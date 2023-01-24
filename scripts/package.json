@@ -1,0 +1,17 @@
+{
+  "name": "cd-scripts",
+  "version": "1.0.0",
+  "description": "scripts to deploy artifacts to s3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "author": "sreehari ps",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.256.0",
+    "dotenv": "^16.0.3",
+    "@root/walk": "^1.1.0"
+  }
+}
