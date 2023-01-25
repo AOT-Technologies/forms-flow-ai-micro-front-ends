@@ -2,7 +2,7 @@ name: Build and push artifacts to s3
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "forms-flow-nav/**"
   defaults:
