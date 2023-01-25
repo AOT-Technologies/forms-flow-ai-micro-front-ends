@@ -1,5 +1,4 @@
 import { STAFF_REVIEWER, STAFF_DESIGNER } from "../constants/constants";
-import { GROUPS } from "../constants/groupConstants";
 
 /****
  * Default value of REACT_APP_USER_ACCESS_PERMISSIONS is
@@ -35,65 +34,11 @@ const getUserRoleName = (userRoles) => {
   return role;
 };
 
-const getNameFromEmail = (email) =>
-  email ? email.substring(0, email.lastIndexOf("@")) : "";
-
 const getUserRolePermission = (userRoles, role) => {
   return userRoles && userRoles.includes(role);
-};
-
-const setShowApplications = (userGroups) => {
-  if (!userAccessGroupCheck.accessAllowApplications) {
-    return true;
-  } else if (userGroups?.length) {
-    const applicationAccess = GROUPS.applicationsAccess.some((group) =>
-      userGroups.includes(group)
-    );
-    return applicationAccess;
-  } else {
-    return false;
-  }
-};
-
-const setShowViewSubmissions = (userGroups) => {
-  if (!userAccessGroupCheck.accessAllowSubmissions) {
-    return true;
-  } else if (userGroups?.length) {
-    const viewSubmissionAccess = GROUPS.viewSubmissionsAccess.some((group) =>
-      userGroups.includes(group)
-    );
-    return viewSubmissionAccess;
-  } else {
-    return false;
-  }
-};
-
-const getUserInsightsPermission = () => {
-  let user = localStorage.getItem("UserDetails");
-  if (!user) {
-    return false;
-  }
-  user = JSON.parse(user);
-  if (!user?.dashboards) {
-    return false;
-  }
-  return true;
-};
-
-const setUserRolesToObject = (response)=>{
-  let roleObject = {};
-  response.forEach(role => {
-    roleObject[role.type] = role.roleId;
-  });
-  return roleObject;
 };
 
 export {
   getUserRoleName,
   getUserRolePermission,
-  getNameFromEmail,
-  setShowApplications,
-  setShowViewSubmissions,
-  getUserInsightsPermission,
-  setUserRolesToObject
 };
