@@ -6,9 +6,9 @@ on:
       - main
     paths:
       - "forms-flow-nav/**"
-  defaults:
-  run:
-    shell: bash
+defaults:
+run:
+  shell: bash
 jobs:
   build:
     name: Build
