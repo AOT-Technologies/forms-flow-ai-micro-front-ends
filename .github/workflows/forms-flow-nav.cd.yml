@@ -1,5 +1,6 @@
 name: Build and push artifacts to s3
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
