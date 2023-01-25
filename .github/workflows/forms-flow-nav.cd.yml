@@ -7,8 +7,8 @@ on:
     paths:
       - "forms-flow-nav/**"
 defaults:
-run:
-  shell: bash
+  run:
+    shell: bash
 jobs:
   build:
     name: Build
