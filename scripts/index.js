@@ -16,8 +16,6 @@ if (!component) {
 
 import Walk from "@root/walk"
 import path from "path"
-import dotenv from "dotenv";
-dotenv.config();
 
 const compressFileAndUpload = (fileName, filePath) => {
   const stream = createReadStream(`${filePath}/${fileName}`);
