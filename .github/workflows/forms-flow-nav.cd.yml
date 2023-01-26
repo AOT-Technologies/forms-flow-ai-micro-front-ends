@@ -23,12 +23,12 @@ jobs:
         working-directory: ./forms-flow-nav
       - run: npm run build:webpack
         working-directory: ./forms-flow-nav
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.REGION }}
       - run: npm ci
         working-directory: ./scripts
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          BUCKET: ${{ secrets.BUCKET }}
-          REGION: ${{ secrets.REGION }}
       - run: node index forms-flow-nav
         working-directory: ./scripts
