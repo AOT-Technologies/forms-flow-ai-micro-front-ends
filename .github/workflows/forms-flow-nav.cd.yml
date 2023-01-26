@@ -28,9 +28,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.REGION }}
+          aws-bucket: ${{ secrets.BUCKET }}
       - run: npm ci
         working-directory: ./scripts
-        env:
-          BUCKET: ${{ secrets.BUCKET }}
       - run: node index forms-flow-nav
         working-directory: ./scripts
