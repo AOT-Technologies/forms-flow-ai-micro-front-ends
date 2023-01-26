@@ -4,7 +4,7 @@ import { s3Client } from "./libs/s3Client.js";
 import { createReadStream, createWriteStream } from "fs";
 import { createGzip } from "zlib";
 
-const BUCKET = process.env.BUCKET || "formsflow.ai-micro-front-ends";
+const BUCKET = process.env.BUCKET;
 const component = process.argv.slice(2)[0];
 
 if (!component) {
