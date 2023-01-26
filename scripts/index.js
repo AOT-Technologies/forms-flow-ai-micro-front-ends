@@ -46,6 +46,7 @@ const run = async (params) => {
     return results; // For unit tests.
   } catch (err) {
     console.log("Error", err);
+    throw Error("Upload failed!");
   }
 };
 
@@ -94,12 +95,12 @@ function walkFunc(err, pathname, dirent) {
         console.log(
             `Collecting artifact -> ${path.dirname(pathname)}/${dirent.name}`
           );
-          // upload(dirent.name, `${path.dirname(pathname)}/${dirent.name}`);
           if (dirent.name === `${component}.js`) {
             compressFileAndUpload(dirent.name, `${path.dirname(pathname)}`);
           }
     } catch (err) {
       console.log("Upload failed", err);
+      throw err;
     }
   }
   return Promise.resolve();
