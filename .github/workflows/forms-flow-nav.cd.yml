@@ -25,12 +25,12 @@ jobs:
         working-directory: ./forms-flow-nav
       - run: npm ci
         working-directory: ./scripts
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          BUCKET: ${{ secrets.BUCKET }}
-          REGION: ${{ secrets.REGION }}
-      - run: echo "$REGION"
+      - run: |
+          touch .env
+          echo REGION=${{ secrets.REGION }} >> .env
+          echo BUCKET=${{ secrets.BUCKET }} >> .env
+          echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} >> .env
+          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> .env
       - run: node index forms-flow-nav
         working-directory: ./scripts
         
