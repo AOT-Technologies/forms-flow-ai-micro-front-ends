@@ -30,5 +30,7 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - run: npm ci
         working-directory: ./scripts
+        env:
+          BUCKET: ${{ secrets.BUCKET }}
       - run: node index forms-flow-nav
         working-directory: ./scripts
