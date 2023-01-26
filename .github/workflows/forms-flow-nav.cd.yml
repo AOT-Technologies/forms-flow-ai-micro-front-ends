@@ -30,7 +30,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BUCKET: ${{ secrets.BUCKET }}
           REGION: ${{ secrets.REGION }}
-      - run: echo env.REGION
+      - run: echo "$REGION"
       - run: node index forms-flow-nav
         working-directory: ./scripts
         
