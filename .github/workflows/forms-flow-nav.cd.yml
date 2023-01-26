@@ -30,8 +30,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BUCKET: ${{ secrets.BUCKET }}
           REGION: ${{ secrets.REGION }}
-      - if:  env.REGION == 'ap-northeast-1'
-      - run: echo "I know what the secret region is!"
+      - run: echo env.REGION
       - run: node index forms-flow-nav
         working-directory: ./scripts
         
