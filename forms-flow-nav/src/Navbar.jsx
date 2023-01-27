@@ -15,6 +15,7 @@ import {
   MULTITENANCY_ENABLED,
 } from "./constants/constants";
 import "./Navbar.scss"
+// import { KeycloakService } from '@formsflow/service';
 
 const NavBar = React.memo(({ props }) => {
   const [user, setUser] = React.useState({});
