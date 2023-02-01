@@ -2,6 +2,7 @@
   "extends": "ts-config-single-spa",
   "files": ["src/formsflow-services.ts"],
   "compilerOptions": {
+    "declaration": true,
     "declarationDir": "dist"
   },
   "include": ["src/**/*"],
