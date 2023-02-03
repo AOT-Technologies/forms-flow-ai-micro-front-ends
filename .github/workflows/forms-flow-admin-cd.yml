@@ -18,7 +18,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16.17.0'
-      - run: npm ci
+          #TODO: force installing due to dependency conflict need to resolve the dependency
+      - run: npm ci --force
         working-directory: ./forms-flow-admin
       - run: npm run build:webpack
         working-directory: ./forms-flow-admin
