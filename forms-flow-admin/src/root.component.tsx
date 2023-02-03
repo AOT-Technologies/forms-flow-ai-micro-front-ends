@@ -1,4 +1,4 @@
-import { Admin } from "./components/Admin"
-export default function Root(props) {
-  return <Admin /> 
+import AdminDashboard from "./components/dashboard/index"
+export default function Root(props) {    
+  return <AdminDashboard props={props} /> 
 }
