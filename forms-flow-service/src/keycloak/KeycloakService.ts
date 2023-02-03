@@ -162,6 +162,10 @@ import Keycloak, {
     public getUserData():any {
       return this.userData;
     }
+
+    public isAuthenticated(): boolean {
+      return !!this.token;
+    }
   }
   
   export default KeycloakService;
