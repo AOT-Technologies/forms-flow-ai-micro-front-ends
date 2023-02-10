@@ -8,7 +8,6 @@ import Loading from "../loading";
 import Popover from "@material-ui/core/Popover";
 import { updateAuthorization, fetchAuthorizations } from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
-import Head from "../../containers/head";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 
@@ -140,6 +139,21 @@ export const InsightDashboard = React.memo((props: any) => {
       }, setErr)
     }, setErr);
   };
+  const pageListRenderer = ({ pages, onPageChange }) => {
+    return (
+      <div className="formsflow-paginator">
+        {pages.map((p, i) => (
+          <div
+            key={i}
+            className={`btn paginator-btn ${p.active && "paginator-active"}`}
+            onClick={() => onPageChange(p.page)}
+          >
+            {p.page}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   const columns = [
     {
@@ -156,13 +170,7 @@ export const InsightDashboard = React.memo((props: any) => {
               <div key={i} className="chip-element mr-2">
                 <span className="chip-label">
                   {label}{" "}
-                  <span
-                    className="chip-close"
-                    data-testid={rowData.resourceDetails.name + label}
-                    onClick={() => removeDashboardAuth(rowData, label)}
-                  >
-                    <i className="fa fa-close"></i>
-                  </span>
+                    <i className="fa fa-close chip-close" onClick={() => removeDashboardAuth(rowData, label)}></i>
                 </span>
               </div>
             ))}
@@ -266,60 +274,38 @@ export const InsightDashboard = React.memo((props: any) => {
   );
 
   const pagination = paginationFactory({
-    showTotal: true,
-    align: "left",
-    sizePerPageList: getpageList(),
+    align: "center",
     page: activePage,
     sizePerPage: sizePerPage,
-    paginationTotalRenderer: customTotal,
-    onPageChange: (page) => setActivePage(page),
-    onSizePerPageChange: (size, page) => handleSizeChange(size, page),
-    sizePerPageRenderer: customDropUp,
+    hideSizePerPage: true,
+    pageListRenderer,
   });
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  const headerList = () => {
-    return [
-      {
-        name: "Dashboard",
-        count: authorizations?.length,
-        // icon: "user-circle-o",
-      },
-      {
-        name: "Roles",
-        count:'',
-        // icon: "user-circle-o",
-      },
-      {
-        name: "Users",
-        count: '',
-        // icon: "user-circle-o",
-      },
-    ];
-  };
-
-  let headOptions = headerList();
   return (
     <>
       <div className="container-admin" role="definition">
-        <Head items={headOptions} page="Dashboard" />
+        {/* <Head items={headOptions} page="Dashboard" /> */}
         <br />
         <div>
-          {dashboards?.results?.length ? (
+          {/* {dashboards?.results?.length ? ( */}
             <BootstrapTable
               keyField="resourceId"
               data={authDashBoardList}
               columns={columns}
               pagination={pagination}
+              bordered={false}
+              wrapperClasses="table-container-admin"
+              rowStyle={{
+                color: "#09174A",
+                fontWeight: 600,
+              }}
+              noDataIndication={ () => <Loading /> }
             />
-          ) : (
+          {/* ) : (
             <h3 className="text-center">
               <Translation>{(t) => t("No Dashboards Found")}</Translation>
             </h3>
-          )}
+          )} */}
         </div>
       </div>
     </>

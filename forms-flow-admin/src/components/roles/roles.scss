@@ -1,0 +1,103 @@
+.table-container{
+    min-height: 28.125rem !important;
+    margin-left: 3.938rem;
+    margin-right: 4.188rem !important;
+    padding-left: 1.938rem;
+    padding-right: 1.938rem;
+    background: #FFFFFF;
+    border: 1px solid #ECECEC;
+    box-shadow: 0px 2px 8px rgba(66, 66, 66, 0.07);
+    border-radius: 8px;
+}
+.table th{
+    color: #646464;
+    border: none;
+}
+.table-container .table td{
+    padding-top: 1.563rem;
+    padding-bottom: 1.75rem;
+    font-weight: 600;
+}
+
+.search-role {
+    width: 33.625rem !important;
+    margin-bottom: 1.75rem;
+    margin-top: 1.875rem;
+}
+.sub-container{
+    margin-left: 3.938rem !important;
+    margin-right: 4.188rem;
+    padding-left: 1.938rem;
+    padding-right: 1.938rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.btn-primary{
+    background-color: #2F45F3 !important;
+}
+.user-list{
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: #09174A;
+    display: flex;
+    align-items: baseline;
+    height: 1.5rem;
+    width: 4.25rem;
+}
+.list-group{
+    max-height: 15.313rem;
+    max-width: 14.063rem;
+}
+.btn-close{
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: 0.25em;
+    color: #000;
+    background: transparent url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3E%3Cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3E%3C/svg%3E") 50%/1em auto no-repeat;
+    border: 0;
+    border-radius: 0.375rem;
+    opacity: .5;
+}
+.modal-title{
+    font-weight: 600;
+    color: #09174A;
+}
+.row{
+    display: block !important;
+}
+.formsflow-paginator{
+    text-align: center;
+    background-color: #FFFFFF;
+    margin-left: 4.938rem;
+    margin-right: 5.188rem;
+    padding-left: 1.938rem;
+    padding-right: 1.938rem;
+    border: 1px solid #ECECEC;
+    box-shadow: 0px 2px 8px rgba(66, 66, 66, 0.07);
+    border-radius: 8px;
+}
+.paginator-btn{
+    border-radius: 50%;
+    color: #838383;
+    border: none;
+    margin-left: 21px;
+    font-weight: 600;
+}
+.paginator-btn:focus{
+    outline: 0;
+    border: none;
+}
+.paginator-btn:active{
+    border: none;
+    outline: none;
+}
+.paginator-active{
+    background-color: #F0F0F0;
+}
+
+.react-bootstrap-table{
+    width: auto !important;
+}

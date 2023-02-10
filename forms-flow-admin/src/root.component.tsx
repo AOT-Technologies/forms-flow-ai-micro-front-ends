@@ -1,4 +1,6 @@
-import AdminDashboard from "./components/dashboard/index"
+import Admin from "."
+import {BrowserRouter} from "react-router-dom";
+
 export default function Root(props) {    
-  return <AdminDashboard props={props} /> 
+  return <BrowserRouter><Admin props={props} /> </BrowserRouter>
 }
