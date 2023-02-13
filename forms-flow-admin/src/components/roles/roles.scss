@@ -65,8 +65,10 @@
     font-weight: 600;
     color: #09174A;
 }
-.row{
-    display: block !important;
+.container-admin {
+    .row{
+        display: block !important;
+    }
 }
 .formsflow-paginator{
     text-align: center;

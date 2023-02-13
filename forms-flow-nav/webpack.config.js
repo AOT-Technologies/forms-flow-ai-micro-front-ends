@@ -15,6 +15,7 @@ module.exports = (webpackConfigEnv, argv) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
+      port: 8080
     },
     output:{
       filename:"forms-flow-nav.js"

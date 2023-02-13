@@ -7,7 +7,7 @@ const version_org = "5.2.0";
 const Footer = React.memo(() => {
   //const today = new Date();
   return (
-    <div className="row footer">
+    <div className="footer">
       <div className="col-12 text-center text-align footer-text" role="main">
         <Translation>{(t) => t("Powered by ")}</Translation>
         <a

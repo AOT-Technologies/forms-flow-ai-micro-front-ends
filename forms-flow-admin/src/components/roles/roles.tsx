@@ -349,7 +349,7 @@ const Roles = React.memo((props: any) => {
   ];
   return (
     <>
-      <div className="">
+      <div className="container-admin">
         <div className="sub-container">
           <Form.Control
             type="text"

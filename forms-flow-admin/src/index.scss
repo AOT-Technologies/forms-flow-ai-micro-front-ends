@@ -2,5 +2,16 @@
     background-color: #F9F9F9;
 }
 .loader-container{
-    height: 50vh !important;
+display: flex;
+height: 50vh !important;
+justify-content: center;
+align-items: center;
+}
+.loader {
+position: absolute;
+margin: auto;
+left: 0;
+right: 0;
+top: 0;
+bottom: 0;
 }
