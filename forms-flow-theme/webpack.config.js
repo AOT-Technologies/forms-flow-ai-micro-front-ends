@@ -17,6 +17,9 @@ module.exports = (webpackConfigEnv, argv) => {
       },
       port: 8082
     },
+    output:{
+      filename:"forms-flow-theme.js"
+    },
     module: {
       rules: [
         {
