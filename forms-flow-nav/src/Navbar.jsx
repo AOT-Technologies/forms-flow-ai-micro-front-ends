@@ -11,7 +11,7 @@ import {
   STAFF_DESIGNER,
   MULTITENANCY_ENABLED,
 } from "./constants/constants";
-import "./Navbar.scss";
+import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
 import { fetchSelectLanguages } from "./services/languageService";
 
@@ -115,7 +115,6 @@ const NavBar = React.memo(({ props }) => {
       <header>
         <Navbar
           expand="lg"
-          bg="white"
           className="topheading-border-bottom"
           fixed="top"
         >
@@ -148,10 +147,9 @@ const NavBar = React.memo(({ props }) => {
                     className={`main-nav nav-item ${
                       pathname.match(createURLPathMatchExp("form", baseUrl))
                         ? "active-tab"
-                        : ""
+                        : "inactive-tab"
                     }`}
                   >
-                    {/* <i className="fa fa-wpforms fa-fw fa-lg mr-2" /> */}
                     {t("Forms")}
                   </Nav.Link>
                   {getUserRolePermission(userRoles, STAFF_DESIGNER) ? (
@@ -161,10 +159,9 @@ const NavBar = React.memo(({ props }) => {
                       className={`main-nav nav-item ${
                         pathname.match(createURLPathMatchExp("admin", baseUrl))
                           ? "active-tab"
-                          : ""
+                          : "inactive-tab"
                       }`}
                     >
-                      {/* <i className="fa fa-user-circle-o fa-lg mr-2" /> */}
                       {t("Admin")}
                     </Nav.Link>
                   ) : null}
@@ -178,10 +175,9 @@ const NavBar = React.memo(({ props }) => {
                           createURLPathMatchExp("processes", baseUrl)
                         )
                           ? "active-tab"
-                          : ""
+                          : "inactive-tab"
                       }`}
                     >
-                      {/* <i className="fa fa-cogs fa-lg fa-fw mr-2" /> */}
                       {t("Processes")}
                     </Nav.Link>
                   ) : null}
@@ -201,11 +197,10 @@ const NavBar = React.memo(({ props }) => {
                                 createURLPathMatchExp("draft", baseUrl)
                               )
                             ? "active-tab"
-                            : ""
+                            : "inactive-tab"
                         }`}
                       >
                         {" "}
-                        {/* <i className="fa fa-list-alt fa-fw fa-lg mr-2" /> */}
                         {t("Applications")}
                       </Nav.Link>
                     ) : null
@@ -217,11 +212,10 @@ const NavBar = React.memo(({ props }) => {
                       className={`main-nav nav-item taskDropdown ${
                         pathname.match(createURLPathMatchExp("task", baseUrl))
                           ? "active-tab"
-                          : ""
+                          : "inactive-tab"
                       }`}
                     >
                       {" "}
-                      {/* <i className="fa fa-list fa-lg fa-fw mr-2" /> */}
                       {t("Tasks")}
                     </Nav.Link>
                   ) : null}
@@ -239,11 +233,10 @@ const NavBar = React.memo(({ props }) => {
                           createURLPathMatchExp("insights", baseUrl)
                         )
                           ? "active-tab"
-                          : ""
+                          : "inactive-tab"
                       }`}
                     >
                       {" "}
-                      {/* <i className="fa fa-tachometer fa-lg fa-fw mr-2" /> */}
                       {t("Dashboards")}
                     </Nav.Link>
                   ) : null}
