@@ -23,31 +23,33 @@ const NavBar = React.memo(({ props }) => {
   const [form, setForm] = React.useState({});
   const [selectLanguages, setSelectLanguages] = React.useState([]);
 
+  React,useEffect(()=>{
+    props.subscribe("FF_AUTH", (msg, data) => {
+      setInstance(data);
+    });
+  
+    props.subscribe("ES_USER", (msg, data) => {
+      if (data) {
+        setUser(data);
+      }
+    });
+    props.subscribe("ES_TENANT", (msg, data) => {
+      if (data) {
+        setTenant(data);
+      }
+    });
+    props.subscribe("ES_ROUTE", (msg, data) => {
+      if (data) {
+        setLocation(data);
+      }
+    });
+    props.subscribe("ES_FORM", (msg, data) => {
+      if (data) {
+          setForm(data);
+      }
+    });    
+  },[])
 
-  props.subscribe("FF_AUTH", (msg, data) => {
-    setInstance(data);
-  });
-
-  props.subscribe("ES_USER", (msg, data) => {
-    if (data) {
-      setUser(data);
-    }
-  });
-  props.subscribe("ES_TENANT", (msg, data) => {
-    if (data) {
-      setTenant(data);
-    }
-  });
-  props.subscribe("ES_ROUTE", (msg, data) => {
-    if (data) {
-      setLocation(data);
-    }
-  });
-  props.subscribe("ES_FORM", (msg, data) => {
-    if (data) {
-      setForm(data);
-    }
-  });
 
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
