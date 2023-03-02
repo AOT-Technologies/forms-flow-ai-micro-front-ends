@@ -1,6 +1,5 @@
 import React from "react";
 import { Translation } from "react-i18next";
-import './head.scss';
 
 const Head = React.memo((props: any) => {
   const { items, page } = props;
