@@ -52,7 +52,6 @@ export const InsightDashboard = React.memo((props: any) => {
   const [activeRow, setActiveRow] = useState(null);
   const [show, setShow] = useState(false);
   const [activePage, setActivePage] = useState(1);
-  const [sizePerPage, setSizePerPage] = useState(5);
   const [err, setErr] = useState({})
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -139,21 +138,14 @@ export const InsightDashboard = React.memo((props: any) => {
       }, setErr)
     }, setErr);
   };
-  const pageListRenderer = ({ pages, onPageChange }) => {
-    return (
-      <div className="formsflow-paginator">
-        {pages.map((p, i) => (
-          <div
-            key={i}
-            className={`btn paginator-btn ${p.active && "paginator-active"}`}
-            onClick={() => onPageChange(p.page)}
-          >
-            {p.page}
-          </div>
-        ))}
-      </div>
-    );
-  };
+
+  const noData = () => (
+    <div>
+      <h3 className="text-center">
+        <Translation>{(t) => t("No data Found")}</Translation>
+      </h3>
+    </div>
+  );
 
   const columns = [
     {
@@ -259,11 +251,6 @@ export const InsightDashboard = React.memo((props: any) => {
     return list;
   };
 
-  const handleSizeChange = (sizePerPage, page) => {
-    setActivePage(page);
-    setSizePerPage(sizePerPage);
-  };
-
   const customTotal = (from, to, size) => (
     <span className="react-bootstrap-table-pagination-total" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
@@ -274,20 +261,21 @@ export const InsightDashboard = React.memo((props: any) => {
   );
 
   const pagination = paginationFactory({
+    showTotal: true,
     align: "center",
+    sizePerPageList: getpageList(),
     page: activePage,
-    sizePerPage: sizePerPage,
-    hideSizePerPage: true,
-    pageListRenderer,
+    paginationTotalRenderer: customTotal,
+    onPageChange: (page) => setActivePage(page),
+    sizePerPageRenderer: customDropUp,
   });
 
   return (
     <>
       <div className="container-admin" role="definition">
-        {/* <Head items={headOptions} page="Dashboard" /> */}
         <br />
         <div>
-          {/* {dashboards?.results?.length ? ( */}
+          {!isLoading ? (
             <BootstrapTable
               keyField="resourceId"
               data={authDashBoardList}
@@ -299,13 +287,9 @@ export const InsightDashboard = React.memo((props: any) => {
                 color: "#09174A",
                 fontWeight: 600,
               }}
-              noDataIndication={ () => <Loading /> }
+              noDataIndication={noData}
             />
-          {/* ) : (
-            <h3 className="text-center">
-              <Translation>{(t) => t("No Dashboards Found")}</Translation>
-            </h3>
-          )} */}
+           ) : <Loading />} 
         </div>
       </div>
     </>

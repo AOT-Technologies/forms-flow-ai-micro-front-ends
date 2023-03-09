@@ -8,6 +8,8 @@
     border: 1px solid #ECECEC;
     box-shadow: 0px 2px 8px rgba(66, 66, 66, 0.07);
     border-radius: 8px;
+    overflow-y: scroll;
+    max-height: 25rem;
 }
 .table th{
     color: #646464;
@@ -63,7 +65,12 @@
 }
 .container-admin {
     .row{
-        display: block !important;
+        margin-left: 2.98rem;
+        margin-right: 3.188rem;
+    }
+    tbody{
+        overflow-y: auto;
+        height: 300px;
     }
 }
 .formsflow-paginator{
@@ -98,4 +105,8 @@
 
 .react-bootstrap-table{
     width: auto !important;
+}
+.user-table-container{
+    overflow-y: scroll;
+    max-height: 25rem;
 }

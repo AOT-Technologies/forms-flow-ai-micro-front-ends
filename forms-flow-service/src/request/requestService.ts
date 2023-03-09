@@ -133,6 +133,7 @@ class RequestService {
   }
   public static httpDELETERequest(
     url: string,
+    data: object,
     token: string | null,
     isBearer: boolean = true
   ): any {
@@ -144,6 +145,7 @@ class RequestService {
             }`
           : token,
       },
+      data: data
     });
   }
   public static httpPUTRequestWithoutToken(url: string, data: object): any {

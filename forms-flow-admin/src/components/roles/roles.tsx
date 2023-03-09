@@ -11,9 +11,10 @@ import Popover from "@material-ui/core/Popover";
 import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
 import Loading from "../loading";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
 
 const Roles = React.memo((props: any) => {
-  console.log("Role props", props);
   const { t } = useTranslation();
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
@@ -108,11 +109,14 @@ const Roles = React.memo((props: any) => {
     setAnchorEl(event.currentTarget);
     fetchUsers(
       rowData.name,
+      null,
+      null,
       (data) => {
         setUsers(data);
         setLoading(false);
       },
-      setError
+      setError,
+      false
     );
   };
   const handleClose = () => {
@@ -239,27 +243,77 @@ const Roles = React.memo((props: any) => {
       </Modal>
     </div>
   );
-  const pageListRenderer = ({ pages, onPageChange }) => {
+
+  const noData = () => (
+    <div>
+      <h3 className="text-center">
+        <Translation>{(t) => t("No data Found")}</Translation>
+      </h3>
+    </div>
+  );
+
+  const customTotal = (from, to, size) => (
+    <span className="react-bootstrap-table-pagination-total" role="main">
+      <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
+      <Translation>{(t) => t("to")}</Translation> {to}{" "}
+      <Translation>{(t) => t("of")}</Translation> {size}{" "}
+      <Translation>{(t) => t("Results")}</Translation>
+    </span>
+  );
+  const getpageList = () => {
+    const list = [
+      {
+        text: "5",
+        value: 5,
+      },
+      {
+        text: "25",
+        value: 25,
+      },
+      {
+        text: "50",
+        value: 50,
+      },
+      {
+        text: "100",
+        value: 100,
+      },
+      {
+        text: "All",
+        value: roles.length,
+      },
+    ];
+    return list;
+  };
+  const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
     return (
-      <div className="formsflow-paginator">
-        {pages.map((p, i) => (
-          <div
-            key={i}
-            className={`btn paginator-btn ${p.active && "paginator-active"}`}
-            onClick={() => onPageChange(p.page)}
+      <DropdownButton
+        drop="up"
+        variant="secondary"
+        title={currSizePerPage}
+        style={{ display: "inline" }}
+      >
+        {options.map((option) => (
+          <Dropdown.Item
+            key={option.text}
+            type="button"
+            onClick={() => onSizePerPageChange(option.page)}
           >
-            {p.page}
-          </div>
+            {option.text}
+          </Dropdown.Item>
         ))}
-      </div>
+      </DropdownButton>
     );
   };
   const pagination = paginationFactory({
+    showTotal: true,
     align: "center",
+    sizePerPageList: getpageList(),
     page: activePage,
     sizePerPage: sizePerPage,
-    hideSizePerPage: true,
-    pageListRenderer,
+    paginationTotalRenderer: customTotal,
+    onPageChange: (page) => setActivePage(page),
+    sizePerPageRenderer: customDropUp,
   });
 
   const columns = [
@@ -361,7 +415,7 @@ const Roles = React.memo((props: any) => {
             <i className="fa fa-l fa-plus-circle mr-1" /> Create New Role
           </Button>
         </div>
-        <BootstrapTable
+       {!props?.loading ? <BootstrapTable
           keyField="id"
           data={roles}
           columns={columns}
@@ -372,8 +426,8 @@ const Roles = React.memo((props: any) => {
             color: "#09174A",
             fontWeight: 600
           }}
-          noDataIndication={() => <Loading />}
-        />
+          noDataIndication={noData}
+        />: <Loading />}
         {showCreateModal()}
         {confirmDelete()}
         {showEditModal()}

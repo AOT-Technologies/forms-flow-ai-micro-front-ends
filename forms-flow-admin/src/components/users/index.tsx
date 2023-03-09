@@ -1,37 +1,109 @@
 import React from "react";
+import { fetchRoles } from "../../services/roles";
 import { fetchUsers } from "../../services/users";
 import Users from "./users";
 
-const UserManagement = React.memo((props : any) => {
-  
-    const {setTab, setCount} = props;
+const UserManagement = React.memo((props: any) => {
+  const { setTab, setCount } = props;
 
-    const [users, setUsers] = React.useState([]);
-    const [error, setError] = React.useState({});
-    const [invalidated, setInvalidated] = React.useState(false);
+  const [users, setUsers] = React.useState([]);
+  const [roles, setRoles] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState({});
+  const [invalidated, setInvalidated] = React.useState(false);
+  const [pageNo, setPageNo] = React.useState(1);  
+  const [search, setSearch] = React.useState(undefined);
+  const [filter, setFilter] = React.useState(undefined);
 
   React.useEffect(()=>{
-    if(invalidated){
-      fetchUsers(null, (data)=>{
-        setUsers(data)
-        setCount(data.length)
-        setInvalidated(false)
-      }, setError);
+    setLoading(true);
+    fetchUsers(
+      filter,
+      1,
+      search,
+      (data) => {
+        setUsers(data);
+        setCount(data.length);
+        setInvalidated(false);
+        setPageNo(1);
+        setLoading(false);
+      },
+      setError
+    );
+  }, [filter])
+
+  React.useEffect(()=>{
+    if (search === undefined) return
+    let delay = setTimeout(()=>{
+        setLoading(true);
+        fetchUsers(
+          null,
+          1,
+          search,
+          (data) => {
+            setUsers(data);
+            setCount(data.length);
+            setInvalidated(false);
+            setPageNo(1);
+            setLoading(false);
+          },
+          setError
+        );
+    }, 1500)
+
+    return ()=> clearTimeout(delay);
+  },[search]);
+
+  React.useEffect(() => {
+    if (invalidated) {
+      setLoading(true);
+      fetchUsers(
+        null,
+        pageNo,
+        null,
+        (data) => {
+          setUsers(data);
+          setCount(data.length);
+          setInvalidated(false);
+          setLoading(false);
+        },
+        setError
+      );
     }
-  },[invalidated])
+  }, [invalidated]);
 
   React.useEffect(() => {
     setTab("Users");
-    fetchUsers(null, (data)=>{
-      setUsers(data)
-      setCount(data.length)
+    setLoading(true);
+    fetchUsers(
+      null,
+      pageNo,
+      null,
+      (data) => {
+        setUsers(data);
+        setCount(data.length);
+        setLoading(false);
+      },
+      setError
+    );
 
+    fetchRoles((data) => {
+      setRoles(data);
     }, setError);
   }, []);
 
   return (
     <>
-    <Users {...props} users={users} setInvalidated={setInvalidated} />
+      <Users
+        {...props}
+        users={users}
+        roles={roles}
+        setInvalidated={setInvalidated}
+        page={{pageNo, setPageNo}}
+        loading={loading}
+        setSearch={setSearch}
+        setFilter={setFilter}
+      />
     </>
   );
 });
