@@ -51,7 +51,6 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.4",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",

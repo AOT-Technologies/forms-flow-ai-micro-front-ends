@@ -110,3 +110,16 @@
     overflow-y: scroll;
     max-height: 25rem;
 }
+
+.list-group{
+    max-height: 25rem;
+}
+.role-user {
+    padding-left: 9px;
+    padding-right: 9px;
+    height: 37px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    justify-content: space-between;
+}

@@ -7,12 +7,12 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { fetchUsers } from "../../services/users";
 import { CreateRole, DeleteRole, UpdateRole } from "../../services/roles";
-import Popover from "@material-ui/core/Popover";
-import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
 import Loading from "../loading";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
@@ -179,6 +179,7 @@ const Roles = React.memo((props: any) => {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label aria-required>Role Name</Form.Label>
+              <i style={{ color: "red" }}>*</i>
               <Form.Control
                 type="text"
                 placeholder="Eg: Account Manager"
@@ -186,8 +187,10 @@ const Roles = React.memo((props: any) => {
                 onChange={handleChangeName}
               />
               <Form.Label className="mt-2">Description</Form.Label>
+              <i style={{ color: "red" }}>*</i>
               <Form.Control
                 as="textarea"
+                placeholder="Eg: Lorem ipsum..."
                 rows={3}
                 onChange={handleChangeDescription}
               />
@@ -215,6 +218,7 @@ const Roles = React.memo((props: any) => {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label aria-required>Role Name</Form.Label>
+              <i style={{ color: "red" }}>*</i>
               <Form.Control
                 type="text"
                 placeholder="Eg: Account Manager"
@@ -223,6 +227,7 @@ const Roles = React.memo((props: any) => {
                 value={editCandidate.name}
               />
               <Form.Label className="mt-2">Description</Form.Label>
+              <i style={{ color: "red" }}>*</i>
               <Form.Control
                 as="textarea"
                 rows={3}
@@ -319,7 +324,7 @@ const Roles = React.memo((props: any) => {
   const columns = [
     {
       dataField: "name",
-      text: <Translation>{(t) => t("Role name")}</Translation>,
+      text: <Translation>{(t) => t("Role Name")}</Translation>,
     },
     {
       dataField: "description",
@@ -332,45 +337,36 @@ const Roles = React.memo((props: any) => {
       formatter: (cell, rowData, rowIdx, formatExtraData) => {
         const { show, users, loading } = formatExtraData;
         return (
-          <>
+          <OverlayTrigger
+            trigger="click"
+            key={rowIdx}
+            placement="left"
+            rootClose={true}
+            overlay={
+              <Popover id={`popover-positioned-bottom`}>
+                <Popover.Body>
+                  <div className="role-list">
+                    {!loading ? (
+                      users.length > 0 ? (
+                        users?.map((item, key) => (
+                          <div className="role-user">{item.id}</div>
+                        ))
+                      ) : (
+                        <div>{`${t("No results found")}`}</div>
+                      )
+                    ) : (
+                      <>{`${t("Loading...")}`}</>
+                    )}
+                  </div>
+                </Popover.Body>
+              </Popover>
+            }
+          >
             <div className="user-list" onClick={(e) => handleClick(e, rowData)}>
-              <p>view</p>
+              <p>View</p>
               <i className="fa fa-caret-down ml-1" />
             </div>
-            <Popover
-              data-testid="popup-component"
-              id={show ? "simple-popover" : undefined}
-              open={show}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-            >
-              <ListGroup>
-                {!loading ? (
-                  users.length > 0 ? (
-                    users?.map((item, key) => (
-                      <ListGroup.Item key={key} as="button">
-                        {item.id}
-                      </ListGroup.Item>
-                    ))
-                  ) : (
-                    <ListGroup.Item>{`${t(
-                      "No results found"
-                    )}`}</ListGroup.Item>
-                  )
-                ) : (
-                  <ListGroup.Item>{`${t("Loading...")}`}</ListGroup.Item>
-                )}
-              </ListGroup>
-            </Popover>
-          </>
+          </OverlayTrigger>
         );
       },
     },
@@ -415,19 +411,23 @@ const Roles = React.memo((props: any) => {
             <i className="fa fa-l fa-plus-circle mr-1" /> Create New Role
           </Button>
         </div>
-       {!props?.loading ? <BootstrapTable
-          keyField="id"
-          data={roles}
-          columns={columns}
-          pagination={pagination}
-          bordered={false}
-          wrapperClasses="table-container"
-          rowStyle={{
-            color: "#09174A",
-            fontWeight: 600
-          }}
-          noDataIndication={noData}
-        />: <Loading />}
+        {!props?.loading ? (
+          <BootstrapTable
+            keyField="id"
+            data={roles}
+            columns={columns}
+            pagination={pagination}
+            bordered={false}
+            wrapperClasses="table-container"
+            rowStyle={{
+              color: "#09174A",
+              fontWeight: 600,
+            }}
+            noDataIndication={noData}
+          />
+        ) : (
+          <Loading />
+        )}
         {showCreateModal()}
         {confirmDelete()}
         {showEditModal()}

@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
-import ListGroup from "react-bootstrap/ListGroup";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import Loading from "../loading";
-import Popover from "@material-ui/core/Popover";
-import { updateAuthorization, fetchAuthorizations } from "../../services/dashboard";
+import {
+  updateAuthorization,
+  fetchAuthorizations,
+} from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 
-const customDropUp = ({
-  options,
-  currSizePerPage,
-  onSizePerPageChange,
-}) => {
+const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
   return (
     <DropdownButton
       drop="up"
@@ -37,22 +36,20 @@ const customDropUp = ({
 };
 
 export const InsightDashboard = React.memo((props: any) => {
-
-  const {dashboards, groups, authorizations } = props;  
+  const { dashboards, groups, authorizations } = props;
 
   const isGroupUpdated = groups.length > 0;
   const [authDashBoardList, setAuthDashboardList] = React.useState([]);
-  const [isAuthUpdated, setIsAuthUpdated] = React.useState(false); 
+  const [isAuthUpdated, setIsAuthUpdated] = React.useState(false);
 
   const { t } = useTranslation();
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [remainingGroups, setRemainingGroups] = useState([]);
+  const [remainingGroups, setRemainingGroups] = React.useState([]);
 
-  const [activeRow, setActiveRow] = useState(null);
-  const [show, setShow] = useState(false);
-  const [activePage, setActivePage] = useState(1);
-  const [err, setErr] = useState({})
+  const [activeRow, setActiveRow] = React.useState(null);
+  const [show, setShow] = React.useState(false);
+  const [activePage, setActivePage] = React.useState(1);
+  const [err, setErr] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(true);
 
   function compare(a, b) {
@@ -83,15 +80,18 @@ export const InsightDashboard = React.memo((props: any) => {
     return newList.sort(compare);
   };
 
-  useEffect(() => {    
-    if (dashboards?.results?.length > 0 && authorizations.length > 0 && !isAuthUpdated) {
+  React.useEffect(() => {
+    if (
+      dashboards?.results?.length > 0 &&
+      authorizations.length > 0 &&
+      !isAuthUpdated
+    ) {
       let authList = updateAuthList(authorizations);
-      setAuthDashboardList(authList)
+      setAuthDashboardList(authList);
       setIsAuthUpdated(true);
       setIsLoading(false);
     }
   }, [dashboards, authorizations, isAuthUpdated]);
-
 
   // handles the add button click event
   const handleClick = (event, rowData) => {
@@ -102,12 +102,6 @@ export const InsightDashboard = React.memo((props: any) => {
     setActiveRow(rowData);
     setRemainingGroups(listGroup);
     setShow(!show);
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setShow(false);
-    setAnchorEl(null);
   };
 
   const id = show ? "simple-popover" : undefined;
@@ -120,11 +114,17 @@ export const InsightDashboard = React.memo((props: any) => {
     };
     let modifiedRoles = dashboard.roles.filter((item) => item !== groupPath);
     dashboard.roles = modifiedRoles;
-    updateAuthorization(dashboard,()=>{
-      fetchAuthorizations((data)=>{
-        setAuthDashboardList(updateAuthList(data));
-      }, setErr)
-    } , setErr);
+    setIsLoading(true);
+    updateAuthorization(
+      dashboard,
+      () => {
+        fetchAuthorizations((data) => {
+          setAuthDashboardList(updateAuthList(data));
+          setIsLoading(false);
+        }, setErr);
+      },
+      setErr
+    );
   };
 
   const addDashboardAuth = (data) => {
@@ -132,11 +132,17 @@ export const InsightDashboard = React.memo((props: any) => {
     currentRow.roles = [...activeRow.roles, data.path];
     setActiveRow(currentRow);
     setShow(!show);
-    updateAuthorization(currentRow, ()=>{
-      fetchAuthorizations((data)=>{
-        setAuthDashboardList(updateAuthList(data));
-      }, setErr)
-    }, setErr);
+    setIsLoading(true);
+    updateAuthorization(
+      currentRow,
+      () => {
+        fetchAuthorizations((data) => {
+          setAuthDashboardList(updateAuthList(data));
+          setIsLoading(false);
+        }, setErr);
+      },
+      setErr
+    );
   };
 
   const noData = () => (
@@ -162,7 +168,10 @@ export const InsightDashboard = React.memo((props: any) => {
               <div key={i} className="chip-element mr-2">
                 <span className="chip-label">
                   {label}{" "}
-                    <i className="fa fa-close chip-close" onClick={() => removeDashboardAuth(rowData, label)}></i>
+                  <i
+                    className="fa fa-close chip-close"
+                    onClick={() => removeDashboardAuth(rowData, label)}
+                  ></i>
                 </span>
               </div>
             ))}
@@ -177,7 +186,35 @@ export const InsightDashboard = React.memo((props: any) => {
       formatter: (cell, rowData, rowIdx, formatExtraData) => {
         let { show, remainingGroups, isGroupUpdated } = formatExtraData;
         return (
-          <div>
+          <OverlayTrigger
+            trigger="click"
+            key={rowIdx}
+            placement="left"
+            rootClose={true}
+            overlay={
+              <Popover id={`popover-positioned-bottom`}>
+                <Popover.Body>
+                  <div className="role-list">
+                    {remainingGroups.length > 0 ? (
+                      remainingGroups.map((item, key) => (
+                        <div
+                          className="role"
+                          key={key}
+                          onClick={() => addDashboardAuth(item)}
+                        >
+                          {item.path}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="role">{`${t(
+                        "All groups have access to the dashboard"
+                      )}`}</div>
+                    )}
+                  </div>
+                </Popover.Body>
+              </Popover>
+            }
+          >
             <Button
               data-testid={rowIdx}
               onClick={(e) => handleClick(e, rowData)}
@@ -186,40 +223,7 @@ export const InsightDashboard = React.memo((props: any) => {
             >
               <Translation>{(t) => t("Add")}</Translation> <b>+</b>
             </Button>
-            <Popover
-              data-testid="popup-component"
-              id={id}
-              open={show}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-            >
-              <ListGroup>
-                {remainingGroups.length > 0 ? (
-                  remainingGroups.map((item, key) => (
-                    <ListGroup.Item
-                      key={key}
-                      as="button"
-                      onClick={() => addDashboardAuth(item)}
-                    >
-                      {item.path}
-                    </ListGroup.Item>
-                  ))
-                ) : (
-                  <ListGroup.Item>{`${t(
-                    "All groups have access to the dashboard"
-                  )}`}</ListGroup.Item>
-                )}
-              </ListGroup>
-            </Popover>
-          </div>
+          </OverlayTrigger>
         );
       },
     },
@@ -289,7 +293,9 @@ export const InsightDashboard = React.memo((props: any) => {
               }}
               noDataIndication={noData}
             />
-           ) : <Loading />} 
+          ) : (
+            <Loading />
+          )}
         </div>
       </div>
     </>
