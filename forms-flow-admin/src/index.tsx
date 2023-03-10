@@ -31,7 +31,7 @@ const Admin = React.memo(({ props }: any) => {
   const [userCount, setUserCount] = React.useState();
 
   React.useEffect(() => {
-    publish("ES_ROUTE", { pathname: "/admin" });
+    publish("ES_ROUTE", { pathname: `${BASE_ROUTE}admin` });
   }, []);
 
   React.useEffect(() => {
@@ -54,19 +54,19 @@ const Admin = React.memo(({ props }: any) => {
         name: "Dashboard",
         count: dashboardCount,
         // icon: "user-circle-o",
-        onClick: () => history.push("/admin/dashboard")
+        onClick: () => history.push(`${BASE_ROUTE}admin/dashboard`)
       },
       {
         name: "Roles",
         count:roleCount,
         // icon: "user-circle-o",
-        onClick: () => history.push("/admin/roles")
+        onClick: () => history.push(`${BASE_ROUTE}admin/roles`)
       },
       {
         name: "Users",
         count: userCount,
         // icon: "user-circle-o",
-        onClick: () => history.push("/admin/users")
+        onClick: () => history.push(`${BASE_ROUTE}admin/users`)
       },
     ];
   };
