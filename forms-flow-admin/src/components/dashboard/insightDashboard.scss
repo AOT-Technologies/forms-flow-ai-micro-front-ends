@@ -31,7 +31,7 @@
     }
 }
 .table-container-admin{
-    min-height: 28.125rem !important;
+    min-height: 32rem;
     margin-left: 3.938rem;
     margin-right: 4.188rem !important;
     padding-left: 1.938rem;
@@ -40,10 +40,16 @@
     border: 1px solid #ECECEC;
     box-shadow: 0px 2px 8px rgba(66, 66, 66, 0.07);
     border-radius: 8px;
-    max-height: 25rem;
+    max-height: 32rem;
     overflow-y: scroll;
 }
 .table-container-admin .table td{
     padding-top: 1.5rem;
     font-weight: 600;
 }
+.container-admin .react-bootstrap-table-pagination-list{
+    margin-top: 1rem;
+} 
+.container-admin .react-bootstrap-table-pagination-total{
+    margin-left: 1rem;
+} 
