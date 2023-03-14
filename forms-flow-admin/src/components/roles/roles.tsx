@@ -13,6 +13,7 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
+import { toast } from "react-toastify";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
@@ -27,7 +28,6 @@ const Roles = React.memo((props: any) => {
   // Toggle for create/edit role
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showEditRoleModal, setShowEditRoleModal] = useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const [payload, setPayload] = React.useState({ name: "", description: "" });
   // Toggle for Delete Confirm modal
@@ -39,12 +39,23 @@ const Roles = React.memo((props: any) => {
   };
   const [deleteCandidate, setDeleteCandidate] = React.useState(initialRoleType);
   const [editCandidate, setEditCandidate] = React.useState(initialRoleType);
+  const [disabled, setDisabled] = React.useState(true);
+  const [search, setSerach] = React.useState("");
+
+  React.useEffect(() => {
+    setDisabled(!(payload.name && payload.description));
+  }, [payload]);
+
+  React.useEffect(() => {
+    setDisabled(!(editCandidate.name && editCandidate.description));
+  }, [editCandidate]);
 
   React.useEffect(() => {
     setRoles(props.roles);
   }, [props.roles]);
 
   const handlFilter = (e) => {
+    setSerach(e.target.value);    
     let roleList = props?.roles.filter((role) => {
       return (
         role.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
@@ -54,21 +65,28 @@ const Roles = React.memo((props: any) => {
   };
 
   const deleteRole = (rowData) => {
+    setDisabled(true);
     DeleteRole(
       rowData.id,
       () => {
         props.setInvalidated(true);
         handleCloseDeleteModal();
+        setSerach("");
+        toast.success("Role deleted successfully!");
       },
-      setError
+      (err) => {
+        setError(err);
+        setDisabled(false);
+        toast.error(err.message || "Failed to delete role!");
+      }
     );
   };
 
   const handleChangeName = (e) => {
-    setPayload({ ...payload, name: e.target.value });
+    setPayload({ ...payload, name: e.target.value.trim() });
   };
   const handleChangeDescription = (e) => {
-    setPayload({ ...payload, description: e.target.value });
+    setPayload({ ...payload, description: e.target.value.trim() });
   };
 
   const validateRolePayload = (payload) => {
@@ -79,26 +97,40 @@ const Roles = React.memo((props: any) => {
     if (!validateRolePayload(payload)) {
       return;
     }
+    setDisabled(true);
     CreateRole(
       payload,
       (data) => {
         props.setInvalidated(true);
         handleCloseRoleModal();
+        setSerach("");
+        toast.success("Role created successfully!");
       },
-      setError
+      (err) => {
+        setError(err);
+        setDisabled(false);
+        toast.error(err.message || "Failed to create role!");
+      }
     );
   };
   const handleUpdateRole = () => {
     if (!validateRolePayload(editCandidate)) {
       return;
     }
+    setDisabled(true);
     UpdateRole(
       editCandidate,
       (data) => {
         props.setInvalidated(true);
         handleCloseEditRoleModal();
+        setSerach("");
+        toast.success("Role updated successfully!");
       },
-      setError
+      (err) => {
+        setError(err);
+        setDisabled(false);
+        toast.error(err.message || "Failed to update role!");
+      }
     );
   };
 
@@ -106,7 +138,6 @@ const Roles = React.memo((props: any) => {
   const handleClick = (event, rowData) => {
     setShow(!show);
     setLoading(true);
-    setAnchorEl(event.currentTarget);
     fetchUsers(
       rowData.name,
       null,
@@ -118,11 +149,6 @@ const Roles = React.memo((props: any) => {
       setError,
       false
     );
-  };
-  const handleClose = () => {
-    setShow(false);
-    setAnchorEl(null);
-    setUsers([]);
   };
 
   const handleEditName = (e) => {
@@ -143,8 +169,12 @@ const Roles = React.memo((props: any) => {
   const handleCloseDeleteModal = () => {
     setShowConfirmDelete(false);
     setDeleteCandidate(initialRoleType);
+    setDisabled(true);
   };
-  const handleShowDeleteModal = () => setShowConfirmDelete(true);
+  const handleShowDeleteModal = () => {
+    setShowConfirmDelete(true);
+    setDisabled(false);
+  };
 
   // Delete confirmation
 
@@ -161,7 +191,11 @@ const Roles = React.memo((props: any) => {
           <Button variant="light" onClick={handleCloseDeleteModal}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={() => deleteRole(deleteCandidate)}>
+          <Button
+            variant="danger"
+            disabled={disabled}
+            onClick={() => deleteRole(deleteCandidate)}
+          >
             Delete
           </Button>
         </Modal.Footer>
@@ -201,7 +235,11 @@ const Roles = React.memo((props: any) => {
           <Button variant="light" onClick={handleCloseRoleModal}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleCreateRole}>
+          <Button
+            variant="primary"
+            disabled={disabled}
+            onClick={handleCreateRole}
+          >
             Create
           </Button>
         </Modal.Footer>
@@ -241,7 +279,11 @@ const Roles = React.memo((props: any) => {
           <Button variant="light" onClick={handleCloseEditRoleModal}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleUpdateRole}>
+          <Button
+            variant="primary"
+            disabled={disabled}
+            onClick={handleUpdateRole}
+          >
             Save
           </Button>
         </Modal.Footer>
@@ -406,6 +448,7 @@ const Roles = React.memo((props: any) => {
             placeholder="Search by role name"
             className="search-role"
             onChange={handlFilter}
+            value={search}
           />
           <Button variant="primary" onClick={handleShowRoleModal}>
             <i className="fa fa-l fa-plus-circle mr-1" /> Create New Role

@@ -1,10 +1,7 @@
 import React from "react";
-import {
-  Route,
-  Switch,
-  Redirect,
-  useHistory
-} from "react-router-dom";
+import { Route, Switch, Redirect, useHistory } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { KeycloakService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
@@ -18,7 +15,7 @@ import RoleManagement from "./components/roles";
 import UserManagement from "./components/users";
 import Head from "./containers/head";
 
-import './index.scss'
+import "./index.scss";
 
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
@@ -54,48 +51,68 @@ const Admin = React.memo(({ props }: any) => {
         name: "Dashboard",
         count: dashboardCount,
         // icon: "user-circle-o",
-        onClick: () => history.push(`${BASE_ROUTE}admin/dashboard`)
+        onClick: () => history.push(`${BASE_ROUTE}admin/dashboard`),
       },
       {
         name: "Roles",
-        count:roleCount,
+        count: roleCount,
         // icon: "user-circle-o",
-        onClick: () => history.push(`${BASE_ROUTE}admin/roles`)
+        onClick: () => history.push(`${BASE_ROUTE}admin/roles`),
       },
       {
         name: "Users",
         count: userCount,
         // icon: "user-circle-o",
-        onClick: () => history.push(`${BASE_ROUTE}admin/users`)
+        onClick: () => history.push(`${BASE_ROUTE}admin/users`),
       },
     ];
   };
 
   return (
     <>
-     {isAuth && <div className="admin-container" tabIndex={0}>
-        <Head items={headerList()} page={page} />
+      {isAuth && (
+        <div className="admin-container" tabIndex={0}>
+          <Head items={headerList()} page={page} />
+          <ToastContainer theme="colored" />
           <Switch>
             <Route
               exact
               path={`${BASE_ROUTE}admin/dashboard`}
-              render={() => <AdminDashboard {...props} setTab={setPage} setCount={setDashboardCount} />}
+              render={() => (
+                <AdminDashboard
+                  {...props}
+                  setTab={setPage}
+                  setCount={setDashboardCount}
+                />
+              )}
             />
             <Route
               exact
               path={`${BASE_ROUTE}admin/roles`}
-              render={() => <RoleManagement {...props} setTab={setPage} setCount={setRoleCount} />}
+              render={() => (
+                <RoleManagement
+                  {...props}
+                  setTab={setPage}
+                  setCount={setRoleCount}
+                />
+              )}
             />
             <Route
               exact
               path={`${BASE_ROUTE}admin/users`}
-              render={() => <UserManagement {...props} setTab={setPage} setCount={setUserCount} />}
+              render={() => (
+                <UserManagement
+                  {...props}
+                  setTab={setPage}
+                  setCount={setUserCount}
+                />
+              )}
             />
             <Redirect from="*" to="/404" />
           </Switch>
           <Footer />
         </div>
-      }
+      )}
     </>
   );
 });

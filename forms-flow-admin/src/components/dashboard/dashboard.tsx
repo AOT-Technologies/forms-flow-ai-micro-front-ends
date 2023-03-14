@@ -7,6 +7,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 import paginationFactory from "react-bootstrap-table2-paginator";
+import { toast } from "react-toastify";
 import Loading from "../loading";
 import {
   updateAuthorization,
@@ -121,7 +122,11 @@ export const InsightDashboard = React.memo((props: any) => {
         fetchAuthorizations((data) => {
           setAuthDashboardList(updateAuthList(data));
           setIsLoading(false);
-        }, setErr);
+          toast.success("Update success!")
+        }, (err)=>{
+          setErr(err);
+          toast.error("Update failed!")
+        });
       },
       setErr
     );
@@ -139,7 +144,11 @@ export const InsightDashboard = React.memo((props: any) => {
         fetchAuthorizations((data) => {
           setAuthDashboardList(updateAuthList(data));
           setIsLoading(false);
-        }, setErr);
+          toast.success("Update success!")
+        }, (err)=>{
+          setErr(err);
+          toast.error("Update failed!")
+        });
       },
       setErr
     );
