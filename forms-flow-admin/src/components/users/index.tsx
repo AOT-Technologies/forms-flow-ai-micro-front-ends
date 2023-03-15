@@ -14,7 +14,6 @@ const UserManagement = React.memo((props: any) => {
   const [pageNo, setPageNo] = React.useState(1);
   const [search, setSearch] = React.useState(undefined);
   const [filter, setFilter] = React.useState(undefined);
-  const [userCount, setUserCount] = React.useState();
 
   React.useEffect(() => {
     setLoading(true);
@@ -24,8 +23,6 @@ const UserManagement = React.memo((props: any) => {
       search,
       (results) => {
         setUsers(results.data);
-        setCount(results.count);
-        setUserCount(results.count);
         setInvalidated(false);
         setPageNo(1);
         setLoading(false);
@@ -44,7 +41,6 @@ const UserManagement = React.memo((props: any) => {
         search,
         (results) => {
           setUsers(results.data);
-          setCount(results.count);
           setInvalidated(false);
           setPageNo(1);
           setLoading(false);
@@ -65,7 +61,6 @@ const UserManagement = React.memo((props: any) => {
         search,
         (results) => {
           setUsers(results.data);
-          setCount(results.count);
           setInvalidated(false);
           setLoading(false);
         },
@@ -106,7 +101,6 @@ const UserManagement = React.memo((props: any) => {
         search={search}
         setSearch={setSearch}
         setFilter={setFilter}
-        userCount={userCount}
       />
     </>
   );

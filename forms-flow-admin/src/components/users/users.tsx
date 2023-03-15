@@ -130,7 +130,7 @@ const Users = React.memo((props: any) => {
     sizePerPageList: getpageList(),
     page: activePage,
     pageStartIndex: 1,
-    totalSize: props.userCount,
+    totalSize: props.users.length,
     sizePerPage: sizePerPage,
     paginationTotalRenderer: customTotal,
     onPageChange: (page) => {

@@ -21,7 +21,6 @@ const AdminDashboard = React.memo((props : any) => {
     fetchGroups(setGroups, setError);
     fetchAuthorizations((data)=>{
       setAuthorizations(data)
-      setCount(data.length)
     }, setError);
   }, []);
 
@@ -31,6 +30,7 @@ const AdminDashboard = React.memo((props : any) => {
       dashboards={dashboards}
       groups={groups}
       authorizations={authorizations}
+      setCount={setCount}
     />
   );
 });

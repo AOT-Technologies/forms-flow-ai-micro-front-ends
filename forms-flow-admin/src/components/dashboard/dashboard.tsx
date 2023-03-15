@@ -37,10 +37,10 @@ const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
 };
 
 export const InsightDashboard = React.memo((props: any) => {
-  const { dashboards, groups, authorizations } = props;
+  const { dashboards, groups, authorizations, setCount } = props;
 
   const isGroupUpdated = groups.length > 0;
-  const [authDashBoardList, setAuthDashboardList] = React.useState([]);
+  const [authDashBoardList, setAuthDashboardList] = React.useState([]);  
   const [isAuthUpdated, setIsAuthUpdated] = React.useState(false);
 
   const { t } = useTranslation();
@@ -89,6 +89,7 @@ export const InsightDashboard = React.memo((props: any) => {
     ) {
       let authList = updateAuthList(authorizations);
       setAuthDashboardList(authList);
+      setCount(authList.length)
       setIsAuthUpdated(true);
       setIsLoading(false);
     }
@@ -258,7 +259,7 @@ export const InsightDashboard = React.memo((props: any) => {
       },
       {
         text: "All",
-        value: dashboards?.count,
+        value: authDashBoardList.length
       },
     ];
     return list;
