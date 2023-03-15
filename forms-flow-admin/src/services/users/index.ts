@@ -8,9 +8,10 @@ export const fetchUsers = (
   search: string | null,
   callback: any,
   errorHandler: any,
-  role = true
+  role = true,
+  count = true
 ) => {
-  let url = `${API.GET_USERS}?role=${role}`;
+  let url = `${API.GET_USERS}?role=${role}&count=${count}`;
   if (group) url += `&memberOfGroup=${group}`;
   if (pageNo) url += `&pageNo=${pageNo}&limit=5`;
   if (search) url += `&search=${search}`;

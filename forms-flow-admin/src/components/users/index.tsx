@@ -11,48 +11,50 @@ const UserManagement = React.memo((props: any) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState({});
   const [invalidated, setInvalidated] = React.useState(false);
-  const [pageNo, setPageNo] = React.useState(1);  
+  const [pageNo, setPageNo] = React.useState(1);
   const [search, setSearch] = React.useState(undefined);
   const [filter, setFilter] = React.useState(undefined);
+  const [userCount, setUserCount] = React.useState();
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     setLoading(true);
     fetchUsers(
       filter,
       1,
       search,
-      (data) => {
-        setUsers(data);
-        setCount(data.length);
+      (results) => {
+        setUsers(results.data);
+        setCount(results.count);
+        setUserCount(results.count);
         setInvalidated(false);
         setPageNo(1);
         setLoading(false);
       },
       setError
     );
-  }, [filter])
+  }, [filter]);
 
-  React.useEffect(()=>{
-    if (search === undefined) return
-    let delay = setTimeout(()=>{
-        setLoading(true);
-        fetchUsers(
-          null,
-          1,
-          search,
-          (data) => {
-            setUsers(data);
-            setCount(data.length);
-            setInvalidated(false);
-            setPageNo(1);
-            setLoading(false);
-          },
-          setError
-        );
-    }, 1500)
+  React.useEffect(() => {
+    if (search === undefined) return;
+    let delay = setTimeout(() => {
+      setLoading(true);
+      fetchUsers(
+        filter,
+        1,
+        search,
+        (results) => {
+          setUsers(results.data);
+          setCount(results.count);
+          setInvalidated(false);
+          setPageNo(1);
+          setLoading(false);
+        },
+        setError
+      );
+    }, 1500);
 
-    return ()=> clearTimeout(delay);
-  },[search]);
+    return () => clearTimeout(delay);
+  }, [search]);
 
   React.useEffect(() => {
     if (invalidated) {
@@ -60,10 +62,10 @@ const UserManagement = React.memo((props: any) => {
       fetchUsers(
         null,
         pageNo,
-        null,
-        (data) => {
-          setUsers(data);
-          setCount(data.length);
+        search,
+        (results) => {
+          setUsers(results.data);
+          setCount(results.count);
           setInvalidated(false);
           setLoading(false);
         },
@@ -79,9 +81,9 @@ const UserManagement = React.memo((props: any) => {
       null,
       pageNo,
       null,
-      (data) => {
-        setUsers(data);
-        setCount(data.length);
+      (results) => {
+        setUsers(results.data);
+        setCount(results.count);
         setLoading(false);
       },
       setError
@@ -99,10 +101,12 @@ const UserManagement = React.memo((props: any) => {
         users={users}
         roles={roles}
         setInvalidated={setInvalidated}
-        page={{pageNo, setPageNo}}
+        page={{ pageNo, setPageNo }}
         loading={loading}
+        search={search}
         setSearch={setSearch}
         setFilter={setFilter}
+        userCount={userCount}
       />
     </>
   );

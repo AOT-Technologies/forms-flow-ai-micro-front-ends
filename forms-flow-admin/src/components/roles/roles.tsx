@@ -43,11 +43,13 @@ const Roles = React.memo((props: any) => {
   const [search, setSerach] = React.useState("");
 
   React.useEffect(() => {
-    setDisabled(!(payload.name && payload.description));
+    setDisabled(!(payload.name.trim() && payload.description.trim()));
   }, [payload]);
 
   React.useEffect(() => {
-    setDisabled(!(editCandidate.name && editCandidate.description));
+    setDisabled(
+      !(editCandidate.name.trim() && editCandidate.description.trim())
+    );
   }, [editCandidate]);
 
   React.useEffect(() => {
@@ -55,7 +57,7 @@ const Roles = React.memo((props: any) => {
   }, [props.roles]);
 
   const handlFilter = (e) => {
-    setSerach(e.target.value);    
+    setSerach(e.target.value);
     let roleList = props?.roles.filter((role) => {
       return (
         role.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
@@ -83,10 +85,10 @@ const Roles = React.memo((props: any) => {
   };
 
   const handleChangeName = (e) => {
-    setPayload({ ...payload, name: e.target.value.trim() });
+    setPayload({ ...payload, name: e.target.value });
   };
   const handleChangeDescription = (e) => {
-    setPayload({ ...payload, description: e.target.value.trim() });
+    setPayload({ ...payload, description: e.target.value });
   };
 
   const validateRolePayload = (payload) => {
@@ -142,11 +144,12 @@ const Roles = React.memo((props: any) => {
       rowData.name,
       null,
       null,
-      (data) => {
-        setUsers(data);
+      (results) => {
+        setUsers(results.data);
         setLoading(false);
       },
       setError,
+      false,
       false
     );
   };

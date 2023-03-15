@@ -10,6 +10,7 @@ import Popover from "react-bootstrap/Popover";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import { toast } from "react-toastify";
 import "./users.scss";
 
 const Users = React.memo((props: any) => {
@@ -73,8 +74,12 @@ const Users = React.memo((props: any) => {
       payload,
       () => {
         props.setInvalidated(true);
+        toast.success("Permission updated successfully!");
       },
-      setError
+      (err) => {
+        setError(err);
+        toast.error(err.message || "Failed to update permission!");
+      }
     );
   };
   const handleSizeChange = (sizePerPage, page) => {
@@ -114,7 +119,7 @@ const Users = React.memo((props: any) => {
       {
         text: "5",
         value: 5,
-      }
+      },
     ];
     return list;
   };
@@ -125,8 +130,7 @@ const Users = React.memo((props: any) => {
     sizePerPageList: getpageList(),
     page: activePage,
     pageStartIndex: 1,
-    // TOD: API does not support count so hardcoding total 
-    totalSize: 30,
+    totalSize: props.userCount,
     sizePerPage: sizePerPage,
     paginationTotalRenderer: customTotal,
     onPageChange: (page) => {
@@ -166,7 +170,9 @@ const Users = React.memo((props: any) => {
         return (
           <div>
             {rowData?.firstName && (
-              <div>{`${rowData.firstName} ${rowData?.lastName}`}</div>
+              <div>
+                {rowData.firstName} {rowData.lastName && rowData.lastName}
+              </div>
             )}
             <div style={{ color: "grey" }}>{rowData?.username}</div>
           </div>
@@ -260,8 +266,12 @@ const Users = React.memo((props: any) => {
           Promise.all(promises)
             .then((res) => {
               props.setInvalidated(true);
+              toast.success("Permision updated successfully!");
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+              toast.error(err.message || "Failed to update permision!");
+              console.log(err);
+            });
         };
 
         return (
@@ -304,6 +314,7 @@ const Users = React.memo((props: any) => {
             placeholder="Search by name, username or email"
             className="search-role"
             onChange={handleSearch}
+            value={props.search}
           />
           <div className="user-filter-container">
             <span>Filter By: </span>
