@@ -42,6 +42,13 @@ const Roles = React.memo((props: any) => {
   const [disabled, setDisabled] = React.useState(true);
   const [search, setSerach] = React.useState("");
 
+  const filterList = (filterTerm, List) => {
+    let roleList = List.filter((role) => {
+      return role.name.toLowerCase().search(filterTerm.toLowerCase()) !== -1;
+    });
+    return roleList;
+  };
+
   React.useEffect(() => {
     setDisabled(!(payload.name.trim() && payload.description.trim()));
   }, [payload]);
@@ -53,17 +60,15 @@ const Roles = React.memo((props: any) => {
   }, [editCandidate]);
 
   React.useEffect(() => {
+    if (search) {
+      return setRoles(filterList(search, props.roles));
+    }
     setRoles(props.roles);
   }, [props.roles]);
 
   const handlFilter = (e) => {
     setSerach(e.target.value);
-    let roleList = props?.roles.filter((role) => {
-      return (
-        role.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
-      );
-    });
-    setRoles(roleList);
+    setRoles(filterList(e.target.value, props.roles));
   };
 
   const deleteRole = (rowData) => {
@@ -73,7 +78,6 @@ const Roles = React.memo((props: any) => {
       () => {
         props.setInvalidated(true);
         handleCloseDeleteModal();
-        setSerach("");
         toast.success("Role deleted successfully!");
       },
       (err) => {
@@ -105,7 +109,6 @@ const Roles = React.memo((props: any) => {
       (data) => {
         props.setInvalidated(true);
         handleCloseRoleModal();
-        setSerach("");
         toast.success("Role created successfully!");
       },
       (err) => {
@@ -125,7 +128,6 @@ const Roles = React.memo((props: any) => {
       (data) => {
         props.setInvalidated(true);
         handleCloseEditRoleModal();
-        setSerach("");
         toast.success("Role updated successfully!");
       },
       (err) => {
