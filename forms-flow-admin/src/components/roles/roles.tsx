@@ -396,7 +396,7 @@ const Roles = React.memo((props: any) => {
                     {!loading ? (
                       users.length > 0 ? (
                         users?.map((item, key) => (
-                          <div className="role-user">{item.id}</div>
+                          <div className="role-user">{item.username}</div>
                         ))
                       ) : (
                         <div>{`${t("No results found")}`}</div>
