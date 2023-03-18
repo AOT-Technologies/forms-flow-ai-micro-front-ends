@@ -130,7 +130,7 @@ const Users = React.memo((props: any) => {
     sizePerPageList: getpageList(),
     page: activePage,
     pageStartIndex: 1,
-    totalSize: props.users.length,
+    totalSize: props.total,
     sizePerPage: sizePerPage,
     paginationTotalRenderer: customTotal,
     onPageChange: (page) => {
@@ -309,13 +309,26 @@ const Users = React.memo((props: any) => {
     <>
       <div className="container-admin">
         <div className="sub-container">
-          <Form.Control
-            type="text"
-            placeholder="Search by name, username or email"
-            className="search-role"
-            onChange={handleSearch}
-            value={props.search}
-          />
+          <div className="search-role">
+            <Form.Control
+              type="text"
+              placeholder="Search by name, username or email"
+              className="search-role-input"
+              onChange={handleSearch}
+              value={props.search || ""}
+            />
+            {props.search?.length > 0 && (
+              <Button
+                variant="outline-secondary clear"
+                onClick={() => {
+                  props.setSearch("");
+                }}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+
           <div className="user-filter-container">
             <span>Filter By: </span>
             <Form.Select size="lg" onChange={handleSelectFilter}>

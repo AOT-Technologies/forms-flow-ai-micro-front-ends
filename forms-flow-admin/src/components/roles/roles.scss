@@ -25,6 +25,7 @@
     width: 33.625rem !important;
     margin-bottom: 1.75rem;
     margin-top: 1.875rem;
+    display: flex;
 }
 .sub-container{
     margin-left: 3.938rem !important;
@@ -123,4 +124,21 @@
     align-items: center;
     margin-bottom: 5px;
     justify-content: space-between;
+}
+.clear{
+    border-left: none;
+    border-color: #80bdff;
+    margin-left: 0;
+    background-color: white;
+    border-top-left-radius:0;
+    border-bottom-left-radius:0;
+}
+.search-role-input{
+    margin-right: 0;
+}
+.search-role-input:not(:placeholder-shown){
+    box-shadow: none;
+    border-right: none;
+    border-top-right-radius:0;
+    border-bottom-right-radius:0;
 }

@@ -14,6 +14,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
+import InputGroup from "react-bootstrap/InputGroup";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
@@ -448,13 +449,27 @@ const Roles = React.memo((props: any) => {
     <>
       <div className="container-admin">
         <div className="sub-container">
-          <Form.Control
-            type="text"
-            placeholder="Search by role name"
-            className="search-role"
-            onChange={handlFilter}
-            value={search}
-          />
+          <div className="search-role">
+            <Form.Control
+              type="text"
+              placeholder="Search by role name"
+              className="search-role-input"
+              onChange={handlFilter}
+              value={search}
+            />
+
+            {search.length > 0 && (
+              <Button
+                variant="outline-secondary clear"
+                onClick={() => {
+                  setSerach("");
+                  setRoles(props.roles);
+                }}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
           <Button variant="primary" onClick={handleShowRoleModal}>
             <i className="fa fa-l fa-plus-circle mr-1" /> Create New Role
           </Button>
