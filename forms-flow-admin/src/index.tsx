@@ -2,14 +2,14 @@ import React from "react";
 import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { KeycloakService } from "@formsflow/service";
+import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/footer";
-import { BASE_ROUTE } from "./constants";
+import { BASE_ROUTE, ADMIN_ROLE } from "./constants";
 import AdminDashboard from "./components/dashboard";
 import RoleManagement from "./components/roles";
 import UserManagement from "./components/users";
@@ -26,7 +26,8 @@ const Admin = React.memo(({ props }: any) => {
   const [dashboardCount, setDashboardCount] = React.useState();
   const [roleCount, setRoleCount] = React.useState();
   const [userCount, setUserCount] = React.useState();
-
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${BASE_ROUTE}admin` });
   }, []);
@@ -44,6 +45,14 @@ const Admin = React.memo(({ props }: any) => {
       });
     }
   }, []);
+
+  React.useEffect(()=>{
+    if(!isAuth) return
+    const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
+    if(roles.includes(ADMIN_ROLE)){
+      setIsAdmin(true);
+    }
+  },[isAuth])
 
   const headerList = () => {
     return [
@@ -70,7 +79,7 @@ const Admin = React.memo(({ props }: any) => {
 
   return (
     <>
-      {isAuth && (
+      {isAdmin && (
         <div className="admin-container" tabIndex={0}>
           <Head items={headerList()} page={page} />
           <ToastContainer theme="colored" />

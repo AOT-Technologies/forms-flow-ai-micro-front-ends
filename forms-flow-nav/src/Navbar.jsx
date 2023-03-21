@@ -10,6 +10,7 @@ import {
   APPLICATION_NAME,
   STAFF_DESIGNER,
   MULTITENANCY_ENABLED,
+  ADMIN_ROLE,
 } from "./constants/constants";
 import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
@@ -154,7 +155,7 @@ const NavBar = React.memo(({ props }) => {
                   >
                     {t("Forms")}
                   </Nav.Link>
-                  {getUserRolePermission(userRoles, STAFF_DESIGNER) ? (
+                  {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}

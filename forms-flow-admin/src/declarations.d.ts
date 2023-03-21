@@ -39,5 +39,5 @@ declare module "*.svg" {
 }
 
 declare module "@formsflow/service" {
-	export const {KeycloakService, RequestService}: any;
+	export const {KeycloakService, RequestService, StorageService}: any;
 }

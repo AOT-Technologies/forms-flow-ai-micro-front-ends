@@ -7,3 +7,5 @@ export const MULTITENANCY_ENABLED =
     : false;
 
 export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
+
+export const ADMIN_ROLE = "formsflow-admin";
