@@ -21,14 +21,14 @@ export const fetchUsers = (
       if (res.data) {
         callback(res.data);
       } else {
-        errorHandler("No Roles found!");
+        errorHandler("No Users found!");
       }
     })
     .catch((error) => {
       if (error?.response?.data) {
         errorHandler(error.response.data);
       } else {
-        errorHandler("Failed to fetch roles!");
+        errorHandler("Failed to fetch users!");
       }
     });
 };

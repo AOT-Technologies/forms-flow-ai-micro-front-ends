@@ -11,6 +11,7 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
+import { Tooltip } from "react-bootstrap";
 import "./users.scss";
 
 const Users = React.memo((props: any) => {
@@ -57,6 +58,9 @@ const Users = React.memo((props: any) => {
   };
 
   const handleSearch = (e) => {
+    if (selectedFilter) {
+      setSelectedFilter(undefined);
+    }
     props.setSearch(e.target.value);
   };
 
@@ -154,7 +158,7 @@ const Users = React.memo((props: any) => {
   const noData = () => (
     <div>
       <h3 className="text-center">
-        <Translation>{(t) => t("No data Found")}</Translation>
+        <Translation>{(t) => t(props.error || "No data Found")}</Translation>
       </h3>
     </div>
   );
@@ -194,13 +198,18 @@ const Users = React.memo((props: any) => {
           <div className="role-container">
             {cell?.map((item, i) => (
               <div key={i} className="chip-element mr-2">
-                <span className="chip-label">
-                  {item?.name}{" "}
-                  <i
-                    className="fa fa-close chip-close"
-                    onClick={() => removePermission(rowData, item)}
-                  ></i>
-                </span>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip id="tooltip">{item?.path}</Tooltip>}
+                >
+                  <span className="chip-label">
+                    {item?.name}{" "}
+                    <i
+                      className="fa fa-close chip-close"
+                      onClick={() => removePermission(rowData, item)}
+                    ></i>
+                  </span>
+                </OverlayTrigger>
               </div>
             ))}
           </div>
@@ -332,7 +341,9 @@ const Users = React.memo((props: any) => {
           <div className="user-filter-container">
             <span>Filter By: </span>
             <Form.Select size="lg" onChange={handleSelectFilter}>
-              <option value="ALL">All roles</option>
+              <option value="ALL" selected={!props.filter}>
+                All roles
+              </option>
               {roles?.map((role, i) => (
                 <option key={i} value={role.name}>
                   {role.name}

@@ -9,7 +9,7 @@ const UserManagement = React.memo((props: any) => {
   const [users, setUsers] = React.useState([]);
   const [roles, setRoles] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState({});
+  const [error, setError] = React.useState();
   const [invalidated, setInvalidated] = React.useState(false);
   const [pageNo, setPageNo] = React.useState(1);
   const [search, setSearch] = React.useState(undefined);
@@ -17,6 +17,7 @@ const UserManagement = React.memo((props: any) => {
   const [total, setTotal] = React.useState(undefined);
 
   React.useEffect(() => {
+    if(filter === undefined) return
     setLoading(true);
     fetchUsers(
       filter,
@@ -28,6 +29,7 @@ const UserManagement = React.memo((props: any) => {
         setPageNo(1);
         setLoading(false);
         setTotal(results.count);
+        setSearch(undefined);
       },
       setError
     );
@@ -86,7 +88,10 @@ const UserManagement = React.memo((props: any) => {
         setTotal(results.count);
         setLoading(false);
       },
-      setError
+      (err)=>{
+        setError(err);
+        setLoading(false);
+      }
     );
 
     fetchRoles((data) => {
@@ -105,8 +110,10 @@ const UserManagement = React.memo((props: any) => {
         loading={loading}
         search={search}
         setSearch={setSearch}
+        filter={filter}
         setFilter={setFilter}
         total={total}
+        error={error}
       />
     </>
   );
