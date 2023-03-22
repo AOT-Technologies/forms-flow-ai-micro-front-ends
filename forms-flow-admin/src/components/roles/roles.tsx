@@ -300,7 +300,7 @@ const Roles = React.memo((props: any) => {
   const noData = () => (
     <div>
       <h3 className="text-center">
-        <Translation>{(t) => t("No data Found")}</Translation>
+        <Translation>{(t) => t(props.error || "No data Found")}</Translation>
       </h3>
     </div>
   );

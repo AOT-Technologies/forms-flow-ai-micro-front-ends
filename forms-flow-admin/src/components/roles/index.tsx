@@ -6,7 +6,7 @@ const RoleManagement = React.memo((props: any) => {
   const { setTab, setCount } = props;
 
   const [roles, setRoles] = React.useState([]);
-  const [error, setError] = React.useState({});
+  const [error, setError] = React.useState();
   const [invalidated, setInvalidated] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -29,7 +29,10 @@ const RoleManagement = React.memo((props: any) => {
       setRoles(data);
       setCount(data.length);
       setLoading(false);
-    }, setError);
+    }, (err)=>{
+      setError(err);
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -39,6 +42,7 @@ const RoleManagement = React.memo((props: any) => {
         roles={roles}
         setInvalidated={setInvalidated}
         loading={loading}
+        error={error}
       />
     </>
   );

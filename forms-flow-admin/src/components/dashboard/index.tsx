@@ -13,8 +13,8 @@ const AdminDashboard = React.memo((props : any) => {
   const [dashboards, setDashboards] = React.useState([]);
   const [groups, setGroups] = React.useState([]);
   const [authorizations, setAuthorizations] = React.useState([]);
-  const [error, setError] = React.useState({});
-
+  const [error, setError] = React.useState();
+  
   React.useEffect(() => {
     setTab("Dashboard");
     fetchdashboards(setDashboards, setError);
@@ -31,6 +31,7 @@ const AdminDashboard = React.memo((props : any) => {
       groups={groups}
       authorizations={authorizations}
       setCount={setCount}
+      error={error}
     />
   );
 });

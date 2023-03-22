@@ -26,7 +26,7 @@ export const fetchUsers = (
     })
     .catch((error) => {
       if (error?.response?.data) {
-        errorHandler(error.response.data);
+        errorHandler(error.response.data?.message);
       } else {
         errorHandler("Failed to fetch users!");
       }
@@ -61,7 +61,7 @@ export const RemoveUserRole = (
     })
     .catch((error) => {
       if (error?.response?.data) {
-        errorHandler(error.response.data);
+        errorHandler(error.response.data?.message);
       } else {
         errorHandler("Failed to update permission!");
       }

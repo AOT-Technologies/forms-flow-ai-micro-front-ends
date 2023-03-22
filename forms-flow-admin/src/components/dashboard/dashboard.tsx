@@ -53,6 +53,12 @@ export const InsightDashboard = React.memo((props: any) => {
   const [err, setErr] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(true);
 
+  React.useEffect(()=>{
+    if(props.error){
+      setIsLoading(false);
+    }
+  },[props.error]);
+
   function compare(a, b) {
     if (Number(a.resourceId) < Number(b.resourceId)) {
       return -1;
@@ -158,7 +164,7 @@ export const InsightDashboard = React.memo((props: any) => {
   const noData = () => (
     <div>
       <h3 className="text-center">
-        <Translation>{(t) => t("No data Found")}</Translation>
+        <Translation>{(t) => t(props.error || "No data Found")}</Translation>
       </h3>
     </div>
   );

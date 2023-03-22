@@ -14,7 +14,7 @@ export const fetchdashboards = (callback, errorHandler) => {
       })
       .catch((error) => {
         if (error?.response?.data) {
-          errorHandler(error.response.data);
+          errorHandler(error.response.data?.message);
         } else {
           errorHandler("Failed to fetch dashboards!");
         }
@@ -32,7 +32,7 @@ export const fetchGroups = (callback, errorHandler) => {
       })
       .catch((error) => {
         if (error?.response?.data) {
-          errorHandler(error.response.data)
+          errorHandler(error.response.data?.message)
         } else {
           errorHandler("Failed to fetch groups!")
         }
@@ -64,7 +64,7 @@ export const fetchAuthorizations = (callback, errorHandler) => {
       })
       .catch((error) => {
         if (error?.response?.data) {
-          errorHandler(error?.response?.data)
+          errorHandler(error?.response?.data?.message)
         } else {
           errorHandler("Network error!")
         }

@@ -14,7 +14,7 @@ export const fetchRoles = (callback, errorHandler) => {
       })
       .catch((error) => {
         if (error?.response?.data) {
-          errorHandler(error.response.data);
+          errorHandler(error.response.data?.message);
         } else {
           errorHandler("Failed to fetch roles!");
         }
@@ -31,7 +31,7 @@ export const CreateRole = (payload, callback, errorHandler) => {
       })
       .catch((error) => {
         if (error?.response?.data) {
-          errorHandler(error.response.data);
+          errorHandler(error.response.data?.message);
         } else {
           errorHandler("Faied to post data!");
         }
@@ -48,7 +48,7 @@ export const DeleteRole = (roleId, callback, errorHandler) => {
       })
       .catch((error) => {
         if (error?.response?.data) {
-          errorHandler(error.response.data);
+          errorHandler(error.response.data?.message);
         } else {
           errorHandler("Faied to delete role!");
         }
@@ -66,7 +66,7 @@ export const UpdateRole = (payload, callback, errorHandler) => {
     })
     .catch((error) => {
       if (error?.response?.data) {
-        errorHandler(error.response.data);
+        errorHandler(error.response.data?.message);
       } else {
         errorHandler("Faied to update data!");
       }

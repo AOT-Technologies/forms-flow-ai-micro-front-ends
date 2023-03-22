@@ -17,7 +17,7 @@ const UserManagement = React.memo((props: any) => {
   const [total, setTotal] = React.useState(undefined);
 
   React.useEffect(() => {
-    if(filter === undefined) return
+    if (filter === undefined) return;
     setLoading(true);
     fetchUsers(
       filter,
@@ -31,7 +31,12 @@ const UserManagement = React.memo((props: any) => {
         setTotal(results.count);
         setSearch(undefined);
       },
-      setError
+      (err) => {
+        setError(err);
+        setUsers([]);
+        setTotal(0);
+        setLoading(false);
+      }
     );
   }, [filter]);
 
@@ -50,7 +55,12 @@ const UserManagement = React.memo((props: any) => {
           setTotal(results.count);
           setLoading(false);
         },
-        setError
+        (err) => {
+          setError(err);
+          setUsers([]);
+          setTotal(0);
+          setLoading(false);
+        }
       );
     }, 1500);
 
@@ -61,7 +71,7 @@ const UserManagement = React.memo((props: any) => {
     if (invalidated) {
       setLoading(true);
       fetchUsers(
-        null,
+        filter,
         pageNo,
         search,
         (results) => {
@@ -70,7 +80,12 @@ const UserManagement = React.memo((props: any) => {
           setInvalidated(false);
           setLoading(false);
         },
-        setError
+        (err) => {
+          setError(err);
+          setUsers([]);
+          setTotal(0);
+          setLoading(false);
+        }
       );
     }
   }, [invalidated]);
@@ -88,7 +103,7 @@ const UserManagement = React.memo((props: any) => {
         setTotal(results.count);
         setLoading(false);
       },
-      (err)=>{
+      (err) => {
         setError(err);
         setLoading(false);
       }
