@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 import { fetchRoles } from "../../services/roles";
 import { fetchUsers } from "../../services/users";
 import Users from "./users";
@@ -111,7 +112,10 @@ const UserManagement = React.memo((props: any) => {
 
     fetchRoles((data) => {
       setRoles(data);
-    }, setError);
+    }, (err)=>{
+      setError(err);
+      toast.error("Failed to fetch roles!")
+    });
   }, []);
 
   return (
