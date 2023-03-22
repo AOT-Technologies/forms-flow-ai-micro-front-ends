@@ -23,11 +23,11 @@ const NavBar = React.memo(({ props }) => {
   const [form, setForm] = React.useState({});
   const [selectLanguages, setSelectLanguages] = React.useState([]);
 
-  React,useEffect(()=>{
+  React, useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
     });
-  
+
     props.subscribe("ES_USER", (msg, data) => {
       if (data) {
         setUser(data);
@@ -45,10 +45,10 @@ const NavBar = React.memo(({ props }) => {
     });
     props.subscribe("ES_FORM", (msg, data) => {
       if (data) {
-          setForm(data);
+        setForm(data);
       }
-    });    
-  },[])
+    });
+  }, [])
 
 
   const isAuthenticated = instance?.isAuthenticated();
@@ -95,7 +95,7 @@ const NavBar = React.memo(({ props }) => {
   }, [isAuthenticated, formTenant]);
 
   useEffect(() => {
-    fetchSelectLanguages((data)=>{
+    fetchSelectLanguages((data) => {
       setSelectLanguages(data);
     })
   }, []);
@@ -105,7 +105,7 @@ const NavBar = React.memo(({ props }) => {
   }, [lang]);
 
   const handleOnclick = (selectedLang) => {
-    props.publish("ES_UPDATE_LANGUAGE", selectedLang);
+    props.publish("ES_CHANGE_LANGUAGE", selectedLang);
   };
 
   const logout = () => {
@@ -146,11 +146,10 @@ const NavBar = React.memo(({ props }) => {
                   <Nav.Link
                     as={Link}
                     to={`${baseUrl}form`}
-                    className={`main-nav nav-item ${
-                      pathname.match(createURLPathMatchExp("form", baseUrl))
-                        ? "active-tab"
-                        : "inactive-tab"
-                    }`}
+                    className={`main-nav nav-item ${pathname.match(createURLPathMatchExp("form", baseUrl))
+                      ? "active-tab"
+                      : "inactive-tab"
+                      }`}
                   >
                     {t("Forms")}
                   </Nav.Link>
@@ -158,11 +157,10 @@ const NavBar = React.memo(({ props }) => {
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}
-                      className={`main-nav nav-item ${
-                        pathname.match(createURLPathMatchExp("admin", baseUrl))
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
+                      className={`main-nav nav-item ${pathname.match(createURLPathMatchExp("admin", baseUrl))
+                        ? "active-tab"
+                        : "inactive-tab"
+                        }`}
                     >
                       {t("Admin")}
                     </Nav.Link>
@@ -172,13 +170,12 @@ const NavBar = React.memo(({ props }) => {
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}processes`}
-                      className={`main-nav nav-item ${
-                        pathname.match(
-                          createURLPathMatchExp("processes", baseUrl)
-                        )
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
+                      className={`main-nav nav-item ${pathname.match(
+                        createURLPathMatchExp("processes", baseUrl)
+                      )
+                        ? "active-tab"
+                        : "inactive-tab"
+                        }`}
                     >
                       {t("Processes")}
                     </Nav.Link>
@@ -186,21 +183,20 @@ const NavBar = React.memo(({ props }) => {
 
                   {showApplications ? (
                     getUserRolePermission(userRoles, STAFF_REVIEWER) ||
-                    getUserRolePermission(userRoles, CLIENT) ? (
+                      getUserRolePermission(userRoles, CLIENT) ? (
                       <Nav.Link
                         as={Link}
                         to={`${baseUrl}application`}
-                        className={`main-nav nav-item ${
-                          pathname.match(
-                            createURLPathMatchExp("application", baseUrl)
+                        className={`main-nav nav-item ${pathname.match(
+                          createURLPathMatchExp("application", baseUrl)
+                        )
+                          ? "active-tab"
+                          : pathname.match(
+                            createURLPathMatchExp("draft", baseUrl)
                           )
                             ? "active-tab"
-                            : pathname.match(
-                                createURLPathMatchExp("draft", baseUrl)
-                              )
-                            ? "active-tab"
                             : "inactive-tab"
-                        }`}
+                          }`}
                       >
                         {" "}
                         {t("Applications")}
@@ -211,11 +207,10 @@ const NavBar = React.memo(({ props }) => {
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}task`}
-                      className={`main-nav nav-item taskDropdown ${
-                        pathname.match(createURLPathMatchExp("task", baseUrl))
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
+                      className={`main-nav nav-item taskDropdown ${pathname.match(createURLPathMatchExp("task", baseUrl))
+                        ? "active-tab"
+                        : "inactive-tab"
+                        }`}
                     >
                       {" "}
                       {t("Tasks")}
@@ -227,16 +222,15 @@ const NavBar = React.memo(({ props }) => {
                       as={Link}
                       to={`${baseUrl}metrics`}
                       data-testid="Dashboards"
-                      className={`main-nav nav-item ${
-                        pathname.match(
-                          createURLPathMatchExp("metrics", baseUrl)
-                        ) ||
+                      className={`main-nav nav-item ${pathname.match(
+                        createURLPathMatchExp("metrics", baseUrl)
+                      ) ||
                         pathname.match(
                           createURLPathMatchExp("insights", baseUrl)
                         )
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
+                        ? "active-tab"
+                        : "inactive-tab"
+                        }`}
                     >
                       {" "}
                       {t("Dashboards")}
