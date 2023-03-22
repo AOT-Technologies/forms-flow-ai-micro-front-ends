@@ -293,13 +293,19 @@ const Users = React.memo((props: any) => {
               <Popover id={`popover-positioned-bottom`}>
                 <Popover.Body>
                   <div className="role-list">
-                    {roles.map((role, key) =>
-                      getRoleRepresentation(role, key, rowData)
+                    {roles.length > 0 ? (
+                      roles.map((role, key) =>
+                        getRoleRepresentation(role, key, rowData)
+                      )
+                    ) : (
+                      <>No data found</>
                     )}
                   </div>
                   <hr />
                   <div className="done-button">
-                    <Button onClick={addUserPermission}>Done</Button>
+                    {roles.length > 0 && (
+                      <Button onClick={addUserPermission}>Done</Button>
+                    )}
                   </div>
                 </Popover.Body>
               </Popover>
