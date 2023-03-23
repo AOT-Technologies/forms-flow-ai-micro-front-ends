@@ -14,7 +14,8 @@ import {
 } from "./constants/constants";
 import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
-import { fetchSelectLanguages } from "./services/languageService";
+import { fetchSelectLanguages, updateUserlang } from "./services/language";
+import i18n from "./resourceBundles/i18n";
 
 const NavBar = React.memo(({ props }) => {
   const [instance, setInstance] = React.useState(props.getKcInstance());
@@ -24,11 +25,11 @@ const NavBar = React.memo(({ props }) => {
   const [form, setForm] = React.useState({});
   const [selectLanguages, setSelectLanguages] = React.useState([]);
 
-  React,useEffect(()=>{
+  React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
     });
-  
+
     props.subscribe("ES_USER", (msg, data) => {
       if (data) {
         setUser(data);
@@ -46,18 +47,16 @@ const NavBar = React.memo(({ props }) => {
     });
     props.subscribe("ES_FORM", (msg, data) => {
       if (data) {
-          setForm(data);
+        setForm(data);
       }
-    });    
-  },[])
-
+    });
+  }, []);
 
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
-  const userDetail = JSON.parse(
-    StorageService.get(StorageService.User.USER_DETAILS)
-  );
-  const lang = userDetail?.locale;
+  const [userDetail, setUserDetail] = React.useState({});
+
+  const [lang, setLang] = React.useState(userDetail?.locale);
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -96,17 +95,33 @@ const NavBar = React.memo(({ props }) => {
   }, [isAuthenticated, formTenant]);
 
   useEffect(() => {
-    fetchSelectLanguages((data)=>{
+    fetchSelectLanguages((data) => {
       setSelectLanguages(data);
-    })
+    });
   }, []);
 
   useEffect(() => {
     props.publish("ES_CHANGE_LANGUAGE", lang);
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
   }, [lang]);
 
+  React.useEffect(() => {
+    setUserDetail(
+      JSON.parse(StorageService.get(StorageService.User.USER_DETAILS))
+    );
+  }, [user]);
+
+  React.useEffect(() => {
+    if (!lang) {
+      const locale = instance?.getUserData()?.locale
+      setLang(locale);
+    }
+  }, [instance]);
+
   const handleOnclick = (selectedLang) => {
-    props.publish("ES_UPDATE_LANGUAGE", selectedLang);
+    setLang(selectedLang);
+    updateUserlang(selectedLang);
   };
 
   const logout = () => {
@@ -116,11 +131,7 @@ const NavBar = React.memo(({ props }) => {
   return (
     <BrowserRouter>
       <header>
-        <Navbar
-          expand="lg"
-          className="topheading-border-bottom"
-          fixed="top"
-        >
+        <Navbar expand="lg" className="topheading-border-bottom" fixed="top">
           <Container fluid>
             <Navbar.Brand className="d-flex">
               <Link to={`${baseUrl}`}>

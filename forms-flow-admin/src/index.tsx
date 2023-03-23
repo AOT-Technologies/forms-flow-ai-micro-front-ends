@@ -14,6 +14,7 @@ import AdminDashboard from "./components/dashboard";
 import RoleManagement from "./components/roles";
 import UserManagement from "./components/users";
 import Head from "./containers/head";
+import i18n from "./resourceBundles/i18n"
 
 import "./index.scss";
 
@@ -30,6 +31,9 @@ const Admin = React.memo(({ props }: any) => {
   
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${BASE_ROUTE}admin` });
+    subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
+      i18n.changeLanguage(data);
+    })
   }, []);
 
   React.useEffect(() => {
@@ -52,6 +56,8 @@ const Admin = React.memo(({ props }: any) => {
     if(roles.includes(ADMIN_ROLE)){
       setIsAdmin(true);
     }
+    const locale = localStorage.getItem("i18nextLng")
+    if(locale) i18n.changeLanguage(locale);
   },[isAuth])
 
   const headerList = () => {
