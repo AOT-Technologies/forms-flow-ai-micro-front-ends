@@ -1,4 +1,22 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
-   
+    "Dashboard": "табло",
+    "Roles": "роли",
+    "Users": "потребители",
+    "Access Groups": "групи за достъп",
+    "Action": "действие",
+    "Add":"Добавете",
+    "Results": "Резултати",
+    "Showing": "Показване",
+    "to": "да се",
+    "of": "на",
+    "Create New Role": "създайте нова роля",
+    "Search by role name": "търсене по име на роля",
+    "Role Name": "име на ролята",
+    "Description": "Описание",
+    "Actions": "действия",
+    "Create Role": "създайте роля",
+    "Email": "електронна поща",
+    "Role": "Роля",
+    "Add Role": "Добавяне на роля" ,
 };
