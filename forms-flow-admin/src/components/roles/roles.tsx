@@ -14,7 +14,6 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
-import InputGroup from "react-bootstrap/InputGroup";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
@@ -151,7 +150,11 @@ const Roles = React.memo((props: any) => {
         setUsers(results.data);
         setLoading(false);
       },
-      setError,
+      (err) => {
+        setUsers([]);
+        setError(err);
+        setLoading(false);
+      },
       false,
       false
     );
