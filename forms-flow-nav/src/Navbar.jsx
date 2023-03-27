@@ -121,7 +121,7 @@ const NavBar = React.memo(({ props }) => {
 
   const handleOnclick = (selectedLang) => {
     setLang(selectedLang);
-    updateUserlang(selectedLang);
+    updateUserlang(selectedLang, instance);
   };
 
   const logout = () => {

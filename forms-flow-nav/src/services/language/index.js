@@ -14,7 +14,7 @@ export const fetchSelectLanguages = (callback) => {
     .then((data) => callback(data));
 };
 
-export const updateUserlang = (data) => {
+export const updateUserlang = (data, instance) => {
   const apiUpdatelang = API.LANG_UPDATE;
   RequestService.httpPUTRequest(
     apiUpdatelang,
@@ -23,7 +23,8 @@ export const updateUserlang = (data) => {
   )
     .then((res) => {
       if (res.data) {
-        localStorage.setItem("lang", data)
+        localStorage.setItem("lang", data);
+        instance.initKeycloak();
       } else {
         //toast.error(<Translation>{(t)=>t("Failed")}</Translation>);
       }
