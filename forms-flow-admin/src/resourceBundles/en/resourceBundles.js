@@ -18,7 +18,12 @@ export const RESOURCE_BUNDLES_EN = {
     "Create Role": "Create Role",
     "Email": "Email",
     "Role": "Role",
-    "Add Role": "Add Role"
+    "Add Role": "Add Role",
+    "Role deleted successfully!": "Role deleted successfully!",
+    "Failed to delete role!": "Failed to delete role!",
+    "Role created successfully!": "Role created successfully!",
+    "Failed to create role!": "Failed to create role!",
+    "Update success!":"Update success!"
 };
 
 

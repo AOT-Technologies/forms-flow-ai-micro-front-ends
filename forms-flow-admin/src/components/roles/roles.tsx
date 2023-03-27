@@ -78,12 +78,12 @@ const Roles = React.memo((props: any) => {
       () => {
         props.setInvalidated(true);
         handleCloseDeleteModal();
-        toast.success("Role deleted successfully!");
+        toast.success(t("Role deleted successfully!"));
       },
       (err) => {
         setError(err);
         setDisabled(false);
-        toast.error(err.message || "Failed to delete role!");
+        toast.error(t(err.message || "Failed to delete role!"));
       }
     );
   };
@@ -109,12 +109,12 @@ const Roles = React.memo((props: any) => {
       (data) => {
         props.setInvalidated(true);
         handleCloseRoleModal();
-        toast.success("Role created successfully!");
+        toast.success(t("Role created successfully!"));
       },
       (err) => {
         setError(err);
         setDisabled(false);
-        toast.error(err.message || "Failed to create role!");
+        toast.error(t(err.message || "Failed to create role!"));
       }
     );
   };
@@ -128,12 +128,12 @@ const Roles = React.memo((props: any) => {
       (data) => {
         props.setInvalidated(true);
         handleCloseEditRoleModal();
-        toast.success("Role updated successfully!");
+        toast.success(t("Role updated successfully!"));
       },
       (err) => {
         setError(err);
         setDisabled(false);
-        toast.error(err.message || "Failed to update role!");
+        toast.error(t(err.message || "Failed to update role!"));
       }
     );
   };

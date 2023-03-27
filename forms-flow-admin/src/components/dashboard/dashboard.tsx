@@ -129,10 +129,10 @@ export const InsightDashboard = React.memo((props: any) => {
         fetchAuthorizations((data) => {
           setAuthDashboardList(updateAuthList(data));
           setIsLoading(false);
-          toast.success("Update success!")
+          toast.success(t("Update success!"))
         }, (err)=>{
           setErr(err);
-          toast.error("Update failed!")
+          toast.error(t("Update failed!"))
         });
       },
       setErr
@@ -151,10 +151,10 @@ export const InsightDashboard = React.memo((props: any) => {
         fetchAuthorizations((data) => {
           setAuthDashboardList(updateAuthList(data));
           setIsLoading(false);
-          toast.success("Update success!")
+          toast.success(t("Update success!"))
         }, (err)=>{
           setErr(err);
-          toast.error("Update failed!")
+          toast.error(t("Update failed!"))
         });
       },
       setErr

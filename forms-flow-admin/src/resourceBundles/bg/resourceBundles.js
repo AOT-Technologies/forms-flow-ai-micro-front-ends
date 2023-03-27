@@ -19,4 +19,9 @@ export const RESOURCE_BUNDLES_BG = {
     "Email": "електронна поща",
     "Role": "Роля",
     "Add Role": "Добавяне на роля" ,
+    "Role deleted successfully!": "Ролята е изтрита успешно!",
+    "Failed to delete role!": "Неуспешно изтриване на роля!",
+    "Role created successfully!": "Ролята е създадена успешно!",
+    "Failed to create role!": "Неуспешно създаване на роля!",
+    "Update success!":"Успешна актуализация!"
 };

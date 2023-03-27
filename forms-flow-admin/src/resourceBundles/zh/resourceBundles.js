@@ -18,6 +18,11 @@ export const RESOURCE_BUNDLES_ZH = {
   "Create Role": "创建角色",
   "Email": "电子邮件",
   "Role": "角色",
-  "Add Role": "添加角色"
+  "Add Role": "添加角色",
+  "Role deleted successfully!": "角色删除成功",
+  "Failed to delete role!": "删除角色失败！",
+  "Role created successfully!": "角色创建成功！",
+  "Failed to create role!": "创建角色失败",
+  "Update success!":"更新成功"
 };
 
