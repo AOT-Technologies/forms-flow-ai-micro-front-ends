@@ -74,7 +74,7 @@ const NavBar = React.memo(({ props }) => {
 
   const [loginUrl, setLoginUrl] = useState(baseUrl);
 
-  const logoPath = "/logo.svg";
+  const logoPath = document.documentElement.style.getPropertyValue("--navbar-logo-path") || "/logo.svg";
   const getAppName = useMemo(
     () => () => {
       if (!MULTITENANCY_ENABLED) {
@@ -136,7 +136,7 @@ const NavBar = React.memo(({ props }) => {
             <Navbar.Brand className="d-flex">
               <Link to={`${baseUrl}`}>
                 <img
-                  className="img-fluid"
+                  className="img-fluid custom-logo"
                   src={logoPath}
                   width="50"
                   height="55"
