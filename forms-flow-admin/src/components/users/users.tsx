@@ -82,7 +82,7 @@ const Users = React.memo((props: any) => {
       },
       (err) => {
         setError(err);
-        toast.error(err.message || "Failed to update permission!");
+        toast.error("Failed to update permission!");
       }
     );
   };
@@ -278,7 +278,7 @@ const Users = React.memo((props: any) => {
               toast.success("Permision updated successfully!");
             })
             .catch((err) => {
-              toast.error(err.message || "Failed to update permision!");
+              toast.error("Failed to update permision!");
               console.log(err);
             });
         };
