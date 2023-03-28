@@ -14,15 +14,33 @@ const AdminDashboard = React.memo((props : any) => {
   const [groups, setGroups] = React.useState([]);
   const [authorizations, setAuthorizations] = React.useState([]);
   const [error, setError] = React.useState();
+  const [dashboardLoading, setDashboardLoading] = React.useState(true);
+  const [groupLoading, setGroupLoading] = React.useState(true);
+  const [authLoading, setAuthLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(true);
   
   React.useEffect(() => {
     setTab("Dashboard");
-    fetchdashboards(setDashboards, setError);
-    fetchGroups(setGroups, setError);
+    setLoading(true);
+    fetchdashboards((data)=>{
+      setDashboards(data);
+      setDashboardLoading(false);
+    }, setError);
+    fetchGroups((data)=>{
+      setGroups(data);
+      setGroupLoading(false);
+    }, setError);
     fetchAuthorizations((data)=>{
-      setAuthorizations(data)
+      setAuthorizations(data);
+      setAuthLoading(false);
     }, setError);
   }, []);
+
+  React.useEffect(()=>{
+    if(!dashboardLoading && !groupLoading && !authLoading){
+      setLoading(false)
+    }
+  },[dashboardLoading, groupLoading, authLoading])
 
   return (
     <InsightDashboard
@@ -32,6 +50,7 @@ const AdminDashboard = React.memo((props : any) => {
       authorizations={authorizations}
       setCount={setCount}
       error={error}
+      loading={loading}
     />
   );
 });

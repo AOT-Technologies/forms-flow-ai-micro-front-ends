@@ -168,7 +168,10 @@ const Roles = React.memo((props: any) => {
   };
 
   // handlers for role create/edit modal
-  const handleCloseRoleModal = () => setShowRoleModal(false);
+  const handleCloseRoleModal = () => {
+    setShowRoleModal(false);
+    setPayload({ name: "", description: "" });
+  };
   const handleShowRoleModal = () => setShowRoleModal(true);
   const handleCloseEditRoleModal = () => {
     setShowEditRoleModal(false);

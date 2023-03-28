@@ -59,6 +59,12 @@ export const InsightDashboard = React.memo((props: any) => {
     }
   },[props.error]);
 
+  React.useEffect(()=>{
+    if(!props.loading){
+      setIsLoading(false);
+    }
+  },[props.loading])
+
   function compare(a, b) {
     if (Number(a.resourceId) < Number(b.resourceId)) {
       return -1;
