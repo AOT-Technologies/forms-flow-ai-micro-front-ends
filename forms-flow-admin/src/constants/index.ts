@@ -9,3 +9,5 @@ export const MULTITENANCY_ENABLED =
 export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
 
 export const ADMIN_ROLE = "formsflow-admin";
+export const STAFF_DESIGNER = "formsflow-designer";
+export const TENANT_DETAILS="tenant-details";

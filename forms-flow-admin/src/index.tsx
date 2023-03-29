@@ -9,7 +9,7 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/footer";
-import { BASE_ROUTE, ADMIN_ROLE } from "./constants";
+import { BASE_ROUTE, ADMIN_ROLE, STAFF_DESIGNER, MULTITENANCY_ENABLED, TENANT_DETAILS } from "./constants";
 import AdminDashboard from "./components/dashboard";
 import RoleManagement from "./components/roles";
 import UserManagement from "./components/users";
@@ -27,17 +27,20 @@ const Admin = React.memo(({ props }: any) => {
   const [roleCount, setRoleCount] = React.useState();
   const [userCount, setUserCount] = React.useState();
   const [isAdmin, setIsAdmin] = React.useState(false);
-  
+
+  let tenantKey = localStorage.getItem("tenantKey");
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${BASE_ROUTE}admin` });
   }, []);
-
+  //const tenantKey = tenant['tenantId'];
+  // const tenantKey = tenant?.tenantId;
   React.useEffect(() => {
     if (!isAuth) {
       let instance = KeycloakService.getInstance(
         KEYCLOAK_URL_AUTH,
         KEYCLOAK_URL_REALM,
-        KEYCLOAK_CLIENT
+        KEYCLOAK_CLIENT,
+        tenantKey
       );
       instance.initKeycloak(() => {
         setIsAuth(instance.isAuthenticated());
@@ -46,33 +49,33 @@ const Admin = React.memo(({ props }: any) => {
     }
   }, []);
 
-  React.useEffect(()=>{
-    if(!isAuth) return
+  React.useEffect(() => {
+    if (!isAuth) return
     const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
-    if(roles.includes(ADMIN_ROLE)){
+    if (roles.includes(ADMIN_ROLE) || roles.includes(STAFF_DESIGNER)) {
       setIsAdmin(true);
     }
-  },[isAuth])
-
+  }, [isAuth])
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const headerList = () => {
     return [
       {
         name: "Dashboard",
         count: dashboardCount,
         // icon: "user-circle-o",
-        onClick: () => history.push(`${BASE_ROUTE}admin/dashboard`),
+        onClick: () => history.push(`${baseUrl}admin/dashboard`),
       },
       {
         name: "Roles",
         count: roleCount,
         // icon: "user-circle-o",
-        onClick: () => history.push(`${BASE_ROUTE}admin/roles`),
+        onClick: () => history.push(`${baseUrl}admin/roles`),
       },
       {
         name: "Users",
         count: userCount,
         // icon: "user-circle-o",
-        onClick: () => history.push(`${BASE_ROUTE}admin/users`),
+        onClick: () => history.push(`${baseUrl}admin/users`),
       },
     ];
   };

@@ -40,7 +40,7 @@ export const InsightDashboard = React.memo((props: any) => {
   const { dashboards, groups, authorizations, setCount } = props;
 
   const isGroupUpdated = groups.length > 0;
-  const [authDashBoardList, setAuthDashboardList] = React.useState([]);  
+  const [authDashBoardList, setAuthDashboardList] = React.useState([]);
   const [isAuthUpdated, setIsAuthUpdated] = React.useState(false);
 
   const { t } = useTranslation();
@@ -53,11 +53,16 @@ export const InsightDashboard = React.memo((props: any) => {
   const [err, setErr] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(true);
 
-  React.useEffect(()=>{
-    if(props.error){
+  React.useEffect(() => {
+    if (props.error) {
       setIsLoading(false);
     }
-  },[props.error]);
+  }, [props.error]);
+  React.useEffect(() => {
+    if (props.dashboards.length == 0) {
+      setIsLoading(false);
+    }
+  }, []);
 
   function compare(a, b) {
     if (Number(a.resourceId) < Number(b.resourceId)) {
@@ -130,7 +135,7 @@ export const InsightDashboard = React.memo((props: any) => {
           setAuthDashboardList(updateAuthList(data));
           setIsLoading(false);
           toast.success("Update success!")
-        }, (err)=>{
+        }, (err) => {
           setErr(err);
           toast.error("Update failed!")
         });
@@ -152,7 +157,7 @@ export const InsightDashboard = React.memo((props: any) => {
           setAuthDashboardList(updateAuthList(data));
           setIsLoading(false);
           toast.success("Update success!")
-        }, (err)=>{
+        }, (err) => {
           setErr(err);
           toast.error("Update failed!")
         });

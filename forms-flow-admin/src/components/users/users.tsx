@@ -146,7 +146,7 @@ const Users = React.memo((props: any) => {
     sizePerPageRenderer: customDropUp,
   });
 
-  const handleTableChange = () => {};
+  const handleTableChange = () => { };
 
   const handleSelectFilter = (e) => {
     if (e.target.value === "ALL") {
@@ -200,7 +200,7 @@ const Users = React.memo((props: any) => {
               <div key={i} className="chip-element mr-2">
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={<Tooltip id="tooltip">{item?.path}</Tooltip>}
+                  overlay={<Tooltip id="tooltip">{item?.description}</Tooltip>}
                 >
                   <span className="chip-label">
                     {item?.name}{" "}
@@ -248,8 +248,7 @@ const Users = React.memo((props: any) => {
             <div
               key={key}
               className={[
-                `role ${shouldHighLight ? "role-highlighted" : ""} ${
-                  isSelected ? "role-selected" : ""
+                `role ${shouldHighLight ? "role-highlighted" : ""} ${isSelected ? "role-selected" : ""
                 }`,
               ].toString()}
               onClick={() => !shouldHighLight && updateSelectedRoles(role)}

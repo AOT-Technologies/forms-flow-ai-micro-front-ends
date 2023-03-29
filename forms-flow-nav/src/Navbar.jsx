@@ -11,6 +11,7 @@ import {
   STAFF_DESIGNER,
   MULTITENANCY_ENABLED,
   ADMIN_ROLE,
+  TENANT_DETAILS
 } from "./constants/constants";
 import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
@@ -24,11 +25,11 @@ const NavBar = React.memo(({ props }) => {
   const [form, setForm] = React.useState({});
   const [selectLanguages, setSelectLanguages] = React.useState([]);
 
-  React,useEffect(()=>{
+  React, useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
     });
-  
+
     props.subscribe("ES_USER", (msg, data) => {
       if (data) {
         setUser(data);
@@ -37,6 +38,7 @@ const NavBar = React.memo(({ props }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
+        localStorage.setItem(TENANT_DETAILS, JSON.stringify(data));
       }
     });
     props.subscribe("ES_ROUTE", (msg, data) => {
@@ -46,10 +48,10 @@ const NavBar = React.memo(({ props }) => {
     });
     props.subscribe("ES_FORM", (msg, data) => {
       if (data) {
-          setForm(data);
+        setForm(data);
       }
-    });    
-  },[])
+    });
+  }, [])
 
 
   const isAuthenticated = instance?.isAuthenticated();
@@ -65,6 +67,12 @@ const NavBar = React.memo(({ props }) => {
   const applicationTitle = tenant.tenantData?.details?.applicationTitle;
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
+  useEffect(() => {
+    const retriveTenant = JSON.parse(localStorage.getItem(TENANT_DETAILS));
+    if (retriveTenant) setTenant(retriveTenant);
+  }, []);
+  if (tenantKey)
+    localStorage.setItem("tenantKey", tenant?.tenantId);
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
   /**
@@ -96,7 +104,7 @@ const NavBar = React.memo(({ props }) => {
   }, [isAuthenticated, formTenant]);
 
   useEffect(() => {
-    fetchSelectLanguages((data)=>{
+    fetchSelectLanguages((data) => {
       setSelectLanguages(data);
     })
   }, []);
@@ -147,23 +155,21 @@ const NavBar = React.memo(({ props }) => {
                   <Nav.Link
                     as={Link}
                     to={`${baseUrl}form`}
-                    className={`main-nav nav-item ${
-                      pathname.match(createURLPathMatchExp("form", baseUrl))
-                        ? "active-tab"
-                        : "inactive-tab"
-                    }`}
+                    className={`main-nav nav-item ${pathname.match(createURLPathMatchExp("form", baseUrl))
+                      ? "active-tab"
+                      : "inactive-tab"
+                      }`}
                   >
                     {t("Forms")}
                   </Nav.Link>
-                  {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
+                  {getUserRolePermission(userRoles, STAFF_DESIGNER) || getUserRolePermission(userRoles, ADMIN_ROLE) ? (
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}
-                      className={`main-nav nav-item ${
-                        pathname.match(createURLPathMatchExp("admin", baseUrl))
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
+                      className={`main-nav nav-item ${pathname.match(createURLPathMatchExp("admin", baseUrl))
+                        ? "active-tab"
+                        : "inactive-tab"
+                        }`}
                     >
                       {t("Admin")}
                     </Nav.Link>
@@ -173,13 +179,12 @@ const NavBar = React.memo(({ props }) => {
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}processes`}
-                      className={`main-nav nav-item ${
-                        pathname.match(
-                          createURLPathMatchExp("processes", baseUrl)
-                        )
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
+                      className={`main-nav nav-item ${pathname.match(
+                        createURLPathMatchExp("processes", baseUrl)
+                      )
+                        ? "active-tab"
+                        : "inactive-tab"
+                        }`}
                     >
                       {t("Processes")}
                     </Nav.Link>
@@ -187,21 +192,20 @@ const NavBar = React.memo(({ props }) => {
 
                   {showApplications ? (
                     getUserRolePermission(userRoles, STAFF_REVIEWER) ||
-                    getUserRolePermission(userRoles, CLIENT) ? (
+                      getUserRolePermission(userRoles, CLIENT) ? (
                       <Nav.Link
                         as={Link}
                         to={`${baseUrl}application`}
-                        className={`main-nav nav-item ${
-                          pathname.match(
-                            createURLPathMatchExp("application", baseUrl)
+                        className={`main-nav nav-item ${pathname.match(
+                          createURLPathMatchExp("application", baseUrl)
+                        )
+                          ? "active-tab"
+                          : pathname.match(
+                            createURLPathMatchExp("draft", baseUrl)
                           )
                             ? "active-tab"
-                            : pathname.match(
-                                createURLPathMatchExp("draft", baseUrl)
-                              )
-                            ? "active-tab"
                             : "inactive-tab"
-                        }`}
+                          }`}
                       >
                         {" "}
                         {t("Applications")}
@@ -212,11 +216,10 @@ const NavBar = React.memo(({ props }) => {
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}task`}
-                      className={`main-nav nav-item taskDropdown ${
-                        pathname.match(createURLPathMatchExp("task", baseUrl))
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
+                      className={`main-nav nav-item taskDropdown ${pathname.match(createURLPathMatchExp("task", baseUrl))
+                        ? "active-tab"
+                        : "inactive-tab"
+                        }`}
                     >
                       {" "}
                       {t("Tasks")}
@@ -228,16 +231,15 @@ const NavBar = React.memo(({ props }) => {
                       as={Link}
                       to={`${baseUrl}metrics`}
                       data-testid="Dashboards"
-                      className={`main-nav nav-item ${
-                        pathname.match(
-                          createURLPathMatchExp("metrics", baseUrl)
-                        ) ||
+                      className={`main-nav nav-item ${pathname.match(
+                        createURLPathMatchExp("metrics", baseUrl)
+                      ) ||
                         pathname.match(
                           createURLPathMatchExp("insights", baseUrl)
                         )
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
+                        ? "active-tab"
+                        : "inactive-tab"
+                        }`}
                     >
                       {" "}
                       {t("Dashboards")}

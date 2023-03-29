@@ -1,4 +1,4 @@
-import { STAFF_REVIEWER, STAFF_DESIGNER } from "../constants/constants";
+import { STAFF_REVIEWER, STAFF_DESIGNER,ADMIN_ROLE } from "../constants/constants";
 
 /****
  * Default value of REACT_APP_USER_ACCESS_PERMISSIONS is
@@ -28,6 +28,8 @@ const getUserRoleName = (userRoles) => {
     role = "REVIEWER";
   } else if (userRoles.includes(STAFF_DESIGNER)) {
     role = "DESIGNER";
+  } else if (userRoles.includes(ADMIN_ROLE)) {
+    role = "ADMIN";
   } else {
     role = "CLIENT";
   }
