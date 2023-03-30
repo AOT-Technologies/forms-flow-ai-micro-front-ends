@@ -12,6 +12,7 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
+import { MULTITENANCY_ENABLED } from "../../constants";
 import "./users.scss";
 
 const Users = React.memo((props: any) => {
@@ -200,7 +201,7 @@ const Users = React.memo((props: any) => {
               <div key={i} className="chip-element mr-2">
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={<Tooltip id="tooltip">{item?.description}</Tooltip>}
+                  overlay={!MULTITENANCY_ENABLED ? (<Tooltip id="tooltip">{item?.path}</Tooltip>) : (<span></span>)}
                 >
                   <span className="chip-label">
                     {item?.name}{" "}
