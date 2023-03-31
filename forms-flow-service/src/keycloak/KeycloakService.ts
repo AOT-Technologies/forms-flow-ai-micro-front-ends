@@ -71,6 +71,7 @@ import Keycloak, {
             if (refreshed) {
               console.log("Token refreshed!");
               clearInterval(this.timerId);
+              this.token = this.kc.token
               StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
               this.refreshToken();
             } else {
