@@ -38,7 +38,6 @@ const NavBar = React.memo(({ props }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
-        localStorage.setItem(TENANT_DETAILS, JSON.stringify(data));
       }
     });
     props.subscribe("ES_ROUTE", (msg, data) => {
@@ -65,14 +64,8 @@ const NavBar = React.memo(({ props }) => {
   );
   const showApplications = user.showApplications;
   const applicationTitle = tenant.tenantData?.details?.applicationTitle;
-  const tenantKey = tenant?.tenantId;
+  const tenantKey = StorageService.get('tenantKey');
   const formTenant = form?.tenantKey;
-  useEffect(() => {
-    const retriveTenant = JSON.parse(localStorage.getItem(TENANT_DETAILS));
-    if (retriveTenant) setTenant(retriveTenant);
-  }, []);
-  if (tenantKey)
-    localStorage.setItem("tenantKey", tenant?.tenantId);
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
   /**
@@ -162,7 +155,7 @@ const NavBar = React.memo(({ props }) => {
                   >
                     {t("Forms")}
                   </Nav.Link>
-                  {getUserRolePermission(userRoles, STAFF_DESIGNER) || getUserRolePermission(userRoles, ADMIN_ROLE) ? (
+                  {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}

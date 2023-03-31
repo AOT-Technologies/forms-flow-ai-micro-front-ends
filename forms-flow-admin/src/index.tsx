@@ -9,11 +9,12 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/footer";
-import { BASE_ROUTE, ADMIN_ROLE, STAFF_DESIGNER, MULTITENANCY_ENABLED, TENANT_DETAILS } from "./constants";
+import { BASE_ROUTE, ADMIN_ROLE, MULTITENANCY_ENABLED } from "./constants";
 import AdminDashboard from "./components/dashboard";
 import RoleManagement from "./components/roles";
 import UserManagement from "./components/users";
 import Head from "./containers/head";
+import { fetchtenant } from "./services/common";
 
 import "./index.scss";
 
@@ -27,20 +28,27 @@ const Admin = React.memo(({ props }: any) => {
   const [roleCount, setRoleCount] = React.useState();
   const [userCount, setUserCount] = React.useState();
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [tenant, setTenant] = React.useState({});
+  const [error, setError] = React.useState();
 
-  let tenantKey = localStorage.getItem("tenantKey");
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${BASE_ROUTE}admin` });
   }, []);
-  //const tenantKey = tenant['tenantId'];
-  // const tenantKey = tenant?.tenantId;
+
+  let clientId = KEYCLOAK_CLIENT;
+  const url = window.location.href;
+  const url_array = url.split('/');
+  const tenantKey = url_array[4];
+  clientId = MULTITENANCY_ENABLED ? `${tenantKey}` : KEYCLOAK_CLIENT;
+
+
   React.useEffect(() => {
     if (!isAuth) {
       let instance = KeycloakService.getInstance(
         KEYCLOAK_URL_AUTH,
         KEYCLOAK_URL_REALM,
         KEYCLOAK_CLIENT,
-        tenantKey
+        clientId,
       );
       instance.initKeycloak(() => {
         setIsAuth(instance.isAuthenticated());
@@ -48,11 +56,30 @@ const Admin = React.memo(({ props }: any) => {
       });
     }
   }, []);
+  const Tenantdata = localStorage.getItem('tenantData');
+  if (!Tenantdata) {
+    React.useEffect(() => {
+      fetchtenant((data) => {
+        setTenant(data);
+      }, (err) => {
+        setError(err);
+      });
+    }, []);
+
+    React.useEffect(() => {
+      props.publish("ES_TENANT", tenant);
+    }, [tenant]);
+    props.subscribe("ES_TENANT", (msg, data) => {
+      if (data) {
+        setTenant(data);
+      }
+    });
+  }
 
   React.useEffect(() => {
     if (!isAuth) return
     const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
-    if (roles.includes(ADMIN_ROLE) || roles.includes(STAFF_DESIGNER)) {
+    if (roles.includes(ADMIN_ROLE)) {
       setIsAdmin(true);
     }
   }, [isAuth])
