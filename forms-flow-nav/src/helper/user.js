@@ -1,4 +1,8 @@
-import { STAFF_REVIEWER, STAFF_DESIGNER } from "../constants/constants";
+import {
+  STAFF_REVIEWER,
+  STAFF_DESIGNER,
+  ADMIN_ROLE,
+} from "../constants/constants";
 
 /****
  * Default value of REACT_APP_USER_ACCESS_PERMISSIONS is
@@ -24,7 +28,9 @@ if (typeof userAccessGroupCheck === "string") {
 
 const getUserRoleName = (userRoles) => {
   let role = "";
-  if (userRoles.includes(STAFF_REVIEWER)) {
+  if (userRoles.includes(ADMIN_ROLE)) {
+    role = "ADMIN";
+  } else if (userRoles.includes(STAFF_REVIEWER)) {
     role = "REVIEWER";
   } else if (userRoles.includes(STAFF_DESIGNER)) {
     role = "DESIGNER";
@@ -38,7 +44,4 @@ const getUserRolePermission = (userRoles, role) => {
   return userRoles && userRoles.includes(role);
 };
 
-export {
-  getUserRoleName,
-  getUserRolePermission,
-};
+export { getUserRoleName, getUserRolePermission };

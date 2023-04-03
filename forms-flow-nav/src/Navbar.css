@@ -9,7 +9,7 @@ h4 {
   font-size: 1.2rem;
 }
 body {
-  font-size: 16px;
+  font-size: var(--navbar-items-font-size);
   font-family: Nunito Sans, SemiBold;
 }
 h5,
@@ -38,8 +38,8 @@ h5,
 }
 .main-nav {
   text-decoration: none !important;
-  /* color: var(--navbar-items); */
-  font-size: 20px !important;
+  /* font-size: var(--navbar-items-font-size) !important; */
+  font-weight: var(--navbar-items-font-weight);
 }
 .inactive-tab {
   color: var(--navbar-items) !important;
@@ -98,12 +98,12 @@ header nav {
 }
 
 .navbar-light .navbar-nav .nav-link {
-  color: var(--navbar-items)
+  color: var(--navbar-items);
 }
 
-.navbar-expand-lg .navbar-nav .nav-link {
-  padding-right: 2.5rem !important;
-  padding-left: 0.8rem !important;
+.navbar-collapse{
+  justify-content: space-evenly !important;
+
 }
 
 .navbar-nav .nav-link:hover,

@@ -34,6 +34,9 @@
   --appname-margin-top: 0px;
   --appname-margin-bottom: 0px;
 
+  --navbar-items-font-size:16px;
+  --navbar-items-font-weight: 600;
+
   --navbar-background: var(--color-white);
   --navbar-items: var(--color-black);
   --navbar-active: var(--color-primary);

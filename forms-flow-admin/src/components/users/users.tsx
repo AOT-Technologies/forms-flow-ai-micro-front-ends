@@ -13,6 +13,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
 import "./users.scss";
+import { KEYCLOAK_ENABLE_CLIENT_AUTH } from "../../constants";
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -200,7 +201,7 @@ const Users = React.memo((props: any) => {
               <div key={i} className="chip-element mr-2">
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={<Tooltip id="tooltip">{item?.path}</Tooltip>}
+                  overlay={ !KEYCLOAK_ENABLE_CLIENT_AUTH ? <Tooltip id="tooltip">{item?.path}</Tooltip> : <></>}
                 >
                   <span className="chip-label">
                     {item?.name}{" "}

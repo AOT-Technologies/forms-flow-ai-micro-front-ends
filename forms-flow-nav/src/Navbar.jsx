@@ -16,6 +16,7 @@ import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
 import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
+import { fetchTenantDetails } from "./services/tenant";
 
 const NavBar = React.memo(({ props }) => {
   const [instance, setInstance] = React.useState(props.getKcInstance());
@@ -38,6 +39,9 @@ const NavBar = React.memo(({ props }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
+        if(!StorageService.get("TENANT_DATA")){
+          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData)); 
+        }
       }
     });
     props.subscribe("ES_ROUTE", (msg, data) => {
@@ -52,6 +56,12 @@ const NavBar = React.memo(({ props }) => {
     });
   }, []);
 
+  React.useEffect(()=>{
+    if(MULTITENANCY_ENABLED && !tenant.tenantId){
+      fetchTenantDetails(setTenant);
+    }
+  },[]);
+
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
@@ -61,7 +71,7 @@ const NavBar = React.memo(({ props }) => {
     StorageService.get(StorageService.User.USER_ROLE)
   );
   const showApplications = user.showApplications;
-  const applicationTitle = tenant.tenantData?.details?.applicationTitle;
+  const applicationTitle = JSON.parse(StorageService.get("TENANT_DATA"))?.details?.applicationTitle;
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -153,7 +163,7 @@ const NavBar = React.memo(({ props }) => {
               >
                 <Nav
                   id="main-menu-nav"
-                  className="mr-auto active align-items-lg-center"
+                  className="active align-items-lg-center"
                 >
                   <Nav.Link
                     as={Link}
@@ -164,6 +174,7 @@ const NavBar = React.memo(({ props }) => {
                         : "inactive-tab"
                     }`}
                   >
+                    <i className="fa fa-wpforms fa-fw fa-lg mr-2" />
                     {t("Forms")}
                   </Nav.Link>
                   {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
@@ -176,6 +187,7 @@ const NavBar = React.memo(({ props }) => {
                           : "inactive-tab"
                       }`}
                     >
+                      <i className="fa fa-user-circle-o fa-lg mr-2" />
                       {t("Admin")}
                     </Nav.Link>
                   ) : null}
@@ -192,6 +204,7 @@ const NavBar = React.memo(({ props }) => {
                           : "inactive-tab"
                       }`}
                     >
+                      <i className="fa fa-cogs fa-lg fa-fw mr-2" />
                       {t("Processes")}
                     </Nav.Link>
                   ) : null}
@@ -215,6 +228,7 @@ const NavBar = React.memo(({ props }) => {
                         }`}
                       >
                         {" "}
+                        <i className="fa fa-list-alt fa-fw fa-lg mr-2" />
                         {t("Applications")}
                       </Nav.Link>
                     ) : null
@@ -230,6 +244,7 @@ const NavBar = React.memo(({ props }) => {
                       }`}
                     >
                       {" "}
+                      <i className="fa fa-list fa-lg fa-fw mr-2" />
                       {t("Tasks")}
                     </Nav.Link>
                   ) : null}
@@ -251,12 +266,13 @@ const NavBar = React.memo(({ props }) => {
                       }`}
                     >
                       {" "}
+                      <i className="fa fa-tachometer fa-lg fa-fw mr-2" />
                       {t("Dashboards")}
                     </Nav.Link>
                   ) : null}
                 </Nav>
 
-                <Nav className="ml-lg-auto mr-auto px-lg-0 px-3">
+                <Nav className="px-lg-0 px-3">
                   {selectLanguages.length === 1 ? (
                     selectLanguages.map((e, i) => {
                       return (
@@ -290,7 +306,7 @@ const NavBar = React.memo(({ props }) => {
                   )}
                 </Nav>
 
-                <Nav className="ml-lg-auto mr-auto px-lg-0 px-3">
+                <Nav className="px-lg-0 px-3">
                   <NavDropdown
                     title={
                       <>
