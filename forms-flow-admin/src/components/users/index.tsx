@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { fetchRoles } from "../../services/roles";
 import { fetchUsers } from "../../services/users";
 import Users from "./users";
+import {useTranslation} from "react-i18next";
 
 const UserManagement = React.memo((props: any) => {
   const { setTab, setCount } = props;
@@ -16,6 +17,7 @@ const UserManagement = React.memo((props: any) => {
   const [search, setSearch] = React.useState(undefined);
   const [filter, setFilter] = React.useState(undefined);
   const [total, setTotal] = React.useState(undefined);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     if (filter === undefined) return;
@@ -114,7 +116,7 @@ const UserManagement = React.memo((props: any) => {
       setRoles(data);
     }, (err)=>{
       setError(err);
-      toast.error("Failed to fetch roles!")
+      toast.error(t("Failed to fetch roles!"))
     });
   }, []);
 
