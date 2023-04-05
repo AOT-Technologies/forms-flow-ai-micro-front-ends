@@ -78,11 +78,11 @@ const Users = React.memo((props: any) => {
       payload,
       () => {
         props.setInvalidated(true);
-        toast.success("Permission updated successfully!");
+        toast.success(t("Permission updated successfully!"));
       },
       (err) => {
         setError(err);
-        toast.error("Failed to update permission!");
+        toast.error(t("Failed to update permission!"));
       }
     );
   };
@@ -275,10 +275,10 @@ const Users = React.memo((props: any) => {
           Promise.all(promises)
             .then((res) => {
               props.setInvalidated(true);
-              toast.success("Permision updated successfully!");
+              toast.success(t("Permision updated successfully!"));
             })
             .catch((err) => {
-              toast.error("Failed to update permision!");
+              toast.error(t("Failed to update permision!"));
               console.log(err);
             });
         };
@@ -298,13 +298,15 @@ const Users = React.memo((props: any) => {
                         getRoleRepresentation(role, key, rowData)
                       )
                     ) : (
-                      <>No data found</>
+                      <>{t("No data found")}</>
                     )}
                   </div>
                   <hr />
                   <div className="done-button">
                     {roles.length > 0 && (
-                      <Button onClick={addUserPermission}>Done</Button>
+                      <Button onClick={addUserPermission}>
+                        <Translation>{(t) => t("Done")}</Translation> 
+                      </Button>
                     )}
                   </div>
                 </Popover.Body>
@@ -312,7 +314,7 @@ const Users = React.memo((props: any) => {
             }
           >
             <Button variant="primary" onClick={() => addRole(rowData)}>
-              <i className="fa fa-l fa-plus-circle mr-1" /> Add Role
+              <i className="fa fa-l fa-plus-circle mr-1" /> {t("Add Role")}
             </Button>
           </OverlayTrigger>
         );
@@ -327,7 +329,7 @@ const Users = React.memo((props: any) => {
           <div className="search-role">
             <Form.Control
               type="text"
-              placeholder="Search by name, username or email"
+              placeholder={t("Search by name, username or email")}
               className="search-role-input"
               onChange={handleSearch}
               value={props.search || ""}
@@ -339,16 +341,16 @@ const Users = React.memo((props: any) => {
                   props.setSearch("");
                 }}
               >
-                Clear
+                {t("Clear")}
               </Button>
             )}
           </div>
 
           <div className="user-filter-container">
-            <span>Filter By: </span>
+            <span>{t("Filter By:")} </span>
             <Form.Select size="lg" onChange={handleSelectFilter}>
               <option value="ALL" selected={!props.filter}>
-                All roles
+                {t("All roles")}
               </option>
               {roles?.map((role, i) => (
                 <option key={i} value={role.name}>
