@@ -192,47 +192,47 @@ const Roles = React.memo((props: any) => {
 
   const confirmDelete = () => (
     <div>
-      <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure deleting the role {deleteCandidate.name}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="light" onClick={handleCloseDeleteModal}>
-            Cancel
-          </Button>
-          <Button
-            variant="danger"
-            disabled={disabled}
-            onClick={() => deleteRole(deleteCandidate)}
-          >
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+  <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
+    <Modal.Header closeButton>
+      <Modal.Title>{t("Confirm Delete")}</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="light" onClick={handleCloseDeleteModal}>
+        {t("Cancel")}
+      </Button>
+      <Button
+        variant="danger"
+        disabled={disabled}
+        onClick={() => deleteRole(deleteCandidate)}
+      >
+        {t("Delete")}
+      </Button>
+    </Modal.Footer>
+  </Modal>
+</div>
   );
 
   const showCreateModal = () => (
     <div>
       <Modal show={showRoleModal} onHide={handleCloseRoleModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Create Role</Modal.Title>
+          <Modal.Title>{t("Create Role")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label aria-required>Role Name</Form.Label>
+              <Form.Label aria-required>{t("Role Name")}</Form.Label>
               <i style={{ color: "red" }}>*</i>
               <Form.Control
                 type="text"
-                placeholder="Eg: Account Manager"
+                placeholder={t("Eg: Account Manager")}
                 required
                 onChange={handleChangeName}
               />
-              <Form.Label className="mt-2">Description</Form.Label>
+              <Form.Label className="mt-2">{t("Description")}</Form.Label>
               <i style={{ color: "red" }}>*</i>
               <Form.Control
                 as="textarea"
@@ -245,14 +245,14 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="light" onClick={handleCloseRoleModal}>
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button
             variant="primary"
             disabled={disabled}
             onClick={handleCreateRole}
           >
-            Create
+            {t("Create")}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -271,7 +271,7 @@ const Roles = React.memo((props: any) => {
               <i style={{ color: "red" }}>*</i>
               <Form.Control
                 type="text"
-                placeholder="Eg: Account Manager"
+                placeholder={("Eg: Account Manager")}
                 required
                 onChange={handleEditName}
                 value={editCandidate.name}
@@ -289,7 +289,7 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="light" onClick={handleCloseEditRoleModal}>
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button
             variant="primary"
@@ -417,7 +417,7 @@ const Roles = React.memo((props: any) => {
             }
           >
             <div className="user-list" onClick={(e) => handleClick(e, rowData)}>
-              <p>View</p>
+              <p><Translation>{(t) => t("View")}</Translation></p>
               <i className="fa fa-caret-down ml-1" />
             </div>
           </OverlayTrigger>
@@ -458,7 +458,7 @@ const Roles = React.memo((props: any) => {
           <div className="search-role">
             <Form.Control
               type="text"
-              placeholder="Search by role name"
+              placeholder={t("Search by role name")}
               className="search-role-input"
               onChange={handlFilter}
               value={search}
@@ -472,12 +472,12 @@ const Roles = React.memo((props: any) => {
                   setRoles(props.roles);
                 }}
               >
-                Clear
+                {t("Clear")}
               </Button>
             )}
           </div>
           <Button variant="primary" onClick={handleShowRoleModal}>
-            <i className="fa fa-l fa-plus-circle mr-1" /> Create New Role
+            <i className="fa fa-l fa-plus-circle mr-1" /> <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>
         {!props?.loading ? (
