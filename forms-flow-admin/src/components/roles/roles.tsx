@@ -74,7 +74,7 @@ const Roles = React.memo((props: any) => {
   const deleteRole = (rowData) => {
     setDisabled(true);
     DeleteRole(
-      rowData.id,
+      rowData,
       () => {
         props.setInvalidated(true);
         handleCloseDeleteModal();

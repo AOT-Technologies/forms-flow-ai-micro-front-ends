@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { RequestService } from "@formsflow/service";
-
 import API from "../../endpoints/index";
+import { KEYCLOAK_ENABLE_CLIENT_AUTH } from "../../constants";
 
 export const fetchRoles = (callback, errorHandler) => {
     RequestService.httpGETRequest(API.GET_ROLES)
@@ -37,8 +37,9 @@ export const CreateRole = (payload, callback, errorHandler) => {
         }
       });
 };
-export const DeleteRole = (roleId, callback, errorHandler) => {
-    RequestService.httpDELETERequest(`${API.GET_ROLES}/${roleId}`)
+export const DeleteRole = (payload, callback, errorHandler) => {
+  const roleIdentifier = KEYCLOAK_ENABLE_CLIENT_AUTH ? payload.name : payload.id;
+    RequestService.httpDELETERequest(`${API.GET_ROLES}/${roleIdentifier}`)
       .then((res) => {
         if (res.data) {
           callback(res.data)
@@ -56,7 +57,8 @@ export const DeleteRole = (roleId, callback, errorHandler) => {
 };
 
 export const UpdateRole = (payload, callback, errorHandler) => {
-  RequestService.httpPUTRequest(`${API.GET_ROLES}/${payload.id}`, payload)
+  const roleIdentifier = KEYCLOAK_ENABLE_CLIENT_AUTH ? payload.name : payload.id;
+  RequestService.httpPUTRequest(`${API.GET_ROLES}/${roleIdentifier}`, payload)
     .then((res) => {
       if (res.data) {
         callback(res.data)
