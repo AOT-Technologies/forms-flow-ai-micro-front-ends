@@ -25,6 +25,8 @@ const NavBar = React.memo(({ props }) => {
   const [location, setLocation] = React.useState({ pathname: "/" });
   const [form, setForm] = React.useState({});
   const [selectLanguages, setSelectLanguages] = React.useState([]);
+  const [applicationTitle, setApplicationTitle] = React.useState("");
+
 
   React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
@@ -39,7 +41,7 @@ const NavBar = React.memo(({ props }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
-        if(!StorageService.get("TENANT_DATA")){
+        if(!JSON.parse(StorageService.get("TENANT_DATA"))?.name){
           StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData)); 
         }
       }
@@ -62,6 +64,10 @@ const NavBar = React.memo(({ props }) => {
     }
   },[]);
 
+React.useEffect(()=>{
+  setApplicationTitle(JSON.parse(StorageService.get("TENANT_DATA"))?.details?.applicationTitle);
+},[tenant]);
+
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
@@ -71,7 +77,6 @@ const NavBar = React.memo(({ props }) => {
     StorageService.get(StorageService.User.USER_ROLE)
   );
   const showApplications = user.showApplications;
-  const applicationTitle = JSON.parse(StorageService.get("TENANT_DATA"))?.details?.applicationTitle;
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
