@@ -17,10 +17,10 @@ import { StorageService } from "@formsflow/service";
 import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
 import { fetchTenantDetails } from "./services/tenant";
+import { setShowApplications } from "./constants/userContants";
 
 const NavBar = React.memo(({ props }) => {
   const [instance, setInstance] = React.useState(props.getKcInstance());
-  const [user, setUser] = React.useState({});
   const [tenant, setTenant] = React.useState({});
   const [location, setLocation] = React.useState({ pathname: "/" });
   const [form, setForm] = React.useState({});
@@ -33,11 +33,6 @@ const NavBar = React.memo(({ props }) => {
       setInstance(data);
     });
 
-    props.subscribe("ES_USER", (msg, data) => {
-      if (data) {
-        setUser(data);
-      }
-    });
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
@@ -76,14 +71,14 @@ React.useEffect(()=>{
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
-  const showApplications = user.showApplications;
+  const showApplications = setShowApplications(userDetail?.groups);
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
   /**
    * For anonymous forms the only way to identify the tenant is through the
-   * form data with current implementation. To redirect to the correact tenant
+   * form data with current implementation. To redirect to the correct tenant
    * we will use form as the data source for the tenantKey
    */
 
@@ -125,7 +120,7 @@ React.useEffect(()=>{
     setUserDetail(
       JSON.parse(StorageService.get(StorageService.User.USER_DETAILS))
     );
-  }, [user]);
+  }, [instance]);
 
   React.useEffect(() => {
     if (!lang) {
