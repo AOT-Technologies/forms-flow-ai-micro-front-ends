@@ -59,10 +59,10 @@ const NavBar = React.memo(({ props }) => {
   }, []);
 
   React.useEffect(()=>{
-    if(MULTITENANCY_ENABLED && !tenant.tenantId){
+    if(MULTITENANCY_ENABLED && !tenant.tenantId && instance?.isAuthenticated){
       fetchTenantDetails(setTenant);
     }
-  },[]);
+  },[instance]);
 
 React.useEffect(()=>{
   setApplicationTitle(JSON.parse(StorageService.get("TENANT_DATA"))?.details?.applicationTitle);
