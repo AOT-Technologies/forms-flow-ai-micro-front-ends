@@ -14,6 +14,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
+import { KEYCLOAK_ENABLE_CLIENT_AUTH } from "../../constants";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ const Roles = React.memo((props: any) => {
     description: "",
   };
   const [deleteCandidate, setDeleteCandidate] = React.useState(initialRoleType);
+  const [selectedRoleIdentifier, setSelectedRoleIdentifier] = React.useState("");
   const [editCandidate, setEditCandidate] = React.useState(initialRoleType);
   const [disabled, setDisabled] = React.useState(true);
   const [search, setSerach] = React.useState("");
@@ -124,6 +126,7 @@ const Roles = React.memo((props: any) => {
     }
     setDisabled(true);
     UpdateRole(
+      selectedRoleIdentifier,
       editCandidate,
       (data) => {
         props.setInvalidated(true);
@@ -176,6 +179,7 @@ const Roles = React.memo((props: any) => {
   const handleCloseEditRoleModal = () => {
     setShowEditRoleModal(false);
     setEditCandidate(initialRoleType);
+    setSelectedRoleIdentifier("");
   };
   const handleShowEditRoleModal = () => setShowEditRoleModal(true);
   const handleCloseDeleteModal = () => {
@@ -434,6 +438,7 @@ const Roles = React.memo((props: any) => {
               className="fa fa-pencil fa-lg mr-4"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
+                setSelectedRoleIdentifier(KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id)
                 setEditCandidate(rowData);
                 handleShowEditRoleModal();
               }}

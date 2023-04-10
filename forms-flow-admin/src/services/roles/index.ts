@@ -56,9 +56,8 @@ export const DeleteRole = (payload, callback, errorHandler) => {
       });
 };
 
-export const UpdateRole = (payload, callback, errorHandler) => {
-  const roleIdentifier = KEYCLOAK_ENABLE_CLIENT_AUTH ? payload.name : payload.id;
-  RequestService.httpPUTRequest(`${API.GET_ROLES}/${roleIdentifier}`, payload)
+export const UpdateRole = (roleId, payload, callback, errorHandler) => {
+  RequestService.httpPUTRequest(`${API.GET_ROLES}/${roleId}`, payload)
     .then((res) => {
       if (res.data) {
         callback(res.data)
