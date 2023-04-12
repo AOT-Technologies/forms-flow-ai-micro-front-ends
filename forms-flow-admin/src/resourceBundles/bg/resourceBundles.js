@@ -45,5 +45,9 @@ export const RESOURCE_BUNDLES_BG = {
     "Failed to delete role!": "Неуспешно изтриване на роля!",
     "Role created successfully!": "Ролята е създадена успешно!",
     "Failed to create role!": "Неуспешно създаване на роля!",
-    "Update success!":"Успешна актуализация!"
+    "Update success!":"Успешна актуализация!",
+    "Save":"Запазване",
+    "No results found":"Няма намерени резултати",
+    "Edit Role":"Редактиране на роля",
+    "Failed to fetch users!":"Неуспешно извличане на потребители!"
 };

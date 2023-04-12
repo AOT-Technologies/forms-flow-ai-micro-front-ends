@@ -276,7 +276,7 @@ const Users = React.memo((props: any) => {
           Promise.all(promises)
             .then((res) => {
               props.setInvalidated(true);
-              toast.success(t("Permision updated successfully!"));
+              toast.success(t("Permission updated successfully!"));
             })
             .catch((err) => {
               toast.error(t("Failed to update permision!"));

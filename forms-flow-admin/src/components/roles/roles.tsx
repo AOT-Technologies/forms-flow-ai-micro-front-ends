@@ -266,12 +266,12 @@ const Roles = React.memo((props: any) => {
     <div>
       <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Edit Role</Modal.Title>
+          <Modal.Title>{t("Edit Role")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
-              <Form.Label aria-required>Role Name</Form.Label>
+              <Form.Label aria-required>{t("Role Name")}</Form.Label>
               <i style={{ color: "red" }}>*</i>
               <Form.Control
                 type="text"
@@ -280,7 +280,7 @@ const Roles = React.memo((props: any) => {
                 onChange={handleEditName}
                 value={editCandidate.name}
               />
-              <Form.Label className="mt-2">Description</Form.Label>
+              <Form.Label className="mt-2">{t("Description")}</Form.Label>
               <i style={{ color: "red" }}>*</i>
               <Form.Control
                 as="textarea"
@@ -300,7 +300,7 @@ const Roles = React.memo((props: any) => {
             disabled={disabled}
             onClick={handleUpdateRole}
           >
-            Save
+           {t("Save")}
           </Button>
         </Modal.Footer>
       </Modal>

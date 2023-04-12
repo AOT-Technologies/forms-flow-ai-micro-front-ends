@@ -45,6 +45,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "Failed to delete role!": "删除角色失败！",
   "Role created successfully!": "角色创建成功！",
   "Failed to create role!": "创建角色失败",
-  "Update success!":"更新成功"
+  "Update success!":"更新成功",
+  "Save":"节省",
+  "No results found":"未找到结果",
+  "Edit Role":"编辑角色",
+  "Failed to fetch users!":"获取用户失败！"
 };
 

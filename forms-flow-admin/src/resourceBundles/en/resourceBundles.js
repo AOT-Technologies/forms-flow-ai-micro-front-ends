@@ -45,7 +45,11 @@ export const RESOURCE_BUNDLES_EN = {
     "Failed to delete role!": "Failed to delete role!",
     "Role created successfully!": "Role created successfully!",
     "Failed to create role!": "Failed to create role!",
-    "Update success!":"Update success!"
+    "Update success!":"Update success!",
+    "Save":"Save",
+    "No results found":"No results found",
+    "Edit Role":"Edit Role",
+    "Failed to fetch users!":"Failed to fetch users!"
 };
 
 
