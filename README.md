@@ -29,6 +29,10 @@ This module contains the common style sheet shared by all micro-front-ends. This
 
 All the modules are built with `single-spa`, a javascript router for micro front-end microsevices.
 
+## Prerequisites
+ - Nodejs 16 or above
+ - Make sure the ports `8080`, `8001`, `8081`, `8082` are available.
+
 # Getting started
 1. Clone the repo
 2. run `npm install && npm start` by checking into all modules
