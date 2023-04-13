@@ -52,12 +52,12 @@ const Roles = React.memo((props: any) => {
   };
 
   React.useEffect(() => {
-    setDisabled(!(payload.name.trim() && payload.description.trim()));
+    setDisabled(!(payload.name?.trim() && payload.description?.trim()));
   }, [payload]);
 
   React.useEffect(() => {
     setDisabled(
-      !(editCandidate.name.trim() && editCandidate.description.trim())
+      !(editCandidate.name?.trim() && editCandidate.description?.trim())
     );
   }, [editCandidate]);
 
