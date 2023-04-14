@@ -45,5 +45,9 @@ export const RESOURCE_BUNDLES_DE = {
     "Failed to delete role!": "Rolle konnte nicht gelöscht werden!",
     "Role created successfully!": "Rolle erfolgreich erstellt!",
     "Failed to create role!": "Rolle konnte nicht erstellt werden!",
-    "Update success!":"Update-Erfolg!"
+    "Update success!":"Update-Erfolg!",
+    "Save":"Speichern",
+    "No results found":"keine Ergebnisse gefunden",
+    "Edit Role":"Rolle bearbeiten",
+    "Failed to fetch users!":"Nutzer konnten nicht abgerufen werden!"
 };

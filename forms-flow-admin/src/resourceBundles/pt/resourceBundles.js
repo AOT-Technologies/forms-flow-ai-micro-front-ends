@@ -45,5 +45,9 @@ export const RESOURCE_BUNDLES_PT = {
     "Failed to delete role!": "Falha ao excluir a função!",
     "Role created successfully!": "Função criada com sucesso!",
     "Failed to create role!": "Falha ao criar função!",
-    "Update success!":"Atualização feita com sucesso!"
+    "Update success!":"Atualização feita com sucesso!",
+    "Save":"Salvar",
+    "No results found":"Nenhum resultado encontrado",
+    "Edit Role":"Editar função",
+    "Failed to fetch users!":"Falha ao buscar usuários!"
 };
