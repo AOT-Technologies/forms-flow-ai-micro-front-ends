@@ -26,7 +26,7 @@ const NavBar = React.memo(({ props }) => {
   const [form, setForm] = React.useState({});
   const [selectLanguages, setSelectLanguages] = React.useState([]);
   const [applicationTitle, setApplicationTitle] = React.useState("");
-
+  const [tenantLogo, setTenantLogo] = React.useState("/logo_skeleton.svg");
 
   React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
@@ -36,8 +36,8 @@ const NavBar = React.memo(({ props }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
-        if(!JSON.parse(StorageService.get("TENANT_DATA"))?.name){
-          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData)); 
+        if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
+          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
         }
       }
     });
@@ -53,15 +53,19 @@ const NavBar = React.memo(({ props }) => {
     });
   }, []);
 
-  React.useEffect(()=>{
-    if(MULTITENANCY_ENABLED && !tenant.tenantId && instance?.isAuthenticated){
+  React.useEffect(() => {
+    if (MULTITENANCY_ENABLED && !tenant.tenantId && instance?.isAuthenticated) {
       fetchTenantDetails(setTenant);
     }
-  },[instance]);
+  }, [instance]);
 
-React.useEffect(()=>{
-  setApplicationTitle(JSON.parse(StorageService.get("TENANT_DATA"))?.details?.applicationTitle);
-},[tenant]);
+  React.useEffect(() => {
+    const data = JSON.parse(StorageService.get("TENANT_DATA"));
+    if (data?.details) {
+      setApplicationTitle(data?.details?.applicationTitle);
+      setTenantLogo(data?.details?.customLogo?.logo || "/logo.svg");
+    }
+  }, [tenant]);
 
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
@@ -84,7 +88,10 @@ React.useEffect(()=>{
 
   const [loginUrl, setLoginUrl] = useState(baseUrl);
 
-  const logoPath = document.documentElement.style.getPropertyValue("--navbar-logo-path") || "/logo.svg";
+  const logoPath = MULTITENANCY_ENABLED
+    ? tenantLogo
+    : document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
+      "/logo.svg";
   const getAppName = useMemo(
     () => () => {
       if (!MULTITENANCY_ENABLED) {
@@ -124,7 +131,7 @@ React.useEffect(()=>{
 
   React.useEffect(() => {
     if (!lang) {
-      const locale = instance?.getUserData()?.locale
+      const locale = instance?.getUserData()?.locale;
       setLang(locale);
     }
   }, [instance]);
