@@ -299,7 +299,7 @@ const Users = React.memo((props: any) => {
                         getRoleRepresentation(role, key, rowData)
                       )
                     ) : (
-                      <>{t("No data found")}</>
+                      <>{t("No data Found")}</>
                     )}
                   </div>
                   <hr />
