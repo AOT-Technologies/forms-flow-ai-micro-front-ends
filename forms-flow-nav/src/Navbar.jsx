@@ -155,7 +155,7 @@ const NavBar = React.memo(({ props }) => {
             <Navbar.Brand className="d-flex">
               <Link to={`${baseUrl}`}>
                 <img
-                  className="img-fluid custom-logo"
+                  className="img-fluid custom-logo mr-2"
                   src={logoPath}
                   width="50"
                   height="55"
