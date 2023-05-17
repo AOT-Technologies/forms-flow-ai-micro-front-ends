@@ -18,6 +18,7 @@ import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
 import { fetchTenantDetails } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
+import { LANGUAGE } from "./constants/constants";
 
 const NavBar = React.memo(({ props }) => {
   const [instance, setInstance] = React.useState(props.getKcInstance());
@@ -118,9 +119,10 @@ const NavBar = React.memo(({ props }) => {
   }, []);
 
   useEffect(() => {
-    props.publish("ES_CHANGE_LANGUAGE", lang);
-    i18n.changeLanguage(lang);
-    localStorage.setItem("lang", lang);
+    const language = lang ? lang : LANGUAGE;
+    props.publish("ES_CHANGE_LANGUAGE",language);
+    i18n.changeLanguage(language);
+    localStorage.setItem("lang", language);
   }, [lang]);
 
   React.useEffect(() => {
@@ -153,7 +155,7 @@ const NavBar = React.memo(({ props }) => {
             <Navbar.Brand className="d-flex">
               <Link to={`${baseUrl}`}>
                 <img
-                  className="img-fluid custom-logo"
+                  className="img-fluid custom-logo mr-2"
                   src={logoPath}
                   width="50"
                   height="55"

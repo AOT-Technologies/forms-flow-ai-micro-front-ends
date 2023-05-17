@@ -24,7 +24,8 @@ export const updateUserlang = (data, instance) => {
     .then((res) => {
       if (res.data) {
         localStorage.setItem("lang", data);
-        instance.initKeycloak();
+        //need to check why we want invoke this function
+        // instance.initKeycloak();
       } else {
         //toast.error(<Translation>{(t)=>t("Failed")}</Translation>);
       }
