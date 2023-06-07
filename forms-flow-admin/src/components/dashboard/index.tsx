@@ -18,7 +18,8 @@ const AdminDashboard = React.memo((props : any) => {
   const [groupLoading, setGroupLoading] = React.useState(true);
   const [authLoading, setAuthLoading] = React.useState(true);
   const [loading, setLoading] = React.useState(true);
-  
+  const [authReceived, setAuthReceived] = React.useState(true);
+
   React.useEffect(() => {
     setTab("Dashboard");
     setLoading(true);
@@ -33,6 +34,7 @@ const AdminDashboard = React.memo((props : any) => {
     fetchAuthorizations((data)=>{
       setAuthorizations(data);
       setAuthLoading(false);
+      setAuthReceived(true);
     }, setError);
   }, []);
 
@@ -51,6 +53,7 @@ const AdminDashboard = React.memo((props : any) => {
       setCount={setCount}
       error={error}
       loading={loading}
+      authReceived={authReceived}
     />
   );
 });
