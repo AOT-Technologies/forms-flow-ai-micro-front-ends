@@ -113,3 +113,17 @@ header nav {
 .custom-logo{
   width: var(--navbar-logo-width);
 }
+@media (max-width: 768px) {
+  .head-item {
+    padding-bottom: 0.5rem;
+  }
+  .padding-left-60 {
+    margin-left: 0px;
+  }
+  .main-header {
+    flex-wrap: nowrap;
+  }
+  .admin-container > .header-container {
+    margin-left: 0rem;
+  }
+}
