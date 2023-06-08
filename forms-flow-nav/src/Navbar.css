@@ -115,7 +115,7 @@ header nav {
 }
 @media (max-width: 768px) {
   .head-item {
-    padding-bottom: 0.5rem;
+    padding-bottom: 0rem;
   }
   .padding-left-60 {
     margin-left: 0px;
@@ -126,4 +126,9 @@ header nav {
   .admin-container > .header-container {
     margin-left: 0rem;
   }
+  .head-rule {
+    margin-top: -25px;
+    margin-left: -10px;
+    margin-right: -50px;
 }
+} 
