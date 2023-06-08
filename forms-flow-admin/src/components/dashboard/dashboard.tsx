@@ -96,7 +96,7 @@ export const InsightDashboard = React.memo((props: any) => {
   React.useEffect(() => {
     if (
       dashboards?.results?.length > 0 &&
-      authReceived > 0 &&
+      authReceived &&
       !isAuthUpdated
     ) {
       let authList = updateAuthList(authorizations);
