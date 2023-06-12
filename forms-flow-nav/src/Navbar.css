@@ -122,13 +122,14 @@ header nav {
   }
   .main-header {
     flex-wrap: nowrap;
+    gap: 20px;
   }
   .admin-container > .header-container {
-    margin-left: 0rem;
+    margin-left: -1rem;
   }
   .head-rule {
     margin-top: -25px;
-    margin-left: -10px;
+    margin-left: 25px;
     margin-right: -50px;
 }
 } 
