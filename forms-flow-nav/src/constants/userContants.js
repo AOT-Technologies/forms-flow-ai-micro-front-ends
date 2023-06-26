@@ -15,7 +15,6 @@ export const REVIEWER_GROUP = "formsflow/formsflow-reviewer";
 function getEnv(env_string) {
   let ENV_BOOLEAN =
       (window._env_ && window._env_["REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK"]) ||
-      process.env[env_string] ||
       false;
 
   return ENV_BOOLEAN === "true" || ENV_BOOLEAN === true
