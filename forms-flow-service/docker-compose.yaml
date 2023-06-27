@@ -1,0 +1,9 @@
+services:
+  forms-flow-service:
+    container_name: forms-flow-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3007:8080"
+    tty: true
