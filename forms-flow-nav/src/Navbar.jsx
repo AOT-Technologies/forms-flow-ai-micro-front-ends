@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
-import { Link, BrowserRouter } from "react-router-dom";
+import { Link, BrowserRouter, useHistory } from "react-router-dom";
 import { getUserRoleName, getUserRolePermission } from "./helper/user";
 import createURLPathMatchExp from "./helper/regExp/pathMatch";
 import { useTranslation } from "react-i18next";
@@ -21,6 +21,7 @@ import { setShowApplications } from "./constants/userContants";
 import { LANGUAGE } from "./constants/constants";
 
 const NavBar = React.memo(({ props }) => {
+  const history = useHistory();
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [tenant, setTenant] = React.useState({});
   const [location, setLocation] = React.useState({ pathname: "/" });
@@ -143,7 +144,8 @@ const NavBar = React.memo(({ props }) => {
     updateUserlang(selectedLang, instance);
   };
 
-  const logout = () => {
+  const logout = () => {  
+    history.push(baseUrl);
     instance.userLogout();
   };
 
