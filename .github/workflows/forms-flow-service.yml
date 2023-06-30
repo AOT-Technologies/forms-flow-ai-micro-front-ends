@@ -46,5 +46,8 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - run: npm ci
         working-directory: ./scripts
-      - run: BUCKET=${{ secrets.BUCKET}} VERSION=${{ env.VERSION }} node index forms-flow-theme
+      - run: node index forms-flow-service
+        env:
+          BUCKET: ${{ secrets.BUCKET}}
+          VERSION: ${{ env.VERSION }}
         working-directory: ./scripts
