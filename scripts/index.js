@@ -5,6 +5,7 @@ import { createReadStream, createWriteStream } from "fs";
 import { createGzip } from "zlib";
 
 const BUCKET = process.env.BUCKET;
+const VERSION = process.env.VERSION;
 const component = process.argv.slice(2)[0];
 
 if (!component) {
@@ -58,7 +59,7 @@ const run = async (params) => {
 async function upload(file_name, file) {
     const params = {
         Bucket: BUCKET, 
-        Key: `${component}/${file_name}`, 
+        Key: `${component}@${VERSION}/${file_name}`, 
         Body: createReadStream(file), 
         ContentType:"application/javascript",
         ContentEncoding:"gzip"
