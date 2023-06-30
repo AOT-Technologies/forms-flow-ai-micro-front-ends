@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - main
+      - develop
     paths:
       - "forms-flow-nav/**"
+      - "VERSION"
 defaults:
   run:
     shell: bash
