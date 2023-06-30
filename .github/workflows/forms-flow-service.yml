@@ -18,6 +18,21 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16.17.0'
+      - name: Set version
+        if: ${{ github.ref != 'refs/heads/main' }}
+        working-directory: .
+        run: |
+          VER=$(cat VERSION)
+          echo "VERSION=$VER" >> $GITHUB_ENV
+          
+      - name: Set version
+        if: ${{ github.ref == 'refs/heads/main' }}
+        working-directory: .
+        run: |
+          VER=$(cat VERSION)
+          VER=${VER/-alpha/''}
+          echo "VERSION=$VER" >> $GITHUB_ENV
+      
       - run: npm ci
         working-directory: ./forms-flow-service
       - run: npm run build:webpack
@@ -29,5 +44,8 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - run: npm ci
         working-directory: ./scripts
-      - run: BUCKET=${{ secrets.BUCKET}} node index forms-flow-service
+      - run: node index forms-flow-theme
+        env:
+          BUCKET: ${{ secrets.BUCKET}}
+          VERSION: ${{ env.VERSION }}
         working-directory: ./scripts
