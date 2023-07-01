@@ -29,7 +29,7 @@ const NavBar = React.memo(({ props }) => {
   const [selectLanguages, setSelectLanguages] = React.useState([]);
   const [applicationTitle, setApplicationTitle] = React.useState("");
   const [tenantLogo, setTenantLogo] = React.useState("/logo_skeleton.svg");
-
+  
   React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
@@ -69,6 +69,7 @@ const NavBar = React.memo(({ props }) => {
     }
   }, [tenant]);
 
+
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
@@ -81,6 +82,7 @@ const NavBar = React.memo(({ props }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+
 
   /**
    * For anonymous forms the only way to identify the tenant is through the
@@ -138,6 +140,14 @@ const NavBar = React.memo(({ props }) => {
       setLang(locale);
     }
   }, [instance]);
+
+  React.useEffect(() => {
+    if (location.pathname.includes('public') && !isAuthenticated) {
+      setApplicationTitle("formsflow.ai");
+      setTenantLogo("/logo.svg");
+    }
+  }, [!isAuthenticated, location]);
+
 
   const handleOnclick = (selectedLang) => {
     setLang(selectedLang);
