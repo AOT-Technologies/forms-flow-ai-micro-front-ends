@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
-import { Link, BrowserRouter } from "react-router-dom";
+import { Link, BrowserRouter, useHistory } from "react-router-dom";
 import { getUserRoleName, getUserRolePermission } from "./helper/user";
 import createURLPathMatchExp from "./helper/regExp/pathMatch";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,11 @@ import {
   STAFF_DESIGNER,
   MULTITENANCY_ENABLED,
   ADMIN_ROLE,
+  ENABLE_FORMS_MODULE,
+  ENABLE_PROCESSES_MODULE,
+  ENABLE_DASHBOARDS_MODULE,
+  ENABLE_APPLICATIONS_MODULE,
+  ENABLE_TASKS_MODULE,
 } from "./constants/constants";
 import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
@@ -21,6 +26,7 @@ import { setShowApplications } from "./constants/userContants";
 import { LANGUAGE } from "./constants/constants";
 
 const NavBar = React.memo(({ props }) => {
+  const history = useHistory();
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [tenant, setTenant] = React.useState({});
   const [location, setLocation] = React.useState({ pathname: "/" });
@@ -120,7 +126,7 @@ const NavBar = React.memo(({ props }) => {
 
   useEffect(() => {
     const language = lang ? lang : LANGUAGE;
-    props.publish("ES_CHANGE_LANGUAGE",language);
+    props.publish("ES_CHANGE_LANGUAGE", language);
     i18n.changeLanguage(language);
     localStorage.setItem("lang", language);
   }, [lang]);
@@ -144,6 +150,7 @@ const NavBar = React.memo(({ props }) => {
   };
 
   const logout = () => {
+    history.push(baseUrl);
     instance.userLogout();
   };
 
@@ -174,18 +181,21 @@ const NavBar = React.memo(({ props }) => {
                   id="main-menu-nav"
                   className="active align-items-lg-center"
                 >
-                  <Nav.Link
-                    as={Link}
-                    to={`${baseUrl}form`}
-                    className={`main-nav nav-item ${
-                      pathname.match(createURLPathMatchExp("form", baseUrl))
-                        ? "active-tab"
-                        : "inactive-tab"
-                    }`}
-                  >
-                    <i className="fa fa-wpforms fa-fw fa-lg mr-2" />
-                    {t("Forms")}
-                  </Nav.Link>
+                  {ENABLE_FORMS_MODULE && (
+                    <Nav.Link
+                      as={Link}
+                      to={`${baseUrl}form`}
+                      className={`main-nav nav-item ${
+                        pathname.match(createURLPathMatchExp("form", baseUrl))
+                          ? "active-tab"
+                          : "inactive-tab"
+                      }`}
+                    >
+                      <i className="fa fa-wpforms fa-fw fa-lg mr-2" />
+                      {t("Forms")}
+                    </Nav.Link>
+                  )}
+
                   {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
                     <Nav.Link
                       as={Link}
@@ -201,84 +211,94 @@ const NavBar = React.memo(({ props }) => {
                     </Nav.Link>
                   ) : null}
 
-                  {getUserRolePermission(userRoles, STAFF_DESIGNER) ? (
-                    <Nav.Link
-                      as={Link}
-                      to={`${baseUrl}processes`}
-                      className={`main-nav nav-item ${
-                        pathname.match(
-                          createURLPathMatchExp("processes", baseUrl)
-                        )
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
-                    >
-                      <i className="fa fa-cogs fa-lg fa-fw mr-2" />
-                      {t("Processes")}
-                    </Nav.Link>
-                  ) : null}
+                  {getUserRolePermission(userRoles, STAFF_DESIGNER)
+                    ? ENABLE_PROCESSES_MODULE && (
+                        <Nav.Link
+                          as={Link}
+                          to={`${baseUrl}processes`}
+                          className={`main-nav nav-item ${
+                            pathname.match(
+                              createURLPathMatchExp("processes", baseUrl)
+                            )
+                              ? "active-tab"
+                              : "inactive-tab"
+                          }`}
+                        >
+                          <i className="fa fa-cogs fa-lg fa-fw mr-2" />
+                          {t("Processes")}
+                        </Nav.Link>
+                      )
+                    : null}
 
-                  {showApplications ? (
-                    getUserRolePermission(userRoles, STAFF_REVIEWER) ||
-                    getUserRolePermission(userRoles, CLIENT) ? (
-                      <Nav.Link
-                        as={Link}
-                        to={`${baseUrl}application`}
-                        className={`main-nav nav-item ${
-                          pathname.match(
-                            createURLPathMatchExp("application", baseUrl)
-                          )
-                            ? "active-tab"
-                            : pathname.match(
-                                createURLPathMatchExp("draft", baseUrl)
+                  {showApplications
+                    ? getUserRolePermission(userRoles, STAFF_REVIEWER) ||
+                      getUserRolePermission(userRoles, CLIENT)
+                      ? ENABLE_APPLICATIONS_MODULE && (
+                          <Nav.Link
+                            as={Link}
+                            to={`${baseUrl}application`}
+                            className={`main-nav nav-item ${
+                              pathname.match(
+                                createURLPathMatchExp("application", baseUrl)
                               )
-                            ? "active-tab"
-                            : "inactive-tab"
-                        }`}
-                      >
-                        {" "}
-                        <i className="fa fa-list-alt fa-fw fa-lg mr-2" />
-                        {t("Applications")}
-                      </Nav.Link>
-                    ) : null
-                  ) : null}
-                  {getUserRolePermission(userRoles, STAFF_REVIEWER) ? (
-                    <Nav.Link
-                      as={Link}
-                      to={`${baseUrl}task`}
-                      className={`main-nav nav-item taskDropdown ${
-                        pathname.match(createURLPathMatchExp("task", baseUrl))
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
-                    >
-                      {" "}
-                      <i className="fa fa-list fa-lg fa-fw mr-2" />
-                      {t("Tasks")}
-                    </Nav.Link>
-                  ) : null}
-
-                  {getUserRolePermission(userRoles, STAFF_REVIEWER) ? (
-                    <Nav.Link
-                      as={Link}
-                      to={`${baseUrl}metrics`}
-                      data-testid="Dashboards"
-                      className={`main-nav nav-item ${
-                        pathname.match(
-                          createURLPathMatchExp("metrics", baseUrl)
-                        ) ||
-                        pathname.match(
-                          createURLPathMatchExp("insights", baseUrl)
+                                ? "active-tab"
+                                : pathname.match(
+                                    createURLPathMatchExp("draft", baseUrl)
+                                  )
+                                ? "active-tab"
+                                : "inactive-tab"
+                            }`}
+                          >
+                            {" "}
+                            <i className="fa fa-list-alt fa-fw fa-lg mr-2" />
+                            {t("Applications")}
+                          </Nav.Link>
                         )
-                          ? "active-tab"
-                          : "inactive-tab"
-                      }`}
-                    >
-                      {" "}
-                      <i className="fa fa-tachometer fa-lg fa-fw mr-2" />
-                      {t("Dashboards")}
-                    </Nav.Link>
-                  ) : null}
+                      : null
+                    : null}
+                  {getUserRolePermission(userRoles, STAFF_REVIEWER)
+                    ? ENABLE_TASKS_MODULE && (
+                        <Nav.Link
+                          as={Link}
+                          to={`${baseUrl}task`}
+                          className={`main-nav nav-item taskDropdown ${
+                            pathname.match(
+                              createURLPathMatchExp("task", baseUrl)
+                            )
+                              ? "active-tab"
+                              : "inactive-tab"
+                          }`}
+                        >
+                          {" "}
+                          <i className="fa fa-list fa-lg fa-fw mr-2" />
+                          {t("Tasks")}
+                        </Nav.Link>
+                      )
+                    : null}
+
+                  {getUserRolePermission(userRoles, STAFF_REVIEWER)
+                    ? ENABLE_DASHBOARDS_MODULE && (
+                        <Nav.Link
+                          as={Link}
+                          to={`${baseUrl}metrics`}
+                          data-testid="Dashboards"
+                          className={`main-nav nav-item ${
+                            pathname.match(
+                              createURLPathMatchExp("metrics", baseUrl)
+                            ) ||
+                            pathname.match(
+                              createURLPathMatchExp("insights", baseUrl)
+                            )
+                              ? "active-tab"
+                              : "inactive-tab"
+                          }`}
+                        >
+                          {" "}
+                          <i className="fa fa-tachometer fa-lg fa-fw mr-2" />
+                          {t("Dashboards")}
+                        </Nav.Link>
+                      )
+                    : null}
                 </Nav>
 
                 <Nav className="px-lg-0 px-3">
