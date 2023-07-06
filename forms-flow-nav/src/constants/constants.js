@@ -53,13 +53,46 @@ export const KEYCLOAK_REALM =
 export const KEYCLOAK_URL =
   (window._env_ && window._env_.REACT_APP_KEYCLOAK_URL);
 
-  export const KEYCLOAK_AUTH_URL = `${KEYCLOAK_URL}/auth`;
+
+  export const ENABLE_FORMS_MODULE =
+  window._env_?.REACT_APP_ENABLE_FORMS_MODULE === "false" ||
+  window._env_?.REACT_APP_ENABLE_FORMS_MODULE === false
+    ? false
+    : true;
+
+export const ENABLE_TASKS_MODULE =
+  window._env_?.REACT_APP_ENABLE_TASKS_MODULE === "false" ||
+  window._env_?.REACT_APP_ENABLE_TASKS_MODULE === false
+    ? false
+    : true;
+
+export const ENABLE_DASHBOARDS_MODULE =
+  window._env_?.REACT_APP_ENABLE_DASHBOARDS_MODULE === "false" ||
+  window._env_?.REACT_APP_ENABLE_DASHBOARDS_MODULE === false
+    ? false
+    : true;
+
+export const ENABLE_PROCESSES_MODULE =
+  window._env_?.REACT_APP_ENABLE_PROCESSES_MODULE === "false" ||
+  window._env_?.REACT_APP_ENABLE_PROCESSES_MODULE === false
+    ? false
+    : true;
+
+export const ENABLE_APPLICATIONS_MODULE =
+  window._env_?.REACT_APP_ENABLE_APPLICATIONS_MODULE === "false" ||
+  window._env_?.REACT_APP_ENABLE_APPLICATIONS_MODULE === false
+    ? false
+    : true;
+
+
+export const KEYCLOAK_AUTH_URL = `${KEYCLOAK_URL}/auth`;
 
 export const CLIENT = "formsflow-client";
 export const STAFF_DESIGNER = "formsflow-designer";
 export const STAFF_REVIEWER = "formsflow-reviewer";
 export const ANONYMOUS_USER = "anonymous";
 export const ADMIN_ROLE = "formsflow-admin";
+
 
 
 export const OPERATIONS = {

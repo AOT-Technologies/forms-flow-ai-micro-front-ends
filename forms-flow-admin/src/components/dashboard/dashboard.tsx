@@ -37,7 +37,7 @@ const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
 };
 
 export const InsightDashboard = React.memo((props: any) => {
-  const { dashboards, groups, authorizations, setCount } = props;
+  const { dashboards, groups, authorizations, setCount,authReceived } = props;
 
   const isGroupUpdated = groups.length > 0;
   const [authDashBoardList, setAuthDashboardList] = React.useState([]);  
@@ -96,7 +96,7 @@ export const InsightDashboard = React.memo((props: any) => {
   React.useEffect(() => {
     if (
       dashboards?.results?.length > 0 &&
-      authorizations.length > 0 &&
+      authReceived &&
       !isAuthUpdated
     ) {
       let authList = updateAuthList(authorizations);
@@ -105,7 +105,7 @@ export const InsightDashboard = React.memo((props: any) => {
       setIsAuthUpdated(true);
       setIsLoading(false);
     }
-  }, [dashboards, authorizations, isAuthUpdated]);
+  }, [dashboards, authReceived, isAuthUpdated]);
 
   // handles the add button click event
   const handleClick = (event, rowData) => {
