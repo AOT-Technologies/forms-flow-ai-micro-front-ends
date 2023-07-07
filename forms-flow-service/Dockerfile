@@ -32,7 +32,7 @@ RUN mkdir /app
 COPY --from=build-stage /forms-flow-service/app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
 
-EXPOSE 3007:8080
+EXPOSE 8080
 
 WORKDIR /usr/share/nginx/html/config
 # COPY .env .

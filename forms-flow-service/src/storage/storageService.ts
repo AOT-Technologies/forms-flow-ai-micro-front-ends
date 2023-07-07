@@ -23,6 +23,7 @@ enum User {
      */
     public static save(key: string, value: string): void {
       sessionStorage.setItem(key, value);
+      localStorage.setItem(key,value);
     }
     /**
      * removes the key value pair from the session storage if
