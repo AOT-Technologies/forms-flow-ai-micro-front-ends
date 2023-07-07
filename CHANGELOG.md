@@ -6,7 +6,21 @@ Mark items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upco
 
 ### Added
 
-- **forms-flow-admin**: Converted from monolithic to micro front-end service.
-- **forms-flow-nav**: Separated to micro front-end service.
-- **forms-flow-service**: All services are separated from formsflow web to services.
-- **forms-flow-theme**: Application theme service separated to micro front-end.
+**forms-flow-admin**
+  - Role creation functionality
+  - User role management
+ 
+**forms-flow-nav**
+  - Separated to micro front-end service
+
+**forms-flow-service**
+  - Added storage services
+  - Integrated Keycloak services
+  - Implemented API call services
+    
+**forms-flow-theme**
+  - All css components added to forms-flow-theme
+
+**General**
+ - Implemented pub-sub mechanism to emit and receive events
+    
