@@ -31,7 +31,7 @@ LABEL Name="formsflow"
 RUN mkdir /app
 COPY --from=build-stage /forms-flow-nav/app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
-EXPOSE 3005:8080
+EXPOSE 8080
 WORKDIR /usr/share/nginx/html/config
 # COPY .env .
 RUN apk add --no-cache bash
