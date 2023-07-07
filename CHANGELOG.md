@@ -4,7 +4,7 @@ Mark items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upco
 
 ## 5.2.0 - 2022-07-06
 
-### Added
+`Added`
 
 **forms-flow-admin**
   - Role creation functionality
@@ -21,6 +21,6 @@ Mark items as `Added`, `Changed`, `Fixed`, `Removed`, `Untested Features`, `Upco
 **forms-flow-theme**
   - All css components added to forms-flow-theme
 
-**General**
+`Generic changes`
  - Implemented pub-sub mechanism to emit and receive events
     
