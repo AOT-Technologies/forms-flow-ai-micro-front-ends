@@ -460,7 +460,7 @@ const Roles = React.memo((props: any) => {
     <>
       <div className="container-admin">
         <div className="sub-container">
-          <div className="search-role">
+          <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5">
             <Form.Control
               type="text"
               placeholder={t("Search by role name")}
@@ -481,7 +481,7 @@ const Roles = React.memo((props: any) => {
               </Button>
             )}
           </div>
-          <Button variant="primary" onClick={handleShowRoleModal}>
+          <Button variant="primary" className="font-size col-xl-2 col-lg-3 col-md-3 col-sm-4" onClick={handleShowRoleModal}>
             <i className="fa fa-l fa-plus-circle mr-1" /> <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>

@@ -34,10 +34,17 @@ const NavBar = React.memo(({ props }) => {
   const [selectLanguages, setSelectLanguages] = React.useState([]);
   const [applicationTitle, setApplicationTitle] = React.useState("");
   const [tenantLogo, setTenantLogo] = React.useState("/logo_skeleton.svg");
-
+  const defaultLogoPath = document.documentElement.style.getPropertyValue("--navbar-logo-path") || "/logo.svg";
   React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
+    });
+
+    props.subscribe("FF_PUBLIC", () => {
+      if(MULTITENANCY_ENABLED){
+        setApplicationTitle(APPLICATION_NAME)
+        setTenantLogo(defaultLogoPath)
+      }
     });
 
     props.subscribe("ES_TENANT", (msg, data) => {
@@ -97,8 +104,7 @@ const NavBar = React.memo(({ props }) => {
 
   const logoPath = MULTITENANCY_ENABLED
     ? tenantLogo
-    : document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
-      "/logo.svg";
+    : defaultLogoPath;
   const getAppName = useMemo(
     () => () => {
       if (!MULTITENANCY_ENABLED) {
@@ -361,9 +367,9 @@ const NavBar = React.memo(({ props }) => {
                 </Nav>
               </Navbar.Collapse>
             ) : (
-              <Link to={loginUrl} className="btn btn-primary">
-                Login
-              </Link>
+            !MULTITENANCY_ENABLED && <Link to={loginUrl} className="btn btn-primary">
+              Login
+            </Link>
             )}
           </Container>
         </Navbar>
