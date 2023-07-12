@@ -622,7 +622,7 @@ div.upload input[type="file"] {
 }
 
 .admin-container > .header-container {
-  padding-top: 5rem !important;
+  padding-top: 10px !important;
   margin-left: 3.938rem;
   margin-right: 4.188rem;
   padding-left: 1.938rem;

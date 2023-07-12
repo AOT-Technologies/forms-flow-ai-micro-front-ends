@@ -163,7 +163,7 @@ const NavBar = React.memo(({ props }) => {
   return (
     <BrowserRouter>
       <header>
-        <Navbar expand="lg" className="topheading-border-bottom" fixed="top">
+        <Navbar expand="lg" className="topheading-border-bottom position-relative" fixed="top">
           <Container fluid>
             <Navbar.Brand className="d-flex">
               <Link to={`${baseUrl}`}>
