@@ -1,11 +1,12 @@
 import React from "react";
 import "./footer.scss";
-// import { version } from "../../../package.json";
+import Package from "../../../package.json";
 import { Translation } from "react-i18next";
 
 const version_org = "5.2.0";
 const Footer = React.memo(() => {
   //const today = new Date();
+   
   return (
     <div className="footer">
       <div className="col-12 text-center text-align footer-text" role="main">
@@ -18,7 +19,7 @@ const Footer = React.memo(() => {
         >
            formsflow.ai 
         </a>
-        {` v${version_org}`} {/*{today.getFullYear()}*/}
+        {` v${Package.version}`} {/*{today.getFullYear()}*/}
       </div>
     </div>
   );
