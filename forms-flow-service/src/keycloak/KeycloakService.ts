@@ -116,20 +116,26 @@ import Keycloak, {
           if (authenticated) {
             console.log("Authenticated");
             if (!!this.kc?.resourceAccess) {
-              const UserRoles = this.kc?.resourceAccess[this.kc.clientId!].roles;
-              StorageService.save(StorageService.User.USER_ROLE, JSON.stringify(UserRoles));
-              this.token = this.kc.token;
-              this._tokenParsed = this.kc.tokenParsed;
-              StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
-              this.kc.loadUserInfo().then((data) => {
-                this.userData = data;
-                StorageService.save(
-                  StorageService.User.USER_DETAILS,
-                  JSON.stringify(data)
-                );
-                callback();
-              });
-              this.refreshToken();
+              const UserRoles = this.kc?.resourceAccess[this.kc.clientId!]?.roles;
+              if(!UserRoles){
+                alert("wrong tenant details");
+                this.logout();
+              }
+              else{
+                StorageService.save(StorageService.User.USER_ROLE, JSON.stringify(UserRoles));
+                this.token = this.kc.token;
+                this._tokenParsed = this.kc.tokenParsed;
+                StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
+                this.kc.loadUserInfo().then((data) => {
+                  this.userData = data;
+                  StorageService.save(
+                    StorageService.User.USER_DETAILS,
+                    JSON.stringify(data)
+                  );
+                  callback();
+                });
+                this.refreshToken();
+              }      
             } else {
               this.logout();
             }
