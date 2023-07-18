@@ -116,7 +116,12 @@ import Keycloak, {
           if (authenticated) {
             console.log("Authenticated");
             if (!!this.kc?.resourceAccess) {
-              const UserRoles = this.kc?.resourceAccess[this.kc.clientId!].roles;
+              const UserRoles = this.kc?.resourceAccess[this.kc.clientId!]?.roles;
+              if(!UserRoles){
+                alert("wrong tenant details")
+                this.logout();
+              }
+              else{
               StorageService.save(StorageService.User.USER_ROLE, JSON.stringify(UserRoles));
               this.token = this.kc.token;
               this._tokenParsed = this.kc.tokenParsed;
@@ -130,7 +135,9 @@ import Keycloak, {
                 callback();
               });
               this.refreshToken();
-            } else {
+              }
+            }
+              else {
               this.logout();
             }
           } else {
