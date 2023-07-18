@@ -47,9 +47,9 @@ class I18nManager {
 
   private async checkCustomResourceBundleAndUpdate() {
     const envValue: any = (window as any)._env_;
-    if (envValue.REACT_APP_CUSTOM_RESOURCE_BUNDLE) {
+    if (envValue.REACT_APP_CUSTOM_RESOURCE_BUNDLE_URL) {
       try {
-        const response = await fetch(envValue.REACT_APP_CUSTOM_RESOURCE_BUNDLE);
+        const response = await fetch(envValue.REACT_APP_CUSTOM_RESOURCE_BUNDLE_URL);
         const data = await response.json();
 
         Object.keys(data).forEach((key) => {
