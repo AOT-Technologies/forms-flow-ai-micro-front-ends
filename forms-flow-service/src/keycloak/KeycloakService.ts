@@ -109,7 +109,7 @@ import Keycloak, {
      * make sure `silent-check-sso.html` is present in public folder
      * @param callback - Optional - callback function to excecute after succeessful authentication
      */
-    public initKeycloak(callback: () => void = () => {}): void {
+    public initKeycloak(callback: (authenticated) => void = () => {}): void {
       this.kc
         ?.init(this.keycloakInitConfig)
         .then((authenticated) => {
@@ -118,8 +118,7 @@ import Keycloak, {
             if (!!this.kc?.resourceAccess) {
               const UserRoles = this.kc?.resourceAccess[this.kc.clientId!]?.roles;
               if(!UserRoles){
-                alert("wrong tenant details")
-                this.logout();
+                callback(false);
               }
               else{
               StorageService.save(StorageService.User.USER_ROLE, JSON.stringify(UserRoles));
@@ -132,7 +131,7 @@ import Keycloak, {
                   StorageService.User.USER_DETAILS,
                   JSON.stringify(data)
                 );
-                callback();
+                callback(true);
               });
               this.refreshToken();
               }
