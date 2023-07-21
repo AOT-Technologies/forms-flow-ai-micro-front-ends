@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_FR = {
+  "and you will no longer have the access to this form in bundles": "et vous n'aurez plus accès à ce formulaire dans les bundles",
+  "You will no longer have the access to this form in bundles": "Vous n'aurez plus accès à ce formulaire dans les bundles",
   "Bad Request":"Bad Request",
   "Select the form to be displayed based on the  above criteria":"Sélectionnez le formulaire à afficher en fonction des critères ci-dessus.",
   "Create the criteria using the API key of any form component and a conditional notation. For example, 'age > 18' where 'age' is the API key of a form component":"Créez les critères en utilisant la clé API de n'importe quel composant de formulaire et une notation conditionnelle. Par exemple, 'age > 18', où 'age' est la clé API d'un composant de formulaire.",

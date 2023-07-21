@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+    "and you will no longer have the access to this form in bundles": "и няма да имате достъп до тази форма в пакети",
+    "You will no longer have the access to this form in bundles": "Вече няма да имате достъп до тази форма в пакети",
     "Bad Request":"Неправилна заявка",
     "Select the form to be displayed based on the  above criteria":"Изберете формуляра, който да се показва въз основа на горепосочените критерии.",
     "Create the criteria using the API key of any form component and a conditional notation. For example, 'age > 18' where 'age' is the API key of a form component":"Създайте критериите, използвайки API ключа на който и да е компонент на формуляр и условна нотация. Например, 'age > 18', където 'age' е API ключът на компонент на формуляр.",

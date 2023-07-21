@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_ZH = {
+  "and you will no longer have the access to this form in bundles": "而且您将不再能够在包裹中访问此表单",
+  "You will no longer have the access to this form in bundles": "您将不再能够在包裹中访问此表单",
   "Bad Request":"错误的请求",
   "Select the form to be displayed based on the  above criteria":"根据上述条件选择要显示的表单。",
   "Create the criteria using the API key of any form component and a conditional notation. For example, 'age > 18' where 'age' is the API key of a form component":"使用任何表单组件的API密钥和条件符号创建条件。例如，'age > 18'，其中'age'是表单组件的API密钥。",
