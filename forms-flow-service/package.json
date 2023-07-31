@@ -48,6 +48,7 @@
     "axios": "^1.3.0",
     "i18next": "^23.2.11",
     "keycloak-js": "^20.0.3",
+    "moment": "^2.29.4",
     "single-spa": "^5.9.3"
   },
   "types": "dist/formsflow-services.d.ts"
