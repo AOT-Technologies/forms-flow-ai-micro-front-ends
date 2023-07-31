@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+    "Access restricted by its designer..!": "Достъпът е ограничен от дизайнера..!",
     "and you will no longer have the access to this form in bundles": "и няма да имате достъп до тази форма в пакети",
     "You will no longer have the access to this form in bundles": "Вече няма да имате достъп до тази форма в пакети",
     "Bad Request":"Неправилна заявка",
