@@ -25,4 +25,5 @@ export const DEFAULT_ROLES = [
   "/formsflow/formsflow-designer",
   "/formsflow/formsflow-reviewer",
   "/formsflow/formsflow-client",
+  "/formsflow-admin"
 ];
