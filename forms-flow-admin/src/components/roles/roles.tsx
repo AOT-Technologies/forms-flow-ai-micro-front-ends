@@ -89,7 +89,7 @@ const Roles = React.memo((props: any) => {
       }
     );
   };
-
+  
   const handleChangeName = (e) => {
     setPayload({ ...payload, name: e.target.value });
   };
@@ -100,10 +100,28 @@ const Roles = React.memo((props: any) => {
   const validateRolePayload = (payload) => {
     return !(payload.name === "" || payload.description === "");
   };
-
+  const hasSpecialCharacters = (text) => {
+    const regex = /[!@#$%^&*(),.?":{}|<>_\-/]/;
+    return regex.test(text);
+  };
+  const hasSpecialCharacterswithslash = (text) => {
+    const regex = /[!@#$%^&*(),.?":{}|<>_-]/;
+    return regex.test(text);
+  };
   const handleCreateRole = () => {
     if (!validateRolePayload(payload)) {
       return;
+    }
+    if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
+      if (hasSpecialCharacters(payload.name)) {
+        toast.error("Role names cannot contain special characters except  /, _ , -");
+        return;
+      }
+    } else {
+      if (hasSpecialCharacterswithslash(payload.name)) {
+        toast.error("Role names cannot contain special characters except _ , - ");
+        return;
+      }
     }
     setDisabled(true);
     CreateRole(
