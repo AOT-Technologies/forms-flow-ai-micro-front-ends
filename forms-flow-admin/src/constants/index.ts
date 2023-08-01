@@ -18,3 +18,11 @@ export const KEYCLOAK_ENABLE_CLIENT_AUTH =
 export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
 
 export const ADMIN_ROLE = "formsflow-admin";
+
+export const DEFAULT_ROLES = [
+  "/camunda-admin",
+  "/formsflow",
+  "/formsflow/formsflow-designer",
+  "/formsflow/formsflow-reviewer",
+  "/formsflow/formsflow-client",
+];

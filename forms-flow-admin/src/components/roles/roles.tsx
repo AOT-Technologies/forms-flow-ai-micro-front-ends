@@ -15,6 +15,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH } from "../../constants";
+import { DEFAULT_ROLES } from "../../constants";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
@@ -433,6 +434,7 @@ const Roles = React.memo((props: any) => {
       text: <Translation>{(t) => t("Actions")}</Translation>,
       formatter: (cell, rowData, rowIdx, formatExtraData) => {
         return (
+          DEFAULT_ROLES.includes(rowData.name) ? null :
           <div>
             <i
               className="fa fa-pencil fa-lg mr-4"
