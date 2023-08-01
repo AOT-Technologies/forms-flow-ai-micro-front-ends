@@ -384,5 +384,7 @@ export const RESOURCE_BUNDLES_BG = {
     "Update success!":"Успешна актуализация!",
     "No results found":"Няма намерени резултати",
     "Edit Role":"Редактиране на роля",
-    "Failed to fetch users!":"Неуспешно извличане на потребители!"
+    "Failed to fetch users!":"Неуспешно извличане на потребители!",
+    "Role names cannot contain special characters except   _ , -": "Имената на ролите не могат да съдържат специални знаци освен _, -",
+    "Role names cannot contain special characters except _ , - , / ": "Имената на ролите не могат да съдържат специални знаци освен _, -, /"
 };

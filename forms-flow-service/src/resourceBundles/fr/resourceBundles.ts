@@ -386,8 +386,9 @@ export const RESOURCE_BUNDLES_FR = {
   "Update success!":"Mise à jour réussie!",
   "No results found":"Aucun résultat trouvé",
   "Edit Role":"Modifier le rôle",
-  "Failed to fetch users!":"Échec de la récupération des utilisateurs!"
-
+  "Failed to fetch users!":"Échec de la récupération des utilisateurs!",
+  "Role names cannot contain special characters except   _ , -": "Les noms de rôle ne peuvent pas contenir de caractères spéciaux sauf _ , -",
+  "Role names cannot contain special characters except _ , - , / ": "Les noms de rôle ne peuvent pas contenir de caractères spéciaux sauf _ , - , /"
 };
 
 

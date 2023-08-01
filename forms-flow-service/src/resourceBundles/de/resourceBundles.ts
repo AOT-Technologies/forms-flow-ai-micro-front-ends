@@ -387,6 +387,7 @@ export const RESOURCE_BUNDLES_DE = {
     "Update success!":"Update-Erfolg!",
     "No results found":"keine Ergebnisse gefunden",
     "Edit Role":"Rolle bearbeiten",
-    "Failed to fetch users!":"Nutzer konnten nicht abgerufen werden!"
-
+    "Failed to fetch users!":"Nutzer konnten nicht abgerufen werden!",
+    "Role names cannot contain special characters except   _ , -": "Rollennamen dürfen keine Sonderzeichen außer _ , - enthalten.",
+    "Role names cannot contain special characters except _ , - , / ": "Rollennamen dürfen keine Sonderzeichen außer _ , - , / enthalten."
 };

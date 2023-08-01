@@ -384,7 +384,9 @@ export const RESOURCE_BUNDLES_EN = {
   "Update success!":"Update success!",
   "No results found":"No results found",
   "Edit Role":"Edit Role",
-  "Failed to fetch users!":"Failed to fetch users!"
+  "Failed to fetch users!":"Failed to fetch users!",
+  "Role names cannot contain special characters except   _ , -": "Role names cannot contain special characters except   _ , -",
+  "Role names cannot contain special characters except _ , - , / ": "Role names cannot contain special characters except _ , - , / "
 };
 
 
