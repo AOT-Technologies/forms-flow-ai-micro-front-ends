@@ -114,12 +114,12 @@ const Roles = React.memo((props: any) => {
     }
     if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
       if (hasSpecialCharacters(payload.name)) {
-        toast.error("Role names cannot contain special characters except  /, _ , -");
+        toast.error("Role names cannot contain special characters except   _ , -");
         return;
       }
     } else {
       if (hasSpecialCharacterswithslash(payload.name)) {
-        toast.error("Role names cannot contain special characters except _ , - ");
+        toast.error("Role names cannot contain special characters except _ , - , / ");
         return;
       }
     }
@@ -141,6 +141,17 @@ const Roles = React.memo((props: any) => {
   const handleUpdateRole = () => {
     if (!validateRolePayload(editCandidate)) {
       return;
+    }
+    if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
+      if (hasSpecialCharacters(editCandidate.name)) {
+        toast.error("Role names cannot contain special characters except   _ , -");
+        return;
+      }
+    } else {
+      if (hasSpecialCharacterswithslash(editCandidate.name)) {
+        toast.error("Role names cannot contain special characters except _ , - , / ");
+        return;
+      }
     }
     setDisabled(true);
     UpdateRole(
