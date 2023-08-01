@@ -195,10 +195,15 @@ const Roles = React.memo((props: any) => {
     setDisabled(false);
   };
 
-  const checkDefaultRoleOrNot  = (role) =>{
+  const checkDefaultRoleOrNot  = (role:any) =>{
     if(MULTITENANCY_ENABLED && tenantId){
-      const roles = ["designer","client","reviewer","admin"];
-      return roles.includes(role?.replace(`${tenantId}-`,''))
+      const roles = [
+        `${tenantId}-designer`,
+        `${tenantId}-client`,
+        `${tenantId}-reviewer`,
+        `${tenantId}-admin`,
+      ];
+      return roles.includes(role)
     }else{
       return DEFAULT_ROLES.includes(role);
     }
