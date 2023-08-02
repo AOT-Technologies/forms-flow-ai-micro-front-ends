@@ -1,4 +1,6 @@
 import moment from 'moment'
+import { DATE_FORMAT } from '../constants/constants'
+import { TIME_FORMAT } from '../constants/constants'
 
 class HelperServices {
 
@@ -12,7 +14,7 @@ class HelperServices {
     }
     return moment(
       new Date(date.replace(' ', 'T') + 'Z').toLocaleString(),
-    ).format(`${dateFormat}, ${timeFormat}`)
+    ).format(`${DATE_FORMAT}, ${TIME_FORMAT}`)
   }
 
   public static getLocaldate(date: string, format: string): any {
@@ -23,7 +25,7 @@ class HelperServices {
       ? new Date(date.replace(' ', 'T') + 'Z').toLocaleString()
       : '-'
     const dateTime = moment(dateTimeString)
-    const localDate = dateTime.format(format)
+    const localDate = dateTime.format(DATE_FORMAT)
     return localDate
   }
 
@@ -35,7 +37,7 @@ class HelperServices {
       ? new Date(date.replace(' ', 'T') + 'Z').toLocaleString()
       : '-'
     const dateTime = moment(dateTimeString)
-    const localTime = dateTime.format(format)
+    const localTime = dateTime.format(TIME_FORMAT)
     return localTime
   }
 }
