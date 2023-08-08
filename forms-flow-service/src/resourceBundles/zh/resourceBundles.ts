@@ -383,7 +383,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Update success!":"更新成功",
   "No results found":"未找到结果",
   "Edit Role":"编辑角色",
-  "Failed to fetch users!":"获取用户失败！"
+  "Failed to fetch users!":"获取用户失败！",
+  "Role names cannot contain special characters except   _ , -": "角色名称不能包含除 _ 、 - 之外的特殊字符",
+  "Role names cannot contain special characters except _ , - , / ": "角色名称不能包含除 _ 、 - 、 / 之外的特殊字符"
 
 };
 
