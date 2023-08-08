@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import "./roles.scss";
+import { useParams } from "react-router-dom";
 import { Translation, useTranslation } from "react-i18next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import Form from "react-bootstrap/Form";
@@ -14,10 +15,12 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
-import { KEYCLOAK_ENABLE_CLIENT_AUTH } from "../../constants";
+import { KEYCLOAK_ENABLE_CLIENT_AUTH, MULTITENANCY_ENABLED } from "../../constants";
+import { DEFAULT_ROLES } from "../../constants";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
+  const  {tenantId}  = useParams();
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
@@ -223,6 +226,19 @@ const Roles = React.memo((props: any) => {
     setDisabled(false);
   };
 
+  const checkDefaultRoleOrNot  = (role:any) =>{
+    if(MULTITENANCY_ENABLED && tenantId){
+      const roles = [
+        `${tenantId}-designer`,
+        `${tenantId}-client`,
+        `${tenantId}-reviewer`,
+        `${tenantId}-admin`,
+      ];
+      return roles.includes(role)
+    }else{
+      return DEFAULT_ROLES.includes(role);
+    }
+  }
   // Delete confirmation
 
   const confirmDelete = () => (
@@ -464,6 +480,7 @@ const Roles = React.memo((props: any) => {
       text: <Translation>{(t) => t("Actions")}</Translation>,
       formatter: (cell, rowData, rowIdx, formatExtraData) => {
         return (
+          checkDefaultRoleOrNot(rowData.name) ? null :
           <div>
             <i
               className="fa fa-pencil fa-lg mr-4"
