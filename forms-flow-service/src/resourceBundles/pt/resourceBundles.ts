@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_PT = {
+  "Access restricted by its designer..!": "Acesso restrito pelo designer..!",
   "and you will no longer have the access to this form in bundles": "e você não terá mais acesso a este formulário em pacotes",
   "You will no longer have the access to this form in bundles": "Você não terá mais acesso a este formulário em pacotes",
   "Bad Request":"Pedido ruim",

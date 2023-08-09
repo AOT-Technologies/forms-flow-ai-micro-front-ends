@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_ZH = {
+  "Access restricted by its designer..!": "访问受设计者限制..!",
   "and you will no longer have the access to this form in bundles": "而且您将不再能够在包裹中访问此表单",
   "You will no longer have the access to this form in bundles": "您将不再能够在包裹中访问此表单",
   "Bad Request":"错误的请求",
