@@ -110,7 +110,7 @@ const Roles = React.memo((props: any) => {
   };
   //check regex exept _ - /
   const hasSpecialCharacterswithslash = (text) => {
-    const regex = /^[A-Za-z0-9_\-/]+$/;
+    const regex = /[^A-Za-z0-9_\-\/]/;
     return regex.test(text);
   };
   const handleCreateRole = () => {
