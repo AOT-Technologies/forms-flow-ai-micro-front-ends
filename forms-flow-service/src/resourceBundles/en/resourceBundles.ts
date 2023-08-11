@@ -337,7 +337,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Overview": "Overview",
   "Design Permission": "Design Permission",
   "Application Permission":"Application Permission",
-  "All Designers": "Alle Designer",
+  "All Designers": "All Designers",
   "Private(only you)": "Private(only you)",
   "Specific Designer Group": "Specific Designer Group",
   "Submission Permission": "Submission Permission",
