@@ -1,0 +1,25 @@
+@import "./themes.scss";
+
+.footers {
+    border-top: 2px solid $gray-300;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    position: fixed;
+    background-color: $gray-100;
+    bottom: 0;
+    height: 2.3rem;
+    /* Footer height */
+    width: 100%;
+    z-index: 999;
+    margin-top: 2px solid;
+}
+
+.text-align {
+    bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .footers {
+        width: 100% !important;
+    }
+}
