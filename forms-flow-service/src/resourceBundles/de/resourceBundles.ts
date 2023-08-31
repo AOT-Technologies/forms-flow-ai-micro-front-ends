@@ -119,7 +119,7 @@ export const RESOURCE_BUNDLES_DE = {
   "name": "Name",
   "value": "Wert",
   "No task matching filters found.": "Keine Aufgabe gefunden, die mit Filtern übereinstimmt.",
-   "Application Id": "Anwendungs-ID",
+   "Application ID": "Anwendungs-ID",
   "Set follow-up Date": "Folgedatum festlegen",
   "Set Due date": "Fälligkeitsdatum festlegen",
   "Add groups": "Gruppen hinzufügen",

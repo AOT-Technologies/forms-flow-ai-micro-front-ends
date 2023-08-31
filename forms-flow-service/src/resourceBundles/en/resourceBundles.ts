@@ -120,7 +120,7 @@ export const RESOURCE_BUNDLES_EN = {
   "name": "name",
   "value": "value",
   "No task matching filters found.": "No task matching filters found.",
-   "Application Id": "Application Id",
+   "Application ID": "Application ID",
   "Set follow-up Date": "Set follow-up Date",
   "Set Due date": "Set Due date",
   "Add groups": "Add groups",

@@ -114,7 +114,7 @@ export const RESOURCE_BUNDLES_BG = {
     "For Variable, ignore case of": "За променлива, пренебрегвайте регистъра на",
     "value": "стойност",
     "No task matching filters found.": "Няма намерени филтри за съвпадение на задачи.",
-     "Application Id": "Идентификатор на приложението",
+     "Application ID": "Идентификационен номер на заявление",
     "Set follow-up Date": "Задайте дата за проследяване",
     "Set Due date": "Задайте крайна дата",
     "Add groups": "Добавете групи",

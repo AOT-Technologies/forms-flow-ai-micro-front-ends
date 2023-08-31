@@ -185,7 +185,7 @@ export const RESOURCE_BUNDLES_PT = {
   "No dashboard found": "Nenhum painel encontrado",
   "to": "para",
   "of": "do",
-  "Application Id": "ID do aplicativo",
+  "Application ID": "ID do aplicativo",
   "Total Submissions": "Total de inscrições",
   "Operations": "Operações",
   "Access Groups": "Grupos de acesso",
