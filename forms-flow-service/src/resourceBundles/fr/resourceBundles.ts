@@ -166,7 +166,7 @@ export const RESOURCE_BUNDLES_FR = {
   "Group ID":"Identifiant du groupe",
   "Due":"Dû",
   "Follow-up":"Suivre",
-   "Application Id":"ID d'application",
+  "Application ID":"ID d'application",
   "Application Name":"Nom de l'application",
   "Created By":"Créé par",
   "Application Status":"État de la candidature",

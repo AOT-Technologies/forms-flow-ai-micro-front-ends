@@ -115,7 +115,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "name": "姓名",
   "value": "价值",
   "No task matching filters found.": "未找到匹配过滤器的任务。",
-   "Application Id": "应用程序编号",
+   "Application ID": "应用编号",
   "Set follow-up Date": "设置随访日期",
   "Set Due date": "设置截止日期",
   "Add groups": "添加群组",
