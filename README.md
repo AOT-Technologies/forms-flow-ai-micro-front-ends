@@ -38,7 +38,7 @@ All the modules are built with `single-spa`, a javascript router for micro front
 2. run `npm install && npm start` by checking into all modules
  note: while running `npm install` in `forms-flow-admin` might throw some error due to version conflict, just run the same command with `--force` flag to resolve this issue. This is happening since we migrated the specific module from legacy codebase and some dependencies are to be maintained and will resolve this in future.
 3. clone the formsflow.ai [https://github.com/AOT-Technologies/forms-flow-ai] repo.
-4. check into `5.2.0-alpha` brach
+4. check into `master` brach
 5. check into `forms-flow-web-root-config` directory
 6. update public/config/config.js with all the configurations
 7. run `npm install && npm start`
