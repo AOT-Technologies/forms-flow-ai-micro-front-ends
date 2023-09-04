@@ -3,7 +3,7 @@ import "./footer.scss";
 import Package from "../../../package.json";
 import { Translation } from "react-i18next";
 
-const version_org = "5.2.0";
+const version_org = "5.3.0-alpha";
 const Footer = React.memo(() => {
   //const today = new Date();
    
