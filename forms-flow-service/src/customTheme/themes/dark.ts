@@ -1,14 +1,15 @@
 const Dark = {
-    "--color-black":"#333333",
+    "--color-primary":"#333333",
     "--color-white":"#FFFFFF",
-    "--color-text":"#007BFF",
+    "--color-active":"#007BFF",
     
-    "--navbar-background": "var(--color-black)",
+    "--navbar-background": "var(--color-primary)",
     "--navbar-items": "var(--color-white)",
-    "--navbar-active": "var(--color-text)",
-    "--button-primary-background": "var(--color-black)",
+    "--navbar-active": "var(--color-active)",
+    "--button-primary-background": "var(--color-primary)",
     "--navbar-app-name": "var(--color-white)",
   };
   
   export default Dark;
+
   

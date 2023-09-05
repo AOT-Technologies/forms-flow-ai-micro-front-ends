@@ -656,7 +656,7 @@ div[disabled] {
 }
 
 a {
-  color: #0000ff;
+  color: var(--color-primary);
 }
 
 .info-background {
@@ -744,7 +744,7 @@ div.upload input[type="file"] {
 
 .head-active {
   color: #212529;
-  border-bottom: 4px solid #4d61fc;
+  border-bottom: 4px solid var(--color-primary);
 }
 
 .padding-left-60 {
@@ -796,6 +796,23 @@ div.upload input[type="file"] {
   height: 30px;
   width: 100%;
 }
+.sort-span:hover {
+
+  background-color: var(--color-primary);
+
+  .fa-lg-hover {
+    color: white;
+  }
+}
+.theme-button{
+  background-color: var(--color-primary);
+  color: white;
+  border-color: #007bff;
+}
+.theme-button:hover{
+  color: white;
+}
+
 
 @media (max-width: 768px) {
   .main-header {
