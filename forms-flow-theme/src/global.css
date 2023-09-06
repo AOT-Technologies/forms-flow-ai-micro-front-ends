@@ -796,6 +796,7 @@ div.upload input[type="file"] {
   height: 30px;
   width: 100%;
 }
+
 .sort-span:hover {
 
   background-color: var(--color-primary);
@@ -804,15 +805,33 @@ div.upload input[type="file"] {
     color: white;
   }
 }
+
 .theme-button{
   background-color: var(--color-primary);
   color: white;
   border-color: #007bff;
 }
+
 .theme-button:hover{
   color: white;
 }
 
+.white-box {
+  border: 1px solid var(--color-primary);
+}
+
+.line-hr {
+  border-top: 1px solid var(--color-primary);
+}
+
+.edit-view{
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.custom_primary_color {
+  color: var(--color-primary);
+}
 
 @media (max-width: 768px) {
   .main-header {
