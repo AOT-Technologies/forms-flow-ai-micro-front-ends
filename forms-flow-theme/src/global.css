@@ -797,15 +797,6 @@ div.upload input[type="file"] {
   width: 100%;
 }
 
-.sort-span:hover {
-
-  background-color: var(--color-primary);
-
-  .fa-lg-hover {
-    color: white;
-  }
-}
-
 .theme-button{
   background-color: var(--color-primary);
   color: white;
@@ -831,6 +822,10 @@ div.upload input[type="file"] {
 
 .custom_primary_color {
   color: var(--color-primary);
+}
+
+.btn-primary.disabled, .btn-primary:disabled{
+  background-color: var(--color-primary);
 }
 
 @media (max-width: 768px) {
