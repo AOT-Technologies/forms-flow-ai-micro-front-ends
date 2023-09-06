@@ -392,6 +392,7 @@ export const RESOURCE_BUNDLES_PT = {
     "Edit Role":"Editar função",
     "Failed to fetch users!":"Falha ao buscar usuários!",
     "Role names cannot contain special characters except   _ , -": "Os nomes das funções não podem conter caracteres especiais, exceto _ , -",
-    "Role names cannot contain special characters except _ , - , / ": "Os nomes das funções não podem conter caracteres especiais, exceto _ , - , /"
+    "Role names cannot contain special characters except _ , - , / ": "Os nomes das funções não podem conter caracteres especiais, exceto _ , - , /",
+    "Rules deployed successfully": "Regras implantadas com sucesso"
 
 };
