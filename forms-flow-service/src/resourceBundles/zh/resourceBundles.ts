@@ -390,7 +390,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Edit Role":"编辑角色",
   "Failed to fetch users!":"获取用户失败！",
   "Role names cannot contain special characters except   _ , -": "角色名称不能包含除 _ 、 - 之外的特殊字符",
-  "Role names cannot contain special characters except _ , - , / ": "角色名称不能包含除 _ 、 - 、 / 之外的特殊字符"
+  "Role names cannot contain special characters except _ , - , / ": "角色名称不能包含除 _ 、 - 、 / 之外的特殊字符",
+  "Rules deployed successfully": "规则部署成功"
 
 };
 
