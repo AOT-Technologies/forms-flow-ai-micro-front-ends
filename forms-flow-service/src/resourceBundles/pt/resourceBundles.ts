@@ -186,7 +186,7 @@ export const RESOURCE_BUNDLES_PT = {
   "No dashboard found": "Nenhum painel encontrado",
   "to": "para",
   "of": "do",
-  "Application Id": "ID do aplicativo",
+  "Application ID": "ID do aplicativo",
   "Total Submissions": "Total de inscrições",
   "Operations": "Operações",
   "Access Groups": "Grupos de acesso",
@@ -293,12 +293,16 @@ export const RESOURCE_BUNDLES_PT = {
   "Revert": "Reverter",
   "Overview": "Visão geral",
   "Design Permission": "Permissão de design",
+  "Application Permission":"Permissão de aplicativo",
   "All Designers": "Todos os Designers",
   "Private(only you)": "Privado(só você)",
   "Specific Designer Group": "Grupo específico de designers",
   "Submission Permission": "Permissão de envio",
   "All Users": "Todos os usuários",
   "Specific User Group": "Grupo de usuários específico",
+  "Specific Reviewers":"Revisores Específicos",
+  "All Reviewers":"Todos os revisores",
+  "Permission for application tracking.":"Permissão para rastreamento de aplicativos.",
   "Are you sure you wish to delete the bundle ":"Tem certeza de que deseja excluir o pacote ",
   "Criteria":"Critério",
   "Select Form":"Selecione o formulário",
@@ -389,6 +393,7 @@ export const RESOURCE_BUNDLES_PT = {
     "Edit Role":"Editar função",
     "Failed to fetch users!":"Falha ao buscar usuários!",
     "Role names cannot contain special characters except   _ , -": "Os nomes das funções não podem conter caracteres especiais, exceto _ , -",
-    "Role names cannot contain special characters except _ , - , / ": "Os nomes das funções não podem conter caracteres especiais, exceto _ , - , /"
+    "Role names cannot contain special characters except _ , - , / ": "Os nomes das funções não podem conter caracteres especiais, exceto _ , - , /",
+    "Rules deployed successfully": "Regras implantadas com sucesso"
 
 };

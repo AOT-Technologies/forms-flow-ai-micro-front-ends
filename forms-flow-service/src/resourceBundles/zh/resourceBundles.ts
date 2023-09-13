@@ -116,7 +116,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "name": "姓名",
   "value": "价值",
   "No task matching filters found.": "未找到匹配过滤器的任务。",
-   "Application Id": "应用程序编号",
+   "Application ID": "应用编号",
   "Set follow-up Date": "设置随访日期",
   "Set Due date": "设置截止日期",
   "Add groups": "添加群组",
@@ -336,12 +336,16 @@ export const RESOURCE_BUNDLES_ZH = {
   "Export": "出口",
   "Overview": "概述",
   "Design Permission": "设计许可",
+  "Application Permission":"申请许可",
   "All Designers": "所有设计师",
   "Private(only you)": "私人（只有你）",
   "Specific Designer Group": "特定设计师组",
   "Submission Permission": "提交许可",
   "All Users": "全部用户",
   "Specific User Group": "特定用户群",
+  "Specific Reviewers":"具体审稿人",
+  "All Reviewers":"所有审稿人",
+  "Permission for application tracking.":"应用程序跟踪的权限。",
   "Design Bundle": "设计包",
   "Workflow": "工作流程",
   "Bundle Name and Description is Required": "捆绑包名称和描述为必填项",
@@ -387,7 +391,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Edit Role":"编辑角色",
   "Failed to fetch users!":"获取用户失败！",
   "Role names cannot contain special characters except   _ , -": "角色名称不能包含除 _ 、 - 之外的特殊字符",
-  "Role names cannot contain special characters except _ , - , / ": "角色名称不能包含除 _ 、 - 、 / 之外的特殊字符"
+  "Role names cannot contain special characters except _ , - , / ": "角色名称不能包含除 _ 、 - 、 / 之外的特殊字符",
+  "Rules deployed successfully": "规则部署成功"
 
 };
 

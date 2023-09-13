@@ -120,7 +120,7 @@ export const RESOURCE_BUNDLES_DE = {
   "name": "Name",
   "value": "Wert",
   "No task matching filters found.": "Keine Aufgabe gefunden, die mit Filtern übereinstimmt.",
-   "Application Id": "Anwendungs-ID",
+   "Application ID": "Anwendungs-ID",
   "Set follow-up Date": "Folgedatum festlegen",
   "Set Due date": "Fälligkeitsdatum festlegen",
   "Add groups": "Gruppen hinzufügen",
@@ -295,12 +295,16 @@ export const RESOURCE_BUNDLES_DE = {
   "Revert": "Zurückkehren",
   "Overview": "Überblick",
   "Design Permission": "Designgenehmigung",
+  "Application Permission":"Anwendungserlaubnis",
   "All Designers": "Alle Designer",
   "Private(only you)": "Privat (nur Sie)",
   "Specific Designer Group": "Spezifische Designergruppe",
   "Submission Permission": "Einreichungserlaubnis",
   "All Users": "Alle Nutzer",
   "Specific User Group": "Spezifische Benutzergruppe",
+  "Specific Reviewers":"Spezifische Gutachter",
+  "All Reviewers":"Alle Rezensenten",
+  "Permission for application tracking.":"Erlaubnis zur Bewerbungsverfolgung.",
   "Applicable for Designer Roled Users only.": "Gilt nur für Benutzer mit Designer-Rolle.",
   "Applicable for Client and Reviewer Roled Users only.": "Gilt nur für Benutzer mit Kunden- und Prüferrollen.",
   "Are you sure you wish to delete the bundle ":"Sind Sie sicher, dass Sie das Paket löschen möchten ",
@@ -391,5 +395,6 @@ export const RESOURCE_BUNDLES_DE = {
     "Edit Role":"Rolle bearbeiten",
     "Failed to fetch users!":"Nutzer konnten nicht abgerufen werden!",
     "Role names cannot contain special characters except   _ , -": "Rollennamen dürfen keine Sonderzeichen außer _ , - enthalten.",
-    "Role names cannot contain special characters except _ , - , / ": "Rollennamen dürfen keine Sonderzeichen außer _ , - , / enthalten."
+    "Role names cannot contain special characters except _ , - , / ": "Rollennamen dürfen keine Sonderzeichen außer _ , - , / enthalten.",
+    "Rules deployed successfully": "Regeln erfolgreich bereitgestellt"
 };

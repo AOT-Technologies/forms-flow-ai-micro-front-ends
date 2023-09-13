@@ -115,7 +115,7 @@ export const RESOURCE_BUNDLES_BG = {
     "For Variable, ignore case of": "За променлива, пренебрегвайте регистъра на",
     "value": "стойност",
     "No task matching filters found.": "Няма намерени филтри за съвпадение на задачи.",
-     "Application Id": "Идентификатор на приложението",
+     "Application ID": "Идентификационен номер на заявление",
     "Set follow-up Date": "Задайте дата за проследяване",
     "Set Due date": "Задайте крайна дата",
     "Add groups": "Добавете групи",
@@ -338,12 +338,16 @@ export const RESOURCE_BUNDLES_BG = {
     "Export": "Експортиране",
     "Overview": "Преглед",
     "Design Permission": "Разрешение за проектиране",
+    "Application Permission":"Разрешение за приложение",
     "All Designers": "Всички дизайнери",
     "Private(only you)": "Лично (само ти)",
     "Specific Designer Group": "Специфична дизайнерска група",
     "Submission Permission": "Разрешение за подаване",
     "All Users": "Всички потребители",
     "Specific User Group": "Конкретна потребителска група",
+    "Specific Reviewers":"Конкретни рецензенти",
+    "All Reviewers":"Всички рецензенти",
+    "Permission for application tracking.":"Разрешение за проследяване на приложения.",
     "Design Bundle": "Дизайн пакет",
     "Workflow": "Работен процес",
     "Bundle Name and Description is Required": "Името и описанието на пакета са задължителни",
@@ -388,5 +392,7 @@ export const RESOURCE_BUNDLES_BG = {
     "Edit Role":"Редактиране на роля",
     "Failed to fetch users!":"Неуспешно извличане на потребители!",
     "Role names cannot contain special characters except   _ , -": "Имената на ролите не могат да съдържат специални знаци освен _, -",
-    "Role names cannot contain special characters except _ , - , / ": "Имената на ролите не могат да съдържат специални знаци освен _, -, /"
+    "Role names cannot contain special characters except _ , - , / ": "Имената на ролите не могат да съдържат специални знаци освен _, -, /",
+    "Rules deployed successfully": "Правилата са внедрени успешно"
+
 };

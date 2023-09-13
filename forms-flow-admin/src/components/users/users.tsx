@@ -327,7 +327,7 @@ const Users = React.memo((props: any) => {
     <>
       <div className="container-admin">
         <div className="sub-container">
-          <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5">
+          <div className="search-role col-xl-6 col-lg-6 col-md-6 col-sm-6">
             <Form.Control
               type="text"
               placeholder={t("Search by name, username or email")}
@@ -347,7 +347,7 @@ const Users = React.memo((props: any) => {
             )}
           </div>
 
-          <div className="user-filter-container col-xl-3 col-lg-3 col-md-4 col-sm-5">
+          <div className="user-filter-container col-xl-6 col-lg-6 col-md-6 col-sm-6">
             <span>{t("Filter By:")} </span>
             <Form.Select size="lg" onChange={handleSelectFilter}>
               <option value="ALL" selected={!props.filter}>

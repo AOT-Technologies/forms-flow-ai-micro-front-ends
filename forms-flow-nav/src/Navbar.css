@@ -105,6 +105,9 @@ header nav {
   justify-content: space-evenly !important;
 
 }
+.nav-user {
+  margin-left: auto;
+}
 
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link:focus {
@@ -132,3 +135,8 @@ header nav {
     margin-right: -86px;
 }
 } 
+@media (max-width: 992px) and (max-height: 590px) {
+  .nav-user {
+    margin-left: inherit;
+  }
+}

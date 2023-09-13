@@ -167,7 +167,7 @@ export const RESOURCE_BUNDLES_FR = {
   "Group ID":"Identifiant du groupe",
   "Due":"Dû",
   "Follow-up":"Suivre",
-   "Application Id":"ID d'application",
+  "Application ID":"ID d'application",
   "Application Name":"Nom de l'application",
   "Created By":"Créé par",
   "Application Status":"État de la candidature",
@@ -340,12 +340,16 @@ export const RESOURCE_BUNDLES_FR = {
   "Export": "Exporter",
   "Overview": "Aperçu",
   "Design Permission": "Autorisation de conception",
+  "Application Permission":"Autorisation de candidature",
   "All Designers": "Tous les créateurs",
   "Private(only you)": "Privé (seulement vous)",
   "Specific Designer Group": "Groupe de concepteurs spécifiques",
   "Submission Permission": "Autorisation de soumission",
   "All Users": "Tous les utilisateurs",
   "Specific User Group": "Groupe d'utilisateurs spécifique",
+  "Specific Reviewers":"Examinateurs spécifiques",
+  "All Reviewers":"Tous les examinateurs",
+  "Permission for application tracking.":"Autorisation pour le suivi des candidatures.",
   "Design Bundle": "Ensemble de conception",
   "Workflow": "Flux de travail",
   "Bundle Name and Description is Required": "Nom du bundle et description requis",
@@ -390,7 +394,8 @@ export const RESOURCE_BUNDLES_FR = {
   "Edit Role":"Modifier le rôle",
   "Failed to fetch users!":"Échec de la récupération des utilisateurs!",
   "Role names cannot contain special characters except   _ , -": "Les noms de rôle ne peuvent pas contenir de caractères spéciaux sauf _ , -",
-  "Role names cannot contain special characters except _ , - , / ": "Les noms de rôle ne peuvent pas contenir de caractères spéciaux sauf _ , - , /"
+  "Role names cannot contain special characters except _ , - , / ": "Les noms de rôle ne peuvent pas contenir de caractères spéciaux sauf _ , - , /",
+  "Rules deployed successfully": "Règles déployées avec succès"
 };
 
 

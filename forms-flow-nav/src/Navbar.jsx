@@ -307,7 +307,7 @@ const NavBar = React.memo(({ props }) => {
                     : null}
                 </Nav>
 
-                <Nav className="px-lg-0 px-3">
+                <Nav className="nav-user">
                   {selectLanguages.length === 1 ? (
                     selectLanguages.map((e, i) => {
                       return (
@@ -341,7 +341,7 @@ const NavBar = React.memo(({ props }) => {
                   )}
                 </Nav>
 
-                <Nav className="px-lg-0 px-3">
+                <Nav className="nav-user">
                   <NavDropdown
                     title={
                       <>

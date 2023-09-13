@@ -3,43 +3,43 @@ import { DATE_FORMAT } from '../constants/constants'
 import { TIME_FORMAT } from '../constants/constants'
 
 class HelperServices {
-
-  public static getLocalDateAndTime(
-    date: string,
-    dateFormat: string,
-    timeFormat: string,
-  ): any {
+  public static getLocalDateAndTime(date: string): any {
     if (!date) {
       return '-'
     }
-    return moment(
-      new Date(date.replace(' ', 'T') + 'Z').toLocaleString(),
-    ).format(`${DATE_FORMAT}, ${TIME_FORMAT}`)
+    // Parse the input date string as a moment.js object
+    const momentDate = moment(date?.replace(' ', 'T'))
+
+    // Convert localizedDateTime to a Moment.js object and format it with the same format
+    const localizedDateTime = moment(momentDate?.toDate())
+      .format(`${DATE_FORMAT}, ${TIME_FORMAT}`)
+      .toLocaleString()
+    return localizedDateTime
   }
 
-  public static getLocaldate(date: string, format: string): any {
+  public static getLocaldate(date: string): any {
     if (!date) {
       return '-'
     }
-    const dateTimeString = date
-      ? new Date(date.replace(' ', 'T') + 'Z').toLocaleString()
-      : '-'
-    const dateTime = moment(dateTimeString)
-    const localDate = dateTime.format(DATE_FORMAT)
-    return localDate
+    const momentDate = moment(date?.replace(' ', 'T'));
+
+    const localizedDate = moment(momentDate?.toDate())
+      .format(DATE_FORMAT)
+      .toLocaleString();
+    return localizedDate;
   }
 
-  public static getLocalTime(date: string, format: string): any {
+  public static getLocalTime(date: string): any {
     if (!date) {
       return '-'
     }
-    const dateTimeString = date
-      ? new Date(date.replace(' ', 'T') + 'Z').toLocaleString()
-      : '-'
-    const dateTime = moment(dateTimeString)
-    const localTime = dateTime.format(TIME_FORMAT)
-    return localTime
+
+    const momentDate = moment(date?.replace(' ', 'T'));
+    const localizedTime = moment(momentDate?.toDate())
+      .format(TIME_FORMAT)
+      .toLocaleString();
+    return localizedTime;
   }
 }
 
-export default HelperServices;
+export default HelperServices

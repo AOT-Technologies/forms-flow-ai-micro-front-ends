@@ -121,7 +121,7 @@ export const RESOURCE_BUNDLES_EN = {
   "name": "name",
   "value": "value",
   "No task matching filters found.": "No task matching filters found.",
-   "Application Id": "Application Id",
+   "Application ID": "Application ID",
   "Set follow-up Date": "Set follow-up Date",
   "Set Due date": "Set Due date",
   "Add groups": "Add groups",
@@ -337,12 +337,16 @@ export const RESOURCE_BUNDLES_EN = {
   "Export": "Export",
   "Overview": "Overview",
   "Design Permission": "Design Permission",
-  "All Designers": "Alle Designer",
+  "Application Permission":"Application Permission",
+  "All Designers": "All Designers",
   "Private(only you)": "Private(only you)",
   "Specific Designer Group": "Specific Designer Group",
   "Submission Permission": "Submission Permission",
   "All Users": "All Users",
   "Specific User Group": "Specific User Group",
+  "Specific Reviewers":"Specific Reviewers",
+  "All Reviewers":"All Reviewers",
+  "Permission for application tracking.":"Permission for application tracking.",
   "Design Bundle": "Design Bundle",
   "Workflow": "Workflow",
   "Bundle Name and Description is Required": "Bundle Name and Description is Required",
@@ -389,7 +393,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Edit Role":"Edit Role",
   "Failed to fetch users!":"Failed to fetch users!",
   "Role names cannot contain special characters except   _ , -": "Role names cannot contain special characters except   _ , -",
-  "Role names cannot contain special characters except _ , - , / ": "Role names cannot contain special characters except _ , - , / "
+  "Role names cannot contain special characters except _ , - , / ": "Role names cannot contain special characters except _ , - , / ",
+  "Rules deployed successfully": "Rules deployed successfully"
 };
 
 
