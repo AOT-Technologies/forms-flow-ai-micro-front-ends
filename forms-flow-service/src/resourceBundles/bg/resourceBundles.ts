@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+    "form uploaded":"качен формуляр",
     "Access restricted by its designer..!": "Достъпът е ограничен от дизайнера..!",
     "and you will no longer have the access to this form in bundles": "и няма да имате достъп до тази форма в пакети",
     "You will no longer have the access to this form in bundles": "Вече няма да имате достъп до тази форма в пакети",
@@ -282,7 +283,7 @@ export const RESOURCE_BUNDLES_BG = {
     "Resource":"Ресурс",
     "Error in creating form process mapper":"Грешка при създаването на картограф на процес на формуляр",
     "Select the date":"Изберете датата",
-    "Diagram Deployed":"Разгърната диаграма",
+    "Diagram deployed":"Диаграмата е разгърната",
     "Deployment Failed":"Неуспешно внедряване",
     "Process name(s) must not be empty":"Името(ата) на процесите не трябва да са празни",
     "URL copied":"URL адресът е копиран",

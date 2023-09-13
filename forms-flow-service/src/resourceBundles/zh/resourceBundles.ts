@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_ZH = {
+  "form uploaded":"表格已上传",
   "Access restricted by its designer..!": "访问受设计者限制..!",
   "and you will no longer have the access to this form in bundles": "而且您将不再能够在包裹中访问此表单",
   "You will no longer have the access to this form in bundles": "您将不再能够在包裹中访问此表单",
@@ -280,7 +281,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Resource":"资源",
   "Error in creating form process mapper":"创建表单流程映射器时出错",
   "Select the date":"选择日期",
-  "Diagram Deployed":"已部署的图表",
+  "Diagram deployed":"部署图",
   "Deployment Failed":"部署失败",
   "Process name(s) must not be empty":"进程名称不能为空",
   "URL copied":"已复制网址",

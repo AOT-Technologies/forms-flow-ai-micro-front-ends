@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_DE = {
+  "form uploaded":"Formular hochgeladen",
   "Access restricted by its designer..!": "Zugriff durch den Designer eingeschränkt..!",
   "and you will no longer have the access to this form in bundles": "und Sie haben keinen Zugriff mehr auf dieses Formular in Bündeln",
   "You will no longer have the access to this form in bundles": "Sie haben keinen Zugriff mehr auf dieses Formular in Bündel",
@@ -284,7 +285,7 @@ export const RESOURCE_BUNDLES_DE = {
   "Resource":"Ressource",
   "Error in creating form process mapper":"Fehler beim Erstellen des Formularprozess-Mappers",
   "Select the date":"Wählen Sie das Datum aus",
-  "Diagram Deployed":"Diagramm bereitgestellt",
+  "Diagram deployed":"Diagramm bereitgestellt",
   "Deployment Failed":"Bereitstellung fehlgeschlagen",
   "Process name(s) must not be empty":"Prozessname(n) dürfen nicht leer sein",
   "URL copied":"URL kopiert",

@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_EN = {
+  "form uploaded":"form uploaded",
   "Access restricted by its designer..!": "Access restricted by its designer..!",
   "and you will no longer have the access to this form in bundles": "and you will no longer have the access to this form in bundles",
   "You will no longer have the access to this form in bundles": "You will no longer have access to this form in bundles",
@@ -280,7 +281,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Resource":"Resource",
   "Error in creating form process mapper":"Error in creating form process mapper",
   "Select the date":"Select the date",
-  "Diagram Deployed":"Diagram Deployed",
+  "Diagram deployed":"Diagram deployed",
   "Deployment Failed":"Deployment Failed",
   "Process name(s) must not be empty":"Process name(s) must not be empty",
   "URL copied":"URL copied",
