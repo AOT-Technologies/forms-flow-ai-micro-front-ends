@@ -284,7 +284,7 @@ export const RESOURCE_BUNDLES_PT = {
   "Error in creating form process mapper":"Erro ao criar mapeador de processo de formulário",
   "Select the date":"Selecione a data",
   "Diagram deployed":"Diagrama implantado",
-  "Deployment Failed":"Falha na implantação",
+  "Deployment failed":"Falha na implantação",
   "Process name(s) must not be empty":"O(s) nome(s) do processo não deve(m) estar vazio(s)",
   "URL copied":"URL copiado",
   "Click Here to Copy":"Clique aqui para copiar",

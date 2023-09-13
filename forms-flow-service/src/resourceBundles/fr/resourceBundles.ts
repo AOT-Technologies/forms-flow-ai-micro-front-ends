@@ -286,7 +286,7 @@ export const RESOURCE_BUNDLES_FR = {
   "Error in creating form process mapper":"Erreur lors de la création du mappeur de processus de formulaire",
   "Select the date":"Sélectionnez la date",
   "Diagram deployed":"Diagramme déployé",
-  "Deployment Failed":"Échec du déploiement",
+  "Deployment failed":"Échec du déploiement",
   "Process name(s) must not be empty":"Le(s) nom(s) de processus ne doivent pas être vides",
   "URL copied":"URL copiée",
   "Click Here to Copy":"Cliquez ici pour copier",

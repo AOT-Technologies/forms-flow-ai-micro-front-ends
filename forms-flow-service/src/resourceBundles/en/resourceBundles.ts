@@ -282,7 +282,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Error in creating form process mapper":"Error in creating form process mapper",
   "Select the date":"Select the date",
   "Diagram deployed":"Diagram deployed",
-  "Deployment Failed":"Deployment Failed",
+  "Deployment failed":"Deployment failed",
   "Process name(s) must not be empty":"Process name(s) must not be empty",
   "URL copied":"URL copied",
   "Click Here to Copy":"Click Here to Copy",

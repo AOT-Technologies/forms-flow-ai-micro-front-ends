@@ -284,7 +284,7 @@ export const RESOURCE_BUNDLES_BG = {
     "Error in creating form process mapper":"Грешка при създаването на картограф на процес на формуляр",
     "Select the date":"Изберете датата",
     "Diagram deployed":"Диаграмата е разгърната",
-    "Deployment Failed":"Неуспешно внедряване",
+    "Deployment failed":"Неуспешно внедряване",
     "Process name(s) must not be empty":"Името(ата) на процесите не трябва да са празни",
     "URL copied":"URL адресът е копиран",
     "Click Here to Copy":"Щракнете тук, за да копирате",

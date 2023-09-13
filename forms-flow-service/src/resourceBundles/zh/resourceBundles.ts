@@ -282,7 +282,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Error in creating form process mapper":"创建表单流程映射器时出错",
   "Select the date":"选择日期",
   "Diagram deployed":"部署图",
-  "Deployment Failed":"部署失败",
+  "Deployment failed":"部署失败",
   "Process name(s) must not be empty":"进程名称不能为空",
   "URL copied":"已复制网址",
   "Click Here to Copy":"点击这里复制",
