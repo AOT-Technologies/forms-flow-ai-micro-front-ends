@@ -253,6 +253,7 @@ export const RESOURCE_BUNDLES_FR = {
   "Save Changes":"Save Changes",
   "Changing the form workflow will not affect the existing applications. It will only update in the newly created applications. Press Save Changes to continue or cancel the changes.":"La modification du flux de travail du formulaire n'affectera pas les applications existantes. Il ne sera mis à jour que dans les applications nouvellement créées. Appuyez sur Enregistrer les modifications pour continuer ou annuler les modifications.",
   "Form deleted successfully":"Formulaire supprimé avec succèsy",
+  "Bundle deleted successfully":"Bundle supprimé avec succès",
   "Form deletion unsuccessful":"Échec de la suppression du formulaire",
   "Form process failed":"Le processus de formulaire a échoué",
   "Form unpublishing Failed":"Échec de la dépublication du formulaire",
@@ -284,8 +285,13 @@ export const RESOURCE_BUNDLES_FR = {
   "Resource":"Ressource",
   "Error in creating form process mapper":"Erreur lors de la création du mappeur de processus de formulaire",
   "Select the date":"Sélectionnez la date",
-  "Diagram Deployed":"Diagramme déployé",
-  "Deployment Failed":"Échec du déploiement",
+  "Diagram deployed":"Diagramme déployé",
+  "Deployment failed":"Échec du déploiement",
+  "form uploaded":"formulaire téléchargé",
+  "forms uploaded":"formulaires téléchargés",
+  "Failed to upload":"Échec du téléchargement",
+  "forms...!":"formes...!",
+  "form...!":"formulaire...!",
   "Process name(s) must not be empty":"Le(s) nom(s) de processus ne doivent pas être vides",
   "URL copied":"URL copiée",
   "Click Here to Copy":"Cliquez ici pour copier",
@@ -395,6 +401,7 @@ export const RESOURCE_BUNDLES_FR = {
   "Role names cannot contain special characters except   _ , -": "Les noms de rôle ne peuvent pas contenir de caractères spéciaux sauf _ , -",
   "Role names cannot contain special characters except _ , - , / ": "Les noms de rôle ne peuvent pas contenir de caractères spéciaux sauf _ , - , /",
   "Rules deployed successfully": "Règles déployées avec succès"
+
 };
 
 

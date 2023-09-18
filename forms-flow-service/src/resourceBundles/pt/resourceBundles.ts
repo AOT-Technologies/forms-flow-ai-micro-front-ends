@@ -252,6 +252,7 @@ export const RESOURCE_BUNDLES_PT = {
   "Changing the form workflow will not affect the existing applications. It will only update in the newly created applications. Press Save Changes to continue or cancel the changes.":"Alterar o fluxo de trabalho do formulário não afetará os aplicativos existentes. Ele só será atualizado nos aplicativos recém-criados. Pressione Salvar alterações para continuar ou cancelar as alterações.",
   "Form deletion unsuccessful":"Falha na exclusão do formulário",
   "Form deleted successfully":"Formulário excluído com sucesso",
+  "Bundle deleted successfully":"Pacote excluído com sucesso",
   "Form process failed":"Falha no processo do formulário",
   "Form unpublishing Failed":"Falha ao cancelar a publicação do formulário",
   "All groups have access to the dashboard":"Todos os grupos têm acesso ao painel",
@@ -282,8 +283,13 @@ export const RESOURCE_BUNDLES_PT = {
   "Resource":"Recurso",
   "Error in creating form process mapper":"Erro ao criar mapeador de processo de formulário",
   "Select the date":"Selecione a data",
-  "Diagram Deployed":"Diagrama implantado",
-  "Deployment Failed":"Falha na implantação",
+  "Diagram deployed":"Diagrama implantado",
+  "Deployment failed":"Falha na implantação",
+  "form uploaded":"formulário carregado",
+  "forms uploaded":"formulários carregados",
+  "Failed to upload":"Falha ao carregar",
+  "forms...!":"formas...!",
+  "form...!":"forma...!",
   "Process name(s) must not be empty":"O(s) nome(s) do processo não deve(m) estar vazio(s)",
   "URL copied":"URL copiado",
   "Click Here to Copy":"Clique aqui para copiar",
@@ -393,6 +399,7 @@ export const RESOURCE_BUNDLES_PT = {
     "Failed to fetch users!":"Falha ao buscar usuários!",
     "Role names cannot contain special characters except   _ , -": "Os nomes das funções não podem conter caracteres especiais, exceto _ , -",
     "Role names cannot contain special characters except _ , - , / ": "Os nomes das funções não podem conter caracteres especiais, exceto _ , - , /",
-    "Rules deployed successfully": "Regras implantadas com sucesso"
+    "Rules deployed successfully": "Regras implantadas com sucesso",
+
 
 };

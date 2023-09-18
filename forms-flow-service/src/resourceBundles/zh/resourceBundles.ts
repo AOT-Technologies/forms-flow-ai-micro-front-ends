@@ -250,6 +250,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Form-Workflow association failed.": "表单-工作流关联失败。",
   "Form deletion unsuccessful":"表单删除失败",
   "Form deleted successfully":"表格删除成功",
+  "Bundle deleted successfully":"捆绑包删除成功",
   "Form process failed":"表单处理失败",
   "Form unpublishing Failed":"表单取消发布失败",
   "All groups have access to the dashboard":"所有组都可以访问仪表板",
@@ -280,8 +281,13 @@ export const RESOURCE_BUNDLES_ZH = {
   "Resource":"资源",
   "Error in creating form process mapper":"创建表单流程映射器时出错",
   "Select the date":"选择日期",
-  "Diagram Deployed":"已部署的图表",
-  "Deployment Failed":"部署失败",
+  "Diagram deployed":"部署图",
+  "Deployment failed":"部署失败",
+  "form uploaded":"表格已上传",
+  "forms uploaded":"表格已上传",
+  "Failed to upload":"上传失败",
+  "forms...!":"形式...！",
+  "form...!":"形式...！",
   "Process name(s) must not be empty":"进程名称不能为空",
   "URL copied":"已复制网址",
   "Click Here to Copy":"点击这里复制",
@@ -392,6 +398,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Role names cannot contain special characters except   _ , -": "角色名称不能包含除 _ 、 - 之外的特殊字符",
   "Role names cannot contain special characters except _ , - , / ": "角色名称不能包含除 _ 、 - 、 / 之外的特殊字符",
   "Rules deployed successfully": "规则部署成功"
+
 
 };
 

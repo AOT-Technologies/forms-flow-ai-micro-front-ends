@@ -253,6 +253,7 @@ export const RESOURCE_BUNDLES_DE = {
   "Form-Workflow association failed.":
       "Die Formular-Workflow-Zuordnung ist fehlgeschlagen.",
   "Form deleted successfully":"Formular erfolgreich gelöscht",
+  "Bundle deleted successfully":"Bundle erfolgreich gelöscht",
   "Form deletion unsuccessful":"Formularlöschung fehlgeschlagen",
   "Form process failed":"Formularprozess fehlgeschlagen",
   "Form unpublishing Failed":"Das Aufheben der Veröffentlichung des Formulars ist fehlgeschlagen",
@@ -284,8 +285,13 @@ export const RESOURCE_BUNDLES_DE = {
   "Resource":"Ressource",
   "Error in creating form process mapper":"Fehler beim Erstellen des Formularprozess-Mappers",
   "Select the date":"Wählen Sie das Datum aus",
-  "Diagram Deployed":"Diagramm bereitgestellt",
-  "Deployment Failed":"Bereitstellung fehlgeschlagen",
+  "Diagram deployed":"Diagramm bereitgestellt",
+  "Deployment failed":"Bereitstellung fehlgeschlagen",
+  "form uploaded":"Formular hochgeladen",
+  "forms uploaded":"Formulare hochgeladen",
+  "Failed to upload":"Hochladen fehlgeschlagen",
+  "forms...!":"Formen...!",
+  "form...!":"bilden...!",
   "Process name(s) must not be empty":"Prozessname(n) dürfen nicht leer sein",
   "URL copied":"URL kopiert",
   "Click Here to Copy":"Klicken Sie hier, um zu kopieren",
@@ -395,5 +401,6 @@ export const RESOURCE_BUNDLES_DE = {
     "Failed to fetch users!":"Nutzer konnten nicht abgerufen werden!",
     "Role names cannot contain special characters except   _ , -": "Rollennamen dürfen keine Sonderzeichen außer _ , - enthalten.",
     "Role names cannot contain special characters except _ , - , / ": "Rollennamen dürfen keine Sonderzeichen außer _ , - , / enthalten.",
-    "Rules deployed successfully": "Regeln erfolgreich bereitgestellt"
+    "Rules deployed successfully": "Regeln erfolgreich bereitgestellt",
+
 };
