@@ -252,6 +252,7 @@ export const RESOURCE_BUNDLES_BG = {
       "Неуспешно свързване на формуляр-работен процес.",
     "Form deletion unsuccessful":"Изтриването на формуляра е неуспешно",
     "Form deleted successfully":"Формулярът е изтрит успешно",
+    "Bundle deleted successfully":"Пакетът е изтрит успешно",
     "Form process failed":"Обработката на формуляра не бе успешно",
     "Form unpublishing Failed":"Прекратяването на публикуването на формуляра не бе успешно",
     "All groups have access to the dashboard":"Всички групи имат достъп до таблото",
@@ -282,15 +283,19 @@ export const RESOURCE_BUNDLES_BG = {
     "Resource":"Ресурс",
     "Error in creating form process mapper":"Грешка при създаването на картограф на процес на формуляр",
     "Select the date":"Изберете датата",
-    "Diagram Deployed":"Разгърната диаграма",
-    "Deployment Failed":"Неуспешно внедряване",
+    "Diagram deployed":"Диаграмата е разгърната",
+    "Deployment failed":"Неуспешно внедряване",
+    "form uploaded":"качен формуляр",
+    "forms uploaded":"качени формуляри",
+    "Failed to upload":"Неуспешно качване",
+    "forms...!":"форми...!",
+    "form...!":"форма...!",
     "Process name(s) must not be empty":"Името(ата) на процесите не трябва да са празни",
     "URL copied":"URL адресът е копиран",
     "Click Here to Copy":"Щракнете тук, за да копирате",
     "Resources":"Ресурси",
     "Duplicate form created successfully":"Дублираният формуляр е създаден успешно",
     "Revert": "Връщане",
-
     "Are you sure you wish to delete the bundle ": "Сигурни ли сте, че искате да изтриете пакета ",
     "Criteria":"Критерии",
     "Select Form":"Изберете Формуляр",
@@ -393,5 +398,4 @@ export const RESOURCE_BUNDLES_BG = {
     "Role names cannot contain special characters except   _ , -": "Имената на ролите не могат да съдържат специални знаци освен _, -",
     "Role names cannot contain special characters except _ , - , / ": "Имената на ролите не могат да съдържат специални знаци освен _, -, /",
     "Rules deployed successfully": "Правилата са внедрени успешно"
-
-};
+  };

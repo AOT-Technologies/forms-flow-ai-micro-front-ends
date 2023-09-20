@@ -250,6 +250,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Form-Workflow association failed.": "Form-Workflow association failed.",
   "Form deletion unsuccessful":"Form deletion unsuccessful",
   "Form deleted successfully":"Form deleted successfully",
+  "Bundle deleted successfully":"Bundle deleted successfully",
   "Form process failed":"Form process failed",
   "Form unpublishing Failed":"Form unpublishing Failed",
   "All groups have access to the dashboard":"All groups have access to the dashboard",
@@ -280,8 +281,13 @@ export const RESOURCE_BUNDLES_EN = {
   "Resource":"Resource",
   "Error in creating form process mapper":"Error in creating form process mapper",
   "Select the date":"Select the date",
-  "Diagram Deployed":"Diagram Deployed",
-  "Deployment Failed":"Deployment Failed",
+  "Diagram deployed":"Diagram deployed",
+  "Deployment failed":"Deployment failed",
+  "form uploaded":"form uploaded",
+  "forms uploaded":"forms uploaded",
+  "Failed to upload":"Failed to upload",
+  "forms...!":"forms...!",
+  "form...!":"form...!",
   "Process name(s) must not be empty":"Process name(s) must not be empty",
   "URL copied":"URL copied",
   "Click Here to Copy":"Click Here to Copy",
@@ -393,7 +399,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Failed to fetch users!":"Failed to fetch users!",
   "Role names cannot contain special characters except   _ , -": "Role names cannot contain special characters except   _ , -",
   "Role names cannot contain special characters except _ , - , / ": "Role names cannot contain special characters except _ , - , / ",
-  "Rules deployed successfully": "Rules deployed successfully"
+  "Rules deployed successfully": "Rules deployed successfully",
+
 };
 
 
