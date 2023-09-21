@@ -24,7 +24,7 @@ import i18n from "./resourceBundles/i18n";
 import { fetchTenantDetails } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
 import { LANGUAGE } from "./constants/constants";
-
+import { Helmet } from "react-helmet";
 const NavBar = React.memo(({ props }) => {
   const history = useHistory();
   const [instance, setInstance] = React.useState(props.getKcInstance());
@@ -159,8 +159,20 @@ const NavBar = React.memo(({ props }) => {
     history.push(baseUrl);
     instance.userLogout();
   };
-
+  
+    var link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+    link = document.createElement('link');
+    link.rel = 'icon';
+    document.head.appendChild(link);
+    }
+    MULTITENANCY_ENABLED ? link.href = {tenantLogo} : link.href = {tenantLogo};
+  
   return (
+  <>
+   <Helmet>
+    <title>{MULTITENANCY_ENABLED ? applicationTitle : "formsflow.ai"}</title>
+  </Helmet>
     <BrowserRouter>
       <header>
         <Navbar expand="lg" className="topheading-border-bottom" fixed="top">
@@ -375,6 +387,7 @@ const NavBar = React.memo(({ props }) => {
         </Navbar>
       </header>
     </BrowserRouter>
+    </>
   );
 });
 
