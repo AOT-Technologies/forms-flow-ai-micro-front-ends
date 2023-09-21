@@ -131,6 +131,16 @@ const NavBar = React.memo(({ props }) => {
   }, []);
 
   useEffect(() => {
+  let link = document.querySelector("link[rel~='icon']");
+  if (!link) {
+  link = document.createElement('link');
+  link.rel = 'icon';
+  document.head.appendChild(link);
+  }
+  MULTITENANCY_ENABLED ? link.href = {tenantLogo} : link.href = {tenantLogo};
+  }, []);
+  
+  useEffect(() => {
     const language = lang ? lang : LANGUAGE;
     props.publish("ES_CHANGE_LANGUAGE", language);
     i18n.changeLanguage(language);
@@ -159,14 +169,6 @@ const NavBar = React.memo(({ props }) => {
     history.push(baseUrl);
     instance.userLogout();
   };
-  
-    var link = document.querySelector("link[rel~='icon']");
-    if (!link) {
-    link = document.createElement('link');
-    link.rel = 'icon';
-    document.head.appendChild(link);
-    }
-    MULTITENANCY_ENABLED ? link.href = {tenantLogo} : link.href = {tenantLogo};
   
   return (
   <>
