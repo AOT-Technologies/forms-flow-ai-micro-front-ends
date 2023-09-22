@@ -164,7 +164,7 @@ const NavBar = React.memo(({ props }) => {
   <>
    <Helmet>
     <title>{MULTITENANCY_ENABLED ? applicationTitle : "formsflow.ai"}</title>
-    {MULTITENANCY_ENABLED ? <link rel="icon" type="image/png" href={tenantLogo} /> : null}
+    <link rel="icon" type="image/png" href={MULTITENANCY_ENABLED ? tenantLogo : null} />
   </Helmet>
     <BrowserRouter>
       <header>
