@@ -434,5 +434,6 @@ export const RESOURCE_BUNDLES_DE = {
     "Update Associated Workflow": "Verknüpften Workflow aktualisieren",
     "Enter title": "Titel eingeben",
     "No Templates Found": "Keine Vorlagen gefunden",
-    "No Category Found": "Keine Kategorie gefunden"
+    "No Category Found": "Keine Kategorie gefunden",
+    "Save Template": "Vorlage speichern"
 };

@@ -432,7 +432,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Update Associated Workflow": "Update Associated Workflow",
   "Enter title":"Enter title",
   "No Templates Found": "No Templates Found",
-  "No Category Found": "No Category Found"
+  "No Category Found": "No Category Found",
+  "Save Template": "Save Template"
 
 };
 

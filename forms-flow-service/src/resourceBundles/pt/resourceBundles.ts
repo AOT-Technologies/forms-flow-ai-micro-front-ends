@@ -432,7 +432,8 @@ export const RESOURCE_BUNDLES_PT = {
     "Update Associated Workflow": "Atualizar Fluxo de Trabalho Associado",
     "Enter title":"Inserir título",
     "No Templates Found": "Nenhum modelo encontrado",
-    "No Category Found": "Nenhuma categoria encontrada"
+    "No Category Found": "Nenhuma categoria encontrada",
+    "Save Template": "Salvar Modelo"
 
 
 };
