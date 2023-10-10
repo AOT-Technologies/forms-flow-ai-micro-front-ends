@@ -431,7 +431,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "Enter title": "输入标题",
   "No Templates Found": "未找到模板",
   "No Category Found": "未找到类别",
-  "Save Template": "保存模板"
+  "Save Template": "保存模板",
+  "You can type and click the ": "您可以输入并单击",
+  " to create the category.": "以创建该类别。",
+  "select or type to create": "选择或输入以创建"
 
 
 };
