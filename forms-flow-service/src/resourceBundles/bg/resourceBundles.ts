@@ -433,7 +433,7 @@ export const RESOURCE_BUNDLES_BG = {
     "No Category Found": "Не са намерени категории",
     "Save Template": "Запазване на Шаблона",
     "You can type and click the ": "Можете да пишете и щракнете върху",
-    " to create the category.": "за създаване на категорията.",
+    "to create the category.": " за създаване на категорията.",
     "select or type to create": "изберете или въведете, за да създадете"
 
     
