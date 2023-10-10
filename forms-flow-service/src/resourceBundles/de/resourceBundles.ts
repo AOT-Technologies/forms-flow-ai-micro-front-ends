@@ -435,5 +435,9 @@ export const RESOURCE_BUNDLES_DE = {
     "Enter title": "Titel eingeben",
     "No Templates Found": "Keine Vorlagen gefunden",
     "No Category Found": "Keine Kategorie gefunden",
-    "Save Template": "Vorlage speichern"
+    "Save Template": "Vorlage speichern",
+    "You can type and click the ": "Sie können tippen und klicken Sie auf die",
+    " to create the category.": "um die Kategorie zu erstellen.",
+    "select or type to create": "auswählen oder eingeben, um zu erstellen"
+      
 };
