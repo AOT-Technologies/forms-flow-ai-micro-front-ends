@@ -1,5 +1,5 @@
 :root {
-  --color-primary: #001dff;
+  --color-primary: #0072ed;
   --color-secondary: #6c757d;
   --color-success: #3fb618;
   --color-info: #4d61fc;
@@ -26,6 +26,7 @@
   --color-gray-800: #373a3c;
   --color-gray-900: #212529;
 
+  --head-inactive: #909090;
   --logo-path: "./logo.svg";
 
   --logo-width: 50px;
@@ -73,7 +74,7 @@
 }
 
 .text-primary {
-  color: var(--color-primary);
+  color: var(--color-primary) !important;
 }
 
 .table {
@@ -737,7 +738,7 @@ div.upload input[type="file"] {
 }
 
 .head-item {
-  color: #ABABAB;
+  color: var(--head-inactive);;
   cursor: pointer;
   padding-bottom: 3rem;
 }

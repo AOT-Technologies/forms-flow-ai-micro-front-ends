@@ -179,7 +179,7 @@ const Users = React.memo((props: any) => {
                 {rowData.firstName} {rowData.lastName && rowData.lastName}
               </div>
             )}
-            <div style={{ color: "grey" }}>{rowData?.username}</div>
+            <div style={{ color: "#767676" }}>{rowData?.username}</div>
           </div>
         );
       },
@@ -334,6 +334,7 @@ const Users = React.memo((props: any) => {
               className="search-role-input"
               onChange={handleSearch}
               value={props.search || ""}
+              title={t("Search here")}
             />
             {props.search?.length > 0 && (
               <Button
@@ -349,7 +350,7 @@ const Users = React.memo((props: any) => {
 
           <div className="user-filter-container col-xl-6 col-lg-6 col-md-6 col-sm-6">
             <span>{t("Filter By:")} </span>
-            <Form.Select size="lg" onChange={handleSelectFilter}>
+            <Form.Select size="lg" onChange={handleSelectFilter} title={t("Filter here")}>
               <option value="ALL" selected={!props.filter}>
                 {t("All roles")}
               </option>
