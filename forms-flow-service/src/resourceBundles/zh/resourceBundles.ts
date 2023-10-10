@@ -430,7 +430,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Update Associated Workflow": "更新关联工作流程",
   "Enter title": "输入标题",
   "No Templates Found": "未找到模板",
-  "No Category Found": "未找到类别"
+  "No Category Found": "未找到类别",
+  "Save Template": "保存模板"
 
 
 };
