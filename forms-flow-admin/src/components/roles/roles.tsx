@@ -515,6 +515,7 @@ const Roles = React.memo((props: any) => {
               className="search-role-input"
               onChange={handlFilter}
               value={search}
+              title={t("Search here")}
             />
 
             {search.length > 0 && (

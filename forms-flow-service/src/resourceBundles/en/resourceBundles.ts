@@ -432,7 +432,11 @@ export const RESOURCE_BUNDLES_EN = {
   "Update Associated Workflow": "Update Associated Workflow",
   "Enter title":"Enter title",
   "No Templates Found": "No Templates Found",
-  "No Category Found": "No Category Found"
+  "No Category Found": "No Category Found",
+  "Save Template": "Save Template",
+  "You can type and click the ": "You can type and click the",
+  " to create the category.": " to create the category.",
+  "select or type to create": "select or type to create"
 
 };
 
