@@ -164,11 +164,11 @@ const NavBar = React.memo(({ props }) => {
     <BrowserRouter>
       <header>
         <Navbar expand="lg" className="topheading-border-bottom position-relative" fixed="top">
-          <Container fluid>
+          <Container>
             <Navbar.Brand className="d-flex">
               <Link to={`${baseUrl}`}>
                 <img
-                  className="img-fluid custom-logo mr-2"
+                  className="img-fluid custom-logo"
                   src={logoPath}
                   width="50"
                   height="55"
@@ -191,13 +191,14 @@ const NavBar = React.memo(({ props }) => {
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}form`}
+                      
                       className={`main-nav nav-item ${
                         pathname.match(createURLPathMatchExp("form", baseUrl))
                           ? "active-tab"
                           : "inactive-tab"
                       }`}
                     >
-                      <i className="fa fa-wpforms fa-fw fa-lg mr-2" />
+                      <i className="fa fa-wpforms fa-fw fa-lg" />
                       {t("Forms")}
                     </Nav.Link>
                   )}
@@ -212,7 +213,7 @@ const NavBar = React.memo(({ props }) => {
                           : "inactive-tab"
                       }`}
                     >
-                      <i className="fa fa-user-circle-o fa-lg mr-2" />
+                      <i className="fa fa-user-circle-o fa-lg " />
                       {t("Admin")}
                     </Nav.Link>
                   ) : null}
@@ -230,7 +231,7 @@ const NavBar = React.memo(({ props }) => {
                               : "inactive-tab"
                           }`}
                         >
-                          <i className="fa fa-cogs fa-lg fa-fw mr-2" />
+                          <i className="fa fa-cogs fa-lg fa-fw " />
                           {t("Processes")}
                         </Nav.Link>
                       )
@@ -256,7 +257,7 @@ const NavBar = React.memo(({ props }) => {
                             }`}
                           >
                             {" "}
-                            <i className="fa fa-list-alt fa-fw fa-lg mr-2" />
+                            <i className="fa fa-list-alt fa-fw fa-lg " />
                             {t("Applications")}
                           </Nav.Link>
                         )
@@ -276,7 +277,7 @@ const NavBar = React.memo(({ props }) => {
                           }`}
                         >
                           {" "}
-                          <i className="fa fa-list fa-lg fa-fw mr-2" />
+                          <i className="fa fa-list fa-lg fa-fw " />
                           {t("Tasks")}
                         </Nav.Link>
                       )
@@ -300,14 +301,14 @@ const NavBar = React.memo(({ props }) => {
                           }`}
                         >
                           {" "}
-                          <i className="fa fa-tachometer fa-lg fa-fw mr-2" />
+                          <i className="fa fa-tachometer fa-lg fa-fw " />
                           {t("Dashboards")}
                         </Nav.Link>
                       )
                     : null}
                 </Nav>
-
-                <Nav className="nav-user">
+                <div className="d-flex ml-5">
+                <Nav >
                   {selectLanguages.length === 1 ? (
                     selectLanguages.map((e, i) => {
                       return (
@@ -321,7 +322,7 @@ const NavBar = React.memo(({ props }) => {
                     <NavDropdown
                       title={
                         <>
-                          <i className="fa fa-globe fa-lg mr-2" />
+                          <i className="fa fa-globe fa-lg " />
                           {lang ? lang : "LANGUAGE"}
                         </>
                       }
@@ -341,11 +342,11 @@ const NavBar = React.memo(({ props }) => {
                   )}
                 </Nav>
 
-                <Nav className="nav-user">
+                <Nav>
                   <NavDropdown
                     title={
                       <>
-                        <i className="fa fa-user fa-lg mr-1" />
+                        <i className="fa fa-user fa-lg " />
                         {userDetail?.name ||
                           userDetail?.preferred_username ||
                           ""}
@@ -365,6 +366,8 @@ const NavBar = React.memo(({ props }) => {
                     </NavDropdown.Item>
                   </NavDropdown>
                 </Nav>
+                </div>
+               
               </Navbar.Collapse>
             ) : (
             !MULTITENANCY_ENABLED && <Link to={loginUrl} className="btn btn-primary">

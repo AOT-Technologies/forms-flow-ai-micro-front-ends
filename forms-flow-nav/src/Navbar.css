@@ -46,6 +46,8 @@ h5,
 }
 .active-tab {
   color: var(--navbar-active) !important;
+  border-bottom: 3px solid var(--navbar-active) !important;
+  font-weight: 800;
 }
 
 .active-tab-dropdown > #dashboard-dropdown {
@@ -81,33 +83,33 @@ header nav {
 
 .topheading-border-bottom {
   z-index: 2000;
-  border-bottom: 2px solid var(--color-primary) !important;
   padding: 0 0.5rem !important;
   box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2),
     0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
 }
 
 .custom-app-name {
-  font-size: 30px;
-  font-weight: 600;
+  font-size: 25px;
+  font-weight: 1000;
   color: var(--navbar-app-name);
-  margin-left: var(--appname-margin-left);
-  margin-right: var(--appname-margin-right);
-  margin-top: var(--appname-margin-top);
-  margin-bottom: var(--appname-margin-bottom);
+  /* margin-left: var(--appname-margin-left);
+  margin-right: var(--appname-margin-right); */
+  /* margin-top: var(--appname-margin-top);
+  margin-bottom: var(--appname-margin-bottom); */
 }
 
 .navbar-light .navbar-nav .nav-link {
   color: var(--navbar-items);
+  margin-top: 10px;
 }
 
 .navbar-collapse{
   justify-content: space-evenly !important;
 
 }
-.nav-user {
+/* .nav-user {
   margin-left: auto;
-}
+} */
 
 .navbar-nav .nav-link:hover,
 .navbar-nav .nav-link:focus {

@@ -29,13 +29,13 @@
   --head-inactive: #909090;
   --logo-path: "./logo.svg";
 
-  --logo-width: 50px;
+  --logo-width: 35px;
   --appname-margin-left: 0px;
   --appname-margin-right: 0px;
   --appname-margin-top: 0px;
   --appname-margin-bottom: 0px;
 
-  --navbar-items-font-size: 16px;
+  --navbar-items-font-size: 13px;
   --navbar-items-font-weight: 600;
 
   --navbar-background: var(--color-white);
@@ -517,7 +517,6 @@ header nav {
 
 .topheading-border-bottom {
   z-index: 2000;
-  border-bottom: 2px solid #4d61fc !important;
   padding: 0 0.5rem !important;
   box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2),
     0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
