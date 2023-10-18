@@ -8,7 +8,7 @@ class HelperServices {
       return '-'
     }
     // Parse the input date string as a moment.js object
-    const momentDate = moment(date?.replace(' ', 'T'))
+    const momentDate = moment.utc(date?.replace(' ', 'T'));
 
     // Convert localizedDateTime to a Moment.js object and format it with the same format
     const localizedDateTime = moment(momentDate?.toDate())
@@ -21,7 +21,7 @@ class HelperServices {
     if (!date) {
       return '-'
     }
-    const momentDate = moment(date?.replace(' ', 'T'));
+    const momentDate = moment.utc(date?.replace(' ', 'T'));
 
     const localizedDate = moment(momentDate?.toDate())
       .format(DATE_FORMAT)
@@ -34,7 +34,7 @@ class HelperServices {
       return '-'
     }
 
-    const momentDate = moment(date?.replace(' ', 'T'));
+    const momentDate = moment.utc(date?.replace(' ', 'T')); 
     const localizedTime = moment(momentDate?.toDate())
       .format(TIME_FORMAT)
       .toLocaleString();
