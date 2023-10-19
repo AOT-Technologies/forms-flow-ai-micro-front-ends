@@ -435,8 +435,8 @@ export const RESOURCE_BUNDLES_FR = {
   "No Templates Found": "Aucun modèle trouvé",
   "No Category Found": "Aucune catégorie trouvée",
   "Save Template": "Enregistrer le Modèle",
-  "You can type and click the ": "Vous pouvez taper et cliquer sur",
-  " to create the category.": "pour créer la catégorie.",
+  "You can type and click the": "Vous pouvez taper et cliquer sur",
+  "to create the category.": "pour créer la catégorie.",
   "select or type to create": "sélectionnez ou saisissez pour créer"
 
 };
