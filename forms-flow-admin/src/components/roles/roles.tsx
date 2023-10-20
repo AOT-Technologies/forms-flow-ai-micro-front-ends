@@ -269,30 +269,31 @@ const Roles = React.memo((props: any) => {
   const showCreateModal = () => (
     <div>
       <Modal show={showRoleModal} onHide={handleCloseRoleModal}>
+        <Form>
         <Modal.Header closeButton>
           <Modal.Title>{t("Create Role")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
             <Form.Group className="mb-3">
-              <Form.Label aria-required>{t("Role Name")}</Form.Label>
-              <i style={{ color: "red" }}>*</i>
+              <Form.Label htmlFor="role-name" aria-required>{t("Role Name")}</Form.Label>
+              <i style={{ color: "#e00" }}>*</i>
               <Form.Control
                 type="text"
                 placeholder={t("Eg: Account Manager")}
                 required
                 onChange={handleChangeName}
+                id="role-name"
               />
-              <Form.Label className="mt-2">{t("Description")}</Form.Label>
-              <i style={{ color: "red" }}>*</i>
+              <Form.Label htmlFor="role-description" className="mt-2">{t("Description")}</Form.Label>
+              <i style={{ color: "#e00" }}>*</i>
               <Form.Control
                 as="textarea"
                 placeholder="Eg: Lorem ipsum..."
                 rows={3}
                 onChange={handleChangeDescription}
+                id="role-description"
               />
             </Form.Group>
-          </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="light" onClick={handleCloseRoleModal}>
@@ -302,10 +303,12 @@ const Roles = React.memo((props: any) => {
             variant="primary"
             disabled={disabled}
             onClick={handleCreateRole}
+            type="submit"
           >
             {t("Create")}
           </Button>
-        </Modal.Footer>
+          </Modal.Footer>
+        </Form>
       </Modal>
     </div>
   );
