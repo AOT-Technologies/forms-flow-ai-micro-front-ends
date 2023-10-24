@@ -797,6 +797,13 @@ div.upload input[type="file"] {
   height: 30px;
   width: 100%;
 }
+.cursor-default {
+  cursor: default !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
 
 @media (max-width: 768px) {
   .main-header {
