@@ -1,0 +1,9 @@
+@mixin generate-cursor($value) {
+    .cursor-#{$value} {
+      cursor: #{$value} !important;
+    }
+}
+
+@include generate-cursor("default");
+@include generate-cursor("pointer");
+  
