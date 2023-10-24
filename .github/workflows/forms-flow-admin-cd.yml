@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - release/*
+      - design-changes-5.3.0
     paths:
       - "forms-flow-admin/**"
       - "VERSION"
