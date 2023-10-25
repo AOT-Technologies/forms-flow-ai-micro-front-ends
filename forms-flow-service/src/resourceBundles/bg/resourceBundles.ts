@@ -434,8 +434,17 @@ export const RESOURCE_BUNDLES_BG = {
     "Save Template": "Запазване на Шаблона",
     "You can type and click the ": "Можете да пишете и щракнете върху",
     "to create the category.": " за създаване на категорията.",
-    "select or type to create": "изберете или въведете, за да създадете"
-
+    "select or type to create": "изберете или въведете, за да създадете",
+    "BPMN": "BPMN",
+    "DMN": "DMN",
+    "Advanced Designer": "Напреднал Дизайнер",
+    "Basic Designer": "Основен Дизайнер",
+    "Search": "Търсене",
+    "Key": "Ключ",
+    "No Process Found": "Няма Намерен Процес",
+    "Search workflow": "Търсене на Работен Процес",
+    "No DMN Found": "Няма Намерен DMN"
+    
     
 
   };

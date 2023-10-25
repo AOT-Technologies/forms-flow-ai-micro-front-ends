@@ -436,7 +436,14 @@ export const RESOURCE_BUNDLES_PT = {
     "Save Template": "Salvar Modelo",
     "You can type and click the": "Você pode digitar e clicar em",
     "to create the category.": "para criar a categoria.",
-    "select or type to create": "selecione ou digite para criar"
-
-
+    "select or type to create": "selecione ou digite para criar",
+    "BPMN": "BPMN",
+    "DMN": "DMN",
+    "Advanced Designer": "Designer Avançado",
+    "Basic Designer": "Designer Básico",
+    "Search": "Pesquisar",
+    "Key": "Chave",
+    "No Process Found": "Processo Não Encontrado",
+    "Search workflow": "Pesquisar Fluxo de Trabalho",
+    "No DMN Found": "DMN Não Encontrado"
 };
