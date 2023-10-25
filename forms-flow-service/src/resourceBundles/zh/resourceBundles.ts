@@ -443,7 +443,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "Key": "关键",
   "No Process Found": "未找到流程",
   "Search workflow": "搜索工作流程",
-  "No DMN Found": "未找到DMN"
-
+  "No DMN Found": "未找到DMN",
+  "Submission ID": "提交编号",
+  "Submission Name": "提交名称",
+  "Submission History": "提交历史",
+  "No Submission History found": "未找到提交历史"
 };
 

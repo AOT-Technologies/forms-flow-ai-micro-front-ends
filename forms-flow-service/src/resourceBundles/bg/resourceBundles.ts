@@ -443,8 +443,9 @@ export const RESOURCE_BUNDLES_BG = {
     "Key": "Ключ",
     "No Process Found": "Няма Намерен Процес",
     "Search workflow": "Търсене на Работен Процес",
-    "No DMN Found": "Няма Намерен DMN"
-    
-    
-
+    "No DMN Found": "Няма Намерен DMN",
+    "Submission ID": "Идентификационен Номер на Подаване",
+   "Submission Name": "Име на Подаване",
+   "Submission History": "История на Подаването",
+   "No Submission History found": "Няма Намерен История на Подаването",
   };

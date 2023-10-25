@@ -446,7 +446,11 @@ export const RESOURCE_BUNDLES_FR = {
   "Key": "Clé",
   "No Process Found": "Aucun Processus Trouvé",
   "Search workflow": "Rechercher le Flux de Travail",
-  "No DMN Found": "Aucun DMN Trouvé"
+  "No DMN Found": "Aucun DMN Trouvé",
+  "Submission ID": "ID de Soumission",
+  "Submission Name": "Nom de Soumission",
+  "Submission History": "Historique de Soumission",
+  "No Submission History found": "Aucun Historique de Soumission Trouvé",
 };
 
 

@@ -257,7 +257,7 @@ const NavBar = React.memo(({ props }) => {
                           >
                             {" "}
                             <i className="fa fa-list-alt fa-fw fa-lg mr-2" />
-                            {t("Applications")}
+                            {t("Submissions")}
                           </Nav.Link>
                         )
                       : null

@@ -445,8 +445,11 @@ export const RESOURCE_BUNDLES_EN = {
   "Key": "Key",
   "No Process Found": "No Process Found",
   "Search workflow": "Search workflow",
-  "No DMN Found": "No DMN Found"
-
+  "No DMN Found": "No DMN Found",
+  "Submission ID": "Submission Id",
+  "Submission Name": "Submission Name",
+  "Submission History":  "Submission History", 
+  "No Submission History found": "No Submission History found",
 };
 
 
