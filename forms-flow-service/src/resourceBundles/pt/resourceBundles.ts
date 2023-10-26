@@ -452,4 +452,6 @@ export const RESOURCE_BUNDLES_PT = {
     "No Submission History found": "Nenhum Histórico de Submissão Encontrado",
     "Error in submission count": "Erro na contagem de submissões",
     "Permission for submission tracking.": "Permissão para rastreamento de submissões.",
+    "Reviewer Permission": "Permissão do Revisor",
+    "Client Permission": "Permissão do Cliente"
 };

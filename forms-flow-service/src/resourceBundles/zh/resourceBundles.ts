@@ -450,5 +450,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "No Submission History found": "未找到提交历史",
   "Error in submission count": "提交计数错误",
   "Permission for submission tracking.": "提交跟踪权限",
+  "Reviewer Permission": "审阅者权限",
+  "Client Permission": "客户权限"
 };
 
