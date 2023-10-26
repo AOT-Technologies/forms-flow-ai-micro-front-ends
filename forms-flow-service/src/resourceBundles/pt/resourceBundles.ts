@@ -450,4 +450,6 @@ export const RESOURCE_BUNDLES_PT = {
     "Submission Name": "Nome da Submissão",
     "Submission History": "Histórico da Submissão",
     "No Submission History found": "Nenhum Histórico de Submissão Encontrado",
+    "Error in submission count": "Erro na contagem de submissões",
+    "Permission for submission tracking.": "Permissão para rastreamento de submissões.",
 };

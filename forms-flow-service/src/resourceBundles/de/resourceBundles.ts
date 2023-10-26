@@ -452,5 +452,7 @@ export const RESOURCE_BUNDLES_DE = {
     "Submission Name": "Einreichungsname",
     "Submission History": "Einreichungshistorie",
     "No Submission History found": "Keine Einreichungshistorie gefunden",
+    "Error in submission count": "Fehler in der Einreichungszählung",
+    "Permission for submission tracking.": "Berechtigung für die Einreichungsverfolgung.",
       
 };

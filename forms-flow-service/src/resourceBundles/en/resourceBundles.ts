@@ -450,6 +450,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Submission Name": "Submission Name",
   "Submission History":  "Submission History", 
   "No Submission History found": "No Submission History found",
+  "Error in submission count":"Error in submission count",
+  "Permission for submission tracking." : "Permission for submission tracking.",
 };
 
 

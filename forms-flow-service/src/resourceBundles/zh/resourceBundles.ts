@@ -447,6 +447,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Submission ID": "提交编号",
   "Submission Name": "提交名称",
   "Submission History": "提交历史",
-  "No Submission History found": "未找到提交历史"
+  "No Submission History found": "未找到提交历史",
+  "Error in submission count": "提交计数错误",
+  "Permission for submission tracking.": "提交跟踪权限",
 };
 

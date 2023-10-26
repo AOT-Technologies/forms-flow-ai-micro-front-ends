@@ -448,4 +448,6 @@ export const RESOURCE_BUNDLES_BG = {
    "Submission Name": "Име на Подаване",
    "Submission History": "История на Подаването",
    "No Submission History found": "Няма Намерен История на Подаването",
+   "Error in submission count": "Грешка в броя на Подаванията",
+   "Permission for submission tracking.": "Разрешение за проследяване на Подаванията.",
   };

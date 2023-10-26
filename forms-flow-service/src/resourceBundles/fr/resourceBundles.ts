@@ -451,6 +451,8 @@ export const RESOURCE_BUNDLES_FR = {
   "Submission Name": "Nom de Soumission",
   "Submission History": "Historique de Soumission",
   "No Submission History found": "Aucun Historique de Soumission Trouvé",
+  "Error in submission count": "Erreur dans le comptage des soumissions",
+  "Permission for submission tracking.": "Permission de suivi des soumissions.",
 };
 
 
