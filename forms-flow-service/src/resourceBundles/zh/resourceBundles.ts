@@ -434,8 +434,23 @@ export const RESOURCE_BUNDLES_ZH = {
   "Save Template": "保存模板",
   "You can type and click the": "您可以输入并单击",
   "to create the category.": "以创建该类别。",
-  "select or type to create": "选择或输入以创建"
-
-
+  "select or type to create": "选择或输入以创建",
+  "BPMN": "BPMN",
+  "DMN": "DMN",
+  "Advanced Designer": "高级设计师",
+  "Basic Designer": "基础设计师",
+  "Search": "搜索",
+  "Key": "关键",
+  "No Process Found": "未找到流程",
+  "Search workflow": "搜索工作流程",
+  "No DMN Found": "未找到DMN",
+  "Submission ID": "提交编号",
+  "Submission Name": "提交名称",
+  "Submission History": "提交历史",
+  "No Submission History found": "未找到提交历史",
+  "Error in submission count": "提交计数错误",
+  "Permission for submission tracking.": "提交跟踪权限",
+  "Reviewer Permission": "审阅者权限",
+  "Client Permission": "客户权限"
 };
 

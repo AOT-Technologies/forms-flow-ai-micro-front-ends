@@ -436,7 +436,22 @@ export const RESOURCE_BUNDLES_PT = {
     "Save Template": "Salvar Modelo",
     "You can type and click the": "Você pode digitar e clicar em",
     "to create the category.": "para criar a categoria.",
-    "select or type to create": "selecione ou digite para criar"
-
-
+    "select or type to create": "selecione ou digite para criar",
+    "BPMN": "BPMN",
+    "DMN": "DMN",
+    "Advanced Designer": "Designer Avançado",
+    "Basic Designer": "Designer Básico",
+    "Search": "Pesquisar",
+    "Key": "Chave",
+    "No Process Found": "Processo Não Encontrado",
+    "Search workflow": "Pesquisar Fluxo de Trabalho",
+    "No DMN Found": "DMN Não Encontrado",
+    "Submission ID": "ID da Submissão",
+    "Submission Name": "Nome da Submissão",
+    "Submission History": "Histórico da Submissão",
+    "No Submission History found": "Nenhum Histórico de Submissão Encontrado",
+    "Error in submission count": "Erro na contagem de submissões",
+    "Permission for submission tracking.": "Permissão para rastreamento de submissões.",
+    "Reviewer Permission": "Permissão do Revisor",
+    "Client Permission": "Permissão do Cliente"
 };
