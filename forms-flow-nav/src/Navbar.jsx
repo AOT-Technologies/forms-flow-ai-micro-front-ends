@@ -196,7 +196,7 @@ const NavBar = React.memo(({ props }) => {
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}form`}
-                      className={`nav-item py-md-3 px-0 mx-2 ${
+                      className={`nav-menu-item py-md-3 px-0 mx-2 ${
                         pathname.match(createURLPathMatchExp("form", baseUrl))
                           ? "active"
                           : ""
@@ -212,7 +212,7 @@ const NavBar = React.memo(({ props }) => {
                     <Nav.Link 
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}
-                      className={`nav-item py-md-3 px-0 mx-2 ${
+                      className={`nav-menu-item py-md-3 px-0 mx-2 ${
                         pathname.match(createURLPathMatchExp("admin", baseUrl))
                           ? "active"
                           : ""
@@ -228,7 +228,7 @@ const NavBar = React.memo(({ props }) => {
                         <Nav.Link
                           as={Link}
                           to={`${baseUrl}processes`}
-                          className={`nav-item py-md-3 px-0 mx-2 ${
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
                               createURLPathMatchExp("processes", baseUrl)
                             )
@@ -249,7 +249,7 @@ const NavBar = React.memo(({ props }) => {
                           <Nav.Link
                             as={Link}
                             to={`${baseUrl}application`}
-                            className={`nav-item py-md-3 px-0 mx-2 ${
+                            className={`nav-menu-item py-md-3 px-0 mx-2 ${
                               pathname.match(
                                 createURLPathMatchExp("application", baseUrl)
                               )
@@ -273,7 +273,7 @@ const NavBar = React.memo(({ props }) => {
                         <Nav.Link
                           as={Link}
                           to={`${baseUrl}task`}
-                          className={`nav-item py-md-3 px-0 mx-2 ${
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
                               createURLPathMatchExp("task", baseUrl)
                             )
@@ -294,7 +294,7 @@ const NavBar = React.memo(({ props }) => {
                           as={Link}
                           to={`${baseUrl}metrics`}
                           data-testid="Dashboards"
-                          className={`nav-item py-md-3 px-0 mx-2 ${
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
                               createURLPathMatchExp("metrics", baseUrl)
                             ) ||

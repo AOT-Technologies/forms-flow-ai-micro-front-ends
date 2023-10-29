@@ -2,14 +2,14 @@
 .navbar-background{
   background-color: var(--navbar-background);
 }
-.nav-item{
+.nav-menu-item{
   font-size: var(--navbar-items-font-size);
   font-weight: var(--navbar-items-font-weight);
   transition: 0.2s ease-in-out;
   position: relative;
 }
  
-.nav-item.active {
+.nav-menu-item.active {
   font-size: 18px !important;
   border-bottom: 3px solid var(--color-primary) !important;
   color: var(--color-primary) !important;
