@@ -40,6 +40,10 @@ class HelperServices {
       .toLocaleString();
     return localizedTime;
   }
+
+  public static getMoment(date: any): any {
+    return moment(date)
+  }
 }
 
 export default HelperServices
