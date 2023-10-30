@@ -206,7 +206,7 @@ const Users = React.memo((props: any) => {
                   <span className="chip-label">
                     {item?.name}{" "}
                     <i
-                      className="fa fa-close chip-close"
+                      className="fa-solid fa-xmark chip-close"
                       onClick={() => removePermission(rowData, item)}
                     ></i>
                   </span>

@@ -191,7 +191,7 @@ export const InsightDashboard = React.memo((props: any) => {
                 <span className="chip-label">
                   {label}{" "}
                   <i
-                    className="fa fa-close chip-close"
+                    className="fa-solid fa-xmark chip-close"
                     onClick={() => removeDashboardAuth(rowData, label)}
                   ></i>
                 </span>
