@@ -273,7 +273,7 @@ i.fa.fa-question-circle.text-muted {
   cursor: pointer;
 }
 
-.dropdown-menu:before {
+/* .dropdown-menu:before {
   position: absolute;
   top: -7px;
   right: 9px;
@@ -294,7 +294,7 @@ i.fa.fa-question-circle.text-muted {
   border-bottom: 6px solid #ffffff;
   border-left: 6px solid transparent;
   content: "";
-}
+} */
 
 .taskDropdown>.dropdown-menu::before {
   left: 10%;
@@ -780,6 +780,13 @@ div.upload input[type="file"] {
   margin-bottom: 25px;
   height: 30px;
   width: 100%;
+}
+.cursor-default {
+  cursor: default !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
 }
 
 @media (max-width: 768px) {

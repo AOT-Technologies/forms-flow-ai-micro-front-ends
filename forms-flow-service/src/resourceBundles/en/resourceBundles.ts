@@ -434,10 +434,26 @@ export const RESOURCE_BUNDLES_EN = {
   "No Templates Found": "No Templates Found",
   "No Category Found": "No Category Found",
   "Save Template": "Save Template",
-  "You can type and click the ": "You can type and click the",
-  " to create the category.": " to create the category.",
-  "select or type to create": "select or type to create"
-
+  "You can type and click the": "You can type and click the",
+  "to create the category.": " to create the category.",
+  "select or type to create": "select or type to create",
+  "BPMN": "BPMN",
+  "DMN": "DMN",
+  "Advanced Designer": "Advanced Designer",
+  "Basic Designer": "Basic Designer",
+  "Search": "Search",
+  "Key": "Key",
+  "No Process Found": "No Process Found",
+  "Search workflow": "Search workflow",
+  "No DMN Found": "No DMN Found",
+  "Submission ID": "Submission Id",
+  "Submission Name": "Submission Name",
+  "Submission History":  "Submission History", 
+  "No Submission History found": "No Submission History found",
+  "Error in submission count":"Error in submission count",
+  "Permission for submission tracking." : "Permission for submission tracking.",
+  "Reviewer permission to view submissions": "Reviewer permission to view submissions",
+  "Permission to create new submission": "Permission to create new submission"
 };
 
 
