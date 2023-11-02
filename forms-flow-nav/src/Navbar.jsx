@@ -166,13 +166,11 @@ const NavBar = React.memo(({ props }) => {
     instance.userLogout();
   };
 
-  console.log(lang,"lang")
-
   return (
     <BrowserRouter>
       <header className="navbar-background shadow">
         <Container>
-          <Navbar collapseOnSelect expand="lg" className={`navbar-background py-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
+          <Navbar collapseOnSelect expand="lg" className={`navbar-background p-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
             <Navbar.Brand href={`${baseUrl}`} className="d-flex col-3">
               <img
                 className="custom-logo"
@@ -236,7 +234,7 @@ const NavBar = React.memo(({ props }) => {
                               : ""
                           }`}
                         >
-                          <i className="fa fa-cogs fa-lg fa-fw mr-2" />
+                          <i className="fa fa-cogs fa-fw mr-2" />
                           {t("Processes")}
                         </Nav.Link>
                       )

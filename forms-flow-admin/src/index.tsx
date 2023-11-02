@@ -93,7 +93,9 @@ const Admin = React.memo(({ props }: any) => {
   return (
     <>
       {isAdmin && (
-        <div className="admin-container" tabIndex={0}>
+        <div className="main-container" tabIndex={0}>
+                  <div className="container py-2">
+        <div className="min-hightcontainer">
           <Head items={headerList()} page={page} />
           <ToastContainer theme="colored" />
           <Switch>
@@ -132,7 +134,9 @@ const Admin = React.memo(({ props }: any) => {
             />
             <Redirect from="*" to="/404" />
           </Switch>
+          </div>
           <Footer />
+          </div>
         </div>
       )}
     </>

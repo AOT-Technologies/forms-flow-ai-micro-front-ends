@@ -21,37 +21,23 @@
 
 }
 
-.role-selected {
-
-}
-
 .done-button {
     direction: rtl;
     margin-right: 10px;
     margin-top: 10px;
 }
-.role-container {
-    display: inline-grid;
-    grid-template-columns: auto auto auto auto;
-    column-gap: 10px;
-    row-gap: 10px;
-}
+ 
 
 .user-table-container{
-    min-height: 28.125rem !important;
-    margin-left: 3.938rem;
-    margin-right: 4.188rem !important;
-    padding-left: 1.938rem;
-    padding-right: 1.938rem;
+    min-height: 25rem !important;
+ 
     background: #FFFFFF;
     border: 1px solid #ECECEC;
     box-shadow: 0px 2px 8px rgba(66, 66, 66, 0.07);
     border-radius: 8px;
 }
 
-.user-table-container .table td{
-    font-weight: 500;
-}
+ 
 
 .user-filter-container > select {
     border: none;

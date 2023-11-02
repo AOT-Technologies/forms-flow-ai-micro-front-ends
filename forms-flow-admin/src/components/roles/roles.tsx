@@ -363,7 +363,7 @@ const Roles = React.memo((props: any) => {
   );
 
   const customTotal = (from, to, size) => (
-    <span className="react-bootstrap-table-pagination-total" role="main">
+    <span className="ml-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
@@ -483,7 +483,7 @@ const Roles = React.memo((props: any) => {
           checkDefaultRoleOrNot(rowData.name) ? null :
           <div>
             <i
-              className="fa fa-pencil fa-lg mr-4"
+              className="fa fa-pencil  mr-4"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
                 setSelectedRoleIdentifier(KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id)
@@ -492,7 +492,7 @@ const Roles = React.memo((props: any) => {
               }}
             />
             <i
-              className="fa fa-trash fa-lg delete_button"
+              className="fa fa-trash delete_button"
               style={{ color: "#D04444" }}
               onClick={() => {
                 setDeleteCandidate(rowData);
@@ -507,7 +507,7 @@ const Roles = React.memo((props: any) => {
   return (
     <>
       <div className="container-admin">
-        <div className="sub-container">
+        <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5">
             <Form.Control
               type="text"

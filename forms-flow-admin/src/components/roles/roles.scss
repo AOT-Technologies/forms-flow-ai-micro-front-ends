@@ -1,9 +1,6 @@
 .table-container{
-    min-height: 28.125rem !important;
-    margin-left: 3.938rem;
-    margin-right: 4.188rem !important;
-    padding-left: 1.938rem;
-    padding-right: 1.938rem;
+    min-height: 24rem !important;
+    
     background: #FFFFFF;
     border: 1px solid #ECECEC;
     box-shadow: 0px 2px 8px rgba(66, 66, 66, 0.07);
@@ -15,11 +12,7 @@
     color: #646464;
     border: none;
 }
-.table-container .table td{
-    padding-top: 1.563rem;
-    padding-bottom: 1.75rem;
-    font-weight: 600;
-}
+ 
 
 .search-role {
     width: 33.625rem !important;
@@ -27,18 +20,8 @@
     margin-top: 1.875rem;
     display: flex;
 }
-.sub-container{
-    margin-left: 3.938rem !important;
-    margin-right: 4.188rem;
-    padding-left: 1.938rem;
-    padding-right: 1.938rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.btn-primary{
-    background-color: #2F45F3 !important;
-}
+ 
+ 
 .user-list{
     text-decoration: none;
     cursor: pointer;
@@ -66,8 +49,6 @@
 }
 .container-admin {
     .row{
-        margin-left: 2.98rem;
-        margin-right: 3.188rem;
         align-items: center;
     }
     tbody{
@@ -148,8 +129,5 @@
         white-space: nowrap;
         margin-top: 2px;
     }
-    .sub-container{
-        margin-left: 1rem !important;
-        margin-right: 2.188rem;
-    }
+ 
 }
