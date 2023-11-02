@@ -433,9 +433,23 @@ export const RESOURCE_BUNDLES_BG = {
     "No Category Found": "Не са намерени категории",
     "Save Template": "Запазване на Шаблона",
     "You can type and click the ": "Можете да пишете и щракнете върху",
-    " to create the category.": "за създаване на категорията.",
-    "select or type to create": "изберете или въведете, за да създадете"
-
-    
-
+    "to create the category.": " за създаване на категорията.",
+    "select or type to create": "изберете или въведете, за да създадете",
+    "BPMN": "BPMN",
+    "DMN": "DMN",
+    "Advanced Designer": "Напреднал Дизайнер",
+    "Basic Designer": "Основен Дизайнер",
+    "Search": "Търсене",
+    "Key": "Ключ",
+    "No Process Found": "Няма Намерен Процес",
+    "Search workflow": "Търсене на Работен Процес",
+    "No DMN Found": "Няма Намерен DMN",
+    "Submission ID": "Идентификационен Номер на Подаване",
+   "Submission Name": "Име на Подаване",
+   "Submission History": "История на Подаването",
+   "No Submission History found": "Няма Намерен История на Подаването",
+   "Error in submission count": "Грешка в броя на Подаванията",
+   "Permission for submission tracking.": "Разрешение за проследяване на Подаванията.",
+   "Reviewer permission to view submissions": "Право на рецензент да преглежда представяния",
+   "Permission to create new submission": "Право на създаване на ново представяне"
   };

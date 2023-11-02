@@ -92,7 +92,7 @@ const Users = React.memo((props: any) => {
     setSizePerPage(sizePerPage);
   };
   const customTotal = (from, to, size) => (
-    <span className="react-bootstrap-table-pagination-total" role="main">
+    <span className="ml-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
@@ -196,17 +196,17 @@ const Users = React.memo((props: any) => {
       text: <Translation>{(t) => t("Role")}</Translation>,
       formatter: (cell, rowData) => {
         return (
-          <div className="role-container">
+          <div className="d-flex flex-wrap col-12">
             {cell?.map((item, i) => (
-              <div key={i} className="chip-element mr-2">
+              <div key={i} className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 my-1 small m-2" style={{background:"#EAEFFF"}}>
                 <OverlayTrigger
                   placement="bottom"
                   overlay={ !KEYCLOAK_ENABLE_CLIENT_AUTH ? <Tooltip id="tooltip">{item?.path}</Tooltip> : <></>}
                 >
-                  <span className="chip-label">
-                    {item?.name}{" "}
+                  <span className="">
+                    {item?.name}
                     <i
-                      className="fa-solid fa-xmark chip-close"
+                      className="fa-solid fa-xmark chip-close ml-2"
                       onClick={() => removePermission(rowData, item)}
                     ></i>
                   </span>
@@ -326,7 +326,7 @@ const Users = React.memo((props: any) => {
   return (
     <>
       <div className="container-admin">
-        <div className="sub-container">
+        <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-6 col-lg-6 col-md-6 col-sm-6">
             <Form.Control
               type="text"
@@ -350,7 +350,7 @@ const Users = React.memo((props: any) => {
 
           <div className="user-filter-container col-xl-6 col-lg-6 col-md-6 col-sm-6">
             <span>{t("Filter By:")} </span>
-            <Form.Select size="lg" onChange={handleSelectFilter} title={t("Filter here")}>
+            <Form.Select size="lg" className="bg-light" onChange={handleSelectFilter} title={t("Filter here")}>
               <option value="ALL" selected={!props.filter}>
                 {t("All roles")}
               </option>

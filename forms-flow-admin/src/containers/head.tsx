@@ -28,7 +28,7 @@ const Head = React.memo((props: any) => {
           </div>
         ))}
       </div>
-      <hr className="head-rule" />
+      <hr className="head-rule " />
     </div>
   );
 });

@@ -166,13 +166,11 @@ const NavBar = React.memo(({ props }) => {
     instance.userLogout();
   };
 
-  console.log(lang,"lang")
-
   return (
     <BrowserRouter>
       <header className="navbar-background shadow">
         <Container>
-          <Navbar collapseOnSelect expand="lg" className={`navbar-background py-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
+          <Navbar collapseOnSelect expand="lg" className={`navbar-background p-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
             <Navbar.Brand href={`${baseUrl}`} className="d-flex col-3">
               <img
                 className="custom-logo"
@@ -236,7 +234,7 @@ const NavBar = React.memo(({ props }) => {
                               : ""
                           }`}
                         >
-                          <i className="fa fa-cogs fa-lg fa-fw mr-2" />
+                          <i className="fa fa-cogs fa-fw mr-2" />
                           {t("Processes")}
                         </Nav.Link>
                       )
@@ -261,9 +259,8 @@ const NavBar = React.memo(({ props }) => {
                                 : ""
                             }`}
                           >
-                            {" "}
                             <i className="fa-solid fa-rectangle-list mr-2" />
-                            {t("Applications")}
+                            {t("Submissions")}
                           </Nav.Link>
                         )
                       : null
@@ -281,7 +278,6 @@ const NavBar = React.memo(({ props }) => {
                               : ""
                           }`}
                         >
-                          {" "}
                           <i className="fa-solid fa-list-check mr-2" />
                           {t("Tasks")}
                         </Nav.Link>
@@ -305,7 +301,7 @@ const NavBar = React.memo(({ props }) => {
                               : ""
                           }`}
                         >
-                          {" "}
+                          
                           <i className="fa-solid fa-gauge-high mr-2" />
                           {t("Dashboards")}
                         </Nav.Link>
@@ -341,7 +337,7 @@ const NavBar = React.memo(({ props }) => {
                             handleOnclick(e.name);
                           }}
                         >
-                          {e.value}{" "}
+                          {e.value}
                         </NavDropdown.Item>
                       ))}
                     </NavDropdown>
@@ -357,7 +353,7 @@ const NavBar = React.memo(({ props }) => {
                     }
                   >
                     <NavDropdown.Item>
-                      {" "}
+                      
                       {userDetail?.name || userDetail?.preferred_username}
                       <br />
                       <i className="fa fa-users fa-fw" />
@@ -365,7 +361,7 @@ const NavBar = React.memo(({ props }) => {
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={logout}>
-                      <i className="fa fa-sign-out fa-fw" /> {t("Logout")}{" "}
+                      <i className="fa fa-sign-out fa-fw" /> {t("Logout")}
                     </NavDropdown.Item>
                   </NavDropdown>
                 </Nav>

@@ -185,13 +185,13 @@ export const InsightDashboard = React.memo((props: any) => {
       text: <Translation>{(t) => t("Access Groups")}</Translation>,
       formatter: (cell, rowData) => {
         return (
-          <div className="d-flex flex-wrap">
+          <div className="d-flex flex-wrap col-12">
             {cell?.map((label, i) => (
-              <div key={i} className="chip-element mr-2">
-                <span className="chip-label">
-                  {label}{" "}
+              <div key={i} className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 small m-2" style={{background:"#EAEFFF"}}>
+                <span className="">
+                  {label}
                   <i
-                    className="fa-solid fa-xmark chip-close"
+                    className="fa-solid fa-xmark chip-close ml-2"
                     onClick={() => removeDashboardAuth(rowData, label)}
                   ></i>
                 </span>
@@ -278,7 +278,7 @@ export const InsightDashboard = React.memo((props: any) => {
   };
 
   const customTotal = (from, to, size) => (
-    <span className="react-bootstrap-table-pagination-total" role="main">
+    <span className="ml-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
@@ -298,7 +298,7 @@ export const InsightDashboard = React.memo((props: any) => {
 
   return (
     <>
-      <div className="container-admin" role="definition">
+      <div className="" role="definition">
         <br />
         <div>
           {!isLoading ? (
@@ -308,7 +308,7 @@ export const InsightDashboard = React.memo((props: any) => {
               columns={columns}
               pagination={pagination}
               bordered={false}
-              wrapperClasses="table-container-admin"
+              wrapperClasses="table-container-admin mb-3"
               rowStyle={{
                 color: "#09174A",
                 fontWeight: 600,

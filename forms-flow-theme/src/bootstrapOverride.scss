@@ -3,3 +3,14 @@
       max-width: 1320px;
     }
 }
+.table {
+  border-collapse: inherit;
+}
+
+.table th {
+  vertical-align: inherit !important;
+}
+
+.table td {
+  vertical-align: inherit !important;
+}
