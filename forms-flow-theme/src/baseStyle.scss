@@ -1,0 +1,17 @@
+/* This file contains style for the main classes of application */
+
+body {
+    font-size: 16px;
+    font-family: Nunito Sans, SemiBold;
+    overflow: hidden;
+  }
+  
+  .main-container{
+    max-height: calc(100vh - 59px);
+    overflow-y: auto;
+    background-color: var(--color-main-bg);
+  }
+  
+  .min-hightcontainer{
+    min-height: calc(100vh - 164px);
+  }
