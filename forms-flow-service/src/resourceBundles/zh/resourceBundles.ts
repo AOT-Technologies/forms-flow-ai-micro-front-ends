@@ -451,6 +451,22 @@ export const RESOURCE_BUNDLES_ZH = {
   "Error in submission count": "提交计数错误",
   "Permission for submission tracking.": "提交跟踪权限",
   "Reviewer permission to view submissions": "审阅者查看提交的权限",
-  "Permission to create new submission": "创建新提交的权限"
+  "Permission to create new submission": "创建新提交的权限",
+  "Back to Bundle List": "返回捆绑包列表",
+  "Bundle": "包",
+  "You can drag these nodes to the pane on the right.": "您可以将这些节点拖动到右侧窗格。",
+  "You can delete the element by select and click the backspace": "您可以通过选择并单击退格键来删除元素",
+  "Workflow Id": "工作流 ID",
+  "Enter Workflow Id": "输入工作流 ID",
+  "Back to Submissions": "返回提交",
+  "Back to Drafts": "返回草稿",
+  "Choose Your Workflow Option": "选择您的工作流选项",
+  "Create New Workflow": "创建新工作流",
+  "Choose this option when you want to create a fresh workflow based on the template. System will generate and deploy a new workflow, then connect it to the selected form. Opt for this if your form requires a distinct set of workflow steps tailored to its specific needs.": "当您希望基于模板创建全新工作流时，请选择此选项。系统将生成并部署新工作流，然后将其连接到所选表单。如果您的表单需要根据其特定需求定制的一组不同的工作流步骤，请选择此选项。",
+  "Reuse Existing Workflow": "重用现有工作流",
+  "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "选择此选项以将表单链接到已建立的工作流程。对现有工作流程进行的任何修改将自动反映在此表单中。当您希望利用现有工作流程满足表单要求时，这是理想选择",
+  "Are you sure you wish to delete the Template?": "您确定要删除模板吗？",
+  "Enter Workflow Name": "输入工作流名称"
+
 };
 

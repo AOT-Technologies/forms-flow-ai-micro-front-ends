@@ -455,6 +455,22 @@ export const RESOURCE_BUNDLES_DE = {
     "Error in submission count": "Fehler in der Einreichungszählung",
     "Permission for submission tracking.": "Berechtigung für die Einreichungsverfolgung.",
     "Reviewer permission to view submissions": "Berechtigung des Reviewers zur Ansicht von Einreichungen",
-    "Permission to create new submission": "Berechtigung zur Erstellung einer neuen Einreichung"
+    "Permission to create new submission": "Berechtigung zur Erstellung einer neuen Einreichung",
+    "Back to Bundle List": "Zurück zur Bündelliste",
+    "Bundle": "Bündel",
+    "You can drag these nodes to the pane on the right.": "Sie können diese Knoten auf das Fenster rechts ziehen.",
+    "You can delete the element by select and click the backspace": "Sie können das Element auswählen und die Rücktaste drücken, um es zu löschen",
+    "Workflow Id": "Workflow-ID",
+    "Enter Workflow Id": "Workflow-ID eingeben",
+    "Back to Submissions": "Zurück zu den Einreichungen",
+    "Back to Drafts": "Zurück zu den Entwürfen",
+    "Choose Your Workflow Option": "Wählen Sie Ihre Workflow-Option",
+    "Create New Workflow": "Neuen Workflow erstellen",
+    "Choose this option when you want to create a fresh workflow based on the template. System will generate and deploy a new workflow, then connect it to the selected form. Opt for this if your form requires a distinct set of workflow steps tailored to its specific needs.": "Wählen Sie diese Option aus, wenn Sie einen neuen Workflow auf der Grundlage der Vorlage erstellen möchten. Das System generiert und implementiert einen neuen Workflow und verbindet ihn dann mit dem ausgewählten Formular. Entscheiden Sie sich dafür, wenn Ihr Formular eine speziell auf seine Bedürfnisse zugeschnittene Reihe von Workflow-Schritten erfordert.",
+    "Reuse Existing Workflow": "Vorhandenen Workflow wiederverwenden",
+    "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "Wählen Sie diese Option aus, um das Formular mit einem bereits etablierten Workflow zu verknüpfen. Alle Änderungen am vorhandenen Workflow werden sich automatisch auch in diesem Formular widerspiegeln. Dies ist ideal, wenn Sie den vorhandenen Workflow für die Anforderungen Ihres Formulars nutzen möchten.",
+    "Are you sure you wish to delete the Template?": "Sind Sie sicher, dass Sie die Vorlage löschen möchten?",
+    "Enter Workflow Name": "Geben Sie den Workflow-Namen ein"
+
       
 };

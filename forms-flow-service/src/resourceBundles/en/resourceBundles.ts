@@ -453,7 +453,23 @@ export const RESOURCE_BUNDLES_EN = {
   "Error in submission count":"Error in submission count",
   "Permission for submission tracking." : "Permission for submission tracking.",
   "Reviewer permission to view submissions": "Reviewer permission to view submissions",
-  "Permission to create new submission": "Permission to create new submission"
+  "Permission to create new submission": "Permission to create new submission",
+  "Back to Bundle List": "Back to Bundle List",
+  "Bundle": "Bundle",
+  "You can drag these nodes to the pane on the right.": "You can drag these nodes to the pane on the right.",
+  "You can delete the element by select and click the backspace": "You can delete the element by select and click the backspace",
+  "Workflow Id": "Workflow Id",
+  "Enter Workflow Id": "Enter Workflow Id",
+  "Back to Submissions": "Back to Submissions",
+  "Back to Drafts": "Back to Drafts",
+  "Choose Your Workflow Option": "Choose Your Workflow Option",
+  "Create New Workflow": "Create New Workflow",
+  "Choose this option when you want to create a fresh workflow based on the template. System will generate and deploy a new workflow, then connect it to the selected form. Opt for this if your form requires a distinct set of workflow steps tailored to its specific needs.": "Choose this option when you want to create a fresh workflow based on the template. System will generate and deploy a new workflow, then connect it to the selected form. Opt for this if your form requires a distinct set of workflow steps tailored to its specific needs.",
+  "Reuse Existing Workflow": "Reuse Existing Workflow",
+  "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements",
+  "Are you sure you wish to delete the Template?": "Are you sure you wish to delete the Template?",
+  "Enter Workflow Name": "Enter Workflow Name"
+
 };
 
 

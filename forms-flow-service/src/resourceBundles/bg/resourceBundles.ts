@@ -451,5 +451,21 @@ export const RESOURCE_BUNDLES_BG = {
    "Error in submission count": "Грешка в броя на Подаванията",
    "Permission for submission tracking.": "Разрешение за проследяване на Подаванията.",
    "Reviewer permission to view submissions": "Право на рецензент да преглежда представяния",
-   "Permission to create new submission": "Право на създаване на ново представяне"
+   "Permission to create new submission": "Право на създаване на ново представяне",
+   "Back to Bundle List": "Обратно към списъка с пакети",
+   "Bundle": "Пакет",
+   "You can drag these nodes to the pane on the right.": "Можете да влачете тези възли в дясната панел.",
+   "You can delete the element by select and click the backspace": "Можете да изтриете елемента, като го изберете и натиснете клавиша за връщане",
+   "Workflow Id": "Идентификатор на работния процес",
+   "Enter Workflow Id": "Въведете идентификатор на работния процес",
+   "Back to Submissions": "Обратно към предаванията",
+   "Back to Drafts": "Обратно към черновите",
+   "Choose Your Workflow Option": "Изберете своята опция за работния процес",
+   "Create New Workflow": "Създаване на нов работен процес",
+   "Choose this option when you want to create a fresh workflow based on the template. System will generate and deploy a new workflow, then connect it to the selected form. Opt for this if your form requires a distinct set of workflow steps tailored to its specific needs.": "Изберете тази опция, когато искате да създадете нов работен процес, базиран на шаблона. Системата ще генерира и разгърне нов работен процес, след което ще го свърже с избрания формуляр. Изберете тази опция, ако вашият формуляр изисква различен набор от стъпки в работния процес, подходящи за конкретните му нужди.",
+   "Reuse Existing Workflow": "Използване на съществуващ работен процес",
+   "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "Изберете тази опция, за да свържете формуляра с вече установения работен процес. Всякакви модификации, направени върху съществуващия работен процес, автоматично ще се отразят и в този формуляр. Това е идеално, когато искате да използвате вече съществуващия работен процес за нуждите на вашия формуляр",
+   "Are you sure you wish to delete the Template?": "Сигурни ли сте, че искате да изтриете шаблона?",
+   "Enter Workflow Name": "Въведете името на работния процес"
+
   };
