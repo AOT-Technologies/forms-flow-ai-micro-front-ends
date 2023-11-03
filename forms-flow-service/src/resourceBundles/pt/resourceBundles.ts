@@ -453,5 +453,21 @@ export const RESOURCE_BUNDLES_PT = {
     "Error in submission count": "Erro na contagem de submissões",
     "Permission for submission tracking.": "Permissão para rastreamento de submissões.",
     "Reviewer permission to view submissions": "Permissão do revisor para visualizar envios",
-    "Permission to create new submission": "Permissão para criar novo envio"
+    "Permission to create new submission": "Permissão para criar novo envio",
+    "Back to Bundle List": "Voltar para a Lista de Pacotes",
+    "Bundle": "Pacote",
+    "You can drag these nodes to the pane on the right.": "Você pode arrastar esses nós para o painel à direita.",
+    "You can delete the element by select and click the backspace": "Você pode excluir o elemento selecionando e clicando na tecla backspace",
+    "Workflow Id": "ID do Fluxo de Trabalho",
+    "Enter Workflow Id": "Insira o ID do Fluxo de Trabalho",
+    "Back to Submissions": "Voltar para as Submissões",
+    "Back to Drafts": "Voltar para os Rascunhos",
+    "Choose Your Workflow Option": "Escolha sua Opção de Fluxo de Trabalho",
+    "Create New Workflow": "Criar Novo Fluxo de Trabalho",
+    "Choose this option when you want to create a fresh workflow based on the template. System will generate and deploy a new workflow, then connect it to the selected form. Opt for this if your form requires a distinct set of workflow steps tailored to its specific needs.": "Escolha esta opção quando desejar criar um novo fluxo de trabalho com base no modelo. O sistema irá gerar e implantar um novo fluxo de trabalho e, em seguida, conectá-lo ao formulário selecionado. Opte por isso se o seu formulário exigir um conjunto distinto de etapas de fluxo de trabalho adaptadas às suas necessidades específicas.",
+    "Reuse Existing Workflow": "Reutilizar Fluxo de Trabalho Existente",
+    "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "Selecione esta opção para vincular o formulário a um fluxo de trabalho já estabelecido. Quaisquer modificações feitas no fluxo de trabalho existente serão refletidas automaticamente neste formulário. Isso é ideal quando você deseja aproveitar o fluxo de trabalho existente para atender às necessidades do seu formulário",
+    "Are you sure you wish to delete the Template?": "Tem certeza de que deseja excluir o Modelo?",
+    "Enter Workflow Name": "Inserir Nome do Fluxo de Trabalho"
+
 };
