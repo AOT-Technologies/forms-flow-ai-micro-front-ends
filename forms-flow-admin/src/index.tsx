@@ -93,9 +93,9 @@ const Admin = React.memo(({ props }: any) => {
   return (
     <>
       {isAdmin && (
-        <div className="main-container" tabIndex={0}>
-                  <div className="container py-2">
-        <div className="min-hightcontainer">
+        <div className="main-container " tabIndex={0}>
+                  <div className="container mt-5">
+        <div className="min-container-height pl-md-3">
           <Head items={headerList()} page={page} />
           <ToastContainer theme="colored" />
           <Switch>

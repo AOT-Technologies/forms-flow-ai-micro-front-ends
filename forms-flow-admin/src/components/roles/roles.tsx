@@ -418,6 +418,7 @@ const Roles = React.memo((props: any) => {
   const pagination = paginationFactory({
     showTotal: true,
     align: "center",
+    className:"d-flex",
     sizePerPageList: getpageList(),
     page: activePage,
     sizePerPage: sizePerPage,
@@ -508,7 +509,7 @@ const Roles = React.memo((props: any) => {
     <>
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
-          <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5">
+          <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
             <Form.Control
               type="text"
               placeholder={t("Search by role name")}
