@@ -1,6 +1,8 @@
 @import "./utils/cursor.scss";
 @import "./utils/overflow.scss";
 @import "./bootstrapOverride.scss";
+@import "./baseStyle.scss";
+@import "./components/custom-table.scss";
 
 :root {
   --color-primary: #0072ed;
@@ -33,7 +35,7 @@
   --head-inactive: #909090;
   --logo-path: "./logo.svg";
 
-  --logo-width: 50px;
+  --logo-width: 40px;
   --appname-margin-left: 0px;
   --appname-margin-right: 0px;
   --appname-margin-top: 0px;
@@ -52,6 +54,8 @@
   --navbar-logo-path: var(--logo-path);
 }
  
+ 
+
 .overflow-x-auto {
   overflow-x: auto;
   overflow-y: hidden;
@@ -100,20 +104,8 @@ h4 {
 }
  
 
-body {
-  font-size: 16px;
-  font-family: Nunito Sans, SemiBold;
-  overflow: hidden;
-}
-
-.main-container{
-  max-height: calc(100vh - 59px);
-  overflow-y: auto;
-}
-
-.min-hightcontainer{
-  min-height: calc(100vh - 164px);
-}
+ 
+ 
 
 .loader-container {
   display: flex;
@@ -321,8 +313,7 @@ i.fa.fa-question-circle.text-muted {
   max-width: 104px;
 }
 
-.main-header {
-  margin-left: 15px !important;
+.main-header { 
   display: flex;
   margin-top: 10px;
   margin-bottom: 25px;
@@ -654,8 +645,8 @@ div.upload input[type="file"] {
 }
 
 .head-active {
-  color: #212529;
-  border-bottom: 4px solid #4d61fc;
+  color: var(--color-black);
+  border-bottom: 4px solid  var(--color-primary);
 }
 
 .padding-left-60 {
@@ -707,13 +698,7 @@ div.upload input[type="file"] {
   cursor: pointer !important;
 }
 
-@media (max-width: 768px) {
-  .main-header {
-    height: 70px;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
+ 
 
 hr {
   border-top: 2px solid rgba(0,0,0,.1);

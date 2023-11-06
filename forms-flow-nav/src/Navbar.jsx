@@ -170,8 +170,8 @@ const NavBar = React.memo(({ props }) => {
     <BrowserRouter>
       <header className="navbar-background shadow">
         <Container>
-          <Navbar collapseOnSelect expand="lg" className={`navbar-background p-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
-            <Navbar.Brand href={`${baseUrl}`} className="d-flex col-3">
+          <Navbar  collapseOnSelect expand="lg" className={`navbar-background p-0 m-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
+            <Navbar.Brand href={`${baseUrl}`} className="d-flex mr-4">
               <img
                 className="custom-logo"
                 src={logoPath}
