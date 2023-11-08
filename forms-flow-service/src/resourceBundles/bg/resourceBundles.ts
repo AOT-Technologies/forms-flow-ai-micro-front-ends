@@ -1,5 +1,18 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+    "View Submitted Form": "Преглед на представен формуляр",
+    "View Draft Details": "Преглед на детайлите на черновата",
+    "Edit Draft": "Редактиране на черновата",
+    "Draft Title": "Заглавие на черновата",
+    "Filter": "Филтър",
+    "Advanced Options": "Разширени опции",
+    "Enter the path name": "Въведете името на пътя",
+    "Search by form title": "Търсене по заглавие на формуляра",
+    "Associate Workflow": "Свързване с работен процес",
+    "Search by workflow name": "Търсене по име на работен процес",
+    "View Details": "Преглед на детайлите",
+    "Visibility": "Видимост",
+    "Form Title":"Заглавие на формуляра",
     "Access restricted by its designer..!": "Достъпът е ограничен от дизайнера..!",
     "and you will no longer have the access to this form in bundles": "и няма да имате достъп до тази форма в пакети",
     "You will no longer have the access to this form in bundles": "Вече няма да имате достъп до тази форма в пакети",

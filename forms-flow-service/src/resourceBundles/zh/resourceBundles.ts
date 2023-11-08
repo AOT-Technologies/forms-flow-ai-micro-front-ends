@@ -1,5 +1,18 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_ZH = {
+  "View Submitted Form": "查看已提交的表单",
+  "View Draft Details": "查看草稿详情",
+  "Edit Draft": "编辑草稿",
+  "Draft Title": "草稿标题",
+  "Filter": "过滤器",
+  "Advanced Options": "高级选项",
+  "Enter the path name": "输入路径名称",
+  "Search by form title": "按表单标题搜索",
+  "Associate Workflow": "关联工作流程",
+  "Search by workflow name": "按工作流程名称搜索",
+  "View Details": "查看详细信息",
+  "Visibility": "可见性",
+  "Form Title": "表单标题",
   "Access restricted by its designer..!": "访问受设计者限制..!",
   "and you will no longer have the access to this form in bundles": "而且您将不再能够在包裹中访问此表单",
   "You will no longer have the access to this form in bundles": "您将不再能够在包裹中访问此表单",
