@@ -1,5 +1,6 @@
 @import "./utils/cursor.scss";
 @import "./utils/overflow.scss";
+@import "./components/toastifyOverride.scss";
 @import "./bootstrapOverride.scss";
 @import "./baseStyle.scss";
 @import "./components/custom-table.scss";
@@ -34,7 +35,7 @@
   --color-main-bg: #F7F7F7;
   --head-inactive: #909090;
   --logo-path: "./logo.svg";
-
+  --toastify-success-color: #39A7FF;
   --logo-width: 40px;
   --appname-margin-left: 0px;
   --appname-margin-right: 0px;

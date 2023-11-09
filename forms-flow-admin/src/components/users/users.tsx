@@ -327,7 +327,7 @@ const Users = React.memo((props: any) => {
     <>
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
-          <div className="search-role col-xl-6 col-lg-6 col-md-6 col-sm-6">
+          <div className="search-role col-xl-6 col-lg-6 col-md-6 col-sm-6 px-0">
             <Form.Control
               type="text"
               placeholder={t("Search by name, username or email")}
