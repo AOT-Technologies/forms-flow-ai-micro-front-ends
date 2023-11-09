@@ -251,9 +251,10 @@ const Roles = React.memo((props: any) => {
       {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
     </Modal.Body>
     <Modal.Footer>
-      <Button variant="light" onClick={handleCloseDeleteModal}>
+      <button type="button"
+            className="btn btn-link text-dark" onClick={handleCloseDeleteModal}>
         {t("Cancel")}
-      </Button>
+      </button>
       <Button
         variant="danger"
         disabled={disabled}
@@ -295,9 +296,10 @@ const Roles = React.memo((props: any) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="light" onClick={handleCloseRoleModal}>
+          <button type="button"
+            className="btn btn-link text-dark" onClick={handleCloseRoleModal}>
             {t("Cancel")}
-          </Button>
+          </button>
           <Button
             variant="primary"
             disabled={disabled}
@@ -339,9 +341,10 @@ const Roles = React.memo((props: any) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="light" onClick={handleCloseEditRoleModal}>
+          <button type="button"
+            className="btn btn-link text-dark" onClick={handleCloseEditRoleModal}>
             {t("Cancel")}
-          </Button>
+          </button>
           <Button
             variant="primary"
             disabled={disabled}
