@@ -479,6 +479,20 @@ export const RESOURCE_BUNDLES_BG = {
    "Reuse Existing Workflow": "Използване на съществуващ работен процес",
    "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "Изберете тази опция, за да свържете формуляра с вече установения работен процес. Всякакви модификации, направени върху съществуващия работен процес, автоматично ще се отразят и в този формуляр. Това е идеално, когато искате да използвате вече съществуващия работен процес за нуждите на вашия формуляр",
    "Are you sure you wish to delete the Template?": "Сигурни ли сте, че искате да изтриете шаблона?",
-   "Enter Workflow Name": "Въведете името на работния процес"
+   "Enter Workflow Name": "Въведете името на работния процес",
+   "Create Workflow": "Създайте работен процес",
+  "Upload Workflow": "Качете работен процес",
+  "Edit Workflow": "Редактирайте работен процес",
+  "Published": "Публикувано",
+  "Unpublished": "Непубликувано",
+  "Private": "Частен",
+  "Anonymous": "Анонимен",
+  "Edit Processes": "Редактирайте процесите",
+  "Create Processes": "Създайте процеси",
+  "tasks": "задачи",
+  "Submission Id": "Идентификационен номер на подаване",
+  "Clear All Filters": "Изчисти всички филтри",
+  "Show results": "Покажи резултатите",
+  "Delete Draft": "Изтрий черновата"
 
   };

@@ -482,8 +482,21 @@ export const RESOURCE_BUNDLES_FR = {
   "Reuse Existing Workflow": "Réutiliser un flux de travail existant",
   "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "Sélectionnez cette option pour lier le formulaire à un flux de travail déjà établi. Toutes les modifications apportées au flux de travail existant se refléteront automatiquement dans ce formulaire. C'est idéal lorsque vous souhaitez exploiter le flux de travail existant pour répondre aux besoins de votre formulaire",
   "Are you sure you wish to delete the Template?": "Êtes-vous sûr de vouloir supprimer le modèle ?",
-  "Enter Workflow Name": "Saisissez le nom du flux de travail"
-
+  "Enter Workflow Name": "Saisissez le nom du flux de travail",
+  "Create Workflow": "Créer un Flux de Travail",
+  "Upload Workflow": "Télécharger un Flux de Travail",
+  "Edit Workflow": "Modifier un Flux de Travail",
+  "Published": "Publié",
+  "Unpublished": "Non Publié",
+  "Private": "Privé",
+  "Anonymous": "Anonyme",
+  "Edit Processes": "Modifier les Processus",
+  "Create Processes": "Créer des Processus",
+  "tasks": "tâches",
+  "Submission Id": "ID de soumission",
+  "Clear All Filters": "Effacer tous les filtres",
+  "Show results": "Afficher les résultats",
+  "Delete Draft": "Supprimer le brouillon"
 };
 
 
