@@ -1,5 +1,18 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_FR = {
+  "View Submitted Form": "Voir le formulaire soumis",
+  "View Draft Details": "Voir les détails du brouillon",
+  "Edit Draft": "Éditer le brouillon",
+  "Draft Title": "Titre du brouillon",
+  "Filter": "Filtre",
+  "Advanced Options": "Options avancées",
+  "Enter the path name": "Entrer le nom du chemin",
+  "Search by form title": "Rechercher par titre de formulaire",
+  "Associate Workflow": "Associer le flux de travail",
+  "Search by workflow name": "Rechercher par nom de flux de travail",
+  "View Details": "Voir les détails",
+  "Visibility": "Visibilité",
+  "Form Title": "Titre du formulaire",
   "Access restricted by its designer..!": "Accès restreint par son concepteur..!",
   "and you will no longer have the access to this form in bundles": "et vous n'aurez plus accès à ce formulaire dans les bundles",
   "You will no longer have the access to this form in bundles": "Vous n'aurez plus accès à ce formulaire dans les bundles",

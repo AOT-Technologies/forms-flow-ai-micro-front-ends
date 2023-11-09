@@ -34,16 +34,18 @@ const NavBar = React.memo(({ props }) => {
   const [selectLanguages, setSelectLanguages] = React.useState([]);
   const [applicationTitle, setApplicationTitle] = React.useState("");
   const [tenantLogo, setTenantLogo] = React.useState("/logo_skeleton.svg");
-  const defaultLogoPath = document.documentElement.style.getPropertyValue("--navbar-logo-path") || "/logo.svg";
+  const defaultLogoPath =
+    document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
+    "/logo.svg";
   React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
     });
 
     props.subscribe("FF_PUBLIC", () => {
-      if(MULTITENANCY_ENABLED){
-        setApplicationTitle(APPLICATION_NAME)
-        setTenantLogo(defaultLogoPath)
+      if (MULTITENANCY_ENABLED) {
+        setApplicationTitle(APPLICATION_NAME);
+        setTenantLogo(defaultLogoPath);
       }
     });
 
@@ -84,8 +86,7 @@ const NavBar = React.memo(({ props }) => {
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
-
-  const [lang, setLang] = React.useState(userDetail?.locale);
+  const [lang, setLang] = React.useState(userDetail?.locale); 
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -102,9 +103,7 @@ const NavBar = React.memo(({ props }) => {
 
   const [loginUrl, setLoginUrl] = useState(baseUrl);
 
-  const logoPath = MULTITENANCY_ENABLED
-    ? tenantLogo
-    : defaultLogoPath;
+  const logoPath = MULTITENANCY_ENABLED ? tenantLogo : defaultLogoPath;
   const getAppName = useMemo(
     () => () => {
       if (!MULTITENANCY_ENABLED) {
@@ -137,6 +136,8 @@ const NavBar = React.memo(({ props }) => {
     localStorage.setItem("lang", language);
   }, [lang]);
 
+ 
+
   React.useEffect(() => {
     setUserDetail(
       JSON.parse(StorageService.get(StorageService.User.USER_DETAILS))
@@ -162,57 +163,55 @@ const NavBar = React.memo(({ props }) => {
 
   return (
     <BrowserRouter>
-      <header>
-        <Navbar expand="lg" className="topheading-border-bottom position-relative" fixed="top">
-          <Container fluid>
-            <Navbar.Brand className="d-flex">
-              <Link to={`${baseUrl}`}>
-                <img
-                  className="img-fluid custom-logo mr-2"
-                  src={logoPath}
-                  width="50"
-                  height="55"
-                  alt="Logo"
-                />
-              </Link>
+      <header className="navbar-background shadow">
+        <Container>
+          <Navbar  collapseOnSelect expand="lg" className={`navbar-background p-0 m-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
+            <Navbar.Brand href={`${baseUrl}`} className="d-flex col-3 px-0">
+              <img
+                className="custom-logo"
+                src={logoPath}
+                alt="Logo"
+              />
               <div className="custom-app-name">{appName}</div>
             </Navbar.Brand>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav " />
+            {isAuthenticated && <Navbar.Toggle aria-controls="responsive-navbar-nav" />}
+             
             {isAuthenticated ? (
               <Navbar.Collapse
                 id="responsive-navbar-nav"
-                className="navbar-nav"
+                className="d-lg-flex justify-content-between h-100"
               >
-                <Nav
+                <Nav 
                   id="main-menu-nav"
-                  className="active align-items-lg-center"
+                  className="align-items-lg-center justify-content-start w-100"
                 >
                   {ENABLE_FORMS_MODULE && (
                     <Nav.Link
                       as={Link}
                       to={`${baseUrl}form`}
-                      className={`main-nav nav-item ${
+                      className={`nav-menu-item py-md-3 px-0 mx-2 ${
                         pathname.match(createURLPathMatchExp("form", baseUrl))
-                          ? "active-tab"
-                          : "inactive-tab"
+                          ? "active"
+                          : ""
                       }`}
                     >
-                      <i className="fa fa-wpforms fa-fw fa-lg mr-2" />
+                      <i className="fa-solid fa-file-lines mr-2" />
                       {t("Forms")}
                     </Nav.Link>
                   )}
 
+
                   {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
-                    <Nav.Link
+                    <Nav.Link 
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}
-                      className={`main-nav nav-item ${
+                      className={`nav-menu-item py-md-3 px-0 mx-2 ${
                         pathname.match(createURLPathMatchExp("admin", baseUrl))
-                          ? "active-tab"
-                          : "inactive-tab"
+                          ? "active"
+                          : ""
                       }`}
                     >
-                      <i className="fa fa-user-circle-o fa-lg mr-2" />
+                      <i className="fa-solid fa-user-check mr-2" />
                       {t("Admin")}
                     </Nav.Link>
                   ) : null}
@@ -222,15 +221,15 @@ const NavBar = React.memo(({ props }) => {
                         <Nav.Link
                           as={Link}
                           to={`${baseUrl}processes`}
-                          className={`main-nav nav-item ${
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
                               createURLPathMatchExp("processes", baseUrl)
                             )
-                              ? "active-tab"
-                              : "inactive-tab"
+                              ? "active"
+                              : ""
                           }`}
                         >
-                          <i className="fa fa-cogs fa-lg fa-fw mr-2" />
+                          <i className="fa fa-cogs fa-fw mr-2" />
                           {t("Processes")}
                         </Nav.Link>
                       )
@@ -243,20 +242,19 @@ const NavBar = React.memo(({ props }) => {
                           <Nav.Link
                             as={Link}
                             to={`${baseUrl}application`}
-                            className={`main-nav nav-item ${
+                            className={`nav-menu-item py-md-3 px-0 mx-2 ${
                               pathname.match(
                                 createURLPathMatchExp("application", baseUrl)
                               )
-                                ? "active-tab"
+                                ? "active"
                                 : pathname.match(
                                     createURLPathMatchExp("draft", baseUrl)
                                   )
-                                ? "active-tab"
-                                : "inactive-tab"
+                                ? "active"
+                                : ""
                             }`}
                           >
-                            {" "}
-                            <i className="fa fa-list-alt fa-fw fa-lg mr-2" />
+                            <i className="fa-solid fa-rectangle-list mr-2" />
                             {t("Submissions")}
                           </Nav.Link>
                         )
@@ -267,16 +265,15 @@ const NavBar = React.memo(({ props }) => {
                         <Nav.Link
                           as={Link}
                           to={`${baseUrl}task`}
-                          className={`main-nav nav-item taskDropdown ${
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
                               createURLPathMatchExp("task", baseUrl)
                             )
-                              ? "active-tab"
-                              : "inactive-tab"
+                              ? "active"
+                              : ""
                           }`}
                         >
-                          {" "}
-                          <i className="fa fa-list fa-lg fa-fw mr-2" />
+                          <i className="fa-solid fa-list-check mr-2" />
                           {t("Tasks")}
                         </Nav.Link>
                       )
@@ -288,19 +285,19 @@ const NavBar = React.memo(({ props }) => {
                           as={Link}
                           to={`${baseUrl}metrics`}
                           data-testid="Dashboards"
-                          className={`main-nav nav-item ${
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
                               createURLPathMatchExp("metrics", baseUrl)
                             ) ||
                             pathname.match(
                               createURLPathMatchExp("insights", baseUrl)
                             )
-                              ? "active-tab"
-                              : "inactive-tab"
+                              ? "active"
+                              : ""
                           }`}
                         >
-                          {" "}
-                          <i className="fa fa-tachometer fa-lg fa-fw mr-2" />
+                          
+                          <i className="fa-solid fa-gauge-high mr-2" />
                           {t("Dashboards")}
                         </Nav.Link>
                       )
@@ -312,8 +309,8 @@ const NavBar = React.memo(({ props }) => {
                     selectLanguages.map((e, i) => {
                       return (
                         <>
-                          <i className="fa fa-globe fa-lg mr-1 mt-1" />
-                          <h4 key={i}>{e.name}</h4>
+                          <i className="fa fa-globe mr-2" />
+                           {e.name}
                         </>
                       );
                     })
@@ -321,7 +318,8 @@ const NavBar = React.memo(({ props }) => {
                     <NavDropdown
                       title={
                         <>
-                          <i className="fa fa-globe fa-lg mr-2" />
+                          <i className="fa fa-globe  mr-2" />
+                         
                           {lang ? lang : "LANGUAGE"}
                         </>
                       }
@@ -334,18 +332,15 @@ const NavBar = React.memo(({ props }) => {
                             handleOnclick(e.name);
                           }}
                         >
-                          {e.value}{" "}
+                          {e.value}
                         </NavDropdown.Item>
                       ))}
                     </NavDropdown>
                   )}
-                </Nav>
-
-                <Nav className="nav-user">
-                  <NavDropdown
+                     <NavDropdown
                     title={
                       <>
-                        <i className="fa fa-user fa-lg mr-1" />
+                        <i className="fa-solid fa-user mr-2" />
                         {userDetail?.name ||
                           userDetail?.preferred_username ||
                           ""}
@@ -353,26 +348,29 @@ const NavBar = React.memo(({ props }) => {
                     }
                   >
                     <NavDropdown.Item>
-                      {" "}
+                      
                       {userDetail?.name || userDetail?.preferred_username}
                       <br />
-                      <i className="fa fa-users fa-lg fa-fw" />
+                      <i className="fa fa-users fa-fw" />
                       <b>{getUserRoleName(userRoles)}</b>
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
                     <NavDropdown.Item onClick={logout}>
-                      <i className="fa fa-sign-out fa-fw" /> {t("Logout")}{" "}
+                      <i className="fa fa-sign-out fa-fw" /> {t("Logout")}
                     </NavDropdown.Item>
                   </NavDropdown>
                 </Nav>
+
               </Navbar.Collapse>
             ) : (
-            !MULTITENANCY_ENABLED && <Link to={loginUrl} className="btn btn-primary">
-              Login
-            </Link>
+              !MULTITENANCY_ENABLED && (
+                <Link to={loginUrl} className="btn btn-primary">
+                  Login
+                </Link>
+              )
             )}
-          </Container>
-        </Navbar>
+          </Navbar>
+        </Container>
       </header>
     </BrowserRouter>
   );

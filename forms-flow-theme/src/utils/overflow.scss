@@ -1,0 +1,10 @@
+@mixin generate-overflow($axis, $value) {
+    .overflow-#{$axis}-#{$value} {
+      overflow-#{$axis}: #{$value} !important;
+    }
+  }
+  
+  @include generate-overflow(x, auto);
+  @include generate-overflow(y, auto);
+  @include generate-overflow(x, hidden);
+  @include generate-overflow(y, hidden);
