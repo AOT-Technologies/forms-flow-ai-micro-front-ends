@@ -86,9 +86,7 @@ const NavBar = React.memo(({ props }) => {
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
-
-  const [lang, setLang] = React.useState(userDetail?.locale);
-  const [selectedLanguage, setSelectedLanguage] = useState({});
+  const [lang, setLang] = React.useState(userDetail?.locale); 
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -138,10 +136,7 @@ const NavBar = React.memo(({ props }) => {
     localStorage.setItem("lang", language);
   }, [lang]);
 
-  useEffect(()=>{
-    const language = selectLanguages?.find((item)=> item.name === lang);
-    setSelectedLanguage(language || {})
-  },[lang,selectLanguages])
+ 
 
   React.useEffect(() => {
     setUserDetail(
@@ -324,8 +319,8 @@ const NavBar = React.memo(({ props }) => {
                       title={
                         <>
                           <i className="fa fa-globe  mr-2" />
-                          {selectedLanguage?.value}
-                          ({lang ? lang : "LANGUAGE"})
+                         
+                          {lang ? lang : "LANGUAGE"}
                         </>
                       }
                       id="basic-nav-dropdown"
