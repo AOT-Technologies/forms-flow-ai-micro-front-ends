@@ -13,7 +13,7 @@
   /* font-size: 18px !important; */
   border-bottom: 3px solid var(--color-primary) !important;
   color: var(--color-primary) !important;
-  font-weight: calc(var(--navbar-items-font-weight) + 100) !important;
+  font-weight: bold !important;
 }
  
  
