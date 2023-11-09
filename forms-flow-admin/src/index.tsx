@@ -39,7 +39,7 @@ const Admin = React.memo(({ props }: any) => {
   }, []);
 
   React.useEffect(()=>{
-    StorageService.save("tenantKey", tenantId)
+    StorageService.save("tenantKey", tenantId || '')
   },[tenantId])
 
   React.useEffect(() => {
