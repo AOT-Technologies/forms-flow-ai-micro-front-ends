@@ -479,7 +479,21 @@ export const RESOURCE_BUNDLES_ZH = {
   "Reuse Existing Workflow": "重用现有工作流",
   "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "选择此选项以将表单链接到已建立的工作流程。对现有工作流程进行的任何修改将自动反映在此表单中。当您希望利用现有工作流程满足表单要求时，这是理想选择",
   "Are you sure you wish to delete the Template?": "您确定要删除模板吗？",
-  "Enter Workflow Name": "输入工作流名称"
+  "Enter Workflow Name": "输入工作流名称",
+  "Create Workflow": "创建工作流",
+  "Upload Workflow": "上传工作流",
+  "Edit Workflow": "编辑工作流",
+  "Published": "已发布",
+  "Unpublished": "未发布",
+  "Private": "私有",
+  "Anonymous": "匿名",
+  "Edit Processes": "编辑流程",
+  "Create Processes": "创建流程",
+  "tasks": "任务",
+  "Submission Id": "提交编号",
+  "Clear All Filters": "清除所有筛选",
+  "Show results": "显示结果",
+  "Delete Draft": "删除草稿"
 
 };
 

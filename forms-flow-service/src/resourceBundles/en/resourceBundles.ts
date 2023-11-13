@@ -481,7 +481,21 @@ export const RESOURCE_BUNDLES_EN = {
   "Reuse Existing Workflow": "Reuse Existing Workflow",
   "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements.": "Select this option to link the form with an already established workflow. Any modifications made to the existing workflow will automatically reflect in this form as well. This is ideal when you want to leverage the existing workflow for your form's requirements",
   "Are you sure you wish to delete the Template?": "Are you sure you wish to delete the Template?",
-  "Enter Workflow Name": "Enter Workflow Name"
+  "Enter Workflow Name": "Enter Workflow Name",
+  "Create Workflow": "Create Workflow",
+  "Upload Workflow": "Upload Workflow",
+  "Edit Workflow": "Edit Workflow",
+  "Published": "Published",
+  "Unpublished": "Unpublished",
+  "Private": "Private",
+  "Anonymous": "Anonymous",
+  "Edit Processes": "Edit Processes",
+  "Create Processes": "Create Processes",
+  "tasks": "tasks",
+  "Submission Id": "Submission Id",
+  "Clear All Filters": "Clear All Filters",
+  "Show results": "Show results",
+  "Delete Draft": "Delete Draft"
 
 };
 
