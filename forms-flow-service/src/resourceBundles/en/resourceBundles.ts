@@ -495,8 +495,18 @@ export const RESOURCE_BUNDLES_EN = {
   "Submission Id": "Submission Id",
   "Clear All Filters": "Clear All Filters",
   "Show results": "Show results",
-  "Delete Draft": "Delete Draft"
-
+  "Delete Draft": "Delete Draft",
+  "I can help you design forms effortlessly- all you have to do is give me a clear and concise description of what the form is meant to do. I will build out the fields and layout for you,which you can further customize.": "I can help you design forms effortlessly- all you have to do is give me a clear and concise description of what the form is meant to do. I will build out the fields and layout for you,which you can further customize.",
+  "I am": "I am",
+  "For example 'Give us a form that will serve as a patient intake form for walk-in clinics'": "For example 'Give us a form that will serve as a patient intake form for walk-in clinics'",
+  "Enter your prompt here": "Enter your prompt here",
+  "Would you like to continue?": "Would you like to continue?",
+  "Restart": "Restart",
+  "I'm here to provide further assistance. Thank you!": "I'm here to provide further assistance. Thank you!",
+  "Generate Form Design": "Generate Form Design",
+  "Preview": "Preview",
+  "Your form is now ready!": "Your form is now ready!",
+  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description,  hit send.": "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description,  hit send."
 };
 
 

@@ -495,5 +495,16 @@ export const RESOURCE_BUNDLES_PT = {
     "Submission Id": "ID da Submissão",
     "Clear All Filters": "Limpar Todos os Filtros",
     "Show results": "Mostrar resultados",
-    "Delete Draft": "Excluir Rascunho"
+    "Delete Draft": "Excluir Rascunho",
+    "I can help you design forms effortlessly- all you have to do is give me a clear and concise description of what the form is meant to do. I will build out the fields and layout for you,which you can further customize.": "Posso ajudar você a projetar formulários sem esforço - tudo o que você precisa fazer é me fornecer uma descrição clara e concisa do que o formulário deve fazer. Vou criar os campos e o layout para você, que você pode personalizar ainda mais.",
+  "I am": "Eu sou",
+  "For example 'Give us a form that will serve as a patient intake form for walk-in clinics'": "Por exemplo 'Nos dê um formulário que servirá como um formulário de admissão de pacientes para clínicas sem necessidade de agendamento'.",
+  "Enter your prompt here": "Digite o prompt aqui",
+  "Would you like to continue?": "Gostaria de continuar?",
+  "Restart": "Reiniciar",
+  "I'm here to provide further assistance. Thank you!": "Estou aqui para fornecer assistência adicional. Obrigado!",
+  "Generate Form Design": "Gerar Design do Formulário",
+  "Preview": "visualização",
+  "Your form is now ready!": "Seu formulário está pronto!",
+  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "Por favor, nos forneça todas as especificações e requisitos que você tem em mente para o seu formulário. Depois de terminar a descrição, pressione Enter."
 };

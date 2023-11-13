@@ -493,6 +493,16 @@ export const RESOURCE_BUNDLES_BG = {
   "Submission Id": "Идентификационен номер на подаване",
   "Clear All Filters": "Изчисти всички филтри",
   "Show results": "Покажи резултатите",
-  "Delete Draft": "Изтрий черновата"
-
+  "Delete Draft": "Изтрий черновата",
+  "I can help you design forms effortlessly- all you have to do is give me a clear and concise description of what the form is meant to do. I will build out the fields and layout for you,which you can further customize.": "Мога да ви помогна да проектирате формуляри без усилие - всичко, което трябва да направите, е да ми дадете ясно и кратко описание на това, за какво е предназначена формата. Аз ще изградя полетата и оформлението за вас, което можете да персонализирате допълнително.",
+  "I am": "Аз съм",
+  "For example 'Give us a form that will serve as a patient intake form for walk-in clinics'": "Например 'Дайте ни формуляр, който ще служи като формуляр за прием на пациенти за клиники без предварително записване'.",
+  "Enter your prompt here": "Въведете вашето подсигуряване тук",
+  "Would you like to continue?": "Искате ли да продължите?",
+  "Restart": "Рестартирай",
+  "I'm here to provide further assistance. Thank you!": "Аз съм тук, за да предоставя допълнителна помощ. Благодаря ви!",
+  "Generate Form Design": "Генерирай дизайн на формуляра",
+  "Preview": "преглед",
+  "Your form is now ready!": "Вашият формуляр вече е готов!",
+  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "Моля, кажете ми всички спецификации и изисквания, които имате предвид за вашия формуляр. След като завършите описанието, натиснете Изпрати."
   };
