@@ -157,7 +157,7 @@ export const RESOURCE_BUNDLES_ZH = {
  "View Submission": "查看提交",
   "Showing": "显示",
   "to": "到",
-  "results": "结果",
+  "Results": "结果",
   "Acknowledge": "承认",
   "View": "看法",
   "Select a task in the list.": "在列表中选择一个任务。",

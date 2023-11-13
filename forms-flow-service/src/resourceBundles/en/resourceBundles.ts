@@ -195,7 +195,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Insights": "Insights",
    "No dashboard found": "No dashboard found",
   "of": "of",
-  "results": "results",
+  "Results": "Results",
   "Dashbaord":"Dashboard",
   "Dashboards":"Dashboards",
   "Select Dashboard": "Select Dashboard",

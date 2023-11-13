@@ -165,7 +165,7 @@ export const RESOURCE_BUNDLES_FR = {
   "Showing":"Affichage",
   "to":"à",
   "of":"de",
-  "results":"résultats",
+  "Results":"résultats",
   "Acknowledge":"Accuser réception",
   "Select a task in the list.":"Sélectionnez une tâche dans la liste.",
   "No Filters Found":"Aucun filtre trouvé",
