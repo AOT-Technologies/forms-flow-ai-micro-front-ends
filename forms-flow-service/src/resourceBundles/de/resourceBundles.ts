@@ -162,7 +162,7 @@ export const RESOURCE_BUNDLES_DE = {
  "View Submission": "Einreichung anzeigen",
   "Showing": "Anzeigen",
   "to": "zu",
-  "results": "Ergebnisse",
+  "Results": "Ergebnisse",
   "Acknowledge": "Anerkennen",
   "View": "Sicht",
   "Select a task in the list.": "Wählen Sie eine Aufgabe in der Liste aus.",

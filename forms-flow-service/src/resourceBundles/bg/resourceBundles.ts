@@ -157,7 +157,7 @@ export const RESOURCE_BUNDLES_BG = {
    "View Submission": "Вижте подаване",
     'Showing': "Показване",
     "to": "да се",
-    "results": "pезултати",
+    "Results": "pезултати",
     "Acknowledge": "Признайте",
     'View': "Преглед",
     "Select a task in the list.": "Изберете задача от списъка.",

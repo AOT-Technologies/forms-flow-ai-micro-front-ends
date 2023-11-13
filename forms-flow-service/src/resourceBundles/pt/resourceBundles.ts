@@ -157,7 +157,7 @@ export const RESOURCE_BUNDLES_PT = {
   "Application History": "Histórico da Aplicação",
  "View Submission": "Ver o envio",
   "Showing": "Mostrando",
-  "results": "resultados",
+  "Results": "resultados",
   "Acknowledge": "Reconhecer",
   "Select a task in the list.": "Selecione uma tarefa na lista.",
   "No Filters Found": "Nenhum filtro encontrado",
