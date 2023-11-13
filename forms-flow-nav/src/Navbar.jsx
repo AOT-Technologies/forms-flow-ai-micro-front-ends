@@ -190,7 +190,7 @@ const NavBar = React.memo(({ props }) => {
                       as={Link}
                       to={`${baseUrl}form`}
                       className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                        pathname.match(createURLPathMatchExp("form", baseUrl))
+                       ( pathname.match(createURLPathMatchExp("form", baseUrl)) ||  pathname.match(createURLPathMatchExp("bundle", baseUrl)))
                           ? "active"
                           : ""
                       }`}
@@ -308,10 +308,10 @@ const NavBar = React.memo(({ props }) => {
                   {selectLanguages.length === 1 ? (
                     selectLanguages.map((e, i) => {
                       return (
-                        <>
+                        <div className="mr-2">
                           <i className="fa fa-globe mr-2" />
                            {e.name}
-                        </>
+                        </div>
                       );
                     })
                   ) : (
@@ -323,6 +323,7 @@ const NavBar = React.memo(({ props }) => {
                           {lang ? lang : "LANGUAGE"}
                         </>
                       }
+                      className="mr-2"
                       id="basic-nav-dropdown"
                     >
                       {selectLanguages.map((e, index) => (
