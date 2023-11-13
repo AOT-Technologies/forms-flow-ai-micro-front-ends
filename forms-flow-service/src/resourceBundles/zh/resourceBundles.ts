@@ -493,7 +493,18 @@ export const RESOURCE_BUNDLES_ZH = {
   "Submission Id": "提交编号",
   "Clear All Filters": "清除所有筛选",
   "Show results": "显示结果",
-  "Delete Draft": "删除草稿"
+  "Delete Draft": "删除草稿",
+  "I can help you design forms effortlessly- all you have to do is give me a clear and concise description of what the form is meant to do. I will build out the fields and layout for you,which you can further customize.": "我可以帮助您轻松设计表单-您只需清晰简洁地描述表单的预期用途即可。我将为您构建字段和布局，您可以进一步自定义。",
+  "I am": "我是",
+  "For example 'Give us a form that will serve as a patient intake form for walk-in clinics'": "例如'给我们一个作为门诊诊所患者接诊表的表单'",
+  "Enter your prompt here": "在此输入您的提示",
+  "Would you like to continue?": "您想继续吗？",
+  "Restart": "重新启动",
+  "I'm here to provide further assistance. Thank you!": "我在这里提供进一步的帮助。谢谢！",
+  "Generate Form Design": "生成表单设计",
+  "Preview": "预览",
+  "Your form is now ready!": "您的表单现在已准备好！",
+  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "请告诉我您对表单的所有规格和要求。完成描述后，请按发送。"
 
 };
 
