@@ -473,7 +473,7 @@ const Roles = React.memo((props: any) => {
           >
             <div className="user-list" onClick={(e) => handleClick(e, rowData)}>
               <p><Translation>{(t) => t("View")}</Translation></p>
-              <i className="fa fa-caret-down ml-1" />
+              <i className="fa fa-caret-down ml-2" />
             </div>
           </OverlayTrigger>
         );
@@ -535,7 +535,7 @@ const Roles = React.memo((props: any) => {
             )}
           </div>
           <Button variant="primary" className="font-size col-xl-2 col-lg-3 col-md-3 col-sm-4" onClick={handleShowRoleModal}>
-            <i className="fa fa-l fa-plus-circle mr-1" /> <Translation>{(t) => t("Create New Role")}</Translation>
+            <i className="fa fa-l fa-plus-circle mr-2" /> <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>
         {!props?.loading ? (

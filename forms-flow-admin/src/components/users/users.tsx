@@ -315,7 +315,7 @@ const Users = React.memo((props: any) => {
             }
           >
             <Button variant="primary" onClick={() => addRole(rowData)}>
-              <i className="fa fa-l fa-plus-circle mr-1" /> <Translation>{(t) => t("Add Role")}</Translation>
+              <i className="fa fa-l fa-plus-circle mr-2" /> <Translation>{(t) => t("Add Role")}</Translation>
             </Button>
           </OverlayTrigger>
         );
