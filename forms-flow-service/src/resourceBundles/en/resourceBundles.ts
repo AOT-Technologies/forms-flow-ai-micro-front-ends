@@ -1,5 +1,8 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_EN = {
+  "results": "Results",
+  "Enter role name": "Enter role name",
+  "Public": "Public",
   "View Submitted Form": "View Submitted Form",
   "View Draft Details": "View Draft Details",
   "Edit Draft": "Edit Draft",
