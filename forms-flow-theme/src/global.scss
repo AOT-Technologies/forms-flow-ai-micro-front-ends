@@ -1,9 +1,11 @@
 @import "./utils/cursor.scss";
 @import "./utils/overflow.scss";
 @import "./components/toastifyOverride.scss";
-@import "./bootstrapOverride.scss";
+@import "./overrideClasses/bootstrapOverride.scss";
+@import "./overrideClasses/formioComponentOverride.scss";
 @import "./baseStyle.scss";
 @import "./components/custom-table.scss";
+@import "./components/button.scss";
 
 :root {
   --color-primary: #0072ed;
@@ -76,8 +78,7 @@
   font-size: 18px;
 }
 
-.btn-primary {
-  padding: 4px 12px;
+.btn-primary { 
   background-color: var(--button-primary-background);
 }
 
@@ -577,9 +578,7 @@ a {
   margin-left: 5px;
 }
 
-.btn {
-  padding: 4px 8px !important;
-}
+ 
 
 div.upload {
   background-color: rgb(239, 239, 239);

@@ -534,8 +534,8 @@ const Roles = React.memo((props: any) => {
               </Button>
             )}
           </div>
-          <Button variant="primary" className="font-size col-xl-2 col-lg-3 col-md-3 col-sm-4" onClick={handleShowRoleModal}>
-            <i className="fa fa-l fa-plus-circle mr-2" /> <Translation>{(t) => t("Create New Role")}</Translation>
+          <Button variant="primary"  onClick={handleShowRoleModal}>
+          <i className="fa-solid fa-plus mr-2"></i> <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>
         {!props?.loading ? (
