@@ -240,10 +240,11 @@ export const InsightDashboard = React.memo((props: any) => {
             <Button
               data-testid={rowIdx}
               onClick={(e) => handleClick(e, rowData)}
-              className="btn btn-primary btn-md form-btn pull-left btn-left"
+              className="btn btn-primary"
               disabled={!isGroupUpdated}
             >
-              <Translation>{(t) => t("Add")}</Translation> <b>+</b>
+              <i className="fa-solid fa-plus mr-2"></i>
+              <Translation>{(t) => t("Add")}</Translation>  
             </Button>
           </OverlayTrigger>
         );
