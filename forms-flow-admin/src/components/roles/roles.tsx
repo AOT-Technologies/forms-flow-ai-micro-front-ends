@@ -283,6 +283,7 @@ const Roles = React.memo((props: any) => {
                 placeholder={t("Eg: Account Manager")}
                 required
                 onChange={handleChangeName}
+                title={t("Enter role name")}
               />
               <Form.Label className="mt-2">{t("Description")}</Form.Label>
               <i style={{ color: "red" }}>*</i>
@@ -291,6 +292,7 @@ const Roles = React.memo((props: any) => {
                 placeholder="Eg: Lorem ipsum..."
                 rows={3}
                 onChange={handleChangeDescription}
+                title={t("Enter Description")}
               />
             </Form.Group>
           </Form>
@@ -392,7 +394,7 @@ const Roles = React.memo((props: any) => {
         value: 100,
       },
       {
-        text: "All",
+        text: t("All"),
         value: roles.length,
       },
     ];
@@ -519,7 +521,7 @@ const Roles = React.memo((props: any) => {
               className="search-role-input"
               onChange={handlFilter}
               value={search}
-              title={t("Search here")}
+              title={t("Search...")}
             />
 
             {search.length > 0 && (

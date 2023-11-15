@@ -1,5 +1,8 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_DE = {
+  "results": "Ergebnisse",
+  "Enter role name": "Rollenname eingeben",
+  "Public": "Öffentlich",
   "View Submitted Form": "Eingereichtes Formular anzeigen",
   "View Draft Details": "Entwurfsdetails anzeigen",
   "Edit Draft": "Entwurf bearbeiten",

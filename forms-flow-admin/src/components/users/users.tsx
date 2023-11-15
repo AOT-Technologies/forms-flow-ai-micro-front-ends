@@ -334,7 +334,7 @@ const Users = React.memo((props: any) => {
               className="search-role-input"
               onChange={handleSearch}
               value={props.search || ""}
-              title={t("Search here")}
+              title={t("Search...")}
             />
             {props.search?.length > 0 && (
               <Button

@@ -1,5 +1,8 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_FR = {
+  "results": "Résultats",
+  "Enter role name": "Entrez le nom du rôle",
+  "Public": "Public",
   "View Submitted Form": "Voir le formulaire soumis",
   "View Draft Details": "Voir les détails du brouillon",
   "Edit Draft": "Éditer le brouillon",

@@ -1,5 +1,8 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_ZH = {
+  "results": "结果",
+  "Enter role name": "输入角色名称",
+  "Public": "公开",
   "View Submitted Form": "查看已提交的表单",
   "View Draft Details": "查看草稿详情",
   "Edit Draft": "编辑草稿",

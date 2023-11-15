@@ -1,5 +1,8 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+  "results": "Резултати",
+  "Enter role name": "Въведете името на ролята",
+  "Public": "Публичен",
   "View Submitted Form": "Преглед на представен формуляр",
   "View Draft Details": "Преглед на детайлите на черновата",
   "Edit Draft": "Редактиране на черновата",

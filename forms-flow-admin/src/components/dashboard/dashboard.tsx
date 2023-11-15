@@ -271,7 +271,7 @@ export const InsightDashboard = React.memo((props: any) => {
         value: 100,
       },
       {
-        text: "All",
+        text: t("All"),
         value: authDashBoardList.length
       },
     ];
