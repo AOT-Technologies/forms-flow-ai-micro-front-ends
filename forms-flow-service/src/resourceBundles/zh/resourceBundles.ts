@@ -77,7 +77,6 @@ export const RESOURCE_BUNDLES_ZH = {
   "Error while Submission.": "提交时出错。",
   "Form saved": "表格已保存。",
   "Submission cannot be done.": "无法提交。 ",
-  "Are you sure you wish to delete the form": "您确定要删除表格吗",
   "Forms": "表格  ",
   "Edit": "编辑",
   "Text Field": "文本域",
@@ -311,8 +310,6 @@ export const RESOURCE_BUNDLES_ZH = {
   "Resources": "资源",
   "Duplicate form created successfully": "成功创建重复表单",
   "Revert": "恢复",
-
-  "Are you sure you wish to delete the bundle ": "您确定要删除捆绑包吗 ",
   "Select Form": "选择表格",
   "Create Condition": "创造条件",
   "Enter criteria": "输入标准",

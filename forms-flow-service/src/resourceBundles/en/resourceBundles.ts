@@ -82,7 +82,6 @@ export const RESOURCE_BUNDLES_EN = {
   "Message": "Please fix the errors before submitting again.",
   "Submission cannot be done.": "Submission cannot be done.",
   "No Process Diagram found": "No Process Diagram found",
-  "Are you sure you wish to delete the form": "Are you sure you wish to delete the form",
   'Forms': "Forms",
   'Form': "Form",
   "Downloaded Successfully": "Downloaded Successfully",
@@ -311,7 +310,6 @@ export const RESOURCE_BUNDLES_EN = {
   "Duplicate form created successfully": "Duplicate form created successfully",
   "Revert": "Revert",
 
-  "Are you sure you wish to delete the bundle ": "Are you sure you wish to delete the bundle ",
   "Criteria": "Criteria",
   "Select Form": "Select Form",
   "Create Condition": "Create Condition",

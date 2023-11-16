@@ -85,7 +85,6 @@ export const RESOURCE_BUNDLES_FR = {
   "No Process Diagram found": "Aucun diagramme de processus trouvé",
   "No forms found": "Aucun formulaire trouvé",
   "All steps completed - you're finished": "Toutes les étapes terminées - vous avez terminé",
-  "Are you sure you wish to delete the form": "Êtes-vous sûr de vouloir supprimer le formulaire",
   "Edit": "Éditer",
   'Text Field': 'champ de texte',
   "Do you want to associate form with a workflow ?": "Vous souhaitez associer un formulaire à un workflow ?",
@@ -315,7 +314,6 @@ export const RESOURCE_BUNDLES_FR = {
   "Duplicate form created successfully": "Formulaire en double créé avec succès",
   "Revert": "Revenir",
 
-  "Are you sure you wish to delete the bundle ": "Êtes-vous sûr de vouloir supprimer le bundle",
   "Select Form": "Sélectionnez le formulaire",
   "Create Condition": "Créer une condition",
   "Enter criteria": "Saisir des critères",
