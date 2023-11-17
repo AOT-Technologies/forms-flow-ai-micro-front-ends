@@ -1,5 +1,17 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_DE = {
+  "Edit Dmn": "DMN bearbeiten",
+  "More options": "Mehr Optionen",
+  "Form Description": "Formularbeschreibung",
+  "Saved to Submissions/Drafts": "Gespeichert in Einreichungen/Entwürfe",
+  "Unfinished submissions will be saved to Submissions/Drafts.": "Unvollständige Einreichungen werden in Einreichungen/Entwürfe gespeichert.",
+  "Edit Process": "Prozess bearbeiten",
+  "Add filter name": "Filternamen hinzufügen",
+  "This section is aimed to set the parameters used to filter the tasks": "Dieser Abschnitt soll die Parameter festlegen, die zur Filterung der Aufgaben verwendet werden",
+  "This section is aimed to set read permissions for the filter": "Dieser Abschnitt soll Leseberechtigungen für den Filter festlegen",
+  "This section is aimed to set select task attributes that will be visible in the task list view": "Dieser Abschnitt soll auswählbare Aufgabenattribute festlegen, die in der Aufgabenliste sichtbar sein werden",
+  "Task Attribute": "Aufgabenattribut",
+  "You can define variables shown in the list": "Sie können Variablen definieren, die in der Liste angezeigt werden",
   "results": "Ergebnisse",
   "Enter role name": "Rollenname eingeben",
   "Public": "Öffentlich",

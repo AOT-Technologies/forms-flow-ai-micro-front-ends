@@ -1,5 +1,17 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_ZH = {
+  "Edit DMN": "编辑 DMN",
+  "More options": "更多选项",
+  "Form Description": "表单描述",
+  "Saved to Submissions/Drafts": "保存到提交/草稿",
+  "Unfinished submissions will be saved to Submissions/Drafts.": "未完成的提交将保存到提交/草稿。",
+  "Edit Process": "编辑流程",
+  "Add filter name": "添加过滤器名称",
+  "This section is aimed to set the parameters used to filter the tasks": "此部分旨在设置用于过滤任务的参数",
+  "This section is aimed to set read permissions for the filter": "此部分旨在设置过滤器的读取权限",
+  "This section is aimed to set select task attributes that will be visible in the task list view": "此部分旨在设置在任务列表视图中可见的选择任务属性",
+  "Task Attribute": "任务属性",
+  "You can define variables shown in the list": "您可以定义在列表中显示的变量",
   "results": "结果",
   "Enter role name": "输入角色名称",
   "Public": "公开",
