@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_DE = {
-  "Edit Dmn": "DMN bearbeiten",
+  "Edit DMN": "DMN bearbeiten",
   "More options": "Mehr Optionen",
   "Form Description": "Formularbeschreibung",
   "Saved to Submissions/Drafts": "Gespeichert in Einreichungen/Entwürfe",
