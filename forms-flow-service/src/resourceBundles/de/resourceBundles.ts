@@ -1,5 +1,18 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_DE = {
+  "List View": "Listenansicht",
+  "Card View": "Kartenansicht",
+  "Create New Filter": "Neuen Filter erstellen",
+  "Sort by": "Sortieren nach",
+  "Collapse All": "Alle minimieren",
+  "Expand All": "Alle maximieren",
+  "Application Id": "Anwendungs-ID",
+  "Back to task": "Zurück zur Aufgabe",
+  "Filters": "Filter",
+  "Assignee": "Beauftragter",
+  "Select a user": "Benutzer auswählen",
+  "Create DMN": "DMN erstellen",
+  "Create Process": "Prozess erstellen",
   "Edit DMN": "DMN bearbeiten",
   "More options": "Mehr Optionen",
   "Form Description": "Formularbeschreibung",
