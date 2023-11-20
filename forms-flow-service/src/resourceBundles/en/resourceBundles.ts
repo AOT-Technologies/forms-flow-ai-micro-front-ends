@@ -519,7 +519,12 @@ export const RESOURCE_BUNDLES_EN = {
   "Generate Form Design": "Generate Form Design",
   "Preview": "Preview",
   "Your form is now ready!": "Your form is now ready!",
-  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description,  hit send.": "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description,  hit send."
+  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description,  hit send.": "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description,  hit send.",
+  "Choose template": "Choose template",
+  "Search by bundle name..": "Search by bundle name..",
+  "Save Bundle": "Save Bundle",
+  "Id": "Id",
+  "Enable bundling ?": "Enable bundling?"
 };
 
 

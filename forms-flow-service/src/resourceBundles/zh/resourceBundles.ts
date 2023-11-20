@@ -517,7 +517,11 @@ export const RESOURCE_BUNDLES_ZH = {
   "Generate Form Design": "生成表单设计",
   "Preview": "预览",
   "Your form is now ready!": "您的表单现在已准备好！",
-  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "请告诉我您对表单的所有规格和要求。完成描述后，请按发送。"
-
+  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "请告诉我您对表单的所有规格和要求。完成描述后，请按发送。",
+  "Choose template": "选择模板",
+  "Search by bundle name..": "按包名称搜索..",
+  "Save Bundle": "保存 Bundle",
+  "Id": "Id",
+  "Enable bundling ?": "启用捆绑？"
 };
 

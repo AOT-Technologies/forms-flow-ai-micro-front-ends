@@ -517,5 +517,10 @@ export const RESOURCE_BUNDLES_BG = {
   "Generate Form Design": "Генерирай дизайн на формуляра",
   "Preview": "преглед",
   "Your form is now ready!": "Вашият формуляр вече е готов!",
-  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "Моля, кажете ми всички спецификации и изисквания, които имате предвид за вашия формуляр. След като завършите описанието, натиснете Изпрати."
+  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "Моля, кажете ми всички спецификации и изисквания, които имате предвид за вашия формуляр. След като завършите описанието, натиснете Изпрати.",
+  "Choose template": "Изберете шаблон",
+  "Search by bundle name..": "Търсене по име на пакета..",
+  "Save Bundle": "Запази Bundle",
+  "Id": "Id",
+  "Enable bundling ?": "Включи опаковане?"
 };
