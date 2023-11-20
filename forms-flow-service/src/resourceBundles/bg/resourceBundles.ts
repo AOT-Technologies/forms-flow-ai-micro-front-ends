@@ -1,5 +1,17 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+  "Edit DMN": "Редактиране на DMN",
+  "More options": "Повече опции",
+  "Form Description": "Описание на формуляра",
+  "Saved to Submissions/Drafts": "Запазено в Представяния/Чернови",
+  "Unfinished submissions will be saved to Submissions/Drafts.": "Незавършените представяния ще бъдат запазени в Представяния/Чернови.",
+  "Edit Process": "Редактиране на процеса",
+  "Add filter name": "Добави име на филтър",
+  "This section is aimed to set the parameters used to filter the tasks": "Този раздел има за цел да зададе параметрите, използвани за филтриране на задачите",
+  "This section is aimed to set read permissions for the filter": "Този раздел има за цел да зададе правата за четене на филтъра",
+  "This section is aimed to set select task attributes that will be visible in the task list view": "Този раздел има за цел да зададе избраните атрибути на задачата, които ще бъдат видими в изгледа на списъка с задачи",
+  "Task Attribute": "Атрибут на задачата",
+  "You can define variables shown in the list": "Можете да дефинирате променливи, показани в списъка",
   "results": "Резултати",
   "Enter role name": "Въведете името на ролята",
   "Public": "Публичен",

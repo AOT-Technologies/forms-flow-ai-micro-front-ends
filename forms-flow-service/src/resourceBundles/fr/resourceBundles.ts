@@ -1,5 +1,17 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_FR = {
+  "Edit DMN": "Éditer DMN",
+  "More options": "Plus d'options",
+  "Form Description": "Description du formulaire",
+  "Saved to Submissions/Drafts": "Enregistré dans Soumissions/Brouillons",
+  "Unfinished submissions will be saved to Submissions/Drafts.": "Les soumissions inachevées seront enregistrées dans Soumissions/Brouillons.",
+  "Edit Process": "Modifier le processus",
+  "Add filter name": "Ajouter un nom de filtre",
+  "This section is aimed to set the parameters used to filter the tasks": "Cette section vise à définir les paramètres utilisés pour filtrer les tâches",
+  "This section is aimed to set read permissions for the filter": "Cette section vise à définir les autorisations de lecture pour le filtre",
+  "This section is aimed to set select task attributes that will be visible in the task list view": "Cette section vise à définir les attributs de tâche sélectionnés qui seront visibles dans la vue de la liste des tâches",
+  "Task Attribute": "Attribut de la tâche",
+  "You can define variables shown in the list": "Vous pouvez définir des variables affichées dans la liste",
   "results": "Résultats",
   "Enter role name": "Entrez le nom du rôle",
   "Public": "Public",
