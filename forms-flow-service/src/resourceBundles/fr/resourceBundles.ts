@@ -1,5 +1,18 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_FR = {
+  "List View": "Vue Liste",
+  "Card View": "Vue Carte",
+  "Create New Filter": "Créer un Nouveau Filtre",
+  "Sort by": "Trier par",
+  "Collapse All": "Réduire Tout",
+  "Expand All": "Étendre Tout",
+  "Application Id": "ID de l'Application",
+  "Back to task": "Retour à la tâche",
+  "Filters": "Filtres",
+  "Assignee": "Assigné",
+  "Select a user": "Sélectionner un utilisateur",
+  "Create DMN": "Créer DMN",
+  "Create Process": "Créer Processus",
   "Edit DMN": "Éditer DMN",
   "More options": "Plus d'options",
   "Form Description": "Description du formulaire",

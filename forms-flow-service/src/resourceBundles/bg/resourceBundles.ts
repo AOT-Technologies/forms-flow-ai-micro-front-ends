@@ -1,5 +1,18 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+  "List View": "Преглед в списък",
+  "Card View": "Преглед на карти",
+  "Create New Filter": "Създай нов филтър",
+  "Sort by": "Сортирай по",
+  "Collapse All": "Свий всичко",
+  "Expand All": "Разшири всичко",
+  "Application Id": "Идентификационен номер на заявлението",
+  "Back to task": "Назад към задачата",
+  "Filters": "Филтри",
+  "Assignee": "Изпълнител",
+  "Select a user": "Изберете потребител",
+  "Create DMN": "Създайте DMN",
+  "Create Process": "Създайте процес",
   "Edit DMN": "Редактиране на DMN",
   "More options": "Повече опции",
   "Form Description": "Описание на формуляра",
