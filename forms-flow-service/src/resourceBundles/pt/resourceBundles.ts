@@ -519,5 +519,10 @@ export const RESOURCE_BUNDLES_PT = {
   "Generate Form Design": "Gerar Design do Formulário",
   "Preview": "visualização",
   "Your form is now ready!": "Seu formulário está pronto!",
-  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "Por favor, nos forneça todas as especificações e requisitos que você tem em mente para o seu formulário. Depois de terminar a descrição, pressione Enter."
+  "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "Por favor, nos forneça todas as especificações e requisitos que você tem em mente para o seu formulário. Depois de terminar a descrição, pressione Enter.",
+  "Choose template": "Escolher modelo",
+  "Search by bundle name..": "Pesquisar por nome do pacote..",
+  "Save Bundle": "Salvar Bundle",
+  "Id": "Id",
+  "Enable bundling ?": "Ativar agrupamento?"
 };
