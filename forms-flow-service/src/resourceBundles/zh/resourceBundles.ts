@@ -1,5 +1,17 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_ZH = {
+  "List View": "列表视图",
+  "Card View": "卡片视图",
+  "Create New Filter": "创建新过滤器",
+  "Sort by": "排序方式",
+  "Collapse All": "全部折叠",
+  "Expand All": "全部展开",
+  "Application Id": "申请 ID",
+  "Back to task": "返回任务",
+  "Filters": "过滤器",
+  "Select a user": "选择用户",
+  "Create DMN": "创建 DMN",
+  "Create Process": "创建流程",
   "Edit DMN": "编辑 DMN",
   "More options": "更多选项",
   "Form Description": "表单描述",

@@ -1,5 +1,18 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_EN = {
+    "List View": "List View",
+  "Card View": "Card View",
+  "Create New Filter": "Create New Filter",
+  "Sort by": "Sort by",
+  "Collapse All": "Collapse All",
+  "Expand All": "Expand All",
+  "Application Id": "Application Id",
+  "Back to task": "Back to task",
+  "Filters": "Filters",
+  "Assignee": "Assignee",
+  "Select a user": "Select a user",
+  "Create DMN": "Create DMN",
+  "Create Process": "Create Process",
   "Edit DMN": "Edit DMN",
   "More options": "More options",
   "Form Description": "Form Description",
