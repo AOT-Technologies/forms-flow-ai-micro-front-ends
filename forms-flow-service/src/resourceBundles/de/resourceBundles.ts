@@ -526,5 +526,7 @@ export const RESOURCE_BUNDLES_DE = {
   "Search by bundle name..": "Nach Bundle-Namen suchen..",
   "Save Bundle": "Bundle speichern",
   "Id": "Id",
-  "Enable bundling ?": "Bündelung aktivieren?"
+  "Enable bundling ?": "Bündelung aktivieren?",
+  "Selected Forms": "Ausgewählte Formulare",
+  "Template Used:": "Verwendetes Template:"
 };

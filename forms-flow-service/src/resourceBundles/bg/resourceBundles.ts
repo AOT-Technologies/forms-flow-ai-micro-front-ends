@@ -522,5 +522,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Search by bundle name..": "Търсене по име на пакета..",
   "Save Bundle": "Запази Bundle",
   "Id": "Id",
-  "Enable bundling ?": "Включи опаковане?"
+  "Enable bundling ?": "Включи опаковане?",
+  "Selected Forms": "Избрани формуляри",
+  "Template Used:": "Използван шаблон:"
 };
