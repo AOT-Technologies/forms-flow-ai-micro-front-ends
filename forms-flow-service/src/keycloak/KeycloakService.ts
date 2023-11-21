@@ -80,7 +80,7 @@ import Keycloak, {
           })
           .catch((err) => {
             console.error("Keycloak token update failed!", err);
-            clearInterval(this.timerId);
+            this.logout();
           });
       }, this.getTokenExpireTime());
     }
