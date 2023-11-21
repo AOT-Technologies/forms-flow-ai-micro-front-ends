@@ -537,7 +537,12 @@ export const RESOURCE_BUNDLES_EN = {
   "Search by bundle name..": "Search by bundle name..",
   "Save Bundle": "Save Bundle",
   "Id": "Id",
-  "Enable bundling ?": "Enable bundling?"
+  "Enable bundling ?": "Enable bundling?",
+  "Select a task in the List.": "Select a task in the List.",
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.",
+  "Add Date": "Add Date",
+  "Assign to Me": "Assign to Me",
+  "Filter count:": "Filter count:"
 };
 
 

@@ -534,6 +534,11 @@ export const RESOURCE_BUNDLES_ZH = {
   "Search by bundle name..": "按包名称搜索..",
   "Save Bundle": "保存 Bundle",
   "Id": "Id",
-  "Enable bundling ?": "启用捆绑？"
+  "Enable bundling ?": "启用捆绑？",
+  "Select a task in the List.": "选择列表中的任务。",
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "从提供的选项列表中选择特定任务。您的选择将确定您将要处理或互动的任务。",
+  "Add Date": "添加日期",
+  "Assign to Me": "分配给我",
+  "Filter count:": "过滤器计数："
 };
 

@@ -535,5 +535,11 @@ export const RESOURCE_BUNDLES_BG = {
   "Search by bundle name..": "Търсене по име на пакета..",
   "Save Bundle": "Запази Bundle",
   "Id": "Id",
-  "Enable bundling ?": "Включи опаковане?"
+  "Enable bundling ?": "Включи опаковане?",
+  "Select a task in the List.": "Изберете задача от списъка.",
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Изберете конкретна задача от предоставения списък с възможности. Вашият избор ще определи задачата, върху която ще работите или с която ще взаимодействате.",
+  "Add Date": "Добавяне на дата",
+  "Assign to Me": "Възложи на мен",
+  "Filter count:": "Брой филтри:"
+
 };
