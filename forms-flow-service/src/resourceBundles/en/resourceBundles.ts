@@ -545,7 +545,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Selected Forms": "Selected Forms",
   "Template Used:": "Template Used:",
   "Select a task from the List.": "Select a task from the List.",
-  "Choose a task from the list; your selection directs your current activity.": "Choose a task from the list; your selection directs your current activity."
+  "Choose a task from the list; your selection directs your current activity.": "Choose a task from the list; your selection directs your current activity.",
+  "Please change the selected filters to view submissions": "Please change the selected filters to view submissions"
 };
 
 
