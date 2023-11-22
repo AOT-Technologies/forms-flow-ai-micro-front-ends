@@ -526,7 +526,7 @@ const Roles = React.memo((props: any) => {
 
             {search.length > 0 && (
               <Button
-                variant="outline-secondary clear"
+                variant="outline-secondary btn-small clear"
                 onClick={() => {
                   setSerach("");
                   setRoles(props.roles);
