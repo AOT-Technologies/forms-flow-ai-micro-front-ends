@@ -546,5 +546,7 @@ export const RESOURCE_BUNDLES_PT = {
   "Template Used:": "Modelo Utilizado:",
   "Select a task from the List.": "Selecione uma tarefa da lista.",
   "Choose a task from the list; your selection directs your current activity.": "Escolha uma tarefa da lista; sua seleção direciona sua atividade atual.",
-  "Please change the selected filters to view submissions": "Por favor, altere os filtros selecionados para ver as submissões"
+  "Please change the selected filters to view submissions": "Por favor, altere os filtros selecionados para ver as submissões",
+  "Please change the selected filters to view drafts": "Por favor, altere os filtros selecionados para ver os rascunhos",
+  "No drafts found": "Nenhum rascunho encontrado"
 };
