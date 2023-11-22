@@ -535,7 +535,7 @@ export const RESOURCE_BUNDLES_FR = {
   "Your form is now ready!": "Votre formulaire est maintenant prêt !",
   "Please tell me all the specifications and requirements you have in mind for your form. After you have finished the description, hit send.": "Veuillez nous donner toutes les spécifications et exigences que vous avez en tête pour votre formulaire. Après avoir terminé la description, appuyez sur Envoyer.",
   "Choose template": "Choisir un modèle",
-  "Search by bundle name..": "Rechercher par nom de bundle..",
+  "Search by bundle name": "Rechercher par nom de bundle",
   "Save Bundle": "Enregistrer Bundle",
   "Id": "Id",
   "Enable bundling ?": "Activer le regroupement ?",
