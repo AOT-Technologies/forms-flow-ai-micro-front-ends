@@ -536,11 +536,12 @@ export const RESOURCE_BUNDLES_ZH = {
   "Id": "Id",
   "Enable bundling ?": "启用捆绑？",
   "Select a task in the List.": "选择列表中的任务。",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "从提供的选项列表中选择特定任务。您的选择将确定您将要处理或互动的任务。",
   "Add Date": "添加日期",
   "Assign to Me": "分配给我",
   "Filter count:": "过滤器计数：",
   "Selected Forms": "已选择的表单",
-  "Template Used:": "使用的模板："
+  "Template Used:": "使用的模板：",
+  "Select a task from the List.": "从列表中选择一个任务。",
+  "Choose a task from the list; your selection directs your current activity.": "从列表中选择一个任务；您的选择将指导您当前的活动。"
 };
 

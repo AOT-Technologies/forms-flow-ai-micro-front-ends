@@ -540,12 +540,13 @@ export const RESOURCE_BUNDLES_FR = {
   "Id": "Id",
   "Enable bundling ?": "Activer le regroupement ?",
   "Select a task in the List.": "Sélectionnez une tâche dans la liste.",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Sélectionnez une tâche spécifique dans la liste d'options fournie. Votre choix déterminera la tâche sur laquelle vous travaillerez ou avec laquelle vous interagirez.",
   "Add Date": "Ajouter une date",
   "Assign to Me": "M'attribuer",
   "Filter count:": "Nombre de filtres :",
   "Selected Forms": "Formulaires sélectionnés",
-  "Template Used:": "Modèle utilisé:"
+  "Template Used:": "Modèle utilisé:",
+  "Select a task from the List.": "Sélectionnez une tâche dans la liste.",
+  "Choose a task from the list; your selection directs your current activity.": "Choisissez une tâche dans la liste ; votre sélection oriente votre activité actuelle."
 };
 
 
