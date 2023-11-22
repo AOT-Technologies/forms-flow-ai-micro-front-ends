@@ -547,5 +547,6 @@ export const RESOURCE_BUNDLES_DE = {
   "Selected Forms": "Ausgewählte Formulare",
   "Template Used:": "Verwendetes Template:",
   "Select a task from the List.": "Wählen Sie eine Aufgabe aus der Liste aus.",
-  "Choose a task from the list; your selection directs your current activity.": "Wählen Sie eine Aufgabe aus der Liste aus; Ihre Auswahl bestimmt Ihre aktuelle Aktivität."
+  "Choose a task from the list; your selection directs your current activity.": "Wählen Sie eine Aufgabe aus der Liste aus; Ihre Auswahl bestimmt Ihre aktuelle Aktivität.",
+  "Please change the selected filters to view submissions": "Bitte ändern Sie die ausgewählten Filter, um Einreichungen anzuzeigen"
 };

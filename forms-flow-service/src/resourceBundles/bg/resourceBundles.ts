@@ -543,5 +543,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Selected Forms": "Избрани формуляри",
   "Template Used:": "Използван шаблон:",
   "Select a task from the List.": "Изберете задача от списъка.",
-  "Choose a task from the list; your selection directs your current activity.": "Изберете задача от списъка; вашият избор определя текущата ви дейност."
+  "Choose a task from the list; your selection directs your current activity.": "Изберете задача от списъка; вашият избор определя текущата ви дейност.",
+  "Please change the selected filters to view submissions": "Моля променете избраните филтри, за да видите представянията"
 };

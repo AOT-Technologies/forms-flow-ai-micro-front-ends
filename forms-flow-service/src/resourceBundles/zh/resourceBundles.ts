@@ -542,6 +542,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Selected Forms": "已选择的表单",
   "Template Used:": "使用的模板：",
   "Select a task from the List.": "从列表中选择一个任务。",
-  "Choose a task from the list; your selection directs your current activity.": "从列表中选择一个任务；您的选择将指导您当前的活动。"
+  "Choose a task from the list; your selection directs your current activity.": "从列表中选择一个任务；您的选择将指导您当前的活动。",
+  "Please change the selected filters to view submissions": "请更改所选过滤器以查看提交"
 };
 
