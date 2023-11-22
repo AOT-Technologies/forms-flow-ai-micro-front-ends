@@ -538,6 +538,11 @@ export const RESOURCE_BUNDLES_PT = {
   "Save Bundle": "Salvar Bundle",
   "Id": "Id",
   "Enable bundling ?": "Ativar agrupamento?",
+  "Select a task in the List.": "Selecione uma tarefa na lista.",
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Selecione uma tarefa específica na lista fornecida de opções. Sua seleção determinará a tarefa com a qual você estará trabalhando ou interagindo.",
+  "Add Date": "Adicionar data",
+  "Assign to Me": "Atribuir para mim",
+  "Filter count:": "Contagem de filtros:",
   "Selected Forms": "Formulários Selecionados",
   "Template Used:": "Modelo Utilizado:"
 };
