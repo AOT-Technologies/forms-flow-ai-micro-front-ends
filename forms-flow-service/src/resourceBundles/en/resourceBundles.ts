@@ -537,7 +537,9 @@ export const RESOURCE_BUNDLES_EN = {
   "Search by bundle name..": "Search by bundle name..",
   "Save Bundle": "Save Bundle",
   "Id": "Id",
-  "Enable bundling ?": "Enable bundling?"
+  "Enable bundling ?": "Enable bundling?",
+  "Selected Forms": "Selected Forms",
+  "Template Used:": "Template Used:"
 };
 
 

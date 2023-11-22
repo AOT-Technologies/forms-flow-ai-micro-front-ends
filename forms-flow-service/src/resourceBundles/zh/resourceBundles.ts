@@ -534,6 +534,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Search by bundle name..": "按包名称搜索..",
   "Save Bundle": "保存 Bundle",
   "Id": "Id",
-  "Enable bundling ?": "启用捆绑？"
+  "Enable bundling ?": "启用捆绑？",
+  "Selected Forms": "已选择的表单",
+  "Template Used:": "使用的模板："
 };
 
