@@ -539,6 +539,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "从提供的选项列表中选择特定任务。您的选择将确定您将要处理或互动的任务。",
   "Add Date": "添加日期",
   "Assign to Me": "分配给我",
-  "Filter count:": "过滤器计数："
+  "Filter count:": "过滤器计数：",
+  "Selected Forms": "已选择的表单",
+  "Template Used:": "使用的模板："
 };
 

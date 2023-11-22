@@ -544,5 +544,7 @@ export const RESOURCE_BUNDLES_DE = {
   "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Wählen Sie eine bestimmte Aufgabe aus der bereitgestellten Liste aus. Ihre Auswahl bestimmt die Aufgabe, an der Sie arbeiten oder mit der Sie interagieren werden.",
   "Add Date": "Datum hinzufügen",
   "Assign to Me": "Mir zuweisen",
-  "Filter count:": "Filteranzahl:"
+  "Filter count:": "Filteranzahl:",
+  "Selected Forms": "Ausgewählte Formulare",
+  "Template Used:": "Verwendetes Template:"
 };

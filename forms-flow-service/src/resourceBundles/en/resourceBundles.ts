@@ -542,7 +542,9 @@ export const RESOURCE_BUNDLES_EN = {
   "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.",
   "Add Date": "Add Date",
   "Assign to Me": "Assign to Me",
-  "Filter count:": "Filter count:"
+  "Filter count:": "Filter count:",
+  "Selected Forms": "Selected Forms",
+  "Template Used:": "Template Used:"
 };
 
 

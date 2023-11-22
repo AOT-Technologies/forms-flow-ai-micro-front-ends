@@ -540,6 +540,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Изберете конкретна задача от предоставения списък с възможности. Вашият избор ще определи задачата, върху която ще работите или с която ще взаимодействате.",
   "Add Date": "Добавяне на дата",
   "Assign to Me": "Възложи на мен",
-  "Filter count:": "Брой филтри:"
-
+  "Filter count:": "Брой филтри:",
+  "Selected Forms": "Избрани формуляри",
+  "Template Used:": "Използван шаблон:"
 };
