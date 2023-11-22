@@ -537,10 +537,11 @@ export const RESOURCE_BUNDLES_BG = {
   "Id": "Id",
   "Enable bundling ?": "Включи опаковане?",
   "Select a task in the List.": "Изберете задача от списъка.",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Изберете конкретна задача от предоставения списък с възможности. Вашият избор ще определи задачата, върху която ще работите или с която ще взаимодействате.",
   "Add Date": "Добавяне на дата",
   "Assign to Me": "Възложи на мен",
   "Filter count:": "Брой филтри:",
   "Selected Forms": "Избрани формуляри",
-  "Template Used:": "Използван шаблон:"
+  "Template Used:": "Използван шаблон:",
+  "Select a task from the List.": "Изберете задача от списъка.",
+  "Choose a task from the list; your selection directs your current activity.": "Изберете задача от списъка; вашият избор определя текущата ви дейност."
 };

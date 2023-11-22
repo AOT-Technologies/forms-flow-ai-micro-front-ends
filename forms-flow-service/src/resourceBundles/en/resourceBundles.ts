@@ -539,12 +539,13 @@ export const RESOURCE_BUNDLES_EN = {
   "Id": "Id",
   "Enable bundling ?": "Enable bundling?",
   "Select a task in the List.": "Select a task in the List.",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.",
   "Add Date": "Add Date",
   "Assign to Me": "Assign to Me",
   "Filter count:": "Filter count:",
   "Selected Forms": "Selected Forms",
-  "Template Used:": "Template Used:"
+  "Template Used:": "Template Used:",
+  "Select a task from the List.": "Select a task from the List.",
+  "Choose a task from the list; your selection directs your current activity.": "Choose a task from the list; your selection directs your current activity."
 };
 
 
