@@ -348,6 +348,7 @@ export const RESOURCE_BUNDLES_FR = {
   "View/Edit": "Voir la modification",
   "Create Bundle": "Créer un lot",
   "Rows per page": "Lignes par page",
+  "Items per page": "Éléments par page",
   "entries": "entrées",
   "Form Bundle": "Ensemble de formulaires",
   "No bundles found": "Aucun groupe trouvé",
