@@ -346,6 +346,7 @@ export const RESOURCE_BUNDLES_EN = {
   "View/Edit": "View/Edit",
   "Create Bundle": "Create Bundle",
   "Rows per page": "Rows per page",
+  "Items per page": "Items per page",
   "entries": "entries",
   "Form Bundle": "Form Bundle",
   "No bundles found": "No bundles found",

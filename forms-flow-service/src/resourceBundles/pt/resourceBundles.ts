@@ -360,6 +360,7 @@ export const RESOURCE_BUNDLES_PT = {
   "View/Edit": "Visualizar edição",
   "Create Bundle": "Criar pacote",
   "Rows per page": "Linhas por página",
+  "Items per page": "Itens por página",
   "entries": "entradas",
   "Form Bundle": "Pacote de formulários",
   "No bundles found": "Nenhum pacote encontrado",

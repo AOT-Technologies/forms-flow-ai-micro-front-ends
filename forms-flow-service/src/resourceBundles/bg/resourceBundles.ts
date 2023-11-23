@@ -346,6 +346,7 @@ export const RESOURCE_BUNDLES_BG = {
   "View/Edit": "Преглед/редактиране",
   "Create Bundle": "Създаване на пакет",
   "Rows per page": "Редове на страница",
+  "Items per page": "Елементи на страница",
   "entries": "записи",
   "Form Bundle": "Пакет формуляри",
   "No bundles found": "Няма намерени пакети",

@@ -363,6 +363,7 @@ export const RESOURCE_BUNDLES_DE = {
   "View/Edit": "Anzeigen/Bearbeiten",
   "Create Bundle": "Bündel erstellen",
   "Rows per page": "Zeilen pro Seite",
+  "Items per page": "Elemente pro Seite",
   "entries": "Einträge",
   "Form Bundle": "Formularbündel",
   "No bundles found": "Keine Pakete gefunden",

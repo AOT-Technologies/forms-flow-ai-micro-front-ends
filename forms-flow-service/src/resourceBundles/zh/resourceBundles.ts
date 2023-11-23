@@ -343,6 +343,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "View/Edit": "查看/编辑",
   "Create Bundle": "创建捆绑包",
   "Rows per page": "每页行数",
+  "Items per page": "每页项目数",
   "entries": "条目",
   "Form Bundle": "表格捆绑",
   "No bundles found": "找不到捆绑包",
