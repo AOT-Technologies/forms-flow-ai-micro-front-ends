@@ -549,7 +549,11 @@ export const RESOURCE_BUNDLES_FR = {
   "Choose a task from the list; your selection directs your current activity.": "Choisissez une tâche dans la liste ; votre sélection oriente votre activité actuelle.",
   "Please change the selected filters to view submissions": "Veuillez changer les filtres sélectionnés pour voir les soumissions",
   "Please change the selected filters to view drafts": "Veuillez changer les filtres sélectionnés pour voir les brouillons",
-  "No drafts found": "Aucun brouillon trouvé"
+  "No drafts found": "Aucun brouillon trouvé",
+  "Flow-E helps to build faster": "Flow-E aide à construire plus rapidement",
+  "Flow-E is not available for demonstration in the trial instance. You can experience Flow-E in any of the premium packages of the product": "Flow-E n'est pas disponible pour une démonstration dans l'instance d'essai. Vous pouvez découvrir Flow-E dans l'un des packages premium du produit",
+  "Get in touch with formsflow.ai team": "Contactez l'équipe de formsflow.ai",
+  "Premium": "Premium"
 };
 
 
