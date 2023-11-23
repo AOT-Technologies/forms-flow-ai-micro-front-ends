@@ -544,5 +544,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Template Used:": "Използван шаблон:",
   "Select a task from the List.": "Изберете задача от списъка.",
   "Choose a task from the list; your selection directs your current activity.": "Изберете задача от списъка; вашият избор определя текущата ви дейност.",
-  "Please change the selected filters to view submissions": "Моля променете избраните филтри, за да видите представянията"
+  "Please change the selected filters to view submissions": "Моля променете избраните филтри, за да видите представянията",
+  "Please change the selected filters to view drafts": "Моля променете избраните филтри, за да видите черновите",
+  "No drafts found": "Не са намерени чернови"
 };
