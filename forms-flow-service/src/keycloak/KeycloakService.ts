@@ -81,6 +81,7 @@ import Keycloak, {
           .catch((err) => {
             console.error("Keycloak token update failed!", err);
             clearInterval(this.timerId);
+            this.logout();
           });
       }, this.getTokenExpireTime());
     }
@@ -109,14 +110,18 @@ import Keycloak, {
      * make sure `silent-check-sso.html` is present in public folder
      * @param callback - Optional - callback function to excecute after succeessful authentication
      */
-    public initKeycloak(callback: () => void = () => {}): void {
+    public initKeycloak(callback: (authenticated) => void = () => {}): void {
       this.kc
         ?.init(this.keycloakInitConfig)
         .then((authenticated) => {
           if (authenticated) {
             console.log("Authenticated");
             if (!!this.kc?.resourceAccess) {
-              const UserRoles = this.kc?.resourceAccess[this.kc.clientId!].roles;
+              const UserRoles = this.kc?.resourceAccess[this.kc.clientId!]?.roles;
+              if(!UserRoles){
+                callback(false);
+              }
+              else{
               StorageService.save(StorageService.User.USER_ROLE, JSON.stringify(UserRoles));
               this.token = this.kc.token;
               this._tokenParsed = this.kc.tokenParsed;
@@ -127,10 +132,12 @@ import Keycloak, {
                   StorageService.User.USER_DETAILS,
                   JSON.stringify(data)
                 );
-                callback();
+                callback(true);
               });
               this.refreshToken();
-            } else {
+              }
+            }
+              else {
               this.logout();
             }
           } else {

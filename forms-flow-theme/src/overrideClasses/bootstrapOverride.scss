@@ -1,0 +1,17 @@
+@media (min-width: 1400px) {
+    .container {
+      max-width: 1320px;
+    }
+}
+.table th {
+  vertical-align: inherit !important;
+}
+
+.table td {
+  vertical-align: inherit !important;
+}
+
+/* ------------------------- button padding override ------------------------ */
+.btn{
+  padding: 8px 16px !important;
+}

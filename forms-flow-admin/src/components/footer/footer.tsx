@@ -1,24 +1,21 @@
 import React from "react";
 import "./footer.scss";
-// import { version } from "../../../package.json";
+import packageInfo  from "../../../package.json";
 import { Translation } from "react-i18next";
 
-const version_org = "5.2.1";
+const version_org = packageInfo.version;
 const Footer = React.memo(() => {
-  //const today = new Date();
   return (
-    <div className="footer">
-      <div className="col-12 text-center text-align footer-text" role="main">
-        <Translation>{(t) => t("Powered by ")}</Translation>
-        <a
-          href="https://formsflow.ai"
-          target="_blank"
-          style={{ color: "#0000FF" }}
-          rel="noreferrer"
-        >
-           formsflow.ai 
-        </a>
-        {` v${version_org}`} {/*{today.getFullYear()}*/}
+    <div className="pl-md-3 pb-3">
+      <hr />
+      <div className="d-flex justify-content-end pb-2">
+        <div className="font-weight-bold">
+          <Translation>{(t) => t("Powered by ")}</Translation>{" "}
+          <a className="text-link" href="https://formsflow.ai/">
+            formsflow.ai
+          </a>
+          {` v${version_org}`}
+        </div>
       </div>
     </div>
   );

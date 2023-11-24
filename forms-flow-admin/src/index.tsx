@@ -39,7 +39,7 @@ const Admin = React.memo(({ props }: any) => {
   }, []);
 
   React.useEffect(()=>{
-    StorageService.save("tenantKey", tenantId)
+    StorageService.save("tenantKey", tenantId || '')
   },[tenantId])
 
   React.useEffect(() => {
@@ -93,7 +93,9 @@ const Admin = React.memo(({ props }: any) => {
   return (
     <>
       {isAdmin && (
-        <div className="admin-container" tabIndex={0}>
+        <div className="main-container " tabIndex={0}>
+                  <div className="container mt-5">
+        <div className="min-container-height pl-md-3">
           <Head items={headerList()} page={page} />
           <ToastContainer theme="colored" />
           <Switch>
@@ -132,7 +134,9 @@ const Admin = React.memo(({ props }: any) => {
             />
             <Redirect from="*" to="/404" />
           </Switch>
+          </div>
           <Footer />
+          </div>
         </div>
       )}
     </>

@@ -4,38 +4,9 @@
     justify-content: space-between;
 }
 
-.chip-element{
-    border-radius: 100rem;
-	box-shadow: 0 0 0 2px rgb(217, 217, 217);
-    background-color: #EAEFFF;
-
-    .chip-label{
-        padding: 3px 6px 3px 10px;
-        display: flex;
-        align-items: center;
-        font-weight: 500;
-        justify-content: space-between;
-    }
-    .chip-close{
-        margin-left: 5px;
-        width: 20px;
-        height: 20px;
-        color: #393939;
-        font-weight: 100;
-        cursor: pointer;
-        display: inline-flex;
-        text-align: center;
-        align-items: center;
-        justify-content: center;
-        
-    }
-}
+ 
 .table-container-admin{
-    min-height: 32rem;
-    margin-left: 3.938rem;
-    margin-right: 4.188rem !important;
-    padding-left: 1.938rem;
-    padding-right: 1.938rem;
+    min-height: 30rem;
     background: #FFFFFF;
     border: 1px solid #ECECEC;
     box-shadow: 0px 2px 8px rgba(66, 66, 66, 0.07);
@@ -43,13 +14,8 @@
     max-height: 32rem;
     overflow-y: scroll;
 }
-.table-container-admin .table td{
-    padding-top: 1.5rem;
-    font-weight: 600;
-}
+ 
 .container-admin .react-bootstrap-table-pagination-list{
     margin-top: 1rem;
 } 
-.container-admin .react-bootstrap-table-pagination-total{
-    margin-left: 1rem;
-} 
+ 

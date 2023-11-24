@@ -92,11 +92,11 @@ const Users = React.memo((props: any) => {
     setSizePerPage(sizePerPage);
   };
   const customTotal = (from, to, size) => (
-    <span className="react-bootstrap-table-pagination-total" role="main">
+    <span className="ml-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
-      <Translation>{(t) => t("Results")}</Translation>
+      <Translation>{(t) => t("results")}</Translation>
     </span>
   );
   const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
@@ -179,7 +179,7 @@ const Users = React.memo((props: any) => {
                 {rowData.firstName} {rowData.lastName && rowData.lastName}
               </div>
             )}
-            <div style={{ color: "grey" }}>{rowData?.username}</div>
+            <div style={{ color: "#767676" }}>{rowData?.username}</div>
           </div>
         );
       },
@@ -196,17 +196,17 @@ const Users = React.memo((props: any) => {
       text: <Translation>{(t) => t("Role")}</Translation>,
       formatter: (cell, rowData) => {
         return (
-          <div className="role-container">
+          <div className="d-flex flex-wrap col-12">
             {cell?.map((item, i) => (
-              <div key={i} className="chip-element mr-2">
+              <div key={i} className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 my-1 small m-2" style={{background:"#EAEFFF"}}>
                 <OverlayTrigger
                   placement="bottom"
                   overlay={ !KEYCLOAK_ENABLE_CLIENT_AUTH ? <Tooltip id="tooltip">{item?.path}</Tooltip> : <></>}
                 >
-                  <span className="chip-label">
-                    {item?.name}{" "}
+                  <span className="">
+                    {item?.name}
                     <i
-                      className="fa fa-close chip-close"
+                      className="fa-solid fa-xmark chip-close ml-2"
                       onClick={() => removePermission(rowData, item)}
                     ></i>
                   </span>
@@ -314,8 +314,8 @@ const Users = React.memo((props: any) => {
               </Popover>
             }
           >
-            <Button variant="primary" onClick={() => addRole(rowData)}>
-              <i className="fa fa-l fa-plus-circle mr-1" /> {t("Add Role")}
+            <Button variant="primary btn-small" onClick={() => addRole(rowData)}>
+            <i className="fa-solid fa-plus mr-2"></i> <Translation>{(t) => t("Add Role")}</Translation>
             </Button>
           </OverlayTrigger>
         );
@@ -326,18 +326,19 @@ const Users = React.memo((props: any) => {
   return (
     <>
       <div className="container-admin">
-        <div className="sub-container">
-          <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5">
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="search-role col-xl-6 col-lg-6 col-md-6 col-sm-6 px-0">
             <Form.Control
               type="text"
               placeholder={t("Search by name, username or email")}
               className="search-role-input"
               onChange={handleSearch}
               value={props.search || ""}
+              title={t("Search...")}
             />
             {props.search?.length > 0 && (
               <Button
-                variant="outline-secondary clear"
+                variant="outline-secondary btn-small clear"
                 onClick={() => {
                   props.setSearch("");
                 }}
@@ -347,9 +348,9 @@ const Users = React.memo((props: any) => {
             )}
           </div>
 
-          <div className="user-filter-container col-xl-3 col-lg-3 col-md-4 col-sm-5">
+          <div className="user-filter-container col-xl-6 col-lg-6 col-md-6 col-sm-6">
             <span>{t("Filter By:")} </span>
-            <Form.Select size="lg" onChange={handleSelectFilter}>
+            <Form.Select size="lg" className="bg-light" onChange={handleSelectFilter} title={t("Filter here")}>
               <option value="ALL" selected={!props.filter}>
                 {t("All roles")}
               </option>

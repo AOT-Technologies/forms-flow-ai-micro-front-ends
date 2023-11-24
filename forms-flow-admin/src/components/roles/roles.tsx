@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import "./roles.scss";
+import { useParams } from "react-router-dom";
 import { Translation, useTranslation } from "react-i18next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import Form from "react-bootstrap/Form";
@@ -14,10 +15,12 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
-import { KEYCLOAK_ENABLE_CLIENT_AUTH } from "../../constants";
+import { KEYCLOAK_ENABLE_CLIENT_AUTH, MULTITENANCY_ENABLED } from "../../constants";
+import { DEFAULT_ROLES } from "../../constants";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
+  const  {tenantId}  = useParams();
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
@@ -89,7 +92,7 @@ const Roles = React.memo((props: any) => {
       }
     );
   };
-
+  
   const handleChangeName = (e) => {
     setPayload({ ...payload, name: e.target.value });
   };
@@ -100,10 +103,30 @@ const Roles = React.memo((props: any) => {
   const validateRolePayload = (payload) => {
     return !(payload.name === "" || payload.description === "");
   };
-
+  //check regex exept _ -
+  const hasSpecialCharacters = (text) => {
+    const regex = /[^A-Za-z0-9_-]/;
+    return regex.test(text);
+  };
+  //check regex exept _ - /
+  const hasSpecialCharacterswithslash = (text) => {
+    const regex = /[^A-Za-z0-9_\-\/]/;
+    return regex.test(text);
+  };
   const handleCreateRole = () => {
     if (!validateRolePayload(payload)) {
       return;
+    }
+    if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
+      if (hasSpecialCharacters(payload.name)) {
+        toast.error(t("Role names cannot contain special characters except   _ , -"));
+        return;
+      }
+    } else {
+      if (hasSpecialCharacterswithslash(payload.name)) {
+        toast.error(t("Role names cannot contain special characters except _ , - , / "));
+        return;
+      }
     }
     setDisabled(true);
     CreateRole(
@@ -123,6 +146,17 @@ const Roles = React.memo((props: any) => {
   const handleUpdateRole = () => {
     if (!validateRolePayload(editCandidate)) {
       return;
+    }
+    if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
+      if (hasSpecialCharacters(editCandidate.name)) {
+        toast.error(t("Role names cannot contain special characters except   _ , -"));
+        return;
+      }
+    } else {
+      if (hasSpecialCharacterswithslash(editCandidate.name)) {
+        toast.error(t("Role names cannot contain special characters except _ , - , / "));
+        return;
+      }
     }
     setDisabled(true);
     UpdateRole(
@@ -192,6 +226,19 @@ const Roles = React.memo((props: any) => {
     setDisabled(false);
   };
 
+  const checkDefaultRoleOrNot  = (role:any) =>{
+    if(MULTITENANCY_ENABLED && tenantId){
+      const roles = [
+        `${tenantId}-designer`,
+        `${tenantId}-client`,
+        `${tenantId}-reviewer`,
+        `${tenantId}-admin`,
+      ];
+      return roles.includes(role)
+    }else{
+      return DEFAULT_ROLES.includes(role);
+    }
+  }
   // Delete confirmation
 
   const confirmDelete = () => (
@@ -204,9 +251,10 @@ const Roles = React.memo((props: any) => {
       {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
     </Modal.Body>
     <Modal.Footer>
-      <Button variant="light" onClick={handleCloseDeleteModal}>
+      <button type="button"
+            className="btn btn-link text-dark" onClick={handleCloseDeleteModal}>
         {t("Cancel")}
-      </Button>
+      </button>
       <Button
         variant="danger"
         disabled={disabled}
@@ -235,6 +283,7 @@ const Roles = React.memo((props: any) => {
                 placeholder={t("Eg: Account Manager")}
                 required
                 onChange={handleChangeName}
+                title={t("Enter role name")}
               />
               <Form.Label className="mt-2">{t("Description")}</Form.Label>
               <i style={{ color: "red" }}>*</i>
@@ -243,14 +292,16 @@ const Roles = React.memo((props: any) => {
                 placeholder="Eg: Lorem ipsum..."
                 rows={3}
                 onChange={handleChangeDescription}
+                title={t("Enter Description")}
               />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="light" onClick={handleCloseRoleModal}>
+          <button type="button"
+            className="btn btn-link text-dark" onClick={handleCloseRoleModal}>
             {t("Cancel")}
-          </Button>
+          </button>
           <Button
             variant="primary"
             disabled={disabled}
@@ -292,9 +343,10 @@ const Roles = React.memo((props: any) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="light" onClick={handleCloseEditRoleModal}>
+          <button type="button"
+            className="btn btn-link text-dark" onClick={handleCloseEditRoleModal}>
             {t("Cancel")}
-          </Button>
+          </button>
           <Button
             variant="primary"
             disabled={disabled}
@@ -316,11 +368,11 @@ const Roles = React.memo((props: any) => {
   );
 
   const customTotal = (from, to, size) => (
-    <span className="react-bootstrap-table-pagination-total" role="main">
+    <span className="ml-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
-      <Translation>{(t) => t("Results")}</Translation>
+      <Translation>{(t) => t("results")}</Translation>
     </span>
   );
   const getpageList = () => {
@@ -342,7 +394,7 @@ const Roles = React.memo((props: any) => {
         value: 100,
       },
       {
-        text: "All",
+        text: t("All"),
         value: roles.length,
       },
     ];
@@ -371,6 +423,7 @@ const Roles = React.memo((props: any) => {
   const pagination = paginationFactory({
     showTotal: true,
     align: "center",
+    className:"d-flex",
     sizePerPageList: getpageList(),
     page: activePage,
     sizePerPage: sizePerPage,
@@ -422,7 +475,7 @@ const Roles = React.memo((props: any) => {
           >
             <div className="user-list" onClick={(e) => handleClick(e, rowData)}>
               <p><Translation>{(t) => t("View")}</Translation></p>
-              <i className="fa fa-caret-down ml-1" />
+              <i className="fa fa-caret-down ml-2" />
             </div>
           </OverlayTrigger>
         );
@@ -433,9 +486,10 @@ const Roles = React.memo((props: any) => {
       text: <Translation>{(t) => t("Actions")}</Translation>,
       formatter: (cell, rowData, rowIdx, formatExtraData) => {
         return (
+          checkDefaultRoleOrNot(rowData.name) ? null :
           <div>
             <i
-              className="fa fa-pencil fa-lg mr-4"
+              className="fa fa-pencil  mr-4"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
                 setSelectedRoleIdentifier(KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id)
@@ -444,7 +498,7 @@ const Roles = React.memo((props: any) => {
               }}
             />
             <i
-              className="fa fa-trash fa-lg delete_button"
+              className="fa fa-trash delete_button"
               style={{ color: "#D04444" }}
               onClick={() => {
                 setDeleteCandidate(rowData);
@@ -459,19 +513,20 @@ const Roles = React.memo((props: any) => {
   return (
     <>
       <div className="container-admin">
-        <div className="sub-container">
-          <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5">
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
             <Form.Control
               type="text"
               placeholder={t("Search by role name")}
               className="search-role-input"
               onChange={handlFilter}
               value={search}
+              title={t("Search...")}
             />
 
             {search.length > 0 && (
               <Button
-                variant="outline-secondary clear"
+                variant="outline-secondary btn-small clear"
                 onClick={() => {
                   setSerach("");
                   setRoles(props.roles);
@@ -481,8 +536,8 @@ const Roles = React.memo((props: any) => {
               </Button>
             )}
           </div>
-          <Button variant="primary" className="font-size col-xl-2 col-lg-3 col-md-3 col-sm-4" onClick={handleShowRoleModal}>
-            <i className="fa fa-l fa-plus-circle mr-1" /> <Translation>{(t) => t("Create New Role")}</Translation>
+          <Button variant="primary"  onClick={handleShowRoleModal}>
+          <i className="fa-solid fa-plus mr-2"></i> <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>
         {!props?.loading ? (
