@@ -13,14 +13,14 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
 `Modified`
 
 **forms-flow-admin**
- - Modified user interface and improved user experince 
+ - Modified user interface and improved user experience 
  - Modified footer style
  
 **forms-flow-nav**
  - Modified navbar style
    
 **forms-flow-theme**
- - Modified css to scss and folder structure
+ - Modified CSS to SCSS and folder structure
  - Modified toast color override
  
 
