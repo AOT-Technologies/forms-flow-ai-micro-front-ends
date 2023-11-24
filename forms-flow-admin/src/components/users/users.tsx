@@ -338,7 +338,7 @@ const Users = React.memo((props: any) => {
             />
             {props.search?.length > 0 && (
               <Button
-                variant="outline-secondary clear"
+                variant="outline-secondary btn-small clear"
                 onClick={() => {
                   props.setSearch("");
                 }}
