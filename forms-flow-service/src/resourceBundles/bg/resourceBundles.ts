@@ -547,5 +547,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Choose a task from the list; your selection directs your current activity.": "Изберете задача от списъка; вашият избор определя текущата ви дейност.",
   "Please change the selected filters to view submissions": "Моля променете избраните филтри, за да видите представянията",
   "Please change the selected filters to view drafts": "Моля променете избраните филтри, за да видите черновите",
-  "No drafts found": "Не са намерени чернови"
+  "No drafts found": "Не са намерени чернови",
+  "Flow-E helps to build faster": "Flow-E помага за по-бързо строене",
+  "Flow-E is not available for demonstration in the trial instance. You can experience Flow-E in any of the premium packages of the product": "Flow-E не е наличен за демонстрация в пробния инстанс. Можете да изпробвате Flow-E в някои от премиум пакетите на продукта",
+  "Get in touch with formsflow.ai team": "Свържете се с екипа на formsflow.ai",
+  "Premium": "Премиум"
 };

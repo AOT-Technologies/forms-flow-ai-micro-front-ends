@@ -546,6 +546,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "Choose a task from the list; your selection directs your current activity.": "从列表中选择一个任务；您的选择将指导您当前的活动。",
   "Please change the selected filters to view submissions": "请更改所选过滤器以查看提交",
   "Please change the selected filters to view drafts":  "请更改所选过滤器以查看草稿",
-  "No drafts found": "未找到草稿"
+  "No drafts found": "未找到草稿",
+  "Flow-E helps to build faster": "Flow-E有助于更快地构建",
+  "Flow-E is not available for demonstration in the trial instance. You can experience Flow-E in any of the premium packages of the product": "在试用实例中，无法演示Flow-E。您可以在产品的任何高级套餐中体验Flow-E",
+  "Get in touch with formsflow.ai team": "与formsflow.ai团队取得联系",
+  "Premium": "高级"
 };
 

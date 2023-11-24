@@ -551,5 +551,9 @@ export const RESOURCE_BUNDLES_DE = {
   "Choose a task from the list; your selection directs your current activity.": "Wählen Sie eine Aufgabe aus der Liste aus; Ihre Auswahl bestimmt Ihre aktuelle Aktivität.",
   "Please change the selected filters to view submissions": "Bitte ändern Sie die ausgewählten Filter, um Einreichungen anzuzeigen",
   "Please change the selected filters to view drafts": "Bitte ändern Sie die ausgewählten Filter, um Entwürfe anzuzeigen",
-  "No drafts found": "Keine Entwürfe gefunden"
+  "No drafts found": "Keine Entwürfe gefunden",
+  "Flow-E helps to build faster": "Flow-E hilft, schneller zu bauen",
+  "Flow-E is not available for demonstration in the trial instance. You can experience Flow-E in any of the premium packages of the product": "Flow-E steht in der Testinstanz nicht für eine Demonstration zur Verfügung. Sie können Flow-E in einem der Premium-Pakete des Produkts erleben",
+  "Get in touch with formsflow.ai team": "Kontaktieren Sie das formsflow.ai-Team",
+  "Premium": "Premium"
 };
