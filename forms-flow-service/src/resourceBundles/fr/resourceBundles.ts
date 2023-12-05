@@ -579,7 +579,10 @@ export const RESOURCE_BUNDLES_FR = {
   "Flow-E helps to build faster": "Flow-E aide à construire plus rapidement",
   "Flow-E is not available for demonstration in the trial instance. You can experience Flow-E in any of the premium packages of the product": "Flow-E n'est pas disponible pour une démonstration dans l'instance d'essai. Vous pouvez découvrir Flow-E dans l'un des packages premium du produit",
   "Get in touch with formsflow.ai team": "Contactez l'équipe de formsflow.ai",
-  "Premium": "Premium"
+  "Premium": "Premium",
+  "Select a status":"Sélectionnez un statut",
+  "Group":"Groupe"
+
 };
 
 
