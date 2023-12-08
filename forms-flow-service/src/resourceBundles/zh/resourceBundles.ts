@@ -577,7 +577,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Get in touch with formsflow.ai team": "与formsflow.ai团队取得联系",
   "Premium": "高级",
   "Select a status":"选择一个状态",
-  "Group":"群组"
-
+  "Group":"群组",
+  "Form description": "表单描述",
+  "Select all forms": "选择所有表单"
 };
 

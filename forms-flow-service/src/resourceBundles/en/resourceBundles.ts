@@ -580,7 +580,9 @@ export const RESOURCE_BUNDLES_EN = {
   "Get in touch with formsflow.ai team": "Get in touch with formsflow.ai team",
   "Premium": "Premium",
   "Select a status":"Select a status",
-  "Group":"Group"
+  "Group":"Group",
+  "Form description": "Form description",
+  "Select all forms": "Select all forms"
 };
 
 
