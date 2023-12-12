@@ -583,7 +583,16 @@ export const RESOURCE_BUNDLES_FR = {
   "Select a status":"Sélectionnez un statut",
   "Group":"Groupe",
   "Form description": "Description du formulaire",
-  "Select all forms": "Sélectionner tous les formulaires"
+  "Select all forms": "Sélectionner tous les formulaires",
+  "Bold": "Gras",
+  "Italic": "Italique",
+  "Underline": "Souligné",
+  "Align left": "Aligner à gauche",
+  "Align center": "Aligner au centre",
+  "Align right": "Aligner à droite",
+  "Align justify": "Justifier",
+  "Insert Link": "Insérer un lien",
+  "Clean": "Effacer"
 };
 
 

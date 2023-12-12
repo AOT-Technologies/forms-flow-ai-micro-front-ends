@@ -584,5 +584,14 @@ export const RESOURCE_BUNDLES_DE = {
   "Select a status":"Wählen Sie einen Status",
   "Group":"Gruppe",
   "Form description": "Formularbeschreibung",
-  "Select all forms": "Alle Formulare auswählen"
+  "Select all forms": "Alle Formulare auswählen",
+  "Bold": "Fett",
+  "Italic": "Kursiv",
+  "Underline": "Unterstrichen",
+  "Align left": "Links ausrichten",
+  "Align center": "Zentriert ausrichten",
+  "Align right": "Rechts ausrichten",
+  "Align justify": "Blocksatz",
+  "Insert Link": "Link einfügen",
+  "Clean": "Formatierung entfernen"
 };

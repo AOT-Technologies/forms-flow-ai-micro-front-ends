@@ -580,5 +580,14 @@ export const RESOURCE_BUNDLES_BG = {
   "Select a status":"Изберете статус",
   "Group":"Група",
   "Form description": "Описание на формуляра",
-  "Select all forms": "Изберете всички форми"
+  "Select all forms": "Изберете всички форми",
+  "Bold": "Удебелен",
+  "Italic": "Курсив",
+  "Underline": "Подчертан",
+  "Align left": "Подравняване вляво",
+  "Align center": "Центрирано подравняване",
+  "Align right": "Подравняване вдясно",
+  "Align justify": "Двустранно подравняване",
+  "Insert Link": "Вмъкни връзка",
+  "Clean": "Изчисти"
 };

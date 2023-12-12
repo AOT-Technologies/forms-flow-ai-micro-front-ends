@@ -582,7 +582,16 @@ export const RESOURCE_BUNDLES_EN = {
   "Select a status":"Select a status",
   "Group":"Group",
   "Form description": "Form description",
-  "Select all forms": "Select all forms"
+  "Select all forms": "Select all forms",
+  "Bold": "Bold",
+  "Italic": "Italic",
+  "Underline": "Underline",
+  "Align left": "Align left",
+  "Align center": "Align center",
+  "Align right": "Align right",
+  "Align justify": "Align justify",
+  "Insert Link": "Insert Link",
+  "Clean": "Clean"
 };
 
 
