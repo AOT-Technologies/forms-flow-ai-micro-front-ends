@@ -233,6 +233,13 @@ const Roles = React.memo((props: any) => {
         `${tenantId}-client`,
         `${tenantId}-reviewer`,
         `${tenantId}-admin`,
+        "formsflow-reviewer",
+        "formsflow-designer",
+        "formsflow-client",
+        "camunda-admin",
+        "Approver",
+        "clerk",
+        "designer"
       ];
       return roles.includes(role)
     }else{
