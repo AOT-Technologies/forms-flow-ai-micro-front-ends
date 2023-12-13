@@ -591,7 +591,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Align right": "Align right",
   "Align justify": "Align justify",
   "Insert Link": "Insert Link",
-  "Clean": "Clean"
+  "Clean": "Clean",
+  "Click for task variables": "Click for task variables"
 };
 
 

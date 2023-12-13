@@ -593,5 +593,6 @@ export const RESOURCE_BUNDLES_DE = {
   "Align right": "Rechts ausrichten",
   "Align justify": "Blocksatz",
   "Insert Link": "Link einfügen",
-  "Clean": "Formatierung entfernen"
+  "Clean": "Formatierung entfernen",
+  "Click for task variables": "Klicken Sie für Aufgabenvariablen"
 };

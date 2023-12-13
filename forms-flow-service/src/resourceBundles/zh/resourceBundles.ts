@@ -588,6 +588,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Align right": "居右对齐",
   "Align justify": "两端对齐",
   "Insert Link": "插入链接",
-  "Clean": "清除格式"
+  "Clean": "清除格式",
+  "Click for task variables": "点击查看任务变量"
 };
 

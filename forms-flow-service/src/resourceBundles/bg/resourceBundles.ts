@@ -589,5 +589,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Align right": "Подравняване вдясно",
   "Align justify": "Двустранно подравняване",
   "Insert Link": "Вмъкни връзка",
-  "Clean": "Изчисти"
+  "Clean": "Изчисти",
+  "Click for task variables": "Кликнете за преглед на променливите на задачата"
 };
