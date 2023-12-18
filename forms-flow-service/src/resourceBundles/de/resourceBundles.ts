@@ -582,6 +582,17 @@ export const RESOURCE_BUNDLES_DE = {
   "Get in touch with formsflow.ai team": "Kontaktieren Sie das formsflow.ai-Team",
   "Premium": "Premium",
   "Select a status":"Wählen Sie einen Status",
-  "Group":"Gruppe"
-
+  "Group":"Gruppe",
+  "Form description": "Formularbeschreibung",
+  "Select all forms": "Alle Formulare auswählen",
+  "Bold": "Fett",
+  "Italic": "Kursiv",
+  "Underline": "Unterstrichen",
+  "Align left": "Links ausrichten",
+  "Align center": "Zentriert ausrichten",
+  "Align right": "Rechts ausrichten",
+  "Align justify": "Blocksatz",
+  "Insert Link": "Link einfügen",
+  "Clean": "Formatierung entfernen",
+  "Click for task variables": "Klicken Sie für Aufgabenvariablen"
 };

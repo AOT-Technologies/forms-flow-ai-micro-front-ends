@@ -578,6 +578,17 @@ export const RESOURCE_BUNDLES_BG = {
   "Get in touch with formsflow.ai team": "Свържете се с екипа на formsflow.ai",
   "Premium": "Премиум",
   "Select a status":"Изберете статус",
-  "Group":"Група"
-
+  "Group":"Група",
+  "Form description": "Описание на формуляра",
+  "Select all forms": "Изберете всички форми",
+  "Bold": "Удебелен",
+  "Italic": "Курсив",
+  "Underline": "Подчертан",
+  "Align left": "Подравняване вляво",
+  "Align center": "Центрирано подравняване",
+  "Align right": "Подравняване вдясно",
+  "Align justify": "Двустранно подравняване",
+  "Insert Link": "Вмъкни връзка",
+  "Clean": "Изчисти",
+  "Click for task variables": "Кликнете за преглед на променливите на задачата"
 };

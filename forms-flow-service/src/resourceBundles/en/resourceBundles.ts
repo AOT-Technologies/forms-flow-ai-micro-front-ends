@@ -580,7 +580,19 @@ export const RESOURCE_BUNDLES_EN = {
   "Get in touch with formsflow.ai team": "Get in touch with formsflow.ai team",
   "Premium": "Premium",
   "Select a status":"Select a status",
-  "Group":"Group"
+  "Group":"Group",
+  "Form description": "Form description",
+  "Select all forms": "Select all forms",
+  "Bold": "Bold",
+  "Italic": "Italic",
+  "Underline": "Underline",
+  "Align left": "Align left",
+  "Align center": "Align center",
+  "Align right": "Align right",
+  "Align justify": "Align justify",
+  "Insert Link": "Insert Link",
+  "Clean": "Clean",
+  "Click for task variables": "Click for task variables"
 };
 
 
