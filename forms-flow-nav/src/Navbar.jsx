@@ -200,7 +200,7 @@ const NavBar = React.memo(({ props }) => {
                           : ""
                       }`}
                     >
-                      <i className="fa-solid fa-file-lines mr-2" />
+                      <i className="fa-solid fa-file-lines me-2" />
                       {t("Forms")}
                     </Nav.Link>
                   )}
@@ -216,7 +216,7 @@ const NavBar = React.memo(({ props }) => {
                           : ""
                       }`}
                     >
-                      <i className="fa-solid fa-user-check mr-2" />
+                      <i className="fa-solid fa-user-check me-2" />
                       {t("Admin")}
                     </Nav.Link>
                   ) : null}
@@ -234,7 +234,7 @@ const NavBar = React.memo(({ props }) => {
                               : ""
                           }`}
                         >
-                          <i className="fa fa-cogs fa-fw mr-2" />
+                          <i className="fa fa-cogs fa-fw me-2" />
                           {t("Processes")}
                         </Nav.Link>
                       )
@@ -259,7 +259,7 @@ const NavBar = React.memo(({ props }) => {
                                 : ""
                             }`}
                           >
-                            <i className="fa-solid fa-rectangle-list mr-2" />
+                            <i className="fa-solid fa-rectangle-list me-2" />
                             {t("Submissions")}
                           </Nav.Link>
                         )
@@ -278,7 +278,7 @@ const NavBar = React.memo(({ props }) => {
                               : ""
                           }`}
                         >
-                          <i className="fa-solid fa-list-check mr-2" />
+                          <i className="fa-solid fa-list-check me-2" />
                           {t("Tasks")}
                         </Nav.Link>
                       )
@@ -302,7 +302,7 @@ const NavBar = React.memo(({ props }) => {
                           }`}
                         >
                           
-                          <i className="fa-solid fa-gauge-high mr-2" />
+                          <i className="fa-solid fa-gauge-high me-2" />
                           {t("Dashboards")}
                         </Nav.Link>
                       )
@@ -313,8 +313,8 @@ const NavBar = React.memo(({ props }) => {
                   {selectLanguages.length === 1 ? (
                     selectLanguages.map((e, i) => {
                       return (
-                        <div className="mr-2">
-                          <i className="fa fa-globe mr-2" />
+                        <div className="me-2">
+                          <i className="fa fa-globe me-2" />
                            {e.name}
                         </div>
                       );
@@ -323,12 +323,12 @@ const NavBar = React.memo(({ props }) => {
                     <NavDropdown
                       title={
                         <>
-                          <i className="fa fa-globe  mr-2" />
+                          <i className="fa fa-globe  me-2" />
                          
                           {lang ? lang : "LANGUAGE"}
                         </>
                       }
-                      className="mr-2"
+                      className="me-2"
                       id="basic-nav-dropdown"
                     >
                       {selectLanguages.map((e, index) => (
@@ -346,7 +346,7 @@ const NavBar = React.memo(({ props }) => {
                      <NavDropdown
                     title={
                       <>
-                        <i className="fa-solid fa-user mr-2" />
+                        <i className="fa-solid fa-user me-2" />
                         {userDetail?.name ||
                           userDetail?.preferred_username ||
                           ""}

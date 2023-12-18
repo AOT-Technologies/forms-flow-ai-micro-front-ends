@@ -378,7 +378,7 @@ const Roles = React.memo((props: any) => {
   );
 
   const customTotal = (from, to, size) => (
-    <span className="ml-2" role="main">
+    <span className="ms-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
@@ -485,7 +485,7 @@ const Roles = React.memo((props: any) => {
           >
             <div className="user-list" onClick={(e) => handleClick(e, rowData)}>
               <p><Translation>{(t) => t("View")}</Translation></p>
-              <i className="fa fa-caret-down ml-2" />
+              <i className="fa fa-caret-down ms-2" />
             </div>
           </OverlayTrigger>
         );
@@ -499,7 +499,7 @@ const Roles = React.memo((props: any) => {
           checkDefaultRoleOrNot(rowData.name) ? null :
           <div>
             <i
-              className="fa fa-pencil  mr-4"
+              className="fa fa-pencil  me-4"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
                 setSelectedRoleIdentifier(KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id)
@@ -547,7 +547,7 @@ const Roles = React.memo((props: any) => {
             )}
           </div>
           <Button variant="primary"  onClick={handleShowRoleModal}>
-          <i className="fa-solid fa-plus mr-2"></i> <Translation>{(t) => t("Create New Role")}</Translation>
+          <i className="fa-solid fa-plus me-2"></i> <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>
         {!props?.loading ? (

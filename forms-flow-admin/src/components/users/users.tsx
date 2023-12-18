@@ -92,7 +92,7 @@ const Users = React.memo((props: any) => {
     setSizePerPage(sizePerPage);
   };
   const customTotal = (from, to, size) => (
-    <span className="ml-2" role="main">
+    <span className="ms-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
@@ -206,7 +206,7 @@ const Users = React.memo((props: any) => {
                   <span className="">
                     {item?.name}
                     <i
-                      className="fa-solid fa-xmark chip-close ml-2"
+                      className="fa-solid fa-xmark chip-close ms-2"
                       onClick={() => removePermission(rowData, item)}
                     ></i>
                   </span>
@@ -315,7 +315,7 @@ const Users = React.memo((props: any) => {
             }
           >
             <Button variant="primary btn-small" onClick={() => addRole(rowData)}>
-            <i className="fa-solid fa-plus mr-2"></i> <Translation>{(t) => t("Add Role")}</Translation>
+            <i className="fa-solid fa-plus me-2"></i> <Translation>{(t) => t("Add Role")}</Translation>
             </Button>
           </OverlayTrigger>
         );
