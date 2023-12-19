@@ -191,7 +191,7 @@ export const InsightDashboard = React.memo((props: any) => {
                 <span className="">
                   {label}
                   <i
-                    className="fa-solid fa-xmark chip-close ml-2"
+                    className="fa-solid fa-xmark chip-close ms-2"
                     onClick={() => removeDashboardAuth(rowData, label)}
                   ></i>
                 </span>
@@ -243,7 +243,7 @@ export const InsightDashboard = React.memo((props: any) => {
               className="btn btn-primary"
               disabled={!isGroupUpdated}
             >
-              <i className="fa-solid fa-plus mr-2"></i>
+              <i className="fa-solid fa-plus me-2"></i>
               <Translation>{(t) => t("Add")}</Translation>  
             </Button>
           </OverlayTrigger>
@@ -279,7 +279,7 @@ export const InsightDashboard = React.memo((props: any) => {
   };
 
   const customTotal = (from, to, size) => (
-    <span className="ml-2" role="main">
+    <span className="ms-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
