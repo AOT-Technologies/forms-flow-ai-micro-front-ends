@@ -590,5 +590,8 @@ export const RESOURCE_BUNDLES_BG = {
   "Align justify": "Двустранно подравняване",
   "Insert Link": "Вмъкни връзка",
   "Clean": "Изчисти",
-  "Click for task variables": "Кликнете за преглед на променливите на задачата"
+  "Click for task variables": "Кликнете за преглед на променливите на задачата",
+  "Upload DMN": "Качване на DMN",
+  "DMN Name": "Име на DMN",
+  "Search by DMN name": "Търсене по име на DMN"
 };

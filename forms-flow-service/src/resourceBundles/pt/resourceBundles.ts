@@ -592,5 +592,8 @@ export const RESOURCE_BUNDLES_PT = {
   "Align justify": "Justificar",
   "Insert Link": "Inserir Link",
   "Clean": "Limpar",
-  "Click for task variables": "Clique para ver as variáveis da tarefa"
+  "Click for task variables": "Clique para ver as variáveis da tarefa",
+  "Upload DMN": "Carregar DMN",
+  "DMN Name": "Nome do DMN",
+  "Search by DMN name": "Pesquisar por nome do DMN"
 };
