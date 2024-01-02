@@ -594,5 +594,8 @@ export const RESOURCE_BUNDLES_DE = {
   "Align justify": "Blocksatz",
   "Insert Link": "Link einfügen",
   "Clean": "Formatierung entfernen",
-  "Click for task variables": "Klicken Sie für Aufgabenvariablen"
+  "Click for task variables": "Klicken Sie für Aufgabenvariablen",
+  "Upload DMN": "DMN hochladen",
+  "DMN Name": "DMN-Name",
+  "Search by DMN name": "Nach DMN-Namen suchen"
 };
