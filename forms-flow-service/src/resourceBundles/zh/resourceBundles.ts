@@ -589,6 +589,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Align justify": "两端对齐",
   "Insert Link": "插入链接",
   "Clean": "清除格式",
-  "Click for task variables": "点击查看任务变量"
+  "Click for task variables": "点击查看任务变量",
+  "Upload DMN": "上传 DMN",
+  "DMN Name": "DMN 名称",
+  "Search by DMN name": "按 DMN 名称搜索"
 };
 

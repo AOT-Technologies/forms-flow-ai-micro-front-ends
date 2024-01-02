@@ -592,7 +592,10 @@ export const RESOURCE_BUNDLES_EN = {
   "Align justify": "Align justify",
   "Insert Link": "Insert Link",
   "Clean": "Clean",
-  "Click for task variables": "Click for task variables"
+  "Click for task variables": "Click for task variables",
+  "Upload DMN": "Upload DMN",
+  "DMN Name": "DMN Name",
+  "Search by DMN name": "Search by DMN name",
 };
 
 
