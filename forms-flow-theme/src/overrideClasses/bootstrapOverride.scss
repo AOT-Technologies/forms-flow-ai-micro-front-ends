@@ -18,3 +18,7 @@
 .bg-primary{
   background-color: var(--color-primary) !important;
 } 
+.table-primary {
+  --bs-table-color: #fff;
+  --bs-table-bg:var(--color-primary) !important;
+}
