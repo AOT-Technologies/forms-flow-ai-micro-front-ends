@@ -373,7 +373,7 @@ const Users = React.memo((props: any) => {
             columns={columns}
             pagination={pagination}
             bordered={false}
-            wrapperClasses="user-table-container"
+            wrapperClasses="user-table-container px-4"
             rowStyle={{
               color: "#09174A",
               fontWeight: 600,

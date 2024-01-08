@@ -7,10 +7,13 @@
     border-radius: 8px;
     overflow-y: scroll;
     max-height: 25rem;
-}
+} 
 .table th{
     color: #646464;
-    border: none;
+}
+.table th ,
+.table tr {
+    vertical-align: middle;
 }
  
 
@@ -88,6 +91,7 @@
 .react-bootstrap-table{
     width: auto !important;
 }
+
 .user-table-container{
     overflow-y: scroll;
     max-height: 25rem;

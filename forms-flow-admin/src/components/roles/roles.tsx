@@ -557,7 +557,7 @@ const Roles = React.memo((props: any) => {
             columns={columns}
             pagination={pagination}
             bordered={false}
-            wrapperClasses="table-container"
+            wrapperClasses="table-container px-4"
             rowStyle={{
               color: "#09174A",
               fontWeight: 600,

@@ -166,7 +166,6 @@ export const InsightDashboard = React.memo((props: any) => {
       setErr
     );
   };
-
   const noData = () => (
     <div>
       <h3 className="text-center">
@@ -309,7 +308,7 @@ export const InsightDashboard = React.memo((props: any) => {
               columns={columns}
               pagination={pagination}
               bordered={false}
-              wrapperClasses="table-container-admin mb-3"
+              wrapperClasses="table-container-admin mb-3 px-4"
               rowStyle={{
                 color: "#09174A",
                 fontWeight: 600,
