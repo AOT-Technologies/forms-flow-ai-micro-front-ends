@@ -326,8 +326,8 @@ const Users = React.memo((props: any) => {
   return (
     <>
       <div className="container-admin">
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="search-role col-xl-6 col-lg-6 col-md-6 col-sm-6 px-0">
+        <div className="d-flex align-items-center justify-content-between flex-wrap">
+          <div className="search-role col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 px-0">
             <Form.Control
               type="text"
               placeholder={t("Search by name, username or email")}
@@ -348,9 +348,9 @@ const Users = React.memo((props: any) => {
             )}
           </div>
 
-          <div className="user-filter-container col-xl-6 col-lg-6 col-md-6 col-sm-6">
-            <span>{t("Filter By:")} </span>
-            <Form.Select size="lg" className="bg-light" onChange={handleSelectFilter} title={t("Filter here")}>
+          <div className="user-filter-container  col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 d-flex justify-content-end gap-2">
+            <span className="my-2">{t("Filter By:")} </span>
+            <Form.Select className="bg-light text-dark" onChange={handleSelectFilter} title={t("Filter here")}>
               <option value="ALL" selected={!props.filter}>
                 {t("All roles")}
               </option>
@@ -373,7 +373,7 @@ const Users = React.memo((props: any) => {
             columns={columns}
             pagination={pagination}
             bordered={false}
-            wrapperClasses="user-table-container"
+            wrapperClasses="user-table-container px-4"
             rowStyle={{
               color: "#09174A",
               fontWeight: 600,

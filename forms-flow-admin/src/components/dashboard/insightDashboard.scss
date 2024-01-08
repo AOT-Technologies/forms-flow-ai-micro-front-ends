@@ -18,4 +18,8 @@
 .container-admin .react-bootstrap-table-pagination-list{
     margin-top: 1rem;
 } 
- 
+
+.table-container-admin tbody {
+    overflow-y: auto;
+    height: 360px;
+}

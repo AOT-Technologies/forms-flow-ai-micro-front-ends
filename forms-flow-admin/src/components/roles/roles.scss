@@ -7,15 +7,17 @@
     border-radius: 8px;
     overflow-y: scroll;
     max-height: 25rem;
-}
+} 
 .table th{
     color: #646464;
-    border: none;
+}
+.table th ,
+.table tr {
+    vertical-align: middle;
 }
  
 
 .search-role {
-    width: 33.625rem !important;
     margin-bottom: 1.75rem;
     margin-top: 1.875rem;
     display: flex;
@@ -89,6 +91,7 @@
 .react-bootstrap-table{
     width: auto !important;
 }
+
 .user-table-container{
     overflow-y: scroll;
     max-height: 25rem;
