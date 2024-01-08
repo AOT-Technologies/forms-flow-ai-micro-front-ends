@@ -326,31 +326,32 @@ const Roles = React.memo((props: any) => {
   const showEditModal = () => (
     <div>
       <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal}>
+        <Form>
         <Modal.Header closeButton>
           <Modal.Title>{t("Edit Role")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
             <Form.Group className="mb-3">
-              <Form.Label aria-required>{t("Role Name")}</Form.Label>
-              <i style={{ color: "red" }}>*</i>
+              <Form.Label htmlFor="edit-role-name" aria-required>{t("Role Name")}</Form.Label>
+              <i style={{ color: "#e00" }}>*</i>
               <Form.Control
+                id="edit-role-name"
                 type="text"
                 placeholder={("Eg: Account Manager")}
                 required
                 onChange={handleEditName}
                 value={editCandidate.name}
               />
-              <Form.Label className="mt-2">{t("Description")}</Form.Label>
-              <i style={{ color: "red" }}>*</i>
+              <Form.Label htmlFor="edit-description" className="mt-2">{t("Description")}</Form.Label>
+              <i style={{ color: "#e00" }}>*</i>
               <Form.Control
+                id="edit-description"
                 as="textarea"
                 rows={3}
                 onChange={handleEditDescription}
                 value={editCandidate.description}
               />
             </Form.Group>
-          </Form>
         </Modal.Body>
         <Modal.Footer>
           <button type="button"
@@ -361,10 +362,12 @@ const Roles = React.memo((props: any) => {
             variant="primary"
             disabled={disabled}
             onClick={handleUpdateRole}
+            type="submit"
           >
            {t("Save")}
           </Button>
-        </Modal.Footer>
+          </Modal.Footer>
+        </Form>
       </Modal>
     </div>
   );
