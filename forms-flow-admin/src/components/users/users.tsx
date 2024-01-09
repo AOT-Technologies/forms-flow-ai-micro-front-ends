@@ -92,7 +92,7 @@ const Users = React.memo((props: any) => {
     setSizePerPage(sizePerPage);
   };
   const customTotal = (from, to, size) => (
-    <span className="ms-2" role="main">
+    <span className="ms-2" role="main" data-testid="custom-total">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
@@ -106,12 +106,14 @@ const Users = React.memo((props: any) => {
         variant="secondary"
         title={currSizePerPage}
         style={{ display: "inline" }}
+        data-testid="custom-drop-up"
       >
         {options.map((option) => (
           <Dropdown.Item
             key={option.text}
             type="button"
             onClick={() => onSizePerPageChange(option.page)}
+            data-testid={`drop-up-option-${option.text}`}
           >
             {option.text}
           </Dropdown.Item>
@@ -380,6 +382,7 @@ const Users = React.memo((props: any) => {
             }}
             noDataIndication={noData}
             onTableChange={handleTableChange}
+            data-testid="users-table"
           />
         ) : (
           <Loading />

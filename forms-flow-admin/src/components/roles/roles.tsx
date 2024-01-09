@@ -249,7 +249,7 @@ const Roles = React.memo((props: any) => {
   // Delete confirmation
 
   const confirmDelete = () => (
-    <div>
+    <div data-testid="confirm-delete-modal">
   <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
     <Modal.Header closeButton>
       <Modal.Title>{t("Confirm Delete")}</Modal.Title>
@@ -258,14 +258,17 @@ const Roles = React.memo((props: any) => {
       {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
     </Modal.Body>
     <Modal.Footer>
-      <button type="button"
-            className="btn btn-link text-dark" onClick={handleCloseDeleteModal}>
+      <button 
+            type="button"
+            className="btn btn-link text-dark" onClick={handleCloseDeleteModal}
+            data-testid="cancel-delete-btn">
         {t("Cancel")}
       </button>
       <Button
         variant="danger"
         disabled={disabled}
         onClick={() => deleteRole(deleteCandidate)}
+        data-testid="confirm-delete-btn"
       >
         {t("Delete")}
       </Button>
@@ -275,7 +278,7 @@ const Roles = React.memo((props: any) => {
   );
 
   const showCreateModal = () => (
-    <div>
+    <div data-testid="create-role-modal">
       <Modal show={showRoleModal} onHide={handleCloseRoleModal}>
         <Form>
         <Modal.Header closeButton>
@@ -324,7 +327,7 @@ const Roles = React.memo((props: any) => {
     </div>
   );
   const showEditModal = () => (
-    <div>
+    <div data-testid="edit-role-modal">
       <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal}>
         <Form>
         <Modal.Header closeButton>
@@ -373,7 +376,7 @@ const Roles = React.memo((props: any) => {
   );
 
   const noData = () => (
-    <div>
+    <div data-testid="no-data-msg">
       <h3 className="text-center">
         <Translation>{(t) => t(props.error || "No data Found")}</Translation>
       </h3>
@@ -566,6 +569,7 @@ const Roles = React.memo((props: any) => {
               fontWeight: 600,
             }}
             noDataIndication={noData}
+            data-testid="roles-table"
           />
         ) : (
           <Loading />

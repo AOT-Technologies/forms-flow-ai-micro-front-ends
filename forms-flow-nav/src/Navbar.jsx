@@ -189,6 +189,7 @@ const NavBar = React.memo(({ props }) => {
                 <Nav 
                   id="main-menu-nav"
                   className="align-items-lg-center justify-content-start w-100"
+                  data-testid="main-menu-nav"
                 >
                   {ENABLE_FORMS_MODULE && (
                     <Nav.Link
@@ -199,6 +200,7 @@ const NavBar = React.memo(({ props }) => {
                           ? "active"
                           : ""
                       }`}
+                      data-testid="forms-nav-link"
                     >
                       <i className="fa-solid fa-file-lines me-2" />
                       {t("Forms")}
@@ -215,6 +217,7 @@ const NavBar = React.memo(({ props }) => {
                           ? "active"
                           : ""
                       }`}
+                      data-testid="admin-nav-link"
                     >
                       <i className="fa-solid fa-user-check me-2" />
                       {t("Admin")}
@@ -233,6 +236,7 @@ const NavBar = React.memo(({ props }) => {
                               ? "active"
                               : ""
                           }`}
+                          data-testid="processes-nav-link"
                         >
                           <i className="fa fa-cogs fa-fw me-2" />
                           {t("Processes")}
@@ -258,6 +262,7 @@ const NavBar = React.memo(({ props }) => {
                                 ? "active"
                                 : ""
                             }`}
+                            data-testid="applications-nav-link"
                           >
                             <i className="fa-solid fa-rectangle-list me-2" />
                             {t("Submissions")}
@@ -277,6 +282,7 @@ const NavBar = React.memo(({ props }) => {
                               ? "active"
                               : ""
                           }`}
+                          data-testid="tasks-nav-link"
                         >
                           <i className="fa-solid fa-list-check me-2" />
                           {t("Tasks")}
@@ -289,7 +295,7 @@ const NavBar = React.memo(({ props }) => {
                         <Nav.Link
                           as={Link}
                           to={`${baseUrl}metrics`}
-                          data-testid="Dashboards"
+                          data-testid="dashboards-nav-link"
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
                               createURLPathMatchExp("metrics", baseUrl)
@@ -309,7 +315,7 @@ const NavBar = React.memo(({ props }) => {
                     : null}
                 </Nav>
 
-                <Nav className="nav-user">
+                <Nav className="nav-user" data-testid="nav-user">
                   {selectLanguages.length === 1 ? (
                     selectLanguages.map((e, i) => {
                       return (
@@ -330,6 +336,7 @@ const NavBar = React.memo(({ props }) => {
                       }
                       className="me-2"
                       id="basic-nav-dropdown"
+                      data-testid="language-dropdown"
                     >
                       {selectLanguages.map((e, index) => (
                         <NavDropdown.Item
@@ -337,6 +344,7 @@ const NavBar = React.memo(({ props }) => {
                           onClick={() => {
                             handleOnclick(e.name);
                           }}
+                          data-testid={`language-option-${index}`}
                         >
                           {e.value}
                         </NavDropdown.Item>
@@ -352,8 +360,9 @@ const NavBar = React.memo(({ props }) => {
                           ""}
                       </>
                     }
+                    data-testid="user-dropdown"
                   >
-                    <NavDropdown.Item>
+                    <NavDropdown.Item data-testid="user-info"> 
                       
                       {userDetail?.name || userDetail?.preferred_username}
                       <br />
@@ -361,7 +370,7 @@ const NavBar = React.memo(({ props }) => {
                       <b>{getUserRoleName(userRoles)}</b>
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={logout}>
+                    <NavDropdown.Item onClick={logout} data-testid="logout-item">
                       <i className="fa fa-sign-out fa-fw" /> {t("Logout")}
                     </NavDropdown.Item>
                   </NavDropdown>
