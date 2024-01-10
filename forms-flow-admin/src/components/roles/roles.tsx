@@ -249,7 +249,7 @@ const Roles = React.memo((props: any) => {
   // Delete confirmation
 
   const confirmDelete = () => (
-    <div data-testid="confirm-delete-modal">
+    <div data-testid="roles-confirm-delete-modal">
   <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
     <Modal.Header closeButton>
       <Modal.Title>{t("Confirm Delete")}</Modal.Title>
@@ -261,14 +261,14 @@ const Roles = React.memo((props: any) => {
       <button 
             type="button"
             className="btn btn-link text-dark" onClick={handleCloseDeleteModal}
-            data-testid="cancel-delete-btn">
+            data-testid="roles-cancel-delete-btn">
         {t("Cancel")}
       </button>
       <Button
         variant="danger"
         disabled={disabled}
         onClick={() => deleteRole(deleteCandidate)}
-        data-testid="confirm-delete-btn"
+        data-testid="roles-confirm-delete-btn"
       >
         {t("Delete")}
       </Button>
@@ -376,7 +376,7 @@ const Roles = React.memo((props: any) => {
   );
 
   const noData = () => (
-    <div data-testid="no-data-msg">
+    <div data-testid="roles-no-data-msg">
       <h3 className="text-center">
         <Translation>{(t) => t(props.error || "No data Found")}</Translation>
       </h3>
@@ -569,7 +569,7 @@ const Roles = React.memo((props: any) => {
               fontWeight: 600,
             }}
             noDataIndication={noData}
-            data-testid="roles-table"
+            data-testid="admin-roles-table"
           />
         ) : (
           <Loading />

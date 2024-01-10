@@ -167,7 +167,7 @@ export const InsightDashboard = React.memo((props: any) => {
     );
   };
   const noData = () => (
-    <div data-testid="no-data-msg">
+    <div data-testid="dashboard-no-data-msg">
       <h3 className="text-center">
         <Translation>{(t) => t(props.error || "No data Found")}</Translation>
       </h3>
@@ -188,13 +188,13 @@ export const InsightDashboard = React.memo((props: any) => {
             {cell?.map((label, i) => (
               <div key={i} className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 small m-2" 
                    style={{background:"#EAEFFF"}}
-                   data-testid={`access-group-${i}`}>
+                   data-testid={`dashboard-access-group-${i}`}>
                 <span className="">
                   {label}
                   <i
                     className="fa-solid fa-xmark chip-close ms-2"
                     onClick={() => removeDashboardAuth(rowData, label)}
-                    data-testid={`remove-auth-btn-${i}`}
+                    data-testid={`dashboard-remove-auth-btn-${i}`}
                   ></i>
                 </span>
               </div>
@@ -225,7 +225,7 @@ export const InsightDashboard = React.memo((props: any) => {
                           className="role"
                           key={key}
                           onClick={() => addDashboardAuth(item)}
-                          data-testid={`remaining-group-${key}`}
+                          data-testid={`dashboard-remaining-group-${key}`}
                         >
                           {item.path}
                         </div>
@@ -318,7 +318,7 @@ export const InsightDashboard = React.memo((props: any) => {
                 fontWeight: 600,
               }}
               noDataIndication={noData}
-              data-testid="dashboard-table"
+              data-testid="admin-dashboard-table"
             />
           ) : (
             <Loading />
