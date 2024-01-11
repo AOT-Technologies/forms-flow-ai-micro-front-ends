@@ -337,6 +337,7 @@ const Users = React.memo((props: any) => {
               onChange={handleSearch}
               value={props.search || ""}
               title={t("Search...")}
+              data-testid="search-users-input"
             />
             {props.search?.length > 0 && (
               <Button
@@ -344,6 +345,7 @@ const Users = React.memo((props: any) => {
                 onClick={() => {
                   props.setSearch("");
                 }}
+                data-testid="clear-users-search-button"
               >
                 {t("Clear")}
               </Button>
@@ -352,12 +354,16 @@ const Users = React.memo((props: any) => {
 
           <div className="user-filter-container  col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 d-flex justify-content-end gap-2">
             <span className="my-2">{t("Filter By:")} </span>
-            <Form.Select className="bg-light text-dark" onChange={handleSelectFilter} title={t("Filter here")}>
-              <option value="ALL" selected={!props.filter}>
+            <Form.Select 
+             className="bg-light text-dark"
+             onChange={handleSelectFilter} 
+             title={t("Filter here")} 
+             data-testid="users-roles-filter-select">
+              <option value="ALL" selected={!props.filter} data-testid="users-all-roles-option">
                 {t("All roles")}
               </option>
               {roles?.map((role, i) => (
-                <option key={i} value={role.name}>
+                <option key={i} value={role.name} data-testid={`users-role-option-${i}`}>
                   {role.name}
                 </option>
               ))}

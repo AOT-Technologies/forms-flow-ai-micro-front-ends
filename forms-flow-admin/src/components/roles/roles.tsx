@@ -538,6 +538,7 @@ const Roles = React.memo((props: any) => {
               onChange={handlFilter}
               value={search}
               title={t("Search...")}
+              data-testid="search-role-input"
             />
 
             {search.length > 0 && (
@@ -547,12 +548,13 @@ const Roles = React.memo((props: any) => {
                   setSerach("");
                   setRoles(props.roles);
                 }}
+                data-testid="clear-role-search-button"
               >
                 {t("Clear")}
               </Button>
             )}
           </div>
-          <Button variant="primary"  onClick={handleShowRoleModal}>
+          <Button variant="primary"  onClick={handleShowRoleModal} data-testid="roles-creat-new-role-button">
           <i className="fa-solid fa-plus me-2"></i> <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>
