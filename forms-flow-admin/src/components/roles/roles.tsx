@@ -359,7 +359,7 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <button type="button"
-            className="btn btn-link text-dark" onClick={handleCloseEditRoleModal} data-testid="create-role-modal-edit-cancel-btn">
+            className="btn btn-link text-dark" onClick={handleCloseEditRoleModal}  data-testid="edit-role-modal-cancel-button">
             {t("Cancel")}
           </button>
           <Button
@@ -367,7 +367,7 @@ const Roles = React.memo((props: any) => {
             disabled={disabled}
             onClick={handleUpdateRole}
             type="submit"
-            data-testid="create-role-modal-edit-submit-btn"
+            data-testid="edit-role-modal-save-button"
           >
            {t("Save")}
           </Button>

@@ -359,11 +359,11 @@ const Users = React.memo((props: any) => {
              onChange={handleSelectFilter} 
              title={t("Filter here")} 
              data-testid="users-roles-filter-select">
-              <option value="ALL" selected={!props.filter} data-testid="users-all-roles-option">
+              <option value="ALL" selected={!props.filter} data-testid="users-roles-filter-option-all">
                 {t("All roles")}
               </option>
               {roles?.map((role, i) => (
-                <option key={i} value={role.name} data-testid={`users-role-option-${i}`}>
+                <option key={i} value={role.name} data-testid={`users-roles-filter-option-${i}`}>
                   {role.name}
                 </option>
               ))}
