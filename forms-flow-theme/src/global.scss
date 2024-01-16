@@ -11,31 +11,47 @@
   --color-primary: #0072ed;
   --color-secondary: #6c757d;
   --color-success: #3fb618;
-  --color-info: #4d61fc;
   --color-warning: #fcba19;
-  --color-red: #ff0039;
+  --color-info: #4d61fc;
+  --color-main-bg: #f7f7f7;
+
+  --color-blue-lt: #1890FF;
+  --color-blue-ltr: #2e96ff;
+  --color-blue-ltst: #E6F7FF;
+  --color-blue-dk: rgb(57, 120, 183);
+  --color-blue-dkr: #155cb5;
+  --color-blue-dkst: #003366;
+
+  --light-gray: #d3d3d3;
+  --color-gray-100: #f8f9fa;
+  --color-gray-200: #eeeeee;
+  --color-gray-300: #ddd;
+  --color-gray-400: #ccc;
+  --color-gray-500: #adb5bd;
+  --color-gray-600: #909090;
+  --color-gray-700: #585e64;
+  --color-gray-800: #3c3c3c;
+  --color-gray-900: #242c35;
+  --color-deep-gray: #222;
+
   --color-light: #f8f9fa;
+  --color-white: #fff;
   --color-dark: #373a3c;
   --color-black: #000;
+
+  --color-red: #ff0039;
+  --color-invalid: #ffd1d1;
+  --color-info-background: #f7dede;
+
   --color-indigo: #6610f2;
   --color-purple: #613d7c;
-  --color-white: #fff;
-  --color-white: #fff;
   --color-pink: #e83e8c;
   --color-teal: #20c997;
+  --color-lightGreen:  #EAFBE7;
+  --color-failure:  #f85757;
   --color-orange: #f2661f;
   --color-cyan: #9954bb;
-  --color-gray-100: #f8f9fa;
-  --colorgray-200: #e9ecef;
-  --color-gray-300: #dee2e6;
-  --color-gray-400: #ced4da;
-  --color-gray-500: #adb5bd;
-  --color-gray-600: #868e96;
-  --color-gray-700: #495057;
-  --color-gray-800: #373a3c;
-  --color-gray-900: #212529;
-  --color-main-bg: #F7F7F7;
-  --head-inactive: var(--color-black);
+
   --logo-path: "./logo.svg";
   --logo-width: 40px;
   --appname-margin-left: 0px;
@@ -52,11 +68,17 @@
   --button-primary-background: var(--color-primary);
   --navbar-app-name: var(--color-black);
   --navbar-logo-width: var(--logo-width);
-
   --navbar-logo-path: var(--logo-path);
+
+  --published-form-label: var(--color-success);
+  --published-background: var(--color-lightGreen);
+  --unpublished-background: var(--color-lightBlue);
+  --head-inactive: var(--color-gray-600);
+  --color-background-blue: var(--color-blue-dk);
+  --unpublished-label: var(--color-blue-lt);
+  --color-question-circle: var(--color-blue-ltr);
+  --color-lightBlue: var(--color-blue-ltst);
 }
- 
- 
 
 .overflow-x-auto {
   overflow-x: auto;
