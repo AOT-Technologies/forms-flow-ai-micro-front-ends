@@ -22,3 +22,10 @@
   --bs-table-color: #fff;
   --bs-table-bg:var(--color-primary) !important;
 }
+
+.btn-link{
+  text-decoration: none;
+  &:hover{
+    text-decoration: underline;
+  }
+}
