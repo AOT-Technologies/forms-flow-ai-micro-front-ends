@@ -261,14 +261,14 @@ const Roles = React.memo((props: any) => {
       <button 
             type="button"
             className="btn btn-link text-dark" onClick={handleCloseDeleteModal}
-            data-testid="roles-cancel-delete-btn">
+            data-testid="roles-cancel-delete-button">
         {t("Cancel")}
       </button>
       <Button
         variant="danger"
         disabled={disabled}
         onClick={() => deleteRole(deleteCandidate)}
-        data-testid="roles-confirm-delete-btn"
+        data-testid="roles-confirm-delete-button"
       >
         {t("Delete")}
       </Button>
@@ -310,7 +310,7 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <button type="button"
-            className="btn btn-link text-dark" onClick={handleCloseRoleModal} data-testid="create-new-role-modal-cancel-btn">
+            className="btn btn-link text-dark" onClick={handleCloseRoleModal} data-testid="create-new-role-modal-cancel-button">
             {t("Cancel")}
           </button>
           <Button
@@ -318,7 +318,7 @@ const Roles = React.memo((props: any) => {
             disabled={disabled}
             onClick={handleCreateRole}
             type="submit"
-            data-testid="create-new-role-modal-submit-btn"
+            data-testid="create-new-role-modal-submit-button"
           >
             {t("Create")}
           </Button>
