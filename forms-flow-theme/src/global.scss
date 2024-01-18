@@ -9,18 +9,27 @@
 
 :root {
   --color-primary: #0072ed;
+  --color-primary-lt: #1890FF;
+  --color-primary-ltr: #2e96ff;
+  --color-primary-ltst: #E6F7FF;
+  --color-primary-dk: rgb(57, 120, 183);
+  --color-primary-dkr: #155cb5;
+  --color-primary-dkst: #003366;
+  --color-primary-btn-outline: #c1c2da;
+
   --color-secondary: #6c757d;
   --color-success: #3fb618;
+  --color-success-lt: #EAFBE7;
   --color-warning: #fcba19;
   --color-info: #4d61fc;
+  --color-info-background: #ffdbdb;
+  --color-error:  #f85757;
   --color-main-bg: #f7f7f7;
-
-  --color-blue-lt: #1890FF;
-  --color-blue-ltr: #2e96ff;
-  --color-blue-ltst: #E6F7FF;
-  --color-blue-dk: rgb(57, 120, 183);
-  --color-blue-dkr: #155cb5;
-  --color-blue-dkst: #003366;
+  --color-invalid: #ffd1d1;
+  --color-info-background: #f7dede;
+  --color-danger: red;
+  --color-danger-hover: #cb0404;
+  --color-hr: #00000080;
 
   --light-gray: #d3d3d3;
   --color-gray-100: #f8f9fa;
@@ -34,21 +43,15 @@
   --color-gray-900: #242c35;
   --color-deep-gray: #222;
 
-  --color-light: #f8f9fa;
   --color-white: #fff;
+  --color-light: #f8f9fa;
   --color-dark: #373a3c;
   --color-black: #000;
-
-  --color-red: #ff0039;
-  --color-invalid: #ffd1d1;
-  --color-info-background: #f7dede;
 
   --color-indigo: #6610f2;
   --color-purple: #613d7c;
   --color-pink: #e83e8c;
   --color-teal: #20c997;
-  --color-lightGreen:  #EAFBE7;
-  --color-failure:  #f85757;
   --color-orange: #f2661f;
   --color-cyan: #9954bb;
 
@@ -71,13 +74,13 @@
   --navbar-logo-path: var(--logo-path);
 
   --published-form-label: var(--color-success);
-  --published-background: var(--color-lightGreen);
+  --published-background: var(--color-success-lt);
   --unpublished-background: var(--color-lightBlue);
   --head-inactive: var(--color-gray-600);
-  --color-background-blue: var(--color-blue-dk);
-  --unpublished-label: var(--color-blue-lt);
-  --color-question-circle: var(--color-blue-ltr);
-  --color-lightBlue: var(--color-blue-ltst);
+  --color-background-blue: var(--color-primary-dk);
+  --unpublished-label: var(--color-primary-lt);
+  --color-question-circle: var(--color-primary-ltr);
+  --color-lightBlue: var(--color-primary-ltst);
 }
 
 .overflow-x-auto {
@@ -94,8 +97,6 @@
   color: var(--color-primary) !important;
 }
 
-
-
 .footer-text {
   font-size: 18px;
 }
@@ -105,8 +106,8 @@
 }
 
 .btn-outline-primary:not(:disabled) {
-  border-color: #0071eb;
-  color: #0071eb;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .btn-outline-primary:not(:disabled):hover {
@@ -161,17 +162,17 @@ h4 {
 }
 
 .well {
-  border: 1px solid #eeeeee;
+  border: 1px solid var(--color-gray-200);
   padding: 1rem;
-  background-color: #f8f8f8bf;
+  background-color: var(--color-gray-100);
 }
 
 .formio-component-panel {
-  border: 1px solid #eeeeee;
+  border: 1px solid --color-gray-200;
 }
 
 .formio-component-panel .panel-heading {
-  background-color: #eeeeee;
+  background-color: --color-gray-200;
   padding: 10px 0 10px 10px;
 }
 
@@ -184,8 +185,8 @@ h4 {
 }
 
 .page-item.active .page-link {
-  background-color: #036 !important;
-  border-color: #56595d !important;
+  background-color: var(--color-primary-dkst) !important;
+  border-color: var(--color-gray-700) !important;
 }
 
 h5,
@@ -194,9 +195,9 @@ h5,
 }
 
 .bg-default {
-  background-color: #38598a;
-  border: #38598a;
-  color: white !important;
+  background-color: var(--color-primary-dkst);
+  border: var(--color-primary-dkst);
+  color: var(--color-white) !important;
 }
 
 .text-muted {
@@ -204,13 +205,13 @@ h5,
 }
 
 i.fa.fa-question-circle.text-muted {
-  color: #2e96ff !important;
+  color: var(--color-primary-ltr) !important;
 }
 
 .panel-heading {
-  background-color: #38598a;
-  border: #38598a;
-  color: white !important;
+  background-color: var(--color-primary-dkst);
+  border: var(--color-primary-dkst);
+  color: var(--color-white) !important;
   padding: 0.75rem 1.25rem;
   margin-bottom: 8px;
 }
@@ -225,22 +226,22 @@ i.fa.fa-question-circle.text-muted {
 
 .formio-error-wrapper,
 .has-error {
-  color: red;
-  background-color: #fff;
-  border-color: red;
+  color: var(--color-danger);
+  background-color: var(--color-white);
+  border-color: var(--color-danger);
 }
 
 .formio-error-wrapper,
 .has-error label {
-  color: red;
+  color: var(--color-danger);
 }
 
 .formio-errors .error {
-  color: red;
+  color: var(--color-danger);
 }
 
 .is-invalid {
-  background-color: #ffd1d1;
+  background-color: var(--color-invalid);
 }
 
 .active-tab {
@@ -260,7 +261,7 @@ i.fa.fa-question-circle.text-muted {
 
 .dropdown-item:hover {
   filter: none;
-  background-color: #e9ecef;
+  background-color: var(--color-gray-200);
 }
 
 .selected-tag {
@@ -399,7 +400,7 @@ i.fa.fa-question-circle.text-muted {
 }
 
 .btn-outline-primary {
-  border-color: #c1c2da !important;
+  border-color: var(--color-primary-btn-outline) !important;
 }
 
 .btn-center {
@@ -417,8 +418,8 @@ i.fa.fa-question-circle.text-muted {
 }
 
 .tooltip-inner {
-  color: black !important;
-  background-color: white !important;
+  color: var(--color-black) !important;
+  background-color: var(--color-white)  !important;
   border: 0.5px solid !important;
   text-align: left;
 }
@@ -434,7 +435,7 @@ i.fa.fa-question-circle.text-muted {
 }
 
 select option:hover {
-  box-shadow: 0 0 10px 100px #000 inset;
+  box-shadow: 0 0 10px 100px var(--color-black) inset;
 }
 
 .modal-dialog {
@@ -444,22 +445,22 @@ select option:hover {
  
 
 #sidebar {
-  background: #fff;
+  background: var(--color-white);
 }
  
 
 #sidebar ul li.active>a,
 #sidebar a[aria-expanded="true"] {
-  background: #fff;
+  background: var(--color-white);
 }
 
 header nav {
-  border-bottom: #fff;
+  border-bottom: var(--color-white);
 }
 
 .topheading-border-bottom {
   z-index: 2000;
-  border-bottom: 2px solid #4d61fc !important;
+  border-bottom: 2px solid var(--color-info) !important;
   padding: 0 0.5rem !important;
   box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2),
     0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
@@ -467,14 +468,14 @@ header nav {
 
 .rounded-circle {
   border-radius: 50% !important;
-  border: 2px solid lightgrey;
+  border: 2px solid var(--color-gray-400);
   height: 40px;
   width: 40px;
 }
 
 .sort-span {
   cursor: pointer;
-  border: 1px solid #cecfd6;
+  border: 1px solid var(--color-gray-400);
   border-radius: 0.25rem;
   padding: 4px;
   padding-left: 6px;
@@ -484,11 +485,11 @@ header nav {
 }
 
 .sort-span:hover {
-  background-color: #001dff;
+  background-color: var(--color-primary);
 }
 
 .sort-span:hover>.fa-lg-hover {
-  color: white;
+  color: var(--color-white);
 }
 
 div[disabled] {
@@ -522,7 +523,7 @@ div[disabled] {
 }
 
 .navbar-light .navbar-nav .nav-link {
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--color-black);
 }
 
 /* overwriting default styles */
@@ -540,14 +541,14 @@ div[disabled] {
 }
 
 .delete_button {
-  color: red;
+  color: var(--color-danger);
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
 }
 
 .delete_button:hover {
-  color: #cb0404;
-}
+  color: var(--color-danger-hover);
+  }
 
 .delete_button:active {
   transform: scale(1.3);
@@ -555,7 +556,7 @@ div[disabled] {
 }
 
 .custom_primary_color {
-  color: #0000ff;
+  color: var(--color-primary);
 }
 
 .tooltiptext {
@@ -581,11 +582,11 @@ div[disabled] {
 }
 
 a {
-  color: #0000ff;
+  color: var(--color-primary);
 }
 
 .info-background {
-  background-color: #ffdbdb;
+  background-color: var(--color-info-background);
 }
 
 .formio-wizard-nav-container {
@@ -603,8 +604,8 @@ a {
  
 
 div.upload {
-  background-color: rgb(239, 239, 239);
-  border: 1px solid #ddd;
+  background-color: var(--color-gray-200);
+  border: 1px solid var(--color-gray-300);
   border-radius: 5px;
   display: inline-block;
   height: 30px;
@@ -629,10 +630,10 @@ div.upload input[type="file"] {
 }
 
 .uploadButton {
-  background-color: #425f9c;
+  background-color: var(--color-primary-dk);
   border: none;
   border-radius: 3px;
-  color: #fff;
+  color: var(--color-white);
   cursor: pointer;
   display: inline-block;
   height: 30px;
@@ -725,7 +726,7 @@ div.upload input[type="file"] {
  
 
 hr {
-  border-top: 2px solid rgba(0,0,0,0.5);
+  border-top: 2px solid var(--color-hr);
   
 }
 .active-link {
