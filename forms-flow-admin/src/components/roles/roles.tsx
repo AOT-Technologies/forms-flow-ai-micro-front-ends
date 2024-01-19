@@ -261,14 +261,14 @@ const Roles = React.memo((props: any) => {
       <button 
             type="button"
             className="btn btn-link text-dark" onClick={handleCloseDeleteModal}
-            data-testid="roles-cancel-delete-btn">
+            data-testid="roles-cancel-delete-button">
         {t("Cancel")}
       </button>
       <Button
         variant="danger"
         disabled={disabled}
         onClick={() => deleteRole(deleteCandidate)}
-        data-testid="roles-confirm-delete-btn"
+        data-testid="roles-confirm-delete-button"
       >
         {t("Delete")}
       </Button>
@@ -310,7 +310,7 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <button type="button"
-            className="btn btn-link text-dark" onClick={handleCloseRoleModal}>
+            className="btn btn-link text-dark" onClick={handleCloseRoleModal} data-testid="create-new-role-modal-cancel-button">
             {t("Cancel")}
           </button>
           <Button
@@ -318,6 +318,7 @@ const Roles = React.memo((props: any) => {
             disabled={disabled}
             onClick={handleCreateRole}
             type="submit"
+            data-testid="create-new-role-modal-submit-button"
           >
             {t("Create")}
           </Button>
@@ -358,7 +359,7 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <button type="button"
-            className="btn btn-link text-dark" onClick={handleCloseEditRoleModal}>
+            className="btn btn-link text-dark" onClick={handleCloseEditRoleModal}  data-testid="edit-role-modal-cancel-button">
             {t("Cancel")}
           </button>
           <Button
@@ -366,6 +367,7 @@ const Roles = React.memo((props: any) => {
             disabled={disabled}
             onClick={handleUpdateRole}
             type="submit"
+            data-testid="edit-role-modal-save-button"
           >
            {t("Save")}
           </Button>
@@ -538,6 +540,7 @@ const Roles = React.memo((props: any) => {
               onChange={handlFilter}
               value={search}
               title={t("Search...")}
+              data-testid="search-role-input"
             />
 
             {search.length > 0 && (
@@ -547,12 +550,13 @@ const Roles = React.memo((props: any) => {
                   setSerach("");
                   setRoles(props.roles);
                 }}
+                data-testid="clear-role-search-button"
               >
                 {t("Clear")}
               </Button>
             )}
           </div>
-          <Button variant="primary"  onClick={handleShowRoleModal}>
+          <Button variant="primary"  onClick={handleShowRoleModal} data-testid="roles-create-new-role-button">
           <i className="fa-solid fa-plus me-2"></i> <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>
