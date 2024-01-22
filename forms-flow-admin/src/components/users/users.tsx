@@ -200,10 +200,20 @@ const Users = React.memo((props: any) => {
         return (
           <div className="d-flex flex-wrap col-12">
             {cell?.map((item, i) => (
-              <div key={i} className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 my-1 small m-2" style={{background:"#EAEFFF"}}>
+              <div
+                key={i}
+                className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 my-1 small m-2"
+                style={{ background: "#EAEFFF" }}
+              >
                 <OverlayTrigger
                   placement="bottom"
-                  overlay={ !KEYCLOAK_ENABLE_CLIENT_AUTH ? <Tooltip id="tooltip">{item?.path}</Tooltip> : <></>}
+                  overlay={
+                    !KEYCLOAK_ENABLE_CLIENT_AUTH ? (
+                      <Tooltip id="tooltip">{item?.path}</Tooltip>
+                    ) : (
+                      <></>
+                    )
+                  }
                 >
                   <span className="">
                     {item?.name}
@@ -293,7 +303,10 @@ const Users = React.memo((props: any) => {
             placement="left"
             rootClose={true}
             overlay={
-              <Popover id={`popover-positioned-bottom`}>
+              <Popover
+                id={`popover-positioned-bottom`}
+                data-testid="users-add-role-popover"
+              >
                 <Popover.Body>
                   <div className="role-list">
                     {roles.length > 0 ? (
@@ -307,8 +320,11 @@ const Users = React.memo((props: any) => {
                   <hr />
                   <div className="done-button">
                     {roles.length > 0 && (
-                      <Button onClick={addUserPermission}>
-                        <Translation>{(t) => t("Done")}</Translation> 
+                      <Button
+                        onClick={addUserPermission}
+                        data-testid="add-role-popover-done-button"
+                      >
+                        <Translation>{(t) => t("Done")}</Translation>
                       </Button>
                     )}
                   </div>
@@ -316,8 +332,13 @@ const Users = React.memo((props: any) => {
               </Popover>
             }
           >
-            <Button variant="primary btn-small" onClick={() => addRole(rowData)}>
-            <i className="fa-solid fa-plus me-2"></i> <Translation>{(t) => t("Add Role")}</Translation>
+            <Button
+              variant="primary btn-small"
+              onClick={() => addRole(rowData)}
+              data-testid="users-add-role-button"
+            >
+              <i className="fa-solid fa-plus me-2"></i>{" "}
+              <Translation>{(t) => t("Add Role")}</Translation>
             </Button>
           </OverlayTrigger>
         );
@@ -354,16 +375,25 @@ const Users = React.memo((props: any) => {
 
           <div className="user-filter-container  col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 d-flex justify-content-end gap-2">
             <span className="my-2">{t("Filter By:")} </span>
-            <Form.Select 
-             className="bg-light text-dark"
-             onChange={handleSelectFilter} 
-             title={t("Filter here")} 
-             data-testid="users-roles-filter-select">
-              <option value="ALL" selected={!props.filter} data-testid="users-roles-filter-option-all">
+            <Form.Select
+              className="bg-light text-dark"
+              onChange={handleSelectFilter}
+              title={t("Filter here")}
+              data-testid="users-roles-filter-select"
+            >
+              <option
+                value="ALL"
+                selected={!props.filter}
+                data-testid="users-roles-filter-option-all"
+              >
                 {t("All roles")}
               </option>
               {roles?.map((role, i) => (
-                <option key={i} value={role.name} data-testid={`users-roles-filter-option-${i}`}>
+                <option
+                  key={i}
+                  value={role.name}
+                  data-testid={`users-roles-filter-option-${i}`}
+                >
                   {role.name}
                 </option>
               ))}
