@@ -23,11 +23,15 @@
   --color-warning: #fcba19;
   --color-info: #4d61fc;
   --color-info-background: #ffdbdb;
-  --color-error:  #f85757;
   --color-main-bg: #f7f7f7;
   --color-invalid: #ffd1d1;
   --color-danger: red;
-  --color-danger-hover: #cb0404;
+  --color-danger-dk: #cb0404;
+  --color-danger-dkr:#970202;
+  --color-danger-dkst: #5b0101;
+  --color-danger-lt:#fc3434;
+  --color-danger-ltr: #f85757;
+  --color-danger-ltst: #ff9e9e;
   --color-hr: #00000080;
 
   --light-gray: #d3d3d3;
@@ -546,7 +550,7 @@ div[disabled] {
 }
 
 .delete_button:hover {
-  color: var(--color-danger-hover);
+  color: var(--color-danger-dk);
   }
 
 .delete_button:active {
