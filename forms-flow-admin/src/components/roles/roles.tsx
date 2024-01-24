@@ -294,7 +294,6 @@ const Roles = React.memo((props: any) => {
   const showCreateModal = () => (
     <div data-testid="create-role-modal">
       <Modal show={showRoleModal} onHide={handleCloseRoleModal}>
-        <Form>
           <Modal.Header closeButton>
             <Modal.Title>{t("Create Role")}</Modal.Title>
           </Modal.Header>
@@ -345,14 +344,12 @@ const Roles = React.memo((props: any) => {
               {t("Create")}
             </Button>
           </Modal.Footer>
-        </Form>
       </Modal>
     </div>
   );
   const showEditModal = () => (
     <div data-testid="edit-role-modal">
       <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal}>
-        <Form>
           <Modal.Header closeButton>
             <Modal.Title>{t("Edit Role")}</Modal.Title>
           </Modal.Header>
@@ -402,7 +399,6 @@ const Roles = React.memo((props: any) => {
               {t("Save")}
             </Button>
           </Modal.Footer>
-        </Form>
       </Modal>
     </div>
   );
