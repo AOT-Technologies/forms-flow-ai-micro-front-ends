@@ -13,3 +13,20 @@
       margin-bottom: 1rem;
     }
   }
+
+  .formbuilder .formarea .breadcrumb {
+    background-color: var(--color-gray-300);
+    padding: 10px;
+  }
+  .formbuilder .formarea .breadcrumb li{
+    margin-right: 5px ;
+   }
+  .formbuilder .formarea .breadcrumb li .badge-primary{
+   background-color: var(--color-primary) ;
+  }
+  .formbuilder .formarea .breadcrumb li .badge-success{
+    background-color: var(--color-success) ;
+  }
+   .formbuilder .formarea .breadcrumb li .badge-info{
+    background-color: var(--color-gray-600) ;
+  }
