@@ -16,6 +16,7 @@ import {
   ENABLE_DASHBOARDS_MODULE,
   ENABLE_APPLICATIONS_MODULE,
   ENABLE_TASKS_MODULE,
+  ENABLE_INTEGRATION_MODULE,
 } from "./constants/constants";
 import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
@@ -240,6 +241,26 @@ const NavBar = React.memo(({ props }) => {
                         >
                           <i className="fa fa-cogs fa-fw me-2" />
                           {t("Processes")}
+                        </Nav.Link>
+                      )
+                    : null}
+
+            {getUserRolePermission(userRoles, STAFF_DESIGNER) || getUserRolePermission(userRoles, STAFF_REVIEWER)
+                    ? ENABLE_INTEGRATION_MODULE && (
+                        <Nav.Link
+                          as={Link}
+                          to={`${baseUrl}integration/dashboard`}
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
+                            pathname.match(
+                              createURLPathMatchExp("integration", baseUrl)
+                            )
+                              ? "active"
+                              : ""
+                          }`}
+                          data-testid="integration-nav-link"
+                        >
+                          <i className="fa fa-cogs fa-fw me-2" />
+                          {t("Integration")}
                         </Nav.Link>
                       )
                     : null}
