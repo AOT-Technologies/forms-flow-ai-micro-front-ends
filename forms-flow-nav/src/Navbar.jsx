@@ -160,7 +160,7 @@ const NavBar = React.memo(({ props }) => {
     history.push(baseUrl);
     instance.userLogout();
   };
-  
+ 
   return (
   <>
    <Helmet>
@@ -193,6 +193,7 @@ const NavBar = React.memo(({ props }) => {
                 >
                   {ENABLE_FORMS_MODULE && (
                     <Nav.Link
+                      eventKey="form"
                       as={Link}
                       to={`${baseUrl}form`}
                       className={`nav-menu-item py-md-3 px-0 mx-2 ${
@@ -210,6 +211,7 @@ const NavBar = React.memo(({ props }) => {
 
                   {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
                     <Nav.Link 
+                    eventKey={"admin"}
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}
                       className={`nav-menu-item py-md-3 px-0 mx-2 ${
@@ -228,6 +230,7 @@ const NavBar = React.memo(({ props }) => {
                     ? ENABLE_PROCESSES_MODULE && (
                         <Nav.Link
                           as={Link}
+                          eventKey={"processes"}
                           to={`${baseUrl}processes`}
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
@@ -249,6 +252,7 @@ const NavBar = React.memo(({ props }) => {
                       getUserRolePermission(userRoles, CLIENT)
                       ? ENABLE_APPLICATIONS_MODULE && (
                           <Nav.Link
+                          eventKey="application"
                             as={Link}
                             to={`${baseUrl}application`}
                             className={`nav-menu-item py-md-3 px-0 mx-2 ${
@@ -273,6 +277,7 @@ const NavBar = React.memo(({ props }) => {
                   {getUserRolePermission(userRoles, STAFF_REVIEWER)
                     ? ENABLE_TASKS_MODULE && (
                         <Nav.Link
+                        eventKey={"task"}
                           as={Link}
                           to={`${baseUrl}task`}
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
@@ -293,6 +298,7 @@ const NavBar = React.memo(({ props }) => {
                   {getUserRolePermission(userRoles, STAFF_REVIEWER)
                     ? ENABLE_DASHBOARDS_MODULE && (
                         <Nav.Link
+                         eventKey={"metrics"}
                           as={Link}
                           to={`${baseUrl}metrics`}
                           data-testid="dashboards-nav-link"
