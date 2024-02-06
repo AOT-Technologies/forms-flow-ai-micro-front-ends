@@ -261,6 +261,7 @@ const NavBar = React.memo(({ props }) => {
             {getUserRolePermission(userRoles, STAFF_DESIGNER)
                     ? integrationEnabled && (
                         <Nav.Link
+                          eventKey="integration"
                           as={Link}
                           to={`${baseUrl}integration/recipes`}
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
