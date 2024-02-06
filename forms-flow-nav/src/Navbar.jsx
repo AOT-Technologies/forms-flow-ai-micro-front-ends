@@ -25,6 +25,7 @@ import { fetchTenantDetails } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
 import { LANGUAGE } from "./constants/constants";
 import { Helmet } from "react-helmet";
+import { checkIntegrationEnabled } from "./services/integration";
 const NavBar = React.memo(({ props }) => {
   const history = useHistory();
   const [instance, setInstance] = React.useState(props.getKcInstance());
@@ -33,6 +34,7 @@ const NavBar = React.memo(({ props }) => {
   const [form, setForm] = React.useState({});
   const [selectLanguages, setSelectLanguages] = React.useState([]);
   const [applicationTitle, setApplicationTitle] = React.useState("");
+  const [integrationEnabled, setIntegrationEnabled] = React.useState(false);
   const [tenantLogo, setTenantLogo] = React.useState("/logo_skeleton.svg");
   const defaultLogoPath =
     document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
@@ -51,7 +53,7 @@ const NavBar = React.memo(({ props }) => {
 
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
-        setTenant(data);
+        setTenant(data); 
         if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
           StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
         }
@@ -67,6 +69,7 @@ const NavBar = React.memo(({ props }) => {
         setForm(data);
       }
     });
+
   }, []);
 
   React.useEffect(() => {
@@ -136,8 +139,6 @@ const NavBar = React.memo(({ props }) => {
     localStorage.setItem("lang", language);
   }, [lang]);
 
- 
-
   React.useEffect(() => {
     setUserDetail(
       JSON.parse(StorageService.get(StorageService.User.USER_DETAILS))
@@ -155,6 +156,16 @@ const NavBar = React.memo(({ props }) => {
     setLang(selectedLang);
     updateUserlang(selectedLang, instance);
   };
+
+  useEffect(()=>{
+    if(isAuthenticated){
+      checkIntegrationEnabled().then((res)=>{ 
+        setIntegrationEnabled(res.data?.enabled);
+      }).catch((err)=>{
+        console.error(err);
+      })
+    }
+  },[isAuthenticated])
 
   const logout = () => {
     history.push(baseUrl);
@@ -243,6 +254,27 @@ const NavBar = React.memo(({ props }) => {
                         >
                           <i className="fa fa-cogs fa-fw me-2" />
                           {t("Processes")}
+                        </Nav.Link>
+                      )
+                    : null}
+
+            {getUserRolePermission(userRoles, STAFF_DESIGNER)
+                    ? integrationEnabled && (
+                        <Nav.Link
+                          eventKey="integration"
+                          as={Link}
+                          to={`${baseUrl}integration/recipes`}
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
+                            pathname.match(
+                              createURLPathMatchExp("integration", baseUrl)
+                            )
+                              ? "active"
+                              : ""
+                          }`}
+                          data-testid="integration-nav-link"
+                        >
+                          <i className="fa-solid fa-network-wired me-2"></i>
+                          {t("Integration")}
                         </Nav.Link>
                       )
                     : null}
