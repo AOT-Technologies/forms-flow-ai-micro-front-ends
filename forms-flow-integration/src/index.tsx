@@ -118,11 +118,7 @@ const Integration = React.memo(({ props }: any) => {
         <div className="main-container " tabIndex={0}>
           <div className="container mt-5">
             <div className="min-container-height ps-md-3">
-              <div className="d-flex align-items-center justify-content-between">
-                <Head hideLine={true} items={headerList()} page={page} />
-                <button className="btn btn-primary"><i className="fa-solid fa-plus me-2"></i>Create new</button>
-              </div>
-              <hr className="head-rule " data-testid="head-rule" />
+                <Head items={headerList()} page={page} />
               <ToastContainer theme="colored" />
               <Switch>
                 <Route
