@@ -34,7 +34,7 @@ const Recipes = React.memo((props: any) => {
 
   return (
     <> {recipesUrl ? <iframe width="100%"
-      height="500"
+      height="700"
       src={recipesUrl}
       title="Recipes" >
     </iframe> : <Alert message="No urls found"/> }</>
