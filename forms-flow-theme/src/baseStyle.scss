@@ -8,7 +8,8 @@ body {
   }
   
   .main-container{
-    max-height: calc(100vh - 52px);
+    max-height: calc(100vh - var(--navbar-height));
+    margin-top: var(--navbar-height);
     overflow-y: auto;
    
   }

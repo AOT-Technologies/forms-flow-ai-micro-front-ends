@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { Link, BrowserRouter, useHistory } from "react-router-dom";
 import { getUserRoleName, getUserRolePermission } from "./helper/user";
@@ -97,6 +97,23 @@ const NavBar = React.memo(({ props }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const navbarRef = useRef(null);
+
+  const onResize = React.useCallback(() => {
+    if (navbarRef?.current) {
+      document.documentElement.style.setProperty('--navbar-height', `${navbarRef.current.offsetHeight}px`);
+    }
+  }, []);
+
+
+  useEffect(() => {
+        window.addEventListener("resize", onResize);
+    onResize();
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
 
   /**
    * For anonymous forms the only way to identify the tenant is through the
@@ -181,7 +198,7 @@ const NavBar = React.memo(({ props }) => {
     <BrowserRouter>
       <header className="navbar-background shadow">
         <Container>
-          <Navbar  collapseOnSelect expand="lg" className={`navbar-background p-0 m-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
+          <Navbar  ref={navbarRef} collapseOnSelect fixed="top"  expand="lg" className={`navbar-background py-0  px-3 m-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
             <Navbar.Brand href={`${baseUrl}`} className="d-flex col-3 px-0">
               <img
                 className="custom-logo"
@@ -198,6 +215,7 @@ const NavBar = React.memo(({ props }) => {
                 className="d-lg-flex justify-content-between h-100"
               >
                 <Nav 
+                
                   id="main-menu-nav"
                   className="align-items-lg-center justify-content-start w-100"
                   data-testid="main-menu-nav"
