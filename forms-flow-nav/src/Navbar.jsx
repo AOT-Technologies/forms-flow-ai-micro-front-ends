@@ -99,11 +99,21 @@ const NavBar = React.memo(({ props }) => {
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const navbarRef = useRef(null);
 
-  const onResize = React.useCallback(() => {
+   const onResize = React.useCallback(() => {
     if (navbarRef?.current) {
-      document.documentElement.style.setProperty('--navbar-height', `${navbarRef.current.offsetHeight}px`);
+      const isMediumScreen = window.matchMedia('(min-width: 992px)').matches;
+      if(isMediumScreen){
+        document.documentElement.style.setProperty('--navbar-height', `${navbarRef.current.offsetHeight}px`);
+      }else{
+        document.documentElement.style.setProperty('--navbar-height', `${52}px`);
+      }
     }
-  }, []);
+  }, [navbarRef?.current]);
+
+  // to set the navbar height
+  useEffect(()=>{
+    onResize()
+  },[navbarRef?.current,navbarRef?.current?.offsetHeight])
 
 
   useEffect(() => {
@@ -196,9 +206,8 @@ const NavBar = React.memo(({ props }) => {
     <link rel="icon" type="image/png" href={MULTITENANCY_ENABLED ? tenantLogo : null} />
   </Helmet>
     <BrowserRouter>
-      <header className="navbar-background shadow">
-        <Container>
-          <Navbar  ref={navbarRef} collapseOnSelect fixed="top"  expand="lg" className={`navbar-background py-0  px-3 m-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
+           <Navbar  ref={navbarRef} collapseOnSelect fixed="top"  expand="lg" className={`navbar-background py-0 shadow px-3 m-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
+          <Container className="d-flex justify-content-between" >
             <Navbar.Brand href={`${baseUrl}`} className="d-flex col-3 px-0">
               <img
                 className="custom-logo"
@@ -440,9 +449,10 @@ const NavBar = React.memo(({ props }) => {
                 </Link>
               )
             )}
+            </Container>
           </Navbar>
-        </Container>
-      </header>
+      
+      
     </BrowserRouter>
     </>
   );
