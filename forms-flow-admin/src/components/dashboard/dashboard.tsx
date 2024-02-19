@@ -77,7 +77,7 @@ export const InsightDashboard = React.memo((props: any) => {
 
   const updateAuthList = (authorizations) => {
     let newList = [...authorizations];
-    let authIds = newList.map((item) => Number(item.resourceId));
+    let authIds = newList.map((item) => item.resourceId);
     for (let item of dashboards?.results) {
       if (!authIds.includes(item.id)) {
         let obj = {
