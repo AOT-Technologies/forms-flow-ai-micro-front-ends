@@ -37,10 +37,10 @@ const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
 };
 
 export const InsightDashboard = React.memo((props: any) => {
-  const { dashboards, groups, authorizations, setCount,authReceived } = props;
+  const { dashboards, groups, authorizations, setCount, authReceived } = props;
 
   const isGroupUpdated = groups.length > 0;
-  const [authDashBoardList, setAuthDashboardList] = React.useState([]);  
+  const [authDashBoardList, setAuthDashboardList] = React.useState([]);
   const [isAuthUpdated, setIsAuthUpdated] = React.useState(false);
 
   const { t } = useTranslation();
@@ -53,17 +53,17 @@ export const InsightDashboard = React.memo((props: any) => {
   const [err, setErr] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(true);
 
-  React.useEffect(()=>{
-    if(props.error){
+  React.useEffect(() => {
+    if (props.error) {
       setIsLoading(false);
     }
-  },[props.error]);
+  }, [props.error]);
 
-  React.useEffect(()=>{
-    if(!props.loading){
+  React.useEffect(() => {
+    if (!props.loading) {
       setIsLoading(false);
     }
-  },[props.loading])
+  }, [props.loading])
 
   function compare(a, b) {
     if (Number(a.resourceId) < Number(b.resourceId)) {
@@ -79,7 +79,7 @@ export const InsightDashboard = React.memo((props: any) => {
     let newList = [...authorizations];
     let authIds = newList.map((item) => item.resourceId);
     for (let item of dashboards?.results) {
-      if (!authIds.includes(item.id)) {
+      if (!authIds.includes(String(item.id))) {
         let obj = {
           resourceId: String(item.id),
           resourceDetails: {
@@ -136,7 +136,7 @@ export const InsightDashboard = React.memo((props: any) => {
           setAuthDashboardList(updateAuthList(data));
           setIsLoading(false);
           toast.success(t("Update success!"))
-        }, (err)=>{
+        }, (err) => {
           setErr(err);
           toast.error(t("Update failed!"))
         });
@@ -158,7 +158,7 @@ export const InsightDashboard = React.memo((props: any) => {
           setAuthDashboardList(updateAuthList(data));
           setIsLoading(false);
           toast.success(t("Update success!"))
-        }, (err)=>{
+        }, (err) => {
           setErr(err);
           toast.error(t("Update failed!"))
         });
@@ -186,9 +186,9 @@ export const InsightDashboard = React.memo((props: any) => {
         return (
           <div className="d-flex flex-wrap col-12">
             {cell?.map((label, i) => (
-              <div key={i} className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 small m-2" 
-                   style={{background:"#EAEFFF"}}
-                   data-testid={`dashboard-access-group-${i}`}>
+              <div key={i} className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 small m-2"
+                style={{ background: "#EAEFFF" }}
+                data-testid={`dashboard-access-group-${i}`}>
                 <span className="">
                   {label}
                   <i
@@ -247,7 +247,7 @@ export const InsightDashboard = React.memo((props: any) => {
               disabled={!isGroupUpdated}
             >
               <i className="fa-solid fa-plus me-2"></i>
-              <Translation>{(t) => t("Add")}</Translation>  
+              <Translation>{(t) => t("Add")}</Translation>
             </Button>
           </OverlayTrigger>
         );
