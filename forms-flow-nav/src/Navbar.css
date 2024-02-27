@@ -34,20 +34,15 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; 
 }
-.custom-app-name.long-name {
-  font-size: 16px; 
-  font-weight: 600; 
+.moderate-name{
+  font-size: 18px;
+}
+.long-name{ 
+  font-size: 16px;
 }
 .custom-logo{
   width: var(--navbar-logo-width);
 }
-@media (min-width: 1200px) {
-  .nav-menu-long-appname {
-    margin-top: 0.7rem;
-  }
-  .custom-app-name.long-name {
-   margin-top: 0.5rem; 
-  }
-}
+

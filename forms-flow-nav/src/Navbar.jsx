@@ -101,7 +101,6 @@ const NavBar = React.memo(({ props }) => {
   const onResize = React.useCallback(() => {
     if (navbarRef?.current) {
       const isMediumScreen = window.matchMedia("(min-width: 992px)").matches;
-      console.log(isMediumScreen);
       if (isMediumScreen) {
         document.documentElement.style.setProperty(
           "--navbar-height",
@@ -235,8 +234,18 @@ const NavBar = React.memo(({ props }) => {
               <div>
                 <img className="custom-logo" src={logoPath} alt="Logo" />
               </div>
-              <div className="custom-app-name long-name">{appName}</div>
-            
+
+              <div
+                className={`custom-app-name ${
+                  appName.length > 30
+                    ? "long-name"
+                    : appName.length > 24 && appName.length <= 30
+                    ? "moderate-name"
+                    : ""
+                }`}
+              >
+                {appName}
+              </div>
             </Navbar.Brand>
 
             {isAuthenticated && (
