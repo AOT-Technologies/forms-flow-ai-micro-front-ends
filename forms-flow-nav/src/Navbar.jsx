@@ -264,22 +264,22 @@ const NavBar = React.memo(({ props }) => {
                 >
                   {ENABLE_FORMS_MODULE && (
                     <Nav.Link
-                      eventKey="form"
-                      as={Link}
-                      to={`${baseUrl}form`}
-                      className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                        pathname.match(
-                          createURLPathMatchExp("form", baseUrl)
-                        ) ||
-                        pathname.match(createURLPathMatchExp("bundle", baseUrl))
-                          ? "active"
-                          : ""
-                      }`}
-                      data-testid="forms-nav-link"
-                    >
-                      <i className="fa-solid fa-file-lines me-2" />
-                      {t("Forms")}
-                    </Nav.Link>
+                    eventKey="form"
+                    as={Link}
+                    to={`${baseUrl}form`}
+                    className={`nav-menu-item py-md-3 px-0 mx-2 ${
+                      (pathname.match(createURLPathMatchExp("form", baseUrl)) ||
+                      pathname.match(createURLPathMatchExp("bundle", baseUrl))) &&
+                      !(pathname.includes("draft") || pathname.includes("submission"))
+                        ? "active"
+                        : ""
+                    }`}
+                    data-testid="forms-nav-link"
+                  >
+                    <i className="fa-solid fa-file-lines me-2" />
+                    {t("Forms")}
+                  </Nav.Link>
+                  
                   )}
 
                   {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
@@ -345,26 +345,24 @@ const NavBar = React.memo(({ props }) => {
                     ? getUserRolePermission(userRoles, STAFF_REVIEWER) ||
                       getUserRolePermission(userRoles, CLIENT)
                       ? ENABLE_APPLICATIONS_MODULE && (
-                          <Nav.Link
-                            eventKey="application"
-                            as={Link}
-                            to={`${baseUrl}application`}
-                            className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                              pathname.match(
-                                createURLPathMatchExp("application", baseUrl)
-                              )
-                                ? "active"
-                                : pathname.match(
-                                    createURLPathMatchExp("draft", baseUrl)
-                                  )
-                                ? "active"
-                                : ""
-                            }`}
-                            data-testid="applications-nav-link"
-                          >
-                            <i className="fa-solid fa-rectangle-list me-2" />
-                            {t("Submissions")}
-                          </Nav.Link>
+                        <Nav.Link
+                        eventKey="application"
+                        as={Link}
+                        to={`${baseUrl}application`}
+          
+                        className={`nav-menu-item py-md-3 px-0 mx-2 ${
+                          pathname.match(createURLPathMatchExp("application", baseUrl)) ||
+                          pathname.includes("draft") ||
+                          pathname.includes("submission")
+                            ? "active"
+                            : ""
+                        }`}
+                        data-testid="applications-nav-link"
+                      >
+                        <i className="fa-solid fa-rectangle-list me-2" />
+                        {t("Submissions")}
+                      </Nav.Link>
+                      
                         )
                       : null
                     : null}
