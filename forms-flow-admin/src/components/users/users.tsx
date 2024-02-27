@@ -25,11 +25,13 @@ const Users = React.memo((props: any) => {
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
   const [selectedFilter, setSelectedFilter] = React.useState();
+  const [searchKey, setSearchKey] = React.useState();
   const { t } = useTranslation();
 
   React.useEffect(() => {
     props?.setFilter(selectedFilter);
-  }, [selectedFilter]);
+    props?.setSearch(searchKey);
+  }, [selectedFilter, searchKey]);
 
   React.useEffect(() => {
     if (props?.page?.pageNo) {
@@ -59,10 +61,7 @@ const Users = React.memo((props: any) => {
   };
 
   const handleSearch = (e) => {
-    if (selectedFilter) {
-      setSelectedFilter(undefined);
-    }
-    props.setSearch(e.target.value);
+    setSearchKey(e.target.value)
   };
 
   const removePermission = (rowData, item) => {
@@ -149,7 +148,7 @@ const Users = React.memo((props: any) => {
     sizePerPageRenderer: customDropUp,
   });
 
-  const handleTableChange = () => {};
+  const handleTableChange = () => { };
 
   const handleSelectFilter = (e) => {
     if (e.target.value === "ALL") {
@@ -261,8 +260,7 @@ const Users = React.memo((props: any) => {
             <div
               key={key}
               className={[
-                `role ${shouldHighLight ? "role-highlighted" : ""} ${
-                  isSelected ? "role-selected" : ""
+                `role ${shouldHighLight ? "role-highlighted" : ""} ${isSelected ? "role-selected" : ""
                 }`,
               ].toString()}
               onClick={() => !shouldHighLight && updateSelectedRoles(role)}
@@ -356,15 +354,15 @@ const Users = React.memo((props: any) => {
               placeholder={t("Search by name, username or email")}
               className="search-role-input"
               onChange={handleSearch}
-              value={props.search || ""}
+              value={searchKey || ""}
               title={t("Search...")}
               data-testid="search-users-input"
             />
-            {props.search?.length > 0 && (
+            {searchKey && (
               <Button
                 variant="outline-secondary btn-small clear"
                 onClick={() => {
-                  props.setSearch("");
+                  setSearchKey(null);
                 }}
                 data-testid="clear-users-search-button"
               >
