@@ -255,7 +255,7 @@ const NavBar = React.memo(({ props }) => {
             {isAuthenticated ? (
               <Navbar.Collapse
                 id="responsive-navbar-nav"
-                className="d-lg-flex justify-content-between h-100 nav-menu-long-appname"
+                className="d-lg-flex justify-content-between h-100"
               >
                 <Nav
                   id="main-menu-nav"
