@@ -32,7 +32,7 @@ const Library = React.memo((props: any) => {
 
    return (
       <> {libraryUrl ? <iframe width="100%"
-         height="500"
+         height="700"
          src={libraryUrl}
          title="Library" >
       </iframe> : <Alert message="No urls found"/> }</>
