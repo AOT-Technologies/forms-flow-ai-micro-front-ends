@@ -53,7 +53,7 @@ const NavBar = React.memo(({ props }) => {
 
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
-        setTenant(data); 
+        setTenant(data);
         if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
           StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
         }
@@ -69,7 +69,6 @@ const NavBar = React.memo(({ props }) => {
         setForm(data);
       }
     });
-
   }, []);
 
   React.useEffect(() => {
@@ -89,7 +88,7 @@ const NavBar = React.memo(({ props }) => {
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
-  const [lang, setLang] = React.useState(userDetail?.locale); 
+  const [lang, setLang] = React.useState(userDetail?.locale);
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -99,31 +98,35 @@ const NavBar = React.memo(({ props }) => {
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const navbarRef = useRef(null);
 
-   const onResize = React.useCallback(() => {
+  const onResize = React.useCallback(() => {
     if (navbarRef?.current) {
-      const isMediumScreen = window.matchMedia('(min-width: 992px)').matches;
-      if(isMediumScreen){
-        document.documentElement.style.setProperty('--navbar-height', `${navbarRef.current.offsetHeight}px`);
-      }else{
-        document.documentElement.style.setProperty('--navbar-height', `${52}px`);
+      const isMediumScreen = window.matchMedia("(min-width: 992px)").matches;
+      if (isMediumScreen) {
+        document.documentElement.style.setProperty(
+          "--navbar-height",
+          `${navbarRef.current.offsetHeight}px`
+        );
+      } else {
+        document.documentElement.style.setProperty(
+          "--navbar-height",
+          `${52}px`
+        );
       }
     }
   }, [navbarRef?.current]);
 
   // to set the navbar height
-  useEffect(()=>{
-    onResize()
-  },[navbarRef?.current,navbarRef?.current?.offsetHeight])
-
+  useEffect(() => {
+    onResize();
+  }, [navbarRef?.current, navbarRef?.current?.offsetHeight]);
 
   useEffect(() => {
-        window.addEventListener("resize", onResize);
+    window.addEventListener("resize", onResize);
     onResize();
     return () => {
       window.removeEventListener("resize", onResize);
     };
   }, []);
-
 
   /**
    * For anonymous forms the only way to identify the tenant is through the
@@ -184,47 +187,77 @@ const NavBar = React.memo(({ props }) => {
     updateUserlang(selectedLang, instance);
   };
 
-  useEffect(()=>{
-    if(isAuthenticated){
-      checkIntegrationEnabled().then((res)=>{ 
-        setIntegrationEnabled(res.data?.enabled);
-      }).catch((err)=>{
-        console.error(err);
-      })
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkIntegrationEnabled()
+        .then((res) => {
+          setIntegrationEnabled(res.data?.enabled);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
-  },[isAuthenticated])
+  }, [isAuthenticated]);
 
   const logout = () => {
     history.push(baseUrl);
     instance.userLogout();
   };
- 
+
   return (
-  <>
-   <Helmet>
-    <title>{MULTITENANCY_ENABLED ? applicationTitle : "formsflow.ai"}</title>
-    <link rel="icon" type="image/png" href={MULTITENANCY_ENABLED ? tenantLogo : null} />
-  </Helmet>
-    <BrowserRouter>
-           <Navbar  ref={navbarRef} collapseOnSelect fixed="top"  expand="lg" className={`navbar-background py-0 shadow px-3 m-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
-          <Container className="d-flex justify-content-between" >
-            <Navbar.Brand href={`${baseUrl}`} className="d-flex col-3 px-0">
-              <img
-                className="custom-logo"
-                src={logoPath}
-                alt="Logo"
-              />
-              <div className="custom-app-name">{appName}</div>
+    <>
+      <Helmet>
+        <title>
+          {MULTITENANCY_ENABLED ? applicationTitle : "formsflow.ai"}
+        </title>
+        <link
+          rel="icon"
+          type="image/png"
+          href={MULTITENANCY_ENABLED ? tenantLogo : null}
+        />
+      </Helmet>
+      <BrowserRouter>
+        <Navbar
+          ref={navbarRef}
+          collapseOnSelect
+          fixed="top"
+          expand="lg"
+          className={`navbar-background py-0 shadow px-3 m-0 ${
+            !isAuthenticated ? "justify-content-between" : ""
+          }`}
+        >
+          <Container className="d-flex justify-content-between">
+            <Navbar.Brand
+              href={`${baseUrl}`}
+              className="d-flex col-8 col-sm-6 col-md-6 col-lg-3 col-xl-3  px-0"
+            >
+              <div>
+                <img className="custom-logo" src={logoPath} alt="Logo" />
+              </div>
+
+              <div
+                className={`custom-app-name ${
+                  appName.length > 30
+                    ? "long-name"
+                    : appName.length > 24 && appName.length <= 30
+                    ? "moderate-name"
+                    : ""
+                }`}
+              >
+                {appName}
+              </div>
             </Navbar.Brand>
-            {isAuthenticated && <Navbar.Toggle aria-controls="responsive-navbar-nav" />}
-             
+
+            {isAuthenticated && (
+              <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            )}
+
             {isAuthenticated ? (
               <Navbar.Collapse
                 id="responsive-navbar-nav"
                 className="d-lg-flex justify-content-between h-100"
               >
-                <Nav 
-                
+                <Nav
                   id="main-menu-nav"
                   className="align-items-lg-center justify-content-start w-100"
                   data-testid="main-menu-nav"
@@ -249,10 +282,9 @@ const NavBar = React.memo(({ props }) => {
                   
                   )}
 
-
                   {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
-                    <Nav.Link 
-                    eventKey={"admin"}
+                    <Nav.Link
+                      eventKey={"admin"}
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}
                       className={`nav-menu-item py-md-3 px-0 mx-2 ${
@@ -288,7 +320,7 @@ const NavBar = React.memo(({ props }) => {
                       )
                     : null}
 
-            {getUserRolePermission(userRoles, STAFF_DESIGNER)
+                  {getUserRolePermission(userRoles, STAFF_DESIGNER)
                     ? integrationEnabled && (
                         <Nav.Link
                           eventKey="integration"
@@ -337,7 +369,7 @@ const NavBar = React.memo(({ props }) => {
                   {getUserRolePermission(userRoles, STAFF_REVIEWER)
                     ? ENABLE_TASKS_MODULE && (
                         <Nav.Link
-                        eventKey={"task"}
+                          eventKey={"task"}
                           as={Link}
                           to={`${baseUrl}task`}
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
@@ -358,7 +390,7 @@ const NavBar = React.memo(({ props }) => {
                   {getUserRolePermission(userRoles, STAFF_REVIEWER)
                     ? ENABLE_DASHBOARDS_MODULE && (
                         <Nav.Link
-                         eventKey={"metrics"}
+                          eventKey={"metrics"}
                           as={Link}
                           to={`${baseUrl}metrics`}
                           data-testid="dashboards-nav-link"
@@ -373,7 +405,6 @@ const NavBar = React.memo(({ props }) => {
                               : ""
                           }`}
                         >
-                          
                           <i className="fa-solid fa-gauge-high me-2" />
                           {t("Dashboards")}
                         </Nav.Link>
@@ -387,7 +418,7 @@ const NavBar = React.memo(({ props }) => {
                       return (
                         <div className="me-2">
                           <i className="fa fa-globe me-2" />
-                           {e.name}
+                          {e.name}
                         </div>
                       );
                     })
@@ -396,7 +427,7 @@ const NavBar = React.memo(({ props }) => {
                       title={
                         <>
                           <i className="fa fa-globe  me-2" />
-                         
+
                           {lang ? lang : "LANGUAGE"}
                         </>
                       }
@@ -417,7 +448,7 @@ const NavBar = React.memo(({ props }) => {
                       ))}
                     </NavDropdown>
                   )}
-                     <NavDropdown
+                  <NavDropdown
                     title={
                       <>
                         <i className="fa-solid fa-user me-2" />
@@ -428,20 +459,21 @@ const NavBar = React.memo(({ props }) => {
                     }
                     data-testid="user-dropdown"
                   >
-                    <NavDropdown.Item data-testid="user-info"> 
-                      
+                    <NavDropdown.Item data-testid="user-info">
                       {userDetail?.name || userDetail?.preferred_username}
                       <br />
                       <i className="fa fa-users fa-fw" />
                       <b>{getUserRoleName(userRoles)}</b>
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={logout} data-testid="logout-item">
+                    <NavDropdown.Item
+                      onClick={logout}
+                      data-testid="logout-item"
+                    >
                       <i className="fa fa-sign-out fa-fw" /> {t("Logout")}
                     </NavDropdown.Item>
                   </NavDropdown>
                 </Nav>
-
               </Navbar.Collapse>
             ) : (
               !MULTITENANCY_ENABLED && (
@@ -450,11 +482,9 @@ const NavBar = React.memo(({ props }) => {
                 </Link>
               )
             )}
-            </Container>
-          </Navbar>
-      
-      
-    </BrowserRouter>
+          </Container>
+        </Navbar>
+      </BrowserRouter>
     </>
   );
 });
