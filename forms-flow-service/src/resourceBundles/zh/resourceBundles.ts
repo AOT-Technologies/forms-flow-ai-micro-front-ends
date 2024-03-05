@@ -592,6 +592,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Click for task variables": "点击查看任务变量",
   "Upload DMN": "上传 DMN",
   "DMN Name": "DMN 名称",
-  "Search by DMN name": "按 DMN 名称搜索"
+  "Search by DMN name": "按 DMN 名称搜索",
+  "Display authorized tasks based on user roles":"显示基于用户角色的授权任务",
 };
 

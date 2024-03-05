@@ -596,6 +596,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Upload DMN": "Upload DMN",
   "DMN Name": "DMN Name",
   "Search by DMN name": "Search by DMN name",
+  "Display authorized tasks based on user roles":"Display authorized tasks based on user roles"
 };
 
 
