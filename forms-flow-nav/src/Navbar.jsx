@@ -150,7 +150,7 @@ const NavBar = React.memo(({ props }) => {
       }
       link.href = tenantLogo;
     }
-  }, [tenant]);
+  }, [tenant, data]);
 
   const getAppName = useMemo(
     () => () => {
