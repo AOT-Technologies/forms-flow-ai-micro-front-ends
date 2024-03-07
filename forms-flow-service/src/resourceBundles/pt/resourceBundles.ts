@@ -595,5 +595,6 @@ export const RESOURCE_BUNDLES_PT = {
   "Click for task variables": "Clique para ver as variáveis da tarefa",
   "Upload DMN": "Carregar DMN",
   "DMN Name": "Nome do DMN",
-  "Search by DMN name": "Pesquisar por nome do DMN"
+  "Search by DMN name": "Pesquisar por nome do DMN",
+  "Display authorized tasks based on user roles":"Exibir tarefas autorizadas com base nas funções do usuário"
 };

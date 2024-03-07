@@ -593,5 +593,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Click for task variables": "Кликнете за преглед на променливите на задачата",
   "Upload DMN": "Качване на DMN",
   "DMN Name": "Име на DMN",
-  "Search by DMN name": "Търсене по име на DMN"
+  "Search by DMN name": "Търсене по име на DMN",
+  "Display authorized tasks based on user roles":"Показване на разрешени задачи въз основа на ролите на потребителя",
 };

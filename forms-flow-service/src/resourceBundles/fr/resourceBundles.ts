@@ -596,7 +596,8 @@ export const RESOURCE_BUNDLES_FR = {
   "Click for task variables": "Cliquez pour voir les variables de la tâche",
   "Upload DMN": "Télécharger DMN",
   "DMN Name": "Nom DMN",
-  "Search by DMN name": "Rechercher par nom DMN"
+  "Search by DMN name": "Rechercher par nom DMN",
+  "Display authorized tasks based on user roles":"Afficher les tâches autorisées en fonction des rôles de l'utilisateur"
 };
 
 
