@@ -79,9 +79,17 @@ const NavBar = React.memo(({ props }) => {
 
   React.useEffect(() => {
     const data = JSON.parse(StorageService.get("TENANT_DATA"));
-    if (data?.details) {
+    if (MULTITENANCY_ENABLED && data?.details) {
       setApplicationTitle(data?.details?.applicationTitle);
-      setTenantLogo(data?.details?.customLogo?.logo || "/logo.svg");
+      const logo = data?.details?.customLogo?.logo || "/logo.svg";
+      setTenantLogo(logo);
+      let link = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.getElementsByTagName("head")[0].appendChild(link);
+      }
+      link.href = logo;
     }
   }, [tenant]);
 
@@ -138,19 +146,6 @@ const NavBar = React.memo(({ props }) => {
 
   const logoPath = MULTITENANCY_ENABLED ? tenantLogo : defaultLogoPath;
   
-  useEffect(() => {
-    const data = JSON.parse(StorageService.get("TENANT_DATA"));
-    if (MULTITENANCY_ENABLED && data?.details) {
-      setTenantLogo(data?.details?.customLogo?.logo || "/logo.svg");
-      let link = document.querySelector("link[rel~='icon']");
-      if (!link) {
-        link = document.createElement("link");
-        link.rel = "icon";
-        document.getElementsByTagName("head")[0].appendChild(link);
-      }
-      link.href = tenantLogo;
-    }
-  }, [tenant, data]);
 
   const getAppName = useMemo(
     () => () => {
@@ -223,7 +218,7 @@ const NavBar = React.memo(({ props }) => {
     <>
       <Helmet>
         <title>
-          {MULTITENANCY_ENABLED ? applicationTitle : "formsflow.ai"}
+          {MULTITENANCY_ENABLED ? applicationTitle : appName}
         </title>
         <link
           rel="icon"
