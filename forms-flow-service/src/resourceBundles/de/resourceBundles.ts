@@ -598,5 +598,8 @@ export const RESOURCE_BUNDLES_DE = {
   "Upload DMN": "DMN hochladen",
   "DMN Name": "DMN-Name",
   "Search by DMN name": "Nach DMN-Namen suchen",
-  "Display authorized tasks based on user roles":"Autorisierte Aufgaben basierend auf Benutzerrollen anzeigen"
+  "Display authorized tasks based on user roles":"Autorisierte Aufgaben basierend auf Benutzerrollen anzeigen",
+  "Task variables": "Aufgabenvaiablen",
+  "To display task variables, select a form as part of the filter": "Um Aufgabenvaiablen anzuzeigen, wählen Sie ein Formular als Teil des Filters aus",
+  "select a form": "wähle ein Formular"
 };

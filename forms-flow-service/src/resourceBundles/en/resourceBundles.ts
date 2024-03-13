@@ -596,7 +596,11 @@ export const RESOURCE_BUNDLES_EN = {
   "Upload DMN": "Upload DMN",
   "DMN Name": "DMN Name",
   "Search by DMN name": "Search by DMN name",
-  "Display authorized tasks based on user roles":"Display authorized tasks based on user roles"
+  "Display authorized tasks based on user roles":"Display authorized tasks based on user roles",
+  "Task variables": "Task variables",
+  "To display task variables, select a form as part of the filter": "To display task variables, select a form as part of the filter",
+  "select a form": "select a form"
+
 };
 
 

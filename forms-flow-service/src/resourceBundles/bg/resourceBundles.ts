@@ -595,4 +595,7 @@ export const RESOURCE_BUNDLES_BG = {
   "DMN Name": "Име на DMN",
   "Search by DMN name": "Търсене по име на DMN",
   "Display authorized tasks based on user roles":"Показване на разрешени задачи въз основа на ролите на потребителя",
+  "Task variables": "Променливи на задачата",
+  "To display task variables, select a form as part of the filter": "За да покажете променливите на задачата, изберете формуляр като част от филтъра",
+  "select a form": "изберете формуляр"
 };
