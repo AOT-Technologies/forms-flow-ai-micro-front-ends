@@ -239,13 +239,16 @@ const NavBar = React.memo(({ props }) => {
           <Container className="d-flex justify-content-between">
             <Navbar.Brand
               href={`${baseUrl}`}
-              className="d-flex col-8 col-sm-6 col-md-6 col-lg-3 col-xl-3  px-0"
+              className="d-flex col-8 col-sm-6 col-md-10 col-lg-3 col-xl-3  px-0"
             >
               <div>
                 <img className="custom-logo" src={logoPath} alt="Logo" />
               </div>
 
               <div
+              data-bs-toggle="tooltip" 
+              data-bs-placement="bottom" 
+              title={appName}
                 className={`custom-app-name ${
                   appName.length > 30
                     ? "long-name"

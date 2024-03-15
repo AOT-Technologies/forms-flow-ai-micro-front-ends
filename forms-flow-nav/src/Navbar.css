@@ -37,10 +37,11 @@
   text-overflow: ellipsis; 
 }
 .moderate-name{
-  font-size: 18px;
+  font-size: 16px;
 }
 .long-name{ 
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 600;
 }
 .custom-logo{
   width: var(--navbar-logo-width);
