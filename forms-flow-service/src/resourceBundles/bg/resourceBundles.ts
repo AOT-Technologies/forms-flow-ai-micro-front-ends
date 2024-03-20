@@ -595,4 +595,9 @@ export const RESOURCE_BUNDLES_BG = {
   "DMN Name": "Име на DMN",
   "Search by DMN name": "Търсене по име на DMN",
   "Display authorized tasks based on user roles":"Показване на разрешени задачи въз основа на ролите на потребителя",
+  "Select Workflow": "Изберете работен процес",
+  "Select Assignee": "Изберете назначен",
+  "Click here to select attributes": "Кликнете тук, за да изберете атрибути",
+  "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "Изберете предварително дефинираните атрибути и персонализирани променливи на задачата, създадени като част от подадената форма, които искате да покажете в списъка със задачи",
+  "Task variables": "Променливи на задачата"
 };

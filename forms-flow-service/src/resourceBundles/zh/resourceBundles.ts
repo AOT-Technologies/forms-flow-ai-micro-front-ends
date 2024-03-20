@@ -594,5 +594,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "DMN Name": "DMN 名称",
   "Search by DMN name": "按 DMN 名称搜索",
   "Display authorized tasks based on user roles":"显示基于用户角色的授权任务",
+  "Select Workflow": "选择工作流程",
+  "Select Assignee": "选择受让人",
+  "Click here to select attributes": "单击此处选择属性",
+  "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "选择要在任务列表中显示的预定义属性和自定义任务变量，这些变量是作为表单提交的一部分创建的",
+  "Task variables": "任务变量"
 };
 
