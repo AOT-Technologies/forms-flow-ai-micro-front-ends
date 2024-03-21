@@ -605,7 +605,9 @@ export const RESOURCE_BUNDLES_EN = {
   "User Role": "User Role",
   "User Group": "User Group",
   "Select User Role": "Select User Role",
-  "Select User Group": "Select User Group"
+  "Select User Group": "Select User Group",
+  "To display task variables, select a form as part of the filter": "To display task variables, select a form as part of the filter",
+  "select a form": "select a form"
 };
 
 

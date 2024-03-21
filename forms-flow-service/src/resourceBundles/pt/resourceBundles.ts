@@ -605,6 +605,7 @@ export const RESOURCE_BUNDLES_PT = {
   "User Role": "Função do usuário",
   "User Group": "Grupo de usuários",
   "Select User Role": "Selecionar função do usuário",
-  "Select User Group": "Selecionar grupo de usuários"
-
+  "Select User Group": "Selecionar grupo de usuários",
+  "To display task variables, select a form as part of the filter": "Para exibir as variáveis da tarefa, selecione um formulário como parte do filtro",
+  "select a form": "selecione um formulário"
 };

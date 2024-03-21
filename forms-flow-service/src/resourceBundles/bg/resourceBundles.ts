@@ -603,5 +603,7 @@ export const RESOURCE_BUNDLES_BG = {
   "User Role": "Роля на потребителя",
   "User Group": "Група на потребителя",
   "Select User Role": "Изберете роля на потребителя",
-  "Select User Group": "Изберете група на потребителя"
+  "Select User Group": "Изберете група на потребителя",
+  "To display task variables, select a form as part of the filter": "За да покажете променливите на задачата, изберете формуляр като част от филтъра",
+  "select a form": "изберете формуляр"
 };
