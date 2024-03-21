@@ -601,6 +601,10 @@ export const RESOURCE_BUNDLES_PT = {
   "Select Assignee": "Selecionar destinatário",
   "Click here to select attributes": "Clique aqui para selecionar atributos",
   "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "Selecione os atributos predefinidos e as variáveis de tarefa personalizadas criadas como parte do envio do formulário que deseja exibir na lista de tarefas",
-  "Task variables": "Variáveis da tarefa"
+  "Task variables": "Variáveis da tarefa",
+  "User Role": "Função do usuário",
+  "User Group": "Grupo de usuários",
+  "Select User Role": "Selecionar função do usuário",
+  "Select User Group": "Selecionar grupo de usuários"
 
 };

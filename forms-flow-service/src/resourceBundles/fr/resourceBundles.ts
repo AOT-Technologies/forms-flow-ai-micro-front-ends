@@ -602,7 +602,11 @@ export const RESOURCE_BUNDLES_FR = {
   "Select Assignee": "Sélectionner l'assigné",
   "Click here to select attributes": "Cliquez ici pour sélectionner les attributs",
   "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "Sélectionnez les attributs prédéfinis et les variables de tâche personnalisées créées dans le cadre de la soumission du formulaire que vous souhaitez afficher dans la liste des tâches",
-  "Task variables": "Variables de tâche"
+  "Task variables": "Variables de tâche",
+  "User Role": "Rôle de l'utilisateur",
+  "User Group": "Groupe d'utilisateurs",
+  "Select User Role": "Sélectionner le rôle de l'utilisateur",
+  "Select User Group": "Sélectionner le groupe d'utilisateurs"
 };
 
 

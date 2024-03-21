@@ -603,5 +603,9 @@ export const RESOURCE_BUNDLES_DE = {
   "Select Assignee": "Zuweisung auswählen",
   "Click here to select attributes": "Klicken Sie hier, um Attribute auszuwählen",
   "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "Wählen Sie die vordefinierten Attribute und benutzerdefinierten Aufgabenvariablen aus, die im Rahmen der Formularübermittlung erstellt wurden und die Sie in der Aufgabenliste anzeigen möchten",
-  "Task variables": "Aufgabenvariablen"
+  "Task variables": "Aufgabenvariablen",
+  "User Role": "Benutzerrolle",
+  "User Group": "Benutzergruppe",
+  "Select User Role": "Benutzerrolle auswählen",
+  "Select User Group": "Benutzergruppe auswählen"
 };

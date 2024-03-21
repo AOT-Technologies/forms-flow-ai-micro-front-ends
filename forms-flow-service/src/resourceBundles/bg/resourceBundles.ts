@@ -599,5 +599,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Select Assignee": "Изберете назначен",
   "Click here to select attributes": "Кликнете тук, за да изберете атрибути",
   "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "Изберете предварително дефинираните атрибути и персонализирани променливи на задачата, създадени като част от подадената форма, които искате да покажете в списъка със задачи",
-  "Task variables": "Променливи на задачата"
+  "Task variables": "Променливи на задачата",
+  "User Role": "Роля на потребителя",
+  "User Group": "Група на потребителя",
+  "Select User Role": "Изберете роля на потребителя",
+  "Select User Group": "Изберете група на потребителя"
 };
