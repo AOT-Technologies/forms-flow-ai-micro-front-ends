@@ -598,5 +598,8 @@ export const RESOURCE_BUNDLES_BG = {
   "You are currently using a test instance.The trial period ends in":"В момента използвате тестова инстанция. Пробният период изтича след",
   "days.": "дни.",
   "Are you sure to delete": "Сигурни ли сте, че искате да изтриете",
-  "filter?": "филтър?"
+  "filter?": "филтър?",
+  "Task variables": "Променливи на задачата",
+  "To display task variables, select a form as part of the filter": "За да покажете променливите на задачата, изберете формуляр като част от филтъра",
+  "select a form": "изберете формуляр"
 };

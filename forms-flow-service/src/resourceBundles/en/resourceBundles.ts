@@ -600,7 +600,11 @@ export const RESOURCE_BUNDLES_EN = {
   "You are currently using a test instance.The trial period ends in": "You are currently using a test instance.The trial period ends in",
   "days.": "days.",
   "Are you sure to delete":"Are you sure to delete",
-  "filter?": "filter?"
+  "filter?": "filter?",
+  "Task variables": "Task variables",
+  "To display task variables, select a form as part of the filter": "To display task variables, select a form as part of the filter",
+  "select a form": "select a form"
+
 };
 
 

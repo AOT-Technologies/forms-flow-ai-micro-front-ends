@@ -600,5 +600,8 @@ export const RESOURCE_BUNDLES_PT = {
   "You are currently using a test instance.The trial period ends in": "Você está usando atualmente uma instância de teste. O período de teste termina em",
   "days.": "dias.",
   "Are you sure to delete": "Tem certeza de que deseja excluir",
-  "filter?": "filtro?"
+  "filter?": "filtro?",
+  "Task variables": "Variáveis da tarefa",
+  "To display task variables, select a form as part of the filter": "Para exibir as variáveis da tarefa, selecione um formulário como parte do filtro",
+  "select a form": "selecione um formulário"
 };

@@ -597,6 +597,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "You are currently using a test instance.The trial period ends in": "您当前正在使用测试实例。试用期结束于",
   "days.": "天。",
   "Are you sure to delete": "您确定要删除吗",
-  "filter?": "过滤器？"
+  "filter?": "过滤器？",
+  "Task variables": "任务变量",
+  "To display task variables, select a form as part of the filter": "要显示任务变量，请将表单选择为筛选器的一部分",
+  "select a form": "选择一个表单"
 };
 
