@@ -594,5 +594,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "DMN Name": "DMN 名称",
   "Search by DMN name": "按 DMN 名称搜索",
   "Display authorized tasks based on user roles":"显示基于用户角色的授权任务",
+  "You are currently using a test instance.The trial period ends in": "您当前正在使用测试实例。试用期结束于",
+  "days.": "天。",
+  "Are you sure to delete": "您确定要删除吗",
+  "filter?": "过滤器？"
 };
 

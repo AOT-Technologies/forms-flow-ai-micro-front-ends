@@ -597,7 +597,11 @@ export const RESOURCE_BUNDLES_FR = {
   "Upload DMN": "Télécharger DMN",
   "DMN Name": "Nom DMN",
   "Search by DMN name": "Rechercher par nom DMN",
-  "Display authorized tasks based on user roles":"Afficher les tâches autorisées en fonction des rôles de l'utilisateur"
+  "Display authorized tasks based on user roles":"Afficher les tâches autorisées en fonction des rôles de l'utilisateur",
+  "You are currently using a test instance.The trial period ends in": "Vous utilisez actuellement une instance de test. La période d'essai se termine dans",
+  "days.": "jours.",
+  "Are you sure to delete?": "Êtes-vous sûr de vouloir supprimer ",
+  "filter?": "filtre ?"
 };
 
 
