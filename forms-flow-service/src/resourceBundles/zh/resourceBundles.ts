@@ -594,5 +594,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "DMN Name": "DMN 名称",
   "Search by DMN name": "按 DMN 名称搜索",
   "Display authorized tasks based on user roles":"显示基于用户角色的授权任务",
+  "Task variables": "任务变量",
+  "To display task variables, select a form as part of the filter": "要显示任务变量，请将表单选择为筛选器的一部分",
+  "select a form": "选择一个表单"
 };
 
