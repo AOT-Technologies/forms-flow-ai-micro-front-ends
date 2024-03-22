@@ -609,5 +609,7 @@ export const RESOURCE_BUNDLES_DE = {
   "Select User Role": "Benutzerrolle auswählen",
   "Select User Group": "Benutzergruppe auswählen",
   "To display task variables, select a form as part of the filter": "Um Aufgabenvaiablen anzuzeigen, wählen Sie ein Formular als Teil des Filters aus",
-  "select a form": "wähle ein Formular"
+  "select a form": "wähle ein Formular",
+  "Edit filter": "Filter bearbeiten",
+
 };
