@@ -597,5 +597,12 @@ export const RESOURCE_BUNDLES_BG = {
   "Display authorized tasks based on user roles":"Показване на разрешени задачи въз основа на ролите на потребителя",
   "Task variables": "Променливи на задачата",
   "To display task variables, select a form as part of the filter": "За да покажете променливите на задачата, изберете формуляр като част от филтъра",
-  "select a form": "изберете формуляр"
+  "select a form": "изберете формуляр",
+  "Select Workflow": "Избор на работен процес",
+  "Edit filter": "Редактиране на филтър",
+  "Select User Role": "Избор на потребителска роля",
+  "Select User Group": "Избор на потребителска група",
+  "Select Assignee": "Избор на упълномощен",
+  "Click here to select attributes": "Щракнете тук, за да изберете атрибути",
+  "User Group": "Потребителска група"
 };

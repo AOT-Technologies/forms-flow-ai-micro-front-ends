@@ -596,6 +596,13 @@ export const RESOURCE_BUNDLES_ZH = {
   "Display authorized tasks based on user roles":"显示基于用户角色的授权任务",
   "Task variables": "任务变量",
   "To display task variables, select a form as part of the filter": "要显示任务变量，请将表单选择为筛选器的一部分",
-  "select a form": "选择一个表单"
+  "select a form": "选择一个表单",
+  "Select Workflow": "选择工作流程",
+  "Edit filter": "编辑过滤器",
+  "Select User Role": "选择用户角色",
+  "Select User Group": "选择用户组",
+  "Select Assignee": "选择受让人",
+  "Click here to select attributes": "点击此处选择属性",
+  "User Group": "用户组"
 };
 

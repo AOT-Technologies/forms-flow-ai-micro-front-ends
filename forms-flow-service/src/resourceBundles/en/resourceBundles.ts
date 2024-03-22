@@ -194,7 +194,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Add a group": "Add a group",
   "Process Name": "Process Name",
   "Set FollowUp Date": "Set FollowUp Date",
-  "Groups": "groups",
+  "Groups": "Groups",
   "Click to Change Assignee": "Click to Change Assignee",
   "Reset Assignee": "Reset Assignee",
   "Update User": "Update User",
@@ -599,8 +599,14 @@ export const RESOURCE_BUNDLES_EN = {
   "Display authorized tasks based on user roles":"Display authorized tasks based on user roles",
   "Task variables": "Task variables",
   "To display task variables, select a form as part of the filter": "To display task variables, select a form as part of the filter",
-  "select a form": "select a form"
-
+  "select a form": "select a form",
+  "Select Workflow": "Select Workflow",
+  "Edit filter": "Edit filter",
+  "Select User Role": "Select User Role",
+  "Select User Group": "Select User Group",
+  "Select Assignee": "Select Assignee",
+  "Click here to select attributes": "Click here to select attributes",
+  "User Group": "User Group"
 };
 
 

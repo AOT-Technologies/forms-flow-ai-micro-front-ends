@@ -599,5 +599,12 @@ export const RESOURCE_BUNDLES_PT = {
   "Display authorized tasks based on user roles":"Exibir tarefas autorizadas com base nas funções do usuário",
   "Task variables": "Variáveis da tarefa",
   "To display task variables, select a form as part of the filter": "Para exibir as variáveis da tarefa, selecione um formulário como parte do filtro",
-  "select a form": "selecione um formulário"
+  "select a form": "selecione um formulário",
+  "Select Workflow": "Selecionar Fluxo de Trabalho",
+  "Edit filter": "Editar filtro",
+  "Select User Role": "Selecionar Função do Usuário",
+  "Select User Group": "Selecionar Grupo de Usuários",
+  "Select Assignee": "Selecionar Atribuído",
+  "Click here to select attributes": "Clique aqui para selecionar atributos",
+  "User Group": "Grupo de Usuários"
 };
