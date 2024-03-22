@@ -599,7 +599,15 @@ export const RESOURCE_BUNDLES_DE = {
   "DMN Name": "DMN-Name",
   "Search by DMN name": "Nach DMN-Namen suchen",
   "Display authorized tasks based on user roles":"Autorisierte Aufgaben basierend auf Benutzerrollen anzeigen",
-  "Task variables": "Aufgabenvaiablen",
+  "Select Workflow": "Arbeitsablauf auswählen",
+  "Select Assignee": "Zuweisung auswählen",
+  "Click here to select attributes": "Klicken Sie hier, um Attribute auszuwählen",
+  "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "Wählen Sie die vordefinierten Attribute und benutzerdefinierten Aufgabenvariablen aus, die im Rahmen der Formularübermittlung erstellt wurden und die Sie in der Aufgabenliste anzeigen möchten",
+  "Task variables": "Aufgabenvariablen",
+  "User Role": "Benutzerrolle",
+  "User Group": "Benutzergruppe",
+  "Select User Role": "Benutzerrolle auswählen",
+  "Select User Group": "Benutzergruppe auswählen",
   "To display task variables, select a form as part of the filter": "Um Aufgabenvaiablen anzuzeigen, wählen Sie ein Formular als Teil des Filters aus",
   "select a form": "wähle ein Formular"
 };

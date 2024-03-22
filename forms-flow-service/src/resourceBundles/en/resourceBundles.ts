@@ -597,10 +597,17 @@ export const RESOURCE_BUNDLES_EN = {
   "DMN Name": "DMN Name",
   "Search by DMN name": "Search by DMN name",
   "Display authorized tasks based on user roles":"Display authorized tasks based on user roles",
+  "Select Workflow": "Select Workflow",
+  "Select Assignee": "Select Assignee",
+  "Click here to select attributes": "Click here to select attributes",
+  "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list",
   "Task variables": "Task variables",
+  "User Role": "User Role",
+  "User Group": "User Group",
+  "Select User Role": "Select User Role",
+  "Select User Group": "Select User Group",
   "To display task variables, select a form as part of the filter": "To display task variables, select a form as part of the filter",
   "select a form": "select a form"
-
 };
 
 
