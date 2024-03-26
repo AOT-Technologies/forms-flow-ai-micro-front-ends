@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal"; // Import Modal from react-bootstrap
 import "./users.scss";
-import { KEYCLOAK_ENABLE_CLIENT_AUTH } from "../../constants";
+import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
 import { CreateUser } from "../../services/users";
 const Users = React.memo((props: any) => {
@@ -32,7 +32,7 @@ const Users = React.memo((props: any) => {
   const { t } = useTranslation();
   const [selectedRolesModal, setSelectedRolesModal] = React.useState([]);
   const [formData, setFormData] = React.useState({ user: ""}); 
-  console.log("fffffffffffffff",formData,selectedRolesModal)
+  
   React.useEffect(() => {
     props?.setFilter(selectedFilter);
     props?.setSearch(searchKey);
@@ -369,8 +369,11 @@ const Users = React.memo((props: any) => {
   CreateUser(
     payload,
     (data) => {
-      toast.success("User Added successfully!");
+      toast.success(t("User Added successfully!"));
+      setFormData({ user: "" });
+      setSelectedRolesModal([]);
       closeInviteModal(); 
+      props.setInvalidated(true);
     },
     (err) => {
       toast.error(t("Failed to create user!"));
@@ -432,55 +435,60 @@ const Users = React.memo((props: any) => {
             </Form.Select>
           </div>
 
-          <Button variant="primary" onClick={openInviteModal}>
-            Invite Registered Users
-          </Button>
+          {MULTITENANCY_ENABLED && (
+  <>
+    <Button variant="primary" onClick={openInviteModal}>
+    {t("Invite Registered Users")}
+    </Button>
 
-          {showInviteModal && (
-            <Modal show={showInviteModal} onHide={closeInviteModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>Invite Registered User to application</Modal.Title>
-              </Modal.Header>
+    {showInviteModal && (
+      <Modal show={showInviteModal} onHide={closeInviteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>{t("Invite registered user to application")}</Modal.Title>
+        </Modal.Header>
 
-              <Modal.Body>
-                <Form>
-                  <Form.Group>
-                    <Form.Label>Username or Email</Form.Label>
-                    <Form.Control
-                  type="text"
-                  value={formData.user}
-                  onChange={(e) =>
-                    setFormData({ ...formData, user: e.target.value })
-                  }
-                />
-                  </Form.Group>
-                  <hr />
-                  <Form.Group>
-                    <Form.Label>Add Role</Form.Label>
-                    <br/>
-                    <Select
-                    options={roles.map((role) => ({
-                    value: role.id,
-                    label: role.name,
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>{t("Username or Email")}</Form.Label>
+              <Form.Control
+                type="text"
+                value={formData.user}
+                onChange={(e) =>
+                  setFormData({ ...formData, user: e.target.value })
+                }
+              />
+            </Form.Group>
+            <hr />
+            <Form.Group>
+              <Form.Label>{t("Add Role")}</Form.Label>
+              <br/>
+              <Select
+                options={roles.map((role) => ({
+                  value: role.id,
+                  label: role.name,
                 }))}
                 isMulti
                 value={selectedRolesModal}
                 onChange={handleRoleSelectChange}
               />
-                  </Form.Group>
-                </Form>
-              </Modal.Body>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
 
-              <Modal.Footer>
-                <Button variant="secondary" onClick={closeInviteModal}>
-                  Cancel
-                </Button>
-                <Button variant="primary" onClick={sendInvites}>
-                 Add User
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          )}
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeInviteModal}>
+          {t("Cancel")}
+          </Button>
+          <Button variant="primary" onClick={sendInvites} disabled={!formData.user || selectedRolesModal.length === 0}>
+          {t("Add User")}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    )}
+  </>
+)}
+
         </div>
 
         {!loading ? (

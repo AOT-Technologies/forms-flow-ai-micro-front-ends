@@ -606,6 +606,12 @@ export const RESOURCE_BUNDLES_BG = {
   "Select User Group": "Изберете група на потребителя",
   "To display task variables, select a form as part of the filter": "За да покажете променливите на задачата, изберете формуляр като част от филтъра",
   "select a form": "изберете формуляр",
-  "Edit filter": "Редактиране на филтър"
+  "Edit filter": "Редактиране на филтър",
+  "User Added successfully!": "Потребителят е успешно добавен!",
+  "Failed to create user!": "Неуспешно създаване на потребител!",
+  "Invite Registered Users": "Покани Регистрирани Потребители",
+  "Invite registered user to application": "Покани регистриран потребител към приложението",
+  "Username or Email": "Потребителско име или Имейл",
+  "Add User": "Добави Потребител"
 
 };
