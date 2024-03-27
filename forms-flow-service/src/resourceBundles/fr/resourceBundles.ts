@@ -108,7 +108,6 @@ export const RESOURCE_BUNDLES_FR = {
   "Form field": "Champ de formulaire",
   "Enter Label": "Entrez l'étiquette",
   "Select form field": "Sélectionnez le champ du formulaire",
-  "Add form fields to display in task list": "Ajouter des champs de formulaire à afficher dans la liste des tâches",
   "Latest Version": "Dernière version",
   "Submission Status": "État de la soumission",
   "No submission status": "Aucun statut de soumission",
@@ -609,7 +608,11 @@ export const RESOURCE_BUNDLES_FR = {
   "Select User Group": "Sélectionner le groupe d'utilisateurs",
   "To display task variables, select a form as part of the filter": "Pour afficher les variables de tâche, sélectionnez un formulaire dans le filtre",
   "select a form": "sélectionnez un formulaire",
-  "Edit filter": "Modifier le filtre"
+  "Edit filter": "Modifier le filtre",
+  "Select form fields to display in task list": "Sélectionnez les champs de formulaire à afficher dans la liste des tâches",
+  "Select all fields": "Sélectionner tous les champs",
+  "Edit Lable": "Modifier l'étiquette",
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Sélectionner tous les champs de formulaire peut affecter les performances. Pour obtenir les meilleures performances, choisissez uniquement les champs de formulaire dont vous avez vraiment besoin."
 };
 
 

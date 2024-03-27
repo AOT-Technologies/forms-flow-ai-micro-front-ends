@@ -108,7 +108,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Form field": "Поле за формуляр",
   "Enter Label": "Въведете етикет",
   "Select form field": "Изберете поле на формуляра",
-  "Add form fields to display in task list": "Добавете полета на формуляра за показване в списъка със задачи",
   "Latest Version": "Последна версия",
   "Submission Status": "Състояние на подаване",
   "No submission status": "Няма състояние на подаване",
@@ -606,6 +605,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Select User Group": "Изберете група на потребителя",
   "To display task variables, select a form as part of the filter": "За да покажете променливите на задачата, изберете формуляр като част от филтъра",
   "select a form": "изберете формуляр",
-  "Edit filter": "Редактиране на филтър"
-
+  "Edit filter": "Редактиране на филтър",
+  "Select form fields to display in task list": "Изберете полета на формуляра, които да се показват в списъка със задачи",
+  "Select all fields": "Изберете всички полета",
+  "Edit Lable": "Редактиране на етикета",
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Избирането на всички полета на формуляра може да окаже влияние върху производителността. За най-добри резултати, изберете само полетата на формуляра, които наистина ви трябват."
 };

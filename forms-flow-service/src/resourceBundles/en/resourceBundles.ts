@@ -107,7 +107,6 @@ export const RESOURCE_BUNDLES_EN = {
   "Form field": "Form field",
   "Enter Label": "Enter Label",
   "Select form field": "Select form field",
-  "Add form fields to display in task list": "Add form fields to display in task list",
   "Latest Version": "Latest Version",
   "Submission Status": "Submission Status",
   "No submission status": "No submission status",
@@ -608,7 +607,11 @@ export const RESOURCE_BUNDLES_EN = {
   "Select User Group": "Select User Group",
   "To display task variables, select a form as part of the filter": "To display task variables, select a form as part of the filter",
   "select a form": "select a form",
-  "Edit filter": "Edit filter"
+  "Edit filter": "Edit filter",
+  "Select form fields to display in task list": "Select form fields to display in task list",
+  "Select all fields": "Select all fields",
+  "Edit Lable": "Edit Label",
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need."
 };
 
 

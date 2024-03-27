@@ -107,7 +107,6 @@ export const RESOURCE_BUNDLES_DE = {
   "Form field": "Formularfeld",
   "Enter Label": "Bezeichnung eingeben",
   "Select form field": "Formularfeld auswählen",
-  "Add form fields to display in task list": "Fügen Sie Formularfelder zur Anzeige in der Aufgabenliste hinzu",
   "Latest Version": "Letzte Version",
   "Submission Status": "Submission Status",
   "No submission status": "Kein Übermittlungsstatus",
@@ -611,5 +610,8 @@ export const RESOURCE_BUNDLES_DE = {
   "To display task variables, select a form as part of the filter": "Um Aufgabenvaiablen anzuzeigen, wählen Sie ein Formular als Teil des Filters aus",
   "select a form": "wähle ein Formular",
   "Edit filter": "Filter bearbeiten",
-
+  "Select form fields to display in task list": "Wählen Sie die Formularfelder aus, die in der Aufgabenliste angezeigt werden sollen",
+  "Select all fields": "Alle Felder auswählen",
+  "Edit Lable": "Beschriftung bearbeiten",
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Das Auswählen aller Formularfelder kann sich auf die Leistung auswirken. Wählen Sie für die beste Leistung nur die Formularfelder aus, die Sie wirklich benötigen."
 };

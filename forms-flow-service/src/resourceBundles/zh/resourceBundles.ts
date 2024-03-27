@@ -107,7 +107,6 @@ export const RESOURCE_BUNDLES_ZH = {
   "Form field": "表单域",
   "Enter Label": "输入标签",
   "Select form field": "选择表单域",
-  "Add form fields to display in task list": "添加表单域以显示在任务列表中",
   "Latest Version": "最新版本",
   "Submission Status": "提交状态",
   "No submission status": "无提交状态",
@@ -605,6 +604,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "Select User Group": "选择用户组",
   "To display task variables, select a form as part of the filter": "要显示任务变量，请将表单选择为筛选器的一部分",
   "select a form": "选择一个表单",
-  "Edit filter": "编辑过滤器"
+  "Edit filter": "编辑过滤器",
+  "Select form fields to display in task list": "选择要在任务列表中显示的表单字段",
+  "Select all fields": "选择所有字段",
+  "Edit Lable": "编辑标签",
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "选择所有表单字段可能会影响性能。为了获得最佳性能，请只选择您真正需要的表单字段。"
 };
 
