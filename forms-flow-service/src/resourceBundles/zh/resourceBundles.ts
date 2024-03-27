@@ -598,8 +598,17 @@ export const RESOURCE_BUNDLES_ZH = {
   "days.": "天。",
   "Are you sure to delete": "您确定要删除吗",
   "filter?": "过滤器？",
+  "Select Workflow": "选择工作流程",
+  "Select Assignee": "选择受让人",
+  "Click here to select attributes": "单击此处选择属性",
+  "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "选择要在任务列表中显示的预定义属性和自定义任务变量，这些变量是作为表单提交的一部分创建的",
   "Task variables": "任务变量",
+  "User Role": "用户角色",
+  "User Group": "用户组",
+  "Select User Role": "选择用户角色",
+  "Select User Group": "选择用户组",
   "To display task variables, select a form as part of the filter": "要显示任务变量，请将表单选择为筛选器的一部分",
-  "select a form": "选择一个表单"
+  "select a form": "选择一个表单",
+  "Edit filter": "编辑过滤器"
 };
 
