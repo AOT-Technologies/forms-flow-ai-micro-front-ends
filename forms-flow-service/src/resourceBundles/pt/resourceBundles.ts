@@ -613,4 +613,10 @@ export const RESOURCE_BUNDLES_PT = {
   "To display task variables, select a form as part of the filter": "Para exibir as variáveis da tarefa, selecione um formulário como parte do filtro",
   "select a form": "selecione um formulário",
   "Edit filter": "Editar filtro",
+  "User Added successfully!": "Usuário adicionado com sucesso!",
+  "Failed to create user!": "Falha ao criar usuário!",
+  "Invite Registered Users": "Convidar Usuários Registrados",
+  "Invite registered user to application": "Convidar usuário registrado para o aplicativo",
+  "Username or Email": "Nome de usuário ou Email",
+  "Add User": "Adicionar Usuário"
 };

@@ -612,7 +612,13 @@ export const RESOURCE_BUNDLES_EN = {
   "Select User Group": "Select User Group",
   "To display task variables, select a form as part of the filter": "To display task variables, select a form as part of the filter",
   "select a form": "select a form",
-  "Edit filter": "Edit filter"
+  "Edit filter": "Edit filter",
+  "User Added successfully!": "User added successfully!",
+  "Failed to create user!": "Failed to create user!",
+  "Invite Registered Users": "Invite Registered Users",
+  "Invite registered user to application": "Invite registered user to application",
+  "Username or Email": "Username or Email",
+  "Add User": "Add User"
 };
 
 

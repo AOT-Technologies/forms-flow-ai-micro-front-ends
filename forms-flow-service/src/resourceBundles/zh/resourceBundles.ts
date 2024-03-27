@@ -609,6 +609,12 @@ export const RESOURCE_BUNDLES_ZH = {
   "Select User Group": "选择用户组",
   "To display task variables, select a form as part of the filter": "要显示任务变量，请将表单选择为筛选器的一部分",
   "select a form": "选择一个表单",
-  "Edit filter": "编辑过滤器"
+  "Edit filter": "编辑过滤器",
+  "User Added successfully!": "用户添加成功！",
+  "Failed to create user!": "用户创建失败！",
+  "Invite Registered Users": "邀请已注册用户",
+  "Invite registered user to application": "邀请已注册用户加入应用",
+  "Username or Email": "用户名或邮箱",
+  "Add User": "添加用户"
 };
 
