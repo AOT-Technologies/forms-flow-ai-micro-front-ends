@@ -356,10 +356,16 @@ const Users = React.memo((props: any) => {
     },
   ];
 
-  
+  const clearForm = () => {
+    setFormData({ user: "" });
+    setSelectedRolesModal([]);
+  };
 
   const openInviteModal = () => setShowInviteModal(true);
-  const closeInviteModal = () => setShowInviteModal(false);
+  const closeInviteModal = () => {
+    clearForm();
+    setShowInviteModal(false);
+  }
   const sendInvites = () => {
     const selectedRolesIds = selectedRolesModal.map(role => ({ roleId: role.value, name: role.label }));
     const payload = {
@@ -370,8 +376,7 @@ const Users = React.memo((props: any) => {
     payload,
     (data) => {
       toast.success(t("User Added successfully!"));
-      setFormData({ user: "" });
-      setSelectedRolesModal([]);
+      clearForm();
       closeInviteModal(); 
       props.setInvalidated(true);
     },
