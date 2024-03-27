@@ -7,6 +7,7 @@ const API = {
     GET_USERS: `${WEB_BASE_URL}/user`,
     DASHBOARD_AUTHORIZATION: `${WEB_BASE_URL}/authorizations/dashboard`,
     USER_ROLE_GROUP_PERMISSION: `${WEB_BASE_URL}/user/<user_id>/permission/groups/<group_id>`,
+    ADD_USER: `${WEB_BASE_URL}/user/add-user`,
 }
 
 export default API;

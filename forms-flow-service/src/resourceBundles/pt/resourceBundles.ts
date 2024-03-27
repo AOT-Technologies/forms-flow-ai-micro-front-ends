@@ -596,6 +596,10 @@ export const RESOURCE_BUNDLES_PT = {
   "DMN Name": "Nome do DMN",
   "Search by DMN name": "Pesquisar por nome do DMN",
   "Display authorized tasks based on user roles":"Exibir tarefas autorizadas com base nas funções do usuário",
+  "You are currently using a test instance.The trial period ends in": "Você está usando atualmente uma instância de teste. O período de teste termina em",
+  "days.": "dias.",
+  "Are you sure to delete": "Tem certeza de que deseja excluir",
+  "filter?": "filtro?",
   "Select Workflow": "Selecionar fluxo de trabalho",
   "Select Assignee": "Selecionar destinatário",
   "Click here to select attributes": "Clique aqui para selecionar atributos",
@@ -611,5 +615,11 @@ export const RESOURCE_BUNDLES_PT = {
   "Select form fields to display in task list": "Selecionar campos do formulário para exibir na lista de tarefas",
   "Select all fields": "Selecionar todos os campos",
   "Edit Lable": "Editar Rótulo",
-  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecionar todos os campos do formulário pode afetar o desempenho. Para obter o melhor desempenho, selecione apenas os campos do formulário que você realmente precisa."
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecionar todos os campos do formulário pode afetar o desempenho. Para obter o melhor desempenho, selecione apenas os campos do formulário que você realmente precisa.",
+  "User Added successfully!": "Usuário adicionado com sucesso!",
+  "Failed to create user!": "Falha ao criar usuário!",
+  "Invite Registered Users": "Convidar Usuários Registrados",
+  "Invite registered user to application": "Convidar usuário registrado para o aplicativo",
+  "Username or Email": "Nome de usuário ou Email",
+  "Add User": "Adicionar Usuário"
 };

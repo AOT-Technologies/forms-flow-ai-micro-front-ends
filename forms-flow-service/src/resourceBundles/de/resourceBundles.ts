@@ -598,11 +598,15 @@ export const RESOURCE_BUNDLES_DE = {
   "DMN Name": "DMN-Name",
   "Search by DMN name": "Nach DMN-Namen suchen",
   "Display authorized tasks based on user roles":"Autorisierte Aufgaben basierend auf Benutzerrollen anzeigen",
+  "You are currently using a test instance.The trial period ends in":"Sie verwenden derzeit eine Testinstanz. Die Testphase endet in",
+  "days.": "Tage.",
+  "Are you sure to delete": "Sind Sie sicher, dass Sie löschen möchten",
+  "filter?": "Filter?",
   "Select Workflow": "Arbeitsablauf auswählen",
   "Select Assignee": "Zuweisung auswählen",
   "Click here to select attributes": "Klicken Sie hier, um Attribute auszuwählen",
   "Select the predefined attributes and custom task variables created as part of form submission you wish to display in the task list": "Wählen Sie die vordefinierten Attribute und benutzerdefinierten Aufgabenvariablen aus, die im Rahmen der Formularübermittlung erstellt wurden und die Sie in der Aufgabenliste anzeigen möchten",
-  "Task variables": "Aufgabenvariablen",
+  "Task variables": "Aufgabenvaiablen",
   "User Role": "Benutzerrolle",
   "User Group": "Benutzergruppe",
   "Select User Role": "Benutzerrolle auswählen",
@@ -613,5 +617,12 @@ export const RESOURCE_BUNDLES_DE = {
   "Select form fields to display in task list": "Wählen Sie die Formularfelder aus, die in der Aufgabenliste angezeigt werden sollen",
   "Select all fields": "Alle Felder auswählen",
   "Edit Lable": "Beschriftung bearbeiten",
-  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Das Auswählen aller Formularfelder kann sich auf die Leistung auswirken. Wählen Sie für die beste Leistung nur die Formularfelder aus, die Sie wirklich benötigen."
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Das Auswählen aller Formularfelder kann sich auf die Leistung auswirken. Wählen Sie für die beste Leistung nur die Formularfelder aus, die Sie wirklich benötigen.",
+  "User Added successfully!": "Benutzer erfolgreich hinzugefügt!",
+  "Failed to create user!": "Benutzer konnte nicht erstellt werden!",
+  "Invite Registered Users": "Registrierte Benutzer einladen",
+  "Invite registered user to application": "Registrierten Benutzer zur Anwendung einladen",
+  "Username or Email": "Benutzername oder E-Mail",
+  "Add User": "Benutzer hinzufügen"
+
 };

@@ -594,6 +594,10 @@ export const RESOURCE_BUNDLES_BG = {
   "DMN Name": "Име на DMN",
   "Search by DMN name": "Търсене по име на DMN",
   "Display authorized tasks based on user roles":"Показване на разрешени задачи въз основа на ролите на потребителя",
+  "You are currently using a test instance.The trial period ends in":"В момента използвате тестова инстанция. Пробният период изтича след",
+  "days.": "дни.",
+  "Are you sure to delete": "Сигурни ли сте, че искате да изтриете",
+  "filter?": "филтър?",
   "Select Workflow": "Изберете работен процес",
   "Select Assignee": "Изберете назначен",
   "Click here to select attributes": "Кликнете тук, за да изберете атрибути",
@@ -609,5 +613,12 @@ export const RESOURCE_BUNDLES_BG = {
   "Select form fields to display in task list": "Изберете полета на формуляра, които да се показват в списъка със задачи",
   "Select all fields": "Изберете всички полета",
   "Edit Lable": "Редактиране на етикета",
-  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Избирането на всички полета на формуляра може да окаже влияние върху производителността. За най-добри резултати, изберете само полетата на формуляра, които наистина ви трябват."
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Избирането на всички полета на формуляра може да окаже влияние върху производителността. За най-добри резултати, изберете само полетата на формуляра, които наистина ви трябват.",
+  "User Added successfully!": "Потребителят е успешно добавен!",
+  "Failed to create user!": "Неуспешно създаване на потребител!",
+  "Invite Registered Users": "Покани Регистрирани Потребители",
+  "Invite registered user to application": "Покани регистриран потребител към приложението",
+  "Username or Email": "Потребителско име или Имейл",
+  "Add User": "Добави Потребител"
+
 };

@@ -597,6 +597,10 @@ export const RESOURCE_BUNDLES_FR = {
   "DMN Name": "Nom DMN",
   "Search by DMN name": "Rechercher par nom DMN",
   "Display authorized tasks based on user roles":"Afficher les tâches autorisées en fonction des rôles de l'utilisateur",
+  "You are currently using a test instance.The trial period ends in": "Vous utilisez actuellement une instance de test. La période d'essai se termine dans",
+  "days.": "jours.",
+  "Are you sure to delete?": "Êtes-vous sûr de vouloir supprimer ",
+  "filter?": "filtre ?",
   "Select Workflow": "Sélectionner le flux de travail",
   "Select Assignee": "Sélectionner l'assigné",
   "Click here to select attributes": "Cliquez ici pour sélectionner les attributs",
@@ -612,7 +616,13 @@ export const RESOURCE_BUNDLES_FR = {
   "Select form fields to display in task list": "Sélectionnez les champs de formulaire à afficher dans la liste des tâches",
   "Select all fields": "Sélectionner tous les champs",
   "Edit Lable": "Modifier l'étiquette",
-  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Sélectionner tous les champs de formulaire peut affecter les performances. Pour obtenir les meilleures performances, choisissez uniquement les champs de formulaire dont vous avez vraiment besoin."
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Sélectionner tous les champs de formulaire peut affecter les performances. Pour obtenir les meilleures performances, choisissez uniquement les champs de formulaire dont vous avez vraiment besoin.",
+  "User Added successfully!": "Utilisateur ajouté avec succès !",
+  "Failed to create user!": "Échec de la création de l'utilisateur !",
+  "Invite Registered Users": "Inviter les utilisateurs enregistrés",
+  "Invite registered user to application": "Inviter l'utilisateur enregistré à l'application",
+  "Username or Email": "Nom d'utilisateur ou Email",
+  "Add User": "Ajouter un utilisateur"
 };
 
 

@@ -596,6 +596,10 @@ export const RESOURCE_BUNDLES_EN = {
   "DMN Name": "DMN Name",
   "Search by DMN name": "Search by DMN name",
   "Display authorized tasks based on user roles":"Display authorized tasks based on user roles",
+  "You are currently using a test instance.The trial period ends in": "You are currently using a test instance.The trial period ends in",
+  "days.": "days.",
+  "Are you sure to delete":"Are you sure to delete",
+  "filter?": "filter?",
   "Select Workflow": "Select Workflow",
   "Select Assignee": "Select Assignee",
   "Click here to select attributes": "Click here to select attributes",
@@ -611,7 +615,13 @@ export const RESOURCE_BUNDLES_EN = {
   "Select form fields to display in task list": "Select form fields to display in task list",
   "Select all fields": "Select all fields",
   "Edit Lable": "Edit Label",
-  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need."
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.",
+  "User Added successfully!": "User added successfully!",
+  "Failed to create user!": "Failed to create user!",
+  "Invite Registered Users": "Invite Registered Users",
+  "Invite registered user to application": "Invite registered user to application",
+  "Username or Email": "Username or Email",
+  "Add User": "Add User"
 };
 
 

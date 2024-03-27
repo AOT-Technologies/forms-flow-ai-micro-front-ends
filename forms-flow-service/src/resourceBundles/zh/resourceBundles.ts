@@ -593,6 +593,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "DMN Name": "DMN 名称",
   "Search by DMN name": "按 DMN 名称搜索",
   "Display authorized tasks based on user roles":"显示基于用户角色的授权任务",
+  "You are currently using a test instance.The trial period ends in": "您当前正在使用测试实例。试用期结束于",
+  "days.": "天。",
+  "Are you sure to delete": "您确定要删除吗",
+  "filter?": "过滤器？",
   "Select Workflow": "选择工作流程",
   "Select Assignee": "选择受让人",
   "Click here to select attributes": "单击此处选择属性",
@@ -608,6 +612,12 @@ export const RESOURCE_BUNDLES_ZH = {
   "Select form fields to display in task list": "选择要在任务列表中显示的表单字段",
   "Select all fields": "选择所有字段",
   "Edit Lable": "编辑标签",
-  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "选择所有表单字段可能会影响性能。为了获得最佳性能，请只选择您真正需要的表单字段。"
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "选择所有表单字段可能会影响性能。为了获得最佳性能，请只选择您真正需要的表单字段。",
+  "User Added successfully!": "用户添加成功！",
+  "Failed to create user!": "用户创建失败！",
+  "Invite Registered Users": "邀请已注册用户",
+  "Invite registered user to application": "邀请已注册用户加入应用",
+  "Username or Email": "用户名或邮箱",
+  "Add User": "添加用户"
 };
 
