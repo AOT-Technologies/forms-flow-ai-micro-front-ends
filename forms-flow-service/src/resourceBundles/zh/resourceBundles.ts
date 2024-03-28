@@ -615,6 +615,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Invite Registered Users": "邀请已注册用户",
   "Invite registered user to application": "邀请已注册用户加入应用",
   "Username or Email": "用户名或邮箱",
-  "Add User": "添加用户"
+  "Add User": "添加用户",
+  "User not exist!": "用户不存在！"
 };
 

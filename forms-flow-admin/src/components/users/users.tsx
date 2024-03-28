@@ -381,7 +381,7 @@ const Users = React.memo((props: any) => {
       props.setInvalidated(true);
     },
     (err) => {
-      toast.error(t("Failed to create user!"));
+      toast.error(t("User not exist!"));
     }
   );
   };
