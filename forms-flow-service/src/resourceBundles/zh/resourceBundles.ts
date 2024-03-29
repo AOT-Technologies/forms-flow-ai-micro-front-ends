@@ -44,9 +44,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Unfinished submissions will be saved to Submissions/Drafts.": "未完成的提交将保存到提交/草稿。",
   "Edit Process": "编辑流程",
   "Add filter name": "添加过滤器名称",
-  "This section is aimed to set the parameters used to filter the tasks": "此部分旨在设置用于过滤任务的参数",
-  "This section is aimed to set read permissions for the filter": "此部分旨在设置过滤器的读取权限",
-  "This section is aimed to set select task attributes that will be visible in the task list view": "此部分旨在设置在任务列表视图中可见的选择任务属性",
+  "This section is aimed to set the parameters\nused to filter the tasks": "此部分旨在设置用于过滤任务的参数",
+  "This section is aimed to set read\npermissions for the filter": "此部分旨在设置过滤器的读取权限",
+  "This section is aimed to set select\ntask attributes that will be visible in\nthe task list view": "此部分旨在设置在任务列表视图中可见的选择任务属性",
   "Task Attribute": "任务属性",
   "You can define variables shown in the list": "您可以定义在列表中显示的变量",
   "results": "结果",
@@ -604,6 +604,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Select User Role": "选择用户角色",
   "Select User Group": "选择用户组",
   "To display task variables, select a form as part of the filter": "要显示任务变量，请将表单选择为筛选器的一部分",
-  "select a form": "选择一个表单"
+  "select a form": "选择一个表单",
+  "No task variables found": "未找到任何任务变量"
 };
 

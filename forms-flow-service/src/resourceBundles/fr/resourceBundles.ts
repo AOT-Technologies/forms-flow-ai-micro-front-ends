@@ -45,9 +45,9 @@ export const RESOURCE_BUNDLES_FR = {
   "Unfinished submissions will be saved to Submissions/Drafts.": "Les soumissions inachevées seront enregistrées dans Soumissions/Brouillons.",
   "Edit Process": "Modifier le processus",
   "Add filter name": "Ajouter un nom de filtre",
-  "This section is aimed to set the parameters used to filter the tasks": "Cette section vise à définir les paramètres utilisés pour filtrer les tâches",
-  "This section is aimed to set read permissions for the filter": "Cette section vise à définir les autorisations de lecture pour le filtre",
-  "This section is aimed to set select task attributes that will be visible in the task list view": "Cette section vise à définir les attributs de tâche sélectionnés qui seront visibles dans la vue de la liste des tâches",
+  "This section is aimed to set the parameters\nused to filter the tasks": "Cette section vise à définir les paramètres utilisés\npour filtrer les tâches",
+  "This section is aimed to set read\npermissions for the filter": "Cette section vise à définir les\nautorisations de lecture pour le filtre",
+  "This section is aimed to set select\ntask attributes that will be visible in\nthe task list view": "Cette section vise à définir les attributs\nde tâche sélectionnés qui seront visibles\ndans la vue de la liste des tâches",
   "Task Attribute": "Attribut de la tâche",
   "You can define variables shown in the list": "Vous pouvez définir des variables affichées dans la liste",
   "results": "Résultats",
@@ -608,7 +608,8 @@ export const RESOURCE_BUNDLES_FR = {
   "Select User Role": "Sélectionner le rôle de l'utilisateur",
   "Select User Group": "Sélectionner le groupe d'utilisateurs",
   "To display task variables, select a form as part of the filter": "Pour afficher les variables de tâche, sélectionnez un formulaire dans le filtre",
-  "select a form": "sélectionnez un formulaire"
+  "select a form": "sélectionnez un formulaire",
+  "No task variables found": "Aucune variable de tâche trouvée"
 };
 
 

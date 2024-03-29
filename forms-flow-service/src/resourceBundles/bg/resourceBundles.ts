@@ -45,9 +45,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Unfinished submissions will be saved to Submissions/Drafts.": "Незавършените представяния ще бъдат запазени в Представяния/Чернови.",
   "Edit Process": "Редактиране на процеса",
   "Add filter name": "Добави име на филтър",
-  "This section is aimed to set the parameters used to filter the tasks": "Този раздел има за цел да зададе параметрите, използвани за филтриране на задачите",
-  "This section is aimed to set read permissions for the filter": "Този раздел има за цел да зададе правата за четене на филтъра",
-  "This section is aimed to set select task attributes that will be visible in the task list view": "Този раздел има за цел да зададе избраните атрибути на задачата, които ще бъдат видими в изгледа на списъка с задачи",
+  "This section is aimed to set the parameters\nused to filter the tasks": "Този раздел има за цел да зададе параметрите,\nизползвани за филтриране на задачите",
+  "This section is aimed to set read\npermissions for the filter": "Този раздел има за цел да зададе\nправата за четене на филтъра",
+  "This section is aimed to set select\ntask attributes that will be visible in\nthe task list view": "Този раздел има за цел да\nзададе избраните атрибути на\nзадачата, които ще бъдатвидими\nв изгледа на списъка с задачи",
   "Task Attribute": "Атрибут на задачата",
   "You can define variables shown in the list": "Можете да дефинирате променливи, показани в списъка",
   "results": "Резултати",
@@ -605,5 +605,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Select User Role": "Изберете роля на потребителя",
   "Select User Group": "Изберете група на потребителя",
   "To display task variables, select a form as part of the filter": "За да покажете променливите на задачата, изберете формуляр като част от филтъра",
-  "select a form": "изберете формуляр"
+  "select a form": "изберете формуляр",
+  "No task variables found": "Не са намерени променливи за задачи"
 };
