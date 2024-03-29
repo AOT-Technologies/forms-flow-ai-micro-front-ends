@@ -67,3 +67,21 @@ export const RemoveUserRole = (
       }
     });
 };
+
+export const CreateUser = (payload, callback, errorHandler) => {
+  RequestService.httpPOSTRequest(API.ADD_USER, payload)
+    .then((res) => {
+      if (res.data) {
+        callback(res.data)
+      } else {
+        errorHandler("Failed to post data!");
+      }
+    })
+    .catch((error) => {
+      if (error?.response?.data) {
+        errorHandler(error.response.data?.message);
+      } else {
+        errorHandler("Faied to post data!");
+      }
+    });
+};

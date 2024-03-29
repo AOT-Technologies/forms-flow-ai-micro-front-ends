@@ -594,6 +594,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "DMN Name": "DMN 名称",
   "Search by DMN name": "按 DMN 名称搜索",
   "Display authorized tasks based on user roles":"显示基于用户角色的授权任务",
+  "You are currently using a test instance.The trial period ends in": "您当前正在使用测试实例。试用期结束于",
+  "days.": "天。",
+  "Are you sure to delete": "您确定要删除吗",
+  "filter?": "过滤器？",
   "Select Workflow": "选择工作流程",
   "Select Assignee": "选择受让人",
   "Click here to select attributes": "单击此处选择属性",
@@ -605,6 +609,14 @@ export const RESOURCE_BUNDLES_ZH = {
   "Select User Group": "选择用户组",
   "To display task variables, select a form as part of the filter": "要显示任务变量，请将表单选择为筛选器的一部分",
   "select a form": "选择一个表单",
-  "No task variables found": "未找到任何任务变量"
+  "No task variables found": "未找到任何任务变量",
+  "Edit filter": "编辑过滤器",
+  "User Added successfully!": "用户添加成功！",
+  "Failed to create user!": "用户创建失败！",
+  "Invite Registered Users": "邀请已注册用户",
+  "Invite registered user to application": "邀请已注册用户加入应用",
+  "Username or Email": "用户名或邮箱",
+  "Add User": "添加用户",
+  "User not exist!": "用户不存在！"
 };
 

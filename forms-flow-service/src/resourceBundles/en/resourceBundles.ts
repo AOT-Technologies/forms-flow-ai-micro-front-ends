@@ -194,7 +194,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Add a group": "Add a group",
   "Process Name": "Process Name",
   "Set FollowUp Date": "Set FollowUp Date",
-  "Groups": "groups",
+  "Groups": "Groups",
   "Click to Change Assignee": "Click to Change Assignee",
   "Reset Assignee": "Reset Assignee",
   "Update User": "Update User",
@@ -597,6 +597,10 @@ export const RESOURCE_BUNDLES_EN = {
   "DMN Name": "DMN Name",
   "Search by DMN name": "Search by DMN name",
   "Display authorized tasks based on user roles":"Display authorized tasks based on user roles",
+  "You are currently using a test instance.The trial period ends in": "You are currently using a test instance.The trial period ends in",
+  "days.": "days.",
+  "Are you sure to delete":"Are you sure to delete",
+  "filter?": "filter?",
   "Select Workflow": "Select Workflow",
   "Select Assignee": "Select Assignee",
   "Click here to select attributes": "Click here to select attributes",
@@ -608,7 +612,15 @@ export const RESOURCE_BUNDLES_EN = {
   "Select User Group": "Select User Group",
   "To display task variables, select a form as part of the filter": "To display task variables, select a form as part of the filter",
   "select a form": "select a form",
-  "No task variables found": "No task variables found"
+  "No task variables found": "No task variables found",
+  "Edit filter": "Edit filter",
+  "User Added successfully!": "User added successfully!",
+  "Failed to create user!": "Failed to create user!",
+  "Invite Registered Users": "Invite Registered Users",
+  "Invite registered user to application": "Invite registered user to application",
+  "Username or Email": "Username or Email",
+  "Add User": "Add User",
+  "User not exist!": "User not exist!"
 };
 
 

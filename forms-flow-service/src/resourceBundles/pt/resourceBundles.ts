@@ -597,6 +597,10 @@ export const RESOURCE_BUNDLES_PT = {
   "DMN Name": "Nome do DMN",
   "Search by DMN name": "Pesquisar por nome do DMN",
   "Display authorized tasks based on user roles":"Exibir tarefas autorizadas com base nas funções do usuário",
+  "You are currently using a test instance.The trial period ends in": "Você está usando atualmente uma instância de teste. O período de teste termina em",
+  "days.": "dias.",
+  "Are you sure to delete": "Tem certeza de que deseja excluir",
+  "filter?": "filtro?",
   "Select Workflow": "Selecionar fluxo de trabalho",
   "Select Assignee": "Selecionar destinatário",
   "Click here to select attributes": "Clique aqui para selecionar atributos",
@@ -608,5 +612,13 @@ export const RESOURCE_BUNDLES_PT = {
   "Select User Group": "Selecionar grupo de usuários",
   "To display task variables, select a form as part of the filter": "Para exibir as variáveis da tarefa, selecione um formulário como parte do filtro",
   "select a form": "selecione um formulário",
-  "No task variables found": "Nenhuma variável de tarefa encontrada"
+  "No task variables found": "Nenhuma variável de tarefa encontrada",
+  "Edit filter": "Editar filtro",
+  "User Added successfully!": "Usuário adicionado com sucesso!",
+  "Failed to create user!": "Falha ao criar usuário!",
+  "Invite Registered Users": "Convidar Usuários Registrados",
+  "Invite registered user to application": "Convidar usuário registrado para o aplicativo",
+  "Username or Email": "Nome de usuário ou Email",
+  "Add User": "Adicionar Usuário",
+  "User not exist!": "Usuário não existe!"
 };

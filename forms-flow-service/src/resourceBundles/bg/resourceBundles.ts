@@ -595,6 +595,10 @@ export const RESOURCE_BUNDLES_BG = {
   "DMN Name": "Име на DMN",
   "Search by DMN name": "Търсене по име на DMN",
   "Display authorized tasks based on user roles":"Показване на разрешени задачи въз основа на ролите на потребителя",
+  "You are currently using a test instance.The trial period ends in":"В момента използвате тестова инстанция. Пробният период изтича след",
+  "days.": "дни.",
+  "Are you sure to delete": "Сигурни ли сте, че искате да изтриете",
+  "filter?": "филтър?",
   "Select Workflow": "Изберете работен процес",
   "Select Assignee": "Изберете назначен",
   "Click here to select attributes": "Кликнете тук, за да изберете атрибути",
@@ -606,5 +610,14 @@ export const RESOURCE_BUNDLES_BG = {
   "Select User Group": "Изберете група на потребителя",
   "To display task variables, select a form as part of the filter": "За да покажете променливите на задачата, изберете формуляр като част от филтъра",
   "select a form": "изберете формуляр",
-  "No task variables found": "Не са намерени променливи за задачи"
+  "No task variables found": "Не са намерени променливи за задачи",
+  "Edit filter": "Редактиране на филтър",
+  "User Added successfully!": "Потребителят е успешно добавен!",
+  "Failed to create user!": "Неуспешно създаване на потребител!",
+  "Invite Registered Users": "Покани Регистрирани Потребители",
+  "Invite registered user to application": "Покани регистриран потребител към приложението",
+  "Username or Email": "Потребителско име или Имейл",
+  "Add User": "Добави Потребител",
+  "User not exist!": "Потребителят не съществува!"
+
 };
