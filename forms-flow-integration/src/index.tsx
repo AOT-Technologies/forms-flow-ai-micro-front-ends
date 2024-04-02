@@ -9,9 +9,10 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/Footer";
-import { BASE_ROUTE, DESIGNER_ROLE, MULTITENANCY_ENABLED } from "./constants";
+import { BASE_ROUTE, DESIGNER_ROLE, MULTITENANCY_ENABLED, ENABLE_INTEGRATION_PREMIUM } from "./constants";
 import Recipes from "./components/Recipes";
 import ConnectedApps from "./components/ConnectedApps";
+import PremiumSubscription from "./components/PremiumSubscription";
 import Library from "./components/Library";
 import Head from "./containers/head";
 import i18n from "./resourceBundles/i18n";
@@ -106,9 +107,11 @@ const Integration = React.memo(({ props }: any) => {
   if (integrationCheckLoading) {
     return <Loading />
   }
-
   if (!integrationEnabled || !isDesigner) {
-    return <div className="d-flex align-item-center justify-content-center p-5">
+    if(ENABLE_INTEGRATION_PREMIUM && isDesigner) {
+      return <PremiumSubscription />
+    } 
+    return <div className="d-flex align-item-center justify-content-center p-5 mt-5">
      <Alert variant="danger" message="Unauthorized Access - You don't have the permission to access this service."/>
     </div>
   }
