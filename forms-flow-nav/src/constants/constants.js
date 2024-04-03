@@ -92,7 +92,13 @@ export const STAFF_REVIEWER = "formsflow-reviewer";
 export const ANONYMOUS_USER = "anonymous";
 export const ADMIN_ROLE = "formsflow-admin";
 
+const INTEGRATION_ENABLED_VARIABLE =
+  (window._env_ && window._env_.REACT_APP_ENABLE_INTEGRATION_PREMIUM) || false;
 
+export const ENABLE_INTEGRATION_PREMIUM = INTEGRATION_ENABLED_VARIABLE === "true" ||
+INTEGRATION_ENABLED_VARIABLE === true
+  ? true
+  : false;
 
 export const OPERATIONS = {
   insert: {
