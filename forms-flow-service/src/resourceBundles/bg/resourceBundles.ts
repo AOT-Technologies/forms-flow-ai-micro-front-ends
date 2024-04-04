@@ -618,7 +618,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Invite registered user to application": "Покани регистриран потребител към приложението",
   "Username or Email": "Потребителско име или Имейл",
   "Add User": "Добави Потребител",
-  "User not exist!": "Потребителят не съществува!",
+  "User doesn't exist!": "Потребителят не съществува!",
   "Success": "Успех",
   "User added": "Потребителят е добавен"
 };

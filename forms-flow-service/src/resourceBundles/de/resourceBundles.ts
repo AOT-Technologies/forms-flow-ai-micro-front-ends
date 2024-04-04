@@ -622,7 +622,7 @@ export const RESOURCE_BUNDLES_DE = {
   "Invite registered user to application": "Registrierten Benutzer zur Anwendung einladen",
   "Username or Email": "Benutzername oder E-Mail",
   "Add User": "Benutzer hinzufügen",
-  "User not exist!": "Benutzer existiert nicht!",
+  "User doesn't exist!": "Benutzer existiert nicht!",
   "Success": "Erfolg",
   "User added": "Benutzer hinzugefügt"
 

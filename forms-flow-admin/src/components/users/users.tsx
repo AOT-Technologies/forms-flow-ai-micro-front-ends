@@ -391,7 +391,7 @@ const Users = React.memo((props: any) => {
         openSuccessModal();
       },
       (err) => {
-        setValidationError(t('User not exist!'));
+        setValidationError(t("User doesn't exist!"));
       }
     );
   };
