@@ -108,7 +108,6 @@ export const RESOURCE_BUNDLES_PT = {
   "Form field": "Campo do formulário",
   "Enter Label": "Digite o rótulo",
   "Select form field": "Selecione o campo do formulário",
-  "Add form fields to display in task list": "Adicionar campos de formulário para exibir na lista de tarefas",
   "Latest Version": "Última versão",
   "Submission Status": "Status de submissão",
   "No submission status": "Sem status de envio",
@@ -614,6 +613,10 @@ export const RESOURCE_BUNDLES_PT = {
   "select a form": "selecione um formulário",
   "No task variables found": "Nenhuma variável de tarefa encontrada",
   "Edit filter": "Editar filtro",
+  "Select form fields to display in task list": "Selecionar campos do formulário para exibir na lista de tarefas",
+  "Select all fields": "Selecionar todos os campos",
+  "Edit Lable": "Editar Rótulo",
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecionar todos os campos do formulário pode afetar o desempenho. Para obter o melhor desempenho, selecione apenas os campos do formulário que você realmente precisa.",
   "User Added successfully!": "Usuário adicionado com sucesso!",
   "Failed to create user!": "Falha ao criar usuário!",
   "Invite Registered Users": "Convidar Usuários Registrados",
@@ -622,5 +625,7 @@ export const RESOURCE_BUNDLES_PT = {
   "Add User": "Adicionar Usuário",
   "User doesn't exist!": "Utilizador não existe!",
   "Success": "Sucesso",
-  "User added": "Utilizador adicionado"
+  "User added": "Utilizador adicionado",
+  "From": "De",
+  "To": "Para"
 };

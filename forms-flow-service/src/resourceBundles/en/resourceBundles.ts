@@ -107,7 +107,6 @@ export const RESOURCE_BUNDLES_EN = {
   "Form field": "Form field",
   "Enter Label": "Enter Label",
   "Select form field": "Select form field",
-  "Add form fields to display in task list": "Add form fields to display in task list",
   "Latest Version": "Latest Version",
   "Submission Status": "Submission Status",
   "No submission status": "No submission status",
@@ -614,6 +613,10 @@ export const RESOURCE_BUNDLES_EN = {
   "select a form": "select a form",
   "No task variables found": "No task variables found",
   "Edit filter": "Edit filter",
+  "Select form fields to display in task list": "Select form fields to display in task list",
+  "Select all fields": "Select all fields",
+  "Edit Lable": "Edit Label",
+  "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.",
   "User Added successfully!": "User added successfully!",
   "Failed to create user!": "Failed to create user!",
   "Invite Registered Users": "Invite Registered Users",
@@ -622,7 +625,9 @@ export const RESOURCE_BUNDLES_EN = {
   "Add User": "Add User",
   "User doesn't exist!": "User doesn't exist!",
   "Success": "Success",
-  "User added": "User added"
+  "User added": "User added",
+  "From": "From",
+  "To": "To"
 };
 
 

@@ -16,6 +16,7 @@ import {
   ENABLE_DASHBOARDS_MODULE,
   ENABLE_APPLICATIONS_MODULE,
   ENABLE_TASKS_MODULE,
+  ENABLE_INTEGRATION_PREMIUM
 } from "./constants/constants";
 import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
@@ -340,7 +341,7 @@ const NavBar = React.memo(({ props }) => {
                     : null}
 
                   {getUserRolePermission(userRoles, STAFF_DESIGNER)
-                    ? integrationEnabled && (
+                    ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
                         <Nav.Link
                           eventKey="integration"
                           as={Link}
@@ -356,6 +357,7 @@ const NavBar = React.memo(({ props }) => {
                         >
                           <i className="fa-solid fa-network-wired me-2"></i>
                           {t("Integration")}
+                          {(ENABLE_INTEGRATION_PREMIUM && <i className="fa-solid fa-crown p-1 text-warning"></i>) || null}
                         </Nav.Link>
                       )
                     : null}
