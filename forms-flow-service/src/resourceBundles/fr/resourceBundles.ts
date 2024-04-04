@@ -624,7 +624,9 @@ export const RESOURCE_BUNDLES_FR = {
   "Invite registered user to application": "Inviter l'utilisateur enregistré à l'application",
   "Username or Email": "Nom d'utilisateur ou Email",
   "Add User": "Ajouter un utilisateur",
-  "User not exist!": "L'utilisateur n'existe pas !"
+  "User not exist!": "L'utilisateur n'existe pas !",
+  "From": "De",
+  "To": "À"
 };
 
 
