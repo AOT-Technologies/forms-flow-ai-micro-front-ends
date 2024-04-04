@@ -615,7 +615,7 @@ export const RESOURCE_BUNDLES_PT = {
   "Edit filter": "Editar filtro",
   "Select form fields to display in task list": "Selecionar campos do formulário para exibir na lista de tarefas",
   "Select all fields": "Selecionar todos os campos",
-  "Edit Lable": "Editar Rótulo",
+  "Edit Label": "Editar Rótulo",
   "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecionar todos os campos do formulário pode afetar o desempenho. Para obter o melhor desempenho, selecione apenas os campos do formulário que você realmente precisa.",
   "User Added successfully!": "Usuário adicionado com sucesso!",
   "Failed to create user!": "Falha ao criar usuário!",

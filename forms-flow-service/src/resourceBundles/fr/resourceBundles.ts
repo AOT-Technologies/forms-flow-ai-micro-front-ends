@@ -616,7 +616,7 @@ export const RESOURCE_BUNDLES_FR = {
   "Edit filter": "Modifier le filtre",
   "Select form fields to display in task list": "Sélectionnez les champs de formulaire à afficher dans la liste des tâches",
   "Select all fields": "Sélectionner tous les champs",
-  "Edit Lable": "Modifier l'étiquette",
+  "Edit Label": "Modifier l'étiquette",
   "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Sélectionner tous les champs de formulaire peut affecter les performances. Pour obtenir les meilleures performances, choisissez uniquement les champs de formulaire dont vous avez vraiment besoin.",
   "User Added successfully!": "Utilisateur ajouté avec succès !",
   "Failed to create user!": "Échec de la création de l'utilisateur !",

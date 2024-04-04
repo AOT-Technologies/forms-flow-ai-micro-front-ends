@@ -613,7 +613,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Edit filter": "Редактиране на филтър",
   "Select form fields to display in task list": "Изберете полета на формуляра, които да се показват в списъка със задачи",
   "Select all fields": "Изберете всички полета",
-  "Edit Lable": "Редактиране на етикета",
+  "Edit Label": "Редактиране на етикета",
   "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Избирането на всички полета на формуляра може да окаже влияние върху производителността. За най-добри резултати, изберете само полетата на формуляра, които наистина ви трябват.",
   "User Added successfully!": "Потребителят е успешно добавен!",
   "Failed to create user!": "Неуспешно създаване на потребител!",

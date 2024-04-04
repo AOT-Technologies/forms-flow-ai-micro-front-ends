@@ -612,7 +612,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Edit filter": "编辑过滤器",
   "Select form fields to display in task list": "选择要在任务列表中显示的表单字段",
   "Select all fields": "选择所有字段",
-  "Edit Lable": "编辑标签",
+  "Edit Label": "编辑标签",
   "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "选择所有表单字段可能会影响性能。为了获得最佳性能，请只选择您真正需要的表单字段。",
   "User Added successfully!": "用户添加成功！",
   "Failed to create user!": "用户创建失败！",

@@ -615,7 +615,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Edit filter": "Edit filter",
   "Select form fields to display in task list": "Select form fields to display in task list",
   "Select all fields": "Select all fields",
-  "Edit Lable": "Edit Label",
+  "Edit Label": "Edit Label",
   "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.",
   "User Added successfully!": "User added successfully!",
   "Failed to create user!": "Failed to create user!",

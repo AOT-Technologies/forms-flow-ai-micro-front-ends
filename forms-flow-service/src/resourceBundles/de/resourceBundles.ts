@@ -617,7 +617,7 @@ export const RESOURCE_BUNDLES_DE = {
   "Edit filter": "Filter bearbeiten",
   "Select form fields to display in task list": "Wählen Sie die Formularfelder aus, die in der Aufgabenliste angezeigt werden sollen",
   "Select all fields": "Alle Felder auswählen",
-  "Edit Lable": "Beschriftung bearbeiten",
+  "Edit Label": "Beschriftung bearbeiten",
   "Selecting all form fields may affect performance. For the best performance, just pick the form fields you really need.": "Das Auswählen aller Formularfelder kann sich auf die Leistung auswirken. Wählen Sie für die beste Leistung nur die Formularfelder aus, die Sie wirklich benötigen.",
   "User Added successfully!": "Benutzer erfolgreich hinzugefügt!",
   "Failed to create user!": "Benutzer konnte nicht erstellt werden!",
