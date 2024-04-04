@@ -31,7 +31,20 @@ const Users = React.memo((props: any) => {
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
   const { t } = useTranslation();
   const [selectedRolesModal, setSelectedRolesModal] = React.useState([]);
-  const [formData, setFormData] = React.useState({ user: ""}); 
+  const [formData, setFormData] = React.useState({ user: ""});
+  const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+  const [validationError, setValidationError] = React.useState('');
+
+  const openSuccessModal = () => {
+    setShowSuccessModal(true);
+    closeInviteModal();
+  };
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
+    clearForm();
+    props.setInvalidated(true);
+  }; 
   
   React.useEffect(() => {
     props?.setFilter(selectedFilter);
@@ -372,22 +385,45 @@ const Users = React.memo((props: any) => {
       roles: selectedRolesIds,
       user: formData.user,
     };
-  CreateUser(
-    payload,
-    (data) => {
-      toast.success(t("User Added successfully!"));
-      clearForm();
-      closeInviteModal(); 
-      props.setInvalidated(true);
-    },
-    (err) => {
-      toast.error(t("User not exist!"));
-    }
-  );
+    CreateUser(
+      payload,
+      (data) => {
+        openSuccessModal();
+      },
+      (err) => {
+        setValidationError(t("User doesn't exist!"));
+      }
+    );
   };
+  
 
   return (
     <>
+      <Modal
+        show={showSuccessModal}
+        onHide={closeSuccessModal}
+        centered
+        className="overflow-hidden">
+        <Modal.Header closeButton>
+          <Modal.Title></Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="modal-md d-flex align-items-center justify-content-center">
+          <div className="p-3 text-center">
+            <div className="d-flex flex-column align-items-center">
+              <div className="mb-2">
+                <i className="fa fa-check-circle fa-3x success"></i>
+
+              </div>
+              <div className="mb-2 fw-bold">
+                {t("Success")}
+              </div>
+              <p>{t("User added")}</p>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between flex-wrap">
           <div className="search-role col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 px-0">
@@ -452,34 +488,39 @@ const Users = React.memo((props: any) => {
           <Modal.Title>{t("Invite registered user to application")}</Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>{t("Username or Email")}</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.user}
-                onChange={(e) =>
-                  setFormData({ ...formData, user: e.target.value })
-                }
-              />
-            </Form.Group>
-            <hr />
-            <Form.Group>
-              <Form.Label>{t("Add Role")}</Form.Label>
-              <br/>
-              <Select
-                options={roles.map((role) => ({
-                  value: role.id,
-                  label: role.name,
-                }))}
-                isMulti
-                value={selectedRolesModal}
-                onChange={handleRoleSelectChange}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
+                  <Modal.Body>
+                    <Form>
+                      <Form.Group>
+                        <Form.Label>{t("Username or Email")}</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={formData.user}
+                          onChange={(e) => setFormData({ ...formData, user: e.target.value })}
+                        />
+                        {validationError && (
+                          <p className="text-danger mt-2 ms-1 small">
+                            <i className="fa fa-times-circle-o text-danger"></i> {validationError}
+                          </p>
+                        )}
+
+                      </Form.Group>
+
+                      <hr />
+                      <Form.Group>
+                        <Form.Label>{t("Add Role")}</Form.Label>
+                        <br />
+                        <Select
+                          options={roles.map((role) => ({
+                            value: role.id,
+                            label: role.name,
+                          }))}
+                          isMulti
+                          value={selectedRolesModal}
+                          onChange={handleRoleSelectChange}
+                        />
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
 
         <Modal.Footer>
           <Button variant="secondary" onClick={closeInviteModal}>
