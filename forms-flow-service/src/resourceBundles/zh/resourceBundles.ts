@@ -624,6 +624,14 @@ export const RESOURCE_BUNDLES_ZH = {
   "Success": "成功",
   "User added": "用户已添加",
   "From": "从",
-  "To": "到"
+  "To": "到",
+  "Premium Subscription":   "高级订阅",
+  " For further insights on this exclusive premium feature, kindly connect":  "有关此独家高级功能的更多见解，请联系",
+  " with our dedicated marketing team for detailed information.":  "联系我们专业的营销团队获取详细信息。",
+  "Get Connected With Us Now!":  "立即与我们联系！",
+  "Visit our":   "访问我们的",
+  "Pricing page": "定价页面",
+  "for more details.":   "获取更多详细信息。",
+  "Integration":"集成"
 };
 

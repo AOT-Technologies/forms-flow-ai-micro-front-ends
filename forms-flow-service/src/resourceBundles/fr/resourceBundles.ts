@@ -628,7 +628,15 @@ export const RESOURCE_BUNDLES_FR = {
   "Success": "Succès",
   "User added": "Utilisateur ajouté",
   "From": "De",
-  "To": "À"
+  "To": "À",
+  "Premium Subscription":  "Abonnement Premium",
+  " For further insights on this exclusive premium feature, kindly connect":  "Pour plus d'informations sur cette fonctionnalité premium exclusive, veuillez vous connecter",
+  " with our dedicated marketing team for detailed information.":  "avec notre équipe marketing dédiée pour des informations détaillées.",
+  "Get Connected With Us Now!":  "Connectez-vous avec nous maintenant !",
+  "Visit our":  "Visitez notre",
+  "Pricing page": "page de tarification",
+  "for more details.":  "pour plus de détails.",
+  "Integration": "Intégration"
 };
 
 

@@ -625,5 +625,13 @@ export const RESOURCE_BUNDLES_BG = {
   "Success": "Успех",
   "User added": "Потребителят е добавен",
   "From": "От",
-  "To": "До"
+  "To": "До",
+  "Premium Subscription":  "Премиум Абонамент",
+  " For further insights on this exclusive premium feature, kindly connect": "За допълнителни прозрения относно тази изключителна премиум функция, моля, свържете се",
+  " with our dedicated marketing team for detailed information.": "с нашия отдел маркетинг за подробна информация.",
+  "Get Connected With Us Now!":  "Свържете се с нас сега!",
+  "Visit our": "Посетете нашия",
+  "Pricing page": "страница с цени",
+  "for more details.": "за повече подробности.",
+  "Integration": "Интеграция",
 };
