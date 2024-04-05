@@ -84,7 +84,10 @@ export const ENABLE_APPLICATIONS_MODULE =
     ? false
     : true;
 
-export const KEYCLOAK_AUTH_URL = `${KEYCLOAK_URL}/auth`;
+export const KEYCLOAK_URL_HTTP_RELATIVE_PATH =
+    (window._env_ && window._env_.REACT_APP_KEYCLOAK_URL_HTTP_RELATIVE_PATH) || '/auth';
+  
+export const KEYCLOAK_AUTH_URL = `${KEYCLOAK_URL}${KEYCLOAK_URL_HTTP_RELATIVE_PATH}`;
 
 export const CLIENT = "formsflow-client";
 export const STAFF_DESIGNER = "formsflow-designer";
