@@ -374,7 +374,10 @@ const Users = React.memo((props: any) => {
     setSelectedRolesModal([]);
   };
 
-  const openInviteModal = () => setShowInviteModal(true);
+  const openInviteModal = () => {      
+    setValidationError(null);
+    setShowInviteModal(true);
+  }
   const closeInviteModal = () => {
     clearForm();
     setShowInviteModal(false);
@@ -389,6 +392,7 @@ const Users = React.memo((props: any) => {
       payload,
       (data) => {
         openSuccessModal();
+        
       },
       (err) => {
         setValidationError(t("User doesn't exist!"));
