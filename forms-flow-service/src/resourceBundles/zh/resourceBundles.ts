@@ -632,6 +632,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Visit our":   "访问我们的",
   "Pricing page": "定价页面",
   "for more details.":   "获取更多详细信息。",
-  "Integration":"集成"
+  "Integration": "集成",
+  "Recipes": "食谱",
+  "Connected Apps": "已连接的应用",
+  "Library": "库"
 };
 

@@ -635,6 +635,8 @@ export const RESOURCE_BUNDLES_PT = {
   "Visit our":  "Visite nosso",
   "Pricing page":"página de preços",
   "for more details.":  "para mais detalhes.",
-  "Integration": " Integração"
-
+  "Integration": "Integração",
+  "Recipes": "Receitas",
+  "Connected Apps": "Aplicativos Conectados",
+  "Library": "Biblioteca"
 };

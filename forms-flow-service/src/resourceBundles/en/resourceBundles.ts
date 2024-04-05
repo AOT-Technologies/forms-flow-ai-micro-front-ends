@@ -635,7 +635,10 @@ export const RESOURCE_BUNDLES_EN = {
   "Visit our": "Visit our",
   "Pricing page":  "Pricing page",
   "for more details.": "for more details.",
-  "Integration": "Integration"
+  "Integration": "Integration",
+  "Recipes": "Recipes",
+  "Connected Apps": "Connected Apps",
+  "Library": "Library"
 };
 
 

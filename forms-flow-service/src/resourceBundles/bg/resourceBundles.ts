@@ -634,4 +634,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Pricing page": "страница с цени",
   "for more details.": "за повече подробности.",
   "Integration": "Интеграция",
+  "Recipes": "Рецепти",
+  "Connected Apps": "Свързани приложения",
+  "Library": "Библиотека"
 };
