@@ -322,8 +322,8 @@ const NavBar = React.memo(({ props }) => {
                   {getUserRolePermission(userRoles, STAFF_DESIGNER)
                     ? ENABLE_PROCESSES_MODULE && (
                         <Nav.Link
+                        eventKey="processes"
                           as={Link}
-                          eventKey={"processes"}
                           to={`${baseUrl}processes`}
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
