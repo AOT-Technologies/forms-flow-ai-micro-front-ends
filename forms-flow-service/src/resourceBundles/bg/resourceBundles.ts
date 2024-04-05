@@ -625,5 +625,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Success": "Успех",
   "User added": "Потребителят е добавен",
   "From": "От",
-  "To": "До"
+  "To": "До",
+  "Integration": "Интеграция",
+  "Recipes": "Рецепти",
+  "Connected Apps": "Свързани приложения",
+  "Library": "Библиотека"
 };
