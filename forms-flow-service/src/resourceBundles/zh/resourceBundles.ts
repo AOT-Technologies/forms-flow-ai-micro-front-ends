@@ -624,6 +624,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "Success": "成功",
   "User added": "用户已添加",
   "From": "从",
-  "To": "到"
+  "To": "到",
+  "Integration": "集成",
+  "Recipes": "食谱",
+  "Connected Apps": "已连接的应用",
+  "Library": "库"
 };
 

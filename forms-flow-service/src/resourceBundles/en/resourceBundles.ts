@@ -627,7 +627,11 @@ export const RESOURCE_BUNDLES_EN = {
   "Success": "Success",
   "User added": "User added",
   "From": "From",
-  "To": "To"
+  "To": "To",
+  "Integration": "Integration",
+  "Recipes": "Recipes",
+  "Connected Apps": "Connected Apps",
+  "Library": "Library"
 };
 
 

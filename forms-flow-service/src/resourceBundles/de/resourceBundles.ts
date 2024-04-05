@@ -629,5 +629,9 @@ export const RESOURCE_BUNDLES_DE = {
   "Success": "Erfolg",
   "User added": "Benutzer hinzugefügt",
   "From": "Von",
-  "To": "Zu"
+  "To": "Zu",
+  "Integration": "Integration",
+  "Recipes": "Rezepte",
+  "Connected Apps": "Verbundene Apps",
+  "Library": "Bibliothek"
 };
