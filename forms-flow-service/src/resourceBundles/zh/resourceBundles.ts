@@ -635,6 +635,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Integration": "集成",
   "Recipes": "食谱",
   "Connected Apps": "已连接的应用",
-  "Library": "库"
+  "Library": "库",
+  "Add group": "添加组"
 };
 
