@@ -638,7 +638,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Integration": "Integration",
   "Recipes": "Recipes",
   "Connected Apps": "Connected Apps",
-  "Library": "Library"
+  "Library": "Library",
+  "Add group": "Add group"
 };
 
 

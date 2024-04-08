@@ -636,5 +636,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Integration": "Интеграция",
   "Recipes": "Рецепти",
   "Connected Apps": "Свързани приложения",
-  "Library": "Библиотека"
+  "Library": "Библиотека",
+  "Add group": "Добави група"
 };
