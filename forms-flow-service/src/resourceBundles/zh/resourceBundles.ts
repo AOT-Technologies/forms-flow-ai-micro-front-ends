@@ -636,6 +636,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Recipes": "食谱",
   "Connected Apps": "已连接的应用",
   "Library": "库",
-  "Add group": "添加组"
+  "Add group": "添加组",
+  "Add task label": "添加任务标签"
 };
 

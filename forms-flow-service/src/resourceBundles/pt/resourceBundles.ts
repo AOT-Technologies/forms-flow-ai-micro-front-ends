@@ -639,5 +639,6 @@ export const RESOURCE_BUNDLES_PT = {
   "Recipes": "Receitas",
   "Connected Apps": "Aplicativos Conectados",
   "Library": "Biblioteca",
-  "Add group": "Adicionar grupo"
+  "Add group": "Adicionar grupo",
+  "Add task label": "Adicionar rótulo de tarefa"
 };

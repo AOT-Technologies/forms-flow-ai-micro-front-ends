@@ -637,5 +637,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Recipes": "Рецепти",
   "Connected Apps": "Свързани приложения",
   "Library": "Библиотека",
-  "Add group": "Добави група"
+  "Add group": "Добави група",
+  "Add task label": "Добавяне на етикет за задача"
 };
