@@ -621,7 +621,6 @@ export const RESOURCE_BUNDLES_FR = {
   "User Added successfully!": "Utilisateur ajouté avec succès !",
   "Failed to create user!": "Échec de la création de l'utilisateur !",
   "Add Registered Users": "Ajouter des utilisateurs enregistrés",
-  "Add registered user to the application": "Ajouter un utilisateur enregistré à l'application",
   "Username or Email": "Nom d'utilisateur ou Email",
   "Add User": "Ajouter un utilisateur",
   "User doesn't exist!": "L'utilisateur n'existe pas!",

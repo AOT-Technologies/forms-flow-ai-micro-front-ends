@@ -618,7 +618,6 @@ export const RESOURCE_BUNDLES_BG = {
   "User Added successfully!": "Потребителят е успешно добавен!",
   "Failed to create user!": "Неуспешно създаване на потребител!",
   "Add Registered Users": "Добави Регистрирани Потребители",
-  "Add registered user to the application": "Добави регистриран потребител към приложението",
   "Username or Email": "Потребителско име или Имейл",
   "Add User": "Добави Потребител",
   "User doesn't exist!": "Потребителят не съществува!",

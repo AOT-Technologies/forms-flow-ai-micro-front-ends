@@ -620,7 +620,6 @@ export const RESOURCE_BUNDLES_PT = {
   "User Added successfully!": "Usuário adicionado com sucesso!",
   "Failed to create user!": "Falha ao criar usuário!",
   "Add Registered Users": "Adicionar Usuários Registrados",
-  "Add registered user to the application": "Adicionar usuário registrado ao aplicativo",
   "Username or Email": "Nome de usuário ou Email",
   "Add User": "Adicionar Usuário",
   "User doesn't exist!": "Utilizador não existe!",

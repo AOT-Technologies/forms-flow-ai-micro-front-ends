@@ -489,7 +489,7 @@ const Users = React.memo((props: any) => {
     {showInviteModal && (
       <Modal show={showInviteModal} onHide={closeInviteModal}>
         <Modal.Header closeButton>
-          <Modal.Title>{t("Add registered user to the application")}</Modal.Title>
+          <Modal.Title>{t("Add Registered Users")}</Modal.Title>
         </Modal.Header>
 
                   <Modal.Body>
