@@ -16,6 +16,7 @@
   font-weight: bold !important;
 }
  
+
  
 
 .custom-app-name {
@@ -26,8 +27,23 @@
   margin-right: var(--appname-margin-right);
   margin-top: var(--appname-margin-top);
   margin-bottom: var(--appname-margin-bottom);
+  white-space: normal;
+  word-break: break-word;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
-
+.moderate-name{
+  font-size: 16px;
+}
+.long-name{ 
+  font-size: 14px;
+  font-weight: 600;
+}
 .custom-logo{
   width: var(--navbar-logo-width);
 }
+

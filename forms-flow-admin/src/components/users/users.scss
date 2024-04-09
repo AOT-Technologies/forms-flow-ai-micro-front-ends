@@ -41,6 +41,9 @@
 
 .user-filter-container > select {
     border: none;
-    padding: 8px;
     width: max-content;
+}
+
+.success{
+    color: var(--color-success) ;
 }

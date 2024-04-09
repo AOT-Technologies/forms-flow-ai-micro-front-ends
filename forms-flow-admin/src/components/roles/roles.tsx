@@ -15,12 +15,15 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
-import { KEYCLOAK_ENABLE_CLIENT_AUTH, MULTITENANCY_ENABLED } from "../../constants";
+import {
+  KEYCLOAK_ENABLE_CLIENT_AUTH,
+  MULTITENANCY_ENABLED,
+} from "../../constants";
 import { DEFAULT_ROLES } from "../../constants";
 
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
-  const  {tenantId}  = useParams();
+  const { tenantId } = useParams();
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
@@ -42,7 +45,8 @@ const Roles = React.memo((props: any) => {
     description: "",
   };
   const [deleteCandidate, setDeleteCandidate] = React.useState(initialRoleType);
-  const [selectedRoleIdentifier, setSelectedRoleIdentifier] = React.useState("");
+  const [selectedRoleIdentifier, setSelectedRoleIdentifier] =
+    React.useState("");
   const [editCandidate, setEditCandidate] = React.useState(initialRoleType);
   const [disabled, setDisabled] = React.useState(true);
   const [search, setSerach] = React.useState("");
@@ -92,7 +96,7 @@ const Roles = React.memo((props: any) => {
       }
     );
   };
-  
+
   const handleChangeName = (e) => {
     setPayload({ ...payload, name: e.target.value });
   };
@@ -119,12 +123,16 @@ const Roles = React.memo((props: any) => {
     }
     if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
       if (hasSpecialCharacters(payload.name)) {
-        toast.error(t("Role names cannot contain special characters except   _ , -"));
+        toast.error(
+          t("Role names cannot contain special characters except   _ , -")
+        );
         return;
       }
     } else {
       if (hasSpecialCharacterswithslash(payload.name)) {
-        toast.error(t("Role names cannot contain special characters except _ , - , / "));
+        toast.error(
+          t("Role names cannot contain special characters except _ , - , / ")
+        );
         return;
       }
     }
@@ -138,7 +146,7 @@ const Roles = React.memo((props: any) => {
       },
       (err) => {
         setError(err);
-        setDisabled(false);        
+        setDisabled(false);
         toast.error(t("Failed to create role!"));
       }
     );
@@ -149,12 +157,16 @@ const Roles = React.memo((props: any) => {
     }
     if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
       if (hasSpecialCharacters(editCandidate.name)) {
-        toast.error(t("Role names cannot contain special characters except   _ , -"));
+        toast.error(
+          t("Role names cannot contain special characters except   _ , -")
+        );
         return;
       }
     } else {
       if (hasSpecialCharacterswithslash(editCandidate.name)) {
-        toast.error(t("Role names cannot contain special characters except _ , - , / "));
+        toast.error(
+          t("Role names cannot contain special characters except _ , - , / ")
+        );
         return;
       }
     }
@@ -226,68 +238,85 @@ const Roles = React.memo((props: any) => {
     setDisabled(false);
   };
 
-  const checkDefaultRoleOrNot  = (role:any) =>{
-    if(MULTITENANCY_ENABLED && tenantId){
+  const checkDefaultRoleOrNot = (role: any) => {
+    if (MULTITENANCY_ENABLED && tenantId) {
       const roles = [
         `${tenantId}-designer`,
         `${tenantId}-client`,
         `${tenantId}-reviewer`,
         `${tenantId}-admin`,
+        "formsflow-reviewer",
+        "formsflow-designer",
+        "formsflow-client",
+        "camunda-admin",
+        "Approver",
+        "clerk",
+        "designer",
       ];
-      return roles.includes(role)
-    }else{
+      return roles.includes(role);
+    } else {
       return DEFAULT_ROLES.includes(role);
     }
-  }
+  };
   // Delete confirmation
 
   const confirmDelete = () => (
-    <div>
-  <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
-    <Modal.Header closeButton>
-      <Modal.Title>{t("Confirm Delete")}</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-      {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
-    </Modal.Body>
-    <Modal.Footer>
-      <button type="button"
-            className="btn btn-link text-dark" onClick={handleCloseDeleteModal}>
-        {t("Cancel")}
-      </button>
-      <Button
-        variant="danger"
-        disabled={disabled}
-        onClick={() => deleteRole(deleteCandidate)}
-      >
-        {t("Delete")}
-      </Button>
-    </Modal.Footer>
-  </Modal>
-</div>
+    <div data-testid="roles-confirm-delete-modal">
+      <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>{t("Confirm Delete")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            type="button"
+            className="btn btn-link text-dark"
+            onClick={handleCloseDeleteModal}
+            data-testid="roles-cancel-delete-button"
+          >
+            {t("Cancel")}
+          </button>
+          <Button
+            variant="danger"
+            disabled={disabled}
+            onClick={() => deleteRole(deleteCandidate)}
+            data-testid="roles-confirm-delete-button"
+          >
+            {t("Delete")}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 
   const showCreateModal = () => (
-    <div>
+    <div data-testid="create-role-modal">
       <Modal show={showRoleModal} onHide={handleCloseRoleModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("Create Role")}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
+          <Modal.Header closeButton>
+            <Modal.Title>{t("Create Role")}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
             <Form.Group className="mb-3">
-              <Form.Label aria-required>{t("Role Name")}</Form.Label>
-              <i style={{ color: "red" }}>*</i>
+              <Form.Label htmlFor="role-name" aria-required>
+                {t("Role Name")}
+              </Form.Label>
+              <i style={{ color: "#e00" }}>*</i>
               <Form.Control
+                id="role-name"
                 type="text"
                 placeholder={t("Eg: Account Manager")}
                 required
                 onChange={handleChangeName}
                 title={t("Enter role name")}
               />
-              <Form.Label className="mt-2">{t("Description")}</Form.Label>
-              <i style={{ color: "red" }}>*</i>
+              <Form.Label htmlFor="role-description" className="mt-2">
+                {t("Description")}
+              </Form.Label>
+              <i style={{ color: "#e00" }}>*</i>
               <Form.Control
+                id="role-description"
                 as="textarea"
                 placeholder="Eg: Lorem ipsum..."
                 rows={3}
@@ -295,72 +324,87 @@ const Roles = React.memo((props: any) => {
                 title={t("Enter Description")}
               />
             </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <button type="button"
-            className="btn btn-link text-dark" onClick={handleCloseRoleModal}>
-            {t("Cancel")}
-          </button>
-          <Button
-            variant="primary"
-            disabled={disabled}
-            onClick={handleCreateRole}
-          >
-            {t("Create")}
-          </Button>
-        </Modal.Footer>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              type="button"
+              className="btn btn-link text-dark"
+              onClick={handleCloseRoleModal}
+              data-testid="create-new-role-modal-cancel-button"
+            >
+              {t("Cancel")}
+            </button>
+            <Button
+              variant="primary"
+              disabled={disabled}
+              onClick={handleCreateRole}
+              type="submit"
+              data-testid="create-new-role-modal-submit-button"
+            >
+              {t("Create")}
+            </Button>
+          </Modal.Footer>
       </Modal>
     </div>
   );
   const showEditModal = () => (
-    <div>
+    <div data-testid="edit-role-modal">
       <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("Edit Role")}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
+          <Modal.Header closeButton>
+            <Modal.Title>{t("Edit Role")}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
             <Form.Group className="mb-3">
-              <Form.Label aria-required>{t("Role Name")}</Form.Label>
-              <i style={{ color: "red" }}>*</i>
+              <Form.Label htmlFor="edit-role-name" aria-required>
+                {t("Role Name")}
+              </Form.Label>
+              <i style={{ color: "#e00" }}>*</i>
               <Form.Control
+                id="edit-role-name"
                 type="text"
-                placeholder={("Eg: Account Manager")}
+                placeholder={"Eg: Account Manager"}
                 required
                 onChange={handleEditName}
                 value={editCandidate.name}
               />
-              <Form.Label className="mt-2">{t("Description")}</Form.Label>
-              <i style={{ color: "red" }}>*</i>
+              <Form.Label htmlFor="edit-description" className="mt-2">
+                {t("Description")}
+              </Form.Label>
+              <i style={{ color: "#e00" }}>*</i>
               <Form.Control
+                id="edit-description"
                 as="textarea"
                 rows={3}
                 onChange={handleEditDescription}
                 value={editCandidate.description}
               />
             </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <button type="button"
-            className="btn btn-link text-dark" onClick={handleCloseEditRoleModal}>
-            {t("Cancel")}
-          </button>
-          <Button
-            variant="primary"
-            disabled={disabled}
-            onClick={handleUpdateRole}
-          >
-           {t("Save")}
-          </Button>
-        </Modal.Footer>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              type="button"
+              className="btn btn-link text-dark"
+              onClick={handleCloseEditRoleModal}
+              data-testid="edit-role-modal-cancel-button"
+            >
+              {t("Cancel")}
+            </button>
+            <Button
+              variant="primary"
+              disabled={disabled}
+              onClick={handleUpdateRole}
+              type="submit"
+              data-testid="edit-role-modal-save-button"
+            >
+              {t("Save")}
+            </Button>
+          </Modal.Footer>
       </Modal>
     </div>
   );
 
   const noData = () => (
-    <div>
+    <div data-testid="roles-no-data-msg">
       <h3 className="text-center">
         <Translation>{(t) => t(props.error || "No data Found")}</Translation>
       </h3>
@@ -368,7 +412,7 @@ const Roles = React.memo((props: any) => {
   );
 
   const customTotal = (from, to, size) => (
-    <span className="ml-2" role="main">
+    <span className="ms-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
       <Translation>{(t) => t("to")}</Translation> {to}{" "}
       <Translation>{(t) => t("of")}</Translation> {size}{" "}
@@ -423,7 +467,7 @@ const Roles = React.memo((props: any) => {
   const pagination = paginationFactory({
     showTotal: true,
     align: "center",
-    className:"d-flex",
+    className: "d-flex",
     sizePerPageList: getpageList(),
     page: activePage,
     sizePerPage: sizePerPage,
@@ -473,9 +517,15 @@ const Roles = React.memo((props: any) => {
               </Popover>
             }
           >
-            <div className="user-list" onClick={(e) => handleClick(e, rowData)}>
-              <p><Translation>{(t) => t("View")}</Translation></p>
-              <i className="fa fa-caret-down ml-2" />
+            <div
+              className="user-list"
+              onClick={(e) => handleClick(e, rowData)}
+              data-testid="user-list-view-dropdown"
+            >
+              <p>
+                <Translation>{(t) => t("View")}</Translation>
+              </p>
+              <i className="fa fa-caret-down ms-2" />
             </div>
           </OverlayTrigger>
         );
@@ -485,17 +535,19 @@ const Roles = React.memo((props: any) => {
       dataField: "id",
       text: <Translation>{(t) => t("Actions")}</Translation>,
       formatter: (cell, rowData, rowIdx, formatExtraData) => {
-        return (
-          checkDefaultRoleOrNot(rowData.name) ? null :
+        return checkDefaultRoleOrNot(rowData.name) ? null : (
           <div>
             <i
-              className="fa fa-pencil  mr-4"
+              className="fa fa-pencil  me-4"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
-                setSelectedRoleIdentifier(KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id)
+                setSelectedRoleIdentifier(
+                  KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id
+                );
                 setEditCandidate(rowData);
                 handleShowEditRoleModal();
               }}
+              data-testid="admin-roles-edit-icon"
             />
             <i
               className="fa fa-trash delete_button"
@@ -504,6 +556,7 @@ const Roles = React.memo((props: any) => {
                 setDeleteCandidate(rowData);
                 handleShowDeleteModal();
               }}
+              data-testid="admin-roles-delete-icon"
             />
           </div>
         );
@@ -522,6 +575,7 @@ const Roles = React.memo((props: any) => {
               onChange={handlFilter}
               value={search}
               title={t("Search...")}
+              data-testid="search-role-input"
             />
 
             {search.length > 0 && (
@@ -531,13 +585,19 @@ const Roles = React.memo((props: any) => {
                   setSerach("");
                   setRoles(props.roles);
                 }}
+                data-testid="clear-role-search-button"
               >
                 {t("Clear")}
               </Button>
             )}
           </div>
-          <Button variant="primary"  onClick={handleShowRoleModal}>
-          <i className="fa-solid fa-plus mr-2"></i> <Translation>{(t) => t("Create New Role")}</Translation>
+          <Button
+            variant="primary"
+            onClick={handleShowRoleModal}
+            data-testid="roles-create-new-role-button"
+          >
+            <i className="fa-solid fa-plus me-2"></i>{" "}
+            <Translation>{(t) => t("Create New Role")}</Translation>
           </Button>
         </div>
         {!props?.loading ? (
@@ -547,12 +607,13 @@ const Roles = React.memo((props: any) => {
             columns={columns}
             pagination={pagination}
             bordered={false}
-            wrapperClasses="table-container"
+            wrapperClasses="table-container px-4"
             rowStyle={{
               color: "#09174A",
               fontWeight: 600,
             }}
             noDataIndication={noData}
+            data-testid="admin-roles-table"
           />
         ) : (
           <Loading />

@@ -2,6 +2,21 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 6.0.0 - 2024-04-05
+
+`Added`
+
+**forms-flow-admin**
+* Added incorporate a user across multiple tenants
+
+**forms-flow-inegration**
+* Added new component for ipaas integration
+  
+`Generic Changes`
+* Fixed UI issues
+
+
+
 ## 5.3.0 - 2023-11-24
 
 `Added`

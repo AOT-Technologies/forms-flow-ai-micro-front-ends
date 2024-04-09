@@ -15,3 +15,17 @@
 .btn{
   padding: 8px 16px !important;
 }
+.bg-primary{
+  background-color: var(--color-primary) !important;
+} 
+.table-primary {
+  --bs-table-color: #fff;
+  --bs-table-bg:var(--color-primary) !important;
+}
+
+.btn-link{
+  text-decoration: none;
+  &:hover{
+    text-decoration: underline;
+  }
+}

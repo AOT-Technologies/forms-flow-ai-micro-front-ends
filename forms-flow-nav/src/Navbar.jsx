@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
 import { Link, BrowserRouter, useHistory } from "react-router-dom";
 import { getUserRoleName, getUserRolePermission } from "./helper/user";
@@ -16,6 +16,7 @@ import {
   ENABLE_DASHBOARDS_MODULE,
   ENABLE_APPLICATIONS_MODULE,
   ENABLE_TASKS_MODULE,
+  ENABLE_INTEGRATION_PREMIUM
 } from "./constants/constants";
 import "./Navbar.css";
 import { StorageService } from "@formsflow/service";
@@ -25,6 +26,7 @@ import { fetchTenantDetails } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
 import { LANGUAGE } from "./constants/constants";
 import { Helmet } from "react-helmet";
+import { checkIntegrationEnabled } from "./services/integration";
 const NavBar = React.memo(({ props }) => {
   const history = useHistory();
   const [instance, setInstance] = React.useState(props.getKcInstance());
@@ -33,6 +35,7 @@ const NavBar = React.memo(({ props }) => {
   const [form, setForm] = React.useState({});
   const [selectLanguages, setSelectLanguages] = React.useState([]);
   const [applicationTitle, setApplicationTitle] = React.useState("");
+  const [integrationEnabled, setIntegrationEnabled] = React.useState(false);
   const [tenantLogo, setTenantLogo] = React.useState("/logo_skeleton.svg");
   const defaultLogoPath =
     document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
@@ -77,16 +80,24 @@ const NavBar = React.memo(({ props }) => {
 
   React.useEffect(() => {
     const data = JSON.parse(StorageService.get("TENANT_DATA"));
-    if (data?.details) {
+    if (MULTITENANCY_ENABLED && data?.details) {
       setApplicationTitle(data?.details?.applicationTitle);
-      setTenantLogo(data?.details?.customLogo?.logo || "/logo.svg");
+      const logo = data?.details?.customLogo?.logo || "/logo.svg";
+      setTenantLogo(logo);
+      let link = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement("link");
+        link.rel = "icon";
+        document.getElementsByTagName("head")[0].appendChild(link);
+      }
+      link.href = logo;
     }
   }, [tenant]);
 
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
-  const [lang, setLang] = React.useState(userDetail?.locale); 
+  const [lang, setLang] = React.useState(userDetail?.locale);
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -94,6 +105,37 @@ const NavBar = React.memo(({ props }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const navbarRef = useRef(null);
+
+  const onResize = React.useCallback(() => {
+    if (navbarRef?.current) {
+      const isMediumScreen = window.matchMedia("(min-width: 992px)").matches;
+      if (isMediumScreen) {
+        document.documentElement.style.setProperty(
+          "--navbar-height",
+          `${navbarRef.current.offsetHeight}px`
+        );
+      } else {
+        document.documentElement.style.setProperty(
+          "--navbar-height",
+          `${52}px`
+        );
+      }
+    }
+  }, [navbarRef?.current]);
+
+  // to set the navbar height
+  useEffect(() => {
+    onResize();
+  }, [navbarRef?.current, navbarRef?.current?.offsetHeight]);
+
+  useEffect(() => {
+    window.addEventListener("resize", onResize);
+    onResize();
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
 
   /**
    * For anonymous forms the only way to identify the tenant is through the
@@ -104,6 +146,8 @@ const NavBar = React.memo(({ props }) => {
   const [loginUrl, setLoginUrl] = useState(baseUrl);
 
   const logoPath = MULTITENANCY_ENABLED ? tenantLogo : defaultLogoPath;
+  
+
   const getAppName = useMemo(
     () => () => {
       if (!MULTITENANCY_ENABLED) {
@@ -136,8 +180,6 @@ const NavBar = React.memo(({ props }) => {
     localStorage.setItem("lang", language);
   }, [lang]);
 
- 
-
   React.useEffect(() => {
     setUserDetail(
       JSON.parse(StorageService.get(StorageService.User.USER_DETAILS))
@@ -156,60 +198,113 @@ const NavBar = React.memo(({ props }) => {
     updateUserlang(selectedLang, instance);
   };
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkIntegrationEnabled()
+        .then((res) => {
+          setIntegrationEnabled(res.data?.enabled);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  }, [isAuthenticated]);
+
   const logout = () => {
     history.push(baseUrl);
     instance.userLogout();
   };
-  
+
   return (
-  <>
-   <Helmet>
-    <title>{MULTITENANCY_ENABLED ? applicationTitle : "formsflow.ai"}</title>
-    <link rel="icon" type="image/png" href={MULTITENANCY_ENABLED ? tenantLogo : null} />
-  </Helmet>
-    <BrowserRouter>
-      <header className="navbar-background shadow">
-        <Container>
-          <Navbar  collapseOnSelect expand="lg" className={`navbar-background p-0 m-0 ${!isAuthenticated ? 'justify-content-between':''}`}>
-            <Navbar.Brand href={`${baseUrl}`} className="d-flex col-3 px-0">
-              <img
-                className="custom-logo"
-                src={logoPath}
-                alt="Logo"
-              />
-              <div className="custom-app-name">{appName}</div>
+    <>
+      <Helmet>
+        <title>
+          {MULTITENANCY_ENABLED ? applicationTitle : appName}
+        </title>
+        <link
+          rel="icon"
+          type="image/png"
+          href={MULTITENANCY_ENABLED ? tenantLogo : null}
+        />
+      </Helmet>
+      <BrowserRouter>
+        <Navbar
+          ref={navbarRef}
+          collapseOnSelect
+          fixed="top"
+          expand="lg"
+          className={`navbar-background py-0 shadow px-3 m-0 ${
+            !isAuthenticated ? "justify-content-between" : ""
+          }`}
+        >
+          <Container className="d-flex justify-content-between">
+            <Navbar.Brand
+              href={`${baseUrl}`}
+              className="d-flex col-8 col-sm-6 col-md-10 col-lg-3 col-xl-3  px-0"
+            >
+              <div>
+                <img className="custom-logo" src={logoPath} alt="Logo" />
+              </div>
+
+              <div
+              data-bs-toggle="tooltip" 
+              data-bs-placement="bottom" 
+              title={appName}
+                className={`custom-app-name ${
+                  appName.length > 30
+                    ? "long-name"
+                    : appName.length > 24 && appName.length <= 30
+                    ? "moderate-name"
+                    : ""
+                }`}
+              >
+                {appName}
+              </div>
             </Navbar.Brand>
-            {isAuthenticated && <Navbar.Toggle aria-controls="responsive-navbar-nav" />}
-             
+
+            {isAuthenticated && (
+              <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            )}
+
             {isAuthenticated ? (
               <Navbar.Collapse
                 id="responsive-navbar-nav"
                 className="d-lg-flex justify-content-between h-100"
               >
-                <Nav 
+                <Nav
                   id="main-menu-nav"
                   className="align-items-lg-center justify-content-start w-100"
+                  data-testid="main-menu-nav"
                 >
                   {ENABLE_FORMS_MODULE && (
                     <Nav.Link
-                      as={Link}
                       eventKey="form"
+                      as={Link}
                       to={`${baseUrl}form`}
                       className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                       ( pathname.match(createURLPathMatchExp("form", baseUrl)) ||  pathname.match(createURLPathMatchExp("bundle", baseUrl)))
+                        (pathname.match(
+                          createURLPathMatchExp("form", baseUrl)
+                        ) ||
+                          pathname.match(
+                            createURLPathMatchExp("bundle", baseUrl)
+                          )) &&
+                        !(
+                          pathname.includes("draft") ||
+                          pathname.includes("submission")
+                        )
                           ? "active"
                           : ""
                       }`}
+                      data-testid="forms-nav-link"
                     >
-                      <i className="fa-solid fa-file-lines mr-2" />
+                      <i className="fa-solid fa-file-lines me-2" />
                       {t("Forms")}
                     </Nav.Link>
                   )}
 
-
                   {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
-                    <Nav.Link 
-                    eventKey="admin"
+                    <Nav.Link
+                      eventKey={"admin"}
                       as={Link}
                       to={`${baseUrl}admin/dashboard`}
                       className={`nav-menu-item py-md-3 px-0 mx-2 ${
@@ -217,8 +312,9 @@ const NavBar = React.memo(({ props }) => {
                           ? "active"
                           : ""
                       }`}
+                      data-testid="admin-nav-link"
                     >
-                      <i className="fa-solid fa-user-check mr-2" />
+                      <i className="fa-solid fa-user-check me-2" />
                       {t("Admin")}
                     </Nav.Link>
                   ) : null}
@@ -236,9 +332,32 @@ const NavBar = React.memo(({ props }) => {
                               ? "active"
                               : ""
                           }`}
+                          data-testid="processes-nav-link"
                         >
-                          <i className="fa fa-cogs fa-fw mr-2" />
+                          <i className="fa fa-cogs fa-fw me-2" />
                           {t("Processes")}
+                        </Nav.Link>
+                      )
+                    : null}
+
+                  {getUserRolePermission(userRoles, STAFF_DESIGNER)
+                    ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
+                        <Nav.Link
+                          eventKey="integration"
+                          as={Link}
+                          to={`${baseUrl}integration/recipes`}
+                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
+                            pathname.match(
+                              createURLPathMatchExp("integration", baseUrl)
+                            )
+                              ? "active"
+                              : ""
+                          }`}
+                          data-testid="integration-nav-link"
+                        >
+                          <i className="fa-solid fa-network-wired me-2"></i>
+                          {t("Integration")}
+                          {(ENABLE_INTEGRATION_PREMIUM && <i className="fa-solid fa-crown p-1 text-warning"></i>) || null}
                         </Nav.Link>
                       )
                     : null}
@@ -248,22 +367,21 @@ const NavBar = React.memo(({ props }) => {
                       getUserRolePermission(userRoles, CLIENT)
                       ? ENABLE_APPLICATIONS_MODULE && (
                           <Nav.Link
-                          eventKey="application"
+                            eventKey="application"
                             as={Link}
                             to={`${baseUrl}application`}
                             className={`nav-menu-item py-md-3 px-0 mx-2 ${
                               pathname.match(
                                 createURLPathMatchExp("application", baseUrl)
-                              )
-                                ? "active"
-                                : pathname.match(
-                                    createURLPathMatchExp("draft", baseUrl)
-                                  )
+                              ) ||
+                              pathname.includes("draft") ||
+                              pathname.includes("submission")
                                 ? "active"
                                 : ""
                             }`}
+                            data-testid="applications-nav-link"
                           >
-                            <i className="fa-solid fa-rectangle-list mr-2" />
+                            <i className="fa-solid fa-rectangle-list me-2" />
                             {t("Submissions")}
                           </Nav.Link>
                         )
@@ -272,7 +390,7 @@ const NavBar = React.memo(({ props }) => {
                   {getUserRolePermission(userRoles, STAFF_REVIEWER)
                     ? ENABLE_TASKS_MODULE && (
                         <Nav.Link
-                        eventKey="task"
+                          eventKey={"task"}
                           as={Link}
                           to={`${baseUrl}task`}
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
@@ -282,8 +400,9 @@ const NavBar = React.memo(({ props }) => {
                               ? "active"
                               : ""
                           }`}
+                          data-testid="tasks-nav-link"
                         >
-                          <i className="fa-solid fa-list-check mr-2" />
+                          <i className="fa-solid fa-list-check me-2" />
                           {t("Tasks")}
                         </Nav.Link>
                       )
@@ -292,10 +411,10 @@ const NavBar = React.memo(({ props }) => {
                   {getUserRolePermission(userRoles, STAFF_REVIEWER)
                     ? ENABLE_DASHBOARDS_MODULE && (
                         <Nav.Link
-                          eventKey="dashboards"
+                          eventKey={"metrics"}
                           as={Link}
                           to={`${baseUrl}metrics`}
-                          data-testid="Dashboards"
+                          data-testid="dashboards-nav-link"
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
                               createURLPathMatchExp("metrics", baseUrl)
@@ -307,21 +426,20 @@ const NavBar = React.memo(({ props }) => {
                               : ""
                           }`}
                         >
-                          
-                          <i className="fa-solid fa-gauge-high mr-2" />
+                          <i className="fa-solid fa-gauge-high me-2" />
                           {t("Dashboards")}
                         </Nav.Link>
                       )
                     : null}
                 </Nav>
 
-                <Nav className="nav-user">
+                <Nav className="nav-user" data-testid="nav-user">
                   {selectLanguages.length === 1 ? (
                     selectLanguages.map((e, i) => {
                       return (
-                        <div className="mr-2">
-                          <i className="fa fa-globe mr-2" />
-                           {e.name}
+                        <div className="me-2">
+                          <i className="fa fa-globe me-2" />
+                          {e.name}
                         </div>
                       );
                     })
@@ -329,13 +447,14 @@ const NavBar = React.memo(({ props }) => {
                     <NavDropdown
                       title={
                         <>
-                          <i className="fa fa-globe  mr-2" />
-                         
+                          <i className="fa fa-globe  me-2" />
+
                           {lang ? lang : "LANGUAGE"}
                         </>
                       }
-                      className="mr-2"
+                      className="me-2"
                       id="basic-nav-dropdown"
+                      data-testid="language-dropdown"
                     >
                       {selectLanguages.map((e, index) => (
                         <NavDropdown.Item
@@ -343,36 +462,39 @@ const NavBar = React.memo(({ props }) => {
                           onClick={() => {
                             handleOnclick(e.name);
                           }}
+                          data-testid={`language-option-${index}`}
                         >
                           {e.value}
                         </NavDropdown.Item>
                       ))}
                     </NavDropdown>
                   )}
-                     <NavDropdown
+                  <NavDropdown
                     title={
                       <>
-                        <i className="fa-solid fa-user mr-2" />
+                        <i className="fa-solid fa-user me-2" />
                         {userDetail?.name ||
                           userDetail?.preferred_username ||
                           ""}
                       </>
                     }
+                    data-testid="user-dropdown"
                   >
-                    <NavDropdown.Item>
-                      
+                    <NavDropdown.Item data-testid="user-info">
                       {userDetail?.name || userDetail?.preferred_username}
                       <br />
                       <i className="fa fa-users fa-fw" />
                       <b>{getUserRoleName(userRoles)}</b>
                     </NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={logout}>
+                    <NavDropdown.Item
+                      onClick={logout}
+                      data-testid="logout-item"
+                    >
                       <i className="fa fa-sign-out fa-fw" /> {t("Logout")}
                     </NavDropdown.Item>
                   </NavDropdown>
                 </Nav>
-
               </Navbar.Collapse>
             ) : (
               !MULTITENANCY_ENABLED && (
@@ -381,10 +503,9 @@ const NavBar = React.memo(({ props }) => {
                 </Link>
               )
             )}
-          </Navbar>
-        </Container>
-      </header>
-    </BrowserRouter>
+          </Container>
+        </Navbar>
+      </BrowserRouter>
     </>
   );
 });
