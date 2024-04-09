@@ -639,7 +639,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Recipes": "Recipes",
   "Connected Apps": "Connected Apps",
   "Library": "Library",
-  "Add group": "Add group"
+  "Add group": "Add group",
+  "Add task label": "Add task label"
 };
 
 
