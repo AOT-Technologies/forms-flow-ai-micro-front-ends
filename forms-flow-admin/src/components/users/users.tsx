@@ -483,13 +483,13 @@ const Users = React.memo((props: any) => {
           {MULTITENANCY_ENABLED && (
   <>
     <Button variant="primary" onClick={openInviteModal}>
-    {t("Invite Registered Users")}
+    {t("Add Registered Users")}
     </Button>
 
     {showInviteModal && (
       <Modal show={showInviteModal} onHide={closeInviteModal}>
         <Modal.Header closeButton>
-          <Modal.Title>{t("Invite registered user to application")}</Modal.Title>
+          <Modal.Title>{t("Add Registered Users")}</Modal.Title>
         </Modal.Header>
 
                   <Modal.Body>
