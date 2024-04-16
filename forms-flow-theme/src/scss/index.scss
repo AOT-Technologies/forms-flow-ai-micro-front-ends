@@ -1,4 +1,20 @@
- 
+// import function
+@import "../../node_modules/bootstrap/scss/functions";
+
+//variable override
+@import "./variables";
+//default
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/mixins";
+
+//theme override
 @import "./theme";
- 
+
+//component override
+@import "./button";
+@import "./table";
+
+// util class
+@import "./utils/index";
+//rest of bootstrap
 @import "~bootstrap/scss/bootstrap";

@@ -38,7 +38,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: isProduction ? "forms-flow-theme.min.css" : "[name].css",
+        filename: "forms-flow-theme.min.css",
         chunkFilename: isProduction ? "[id].css" : "[id].css",
       }),
     ],

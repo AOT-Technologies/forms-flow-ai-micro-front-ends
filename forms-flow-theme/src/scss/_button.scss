@@ -1,0 +1,12 @@
+$btn-padding-x: 1rem;
+$btn-padding-y: .5rem;
+$btn-padding-x-sm: .5rem;
+$btn-padding-y-sm: .25rem;
+
+
+.btn-link{
+    text-decoration: none;
+    &:hover{
+      text-decoration: underline;
+    }
+  }

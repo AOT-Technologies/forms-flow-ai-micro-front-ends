@@ -1,0 +1,8 @@
+// colors over ride and define custom colors
+
+$custom-colors: (
+  "custom-color": #900
+);
+
+// Merge the maps
+$theme-colors: map-merge($theme-colors, $custom-colors);
