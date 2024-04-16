@@ -8,10 +8,10 @@
 
    
   $table-variants: (
-    "primary":    shift-color($secondary, $table-bg-scale)
+    "primary": shift-color($primary, $table-bg-scale)
   );
 
-  .custom-table {
+.custom-table {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: separate !important;
     border-spacing: 0 15px;

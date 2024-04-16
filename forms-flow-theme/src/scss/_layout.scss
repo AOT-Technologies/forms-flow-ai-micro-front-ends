@@ -11,8 +11,8 @@ $container-max-widths: (
 );
 
 .main-container{
-    max-height: calc(100vh - navbar-height);
-    margin-top: navbar-height;
+    max-height: calc(100vh - $navbar-height);
+    margin-top: $navbar-height;
     overflow-y: auto;
   }
   

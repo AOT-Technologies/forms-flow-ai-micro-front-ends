@@ -1,8 +1,25 @@
 // colors over ride and define custom colors
 
-$custom-colors: (
-  "custom-color": #900
+
+
+// --color-primary: #0072ed;
+// --color-primary-lt: #1890FF;
+// --color-primary-ltr: #2e96ff;
+// --color-primary-ltst: #E6F7FF;
+// --color-primary-dk: rgb(57, 120, 183);
+// --color-primary-dkr: #155cb5;
+// --color-primary-dkst: #003366;
+
+$primary : #bf9326;
+
+$theme-colors:(
+    "primary": $primary,
 );
 
+$custom-colors: (
+  "custom-color": #900,
+  "primary-100": tint-color($primary,90%),
+  
+);
 // Merge the maps
 $theme-colors: map-merge($theme-colors, $custom-colors);
