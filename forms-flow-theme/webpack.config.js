@@ -1,37 +1,53 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+// const TerserPlugin = require("terser-webpack-plugin");
 
-module.exports = {
-  entry: "./src/main.scss", // Entry point for your SCSS file
-  output: {
-    // Output directory for the generated CSS file
-    path: path.resolve(__dirname, "dist"),
-  },
-  devServer: {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === "production";
+
+  return {
+    entry: "./src/scss/index.scss",
+    output: {
+      path: path.resolve(__dirname, "dist"),
     },
-    port: 3008
-  },
-  module: {
-    rules: [
-      {
-        test: /\.s[ac]ss$/i,
-        use: [
-          // Extracts CSS into separate files
-          MiniCssExtractPlugin.loader,
-          // Translates CSS into CommonJS
-          "css-loader",
-          // Compiles Sass to CSS
-          "sass-loader",
-        ],
+    devServer: {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
       },
+      port: 3008,
+      watchFiles: {
+        paths: ['./src/scss/'],
+        options: {
+          ignored: ['node_modules/**'] // Example of files to ignore
+        }
+      }
+  
+    },
+    module: {
+      rules: [
+        {
+          test: /\.s[ac]ss$/i,
+          use: [
+            MiniCssExtractPlugin.loader,
+            "css-loader",
+            "sass-loader",
+          ],
+        },
+      ],
+    },
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: isProduction ? "forms-flow-theme.min.css" : "[name].css",
+        chunkFilename: isProduction ? "[id].css" : "[id].css",
+      }),
     ],
-  },
-  plugins: [
-    // Plugin to extract CSS into separate files
-    new MiniCssExtractPlugin({
-      filename: "forms-flow-theme.min.css", // Output minified CSS filename
-    }),
-  ],
+    optimization: {
+      minimizer: [
+        new CssMinimizerPlugin(),
+      ],
+    },
+    // Exclude source maps in production
+    devtool: isProduction ? false : "source-map",
+  };
 };
