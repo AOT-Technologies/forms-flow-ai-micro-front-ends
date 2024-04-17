@@ -295,6 +295,7 @@ const NavBar = React.memo(({ props }) => {
                           ? "active"
                           : ""
                       }`}
+                      id="forms-nav-link"
                       data-testid="forms-nav-link"
                     >
                       <i className="fa-solid fa-file-lines me-2" />
@@ -312,6 +313,7 @@ const NavBar = React.memo(({ props }) => {
                           ? "active"
                           : ""
                       }`}
+                      id="admin-nav-link"
                       data-testid="admin-nav-link"
                     >
                       <i className="fa-solid fa-user-check me-2" />
@@ -332,6 +334,7 @@ const NavBar = React.memo(({ props }) => {
                               ? "active"
                               : ""
                           }`}
+                          id="processes-nav-link"
                           data-testid="processes-nav-link"
                         >
                           <i className="fa fa-cogs fa-fw me-2" />
@@ -353,6 +356,7 @@ const NavBar = React.memo(({ props }) => {
                               ? "active"
                               : ""
                           }`}
+                          id="integration-nav-link"
                           data-testid="integration-nav-link"
                         >
                           <i className="fa-solid fa-network-wired me-2"></i>
@@ -379,6 +383,7 @@ const NavBar = React.memo(({ props }) => {
                                 ? "active"
                                 : ""
                             }`}
+                            id="applications-nav-link"
                             data-testid="applications-nav-link"
                           >
                             <i className="fa-solid fa-rectangle-list me-2" />
@@ -400,6 +405,7 @@ const NavBar = React.memo(({ props }) => {
                               ? "active"
                               : ""
                           }`}
+                          id="tasks-nav-link"
                           data-testid="tasks-nav-link"
                         >
                           <i className="fa-solid fa-list-check me-2" />
@@ -414,6 +420,7 @@ const NavBar = React.memo(({ props }) => {
                           eventKey={"metrics"}
                           as={Link}
                           to={`${baseUrl}metrics`}
+                          id="dashboards-nav-link"
                           data-testid="dashboards-nav-link"
                           className={`nav-menu-item py-md-3 px-0 mx-2 ${
                             pathname.match(
@@ -478,6 +485,7 @@ const NavBar = React.memo(({ props }) => {
                           ""}
                       </>
                     }
+                    id="user-dropdown"
                     data-testid="user-dropdown"
                   >
                     <NavDropdown.Item data-testid="user-info">
