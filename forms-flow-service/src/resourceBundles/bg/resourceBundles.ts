@@ -637,5 +637,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Connected Apps": "Свързани приложения",
   "Library": "Библиотека",
   "Add group": "Добави група",
-  "Add task label": "Добавяне на етикет за задача"
+  "Add task label": "Добавяне на етикет за задача",
+  "Integrations": "Интеграции",
+  "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "Ние улесняваме стотици местни интеграции чрез нашия пакет „Професионални нативни интеграции“.",
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Тази функция по подразбиране не е налична в 14-дневната проба. Ако вашата проба изисква тази функция, можете да ни информирате, и ние можем да я активираме за вас."
+
 };

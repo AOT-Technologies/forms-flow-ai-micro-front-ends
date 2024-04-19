@@ -639,5 +639,8 @@ export const RESOURCE_BUNDLES_PT = {
   "Connected Apps": "Aplicativos Conectados",
   "Library": "Biblioteca",
   "Add group": "Adicionar grupo",
-  "Add task label": "Adicionar rótulo de tarefa"
+  "Add task label": "Adicionar rótulo de tarefa",
+  "Integrations": "Integrações",
+  "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "Facilitamos centenas de integrações nativas através do nosso pacote ‘Integrações Nativas Pro’.",
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Esta funcionalidade não está disponível por padrão no período de 14 dias de avaliação. Se o seu período de avaliação exigir esta funcionalidade, você pode nos informar e podemos ativá-la para você."
 };

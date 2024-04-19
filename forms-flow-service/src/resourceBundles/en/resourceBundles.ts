@@ -639,7 +639,10 @@ export const RESOURCE_BUNDLES_EN = {
   "Connected Apps": "Connected Apps",
   "Library": "Library",
   "Add group": "Add group",
-  "Add task label": "Add task label"
+  "Add task label": "Add task label",
+  "Integrations": "Integrations",
+  "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.",
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you."
 };
 
 

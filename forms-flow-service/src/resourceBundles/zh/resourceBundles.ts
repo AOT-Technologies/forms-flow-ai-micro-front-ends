@@ -636,6 +636,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Connected Apps": "已连接的应用",
   "Library": "库",
   "Add group": "添加组",
-  "Add task label": "添加任务标签"
+  "Add task label": "添加任务标签",
+  "Integrations": "集成",
+  "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "我们通过我们的“原生集成专业版”套餐，可以提供数百种本地集成。",
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "该功能在14天试用期内默认不可用。如果您的试用需要此功能，您可以告诉我们，我们可以为您启用此功能。"
 };
 
