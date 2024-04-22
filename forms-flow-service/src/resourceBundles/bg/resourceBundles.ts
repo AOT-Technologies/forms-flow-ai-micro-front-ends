@@ -640,6 +640,13 @@ export const RESOURCE_BUNDLES_BG = {
   "Add task label": "Добавяне на етикет за задача",
   "Integrations": "Интеграции",
   "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "Ние улесняваме стотици местни интеграции чрез нашия пакет „Професионални нативни интеграции“.",
-  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Тази функция по подразбиране не е налична в 14-дневната проба. Ако вашата проба изисква тази функция, можете да ни информирате, и ние можем да я активираме за вас."
-
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Тази функция по подразбиране не е налична в 14-дневната проба. Ако вашата проба изисква тази функция, можете да ни информирате, и ние можем да я активираме за вас.",
+  "Upgrade to unlock Native Integrations Pro": "Надстройте, за да отключите Нативни интеграции Pro",
+  "We facilitate hundreds of native integrations via our ": "Ние предлагаме стотици нативни интеграции чрез нашия ",
+  "Native Integrations Pro": "Нативни интеграции Pro",
+  " package. This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "пакет. Тази функционалност не е достъпна по подразбиране в 14-дневната проба. Ако вашата проба изисква тази функция, може да ни уведомите и ние можем да я активираме за вас.",
+  "To learn more about Native Integrations Pro": "За да научите повече за Нативни интеграции Pro",
+  "Check out Integrations Feature": "Проверете функцията Интеграции",
+  "Connect with": "Свържете се с",
+  "team for requests or queries.": "екипа за заявки или въпроси."
 };

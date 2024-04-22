@@ -643,8 +643,15 @@ export const RESOURCE_BUNDLES_FR = {
   "Add task label": "Ajouter une étiquette de tâche",
   "Integrations": "Intégrations",
   "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "Nous facilitons des centaines d'intégrations natives via notre package 'Intégrations Natives Pro'.",
-  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Cette fonctionnalité n'est pas disponible par défaut dans l'essai de 14 jours. Si votre essai nécessite cette fonctionnalité, vous pouvez nous le faire savoir et nous pouvons l'activer pour vous."
-
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Cette fonctionnalité n'est pas disponible par défaut dans l'essai de 14 jours. Si votre essai nécessite cette fonctionnalité, vous pouvez nous le faire savoir et nous pouvons l'activer pour vous.",
+  "Upgrade to unlock Native Integrations Pro": "Mettez à niveau pour débloquer les intégrations natives Pro",
+  "We facilitate hundreds of native integrations via our ": "Nous facilitons des centaines d'intégrations natives via notre ",
+  "Native Integrations Pro": "Intégrations natives Pro",
+  " package. This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": ". Cette fonctionnalité n'est pas disponible par défaut dans l'essai de 14 jours. Si votre essai nécessite cette fonctionnalité, vous pouvez nous le faire savoir et nous pouvons l'activer pour vous.",
+  "To learn more about Native Integrations Pro": "Pour en savoir plus sur Native Integrations Pro",
+  "Check out Integrations Feature": "Découvrez la fonctionnalité Intégrations",
+  "Connect with": "Contactez",
+  "team for requests or queries.": "l'équipe pour toute demande ou question."
 };
 
 

@@ -642,5 +642,13 @@ export const RESOURCE_BUNDLES_PT = {
   "Add task label": "Adicionar rótulo de tarefa",
   "Integrations": "Integrações",
   "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "Facilitamos centenas de integrações nativas através do nosso pacote ‘Integrações Nativas Pro’.",
-  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Esta funcionalidade não está disponível por padrão no período de 14 dias de avaliação. Se o seu período de avaliação exigir esta funcionalidade, você pode nos informar e podemos ativá-la para você."
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Esta funcionalidade não está disponível por padrão no período de 14 dias de avaliação. Se o seu período de avaliação exigir esta funcionalidade, você pode nos informar e podemos ativá-la para você.",
+  "Upgrade to unlock Native Integrations Pro": "Atualize para desbloquear as Integrações Nativas Pro",
+  "We facilitate hundreds of native integrations via our ": "Facilitamos centenas de integrações nativas através do nosso ",
+  "Native Integrations Pro": "Integrações Nativas Pro",
+  " package. This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": ". Esta funcionalidade não está disponível por padrão no teste de 14 dias. Se o seu teste exigir esta funcionalidade, você pode nos informar e podemos ativá-la para você.",
+  "To learn more about Native Integrations Pro": "Para saber mais sobre as Integrações Nativas Pro",
+  "Check out Integrations Feature": "Confira a funcionalidade de Integrações",
+  "Connect with": "Entre em contato com",
+  "team for requests or queries.": "a equipe para solicitações ou dúvidas."
 };
