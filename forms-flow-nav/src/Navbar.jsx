@@ -360,7 +360,7 @@ const NavBar = React.memo(({ props }) => {
                           data-testid="integration-nav-link"
                         >
                           <i className="fa-solid fa-network-wired me-2"></i>
-                          {t("Integration")}
+                          {t("Integrations")}
                           {(ENABLE_INTEGRATION_PREMIUM && <i className="fa-solid fa-crown p-1 text-warning"></i>) || null}
                         </Nav.Link>
                       )

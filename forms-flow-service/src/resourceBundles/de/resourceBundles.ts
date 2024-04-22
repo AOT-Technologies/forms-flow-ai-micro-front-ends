@@ -641,5 +641,8 @@ export const RESOURCE_BUNDLES_DE = {
   "Connected Apps": "Verbundene Apps",
   "Library": "Bibliothek",
   "Add group": "Gruppe hinzufügen",
-  "Add task label": "Aufgabenbezeichnung hinzufügen"
+  "Add task label": "Aufgabenbezeichnung hinzufügen",
+  "Integrations": "Integrationen",
+  "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "Wir ermöglichen Hunderte von nativen Integrationen über unser Paket „Native Integrations Pro“.",
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Diese Funktion ist standardmäßig nicht im 14-Tage-Test verfügbar. Wenn Ihr Test diese Funktion erfordert, können Sie uns dies mitteilen, und wir können dies für Sie aktivieren."
 };
