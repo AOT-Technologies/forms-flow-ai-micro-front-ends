@@ -63,7 +63,7 @@ const PremiumSubscription = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Translation>{(t) => t(" formsflow.ai")}</Translation>
+              <Translation>{(t) => t(" formsflow.ai ")}</Translation>
             </a>
             <a
               href="https://formsflow.ai/about-us/#contact-us"
