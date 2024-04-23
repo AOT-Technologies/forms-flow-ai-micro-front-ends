@@ -650,5 +650,7 @@ export const RESOURCE_BUNDLES_PT = {
   "To learn more about Native Integrations Pro": "Para saber mais sobre as Integrações Nativas Pro",
   "Check out Integrations Feature": "Confira a funcionalidade de Integrações",
   "Connect with": "Entre em contato com",
-  "team for requests or queries.": "a equipe para solicitações ou dúvidas."
+  "team for requests or queries.": "a equipe para solicitações ou dúvidas.",
+  "Learn more about the feature": "Saiba mais sobre o recurso",
+  " team.": "equipe."
 };
