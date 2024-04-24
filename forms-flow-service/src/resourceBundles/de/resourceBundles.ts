@@ -641,5 +641,18 @@ export const RESOURCE_BUNDLES_DE = {
   "Connected Apps": "Verbundene Apps",
   "Library": "Bibliothek",
   "Add group": "Gruppe hinzufügen",
-  "Add task label": "Aufgabenbezeichnung hinzufügen"
+  "Add task label": "Aufgabenbezeichnung hinzufügen",
+  "Integrations": "Integrationen",
+  "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "Wir ermöglichen Hunderte von nativen Integrationen über unser Paket „Native Integrations Pro“.",
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "Diese Funktion ist standardmäßig nicht im 14-Tage-Test verfügbar. Wenn Ihr Test diese Funktion erfordert, können Sie uns dies mitteilen, und wir können dies für Sie aktivieren.",
+  "Upgrade to unlock Native Integrations Pro": "Upgrade, um Native Integrations Pro freizuschalten",
+  "We facilitate hundreds of native integrations via our ": "Wir ermöglichen Hunderte von nativen Integrationen über unsere ",
+  "Native Integrations Pro": "Native Integrations Pro",
+  " package. This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "-Paket. Diese Funktion ist standardmäßig nicht in der 14-Tage-Testversion verfügbar. Wenn Ihre Testversion diese Funktion erfordert, können Sie uns dies mitteilen, und wir können sie für Sie aktivieren.",
+  "To learn more about Native Integrations Pro": "Weitere Informationen zu Native Integrations Pro finden Sie unter",
+  "Check out Integrations Feature": "Überprüfen Sie die Integrationen-Funktion",
+  "Connect with": "Wenden Sie sich an",
+  "team for requests or queries.": "das Team für Anfragen oder Fragen.",
+  "Learn more about the feature": "Erfahren Sie mehr über das Feature",
+  " team.": "Team."
 };
