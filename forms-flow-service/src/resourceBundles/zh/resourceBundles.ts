@@ -636,6 +636,19 @@ export const RESOURCE_BUNDLES_ZH = {
   "Connected Apps": "已连接的应用",
   "Library": "库",
   "Add group": "添加组",
-  "Add task label": "添加任务标签"
+  "Add task label": "添加任务标签",
+  "Integrations": "集成",
+  "We facilitate hundreds of native integrations via our ‘Native Integrations Pro’ package.": "我们通过我们的“原生集成专业版”套餐，可以提供数百种本地集成。",
+  " This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "该功能在14天试用期内默认不可用。如果您的试用需要此功能，您可以告诉我们，我们可以为您启用此功能。",
+  "Upgrade to unlock Native Integrations Pro": "升级以解锁原生集成专业版",
+  "We facilitate hundreds of native integrations via our ": "我们通过我们的原生集成专业版 ",
+  "Native Integrations Pro": "原生集成专业版",
+  " package. This feature is not available by default in the 14 day trial. If your trial requires this feature, you can let us know and we can enable this for you.": "包。该功能在14天试用期内默认情况下不可用。如果您的试用需要此功能，请告诉我们，我们可以为您启用。",
+  "To learn more about Native Integrations Pro": "查看原生集成专业版功能",
+  "Check out Integrations Feature": "查看集成功能",
+  "Connect with": "联系",
+  "team for requests or queries.": "团队以获取请求或查询。",
+  "Learn more about the feature": "了解更多功能",
+  " team.": "团队。"
 };
 
