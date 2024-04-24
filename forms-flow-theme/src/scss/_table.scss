@@ -1,4 +1,5 @@
 .table th {
+  padding: 20px !important;
   vertical-align: inherit !important;
 }
 
@@ -6,34 +7,34 @@
   vertical-align: inherit !important;
 }
 
- 
+
 $table-variants: (
   "primary": shift-color($primary, $table-bg-scale)
 );
 
 .custom-table {
-font-family: Arial, Helvetica, sans-serif;
-border-collapse: separate !important;
-border-spacing: 0 15px;
-width: 100%;
-border: none;
-margin: 0;
-
-td, th {
-  padding: 20px;
-  border-bottom: 0;
-  vertical-align: middle !important;
-}
-
-tr {
-  box-shadow: 0 4px 6px map-get($custom-colors, gray-200) !important;
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: separate !important;
+  border-spacing: 0 15px;
+  width: 100%;
   border: none;
-}
-
-th {
-  text-align: left;
-  background-color: map-get($custom-colors, primary-100) !important;
   margin: 0;
-  border: none;
-}
+
+  td,
+  th {
+    border-bottom: 0;
+    vertical-align: middle !important;
+  }
+
+  tr {
+    box-shadow: 0 4px 6px map-get($custom-colors, gray-200) !important;
+    border: none;
+  }
+
+  th {
+    text-align: left;
+    background-color: map-get($custom-colors, primary-100) !important;
+    margin: 0;
+    border: none;
+  }
 }

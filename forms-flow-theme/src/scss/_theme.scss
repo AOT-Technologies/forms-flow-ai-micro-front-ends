@@ -10,8 +10,6 @@ $body-bg: $white;
 $body-color: $white;
 
 
-
-
 $theme-colors: (
   "primary": $primary,
   "secondary": $secondary,
@@ -22,7 +20,8 @@ $theme-colors: (
   "gray": $gray,
   "info": $info,
   "body-bg":$white,
-  "body-color":$white
+  "body-color":$white,
+  "input-color": $dark,
 );
 
 $custom-colors: (
