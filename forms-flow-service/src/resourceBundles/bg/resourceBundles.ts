@@ -651,4 +651,5 @@ export const RESOURCE_BUNDLES_BG = {
   "Learn more about the feature": "Научете повече за функцията",
   "Native Integrations Pro": "Нативни Интеграции Про",
   " team.": "екип.",
+  "Connect with formsflow.ai team.": "Свържете се с екипа на formsflow.ai."
 };

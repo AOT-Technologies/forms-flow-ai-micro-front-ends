@@ -652,5 +652,6 @@ export const RESOURCE_BUNDLES_PT = {
   "Connect with": "Entre em contato com",
   "team for requests or queries.": "a equipe para solicitações ou dúvidas.",
   "Learn more about the feature": "Saiba mais sobre o recurso",
-  " team.": "equipe."
+  " team.": "equipe.",
+  "Connect with formsflow.ai team.": "Conecte-se com a equipe da formsflow.ai."
 };
