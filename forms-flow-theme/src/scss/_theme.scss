@@ -8,6 +8,9 @@ $info: #008599;
 $white: white;
 $body-bg: $white;
 $body-color: $white;
+$dropdown-link-color: $dark;
+$dropdown-link-hover-bg: $gray-200;
+$dropdown-link-hover-color: $dark;
 
 
 $theme-colors: (
@@ -26,6 +29,7 @@ $theme-colors: (
 
 $custom-colors: (
   "primary-100": tint-color($primary, 95%),
+  "primary-200": tint-color($primary, 60%),
   "primary-300": tint-color($primary, 20%),
   "primary-400": tint-color($primary, 10%), 
   "primary-500": shade-color($primary, 10%),
@@ -44,5 +48,23 @@ $custom-colors: (
 );
 
 // Merge the maps
-
 $theme-colors: map-merge($theme-colors, $custom-colors);
+
+:root {
+  --appname-margin-left: 0px;
+  --appname-margin-right: 0px;
+  --appname-margin-top: 0px;
+  --appname-margin-bottom: 0px;
+
+  --navbar-items-font-size: 16px;
+  --navbar-items-font-weight: 400;
+  --navbar-items: #{$dark};
+  --navbar-active: #{$primary};
+  --button-primary-background: #{$primary};
+  --navbar-app-name: #{$dark};
+  --navbar-logo-width: 40px;
+  --navbar-height: 62px;  
+  --navbar-logo-path: "./logo.svg";
+  --navbar-background: #{$white};  
+
+}
