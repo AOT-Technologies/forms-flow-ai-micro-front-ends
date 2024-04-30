@@ -1,40 +1,40 @@
 .table th {
-    vertical-align: inherit !important;
-  }
-  
-  .table td {
-    vertical-align: inherit !important;
-  }
+  padding: 20px !important;
+  vertical-align: inherit !important;
+}
 
-   
-  $table-variants: (
-    "primary": shift-color($primary, $table-bg-scale)
-  );
+.table td {
+  vertical-align: inherit !important;
+}
+
+
+$table-variants: (
+  "primary": shift-color($primary, $table-bg-scale)
+);
 
 .custom-table {
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: separate !important;
-    border-spacing: 0 15px;
-    width: 100%;
-    border: none;
-    margin: 0;
-  
-    td, th {
-      padding: 20px;
-      border-bottom: 0;
-      vertical-align: middle !important;
-    }
-  
-    tr {
-      background-color: #FFFFFF;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border: none;
-    }
-  
-    th {
-      text-align: left;
-      background-color: #f0f6fb;
-      margin: 0;
-      border: none;
-    }
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: separate !important;
+  border-spacing: 0 15px;
+  width: 100%;
+  border: none;
+  margin: 0;
+
+  td,
+  th {
+    border-bottom: 0;
+    vertical-align: middle !important;
   }
+
+  tr {
+    box-shadow: 0 4px 6px map-get($custom-colors, gray-200) !important;
+    border: none;
+  }
+
+  th {
+    text-align: left;
+    background-color: map-get($custom-colors, primary-100) !important;
+    margin: 0;
+    border: none;
+  }
+}

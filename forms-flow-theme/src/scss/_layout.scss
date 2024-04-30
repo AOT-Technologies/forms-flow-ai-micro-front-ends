@@ -1,10 +1,10 @@
 
 
-// @media (min-width: 1400px) {
-//     .container {
-//       max-width: 1320px;
-//     }
-// } below you can see latest method
+@media (min-width: 1400px) {
+    .container {
+      max-width: 1320px;
+    }
+} 
 
 $container-max-widths: (
   xxl: 1320px

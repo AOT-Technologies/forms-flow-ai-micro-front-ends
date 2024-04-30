@@ -8,11 +8,12 @@
 @import "../../node_modules/bootstrap/scss/mixins";
 
 //theme override
+@import "./typography";
 @import "./theme";
 
 //component override
 @import "./button";
-@import "./table";
+@import "./table";  
 
 // util class
 @import "./utils/index";
@@ -20,3 +21,4 @@
 @import "./external/formio.scss";
 @import "./external/toastify.scss";
 @import "~bootstrap/scss/bootstrap";
+
