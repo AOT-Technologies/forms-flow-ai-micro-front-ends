@@ -112,12 +112,12 @@ const NavBar = React.memo(({ props }) => {
       const isMediumScreen = window.matchMedia("(min-width: 992px)").matches;
       if (isMediumScreen) {
         document.documentElement.style.setProperty(
-          "--fwf-navbar-height",
+          "--ff-navbar-height",
           `${navbarRef.current.offsetHeight}px`
         );
       } else {
         document.documentElement.style.setProperty(
-          "--fwf-navbar-height",
+          "--ff-navbar-height",
           `${52}px`
         );
       }

@@ -1,6 +1,6 @@
 // $body-bg: #000;
 
-$prefix:"fwf-";
+$prefix:"ff-";
 
 ///////////////////////////////TB removed///////////////////////////////////////////
 
@@ -15,7 +15,7 @@ $prefix:"fwf-";
 }
 
 .text-primary {
-  color: var(--fwf-primary) !important;
+  color: var(--ff-primary) !important;
 }
 
 .footer-text {
@@ -27,13 +27,13 @@ $prefix:"fwf-";
 }
 
 .btn-outline-primary:not(:disabled) {
-  border-color: var(--fwf-primary);
-  color: var(--fwf-primary);
+  border-color: var(--ff-primary);
+  color: var(--ff-primary);
 }
 
 .btn-outline-primary:not(:disabled):hover {
-  color: var(--fwf-white);
-  background-color: var(--fwf-primary);
+  color: var(--ff-white);
+  background-color: var(--ff-primary);
 }
 
 .task-container {
@@ -83,17 +83,17 @@ h4 {
 }
 
 .well {
-  border: 1px solid var(--fwf-gray-200);
+  border: 1px solid var(--ff-gray-200);
   padding: 1rem;
-  background-color: var(--fwf-gray-100);
+  background-color: var(--ff-gray-100);
 }
 
 .formio-component-panel {
-  border: 1px solid --fwf-gray-200;
+  border: 1px solid --ff-gray-200;
 }
 
 .formio-component-panel .panel-heading {
-  background-color: --fwf-gray-200;
+  background-color: --ff-gray-200;
   padding: 10px 0 10px 10px;
 }
 
@@ -106,8 +106,8 @@ h4 {
 }
 
 .page-item.active .page-link {
-  background-color: var(--fwf-primary-600) !important;
-  border-color: var(--fwf-gray-700) !important;
+  background-color: var(--ff-primary-600) !important;
+  border-color: var(--ff-gray-700) !important;
 }
 
 h5,
@@ -116,23 +116,23 @@ h5,
 }
 
 .bg-default {
-  background-color: var(--fwf-primary-600);
-  border: var(--fwf-primary-600);
-  color: var(--fwf-white) !important;
+  background-color: var(--ff-primary-600);
+  border: var(--ff-primary-600);
+  color: var(--ff-white) !important;
 }
 
 .text-muted {
-  color: var(--fwf-gray-700) !important;
+  color: var(--ff-gray-700) !important;
 }
 
 i.fa.fa-question-circle.text-muted {
-  color: var(--fwf-primary-300) !important;
+  color: var(--ff-primary-300) !important;
 }
 
 .panel-heading {
-  background-color: var(--fwf-primary-600);
-  border: var(--fwf-primary-600);
-  color: var(--fwf-white) !important;
+  background-color: var(--ff-primary-600);
+  border: var(--ff-primary-600);
+  color: var(--ff-white) !important;
   padding: 0.75rem 1.25rem;
   margin-bottom: 8px;
 }
@@ -147,27 +147,27 @@ i.fa.fa-question-circle.text-muted {
 
 .formio-error-wrapper,
 .has-error {
-  color: var(--fwf-danger);
-  background-color: var(--fwf-white);
-  border-color: var(--fwf-danger);
+  color: var(--ff-danger);
+  background-color: var(--ff-white);
+  border-color: var(--ff-danger);
 }
 
 .formio-error-wrapper,
 .has-error label {
-  color: var(--fwf-danger);
+  color: var(--ff-danger);
 }
 
 .formio-errors .error {
-  color: var(--fwf-danger);
+  color: var(--ff-danger);
 }
 
 .is-invalid {
-  background-color: var(--fwf-danger-400);
+  background-color: var(--ff-danger-400);
 }
 
 .active-tab {
   background-color: transparent;
-  color: var(--fwf-primary) !important;
+  color: var(--ff-primary) !important;
 }
 
 .active-tab-dropdown>#dashboard-dropdown {
@@ -182,18 +182,18 @@ i.fa.fa-question-circle.text-muted {
 
 .dropdown-item:hover {
   filter: none;
-  background-color: var(--fwf-gray-200);
+  background-color: var(--ff-gray-200);
 }
 
 .selected-tag {
   color: var(--color-info) !important;
-  border-bottom: 1px solid var(--fwf-info);
+  border-bottom: 1px solid var(--ff-info);
   background-color: transparent;
 }
 
 .lbl-logout {
   font-size: 16px;
-  color: var(--fwf-dark);
+  color: var(--ff-dark);
   margin-left: 10px;
   cursor: pointer;
 }
@@ -321,7 +321,7 @@ i.fa.fa-question-circle.text-muted {
 }
 
 .btn-outline-primary {
-  border-color: var(--fwf-primary-200) !important;
+  border-color: var(--ff-primary-200) !important;
 }
 
 .btn-center {
@@ -339,8 +339,8 @@ i.fa.fa-question-circle.text-muted {
 }
 
 .tooltip-inner {
-  color: var(--fwf-dark) !important;
-  background-color: var(--fwf-white)  !important;
+  color: var(--ff-dark) !important;
+  background-color: var(--ff-white)  !important;
   border: 0.5px solid !important;
   text-align: left;
 }
@@ -356,7 +356,7 @@ i.fa.fa-question-circle.text-muted {
 }
 
 select option:hover {
-  box-shadow: 0 0 10px 100px var(--fwf-dark) inset;
+  box-shadow: 0 0 10px 100px var(--ff-dark) inset;
 }
 
 .modal-dialog {
@@ -366,22 +366,22 @@ select option:hover {
  
 
 #sidebar {
-  background: var(--fwf-white);
+  background: var(--ff-white);
 }
  
 
 #sidebar ul li.active>a,
 #sidebar a[aria-expanded="true"] {
-  background: var(--fwf-white);
+  background: var(--ff-white);
 }
 
 header nav {
-  border-bottom: var(--fwf-white);
+  border-bottom: var(--ff-white);
 }
 
 .topheading-border-bottom {
   z-index: 2000;
-  border-bottom: 2px solid var(--fwf-info) !important;
+  border-bottom: 2px solid var(--ff-info) !important;
   padding: 0 0.5rem !important;
   box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2),
     0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
@@ -389,14 +389,14 @@ header nav {
 
 .rounded-circle {
   border-radius: 50% !important;
-  border: 2px solid var(--fwf-gray-400);
+  border: 2px solid var(--ff-gray-400);
   height: 40px;
   width: 40px;
 }
 
 .sort-span {
   cursor: pointer;
-  border: 1px solid var(--fwf-gray-400);
+  border: 1px solid var(--ff-gray-400);
   border-radius: 0.25rem;
   padding: 4px;
   padding-left: 6px;
@@ -406,11 +406,11 @@ header nav {
 }
 
 .sort-span:hover {
-  background-color: var(--fwf-primary);
+  background-color: var(--ff-primary);
 }
 
 .sort-span:hover>.fa-lg-hover {
-  color: var(--fwf-white);
+  color: var(--ff-white);
 }
 
 div[disabled] {
@@ -444,7 +444,7 @@ div[disabled] {
 }
 
 .navbar-light .navbar-nav .nav-link {
-  color: var(--fwf-black);
+  color: var(--ff-black);
 }
 
 /* overwriting default styles */
@@ -462,13 +462,13 @@ div[disabled] {
 }
 
 .delete_button {
-  color: var(--fwf-danger);
+  color: var(--ff-danger);
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
 }
 
 .delete_button:hover {
-  color: var(--fwf-danger);
+  color: var(--ff-danger);
   }
 
 .delete_button:active {
@@ -477,11 +477,11 @@ div[disabled] {
 }
 
 .custom_primary_color {
-  color: var(--fwf-primary);
+  color: var(--ff-primary);
 }
 
 .tooltiptext {
-  color: var(--fwf-gray-800);
+  color: var(--ff-gray-800);
 }
 
 .select_download {
@@ -503,11 +503,11 @@ div[disabled] {
 }
 
 a {
-  color: var(--fwf-primary);
+  color: var(--ff-primary);
 }
 
 .info-background {
-  background-color: var(--fwf-danger-200);
+  background-color: var(--ff-danger-200);
 }
 
 .formio-wizard-nav-container {
@@ -525,8 +525,8 @@ a {
  
 
 div.upload {
-  background-color: var(--fwf-gray-200);
-  border: 1px solid var(--fwf-gray-300);
+  background-color: var(--ff-gray-200);
+  border: 1px solid var(--ff-gray-300);
   border-radius: 5px;
   display: inline-block;
   height: 30px;
@@ -551,10 +551,10 @@ div.upload input[type="file"] {
 }
 
 .uploadButton {
-  background-color: var(--fwf-primary-500);
+  background-color: var(--ff-primary-500);
   border: none;
   border-radius: 3px;
-  color: var(--fwf-white);
+  color: var(--ff-white);
   cursor: pointer;
   display: inline-block;
   height: 30px;
@@ -582,14 +582,14 @@ div.upload input[type="file"] {
 }
 
 .head-item {
-  color: var(--fwf-gray-700);;
+  color: var(--ff-gray-700);;
   cursor: pointer;
   padding-bottom: 3rem;
 }
 
 .head-active {
-  color: var(--fwf-primary);
-  border-bottom: 4px solid  var(--fwf-primary);
+  color: var(--ff-primary);
+  border-bottom: 4px solid  var(--ff-primary);
 }
 
 .padding-left-60 {
@@ -647,11 +647,11 @@ div.upload input[type="file"] {
  
 
 hr {
-  border-top: 2px solid var(--fwf-gray-400);
+  border-top: 2px solid var(--ff-gray-400);
   
 }
 .active-link {
-  color: var(--fwf-primary) !important;
+  color: var(--ff-primary) !important;
 }
 
 
@@ -660,7 +660,7 @@ body {
   font-size: 16px;
   font-family: Nunito Sans, SemiBold;
   overflow: hidden; 
-  background-color: var(--fwf-white);
+  background-color: var(--ff-white);
 }
 
 .main-container{
