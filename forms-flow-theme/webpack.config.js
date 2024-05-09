@@ -1,51 +1,44 @@
-const path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-module.exports = (env, argv) => {
-  const isProduction = argv.mode === "production";
+// webpack.config.js
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-  return {
-    entry: "./src/scss/index.scss",
-    output: {
-      path: path.resolve(__dirname, "dist"),
-    },
-    devServer: {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      port: 3008,
-      watchFiles: {
-        paths: ['./src/scss/'],
-        options: {
-          ignored: ['node_modules/**'] // Example of files to ignore
-        }
-      }
-  
-    },
-    module: {
-      rules: [
-        {
-          test: /\.s[ac]ss$/i,
-          use: [
-            MiniCssExtractPlugin.loader,
-            "css-loader",
-            "sass-loader",
-          ],
+module.exports = (env, argv) => {
+    const isProduction = argv.mode === 'production';
+
+    return {
+        entry: './scss/index.scss',
+        output: {
+            path: path.resolve(__dirname, 'dist'),
+            filename: 'formsflow-theme.css',
         },
-      ],
-    },
-    plugins: [
-      new MiniCssExtractPlugin({
-        filename: "forms-flow-theme.min.css",
-        chunkFilename: isProduction ? "[id].css" : "[id].css",
-      }),
-    ],
-    optimization: {
-      minimizer: [
-        new CssMinimizerPlugin(),
-      ],
-    },
-    // Exclude source maps in production
-    devtool: isProduction ? false : "source-map",
-  };
+        module: {
+            rules: [
+                {
+                    test: /\.scss$/,
+                    use: [
+                        isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+                        'css-loader',
+                        'sass-loader',
+                    ],
+                },
+            ],
+        },
+        plugins: [
+            new MiniCssExtractPlugin({
+                filename: isProduction ? 'formsflow-theme.min.css' : 'formsflow-theme.css',
+            }),
+        ],
+        devServer: {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+          port: 3008,
+          watchFiles: {
+            options: {
+              ignored: ['node_modules/**'] // Example of files to ignore
+            }
+          }
+      
+        },
+    };
 };
