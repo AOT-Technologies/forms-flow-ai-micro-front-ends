@@ -15,8 +15,8 @@ if (!component) {
   `);
 }
 
-import Walk from "@root/walk"
-import path from "path"
+import Walk from "@root/walk";
+import path from "path";
 
 const compressFileAndUpload = (fileName, filePath) => {
   const stream = createReadStream(`${filePath}/${fileName}`);
@@ -25,10 +25,7 @@ const compressFileAndUpload = (fileName, filePath) => {
     .pipe(createWriteStream(`${filePath}/${component}.gz.js`))
     .on("finish", () => {
       console.log(`Successfully compressed the file at ${filePath}`);
-      upload(
-        `${component}.gz.js`,
-        `${filePath}/${component}.gz.js`
-      );
+      upload(`${component}.gz.js`, `${filePath}/${component}.gz.js`);
     });
 };
 
@@ -37,7 +34,7 @@ const run = async (params) => {
   try {
     const results = await s3Client.send(new PutObjectCommand(params));
     console.log(
-        "Successfully created " +
+      "Successfully created " +
         params.Key +
         " and uploaded it to " +
         params.Bucket +
@@ -57,15 +54,14 @@ const run = async (params) => {
  * @param {string} file - artifact path
  */
 async function upload(file_name, file) {
-    const params = {
-        Bucket: BUCKET, 
-        Key: `${component}@${VERSION}/${file_name}`, 
-        Body: createReadStream(file), 
-        ContentType:"application/javascript",
-        ContentEncoding:"gzip"
-      };
-    run(params);
-    
+  const params = {
+    Bucket: BUCKET,
+    Key: `${component}@${VERSION}/${file_name}`,
+    Body: createReadStream(file),
+    ContentType: file_name.includes(".css") ? "text/css; charset=utf-8" : "application/javascript",
+    ContentEncoding: "gzip",
+  };
+  run(params);
 }
 
 Walk.walk(`../${component}/dist`, walkFunc)
@@ -93,12 +89,16 @@ function walkFunc(err, pathname, dirent) {
 
   if (dirent.isFile()) {
     try {
-        console.log(
-            `Collecting artifact -> ${path.dirname(pathname)}/${dirent.name}`
-          );
-          if (dirent.name === `${component}.js`) {
-            compressFileAndUpload(dirent.name, `${path.dirname(pathname)}`);
-          }
+      const filePath = path.dirname(pathname);
+      const fileName = dirent.name;
+      console.log(`Collecting artifact -> ${filePath}/${fileName}`);
+
+      if (fileName === `${component}.js`) {
+        compressFileAndUpload(fileName, filePath);
+      }
+      if (fileName === `${component}.min.css`) {
+        upload(fileName, `${filePath}/${fileName}`);
+      }
     } catch (err) {
       console.log("Upload failed", err);
       throw err;

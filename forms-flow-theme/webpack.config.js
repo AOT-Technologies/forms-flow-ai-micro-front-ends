@@ -9,7 +9,7 @@ module.exports = (env, argv) => {
         entry: './scss/index.scss',
         output: {
             path: path.resolve(__dirname, 'dist'),
-            filename: 'formsflow-theme.css',
+            filename: 'forms-flow-theme.css',
         },
         module: {
             rules: [
@@ -25,7 +25,7 @@ module.exports = (env, argv) => {
         },
         plugins: [
             new MiniCssExtractPlugin({
-                filename: isProduction ? 'formsflow-theme.min.css' : 'formsflow-theme.css',
+                filename: isProduction ? 'forms-flow-theme.min.css' : 'forms-flow-theme.css',
             }),
         ],
         devServer: {
