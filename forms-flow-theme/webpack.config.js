@@ -9,16 +9,15 @@ module.exports = (env, argv) => {
         entry: './scss/index.scss',
         output: {
             path: path.resolve(__dirname, 'dist'),
-            filename: 'forms-flow-theme.css',
         },
         module: {
             rules: [
                 {
                     test: /\.scss$/,
                     use: [
-                        isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
-                        'css-loader',
-                        'sass-loader',
+                      MiniCssExtractPlugin.loader,                        
+                      'css-loader',
+                      'sass-loader',
                     ],
                 },
             ],
