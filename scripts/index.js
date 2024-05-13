@@ -54,12 +54,13 @@ const run = async (params) => {
  * @param {string} file - artifact path
  */
 async function upload(file_name, file) {
+  const isCss = file_name.includes(".css")
   const params = {
     Bucket: BUCKET,
     Key: `${component}@${VERSION}/${file_name}`,
     Body: createReadStream(file),
-    ContentType: file_name.includes(".css") ? "text/css; charset=utf-8" : "application/javascript",
-    ContentEncoding: "gzip",
+    ContentType: isCss ? "text/css; charset=utf-8" : "application/javascript",
+    ContentEncoding: isCss ? undefined : "gzip",
   };
   run(params);
 }
