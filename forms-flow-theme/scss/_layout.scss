@@ -1,0 +1,21 @@
+
+
+@media (min-width: 1400px) {
+    .container {
+      max-width: 1320px;
+    }
+} 
+
+$container-max-widths: (
+  xxl: 1320px
+);
+
+.main-container{
+    max-height: calc(100vh - $navbar-height);
+    margin-top: $navbar-height;
+    overflow-y: auto;
+  }
+  
+.min-container-height{
+    min-height: calc(100vh - 170px);
+}

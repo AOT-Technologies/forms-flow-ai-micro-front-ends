@@ -18,7 +18,7 @@ import {
   ENABLE_TASKS_MODULE,
   ENABLE_INTEGRATION_PREMIUM
 } from "./constants/constants";
-import "./Navbar.css";
+import "./Navbar.scss";
 import { StorageService } from "@formsflow/service";
 import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
@@ -112,12 +112,12 @@ const NavBar = React.memo(({ props }) => {
       const isMediumScreen = window.matchMedia("(min-width: 992px)").matches;
       if (isMediumScreen) {
         document.documentElement.style.setProperty(
-          "--navbar-height",
+          "--ff-navbar-height",
           `${navbarRef.current.offsetHeight}px`
         );
       } else {
         document.documentElement.style.setProperty(
-          "--navbar-height",
+          "--ff-navbar-height",
           `${52}px`
         );
       }

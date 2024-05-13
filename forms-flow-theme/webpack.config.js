@@ -1,39 +1,43 @@
-const { merge } = require("webpack-merge");
-const singleSpaDefaults = require("webpack-config-single-spa");
+// webpack.config.js
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = (webpackConfigEnv, argv) => {
-  const defaultConfig = singleSpaDefaults({
-    orgName: "formsflow",
-    projectName: "theme",
-    webpackConfigEnv,
-    argv,
-  });
+module.exports = (env, argv) => {
+    const isProduction = argv.mode === 'production';
 
-  return merge(defaultConfig, {
-    // modify the webpack config however you'd like to by adding to this object
-    devServer: {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      port: 3008
-    },
-    output:{
-      filename:"forms-flow-theme.js"
-    },
-    module: {
-      rules: [
-        {
-          test: /\.s[ac]ss$/i,
-          use: [
-            // Creates `style` nodes from JS strings
-            "style-loader",
-            // Translates CSS into CommonJS
-            "css-loader",
-            // Compiles Sass to CSS
-            "sass-loader",
-          ],
+    return {
+        entry: './scss/index.scss',
+        output: {
+            path: path.resolve(__dirname, 'dist'),
         },
-      ],
-    },
-  });
+        module: {
+            rules: [
+                {
+                    test: /\.scss$/,
+                    use: [
+                      MiniCssExtractPlugin.loader,                        
+                      'css-loader',
+                      'sass-loader',
+                    ],
+                },
+            ],
+        },
+        plugins: [
+            new MiniCssExtractPlugin({
+                filename: isProduction ? 'forms-flow-theme.min.css' : 'forms-flow-theme.css',
+            }),
+        ],
+        devServer: {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
+          port: 3008,
+          watchFiles: {
+            options: {
+              ignored: ['node_modules/**'] // Example of files to ignore
+            }
+          }
+      
+        },
+    };
 };
