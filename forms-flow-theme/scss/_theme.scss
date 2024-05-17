@@ -6,6 +6,7 @@ $dark: black;
 $gray: #232323;
 $info: #008599;
 $white: #ffffff;
+$main-bg: #f7f7f7;
 $body-bg: $white;
 $body-color: $white;
 $dropdown-link-color: $dark;
@@ -23,6 +24,7 @@ $theme-colors: (
   "white": $white,
   "gray": $gray,
   "info": $info,
+  "main-bg": $main-bg,
   "body-bg":$white,
   "body-color":$white,
   "input-color": $dark,
