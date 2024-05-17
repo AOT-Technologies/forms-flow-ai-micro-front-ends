@@ -10,14 +10,4 @@ $container-max-widths: (
   xxl: 1320px
 );
 
-.main-container{
-  max-height: calc(100vh - var(--navbar-height));
-  margin-top: var(--navbar-height);
-  overflow-y: auto;
-  background: var(--ff-main-bg);
- 
-}
 
-.min-container-height{
-  min-height: calc(100vh - 170px);
-}
