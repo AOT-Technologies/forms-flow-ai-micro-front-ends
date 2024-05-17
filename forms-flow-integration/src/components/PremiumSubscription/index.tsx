@@ -39,7 +39,7 @@ const PremiumSubscription = () => {
           </h4>
           <div className="mt-5 text-center">
             <a
-              href="https://formsflow.ai/integrations"
+              href="https://formsflow.ai/integrations/#questions"
               className="btn checkout-btn btn-primary fw-bold"
               target="_blank"
               rel="noopener noreferrer"
@@ -52,25 +52,12 @@ const PremiumSubscription = () => {
 
           <div className="mt-4">
             <a
+              className="text-decoration-none"
               href="https://formsflow.ai/about-us/#contact-us"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Translation>{(t) => t("Connect with")}</Translation>
-            </a>
-            <a
-              href="https://formsflow.ai/about-us/#contact-us"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Translation>{(t) => t(" formsflow.ai ")}</Translation>
-            </a>
-            <a
-              href="https://formsflow.ai/about-us/#contact-us"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Translation>{(t) => t(" team.")}</Translation>
+              <Translation>{(t) => t("Connect with formsflow.ai team.")}</Translation>
             </a>
           </div>
         </div>

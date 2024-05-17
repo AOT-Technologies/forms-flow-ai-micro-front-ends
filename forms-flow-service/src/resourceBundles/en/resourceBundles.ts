@@ -244,7 +244,7 @@ export const RESOURCE_BUNDLES_EN = {
   "No dashboard found": "No dashboard found",
   "of": "of",
   "Results": "Results",
-  "Dashbaord": "Dashboard",
+  "Dashboard": "Dashboard",
   "Dashboards": "Dashboards",
   "Select Dashboard": "Select Dashboard",
   "Total Submissions": "Total Submissions",
@@ -442,7 +442,6 @@ export const RESOURCE_BUNDLES_EN = {
   "Eg: Account Manager": "Eg: Account Manager",
   "Search by name, username or email": "Search by name, username or email",
   "No data Found": "No data Found",
-  "Dashboard": "Dashboard",
   "Roles": "Roles",
   "Users": "Users",
   "Create New Role": "Create New Role",
@@ -652,7 +651,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Connect with": "Connect with",
   "team for requests or queries.": "team for requests or queries.",
   "Learn more about the feature": "Learn more about the feature",
-  " team.": "team."
+  " team.": "team.",
+  "Connect with formsflow.ai team.": "Connect with formsflow.ai team."
 };
 
 

@@ -5,7 +5,7 @@ import { RESOURCE_BUNDLES_FR } from "./fr/resourceBundles";
 import { RESOURCE_BUNDLES_PT } from "./pt/resourceBundles";
 import { RESOURCE_BUNDLES_BG } from "./bg/resourceBundles";
 import { RESOURCE_BUNDLES_DE } from "./de/resourceBundles";
-
+import { RESOURCE_BUNDLES_ES } from "./es/resourceBundles";
 interface CustomResourceBundle {
   [key: string]: Resource;
 }
@@ -31,6 +31,9 @@ class I18nManager {
       },
       de: {
         translation: RESOURCE_BUNDLES_DE,
+      },
+      es: {
+        translation: RESOURCE_BUNDLES_ES,
       },
     };
     
