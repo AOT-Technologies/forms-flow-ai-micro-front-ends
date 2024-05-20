@@ -68,6 +68,7 @@ h4 {
   bottom: 0;
 }
 
+
 .input-group .input-group-addon {
   position: absolute;
   right: 5px;
@@ -703,16 +704,6 @@ text-decoration: underline;
 }
 
 
-////
-.Toastify__toast--success{
-  background: var(--color-primary) !important;
-}
-
-.Toastify__progress-bar--success{
-  background: var(--color-white) !important;
-}
-
-/////
 body {
   font-size: 16px;
   font-family: Nunito Sans, SemiBold;
