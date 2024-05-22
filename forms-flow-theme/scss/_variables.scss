@@ -192,6 +192,10 @@ i.fa.fa-question-circle.text-muted {
   background-color: transparent;
 }
 
+.list-group-item:first-child, .list-group-item + .list-group-item {
+  color: var(--ff-dark);
+}
+
 .lbl-logout {
   font-size: 16px;
   color: var(--ff-dark);
