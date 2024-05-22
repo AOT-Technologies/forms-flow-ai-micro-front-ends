@@ -253,6 +253,15 @@ i.fa.fa-question-circle.text-muted {
   z-index: 10;
 }
 
+.modal-header {
+  justify-content: space-between !important;
+}
+
+.alert {
+  background-color: var(--ff-alert-200) !important;
+  border: solid 2px var(--ff-alert-400) !important;
+}
+
 .select {
   border-radius: 4px !important;
   margin-left: 8px;
@@ -629,7 +638,7 @@ div.upload input[type="file"] {
 
 .application-count {
   font-size: 20px;
-  margin-top: 5px;
+  margin-top: 1px;
   margin-left: 5px;
 }
 
