@@ -7,6 +7,7 @@ $gray: #232323;
 $info: #008599;
 $white: #ffffff;
 $main-bg: #f7f7f7;
+$alert: #ffbb00;
 $body-bg: $white;
 $body-color: $white;
 $dropdown-link-color: $dark;
@@ -48,6 +49,8 @@ $custom-colors: (
   "gray-600": tint-color($gray, 35%), 
   "gray-700": tint-color($gray, 25%),
   "gray-800": tint-color($gray, 15%),
+  "alert-200": tint-color($alert, 80%),
+  "alert-400": tint-color($alert, 55%),
 );
 
 // Merge the maps
