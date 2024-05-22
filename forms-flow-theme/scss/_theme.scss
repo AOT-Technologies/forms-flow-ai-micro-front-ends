@@ -38,6 +38,7 @@ $custom-colors: (
   "primary-400": tint-color($primary, 10%), 
   "primary-500": shade-color($primary, 10%),
   "primary-600": shade-color($primary, 40%),
+  "primary-700": shade-color($primary, 60%),
   "danger-200": tint-color($danger, 80%),
   "danger-400": tint-color($danger, 40%),
   "success-200": tint-color($success, 85%),
