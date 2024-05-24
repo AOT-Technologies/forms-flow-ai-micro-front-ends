@@ -1,25 +1,25 @@
 // $custom-btn-hover-bg: $gray-300;
 .btn-light {
     background-color: $gray-100 !important;
-    background-color: $gray-200 !important; 
-
 }
 
 .btn-light:hover {
-    color: $dark !important;
-    background-color: $gray-400 !important; 
-    border-color: $gray-500 !important;
+    border: 1px solid var(--ff-gray-400) !important;
+    background-color: var(--ff-gray-300) !important;
 }
 
 .form-select {
     color: $dark !important;
 }
+
 .btn-info {
     color: $white !important;
 }
+
 .btn-link {
     text-decoration: none !important;
 }
+
 .btn-link:hover {
     text-decoration: underline !important;
 }

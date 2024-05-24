@@ -15,6 +15,7 @@ $dropdown-link-hover-bg: $gray-200;
 $dropdown-link-hover-color: $dark;
 $btn-color: $dark;
 $popover-body-color: $dark;
+$btn-disabled-border-color: $gray-100;  
 
 $theme-colors: (
   "primary": $primary,
@@ -29,6 +30,7 @@ $theme-colors: (
   "body-bg":$white,
   "body-color":$white,
   "input-color": $dark,
+  "btn-disabled-border-color":$btn-disabled-border-color,
 );
 
 $custom-colors: (
