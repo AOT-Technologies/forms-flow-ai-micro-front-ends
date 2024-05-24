@@ -650,6 +650,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "team for requests or queries.": "团队以获取请求或查询。",
   "Learn more about the feature": "了解更多功能",
   " team.": "团队。",
-  "Connect with formsflow.ai team.": "与 formsflow.ai 团队联系。"
+  "Connect with formsflow.ai team.": "与 formsflow.ai 团队联系。",
+  "You don't have permission to access this page.": "您没有权限访问此页面。",
+  "Please contact your administrator or try again later.": "请联系您的管理员或稍后再试。",
+  "Return to login": "返回登录"
 };
 
