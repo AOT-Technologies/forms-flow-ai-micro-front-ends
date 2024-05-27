@@ -652,7 +652,10 @@ export const RESOURCE_BUNDLES_EN = {
   "team for requests or queries.": "team for requests or queries.",
   "Learn more about the feature": "Learn more about the feature",
   " team.": "team.",
-  "Connect with formsflow.ai team.": "Connect with formsflow.ai team."
+  "Connect with formsflow.ai team.": "Connect with formsflow.ai team.",
+  "You don't have permission to access this page.": "You don't have permission to access this page.",
+  "Please contact your administrator or try again later.": "Please contact your administrator or try again later.",
+  "Return to login": "Return to login"
 };
 
 
