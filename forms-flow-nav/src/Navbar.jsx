@@ -119,7 +119,7 @@ const NavBar = React.memo(({ props }) => {
       } else {
         document.documentElement.style.setProperty(
           "--ff-navbar-height",
-          `${52}px`
+          `${50}px`
         );
       }
     }
@@ -149,17 +149,17 @@ const NavBar = React.memo(({ props }) => {
   const logoPath = MULTITENANCY_ENABLED ? tenantLogo : defaultLogoPath;
   
 
-  const getAppName = useMemo(
-    () => () => {
-      if (!MULTITENANCY_ENABLED) {
-        return APPLICATION_NAME;
-      }
-      // TODO: Need a propper fallback component prefered a skeleton.
-      return applicationTitle || "";
-    },
-    [MULTITENANCY_ENABLED, applicationTitle]
-  );
-  const appName = getAppName();
+  // const getAppName = useMemo(
+  //   () => () => {
+  //     if (!MULTITENANCY_ENABLED) {
+  //       return APPLICATION_NAME;
+  //     }
+  //     // TODO: Need a propper fallback component prefered a skeleton.
+  //     return applicationTitle || "";
+  //   },
+  //   [MULTITENANCY_ENABLED, applicationTitle]
+  // );
+  const appName = "formsflow get new app is dddd"
   const { t } = useTranslation();
 
   useEffect(() => {

@@ -37,13 +37,16 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis; 
+  padding-block: 	0.3rem;
 }
 .moderate-name{
   font-size: 16px;
+  padding-block: 	0.3rem;
 }
 .long-name{ 
   font-size: 14px;
   font-weight: 600;
+  padding-block: 	0.3rem;
 }
 .custom-logo{
   width: var(--navbar-logo-width);
