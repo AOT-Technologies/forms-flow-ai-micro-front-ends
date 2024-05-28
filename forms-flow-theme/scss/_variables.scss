@@ -668,7 +668,6 @@ hr {
   color: var(--ff-primary) !important;
 }
 
-
 ///from base.scss///
 body {
   font-size: 16px;
@@ -696,11 +695,12 @@ vertical-align: inherit !important;
 padding: 8px 16px !important;
 }
 .bg-primary{
-background-color: var(--color-primary) !important;
+background-color: var(--ff-primary) !important;
 } 
 .table-primary {
 --bs-table-color: #fff;
---bs-table-bg:var(--color-primary) !important;
+--ff-table-bg: var(--ff-primary) !important;
+ 
 }
 
 .btn-link{
@@ -733,6 +733,11 @@ body {
 
 .min-container-height{
   min-height: calc(100vh - 170px);
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+  padding-right: 0rem !important;
+  padding-left: .3rem !important;
 }
 
 @mixin generate-overflow($axis, $value) {

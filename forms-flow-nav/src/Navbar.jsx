@@ -119,7 +119,7 @@ const NavBar = React.memo(({ props }) => {
       } else {
         document.documentElement.style.setProperty(
           "--ff-navbar-height",
-          `${52}px`
+          `${50}px`
         );
       }
     }
