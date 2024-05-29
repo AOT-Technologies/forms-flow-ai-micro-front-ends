@@ -97,7 +97,8 @@ const NavBar = React.memo(({ props }) => {
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
-  const [lang, setLang] = React.useState(userDetail?.locale);
+  const savedLanguage = localStorage.getItem("lang");
+  const [lang, setLang] = React.useState(savedLanguage);
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -174,10 +175,11 @@ const NavBar = React.memo(({ props }) => {
   }, []);
 
   useEffect(() => {
-    const language = lang ? lang : LANGUAGE;
-    props.publish("ES_CHANGE_LANGUAGE", language);
-    i18n.changeLanguage(language);
-    localStorage.setItem("lang", language);
+    if(lang){
+    props.publish("ES_CHANGE_LANGUAGE", lang);
+    i18n.changeLanguage(lang);
+    localStorage.setItem("lang", lang);
+    }
   }, [lang]);
 
   React.useEffect(() => {
@@ -186,12 +188,18 @@ const NavBar = React.memo(({ props }) => {
     );
   }, [instance]);
 
+  /**
+   * Fetches the user's locale from the instance or tenant data, and sets the lang state variable accordingly.
+   * This effect runs whenever the instance or tenant data changes.
+   */
   React.useEffect(() => {
-    if (!lang) {
-      const locale = instance?.getUserData()?.locale;
-      setLang(locale);
-    }
-  }, [instance]);
+    const locale =
+      instance?.getUserData()?.locale ||
+      tenant?.tenantData?.details?.locale ||
+      lang ||
+      LANGUAGE;
+    setLang(locale);
+  }, [instance, tenant.tenantData]);
 
   const handleOnclick = (selectedLang) => {
     setLang(selectedLang);
