@@ -310,7 +310,7 @@ export const InsightDashboard = React.memo((props: any) => {
               keyField="resourceId"
               data={authDashBoardList}
               columns={columns}
-              pagination={pagination}
+              pagination={authDashBoardList.length > 0 ? pagination : undefined}
               bordered={false}
               wrapperClasses="table-container-admin mb-3 px-4"
               rowStyle={{
