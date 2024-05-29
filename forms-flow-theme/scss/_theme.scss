@@ -2,7 +2,7 @@ $primary : #0072ed;
 $secondary: #6c757d;
 $success: #198754;
 $danger: #dc3545;
-$dark: black;
+$dark: #000000;
 $gray: #232323;
 $info: #008599;
 $white: #ffffff;
@@ -64,7 +64,6 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --appname-margin-right: 0px;
   --appname-margin-top: 0px;
   --appname-margin-bottom: 0px;
-
   --navbar-items-font-size: 16px;
   --navbar-items-font-weight: 400;
   --navbar-items: #{$dark};

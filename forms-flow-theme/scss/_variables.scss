@@ -345,6 +345,7 @@ i.fa.fa-question-circle.text-muted {
 
 .btn.btn-link:focus,
 .btn.btn-link.focus {
+  outline: 3px solid var(--ff-primary-200) !important;
   box-shadow: none;
 }
 
