@@ -1,94 +1,8 @@
-@import "./utils/cursor.scss";
-@import "./utils/overflow.scss";
-@import "./components/toastifyOverride.scss";
-@import "./overrideClasses/bootstrapOverride.scss";
-@import "./overrideClasses/formioComponentOverride.scss";
-@import "./baseStyle.scss";
-@import "./components/custom-table.scss";
-@import "./components/button.scss";
+// $body-bg: #000;
 
-:root {
-  --color-primary: #0072ed;
-  --color-primary-lt: #1890FF;
-  --color-primary-ltr: #2e96ff;
-  --color-primary-ltst: #E6F7FF;
-  --color-primary-dk: rgb(57, 120, 183);
-  --color-primary-dkr: #155cb5;
-  --color-primary-dkst: #003366;
-  --color-primary-btn-outline: #c1c2da;
+$prefix:"ff-";
 
-  --color-secondary: #6c757d;
-  --color-success: #3fb618;
-  --color-success-lt: #EAFBE7;
-  --color-warning: #fcba19;
-  --color-info: #4d61fc;
-  --color-info-background: #ffdbdb;
-  --color-main-bg: #f7f7f7;
-  --color-invalid: #ffd1d1;
-  --color-danger: red;
-  --color-danger-dk: #cb0404;
-  --color-danger-dkr:#970202;
-  --color-danger-dkst: #5b0101;
-  --color-danger-lt:#fc3434;
-  --color-danger-ltr: #f85757;
-  --color-danger-ltst: #ff9e9e;
-  --color-hr: #00000080;
-  --color-help: #008599;
-  --color-text-shadow: #ffffff66;
-  --color-box-shadow: #00000033;
-
-  --light-gray: #d3d3d3;
-  --color-gray-100: #f8f9fa;
-  --color-gray-200: #eeeeee;
-  --color-gray-300: #dddddd;
-  --color-gray-400: #cccccc;
-  --color-gray-500: #aaaaaa;;
-  --color-gray-600: #909090;
-  --color-gray-700: #585e64;
-  --color-gray-800: #3c3c3c;
-  --color-gray-900: #242c35;
-  --color-deep-gray: #222;
-
-  --color-white: #fff;
-  --color-light: #f8f9fa;
-  --color-dark: #373a3c;
-  --color-black: #000;
-
-  --color-indigo: #6610f2;
-  --color-purple: #613d7c;
-  --color-pink: #e83e8c;
-  --color-teal: #20c997;
-  --color-orange: #f2661f;
-  --color-cyan: #9954bb;
-
-  --logo-path: "./logo.svg";
-  --logo-width: 40px;
-  --appname-margin-left: 0px;
-  --appname-margin-right: 0px;
-  --appname-margin-top: 0px;
-  --appname-margin-bottom: 0px;
-
-  --navbar-items-font-size: 16px;
-  --navbar-items-font-weight: 400;
-
-  --navbar-background: var(--color-white);
-  --navbar-height: 52px;
-  --navbar-items: var(--color-black);
-  --navbar-active: var(--color-primary);
-  --button-primary-background: var(--color-primary);
-  --navbar-app-name: var(--color-black);
-  --navbar-logo-width: var(--logo-width);
-  --navbar-logo-path: var(--logo-path);
-
-  --published-form-label: var(--color-success);
-  --published-background: var(--color-success-lt);
-  --unpublished-background: var(--color-lightBlue);
-  --head-inactive: var(--color-gray-600);
-  --color-background-blue: var(--color-primary-dk);
-  --unpublished-label: var(--color-primary-lt);
-  --color-question-circle: var(--color-primary-ltr);
-  --color-lightBlue: var(--color-primary-ltst);
-}
+///////////////////////////////TB removed///////////////////////////////////////////
 
 .overflow-x-auto {
   overflow-x: auto;
@@ -101,7 +15,7 @@
 }
 
 .text-primary {
-  color: var(--color-primary) !important;
+  color: var(--ff-primary) !important;
 }
 
 .footer-text {
@@ -113,13 +27,13 @@
 }
 
 .btn-outline-primary:not(:disabled) {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--ff-primary);
+  color: var(--ff-primary);
 }
 
 .btn-outline-primary:not(:disabled):hover {
-  color: var(--color-white);
-  background-color: var(--color-primary);
+  color: var(--ff-white);
+  background-color: var(--ff-primary);
 }
 
 .task-container {
@@ -154,6 +68,7 @@ h4 {
   bottom: 0;
 }
 
+
 .input-group .input-group-addon {
   position: absolute;
   right: 5px;
@@ -169,17 +84,17 @@ h4 {
 }
 
 .well {
-  border: 1px solid var(--color-gray-200);
+  border: 1px solid var(--ff-gray-200);
   padding: 1rem;
-  background-color: var(--color-gray-100);
+  background-color: var(--ff-gray-100);
 }
 
 .formio-component-panel {
-  border: 1px solid --color-gray-200;
+  border: 1px solid --ff-gray-200;
 }
 
 .formio-component-panel .panel-heading {
-  background-color: --color-gray-200;
+  background-color: --ff-gray-200;
   padding: 10px 0 10px 10px;
 }
 
@@ -192,8 +107,8 @@ h4 {
 }
 
 .page-item.active .page-link {
-  background-color: var(--color-primary-dkst) !important;
-  border-color: var(--color-gray-700) !important;
+  background-color: var(--ff-primary-600) !important;
+  border-color: var(--ff-gray-700) !important;
 }
 
 h5,
@@ -202,23 +117,23 @@ h5,
 }
 
 .bg-default {
-  background-color: var(--color-primary-dkst);
-  border: var(--color-primary-dkst);
-  color: var(--color-white) !important;
+  background-color: var(--ff-primary-600);
+  border: var(--ff-primary-600);
+  color: var(--ff-white) !important;
 }
 
 .text-muted {
-  color: var(--color-gray-700) !important;
+  color: var(--ff-gray-700) !important;
 }
 
 i.fa.fa-question-circle.text-muted {
-  color: var(--color-primary-ltr) !important;
+  color: var(--ff-primary-300) !important;
 }
 
 .panel-heading {
-  background-color: var(--color-primary-dkst);
-  border: var(--color-primary-dkst);
-  color: var(--color-white) !important;
+  background-color: var(--ff-primary-600);
+  border: var(--ff-primary-600);
+  color: var(--ff-white) !important;
   padding: 0.75rem 1.25rem;
   margin-bottom: 8px;
 }
@@ -233,27 +148,27 @@ i.fa.fa-question-circle.text-muted {
 
 .formio-error-wrapper,
 .has-error {
-  color: var(--color-danger);
-  background-color: var(--color-white);
-  border-color: var(--color-danger);
+  color: var(--ff-danger);
+  background-color: var(--ff-white);
+  border-color: var(--ff-danger);
 }
 
 .formio-error-wrapper,
 .has-error label {
-  color: var(--color-danger);
+  color: var(--ff-danger);
 }
 
 .formio-errors .error {
-  color: var(--color-danger);
+  color: var(--ff-danger);
 }
 
 .is-invalid {
-  background-color: var(--color-invalid);
+  background-color: var(--ff-danger-400);
 }
 
 .active-tab {
   background-color: transparent;
-  color: var(--navbar-active) !important;
+  color: var(--ff-primary) !important;
 }
 
 .active-tab-dropdown>#dashboard-dropdown {
@@ -268,18 +183,22 @@ i.fa.fa-question-circle.text-muted {
 
 .dropdown-item:hover {
   filter: none;
-  background-color: var(--color-gray-200);
+  background-color: var(--ff-gray-200);
 }
 
 .selected-tag {
   color: var(--color-info) !important;
-  border-bottom: 1px solid var(--color-info);
+  border-bottom: 1px solid var(--ff-info);
   background-color: transparent;
+}
+
+.list-group-item:first-child, .list-group-item + .list-group-item {
+  color: var(--ff-dark);
 }
 
 .lbl-logout {
   font-size: 16px;
-  color: var(--color-dark);
+  color: var(--ff-dark);
   margin-left: 10px;
   cursor: pointer;
 }
@@ -338,6 +257,15 @@ i.fa.fa-question-circle.text-muted {
   z-index: 10;
 }
 
+.modal-header {
+  justify-content: space-between !important;
+}
+
+.alert {
+  background-color: var(--ff-alert-200) !important;
+  border: solid 2px var(--ff-alert-400) !important;
+}
+
 .select {
   border-radius: 4px !important;
   margin-left: 8px;
@@ -348,7 +276,7 @@ i.fa.fa-question-circle.text-muted {
   display: flex;
   margin-top: 10px;
   margin-bottom: 25px;
-  height: 30px;
+  min-height: 30px;
   width: 100%;
 }
 
@@ -407,7 +335,7 @@ i.fa.fa-question-circle.text-muted {
 }
 
 .btn-outline-primary {
-  border-color: var(--color-primary-btn-outline) !important;
+  border-color: var(--ff-primary-200) !important;
 }
 
 .btn-center {
@@ -417,6 +345,7 @@ i.fa.fa-question-circle.text-muted {
 
 .btn.btn-link:focus,
 .btn.btn-link.focus {
+  outline: 3px solid var(--ff-primary-200) !important;
   box-shadow: none;
 }
 
@@ -425,8 +354,8 @@ i.fa.fa-question-circle.text-muted {
 }
 
 .tooltip-inner {
-  color: var(--color-black) !important;
-  background-color: var(--color-white)  !important;
+  color: var(--ff-dark) !important;
+  background-color: var(--ff-white)  !important;
   border: 0.5px solid !important;
   text-align: left;
 }
@@ -442,7 +371,7 @@ i.fa.fa-question-circle.text-muted {
 }
 
 select option:hover {
-  box-shadow: 0 0 10px 100px var(--color-black) inset;
+  box-shadow: 0 0 10px 100px var(--ff-dark) inset;
 }
 
 .modal-dialog {
@@ -452,22 +381,22 @@ select option:hover {
  
 
 #sidebar {
-  background: var(--color-white);
+  background: var(--ff-white);
 }
  
 
 #sidebar ul li.active>a,
 #sidebar a[aria-expanded="true"] {
-  background: var(--color-white);
+  background: var(--ff-white);
 }
 
 header nav {
-  border-bottom: var(--color-white);
+  border-bottom: var(--ff-white);
 }
 
 .topheading-border-bottom {
   z-index: 2000;
-  border-bottom: 2px solid var(--color-info) !important;
+  border-bottom: 2px solid var(--ff-info) !important;
   padding: 0 0.5rem !important;
   box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2),
     0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
@@ -475,14 +404,14 @@ header nav {
 
 .rounded-circle {
   border-radius: 50% !important;
-  border: 2px solid var(--color-gray-400);
+  border: 2px solid var(--ff-gray-400);
   height: 40px;
   width: 40px;
 }
 
 .sort-span {
   cursor: pointer;
-  border: 1px solid var(--color-gray-400);
+  border: 1px solid var(--ff-gray-400);
   border-radius: 0.25rem;
   padding: 4px;
   padding-left: 6px;
@@ -492,11 +421,11 @@ header nav {
 }
 
 .sort-span:hover {
-  background-color: var(--color-primary);
+  background-color: var(--ff-primary);
 }
 
 .sort-span:hover>.fa-lg-hover {
-  color: var(--color-white);
+  color: var(--ff-white);
 }
 
 div[disabled] {
@@ -530,7 +459,7 @@ div[disabled] {
 }
 
 .navbar-light .navbar-nav .nav-link {
-  color: var(--color-black);
+  color: var(--ff-black);
 }
 
 /* overwriting default styles */
@@ -548,13 +477,13 @@ div[disabled] {
 }
 
 .delete_button {
-  color: var(--color-danger);
+  color: var(--ff-danger);
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
 }
 
 .delete_button:hover {
-  color: var(--color-danger-dk);
+  color: var(--ff-danger);
   }
 
 .delete_button:active {
@@ -563,11 +492,11 @@ div[disabled] {
 }
 
 .custom_primary_color {
-  color: var(--color-primary);
+  color: var(--ff-primary);
 }
 
 .tooltiptext {
-  color: var(--color-gray-800);
+  color: var(--ff-gray-800);
 }
 
 .select_download {
@@ -589,11 +518,11 @@ div[disabled] {
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--ff-primary);
 }
 
 .info-background {
-  background-color: var(--color-info-background);
+  background-color: var(--ff-danger-200);
 }
 
 .formio-wizard-nav-container {
@@ -611,8 +540,8 @@ a {
  
 
 div.upload {
-  background-color: var(--color-gray-200);
-  border: 1px solid var(--color-gray-300);
+  background-color: var(--ff-gray-200);
+  border: 1px solid var(--ff-gray-300);
   border-radius: 5px;
   display: inline-block;
   height: 30px;
@@ -637,10 +566,10 @@ div.upload input[type="file"] {
 }
 
 .uploadButton {
-  background-color: var(--color-primary-dk);
+  background-color: var(--ff-primary-500);
   border: none;
   border-radius: 3px;
-  color: var(--color-white);
+  color: var(--ff-white);
   cursor: pointer;
   display: inline-block;
   height: 30px;
@@ -668,14 +597,14 @@ div.upload input[type="file"] {
 }
 
 .head-item {
-  color: var(--head-inactive);;
+  color: var(--ff-gray-700);;
   cursor: pointer;
   padding-bottom: 3rem;
 }
 
 .head-active {
-  color: var(--color-primary);
-  border-bottom: 4px solid  var(--color-primary);
+  color: var(--ff-primary);
+  border-bottom: 4px solid  var(--ff-primary);
 }
 
 .padding-left-60 {
@@ -714,7 +643,7 @@ div.upload input[type="file"] {
 
 .application-count {
   font-size: 20px;
-  margin-top: 5px;
+  margin-top: 1px;
   margin-left: 5px;
 }
 
@@ -733,9 +662,93 @@ div.upload input[type="file"] {
  
 
 hr {
-  border-top: 2px solid var(--color-hr);
+  border-top: 2px solid var(--ff-gray-400);
   
 }
 .active-link {
-  color: var(--color-primary) !important;
+  color: var(--ff-primary) !important;
 }
+
+///from base.scss///
+body {
+  font-size: 16px;
+  font-family: Nunito Sans, SemiBold;
+  overflow: hidden; 
+  background-color: var(--ff-white);
+}
+
+
+@media (min-width: 1400px) {
+.container {
+  max-width: 1320px;
+}
+}
+.table th {
+vertical-align: inherit !important;
+}
+
+.table td {
+vertical-align: inherit !important;
+}
+
+/* ------------------------- button padding override ------------------------ */
+.btn{
+padding: 8px 16px !important;
+}
+.bg-primary{
+background-color: var(--ff-primary) !important;
+} 
+.table-primary {
+--bs-table-color: #fff;
+--ff-table-bg: var(--ff-primary) !important;
+ 
+}
+
+.btn-link{
+text-decoration: none;
+&:hover{
+text-decoration: underline;
+}
+}
+
+
+///////////
+.btn-small{
+  padding: 4px 8px !important;
+}
+
+
+body {
+  font-size: 16px;
+  font-family: Nunito Sans, SemiBold;
+  overflow: hidden; 
+  background-color: var(--color-main-bg);
+}
+
+.main-container{
+  max-height: calc(100vh - var(--navbar-height));
+  margin-top: var(--navbar-height);
+  overflow-y: auto;
+  background: var(--ff-main-bg);
+}
+
+.min-container-height{
+  min-height: calc(100vh - 170px);
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+  padding-right: 0rem !important;
+  padding-left: .3rem !important;
+}
+
+@mixin generate-overflow($axis, $value) {
+  .overflow-#{$axis}-#{$value} {
+    overflow-#{$axis}: #{$value} !important;
+  }
+}
+
+@include generate-overflow(x, auto);
+@include generate-overflow(y, auto);
+@include generate-overflow(x, hidden);
+@include generate-overflow(y, hidden);
+

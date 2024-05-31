@@ -1,0 +1,78 @@
+$primary : #0072ed;
+$secondary: #6c757d;
+$success: #198754;
+$danger: #dc3545;
+$dark: #000000;
+$gray: #232323;
+$info: #008599;
+$white: #ffffff;
+$main-bg: #f7f7f7;
+$alert: #ffbb00;
+$body-bg: $white;
+$body-color: $white;
+$dropdown-link-color: $dark;
+$dropdown-link-hover-bg: $gray-200;
+$dropdown-link-hover-color: $dark;
+$btn-color: $dark;
+$popover-body-color: $dark;
+$btn-disabled-border-color: $gray-100;  
+
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "danger": $danger,
+  "dark": $dark,
+  "white": $white,
+  "gray": $gray,
+  "info": $info,
+  "main-bg": $main-bg,
+  "body-bg":$white,
+  "body-color":$white,
+  "input-color": $dark,
+  "btn-disabled-border-color":$btn-disabled-border-color,
+);
+
+$custom-colors: (
+  "primary-100": tint-color($primary, 95%),
+  "primary-200": tint-color($primary, 60%),
+  "primary-300": tint-color($primary, 20%),
+  "primary-400": tint-color($primary, 10%), 
+  "primary-500": shade-color($primary, 10%),
+  "primary-600": shade-color($primary, 40%),
+  "primary-700": shade-color($primary, 60%),
+  "danger-200": tint-color($danger, 80%),
+  "danger-400": tint-color($danger, 40%),
+  "success-200": tint-color($success, 85%),
+  "gray-100": tint-color($gray, 95%),
+  "gray-200": tint-color($gray, 85%),
+  "gray-300": tint-color($gray, 75%),
+  "gray-400": tint-color($gray, 65%),
+  "gray-500": tint-color($gray, 50%),
+  "gray-600": tint-color($gray, 35%), 
+  "gray-700": tint-color($gray, 25%),
+  "gray-800": tint-color($gray, 15%),
+  "alert-200": tint-color($alert, 80%),
+  "alert-400": tint-color($alert, 55%),
+);
+
+// Merge the maps
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+:root {
+  --appname-margin-left: 0px;
+  --appname-margin-right: 0px;
+  --appname-margin-top: 0px;
+  --appname-margin-bottom: 0px;
+  --navbar-items-font-size: 16px;
+  --navbar-items-font-weight: 400;
+  --navbar-items: #{$dark};
+  --navbar-active: #{$primary};
+  --button-primary-background: #{$primary};
+  --navbar-app-name: #{$dark};
+  --navbar-logo-width: 40px;
+  --navbar-height: 50px;   
+  --navbar-logo-path: "./logo.svg";
+  --navbar-background: #{$white};  
+
+}

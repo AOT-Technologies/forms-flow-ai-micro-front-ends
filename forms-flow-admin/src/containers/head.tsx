@@ -14,7 +14,8 @@ const Head = React.memo((props: any) => {
             }`}
             data-testid={`head-item-${key}`}
           >
-            <h3 onClick={item?.onClick} className="application-head">
+            <h1 className="sr-only" >{page}</h1>
+            <h2 onClick={item?.onClick} className="application-head">
               <i
                 className={`fa fa-${item?.icon}`}
                 style={{ marginTop: "5px" }}
@@ -36,7 +37,7 @@ const Head = React.memo((props: any) => {
                   ({item?.count})
                 </div>
               ) : null}
-            </h3>
+            </h2>
           </div>
         ))}
       </div>

@@ -15,18 +15,18 @@
   }
 
   .formbuilder .formarea .breadcrumb {
-    background-color: var(--color-gray-300);
+    background-color: $gray-800 !important;
     padding: 10px;
   }
   .formbuilder .formarea .breadcrumb li{
     margin-right: 5px ;
    }
   .formbuilder .formarea .breadcrumb li .badge-primary{
-   background-color: var(--color-primary) ;
+   background-color: $primary ;
   }
   .formbuilder .formarea .breadcrumb li .badge-success{
-    background-color: var(--color-success) ;
+    background-color: $success;
   }
    .formbuilder .formarea .breadcrumb li .badge-info{
-    background-color: var(--color-gray-600) ;
+    background-color: $gray-600;
   }
