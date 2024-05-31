@@ -39,6 +39,7 @@ enum User {
      */
     public static clear(): void {
       sessionStorage.clear();
+      localStorage.clear();
     }
   }
   
