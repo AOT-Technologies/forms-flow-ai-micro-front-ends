@@ -656,5 +656,9 @@ export const RESOURCE_BUNDLES_PT = {
   "Connect with formsflow.ai team.": "Conecte-se com a equipe da formsflow.ai.",
   "You don't have permission to access this page.": "Você não tem permissão para acessar esta página.",
   "Please contact your administrator or try again later.": "Por favor, entre em contato com o seu administrador ou tente novamente mais tarde.",
-  "Return to login": "Voltar ao login"
+  "Return to login": "Voltar ao login",
+  "Default filter removed": "Filtro padrão removido",
+  "Set default filter": "Definir filtro padrão",
+  "added as default filter": "adicionado como filtro padrão"
+  
 };

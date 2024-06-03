@@ -653,6 +653,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Connect with formsflow.ai team.": "与 formsflow.ai 团队联系。",
   "You don't have permission to access this page.": "您没有权限访问此页面。",
   "Please contact your administrator or try again later.": "请联系您的管理员或稍后再试。",
-  "Return to login": "返回登录"
+  "Return to login": "返回登录",
+  "Default filter removed": "默认筛选器已移除",
+  "Set default filter": "设置默认筛选器",
+  "added as default filter": "添加为默认筛选器",
 };
 
