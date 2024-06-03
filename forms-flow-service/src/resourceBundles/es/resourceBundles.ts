@@ -663,7 +663,10 @@ export const RESOURCE_BUNDLES_ES = {
  "team for requests or queries.": "equipo para solicitudes o consultas.",
  "Learn more about the feature": "Aprender más sobre la función",
  "team.": "equipo.",
- "Connect with formsflow.ai team.": "Conéctese con el equipo de formsflow.ai."
+ "Connect with formsflow.ai team.": "Conéctese con el equipo de formsflow.ai.",
+ "Default filter removed": "Filtro predeterminado eliminado",
+ "Set default filter": "Establecer filtro predeterminado",
+ "added as default filter": "agregado como filtro predeterminado",
   };
   
   
