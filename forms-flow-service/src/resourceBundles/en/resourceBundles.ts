@@ -658,7 +658,11 @@ export const RESOURCE_BUNDLES_EN = {
   "Return to login": "Return to login",
   "Default filter removed": "Default filter removed",
   "Set default filter": "Set default filter",
-  "added as default filter": "added as default filter"
+  "added as default filter": "added as default filter",
+  "Proceed to Sign In": "Proceed to Sign In",
+  "Contact formsflow.ai support": "Contact formsflow.ai support",
+  "Please provide your tenant name to sign in": "Please provide your tenant name to sign in",
+  "Tenant not found":"Tenant not found"
 };
 
 

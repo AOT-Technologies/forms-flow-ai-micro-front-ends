@@ -659,6 +659,9 @@ export const RESOURCE_BUNDLES_PT = {
   "Return to login": "Voltar ao login",
   "Default filter removed": "Filtro padrão removido",
   "Set default filter": "Definir filtro padrão",
-  "added as default filter": "adicionado como filtro padrão"
-  
+  "added as default filter": "adicionado como filtro padrão",
+  "Proceed to Sign In": "Prosseguir para Entrar",
+  "Contact formsflow.ai support": "Contactar suporte formsflow.ai",
+  "Please provide your tenant name to sign in": "Por favor, forneça o nome do seu inquilino para entrar",
+  "Tenant not found":"Inquilino não encontrado"
 };

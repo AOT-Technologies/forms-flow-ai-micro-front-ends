@@ -657,6 +657,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Return to login": "Върнете се към вход",
   "Default filter removed": "Филтърът по подразбиране е премахнат",
   "Set default filter": "Задаване на филтър по подразбиране",
-  "added as default filter": "добавен като филтър по подразбиране"
-  
+  "added as default filter": "добавен като филтър по подразбиране",
+  "Proceed to Sign In": "Продължете към Вход",
+  "Contact formsflow.ai support": "Свържете се с поддръжката на formsflow.ai",
+  "Please provide your tenant name to sign in": "Моля, предоставете името на вашата аренда, за да влезете",
+  "Tenant not found":"Наемателят не е намерен"
 };

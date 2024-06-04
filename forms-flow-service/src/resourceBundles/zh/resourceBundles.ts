@@ -657,5 +657,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Default filter removed": "默认筛选器已移除",
   "Set default filter": "设置默认筛选器",
   "added as default filter": "添加为默认筛选器",
+  "Proceed to Sign In": "继续登录",
+  "Contact formsflow.ai support": "联系 formsflow.ai 支持",
+  "Please provide your tenant name to sign in": "请提供您的租户名称以登录",
+  "Tenant not found":"未找到租户"
 };
 

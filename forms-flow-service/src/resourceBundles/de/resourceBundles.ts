@@ -662,5 +662,9 @@ export const RESOURCE_BUNDLES_DE = {
   "Default filter removed": "Standardfilter entfernt",
   "Set default filter": "Standardfilter festlegen",
   "added as default filter": "als Standardfilter hinzugefügt",
+  "Proceed to Sign In": "Weiter zur Anmeldung",
+  "Contact formsflow.ai support": "Kontaktieren Sie den Support von formsflow.ai",
+  "Please provide your tenant name to sign in": "Bitte geben Sie Ihren Mandantenname zum Anmelden ein",
+  "Tenant not found":"Mandant nicht gefunden"
 
 };

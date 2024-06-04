@@ -660,7 +660,11 @@ export const RESOURCE_BUNDLES_FR = {
   "Return to login": "Retour à la connexion",
   "Default filter removed": "Filtre par défaut supprimé",
   "Set default filter": "Définir le filtre par défaut",
-  "added as default filter": "ajouté comme filtre par défaut"
+  "added as default filter": "ajouté comme filtre par défaut",
+  "Proceed to Sign In": "Procéder à la connexion",
+  "Contact formsflow.ai support": "Contacter le support de formsflow.ai",
+  "Please provide your tenant name to sign in": "Veuillez fournir le nom de votre locataire pour vous connecter",
+  "Tenant not found":"Locataire non trouvé"
   
 };
 
