@@ -658,7 +658,10 @@ export const RESOURCE_BUNDLES_FR = {
   "Proceed to Sign In": "Procéder à la connexion",
   "Contact formsflow.ai support": "Contacter le support de formsflow.ai",
   "Please provide your tenant name to sign in": "Veuillez fournir le nom de votre locataire pour vous connecter",
-  "Tenant not found":"Locataire non trouvé"
+  "Tenant not found":"Locataire non trouvé",
+  "You don't have permission to access this page.": "Vous n'avez pas la permission d'accéder à cette page.",
+  "Please contact your administrator or try again later.": "Veuillez contacter votre administrateur ou réessayer plus tard.",
+  "Return to login": "Retour à la connexion"
 };
 
 
