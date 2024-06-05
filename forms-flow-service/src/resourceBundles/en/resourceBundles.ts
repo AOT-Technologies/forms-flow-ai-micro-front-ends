@@ -652,7 +652,11 @@ export const RESOURCE_BUNDLES_EN = {
   "team for requests or queries.": "team for requests or queries.",
   "Learn more about the feature": "Learn more about the feature",
   " team.": "team.",
-  "Connect with formsflow.ai team.": "Connect with formsflow.ai team."
+  "Connect with formsflow.ai team.": "Connect with formsflow.ai team.",
+  "Proceed to Sign In": "Proceed to Sign In",
+  "Contact formsflow.ai support": "Contact formsflow.ai support",
+  "Please provide your tenant name to sign in": "Please provide your tenant name to sign in",
+  "Tenant not found":"Tenant not found"
 };
 
 
