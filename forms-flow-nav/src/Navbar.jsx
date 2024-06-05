@@ -274,7 +274,7 @@ const NavBar = React.memo(({ props }) => {
               <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             )}
 
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <Navbar.Collapse
                 id="responsive-navbar-nav"
                 className="d-lg-flex justify-content-between h-100"
@@ -512,12 +512,6 @@ const NavBar = React.memo(({ props }) => {
                   </NavDropdown>
                 </Nav>
               </Navbar.Collapse>
-            ) : (
-              !MULTITENANCY_ENABLED && (
-                <Link to={loginUrl} className="btn btn-primary">
-                  Login
-                </Link>
-              )
             )}
           </Container>
         </Navbar>
