@@ -650,6 +650,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "team for requests or queries.": "团队以获取请求或查询。",
   "Learn more about the feature": "了解更多功能",
   " team.": "团队。",
-  "Connect with formsflow.ai team.": "与 formsflow.ai 团队联系。"
+  "Connect with formsflow.ai team.": "与 formsflow.ai 团队联系。",
+  "Proceed to Sign In": "继续登录",
+  "Contact formsflow.ai support": "联系 formsflow.ai 支持",
+  "Please provide your tenant name to sign in": "请提供您的租户名称以登录",
+  "Tenant not found":"未找到租户"
 };
 
