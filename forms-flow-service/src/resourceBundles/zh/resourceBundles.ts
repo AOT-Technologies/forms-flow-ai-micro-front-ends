@@ -654,6 +654,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Proceed to Sign In": "继续登录",
   "Contact formsflow.ai support": "联系 formsflow.ai 支持",
   "Please provide your tenant name to sign in": "请提供您的租户名称以登录",
-  "Tenant not found":"未找到租户"
+  "Tenant not found":"未找到租户",
+  "You don't have permission to access this page.": "您没有权限访问此页面。",
+  "Please contact your administrator or try again later.": "请联系您的管理员或稍后再试。",
+  "Return to login": "返回登录"
 };
 
