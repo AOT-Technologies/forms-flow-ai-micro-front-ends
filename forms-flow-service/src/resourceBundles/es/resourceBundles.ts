@@ -666,5 +666,9 @@ export const RESOURCE_BUNDLES_ES = {
     "Connect with formsflow.ai team.": "Conéctese con el equipo de formsflow.ai.",
     "Default filter removed": "Filtro predeterminado eliminado",
     "Set default filter": "Establecer filtro predeterminado",
-    "added as default filter": "agregado como filtro predeterminado"
+    "added as default filter": "agregado como filtro predeterminado",
+    "Proceed to Sign In": "Continuar para iniciar sesión",
+    "Contact formsflow.ai support": "Contactar con el soporte de formsflow.ai",
+    "Please provide your tenant name to sign in": "Por favor, proporcione el nombre de su inquilino para iniciar sesión",
+    "Tenant not found":"Inquilino no encontrado"
 }

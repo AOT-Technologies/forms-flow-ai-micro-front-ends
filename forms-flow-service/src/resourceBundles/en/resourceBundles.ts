@@ -686,5 +686,9 @@ export const RESOURCE_BUNDLES_EN ={
   "Identifier": "Identifier",
   "Enter role ID": "Enter role ID",
   "Select a task in the List": "Select a task in the List",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with."
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.",
+  "Proceed to Sign In": "Proceed to Sign In",
+  "Contact formsflow.ai support": "Contact formsflow.ai support",
+  "Please provide your tenant name to sign in": "Please provide your tenant name to sign in",
+  "Tenant not found":"Tenant not found"
 }
