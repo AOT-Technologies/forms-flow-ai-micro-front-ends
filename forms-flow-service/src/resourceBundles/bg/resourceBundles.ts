@@ -651,5 +651,12 @@ export const RESOURCE_BUNDLES_BG = {
   "Learn more about the feature": "Научете повече за функцията",
   "Native Integrations Pro": "Нативни Интеграции Про",
   " team.": "екип.",
-  "Connect with formsflow.ai team.": "Свържете се с екипа на formsflow.ai."
+  "Connect with formsflow.ai team.": "Свържете се с екипа на formsflow.ai.",
+  "Proceed to Sign In": "Продължете към Вход",
+  "Contact formsflow.ai support": "Свържете се с поддръжката на formsflow.ai",
+  "Please provide your tenant name to sign in": "Моля, предоставете името на вашата аренда, за да влезете",
+  "Tenant not found":"Наемателят не е намерен",
+  "You don't have permission to access this page.": "Нямате разрешение за достъп до тази страница.",
+  "Please contact your administrator or try again later.": "Моля, свържете се с вашия администратор или опитайте по-късно.",
+  "Return to login": "Върнете се към вход"
 };
