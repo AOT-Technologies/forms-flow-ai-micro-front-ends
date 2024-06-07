@@ -10,4 +10,17 @@ $container-max-widths: (
   xxl: 1320px
 );
 
+.padding-left-60 {
+  margin-left: 60px;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 

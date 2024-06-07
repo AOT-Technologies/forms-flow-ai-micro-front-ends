@@ -39,3 +39,11 @@ $table-variants: (
     border: none;
   }
 }
+
+.table th {
+vertical-align: inherit !important;
+}
+
+.table td {
+vertical-align: inherit !important;
+}

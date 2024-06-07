@@ -76,3 +76,17 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --navbar-background: #{$white};  
 
 }
+
+.info-background {
+  background-color: var(--ff-danger-200);
+}
+
+.custom_primary_color {
+  color: var(--ff-primary);
+}
+
+.bg-default {
+  background-color: var(--ff-primary-600);
+  border: var(--ff-primary-600);
+  color: var(--ff-white) !important;
+}
