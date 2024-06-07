@@ -2,10 +2,11 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
-## 6.0.2 - 2024-05-29
+## 6.0.2 - 2024-06-05
 
 `Generic Changes`
 * The tenant user's default language is set from their data, tenant data, or the default application language.
+* Updated Spanish resource bundle
   
 ## 6.0.1 - 2024-05-16
 
