@@ -3,11 +3,6 @@
   vertical-align: inherit !important;
 }
 
-.table td {
-  vertical-align: inherit !important;
-}
-
-
 $table-variants: (
   "primary": shift-color($primary, $table-bg-scale)
 );
@@ -40,10 +35,7 @@ $table-variants: (
   }
 }
 
-.table th {
-vertical-align: inherit !important;
-}
-
+.table th,
 .table td {
-vertical-align: inherit !important;
+  vertical-align: inherit !important;
 }
