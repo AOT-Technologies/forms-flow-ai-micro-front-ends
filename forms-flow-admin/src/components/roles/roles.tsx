@@ -7,7 +7,7 @@ import paginationFactory from "react-bootstrap-table2-paginator";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { fetchUsers } from "../../services/users";
-import { CreateRole, DeleteRole, UpdateRole } from "../../services/roles";
+import { CreateRole, DeleteRole, UpdateRole, fetchPermissions } from "../../services/roles";
 import Modal from "react-bootstrap/Modal";
 import Loading from "../loading";
 import DropdownButton from "react-bootstrap/DropdownButton";
@@ -36,13 +36,14 @@ const Roles = React.memo((props: any) => {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showEditRoleModal, setShowEditRoleModal] = useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [payload, setPayload] = React.useState({ name: "", description: "" });
+  const [payload, setPayload] = React.useState({ name: "", description: "" , permissions: [] });
   // Toggle for Delete Confirm modal
   const [showConfirmDelete, setShowConfirmDelete] = React.useState(false);
   const initialRoleType = {
     name: "",
     id: "",
     description: "",
+    permissions: []
   };
   const [deleteCandidate, setDeleteCandidate] = React.useState(initialRoleType);
   const [selectedRoleIdentifier, setSelectedRoleIdentifier] =
@@ -50,6 +51,7 @@ const Roles = React.memo((props: any) => {
   const [editCandidate, setEditCandidate] = React.useState(initialRoleType);
   const [disabled, setDisabled] = React.useState(true);
   const [search, setSerach] = React.useState("");
+  const [permission, setPermission] = React.useState([])
 
   const filterList = (filterTerm, List) => {
     let roleList = List.filter((role) => {
@@ -59,12 +61,12 @@ const Roles = React.memo((props: any) => {
   };
 
   React.useEffect(() => {
-    setDisabled(!(payload.name?.trim() && payload.description?.trim()));
+    setDisabled(!(payload.name?.trim() && payload.description?.trim() && payload.permissions.length !== 0));
   }, [payload]);
 
   React.useEffect(() => {
     setDisabled(
-      !(editCandidate.name?.trim() && editCandidate.description?.trim())
+      !(editCandidate.name?.trim() && editCandidate.description?.trim() && editCandidate.permissions.length !== 0)
     );
   }, [editCandidate]);
 
@@ -74,6 +76,14 @@ const Roles = React.memo((props: any) => {
     }
     setRoles(props.roles);
   }, [props.roles]);
+
+  React.useEffect(() => {
+    fetchPermissions((data) => {
+      setPermission(data);
+    }, (err)=>{
+      setError(err);
+    });
+  }, []);
 
   const handlFilter = (e) => {
     setSerach(e.target.value);
@@ -103,6 +113,25 @@ const Roles = React.memo((props: any) => {
   const handleChangeDescription = (e) => {
     setPayload({ ...payload, description: e.target.value });
   };
+  const handleCheckboxChange = (permissionName: string, dependsOn: string[]) => {
+    let updatedPermissions: string[] = [...payload.permissions];
+    const isChecked = updatedPermissions.includes(permissionName);
+  
+    if (!isChecked) {
+        updatedPermissions.push(permissionName);
+        dependsOn.forEach(dependency => {
+            if (!updatedPermissions.includes(dependency)) {
+                updatedPermissions.push(dependency);
+            }
+        });
+    } else {
+        updatedPermissions = updatedPermissions.filter(permission => permission !== permissionName);
+        dependsOn.forEach(dependency => {
+            updatedPermissions = updatedPermissions.filter(permission => permission !== dependency);
+        });
+    }
+    setPayload ({ ...payload, permissions: updatedPermissions });
+};
 
   const validateRolePayload = (payload) => {
     return !(payload.name === "" || payload.description === "");
@@ -186,8 +215,7 @@ const Roles = React.memo((props: any) => {
       }
     );
   };
-
-  // handlers for user list popover
+ // handlers for user list popover
   const handleClick = (event, rowData) => {
     setShow(!show);
     setLoading(true);
@@ -216,10 +244,30 @@ const Roles = React.memo((props: any) => {
     setEditCandidate({ ...editCandidate, description: e.target.value });
   };
 
+  const handleEditCheckboxChange = (permissionName: string, dependsOn: string[]) => {
+    let updatedPermissions: string[] = [...editCandidate.permissions];
+    const isChecked = updatedPermissions.includes(permissionName);
+    
+    if (!isChecked) { 
+        updatedPermissions.push(permissionName);
+        dependsOn.forEach(dependency => {
+            if (!updatedPermissions.includes(dependency)) {
+                updatedPermissions.push(dependency);
+            }
+        });
+    } else {
+        updatedPermissions = updatedPermissions.filter(permission => permission !== permissionName);
+        dependsOn.forEach(dependency => {
+            updatedPermissions = updatedPermissions.filter(permission => permission !== dependency);
+        });
+    }
+    setEditCandidate ({ ...editCandidate, permissions: updatedPermissions });
+};
+
   // handlers for role create/edit modal
   const handleCloseRoleModal = () => {
     setShowRoleModal(false);
-    setPayload({ name: "", description: "" });
+    setPayload({ name: "", description: "" , permissions: []});
   };
   const handleShowRoleModal = () => setShowRoleModal(true);
   const handleCloseEditRoleModal = () => {
@@ -259,7 +307,6 @@ const Roles = React.memo((props: any) => {
     }
   };
   // Delete confirmation
-
   const confirmDelete = () => (
     <div data-testid="roles-confirm-delete-modal">
       <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
@@ -302,7 +349,7 @@ const Roles = React.memo((props: any) => {
               <Form.Label htmlFor="role-name" aria-required>
                 {t("Role Name")}
               </Form.Label>
-              <i style={{ color: "#e00" }}>*</i>
+              <i className="text-danger">*</i>
               <Form.Control
                 id="role-name"
                 type="text"
@@ -314,7 +361,7 @@ const Roles = React.memo((props: any) => {
               <Form.Label htmlFor="role-description" className="mt-2">
                 {t("Description")}
               </Form.Label>
-              <i style={{ color: "#e00" }}>*</i>
+              <i className="text-danger">*</i>
               <Form.Control
                 id="role-description"
                 as="textarea"
@@ -323,7 +370,25 @@ const Roles = React.memo((props: any) => {
                 onChange={handleChangeDescription}
                 title={t("Enter Description")}
               />
-            </Form.Group>
+
+            <Form.Label htmlFor="role-permissions" aria-required className="mt-2" title={t("Select Permissions")}>
+            {t("Permissions")}
+            </Form.Label>
+            <i className="text-danger">*</i>
+            <div className="row">
+            {permission.map((permission) => (
+              <div key={permission.name} className="col-md-6 mb-2">
+                <Form.Check
+                  type="checkbox"
+                  id="role-permissions"
+                  label={t(permission.description)}
+                  checked={payload.permissions.includes(permission.name)}
+                  onChange={() => handleCheckboxChange(permission.name, permission.depends_on)}
+                />
+              </div>
+            ))}
+          </div>
+          </Form.Group>
           </Modal.Body>
           <Modal.Footer>
             <button
@@ -378,7 +443,24 @@ const Roles = React.memo((props: any) => {
                 onChange={handleEditDescription}
                 value={editCandidate.description}
               />
-            </Form.Group>
+            <Form.Label htmlFor="role-edit-permissions" aria-required className="mt-2" title={t("Edit Permissions")}>
+            {t("Permissions")}
+            </Form.Label>
+            <i className="text-danger">*</i>
+            <div className="row">
+                {permission.map((permission) => (
+                   <div key={permission.name} className="col-md-6 mb-2">
+                  <Form.Check
+                    type="checkbox"
+                    id="role-edit-permissions"
+                    label={t(permission.description)}
+                    checked={editCandidate.permissions.includes(permission.name)}
+                    onChange={() => handleEditCheckboxChange(permission.name, permission.depends_on)}
+                  />
+                  </div>
+                ))}
+            </div>
+          </Form.Group>
           </Modal.Body>
           <Modal.Footer>
             <button
@@ -534,7 +616,7 @@ const Roles = React.memo((props: any) => {
     {
       dataField: "id",
       text: <Translation>{(t) => t("Actions")}</Translation>,
-      formatter: (cell, rowData, rowIdx, formatExtraData) => {
+      formatter: (cell, rowData, rowIdx, formatExtraData) => {     
         return checkDefaultRoleOrNot(rowData.name) ? null : (
           <div>
             <i

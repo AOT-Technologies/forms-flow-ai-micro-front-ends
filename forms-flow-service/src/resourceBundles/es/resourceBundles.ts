@@ -666,5 +666,22 @@ export const RESOURCE_BUNDLES_ES = {
     "Connect with formsflow.ai team.": "Conéctese con el equipo de formsflow.ai.",
     "Default filter removed": "Filtro predeterminado eliminado",
     "Set default filter": "Establecer filtro predeterminado",
-    "added as default filter": "agregado como filtro predeterminado"
+    "added as default filter": "agregado como filtro predeterminado",
+    "Create Form, workflow designs": "Crear formulario, diseños de flujo de trabajo",
+    "Access to design": "Acceso al diseño",
+    "Create submissions": "Crear envíos",
+    "Access to submissions": "Acceso a envíos",
+    "Access to dashboards": "Acceso a los tableros",
+    "Access to tasks": "Acceso a tareas",
+    "Can claim and work on tasks": "Puede reclamar y trabajar en tareas",
+    "Manage all filters": "Gestionar todos los filtros",
+    "Access to create filters": "Acceso para crear filtros",
+    "Access to view filters": "Acceso para ver filtros",
+    "Access to Integrations": "Acceso a Integraciones",
+    "Manage Dashboard Authorization": "Gestionar autorización del tablero",
+    "Manage Users": "Gestionar usuarios",
+    "Manage Roles": "Gestionar roles" ,
+    "Permissions": "Permisos",
+    "Edit Permissions": "Editar permisos",
+    "Select Permissions": "Seleccionar permisos" 
 }

@@ -73,3 +73,21 @@ export const UpdateRole = (roleId, payload, callback, errorHandler) => {
       }
     });
 };
+
+export const fetchPermissions = (callback, errorHandler) => {
+  RequestService.httpGETRequest(API.GET_PERMISSIONS)
+    .then((res) => {
+      if (res.data) {
+        callback(res.data)
+      } else {
+        errorHandler("No Permissions found!");
+      }
+    })
+    .catch((error) => {
+      if (error?.response?.data) {
+        errorHandler(error.response.data?.message);
+      } else {
+        errorHandler("Failed to fetch permissions!");
+      }
+    });
+};
