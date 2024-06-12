@@ -23,3 +23,16 @@
 .btn-link:hover {
     text-decoration: underline !important;
 }
+
+.btn-primary:focus-visible,
+.btn-primary:focus,
+.btn.btn-link:focus-visible,
+.btn.btn-link:focus,
+.btn-info:focus-visible,
+.btn-info:focus,
+.btn-light:focus-visible,
+.btn-light:focus,
+.btn-outline-primary:focus-visible,
+.btn-outline-primary:focus {
+    outline: 3px solid var(--ff-primary-200) !important;
+}

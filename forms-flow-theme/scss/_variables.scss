@@ -1,6 +1,6 @@
 // $body-bg: #000;
 
-$prefix:"ff-";
+$prefix: "ff-";
 
 ///////////////////////////////TB removed///////////////////////////////////////////
 
@@ -22,7 +22,7 @@ $prefix:"ff-";
   font-size: 18px;
 }
 
-.btn-primary { 
+.btn-primary {
   background-color: var(--button-primary-background);
 }
 
@@ -47,10 +47,10 @@ $prefix:"ff-";
 h4 {
   font-size: 1.2rem;
 }
- 
 
- 
- 
+
+
+
 
 .loader-container {
   display: flex;
@@ -192,7 +192,8 @@ i.fa.fa-question-circle.text-muted {
   background-color: transparent;
 }
 
-.list-group-item:first-child, .list-group-item + .list-group-item {
+.list-group-item:first-child,
+.list-group-item+.list-group-item {
   color: var(--ff-dark);
 }
 
@@ -272,7 +273,7 @@ i.fa.fa-question-circle.text-muted {
   max-width: 104px;
 }
 
-.main-header { 
+.main-header {
   display: flex;
   margin-top: 10px;
   margin-bottom: 25px;
@@ -291,7 +292,7 @@ i.fa.fa-question-circle.text-muted {
 .back-icon {
   display: flex;
 }
- 
+
 
 .task-head {
   font-weight: bold;
@@ -343,9 +344,9 @@ i.fa.fa-question-circle.text-muted {
   margin-left: auto;
 }
 
+
 .btn.btn-link:focus-visible,
 .btn.btn-link.focus {
-  outline: 3px solid var(--ff-primary-200) !important;
   box-shadow: none;
 }
 
@@ -355,7 +356,7 @@ i.fa.fa-question-circle.text-muted {
 
 .tooltip-inner {
   color: var(--ff-dark) !important;
-  background-color: var(--ff-white)  !important;
+  background-color: var(--ff-white) !important;
   border: 0.5px solid !important;
   text-align: left;
 }
@@ -378,12 +379,12 @@ select option:hover {
   margin: 8.75rem auto !important;
 }
 
- 
+
 
 #sidebar {
   background: var(--ff-white);
 }
- 
+
 
 #sidebar ul li.active>a,
 #sidebar a[aria-expanded="true"] {
@@ -484,7 +485,7 @@ div[disabled] {
 
 .delete_button:hover {
   color: var(--ff-danger);
-  }
+}
 
 .delete_button:active {
   transform: scale(1.3);
@@ -537,7 +538,7 @@ a {
   margin-left: 5px;
 }
 
- 
+
 
 div.upload {
   background-color: var(--ff-gray-200);
@@ -597,14 +598,15 @@ div.upload input[type="file"] {
 }
 
 .head-item {
-  color: var(--ff-gray-700);;
+  color: var(--ff-gray-700);
+  ;
   cursor: pointer;
   padding-bottom: 3rem;
 }
 
 .head-active {
   color: var(--ff-primary);
-  border-bottom: 4px solid  var(--ff-primary);
+  border-bottom: 4px solid var(--ff-primary);
 }
 
 .padding-left-60 {
@@ -656,15 +658,16 @@ div.upload input[type="file"] {
   cursor: pointer !important;
 }
 
-.application-head-details{
+.application-head-details {
   font-size: 25px;
 }
- 
+
 
 hr {
   border-top: 2px solid var(--ff-gray-400);
-  
+
 }
+
 .active-link {
   color: var(--ff-primary) !important;
 }
@@ -673,47 +676,51 @@ hr {
 body {
   font-size: 16px;
   font-family: Nunito Sans, SemiBold;
-  overflow: hidden; 
+  overflow: hidden;
   background-color: var(--ff-white);
 }
 
 
 @media (min-width: 1400px) {
-.container {
-  max-width: 1320px;
+  .container {
+    max-width: 1320px;
+  }
 }
-}
+
 .table th {
-vertical-align: inherit !important;
+  vertical-align: inherit !important;
 }
 
 .table td {
-vertical-align: inherit !important;
+  vertical-align: inherit !important;
 }
 
 /* ------------------------- button padding override ------------------------ */
-.btn{
-padding: 8px 16px !important;
-}
-.bg-primary{
-background-color: var(--ff-primary) !important;
-} 
-.table-primary {
---bs-table-color: #fff;
---ff-table-bg: var(--ff-primary) !important;
- 
+.btn {
+  padding: 8px 16px !important;
 }
 
-.btn-link{
-text-decoration: none;
-&:hover{
-text-decoration: underline;
+.bg-primary {
+  background-color: var(--ff-primary) !important;
 }
+
+.table-primary {
+  --bs-table-color: #fff;
+  --ff-table-bg: var(--ff-primary) !important;
+
+}
+
+.btn-link {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 
 ///////////
-.btn-small{
+.btn-small {
   padding: 4px 8px !important;
 }
 
@@ -721,18 +728,18 @@ text-decoration: underline;
 body {
   font-size: 16px;
   font-family: Nunito Sans, SemiBold;
-  overflow: hidden; 
+  overflow: hidden;
   background-color: var(--color-main-bg);
 }
 
-.main-container{
+.main-container {
   max-height: calc(100vh - var(--navbar-height));
   margin-top: var(--navbar-height);
   overflow-y: auto;
   background: var(--ff-main-bg);
 }
 
-.min-container-height{
+.min-container-height {
   min-height: calc(100vh - 170px);
 }
 
@@ -751,4 +758,3 @@ body {
 @include generate-overflow(y, auto);
 @include generate-overflow(x, hidden);
 @include generate-overflow(y, hidden);
-
