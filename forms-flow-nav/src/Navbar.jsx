@@ -251,7 +251,7 @@ const NavBar = React.memo(({ props }) => {
               className="d-flex col-8 col-sm-6 col-md-10 col-lg-3 col-xl-3  px-0"
             >
               <div>
-                <img className="custom-logo" src={logoPath} alt="Logo" />
+                <img className="custom-logo" src={logoPath} alt="applicationName" />
               </div>
 
               <div
