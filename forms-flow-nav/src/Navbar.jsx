@@ -24,7 +24,7 @@ import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
 import { fetchTenantDetails } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
-import { LANGUAGE } from "./constants/constants";
+import { LANGUAGE,USER_LANGUAGE_LIST } from "./constants/constants";
 import { Helmet } from "react-helmet";
 import { checkIntegrationEnabled } from "./services/integration";
 const NavBar = React.memo(({ props }) => {
@@ -167,10 +167,16 @@ const NavBar = React.memo(({ props }) => {
       setLoginUrl(`/tenant/${formTenant}/`);
     }
   }, [isAuthenticated, formTenant]);
-
+  
   useEffect(() => {
     fetchSelectLanguages((data) => {
-      setSelectLanguages(data);
+      if(USER_LANGUAGE_LIST !== ""){
+        const userLanguagesArray = USER_LANGUAGE_LIST.split(',');
+        const supportedLanguages = data.filter(item => userLanguagesArray.includes(item.name));
+        setSelectLanguages(supportedLanguages ? supportedLanguages : data);
+      }else{
+        setSelectLanguages(data);
+      }
     });
   }, []);
 
@@ -200,6 +206,9 @@ const NavBar = React.memo(({ props }) => {
       LANGUAGE;
     setLang(locale);
   }, [instance, tenant.tenantData]);
+
+
+  //cehck here
 
   const handleOnclick = (selectedLang) => {
     setLang(selectedLang);
