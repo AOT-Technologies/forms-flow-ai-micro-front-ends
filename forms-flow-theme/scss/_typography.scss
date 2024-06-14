@@ -1,9 +1,67 @@
-
 $input-color: $dark;
 $input-focus-color: $dark;
-
+$h4-font-size:1.275rem ;
+$h5-font-size : 1rem ;
 
 .input-group-text {
-    color: $gray-800 !important;
+  color: $gray-800 !important;
 }
 
+
+a {
+  color: var(--ff-primary);
+}
+
+.application-count {
+  font-size: 20px;
+  margin-top: 1px;
+  margin-left: 5px;
+}
+
+.footer-text {
+  font-size: 18px;
+}
+
+.list-group-item:first-child, .list-group-item + .list-group-item {
+  color: var(--ff-dark);
+}
+
+.application-head {
+  font-weight: bold;
+  font-size: 26px;
+  display: flex;
+}
+.application-head-details {
+  font-weight: bold;
+  font-size: 25px;
+  margin-left: 10px !important;
+  display: inline-block;
+}
+
+.head-item {
+  color: var(--ff-gray-700);;
+  cursor: pointer;
+  padding-bottom: 3rem;
+}
+
+.head-active {
+  color: var(--ff-primary);
+  border-bottom: 4px solid  var(--ff-primary);
+}
+.task-head {
+  font-weight: bold;
+  font-size: 30px;
+  margin-left: 10px !important;
+}
+.task-head-details {
+  font-weight: bold;
+  font-size: 25px;
+  margin-left: 10px !important;
+}
+.main-header { 
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 25px;
+  min-height: 30px;
+  width: 100%;
+}
