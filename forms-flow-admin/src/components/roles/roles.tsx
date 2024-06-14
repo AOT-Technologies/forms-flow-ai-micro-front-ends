@@ -54,10 +54,11 @@ const Roles = React.memo((props: any) => {
   const [permission, setPermission] = React.useState([])
 
   const filterList = (filterTerm, List) => {
-    let roleList = List.filter((role) => {
+    let roleList = removingTenantId(List);
+    let newRoleList = roleList.filter((role) => {
       return role.name.toLowerCase().search(filterTerm.toLowerCase()) !== -1;
     });
-    return roleList;
+    return newRoleList
   };
 
   React.useEffect(() => {
@@ -71,11 +72,18 @@ const Roles = React.memo((props: any) => {
   }, [editCandidate]);
 
   React.useEffect(() => {
+    let updatedRoles = props.roles;
+    
     if (search) {
-      return setRoles(filterList(search, props.roles));
+      updatedRoles = filterList(search, updatedRoles);
     }
-    setRoles(props.roles);
-  }, [props.roles]);
+    
+    if (updatedRoles.length > 0) {
+      updatedRoles = removingTenantId(updatedRoles);
+    }
+    
+    setRoles(updatedRoles);
+  }, [props.roles, search]);
 
   React.useEffect(() => {
     fetchPermissions((data) => {
@@ -150,21 +158,12 @@ const Roles = React.memo((props: any) => {
     if (!validateRolePayload(payload)) {
       return;
     }
-    if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
-      if (hasSpecialCharacters(payload.name)) {
-        toast.error(
-          t("Role names cannot contain special characters except   _ , -")
-        );
-        return;
-      }
-    } else {
       if (hasSpecialCharacterswithslash(payload.name)) {
         toast.error(
           t("Role names cannot contain special characters except _ , - , / ")
         );
         return;
       }
-    }
     setDisabled(true);
     CreateRole(
       payload,
@@ -184,21 +183,12 @@ const Roles = React.memo((props: any) => {
     if (!validateRolePayload(editCandidate)) {
       return;
     }
-    if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
-      if (hasSpecialCharacters(editCandidate.name)) {
-        toast.error(
-          t("Role names cannot contain special characters except   _ , -")
-        );
-        return;
-      }
-    } else {
       if (hasSpecialCharacterswithslash(editCandidate.name)) {
         toast.error(
           t("Role names cannot contain special characters except _ , - , / ")
         );
         return;
       }
-    }
     setDisabled(true);
     UpdateRole(
       selectedRoleIdentifier,
@@ -306,6 +296,29 @@ const Roles = React.memo((props: any) => {
       return DEFAULT_ROLES.includes(role);
     }
   };
+
+  const removingTenantId = (roles) => {
+    if (MULTITENANCY_ENABLED && tenantId) {
+      const updatedRoles = roles.map(role => {
+        if (role.name.startsWith(`/${tenantId}-`)) {
+          return {
+            ...role,
+            name: role.name.replace(`/${tenantId}-`, '/')
+          };
+        }
+        return role;
+      });
+      return updatedRoles; 
+    }
+    return roles;
+  };
+
+  const clearSearch = () => {
+    setSerach("");
+    let updatedRoleName = removingTenantId(props.roles);
+    setRoles(updatedRoleName);
+  };
+
   // Delete confirmation
   const confirmDelete = () => (
     <div data-testid="roles-confirm-delete-modal">
@@ -623,9 +636,7 @@ const Roles = React.memo((props: any) => {
               className="fa fa-pencil  me-4"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
-                setSelectedRoleIdentifier(
-                  KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id
-                );
+                setSelectedRoleIdentifier(rowData.id);
                 setEditCandidate(rowData);
                 handleShowEditRoleModal();
               }}
@@ -663,10 +674,7 @@ const Roles = React.memo((props: any) => {
             {search.length > 0 && (
               <Button
                 variant="outline-secondary btn-small clear"
-                onClick={() => {
-                  setSerach("");
-                  setRoles(props.roles);
-                }}
+                onClick={clearSearch}
                 data-testid="clear-role-search-button"
               >
                 {t("Clear")}
