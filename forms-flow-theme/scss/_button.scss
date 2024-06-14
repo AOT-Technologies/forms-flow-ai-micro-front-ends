@@ -24,18 +24,6 @@
     text-decoration: underline !important;
 }
 
-.btn-primary { 
-    background-color: var(--button-primary-background);
-}
-.btn-outline-primary:not(:disabled) {
-    border-color: var(--ff-primary);
-    color: var(--ff-primary);
-}
-  
-.btn-outline-primary:not(:disabled):hover {
-    color: var(--ff-white);
-    background-color: var(--ff-primary);
-}
 
 .btn.signature-pad-refresh {
     z-index: 99 !important;

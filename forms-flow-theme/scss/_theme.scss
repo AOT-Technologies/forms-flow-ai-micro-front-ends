@@ -68,7 +68,6 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --navbar-items-font-weight: 400;
   --navbar-items: #{$dark};
   --navbar-active: #{$primary};
-  --button-primary-background: #{$primary};
   --navbar-app-name: #{$dark};
   --navbar-logo-width: 40px;
   --navbar-height: 50px;   
