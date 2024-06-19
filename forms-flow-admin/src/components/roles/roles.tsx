@@ -121,7 +121,7 @@ const Roles = React.memo((props: any) => {
   const handleChangeDescription = (e) => {
     setPayload({ ...payload, description: e.target.value });
   };
-  const handleCheckboxChange = (permissionName: string, dependsOn: string[]) => {
+  const handlePermissionCheck = (permissionName: string, dependsOn: string[]) => {
     let updatedPermissions: string[] = [...payload.permissions];
     const isChecked = updatedPermissions.includes(permissionName);
   
@@ -142,7 +142,7 @@ const Roles = React.memo((props: any) => {
 };
 
   const validateRolePayload = (payload) => {
-    return !(payload.name === "" || payload.description === "");
+    return !(payload.name === "" || payload.description === "" || payload.permissions.length === 0);
   };
   //check regex exept _ -
   const hasSpecialCharacters = (text) => {
@@ -158,12 +158,21 @@ const Roles = React.memo((props: any) => {
     if (!validateRolePayload(payload)) {
       return;
     }
+    // if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
+    //   if (hasSpecialCharacters(payload.name)) {
+    //     toast.error(
+    //       t("Role names cannot contain special characters except   _ , -")
+    //     );
+    //     return;
+    //   }
+    // } else {
       if (hasSpecialCharacterswithslash(payload.name)) {
         toast.error(
           t("Role names cannot contain special characters except _ , - , / ")
         );
         return;
       }
+    // }
     setDisabled(true);
     CreateRole(
       payload,
@@ -183,12 +192,21 @@ const Roles = React.memo((props: any) => {
     if (!validateRolePayload(editCandidate)) {
       return;
     }
+    // if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
+    //   if (hasSpecialCharacters(editCandidate.name)) {
+    //     toast.error(
+    //       t("Role names cannot contain special characters except   _ , -")
+    //     );
+    //     return;
+    //   }
+    // } else {
       if (hasSpecialCharacterswithslash(editCandidate.name)) {
         toast.error(
           t("Role names cannot contain special characters except _ , - , / ")
         );
         return;
       }
+    // }
     setDisabled(true);
     UpdateRole(
       selectedRoleIdentifier,
@@ -234,7 +252,7 @@ const Roles = React.memo((props: any) => {
     setEditCandidate({ ...editCandidate, description: e.target.value });
   };
 
-  const handleEditCheckboxChange = (permissionName: string, dependsOn: string[]) => {
+  const handleEditPermissionCheck = (permissionName: string, dependsOn: string[]) => {
     let updatedPermissions: string[] = [...editCandidate.permissions];
     const isChecked = updatedPermissions.includes(permissionName);
     
@@ -384,19 +402,25 @@ const Roles = React.memo((props: any) => {
                 title={t("Enter Description")}
               />
 
-            <Form.Label htmlFor="role-permissions" aria-required className="mt-2" title={t("Select Permissions")}>
+            <Form.Label 
+             htmlFor="role-permissions" 
+             aria-required 
+             className="mt-2" 
+             title={t("Select Permissions")} 
+             data-testid="permissions-label">
             {t("Permissions")}
             </Form.Label>
             <i className="text-danger">*</i>
             <div className="row">
             {permission.map((permission) => (
-              <div key={permission.name} className="col-md-6 mb-2">
+              <div key={permission.name} className="col-md-6 mb-2" data-testid={`permission-${permission.name}`}>
                 <Form.Check
                   type="checkbox"
                   id="role-permissions"
                   label={t(permission.description)}
                   checked={payload.permissions.includes(permission.name)}
-                  onChange={() => handleCheckboxChange(permission.name, permission.depends_on)}
+                  onChange={() => handlePermissionCheck(permission.name, permission.depends_on)}
+                  aria-label={t(permission.description)}
                 />
               </div>
             ))}
@@ -456,19 +480,24 @@ const Roles = React.memo((props: any) => {
                 onChange={handleEditDescription}
                 value={editCandidate.description}
               />
-            <Form.Label htmlFor="role-edit-permissions" aria-required className="mt-2" title={t("Edit Permissions")}>
+            <Form.Label 
+             htmlFor="role-edit-permissions" 
+             aria-required className="mt-2" 
+             title={t("Edit Permissions")} 
+             data-testid="edit-permissions-label">
             {t("Permissions")}
             </Form.Label>
             <i className="text-danger">*</i>
             <div className="row">
                 {permission.map((permission) => (
-                   <div key={permission.name} className="col-md-6 mb-2">
+                   <div key={permission.name} className="col-md-6 mb-2" data-testid={`edit-permission-${permission.name}`}>
                   <Form.Check
                     type="checkbox"
                     id="role-edit-permissions"
                     label={t(permission.description)}
                     checked={editCandidate.permissions.includes(permission.name)}
-                    onChange={() => handleEditCheckboxChange(permission.name, permission.depends_on)}
+                    onChange={() => handleEditPermissionCheck(permission.name, permission.depends_on)}
+                    aria-label={t(permission.description)}
                   />
                   </div>
                 ))}
@@ -639,6 +668,9 @@ const Roles = React.memo((props: any) => {
                 setSelectedRoleIdentifier(rowData.id);
                 setEditCandidate(rowData);
                 handleShowEditRoleModal();
+                // setSelectedRoleIdentifier(
+                //   KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id
+                // );
               }}
               data-testid="admin-roles-edit-icon"
             />
