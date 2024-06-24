@@ -56,7 +56,7 @@ const NavBar = React.memo(({ props }) => {
       if (data) {
         setTenant(data);
         if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
-          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));  
+          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
         }
       }
     });
@@ -167,7 +167,7 @@ const NavBar = React.memo(({ props }) => {
       setLoginUrl(`/tenant/${formTenant}/`);
     }
   }, [isAuthenticated, formTenant]);
-  
+
   useEffect(() => {
     fetchSelectLanguages((data) => {
       const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
@@ -219,9 +219,6 @@ const NavBar = React.memo(({ props }) => {
       LANGUAGE;
     setLang(locale);
   }, [instance, tenant.tenantData]);
-
-
-  //cehck here
 
   const handleOnclick = (selectedLang) => {
     setLang(selectedLang);
