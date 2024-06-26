@@ -171,18 +171,15 @@ const NavBar = React.memo(({ props }) => {
   useEffect(() => {
     fetchSelectLanguages((data) => {
       const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
-      const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details.langList) || USER_LANGUAGE_LIST ;
-      const getSupportedLanguages = (data) => {
-        let userLanguagesArray = [];
-        if (typeof userLanguageList === 'object') {
-           userLanguagesArray = Object.values(userLanguageList);
-        } else if (typeof userLanguageList === 'string') {
-           userLanguagesArray = userLanguageList.split(',');
-        }
-        return data.filter(item => userLanguagesArray.includes(item.name));
-      };
-      const supportedLanguages = getSupportedLanguages(data);
-       setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : data);
+      const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details.langList) || USER_LANGUAGE_LIST;
+      let userLanguagesArray = [];
+      if (typeof userLanguageList === 'object') {
+        userLanguagesArray = Object.values(userLanguageList);
+      } else if (typeof userLanguageList === 'string') {
+        userLanguagesArray = userLanguageList.split(',');
+      }
+      const supportedLanguages = data.filter(item => userLanguagesArray.includes(item.name));
+      setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : data);
     });
   }, [MULTITENANCY_ENABLED, USER_LANGUAGE_LIST,tenant]);
 
