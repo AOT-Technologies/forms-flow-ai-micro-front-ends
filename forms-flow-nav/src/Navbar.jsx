@@ -171,7 +171,8 @@ const NavBar = React.memo(({ props }) => {
   useEffect(() => {
     fetchSelectLanguages((data) => {
       const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
-      const getSupportedLanguages = (data, userLanguageList) => {
+      const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details.langList) || USER_LANGUAGE_LIST ;
+      const getSupportedLanguages = (data) => {
         let userLanguagesArray = [];
         if (typeof userLanguageList === 'object') {
            userLanguagesArray = Object.values(userLanguageList);
@@ -180,18 +181,10 @@ const NavBar = React.memo(({ props }) => {
         }
         return data.filter(item => userLanguagesArray.includes(item.name));
       };
-      if (MULTITENANCY_ENABLED && tenantdata?.details.langList) {
-        const supportedLanguages =getSupportedLanguages(data,tenantdata?.details.langList);
-        setSelectLanguages(supportedLanguages ? supportedLanguages : data);
-      }
-      else if(USER_LANGUAGE_LIST !== ""){
-        const supportedLanguages = getSupportedLanguages(data,USER_LANGUAGE_LIST);
-        setSelectLanguages(supportedLanguages ? supportedLanguages : data);
-      }else{
-        setSelectLanguages(data);
-      }
+      const supportedLanguages = getSupportedLanguages(data);
+       setSelectLanguages(supportedLanguages.lenght > 0 ? supportedLanguages : data);
     });
-  }, []);
+  }, [MULTITENANCY_ENABLED, USER_LANGUAGE_LIST,tenant]);
 
   useEffect(() => {
     if(lang){
