@@ -182,7 +182,7 @@ const NavBar = React.memo(({ props }) => {
         return data.filter(item => userLanguagesArray.includes(item.name));
       };
       const supportedLanguages = getSupportedLanguages(data);
-       setSelectLanguages(supportedLanguages.lenght > 0 ? supportedLanguages : data);
+       setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : data);
     });
   }, [MULTITENANCY_ENABLED, USER_LANGUAGE_LIST,tenant]);
 
