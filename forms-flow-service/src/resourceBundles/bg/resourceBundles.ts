@@ -1178,5 +1178,22 @@ export const RESOURCE_BUNDLES_BG = {
   "Identifier": "Идентификатор",
   "Enter role ID": "Въведете ID на ролята",
   "Select a task in the List": "Изберете задача от списъка",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Изберете конкретна задача от предоставения списък с опции. Вашият избор ще определи задачата, върху която ще работите или с която ще взаимодействате."
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Изберете конкретна задача от предоставения списък с опции. Вашият избор ще определи задачата, върху която ще работите или с която ще взаимодействате.",
+  "Create Form, workflow designs": "Създаване на формуляр, проекти на работни потоци",
+  "Access to design": "Достъп до дизайн",
+  "Create submissions": "Създаване на подавания",
+  "Access to submissions": "Достъп до подавания",
+  "Access to dashboards": "Достъп до табла",
+  "Access to tasks": "Достъп до задачи",
+  "Can claim and work on tasks": "Може да заявява и работи по задачи",
+  "Manage all filters": "Управление на всички филтри",
+  "Access to create filters": "Достъп до създаване на филтри",
+  "Access to view filters": "Достъп до преглед на филтри",
+  "Access to Integrations": "Достъп до интеграции",
+  "Manage Dashboard Authorization": "Управление на разрешенията за табло",
+  "Manage Users": "Управление на потребители",
+  "Manage Roles": "Управление на роли" ,
+  "Permissions": "Разрешения",
+  "Edit Permissions": "Редактиране на разрешения",
+  "Select Permissions": "Избор на разрешения" 
 }
