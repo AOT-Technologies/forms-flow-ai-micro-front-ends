@@ -129,8 +129,9 @@ text-decoration: underline;
 .btn-light:focus,
 .btn-outline-primary:focus-visible,
 .btn-outline-primary:focus,
-.btn-secondary.form-visible,
-.btn-secondary:focus {
+.btn-secondary.focus-visible,
+.btn-secondary:focus,
+.nav-link:focus-visible {
   outline: 3px solid $gray-100 !important;
 }
 
