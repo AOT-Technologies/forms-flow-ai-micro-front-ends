@@ -132,7 +132,7 @@ text-decoration: underline;
 .btn-secondary.focus-visible,
 .btn-secondary:focus,
 .nav-link:focus-visible {
-  outline: 3px solid $gray-100 !important;
+  outline: 3px solid var(--ff-primary-200) !important;
 }
 
 
