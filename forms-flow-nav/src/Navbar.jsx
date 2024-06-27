@@ -24,7 +24,7 @@ import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
 import { fetchTenantDetails } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
-import { LANGUAGE } from "./constants/constants";
+import { LANGUAGE,USER_LANGUAGE_LIST } from "./constants/constants";
 import { Helmet } from "react-helmet";
 import { checkIntegrationEnabled } from "./services/integration";
 const NavBar = React.memo(({ props }) => {
@@ -170,9 +170,18 @@ const NavBar = React.memo(({ props }) => {
 
   useEffect(() => {
     fetchSelectLanguages((data) => {
-      setSelectLanguages(data);
+      const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
+      const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details.langList) || USER_LANGUAGE_LIST;
+      let userLanguagesArray = [];
+      if (typeof userLanguageList === 'object') {
+        userLanguagesArray = Object.values(userLanguageList);
+      } else if (typeof userLanguageList === 'string') {
+        userLanguagesArray = userLanguageList.split(',');
+      }
+      const supportedLanguages = data.filter(item => userLanguagesArray.includes(item.name));
+      setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : data);
     });
-  }, []);
+  }, [MULTITENANCY_ENABLED, USER_LANGUAGE_LIST,tenant]);
 
   useEffect(() => {
     if(lang){
