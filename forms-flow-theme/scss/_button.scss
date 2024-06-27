@@ -131,8 +131,11 @@ text-decoration: underline;
 .btn-outline-primary:focus,
 .btn-secondary.focus-visible,
 .btn-secondary:focus,
-.nav-link:focus-visible {
+.nav-link:focus-visible,
+.form-check-input:focus-visible,
+.out-line:focus-visible {
   outline: 3px solid var(--ff-primary-200) !important;
 }
+
 
 
