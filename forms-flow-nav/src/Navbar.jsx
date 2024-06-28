@@ -274,42 +274,38 @@ const NavBar = React.memo(({ props }) => {
               <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             )}
 
-            {isAuthenticated && (
-              <Navbar.Collapse
-                id="responsive-navbar-nav"
-                className="d-lg-flex justify-content-between h-100"
-              >
-                <Nav
-                  id="main-menu-nav"
-                  className="align-items-lg-center justify-content-start w-100"
-                  data-testid="main-menu-nav"
-                >
-                  {ENABLE_FORMS_MODULE && (
-                    <Nav.Link
-                      eventKey="form"
-                      as={Link}
-                      to={`${baseUrl}form`}
-                      className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                        (pathname.match(
-                          createURLPathMatchExp("form", baseUrl)
-                        ) ||
-                          pathname.match(
-                            createURLPathMatchExp("bundle", baseUrl)
-                          )) &&
-                        !(
-                          pathname.includes("draft") ||
-                          pathname.includes("submission")
-                        )
-                          ? "active"
-                          : ""
-                      }`}
-                      id="forms-nav-link"
-                      data-testid="forms-nav-link"
-                    >
-                      <i className="fa-solid fa-file-lines me-2" />
-                      {t("Forms")}
-                    </Nav.Link>
-                  )}
+{isAuthenticated && (
+  <Navbar.Collapse
+    id="responsive-navbar-nav"
+    className="d-lg-flex justify-content-between h-100"
+  >
+    <Nav
+      id="main-menu-nav"
+      className="align-items-lg-center justify-content-start w-100"
+      data-testid="main-menu-nav"
+    >
+      {ENABLE_FORMS_MODULE &&
+        (userRoles.includes("create_submissions") ||
+          userRoles.includes("create_designs") || 
+          userRoles.includes("view_designs")) && (
+          <Nav.Link
+            eventKey="form"
+            as={Link}
+            to={`${baseUrl}form`}
+            className={`nav-menu-item py-md-3 px-0 mx-2 ${
+              (pathname.match(createURLPathMatchExp("form", baseUrl)) ||
+                pathname.match(createURLPathMatchExp("bundle", baseUrl))) &&
+              !(pathname.includes("draft") || pathname.includes("submission"))
+                ? "active"
+                : ""
+            }`}
+            id="forms-nav-link"
+            data-testid="forms-nav-link"
+          >
+            <i className="fa-solid fa-file-lines me-2" />
+            {t("Forms")}
+          </Nav.Link>
+        )}
 
                   {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
                     <Nav.Link
@@ -329,27 +325,24 @@ const NavBar = React.memo(({ props }) => {
                     </Nav.Link>
                   ) : null}
 
-                  {getUserRolePermission(userRoles, STAFF_DESIGNER)
-                    ? ENABLE_PROCESSES_MODULE && (
-                        <Nav.Link
-                        eventKey="processes"
-                          as={Link}
-                          to={`${baseUrl}processes`}
-                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                            pathname.match(
-                              createURLPathMatchExp("processes", baseUrl)
-                            )
-                              ? "active"
-                              : ""
-                          }`}
-                          id="processes-nav-link"
-                          data-testid="processes-nav-link"
-                        >
-                          <i className="fa fa-cogs fa-fw me-2" />
-                          {t("Processes")}
-                        </Nav.Link>
-                      )
-                    : null}
+      {userRoles.includes("create_designs") &&
+        ENABLE_PROCESSES_MODULE && (
+          <Nav.Link
+            eventKey="processes"
+            as={Link}
+            to={`${baseUrl}processes`}
+            className={`nav-menu-item py-md-3 px-0 mx-2 ${
+              pathname.match(createURLPathMatchExp("processes", baseUrl))
+                ? "active"
+                : ""
+            }`}
+            id="processes-nav-link"
+            data-testid="processes-nav-link"
+          >
+            <i className="fa fa-cogs fa-fw me-2" />
+            {t("Processes")}
+          </Nav.Link>
+        )}
 
                   {getUserRolePermission(userRoles, STAFF_DESIGNER)
                     ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
@@ -374,145 +367,128 @@ const NavBar = React.memo(({ props }) => {
                       )
                     : null}
 
-                  {showApplications
-                    ? getUserRolePermission(userRoles, STAFF_REVIEWER) ||
-                      getUserRolePermission(userRoles, CLIENT)
-                      ? ENABLE_APPLICATIONS_MODULE && (
-                          <Nav.Link
-                            eventKey="application"
-                            as={Link}
-                            to={`${baseUrl}application`}
-                            className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                              pathname.match(
-                                createURLPathMatchExp("application", baseUrl)
-                              ) ||
-                              pathname.includes("draft") ||
-                              pathname.includes("submission")
-                                ? "active"
-                                : ""
-                            }`}
-                            id="applications-nav-link"
-                            data-testid="applications-nav-link"
-                          >
-                            <i className="fa-solid fa-rectangle-list me-2" />
-                            {t("Submissions")}
-                          </Nav.Link>
-                        )
-                      : null
-                    : null}
-                  {getUserRolePermission(userRoles, STAFF_REVIEWER)
-                    ? ENABLE_TASKS_MODULE && (
-                        <Nav.Link
-                          eventKey={"task"}
-                          as={Link}
-                          to={`${baseUrl}task`}
-                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                            pathname.match(
-                              createURLPathMatchExp("task", baseUrl)
-                            )
-                              ? "active"
-                              : ""
-                          }`}
-                          id="tasks-nav-link"
-                          data-testid="tasks-nav-link"
-                        >
-                          <i className="fa-solid fa-list-check me-2" />
-                          {t("Tasks")}
-                        </Nav.Link>
-                      )
-                    : null}
+      {showApplications &&
+        userRoles.includes("view_submissions") &&
+        ENABLE_APPLICATIONS_MODULE && (
+          <Nav.Link
+            eventKey="application"
+            as={Link}
+            to={`${baseUrl}application`}
+            className={`nav-menu-item py-md-3 px-0 mx-2 ${
+              pathname.match(createURLPathMatchExp("application", baseUrl)) ||
+              pathname.includes("draft") ||
+              pathname.includes("submission")
+                ? "active"
+                : ""
+            }`}
+            id="applications-nav-link"
+            data-testid="applications-nav-link"
+          >
+            <i className="fa-solid fa-rectangle-list me-2" />
+            {t("Submissions")}
+          </Nav.Link>
+        )}
 
-                  {getUserRolePermission(userRoles, STAFF_REVIEWER)
-                    ? ENABLE_DASHBOARDS_MODULE && (
-                        <Nav.Link
-                          eventKey={"metrics"}
-                          as={Link}
-                          to={`${baseUrl}metrics`}
-                          id="dashboards-nav-link"
-                          data-testid="dashboards-nav-link"
-                          className={`nav-menu-item py-md-3 px-0 mx-2 ${
-                            pathname.match(
-                              createURLPathMatchExp("metrics", baseUrl)
-                            ) ||
-                            pathname.match(
-                              createURLPathMatchExp("insights", baseUrl)
-                            )
-                              ? "active"
-                              : ""
-                          }`}
-                        >
-                          <i className="fa-solid fa-gauge-high me-2" />
-                          {t("Dashboards")}
-                        </Nav.Link>
-                      )
-                    : null}
-                </Nav>
+      {userRoles.includes("view_tasks") &&
+        ENABLE_TASKS_MODULE && (
+          <Nav.Link
+            eventKey={"task"}
+            as={Link}
+            to={`${baseUrl}task`}
+            className={`nav-menu-item py-md-3 px-0 mx-2 ${
+              pathname.match(createURLPathMatchExp("task", baseUrl))
+                ? "active"
+                : ""
+            }`}
+            id="tasks-nav-link"
+            data-testid="tasks-nav-link"
+          >
+            <i className="fa-solid fa-list-check me-2" />
+            {t("Tasks")}
+          </Nav.Link>
+        )}
 
-                <Nav className="nav-user" data-testid="nav-user">
-                  {selectLanguages.length === 1 ? (
-                    selectLanguages.map((e, i) => {
-                      return (
-                        <div className="me-2">
-                          <i className="fa fa-globe me-2" />
-                          {e.name}
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <NavDropdown
-                      title={
-                        <>
-                          <i className="fa fa-globe  me-2" />
+      {userRoles.includes("view_dashboards") &&
+        ENABLE_DASHBOARDS_MODULE && (
+          <Nav.Link
+            eventKey={"metrics"}
+            as={Link}
+            to={`${baseUrl}metrics`}
+            id="dashboards-nav-link"
+            data-testid="dashboards-nav-link"
+            className={`nav-menu-item py-md-3 px-0 mx-2 ${
+              pathname.match(createURLPathMatchExp("metrics", baseUrl)) ||
+              pathname.match(createURLPathMatchExp("insights", baseUrl))
+                ? "active"
+                : ""
+            }`}
+          >
+            <i className="fa-solid fa-gauge-high me-2" />
+            {t("Dashboards")}
+          </Nav.Link>
+        )}
+    </Nav>
 
-                          {lang ? lang : "LANGUAGE"}
-                        </>
-                      }
-                      className="me-2"
-                      id="basic-nav-dropdown"
-                      data-testid="language-dropdown"
-                    >
-                      {selectLanguages.map((e, index) => (
-                        <NavDropdown.Item
-                          key={index}
-                          onClick={() => {
-                            handleOnclick(e.name);
-                          }}
-                          data-testid={`language-option-${index}`}
-                        >
-                          {e.value}
-                        </NavDropdown.Item>
-                      ))}
-                    </NavDropdown>
-                  )}
-                  <NavDropdown
-                    title={
-                      <>
-                        <i className="fa-solid fa-user me-2" />
-                        {userDetail?.name ||
-                          userDetail?.preferred_username ||
-                          ""}
-                      </>
-                    }
-                    id="user-dropdown"
-                    data-testid="user-dropdown"
-                  >
-                    <NavDropdown.Item data-testid="user-info">
-                      {userDetail?.name || userDetail?.preferred_username}
-                      <br />
-                      <i className="fa fa-users fa-fw" />
-                      <b>{getUserRoleName(userRoles)}</b>
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item
-                      onClick={logout}
-                      data-testid="logout-item"
-                    >
-                      <i className="fa fa-sign-out fa-fw" /> {t("Logout")}
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </Nav>
-              </Navbar.Collapse>
-            )}
+    <Nav className="nav-user" data-testid="nav-user">
+      {selectLanguages.length === 1 ? (
+        selectLanguages.map((e, i) => {
+          return (
+            <div className="me-2" key={i}>
+              <i className="fa fa-globe me-2" />
+              {e.name}
+            </div>
+          );
+        })
+      ) : (
+        <NavDropdown
+          title={
+            <>
+              <i className="fa fa-globe  me-2" />
+              {lang ? lang : "LANGUAGE"}
+            </>
+          }
+          className="me-2"
+          id="basic-nav-dropdown"
+          data-testid="language-dropdown"
+        >
+          {selectLanguages.map((e, index) => (
+            <NavDropdown.Item
+              key={index}
+              onClick={() => {
+                handleOnclick(e.name);
+              }}
+              data-testid={`language-option-${index}`}
+            >
+              {e.value}
+            </NavDropdown.Item>
+          ))}
+        </NavDropdown>
+      )}
+      <NavDropdown
+        title={
+          <>
+            <i className="fa-solid fa-user me-2" />
+            {userDetail?.name || userDetail?.preferred_username || ""}
+          </>
+        }
+        id="user-dropdown"
+        data-testid="user-dropdown"
+      >
+        <NavDropdown.Item data-testid="user-info">
+          {userDetail?.name || userDetail?.preferred_username}
+          <br />
+          <i className="fa fa-users fa-fw" />
+          <b>{getUserRoleName(userRoles)}</b>
+        </NavDropdown.Item>
+        <NavDropdown.Divider />
+        <NavDropdown.Item onClick={logout} data-testid="logout-item">
+          <i className="fa fa-sign-out fa-fw" /> {t("Logout")}
+        </NavDropdown.Item>
+      </NavDropdown>
+    </Nav>
+  </Navbar.Collapse>
+)}
+
           </Container>
         </Navbar>
       </BrowserRouter>
