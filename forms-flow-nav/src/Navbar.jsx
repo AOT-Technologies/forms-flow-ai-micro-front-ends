@@ -108,6 +108,17 @@ const NavBar = React.memo(({ props }) => {
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const navbarRef = useRef(null);
 
+const isDashboardManager = userRoles.includes("manage_dashboard_authorizations");
+const isRoleManager = userRoles.includes("manage_roles");
+const isUserManager = userRoles.includes("manage_users");
+ const ADMIN_BASE_ROUTE = isDashboardManager
+  ? `${baseUrl}admin/dashboard`
+  : isRoleManager
+    ? `${baseUrl}admin/roles`
+    : isUserManager
+      ? `${baseUrl}admin/users`
+      : null; 
+    
   const onResize = React.useCallback(() => {
     if (navbarRef?.current) {
       const isMediumScreen = window.matchMedia("(min-width: 992px)").matches;
@@ -222,7 +233,6 @@ const NavBar = React.memo(({ props }) => {
     history.push(baseUrl);
     instance.userLogout();
   };
-
   return (
     <>
       <Helmet>
@@ -306,12 +316,11 @@ const NavBar = React.memo(({ props }) => {
             {t("Forms")}
           </Nav.Link>
         )}
-
-                  {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
+                  {userRoles.includes("admin") ? (
                     <Nav.Link
                       eventKey={"admin"}
                       as={Link}
-                      to={`${baseUrl}admin/dashboard`}
+                      to={`${ADMIN_BASE_ROUTE}`}
                       className={`nav-menu-item py-md-3 px-0 mx-2 ${
                         pathname.match(createURLPathMatchExp("admin", baseUrl))
                           ? "active"
@@ -344,7 +353,7 @@ const NavBar = React.memo(({ props }) => {
           </Nav.Link>
         )}
 
-                  {getUserRolePermission(userRoles, STAFF_DESIGNER)
+                  {userRoles.includes("manage_integrations") 
                     ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
                         <Nav.Link
                           eventKey="integration"
