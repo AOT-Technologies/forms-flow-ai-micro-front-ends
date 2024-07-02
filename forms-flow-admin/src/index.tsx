@@ -28,9 +28,13 @@ const Admin = React.memo(({ props }: any) => {
   const [roleCount, setRoleCount] = React.useState();
   const [userCount, setUserCount] = React.useState();
   const [isAdmin, setIsAdmin] = React.useState(false);
-
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
-  
+  const userRoles = JSON.parse(
+    StorageService.get(StorageService.User.USER_ROLE)
+  );
+  const isDashboardManager = userRoles.includes("manage_dashboard_authorizations");
+  const isRoleManager = userRoles.includes("manage_roles");
+  const isUserManager = userRoles.includes("manage_users");
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}admin` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
@@ -60,7 +64,7 @@ const Admin = React.memo(({ props }: any) => {
   React.useEffect(()=>{
     if(!isAuth) return
     const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
-    if(roles.includes(ADMIN_ROLE)){
+    if(roles.includes("admin")){
       setIsAdmin(true);
     }
     const locale = localStorage.getItem("i18nextLng")
@@ -68,26 +72,27 @@ const Admin = React.memo(({ props }: any) => {
   },[isAuth])
 
   const headerList = () => {
-    return [
-      {
+    const headers =[];
+    if(isDashboardManager){
+      headers.push({
         name: "Dashboard",
         count: dashboardCount,
         // icon: "user-circle-o",
-        onClick: () => history.push(`${baseUrl}admin/dashboard`),
-      },
-      {
+        onClick: () => history.push(`${baseUrl}admin/dashboard`)
+    })}  if (isRoleManager){
+      headers.push({
         name: "Roles",
         count: roleCount,
         // icon: "user-circle-o",
         onClick: () => history.push(`${baseUrl}admin/roles`),
-      },
-      {
+    })}  if(isUserManager){ 
+      headers.push({
         name: "Users",
         count: userCount,
         // icon: "user-circle-o",
-        onClick: () => history.push(`${baseUrl}admin/users`),
-      },
-    ];
+        onClick: () => history.push(`${baseUrl}admin/users`)
+    })}
+    return headers ;
   };
 
   return (
@@ -99,7 +104,8 @@ const Admin = React.memo(({ props }: any) => {
           <Head items={headerList()} page={page} />
           <ToastContainer theme="colored" />
           <Switch>
-            <Route
+            { isDashboardManager && (
+              <Route
               exact
               path={`${BASE_ROUTE}admin/dashboard`}
               render={() => (
@@ -109,19 +115,21 @@ const Admin = React.memo(({ props }: any) => {
                   setCount={setDashboardCount}
                 />
               )}
-            />
-            <Route
-              exact
-              path={`${BASE_ROUTE}admin/roles`}
-              render={() => (
-                <RoleManagement
-                  {...props}
-                  setTab={setPage}
-                  setCount={setRoleCount}
-                />
-              )}
-            />
-            <Route
+            />)}
+            {isRoleManager && 
+              (<Route
+                exact
+                path={`${BASE_ROUTE}admin/roles`}
+                render={() => (
+                  <RoleManagement
+                    {...props}
+                    setTab={setPage}
+                    setCount={setRoleCount}
+                  />
+                )}
+              />)}
+            { isUserManager && (
+              <Route
               exact
               path={`${BASE_ROUTE}admin/users`}
               render={() => (
@@ -131,7 +139,7 @@ const Admin = React.memo(({ props }: any) => {
                   setCount={setUserCount}
                 />
               )}
-            />
+            />)}
             <Redirect from="*" to="/404" />
           </Switch>
           </div>
