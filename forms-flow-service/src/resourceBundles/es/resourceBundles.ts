@@ -667,6 +667,7 @@ export const RESOURCE_BUNDLES_ES = {
     "Default filter removed": "Filtro predeterminado eliminado",
     "Set default filter": "Establecer filtro predeterminado",
     "added as default filter": "agregado como filtro predeterminado",
+    "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Seleccione una tarea específica de la lista de opciones proporcionadas. Su selección determinará la tarea en la que trabajará o con la que interactuará.",
     "Proceed to Sign In": "Continuar para iniciar sesión",
     "Contact formsflow.ai support": "Contactar con el soporte de formsflow.ai",
     "Please provide your tenant name to sign in": "Por favor, proporcione el nombre de su inquilino para iniciar sesión",
