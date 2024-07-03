@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch, Redirect, useHistory, useParams } from "react-router-dom";
+import { Route, Switch,useHistory, useParams,useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { KeycloakService, StorageService } from "@formsflow/service";
@@ -9,13 +9,14 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/footer";
-import { BASE_ROUTE, ADMIN_ROLE, MULTITENANCY_ENABLED } from "./constants";
+import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import AdminDashboard from "./components/dashboard";
 import RoleManagement from "./components/roles";
 import UserManagement from "./components/users";
 import Head from "./containers/head";
 import i18n from "./resourceBundles/i18n";
 import "./index.scss";
+import Accessdenied from "./components/AccessDenied";
 
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
@@ -27,7 +28,6 @@ const Admin = React.memo(({ props }: any) => {
   const [dashboardCount, setDashboardCount] = React.useState();
   const [roleCount, setRoleCount] = React.useState();
   const [userCount, setUserCount] = React.useState();
-  const [isAdmin, setIsAdmin] = React.useState(false);
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
@@ -35,6 +35,8 @@ const Admin = React.memo(({ props }: any) => {
   const isDashboardManager = userRoles.includes("manage_dashboard_authorizations");
   const isRoleManager = userRoles.includes("manage_roles");
   const isUserManager = userRoles.includes("manage_users");
+  const location =useLocation().pathname;
+  const [isAccessRestricted, setIsAccessRestricted] = React.useState(false);
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}admin` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
@@ -63,10 +65,6 @@ const Admin = React.memo(({ props }: any) => {
 
   React.useEffect(()=>{
     if(!isAuth) return
-    const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
-    if(roles.includes("admin")){
-      setIsAdmin(true);
-    }
     const locale = localStorage.getItem("i18nextLng")
     if(locale) i18n.changeLanguage(locale);
   },[isAuth])
@@ -94,13 +92,21 @@ const Admin = React.memo(({ props }: any) => {
     })}
     return headers ;
   };
-
+  
+  React.useEffect(()=>{
+    const restricted = 
+    (location === '/admin/dashboard' && !isDashboardManager) ||
+    (location === '/admin/roles' && !isRoleManager) ||
+    (location === '/admin/users' && !isUserManager);
+    setIsAccessRestricted(restricted);
+  },[location,userRoles]);
   return (
     <>
-      {isAdmin && (
+      {userRoles.includes("admin") ? (
         <div className="main-container " tabIndex={0}>
-                  <div className="container mt-5">
-        <div className="min-container-height ps-md-3">
+        <div className="container mt-5">
+        {!isAccessRestricted ?(
+          <div className="min-container-height ps-md-3">
           <Head items={headerList()} page={page} />
           <ToastContainer theme="colored" />
           <Switch>
@@ -140,13 +146,22 @@ const Admin = React.memo(({ props }: any) => {
                 />
               )}
             />)}
-            <Redirect from="*" to="/404" />
           </Switch>
-          </div>
+          </div>):
+          <div className="min-container-height ps-md-3" >
+            <Accessdenied userRoles={userRoles} />
+            </div> }
           <Footer />
           </div>
         </div>
-      )}
+      ):<div className="main-container ">
+         <div className="container mt-5">
+         <div className="min-container-height ps-md-3" >
+          <Accessdenied userRoles={userRoles} />
+          </div>
+          <Footer />
+          </div> 
+        </div>}
     </>
   );
 });

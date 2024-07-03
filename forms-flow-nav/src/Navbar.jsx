@@ -316,7 +316,7 @@ const isUserManager = userRoles.includes("manage_users");
             {t("Forms")}
           </Nav.Link>
         )}
-                  {userRoles.includes("admin") ? (
+                  {userRoles.includes("admin") && (
                     <Nav.Link
                       eventKey={"admin"}
                       as={Link}
@@ -332,7 +332,7 @@ const isUserManager = userRoles.includes("manage_users");
                       <i className="fa-solid fa-user-check me-2" />
                       {t("Admin")}
                     </Nav.Link>
-                  ) : null}
+                  ) }
 
       {userRoles.includes("create_designs") &&
         ENABLE_PROCESSES_MODULE && (
