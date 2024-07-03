@@ -70,7 +70,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --navbar-active: #{$primary};
   --navbar-app-name: #{$dark};
   --navbar-logo-width: 40px;
-  --navbar-height: 50px;   
+  --navbar-width: 192px;   
   --navbar-logo-path: "./logo.svg";
   --navbar-background: #{$white};  
 
