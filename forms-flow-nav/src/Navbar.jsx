@@ -107,7 +107,14 @@ const NavBar = React.memo(({ props }) => {
   const formTenant = form?.tenantKey;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const navbarRef = useRef(null);
-
+const isCreateSubmissions = userRoles.includes("create_submissions");
+const isViewSubmissions = userRoles.includes("view_submissions");
+const isCreateDesigns =userRoles.includes("create_designs");
+const isViewDesigns = userRoles.includes("view_designs");
+const isAdmin =userRoles.includes("admin");
+const isViewTask =userRoles.includes("view_tasks");
+const isManageTask=userRoles.includes("manage_tasks");
+const isViewDashboard=userRoles.includes("view_dashboards")
 const isDashboardManager = userRoles.includes("manage_dashboard_authorizations");
 const isRoleManager = userRoles.includes("manage_roles");
 const isUserManager = userRoles.includes("manage_users");
@@ -295,9 +302,9 @@ const isUserManager = userRoles.includes("manage_users");
       data-testid="main-menu-nav"
     >
       {ENABLE_FORMS_MODULE &&
-        (userRoles.includes("create_submissions") ||
-          userRoles.includes("create_designs") || 
-          userRoles.includes("view_designs")) && (
+        (isCreateSubmissions ||
+          isCreateDesigns || 
+          isViewDesigns) && (
           <Nav.Link
             eventKey="form"
             as={Link}
@@ -316,7 +323,7 @@ const isUserManager = userRoles.includes("manage_users");
             {t("Forms")}
           </Nav.Link>
         )}
-                  {userRoles.includes("admin") && (
+                  {isAdmin && (
                     <Nav.Link
                       eventKey={"admin"}
                       as={Link}
@@ -334,7 +341,7 @@ const isUserManager = userRoles.includes("manage_users");
                     </Nav.Link>
                   ) }
 
-      {userRoles.includes("create_designs") &&
+      {isCreateDesigns &&
         ENABLE_PROCESSES_MODULE && (
           <Nav.Link
             eventKey="processes"
@@ -377,7 +384,7 @@ const isUserManager = userRoles.includes("manage_users");
                     : null}
 
       {showApplications &&
-        userRoles.includes("view_submissions") &&
+        isViewSubmissions &&
         ENABLE_APPLICATIONS_MODULE && (
           <Nav.Link
             eventKey="application"
@@ -398,7 +405,7 @@ const isUserManager = userRoles.includes("manage_users");
           </Nav.Link>
         )}
 
-      {userRoles.includes("view_tasks") &&
+      {(isViewTask ||isManageTask) &&
         ENABLE_TASKS_MODULE && (
           <Nav.Link
             eventKey={"task"}
@@ -417,7 +424,7 @@ const isUserManager = userRoles.includes("manage_users");
           </Nav.Link>
         )}
 
-      {userRoles.includes("view_dashboards") &&
+      {isViewDashboard &&
         ENABLE_DASHBOARDS_MODULE && (
           <Nav.Link
             eventKey={"metrics"}
