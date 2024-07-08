@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_PT ={
+  "Filter Created by": "Filtro criado por",
   "Submit Form": "Enviar Formulário",
   "Changes Applied Successfully": "Alterações Aplicadas com Sucesso",
   "Filter Deleted Successfully": "Filtro Excluído com Sucesso",
