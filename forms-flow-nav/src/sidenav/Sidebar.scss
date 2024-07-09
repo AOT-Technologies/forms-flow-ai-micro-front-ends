@@ -1,0 +1,293 @@
+:root {
+    //colors
+    --color-dark: #303436;
+    --color-light: #E4E6E7;
+    --color-hover: #E7E9FE;
+    --color-border: #61686B;
+    --color-white: #fff;
+    --gray-20: #C9CDCF;
+    //font-style
+    --primary-font: 'Roboto', sans-serif;
+    //font-size
+    --font-size-xs: 0.875rem;
+    --font-size-sm: 1rem;
+    --font-size-md: 1.250rem;
+    --font-size-lg: 1.500rem;
+    --font-size-xl: 2rem;
+    //font-weight
+    --font-weight-xs:300;
+    --font-weight-sm: 400;
+    --font-weight-md:500;
+    --font-weight-lg: 600;
+    --font-weight-xl: 700;
+    //text-space
+    --text-space-xs: 0.02rem;
+    --text-space-sm: 0.04rem;
+    --text-space-md: 0.08rem;
+    --text-space-lg: 0.16rem;
+    --text-space-xl: 0.20rem;
+    //line-height
+    --text-line-height: 120%;
+    //spacer
+    --spacer-025: 0.25rem;
+    --spacer-050: 0.50rem;
+    --spacer-075: 0.75rem;
+    --spacer-100: 1.00rem;
+    --spacer-125: 1.25rem;
+    --spacer-150: 1.50rem;
+    --spacer-175: 1.75rem;
+    --spacer-200: 2.00rem;
+    --spacer-225: 2.25rem;
+    --spacer-250: 2.50rem;
+    --spacer-275: 2.75rem;
+    --spacer-300: 3.00rem;
+    //shadow
+    --shadow-sm: 0px 2px 2px 0px rgba(48, 52, 54, 0.04);
+    --shadow-md: 0px 2px 4px 0px rgba(48, 52, 54, 0.08);
+    --shadow-lg: 0px 4px 8px -2px rgba(48, 52, 54, 0.08);
+    --shadow-xl: 0px 12px 16px -4px rgba(48, 52, 54, 0.08);
+    --shadow-2xl: 0px 20px 24px -4px rgba(48, 52, 54, 0.08);
+    --shadow-3xl: 0px 24px 48px -8px rgba(48, 52, 54, 0.016);
+    --shadow-nav: 4px 0px 8px -2px rgba(48, 52, 54, 0.08);
+   //radius
+   --radius-050: 0.50rem;
+   --radius-075: 0.75rem;
+   --radius-0100: 1.00rem;
+   --radius-0150: 1.50rem;
+   --radius-200: 2.00rem;
+  }
+  
+.application-name {
+    font-weight: var(--font-weight-lg);
+    text-decoration: none;
+    color: var(--color-dark);
+    font-size: 1.4rem;
+  }
+  
+  .application-name:hover {
+    color: var(--color-dark);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .sidenav {
+    font-family: var(--primary-font);
+    height: 100%;
+    width: 192px;
+    position: fixed;
+    z-index: 1050;
+    // top: 0;
+    left: 0;
+    background-color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-nav)
+  }
+    
+  .logo-container {
+    display: flex;
+    align-items: center;
+    min-height: 4.625rem;
+    padding: 0 1.5rem;
+  }
+  
+  .options-container {
+    text-align: center;
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  
+  .accordion-button {
+    color: var(--color-dark);
+    padding: 1.5rem;
+    background-color: var(--color-white);
+    gap: 0.5rem;
+  }
+  
+  .accordion-button:focus {
+    box-shadow: none;
+  }
+  
+  .accordion-button::after {
+    order: -1;
+    margin-right: 0.625rem;
+    margin-left: 0;
+  }
+  
+  .accordion-button:hover {
+    background-color: var(--color-hover);
+  }
+  
+  .accordion-button:not(.collapsed) {
+    color: var(--color-dark);
+    background-color: var(--color-light);
+  }
+  
+  .accordion-body {
+    color: var(--color-dark);
+    padding: 0;
+  }
+  
+  .accordion-item {
+    background-color: var(--color-white);
+    border: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-size-sm);
+    line-height: var(--text-line-height);
+    letter-spacing: var(var(--text-space-xs));
+  }
+  
+  // .accordion-header {
+  //   background-color: var(--color-light);
+  //   border: none;
+  // }
+  
+  .accordion-link {
+    display: block;
+    padding: 1rem 1rem 1rem 3.2rem;
+    color: var(--color-dark);
+    text-decoration: none;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+  }
+  
+  .accordion-link:hover {
+    text-decoration: none;
+    color: var(--color-dark);
+    background-color: var(--color-hover);
+  }
+  
+  .accordion-link.active {
+    background-color: var(--color-dark);
+    color: var(--color-white);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-xl);
+    line-height: var(--text-line-height);
+    letter-spacing: var(--text-space-sm);
+  }
+  
+  .accordion-item:first-of-type > .accordion-header .accordion-button {
+    border-top-left-radius: none;
+    border-top-right-radius: none;
+  }
+  
+  .user-container {
+    text-align: center;
+    border-top: 0.031rem solid var(--color-border);
+  }
+  
+  .username {
+    color: var(--color-dark);
+    padding: 1rem;
+    margin: 0;
+    text-align: left;
+    display: flex;
+    justify-content: space-around;
+    gap: 0.5rem;
+  }
+  
+  .sign-out-button {
+    text-align: left;
+    padding: 1rem 1.5rem;
+    border: none;
+    cursor: pointer;
+    color: var(--color-dark);
+  }
+  
+  .sign-out-button:hover {
+    background-color: var(--color-hover);
+  }
+  
+  .username h5 {
+    margin: 0;
+  }
+  
+  .accordion-header.no-arrow .accordion-button::after {
+    display: none;
+  }
+  .accordion-header.no-arrow .accordion-button{
+    padding-left:  3.2rem;
+  }
+  .accordion-header.active .accordion-button {
+    background-color: var(--color-dark);
+    color: var(--color-white);
+  }
+
+  .user-icon {
+    width: 2rem; 
+    height: 2rem; 
+    border-radius: 6.25rem;
+    background-color: var(--gray-20); 
+    color: var(--color-dark); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px; 
+    font-weight: var(--font-weight-xs);
+    
+  }
+  .user-name{
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-sm);
+    line-height: var(--text-line-height);
+    letter-spacing: var(--text-space-xs);
+    margin: 0;
+  }
+  .user-email{
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--color-dark);
+    text-overflow: ellipsis;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-xs);
+    line-height: normal;
+    text-transform: lowercase;
+    max-width: 7.5rem;
+  }
+  .accordion-button::after {
+    display: none; 
+  }
+
+  .accordion-button:not(.collapsed) .custom-chevron {
+    transform: rotate(180deg); 
+    transition: transform 0.3s ease;
+  }
+
+  .custom-chevron {
+    transition: transform 0.3s ease;
+  }
+
+  .multitenancy-header {
+    height: 3rem;
+    box-shadow: var(--shadow-lg);
+    background-color: var(--color-white); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+  }
+
+  .multitenancy-logo {
+    height: 1.5rem;
+    margin-right: 0.5rem; 
+  }
+  
+  .multitenancy-app-name {
+    font-size: var(--font-size-md); 
+    font-weight: var(--font-weight-lg); 
+    color: var(--color-dark); 
+  }
+  
+  @media screen and (max-height: 450px) {
+    .sidenav {
+      padding-top: 15px;
+    }
+  
+    .sidenav a {
+      font-size: 18px;
+    }
+  }
+
+  
