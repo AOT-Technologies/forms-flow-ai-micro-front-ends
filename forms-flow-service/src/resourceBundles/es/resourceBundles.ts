@@ -1,4 +1,5 @@
 export const RESOURCE_BUNDLES_ES = {
+    "Filter Created by": "Filtro creado por",
     "No histories found": "No se encontraron historias",
     "Continue": "Continuar",
     "This will create a new version of the form without changing the path name but with new form id.": "Esto creará una nueva versión del formulario sin cambiar el nombre de la ruta pero con un nuevo ID de formulario.",
