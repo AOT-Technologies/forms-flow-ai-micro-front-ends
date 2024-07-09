@@ -1167,5 +1167,22 @@ export const RESOURCE_BUNDLES_ZH = {
   "Submissions are made against": "提交是针对的",
   "Submission is made against": "提交是针对的",
   "Changing the form title will not affect the existing submissions. It will only update in the newly created submissions. Press Save Changes to continue or cancel the changes.": "更改表单标题不会影响现有的提交。它只会在新创建的提交中更新。按 Save Changes 继续或取消更改。",
-  "No submissions Found": "未找到提交"
+  "No submissions Found": "未找到提交",
+  "Create Form, workflow designs": "创建表单，工作流设计",
+  "Access to design": "访问设计",
+  "Create submissions": "创建提交",
+  "Access to submissions": "访问提交",
+  "Access to dashboards": "访问仪表板",
+  "Access to tasks": "访问任务",
+  "Can claim and work on tasks": "可以认领并处理任务",
+  "Manage all filters": "管理所有过滤器",
+  "Access to create filters": "访问创建过滤器",
+  "Access to view filters": "访问查看过滤器",
+  "Access to Integrations": "访问集成",
+  "Manage Dashboard Authorization": "管理仪表板授权",
+  "Manage Users": "管理用户",
+  "Manage Roles": "管理角色" ,
+  "Permissions": "权限",
+  "Edit Permissions": "编辑权限",
+  "Select Permissions": "选择权限" 
 }

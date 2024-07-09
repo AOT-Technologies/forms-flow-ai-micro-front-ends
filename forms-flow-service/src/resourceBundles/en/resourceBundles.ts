@@ -686,5 +686,22 @@ export const RESOURCE_BUNDLES_EN ={
   "Identifier": "Identifier",
   "Enter role ID": "Enter role ID",
   "Select a task in the List": "Select a task in the List",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with."
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.",
+  "Create Form, workflow designs": "Create Form, workflow designs",
+  "Access to design": "Access to design",
+  "Create submissions": "Create submissions",
+  "Access to submissions": "Access to submissions",
+  "Access to dashboards": "Access to dashboards",
+  "Access to tasks": "Access to tasks",
+  "Can claim and work on tasks": "Can claim and work on tasks",
+  "Manage all filters": "Manage all filters",
+  "Access to create filters": "Access to create filters",
+  "Access to view filters": "Access to view filters",
+  "Access to Integrations": "Access to Integrations",
+  "Manage Dashboard Authorization": "Manage Dashboard Authorization",
+  "Manage Users": "Manage Users",
+  "Manage Roles": "Manage Roles",
+  "Permissions": "Permissions",
+  "Edit Permissions": "Edit Permissions",
+  "Select Permissions": "Select Permissions" 
 }
