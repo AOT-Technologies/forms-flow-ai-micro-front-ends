@@ -1,27 +1,53 @@
-import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import './hamburger.scss'; // Import the custom CSS
+import React from "react";
+import { useState } from "react";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import "./hamburger.scss";
+import Appname from "./formsflow.svg";
+import Offcanvas from "react-bootstrap/Offcanvas";
+import Sidebar from "./Sidebar";
+import hamburger from "./hamburger.svg";
+import closebutton from "./closebutton.svg";
 
-function HamburgerMenu() {
+function HamburgerMenu({ props }) {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary custom-navbar">
       <Container>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className="order-0" />
-        <Navbar.Brand href="#home" className="mx-auto">TenantName.ai</Navbar.Brand>
+        <button
+          aria-controls="basic-navbar-nav"
+          className="navbar-toggler order-0"
+          onClick={handleShow}
+          data-testid="hamburger-button"
+          aria-label="Open sidebar"
+        >
+          <img src={hamburger} alt="hamburger icon" />
+        </button>
+        <Navbar.Brand href="" className="mx-auto">
+          <img className="" src={Appname} alt="applicationName" />
+        </Navbar.Brand>
         <Navbar.Collapse id="basic-navbar-nav" className="order-2">
           <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#link">Link</Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-            </NavDropdown>
+            <Offcanvas show={show} onHide={handleClose} data-testid="offcanvas">
+              <Offcanvas.Header className="offcanvas-header">
+                <img
+                  src={closebutton}
+                  alt="close icon"
+                  onClick={handleClose}
+                  data-testid="close-button"
+                  aria-label="Close sidebar"
+                />
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <div className="child-sidenav" data-testid="child-sidenav">
+                  <Sidebar props={props} />
+                </div>
+              </Offcanvas.Body>
+            </Offcanvas>
           </Nav>
         </Navbar.Collapse>
       </Container>
