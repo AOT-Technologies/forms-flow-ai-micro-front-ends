@@ -97,8 +97,7 @@ const NavBar = React.memo(({ props }) => {
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
-  const savedLanguage = localStorage.getItem("lang");
-  const [lang, setLang] = React.useState(savedLanguage);
+  const [lang, setLang] = React.useState();
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -171,7 +170,7 @@ const NavBar = React.memo(({ props }) => {
   useEffect(() => {
     fetchSelectLanguages((data) => {
       const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
-      const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details.langList) || USER_LANGUAGE_LIST;
+      const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details?.langList) || USER_LANGUAGE_LIST;
       let userLanguagesArray = [];
       if (typeof userLanguageList === 'object') {
         userLanguagesArray = Object.values(userLanguageList);
@@ -202,16 +201,18 @@ const NavBar = React.memo(({ props }) => {
    * This effect runs whenever the instance or tenant data changes.
    */
   React.useEffect(() => {
-    const locale =
-      instance?.getUserData()?.locale ||
-      tenant?.tenantData?.details?.locale ||
-      lang ||
-      LANGUAGE;
-    setLang(locale);
-  }, [instance, tenant.tenantData]);
+      if(userDetail){
+        const locale =
+        userDetail?.locale ||
+        tenant?.tenantData?.details?.locale ||
+        LANGUAGE;
+        setLang(locale);
+      }
+  }, [userDetail, tenant.tenantData]);
 
   const handleOnclick = (selectedLang) => {
-    setLang(selectedLang);
+    setLang(selectedLang)
+    setUserDetail(prev => ({...prev,locale:selectedLang}))
     updateUserlang(selectedLang, instance);
   };
 
