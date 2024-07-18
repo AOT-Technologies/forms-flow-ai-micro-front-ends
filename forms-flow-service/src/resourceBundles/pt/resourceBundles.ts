@@ -1181,5 +1181,9 @@ export const RESOURCE_BUNDLES_PT ={
   "Identifier": "identificador",
   "Enter role ID": "Digite o ID da função",
   "Select a task in the List": "Selecione uma tarefa na Lista",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Selecione uma tarefa específica na lista de opções fornecida. Sua seleção determinará a tarefa na qual você estará trabalhando ou interagindo."
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Selecione uma tarefa específica na lista de opções fornecida. Sua seleção determinará a tarefa na qual você estará trabalhando ou interagindo.",
+  "Proceed to Sign In": "Prosseguir para Entrar",
+  "Contact formsflow.ai support": "Contactar suporte formsflow.ai",
+  "Please provide your tenant name to sign in": "Por favor, forneça o nome do seu inquilino para entrar",
+  "Tenant not found":"Inquilino não encontrado"
 };

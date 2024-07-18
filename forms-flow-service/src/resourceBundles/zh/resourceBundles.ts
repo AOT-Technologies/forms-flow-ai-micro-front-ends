@@ -1168,5 +1168,9 @@ export const RESOURCE_BUNDLES_ZH = {
   "Submissions are made against": "提交是针对的",
   "Submission is made against": "提交是针对的",
   "Changing the form title will not affect the existing submissions. It will only update in the newly created submissions. Press Save Changes to continue or cancel the changes.": "更改表单标题不会影响现有的提交。它只会在新创建的提交中更新。按 Save Changes 继续或取消更改。",
-  "No submissions Found": "未找到提交"
+  "No submissions Found": "未找到提交",
+  "Proceed to Sign In": "继续登录",
+  "Contact formsflow.ai support": "联系 formsflow.ai 支持",
+  "Please provide your tenant name to sign in": "请提供您的租户名称以登录",
+  "Tenant not found":"未找到租户"
 }

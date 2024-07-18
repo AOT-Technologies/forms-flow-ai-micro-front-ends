@@ -1179,5 +1179,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Identifier": "Идентификатор",
   "Enter role ID": "Въведете ID на ролята",
   "Select a task in the List": "Изберете задача от списъка",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Изберете конкретна задача от предоставения списък с опции. Вашият избор ще определи задачата, върху която ще работите или с която ще взаимодействате."
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Изберете конкретна задача от предоставения списък с опции. Вашият избор ще определи задачата, върху която ще работите или с която ще взаимодействате.",
+  "Proceed to Sign In": "Продължете към Вход",
+  "Contact formsflow.ai support": "Свържете се с поддръжката на formsflow.ai",
+  "Please provide your tenant name to sign in": "Моля, предоставете името на вашата аренда, за да влезете",
+  "Tenant not found":"Наемателят не е намерен"
 }
