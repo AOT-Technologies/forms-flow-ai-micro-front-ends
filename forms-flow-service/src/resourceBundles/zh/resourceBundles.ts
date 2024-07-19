@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_ZH = {
+  "Filter Created by": "筛选器创建者",
   "Submit Form": "提交表单",
   "Changes Applied Successfully": "更改成功应用",
   "Filter Deleted Successfully": "成功删除过滤器",

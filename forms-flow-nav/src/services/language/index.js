@@ -21,14 +21,8 @@ export const updateUserlang = (data, instance) => {
     { locale: data },
     StorageService.get(StorageService.User.AUTH_TOKEN)
   )
-    .then((res) => {
-      if (res.data) {
-        localStorage.setItem("lang", data);
-        //need to check why we want invoke this function
-        // instance.initKeycloak();
-      } else {
-        //toast.error(<Translation>{(t)=>t("Failed")}</Translation>);
-      }
+    .then(() => {
+      localStorage.setItem("lang", data);
     })
     .catch((error) => {
       console.log(error);
