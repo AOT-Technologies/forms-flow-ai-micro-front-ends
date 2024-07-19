@@ -12,10 +12,10 @@ export default function Root(props) {
     <Router>
       {/* <NavBar props={props} /> */}
       <>
-      <div className="multitenancy-header">
+      {/* <div className="multitenancy-header">
         <img className="multitenancy-logo" src={tenantLogo} alt="custom logo" />
         <span className="multitenancy-app-name">{tenantName}</span>
-      </div>
+      </div> */}
       <HamburgerMenu props={props} />
       <div className="main-sidenav">
         <Sidebar props={props} />

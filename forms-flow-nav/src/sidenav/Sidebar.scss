@@ -55,6 +55,9 @@
   --radius-0100: 1rem;
   --radius-0150: 1.5rem;
   --radius-200: 2rem;
+  //
+  --client-nav: 3rem;
+  --header-close-btn: 4.625rem;
 }
 
 .application-name {
@@ -73,7 +76,7 @@
 .sidenav {
   font-family: var(--primary-font);
   height: 100%;
-  width: 13.6rem;
+  width: 13.615rem;
   position: fixed;
   z-index: 1050;
   left: 0;
@@ -232,6 +235,7 @@
   line-height: var(--text-line-height);
   letter-spacing: var(--text-space-xs);
   margin: 0;
+  cursor: pointer;
 }
 .user-email {
   overflow: hidden;
@@ -243,6 +247,7 @@
   line-height: normal;
   text-transform: lowercase;
   max-width: 7.5rem;
+  cursor: pointer;
 }
 .accordion-button::after {
   display: none;
@@ -258,7 +263,7 @@
 }
 
 .multitenancy-header {
-  height: 3rem;
+  height: var(--client-nav);
   box-shadow: var(--shadow-lg);
   background-color: var(--color-white);
   display: flex;
@@ -277,6 +282,21 @@
   font-weight: var(--font-weight-lg);
   color: var(--color-dark);
 }
+
+/* CustomTooltip */
+.custom-tooltip .tooltip-inner {
+  background-color: var(--color-hover);
+  color: var(--color-dark);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-sm);
+  line-height: var(--text-line-height);
+  white-space: nowrap;
+  padding: 0.5rem;
+}
+.custom-tooltip .tooltip-arrow::before {
+  border-color: var(--color-hover) transparent transparent transparent !important;
+}
+
 @media (max-width: 768px) {
   .main-container {
     margin-left: 0;
@@ -284,4 +304,17 @@
   .logo-container {
     display: none;
   }
+  .main-sidenav {
+    display: none;
+  }
+  .sidenav {
+    height: calc(100% - var(--header-close-btn));
+  }
 }
+
+@media (min-width: 992px) {
+  .sidenav {
+    height: 100%;
+  }
+}
+

@@ -6,6 +6,8 @@ import { Link, BrowserRouter, useHistory } from "react-router-dom";
 import { getUserRoleName, getUserRolePermission } from "../helper/user";
 import createURLPathMatchExp from "../helper/regExp/pathMatch";
 import { useTranslation } from "react-i18next";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import {
   CLIENT,
   STAFF_REVIEWER,
@@ -30,12 +32,8 @@ import { Helmet } from "react-helmet";
 import { checkIntegrationEnabled } from "../services/integration";
 import AccordionComponent from "./accordionComponent";
 import Appname from "./formsflow.svg";
-import HamburgerMenu from "./hamburgerMenu";
 
 const Sidebar = React.memo(({ props }) => {
-  // const MULTITENANCY_ENABLED = true
-  // console.log(MULTITENANCY_ENABLED)
-  console.log(props);
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");
   const [userDetail, setUserDetail] = React.useState({});
@@ -55,6 +53,23 @@ const Sidebar = React.memo(({ props }) => {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
+  
+  const isCreateSubmissions = userRoles.includes("create_submissions");
+  const isViewSubmissions = userRoles.includes("view_submissions");
+  const isCreateDesigns = userRoles.includes("create_designs");
+  const isViewDesigns = userRoles.includes("view_designs");
+  const isAdmin = userRoles.includes("admin");
+  const isViewTask = userRoles.includes("view_tasks");
+  const isManageTask = userRoles.includes("manage_tasks");
+  const isViewDashboard = userRoles.includes("view_dashboards");
+  const isDashboardManager = userRoles.includes(
+    "manage_dashboard_authorizations"
+  );
+  const isRoleManager = userRoles.includes("manage_roles");
+  const isUserManager = userRoles.includes("manage_users");
+  const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
+  const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
+  const USER_ROUTE = isUserManager ? "admin/users" : null;
   const { pathname } = location;
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
@@ -130,9 +145,9 @@ const Sidebar = React.memo(({ props }) => {
 
   const handleLinkClick = (link) => {
     history.push(`${baseUrl}${link}`);
-    setActiveLink(link);
+    // setActiveLink(link);
   };
-  
+
   const logout = () => {
     history.push(baseUrl);
     instance.userLogout();
@@ -142,49 +157,53 @@ const Sidebar = React.memo(({ props }) => {
     <>
       <div className="sidenav">
         <div className="logo-container">
-          <img className="" src={Appname} alt="applicationName"  data-testid="app-logo"/>
+          <img
+            className=""
+            src={Appname}
+            alt="applicationName"
+            data-testid="app-logo"
+          />
         </div>
         <div className="options-container" data-testid="options-container">
           <Accordion defaultActiveKey="">
-            {ENABLE_FORMS_MODULE && (
+            {ENABLE_FORMS_MODULE &&
+              (isCreateSubmissions || isCreateDesigns || isViewDesigns) && (
+                <AccordionComponent
+                  eventKey="0"
+                  header="Forms"
+                  links={[
+                    {
+                      name: "All Forms",
+                      path: "form",
+                      matchExp: createURLPathMatchExp("form", baseUrl),
+                    },
+                    {
+                      name: "Forms Bundle",
+                      path: "bundle",
+                      matchExp: createURLPathMatchExp("bundle", baseUrl),
+                    },
+                    { name: "Templates", path: "forms-template-library" },
+                  ]}
+                />
+              )}
+            {isCreateDesigns && ENABLE_PROCESSES_MODULE && (
               <AccordionComponent
-                eventKey="0"
-                header="Forms"
+                eventKey="1"
+                header="Flows"
                 links={[
                   {
-                    name: "All Forms",
-                    path: "form",
-                    matchExp: createURLPathMatchExp("form", baseUrl),
+                    name: "Workflows",
+                    path: "processes",
+                    matchExp: createURLPathMatchExp("processes", baseUrl),
                   },
                   {
-                    name: "Forms Bundle",
-                    path: "bundle",
-                    matchExp: createURLPathMatchExp("bundle", baseUrl),
+                    name: "Templates",
+                    path: "workflow-template-library",
                   },
-                  { name: "Templates", path: "forms-template-library" },
                 ]}
               />
             )}
-            {getUserRolePermission(userRoles, STAFF_DESIGNER)
-              ? ENABLE_PROCESSES_MODULE && (
-                  <AccordionComponent
-                    eventKey="1"
-                    header="Flows"
-                    links={[
-                      {
-                        name: "Workflows",
-                        path: "processes",
-                        matchExp: createURLPathMatchExp("processes", baseUrl),
-                      },
-                      {
-                        name: "Templates",
-                        path: "workflow-template-library",
-                      },
-                    ]}
-                  />
-                )
-              : null}
-            {getUserRolePermission(userRoles, STAFF_DESIGNER)
+            {userRoles.includes("manage_integrations")
               ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
                   <AccordionComponent
                     eventKey="2"
@@ -193,7 +212,10 @@ const Sidebar = React.memo(({ props }) => {
                       {
                         name: "Recipes",
                         path: "integration/recipes",
-                        matchExp: createURLPathMatchExp("integration/recipes", baseUrl),
+                        matchExp: createURLPathMatchExp(
+                          "integration/recipes",
+                          baseUrl
+                        ),
                       },
                       {
                         name: "Connected Apps",
@@ -215,111 +237,116 @@ const Sidebar = React.memo(({ props }) => {
                   />
                 )
               : null}
-            {showApplications
-              ? getUserRolePermission(userRoles, STAFF_REVIEWER) ||
-                getUserRolePermission(userRoles, CLIENT)
-                ? ENABLE_APPLICATIONS_MODULE && (
-                    <AccordionComponent
-                      eventKey="3"
-                      header="Submissions"
-                      links={[
-                        {
-                          name: "Forms",
-                          path: "application",
-                          matchExp: createURLPathMatchExp(
-                            "application",
-                            baseUrl
-                          ),
-                        },
-                        {
-                          name: "Data",
-                          path: "data",
-                          matchExp: createURLPathMatchExp("data", baseUrl),
-                        },
-                        {
-                          name: "Drafts",
-                          path: "draft",
-                          matchExp: createURLPathMatchExp("draft", baseUrl),
-                        },
-                      ]}
-                    />
-                  )
-                : null
-              : null}
-            {getUserRolePermission(userRoles, STAFF_REVIEWER)
-              ? ENABLE_DASHBOARDS_MODULE && (
-                  <AccordionComponent
-                    eventKey="4"
-                    header="Dashboards"
-                    links={[
-                      {
-                        name: "Metrics",
-                        path: "metrics",
-                        matchExp: createURLPathMatchExp("metrics", baseUrl),
-                      },
-                      {
-                        name: "Insights",
-                        path: "insights",
-                        matchExp: createURLPathMatchExp("insights", baseUrl),
-                      },
-                    ]}
-                  />
-                )
-              : null}
+            {showApplications &&
+              isViewSubmissions &&
+              ENABLE_APPLICATIONS_MODULE && (
+                <AccordionComponent
+                  eventKey="3"
+                  header="Submissions"
+                  links={[
+                    {
+                      name: "Forms",
+                      path: "application",
+                      matchExp: createURLPathMatchExp("application", baseUrl),
+                    },
+                    {
+                      name: "Data",
+                      path: "data",
+                      matchExp: createURLPathMatchExp("data", baseUrl),
+                    },
+                    {
+                      name: "Drafts",
+                      path: "draft",
+                      matchExp: createURLPathMatchExp("draft", baseUrl),
+                    },
+                  ]}
+                />
+              )}
+            {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
+              <AccordionComponent
+                eventKey="4"
+                header="Dashboards"
+                links={[
+                  {
+                    name: "Metrics",
+                    path: "metrics",
+                    matchExp: createURLPathMatchExp("metrics", baseUrl),
+                  },
+                  {
+                    name: "Insights",
+                    path: "insights",
+                    matchExp: createURLPathMatchExp("insights", baseUrl),
+                  },
+                ]}
+              />
+            )}
             <Accordion.Item eventKey="5" className="no-arrow">
-              {getUserRolePermission(userRoles, STAFF_REVIEWER)
-                ? ENABLE_TASKS_MODULE && (
-                    <Accordion.Header
-                      className={`no-arrow ${
-                        pathname.match(createURLPathMatchExp("task", baseUrl))
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() => handleLinkClick("task")}
-                      data-testid="accordion-header-task"
-                      aria-label="Tasks"
-                    >
-                      {t("Tasks")}
-                    </Accordion.Header>
-                  )
-                : null}
+              {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
+                <Accordion.Header
+                  className={`no-arrow ${
+                    pathname.match(createURLPathMatchExp("task", baseUrl))
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => handleLinkClick("task")}
+                  data-testid="accordion-header-task"
+                  aria-label="Tasks"
+                >
+                  {t("Tasks")}
+                </Accordion.Header>
+              )}
             </Accordion.Item>
-            {getUserRolePermission(userRoles, ADMIN_ROLE) ? (
+            {isAdmin && (
               <AccordionComponent
                 eventKey="6"
                 header="Admin"
                 links={[
                   {
                     name: "Dashboards",
-                    path: "admin/dashboard",
+                    path: DASHBOARD_ROUTE,
                     matchExp: createURLPathMatchExp("admin/dashboard", baseUrl),
                   },
                   {
                     name: "Roles",
-                    path: "admin/roles",
+                    path: ROLE_ROUTE,
                     matchExp: createURLPathMatchExp("admin/roles", baseUrl),
                   },
                   {
                     name: "Users",
-                    path: "admin/users",
+                    path: USER_ROUTE,
                     matchExp: createURLPathMatchExp("admin/users", baseUrl),
                   },
                 ]}
               />
-            ) : null}
+            )}
           </Accordion>
         </div>
         <div className="user-container">
           <div className="username">
-            <div className="user-icon" data-testid="user-icon">{initials}</div>
+            <div className="user-icon" data-testid="user-icon">
+              {initials}
+            </div>
             <div>
               <p className="user-name" data-testid="user-name">
                 {userDetail?.name || userDetail?.preferred_username}
               </p>
-              <p className="user-email" data-testid="user-email">{userDetail?.email}</p>
+              <OverlayTrigger
+                placement="top"
+                overlay={
+                  <Tooltip id="email-tooltip" className="custom-tooltip">{userDetail?.email}</Tooltip>
+                }
+              >
+                <p className="user-email" data-testid="user-email">
+                  {userDetail?.email}
+                </p>
+              </OverlayTrigger>
             </div>
           </div>
-          <div className="sign-out-button" onClick={logout} data-testid="sign-out-button">
+          <div
+            className="sign-out-button"
+            onClick={logout}
+            data-testid="sign-out-button"
+          >
             <p>{t("Sign Out")}</p>
           </div>
         </div>

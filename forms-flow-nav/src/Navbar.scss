@@ -52,12 +52,9 @@
   width: var(--navbar-logo-width);
 }
 
-@media (max-width: 768px) {
-  .main-sidenav {
-    display: none;
-  }
-  .main-container {
-     margin-left: 0;  
-}
-}
+// @media (max-width: 768px) {
+//   .main-sidenav {
+//     display: none;
+//   }
+// }
 
