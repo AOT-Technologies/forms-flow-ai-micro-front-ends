@@ -1,5 +1,5 @@
 import React from "react";
-import AccessDeniedIcon  from "./AccessDenied.svg";
+import AccessDeniedIcon  from "./AccessDenied.js";
 import './accessDenied.scss';
 import { useTranslation } from "react-i18next";
 import { BASE_ROUTE } from "../../constants/index";
@@ -24,7 +24,7 @@ const AccessDenied = ({ userRoles }) => {
 
   return (
     <div className="d-flex flex-column align-items-center text-center" data-testid="access-denied-component">
-      <img src={AccessDeniedIcon} alt="Access Denied Icon" className="mb-4 mt-2" />    
+      <AccessDeniedIcon  alt="Access Denied Icon" className="mb-4 mt-2" />    
         <h1 className="access-denied-text" data-testid="access-denied-title">{t("Access Denied")}</h1>
       <span className="access-denied" data-testid="access-denied-message">{t("You don't have permission to access this page.")}</span>
       <span className="access-denied" data-testid="access-denied-submessage">{t("Please contact your administrator or try again later.")}</span>
