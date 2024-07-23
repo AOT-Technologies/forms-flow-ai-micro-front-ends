@@ -30,7 +30,7 @@ import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
 import { Helmet } from "react-helmet";
 import { checkIntegrationEnabled } from "../services/integration";
-import AccordionComponent from "./accordionComponent";
+import MenuComponent from "./MenuComponent";
 import Appname from "./formsflow.svg";
 
 const Sidebar = React.memo(({ props }) => {
@@ -143,11 +143,6 @@ const Sidebar = React.memo(({ props }) => {
     }
   }, [tenant]);
 
-  const handleLinkClick = (link) => {
-    history.push(`${baseUrl}${link}`);
-    // setActiveLink(link);
-  };
-
   const logout = () => {
     history.push(baseUrl);
     instance.userLogout();
@@ -168,10 +163,11 @@ const Sidebar = React.memo(({ props }) => {
           <Accordion defaultActiveKey="">
             {ENABLE_FORMS_MODULE &&
               (isCreateSubmissions || isCreateDesigns || isViewDesigns) && (
-                <AccordionComponent
+                <MenuComponent
                   eventKey="0"
-                  header="Forms"
-                  links={[
+                  optionsCount="2"
+                  mainMenu="Forms"
+                  subMenu={[
                     {
                       name: "All Forms",
                       path: "form",
@@ -187,10 +183,11 @@ const Sidebar = React.memo(({ props }) => {
                 />
               )}
             {isCreateDesigns && ENABLE_PROCESSES_MODULE && (
-              <AccordionComponent
+              <MenuComponent
                 eventKey="1"
-                header="Flows"
-                links={[
+                optionsCount="2"
+                mainMenu="Flows"
+                subMenu={[
                   {
                     name: "Workflows",
                     path: "processes",
@@ -205,10 +202,11 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {userRoles.includes("manage_integrations")
               ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
-                  <AccordionComponent
+                  <MenuComponent
                     eventKey="2"
-                    header="Integrations"
-                    links={[
+                    optionsCount="3"
+                    mainMenu="Integrations"
+                    subMenu={[
                       {
                         name: "Recipes",
                         path: "integration/recipes",
@@ -240,10 +238,11 @@ const Sidebar = React.memo(({ props }) => {
             {showApplications &&
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
-                <AccordionComponent
+                <MenuComponent
                   eventKey="3"
-                  header="Submissions"
-                  links={[
+                  optionsCount="3"
+                  mainMenu="Submissions"
+                  subMenu={[
                     {
                       name: "Forms",
                       path: "application",
@@ -263,10 +262,11 @@ const Sidebar = React.memo(({ props }) => {
                 />
               )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
-              <AccordionComponent
+              <MenuComponent
                 eventKey="4"
-                header="Dashboards"
-                links={[
+                optionsCount="2"
+                mainMenu="Dashboards"
+                subMenu={[
                   {
                     name: "Metrics",
                     path: "metrics",
@@ -280,27 +280,24 @@ const Sidebar = React.memo(({ props }) => {
                 ]}
               />
             )}
-            <Accordion.Item eventKey="5" className="no-arrow">
-              {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
-                <Accordion.Header
-                  className={`no-arrow ${
-                    pathname.match(createURLPathMatchExp("task", baseUrl))
-                      ? "active"
-                      : ""
-                  }`}
-                  onClick={() => handleLinkClick("task")}
-                  data-testid="accordion-header-task"
-                  aria-label="Tasks"
-                >
-                  {t("Tasks")}
-                </Accordion.Header>
-              )}
-            </Accordion.Item>
+            {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
+            <MenuComponent
+                eventKey="5"
+                optionsCount="0"
+                mainMenu="Tasks"
+                subMenu={[
+                  {
+                    path: "task",
+                    matchExp: createURLPathMatchExp("task", baseUrl)
+                  }
+                ]}
+              />)}
             {isAdmin && (
-              <AccordionComponent
+              <MenuComponent
                 eventKey="6"
-                header="Admin"
-                links={[
+                optionsCount="3"
+                mainMenu="Admin"
+                subMenu={[
                   {
                     name: "Dashboards",
                     path: DASHBOARD_ROUTE,
