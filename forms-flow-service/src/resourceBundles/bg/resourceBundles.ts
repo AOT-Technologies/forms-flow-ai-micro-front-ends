@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+  "Filter Created by": "Филтър Създаден от",
   "Submit Form": "Изпращане на Формуляр",
   "Changes Applied Successfully": "Промените са успешно приложени",
   "Filter Deleted Successfully": "Филтърът е успешно изтрит",
