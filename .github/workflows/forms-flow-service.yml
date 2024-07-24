@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - release/*
+      - feature/FWF-3316-permission-matrix
     paths:
       - "forms-flow-service/**"
       - "VERSION"

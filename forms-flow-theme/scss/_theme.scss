@@ -125,9 +125,61 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --navbar-active: #{$primary};
   --navbar-app-name: #{$dark};
   --navbar-logo-width: 40px;
-  --navbar-height: 50px;
+  --navbar-width: 192px; 
   --navbar-logo-path: "./logo.svg";
   --navbar-background: #{$white};
+    //font-style
+    --primary-font: "Roboto", sans-serif;
+    //font-size
+    --font-size-xs: 0.875rem;
+    --font-size-sm: 1rem;
+    --font-size-md: 1.25rem;
+    --font-size-lg: 1.5rem;
+    --font-size-xl: 2rem;
+    //font-weight
+    --font-weight-xs: 300;
+    --font-weight-sm: 400;
+    --font-weight-md: 500;
+    --font-weight-lg: 600;
+    --font-weight-xl: 700;
+    //text-space
+    --text-space-xs: 0.02rem;
+    --text-space-sm: 0.04rem;
+    --text-space-md: 0.08rem;
+    --text-space-lg: 0.16rem;
+    --text-space-xl: 0.2rem;
+    //line-height
+    --text-line-height: 120%;
+    //spacer
+    --spacer-025: 0.25rem;
+    --spacer-050: 0.5rem;
+    --spacer-075: 0.75rem;
+    --spacer-100: 1rem;
+    --spacer-125: 1.25rem;
+    --spacer-150: 1.5rem;
+    --spacer-175: 1.75rem;
+    --spacer-200: 2rem;
+    --spacer-225: 2.25rem;
+    --spacer-250: 2.5rem;
+    --spacer-275: 2.75rem;
+    --spacer-300: 3rem;
+    //shadow
+    --shadow-sm: 0px 2px 2px 0px rgba(48, 52, 54, 0.04);
+    --shadow-md: 0px 2px 4px 0px rgba(48, 52, 54, 0.08);
+    --shadow-lg: 0px 4px 8px -2px rgba(48, 52, 54, 0.08);
+    --shadow-xl: 0px 12px 16px -4px rgba(48, 52, 54, 0.08);
+    --shadow-2xl: 0px 20px 24px -4px rgba(48, 52, 54, 0.08);
+    --shadow-3xl: 0px 24px 48px -8px rgba(48, 52, 54, 0.016);
+    --shadow-nav: 4px 0px 8px -2px rgba(48, 52, 54, 0.08);
+    //radius
+    --radius-050: 0.5rem;
+    --radius-075: 0.75rem;
+    --radius-0100: 1rem;
+    --radius-0150: 1.5rem;
+    --radius-200: 2rem;
+    //custom
+    --client-nav: 3rem;
+    --header-close-btn: 4.625rem;
 }
 
 .info-background {

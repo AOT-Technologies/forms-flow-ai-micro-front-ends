@@ -1181,5 +1181,22 @@ export const RESOURCE_BUNDLES_PT ={
   "Identifier": "identificador",
   "Enter role ID": "Digite o ID da função",
   "Select a task in the List": "Selecione uma tarefa na Lista",
-  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Selecione uma tarefa específica na lista de opções fornecida. Sua seleção determinará a tarefa na qual você estará trabalhando ou interagindo."
+  "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Selecione uma tarefa específica na lista de opções fornecida. Sua seleção determinará a tarefa na qual você estará trabalhando ou interagindo.",
+  "Create Form, workflow designs": "Criar Formulário, designs de fluxo de trabalho",
+  "Access to design": "Acesso ao design",
+  "Create submissions": "Criar submissões",
+  "Access to submissions": "Acesso às submissões",
+  "Access to dashboards": "Acesso aos painéis",
+  "Access to tasks": "Acesso às tarefas",
+  "Can claim and work on tasks": "Pode reivindicar e trabalhar em tarefas",
+  "Manage all filters": "Gerenciar todos os filtros",
+  "Access to create filters": "Acesso para criar filtros",
+  "Access to view filters": "Acesso para visualizar filtros",
+  "Access to Integrations": "Acesso às Integrações",
+  "Manage Dashboard Authorization": "Gerenciar Autorização do Painel",
+  "Manage Users": "Gerenciar Usuários",
+  "Manage Roles": "Gerenciar Funções" ,
+  "Permissions": "Permissões",
+  "Edit Permissions": "Editar Permissões",
+  "Select Permissions": "Selecionar Permissões" 
 };
