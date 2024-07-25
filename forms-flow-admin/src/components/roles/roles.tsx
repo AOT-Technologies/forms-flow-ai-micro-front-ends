@@ -26,6 +26,7 @@ import {
 } from "../../constants";
 import { DEFAULT_ROLES } from "../../constants";
 
+import {removingTenantId} from "../../utils/utils.js";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -63,7 +64,7 @@ const Roles = React.memo((props: any) => {
   const [permission, setPermission] = React.useState([]);
 
   const filterList = (filterTerm, List) => {
-    let roleList = removingTenantId(List);
+    let roleList = removingTenantId(List,tenantId);
     let newRoleList = roleList.filter((role) => {
       return role.name.toLowerCase().search(filterTerm.toLowerCase()) !== -1;
     });
@@ -98,7 +99,7 @@ const Roles = React.memo((props: any) => {
     }
 
     if (updatedRoles.length > 0) {
-      updatedRoles = removingTenantId(updatedRoles);
+      updatedRoles = removingTenantId(updatedRoles,tenantId);
     }
 
     setRoles(updatedRoles);
@@ -355,25 +356,11 @@ const Roles = React.memo((props: any) => {
     }
   };
 
-  const removingTenantId = (roles) => {
-    if (MULTITENANCY_ENABLED && tenantId) {
-      const updatedRoles = roles.map((role) => {
-        if (role.name.startsWith(`/${tenantId}-`)) {
-          return {
-            ...role,
-            name: role.name.replace(`/${tenantId}-`, "/"),
-          };
-        }
-        return role;
-      });
-      return updatedRoles;
-    }
-    return roles;
-  };
+
 
   const clearSearch = () => {
     setSerach("");
-    let updatedRoleName = removingTenantId(props.roles);
+    let updatedRoleName = removingTenantId(props.roles,tenantId);
     setRoles(updatedRoleName);
   };
 
