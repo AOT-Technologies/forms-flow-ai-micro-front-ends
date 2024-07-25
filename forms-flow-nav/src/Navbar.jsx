@@ -24,7 +24,7 @@ import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
 import { fetchTenantDetails } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
-import { LANGUAGE } from "./constants/constants";
+import { LANGUAGE,USER_LANGUAGE_LIST } from "./constants/constants";
 import { Helmet } from "react-helmet";
 import { checkIntegrationEnabled } from "./services/integration";
 const NavBar = React.memo(({ props }) => {
@@ -97,8 +97,7 @@ const NavBar = React.memo(({ props }) => {
   const isAuthenticated = instance?.isAuthenticated();
   const { pathname } = location;
   const [userDetail, setUserDetail] = React.useState({});
-  const savedLanguage = localStorage.getItem("lang");
-  const [lang, setLang] = React.useState(savedLanguage);
+  const [lang, setLang] = React.useState();
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -188,9 +187,18 @@ const isUserManager = userRoles?.includes("manage_users");
 
   useEffect(() => {
     fetchSelectLanguages((data) => {
-      setSelectLanguages(data);
+      const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
+      const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details?.langList) || USER_LANGUAGE_LIST;
+      let userLanguagesArray = [];
+      if (typeof userLanguageList === 'object') {
+        userLanguagesArray = Object.values(userLanguageList);
+      } else if (typeof userLanguageList === 'string') {
+        userLanguagesArray = userLanguageList.split(',');
+      }
+      const supportedLanguages = data.filter(item => userLanguagesArray.includes(item.name));
+      setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : data);
     });
-  }, []);
+  }, [MULTITENANCY_ENABLED, USER_LANGUAGE_LIST,tenant]);
 
   useEffect(() => {
     if(lang){
@@ -211,16 +219,18 @@ const isUserManager = userRoles?.includes("manage_users");
    * This effect runs whenever the instance or tenant data changes.
    */
   React.useEffect(() => {
-    const locale =
-      instance?.getUserData()?.locale ||
-      tenant?.tenantData?.details?.locale ||
-      lang ||
-      LANGUAGE;
-    setLang(locale);
-  }, [instance, tenant.tenantData]);
+      if(userDetail){
+        const locale =
+        userDetail?.locale ||
+        tenant?.tenantData?.details?.locale ||
+        LANGUAGE;
+        setLang(locale);
+      }
+  }, [userDetail, tenant.tenantData]);
 
   const handleOnclick = (selectedLang) => {
-    setLang(selectedLang);
+    setLang(selectedLang)
+    setUserDetail(prev => ({...prev,locale:selectedLang}))
     updateUserlang(selectedLang, instance);
   };
 
@@ -268,7 +278,7 @@ const isUserManager = userRoles?.includes("manage_users");
               className="d-flex col-8 col-sm-6 col-md-10 col-lg-3 col-xl-3  px-0"
             >
               <div>
-                <img className="custom-logo" src={logoPath} alt="Logo" />
+                <img className="custom-logo" src={logoPath} alt="applicationName" />
               </div>
 
               <div

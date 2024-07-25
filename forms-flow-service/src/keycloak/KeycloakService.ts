@@ -42,6 +42,7 @@ import Keycloak, {
   
     private logout(): void {
       this.kc?.logout();
+      StorageService.clear()
     }
   
     /**

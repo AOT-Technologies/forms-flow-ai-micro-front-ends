@@ -23,7 +23,7 @@ const Head = React.memo((props: any) => {
                 data-testid={`head-icon-${key}`}
               />
               <span
-                className="application-text"
+                className="ms-2"
                 data-testid={`application-text-${key}`}
               >
                 <Translation>{(t) => t(item?.name)}</Translation>

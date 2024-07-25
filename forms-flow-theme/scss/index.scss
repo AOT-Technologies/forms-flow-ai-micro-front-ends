@@ -14,7 +14,11 @@
 
 //component override
 @import "./button";
-@import "./table";  
+@import "./table"; 
+@import "./layout";
+@import "./forms";
+@import "./icon";
+@import "./modal";
 
 // util class
 @import "./utils/index";
