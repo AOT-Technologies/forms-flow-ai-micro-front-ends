@@ -1,4 +1,5 @@
 export const RESOURCE_BUNDLES_ES = {
+    "Filter Created by": "Filtro creado por",
     "No histories found": "No se encontraron historias",
     "Continue": "Continuar",
     "This will create a new version of the form without changing the path name but with new form id.": "Esto creará una nueva versión del formulario sin cambiar el nombre de la ruta pero con un nuevo ID de formulario.",
@@ -683,5 +684,10 @@ export const RESOURCE_BUNDLES_ES = {
     "Manage Roles": "Gestionar roles" ,
     "Permissions": "Permisos",
     "Edit Permissions": "Editar permisos",
-    "Select Permissions": "Seleccionar permisos" 
+    "Select Permissions": "Seleccionar permisos" ,
+    "Select a specific task from the provided list of options. Your selection will determine the task you will be working on or interacting with.": "Seleccione una tarea específica de la lista de opciones proporcionadas. Su selección determinará la tarea en la que trabajará o con la que interactuará.",
+    "Proceed to Sign In": "Continuar para iniciar sesión",
+    "Contact formsflow.ai support": "Contactar con el soporte de formsflow.ai",
+    "Please provide your tenant name to sign in": "Por favor, proporcione el nombre de su inquilino para iniciar sesión",
+    "Tenant not found":"Inquilino no encontrado"
 }

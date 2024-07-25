@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_BG = {
+  "Filter Created by": "Филтър Създаден от",
   "Submit Form": "Изпращане на Формуляр",
   "Changes Applied Successfully": "Промените са успешно приложени",
   "Filter Deleted Successfully": "Филтърът е успешно изтрит",
@@ -1195,5 +1196,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Manage Roles": "Управление на роли" ,
   "Permissions": "Разрешения",
   "Edit Permissions": "Редактиране на разрешения",
-  "Select Permissions": "Избор на разрешения" 
+  "Select Permissions": "Избор на разрешения", 
+  "Proceed to Sign In": "Продължете към Вход",
+  "Contact formsflow.ai support": "Свържете се с поддръжката на formsflow.ai",
+  "Please provide your tenant name to sign in": "Моля, предоставете името на вашата аренда, за да влезете",
+  "Tenant not found":"Наемателят не е намерен"
 }

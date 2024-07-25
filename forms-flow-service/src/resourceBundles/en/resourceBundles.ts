@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_EN ={
+  "Filter Created by": "Filter Created by",
   "Submit Form": "Submit Form",
   "Changes Applied Successfully": "Changes Applied Successfully",
   "Filter Deleted Successfully": "Filter Deleted Successfully",
@@ -703,5 +704,9 @@ export const RESOURCE_BUNDLES_EN ={
   "Manage Roles": "Manage Roles",
   "Permissions": "Permissions",
   "Edit Permissions": "Edit Permissions",
-  "Select Permissions": "Select Permissions" 
+  "Select Permissions": "Select Permissions",
+  "Proceed to Sign In": "Proceed to Sign In",
+  "Contact formsflow.ai support": "Contact formsflow.ai support",
+  "Please provide your tenant name to sign in": "Please provide your tenant name to sign in",
+  "Tenant not found":"Tenant not found"
 }

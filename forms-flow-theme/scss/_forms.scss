@@ -1,0 +1,111 @@
+.forms-text {
+  vertical-align: bottom;
+  margin-left: 10px;
+  margin-bottom: 0px;
+}
+
+.forms-text {
+  vertical-align: middle;
+  margin-left: 10px;
+}
+select option:hover {
+  box-shadow: 0 0 10px 100px var(--ff-dark) inset;
+}
+
+//forms table header classes
+.form_select {
+  width: 15%;
+}
+
+.form_operation {
+  width: 30%;
+}
+
+.form_title {
+  width: 40%;
+}
+
+.input-group .input-group-addon {
+    position: absolute;
+    right: 5px;
+    top: 7px;
+}
+  
+.input-group .radio-inline {
+    margin-left: 1.25rem;
+}
+  
+.input-group label {
+    margin-right: 2rem;
+}
+.select {
+  border-radius: 4px !important;
+  margin-left: 8px;
+  max-width: 104px;
+}
+
+.form_check {
+  margin-bottom: 20px;
+}
+
+.form-view-wrapper {
+  min-height: 75vh;
+}
+
+.well {
+  border: 1px solid var(--ff-gray-200);
+  padding: 1rem;
+  background-color: var(--ff-gray-100);
+}
+
+.panel-body {
+  padding: 1.5rem 2rem 1.5rem 2rem;
+}
+.panel-heading {
+  background-color: var(--ff-primary-600);
+  border: var(--ff-primary-600);
+  color: var(--ff-white) !important;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 8px;
+}
+
+.formcomponents .formcomponent {
+  font-size: 1em;
+}
+
+//formio classes 
+
+.formio-component-panel {
+  border: 1px solid --ff-gray-200;
+}
+
+.formio-component-panel .panel-heading {
+  background-color: --ff-gray-200;
+  padding: 10px 0 10px 10px;
+}
+
+.formio-component-panel .panel-heading .panel-title i {
+  font-size: 0.75rem;
+}
+
+.formio-error-wrapper,
+.has-error {
+  color: var(--ff-danger);
+  background-color: var(--ff-white);
+  border-color: var(--ff-danger);
+}
+
+.formio-error-wrapper,
+.has-error label {
+  color: var(--ff-danger);
+}
+
+.formio-errors .error {
+  color: var(--ff-danger);
+}
+
+.formio-wizard-nav-container {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
