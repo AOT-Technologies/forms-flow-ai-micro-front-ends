@@ -1198,5 +1198,9 @@ export const RESOURCE_BUNDLES_PT ={
   "Manage Roles": "Gerenciar Funções" ,
   "Permissions": "Permissões",
   "Edit Permissions": "Editar Permissões",
-  "Select Permissions": "Selecionar Permissões" 
+  "Select Permissions": "Selecionar Permissões",
+  "Proceed to Sign In": "Prosseguir para Entrar",
+  "Contact formsflow.ai support": "Contactar suporte formsflow.ai",
+  "Please provide your tenant name to sign in": "Por favor, forneça o nome do seu inquilino para entrar",
+  "Tenant not found":"Inquilino não encontrado"
 };

@@ -704,5 +704,9 @@ export const RESOURCE_BUNDLES_EN ={
   "Manage Roles": "Manage Roles",
   "Permissions": "Permissions",
   "Edit Permissions": "Edit Permissions",
-  "Select Permissions": "Select Permissions" 
+  "Select Permissions": "Select Permissions",
+  "Proceed to Sign In": "Proceed to Sign In",
+  "Contact formsflow.ai support": "Contact formsflow.ai support",
+  "Please provide your tenant name to sign in": "Please provide your tenant name to sign in",
+  "Tenant not found":"Tenant not found"
 }

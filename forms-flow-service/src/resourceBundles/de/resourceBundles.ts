@@ -1201,5 +1201,10 @@ export const RESOURCE_BUNDLES_DE = {
   "Manage Roles": "Rollen verwalten" ,
   "Permissions": "Berechtigungen",
   "Edit Permissions": "Berechtigungen bearbeiten",
-  "Select Permissions": "Berechtigungen auswählen" 
+  "Select Permissions": "Berechtigungen auswählen" ,
+  "Proceed to Sign In": "Weiter zur Anmeldung",
+  "Contact formsflow.ai support": "Kontaktieren Sie den Support von formsflow.ai",
+  "Please provide your tenant name to sign in": "Bitte geben Sie Ihren Mandantenname zum Anmelden ein",
+  "Tenant not found":"Mandant nicht gefunden"
+
 }

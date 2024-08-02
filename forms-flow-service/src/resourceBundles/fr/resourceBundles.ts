@@ -1198,8 +1198,12 @@ export const RESOURCE_BUNDLES_FR ={
   "Manage Roles": "Gérer les rôles",
   "Permissions": "Autorisations",
   "Edit Permissions": "Modifier les autorisations",
-  "Select Permissions": "Sélectionner des autorisations" 
+  "Select Permissions": "Sélectionner des autorisations" ,
 
+  "Proceed to Sign In": "Procéder à la connexion",
+  "Contact formsflow.ai support": "Contacter le support de formsflow.ai",
+  "Please provide your tenant name to sign in": "Veuillez fournir le nom de votre locataire pour vous connecter",
+  "Tenant not found":"Locataire non trouvé"
 }
 
 
