@@ -261,54 +261,74 @@
 .dropdown.btn-group {
   .btn {
     border-radius: 0 !important;
+  }
+
+  .btn-primary.dropdown-toggle {
+    background-color: var(--base-base-50, #5568F6) !important;
+    border-color: var(--base-base-50, #5568F6) !important;
+  }
+
+  .btn-dark.dropdown-toggle {
+    background-color: var(--ff-gray-600, #61686B) !important;
+    border-color: var(--ff-gray-600, #61686B) !important;
+  }
+
+  .dropdown-menu {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    top: 100% !important;
+    border-bottom-left-radius: var(--radius-0150) !important;
+    border-bottom-right-radius: var(--radius-0150) !important;
+  }
+
+  &.show {
+    .btn {
+      border-bottom-left-radius: 0 !important;
+    }
+
+    .dropdown-toggle {
+      border-bottom-right-radius: 0 !important;
+    }
+  }
 }
-}
-.btn-group > .btn:first-child,
-.btn-group > .btn:first-child:active {
+
+.btn-group {
+  > .btn:first-child,
+  > .btn:first-child:active {
     border-top-left-radius: var(--radius-0150) !important;
     border-bottom-left-radius: var(--radius-0150) !important;
-}
-.btn-group > .btn:nth-child(2),
-.btn-group > .btn:nth-child(2):active {
+  }
+
+  > .btn:nth-child(2),
+  > .btn:nth-child(2):active {
     border-top-right-radius: var(--radius-0150) !important;
     border-bottom-right-radius: var(--radius-0150) !important;
-}
-.dropdown.btn-group .btn-primary.dropdown-toggle{
-  background-color: var(--base-base-50, #5568F6) !important;
-  border-color: var(--base-base-50, #5568F6) !important; 
-}
-.dropdown.btn-group .btn-dark.dropdown-toggle{
-  background-color: var(--ff-gray-600, #61686B) !important;
-  border-color: var(--ff-gray-600, #61686B) !important;
+  }
 }
 
-.dropdown-menu {
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  top: 100% !important; 
-  border-bottom-left-radius: var(--radius-0150) !important;
-  border-bottom-right-radius: var(--radius-0150) !important;
-}
-.dropdown.show .btn {
-    border-bottom-left-radius: 0 !important;
-}
-.dropdown.show .dropdown-toggle {
-  border-bottom-right-radius: 0 !important;
-}
-.default-arrow::after {
-  display: none !important;
-}
-.default-arrow img {
-  transition: transform 0.3s ease;
+.default-arrow {
+  &::after {
+    display: none !important;
+  }
+
+  img {
+    transition: transform 0.3s ease;
+    transform: rotate(0deg); 
+
+    &.collapsed {
+      transform: rotate(180deg);
+    }
+  }
+
+  &.collapsed img {
+    transform: rotate(0deg);
+  }
+
+  &:not(.collapsed) img {
+    transform: rotate(180deg);
+  }
 }
 
-.default-arrow.collapsed img {
-  transform: rotate(0deg);
-}
-
-.default-arrow:not(.collapsed) img {
-  transform: rotate(180deg);
-}
 
 //Pagination buttons
 .page-item {
