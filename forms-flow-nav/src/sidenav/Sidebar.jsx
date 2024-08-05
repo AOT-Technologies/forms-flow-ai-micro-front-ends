@@ -166,117 +166,96 @@ const Sidebar = React.memo(({ props }) => {
                 <MenuComponent
                   eventKey="0"
                   optionsCount="2"
-                  mainMenu="Forms"
+                  mainMenu="Design"
                   subMenu={[
                     {
-                      name: "All Forms",
+                      name: "Forms",
                       path: "form",
-                      matchExp: createURLPathMatchExp("form", baseUrl),
+                      matchExps: [
+                        createURLPathMatchExp("form", baseUrl),
+                      ] 
                     },
                     {
-                      name: "Forms Bundle",
-                      path: "bundle",
-                      matchExp: createURLPathMatchExp("bundle", baseUrl),
+                      name: "Bundle",
+                      path: "bundle", 
+                      matchExps: [
+                        createURLPathMatchExp("bundle", baseUrl),
+                      ] 
                     },
                     { name: "Templates", path: "forms-template-library" },
                   ]}
                 />
               )}
-            {isCreateDesigns && ENABLE_PROCESSES_MODULE && (
-              <MenuComponent
-                eventKey="1"
-                optionsCount="2"
-                mainMenu="Flows"
-                subMenu={[
-                  {
-                    name: "Workflows",
-                    path: "processes",
-                    matchExp: createURLPathMatchExp("processes", baseUrl),
-                  },
-                  {
-                    name: "Templates",
-                    path: "workflow-template-library",
-                  },
-                ]}
-              />
-            )}
-            {userRoles.includes("manage_integrations")
+              {userRoles.includes("manage_integrations")
               ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
                   <MenuComponent
-                    eventKey="2"
-                    optionsCount="3"
+                    eventKey="1"
+                    optionsCount="0"
                     mainMenu="Integrations"
                     subMenu={[
                       {
-                        name: "Recipes",
+                        name: "Integrations",
                         path: "integration/recipes",
-                        matchExp: createURLPathMatchExp(
-                          "integration/recipes",
-                          baseUrl
-                        ),
-                      },
-                      {
-                        name: "Connected Apps",
-                        path: "integration/connected-apps",
-                        matchExp: createURLPathMatchExp(
-                          "integration/connected-apps",
-                          baseUrl
-                        ),
-                      },
-                      {
-                        name: "Templates",
-                        path: "integration/library",
-                        matchExp: createURLPathMatchExp(
-                          "integration/library",
-                          baseUrl
-                        ),
-                      },
+                        matchExps: [
+                          createURLPathMatchExp(
+                            "integration/recipes",
+                            baseUrl
+                          ),
+                        ]
+                      }
                     ]}
                   />
                 )
               : null}
+            {isCreateDesigns && ENABLE_PROCESSES_MODULE && (
+              <MenuComponent
+                eventKey="2"
+                optionsCount="0"
+                mainMenu="Sub - flows"
+                subMenu={[
+                  {
+                    name: "flows",
+                    path: "processes",
+                    matchExps: [
+                      createURLPathMatchExp("processes", baseUrl),
+                    ]
+                  }
+                ]}
+              />
+            )}
             {showApplications &&
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
                   eventKey="3"
-                  optionsCount="3"
-                  mainMenu="Submissions"
+                  optionsCount="0"
+                  mainMenu="Submit"
                   subMenu={[
                     {
-                      name: "Forms",
+                      name: "Submit",
                       path: "application",
-                      matchExp: createURLPathMatchExp("application", baseUrl),
-                    },
-                    {
-                      name: "Data",
-                      path: "data",
-                      matchExp: createURLPathMatchExp("data", baseUrl),
-                    },
-                    {
-                      name: "Drafts",
-                      path: "draft",
-                      matchExp: createURLPathMatchExp("draft", baseUrl),
-                    },
+                      matchExps: [
+                        createURLPathMatchExp("application", baseUrl),
+                        createURLPathMatchExp("draft", baseUrl),
+                      ]
+                    }
                   ]}
                 />
               )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
                 eventKey="4"
-                optionsCount="2"
-                mainMenu="Dashboards"
+                optionsCount="0"
+                mainMenu="Analyze"
                 subMenu={[
                   {
-                    name: "Metrics",
+                    name: "analyze",
                     path: "metrics",
-                    matchExp: createURLPathMatchExp("metrics", baseUrl),
-                  },
-                  {
-                    name: "Insights",
-                    path: "insights",
-                    matchExp: createURLPathMatchExp("insights", baseUrl),
-                  },
+                    matchExps: [
+                      createURLPathMatchExp("metrics", baseUrl),
+                      createURLPathMatchExp("insights", baseUrl),
+                    ]
+                  }
                 ]}
               />
             )}
@@ -284,11 +263,14 @@ const Sidebar = React.memo(({ props }) => {
             <MenuComponent
                 eventKey="5"
                 optionsCount="0"
-                mainMenu="Tasks"
+                mainMenu="Review"
                 subMenu={[
                   {
+                    name: "task",
                     path: "task",
-                    matchExp: createURLPathMatchExp("task", baseUrl)
+                    matchExps: [
+                      createURLPathMatchExp("task", baseUrl)
+                    ] 
                   }
                 ]}
               />)}
@@ -296,22 +278,28 @@ const Sidebar = React.memo(({ props }) => {
               <MenuComponent
                 eventKey="6"
                 optionsCount="3"
-                mainMenu="Admin"
+                mainMenu="Manage"
                 subMenu={[
                   {
                     name: "Dashboards",
-                    path: DASHBOARD_ROUTE,
-                    matchExp: createURLPathMatchExp("admin/dashboard", baseUrl),
+                    path: DASHBOARD_ROUTE, 
+                    matchExps: [
+                      createURLPathMatchExp("admin/dashboard", baseUrl),
+                    ] 
                   },
                   {
                     name: "Roles",
                     path: ROLE_ROUTE,
-                    matchExp: createURLPathMatchExp("admin/roles", baseUrl),
+                    matchExps: [
+                      createURLPathMatchExp("admin/roles", baseUrl),
+                    ] 
                   },
                   {
                     name: "Users",
                     path: USER_ROUTE,
-                    matchExp: createURLPathMatchExp("admin/users", baseUrl),
+                    matchExps: [
+                      createURLPathMatchExp("admin/users", baseUrl),
+                    ]
                   },
                 ]}
               />
