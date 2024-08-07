@@ -708,5 +708,6 @@ export const RESOURCE_BUNDLES_EN ={
   "Proceed to Sign In": "Proceed to Sign In",
   "Contact formsflow.ai support": "Contact formsflow.ai support",
   "Please provide your tenant name to sign in": "Please provide your tenant name to sign in",
-  "Tenant not found":"Tenant not found"
+  "Tenant not found":"Tenant not found",
+  "Access Roles" :"Access Roles",
 }

@@ -1189,5 +1189,6 @@ export const RESOURCE_BUNDLES_ZH = {
   "Proceed to Sign In": "继续登录",
   "Contact formsflow.ai support": "联系 formsflow.ai 支持",
   "Please provide your tenant name to sign in": "请提供您的租户名称以登录",
-  "Tenant not found":"未找到租户"
+  "Tenant not found":"未找到租户",
+  "Access Roles": "访问角色",
 }

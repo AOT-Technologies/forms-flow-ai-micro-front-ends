@@ -689,5 +689,6 @@ export const RESOURCE_BUNDLES_ES = {
     "Proceed to Sign In": "Continuar para iniciar sesión",
     "Contact formsflow.ai support": "Contactar con el soporte de formsflow.ai",
     "Please provide your tenant name to sign in": "Por favor, proporcione el nombre de su inquilino para iniciar sesión",
-    "Tenant not found":"Inquilino no encontrado"
+    "Tenant not found":"Inquilino no encontrado",
+    "Access Roles": "Roles de acceso",
 }

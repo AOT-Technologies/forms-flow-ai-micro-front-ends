@@ -9,6 +9,10 @@ import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 import paginationFactory from "react-bootstrap-table2-paginator";
 import { toast } from "react-toastify";
 import Loading from "../loading";
+import { useParams } from "react-router-dom";
+import {removeTenantKey} from "../../utils/utils.js";
+import { MULTITENANCY_ENABLED } from "../../constants";
+
 import {
   updateAuthorization,
   fetchAuthorizations,
@@ -44,7 +48,7 @@ export const InsightDashboard = React.memo((props: any) => {
   const [isAuthUpdated, setIsAuthUpdated] = React.useState(false);
 
   const { t } = useTranslation();
-
+  const { tenantId } = useParams();
   const [remainingGroups, setRemainingGroups] = React.useState([]);
 
   const [activeRow, setActiveRow] = React.useState(null);
@@ -181,7 +185,7 @@ export const InsightDashboard = React.memo((props: any) => {
     },
     {
       dataField: "roles",
-      text: <Translation>{(t) => t("Access Groups")}</Translation>,
+      text: <Translation>{(t) => t("Access Roles")}</Translation>,
       formatter: (cell, rowData) => {
         return (
           <div className="d-flex flex-wrap col-12">
@@ -190,7 +194,7 @@ export const InsightDashboard = React.memo((props: any) => {
                 style={{ background: "#EAEFFF" }}
                 data-testid={`dashboard-access-group-${i}`}>
                 <span className="">
-                  {label}
+                  {MULTITENANCY_ENABLED ? removeTenantKey(label,tenantId) : label}
                   <i
                     className="fa-solid fa-xmark chip-close ms-2"
                     onClick={() => removeDashboardAuth(rowData, label)}
@@ -227,7 +231,7 @@ export const InsightDashboard = React.memo((props: any) => {
                           onClick={() => addDashboardAuth(item)}
                           data-testid={`dashboard-remaining-group-${key}`}
                         >
-                          {item.path}
+                          {MULTITENANCY_ENABLED ? removeTenantKey(item.path, tenantId) : item.path}
                         </div>
                       ))
                     ) : (
