@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch,useHistory, useParams,useLocation } from "react-router-dom";
+import { Route, Switch,useHistory, useParams,useLocation,Redirect } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { KeycloakService, StorageService } from "@formsflow/service";
@@ -146,6 +146,23 @@ const Admin = React.memo(({ props }: any) => {
                 />
               )}
             />)}
+            <Route 
+            exact
+            path={`${BASE_ROUTE}admin`}
+             >
+              {
+                userRoles.length && (
+                  <Redirect 
+                    to ={
+                      isDashboardManager ? `${BASE_ROUTE}admin/dashboard` 
+                      :isRoleManager ? `${BASE_ROUTE}admin/roles`
+                      :isUserManager ? `${BASE_ROUTE}admin/users`
+                      : '/404'
+                    }
+                  /> 
+                )
+              }
+             </Route>
           </Switch>
           </div>):
           <div className="min-container-height ps-md-3" >
