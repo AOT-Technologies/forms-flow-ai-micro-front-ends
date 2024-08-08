@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - keycloak-issue
       - release/*
     paths:
       - "forms-flow-service/**"
