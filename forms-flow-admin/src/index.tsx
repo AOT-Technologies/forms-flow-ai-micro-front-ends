@@ -97,9 +97,11 @@ const Admin = React.memo(({ props }: any) => {
     const restricted = 
     (location === '/admin/dashboard' && !isDashboardManager) ||
     (location === '/admin/roles' && !isRoleManager) ||
-    (location === '/admin/users' && !isUserManager);
+    (location === '/admin/users' && !isUserManager) ||
+    (!(isDashboardManager ||isRoleManager ||isUserManager));
     setIsAccessRestricted(restricted);
   },[location,userRoles]);
+  console.log(isAccessRestricted,"hi");
   return (
     <>
       {userRoles.includes("admin") ? (
@@ -156,10 +158,9 @@ const Admin = React.memo(({ props }: any) => {
                     to ={
                       isDashboardManager ? `${BASE_ROUTE}admin/dashboard` 
                       :isRoleManager ? `${BASE_ROUTE}admin/roles`
-                      :isUserManager ? `${BASE_ROUTE}admin/users`
-                      : '/404'
+                      : `${BASE_ROUTE}admin/users`
                     }
-                  /> 
+                  />  
                 )
               }
              </Route>
