@@ -101,7 +101,6 @@ const Admin = React.memo(({ props }: any) => {
     (!(isDashboardManager ||isRoleManager ||isUserManager));
     setIsAccessRestricted(restricted);
   },[location,userRoles]);
-  console.log(isAccessRestricted,"hi");
   return (
     <>
       {userRoles.includes("admin") ? (
