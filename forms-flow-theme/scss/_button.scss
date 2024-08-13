@@ -349,6 +349,7 @@
     color: var(--ff-black) !important;
     background-color: var(--ff-gray-100) !important;
     font-weight: bold;
+    outline: none !important;
   }
 
   &:first-child .page-link,
@@ -369,4 +370,77 @@
 .sort-icon {
   font-size: 8px !important;
   color: var(--ff-gray-300) !important;
+}
+
+.page-link {
+  display: flex !important;
+  justify-content: space-around;
+  width: auto !important;
+  height: auto !important;
+  min-height: 39px !important;
+  min-width: 39px !important;
+  padding: 9px !important;
+  border-radius: 50% !important;
+  border-color: transparent !important;
+
+  &:hover,
+  &:focus {
+    background-color: var(--ff-gray-000) !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+}
+
+
+.pagination-dropdown {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(-ff-base-600) !important;
+
+  .dropdown-toggle {
+    color: var(--ff-base-600) !important;
+  }
+
+  .dropdown .btn {
+    color: var(-ff-base-600) !important;
+    border: none !important;
+    background-color: var(--ff-wite) !important;
+    outline: transparent !important;
+    border-radius: 50% !important;
+    height: auto !important;
+    width: auto !important;
+    min-width: 39px !important;
+    min-height: 39px !important;
+    margin: 0 !important;
+  }
+
+  .dropdown .btn:hover {
+    color: var(--ff-black) !important;
+    font-weight: bold;
+    background-color: var(--ff-gray-000) !important;
+    outline: transparent !important;
+  }
+
+  .dropdown .btn:active,
+  .dropdown .btn:focus {
+    color: var(--ff-black) !important;
+    background-color: var(--ff-gray-000) !important;
+    font-weight: bold;
+    outline: transparent !important;
+  }
+
+
+  .dropdown-toggle::after {
+    display: inline-block !important;
+    margin-left: 0.255em !important;
+    vertical-align: 0.255em !important;
+    content: none !important;
+    border-top: 0 transparent !important;
+    border-right: 0 transparent !important;
+    border-bottom: 0 transparent !important;
+    border-left: 0 transparent !important;
+    ;
+  }
 }

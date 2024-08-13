@@ -1,0 +1,86 @@
+$file-upload-border-color: var(--ff-base-600, blue);
+$file-upload-bg-color: var(--ff-white, #ffffff);
+$upload-text-color: var(--ff-gray-800, #303436);
+$upload-text-description-color: var(--ff-gray-400, #949B9E);
+$upload-status-success-color: var(--base-base-60, #253DF4);
+$upload-status-progress-color: var(--gray-gray-40, #949B9E);
+
+.file-upload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 162px;
+    border: 1.5px dashed $file-upload-border-color;
+    border-radius: 16px;
+    background-color: $file-upload-bg-color;
+    cursor: pointer;
+    text-align: center;
+}
+
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-text {
+    color: $upload-text-color;
+    text-align: center;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 120%;
+    padding: 16px 0;
+    margin: 0;
+}
+
+.upload-text-description {
+    color: $upload-text-description-color;
+    text-align: center;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 120%;
+}
+
+.upload-file-name {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    align-self: stretch;
+}
+
+.upload-details {
+    display: flex;
+    height: auto !important;
+    align-items: center;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.upload-status-success {
+    color: $upload-status-success-color;
+    text-align: right;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 120%;
+}
+
+.upload-status-progress {
+    color: $upload-status-progress-color;
+    text-align: right;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 120%;
+}

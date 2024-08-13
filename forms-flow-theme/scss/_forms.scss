@@ -8,6 +8,7 @@
   vertical-align: middle;
   margin-left: 10px;
 }
+
 select option:hover {
   box-shadow: 0 0 10px 100px var(--ff-dark) inset;
 }
@@ -26,18 +27,19 @@ select option:hover {
 }
 
 .input-group .input-group-addon {
-    position: absolute;
-    right: 5px;
-    top: 7px;
+  position: absolute;
+  right: 5px;
+  top: 7px;
 }
-  
+
 .input-group .radio-inline {
-    margin-left: 1.25rem;
+  margin-left: 1.25rem;
 }
-  
+
 .input-group label {
-    margin-right: 2rem;
+  margin-right: 2rem;
 }
+
 .select {
   border-radius: 4px !important;
   margin-left: 8px;
@@ -61,6 +63,7 @@ select option:hover {
 .panel-body {
   padding: 1.5rem 2rem 1.5rem 2rem;
 }
+
 .panel-heading {
   background-color: var(--ff-primary-600);
   border: var(--ff-primary-600);
@@ -108,4 +111,31 @@ select option:hover {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: row;
+}
+
+.status-live {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #57C20A;
+  margin-right: 8px;
+}
+
+.status-draft {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #F2F2F3;
+  margin-right: 8px;
+}
+
+.pagination-text {
+  overflow: hidden;
+  color: var(--ff-black);
+  text-overflow: ellipsis;
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 120%;
 }

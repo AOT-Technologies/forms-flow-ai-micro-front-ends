@@ -7,7 +7,7 @@
   td,
   th {
     vertical-align: middle !important;
-    padding: 1.5rem 1.5rem !important;
+    padding: 1.45rem 1.5rem !important;
   }
 
   thead {
@@ -37,4 +37,31 @@
   tr {
     border-bottom: 1px solid var(--ff-gray-000);
   }
+}
+
+.width-40 {
+  width: 400px !important;
+  max-width: 40% !important;
+  min-width: 40% !important;
+}
+
+.width-30 {
+  width: 300px !important;
+  max-width: 30% !important;
+  min-width: 30% !important;
+}
+
+.text-container {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 3em; /* 1.5em per line for a total of 2 lines */
+  line-height: 1.5em;
+  color: var(--bnw-Black, #000);
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
 }
