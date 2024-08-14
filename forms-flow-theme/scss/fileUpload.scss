@@ -2,8 +2,8 @@ $file-upload-border-color: var(--ff-base-600, blue);
 $file-upload-bg-color: var(--ff-white, #ffffff);
 $upload-text-color: var(--ff-gray-800, #303436);
 $upload-text-description-color: var(--ff-gray-400, #949B9E);
-$upload-status-success-color: var(--base-base-60, #253DF4);
-$upload-status-progress-color: var(--gray-gray-40, #949B9E);
+$upload-status-success-color: var(--ff-base-600, #253DF4);
+$upload-status-progress-color: var(--ff-gray-400, #949B9E);
 
 .file-upload {
     display: flex;
@@ -28,10 +28,10 @@ $upload-status-progress-color: var(--gray-gray-40, #949B9E);
 .upload-text {
     color: $upload-text-color;
     text-align: center;
-    font-family: Roboto;
+    font-family: var(--ff-primary-font);
     font-size: 14px;
     font-style: normal;
-    font-weight: 400;
+    font-weight: var(--ff-font-weight-sm);
     line-height: 120%;
     padding: 16px 0;
     margin: 0;
@@ -40,10 +40,10 @@ $upload-status-progress-color: var(--gray-gray-40, #949B9E);
 .upload-text-description {
     color: $upload-text-description-color;
     text-align: center;
-    font-family: Roboto;
+    font-family: var(--ff-primary-font);
     font-size: 14px;
     font-style: normal;
-    font-weight: 400;
+    font-weight: var(--ff-font-weight-sm);
     line-height: 120%;
 }
 
@@ -53,7 +53,7 @@ $upload-status-progress-color: var(--gray-gray-40, #949B9E);
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 24px;
+    gap: var(--ff-spacer-150);
     align-self: stretch;
 }
 
@@ -61,26 +61,26 @@ $upload-status-progress-color: var(--gray-gray-40, #949B9E);
     display: flex;
     height: auto !important;
     align-items: center;
-    gap: 16px;
+    gap: var(--ff-spacer-100);
     align-self: stretch;
 }
 
 .upload-status-success {
     color: $upload-status-success-color;
     text-align: right;
-    font-family: Roboto;
+    font-family: var(--ff-primary-font);
     font-size: 14px;
     font-style: normal;
-    font-weight: 400;
+    font-weight: var(--ff-font-weight-sm);
     line-height: 120%;
 }
 
 .upload-status-progress {
     color: $upload-status-progress-color;
     text-align: right;
-    font-family: Roboto;
+    font-family: var(--ff-primary-font);
     font-size: 14px;
     font-style: normal;
-    font-weight: 400;
+    font-weight: var(--ff-font-weight-sm);
     line-height: 120%;
 }

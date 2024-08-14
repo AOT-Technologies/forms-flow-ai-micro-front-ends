@@ -38,6 +38,7 @@ $gray-000: set-lightness($gray, 95%);
 
 $primary : $base-600;
 $success: #198754;
+$live: #57C20A;
 $danger: #dc3545;
 $dark: #000000;
 $gray: #232323;
@@ -95,6 +96,7 @@ $custom-colors: (
 
   "black": $black,
   "white": $white,
+  "live": $live,
   "red-000": $red-000,
     //old colors - to be removed.
   "primary-100": tint-color($primary, 95%),

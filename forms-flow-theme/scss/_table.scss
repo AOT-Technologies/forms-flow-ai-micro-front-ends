@@ -1,7 +1,7 @@
 .custom-tables {
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  border-radius: 1.5rem !important;
+  border-radius: var(--ff-radius-0150) !important;
   overflow: hidden !important;
 
   td,
@@ -12,22 +12,22 @@
 
   thead {
     th:first-child {
-      border-top-left-radius: 1.5rem !important;
+      border-top-left-radius: var(--ff-radius-0150) !important;
     }
 
     th:last-child {
-      border-top-right-radius: 1.5rem !important;
+      border-top-right-radius: var(--ff-radius-0150) !important;
     }
   }
 
   tbody {
     tr:last-child {
       td:first-child {
-        border-bottom-left-radius: 1.5rem !important;
+        border-bottom-left-radius: var(--ff-radius-0150) !important;
       }
 
       td:last-child {
-        border-bottom-right-radius: 1.5rem !important;
+        border-bottom-right-radius: var(--ff-radius-0150) !important;
       }
     }
   }
@@ -59,9 +59,9 @@
   text-overflow: ellipsis;
   height: 3em; /* 1.5em per line for a total of 2 lines */
   line-height: 1.5em;
-  color: var(--bnw-Black, #000);
-  font-family: Roboto;
+  color: var(--ff-Black, #000);
+  font-family: var(--ff-primary-font);
   font-size: 14px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--ff-font-weight-sm);
 }

@@ -158,17 +158,20 @@
     }
 
     // Dropdown item styles for btn-primary
-    & + .dropdown-toggle + .dropdown-menu {
+    &+.dropdown-toggle+.dropdown-menu {
       border-color: var(--ff-primary, #253DF4) !important;
+
       .dropdown-item {
         color: var(--ff-primary, #253DF4) !important;
+
         &:hover {
-          background-color: transparent !important; 
+          background-color: transparent !important;
           color: var(--ff-primary, #253DF4) !important;
         }
       }
     }
   }
+
   &.btn-text {
     color: var(--ff-primary, #253DF4) !important;
   }
@@ -178,15 +181,18 @@
     color: var(--ff-primary, #253DF4) !important;
     background: var(--base-base-10, #E7E9FE) !important;
     line-height: var(--text-line-height) !important;
+
     &:hover {
       background-color: var(--base-base-20, #CFD4FC) !important;
       font-weight: var(--font-weight-xl) !important;
     }
+
     &:focus {
       outline: none !important;
     }
   }
-  &.btn-dark{
+
+  &.btn-dark {
     background-color: var(--ff-gray-700, #494E50) !important;
 
     &:hover {
@@ -200,44 +206,48 @@
       border: 1px solid var(--ff-gray-700, #494E50) !important;
     }
 
-        // Dropdown item styles for btn-dark
-        & + .dropdown-toggle + .dropdown-menu {
-          border: 1px solid var(--ff-gray-700, #494E50) !important;
-          .dropdown-item {
-            color: var(--ff-gray-800, #303436) !important;
-            &:hover {
-              background-color: transparent !important; 
-              color: var(--ff-gray-800, #303436) !important;
-            }
-          }
+    // Dropdown item styles for btn-dark
+    &+.dropdown-toggle+.dropdown-menu {
+      border: 1px solid var(--ff-gray-700, #494E50) !important;
+
+      .dropdown-item {
+        color: var(--ff-gray-800, #303436) !important;
+
+        &:hover {
+          background-color: transparent !important;
+          color: var(--ff-gray-800, #303436) !important;
         }
+      }
+    }
   }
+
   &.btn-sm {
     font-size: var(--font-size-xs) !important;
-    padding: 0.5rem var(--spacer-100, 1rem) !important;
+    padding: 0.5rem var(--spacer-100) !important;
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-0100) !important;
 
     // Dropdown item styles for btn-sm
-    ~ .dropdown-menu .dropdown-item {
+    ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-xl) !important;
-      line-height: var(--text-line-height); 
-      padding: 0.5rem var(--spacer-100, 1rem) !important;
+      line-height: var(--text-line-height);
+      padding: 0.5rem var(--spacer-100) !important;
     }
   }
+
   &.btn-md {
     font-size: var(--font-size-sm) !important;
-    padding: 0.75rem var(--spacer-150, 1.5rem) !important;
+    padding: 0.75rem var(--spacer-150) !important;
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-0125) !important;
 
     // Dropdown item styles for btn-md
-    ~ .dropdown-menu .dropdown-item {
+    ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
-      line-height: var(--text-line-height); 
-      padding: 0.75rem var(--spacer-150, 1.5rem) !important;
+      line-height: var(--text-line-height);
+      padding: 0.75rem var(--spacer-150) !important;
     }
   }
 
@@ -248,10 +258,10 @@
     border-radius: var(--radius-0150) !important;
 
     // Dropdown item styles for btn-lg
-    ~ .dropdown-menu .dropdown-item {
+    ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
-      line-height: var(--text-line-height); 
+      line-height: var(--text-line-height);
       padding: 1rem var(--spacer-200, 2rem) !important;
     }
   }
@@ -293,14 +303,15 @@
 }
 
 .btn-group {
-  > .btn:first-child,
-  > .btn:first-child:active {
+
+  >.btn:first-child,
+  >.btn:first-child:active {
     border-top-left-radius: var(--radius-0150) !important;
     border-bottom-left-radius: var(--radius-0150) !important;
   }
 
-  > .btn:nth-child(2),
-  > .btn:nth-child(2):active {
+  >.btn:nth-child(2),
+  >.btn:nth-child(2):active {
     border-top-right-radius: var(--radius-0150) !important;
     border-bottom-right-radius: var(--radius-0150) !important;
   }
@@ -313,7 +324,7 @@
 
   img {
     transition: transform 0.3s ease;
-    transform: rotate(0deg); 
+    transform: rotate(0deg);
 
     &.collapsed {
       transform: rotate(180deg);
@@ -332,11 +343,11 @@
 
 //Pagination buttons
 .page-item {
-  margin-left: 8px !important;
-  margin-right: 8px !important;
+  margin-left: var(--ff-spacer-050) !important;
+  margin-right: var(--ff-spacer-050) !important;
 
   .page-link {
-    border-radius: 50% !important;
+    border-radius: var(--ff-radius-0100) !important;
     border-color: transparent !important;
 
     &:hover {
@@ -364,9 +375,11 @@
     color: var(--ff-black) !important;
   }
 }
+
 .pagination {
   margin-bottom: 0 !important;
 }
+
 .sort-icon {
   font-size: 8px !important;
   color: var(--ff-gray-300) !important;
@@ -380,7 +393,7 @@
   min-height: 39px !important;
   min-width: 39px !important;
   padding: 9px !important;
-  border-radius: 50% !important;
+  border-radius: var(--ff-radius-0100) !important;
   border-color: transparent !important;
 
   &:hover,
@@ -408,7 +421,7 @@
     border: none !important;
     background-color: var(--ff-wite) !important;
     outline: transparent !important;
-    border-radius: 50% !important;
+    border-radius: var(--ff-radius-0100) !important;
     height: auto !important;
     width: auto !important;
     min-width: 39px !important;
@@ -434,13 +447,12 @@
 
   .dropdown-toggle::after {
     display: inline-block !important;
-    margin-left: 0.255em !important;
-    vertical-align: 0.255em !important;
+    margin-left: var(--ff-spacer-025) !important;
+    vertical-align: var(--ff-spacer-025) !important;
     content: none !important;
     border-top: 0 transparent !important;
     border-right: 0 transparent !important;
     border-bottom: 0 transparent !important;
     border-left: 0 transparent !important;
-    ;
   }
 }

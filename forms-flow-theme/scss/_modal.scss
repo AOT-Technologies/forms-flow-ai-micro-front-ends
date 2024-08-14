@@ -7,38 +7,26 @@
   margin: 8.75rem auto !important;
 }  
 
-//
-$modal-color: var(--ff-modal-color);
-$modal-bg: var(--ff-modal-bg);
-$modal-border-radius: var(--ff-modal-border-radius);
-$header-color: var(--gray-gray-80, #303436);
-$header-font: Roboto;
-$header-font-size: 24px;
-$base-color: var(--ff-base-600, #253DF4);
-$gray-color: var(--ff-gray-800, #303436);
-$header-padding: 32px;
-$form-modal-border-radius: var(--Rem1_5, 24px);
-
 .modal-header {
   justify-content: space-between !important;
   height: 95px;
   margin-left: 0 !important;
   padding-left: 40px !important;
-  padding-top: $header-padding;
-  padding-bottom: $header-padding;
+  padding-top: var(--ff-spacer-200);
+  padding-bottom: var(--ff-spacer-200);
   padding-right: 40px !important;
   flex-shrink: 0;
-  color: $header-color;
-  font-family: $header-font;
-  font-size: $header-font-size;
+  color: var(--ff-gray-800, #303436);
+  font-family: var(--ff-primary-font);
+  font-size: var(--ff-spacer-150);
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--ff-font-weight-sm);
   line-height: normal;
 }
 
 .modal-footer {
-  padding-top: $header-padding !important;
-  padding-bottom: $header-padding !important;
+  padding-top: var(--ff-spacer-200) !important;
+  padding-bottom: var(--ff-spacer-200) !important;
   padding-left: 40px !important;
 }
 
@@ -55,12 +43,11 @@ $form-modal-border-radius: var(--Rem1_5, 24px);
   display: flex;
   flex-direction: column;
   width: 100% !important;
-  color: $modal-color;
   pointer-events: auto;
-  background-color: $modal-bg;
+  background-color: var(--ff-white);
   background-clip: padding-box;
   border: none;
-  border-radius: $modal-border-radius;
+  border-radius: var(--ff-radius-0100);
   outline: 0;
 
   &.fade .modal-dialog {
@@ -89,14 +76,14 @@ $form-modal-border-radius: var(--Rem1_5, 24px);
     width: 900px !important;
     height: 255px !important;
     flex-shrink: 0 !important;
-    border-radius: $form-modal-border-radius !important;
+    border-radius: var(--ff-radius-0150, 24px) !important;
     position: absolute !important;
     border: none !important;
   }
 
   &.Modal-content-heading {
-    color: $base-color;
-    font-family: $header-font;
+    color: var(--ff-base-600, #253DF4);
+    font-family: var(--ff-primary-font);
     font-size: 16px;
     font-style: normal;
     font-weight: 700;
@@ -105,8 +92,8 @@ $form-modal-border-radius: var(--Rem1_5, 24px);
   }
 
   &.modal-content-text {
-    color: $gray-color;
-    font-family: $header-font;
+    color: var(--ff-gray-800, #303436);
+    font-family: var(--ff-primary-font);
     font-size: 16px;
     font-style: normal;
     font-weight: 400;

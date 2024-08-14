@@ -1,7 +1,7 @@
 .forms-text {
   vertical-align: bottom;
   margin-left: 10px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .forms-text {
@@ -10,7 +10,7 @@
 }
 
 select option:hover {
-  box-shadow: 0 0 10px 100px var(--ff-dark) inset;
+  box-shadow: 0 0 10px 100px var(--ff-black) inset;
 }
 
 //forms table header classes
@@ -33,16 +33,16 @@ select option:hover {
 }
 
 .input-group .radio-inline {
-  margin-left: 1.25rem;
+  margin-left: var(--ff-spacer-125);
 }
 
 .input-group label {
-  margin-right: 2rem;
+  margin-right: var(--ff-spacer-200);
 }
 
 .select {
-  border-radius: 4px !important;
-  margin-left: 8px;
+  border-radius: var(--ff-spacer-025) !important;
+  margin-left: var(--ff-spacer-050);
   max-width: 104px;
 }
 
@@ -56,7 +56,7 @@ select option:hover {
 
 .well {
   border: 1px solid var(--ff-gray-200);
-  padding: 1rem;
+  padding: var(--ff-spacer-100);
   background-color: var(--ff-gray-100);
 }
 
@@ -69,7 +69,7 @@ select option:hover {
   border: var(--ff-primary-600);
   color: var(--ff-white) !important;
   padding: 0.75rem 1.25rem;
-  margin-bottom: 8px;
+  margin-bottom: var(--ff-spacer-050);
 }
 
 .formcomponents .formcomponent {
@@ -114,28 +114,28 @@ select option:hover {
 }
 
 .status-live {
-  width: 8px;
-  height: 8px;
+  width: var(--ff-spacer-050);
+  height: var(--ff-spacer-050);
   border-radius: 50%;
-  background-color: #57C20A;
-  margin-right: 8px;
+  background-color: var(--ff-live);
+  margin-right: var(--ff-spacer-050);
 }
 
 .status-draft {
-  width: 8px;
-  height: 8px;
+  width: var(--ff-spacer-050);
+  height: var(--ff-spacer-050);
   border-radius: 50%;
-  background-color: #F2F2F3;
-  margin-right: 8px;
+  background-color: var(--ff-gray-100);
+  margin-right: var(--ff-spacer-050);
 }
 
 .pagination-text {
   overflow: hidden;
   color: var(--ff-black);
   text-overflow: ellipsis;
-  font-family: Roboto;
-  font-size: 14px;
+  font-family: var(--ff-primary-font);
+  font-size:  var(--ff-font-size-sm);
   font-style: normal;
-  font-weight: 300;
+  font-weight: var(--ff-font-weight-xs);
   line-height: 120%;
 }

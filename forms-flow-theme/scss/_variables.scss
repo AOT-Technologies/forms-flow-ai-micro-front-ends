@@ -211,7 +211,7 @@ hr {
 ///from base.scss///
 body {
   font-size: 16px;
-  font-family: Nunito Sans, SemiBold;
+  font-family: var(--ff-primary-font);
   overflow: hidden; 
   background-color: var(--ff-white);
 }
@@ -225,7 +225,7 @@ body {
 
 body {
   font-size: 16px;
-  font-family: Nunito Sans, SemiBold;
+  font-family: var(--ff-primary-font);
   overflow: hidden; 
   background-color: var(--color-main-bg);
 }
