@@ -141,7 +141,7 @@
 
   &.btn-primary {
     background-color: var(--base-base-60, #253DF4) !important;
-
+    border: 1px solid var(--base-base-60, #253DF4) !important;
     &:focus {
       outline: none !important;
     }
@@ -188,7 +188,8 @@
   }
   &.btn-dark{
     background-color: var(--ff-gray-700, #494E50) !important;
-
+    border: 1px solid var(--ff-gray-700, #494E50) !important;
+    
     &:hover {
       background-color: var(--ff-gray-600, #61686B) !important;
       box-shadow: var(--shadow-md) !important;
@@ -311,23 +312,20 @@
     display: none !important;
   }
 
-  img {
+  svg {
     transition: transform 0.3s ease;
     transform: rotate(0deg); 
-
-    &.collapsed {
-      transform: rotate(180deg);
-    }
   }
 
-  &.collapsed img {
-    transform: rotate(0deg);
-  }
-
-  &:not(.collapsed) img {
+  &.collapsed svg {
     transform: rotate(180deg);
   }
+
+  &:not(.collapsed) svg {
+    transform: rotate(0deg);
+  }
 }
+
 
 
 //Pagination buttons

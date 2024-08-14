@@ -109,3 +109,58 @@ select option:hover {
   flex-wrap: nowrap;
   flex-direction: row;
 }
+
+/* CustomTooltip */
+.custom-tooltip .tooltip-inner {
+  background-color: var(--ff-base-100);
+  color: var(--ff-gray-800);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-sm);
+  line-height: var(--text-line-height);
+  white-space: nowrap;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+.custom-tooltip .tooltip-arrow::before {
+  border-color: var(--ff-base-100) transparent transparent transparent !important;
+}
+
+/* Custom Form.Check */
+.custom-checkbox .form-check-input {
+  width: 1.25em;
+  height: 1.25em;
+  border-radius: 0.25em;
+  border: 2px solid var(--ff-base-600) !important;
+  background-color: transparent;
+  position: relative;
+
+  &:focus {
+    box-shadow: none;
+  }
+
+  &:checked {
+    background-color: var(--ff-white) !important;
+    border-color: var(--ff-base-600) !important;
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0.1em;
+      left: 0.35em;
+      width: 0.35em;
+      height: 0.7em;
+      border: solid var(--ff-base-600);
+      border-width: 0 0.15em 0.15em 0;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.custom-checkbox .form-check-label {
+  color: var(--ff-gray-800);
+  margin-left: 0.5rem;
+  margin-top: 0.3rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-sm);
+  line-height: var(--text-line-height);
+}
+
