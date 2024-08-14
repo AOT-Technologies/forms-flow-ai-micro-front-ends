@@ -1,16 +1,9 @@
-// $body-bg: #000;
-
-$prefix:"ff-";
-
-///////////////////////////////TB removed///////////////////////////////////////////
-
-
+$prefix: "ff-";
 
 .task-container {
   height: 100% !important;
 }
 
-//defined at multiple files
 .loader-container {
   display: flex;
   height: 80vh;
@@ -56,27 +49,23 @@ $prefix:"ff-";
   background-color: var(--ff-gray-200);
 }
 
-
-
-
-
 .taskDropdown>.dropdown-menu::before {
   left: 10%;
   right: 100%;
 }
 
 .taskDropdown>.dasboard-icon-dropdown {
-  margin-bottom: 5px;
+  margin-bottom: 0.3125rem;
 }
 
 .taskDropdown>.task-dropdown-icon {
-  margin-bottom: 1px;
+  margin-bottom: 0.0625rem;
 }
 
 .taskDropdown>.applications-icon-header {
-  width: 23px;
-  height: 23px;
-  margin-bottom: 5px;
+  width: 1.4375rem;
+  height: 1.4375rem;
+  margin-bottom: 0.3125rem;
 }
 
 .taskDropdown>.dropdown-menu::after {
@@ -84,27 +73,24 @@ $prefix:"ff-";
   right: 100%;
 }
 
-
 .taskvariable-alert {
   background-color: var(--ff-alert-200) !important;
-  border: solid 2px var(--ff-alert-400) !important;
+  border: solid 0.125rem var(--ff-alert-400) !important;
 }
 
 .select {
-  border-radius: 4px !important;
-  margin-left: 8px;
-  max-width: 104px;
+  border-radius: 0.25rem !important;
+  margin-left: var(--ff-radius-050);
+  max-width: 6.5rem;
 }
-
 
 @media (max-width: 768px) {
   .main-header {
-    height: 70px;
+    height: 4.375rem;
     flex-direction: row;
     flex-wrap: wrap;
   }
 }
-
 
 .navbar-brand {
   align-items: center;
@@ -115,10 +101,11 @@ $prefix:"ff-";
   max-width: 100%;
   height: 100%;
 }
+
 #sidebar {
   background: var(--ff-white);
 }
- 
+
 #sidebar ul li.active>a,
 #sidebar a[aria-expanded="true"] {
   background: var(--ff-white);
@@ -128,43 +115,39 @@ header nav {
   border-bottom: var(--ff-white);
 }
 
-
 .rounded-circle {
   border-radius: 50% !important;
-  border: 2px solid var(--ff-gray-400);
-  height: 40px;
-  width: 40px;
+  border: 0.125rem solid var(--ff-gray-400);
+  height: var(--ff-spacer-250);
+  width: var(--ff-spacer-250);
 }
-
-
 
 div[disabled] {
   pointer-events: none;
   opacity: 0.7;
 }
 
-
 .navbar-light .navbar-nav .nav-link {
   color: var(--ff-black);
 }
 
-/* overwriting default styles */
 .MuiTab-wrapper {
-  font-size: 16px;
+  font-size: var(--ff-font-size-sm);
 }
+
 .tooltiptext {
   color: var(--ff-gray-800);
 }
-//check
+
 div.upload {
   background-color: var(--ff-gray-200);
-  border: 1px solid var(--ff-gray-300);
-  border-radius: 5px;
+  border: 0.0625rem solid var(--ff-gray-300);
+  border-radius: 0.3125rem;
   display: inline-block;
-  height: 30px;
-  padding: 3px 3px 3px 3px;
+  height: 1.875rem;
+  padding: 0.1875rem;
   position: relative;
-  width: 140px;
+  width: 8.75rem;
   text-align: center;
 }
 
@@ -173,9 +156,9 @@ div.upload:hover {
 }
 
 div.upload input[type="file"] {
-  display: input-block;
+  display: block;
   width: 100%;
-  height: 30px;
+  height: 1.875rem;
   opacity: 0;
   cursor: pointer;
   position: absolute;
@@ -183,7 +166,7 @@ div.upload input[type="file"] {
 }
 
 .admin-container>.header-container {
-  padding-top: 10px !important;
+  padding-top: 0.625rem !important;
   margin-left: 3.938rem;
   margin-right: 4.188rem;
   padding-left: 1.938rem;
@@ -191,7 +174,7 @@ div.upload input[type="file"] {
 }
 
 .head-rule {
-  margin-top: -10px;
+  margin-top: -0.625rem;
 }
 
 .cursor-default {
@@ -201,37 +184,25 @@ div.upload input[type="file"] {
 .cursor-pointer {
   cursor: pointer !important;
 }
- 
+
 hr {
-  border-top: 2px solid var(--ff-gray-400);
-  
-}
-
-
-///from base.scss///
-body {
-  font-size: 16px;
-  font-family: var(--ff-primary-font);
-  overflow: hidden; 
-  background-color: var(--ff-white);
-}
-
-
-@media (min-width: 1400px) {
-.container {
-  max-width: 1320px;
-}
+  border-top: 0.125rem solid var(--ff-gray-400);
 }
 
 body {
-  font-size: 16px;
+  font-size: var(--ff-font-size-sm);
   font-family: var(--ff-primary-font);
-  overflow: hidden; 
+  overflow: hidden;
   background-color: var(--color-main-bg);
 }
 
-.main-container{
+@media (min-width: 1400px) {
+  .container {
+    max-width: 82.5rem;
+  }
+}
 
+.main-container {
   overflow-y: auto;
   background: var(--ff-main-bg);
   margin-left: var(--navbar-width);
@@ -239,13 +210,13 @@ body {
   max-height: 100vh;
 }
 
-.min-container-height{
-  min-height: calc(100vh - 170px);
+.min-container-height {
+  min-height: calc(100vh - 10.625rem);
 }
 
 .navbar-expand-lg .navbar-nav .nav-link {
-  padding-right: 0rem !important;
-  padding-left: .3rem !important;
+  padding-right: 0 !important;
+  padding-left: 0.3rem !important;
 }
 
 @mixin generate-overflow($axis, $value) {

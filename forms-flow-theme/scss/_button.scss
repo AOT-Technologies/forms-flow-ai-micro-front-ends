@@ -3,7 +3,7 @@
 }
 
 .btn-light:hover {
-  border: 1px solid var(--ff-gray-400) !important;
+  border: 0.0625rem solid var(--ff-gray-400) !important;
   background-color: var(--ff-gray-300) !important;
 }
 
@@ -22,7 +22,6 @@
 .btn-link:hover {
   text-decoration: underline !important;
 }
-
 
 .btn.signature-pad-refresh {
   z-index: 99 !important;
@@ -48,7 +47,7 @@
 }
 
 .button_font {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
 }
 
@@ -68,25 +67,22 @@
 }
 
 .upload+.uploadButton {
-  height: 38px;
+  height: 2.375rem;
 }
 
 .uploadButton {
   background-color: var(--ff-primary-500);
   border: none;
-  border-radius: 3px;
+  border-radius: 0.1875rem;
   color: var(--ff-white);
   cursor: pointer;
   display: inline-block;
-  height: 30px;
-  margin-right: 15px;
+  height: 1.875rem;
+  margin-right: 0.9375rem;
   width: auto;
-  padding: 0 20px;
+  padding: 0 1.25rem;
   box-sizing: content-box;
 }
-
-/* ------------------------- button padding override ------------------------ */
-
 
 .bg-primary {
   background-color: var(--ff-primary) !important;
@@ -95,21 +91,20 @@
 .table-primary {
   --bs-table-color: #fff;
   --ff-table-bg: var(--ff-primary) !important;
-
 }
 
 .btn-link {
   text-decoration: none;
+}
 
-  &:hover {
-    text-decoration: underline;
-  }
+.btn-link:hover {
+  text-decoration: underline;
 }
 
 .btn-wizard-nav-submit,
 .btn-wizard-nav-next,
 .btn-wizard-nav-previous {
-  margin-left: 5px;
+  margin-left: 0.3125rem;
 }
 
 .btn-primary:focus-visible,
@@ -126,11 +121,9 @@
 .nav-link:focus-visible,
 .form-check-input:focus-visible,
 .out-line:focus-visible {
-  outline: 3px solid var(--ff-primary-200) !important;
+  outline: 0.1875rem solid var(--ff-primary-200) !important;
 }
 
-
-//new class overide for buttons
 .btn {
   font-style: normal;
   border: none !important;
@@ -154,10 +147,9 @@
     &:active {
       background-color: var(--ff-white, #ffffff) !important;
       color: var(--ff-primary, #253DF4) !important;
-      border: 1px solid var(--ff-primary, #253DF4) !important;
+      border: 0.0625rem solid var(--ff-primary, #253DF4) !important;
     }
 
-    // Dropdown item styles for btn-primary
     &+.dropdown-toggle+.dropdown-menu {
       border-color: var(--ff-primary, #253DF4) !important;
 
@@ -203,12 +195,11 @@
     &:active {
       background-color: var(--ff-white, #ffffff) !important;
       color: var(--ff-gray-800, #303436) !important;
-      border: 1px solid var(--ff-gray-700, #494E50) !important;
+      border: 0.0625rem solid var(--ff-gray-700, #494E50) !important;
     }
 
-    // Dropdown item styles for btn-dark
     &+.dropdown-toggle+.dropdown-menu {
-      border: 1px solid var(--ff-gray-700, #494E50) !important;
+      border: 0.0625rem solid var(--ff-gray-700, #494E50) !important;
 
       .dropdown-item {
         color: var(--ff-gray-800, #303436) !important;
@@ -227,7 +218,6 @@
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-0100) !important;
 
-    // Dropdown item styles for btn-sm
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-xl) !important;
@@ -242,7 +232,6 @@
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-0125) !important;
 
-    // Dropdown item styles for btn-md
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
@@ -257,7 +246,6 @@
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-0150) !important;
 
-    // Dropdown item styles for btn-lg
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
@@ -265,7 +253,6 @@
       padding: 1rem var(--spacer-200, 2rem) !important;
     }
   }
-
 }
 
 .dropdown.btn-group {
@@ -303,7 +290,6 @@
 }
 
 .btn-group {
-
   >.btn:first-child,
   >.btn:first-child:active {
     border-top-left-radius: var(--radius-0150) !important;
@@ -340,11 +326,9 @@
   }
 }
 
-
-//Pagination buttons
 .page-item {
-  margin-left: var(--ff-spacer-050) !important;
-  margin-right: var(--ff-spacer-050) !important;
+  margin-left: 0.3125rem !important;
+  margin-right: 0.3125rem !important;
 
   .page-link {
     border-radius: var(--ff-radius-0100) !important;
@@ -381,7 +365,7 @@
 }
 
 .sort-icon {
-  font-size: 8px !important;
+  font-size: 0.5rem !important;
   color: var(--ff-gray-300) !important;
 }
 
@@ -390,9 +374,9 @@
   justify-content: space-around;
   width: auto !important;
   height: auto !important;
-  min-height: 39px !important;
-  min-width: 39px !important;
-  padding: 9px !important;
+  min-height: 2.4375rem !important;
+  min-width: 2.4375rem !important;
+  padding: 0.5625rem !important;
   border-radius: var(--ff-radius-0100) !important;
   border-color: transparent !important;
 
@@ -402,30 +386,28 @@
     outline: none !important;
     box-shadow: none !important;
   }
-
 }
-
 
 .pagination-dropdown {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(-ff-base-600) !important;
+  color: var(--ff-base-600) !important;
 
   .dropdown-toggle {
     color: var(--ff-base-600) !important;
   }
 
   .dropdown .btn {
-    color: var(-ff-base-600) !important;
+    color: var(--ff-base-600) !important;
     border: none !important;
-    background-color: var(--ff-wite) !important;
+    background-color: var(--ff-white) !important;
     outline: transparent !important;
     border-radius: var(--ff-radius-0100) !important;
     height: auto !important;
     width: auto !important;
-    min-width: 39px !important;
-    min-height: 39px !important;
+    min-width: 2.4375rem !important;
+    min-height: 2.4375rem !important;
     margin: 0 !important;
   }
 
@@ -443,7 +425,6 @@
     font-weight: bold;
     outline: transparent !important;
   }
-
 
   .dropdown-toggle::after {
     display: inline-block !important;

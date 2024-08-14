@@ -1,19 +1,18 @@
 .forms-text {
   vertical-align: bottom;
-  margin-left: 10px;
+  margin-left: 0.625rem; 
   margin-bottom: 0;
 }
 
 .forms-text {
   vertical-align: middle;
-  margin-left: 10px;
+  margin-left: 0.625rem; 
 }
-
 select option:hover {
-  box-shadow: 0 0 10px 100px var(--ff-black) inset;
+  box-shadow: 0 0 0.625rem 6.25rem var(--ff-black) inset; 
 }
 
-//forms table header classes
+// forms table header classes
 .form_select {
   width: 15%;
 }
@@ -23,13 +22,13 @@ select option:hover {
 }
 
 .form_title {
-  width: 40%;
+  width: var(--ff-spacer-250);
 }
 
 .input-group .input-group-addon {
   position: absolute;
-  right: 5px;
-  top: 7px;
+  right: 0.3125rem; 
+  top: 0.4375rem; 
 }
 
 .input-group .radio-inline {
@@ -43,11 +42,11 @@ select option:hover {
 .select {
   border-radius: var(--ff-spacer-025) !important;
   margin-left: var(--ff-spacer-050);
-  max-width: 104px;
+  max-width: 6.5rem; 
 }
 
 .form_check {
-  margin-bottom: 20px;
+  margin-bottom: var(--ff-spacer-125);
 }
 
 .form-view-wrapper {
@@ -55,7 +54,7 @@ select option:hover {
 }
 
 .well {
-  border: 1px solid var(--ff-gray-200);
+  border: 0.0625rem solid var(--ff-gray-200); 
   padding: var(--ff-spacer-100);
   background-color: var(--ff-gray-100);
 }
@@ -66,7 +65,7 @@ select option:hover {
 
 .panel-heading {
   background-color: var(--ff-primary-600);
-  border: var(--ff-primary-600);
+  border: 0.0625rem solid var(--ff-primary-600); 
   color: var(--ff-white) !important;
   padding: 0.75rem 1.25rem;
   margin-bottom: var(--ff-spacer-050);
@@ -76,19 +75,19 @@ select option:hover {
   font-size: 1em;
 }
 
-//formio classes 
+// formio classes
 
 .formio-component-panel {
-  border: 1px solid --ff-gray-200;
+  border: 0.0625rem solid var(--ff-gray-200); 
 }
 
 .formio-component-panel .panel-heading {
-  background-color: --ff-gray-200;
-  padding: 10px 0 10px 10px;
+  background-color: var(--ff-gray-200);
+  padding: 0.625rem 0 0.625rem 0.625rem; 
 }
 
 .formio-component-panel .panel-heading .panel-title i {
-  font-size: 0.75rem;
+  font-size: 0.75rem; 
 }
 
 .formio-error-wrapper,
@@ -134,7 +133,7 @@ select option:hover {
   color: var(--ff-black);
   text-overflow: ellipsis;
   font-family: var(--ff-primary-font);
-  font-size:  var(--ff-font-size-sm);
+  font-size: var(--ff-font-size-sm);
   font-style: normal;
   font-weight: var(--ff-font-weight-xs);
   line-height: 120%;

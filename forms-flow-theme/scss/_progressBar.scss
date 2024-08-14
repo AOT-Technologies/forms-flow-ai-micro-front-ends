@@ -1,7 +1,7 @@
 .progress {
     background-color: var(--ff-white);
     /* Background color of the progress bar container */
-    border-radius: 5px;
+    border-radius: 0.3125rem;
     height: var(--ff-spacer-150) !important;
     width: 100%;
     position: relative;
@@ -21,9 +21,9 @@
     height: 100%;
     width: 0%;
     transition: width 0.4s ease-in-out;
-    border-radius: $border-radius-small;
+    border-radius: var(--ff-radius-075);
     text-align: center;
-    line-height: 20px;
+    line-height: var(--ff-spacer-125);
 }
 
 .upload-svg {
@@ -38,7 +38,7 @@
 }
 
 .success-tic-svg {
-    margin-top: 2px;
+    margin-top: 0.125rem;
     width: var(--ff-spacer-100);
     height: var(--ff-spacer-100);
     //to be replaced
