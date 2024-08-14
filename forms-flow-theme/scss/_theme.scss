@@ -5,6 +5,7 @@ $gray: hsl(199, 5%, 40%);
 $black: hsl(0, 0%, 0%);
 $white: hsl(0, 0%, 100%);
 $red-000: hsl(0, 100%, 63%);
+$live: hsl(95, 90%, 40%);
 
 @function set-lightness($color, $target-lightness) {
 //USE: call the function with a color and its expected lightness. (the L of HSL will be replaced).
@@ -95,6 +96,7 @@ $custom-colors: (
 
   "black": $black,
   "white": $white,
+  "live": $live,
   "red-000": $red-000,
     //old colors - to be removed.
   "primary-100": tint-color($primary, 95%),
