@@ -9,7 +9,7 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/Footer";
-import { BASE_ROUTE, DESIGNER_ROLE, MULTITENANCY_ENABLED, ENABLE_INTEGRATION_PREMIUM } from "./constants";
+import { BASE_ROUTE, MULTITENANCY_ENABLED, ENABLE_INTEGRATION_PREMIUM } from "./constants";
 import Recipes from "./components/Recipes";
 import ConnectedApps from "./components/ConnectedApps";
 import PremiumSubscription from "./components/PremiumSubscription";
@@ -65,7 +65,7 @@ const Integration = React.memo(({ props }: any) => {
   React.useEffect(() => {
     if (!isAuth) return
     const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
-    if (roles.includes(DESIGNER_ROLE)) {
+    if (roles.includes('view_designs')) {
       setIsDesigner(true);
     }
     const locale = localStorage.getItem("i18nextLng")
