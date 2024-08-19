@@ -109,3 +109,53 @@ select option:hover {
   flex-wrap: nowrap;
   flex-direction: row;
 }
+
+.search-box {
+  .form-control-with-icon {
+    position: relative;
+    width: 25%;
+    
+
+    .search-box-input {
+      border-radius: 16px;
+      border: 1px solid var(--ff-primary);
+      background:  var(--ff-white);
+      color: var(--ff-gray-500);
+      font-size: 14px;
+      font-weight: var(--font-weight-sm);
+      line-height: 120%;
+  
+
+      &.has-value {
+        border: 2px solid var(--ff-primary);
+        border-radius: 16px;
+        background: var(--ff-white);
+        color: var(--ff-gray-800) !important;
+      }
+
+      &.is-searching {
+        border: 1px solid var(--ff-gray-800);
+        background-color: var(--ff-gray-700) !important;
+      }
+    }
+
+    .search-box-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--ff-gray-800);
+      
+      &.loading {
+        color: var(--ff-gray-800);
+      }
+
+      &.clear {
+        color: var(--ff-gray-800);
+        right: 1rem;
+      }
+    }
+  }
+}
+
