@@ -1,0 +1,46 @@
+.progress {
+    background-color: var(--ff-white);
+    /* Background color of the progress bar container */
+    border-radius: 0.3125rem;
+    height: var(--ff-spacer-150) !important;
+    width: 100%;
+    position: relative;
+}
+
+.upload-progress {
+    display: flex;
+    height: var(--ff-spacer-150);
+    margin-bottom: var(--ff-spacer-150);
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: var(--ff-radius-0150);
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s ease-in-out;
+    border-radius: var(--ff-radius-075);
+    text-align: center;
+    line-height: var(--ff-spacer-125);
+}
+
+.upload-svg {
+    padding-top: var(--ff-spacer-100);
+    padding-bottom: var(--ff-spacer-100);
+    width: var(--ff-spacer-200);
+    height: var(--ff-spacer-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: var(--file-upload-svg);
+}
+
+.success-tic-svg {
+    margin-top: 0.125rem;
+    width: var(--ff-spacer-100);
+    height: var(--ff-spacer-100);
+    //to be replaced
+    background-image: var(--success-tic-svg);
+}   
