@@ -504,7 +504,7 @@ const isUserManager = userRoles?.includes("manage_users");
           {userDetail?.name || userDetail?.preferred_username}
           <br />
           <i className="fa fa-users fa-fw" />
-          <b>{getUserRoleName(userRoles)}</b>
+          <b>{userDetail?.given_name}</b>
         </NavDropdown.Item>
         <NavDropdown.Divider />
         <NavDropdown.Item onClick={logout} data-testid="logout-item">
