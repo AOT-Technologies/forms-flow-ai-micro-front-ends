@@ -1,0 +1,51 @@
+$form-input-border-radius: var(--ff-radius-0150, 24px);
+$form-input-border-color: var(--ff-base-600, #253DF4);
+$form-input-focus-outline: 2px solid var(--ff-base-600, #253DF4);
+$input-error-border-color: var(--ff-red-000, red);
+$input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+$validation-text-color: var(--ff-red-000, red);
+$vadiation-astrisk-color: var(--ff-base-600, blue);
+
+.form-input {
+  width: 100%;
+  height: var(--ff-spacer-200);
+  flex-shrink: 0;
+  border-radius: $form-input-border-radius;
+  border: 1px solid $form-input-border-color;
+  background: var(--ff-white);
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 16px;
+  resize: none;
+  padding-left: 18px !important;
+
+  &:active,
+  &:focus {
+    outline: $form-input-focus-outline !important;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+    /* For Webkit browsers */
+  }
+
+  -ms-overflow-style: none;
+  /* For Internet Explorer and Edge */
+  scrollbar-width: none;
+  /* For Firefox */
+}
+
+.input-error {
+  border-color: $input-error-border-color;
+  outline: none;
+  box-shadow: $input-error-box-shadow;
+}
+
+.validation-text {
+  font-size: small;
+  color: $validation-text-color !important;
+}
+
+.vadiation-astrisk {
+  color: $vadiation-astrisk-color;
+}

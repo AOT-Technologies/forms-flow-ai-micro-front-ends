@@ -1,18 +1,18 @@
 .forms-text {
   vertical-align: bottom;
-  margin-left: 10px;
-  margin-bottom: 0px;
+  margin-left: 0.625rem; 
+  margin-bottom: 0;
 }
 
 .forms-text {
   vertical-align: middle;
-  margin-left: 10px;
+  margin-left: 0.625rem; 
 }
 select option:hover {
-  box-shadow: 0 0 10px 100px var(--ff-dark) inset;
+  box-shadow: 0 0 0.625rem 6.25rem var(--ff-black) inset; 
 }
 
-//forms table header classes
+// forms table header classes
 .form_select {
   width: 15%;
 }
@@ -22,30 +22,31 @@ select option:hover {
 }
 
 .form_title {
-  width: 40%;
+  width: var(--ff-spacer-250);
 }
 
 .input-group .input-group-addon {
-    position: absolute;
-    right: 5px;
-    top: 7px;
+  position: absolute;
+  right: 0.3125rem; 
+  top: 0.4375rem; 
 }
-  
+
 .input-group .radio-inline {
-    margin-left: 1.25rem;
+  margin-left: var(--ff-spacer-125);
 }
-  
+
 .input-group label {
-    margin-right: 2rem;
+  margin-right: var(--ff-spacer-200);
 }
+
 .select {
-  border-radius: 4px !important;
-  margin-left: 8px;
-  max-width: 104px;
+  border-radius: var(--ff-spacer-025) !important;
+  margin-left: var(--ff-spacer-050);
+  max-width: 6.5rem; 
 }
 
 .form_check {
-  margin-bottom: 20px;
+  margin-bottom: var(--ff-spacer-125);
 }
 
 .form-view-wrapper {
@@ -53,39 +54,40 @@ select option:hover {
 }
 
 .well {
-  border: 1px solid var(--ff-gray-200);
-  padding: 1rem;
+  border: 0.0625rem solid var(--ff-gray-200); 
+  padding: var(--ff-spacer-100);
   background-color: var(--ff-gray-100);
 }
 
 .panel-body {
   padding: 1.5rem 2rem 1.5rem 2rem;
 }
+
 .panel-heading {
   background-color: var(--ff-primary-600);
-  border: var(--ff-primary-600);
+  border: 0.0625rem solid var(--ff-primary-600); 
   color: var(--ff-white) !important;
   padding: 0.75rem 1.25rem;
-  margin-bottom: 8px;
+  margin-bottom: var(--ff-spacer-050);
 }
 
 .formcomponents .formcomponent {
   font-size: 1em;
 }
 
-//formio classes 
+// formio classes
 
 .formio-component-panel {
-  border: 1px solid --ff-gray-200;
+  border: 0.0625rem solid var(--ff-gray-200); 
 }
 
 .formio-component-panel .panel-heading {
-  background-color: --ff-gray-200;
-  padding: 10px 0 10px 10px;
+  background-color: var(--ff-gray-200);
+  padding: 0.625rem 0 0.625rem 0.625rem; 
 }
 
 .formio-component-panel .panel-heading .panel-title i {
-  font-size: 0.75rem;
+  font-size: 0.75rem; 
 }
 
 .formio-error-wrapper,
@@ -108,6 +110,83 @@ select option:hover {
   display: flex;
   flex-wrap: nowrap;
   flex-direction: row;
+}
+
+.search-box {
+  .form-control-with-icon {
+    position: relative;
+    width: 25%;
+    
+
+    .search-box-input {
+      border-radius:  var(--radius-0100);
+      border: 1px solid var(--ff-primary);
+      background:  var(--ff-white);
+      color: var(--ff-gray-500);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-sm);
+      line-height: 120%;
+  
+
+      &.has-value {
+        border: 2px solid var(--ff-primary);
+        border-radius: var(--radius-0100);
+        background: var(--ff-white);
+        color: var(--ff-gray-800) !important;
+      }
+
+      &.is-searching {
+        border: 1px solid var(--ff-gray-800);
+        background-color: var(--ff-gray-700) !important;
+      }
+    }
+
+    .search-box-icon {
+      position: absolute;
+      right: var(--spacer-100);      
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--ff-gray-800);
+      
+      &.loading {
+        color: var(--ff-gray-800);
+      }
+
+      &.clear {
+        color: var(--ff-gray-800);
+        right: var(--spacer-100);
+      }
+    }
+  }
+}
+
+
+.status-live {
+  width: var(--ff-spacer-050);
+  height: var(--ff-spacer-050);
+  border-radius: 50%;
+  background-color: var(--ff-live);
+  margin-right: var(--ff-spacer-050);
+}
+
+.status-draft {
+  width: var(--ff-spacer-050);
+  height: var(--ff-spacer-050);
+  border-radius: 50%;
+  background-color: var(--ff-gray-100);
+  margin-right: var(--ff-spacer-050);
+}
+
+.pagination-text {
+  overflow: hidden;
+  color: var(--ff-black);
+  text-overflow: ellipsis;
+  font-family: var(--ff-primary-font);
+  font-size: var(--ff-font-size-sm);
+  font-style: normal;
+  font-weight: var(--ff-font-weight-xs);
+  line-height: 120%;
 }
 
 /* CustomTooltip */
@@ -163,4 +242,3 @@ select option:hover {
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
 }
-
