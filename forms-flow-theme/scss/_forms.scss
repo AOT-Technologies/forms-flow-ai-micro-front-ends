@@ -112,6 +112,56 @@ select option:hover {
   flex-direction: row;
 }
 
+.search-box {
+  .form-control-with-icon {
+    position: relative;
+    width: 25%;
+    
+
+    .search-box-input {
+      border-radius:  var(--radius-0100);
+      border: 1px solid var(--ff-primary);
+      background:  var(--ff-white);
+      color: var(--ff-gray-500);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-sm);
+      line-height: 120%;
+  
+
+      &.has-value {
+        border: 2px solid var(--ff-primary);
+        border-radius: var(--radius-0100);
+        background: var(--ff-white);
+        color: var(--ff-gray-800) !important;
+      }
+
+      &.is-searching {
+        border: 1px solid var(--ff-gray-800);
+        background-color: var(--ff-gray-700) !important;
+      }
+    }
+
+    .search-box-icon {
+      position: absolute;
+      right: var(--spacer-100);      
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--ff-gray-800);
+      
+      &.loading {
+        color: var(--ff-gray-800);
+      }
+
+      &.clear {
+        color: var(--ff-gray-800);
+        right: var(--spacer-100);
+      }
+    }
+  }
+}
+
+
 .status-live {
   width: var(--ff-spacer-050);
   height: var(--ff-spacer-050);
@@ -138,3 +188,4 @@ select option:hover {
   font-weight: var(--ff-font-weight-xs);
   line-height: 120%;
 }
+
