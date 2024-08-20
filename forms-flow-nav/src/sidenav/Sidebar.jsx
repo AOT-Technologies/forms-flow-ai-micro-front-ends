@@ -53,7 +53,7 @@ const Sidebar = React.memo(({ props }) => {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
-  
+
   const isCreateSubmissions = userRoles.includes("create_submissions");
   const isViewSubmissions = userRoles.includes("view_submissions");
   const isCreateDesigns = userRoles.includes("create_designs");
@@ -165,115 +165,106 @@ const Sidebar = React.memo(({ props }) => {
               (isCreateSubmissions || isCreateDesigns || isViewDesigns) && (
                 <MenuComponent
                   eventKey="0"
-                  optionsCount="2"
+                  optionsCount="5"
                   mainMenu="Design"
                   subMenu={[
                     {
                       name: "Forms",
                       path: "form",
-                      matchExps: [
-                        createURLPathMatchExp("form", baseUrl),
-                      ] 
+                      matchExps: [createURLPathMatchExp("form", baseUrl)],
                     },
                     {
                       name: "Bundle",
-                      path: "bundle", 
-                      matchExps: [
-                        createURLPathMatchExp("bundle", baseUrl),
-                      ] 
+                      path: "bundle",
+                      matchExps: [createURLPathMatchExp("bundle", baseUrl)],
                     },
                     { name: "Templates", path: "forms-template-library" },
+                    ...(userRoles.includes("manage_integrations") &&
+                    (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
+                      ? [
+                          {
+                            name: "Integrations",
+                            path: "integration/recipes",
+                            matchExps: [
+                              createURLPathMatchExp(
+                                "integration/recipes",
+                                baseUrl
+                              ),
+                            ],
+                          },
+                        ]
+                      : []),
+                    ...(isCreateDesigns && ENABLE_PROCESSES_MODULE
+                      ? [
+                          {
+                            name: "Sub - flows",
+                            path: "processes",
+                            matchExps: [
+                              createURLPathMatchExp("processes", baseUrl),
+                            ],
+                          },
+                        ]
+                      : []),
+                      { name: "Decision Tables", path: "forms-decision-tables" },
                   ]}
                 />
               )}
-              {userRoles.includes("manage_integrations")
-              ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
-                  <MenuComponent
-                    eventKey="1"
-                    optionsCount="0"
-                    mainMenu="Integrations"
-                    subMenu={[
-                      {
-                        name: "Integrations",
-                        path: "integration/recipes",
-                        matchExps: [
-                          createURLPathMatchExp(
-                            "integration/recipes",
-                            baseUrl
-                          ),
-                        ]
-                      }
-                    ]}
-                  />
-                )
-              : null}
-            {isCreateDesigns && ENABLE_PROCESSES_MODULE && (
-              <MenuComponent
-                eventKey="2"
-                optionsCount="0"
-                mainMenu="Sub - flows"
-                subMenu={[
-                  {
-                    name: "flows",
-                    path: "processes",
-                    matchExps: [
-                      createURLPathMatchExp("processes", baseUrl),
-                    ]
-                  }
-                ]}
-              />
-            )}
             {showApplications &&
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
                   eventKey="3"
-                  optionsCount="0"
+                  optionsCount="1"
                   mainMenu="Submit"
                   subMenu={[
                     {
-                      name: "Submit",
+                      name: "Forms",
                       path: "application",
                       matchExps: [
                         createURLPathMatchExp("application", baseUrl),
                         createURLPathMatchExp("draft", baseUrl),
-                      ]
-                    }
+                      ],
+                    },
                   ]}
                 />
               )}
-            {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
+              {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
                 eventKey="4"
-                optionsCount="0"
+                optionsCount="1"
+                mainMenu="Review"
+                subMenu={[
+                  {
+                    name: "Task",
+                    path: "task",
+                    matchExps: [createURLPathMatchExp("task", baseUrl)],
+                  },
+                ]}
+              />
+            )}
+            {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
+              <MenuComponent
+                eventKey="5"
+                optionsCount="2"
                 mainMenu="Analyze"
                 subMenu={[
                   {
-                    name: "analyze",
+                    name: "Metrics",
                     path: "metrics",
                     matchExps: [
                       createURLPathMatchExp("metrics", baseUrl),
+                    ],
+                  },
+                  {
+                    name: "Insights",
+                    path: "insights",
+                    matchExps: [
                       createURLPathMatchExp("insights", baseUrl),
-                    ]
+                    ],
                   }
                 ]}
               />
             )}
-            {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
-            <MenuComponent
-                eventKey="5"
-                optionsCount="0"
-                mainMenu="Review"
-                subMenu={[
-                  {
-                    name: "task",
-                    path: "task",
-                    matchExps: [
-                      createURLPathMatchExp("task", baseUrl)
-                    ] 
-                  }
-                ]}
-              />)}
             {isAdmin && (
               <MenuComponent
                 eventKey="6"
@@ -282,24 +273,20 @@ const Sidebar = React.memo(({ props }) => {
                 subMenu={[
                   {
                     name: "Dashboards",
-                    path: DASHBOARD_ROUTE, 
+                    path: DASHBOARD_ROUTE,
                     matchExps: [
                       createURLPathMatchExp("admin/dashboard", baseUrl),
-                    ] 
+                    ],
                   },
                   {
                     name: "Roles",
                     path: ROLE_ROUTE,
-                    matchExps: [
-                      createURLPathMatchExp("admin/roles", baseUrl),
-                    ] 
+                    matchExps: [createURLPathMatchExp("admin/roles", baseUrl)],
                   },
                   {
                     name: "Users",
                     path: USER_ROUTE,
-                    matchExps: [
-                      createURLPathMatchExp("admin/users", baseUrl),
-                    ]
+                    matchExps: [createURLPathMatchExp("admin/users", baseUrl)],
                   },
                 ]}
               />
@@ -318,7 +305,9 @@ const Sidebar = React.memo(({ props }) => {
               <OverlayTrigger
                 placement="top"
                 overlay={
-                  <Tooltip id="email-tooltip" className="custom-tooltip">{userDetail?.email}</Tooltip>
+                  <Tooltip id="email-tooltip" className="custom-tooltip">
+                    {userDetail?.email}
+                  </Tooltip>
                 }
               >
                 <p className="user-email" data-testid="user-email">
