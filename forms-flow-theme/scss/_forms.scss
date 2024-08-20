@@ -119,7 +119,7 @@ select option:hover {
     
 
     .search-box-input {
-      border-radius: 16px;
+      border-radius:  var(--radius-0100);
       border: 1px solid var(--ff-primary);
       background:  var(--ff-white);
       color: var(--ff-gray-500);
@@ -130,7 +130,7 @@ select option:hover {
 
       &.has-value {
         border: 2px solid var(--ff-primary);
-        border-radius: 16px;
+        border-radius: var(--radius-0100);
         background: var(--ff-white);
         color: var(--ff-gray-800) !important;
       }
@@ -143,7 +143,7 @@ select option:hover {
 
     .search-box-icon {
       position: absolute;
-      right: 1rem;
+      right: var(--spacer-100);      
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
@@ -155,7 +155,7 @@ select option:hover {
 
       &.clear {
         color: var(--ff-gray-800);
-        right: 1rem;
+        right: var(--spacer-100);
       }
     }
   }
