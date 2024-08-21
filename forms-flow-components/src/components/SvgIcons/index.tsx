@@ -1,6 +1,6 @@
-const baseColor = getComputedStyle(document.documentElement).getPropertyValue(
-  "--ff-base-600"
-);
+  const computedStyle = getComputedStyle(document.documentElement);
+  const baseColor = computedStyle.getPropertyValue("--ff-base-600");
+  const grayColor = computedStyle.getPropertyValue("--ff-gray-800");
 
 export const ChevronIcon = ({ color = baseColor, ...props }) => (
   <svg
@@ -206,7 +206,7 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const CloseIcon = ({ color = baseColor, ...props }) => (
+export const CloseIcon = ({ color = grayColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="14"
