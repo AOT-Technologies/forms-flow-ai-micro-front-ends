@@ -208,7 +208,7 @@ select option:hover {
 .custom-checkbox .form-check-input {
   width: 1.25em;
   height: 1.25em;
-  border-radius: 0.25em;
+  border-radius: var(--radius-025);
   border: 2px solid var(--ff-base-600) !important;
   background-color: transparent;
   position: relative;
@@ -236,8 +236,8 @@ select option:hover {
 
 .custom-checkbox .form-check-label {
   color: var(--ff-gray-800);
-  margin-left: 0.5rem;
-  margin-top: 0.3rem;
+  margin-left: var(--spacer-050);
+  margin-top: var(--spacer-025);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
