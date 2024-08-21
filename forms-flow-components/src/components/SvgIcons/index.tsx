@@ -1,22 +1,26 @@
+const baseColor = getComputedStyle(document.documentElement).getPropertyValue(
+  "--ff-base-600"
+);
 
-export const ChevronIcon = ({ color = "currentColor", ...props }) => (
+export const ChevronIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
-    height="17"
-    viewBox="0 0 16 17"
+    height="10"
+    viewBox="0 0 16 10"
     fill="none"
   >
     <path
-      d="M12 6.5L8 10.5L4 6.5"
+      d="M1.49969 1.74976L8.00028 8.25034L14.5003 1.75034"
       stroke={color}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     />
   </svg>
 );
 
-export const RefreshIcon = ({ color = "currentColor", ...props }) => (
+export const RefreshIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -49,7 +53,7 @@ export const RefreshIcon = ({ color = "currentColor", ...props }) => (
     </defs>
   </svg>
 );
-export const HamburgerIcon = ({ color = "currentColor", ...props }) => (
+export const HamburgerIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="12"
@@ -76,7 +80,7 @@ export const HamburgerIcon = ({ color = "currentColor", ...props }) => (
   </svg>
 );
 
-export const MessageIcon = ({ color = "currentColor", ...props }) => (
+export const MessageIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -92,7 +96,7 @@ export const MessageIcon = ({ color = "currentColor", ...props }) => (
     />
   </svg>
 );
-export const PreviewIcon = ({ color = "currentColor", ...props }) => (
+export const PreviewIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="20"
@@ -116,7 +120,7 @@ export const PreviewIcon = ({ color = "currentColor", ...props }) => (
   </svg>
 );
 
-export const SwitchIcon = ({ color = "currentColor", ...props }) => (
+export const SwitchIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="20"
@@ -134,7 +138,7 @@ export const SwitchIcon = ({ color = "currentColor", ...props }) => (
   </svg>
 );
 
-export const AddIcon = ({ color = "currentColor", ...props }) => (
+export const AddIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -159,7 +163,7 @@ export const AddIcon = ({ color = "currentColor", ...props }) => (
   </svg>
 );
 
-export const DuplicateIcon = ({ color = "currentColor", ...props }) => (
+export const DuplicateIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -180,7 +184,7 @@ export const DuplicateIcon = ({ color = "currentColor", ...props }) => (
   </svg>
 );
 
-export const SaveTemplateIcon = ({ color = "currentColor", ...props }) => (
+export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="14"
@@ -202,7 +206,7 @@ export const SaveTemplateIcon = ({ color = "currentColor", ...props }) => (
   </svg>
 );
 
-export const CloseIcon = ({ color = "currentColor", ...props }) => (
+export const CloseIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="14"
@@ -225,7 +229,7 @@ export const CloseIcon = ({ color = "currentColor", ...props }) => (
   </svg>
 );
 
-export const ExportIcon = ({ color = "currentColor", ...props }) => (
+export const ExportIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="10"
@@ -243,7 +247,7 @@ export const ExportIcon = ({ color = "currentColor", ...props }) => (
   </svg>
 );
 
-export const ImportIcon = ({ color = "currentColor", ...props }) => (
+export const ImportIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="10"
@@ -257,6 +261,86 @@ export const ImportIcon = ({ color = "currentColor", ...props }) => (
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
+    />
+  </svg>
+);
+
+export const PencilIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+  >
+    <path
+      d="M6.53858 3.58705L15.0242 12.0727L16.5 16.5L12.0727 15.0242L3.58705 6.53858M6.53858 3.58705L5.06281 2.11128C4.24777 1.29624 2.92633 1.29624 2.11128 2.11128C1.29624 2.92633 1.29624 4.24777 2.11128 5.06281L3.58705 6.53858M6.53858 3.58705L3.58705 6.53858"
+      stroke={color}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
+export const CurlyBracketsIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="18"
+    viewBox="0 0 16 18"
+    fill="none"
+  >
+    <path
+      d="M6 1.97852H5C4.44772 1.97852 4 2.42623 4 2.97852V6.52468C4 6.86428 3.82764 7.18068 3.54231 7.36485L1 9.00586L3.5547 10.709C3.8329 10.8945 4 11.2067 4 11.541V14.9785C4 15.5308 4.44772 15.9785 5 15.9785H6"
+      stroke={color}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M10 16.0215L11 16.0215C11.5523 16.0215 12 15.5738 12 15.0215L12 11.4753C12 11.1357 12.1724 10.8193 12.4577 10.6351L15 8.99414L12.4453 7.29101C12.1671 7.10554 12 6.79331 12 6.45896L12 3.02148C12 2.4692 11.5523 2.02148 11 2.02148L10 2.02148"
+      stroke={color}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
+export const AngleRightIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="10"
+    height="15"
+    viewBox="0 0 10 15"
+    fill="none"
+  >
+    <path
+      d="M1.74951 14.0005L8.2501 7.4999L1.75009 0.999901"
+      stroke={color}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
+export const UploadIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="32"
+    height="32"
+    viewBox="0 0 32 32"
+    fill="none"
+  >
+    <path
+      d="M1 19.7998C1.26522 19.7998 1.51957 19.9052 1.70711 20.0927C1.89464 20.2803 2 20.5346 2 20.7998V25.7998C2 26.3303 2.21071 26.839 2.58579 27.214C2.96086 27.5891 3.46957 27.7998 4 27.7998H28C28.5304 27.7998 29.0391 27.5891 29.4142 27.214C29.7893 26.839 30 26.3303 30 25.7998V20.7998C30 20.5346 30.1054 20.2803 30.2929 20.0927C30.4804 19.9052 30.7348 19.7998 31 19.7998C31.2652 19.7998 31.5196 19.9052 31.7071 20.0927C31.8946 20.2803 32 20.5346 32 20.7998V25.7998C32 26.8607 31.5786 27.8781 30.8284 28.6283C30.0783 29.3784 29.0609 29.7998 28 29.7998H4C2.93913 29.7998 1.92172 29.3784 1.17157 28.6283C0.421427 27.8781 0 26.8607 0 25.7998V20.7998C0 20.5346 0.105357 20.2803 0.292893 20.0927C0.48043 19.9052 0.734784 19.7998 1 19.7998Z"
+      fill={color}
+    />
+    <path
+      d="M15.292 2.29183C15.3849 2.19871 15.4952 2.12482 15.6167 2.07441C15.7382 2.024 15.8685 1.99805 16 1.99805C16.1315 1.99805 16.2618 2.024 16.3833 2.07441C16.5048 2.12482 16.6151 2.19871 16.708 2.29183L22.708 8.29183C22.8958 8.47961 23.0013 8.73428 23.0013 8.99983C23.0013 9.26539 22.8958 9.52006 22.708 9.70783C22.5202 9.89561 22.2656 10.0011 22 10.0011C21.7344 10.0011 21.4798 9.89561 21.292 9.70783L17 5.41383V22.9998C17 23.2651 16.8946 23.5194 16.7071 23.7069C16.5196 23.8945 16.2652 23.9998 16 23.9998C15.7348 23.9998 15.4804 23.8945 15.2929 23.7069C15.1054 23.5194 15 23.2651 15 22.9998V5.41383L10.708 9.70783C10.615 9.80081 10.5046 9.87456 10.3832 9.92488C10.2617 9.9752 10.1315 10.0011 10 10.0011C9.86851 10.0011 9.73831 9.9752 9.61683 9.92488C9.49535 9.87456 9.38498 9.80081 9.292 9.70783C9.19902 9.61486 9.12527 9.50448 9.07495 9.383C9.02464 9.26152 8.99874 9.13132 8.99874 8.99983C8.99874 8.86835 9.02464 8.73815 9.07495 8.61667C9.12527 8.49519 9.19902 8.38481 9.292 8.29183L15.292 2.29183Z"
+      fill={color}
     />
   </svg>
 );
