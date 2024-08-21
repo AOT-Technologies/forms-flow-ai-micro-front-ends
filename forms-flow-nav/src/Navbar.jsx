@@ -117,13 +117,7 @@ const isViewDashboard=userRoles?.includes("view_dashboards")
 const isDashboardManager = userRoles?.includes("manage_dashboard_authorizations");
 const isRoleManager = userRoles?.includes("manage_roles");
 const isUserManager = userRoles?.includes("manage_users");
- const ADMIN_BASE_ROUTE = isDashboardManager
-  ? `${baseUrl}admin/dashboard`
-  : isRoleManager
-    ? `${baseUrl}admin/roles`
-    : isUserManager
-      ? `${baseUrl}admin/users`
-      : null; 
+
     
   const onResize = React.useCallback(() => {
     if (navbarRef?.current) {
@@ -337,7 +331,7 @@ const isUserManager = userRoles?.includes("manage_users");
                     <Nav.Link
                       eventKey={"admin"}
                       as={Link}
-                      to={`${ADMIN_BASE_ROUTE}`}
+                      to={`${baseUrl}admin`}
                       className={`nav-menu-item py-md-3 px-0 mx-2 ${
                         pathname.match(createURLPathMatchExp("admin", baseUrl))
                           ? "active"
@@ -369,7 +363,6 @@ const isUserManager = userRoles?.includes("manage_users");
             {t("Processes")}
           </Nav.Link>
         )}
-
                   {userRoles?.includes("manage_integrations") 
                     ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
                         <Nav.Link
