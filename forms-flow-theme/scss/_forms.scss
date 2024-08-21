@@ -197,8 +197,8 @@ select option:hover {
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
   white-space: nowrap;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  padding: var(--spacer-050);
+  border-radius: var(--radius-050); 
 }
 .custom-tooltip .tooltip-arrow::before {
   border-color: var(--ff-base-100) transparent transparent transparent !important;
