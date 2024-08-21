@@ -124,8 +124,7 @@
   outline: 0.1875rem solid var(--ff-primary-200) !important;
 }
 
-.btn {
-  font-style: normal;
+.btn {  
   border: none !important;
   display: inline-flex !important;
   justify-content: center !important;
@@ -332,7 +331,7 @@
   margin-right: 0.3125rem !important;
 
   .page-link {
-    border-radius: var(--ff-radius-0100) !important;
+    border-radius: 50% !important;
     border-color: transparent !important;
 
     &:hover {
@@ -376,9 +375,9 @@
   width: auto !important;
   height: auto !important;
   min-height: 2.4375rem !important;
-  min-width: 2.4375rem !important;
+  min-width: 2.75rem !important;
   padding: 0.5625rem !important;
-  border-radius: var(--ff-radius-0100) !important;
+  border-radius: 50% !important;
   border-color: transparent !important;
 
   &:hover,
@@ -404,11 +403,11 @@
     border: none !important;
     background-color: var(--ff-white) !important;
     outline: transparent !important;
-    border-radius: var(--ff-radius-0100) !important;
+    border-radius: 50% !important;
     height: auto !important;
     width: auto !important;
-    min-width: 2.4375rem !important;
-    min-height: 2.4375rem !important;
+    min-width: 3.2275rem !important;
+    min-height: 3.2275rem !important;
     margin: 0 !important;
   }
 
@@ -429,8 +428,8 @@
 
   .dropdown-toggle::after {
     display: inline-block !important;
-    margin-left: var(--ff-spacer-025) !important;
-    vertical-align: var(--ff-spacer-025) !important;
+    margin-left: var(--spacer-025) !important;
+    vertical-align: var(--spacer-025) !important;
     content: none !important;
     border-top: 0 transparent !important;
     border-right: 0 transparent !important;

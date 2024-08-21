@@ -118,8 +118,8 @@ header nav {
 .rounded-circle {
   border-radius: 50% !important;
   border: 0.125rem solid var(--ff-gray-400);
-  height: var(--ff-spacer-250);
-  width: var(--ff-spacer-250);
+  height: var(--spacer-250);
+  width: var(--spacer-250);
 }
 
 div[disabled] {
@@ -132,7 +132,7 @@ div[disabled] {
 }
 
 .MuiTab-wrapper {
-  font-size: var(--ff-font-size-sm);
+  font-size: var(--font-size-sm);
 }
 
 .tooltiptext {
@@ -190,8 +190,7 @@ hr {
 }
 
 body {
-  font-size: var(--ff-font-size-sm);
-  font-family: var(--ff-primary-font);
+  font-size: var(--font-size-sm);  
   overflow: hidden;
   background-color: var(--color-main-bg);
 }

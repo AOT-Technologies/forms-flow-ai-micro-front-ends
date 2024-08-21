@@ -51,22 +51,20 @@ const Sidebar = React.memo(({ props }) => {
   //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
   //   "/logo.svg";
   const userRoles = JSON.parse(
-    StorageService.get(StorageService.User.USER_ROLE)
-  );
-
-  const isCreateSubmissions = userRoles.includes("create_submissions");
-  const isViewSubmissions = userRoles.includes("view_submissions");
-  const isCreateDesigns = userRoles.includes("create_designs");
-  const isViewDesigns = userRoles.includes("view_designs");
-  const isAdmin = userRoles.includes("admin");
-  const isViewTask = userRoles.includes("view_tasks");
-  const isManageTask = userRoles.includes("manage_tasks");
-  const isViewDashboard = userRoles.includes("view_dashboards");
-  const isDashboardManager = userRoles.includes(
+    StorageService.get(StorageService.User.USER_ROLE));
+  const isCreateSubmissions = userRoles?.includes("create_submissions");
+  const isViewSubmissions = userRoles?.includes("view_submissions");
+  const isCreateDesigns = userRoles?.includes("create_designs");
+  const isViewDesigns = userRoles?.includes("view_designs");
+  const isAdmin = userRoles?.includes("admin");
+  const isViewTask = userRoles?.includes("view_tasks");
+  const isManageTask = userRoles?.includes("manage_tasks");
+  const isViewDashboard = userRoles?.includes("view_dashboards");
+  const isDashboardManager = userRoles?.includes(
     "manage_dashboard_authorizations"
   );
-  const isRoleManager = userRoles.includes("manage_roles");
-  const isUserManager = userRoles.includes("manage_users");
+  const isRoleManager = userRoles?.includes("manage_roles");
+  const isUserManager = userRoles?.includes("manage_users");
   const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
   const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
   const USER_ROUTE = isUserManager ? "admin/users" : null;
@@ -171,15 +169,19 @@ const Sidebar = React.memo(({ props }) => {
                     {
                       name: "Forms",
                       path: "form",
-                      matchExps: [createURLPathMatchExp("form", baseUrl)],
+                      matchExps: [
+                        createURLPathMatchExp("form", baseUrl),
+                      ]
                     },
                     {
                       name: "Bundle",
                       path: "bundle",
-                      matchExps: [createURLPathMatchExp("bundle", baseUrl)],
+                      matchExps: [
+                        createURLPathMatchExp("bundle", baseUrl),
+                      ]
                     },
                     { name: "Templates", path: "forms-template-library" },
-                    ...(userRoles.includes("manage_integrations") &&
+                    ...(userRoles?.includes("manage_integrations") &&
                     (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
                       ? [
                           {

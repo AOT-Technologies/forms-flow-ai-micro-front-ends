@@ -186,6 +186,10 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
     --header-close-btn: 4.625rem;
 }
 
+.body {
+  font-family: var(--primary-font) !important;
+}
+
 .info-background {
   background-color: var(--ff-danger-200);
 }
