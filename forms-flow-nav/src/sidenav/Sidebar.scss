@@ -207,19 +207,7 @@
   color: var(--ff-gray-800);
 }
 
-/* CustomTooltip */
-.custom-tooltip .tooltip-inner {
-  background-color: var(--ff-base-100);
-  color: var(--ff-gray-800);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
-  white-space: nowrap;
-  padding: 0.5rem;
-}
-.custom-tooltip .tooltip-arrow::before {
-  border-color: var(--ff-base-100) transparent transparent transparent !important;
-}
+
 
 @media (max-width: 768px) {
   .main-container {
