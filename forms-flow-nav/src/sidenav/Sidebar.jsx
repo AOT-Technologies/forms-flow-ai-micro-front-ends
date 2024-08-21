@@ -51,22 +51,20 @@ const Sidebar = React.memo(({ props }) => {
   //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
   //   "/logo.svg";
   const userRoles = JSON.parse(
-    StorageService.get(StorageService.User.USER_ROLE)
-  );
-  
-  const isCreateSubmissions = userRoles.includes("create_submissions");
-  const isViewSubmissions = userRoles.includes("view_submissions");
-  const isCreateDesigns = userRoles.includes("create_designs");
-  const isViewDesigns = userRoles.includes("view_designs");
-  const isAdmin = userRoles.includes("admin");
-  const isViewTask = userRoles.includes("view_tasks");
-  const isManageTask = userRoles.includes("manage_tasks");
-  const isViewDashboard = userRoles.includes("view_dashboards");
-  const isDashboardManager = userRoles.includes(
+    StorageService.get(StorageService.User.USER_ROLE));
+  const isCreateSubmissions = userRoles?.includes("create_submissions");
+  const isViewSubmissions = userRoles?.includes("view_submissions");
+  const isCreateDesigns = userRoles?.includes("create_designs");
+  const isViewDesigns = userRoles?.includes("view_designs");
+  const isAdmin = userRoles?.includes("admin");
+  const isViewTask = userRoles?.includes("view_tasks");
+  const isManageTask = userRoles?.includes("manage_tasks");
+  const isViewDashboard = userRoles?.includes("view_dashboards");
+  const isDashboardManager = userRoles?.includes(
     "manage_dashboard_authorizations"
   );
-  const isRoleManager = userRoles.includes("manage_roles");
-  const isUserManager = userRoles.includes("manage_users");
+  const isRoleManager = userRoles?.includes("manage_roles");
+  const isUserManager = userRoles?.includes("manage_users");
   const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
   const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
   const USER_ROUTE = isUserManager ? "admin/users" : null;
@@ -173,39 +171,39 @@ const Sidebar = React.memo(({ props }) => {
                       path: "form",
                       matchExps: [
                         createURLPathMatchExp("form", baseUrl),
-                      ] 
+                      ]
                     },
                     {
                       name: "Bundle",
-                      path: "bundle", 
+                      path: "bundle",
                       matchExps: [
                         createURLPathMatchExp("bundle", baseUrl),
-                      ] 
+                      ]
                     },
                     { name: "Templates", path: "forms-template-library" },
                   ]}
                 />
               )}
-              {userRoles.includes("manage_integrations")
+            {userRoles?.includes("manage_integrations")
               ? (integrationEnabled || ENABLE_INTEGRATION_PREMIUM) && (
-                  <MenuComponent
-                    eventKey="1"
-                    optionsCount="0"
-                    mainMenu="Integrations"
-                    subMenu={[
-                      {
-                        name: "Integrations",
-                        path: "integration/recipes",
-                        matchExps: [
-                          createURLPathMatchExp(
-                            "integration/recipes",
-                            baseUrl
-                          ),
-                        ]
-                      }
-                    ]}
-                  />
-                )
+                <MenuComponent
+                  eventKey="1"
+                  optionsCount="0"
+                  mainMenu="Integrations"
+                  subMenu={[
+                    {
+                      name: "Integrations",
+                      path: "integration/recipes",
+                      matchExps: [
+                        createURLPathMatchExp(
+                          "integration/recipes",
+                          baseUrl
+                        ),
+                      ]
+                    }
+                  ]}
+                />
+              )
               : null}
             {isCreateDesigns && ENABLE_PROCESSES_MODULE && (
               <MenuComponent
@@ -260,7 +258,7 @@ const Sidebar = React.memo(({ props }) => {
               />
             )}
             {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
-            <MenuComponent
+              <MenuComponent
                 eventKey="5"
                 optionsCount="0"
                 mainMenu="Review"
@@ -270,7 +268,7 @@ const Sidebar = React.memo(({ props }) => {
                     path: "task",
                     matchExps: [
                       createURLPathMatchExp("task", baseUrl)
-                    ] 
+                    ]
                   }
                 ]}
               />)}
@@ -282,17 +280,17 @@ const Sidebar = React.memo(({ props }) => {
                 subMenu={[
                   {
                     name: "Dashboards",
-                    path: DASHBOARD_ROUTE, 
+                    path: DASHBOARD_ROUTE,
                     matchExps: [
                       createURLPathMatchExp("admin/dashboard", baseUrl),
-                    ] 
+                    ]
                   },
                   {
                     name: "Roles",
                     path: ROLE_ROUTE,
                     matchExps: [
                       createURLPathMatchExp("admin/roles", baseUrl),
-                    ] 
+                    ]
                   },
                   {
                     name: "Users",

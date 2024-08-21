@@ -22,7 +22,7 @@ select option:hover {
 }
 
 .form_title {
-  width: var(--ff-spacer-250);
+  width: var(--spacer-250);
 }
 
 .input-group .input-group-addon {
@@ -32,21 +32,21 @@ select option:hover {
 }
 
 .input-group .radio-inline {
-  margin-left: var(--ff-spacer-125);
+  margin-left: var(--spacer-125);
 }
 
 .input-group label {
-  margin-right: var(--ff-spacer-200);
+  margin-right: var(--spacer-200);
 }
 
 .select {
-  border-radius: var(--ff-spacer-025) !important;
-  margin-left: var(--ff-spacer-050);
+  border-radius: var(--spacer-025) !important;
+  margin-left: var(--spacer-050);
   max-width: 6.5rem; 
 }
 
 .form_check {
-  margin-bottom: var(--ff-spacer-125);
+  margin-bottom: var(--spacer-125);
 }
 
 .form-view-wrapper {
@@ -55,7 +55,7 @@ select option:hover {
 
 .well {
   border: 0.0625rem solid var(--ff-gray-200); 
-  padding: var(--ff-spacer-100);
+  padding: var(--spacer-100);
   background-color: var(--ff-gray-100);
 }
 
@@ -68,7 +68,7 @@ select option:hover {
   border: 0.0625rem solid var(--ff-primary-600); 
   color: var(--ff-white) !important;
   padding: 0.75rem 1.25rem;
-  margin-bottom: var(--ff-spacer-050);
+  margin-bottom: var(--spacer-050);
 }
 
 .formcomponents .formcomponent {
