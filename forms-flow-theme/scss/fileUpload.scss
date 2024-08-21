@@ -27,10 +27,8 @@ $upload-status-progress-color: var(--ff-gray-400, #949B9E);
 
 .upload-text {
   color: $upload-text-color;
-  text-align: center;
-  font-family: var(--primary-font);
-  font-size: 0.875rem;
-  font-style: normal;
+  text-align: center;  
+  font-size: 0.875rem;  
   font-weight: var(--font-weight-sm);
   line-height: 120%;
   padding: var(--spacer-100) 0;
@@ -40,10 +38,8 @@ $upload-status-progress-color: var(--ff-gray-400, #949B9E);
 .upload-text-description {
   color: $upload-text-description-color;
   text-align: center;
-  font-family: var(--primary-font);
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: var(--font-weight-sm);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-sm);
   line-height: 120%;
 }
 
@@ -67,10 +63,8 @@ $upload-status-progress-color: var(--ff-gray-400, #949B9E);
 
 .upload-status-success {
   color: $upload-status-success-color;
-  text-align: right;
-  font-family: var(--primary-font);
-  font-size: 0.875rem;
-  font-style: normal;
+  text-align: right;  
+  font-size: 0.875rem;  
   font-weight: var(--font-weight-sm);
   line-height: 120%;
 }
@@ -78,10 +72,8 @@ $upload-status-progress-color: var(--ff-gray-400, #949B9E);
 .upload-status-progress {
   color: $upload-status-progress-color;
   text-align: right;
-  font-family: var(--primary-font);
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: var(--font-weight-sm);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-sm);
   line-height: 120%;
 }
 

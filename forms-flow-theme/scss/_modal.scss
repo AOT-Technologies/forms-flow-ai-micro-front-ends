@@ -25,10 +25,8 @@
   margin-left: 0 !important;
   padding: var(--spacer-200) 2.5rem !important;
   flex-shrink: 0;
-  color: var(--ff-gray-800, #303436);
-  font-family: var(--primary-font);
-  font-size: var(--spacer-150);
-  font-style: normal;
+  color: var(--ff-gray-800, #303436);  
+  font-size: var(--spacer-150);  
   font-weight: var(--font-weight-sm);
   line-height: normal;
 }
@@ -56,9 +54,9 @@
 
   &.modal-content-heading {
     color: var(--ff-base-600, #253DF4);
-    font-family: var(--primary-font);
+    
     font-size: var(--font-size-sm);
-    font-style: normal;
+    
     font-weight: var(--ff-font-weight-xl);
     line-height: 120%;
     letter-spacing: 0.02rem;
@@ -66,9 +64,9 @@
 
   &.modal-content-text {
     color: var(--ff-gray-800, #303436);
-    font-family: var(--primary-font);
+    
     font-size: var(--ff--font-size-sm);
-    font-style: normal;
+    
     font-weight: var(--font-weight-sm);
     line-height: 120%;
     text-align: left;
@@ -130,9 +128,9 @@
 
 .Modal-content-heading {
   color: var(--ff-base-600, #253DF4);
-  font-family: Roboto;
+  
   font-size: var(--spacer-100);
-  font-style: normal;
+  
   font-weight: 700;
   line-height: 120%;
   letter-spacing: 0.02rem;
@@ -140,9 +138,9 @@
 
 .modal-content-text {
   color: var(--ff-gray-800, #303436);
-  font-family: Roboto;
+  
   font-size: var(--spacer-100);
-  font-style: normal;
+  
   font-weight: 400;
   line-height: 120%;
   text-align: left;

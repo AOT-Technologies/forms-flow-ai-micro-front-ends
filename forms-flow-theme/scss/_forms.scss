@@ -162,29 +162,11 @@ select option:hover {
 }
 
 
-.status-live {
-  width: var(--ff-spacer-050);
-  height: var(--ff-spacer-050);
-  border-radius: 50%;
-  background-color: var(--ff-live);
-  margin-right: var(--ff-spacer-050);
-}
-
-.status-draft {
-  width: var(--ff-spacer-050);
-  height: var(--ff-spacer-050);
-  border-radius: 50%;
-  background-color: var(--ff-gray-100);
-  margin-right: var(--ff-spacer-050);
-}
-
 .pagination-text {
   overflow: hidden;
   color: var(--ff-black);
   text-overflow: ellipsis;
-  font-family: var(--ff-primary-font);
-  font-size: var(--ff-font-size-sm);
-  font-style: normal;
+  font-size: var(--ff-font-size-sm);  
   font-weight: var(--ff-font-weight-xs);
   line-height: 120%;
 }
