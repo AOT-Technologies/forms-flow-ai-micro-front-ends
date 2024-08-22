@@ -22,3 +22,16 @@ export const removingTenantId = (roles=[], tenantId, tenantIdInPath = false) => 
   }
   return roles;
 };
+
+
+export const removeTenantKey = (value, tenantkey) => {
+  const tenantKeyCheck = value.match(`${tenantkey}-`);
+  if (
+    tenantKeyCheck &&
+    tenantKeyCheck[0].toLowerCase() === `${tenantkey.toLowerCase()}-`
+  ) {
+    return value.replace(`${tenantkey.toLowerCase()}-`, "");
+  } else {
+    return false;
+  }
+};

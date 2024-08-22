@@ -1200,5 +1200,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Proceed to Sign In": "Продължете към Вход",
   "Contact formsflow.ai support": "Свържете се с поддръжката на formsflow.ai",
   "Please provide your tenant name to sign in": "Моля, предоставете името на вашата аренда, за да влезете",
-  "Tenant not found":"Наемателят не е намерен"
+  "Tenant not found":"Наемателят не е намерен",
+  "Access Roles": "Роли за достъп",
 }

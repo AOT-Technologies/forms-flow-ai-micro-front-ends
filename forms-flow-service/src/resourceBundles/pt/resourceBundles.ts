@@ -1202,5 +1202,6 @@ export const RESOURCE_BUNDLES_PT ={
   "Proceed to Sign In": "Prosseguir para Entrar",
   "Contact formsflow.ai support": "Contactar suporte formsflow.ai",
   "Please provide your tenant name to sign in": "Por favor, forneça o nome do seu inquilino para entrar",
-  "Tenant not found":"Inquilino não encontrado"
+  "Tenant not found":"Inquilino não encontrado",
+  "Access Roles": "Funções de Acesso",
 };
