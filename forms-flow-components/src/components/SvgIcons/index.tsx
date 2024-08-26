@@ -53,7 +53,7 @@ export const RefreshIcon = ({ color = baseColor, ...props }) => (
     </defs>
   </svg>
 );
-export const HamburgerIcon = ({ color = baseColor, ...props }) => (
+export const HamburgerIcon = ({ color = baseColor, onClick, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="12"
@@ -61,6 +61,7 @@ export const HamburgerIcon = ({ color = baseColor, ...props }) => (
     viewBox="0 0 12 12"
     fill={color}
     {...props}
+    onClick={onClick}
   >
     <path
       d="M0 1C0 0.447715 0.447715 0 1 0H11C11.5523 0 12 0.447715 12 1C12 1.55228 11.5523 2 11 2H1C0.447715 2 0 1.55228 0 1Z"
@@ -80,7 +81,7 @@ export const HamburgerIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const MessageIcon = ({ color = baseColor, ...props }) => (
+export const MessageIcon = ({ color = baseColor, onClick, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -88,6 +89,7 @@ export const MessageIcon = ({ color = baseColor, ...props }) => (
     viewBox="0 0 16 14"
     fill={color}
     {...props}
+    onClick={onClick}
   >
     <path
       d="M16 7.00058C15.9999 7.10306 15.9706 7.20326 15.9157 7.28873C15.8608 7.3742 15.7827 7.44117 15.6911 7.48133L1.06208 13.9366C0.933224 13.9935 0.791638 14.0126 0.652908 13.9919C0.514178 13.9712 0.38368 13.9115 0.27578 13.8194C0.167879 13.7272 0.0867575 13.6062 0.0413435 13.4697C-0.00407044 13.3331 -0.0120162 13.1863 0.0183806 13.0454L1.32355 7.00059L0.0183811 0.955753C-0.0122657 0.81471 -0.00447475 0.667691 0.0408943 0.530919C0.0862634 0.394147 0.167447 0.272939 0.275486 0.180669C0.383526 0.0883999 0.514222 0.0286557 0.653152 0.00802981C0.792082 -0.0125961 0.933846 0.00669818 1.0628 0.0637831L15.6904 6.52058C15.782 6.56074 15.8601 6.62771 15.915 6.71318C15.9699 6.79865 15.9992 6.89885 15.9993 7.00132L16 7.00058ZM2.25016 7.52275L1.11739 12.7732L13.0162 7.52275H2.25016ZM13.0162 6.47694L1.11739 1.22645L2.2516 6.47694L13.0162 6.47694Z"
@@ -206,13 +208,14 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const CloseIcon = ({ color = grayColor, ...props }) => (
+export const CloseIcon = ({ color = grayColor, onClick, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="14"
     height="14"
     viewBox="0 0 14 14"
     fill="none"
+    onClick={onClick}
   >
     <path
       d="M1.5 1.5L12.5 12.5"
@@ -308,13 +311,14 @@ export const CurlyBracketsIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AngleRightIcon = ({ color = baseColor, ...props }) => (
+export const AngleRightIcon = ({ color = baseColor,onClick, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="10"
     height="15"
     viewBox="0 0 10 15"
     fill="none"
+    onClick={onClick}
   >
     <path
       d="M1.74951 14.0005L8.2501 7.4999L1.75009 0.999901"
