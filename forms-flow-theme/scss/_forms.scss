@@ -265,7 +265,7 @@ select option:hover {
       font-size: var(--font-size-sm);
       font-style: normal;
       font-weight: var(--font-weight-sm);
-      line-height: 120%; 
+      line-height: var(--text-line-height); 
     }
   }
   .required-icon{
