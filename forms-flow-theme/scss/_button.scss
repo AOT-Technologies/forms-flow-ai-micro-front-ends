@@ -1,3 +1,5 @@
+@import '_mixins';
+
 .btn-light {
   background-color: $gray-100 !important;
 }
@@ -224,6 +226,9 @@
       line-height: var(--text-line-height);
       padding: 0.5rem var(--spacer-100) !important;
     }
+    .dotted-spinner {
+      font-size: 0.75rem;
+    }
   }
 
   &.btn-md {
@@ -238,6 +243,9 @@
       line-height: var(--text-line-height);
       padding: 0.75rem var(--spacer-150) !important;
     }
+    .dotted-spinner {
+      font-size: 1rem;
+    }
   }
 
   &.btn-lg {
@@ -251,6 +259,9 @@
       font-weight: var(--font-weight-xl) !important;
       line-height: var(--text-line-height);
       padding: 1rem var(--spacer-200, 2rem) !important;
+    }
+    .dotted-spinner {
+      font-size: 1.25rem;
     }
   }
 }
@@ -436,4 +447,15 @@
     border-bottom: 0 transparent !important;
     border-left: 0 transparent !important;
   }
+}
+
+.button-content {
+  opacity: 0; 
+}
+
+.dotted-spinner {
+  @include spinner-base;
+  width: 1em;
+  height: 1em;
+  position: absolute;
 }
