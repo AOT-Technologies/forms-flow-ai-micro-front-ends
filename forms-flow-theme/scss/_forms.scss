@@ -272,14 +272,21 @@ select option:hover {
     color: var(--ff-primary, #253DF4) !important;
   }
 
-  .custom-form-input-group .input-group-text {
+  
+  .custom-form-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-group-text {
     position: absolute;
     right: var(--spacer-025);
     top: 50%;
     transform: translateY(-50%);
     border: none;
     background: none;
-    color:var(--ff-primary, #253DF4) ;
+    color: var(--ff-primary, #253DF4);
+    z-index: 10;
   }
 
   .custom-form-control-label{
@@ -288,20 +295,19 @@ select option:hover {
     font-size: var(--font-size-xs) ; //14px
     font-style: normal;
     font-weight: var(--font-weight-sm); //400
-    line-height: 120%; 
+    line-height: var(--text-line-height); 
   }
 
-  .custom-icon{
-    color: var(--ff-primary, #253DF4) !important;
-    z-index: 10;
-  }
 
-  .custom-feedback{
-    color: var(--sucess-fail-Red-000, #FF4242);
+  .custom-feedback {
+    color: var(--ff-red-000);
     font-family: var(--primary-font);
     font-size: var(--font-size-xs);
     font-style: normal;
     font-weight: var(--font-weight-sm);
-    line-height: 120%; 
+    line-height: var(--text-line-height);
+    position: absolute; 
+    top: 100%; 
+    left: 0;
   }
 }
