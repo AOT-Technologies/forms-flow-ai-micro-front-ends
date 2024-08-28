@@ -227,13 +227,13 @@ select option:hover {
 }
 //FormInput styles
 
-.Form-input-box {
+.form-input-box {
   display: flex;
   width: 100%;
   max-width: 40rem;
   flex-direction: column;
   justify-content: center;
-  .Form-control-input{
+  .form-control-input{
     display: flex;
     padding: var(--spacer-050) var(--spacer-100);
     justify-content: center;
@@ -246,8 +246,8 @@ select option:hover {
       background-image: none !important;
     }
     &:disabled {
-      border-color: var(--ff-gray-700);
-      background-color: var(--ff-gray-100);
+      border-color: var(--ff-gray-400);
+      background-color: var(--ff-gray-000);
     }
   }
   
