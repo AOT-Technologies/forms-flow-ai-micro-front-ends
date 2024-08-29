@@ -19,7 +19,7 @@ interface CustomButtonProps {
   isDropdown?: boolean;
   dropdownItems?: DropdownItem[];
   disabled?: boolean;
-  icon?: boolean;
+  icon?: React.ReactNode;
   className?: string;
   dataTestid?: string;
   ariaLabel?: string;
@@ -107,7 +107,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           ))}
         </Dropdown.Menu>
       </Dropdown>
-    ) as ReactElement;
+    );
   }
 
   return (
@@ -130,7 +130,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       </div>
       {buttonLoading && <span className="dotted-spinner"></span>}
     </Button>
-  ) as ReactElement;
+  );
 };
 
 export default CustomButton;
