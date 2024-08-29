@@ -248,7 +248,7 @@ select option:hover {
     &:disabled {
       border-color: var(--ff-gray-400);
       background-color: var(--ff-gray-000);
-    }
+      }
   }
   
   input{ 
@@ -261,9 +261,7 @@ select option:hover {
 
     &::placeholder{
       color: var(--ff-gray-400, #949B9E); 
-      font-family: var(--primary-font);
       font-size: var(--font-size-sm);
-      font-style: normal;
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height); 
     }
@@ -271,8 +269,11 @@ select option:hover {
   .required-icon{
     color: var(--ff-primary, #253DF4) !important;
   }
+ 
+  .disabled-icon svg path {
+    fill: var(--ff-gray-400); 
+  }
 
-  
   .custom-form-input-group {
     position: relative;
     display: flex;
@@ -291,19 +292,14 @@ select option:hover {
 
   .custom-form-control-label{
     color: var(--ff-gray-800, #303436);
-    font-family:var(--primary-font) ; //Roboto
     font-size: var(--font-size-xs) ; //14px
-    font-style: normal;
-    font-weight: var(--font-weight-sm); //400
+    font-weight: var(--font-weight-sm); 
     line-height: var(--text-line-height); 
   }
 
-
   .custom-feedback {
     color: var(--ff-red-000);
-    font-family: var(--primary-font);
     font-size: var(--font-size-xs);
-    font-style: normal;
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
     position: absolute; 
