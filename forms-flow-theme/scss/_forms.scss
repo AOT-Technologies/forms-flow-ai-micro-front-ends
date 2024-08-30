@@ -1,3 +1,5 @@
+@import '_mixins';
+
 .forms-text {
   vertical-align: bottom;
   margin-left: 0.625rem; 
@@ -111,18 +113,13 @@ select option:hover {
   flex-wrap: nowrap;
   flex-direction: row;
 }
-
-.search-box {
-  .form-control-with-icon {
-    position: relative;
-    width: 25%;
-    
-
+.form-control-with-icon {
+  position: relative;
     .search-box-input {
       border-radius:  var(--radius-0100);
       border: 1px solid var(--ff-primary);
       background:  var(--ff-white);
-      color: var(--ff-gray-500);
+      color: var(--ff-gray-400);
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);
       line-height: 120%;
@@ -136,8 +133,9 @@ select option:hover {
       }
 
       &.is-searching {
+        color: var(--ff-gray-700) !important;
         border: 1px solid var(--ff-gray-800);
-        background-color: var(--ff-gray-700) !important;
+        background-color: var(--ff-gray-100) !important;
       }
     }
 
@@ -150,16 +148,23 @@ select option:hover {
       color: var(--ff-gray-800);
       
       &.loading {
-        color: var(--ff-gray-800);
+        cursor: default;
+      }
+      .search-spinner {
+        @include spinner-base;
+        width: 0.75rem;
+        height: 0.75rem;
+        font-size: x-small;
+        position: relative;
       }
 
-      &.clear {
-        color: var(--ff-gray-800);
-        right: var(--spacer-100);
-      }
+      
     }
   }
-}
+
+  
+
+
 
 
 .pagination-text {
@@ -168,7 +173,7 @@ select option:hover {
   text-overflow: ellipsis;
   font-size: var(--ff-font-size-sm);  
   font-weight: var(--ff-font-weight-xs);
-  line-height: 120%;
+  line-height: var(--text-line-height);
 }
 
 /* CustomTooltip */

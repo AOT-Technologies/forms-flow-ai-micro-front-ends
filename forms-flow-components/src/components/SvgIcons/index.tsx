@@ -208,29 +208,31 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const CloseIcon = ({ color = grayColor, onClick, ...props }) => (
+export const CloseIcon = ({ color = grayColor, width = 14, height = 14, onClick, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="14"
-    height="14"
+    width={width}
+    height={height}
     viewBox="0 0 14 14"
     fill="none"
     onClick={onClick}
+    {...props}
   >
     <path
       d="M1.5 1.5L12.5 12.5"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
+      strokeWidth="2"
+      strokeLinecap="round"
     />
     <path
       d="M12.5 1.5L1.5 12.5"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
+      strokeWidth="2"
+      strokeLinecap="round"
     />
   </svg>
 );
+
 
 export const ExportIcon = ({ color = baseColor, ...props }) => (
   <svg
