@@ -49,7 +49,10 @@
     "webpack-config-single-spa-react-ts": "^4.0.0",
     "webpack-config-single-spa-ts": "^4.0.0",
     "webpack-dev-server": "^4.0.0",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "^5.8.0",
+    "react": "^17.0.2",
+    "react-bootstrap": "^1.6.0",
+    "react-dom": "^17.0.2"
   },
   "dependencies": {
     "@types/react": "^17.0.19",
@@ -58,6 +61,11 @@
     "@types/webpack-env": "^1.16.2",
     "single-spa": "^5.9.3",
     "single-spa-react": "^4.3.1"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-bootstrap": "^1.6.0",
+    "react-dom": "^17.0.2"
   },
   "types": "dist/formsflow-components.d.ts"
 }
