@@ -1,2 +1,2 @@
 export * from "./SvgIcons";
-export { default as CustomButton } from "./CustomComponents/Button";
+export * from "./CustomComponents/Button";

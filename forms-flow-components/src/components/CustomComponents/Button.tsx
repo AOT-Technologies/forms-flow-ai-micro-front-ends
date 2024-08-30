@@ -26,7 +26,7 @@ interface CustomButtonProps {
   buttonLoading?: boolean;
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({
+export const CustomButton: React.FC<CustomButtonProps> = ({
   variant,
   size,
   label,
@@ -133,4 +133,3 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   );
 };
 
-export default CustomButton;
