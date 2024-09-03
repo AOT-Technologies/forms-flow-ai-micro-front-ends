@@ -312,3 +312,69 @@ select option:hover {
     left: 0;
   }
 }
+
+/* ------------------------- Badge pills style ------------------------ */
+
+.badge-pill {
+  display: inline-flex !important;
+  padding-block: var(--spacer-050) !important;
+  padding-inline: var(--spacer-100) !important;
+  color: var(--ff-black) !important;
+  gap: var(--spacer-050) !important;
+  border-radius: var(--ff-border-radius-xl) !important;
+  background-color: var(--ff-base-100) !important;
+  border: none !important;
+  align-items: center !important;
+  font-size: var(--font-size-sm) !important;
+  font-weight: var(--ff-badge-font-md) !important;
+}
+
+/* ------------------------- Tabs Style ------------------------ */
+
+.custom-tabs {
+  .nav-link {
+    background-color: transparent !important;
+    font-weight: var(--font-weight-xl) !important;
+    color: var(--ff-base-700) !important;
+    border: none !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    padding: 0 0 var(--spacer-050) 0 !important;
+    margin-right: var(--spacer-150) !important;
+
+    &.active {
+      border-bottom: 0.125rem solid var(--ff-gray-800) !important;
+      background-color: transparent !important;
+      color: var(--gray-gray-800) !important;
+    }
+  }
+
+  &.nav-tabs {
+    border-bottom: none !important;
+  }
+}
+
+/* ------------------------- Radio Button Style ------------------------ */
+
+.form-check-input[type="radio"] {
+  border-color: var(--ff-base-600) !important;
+  position: relative;
+
+  &:checked {
+    --bs-form-check-bg-image: none !important;
+    background-color: var(--ff-white) !important;
+    border-color: var(--ff-base-600) !important;
+
+    &::before {
+      content: "" !important;
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      width: 60% !important;
+      height: 60% !important;
+      background-color: var(--ff-base-600) !important;
+      border-radius: 50% !important;
+      transform: translate(-50%, -50%) !important;
+    }
+  }
+}
