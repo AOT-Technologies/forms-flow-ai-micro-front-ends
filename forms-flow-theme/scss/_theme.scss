@@ -132,7 +132,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --navbar-background: #{$white};
     //font-style
     --primary-font: "Roboto", sans-serif;
-    //font-size
+    //font-size 1rem = 16px
     --font-size-xs: 0.875rem;
     --font-size-sm: 1rem;
     --font-size-md: 1.25rem;
@@ -144,7 +144,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
     --font-weight-md: 500;
     --font-weight-lg: 600;
     --font-weight-xl: 700;
-    //text-space
+    //text-space 1rem = 16px
     --text-space-xs: 0.02rem;
     --text-space-sm: 0.04rem;
     --text-space-md: 0.08rem;
@@ -152,7 +152,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
     --text-space-xl: 0.2rem;
     //line-height
     --text-line-height: 120%;
-    //spacer
+    //spacer    1rem = 16px
     --spacer-025: 0.25rem;
     --spacer-050: 0.5rem;
     --spacer-075: 0.75rem;
