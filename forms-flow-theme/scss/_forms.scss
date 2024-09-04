@@ -368,10 +368,10 @@ select option:hover {
     &::before {
       content: "" !important;
       position: absolute !important;
-      top: 50% !important;
-      left: 50% !important;
-      width: 60% !important;
-      height: 60% !important;
+      top: 50% !important; /* Center vertically */
+      left: 50% !important; /* Center horizontally */
+      width: 67% !important;
+      height: 70% !important;
       background-color: var(--ff-base-600) !important;
       border-radius: 50% !important;
       transform: translate(-50%, -50%) !important;
