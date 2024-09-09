@@ -1,12 +1,12 @@
-import React, { ChangeEvent, FocusEvent } from 'react';
+import React, { ChangeEvent, FocusEvent ,KeyboardEvent } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 
 interface FormInputProps {
   type?: string;
   label?: string;
   value?: string;
-  onChange?: () => void;
-  onBlur?: () => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
   placeholder?: string;
   isInvalid?: boolean;
   feedback?: string;
@@ -18,6 +18,7 @@ interface FormInputProps {
   required?: boolean;
   icon?: React.ReactNode;
   id?: string;
+  onIconClick?: () => void;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -36,10 +37,11 @@ export const FormInput: React.FC<FormInputProps> = ({
   className = '',
   required = false,
   icon,
-  id
+  id,
+  onIconClick
 }) => {
 
-  const inputClassNames = `form-control-input ${className}`;
+  const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
 
   return (
     <div className="form-input-box">
@@ -63,9 +65,13 @@ export const FormInput: React.FC<FormInputProps> = ({
             aria-label={ariaLabel}
             required={required}
             className={inputClassNames}
+            onKeyDown={(e) => (e.keyCode === 13 && onIconClick())}
           />
           {icon && (
-            <InputGroup.Text id="basic-addon1" className={disabled ? 'disabled-icon' : ''}>
+            <InputGroup.Text
+             id="basic-addon1" 
+             onClick={onIconClick}
+             className={disabled ? 'disabled-icon' : ''}>
               {icon}
             </InputGroup.Text>
           )}
