@@ -18,7 +18,7 @@ export const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
   ariaLabel = "",
 }) => {
   return (
-    <Form className="custom-radio-button mb-3" data-testid={dataTestid} aria-label={ariaLabel}>
+    <Form className="custom-radio-button mb-3"  aria-label={ariaLabel}>
       {items.map((option, index) => (
         <Form.Check
           inline
@@ -27,6 +27,7 @@ export const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
           name="group1"
           type="radio"
           id={`inline-radio-${index + 1}`}
+          data-testid={`${dataTestid}-inline-radio-${index + 1}`}
           key={`radio-${index + 1}`}
           defaultChecked={index === 0}
           onClick={option.onClick}

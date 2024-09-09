@@ -35,7 +35,7 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
       onSelect={onSelect}
     >
       {tabs.map((tab, index) => (
-        <Tab key={index} eventKey={tab.eventKey} title={tab.title}>
+        <Tab key={index} eventKey={tab.eventKey} title={tab.title} data-testid={`${dataTestid}-tab-${tab.eventKey}`} >
           {tab.content}
         </Tab>
       ))}
