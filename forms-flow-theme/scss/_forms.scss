@@ -116,18 +116,20 @@ select option:hover {
 .form-control-with-icon {
   position: relative;
     .search-box-input {
-      border-radius:  var(--radius-0100);
+      border-radius:  16px !important; //TBD: To be changed to rem
       border: 1px solid var(--ff-primary);
       background:  var(--ff-white);
       color: var(--ff-gray-400);
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);
-      line-height: 120%;
+      line-height: var(--text-line-height);
+      padding: var(--spacer-075);
+      padding-right: var(--spacer-250);
+
   
 
       &.has-value {
         border: 2px solid var(--ff-primary);
-        border-radius: var(--radius-0100);
         background: var(--ff-white);
         color: var(--ff-gray-800) !important;
       }
@@ -246,35 +248,46 @@ select option:hover {
     align-self: stretch;
   }
 
-  .form-control {
+  
+  input {
+    border-radius: var(--radius-0100) !important;
+    border: 1px solid var(--ff-primary, #253DF4) !important;
+    outline: none;
+    
+    &:focus {
+      outline: 1px solid var(--ff-primary, #253DF4);
+    }
+  
+    &::placeholder {
+      color: var(--ff-gray-400, #949B9E);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-sm);
+      line-height: var(--text-line-height);
+    }
+
     &.is-invalid {
       background-image: none !important;
+      border: 1px solid var(--ff-red-000) !important;
+      
+      &:focus {
+        outline: 1px solid var(--ff-red-000) !important;
+        border: 1px solid var(--ff-red-000) !important;
+      }
     }
+  
     &:disabled {
       border-color: var(--ff-gray-400);
       background-color: var(--ff-gray-000);
-      }
+    }
   }
   
-  input{ 
-    border-radius: var(--radius-0100)!important; 
-    border: 1px solid var(--ff-primary, #253DF4);
-
-    &:focus {
-    border:2px solid var(--ff-primary, #253DF4) ;
-    }
-
-    &::placeholder{
-      color: var(--ff-gray-400, #949B9E); 
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-sm);
-      line-height: var(--text-line-height); 
-    }
-  }
   .required-icon{
     color: var(--ff-primary, #253DF4) !important;
   }
- 
+  
+ .with-icon {
+  padding-right: 3rem !important;
+ }
   .disabled-icon svg path {
     fill: var(--ff-gray-400); 
   }
