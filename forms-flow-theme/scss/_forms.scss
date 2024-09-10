@@ -122,7 +122,7 @@ select option:hover {
       color: var(--ff-gray-400);
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);
-      line-height: 120%;
+      line-height: var(--text-line-height);
       padding: var(--spacer-075);
       padding-right: var(--spacer-250);
 
