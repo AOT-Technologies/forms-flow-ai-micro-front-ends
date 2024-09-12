@@ -5,38 +5,40 @@ import { CloseIcon } from "../SvgIcons/index";
 
 interface ConfirmModalProps {
   show: boolean;
-  onCancel: () => void;
+  onClose: () => void;
+  secondayBtnAction: () => void;
   title: string;
   message: string;
   messageSecondary?: string;
-  onConfirm: () => void;
-  confirmText: string;
-  cancelText: string;
-  cancelBtndataTestid?: string;
-  confirmBtndataTestid?: string;
-  confirmBtnariaLabel?: string;
-  cancelBtnariaLabel?: string;
+  primaryBtnAction: () => void;
+  primaryBtnText: string;
+  secondaryBtnText: string;
+  secondoryBtndataTestid?: string;
+  primaryBtndataTestid?: string;
+  primaryBtnariaLabel?: string;
+  secondoryBtnariaLabel?: string;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   show,
-  onCancel,
+  onClose,
+  secondayBtnAction,
   title,
   message,
   messageSecondary = '',
-  onConfirm,
-  confirmText,
-  cancelText,
-  cancelBtndataTestid = 'cancel-button',
-  confirmBtndataTestid = 'Confirm-button',
-  confirmBtnariaLabel = 'Confirm Button',
-  cancelBtnariaLabel = 'Cancel Button'
+  primaryBtnAction,
+  primaryBtnText,
+  secondaryBtnText,
+  secondoryBtndataTestid = 'cancel-button',
+  primaryBtndataTestid = 'Confirm-button',
+  primaryBtnariaLabel = 'Confirm Button',
+  secondoryBtnariaLabel = 'Cancel Button'
 }) => {
   return (
     <>
       <Modal
         show={show}
-        onHide={onCancel}
+        onHide={onClose}
         dialogClassName="modal-50w"
         data-testid="confirm-modal"
         aria-labelledby="confirm-modal-title"
@@ -49,7 +51,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             </b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-              <CloseIcon onClick={onCancel} />
+              <CloseIcon onClick={onClose} />
           </div>
         </Modal.Header>
         <Modal.Body className="p-5">
@@ -79,18 +81,18 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
           <CustomButton
             variant={"primary"}
             size="lg"
-            label={confirmText}
-            onClick={onConfirm}
-            dataTestid={confirmBtndataTestid}
-            ariaLabel={confirmBtnariaLabel}
+            label={primaryBtnText}
+            onClick={primaryBtnAction}
+            dataTestid={primaryBtndataTestid}
+            ariaLabel={primaryBtnariaLabel}
           />
           <CustomButton
             variant="secondary"
             size="lg"
-            label={cancelText}
-            onClick={onCancel}
-            dataTestid={cancelBtndataTestid}
-            ariaLabel={cancelBtnariaLabel}
+            label={secondaryBtnText}
+            onClick={secondayBtnAction}
+            dataTestid={secondoryBtndataTestid}
+            ariaLabel={secondoryBtnariaLabel}
           />
         </Modal.Footer>
       </Modal>

@@ -59,6 +59,7 @@ $theme-colors: (
   "secondary": $secondary,
   "success": $success,
   "danger": $danger,
+  "black":$black,
   "dark": $dark,
   "white": $white,
   "gray": $gray,
@@ -185,8 +186,9 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --client-nav: 3rem;
   --header-close-btn: 4.625rem;
 }
-
-.body {
+  
+body {
+  color: var(--ff-gray-800) !important; 
   min-height: 100vh !important;
   font-family: var(--primary-font) !important;
   overflow: hidden;
