@@ -189,12 +189,6 @@ hr {
   border-top: 0.125rem solid var(--ff-gray-400);
 }
 
-body {
-  font-size: var(--font-size-sm);  
-  overflow: hidden;
-  background-color: var(--color-main-bg);
-}
-
 @media (min-width: 1400px) {
   .container {
     max-width: 82.5rem;
@@ -202,11 +196,12 @@ body {
 }
 
 .main-container {
-  overflow-y: auto;
+  overflow: hidden !important;
+  scrollbar-width: none !important;
   background: var(--ff-main-bg);
   margin-left: var(--navbar-width);
   margin-top: 0;
-  max-height: 100vh;
+  height: 100vh !important;
 }
 
 .min-container-height {
@@ -221,6 +216,13 @@ body {
 @mixin generate-overflow($axis, $value) {
   .overflow-#{$axis}-#{$value} {
     overflow-#{$axis}: #{$value} !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    margin-left: 0;
+    height: 100vh !important;
   }
 }
 

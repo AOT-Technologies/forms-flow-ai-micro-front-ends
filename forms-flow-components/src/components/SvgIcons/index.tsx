@@ -1,6 +1,6 @@
-  const computedStyle = getComputedStyle(document.documentElement);
-  const baseColor = computedStyle.getPropertyValue("--ff-base-600");
-  const grayColor = computedStyle.getPropertyValue("--ff-gray-800");
+const computedStyle = getComputedStyle(document.documentElement);
+const baseColor = computedStyle.getPropertyValue("--ff-base-600");
+const grayColor = computedStyle.getPropertyValue("--ff-gray-800");
 
 export const ChevronIcon = ({ color = baseColor, ...props }) => (
   <svg
@@ -20,7 +20,7 @@ export const ChevronIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const RefreshIcon = ({ color = baseColor, ...props }) => (
+export const HistoryIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -101,20 +101,20 @@ export const MessageIcon = ({ color = baseColor, onClick, ...props }) => (
 export const PreviewIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 20 20"
+    width="16"
+    height="17"
+    viewBox="0 0 20 19"
     fill="none"
   >
     <path
-      d="M15.1848 4.81689L4.81583 15.1859"
-      stroke={color}
+      d="M15.1846 4.31689L4.81556 14.6859"
+      stroke="#253DF4"
       stroke-width="2"
       stroke-linecap="round"
     />
     <path
-      d="M14.3872 13.5894L15.1848 4.81557L6.41104 5.61319"
-      stroke={color}
+      d="M14.3867 13.0894L15.1843 4.31557L6.41055 5.11319"
+      stroke="#253DF4"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
@@ -208,7 +208,13 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const CloseIcon = ({ color = grayColor, width = 14, height = 14, onClick, ...props }) => (
+export const CloseIcon = ({
+  color = grayColor,
+  width = 14,
+  height = 14,
+  onClick,
+  ...props
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={width}
@@ -232,7 +238,6 @@ export const CloseIcon = ({ color = grayColor, width = 14, height = 14, onClick,
     />
   </svg>
 );
-
 
 export const ExportIcon = ({ color = baseColor, ...props }) => (
   <svg
@@ -313,7 +318,7 @@ export const CurlyBracketsIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AngleRightIcon = ({ color = baseColor,onClick, ...props }) => (
+export const AngleRightIcon = ({ color = baseColor, onClick, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="10"
@@ -347,6 +352,24 @@ export const UploadIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M15.292 2.29183C15.3849 2.19871 15.4952 2.12482 15.6167 2.07441C15.7382 2.024 15.8685 1.99805 16 1.99805C16.1315 1.99805 16.2618 2.024 16.3833 2.07441C16.5048 2.12482 16.6151 2.19871 16.708 2.29183L22.708 8.29183C22.8958 8.47961 23.0013 8.73428 23.0013 8.99983C23.0013 9.26539 22.8958 9.52006 22.708 9.70783C22.5202 9.89561 22.2656 10.0011 22 10.0011C21.7344 10.0011 21.4798 9.89561 21.292 9.70783L17 5.41383V22.9998C17 23.2651 16.8946 23.5194 16.7071 23.7069C16.5196 23.8945 16.2652 23.9998 16 23.9998C15.7348 23.9998 15.4804 23.8945 15.2929 23.7069C15.1054 23.5194 15 23.2651 15 22.9998V5.41383L10.708 9.70783C10.615 9.80081 10.5046 9.87456 10.3832 9.92488C10.2617 9.9752 10.1315 10.0011 10 10.0011C9.86851 10.0011 9.73831 9.9752 9.61683 9.92488C9.49535 9.87456 9.38498 9.80081 9.292 9.70783C9.19902 9.61486 9.12527 9.50448 9.07495 9.383C9.02464 9.26152 8.99874 9.13132 8.99874 8.99983C8.99874 8.86835 9.02464 8.73815 9.07495 8.61667C9.12527 8.49519 9.19902 8.38481 9.292 8.29183L15.292 2.29183Z"
       fill={color}
+    />
+  </svg>
+);
+
+export const BackToPrevIcon = ({ color = baseColor, onClick, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="32"
+    height="33"
+    viewBox="0 0 32 33"
+    fill="none"
+    onClick={onClick}
+  >
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M29.9998 16.5C29.9998 16.2348 29.8945 15.9805 29.7069 15.7929C29.5194 15.6054 29.2651 15.5 28.9998 15.5H5.41383L11.7078 9.20804C11.8008 9.11507 11.8746 9.00469 11.9249 8.88321C11.9752 8.76173 12.0011 8.63153 12.0011 8.50004C12.0011 8.36855 11.9752 8.23835 11.9249 8.11688C11.8746 7.9954 11.8008 7.88502 11.7078 7.79204C11.6149 7.69907 11.5045 7.62531 11.383 7.575C11.2615 7.52468 11.1313 7.49878 10.9998 7.49878C10.8683 7.49878 10.7381 7.52468 10.6167 7.575C10.4952 7.62531 10.3848 7.69907 10.2918 7.79204L2.29183 15.792C2.19871 15.8849 2.12482 15.9953 2.07441 16.1168C2.024 16.2383 1.99805 16.3685 1.99805 16.5C1.99805 16.6316 2.024 16.7618 2.07441 16.8833C2.12482 17.0048 2.19871 17.1152 2.29183 17.208L10.2918 25.208C10.3848 25.301 10.4952 25.3748 10.6167 25.4251C10.7381 25.4754 10.8683 25.5013 10.9998 25.5013C11.1313 25.5013 11.2615 25.4754 11.383 25.4251C11.5045 25.3748 11.6149 25.301 11.7078 25.208C11.8008 25.1151 11.8746 25.0047 11.9249 24.8832C11.9752 24.7617 12.0011 24.6315 12.0011 24.5C12.0011 24.3686 11.9752 24.2384 11.9249 24.1169C11.8746 23.9954 11.8008 23.885 11.7078 23.792L5.41383 17.5H28.9998C29.2651 17.5 29.5194 17.3947 29.7069 17.2071C29.8945 17.0196 29.9998 16.7653 29.9998 16.5Z"
+      fill="white"
     />
   </svg>
 );

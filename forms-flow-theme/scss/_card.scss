@@ -1,0 +1,185 @@
+.wraper {
+    .card {
+      border-radius: var(--radius-0150) !important;
+      border: none !important;
+    }
+  
+    .card-header {
+      border-bottom: 1px solid hsl(199deg 5% 95% / 0%);
+      height: 4.6875rem !important;
+      display: flex;
+      padding: var(--spacer-100) var(--spacer-200) !important;
+      align-items: center !important;
+      gap: var(--spacer-100) !important;
+      align-self: stretch;
+      color: var(--ff-gray-800) !important;
+      font-size: var(--font-size-lg) !important;
+      font-weight: var(--font-weight-xl) !important;
+      line-height: 120% !important;
+    }
+  
+    .card-body {
+      border-top: 1px solid var(--ff-gray-000) !important;
+    }
+  }
+  
+  .flow-builder {
+    min-height: 27.25rem;
+  }
+  
+  .form-builder {
+    height: 28.75rem;
+    overflow-x: hidden;
+    scrollbar-width: none !important;
+  
+    .card {
+      border: 1px solid var(--ff-gray-000) !important;
+      border-radius: var(--radius-0150) !important;
+      margin-bottom: var(--spacer-050) !important;
+    }
+  
+    .card-header {
+      height: var(--spacer-200) !important;
+      padding-left: var(--spacer-050) !important;
+    }
+  }
+  
+  .no-drop {
+    border-top: 1px solid var(--ff-gray-000);
+  }
+  
+  .editor-header {
+    background-color: var(--ff-gray-800) !important;
+    width: 100% !important;
+    height: auto !important;
+    border-radius: var(--radius-0100) !important;
+    margin: var(--spacer-150) 0;
+  
+    .editor-header-text {
+      color: var(--ff-white);
+      text-align: center;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-xl);
+      line-height: 120%;
+    }
+  }
+  
+  .white-text {
+    color: var(--ff-white) !important;
+  }
+  
+  .form-flow-wraper-right {
+    color: var(--ff-base-600);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-xl);
+    padding-bottom: var(--spacer-200) !important;
+    padding-left: var(--spacer-200) !important;
+    padding-right: 2.25rem !important;
+    background-color: var(--ff-base-200);
+    width: 6.0625rem;
+    min-height: 35.4375rem;
+    cursor: pointer;
+    height: auto;
+    position: absolute;
+    left: 94%;
+    overflow: hidden;
+    writing-mode: vertical-rl;
+    text-align: end;
+    transform: rotate(180deg);
+    border-top-right-radius: var(--radius-0100);
+    border-bottom-right-radius: var(--radius-0100);
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  
+    &.visible {
+      opacity: 1;
+      left: 94%;
+      transition: width 0.5s ease, opacity 0.5s ease;
+      animation: shrink-right 1.5s forwards;
+    }
+  }
+  
+  @keyframes shrink-right {
+    0% {
+      opacity: 1;
+      left: 0%;
+    }
+    100% {
+      opacity: 1;
+      left: 94%;
+    }
+  }
+  
+  .form-flow-wraper-left {
+    margin-right: -1.5rem;
+    color: var(--ff-base-600);
+    width: 6.25rem;
+    font-size: var(--font-size-lg);
+    overflow: hidden;
+    font-weight: 700;
+    padding-bottom: var(--spacer-200) !important;
+    padding-left: var(--spacer-200) !important;
+    padding-right: 2.25rem !important;
+    background-color: var(--ff-base-200);
+    min-height: 35.4375rem;
+    height: auto;
+    position: absolute;
+    right: -15%;
+    writing-mode: vertical-rl;
+    cursor: pointer;
+    text-align: end;
+    transform: rotate(180deg);
+    border-top-left-radius: var(--radius-0100);
+    border-bottom-left-radius: var(--radius-0100);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  
+    &.visible {
+      opacity: 1;
+      right: -15%;
+      transition: width 0.5s ease, opacity 0.5s ease;
+      animation: shrink-width 1.5s forwards;
+    }
+  }
+  
+  @keyframes shrink-width {
+    0% {
+      opacity: 1;
+      right: -10%;
+    }
+    100% {
+      opacity: 1;
+      right: 96%;
+    }
+  }
+  
+  .main-edit-wrap {
+    overflow-y: hidden !important;
+  }
+  
+  .flow-wraper {
+    position: absolute;
+    right: -100%;
+    width: 93%;
+    opacity: 0;
+    transition: right 1.5s ease, opacity 1.5s ease;
+  
+    &.visible {
+      opacity: 1 !important;
+      right: 0;
+    }
+  }
+  
+  .form-wraper {
+    position: relative;
+    right: 100%;
+    width: 93%;
+    opacity: 0;
+    transition: right 1.5s ease, opacity 1.5s ease;
+  
+    &.visible {
+      opacity: 1 !important;
+      right: 0;
+    }
+  }
+  
