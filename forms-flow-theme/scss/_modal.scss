@@ -134,6 +134,11 @@ text-transform: capitalize !important;
     border-right: 0 !important;
   }
 }
+.create-form-modal-ee{
+  .modal-dialog{
+    max-width: 912px
+  }
+}
 
 .close-modal {
   border: none;

@@ -15,6 +15,7 @@ interface CustomTabsProps {
   dataTestid?: string;
   ariaLabel?: string;
   onSelect?: (eventKey: string | null) => void;
+  className? : string;
 }
 
 export const CustomTabs: React.FC<CustomTabsProps> = ({
@@ -24,12 +25,13 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
   dataTestid = "",
   ariaLabel = "",
   onSelect,
+  className ,
 }) => {
   return (
     <Tabs
       defaultActiveKey={defaultActiveKey}
       id={id}
-      className="custom-tabs mb-3"
+      className={`custom-tabs ${className}`}
       data-testid={dataTestid}
       aria-label={ariaLabel}
       onSelect={onSelect}
