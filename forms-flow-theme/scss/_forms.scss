@@ -353,7 +353,6 @@ select option:hover {
     display: flex !important;
     align-items: flex-start !important;
     padding: 0 0 var(--spacer-050) 0 !important;
-    margin-right: var(--spacer-150) !important;
 
     &.active {
       border-bottom: 0.125rem solid var(--ff-gray-800) !important;
