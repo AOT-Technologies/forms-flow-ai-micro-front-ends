@@ -149,15 +149,15 @@ const Admin = React.memo(({ props }: any) => {
             />)}
             <Route 
             exact
-            path={`${BASE_ROUTE}admin`}
+            path={`${baseUrl}admin`}
              >
               {
                 userRoles.length && (
                   <Redirect 
                     to ={
-                      isDashboardManager ? `${BASE_ROUTE}admin/dashboard` 
-                      :isRoleManager ? `${BASE_ROUTE}admin/roles`
-                      : `${BASE_ROUTE}admin/users`
+                      isDashboardManager ? `${baseUrl}admin/dashboard` 
+                      :isRoleManager ? `${baseUrl}admin/roles`
+                      : `${baseUrl}admin/users`
                     }
                   />  
                 )
