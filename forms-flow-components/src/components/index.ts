@@ -1,4 +1,5 @@
 export * from "./SvgIcons";
+export * from "./SvgImages";
 export * from "./CustomComponents/Button";
 export * from "./CustomComponents/ConfirmModal";
 export * from "./CustomComponents/Pills";
