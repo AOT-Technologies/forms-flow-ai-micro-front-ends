@@ -1,11 +1,11 @@
 .ai-modal {
-    .modal-dialog {
-        margin-top: 2.5vh !important;
-        margin-bottom: 2.5vh !important;
-        width: 95vw;
-        height: 95vh;
-        max-width: 90%; 
-      }
+  .modal-dialog {
+    margin-top: 2.5vh !important;
+    margin-bottom: 2.5vh !important;
+    width: 95vw;
+    height: 95vh;
+    max-width: 90%;
+  }
   .modal-body {
     height: 84vh;
 
@@ -23,14 +23,29 @@
 
     .chat-column {
       padding: 0;
-      max-height: 36.5rem;
-      padding: 2.5rem;
+      // max-height: 36.5rem;
+      max-height: 100%;
+      padding-block: var(--spacer-200);
+      padding-inline: var(--spacer-250);
     }
 
     .form-column {
       background-color: var(--ff-gray-100) !important;
-      max-height: 35rem;
-      justify-content: space-between;
+      border-bottom-right-radius: var(--radius-0150) !important;
+      height: 100%;
+    }
+    .welcome-image {
+      height: 100%;
+
+      img {
+        max-height: 80%;
+        width: auto;
+      }
+
+      .progressBar {
+        width: 50%;
+        margin-block: var(--spacer-200);
+      }
     }
 
     .loading-container {
@@ -42,18 +57,22 @@
         display: none;
       }
 
+      p {
+        margin: 0;
+      }
+
       ul {
         padding: 0;
         list-style-type: none;
-        max-height: 30.40rem;
+        max-height: 29.9rem;
         overflow-y: scroll;
         -ms-overflow-style: none;
         scrollbar-width: none;
-        margin-bottom: 1rem;
+        margin-bottom: var(--spacer-100);
       }
 
       li {
-        margin-bottom: 1rem;
+        margin-bottom: var(--spacer-100);
         line-height: var(--text-line-height);
         font-weight: var(--font-weight-sm);
         font-size: var(--font-size-sm);
@@ -62,6 +81,7 @@
           padding: var(--spacer-200);
           background: var(--base-base-10, #e7e9fe) !important;
           border-radius: var(--radius-0100);
+          margin-top: var(--spacer-050);
         }
 
         .ai-user-message {
@@ -69,6 +89,7 @@
           padding: var(--spacer-200);
           margin-left: var(--spacer-200);
           border-radius: var(--radius-0100);
+          margin-bottom: var(--spacer-100);
         }
 
         .ai-response-loading {
@@ -117,12 +138,15 @@
         }
       }
     }
-
+    .danger-message {
+      color: var(--ff-red-000);
+    }
     .form-container {
       overflow-y: scroll;
       -ms-overflow-style: none;
       scrollbar-width: none;
       width: 90%;
+      height: 100%;
 
       &::-webkit-scrollbar {
         display: none;
@@ -131,18 +155,10 @@
 
     .button-container {
       background-color: var(--ff-white, #ffffff) !important;
-    }
-
-    .select-button {
-      margin-top: 1.875rem;
+      height: 20%;
+      border-bottom-right-radius: var(--radius-0150) !important;
     }
 
     padding: 0;
   }
 }
-// @media (min-width: 992px) {
-//     .modal-xl {
-//         max-width: 95%;
-//     }
-// }
-
