@@ -31,7 +31,8 @@ import { LANGUAGE } from "../constants/constants";
 import { Helmet } from "react-helmet";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
-import Appname from "./formsflow.svg";
+// import Appname from "./formsflow.svg";
+import { ApplicationLogo } from "@formsflow/components";
 
 const Sidebar = React.memo(({ props }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
@@ -150,12 +151,13 @@ const Sidebar = React.memo(({ props }) => {
     <>
       <div className="sidenav">
         <div className="logo-container">
-          <img
+          {/* <img
             className=""
             src={Appname}
             alt="applicationName"
             data-testid="app-logo"
-          />
+          /> */}
+          <ApplicationLogo data-testid="application-logo" />
         </div>
         <div className="options-container" data-testid="options-container">
           <Accordion defaultActiveKey="">
