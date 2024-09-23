@@ -10,7 +10,7 @@
 //theme override
 @import "./typography";
 @import "./theme";
-
+@import "./card";
 
 //component override
 @import "./button";
@@ -19,6 +19,9 @@
 @import "./forms";
 @import "./icon";
 @import "./modal";
+@import "./fileUpload";
+@import "./inputBox";
+@import "./aiAssistant";
 
 // util class
 @import "./utils/index";
