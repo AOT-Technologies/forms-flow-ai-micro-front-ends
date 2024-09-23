@@ -1,26 +1,67 @@
+.custom-tables-wrapper {
+  height: 39.75rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none !important;
+  border-radius: 1.5rem !important;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .custom-tables {
+  width: 100%;
   border-collapse: separate !important;
   border-spacing: 0 !important;
   border-radius: var(--radius-0150) !important;
-  overflow: hidden !important;
+  table-layout: fixed;
 
-  td,
-  th {
+  th,
+  td {
     vertical-align: middle !important;
     padding: 1.45rem 1.5rem !important;
   }
 
   thead {
+    display: table;
+    width: 100%;
+    z-index: 2;
+    background-color: var(--ff-white);
+
+    th {
+      width: 8.125rem;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background-color: inherit;
+    }
+
     th:first-child {
-      border-top-left-radius: var(--radius-0150) !important;
+      position: sticky;
+      top: 0;
+      z-index: 3;
     }
 
     th:last-child {
       border-top-right-radius: var(--radius-0150) !important;
+      position: sticky;
+      top: 0;
+      z-index: 3;
     }
   }
 
   tbody {
+    display: block;
+    width: 100%;
+    overflow-y: auto;
+
+    tr {
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+    }
+
     tr:last-child {
       td:first-child {
         border-bottom-left-radius: var(--radius-0150) !important;
@@ -31,6 +72,14 @@
       }
     }
   }
+
+  .table-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--ff-white);
+    width: 100%;
+  }
 }
 
 .table {
@@ -40,7 +89,7 @@
 }
 
 .width-40 {
-  width: 31rem !important;
+  width: 28rem !important;
   max-width: 40% !important;
   min-width: 40% !important;
 }
@@ -59,18 +108,17 @@
   text-overflow: ellipsis;
   height: 3rem;
   line-height: 1.5rem;
-  color: var(--ff-Black, #000);  
-  font-size: 14px !important;  
-  font-weight: var(--font-weight-sm);
-}
-.text-container-expand {
-  line-height: 1.5rem;
   color: var(--ff-Black, #000);
-  
-  font-size: 14px !important;  
+  font-size: 0.875rem !important;
   font-weight: var(--font-weight-sm);
 }
 
+.text-container-expand {
+  line-height: 1.5rem;
+  color: var(--ff-Black);
+  font-size: 0.875rem !important;
+  font-weight: var(--font-weight-sm);
+}
 
 .status-live {
   width: var(--spacer-050);
@@ -91,9 +139,8 @@
 .pagination-text {
   overflow: hidden;
   color: var(--ff-black);
-  text-overflow: ellipsis;  
-  font-size: var(--font-size-sm);  
+  text-overflow: ellipsis;
+  font-size: var(--font-size-sm);
   font-weight: var(--ff-font-weight-xs);
   line-height: 120%;
 }
-
