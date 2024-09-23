@@ -2,7 +2,8 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
-import ChevronIcon from "./chevronicon.svg";
+// import ChevronIcon from "./chevronicon.svg";
+import { ChevronIcon } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 
@@ -38,11 +39,12 @@ const MenuComponent = ({ eventKey, mainMenu, subMenu, optionsCount }) => {
         onClick={noOptionsMenu ? handleHeaderClick : undefined}
       >
         {!noOptionsMenu && (
-          <img
-            src={ChevronIcon}
-            alt="Chevron icon"
-            className="custom-chevron"
-          />
+          // <img
+          //   src={ChevronIcon}
+          //   alt="Chevron icon"
+          //   className="custom-chevron"
+          // />
+          <ChevronIcon className="custom-chevron" color={getComputedStyle(document.documentElement).getPropertyValue("--ff-gray-800")}/>
         )}
         <span>{t(mainMenu)}</span>
       </Accordion.Header>
