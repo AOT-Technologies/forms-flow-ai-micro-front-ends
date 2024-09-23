@@ -22,6 +22,9 @@
     text-align: center;
     flex-grow: 1;
     overflow-y: auto;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   .accordion-button {
