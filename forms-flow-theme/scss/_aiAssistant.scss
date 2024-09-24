@@ -23,14 +23,13 @@
 
     .chat-column {
       padding: 0;
-      // max-height: 36.5rem;
       max-height: 100%;
       padding-block: var(--spacer-200);
       padding-inline: var(--spacer-250);
     }
 
     .form-column {
-      background-color: var(--ff-gray-100) !important;
+      background-color: var(--ff-gray-000) !important;
       border-bottom-right-radius: var(--radius-0150) !important;
       height: 100%;
     }
@@ -46,10 +45,6 @@
         width: 50%;
         margin-block: var(--spacer-200);
       }
-    }
-
-    .loading-container {
-      max-height: 30rem;
     }
 
     .ai-chat {
@@ -76,6 +71,10 @@
         line-height: var(--text-line-height);
         font-weight: var(--font-weight-sm);
         font-size: var(--font-size-sm);
+
+        /* Add fade-in animation */
+        animation: fadeIn 0.5s ease-in-out;
+
         .ai-message-box {
           margin-right: var(--spacer-200);
           padding: var(--spacer-200);
@@ -160,5 +159,17 @@
     }
 
     padding: 0;
+  }
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); /* Start slightly below */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Settle in original position */
   }
 }
