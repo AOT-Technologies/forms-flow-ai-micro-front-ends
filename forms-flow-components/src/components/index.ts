@@ -7,3 +7,4 @@ export * from "./CustomComponents/Tabs";
 export * from "./CustomComponents/Radio";
 export * from "./CustomComponents/FormInput";
 export * from "./CustomComponents/Search";
+export * from "./CustomComponents/ProgressBar";
