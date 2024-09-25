@@ -2,11 +2,11 @@ const computedStyle = getComputedStyle(document.documentElement);
 const baseColor = computedStyle.getPropertyValue("--ff-base-600");
 const grayColor = computedStyle.getPropertyValue("--ff-gray-800");
 
-export const ChevronIcon = ({ color = baseColor, ...props }) => (
+export const ChevronIcon = ({ color = baseColor, width = "10", height = "16", ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="10"
+    width={width}
+    height={height}
     viewBox="0 0 16 10"
     fill="none"
     {...props}
