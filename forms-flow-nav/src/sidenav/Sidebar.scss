@@ -1,7 +1,7 @@
 
 .sidenav {  
   height: 100%;
-  width: 13.615rem;
+  width: 12rem;
   position: fixed;
   z-index: 1050;
   left: 0;
@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     min-height: 4.625rem;
-    padding: 0 1.5rem;
+    padding: var(--spacer-150);
   }
 
   .options-container {
@@ -29,7 +29,6 @@
 
   .accordion-button {
     color: var(--ff-gray-800);
-    padding: 1.5rem;
     background-color: var(--ff-white);
     gap: 0.5rem;
 
@@ -52,6 +51,7 @@
       color: var(--ff-gray-800);
       background-color: var(--ff-gray-100);
     }
+
   }
 
   .accordion-body {
@@ -66,6 +66,7 @@
     font-weight: var(--font-size-sm);
     line-height: var(--text-line-height);
     letter-spacing: var(--text-space-xs);
+    margin-bottom: 0.5rem;
 
     &:first-of-type > .accordion-header .accordion-button {
       border-top-left-radius: none;
@@ -75,7 +76,8 @@
 
   .accordion-link {
     display: block;
-    padding: 1rem 1rem 1rem 3.2rem;
+    padding-block: var(--spacer-100);
+    padding-inline: var(--spacer-250) var(--spacer-100);
     color: var(--ff-gray-800);
     text-decoration: none;
     text-align: left;
@@ -104,21 +106,23 @@
 
     .username {
       color: var(--ff-gray-800);
-      padding: 1rem;
+      padding: var(--spacer-100);
       margin: 0;
       text-align: left;
       display: flex;
-      justify-content: space-around;
-      gap: 0.5rem;
+      gap: var(--spacer-050);
 
       h5 {
         margin: 0;
+      }
+      &:hover {
+        background-color: var(--ff-base-100);
       }
     }
 
     .sign-out-button {
       text-align: left;
-      padding: 1rem 1.5rem;
+      padding: var(--spacer-100) var(--spacer-150);
       border: none;
       cursor: pointer;
       color: var(--ff-gray-800);
@@ -161,6 +165,7 @@
       text-transform: lowercase;
       max-width: 7.5rem;
       cursor: pointer;
+      margin-bottom: 0;
     }
   }
 
@@ -195,7 +200,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 1rem;
+  padding: 0 var(--spacer-100);
 }
 
 .multitenancy-logo {
@@ -209,6 +214,9 @@
   color: var(--ff-gray-800);
 }
 
+.active-header .accordion-button {
+  background-color: var(--ff-gray-100);
+}
 
 
 @media (max-width: 768px) {
