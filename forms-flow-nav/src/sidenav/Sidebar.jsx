@@ -304,20 +304,20 @@ const Sidebar = React.memo(({ props }) => {
             </div>
             <div>
               <p className="user-name" data-testid="user-name">
-                {userDetail?.preferred_username}
+                {userDetail?.name}
               </p>
-              {/* <OverlayTrigger
+              <OverlayTrigger
                 placement="top"
                 overlay={
                   <Tooltip id="email-tooltip" className="custom-tooltip">
-                    {userDetail?.email}
+                    {userDetail?.preferred_username}
                   </Tooltip>
                 }
               >
                 <p className="user-email" data-testid="user-email">
-                  {userDetail?.email}
+                  {userDetail?.preferred_username}
                 </p>
-              </OverlayTrigger> */}
+              </OverlayTrigger>
             </div>
           </div>
           <div
@@ -325,7 +325,7 @@ const Sidebar = React.memo(({ props }) => {
             onClick={logout}
             data-testid="sign-out-button"
           >
-            <p>{t("Sign Out")}</p>
+            <p className="m-0">{t("Sign Out")}</p>
           </div>
         </div>
       </div>

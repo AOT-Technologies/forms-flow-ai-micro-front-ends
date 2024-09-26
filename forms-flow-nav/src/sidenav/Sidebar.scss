@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     min-height: 4.625rem;
-    padding: 1.5rem;
+    padding: var(--spacer-150);
   }
 
   .options-container {
@@ -29,7 +29,6 @@
 
   .accordion-button {
     color: var(--ff-gray-800);
-    padding: 1rem;
     background-color: var(--ff-white);
     gap: 0.5rem;
 
@@ -77,7 +76,8 @@
 
   .accordion-link {
     display: block;
-    padding: 1rem 1rem 1rem 2.5rem;
+    padding-block: var(--spacer-100);
+    padding-inline: var(--spacer-250) var(--spacer-100);
     color: var(--ff-gray-800);
     text-decoration: none;
     text-align: left;
@@ -106,12 +106,11 @@
 
     .username {
       color: var(--ff-gray-800);
-      padding: 1rem;
+      padding: var(--spacer-100);
       margin: 0;
       text-align: left;
       display: flex;
-      justify-content: space-around;
-      gap: 0.5rem;
+      gap: var(--spacer-050);
 
       h5 {
         margin: 0;
@@ -123,7 +122,7 @@
 
     .sign-out-button {
       text-align: left;
-      padding: 1rem 1.5rem;
+      padding: var(--spacer-100) var(--spacer-150);
       border: none;
       cursor: pointer;
       color: var(--ff-gray-800);
@@ -201,7 +200,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 1rem;
+  padding: 0 var(--spacer-100);
 }
 
 .multitenancy-logo {
