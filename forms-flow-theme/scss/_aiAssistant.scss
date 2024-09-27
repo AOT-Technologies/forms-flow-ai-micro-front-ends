@@ -6,6 +6,9 @@
     height: 95vh;
     max-width: 90%;
   }
+  .modal-header{
+    border-bottom: 1px solid var(--ff-gray-000) !important;
+  }
   .modal-body {
     height: 84vh;
 
@@ -24,7 +27,8 @@
     .chat-column {
       padding: 0;
       max-height: 100%;
-      padding-block: var(--spacer-200);
+      // padding-block: var(--spacer-200);
+      padding-bottom: var(--spacer-200);
       padding-inline: var(--spacer-250);
     }
 
@@ -33,21 +37,28 @@
       border-bottom-right-radius: var(--radius-0150) !important;
       height: 100%;
     }
-    .welcome-image {
-      height: 100%;
-
-      img {
-        max-height: 80%;
-        width: auto;
+    .welcome-container {
+      .welcome-image {
+        height: 100%;
+    
+        img {
+          max-height: 80%;
+          width: auto;
+        }
       }
-
-      .progressBar {
-        width: 50%;
-        margin-block: var(--spacer-200);
-      }
+    }
+    .progress-bar-container {
+      width: 50%;
+      margin-block: var(--spacer-200);
     }
 
     .ai-chat {
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      flex: 1;
       &::-webkit-scrollbar {
         display: none;
       }
@@ -59,11 +70,11 @@
       ul {
         padding: 0;
         list-style-type: none;
-        max-height: 29.9rem;
+        // max-height: 29.9rem;
         overflow-y: scroll;
         -ms-overflow-style: none;
         scrollbar-width: none;
-        margin-bottom: var(--spacer-100);
+        margin-bottom: 0;
       }
 
       li {
@@ -154,8 +165,9 @@
 
     .button-container {
       background-color: var(--ff-white, #ffffff) !important;
-      height: 20%;
+      padding: var(--spacer-200) var(--spacer-100);
       border-bottom-right-radius: var(--radius-0150) !important;
+      border-left: 1px solid var(--ff-gray-000) !important;;
     }
 
     padding: 0;
