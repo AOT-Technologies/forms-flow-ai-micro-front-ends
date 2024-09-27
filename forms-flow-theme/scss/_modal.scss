@@ -98,7 +98,7 @@ text-transform: capitalize !important;
   margin-bottom: var(--spacer-150);
 }
 .message-secondary {
-  color: var(--gray-gray-80, #303436);
+  color: var(--ff-gray-800, #303436);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-xl);
   line-height: 120%
@@ -174,7 +174,7 @@ text-transform: capitalize !important;
 
 .choose-template-modal {
   .modal-title{
-    color: var(--gray-gray-80, #303436);
+    color: var(--ff-gray-800, #303436);
   }
   .modal-dialog {
     margin-top: 2.5vh !important;
@@ -193,7 +193,7 @@ text-transform: capitalize !important;
   .tab-content {
     padding: var(--spacer-100) var(--spacer-125);
     width: 100% !important;
-    background: var(--gray-gray-0, #F2F2F3);
+    background: var(--ff-gray-000, #F2F2F3);
   }
  
 .form-template-list{
@@ -234,9 +234,8 @@ text-transform: capitalize !important;
   }
   .template-item{
     padding: var(--spacer-125) var(--spacer-250) !important;
-    border-bottom: 1px solid var(--ff-gray-000-rgb, #F2F2F3);
-    border-bottom: 1px solid var(--gray-gray-0, #F2F2F3);
-    background: var(--bnw-White, #FFF);
+    border-bottom: 1px solid var(--ff-gray-000, #F2F2F3);
+    background: var(--ff-white, #FFF);
     overflow: hidden;
     white-space: nowrap;
     min-width: 8rem;
@@ -253,8 +252,8 @@ text-transform: capitalize !important;
     }
   }
   .active-template {
-    border-bottom: 1px solid var(--ff-gray-000-rgb, #f2f2f3);
-    background: var(--base-base-10, #E7E9FE);
+    border-bottom: 1px solid var(--ff-gray-000, #f2f2f3);
+    background: var(--ff-base-100, #E7E9FE);
     max-height: none !important;
     .template-desc {
       display: block; 
