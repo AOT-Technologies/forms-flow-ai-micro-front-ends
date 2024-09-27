@@ -189,11 +189,6 @@ hr {
   border-top: 0.125rem solid var(--ff-gray-400);
 }
 
-@media (min-width: 1400px) {
-  .container {
-    max-width: 82.5rem;
-  }
-}
 .container {
   width: auto !important;
     padding-left: 8px !important;
