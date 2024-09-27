@@ -1,5 +1,6 @@
 .custom-tables-wrapper {
-  height: 39.75rem;
+  height: auto;
+  max-height: calc(100vh - 6.8rem);
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none !important;
@@ -11,6 +12,7 @@
 }
 
 .custom-tables {
+  table-layout: fixed;
   width: 100%;
   border-collapse: separate !important;
   border-spacing: 0 !important;
@@ -20,11 +22,13 @@
   th,
   td {
     vertical-align: middle !important;
-    padding: 1.45rem 1.5rem !important;
+    padding: var(--spacer-125) var(--spacer-150) !important;
+    font-size: 0.875rem !important;
   }
 
   thead {
     display: table;
+    table-layout: fixed;
     width: 100%;
     z-index: 2;
     background-color: var(--ff-white);
@@ -55,6 +59,7 @@
     display: block;
     width: 100%;
     overflow-y: auto;
+    font-size: 0.875rem !important;
 
     tr {
       display: table;
@@ -89,15 +94,15 @@
 }
 
 .width-40 {
-  width: 28rem !important;
+  width: 25rem !important;
   max-width: 40% !important;
   min-width: 40% !important;
 }
 
-.width-30 {
+.width-25 {
   width: 18.75rem !important;
   max-width: 30% !important;
-  min-width: 30% !important;
+  min-width: 25% !important;
 }
 
 .text-container {
@@ -109,7 +114,6 @@
   height: 3rem;
   line-height: 1.5rem;
   color: var(--ff-Black, #000);
-  font-size: 0.875rem !important;
   font-weight: var(--font-weight-sm);
 }
 
@@ -143,4 +147,20 @@
   font-size: var(--font-size-sm);
   font-weight: var(--ff-font-weight-xs);
   line-height: 120%;
+}
+
+.w-20 {
+  width: 20% !important;
+}
+
+.w-30 {
+  width: 30% !important;
+}
+
+.w-13 {
+  width: 13% !important;
+}
+
+.w-12 {
+  width: 12% !important;
 }

@@ -194,6 +194,11 @@ hr {
     max-width: 82.5rem;
   }
 }
+.container {
+  width: auto !important;
+    padding-left: 8px !important;
+    padding-right: 24px !important;
+}
 
 .main-container {
   overflow: hidden !important;
