@@ -24,11 +24,11 @@
   }
   
   .flow-builder {
-    min-height: 27.25rem;
+    height: calc(100vh - 18rem) !important;
   }
   
   .form-builder {
-    height: 28.75rem;
+    height: calc(100vh - 16.5rem) !important;
     overflow-x: hidden;
     scrollbar-width: none !important;
   
@@ -53,7 +53,7 @@
     width: 100% !important;
     height: auto !important;
     border-radius: var(--radius-0100) !important;
-    margin: var(--spacer-150) 0;
+    margin-bottom: var(--spacer-150);
   
     .editor-header-text {
       color: var(--ff-white);
@@ -77,7 +77,7 @@
     padding-right: 2.25rem !important;
     background-color: var(--ff-base-200);
     width: 6.0625rem;
-    min-height: 35.4375rem;
+    height: calc(100vh - 9.8rem) !important;
     cursor: pointer;
     height: auto;
     position: absolute;
@@ -121,7 +121,7 @@
     padding-left: var(--spacer-200) !important;
     padding-right: 2.25rem !important;
     background-color: var(--ff-base-200);
-    min-height: 35.4375rem;
+    height: calc(100vh - 9.8rem) !important;
     height: auto;
     position: absolute;
     right: -15%;

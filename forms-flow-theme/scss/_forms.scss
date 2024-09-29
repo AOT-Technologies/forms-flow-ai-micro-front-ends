@@ -123,7 +123,7 @@ select option:hover {
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);
-      padding: var(--spacer-075);
+      padding: var(--spacer-050);
       padding-right: var(--spacer-250);
 
   
@@ -389,4 +389,8 @@ select option:hover {
       transform: translate(-50%, -50%) !important;
     }
   }
+}
+
+.valiation-astrisk {
+  color: var(--ff-base-600);
 }

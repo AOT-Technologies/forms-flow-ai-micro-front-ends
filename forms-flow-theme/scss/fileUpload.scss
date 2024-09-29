@@ -4,6 +4,7 @@ $upload-text-color: var(--ff-gray-800, #303436);
 $upload-text-description-color: var(--ff-gray-400, #949B9E);
 $upload-status-success-color: var(--ff-base-600, #253DF4);
 $upload-status-progress-color: var(--ff-gray-400, #949B9E);
+$upload-status-error-color: var(--ff-red-000, #ff4242);
 
 .file-upload {
   display: flex;
@@ -27,8 +28,8 @@ $upload-status-progress-color: var(--ff-gray-400, #949B9E);
 
 .upload-text {
   color: $upload-text-color;
-  text-align: center;  
-  font-size: 0.875rem;  
+  text-align: center;
+  font-size: 0.875rem;
   font-weight: var(--font-weight-sm);
   line-height: 120%;
   padding: var(--spacer-100) 0;
@@ -38,8 +39,8 @@ $upload-status-progress-color: var(--ff-gray-400, #949B9E);
 .upload-text-description {
   color: $upload-text-description-color;
   text-align: center;
-    font-size: 0.875rem;
-    font-weight: var(--font-weight-sm);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-sm);
   line-height: 120%;
 }
 
@@ -53,18 +54,55 @@ $upload-status-progress-color: var(--ff-gray-400, #949B9E);
   align-self: stretch;
 }
 
-.upload-details {
+.upload-boady {
   display: flex;
-  height: auto !important;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--spacer-100);
   align-self: stretch;
 }
 
+.upload-details {
+  margin-top: var(--spacer-100);
+  display: flex;
+  height: auto !important;
+  align-items: center;
+  gap: var(--spacer-050);
+  align-self: stretch;
+}
+
+.upload-form-details {
+  overflow: hidden;
+  color: var(--ff-Black, #000);
+  text-overflow: ellipsis;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-sm);
+  line-height: 120%;
+}
+
+.import-error-note {
+  display: flex;
+  padding: var(--spacer-100);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacer-050);
+  align-self: stretch;
+  border-radius: var(--spacer-100);
+  background-color: var(--ff-gray-000, #F2F2F3);
+}
+
 .upload-status-success {
   color: $upload-status-success-color;
-  text-align: right;  
-  font-size: 0.875rem;  
+  text-align: right;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-sm);
+  line-height: 120%;
+}
+
+.upload-status-error {
+  color: $upload-status-error-color;
+  text-align: right;
+  font-size: 0.875rem;
   font-weight: var(--font-weight-sm);
   line-height: 120%;
 }
@@ -72,13 +110,13 @@ $upload-status-progress-color: var(--ff-gray-400, #949B9E);
 .upload-status-progress {
   color: $upload-status-progress-color;
   text-align: right;
-    font-size: 0.875rem;
-    font-weight: var(--font-weight-sm);
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-sm);
   line-height: 120%;
 }
 
 .progress {
-  height: 1.5rem !important;
+  height: var(--spacer-150) !important;
 }
 
 .progress,

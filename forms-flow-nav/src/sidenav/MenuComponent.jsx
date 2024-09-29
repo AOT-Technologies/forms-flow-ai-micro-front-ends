@@ -2,7 +2,7 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
-import ChevronIcon from "./chevronicon.svg";
+import { ChevronIcon } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants/constants";
 import { useTranslation } from "react-i18next";
 
@@ -21,27 +21,28 @@ const MenuComponent = ({ eventKey, mainMenu, subMenu, optionsCount }) => {
     }
   };
 
+  const isActive = subMenu.some((menu) =>
+    menu.matchExps && menu.matchExps.some((exp) => exp.test(location.pathname))
+  );
+
   return (
     <Accordion.Item eventKey={eventKey}>
       <Accordion.Header
         data-testid={`accordion-header-${eventKey}`}
         aria-label={`Accordion header for ${mainMenu}`}
         className={`${noOptionsMenu ? "no-arrow" : ""} ${
-          noOptionsMenu &&
-          subMenu.some((menu) =>
-            menu.matchExps &&
-            menu.matchExps.some((exp) => exp.test(location.pathname))
-          )
-            ? "active"
-            : ""
+          isActive ? "active-header" : ""
         }`}
         onClick={noOptionsMenu ? handleHeaderClick : undefined}
       >
         {!noOptionsMenu && (
-          <img
-            src={ChevronIcon}
-            alt="Chevron icon"
+          <ChevronIcon
+            width="10"
+            height="5"
             className="custom-chevron"
+            color={getComputedStyle(document.documentElement).getPropertyValue(
+              "--ff-gray-800"
+            )}
           />
         )}
         <span>{t(mainMenu)}</span>
@@ -53,7 +54,8 @@ const MenuComponent = ({ eventKey, mainMenu, subMenu, optionsCount }) => {
               key={index}
               to={`${baseUrl}${menu.path}`}
               className={`accordion-link ${
-                menu.matchExps && menu.matchExps.some((exp) => exp.test(location.pathname))
+                menu.matchExps &&
+                menu.matchExps.some((exp) => exp.test(location.pathname))
                   ? "active"
                   : ""
               } `}
