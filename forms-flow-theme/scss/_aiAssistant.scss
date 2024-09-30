@@ -16,7 +16,7 @@
       height: 100%;
       max-width: 100%;
       margin: 0;
-      padding: 0;
+      padding: 0 !important;
     }
 
     .row {
@@ -153,15 +153,21 @@
     }
     .form-container {
       overflow-y: scroll;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-      width: 90%;
+      -ms-overflow-style: auto;  
+      width: 100%;
       height: 100%;
-
+      padding: var(--spacer-200) var(--spacer-250);
+      
       &::-webkit-scrollbar {
-        display: none;
+        width: 0.5rem;
+      }  
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--ff-gray-200);
+        border: 1px solid var(--ff-gray-200);
+        border-radius: var(--radius-0125);
       }
     }
+    
 
     .button-container {
       background-color: var(--ff-white, #ffffff) !important;
