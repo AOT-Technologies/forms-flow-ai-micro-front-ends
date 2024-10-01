@@ -295,7 +295,6 @@ border: 1px solid var(--ff-base-600, #253DF4);
 
 .input-drop-edit{
   position: absolute;
-  top: 34.3rem; //to be adjusted
   z-index: 100;
   overflow: auto;
   scrollbar-width: none;
@@ -308,7 +307,6 @@ border: 1px solid var(--ff-base-600, #253DF4);
 }
 .input-drop-create{
   position: absolute;
-  top: 47.2rem; //to be adjusted
   z-index: 100;
   height: 350px;
   overflow: auto;
@@ -323,7 +321,6 @@ border: 1px solid var(--ff-base-600, #253DF4);
 
 .input-drop-view{
   position: absolute;
-  top: 59.15rem; //to be adjusted
   z-index: 100;
   height: 350px;
   overflow: auto;
