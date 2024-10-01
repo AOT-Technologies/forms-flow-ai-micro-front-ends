@@ -237,7 +237,7 @@ select option:hover {
 .form-input-box {
   display: flex;
   width: 100%;
-  max-width: 40rem;
+  // max-width: 40rem;
   flex-direction: column;
   justify-content: center;
   .form-control-input{
@@ -276,7 +276,7 @@ select option:hover {
     }
   
     &:disabled {
-      border-color: var(--ff-gray-400);
+      border-color: var(--ff-gray-400) !important;
       background-color: var(--ff-gray-000);
     }
   }
@@ -394,3 +394,4 @@ select option:hover {
 .valiation-astrisk {
   color: var(--ff-base-600);
 }
+
