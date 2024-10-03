@@ -3,6 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { FormTextArea } from "./FormTextArea";
 import { CloseIcon } from "../SvgIcons/index";
+import { FormInput } from "../CustomComponents/FormInput";
 
 interface BuildFormModalProps {
   showBuildForm: boolean;
@@ -30,7 +31,8 @@ interface BuildFormModalProps {
   closedataTestid?: string;
   nameInputDataTestid?: string;
   descriptionDataTestid?: string;
- 
+  placeholderForForm?: string;
+  placeholderForDescription?: string;
 }
 
 export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
@@ -57,24 +59,9 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     closedataTestid = "close",
     nameInputDataTestid = "form-name",
     descriptionDataTestid = "form-description",
-    
+    placeholderForForm = "Form",
+    placeholderForDescription = "Form Description",
   }) => {
-    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-    useEffect(() => {
-      const textarea = textareaRef.current;
-      if (textarea) {
-        const handleInput = () => {
-          textarea.style.height = "auto";
-          textarea.style.height = `${textarea.scrollHeight}px`;
-        };
-        textarea.addEventListener("input", handleInput);
-        return () => {
-          textarea.removeEventListener("input", handleInput);
-        };
-      }
-    }, [showBuildForm]);
-
     return (
       <>
         <Modal
@@ -87,15 +74,15 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               <b>{modalHeader}</b>
             </Modal.Title>
             <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} />
+              <CloseIcon onClick={onClose} />
             </div>
           </Modal.Header>
           <Modal.Body className="p-5">
             <label className="form-label">{nameLabel}</label>
             <span className="valiation-astrisk">*</span>
-            <input
+            <FormInput
               type="text"
-              placeholder="Form 1"
+              placeholder={placeholderForForm}
               className={`form-input ${nameError ? "input-error" : ""}`}
               aria-label="Name of the form"
               data-testid={nameInputDataTestid}
@@ -114,8 +101,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
 
             <FormTextArea
               onChange={(e) => setFormDescription(e.target.value)}
-              ref={textareaRef}
-              placeholder="Short description of the form"
+              placeholder={placeholderForDescription}
               className="form-input"
               aria-label="Description of the new form"
               data-testid={descriptionDataTestid}
@@ -125,22 +111,20 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
           <Modal.Footer className="d-flex justify-content-start">
             <CustomButton
               variant={nameError ? "dark" : "primary"}
-              size="lg"
               disabled={!!nameError || formSubmitted}
               label={primaryBtnLabel}
               buttonLoading={!nameError && formSubmitted ? true : false}
               onClick={primaryBtnAction}
-              className=""
+              className="btn-md"
               dataTestid={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
             />
 
             <CustomButton
               variant="secondary"
-              size="lg"
               label={secondaryBtnLabel}
               onClick={secondaryBtnAction}
-              className=""
+              className="btn-md"
               dataTestid={secondoryBtndataTestid}
               ariaLabel={secondoryBtnariaLabel}
             />
