@@ -59,8 +59,8 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     closedataTestid = "close",
     nameInputDataTestid = "form-name",
     descriptionDataTestid = "form-description",
-    placeholderForForm = "Form",
-    placeholderForDescription = "Form Description",
+    placeholderForForm,
+    placeholderForDescription,
   }) => {
     return (
       <>
@@ -111,20 +111,20 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
           <Modal.Footer className="d-flex justify-content-start">
             <CustomButton
               variant={nameError ? "dark" : "primary"}
+              size="md"
               disabled={!!nameError || formSubmitted}
               label={primaryBtnLabel}
               buttonLoading={!nameError && formSubmitted ? true : false}
               onClick={primaryBtnAction}
-              className="btn-md"
               dataTestid={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
             />
 
             <CustomButton
               variant="secondary"
+              size="md"
               label={secondaryBtnLabel}
               onClick={secondaryBtnAction}
-              className="btn-md"
               dataTestid={secondoryBtndataTestid}
               ariaLabel={secondoryBtnariaLabel}
             />
