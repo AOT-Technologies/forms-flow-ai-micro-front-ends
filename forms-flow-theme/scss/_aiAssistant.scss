@@ -89,7 +89,7 @@
         .ai-message-box {
           margin-right: var(--spacer-200);
           padding: var(--spacer-200);
-          background: var(--base-base-10, #e7e9fe) !important;
+          background: var(--ff-base-100, #e7e9fe) !important;
           border-radius: var(--radius-0100);
           margin-top: var(--spacer-050);
         }
@@ -105,7 +105,7 @@
         .ai-response-loading {
           border-radius: var(--radius-0100);
           padding: var(--spacer-200);
-          background: var(--base-base-10, #e7e9fe) !important;
+          background: var(--ff-base-100, #e7e9fe) !important;
           max-width: 0.938rem;
 
           .loading-dots {
