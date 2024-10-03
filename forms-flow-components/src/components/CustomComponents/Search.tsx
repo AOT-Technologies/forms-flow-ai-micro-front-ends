@@ -46,8 +46,8 @@ export const CustomSearch: FC<CustomSearchProps> = ({
                     >
                         {!searchFormLoading ? (
                             <CloseIcon
-                                width={12}
-                                height={12}
+                                width={16}
+                                height={16}
                                 onClick={handleClearSearch}
                                 data-testid="form-search-clear-button"
 
