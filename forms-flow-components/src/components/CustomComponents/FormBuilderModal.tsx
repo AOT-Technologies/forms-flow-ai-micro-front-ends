@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { FormTextArea } from "./FormTextArea";
 import { CloseIcon } from "../SvgIcons/index";
-import { FormInput } from "../CustomComponents/FormInput";
+import { FormInput } from "./FormInput";
 
 interface BuildFormModalProps {
   showBuildForm: boolean;
