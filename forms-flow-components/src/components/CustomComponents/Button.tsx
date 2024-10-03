@@ -80,6 +80,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           ref={buttonRef}
           data-testid={dataTestid}
           aria-label={ariaLabel}
+          className={`${size !== 'md' ? className : `btn-md ${className}`}`}
         >
           {label}
         </Button>
@@ -116,7 +117,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       size={size!='md' ? size : undefined}
       onClick={onClick}
       disabled={disabled || buttonLoading}
-      className={size!='md' ? className : "btn-md"}
+      className={`${size !== 'md' ? className : `btn-md ${className}`}`}
       data-testid={dataTestid}
       aria-label={ariaLabel}
     >
