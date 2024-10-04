@@ -13,7 +13,7 @@ interface DropdownItem {
 
 interface CustomButtonProps {
   variant: string;
-  size?: "sm" | "lg" ;
+  size?: "sm" | "md" | "lg" ;
   label: string;
   onClick?: () => void;
   isDropdown?: boolean;
@@ -75,11 +75,12 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       >
         <Button
           variant={variant}
-          size={size}
+          size={size!='md' ? size : undefined}
           disabled={disabled}
           ref={buttonRef}
           data-testid={dataTestid}
           aria-label={ariaLabel}
+          className={`${size !== 'md' ? className : `btn-md ${className}`}`}
         >
           {label}
         </Button>
@@ -113,10 +114,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   return (
     <Button
       variant={variant}
-      size={size}
+      size={size!='md' ? size : undefined}
       onClick={onClick}
       disabled={disabled || buttonLoading}
-      className={className}
+      className={`${size !== 'md' ? className : `btn-md ${className}`}`}
       data-testid={dataTestid}
       aria-label={ariaLabel}
     >

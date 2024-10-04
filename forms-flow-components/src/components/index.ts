@@ -9,3 +9,4 @@ export * from "./CustomComponents/FormInput";
 export * from "./CustomComponents/FormTextArea";
 export * from "./CustomComponents/Search";
 export * from "./CustomComponents/ProgressBar";
+export * from "./CustomComponents/FormBuilderModal";
