@@ -238,7 +238,7 @@ select option:hover {
 .form-input-box {
   display: flex;
   width: 100%;
-  max-width: 40rem;
+  // max-width: 40rem;
   flex-direction: column;
   justify-content: center;
   .form-control-input{
@@ -299,6 +299,7 @@ select option:hover {
     align-items: center;
   }
   .input-group-text {
+    cursor: pointer;
     position: absolute;
     right: var(--spacer-025);
     top: 50%;
