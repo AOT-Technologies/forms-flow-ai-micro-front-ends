@@ -211,6 +211,7 @@ const Sidebar = React.memo(({ props }) => {
                       : []),
                       { name: "Decision Tables", path: "forms-decision-tables" },
                   ]}
+                  subscribe={props.subscribe}
                 />
               )}
             {showApplications &&
@@ -230,6 +231,7 @@ const Sidebar = React.memo(({ props }) => {
                       ],
                     },
                   ]}
+                  subscribe={props.subscribe}
                 />
               )}
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
@@ -244,6 +246,7 @@ const Sidebar = React.memo(({ props }) => {
                     matchExps: [createURLPathMatchExp("task", baseUrl)],
                   },
                 ]}
+                subscribe={props.subscribe}
               />
             )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
@@ -267,6 +270,7 @@ const Sidebar = React.memo(({ props }) => {
                     ],
                   }
                 ]}
+                subscribe={props.subscribe}
               />
             )}
             {isAdmin && (
@@ -293,6 +297,7 @@ const Sidebar = React.memo(({ props }) => {
                     matchExps: [createURLPathMatchExp("admin/users", baseUrl)],
                   },
                 ]}
+                subscribe={props.subscribe}
               />
             )}
           </Accordion>
