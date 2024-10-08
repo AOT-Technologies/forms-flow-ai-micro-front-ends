@@ -407,123 +407,91 @@
 }
 
 //settingsmodal 
-.settings-modal{
+.settings-modal {
   padding-top: 5rem;
   padding-bottom: 5rem;
   margin: 0 !important;
-}
 
-.section {
-  display: flex;
-  padding: var(--spacer-200) var(--spacer-250) !important;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--spacer-150);
-  align-self: stretch;
-}
-
-.modal-hr {
-  border-bottom: 1px solid var(--ff-gray-000);
-}
-
-
-
-
-.url-input {
-  display: flex;
-  align-items: center;
-  align-self: stretch;
-  border-radius: var(--radius-0100);
-  border: 1px solid var(--ff-base-600, #253DF4);
-}
-
-.settings-modal .list-group {
-  border: 1px solid var(--ff-base-600, #253DF4);
-  border-radius: var(--radius-0100);
-}
-
-.settings-modal .list-group-item {
-  border: none;
-}
-
-
-
-
-
-
-
-.field-label {
-  font-size: var(--font-size-xs);
-}
-
-
-.input-drop {
-  position: absolute;
-  z-index: 100;
-  overflow: auto;
-  scrollbar-width: none;
-  border-radius: var(--radius-0100);
-
-  border-bottom: 1px solid var(--base-base-600, #253DF4);
-
-}
-
-
-.input-with-pills {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center;
-  padding: var(--spacer-050) var(--spacer-100);
-  border: 1px solid var(--ff-base-600, #253DF4) !important;
-  border-radius: var(--radius-0100) !important;
-  position: relative;
-  grid-row-gap: 5px !important;
-  row-gap: 5px !important;
-  grid-column-gap: 5px !important;
-  column-gap: 5px !important;
-
-  .role-input {
-    border: none;
-    flex-grow: 1;
-    padding: var(--spacer-025);
-    outline: none;
+  .section {
+      display: flex;
+      padding: var(--spacer-200) var(--spacer-250) !important;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacer-150);
+      align-self: stretch;
   }
 
+  .modal-hr {
+      border-bottom: 1px solid var(--ff-gray-000);
+  }
+  .url-input {
+      display: flex;
+      align-items: center;
+      align-self: stretch;
+      border-radius: var(--radius-0100);
+      border: 1px solid var(--ff-base-600, #253DF4);
+  }
 
-}
+  .list-group {
+      border: 1px solid var(--ff-base-600, #253DF4);
+      border-radius: var(--radius-0100);
 
+      .list-group-item {
+          border: none;
+      }
+  }
 
+  .field-label {
+      font-size: var(--font-size-xs);
+  }
 
-.url-non-edit {
-  border: none !important;
-  border-radius: var(--radius-0100) !important;
-  border-right: none;
-  color: var(--ff-gray-400, #949B9E) !important;
-  background: none !important;
-  overflow: hidden;
-}
+  .input-drop {
+      position: absolute;
+      z-index: 100;
+      overflow: auto;
+      scrollbar-width: none;
+      border-radius: var(--radius-0100);
+      border-bottom: 1px solid var(--base-base-600, #253DF4);
+  }
 
-.url-edit {
-  border: none !important;
-}
+  .input-with-pills {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      align-items: center;
+      padding: var(--spacer-050) var(--spacer-100);
+      border: 1px solid var(--ff-base-600, #253DF4) !important;
+      border-radius: var(--radius-0100) !important;
+      position: relative;
+      grid-row-gap: 5px !important;
+      row-gap: 5px !important;
+      grid-column-gap: 5px !important;
+      column-gap: 5px !important;
 
+      .role-input {
+          border: none;
+          flex-grow: 1;
+          padding: var(--spacer-025);
+          outline: none;
+      }
+  }
 
-.url-copy {
-  justify-content: center;
-  background: none !important;
-  border: none !important;
-}
+  .url-non-edit {
+      border: none !important;
+      border-radius: var(--radius-0100) !important;
+      border-right: none;
+      color: var(--ff-gray-400, #949B9E) !important;
+      background: none !important;
+      overflow: hidden;
+  }
 
-.text-area {
-  display: flex;
-  padding: var(--spacer-050) var(--spacer-100);
-  justify-content: center;
-  align-items: center;
-  align-self: stretch;
-  border-radius: var(--radius-0100) !important;
-  border: 1px solid var(--ff-base-600, #253DF4) !important;
-  overflow: auto;
-  scrollbar-width: none;
-  resize: none;
+  .url-edit {
+      border: none !important;
+  }
+
+  .url-copy {
+      justify-content: center;
+      background: none !important;
+      border: none !important;
+  }
 }
 
