@@ -200,7 +200,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 var(--spacer-100);
+  padding: var(--spacer-050) 0;
 }
 
 .multitenancy-logo {
@@ -209,8 +209,8 @@
 }
 
 .multitenancy-app-name {
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-sm);
   color: var(--ff-gray-800);
 }
 

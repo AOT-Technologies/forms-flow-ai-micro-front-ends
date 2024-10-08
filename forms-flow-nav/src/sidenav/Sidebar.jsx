@@ -218,7 +218,7 @@ const Sidebar = React.memo(({ props }) => {
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
-                  eventKey="3"
+                  eventKey="1"
                   optionsCount="1"
                   mainMenu="Submit"
                   subMenu={[
@@ -236,7 +236,7 @@ const Sidebar = React.memo(({ props }) => {
               )}
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
-                eventKey="4"
+                eventKey="2"
                 optionsCount="1"
                 mainMenu="Review"
                 subMenu={[
@@ -251,7 +251,7 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
-                eventKey="5"
+                eventKey="3"
                 optionsCount="2"
                 mainMenu="Analyze"
                 subMenu={[
@@ -275,7 +275,7 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {isAdmin && (
               <MenuComponent
-                eventKey="6"
+                eventKey="4"
                 optionsCount="3"
                 mainMenu="Manage"
                 subMenu={[
