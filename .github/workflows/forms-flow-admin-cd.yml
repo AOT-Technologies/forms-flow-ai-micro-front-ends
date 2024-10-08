@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - release/*
+      - backup/develop-23-9-2024
     paths:
       - "forms-flow-admin/**"
       - "VERSION"
