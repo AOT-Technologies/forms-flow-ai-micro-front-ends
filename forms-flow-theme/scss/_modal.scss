@@ -319,10 +319,6 @@
   .bpmn-container {
     height: 52vh;
     overflow: auto;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
 
   .select-temp-btn {
