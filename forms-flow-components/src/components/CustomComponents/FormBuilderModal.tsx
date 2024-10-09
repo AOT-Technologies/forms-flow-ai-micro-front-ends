@@ -4,6 +4,7 @@ import { CustomButton } from "./Button";
 import { FormTextArea } from "./FormTextArea";
 import { CloseIcon } from "../SvgIcons/index";
 import { FormInput } from "./FormInput";
+import { useTranslation } from "react-i18next";
 
 interface BuildFormModalProps {
   showBuildForm: boolean;
@@ -62,6 +63,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     placeholderForForm,
     placeholderForDescription,
   }) => {
+    const { t } = useTranslation();
     const [name, setName] = useState<string>(""); // State for form name
     const [formDescription, setFormDescription] = useState<string>(description || ""); // State for form description
 
@@ -94,7 +96,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               type="text"
               placeholder={placeholderForForm}
               className={`form-input ${nameError ? "input-error" : ""}`}
-              aria-label="Name of the form"
+              aria-label={t("Name of the form")}
               data-testid={nameInputDataTestid}
               onBlur={nameValidationOnBlur}
               onChange={(event) => {
@@ -112,13 +114,13 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <FormTextArea
               placeholder={placeholderForDescription}
               className="form-input"
-              aria-label="Description of the new form"
+              aria-label={t("Description of the new form")}
               data-testid={descriptionDataTestid}
               value={formDescription} // Bind description state
               onChange={(event) => {
                 setFormDescription(event.target.value); // Set the description state
               }}
-              maxRows={3}
+              minRows={5}
             />
           </Modal.Body>
           <Modal.Footer className="d-flex justify-content-start">

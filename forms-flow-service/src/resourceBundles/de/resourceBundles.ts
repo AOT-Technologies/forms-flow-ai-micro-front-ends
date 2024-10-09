@@ -1207,5 +1207,11 @@ export const RESOURCE_BUNDLES_DE = {
   "Please provide your tenant name to sign in": "Bitte geben Sie Ihren Mandantenname zum Anmelden ein",
   "Tenant not found":"Mandant nicht gefunden",
   "Access Roles": "Zugriffsrollen",
-
+  "Description of the new form": "Beschreibung des neuen Formulars",
+  "Name of the form": "Formularname",
+  "Duplicate": "Duplikat",
+  "New Form Name": "Neuer Formularname",
+  "New Form Description": "Neue Formularbeschreibung",
+  "Save and Edit form": "Formular speichern und bearbeiten",
+  "Build New Form": "Neues Formular erstellen",
 }
