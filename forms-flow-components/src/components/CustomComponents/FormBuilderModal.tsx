@@ -1,9 +1,10 @@
-import React, { useRef, useEffect } from "react";
+import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { FormTextArea } from "./FormTextArea";
 import { CloseIcon } from "../SvgIcons/index";
 import { FormInput } from "./FormInput";
+import { useTranslation } from "react-i18next";
 
 interface BuildFormModalProps {
   showBuildForm: boolean;
@@ -12,11 +13,11 @@ interface BuildFormModalProps {
     field: string,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  primaryBtnAction?: () => void;
+  primaryBtnAction?: (name: string, description: string) => void; // Now expects name and description
   secondaryBtnAction?: () => void;
-  setFormDescription?: (value: string) => void;
   setNameError?: (value: string) => void;
   nameError?: string;
+  description?: string;
   formSubmitted?: boolean;
   modalHeader?: string;
   nameLabel?: string;
@@ -42,8 +43,8 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     handleChange,
     primaryBtnAction,
     secondaryBtnAction = onClose, // Default to onClose if not provided
-    setFormDescription,
     setNameError,
+    description,
     nameError,
     formSubmitted,
     modalHeader,
@@ -62,6 +63,17 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     placeholderForForm,
     placeholderForDescription,
   }) => {
+    const { t } = useTranslation();
+    const [name, setName] = useState<string>(""); // State for form name
+    const [formDescription, setFormDescription] = useState<string>(description || ""); // State for form description
+
+    const handlePrimaryAction = () => {
+      // Pass name and description to primaryBtnAction
+      if (primaryBtnAction) {
+        primaryBtnAction(name, formDescription);
+      }
+    };
+
     return (
       <>
         <Modal
@@ -79,16 +91,17 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
           </Modal.Header>
           <Modal.Body className="p-5">
             <label className="form-label">{nameLabel}</label>
-            <span className="valiation-astrisk">*</span>
+            <span className="validation-astrisk">*</span>
             <FormInput
               type="text"
               placeholder={placeholderForForm}
               className={`form-input ${nameError ? "input-error" : ""}`}
-              aria-label="Name of the form"
+              aria-label={t("Name of the form")}
               data-testid={nameInputDataTestid}
               onBlur={nameValidationOnBlur}
               onChange={(event) => {
                 setNameError("");
+                setName(event.target.value); // Set the name state
                 handleChange("title", event);
               }}
               required
@@ -98,24 +111,26 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             )}
 
             <label className="form-label">{descriptionLabel}</label>
-
             <FormTextArea
-              onChange={(e) => setFormDescription(e.target.value)}
               placeholder={placeholderForDescription}
               className="form-input"
-              aria-label="Description of the new form"
+              aria-label={t("Description of the new form")}
               data-testid={descriptionDataTestid}
-              maxRows={1}
+              value={formDescription} // Bind description state
+              onChange={(event) => {
+                setFormDescription(event.target.value); // Set the description state
+              }}
+              minRows={5}
             />
           </Modal.Body>
           <Modal.Footer className="d-flex justify-content-start">
             <CustomButton
               variant={nameError ? "dark" : "primary"}
               size="md"
-              disabled={!!nameError || formSubmitted}
+              disabled={!!nameError || formSubmitted || !name || !formDescription} // Disable if errors or fields are empty
               label={primaryBtnLabel}
               buttonLoading={!nameError && formSubmitted ? true : false}
-              onClick={primaryBtnAction}
+              onClick={handlePrimaryAction} // Use the new handler
               dataTestid={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
             />

@@ -1204,4 +1204,11 @@ export const RESOURCE_BUNDLES_PT ={
   "Please provide your tenant name to sign in": "Por favor, forneça o nome do seu inquilino para entrar",
   "Tenant not found":"Inquilino não encontrado",
   "Access Roles": "Funções de Acesso",
+  "Description of the new form": "Descrição do novo formulário",
+  "Name of the form": "Nome do formulário",
+  "Duplicate": "Duplicar",
+  "New Form Name": "Novo nome do formulário",
+  "New Form Description": "Nova descrição do formulário",
+  "Save and Edit form": "Salvar e Editar formulário",
+  "Build New Form": "Criar novo formulário",
 };

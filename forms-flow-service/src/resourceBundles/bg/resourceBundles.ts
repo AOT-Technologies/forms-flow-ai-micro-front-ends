@@ -1202,4 +1202,11 @@ export const RESOURCE_BUNDLES_BG = {
   "Please provide your tenant name to sign in": "Моля, предоставете името на вашата аренда, за да влезете",
   "Tenant not found":"Наемателят не е намерен",
   "Access Roles": "Роли за достъп",
+  "Description of the new form": "Описание на новата форма",
+  "Name of the form": "Име на формуляра",
+  "Duplicate": "Дублирай",
+  "New Form Name": "Ново име на формуляра",
+  "New Form Description": "Ново описание на формуляра",
+  "Save and Edit form": "Запазване и редактиране на формуляра",
+  "Build New Form": "Създай нов формуляр",
 }

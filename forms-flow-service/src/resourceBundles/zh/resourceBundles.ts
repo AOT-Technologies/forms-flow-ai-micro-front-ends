@@ -1191,4 +1191,11 @@ export const RESOURCE_BUNDLES_ZH = {
   "Please provide your tenant name to sign in": "请提供您的租户名称以登录",
   "Tenant not found":"未找到租户",
   "Access Roles": "访问角色",
+  "Description of the new form": "新表单的描述",
+  "Name of the form": "表单名称",
+  "Duplicate": "复制",
+  "New Form Name": "新表单名称",
+  "New Form Description": "新表单描述",
+  "Save and Edit form": "保存并编辑表单",
+  "Build New Form": "创建新表单"
 }

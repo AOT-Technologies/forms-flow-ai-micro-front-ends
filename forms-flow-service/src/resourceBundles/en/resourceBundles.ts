@@ -710,4 +710,11 @@ export const RESOURCE_BUNDLES_EN ={
   "Please provide your tenant name to sign in": "Please provide your tenant name to sign in",
   "Tenant not found":"Tenant not found",
   "Access Roles" :"Access Roles",
+  "Description of the new form": "Description of the new form",
+    "Name of the form": "Name of the form",
+    "Duplicate": "Duplicate",
+    "New Form Name": "New Form Name",
+    "New Form Description": "New Form Description",
+    "Save and Edit form": "Save and Edit form",
+    "Build New Form": "Build New Form"
 }
