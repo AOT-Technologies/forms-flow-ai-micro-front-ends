@@ -223,7 +223,6 @@
   .form-template-list {
     overflow-y: scroll;
     -ms-overflow-style: none;
-    scrollbar-width: none;
     max-height: 75vh;
     height: 74vh
   }
@@ -307,7 +306,6 @@
   .form-container {
     overflow-y: scroll;
     -ms-overflow-style: none;
-    scrollbar-width: none;
     max-height: 25rem;
     height: 52vh;
   }
@@ -441,7 +439,6 @@
       position: absolute;
       z-index: 100;
       overflow: auto;
-      scrollbar-width: none;
       border-radius: var(--radius-0100);
       border-bottom: 1px solid var(--base-base-600, #253DF4);
   }
