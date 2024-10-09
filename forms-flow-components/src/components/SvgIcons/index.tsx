@@ -30,10 +30,10 @@ export const HistoryIcon = ({ color = baseColor, ...props }) => (
     fill={color}
     {...props}
   >
-    <g clip-path="url(#clip0_1459_2724)">
+    <g clipPath="url(#clip0_1459_2724)">
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M8 3.49996C6.91935 3.50038 5.86793 3.85089 5.00321 4.499C4.13848 5.14711 3.50701 6.05793 3.20336 7.09504C2.89972 8.13215 2.94025 9.23972 3.31889 10.2519C3.69752 11.264 4.39388 12.1262 5.30366 12.7094C6.21344 13.2926 7.28768 13.5653 8.36546 13.4867C9.44325 13.4082 10.4666 12.9825 11.2822 12.2736C12.0977 11.5646 12.6617 10.6105 12.8895 9.55416C13.1174 8.49781 12.9968 7.39607 12.546 6.41396C12.4969 6.29456 12.4959 6.1608 12.5432 6.04069C12.5906 5.92057 12.6825 5.82341 12.7998 5.76953C12.9171 5.71565 13.0507 5.70924 13.1727 5.75163C13.2946 5.79402 13.3954 5.88193 13.454 5.99696C13.995 7.17555 14.1396 8.49769 13.8661 9.76535C13.5926 11.033 12.9157 12.1779 11.9369 13.0286C10.9581 13.8793 9.73004 14.39 8.43664 14.4841C7.14325 14.5783 5.85416 14.2509 4.76247 13.5509C3.67078 12.8509 2.83526 11.8161 2.38106 10.6014C1.92686 9.38673 1.87843 8.05759 2.24303 6.81308C2.60763 5.56856 3.36563 4.47568 4.40348 3.69812C5.44134 2.92056 6.70318 2.50018 8 2.49996V3.49996Z"
         fill={color}
       />
@@ -110,15 +110,15 @@ export const PreviewIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M15.1846 4.31689L4.81556 14.6859"
       stroke="#253DF4"
-      stroke-width="2"
-      stroke-linecap="round"
+      strokeWidth="2"
+      strokeLinecap="round"
     />
     <path
       d="M14.3867 13.0894L15.1843 4.31557L6.41055 5.11319"
       stroke="#253DF4"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -134,9 +134,9 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M3.09012 5.95238C4.22399 3.0458 6.93103 1 10.0901 1C13.2492 1 15.9562 3.0458 17.0901 5.95238M17.0901 12.0476C15.9562 14.9542 13.2492 17 10.0901 17C6.93103 17 4.22399 14.9542 3.09012 12.0476M13.683 11.9777L17.7603 10.7539L18.9841 14.8312M6.58723 5.78665L2.59452 7.36523L1.01593 3.37252"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -152,16 +152,16 @@ export const AddIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M8 1V15"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M1 8L15 8"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -177,8 +177,8 @@ export const DuplicateIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M5.5 1.5H13.5C14.0523 1.5 14.5 1.94772 14.5 2.5V12.5"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
+      strokeWidth="2"
+      strokeLinecap="round"
     />
     <path
       d="M2.5 6.5H9.5V4.5H2.5V6.5ZM9.5 6.5V15.5H11.5V6.5H9.5ZM9.5 15.5H2.5V17.5H9.5V15.5ZM2.5 15.5V6.5H0.5V15.5H2.5ZM2.5 15.5H2.5H0.5C0.5 16.6046 1.39543 17.5 2.5 17.5V15.5ZM9.5 15.5V17.5C10.6046 17.5 11.5 16.6046 11.5 15.5H9.5ZM9.5 6.5H11.5C11.5 5.39543 10.6046 4.5 9.5 4.5V6.5ZM2.5 4.5C1.39543 4.5 0.5 5.39543 0.5 6.5H2.5V6.5V4.5Z"
@@ -202,10 +202,10 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M7 5L7 11"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
+      strokeWidth="2"
+      strokeLinecap="round"
     />
-    <path d="M4 8H10" stroke={color} stroke-width="2" stroke-linecap="round" />
+    <path d="M4 8H10" stroke={color} strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
@@ -296,9 +296,9 @@ export const ExportIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M5 1V12.7895M5 12.7895L1 9.42105M5 12.7895L9 9.42105M1 17H9"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -314,9 +314,9 @@ export const ImportIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M5 17L5 5.21053M5 5.21053L9 8.57895M5 5.21053L1 8.57895M9 1L1 0.999999"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -329,7 +329,7 @@ export const IButton = ({ color = grayColor, ...props }) => (
     viewBox="0 0 12 13"
     fill={color}
   >
-    <g clip-path="url(#clip0_4691_5740)">
+    <g clipPath="url(#clip0_4691_5740)">
       <path
         d="M6 11.75C4.60761 11.75 3.27226 11.1969 2.28769 10.2123C1.30312 9.22774 0.75 7.89239 0.75 6.5C0.75 5.10761 1.30312 3.77226 2.28769 2.78769C3.27226 1.80312 4.60761 1.25 6 1.25C7.39239 1.25 8.72774 1.80312 9.71231 2.78769C10.6969 3.77226 11.25 5.10761 11.25 6.5C11.25 7.89239 10.6969 9.22774 9.71231 10.2123C8.72774 11.1969 7.39239 11.75 6 11.75ZM6 12.5C7.5913 12.5 9.11742 11.8679 10.2426 10.7426C11.3679 9.61742 12 8.0913 12 6.5C12 4.9087 11.3679 3.38258 10.2426 2.25736C9.11742 1.13214 7.5913 0.5 6 0.5C4.4087 0.5 2.88258 1.13214 1.75736 2.25736C0.632141 3.38258 0 4.9087 0 6.5C0 8.0913 0.632141 9.61742 1.75736 10.7426C2.88258 11.8679 4.4087 12.5 6 12.5Z"
         fill="#303436"
@@ -361,12 +361,12 @@ export const DownArrowIcon = ({ color = grayColor, ...props }) => (
     fill={ color}
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M1.64599 4.64604C1.69244 4.59948 1.74761 4.56253 1.80836 4.53733C1.86911 4.51212 1.93423 4.49915 1.99999 4.49915C2.06576 4.49915 2.13088 4.51212 2.19163 4.53733C2.25237 4.56253 2.30755 4.59948 2.35399 4.64604L7.99999 10.293L13.646 4.64604C13.6925 4.59955 13.7477 4.56267 13.8084 4.53752C13.8691 4.51236 13.9342 4.49941 14 4.49941C14.0657 4.49941 14.1308 4.51236 14.1916 4.53752C14.2523 4.56267 14.3075 4.59955 14.354 4.64604C14.4005 4.69253 14.4374 4.74772 14.4625 4.80846C14.4877 4.86919 14.5006 4.9343 14.5006 5.00004C14.5006 5.06578 14.4877 5.13088 14.4625 5.19162C14.4374 5.25236 14.4005 5.30755 14.354 5.35404L8.35399 11.354C8.30755 11.4006 8.25237 11.4375 8.19163 11.4628C8.13088 11.488 8.06576 11.5009 7.99999 11.5009C7.93423 11.5009 7.86911 11.488 7.80836 11.4628C7.74761 11.4375 7.69244 11.4006 7.64599 11.354L1.64599 5.35404C1.59943 5.30759 1.56249 5.25242 1.53728 5.19167C1.51207 5.13093 1.4991 5.06581 1.4991 5.00004C1.4991 4.93427 1.51207 4.86915 1.53728 4.80841C1.56249 4.74766 1.59943 4.69248 1.64599 4.64604Z"
       fill="#000000"
       stroke="#000000"
-      stroke-width="2"
+      strokeWidth="2"
     />
   </svg>
 );
@@ -382,9 +382,9 @@ export const PencilIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M6.53858 3.58705L15.0242 12.0727L16.5 16.5L12.0727 15.0242L3.58705 6.53858M6.53858 3.58705L5.06281 2.11128C4.24777 1.29624 2.92633 1.29624 2.11128 2.11128C1.29624 2.92633 1.29624 4.24777 2.11128 5.06281L3.58705 6.53858M6.53858 3.58705L3.58705 6.53858"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -400,16 +400,16 @@ export const CurlyBracketsIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M6 1.97852H5C4.44772 1.97852 4 2.42623 4 2.97852V6.52468C4 6.86428 3.82764 7.18068 3.54231 7.36485L1 9.00586L3.5547 10.709C3.8329 10.8945 4 11.2067 4 11.541V14.9785C4 15.5308 4.44772 15.9785 5 15.9785H6"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M10 16.0215L11 16.0215C11.5523 16.0215 12 15.5738 12 15.0215L12 11.4753C12 11.1357 12.1724 10.8193 12.4577 10.6351L15 8.99414L12.4453 7.29101C12.1671 7.10554 12 6.79331 12 6.45896L12 3.02148C12 2.4692 11.5523 2.02148 11 2.02148L10 2.02148"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -462,8 +462,8 @@ export const BackToPrevIcon = ({ color = baseColor, onClick, ...props }) => (
     onClick={onClick}
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M29.9998 16.5C29.9998 16.2348 29.8945 15.9805 29.7069 15.7929C29.5194 15.6054 29.2651 15.5 28.9998 15.5H5.41383L11.7078 9.20804C11.8008 9.11507 11.8746 9.00469 11.9249 8.88321C11.9752 8.76173 12.0011 8.63153 12.0011 8.50004C12.0011 8.36855 11.9752 8.23835 11.9249 8.11688C11.8746 7.9954 11.8008 7.88502 11.7078 7.79204C11.6149 7.69907 11.5045 7.62531 11.383 7.575C11.2615 7.52468 11.1313 7.49878 10.9998 7.49878C10.8683 7.49878 10.7381 7.52468 10.6167 7.575C10.4952 7.62531 10.3848 7.69907 10.2918 7.79204L2.29183 15.792C2.19871 15.8849 2.12482 15.9953 2.07441 16.1168C2.024 16.2383 1.99805 16.3685 1.99805 16.5C1.99805 16.6316 2.024 16.7618 2.07441 16.8833C2.12482 17.0048 2.19871 17.1152 2.29183 17.208L10.2918 25.208C10.3848 25.301 10.4952 25.3748 10.6167 25.4251C10.7381 25.4754 10.8683 25.5013 10.9998 25.5013C11.1313 25.5013 11.2615 25.4754 11.383 25.4251C11.5045 25.3748 11.6149 25.301 11.7078 25.208C11.8008 25.1151 11.8746 25.0047 11.9249 24.8832C11.9752 24.7617 12.0011 24.6315 12.0011 24.5C12.0011 24.3686 11.9752 24.2384 11.9249 24.1169C11.8746 23.9954 11.8008 23.885 11.7078 23.792L5.41383 17.5H28.9998C29.2651 17.5 29.5194 17.3947 29.7069 17.2071C29.8945 17.0196 29.9998 16.7653 29.9998 16.5Z"
       fill="white"
     />

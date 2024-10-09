@@ -192,14 +192,6 @@ body {
   min-height: 100vh !important;
   font-family: var(--primary-font) !important;
   overflow: hidden;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
-}
-
-body::-webkit-scrollbar {
-  display: none !important;
-  /* Hide scrollbar for Chrome, Safari, and Opera */
 }
 
 .info-background {

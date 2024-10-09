@@ -219,16 +219,15 @@
     width: 100% !important;
     background: var(--ff-gray-000, #F2F2F3);
   }
-
-  .form-template-list {
-    overflow-y: scroll;
-    -ms-overflow-style: none;
-    max-height: 75vh;
-    height: 74vh
-  }
-
-  .choose-template-header {
-    display: flex;
+  
+.form-template-list{
+  overflow-y: scroll; 
+  -ms-overflow-style: none; 
+  max-height: 75vh;
+  height: 74vh
+}
+  .choose-template-header{
+    display: flex;  
     padding: var(--spacer-200) 6.5rem var(--spacer-200) var(--spacer-250);
     align-items: center;
     gap: var(--spacer-200);
