@@ -1,15 +1,13 @@
-
-
 @media (min-width: 1400px) {
-    .container {
-      // max-width: 1320px;
-      max-width: none !important; // temporarly added to have container fluidic behavior for large screens also
-    }
-} 
+  .container {
+    // max-width: 1320px;
+    max-width: none !important; // temporarly added to have container fluidic behavior for large screens also
+  }
+}
 
-// $container-max-widths: (
-//   xxl: 1320px
-// );
+::-webkit-scrollbar {
+  display: none;
+}
 
 .padding-left-60 {
   margin-left: 60px;

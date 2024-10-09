@@ -222,7 +222,6 @@
 .form-template-list{
   overflow-y: scroll; 
   -ms-overflow-style: none; 
-  scrollbar-width: none;
   max-height: 75vh;
   height: 74vh
 }
@@ -294,19 +293,12 @@
   .form-container{
     overflow-y: scroll; 
     -ms-overflow-style: none; 
-    scrollbar-width: none;
     max-height: 25rem; 
     height: 52vh; 
-    &::-webkit-scrollbar {
-      display: none; 
-    }
   }
   .bpmn-container{
     height: 52vh;
      overflow: auto;
-     &::-webkit-scrollbar {
-       display: none;
-     }
  }
   .select-temp-btn{
     display: flex;

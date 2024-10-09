@@ -3,12 +3,7 @@
   max-height: calc(100vh - 6.8rem);
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-width: none !important;
   border-radius: 1.5rem !important;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 .custom-tables {
