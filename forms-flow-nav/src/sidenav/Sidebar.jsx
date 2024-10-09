@@ -35,8 +35,6 @@ import MenuComponent from "./MenuComponent";
 import { ApplicationLogo } from "@formsflow/components";
 
 const Sidebar = React.memo(({ props }) => {
-  const [tenantLogo, setTenantLogo] = React.useState("");
-  const [tenantName, setTenantName] = React.useState("");
   const [userDetail, setUserDetail] = React.useState({});
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [tenant, setTenant] = React.useState({});
@@ -45,12 +43,7 @@ const Sidebar = React.memo(({ props }) => {
   const history = useHistory();
   const tenantKey = tenant?.tenantId;
   const { t } = useTranslation();
-
-  // const [activeLink, setActiveLink] = useState("");
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
-  // const defaultLogoPath =
-  //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
-  //   "/logo.svg";
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE));
   const isCreateSubmissions = userRoles?.includes("create_submissions");
@@ -93,13 +86,13 @@ const Sidebar = React.memo(({ props }) => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
     });
-
-    props.subscribe("FF_PUBLIC", () => {
-      if (MULTITENANCY_ENABLED) {
-        setApplicationTitle(APPLICATION_NAME);
-        setTenantLogo(defaultLogoPath);
-      }
-    });
+ 
+    // props.subscribe("FF_PUBLIC", () => {
+    //   if (MULTITENANCY_ENABLED) {
+    //     setApplicationTitle(APPLICATION_NAME);
+    //     setTenantLogo(defaultLogoPath);
+    //   }
+    // });
 
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
@@ -133,14 +126,6 @@ const Sidebar = React.memo(({ props }) => {
     }
   }, [isAuthenticated]);
 
-  React.useEffect(() => {
-    const data = JSON.parse(StorageService.get("TENANT_DATA"));
-    if (MULTITENANCY_ENABLED && data?.details) {
-      setTenantName(data?.details?.applicationTitle);
-      const logo = data?.details?.customLogo?.logo;
-      setTenantLogo(logo);
-    }
-  }, [tenant]);
 
   const logout = () => {
     history.push(baseUrl);
@@ -151,12 +136,6 @@ const Sidebar = React.memo(({ props }) => {
     <>
       <div className="sidenav">
         <div className="logo-container">
-          {/* <img
-            className=""
-            src={Appname}
-            alt="applicationName"
-            data-testid="app-logo"
-          /> */}
           <ApplicationLogo data-testid="application-logo" />
         </div>
         <div className="options-container" data-testid="options-container">
