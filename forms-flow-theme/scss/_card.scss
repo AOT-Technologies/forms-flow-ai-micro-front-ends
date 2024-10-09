@@ -25,6 +25,8 @@
   
   .flow-builder {
     height: calc(100vh - 18rem) !important;
+    overflow: auto;
+    scrollbar-width: none;
   }
   
   .form-builder {
