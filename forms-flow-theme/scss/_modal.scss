@@ -310,10 +310,6 @@
     scrollbar-width: none;
     max-height: 25rem;
     height: 52vh;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
 
   .bpmn-container {
