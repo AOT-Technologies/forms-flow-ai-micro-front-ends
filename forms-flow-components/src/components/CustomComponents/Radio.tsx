@@ -18,7 +18,7 @@ export const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
   ariaLabel = "",
 }) => {
   return (
-    <Form className="custom-radio-button mb-3"  aria-label={ariaLabel}>
+    <Form className="custom-radio-button"  aria-label={ariaLabel}>
       {items.map((option, index) => (
         <Form.Check
           inline
