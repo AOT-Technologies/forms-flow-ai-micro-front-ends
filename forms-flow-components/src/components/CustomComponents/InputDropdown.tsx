@@ -5,26 +5,32 @@ import { FormInput } from './FormInput';
 import { CloseIcon , ChevronIcon } from "../SvgIcons/index";
 
 
-  
+interface DropdownItem {
+    label: string;
+    onClick:()=>void;
+  }
 interface InputDropdownProps {
-  dropDownItems: string[];
+  Options: DropdownItem[];
   firstItemLabel: string;
   dropdownLabel: string;
   placeholder?: string;
   isAllowInput: boolean;
+  required?: boolean;
+  value?:string;
 }
 
-export  const InputDropdown: React.FC<InputDropdownProps> = ({
-  dropDownItems=[],
+export const InputDropdown: React.FC<InputDropdownProps> = ({
+  Options= [],
   firstItemLabel,
   dropdownLabel,
   placeholder = '',
   isAllowInput,
+  required = false
 }) => {
-  const [selectedItem, setSelectedItem] = useState<string | undefined>(undefined);
+  const [selectedItem, setSelectedItem] = useState<DropdownItem | undefined>(undefined);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>(selectedItem || '');
-  const [filteredItems, setFilteredItems] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState<string>(selectedItem?.label || '');
+  const [filteredItems, setFilteredItems] = useState<DropdownItem[]>([]);
   const [textBoxInput, setTextBoxInput] = useState<boolean>(false);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -50,16 +56,19 @@ export  const InputDropdown: React.FC<InputDropdownProps> = ({
     const value = e.target.value;
     setInputValue(value);
 
-    const filtered = dropDownItems.filter((item) =>
-      item.toLowerCase().includes(value.toLowerCase())
+    const filtered = Options.filter((item) =>
+      item.label.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredItems(filtered);
   };
 
-  const handleSelect = (item: string) => {
+  const handleSelect = (item: DropdownItem) => {
     setSelectedItem(item);
-    setInputValue(item);
+    setInputValue(item.label);
     setIsDropdownOpen(false);
+    if (item.onClick) {
+        item.onClick(); 
+      }
   };
 
   const onFirstItemClick = () => {
@@ -100,6 +109,7 @@ export  const InputDropdown: React.FC<InputDropdownProps> = ({
             className={`${isDropdownOpen ? 'border-input collapsed' : ''}`}
             onIconClick={toggleDropdown}
             label={dropdownLabel}
+            required ={ required ? true :false}
           />
         </InputGroup>
       )}
@@ -115,14 +125,14 @@ export  const InputDropdown: React.FC<InputDropdownProps> = ({
               {firstItemLabel}
             </ListGroup.Item>
           )}
-          {(filteredItems.length > 0 ? filteredItems : dropDownItems).map((item, index) => (
+          {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
             <ListGroup.Item
               key={index}
               onClick={() => handleSelect(item)}
-              data-testid={`list-${item}-item`}
-              aria-label={`list-${item}-item`}
+              data-testid={`list-${item.label}-item`}
+              aria-label={`list-${item.label}-item`}
             >
-              {item}
+              {item.label}
             </ListGroup.Item>
           ))}
         </ListGroup>
