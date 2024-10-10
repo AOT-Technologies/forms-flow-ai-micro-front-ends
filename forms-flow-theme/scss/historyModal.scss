@@ -1,0 +1,43 @@
+.modal-70w {
+    width: 70% !important;
+    max-width: 70% !important;
+    margin: 1.5rem auto !important;
+    
+    .history-modal-body{
+        padding: 2rem 2.5rem;
+    }
+    .major-version-box {
+        padding: 0.688rem var(--spacer-100);
+        border-radius: var(--radius-0150);
+        border: 2px solid var(--ff-primary);  
+        margin-bottom: 1rem;
+        display: flex;
+      }
+      
+      .minor-version-box {
+        // height: 62px;
+        padding: 0.688rem var(--spacer-100);
+        border-radius: var(--radius-0150);
+        border: 2px solid var(--ff-gray-100);    
+        margin-bottom: 1rem;
+        display: flex;
+      }
+      .bold-headings{
+        color: var(--ff-gray-800, #303436) !important;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-xl);
+    }
+    .normal-text{
+        color: var(--ff-gray-800, #303436) !important;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-sm);
+    }
+    .custom-offset-2rem {
+        margin-left: 2rem;
+      }
+}
+
+  
+
+  
+  
