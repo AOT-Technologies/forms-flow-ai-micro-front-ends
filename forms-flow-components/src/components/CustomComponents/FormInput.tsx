@@ -19,6 +19,7 @@ interface FormInputProps {
   icon?: React.ReactNode;
   id?: string;
   onIconClick?: () => void;
+  onClick?: () => void;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -38,7 +39,8 @@ export const FormInput: React.FC<FormInputProps> = ({
   required = false,
   icon,
   id,
-  onIconClick
+  onIconClick,
+  onClick
 }) => {
 
   const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
@@ -66,10 +68,11 @@ export const FormInput: React.FC<FormInputProps> = ({
             required={required}
             className={inputClassNames}
             onKeyDown={(e) => (e.keyCode === 13 && onIconClick())}
+            onClick={onClick}
           />
           {icon && (
             <InputGroup.Text
-             id="basic-addon1" 
+             id="input-icon" 
              onClick={onIconClick}
              className={disabled ? 'disabled-icon' : ''}>
               {icon}
