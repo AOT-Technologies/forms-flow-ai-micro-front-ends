@@ -129,8 +129,8 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
             <ListGroup.Item
               key={index}
               onClick={() => handleSelect(item)}
-              data-testid={`list-${item.label}-item`}
-              aria-label={`list-${item.label}-item`}
+              data-testid={`list-${index}-item`}
+              aria-label={`list-${index}-item`}
             >
               {item.label}
             </ListGroup.Item>
