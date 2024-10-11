@@ -27,11 +27,10 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   placeholder = '',
   isAllowInput,
   required = false,
-  selectedOption // Use the new selectedOption prop
+  selectedOption 
 }) => {
-  const [selectedItem, setSelectedItem] = useState<DropdownItem | undefined>(); // Initialize with selectedOption
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>(selectedOption || ''); // Initialize inputValue with selectedOption's label
+  const [inputValue, setInputValue] = useState<string>(selectedOption || ''); 
   const [filteredItems, setFilteredItems] = useState<DropdownItem[]>([]);
   const [textBoxInput, setTextBoxInput] = useState<boolean>(false);
 
@@ -72,7 +71,6 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   };
 
   const handleSelect = (item: DropdownItem) => {
-      setSelectedItem(item);
       setInputValue(item.label);
       setIsDropdownOpen(false);
       if (item.onClick) {
@@ -83,7 +81,6 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const onFirstItemClick = () => {
       setTextBoxInput(true);
       setInputValue('');
-      setSelectedItem(undefined);
       setIsDropdownOpen(false);
   };
 
@@ -139,7 +136,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                           key={index}
                           onClick={() => handleSelect(item)}
                           data-testid={`list-${index}-item`}
-                          aria-label={`list-${index}-item`}
+                          aria-label={`list-${item.label}-item`}
                       >
                           {item.label}
                       </ListGroup.Item>
@@ -149,4 +146,5 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
       </div>
   );
 };
+
 
