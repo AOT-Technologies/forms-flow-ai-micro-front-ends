@@ -54,7 +54,7 @@ $vadiation-astrisk-color: var(--ff-base-600, blue);
   position: relative; 
   
   .border-input{  
-    border-radius:var(--spacer-100) var(--spacer-100) 0px 0px !important;
+    border-radius:var(--radius-0100) var(--radius-0100) 0px 0px !important;
   }
 
   .input-group-text svg {
@@ -71,34 +71,34 @@ $vadiation-astrisk-color: var(--ff-base-600, blue);
     right: 0;
     z-index: 100; 
     display: flex;
-    padding: 8px 0px;
+    padding: var(--spacer-050) 0px;
     flex-direction: column;
     align-self: stretch;
     border: 1px solid var(--ff-base-600, #253DF4); 
     border-top: none;
-    border-radius: 0px 0px var(--rem-100, 16px) var(--rem-100, 16px);
+    border-radius: 0px 0px var(--radius-0100, 16px) var(--radius-0100, 16px);
     max-height: 12.5rem;
     overflow-y: scroll;
     background-color: var(--ff-white);
-  &::-webkit-scrollbar{
-    display: none;
-  }
   
   .list-group-item{
     &.list-first-item-btn{
-      font-weight: bolder;
-      cursor: pointer;
+      color: var(--ff-base-600, #253DF4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-xl);
+      line-height: var(--text-line-height); 
+      text-transform: capitalize; 
     }
     display: flex;
-    padding: 8px var(--rem-100, 16px);
+    padding: var(--spacer-050) var(--spacer-100, 16px);
     align-items: center;
     gap: 8px;
     cursor: pointer;
     border: none;
     color: var(--ff-base-600, #253DF4);
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 120%; 
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-sm);
+    line-height: var(--text-line-height); 
     &:hover{
       background: var(--ff-gray-000, #F2F2F3);
     }
