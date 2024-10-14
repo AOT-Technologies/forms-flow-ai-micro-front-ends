@@ -299,6 +299,7 @@ select option:hover {
     align-items: center;
   }
   .input-group-text {
+    cursor: pointer;
     position: absolute;
     right: var(--spacer-025);
     top: 50%;
@@ -321,9 +322,6 @@ select option:hover {
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
-    position: absolute; 
-    top: 100%; 
-    left: 0;
   }
 }
 
