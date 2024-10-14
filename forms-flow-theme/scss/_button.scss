@@ -151,9 +151,9 @@
       border: 0.0625rem solid var(--ff-primary, #253DF4) !important;
     }
     &.btn:disabled{
-      background-color: $gray-100 !important;
+      background-color: var(--ff-gray-300) !important;
       color: var(--ff-white) !important;
-      border-color: $gray-100 !important;
+      border-color: var(--ff-gray-300)!important;
     }
 
     &+.dropdown-toggle+.dropdown-menu {

@@ -18,6 +18,8 @@ interface InputDropdownProps {
   required?: boolean;
   value?: string;
   selectedOption?: string; 
+  feedback?: string;
+  setNewInput? : (value: string) => void;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -27,7 +29,9 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   placeholder = '',
   isAllowInput,
   required = false,
-  selectedOption 
+  selectedOption ,
+  feedback,
+  setNewInput
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(selectedOption || ''); 
@@ -54,16 +58,15 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   }, [dropdownRef]);
 
   useEffect(() => {
-      
       if (selectedOption) {
-          setInputValue(selectedOption);
+        setInputValue(selectedOption);
       }
   }, [selectedOption]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputDropdownChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setInputValue(value);
-
+      
       const filtered = Options.filter((item) =>
           item.label.toLowerCase().includes(value.toLowerCase())
       );
@@ -89,18 +92,22 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
       setInputValue('');
       setIsDropdownOpen(true);
   };
-
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>)=>{
+    setNewInput(e.target.value);
+    setInputValue(e.target.value);
+  }
   return (
       <div ref={dropdownRef} className="input-dropdown">
           {textBoxInput ? (
               <InputGroup>
                   <FormInput
                       value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
+                      onChange={handleInputChange}
                       aria-label="category input"
                       icon={<CloseIcon onClick={handleClose} color='#253DF4' data-testid="close-input" aria-label="Close input "/>} 
                       className="input-with-close"
                       label={dropdownLabel}
+                      feedback={feedback}
                   />
               </InputGroup>
           ) : (
@@ -108,7 +115,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                   <FormInput
                       placeholder={placeholder}
                       value={inputValue}
-                      onChange={handleInputChange}
+                      onChange={handleInputDropdownChange}
                       onClick={toggleDropdown}
                       aria-label="Dropdown input"
                       icon={<ChevronIcon data-testid="dropdown-input" aria-label="dropdown input"/>}
