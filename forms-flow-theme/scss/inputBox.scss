@@ -83,10 +83,7 @@ $vadiation-astrisk-color: var(--ff-base-600, blue);
   
   .list-group-item{
     &.list-first-item-btn{
-      color: var(--ff-base-600, #253DF4);
-      font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl);
-      line-height: var(--text-line-height); 
       text-transform: capitalize; 
     }
     display: flex;
