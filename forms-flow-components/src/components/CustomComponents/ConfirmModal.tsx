@@ -54,7 +54,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
               <CloseIcon onClick={onClose} />
           </div>
         </Modal.Header>
-        <Modal.Body className="p-5">
+        <Modal.Body className="build-modal-body">
           <div
             className="d-flex flex-column"
             id="confirm-modal-message"
