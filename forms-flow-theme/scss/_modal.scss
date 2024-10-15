@@ -375,6 +375,7 @@
 .custom-action-flex {
   gap: var(--spacer-100);
   display: flex;
+  flex-wrap: wrap;
 }
 
 .custom-action-model-body {
@@ -483,3 +484,46 @@
   }
 }
 
+//Save template modal
+
+.save-template-modal{
+  .modal-content{
+     background: var(--ff-white, #FFF);
+  }
+  
+  .save-template-header{
+    display: flex;
+    padding: var(--spacer-200) 6.5rem var(--spacer-200, 32px) 2.5rem;
+    align-items: center;
+    gap: var(--spacer-200);
+    align-self: stretch;
+  }
+  .save-template-body{
+    display: flex;
+    padding: var(--spacer-200) 2.5rem;
+    flex-direction: column;
+    align-self: stretch;
+    border-top: 1px solid var(--ff-gray-000, #F2F2F3);
+  }
+  .save-template-footer{
+    display: flex;
+    padding: var(--spacer-200) 2.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    border-top: 1px solid var(--ff-gray-000, #F2F2F3);
+    float: left;
+  }
+  .btn-container{    
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-100);
+    align-self: stretch;
+  }
+  .input-container{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-100);
+    align-self: stretch;
+  }
+}
