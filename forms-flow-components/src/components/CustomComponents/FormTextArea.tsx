@@ -72,7 +72,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     ? 'icon-center'
     : iconBottom
     ? 'icon-bottom'
-    : 'icon-center';
+    : 'icon-top';
     
     return (
         <div className="form-input-box">
