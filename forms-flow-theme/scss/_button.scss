@@ -2,12 +2,13 @@
 
 .btn-light {
   background-color: $gray-100 !important;
+
+  &:hover {
+    border: 0.0625rem solid var(--ff-gray-400) !important;
+    background-color: var(--ff-gray-300) !important;
+  }
 }
 
-.btn-light:hover {
-  border: 0.0625rem solid var(--ff-gray-400) !important;
-  background-color: var(--ff-gray-300) !important;
-}
 
 .form-select {
   color: $dark !important;
@@ -19,11 +20,12 @@
 
 .btn-link {
   text-decoration: none !important;
+
+  &:hover {
+    text-decoration: underline !important;
+  }
 }
 
-.btn-link:hover {
-  text-decoration: underline !important;
-}
 
 .btn.signature-pad-refresh {
   z-index: 99 !important;
@@ -49,7 +51,7 @@
 }
 
 .button_font {
-  font-size: 0.875rem;
+  font-size: var(--font-size-xs);
   font-weight: bold;
 }
 
@@ -57,34 +59,34 @@
   color: var(--ff-danger);
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
+
+  &:hover {
+    color: var(--ff-danger); // This line can be omitted since the color remains the same.
+  }
+
+  &:active {
+    transform: scale(1.3);
+    color: transparent;
+  }
 }
 
-.delete_button:hover {
-  color: var(--ff-danger);
-}
+// .upload+.uploadButton {
+//   height: 2.375rem;
+// }
 
-.delete_button:active {
-  transform: scale(1.3);
-  color: transparent;
-}
-
-.upload+.uploadButton {
-  height: 2.375rem;
-}
-
-.uploadButton {
-  background-color: var(--ff-primary-500);
-  border: none;
-  border-radius: 0.1875rem;
-  color: var(--ff-white);
-  cursor: pointer;
-  display: inline-block;
-  height: 1.875rem;
-  margin-right: 0.9375rem;
-  width: auto;
-  padding: 0 1.25rem;
-  box-sizing: content-box;
-}
+// .uploadButton {
+//   background-color: var(--ff-primary-500);
+//   border: none;
+//   border-radius: 0.1875rem;
+//   color: var(--ff-white);
+//   cursor: pointer;
+//   display: inline-block;
+//   height: 1.875rem;
+//   margin-right: 0.9375rem;
+//   width: auto;
+//   padding: 0 1.25rem;
+//   box-sizing: content-box;
+// }
 
 .bg-primary {
   background-color: var(--ff-primary) !important;
@@ -97,10 +99,10 @@
 
 .btn-link {
   text-decoration: none;
-}
 
-.btn-link:hover {
-  text-decoration: underline;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .btn-wizard-nav-submit,
@@ -126,6 +128,40 @@
   outline: 0.1875rem solid var(--ff-primary-200) !important;
 }
 
+// Mixin for button states
+@mixin button-states($bg-color, $border-color, $text-color) {
+  background-color: $bg-color !important;
+  border-color: $border-color !important;
+  color: $text-color !important;
+
+  &:focus {
+    outline: none !important;
+  }
+
+  &:hover {
+    background-color: darken($bg-color, 10%) !important;
+    box-shadow: var(--shadow-md) !important;
+  }
+
+  &:active {
+    background-color: var(--ff-white) !important;
+    border: 0.0625rem solid $border-color !important;
+  }
+
+  &:disabled {
+    background-color: var(--ff-gray-300) !important;
+    color: var(--ff-white) !important;
+    border-color: var(--ff-gray-300) !important;
+  }
+}
+
+.default-button-styles{
+  font-size: var(--font-size-sm) !important;
+  padding: var(--spacer-075) var(--spacer-150) !important;
+  font-weight: var(--font-weight-xl) !important;
+  border-radius: var(--radius-0125) !important;
+}
+
 .btn {  
   border: none !important;
   display: inline-flex !important;
@@ -133,22 +169,25 @@
   align-items: center !important;
   line-height: 120% !important;
 
-  &.btn-primary {
-    background-color: var(--base-base-60, #253DF4) !important;
-    border: 1px solid var(--base-base-60, #253DF4) !important;
+  // Default styles for buttons for all sizes . Useful for formio buttons
+  @extend .default-button-styles;
+
+  &.btn-primary, &.btn-success {
+    background-color: var(--ff-base-600) !important;
+    border: 1px solid var(--ff-base-600) !important;
     &:focus {
       outline: none !important;
     }
 
     &:hover {
-      background-color: var(--base-base-50, #5568F6) !important;
+      background-color: var(--ff-base-500) !important;
       box-shadow: var(--shadow-md) !important;
     }
 
     &:active {
-      background-color: var(--ff-white, #ffffff) !important;
-      color: var(--ff-primary, #253DF4) !important;
-      border: 0.0625rem solid var(--ff-primary, #253DF4) !important;
+      background-color: var(--ff-white) !important;
+      color: var(--ff-primary) !important;
+      border: 0.0625rem solid var(--ff-primary) !important;
     }
     &.btn:disabled{
       background-color: var(--ff-gray-300) !important;
@@ -157,31 +196,31 @@
     }
 
     &+.dropdown-toggle+.dropdown-menu {
-      border-color: var(--ff-primary, #253DF4) !important;
+      border-color: var(--ff-primary) !important;
 
       .dropdown-item {
-        color: var(--ff-primary, #253DF4) !important;
+        color: var(--ff-primary) !important;
 
         &:hover {
           background-color: transparent !important;
-          color: var(--ff-primary, #253DF4) !important;
+          color: var(--ff-primary) !important;
         }
       }
     }
   }
 
   &.btn-text {
-    color: var(--ff-primary, #253DF4) !important;
+    color: var(--ff-primary) !important;
   }
 
   &.btn-secondary {
     border: none;
-    color: var(--ff-primary, #253DF4) !important;
-    background: var(--base-base-10, #E7E9FE) !important;
+    color: var(--ff-primary) !important;
+    background: var(--ff-base-100) !important;
     line-height: var(--text-line-height) !important;
 
     &:hover {
-      background-color: var(--base-base-20, #CFD4FC) !important;
+      background-color: var(--ff-base-200) !important;
       font-weight: var(--font-weight-xl) !important;
     }
 
@@ -191,29 +230,29 @@
   }
 
   &.btn-dark {
-    background-color: var(--ff-gray-700, #494E50) !important;
-    border: 1px solid var(--ff-gray-700, #494E50) !important;
+    background-color: var(--ff-gray-700) !important;
+    border: 1px solid var(--ff-gray-700) !important;
     
     &:hover {
-      background-color: var(--ff-gray-600, #61686B) !important;
+      background-color: var(--ff-gray-600) !important;
       box-shadow: var(--shadow-md) !important;
     }
 
     &:active {
-      background-color: var(--ff-white, #ffffff) !important;
-      color: var(--ff-gray-800, #303436) !important;
-      border: 0.0625rem solid var(--ff-gray-700, #494E50) !important;
+      background-color: var(--ff-white) !important;
+      color: var(--ff-gray-800) !important;
+      border: 0.0625rem solid var(--ff-gray-700) !important;
     }
 
     &+.dropdown-toggle+.dropdown-menu {
-      border: 0.0625rem solid var(--ff-gray-700, #494E50) !important;
+      border: 0.0625rem solid var(--ff-gray-700) !important;
 
       .dropdown-item {
-        color: var(--ff-gray-800, #303436) !important;
+        color: var(--ff-gray-800) !important;
 
         &:hover {
           background-color: transparent !important;
-          color: var(--ff-gray-800, #303436) !important;
+          color: var(--ff-gray-800) !important;
         }
       }
     }
@@ -221,7 +260,7 @@
 
   &.btn-sm {
     font-size: var(--font-size-xs) !important;
-    padding: 0.5rem var(--spacer-100) !important;
+    padding: var(--spacer-050) var(--spacer-100) !important;
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-0100) !important;
 
@@ -229,16 +268,16 @@
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-xl) !important;
       line-height: var(--text-line-height);
-      padding: 0.5rem var(--spacer-100) !important;
+      padding: var(--spacer-050) var(--spacer-100) !important;
     }
     .dotted-spinner {
-      font-size: 0.75rem;
+      font-size: var(--font-size-xs);
     }
   }
 
   &.btn-md {
     font-size: var(--font-size-sm) !important;
-    padding: 0.75rem var(--spacer-150) !important;
+    padding: var(--spacer-075) var(--spacer-150) !important;
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-0125) !important;
 
@@ -246,16 +285,16 @@
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
       line-height: var(--text-line-height);
-      padding: 0.75rem var(--spacer-150) !important;
+      padding: var(--spacer-075) var(--spacer-150) !important;
     }
     .dotted-spinner {
-      font-size: 1rem;
+      font-size: var(--font-size-sm);
     }
   }
 
   &.btn-lg {
     font-size: var(--font-size-sm) !important;
-    padding: 1rem var(--spacer-200, 2rem) !important;
+    padding: var(--spacer-100) var(--spacer-200) !important;
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-0150) !important;
 
@@ -263,10 +302,10 @@
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
       line-height: var(--text-line-height);
-      padding: 1rem var(--spacer-200, 2rem) !important;
+      padding: var(--spacer-100) var(--spacer-200) !important;
     }
     .dotted-spinner {
-      font-size: 1.25rem;
+      font-size: var(--font-size-md);
     }
   }
 }
@@ -277,13 +316,13 @@
   }
 
   .btn-primary.dropdown-toggle {
-    background-color: var(--base-base-50, #5568F6) !important;
-    border-color: var(--base-base-50, #5568F6) !important;
+    background-color: var(--ff-base-500) !important;
+    border-color: var(--ff-base-500) !important;
   }
 
   .btn-dark.dropdown-toggle {
-    background-color: var(--ff-gray-600, #61686B) !important;
-    border-color: var(--ff-gray-600, #61686B) !important;
+    background-color: var(--ff-gray-600) !important;
+    border-color: var(--ff-gray-600) !important;
   }
 
   .dropdown-menu {
@@ -410,48 +449,92 @@
   align-items: center;
   color: var(--ff-base-600) !important;
 
-  .dropdown-toggle {
-    color: var(--ff-base-600) !important;
+  // .dropdown-toggle {
+  //   color: var(--ff-base-600) !important;
+  // }
+  // Variables for reused values
+  $btn-color: var(--ff-base-600);
+  $btn-hover-color: var(--ff-black);
+  $btn-bg: var(--ff-white);
+  $btn-hover-bg: var(--ff-gray-000);
+  $btn-size: 3.2275rem;
+  $btn-border-radius: 50%;
+  $btn-font-weight: bold;
+
+  // Dropdown Button Styles
+  .dropdown {
+    .btn {
+      color: $btn-color !important;
+      border: none !important;
+      background-color: $btn-bg !important;
+      outline: transparent !important;
+      border-radius: $btn-border-radius !important;
+      height: auto !important;
+      width: auto !important;
+      min-width: $btn-size !important;
+      min-height: $btn-size !important;
+      margin: 0 !important;
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: $btn-hover-color !important;
+        background-color: $btn-hover-bg !important;
+        font-weight: $btn-font-weight;
+        outline: transparent !important;
+      }
+    }
+
+    .dropdown-toggle {
+      color: var(--ff-base-600) !important;
+      &::after {
+        display: inline-block !important;
+        margin-left: var(--spacer-025) !important;
+        vertical-align: var(--spacer-025) !important;
+        content: none !important;
+        border: 0 transparent !important;
+      }
+    }
   }
 
-  .dropdown .btn {
-    color: var(--ff-base-600) !important;
-    border: none !important;
-    background-color: var(--ff-white) !important;
-    outline: transparent !important;
-    border-radius: 50% !important;
-    height: auto !important;
-    width: auto !important;
-    min-width: 3.2275rem !important;
-    min-height: 3.2275rem !important;
-    margin: 0 !important;
-  }
+  // .dropdown .btn {
+  //   color: var(--ff-base-600) !important;
+  //   border: none !important;
+  //   background-color: var(--ff-white) !important;
+  //   outline: transparent !important;
+  //   border-radius: 50% !important;
+  //   height: auto !important;
+  //   width: auto !important;
+  //   min-width: 3.2275rem !important;
+  //   min-height: 3.2275rem !important;
+  //   margin: 0 !important;
+  // }
 
-  .dropdown .btn:hover {
-    color: var(--ff-black) !important;
-    font-weight: bold;
-    background-color: var(--ff-gray-000) !important;
-    outline: transparent !important;
-  }
+  // .dropdown .btn:hover {
+  //   color: var(--ff-black) !important;
+  //   font-weight: bold;
+  //   background-color: var(--ff-gray-000) !important;
+  //   outline: transparent !important;
+  // }
 
-  .dropdown .btn:active,
-  .dropdown .btn:focus {
-    color: var(--ff-black) !important;
-    background-color: var(--ff-gray-000) !important;
-    font-weight: bold;
-    outline: transparent !important;
-  }
+  // .dropdown .btn:active,
+  // .dropdown .btn:focus {
+  //   color: var(--ff-black) !important;
+  //   background-color: var(--ff-gray-000) !important;
+  //   font-weight: bold;
+  //   outline: transparent !important;
+  // }
 
-  .dropdown-toggle::after {
-    display: inline-block !important;
-    margin-left: var(--spacer-025) !important;
-    vertical-align: var(--spacer-025) !important;
-    content: none !important;
-    border-top: 0 transparent !important;
-    border-right: 0 transparent !important;
-    border-bottom: 0 transparent !important;
-    border-left: 0 transparent !important;
-  }
+  // .dropdown-toggle::after {
+  //   display: inline-block !important;
+  //   margin-left: var(--spacer-025) !important;
+  //   vertical-align: var(--spacer-025) !important;
+  //   content: none !important;
+  //   border-top: 0 transparent !important;
+  //   border-right: 0 transparent !important;
+  //   border-bottom: 0 transparent !important;
+  //   border-left: 0 transparent !important;
+  // }
 }
 
 .button-content {

@@ -46,7 +46,6 @@ export const FormInput: React.FC<FormInputProps> = ({
   const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
 
   return (
-    <div className="form-input-box">
       <Form.Group controlId={id}>
         {label && (
           <Form.Label className='custom-form-control-label'>
@@ -85,7 +84,6 @@ export const FormInput: React.FC<FormInputProps> = ({
           )}
         </InputGroup>
       </Form.Group>
-    </div>
   );
 };
 

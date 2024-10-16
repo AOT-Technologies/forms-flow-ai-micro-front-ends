@@ -15,7 +15,7 @@
       color: var(--ff-gray-800) !important;
       font-size: var(--font-size-lg) !important;
       font-weight: var(--font-weight-xl) !important;
-      line-height: 120% !important;
+      line-height: var(--text-line-height) !important;
     }
   
     .card-body {
@@ -60,7 +60,7 @@
       text-align: center;
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl);
-      line-height: 120%;
+      line-height: var(--text-line-height);
     }
   }
   
@@ -196,7 +196,7 @@
   
   .info-content {
     align-self: stretch;
-    color: var(--ff-gray-800, #303436);
+    color: var(--ff-gray-800);
     font-size: var(--font-size-xs);
     line-height: var(--text-line-height);
   }

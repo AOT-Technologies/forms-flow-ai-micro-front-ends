@@ -79,7 +79,8 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
         <Modal
           show={showBuildForm}
           onHide={onClose}
-          dialogClassName="modal-50w"
+          size="sm"
+          centered={true}
         >
           <Modal.Header>
             <Modal.Title>

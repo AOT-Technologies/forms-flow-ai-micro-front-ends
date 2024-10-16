@@ -61,7 +61,6 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     };
 
     return (
-        <div className="form-input-box">
             <Form.Group controlId={id}>
                 {label && (
                     <Form.Label className="custom-form-control-label">
@@ -102,7 +101,6 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                     )}
                 </InputGroup>
             </Form.Group>
-        </div>
     );
 });
 
