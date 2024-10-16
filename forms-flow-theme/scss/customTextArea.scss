@@ -10,7 +10,7 @@ $form-textArea-focus-outline: 2px solid var(--ff-base-600, #253DF4);
         resize: none; 
         border-radius: $form-textArea-border-radius !important;
         border: 1px solid $form-textArea-border-color !important;
-        font-size: 16px;
+        font-size: var(--font-size-sm);
         -webkit-overflow-scrolling: touch; 
         flex-grow: 1;
         &:active,
@@ -32,13 +32,13 @@ $form-textArea-focus-outline: 2px solid var(--ff-base-600, #253DF4);
     }
     .icon-top{
         align-items: flex-start !important;
-        padding-top: 0.75rem;
+        padding-top: var(--spacer-075);
     }
     .icon-center  {
         align-items: center !important;
     }
     .icon-bottom  {
         align-items: flex-end !important;
-        padding-bottom: 0.75rem;
+        padding-bottom: var(--spacer-075);
     }
 }
