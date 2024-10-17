@@ -24,6 +24,14 @@
   &:hover {
     text-decoration: underline !important;
   }
+
+  &:focus, &.focus {
+    box-shadow: none;
+  }
+
+  &:hover {
+    text-decoration: underline !important;
+  }
 }
 
 
@@ -43,11 +51,6 @@
 .btn-center {
   float: right;
   margin-left: auto;
-}
-
-.btn.btn-link:focus,
-.btn.btn-link.focus {
-  box-shadow: none;
 }
 
 .button_font {
@@ -95,14 +98,6 @@
 .table-primary {
   --bs-table-color: #fff;
   --ff-table-bg: var(--ff-primary) !important;
-}
-
-.btn-link {
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
 }
 
 .btn-wizard-nav-submit,
