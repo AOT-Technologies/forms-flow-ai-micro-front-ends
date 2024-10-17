@@ -1,10 +1,10 @@
-$file-upload-border-color: var(--ff-base-600, blue);
-$file-upload-bg-color: var(--ff-white, #ffffff);
-$upload-text-color: var(--ff-gray-800, #303436);
-$upload-text-description-color: var(--ff-gray-400, #949B9E);
-$upload-status-success-color: var(--ff-base-600, #253DF4);
-$upload-status-progress-color: var(--ff-gray-400, #949B9E);
-$upload-status-error-color: var(--ff-red-000, #ff4242);
+$file-upload-border-color: var(--ff-base-600);
+$file-upload-bg-color: var(--ff-white);
+$upload-text-color: var(--ff-gray-800);
+$upload-text-description-color: var(--ff-gray-400);
+$upload-status-success-color: var(--ff-base-600);
+$upload-status-progress-color: var(--ff-gray-400);
+$upload-status-error-color: var(--ff-red-000);
 
 .file-upload {
   display: flex;
@@ -31,7 +31,7 @@ $upload-status-error-color: var(--ff-red-000, #ff4242);
   text-align: center;
   font-size: 0.875rem;
   font-weight: var(--font-weight-sm);
-  line-height: 120%;
+  line-height: var(--text-line-height);
   padding: var(--spacer-100) 0;
   margin: 0;
 }
@@ -41,7 +41,7 @@ $upload-status-error-color: var(--ff-red-000, #ff4242);
   text-align: center;
   font-size: 0.875rem;
   font-weight: var(--font-weight-sm);
-  line-height: 120%;
+  line-height: var(--text-line-height);
 }
 
 .upload-file-name {
@@ -73,11 +73,11 @@ $upload-status-error-color: var(--ff-red-000, #ff4242);
 
 .upload-form-details {
   overflow: hidden;
-  color: var(--ff-Black, #000);
+  color: var(--ff-Black);
   text-overflow: ellipsis;
   font-size: 0.875rem;
   font-weight: var(--font-weight-sm);
-  line-height: 120%;
+  line-height: var(--text-line-height);
 }
 
 .import-error-note {
@@ -88,7 +88,7 @@ $upload-status-error-color: var(--ff-red-000, #ff4242);
   gap: var(--spacer-050);
   align-self: stretch;
   border-radius: var(--spacer-100);
-  background-color: var(--ff-gray-000, #F2F2F3);
+  background-color: var(--ff-gray-000);
 }
 
 .upload-status-success {
@@ -96,7 +96,7 @@ $upload-status-error-color: var(--ff-red-000, #ff4242);
   text-align: right;
   font-size: 0.875rem;
   font-weight: var(--font-weight-sm);
-  line-height: 120%;
+  line-height: var(--text-line-height);
 }
 
 .upload-status-error {
@@ -104,7 +104,7 @@ $upload-status-error-color: var(--ff-red-000, #ff4242);
   text-align: right;
   font-size: 0.875rem;
   font-weight: var(--font-weight-sm);
-  line-height: 120%;
+  line-height: var(--text-line-height);
 }
 
 .upload-status-progress {
@@ -112,7 +112,7 @@ $upload-status-error-color: var(--ff-red-000, #ff4242);
   text-align: right;
   font-size: 0.875rem;
   font-weight: var(--font-weight-sm);
-  line-height: 120%;
+  line-height: var(--text-line-height);
 }
 
 .progress {

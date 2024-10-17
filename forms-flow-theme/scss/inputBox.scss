@@ -1,10 +1,10 @@
-$form-input-border-radius: var(--radius-0150, 24px);
-$form-input-border-color: var(--ff-base-600, #253DF4);
-$form-input-focus-outline: 2px solid var(--ff-base-600, #253DF4);
-$input-error-border-color: var(--ff-red-000, red);
+$form-input-border-radius: var(--radius-0150);
+$form-input-border-color: var(--ff-base-600);
+$form-input-focus-outline: 2px solid var(--ff-base-600);
+$input-error-border-color: var(--ff-red-000);
 $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
-$validation-text-color: var(--ff-red-000, red);
-$vadiation-astrisk-color: var(--ff-base-600, blue);
+$validation-text-color: var(--ff-red-000);
+$validation-astrisk-color: var(--ff-base-600);
 
 .form-input {
   width: 100%;
@@ -14,8 +14,8 @@ $vadiation-astrisk-color: var(--ff-base-600, blue);
   border: 1px solid $form-input-border-color;
   background: var(--ff-white);
   margin-bottom: 10px;
-  padding: 8px;
-  font-size: 16px;
+  padding: var(--spacer-050);
+  font-size: var(--font-size-sm);
   resize: none;
   padding-left: 18px !important;
 
@@ -46,8 +46,8 @@ $vadiation-astrisk-color: var(--ff-base-600, blue);
   color: $validation-text-color !important;
 }
 
-.vadiation-astrisk {
-  color: $vadiation-astrisk-color;
+.validation-astrisk {
+  color: $validation-astrisk-color;
 }
 
 .input-dropdown{
@@ -74,9 +74,9 @@ $vadiation-astrisk-color: var(--ff-base-600, blue);
     padding: var(--spacer-050) 0px;
     flex-direction: column;
     align-self: stretch;
-    border: 1px solid var(--ff-base-600, #253DF4); 
+    border: 1px solid var(--ff-base-600); 
     border-top: none;
-    border-radius: 0px 0px var(--radius-0100, 16px) var(--radius-0100, 16px);
+    border-radius: 0px 0px var(--radius-0100) var(--radius-0100);
     max-height: 12.5rem;
     overflow-y: scroll;
     background-color: var(--ff-white);
@@ -87,17 +87,17 @@ $vadiation-astrisk-color: var(--ff-base-600, blue);
       text-transform: capitalize; 
     }
     display: flex;
-    padding: var(--spacer-050) var(--spacer-100, 16px);
+    padding: var(--spacer-050) var(--spacer-100);
     align-items: center;
-    gap: 8px;
+    gap: var(--spacer-050);
     cursor: pointer;
     border: none;
-    color: var(--ff-base-600, #253DF4);
+    color: var(--ff-base-600);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height); 
     &:hover{
-      background: var(--ff-gray-000, #F2F2F3);
+      background: var(--ff-gray-000);
     }
     &:last-child{
     border-bottom-right-radius: unset;
