@@ -1,6 +1,6 @@
-$form-textArea-border-radius: var(--radius-0150, 24px);
-$form-textArea-border-color: var(--ff-base-600, #253DF4);
-$form-textArea-focus-outline: 2px solid var(--ff-base-600, #253DF4);
+$form-textArea-border-radius: var(--radius-0150);
+$form-textArea-border-color: var(--ff-base-600);
+$form-textArea-focus-outline: 2px solid var(--ff-base-600);
 .custom-textarea {
     overflow-y: auto;
     scrollbar-width: none;
@@ -8,8 +8,8 @@ $form-textArea-focus-outline: 2px solid var(--ff-base-600, #253DF4);
     resize: none; 
     border-radius: $form-textArea-border-radius !important;
     border: 1px solid $form-textArea-border-color;
-    padding: 8px 8px 8px 18px !important;
-    font-size: 16px;
+    padding: var(--spacer-050) var(--spacer-050) var(--spacer-050) 18px !important;
+    font-size: var(--font-size-sm);
     -webkit-overflow-scrolling: touch; 
     &:active,
     &:focus {

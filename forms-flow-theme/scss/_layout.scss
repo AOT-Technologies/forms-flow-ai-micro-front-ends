@@ -22,3 +22,13 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+button,
+a,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+.btn,
+.clickable {
+  cursor: pointer;
+}

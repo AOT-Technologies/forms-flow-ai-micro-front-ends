@@ -2,9 +2,7 @@
   .modal-dialog {
     margin-top: 2.5vh !important;
     margin-bottom: 2.5vh !important;
-    width: 95vw;
     height: 95vh;
-    max-width: 90%;
   }
   .modal-header{
     border-bottom: 1px solid var(--ff-gray-000) !important;
@@ -89,7 +87,7 @@
         .ai-message-box {
           margin-right: var(--spacer-200);
           padding: var(--spacer-200);
-          background: var(--ff-base-100, #e7e9fe) !important;
+          background: var(--ff-base-100) !important;
           border-radius: var(--radius-0100);
           margin-top: var(--spacer-050);
         }
@@ -105,7 +103,7 @@
         .ai-response-loading {
           border-radius: var(--radius-0100);
           padding: var(--spacer-200);
-          background: var(--ff-base-100, #e7e9fe) !important;
+          background: var(--ff-base-100) !important;
           max-width: 0.938rem;
 
           .loading-dots {
@@ -116,7 +114,7 @@
             div {
               width: 0.125rem;
               height: 0.125rem;
-              background-color: var(--ff-gray-800, #303436) !important;
+              background-color: var(--ff-gray-800) !important;
               border-radius: 50%;
               margin: 0 2px;
               animation: loading 1s infinite;
@@ -170,7 +168,7 @@
     
 
     .button-container {
-      background-color: var(--ff-white, #ffffff) !important;
+      background-color: var(--ff-white) !important;
       padding: var(--spacer-200) var(--spacer-100);
       border-bottom-right-radius: var(--radius-0150) !important;
       border-left: 1px solid var(--ff-gray-000) !important;;

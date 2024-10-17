@@ -45,3 +45,10 @@
     z-index: 1;
   }
   
+  
+  @mixin text-modal-content {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-sm);
+    line-height: var(--text-line-height);
+    color: var(--ff-gray-800);
+  }

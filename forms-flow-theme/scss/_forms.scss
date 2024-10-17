@@ -116,7 +116,7 @@ select option:hover {
 .form-control-with-icon {
   position: relative;
     .search-box-input {
-      border-radius:  16px !important; //TBD: To be changed to rem
+      border-radius:  var(--radius-0100) !important; //TBD: To be changed to rem
       border: 1px solid var(--ff-primary);
       background:  var(--ff-white);
       color: var(--ff-gray-400);
@@ -235,32 +235,23 @@ select option:hover {
 }
 //FormInput styles
 
-.form-input-box {
-  display: flex;
-  width: 100%;
-  // max-width: 40rem;
-  flex-direction: column;
-  justify-content: center;
-  .form-control-input{
+.form-control{
+  color: var(--ff-gray-800) !important;
+    border-radius: var(--radius-0100) !important;
+    border: 1px solid var(--ff-primary) !important;
+    outline: none;
+
     display: flex;
     padding: var(--spacer-050) var(--spacer-100);
     justify-content: center;
     align-items: center;
     align-self: stretch;
-  }
-
-  
-  input {
-    border-radius: var(--radius-0100) !important;
-    border: 1px solid var(--ff-primary, #253DF4) !important;
-    outline: none;
-    
     &:focus {
-      outline: 1px solid var(--ff-primary, #253DF4);
+      outline: 1px solid var(--ff-primary);
     }
   
     &::placeholder {
-      color: var(--ff-gray-400, #949B9E);
+      color: var(--ff-gray-400);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);
@@ -280,10 +271,17 @@ select option:hover {
       border-color: var(--ff-gray-400) !important;
       background-color: var(--ff-gray-000);
     }
-  }
   
+}
+
+.form-group {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+
   .required-icon{
-    color: var(--ff-primary, #253DF4) !important;
+    color: var(--ff-primary) !important;
   }
   
  .with-icon {
@@ -306,12 +304,12 @@ select option:hover {
     transform: translateY(-50%);
     border: none;
     background: none;
-    color: var(--ff-primary, #253DF4);
+    color: var(--ff-primary);
     z-index: 10;
   }
 
   .custom-form-control-label{
-    color: var(--ff-gray-800, #303436);
+    color: var(--ff-gray-800);
     font-size: var(--font-size-xs) ; //14px
     font-weight: var(--font-weight-sm); 
     line-height: var(--text-line-height); 
