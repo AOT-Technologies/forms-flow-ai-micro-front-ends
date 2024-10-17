@@ -72,6 +72,7 @@ const Sidebar = React.memo(({ props }) => {
   const { pathname } = location;
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
+  const [form, setForm] = React.useState({});
 
   const getInitials = (name) => {
     if (!name) return "";
