@@ -20,15 +20,15 @@
     transform: translateY(-20%) !important;
     opacity: 0;
   }
-  // for modals with size="sm" . 37.2% given to make it 750px as per figma size
+  // for modals with size="sm" . 50% given to make it 750px as per figma size
   &.modal-sm{
-    width: 37.2% !important;
-    max-width: 37.2% !important;
+    width: 50% !important;
+    max-width: 50% !important;
   }
-  // for modals with size="lg" . 71.032% given to make it 750px as per figma size
+  // for modals with size="lg" . 95% given to make it 1432px as per figma size
   &.modal-lg{
-    width: 71.032% !important;
-    max-width: 71.032% !important;
+    width: 95% !important;
+    max-width: 95% !important;
   }
 
 
