@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
@@ -6,7 +7,7 @@ import { CloseIcon } from "../SvgIcons/index";
 interface HistoryModalProps {
   show: boolean;
   onClose: () => void;
-  revertBtnAction: () => void;
+  revertBtnAction: (cloneId: string | null) => void;
   title: string;
   loadMoreBtnAction: () => void;
   revertBtnText: string;
@@ -16,22 +17,40 @@ interface HistoryModalProps {
   loadMoreBtndataTestid?: string;
   loadMoreBtnariaLabel?: string;
   formHistory: FormHistory[];
+  categoryType: string;
 }
 
 interface FormHistory {
   formId: string;
   createdBy: string;
-  createdAt: string;
+  created: string;
   changeLog: {
     cloned_form_id: string;
     new_version: boolean;
-    version: string;
-  }[];
+  };
   majorVersion: number;
   minorVersion: number;
   version: string;
   isMajor: boolean;
+  processType?: string;
 }
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = String(date.getFullYear()).slice(-2); // Last two digits of year
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  // Convert 24-hour format to 12-hour format
+  hours = hours % 12;
+  hours = hours ? hours : 12; // hour '0' should be '12'
+  const formattedHours = String(hours).padStart(2, "0");
+
+  return `${day}-${month}-${year} ${formattedHours}:${minutes}${ampm}`;
+};
 
 export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
   ({
@@ -47,76 +66,110 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     loadMoreBtndataTestid = "loadmore-button",
     loadMoreBtnariaLabel = "Loadmore Button",
     formHistory,
+    categoryType,
   }) => {
-    console.log(formHistory);
-    const renderHistory = () => {
-      return formHistory.map((entry) => {
-        const isMajorVersion = entry.isMajor;
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
+    const [clonedFormId, setClonedFormId] = useState<string | null>(null);
 
-        return (
-          <React.Fragment key={entry.version}>
-            {isMajorVersion && (
-              <div className="major-version-box">
-                <div className="col-md-4 bold-headings d-flex align-items-center">
-                  Version {entry.version}
-                </div>
-                <div className="col-md-2">
-                  <div className="bold-headings">Last Edit On</div>
-                  <div className="normal-text">12/12/2012</div>
-                </div>
-                <div className="col-md-2">
-                  <div className="bold-headings">Last Edit By</div>
-                  <div className="normal-text">{entry.createdBy}</div>
-                </div>
-                <div className="col-md-2">
-                  <div className="bold-headings">Published On</div>
-                  <div className="normal-text">12/12/2012</div>
-                </div>
-                <div className="col-md-2">
-                  <CustomButton
-                    variant="secondary"
-                    size="sm"
-                    label={revertBtnText}
-                    onClick={revertBtnAction}
-                    dataTestid={revertBtndataTestid}
-                    ariaLabel={revertBtnariaLabel}
-                  />
-                </div>
-              </div>
-            )}
-            {!isMajorVersion && (
-              <div className="minor-version-box custom-offset-2rem">
-                <div className="col-md-4 bold-headings d-flex align-items-center">
-                  Version {entry.version}
-                </div>
-                <div className="col-md-2">
-                  <div className="bold-headings">Last Edit On</div>
-                  <div className="normal-text">12/12/2012</div>
-                </div>
-                <div className="col-md-2">
-                  <div className="bold-headings">Last Edit By</div>
-                  <div className="normal-text">{entry.createdBy}</div>
-                </div>
-                <div className="col-md-2">
-                  <div className="bold-headings">Published On</div>
-                  <div className="normal-text">12/12/2012</div>
-                </div>
-                <div className="col-md-2">
-                  <CustomButton
-                    variant="secondary"
-                    size="sm"
-                    label={revertBtnText}
-                    onClick={revertBtnAction}
-                    dataTestid={revertBtndataTestid}
-                    ariaLabel={revertBtnariaLabel}
-                  />
-                </div>
-              </div>
-            )}
-          </React.Fragment>
-        );
-      });
+    const handleRevertClick = (version: string, cloned_form_id: string) => {
+      setSelectedVersion(version);
+      setClonedFormId(cloned_form_id);
+      setShowConfirmModal(true);
+      onClose();
     };
+
+    const handleKeepLayout = () => {
+      setShowConfirmModal(false);
+    };
+
+    const handleReplaceLayout = () => {
+      revertBtnAction(clonedFormId);
+      setShowConfirmModal(false);
+    };
+
+    const renderHistory = () => {
+        return formHistory.map((entry, index) => {
+          const isMajorVersion = entry.isMajor;
+          const version = `${entry.majorVersion}.${entry.minorVersion}`;
+          const cloned_form_id = entry.changeLog.cloned_form_id ; 
+          return (
+            <React.Fragment key={`${entry.version}-${index}`}>
+              {isMajorVersion && (
+                <div className={`${categoryType === "WORKFLOW" ? "workflow-major-grid" : "major-version-grid"}`}>
+                  <div className="bold-headings">
+                   Version {version}
+                  </div>
+                  <div className="last-edit-on">
+                    <div className="bold-headings">Last Edit On</div>
+                    <div className="normal-text">{formatDate(entry.created)}</div>
+                  </div>
+                  <div className="last-edit-by">
+                    <div className="bold-headings">Last Edit By</div>
+                    <div className="normal-text">{entry.createdBy}</div>
+                  </div>
+                  <div className="published-on">
+                    <div className="bold-headings">Published On</div>
+                    <div className="normal-text">{formatDate(entry.created)}</div>
+                  </div>
+                  {categoryType === "WORKFLOW" && (
+                    <div className="type">
+                      <div className="bold-headings">Type</div>
+                      <div className="normal-text">{entry.processType}</div>
+                    </div>
+                  )}
+                  <div className="revert-btn">
+                    <CustomButton
+                      variant="secondary"
+                      size="sm"
+                      label={revertBtnText}
+                      onClick={() => handleRevertClick(version, cloned_form_id)}
+                      dataTestid={revertBtndataTestid}
+                      ariaLabel={revertBtnariaLabel}
+                    />
+                  </div>
+                </div>
+              )}
+              {!isMajorVersion && (
+                <div className={`${categoryType === "WORKFLOW" ? "workflow-minor-grid" : "minor-version-grid"}`}>
+                  <div className="bold-headings">
+                    Version {version}
+                  </div>
+                  <div className="last-edit-on">
+                    <div className="bold-headings">Last Edit On</div>
+                    <div className="normal-text">{formatDate(entry.created)}</div>
+                  </div>
+                  <div className="last-edit-by">
+                    <div className="bold-headings">Last Edit By</div>
+                    <div className="normal-text">{entry.createdBy}</div>
+                  </div>
+                  <div className="published-on">
+                    <div className="bold-headings">Published On</div>
+                    <div className="normal-text">{formatDate(entry.created)}</div>
+                  </div>
+                  {categoryType === "WORKFLOW" && (
+                    <div className="type">
+                      <div className="bold-headings">Type</div>
+                      <div className="normal-text">{entry.processType}</div>
+                    </div>
+                  )}
+                  <div className="revert-btn">
+                    <CustomButton
+                      variant="secondary"
+                      size="sm"
+                      label={revertBtnText}
+                      onClick={() => handleRevertClick(version, cloned_form_id)}
+                      dataTestid={revertBtndataTestid}
+                      ariaLabel={revertBtnariaLabel}
+                    />
+                  </div>
+                </div>
+              )}
+            </React.Fragment>
+          );
+        });
+      };
+      
 
     return (
       <>
@@ -132,24 +185,62 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             <Modal.Title id="confirm-modal-title">
               <b>{title}</b>
             </Modal.Title>
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center ">
               <CloseIcon onClick={onClose} />
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">
-            {renderHistory()}
-            </Modal.Body>
-          <Modal.Footer className="d-flex justify-content-center border-0">
-            <CustomButton
-              variant="secondary"
-              size="sm"
-              label={loadMoreBtnText}
-              onClick={loadMoreBtnAction}
-              dataTestid={loadMoreBtndataTestid}
-              ariaLabel={loadMoreBtnariaLabel}
-            />
-          </Modal.Footer>
+            {/* <div className="timeline"></div> */}
+            <div className="history-content">
+              {renderHistory()}
+              <div className="d-flex justify-content-center mt-4">
+                <CustomButton
+                  variant="secondary"
+                  size="sm"
+                  label={loadMoreBtnText}
+                  onClick={loadMoreBtnAction}
+                  dataTestid={loadMoreBtndataTestid}
+                  ariaLabel={loadMoreBtnariaLabel}
+                />
+              </div>
+            </div>
+          </Modal.Body>
         </Modal>
+
+        {/* Confirmation Modal */}
+        {selectedVersion && (
+          <Modal
+            show={showConfirmModal}
+            onHide={() => setShowConfirmModal(false)}
+            dialogClassName="modal-50w"
+            data-testid="confirm-revert-modal"
+          >
+            <Modal.Header>
+              <Modal.Title>
+                <b>Use Layout from Version {selectedVersion}</b>
+              </Modal.Title>
+              <CloseIcon onClick={() => setShowConfirmModal(false)} />
+            </Modal.Header>
+            <Modal.Body className="">
+              This will copy the layout from Version {selectedVersion}{" "}
+              overwriting your existing layout.
+            </Modal.Body>
+            <Modal.Footer className="">
+              <CustomButton
+                variant="primary"
+                size="md"
+                label="Keep Current Layout"
+                onClick={handleKeepLayout}
+              />
+              <CustomButton
+                variant="secondary"
+                size="md"
+                label="Replace Current Layout"
+                onClick={handleReplaceLayout}
+              />
+            </Modal.Footer>
+          </Modal>
+        )}
       </>
     );
   }

@@ -1,43 +1,123 @@
 .modal-70w {
-    width: 70% !important;
-    max-width: 70% !important;
-    margin: 1.5rem auto !important;
-    
-    .history-modal-body{
-        padding: 2rem 2.5rem;
-    }
-    .major-version-box {
-        padding: 0.688rem var(--spacer-100);
-        border-radius: var(--radius-0150);
-        border: 2px solid var(--ff-primary);  
+  width: 66.2% !important;
+  max-width: 66.2% !important;
+  margin: var(--spacer-150) auto !important;
+
+  .history-modal-body {
+    padding: var(--spacer-200) var(--spacer-250) !important;
+    margin-top: var(--spacer-200);
+    // .timeline {
+    //   position: absolute;
+    //   top: -8px;
+    //   bottom: 0;
+    //   width: 2px;
+    //   background-color: #253df4;
+    //   left: 121px; // Customize timeline color
+
+    //   &::before {
+    //     content: "";
+    //     position: absolute;
+    //     left: -15px; // Adjust to center the larger circle over the line
+    //     top: 0;
+    //     width: 32px;
+    //     height: 32px;
+    //     background-color: #fff; // Background color for the outer circle (transparent effect)
+    //     border: 2px solid #253df4; // Border color of the outer circle
+    //     border-radius: 50%; // Make it circular
+    //     display: flex;
+    //     align-items: center;
+    //     justify-content: center;
+    //     padding: 8px; // Space for the inner circle
+    //   }
+    // }
+    .version-grid {
+        display: grid;
+        gap: 1rem;
+        align-items: center;
         margin-bottom: 1rem;
-        display: flex;
+      
+        .last-edit-on {
+          grid-column: 2;
+        }
+      
+        .last-edit-by {
+          grid-column: 3;
+        }
+      
+        .published-on {
+          grid-column: 4;
+        }
+      
+        .type {
+          grid-column: 5;
+        }
+      
+        .revert-btn {
+          grid-column: 6;
+          justify-self: end; 
+        }
       }
       
-      .minor-version-box {
-        // height: 62px;
+      .major-version-grid {
+       padding: 0.688rem var(--spacer-100);
+       border-radius: var(--radius-0150);
+       border: 2px solid var(--ff-primary);
+        @extend .version-grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 0fr 1fr;
+      }
+      .workflow-major-grid{
         padding: 0.688rem var(--spacer-100);
         border-radius: var(--radius-0150);
-        border: 2px solid var(--ff-gray-100);    
-        margin-bottom: 1rem;
-        display: flex;
+        border: 2px solid var(--ff-primary);
+         @extend .version-grid;
+         grid-template-columns: 2.5fr 1.5fr 1fr 1.5fr 1fr 1.5fr;
       }
-      .bold-headings{
+      
+      .minor-version-grid {
+        padding: 0.688rem var(--spacer-100);
+        border-radius: var(--radius-0150);
+        border: 2px solid var(--ff-gray-100);
+        @extend .version-grid;
+        margin-left: 2rem; 
+        grid-template-columns: 1.75fr 1fr 1fr 1fr 0fr 1fr;
+      }
+      .workflow-minor-grid{
+        padding: 0.688rem var(--spacer-100);
+        border-radius: var(--radius-0150);
+        border: 2px solid var(--ff-gray-100);
+        @extend .version-grid;
+        margin-left: 2rem; 
+        grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr; 
+      }
+      
+      .bold-headings {
         color: var(--ff-gray-800, #303436) !important;
         font-size: var(--font-size-xs);
         font-weight: var(--font-weight-xl);
-    }
-    .normal-text{
+      }
+      
+      .normal-text {
         color: var(--ff-gray-800, #303436) !important;
         font-size: var(--font-size-xs);
         font-weight: var(--font-weight-sm);
-    }
-    .custom-offset-2rem {
-        margin-left: 2rem;
       }
+      
+  }
+
 }
-
-  
-
-  
-  
+.modal-50w {
+  .modal-header {
+    border-bottom: 1px solid var(--ff-gray-000) !important;
+  }
+  .modal-body {
+    padding: var(--spacer-200) var(--spacer-250) !important;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-sm);
+    line-height: var(--text-line-height);
+  }
+  .modal-footer {
+    display: flex;
+    justify-content: flex-start !important;
+    border-top: 1px solid var(--ff-gray-000) !important;
+  }
+}
