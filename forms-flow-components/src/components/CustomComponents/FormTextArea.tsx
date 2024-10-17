@@ -21,6 +21,9 @@ interface FormTextAreaProps {
     minRows?: number;
     onIconClick?: () => void;
     maxRows?: number;
+    iconTop?: boolean;
+    iconCenter?: boolean;
+    iconBottom?: boolean;
 }
 
 export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>(({
@@ -42,6 +45,9 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     minRows = 1,
     onIconClick,
     maxRows = 5,
+    iconTop,
+    iconBottom,
+    iconCenter 
 }, ref) => {
     const internalRef = useRef<HTMLTextAreaElement>(null);
     const combinedRef = (ref || internalRef) as React.RefObject<HTMLTextAreaElement>;
@@ -60,6 +66,14 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
         }
     };
 
+    const iconPositionClass = iconTop
+    ? 'icon-top'
+    : iconCenter
+    ? 'icon-center'
+    : iconBottom
+    ? 'icon-bottom'
+    : 'icon-top';
+    
     return (
             <Form.Group controlId={id}>
                 {label && (
@@ -89,7 +103,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         <InputGroup.Text
                             id="basic-addon1"
                             onClick={onIconClick}
-                            className={disabled ? 'disabled-icon' : ''}
+                            className={`icon-wrapper  ${iconPositionClass} ${disabled ? 'disabled-icon' : ''}`}
                         >
                             {icon}
                         </InputGroup.Text>
