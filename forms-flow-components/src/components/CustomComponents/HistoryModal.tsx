@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
@@ -71,6 +71,9 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
     const [clonedFormId, setClonedFormId] = useState<string | null>(null);
+    const timelineRef = useRef<HTMLDivElement>(null);
+    const loadMoreRef = useRef<HTMLDivElement>(null);
+    const lastEntryRef = useRef<HTMLDivElement>(null);
 
     const handleRevertClick = (version: string, cloned_form_id: string) => {
       setSelectedVersion(version);
@@ -87,89 +90,122 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
       revertBtnAction(clonedFormId);
       setShowConfirmModal(false);
     };
+    const adjustTimelineHeight = () => {
+        const timelineElement = timelineRef.current;
+        const loadMoreElement = loadMoreRef.current;
+        const lastEntryElement = lastEntryRef.current;
+  
+        if (timelineElement && loadMoreElement && lastEntryElement) {
+          const loadMoreHeight = loadMoreElement.offsetHeight;
+          const lastEntryHeight = lastEntryElement.offsetHeight;
+          const newHeight = `calc(100% - ${loadMoreHeight + lastEntryHeight}px)`;
+  
+          timelineElement.style.height = newHeight;
+        }
+      };
+
+      useEffect(() => {
+        adjustTimelineHeight();
+        window.addEventListener("resize", adjustTimelineHeight); 
+  
+        return () => {
+          window.removeEventListener("resize", adjustTimelineHeight);
+        };
+      }, [show]);
 
     const renderHistory = () => {
-        return formHistory.map((entry, index) => {
-          const isMajorVersion = entry.isMajor;
-          const version = `${entry.majorVersion}.${entry.minorVersion}`;
-          const cloned_form_id = entry.changeLog.cloned_form_id ; 
-          return (
-            <React.Fragment key={`${entry.version}-${index}`}>
-              {isMajorVersion && (
-                <div className={`${categoryType === "WORKFLOW" ? "workflow-major-grid" : "major-version-grid"}`}>
-                  <div className="bold-headings">
-                   Version {version}
-                  </div>
-                  <div className="last-edit-on">
-                    <div className="bold-headings">Last Edit On</div>
-                    <div className="normal-text">{formatDate(entry.created)}</div>
-                  </div>
-                  <div className="last-edit-by">
-                    <div className="bold-headings">Last Edit By</div>
-                    <div className="normal-text">{entry.createdBy}</div>
-                  </div>
-                  <div className="published-on">
-                    <div className="bold-headings">Published On</div>
-                    <div className="normal-text">{formatDate(entry.created)}</div>
-                  </div>
-                  {categoryType === "WORKFLOW" && (
-                    <div className="type">
-                      <div className="bold-headings">Type</div>
-                      <div className="normal-text">{entry.processType}</div>
-                    </div>
-                  )}
-                  <div className="revert-btn">
-                    <CustomButton
-                      variant="secondary"
-                      size="sm"
-                      label={revertBtnText}
-                      onClick={() => handleRevertClick(version, cloned_form_id)}
-                      dataTestid={revertBtndataTestid}
-                      ariaLabel={revertBtnariaLabel}
-                    />
-                  </div>
+      return formHistory.map((entry, index) => {
+        const isMajorVersion = entry.isMajor;
+        const version = `${entry.majorVersion}.${entry.minorVersion}`;
+        const cloned_form_id =
+          categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
+        const isLastEntry = index === formHistory.length - 1;
+        return (
+          <React.Fragment key={`${entry.version}-${index}`}>
+            {isMajorVersion && (
+              <div
+              ref={isLastEntry ? lastEntryRef : null}
+                className={`history-entry ${
+                  categoryType === "WORKFLOW"
+                    ? "workflow-major-grid "
+                    : "major-version-grid"
+                }`}
+              >
+                <div className="bold-headings">Version {version}</div>
+                <div className="last-edit-on">
+                  <div className="bold-headings">Last Edit On</div>
+                  <div className="normal-text">{formatDate(entry.created)}</div>
                 </div>
-              )}
-              {!isMajorVersion && (
-                <div className={`${categoryType === "WORKFLOW" ? "workflow-minor-grid" : "minor-version-grid"}`}>
-                  <div className="bold-headings">
-                    Version {version}
-                  </div>
-                  <div className="last-edit-on">
-                    <div className="bold-headings">Last Edit On</div>
-                    <div className="normal-text">{formatDate(entry.created)}</div>
-                  </div>
-                  <div className="last-edit-by">
-                    <div className="bold-headings">Last Edit By</div>
-                    <div className="normal-text">{entry.createdBy}</div>
-                  </div>
-                  <div className="published-on">
-                    <div className="bold-headings">Published On</div>
-                    <div className="normal-text">{formatDate(entry.created)}</div>
-                  </div>
-                  {categoryType === "WORKFLOW" && (
-                    <div className="type">
-                      <div className="bold-headings">Type</div>
-                      <div className="normal-text">{entry.processType}</div>
-                    </div>
-                  )}
-                  <div className="revert-btn">
-                    <CustomButton
-                      variant="secondary"
-                      size="sm"
-                      label={revertBtnText}
-                      onClick={() => handleRevertClick(version, cloned_form_id)}
-                      dataTestid={revertBtndataTestid}
-                      ariaLabel={revertBtnariaLabel}
-                    />
-                  </div>
+                <div className="last-edit-by">
+                  <div className="bold-headings">Last Edit By</div>
+                  <div className="normal-text">{entry.createdBy}</div>
                 </div>
-              )}
-            </React.Fragment>
-          );
-        });
-      };
-      
+                <div className="published-on">
+                  <div className="bold-headings">Published On</div>
+                  <div className="normal-text">{formatDate(entry.created)}</div>
+                </div>
+                {categoryType === "WORKFLOW" && (
+                  <div className="type">
+                    <div className="bold-headings">Type</div>
+                    <div className="normal-text">{entry.processType}</div>
+                  </div>
+                )}
+                <div className="revert-btn">
+                  <CustomButton
+                    variant="secondary"
+                    size="sm"
+                    label={revertBtnText}
+                    onClick={() => handleRevertClick(version, cloned_form_id)}
+                    dataTestid={revertBtndataTestid}
+                    ariaLabel={revertBtnariaLabel}
+                  />
+                </div>
+              </div>
+            )}
+            {!isMajorVersion && (
+              <div
+                ref={isLastEntry ? lastEntryRef : null}
+                className={`history-entry ${
+                  categoryType === "WORKFLOW"
+                    ? "workflow-minor-grid"
+                    : "minor-version-grid"
+                }`}
+              >
+                <div className="bold-headings">Version {version}</div>
+                <div className="last-edit-on">
+                  <div className="bold-headings">Last Edit On</div>
+                  <div className="normal-text">{formatDate(entry.created)}</div>
+                </div>
+                <div className="last-edit-by">
+                  <div className="bold-headings">Last Edit By</div>
+                  <div className="normal-text">{entry.createdBy}</div>
+                </div>
+                <div className="published-on">
+                  <div className="bold-headings">Published On</div>
+                  <div className="normal-text">{formatDate(entry.created)}</div>
+                </div>
+                {categoryType === "WORKFLOW" && (
+                  <div className="type">
+                    <div className="bold-headings">Type</div>
+                    <div className="normal-text">{entry.processType}</div>
+                  </div>
+                )}
+                <div className="revert-btn">
+                  <CustomButton
+                    variant="secondary"
+                    size="sm"
+                    label={revertBtnText}
+                    onClick={() => handleRevertClick(version, cloned_form_id)}
+                    dataTestid={revertBtndataTestid}
+                    ariaLabel={revertBtnariaLabel}
+                  />
+                </div>
+              </div>
+            )}
+          </React.Fragment>
+        );
+      });
+    };
 
     return (
       <>
@@ -190,10 +226,10 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">
-            {/* <div className="timeline"></div> */}
+            <div ref={timelineRef} className="timeline"></div>
             <div className="history-content">
               {renderHistory()}
-              <div className="d-flex justify-content-center mt-4">
+              <div ref={loadMoreRef} className="d-flex justify-content-center mt-4">
                 <CustomButton
                   variant="secondary"
                   size="sm"
