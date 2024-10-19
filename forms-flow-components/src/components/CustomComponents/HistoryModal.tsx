@@ -71,6 +71,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
     const [clonedFormId, setClonedFormId] = useState<string | null>(null);
+    const [hasLoadedMore, setHasLoadedMore] = useState(false);
     const timelineRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
@@ -112,6 +113,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
           window.removeEventListener("resize", adjustTimelineHeight);
         };
       }, [show]);
+
+      const handleLoadMore = () => {
+        loadMoreBtnAction();
+        setHasLoadedMore(true); 
+      };
 
     const renderHistory = () => {
       return formHistory.map((entry, index) => {
@@ -229,16 +235,18 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             <div ref={timelineRef} className="timeline"></div>
             <div className="history-content">
               {renderHistory()}
-              <div ref={loadMoreRef} className="d-flex justify-content-center mt-4">
+              {!hasLoadedMore && (
+              <div className="d-flex justify-content-center mt-4" ref={loadMoreRef}>
                 <CustomButton
                   variant="secondary"
                   size="sm"
                   label={loadMoreBtnText}
-                  onClick={loadMoreBtnAction}
+                  onClick={handleLoadMore}
                   dataTestid={loadMoreBtndataTestid}
                   ariaLabel={loadMoreBtnariaLabel}
                 />
               </div>
+            )}
             </div>
           </Modal.Body>
         </Modal>
