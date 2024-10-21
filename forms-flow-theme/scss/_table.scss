@@ -44,7 +44,7 @@ $status-radius: 50%;
       z-index: $th-z-index-default;
       background-color: inherit;
 
-      &:first-child, 
+      &:first-child,
       &:last-child {
         position: sticky;
         top: 0;
@@ -116,13 +116,13 @@ $status-radius: 50%;
   text-overflow: ellipsis;
   height: 3rem;
   line-height: 1.5rem;
-  color: var(--ff-Black);
+  color: var(--ff-black);
   font-weight: var(--font-weight-sm);
 }
 
 .text-container-expand {
   line-height: 1.5rem;
-  color: var(--ff-Black);
+  color: var(--ff-black);
   font-size: var(--font-size-xs) !important;
   font-weight: var(--font-weight-sm);
 }
