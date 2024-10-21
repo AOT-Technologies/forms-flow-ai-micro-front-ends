@@ -1,23 +1,24 @@
 $form-textArea-border-radius: var(--radius-0150);
 $form-textArea-border-color: var(--ff-base-600);
 $form-textArea-focus-outline: 2px solid var(--ff-base-600);
+
 .custom-textarea {
     overflow-y: auto;
-    scrollbar-width: none;
+    // scrollbar-width: none;
     -ms-overflow-style: none;
-    resize: none; 
+    resize: none;
     border-radius: $form-textArea-border-radius !important;
     border: 1px solid $form-textArea-border-color;
     padding: var(--spacer-050) var(--spacer-050) var(--spacer-050) 18px !important;
     font-size: var(--font-size-sm);
-    -webkit-overflow-scrolling: touch; 
+    -webkit-overflow-scrolling: touch;
+
     &:active,
     &:focus {
         outline: $form-textArea-focus-outline !important;
     }
 
-    &::-webkit-scrollbar {
-        display: none;
-    }
+    // &::-webkit-scrollbar {
+    //     display: none;
+    // }
 }
- 

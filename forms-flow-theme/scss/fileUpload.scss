@@ -1,10 +1,9 @@
-$file-upload-border-color: var(--ff-base-600);
-$file-upload-bg-color: var(--ff-white);
-$upload-text-color: var(--ff-gray-800);
-$upload-text-description-color: var(--ff-gray-400);
-$upload-status-success-color: var(--ff-base-600);
-$upload-status-progress-color: var(--ff-gray-400);
-$upload-status-error-color: var(--ff-red-000);
+$base-600: var(--ff-base-600);
+$ff-white: var(--ff-white);
+$gray-800: var(--ff-gray-800);
+$gray-400: var(--ff-gray-400);
+$ff-red: var(--ff-red-000);
+$font-size-xs: var(--font-size-xs);
 
 .file-upload {
   display: flex;
@@ -12,9 +11,9 @@ $upload-status-error-color: var(--ff-red-000);
   align-items: center;
   width: 100%;
   min-height: 10.125rem;
-  border: 0.09375rem dashed $file-upload-border-color;
+  border: 0.09375rem dashed $base-600;
   border-radius: var(--radius-0100);
-  background-color: $file-upload-bg-color;
+  background-color: $ff-white;
   cursor: pointer;
   text-align: center;
 }
@@ -27,9 +26,9 @@ $upload-status-error-color: var(--ff-red-000);
 }
 
 .upload-text {
-  color: $upload-text-color;
+  color: $gray-800;
   text-align: center;
-  font-size: 0.875rem;
+  font-size: $font-size-xs;
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
   padding: var(--spacer-100) 0;
@@ -37,9 +36,9 @@ $upload-status-error-color: var(--ff-red-000);
 }
 
 .upload-text-description {
-  color: $upload-text-description-color;
+  color: $gray-400;
   text-align: center;
-  font-size: 0.875rem;
+  font-size: $font-size-xs;
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
 }
@@ -73,9 +72,9 @@ $upload-status-error-color: var(--ff-red-000);
 
 .upload-form-details {
   overflow: hidden;
-  color: var(--ff-Black);
+  color: var(--ff-black);
   text-overflow: ellipsis;
-  font-size: 0.875rem;
+  font-size: $font-size-xs;
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
 }
@@ -92,27 +91,15 @@ $upload-status-error-color: var(--ff-red-000);
 }
 
 .upload-status-success {
-  color: $upload-status-success-color;
-  text-align: right;
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
+  @include upload-status-styles($base-600);
 }
 
 .upload-status-error {
-  color: $upload-status-error-color;
-  text-align: right;
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
+  @include upload-status-styles($ff-red);
 }
 
 .upload-status-progress {
-  color: $upload-status-progress-color;
-  text-align: right;
-  font-size: 0.875rem;
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
+  @include upload-status-styles($gray-400);
 }
 
 .progress {
