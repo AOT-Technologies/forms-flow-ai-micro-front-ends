@@ -62,14 +62,14 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
         }
     };
 
-    const iconPositionClass = iconPosition === "top"
-    ? 'icon-top'
-    : iconPosition === "center"
-    ? 'icon-center'
-    : iconPosition === "bottom"
-    ? 'icon-bottom' 
-    : 'icon-top';
+    const getIconPositionClass = (position) => {
+        if (position === "top") return 'icon-top';
+        if (position === "center") return 'icon-center';
+        if (position === "bottom") return 'icon-bottom';
+        return 'icon-top'; 
+    };
     
+    const iconPositionClass = getIconPositionClass(iconPosition);
     return (
             <Form.Group controlId={id}>
                 {label && (

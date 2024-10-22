@@ -42,7 +42,6 @@ export const CustomSearch: FC<CustomSearchProps> = ({
                 {search && (
                     <span
                         className={`d-flex search-box-icon ${searchLoading ? 'loading' : ''}`}
-                        onClick={!searchLoading && handleClearSearch}
                     >
                         {!searchLoading ? (
                             <CloseIcon
@@ -50,7 +49,6 @@ export const CustomSearch: FC<CustomSearchProps> = ({
                                 height={16}
                                 onClick={handleClearSearch}
                                 data-testid="form-search-clear-button"
-
                             />
                         ) : (
                             <div className="search-spinner"></div>
