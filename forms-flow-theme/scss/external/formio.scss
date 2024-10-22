@@ -30,3 +30,12 @@
    .formbuilder .formarea .breadcrumb li .badge-info{
     background-color: $gray-600;
   }
+
+  // Settings button on hovering formio component
+  .component-settings-button {
+    padding: 6px var(--spacer-100) !important;
+    margin: var(--spacer-075) var(--spacer-025) !important;
+    .fa{
+      font-size: var(--font-size-xs) !important;
+    }
+  }

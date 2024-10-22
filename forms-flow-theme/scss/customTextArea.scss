@@ -1,42 +1,40 @@
 $form-textArea-border-radius: var(--radius-0100);
 $form-textArea-border-color: var(--ff-base-600);
 $form-textArea-focus-outline: 2px solid var(--ff-base-600);
-    .custom-textarea {
-        overflow-y: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        resize: none; 
-        border-radius: $form-textArea-border-radius !important;
-        border: 1px solid $form-textArea-border-color !important;
-        font-size: var(--font-size-sm);
-        -webkit-overflow-scrolling: touch; 
-        flex-grow: 1;
-        &:active,
-        &:focus {
-            outline: $form-textArea-focus-outline !important;
-        }
-    
-        &::-webkit-scrollbar {
-            display: none;
-        }
-    }
-    .input-group-text{
-        height: 100%;
-    }
-    .icon-wrapper {
-        display: flex !important;
-        justify-content: center ;
-        
-    }
-    .icon-top{
-        align-items: flex-start !important;
-        padding-top: var(--spacer-075) !important        ;
-    }
-    .icon-center  {
-        align-items: center !important;
-    }
-    .icon-bottom  {
-        align-items: flex-end !important;
-        padding-bottom: var(--spacer-075) !important;
-    }
+.custom-textarea {
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  resize: none;
+  border-radius: $form-textArea-border-radius !important;
+  border: 1px solid $form-textArea-border-color !important;
+  padding: var(--spacer-050) var(--spacer-050) var(--spacer-050) 18px !important;
+  font-size: var(--font-size-sm);
+  -webkit-overflow-scrolling: touch;
+  flex-grow: 1;
+  &:active,
+  &:focus {
+    outline: $form-textArea-focus-outline !important;
+  }
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+.input-group-text {
+  height: 100%;
+}
+.icon-wrapper {
+  display: flex !important;
+  justify-content: center;
+}
+.icon-top {
+  align-items: flex-start !important;
+  padding-top: var(--spacer-075) !important        ;
+}
+.icon-center {
+  align-items: center !important;
+}
+.icon-bottom {
+  align-items: flex-end !important;
+  padding-bottom: var(--spacer-075) !important;
+}
