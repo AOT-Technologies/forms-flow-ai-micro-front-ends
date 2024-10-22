@@ -16,9 +16,7 @@ $form-textArea-focus-outline: 2px solid var(--ff-base-600);
     outline: $form-textArea-focus-outline !important;
   }
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+
 }
 .input-group-text {
   height: 100%;
