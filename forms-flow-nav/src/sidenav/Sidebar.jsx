@@ -148,7 +148,6 @@ const Sidebar = React.memo(({ props }) => {
   };
 
   return (
-    <>
       <div className="sidenav">
         <div className="logo-container">
           {/* <img
@@ -329,7 +328,6 @@ const Sidebar = React.memo(({ props }) => {
           </div>
         </div>
       </div>
-    </>
   );
 });
 
