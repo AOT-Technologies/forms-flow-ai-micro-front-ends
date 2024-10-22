@@ -202,9 +202,9 @@ const Sidebar = React.memo(({ props }) => {
                       ? [
                           {
                             name: "Sub - flows",
-                            path: "processes",
+                            path: "subflow",
                             matchExps: [
-                              createURLPathMatchExp("processes", baseUrl),
+                              createURLPathMatchExp("subflow", baseUrl),
                             ],
                           },
                         ]
