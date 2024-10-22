@@ -92,7 +92,7 @@
       border-radius: var(--radius-0150);
       border: 2px solid var(--ff-primary);
       @extend .version-grid;
-      grid-template-columns: 2.5fr 1.5fr 1fr 1.5fr 1fr 1.5fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     }
 
     .minor-version-grid {

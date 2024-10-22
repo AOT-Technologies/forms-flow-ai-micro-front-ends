@@ -16,11 +16,12 @@ interface HistoryModalProps {
   revertBtnariaLabel?: string;
   loadMoreBtndataTestid?: string;
   loadMoreBtnariaLabel?: string;
-  formHistory: FormHistory[];
+  allHistory: AllHistory[];
   categoryType: string;
+  historyCount: number;
 }
 
-interface FormHistory {
+interface AllHistory {
   formId: string;
   createdBy: string;
   created: string;
@@ -65,8 +66,9 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     revertBtnariaLabel = "Revert Button",
     loadMoreBtndataTestid = "loadmore-button",
     loadMoreBtnariaLabel = "Loadmore Button",
-    formHistory,
+    allHistory,
     categoryType,
+    historyCount
   }) => {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
@@ -120,7 +122,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
       return () => {
         window.removeEventListener("resize", adjustTimelineHeight);
       };
-    }, [show]);
+    }, [show, allHistory]);
 
     const handleLoadMore = () => {
       loadMoreBtnAction();
@@ -141,14 +143,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         }
       }
     }, [show]);
-
+    
     const renderHistory = () => {
-      return formHistory.map((entry, index) => {
+      return allHistory.map((entry, index) => {
         const isMajorVersion = entry.isMajor;
         const version = `${entry.majorVersion}.${entry.minorVersion}`;
         const cloned_form_id =
           categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
-        const isLastEntry = index === formHistory.length - 1;
+        const isLastEntry = index === allHistory.length - 1;
         return (
           <React.Fragment key={`${entry.version}-${index}`}>
             {isMajorVersion && (
@@ -254,10 +256,10 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">
-            <div ref={timelineRef} className="timeline"></div>
+          {historyCount > 0 && <div ref={timelineRef} className="timeline"></div>}
             <div className="history-content">
               {renderHistory()}
-              {formHistory.length >= 4 &&
+              {historyCount > 4 &&
                 !hasLoadedMoreForm &&
                 categoryType === "FORM" && (
                   <div
@@ -274,7 +276,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                     />
                   </div>
                 )}
-              {formHistory.length >= 4 &&
+              {historyCount > 4 &&
                 !hasLoadedMoreWorkflow &&
                 categoryType === "WORKFLOW" && (
                   <div
