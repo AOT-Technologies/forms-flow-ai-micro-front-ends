@@ -24,8 +24,8 @@
         top: 0;
         width: 32px;
         height: 32px;
-        background-color: var(--ff-white, #ffffff) !important;
-        border: 2px solid var(--ff-primary, #253DF4) !important;
+        background-color: var(--ff-white) !important;
+        border: 2px solid var(--ff-primary) !important;
         border-radius: 50%;
         z-index: 1;
         display: flex;
@@ -38,7 +38,7 @@
         position: absolute;
         width: 16px;
         height: 16px;
-        background-color: var(--ff-primary, #253DF4) !important;
+        background-color: var(--ff-primary) !important;
         border-radius: 50%;
         top: 8px;
         left: -7px;
@@ -48,8 +48,8 @@
 
     .history-entry {
       position: relative;
-      background-color: var(--ff-white, #ffffff) !important; /* Ensure the div hides the timeline */
-      z-index: 2; /* Keep the history entry above the timeline */
+      background-color: var(--ff-white) !important; 
+      z-index: 2; 
     }
 
     .version-grid {

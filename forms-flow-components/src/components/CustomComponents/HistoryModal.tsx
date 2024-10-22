@@ -71,7 +71,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
     const [clonedFormId, setClonedFormId] = useState<string | null>(null);
-    const [hasLoadedMore, setHasLoadedMore] = useState(false);
+    const [hasLoadedMoreForm, setHasLoadedMoreForm] = useState(false);
+    const [hasLoadedMoreWorkflow, setHasLoadedMoreWorkflow] = useState(false);
     const timelineRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
@@ -91,33 +92,55 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
       revertBtnAction(clonedFormId);
       setShowConfirmModal(false);
     };
+
     const adjustTimelineHeight = () => {
-        const timelineElement = timelineRef.current;
-        const loadMoreElement = loadMoreRef.current;
-        const lastEntryElement = lastEntryRef.current;
-  
-        if (timelineElement && loadMoreElement && lastEntryElement) {
+      const timelineElement = timelineRef.current;
+      const loadMoreElement = loadMoreRef.current;
+      const lastEntryElement = lastEntryRef.current;
+
+      if (timelineElement && lastEntryElement) {
+        const lastEntryHeight = lastEntryElement.offsetHeight;
+        if (loadMoreElement) {
           const loadMoreHeight = loadMoreElement.offsetHeight;
-          const lastEntryHeight = lastEntryElement.offsetHeight;
-          const newHeight = `calc(100% - ${loadMoreHeight + lastEntryHeight}px)`;
-  
+          const newHeight = `calc(100% - ${
+            loadMoreHeight + lastEntryHeight
+          }px)`;
+          timelineElement.style.height = newHeight;
+        } else {
+          const newHeight = `calc(100% - ${lastEntryHeight}px)`;
           timelineElement.style.height = newHeight;
         }
-      };
+      }
+    };
 
-      useEffect(() => {
-        adjustTimelineHeight();
-        window.addEventListener("resize", adjustTimelineHeight); 
-  
-        return () => {
-          window.removeEventListener("resize", adjustTimelineHeight);
-        };
-      }, [show]);
+    useEffect(() => {
+      adjustTimelineHeight();
+      window.addEventListener("resize", adjustTimelineHeight);
 
-      const handleLoadMore = () => {
-        loadMoreBtnAction();
-        setHasLoadedMore(true); 
+      return () => {
+        window.removeEventListener("resize", adjustTimelineHeight);
       };
+    }, [show]);
+
+    const handleLoadMore = () => {
+      loadMoreBtnAction();
+      if (categoryType === "FORM") {
+        setHasLoadedMoreForm(true);
+      } else if (categoryType === "WORKFLOW") {
+        setHasLoadedMoreWorkflow(true);
+      }
+    };
+
+    useEffect(() => {
+      if (show) {
+        console.log(!hasLoadedMoreForm);
+        if (!hasLoadedMoreForm && categoryType === "FORM") {
+          setHasLoadedMoreForm(false);
+        } else if (!hasLoadedMoreWorkflow && categoryType === "WORKFLOW") {
+          setHasLoadedMoreWorkflow(false);
+        }
+      }
+    }, [show]);
 
     const renderHistory = () => {
       return formHistory.map((entry, index) => {
@@ -130,7 +153,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
           <React.Fragment key={`${entry.version}-${index}`}>
             {isMajorVersion && (
               <div
-              ref={isLastEntry ? lastEntryRef : null}
+                ref={isLastEntry ? lastEntryRef : null}
                 className={`history-entry ${
                   categoryType === "WORKFLOW"
                     ? "workflow-major-grid "
@@ -212,7 +235,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         );
       });
     };
-
     return (
       <>
         <Modal
@@ -235,18 +257,40 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             <div ref={timelineRef} className="timeline"></div>
             <div className="history-content">
               {renderHistory()}
-              {!hasLoadedMore && (
-              <div className="d-flex justify-content-center mt-4" ref={loadMoreRef}>
-                <CustomButton
-                  variant="secondary"
-                  size="sm"
-                  label={loadMoreBtnText}
-                  onClick={handleLoadMore}
-                  dataTestid={loadMoreBtndataTestid}
-                  ariaLabel={loadMoreBtnariaLabel}
-                />
-              </div>
-            )}
+              {formHistory.length >= 4 &&
+                !hasLoadedMoreForm &&
+                categoryType === "FORM" && (
+                  <div
+                    className="d-flex justify-content-center mt-4"
+                    ref={loadMoreRef}
+                  >
+                    <CustomButton
+                      variant="secondary"
+                      size="sm"
+                      label={loadMoreBtnText}
+                      onClick={handleLoadMore}
+                      dataTestid={loadMoreBtndataTestid}
+                      ariaLabel={loadMoreBtnariaLabel}
+                    />
+                  </div>
+                )}
+              {formHistory.length >= 4 &&
+                !hasLoadedMoreWorkflow &&
+                categoryType === "WORKFLOW" && (
+                  <div
+                    className="d-flex justify-content-center mt-4"
+                    ref={loadMoreRef}
+                  >
+                    <CustomButton
+                      variant="secondary"
+                      size="sm"
+                      label={loadMoreBtnText}
+                      onClick={handleLoadMore}
+                      dataTestid={loadMoreBtndataTestid}
+                      ariaLabel={loadMoreBtnariaLabel}
+                    />
+                  </div>
+                )}
             </div>
           </Modal.Body>
         </Modal>
