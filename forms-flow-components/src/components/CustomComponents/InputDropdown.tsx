@@ -24,6 +24,7 @@ interface InputDropdownProps {
   dataTestIdforInput?:string
   dataTestIdforDropdown?:string
   setNewInput? : (value: string) => void;
+  isInvalid?: boolean;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -39,7 +40,8 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   ariaLabelforDropdown,
   ariaLabelforInput,
   dataTestIdforDropdown,
-  dataTestIdforInput
+  dataTestIdforInput,
+  isInvalid
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(selectedOption || ''); 
@@ -113,6 +115,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       onChange={handleInputChange}
                       ariaLabel={ariaLabelforInput}
                       dataTestid={dataTestIdforInput}
+                      isInvalid={isInvalid}
                       icon={<CloseIcon onClick={handleClose} color='#253DF4' data-testid="close-input" aria-label="Close input "/>} 
                       className="input-with-close"
                       label={dropdownLabel}
