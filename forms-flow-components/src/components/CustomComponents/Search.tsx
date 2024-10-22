@@ -3,7 +3,7 @@ import { InputGroup, FormControl } from 'react-bootstrap';
 import { CloseIcon } from "../SvgIcons/index";
 
 interface CustomSearchProps {
-    searchFormLoading: boolean;
+    searchLoading: boolean;
     handleClearSearch: () => void;
     search: string;
     setSearch: (value: string) => void;
@@ -14,7 +14,7 @@ interface CustomSearchProps {
 }
 
 export const CustomSearch: FC<CustomSearchProps> = ({
-    searchFormLoading,
+    searchLoading,
     handleClearSearch,
     search,
     setSearch,
@@ -23,7 +23,7 @@ export const CustomSearch: FC<CustomSearchProps> = ({
     title = "Search",
     dataTestId
 }) => {
-    const inputClassNames = `d-flex align-items-center search-box-input ${searchFormLoading ? 'is-searching' : search ? 'has-value' : ''
+    const inputClassNames = `d-flex align-items-center search-box-input ${searchLoading ? 'is-searching' : search ? 'has-value' : ''
         }`;
 
     return (
@@ -41,10 +41,10 @@ export const CustomSearch: FC<CustomSearchProps> = ({
                 />
                 {search && (
                     <span
-                        className={`d-flex search-box-icon ${searchFormLoading ? 'loading' : ''}`}
-                        onClick={!searchFormLoading && handleClearSearch}
+                        className={`d-flex search-box-icon ${searchLoading ? 'loading' : ''}`}
+                        onClick={!searchLoading && handleClearSearch}
                     >
-                        {!searchFormLoading ? (
+                        {!searchLoading ? (
                             <CloseIcon
                                 width={16}
                                 height={16}

@@ -21,9 +21,7 @@ interface FormTextAreaProps {
     minRows?: number;
     onIconClick?: () => void;
     maxRows?: number;
-    iconTop?: boolean;
-    iconCenter?: boolean;
-    iconBottom?: boolean;
+    iconPosition?: string;
 }
 
 export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>(({
@@ -45,9 +43,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     minRows = 1,
     onIconClick,
     maxRows = 5,
-    iconTop,
-    iconBottom,
-    iconCenter 
+    iconPosition = "top"
 }, ref) => {
     const internalRef = useRef<HTMLTextAreaElement>(null);
     const combinedRef = (ref || internalRef) as React.RefObject<HTMLTextAreaElement>;
@@ -66,12 +62,12 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
         }
     };
 
-    const iconPositionClass = iconTop
+    const iconPositionClass = iconPosition === "top"
     ? 'icon-top'
-    : iconCenter
+    : iconPosition === "center"
     ? 'icon-center'
-    : iconBottom
-    ? 'icon-bottom'
+    : iconPosition === "bottom"
+    ? 'icon-bottom' 
     : 'icon-top';
     
     return (
