@@ -10,12 +10,14 @@ interface RadioOption {
     items: RadioOption[];
     dataTestid?: string;
     ariaLabel?: string;
+    indexValue?: number; 
   }
 
 export const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
   items,
   dataTestid = "",
   ariaLabel = "",
+  indexValue = 0, 
 }) => {
   return (
     <Form className="custom-radio-button"  aria-label={ariaLabel}>
@@ -29,7 +31,7 @@ export const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
           id={`inline-radio-${index + 1}`}
           data-testid={`${dataTestid}-inline-radio-${index + 1}`}
           key={`radio-${index + 1}`}
-          defaultChecked={index === 0}
+          defaultChecked={index === indexValue}
           onClick={option.onClick}
         />
       ))}
