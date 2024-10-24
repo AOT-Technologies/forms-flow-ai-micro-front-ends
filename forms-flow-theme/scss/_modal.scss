@@ -454,6 +454,7 @@
 
   .input-with-pills {
     display: flex !important;
+    justify-content: flex-start;
     flex-wrap: wrap !important;
     align-items: center;
     padding: var(--spacer-050) var(--spacer-100);
