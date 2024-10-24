@@ -4,6 +4,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 interface FormTextAreaProps {
     type?: string;
     label?: string;
+    name?:string;
     value?: string;
     onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
     onBlur?: (e: FocusEvent<HTMLTextAreaElement>) => void;
@@ -27,6 +28,7 @@ interface FormTextAreaProps {
 export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>(({
     label,
     value = '',
+    name,
     onChange,
     onBlur,
     placeholder = '',
@@ -81,6 +83,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                     <Form.Control
                         as="textarea"
                         ref={combinedRef}
+                        name={name}
                         value={value}
                         onChange={onChange}
                         onBlur={onBlur}

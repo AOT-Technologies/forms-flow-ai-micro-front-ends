@@ -4,6 +4,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 interface FormInputProps {
   type?: string;
   label?: string;
+  name? : string;
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
@@ -24,6 +25,7 @@ interface FormInputProps {
 
 export const FormInput: React.FC<FormInputProps> = ({
   type = "text",
+  name,
   label,
   value ,
   onChange,
@@ -55,6 +57,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         <InputGroup className="custom-form-input-group">
           <Form.Control
             type={type}
+            name={name}
             value={value}
             onChange={onChange}
             onBlur={onBlur}
