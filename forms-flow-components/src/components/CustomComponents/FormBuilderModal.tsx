@@ -79,7 +79,8 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
         <Modal
           show={showBuildForm}
           onHide={onClose}
-          dialogClassName="modal-50w"
+          size="sm"
+          centered={true}
         >
           <Modal.Header>
             <Modal.Title>
@@ -120,7 +121,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               onChange={(event) => {
                 setFormDescription(event.target.value); // Set the description state
               }}
-              minRows={5}
+              minRows={1}
             />
           </Modal.Body>
           <Modal.Footer className="d-flex justify-content-start">

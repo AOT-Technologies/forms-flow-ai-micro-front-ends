@@ -148,7 +148,6 @@ const Sidebar = React.memo(({ props }) => {
   };
 
   return (
-    <>
       <div className="sidenav">
         <div className="logo-container">
           {/* <img
@@ -202,9 +201,9 @@ const Sidebar = React.memo(({ props }) => {
                       ? [
                           {
                             name: "Sub - flows",
-                            path: "processes",
+                            path: "subflow",
                             matchExps: [
-                              createURLPathMatchExp("processes", baseUrl),
+                              createURLPathMatchExp("subflow", baseUrl),
                             ],
                           },
                         ]
@@ -329,7 +328,6 @@ const Sidebar = React.memo(({ props }) => {
           </div>
         </div>
       </div>
-    </>
   );
 });
 

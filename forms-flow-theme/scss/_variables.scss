@@ -191,8 +191,8 @@ hr {
 
 .container {
   width: auto !important;
-    padding-left: 8px !important;
-    padding-right: 24px !important;
+  padding-left: var(--spacer-050) !important;
+  padding-right: var(--spacer-150) !important;
 }
 
 .main-container {
@@ -229,4 +229,3 @@ hr {
 @include generate-overflow(y, auto);
 @include generate-overflow(x, hidden);
 @include generate-overflow(y, hidden);
-
