@@ -93,6 +93,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const handleReplaceLayout = () => {
       revertBtnAction(clonedFormId);
       setShowConfirmModal(false);
+      setHasLoadedMoreForm(false);
+      setHasLoadedMoreWorkflow(false);
     };
 
     const adjustTimelineHeight = () => {
@@ -116,13 +118,21 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     };
 
     useEffect(() => {
-      adjustTimelineHeight();
-      window.addEventListener("resize", adjustTimelineHeight);
-
-      return () => {
-        window.removeEventListener("resize", adjustTimelineHeight);
-      };
-    }, [show, allHistory]);
+        adjustTimelineHeight();
+        window.addEventListener("resize", adjustTimelineHeight);
+        if (show) {
+          if (!hasLoadedMoreForm && categoryType === "FORM") {
+            setHasLoadedMoreForm(false);
+          } else if (!hasLoadedMoreWorkflow && categoryType === "WORKFLOW") {
+            setHasLoadedMoreWorkflow(false);
+          }
+        }
+      
+        return () => {
+          window.removeEventListener("resize", adjustTimelineHeight);
+        };
+      }, [show, allHistory]);
+      
 
     const handleLoadMore = () => {
       loadMoreBtnAction();
@@ -133,16 +143,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
       }
     };
 
-    useEffect(() => {
-      if (show) {
-        console.log(!hasLoadedMoreForm);
-        if (!hasLoadedMoreForm && categoryType === "FORM") {
-          setHasLoadedMoreForm(false);
-        } else if (!hasLoadedMoreWorkflow && categoryType === "WORKFLOW") {
-          setHasLoadedMoreWorkflow(false);
-        }
-      }
-    }, [show]);
     
     const renderHistory = () => {
       return allHistory.map((entry, index) => {
@@ -243,12 +243,12 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
           show={show}
           onHide={onClose}
           dialogClassName="modal-70w"
-          data-testid="confirm-modal"
-          aria-labelledby="confirm-modal-title"
-          aria-describedby="confirm-modal-message"
+          data-testid="history-modal"
+          aria-labelledby="history-modal-title"
+          aria-describedby="history-modal-message"
         >
           <Modal.Header>
-            <Modal.Title id="confirm-modal-title">
+            <Modal.Title id="history-modal-title">
               <b>{title}</b>
             </Modal.Title>
             <div className="d-flex align-items-center ">
@@ -303,7 +303,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             show={showConfirmModal}
             onHide={() => setShowConfirmModal(false)}
             dialogClassName="modal-50w"
-            data-testid="confirm-revert-modal"
+            data-testid="history-revert-modal"
           >
             <Modal.Header>
               <Modal.Title>
@@ -321,12 +321,16 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 size="md"
                 label="Keep Current Layout"
                 onClick={handleKeepLayout}
+                dataTestid="keep-current-layout-button"
+                ariaLabel="Keep Current Layout"
               />
               <CustomButton
                 variant="secondary"
                 size="md"
                 label="Replace Current Layout"
                 onClick={handleReplaceLayout}
+                dataTestid="replace-current-layout-button"
+                ariaLabel="Replace Current Layout"
               />
             </Modal.Footer>
           </Modal>
