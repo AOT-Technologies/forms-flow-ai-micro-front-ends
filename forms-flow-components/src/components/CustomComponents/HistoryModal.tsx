@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
+import { ConfirmModal } from "./ConfirmModal";
 
 interface HistoryModalProps {
   show: boolean;
@@ -34,6 +35,8 @@ interface AllHistory {
   version: string;
   isMajor: boolean;
   processType?: string;
+  publishedOn?: string;
+  id?:string;
 }
 
 const formatDate = (dateString: string) => {
@@ -73,25 +76,34 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
     const [clonedFormId, setClonedFormId] = useState<string | null>(null);
+    const [processId, setProcessId] = useState<string | null>(null);
     const [hasLoadedMoreForm, setHasLoadedMoreForm] = useState(false);
     const [hasLoadedMoreWorkflow, setHasLoadedMoreWorkflow] = useState(false);
     const timelineRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
 
-    const handleRevertClick = (version: string, cloned_form_id: string) => {
+    const handleRevertClick = (version: string, cloned_form_id: string, process_id: string) => {
       setSelectedVersion(version);
       setClonedFormId(cloned_form_id);
+      setProcessId(process_id);
       setShowConfirmModal(true);
       onClose();
     };
+ 
+    const handleClose = () => {
+        onClose();
+        setHasLoadedMoreForm(false);
+        setHasLoadedMoreWorkflow(false);
+      };
 
     const handleKeepLayout = () => {
       setShowConfirmModal(false);
     };
 
     const handleReplaceLayout = () => {
-      revertBtnAction(clonedFormId);
+      const idToRevert = categoryType === "FORM" ? clonedFormId : processId;
+      revertBtnAction(idToRevert);
       setShowConfirmModal(false);
       setHasLoadedMoreForm(false);
       setHasLoadedMoreWorkflow(false);
@@ -150,6 +162,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         const version = `${entry.majorVersion}.${entry.minorVersion}`;
         const cloned_form_id =
           categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
+        const process_id =
+          categoryType === "WORKFLOW" ? entry.id : null;
         const isLastEntry = index === allHistory.length - 1;
         return (
           <React.Fragment key={`${entry.version}-${index}`}>
@@ -173,7 +187,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 </div>
                 <div className="published-on">
                   <div className="bold-headings">Published On</div>
-                  <div className="normal-text">{formatDate(entry.created)}</div>
+                  <div className="normal-text">{formatDate(entry.publishedOn)}</div>
                 </div>
                 {categoryType === "WORKFLOW" && (
                   <div className="type">
@@ -186,7 +200,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                     variant="secondary"
                     size="sm"
                     label={revertBtnText}
-                    onClick={() => handleRevertClick(version, cloned_form_id)}
+                    onClick={() => handleRevertClick(version, cloned_form_id, process_id)}
                     dataTestid={revertBtndataTestid}
                     ariaLabel={revertBtnariaLabel}
                   />
@@ -213,7 +227,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 </div>
                 <div className="published-on">
                   <div className="bold-headings">Published On</div>
-                  <div className="normal-text">{formatDate(entry.created)}</div>
+                  <div className="normal-text">{formatDate(entry.publishedOn)}</div>
                 </div>
                 {categoryType === "WORKFLOW" && (
                   <div className="type">
@@ -226,7 +240,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                     variant="secondary"
                     size="sm"
                     label={revertBtnText}
-                    onClick={() => handleRevertClick(version, cloned_form_id)}
+                    onClick={() => handleRevertClick(version, cloned_form_id, process_id)}
                     dataTestid={revertBtndataTestid}
                     ariaLabel={revertBtnariaLabel}
                   />
@@ -241,7 +255,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
       <>
         <Modal
           show={show}
-          onHide={onClose}
+          onHide={handleClose}
           dialogClassName="modal-70w"
           data-testid="history-modal"
           aria-labelledby="history-modal-title"
@@ -252,7 +266,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
               <b>{title}</b>
             </Modal.Title>
             <div className="d-flex align-items-center ">
-              <CloseIcon onClick={onClose} />
+              <CloseIcon onClick={handleClose} />
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">
@@ -298,43 +312,16 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         </Modal>
 
         {/* Confirmation Modal */}
-        {selectedVersion && (
-          <Modal
-            show={showConfirmModal}
-            onHide={() => setShowConfirmModal(false)}
-            dialogClassName="modal-50w"
-            data-testid="history-revert-modal"
-          >
-            <Modal.Header>
-              <Modal.Title>
-                <b>Use Layout from Version {selectedVersion}</b>
-              </Modal.Title>
-              <CloseIcon onClick={() => setShowConfirmModal(false)} />
-            </Modal.Header>
-            <Modal.Body className="">
-              This will copy the layout from Version {selectedVersion}{" "}
-              overwriting your existing layout.
-            </Modal.Body>
-            <Modal.Footer className="">
-              <CustomButton
-                variant="primary"
-                size="md"
-                label="Keep Current Layout"
-                onClick={handleKeepLayout}
-                dataTestid="keep-current-layout-button"
-                ariaLabel="Keep Current Layout"
-              />
-              <CustomButton
-                variant="secondary"
-                size="md"
-                label="Replace Current Layout"
-                onClick={handleReplaceLayout}
-                dataTestid="replace-current-layout-button"
-                ariaLabel="Replace Current Layout"
-              />
-            </Modal.Footer>
-          </Modal>
-        )}
+        {selectedVersion && (<ConfirmModal
+        show={showConfirmModal}
+        title={`Use Layout from Version ${selectedVersion}`}
+        message={`This will copy the layout from Version ${selectedVersion} overwriting your existing layout.`}    
+        primaryBtnAction={handleKeepLayout}
+        onClose={() => setShowConfirmModal(false)}
+        primaryBtnText="Keep Current Layout"
+        secondaryBtnText="Replace Current Layout"
+        secondayBtnAction={handleReplaceLayout}
+      />)}
       </>
     );
   }
