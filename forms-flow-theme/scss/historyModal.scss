@@ -125,19 +125,4 @@
     }
   }
 }
-.modal-50w {
-  .modal-header {
-    border-bottom: 1px solid var(--ff-gray-000) !important;
-  }
-  .modal-body {
-    padding: var(--spacer-200) var(--spacer-250) !important;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-sm);
-    line-height: var(--text-line-height);
-  }
-  .modal-footer {
-    display: flex;
-    justify-content: flex-start !important;
-    border-top: 1px solid var(--ff-gray-000) !important;
-  }
-}
+
