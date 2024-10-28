@@ -526,12 +526,12 @@
 //no-code modals
 .no-code-action-modal
 {
-  .email-action {
+  .modal-action{
     padding: var(--spacer-200) var(--spacer-250);
     align-self: stretch;
   }
   
-  .email-inputs {
+  .modal-action-inputs {
     gap:  var(--spacer-150);
     align-self: stretch;
   }
