@@ -425,7 +425,7 @@ export const AngleRightIcon = ({ color = baseColor, onClick, ...props }) => (
   >
     <path
       d="M1.74951 14.0005L8.2501 7.4999L1.75009 0.999901"
-      stroke={color}
+      stroke={props.disabled ? grayColor : color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
