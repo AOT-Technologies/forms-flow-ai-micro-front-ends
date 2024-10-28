@@ -22,7 +22,7 @@ jobs:
             "cards": [
               {
                 "header": {
-                  "title": "Micro front-ends : Pull Request Opened by ${{ github.event.pull_request.user.login }}",
+                  "title": "Micro front-ends: Pull Request Opened by ${{ github.event.pull_request.user.login }}",
                   "subtitle": "Pull Request #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}",
                   "imageUrl": "${{ github.event.pull_request.user.avatar_url }}"
                 },
@@ -32,6 +32,11 @@ jobs:
                       {
                         "textParagraph": {
                           "text": "Repository: ${{ github.repository }}"
+                        }
+                      },
+                      {
+                        "textParagraph": {
+                          "text": "Status: ${{ github.event.action == 'opened' ? '🟢 Open' : github.event.action == 'closed' ? '🔴 Closed' : '🟣 Merged' }}"
                         }
                       },
                       {
