@@ -19,8 +19,11 @@ jobs:
             echo "status=🟢 Open" >> $GITHUB_ENV
           elif [[ "${{ github.event.action }}" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]]; then
             echo "status=🟣 Merged" >> $GITHUB_ENV
-          else
+          elif [[ "${{ github.event.action }}" == "closed" ]]; then
             echo "status=🔴 Closed" >> $GITHUB_ENV
+          else
+            echo "status=🟢 Open" >> $GITHUB_ENV
+          fi
 
       - name: Send notification to Google Chat
         uses: fjogeleit/http-request-action@v1.1.0
