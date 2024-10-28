@@ -9,7 +9,7 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-    if: github.repository == 'AOT-Technologies/forms-flow-ai'
+    if: github.repository == 'AOT-Technologies/forms-flow-ai-micro-front-ends'
 
     steps:
       - name: Send notification to Google Chat
@@ -22,7 +22,7 @@ jobs:
             "cards": [
               {
                 "header": {
-                  "title": "Open Source : Pull Request Opened by ${{ github.event.pull_request.user.login }}",
+                  "title": "Micro front-ends : Pull Request Opened by ${{ github.event.pull_request.user.login }}",
                   "subtitle": "Pull Request #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}",
                   "imageUrl": "${{ github.event.pull_request.user.avatar_url }}"
                 },
