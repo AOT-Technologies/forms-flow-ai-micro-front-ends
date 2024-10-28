@@ -522,3 +522,17 @@
     align-self: stretch;
   }
 }
+
+//no-code modals
+.no-code-action-modal
+{
+  .email-action {
+    padding: var(--spacer-200) var(--spacer-250);
+    align-self: stretch;
+  }
+  
+  .email-inputs {
+    gap:  var(--spacer-150);
+    align-self: stretch;
+  }
+}
