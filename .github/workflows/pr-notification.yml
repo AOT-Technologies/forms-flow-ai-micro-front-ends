@@ -2,7 +2,7 @@ name: PR Notification to Google Chat
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, closed]
     branches:
       - develop
 
@@ -12,6 +12,16 @@ jobs:
     if: github.repository == 'AOT-Technologies/forms-flow-ai-micro-front-ends'
 
     steps:
+      - name: Determine PR Status
+        id: pr_status
+        run: |
+          if [[ "${{ github.event.action }}" == "opened" ]]; then
+            echo "status=🟢 Open" >> $GITHUB_ENV
+          elif [[ "${{ github.event.action }}" == "closed" && "${{ github.event.pull_request.merged }}" == "true" ]]; then
+            echo "status=🟣 Merged" >> $GITHUB_ENV
+          else
+            echo "status=🔴 Closed" >> $GITHUB_ENV
+
       - name: Send notification to Google Chat
         uses: fjogeleit/http-request-action@v1.1.0
         with:
@@ -37,7 +47,7 @@ jobs:
                         },
                         {
                           "textParagraph": {
-                            "text": "Status: ${{ github.event.action == 'opened' ? '🟢 Open' : github.event.action == 'closed' ? '🔴 Closed' : '🟣 Merged' }}"
+                            "text": "Status: ${{ env.status }}"
                           }
                         },
                         {
