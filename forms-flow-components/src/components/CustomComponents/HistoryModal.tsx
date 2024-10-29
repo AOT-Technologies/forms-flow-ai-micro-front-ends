@@ -35,7 +35,7 @@ interface AllHistory {
   isMajor: boolean;
   processType?: string;
   publishedOn?: string;
-  id?:string;
+  id?: string;
 }
 
 const formatDate = (dateString: string) => {
@@ -69,7 +69,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     loadMoreBtnariaLabel = "Loadmore Button",
     allHistory,
     categoryType,
-    historyCount
+    historyCount,
   }) => {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
@@ -81,19 +81,23 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
 
-    const handleRevertClick = (version: string, cloned_form_id: string, process_id: string) => {
+    const handleRevertClick = (
+      version: string,
+      cloned_form_id: string,
+      process_id: string
+    ) => {
       setSelectedVersion(version);
       setClonedFormId(cloned_form_id);
       setProcessId(process_id);
       setShowConfirmModal(true);
       onClose();
     };
- 
+
     const handleClose = () => {
-        onClose();
-        setHasLoadedMoreForm(false);
-        setHasLoadedMoreWorkflow(false);
-      };
+      onClose();
+      setHasLoadedMoreForm(false);
+      setHasLoadedMoreWorkflow(false);
+    };
 
     const handleKeepLayout = () => {
       setShowConfirmModal(false);
@@ -128,21 +132,20 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     };
 
     useEffect(() => {
-        adjustTimelineHeight();
-        window.addEventListener("resize", adjustTimelineHeight);
-        if (show) {
-          if (!hasLoadedMoreForm && categoryType === "FORM") {
-            setHasLoadedMoreForm(false);
-          } else if (!hasLoadedMoreWorkflow && categoryType === "WORKFLOW") {
-            setHasLoadedMoreWorkflow(false);
-          }
+      adjustTimelineHeight();
+      window.addEventListener("resize", adjustTimelineHeight);
+      if (show) {
+        if (!hasLoadedMoreForm && categoryType === "FORM") {
+          setHasLoadedMoreForm(false);
+        } else if (!hasLoadedMoreWorkflow && categoryType === "WORKFLOW") {
+          setHasLoadedMoreWorkflow(false);
         }
-      
-        return () => {
-          window.removeEventListener("resize", adjustTimelineHeight);
-        };
-      }, [show, allHistory]);
-      
+      }
+
+      return () => {
+        window.removeEventListener("resize", adjustTimelineHeight);
+      };
+    }, [show, allHistory]);
 
     const handleLoadMore = () => {
       loadMoreBtnAction();
@@ -153,96 +156,113 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
       }
     };
 
-    
+    const HistoryField = ({ heading, value }) => {
+      return (
+        <div>
+          <div className="content-headings">{heading}</div>
+          <div className="normal-text">{value}</div>
+        </div>
+      );
+    };
+
+    const RevertField = ({
+      variant,
+      size,
+      label,
+      onClick,
+      dataTestid,
+      ariaLabel,
+    }) => {
+      return (
+        <div className="revert-btn">
+          <CustomButton
+            variant={variant}
+            size={size}
+            label={label}
+            onClick={onClick}
+            dataTestid={dataTestid}
+            ariaLabel={ariaLabel}
+          />
+        </div>
+      );
+    };
+
     const renderHistory = () => {
       return allHistory.map((entry, index) => {
         const isMajorVersion = entry.isMajor;
         const version = `${entry.majorVersion}.${entry.minorVersion}`;
         const cloned_form_id =
           categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
-        const process_id =
-          categoryType === "WORKFLOW" ? entry.id : null;
+        const process_id = categoryType === "WORKFLOW" ? entry.id : null;
         const isLastEntry = index === allHistory.length - 1;
         return (
           <React.Fragment key={`${entry.version}-${index}`}>
             {isMajorVersion && (
               <div
                 ref={isLastEntry ? lastEntryRef : null}
-                className={`history-entry ${
+                className={`major-version-grid ${
                   categoryType === "WORKFLOW"
                     ? "workflow-major-grid "
-                    : "major-version-grid"
+                    : ""
                 }`}
               >
-                <div className="bold-headings">Version {version}</div>
-                <div className="last-edit-on">
-                  <div className="bold-headings">Last Edit On</div>
-                  <div className="normal-text">{formatDate(entry.created)}</div>
-                </div>
-                <div className="last-edit-by">
-                  <div className="bold-headings">Last Edit By</div>
-                  <div className="normal-text">{entry.createdBy}</div>
-                </div>
-                <div className="published-on">
-                  <div className="bold-headings">Published On</div>
-                  <div className="normal-text">{formatDate(entry.publishedOn)}</div>
-                </div>
+                <div className="content-headings">Version {version}</div>
+                <HistoryField
+                  heading="Last Edit On"
+                  value={formatDate(entry.created)}
+                />
+                <HistoryField heading="Last Edit By" value={entry.createdBy} />
+                <HistoryField
+                  heading="Published On"
+                  value={formatDate(entry.publishedOn)}
+                />
                 {categoryType === "WORKFLOW" && (
-                  <div className="type">
-                    <div className="bold-headings">Type</div>
-                    <div className="normal-text">{entry.processType}</div>
-                  </div>
+                  <HistoryField heading="Type" value={entry.processType} />
                 )}
-                <div className="revert-btn">
-                  <CustomButton
-                    variant="secondary"
-                    size="sm"
-                    label={revertBtnText}
-                    onClick={() => handleRevertClick(version, cloned_form_id, process_id)}
-                    dataTestid={revertBtndataTestid}
-                    ariaLabel={revertBtnariaLabel}
-                  />
-                </div>
+                <RevertField
+                  variant="secondary"
+                  size="sm"
+                  label={revertBtnText}
+                  onClick={() =>
+                    handleRevertClick(version, cloned_form_id, process_id)
+                  }
+                  dataTestid={revertBtndataTestid}
+                  ariaLabel={revertBtnariaLabel}
+                />
               </div>
             )}
             {!isMajorVersion && (
               <div
                 ref={isLastEntry ? lastEntryRef : null}
-                className={`history-entry ${
+                className={`minor-version-grid ${
                   categoryType === "WORKFLOW"
                     ? "workflow-minor-grid"
-                    : "minor-version-grid"
+                    : ""
                 }`}
               >
-                <div className="bold-headings">Version {version}</div>
-                <div className="last-edit-on">
-                  <div className="bold-headings">Last Edit On</div>
-                  <div className="normal-text">{formatDate(entry.created)}</div>
-                </div>
-                <div className="last-edit-by">
-                  <div className="bold-headings">Last Edit By</div>
-                  <div className="normal-text">{entry.createdBy}</div>
-                </div>
-                <div className="published-on">
-                  <div className="bold-headings">Published On</div>
-                  <div className="normal-text">{formatDate(entry.publishedOn)}</div>
-                </div>
+                <div className="content-headings">Version {version}</div>
+                <HistoryField
+                  heading="Last Edit On"
+                  value={formatDate(entry.created)}
+                />
+                <HistoryField heading="Last Edit By" value={entry.createdBy} />
+                <HistoryField
+                  heading="Published On"
+                  value={formatDate(entry.publishedOn)}
+                />
                 {categoryType === "WORKFLOW" && (
-                  <div className="type">
-                    <div className="bold-headings">Type</div>
-                    <div className="normal-text">{entry.processType}</div>
-                  </div>
+                   <HistoryField heading="Type" value={entry.processType} />
                 )}
-                <div className="revert-btn">
-                  <CustomButton
-                    variant="secondary"
-                    size="sm"
-                    label={revertBtnText}
-                    onClick={() => handleRevertClick(version, cloned_form_id, process_id)}
-                    dataTestid={revertBtndataTestid}
-                    ariaLabel={revertBtnariaLabel}
-                  />
-                </div>
+                <RevertField
+                  variant="secondary"
+                  size="sm"
+                  label={revertBtnText}
+                  onClick={() =>
+                    handleRevertClick(version, cloned_form_id, process_id)
+                  }
+                  dataTestid={revertBtndataTestid}
+                  ariaLabel={revertBtnariaLabel}
+                />
               </div>
             )}
           </React.Fragment>
@@ -268,7 +288,9 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">
-          {historyCount > 0 && <div ref={timelineRef} className="timeline"></div>}
+            {historyCount > 0 && (
+              <div ref={timelineRef} className="timeline"></div>
+            )}
             <div className="history-content">
               {renderHistory()}
               {historyCount > 4 &&
@@ -310,16 +332,18 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         </Modal>
 
         {/* Confirmation Modal */}
-        {selectedVersion && (<ConfirmModal
-        show={showConfirmModal}
-        title={`Use Layout from Version ${selectedVersion}`}
-        message={`This will copy the layout from Version ${selectedVersion} overwriting your existing layout.`}    
-        primaryBtnAction={handleKeepLayout}
-        onClose={() => setShowConfirmModal(false)}
-        primaryBtnText="Keep Current Layout"
-        secondaryBtnText="Replace Current Layout"
-        secondayBtnAction={handleReplaceLayout}
-      />)}
+        {selectedVersion && (
+          <ConfirmModal
+            show={showConfirmModal}
+            title={`Use Layout from Version ${selectedVersion}`}
+            message={`This will copy the layout from Version ${selectedVersion} overwriting your existing layout.`}
+            primaryBtnAction={handleKeepLayout}
+            onClose={() => setShowConfirmModal(false)}
+            primaryBtnText="Keep Current Layout"
+            secondaryBtnText="Replace Current Layout"
+            secondayBtnAction={handleReplaceLayout}
+          />
+        )}
       </>
     );
   }
