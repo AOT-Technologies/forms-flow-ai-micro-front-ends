@@ -75,7 +75,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     };
 
     return (
-      <>
         <Modal
           show={showBuildForm}
           onHide={onClose}
@@ -146,7 +145,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             />
           </Modal.Footer>
         </Modal>
-      </>
-    );
+     );
   }
 );
