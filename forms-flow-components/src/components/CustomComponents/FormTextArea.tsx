@@ -4,6 +4,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 interface FormTextAreaProps {
     type?: string;
     label?: string;
+    name?:string;
     value?: string;
     onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
     onBlur?: (e: FocusEvent<HTMLTextAreaElement>) => void;
@@ -21,11 +22,13 @@ interface FormTextAreaProps {
     minRows?: number;
     onIconClick?: () => void;
     maxRows?: number;
+    iconPosition?: string;
 }
 
 export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>(({
     label,
     value = '',
+    name,
     onChange,
     onBlur,
     placeholder = '',
@@ -42,6 +45,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     minRows = 1,
     onIconClick,
     maxRows = 5,
+    iconPosition = "top"
 }, ref) => {
     const internalRef = useRef<HTMLTextAreaElement>(null);
     const combinedRef = (ref || internalRef) as React.RefObject<HTMLTextAreaElement>;
@@ -60,8 +64,15 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
         }
     };
 
+    const getIconPositionClass = (position) => {
+        if (position === "top") return 'icon-top';
+        if (position === "center") return 'icon-center';
+        if (position === "bottom") return 'icon-bottom';
+        return 'icon-top'; 
+    };
+    
+    const iconPositionClass = getIconPositionClass(iconPosition);
     return (
-        <div className="form-input-box">
             <Form.Group controlId={id}>
                 {label && (
                     <Form.Label className="custom-form-control-label">
@@ -72,6 +83,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                     <Form.Control
                         as="textarea"
                         ref={combinedRef}
+                        name={name}
                         value={value}
                         onChange={onChange}
                         onBlur={onBlur}
@@ -90,7 +102,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         <InputGroup.Text
                             id="basic-addon1"
                             onClick={onIconClick}
-                            className={disabled ? 'disabled-icon' : ''}
+                            className={`icon-wrapper  ${iconPositionClass} ${disabled ? 'disabled-icon' : ''}`}
                         >
                             {icon}
                         </InputGroup.Text>
@@ -102,7 +114,6 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                     )}
                 </InputGroup>
             </Form.Group>
-        </div>
     );
 });
 
