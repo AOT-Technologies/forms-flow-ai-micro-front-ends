@@ -522,3 +522,15 @@
     align-self: stretch;
   }
 }
+
+.newversion-modal-body {
+  padding: 2rem 2.5rem !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ff-spacer-150);
+  align-self: stretch;
+
+  .form-check-input {
+    border-color: var(--ff-base-600);
+  }
+} 
