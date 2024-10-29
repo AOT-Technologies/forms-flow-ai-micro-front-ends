@@ -75,7 +75,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     };
 
     return (
-      <>
         <Modal
           show={showBuildForm}
           onHide={onClose}
@@ -104,7 +103,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
                 handleChange("title", event);
               }}
               required
-              isInvalid={nameError ? true :false}
+              isInvalid={!!nameError}
               feedback={nameError}
             />
 
@@ -145,7 +144,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             />
           </Modal.Footer>
         </Modal>
-      </>
     );
   }
 );
