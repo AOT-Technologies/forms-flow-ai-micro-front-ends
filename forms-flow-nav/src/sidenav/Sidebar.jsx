@@ -208,7 +208,14 @@ const Sidebar = React.memo(({ props }) => {
                           },
                         ]
                       : []),
-                      { name: "Decision Tables", path: "forms-decision-tables" },
+                      ...(isCreateDesigns && ENABLE_PROCESSES_MODULE ? 
+                        [{
+                           name: "Decision Tables",
+                           path: "descision-table", 
+                           matchExps: [ 
+                            createURLPathMatchExp("descision-table" ,baseUrl)
+                           ]
+                          }]:[]),
                   ]}
                 />
               )}
