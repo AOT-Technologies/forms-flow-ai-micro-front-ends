@@ -107,7 +107,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
     setInputValue(e.target.value);
   }
   return (
-      <div ref={dropdownRef} className="input-dropdown">
+      <div ref={dropdownRef} className="input-dropdown w-100">
           {textBoxInput ? (
               <InputGroup>
                   <FormInput

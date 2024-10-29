@@ -534,3 +534,17 @@
     border-color: var(--ff-base-600);
   }
 } 
+
+//no-code modals
+.no-code-action-modal
+{
+  .modal-action{
+    padding: var(--spacer-200) var(--spacer-250);
+    align-self: stretch;
+  }
+  
+  .modal-action-inputs {
+    gap:  var(--spacer-150);
+    align-self: stretch;
+  }
+}
