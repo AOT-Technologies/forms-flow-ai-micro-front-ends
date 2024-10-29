@@ -75,7 +75,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     };
 
     return (
-      <>
         <Modal
           show={showBuildForm}
           onHide={onClose}
@@ -128,7 +127,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <CustomButton
               variant={nameError ? "dark" : "primary"}
               size="md"
-              disabled={!!nameError || formSubmitted || !name || !formDescription} // Disable if errors or fields are empty
+              disabled={!!nameError || formSubmitted || !name } // Disable if errors or fields are empty
               label={primaryBtnLabel}
               buttonLoading={!nameError && formSubmitted ? true : false}
               onClick={handlePrimaryAction} // Use the new handler
@@ -146,7 +145,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             />
           </Modal.Footer>
         </Modal>
-      </>
-    );
+     );
   }
 );
