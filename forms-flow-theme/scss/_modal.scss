@@ -523,6 +523,52 @@
   }
 }
 
+.import-container {
+  width: 100%;
+
+  .import-details {
+    display: flex;
+    padding: var(--spacer-100) 0 var(--spacer-100) 0;
+    align-items: center;
+    align-self: stretch;
+    border-bottom: 1px solid var(--ff-gray-100);
+
+
+    .file-item-header-text {
+      display: flex;
+      justify-content: flex-start;
+      width: 30%;
+      color: var(--ff-gray-800);
+      font-size: 0.875rem;
+      font-weight: var(--font-weight-lg);
+      line-height: 120%;
+    }
+  }
+
+  .file-item-content {
+    display: flex;
+    padding: var(--spacer-200) 0 var(--spacer-200) 0;
+    align-items: center;
+    align-self: stretch;
+    border-bottom: 1px solid var(--ff-gray-100);
+
+    .import-layout-text,
+    .import-workflow-text {
+      width: 30%;
+      color: var(--gray-800);
+      font-size: 0.875rem;
+      font-weight: var(--font-weight-sm);
+      line-height: 120%;
+    }
+
+    /* Target the last child */
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+}
+
 .newversion-modal-body {
   padding: 2rem 2.5rem !important;
   display: flex;
