@@ -522,3 +522,29 @@
     align-self: stretch;
   }
 }
+
+.newversion-modal-body {
+  padding: 2rem 2.5rem !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ff-spacer-150);
+  align-self: stretch;
+
+  .form-check-input {
+    border-color: var(--ff-base-600);
+  }
+} 
+
+//no-code modals
+.no-code-action-modal
+{
+  .modal-action{
+    padding: var(--spacer-200) var(--spacer-250);
+    align-self: stretch;
+  }
+  
+  .modal-action-inputs {
+    gap:  var(--spacer-150);
+    align-self: stretch;
+  }
+}
