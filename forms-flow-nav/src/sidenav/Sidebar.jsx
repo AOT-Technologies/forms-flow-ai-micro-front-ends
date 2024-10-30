@@ -197,25 +197,18 @@ const Sidebar = React.memo(({ props }) => {
                           },
                         ]
                       : []),
-                    ...(isCreateDesigns && ENABLE_PROCESSES_MODULE
-                      ? [
-                          {
-                            name: "Sub - flows",
-                            path: "subflow",
-                            matchExps: [
-                              createURLPathMatchExp("subflow", baseUrl),
-                            ],
-                          },
-                        ]
-                      : []),
-                      ...(isCreateDesigns && ENABLE_PROCESSES_MODULE ? 
-                        [{
-                           name: "Decision Tables",
-                           path: "descision-table", 
-                           matchExps: [ 
-                            createURLPathMatchExp("descision-table" ,baseUrl)
-                           ]
-                          }]:[]),
+                    ...(isCreateDesigns && ENABLE_PROCESSES_MODULE) ? [
+                      {
+                        name: "Sub - flows",
+                        path: "subflow",
+                        matchExps: [createURLPathMatchExp("subflow", baseUrl)],
+                      },
+                      {
+                        name: "Decision Tables",
+                        path: "descision-table",
+                        matchExps: [createURLPathMatchExp("descision-table", baseUrl)],
+                      },
+                    ] : [],
                   ]}
                 />
               )}
