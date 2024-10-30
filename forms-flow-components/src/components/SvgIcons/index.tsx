@@ -250,11 +250,11 @@ export const DeleteIcon = ({ color = baseColor, onClick, ...props }) => (
     {...props}
   >
       <path d="M7 8L7 11" 
-    stroke="#253DF4" 
+    stroke={color} 
     strokeWidth="2" 
     strokeLinecap="round" />
     <path d="M2.41176 3.94737L3.82353 15H10.1765L11.5882 3.94737M1 3.94737H4.52941M13 3.94737H9.47059M4.52941 3.94737L5.23529 1H8.76471L9.47059 3.94737M4.52941 3.94737H9.47059" 
-    stroke="#253DF4" 
+    stroke={color} 
     strokeWidth="2" 
     strokeLinecap="round" 
     strokeLinejoin="round" />
