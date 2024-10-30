@@ -432,11 +432,13 @@
   }
 
   .list-group {
-    border: 1px solid var(--ff-base-600);
     border-radius: var(--radius-0100);
 
     .list-group-item {
       border: none;
+      &:active{
+        color: var(--ff-base-600);
+      }
     }
   }
 
@@ -447,9 +449,10 @@
   .input-drop {
     position: absolute;
     z-index: 100;
+    max-height: 400px;
     overflow: auto;
     border-radius: var(--radius-0100);
-    border-bottom: 1px solid var(--base-base-600);
+    border: 1px solid var(--ff-base-600);
   }
 
   .input-with-pills {
