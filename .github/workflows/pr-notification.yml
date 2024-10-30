@@ -28,7 +28,7 @@ jobs:
       - name: Send notification to Google Chat
         uses: fjogeleit/http-request-action@v1.1.0
         with:
-          url: ${{ secrets.WEBHOOK }}
+          url: ${{ secrets.PR_NOTIFICATION }}
           method: POST
           contentType: application/json
           data: |
