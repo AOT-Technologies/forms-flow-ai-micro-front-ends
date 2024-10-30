@@ -54,6 +54,37 @@ const formatDate = (dateString: string) => {
   return `${day}-${month}-${year} ${formattedHours}:${minutes}${ampm}`;
 };
 
+const HistoryField = ({ heading, value }) => {
+  return (
+    <div>
+      <div className="content-headings">{heading}</div>
+      <div className="normal-text">{value}</div>
+    </div>
+  );
+};
+
+const RevertField = ({
+  variant,
+  size,
+  label,
+  onClick,
+  dataTestid,
+  ariaLabel,
+}) => {
+  return (
+    <div className="revert-btn">
+      <CustomButton
+        variant={variant}
+        size={size}
+        label={label}
+        onClick={onClick}
+        dataTestid={dataTestid}
+        ariaLabel={ariaLabel}
+      />
+    </div>
+  );
+};
+
 export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
   ({
     show,
@@ -156,37 +187,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
       }
     };
 
-    const HistoryField = ({ heading, value }) => {
-      return (
-        <div>
-          <div className="content-headings">{heading}</div>
-          <div className="normal-text">{value}</div>
-        </div>
-      );
-    };
-
-    const RevertField = ({
-      variant,
-      size,
-      label,
-      onClick,
-      dataTestid,
-      ariaLabel,
-    }) => {
-      return (
-        <div className="revert-btn">
-          <CustomButton
-            variant={variant}
-            size={size}
-            label={label}
-            onClick={onClick}
-            dataTestid={dataTestid}
-            ariaLabel={ariaLabel}
-          />
-        </div>
-      );
-    };
-
     const renderHistory = () => {
       return allHistory.map((entry, index) => {
         const isMajorVersion = entry.isMajor;
@@ -201,9 +201,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
               <div
                 ref={isLastEntry ? lastEntryRef : null}
                 className={`major-version-grid ${
-                  categoryType === "WORKFLOW"
-                    ? "workflow-major-grid "
-                    : ""
+                  categoryType === "WORKFLOW" ? "workflow-major-grid " : ""
                 }`}
               >
                 <div className="content-headings">Version {version}</div>
@@ -213,8 +211,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 />
                 <HistoryField heading="Last Edit By" value={entry.createdBy} />
                 <HistoryField
-                  heading="Published On"
-                  value={formatDate(entry.publishedOn)}
+                  heading={entry.publishedOn ? "Published On" : ""}
+                  value={entry.publishedOn ? formatDate(entry.publishedOn) : ""}
                 />
                 {categoryType === "WORKFLOW" && (
                   <HistoryField heading="Type" value={entry.processType} />
@@ -235,9 +233,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
               <div
                 ref={isLastEntry ? lastEntryRef : null}
                 className={`minor-version-grid ${
-                  categoryType === "WORKFLOW"
-                    ? "workflow-minor-grid"
-                    : ""
+                  categoryType === "WORKFLOW" ? "workflow-minor-grid" : ""
                 }`}
               >
                 <div className="content-headings">Version {version}</div>
@@ -247,11 +243,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 />
                 <HistoryField heading="Last Edit By" value={entry.createdBy} />
                 <HistoryField
-                  heading="Published On"
-                  value={formatDate(entry.publishedOn)}
+                  heading={entry.publishedOn ? "Published On" : ""}
+                  value={entry.publishedOn ? formatDate(entry.publishedOn) : ""}
                 />
                 {categoryType === "WORKFLOW" && (
-                   <HistoryField heading="Type" value={entry.processType} />
+                  <HistoryField heading="Type" value={entry.processType} />
                 )}
                 <RevertField
                   variant="secondary"
