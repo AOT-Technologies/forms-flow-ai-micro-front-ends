@@ -431,48 +431,6 @@
     }
   }
 
-  .list-group {
-    border: 1px solid var(--ff-base-600);
-    border-radius: var(--radius-0100);
-
-    .list-group-item {
-      border: none;
-    }
-  }
-
-  .field-label {
-    font-size: var(--font-size-xs);
-  }
-
-  .input-drop {
-    position: absolute;
-    z-index: 100;
-    overflow: auto;
-    border-radius: var(--radius-0100);
-    border-bottom: 1px solid var(--base-base-600);
-  }
-
-  .input-with-pills {
-    display: flex !important;
-    justify-content: flex-start;
-    flex-wrap: wrap !important;
-    align-items: center;
-    padding: var(--spacer-050) var(--spacer-100);
-    border: 1px solid var(--ff-base-600) !important;
-    border-radius: var(--radius-0100) !important;
-    position: relative;
-    grid-row-gap: 5px !important;
-    row-gap: 5px !important;
-    grid-column-gap: 5px !important;
-    column-gap: 5px !important;
-
-    .role-input {
-      border: none;
-      flex-grow: 1;
-      padding: var(--spacer-025);
-      outline: none;
-    }
-  }
 }
 
 //Save template modal
@@ -548,3 +506,46 @@
     align-self: stretch;
   }
 }
+
+//reusable multi-select
+.multi-select{
+  .list-group {
+    border: 1px solid var(--ff-base-600);
+    border-radius: var(--radius-0100);
+  
+    .list-group-item {
+      border: none;
+    }
+  }
+  .input-drop {
+    position: absolute;
+    z-index: 100;
+    overflow: auto;
+    border-radius: var(--radius-0100);
+    border-bottom: 1px solid var(--ff-base-600);
+  }
+  
+  .input-with-pills {
+    display: flex !important;
+    justify-content: flex-start;
+    flex-wrap: wrap !important;
+    align-items: center;
+    padding: var(--spacer-050) var(--spacer-100);
+    border: 1px solid var(--ff-base-600) !important;
+    border-radius: var(--radius-0100) !important;
+    position: relative;
+    gap: 5px !important;
+  
+    .role-input {
+      border: none;
+      flex-grow: 1;
+      padding: var(--spacer-025);
+      outline: none;
+    }
+  }
+}
+.multi-label {
+  font-size: var(--font-size-xs);
+  margin-bottom: var(--spacer-050);
+}
+

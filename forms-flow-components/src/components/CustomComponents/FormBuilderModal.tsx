@@ -90,12 +90,10 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             </div>
           </Modal.Header>
           <Modal.Body className="p-5">
-            <label className="form-label">{nameLabel}</label>
-            <span className="validation-astrisk">*</span>
             <FormInput
               type="text"
               placeholder={placeholderForForm}
-              className={`form-input ${nameError ? "input-error" : ""}`}
+              label={nameLabel}
               aria-label={t("Name of the form")}
               data-testid={nameInputDataTestid}
               onBlur={nameValidationOnBlur}
@@ -105,14 +103,14 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
                 handleChange("title", event);
               }}
               required
+              isInvalid={!!nameError}
+              feedback={nameError}
             />
-            {nameError && (
-              <div className="validation-text mb-4">{nameError}</div>
-            )}
 
-            <label className="form-label">{descriptionLabel}</label>
-            <FormTextArea
+           <div className="mt-2">
+           <FormTextArea
               placeholder={placeholderForDescription}
+              label={descriptionLabel}
               className="form-input"
               aria-label={t("Description of the new form")}
               data-testid={descriptionDataTestid}
@@ -122,6 +120,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               }}
               minRows={1}
             />
+           </div>
           </Modal.Body>
           <Modal.Footer className="d-flex justify-content-start">
             <CustomButton
