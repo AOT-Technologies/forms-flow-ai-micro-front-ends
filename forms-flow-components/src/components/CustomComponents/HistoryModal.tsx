@@ -3,6 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
 import { ConfirmModal } from "./ConfirmModal";
+import { useTranslation } from "react-i18next";
 
 interface HistoryModalProps {
   show: boolean;
@@ -54,14 +55,18 @@ const formatDate = (dateString: string) => {
   return `${day}-${month}-${year} ${formattedHours}:${minutes}${ampm}`;
 };
 
-const HistoryField = ({ heading, value }) => {
-  return (
-    <div>
-      <div className="content-headings">{heading}</div>
-      <div className="normal-text">{value}</div>
-    </div>
-  );
-};
+const HistoryField = ({ fields }) => {
+    return (
+      <>
+        {fields.map(({ heading, value }, index) => (
+          <div key={index}>
+            <div className="content-headings">{heading}</div>
+            <div className="normal-text">{value}</div>
+          </div>
+        ))}
+      </>
+    );
+  };
 
 const RevertField = ({
   variant,
@@ -102,6 +107,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     categoryType,
     historyCount,
   }) => {
+    const { t } = useTranslation();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
     const [clonedFormId, setClonedFormId] = useState<string | null>(null);
@@ -187,6 +193,25 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
       }
     };
 
+    const renderLoadMoreButton = () => {
+        const shouldRenderButton = 
+          (categoryType === "FORM" && !hasLoadedMoreForm) || 
+          (categoryType === "WORKFLOW" && !hasLoadedMoreWorkflow);
+        
+        return shouldRenderButton ? (
+          <div className="d-flex justify-content-center mt-4" ref={loadMoreRef}>
+            <CustomButton
+              variant="secondary"
+              size="sm"
+              label={loadMoreBtnText}
+              onClick={handleLoadMore}
+              dataTestid={loadMoreBtndataTestid}
+              ariaLabel={loadMoreBtnariaLabel}
+            />
+          </div>
+        ) : null;
+      };      
+
     const renderHistory = () => {
       return allHistory.map((entry, index) => {
         const isMajorVersion = entry.isMajor;
@@ -195,6 +220,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
           categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
         const process_id = categoryType === "WORKFLOW" ? entry.id : null;
         const isLastEntry = index === allHistory.length - 1;
+        const fields = [
+            { heading: t("Last Edit On"), value: formatDate(entry.created) },
+            { heading: t("Last Edit By"), value: entry.createdBy },
+            { heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? formatDate(entry.publishedOn) : "" },
+            ...(categoryType === "WORKFLOW"
+              ? [{ heading: t("Type"), value: entry.processType }]
+              : []),
+          ];
         return (
           <React.Fragment key={`${entry.version}-${index}`}>
             {isMajorVersion && (
@@ -205,18 +238,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 }`}
               >
                 <div className="content-headings">Version {version}</div>
-                <HistoryField
-                  heading="Last Edit On"
-                  value={formatDate(entry.created)}
-                />
-                <HistoryField heading="Last Edit By" value={entry.createdBy} />
-                <HistoryField
-                  heading={entry.publishedOn ? "Published On" : ""}
-                  value={entry.publishedOn ? formatDate(entry.publishedOn) : ""}
-                />
-                {categoryType === "WORKFLOW" && (
-                  <HistoryField heading="Type" value={entry.processType} />
-                )}
+                <HistoryField fields={fields} />
                 <RevertField
                   variant="secondary"
                   size="sm"
@@ -237,18 +259,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 }`}
               >
                 <div className="content-headings">Version {version}</div>
-                <HistoryField
-                  heading="Last Edit On"
-                  value={formatDate(entry.created)}
-                />
-                <HistoryField heading="Last Edit By" value={entry.createdBy} />
-                <HistoryField
-                  heading={entry.publishedOn ? "Published On" : ""}
-                  value={entry.publishedOn ? formatDate(entry.publishedOn) : ""}
-                />
-                {categoryType === "WORKFLOW" && (
-                  <HistoryField heading="Type" value={entry.processType} />
-                )}
+                <HistoryField key={`${entry.version}-${index}`} fields={fields} />
                 <RevertField
                   variant="secondary"
                   size="sm"
@@ -289,40 +300,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             )}
             <div className="history-content">
               {renderHistory()}
-              {historyCount > 4 &&
-                !hasLoadedMoreForm &&
-                categoryType === "FORM" && (
-                  <div
-                    className="d-flex justify-content-center mt-4"
-                    ref={loadMoreRef}
-                  >
-                    <CustomButton
-                      variant="secondary"
-                      size="sm"
-                      label={loadMoreBtnText}
-                      onClick={handleLoadMore}
-                      dataTestid={loadMoreBtndataTestid}
-                      ariaLabel={loadMoreBtnariaLabel}
-                    />
-                  </div>
-                )}
-              {historyCount > 4 &&
-                !hasLoadedMoreWorkflow &&
-                categoryType === "WORKFLOW" && (
-                  <div
-                    className="d-flex justify-content-center mt-4"
-                    ref={loadMoreRef}
-                  >
-                    <CustomButton
-                      variant="secondary"
-                      size="sm"
-                      label={loadMoreBtnText}
-                      onClick={handleLoadMore}
-                      dataTestid={loadMoreBtndataTestid}
-                      ariaLabel={loadMoreBtnariaLabel}
-                    />
-                  </div>
-                )}
+              {historyCount > 4 && renderLoadMoreButton()}
             </div>
           </Modal.Body>
         </Modal>
@@ -331,12 +309,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         {selectedVersion && (
           <ConfirmModal
             show={showConfirmModal}
-            title={`Use Layout from Version ${selectedVersion}`}
-            message={`This will copy the layout from Version ${selectedVersion} overwriting your existing layout.`}
+            title={t(`Use Layout from Version ${selectedVersion}`)}
+            message={t(
+              `This will copy the layout from Version ${selectedVersion} overwriting your existing layout.`
+            )}
             primaryBtnAction={handleKeepLayout}
             onClose={() => setShowConfirmModal(false)}
-            primaryBtnText="Keep Current Layout"
-            secondaryBtnText="Replace Current Layout"
+            primaryBtnText={t("Keep Current Layout")}
+            secondaryBtnText={t("Replace Current Layout")}
             secondayBtnAction={handleReplaceLayout}
           />
         )}
