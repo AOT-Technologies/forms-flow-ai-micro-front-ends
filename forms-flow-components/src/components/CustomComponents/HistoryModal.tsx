@@ -58,8 +58,8 @@ const formatDate = (dateString: string) => {
 const HistoryField = ({ fields }) => {
     return (
       <>
-        {fields.map(({ heading, value }, index) => (
-          <div key={index}>
+        {fields.map(({ id, heading, value }) => (
+          <div key={id}>
             <div className="content-headings">{heading}</div>
             <div className="normal-text">{value}</div>
           </div>
@@ -221,11 +221,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         const process_id = categoryType === "WORKFLOW" ? entry.id : null;
         const isLastEntry = index === allHistory.length - 1;
         const fields = [
-            { heading: t("Last Edit On"), value: formatDate(entry.created) },
-            { heading: t("Last Edit By"), value: entry.createdBy },
-            { heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? formatDate(entry.publishedOn) : "" },
+            { id:1, heading: t("Last Edit On"), value: formatDate(entry.created) },
+            { id:2, heading: t("Last Edit By"), value: entry.createdBy },
+            { id:3, heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? formatDate(entry.publishedOn) : "" },
             ...(categoryType === "WORKFLOW"
-              ? [{ heading: t("Type"), value: entry.processType }]
+              ? [{ id:4, heading: t("Type"), value: entry.processType }]
               : []),
           ];
         return (
