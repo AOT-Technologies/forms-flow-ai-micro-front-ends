@@ -13,4 +13,4 @@ export * from "./CustomComponents/FormBuilderModal";
 export * from "./CustomComponents/InputDropdown";
 export * from './CustomComponents/ReusableProcessTableRow';
 export * from "./CustomComponents/TableFooter";
-export * from "./CustomComponents/Info";
+export * from "./CustomComponents/CustomInfo";

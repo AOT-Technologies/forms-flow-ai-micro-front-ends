@@ -5,7 +5,7 @@ import { FormTextArea } from "./FormTextArea";
 import { CloseIcon } from "../SvgIcons/index";
 import { FormInput } from "./FormInput";
 import { useTranslation } from "react-i18next";
-import { CustomInfo } from "./Info";
+import { CustomInfo } from "./CustomInfo";
 import { Form } from "react-bootstrap";
 
 interface BuildFormModalProps {
