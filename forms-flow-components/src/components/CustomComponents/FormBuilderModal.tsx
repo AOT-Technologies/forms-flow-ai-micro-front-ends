@@ -138,6 +138,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
              checked={checked}
              onChange={setChecked}
              className="field-label"
+             data-testid="wizard-checkbox"
            />   
           </>
           }
