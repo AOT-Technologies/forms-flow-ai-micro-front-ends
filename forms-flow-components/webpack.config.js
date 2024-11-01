@@ -18,10 +18,7 @@ module.exports = (webpackConfigEnv, argv) => {
     },
     output:{
       filename:"forms-flow-components.js"
-    },
-    externals: {
-      react: 'react',
-      'react-dom': 'react-dom',
-    }
+    },  
+    externals: ["@formsflow/*","react","react-dom"]
   });
 };

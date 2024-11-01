@@ -54,7 +54,8 @@
     "react-bootstrap": "^1.6.0",
     "react-dom": "^17.0.2",
     "i18next-browser-languagedetector": "^7.0.1",
-    "react-i18next": "^12.1.4"
+    "react-i18next": "^12.1.4",
+    "react-js-pagination": "^3.0.3"
   },
   "dependencies": {
     "@types/react": "^17.0.19",
@@ -67,7 +68,8 @@
   "peerDependencies": {
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.0",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-js-pagination": "^3.0.3"
   },
   "types": "dist/formsflow-components.d.ts"
 }
