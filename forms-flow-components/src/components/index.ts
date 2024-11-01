@@ -10,6 +10,7 @@ export * from "./CustomComponents/FormTextArea";
 export * from "./CustomComponents/Search";
 export * from "./CustomComponents/ProgressBar";
 export * from "./CustomComponents/FormBuilderModal";
+export * from "./CustomComponents/HistoryModal";
 export * from "./CustomComponents/InputDropdown";
 export * from './CustomComponents/ReusableProcessTableRow';
 export * from "./CustomComponents/TableFooter";
