@@ -548,4 +548,11 @@
   font-size: var(--font-size-xs);
   margin-bottom: var(--spacer-050);
 }
-
+.form-builder-modal{
+  display: flex;
+ padding: var(--spacer-200) var(--spacer-250) !important;
+ flex-direction: column;
+ align-items: flex-start;
+ gap: var(--spacer-150);
+ align-self: stretch;
+}
