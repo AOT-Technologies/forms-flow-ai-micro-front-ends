@@ -5,6 +5,8 @@ import { FormTextArea } from "./FormTextArea";
 import { CloseIcon } from "../SvgIcons/index";
 import { FormInput } from "./FormInput";
 import { useTranslation } from "react-i18next";
+import { CustomInfo } from "./CustomInfo";
+import { Form } from "react-bootstrap";
 
 interface BuildFormModalProps {
   showBuildForm: boolean;
@@ -34,6 +36,9 @@ interface BuildFormModalProps {
   descriptionDataTestid?: string;
   placeholderForForm?: string;
   placeholderForDescription?: string;
+  buildForm?: boolean;
+  checked?: boolean;
+  setChecked?:()=>void;
 }
 
 export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
@@ -62,6 +67,9 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     descriptionDataTestid = "form-description",
     placeholderForForm,
     placeholderForDescription,
+    buildForm= false,
+    checked= false,
+    setChecked
   }) => {
     const { t } = useTranslation();
     const [name, setName] = useState<string>(""); // State for form name
@@ -89,7 +97,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               <CloseIcon onClick={onClose} />
             </div>
           </Modal.Header>
-          <Modal.Body className="p-5">
+          <Modal.Body className="form-builder-modal">
             <FormInput
               type="text"
               placeholder={placeholderForForm}
@@ -106,8 +114,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               isInvalid={!!nameError}
               feedback={nameError}
             />
-
-           <div className="mt-2">
            <FormTextArea
               placeholder={placeholderForDescription}
               label={descriptionLabel}
@@ -120,7 +126,22 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               }}
               minRows={1}
             />
-           </div>
+
+           {buildForm && 
+           <>
+           <CustomInfo heading="Note" 
+           content="Allowing the addition of multiple pages in a single form will prevent you from using this form in a bundle later" />
+           <Form.Check
+             type="checkbox"
+             id="anonymouseCheckbox"
+             label={t("Allow adding multiple pages form in this form")}
+             checked={checked}
+             onChange={setChecked}
+             className="field-label"
+             data-testid="wizard-checkbox"
+           />   
+          </>
+          }
           </Modal.Body>
           <Modal.Footer className="d-flex justify-content-start">
             <CustomButton
