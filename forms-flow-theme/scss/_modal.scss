@@ -556,3 +556,32 @@
  gap: var(--spacer-150);
  align-self: stretch;
 }
+.build-modal{
+  width: 66.2% !important;
+  max-width: 66.2% !important;
+  .modal-body{
+    padding: 0;
+  }
+  .modal-header{
+    border-bottom: 1px solid var(--ff-gray-000);
+  }
+  .content-heading{
+    color: var(--ff-base-600);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-xl);
+    line-height: var(--text-line-height); 
+  }
+  .content-body{
+    color: var(--ff-gray-800);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-sm);
+    line-height: var(--text-line-height); 
+  }
+  .build-contents{
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--ff-gray-000);
+    padding: var(--spacer-200);
+    cursor: pointer;
+  }
+}

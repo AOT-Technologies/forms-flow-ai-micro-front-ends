@@ -15,3 +15,4 @@ export * from "./CustomComponents/InputDropdown";
 export * from './CustomComponents/ReusableProcessTableRow';
 export * from "./CustomComponents/TableFooter";
 export * from "./CustomComponents/CustomInfo";
+export * from "./CustomComponents/BuildModal";
