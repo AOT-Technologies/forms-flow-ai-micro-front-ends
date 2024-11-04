@@ -205,8 +205,8 @@ const Sidebar = React.memo(({ props }) => {
                       },
                       {
                         name: "Decision Tables",
-                        path: "descision-table",
-                        matchExps: [createURLPathMatchExp("descision-table", baseUrl)],
+                        path: "decision-table",
+                        matchExps: [createURLPathMatchExp("decision-table", baseUrl)],
                       },
                     ] : [],
                   ]}
