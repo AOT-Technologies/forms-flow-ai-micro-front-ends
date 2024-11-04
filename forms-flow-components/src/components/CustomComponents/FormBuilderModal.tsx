@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { FormTextArea } from "./FormTextArea";
@@ -72,15 +72,27 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     setChecked
   }) => {
     const { t } = useTranslation();
-    const [name, setName] = useState<string>(""); // State for form name
-    const [formDescription, setFormDescription] = useState<string>(description || ""); // State for form description
-
+    const [values, setValues] = useState({
+      name:"",
+      description: description || ""
+    })
     const handlePrimaryAction = () => {
       // Pass name and description to primaryBtnAction
       if (primaryBtnAction) {
-        primaryBtnAction(name, formDescription);
+        primaryBtnAction(values.name, values.description);
       }
     };
+
+    const handleInputValueChange = (e:any)=>{
+      const {name, value} = e.target;
+      setValues(prev => ({...prev,[name]:value}))
+    }
+
+    useEffect(()=>{
+      if(!showBuildForm){
+        setValues({name:"",description:""})
+      }
+    },[showBuildForm])
 
     return (
         <Modal
@@ -99,6 +111,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
           </Modal.Header>
           <Modal.Body className="form-builder-modal">
             <FormInput
+              name="name"
               type="text"
               placeholder={placeholderForForm}
               label={nameLabel}
@@ -106,24 +119,24 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               data-testid={nameInputDataTestid}
               onBlur={nameValidationOnBlur}
               onChange={(event) => {
+                handleInputValueChange(event);
                 setNameError("");
-                setName(event.target.value); // Set the name state
                 handleChange("title", event);
               }}
               required
+              value={values.name}
               isInvalid={!!nameError}
               feedback={nameError}
             />
            <FormTextArea
+              name="description"
               placeholder={placeholderForDescription}
               label={descriptionLabel}
               className="form-input"
               aria-label={t("Description of the new form")}
               data-testid={descriptionDataTestid}
-              value={formDescription} // Bind description state
-              onChange={(event) => {
-                setFormDescription(event.target.value); // Set the description state
-              }}
+              value={values.description} // Bind description state
+              onChange={handleInputValueChange}
               minRows={1}
             />
 
@@ -136,7 +149,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
              id="anonymouseCheckbox"
              label={t("Allow adding multiple pages form in this form")}
              checked={checked}
-             onChange={setChecked}
+             onChange={setChecked} //TBD: need to remove and add to setValues 
              className="field-label"
              data-testid="wizard-checkbox"
            />   
@@ -147,7 +160,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <CustomButton
               variant={nameError ? "dark" : "primary"}
               size="md"
-              disabled={!!nameError || formSubmitted || !name } // Disable if errors or fields are empty
+              disabled={!!nameError || formSubmitted || !values.name } // Disable if errors or fields are empty
               label={primaryBtnLabel}
               buttonLoading={!nameError && formSubmitted ? true : false}
               onClick={handlePrimaryAction} // Use the new handler
