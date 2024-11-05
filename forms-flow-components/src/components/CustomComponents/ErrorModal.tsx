@@ -26,7 +26,6 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
   primaryBtnariaLabel = 'Dismiss',
 }) => {
   return (
-    <>
       <Modal
         show={show}
         onHide={onClose}
@@ -71,6 +70,5 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
           />
         </Modal.Footer>
       </Modal>
-    </>
   );
 });
