@@ -34,7 +34,6 @@ const buildModalContent = (
           className="col-md-6 build-contents"
           key={id}
           onClick={onClick}
-          role="button"
           tabIndex={0}
           onKeyDown={(event) => handleKeyDown(event, onClick)}
           aria-label={`Button for ${heading}`} 
