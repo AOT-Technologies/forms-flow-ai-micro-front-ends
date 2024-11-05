@@ -7,7 +7,7 @@ import { HelperServices } from "@formsflow/service";
 interface ProcessTableRowProps {
   item: {
     name: string;
-    parentProcessKey?: string;
+    processKey?: string;
     modified?: string;
     status?: string;
     _id: string;
@@ -25,13 +25,13 @@ export const ReusableProcessTableRow: React.FC<ProcessTableRowProps> = ({ item, 
         <span className="ms-4">{item.name}</span>
       </td>
       <td className="w-20">
-        <span>{item.parentProcessKey}</span>
+        <span>{item.processKey}</span>
       </td>
       <td className="w-15">{HelperServices?.getLocaldate(item.modified)}</td>
       <td className="w-15">
         <span data-testid={`sub-flow-status-${item._id}`} className="d-flex align-items-center">
-          <span className={item.status === 'active' ? 'status-live' : 'status-draft'}></span>
-          {item.status === 'active' ? t('Live') : t('Draft')}
+          <span className={item.status === 'Published' ? 'status-live' : 'status-draft'}></span>
+          {item.status === 'Published' ? t('Live') : t('Draft')}
         </span>
       </td>
       <td className="w-25">
