@@ -24,23 +24,25 @@ const buildModalContent = (
 ) => {
   const handleKeyDown = (event, onClick) => {
     if (event.key === "Enter" || event.key === " ") {
-      onClick && onClick();
+        onClick?.();
     }
   };
   return (
     <>
       {contents.map(({ id, heading, body, onClick }) => (
-        <div
+        <button
           className="col-md-6 build-contents"
           key={id}
           onClick={onClick}
           role="button"
           tabIndex={0}
           onKeyDown={(event) => handleKeyDown(event, onClick)}
+          aria-label={`Button for ${heading}`} 
+          data-testid={`button-${id}`}
         >
           <span className="mb-3 content-heading">{heading}</span>
           <span className="content-body">{body}</span>
-        </div>
+        </button>
       ))}
     </>
   );

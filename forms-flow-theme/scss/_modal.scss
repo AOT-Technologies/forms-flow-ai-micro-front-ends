@@ -580,8 +580,10 @@
   .build-contents{
     display: flex;
     flex-direction: column;
-    border-right: 1px solid var(--ff-gray-000);
+    border-right: 1px solid var(--ff-gray-000) !important;
     padding: var(--spacer-200);
     cursor: pointer;
+    background: none;
+    border: none;
   }
 }
