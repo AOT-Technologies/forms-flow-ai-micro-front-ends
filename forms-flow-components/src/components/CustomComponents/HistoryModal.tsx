@@ -20,6 +20,7 @@ interface HistoryModalProps {
   allHistory: AllHistory[];
   categoryType: string;
   historyCount: number;
+  currentVersionId?:number|string;
 }
 
 interface AllHistory {
@@ -75,12 +76,14 @@ const RevertField = ({
   onClick,
   dataTestid,
   ariaLabel,
+  disabled=false
 }) => {
   return (
     <div className="revert-btn">
       <CustomButton
         variant={variant}
         size={size}
+        disabled={disabled}
         label={label}
         onClick={onClick}
         dataTestid={dataTestid}
@@ -106,6 +109,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     allHistory,
     categoryType,
     historyCount,
+    currentVersionId,
   }) => {
     const { t } = useTranslation();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -242,6 +246,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 <RevertField
                   variant="secondary"
                   size="sm"
+                  disabled={currentVersionId == entry.id}
                   label={revertBtnText}
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
@@ -264,6 +269,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   variant="secondary"
                   size="sm"
                   label={revertBtnText}
+                  disabled={currentVersionId == entry.id}
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
