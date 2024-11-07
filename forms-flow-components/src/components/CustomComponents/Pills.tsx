@@ -26,7 +26,12 @@ export const CustomPill: React.FC<CustomPillProps> = ({
       <Badge pill variant={bg} data-testid={dataTestid} aria-label={ariaLabel}>
         <span className="primary-label">{label}</span> 
         { secondaryLabel && (<span className="secondary-label" >{secondaryLabel}</span>)}
-        {icon && <span onClick={onClick}>{icon}</span>}
+        {icon && 
+        <button 
+        className="button-as-div"
+        aria-label="click icon" 
+        data-testid="click-icon"
+        onClick={onClick}>{icon}</button>}
       </Badge>{" "}
     </div>
   );
