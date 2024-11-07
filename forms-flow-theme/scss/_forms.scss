@@ -340,14 +340,17 @@ select option:hover {
   display: inline-flex !important;
   padding-block: var(--spacer-050) !important;
   padding-inline: var(--spacer-100) !important;
-  color: var(--ff-black) !important;
+  color: var(--ff-gray-800) !important;
   gap: var(--spacer-050) !important;
-  border-radius: var(--ff-border-radius-xl) !important;
   background-color: var(--ff-base-100) !important;
   border: none !important;
   align-items: center !important;
   font-size: var(--font-size-sm) !important;
   font-weight: var(--ff-badge-font-md) !important;
+  border-radius: var(--radius-0150) !important;
+  .secondary-label{
+    color: var(--ff-gray-500);
+  }
 }
 
 /* ------------------------- Tabs Style ------------------------ */
