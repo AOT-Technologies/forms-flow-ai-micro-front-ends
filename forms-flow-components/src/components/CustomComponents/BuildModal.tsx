@@ -58,6 +58,7 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
         aria-labelledby="build-modal-title"
         aria-describedby="build-modal-message"
         dialogClassName="build-modal"
+        size="sm"
       >
         <Modal.Header>
           <Modal.Title id="build-modal-title">

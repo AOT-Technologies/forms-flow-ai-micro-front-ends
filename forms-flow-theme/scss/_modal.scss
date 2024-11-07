@@ -558,8 +558,6 @@
  align-self: stretch;
 }
 .build-modal{
-  width: 60.318% !important;
-  max-width: 60.318% !important;
   .modal-body{
     padding: 0px !important;
   }
@@ -580,6 +578,7 @@
   }
   .content-body{
     @extend .content-style;
+    text-align: left;
     color: var(--ff-gray-800);
     font-weight: var(--font-weight-sm);
   }
