@@ -4,11 +4,12 @@ import {  DeleteIcon } from "../SvgIcons/index";
 
 interface CustomPillProps {
   label: string;
-  icon?: boolean;
+  secondaryLabel: string;
+  icon?: React.ReactNode;
   bg: string;
   dataTestid?: string;
   ariaLabel?: string;
-  onClick?: () => void;
+  onClick?: () => void; 
 }
 
 export const CustomPill: React.FC<CustomPillProps> = ({
@@ -17,12 +18,20 @@ export const CustomPill: React.FC<CustomPillProps> = ({
   bg,
   dataTestid = "",
   ariaLabel = "",
+  secondaryLabel="",
   onClick,
 }) => {
   return (
     <div>
       <Badge pill variant={bg} data-testid={dataTestid} aria-label={ariaLabel}>
-        {label} {icon && <DeleteIcon color="#253DF4" onClick={onClick} />}
+        <span className="primary-label">{label}</span> 
+        { secondaryLabel && (<span className="secondary-label" >{secondaryLabel}</span>)}
+        {icon && 
+        <button 
+        className="button-as-div"
+        aria-label="click icon" 
+        data-testid="click-icon"
+        onClick={onClick}>{icon}</button>}
       </Badge>{" "}
     </div>
   );

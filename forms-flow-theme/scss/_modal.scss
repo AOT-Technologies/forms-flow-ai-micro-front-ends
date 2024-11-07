@@ -558,8 +558,12 @@
  align-self: stretch;
 }
 .build-modal{
-  width: 60.318% !important;
-  max-width: 60.318% !important;
+  .modal-body{
+    padding: 0px !important;
+  }
+  .modal-content{
+    overflow: hidden;
+  }
   .modal-header{
     border-bottom: 1px solid var(--ff-gray-000);
   }
@@ -574,6 +578,7 @@
   }
   .content-body{
     @extend .content-style;
+    text-align: left;
     color: var(--ff-gray-800);
     font-weight: var(--font-weight-sm);
   }
@@ -581,9 +586,10 @@
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--ff-gray-000) !important;
+    padding-left: var(--spacer-250) !important;
     padding: var(--spacer-200);
     cursor: pointer;
     background: none;
     border: none;
-  }
+  }     
 }
