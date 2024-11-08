@@ -21,6 +21,7 @@ interface HistoryModalProps {
   categoryType: string;
   historyCount: number;
   currentVersionId?:number|string;
+  disabledData:{key:string,value:any}
 }
 
 interface AllHistory {
@@ -110,6 +111,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     categoryType,
     historyCount,
     currentVersionId,
+    disabledData = {key:"", value:""} // we can pass the key and its value based on that we can disable revert button eg: key:"processKey",value:"bpmn" if the data[key] == value it will disable
   }) => {
     const { t } = useTranslation();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -246,7 +248,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 <RevertField
                   variant="secondary"
                   size="sm"
-                  disabled={currentVersionId == entry.id}
+                  disabled={currentVersionId == entry.id || entry[disabledData.key] == disabledData.value}
                   label={revertBtnText}
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
@@ -269,7 +271,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   variant="secondary"
                   size="sm"
                   label={revertBtnText}
-                  disabled={currentVersionId == entry.id}
+                  disabled={currentVersionId == entry.id || entry[disabledData.key] == disabledData.value}
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
