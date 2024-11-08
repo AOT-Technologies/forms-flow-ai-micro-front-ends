@@ -407,3 +407,8 @@ select option:hover {
 .valiation-astrisk {
   color: var(--ff-base-600);
 }
+//for not allowing for edit in preview 
+.form-preview{
+  pointer-events: none;
+  cursor: not-allowed;
+}
