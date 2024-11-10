@@ -39,3 +39,19 @@
       font-size: var(--font-size-xs) !important;
     }
   }
+
+  .form-hilighter  [ref="webform"]  .formio-component{
+    // &:hover{
+    //   border: 2px solid;
+    //   border-style: dashed;
+    // }
+  }
+  .formio-hilighted{
+    box-sizing: border-box;
+    border-radius: var(--Rem_5, 8px);
+    border: 2px dashed var(--ff-base-600);
+    padding: 8px 10px;
+  }
+  .formio-component {
+    transition: border 0.05s ease, padding 0.3s ease; 
+  }
