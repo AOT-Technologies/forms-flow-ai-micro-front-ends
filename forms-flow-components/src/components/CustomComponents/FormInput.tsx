@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent ,KeyboardEvent } from 'react';
+import React, { ChangeEvent, FocusEvent ,KeyboardEvent ,FC} from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 
 interface FormInputProps {
@@ -47,6 +47,13 @@ export const FormInput: React.FC<FormInputProps> = ({
 
   const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Check if Enter key is pressed and onIconClick is provided
+    if (e.key === 'Enter' && onIconClick) {
+      onIconClick();
+    }
+  };
+
   return (
       <Form.Group controlId={id}>
         {label && (
@@ -69,7 +76,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             aria-label={ariaLabel}
             required={required}
             className={inputClassNames}
-            onKeyDown={(e) => (e.keyCode === 13 && onIconClick())}
+            onKeyDown={handleKeyDown}
             onClick={onClick}
           />
           {icon && (

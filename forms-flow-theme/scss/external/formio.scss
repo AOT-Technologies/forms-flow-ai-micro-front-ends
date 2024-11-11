@@ -40,17 +40,12 @@
     }
   }
 
-  .form-hilighter  [ref="webform"]  .formio-component{
-    // &:hover{
-    //   border: 2px solid;
-    //   border-style: dashed;
-    // }
-  }
+
   .formio-hilighted{
     box-sizing: border-box;
-    border-radius: var(--Rem_5, 8px);
+    border-radius: var(--radius-050);
     border: 2px dashed var(--ff-base-600);
-    padding: 8px 10px;
+    padding: 8px 10px;  //TBD need to update
   }
   .formio-component {
     transition: border 0.05s ease, padding 0.3s ease; 
