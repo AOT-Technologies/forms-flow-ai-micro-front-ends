@@ -1,3 +1,7 @@
+// Variables for reused values
+$base-100: var(--ff-base-100);
+$primary: var(--ff-primary);
+
 .btn-group-xxs>.btn, .btn-xxs, .component-btn-group .component-settings-button{
     width: auto !important;
     height: auto !important;
@@ -38,4 +42,14 @@
     .fa{
       font-size: var(--font-size-xs) !important;
     }
+  }
+
+
+  .formio-component{
+      .bg-default {
+        background: $base-100 !important;
+        .card-title{
+          color: $primary !important;
+        }
+      }
   }
