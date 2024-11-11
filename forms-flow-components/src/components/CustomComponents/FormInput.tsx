@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent ,KeyboardEvent ,FC} from 'react';
+import React, { ChangeEvent, FocusEvent ,KeyboardEvent } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 
 interface FormInputProps {
