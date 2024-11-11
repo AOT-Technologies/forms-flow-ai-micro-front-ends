@@ -692,7 +692,7 @@
 
   .pick-operator {
     padding: var(--spacer-200) var(--spacer-250) var(--spacer-150) var(--spacer-250);
-    gap: 1.5rem;
+    gap: var(--spacer-050);
   }
 
   .operator-list {
