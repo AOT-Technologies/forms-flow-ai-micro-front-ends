@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { FormTextArea } from "./FormTextArea";
 import { CloseIcon } from "../SvgIcons/index";
 import { FormInput } from "./FormInput";
 import { useTranslation } from "react-i18next";
+import { CustomInfo } from "./CustomInfo";
+import { Form } from "react-bootstrap";
 
 interface BuildFormModalProps {
   showBuildForm: boolean;
@@ -13,18 +15,18 @@ interface BuildFormModalProps {
     field: string,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  primaryBtnAction?: (name: string, description: string) => void; // Now expects name and description
+  primaryBtnAction?: (values:any) => void; // Now expects name and description
   secondaryBtnAction?: () => void;
   setNameError?: (value: string) => void;
   nameError?: string;
   description?: string;
-  formSubmitted?: boolean;
+  isLoading?: boolean;
   modalHeader?: string;
   nameLabel?: string;
   descriptionLabel?: string;
   primaryBtnLabel?: string;
   secondaryBtnLabel?: string;
-  nameValidationOnBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  nameValidationOnBlur?: (values:any) => void;
   primaryBtndataTestid?: string;
   secondoryBtndataTestid?: string;
   primaryBtnariaLabel?: string;
@@ -34,19 +36,21 @@ interface BuildFormModalProps {
   descriptionDataTestid?: string;
   placeholderForForm?: string;
   placeholderForDescription?: string;
+  buildForm?: boolean;
+  checked?: boolean; 
 }
 
 export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
   ({
     showBuildForm,
     onClose,
-    handleChange,
+    handleChange = ()=>{},
     primaryBtnAction,
     secondaryBtnAction = onClose, // Default to onClose if not provided
     setNameError,
     description,
     nameError,
-    formSubmitted,
+    isLoading,
     modalHeader,
     nameLabel = "Name",
     descriptionLabel = "Form Description",
@@ -62,17 +66,44 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     descriptionDataTestid = "form-description",
     placeholderForForm,
     placeholderForDescription,
+    buildForm= false,
+    checked= false,
   }) => {
     const { t } = useTranslation();
-    const [name, setName] = useState<string>(""); // State for form name
-    const [formDescription, setFormDescription] = useState<string>(description || ""); // State for form description
-
+    const [values, setValues] = useState({
+      title:"",
+      description: description || "",
+      display: checked ? "wizard" : "form"
+    })
+    const [cachedTitle, setCachedTitle] = useState("");
     const handlePrimaryAction = () => {
       // Pass name and description to primaryBtnAction
       if (primaryBtnAction) {
-        primaryBtnAction(name, formDescription);
+        primaryBtnAction(values);
       }
     };
+
+    const handleInputValueChange = (e:any)=>{
+      let {name, value} = e.target;
+      if(e.target.type == "checkbox"){
+        value = e.target.checked ? "wizard" : "form";
+      }
+      setValues(prev => ({...prev,[name]:value}))
+    }
+    
+    const handleOnBlur = ()=>{
+      if(!values.title || values.title !== cachedTitle){
+        nameValidationOnBlur(values)
+        setCachedTitle(values.title);
+      }
+    }
+
+    useEffect(()=>{
+      if(!showBuildForm){
+        setValues({title:"",description:"", display: checked ? "wizard" : "form" }) 
+        setCachedTitle('');
+      }
+    },[showBuildForm])
 
     return (
         <Modal
@@ -89,47 +120,61 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               <CloseIcon onClick={onClose} />
             </div>
           </Modal.Header>
-          <Modal.Body className="p-5">
-            <label className="form-label">{nameLabel}</label>
-            <span className="validation-astrisk">*</span>
+          <Modal.Body className="form-builder-modal">
             <FormInput
+              name="title"
               type="text"
               placeholder={placeholderForForm}
-              className={`form-input ${nameError ? "input-error" : ""}`}
+              label={nameLabel}
               aria-label={t("Name of the form")}
               data-testid={nameInputDataTestid}
-              onBlur={nameValidationOnBlur}
+              onBlur={handleOnBlur}
               onChange={(event) => {
+                handleInputValueChange(event);
                 setNameError("");
-                setName(event.target.value); // Set the name state
                 handleChange("title", event);
               }}
               required
+              value={values.title}
+              isInvalid={!!nameError}
+              feedback={nameError}
             />
-            {nameError && (
-              <div className="validation-text mb-4">{nameError}</div>
-            )}
-
-            <label className="form-label">{descriptionLabel}</label>
-            <FormTextArea
+           <FormTextArea
+              name="description"
               placeholder={placeholderForDescription}
+              label={descriptionLabel}
               className="form-input"
               aria-label={t("Description of the new form")}
               data-testid={descriptionDataTestid}
-              value={formDescription} // Bind description state
-              onChange={(event) => {
-                setFormDescription(event.target.value); // Set the description state
-              }}
+              value={values.description} // Bind description state
+              onChange={handleInputValueChange}
               minRows={1}
             />
+
+           {buildForm && 
+           <>
+           <CustomInfo heading="Note" 
+           content="Allowing the addition of multiple pages in a single form will prevent you from using this form in a bundle later" />
+           <Form.Check
+             type="checkbox"
+             id="anonymouseCheckbox"
+             label={t("Allow adding multiple pages form in this form")}
+             checked={values.display == "wizard"}
+             onChange={handleInputValueChange} 
+             name="display" 
+             className="field-label"
+             data-testid="wizard-checkbox"
+           />   
+          </>
+          }
           </Modal.Body>
           <Modal.Footer className="d-flex justify-content-start">
             <CustomButton
               variant={nameError ? "dark" : "primary"}
               size="md"
-              disabled={!!nameError || formSubmitted || !name } // Disable if errors or fields are empty
+              disabled={!!nameError || isLoading || !values.title } // Disable if errors or fields are empty
               label={primaryBtnLabel}
-              buttonLoading={!nameError && formSubmitted ? true : false}
+              buttonLoading={isLoading}
               onClick={handlePrimaryAction} // Use the new handler
               dataTestid={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}

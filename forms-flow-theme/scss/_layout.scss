@@ -32,7 +32,9 @@ a,
 input[type="button"],
 input[type="submit"],
 input[type="radio"],
+input[type="radio"]+label,
 input[type="checkbox"],
+input[type="checkbox"]+label,
 .btn,
 .clickable {
   cursor: pointer;
