@@ -22,6 +22,7 @@ interface HistoryModalProps {
   historyCount: number;
   currentVersionId?:number|string;
   disabledData:{key:string,value:any}
+  ignoreFirstEntryDisable?: boolean
 }
 
 interface AllHistory {
@@ -42,6 +43,8 @@ interface AllHistory {
 }
 
 const formatDate = (dateString: string) => {
+  // TBD : to be formatted from backend later
+  dateString = dateString.replace(" ", "T") + "Z";
   const date = new Date(dateString);
 
   const day = String(date.getDate()).padStart(2, "0");
@@ -111,6 +114,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     categoryType,
     historyCount,
     currentVersionId,
+    ignoreFirstEntryDisable = false,
     disabledData = {key:"", value:""} // we can pass the key and its value based on that we can disable revert button eg: key:"processKey",value:"bpmn" if the data[key] == value it will disable
   }) => {
     const { t } = useTranslation();
@@ -123,6 +127,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const timelineRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
+
+    const currentCategoryLabel = categoryType === "FORM" ? "Layout" : "Flow";
 
     const handleRevertClick = (
       version: string,
@@ -225,7 +231,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         const cloned_form_id =
           categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
         const process_id = categoryType === "WORKFLOW" ? entry.id : null;
-        const isLastEntry = index === allHistory.length - 1;
+        const isLastEntry = index === allHistory.length - 1;  
+        const revertButtonDisabled = entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
         const fields = [
             { id:1, heading: t("Last Edit On"), value: formatDate(entry.created) },
             { id:2, heading: t("Last Edit By"), value: entry.createdBy },
@@ -234,6 +241,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
               ? [{ id:4, heading: t("Type"), value: entry.processType }]
               : []),
           ];
+
         return (
           <React.Fragment key={`${entry.version}-${index}`}>
             {isMajorVersion && (
@@ -248,7 +256,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                 <RevertField
                   variant="secondary"
                   size="sm"
-                  disabled={currentVersionId == entry.id || entry[disabledData.key] == disabledData.value}
+                  disabled={revertButtonDisabled}
                   label={revertBtnText}
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
@@ -271,7 +279,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   variant="secondary"
                   size="sm"
                   label={revertBtnText}
-                  disabled={currentVersionId == entry.id || entry[disabledData.key] == disabledData.value}
+                  disabled={revertButtonDisabled}
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
@@ -317,14 +325,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         {selectedVersion && (
           <ConfirmModal
             show={showConfirmModal}
-            title={t(`Use Layout from Version ${selectedVersion}`)}
+            title={t(`Use ${currentCategoryLabel} from Version ${selectedVersion}`)}
             message={t(
-              `This will copy the layout from Version ${selectedVersion} overwriting your existing layout.`
+              `This will copy the ${currentCategoryLabel.toLowerCase()} from Version ${selectedVersion} overwriting your existing ${currentCategoryLabel.toLowerCase()}.`
             )}
             primaryBtnAction={handleKeepLayout}
             onClose={() => setShowConfirmModal(false)}
-            primaryBtnText={t("Keep Current Layout")}
-            secondaryBtnText={t("Replace Current Layout")}
+            primaryBtnText={t(`Keep Current ${currentCategoryLabel}`)}
+            secondaryBtnText={t(`Replace Current ${currentCategoryLabel}`)}
             secondayBtnAction={handleReplaceLayout}
           />
         )}
