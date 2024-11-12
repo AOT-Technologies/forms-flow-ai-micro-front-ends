@@ -43,6 +43,8 @@ interface AllHistory {
 }
 
 const formatDate = (dateString: string) => {
+  // TBD : to be formatted from backend later
+  dateString = dateString.replace(" ", "T") + "Z";
   const date = new Date(dateString);
 
   const day = String(date.getDate()).padStart(2, "0");
@@ -125,6 +127,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const timelineRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
+
+    const currentCategoryLabel = categoryType === "FORM" ? "Layout" : "Flow";
 
     const handleRevertClick = (
       version: string,
@@ -321,14 +325,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         {selectedVersion && (
           <ConfirmModal
             show={showConfirmModal}
-            title={t(`Use Layout from Version ${selectedVersion}`)}
+            title={t(`Use ${currentCategoryLabel} from Version ${selectedVersion}`)}
             message={t(
-              `This will copy the layout from Version ${selectedVersion} overwriting your existing layout.`
+              `This will copy the ${currentCategoryLabel.toLowerCase()} from Version ${selectedVersion} overwriting your existing ${currentCategoryLabel.toLowerCase()}.`
             )}
             primaryBtnAction={handleKeepLayout}
             onClose={() => setShowConfirmModal(false)}
-            primaryBtnText={t("Keep Current Layout")}
-            secondaryBtnText={t("Replace Current Layout")}
+            primaryBtnText={t(`Keep Current ${currentCategoryLabel}`)}
+            secondaryBtnText={t(`Replace Current ${currentCategoryLabel}`)}
             secondayBtnAction={handleReplaceLayout}
           />
         )}

@@ -21,10 +21,10 @@ export const ReusableProcessTableRow: React.FC<ProcessTableRowProps> = ({ item, 
 
   return (
     <tr>
-      <td className="w-25">
+      <td className="w-25 text-ellipsis">
         <span className="ms-4">{item.name}</span>
       </td>
-      <td className="w-20">
+      <td className="w-20 text-ellipsis">
         <span>{item.processKey}</span>
       </td>
       <td className="w-15">{HelperServices?.getLocaldate(item.modified)}</td>
