@@ -65,7 +65,7 @@
 
       .modal-content-text {
         color: var(--ff-gray-800, #303436);
-        font-size: var(--ff--font-size-sm);
+        font-size: var(--font-size-sm);
         font-weight: var(--font-weight-sm);
         line-height: var(--text-line-height);
         text-align: left;
@@ -833,11 +833,11 @@
   
   .select-text{
     color: var(--ff-gray-400);
-    font-size: var(--ff--font-size-sm);
+    font-size: var(--font-size-sm);
   }
   .selected-var-text{
     color: var(--ff-dark);
-    font-size: var(--ff--font-size-sm);
+    font-size: var(--font-size-sm);
     padding-bottom: var(--spacer-050);
   }
  
@@ -847,7 +847,7 @@
   gap: var(--spacer-150);
   .text-bold{
     font-weight: var(--font-weight-xl);
-    font-size: var(--ff--font-size-sm);
+    font-size: var(--font-size-sm);
     word-break: break-all;
    }
  }
