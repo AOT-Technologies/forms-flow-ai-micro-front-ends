@@ -619,3 +619,19 @@ export const TrashIcon = ({ color = baseColor, ...props }) => (
     />
   </svg>
 );
+
+export const TickIcon = ({ color = baseColor, ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="16" 
+    height="13" 
+    viewBox="0 0 16 13" 
+    fill="none">
+  <path
+   d="M1 6.96876L6.69828 12L15 1" 
+   stroke={color}
+   strokeWidth="2" 
+   strokeLinecap="round" 
+   strokeLinejoin="round"/>
+</svg>
+);
