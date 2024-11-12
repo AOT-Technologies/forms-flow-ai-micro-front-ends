@@ -15,6 +15,7 @@ interface CustomButtonProps {
   variant: string;
   size?: "sm" | "md" | "lg" ;
   label: string;
+  name?: string,
   onClick?: () => void;
   isDropdown?: boolean;
   dropdownItems?: DropdownItem[];
@@ -38,6 +39,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   className = "",
   dataTestid = "",
   ariaLabel = "",
+  name =  "",
   buttonLoading = false,
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -80,6 +82,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           ref={buttonRef}
           data-testid={dataTestid}
           aria-label={ariaLabel}
+          name={name}
           className={`${size !== 'md' ? className : `btn-md ${className}`}`}
         >
           {label}
@@ -117,6 +120,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       size={size!='md' ? size : undefined}
       onClick={onClick}
       disabled={disabled || buttonLoading}
+      name={name}
       className={`${size !== 'md' ? className : `btn-md ${className}`}`}
       data-testid={dataTestid}
       aria-label={ariaLabel}
