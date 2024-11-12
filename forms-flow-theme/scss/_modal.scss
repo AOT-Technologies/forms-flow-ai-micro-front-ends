@@ -507,6 +507,10 @@
     align-self: stretch;
   }
 }
+.node-list-row {
+  padding: var(--spacer-200);
+  border-top: 1px solid var(--ff-gray-000);
+}
 
 //reusable multi-select
 .multi-select{
