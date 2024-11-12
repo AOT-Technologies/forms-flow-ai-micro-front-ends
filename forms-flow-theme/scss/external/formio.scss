@@ -45,6 +45,17 @@ $primary: var(--ff-primary);
   }
 
 
+  .formio-hilighted{
+    box-sizing: border-box;
+    border-radius: var(--radius-050);
+    border: 2px dashed var(--ff-base-600);
+    padding: 8px 10px;  //TBD need to update
+  }
+  // Adjust the hover transition on the component in the TaskVariable UI to prevent size change glitches
+  .formio-component {
+    transition: border 0.05s ease, padding 0.3s ease; 
+  }
+
   .formio-component{
       .bg-default {
         background: $base-100 !important;
