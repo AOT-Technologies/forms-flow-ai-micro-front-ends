@@ -627,8 +627,8 @@
     flex: 1 0 0;
     align-self: stretch;
     border-radius: var(--radius-0100);
-    border: 1px solid var(--ff-gray-300, #AFB4B6);
-    background: var(--ff-white, #FFF);    
+    border: 1px solid var(--ff-gray-300);
+    background: var(--ff-white);    
   }
   
   .select-text{
@@ -647,7 +647,7 @@
   gap: var(--spacer-150);
   .text-bold{
     font-weight: var(--font-weight-xl);
-    font-size: 1rem;
+    font-size: var(--ff--font-size-sm);
     word-break: break-all;
    }
  }
