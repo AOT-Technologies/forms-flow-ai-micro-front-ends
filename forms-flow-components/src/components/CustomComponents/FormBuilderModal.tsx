@@ -108,6 +108,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
         setCachedTitle('');
       }
       if(showBuildForm){
+        //reset the name error on starting
         setNameError("");
       }
     },[showBuildForm])
