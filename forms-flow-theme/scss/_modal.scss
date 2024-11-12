@@ -596,7 +596,7 @@
 
 
 //expression-builder-modal
-
+.expression-builder{
   .expression-list-group {
     width: 100%;
   }
@@ -626,13 +626,13 @@
 
   .expression-list-group .variable-label {
     color: var(--ff-primary);
-    font-size: var(--ff--font-size-sm);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-lg);
   }
 
   .expression-list-group .variable-key {
     color: var(--ff-gray-400);
-    font-size: var(--ff--font-size-sm);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-sm);
     margin-left: 8px;
   }
@@ -722,7 +722,7 @@
   .expression-text {
     padding-left: var(--spacer-100);
     padding-top: var(--spacer-050);
-    font-weight: var(--ff-font-weight-xl);
+    font-weight: var(--font-weight-xl);
   }
 
   .no-variables {
@@ -735,7 +735,7 @@
 
   .no-var-text {
     color: var(--ff-gray-400);
-    font-weight: var(--ff-font-weight-sm);
+    font-weight: var(--font-weight-sm);
   }
 
   .dashed-box {
@@ -787,6 +787,7 @@
       color: var(--ff-white) !important;
     }
   }
+}
 
 
 
