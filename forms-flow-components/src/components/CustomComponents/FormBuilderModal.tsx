@@ -91,9 +91,13 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       setValues(prev => ({...prev,[name]:value}))
     }
     
-    const handleOnBlur = ()=>{
-      if(!values.title || values.title !== cachedTitle){
-        nameValidationOnBlur(values)
+    const handleOnBlur = (e)=>{ 
+      //TBD: need to prevent this function on modal close
+      const relatedTargetName = e.relatedTarget?.name;
+      const createButtonClicked =  relatedTargetName == "createButton";
+      const isCancelButton = relatedTargetName == "cancelButton"; 
+       if((!values.title || values.title !== cachedTitle) && !isCancelButton){
+        nameValidationOnBlur({...values,createButtonClicked})
         setCachedTitle(values.title);
       }
     }
@@ -102,6 +106,10 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       if(!showBuildForm){
         setValues({title:"",description:"", display: checked ? "wizard" : "form" }) 
         setCachedTitle('');
+      }
+      if(showBuildForm){
+        //reset the name error on starting
+        setNameError("");
       }
     },[showBuildForm])
 
@@ -176,6 +184,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               label={primaryBtnLabel}
               buttonLoading={isLoading}
               onClick={handlePrimaryAction} // Use the new handler
+              name="createButton"
               dataTestid={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
             />
@@ -183,6 +192,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <CustomButton
               variant="secondary"
               size="md"
+              name="cancelButton"
               label={secondaryBtnLabel}
               onClick={secondaryBtnAction}
               dataTestid={secondoryBtndataTestid}
