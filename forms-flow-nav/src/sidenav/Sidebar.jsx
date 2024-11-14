@@ -33,6 +33,7 @@ import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo } from "@formsflow/components";
+import PropTypes from 'prop-types';
 
 const Sidebar = React.memo(({ props }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
@@ -335,5 +336,12 @@ const Sidebar = React.memo(({ props }) => {
       </div>
   );
 });
+
+Sidebar.propTypes = {
+  props: PropTypes.shape({
+    subscribe: PropTypes.func.isRequired, 
+    getKcInstance: PropTypes.func.isRequired, 
+  }).isRequired,
+};
 
 export default Sidebar;
