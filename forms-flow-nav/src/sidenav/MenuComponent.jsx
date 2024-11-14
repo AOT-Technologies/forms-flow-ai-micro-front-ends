@@ -5,13 +5,27 @@ import { Link, useLocation, useHistory } from "react-router-dom";
 import { ChevronIcon } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants/constants";
 import { useTranslation } from "react-i18next";
+import { StorageService } from "@formsflow/service";
 
-const MenuComponent = ({ eventKey, mainMenu, subMenu, optionsCount }) => {
+const MenuComponent = ({ eventKey, mainMenu, subMenu, optionsCount, subscribe }) => {
+  const [tenant, setTenant] = React.useState({});
   const location = useLocation();
   const history = useHistory();
+  const tenantKey = tenant?.tenantId;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const { t } = useTranslation();
   const noOptionsMenu = optionsCount === "0";
+
+  React.useEffect(() => { 
+    subscribe("ES_TENANT", (msg, data) => {
+      if (data) {
+        setTenant(data);
+        if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
+          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
+        }
+      }
+    });
+  }, []);
 
   const handleHeaderClick = () => {
     if (noOptionsMenu) {
