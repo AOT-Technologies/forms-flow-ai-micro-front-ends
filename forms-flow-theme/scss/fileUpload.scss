@@ -35,6 +35,14 @@ $font-size-xs: var(--font-size-xs);
   margin: 0;
 }
 
+.upload-size-text {
+color: $gray-400;
+text-align: center;
+font-size: 0.875rem; //14px
+font-weight: var(--font-weight-sm);
+line-height: var(--text-line-height);
+}
+
 .upload-text-description {
   color: $gray-400;
   text-align: center;
