@@ -27,6 +27,8 @@ import {
 import { DEFAULT_ROLES } from "../../constants";
 
 import {removingTenantId} from "../../utils/utils.js";
+import { TableFooter } from "@formsflow/components";
+
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -638,17 +640,12 @@ const Roles = React.memo((props: any) => {
       </DropdownButton>
     );
   };
-  const pagination = paginationFactory({
-    showTotal: true,
-    align: "center",
-    className: "d-flex",
-    sizePerPageList: getpageList(),
-    page: activePage,
-    sizePerPage: sizePerPage,
-    paginationTotalRenderer: customTotal,
-    onPageChange: (page) => setActivePage(page),
-    sizePerPageRenderer: customDropUp,
-  });
+
+  const handleLimitChange = (sizePerPage, page) => {
+    setActivePage(page);
+    setSizePerPage(sizePerPage);
+  };
+
 
   const columns = [
     {
@@ -773,11 +770,11 @@ const Roles = React.memo((props: any) => {
           </Button>
         </div>
         {!props?.loading ? (
+          <div>
           <BootstrapTable
             keyField="id"
             data={roles}
             columns={columns}
-            pagination={pagination}
             bordered={false}
             wrapperClasses="table-container px-4"
             rowStyle={{
@@ -787,6 +784,20 @@ const Roles = React.memo((props: any) => {
             noDataIndication={noData}
             data-testid="admin-roles-table"
           />
+    
+          <table className="table">
+            <tfoot>
+              <TableFooter
+                limit={sizePerPage}
+                activePage={activePage}
+                totalCount={roles.length}
+                handlePageChange={setActivePage}
+                onLimitChange={handleLimitChange}
+                pageOptions={getpageList()}
+              />
+            </tfoot>
+          </table>
+        </div>
         ) : (
           <Loading />
         )}
