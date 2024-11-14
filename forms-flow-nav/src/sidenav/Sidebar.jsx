@@ -33,6 +33,7 @@ import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo } from "@formsflow/components";
+import PropTypes from 'prop-types';
 
 const Sidebar = React.memo(({ props }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
@@ -210,13 +211,14 @@ const Sidebar = React.memo(({ props }) => {
                       },
                     ] : [],
                   ]}
+                  subscribe={props.subscribe}
                 />
               )}
             {showApplications &&
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
-                  eventKey="3"
+                  eventKey="1"
                   optionsCount="1"
                   mainMenu="Submit"
                   subMenu={[
@@ -229,11 +231,12 @@ const Sidebar = React.memo(({ props }) => {
                       ],
                     },
                   ]}
+                  subscribe={props.subscribe}
                 />
               )}
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
-                eventKey="4"
+                eventKey="2"
                 optionsCount="1"
                 mainMenu="Review"
                 subMenu={[
@@ -243,11 +246,12 @@ const Sidebar = React.memo(({ props }) => {
                     matchExps: [createURLPathMatchExp("task", baseUrl)],
                   },
                 ]}
+                subscribe={props.subscribe}
               />
             )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
-                eventKey="5"
+                eventKey="3"
                 optionsCount="2"
                 mainMenu="Analyze"
                 subMenu={[
@@ -266,11 +270,12 @@ const Sidebar = React.memo(({ props }) => {
                     ],
                   }
                 ]}
+                subscribe={props.subscribe}
               />
             )}
             {isAdmin && (
               <MenuComponent
-                eventKey="6"
+                eventKey="4"
                 optionsCount="3"
                 mainMenu="Manage"
                 subMenu={[
@@ -292,6 +297,7 @@ const Sidebar = React.memo(({ props }) => {
                     matchExps: [createURLPathMatchExp("admin/users", baseUrl)],
                   },
                 ]}
+                subscribe={props.subscribe}
               />
             )}
           </Accordion>
@@ -330,5 +336,12 @@ const Sidebar = React.memo(({ props }) => {
       </div>
   );
 });
+
+Sidebar.propTypes = {
+  props: PropTypes.shape({
+    subscribe: PropTypes.func.isRequired, 
+    getKcInstance: PropTypes.func.isRequired, 
+  }).isRequired,
+};
 
 export default Sidebar;
