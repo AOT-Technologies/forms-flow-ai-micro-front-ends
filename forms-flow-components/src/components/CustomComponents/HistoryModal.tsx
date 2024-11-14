@@ -23,6 +23,7 @@ interface HistoryModalProps {
   currentVersionId?:number|string;
   disabledData:{key:string,value:any}
   ignoreFirstEntryDisable?: boolean
+  disableAllRevertButton?: boolean
 }
 
 interface AllHistory {
@@ -113,7 +114,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     allHistory,
     categoryType,
     historyCount,
-    currentVersionId,
+    disableAllRevertButton = false,
     ignoreFirstEntryDisable = false,
     disabledData = {key:"", value:""} // we can pass the key and its value based on that we can disable revert button eg: key:"processKey",value:"bpmn" if the data[key] == value it will disable
   }) => {
@@ -232,7 +233,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
           categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
         const process_id = categoryType === "WORKFLOW" ? entry.id : null;
         const isLastEntry = index === allHistory.length - 1;  
-        const revertButtonDisabled = entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
+        const revertButtonDisabled = disableAllRevertButton || entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
         const fields = [
             { id:1, heading: t("Last Edit On"), value: formatDate(entry.created) },
             { id:2, heading: t("Last Edit By"), value: entry.createdBy },
