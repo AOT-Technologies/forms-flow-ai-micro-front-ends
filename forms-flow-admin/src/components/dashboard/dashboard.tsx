@@ -1,12 +1,8 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
-import paginationFactory from "react-bootstrap-table2-paginator";
 import { toast } from "react-toastify";
 import Loading from "../loading";
 import { useParams } from "react-router-dom";
@@ -18,29 +14,9 @@ import {
   fetchAuthorizations,
 } from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
+import { TableFooter } from "@formsflow/components";  
 
-const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
-  return (
-    <DropdownButton
-      drop="up"
-      variant="secondary"
-      title={currSizePerPage}
-      style={{ display: "inline" }}
-    >
-      {options.map((option) => (
-        <Dropdown.Item
-          key={option.text}
-          type="button"
-          onClick={() => onSizePerPageChange(option.page)}
-        >
-          {option.text}
-        </Dropdown.Item>
-      ))}
-    </DropdownButton>
-  );
-};
-
-export const InsightDashboard = React.memo((props: any) => {
+const InsightDashboard = React.memo((props: any) => {
   const { dashboards, groups, authorizations, setCount, authReceived } = props;
 
   const isGroupUpdated = groups.length > 0;
@@ -55,6 +31,7 @@ export const InsightDashboard = React.memo((props: any) => {
   const [show, setShow] = React.useState(false);
   const [activePage, setActivePage] = React.useState(1);
   const [err, setErr] = React.useState({});
+  const [limit, setLimit] = React.useState(5); 
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -285,36 +262,17 @@ export const InsightDashboard = React.memo((props: any) => {
     return list;
   };
 
-  const customTotal = (from, to, size) => (
-    <span className="ms-2" role="main">
-      <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
-      <Translation>{(t) => t("to")}</Translation> {to}{" "}
-      <Translation>{(t) => t("of")}</Translation> {size}{" "}
-      <Translation>{(t) => t("results")}</Translation>
-    </span>
-  );
-
-  const pagination = paginationFactory({
-    showTotal: true,
-    align: "center",
-    sizePerPageList: getpageList(),
-    page: activePage,
-    paginationTotalRenderer: customTotal,
-    onPageChange: (page) => setActivePage(page),
-    sizePerPageRenderer: customDropUp,
-  });
-
   return (
     <>
       <div className="" role="definition">
         <br />
         <div>
           {!isLoading ? (
+            <div>
             <BootstrapTable
               keyField="resourceId"
               data={authDashBoardList}
               columns={columns}
-              pagination={authDashBoardList.length > 0 ? pagination : false}
               bordered={false}
               wrapperClasses="table-container-admin mb-3 px-4"
               rowStyle={{
@@ -324,6 +282,19 @@ export const InsightDashboard = React.memo((props: any) => {
               noDataIndication={noData}
               data-testid="admin-dashboard-table"
             />
+            <table className="table">
+              <tfoot>
+              <TableFooter
+              limit={limit}
+              activePage={activePage}
+              totalCount={authDashBoardList.length}
+              handlePageChange={(page) => setActivePage(page)}
+              onLimitChange={setLimit}
+              pageOptions={getpageList()}
+            />
+              </tfoot>
+          </table>
+          </div>
           ) : (
             <Loading />
           )}
