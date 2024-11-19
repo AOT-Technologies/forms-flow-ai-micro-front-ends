@@ -5,13 +5,34 @@ import { Link, useLocation, useHistory } from "react-router-dom";
 import { ChevronIcon } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants/constants";
 import { useTranslation } from "react-i18next";
+import { StorageService } from "@formsflow/service";
+import PropTypes from "prop-types";
 
-const MenuComponent = ({ eventKey, mainMenu, subMenu, optionsCount }) => {
+const MenuComponent = ({
+  eventKey,
+  mainMenu,
+  subMenu,
+  optionsCount,
+  subscribe,
+}) => {
+  const [tenant, setTenant] = React.useState({});
   const location = useLocation();
   const history = useHistory();
+  const tenantKey = tenant?.tenantId;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const { t } = useTranslation();
   const noOptionsMenu = optionsCount === "0";
+
+  React.useEffect(() => {
+    subscribe("ES_TENANT", (msg, data) => {
+      if (data) {
+        setTenant(data);
+        if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
+          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
+        }
+      }
+    });
+  }, []);
 
   const handleHeaderClick = () => {
     if (noOptionsMenu) {
@@ -21,8 +42,10 @@ const MenuComponent = ({ eventKey, mainMenu, subMenu, optionsCount }) => {
     }
   };
 
-  const isActive = subMenu.some((menu) =>
-    menu.matchExps && menu.matchExps.some((exp) => exp.test(location.pathname))
+  const isActive = subMenu.some(
+    (menu) =>
+      menu.matchExps &&
+      menu.matchExps.some((exp) => exp.test(location.pathname))
   );
 
   return (
@@ -69,6 +92,20 @@ const MenuComponent = ({ eventKey, mainMenu, subMenu, optionsCount }) => {
       )}
     </Accordion.Item>
   );
+};
+
+MenuComponent.propTypes = {
+  eventKey: PropTypes.string.isRequired,
+  mainMenu: PropTypes.string.isRequired,
+  subMenu: PropTypes.arrayOf(
+    PropTypes.shape({
+      path: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      matchExps: PropTypes.arrayOf(PropTypes.instanceOf(RegExp)),
+    })
+  ).isRequired,
+  optionsCount: PropTypes.string.isRequired,
+  subscribe: PropTypes.func.isRequired,
 };
 
 export default MenuComponent;
