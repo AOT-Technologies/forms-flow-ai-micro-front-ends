@@ -635,7 +635,7 @@ export const TickIcon = ({ color = baseColor, ...props }) => (
 </svg>
 );
 
-export const DropdownIcon = () => (
+export const DropdownIcon = ({color = baseColor}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -645,7 +645,7 @@ export const DropdownIcon = () => (
   >
     <path
       d="M1.5 1.24951L8.00058 7.7501L14.5006 1.25009"
-      stroke="#253DF4"
+      stroke={color}
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"

@@ -38,7 +38,7 @@ $font-size-xs: var(--font-size-xs);
 .upload-size-text {
 color: $gray-400;
 text-align: center;
-font-size: 0.875rem; //14px
+font-size: var(--font-size-xs); 
 font-weight: var(--font-weight-sm);
 line-height: var(--text-line-height);
 }
@@ -117,4 +117,71 @@ line-height: var(--text-line-height);
 .progress,
 .progress-stacked {
   --ff-progress-border-radius: var(--radius-0150) !important;
+}
+
+.upload-status-success {
+  @include upload-status-styles($base-600);
+}
+
+.upload-status-error {
+  @include upload-status-styles(var(--ff-red));
+}
+
+.upload-status-progress {
+  @include upload-status-styles($gray-400);
+}
+
+.progress {
+  height: var(--spacer-150) !important;
+}
+
+.progress,
+.progress-stacked {
+  --ff-progress-border-radius: var(--radius-0150) !important;
+}
+
+//fileupload.scss
+.import-container {
+  width: 100%;
+
+  .import-details {
+    display: flex;
+    padding: var(--spacer-100) 0 var(--spacer-100) 0;
+    align-items: center;
+    align-self: stretch;
+    border-bottom: 1px solid var(--ff-gray-100);
+
+    .file-item-header-text {
+      display: flex;
+      justify-content: flex-start;
+      width: 30%;
+      color: var(--ff-gray-800);
+      font-size: 0.875rem;
+      font-weight: var(--font-weight-lg);
+      line-height: var(--text-line-height);
+    }
+  }
+
+  .file-item-content {
+    display: flex;
+    padding: var(--spacer-200) 0 var(--spacer-200) 0;
+    align-items: center;
+    align-self: stretch;
+    border-bottom: 1px solid var(--ff-gray-100);
+
+    .import-layout-text,
+    .import-workflow-text {
+      width: 30%;
+      color: var(--gray-800);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-sm);
+      line-height: var(--text-line-height);
+    }
+
+    /* Target the last child */
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
 }
