@@ -17,3 +17,4 @@ export * from "./CustomComponents/TableFooter";
 export * from "./CustomComponents/CustomInfo";
 export * from "./CustomComponents/BuildModal";
 export * from "./CustomComponents/ErrorModal";
+export * from "./CustomComponents/NoDataFound";
