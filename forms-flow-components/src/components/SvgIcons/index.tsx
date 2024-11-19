@@ -646,9 +646,9 @@ export const DropdownIcon = ({color = baseColor}) => (
     <path
       d="M1.5 1.24951L8.00058 7.7501L14.5006 1.25009"
       stroke={color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

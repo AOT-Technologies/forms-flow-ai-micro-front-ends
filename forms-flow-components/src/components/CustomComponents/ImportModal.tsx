@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Dropdown from "react-bootstrap/Dropdown";
-import { useTranslation } from "react-i18next";
 import {
   CloseIcon,
   UploadIcon,
@@ -12,9 +11,9 @@ import {
   DropdownIcon,
 } from "../SvgIcons";
 import { CustomButton } from "../CustomComponents/Button";
+import { useTranslation } from "react-i18next";
 
 // Define the types for props
-const { t } = useTranslation();
 interface FileItem {
   form?: {
     majorVersion: number;
@@ -72,6 +71,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     headerText,
     processVersion,
   }) => {
+    const { t } = useTranslation();
     const computedStyle = getComputedStyle(document.documentElement);
     const redColor = computedStyle.getPropertyValue("--ff-red-000");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -80,7 +80,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       value: any;
       label: string;
     } | null>(null);
-    const [selectedFlowVersion, setSelectedFlowOption] = useState<{
+    const [selectedFlowVersion, setSelectedFlowVersion] = useState<{
       value: any;
       label: string;
     } | null>(null);
@@ -116,7 +116,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     };
 
     const handFlowChange = (option: { value: any; label: string }) => {
-      setSelectedFlowOption(option);
+      setSelectedFlowVersion(option);
     };
 
     const onUpload = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,7 +133,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       setSelectedFile(null);
       setUploadProgress(0);
       setSelectedLayoutOption(null);
-      setSelectedFlowOption(null);
+      setSelectedFlowVersion(null);
       setShowFileItems(false);
       onClose();
     };
@@ -241,16 +241,22 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       );
     };
 
-    // Function to determine the upload status class based on conditions
     const getUploadStatusClass = () => {
-      return !importLoader && !importError && !inprogress
-        ? "upload-status-success"
-        : !importLoader && importError && !inprogress
-        ? "upload-status-error"
-        : inprogress
-        ? "upload-status-progress"
-        : "";
+      if (!importLoader && !importError && !inprogress) {
+        return "upload-status-success";
+      }
+    
+      if (!importLoader && importError && !inprogress) {
+        return "upload-status-error";
+      }
+    
+      if (inprogress) {
+        return "upload-status-progress";
+      }
+    
+      return "";
     };
+    
 
     // Function to render the status text based on the upload condition
     const renderUploadStatusText = () => {
@@ -344,9 +350,9 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                   </div>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  {layoutOptions.map((option, index) => (
+                  {layoutOptions.map((option) => (
                     <Dropdown.Item
-                      key={index}
+                      key={option.value.toString()}
                       onClick={() => handleLayoutChange(option)}
                     >
                       {option.label}
@@ -379,9 +385,9 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                   </div>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  {flowOptions.map((option, index) => (
+                  {flowOptions.map((option) => (
                     <Dropdown.Item
-                      key={index}
+                      key={option.value.toString()}
                       onClick={() => handFlowChange(option)}
                     >
                       {option.label}
@@ -399,8 +405,16 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     const renderFileUploadArea = () => {
       return (
         <div
+          role="button"
           className="file-upload"
+          tabIndex={0}
           onClick={() => document.getElementById("file-input")?.click()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              document.getElementById("file-input")?.click(); 
+            }
+          }}
+          aria-label="Upload file"
         >
           <input
             id="file-input"
@@ -419,8 +433,8 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
               )}
             </p>
             <p className="upload-size-text">
-              {t( `Support for a single ${fileType} file upload. Maximum file
-              size 20MB.` )}
+              {t(`Support for a single ${fileType} file upload. Maximum file
+              size 20MB.`)}
             </p>
           </div>
         </div>

@@ -36,11 +36,11 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-size-text {
-color: $gray-400;
-text-align: center;
-font-size: var(--font-size-xs); 
-font-weight: var(--font-weight-sm);
-line-height: var(--text-line-height);
+  color: $gray-400;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-sm);
+  line-height: var(--text-line-height);
 }
 
 .upload-text-description {
@@ -61,7 +61,7 @@ line-height: var(--text-line-height);
   align-self: stretch;
 }
 
-.upload-boady {
+.upload-body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -112,35 +112,13 @@ line-height: var(--text-line-height);
 
 .progress {
   height: var(--spacer-150) !important;
+  --ff-progress-border-radius: var(--radius-0150) !important;
 }
 
-.progress,
 .progress-stacked {
   --ff-progress-border-radius: var(--radius-0150) !important;
 }
 
-.upload-status-success {
-  @include upload-status-styles($base-600);
-}
-
-.upload-status-error {
-  @include upload-status-styles(var(--ff-red));
-}
-
-.upload-status-progress {
-  @include upload-status-styles($gray-400);
-}
-
-.progress {
-  height: var(--spacer-150) !important;
-}
-
-.progress,
-.progress-stacked {
-  --ff-progress-border-radius: var(--radius-0150) !important;
-}
-
-//fileupload.scss
 .import-container {
   width: 100%;
 
