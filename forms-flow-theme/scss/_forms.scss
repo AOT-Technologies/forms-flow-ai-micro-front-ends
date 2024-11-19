@@ -428,7 +428,7 @@ select option:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 0.875rem !important;
+    font-size: var(--font-size-xs)!important;
     font-weight: var(--font-weight-sm) !important;
   }
 
@@ -444,7 +444,7 @@ select option:hover {
     display: flex !important;
     align-items: left !important;
     justify-content: start !important;
-    font-size: 0.875rem !important;
+    font-size: var(--font-size-xs)!important;
     font-weight: var(--font-weight-sm) !important;
   }
 
