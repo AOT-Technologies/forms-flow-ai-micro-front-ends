@@ -27,6 +27,7 @@ import { DEFAULT_ROLES } from "../../constants";
 
 import {removingTenantId} from "../../utils/utils.js";
 import { TableFooter } from "@formsflow/components";
+
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -636,6 +637,7 @@ const Roles = React.memo((props: any) => {
     setActivePage(1); 
   };
 
+
   const columns = [
     {
       dataField: "name",
@@ -776,14 +778,15 @@ const Roles = React.memo((props: any) => {
     
           <table className="table">
             <tfoot>
-            <TableFooter
-            limit={sizePerPage}
-            activePage={activePage}
-            totalCount={roles.length}
-            handlePageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-            pageOptions={getPageList()}
-          />
+
+              <TableFooter
+                limit={sizePerPage}
+                activePage={activePage}
+                totalCount={roles.length}
+                handlePageChange={setActivePage}
+                onLimitChange={handleLimitChange}
+                pageOptions={getpageList()}
+              />
             </tfoot>
           </table>
         </div>

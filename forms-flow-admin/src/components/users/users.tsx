@@ -16,6 +16,8 @@ import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
 import { CreateUser } from "../../services/users";
+import { TableFooter } from "@formsflow/components";
+
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedRoles, setSelectedRoles] = React.useState([]);
@@ -106,7 +108,7 @@ const Users = React.memo((props: any) => {
     );
   };
 
-  const handleSizeChange = (sizePerPage, page) => {
+  const handleLimitChange = (sizePerPage, page) => {
     setActivePage(page);
     setSizePerPage(sizePerPage);
   };
@@ -153,23 +155,6 @@ const Users = React.memo((props: any) => {
     return list;
   };
 
-  const pagination = paginationFactory({
-    showTotal: true,
-    align: "left",
-    sizePerPageList: getpageList(),
-    page: activePage,
-    pageStartIndex: 1,
-    totalSize: props.total,
-    sizePerPage: sizePerPage,
-    paginationTotalRenderer: customTotal,
-    onPageChange: (page) => {
-      setActivePage(page);
-      props.page.setPageNo(page);
-      props.setInvalidated(true);
-    },
-    onSizePerPageChange: (size, page) => handleSizeChange(size, page),
-    sizePerPageRenderer: customDropUp,
-  });
 
   const handleTableChange = () => {};
 
@@ -541,6 +526,7 @@ const Users = React.memo((props: any) => {
         </div>
 
         {!loading ? (
+          <div>
           <BootstrapTable
             remote={{
               pagination: true,
@@ -549,7 +535,6 @@ const Users = React.memo((props: any) => {
             data={props?.users}
             loading={loading}
             columns={columns}
-            pagination={pagination}
             bordered={false}
             wrapperClasses="user-table-container px-4"
             rowStyle={{
@@ -560,6 +545,19 @@ const Users = React.memo((props: any) => {
             onTableChange={handleTableChange}
             data-testid="admin-users-table"
           />
+          <table className="table">
+            <tfoot>
+              <TableFooter
+                limit={sizePerPage}
+                activePage={activePage}
+                totalCount={roles.length}
+                handlePageChange={setActivePage}
+                onLimitChange={handleLimitChange}
+                pageOptions={getpageList()}
+              />
+            </tfoot>
+          </table>
+          </div>
         ) : (
           <Loading />
         )}
