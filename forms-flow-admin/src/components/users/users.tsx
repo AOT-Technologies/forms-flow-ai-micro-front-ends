@@ -7,7 +7,6 @@ import Loading from "../loading";
 import { AddUserRole, RemoveUserRole } from "../../services/users";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import paginationFactory from "react-bootstrap-table2-paginator";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";

@@ -3,7 +3,6 @@ import BootstrapTable from "react-bootstrap-table-next";
 import "./roles.scss";
 import { useParams } from "react-router-dom";
 import { Translation, useTranslation } from "react-i18next";
-import paginationFactory from "react-bootstrap-table2-paginator";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { fetchUsers } from "../../services/users";
@@ -27,6 +26,7 @@ import {
 import { DEFAULT_ROLES } from "../../constants";
 
 import {removingTenantId} from "../../utils/utils.js";
+import { TableFooter } from "@formsflow/components";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -593,31 +593,23 @@ const Roles = React.memo((props: any) => {
       <Translation>{(t) => t("results")}</Translation>
     </span>
   );
-  const getpageList = () => {
-    const list = [
-      {
-        text: "5",
-        value: 5,
-      },
-      {
-        text: "25",
-        value: 25,
-      },
-      {
-        text: "50",
-        value: 50,
-      },
-      {
-        text: "100",
-        value: 100,
-      },
-      {
-        text: t("All"),
-        value: roles.length,
-      },
-    ];
-    return list;
+  const getPageList = () => [
+    { text: '5', value: 5 },
+    { text: '25', value: 25 },
+    { text: '50', value: 50 },
+    { text: '100', value: 100 },
+    { text: 'All', value: roles.length },
+  ];
+  const paginatedRoles = roles.slice(
+    (activePage - 1) * sizePerPage, 
+    activePage * sizePerPage 
+  );
+
+  const handlePageChange = (page: number) => {
+    setActivePage(page);
   };
+
+
   const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
     return (
       <DropdownButton
@@ -638,17 +630,11 @@ const Roles = React.memo((props: any) => {
       </DropdownButton>
     );
   };
-  const pagination = paginationFactory({
-    showTotal: true,
-    align: "center",
-    className: "d-flex",
-    sizePerPageList: getpageList(),
-    page: activePage,
-    sizePerPage: sizePerPage,
-    paginationTotalRenderer: customTotal,
-    onPageChange: (page) => setActivePage(page),
-    sizePerPageRenderer: customDropUp,
-  });
+
+  const handleLimitChange = (newLimit: number) => {
+    setSizePerPage(newLimit);
+    setActivePage(1); 
+  };
 
   const columns = [
     {
@@ -773,11 +759,11 @@ const Roles = React.memo((props: any) => {
           </Button>
         </div>
         {!props?.loading ? (
+          <div>
           <BootstrapTable
             keyField="id"
-            data={roles}
+            data={paginatedRoles}
             columns={columns}
-            pagination={pagination}
             bordered={false}
             wrapperClasses="table-container px-4"
             rowStyle={{
@@ -787,6 +773,20 @@ const Roles = React.memo((props: any) => {
             noDataIndication={noData}
             data-testid="admin-roles-table"
           />
+    
+          <table className="table">
+            <tfoot>
+            <TableFooter
+            limit={sizePerPage}
+            activePage={activePage}
+            totalCount={roles.length}
+            handlePageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            pageOptions={getPageList()}
+          />
+            </tfoot>
+          </table>
+        </div>
         ) : (
           <Loading />
         )}
