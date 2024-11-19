@@ -76,7 +76,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     const redColor = computedStyle.getPropertyValue("--ff-red-000");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [selectedLayoutVersion, setSelectedLayoutOption] = useState<{
+    const [selectedLayoutVersion, setSelectedLayoutVersion] = useState<{
       value: any;
       label: string;
     } | null>(null);
@@ -112,7 +112,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     ];
 
     const handleLayoutChange = (option: { value: any; label: string }) => {
-      setSelectedLayoutOption(option);
+      setSelectedLayoutVersion(option);
     };
 
     const handFlowChange = (option: { value: any; label: string }) => {
@@ -132,7 +132,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     const closeModal = () => {
       setSelectedFile(null);
       setUploadProgress(0);
-      setSelectedLayoutOption(null);
+      setSelectedLayoutVersion(null);
       setSelectedFlowVersion(null);
       setShowFileItems(false);
       onClose();
