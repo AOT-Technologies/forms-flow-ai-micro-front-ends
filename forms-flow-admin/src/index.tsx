@@ -13,7 +13,6 @@ import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import AdminDashboard from "./components/dashboard";
 import RoleManagement from "./components/roles";
 import UserManagement from "./components/users";
-import Head from "./containers/head";
 import i18n from "./resourceBundles/i18n";
 import "./index.scss";
 import Accessdenied from "./components/AccessDenied";
@@ -68,30 +67,6 @@ const Admin = React.memo(({ props }: any) => {
     const locale = localStorage.getItem("i18nextLng")
     if(locale) i18n.changeLanguage(locale);
   },[isAuth])
-
-  const headerList = () => {
-    const headers =[];
-    if(isDashboardManager){
-      headers.push({
-        name: "Dashboard",
-        count: dashboardCount,
-        // icon: "user-circle-o",
-        onClick: () => history.push(`${baseUrl}admin/dashboard`)
-    })}  if (isRoleManager){
-      headers.push({
-        name: "Roles",
-        count: roleCount,
-        // icon: "user-circle-o",
-        onClick: () => history.push(`${baseUrl}admin/roles`),
-    })}  if(isUserManager){ 
-      headers.push({
-        name: "Users",
-        count: userCount,
-        // icon: "user-circle-o",
-        onClick: () => history.push(`${baseUrl}admin/users`)
-    })}
-    return headers ;
-  };
   
   React.useEffect(()=>{
     const restricted = 
@@ -108,7 +83,6 @@ const Admin = React.memo(({ props }: any) => {
         <div className="container mt-5">
         {!isAccessRestricted ?(
           <div className="min-container-height ps-md-3">
-          <Head items={headerList()} page={page} />
           <ToastContainer theme="colored" />
           <Switch>
             { isDashboardManager && (
