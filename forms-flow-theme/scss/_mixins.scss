@@ -56,17 +56,17 @@
 }
 
 
-@mixin text-modal-content {
+@mixin text-modal-content { 
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
+  line-height: var(--text-line-height); 
   color: var(--ff-gray-800);
 }
 
 @mixin upload-status-styles($color) {
   color: $color;
   text-align: right;
-  font-size: $font-size-xs;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
 }

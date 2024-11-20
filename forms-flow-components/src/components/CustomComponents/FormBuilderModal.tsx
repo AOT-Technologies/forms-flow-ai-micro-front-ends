@@ -89,6 +89,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
         value = e.target.checked ? "wizard" : "form";
       }
       setValues(prev => ({...prev,[name]:value}))
+      setCachedTitle(""); //reseting caching on type
     }
     
     const handleOnBlur = (e)=>{ 
@@ -98,7 +99,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       const isCancelButton = relatedTargetName == "cancelButton"; 
        if((!values.title || values.title !== cachedTitle) && !isCancelButton){
         nameValidationOnBlur({...values,createButtonClicked})
-        setCachedTitle(values.title);
+        setCachedTitle(values.title); //caching this title to avoid calling handling blur
       }
     }
 
