@@ -20,7 +20,6 @@ $status-radius: 50%;
   border-collapse: separate !important;
   border-spacing: 0 !important;
   border-radius: var(--radius-0150) !important;
-  table-layout: fixed;
 
   th,
   td {
@@ -182,7 +181,25 @@ $status-radius: 50%;
   justify-content: space-between;
   width: 100%;
 }
-.text-ellipsis{
+.text-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.no-data-body {
+  .no-data-container {
+    display: flex;
+    padding: var(--spacer-200) !important ;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacer-100);
+    flex: 1 0 0;
+    .no-data-text {
+      color: var(--ff-gray-400);
+      text-align: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-sm);
+      line-height: var(--text-line-height); 
+    }
+  }
 }

@@ -1,7 +1,6 @@
 const computedStyle = getComputedStyle(document.documentElement);
 const baseColor = computedStyle.getPropertyValue("--ff-base-600");
 const grayColor = computedStyle.getPropertyValue("--ff-gray-800");
-
 export const ChevronIcon = ({
   color = baseColor,
   width = "10",
@@ -635,3 +634,22 @@ export const TickIcon = ({ color = baseColor, ...props }) => (
    strokeLinejoin="round"/>
 </svg>
 );
+
+export const DropdownIcon = ({color = baseColor}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="9"
+    viewBox="0 0 16 9"
+    fill="none"
+  >
+    <path
+      d="M1.5 1.24951L8.00058 7.7501L14.5006 1.25009"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
