@@ -4,6 +4,7 @@ import { CustomButton } from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
 import { ConfirmModal } from "./ConfirmModal";
 import { useTranslation } from "react-i18next";
+import { HelperServices } from "@formsflow/service";
 
 interface HistoryModalProps {
   show: boolean;
@@ -43,23 +44,7 @@ interface AllHistory {
   id?: string;
 }
 
-const formatDate = (dateString: string) => {
-  // TBD : to be formatted from backend later
-  dateString = dateString.replace(" ", "T") + "Z";
-  const date = new Date(dateString);
-
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
-  const year = String(date.getFullYear()).slice(-2); // Last two digits of year
-  const rawHours = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const ampm = rawHours >= 12 ? "PM" : "AM";
-  // Convert 24-hour format to 12-hour format
-  const displayHours = rawHours % 12 || 12; // '0' hour should be '12'
-  const formattedHours = String(displayHours).padStart(2, "0");
-
-  return `${day}-${month}-${year} ${formattedHours}:${minutes}${ampm}`;
-};
+ 
 
 const HistoryField = ({ fields }) => {
     return (
@@ -235,9 +220,9 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         const isLastEntry = index === allHistory.length - 1;  
         const revertButtonDisabled = disableAllRevertButton || entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
         const fields = [
-            { id:1, heading: t("Last Edit On"), value: formatDate(entry.created) },
+            { id:1, heading: t("Last Edit On"), value: HelperServices?.getLocalDateAndTime(entry.created) },
             { id:2, heading: t("Last Edit By"), value: entry.createdBy },
-            { id:3, heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? formatDate(entry.publishedOn) : "" },
+            { id:3, heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? HelperServices?.getLocalDateAndTime(entry.publishedOn) : "" },
             ...(categoryType === "WORKFLOW"
               ? [{ id:4, heading: t("Type"), value: entry.processType }]
               : []),
