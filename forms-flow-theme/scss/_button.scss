@@ -160,6 +160,7 @@ $btn-font-weight: bold;
   padding: var(--spacer-075) var(--spacer-150) !important;
   font-weight: var(--font-weight-xl) !important;
   border-radius: var(--radius-0125) !important;
+  width: fit-content;
 }
 
 .btn {
@@ -168,7 +169,6 @@ $btn-font-weight: bold;
   justify-content: center !important;
   align-items: center !important;
   line-height: var(--text-line-height) !important;
-
   // Default styles for buttons for all sizes . Useful for formio buttons
   @extend .default-button-styles;
 

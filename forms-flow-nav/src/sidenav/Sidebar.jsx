@@ -21,6 +21,7 @@ import {
   ENABLE_APPLICATIONS_MODULE,
   ENABLE_TASKS_MODULE,
   ENABLE_INTEGRATION_PREMIUM,
+  IS_ENTERPRISE
 } from "../constants/constants";
 import { StorageService } from "@formsflow/service";
 import { fetchSelectLanguages, updateUserlang } from "../services/language";
@@ -43,8 +44,10 @@ const Sidebar = React.memo(({ props }) => {
   const [tenant, setTenant] = React.useState({});
   const [location, setLocation] = React.useState({ pathname: "/" });
   const [integrationEnabled, setIntegrationEnabled] = React.useState(false);
+  const [form, setForm] = React.useState({});
   const history = useHistory();
   const tenantKey = tenant?.tenantId;
+  const formTenant = form?.tenantKey;
   const { t } = useTranslation();
 
   // const [activeLink, setActiveLink] = useState("");
@@ -143,10 +146,40 @@ const Sidebar = React.memo(({ props }) => {
     }
   }, [tenant]);
 
+  useEffect(() => {
+    if (!isAuthenticated && formTenant && MULTITENANCY_ENABLED) {
+      setLoginUrl(`/tenant/${formTenant}/`);
+    }
+  }, [isAuthenticated, formTenant]);
+
   const logout = () => {
     history.push(baseUrl);
     instance.userLogout();
   };
+
+  const manageOptions = () => {
+    return (
+      [
+        {
+          name: "Dashboards",
+          path: DASHBOARD_ROUTE,
+          matchExps: [
+            createURLPathMatchExp("admin/dashboard", baseUrl),
+          ],
+        },
+        {
+          name: "Roles",
+          path: ROLE_ROUTE,
+          matchExps: [createURLPathMatchExp("admin/roles", baseUrl)],
+        },
+        {
+          name: "Users",
+          path: USER_ROUTE,
+          matchExps: [createURLPathMatchExp("admin/users", baseUrl)],
+        },
+      ]
+    )
+  }
 
   return (
       <div className="sidenav">
@@ -162,7 +195,7 @@ const Sidebar = React.memo(({ props }) => {
         <div className="options-container" data-testid="options-container">
           <Accordion defaultActiveKey="">
             {ENABLE_FORMS_MODULE &&
-              (isCreateSubmissions || isCreateDesigns || isViewDesigns) && (
+              (isCreateDesigns || isViewDesigns) && (
                 <MenuComponent
                   eventKey="0"
                   optionsCount="5"
@@ -170,20 +203,24 @@ const Sidebar = React.memo(({ props }) => {
                   subMenu={[
                     {
                       name: "Forms",
-                      path: "form",
+                      path: "formflow",
                       matchExps: [
-                        createURLPathMatchExp("form", baseUrl),
+                        createURLPathMatchExp("formflow", baseUrl),
                       ]
                     },
-                    {
-                      name: "Bundle",
-                      path: "bundle",
-                      matchExps: [
-                        createURLPathMatchExp("bundle", baseUrl),
-                      ]
-                    },
-                    { name: "Templates", path: "forms-template-library" },
-                    ...(userRoles?.includes("manage_integrations") &&
+                    ...(IS_ENTERPRISE
+                      ? [
+                          {
+                            name: "Bundle",
+                            path: "bundle",
+                            matchExps: [
+                              createURLPathMatchExp("bundle", baseUrl),
+                            ],
+                          },
+                        ]
+                    : []),
+                    // { name: "Templates", path: "forms-template-library" }, // TBD : Templates to be added on a later stage
+                    ...(IS_ENTERPRISE && userRoles?.includes("manage_integrations") &&
                     (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
                       ? [
                           {
@@ -224,8 +261,9 @@ const Sidebar = React.memo(({ props }) => {
                   subMenu={[
                     {
                       name: "Forms",
-                      path: "application",
+                      path: "form",
                       matchExps: [
+                        createURLPathMatchExp("form", baseUrl),
                         createURLPathMatchExp("application", baseUrl),
                         createURLPathMatchExp("draft", baseUrl),
                       ],
@@ -278,31 +316,13 @@ const Sidebar = React.memo(({ props }) => {
                 eventKey="4"
                 optionsCount="3"
                 mainMenu="Manage"
-                subMenu={[
-                  {
-                    name: "Dashboards",
-                    path: DASHBOARD_ROUTE,
-                    matchExps: [
-                      createURLPathMatchExp("admin/dashboard", baseUrl),
-                    ],
-                  },
-                  {
-                    name: "Roles",
-                    path: ROLE_ROUTE,
-                    matchExps: [createURLPathMatchExp("admin/roles", baseUrl)],
-                  },
-                  {
-                    name: "Users",
-                    path: USER_ROUTE,
-                    matchExps: [createURLPathMatchExp("admin/users", baseUrl)],
-                  },
-                ]}
+                subMenu={manageOptions()}
                 subscribe={props.subscribe}
               />
             )}
           </Accordion>
         </div>
-        <div className="user-container">
+        {isAuthenticated && (<div className="user-container">
           <div className="username">
             <div className="user-icon" data-testid="user-icon">
               {initials}
@@ -332,7 +352,7 @@ const Sidebar = React.memo(({ props }) => {
           >
             <p className="m-0">{t("Sign Out")}</p>
           </div>
-        </div>
+        </div>)}
       </div>
   );
 });

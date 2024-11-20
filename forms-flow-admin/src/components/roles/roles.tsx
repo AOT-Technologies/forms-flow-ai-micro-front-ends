@@ -398,7 +398,7 @@ const Roles = React.memo((props: any) => {
 
   const showCreateModal = () => (
     <div data-testid="create-role-modal">
-      <Modal show={showRoleModal} onHide={handleCloseRoleModal}>
+      <Modal show={showRoleModal} onHide={handleCloseRoleModal} centered={true}>
         <Modal.Header closeButton>
           <Modal.Title>{t("Create Role")}</Modal.Title>
         </Modal.Header>
@@ -488,7 +488,7 @@ const Roles = React.memo((props: any) => {
   );
   const showEditModal = () => (
     <div data-testid="edit-role-modal">
-      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal}>
+      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} centered={true}>
         <Modal.Header closeButton>
           <Modal.Title>{t("Edit Role")}</Modal.Title>
         </Modal.Header>
