@@ -412,3 +412,43 @@ select option:hover {
   pointer-events: none;
   cursor: not-allowed;
 }
+
+.dropdown-main {
+  display: block !important;
+  padding: 0 !important;
+
+  .dropdown-menu.show {
+    width: 100% !important;
+    overflow: hidden !important;
+    padding: 0.4375rem !important;
+    display: block !important;
+  }
+
+  .dropdown-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--font-size-xs)!important;
+    font-weight: var(--font-weight-sm) !important;
+  }
+
+  .btn.btn-primary,
+  .btn.btn-success,
+  .btn.btn-success:hover {
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: $white !important;
+    color: $black !important;
+    display: flex !important;
+    align-items: left !important;
+    justify-content: start !important;
+    font-size: var(--font-size-xs)!important;
+    font-weight: var(--font-weight-sm) !important;
+  }
+
+  .dropdown-toggle::after {
+    display: none !important;
+  }
+}
