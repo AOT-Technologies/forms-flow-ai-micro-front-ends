@@ -249,7 +249,7 @@ select option:hover {
   outline: none;
 
   display: flex;
-  padding: var(--spacer-050) var(--spacer-100);
+  padding: var(--spacer-050) var(--spacer-100) !important;
   justify-content: center;
   align-items: center;
   align-self: stretch;

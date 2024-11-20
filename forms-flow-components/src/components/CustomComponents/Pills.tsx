@@ -1,6 +1,5 @@
 import React from "react";
 import Badge from "react-bootstrap/Badge";
-import {  DeleteIcon } from "../SvgIcons/index";
 
 interface CustomPillProps {
   label: string;
