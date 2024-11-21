@@ -183,9 +183,9 @@
   }
 
   .modal-dialog {
-    margin-top: 2.5vh !important;
+    margin-top: 6.5vh !important;
     margin-bottom: 2.5vh !important;
-    height: 95vh;
+    height: 87vh;
     background: var(--ff-white, #FFF);
     border-radius: var(--radius-0150);
   }
@@ -204,7 +204,8 @@
     overflow-y: scroll;
     -ms-overflow-style: none;
     max-height: 75vh;
-    height: 62vh;
+    height: 59vh;
+    border-top: 1px solid var(--ff-gray-000);;
   }
   //TBD: Quick fix ,will remove later. 
   .line-height-1{
@@ -216,7 +217,6 @@
     align-items: center;
     gap: var(--spacer-200);
     align-self: stretch;
-    border-bottom: none;
   }
 
   .template-left {
@@ -246,7 +246,9 @@
   }
 
   .template-item {
-    padding: var(--spacer-125) var(--spacer-250) !important;
+    padding: var(--spacer-050) var(--spacer-225) !important;
+    display: flex;
+    flex-direction: column;
     border-bottom: 1px solid var(--ff-gray-000);
     background: var(--ff-white);
     overflow: hidden;
@@ -291,26 +293,24 @@
   .form-container {
     overflow-y: scroll;
     -ms-overflow-style: none;
-    max-height: 25rem;
-    height: 54vh;
+    height: 56vh;
   }
 
   .bpmn-container {
-    height: 54vh;
+    height: 56vh;
     overflow: auto;
   }
 
   .select-temp-btn {
     display: flex;
-    padding: var(--spacer-200) var(--spacer-250);
+    padding: var(--spacer-100);
     flex-direction: column;
     align-items: center;
   }
 
   .form-flow-tabs {
     display: flex;
-    height: 4.625rem;
-    padding: var(--spacer-100) var(--spacer-150);
+    padding: var(--spacer-200) var(--spacer-225);
     align-items: center;
     gap: var(--spacer-150);
     align-self: stretch;
