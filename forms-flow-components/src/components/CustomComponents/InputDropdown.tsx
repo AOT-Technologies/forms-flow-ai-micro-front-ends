@@ -25,6 +25,7 @@ interface InputDropdownProps {
   dataTestIdforDropdown?:string
   setNewInput? : (value: string) => void;
   isInvalid?: boolean;
+  inputClassName?: string;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -41,7 +42,8 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   ariaLabelforInput,
   dataTestIdforDropdown,
   dataTestIdforInput,
-  isInvalid
+  isInvalid,
+  inputClassName=''
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(selectedOption || ''); 
@@ -132,7 +134,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       ariaLabel={ariaLabelforDropdown}
                       dataTestid={dataTestIdforDropdown}
                       icon={<ChevronIcon data-testid="dropdown-input" aria-label="dropdown input"/>}
-                      className={`${isDropdownOpen ? 'border-input collapsed' : ''}`}
+                      className={`${inputClassName} ${isDropdownOpen ? 'border-input collapsed' : ''}`}
                       onIconClick={toggleDropdown}
                       label={dropdownLabel}
                       required={required}
