@@ -200,3 +200,7 @@ export const DRAFT_ENABLED =
   DRAFT_ENABLED_VARIABLE === "true" || DRAFT_ENABLED_VARIABLE === true
     ? true
     : false;
+
+// This is to check if the application is running in enterprise mode or not
+export const IS_ENTERPRISE =
+  (window._env_ && window._env_.REACT_APP_IS_ENTERPRISE) || false;

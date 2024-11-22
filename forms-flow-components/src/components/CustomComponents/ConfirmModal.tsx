@@ -12,6 +12,7 @@ interface ConfirmModalProps {
   messageSecondary?: string;
   primaryBtnAction: () => void;
   primaryBtnText: string;
+  primaryBtnDisable?: boolean;
   secondaryBtnText: string;
   secondoryBtndataTestid?: string;
   primaryBtndataTestid?: string;
@@ -28,6 +29,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   messageSecondary = '',
   primaryBtnAction,
   primaryBtnText,
+  primaryBtnDisable = false,
   secondaryBtnText,
   secondoryBtndataTestid = 'cancel-button',
   primaryBtndataTestid = 'Confirm-button',
@@ -83,6 +85,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             variant={"primary"}
             size="lg"
             label={primaryBtnText}
+            disabled={primaryBtnDisable}
             onClick={primaryBtnAction}
             dataTestid={primaryBtndataTestid}
             ariaLabel={primaryBtnariaLabel}

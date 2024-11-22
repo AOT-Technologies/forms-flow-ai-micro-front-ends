@@ -36,13 +36,13 @@ const MenuComponent = ({
 
   const handleHeaderClick = () => {
     if (noOptionsMenu) {
-      subMenu.map((item, index) => {
+      subMenu?.map((item, index) => {
         history.push(`${baseUrl}${item.path}`);
       });
     }
   };
 
-  const isActive = subMenu.some(
+  const isActive = subMenu?.some(
     (menu) =>
       menu.matchExps &&
       menu.matchExps.some((exp) => exp.test(location.pathname))
@@ -72,7 +72,7 @@ const MenuComponent = ({
       </Accordion.Header>
       {!noOptionsMenu && (
         <Accordion.Body>
-          {subMenu.map((menu, index) => (
+          {subMenu?.map((menu, index) => (
             <Link
               key={index}
               to={`${baseUrl}${menu.path}`}
