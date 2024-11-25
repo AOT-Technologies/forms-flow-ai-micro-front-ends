@@ -245,18 +245,17 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       if (!importLoader && !importError && !inprogress) {
         return "upload-status-success";
       }
-    
+
       if (!importLoader && importError && !inprogress) {
         return "upload-status-error";
       }
-    
+
       if (inprogress) {
         return "upload-status-progress";
       }
-    
+
       return "";
     };
-    
 
     // Function to render the status text based on the upload condition
     const renderUploadStatusText = () => {
@@ -301,6 +300,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             {renderFileItemDetails()}
             {renderLayoutOptions()}
             {renderFlowOptions()}
+            {renderProcessOption()}
           </div>
         );
       }
@@ -324,10 +324,14 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     // Function to render the file item details (e.g. type and import version)
     const renderFileItemDetails = () => {
       return (
-        <div className="import-details">
-          <div className="file-item-header-text">{t("Type")}</div>
-          <div className="file-item-header-text">{t("Import")}</div>
-        </div>
+        <>
+          {(fileItems?.form?.majorVersion || processVersion?.majorVersion) && (
+            <div className="import-details">
+              <div className="file-item-header-text">{t("Type")}</div>
+              <div className="file-item-header-text">{t("Import")}</div>
+            </div>
+          )}
+        </>
       );
     };
 
@@ -400,6 +404,19 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         )
       );
     };
+
+    const renderProcessOption = () => {
+      return (
+         processVersion?.majorVersion && (
+          <div className="file-item-content">
+            <div className="import-workflow-text">{processVersion.type}</div>
+            <div className="flex-grow-1">
+             {t(`Import as Version ${processVersion?.majorVersion}.${processVersion?.minorVersion} (only impacts new submissions)`)}
+            </div>
+          </div>
+        )
+      );
+    }
 
     // Function to render the file upload area when no file is selected
     const renderFileUploadArea = () => {
