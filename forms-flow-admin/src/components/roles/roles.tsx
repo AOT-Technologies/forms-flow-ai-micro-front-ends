@@ -26,7 +26,7 @@ import {
 import { DEFAULT_ROLES } from "../../constants";
 
 import {removingTenantId} from "../../utils/utils.js";
-import { TableFooter } from "@formsflow/components";
+import { TableFooter, CustomSearch } from "@formsflow/components";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -117,8 +117,11 @@ const Roles = React.memo((props: any) => {
   }, []);
 
   const handlFilter = (e) => {
-    setSerach(e.target.value);
-    setRoles(filterList(e.target.value, props.roles));
+    if (e && e.key === 'Enter') {
+      setSerach(e.target.value);
+      setRoles(filterList(e.target.value, props.roles));
+
+    }    
   };
 
   const deleteRole = (rowData) => {
@@ -356,9 +359,7 @@ const Roles = React.memo((props: any) => {
     }
   };
 
-
-
-  const clearSearch = () => {
+  const handleClearSearch = () => {
     setSerach("");
     let updatedRoleName = removingTenantId(props.roles,tenantId);
     setRoles(updatedRoleName);
@@ -729,25 +730,16 @@ const Roles = React.memo((props: any) => {
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
-            <Form.Control
-              type="text"
-              placeholder={t("Search by role name")}
-              className="search-role-input"
-              onChange={handlFilter}
-              value={search}
-              title={t("Search...")}
-              data-testid="search-role-input"
+             <CustomSearch
+              searchLoading={loading} // Set loading state if needed
+              handleClearSearch={handleClearSearch}
+              search={search}
+              setSearch={setSerach}
+              handleSearch={handlFilter}
+              placeholder="Search by role name"
+              title="Search"
+              dataTestId="search-role-input"
             />
-
-            {search.length > 0 && (
-              <Button
-                variant="outline-secondary btn-small clear"
-                onClick={clearSearch}
-                data-testid="clear-role-search-button"
-              >
-                {t("Clear")}
-              </Button>
-            )}
           </div>
           <Button
             variant="primary"

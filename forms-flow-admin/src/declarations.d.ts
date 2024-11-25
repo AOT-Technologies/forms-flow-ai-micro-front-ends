@@ -43,5 +43,5 @@ declare module "@formsflow/service" {
 }
 
 declare module "@formsflow/components"{
-  export const {TableFooter}: any;
+  export const {TableFooter, CustomSearch}: any;
 }
