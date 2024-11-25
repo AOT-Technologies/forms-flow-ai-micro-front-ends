@@ -412,6 +412,12 @@ select option:hover {
   pointer-events: none;
   cursor: not-allowed;
 }
+.form-preview-tab {
+  padding: var(--spacer-200);
+  height: 100vh; 
+  overflow-y: auto;
+  overflow-x: hidden; 
+}
 
 .dropdown-main {
   display: block !important;
