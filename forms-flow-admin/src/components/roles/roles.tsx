@@ -731,7 +731,6 @@ const Roles = React.memo((props: any) => {
         <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
              <CustomSearch
-              searchLoading={loading} // Set loading state if needed
               handleClearSearch={handleClearSearch}
               search={search}
               setSearch={setSerach}
