@@ -56,7 +56,7 @@ export const TableFooter: React.FC<TableFooterProps> = ({
           </td>
           {pageOptions && (
             <td colSpan={3}>           
-             <div className="d-flex align-items-center">              
+             <div className="d-flex align-items-center justify-content-end">              
               <span className="pagination-text">{t("Rows per page")}</span>
               <div className="pagination-dropdown">
                 <Dropdown data-testid="page-limit-dropdown">
