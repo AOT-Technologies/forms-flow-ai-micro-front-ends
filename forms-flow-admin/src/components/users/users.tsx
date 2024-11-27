@@ -16,7 +16,7 @@ import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
 import { CreateUser } from "../../services/users";
-import { TableFooter } from "@formsflow/components";
+import { TableFooter, CustomSearch } from "@formsflow/components";
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -32,7 +32,7 @@ const Users = React.memo((props: any) => {
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
   const { t } = useTranslation();
   const [selectedRolesModal, setSelectedRolesModal] = React.useState([]);
-  const [formData, setFormData] = React.useState({ user: ""});
+  const [formData, setFormData] = React.useState({ user: "" });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [validationError, setValidationError] = React.useState('');
 
@@ -82,9 +82,13 @@ const Users = React.memo((props: any) => {
     setSelectedRolesModal(selectedOptions);
   };
   const handleSearch = (e) => {
-    setSearchKey(e.target.value);
+    if (e && e.key === 'Enter') {
+      setSearchKey(e.target.value);
+    }
   };
-
+  const handleClearSearch = () => {
+    setSearchKey("");
+  };
   const removePermission = (rowData, item) => {
     const user_id = rowData.id;
     const group_id = item.id;
@@ -113,36 +117,10 @@ const Users = React.memo((props: any) => {
     setSizePerPage(sizePerPage);
   };
 
-  const customTotal = (from, to, size) => (
-    <span className="ms-2" role="main" data-testid="admin-users-custom-total">
-      <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
-      <Translation>{(t) => t("to")}</Translation> {to}{" "}
-      <Translation>{(t) => t("of")}</Translation> {size}{" "}
-      <Translation>{(t) => t("results")}</Translation>
-    </span>
-  );
-
-  const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
-    return (
-      <DropdownButton
-        drop="up"
-        variant="secondary"
-        title={currSizePerPage}
-        style={{ display: "inline" }}
-        data-testid="admin-users-custom-drop-up"
-      >
-        {options.map((option) => (
-          <Dropdown.Item
-            key={option.text}
-            type="button"
-            onClick={() => onSizePerPageChange(option.page)}
-            data-testid={`admin-users-drop-up-option-${option.text}`}
-          >
-            {option.text}
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
-    );
+  const handlePageChange = (page) => {
+    setActivePage(page);
+    props.page.setPageNo(page);
+    props.setInvalidated(true);
   };
 
   const getpageList = () => {
@@ -415,26 +393,17 @@ const Users = React.memo((props: any) => {
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between flex-wrap">
           <div className="search-role col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 px-0">
-            <Form.Control
-              type="text"
-              placeholder={t("Search by name, username or email")}
-              className="search-role-input"
-              onChange={handleSearch}
-              value={searchKey}
+
+            <CustomSearch
+              search={searchKey}
+              setSearch={setSearchKey}
+              handleSearch={handleSearch}
+              handleClearSearch={handleClearSearch}
+              searchLoading={loading}
+              placeholder={t("Search by name, username, or email")}
               title={t("Search...")}
-              data-testid="search-users-input"
+              dataTestId="search-users-input"
             />
-            {searchKey && (
-              <Button
-                variant="outline-secondary btn-small clear"
-                onClick={() => {
-                  setSearchKey("");
-                }}
-                data-testid="clear-users-search-button"
-              >
-                {t("Clear")}
-              </Button>
-            )}
           </div>
 
           <div className="user-filter-container  col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 d-flex justify-content-end gap-2">
@@ -548,15 +517,15 @@ const Users = React.memo((props: any) => {
           <table className="table">
             <tfoot>
               <TableFooter
-                limit={sizePerPage}
-                activePage={activePage}
-                totalCount={roles.length}
-                handlePageChange={setActivePage}
-                onLimitChange={handleLimitChange}
-                pageOptions={getpageList()}
-              />
-            </tfoot>
-          </table>
+                  limit={sizePerPage}
+                  activePage={activePage}
+                  totalCount={props.total}
+                  handlePageChange={handlePageChange}
+                  onLimitChange={handleLimitChange}
+                />
+
+              </tfoot>
+            </table>
           </div>
         ) : (
           <Loading />
