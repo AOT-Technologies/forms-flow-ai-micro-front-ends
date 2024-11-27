@@ -87,12 +87,12 @@ export const FormInput: React.FC<FormInputProps> = ({
               {icon}
             </InputGroup.Text>
           )}
-          {isInvalid && (
+        </InputGroup>
+        {isInvalid && (
             <Form.Control.Feedback className='custom-feedback' type="invalid">
               {feedback}
             </Form.Control.Feedback>
           )}
-        </InputGroup>
       </Form.Group>
   );
 };
