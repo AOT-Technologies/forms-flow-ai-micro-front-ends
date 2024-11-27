@@ -147,14 +147,22 @@ const Sidebar = React.memo(({ props }) => {
       setTenantLogo(logo);
     }
   }, [tenant]);
+
+  const SectionKeys = { 
+    DESIGN: "design",
+    SUBMIT: "submit",
+    REVIEW: "review",
+    ANALYZE: "analyze",
+    MANAGE: "manage"
+ };
   
   useEffect((()=>{
     const sections = [
-      { key: "0", matchExps: ["formflow", "bundle", "subflow", "decision-table"] },
-      { key: "1", matchExps: ["form", "application", "draft"] },
-      { key: "2", matchExps: ["task"] },
-      { key: "3", matchExps: ["metrics", "insights"] },
-      { key: "4", matchExps: ["admin/dashboard", "admin/roles", "admin/users"] },
+      { key: SectionKeys.DESIGN, matchExps: ["formflow", "bundle", "subflow", "decision-table"] },
+      { key: SectionKeys.SUBMIT, matchExps: ["form", "application", "draft"] },
+      { key: SectionKeys.REVIEW, matchExps: ["task"] },
+      { key: SectionKeys.ANALYZE, matchExps: ["metrics", "insights"] },
+      { key: SectionKeys.MANAGE, matchExps: ["admin/dashboard", "admin/roles", "admin/users"] },
     ];
     const activeSection =
     sections.find((section) =>
@@ -215,7 +223,7 @@ const Sidebar = React.memo(({ props }) => {
             {ENABLE_FORMS_MODULE &&
               (isCreateDesigns || isViewDesigns) && (
                 <MenuComponent
-                  eventKey="0"
+                  eventKey={SectionKeys.DESIGN}
                   optionsCount="5"
                   mainMenu="Design"
                   subMenu={[
@@ -273,7 +281,7 @@ const Sidebar = React.memo(({ props }) => {
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
-                  eventKey="1"
+                  eventKey={SectionKeys.SUBMIT}
                   optionsCount="1"
                   mainMenu="Submit"
                   subMenu={[
@@ -292,12 +300,12 @@ const Sidebar = React.memo(({ props }) => {
               )}
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
-                eventKey="2"
+                eventKey={SectionKeys.REVIEW}
                 optionsCount="1"
                 mainMenu="Review"
                 subMenu={[
                   {
-                    name: "Task",
+                    name: "Tasks",
                     path: "task",
                     matchExps: [createURLPathMatchExp("task", baseUrl)],
                   },
@@ -307,7 +315,7 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
-                eventKey="3"
+                eventKey={SectionKeys.ANALYZE}
                 optionsCount="2"
                 mainMenu="Analyze"
                 subMenu={[
@@ -331,7 +339,7 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {isAdmin && (
               <MenuComponent
-                eventKey="4"
+                eventKey={SectionKeys.MANAGE}
                 optionsCount="3"
                 mainMenu="Manage"
                 subMenu={manageOptions()}
