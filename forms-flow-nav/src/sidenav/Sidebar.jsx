@@ -2,7 +2,7 @@ import "./Sidebar.scss";
 import Accordion from "react-bootstrap/Accordion";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
-import { Link, BrowserRouter, useHistory } from "react-router-dom";
+import { Link, BrowserRouter, useHistory ,useLocation } from "react-router-dom";
 import { getUserRoleName, getUserRolePermission } from "../helper/user";
 import createURLPathMatchExp from "../helper/regExp/pathMatch";
 import { useTranslation } from "react-i18next";
@@ -49,6 +49,7 @@ const Sidebar = React.memo(({ props }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const { t } = useTranslation();
+  const currentLocation = useLocation();
 
   // const [activeLink, setActiveLink] = useState("");
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -76,6 +77,7 @@ const Sidebar = React.memo(({ props }) => {
   const { pathname } = location;
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
+  const [activeKey,setActiveKey] = useState(0);
 
   const getInitials = (name) => {
     if (!name) return "";
@@ -146,6 +148,30 @@ const Sidebar = React.memo(({ props }) => {
     }
   }, [tenant]);
 
+  const SectionKeys = { 
+    DESIGN: "design",
+    SUBMIT: "submit",
+    REVIEW: "review",
+    ANALYZE: "analyze",
+    MANAGE: "manage"
+ };
+  
+  useEffect((()=>{
+    const sections = [
+      { key: SectionKeys.DESIGN, matchExps: ["formflow", "bundle", "subflow", "decision-table"] },
+      { key: SectionKeys.SUBMIT, matchExps: ["form", "application", "draft"] },
+      { key: SectionKeys.REVIEW, matchExps: ["task"] },
+      { key: SectionKeys.ANALYZE, matchExps: ["metrics", "insights"] },
+      { key: SectionKeys.MANAGE, matchExps: ["admin/dashboard", "admin/roles", "admin/users"] },
+    ];
+    const activeSection =
+    sections.find((section) =>
+      section.matchExps.some((exp) => currentLocation.pathname.includes(exp))
+    ) || { key: "0" }; // Default to key "0" if no match
+  
+    setActiveKey(activeSection.key);
+  }),[currentLocation.pathname]);
+  
   useEffect(() => {
     if (!isAuthenticated && formTenant && MULTITENANCY_ENABLED) {
       setLoginUrl(`/tenant/${formTenant}/`);
@@ -193,11 +219,11 @@ const Sidebar = React.memo(({ props }) => {
           <ApplicationLogo data-testid="application-logo" />
         </div>
         <div className="options-container" data-testid="options-container">
-          <Accordion defaultActiveKey="">
+          <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
             {ENABLE_FORMS_MODULE &&
               (isCreateDesigns || isViewDesigns) && (
                 <MenuComponent
-                  eventKey="0"
+                  eventKey={SectionKeys.DESIGN}
                   optionsCount="5"
                   mainMenu="Design"
                   subMenu={[
@@ -237,7 +263,7 @@ const Sidebar = React.memo(({ props }) => {
                       : []),
                     ...(isCreateDesigns && ENABLE_PROCESSES_MODULE) ? [
                       {
-                        name: "Sub - flows",
+                        name: "Subflows",
                         path: "subflow",
                         matchExps: [createURLPathMatchExp("subflow", baseUrl)],
                       },
@@ -255,7 +281,7 @@ const Sidebar = React.memo(({ props }) => {
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
-                  eventKey="1"
+                  eventKey={SectionKeys.SUBMIT}
                   optionsCount="1"
                   mainMenu="Submit"
                   subMenu={[
@@ -274,12 +300,12 @@ const Sidebar = React.memo(({ props }) => {
               )}
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
-                eventKey="2"
+                eventKey={SectionKeys.REVIEW}
                 optionsCount="1"
                 mainMenu="Review"
                 subMenu={[
                   {
-                    name: "Task",
+                    name: "Tasks",
                     path: "task",
                     matchExps: [createURLPathMatchExp("task", baseUrl)],
                   },
@@ -289,7 +315,7 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
-                eventKey="3"
+                eventKey={SectionKeys.ANALYZE}
                 optionsCount="2"
                 mainMenu="Analyze"
                 subMenu={[
@@ -313,7 +339,7 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {isAdmin && (
               <MenuComponent
-                eventKey="4"
+                eventKey={SectionKeys.MANAGE}
                 optionsCount="3"
                 mainMenu="Manage"
                 subMenu={manageOptions()}
