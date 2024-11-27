@@ -26,6 +26,7 @@ interface InputDropdownProps {
   setNewInput? : (value: string) => void;
   isInvalid?: boolean;
   inputClassName?: string;
+  onBlurDropDown?: () => void; 
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -43,7 +44,8 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   dataTestIdforDropdown,
   dataTestIdforInput,
   isInvalid,
-  inputClassName=''
+  inputClassName='',
+  onBlurDropDown
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(selectedOption || ''); 
@@ -78,7 +80,10 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const handleInputDropdownChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setInputValue(value);
-      
+      if (value === '') {
+        setNewInput('');
+      }
+      //filtering out items
       const filtered = Options.filter((item) =>
           item.label.toLowerCase().includes(value.toLowerCase())
       );
@@ -138,6 +143,9 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       onIconClick={toggleDropdown}
                       label={dropdownLabel}
                       required={required}
+                      onBlur={onBlurDropDown}
+                      isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
+                      feedback={feedback}
                   />
               </InputGroup>
           )}

@@ -326,6 +326,7 @@ select option:hover {
   }
 
   .custom-feedback {
+    display: flex;
     color: var(--ff-red-000);
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
