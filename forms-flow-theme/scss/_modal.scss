@@ -849,4 +849,16 @@
    }
  }
 }
-
+.profile-settings{
+  .lang-settings{
+    display: flex;
+    padding: var(--spacer-200) var(--spacer-250);
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+  }
+  .input-dropdown .list-group {
+    max-height: 8rem;
+  }
+  
+}

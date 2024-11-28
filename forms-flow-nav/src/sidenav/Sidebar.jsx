@@ -34,6 +34,7 @@ import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo } from "@formsflow/components";
+import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
 const Sidebar = React.memo(({ props }) => {
@@ -48,6 +49,8 @@ const Sidebar = React.memo(({ props }) => {
   const history = useHistory();
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
+  const [showProfile, setShowProfile] = useState(false);
+
   const { t } = useTranslation();
 
   // const [activeLink, setActiveLink] = useState("");
@@ -151,6 +154,9 @@ const Sidebar = React.memo(({ props }) => {
       setLoginUrl(`/tenant/${formTenant}/`);
     }
   }, [isAuthenticated, formTenant]);
+
+  const handleProfileModal = () => setShowProfile(true); 
+  const handleProfileClose = () => setShowProfile(false);
 
   const logout = () => {
     history.push(baseUrl);
@@ -328,7 +334,11 @@ const Sidebar = React.memo(({ props }) => {
               {initials}
             </div>
             <div>
-              <p className="user-name" data-testid="user-name">
+            <p
+                className="user-name"
+                data-testid="user-name"
+                onClick={handleProfileModal}  //profile settings modal for language selection
+              >
                 {userDetail?.name}
               </p>
               <OverlayTrigger
@@ -353,6 +363,12 @@ const Sidebar = React.memo(({ props }) => {
             <p className="m-0">{t("Sign Out")}</p>
           </div>
         </div>)}
+        <ProfileSettingsModal 
+        show={showProfile} 
+        onClose={handleProfileClose} 
+        tenant={tenant}
+        publish={props.publish}
+      />
       </div>
   );
 });
