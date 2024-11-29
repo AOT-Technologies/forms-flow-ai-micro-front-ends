@@ -79,14 +79,12 @@ $primary: var(--ff-primary);
     .task-variable-modal {
       .formio-form {
         .formio-component {
-  
           // Apply hover effect only if the component is not in the ignored list
           &:not(#{$ignored-components}) {
             &:hover {
               border-style: dotted;
               padding: 8px 10px;
               border-color: var(--ff-primary-200);
-              cursor: pointer;
               border-radius: var(--radius-050);
             }
           }
