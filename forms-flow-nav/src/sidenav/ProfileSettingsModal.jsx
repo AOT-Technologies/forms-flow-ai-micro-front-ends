@@ -13,54 +13,28 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const { t } = useTranslation();
   const [userDetail, setUserDetail] = useState({});
 
-
   useEffect(() => {
     setUserDetail(JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)));
-  }, []);
 
-  useEffect(() => {
-    if (show) {
-      fetchSelectLanguages((languages) => {
-        setSelectLanguages(languages);
-      });
-    }
-  }, [show]);
-
-  useEffect(() => {
-    fetchSelectLanguages((data) => {
-      const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
-      const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details?.langList) || USER_LANGUAGE_LIST;
-      let userLanguagesArray = [];
-      if (typeof userLanguageList === 'object') {
-        userLanguagesArray = Object.values(userLanguageList);
-      } else if (typeof userLanguageList === 'string') {
-        userLanguagesArray = userLanguageList.split(',');
-      }
-      const supportedLanguages = data.filter(item => userLanguagesArray.includes(item.name));
-      setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : data);
+    fetchSelectLanguages((languages) => {
+      const tenantData = JSON.parse(StorageService.get("TENANT_DATA"));
+      const userLanguageList = (MULTITENANCY_ENABLED && tenantData?.details?.langList) || USER_LANGUAGE_LIST;
+      const userLanguagesArray = typeof userLanguageList === 'object' ? Object.values(userLanguageList) : userLanguageList.split(',');
+      const supportedLanguages = languages.filter(item => userLanguagesArray.includes(item.name));
+      setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : languages);
     });
-  }, [MULTITENANCY_ENABLED, USER_LANGUAGE_LIST, tenant]);
+
+    const savedLang = localStorage.getItem('lang') || 'en';
+    setSelectedLang(savedLang);
+    i18n.changeLanguage(savedLang);
+  }, [tenant]);
 
   useEffect(() => {
-    const savedLang = localStorage.getItem('lang');
-    if (savedLang) {
-      setSelectedLang(savedLang);
-      i18n.changeLanguage(savedLang);
-    } else {
-      setSelectedLang('en');
-      i18n.changeLanguage('en');
-    }
-  }, []);
-
-  React.useEffect(() => {
     if (userDetail) {
-      const locale =
-        userDetail?.locale ||
-        tenant?.tenantData?.details?.locale ||
-        LANGUAGE;
+      const locale = userDetail?.locale || tenant?.tenantData?.details?.locale || LANGUAGE;
       setSelectedLang(locale);
     }
-  }, [userDetail, tenant.tenantData]);
+  }, [userDetail, tenant]);
 
   const handleLanguageChange = (newLang) => {
     setSelectedLang(newLang);
@@ -73,7 +47,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
 
     i18n.changeLanguage(selectedLang);
 
-    if (tenant && tenant.tenantData && tenant.tenantData.details) {
+    if (tenant?.tenantData?.details) {
       tenant.tenantData.details.locale = selectedLang;
 
     }
