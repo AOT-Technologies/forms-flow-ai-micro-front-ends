@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types'; 
 import Modal from 'react-bootstrap/Modal';
 import { CloseIcon, CustomButton, InputDropdown } from "@formsflow/components";
 import { fetchSelectLanguages, updateUserlang } from '../services/language';
@@ -49,7 +50,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
 
     if (tenant?.tenantData?.details) {
       tenant.tenantData.details.locale = selectedLang;
-
     }
 
     if (selectedLang) {
@@ -123,3 +123,22 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     </Modal>
   );
 };
+
+ProfileSettingsModal.propTypes = {
+  show: PropTypes.bool.isRequired,  
+  onClose: PropTypes.func.isRequired,  
+  tenant: PropTypes.shape({  
+    tenantData: PropTypes.shape({
+      details: PropTypes.shape({
+        locale: PropTypes.string,
+        langList: PropTypes.oneOfType([
+          PropTypes.object,
+          PropTypes.string
+        ])
+      })
+    })
+  }).isRequired,  
+  publish: PropTypes.func.isRequired, 
+};
+
+export default ProfileSettingsModal;
