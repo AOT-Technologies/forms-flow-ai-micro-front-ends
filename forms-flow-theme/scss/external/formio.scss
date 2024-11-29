@@ -48,28 +48,29 @@ $primary: var(--ff-primary);
   .formio-hilighted{
     box-sizing: border-box;
     border-radius: var(--radius-050);
-    border: 2px dashed var(--ff-base-600);
+    border: 2px dashed var(--ff-base-600) !important;
     padding: 8px 10px;  //TBD need to update
   }
   // Adjust the hover transition on the component in the TaskVariable UI to prevent size change glitches
   .formio-component {
     transition: border 0.05s ease, padding 0.3s ease; 
+    cursor: pointer !important;
   }
 
   //TBD : getting hovered all the component including panels,columns,etc.need to exclude those items.
-//   .form-hilighter{
-//   .formio-form{
-//     .formio-component{
-//       &:hover{
-//        border-style: dotted;
-//        padding: 10px;
-//        border-color: var(--ff-primary-200);
-//        cursor: pointer;
-//       }
-//      }
-//   }
-// }
-
+  .task-variable-modal{
+    .formio-form{
+      .formio-component{
+        &:hover{
+         box-sizing: border-box;
+         padding: 10px;
+         border: 1px dotted var(--ff-primary-200);
+         border-radius: var(--radius-050);
+        }
+       }
+    }
+  }
+  
   .formio-component{
       .bg-default {
         background: $base-100 !important;
