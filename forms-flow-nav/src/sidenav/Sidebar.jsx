@@ -355,7 +355,7 @@ const Sidebar = React.memo(({ props }) => {
           </Accordion>
         </div>
         {isAuthenticated && (<div className="user-container">
-          <div className="username" onClick={handleProfileModal}>
+          <button className="button-as-div justify-content-start m-2" onClick={handleProfileModal}>
             <div className="user-icon cursor-pointer" data-testid="user-icon">
               {initials}
             </div>
@@ -369,7 +369,7 @@ const Sidebar = React.memo(({ props }) => {
                   {userDetail.email ? userDetail.email : userDetail?.preferred_username}
               </p>
             </div>
-          </div>
+          </button>
           <div
             className="sign-out-button"
             onClick={logout}
