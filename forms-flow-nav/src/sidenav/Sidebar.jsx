@@ -360,21 +360,13 @@ const Sidebar = React.memo(({ props }) => {
               {initials}
             </div>
             <div>
-            <p
-              className="user-name"
-              data-testid="user-name"
-              onClick={handleProfileModal}
-              tabIndex="0"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleProfileModal();
-                }
-              }}
-            >
-              {userDetail?.name}
-            </p>
-
-
+            <button
+                className="user-name"
+                data-testid="user-name"
+                onClick={handleProfileModal} 
+              >
+                {userDetail?.name}
+              </button>
               <OverlayTrigger
                 placement="top"
                 overlay={
