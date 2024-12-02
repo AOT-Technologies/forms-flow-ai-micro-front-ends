@@ -355,30 +355,19 @@ const Sidebar = React.memo(({ props }) => {
           </Accordion>
         </div>
         {isAuthenticated && (<div className="user-container">
-          <div className="username">
-            <div className="user-icon" data-testid="user-icon">
+          <div className="username" onClick={handleProfileModal}>
+            <div className="user-icon cursor-pointer" data-testid="user-icon">
               {initials}
             </div>
             <div>
-            <button
+            <p
                 className="user-name"
-                data-testid="user-name"
-                onClick={handleProfileModal} 
-              >
+                data-testid="user-name"              >
                 {userDetail?.name}
-              </button>
-              <OverlayTrigger
-                placement="top"
-                overlay={
-                  <Tooltip id="email-tooltip" className="custom-tooltip">
-                    {userDetail?.preferred_username}
-                  </Tooltip>
-                }
-              >
-                <p className="user-email" data-testid="user-email">
-                  {userDetail?.preferred_username}
-                </p>
-              </OverlayTrigger>
+              </p>
+              <p className="user-email" data-testid="user-email">
+                  {userDetail.email ? userDetail.email : userDetail?.preferred_username}
+              </p>
             </div>
           </div>
           <div

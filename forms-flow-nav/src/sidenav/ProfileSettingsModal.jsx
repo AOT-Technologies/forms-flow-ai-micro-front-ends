@@ -53,7 +53,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     }
 
     if (selectedLang) {
-      publish("ES_CHANGE_LANGUAGE", selectedLang);
+      props.publish("ES_CHANGE_LANGUAGE", selectedLang);
     }
 
     onClose();
