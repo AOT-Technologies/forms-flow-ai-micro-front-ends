@@ -361,12 +361,20 @@ const Sidebar = React.memo(({ props }) => {
             </div>
             <div>
             <p
-                className="user-name"
-                data-testid="user-name"
-                onClick={handleProfileModal}  //profile settings modal for language selection
-              >
-                {userDetail?.name}
-              </p>
+              className="user-name"
+              data-testid="user-name"
+              onClick={handleProfileModal}
+              tabIndex="0"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleProfileModal();
+                }
+              }}
+            >
+              {userDetail?.name}
+            </p>
+
+
               <OverlayTrigger
                 placement="top"
                 overlay={
@@ -402,7 +410,8 @@ const Sidebar = React.memo(({ props }) => {
 Sidebar.propTypes = {
   props: PropTypes.shape({
     subscribe: PropTypes.func.isRequired, 
-    getKcInstance: PropTypes.func.isRequired, 
+    getKcInstance: PropTypes.func.isRequired,
+    publish: PropTypes.func.isRequired, 
   }).isRequired,
 };
 
