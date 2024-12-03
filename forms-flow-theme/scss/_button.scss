@@ -174,39 +174,39 @@ $btn-font-weight: bold;
 
   &.btn-primary,
   &.btn-success {
-    background-color: $base-600 !important;
-    border: 1px solid $base-600 !important;
-
+    background-color: var(--primary-btn-bg-color) !important;
+    border: 1px solid var(--primary-btn-bg-color) !important;
+    color: var(--primary-btn-font-color) !important;
     &:focus {
       outline: none !important;
     }
 
     &:hover {
-      background-color: var(--ff-base-500) !important;
+      background-color: var(--primary-btn-hover-bg-color) !important;
       box-shadow: var(--shadow-md) !important;
     }
 
     &:active {
-      background-color: $white-color !important;
-      color: var(--ff-primary) !important;
+      background-color: var(--primary-btn-bg-color) !important;
+      color: var(--primary-btn-font-color) !important;
       border: 0.0625rem solid var(--ff-primary) !important;
     }
 
     &.btn:disabled {
       background-color: var(--ff-gray-300) !important;
-      color: $white-color !important;
+      color: var(--primary-btn-font-color) !important;
       border-color: var(--ff-gray-300) !important;
     }
 
     &+.dropdown-toggle+.dropdown-menu {
-      border-color: var(--ff-primary) !important;
+      border-color: var(--primary-btn-bg-color) !important;
 
       .dropdown-item {
-        color: var(--ff-primary) !important;
+        color: var(--primary-btn-bg-color) !important;
 
         &:hover {
           background-color: transparent !important;
-          color: var(--ff-primary) !important;
+          color: var(--primary-btn-bg-color) !important;
         }
       }
     }
@@ -218,12 +218,12 @@ $btn-font-weight: bold;
 
   &.btn-secondary {
     border: none;
-    color: var(--ff-primary) !important;
-    background: var(--ff-base-100) !important;
+    color: var(--secondary-btn-font-color) !important;
+    background: var(--secondary-btn-bg-color) !important;
     line-height: var(--text-line-height) !important;
 
     &:hover {
-      background-color: var(--ff-base-200) !important;
+      background-color: var(--secondary-btn-hover-bg-color) !important;
       font-weight: var(--font-weight-xl) !important;
     }
 
@@ -243,7 +243,7 @@ $btn-font-weight: bold;
 
     &:active {
       background-color: $white-color !important;
-      color: var(--ff-gray-800) !important;
+      color: var(--default-font-color) !important;
       border: 0.0625rem solid var(--ff-gray-700) !important;
     }
 
@@ -251,11 +251,11 @@ $btn-font-weight: bold;
       border: 0.0625rem solid var(--ff-gray-700) !important;
 
       .dropdown-item {
-        color: var(--ff-gray-800) !important;
+        color: var(--default-font-color) !important;
 
         &:hover {
           background-color: transparent !important;
-          color: var(--ff-gray-800) !important;
+          color: var(--default-font-color) !important;
         }
       }
     }

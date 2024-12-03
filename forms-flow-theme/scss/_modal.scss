@@ -56,7 +56,7 @@
       }
 
       .modal-content-heading {
-        color: var(--ff-base-600, #253DF4);
+        color: var(--ff-base-600);
         font-size: var(--font-size-sm);
         font-weight: var(--font-weight-xl);
         line-height: var(--text-line-height);
@@ -64,7 +64,7 @@
       }
 
       .modal-content-text {
-        color: var(--ff-gray-800, #303436);
+        color: var(--default-font-color);
         font-size: var(--font-size-sm);
         font-weight: var(--font-weight-sm);
         line-height: var(--text-line-height);
@@ -86,7 +86,7 @@
         margin-left: 0 !important;
         padding: var(--spacer-200) 2.5rem !important;
         flex-shrink: 0;
-        color: var(--ff-gray-800, #303436);
+        color: var(--default-font-color);
         font-size: var(--spacer-150);
         font-weight: var(--font-weight-sm);
         line-height: normal;
@@ -179,7 +179,7 @@
 
 .choose-template-modal {
   .modal-title {
-    color: var(--ff-gray-800, #303436);
+    color: var(--default-font-color);
   }
 
   .modal-dialog {
@@ -576,7 +576,7 @@
   .content-body{
     @extend .content-style;
     text-align: left;
-    color: var(--ff-gray-800);
+    color: var(--default-font-color);
     font-weight: var(--font-weight-sm);
   }
   .build-contents{

@@ -12,7 +12,7 @@
     align-items: center !important;
     gap: var(--spacer-100) !important;
     align-self: stretch;
-    color: var(--ff-gray-800) !important;
+    color: var(--default-font-color) !important;
     font-size: var(--font-size-lg) !important;
     font-weight: var(--font-weight-xl) !important;
     line-height: var(--text-line-height) !important;
@@ -198,13 +198,13 @@
 
 .info-content {
   align-self: stretch;
-  color: var(--ff-gray-800);
+  color: var(--default-font-color);
   font-size: var(--font-size-xs);
   line-height: var(--text-line-height);
 }
 
 .preview-header-text {
-  color: var(--ff-gray-800);
+  color: var(--default-font-color);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-xl);
   line-height: var(--text-line-height);

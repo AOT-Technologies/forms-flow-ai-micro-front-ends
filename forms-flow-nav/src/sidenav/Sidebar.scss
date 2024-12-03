@@ -5,7 +5,7 @@
   position: fixed;
   z-index: 1050;
   left: 0;
-  background-color: var(--ff-white);
+  background-color: var(--navbar-bg-color);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -25,8 +25,8 @@
   }
 
   .accordion-button {
-    color: var(--ff-gray-800);
-    background-color: var(--ff-white);
+    color: var(--navbar-main-menu-active-font-color);
+    background-color: var(--navbar-bg-color);
     gap: 0.5rem;
 
     &:focus {
@@ -41,23 +41,23 @@
     }
 
     &:hover {
-      background-color: var(--ff-base-100);
+      background-color: var(--navbar-menu-hover-bg-color);
     }
 
     &:not(.collapsed) {
-      color: var(--ff-gray-800);
-      background-color: var(--ff-gray-100);
+      color: var(--navbar-main-menu-active-font-color);
+      background-color: var(--navbar-main-menu-active-bg-color);
     }
 
   }
 
   .accordion-body {
-    color: var(--ff-gray-800);
+    color: var(--navbar-main-menu-active-font-color);
     padding: 0;
   }
 
   .accordion-item {
-    background-color: var(--ff-white);
+    background-color: var(--navbar-bg-color);
     border: none;
     font-size: var(--font-size-sm);
     font-weight: var(--font-size-sm);
@@ -75,7 +75,7 @@
     display: block;
     padding-block: var(--spacer-100);
     padding-inline: var(--spacer-250) var(--spacer-100);
-    color: var(--ff-gray-800);
+    color: var(--navbar-main-menu-active-font-color);
     text-decoration: none;
     text-align: left;
     width: 100%;
@@ -83,13 +83,13 @@
 
     &:hover {
       text-decoration: none;
-      color: var(--ff-gray-800);
-      background-color: var(--ff-base-100);
+      color: var(--navbar-main-menu-active-font-color);
+      background-color: var(--navbar-menu-hover-bg-color);
     }
 
     &.active {
-      background-color: var(--ff-gray-800);
-      color: var(--ff-white);
+      background-color: var(--navbar-active-submenu-bg-color);
+      color: var(--navbar-active-submenu-font-color);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl);
       line-height: var(--text-line-height);
@@ -102,7 +102,7 @@
     border-top: 0.031rem solid var(--ff-gray-600);
 
     .username {
-      color: var(--ff-gray-800);
+      color: var(--navbar-main-menu-active-font-color);
       padding: var(--spacer-100);
       margin: 0;
       text-align: left;
@@ -113,7 +113,7 @@
         margin: 0;
       }
       &:hover {
-        background-color: var(--ff-base-100);
+        background-color: var(--navbar-menu-hover-bg-color);
       }
     }
 
@@ -122,10 +122,10 @@
       padding: var(--spacer-100) var(--spacer-150);
       border: none;
       cursor: pointer;
-      color: var(--ff-gray-800);
+      color: var(--navbar-main-menu-active-font-color);
 
       &:hover {
-        background-color: var(--ff-base-100);
+        background-color: var(--navbar-menu-hover-bg-color);
       }
     }
 
@@ -134,7 +134,7 @@
       height: 2rem;
       border-radius: 6.25rem;
       background-color: var(--ff-gray-100);
-      color: var(--ff-gray-800);
+      color: var(--default-font-color);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -154,7 +154,7 @@
     .user-email {
       overflow: hidden;
       white-space: nowrap;
-      color: var(--ff-gray-800);
+      color: var(--navbar-main-menu-active-font-color);
       text-overflow: ellipsis;
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-xs);
@@ -176,8 +176,8 @@
     }
 
     &.active .accordion-button {
-      background-color: var(--ff-gray-800);
-      color: var(--ff-white);
+      background-color: var(--navbar-active-submenu-bg-color);
+      color: var(--navbar-active-submenu-font-color);
     }
   }
 }
@@ -193,7 +193,7 @@
 .multitenancy-header {
   height: var(--client-nav);
   box-shadow: var(--shadow-lg);
-  background-color: var(--ff-white);
+  background-color: var(--navbar-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,11 +208,11 @@
 .multitenancy-app-name {
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-lg);
-  color: var(--ff-gray-800);
+  color: var(--navbar-main-menu-active-font-color);
 }
 
 .active-header .accordion-button {
-  background-color: var(--ff-gray-100);
+  background-color: var(--navbar-main-menu-active-bg-color);
 }
 
 
@@ -230,7 +230,7 @@
 
 @media (min-width: 992px) {
   .sidenav {
-    height: 100%;
+    height: calc(100% - var(--client-nav));
   }
 }
 

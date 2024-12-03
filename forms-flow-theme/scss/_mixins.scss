@@ -60,7 +60,7 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height); 
-  color: var(--ff-gray-800);
+  color: var(--default-font-color);
 }
 
 @mixin upload-status-styles($color) {

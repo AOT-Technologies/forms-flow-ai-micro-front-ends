@@ -118,24 +118,28 @@ $custom-colors: (
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 :root {
-  --appname-margin-left: 0px;
-  --appname-margin-right: 0px;
-  --appname-margin-top: 0px;
-  --appname-margin-bottom: 0px;
-  --navbar-items-font-size: 16px;
-  --navbar-items-font-weight: 400;
-  --navbar-items: #{$dark};
-  --navbar-active: #{$primary};
-  --navbar-app-name: #{$dark};
-  --navbar-logo-width: 40px;
+  --navbar-active-submenu-bg-color: #{$gray-800};
+  --navbar-active-submenu-font-color: #{$white};
+  --navbar-menu-hover-bg-color: #{$base-100};
+  --navbar-main-menu-active-bg-color: #{$gray-100};
+  --navbar-main-menu-active-font-color: #{$gray-800};
+  --navbar-bg-color: #{$white};
+  --custom-logo-path: " ";
+  --custom-title: " ";
+  --primary-btn-font-color: #{$white};
+  --primary-btn-bg-color: #{$base-600};
+  --primary-btn-hover-bg-color: #{$base-500};
+  --secondary-btn-font-color: #{$base-600};
+  --secondary-btn-bg-color: #{$base-100};
+  --secondary-btn-hover-bg-color: #{$base-200};
+  --default-font-size: 1rem; 
+  --default-font-color: #{$gray-800};
   --navbar-width: 192px;
-  --navbar-logo-path: "./logo.svg";
-  --navbar-background: #{$white};
   //font-style
   --primary-font: "Roboto", sans-serif;
   //font-size
   --font-size-xs: 0.875rem;
-  --font-size-sm: 1rem;
+  --font-size-sm: var(--default-font-size);
   --font-size-md: 1.25rem;
   --font-size-lg: 1.5rem;
   --font-size-xl: 2rem;
@@ -188,7 +192,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 }
   
 body {
-  color: var(--ff-gray-800) !important; 
+  color: var(--default-font-color) !important; 
   min-height: 100vh !important;
   font-family: var(--primary-font) !important;
   overflow: hidden;
