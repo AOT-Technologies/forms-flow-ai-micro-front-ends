@@ -221,7 +221,7 @@ export const CloseIcon = ({
     height={height}
     viewBox="0 0 14 14"
     fill="none"
-    onClick={onClick}
+    onClick={onClick} 
     {...props}
   >
     <path
@@ -649,6 +649,21 @@ export const DropdownIcon = ({color = baseColor}) => (
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+    />
+  </svg>
+);
+export const StarPremiumIcon = ({ color = baseColor,...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+  >
+    <path
+      d="M7.52447 1.96352C7.67415 1.50287 8.32585 1.50287 8.47553 1.96353L9.68386 5.68237C9.75079 5.88838 9.94277 6.02786 10.1594 6.02786H14.0696C14.554 6.02786 14.7554 6.64767 14.3635 6.93237L11.2001 9.23075C11.0248 9.35807 10.9515 9.58375 11.0184 9.78976L12.2268 13.5086C12.3764 13.9693 11.8492 14.3523 11.4573 14.0676L8.29389 11.7693C8.11865 11.6419 7.88135 11.6419 7.70611 11.7693L4.54267 14.0676C4.15081 14.3523 3.62357 13.9693 3.77325 13.5086L4.98157 9.78976C5.04851 9.58375 4.97518 9.35807 4.79994 9.23075L1.6365 6.93237C1.24464 6.64767 1.44603 6.02786 1.93039 6.02786H5.84062C6.05723 6.02786 6.24921 5.88838 6.31614 5.68237L7.52447 1.96352Z"
+      stroke={color}
+      strokeWidth="2"
     />
   </svg>
 );
