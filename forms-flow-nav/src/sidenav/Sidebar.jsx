@@ -366,7 +366,7 @@ const Sidebar = React.memo(({ props }) => {
                 {userDetail?.name}
               </p>
               <p className="user-email" data-testid="user-email">
-                  {userDetail.email ? userDetail.email : userDetail?.preferred_username}
+                  {userDetail?.email || userDetail?.preferred_username}
               </p>
             </div>
           </button>
