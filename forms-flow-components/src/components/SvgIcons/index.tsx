@@ -668,3 +668,20 @@ export const StarPremiumIcon = ({ color = baseColor,...props }) => (
   </svg>
 );
 
+export const StrokeLine = ({ color = grayColor}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="318"
+    height="3"
+    viewBox="0 0 318 3"
+    fill="none"
+  >
+    <path
+      d="M1 1.5L317 1.50003"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeDasharray="8 8"
+    />
+  </svg>
+);
