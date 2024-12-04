@@ -94,7 +94,7 @@ const Sidebar = React.memo(({ props }) => {
 
   React.useEffect(() => {
     setUserDetail(
-      JSON.parse(StorageService.get(StorageService.User.USER_DETAILS))
+      JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {}
     );
   }, [instance]);
 
