@@ -391,7 +391,8 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
 Sidebar.propTypes = {
     subscribe: PropTypes.func.isRequired, 
     getKcInstance: PropTypes.func.isRequired,
-    publish: PropTypes.func.isRequired
+    publish: PropTypes.func.isRequired,
+    sidenavHeight: PropTypes.func.isRequired, 
 };
 
 export default Sidebar;
