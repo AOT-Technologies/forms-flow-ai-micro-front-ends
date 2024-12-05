@@ -64,6 +64,9 @@ $secondary: var(--ff-secondary);
         font-weight: var(--font-weight-xl);
         line-height: var(--text-line-height);
         letter-spacing: 0.02rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;  
       }
 
       .modal-content-text {
@@ -159,6 +162,13 @@ $secondary: var(--ff-secondary);
             border-right: 0 !important;
           }
         }
+        
+        .text-content {
+          display: flex;
+          flex-direction: column;
+          gap: var(--spacer-150);
+        }
+        
       }
 
       .modal-footer {
@@ -852,4 +862,16 @@ $secondary: var(--ff-secondary);
    }
  }
 }
-
+.profile-settings{
+  .lang-settings{
+    display: flex;
+    padding: var(--spacer-200) var(--spacer-250);
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+  }
+  .input-dropdown .list-group {
+    max-height: 8rem;
+  }
+  
+}

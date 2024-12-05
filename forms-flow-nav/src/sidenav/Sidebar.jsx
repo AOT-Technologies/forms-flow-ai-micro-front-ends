@@ -34,6 +34,7 @@ import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo } from "@formsflow/components";
+import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
 const Sidebar = React.memo(({ props, sidenavHeight }) => {
@@ -48,6 +49,8 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
   const history = useHistory();
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
+  const [showProfile, setShowProfile] = useState(false);
+
   const { t } = useTranslation();
   const currentLocation = useLocation();
 
@@ -91,7 +94,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
 
   React.useEffect(() => {
     setUserDetail(
-      JSON.parse(StorageService.get(StorageService.User.USER_DETAILS))
+      JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {}
     );
   }, [instance]);
 
@@ -177,6 +180,9 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
       setLoginUrl(`/tenant/${formTenant}/`);
     }
   }, [isAuthenticated, formTenant]);
+
+  const handleProfileModal = () => setShowProfile(true); 
+  const handleProfileClose = () => setShowProfile(false);
 
   const logout = () => {
     history.push(baseUrl);
@@ -349,28 +355,21 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
           </Accordion>
         </div>
         {isAuthenticated && (<div className="user-container">
-          <div className="username">
-            <div className="user-icon" data-testid="user-icon">
+          <button className="button-as-div justify-content-start m-2" onClick={handleProfileModal}>
+            <div className="user-icon cursor-pointer" data-testid="user-icon">
               {initials}
             </div>
             <div>
-              <p className="user-name" data-testid="user-name">
+            <p
+                className="user-name"
+                data-testid="user-name"              >
                 {userDetail?.name}
               </p>
-              <OverlayTrigger
-                placement="top"
-                overlay={
-                  <Tooltip id="email-tooltip" className="custom-tooltip">
-                    {userDetail?.preferred_username}
-                  </Tooltip>
-                }
-              >
-                <p className="user-email" data-testid="user-email">
-                  {userDetail?.preferred_username}
-                </p>
-              </OverlayTrigger>
+              <p className="user-email" data-testid="user-email">
+                  {userDetail?.email || userDetail?.preferred_username}
+              </p>
             </div>
-          </div>
+          </button>
           <div
             className="sign-out-button"
             onClick={logout}
@@ -379,15 +378,20 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
             <p className="m-0">{t("Sign Out")}</p>
           </div>
         </div>)}
+        <ProfileSettingsModal 
+        show={showProfile} 
+        onClose={handleProfileClose} 
+        tenant={tenant}
+        publish={props.publish}
+      />
       </div>
   );
 });
 
 Sidebar.propTypes = {
-  props: PropTypes.shape({
     subscribe: PropTypes.func.isRequired, 
-    getKcInstance: PropTypes.func.isRequired, 
-  }).isRequired,
+    getKcInstance: PropTypes.func.isRequired,
+    publish: PropTypes.func.isRequired
 };
 
 export default Sidebar;

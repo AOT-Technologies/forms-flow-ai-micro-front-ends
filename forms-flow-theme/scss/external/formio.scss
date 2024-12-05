@@ -1,6 +1,6 @@
 // Variables for reused values
-$secondary: var(--ff-secondary);
 $primary: var(--ff-primary);
+$secondary: var(--ff-secondary);
 
 .btn-group-xxs>.btn, .btn-xxs, .component-btn-group .component-settings-button{
     width: auto !important;
@@ -45,36 +45,50 @@ $primary: var(--ff-primary);
   }
 
 
-  .formio-hilighted{
-    box-sizing: border-box;
-    border-radius: var(--radius-050);
-    border: 2px dashed $primary;
-    padding: 8px 10px;  //TBD need to update
-  }
-  // Adjust the hover transition on the component in the TaskVariable UI to prevent size change glitches
-  .formio-component {
-    transition: border 0.05s ease, padding 0.3s ease; 
-  }
-
-  //TBD : getting hovered all the component including panels,columns,etc.need to exclude those items.
-//   .form-hilighter{
-//   .formio-form{
-//     .formio-component{
-//       &:hover{
-//        border-style: dotted;
-//        padding: 10px;
-//        border-color: var(--ff-primary-200);
-//        cursor: pointer;
-//       }
-//      }
-//   }
-// }
-
-  .formio-component{
+    .formio-hilighted {
+      box-sizing: border-box;
+      border-radius: var(--radius-050);
+      border: 2px dashed $primary !important;
+      padding: 8px 10px; //TBD need to update
+    }
+  
+    .formio-component {
+      transition: border 0.05s ease, padding 0.3s ease;
+      cursor: pointer !important;
+  
       .bg-default {
         background: $secondary !important;
-        .card-title{
+  
+        .card-title {
           color: $primary !important;
         }
       }
-  }
+    }
+  
+    // Define a list of ignored components for reuse
+    $ignored-components: (
+      '.formio-component-button',
+      '.formio-component-columns',
+      '.formio-component-panel',
+      '.formio-component-well',
+      '.formio-component-container',
+      '.formio-component-htmlelement',
+      '.formio-component-tabs'
+    );
+  
+    .task-variable-modal {
+      .formio-form {
+        .formio-component {
+          // Apply hover effect only if the component is not in the ignored list
+          &:not(#{$ignored-components}) {
+            &:hover {
+              border-style: dotted;
+              padding: 8px 10px;
+              border-color: var(--ff-primary-200);
+              border-radius: var(--radius-050);
+            }
+          }
+        }
+      }
+    }
+  

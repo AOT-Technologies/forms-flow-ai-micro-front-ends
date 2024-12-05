@@ -2,8 +2,8 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
-import { ChevronIcon } from "@formsflow/components";
-import { MULTITENANCY_ENABLED } from "../constants/constants";
+import { ChevronIcon ,ShowPremiumIcons } from "@formsflow/components";
+import { MULTITENANCY_ENABLED} from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { StorageService } from "@formsflow/service";
 import PropTypes from "prop-types";
@@ -76,7 +76,7 @@ const MenuComponent = ({
             <Link
               key={index}
               to={`${baseUrl}${menu.path}`}
-              className={`accordion-link ${
+              className={`accordion-link d-flex justify-content-between ${
                 menu.matchExps &&
                 menu.matchExps.some((exp) => exp.test(location.pathname))
                   ? "active"
@@ -85,7 +85,9 @@ const MenuComponent = ({
               data-testid={`accordion-link-${index}`}
               aria-label={`Link to ${menu.name}`}
             >
-              {t(menu.name)}
+              {t(menu.name)} {(menu.name.toLowerCase() === "bundle" || menu.name.toLowerCase() === "integrations")  &&(
+        <ShowPremiumIcons />
+      )}
             </Link>
           ))}
         </Accordion.Body>
