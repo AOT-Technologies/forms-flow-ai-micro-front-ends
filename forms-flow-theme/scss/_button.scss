@@ -1,6 +1,6 @@
 @import '_mixins';
 // Variables for reused values
-$base-600: var(--ff-base-600);
+$primary: var(--ff-primary);
 $black-color: var(--ff-black);
 $white-color: var(--ff-white);
 $gray-000: var(--ff-gray-000);
@@ -454,7 +454,7 @@ $btn-font-weight: bold;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: $base-600 !important;
+  color: $primary !important;
 
   // .dropdown-toggle {
   //   color: $base-600 !important;
@@ -485,7 +485,7 @@ $btn-font-weight: bold;
     }
 
     .dropdown-toggle {
-      color: $base-600 !important;
+      color: $primary !important;
 
       &::after {
         display: inline-block !important;

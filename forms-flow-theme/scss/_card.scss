@@ -1,3 +1,6 @@
+// Variables for reused values
+$primary: var(--ff-primary);
+
 .wraper {
   .card {
     border-radius: var(--radius-0150) !important;
@@ -69,7 +72,7 @@
 }
 
 .form-flow-wraper-right {
-  color: var(--ff-base-600);
+  color: $primary;
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-xl);
   padding-bottom: var(--spacer-200) !important;
@@ -113,7 +116,7 @@
 
 .form-flow-wraper-left {
   margin-right: -1.5rem;
-  color: var(--ff-base-600);
+  color: $primary;
   width: 6.25rem;
   font-size: var(--font-size-lg);
   overflow: hidden;

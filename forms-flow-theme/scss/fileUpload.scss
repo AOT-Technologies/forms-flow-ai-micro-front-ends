@@ -1,4 +1,4 @@
-$base-600: var(--ff-base-600);
+$primary: var(--ff-primary);
 $ff-white: var(--ff-white);
 $gray-800: var(--ff-gray-800);
 $gray-400: var(--ff-gray-400);
@@ -11,7 +11,7 @@ $font-size-xs: var(--font-size-xs);
   align-items: center;
   width: 100%;
   min-height: 10.125rem;
-  border: 0.09375rem dashed $base-600;
+  border: 0.09375rem dashed $primary;
   border-radius: var(--radius-0100);
   background-color: $ff-white;
   cursor: pointer;
@@ -99,7 +99,7 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-status-success {
-  @include upload-status-styles($base-600);
+  @include upload-status-styles($primary);
 }
 
 .upload-status-error {
