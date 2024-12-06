@@ -459,3 +459,8 @@ select option:hover {
     display: none !important;
   }
 }
+
+.dashed-line {
+  width: 8.8125rem;
+  border-top: 0.1875rem dashed var(--ff-gray-300);
+}
