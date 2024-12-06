@@ -97,7 +97,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       },
       {
         value: "minor",
-        label: `import as version ${fileItems?.form?.majorVersion}.${fileItems?.form?.minorVersion} (impacts previous and new submissions)`,
+        label: `import as version ${fileItems?.form?.majorVersion}.${fileItems?.form?.minorVersion + 1 }  (impacts previous and new submissions)`,
       },
     ];
 
