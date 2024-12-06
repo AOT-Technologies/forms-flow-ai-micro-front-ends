@@ -1,4 +1,7 @@
 @import '_mixins';
+// Variables for reused values
+$primary: var(--ff-primary);
+$secondary: var(--ff-secondary);
 
 .forms-text {
   vertical-align: bottom;
@@ -134,7 +137,7 @@ select option:hover {
     &.has-value {
       border: 2px solid var(--ff-primary);
       background: var(--ff-white);
-      color: var(--ff-gray-800) !important;
+      color: var(--default-font-color) !important;
     }
 
     &.is-searching {
@@ -150,7 +153,7 @@ select option:hover {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: var(--ff-gray-800);
+    color: var(--default-font-color);
     padding: var(--spacer-050);
 
     &.loading {
@@ -185,8 +188,8 @@ select option:hover {
 
 /* CustomTooltip */
 .custom-tooltip .tooltip-inner {
-  background-color: var(--ff-base-100);
-  color: var(--ff-gray-800);
+  background-color: $secondary;
+  color: var(--default-font-color);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
@@ -196,7 +199,7 @@ select option:hover {
 }
 
 .custom-tooltip .tooltip-arrow::before {
-  border-color: var(--ff-base-100) transparent transparent transparent !important;
+  border-color: $secondary transparent transparent transparent !important;
 }
 
 /* Custom Form.Check */
@@ -204,7 +207,7 @@ select option:hover {
   width: 1.25em;
   height: 1.25em;
   border-radius: var(--radius-025);
-  border: 2px solid var(--ff-base-600) !important;
+  border: 2px solid $primary !important;
   background-color: transparent;
   position: relative;
 
@@ -214,7 +217,7 @@ select option:hover {
 
   &:checked {
     background-color: var(--ff-white) !important;
-    border-color: var(--ff-base-600) !important;
+    border-color: $primary !important;
 
     &:after {
       content: '';
@@ -223,7 +226,7 @@ select option:hover {
       left: 0.35em;
       width: 0.35em;
       height: 0.7em;
-      border: solid var(--ff-base-600);
+      border: solid $primary;
       border-width: 0 0.15em 0.15em 0;
       transform: rotate(45deg);
     }
@@ -231,8 +234,8 @@ select option:hover {
 }
 
 .custom-checkbox .form-check-label {
-  color: var(--ff-gray-800);
-  margin-left: var(--spacer-050);
+  color: var(--default-font-color);
+  margin-left: var(--default-font-color);
   margin-top: var(--spacer-025);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
@@ -243,7 +246,7 @@ select option:hover {
 //FormInput styles
 
 .form-control {
-  color: var(--ff-gray-800) !important;
+  color: var(--default-font-color) !important;
   border-radius: var(--radius-0100) !important;
   border: 1px solid var(--ff-primary) !important;
   outline: none;
@@ -319,7 +322,7 @@ select option:hover {
   }
 
   .custom-form-control-label {
-    color: var(--ff-gray-800);
+    color: var(--default-font-color);
     font-size: var(--font-size-xs); //14px
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
@@ -341,9 +344,9 @@ select option:hover {
   display: inline-flex !important;
   padding-block: var(--spacer-050) !important;
   padding-inline: var(--spacer-100) !important;
-  color: var(--ff-gray-800) !important;
+  color: var(--default-font-color) !important;
   gap: var(--spacer-050) !important;
-  background-color: var(--ff-base-100) !important;
+  background-color: $secondary !important;
   border: none !important;
   align-items: center !important;
   font-size: var(--font-size-sm) !important;
@@ -381,13 +384,13 @@ select option:hover {
 /* ------------------------- Radio Button Style ------------------------ */
 
 .form-check-input[type="radio"] {
-  border-color: var(--ff-base-600) !important;
+  border-color: $primary !important;
   position: relative;
 
   &:checked {
     --bs-form-check-bg-image: none !important;
     background-color: var(--ff-white) !important;
-    border-color: var(--ff-base-600) !important;
+    border-color: $primary !important;
 
     &::before {
       content: "" !important;
@@ -398,7 +401,7 @@ select option:hover {
       /* Center horizontally */
       width: 67% !important;
       height: 70% !important;
-      background-color: var(--ff-base-600) !important;
+      background-color: $primary !important;
       border-radius: 50% !important;
       transform: translate(-50%, -50%) !important;
     }
@@ -406,7 +409,7 @@ select option:hover {
 }
 
 .valiation-astrisk {
-  color: var(--ff-base-600);
+  color: $primary;
 }
 //for not allowing for edit in preview 
 .form-preview{

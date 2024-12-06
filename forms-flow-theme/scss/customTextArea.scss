@@ -1,6 +1,6 @@
 $form-textArea-border-radius: var(--radius-0100);
-$form-textArea-border-color: var(--ff-base-600);
-$form-textArea-focus-outline: 2px solid var(--ff-base-600);
+$form-textArea-border-color: var(--ff-primary);
+$form-textArea-focus-outline: 2px solid var(--ff-primary);
 .custom-textarea {
   overflow-y: auto;
   -ms-overflow-style: none;

@@ -1,6 +1,6 @@
 // Variables for reused values
-$base-100: var(--ff-base-100);
 $primary: var(--ff-primary);
+$secondary: var(--ff-secondary);
 
 .btn-group-xxs>.btn, .btn-xxs, .component-btn-group .component-settings-button{
     width: auto !important;
@@ -48,7 +48,7 @@ $primary: var(--ff-primary);
     .formio-hilighted {
       box-sizing: border-box;
       border-radius: var(--radius-050);
-      border: 2px dashed var(--ff-base-600) !important;
+      border: 2px dashed $primary !important;
       padding: 8px 10px; //TBD need to update
     }
   
@@ -57,7 +57,7 @@ $primary: var(--ff-primary);
       cursor: pointer !important;
   
       .bg-default {
-        background: $base-100 !important;
+        background: $secondary !important;
   
         .card-title {
           color: $primary !important;
