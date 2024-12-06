@@ -5,7 +5,7 @@ class StyleServices {
     element: HTMLElement = document.documentElement
   ): string {
     const value = getComputedStyle(element).getPropertyValue(variableName);
-    return value.trim();
+    return value === '" "' ? "" : value;
   }
 }
 
