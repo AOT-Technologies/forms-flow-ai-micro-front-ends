@@ -4,11 +4,11 @@ import Sidebar from "./sidenav/Sidebar";
 import React, { useRef, useEffect, useState } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
+import { StyleServices } from "@formsflow/service";
 
 export default function Root(props) {
-  const customLogoPath =  document.documentElement.style.getPropertyValue("--custom-logo-path");
-  const customTitle =
-    document.documentElement.style.getPropertyValue("--custom-title"); 
+  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customTitle = StyleServices?.getCSSVariable("--custom-title");
   const headerRef = useRef(null); 
   const sidenavRef = useRef(null); 
   const [sidenavHeight, setSidenavHeight] = useState("100%");
