@@ -224,7 +224,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             { id:2, heading: t("Last Edit By"), value: entry.createdBy },
             { id:3, heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? HelperServices?.getLocalDateAndTime(entry.publishedOn) : "" },
             ...(categoryType === "WORKFLOW"
-              ? [{ id:4, heading: t("Type"), value: entry.processType }]
+              ? [{ id:4, heading: t("Type"), value: entry.processType === "LOWCODE" ? "No-Code" : entry.processType }]
               : []),
           ];
 
