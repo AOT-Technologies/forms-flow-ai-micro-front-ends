@@ -14,15 +14,13 @@ const MenuComponent = ({
   subMenu,
   optionsCount,
   subscribe,
+  baseUrl
 }) => {
   const [tenant, setTenant] = React.useState({});
   const location = useLocation();
   const history = useHistory();
-  const tenantKey = tenant?.tenantId;
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const { t } = useTranslation();
   const noOptionsMenu = optionsCount === "0";
-
   React.useEffect(() => {
     subscribe("ES_TENANT", (msg, data) => {
       if (data) {
@@ -108,6 +106,7 @@ MenuComponent.propTypes = {
   ).isRequired,
   optionsCount: PropTypes.string.isRequired,
   subscribe: PropTypes.func.isRequired,
+  baseUrl: PropTypes.string.isRequired,
 };
 
 export default MenuComponent;

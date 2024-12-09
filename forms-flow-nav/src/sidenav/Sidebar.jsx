@@ -97,6 +97,12 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
       JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {}
     );
   }, [instance]);
+ 
+  React.useEffect(() => {
+    if (MULTITENANCY_ENABLED && !tenant.tenantId && instance?.isAuthenticated) {
+      fetchTenantDetails(setTenant);
+    }
+  }, [instance]);
 
   React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
@@ -229,6 +235,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
             {ENABLE_FORMS_MODULE &&
               (isCreateDesigns || isViewDesigns) && (
                 <MenuComponent
+                  baseUrl={baseUrl}
                   eventKey={SectionKeys.DESIGN}
                   optionsCount="5"
                   mainMenu="Design"
@@ -287,6 +294,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
+                  baseUrl={baseUrl}
                   eventKey={SectionKeys.SUBMIT}
                   optionsCount="1"
                   mainMenu="Submit"
@@ -306,6 +314,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
               )}
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
+                baseUrl={baseUrl}
                 eventKey={SectionKeys.REVIEW}
                 optionsCount="1"
                 mainMenu="Review"
@@ -321,6 +330,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
             )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
+                baseUrl={baseUrl}
                 eventKey={SectionKeys.ANALYZE}
                 optionsCount="2"
                 mainMenu="Analyze"
@@ -345,6 +355,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
             )}
             {isAdmin && (
               <MenuComponent
+                baseUrl={baseUrl}
                 eventKey={SectionKeys.MANAGE}
                 optionsCount="3"
                 mainMenu="Manage"
