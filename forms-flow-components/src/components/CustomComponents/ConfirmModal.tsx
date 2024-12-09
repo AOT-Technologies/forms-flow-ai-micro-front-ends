@@ -18,6 +18,7 @@ interface ConfirmModalProps {
   primaryBtndataTestid?: string;
   primaryBtnariaLabel?: string;
   secondoryBtnariaLabel?: string;
+  buttonLoading?:boolean;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
@@ -34,7 +35,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   secondoryBtndataTestid = 'cancel-button',
   primaryBtndataTestid = 'Confirm-button',
   primaryBtnariaLabel = 'Confirm Button',
-  secondoryBtnariaLabel = 'Cancel Button'
+  secondoryBtnariaLabel = 'Cancel Button',
+  buttonLoading= false,
 }) => {
   return (
     <>
@@ -89,6 +91,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             onClick={primaryBtnAction}
             dataTestid={primaryBtndataTestid}
             ariaLabel={primaryBtnariaLabel}
+            buttonLoading={buttonLoading}
           />
           <CustomButton
             variant="secondary"
