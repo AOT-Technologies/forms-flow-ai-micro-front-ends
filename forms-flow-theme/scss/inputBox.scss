@@ -1,6 +1,6 @@
 $form-input-border-radius: var(--radius-0150);
-$base-600: var(--ff-base-600);
-$form-input-focus-outline: 2px solid var(--ff-base-600);
+$primary: var(--ff-primary);
+$form-input-focus-outline: 2px solid var(--ff-primary);
 $red-000: var(--ff-red-000);
 $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
 
@@ -9,7 +9,7 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
   height: var(--spacer-200);
   flex-shrink: 0;
   border-radius: $form-input-border-radius;
-  border: 1px solid $base-600;
+  border: 1px solid $primary;
   background: var(--ff-white);
   margin-bottom: 10px;
   padding: var(--spacer-050);
@@ -45,7 +45,7 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
 }
 
 .validation-astrisk {
-  color: $base-600;
+  color: $primary;
 }
 
 .input-dropdown {
@@ -73,7 +73,7 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
     padding: var(--spacer-050) 0px;
     flex-direction: column;
     align-self: stretch;
-    border: 1px solid var(--ff-base-600);
+    border: 1px solid $primary;
     border-top: none;
     border-radius: 0px 0px var(--radius-0100) var(--radius-0100);
     max-height: 12.5rem;
@@ -92,7 +92,7 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
       gap: var(--spacer-050);
       cursor: pointer;
       border: none;
-      color: var(--ff-base-600);
+      color: $primary;
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);

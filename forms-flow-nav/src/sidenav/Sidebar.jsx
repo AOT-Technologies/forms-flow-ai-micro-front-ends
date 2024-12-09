@@ -37,7 +37,7 @@ import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
-const Sidebar = React.memo(({ props }) => {
+const Sidebar = React.memo(({ props, sidenavHeight }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");
   const [userDetail, setUserDetail] = React.useState({});
@@ -214,7 +214,7 @@ const Sidebar = React.memo(({ props }) => {
   }
 
   return (
-      <div className="sidenav">
+      <div className="sidenav" style={{ height: sidenavHeight }}>
         <div className="logo-container">
           {/* <img
             className=""
@@ -391,7 +391,8 @@ const Sidebar = React.memo(({ props }) => {
 Sidebar.propTypes = {
     subscribe: PropTypes.func.isRequired, 
     getKcInstance: PropTypes.func.isRequired,
-    publish: PropTypes.func.isRequired
+    publish: PropTypes.func.isRequired,
+    sidenavHeight: PropTypes.func.isRequired, 
 };
 
 export default Sidebar;
