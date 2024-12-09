@@ -97,7 +97,13 @@ const Sidebar = React.memo(({ props }) => {
       JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {}
     );
   }, [instance]);
-
+ 
+  React.useEffect(() => {
+    if (MULTITENANCY_ENABLED && !tenant.tenantId && instance?.isAuthenticated) {
+      fetchTenantDetails(setTenant);
+    }
+  }, [instance]);
+  
   React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
@@ -345,6 +351,7 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {isAdmin && (
               <MenuComponent
+                baseUrl={baseUrl}
                 eventKey={SectionKeys.MANAGE}
                 optionsCount="3"
                 mainMenu="Manage"

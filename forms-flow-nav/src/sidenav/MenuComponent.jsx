@@ -18,11 +18,8 @@ const MenuComponent = ({
   const [tenant, setTenant] = React.useState({});
   const location = useLocation();
   const history = useHistory();
-  const tenantKey = tenant?.tenantId;
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const { t } = useTranslation();
   const noOptionsMenu = optionsCount === "0";
-
   React.useEffect(() => {
     subscribe("ES_TENANT", (msg, data) => {
       if (data) {
@@ -31,7 +28,7 @@ const MenuComponent = ({
           StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
         }
       }
-    });
+    });  
   }, []);
 
   const handleHeaderClick = () => {
