@@ -14,6 +14,7 @@ const MenuComponent = ({
   subMenu,
   optionsCount,
   subscribe,
+  baseUrl
 }) => {
   const [tenant, setTenant] = React.useState({});
   const location = useLocation();
@@ -28,7 +29,7 @@ const MenuComponent = ({
           StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
         }
       }
-    });  
+    });
   }, []);
 
   const handleHeaderClick = () => {
@@ -105,6 +106,7 @@ MenuComponent.propTypes = {
   ).isRequired,
   optionsCount: PropTypes.string.isRequired,
   subscribe: PropTypes.func.isRequired,
+  baseUrl: PropTypes.string.isRequired,
 };
 
 export default MenuComponent;

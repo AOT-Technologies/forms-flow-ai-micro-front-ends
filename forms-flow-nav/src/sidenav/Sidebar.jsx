@@ -103,7 +103,7 @@ const Sidebar = React.memo(({ props }) => {
       fetchTenantDetails(setTenant);
     }
   }, [instance]);
-  
+
   React.useEffect(() => {
     props.subscribe("FF_AUTH", (msg, data) => {
       setInstance(data);
@@ -235,6 +235,7 @@ const Sidebar = React.memo(({ props }) => {
             {ENABLE_FORMS_MODULE &&
               (isCreateDesigns || isViewDesigns) && (
                 <MenuComponent
+                  baseUrl={baseUrl}
                   eventKey={SectionKeys.DESIGN}
                   optionsCount="5"
                   mainMenu="Design"
@@ -293,6 +294,7 @@ const Sidebar = React.memo(({ props }) => {
               isViewSubmissions &&
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
+                  baseUrl={baseUrl}
                   eventKey={SectionKeys.SUBMIT}
                   optionsCount="1"
                   mainMenu="Submit"
@@ -312,6 +314,7 @@ const Sidebar = React.memo(({ props }) => {
               )}
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
+                baseUrl={baseUrl}
                 eventKey={SectionKeys.REVIEW}
                 optionsCount="1"
                 mainMenu="Review"
@@ -327,6 +330,7 @@ const Sidebar = React.memo(({ props }) => {
             )}
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
+                baseUrl={baseUrl}
                 eventKey={SectionKeys.ANALYZE}
                 optionsCount="2"
                 mainMenu="Analyze"
