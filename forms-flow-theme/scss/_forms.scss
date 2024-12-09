@@ -129,7 +129,7 @@ select option:hover {
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
-    padding: var(--spacer-050) var(--spacer-250) var(--spacer-050) var(--spacer-100);
+    padding: var(--spacer-050) var(--spacer-200) var(--spacer-050) var(--spacer-100) !important;
     height: 2.063rem;
 
 
@@ -149,7 +149,7 @@ select option:hover {
 
   .search-box-icon {
     position: absolute;
-    right: var(--spacer-100);
+    right: var(--spacer-025);
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
