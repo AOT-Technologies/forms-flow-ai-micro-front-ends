@@ -425,6 +425,20 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
           role="button"
           className="file-upload"
           tabIndex={0}
+          onDragOver={(e) => {
+            e.preventDefault(); // Prevent the browser's default drag behavior
+            e.stopPropagation(); 
+          }}
+
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation(); 
+            const file = e.dataTransfer.files[0];
+            if (file) {
+              setSelectedFile(file); // Handle the dropped files
+            }
+          }}
+
           onClick={() => document.getElementById("file-input")?.click()}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
