@@ -57,7 +57,12 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       publish("ES_CHANGE_LANGUAGE", selectedLang);
     }
 
-    onClose();
+    onClose();  
+  };
+
+  const handleClose = () => {
+    setSelectedLang(localStorage.getItem('lang') || 'en');
+    onClose(); 
   };
 
   const isSaveDisabled = selectedLang === localStorage.getItem('i18nextLng');
@@ -67,7 +72,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   return (
     <Modal
       show={show}
-      onHide={onClose}
+      onHide={handleClose}
       size="sm"
       centered={true}
       data-testid="profile-settings-modal"
@@ -80,7 +85,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           <b>{t("Settings")}</b>
         </Modal.Title>
         <div className="d-flex align-items-center">
-          <CloseIcon onClick={onClose} />
+          <CloseIcon onClick={handleClose} />
         </div>
       </Modal.Header>
 
@@ -119,7 +124,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           variant="secondary"
           size="md"
           label={t("Cancel")}
-          onClick={onClose}
+          onClick={handleClose}
           dataTestid="cancel-profile-settings"
           ariaLabel={t("Cancel profile settings")}
         />
