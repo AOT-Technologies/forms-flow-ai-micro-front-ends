@@ -1,5 +1,6 @@
 {
   "name": "@formsflow/nav",
+  "version": "7.0.0-alpha",
   "scripts": {
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",

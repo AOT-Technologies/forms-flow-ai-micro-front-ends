@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'; 
 import Modal from 'react-bootstrap/Modal';
-import { CloseIcon, CustomButton, InputDropdown } from "@formsflow/components";
+import { CloseIcon, CustomButton, InputDropdown, CustomInfo } from "@formsflow/components";
 import { fetchSelectLanguages, updateUserlang } from '../services/language';
 import { useTranslation } from "react-i18next";
 import i18n from '../resourceBundles/i18n';
 import { StorageService } from "@formsflow/service";
 import { LANGUAGE, MULTITENANCY_ENABLED, USER_LANGUAGE_LIST } from '../constants/constants';
+import version from "../../package.json";
 
 export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [selectLanguages, setSelectLanguages] = useState([]);
@@ -56,15 +57,22 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       publish("ES_CHANGE_LANGUAGE", selectedLang);
     }
 
-    onClose();
+    onClose();  
+  };
+
+  const handleClose = () => {
+    setSelectedLang(localStorage.getItem('lang') || 'en');
+    onClose(); 
   };
 
   const isSaveDisabled = selectedLang === localStorage.getItem('i18nextLng');
 
+  const selectedLangLabel = selectLanguages.find(lang => lang.name === selectedLang)?.value || selectedLang;
+
   return (
     <Modal
       show={show}
-      onHide={onClose}
+      onHide={handleClose}
       size="sm"
       centered={true}
       data-testid="profile-settings-modal"
@@ -74,10 +82,10 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     >
       <Modal.Header>
         <Modal.Title id="profile-modal-title">
-          <b>{t("Profile Settings")}</b>
+          <b>{t("Settings")}</b>
         </Modal.Title>
         <div className="d-flex align-items-center">
-          <CloseIcon onClick={onClose} />
+          <CloseIcon onClick={handleClose} />
         </div>
       </Modal.Header>
 
@@ -86,18 +94,19 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           <InputDropdown
             isAllowInput={false}
             Options={selectLanguages.map((lang) => ({
-              label: lang.name,
+              label: lang.value,
               onClick: () => handleLanguageChange(lang.name),
             }))}
             dropdownLabel={t("System Language")}
-            placeholder={selectedLang}
-            selectedOption={selectedLang}
+            selectedOption={selectedLangLabel}  
             isInvalid={false}
             ariaLabelforDropdown={t("Language Dropdown")}
             ariaLabelforInput={t("Language Input")}
             dataTestIdforDropdown="dropdown-language"
             dataTestIdforInput="input-language"
           />
+          <CustomInfo className="note" heading="Note" 
+            content={`You are running version ${version.version} of Formsflow`} />
         </div>
       </Modal.Body>
 
@@ -115,7 +124,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           variant="secondary"
           size="md"
           label={t("Cancel")}
-          onClick={onClose}
+          onClick={handleClose}
           dataTestid="cancel-profile-settings"
           ariaLabel={t("Cancel profile settings")}
         />
