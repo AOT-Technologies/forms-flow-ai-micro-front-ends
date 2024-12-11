@@ -50,7 +50,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     setNameError,
     description,
     nameError,
-    isLoading,
     modalHeader,
     nameLabel = "Name",
     descriptionLabel = "Form Description",
@@ -76,8 +75,11 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       display: checked ? "wizard" : "form"
     })
     const [cachedTitle, setCachedTitle] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [isValidating, setIsValidating] = useState(false); 
     const handlePrimaryAction = () => {
       // Pass name and description to primaryBtnAction
+      setIsLoading(true);
       if (primaryBtnAction) {
         primaryBtnAction(values);
       }
@@ -97,9 +99,13 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       const relatedTargetName = e.relatedTarget?.name;
       const createButtonClicked =  relatedTargetName == "createButton";
       const isCancelButton = relatedTargetName == "cancelButton"; 
-       if((!values.title || values.title !== cachedTitle) && !isCancelButton){
-        nameValidationOnBlur({...values,createButtonClicked})
-        setCachedTitle(values.title); //caching this title to avoid calling handling blur
+      if((!values.title || values.title !== cachedTitle) && !isCancelButton){
+        setIsValidating(true); 
+        nameValidationOnBlur({ ...values, createButtonClicked });
+        setCachedTitle(values.title); 
+        setTimeout(() => {
+          setIsValidating(false); 
+        }, 1000);
       }
     }
 
@@ -147,6 +153,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               value={values.title}
               isInvalid={!!nameError}
               feedback={nameError}
+              isValidating={isValidating}
             />
            <FormTextArea
               name="description"

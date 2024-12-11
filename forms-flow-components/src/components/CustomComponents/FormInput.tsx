@@ -21,6 +21,7 @@ interface FormInputProps {
   id?: string;
   onIconClick?: () => void;
   onClick?: () => void;
+  isValidating?: boolean;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -42,7 +43,8 @@ export const FormInput: React.FC<FormInputProps> = ({
   icon,
   id,
   onIconClick,
-  onClick
+  onClick,
+  isValidating = false,
 }) => {
 
   const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
@@ -79,7 +81,10 @@ export const FormInput: React.FC<FormInputProps> = ({
             onKeyDown={handleKeyDown}
             onClick={onClick}
           />
-          {icon && (
+          {isValidating && (
+          <div className="input-spinner"></div>
+        )}
+          {icon && !isValidating &&(
             <InputGroup.Text
              id="input-icon" 
              onClick={onIconClick}
