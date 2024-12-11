@@ -188,7 +188,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <CustomButton
               variant={nameError ? "dark" : "primary"}
               size="md"
-              disabled={!!nameError || isLoading || !values.title } // Disable if errors or fields are empty
+              disabled={!!nameError || isLoading || !values.title || isValidating } // Disable if errors or fields are empty
               label={primaryBtnLabel}
               buttonLoading={isLoading}
               onClick={handlePrimaryAction} // Use the new handler
