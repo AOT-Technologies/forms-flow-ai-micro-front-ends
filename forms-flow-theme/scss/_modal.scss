@@ -855,11 +855,28 @@ $secondary: var(--ff-secondary);
   display: flex;
   flex-direction: column;
   gap: var(--spacer-150);
+
   .text-bold{
     font-weight: var(--font-weight-xl);
     font-size: var(--font-size-sm);
     word-break: break-all;
    }
+ }
+
+ .form-control {
+   &:disabled {
+     background-color: var(--ff-white) !important;
+   }
+ }
+
+ .card-body {
+   border-radius: var(--radius-0100) !important;
+   border-color: var(--ff-gray-400) !important;
+
+   .formio-editor-read-only-content {
+     padding: var(--spacer-025) var(--spacer-050);
+   }
+
  }
 }
 .profile-settings{
@@ -876,5 +893,4 @@ $secondary: var(--ff-secondary);
   .note{
     margin-top: 1.5rem;
   }
-  
 }
