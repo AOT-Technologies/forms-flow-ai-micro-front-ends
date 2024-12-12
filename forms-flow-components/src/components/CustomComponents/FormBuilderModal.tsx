@@ -20,7 +20,8 @@ interface BuildFormModalProps {
   setNameError?: (value: string) => void;
   nameError?: string;
   description?: string;
-  isLoading?: boolean;
+  isSaveBtnLoading?: boolean;
+  isFormNameValidating?: boolean;
   modalHeader?: string;
   nameLabel?: string;
   descriptionLabel?: string;
@@ -50,7 +51,6 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     setNameError,
     description,
     nameError,
-    isLoading,
     modalHeader,
     nameLabel = "Name",
     descriptionLabel = "Form Description",
@@ -68,6 +68,9 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     placeholderForDescription,
     buildForm= false,
     checked= false,
+    isSaveBtnLoading= false,
+    isFormNameValidating=false
+
   }) => {
     const { t } = useTranslation();
     const [values, setValues] = useState({
@@ -97,10 +100,10 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       const relatedTargetName = e.relatedTarget?.name;
       const createButtonClicked =  relatedTargetName == "createButton";
       const isCancelButton = relatedTargetName == "cancelButton"; 
-       if((!values.title || values.title !== cachedTitle) && !isCancelButton){
-        nameValidationOnBlur({...values,createButtonClicked})
-        setCachedTitle(values.title); //caching this title to avoid calling handling blur
-      }
+      if((!values.title || values.title !== cachedTitle) && !isCancelButton){
+        nameValidationOnBlur({ ...values, createButtonClicked });
+        setCachedTitle(values.title); 
+            }
     }
 
     useEffect(()=>{
@@ -147,6 +150,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               value={values.title}
               isInvalid={!!nameError}
               feedback={nameError}
+              turnOnLoader={isFormNameValidating}
             />
            <FormTextArea
               name="description"
@@ -181,9 +185,9 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <CustomButton
               variant={nameError ? "dark" : "primary"}
               size="md"
-              disabled={!!nameError || isLoading || !values.title } // Disable if errors or fields are empty
+              disabled={!!nameError || isSaveBtnLoading || !values.title || isFormNameValidating } // Disable if errors or fields are empty
               label={primaryBtnLabel}
-              buttonLoading={isLoading}
+              buttonLoading={isSaveBtnLoading}
               onClick={handlePrimaryAction} // Use the new handler
               name="createButton"
               dataTestid={primaryBtndataTestid}

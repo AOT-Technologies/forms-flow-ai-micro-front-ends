@@ -83,10 +83,6 @@ select option:hover {
 
 // formio classes
 
-.formio-component-panel {
-  border: 0.0625rem solid var(--ff-gray-200);
-}
-
 .formio-component-panel .panel-heading {
   background-color: var(--ff-gray-200);
   padding: 0.625rem 0 0.625rem 0.625rem;
@@ -307,6 +303,13 @@ select option:hover {
     position: relative;
     display: flex;
     align-items: center;
+    .input-spinner{  
+      @include spinner-base;
+      width: 1em;
+      height: 1em;
+      position: absolute;
+      right: 1rem; 
+  }
   }
 
   .input-group-text {
