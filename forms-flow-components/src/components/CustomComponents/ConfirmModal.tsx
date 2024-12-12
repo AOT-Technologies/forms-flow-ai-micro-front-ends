@@ -93,14 +93,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             ariaLabel={primaryBtnariaLabel}
             buttonLoading={buttonLoading}
           />
-          <CustomButton
+          {secondaryBtnText && <CustomButton
             variant="secondary"
             size="lg"
             label={secondaryBtnText}
             onClick={secondayBtnAction}
             dataTestid={secondoryBtndataTestid}
             ariaLabel={secondoryBtnariaLabel}
-          />
+          />}
         </Modal.Footer>
       </Modal>
     </>
