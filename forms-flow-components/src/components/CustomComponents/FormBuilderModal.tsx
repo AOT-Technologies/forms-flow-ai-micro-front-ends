@@ -160,22 +160,28 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               minRows={1}
             />
 
-           {buildForm && 
-           <>
-           <CustomInfo heading="Note" 
-           content="Allowing the addition of multiple pages in a single form will prevent you from using this form in a bundle later" />
-           <Form.Check
-             type="checkbox"
-             id="anonymouseCheckbox"
-             label={t("Allow adding multiple pages form in this form")}
-             checked={values.display == "wizard"}
-             onChange={handleInputValueChange} 
-             name="display" 
-             className="field-label"
-             data-testid="wizard-checkbox"
-           />   
-          </>
-          }
+{/* This below commenting is for open-source use only. It should not be included in EE.
+Further clarification on this is to be determined for EE. */}
+
+{/* 
+   {buildForm && 
+   <>
+     <CustomInfo heading="Note" 
+     content="Allowing the addition of multiple pages in a single form will prevent you from using this form in a bundle later" />
+     <Form.Check
+       type="checkbox"
+       id="anonymouseCheckbox"
+       label={t("Allow adding multiple pages form in this form")}
+       checked={values.display == "wizard"}
+       onChange={handleInputValueChange} 
+       name="display" 
+       className="field-label"
+       data-testid="wizard-checkbox"
+     />   
+   </>
+   }
+*/}
+
           </Modal.Body>
           <Modal.Footer className="d-flex justify-content-start">
             <CustomButton
