@@ -107,3 +107,8 @@ $secondary: var(--ff-secondary);
     }
   }
 }
+
+.ace_scrollbar-h {
+  display: block;
+  scrollbar-width: thin;
+}
