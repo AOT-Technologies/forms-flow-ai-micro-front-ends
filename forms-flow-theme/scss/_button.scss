@@ -548,7 +548,8 @@ $btn-font-weight: bold;
   position: absolute;
 }
 
-.form-preview-tab{
+.form-preview-tab,
+.wizard-tab{
   &:first-child .page-link,
   &:last-child .page-link {
     display: flex !important;
