@@ -547,3 +547,11 @@ $btn-font-weight: bold;
   height: 1em;
   position: absolute;
 }
+
+.form-preview-tab{
+  &:first-child .page-link,
+  &:last-child .page-link {
+    display: flex !important;
+    background-color: transparent !important;
+    color: $black-color !important  }
+}
