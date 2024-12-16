@@ -118,6 +118,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
           {textBoxInput ? (
               <InputGroup>
                   <FormInput
+                      autoFocusInput
                       value={inputValue}
                       onChange={handleInputChange}
                       ariaLabel={ariaLabelforInput}

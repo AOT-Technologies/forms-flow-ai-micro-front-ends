@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent ,KeyboardEvent } from 'react';
+import React, { ChangeEvent, FocusEvent ,KeyboardEvent, useEffect, useRef } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 
 interface FormInputProps {
@@ -22,6 +22,7 @@ interface FormInputProps {
   onIconClick?: () => void;
   onClick?: () => void;
   turnOnLoader?: boolean;
+  autoFocusInput?:boolean;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -45,10 +46,16 @@ export const FormInput: React.FC<FormInputProps> = ({
   onIconClick,
   onClick,
   turnOnLoader = false,
-}) => {
+  autoFocusInput = false,
+},) => {
 
   const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
-
+  const inputRef = useRef(null);
+  useEffect(()=>{ 
+    if(autoFocusInput && inputRef.current){
+      inputRef.current.focus();
+    }
+  },[autoFocusInput])
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     // Check if Enter key is pressed and onIconClick is provided
     if (e.key === 'Enter' && onIconClick) {
@@ -80,6 +87,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             className={inputClassNames}
             onKeyDown={handleKeyDown}
             onClick={onClick}
+            ref={inputRef}
           />
           {turnOnLoader && (
           <div className="input-spinner"></div>
