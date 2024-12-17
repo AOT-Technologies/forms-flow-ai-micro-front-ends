@@ -1,5 +1,5 @@
 import NavBar from "./Navbar";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router ,useLocation} from "react-router-dom";
 import Sidebar from "./sidenav/Sidebar";
 import React, { useRef, useEffect, useState } from "react";
 import "./Navbar.scss";
@@ -13,12 +13,20 @@ export default function Root(props) {
   const sidenavRef = useRef(null); 
   const [sidenavHeight, setSidenavHeight] = useState("100%");
   const hasMultitenancyHeader = customLogoPath || customTitle;
+  const [isPreviewRoute,setIsPreviewRoute] = useState(false);
+   
   useEffect(() => {
     const headerHeight = headerRef.current?.offsetHeight || 0;
     const totalHeight = `calc(100% - ${headerHeight}px)`;
     setSidenavHeight(totalHeight);
   }, [ hasMultitenancyHeader ]); 
 
+  useEffect(()=>{
+    const location = window.location.pathname;
+    if(location.includes("view-edit")){
+      setIsPreviewRoute(true);
+    }
+  })
   return (
     <Router>
       {/* <NavBar props={props} /> */}
@@ -38,9 +46,9 @@ export default function Root(props) {
           </div>
         )}
         <HamburgerMenu props={props} />
-        <div className="main-sidenav" ref={sidenavRef}>
+        { !isPreviewRoute && <div className="main-sidenav" ref={sidenavRef}>
           <Sidebar props={props} sidenavHeight={sidenavHeight}/>
-        </div>
+        </div>}
       </>
     </Router>
   );
