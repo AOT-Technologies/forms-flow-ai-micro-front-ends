@@ -17,6 +17,7 @@ const MenuComponent = ({
   baseUrl
 }) => {
   const [tenant, setTenant] = React.useState({});
+  const [activeMenu, setActiveMenu] = React.useState(null); 
   const location = useLocation();
   const history = useHistory();
   const { t } = useTranslation();
@@ -32,6 +33,12 @@ const MenuComponent = ({
     });
   }, []);
 
+  React.useEffect(() => {
+    const activePath = subMenu.find((menu) => location.pathname.includes(menu.path));
+    setActiveMenu(activePath ? activePath.path : null);
+  }, [location, subMenu]);
+
+  
   const handleHeaderClick = () => {
     if (noOptionsMenu) {
       subMenu?.map((item, index) => {
@@ -40,11 +47,14 @@ const MenuComponent = ({
     }
   };
 
-  const isActive = subMenu?.some(
-    (menu) =>
-      menu.matchExps &&
-      menu.matchExps.some((exp) => exp.test(location.pathname))
-  );
+  const isActive = (menuPath) => location.pathname.includes(menuPath);
+
+  const getIconColor = (menuPath) => {
+    return activeMenu === menuPath || isActive(menuPath) 
+      ? getComputedStyle(document.documentElement).getPropertyValue("--ff-white")
+      : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
+  };
+  
 
   return (
     <Accordion.Item eventKey={eventKey}>
@@ -52,7 +62,7 @@ const MenuComponent = ({
         data-testid={`accordion-header-${eventKey}`}
         aria-label={`Accordion header for ${mainMenu}`}
         className={`${noOptionsMenu ? "no-arrow" : ""} ${
-          isActive ? "active-header" : ""
+          isActive(mainMenu) ? "active-header" : ""
         }`}
         onClick={noOptionsMenu ? handleHeaderClick : undefined}
       >
@@ -75,17 +85,15 @@ const MenuComponent = ({
               key={index}
               to={`${baseUrl}${menu.path}`}
               className={`accordion-link d-flex justify-content-between ${
-                menu.matchExps &&
-                menu.matchExps.some((exp) => exp.test(location.pathname))
-                  ? "active"
-                  : ""
-              } `}
+                isActive(menu.path) ? "active" : ""
+              }`}
               data-testid={`accordion-link-${index}`}
               aria-label={`Link to ${menu.name}`}
             >
-              {t(menu.name)} {(menu.name.toLowerCase() === "bundle" || menu.name.toLowerCase() === "integrations")  &&(
-        <ShowPremiumIcons />
-      )}
+              {t(menu.name)}
+              {(menu.name.toLowerCase() === "bundle" || menu.name.toLowerCase() === "integrations") && (
+                <ShowPremiumIcons color={getIconColor(menu.path)} /> 
+              )}
             </Link>
           ))}
         </Accordion.Body>
