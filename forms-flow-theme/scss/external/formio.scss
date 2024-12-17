@@ -81,9 +81,10 @@ $secondary: var(--ff-secondary);
         .formio-component {
           // Apply hover effect only if the component is not in the ignored list
           &:not(#{$ignored-components}) {
+            padding: 8px 10px; 
+            border-style:  dotted;  
+            border-color: transparent;
             &:hover {
-              border-style: dotted;
-              padding: 8px 10px;
               border-color: var(--ff-primary-200);
               border-radius: var(--radius-050);
             }

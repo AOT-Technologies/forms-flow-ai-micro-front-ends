@@ -25,6 +25,17 @@ $primary: var(--ff-primary);
     border-top: 1px solid var(--ff-gray-000) !important;
   }
 }
+.flow-edit{
+  .card-body{
+    padding: 0 !important;
+  }
+}
+
+.form-edit{
+  .card-body{
+    padding-top: 0 !important;
+  }
+}
 
 .flow-builder {
   height: calc(100vh - 18rem) !important;
@@ -212,3 +223,4 @@ $primary: var(--ff-primary);
   font-weight: var(--font-weight-xl);
   line-height: var(--text-line-height);
 }
+
