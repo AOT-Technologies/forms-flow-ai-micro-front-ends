@@ -65,6 +65,8 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
   const isViewSubmissions = userRoles?.includes("view_submissions");
   const isCreateDesigns = userRoles?.includes("create_designs");
   const isViewDesigns = userRoles?.includes("view_designs");
+  const isManageSubflows = userRoles.includes("manage_subflows");
+  const isManageDmn = userRoles.includes("manage_decision_tables");
   const isAdmin = userRoles?.includes("admin");
   const isViewTask = userRoles?.includes("view_tasks");
   const isManageTask = userRoles?.includes("manage_tasks");
@@ -274,18 +276,24 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
                           },
                         ]
                       : []),
-                    ...(isCreateDesigns && ENABLE_PROCESSES_MODULE) ? [
-                      {
-                        name: "Subflows",
-                        path: "subflow",
-                        matchExps: [createURLPathMatchExp("subflow", baseUrl)],
-                      },
-                      {
-                        name: "Decision Tables",
-                        path: "decision-table",
-                        matchExps: [createURLPathMatchExp("decision-table", baseUrl)],
-                      },
-                    ] : [],
+                      ...(isManageSubflows && ENABLE_PROCESSES_MODULE
+                        ? [
+                          {
+                            name: "Subflows",
+                            path: "subflow",
+                            matchExps: [createURLPathMatchExp("subflow", baseUrl)],
+                          },
+                          ]
+                        : []),
+                      ...(isManageDmn && ENABLE_PROCESSES_MODULE
+                        ? [
+                          {
+                            name: "Decision Tables",
+                            path: "decision-table",
+                            matchExps: [createURLPathMatchExp("decision-table", baseUrl)],
+                          },
+                          ]
+                        : []),
                   ]}
                   subscribe={props.subscribe}
                 />
