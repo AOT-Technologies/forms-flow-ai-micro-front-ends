@@ -65,8 +65,8 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
   const isViewSubmissions = userRoles?.includes("view_submissions");
   const isCreateDesigns = userRoles?.includes("create_designs");
   const isViewDesigns = userRoles?.includes("view_designs");
-  const isManageSubflows = userRoles.includes("manage_subflows");
-  const isManageDmn = userRoles.includes("manage_decision_tables");
+  const isManageSubflows = userRoles?.includes("manage_subflows");
+  const isManageDmn = userRoles?.includes("manage_decision_tables");
   const isAdmin = userRoles?.includes("admin");
   const isViewTask = userRoles?.includes("view_tasks");
   const isManageTask = userRoles?.includes("manage_tasks");
