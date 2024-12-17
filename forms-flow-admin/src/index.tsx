@@ -142,7 +142,6 @@ const Admin = React.memo(({ props }: any) => {
           <div className="min-container-height ps-md-3" >
             <Accessdenied userRoles={userRoles} />
             </div> }
-          <Footer />
           </div>
         </div>
       ):<div className="main-container ">
@@ -150,7 +149,6 @@ const Admin = React.memo(({ props }: any) => {
          <div className="min-container-height ps-md-3" >
           <Accessdenied userRoles={userRoles} />
           </div>
-          <Footer />
           </div> 
         </div>}
     </>

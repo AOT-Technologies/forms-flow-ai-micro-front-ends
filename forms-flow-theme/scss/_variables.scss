@@ -212,6 +212,33 @@ hr {
   padding-left: 0.3rem !important;
 }
 
+.follow-up-to{
+  .react-datepicker__triangle {
+    left: 270px !important;
+  }
+  .react-datepicker-popper {
+    left: -190px !important;
+  }
+}
+
+.follow-up-from {
+  .react-datepicker-popper {
+    left: -140px !important;
+  }
+  .react-datepicker__triangle {
+    left: 190px !important;
+  }
+}
+
+.preview-list-group{
+  max-height: 45vh;
+  overflow-y: auto;
+}
+.scrollable-overview {
+  max-height: 80vh;
+  overflow-y: auto; 
+}
+
 @mixin generate-overflow($axis, $value) {
   .overflow-#{$axis}-#{$value} {
     overflow-#{$axis}: #{$value} !important;

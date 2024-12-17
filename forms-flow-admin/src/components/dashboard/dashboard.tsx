@@ -277,7 +277,7 @@ const InsightDashboard = React.memo((props: any) => {
               wrapperClasses="table-container-admin mb-3 px-4"
               rowStyle={{
                 color: "#09174A",
-                fontWeight: 600,
+                fontWeight: 400,
               }}
               noDataIndication={noData}
               data-testid="admin-dashboard-table"

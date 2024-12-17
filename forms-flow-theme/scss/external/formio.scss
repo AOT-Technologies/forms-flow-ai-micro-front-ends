@@ -91,4 +91,24 @@ $secondary: var(--ff-secondary);
         }
       }
     }
-  
+
+.formio-form {
+  .formio-component-tabs {
+    li {
+      .form-group {
+        margin-bottom: 0rem;
+      }
+      .editgrid-actions {
+        margin-top: 1rem;
+      }
+      .formio-component-textfield {
+        margin-bottom: 1rem;
+      }
+    }
+  }
+}
+
+.ace_scrollbar-h {
+  display: block;
+  scrollbar-width: thin;
+}
