@@ -359,20 +359,17 @@ $secondary: var(--ff-secondary);
 }
 
 //action modal
+.action-modal-body {
+  padding: var(--spacer-250) var(--spacer-200) !important;
+}
 .custom-action-flex {
   gap: var(--spacer-100);
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-}
-
-.custom-action-model-body {
-  padding: var(--spacer-200) var(--spacer-250);
-
 }
 
 .action-form {
-  padding: 1.875rem var(--spacer-125);
+  padding-block: 1.875rem var(--spacer-125);
 }
 
 .custom-modal-content {
@@ -492,12 +489,18 @@ $secondary: var(--ff-secondary);
   padding: 2rem 2.5rem !important;
   display: flex;
   flex-direction: column;
-  gap: var(--ff-spacer-150);
+  gap: var(--spacer-150);
   align-self: stretch;
 
   .form-check-input {
     border-color: $primary;
   }
+  .dashed-line {
+    flex-grow: 1;
+    border-top: 1px dashed gray;
+    margin: 0 10px;
+  }
+
 } 
 
 //no-code modals

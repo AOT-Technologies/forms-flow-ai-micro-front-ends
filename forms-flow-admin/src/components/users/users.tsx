@@ -515,7 +515,7 @@ const Users = React.memo((props: any) => {
             wrapperClasses="user-table-container px-4"
             rowStyle={{
               color: "#09174A",
-              fontWeight: 600,
+              fontWeight: 400,
             }}
             noDataIndication={noData}
             onTableChange={handleTableChange}
