@@ -186,6 +186,9 @@ $primary: var(--ff-primary);
     opacity: 1 !important;
     right: 0;
   }
+  .card-body {
+    padding-right: var(--spacer-025);
+  }
 }
 
 .info-panel {
