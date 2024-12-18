@@ -1,5 +1,5 @@
 import NavBar from "./Navbar";
-import { BrowserRouter as Router ,useLocation} from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import Sidebar from "./sidenav/Sidebar";
 import React, { useRef, useEffect, useState } from "react";
 import "./Navbar.scss";
