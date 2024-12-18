@@ -509,6 +509,8 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                 : "primary"
             }
             disabled={
+              inprogress || 
+              importLoader ||
               !selectedFile ||
               (importError && primaryButtonText !== "Try Again")
             }
