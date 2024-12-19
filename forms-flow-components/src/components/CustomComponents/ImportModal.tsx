@@ -94,7 +94,6 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
     const [showFileItems, setShowFileItems] = useState(false);
     const [inprogress, setInprogress] = useState(true);
-    const [primaryButtonDisabled, setPrimaryButtonDisabled] = useState(true);
 
     const layoutOptions = [
       { value: true, label: "Skip, do not import" },
@@ -160,25 +159,16 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       }
     };
 
-    useEffect(() => {
-      const shouldDisablePrimaryButton = 
-        !selectedFile || inprogress || importLoader ||
-        (importError && primaryButtonText !== "Try Again") || 
-        (showFileItems && 
-          selectedFlowVersion?.label === skipImport && 
-          selectedLayoutVersion?.label === skipImport);
+
+    const primaryButtonDisabled = 
+      !selectedFile || 
+      inprogress || 
+      importLoader ||
+      (importError && primaryButtonText !== "Try Again") || 
+      (showFileItems && 
+        selectedFlowVersion?.label === skipImport && 
+        selectedLayoutVersion?.label === skipImport);
     
-      setPrimaryButtonDisabled(shouldDisablePrimaryButton);
-    }, [
-      showFileItems,
-      selectedFlowVersion,
-      selectedLayoutVersion,
-      selectedFile,
-      importError,
-      primaryButtonText,
-      importLoader,
-      inprogress
-    ]);
 
     useEffect(() => {
       if (
