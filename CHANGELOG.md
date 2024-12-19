@@ -19,7 +19,10 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
   * Svg Icons
   * Svg Images
   * Custom components:
-    * Modals, Button, various form elements and table elements
+    * Modals 
+    * Button 
+    * Form elements 
+    * Table elements
 <br><br>
 
 
