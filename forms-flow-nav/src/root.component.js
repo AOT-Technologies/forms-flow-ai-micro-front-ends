@@ -4,7 +4,7 @@ import Sidebar from "./sidenav/Sidebar";
 import React, { useRef, useEffect, useState } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
-import { StyleServices } from "@formsflow/service";
+import { StyleServices ,HelperServices } from "@formsflow/service"; 
 
 export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
@@ -13,12 +13,19 @@ export default function Root(props) {
   const sidenavRef = useRef(null); 
   const [sidenavHeight, setSidenavHeight] = useState("100%");
   const hasMultitenancyHeader = customLogoPath || customTitle;
+  const [isPreviewRoute,setIsPreviewRoute] = useState(false);
+   
   useEffect(() => {
     const headerHeight = headerRef.current?.offsetHeight || 0;
     const totalHeight = `calc(100% - ${headerHeight}px)`;
     setSidenavHeight(totalHeight);
   }, [ hasMultitenancyHeader ]); 
 
+  useEffect(()=>{
+    const location = window.location.pathname;
+    const viewOnlyRoutes = new Set (["view-edit"]);
+    setIsPreviewRoute(() => HelperServices.isViewOnlyRoute(location,viewOnlyRoutes));
+  })
   return (
     <Router>
       {/* <NavBar props={props} /> */}
@@ -38,9 +45,9 @@ export default function Root(props) {
           </div>
         )}
         <HamburgerMenu props={props} />
-        <div className="main-sidenav" ref={sidenavRef}>
+        { !isPreviewRoute && <div className="main-sidenav" ref={sidenavRef}>
           <Sidebar props={props} sidenavHeight={sidenavHeight}/>
-        </div>
+        </div>}
       </>
     </Router>
   );
