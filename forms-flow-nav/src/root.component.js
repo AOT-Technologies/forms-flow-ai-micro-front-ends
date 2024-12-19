@@ -5,6 +5,7 @@ import React, { useRef, useEffect, useState } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
 import { StyleServices } from "@formsflow/service";
+import { HelperServices } from '@formsflow/service'; 
 
 export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
@@ -23,9 +24,8 @@ export default function Root(props) {
 
   useEffect(()=>{
     const location = window.location.pathname;
-    if(location.includes("view-edit")){
-      setIsPreviewRoute(true);
-    }
+    const viewOnlyRoutes = new Set (["view-edit"]);
+    setIsPreviewRoute(() => HelperServices.isViewOnlyRoute(location,viewOnlyRoutes));
   })
   return (
     <Router>
