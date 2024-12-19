@@ -4,8 +4,7 @@ import Sidebar from "./sidenav/Sidebar";
 import React, { useRef, useEffect, useState } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
-import { StyleServices } from "@formsflow/service";
-import { HelperServices } from '@formsflow/service'; 
+import { StyleServices ,HelperServices } from "@formsflow/service"; 
 
 export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");

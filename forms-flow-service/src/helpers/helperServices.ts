@@ -1,7 +1,6 @@
 import moment from 'moment'
-import { DATE_FORMAT } from '../constants/constants'
-import { TIME_FORMAT } from '../constants/constants'
-import { MULTITENANCY_ENABLED } from "../constants/constants";
+import { DATE_FORMAT ,MULTITENANCY_ENABLED ,TIME_FORMAT} from '../constants/constants';
+
 class HelperServices {
   public static getLocalDateAndTime(date: string): any {
     if (!date) {
@@ -54,7 +53,7 @@ class HelperServices {
       return value;
     }
 
-    const tenantKeyCheck = value.match(`${tenantKey}-`)?.[0];
+    const tenantKeyCheck = new RegExp(`${tenantKey}-`).exec(value)?.[0]
     const startWithSlash = value.startsWith("/");
 
     if (
