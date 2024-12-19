@@ -150,6 +150,11 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
     }
   }, [isAuthenticated]);
 
+    useEffect(() => {
+        const locale = userDetail?.locale || tenant?.tenantData?.details?.locale || LANGUAGE;
+        i18n.changeLanguage(locale);
+    }, [userDetail, tenant?.tenantData]);
+
   React.useEffect(() => {
     const data = JSON.parse(StorageService.get("TENANT_DATA"));
     if (MULTITENANCY_ENABLED && data?.details) {
@@ -158,6 +163,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
       setTenantLogo(logo);
     }
   }, [tenant]);
+
 
   const SectionKeys = { 
     DESIGN: "design",
@@ -397,12 +403,14 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
             <p className="m-0">{t("Sign Out")}</p>
           </div>
         </div>)}
-        <ProfileSettingsModal 
-        show={showProfile} 
-        onClose={handleProfileClose} 
-        tenant={tenant}
-        publish={props.publish}
-      />
+        {
+          showProfile && <ProfileSettingsModal 
+          show={showProfile}  
+          onClose={handleProfileClose} 
+          tenant={tenant}
+          publish={props.publish}
+        />
+        }
       </div>
   );
 });

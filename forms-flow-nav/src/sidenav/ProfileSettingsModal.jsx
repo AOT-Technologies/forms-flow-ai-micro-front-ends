@@ -11,12 +11,10 @@ import version from "../../package.json";
 
 export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [selectLanguages, setSelectLanguages] = useState([]);
-  const [selectedLang, setSelectedLang] = useState(localStorage.getItem('lang') || 'en');
-  const { t } = useTranslation();
-  const [userDetail, setUserDetail] = useState({});
-
-  useEffect(() => {
-    setUserDetail(JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)));
+  const prevSelectedLang = localStorage.getItem('i18nextLng');
+  const [selectedLang, setSelectedLang] = useState(prevSelectedLang || LANGUAGE );
+  const { t } = useTranslation(); 
+  useEffect(() => { 
 
     fetchSelectLanguages((languages) => {
       const tenantData = JSON.parse(StorageService.get("TENANT_DATA"));
@@ -26,33 +24,19 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : languages);
     });
 
-    const savedLang = localStorage.getItem('lang') || 'en';
-    setSelectedLang(savedLang);
-    i18n.changeLanguage(savedLang);
   }, [tenant]);
-
-  useEffect(() => {
-    if (userDetail) {
-      const locale = userDetail?.locale || tenant?.tenantData?.details?.locale || LANGUAGE;
-      setSelectedLang(locale);
-    }
-  }, [userDetail, tenant]);
+ 
 
   const handleLanguageChange = (newLang) => {
     setSelectedLang(newLang);
   };
 
-  const handleConfirmProfile = () => {
-    setUserDetail((prev) => ({ ...prev, locale: selectedLang }));
-
+  const handleConfirmProfile = () => { 
     updateUserlang(selectedLang);
-
     i18n.changeLanguage(selectedLang);
-
     if (tenant?.tenantData?.details) {
       tenant.tenantData.details.locale = selectedLang;
     }
-
     if (selectedLang) {
       publish("ES_CHANGE_LANGUAGE", selectedLang);
     }
@@ -60,19 +44,15 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     onClose();  
   };
 
-  const handleClose = () => {
-    setSelectedLang(localStorage.getItem('lang') || 'en');
-    onClose(); 
-  };
-
-  const isSaveDisabled = selectedLang === localStorage.getItem('i18nextLng');
+ 
+  const isSaveDisabled = selectedLang === prevSelectedLang;
 
   const selectedLangLabel = selectLanguages.find(lang => lang.name === selectedLang)?.value || selectedLang;
 
   return (
     <Modal
       show={show}
-      onHide={handleClose}
+      onHide={onClose}
       size="sm"
       centered={true}
       data-testid="profile-settings-modal"
@@ -85,7 +65,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           <b>{t("Settings")}</b>
         </Modal.Title>
         <div className="d-flex align-items-center">
-          <CloseIcon onClick={handleClose} />
+          <CloseIcon onClick={onClose} />
         </div>
       </Modal.Header>
 
@@ -124,7 +104,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           variant="secondary"
           size="md"
           label={t("Cancel")}
-          onClick={handleClose}
+          onClick={onClose}
           dataTestid="cancel-profile-settings"
           ariaLabel={t("Cancel profile settings")}
         />
