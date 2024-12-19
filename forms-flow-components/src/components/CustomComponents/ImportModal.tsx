@@ -76,14 +76,22 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     const redColor = computedStyle.getPropertyValue("--ff-red-000");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const skipImport = "Skip, do not import";
     const [selectedLayoutVersion, setSelectedLayoutVersion] = useState<{
       value: any;
       label: string;
-    } | null>(null);
+    } | null>({
+      value: true,
+      label: skipImport,
+    });
     const [selectedFlowVersion, setSelectedFlowVersion] = useState<{
       value: any;
       label: string;
-    } | null>(null);
+    } | null>({
+      value: true,
+      label: skipImport,
+    });
+
     const [showFileItems, setShowFileItems] = useState(false);
     const [inprogress, setInprogress] = useState(true);
 
@@ -97,7 +105,9 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       },
       {
         value: "minor",
-        label: `import as version ${fileItems?.form?.majorVersion}.${fileItems?.form?.minorVersion + 1 }  (impacts previous and new submissions)`,
+        label: `import as version ${fileItems?.form?.majorVersion}.${
+          fileItems?.form?.minorVersion + 1
+        }  (impacts previous and new submissions)`,
       },
     ];
 
@@ -148,6 +158,17 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         );
       }
     };
+
+
+    const primaryButtonDisabled = 
+      !selectedFile || 
+      inprogress || 
+      importLoader ||
+      (importError && primaryButtonText !== "Try Again") || 
+      (showFileItems && 
+        selectedFlowVersion?.label === skipImport && 
+        selectedLayoutVersion?.label === skipImport);
+    
 
     useEffect(() => {
       if (
@@ -508,12 +529,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                 ? "dark"
                 : "primary"
             }
-            disabled={
-              inprogress || 
-              importLoader ||
-              !selectedFile ||
-              (importError && primaryButtonText !== "Try Again")
-            }
+            disabled={ primaryButtonDisabled }
             size="md"
             label={primaryButtonText}
             onClick={() => {
