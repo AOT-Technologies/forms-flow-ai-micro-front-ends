@@ -147,6 +147,17 @@ const InsightDashboard = React.memo((props: any) => {
       setErr
     );
   };
+
+  const paginatedDashboard = authDashBoardList.slice(
+    (activePage - 1) * limit, 
+    activePage * limit 
+  );
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setActivePage(1); 
+  };
+
   const noData = () => (
     <div data-testid="dashboard-no-data-msg">
       <h3 className="text-center">
@@ -271,7 +282,7 @@ const InsightDashboard = React.memo((props: any) => {
             <div>
             <BootstrapTable
               keyField="resourceId"
-              data={authDashBoardList}
+              data={paginatedDashboard}
               columns={columns}
               bordered={false}
               wrapperClasses="table-container-admin mb-3 px-4"
@@ -288,8 +299,8 @@ const InsightDashboard = React.memo((props: any) => {
               limit={limit}
               activePage={activePage}
               totalCount={authDashBoardList.length}
-              handlePageChange={(page) => setActivePage(page)}
-              onLimitChange={setLimit}
+              handlePageChange={(page: number) => setActivePage(page)}
+              onLimitChange={handleLimitChange}
               pageOptions={getpageList()}
             />
               </tfoot>

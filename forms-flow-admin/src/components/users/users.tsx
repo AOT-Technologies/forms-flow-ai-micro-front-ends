@@ -112,12 +112,12 @@ const Users = React.memo((props: any) => {
     );
   };
 
-  const handleLimitChange = (sizePerPage, page) => {
-    setActivePage(page);
-    setSizePerPage(sizePerPage);
+  const handleLimitChange = (newLimit: number) => {
+    setSizePerPage(newLimit);
+    setActivePage(1); 
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: number) => {
     setActivePage(page);
     props.page.setPageNo(page);
     props.setInvalidated(true);
@@ -362,6 +362,13 @@ const Users = React.memo((props: any) => {
     );
   };
   
+  const getPageList = () => [
+    { text: '5', value: 5 },
+    { text: '25', value: 25 },
+    { text: '50', value: 50 },
+    { text: '100', value: 100 },
+    { text: 'All', value: roles.length },
+  ];
 
   return (
     <>
@@ -409,7 +416,7 @@ const Users = React.memo((props: any) => {
           <div className="user-filter-container  col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 d-flex justify-content-end gap-2">
             <span className="my-2">{t("Filter By:")} </span>
             <Form.Select
-              className="bg-light text-dark"
+              className="bg-light text-dark w-0"
               onChange={handleSelectFilter}
               title={t("Filter here")}
               data-testid="users-roles-filter-select"
@@ -417,7 +424,7 @@ const Users = React.memo((props: any) => {
               <option
                 value="ALL"
                 selected={!props.filter}
-                data-testid="users-roles-filter-option-all"
+                data-testid="users-roles-filter-option-all" 
               >
                 {t("All roles")}
               </option>
@@ -514,14 +521,15 @@ const Users = React.memo((props: any) => {
             onTableChange={handleTableChange}
             data-testid="admin-users-table"
           />
-          <table className="table">
+          <table className="table mt-3">
             <tfoot>
               <TableFooter
                   limit={sizePerPage}
-                  activePage={activePage}
+                  activePage={activePage} 
                   totalCount={props.total}
                   handlePageChange={handlePageChange}
                   onLimitChange={handleLimitChange}
+                  pageOptions={getPageList()}
                 />
 
               </tfoot>
