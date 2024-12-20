@@ -765,7 +765,7 @@ const Roles = React.memo((props: any) => {
             data-testid="admin-roles-table"
           />
     
-          <table className="table">
+          <table className="table mt-3">
             <tfoot>
             <TableFooter
             limit={sizePerPage}
