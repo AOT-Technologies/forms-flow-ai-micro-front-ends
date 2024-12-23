@@ -23,9 +23,8 @@ export default function Root(props) {
 
   useEffect(()=>{
     const location = window.location.pathname;
-    const viewOnlyRoutes = new Set (["view-edit"]);
-    setIsPreviewRoute(() => HelperServices.isViewOnlyRoute(location,viewOnlyRoutes));
-  })
+    setIsPreviewRoute(() => HelperServices.HideSideBarRoute(location));
+  },[])
   return (
     <Router>
       {/* <NavBar props={props} /> */}

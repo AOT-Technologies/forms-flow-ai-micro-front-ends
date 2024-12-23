@@ -73,6 +73,10 @@ class HelperServices {
     return Array.from(routes).some((route) => location.includes(route));
   }
 
+  public static HideSideBarRoute(location: string): boolean {
+    const viewOnlyRoutes = new Set (["view-edit","formflow"]);
+    return Array.from(viewOnlyRoutes).every((route) => location.includes(route));
+  }
 }
 
 export default HelperServices
