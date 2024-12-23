@@ -526,7 +526,8 @@ $secondary: var(--ff-secondary);
   .list-group {
     border: 1px solid $primary;
     border-radius: var(--radius-0100);
-  
+    max-height: 16rem;
+    overflow: auto;
     .list-group-item {
       border: none;
     }
