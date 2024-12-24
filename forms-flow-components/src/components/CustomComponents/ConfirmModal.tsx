@@ -8,7 +8,7 @@ interface ConfirmModalProps {
   onClose: () => void;
   secondayBtnAction: () => void;
   title: string;
-  message: string;
+  message: any;
   messageSecondary?: string;
   primaryBtnAction: () => void;
   primaryBtnText: string;
