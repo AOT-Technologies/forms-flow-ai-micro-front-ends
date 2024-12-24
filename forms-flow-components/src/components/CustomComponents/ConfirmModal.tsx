@@ -13,12 +13,14 @@ interface ConfirmModalProps {
   primaryBtnAction: () => void;
   primaryBtnText: string;
   primaryBtnDisable?: boolean;
-  secondaryBtnText: string;
-  secondoryBtndataTestid?: string;
   primaryBtndataTestid?: string;
   primaryBtnariaLabel?: string;
-  secondoryBtnariaLabel?: string;
   buttonLoading?:boolean;
+  secondaryBtnText: string;
+  secondaryBtnDisable?: boolean;
+  secondoryBtndataTestid?: string;
+  secondoryBtnariaLabel?: string;
+  secondaryBtnLoading?:boolean;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
@@ -31,12 +33,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   primaryBtnAction,
   primaryBtnText,
   primaryBtnDisable = false,
-  secondaryBtnText,
-  secondoryBtndataTestid = 'cancel-button',
   primaryBtndataTestid = 'Confirm-button',
   primaryBtnariaLabel = 'Confirm Button',
-  secondoryBtnariaLabel = 'Cancel Button',
   buttonLoading= false,
+  secondaryBtnText,
+  secondaryBtnDisable = false,
+  secondoryBtndataTestid = 'cancel-button',
+  secondoryBtnariaLabel = 'Cancel Button',
+  secondaryBtnLoading= false
 }) => {
   return (
     <>
@@ -100,6 +104,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             onClick={secondayBtnAction}
             dataTestid={secondoryBtndataTestid}
             ariaLabel={secondoryBtnariaLabel}
+            disabled={secondaryBtnDisable}
+            buttonLoading={secondaryBtnLoading}
           />}
         </Modal.Footer>
       </Modal>

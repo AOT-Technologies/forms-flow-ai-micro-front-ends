@@ -55,6 +55,7 @@ $secondary: var(--ff-secondary);
     .formio-component {
       transition: border 0.05s ease, padding 0.3s ease;
       cursor: pointer !important;
+      padding-top: var(--spacer-050);
   
       .bg-default {
         background: $secondary !important;
