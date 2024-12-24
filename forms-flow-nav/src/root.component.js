@@ -23,7 +23,7 @@ export default function Root(props) {
 
   useEffect(()=>{
     const location = window.location.pathname;
-    setIsPreviewRoute(() => HelperServices.HideSideBarRoute(location));
+    setIsPreviewRoute(() => HelperServices.hideSideBarRoute(location));
   },[])
   return (
     <Router>
