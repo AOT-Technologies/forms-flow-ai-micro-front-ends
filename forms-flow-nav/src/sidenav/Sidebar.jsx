@@ -1,20 +1,11 @@
 import "./Sidebar.scss";
 import Accordion from "react-bootstrap/Accordion";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
-import { Link, BrowserRouter, useHistory ,useLocation } from "react-router-dom";
-import { getUserRoleName, getUserRolePermission } from "../helper/user";
-import createURLPathMatchExp from "../helper/regExp/pathMatch";
+import React, { useEffect, useState } from "react";
+import { useHistory ,useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
 import {
-  CLIENT,
-  STAFF_REVIEWER,
   APPLICATION_NAME,
-  STAFF_DESIGNER,
   MULTITENANCY_ENABLED,
-  ADMIN_ROLE,
   ENABLE_FORMS_MODULE,
   ENABLE_PROCESSES_MODULE,
   ENABLE_DASHBOARDS_MODULE,
@@ -24,12 +15,10 @@ import {
   IS_ENTERPRISE
 } from "../constants/constants";
 import { StorageService } from "@formsflow/service";
-import { fetchSelectLanguages, updateUserlang } from "../services/language";
 import i18n from "../resourceBundles/i18n";
 import { fetchTenantDetails } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
-import { Helmet } from "react-helmet";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
@@ -61,7 +50,6 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
   //   "/logo.svg";
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE));
-  const isCreateSubmissions = userRoles?.includes("create_submissions");
   const isViewSubmissions = userRoles?.includes("view_submissions");
   const isCreateDesigns = userRoles?.includes("create_designs");
   const isViewDesigns = userRoles?.includes("view_designs");
@@ -79,7 +67,6 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
   const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
   const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
   const USER_ROUTE = isUserManager ? "admin/users" : null;
-  const { pathname } = location;
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
   const [activeKey,setActiveKey] = useState(0);
@@ -166,24 +153,40 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
 
 
   const SectionKeys = { 
-    DESIGN: "design",
-    SUBMIT: "submit",
-    REVIEW: "review",
-    ANALYZE: "analyze",
-    MANAGE: "manage"
- };
+    DESIGN: {
+      value: "design",
+      supportedRoutes: ["formflow", "bundleflow", "subflow", "decision-table","integration/recipes"],
+    },
+    SUBMIT: {
+      value: "submit",
+      supportedRoutes: ["form", "bundle", "application", "draft"],
+    },
+    REVIEW: {
+      value: "review",
+      supportedRoutes: ["task"],
+    },
+    ANALYZE: {
+      value: "analyze",
+      supportedRoutes: ["metrics", "insights"],
+    },
+    MANAGE: {
+      value: "manage",
+      supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users"],
+    },
+  };  
   
   useEffect((()=>{
     const sections = [
-      { key: SectionKeys.DESIGN, matchExps: ["formflow", "bundle", "subflow", "decision-table"] },
-      { key: SectionKeys.SUBMIT, matchExps: ["form", "application", "draft"] },
-      { key: SectionKeys.REVIEW, matchExps: ["task"] },
-      { key: SectionKeys.ANALYZE, matchExps: ["metrics", "insights"] },
-      { key: SectionKeys.MANAGE, matchExps: ["admin/dashboard", "admin/roles", "admin/users"] },
+      { key: SectionKeys.DESIGN.value, supportedRoutes: SectionKeys.DESIGN.supportedRoutes },
+      { key: SectionKeys.SUBMIT.value, supportedRoutes: SectionKeys.SUBMIT.supportedRoutes },
+      { key: SectionKeys.REVIEW.value, supportedRoutes: SectionKeys.REVIEW.supportedRoutes },
+      { key: SectionKeys.ANALYZE.value, supportedRoutes: SectionKeys.ANALYZE.supportedRoutes },
+      { key: SectionKeys.MANAGE.value, supportedRoutes: SectionKeys.MANAGE.supportedRoutes },
     ];
+    
     const activeSection =
     sections.find((section) =>
-      section.matchExps.some((exp) => currentLocation.pathname.includes(exp))
+      section.supportedRoutes.some((exp) => currentLocation.pathname.includes(exp))
     ) || { key: "0" }; // Default to key "0" if no match
   
     setActiveKey(activeSection.key);
@@ -209,19 +212,14 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
         {
           name: "Dashboards",
           path: DASHBOARD_ROUTE,
-          matchExps: [
-            createURLPathMatchExp("admin/dashboard", baseUrl),
-          ],
         },
         {
           name: "Roles",
           path: ROLE_ROUTE,
-          matchExps: [createURLPathMatchExp("admin/roles", baseUrl)],
         },
         {
           name: "Users",
           path: USER_ROUTE,
-          matchExps: [createURLPathMatchExp("admin/users", baseUrl)],
         },
       ]
     )
@@ -244,25 +242,19 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
               (isCreateDesigns || isViewDesigns) && (
                 <MenuComponent
                   baseUrl={baseUrl}
-                  eventKey={SectionKeys.DESIGN}
+                  eventKey={SectionKeys.DESIGN.value}
                   optionsCount="5"
                   mainMenu="Design"
                   subMenu={[
                     {
                       name: "Forms",
                       path: "formflow",
-                      matchExps: [
-                        createURLPathMatchExp("formflow", baseUrl),
-                      ]
                     },
                     ...(IS_ENTERPRISE
                       ? [
                           {
                             name: "Bundle",
-                            path: "bundle",
-                            matchExps: [
-                              createURLPathMatchExp("bundle", baseUrl),
-                            ],
+                            path: "bundleflow",
                           },
                         ]
                     : []),
@@ -273,12 +265,6 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
                           {
                             name: "Integrations",
                             path: "integration/recipes",
-                            matchExps: [
-                              createURLPathMatchExp(
-                                "integration/recipes",
-                                baseUrl
-                              ),
-                            ],
                           },
                         ]
                       : []),
@@ -287,7 +273,6 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
                           {
                             name: "Subflows",
                             path: "subflow",
-                            matchExps: [createURLPathMatchExp("subflow", baseUrl)],
                           },
                           ]
                         : []),
@@ -296,7 +281,6 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
                           {
                             name: "Decision Tables",
                             path: "decision-table",
-                            matchExps: [createURLPathMatchExp("decision-table", baseUrl)],
                           },
                           ]
                         : []),
@@ -309,18 +293,14 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
               ENABLE_APPLICATIONS_MODULE && (
                 <MenuComponent
                   baseUrl={baseUrl}
-                  eventKey={SectionKeys.SUBMIT}
+                  eventKey={SectionKeys.SUBMIT.value}
                   optionsCount="1"
                   mainMenu="Submit"
                   subMenu={[
                     {
                       name: "Forms",
                       path: "form",
-                      matchExps: [
-                        createURLPathMatchExp("form", baseUrl),
-                        createURLPathMatchExp("application", baseUrl),
-                        createURLPathMatchExp("draft", baseUrl),
-                      ],
+                      supportedSubRoutes: ["form", "bundle", "application", "draft"],
                     },
                   ]}
                   subscribe={props.subscribe}
@@ -329,14 +309,13 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
                 baseUrl={baseUrl}
-                eventKey={SectionKeys.REVIEW}
+                eventKey={SectionKeys.REVIEW.value}
                 optionsCount="1"
                 mainMenu="Review"
                 subMenu={[
                   {
                     name: "Tasks",
                     path: "task",
-                    matchExps: [createURLPathMatchExp("task", baseUrl)],
                   },
                 ]}
                 subscribe={props.subscribe}
@@ -345,23 +324,17 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
             {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
                 baseUrl={baseUrl}
-                eventKey={SectionKeys.ANALYZE}
+                eventKey={SectionKeys.ANALYZE.value}
                 optionsCount="2"
                 mainMenu="Analyze"
                 subMenu={[
                   {
                     name: "Metrics",
                     path: "metrics",
-                    matchExps: [
-                      createURLPathMatchExp("metrics", baseUrl),
-                    ],
                   },
                   {
                     name: "Insights",
                     path: "insights",
-                    matchExps: [
-                      createURLPathMatchExp("insights", baseUrl),
-                    ],
                   }
                 ]}
                 subscribe={props.subscribe}
@@ -370,7 +343,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
             {isAdmin && (
               <MenuComponent
                 baseUrl={baseUrl}
-                eventKey={SectionKeys.MANAGE}
+                eventKey={SectionKeys.MANAGE.value}
                 optionsCount="3"
                 mainMenu="Manage"
                 subMenu={manageOptions()}
