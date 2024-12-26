@@ -34,11 +34,23 @@ const MenuComponent = ({
   }, []);
 
   React.useEffect(() => {
-    const activePath = subMenu.find((menu) => location.pathname.includes(menu.path));
-    setActiveMenu(activePath ? activePath.path : null);
+    let activePath = null;
+    for (const menu of subMenu) {
+      const matchedExp = menu?.supportedSubRoutes?.find(subRoute => location.pathname.includes(subRoute));
+      if (matchedExp) {
+        activePath = menu;
+        setActiveMenu(activePath ? activePath.path : null);
+        break;
+      }
+    }    
+
   }, [location, subMenu]);
 
-  
+  const setActiveTab = (menu) => {
+    return menu.supportedSubRoutes?.length ? menu.supportedSubRoutes?.find(exp => location.pathname.includes(exp)) && menu.path 
+    : location.pathname.includes(menu.path);
+  };
+
   const handleHeaderClick = () => {
     if (noOptionsMenu) {
       subMenu?.map((item, index) => {
@@ -47,10 +59,10 @@ const MenuComponent = ({
     }
   };
 
-  const isActive = (menuPath) => location.pathname.includes(menuPath);
+  const isActive = (menu) => setActiveTab(menu);
 
-  const getIconColor = (menuPath) => {
-    return activeMenu === menuPath || isActive(menuPath) 
+  const getIconColor = (menu) => {
+    return activeMenu === menu.path || isActive(menu) 
       ? getComputedStyle(document.documentElement).getPropertyValue("--ff-white")
       : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
   };
@@ -62,7 +74,7 @@ const MenuComponent = ({
         data-testid={`accordion-header-${eventKey}`}
         aria-label={`Accordion header for ${mainMenu}`}
         className={`${noOptionsMenu ? "no-arrow" : ""} ${
-          isActive(mainMenu) ? "active-header" : ""
+          isActive(mainMenu) && "active-header"
         }`}
         onClick={noOptionsMenu ? handleHeaderClick : undefined}
       >
@@ -85,14 +97,14 @@ const MenuComponent = ({
               key={index}
               to={`${baseUrl}${menu.path}`}
               className={`accordion-link d-flex justify-content-between ${
-                isActive(menu.path) ? "active" : ""
+                isActive(menu) && "active"
               }`}
               data-testid={`accordion-link-${index}`}
               aria-label={`Link to ${menu.name}`}
             >
               {t(menu.name)}
               {(menu.name.toLowerCase() === "bundle" || menu.name.toLowerCase() === "integrations") && (
-                <ShowPremiumIcons color={getIconColor(menu.path)} /> 
+                <ShowPremiumIcons color={getIconColor(menu)} /> 
               )}
             </Link>
           ))}
@@ -109,7 +121,7 @@ MenuComponent.propTypes = {
     PropTypes.shape({
       path: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      matchExps: PropTypes.arrayOf(PropTypes.instanceOf(RegExp)),
+      supportedSubRoutes: PropTypes.arrayOf(PropTypes.string),
     })
   ).isRequired,
   optionsCount: PropTypes.string.isRequired,
