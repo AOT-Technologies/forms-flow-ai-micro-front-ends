@@ -34,16 +34,15 @@ const MenuComponent = ({
   }, []);
 
   React.useEffect(() => {
-    // const activePath = subMenu.find((menu) => location.pathname.includes(menu.path));
     let activePath = null;
-    for (let i = 0; i < subMenu.length; i++) {
-      const matchedExp = subMenu[i]?.supportedSubRoutes?.find(exp => location.pathname.includes(exp));
+    for (const menu of subMenu) {
+      const matchedExp = menu?.supportedSubRoutes?.find(subRoute => location.pathname.includes(subRoute));
       if (matchedExp) {
-        activePath = subMenu[i];
+        activePath = menu;
         setActiveMenu(activePath ? activePath.path : null);
         break;
       }
-    }
+    }    
 
   }, [location, subMenu]);
 
@@ -122,6 +121,7 @@ MenuComponent.propTypes = {
     PropTypes.shape({
       path: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
+      supportedSubRoutes: PropTypes.arrayOf(PropTypes.string),
     })
   ).isRequired,
   optionsCount: PropTypes.string.isRequired,
