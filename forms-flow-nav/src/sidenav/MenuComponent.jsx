@@ -47,9 +47,15 @@ const MenuComponent = ({
   }, [location, subMenu]);
 
   const setActiveTab = (menu) => {
-    return menu.supportedSubRoutes?.length ? menu.supportedSubRoutes?.find(exp => location.pathname.includes(exp)) && menu.path 
-    : location.pathname.includes(menu.path);
-  };
+    if (menu.supportedSubRoutes?.length) {
+      return menu.supportedSubRoutes.find(
+        (route) =>
+          location.pathname.includes(route) &&
+          !(menu.unsupportedSubRoutes?.some((excluded) => location.pathname.includes(excluded)))
+      );
+    }
+    return location.pathname.includes(menu.path);
+  };  
 
   const handleHeaderClick = () => {
     if (noOptionsMenu) {
@@ -121,7 +127,8 @@ MenuComponent.propTypes = {
     PropTypes.shape({
       path: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      supportedSubRoutes: PropTypes.arrayOf(PropTypes.string),
+      supportedSubRoutes: PropTypes.arrayOf(PropTypes.string), // This will be the list of supported sub-routes for menu item for highlighting that menu item,
+      unsupportedSubRoutes: PropTypes.arrayOf(PropTypes.string), // This will be the list of unsupported sub-routes for menu item . Helpful in routes discriminating routes like form & formflow. 
     })
   ).isRequired,
   optionsCount: PropTypes.string.isRequired,

@@ -26,7 +26,7 @@ import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
-const Sidebar = React.memo(({ props, sidenavHeight }) => {
+const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");
   const [userDetail, setUserDetail] = React.useState({});
@@ -265,6 +265,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
                           {
                             name: "Integrations",
                             path: "integration/recipes",
+                            supportedSubRoutes: ["integration/connected-apps", "integration/library"],
                           },
                         ]
                       : []),
@@ -301,6 +302,7 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
                       name: "Forms",
                       path: "form",
                       supportedSubRoutes: ["form", "bundle", "application", "draft"],
+                      unsupportedSubRoutes: ["formflow", "bundleflow"],
                     },
                   ]}
                   subscribe={props.subscribe}
@@ -391,8 +393,8 @@ const Sidebar = React.memo(({ props, sidenavHeight }) => {
 Sidebar.propTypes = {
     subscribe: PropTypes.func.isRequired, 
     getKcInstance: PropTypes.func.isRequired,
-    publish: PropTypes.func.isRequired,
-    sidenavHeight: PropTypes.func.isRequired, 
+    publish: PropTypes.func,
+    sidenavHeight: PropTypes.string, 
 };
 
 export default Sidebar;
