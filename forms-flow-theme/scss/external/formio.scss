@@ -74,7 +74,9 @@ $secondary: var(--ff-secondary);
       '.formio-component-well',
       '.formio-component-container',
       '.formio-component-htmlelement',
-      '.formio-component-tabs'
+      '.formio-component-tabs',
+      '.formio-component-submit',
+      '.formio-component-hidden',
     );
   
     .task-variable-modal {
@@ -89,6 +91,12 @@ $secondary: var(--ff-secondary);
               border-color: var(--ff-primary-200);
               border-radius: var(--radius-050);
             }
+          }
+
+          &.formio-component-hidden{
+            margin: 0;
+            padding: 0;
+            cursor: none;
           }
         }
       }
