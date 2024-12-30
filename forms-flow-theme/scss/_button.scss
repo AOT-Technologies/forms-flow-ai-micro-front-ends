@@ -555,4 +555,8 @@ $btn-font-weight: bold;
     display: flex !important;
     background-color: transparent !important;
     color: $black-color !important  }
+  .page-item.active .page-link {
+    text-decoration: underline !important;
+    text-underline-offset: var(--spacer-075) !important; 
+  }
 }
