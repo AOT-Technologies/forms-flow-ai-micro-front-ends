@@ -173,6 +173,9 @@ $secondary: var(--ff-secondary);
 
       .modal-footer {
         justify-content: flex-start !important;
+        &.space-between {
+          justify-content: space-between !important;
+        }
       }
     }
   }
@@ -427,6 +430,13 @@ $secondary: var(--ff-secondary);
         box-shadow: none;
       }
     }
+    input:-webkit-autofill {
+           background-color: transparent !important;
+           box-shadow: 0 0 0px 1000px white inset !important;
+           -webkit-text-fill-color: inherit !important;
+           transition: none !important;
+      }
+      
 
     .url-copy {
       justify-content: center;
