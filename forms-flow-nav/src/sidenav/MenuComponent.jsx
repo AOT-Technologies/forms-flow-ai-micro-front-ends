@@ -68,7 +68,7 @@ const MenuComponent = ({
   const isActive = (menu) => setActiveTab(menu);
 
   const getIconColor = (menu) => {
-    return activeMenu === menu.path || isActive(menu) 
+    return isActive(menu) 
       ? getComputedStyle(document.documentElement).getPropertyValue("--ff-white")
       : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
   };
@@ -109,7 +109,7 @@ const MenuComponent = ({
               aria-label={`Link to ${menu.name}`}
             >
               {t(menu.name)}
-              {(menu.name.toLowerCase() === "bundle" || menu.name.toLowerCase() === "integrations") && (
+              {menu.isPremium && (
                 <ShowPremiumIcons color={getIconColor(menu)} /> 
               )}
             </Link>
