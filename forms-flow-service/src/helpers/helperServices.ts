@@ -73,9 +73,14 @@ class HelperServices {
     return Array.from(routes).some((route) => location.includes(route));
   }
 
+  // Method to check if the current route matches the routes where sidebar shouldnt be shown
   public static hideSideBarRoute(location: string): boolean {
-    const viewOnlyRoutes = new Set (["view-edit","formflow"]);
-    return Array.from(viewOnlyRoutes).every((route) => location.includes(route));
+    const previewRouteParts = ["formflow","view-edit"]; // Route parts which is part of designer preview page
+    const exactRouteMatches = ["/","/tenant"]; // Routes where sidebar is not required
+    return (
+      previewRouteParts.every((route) => location.includes(route)) || 
+      exactRouteMatches.some((route) => location == route)
+    );
   }
 }
 

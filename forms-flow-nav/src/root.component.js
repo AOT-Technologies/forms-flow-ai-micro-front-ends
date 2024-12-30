@@ -15,16 +15,23 @@ export default function Root(props) {
   const hasMultitenancyHeader = customLogoPath || customTitle;
   const [isPreviewRoute,setIsPreviewRoute] = useState(false);
    
+
+  useEffect(() => {
+    props.subscribe("ES_ROUTE", (msg, data) => {
+      if (data) {
+      const location = data.pathname;
+      // Used to hide sidebar
+      setIsPreviewRoute(() => HelperServices.hideSideBarRoute(location));
+      }
+    });
+  }, []);
+
   useEffect(() => {
     const headerHeight = headerRef.current?.offsetHeight || 0;
     const totalHeight = `calc(100% - ${headerHeight}px)`;
     setSidenavHeight(totalHeight);
   }, [ hasMultitenancyHeader ]); 
 
-  useEffect(()=>{
-    const location = window.location.pathname;
-    setIsPreviewRoute(() => HelperServices.hideSideBarRoute(location));
-  },[])
   return (
     <Router>
       {/* <NavBar props={props} /> */}
