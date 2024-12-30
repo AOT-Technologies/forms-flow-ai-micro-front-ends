@@ -5,6 +5,7 @@ import React, { useRef, useEffect, useState } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
 import { StyleServices ,HelperServices } from "@formsflow/service"; 
+import PropTypes from "prop-types";
 
 export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
@@ -58,3 +59,7 @@ export default function Root(props) {
     </Router>
   );
 }
+
+Root.propTypes = {
+  subscribe: PropTypes.func,
+};
