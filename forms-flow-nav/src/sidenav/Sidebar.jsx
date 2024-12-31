@@ -155,7 +155,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const SectionKeys = { 
     DESIGN: {
       value: "design",
-      supportedRoutes: ["formflow", "bundleflow", "subflow", "decision-table","integration/recipes"],
+      supportedRoutes: ["formflow", "bundleflow", "subflow", "decision-table","integration/recipes","integration/connected-apps","integration/library"],
     },
     SUBMIT: {
       value: "submit",
@@ -255,6 +255,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                           {
                             name: "Bundle",
                             path: "bundleflow",
+                            isPremium:true
                           },
                         ]
                     : []),
@@ -265,7 +266,8 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                           {
                             name: "Integrations",
                             path: "integration/recipes",
-                            supportedSubRoutes: ["integration/connected-apps", "integration/library"],
+                            supportedSubRoutes: ["integration/recipes","integration/connected-apps", "integration/library"],
+                            isPremium:true
                           },
                         ]
                       : []),
