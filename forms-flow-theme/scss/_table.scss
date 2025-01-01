@@ -95,6 +95,12 @@ $status-radius: 50%;
   }
 }
 
+.custom-table th,
+.custom-table td {
+  vertical-align: middle;
+}
+
+
 .width-40 {
   width: 25rem !important;
   max-width: 40% !important;
