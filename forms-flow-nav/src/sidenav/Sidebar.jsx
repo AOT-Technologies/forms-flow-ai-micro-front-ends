@@ -50,6 +50,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   //   "/logo.svg";
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE));
+  const isCreateSubmissions = userRoles?.includes("create_submissions");
   const isViewSubmissions = userRoles?.includes("view_submissions");
   const isCreateDesigns = userRoles?.includes("create_designs");
   const isViewDesigns = userRoles?.includes("view_designs");
@@ -207,23 +208,32 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   };
 
   const manageOptions = () => {
-    return (
-      [
-        {
-          name: "Dashboards",
-          path: DASHBOARD_ROUTE,
-        },
-        {
-          name: "Roles",
-          path: ROLE_ROUTE,
-        },
-        {
-          name: "Users",
-          path: USER_ROUTE,
-        },
-      ]
-    )
-  }
+    const options = [];
+    
+    if (isViewDashboard) {
+      options.push({
+        name: "Dashboards",
+        path: DASHBOARD_ROUTE,
+      });
+    }
+  
+    if (isRoleManager) {
+      options.push({
+        name: "Roles",
+        path: ROLE_ROUTE,
+      });
+    }
+  
+    if (isUserManager) {
+      options.push({
+        name: "Users",
+        path: USER_ROUTE,
+      });
+    }
+  
+    return options;
+  };
+  
 
   return (
       <div className="sidenav" style={{ height: sidenavHeight }}>
@@ -291,25 +301,24 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                   subscribe={props.subscribe}
                 />
               )}
-            {showApplications &&
-              isViewSubmissions &&
-              ENABLE_APPLICATIONS_MODULE && (
-                <MenuComponent
-                  baseUrl={baseUrl}
-                  eventKey={SectionKeys.SUBMIT.value}
-                  optionsCount="1"
-                  mainMenu="Submit"
-                  subMenu={[
-                    {
-                      name: "Forms",
-                      path: "form",
-                      supportedSubRoutes: ["form", "bundle", "application", "draft"],
-                      unsupportedSubRoutes: ["formflow", "bundleflow"],
-                    },
-                  ]}
-                  subscribe={props.subscribe}
-                />
-              )}
+          {(isCreateSubmissions || (showApplications && isViewSubmissions && ENABLE_APPLICATIONS_MODULE)) && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.SUBMIT.value}
+              optionsCount="1"
+              mainMenu="Submit"
+              subMenu={[
+                {
+                  name: "Forms",
+                  path: "form",
+                  supportedSubRoutes: ["form", "bundle", "application", "draft"],
+                  unsupportedSubRoutes: ["formflow", "bundleflow"],
+                },
+              ]}
+              subscribe={props.subscribe}
+            />
+          )}
+
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
                 baseUrl={baseUrl}
