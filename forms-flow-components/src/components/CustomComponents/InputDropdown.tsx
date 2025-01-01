@@ -38,7 +38,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   required = false,
   selectedOption ,
   feedback,
-  setNewInput,
+  setNewInput = ()=>{},
   ariaLabelforDropdown,
   ariaLabelforInput,
   dataTestIdforDropdown,
