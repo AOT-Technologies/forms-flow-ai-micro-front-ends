@@ -64,9 +64,13 @@ const Roles = React.memo((props: any) => {
   const [permission, setPermission] = React.useState([]);
 
   const filterList = (filterTerm, List) => {
-    let roleList = removingTenantId(List,tenantId);
+    let roleList = removingTenantId(List, tenantId);
+  
+    // Escape backslashes and square brackets in filterTerm for safe regex use
+    const escapedFilterTerm = filterTerm.replace(/([\\[])/g, '\\$1');
+  
     let newRoleList = roleList.filter((role) => {
-      return role.name.toLowerCase().search(filterTerm.toLowerCase()) !== -1;
+      return role.name.toLowerCase().search(escapedFilterTerm.toLowerCase()) !== -1;
     });
     return newRoleList;
   };
