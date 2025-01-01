@@ -301,25 +301,24 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                   subscribe={props.subscribe}
                 />
               )}
-            {showApplications &&
-              isViewSubmissions || isCreateSubmissions &&
-              ENABLE_APPLICATIONS_MODULE && (
-                <MenuComponent
-                  baseUrl={baseUrl}
-                  eventKey={SectionKeys.SUBMIT.value}
-                  optionsCount="1"
-                  mainMenu="Submit"
-                  subMenu={[
-                    {
-                      name: "Forms",
-                      path: "form",
-                      supportedSubRoutes: ["form", "bundle", "application", "draft"],
-                      unsupportedSubRoutes: ["formflow", "bundleflow"],
-                    },
-                  ]}
-                  subscribe={props.subscribe}
-                />
-              )}
+          {(isCreateSubmissions || (showApplications && isViewSubmissions && ENABLE_APPLICATIONS_MODULE)) && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.SUBMIT.value}
+              optionsCount="1"
+              mainMenu="Submit"
+              subMenu={[
+                {
+                  name: "Forms",
+                  path: "form",
+                  supportedSubRoutes: ["form", "bundle", "application", "draft"],
+                  unsupportedSubRoutes: ["formflow", "bundleflow"],
+                },
+              ]}
+              subscribe={props.subscribe}
+            />
+          )}
+
               {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
               <MenuComponent
                 baseUrl={baseUrl}
