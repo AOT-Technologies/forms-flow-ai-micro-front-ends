@@ -76,10 +76,13 @@ class HelperServices {
   // Method to check if the current route matches the routes where sidebar shouldnt be shown
   public static hideSideBarRoute(location: string): boolean {
     const previewRouteParts = ["formflow","view-edit"]; // Route parts which is part of designer preview page
-    const exactRouteMatches = ["/","/tenant"]; // Routes where sidebar is not required
+    const exactRouteMatches = ["/","/tenant"]; // Exact Routes where sidebar is not required
+    const partOfRouteMatches = ["/public/"]; // Parts of Routes where sidebar is not required . 
+
     return (
       previewRouteParts.every((route) => location.includes(route)) || 
-      exactRouteMatches.some((route) => location == route)
+      exactRouteMatches.some((route) => location == route) || 
+      partOfRouteMatches.some((route) => location.includes(route))
     );
   }
 }
