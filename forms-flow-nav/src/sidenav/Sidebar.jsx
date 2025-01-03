@@ -210,7 +210,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const manageOptions = () => {
     const options = [];
     
-    if (isViewDashboard) {
+    if (isViewDashboard || isDashboardManager) {
       options.push({
         name: "Dashboards",
         path: DASHBOARD_ROUTE,
@@ -334,7 +334,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 subscribe={props.subscribe}
               />
             )}
-            {isViewDashboard && ENABLE_DASHBOARDS_MODULE && (
+            {isViewDashboard  && ENABLE_DASHBOARDS_MODULE && (
               <MenuComponent
                 baseUrl={baseUrl}
                 eventKey={SectionKeys.ANALYZE.value}
