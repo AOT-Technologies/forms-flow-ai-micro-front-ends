@@ -1,4 +1,4 @@
-import React ,{ FC } from "react";
+import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { InfoIcon } from "../SvgIcons/index";
 
@@ -14,16 +14,23 @@ export const CustomInfo: FC<CustomInfoProps> = ( {
     content ,
     className ,
 }) => { 
-    const { t } = useTranslation();
-    return (
-        <div className={`info-panel ${className}`}>
-        <div className="d-flex align-items-center">
-          <InfoIcon />
-          <div className="field-label ms-2">{t(heading)}</div>
-        </div>
-        <div className="info-content">
-          {t(content)}
-        </div>
+  const { t } = useTranslation();
+  
+  // Replace `\n` with <br /> tags
+  const formattedContent = content.split("\n").map((line, index) => (
+    <React.Fragment key={index}>
+      {t(line)}
+      <br />
+    </React.Fragment>
+  ));
+
+  return (
+    <div className={`info-panel ${className}`}>
+      <div className="d-flex align-items-center">
+        <InfoIcon />
+        <div className="field-label ms-2">{t(heading)}</div>
       </div>
-    )
+      <div className="info-content">{formattedContent}</div> {/* Render formatted content */}
+    </div>
+  );
 };
