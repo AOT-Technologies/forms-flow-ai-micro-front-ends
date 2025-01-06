@@ -17,8 +17,9 @@ export const CustomInfo: FC<CustomInfoProps> = ( {
   const { t } = useTranslation();
   
   // Replace `\n` with <br /> tags
-  const formattedContent = content.split("\n").map((line, index) => (
-    <React.Fragment key={index}>
+  // Create a unique key for each line using a random identifier (e.g., Date.now combined with a line)
+  const formattedContent = content.split("\n").map((line) => (
+    <React.Fragment key={`${line}-${Date.now()}`}>
       {t(line)}
       <br />
     </React.Fragment>
