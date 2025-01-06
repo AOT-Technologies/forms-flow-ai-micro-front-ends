@@ -16,9 +16,9 @@ export const CustomInfo: FC<CustomInfoProps> = ( {
 }) => { 
   const { t } = useTranslation();
   
-  // Replace `\n` with <br /> tags and use the index as the key
-  const formattedContent = content.split("\n").map((line, index) => (
-    <React.Fragment key={`line-${index}`}>
+   // Replace `\n` with <br /> tags and use the line itself as a key
+   const formattedContent = content.split("\n").map((line) => (
+    <React.Fragment key={line.trim().replace(/\s+/g, "-")}>
       {t(line)}
       <br />
     </React.Fragment>
