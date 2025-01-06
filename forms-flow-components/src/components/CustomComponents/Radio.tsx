@@ -1,5 +1,7 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
+import { useTranslation } from "react-i18next";
+
 
 
 interface RadioOption {
@@ -25,12 +27,13 @@ interface RadioOption {
     selectedValue = "",
     onChange = () => {}
   }) => {
+    const { t } = useTranslation();
     return (
       <Form className="custom-radio-button" aria-label={ariaLabel}>
         {items.map((option, index) => (
           <Form.Check
             inline
-            label={option.label}
+            label={t(option.label)}
             value={option.value}
             name="group1"
             type="radio"

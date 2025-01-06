@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FocusEvent, KeyboardEvent, useRef, forwardRef, useEffect } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
+import { useTranslation } from "react-i18next";
 
 interface FormTextAreaProps {
     type?: string;
@@ -47,6 +48,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     maxRows = 5,
     iconPosition = "top"
 }, ref) => {
+    const { t } = useTranslation();
     const internalRef = useRef<HTMLTextAreaElement>(null);
     const combinedRef = (ref || internalRef) as React.RefObject<HTMLTextAreaElement>;
 
@@ -76,7 +78,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
             <Form.Group controlId={id}>
                 {label && (
                     <Form.Label className="custom-form-control-label">
-                        {label} {required && <span className="required-icon">*</span>}
+                        {t(label)} {required && <span className="required-icon">*</span>}
                     </Form.Label>
                 )}
                 <InputGroup className="custom-form-input-group">
@@ -87,7 +89,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         value={value}
                         onChange={onChange}
                         onBlur={onBlur}
-                        placeholder={placeholder}
+                        placeholder={t(placeholder)}
                         isInvalid={isInvalid}
                         disabled={disabled}
                         size={size}
@@ -109,7 +111,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                     )}
                     {isInvalid && (
                         <Form.Control.Feedback className="custom-feedback" type="invalid">
-                            {feedback}
+                            {t(feedback)}
                         </Form.Control.Feedback>
                     )}
                 </InputGroup>
