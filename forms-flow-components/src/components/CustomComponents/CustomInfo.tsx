@@ -16,14 +16,14 @@ export const CustomInfo: FC<CustomInfoProps> = ( {
 }) => { 
   const { t } = useTranslation();
   
-  // Replace `\n` with <br /> tags
-  // Create a unique key for each line using a random identifier (e.g., Date.now combined with a line)
-  const formattedContent = content.split("\n").map((line) => (
-    <React.Fragment key={`${line}-${Date.now()}`}>
+  // Replace `\n` with <br /> tags and use the index as the key
+  const formattedContent = content.split("\n").map((line, index) => (
+    <React.Fragment key={`line-${index}`}>
       {t(line)}
       <br />
     </React.Fragment>
   ));
+
 
   return (
     <div className={`info-panel ${className}`}>
