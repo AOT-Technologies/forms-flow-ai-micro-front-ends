@@ -26,7 +26,6 @@ const Users = React.memo((props: any) => {
   const [error, setError] = React.useState(null); // Initialize error state with null instead of undefined
   const [loading, setLoading] = React.useState(false);
   const [activePage, setActivePage] = React.useState(1);
-  const [sizePerPage, setSizePerPage] = React.useState(5);
   const [selectedFilter, setSelectedFilter] = React.useState(null); // Initialize selectedFilter with null
   const [searchKey, setSearchKey] = React.useState("");
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
@@ -113,7 +112,8 @@ const Users = React.memo((props: any) => {
   };
 
   const handleLimitChange = (newLimit: number) => {
-    setSizePerPage(newLimit);
+    props.limit?.setSizePerPage(newLimit);
+    props.page.setPageNo(1);
     setActivePage(1); 
   };
 
@@ -524,7 +524,7 @@ const Users = React.memo((props: any) => {
           <table className="table mt-3">
             <tfoot>
               <TableFooter
-                  limit={sizePerPage}
+                  limit={props?.limit?.sizePerPage}
                   activePage={activePage} 
                   totalCount={props.total}
                   handlePageChange={handlePageChange}
