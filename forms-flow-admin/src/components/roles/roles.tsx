@@ -511,7 +511,6 @@ const Roles = React.memo((props: any) => {
             <Form.Label htmlFor="edit-description" className="mt-2">
               {t("Description")}
             </Form.Label>
-            <i style={{ color: "#e00" }}>*</i>
             <Form.Control
               id="edit-description"
               as="textarea"
