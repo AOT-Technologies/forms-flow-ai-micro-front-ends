@@ -663,12 +663,13 @@ $secondary: var(--ff-secondary);
 
   .expression-area {
     display: flex;
-    height: 80px;
+    min-height: 80px;
     align-items: flex-start;
     gap: var(--spacer-050);
     border-radius: var(--radius-0100);
     border: 1px solid $primary;
     margin-top: 0.5rem;
+    padding-bottom: 0.5rem; 
     flex-wrap: wrap;
   }
 
