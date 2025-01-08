@@ -98,16 +98,18 @@ $secondary: var(--ff-secondary);
             padding: 0;
             cursor: none;
           }
-          &.taskvariable-hiddent-component {
-            label{
-                text-align: center;
-                border: dashed 1px !important;
-                padding: 5px;  
-            }
-            input {  
-                display: none;
-            }
-          }
+                    &.taskvariable-hiddent-component {
+                      label {
+                        text-align: center;
+                        border: dashed 1px !important;
+                        padding: 5px;
+                        cursor: pointer;
+                      }
+          
+                      input {
+                        display: none;
+                      }
+                    }
         }
       }
     }
