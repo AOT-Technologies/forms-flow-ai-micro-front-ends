@@ -168,6 +168,17 @@ $secondary: var(--ff-secondary);
           flex-direction: column;
           gap: var(--spacer-150);
         }
+
+        .long-form-name {
+          display: -webkit-box;
+         -webkit-box-orient: vertical; 
+         -webkit-line-clamp: 2; 
+         overflow: hidden; 
+         text-overflow: ellipsis; 
+         line-height: 1.2em; 
+         max-height: 2.4em; 
+         word-wrap: break-word; 
+       }
         
       }
 
@@ -909,3 +920,11 @@ $secondary: var(--ff-secondary);
     margin-top: 1.5rem;
   }
 }
+ 
+
+
+
+
+
+
+
