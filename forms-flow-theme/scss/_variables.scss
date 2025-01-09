@@ -235,8 +235,9 @@ hr {
   overflow-y: auto;
 }
 .scrollable-overview {
-  max-height: 80vh;
+  max-height: 90vh;
   overflow-y: auto; 
+  padding-bottom: 5rem;
 }
 
 @mixin generate-overflow($axis, $value) {
