@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import {CustomButton} from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
+import { useTranslation } from "react-i18next";
 
 interface ConfirmModalProps {
   show: boolean;
@@ -42,6 +43,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   secondoryBtnariaLabel = 'Cancel Button',
   secondaryBtnLoading= false
 }) => {
+  const { t } = useTranslation();
   return (
     <>
       <Modal
@@ -56,7 +58,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         <Modal.Header>
           <Modal.Title id="confirm-modal-title">
             <b>
-              {title}
+              {t(title)}
             </b>
           </Modal.Title>
           <div className="d-flex align-items-center">
@@ -73,7 +75,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
               data-testid="confirm-modal-primary-message"
               aria-label="Primary message"
             >
-              {message}
+              {t(message)}
             </div>
             {messageSecondary && (
               <div
@@ -81,7 +83,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
                 data-testid="confirm-modal-secondary-message"
                 aria-label="Secondary message"
               >
-                {messageSecondary}
+                {t(messageSecondary)}
               </div>
             )}
           </div>

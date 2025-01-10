@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FocusEvent ,KeyboardEvent, useEffect, useRef } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
+import { useTranslation } from "react-i18next";
 
 interface FormInputProps {
   type?: string;
@@ -48,7 +49,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   turnOnLoader = false,
   autoFocusInput = false,
 },) => {
-
+  const { t } = useTranslation();
   const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
   const inputRef = useRef(null);
   useEffect(()=>{ 
@@ -67,7 +68,7 @@ export const FormInput: React.FC<FormInputProps> = ({
       <Form.Group controlId={id}>
         {label && (
           <Form.Label className='custom-form-control-label'>
-            {label} {required && <span className='required-icon'>*</span>}
+            {t(label)} {required && <span className='required-icon'>*</span>}
           </Form.Label>
         )}
         <InputGroup className="custom-form-input-group">
@@ -77,7 +78,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             value={value}
             onChange={onChange}
             onBlur={onBlur}
-            placeholder={placeholder}
+            placeholder={t(placeholder)}
             isInvalid={isInvalid}
             disabled={disabled}
             size={size}
@@ -103,7 +104,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         </InputGroup>
         {isInvalid && (
             <Form.Control.Feedback className='custom-feedback' type="invalid">
-              {feedback}
+              {t(feedback)}
             </Form.Control.Feedback>
           )}
       </Form.Group>

@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import { ChevronIcon } from "../SvgIcons/index";
+import { useTranslation } from "react-i18next";
 
 interface DropdownItem {
   label: string;
@@ -46,6 +47,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   const updateMenuStyle = () => {
     if (buttonRef.current && toggleRef.current) {
@@ -85,7 +87,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           name={name}
           className={`${size !== 'md' ? className : `btn-md ${className}`}`}
         >
-          {label}
+          {t(label)}
         </Button>
 
         <Dropdown.Toggle
@@ -106,7 +108,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
               data-testid={item.dataTestid}
               aria-label={item.ariaLabel}
             >
-              {item.label}
+              {t(item.label)}
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>
@@ -131,7 +133,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         }`}
       >
         {icon && <span className="me-2">{icon}</span>}
-        {label}
+        {t(label)}
       </div>
       {buttonLoading && <span className="dotted-spinner"></span>}
     </Button>

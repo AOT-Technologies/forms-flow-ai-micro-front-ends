@@ -1,11 +1,13 @@
 import React from "react";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
+import { useTranslation } from "react-i18next";
+
 
 interface TabItem {
   eventKey: string;
   title: string;
-  content: React.ReactNode;
+  content: string | React.ReactNode;
 }
 
 interface CustomTabsProps {
@@ -27,6 +29,7 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
   onSelect,
   className ,
 }) => {
+  const { t } = useTranslation();
   return (
     <Tabs
       defaultActiveKey={defaultActiveKey}
@@ -38,7 +41,7 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
     >
       {tabs.map((tab, index) => (
         <Tab key={index} eventKey={tab.eventKey} title={tab.title} data-testid={`${dataTestid}-tab-${tab.eventKey}`} >
-          {tab.content}
+          {typeof tab.content === "string" ? t(tab.content) : tab.content}
         </Tab>
       ))}
     </Tabs>

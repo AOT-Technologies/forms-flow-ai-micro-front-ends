@@ -1,5 +1,7 @@
 import React from "react";
 import Badge from "react-bootstrap/Badge";
+import { useTranslation } from "react-i18next";
+
 
 interface CustomPillProps {
   label: string;
@@ -20,11 +22,12 @@ export const CustomPill: React.FC<CustomPillProps> = ({
   secondaryLabel="",
   onClick,
 }) => {
+  const { t } = useTranslation();
   return (
     <div>
       <Badge pill variant={bg} data-testid={dataTestid} aria-label={ariaLabel}>
-        <span className="primary-label">{label}</span> 
-        { secondaryLabel && (<span className="secondary-label" >{secondaryLabel}</span>)}
+        <span className="primary-label">{t(label)}</span> 
+        { secondaryLabel && (<span className="secondary-label" >{t(secondaryLabel)}</span>)}
         {icon && 
         <button 
         className="button-as-div"
