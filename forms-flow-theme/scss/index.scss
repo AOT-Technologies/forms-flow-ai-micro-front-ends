@@ -1,0 +1,34 @@
+// import function
+@import "../node_modules/bootstrap/scss/functions";
+
+//variable override
+@import "./variables";
+//default
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+
+//theme override
+@import "./typography";
+@import "./theme";
+@import "./card";
+
+//component override
+@import "./button";
+@import "./table"; 
+@import "./layout";
+@import "./forms";
+@import "./icon";
+@import "./modal";
+@import "./fileUpload";
+@import "./inputBox";
+@import "./aiAssistant";
+@import "./customTextArea.scss";
+@import "./historyModal";
+
+// util class
+@import "./utils/index";
+//rest of bootstrap
+@import "./external/formio.scss";
+@import "./external/toastify.scss";
+@import "~bootstrap/scss/bootstrap";
+

@@ -3,11 +3,15 @@ import BootstrapTable from "react-bootstrap-table-next";
 import "./roles.scss";
 import { useParams } from "react-router-dom";
 import { Translation, useTranslation } from "react-i18next";
-import paginationFactory from "react-bootstrap-table2-paginator";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { fetchUsers } from "../../services/users";
-import { CreateRole, DeleteRole, UpdateRole } from "../../services/roles";
+import {
+  CreateRole,
+  DeleteRole,
+  UpdateRole,
+  fetchPermissions,
+} from "../../services/roles";
 import Modal from "react-bootstrap/Modal";
 import Loading from "../loading";
 import DropdownButton from "react-bootstrap/DropdownButton";
@@ -21,6 +25,8 @@ import {
 } from "../../constants";
 import { DEFAULT_ROLES } from "../../constants";
 
+import {removingTenantId} from "../../utils/utils.js";
+import { TableFooter, CustomSearch } from "@formsflow/components";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -36,13 +42,18 @@ const Roles = React.memo((props: any) => {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showEditRoleModal, setShowEditRoleModal] = useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [payload, setPayload] = React.useState({ name: "", description: "" });
+  const [payload, setPayload] = React.useState({
+    name: "",
+    description: "",
+    permissions: [],
+  });
   // Toggle for Delete Confirm modal
   const [showConfirmDelete, setShowConfirmDelete] = React.useState(false);
   const initialRoleType = {
     name: "",
     id: "",
     description: "",
+    permissions: [],
   };
   const [deleteCandidate, setDeleteCandidate] = React.useState(initialRoleType);
   const [selectedRoleIdentifier, setSelectedRoleIdentifier] =
@@ -50,34 +61,69 @@ const Roles = React.memo((props: any) => {
   const [editCandidate, setEditCandidate] = React.useState(initialRoleType);
   const [disabled, setDisabled] = React.useState(true);
   const [search, setSerach] = React.useState("");
+  const [permission, setPermission] = React.useState([]);
 
   const filterList = (filterTerm, List) => {
-    let roleList = List.filter((role) => {
-      return role.name.toLowerCase().search(filterTerm.toLowerCase()) !== -1;
+    let roleList = removingTenantId(List, tenantId);
+  
+    // Escape backslashes and square brackets in filterTerm for safe regex use
+    const escapedFilterTerm = filterTerm.replace(/([\\[])/g, '\\$1');
+  
+    let newRoleList = roleList.filter((role) => {
+      return role.name.toLowerCase().search(escapedFilterTerm.toLowerCase()) !== -1;
     });
-    return roleList;
+    return newRoleList;
   };
 
   React.useEffect(() => {
-    setDisabled(!(payload.name?.trim() && payload.description?.trim()));
+    setDisabled(
+      !(
+        payload.name?.trim() &&
+        payload.permissions.length !== 0
+      )
+    );
   }, [payload]);
 
   React.useEffect(() => {
     setDisabled(
-      !(editCandidate.name?.trim() && editCandidate.description?.trim())
+      !(
+        editCandidate.name?.trim() &&
+        editCandidate.permissions.length !== 0
+      )
     );
   }, [editCandidate]);
 
   React.useEffect(() => {
+    let updatedRoles = props.roles;
+
     if (search) {
-      return setRoles(filterList(search, props.roles));
+      updatedRoles = filterList(search, updatedRoles);
     }
-    setRoles(props.roles);
-  }, [props.roles]);
+
+    if (updatedRoles.length > 0) {
+      updatedRoles = removingTenantId(updatedRoles,tenantId);
+    }
+
+    setRoles(updatedRoles);
+  }, [props.roles, search]);
+
+  React.useEffect(() => {
+    fetchPermissions(
+      (data) => {
+        setPermission(data);
+      },
+      (err) => {
+        setError(err);
+      }
+    );
+  }, []);
 
   const handlFilter = (e) => {
-    setSerach(e.target.value);
-    setRoles(filterList(e.target.value, props.roles));
+    if (e && e.key === 'Enter') {
+      setSerach(e.target.value);
+      setRoles(filterList(e.target.value, props.roles));
+
+    }    
   };
 
   const deleteRole = (rowData) => {
@@ -103,9 +149,38 @@ const Roles = React.memo((props: any) => {
   const handleChangeDescription = (e) => {
     setPayload({ ...payload, description: e.target.value });
   };
+  const handlePermissionCheck = (
+    permissionName: string,
+    dependsOn: string[]
+  ) => {
+    let updatedPermissions: string[] = [...payload.permissions];
+    const isChecked = updatedPermissions.includes(permissionName);
+
+    if (!isChecked) {
+      updatedPermissions.push(permissionName);
+      dependsOn.forEach((dependency) => {
+        if (!updatedPermissions.includes(dependency)) {
+          updatedPermissions.push(dependency);
+        }
+      });
+    } else {
+      updatedPermissions = updatedPermissions.filter(
+        (permission) => permission !== permissionName
+      );
+      dependsOn.forEach((dependency) => {
+        updatedPermissions = updatedPermissions.filter(
+          (permission) => permission !== dependency
+        );
+      });
+    }
+    setPayload({ ...payload, permissions: updatedPermissions });
+  };
 
   const validateRolePayload = (payload) => {
-    return !(payload.name === "" || payload.description === "");
+    return !(
+      payload.name === "" ||
+      payload.permissions.length === 0
+    );
   };
   //check regex exept _ -
   const hasSpecialCharacters = (text) => {
@@ -121,21 +196,21 @@ const Roles = React.memo((props: any) => {
     if (!validateRolePayload(payload)) {
       return;
     }
-    if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
-      if (hasSpecialCharacters(payload.name)) {
-        toast.error(
-          t("Role names cannot contain special characters except   _ , -")
-        );
-        return;
-      }
-    } else {
-      if (hasSpecialCharacterswithslash(payload.name)) {
-        toast.error(
-          t("Role names cannot contain special characters except _ , - , / ")
-        );
-        return;
-      }
+    // if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
+    //   if (hasSpecialCharacters(payload.name)) {
+    //     toast.error(
+    //       t("Role names cannot contain special characters except   _ , -")
+    //     );
+    //     return;
+    //   }
+    // } else {
+    if (hasSpecialCharacterswithslash(payload.name)) {
+      toast.error(
+        t("Role names cannot contain special characters except _ , - , / ")
+      );
+      return;
     }
+    // }
     setDisabled(true);
     CreateRole(
       payload,
@@ -155,21 +230,21 @@ const Roles = React.memo((props: any) => {
     if (!validateRolePayload(editCandidate)) {
       return;
     }
-    if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
-      if (hasSpecialCharacters(editCandidate.name)) {
-        toast.error(
-          t("Role names cannot contain special characters except   _ , -")
-        );
-        return;
-      }
-    } else {
-      if (hasSpecialCharacterswithslash(editCandidate.name)) {
-        toast.error(
-          t("Role names cannot contain special characters except _ , - , / ")
-        );
-        return;
-      }
+    // if (KEYCLOAK_ENABLE_CLIENT_AUTH) {
+    //   if (hasSpecialCharacters(editCandidate.name)) {
+    //     toast.error(
+    //       t("Role names cannot contain special characters except   _ , -")
+    //     );
+    //     return;
+    //   }
+    // } else {
+    if (hasSpecialCharacterswithslash(editCandidate.name)) {
+      toast.error(
+        t("Role names cannot contain special characters except _ , - , / ")
+      );
+      return;
     }
+    // }
     setDisabled(true);
     UpdateRole(
       selectedRoleIdentifier,
@@ -186,13 +261,13 @@ const Roles = React.memo((props: any) => {
       }
     );
   };
-
   // handlers for user list popover
   const handleClick = (event, rowData) => {
     setShow(!show);
     setLoading(true);
     fetchUsers(
       rowData.name,
+      null,
       null,
       null,
       (results) => {
@@ -216,10 +291,37 @@ const Roles = React.memo((props: any) => {
     setEditCandidate({ ...editCandidate, description: e.target.value });
   };
 
+  const handleEditPermissionCheck = (
+    permissionName: string,
+    dependsOn: string[]
+  ) => {
+    let updatedPermissions: string[] = [...editCandidate.permissions];
+    const isChecked = updatedPermissions.includes(permissionName);
+
+    if (!isChecked) {
+      updatedPermissions.push(permissionName);
+      dependsOn.forEach((dependency) => {
+        if (!updatedPermissions.includes(dependency)) {
+          updatedPermissions.push(dependency);
+        }
+      });
+    } else {
+      updatedPermissions = updatedPermissions.filter(
+        (permission) => permission !== permissionName
+      );
+      dependsOn.forEach((dependency) => {
+        updatedPermissions = updatedPermissions.filter(
+          (permission) => permission !== dependency
+        );
+      });
+    }
+    setEditCandidate({ ...editCandidate, permissions: updatedPermissions });
+  };
+
   // handlers for role create/edit modal
   const handleCloseRoleModal = () => {
     setShowRoleModal(false);
-    setPayload({ name: "", description: "" });
+    setPayload({ name: "", description: "", permissions: [] });
   };
   const handleShowRoleModal = () => setShowRoleModal(true);
   const handleCloseEditRoleModal = () => {
@@ -258,8 +360,14 @@ const Roles = React.memo((props: any) => {
       return DEFAULT_ROLES.includes(role);
     }
   };
-  // Delete confirmation
 
+  const handleClearSearch = () => {
+    setSerach("");
+    let updatedRoleName = removingTenantId(props.roles,tenantId);
+    setRoles(updatedRoleName);
+  };
+
+  // Delete confirmation
   const confirmDelete = () => (
     <div data-testid="roles-confirm-delete-modal">
       <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
@@ -293,112 +401,179 @@ const Roles = React.memo((props: any) => {
 
   const showCreateModal = () => (
     <div data-testid="create-role-modal">
-      <Modal show={showRoleModal} onHide={handleCloseRoleModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>{t("Create Role")}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group className="mb-3">
-              <Form.Label htmlFor="role-name" aria-required>
-                {t("Role Name")}
-              </Form.Label>
-              <i style={{ color: "#e00" }}>*</i>
-              <Form.Control
-                id="role-name"
-                type="text"
-                placeholder={t("Eg: Account Manager")}
-                required
-                onChange={handleChangeName}
-                title={t("Enter role name")}
-              />
-              <Form.Label htmlFor="role-description" className="mt-2">
-                {t("Description")}
-              </Form.Label>
-              <i style={{ color: "#e00" }}>*</i>
-              <Form.Control
-                id="role-description"
-                as="textarea"
-                placeholder="Eg: Lorem ipsum..."
-                rows={3}
-                onChange={handleChangeDescription}
-                title={t("Enter Description")}
-              />
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              type="button"
-              className="btn btn-link text-dark"
-              onClick={handleCloseRoleModal}
-              data-testid="create-new-role-modal-cancel-button"
+      <Modal show={showRoleModal} onHide={handleCloseRoleModal} centered={true}>
+        <Modal.Header closeButton>
+          <Modal.Title>{t("Create Role")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="role-name" aria-required>
+              {t("Role Name")}
+            </Form.Label>
+            <i className="text-danger">*</i>
+            <Form.Control
+              id="role-name"
+              type="text"
+              placeholder={t("Eg: Account Manager")}
+              required
+              onChange={handleChangeName}
+              title={t("Enter role name")}
+            />
+            <Form.Label htmlFor="role-description" className="mt-2">
+              {t("Description")}
+            </Form.Label>
+            <Form.Control
+              id="role-description"
+              as="textarea"
+              placeholder="Eg: Lorem ipsum..."
+              rows={3}
+              onChange={handleChangeDescription}
+              title={t("Enter Description")}
+            />
+
+            <Form.Label
+              htmlFor="role-permissions"
+              aria-required
+              className="mt-2"
+              title={t("Select Permissions")}
+              data-testid="permissions-label"
             >
-              {t("Cancel")}
-            </button>
-            <Button
-              variant="primary"
-              disabled={disabled}
-              onClick={handleCreateRole}
-              type="submit"
-              data-testid="create-new-role-modal-submit-button"
-            >
-              {t("Create")}
-            </Button>
-          </Modal.Footer>
+              {t("Permissions")}
+            </Form.Label>
+            <i className="text-danger">*</i>
+            <div className="row">
+              {permission.map((permission) => (
+                <div
+                  key={permission.name}
+                  className="col-md-6 mb-2"
+                  data-testid={`permission-${permission.name}`}
+                >
+                  <Form.Check
+                    type="checkbox"
+                    id={`role-permissions-${permission.name}`}
+                    label={t(permission.description)}
+                    checked={payload.permissions.includes(permission.name)}
+                    onChange={() =>
+                      handlePermissionCheck(
+                        permission.name,
+                        permission.depends_on
+                      )
+                    }
+                    aria-label={t(permission.description)}
+                  />
+                </div>
+              ))}
+            </div>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            type="button"
+            className="btn btn-link text-dark"
+            onClick={handleCloseRoleModal}
+            data-testid="create-new-role-modal-cancel-button"
+          >
+            {t("Cancel")}
+          </button>
+          <Button
+            variant="primary"
+            disabled={disabled}
+            onClick={handleCreateRole}
+            type="submit"
+            data-testid="create-new-role-modal-submit-button"
+          >
+            {t("Create")}
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );
   const showEditModal = () => (
     <div data-testid="edit-role-modal">
-      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>{t("Edit Role")}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group className="mb-3">
-              <Form.Label htmlFor="edit-role-name" aria-required>
-                {t("Role Name")}
-              </Form.Label>
-              <i style={{ color: "#e00" }}>*</i>
-              <Form.Control
-                id="edit-role-name"
-                type="text"
-                placeholder={"Eg: Account Manager"}
-                required
-                onChange={handleEditName}
-                value={editCandidate.name}
-              />
-              <Form.Label htmlFor="edit-description" className="mt-2">
-                {t("Description")}
-              </Form.Label>
-              <i style={{ color: "#e00" }}>*</i>
-              <Form.Control
-                id="edit-description"
-                as="textarea"
-                rows={3}
-                onChange={handleEditDescription}
-                value={editCandidate.description}
-              />
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              type="button"
-              className="btn btn-link text-dark"
-              onClick={handleCloseEditRoleModal}
-              data-testid="edit-role-modal-cancel-button"
+      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} centered={true}>
+        <Modal.Header closeButton>
+          <Modal.Title>{t("Edit Role")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group className="mb-3">
+            <Form.Label htmlFor="edit-role-name" aria-required>
+              {t("Role Name")}
+            </Form.Label>
+            <i style={{ color: "#e00" }}>*</i>
+            <Form.Control
+              id="edit-role-name"
+              type="text"
+              placeholder={"Eg: Account Manager"}
+              required
+              onChange={handleEditName}
+              value={editCandidate.name}
+            />
+            <Form.Label htmlFor="edit-description" className="mt-2">
+              {t("Description")}
+            </Form.Label>
+            <Form.Control
+              id="edit-description"
+              as="textarea"
+              rows={3}
+              onChange={handleEditDescription}
+              value={editCandidate.description}
+            />
+            <Form.Label
+              htmlFor="role-edit-permissions"
+              aria-required
+              className="mt-2"
+              title={t("Edit Permissions")}
+              data-testid="edit-permissions-label"
             >
-              {t("Cancel")}
-            </button>
-            <Button
-              variant="primary"
-              disabled={disabled}
-              onClick={handleUpdateRole}
-              type="submit"
-              data-testid="edit-role-modal-save-button"
-            >
-              {t("Save")}
-            </Button>
-          </Modal.Footer>
+              {t("Permissions")}
+            </Form.Label>
+            <i className="text-danger">*</i>
+            <div className="row">
+              {permission.map((permission) => (
+                <div
+                  key={permission.name}
+                  className="col-md-6 mb-2"
+                  data-testid={`edit-permission-${permission.name}`}
+                >
+                  <Form.Check
+                    type="checkbox"
+                    id={`role-edit-permissions-${permission.name}`}
+                    label={t(permission.description)}
+                    checked={editCandidate.permissions.includes(
+                      permission.name
+                    )}
+                    onChange={() =>
+                      handleEditPermissionCheck(
+                        permission.name,
+                        permission.depends_on
+                      )
+                    }
+                    aria-label={t(permission.description)}
+                  />
+                </div>
+              ))}
+            </div>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            type="button"
+            className="btn btn-link text-dark"
+            onClick={handleCloseEditRoleModal}
+            data-testid="edit-role-modal-cancel-button"
+          >
+            {t("Cancel")}
+          </button>
+          <Button
+            variant="primary"
+            disabled={disabled}
+            onClick={handleUpdateRole}
+            type="submit"
+            data-testid="edit-role-modal-save-button"
+          >
+            {t("Save")}
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );
@@ -419,31 +594,23 @@ const Roles = React.memo((props: any) => {
       <Translation>{(t) => t("results")}</Translation>
     </span>
   );
-  const getpageList = () => {
-    const list = [
-      {
-        text: "5",
-        value: 5,
-      },
-      {
-        text: "25",
-        value: 25,
-      },
-      {
-        text: "50",
-        value: 50,
-      },
-      {
-        text: "100",
-        value: 100,
-      },
-      {
-        text: t("All"),
-        value: roles.length,
-      },
-    ];
-    return list;
+  const getPageList = () => [
+    { text: '5', value: 5 },
+    { text: '25', value: 25 },
+    { text: '50', value: 50 },
+    { text: '100', value: 100 },
+    { text: 'All', value: roles.length },
+  ];
+  const paginatedRoles = roles.slice(
+    (activePage - 1) * sizePerPage, 
+    activePage * sizePerPage 
+  );
+
+  const handlePageChange = (page: number) => {
+    setActivePage(page);
   };
+
+
   const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
     return (
       <DropdownButton
@@ -464,17 +631,11 @@ const Roles = React.memo((props: any) => {
       </DropdownButton>
     );
   };
-  const pagination = paginationFactory({
-    showTotal: true,
-    align: "center",
-    className: "d-flex",
-    sizePerPageList: getpageList(),
-    page: activePage,
-    sizePerPage: sizePerPage,
-    paginationTotalRenderer: customTotal,
-    onPageChange: (page) => setActivePage(page),
-    sizePerPageRenderer: customDropUp,
-  });
+
+  const handleLimitChange = (newLimit: number) => {
+    setSizePerPage(newLimit);
+    setActivePage(1); 
+  };
 
   const columns = [
     {
@@ -541,11 +702,12 @@ const Roles = React.memo((props: any) => {
               className="fa fa-pencil  me-4"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
-                setSelectedRoleIdentifier(
-                  KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id
-                );
+                setSelectedRoleIdentifier(rowData.id);
                 setEditCandidate(rowData);
                 handleShowEditRoleModal();
+                // setSelectedRoleIdentifier(
+                //   KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id
+                // );
               }}
               data-testid="admin-roles-edit-icon"
             />
@@ -568,28 +730,15 @@ const Roles = React.memo((props: any) => {
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
-            <Form.Control
-              type="text"
-              placeholder={t("Search by role name")}
-              className="search-role-input"
-              onChange={handlFilter}
-              value={search}
-              title={t("Search...")}
-              data-testid="search-role-input"
+             <CustomSearch
+              handleClearSearch={handleClearSearch}
+              search={search}
+              setSearch={setSerach}
+              handleSearch={handlFilter}
+              placeholder="Search by role name"
+              title="Search"
+              dataTestId="search-role-input"
             />
-
-            {search.length > 0 && (
-              <Button
-                variant="outline-secondary btn-small clear"
-                onClick={() => {
-                  setSerach("");
-                  setRoles(props.roles);
-                }}
-                data-testid="clear-role-search-button"
-              >
-                {t("Clear")}
-              </Button>
-            )}
           </div>
           <Button
             variant="primary"
@@ -601,20 +750,34 @@ const Roles = React.memo((props: any) => {
           </Button>
         </div>
         {!props?.loading ? (
+          <div>
           <BootstrapTable
             keyField="id"
-            data={roles}
+            data={paginatedRoles}
             columns={columns}
-            pagination={pagination}
             bordered={false}
             wrapperClasses="table-container px-4"
             rowStyle={{
               color: "#09174A",
-              fontWeight: 600,
+              fontWeight: 400,
             }}
             noDataIndication={noData}
             data-testid="admin-roles-table"
           />
+    
+          <table className="table mt-3">
+            <tfoot>
+            <TableFooter
+            limit={sizePerPage}
+            activePage={activePage}
+            totalCount={roles.length}
+            handlePageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            pageOptions={getPageList()}
+          />
+            </tfoot>
+          </table>
+        </div>
         ) : (
           <Loading />
         )}

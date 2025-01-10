@@ -1,10 +1,4 @@
- 
-.loader-container{
-display: flex;
-height: 50vh !important;
-justify-content: center;
-align-items: center;
-}
+
 .loader {
 position: absolute;
 margin: auto;
@@ -17,6 +11,6 @@ bottom: 0;
     color: #0072ed !important;
 }
 
-.page-item.active .page-link {
-    color: #fff !important;
-}
+
+
+

@@ -8,6 +8,8 @@ export const APPLICATION_NAME =
 export const LANGUAGE =
   (window._env_ && window._env_.REACT_APP_LANGUAGE) ||
   "en";
+//Language list by user
+export const USER_LANGUAGE_LIST =(window._env_ && window._env_?.USER_LANGUAGE_LIST) || "" ;
 //custom url
 export const WEB_BASE_CUSTOM_URL =
   (window._env_ && window._env_.REACT_APP_WEB_BASE_CUSTOM_URL) ||
@@ -198,3 +200,7 @@ export const DRAFT_ENABLED =
   DRAFT_ENABLED_VARIABLE === "true" || DRAFT_ENABLED_VARIABLE === true
     ? true
     : false;
+
+// This is to check if the application is running in enterprise mode or not
+export const IS_ENTERPRISE =
+  (window._env_ && window._env_.REACT_APP_IS_ENTERPRISE) || false;

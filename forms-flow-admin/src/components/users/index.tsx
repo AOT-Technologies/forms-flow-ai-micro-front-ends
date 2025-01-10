@@ -4,9 +4,12 @@ import { fetchRoles } from "../../services/roles";
 import { fetchUsers } from "../../services/users";
 import Users from "./users";
 import {useTranslation} from "react-i18next";
-
+import {removingTenantId} from "../../utils/utils.js";
+import { useParams } from "react-router-dom";
+import { MULTITENANCY_ENABLED } from "../../constants";
 const UserManagement = React.memo((props: any) => {
   const { setTab, setCount } = props;
+  const { tenantId } = useParams();
 
   const [users, setUsers] = React.useState([]);
   const [roles, setRoles] = React.useState([]);
@@ -18,7 +21,8 @@ const UserManagement = React.memo((props: any) => {
   const [filter, setFilter] = React.useState(undefined);
   const [total, setTotal] = React.useState(undefined);
   const { t } = useTranslation();
-
+  const [sizePerPage, setSizePerPage] = React.useState(5);
+  
   React.useEffect(() => {
     if (filter === undefined) return;
     setLoading(true);
@@ -26,8 +30,9 @@ const UserManagement = React.memo((props: any) => {
       filter,
       1,
       search,
+      sizePerPage,
       (results) => {
-        setUsers(results.data);
+        setUsers(removeTenantIdFromUserRoles(results.data));
         setInvalidated(false);
         setPageNo(1);
         setLoading(false);
@@ -51,8 +56,9 @@ const UserManagement = React.memo((props: any) => {
         filter,
         1,
         search,
+        sizePerPage,
         (results) => {
-          setUsers(results.data);
+          setUsers(removeTenantIdFromUserRoles(results.data));
           setInvalidated(false);
           setPageNo(1);
           setTotal(results.count);
@@ -77,8 +83,9 @@ const UserManagement = React.memo((props: any) => {
         filter,
         pageNo,
         search,
+        sizePerPage,
         (results) => {
-          setUsers(results.data);
+          setUsers(removeTenantIdFromUserRoles(results.data));
           setTotal(results.count);
           setInvalidated(false);
           setLoading(false);
@@ -100,8 +107,10 @@ const UserManagement = React.memo((props: any) => {
       null,
       pageNo,
       null,
+      sizePerPage,
       (results) => {
-        setUsers(results.data);
+        
+        setUsers(removeTenantIdFromUserRoles(results.data));
         setCount(results.count);
         setTotal(results.count);
         setLoading(false);
@@ -113,13 +122,25 @@ const UserManagement = React.memo((props: any) => {
     );
 
     fetchRoles((data) => {
-      setRoles(data);
+      setRoles(removingTenantId(data,tenantId));
     }, (err)=>{
       setError(err);
       toast.error(t("Failed to fetch roles!"))
     });
-  }, []);
+  }, [sizePerPage]);
 
+  const removeTenantIdFromUserRoles = (data)=>{
+    let updatedUserData = []
+        if(MULTITENANCY_ENABLED){
+          data?.forEach((user)=>{
+             user.role = removingTenantId(user.role, tenantId,true) 
+             updatedUserData.push(user)
+          })
+        }else{
+          updatedUserData = data
+        } 
+    return updatedUserData
+  }
   return (
     <>
       <Users
@@ -135,6 +156,7 @@ const UserManagement = React.memo((props: any) => {
         setFilter={setFilter}
         total={total}
         error={error}
+        limit = {{sizePerPage , setSizePerPage}}
       />
     </>
   );

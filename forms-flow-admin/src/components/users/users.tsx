@@ -7,7 +7,6 @@ import Loading from "../loading";
 import { AddUserRole, RemoveUserRole } from "../../services/users";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import paginationFactory from "react-bootstrap-table2-paginator";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
@@ -17,6 +16,8 @@ import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
 import { CreateUser } from "../../services/users";
+import { TableFooter, CustomSearch } from "@formsflow/components";
+
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedRoles, setSelectedRoles] = React.useState([]);
@@ -25,13 +26,12 @@ const Users = React.memo((props: any) => {
   const [error, setError] = React.useState(null); // Initialize error state with null instead of undefined
   const [loading, setLoading] = React.useState(false);
   const [activePage, setActivePage] = React.useState(1);
-  const [sizePerPage, setSizePerPage] = React.useState(5);
   const [selectedFilter, setSelectedFilter] = React.useState(null); // Initialize selectedFilter with null
   const [searchKey, setSearchKey] = React.useState("");
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
   const { t } = useTranslation();
   const [selectedRolesModal, setSelectedRolesModal] = React.useState([]);
-  const [formData, setFormData] = React.useState({ user: ""});
+  const [formData, setFormData] = React.useState({ user: "" });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [validationError, setValidationError] = React.useState('');
 
@@ -81,9 +81,13 @@ const Users = React.memo((props: any) => {
     setSelectedRolesModal(selectedOptions);
   };
   const handleSearch = (e) => {
-    setSearchKey(e.target.value);
+    if (e && e.key === 'Enter') {
+      setSearchKey(e.target.value);
+    }
   };
-
+  const handleClearSearch = () => {
+    setSearchKey("");
+  };
   const removePermission = (rowData, item) => {
     const user_id = rowData.id;
     const group_id = item.id;
@@ -107,41 +111,16 @@ const Users = React.memo((props: any) => {
     );
   };
 
-  const handleSizeChange = (sizePerPage, page) => {
-    setActivePage(page);
-    setSizePerPage(sizePerPage);
+  const handleLimitChange = (newLimit: number) => {
+    props.limit?.setSizePerPage(newLimit);
+    props.page.setPageNo(1);
+    setActivePage(1); 
   };
 
-  const customTotal = (from, to, size) => (
-    <span className="ms-2" role="main" data-testid="admin-users-custom-total">
-      <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
-      <Translation>{(t) => t("to")}</Translation> {to}{" "}
-      <Translation>{(t) => t("of")}</Translation> {size}{" "}
-      <Translation>{(t) => t("results")}</Translation>
-    </span>
-  );
-
-  const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
-    return (
-      <DropdownButton
-        drop="up"
-        variant="secondary"
-        title={currSizePerPage}
-        style={{ display: "inline" }}
-        data-testid="admin-users-custom-drop-up"
-      >
-        {options.map((option) => (
-          <Dropdown.Item
-            key={option.text}
-            type="button"
-            onClick={() => onSizePerPageChange(option.page)}
-            data-testid={`admin-users-drop-up-option-${option.text}`}
-          >
-            {option.text}
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
-    );
+  const handlePageChange = (page: number) => {
+    setActivePage(page);
+    props.page.setPageNo(page);
+    props.setInvalidated(true);
   };
 
   const getpageList = () => {
@@ -154,23 +133,6 @@ const Users = React.memo((props: any) => {
     return list;
   };
 
-  const pagination = paginationFactory({
-    showTotal: true,
-    align: "left",
-    sizePerPageList: getpageList(),
-    page: activePage,
-    pageStartIndex: 1,
-    totalSize: props.total,
-    sizePerPage: sizePerPage,
-    paginationTotalRenderer: customTotal,
-    onPageChange: (page) => {
-      setActivePage(page);
-      props.page.setPageNo(page);
-      props.setInvalidated(true);
-    },
-    onSizePerPageChange: (size, page) => handleSizeChange(size, page),
-    sizePerPageRenderer: customDropUp,
-  });
 
   const handleTableChange = () => {};
 
@@ -400,6 +362,13 @@ const Users = React.memo((props: any) => {
     );
   };
   
+  const getPageList = () => [
+    { text: '5', value: 5 },
+    { text: '25', value: 25 },
+    { text: '50', value: 50 },
+    { text: '100', value: 100 },
+    { text: 'All', value: roles.length },
+  ];
 
   return (
     <>
@@ -431,32 +400,23 @@ const Users = React.memo((props: any) => {
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between flex-wrap">
           <div className="search-role col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 px-0">
-            <Form.Control
-              type="text"
-              placeholder={t("Search by name, username or email")}
-              className="search-role-input"
-              onChange={handleSearch}
-              value={searchKey}
+
+            <CustomSearch
+              search={searchKey}
+              setSearch={setSearchKey}
+              handleSearch={handleSearch}
+              handleClearSearch={handleClearSearch}
+              searchLoading={loading}
+              placeholder={t("Search by name, username, or email")}
               title={t("Search...")}
-              data-testid="search-users-input"
+              dataTestId="search-users-input"
             />
-            {searchKey && (
-              <Button
-                variant="outline-secondary btn-small clear"
-                onClick={() => {
-                  setSearchKey("");
-                }}
-                data-testid="clear-users-search-button"
-              >
-                {t("Clear")}
-              </Button>
-            )}
           </div>
 
           <div className="user-filter-container  col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 d-flex justify-content-end gap-2">
             <span className="my-2">{t("Filter By:")} </span>
             <Form.Select
-              className="bg-light text-dark"
+              className="bg-light text-dark w-0"
               onChange={handleSelectFilter}
               title={t("Filter here")}
               data-testid="users-roles-filter-select"
@@ -464,7 +424,7 @@ const Users = React.memo((props: any) => {
               <option
                 value="ALL"
                 selected={!props.filter}
-                data-testid="users-roles-filter-option-all"
+                data-testid="users-roles-filter-option-all" 
               >
                 {t("All roles")}
               </option>
@@ -542,6 +502,7 @@ const Users = React.memo((props: any) => {
         </div>
 
         {!loading ? (
+          <div>
           <BootstrapTable
             remote={{
               pagination: true,
@@ -550,17 +511,30 @@ const Users = React.memo((props: any) => {
             data={props?.users}
             loading={loading}
             columns={columns}
-            pagination={pagination}
             bordered={false}
             wrapperClasses="user-table-container px-4"
             rowStyle={{
               color: "#09174A",
-              fontWeight: 600,
+              fontWeight: 400,
             }}
             noDataIndication={noData}
             onTableChange={handleTableChange}
             data-testid="admin-users-table"
           />
+          <table className="table mt-3">
+            <tfoot>
+              <TableFooter
+                  limit={props?.limit?.sizePerPage}
+                  activePage={activePage} 
+                  totalCount={props.total}
+                  handlePageChange={handlePageChange}
+                  onLimitChange={handleLimitChange}
+                  pageOptions={getPageList()}
+                />
+
+              </tfoot>
+            </table>
+          </div>
         ) : (
           <Loading />
         )}

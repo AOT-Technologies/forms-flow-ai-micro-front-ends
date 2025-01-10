@@ -1,0 +1,136 @@
+// Variables for reused values
+$primary: var(--ff-primary);
+$secondary: var(--ff-secondary);
+
+.btn-group-xxs>.btn, .btn-xxs, .component-btn-group .component-settings-button{
+    width: auto !important;
+    height: auto !important;
+}
+
+.builder-sidebar .btn {
+    width: 100%;
+}
+
+.formio-form, 
+.formio-builder-form {
+    .form-group {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .formbuilder .formarea .breadcrumb {
+    background-color: $gray-800 !important;
+    padding: 10px;
+  }
+  .formbuilder .formarea .breadcrumb li{
+    margin-right: 5px ;
+   }
+  .formbuilder .formarea .breadcrumb li .badge-primary{
+   background-color: $primary ;
+  }
+  .formbuilder .formarea .breadcrumb li .badge-success{
+    background-color: $success;
+  }
+   .formbuilder .formarea .breadcrumb li .badge-info{
+    background-color: $gray-600;
+  }
+
+  // Settings button on hovering formio component
+  .component-settings-button {
+    padding: 6px var(--spacer-100) !important;
+    margin: var(--spacer-075) var(--spacer-025) !important;
+    .fa{
+      font-size: var(--font-size-xs) !important;
+    }
+  }
+
+
+    .formio-hilighted {
+      box-sizing: border-box;
+      border-radius: var(--radius-050);
+      border: 2px dashed $primary !important;
+      padding: 8px 10px; //TBD need to update
+    }
+  
+    .formio-component {
+      transition: border 0.05s ease, padding 0.3s ease;
+      cursor: pointer !important;
+      padding-top: var(--spacer-050);
+  
+      .bg-default {
+        background: $secondary !important;
+  
+        .card-title {
+          color: $primary !important;
+        }
+      }
+    }
+  
+    // Define a list of ignored components for reuse
+    $ignored-components: (
+      '.formio-component-button',
+      '.formio-component-columns',
+      '.formio-component-panel',
+      '.formio-component-well',
+      '.formio-component-container',
+      '.formio-component-htmlelement',
+      '.formio-component-tabs',
+      '.formio-component-submit',
+      '.formio-component-hidden',
+    );
+  
+    .task-variable-modal {
+      .formio-form {
+        .formio-component {
+          // Apply hover effect only if the component is not in the ignored list
+          &:not(#{$ignored-components}) {
+            padding: 8px 10px; 
+            border-style:  dotted;  
+            border-color: transparent;
+            &:hover {
+              border-color: var(--ff-primary-200);
+              border-radius: var(--radius-050);
+            }
+          }
+
+          &.formio-component-hidden{
+            margin: 0;
+            padding: 0;
+            cursor: none;
+          }
+                    &.taskvariable-hiddent-component {
+                      label {
+                        text-align: center;
+                        border: dashed 1px !important;
+                        padding: 5px;
+                        cursor: pointer;
+                      }
+          
+                      input {
+                        display: none;
+                      }
+                    }
+        }
+      }
+    }
+
+.formio-form {
+  .formio-component-tabs {
+    li {
+      .form-group {
+        margin-bottom: 0rem;
+      }
+      .editgrid-actions {
+        margin-top: 1rem;
+      }
+      .formio-component-textfield {
+        margin-bottom: 1rem;
+      }
+    }
+  }
+}
+
+.ace_scrollbar-h {
+  display: block;
+  scrollbar-width: thin;
+}

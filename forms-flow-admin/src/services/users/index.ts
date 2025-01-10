@@ -6,6 +6,7 @@ export const fetchUsers = (
   group: string | null,
   pageNo: number | null,
   search: string | null,
+  sizePerPage : number | null ,
   callback: any,
   errorHandler: any,
   role = true,
@@ -13,7 +14,8 @@ export const fetchUsers = (
 ) => {
   let url = `${API.GET_USERS}?role=${role}&count=${count}`;
   if (group) url += `&memberOfGroup=${group}`;
-  if (pageNo) url += `&pageNo=${pageNo}&limit=5`;
+  if (pageNo) url += `&pageNo=${pageNo}`;
+  if(sizePerPage) url += `&limit=${sizePerPage}`;
   if (search) url += `&search=${search}`;
 
   RequestService.httpGETRequest(url)

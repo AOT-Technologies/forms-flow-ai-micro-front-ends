@@ -1,42 +1,22 @@
 import React from "react";
 import { Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
-import paginationFactory from "react-bootstrap-table2-paginator";
 import { toast } from "react-toastify";
 import Loading from "../loading";
+import { useParams } from "react-router-dom";
+import {removeTenantKey} from "../../utils/utils.js";
+import { MULTITENANCY_ENABLED } from "../../constants";
+
 import {
   updateAuthorization,
   fetchAuthorizations,
 } from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
+import { TableFooter } from "@formsflow/components";  
 
-const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
-  return (
-    <DropdownButton
-      drop="up"
-      variant="secondary"
-      title={currSizePerPage}
-      style={{ display: "inline" }}
-    >
-      {options.map((option) => (
-        <Dropdown.Item
-          key={option.text}
-          type="button"
-          onClick={() => onSizePerPageChange(option.page)}
-        >
-          {option.text}
-        </Dropdown.Item>
-      ))}
-    </DropdownButton>
-  );
-};
-
-export const InsightDashboard = React.memo((props: any) => {
+const InsightDashboard = React.memo((props: any) => {
   const { dashboards, groups, authorizations, setCount, authReceived } = props;
 
   const isGroupUpdated = groups.length > 0;
@@ -44,13 +24,14 @@ export const InsightDashboard = React.memo((props: any) => {
   const [isAuthUpdated, setIsAuthUpdated] = React.useState(false);
 
   const { t } = useTranslation();
-
+  const { tenantId } = useParams();
   const [remainingGroups, setRemainingGroups] = React.useState([]);
 
   const [activeRow, setActiveRow] = React.useState(null);
   const [show, setShow] = React.useState(false);
   const [activePage, setActivePage] = React.useState(1);
   const [err, setErr] = React.useState({});
+  const [limit, setLimit] = React.useState(5); 
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -166,6 +147,17 @@ export const InsightDashboard = React.memo((props: any) => {
       setErr
     );
   };
+
+  const paginatedDashboard = authDashBoardList.slice(
+    (activePage - 1) * limit, 
+    activePage * limit 
+  );
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setActivePage(1); 
+  };
+
   const noData = () => (
     <div data-testid="dashboard-no-data-msg">
       <h3 className="text-center">
@@ -181,7 +173,7 @@ export const InsightDashboard = React.memo((props: any) => {
     },
     {
       dataField: "roles",
-      text: <Translation>{(t) => t("Access Groups")}</Translation>,
+      text: <Translation>{(t) => t("Access Roles")}</Translation>,
       formatter: (cell, rowData) => {
         return (
           <div className="d-flex flex-wrap col-12">
@@ -190,7 +182,7 @@ export const InsightDashboard = React.memo((props: any) => {
                 style={{ background: "#EAEFFF" }}
                 data-testid={`dashboard-access-group-${i}`}>
                 <span className="">
-                  {label}
+                  {MULTITENANCY_ENABLED ? removeTenantKey(label,tenantId) : label}
                   <i
                     className="fa-solid fa-xmark chip-close ms-2"
                     onClick={() => removeDashboardAuth(rowData, label)}
@@ -227,7 +219,7 @@ export const InsightDashboard = React.memo((props: any) => {
                           onClick={() => addDashboardAuth(item)}
                           data-testid={`dashboard-remaining-group-${key}`}
                         >
-                          {item.path}
+                          {MULTITENANCY_ENABLED ? removeTenantKey(item.path, tenantId) : item.path}
                         </div>
                       ))
                     ) : (
@@ -281,45 +273,39 @@ export const InsightDashboard = React.memo((props: any) => {
     return list;
   };
 
-  const customTotal = (from, to, size) => (
-    <span className="ms-2" role="main">
-      <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
-      <Translation>{(t) => t("to")}</Translation> {to}{" "}
-      <Translation>{(t) => t("of")}</Translation> {size}{" "}
-      <Translation>{(t) => t("results")}</Translation>
-    </span>
-  );
-
-  const pagination = paginationFactory({
-    showTotal: true,
-    align: "center",
-    sizePerPageList: getpageList(),
-    page: activePage,
-    paginationTotalRenderer: customTotal,
-    onPageChange: (page) => setActivePage(page),
-    sizePerPageRenderer: customDropUp,
-  });
-
   return (
     <>
       <div className="" role="definition">
         <br />
         <div>
           {!isLoading ? (
+            <div>
             <BootstrapTable
               keyField="resourceId"
-              data={authDashBoardList}
+              data={paginatedDashboard}
               columns={columns}
-              pagination={pagination}
               bordered={false}
               wrapperClasses="table-container-admin mb-3 px-4"
               rowStyle={{
                 color: "#09174A",
-                fontWeight: 600,
+                fontWeight: 400,
               }}
               noDataIndication={noData}
               data-testid="admin-dashboard-table"
             />
+            <table className="table">
+              <tfoot>
+              <TableFooter
+              limit={limit}
+              activePage={activePage}
+              totalCount={authDashBoardList.length}
+              handlePageChange={(page: number) => setActivePage(page)}
+              onLimitChange={handleLimitChange}
+              pageOptions={getpageList()}
+            />
+              </tfoot>
+          </table>
+          </div>
           ) : (
             <Loading />
           )}

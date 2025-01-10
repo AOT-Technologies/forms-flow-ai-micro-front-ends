@@ -1,0 +1,210 @@
+$th-width: 8.125rem;
+$tr-th-border-radius: var(--radius-0150);
+$th-z-index-default: 2;
+$th-z-index-special: 3;
+$status-size: var(--spacer-050);
+$status-margin: var(--spacer-050);
+$status-radius: 50%;
+
+.custom-tables-wrapper {
+  height: auto;
+  max-height: calc(100vh - 6.8rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: $tr-th-border-radius !important;
+}
+
+.custom-tables {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border-radius: var(--radius-0150) !important;
+
+  th,
+  td {
+    vertical-align: middle !important;
+    padding: var(--spacer-125) var(--spacer-150) !important;
+    font-size: var(--font-size-xs) !important;
+  }
+
+  thead {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    z-index: 2;
+    background-color: var(--ff-white);
+
+    // Table Header Styles
+    th {
+      width: $th-width;
+      position: sticky;
+      top: 0;
+      z-index: $th-z-index-default;
+      background-color: inherit;
+
+      &:first-child,
+      &:last-child {
+        position: sticky;
+        top: 0;
+        z-index: $th-z-index-special;
+      }
+
+      &:last-child {
+        border-top-right-radius: $tr-th-border-radius !important;
+      }
+    }
+  }
+
+  tbody {
+    display: block;
+    width: 100%;
+    overflow-y: auto;
+    font-size: var(--font-size-xs) !important;
+
+    // Table Row Styles
+    tr {
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+
+      &:last-child {
+        td:first-child {
+          border-bottom-left-radius: $tr-th-border-radius !important;
+        }
+
+        td:last-child {
+          border-bottom-right-radius: $tr-th-border-radius !important;
+        }
+      }
+    }
+  }
+
+  .table-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--ff-white);
+    width: 100%;
+  }
+}
+
+.table {
+  tr {
+    border-bottom: 0.0625rem solid var(--ff-gray-000);
+  }
+}
+
+.custom-table th,
+.custom-table td {
+  vertical-align: middle;
+}
+
+
+.width-40 {
+  width: 25rem !important;
+  max-width: 40% !important;
+  min-width: 40% !important;
+}
+
+.width-25 {
+  width: 18.75rem !important;
+  max-width: 30% !important;
+  min-width: 25% !important;
+}
+
+.text-container {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5rem;
+  color: var(--ff-black);
+  font-weight: var(--font-weight-sm);
+}
+
+.text-container-expand {
+  line-height: 1.5rem;
+  color: var(--ff-black);
+  font-size: var(--font-size-xs) !important;
+  font-weight: var(--font-weight-sm);
+}
+
+.status-circle {
+  width: $status-size;
+  height: $status-size;
+  border-radius: $status-radius;
+  margin-right: $status-margin;
+}
+
+.status-live {
+  @extend .status-circle;
+  background-color: var(--ff-live);
+}
+
+.status-draft {
+  @extend .status-circle;
+  background-color: var(--ff-gray-100);
+}
+
+.pagination-text {
+  overflow: hidden;
+  color: var(--ff-black);
+  text-overflow: ellipsis;
+  font-size: var(--font-size-sm);
+  font-weight: var(--ff-font-weight-xs);
+  line-height: var(--text-line-height);
+}
+
+.w-20 {
+  width: 20% !important;
+}
+
+.w-30 {
+  width: 30% !important;
+}
+
+.w-13 {
+  width: 13% !important;
+}
+
+.w-12 {
+  width: 12% !important;
+}
+
+.button-as-div {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.no-data-body {
+  .no-data-container {
+    display: flex;
+    padding: var(--spacer-200) !important ;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacer-100);
+    flex: 1 0 0;
+    .no-data-text {
+      color: var(--ff-gray-400);
+      text-align: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-sm);
+      line-height: var(--text-line-height); 
+    }
+  }
+}

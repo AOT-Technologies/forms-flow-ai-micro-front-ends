@@ -1,0 +1,41 @@
+@media (min-width: 1400px) {
+  .container {
+    // max-width: 1320px;
+    max-width: none !important; // temporarly added to have container fluidic behavior for large screens also
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+.padding-left-60 {
+  margin-left: 60px;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.overflow-y-auto {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+button,
+a,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="radio"],
+input[type="radio"]+label,
+input[type="checkbox"],
+input[type="checkbox"]+label,
+.btn,
+.clickable {
+  cursor: pointer;
+}

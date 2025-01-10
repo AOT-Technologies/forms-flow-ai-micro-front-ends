@@ -39,7 +39,7 @@ jobs:
       - run: echo ${{ env.VERSION }}
       - run: npm ci
         working-directory: ./forms-flow-theme
-      - run: npm run build:webpack
+      - run: npm run build
         working-directory: ./forms-flow-theme
       - uses: aws-actions/configure-aws-credentials@v1
         with:
