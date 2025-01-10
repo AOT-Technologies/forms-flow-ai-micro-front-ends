@@ -1,0 +1,243 @@
+//New Colors
+
+$base: hsl(233, 90%, 55%);
+$gray: hsl(199, 5%, 40%);
+$black: hsl(0, 0%, 0%);
+$white: hsl(0, 0%, 100%);
+$red-000: hsl(0, 100%, 63%);
+$live: hsl(95, 90%, 40%);
+
+@function set-lightness($color, $target-lightness) {
+  //USE: call the function with a color and its expected lightness. (the L of HSL will be replaced).
+  $hue: hue($color);
+  $saturation: saturation($color);
+  @return hsl($hue, $saturation, $target-lightness);
+}
+
+$base-1000: set-lightness($base, 15%); //darker.
+$base-900: set-lightness($base, 25%);
+$base-800: set-lightness($base, 35%);
+$base-700: set-lightness($base, 45%);
+$base-600: set-lightness($base, 55%); //Used as primary color.
+$base-500: set-lightness($base, 65%);
+$base-400: set-lightness($base, 75%);
+$base-300: set-lightness($base, 85%);
+$base-200: set-lightness($base, 90%);
+$base-100: set-lightness($base, 95%); //brighter.
+
+$gray-1000: set-lightness($gray, 5%);
+$gray-900: set-lightness($gray, 10%);
+$gray-800: set-lightness($gray, 20%);
+$gray-700: set-lightness($gray, 30%);
+$gray-600: set-lightness($gray, 40%);
+$gray-500: set-lightness($gray, 50%);
+$gray-400: set-lightness($gray, 60%);
+$gray-300: set-lightness($gray, 70%);
+$gray-200: set-lightness($gray, 80%);
+$gray-100: set-lightness($gray, 90%);
+$gray-000: set-lightness($gray, 95%);
+
+$primary : $base-600;
+$secondary : $base-100; 
+$success: #198754;
+$danger: #dc3545;
+$dark: #000000;
+$gray: #232323;
+$info: #008599;
+$main-bg: $gray-000;
+$alert: #ffbb00;
+$body-bg: $white;
+$body-color: $white;
+$dropdown-link-color: $dark;
+$dropdown-link-hover-bg: $gray-200;
+$dropdown-link-hover-color: $dark;
+$btn-color: $dark;
+$popover-body-color: $dark;
+$btn-disabled-border-color: $gray-100;
+
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "danger": $danger,
+  "black":$black,
+  "dark": $dark,
+  "white": $white,
+  "gray": $gray,
+  "info": $info,
+  "main-bg": $main-bg,
+  "body-bg":$white,
+  "body-color":$white,
+  "input-color": $dark,
+  "btn-disabled-border-color":$btn-disabled-border-color,
+);
+
+$custom-colors: (
+  "base-1000": $base-1000, //darker
+  "base-900": $base-900,
+  "base-800": $base-800,
+  "base-700": $base-700,
+  "base-600": $base-600, //primary
+  "base-500": $base-500,
+  "base-400": $base-400,
+  "base-300": $base-300,
+  "base-200": $base-200,
+  "base-100": $base-100, //lighter
+
+  "gray-1000": $gray-1000, //darker
+  "gray-900": $gray-900,
+  "gray-800": $gray-800,
+  "gray-700": $gray-700,
+  "gray-600": $gray-600,
+  "gray-500": $gray-500,
+  "gray-400": $gray-400,
+  "gray-300": $gray-300,
+  "gray-200": $gray-200,
+  "gray-100": $gray-100,
+  "gray-000": $gray-000, //lighter
+
+  "black": $black,
+  "white": $white,
+  "live": $live,
+  "red-000": $red-000,
+  //old colors - to be removed.
+  "primary-100": tint-color($primary, 95%),
+  "primary-200": tint-color($primary, 60%),
+  "primary-300": tint-color($primary, 20%),
+  "primary-400": tint-color($primary, 10%),
+  "primary-500": shade-color($primary, 10%),
+  "primary-600": shade-color($primary, 40%),
+  "primary-700": shade-color($primary, 60%),
+  "danger-200": tint-color($danger, 80%),
+  "danger-400": tint-color($danger, 40%),
+  "success-200": tint-color($success, 85%),
+  "alert-200": tint-color($alert, 80%),
+  "alert-400": tint-color($alert, 55%),
+);
+
+// Merge the maps
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+:root {
+  --navbar-active-submenu-bg-color: #{$gray-800};
+  --navbar-active-submenu-font-color: #{$white};
+  --navbar-menu-hover-bg-color: #{$base-100};
+  --navbar-main-menu-active-bg-color: #{$gray-100};
+  --navbar-main-menu-active-font-color: #{$gray-800};
+  --navbar-bg-color: #{$white};
+  --custom-logo-path: " ";
+  --custom-title: " ";
+  --primary-btn-font-color: #{$white};
+  --primary-btn-bg-color: #{$base-600};
+  --primary-btn-hover-bg-color: #{$base-500};
+  --secondary-btn-font-color: #{$base-600};
+  --secondary-btn-bg-color: #{$base-100};
+  --secondary-btn-hover-bg-color: #{$base-200};
+  --default-font-size: 1rem; 
+  --default-font-color: #{$gray-800};
+  --navbar-width: 192px;
+  //font-style
+  --primary-font: "Roboto", sans-serif;
+  //font-size
+  --font-size-xs: 0.875rem;
+  --font-size-sm: var(--default-font-size);
+  --font-size-md: 1.25rem;
+  --font-size-lg: 1.5rem;
+  --font-size-xl: 2rem;
+  //font-weight
+  --font-weight-xs: 300;
+  --font-weight-sm: 400;
+  --font-weight-md: 500;
+  --font-weight-lg: 600;
+  --font-weight-xl: 700;
+  //text-space
+  --text-space-xs: 0.02rem;
+  --text-space-sm: 0.04rem;
+  --text-space-md: 0.08rem;
+  --text-space-lg: 0.16rem;
+  --text-space-xl: 0.2rem;
+  //line-height
+  --text-line-height: 120%;
+  //spacer
+  --spacer-025: 0.25rem;
+  --spacer-050: 0.5rem;
+  --spacer-075: 0.75rem;
+  --spacer-100: 1rem;
+  --spacer-125: 1.25rem;
+  --spacer-150: 1.5rem;
+  --spacer-175: 1.75rem;
+  --spacer-200: 2rem;
+  --spacer-225: 2.25rem;
+  --spacer-250: 2.5rem;
+  --spacer-275: 2.75rem;
+  --spacer-300: 3rem;
+  //shadow
+  --shadow-sm: 0px 2px 2px 0px rgba(48, 52, 54, 0.04);
+  --shadow-md: 0px 2px 4px 0px rgba(48, 52, 54, 0.08);
+  --shadow-lg: 0px 4px 8px -2px rgba(48, 52, 54, 0.08);
+  --shadow-xl: 0px 12px 16px -4px rgba(48, 52, 54, 0.08);
+  --shadow-2xl: 0px 20px 24px -4px rgba(48, 52, 54, 0.08);
+  --shadow-3xl: 0px 24px 48px -8px rgba(48, 52, 54, 0.016);
+  --shadow-nav: 4px 0px 8px -2px rgba(48, 52, 54, 0.08);
+  //radius
+  --radius-025: 0.25rem;
+  --radius-050: 0.5rem;
+  --radius-075: 0.75rem;
+  --radius-0100: 1rem;
+  --radius-0125: 1.25rem;
+  --radius-0150: 1.5rem;
+  --radius-200: 2rem;
+  //custom
+  --client-nav: 3rem;
+  --header-close-btn: 4.625rem;
+}
+  
+body {
+  color: var(--default-font-color) !important; 
+  min-height: 100vh !important;
+  font-family: var(--primary-font) !important;
+  overflow: hidden;
+}
+
+.info-background {
+  background-color: var(--ff-danger-200);
+}
+
+.custom_primary_color {
+  color: var(--ff-primary);
+}
+
+.bg-default {
+  background-color: var(--ff-primary-600);
+  border: var(--ff-primary-600);
+  color: var(--ff-white) !important;
+}
+
+/* Custom Scrollbar Styles */
+.custom-scroll {
+  &::-webkit-scrollbar {
+    width: var(--spacer-100);
+    background-color: transparent;
+    display: block;
+    opacity: 0;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      opacity: 1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--ff-base-200);
+      border-radius: var(--radius-0125);
+      width: var(--spacer-050);
+      background-clip: padding-box;
+      border: var(--spacer-025) solid transparent;
+      opacity: 1;
+    }
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    box-shadow: inset 0 0 0 0.0625rem var(--ff-base-600);
+  }
+}

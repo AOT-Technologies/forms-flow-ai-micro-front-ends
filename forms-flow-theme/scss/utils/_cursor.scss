@@ -1,0 +1,12 @@
+// Define a map with class names and their corresponding cursor values
+$cursor-map: (
+cursor-pointer: pointer,
+cursor-default: default
+);
+
+// Iterate over the map using @each and generate styles for each class
+@each $class-name, $cursor-value in $cursor-map {
+  .#{$class-name} {
+    cursor: $cursor-value;
+  }
+}

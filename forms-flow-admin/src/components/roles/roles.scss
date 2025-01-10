@@ -1,5 +1,4 @@
 .table-container{
-    min-height: 24rem !important;
     
     background: #FFFFFF;
     border: 1px solid #ECECEC;
@@ -8,9 +7,7 @@
     overflow-y: scroll;
     max-height: 25rem;
 } 
-.table th{
-    color: #646464;
-}
+
 .table th ,
 .table tr {
     vertical-align: middle;
@@ -52,10 +49,6 @@
 .container-admin {
     .row{
         align-items: center;
-    }
-    tbody{
-        overflow-y: auto;
-        height: 300px;
     }
 }
 .formsflow-paginator{

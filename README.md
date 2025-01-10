@@ -27,6 +27,10 @@ This module contains all the common functionalties used by micro front-ends. The
 
 This module contains the common style sheet shared by all micro-front-ends. This module supports theming by providing the option to use desired themes by modifying the css variables.
 
+5. forms-flow-components
+
+This module contains reusable UI components.
+
 All the modules are built with `single-spa`, a javascript router for micro front-end microsevices.
 
 ## Prerequisites

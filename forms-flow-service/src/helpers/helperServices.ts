@@ -1,6 +1,5 @@
 import moment from 'moment'
-import { DATE_FORMAT } from '../constants/constants'
-import { TIME_FORMAT } from '../constants/constants'
+import { DATE_FORMAT ,MULTITENANCY_ENABLED ,TIME_FORMAT} from '../constants/constants';
 
 class HelperServices {
   public static getLocalDateAndTime(date: string): any {
@@ -42,7 +41,49 @@ class HelperServices {
   }
 
   public static getMoment(date: any): any {
-    return moment(date)
+    return moment(date);
+  }
+  
+  //  method to remove tenant key
+  public static removeTenantKeyFromData(
+    value: string,
+    tenantKey: string
+  ): string {
+    if (!value || !tenantKey) {
+      return value;
+    }
+
+    const tenantKeyCheck = new RegExp(`${tenantKey}-`).exec(value)?.[0]
+    const startWithSlash = value.startsWith("/");
+
+    if (
+      MULTITENANCY_ENABLED &&
+      tenantKey &&
+      tenantKeyCheck?.toLowerCase() === `${tenantKey.toLowerCase()}-`
+    ) {
+      return value.replace(
+        `${startWithSlash ? "/" : ""}${tenantKey.toLowerCase()}-`,
+        ""
+      );
+    }
+    return value;
+  }
+
+  public static isViewOnlyRoute(location: string, routes: Set<string>): boolean {
+    return Array.from(routes).some((route) => location.includes(route));
+  }
+
+  // Method to check if the current route matches the routes where sidebar shouldnt be shown
+  public static hideSideBarRoute(location: string): boolean {
+    const previewRouteParts = ["formflow","view-edit"]; // Route parts which is part of designer preview page
+    const exactRouteMatches = ["/","/tenant"]; // Exact Routes where sidebar is not required
+    const partOfRouteMatches = ["/public/"]; // Parts of Routes where sidebar is not required . 
+
+    return (
+      previewRouteParts.every((route) => location.includes(route)) || 
+      exactRouteMatches.some((route) => location == route) || 
+      partOfRouteMatches.some((route) => location.includes(route))
+    );
   }
 }
 

@@ -68,7 +68,30 @@ class RequestService {
         : headers,
     });
   }
-  public static httpPOSTBlobRequest(
+
+  public static httpMultipartPOSTRequest(
+    url: string,
+    importData: File,
+    supportData: string, 
+    token: string | null,
+    isBearer: boolean = true,
+    headers: object | null = null
+  ): any {
+    const formData = new FormData();
+    formData.append("file", importData);
+    formData.append("data", supportData);
+      return axios.post(url, formData, {
+      headers: {
+        ...headers,
+        Authorization: isBearer
+          ? `Bearer ${token || StorageService.get(StorageService.User.AUTH_TOKEN)}`
+          : token,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  }  
+
+    public static httpPOSTBlobRequest(
     url: string,
     params: object | null,
     data: object,

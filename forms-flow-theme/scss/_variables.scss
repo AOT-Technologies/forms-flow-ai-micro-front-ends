@@ -1,0 +1,259 @@
+$prefix: "ff-";
+
+.task-container {
+  height: 100% !important;
+}
+
+.loader-container {
+  display: flex;
+  height: 80vh;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.page-item.active .page-link {
+  background-color: var(--ff-primary-600) !important;
+  border-color: var(--ff-gray-700) !important;
+}
+
+.is-invalid {
+  background-color: var(--ff-danger-400);
+}
+
+.active-tab {
+  background-color: transparent;
+  color: var(--ff-primary) !important;
+}
+
+.active-tab-dropdown>#dashboard-dropdown {
+  background-color: transparent;
+  filter: invert(36%) sepia(38%) saturate(7152%) hue-rotate(227deg) brightness(101%) contrast(98%);
+}
+
+.active-tab-dropdown>#task-dropdown {
+  background-color: transparent;
+  filter: invert(36%) sepia(38%) saturate(7152%) hue-rotate(227deg) brightness(101%) contrast(98%);
+}
+
+.dropdown-item:hover {
+  filter: none;
+  background-color: var(--ff-gray-200);
+}
+
+.taskDropdown>.dropdown-menu::before {
+  left: 10%;
+  right: 100%;
+}
+
+.taskDropdown>.dasboard-icon-dropdown {
+  margin-bottom: 0.3125rem;
+}
+
+.taskDropdown>.task-dropdown-icon {
+  margin-bottom: 0.0625rem;
+}
+
+.taskDropdown>.applications-icon-header {
+  width: 1.4375rem;
+  height: 1.4375rem;
+  margin-bottom: 0.3125rem;
+}
+
+.taskDropdown>.dropdown-menu::after {
+  left: 10%;
+  right: 100%;
+}
+
+.taskvariable-alert {
+  background-color: var(--ff-alert-200) !important;
+  border: solid 0.125rem var(--ff-alert-400) !important;
+}
+
+.select {
+  border-radius: 0.25rem !important;
+  margin-left: var(--ff-radius-050);
+  max-width: 6.5rem;
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    height: 4.375rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.navbar-brand {
+  align-items: center;
+}
+
+.navbar-brand .img-fluid,
+.navbar-brand .img-thumbnail {
+  max-width: 100%;
+  height: 100%;
+}
+
+#sidebar {
+  background: var(--ff-white);
+}
+
+#sidebar ul li.active>a,
+#sidebar a[aria-expanded="true"] {
+  background: var(--ff-white);
+}
+
+header nav {
+  border-bottom: var(--ff-white);
+}
+
+.rounded-circle {
+  border-radius: 50% !important;
+  border: 0.125rem solid var(--ff-gray-400);
+  height: var(--spacer-250);
+  width: var(--spacer-250);
+}
+
+div[disabled] {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: var(--ff-black);
+}
+
+.MuiTab-wrapper {
+  font-size: var(--font-size-sm);
+}
+
+.tooltiptext {
+  color: var(--default-font-color);
+}
+
+div.upload {
+  background-color: var(--ff-gray-200);
+  border: 0.0625rem solid var(--ff-gray-300);
+  border-radius: 0.3125rem;
+  display: inline-block;
+  height: 1.875rem;
+  padding: 0.1875rem;
+  position: relative;
+  width: 8.75rem;
+  text-align: center;
+}
+
+div.upload:hover {
+  opacity: 0.95;
+}
+
+div.upload input[type="file"] {
+  display: block;
+  width: 100%;
+  height: 1.875rem;
+  opacity: 0;
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+}
+
+.admin-container>.header-container {
+  padding-top: 0.625rem !important;
+  margin-left: 3.938rem;
+  margin-right: 4.188rem;
+  padding-left: 1.938rem;
+  padding-right: 1.938rem;
+}
+
+.head-rule {
+  margin-top: -0.625rem;
+}
+
+.cursor-default {
+  cursor: default !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+hr {
+  border-top: 0.125rem solid var(--ff-gray-400);
+}
+
+.container {
+  width: auto !important;
+  padding-left: var(--spacer-050) !important;
+  padding-right: var(--spacer-150) !important;
+}
+
+.main-container {
+  overflow: hidden !important;
+  background: var(--ff-main-bg);
+  margin-left: var(--navbar-width);
+  margin-top: 0;
+  height: 100vh !important;
+}
+
+.min-container-height {
+  min-height: calc(100vh - 10.625rem);
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+  padding-right: 0 !important;
+  padding-left: 0.3rem !important;
+}
+
+.follow-up-to{
+  .react-datepicker__triangle {
+    left: 270px !important;
+  }
+  .react-datepicker-popper {
+    left: -190px !important;
+  }
+}
+
+.follow-up-from {
+  .react-datepicker-popper {
+    left: -140px !important;
+  }
+  .react-datepicker__triangle {
+    left: 190px !important;
+  }
+}
+
+.preview-list-group{
+  max-height: 45vh;
+  overflow-y: auto;
+}
+.scrollable-overview {
+  max-height: 90vh;
+  overflow-y: auto; 
+  padding-bottom: 5rem;
+}
+
+@mixin generate-overflow($axis, $value) {
+  .overflow-#{$axis}-#{$value} {
+    overflow-#{$axis}: #{$value} !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    margin-left: 0;
+    height: 100vh !important;
+  }
+}
+
+@include generate-overflow(x, auto);
+@include generate-overflow(y, auto);
+@include generate-overflow(x, hidden);
+@include generate-overflow(y, hidden);
