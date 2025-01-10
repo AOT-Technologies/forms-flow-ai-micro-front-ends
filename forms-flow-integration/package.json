@@ -1,6 +1,6 @@
 {
   "name": "@formsflow/integration",
-  "version": "7.0.0-alpha",
+  "version": "7.0.0",
   "scripts": {
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",
