@@ -2,7 +2,7 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
-## 7.0.0 - 2025-12-10
+## 7.0.0 - 2025-01-10
 
 `Added`
 
