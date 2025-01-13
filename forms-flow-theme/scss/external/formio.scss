@@ -80,6 +80,12 @@ $secondary: var(--ff-secondary);
     );
   
     .task-variable-modal {
+       .form-control:disabled {
+        pointer-events: none;
+       }
+       label {
+        cursor: pointer;
+       }
       .formio-form {
         .formio-component {
           // Apply hover effect only if the component is not in the ignored list
@@ -98,18 +104,17 @@ $secondary: var(--ff-secondary);
             padding: 0;
             cursor: none;
           }
-                    &.taskvariable-hiddent-component {
-                      label {
-                        text-align: center;
-                        border: dashed 1px !important;
-                        padding: 5px;
-                        cursor: pointer;
-                      }
-          
-                      input {
-                        display: none;
-                      }
-                    }
+          &.taskvariable-hiddent-component {
+            label {
+              text-align: center;
+              border: dashed 1px !important;
+              padding: 5px;
+              cursor: pointer;
+            }
+            input {
+              display: none;
+            }
+          }
         }
       }
     }
