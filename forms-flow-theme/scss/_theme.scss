@@ -54,6 +54,9 @@ $dropdown-link-hover-color: $dark;
 $btn-color: $dark;
 $popover-body-color: $dark;
 $btn-disabled-border-color: $gray-100;
+$no-code-success: #1B9C85;
+$no-code-secondary: #EA9389;
+$no-code-warning: #faad14;
 
 $theme-colors: (
   "primary": $primary,
@@ -136,6 +139,10 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --default-font-size: 1rem; 
   --default-font-color: #{$gray-800};
   --navbar-width: 192px;
+  //no-code colors
+  --no-code-success: #{$no-code-success};
+  --no-code-secondary: #{$no-code-secondary};
+  --no-code-warning: #{$no-code-warning};
   //font-style
   --primary-font: "Roboto", sans-serif;
   //font-size
