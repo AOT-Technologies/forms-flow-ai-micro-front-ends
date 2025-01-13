@@ -151,6 +151,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               isInvalid={!!nameError}
               feedback={nameError}
               turnOnLoader={isFormNameValidating}
+              maxLength={200} 
             />
            <FormTextArea
               name="description"
