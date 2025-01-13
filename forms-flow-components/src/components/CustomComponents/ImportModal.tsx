@@ -76,7 +76,10 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     const redColor = computedStyle.getPropertyValue("--ff-red-000");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const skipImport = "Skip, do not import";
+    const hasVersion = (item) => item?.majorVersion != null || item?.minorVersion != null;
+    const skipImport = fileItems && Object.values(fileItems).some(hasVersion) 
+    ? "Skip, do not import" 
+    : "";
     const [selectedLayoutVersion, setSelectedLayoutVersion] = useState<{
       value: any;
       label: string;
@@ -161,33 +164,26 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
 
     const primaryButtonDisabled = 
-      !selectedFile || 
-      inprogress || 
-      importLoader ||
-      (importError && primaryButtonText !== "Try Again") || 
-      (showFileItems && 
-        selectedFlowVersion?.label === skipImport && 
-        selectedLayoutVersion?.label === skipImport);
-    
-
-    useEffect(() => {
-      if (
-        fileItems &&
-        !importError &&
-        Object.values(fileItems).some(
-          (item) => item?.majorVersion != null || item?.minorVersion != null
-        )
-      ) {
-        setShowFileItems(true);
-      } else if (
-        processVersion?.majorVersion != null ||
-        processVersion?.minorVersion != null
-      ) {
-        setShowFileItems(true);
-      } else {
-        setShowFileItems(false);
-      }
-    }, [importError, fileItems]);
+    !selectedFile || 
+    inprogress || 
+    importLoader ||
+    (importError && primaryButtonText !== "Try Again") || 
+    (showFileItems && 
+      selectedFlowVersion?.label === "Skip, do not import" && 
+      selectedLayoutVersion?.label === "Skip, do not import");
+      
+      useEffect(() => {
+        const fileItemsHasVersion = fileItems && Object.values(fileItems).some(hasVersion);
+        const processVersionHasVersion = processVersion?.majorVersion != null || processVersion?.minorVersion != null;
+      
+        if (fileItemsHasVersion) {
+          setShowFileItems(true);
+        } else if (processVersionHasVersion) {
+          setShowFileItems(true);
+        } else {
+          setShowFileItems(false);
+        }
+      }, [importError, fileItems, processVersion]);
 
     useEffect(() => {
       if (!showModal) {
