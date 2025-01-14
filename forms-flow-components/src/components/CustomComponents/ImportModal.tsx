@@ -85,14 +85,14 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       label: string;
     } | null>({
       value: true,
-      label: skipImport,
+      label: "Skip, do not import",
     });
     const [selectedFlowVersion, setSelectedFlowVersion] = useState<{
       value: any;
       label: string;
     } | null>({
       value: true,
-      label: skipImport,
+      label: "Skip, do not import",
     });
 
     const [showFileItems, setShowFileItems] = useState(false);
@@ -169,8 +169,8 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     importLoader ||
     (importError && primaryButtonText !== "Try Again") || 
     (showFileItems && 
-      selectedFlowVersion?.label === "Skip, do not import" && 
-      selectedLayoutVersion?.label === "Skip, do not import");
+      selectedFlowVersion?.label === skipImport && 
+      selectedLayoutVersion?.label === skipImport);
       
       useEffect(() => {
         const fileItemsHasVersion = fileItems && Object.values(fileItems).some(hasVersion);
