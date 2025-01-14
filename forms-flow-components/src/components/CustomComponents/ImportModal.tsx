@@ -174,13 +174,10 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       
       useEffect(() => {
         const fileItemsHasVersion = fileItems && Object.values(fileItems).some(hasVersion);
-        const processVersionHasVersion = processVersion?.majorVersion != null || processVersion?.minorVersion != null;
-      
-        if (fileItemsHasVersion) {
+        const processVersionHasVersion = hasVersion(processVersion);
+        if (fileItemsHasVersion || processVersionHasVersion) {
           setShowFileItems(true);
-        } else if (processVersionHasVersion) {
-          setShowFileItems(true);
-        } else {
+         } else {
           setShowFileItems(false);
         }
       }, [importError, fileItems, processVersion]);
