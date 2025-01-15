@@ -290,7 +290,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         >
           <Modal.Header>
             <Modal.Title id="history-modal-title">
-              <b>{title}</b>
+              <b>{t(title)}</b>
             </Modal.Title>
             <div className="d-flex align-items-center ">
               <CloseIcon onClick={handleClose} />
