@@ -77,27 +77,25 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const hasVersion = (item) => item?.majorVersion != null || item?.minorVersion != null;
-    const skipImport = fileItems && Object.values(fileItems).some(hasVersion) 
-    ? "Skip, do not import" 
-    : "";
+    const skipImport = t("Skip, do not import");
+    
     const [selectedLayoutVersion, setSelectedLayoutVersion] = useState<{
       value: any;
       label: string;
     } | null>({
       value: true,
-      label: "Skip, do not import",
+      label: skipImport,
     });
     const [selectedFlowVersion, setSelectedFlowVersion] = useState<{
       value: any;
       label: string;
     } | null>({
       value: true,
-      label: "Skip, do not import",
+      label: skipImport,
     });
 
     const [showFileItems, setShowFileItems] = useState(false);
     const [inprogress, setInprogress] = useState(true);
-
     const layoutOptions = [
       { value: true, label: "Skip, do not import" },
       {
@@ -164,14 +162,14 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
 
     const primaryButtonDisabled = 
-    !selectedFile || 
-    inprogress || 
-    importLoader ||
-    (importError && primaryButtonText !== "Try Again") || 
-    (showFileItems && 
-      selectedFlowVersion?.label === skipImport && 
-      selectedLayoutVersion?.label === skipImport);
-      
+      !selectedFile || 
+      inprogress || 
+      importLoader ||
+      (importError && primaryButtonText !== "Try Again") || 
+      (showFileItems && fileItems &&
+        selectedFlowVersion?.label === skipImport && 
+        selectedLayoutVersion?.label === skipImport);
+       
       useEffect(() => {
         const fileItemsHasVersion = fileItems && Object.values(fileItems).some(hasVersion);
         const processVersionHasVersion = hasVersion(processVersion);
