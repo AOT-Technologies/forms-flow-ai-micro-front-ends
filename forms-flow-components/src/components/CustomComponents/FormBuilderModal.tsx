@@ -126,7 +126,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
         >
           <Modal.Header>
             <Modal.Title>
-              <b>{modalHeader}</b>
+              <b>{t(modalHeader)}</b>
             </Modal.Title>
             <div className="d-flex align-items-center">
               <CloseIcon onClick={onClose} />
@@ -136,7 +136,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <FormInput
               name="title"
               type="text"
-              placeholder={placeholderForForm}
+              placeholder={t(placeholderForForm)}
               label={nameLabel}
               aria-label={t("Name of the form")}
               data-testid={nameInputDataTestid}
@@ -151,10 +151,11 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               isInvalid={!!nameError}
               feedback={nameError}
               turnOnLoader={isFormNameValidating}
+              maxLength={200} 
             />
            <FormTextArea
               name="description"
-              placeholder={placeholderForDescription}
+              placeholder={t(placeholderForDescription)}
               label={descriptionLabel}
               className="form-input"
               aria-label={t("Description of the new form")}
