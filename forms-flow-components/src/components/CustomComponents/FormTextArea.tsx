@@ -24,6 +24,8 @@ interface FormTextAreaProps {
     onIconClick?: () => void;
     maxRows?: number;
     iconPosition?: string;
+    minLength?: number;
+    maxLength?: number; 
 }
 
 export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>(({
@@ -46,7 +48,9 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     minRows = 1,
     onIconClick,
     maxRows = 5,
-    iconPosition = "top"
+    iconPosition = "top",
+    minLength, 
+    maxLength, 
 }, ref) => {
     const { t } = useTranslation();
     const internalRef = useRef<HTMLTextAreaElement>(null);
@@ -99,6 +103,8 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         className={`custom-textarea form-control-input ${icon ? 'with-icon' : ''} ${className}`}
                         style={{ maxHeight: `${maxRows * 1.5}em` }}
                         onKeyDown={handleKeyDown}
+                        minLength={minLength}
+                        maxLength={maxLength}
                     />
                     {icon && (
                         <InputGroup.Text

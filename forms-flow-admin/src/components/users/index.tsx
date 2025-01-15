@@ -21,7 +21,8 @@ const UserManagement = React.memo((props: any) => {
   const [filter, setFilter] = React.useState(undefined);
   const [total, setTotal] = React.useState(undefined);
   const { t } = useTranslation();
-
+  const [sizePerPage, setSizePerPage] = React.useState(5);
+  
   React.useEffect(() => {
     if (filter === undefined) return;
     setLoading(true);
@@ -29,6 +30,7 @@ const UserManagement = React.memo((props: any) => {
       filter,
       1,
       search,
+      sizePerPage,
       (results) => {
         setUsers(removeTenantIdFromUserRoles(results.data));
         setInvalidated(false);
@@ -54,6 +56,7 @@ const UserManagement = React.memo((props: any) => {
         filter,
         1,
         search,
+        sizePerPage,
         (results) => {
           setUsers(removeTenantIdFromUserRoles(results.data));
           setInvalidated(false);
@@ -80,6 +83,7 @@ const UserManagement = React.memo((props: any) => {
         filter,
         pageNo,
         search,
+        sizePerPage,
         (results) => {
           setUsers(removeTenantIdFromUserRoles(results.data));
           setTotal(results.count);
@@ -103,6 +107,7 @@ const UserManagement = React.memo((props: any) => {
       null,
       pageNo,
       null,
+      sizePerPage,
       (results) => {
         
         setUsers(removeTenantIdFromUserRoles(results.data));
@@ -122,7 +127,7 @@ const UserManagement = React.memo((props: any) => {
       setError(err);
       toast.error(t("Failed to fetch roles!"))
     });
-  }, []);
+  }, [sizePerPage]);
 
   const removeTenantIdFromUserRoles = (data)=>{
     let updatedUserData = []
@@ -151,6 +156,7 @@ const UserManagement = React.memo((props: any) => {
         setFilter={setFilter}
         total={total}
         error={error}
+        limit = {{sizePerPage , setSizePerPage}}
       />
     </>
   );

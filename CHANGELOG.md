@@ -2,6 +2,44 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 7.0.0 - 2025-01-10
+
+`Added`
+
+**forms-flow-admin**
+* Added permission selection option in role creation modal
+
+**forms-flow-theme**
+* Added new root variables to support the updated UI design
+* Added style changes to support new design
+
+**forms-flow-components**
+* New micro-frontend to include reusable UI components
+* Added new reusable components:
+  * Svg Icons
+  * Svg Images
+  * Custom components:
+    * Modals 
+    * Button 
+    * Form elements 
+    * Table elements
+<br><br>
+
+
+`Modified`
+
+**forms-flow-admin**
+* Renamed Admin menu as Manage and moved to sidebar
+
+**forms-flow-nav**
+* Modified Navbar to sidebar with updated design
+
+
+
+
+
+
+
 ## 6.0.2 - 2024-06-05
 
 `Generic Changes`

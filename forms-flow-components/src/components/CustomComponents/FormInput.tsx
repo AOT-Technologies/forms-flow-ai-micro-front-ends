@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FocusEvent ,KeyboardEvent, useEffect, useRef } from 'react';
+import React, { ChangeEvent, FocusEvent, KeyboardEvent, useEffect, useRef } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
 
@@ -23,7 +23,9 @@ interface FormInputProps {
   onIconClick?: () => void;
   onClick?: () => void;
   turnOnLoader?: boolean;
-  autoFocusInput?:boolean;
+  autoFocusInput?: boolean;
+  minLength?: number;
+  maxLength?: number; 
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -48,7 +50,9 @@ export const FormInput: React.FC<FormInputProps> = ({
   onClick,
   turnOnLoader = false,
   autoFocusInput = false,
-},) => {
+  minLength,
+  maxLength, 
+}) => {
   const { t } = useTranslation();
   const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
   const inputRef = useRef(null);
@@ -65,32 +69,34 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   return (
-      <Form.Group controlId={id}>
-        {label && (
-          <Form.Label className='custom-form-control-label'>
-            {t(label)} {required && <span className='required-icon'>*</span>}
-          </Form.Label>
-        )}
-        <InputGroup className="custom-form-input-group">
-          <Form.Control
-            type={type}
-            name={name}
-            value={value}
-            onChange={onChange}
-            onBlur={onBlur}
-            placeholder={t(placeholder)}
-            isInvalid={isInvalid}
-            disabled={disabled}
-            size={size}
-            data-testid={dataTestid}
-            aria-label={ariaLabel}
-            required={required}
-            className={inputClassNames}
-            onKeyDown={handleKeyDown}
-            onClick={onClick}
-            ref={inputRef}
-          />
-          {turnOnLoader && (
+    <Form.Group controlId={id}>
+      {label && (
+        <Form.Label className='custom-form-control-label'>
+          {t(label)}{required && <span className='required-icon'>*</span>}
+        </Form.Label>
+      )}
+      <InputGroup className="custom-form-input-group">
+        <Form.Control
+          type={type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          placeholder={placeholder}
+          isInvalid={isInvalid}
+          disabled={disabled}
+          size={size}
+          data-testid={dataTestid}
+          aria-label={ariaLabel}
+          required={required}
+          className={inputClassNames}
+          onKeyDown={handleKeyDown}
+          onClick={onClick}
+          ref={inputRef}
+          minLength={minLength}
+          maxLength={maxLength}
+        />
+        {turnOnLoader && (
           <div className="input-spinner"></div>
         )}
           {icon && !turnOnLoader &&(

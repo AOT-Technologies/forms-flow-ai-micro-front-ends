@@ -210,7 +210,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const manageOptions = () => {
     const options = [];
     
-    if (isViewDashboard || isDashboardManager) {
+    if (isDashboardManager) {
       options.push({
         name: "Dashboards",
         path: DASHBOARD_ROUTE,
@@ -402,8 +402,8 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 });
 
 Sidebar.propTypes = {
-    subscribe: PropTypes.func.isRequired, 
-    getKcInstance: PropTypes.func.isRequired,
+    subscribe: PropTypes.func, 
+    getKcInstance: PropTypes.func,
     publish: PropTypes.func,
     sidenavHeight: PropTypes.string, 
 };

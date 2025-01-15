@@ -79,7 +79,6 @@ const Roles = React.memo((props: any) => {
     setDisabled(
       !(
         payload.name?.trim() &&
-        payload.description?.trim() &&
         payload.permissions.length !== 0
       )
     );
@@ -89,7 +88,6 @@ const Roles = React.memo((props: any) => {
     setDisabled(
       !(
         editCandidate.name?.trim() &&
-        editCandidate.description?.trim() &&
         editCandidate.permissions.length !== 0
       )
     );
@@ -181,7 +179,6 @@ const Roles = React.memo((props: any) => {
   const validateRolePayload = (payload) => {
     return !(
       payload.name === "" ||
-      payload.description === "" ||
       payload.permissions.length === 0
     );
   };
@@ -270,6 +267,7 @@ const Roles = React.memo((props: any) => {
     setLoading(true);
     fetchUsers(
       rowData.name,
+      null,
       null,
       null,
       (results) => {
@@ -424,7 +422,6 @@ const Roles = React.memo((props: any) => {
             <Form.Label htmlFor="role-description" className="mt-2">
               {t("Description")}
             </Form.Label>
-            <i className="text-danger">*</i>
             <Form.Control
               id="role-description"
               as="textarea"
@@ -514,7 +511,6 @@ const Roles = React.memo((props: any) => {
             <Form.Label htmlFor="edit-description" className="mt-2">
               {t("Description")}
             </Form.Label>
-            <i style={{ color: "#e00" }}>*</i>
             <Form.Control
               id="edit-description"
               as="textarea"
