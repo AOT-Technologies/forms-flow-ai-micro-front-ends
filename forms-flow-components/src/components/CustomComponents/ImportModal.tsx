@@ -160,9 +160,9 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     };
 
 
-    const primaryButtonDisabled = 
-      !selectedFile || 
-      inprogress || 
+    const primaryButtonDisabled =
+      !selectedFile ||
+      inprogress ||
       importLoader ||
       (importError && primaryButtonText !== "Try Again") || 
       (showFileItems && fileItems &&
