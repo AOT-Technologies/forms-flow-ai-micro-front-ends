@@ -63,6 +63,12 @@ const Admin = React.memo(({ props }: any) => {
   }, []);
 
   React.useEffect(()=>{
+    if(instance){
+      publish("FF_AUTH", instance);
+    }
+  },[instance])
+
+  React.useEffect(()=>{
     if(!isAuth) return
     const locale = localStorage.getItem("i18nextLng")
     if(locale) i18n.changeLanguage(locale);
