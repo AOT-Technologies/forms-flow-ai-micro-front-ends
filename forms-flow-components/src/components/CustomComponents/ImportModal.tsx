@@ -76,6 +76,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     const redColor = computedStyle.getPropertyValue("--ff-red-000");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const hasVersion = (item) => item?.majorVersion != null || item?.minorVersion != null;
     const skipImport = "Skip, do not import";
     const [selectedLayoutVersion, setSelectedLayoutVersion] = useState<{
       value: any;
@@ -160,34 +161,27 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     };
 
 
-    const primaryButtonDisabled = 
-      !selectedFile || 
-      inprogress || 
+    const primaryButtonDisabled =
+      !selectedFile ||
+      inprogress ||
       importLoader ||
-      (importError && primaryButtonText !== "Try Again") || 
-      (showFileItems && 
-        selectedFlowVersion?.label === skipImport && 
+      (importError && primaryButtonText !== "Try Again") ||
+      (showFileItems &&
+        fileItems &&
+        selectedFlowVersion?.label === skipImport &&
         selectedLayoutVersion?.label === skipImport);
     
 
-    useEffect(() => {
-      if (
-        fileItems &&
-        !importError &&
-        Object.values(fileItems).some(
-          (item) => item?.majorVersion != null || item?.minorVersion != null
-        )
-      ) {
-        setShowFileItems(true);
-      } else if (
-        processVersion?.majorVersion != null ||
-        processVersion?.minorVersion != null
-      ) {
-        setShowFileItems(true);
-      } else {
-        setShowFileItems(false);
-      }
-    }, [importError, fileItems]);
+   useEffect(() => {
+     const fileItemsHasVersion =
+       fileItems && Object.values(fileItems).some(hasVersion);
+     const processVersionHasVersion = hasVersion(processVersion);
+     if (fileItemsHasVersion || processVersionHasVersion) {
+       setShowFileItems(true);
+     } else {
+       setShowFileItems(false);
+     }
+   }, [importError, fileItems, processVersion]);
 
     useEffect(() => {
       if (!showModal) {
