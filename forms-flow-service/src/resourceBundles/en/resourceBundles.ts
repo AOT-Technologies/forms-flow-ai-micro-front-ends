@@ -770,6 +770,7 @@ export const RESOURCE_BUNDLES_EN ={
   "Are You Sure You Want to Delete This Form?": "Are You Sure You Want to Delete This Form?",
   "No, Keep This Form": "No, Keep This Form",
   "Yes, Delete the Form": "Yes, Delete the Form",
+  "Importing and deleting is not available when the form is published. You must unpublish the form first if you wish to make any changes.": "Importing and deleting is not available when the form is published. You must unpublish the form first if you wish to make any changes.",
 
 
 

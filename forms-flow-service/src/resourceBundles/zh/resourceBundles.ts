@@ -1264,6 +1264,6 @@ export const RESOURCE_BUNDLES_ZH = {
   "Are You Sure You Want to Delete This Form?": "您确定要删除此表单吗？",
   "No, Keep This Form": "不，保留此表单",
   "Yes, Delete the Form": "是的，删除表单",
-   
+"Importing and deleting is not available when the form is published. You must unpublish the form first if you wish to make any changes.": "当表单已发布时，无法导入和删除。如果您希望进行任何更改，必须先取消发布表单。",
 
 }

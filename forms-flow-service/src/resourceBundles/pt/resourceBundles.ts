@@ -1277,4 +1277,5 @@ export const RESOURCE_BUNDLES_PT ={
   "Are You Sure You Want to Delete This Form?": "Tem certeza de que deseja excluir este formulário?",
   "No, Keep This Form": "Não, manter este formulário",
   "Yes, Delete the Form": "Sim, excluir o formulário",
+  "Importing and deleting is not available when the form is published. You must unpublish the form first if you wish to make any changes.": "A importação e exclusão não estão disponíveis quando o formulário está publicado. Você deve despublicar o formulário primeiro se desejar fazer alterações.",
 };

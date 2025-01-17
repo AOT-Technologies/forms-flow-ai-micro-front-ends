@@ -1275,4 +1275,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Are You Sure You Want to Delete This Form?": "Сигурни ли сте, че искате да изтриете тази форма?",
   "No, Keep This Form": "Не, запазете тази форма",
   "Yes, Delete the Form": "Да, изтрийте формата",
+  "Importing and deleting is not available when the form is published. You must unpublish the form first if you wish to make any changes.": "Импортирането и изтриването не са налични, когато формата е публикувана. Трябва първо да я оттеглите, ако искате да направите промени.",
+  
 }
