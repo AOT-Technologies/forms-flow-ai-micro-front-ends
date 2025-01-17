@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import {CustomButton} from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
+import { useTranslation } from "react-i18next";
 
 interface ErrorModalProps {
   show: boolean;
@@ -25,6 +26,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
   primaryBtndataTestid = 'Dismiss-button',
   primaryBtnariaLabel = 'Dismiss',
 }) => {
+  const { t } = useTranslation();
   return (
       <Modal
         show={show}
@@ -38,7 +40,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
         <Modal.Header>
           <Modal.Title id="error-modal-title" className="text-danger">
             <b>
-              {title}
+              {t(title)}
             </b>
           </Modal.Title>
           <div className="d-flex align-items-center">
@@ -55,7 +57,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
               data-testid="error-modal-primary-message"
               aria-label="Primary message"
             >
-              {message}
+              {t(message)}
             </div>
           </div>
         </Modal.Body>

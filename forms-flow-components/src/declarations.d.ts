@@ -39,5 +39,5 @@ declare module "*.svg" {
 }
 
 declare module "@formsflow/service" {
-	export const { HelperServices }: any;
+	export const { HelperServices, StyleServices }: any;
 }

@@ -3,7 +3,8 @@ import { InputGroup } from 'react-bootstrap';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { FormInput } from './FormInput';
 import { CloseIcon , ChevronIcon } from "../SvgIcons/index";
-
+import { useTranslation } from "react-i18next";
+import { StyleServices } from "@formsflow/service";
 
 interface DropdownItem {
   label: string;
@@ -47,6 +48,8 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   inputClassName='',
   onBlurDropDown
 }) => {
+  const { t } = useTranslation();
+  const primaryColor = StyleServices.getCSSVariable('primary');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(selectedOption || ''); 
   const [filteredItems, setFilteredItems] = useState<DropdownItem[]>([]);
@@ -124,16 +127,16 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       ariaLabel={ariaLabelforInput}
                       dataTestid={dataTestIdforInput}
                       isInvalid={isInvalid}
-                      icon={<CloseIcon onClick={handleClose} color='#253DF4' data-testid="close-input" aria-label="Close input "/>} 
+                      icon={<CloseIcon onClick={handleClose} color={primaryColor} data-testid="close-input" aria-label="Close input "/>} 
                       className="input-with-close"
-                      label={dropdownLabel}
-                      feedback={feedback}
+                      label={t(dropdownLabel)}
+                      feedback={t(feedback)}
                   />
               </InputGroup>
           ) : (
               <InputGroup>
                   <FormInput
-                      placeholder={placeholder}
+                      placeholder={t(placeholder)}
                       value={inputValue}
                       onChange={handleInputDropdownChange}
                       onClick={toggleDropdown}
@@ -142,11 +145,11 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       icon={<ChevronIcon data-testid="dropdown-input" aria-label="dropdown input"/>}
                       className={`${inputClassName} ${isDropdownOpen ? 'border-input collapsed' : ''}`}
                       onIconClick={toggleDropdown}
-                      label={dropdownLabel}
+                      label={t(dropdownLabel)}
                       required={required}
                       onBlur={onBlurDropDown}
                       isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
-                      feedback={feedback}
+                      feedback={t(feedback)}
                   />
               </InputGroup>
           )}
@@ -159,7 +162,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                           className="list-first-item-btn"
                           data-testid="list-first-item"
                       >
-                          {firstItemLabel}
+                          {t(firstItemLabel)}
                       </ListGroup.Item>
                   )}
                   {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
@@ -169,7 +172,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                           data-testid={`list-${index}-item`}
                           aria-label={`list-${item.label}-item`}
                       >
-                          {item.label}
+                          {t(item.label)}
                       </ListGroup.Item>
                   ))}
               </ListGroup>
