@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import Pagination from "react-js-pagination";
 import { Dropdown } from "react-bootstrap";
 import { DownArrowIcon, AngleLeftIcon, AngleRightIcon } from "../SvgIcons/index";
-import { StyleServices } from "@formsflow/service";
 interface PageOption {
   value: number;
   text: string;
