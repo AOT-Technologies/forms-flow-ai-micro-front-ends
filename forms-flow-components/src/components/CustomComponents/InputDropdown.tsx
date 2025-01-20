@@ -49,7 +49,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   onBlurDropDown
 }) => {
   const { t } = useTranslation();
-  const primaryColor = StyleServices.getCSSVariable('primary');
+  const primaryColor = StyleServices.getCSSVariable('--ff-primary');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(selectedOption || ''); 
   const [filteredItems, setFilteredItems] = useState<DropdownItem[]>([]);
