@@ -722,4 +722,6 @@ export const RESOURCE_BUNDLES_ES = {
     "Confirm and Edit form": "Confirmar y editar formulario",
     "Click or drag a file to this area to import": "Haga clic o arrastre un archivo a esta área para importarlo",
     "Import New": "Importar Nuevo",
+    "Search DMN Name": "Buscar nombre DMN",
+    "Search BPMN Name": "Buscar nombre BPMN"
 }

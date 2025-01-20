@@ -1236,6 +1236,7 @@ export const RESOURCE_BUNDLES_FR ={
   "Create And Edit BPMN": "Créer et modifier le BPMN",
   "Create And Edit DMN": "Créer et modifier le DMN",
   "Import New": "Importer un nouveau",
+  "Search DMN Name": "Rechercher le nom DMN",
 }
 
 

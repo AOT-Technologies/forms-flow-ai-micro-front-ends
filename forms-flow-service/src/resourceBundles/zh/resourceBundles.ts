@@ -1223,4 +1223,5 @@ export const RESOURCE_BUNDLES_ZH = {
   "Create And Edit BPMN": "创建和编辑 BPMN",
   "Create And Edit DMN": "创建和编辑 DMN",
   "Import New": "导入新内容",
+  "Search DMN Name": "搜索 DMN 名称",
 }
