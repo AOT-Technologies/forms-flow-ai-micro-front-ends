@@ -1197,5 +1197,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "New Form Name": "新表单名称",
   "New Form Description": "新表单描述",
   "Save and Edit form": "保存并编辑表单",
-  "Build New Form": "创建新表单"
+  "Build New Form": "创建新表单",
+  "cancel": "取消",
+  "previous": "上一页",
+  "next": "下一页",
+  "Month": "月",
+  "Year": "年"
 }

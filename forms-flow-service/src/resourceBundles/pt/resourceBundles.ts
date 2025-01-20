@@ -1211,4 +1211,9 @@ export const RESOURCE_BUNDLES_PT ={
   "New Form Description": "Nova descrição do formulário",
   "Save and Edit form": "Salvar e Editar formulário",
   "Build New Form": "Criar novo formulário",
+  "cancel": "cancelar",
+  "previous": "anterior",
+  "next": "próximo", 
+  "Month": "Mês", 
+  "Year": "Ano"
 };

@@ -1214,4 +1214,9 @@ export const RESOURCE_BUNDLES_DE = {
   "New Form Description": "Neue Formularbeschreibung",
   "Save and Edit form": "Formular speichern und bearbeiten",
   "Build New Form": "Neues Formular erstellen",
+  "cancel": "abbrechen",
+  "previous": "vorherige",
+  "next": "nächste", 
+  "Month": "Monat", 
+  "Year": "Jahr"
 }

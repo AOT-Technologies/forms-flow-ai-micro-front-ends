@@ -698,4 +698,11 @@ export const RESOURCE_BUNDLES_ES = {
     "New Form Description": "Nueva descripción del formulario",
     "Save and Edit form": "Guardar y editar formulario",
     "Build New Form": "Crear nuevo formulario",
+    "cancel": "cancelar",
+    "previous": "anterior",
+    "next": "siguiente",
+    "Date / Time": "Fecha / Hora",
+    "Month": "Mes",
+    "Day": "Día",
+    "Year": "Año"
 }

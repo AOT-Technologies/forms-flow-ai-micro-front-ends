@@ -1209,4 +1209,9 @@ export const RESOURCE_BUNDLES_BG = {
   "New Form Description": "Ново описание на формуляра",
   "Save and Edit form": "Запазване и редактиране на формуляра",
   "Build New Form": "Създай нов формуляр",
+  "cancel": "Отмени",
+  "previous": "Предишна",
+  "next": "Следваща", 
+  "Month": "Месец", 
+  "Year": "Година"
 }
