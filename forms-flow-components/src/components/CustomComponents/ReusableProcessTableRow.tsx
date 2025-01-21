@@ -22,7 +22,7 @@ export const ReusableProcessTableRow: React.FC<ProcessTableRowProps> = ({ item, 
   return (
     <tr>
       <td className="w-25 text-ellipsis text-nowrap">
-        <span className="ms-4">{item.name}</span>
+        <span>{item.name}</span>
       </td>
       <td className="w-20 text-ellipsis text-nowrap">
         <span>{item.processKey}</span>

@@ -1237,4 +1237,9 @@ export const RESOURCE_BUNDLES_PT ={
   "Create And Edit DMN": "Criar e Editar DMN",
   "Import New": "Importar Novo",
   "Search DMN Name": "Pesquisar nome DMN",
+  "cancel": "cancelar",
+  "previous": "anterior",
+  "next": "próximo", 
+  "Month": "Mês", 
+  "Year": "Ano",
 };

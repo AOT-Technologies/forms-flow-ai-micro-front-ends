@@ -1240,4 +1240,9 @@ export const RESOURCE_BUNDLES_DE = {
   "Create And Edit DMN": "Erstellen und Bearbeiten von DMN",
   "Import New": "Neu importieren",
   "Search DMN Name": "DMN-Namen suchen",
+  "cancel": "abbrechen",
+  "previous": "vorherige",
+  "next": "nächste", 
+  "Month": "Monat", 
+  "Year": "Jahr",
 }

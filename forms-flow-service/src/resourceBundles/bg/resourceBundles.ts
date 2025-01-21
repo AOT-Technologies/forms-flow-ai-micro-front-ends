@@ -1235,4 +1235,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Click or drag a file to this area to import": "Щракнете или плъзнете файл в тази област, за да го импортирате",
   "Import New": "Импортиране на ново",
   "Search DMN Name": "Търсене на име DMN",
+  "cancel": "Отмени",
+  "previous": "Предишна",
+  "next": "Следваща", 
+  "Month": "Месец", 
+  "Year": "Година",
 }

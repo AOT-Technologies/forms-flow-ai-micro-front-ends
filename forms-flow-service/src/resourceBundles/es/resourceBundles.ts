@@ -723,5 +723,12 @@ export const RESOURCE_BUNDLES_ES = {
     "Click or drag a file to this area to import": "Haga clic o arrastre un archivo a esta área para importarlo",
     "Import New": "Importar Nuevo",
     "Search DMN Name": "Buscar nombre DMN",
-    "Search BPMN Name": "Buscar nombre BPMN"
+    "Search BPMN Name": "Buscar nombre BPMN",
+    "cancel": "cancelar",
+    "previous": "anterior",
+    "next": "siguiente",
+    "Date / Time": "Fecha / Hora",
+    "Month": "Mes",
+    "Day": "Día",
+    "Year": "Año",
 }

@@ -8,7 +8,7 @@ export const NoDataFound: React.FC = () => {
     <tbody className="no-data-body">
       <tr>
         <td colSpan={2} className="no-data-container">
-          <span className="no-data-text" data-testid="no-data-found">{t("Nothing is found. Please try again.")}</span>
+          <span className="no-data-text" data-testid="no-data-found">{t("Nothing is found based on your search query. Please try again.")}</span>
         </td>
       </tr>
     </tbody>
