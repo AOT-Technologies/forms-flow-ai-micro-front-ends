@@ -771,7 +771,8 @@ export const RESOURCE_BUNDLES_EN ={
   "No, Keep This Form": "No, Keep This Form",
   "Yes, Delete the Form": "Yes, Delete the Form",
   "Importing and deleting is not available when the form is published. You must unpublish the form first if you wish to make any changes.": "Importing and deleting is not available when the form is published. You must unpublish the form first if you wish to make any changes.",
-
-
-
+  "Date / Time": "Date / Time",
+  "Month": "Month",
+  "Day": "Day",
+  "Year": "Year",
 }

@@ -372,21 +372,20 @@ export const IButton = ({ color = grayColor, ...props }) => (
   </svg>
 );
 
-export const DownArrowIcon = ({ color = grayColor, ...props }) => (
+export const DownArrowIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="10"
+    width="16"
     height="10"
-    viewBox="0 0 16 16"
-    fill={color}
+    viewBox="0 0 16 10"
+    fill="none"
   >
     <path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M1.64599 4.64604C1.69244 4.59948 1.74761 4.56253 1.80836 4.53733C1.86911 4.51212 1.93423 4.49915 1.99999 4.49915C2.06576 4.49915 2.13088 4.51212 2.19163 4.53733C2.25237 4.56253 2.30755 4.59948 2.35399 4.64604L7.99999 10.293L13.646 4.64604C13.6925 4.59955 13.7477 4.56267 13.8084 4.53752C13.8691 4.51236 13.9342 4.49941 14 4.49941C14.0657 4.49941 14.1308 4.51236 14.1916 4.53752C14.2523 4.56267 14.3075 4.59955 14.354 4.64604C14.4005 4.69253 14.4374 4.74772 14.4625 4.80846C14.4877 4.86919 14.5006 4.9343 14.5006 5.00004C14.5006 5.06578 14.4877 5.13088 14.4625 5.19162C14.4374 5.25236 14.4005 5.30755 14.354 5.35404L8.35399 11.354C8.30755 11.4006 8.25237 11.4375 8.19163 11.4628C8.13088 11.488 8.06576 11.5009 7.99999 11.5009C7.93423 11.5009 7.86911 11.488 7.80836 11.4628C7.74761 11.4375 7.69244 11.4006 7.64599 11.354L1.64599 5.35404C1.59943 5.30759 1.56249 5.25242 1.53728 5.19167C1.51207 5.13093 1.4991 5.06581 1.4991 5.00004C1.4991 4.93427 1.51207 4.86915 1.53728 4.80841C1.56249 4.74766 1.59943 4.69248 1.64599 4.64604Z"
-      fill="#000000"
-      stroke="#000000"
+      d="M1.49969 1.74976L8.00028 8.25034L14.5003 1.75034"
+      stroke={color}
       strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -452,6 +451,26 @@ export const AngleRightIcon = ({ color = baseColor, onClick, ...props }) => (
     />
   </svg>
 );
+
+export const AngleLeftIcon = ({ color = baseColor, onClick, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="10"
+    height="15"
+    viewBox="0 0 10 15"
+    fill="none"
+    onClick={onClick}
+  >
+    <path
+      d="M8.2501 14.0005L1.74951 7.4999L8.24951 0.999901"
+      stroke={props.disabled ? grayColor : color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 
 export const UploadIcon = ({ color = baseColor, ...props }) => (
   <svg
@@ -668,3 +687,20 @@ export const StarPremiumIcon = ({ color = baseColor,...props }) => (
   </svg>
 );
 
+export const SortIcon = ({ color = grayColor, ...props }) => (
+  <svg
+    width="12"
+    height="17"
+    viewBox="0 0 12 17"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M6 15.5L6 1.5M6 1.5L11 5.5M6 1.5L1 5.5"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

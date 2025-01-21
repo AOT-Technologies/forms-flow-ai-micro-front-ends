@@ -24,16 +24,16 @@ $secondary: var(--ff-secondary);
       opacity: 0;
     }
 
-    // for modals with size="sm" . 50% given to make it 750px as per figma size
+    // for modals with size="sm" . 63.5% given to make it 960px as per figma size
     &.modal-sm {
-      width: 50% !important;
-      max-width: 50% !important;
+      width: 63.5% !important;
+      max-width: 63.5% !important;
     }
 
-    // for modals with size="lg" . 95% given to make it 1432px as per figma size
+    // for modals with size="lg" . 95% given to make it 1440px as per figma size
     &.modal-lg {
-      width: 95% !important;
-      max-width: 95% !important;
+      width: 95.2% !important;
+      max-width: 95.2% !important;
     }
 
 
@@ -631,10 +631,23 @@ $secondary: var(--ff-secondary);
 
 
 //expression-builder-modal
-.expression-builder{
-  .expression-list-group {
-    width: 100%;
+.expression-builder-modal {
+  .modal-content{
+    margin-top: var(--spacer-100);
+    margin-bottom: var(--spacer-100);
+    max-height: calc(100vh - 2rem);
   }
+  
+  .expression-section{
+    border-bottom: 1px solid var(--ff-gray-100);
+    padding: var(--spacer-200) var(--spacer-225) !important;
+    gap: var(--spacer-050);
+  }
+}
+  .expression-builder{
+    .expression-list-group {
+      width: 100%;
+}
 
   .expression-list-group .form-variable {
     display: flex;
@@ -684,8 +697,7 @@ $secondary: var(--ff-secondary);
     flex-wrap: wrap;
   }
 
-  .expression-section,
-  .variable-section {
+  .expression-section{
     display: flex;
     padding: var(--spacer-200) var(--spacer-250);
     flex-direction: column;
@@ -694,45 +706,54 @@ $secondary: var(--ff-secondary);
   }
 
   .variable-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
     gap: var(--spacer-150);
+    max-height: calc(100vh - 35.875rem);
+    overflow-y: scroll;
   }
 
   .tab-label {
     font-size: var(--font-size-md);
   }
-
+  .tab-variable-section{
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacer-200);
+    gap: var(--spacer-150);
+  }
   .tab-section {
     display: flex;
     align-items: center;
     gap: var(--spacer-150);
-    padding-left: var(--spacer-250);
-    padding-top: var(--spacer-200);
+    border-bottom: 1px solid var(--ff-gray-000);
   }
 
   .variable-tab {
     gap: var(--spacer-150);
   }
-
-  .custom-value {
-    padding: 42px 24px 40px 40px;
-  }
+  
 
   .save-value {
     display: inline-flex;
-    justify-content: center;
     align-items: center;
     gap: var(--spacer-050);
-    padding-left: var(--spacer-250);
-    padding-bottom: var(--spacer-250);
   }
 
   .pick-operator {
-    padding: var(--spacer-200) var(--spacer-250) var(--spacer-150) var(--spacer-250);
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacer-200);
     gap: var(--spacer-050);
+    max-height: calc(100vh - 26.375rem); 
+    overflow-y: scroll;
   }
 
   .operator-list {
     width: 100%;
+    padding: var(--spacer-050) var(--spacer-100);
   }
 
   .operator-list:hover {
@@ -808,7 +829,6 @@ $secondary: var(--ff-secondary);
     margin: 0;
     align-items: center;
     width: 100%;
-    padding-block: 1rem;
     gap: var(--spacer-050);
     .badge-pill {
     background-color: $primary !important;
@@ -821,8 +841,8 @@ $secondary: var(--ff-secondary);
     .badge-pill {
       background-color: $primary !important;
       color: var(--ff-white) !important;
-    }
   }
+}
 }
 
 

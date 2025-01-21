@@ -1278,10 +1278,37 @@ export const RESOURCE_BUNDLES_FR ={
   "No, Keep This Form": "Non, garder ce formulaire",
   "Yes, Delete the Form": "Oui, supprimer le formulaire",
   "Importing and deleting is not available when the form is published. You must unpublish the form first if you wish to make any changes.": "L'importation et la suppression ne sont pas disponibles lorsque le formulaire est publié. Vous devez d'abord dépublier le formulaire si vous souhaitez apporter des modifications.",
-
-
-
-
+  "Search Form Name and Description": "Rechercher le nom et la description du formulaire",
+  "New Form": "Nouveau formulaire",
+  "Add Form": "Ajouter un formulaire",
+  "Build": "Construire",
+  "Import": "Importer",
+  "Create the form from scratch": "Créer le formulaire à partir de zéro",
+  "Upload form from a file": "Télécharger le formulaire depuis un fichier",
+  "Live": "En direct",
+  "Draft": "Brouillon",
+  "Last Edited": "Dernière édition",
+  "ID": "ID",
+  "New BPMN": "Nouveau BPMN",
+  "Create the BPMN from scratch": "Créer le BPMN à partir de zéro",
+  "Upload BPMN from a file": "Télécharger le BPMN depuis un fichier",
+  "Search BPMN Name": "Rechercher un nom BPMN",
+  "New DMN": "Nouveau DMN",
+  "Search Decision Table": "Rechercher une table de décision",
+  "Create the DMN from scratch": "Créer le DMN à partir de zéro",
+  "Upload DMN from a file": "Télécharger le DMN depuis un fichier",
+  "Import New Form": "Importer un nouveau formulaire",
+  "Confirm and Edit form": "Confirmer et modifier le formulaire",
+  "Click or drag a file to this area to import": "Cliquez ou glissez un fichier dans cette zone pour l'importer",
+  "Create And Edit BPMN": "Créer et modifier le BPMN",
+  "Create And Edit DMN": "Créer et modifier le DMN",
+  "Import New": "Importer un nouveau",
+  "Search DMN Name": "Rechercher le nom DMN",
+  "cancel": "annuler",
+  "previous": "précédent",
+  "next": "suivant", 
+  "Month": "Mois", 
+  "Year": "Année",
 }
 
 
