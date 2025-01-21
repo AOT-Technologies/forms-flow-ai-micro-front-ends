@@ -940,11 +940,19 @@ $secondary: var(--ff-secondary);
     margin-top: 1.5rem;
   }
 }
- 
-
-
-
-
-
-
-
+.sort-settings{
+  .sortbody-settings{
+    display: flex;
+    padding: var(--spacer-200) var(--spacer-250);
+    gap: var(--rem-150, 24px);
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+  }
+  .input-dropdown .list-group {
+    min-height: auto !important;
+  }
+}
+.button-align{
+  gap: var(--spacer-100);
+}

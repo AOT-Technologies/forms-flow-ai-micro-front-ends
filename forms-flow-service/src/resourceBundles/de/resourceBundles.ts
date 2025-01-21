@@ -1218,5 +1218,15 @@ export const RESOURCE_BUNDLES_DE = {
   "previous": "vorherige",
   "next": "nächste", 
   "Month": "Monat", 
-  "Year": "Jahr"
+  "Year": "Jahr",
+  "Sort": "Sortieren",
+  "Sort Results": "Sortierergebnisse",
+  "Sort By": "Sortieren nach",
+  "In a": "In einer",
+  "Sort By Dropdown": "Dropdown Sortieren nach",
+  "Sort By Input": "Eingabe Sortieren nach",
+  "Order Dropdown": "Dropdown Reihenfolge",
+  "Order Input": "Eingabe Reihenfolge",
+  "Apply sorting": "Sortierung anwenden",
+  "Last Edited": "Zuletzt Bearbeitet",
 }

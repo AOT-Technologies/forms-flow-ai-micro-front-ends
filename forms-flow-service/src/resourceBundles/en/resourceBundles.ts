@@ -720,5 +720,15 @@ export const RESOURCE_BUNDLES_EN ={
   "Date / Time": "Date / Time",
   "Month": "Month",
   "Day": "Day",
-  "Year": "Year"
+  "Year": "Year",
+  "Sort": "Sort",
+  "Sort Results": "Sort Results",
+  "Sort By": "Sort By",
+  "In a": "In a",
+  "Sort By Dropdown": "Sort By Dropdown",
+  "Sort By Input": "Sort By Input",
+  "Order Dropdown": "Order Dropdown",
+  "Order Input": "Order Input",
+  "Apply sorting": "Apply sorting",
+  "Last Edited": "Last Edited",
 }

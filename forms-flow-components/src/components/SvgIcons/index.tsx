@@ -687,6 +687,59 @@ export const StarPremiumIcon = ({ color = baseColor,...props }) => (
   </svg>
 );
 
+export const RefreshIcon = ({ color = baseColor, onClick, ...props }) => (
+  <svg
+    className="icon-wrapper-change"
+    width="43"
+    height="43"
+    viewBox="0 0 43 43"
+    fill="none"
+    onClick={onClick}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="21.5" cy="21.5" r="21.5" fill="#E2E1FC" />
+    <path
+      d="M14.5901 18.4524C15.724 15.5458 18.431 13.5 21.5901 13.5C24.7492 13.5 27.4562 15.5458 28.5901 18.4524M28.5901 24.5476C27.4562 27.4542 24.7492 29.5 21.5901 29.5C18.431 29.5 15.724 27.4542 14.5901 24.5476M25.1829 24.4777L29.2603 23.2539L30.4841 27.3312M18.0872 18.2866L14.0945 19.8652L12.5159 15.8725"
+      stroke={color}
+      strokeWidth="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
+export const FilterIcon = ({ color = baseColor,  onClick, ...props }) => (
+  <svg
+    className="icon-wrapper-change"
+    width="43"
+    height="43"
+    viewBox="0 0 43 43"
+    fill="none"
+    onClick={onClick}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="21.5" cy="21.5" r="21.5" fill="#E2E1FC" />
+    <path
+      d="M13.5312 17.5H29.4688"
+      stroke={color}
+      strokeWidth="2"
+      stroke-linecap="round"
+    />
+    <path
+      d="M13.5312 25.5H19.0312"
+      stroke={color}
+      strokeWidth="2"
+      stroke-linecap="round"
+    />
+    <path
+      d="M13.5312 21.5H23.5312"
+      stroke={color}
+      strokeWidth="2"
+      stroke-linecap="round"
+    />
+  </svg>
+);
+
 export const SortIcon = ({ color = grayColor, ...props }) => (
   <svg
     width="12"

@@ -704,5 +704,15 @@ export const RESOURCE_BUNDLES_ES = {
     "Date / Time": "Fecha / Hora",
     "Month": "Mes",
     "Day": "Día",
-    "Year": "Año"
+    "Year": "Año",
+    "Sort": "Ordenar",
+    "Sort Results": "Resultados del Ordenamiento",
+    "Sort By": "Ordenar Por",
+    "In a": "En una",
+    "Sort By Dropdown": "Menú desplegable Ordenar Por",
+    "Sort By Input": "Entrada Ordenar Por",
+    "Order Dropdown": "Menú desplegable de Orden",
+    "Order Input": "Entrada de Orden",
+    "Apply sorting": "Aplicar orden",
+    "Last Edited": "Última Edición",
 }

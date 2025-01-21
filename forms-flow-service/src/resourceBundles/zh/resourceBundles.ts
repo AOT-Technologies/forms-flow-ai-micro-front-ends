@@ -1202,5 +1202,15 @@ export const RESOURCE_BUNDLES_ZH = {
   "previous": "上一页",
   "next": "下一页",
   "Month": "月",
-  "Year": "年"
+  "Year": "年",
+  "Sort": "排序",
+  "Sort Results": "排序结果",
+  "Sort By": "排序依据",
+  "In a": "以",
+  "Sort By Dropdown": "排序依据下拉菜单",
+  "Sort By Input": "排序依据输入框",
+  "Order Dropdown": "排序顺序下拉菜单",
+  "Order Input": "排序顺序输入框",
+  "Apply sorting": "应用排序",
+  "Last Edited": "最后编辑",
 }

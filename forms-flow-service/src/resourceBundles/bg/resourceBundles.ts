@@ -1213,5 +1213,15 @@ export const RESOURCE_BUNDLES_BG = {
   "previous": "Предишна",
   "next": "Следваща", 
   "Month": "Месец", 
-  "Year": "Година"
+  "Year": "Година",
+  "Sort": "Сортирай",
+  "Sort Results": "Резултати от сортирането",
+  "Sort By": "Сортиране по",
+  "In a": "В",
+  "Sort By Dropdown": "Раздел Сортиране по",
+  "Sort By Input": "Вход Сортиране по",
+  "Order Dropdown": "Раздел Ред",
+  "Order Input": "Вход Ред",
+  "Apply sorting": "Приложи сортиране",
+  "Last Edited": "Последна редакция",
 }
