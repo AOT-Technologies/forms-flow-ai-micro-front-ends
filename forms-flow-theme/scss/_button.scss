@@ -1,21 +1,17 @@
 @import '_mixins';
 // Variables for reused values
 $primary: var(--ff-primary);
+$primary-light: var(--ff-primary-light);
 $black-color: var(--ff-black);
 $white-color: var(--ff-white);
-$gray-000: var(--ff-gray-000);
+$gray-dark: var(--ff-gray-dark);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
 $dropdown-btn-size: 3.2275rem;
 $btn-border-radius: 50%;
 $btn-font-weight: bold;
 
-.btn-light {
-  background-color: $gray-100 !important;
 
-  &:hover {
-    border: 0.0625rem solid var(--ff-gray-400) !important;
-    background-color: var(--ff-gray-300) !important;
-  }
-}
 
 
 .form-select {
@@ -50,7 +46,7 @@ $btn-font-weight: bold;
 }
 
 .btn-outline-primary {
-  border-color: var(--ff-primary-200) !important;
+  border-color: $primary-light !important;
 }
 
 .btn-center {
@@ -78,31 +74,14 @@ $btn-font-weight: bold;
   }
 }
 
-// .upload+.uploadButton {
-//   height: 2.375rem;
-// }
-
-// .uploadButton {
-//   background-color: var(--ff-primary-500);
-//   border: none;
-//   border-radius: 0.1875rem;
-//   color: $white-color;
-//   cursor: pointer;
-//   display: inline-block;
-//   height: 1.875rem;
-//   margin-right: 0.9375rem;
-//   width: auto;
-//   padding: 0 1.25rem;
-//   box-sizing: content-box;
-// }
 
 .bg-primary {
-  background-color: var(--ff-primary) !important;
+  background-color: $primary!important;
 }
 
 .table-primary {
   --bs-table-color: #fff;
-  --ff-table-bg: var(--ff-primary) !important;
+  --ff-table-bg: $primary !important;
 }
 
 .btn-wizard-nav-submit,
@@ -125,35 +104,9 @@ $btn-font-weight: bold;
 .nav-link:focus-visible,
 .form-check-input:focus-visible,
 .out-line:focus-visible {
-  outline: 0.1875rem solid var(--ff-primary-200) !important;
+  outline: 0.1875rem solid $primary-light !important;
 }
 
-// Mixin for button states
-// @mixin button-states($bg-color, $border-color, $text-color) {
-//   background-color: $bg-color !important;
-//   border-color: $border-color !important;
-//   color: $text-color !important;
-
-//   &:focus {
-//     outline: none !important;
-//   }
-
-//   &:hover {
-//     background-color: darken($bg-color, 10%) !important;
-//     box-shadow: var(--shadow-md) !important;
-//   }
-
-//   &:active {
-//     background-color: $white-color !important;
-//     border: 0.0625rem solid $border-color !important;
-//   }
-
-//   &:disabled {
-//     background-color: var(--ff-gray-300) !important;
-//     color: $white-color !important;
-//     border-color: var(--ff-gray-300) !important;
-//   }
-// }
 
 .default-button-styles {
   font-size: var(--font-size-sm) !important;
@@ -182,20 +135,20 @@ $btn-font-weight: bold;
     }
 
     &:hover {
-      background-color: var(--primary-btn-hover-bg-color) !important;
+      opacity: 0.8;
       box-shadow: var(--shadow-md) !important;
     }
 
     &:active {
       background-color: var(--primary-btn-bg-color) !important;
       color: var(--primary-btn-font-color) !important;
-      border: 0.0625rem solid var(--ff-primary) !important;
+      border: 0.0625rem solid $primary !important;
     }
 
     &.btn:disabled {
-      background-color: var(--ff-gray-300) !important;
+      background-color: $gray-medium-dark !important;
       color: var(--primary-btn-font-color) !important;
-      border-color: var(--ff-gray-300) !important;
+      border-color: $gray-medium-dark !important;
     }
 
     &+.dropdown-toggle+.dropdown-menu {
@@ -213,7 +166,7 @@ $btn-font-weight: bold;
   }
 
   &.btn-text {
-    color: var(--ff-primary) !important;
+    color: $primary !important;
   }
 
   &.btn-secondary {
@@ -223,7 +176,7 @@ $btn-font-weight: bold;
     line-height: var(--text-line-height) !important;
 
     &:hover {
-      background-color: var(--secondary-btn-hover-bg-color) !important;
+      opacity: 0.8;
       font-weight: var(--font-weight-xl) !important;
     }
 
@@ -233,22 +186,22 @@ $btn-font-weight: bold;
   }
 
   &.btn-dark {
-    background-color: var(--ff-gray-700) !important;
-    border: 1px solid var(--ff-gray-700) !important;
+    background-color: $gray-dark !important;
+    border: 1px solid $gray-dark !important;
 
     &:hover {
-      background-color: var(--ff-gray-600) !important;
+      opacity: 0.8;
       box-shadow: var(--shadow-md) !important;
     }
 
     &:active {
       background-color: $white-color !important;
       color: var(--default-font-color) !important;
-      border: 0.0625rem solid var(--ff-gray-700) !important;
+      border: 0.0625rem solid $gray-dark !important;
     }
 
     &+.dropdown-toggle+.dropdown-menu {
-      border: 0.0625rem solid var(--ff-gray-700) !important;
+      border: 0.0625rem solid $gray-dark !important;
 
       .dropdown-item {
         color: var(--default-font-color) !important;
@@ -322,13 +275,11 @@ $btn-font-weight: bold;
   }
 
   .btn-primary.dropdown-toggle {
-    background-color: var(--ff-base-500) !important;
-    border-color: var(--ff-base-500) !important;
+    opacity: 0.8;
   }
 
   .btn-dark.dropdown-toggle {
-    background-color: var(--ff-gray-600) !important;
-    border-color: var(--ff-gray-600) !important;
+    opacity: 0.8;
   }
 
   .dropdown-menu {
@@ -397,14 +348,14 @@ $btn-font-weight: bold;
     border-color: transparent !important;
 
     &:hover {
-      background-color: $gray-000 !important;
+      background-color: $gray-medium !important;
     }
   }
 
   &.active .page-link {
     border-color: transparent !important;
     color: $black-color !important;
-    background-color: var(--ff-gray-100) !important;
+    background-color: $gray-medium !important;
     font-weight: $btn-font-weight;
     outline: none !important;
   }
@@ -428,7 +379,7 @@ $btn-font-weight: bold;
 
 .sort-icon {
   font-size: 0.5rem !important;
-  color: var(--ff-gray-300) !important;
+  color: $gray-medium-dark !important;
 }
 
 .page-link {
@@ -444,7 +395,7 @@ $btn-font-weight: bold;
 
   &:hover,
   &:focus {
-    background-color: $gray-000 !important;
+    background-color: $gray-medium !important;
     outline: none !important;
     box-shadow: none !important;
   }
@@ -478,7 +429,7 @@ $btn-font-weight: bold;
       &:active,
       &:focus {
         color: $black-color !important;
-        background-color: $gray-000 !important;
+        background-color: $gray-medium !important;
         font-weight: $btn-font-weight;
         outline: transparent !important;
       }

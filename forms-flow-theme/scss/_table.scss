@@ -5,6 +5,8 @@ $th-z-index-special: 3;
 $status-size: var(--spacer-050);
 $status-margin: var(--spacer-050);
 $status-radius: 50%;
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
 
 .custom-tables-wrapper {
   height: auto;
@@ -91,7 +93,7 @@ $status-radius: 50%;
 
 .table {
   tr {
-    border-bottom: 0.0625rem solid var(--ff-gray-000);
+    border-bottom: 0.0625rem solid $gray-medium;
   }
 }
 
@@ -145,7 +147,7 @@ $status-radius: 50%;
 
 .status-draft {
   @extend .status-circle;
-  background-color: var(--ff-gray-100);
+  background-color: $gray-medium;
 }
 
 .pagination-text {
@@ -200,7 +202,7 @@ $status-radius: 50%;
     gap: var(--spacer-100);
     flex: 1 0 0;
     .no-data-text {
-      color: var(--ff-gray-400);
+      color: $gray-medium-dark;
       text-align: center;
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);

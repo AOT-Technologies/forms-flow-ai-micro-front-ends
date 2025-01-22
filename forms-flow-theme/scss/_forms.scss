@@ -1,7 +1,10 @@
 @import '_mixins';
 // Variables for reused values
 $primary: var(--ff-primary);
-$secondary: var(--ff-secondary);
+$primary-light: var(--ff-primary-light);
+$gray-dark: var(--ff-gray-dark);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
 
 .forms-text {
   vertical-align: bottom;
@@ -60,9 +63,9 @@ select option:hover {
 }
 
 .well {
-  border: 0.0625rem solid var(--ff-gray-200);
+  border: 0.0625rem solid $gray-medium;
   padding: var(--spacer-100);
-  background-color: var(--ff-gray-100);
+  background-color: $gray-medium;
 }
 
 .panel-body {
@@ -70,8 +73,8 @@ select option:hover {
 }
 
 .panel-heading {
-  background-color: var(--ff-primary-600);
-  border: 0.0625rem solid var(--ff-primary-600);
+  background-color: $primary;
+  border: 0.0625rem solid $primary;
   color: var(--ff-white) !important;
   padding: 0.75rem 1.25rem;
   margin-bottom: var(--spacer-050);
@@ -84,7 +87,7 @@ select option:hover {
 // formio classes
 
 .formio-component-panel .panel-heading {
-  background-color: var(--ff-gray-200);
+  background-color: $gray-medium;
   padding: 0.625rem 0 0.625rem 0.625rem;
 }
 
@@ -118,9 +121,9 @@ select option:hover {
 
   .search-box-input {
     border-radius: var(--radius-0100) !important; //TBD: To be changed to rem
-    border: 1px solid var(--ff-primary);
+    border: 1px solid $primary;
     background: var(--ff-white);
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
@@ -130,15 +133,15 @@ select option:hover {
 
 
     &.has-value {
-      border: 2px solid var(--ff-primary);
+      border: 2px solid $primary;
       background: var(--ff-white);
       color: var(--default-font-color) !important;
     }
 
     &.is-searching {
-      color: var(--ff-gray-700) !important;
-      border: 1px solid var(--ff-gray-800);
-      background-color: var(--ff-gray-100) !important;
+      color: $gray-dark !important;
+      border: 1px solid $gray-dark;
+      background-color: $gray-medium !important;
     }
   }
 
@@ -171,7 +174,7 @@ select option:hover {
 
 /* CustomTooltip */
 .custom-tooltip .tooltip-inner {
-  background-color: $secondary;
+  background-color: $primary-light;
   color: var(--default-font-color);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
@@ -182,7 +185,7 @@ select option:hover {
 }
 
 .custom-tooltip .tooltip-arrow::before {
-  border-color: $secondary transparent transparent transparent !important;
+  border-color: $primary-light transparent transparent transparent !important;
 }
 
 /* Custom Form.Check */
@@ -231,7 +234,7 @@ select option:hover {
 .form-control {
   color: var(--default-font-color) !important;
   border-radius: var(--radius-0100) !important;
-  border: 1px solid var(--ff-primary) !important;
+  border: 1px solid $primary !important;
   outline: none;
 
   display: flex;
@@ -241,11 +244,11 @@ select option:hover {
   align-self: stretch;
 
   &:focus {
-    outline: 1px solid var(--ff-primary);
+    outline: 1px solid $primary;
   }
 
   &::placeholder {
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
@@ -262,8 +265,8 @@ select option:hover {
   }
 
   &:disabled {
-    border-color: var(--ff-gray-400) !important;
-    background-color: var(--ff-gray-000);
+    border-color: $gray-medium-dark !important;
+    background-color: $gray-medium;
   }
 
 }
@@ -275,7 +278,7 @@ select option:hover {
   justify-content: center;
 
   .required-icon {
-    color: var(--ff-primary) !important;
+    color: $primary !important;
   }
 
   .with-icon {
@@ -283,7 +286,7 @@ select option:hover {
   }
 
   .disabled-icon svg path {
-    fill: var(--ff-gray-400);
+    fill: $gray-medium-dark;
   }
 
   .custom-form-input-group {
@@ -307,7 +310,7 @@ select option:hover {
     transform: translateY(-50%);
     border: none;
     background: none;
-    color: var(--ff-primary);
+    color: $primary;
     z-index: 10;
   }
 
@@ -336,14 +339,14 @@ select option:hover {
   padding-inline: var(--spacer-100) !important;
   color: var(--default-font-color) !important;
   gap: var(--spacer-050) !important;
-  background-color: $secondary !important;
+  background-color: $primary-light !important;
   border: none !important;
   align-items: center !important;
   font-size: var(--font-size-sm) !important;
   font-weight: var(--ff-badge-font-md) !important;
   border-radius: var(--radius-0150) !important;
   .secondary-label{
-    color: var(--ff-gray-500);
+    color: $gray-medium-dark;
   }
 }
 
@@ -353,16 +356,16 @@ select option:hover {
   .nav-link {
     background-color: transparent !important;
     font-weight: var(--font-weight-xl) !important;
-    color: var(--ff-base-700) !important;
+    color: $primary !important; 
     border: none !important;
     display: flex !important;
     align-items: flex-start !important;
     padding: 0 0 var(--spacer-050) 0 !important;
 
     &.active {
-      border-bottom: 0.125rem solid var(--ff-gray-800) !important;
+      border-bottom: 0.125rem solid $gray-dark !important;
       background-color: transparent !important;
-      color: var(--gray-gray-800) !important;
+      color: $gray-dark !important;
     }
   }
 
@@ -455,5 +458,5 @@ select option:hover {
 
 .dashed-line {
   width: 8.8125rem;
-  border-top: 0.1875rem dashed var(--ff-gray-300);
+  border-top: 0.1875rem dashed $gray-medium-dark;
 }
