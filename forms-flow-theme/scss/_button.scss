@@ -11,8 +11,13 @@ $dropdown-btn-size: 3.2275rem;
 $btn-border-radius: 50%;
 $btn-font-weight: bold;
 
+.btn-light {
+  background-color: $white-color !important;
 
-
+  &:hover {
+    opacity: 0.8;
+  }
+}
 
 .form-select {
   color: $dark !important;

@@ -2,7 +2,7 @@
 // Variables for reused values
 $primary: var(--ff-primary);
 $primary-light: var(--ff-primary-light);
-$gray-dark: var(--ff-gray-dark);
+$gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 
@@ -144,12 +144,12 @@ select option:hover {
       background-color: $gray-medium !important;
     }
     &::placeholder {
-      color: var(--ff-gray-300) !important;
+      color: $gray-medium-dark !important;
       font-size: var(--font-size-sm) !important;
       font-weight: var(--font-weight-sm);
     }
     &:focus::placeholder {
-      color: var(--ff-gray-300) !important;
+      color: $gray-medium-dark !important;
     }
   }
 
@@ -371,9 +371,9 @@ select option:hover {
     padding: 0 0 var(--spacer-050) 0 !important;
 
     &.active {
-      border-bottom: 0.125rem solid $gray-dark !important;
+      border-bottom: 0.125rem solid $gray-darkest !important;
       background-color: transparent !important;
-      color: $gray-dark !important;
+      color: $gray-darkest !important;
     }
   }
 

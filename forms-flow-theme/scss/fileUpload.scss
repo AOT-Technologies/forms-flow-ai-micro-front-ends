@@ -1,6 +1,6 @@
 $primary: var(--ff-primary);
 $ff-white: var(--ff-white);
-$gray-dark: var(--ff-gray-dark);;
+$gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $ff-red: var(--ff-red-000);
 $font-size-xs: var(--font-size-xs);
@@ -150,7 +150,7 @@ $font-size-xs: var(--font-size-xs);
     .import-layout-text,
     .import-workflow-text {
       width: 30%;
-      color: $gray-dark;
+      color: $gray-darkest;
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);

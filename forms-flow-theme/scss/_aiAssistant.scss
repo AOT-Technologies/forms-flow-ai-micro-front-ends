@@ -1,6 +1,6 @@
 // Variables for reused values
 $primary-light: var(--ff-primary-light);
-$gray-dark: var(--ff-gray-dark);
+$gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 .ai-modal {
@@ -118,7 +118,7 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
             div {
               width: 0.125rem;
               height: 0.125rem;
-              background-color: $gray-dark !important;
+              background-color: $gray-darkest !important;
               border-radius: 50%;
               margin: 0 2px;
               animation: loading 1s infinite;

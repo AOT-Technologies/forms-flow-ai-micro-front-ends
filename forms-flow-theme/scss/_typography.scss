@@ -1,7 +1,7 @@
-$gray-dark: var(--ff-gray-dark);
+$gray-darkest: var(--ff-gray-darkest);
 $primary: var(--ff-primary);
 .input-group-text {
-  color: $gray-dark !important;
+  color: $gray-darkest !important;
 }
 
 
@@ -36,7 +36,7 @@ a {
 }
 
 .head-item {
-  color: $gray-dark;
+  color: $gray-darkest;
   cursor: pointer;
 }
 

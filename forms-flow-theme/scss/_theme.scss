@@ -27,7 +27,8 @@ $base-300: set-lightness($base, 85%);
 $base-200: set-lightness($base, 90%);
 $base-100: set-lightness($base, 95%); //brighter.
 
-$gray-dark: #303436;
+$gray-darkest: #303436;
+$gray-dark: #4C4C4C;
 $gray-medium-dark: #AFB4B6;
 $gray-medium: #E4E6E7;
 $gray-light: #F2F2F3;
@@ -109,6 +110,7 @@ $custom-colors: (
   "primary-light": $primary-light,
 
   //gray shades
+  "gray-darkest": $gray-darkest,
   "gray-dark": $gray-dark,
   "gray-medium-dark": $gray-medium-dark,
   "gray-medium": $gray-medium,
@@ -139,11 +141,11 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 
 :root {
   //for navbar
-  --navbar-active-submenu-bg-color: #{$gray-dark};
+  --navbar-active-submenu-bg-color: #{$gray-darkest};
   --navbar-active-submenu-font-color: #{$white};
   --navbar-menu-hover-bg-color: #{$primary-light};
   --navbar-main-menu-active-bg-color: #{$gray-medium};
-  --navbar-main-menu-active-font-color: #{$gray-dark};
+  --navbar-main-menu-active-font-color: #{$gray-darkest};
   --navbar-bg-color: #{$white};
   --custom-logo-path: " ";
   --custom-title: " ";

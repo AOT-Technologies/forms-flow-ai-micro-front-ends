@@ -1,5 +1,5 @@
 $prefix: "ff-";
-$gray-dark: var(--ff-gray-dark);
+$gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $primary-color: var(--ff-primary);
@@ -25,7 +25,7 @@ $primary-color: var(--ff-primary);
 
 .page-item.active .page-link {
   background-color: $primary-color !important;
-  border-color: $gray-dark !important;
+  border-color: $gray-darkest !important;
 }
 
 .is-invalid {

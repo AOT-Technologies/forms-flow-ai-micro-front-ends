@@ -26,7 +26,7 @@ function HamburgerMenu({ props }) {
           aria-label="Open sidebar"
         >
           {/* <img src={hamburger} alt="hamburger icon" /> */}
-          <HamburgerIcon data-testid="hamburger-button" aria-label="hamburger button" color={getComputedStyle(document.documentElement).getPropertyValue("--ff-gray-dark")} />
+          <HamburgerIcon data-testid="hamburger-button" aria-label="hamburger button" color={getComputedStyle(document.documentElement).getPropertyValue("--ff-gray-darkest")} />
         </button>
         <Navbar.Brand href="" className="mx-auto">
           {/* <img className="" src={Appname} alt="applicationName" /> */}
