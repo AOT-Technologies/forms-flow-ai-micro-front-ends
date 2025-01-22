@@ -127,7 +127,7 @@ select option:hover {
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
-    padding: var(--spacer-050) var(--spacer-200) var(--spacer-050) var(--spacer-100) !important;
+    padding: var(--spacer-075) var(--spacer-100)  !important;
     height: 2.063rem;
 
 
@@ -142,6 +142,14 @@ select option:hover {
       color: $gray-dark !important;
       border: 1px solid $gray-dark;
       background-color: $gray-medium !important;
+    }
+    &::placeholder {
+      color: var(--ff-gray-300) !important;
+      font-size: var(--font-size-sm) !important;
+      font-weight: var(--font-weight-sm);
+    }
+    &:focus::placeholder {
+      color: var(--ff-gray-300) !important;
     }
   }
 

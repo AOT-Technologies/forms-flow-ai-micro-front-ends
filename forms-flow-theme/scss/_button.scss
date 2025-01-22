@@ -424,15 +424,7 @@ $btn-font-weight: bold;
       min-width: $dropdown-btn-size !important;
       min-height: $dropdown-btn-size !important;
       margin: 0 !important;
-
-      &:hover,
-      &:active,
-      &:focus {
-        color: $black-color !important;
-        background-color: $gray-medium !important;
-        font-weight: $btn-font-weight;
-        outline: transparent !important;
-      }
+      gap: var(--spacer-075) !important;
     }
 
     .dropdown-toggle {
