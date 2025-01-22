@@ -13,7 +13,7 @@ interface MultiSelectInterface {
   avoidHighlightFirstOption?: boolean;  
   hidePlaceholder?:boolean;
   className?:string;
-  disable?:boolean;
+  disabled?:boolean;
   placeholder?:string;
   label?:string;
 }
@@ -27,7 +27,7 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
     avoidHighlightFirstOption = true,
     hidePlaceholder=true,
     className,
-    disable=false,
+    disabled=false,
     placeholder="",
     label
 
@@ -39,7 +39,8 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
   const handleClick = (e: MouseEvent) => {
     if (
       dropdownRef.current &&
-      dropdownRef.current.contains(e.target as Node)
+      dropdownRef.current.contains(e.target as Node) &&
+      !disabled
     ) {
       setIsOpen(true);
     } else {
@@ -67,12 +68,12 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
           displayValue={displayValue}
           avoidHighlightFirstOption={avoidHighlightFirstOption}
           hidePlaceholder={hidePlaceholder}
-          disable={disable}
+          disable={disabled}
           placeholder={placeholder}
           customCloseIcon={
             <CloseIcon
               onClick={onRemove}
-              color={primaryColor}
+              color={disabled ? `#AFB4B6`: primaryColor}
               data-testid="pill-remove-icon"
               aria-label="remove "
             />

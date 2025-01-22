@@ -479,6 +479,11 @@ select option:hover {
   &.disable_ms {
     .searchWrapper {
       background: var(--ff-gray-000);
+      border: none;
+      .chip {
+        background: var(--ff-white);
+        color: var(--ff-gray-800);
+      }
     }
   }
 
