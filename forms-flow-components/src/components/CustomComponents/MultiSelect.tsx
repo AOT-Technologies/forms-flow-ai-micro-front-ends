@@ -37,10 +37,11 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
    const [isOpen,setIsOpen] = useState(false);
      // Toggle dropdown open/close when clicked
   const handleClick = (e: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      dropdownRef.current.contains(e.target as Node) &&
-      !disabled
+    if (disabled) {
+      return; 
+    }
+    else if (
+      dropdownRef.current?.contains(e.target as Node)
     ) {
       setIsOpen(true);
     } else {
