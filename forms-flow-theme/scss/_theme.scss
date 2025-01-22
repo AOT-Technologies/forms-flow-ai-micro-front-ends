@@ -194,6 +194,11 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --radius-0125: 1.25rem;
   --radius-0150: 1.5rem;
   --radius-200: 2rem;
+
+  --radius-sm: 1.09375rem; //17.5px
+  --radius-md: 1.34375rem; //21.5px
+  --radius-lg: 1.59375rem; //25.5px
+  --radius-modal: 1.5rem; //24px
   //custom
   --client-nav: 3rem;
   --header-close-btn: 4.625rem;
