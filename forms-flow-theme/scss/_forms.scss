@@ -481,11 +481,11 @@ select option:hover {
 
   &.disable_ms {
     .searchWrapper {
-      background: var(--ff-gray-000);
+      background: var(--ff-gray-light);
       border: none;
       .chip {
         background: var(--ff-white);
-        color: var(--ff-gray-800);
+        color: var(--ff-gray-darkest);
       }
     }
   }
@@ -493,18 +493,22 @@ select option:hover {
   .searchWrapper {
     border-radius: var(--radius-sm);
     border: 1px solid var(--ff-primary);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacer-050);
     
     .chip {
       padding: var(--spacer-050) var(--spacer-100);
       align-items: center;
       gap: var(--spacer-050);
       border-radius: var(--radius-modal);
-      background: var(--ff-secondary); // #e4e3fc
-      color: var(--ff-gray-800);
+      background: var(--ff-primary-light); // #e4e3fc
+      color: var(--ff-gray-darkest);
       text-align: center;
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);
+      margin-bottom: 0px !important;
     }
 
     .custom-close {

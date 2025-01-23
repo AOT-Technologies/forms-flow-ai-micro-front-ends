@@ -27,7 +27,7 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
     avoidHighlightFirstOption = true,
     hidePlaceholder=true,
     className,
-    disabled=false,
+    disabled,
     placeholder="",
     label
 
@@ -37,12 +37,7 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
    const [isOpen,setIsOpen] = useState(false);
      // Toggle dropdown open/close when clicked
   const handleClick = (e: MouseEvent) => {
-    if (disabled) {
-      return; 
-    }
-    else if (
-      dropdownRef.current?.contains(e.target as Node)
-    ) {
+    if (dropdownRef.current?.contains(e.target as Node) && !disabled) {
       setIsOpen(true);
     } else {
       setIsOpen(false);
