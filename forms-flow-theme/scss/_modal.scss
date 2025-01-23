@@ -1,7 +1,10 @@
 @import '_mixins';
 // Variables for reused values
 $primary: var(--ff-primary);
-$secondary: var(--ff-secondary);
+$primary-light: var(--ff-primary-light);
+$gray-dark: var(--ff-gray-dark);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
 
 .modal {
   .modal-dialog {
@@ -143,7 +146,7 @@ $secondary: var(--ff-secondary);
           flex-direction: column;
           align-items: flex-start;
           gap: var(--spacer-150);
-          border-left: 0.0625rem solid var(--ff-gray-100) !important;
+          border-left: 0.0625rem solid $gray-medium !important;
           flex-shrink: 0;
           position: relative;
           cursor: pointer;
@@ -224,7 +227,7 @@ $secondary: var(--ff-secondary);
   .tab-content {
     padding: var(--spacer-100) var(--spacer-125);
     width: 100% !important;
-    background: var(--ff-gray-000, #F2F2F3);
+    background: $gray-medium;
   }
 
   .form-template-list {
@@ -232,7 +235,7 @@ $secondary: var(--ff-secondary);
     -ms-overflow-style: none;
     max-height: 75vh;
     height: 59vh;
-    border-top: 1px solid var(--ff-gray-000);
+    border-top: 1px solid $gray-medium;
   }
   //TBD: Quick fix ,will remove later. 
   .line-height-1{
@@ -256,7 +259,7 @@ $secondary: var(--ff-secondary);
   .template-right {
     width: 70%;
     float: right;
-    border-left: 0.0625rem solid var(--ff-gray-100) !important;
+    border-left: 0.0625rem solid $gray-medium !important;
     display: flex;
     flex-direction: column;
     align-items: none;
@@ -276,7 +279,7 @@ $secondary: var(--ff-secondary);
     padding: var(--spacer-050) var(--spacer-225) !important;
     display: flex;
     flex-direction: column;
-    border-bottom: 1px solid var(--ff-gray-000);
+    border-bottom: 1px solid $gray-medium;
     background: var(--ff-white);
     overflow: hidden;
     white-space: nowrap;
@@ -297,8 +300,8 @@ $secondary: var(--ff-secondary);
   }
 
   .active-template {
-    border-bottom: 1px solid var(--ff-gray-000);
-    background: $secondary;
+    border-bottom: 1px solid $gray-medium;
+    background: $primary-light;
     max-height: none !important;
 
     .template-desc {
@@ -363,7 +366,7 @@ $secondary: var(--ff-secondary);
     flex: 1 0 0;
 
     &.not-found-text {
-      color: var(--ff-gray-400);
+      color: $gray-medium-dark;
       text-align: center;
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);
@@ -411,7 +414,7 @@ $secondary: var(--ff-secondary);
   }
 
   .modal-hr {
-    border-bottom: 1px solid var(--ff-gray-000);
+    border-bottom: 1px solid $gray-medium;
   }
 
   .url-input {
@@ -426,7 +429,7 @@ $secondary: var(--ff-secondary);
       border: none !important;
       border-radius: var(--radius-0100) !important;
       border-right: none;
-      color: var(--ff-gray-400) !important;
+      color: $gray-medium-dark !important;
       background: none !important;
       overflow: hidden;
       position: relative;
@@ -478,7 +481,7 @@ $secondary: var(--ff-secondary);
     padding: var(--spacer-200) 2.5rem;
     flex-direction: column;
     align-self: stretch;
-    border-top: 1px solid var(--ff-gray-000);
+    border-top: 1px solid $gray-medium;
   }
 
   .save-template-footer {
@@ -487,7 +490,7 @@ $secondary: var(--ff-secondary);
     flex-direction: column;
     align-items: flex-start;
     align-self: stretch;
-    border-top: 1px solid var(--ff-gray-000);
+    border-top: 1px solid $gray-medium;
     float: left;
   }
 
@@ -539,7 +542,7 @@ $secondary: var(--ff-secondary);
 }
 .node-list-row {
   padding: var(--spacer-200);
-  border-top: 1px solid var(--ff-gray-000);
+  border-top: 1px solid $gray-medium;
 }
 
 //reusable multi-select
@@ -600,7 +603,7 @@ $secondary: var(--ff-secondary);
     overflow: hidden;
   }
   .modal-header{
-    border-bottom: 1px solid var(--ff-gray-000);
+    border-bottom: 1px solid $gray-medium;
   }
   .content-style{
     font-size: var(--font-size-sm);
@@ -620,7 +623,7 @@ $secondary: var(--ff-secondary);
   .build-contents{
     display: flex;
     flex-direction: column;
-    border-right: 1px solid var(--ff-gray-000) !important;
+    border-right: 1px solid $gray-medium !important;
     padding-left: var(--spacer-250) !important;
     padding: var(--spacer-200);
     cursor: pointer;
@@ -657,14 +660,14 @@ $secondary: var(--ff-secondary);
   }
 
   .expression-list-group .form-variable:hover {
-    background: $secondary;
+    background: $primary-light;
    
     .variable-label {
-      color: var(--ff-primary) !important;
+      color: $primary !important;
       
     }
     .variable-key{
-      color: var(--ff-gray-400) !important;
+      color: $gray-medium-dark !important;
       
     }
   }
@@ -673,13 +676,13 @@ $secondary: var(--ff-secondary);
   }
 
   .expression-list-group .variable-label {
-    color: var(--ff-primary);
+    color: $primary;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-lg);
   }
 
   .expression-list-group .variable-key {
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-sm);
     margin-left: 8px;
@@ -757,7 +760,7 @@ $secondary: var(--ff-secondary);
   }
 
   .operator-list:hover {
-    background-color: $secondary !important;
+    background-color: $primary-light !important;
   }
 
   .key-label {
@@ -791,13 +794,13 @@ $secondary: var(--ff-secondary);
   }
 
   .no-var-text {
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-weight: var(--font-weight-sm);
   }
 
   .dashed-box {
     border-radius: var(--spacer-050);
-    border: 2px dashed var(--ff-primary);
+    border: 2px dashed $primary;
     margin-left: var(--spacer-050);
     height: 26px;
   }
@@ -864,7 +867,7 @@ $secondary: var(--ff-secondary);
   .form-field-container{
     width: 80%;
     float: left;
-    background: var(--ff-gray-000);  // #F1F1F1
+    background: $gray-medium;  // #F1F1F1
     padding: var(--spacer-200) var(--spacer-250);
   }
   .field-details-container{
@@ -883,12 +886,12 @@ $secondary: var(--ff-secondary);
     flex: 1 0 0;
     align-self: stretch;
     border-radius: var(--radius-0100);
-    border: 1px solid var(--ff-gray-300);
+    border: 1px solid $gray-medium-dark;
     background: var(--ff-white);    
   }
   
   .select-text{
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-size: var(--font-size-sm);
   }
   .selected-var-text{
@@ -917,7 +920,7 @@ $secondary: var(--ff-secondary);
 
  .card-body {
    border-radius: var(--radius-0100) !important;
-   border-color: var(--ff-gray-400) !important;
+   border-color: $gray-medium-dark !important;
 
    .formio-editor-read-only-content {
      padding: var(--spacer-025) var(--spacer-050);

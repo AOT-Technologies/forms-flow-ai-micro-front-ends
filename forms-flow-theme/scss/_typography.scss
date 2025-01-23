@@ -1,10 +1,12 @@
+$gray-darkest: var(--ff-gray-darkest);
+$primary: var(--ff-primary);
 .input-group-text {
-  color: $gray-800 !important;
+  color: $gray-darkest !important;
 }
 
 
 a {
-  color: var(--ff-primary);
+  color: $primary;
 }
 
 .application-count {
@@ -34,13 +36,13 @@ a {
 }
 
 .head-item {
-  color: var(--ff-gray-700);;
+  color: $gray-darkest;
   cursor: pointer;
 }
 
 .head-active {
-  color: var(--ff-primary);
-  border-bottom: 4px solid  var(--ff-primary);
+  color: $primary;
+  border-bottom: 4px solid  $primary;
 }
 .task-head {
   font-weight: bold;

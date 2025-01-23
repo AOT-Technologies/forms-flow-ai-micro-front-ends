@@ -1,6 +1,6 @@
 const computedStyle = getComputedStyle(document.documentElement);
 const baseColor = computedStyle.getPropertyValue("--ff-primary");
-const grayColor = computedStyle.getPropertyValue("--ff-gray-800");
+const grayColor = computedStyle.getPropertyValue("--ff-gray-dark");
 export const ChevronIcon = ({
   color = baseColor,
   width = "10",

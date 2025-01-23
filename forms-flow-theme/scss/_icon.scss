@@ -1,8 +1,8 @@
-
+$primary-light: var(--ff-primary-light);
 .icon-wp-forms {
   height: 30px;
 }
 
 i.fa.fa-question-circle.text-muted {
-  color: var(--ff-primary-300) !important;
+  color: $primary-light !important;
 }

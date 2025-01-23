@@ -1,7 +1,7 @@
 $primary: var(--ff-primary);
 $ff-white: var(--ff-white);
-$gray-800: var(--ff-gray-800);
-$gray-400: var(--ff-gray-400);
+$gray-darkest: var(--ff-gray-darkest);
+$gray-medium: var(--ff-gray-medium);
 $ff-red: var(--ff-red-000);
 $font-size-xs: var(--font-size-xs);
 
@@ -95,7 +95,7 @@ $font-size-xs: var(--font-size-xs);
   gap: var(--spacer-050);
   align-self: stretch;
   border-radius: var(--spacer-100);
-  background-color: var(--ff-gray-000);
+  background-color: $gray-medium;
 }
 
 .upload-status-success {
@@ -127,7 +127,7 @@ $font-size-xs: var(--font-size-xs);
     padding: var(--spacer-100) 0 var(--spacer-100) 0;
     align-items: center;
     align-self: stretch;
-    border-bottom: 1px solid var(--ff-gray-100);
+    border-bottom: 1px solid $gray-medium;
 
     .file-item-header-text {
       display: flex;
@@ -145,12 +145,12 @@ $font-size-xs: var(--font-size-xs);
     padding: var(--spacer-200) 0 var(--spacer-200) 0;
     align-items: center;
     align-self: stretch;
-    border-bottom: 1px solid var(--ff-gray-100);
+    border-bottom: 1px solid $gray-medium;
 
     .import-layout-text,
     .import-workflow-text {
       width: 30%;
-      color: var(--gray-800);
+      color: $gray-darkest;
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);
