@@ -1282,11 +1282,8 @@ export const RESOURCE_BUNDLES_FR ={
   "New Form": "Nouveau formulaire",
   "Add Form": "Ajouter un formulaire",
   "Build": "Construire",
-  "Import": "Importer",
   "Create the form from scratch": "Créer le formulaire à partir de zéro",
   "Upload form from a file": "Télécharger le formulaire depuis un fichier",
-  "Live": "En direct",
-  "Draft": "Brouillon",
   "Last Edited": "Dernière édition",
   "ID": "ID",
   "New BPMN": "Nouveau BPMN",
@@ -1309,6 +1306,15 @@ export const RESOURCE_BUNDLES_FR ={
   "next": "suivant", 
   "Month": "Mois", 
   "Year": "Année",
+  "Sort": "Trier",
+  "Sort Results": "Résultats du tri",
+  "Sort By": "Trier par",
+  "In a": "Dans un",
+  "Sort By Dropdown": "Menu déroulant Trier par",
+  "Sort By Input": "Entrée Trier par",
+  "Order Dropdown": "Menu déroulant de l'ordre",
+  "Order Input": "Entrée de l'ordre",
+  "Apply sorting": "Appliquer le tri",
 }
 
 

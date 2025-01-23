@@ -6,3 +6,11 @@ $primary-light: var(--ff-primary-light);
 i.fa.fa-question-circle.text-muted {
   color: $primary-light !important;
 }
+.icon-wrapper-change {
+  cursor: pointer;
+  transition: transform 0.5s, color 0.5s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
