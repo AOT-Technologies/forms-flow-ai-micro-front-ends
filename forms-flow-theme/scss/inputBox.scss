@@ -3,6 +3,8 @@ $primary: var(--ff-primary);
 $form-input-focus-outline: 2px solid var(--ff-primary);
 $red-000: var(--ff-red-000);
 $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+$gray-medium: var(--ff-gray-medium);
+$white-color: var(--ff-white);
 
 .form-input {
   width: 100%;
@@ -78,7 +80,7 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
     border-radius: 0px 0px var(--radius-0100) var(--radius-0100);
     max-height: 12.5rem;
     overflow-y: scroll;
-    background-color: var(--ff-white);
+    background-color: $white-color;
 
     .list-group-item {
       &.list-first-item-btn {
@@ -98,7 +100,7 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
       line-height: var(--text-line-height);
 
       &:hover {
-        background: var(--ff-gray-000);
+        background: $gray-medium;
       }
 
       &:last-child {

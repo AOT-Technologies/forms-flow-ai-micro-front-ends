@@ -1,6 +1,6 @@
 // Variables for reused values
 $primary: var(--ff-primary);
-$secondary: var(--ff-secondary);
+$primary-light: var(--ff-primary-light);
 
 .btn-group-xxs>.btn, .btn-xxs, .component-btn-group .component-settings-button{
     width: auto !important;
@@ -58,7 +58,7 @@ $secondary: var(--ff-secondary);
       padding-top: var(--spacer-050);
   
       .bg-default {
-        background: $secondary !important;
+        background: $primary-light !important;
   
         .card-title {
           color: $primary !important;
@@ -94,7 +94,7 @@ $secondary: var(--ff-secondary);
             border-style:  dotted;  
             border-color: transparent;
             &:hover {
-              border-color: var(--ff-primary-200);
+              border-color: $primary-light;
               border-radius: var(--radius-050);
             }
           }
