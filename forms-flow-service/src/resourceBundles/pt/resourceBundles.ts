@@ -1306,4 +1306,13 @@ export const RESOURCE_BUNDLES_PT ={
   "next": "próximo", 
   "Month": "Mês", 
   "Year": "Ano",
+  "Sort": "Ordenar",
+  "Sort Results": "Resultados da Ordenação",
+  "Sort By": "Ordenar Por",
+  "In a": "Em uma",
+  "Sort By Dropdown": "Menu suspenso de Ordenar Por",
+  "Sort By Input": "Entrada de Ordenar Por",
+  "Order Dropdown": "Menu suspenso de Ordem",
+  "Order Input": "Entrada de Ordem",
+  "Apply sorting": "Aplicar ordenação",
 };

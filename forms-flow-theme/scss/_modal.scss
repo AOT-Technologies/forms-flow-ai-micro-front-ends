@@ -943,11 +943,19 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
     margin-top: 1.5rem;
   }
 }
- 
-
-
-
-
-
-
-
+.sort-settings{
+  .sortbody-settings{
+    display: flex;
+    padding: var(--spacer-200) var(--spacer-250);
+    gap: var(--spacer-150);
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+  }
+  .input-dropdown .list-group {
+    min-height: auto !important;
+  }
+}
+.button-align{
+  gap: var(--spacer-100);
+}

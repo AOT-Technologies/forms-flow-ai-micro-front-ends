@@ -1306,6 +1306,15 @@ export const RESOURCE_BUNDLES_FR ={
   "next": "suivant", 
   "Month": "Mois", 
   "Year": "Année",
+  "Sort": "Trier",
+  "Sort Results": "Résultats du tri",
+  "Sort By": "Trier par",
+  "In a": "Dans un",
+  "Sort By Dropdown": "Menu déroulant Trier par",
+  "Sort By Input": "Entrée Trier par",
+  "Order Dropdown": "Menu déroulant de l'ordre",
+  "Order Input": "Entrée de l'ordre",
+  "Apply sorting": "Appliquer le tri",
 }
 
 
