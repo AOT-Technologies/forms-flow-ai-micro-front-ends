@@ -1317,5 +1317,5 @@ export const RESOURCE_BUNDLES_DE = {
   "Order Dropdown": "Dropdown Reihenfolge",
   "Order Input": "Eingabe Reihenfolge",
   "Apply sorting": "Sortierung anwenden",
- 
+  "Last Edited": "Zuletzt bearbeitet",
 }

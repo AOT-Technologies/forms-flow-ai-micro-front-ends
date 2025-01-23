@@ -9,8 +9,8 @@ i.fa.fa-question-circle.text-muted {
 .icon-wrapper-change {
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
-}
 
-.icon-wrapper-change:hover {
-  opacity: 0.8;
+  &:hover {
+    opacity: 0.8;
+  }
 }
