@@ -470,7 +470,7 @@ select option:hover {
 }
 .multiple-select-label {
   padding-bottom: var(--spacer-050);
-  color: var(--ff-gray-800);
+  color: $gray-darkest;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
@@ -485,14 +485,14 @@ select option:hover {
       border: none;
       .chip {
         background: var(--ff-white);
-        color: var(--ff-gray-darkest);
+        color: $gray-darkest;
       }
     }
   }
 
   .searchWrapper {
     border-radius: var(--radius-sm);
-    border: 1px solid var(--ff-primary);
+    border: 1px solid $primary;
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacer-050);
@@ -502,8 +502,8 @@ select option:hover {
       align-items: center;
       gap: var(--spacer-050);
       border-radius: var(--radius-modal);
-      background: var(--ff-primary-light); // #e4e3fc
-      color: var(--ff-gray-darkest);
+      background: $primary-light; // #e4e3fc
+      color: $gray-darkest;
       text-align: center;
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-sm);
@@ -545,11 +545,11 @@ select option:hover {
     flex-direction: column;
     align-items: flex-start;
     flex: 1 0 0;
-    border: 1px solid var(--ff-primary);
+    border: 1px solid $primary;
 
     .option {
       &:hover {
-        background: var(--ff-primary);
+        background: $primary;
       }
       display: flex;
       padding: var(--spacer-050) var(--spacer-100);
