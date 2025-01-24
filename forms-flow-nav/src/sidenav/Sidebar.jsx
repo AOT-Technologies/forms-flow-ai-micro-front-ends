@@ -141,7 +141,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     useEffect(() => {
         const locale = userDetail?.locale || tenant?.tenantData?.details?.locale || LANGUAGE;
         i18n.changeLanguage(locale);
-    }, [userDetail, tenant?.tenantData]);
+    }, [userDetail]);
 
   React.useEffect(() => {
     const data = JSON.parse(StorageService.get("TENANT_DATA"));
