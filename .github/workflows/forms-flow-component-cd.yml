@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - develop
-      - FWF-3440-Design-System-MF
       - release/*
     paths:
       - "forms-flow-components/**"
