@@ -1,0 +1,9 @@
+services:
+  forms-flow-rsbcservice:
+    container_name: forms-flow-rsbcservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3011:8080"
+    tty: true

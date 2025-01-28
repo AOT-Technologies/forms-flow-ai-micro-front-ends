@@ -1,0 +1,1 @@
+// getStaticData code
