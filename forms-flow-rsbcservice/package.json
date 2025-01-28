@@ -54,5 +54,5 @@
     "react-i18next": "^15.4.0",
     "single-spa": "^5.9.3"
   },
-  "types": "dist/formsflow-rsbcservice.d.ts"
+  "types": "dist/formsflow-rsbcservices.d.ts"
 }

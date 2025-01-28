@@ -1,6 +1,6 @@
 {
   "extends": "ts-config-single-spa",
-  "files": ["src/formsflow-rsbcservice.ts"],
+  "files": ["src/formsflow-rsbcservices.ts"],
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "dist"

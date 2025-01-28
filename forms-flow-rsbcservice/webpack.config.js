@@ -4,7 +4,7 @@ const singleSpaDefaults = require("webpack-config-single-spa-ts");
 module.exports = (webpackConfigEnv, argv) => {
   const defaultConfig = singleSpaDefaults({
     orgName: "formsflow",
-    projectName: "rsbcservice",
+    projectName: "rsbcservices",
     webpackConfigEnv,
     argv,
   });
