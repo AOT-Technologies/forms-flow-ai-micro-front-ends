@@ -47,7 +47,7 @@ $primary-light: var(--ff-primary-light);
 
     .formio-hilighted {
       box-sizing: border-box;
-      border-radius: var(--radius-050);
+      border-radius: var(--radius-sm);
       border: 2px dashed $primary !important;
       padding: 8px 10px; //TBD need to update
     }
@@ -95,7 +95,7 @@ $primary-light: var(--ff-primary-light);
             border-color: transparent;
             &:hover {
               border-color: $primary-light;
-              border-radius: var(--radius-050);
+              border-radius: var(--radius-sm);
             }
           }
 

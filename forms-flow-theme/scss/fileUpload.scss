@@ -12,7 +12,7 @@ $font-size-xs: var(--font-size-xs);
   width: 100%;
   min-height: 10.125rem;
   border: 0.09375rem dashed $primary;
-  border-radius: var(--radius-0100);
+  border-radius: var(--radius-sm);
   background-color: $ff-white;
   cursor: pointer;
   text-align: center;
@@ -112,11 +112,11 @@ $font-size-xs: var(--font-size-xs);
 
 .progress {
   height: var(--spacer-150) !important;
-  --ff-progress-border-radius: var(--radius-0150) !important;
+  --ff-progress-border-radius: var(--radius-lg) !important;
 }
 
 .progress-stacked {
-  --ff-progress-border-radius: var(--radius-0150) !important;
+  --ff-progress-border-radius: var(--radius-lg) !important;
 }
 
 .import-container {
