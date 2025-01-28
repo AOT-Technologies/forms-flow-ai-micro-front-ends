@@ -8,7 +8,7 @@ $gray-darkest: var(--ff-gray-darkest);
 
 .wraper {
   .card {
-    border-radius: var(--radius-0150) !important;
+    border-radius: var(--radius-lg) !important;
     border: none !important;
   }
 
@@ -53,7 +53,7 @@ $gray-darkest: var(--ff-gray-darkest);
 
   .card {
     border: 1px solid $gray-medium !important;
-    border-radius: var(--radius-0150) !important;
+    border-radius: var(--radius-lg) !important;
     margin-bottom: var(--spacer-050) !important;
   }
 
@@ -71,7 +71,7 @@ $gray-darkest: var(--ff-gray-darkest);
   background-color: $gray-darkest !important;
   width: 100% !important;
   height: auto !important;
-  border-radius: var(--radius-0100) !important;
+  border-radius: var(--radius-sm) !important;
   margin-bottom: var(--spacer-150);
 
   .editor-header-text {
@@ -98,15 +98,14 @@ $gray-darkest: var(--ff-gray-darkest);
   width: 6.0625rem;
   height: calc(100vh - 9.8rem) !important;
   cursor: pointer;
-  height: auto;
   position: absolute;
   left: 94%;
   overflow: hidden;
   writing-mode: vertical-rl;
   text-align: end;
   transform: rotate(180deg);
-  border-top-right-radius: var(--radius-0100);
-  border-bottom-right-radius: var(--radius-0100);
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
   opacity: 1;
   transition: opacity 0.5s ease;
 
@@ -149,8 +148,8 @@ $gray-darkest: var(--ff-gray-darkest);
   cursor: pointer;
   text-align: end;
   transform: rotate(180deg);
-  border-top-left-radius: var(--radius-0100);
-  border-bottom-left-radius: var(--radius-0100);
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
   opacity: 0;
   transition: opacity 0.5s ease;
 
@@ -214,7 +213,7 @@ $gray-darkest: var(--ff-gray-darkest);
   align-items: flex-start;
   gap: var(--spacer-050);
   align-self: stretch;
-  border-radius: var(--radius-0100);
+  border-radius: var(--radius-sm);
   background: $gray-medium;
 }
 
