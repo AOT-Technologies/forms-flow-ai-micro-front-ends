@@ -687,14 +687,13 @@ export const StarPremiumIcon = ({ color = baseColor,...props }) => (
   </svg>
 );
 
-export const RefreshIcon = ({ color = baseColor, onClick, ...props }) => (
+export const RefreshIcon = ({ color = baseColor, ...props }) => (
   <svg
     className="icon-wrapper-change"
     width="43"
     height="43"
     viewBox="0 0 43 43"
     fill="none"
-    onClick={onClick}
     xmlns="http://www.w3.org/2000/svg"
   >
     <circle cx="21.5" cy="21.5" r="21.5" fill="#E2E1FC" />
@@ -708,14 +707,13 @@ export const RefreshIcon = ({ color = baseColor, onClick, ...props }) => (
   </svg>
 );
 
-export const FilterIcon = ({ color = baseColor,  onClick, ...props }) => (
+export const FilterIcon = ({ color = baseColor, ...props }) => (
   <svg
     className="icon-wrapper-change"
     width="43"
     height="43"
     viewBox="0 0 43 43"
     fill="none"
-    onClick={onClick}
     xmlns="http://www.w3.org/2000/svg"
   >
     <circle cx="21.5" cy="21.5" r="21.5" fill="#E2E1FC" />
