@@ -177,10 +177,14 @@ export const db = new DigitalFormsDB();
 // Open the database and clear formID for testing
 const initDB = async () => {
   try {
-    await db.open();
+    if (!db.isOpen()) {
+      await db.open();
+      console.log("IndexedDB is open.");
+    } else {
+      console.log("IndexedDB is already open.");
+    }
     await db.formID.clear();
     console.log("Form IDs cleared.");
-    console.log("IndexedDB is open.");
   } catch (error) {
     console.error("Open failed: " + error);
   }

@@ -3,8 +3,19 @@ import { fetchStaticData } from "../request/staticDataApi";
 import { handleError } from "../helpers/helperServices";
 
 class DBService {
+  
   public static async saveToIndexedDB(resourceName: string, data: any) {
     try {
+      // Check if IndexedDB is available
+      if (!db) {
+        throw new Error("IndexedDB is not available.");
+      }
+
+      // Check if data is valid
+      if (!data || data.length === 0) {
+        throw new Error(`No valid data provided for ${resourceName}.`);
+      }
+
       switch (resourceName) {
         case "agencies":
           await db.agencies.clear();
@@ -73,25 +84,6 @@ class DBService {
       console.error(`Error saving ${resourceName} to IndexedDB:`, error);
     }
   }
-  public static async fetchStaticDataFromTable(
-    tableName: string
-  ): Promise<any[]> {
-    try {
-      // Ensure the database is open before performing any operations
-      await db.open();
-
-      // Dynamically access the table using the tableName argument
-      const table = db[tableName];
-
-      // Fetch all records from the table
-      const data = await table.toArray();
-
-      return data;
-    } catch (error) {
-      console.error(`Error fetching data from table ${tableName}:`, error);
-      throw error; // Propagate the error so it can be handled by the caller
-    }
-  }
 
   public static async fetchAndSaveStaticData(): Promise<void> {
     try {
@@ -129,5 +121,38 @@ class DBService {
       console.error("Error in data fetching and saving process:", error);
     }
   }
+
+  public static async fetchStaticDataFromTable(
+    tableName: string
+  ): Promise<any[]> {
+    try {
+      // Ensure the database is open before performing any operations
+      if (!db) {
+        throw new Error("IndexedDB is not available.");
+      }
+
+      await db.open(); // Open the database
+
+      // Dynamically access the table using the tableName argument
+      const table = db[tableName];
+
+      // Check if the table exists
+      if (!table) {
+        throw new Error(`Table ${tableName} not found in IndexedDB.`);
+      }
+
+      // Fetch all records from the table
+      const data = await table.toArray();
+  
+      if (data.length === 0) {
+        console.log(`No data found in table ${tableName}.`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error(`Error fetching data from table ${tableName}:`, error);
+      throw error; // Propagate the error so it can be handled by the caller
+    }
+  }  
 }
 export default DBService;
