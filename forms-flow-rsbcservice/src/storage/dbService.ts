@@ -3,7 +3,6 @@ import { fetchStaticData } from "../request/staticDataApi";
 import { handleError } from "../helpers/helperServices";
 
 class DBService {
-  
   public static async saveToIndexedDB(resourceName: string, data: any) {
     try {
       // Check if IndexedDB is available
@@ -105,18 +104,35 @@ class DBService {
       ];
 
       // Create an array of promises for fetching data
-      const fetchPromises = resources.map((resource) =>
-        fetchStaticData(
-          resource,
-          (data: any) => this.saveToIndexedDB(resource, data),
-          (error: any) => handleError(error)
-        )
-      );
+      const fetchPromises = resources.map(async (resource) => {
+        try {
+          // Check if data already exists in IndexedDB
+          const existingData = await this.fetchStaticDataFromTable(resource);
+
+          // If no data exists, fetch and save it
+          if (existingData.length === 0) {
+            console.log(
+              `No data found in IndexedDB for ${resource}. Fetching data...`
+            );
+            await fetchStaticData(
+              resource,
+              (data: any) => this.saveToIndexedDB(resource, data),
+              (error: any) => handleError(error)
+            );
+          } else {
+            console.log(
+              `Data already exists for ${resource} in IndexedDB. Skipping fetch.`
+            );
+          }
+        } catch (error) {
+          console.error(`Error processing resource ${resource}:`, error);
+        }
+      });
 
       // Wait for all API calls to complete in parallel
       await Promise.all(fetchPromises);
 
-      console.log("All static data fetched and saved successfully.");
+      console.log("All static data processed.");
     } catch (error) {
       console.error("Error in data fetching and saving process:", error);
     }
@@ -143,7 +159,7 @@ class DBService {
 
       // Fetch all records from the table
       const data = await table.toArray();
-  
+
       if (data.length === 0) {
         console.log(`No data found in table ${tableName}.`);
       }
@@ -153,6 +169,6 @@ class DBService {
       console.error(`Error fetching data from table ${tableName}:`, error);
       throw error; // Propagate the error so it can be handled by the caller
     }
-  }  
+  }
 }
 export default DBService;
