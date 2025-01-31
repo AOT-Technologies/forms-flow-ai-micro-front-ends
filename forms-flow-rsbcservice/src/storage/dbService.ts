@@ -3,6 +3,7 @@ import { fetchStaticData } from "../request/staticDataApi";
 import { handleError } from "../helpers/helperServices";
 
 class DBService {
+  
   public static async saveToIndexedDB(resourceName: string, data: any) {
     try {
       // Check if IndexedDB is available
@@ -159,7 +160,7 @@ class DBService {
 
       // Fetch all records from the table
       const data = await table.toArray();
-
+  
       if (data.length === 0) {
         console.log(`No data found in table ${tableName}.`);
       }
@@ -169,6 +170,6 @@ class DBService {
       console.error(`Error fetching data from table ${tableName}:`, error);
       throw error; // Propagate the error so it can be handled by the caller
     }
-  }
+  }  
 }
 export default DBService;
