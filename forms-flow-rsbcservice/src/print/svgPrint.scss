@@ -1,0 +1,103 @@
+.svg_icons {
+  transform: scale(0.2);
+}
+
+.fontMedium {
+  font-size: 3pt;
+}
+
+.fontSmall {
+  font-size: 2.5pt;
+}
+
+.fontXSmall {
+  font-size: 2pt;
+}
+
+.fontXXSmall {
+  font-size: 1.75pt;
+}
+
+.fontLarge {
+  font-size: 4.5pt;
+}
+
+.fontText {
+  font-size: 3pt;
+}
+
+.fontBarcode {
+  font-family: "barcode", serif;
+  font-weight: normal;
+  font-size: 7.5pt;
+}
+
+$font_path: ("../assets");
+@font-face {
+  font-family: "barcode";
+  src: local("barcode"),
+    url($font_path + "/libre-barcode-39-v19-latin-regular.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0;
+  }
+
+  html {
+    margin: 0;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  #roadsafety-header {
+    display: none;
+    all: unset !important;
+
+    .header {
+      display: none;
+    }
+  }
+
+  #roadesafety-footer {
+    display: none;
+  }
+
+  #popconfirm-modal {
+    display: none;
+  }
+
+  #event-container {
+    all: unset;
+  }
+
+  #button-container {
+    display: none;
+  }
+
+  #history-button-container {
+    display: none;
+  }
+
+  .outline {
+    all: unset !important;
+  }
+
+  .svg-wrapper {
+    page-break-before: always;
+
+    &--landscape {
+      transform: rotate(-90deg) scale(1.08) translate(-125px, 14px);
+      display: block !important;
+    }
+    &--portrait {
+      transform: scale(1.25) translate(-25px, 110px);
+      display: block !important;
+    }
+  }
+}
