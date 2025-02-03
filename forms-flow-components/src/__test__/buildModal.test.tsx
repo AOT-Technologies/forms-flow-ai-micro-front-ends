@@ -5,7 +5,7 @@ import { BuildModal } from "../components/CustomComponents/BuildModal"; // Adjus
 
 // Mock the CloseIcon component
 jest.mock( "../components/SvgIcons/index", () => ({
-  CloseIcon: ({ onClick }) => <div onClick={onClick}>CloseIcon</div>,
+  CloseIcon: ({ onClick }) => <button onClick={onClick}>CloseIcon</button>,
 }));
 
 describe("BuildModal", () => {
