@@ -104,6 +104,7 @@ class DBService {
         "nsc_puj",
         "jurisdiction_country",
       ];
+      
 
       // Create an array of promises for fetching data
       const fetchPromises = resources.map(async (resource) => {
