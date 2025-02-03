@@ -26,6 +26,8 @@ interface CustomButtonProps {
   dataTestid?: string;
   ariaLabel?: string;
   buttonLoading?: boolean;
+  //showSuccess?: boolean;
+  //successCountdown?: number;
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -42,6 +44,8 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   ariaLabel = "",
   name =  "",
   buttonLoading = false,
+  //showSuccess = false,
+  //successCountdown = 0,
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -137,6 +141,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       </div>
       {buttonLoading && <span className="dotted-spinner"></span>}
     </Button>
+    
   );
 };
 
