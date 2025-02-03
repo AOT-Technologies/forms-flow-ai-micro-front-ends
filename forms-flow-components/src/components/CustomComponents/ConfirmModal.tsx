@@ -45,8 +45,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
 }) => {
   const { t } = useTranslation();
   return (
-    <>
-      <Modal
+    <Modal
         show={show}
         onHide={onClose}
         size="sm"
@@ -95,7 +94,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             label={primaryBtnText}
             disabled={primaryBtnDisable}
             onClick={primaryBtnAction}
-            dataTestid={primaryBtndataTestid}
+            dataTestId={primaryBtndataTestid}
             ariaLabel={primaryBtnariaLabel}
             buttonLoading={buttonLoading}
           />
@@ -104,13 +103,12 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             size="lg"
             label={secondaryBtnText}
             onClick={secondayBtnAction}
-            dataTestid={secondoryBtndataTestid}
+            dataTestId={secondoryBtndataTestid}
             ariaLabel={secondoryBtnariaLabel}
             disabled={secondaryBtnDisable}
             buttonLoading={secondaryBtnLoading}
           />}
         </Modal.Footer>
       </Modal>
-    </>
   );
 });
