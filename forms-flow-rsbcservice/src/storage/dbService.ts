@@ -3,7 +3,7 @@ import { fetchStaticData } from "../request/staticDataApi";
 import { handleError } from "../helpers/helperServices";
 
 class DBService {
-  
+    
   public static async saveToIndexedDB(resourceName: string, data: any) {
     try {
       // Check if IndexedDB is available
@@ -87,6 +87,7 @@ class DBService {
 
   public static async fetchAndSaveStaticData(): Promise<void> {
     try {
+      await db.open();
       console.log("Fetching and saving static data...");
 
       const resources = [
@@ -103,28 +104,16 @@ class DBService {
         "nsc_puj",
         "jurisdiction_country",
       ];
+      
 
       // Create an array of promises for fetching data
       const fetchPromises = resources.map(async (resource) => {
-        try {
-          // Check if data already exists in IndexedDB
-          const existingData = await this.fetchStaticDataFromTable(resource);
-
-          // If no data exists, fetch and save it
-          if (existingData.length === 0) {
-            console.log(
-              `No data found in IndexedDB for ${resource}. Fetching data...`
-            );
+        try {              
             await fetchStaticData(
               resource,
               (data: any) => this.saveToIndexedDB(resource, data),
               (error: any) => handleError(error)
-            );
-          } else {
-            console.log(
-              `Data already exists for ${resource} in IndexedDB. Skipping fetch.`
-            );
-          }
+            );          
         } catch (error) {
           console.error(`Error processing resource ${resource}:`, error);
         }
@@ -138,6 +127,7 @@ class DBService {
       console.error("Error in data fetching and saving process:", error);
     }
   }
+  
 
   public static async fetchStaticDataFromTable(
     tableName: string
