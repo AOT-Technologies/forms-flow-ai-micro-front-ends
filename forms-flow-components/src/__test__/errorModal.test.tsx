@@ -15,9 +15,10 @@ describe("ErrorModal Component", () => {
     primaryBtnText: "Dismiss",
   };
 
+  const renderModalComponent = (props)=>  render(<ErrorModal {...props} />);
+
   test("renders ErrorModal with correct content", () => {
-    render(<ErrorModal {...modalProps} />);
-    
+    renderModalComponent(modalProps);
     expect(screen.getByTestId("error-modal")).toBeInTheDocument();
     expect(screen.getByText("Error Title")).toBeInTheDocument();
     expect(screen.getByText("Error Message")).toBeInTheDocument();
@@ -25,7 +26,7 @@ describe("ErrorModal Component", () => {
   });
 
   test("calls primary button action on click", () => {
-    render(<ErrorModal {...modalProps} />);
+    renderModalComponent(modalProps);
     fireEvent.click(screen.getByTestId("Dismiss-button"));
     expect(mockPrimaryAction).toHaveBeenCalledTimes(1);
   });

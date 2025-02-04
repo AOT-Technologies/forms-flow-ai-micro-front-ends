@@ -9,18 +9,18 @@ jest.mock("../components/SvgIcons/index", () => ({
   )),
 }));
 
+const renderPremiumIconComponent = (props)=>render(<ShowPremiumIcons {...props}/>);
+
 describe("ShowPremiumIcons Component", () => {
   it("renders StarPremiumIcon when SHOW_PREMIUM_ICON is true", () => {
     Object.defineProperty(constants, "SHOW_PREMIUM_ICON", { value: true, writable: true, });
-
-    render(<ShowPremiumIcons color="gold" />);
+    renderPremiumIconComponent({color:"gold"})
     expect(screen.getByTestId("star-icon")).toBeInTheDocument();
   });
 
   it("does not render StarPremiumIcon when SHOW_PREMIUM_ICON is false", () => {
     Object.defineProperty(constants, "SHOW_PREMIUM_ICON", { value: false,  writable: true, });
-
-    render(<ShowPremiumIcons color="gold" />);
+    renderPremiumIconComponent({color:"gold"})
     expect(screen.queryByTestId("star-icon")).not.toBeInTheDocument();
   });
 });
