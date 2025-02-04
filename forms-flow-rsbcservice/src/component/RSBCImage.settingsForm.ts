@@ -35,7 +35,7 @@ const settingsForm = (...extend) => {
                     {
                         type: 'textarea',
                         key: 'rsbcImageSettings',
-                        label: 'RSBC Image Settings',
+                        label: 'RSBC Image Settings (JSON format)',
                         input: true,
                         rows: 5,
                         resizable: true,
