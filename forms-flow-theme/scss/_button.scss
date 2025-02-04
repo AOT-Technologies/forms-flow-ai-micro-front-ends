@@ -130,8 +130,7 @@ $btn-font-weight: bold;
   // Default styles for buttons for all sizes . Useful for formio buttons
   @extend .default-button-styles;
 
-  &.btn-primary,
-  &.btn-success {
+  &.btn-primary {
     background-color: var(--primary-btn-bg-color) !important;
     border: 1px solid var(--primary-btn-bg-color) !important;
     color: var(--primary-btn-font-color) !important;

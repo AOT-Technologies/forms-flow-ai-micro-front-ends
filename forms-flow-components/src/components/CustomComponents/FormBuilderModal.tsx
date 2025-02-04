@@ -89,7 +89,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
         primaryBtnAction(values);
       }
     };
-  console.log("showSuccess",showSuccess);
+ 
     const handleInputValueChange = (e:any)=>{
       let {name, value} = e.target;
       if(e.target.type == "checkbox"){
@@ -108,6 +108,12 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
         nameValidationOnBlur({ ...values, createButtonClicked });
         setCachedTitle(values.title); 
             }
+    }
+    let buttonVariant = "primary"; // Default value
+    if (showSuccess) {
+      buttonVariant = "success";
+    } else if (nameError) {
+      buttonVariant = "dark";
     }
 
     useEffect(()=>{
@@ -188,13 +194,14 @@ Further clarification on this is to be determined for EE. */}
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-start">
           <CustomButton
-            variant={showSuccess ? "danger" : nameError ? "dark" : "primary"} // Set color based on success or error
+            variant={buttonVariant} // Set color based on success or error
             size="md"
             disabled={
               !!nameError ||
               isSaveBtnLoading ||
               !values.title ||
-              isFormNameValidating
+              isFormNameValidating ||
+              showSuccess
             } // Disable if errors or fields are empty
             label={
               showSuccess ? `Saving (${successCountdown})` : primaryBtnLabel
