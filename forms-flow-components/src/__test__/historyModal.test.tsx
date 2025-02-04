@@ -146,7 +146,7 @@ describe("History Modal component", () => {
   });
 
   it("check revert button disabled for some keys", () => {
-   const {container} = renderHistoryModal({
+    renderHistoryModal({
       ...defaultProps,
       allHistory: workflowHistory,
       historyCount: workflowHistory.length,
