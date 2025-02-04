@@ -43,7 +43,6 @@ export default class RSBCImage extends ReactComponent {
       );
     }
     catch (error) {
-      // TODO Handle error to show when saving or clicking out side the box.
       console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
       console.error('Error in defining RSBC Image Settings in RSBCImage Component. Needs to be a valid JSON object.');
     }
