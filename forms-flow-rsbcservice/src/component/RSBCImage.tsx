@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { ReactComponent } from '@aot-technologies/formio-react';
 import PrintServices from '../print/printService';
 import settingsForm from "./RSBCImage.settingsForm";
+import _ from "lodash";
 
 export default class RSBCImage extends ReactComponent {
   data: any;
@@ -34,15 +35,41 @@ export default class RSBCImage extends ReactComponent {
 
   static editForm = settingsForm;
 
+  getOutputJson(settingsJson: any): any {
+    try {
+      const settingsJsonParsed = JSON.parse(settingsJson);
+      return Object.fromEntries(
+          Object.entries(settingsJsonParsed).map(([key, path]) => [key, _.get(this.data, path)])
+      );
+    }
+    catch (error) {
+      // TODO Handle error to show when saving or clicking out side the box.
+      console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
+      console.error('Error in defining RSBC Image Settings in RSBCImage Component. Needs to be a valid JSON object.');
+    }
+  }
+
   attachReact(element: HTMLElement): void {
     const printServices = new PrintServices();
   
     if (!printServices || typeof printServices.renderSVGForm !== 'function') {
       throw new Error('printServices.renderSVGForm is not available.');
     }
-  
+
+    let outputJson:any = {};
+    if(this.component.rsbcImageSettings){
+      try {
+        outputJson = this.getOutputJson(this.component.rsbcImageSettings)
+      }
+      catch (error) {
+            console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
+        }
+    } else {
+      outputJson = this.data;
+    }
+
     const isEditMode = this.isPreviewPanelVisible();
-    printServices.renderSVGForm(this.data, this.component, isEditMode, this.builderMode)
+    printServices.renderSVGForm(outputJson, this.component, isEditMode, this.builderMode)
       .then((svgComponents) => {
         const root = createRoot(element);
         root.render(
@@ -59,7 +86,6 @@ export default class RSBCImage extends ReactComponent {
         console.error('Error rendering SVG form:', error);
       });
   }
-  
 
   detachReact(element: HTMLElement): void {
     if (element) {
@@ -71,11 +97,8 @@ export default class RSBCImage extends ReactComponent {
   isPreviewPanelVisible(): boolean {
     const previewPanel = document.querySelector('.card.panel.preview-panel') as HTMLElement;
     if (previewPanel) {
-      const isVisible = previewPanel.offsetHeight > 0 && previewPanel.offsetWidth > 0;
-      console.log(isVisible ? 'Preview panel is visible!' : 'Preview panel is not visible.');
-      return isVisible;
+      return previewPanel.offsetHeight > 0 && previewPanel.offsetWidth > 0;
     } else {
-      console.log('Preview panel not found.');
       return false;
     }
   }
