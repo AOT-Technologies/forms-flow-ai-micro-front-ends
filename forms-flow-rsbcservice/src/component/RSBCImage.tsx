@@ -39,9 +39,26 @@ export default class RSBCImage extends ReactComponent {
   getOutputJson(settingsJson: any, inputData: any): any {
     try {
       const settingsJsonParsed = JSON.parse(settingsJson);
-      return Object.fromEntries(
-          Object.entries(settingsJsonParsed).map(([key, path]) => [key, _.get(inputData, path)])
-      );
+      const output: Record<string, any> = {};
+    
+    _.forOwn(settingsJsonParsed, (rule, key) => {
+        if (typeof rule === 'string') {
+            // Direct mapping
+            _.set(output, key, _.get(inputData, rule, null));
+        } else if (typeof rule === 'object' && rule.mapping) {
+            // Nested mapping
+            output[key] = {};
+            _.forOwn(rule.mapping, (path, nestedKey) => {
+                output[key][nestedKey] = _.get(inputData, path, null);
+            });
+        } else if (typeof rule === 'object' && rule.default !== undefined) {
+            // Default values
+            _.set(output, key, rule.default);
+        }
+    });
+
+    return output;
+    
     }
     catch (error) {
       console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
@@ -58,9 +75,7 @@ export default class RSBCImage extends ReactComponent {
 
     let outputJson:any = {};
     let inputData = testInput.data; //TODO - replace this with this.data before going live
-    console.log("ratheesh testInput.data type:"+typeof inputData);
-    console.log("this.data type:"+typeof this.data);
-    console.log("this.component.rsbcImageSettings type:" + typeof this.component.rsbcImageSettings);
+    
     if(this.component.rsbcImageSettings){
       try {
         outputJson = this.getOutputJson(this.component.rsbcImageSettings, inputData);
