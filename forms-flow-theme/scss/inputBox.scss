@@ -1,7 +1,7 @@
 $form-input-border-radius: var(--radius-lg);
 $primary: var(--ff-primary);
 $form-input-focus-outline: 2px solid var(--ff-primary);
-$red-000: var(--ff-red-000);
+$danger-color: var(--ff-danger);
 $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
 $gray-medium: var(--ff-gray-medium);
 $white-color: var(--ff-white);
@@ -36,14 +36,14 @@ $white-color: var(--ff-white);
 }
 
 .input-error {
-  border-color: $red-000 !important;
+  border-color: $danger-color !important;
   outline: none;
   box-shadow: $input-error-box-shadow;
 }
 
 .validation-text {
   font-size: small;
-  color: $red-000 !important;
+  color: $danger-color !important;
 }
 
 .validation-astrisk {

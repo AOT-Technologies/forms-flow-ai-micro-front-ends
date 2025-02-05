@@ -5,6 +5,7 @@ $primary-light: var(--ff-primary-light);
 $gray-dark: var(--ff-gray-dark);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
+$black-color: var(--ff-black);
 
 .modal {
   .modal-dialog {
@@ -314,7 +315,7 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
 
   .template-title,
   .template-desc {
-    color: var(--ff-dark);
+    color: $black-color;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
@@ -895,7 +896,7 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
     font-size: var(--font-size-sm);
   }
   .selected-var-text{
-    color: var(--ff-dark);
+    color: $black-color;
     font-size: var(--font-size-sm);
     padding-bottom: var(--spacer-050);
   }

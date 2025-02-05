@@ -3,6 +3,7 @@ $primary-light: var(--ff-primary-light);
 $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
+$danger-color: var(--ff-danger);
 .ai-modal {
   .modal-dialog {
     margin-top: 2.5vh !important;
@@ -154,7 +155,7 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
     }
 
     .danger-message {
-      color: var(--ff-red-000);
+      color: $danger-color;
     }
 
     .form-container {

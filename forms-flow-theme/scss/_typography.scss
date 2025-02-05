@@ -1,5 +1,6 @@
 $gray-darkest: var(--ff-gray-darkest);
 $primary: var(--ff-primary);
+$black-color: var(--ff-black);
 .input-group-text {
   color: $gray-darkest !important;
 }
@@ -20,7 +21,7 @@ a {
 }
 
 .list-group-item:first-child, .list-group-item + .list-group-item {
-  color: var(--ff-dark);
+  color: $black-color;
 }
 
 .application-head {

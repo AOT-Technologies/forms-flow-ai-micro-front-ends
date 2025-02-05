@@ -5,7 +5,7 @@ $primary-light: var(--ff-primary-light);
 $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
-
+$danger-color: var(--ff-danger);
 .forms-text {
   vertical-align: bottom;
   margin-left: 0.625rem;
@@ -97,17 +97,17 @@ select option:hover {
 
 .formio-error-wrapper,
 .has-error {
-  color: var(--ff-danger);
-  border-color: var(--ff-danger);
+  color: $danger-color;
+  border-color: $danger-color;
 }
 
 .formio-error-wrapper,
 .has-error label {
-  color: var(--ff-danger);
+  color: $danger-color;
 }
 
 .formio-errors .error {
-  color: var(--ff-danger);
+  color: $danger-color;
 }
 
 .formio-wizard-nav-container {
@@ -264,11 +264,11 @@ select option:hover {
 
   &.is-invalid {
     background-image: none !important;
-    border: 1px solid var(--ff-red-000) !important;
+    border: 1px solid $danger-color !important;
 
     &:focus {
-      outline: 1px solid var(--ff-red-000) !important;
-      border: 1px solid var(--ff-red-000) !important;
+      outline: 1px solid $danger-color !important;
+      border: 1px solid $danger-color !important;
     }
   }
 
@@ -331,7 +331,7 @@ select option:hover {
 
   .custom-feedback {
     display: flex;
-    color: var(--ff-red-000);
+    color: $danger-color;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);

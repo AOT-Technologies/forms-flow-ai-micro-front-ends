@@ -10,6 +10,7 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
 $dropdown-btn-size: 3.2275rem;
 $btn-border-radius: 50%;
 $btn-font-weight: bold;
+$danger-color: var(--ff-danger);
 
 .btn-light {
   background-color: $white-color !important;
@@ -20,7 +21,7 @@ $btn-font-weight: bold;
 }
 
 .form-select {
-  color: $dark !important;
+  color: $black-color !important;
 }
 
 .btn-info {
@@ -65,12 +66,12 @@ $btn-font-weight: bold;
 }
 
 .delete_button {
-  color: var(--ff-danger);
+  color: $danger-color;
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
 
   &:hover {
-    color: var(--ff-danger); // This line can be omitted since the color remains the same.
+    color: $danger-color; // This line can be omitted since the color remains the same.
   }
 
   &:active {

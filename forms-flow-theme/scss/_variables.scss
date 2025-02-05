@@ -3,6 +3,7 @@ $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $primary-color: var(--ff-primary);
+$danger-color: var(--ff-danger);
 .task-container {
   height: 100% !important;
 }
@@ -29,7 +30,7 @@ $primary-color: var(--ff-primary);
 }
 
 .is-invalid {
-  background-color: var(--ff-danger-400);
+  background-color: $danger-color;
 }
 
 .active-tab {
@@ -77,8 +78,8 @@ $primary-color: var(--ff-primary);
 }
 
 .taskvariable-alert {
-  background-color: var(--ff-alert-200) !important;
-  border: solid 0.125rem var(--ff-alert-400) !important;
+  background-color: $danger-color !important;
+  border: solid 0.125rem $danger-color!important;
 }
 
 .select {
@@ -200,7 +201,7 @@ hr {
 
 .main-container {
   overflow: hidden !important;
-  background: var(--ff-main-bg);
+  background: $gray-medium;
   margin-left: var(--navbar-width);
   margin-top: 0;
   height: 100vh !important;

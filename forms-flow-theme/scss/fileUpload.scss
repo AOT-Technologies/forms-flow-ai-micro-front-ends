@@ -2,7 +2,7 @@ $primary: var(--ff-primary);
 $ff-white: var(--ff-white);
 $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
-$ff-red: var(--ff-red-000);
+$ff-red: var(--ff-danger);
 $font-size-xs: var(--font-size-xs);
 
 .file-upload {
@@ -26,7 +26,7 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-text {
-  color: $gray-800;
+  color: $gray-darkest;
   text-align: center;
   font-size: $font-size-xs;
   font-weight: var(--font-weight-sm);
@@ -36,7 +36,7 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-size-text {
-  color: $gray-400;
+  color: $gray-medium-dark;
   text-align: center;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
@@ -44,7 +44,7 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-text-description {
-  color: $gray-400;
+  color: $gray-medium-dark;
   text-align: center;
   font-size: $font-size-xs;
   font-weight: var(--font-weight-sm);
@@ -107,7 +107,7 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-status-progress {
-  @include upload-status-styles($gray-400);
+  @include upload-status-styles($gray-medium-dark);
 }
 
 .progress {
