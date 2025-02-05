@@ -58,6 +58,9 @@ export default class RSBCImage extends ReactComponent {
 
     let outputJson:any = {};
     let inputData = testInput.data; //TODO - replace this with this.data before going live
+    console.log("ratheesh testInput.data type:"+typeof inputData);
+    console.log("this.data type:"+typeof this.data);
+    console.log("this.component.rsbcImageSettings type:" + typeof this.component.rsbcImageSettings);
     if(this.component.rsbcImageSettings){
       try {
         outputJson = this.getOutputJson(this.component.rsbcImageSettings, inputData);
