@@ -2,8 +2,8 @@
     "data": {
         "formOptions": {
             "VI": true,
-            "TwentyFourHour": true,
-            "TwelveHour": false
+            "TwentyFourHour": false,
+            "TwelveHour": true
         },
         "submit": true,
         "applicationId": "",
@@ -29,7 +29,7 @@
                 "driver_given_name": "John",
                 "driver_prov_state": "nl",
                 "driver_postal": "v5k231",
-                "driver_dob": "2025-02-13T00:00:00-08:00",
+                "driver_dob": "2025-02-13",
                 "driver_phone": "(221) 312-3213",
                 "applicationId": "",
                 "applicationStatus": "",
@@ -42,7 +42,7 @@
                     "formsflow/formsflow-client",
                     "formsflow/formsflow-designer"
                 ],
-                "driver_licence_expiry": "2025-02-27T00:00:00-08:00",
+                "driver_licence_expiry": "2025-02-27",
                 "driver_licence_class": "A",
                 "gender": "male"
             },
@@ -185,7 +185,7 @@
                 "intersection_or_address_of_offence": "235 wal road",
                 "offence_city": {},
                 "agency_file_no": "1231231",
-                "date_of_driving": "2025-02-19T00:00:00-08:00",
+                "date_of_driving": "2025-02-19",
                 "time_of_driving": "21:32",
                 "applicationId": "",
                 "applicationStatus": "",
@@ -306,7 +306,7 @@
                     "formsflow/formsflow-client",
                     "formsflow/formsflow-designer"
                 ],
-                "reasonable_date_of_test": "2025-02-12T12:00:00-08:00",
+                "reasonable_date_of_test": "2025-02-12",
                 "reasonable_time_of_test": "21:31"
             },
             "metadata": {}
@@ -345,7 +345,7 @@
                     "formsflow/formsflow-designer"
                 ],
                 "resonable_test_used_alcohol": "alco-sensor",
-                "reasonable_asd_expiry_date": "2025-02-28T12:00:00-08:00",
+                "reasonable_asd_expiry_date": "2025-02-28",
                 "reasonable_result_alcohol": "51-59"
             },
             "metadata": {}
