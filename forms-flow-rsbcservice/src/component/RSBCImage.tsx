@@ -4,6 +4,7 @@ import { ReactComponent } from '@aot-technologies/formio-react';
 import PrintServices from '../print/printService';
 import settingsForm from "./RSBCImage.settingsForm";
 import _ from "lodash";
+import testInput from "../test_data/sampleDataFromRatheesh.json"
 
 export default class RSBCImage extends ReactComponent {
   data: any;
@@ -35,11 +36,11 @@ export default class RSBCImage extends ReactComponent {
 
   static editForm = settingsForm;
 
-  getOutputJson(settingsJson: any): any {
+  getOutputJson(settingsJson: any, inputData: any): any {
     try {
       const settingsJsonParsed = JSON.parse(settingsJson);
       return Object.fromEntries(
-          Object.entries(settingsJsonParsed).map(([key, path]) => [key, _.get(this.data, path)])
+          Object.entries(settingsJsonParsed).map(([key, path]) => [key, _.get(inputData, path)])
       );
     }
     catch (error) {
@@ -56,9 +57,10 @@ export default class RSBCImage extends ReactComponent {
     }
 
     let outputJson:any = {};
+    let inputData = testInput.data; //TODO - replace this with this.data before going live
     if(this.component.rsbcImageSettings){
       try {
-        outputJson = this.getOutputJson(this.component.rsbcImageSettings)
+        outputJson = this.getOutputJson(this.component.rsbcImageSettings, inputData);
       }
       catch (error) {
             console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
