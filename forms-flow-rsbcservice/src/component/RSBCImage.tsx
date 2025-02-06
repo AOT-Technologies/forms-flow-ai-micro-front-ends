@@ -41,24 +41,24 @@ export default class RSBCImage extends ReactComponent {
       const settingsJsonParsed = JSON.parse(settingsJson);
       const output: Record<string, any> = {};
     
-    _.forOwn(settingsJsonParsed, (rule, key) => {
-        if (typeof rule === 'string') {
-            // Direct mapping
-            _.set(output, key, _.get(inputData, rule, null));
-        } else if (typeof rule === 'object' && rule.mapping) {
-            // Nested mapping
-            output[key] = {};
-            _.forOwn(rule.mapping, (path, nestedKey) => {
-                output[key][nestedKey] = _.get(inputData, path, null);
-            });
-        } else if (typeof rule === 'object' && rule.default !== undefined) {
-            // Default values
-            _.set(output, key, rule.default);
-        }
-    });
+      _.forOwn(settingsJsonParsed, (rule, key) => {
+          if (typeof rule === 'string') {
+              // Direct mapping
+              _.set(output, key, _.get(inputData, rule, null));
+          } else if (typeof rule === 'object' && rule.mapping) {
+              // Nested mapping
+              output[key] = {};
+              _.forOwn(rule.mapping, (path, nestedKey) => {
+                  output[key][nestedKey] = _.get(inputData, path, null);
+              });
+          } else if (typeof rule === 'object' && rule.default !== undefined) {
+              // Default values
+              _.set(output, key, rule.default);
+          }
+      });
 
-    return output;
-    
+      return output;
+
     }
     catch (error) {
       console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
