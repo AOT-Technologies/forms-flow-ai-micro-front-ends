@@ -1,4 +1,6 @@
-rsbcImageSettings.json =
+{
+"___settings.json___" :
+
 {
     "TwentyFourHour": "form.data.aureliocheckbox",
     "TwelveHour": "form.data.aurelioselectBoxes.fasdf",
@@ -16,10 +18,9 @@ rsbcImageSettings.json =
             "0": "form1.vehicleColours"
         }
     }
-}
+},
 
-
-inputJson =
+"____inputJson_____" :
 {
 	"form":{
 		"data": {
@@ -35,9 +36,9 @@ inputJson =
 		"vehicleColours": "BLK"
 	}
 	
-}
+},
 
-outputJson =
+"_____outputJson____":
 {
 	"TwentyFourHour":true,
 	"TwelveHour":"test",
@@ -51,4 +52,5 @@ outputJson =
 	"vehicle_colour": [
         	"BLU"
     	],
+}
 }

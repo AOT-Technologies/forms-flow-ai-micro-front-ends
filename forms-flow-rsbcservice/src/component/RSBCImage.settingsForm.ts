@@ -39,15 +39,10 @@ const settingsForm = (...extend) => {
                         input: true,
                         rows: 5,
                         resizable: true,
-                        placeholder: `
-Enter RSBC image-specific settings here...
-Sample Input:
-{
-    "TwentyFourHour": "form1.data.textField",
-    "TwelveHour": "form2.data.checkbox",
-    "driver_licence_no": "form3.data.textArea"
-}`,
-                        weight: 30
+                        tooltip: 'eg: {\"driver_licence_no": "form3.data.textArea\"}',
+                        weight: 30,
+                        // editor: "ace",
+                        as: "json"
                     },
                 ],
             },
