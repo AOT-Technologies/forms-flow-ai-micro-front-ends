@@ -8,7 +8,7 @@ interface CustomPillProps {
   secondaryLabel: string;
   icon?: React.ReactNode;
   bg: string;
-  dataTestid?: string;
+ dataTestId?: string;
   ariaLabel?: string;
   onClick?: () => void; 
 }
@@ -17,7 +17,7 @@ export const CustomPill: React.FC<CustomPillProps> = ({
   label,
   icon,
   bg,
-  dataTestid = "",
+ dataTestId = "",
   ariaLabel = "",
   secondaryLabel="",
   onClick,
@@ -25,9 +25,9 @@ export const CustomPill: React.FC<CustomPillProps> = ({
   const { t } = useTranslation();
   return (
     <div>
-      <Badge pill variant={bg} data-testid={dataTestid} aria-label={ariaLabel}>
-        <span className="primary-label">{t(label)}</span> 
-        { secondaryLabel && (<span className="secondary-label" >{t(secondaryLabel)}</span>)}
+      <Badge pill variant={bg} data-testid={dataTestId} aria-label={ariaLabel}>
+        <span className="primary-label">{label}</span> 
+        { secondaryLabel && (<span className="secondary-label" >{secondaryLabel}</span>)}
         {icon && 
         <button 
         className="button-as-div"

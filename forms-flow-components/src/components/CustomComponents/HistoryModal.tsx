@@ -64,7 +64,7 @@ const RevertField = ({
   size,
   label,
   onClick,
-  dataTestid,
+ dataTestId,
   ariaLabel,
   disabled=false
 }) => {
@@ -76,7 +76,7 @@ const RevertField = ({
         disabled={disabled}
         label={label}
         onClick={onClick}
-        dataTestid={dataTestid}
+       dataTestId={dataTestId}
         ariaLabel={ariaLabel}
       />
     </div>
@@ -203,7 +203,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
               size="sm"
               label={loadMoreBtnText}
               onClick={handleLoadMore}
-              dataTestid={loadMoreBtndataTestid}
+             dataTestId={loadMoreBtndataTestid}
               ariaLabel={loadMoreBtnariaLabel}
             />
           </div>
@@ -247,7 +247,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
-                  dataTestid={revertBtndataTestid}
+                 dataTestId={revertBtndataTestid}
                   ariaLabel={revertBtnariaLabel}
                 />
               </div>
@@ -269,7 +269,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
-                  dataTestid={revertBtndataTestid}
+                 dataTestId={revertBtndataTestid}
                   ariaLabel={revertBtnariaLabel}
                 />
               </div>
