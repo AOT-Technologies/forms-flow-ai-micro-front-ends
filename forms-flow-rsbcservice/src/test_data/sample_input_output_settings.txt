@@ -1,4 +1,4 @@
-settings.json =
+rsbcImageSettings.json =
 {
     "TwentyFourHour": "form.data.aureliocheckbox",
     "TwelveHour": "form.data.aurelioselectBoxes.fasdf",
