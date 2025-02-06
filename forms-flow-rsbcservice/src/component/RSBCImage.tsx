@@ -37,11 +37,13 @@ export default class RSBCImage extends ReactComponent {
   static editForm = settingsForm;
 
   getOutputJson(settingsJson: any, inputData: any): any {
-    try {
-      const settingsJsonParsed = JSON.parse(settingsJson);
+    try {      
+      //const settingsJsonParsed = JSON.parse(settingsJson);
+      //const settingsJsonString = JSON.stringify(settingsJson);
+      //const settingsJsonParsed = JSON.parse(settingsJsonString);
       const output: Record<string, any> = {};
     
-      _.forOwn(settingsJsonParsed, (rule, key) => {
+      _.forOwn(settingsJson, (rule, key) => {
           if (typeof rule === 'string') {
               // Direct mapping
               _.set(output, key, _.get(inputData, rule, null));
