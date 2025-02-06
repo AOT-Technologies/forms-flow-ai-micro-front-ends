@@ -82,12 +82,13 @@ $danger-color: var(--ff-danger);
 
 
 .bg-primary {
-  background-color: $primary!important;
+  background-color: $primary !important;
 }
 
 .table-primary {
   --bs-table-color: #fff;
   --ff-table-bg: $primary !important;
+  background-color: $primary !important;
 }
 
 .btn-wizard-nav-submit,

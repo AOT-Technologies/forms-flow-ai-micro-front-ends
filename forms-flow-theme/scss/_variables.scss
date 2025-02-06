@@ -1,6 +1,7 @@
 $prefix: "ff-";
 $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
+$gray-light: var(--ff-gray-light);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $primary-color: var(--ff-primary);
 $danger-color: var(--ff-danger);
@@ -201,7 +202,7 @@ hr {
 
 .main-container {
   overflow: hidden !important;
-  background: $gray-medium;
+  background: $gray-light;
   margin-left: var(--navbar-width);
   margin-top: 0;
   height: 100vh !important;
