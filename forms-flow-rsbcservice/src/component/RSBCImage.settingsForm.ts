@@ -39,10 +39,29 @@ const settingsForm = (...extend) => {
                         input: true,
                         rows: 5,
                         resizable: true,
-                        tooltip: 'eg: {\"driver_licence_no": "form3.data.textArea\"}',
                         weight: 30,
                         // editor: "ace",
-                        as: "json"
+                        as: "json",
+                        description: `
+                        Example JSON:<pre>
+{
+    "TwentyFourHour": "form1.data.twentyFourHour",
+    "drivers_licence_jurisdiction": {
+        "mapping": {
+            "value": "form2.drivers_licence_jurisdiction_value",
+            "label": "form2.drivers_licence_jurisdiction_label"
+        }
+    },
+    "gender": { "default": {} },
+    "driver_licence_expiry": { "default": null },
+    "driver_licence_class": { "default": "A" },
+    "vehicle_colour": {
+        "mapping": {
+            "0": "form1.vehicleColours"
+        }
+    }
+}</pre>
+                        `
                     },
                 ],
             },
