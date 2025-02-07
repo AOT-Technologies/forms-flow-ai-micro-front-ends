@@ -48,8 +48,10 @@ $primary-color: var(--ff-primary);
 }
 
 .dropdown-item:hover {
+  border-radius: var(--radius-sm);
+  //background: $primary-color;
   filter: none;
-  background-color: $gray-medium;
+  background-color: $primary;
 }
 
 .taskDropdown>.dropdown-menu::before {

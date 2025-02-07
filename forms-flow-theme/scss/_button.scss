@@ -417,6 +417,9 @@ $btn-font-weight: bold;
   // }
 
   // Dropdown Button Styles
+  .dropdown-menu{
+    min-width: 5rem !important;
+  }
   .dropdown {
     .btn {
       color: $btn-color !important;

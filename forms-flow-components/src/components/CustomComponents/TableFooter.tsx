@@ -41,7 +41,7 @@ export const TableFooter: React.FC<TableFooterProps> = ({
       {totalCount > 5 ? (
         <>
           <td colSpan={3}>
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center justify-content-center">
               <Pagination
                 activePage={activePage}
                 itemsCountPerPage={limit}
@@ -64,7 +64,7 @@ export const TableFooter: React.FC<TableFooterProps> = ({
              <div className="d-flex align-items-center justify-content-end">              
               <span className="pagination-text">{t("Rows per page")}</span>
               <div className="pagination-dropdown">
-                <Dropdown data-testid="page-limit-dropdown">
+                <Dropdown data-testid="page-limit-dropdown" >
                   <Dropdown.Toggle
                     variant="light"
                     id="dropdown-basic"
