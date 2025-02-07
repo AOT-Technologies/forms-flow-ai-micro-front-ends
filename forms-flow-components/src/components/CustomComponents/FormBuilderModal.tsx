@@ -197,7 +197,7 @@ Further clarification on this is to be determined for EE. */}
               buttonLoading={isSaveBtnLoading}
               onClick={handlePrimaryAction} // Use the new handler
               name="createButton"
-              dataTestid={primaryBtndataTestid}
+              dataTestId={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
             />
 
@@ -207,7 +207,7 @@ Further clarification on this is to be determined for EE. */}
               name="cancelButton"
               label={secondaryBtnLabel}
               onClick={secondaryBtnAction}
-              dataTestid={secondoryBtndataTestid}
+              dataTestId={secondoryBtndataTestid}
               ariaLabel={secondoryBtnariaLabel}
             />
           </Modal.Footer>

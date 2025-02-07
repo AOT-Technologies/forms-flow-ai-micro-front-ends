@@ -125,7 +125,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       value={inputValue}
                       onChange={handleInputChange}
                       ariaLabel={ariaLabelforInput}
-                      dataTestid={dataTestIdforInput}
+                     dataTestId={dataTestIdforInput}
                       isInvalid={isInvalid}
                       icon={<CloseIcon onClick={handleClose} color={primaryColor} data-testid="close-input" aria-label="Close input "/>} 
                       className="input-with-close"
@@ -141,7 +141,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       onChange={handleInputDropdownChange}
                       onClick={toggleDropdown}
                       ariaLabel={ariaLabelforDropdown}
-                      dataTestid={dataTestIdforDropdown}
+                     dataTestId={dataTestIdforDropdown}
                       icon={<ChevronIcon data-testid="dropdown-input" aria-label="dropdown input"/>}
                       className={`${inputClassName} ${isDropdownOpen ? 'border-input collapsed' : ''}`}
                       onIconClick={toggleDropdown}
