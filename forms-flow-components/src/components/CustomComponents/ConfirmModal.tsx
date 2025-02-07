@@ -34,7 +34,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   primaryBtnAction,
   primaryBtnText,
   primaryBtnDisable = false,
-  primaryBtndataTestid = 'Confirm-button',
+  primaryBtndataTestid = 'confirm-button',
   primaryBtnariaLabel = 'Confirm Button',
   buttonLoading= false,
   secondaryBtnText,
