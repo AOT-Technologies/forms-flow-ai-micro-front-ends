@@ -51,7 +51,12 @@ export default class RSBCImage extends ReactComponent {
               // Nested mapping
               output[key] = {};
               _.forOwn(rule.mapping, (path, nestedKey) => {
-                  output[key][nestedKey] = _.get(inputData, path, null);
+                  if (typeof path === 'object' && path.default !== undefined) {
+                      // Apply default value if specified
+                      output[key][nestedKey] = path.default;
+                  } else {
+                      output[key][nestedKey] = _.get(inputData, path, null);
+                  }
               });
           } else if (typeof rule === 'object' && rule.default !== undefined) {
               // Default values
