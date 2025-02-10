@@ -2,7 +2,8 @@ $primary: var(--ff-primary);
 $ff-white: var(--ff-white);
 $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
-$ff-red: var(--ff-danger);
+$gray-medium-dark: var(--ff-gray-medium-dark);
+$danger: var(--ff-danger);
 $font-size-xs: var(--font-size-xs);
 
 .file-upload {
@@ -103,7 +104,7 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-status-error {
-  @include upload-status-styles($ff-red);
+  @include upload-status-styles($danger);
 }
 
 .upload-status-progress {
