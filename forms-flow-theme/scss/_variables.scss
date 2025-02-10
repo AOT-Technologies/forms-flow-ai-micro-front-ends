@@ -3,6 +3,7 @@ $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $primary-color: var(--ff-primary);
+$white-color: var(--ff-white);
 .task-container {
   height: 100% !important;
 }
@@ -49,9 +50,12 @@ $primary-color: var(--ff-primary);
 
 .dropdown-item:hover {
   border-radius: var(--radius-sm);
-  //background: $primary-color;
+  background: $primary-color !important;
+  color: $white-color !important;
+  margin-left: 6px !important;
+  margin-right: 6px !important;
   filter: none;
-  background-color: $primary;
+  width: auto !important;
 }
 
 .taskDropdown>.dropdown-menu::before {
