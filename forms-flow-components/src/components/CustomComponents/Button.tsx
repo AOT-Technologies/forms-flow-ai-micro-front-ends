@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 interface DropdownItem {
   label: string;
   onClick: () => void;
-  dataTestid?: string;
+  dataTestId?: string;
   ariaLabel?: string;
 }
 
@@ -23,7 +23,7 @@ interface CustomButtonProps {
   disabled?: boolean;
   icon?: React.ReactNode;
   className?: string;
-  dataTestid?: string;
+  dataTestId?: string;
   ariaLabel?: string;
   buttonLoading?: boolean;
 }
@@ -38,7 +38,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   disabled = false,
   icon = false,
   className = "",
-  dataTestid = "",
+  dataTestId = "",
   ariaLabel = "",
   name =  "",
   buttonLoading = false,
@@ -82,7 +82,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           size={size!='md' ? size : undefined}
           disabled={disabled}
           ref={buttonRef}
-          data-testid={dataTestid}
+          data-testid={dataTestId}
           aria-label={ariaLabel}
           name={name}
           className={`${size !== 'md' ? className : `btn-md ${className}`}`}
@@ -105,7 +105,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             <Dropdown.Item
               key={index}
               onClick={item.onClick}
-              data-testid={item.dataTestid}
+              data-testid={item.dataTestId}
               aria-label={item.ariaLabel}
             >
               {t(item.label)}
@@ -124,7 +124,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       disabled={disabled || buttonLoading}
       name={name}
       className={`${size !== 'md' ? className : `btn-md ${className}`}`}
-      data-testid={dataTestid}
+      data-testid={dataTestId}
       aria-label={ariaLabel}
     >
       <div

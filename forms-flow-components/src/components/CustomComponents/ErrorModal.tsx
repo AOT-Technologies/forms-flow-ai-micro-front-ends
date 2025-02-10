@@ -67,7 +67,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
             size="lg"
             label={primaryBtnText}
             onClick={primaryBtnAction}
-            dataTestid={primaryBtndataTestid}
+            dataTestId={primaryBtndataTestid}
             ariaLabel={primaryBtnariaLabel}
           />
         </Modal.Footer>

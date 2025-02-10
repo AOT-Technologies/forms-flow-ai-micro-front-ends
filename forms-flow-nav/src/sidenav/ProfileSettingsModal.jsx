@@ -96,7 +96,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           size="md"
           label={t("Save Changes")}
           onClick={handleConfirmProfile}
-          dataTestid="save-profile-settings"
+         dataTestId="save-profile-settings"
           ariaLabel={t("Save Profile Settings")}
           disabled={isSaveDisabled}
         />
@@ -105,7 +105,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           size="md"
           label={t("Cancel")}
           onClick={onClose}
-          dataTestid="cancel-profile-settings"
+         dataTestId="cancel-profile-settings"
           ariaLabel={t("Cancel profile settings")}
         />
       </Modal.Footer>

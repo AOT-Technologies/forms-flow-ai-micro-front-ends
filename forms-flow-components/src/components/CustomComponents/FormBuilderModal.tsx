@@ -89,7 +89,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
         primaryBtnAction(values);
       }
     };
- 
+
     const handleInputValueChange = (e:any)=>{
       let {name, value} = e.target;
       if(e.target.type == "checkbox"){
@@ -144,7 +144,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             placeholder={t(placeholderForForm)}
             label={nameLabel}
             aria-label={t("Name of the form")}
-            data-testid={nameInputDataTestid}
+            dataTestId={nameInputDataTestid}
             onBlur={handleOnBlur}
             onChange={(event) => {
               handleInputValueChange(event);
@@ -164,7 +164,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             label={descriptionLabel}
             className="form-input"
             aria-label={t("Description of the new form")}
-            data-testid={descriptionDataTestid}
+            dataTestId={descriptionDataTestid}
             value={values.description} // Bind description state
             onChange={handleInputValueChange}
             minRows={1}
@@ -173,7 +173,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
           {/* This below commenting is for open-source use only. It should not be included in EE.
 Further clarification on this is to be determined for EE. */}
 
-          {/* 
+          {/*
    {buildForm && 
    <>
      <CustomInfo heading="Note" 
@@ -209,7 +209,7 @@ Further clarification on this is to be determined for EE. */}
             buttonLoading={isSaveBtnLoading}
             onClick={handlePrimaryAction} // Trigger action on button click
             name="createButton"
-            dataTestid={primaryBtndataTestid}
+            dataTestId={primaryBtndataTestid}
             ariaLabel={primaryBtnariaLabel}
           />
 
@@ -219,7 +219,7 @@ Further clarification on this is to be determined for EE. */}
             name="cancelButton"
             label={secondaryBtnLabel}
             onClick={secondaryBtnAction}
-            dataTestid={secondoryBtndataTestid}
+            dataTestId={secondoryBtndataTestid}
             ariaLabel={secondoryBtnariaLabel}
           />
         </Modal.Footer>
