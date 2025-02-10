@@ -23,13 +23,13 @@
                 "drivers_licence_jurisdiction": "AB",
                 "scanDl": false,
                 "icbcPrefill": true,
-                "driver_last_name": "Snow",
+                "driver_last_name": "Doe",
                 "driver_address": "1934 Westpark Ln",
                 "driver_city": "Victoria",
                 "driver_given_name": "John",
                 "driver_prov_state": "nl",
                 "driver_postal": "v5k231",
-                "driver_dob": "2025-02-13T00:00:00-08:00",
+                "driver_dob": "2025-02-13",
                 "driver_phone": "(221) 312-3213",
                 "applicationId": "",
                 "applicationStatus": "",
@@ -42,7 +42,7 @@
                     "formsflow/formsflow-client",
                     "formsflow/formsflow-designer"
                 ],
-                "driver_licence_expiry": "2025-02-27T00:00:00-08:00",
+                "driver_licence_expiry": "2025-02-27",
                 "driver_licence_class": "A",
                 "gender": "male"
             },
@@ -176,7 +176,7 @@
                     "formsflow/formsflow-client",
                     "formsflow/formsflow-designer"
                 ],
-                "date_of_impound": "2025-02-19T00:00:00-08:00"
+                "date_of_impound": "2025-02-19"
             },
             "metadata": {}
         },
@@ -185,7 +185,7 @@
                 "intersection_or_address_of_offence": "235 wal road",
                 "offence_city": {},
                 "agency_file_no": "1231231",
-                "date_of_driving": "2025-02-19T00:00:00-08:00",
+                "date_of_driving": "2025-02-19",
                 "time_of_driving": "21:32",
                 "applicationId": "",
                 "applicationStatus": "",

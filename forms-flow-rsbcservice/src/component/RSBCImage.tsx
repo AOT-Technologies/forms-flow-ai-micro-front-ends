@@ -4,7 +4,7 @@ import { ReactComponent } from '@aot-technologies/formio-react';
 import PrintServices from '../print/printService';
 import settingsForm from "./RSBCImage.settingsForm";
 import _ from "lodash";
-import testInput from "../test_data/sampleDataFromRatheesh.json"
+import testInput from "../test_data/sampleTestData.json"
 
 export default class RSBCImage extends ReactComponent {
   data: any;
