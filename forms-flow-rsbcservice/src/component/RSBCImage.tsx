@@ -38,9 +38,6 @@ export default class RSBCImage extends ReactComponent {
 
   getOutputJson(settingsJson: any, inputData: any): any {
     try {      
-      //const settingsJsonParsed = JSON.parse(settingsJson);
-      //const settingsJsonString = JSON.stringify(settingsJson);
-      //const settingsJsonParsed = JSON.parse(settingsJsonString);
       const output: Record<string, any> = {};
     
       _.forOwn(settingsJson, (rule, key) => {
@@ -81,7 +78,7 @@ export default class RSBCImage extends ReactComponent {
     }
 
     let outputJson:any = {};
-    let inputData = testInput.data; //TODO - replace this with this.data before going live
+    let inputData = this.data;
     
     if(this.component.rsbcImageSettings){
       try {
