@@ -186,3 +186,28 @@ The `RSBCImage` component requires specific data structures to render images eff
     "twenty_four_hour_number": "VZ110018"
 }
 ```
+
+
+#### RSBC Image Settings
+If the data structure varies, the `RSBCImage` component includes an `“RSBCImage Settings”` section, allowing you to configure and map different data structures.
+This ensures flexibility in handling various data formats while maintaining seamless integration. Sample on this is below
+
+```json
+{
+    "TwentyFourHour": "form1.data.twentyFourHour",
+    "drivers_licence_jurisdiction": {
+        "mapping": {
+            "value": "form2.drivers_licence_jurisdiction_value",
+            "label": "form2.drivers_licence_jurisdiction_label"
+        }
+    },
+    "gender": { "default": {} },
+    "driver_licence_expiry": { "default": null },
+    "driver_licence_class": { "default": "A" },
+    "vehicle_colour": {
+        "mapping": {
+            "0": "form1.vehicleColours"
+        }
+    }
+}
+```
