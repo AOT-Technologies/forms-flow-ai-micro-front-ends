@@ -16,7 +16,7 @@ export const WEB_BASE_CUSTOM_URL =
   "";
 
 export const CUSTOM_SUBMISSION_URL =
-    (window._env_ && window._env_.REACT_APP_CUSTOM_SUBMISSION_URL) ||
+  (window._env_ && window._env_.REACT_APP_CUSTOM_SUBMISSION_URL) ||
   "";
 const CUSTOM_SUBMISSION_ENABLED_VARIABLE =
   (window._env_ && window._env_.REACT_APP_CUSTOM_SUBMISSION_ENABLED) ||
