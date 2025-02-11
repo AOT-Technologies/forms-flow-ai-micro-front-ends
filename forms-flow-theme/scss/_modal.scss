@@ -657,8 +657,10 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
   
   .expression-section{
     border-bottom: 1px solid var(--ff-gray-100);
-    padding: var(--spacer-200) var(--spacer-225) !important;
+    padding: var(--spacer-050) var(--spacer-225) !important;
+    padding-bottom: var(--spacer-050);
     gap: var(--spacer-050);
+    margin-top: var(--spacer-200);
   }
 }
   .expression-builder{
@@ -701,17 +703,24 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
     font-weight: var(--font-weight-sm);
     margin-left: 8px;
   }
-
-  .expression-area {
+  .expression-area,
+  .expression-display-area {
     display: flex;
-    min-height: 80px;
     align-items: flex-start;
     gap: var(--spacer-050);
     border-radius: var(--radius-sm);
-    border: 1px solid $primary;
-    margin-top: 0.5rem;
-    padding-bottom: 0.5rem; 
+    border: 0.0625rem solid var(--ff-gray-300);
+    padding: var(--spacer-050) var(--spacer-100);
     flex-wrap: wrap;
+
+    &.expression-area {
+      min-height: 4.375rem;
+    }
+
+    &.expression-display-area {
+      min-height: 2.1875rem;
+      pointer-events: none;
+    }
   }
 
   .expression-section{
@@ -973,3 +982,9 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
 .button-align{
   gap: var(--spacer-100);
 }
+
+.dashed-selection {
+  border: 0.125rem dotted $primary;
+  padding: 0.1875rem;
+  border-radius: var(--radius-sm); /* Optional: Add some rounding */
+} 

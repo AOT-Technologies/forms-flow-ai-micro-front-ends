@@ -45,7 +45,7 @@ describe("CustomTabs component", () => {
       <CustomTabs
         defaultActiveKey="tab1"
         tabs={mockTabs}
-        dataTestid="custom-tabs"
+        dataTestId="custom-tabs"
         ariaLabel="Test Tabs"
       />
     );
@@ -59,7 +59,7 @@ describe("CustomTabs component", () => {
       <CustomTabs
         defaultActiveKey="tab1"
         tabs={mockTabs}
-        dataTestid="custom-tabs"
+        dataTestId="custom-tabs"
       />
     );
     expect(screen.getByTestId("custom-tabs-tab-tab1")).toBeInTheDocument();

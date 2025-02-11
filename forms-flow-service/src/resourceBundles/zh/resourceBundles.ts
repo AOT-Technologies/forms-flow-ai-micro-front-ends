@@ -1349,4 +1349,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Unpublish This Form": "取消发布此表单",
   "A system error occurred during export. Please try again.": "导出过程中发生了系统错误。请重试。",
   "Try Again": "再试一次",
+  "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.": "未找到任何表单。请点击右上角的“新建表单”按钮创建新表单。",
+  "No subflows have been found. Create a new subflow by clicking \"New BPMN\" button in the top right.": "未找到任何子流程。请点击右上角的“新建 BPMN”按钮创建新子流程。",
+  "No decision tables have been found. Create a new decision table by clicking \"New DMN\" button in the top right.": "未找到任何决策表。请点击右上角的“新建 DMN”按钮创建新决策表。"
+
 }

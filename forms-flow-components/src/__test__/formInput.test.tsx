@@ -4,7 +4,7 @@ import { FormInput } from '../components/CustomComponents/FormInput';
 
 const handleChange = jest.fn();
 
-const renderFormInputComponent = (props)=> render(<FormInput  onChange={handleChange} value=''  dataTestid="input" {...props} />);
+const renderFormInputComponent = (props)=> render(<FormInput  onChange={handleChange} value=''  dataTestId="input" {...props} />);
 
 describe('FormInput Component', () => {
   it('renders without crashing', () => {

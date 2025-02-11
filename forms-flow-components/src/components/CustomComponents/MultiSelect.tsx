@@ -59,6 +59,7 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
         <Multiselect
           options={options}
           selectedValues={selectedValues}
+          data-testid="multi-select"
           className={`${isOpen && "open-dropdown"}`}
           onSelect={onSelect}
           onRemove={onRemove}

@@ -1360,6 +1360,9 @@ export const RESOURCE_BUNDLES_FR ={
   "Unpublish This Form": "Retirer de la publication ce formulaire",
   "A system error occurred during export. Please try again.": "Une erreur système est survenue lors de l'exportation. Veuillez réessayer.",
   "Try Again": "Réessayez",
+  "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.": "Aucun formulaire n'a été trouvé. Créez un nouveau formulaire en cliquant sur le bouton 'Nouveau formulaire' en haut à droite.",
+  "No subflows have been found. Create a new subflow by clicking \"New BPMN\" button in the top right.": "Aucun sous-flux n'a été trouvé. Créez un nouveau sous-flux en cliquant sur le bouton 'Nouveau BPMN' en haut à droite.",
+  "No decision tables have been found. Create a new decision table by clicking \"New DMN\" button in the top right.": "Aucun tableau de décision n'a été trouvé. Créez un nouveau tableau de décision en cliquant sur le bouton 'Nouveau DMN' en haut à droite."
 }
 
 
