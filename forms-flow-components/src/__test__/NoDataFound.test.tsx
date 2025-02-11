@@ -9,7 +9,7 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
-const renderNoDataFound = () => render(<table><NoDataFound /></table>);
+const renderNoDataFound = () => render(<table><NoDataFound message='Nothing is found based on your search query. Please try again.'/></table>);
 
 describe('NoDataFound Component', () => {
   it('renders the no data message correctly', () => {
