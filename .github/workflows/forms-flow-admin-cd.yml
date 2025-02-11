@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - release/*
+      - rsbc/7.0.0
     paths:
       - "forms-flow-admin/**"
       - "VERSION"
