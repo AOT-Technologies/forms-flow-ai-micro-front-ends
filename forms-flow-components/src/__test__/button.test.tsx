@@ -80,7 +80,7 @@ describe("CustomButton component", () => {
       <CustomButton
         variant="primary"
         label="Accessible"
-        dataTestid="test-button"
+        dataTestId="test-button"
         ariaLabel="Test Button"
       />
     );
