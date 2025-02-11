@@ -68,8 +68,10 @@ class PrintServices {
                 isPreview: isPreview,
               })
           );
-        }
-        componentsToRender.push(<div id={item}>{components}</div>);        
+        }         
+        componentsToRender.push(
+          React.createElement("div", { id: item, key: item }, components)
+        );              
         components = [];
       }
     }
