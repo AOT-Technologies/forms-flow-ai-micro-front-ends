@@ -8,14 +8,15 @@ import { StyleServices } from "@formsflow/service";
 
 interface DropdownItem {
   label: string;
+  value?:string;
   onClick: () => void;
 }
 interface InputDropdownProps {
   Options: DropdownItem[];
-  firstItemLabel: string;
+  firstItemLabel?: string;
   dropdownLabel: string;
   placeholder?: string;
-  isAllowInput: boolean;
+  isAllowInput?: boolean;
   required?: boolean;
   value?: string;
   selectedOption?: string; 
@@ -28,6 +29,7 @@ interface InputDropdownProps {
   isInvalid?: boolean;
   inputClassName?: string;
   onBlurDropDown?: () => void; 
+  disabled?: boolean;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -35,7 +37,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   firstItemLabel,
   dropdownLabel,
   placeholder = '',
-  isAllowInput,
+  isAllowInput =  false,
   required = false,
   selectedOption ,
   feedback,
@@ -46,10 +48,12 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   dataTestIdforInput,
   isInvalid,
   inputClassName='',
-  onBlurDropDown
+  onBlurDropDown,
+  disabled = false
 }) => {
   const { t } = useTranslation();
   const primaryColor = StyleServices.getCSSVariable('--ff-primary');
+  const disabledColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(selectedOption || ''); 
   const [filteredItems, setFilteredItems] = useState<DropdownItem[]>([]);
@@ -58,7 +62,9 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
-      setIsDropdownOpen((prev) => !prev);
+    if(!disabled){
+     setIsDropdownOpen((prev) => !prev);
+    }
   };
 
   useEffect(() => {
@@ -75,12 +81,14 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   }, [dropdownRef]);
 
   useEffect(() => {
-      if (selectedOption) {
-        setInputValue(selectedOption);
+    if (selectedOption) {
+        const foundItem = Options.find((item) => item.value === selectedOption);
+        setInputValue(foundItem ? foundItem.label : selectedOption);
       }
-  }, [selectedOption]);
+  }, [selectedOption,Options]);
 
   const handleInputDropdownChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(disabled) return ;
       const value = e.target.value;
       setInputValue(value);
       if (value === '') {
@@ -88,13 +96,15 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
       }
       //filtering out items
       const filtered = Options.filter((item) =>
-          item.label.toLowerCase().includes(value.toLowerCase())
+          item.label.toLowerCase().includes(value.toLowerCase()) || 
+          item.value?.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredItems(filtered);
   };
 
   const handleSelect = (item: DropdownItem) => {
       setInputValue(item.label);
+      setNewInput(item.value);
       setIsDropdownOpen(false);
       if (item.onClick) {
           item.onClick(); 
@@ -142,8 +152,8 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       onClick={toggleDropdown}
                       ariaLabel={ariaLabelforDropdown}
                       dataTestid={dataTestIdforDropdown}
-                      icon={<ChevronIcon data-testid="dropdown-input" aria-label="dropdown input"/>}
-                      className={`${inputClassName} ${isDropdownOpen ? 'border-input collapsed' : ''}`}
+                      icon={<ChevronIcon color={disabled ? disabledColor : primaryColor} data-testid="dropdown-input" aria-label="dropdown input"/>}
+                      className={`${inputClassName} ${isDropdownOpen && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
                       onIconClick={toggleDropdown}
                       label={t(dropdownLabel)}
                       required={required}
@@ -154,7 +164,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
               </InputGroup>
           )}
 
-          {!textBoxInput && isDropdownOpen && (
+          {!textBoxInput && isDropdownOpen && !disabled && (
               <ListGroup>
                   {isAllowInput && (
                       <ListGroup.Item

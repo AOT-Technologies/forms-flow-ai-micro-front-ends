@@ -26,13 +26,14 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
     displayValue= "",
     avoidHighlightFirstOption = true,
     hidePlaceholder=true,
-    className,
+    className="",
     disabled,
     placeholder="",
     label
 
 })=>{
    const primaryColor = StyleServices.getCSSVariable('--ff-primary');
+   const disabledColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
    const dropdownRef = useRef<HTMLDivElement | null>(null);
    const [isOpen,setIsOpen] = useState(false);
      // Toggle dropdown open/close when clicked
@@ -69,7 +70,7 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
           customCloseIcon={
             <CloseIcon
               onClick={onRemove}
-              color={disabled ? `#AFB4B6`: primaryColor}
+              color={disabled ? disabledColor : primaryColor}
               data-testid="pill-remove-icon"
               aria-label="remove "
             />

@@ -400,21 +400,35 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
 
 //settingsmodal 
 .settings-modal {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-  margin: 0 !important;
-
-  .section {
-    display: flex;
-    padding: var(--spacer-200) var(--spacer-250) !important;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacer-150);
-    align-self: stretch;
+  .modal-content{
+    max-height: calc(100vh - 2rem);
+    margin-top: var(--spacer-100);
+    margin-bottom: var(--spacer-100);
   }
+ 
 
-  .modal-hr {
-    border-bottom: 1px solid $gray-medium;
+  .settings-tab-container{
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacer-200) var(--spacer-225);
+    gap: var(--spacer-150);  
+    .settings-sections{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacer-150);
+      align-self: stretch;
+    }
+    .custom-tab {
+      display: flex;
+      gap: var(--spacer-100);  
+      border-bottom: 1px solid $gray-medium !important;  
+      }
+      .tab-content { 
+        max-height: calc(100vh - 21.3375rem);
+        overflow-y: scroll;
+        padding-bottom: 2px;
+      }
   }
 
   .url-input {

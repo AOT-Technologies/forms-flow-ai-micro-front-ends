@@ -216,6 +216,11 @@ $gray-darkest: var(--ff-gray-darkest);
   align-self: stretch;
   border-radius: var(--radius-0100);
   background: $gray-medium;
+  .field-label{
+    font-weight: 700;
+    font-size:var(--font-size-xs);
+    color: $gray-darkest;
+  }
 }
 
 .info-content {
