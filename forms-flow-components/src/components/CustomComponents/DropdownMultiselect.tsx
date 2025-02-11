@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { InputDropdown } from './InputDropdown';
 import { MultipleSelect } from './MultiSelect';
 
 interface DropdownMultiselectProps {
   dropdownLabel: string; 
-  defaultDropdownValue?: string | any; 
   onDropdownChange?: (value: any) => void; // Callback when dropdown changes
   onMultiSelectionChange?: (values: any[]) => void; // Callback when multi-selection changes
   multiSelectPillClassName?: string;
