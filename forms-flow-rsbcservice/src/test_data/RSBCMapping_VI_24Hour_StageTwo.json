@@ -1,0 +1,40 @@
+{
+  "VI": "formOptions.VI",
+  "TwelveHour": "formOptions.TwelveHour",
+  "TwentyFourHour": "formOptions.TwentyFourHour",
+  "driver_licence_no": "driverInfoNestedComponent.data.driver_licence_no",
+  "drivers_licence_jurisdiction": {
+    "mapping": {
+        "value": {"default": "HARDCODED_VALUE_PATH_COULDNT_BE_FOUND"},
+        "label": "driverInfoNestedComponent.data.drivers_licence_jurisdiction.label"
+    }
+  },
+  "driver_last_name": "driverInfoNestedComponent.data.driver_last_name",
+  "driver_given_name": "driverInfoNestedComponent.data.driver_given_name",
+  "driver_dob": "driverInfoNestedComponent.data.driver_dob",
+  "driver_address": "driverInfoNestedComponent.data.driver_address",
+  "driver_phone": "driverInfoNestedComponent.data.driver_phone",
+  "driver_city": "driverInfoNestedComponent.data.driver_city",
+  "driver_prov_state": "driverInfoNestedComponent.data.driver_prov_state",
+  "driver_postal": "driverInfoNestedComponent.data.driver_postal",
+  "gender": "driverInfoNestedComponent.data.gender",
+  "driver_licence_expiry": "driverInfoNestedComponent.data.driver_licence_expiry",
+  "driver_licence_class": "driverInfoNestedComponent.data.driver_licence_class",
+  "date_of_impound": "vehicleImpoundmentDisposition.data.date_of_impound",
+  "vehicle_impounded": "vehicleImpoundmentDisposition.data.vehicle_impounded",
+  "ILO-name": "vehicleImpoundmentDisposition.data.ILO-name",
+  "ILO-address": "vehicleImpoundmentDisposition.data.ILO-address",
+  "ILO-city": "vehicleImpoundmentDisposition.data.ILO-city",
+  "ILO-phone": "vehicleImpoundmentDisposition.data.ILO-phone",
+  "type_of_prohibition": "prohibitionForm.data.type_of_prohibition",
+  "intersection_or_address_of_offence": "prohibitionForm.data.intersection_or_address_of_offence",
+  "offence_city": {"default": "HARDCODED_VALUE_PATH_COULDNT_BE_FOUND"},
+  "agency_file_no": "prohibitionForm.data.agency_file_no",
+  "date_of_driving": "prohibitionForm.data.date_of_driving",
+  "time_of_driving": "prohibitionForm.data.time_of_driving",
+  "irp_impound": "impoundmentImmediateRP.data.irp_impound",
+  "irp_impound_duration": "impoundmentImmediateRP.data.irp_impound_duration",
+  "IRP_number": "impoundmentImmediateRP.data.IRP_number",
+  "VI_number": "impoundmentImmediateRP.data.VI_number",
+  "reasonable_asd_expiry_date": "testAdministered.data.reasonable_asd_expiry_date"
+}
