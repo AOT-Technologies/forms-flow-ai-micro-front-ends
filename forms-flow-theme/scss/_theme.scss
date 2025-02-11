@@ -210,13 +210,13 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --shadow-3xl: 0px 24px 48px -8px rgba(48, 52, 54, 0.016);
   --shadow-nav: 4px 0px 8px -2px rgba(48, 52, 54, 0.08);
   //radius
-  --radius-025: 0.25rem;
-  --radius-050: 0.5rem;
-  --radius-075: 0.75rem;
-  --radius-0100: 1rem;
-  --radius-0125: 1.25rem;
-  --radius-0150: 1.5rem;
-  --radius-200: 2rem;
+  // --radius-025: 0.25rem;
+  // --radius-050: 0.5rem;
+  // --radius-075: 0.75rem;
+  // --radius-0100: 1rem;
+  // --radius-0125: 1.25rem;
+  // --radius-0150: 1.5rem;
+  // --radius-200: 2rem;
 
   --radius-sm: 1.09375rem; //17.5px
   --radius-md: 1.34375rem; //21.5px
@@ -264,7 +264,7 @@ body {
 
     &::-webkit-scrollbar-thumb {
       background-color: $primary-light;
-      border-radius: var(--radius-0125);
+      border-radius: var(--radius-md);
       width: var(--spacer-050);
       background-clip: padding-box;
       border: var(--spacer-025) solid transparent;

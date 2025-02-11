@@ -120,7 +120,7 @@ select option:hover {
   position: relative;
 
   .search-box-input {
-    border-radius: var(--radius-0100) !important; //TBD: To be changed to rem
+    border-radius: var(--radius-sm) !important; //TBD: To be changed to rem
     border: 1px solid $primary;
     background: var(--ff-white);
     color: $gray-medium-dark;
@@ -189,7 +189,7 @@ select option:hover {
   line-height: var(--text-line-height);
   white-space: nowrap;
   padding: var(--spacer-050);
-  border-radius: var(--radius-050);
+  border-radius: var(--radius-sm);
 }
 
 .custom-tooltip .tooltip-arrow::before {
@@ -200,7 +200,7 @@ select option:hover {
 .custom-checkbox .form-check-input {
   width: 1.25em;
   height: 1.25em;
-  border-radius: var(--radius-025);
+  border-radius: var(--radius-sm);
   border: 2px solid $primary !important;
   background-color: transparent;
   position: relative;
@@ -241,7 +241,7 @@ select option:hover {
 
 .form-control {
   color: var(--default-font-color) !important;
-  border-radius: var(--radius-0100) !important;
+  border-radius: var(--radius-sm) !important;
   border: 1px solid $primary !important;
   outline: none;
 
@@ -351,7 +351,7 @@ select option:hover {
   align-items: center !important;
   font-size: var(--font-size-sm) !important;
   font-weight: var(--ff-badge-font-md) !important;
-  border-radius: var(--radius-0150) !important;
+  border-radius: var(--radius-lg) !important;
   .secondary-label{
     color: $gray-medium-dark;
   }

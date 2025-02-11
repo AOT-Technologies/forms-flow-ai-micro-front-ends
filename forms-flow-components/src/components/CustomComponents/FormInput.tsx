@@ -14,7 +14,7 @@ interface FormInputProps {
   feedback?: string;
   disabled?: boolean;
   size?: 'sm' | 'lg';
-  dataTestid?: string;
+  dataTestId?: string;
   ariaLabel?: string;
   className?: string;
   required?: boolean;
@@ -40,7 +40,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   feedback = "",
   disabled = false,
   size,
-  dataTestid,
+  dataTestId,
   ariaLabel,
   className = '',
   required = false,
@@ -86,7 +86,7 @@ export const FormInput: React.FC<FormInputProps> = ({
           isInvalid={isInvalid}
           disabled={disabled}
           size={size}
-          data-testid={dataTestid}
+          data-testid={dataTestId}
           aria-label={ariaLabel}
           required={required}
           className={inputClassNames}

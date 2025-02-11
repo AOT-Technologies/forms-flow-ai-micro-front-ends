@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - develop
-      - FWF-3440-Design-System-MF
       - release/*
     paths:
       - "forms-flow-components/**"
@@ -21,7 +20,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.17.0'
+          node-version: '16.18.0'
       - name: Set version
         if: ${{ github.ref != 'refs/heads/main' }}
         working-directory: .
@@ -40,6 +39,10 @@ jobs:
         #TODO: force installing due to dependency conflict need to resolve the dependency
       - run: npm ci --force
         working-directory: ./forms-flow-components
+      - name: Run Tests
+        run: npm run test
+        working-directory: ./forms-flow-components
+        continue-on-error: false   
       - run: npm run build:webpack
         working-directory: ./forms-flow-components
       - uses: aws-actions/configure-aws-credentials@v1

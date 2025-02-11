@@ -1,5 +1,5 @@
 $th-width: 8.125rem;
-$tr-th-border-radius: var(--radius-0150);
+$tr-th-border-radius: var(--radius-lg);
 $th-z-index-default: 2;
 $th-z-index-special: 3;
 $status-size: var(--spacer-050);
@@ -21,7 +21,7 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
   width: 100%;
   border-collapse: separate !important;
   border-spacing: 0 !important;
-  border-radius: var(--radius-0150) !important;
+  border-radius: var(--radius-lg) !important;
 
   td {
     vertical-align: middle !important;

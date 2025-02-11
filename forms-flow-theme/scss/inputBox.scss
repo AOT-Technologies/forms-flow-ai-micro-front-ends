@@ -1,4 +1,4 @@
-$form-input-border-radius: var(--radius-0150);
+$form-input-border-radius: var(--radius-lg);
 $primary: var(--ff-primary);
 $form-input-focus-outline: 2px solid var(--ff-primary);
 $red-000: var(--ff-red-000);
@@ -55,7 +55,7 @@ $gray-light: var(--ff-gray-light);
   position: relative;
 
   .border-input {
-    border-radius: var(--radius-0100) var(--radius-0100) 0px 0px !important;
+    border-radius: var(--radius-sm) var(--radius-sm) 0px 0px !important;
   }
 
   .input-group-text svg {
@@ -78,7 +78,7 @@ $gray-light: var(--ff-gray-light);
     align-self: stretch;
     border: 1px solid $primary;
     border-top: none;
-    border-radius: 0px 0px var(--radius-0100) var(--radius-0100);
+    border-radius: 0px 0px var(--radius-sm) var(--radius-sm);
     max-height: 12.5rem;
     overflow-y: scroll;
     background-color: $white-color;
