@@ -1,4 +1,6 @@
+//Spanish
 export const RESOURCE_BUNDLES_ES = {
+    "Latest Submission": "Modificado por",
     "Filter Created by": "Filtro creado por",
     "No histories found": "No se encontraron historias",
     "Continue": "Continuar",

@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
+// Portuguese
 export const RESOURCE_BUNDLES_PT ={
+  "Latest Submission": "Submissões",
   "Filter Created by": "Filtro criado por",
   "Submit Form": "Enviar Formulário",
   "Changes Applied Successfully": "Alterações Aplicadas com Sucesso",

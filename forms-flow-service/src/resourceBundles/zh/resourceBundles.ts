@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
+// Chinese
 export const RESOURCE_BUNDLES_ZH = {
+  "Latest Submission": "最新提交",
   "Filter Created by": "筛选器创建者",
   "Submit Form": "提交表单",
   "Changes Applied Successfully": "更改成功应用",

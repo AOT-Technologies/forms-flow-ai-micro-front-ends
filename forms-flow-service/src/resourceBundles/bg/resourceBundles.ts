@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
+//Bulgarian
 export const RESOURCE_BUNDLES_BG = {
+  "Latest Submission": "Последно подаване",
   "Filter Created by": "Филтър Създаден от",
   "Submit Form": "Изпращане на Формуляр",
   "Changes Applied Successfully": "Промените са успешно приложени",
