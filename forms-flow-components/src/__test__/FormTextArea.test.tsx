@@ -10,7 +10,7 @@ const renderComponent = (props) =>
     <FormTextArea
       onChange={handleChange}
       value=""
-      dataTestid="textarea"
+      dataTestId="textarea"
       {...props}
     />
   );

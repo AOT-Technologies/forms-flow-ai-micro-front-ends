@@ -43,7 +43,7 @@ describe("CustomPill component", () => {
         label="Test"
         secondaryLabel=""
         bg="success"
-        dataTestid="custom-pill"
+        dataTestId="custom-pill"
         ariaLabel="Custom Pill"
       />
     );
