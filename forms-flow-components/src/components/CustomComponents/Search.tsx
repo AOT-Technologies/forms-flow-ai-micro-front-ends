@@ -54,7 +54,7 @@ export const CustomSearch: FC<CustomSearchProps> = ({
                                 data-testid="form-search-clear-button"
                             />
                         ) : (
-                            <div className="search-spinner"></div>
+                            <div className="search-spinner" data-testid="search-spinner"></div>
                         )}
 
                     </span>
