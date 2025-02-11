@@ -41,6 +41,7 @@ class PrintServices {
     }
 
     const componentsToRender: JSX.Element[] = [];
+    let components = [];
     for (const item in forms) {
       if (forms[item]) {
         for (const formKey in formsPNG?.[renderStage]?.[item] || {}) {
@@ -54,7 +55,7 @@ class PrintServices {
             continue;
           }
 
-          componentsToRender.push(
+          components.push(
               React.createElement(SVGprint, {
                 key: `${item}-${formKey}`,
                 form: formsPNG?.[renderStage]?.[item]?.[formKey]?.["png"] || "",
@@ -68,6 +69,8 @@ class PrintServices {
               })
           );
         }
+        componentsToRender.push(<div id={item}>{components}</div>);        
+        components = [];
       }
     }
     return componentsToRender;
