@@ -17,7 +17,6 @@ interface InputDropdownProps {
   placeholder?: string;
   isAllowInput: boolean;
   required?: boolean;
-  value?: string;
   selectedOption?: string; 
   feedback?: string;
   ariaLabelforDropdown?:string
