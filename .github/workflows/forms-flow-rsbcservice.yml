@@ -1,11 +1,11 @@
-name: forms-flow-service-CD
+name: forms-flow-rsbcservice-CD
 on:
   workflow_dispatch:
   push:
     branches:
       - rsbc/7.0.0
     paths:
-      - "forms-flow-service/**"
+      - "forms-flow-rsbcservice/**"
       - "VERSION"
 defaults:
   run:
@@ -35,9 +35,9 @@ jobs:
           echo "VERSION=$VER" >> $GITHUB_ENV
       
       - run: npm ci
-        working-directory: ./forms-flow-service
+        working-directory: ./forms-flow-rsbcservice
       - run: npm run build:webpack
-        working-directory: ./forms-flow-service
+        working-directory: ./forms-flow-rsbcservice
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -45,7 +45,7 @@ jobs:
           aws-region: ${{ secrets.REGION }}
       - run: npm ci
         working-directory: ./scripts
-      - run: node index forms-flow-service
+      - run: node index forms-flow-rsbcservice
         env:
           BUCKET: ${{ secrets.BUCKET}}
           VERSION: ${{ env.VERSION }}
