@@ -1,4 +1,4 @@
-import { render, fireEvent, getByTestId } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import {CustomRadioButton as Radio} from '../components/CustomComponents/Radio';
 import '@testing-library/jest-dom';
 import React from 'react';
