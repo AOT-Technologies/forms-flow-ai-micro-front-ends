@@ -42,7 +42,7 @@ export const ReusableProcessTableRow: React.FC<ProcessTableRowProps> = ({ item, 
             label={t('Edit')}
             ariaLabel={`Edit ${buttonLabel} Button`}
             onClick={() => gotoEdit(item)}
-            dataTestid={`Edit ${buttonLabel} Button`}
+           dataTestId={`Edit ${buttonLabel} Button`}
           />
         </span>
       </td>

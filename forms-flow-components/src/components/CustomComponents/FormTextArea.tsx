@@ -14,7 +14,7 @@ interface FormTextAreaProps {
     feedback?: string;
     disabled?: boolean;
     size?: 'sm' | 'lg';
-    dataTestid?: string;
+   dataTestId?: string;
     ariaLabel?: string;
     className?: string;
     required?: boolean;
@@ -39,7 +39,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     feedback = '',
     disabled = false,
     size,
-    dataTestid,
+   dataTestId,
     ariaLabel,
     className = '',
     required = false,
@@ -97,7 +97,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         isInvalid={isInvalid}
                         disabled={disabled}
                         size={size}
-                        data-testid={dataTestid}
+                        data-testid={dataTestId}
                         aria-label={ariaLabel}
                         required={required}
                         className={`custom-textarea form-control-input ${icon ? 'with-icon' : ''} ${className}`}

@@ -139,7 +139,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               placeholder={t(placeholderForForm)}
               label={nameLabel}
               aria-label={t("Name of the form")}
-              data-testid={nameInputDataTestid}
+              dataTestId={nameInputDataTestid}
               onBlur={handleOnBlur}
               onChange={(event) => {
                 handleInputValueChange(event);
@@ -159,7 +159,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
               label={descriptionLabel}
               className="form-input"
               aria-label={t("Description of the new form")}
-              data-testid={descriptionDataTestid}
+              dataTestId={descriptionDataTestid}
               value={values.description} // Bind description state
               onChange={handleInputValueChange}
               minRows={1}
@@ -197,7 +197,7 @@ Further clarification on this is to be determined for EE. */}
               buttonLoading={isSaveBtnLoading}
               onClick={handlePrimaryAction} // Use the new handler
               name="createButton"
-              dataTestid={primaryBtndataTestid}
+              dataTestId={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
             />
 
@@ -207,7 +207,7 @@ Further clarification on this is to be determined for EE. */}
               name="cancelButton"
               label={secondaryBtnLabel}
               onClick={secondaryBtnAction}
-              dataTestid={secondoryBtndataTestid}
+              dataTestId={secondoryBtndataTestid}
               ariaLabel={secondoryBtnariaLabel}
             />
           </Modal.Footer>

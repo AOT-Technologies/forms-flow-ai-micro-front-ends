@@ -123,7 +123,7 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
             label={t(primaryBtnLabel)}
             onClick={handlePrimaryAction}
             name="applyButton"
-            dataTestid={primaryBtndataTestid}
+            dataTestId={primaryBtndataTestid}
             ariaLabel={t(primaryBtnariaLabel)}
           />
           <CustomButton
@@ -132,7 +132,7 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
             name="cancelButton"
             label={t(secondaryBtnLabel)}
             onClick={secondaryBtnAction}
-            dataTestid={secondaryBtndataTestid}
+            dataTestId={secondaryBtndataTestid}
             ariaLabel={t(secondaryBtnariaLabel)}
           />
         </Modal.Footer>

@@ -12,7 +12,7 @@ interface RadioOption {
  
   interface CustomRadioButtonProps {
     items: RadioOption[];
-    dataTestid?: string;
+   dataTestId?: string;
     ariaLabel?: string;
     id?:string;
     selectedValue?:any;
@@ -21,7 +21,7 @@ interface RadioOption {
 
   export const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
     items,
-    dataTestid = "",
+   dataTestId = "",
     id = "",
     ariaLabel = "",
     selectedValue = "",
@@ -38,7 +38,7 @@ interface RadioOption {
             name="group1"
             type="radio"
             id={`${id}-${index + 1}`}
-            data-testid={`${dataTestid}-inline-radio-${index + 1}`}
+            data-testid={`${dataTestId}-inline-radio-${index + 1}`}
             key={option.value || option.label}
             checked={selectedValue === option.value} // use `checked` for controlled component
             onChange={() => onChange(option.value)} // Call with option value
