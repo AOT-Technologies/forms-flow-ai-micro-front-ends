@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
+//French
 export const RESOURCE_BUNDLES_FR ={
+  "Latest Submission": "Dernière soumission",
   "Filter Created by": "Filtre créé par",
   "Submit Form": "Soumettre le Formulaire",
   "Changes Applied Successfully": "Changements Appliqués avec Succès",
