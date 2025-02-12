@@ -434,6 +434,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       return (
         <div
           role="button"
+          data-testid="import-modal-file-upload-area"
           className="file-upload"
           tabIndex={0}
           onDragOver={(e) => {
@@ -460,6 +461,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         >
           <input
             id="file-input"
+            data-testid="import-modal-file-input"
             type="file"
             style={{ display: "none" }}
             onChange={onUpload}
@@ -521,6 +523,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             }
             disabled={ primaryButtonDisabled }
             size="md"
+           dataTestId="import-modal-primary-button"
             label={primaryButtonText}
             onClick={() => {
               primaryButtonText === "Try Again" ? closeModal() : onImport();
