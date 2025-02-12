@@ -73,7 +73,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
   }) => {
     const { t } = useTranslation();
     const computedStyle = getComputedStyle(document.documentElement);
-    const redColor = computedStyle.getPropertyValue("--ff-red-000");
+    const redColor = computedStyle.getPropertyValue("--ff-danger");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const hasVersion = (item) => item?.majorVersion != null || item?.minorVersion != null;

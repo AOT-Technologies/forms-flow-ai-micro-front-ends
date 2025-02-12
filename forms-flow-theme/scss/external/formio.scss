@@ -1,6 +1,8 @@
 // Variables for reused values
 $primary: var(--ff-primary);
 $primary-light: var(--ff-primary-light);
+$gray-darkest: var(--ff-gray-darkest);
+$gray-dark: var(--ff-gray-dark);
 
 .btn-group-xxs>.btn, .btn-xxs, .component-btn-group .component-settings-button{
     width: auto !important;
@@ -19,7 +21,7 @@ $primary-light: var(--ff-primary-light);
   }
 
   .formbuilder .formarea .breadcrumb {
-    background-color: $gray-800 !important;
+    background-color: $gray-darkest !important;
     padding: 10px;
   }
   .formbuilder .formarea .breadcrumb li{
@@ -32,7 +34,7 @@ $primary-light: var(--ff-primary-light);
     background-color: $success;
   }
    .formbuilder .formarea .breadcrumb li .badge-info{
-    background-color: $gray-600;
+    background-color: $gray-dark;
   }
 
   // Settings button on hovering formio component

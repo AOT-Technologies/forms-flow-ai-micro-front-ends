@@ -1,9 +1,12 @@
 $prefix: "ff-";
 $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
+$gray-light: var(--ff-gray-light);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $primary-color: var(--ff-primary);
+$danger-color: var(--ff-danger);
 $white-color: var(--ff-white);
+
 .task-container {
   height: 100% !important;
 }
@@ -30,7 +33,7 @@ $white-color: var(--ff-white);
 }
 
 .is-invalid {
-  background-color: var(--ff-danger-400);
+  background-color: $danger-color;
 }
 
 .active-tab {
@@ -83,8 +86,8 @@ $white-color: var(--ff-white);
 }
 
 .taskvariable-alert {
-  background-color: var(--ff-alert-200) !important;
-  border: solid 0.125rem var(--ff-alert-400) !important;
+  background-color: $danger-color !important;
+  border: solid 0.125rem $danger-color!important;
 }
 
 .select {
@@ -205,7 +208,7 @@ hr {
 
 .main-container {
   overflow: hidden !important;
-  background: var(--ff-main-bg);
+  background: $gray-light;
   margin-left: var(--navbar-width);
   margin-top: 0;
   height: 100vh !important;

@@ -1,10 +1,10 @@
-$primary-light: var(--ff-primary-light);
+$primary: var(--ff-primary);
 .icon-wp-forms {
   height: 30px;
 }
 
 i.fa.fa-question-circle.text-muted {
-  color: $primary-light !important;
+  color: $primary !important;
 }
 .icon-wrapper-change {
   cursor: pointer;

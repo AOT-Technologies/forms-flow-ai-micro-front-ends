@@ -10,6 +10,7 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
 $dropdown-btn-size: 3.2275rem;
 $btn-border-radius: 50%;
 $btn-font-weight: bold;
+$danger-color: var(--ff-danger);
 
 .btn-light {
   background-color: $white-color !important;
@@ -20,7 +21,7 @@ $btn-font-weight: bold;
 }
 
 .form-select {
-  color: $dark !important;
+  color: $black-color !important;
 }
 
 .btn-info {
@@ -65,12 +66,12 @@ $btn-font-weight: bold;
 }
 
 .delete_button {
-  color: var(--ff-danger);
+  color: $danger-color;
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
 
   &:hover {
-    color: var(--ff-danger); // This line can be omitted since the color remains the same.
+    color: $danger-color; // This line can be omitted since the color remains the same.
   }
 
   &:active {
@@ -81,12 +82,13 @@ $btn-font-weight: bold;
 
 
 .bg-primary {
-  background-color: $primary!important;
+  background-color: $primary !important;
 }
 
 .table-primary {
   --bs-table-color: #fff;
   --ff-table-bg: $primary !important;
+  background-color: $primary !important;
 }
 
 .btn-wizard-nav-submit,
@@ -121,6 +123,12 @@ $btn-font-weight: bold;
   width: fit-content;
 }
 
+.btn-disabled {
+  background-color: $gray-medium-dark !important;
+  color: var(--primary-btn-font-color) !important;
+  border-color: $gray-medium-dark !important;
+}
+
 .btn {
   border: none !important;
   display: inline-flex !important;
@@ -151,9 +159,7 @@ $btn-font-weight: bold;
     }
 
     &.btn:disabled {
-      background-color: $gray-medium-dark !important;
-      color: var(--primary-btn-font-color) !important;
-      border-color: $gray-medium-dark !important;
+      @extend .btn-disabled;
     }
 
     &+.dropdown-toggle+.dropdown-menu {
@@ -188,6 +194,9 @@ $btn-font-weight: bold;
     &:focus {
       outline: none !important;
     }
+    &.btn:disabled {
+      @extend .btn-disabled;
+    }
   }
 
   &.btn-dark {
@@ -219,12 +228,18 @@ $btn-font-weight: bold;
     }
   }
 
+  &.btn-table {
+    padding: var(--spacer-050) var(--spacer-100) !important;
+    border-radius: var(--radius-sm) !important;
+    line-height: var(--text-line-height);
+  }
+
   &.btn-sm {
     font-size: var(--font-size-xs) !important;
-    padding: var(--spacer-050) var(--spacer-100) !important;
+    padding: var(--spacer-075) var(--spacer-100) !important;
     font-weight: var(--font-weight-xl) !important;
-    border-radius: var(--radius-sm) !important;
-
+    border-radius: var(--radius-md) !important;
+    line-height: var(--text-line-height);
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-xl) !important;
@@ -238,11 +253,10 @@ $btn-font-weight: bold;
   }
 
   &.btn-md {
-    font-size: var(--font-size-sm) !important;
-    padding: var(--spacer-075) var(--spacer-150) !important;
-    font-weight: var(--font-weight-xl) !important;
+    padding: var(--spacer-100) var(--spacer-150) !important;
+    font-weight: var(--font-weight-lg) !important;
     border-radius: var(--radius-md) !important;
-
+    line-height: var(--text-line-height);
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
@@ -256,11 +270,10 @@ $btn-font-weight: bold;
   }
 
   &.btn-lg {
-    font-size: var(--font-size-sm) !important;
-    padding: var(--spacer-100) var(--spacer-200) !important;
+    padding: var(--spacer-100) var(--spacer-150) !important;
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--radius-lg) !important;
-
+    line-height: var(--text-line-height);
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;

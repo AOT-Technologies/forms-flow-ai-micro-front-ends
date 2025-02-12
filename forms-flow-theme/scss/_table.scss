@@ -7,6 +7,7 @@ $status-margin: var(--spacer-050);
 $status-radius: 50%;
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
+$green-color: var(--ff-green);
 
 .custom-tables-wrapper {
   height: auto;
@@ -143,7 +144,7 @@ $gray-medium-dark: var(--ff-gray-medium-dark);
 
 .status-live {
   @extend .status-circle;
-  background-color: var(--ff-live);
+  background-color: $green-color;
 }
 
 .status-draft {
