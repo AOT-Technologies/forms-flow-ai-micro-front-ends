@@ -17,6 +17,7 @@ on:
 defaults:
   run:
     shell: bash
+    working-directory: ./forms-flow-components
 jobs:
   Forms-Flow-Components-CI:
     name: Run Tests and Lint Checks
@@ -29,8 +30,6 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci --force
-        working-directory: ./forms-flow-components
       - name: Run Tests
         run: |
           npm run test
-        working-directory: ./forms-flow-components
