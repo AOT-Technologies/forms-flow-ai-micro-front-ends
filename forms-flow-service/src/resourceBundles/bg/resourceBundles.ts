@@ -1359,4 +1359,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Unpublish This Form": "Отменете публикуването на тази форма",
   "A system error occurred during export. Please try again.": "По време на експортиране възникна системна грешка. Моля, опитайте отново.",
   "Try Again": "Опитайте отново",
+  "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.": "Не са намерени формуляри. Създайте нов формуляр, като щракнете върху бутона „Нов формуляр“ в горния десен ъгъл.",
+  "No subflows have been found. Create a new subflow by clicking \"New BPMN\" button in the top right.": "Не са намерени подпотоци. Създайте нов подпоток, като щракнете върху бутона „Нов BPMN“ в горния десен ъгъл.",
+  "No decision tables have been found. Create a new decision table by clicking \"New DMN\" button in the top right.": "Не са намерени таблици за решения. Създайте нова таблица за решения, като щракнете върху бутона „Нов DMN“ в горния десен ъгъл."
 }

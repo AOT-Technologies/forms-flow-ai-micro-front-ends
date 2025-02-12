@@ -853,4 +853,8 @@ export const RESOURCE_BUNDLES_EN ={
   "Unpublish This Form": "Unpublish This Form",
   "A system error occurred during export. Please try again.": "A system error occurred during export. Please try again.",
   "Try Again": "Try Again",
+  "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.":  "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.",
+  "No subflows have been found. Create a new subflow by clicking \"New BPMN\" button in the top right.": "No subflows have been found. Create a new subflow by clicking \"New BPMN\" button in the top right.",
+  "No decision tables have been found. Create a new decision table by clicking \"New DMN\" button in the top right.": "No decision tables have been found. Create a new decision table by clicking \"New DMN\" button in the top right."
+
 }
