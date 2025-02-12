@@ -82,17 +82,17 @@ export default class RSBCImage extends ReactComponent {
     let inputData = this.data;
     inputData = testInput.data;
 
-    if(this.component.rsbcImageSettings){
+    if (this.component.rsbcImageSettings) {
       try {
         outputJson = this.getOutputJson(this.component.rsbcImageSettings, inputData);
+      } catch (error) {
+        console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
       }
-      catch (error) {
-            console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
-        }
     } else {
       outputJson = this.data;
     }
     this.component.rsbcImageData = outputJson;
+    this.component.rsbcImageData.svgImages = {};
 
     const isEditMode = this.isPreviewPanelVisible();
     printServices.renderSVGForm(outputJson, this.component, isEditMode, this.builderMode)
@@ -100,11 +100,19 @@ export default class RSBCImage extends ReactComponent {
         const root = createRoot(element);
         root.render(
           <div className="rsbc-image-container">
-            {svgComponents.map((svg: React.ReactNode, index: number) => (
-              <div key={index} className="rsbc-image">
-                {svg}
-              </div>
-            ))}
+            {svgComponents.map((svg: React.ReactNode, index: number) => {
+              if (React.isValidElement(svg)) {
+                const element = svg as React.ReactElement<{ id?: string }>;
+                const divId = element.props.id || `svg-${index}`;
+                this.component.rsbcImageData.svgImages[divId] = svg;
+                return (
+                  <div key={index} className="rsbc-image" id={divId}>
+                    {svg}
+                  </div>
+                );
+              }
+              return null;
+            })}
           </div>
         );
       })
@@ -118,24 +126,23 @@ export default class RSBCImage extends ReactComponent {
     try {
       const base64Images: Object = {};
 
-      // setIsSubmitting(true);
       if (this.component.rsbcImageData["VI"]) {
-        const element = document.getElementById("VI");
+        const element = this.component.rsbcImageData.svgImages["VI"];
         const base64_png = await toPng(element);
         base64Images["VI_form_png"] = base64_png;
       }
       if (this.component.rsbcImageData["TwentyFourHour"]) {
-        const element = document.getElementById("TwentyFourHour");
+        const element = this.component.rsbcImageData.svgImages["TwentyFourHour"];
         const base64_png = await toPng(element);
         base64Images["TwentyFourHour_form_png"] = base64_png;
       }
       if (this.component.rsbcImageData["IRP"]) {
-        const element = document.getElementById("IRP");
+        const element = this.component.rsbcImageData.svgImages["IRP"];
         const base64_png = await toPng(element);
         base64Images["IRP_form_png"] = base64_png;
       }
       if (this.component.rsbcImageData["TwelveHour"]) {
-        const element = document.getElementById("TwelveHour");
+        const element = this.component.rsbcImageData.svgImages["TwelveHour"];
         const base64_png = await toPng(element);
         base64Images["TwelveHour_form_png"] = base64_png;
       }
@@ -147,8 +154,6 @@ export default class RSBCImage extends ReactComponent {
 
     } catch (error) {
       console.error("An error occurred submitting the event: ", error);
-      // setIsSubmitting(false);
-      // setEventCreationFailedModalOpen(true);
     }
 
   }
