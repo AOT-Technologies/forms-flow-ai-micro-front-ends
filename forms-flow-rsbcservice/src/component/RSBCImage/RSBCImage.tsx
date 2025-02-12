@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from "react";
 import { createRoot } from 'react-dom/client';
 import { ReactComponent } from '@aot-technologies/formio-react';
 import PrintServices from '../../print/printService';
 import settingsForm from "./RSBCImage.settingsForm";
+import { toPng } from "html-to-image";
 import _ from "lodash";
 import testInput from "../../test_data/sampleTestData.json"
 
@@ -79,6 +80,7 @@ export default class RSBCImage extends ReactComponent {
 
     let outputJson:any = {};
     let inputData = this.data;
+    inputData = testInput.data;
 
     if(this.component.rsbcImageSettings){
       try {
@@ -90,6 +92,7 @@ export default class RSBCImage extends ReactComponent {
     } else {
       outputJson = this.data;
     }
+    this.component.rsbcImageData = outputJson;
 
     const isEditMode = this.isPreviewPanelVisible();
     printServices.renderSVGForm(outputJson, this.component, isEditMode, this.builderMode)
@@ -108,6 +111,46 @@ export default class RSBCImage extends ReactComponent {
       .catch((error) => {
         console.error('Error rendering SVG form:', error);
       });
+  }
+
+  async getBase64Images(): Promise<Object> {
+    console.log("getBase64Images______________");
+    try {
+      const base64Images: Object = {};
+
+      // setIsSubmitting(true);
+      if (this.component.rsbcImageData["VI"]) {
+        const element = document.getElementById("VI");
+        const base64_png = await toPng(element);
+        base64Images["VI_form_png"] = base64_png;
+      }
+      if (this.component.rsbcImageData["TwentyFourHour"]) {
+        const element = document.getElementById("TwentyFourHour");
+        const base64_png = await toPng(element);
+        base64Images["TwentyFourHour_form_png"] = base64_png;
+      }
+      if (this.component.rsbcImageData["IRP"]) {
+        const element = document.getElementById("IRP");
+        const base64_png = await toPng(element);
+        base64Images["IRP_form_png"] = base64_png;
+      }
+      if (this.component.rsbcImageData["TwelveHour"]) {
+        const element = document.getElementById("TwelveHour");
+        const base64_png = await toPng(element);
+        base64Images["TwelveHour_form_png"] = base64_png;
+      }
+      if (this.component.rsbcImageData["date_of_impound"] && this.component.rsbcImageData["vehicle_impounded"] === "NO") {
+        base64Images["date_released"] = this.component.rsbcImageData["date_of_impound"];
+      }
+
+      return base64Images;
+
+    } catch (error) {
+      console.error("An error occurred submitting the event: ", error);
+      // setIsSubmitting(false);
+      // setEventCreationFailedModalOpen(true);
+    }
+
   }
 
   detachReact(element: HTMLElement): void {
