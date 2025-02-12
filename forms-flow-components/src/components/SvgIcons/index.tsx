@@ -602,10 +602,10 @@ export const NewInfoIcon = ({ color = grayColor,  ...props }) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <circle cx="8" cy="8" r="7" stroke="#303436" strokeWidth="2" />
+    <circle cx="8" cy="8" r="7" stroke={color} strokeWidth="2" />
     <path
       d="M8 4.5V7.5M8 10.5V11.5"
-      stroke="#303436"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
     />

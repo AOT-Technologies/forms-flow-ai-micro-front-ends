@@ -118,6 +118,6 @@ $gray-light: var(--ff-gray-light);
     background-color: $gray-light !important;
     pointer-events: none !important;
     cursor: not-allowed;
-    border-color: var(--ff-gray-light) !important;
+    border-color: $gray-light !important;
   }
 }
