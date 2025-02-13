@@ -5,6 +5,7 @@ $danger-color: var(--ff-danger);
 $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
 $gray-medium: var(--ff-gray-medium);
 $white-color: var(--ff-white);
+$gray-light: var(--ff-gray-light); 
 
 .form-input {
   width: 100%;
@@ -108,5 +109,15 @@ $white-color: var(--ff-white);
         border-bottom-left-radius: unset;
       }
     }
+  }
+  .form-control:focus{
+    box-shadow: none !important;
+    z-index: unset !important;
+  }
+  .disabled-inpudropdown{
+    background-color: $gray-light !important;
+    pointer-events: none !important;
+    cursor: not-allowed;
+    border-color: $gray-light !important;
   }
 }

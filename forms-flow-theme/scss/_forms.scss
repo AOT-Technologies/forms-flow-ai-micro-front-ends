@@ -286,7 +286,7 @@ select option:hover {
   justify-content: center;
 
   .required-icon {
-    color: $primary !important;
+    color: $gray-darkest !important;
   }
 
   .with-icon {
@@ -318,8 +318,7 @@ select option:hover {
     transform: translateY(-50%);
     border: none;
     background: none;
-    color: $primary;
-    z-index: 10;
+    color: $primary;   
   }
 
   .custom-form-control-label {
@@ -485,7 +484,7 @@ select option:hover {
       border: none;
       .chip {
         background: var(--ff-white);
-        color: $gray-darkest;
+        color: $gray-medium-dark;
       }
     }
   }
@@ -509,6 +508,7 @@ select option:hover {
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);
       margin-bottom: 0px !important;
+      margin-right: 0px !important;
     }
 
     .custom-close {
@@ -550,12 +550,29 @@ select option:hover {
     .option {
       &:hover {
         background: $primary;
+        border-radius: var(--radius-0100);
       }
       display: flex;
       padding: var(--spacer-050) var(--spacer-100);
       align-items: center;
       align-self: stretch;
+      gap: var(--spacer-050);
+      z-index: 9999 !important;
     }
   }
 }
 
+.dropdown-multiselect-component {
+  width: 100%;
+  display: flex;
+    flex-direction: column;
+    gap: var(--spacer-050);
+  .L-style{
+    height: 25px;
+    width: 12px;
+    border-left: 1px solid $primary;
+    border-bottom:  1px solid $primary;
+    margin-right: var(--spacer-075);
+  }
+  
+}

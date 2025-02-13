@@ -22,3 +22,4 @@ export * from "./CustomComponents/ImportModal";
 export * from "./CustomComponents/NoDataFound";
 export * from "./CustomComponents/ShowPremiumIcon";
 export * from "./CustomComponents/MultiSelect";
+export * from "./CustomComponents/DropdownMultiselect";
