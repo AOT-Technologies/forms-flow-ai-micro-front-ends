@@ -2,12 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { NoDataFound } from '../components/CustomComponents/NoDataFound';
 
-// Mock the react-i18next hook
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (str: string) => str,
-  }),
-}));
+ 
 
 const renderNoDataFound = () => render(<table><NoDataFound message='Nothing is found based on your search query. Please try again.'/></table>);
 
