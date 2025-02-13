@@ -12,17 +12,14 @@ interface ComponentSettings {
 class PrintServices {
   async renderSVGForm(
       values: Record<string, any>,
-      componentSettings: ComponentSettings,
       isEditMode: boolean,
-      builderMode: boolean
+      builderMode: boolean,
+      renderStage: string
   ): Promise<JSX.Element[]> {
 
     //values = inputValues;
     //let impoundLotOperators = impound;
     let impoundLotOperators = await DBService.fetchStaticDataFromTable('impoundLotOperators');
-    
-    const renderStage = componentSettings.stage || "stageOne";
-
     let isPreview = isEditMode;
     if (!isPreview && builderMode) {
       isPreview = true;

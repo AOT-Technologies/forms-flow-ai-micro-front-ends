@@ -72,7 +72,7 @@ export default class RSBCImage extends ReactComponent {
     const transformedJson = this.getTransformedInputData();
     const isEditMode = this.isPreviewPanelVisible();
 
-    printServices.renderSVGForm(transformedJson, this.component, isEditMode, this.builderMode)
+    printServices.renderSVGForm(transformedJson, isEditMode, this.builderMode, this.component.stage)
       .then((svgComponents) => {
         createRoot(element).render(
           <div className="rsbc-image-container">
@@ -83,8 +83,13 @@ export default class RSBCImage extends ReactComponent {
       .catch(console.error);
   }
 
-  async getBase64Images(): Promise<Record<string, string>> {
+  async getBase64Images(stage: string = "stageOne"): Promise<Record<string, string>> {
     try {
+      const validStages = ["stageOne", "stageTwo"];
+      if (!validStages.includes(stage)) {
+        throw new Error(`Invalid stage: "${stage}". Expected values: ${validStages.join(" or ")}.`);
+      }
+
       const printServices = new PrintServices();
       if (!printServices?.renderSVGForm) {
         throw new Error('printServices.renderSVGForm is not available.');
@@ -94,7 +99,7 @@ export default class RSBCImage extends ReactComponent {
       const svgImages: Record<string, React.ReactNode> = {};
       const isEditMode = this.isPreviewPanelVisible();
 
-      const svgComponents = await printServices.renderSVGForm(transformedJson, this.component, isEditMode, this.builderMode);
+      const svgComponents = await printServices.renderSVGForm(transformedJson, isEditMode, this.builderMode, stage);
       svgComponents.forEach((svg, index) => {
         if (React.isValidElement(svg)) {
           const element = svg as React.ReactElement<{ id?: string }>;
