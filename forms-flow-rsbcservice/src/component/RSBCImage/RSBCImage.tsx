@@ -63,6 +63,46 @@ export default class RSBCImage extends ReactComponent {
     }
   }
 
+  handlePrint = () => {
+    const printContent = document.querySelectorAll('.rsbc-image');
+    if (printContent.length === 0) {
+      console.log('No content to print.');
+      return;
+    }
+    
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      const styles = Array.from(document.styleSheets)
+        .map((styleSheet) => {
+          try {
+            return Array.from(styleSheet.cssRules)
+              .map((rule) => rule.cssText)
+              .join('\n');
+          } catch (error) {
+            return '';
+          }
+        })
+        .join('\n');
+      
+      printWindow.document.write('<html><head><title>Print</title><style>' + styles + '</style></head><body>');
+      printContent.forEach((element) => {
+        printWindow.document.write(element.outerHTML);
+      });
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.onload = () => {
+        printWindow.print();
+        printWindow.onafterprint = () => {
+          printWindow.close();
+          console.log('Printing was successful.');
+        };
+      };
+    } else {
+      console.log('Printing was canceled or failed.');
+    }
+  };
+
   attachReact(element: HTMLElement): void {
     const printServices = new PrintServices();
     if (!printServices?.renderSVGForm) {
@@ -77,6 +117,23 @@ export default class RSBCImage extends ReactComponent {
         createRoot(element).render(
           <div className="rsbc-image-container">
             {svgComponents.map((svg, index) => <div key={index} className="rsbc-image">{svg}</div>)}
+            <button
+              style={{
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                fontSize: '16px'
+              }}
+              onClick={this.handlePrint}
+            >
+              Print
+            </button>
           </div>
         );
       })
