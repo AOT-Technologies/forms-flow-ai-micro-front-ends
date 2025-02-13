@@ -54,7 +54,7 @@ const settingsForm = (...extend) => {
                                     JSON.parse(context.value);
                                     return true;
                                 } catch (error) {
-                                    return error.message;
+                                    return "Invalid JSON format";
                                 }
                             }
                         },
