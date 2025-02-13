@@ -42,6 +42,22 @@ const settingsForm = (...extend) => {
                         weight: 30,
                         // editor: "ace",
                         as: "json",
+                        validate: {
+                            custom: function(context) {
+                                // If empty or default to ""
+                                let currValue = context.data.rsbcImageSettings.trim()
+                                if (currValue === "" || currValue === "\"\"") {
+                                    context.data.rsbcImageSettings = "";
+                                    return true;
+                                }
+                                try {
+                                    JSON.parse(context.value);
+                                    return true;
+                                } catch (error) {
+                                    return error.message;
+                                }
+                            }
+                        },
                         description: `
                         Example JSON:<pre>
 {
