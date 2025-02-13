@@ -70,7 +70,7 @@ export default class RSBCImage extends ReactComponent {
       console.error('Error in defining RSBC Image Settings in RSBCImage Component:', error);
       console.error('Error in defining RSBC Image Settings in RSBCImage Component. Needs to be a valid JSON object.');
     }
-  }
+  }  
 
   attachReact(element: HTMLElement): void {
     const printServices = new PrintServices();
@@ -91,9 +91,7 @@ export default class RSBCImage extends ReactComponent {
       }
     } else {
       outputJson = this.data;
-    }
-    // this.component.rsbcImageData = outputJson;
-    // this.component.rsbcImageData.svgImages = {};
+    }    
 
     const isEditMode = this.isPreviewPanelVisible();
     printServices.renderSVGForm(outputJson, this.component, isEditMode, this.builderMode)
@@ -116,20 +114,15 @@ export default class RSBCImage extends ReactComponent {
       });
   }
 
-  async getBase64Images(): Promise<Object> {
-    console.log("getBase64Images______________");
+  async getBase64Images(): Promise<Object> {    
     try {
-      ////
       const printServices = new PrintServices();
-
       if (!printServices || typeof printServices.renderSVGForm !== 'function') {
         throw new Error('printServices.renderSVGForm is not available.');
       }
-
       let outputJson:any = {};
       let inputData = this.data;
       inputData = testInput.data;
-
       if (this.component.rsbcImageSettings) {
         try {
           outputJson = this.getOutputJson(this.component.rsbcImageSettings, inputData);
@@ -138,8 +131,7 @@ export default class RSBCImage extends ReactComponent {
         }
       } else {
         outputJson = this.data;
-      }
-      // this.component.rsbcImageData = outputJson;
+      }      
       const rsbcImageData = outputJson;
       const svgImages = {};
 
@@ -154,38 +146,21 @@ export default class RSBCImage extends ReactComponent {
       });
 
       const base64Images: Object = {};
+      const imageKeys = ["VI","TwentyFourHour", "IRP", "TwelveHour"];
 
-      if (rsbcImageData["VI"]) {
-        const element = svgImages["VI"];
-        // const base64_png = await toPng(element);
-        const elementHtml = this.convertToHTMLElement(svgImages["VI"]);
-        try {
-          const base64_png = await toPng(elementHtml);
-          base64Images["VI_form_png"] = base64_png;
-        } catch (error) {
-            console.error("An error occurred converting the SVG to PNG: ", error);
+      for (const key of imageKeys) {
+        if (rsbcImageData[key]) {
+          const element = this.convertToHTMLElement(svgImages[key]);
+          if (element) {
+            this.injectStyles(element);
+          }
+          document.body.appendChild(element);
+          const base64_png = await this.safeToPng(element);
+          document.body.removeChild(element);
+          base64Images[`${key}_form_png`] = base64_png;
+          //console.log(`${key}_form_png:  `+base64Images[`${key}_form_png`]);
         }
-
-
-      }
-      if (rsbcImageData["TwentyFourHour"]) {
-        const element = svgImages["TwentyFourHour"];
-        // const base64_png = await toPng(element);
-        const base64_png = await toPng(this.convertToHTMLElement(svgImages["TwentyFourHour"]));
-        base64Images["TwentyFourHour_form_png"] = base64_png;
-      }
-      if (rsbcImageData["IRP"]) {
-        const element = svgImages["IRP"];
-        // const base64_png = await toPng(element);
-        const base64_png = await toPng(this.convertToHTMLElement(svgImages["IRP"]));
-        base64Images["IRP_form_png"] = base64_png;
-      }
-      if (rsbcImageData["TwelveHour"]) {
-        const element = svgImages["TwelveHour"];
-        // const base64_png = await toPng(element);
-        const base64_png = await toPng(this.convertToHTMLElement(svgImages["TwelveHour"]));
-        base64Images["TwelveHour_form_png"] = base64_png;
-      }
+      }      
       if (rsbcImageData["date_of_impound"] && rsbcImageData["vehicle_impounded"] === "NO") {
         base64Images["date_released"] = rsbcImageData["date_of_impound"];
       }
@@ -198,14 +173,50 @@ export default class RSBCImage extends ReactComponent {
 
   }
 
-  convertToHTMLElement = (jsxElement: React.ReactNode): HTMLElement | null => {
-    // Convert JSX to an HTML string
-    const htmlString = renderToString(jsxElement);
+  async safeToPng(element: HTMLElement) {
+      const originalConsoleError = console.error;
+      try {
+          console.error = () => {};
+          return await toPng(element);
+      } catch (error) {
+          console.error = originalConsoleError; 
+          throw error; 
+      } finally {
+          console.error = originalConsoleError; 
+      }
+  }
 
-    // Use DOMParser to convert the string into a real DOM element
+  injectStyles(element: HTMLElement) {    
+    const stylesheets = Array.from(document.styleSheets)
+      .filter(sheet => sheet.href === null || sheet.href.startsWith(window.location.origin));
+  
+    const cssText = stylesheets
+      .map(sheet => {
+        try {
+          return Array.from(sheet.cssRules).map(rule => rule.cssText).join("\n");
+        } catch (e) {
+          console.warn("Could not access stylesheet: ", e);
+          return "";
+        }
+      })
+      .join("\n");  
+    
+    const styleElement = document.createElement("style");
+    styleElement.textContent = cssText;  
+
+    element.prepend(styleElement);
+  }
+  
+
+  convertToHTMLElement = (jsxElement: React.ReactNode): HTMLElement | null => {
+    const htmlString = renderToString(jsxElement);
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlString, "text/html");
-    return doc.body.firstChild as HTMLElement; // Get the first rendered element
+    const element = doc.body.firstElementChild as HTMLElement;    
+    if (!element) {
+        console.error("Failed to parse JSX into an HTMLElement.");
+    }    
+    return element;
   };
 
   detachReact(element: HTMLElement): void {
