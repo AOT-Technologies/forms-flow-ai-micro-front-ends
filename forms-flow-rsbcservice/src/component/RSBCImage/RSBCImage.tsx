@@ -40,8 +40,8 @@ export default class RSBCImage extends ReactComponent {
   static editForm = settingsForm;
 
   private getTransformedInputData(): any {
-    //let inputData = this.data; 
-    let inputData =  testInput.data;
+    let inputData = this.data; 
+    //let inputData =  testInput.data;
     return this.component.rsbcImageSettings ? 
       this.getOutputJson(this.component.rsbcImageSettings, inputData) : inputData;
   }
@@ -103,21 +103,36 @@ handlePrint = () => {
       return;
   }
 
-  // Create a wrapper to hold only the elements to be printed
+  // Create a temporary print container
   const printContainer = document.createElement("div");
   printContainer.id = "print-container";
 
-  // Clone .rsbc-image elements (so we don’t remove them from the page)
-  rsbcImages.forEach(element => {
-      //const clonedElement = element.cloneNode(true) as HTMLElement;
-      //printContainer.appendChild(clonedElement);
-      printContainer.appendChild(element);
+  // Store original parent and a placeholder for each element
+  const originalPositions: { element: HTMLElement; parent: Node; placeholder: HTMLElement }[] = [];
+
+  rsbcImages.forEach((element) => {
+      if (element instanceof HTMLElement) {
+          const parent = element.parentNode as Node;
+
+          // Create a placeholder <span> to mark the original position
+          const placeholder = document.createElement("span");
+          placeholder.style.display = "none"; // Hide it visually
+          parent.insertBefore(placeholder, element);
+
+          originalPositions.push({
+              element,
+              parent,
+              placeholder, // Store placeholder reference
+          });
+
+          printContainer.appendChild(element); // Move element to print container
+      }
   });
 
-  // Append print container to body
+  // Append print container to document body
   document.body.appendChild(printContainer);
 
-  // Apply print-only styles to hide everything except #print-container
+  // Apply print styles dynamically
   const printStyles = document.createElement("style");
   printStyles.innerHTML = `
       @media print {
@@ -157,12 +172,19 @@ handlePrint = () => {
   // Trigger print
   window.print();
 
-  // Remove print container and restore page after printing
+  // Restore elements to their exact original position
   setTimeout(() => {
+      originalPositions.forEach(({ element, parent, placeholder }) => {
+          parent.insertBefore(element, placeholder); // Restore before placeholder
+          parent.removeChild(placeholder); // Remove placeholder
+      });
+
+      // Cleanup
       document.body.removeChild(printContainer);
       document.head.removeChild(printStyles);
   }, 1000);
 };
+
 
 
 
