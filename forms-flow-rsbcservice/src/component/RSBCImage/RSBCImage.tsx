@@ -270,23 +270,25 @@ export default class RSBCImage extends ReactComponent {
                 {svg}
               </div>
             ))}
-            <button
-              style={{
-                position: "fixed",
-                bottom: "20px",
-                right: "20px",
-                padding: "10px 20px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontSize: "16px",
-              }}
-              onClick={this.handlePrint}
-            >
-              Print
-            </button>
+            {this.component.stage === "stageOne" && (
+              <button
+                style={{
+                  position: "fixed",
+                  bottom: "20px",
+                  right: "20px",
+                  padding: "10px 20px",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                }}
+                onClick={this.handlePrint}
+              >
+                Print
+              </button>
+            )}
           </div>
         );
       })
