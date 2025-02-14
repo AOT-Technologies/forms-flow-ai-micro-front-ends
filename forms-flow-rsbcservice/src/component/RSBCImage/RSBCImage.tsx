@@ -109,8 +109,9 @@ handlePrint = () => {
 
   // Clone .rsbc-image elements (so we don’t remove them from the page)
   rsbcImages.forEach(element => {
-      const clonedElement = element.cloneNode(true) as HTMLElement;
-      printContainer.appendChild(clonedElement);
+      //const clonedElement = element.cloneNode(true) as HTMLElement;
+      //printContainer.appendChild(clonedElement);
+      printContainer.appendChild(element);
   });
 
   // Append print container to body
