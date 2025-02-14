@@ -8,6 +8,7 @@ import { renderToString } from "react-dom/server";
 import _ from "lodash";
 import testInput from "../../test_data/sampleTestData.json";
 
+
 export default class RSBCImage extends ReactComponent {
   data: any;
   component: any;
@@ -39,7 +40,7 @@ export default class RSBCImage extends ReactComponent {
   static editForm = settingsForm;
 
   private getTransformedInputData(): any {
-    //let inputData = this.data;
+    //let inputData = this.data; 
     let inputData =  testInput.data;
     return this.component.rsbcImageSettings ? 
       this.getOutputJson(this.component.rsbcImageSettings, inputData) : inputData;
@@ -63,45 +64,107 @@ export default class RSBCImage extends ReactComponent {
     }
   }
 
-  handlePrint = () => {
-    const printContent = document.querySelectorAll('.rsbc-image');
-    if (printContent.length === 0) {
-      console.log('No content to print.');
+  /*handlePrint = () => {
+    const elementsToPrint = document.querySelectorAll(".rsbc-image");
+
+    if (elementsToPrint.length === 0) {
+        console.log("No content to print.");
+        return;
+    }
+
+    // Create a temporary print container
+    const printContainer = document.createElement("div");
+    printContainer.id = "print-container";
+
+    // Clone elements and append to print container
+    elementsToPrint.forEach(element => {
+        const clonedElement = element.cloneNode(true) as HTMLElement;
+        //printContainer.appendChild(clonedElement);
+        printContainer.appendChild(element);
+    });
+
+    // Append to document body
+    document.body.appendChild(printContainer);
+
+    // Trigger print
+    window.print();
+
+    // Remove print container after printing
+    setTimeout(() => {
+        document.body.removeChild(printContainer);
+    }, 1000);
+};*/
+
+handlePrint = () => {
+  const rsbcImages = document.querySelectorAll(".rsbc-image");
+
+  if (rsbcImages.length === 0) {
+      console.log("No content to print.");
       return;
-    }
-    
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      const styles = Array.from(document.styleSheets)
-        .map((styleSheet) => {
-          try {
-            return Array.from(styleSheet.cssRules)
-              .map((rule) => rule.cssText)
-              .join('\n');
-          } catch (error) {
-            return '';
+  }
+
+  // Create a wrapper to hold only the elements to be printed
+  const printContainer = document.createElement("div");
+  printContainer.id = "print-container";
+
+  // Clone .rsbc-image elements (so we don’t remove them from the page)
+  rsbcImages.forEach(element => {
+      const clonedElement = element.cloneNode(true) as HTMLElement;
+      printContainer.appendChild(clonedElement);
+  });
+
+  // Append print container to body
+  document.body.appendChild(printContainer);
+
+  // Apply print-only styles to hide everything except #print-container
+  const printStyles = document.createElement("style");
+  printStyles.innerHTML = `
+      @media print {
+          body * {
+              visibility: hidden !important;
           }
-        })
-        .join('\n');
-      
-      printWindow.document.write('<html><head><title>Print</title><style>' + styles + '</style></head><body>');
-      printContent.forEach((element) => {
-        printWindow.document.write(element.outerHTML);
-      });
-      printWindow.document.write('</body></html>');
-      printWindow.document.close();
-      printWindow.focus();
-      printWindow.onload = () => {
-        printWindow.print();
-        printWindow.onafterprint = () => {
-          printWindow.close();
-          console.log('Printing was successful.');
-        };
-      };
-    } else {
-      console.log('Printing was canceled or failed.');
-    }
-  };
+
+          #print-container, #print-container * {
+              visibility: visible !important;
+          }
+
+          #print-container {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: auto;
+          }
+
+          .rsbc-image {
+              display: block !important;
+              page-break-before: always;
+              background: white !important;
+              width: 100% !important;
+              height: auto !important;
+          }
+
+          svg {
+              width: 100% !important;
+              height: auto !important;
+              background: transparent !important;
+          }
+      }
+  `;
+  document.head.appendChild(printStyles);
+
+  // Trigger print
+  window.print();
+
+  // Remove print container and restore page after printing
+  setTimeout(() => {
+      document.body.removeChild(printContainer);
+      document.head.removeChild(printStyles);
+  }, 1000);
+};
+
+
+
 
   attachReact(element: HTMLElement): void {
     const printServices = new PrintServices();
