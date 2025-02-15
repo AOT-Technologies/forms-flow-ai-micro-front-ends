@@ -11,15 +11,17 @@ interface ComponentSettings {
 
 class PrintServices {
   async renderSVGForm(
-      values: Record<string, any>,
-      isEditMode: boolean,
-      builderMode: boolean,
-      renderStage: string
+    values: Record<string, any>,
+    isEditMode: boolean,
+    builderMode: boolean,
+    renderStage: string,
+    isForSubmissionPayload: boolean
   ): Promise<JSX.Element[]> {
-
     //values = inputValues;
     //let impoundLotOperators = impound;
-    let impoundLotOperators = await DBService.fetchStaticDataFromTable('impoundLotOperators');
+    let impoundLotOperators = await DBService.fetchStaticDataFromTable(
+      "impoundLotOperators"
+    );
     let isPreview = isEditMode;
     if (!isPreview && builderMode) {
       isPreview = true;
@@ -42,33 +44,44 @@ class PrintServices {
     for (const item in forms) {
       if (forms[item]) {
         for (const formKey in formsPNG?.[renderStage]?.[item] || {}) {
-          if (formKey === "ILO" && values["VI"] && values["TwentyFourHour"] && item === "TwentyFourHour") {
+          if (
+            formKey === "ILO" &&
+            values["VI"] &&
+            values["TwentyFourHour"] &&
+            item === "TwentyFourHour"
+          ) {
             continue;
           }
           if (formKey === "ILO" && values["vehicle_impounded"] === "NO") {
             continue;
           }
-          if (formKey === "DETAILS" && values["incident_details"]?.length < 500) {
+          if (
+            formKey === "DETAILS" &&
+            values["incident_details"]?.length < 500
+          ) {
             continue;
           }
 
           components.push(
-              React.createElement(SVGprint, {
-                key: `${item}-${formKey}`,
-                form: formsPNG?.[renderStage]?.[item]?.[formKey]?.["png"] || "",
-                formAspect: formsPNG?.[renderStage]?.[item]?.[formKey]?.["aspectClass"] || "",
-                formLayout: item,
-                formType: formKey,
-                values: valuesCopy,
-                impoundLotOperators: impoundLotOperators,
-                renderStage: renderStage,
-                isPreview: isPreview,
-              })
+            React.createElement(SVGprint, {
+              key: `${item}-${formKey}`,
+              form: formsPNG?.[renderStage]?.[item]?.[formKey]?.["png"] || "",
+              formAspect:
+                formsPNG?.[renderStage]?.[item]?.[formKey]?.["aspectClass"] ||
+                "",
+              formLayout: item,
+              formType: formKey,
+              values: valuesCopy,
+              impoundLotOperators: impoundLotOperators,
+              renderStage: renderStage,
+              isPreview: isPreview,
+              isForSubmissionPayload: isForSubmissionPayload,
+            })
           );
-        }         
+        }
         componentsToRender.push(
           React.createElement("div", { id: item, key: item }, components)
-        );              
+        );
         components = [];
       }
     }
