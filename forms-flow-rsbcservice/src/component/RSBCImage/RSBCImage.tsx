@@ -12,6 +12,7 @@ export default class RSBCImage extends ReactComponent {
   data: any;
   component: any;
   builderMode: boolean;
+  emit!: (event: string, ...args: any[]) => void;
 
   constructor(component: any, options: any, data: any) {
     super(component, options, data);
@@ -223,8 +224,14 @@ export default class RSBCImage extends ReactComponent {
       const userConfirmed = await showConfirmationDialog();
       if (userConfirmed) {
         console.log("User confirmed successful printing.");
+        (this as any).emit("printResponse", {
+          data: "YES",
+        });
       } else {
         console.log("User reported an issue with printing.");
+        (this as any).emit("printResponse", {
+          data: "NO",
+        });
       }
     };
 
