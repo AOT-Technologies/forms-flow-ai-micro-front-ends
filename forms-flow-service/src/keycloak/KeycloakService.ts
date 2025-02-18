@@ -69,7 +69,6 @@ import Keycloak, {
         // Check if the user is offline before attempting a token refresh
         if (!navigator.onLine) {
           console.debug("Offline: Skipping token refresh.");
-          // Exit the function to prevent unnecessary token refresh attempts while offline
           return;
         }
     
@@ -104,16 +103,12 @@ import Keycloak, {
      */
     private handleTokenRefreshFailure(): void {
       if (!navigator.onLine) {
-        // If the user is offline and no retry listener is set wait for online
         if (!this.isWaitingForOnline) {
-          // Set flag to prevent multiple event listeners from being added
           this.isWaitingForOnline = true;
           console.debug("Offline detected: Retrying token refresh when back online.");
-          // Add an event listener for the online event to retry token refresh when connectivity is restored
           window.addEventListener("online", this.retryTokenRefresh, { once: true });
         }
       } else {
-        // If the user is online but token refresh failed log out
         this.logout();
       }
     }
@@ -123,37 +118,10 @@ import Keycloak, {
     */
     private retryTokenRefresh = (): void => {
       console.log("Back online: Retrying token refresh.");
-      //Reset flag after retry
       this.isWaitingForOnline = false;
       this.refreshToken();
     };
 
-    
-    /**
-     * Refresh the keycloak token before expiring
-     */
-   /* private refreshToken(): void {
-      this.timerId = setInterval(() => {
-        this.kc
-          ?.updateToken(-1)
-          .then((refreshed) => {
-            if (refreshed) {
-              console.log("Token refreshed!");
-              clearInterval(this.timerId);
-              this.token = this.kc.token
-              StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
-              this.refreshToken();
-            } else {
-              console.log("Token is still valid!");
-            }
-          })
-          .catch((err) => {
-            console.error("Keycloak token update failed!", err);
-            clearInterval(this.timerId);
-            this.logout();
-          });
-      }, this.getTokenExpireTime());
-    }*/
   
     /**
      *
