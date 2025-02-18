@@ -66,7 +66,6 @@ import Keycloak, {
      */
     private refreshToken(): void {
       this.timerId = setInterval(() => {
-        // Check if the user is offline before attempting a token refresh
         if (!navigator.onLine) {
           console.debug("Offline: Skipping token refresh.");
           return;
