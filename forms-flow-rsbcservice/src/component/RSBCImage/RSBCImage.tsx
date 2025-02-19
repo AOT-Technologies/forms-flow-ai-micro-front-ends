@@ -43,13 +43,30 @@ export default class RSBCImage extends ReactComponent {
   }
 
   static editForm = settingsForm;
-
+  
+  private transformedDataCache: any = null;
+  private lastData: any = null;
+  private lastSettings: any = null;
   // Transforms input data based on the defined RSBC Image settings.
   private getTransformedInputData(): any {
-    let inputData = this.data;
-    return this.component.rsbcImageSettings
-      ? this.getOutputJson(this.component.rsbcImageSettings, inputData)
-      : inputData;
+    // Avoid recomputation if data and settings haven't changed
+    if (
+      this.transformedDataCache &&
+      _.isEqual(this.data, this.lastData) &&
+      _.isEqual(this.component.rsbcImageSettings, this.lastSettings)
+    ) {      
+      return this.transformedDataCache;
+    }
+
+    // Store current state for future comparison
+    this.lastData = _.cloneDeep(this.data);
+    this.lastSettings = _.cloneDeep(this.component.rsbcImageSettings);
+
+    // Compute new transformed data
+    this.transformedDataCache = this.component.rsbcImageSettings
+      ? this.getOutputJson(this.component.rsbcImageSettings, this.data)
+      : this.data;    
+    return this.transformedDataCache;
   }
 
   // Maps input data to the settings JSON, transforming it accordingly.
@@ -82,40 +99,46 @@ export default class RSBCImage extends ReactComponent {
     if (rsbcImages.length === 0) {
       console.log("No content to print.");
       return;
-    }    
+    }
 
-    const showConfirmationDialog = (message: string, primaryBtnCaption: string, secondaryBtnCaption: string) => {
+    const showConfirmationDialog = (
+      message: string,
+      primaryBtnCaption: string,
+      secondaryBtnCaption: string
+    ) => {
       return new Promise<boolean>((resolve) => {
         if (document.querySelector(".modal-overlay")) return; // Prevent multiple instances
-    
+
         const modalContainer = document.createElement("div");
         document.body.appendChild(modalContainer);
-    
+
         const handleClose = (result: boolean) => {
           resolve(result);
           document.body.removeChild(modalContainer);
         };
-    
+
         createRoot(modalContainer).render(
-            <PrintConfirmationDialog
-                message={message}
-                onConfirm={() => handleClose(true)}
-                onCancel={() => handleClose(false)}
-                primaryBtnCaption={primaryBtnCaption}
-                secondaryBtnCaption={secondaryBtnCaption}
-            />
+          <PrintConfirmationDialog
+            message={message}
+            onConfirm={() => handleClose(true)}
+            onCancel={() => handleClose(false)}
+            primaryBtnCaption={primaryBtnCaption}
+            secondaryBtnCaption={secondaryBtnCaption}
+          />
         );
       });
     };
-    
+
     const proceedToPrint = await showConfirmationDialog(
-        "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
-        "Proceed",
-        "Cancel"
+      "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
+      "Proceed",
+      "Cancel"
     );
 
     if (proceedToPrint) {
-      console.log("User confirmed proceeding to printing step, FormInputs are locked.");
+      console.log(
+        "User confirmed proceeding to printing step, FormInputs are locked."
+      );
       (this as any).emit("lockFormInput", {
         data: "YES",
       });
@@ -124,15 +147,19 @@ export default class RSBCImage extends ReactComponent {
       (this as any).emit("lockFormInput", {
         data: "NO",
       });
-      return
+      return;
     }
-    
+
     const { printContainer, originalPositions } =
-      moveElementsToPrintContainer(rsbcImages);   
+      moveElementsToPrintContainer(rsbcImages);
 
     const handleAfterPrint = async () => {
       window.removeEventListener("afterprint", handleAfterPrint);
-      const userConfirmed = await showConfirmationDialog("Did it print successfully?", "Yes", "No");
+      const userConfirmed = await showConfirmationDialog(
+        "Did it print successfully?",
+        "Yes",
+        "No"
+      );
       if (userConfirmed) {
         console.log("User confirmed successful printing.");
         (this as any).emit("printResponse", {
