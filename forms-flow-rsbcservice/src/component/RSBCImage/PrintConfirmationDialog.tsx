@@ -5,21 +5,25 @@ interface ConfirmationDialogProps {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
+  primaryBtnCaption: string;
+  secondaryBtnCaption: string;
 }
 
 const PrintConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   message,
   onConfirm,
   onCancel,
+  primaryBtnCaption,
+  secondaryBtnCaption,
 }) => {
   return (
     <div className="confirmation-dialog">
       <p>{message}</p>
       <button className="yes-button" onClick={onConfirm}>
-        Yes
+          {primaryBtnCaption}
       </button>
       <button className="no-button" onClick={onCancel}>
-        No
+          {secondaryBtnCaption}
       </button>
     </div>
   );

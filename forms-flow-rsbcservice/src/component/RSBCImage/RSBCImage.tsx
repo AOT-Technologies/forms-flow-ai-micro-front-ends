@@ -75,7 +75,7 @@ export default class RSBCImage extends ReactComponent {
     }
   }
 
-  handlePrint = () => {
+  handlePrint = async (values?: any) => {
     const rsbcImages = document.querySelectorAll(".rsbc-image");
 
     if (rsbcImages.length === 0) {
@@ -86,7 +86,7 @@ export default class RSBCImage extends ReactComponent {
     const { printContainer, originalPositions } =
       moveElementsToPrintContainer(rsbcImages);
 
-    const showConfirmationDialog = () => {
+    const showConfirmationDialog = (message: string, primaryBtnCaption: string, secondaryBtnCaption: string) => {
       return new Promise<boolean>((resolve) => {
         const modalContainer = document.createElement("div");
         document.body.appendChild(modalContainer);
@@ -97,18 +97,42 @@ export default class RSBCImage extends ReactComponent {
         };
 
         createRoot(modalContainer).render(
-          <PrintConfirmationDialog
-            message="Did it print successfully?"
-            onConfirm={() => handleClose(true)}
-            onCancel={() => handleClose(false)}
-          />
+            <PrintConfirmationDialog
+                message={message}
+                onConfirm={() => handleClose(true)}
+                onCancel={() => handleClose(false)}
+                primaryBtnCaption={primaryBtnCaption}
+                secondaryBtnCaption={secondaryBtnCaption}
+            />
         );
       });
     };
-    
+
+    // Wait for user confirmation before proceeding to print
+    const proceedToPrint = await showConfirmationDialog(
+        "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
+        "Proceed",
+        "Cancel"
+    );
+
+    if (proceedToPrint) {
+      console.log("User confirmed proceeding to printing step, FormInputs are locked.");
+      (this as any).emit("lockFormInput", {
+        data: "YES",
+      });
+    } else {
+      console.log("User cancel proceeding to printing.");
+      (this as any).emit("lockFormInput", {
+        data: "NO",
+      });
+      return
+    }
+
+    window.dispatchEvent(new Event("lockFormInput"));
+
     const handleAfterPrint = async () => {
       window.removeEventListener("afterprint", handleAfterPrint);
-      const userConfirmed = await showConfirmationDialog();
+      const userConfirmed = await showConfirmationDialog("Did it print successfully?", "Yes", "No");
       if (userConfirmed) {
         console.log("User confirmed successful printing.");
         (this as any).emit("printResponse", {
