@@ -83,9 +83,6 @@ export default class RSBCImage extends ReactComponent {
       return;
     }
 
-    const { printContainer, originalPositions } =
-      moveElementsToPrintContainer(rsbcImages);
-
     const showConfirmationDialog = (message: string, primaryBtnCaption: string, secondaryBtnCaption: string) => {
       return new Promise<boolean>((resolve) => {
         const modalContainer = document.createElement("div");
@@ -127,8 +124,9 @@ export default class RSBCImage extends ReactComponent {
       });
       return
     }
-
-    window.dispatchEvent(new Event("lockFormInput"));
+    
+    const { printContainer, originalPositions } =
+      moveElementsToPrintContainer(rsbcImages);   
 
     const handleAfterPrint = async () => {
       window.removeEventListener("afterprint", handleAfterPrint);
