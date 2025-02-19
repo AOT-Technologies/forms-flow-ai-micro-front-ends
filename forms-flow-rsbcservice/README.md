@@ -25,6 +25,20 @@ To integrate the `RSBCImage` component in your form:
 2. Make sure that submission form data are the expected ones.  See below example of expected submission data.
 3. When adding or editing the `RSBCImage` component, you must choose the "RSBC Printing Stage". This should be set to either "Stage One" or "Stage Two" based on the form's requirements.
 
+### Events Emitted
+1. ```lockFormInput```
+    -  Description: Emitted when the user selects an option in the confirmation dialog before printing.
+    -  Dialog Message: If you print this form you cannot go back and edit it, please confirm you wish to proceed.
+    -  Values:
+       -  "YES" - If the user confirms printing, locking the form inputs.
+       -  "NO" - If the user cancels, allowing further edits.
+1. ```printResponse```
+    -  Description: Emitted when the user selects an option in the confirmation dialog after printing.
+    -  Dialog Message: Did it print successfully?
+    -  Values:
+       -  "YES" - If the user confirms that printing was successful.
+       -  "NO" - If the user reports an issue with printing.
+
 ### Expected Submission Data
 The `RSBCImage` component requires specific data structures to render images effectively. Below are example JSON structures demonstrating the expected input:
 
