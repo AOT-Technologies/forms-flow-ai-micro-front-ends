@@ -1,3 +1,4 @@
+// Moves elements to a dedicated print container while keeping track of their original positions.
 export const moveElementsToPrintContainer = (elements: NodeListOf<Element>) => {
   const printContainer = document.createElement("div");
   printContainer.id = "print-container";
@@ -25,6 +26,7 @@ export const moveElementsToPrintContainer = (elements: NodeListOf<Element>) => {
   return { printContainer, originalPositions };
 };
 
+// Restores elements to their original positions after printing.
 export const restoreOriginalPositions = (
   originalPositions: {
     element: HTMLElement;

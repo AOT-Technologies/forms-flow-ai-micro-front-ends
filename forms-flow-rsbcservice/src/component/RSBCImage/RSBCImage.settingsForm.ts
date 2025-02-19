@@ -1,5 +1,6 @@
 import baseEditForm from "@aot-technologies/formiojs/lib/components/_classes/component/Component.form";
 
+// Returns the configuration settings form for the RSBC Image component, including label, stage selection, and JSON-based settings validation.
 const settingsForm = (...extend) => {
   return baseEditForm(
     [
@@ -40,7 +41,6 @@ const settingsForm = (...extend) => {
             rows: 5,
             resizable: true,
             weight: 30,
-            // editor: "ace",
             as: "json",
             validate: {
               custom: function (context) {

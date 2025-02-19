@@ -15,6 +15,7 @@ interface SVGPrintProps {
   isForSubmissionPayload: boolean;
 }
 
+// A React component that renders an SVG-based print layout using predefined form field positions and user-provided values.
 export const SVGprint: React.FC<SVGPrintProps> = ({
   form,
   formAspect,

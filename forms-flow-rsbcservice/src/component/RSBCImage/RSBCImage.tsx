@@ -44,6 +44,7 @@ export default class RSBCImage extends ReactComponent {
 
   static editForm = settingsForm;
 
+  // Transforms input data based on the defined RSBC Image settings.
   private getTransformedInputData(): any {
     let inputData = this.data;
     return this.component.rsbcImageSettings
@@ -51,6 +52,7 @@ export default class RSBCImage extends ReactComponent {
       : inputData;
   }
 
+  // Maps input data to the settings JSON, transforming it accordingly.
   getOutputJson(settingsJson: any, inputData: any): any {
     try {
       return _.mapValues(settingsJson, (rule) => {
@@ -73,6 +75,7 @@ export default class RSBCImage extends ReactComponent {
     }
   }
 
+  // Manages the print workflow, including a confirmation dialog and form input locking.
   handlePrint = async (values?: any) => {
     const rsbcImages = document.querySelectorAll(".rsbc-image");
 
@@ -153,6 +156,7 @@ export default class RSBCImage extends ReactComponent {
     );
   };
 
+  // Renders the RSBC Image component within the given HTML element.
   attachReact(element: HTMLElement): void {
     const printServices = new PrintServices();
     if (!printServices?.renderSVGForm) {
@@ -202,6 +206,7 @@ export default class RSBCImage extends ReactComponent {
       .catch(console.error);
   }
 
+  // Generates Base64-encoded images for the given stage.
   async getBase64Images(
     stage: string = "stageOne"
   ): Promise<Record<string, string>> {
@@ -247,6 +252,7 @@ export default class RSBCImage extends ReactComponent {
     }
   }
 
+  // Converts SVG images to Base64 PNGs based on provided data.
   private async generateBase64Images(
     svgImages: Record<string, React.ReactNode>,
     data: any
@@ -272,6 +278,7 @@ export default class RSBCImage extends ReactComponent {
     return base64Images;
   }
 
+  // Converts an HTML element to a PNG image while suppressing console errors.
   async safeToPng(element: HTMLElement) {
     const originalConsoleError = console.error;
     try {
@@ -285,6 +292,7 @@ export default class RSBCImage extends ReactComponent {
     }
   }
 
+  // Injects global styles into an HTML element for consistent rendering.
   injectStyles(element: HTMLElement) {
     const cssText = Array.from(document.styleSheets)
       .filter(
@@ -306,16 +314,19 @@ export default class RSBCImage extends ReactComponent {
     element.prepend(styleElement);
   }
 
+  // Converts a JSX element to an HTML element.
   convertToHTMLElement(jsxElement: React.ReactNode): HTMLElement | null {
     const htmlString = renderToString(jsxElement);
     const doc = new DOMParser().parseFromString(htmlString, "text/html");
     return doc.body.firstElementChild as HTMLElement;
   }
 
+  // Unmounts the React component from the given HTML element.
   detachReact(element: HTMLElement): void {
     createRoot(element).unmount();
   }
 
+  // Checks if the preview panel of form.io form builder is currently visible.
   isPreviewPanelVisible(): boolean {
     const previewPanel = document.querySelector(
       ".card.panel.preview-panel"
