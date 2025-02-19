@@ -2,8 +2,6 @@ import React, { JSX } from "react";
 import { formsPNG } from "../helpers/helperServices";
 import { SVGprint } from "./svgPrint";
 import DBService from "../storage/dbService";
-import inputValues from "../test_data/sampleData_VI_24Hour_StageTwo.json";
-import impound from "../test_data/impoundLotOperators_VI_StageOne.json";
 
 interface ComponentSettings {
   stage?: string;
@@ -16,9 +14,7 @@ class PrintServices {
     builderMode: boolean,
     renderStage: string,
     isForSubmissionPayload: boolean
-  ): Promise<JSX.Element[]> {
-    //values = inputValues;
-    //let impoundLotOperators = impound;
+  ): Promise<JSX.Element[]> {    
     let impoundLotOperators = await DBService.fetchStaticDataFromTable(
       "impoundLotOperators"
     );
