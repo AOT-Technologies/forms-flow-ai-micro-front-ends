@@ -17,14 +17,16 @@ const PrintConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   secondaryBtnCaption,
 }) => {
   return (
-    <div className="confirmation-dialog">
-      <p>{message}</p>
-      <button className="yes-button" onClick={onConfirm}>
+    <div className="modal-overlay">
+      <div className="confirmation-dialog">
+        <p>{message}</p>
+        <button className="yes-button" onClick={onConfirm}>
           {primaryBtnCaption}
-      </button>
-      <button className="no-button" onClick={onCancel}>
+        </button>
+        <button className="no-button" onClick={onCancel}>
           {secondaryBtnCaption}
-      </button>
+        </button>
+      </div>
     </div>
   );
 };
