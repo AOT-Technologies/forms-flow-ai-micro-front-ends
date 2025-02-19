@@ -8,6 +8,7 @@ interface ComponentSettings {
 }
 
 class PrintServices {
+  // Generates an array of SVG components based on form data and print settings.
   async renderSVGForm(
     values: Record<string, any>,
     isEditMode: boolean,
