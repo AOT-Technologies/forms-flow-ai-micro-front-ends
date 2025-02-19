@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
 import { ReactComponent } from "@aot-technologies/formio-react";
 import PrintServices from "../../print/printService";
@@ -12,7 +12,6 @@ import {
 } from "./printUtils";
 import _ from "lodash";
 import "./printContainer.scss";
-import testInput from "../../test_data/sampleTestData.json";
 
 export default class RSBCImage extends ReactComponent {
   data: any;
@@ -47,7 +46,6 @@ export default class RSBCImage extends ReactComponent {
 
   private getTransformedInputData(): any {
     let inputData = this.data;
-    //let inputData =  testInput.data;
     return this.component.rsbcImageSettings
       ? this.getOutputJson(this.component.rsbcImageSettings, inputData)
       : inputData;
