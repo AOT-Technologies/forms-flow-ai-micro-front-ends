@@ -81,18 +81,20 @@ export default class RSBCImage extends ReactComponent {
     if (rsbcImages.length === 0) {
       console.log("No content to print.");
       return;
-    }
+    }    
 
     const showConfirmationDialog = (message: string, primaryBtnCaption: string, secondaryBtnCaption: string) => {
       return new Promise<boolean>((resolve) => {
+        if (document.querySelector(".modal-overlay")) return; // Prevent multiple instances
+    
         const modalContainer = document.createElement("div");
         document.body.appendChild(modalContainer);
-
+    
         const handleClose = (result: boolean) => {
           resolve(result);
           document.body.removeChild(modalContainer);
         };
-
+    
         createRoot(modalContainer).render(
             <PrintConfirmationDialog
                 message={message}
@@ -104,6 +106,7 @@ export default class RSBCImage extends ReactComponent {
         );
       });
     };
+    
 
     // Wait for user confirmation before proceeding to print
     const proceedToPrint = await showConfirmationDialog(
