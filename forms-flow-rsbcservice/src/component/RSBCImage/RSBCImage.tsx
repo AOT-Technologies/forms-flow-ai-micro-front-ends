@@ -107,8 +107,6 @@ export default class RSBCImage extends ReactComponent {
       });
     };
     
-
-    // Wait for user confirmation before proceeding to print
     const proceedToPrint = await showConfirmationDialog(
         "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
         "Proceed",
