@@ -8,7 +8,7 @@ import appealsForm from "../assets/MV2721_202404_appeal.png";
 import viReportForm from "../assets/MV2722_202404.png";
 import twelveHourDriverForm from "../assets/MV2906E_082023_driver.png";
 import twelveHourICBCForm from "../assets/MV2906E_082023_icbc.png";
-// BEGIN-NOSCAN
+
 interface FormEntry {
   png: string;
   aspectClass: string;
@@ -91,6 +91,7 @@ interface ImpoundLotOperator {
   name_print?: string;
 }
 
+// BEGIN-NOSCAN
 export const printFormatHelper = (
     values: Values,
     data: DataEntry,
@@ -264,6 +265,7 @@ export const printFormatHelper = (
 
   return val;
 };
+// END-NOSCAN
 
 export const printCheckHelper = (
     values: Record<string, any>,
@@ -288,4 +290,3 @@ export const printCheckHelper = (
 export const handleError = (error: string): void => {
   console.error("Error:", error);
 };
-// END-NOSCAN
