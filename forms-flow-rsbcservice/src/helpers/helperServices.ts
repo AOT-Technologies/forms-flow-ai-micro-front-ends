@@ -91,14 +91,12 @@ interface ImpoundLotOperator {
   name_print?: string;
 }
 
-// BEGIN-NOSCAN
 export const printFormatHelper = (
-    values: Values,
-    data: DataEntry,
-    key: string,
-    impoundLotOperators: ImpoundLotOperator[]
+  values: Values,
+  data: DataEntry,
+  key: string,
+  impoundLotOperators: ImpoundLotOperator[]
 ): string => {
-  
   let val = values[data.field_name];
 
   if (key in fieldsToSplit) {
@@ -108,12 +106,13 @@ export const printFormatHelper = (
       return ""; // Return empty string if the value is null or undefined
     }
 
-    const splitData =
-        typeof rawValue === "object" && rawValue.value
-            ? rawValue.value.split(data.delimeter || " ")
-            : typeof rawValue === "string"
-                ? rawValue.split(data.delimeter || " ")
-                : [];
+    let splitData: string[] = [];
+
+    if (typeof rawValue === "object" && rawValue.value) {
+      splitData = rawValue.value.split(data.delimeter || " ");
+    } else if (typeof rawValue === "string") {
+      splitData = rawValue.split(data.delimeter || " ");
+    }
 
     // Ensure splitData is valid before accessing indices
     if (!Array.isArray(splitData) || splitData.length === 0) {
@@ -121,9 +120,9 @@ export const printFormatHelper = (
     }
 
     val =
-        typeof fieldsToSplit[key] === "number"
-            ? splitData[fieldsToSplit[key]] || ""
-            : splitData.slice(1).join(data.delimeter || " ");
+      typeof fieldsToSplit[key] === "number"
+        ? splitData[fieldsToSplit[key]] || ""
+        : splitData.slice(1).join(data.delimeter || " ");
 
     return val;
   }
@@ -136,11 +135,13 @@ export const printFormatHelper = (
       const fieldValue = values[field];
 
       if (fieldValue) {
-        if (typeof fieldValue !== null && fieldValue === "object") {
+        if (typeof fieldValue === "object" && fieldValue !== null) {
           if (field === "offence_city") {
             val += fieldValue.label;
           } else if (field === "driver_prov_state") {
-            val += fieldValue.value.includes("_") ? fieldValue.value.split("_")[1] : fieldValue.value;
+            val += fieldValue.value.includes("_")
+              ? fieldValue.value.split("_")[1]
+              : fieldValue.value;
           } else {
             val += fieldValue.value;
           }
@@ -173,14 +174,14 @@ export const printFormatHelper = (
   }
 
   // If the value is a date, format it properly
-  if (values[data.field_name as string] instanceof Date) {
-    val = moment(values[data.field_name as string]).format(data.date_val || "YYYY-MM-DD");
+  if (values[data.field_name] instanceof Date) {
+    val = moment(values[data.field_name]).format(data.date_val || "YYYY-MM-DD");
     return val;
   }
 
   // If the value is a list, join it into a single string
-  if (Array.isArray(values[data.field_name as string])) {
-    val = values[data.field_name as string].join("");
+  if (Array.isArray(values[data.field_name])) {
+    val = values[data.field_name].join("");
     return val;
   }
 
@@ -194,91 +195,126 @@ export const printFormatHelper = (
   }
 
   // If the value is an object, extract its value safely
-  if (typeof values[data.field_name as string] === "object" && values[data.field_name as string] !== null) {
+  if (
+    typeof values[data.field_name] === "object" &&
+    values[data.field_name] !== null
+  ) {
     if (key === "LOCATION_CITY") {
-      val = values[data.field_name as string]?.label;
+      val = values[data.field_name]?.label;
     } else {
-      val = values[data.field_name as string]?.value;
+      val = values[data.field_name]?.value;
       val = String(val).includes("_") ? val.split("_")[1] : val;
     }
     return val;
   }
 
   // Determine the released vehicle reason
-  let released_val = values["TwelveHour"] ? "vehicle_location" : values["TwentyFourHour"] ? "reason_for_not_impounding" : "";
+  let released_val = "";
+
+  if (values["TwelveHour"]) {
+    released_val = "vehicle_location";
+  } else if (values["TwentyFourHour"]) {
+    released_val = "reason_for_not_impounding";
+  }
 
   if (key === "NOT_IMPOUNDED_REASON") {
-    val = {
-      released: "RELEASED TO OTHER DRIVER",
-      private: "PRIVATE TOW",
-      roadside: "LEFT AT ROADSIDE",
-      investigation: "SEIZED FOR INVESTIGATION"
-    }[values[released_val]] || "";
+    val =
+      {
+        released: "RELEASED TO OTHER DRIVER",
+        private: "PRIVATE TOW",
+        roadside: "LEFT AT ROADSIDE",
+        investigation: "SEIZED FOR INVESTIGATION",
+      }[values[released_val]] || "";
   }
 
   // Assign vehicle release location
   if (key === "RELEASE_LOCATION_VEHICLE") {
-    val = values["VI"] || (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES") ? "IMPOUNDED" : {
-      released: "RELEASED TO OTHER DRIVER",
-      private: "PRIVATE TOW",
-      roadside: "LEFT AT ROADSIDE",
-      investigation: "SEIZED FOR INVESTIGATION"
-    }[values[released_val]] || "";
+    val =
+      values["VI"] ||
+      (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES")
+        ? "IMPOUNDED"
+        : {
+            released: "RELEASED TO OTHER DRIVER",
+            private: "PRIVATE TOW",
+            roadside: "LEFT AT ROADSIDE",
+            investigation: "SEIZED FOR INVESTIGATION",
+          }[values[released_val]] || "";
   }
 
   // Assign key release location
   if (key === "RELEASE_LOCATION_KEYS") {
-    val = values["VI"] || (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES")
-        ? values["location_of_keys"]
-        : values[released_val] === "released"
-            ? "WITH OTHER DRIVER"
-            : values["location_of_keys"];
+    if (values["VI"] || (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES")) {
+      val = values["location_of_keys"];
+    } else if (values[released_val] === "released") {
+      val = "WITH OTHER DRIVER";
+    } else {
+      val = values["location_of_keys"];
+    }
   }
+  
 
   // Assign release person
   if (key === "RELEASE_PERSON") {
-    val = values["VI"] || (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES")
-        ? ""
-        : values[released_val] === "released"
-            ? values["vehicle_released_to"]
-            : values[released_val] === "private"
-                ? values["ILO-name"]
-                : "";
+    if (values["VI"] || (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES")) {
+      val = "";
+    } else if (values[released_val] === "released") {
+      val = values["vehicle_released_to"];
+    } else if (values[released_val] === "private") {
+      val = values["ILO-name"];
+    } else {
+      val = "";
+    }
   }
+  
 
   // Format incident details and split if too long
-  if (key === "REPORT_INCIDENT_DETAILS" && values["incident_details"]?.length > 500) {
+  if (
+    key === "REPORT_INCIDENT_DETAILS" &&
+    values["incident_details"]?.length > 500
+  ) {
     val = values["incident_details"].substring(0, 500);
   }
-  if (key === "DETAILS_INCIDENT_DETAILS" && values["incident_details"]?.length > 500) {
+  if (
+    key === "DETAILS_INCIDENT_DETAILS" &&
+    values["incident_details"]?.length > 500
+  ) {
     val = values["incident_details"].substring(500);
   }
 
   // Assign impound lot name
   if (
-      key === "IMPOUND_LOT_NAME" ||
-      key === "IMPOUNDED_LOT" ||
-      (key === "RELEASE_PERSON" && values["TwelveHour"] && !values["VI"] && values["vehicle_location"] === "private")
+    key === "IMPOUND_LOT_NAME" ||
+    key === "IMPOUNDED_LOT" ||
+    (key === "RELEASE_PERSON" &&
+      values["TwelveHour"] &&
+      !values["VI"] &&
+      values["vehicle_location"] === "private")
   ) {
-    val = impoundLotOperators.find(x => x.name === values["ILO-name"])?.name_print || values["ILO-name"];
+    val =
+      impoundLotOperators.find((x) => x.name === values["ILO-name"])
+        ?.name_print || values["ILO-name"];
   }
 
   return val;
 };
-// END-NOSCAN
 
 export const printCheckHelper = (
-    values: Record<string, any>,
-    data: { field_name: string; field_val?: string | string[] },
-    key: string
+  values: Record<string, any>,
+  data: { field_name: string; field_val?: string | string[] },
+  key: string
 ): boolean => {
   // If value is boolean, return it directly
   if (typeof values[data.field_name] === "boolean") {
-    return data.field_val === "false" ? !values[data.field_name] : values[data.field_name];
+    return data.field_val === "false"
+      ? !values[data.field_name]
+      : values[data.field_name];
   }
 
   // If field_val is an array, check if the value exists in it
-  if (Array.isArray(data.field_val) && data.field_val.includes(values[data.field_name])) {
+  if (
+    Array.isArray(data.field_val) &&
+    data.field_val.includes(values[data.field_name])
+  ) {
     return true;
   }
 
