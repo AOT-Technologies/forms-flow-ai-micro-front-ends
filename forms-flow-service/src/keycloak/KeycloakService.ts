@@ -115,7 +115,7 @@ import Keycloak, {
     /**
      * Retry token refresh when the user is back online
     */
-    private retryTokenRefresh = (): void => {
+    private readonly retryTokenRefresh = (): void => {
       console.log("Back online: Retrying token refresh.");
       this.isWaitingForOnline = false;
       this.refreshToken();
