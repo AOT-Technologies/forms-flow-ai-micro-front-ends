@@ -105,8 +105,8 @@ export const printFormatHelper = (
   if (key in fieldsToSplit) {
     return handleSplitField(
       values[data.field_name],
-      data.delimeter,
-      fieldsToSplit[key]
+      fieldsToSplit[key],
+      data.delimeter
     );
   }
 
@@ -117,14 +117,14 @@ export const printFormatHelper = (
   return processFieldValue(values, data, key, impoundLotOperators);
 };
 
-const handleSplitField = (rawValue: any, delimiter = " ", index: number) => {
+const handleSplitField = (rawValue: any, index: number, delimiter = " ") => {
   if (!rawValue) return "";
-  const splitData =
-    typeof rawValue === "object" && rawValue.value
-      ? rawValue.value.split(delimiter)
-      : typeof rawValue === "string"
-      ? rawValue.split(delimiter)
-      : [];
+  let splitData: string[] = [];
+  if (typeof rawValue === "object" && rawValue.value) {
+    splitData = rawValue.value.split(delimiter);
+  } else if (typeof rawValue === "string") {
+    splitData = rawValue.split(delimiter);
+  }
   return splitData.length ? splitData[index] || "" : "";
 };
 
@@ -193,11 +193,12 @@ const formatReleaseInformation = (
   val: string,
   impoundLotOperators: ImpoundLotOperator[]
 ): string => {
-  const released_val = values["TwelveHour"]
-    ? "vehicle_location"
-    : values["TwentyFourHour"]
-    ? "reason_for_not_impounding"
-    : "";
+  let released_val = "";
+  if (values["TwelveHour"]) {
+    released_val = "vehicle_location";
+  } else if (values["TwentyFourHour"]) {
+    released_val = "reason_for_not_impounding";
+  }
 
   if (["NOT_IMPOUNDED_REASON", "RELEASE_LOCATION_VEHICLE"].includes(key)) {
     return (
@@ -229,11 +230,13 @@ const determineReleasePerson = (
     (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES")
   )
     return "";
-  return values[released_val] === "released"
-    ? values["vehicle_released_to"]
-    : values[released_val] === "private"
-    ? values["ILO-name"]
-    : "";
+  if (values[released_val] === "released") {
+    return values["vehicle_released_to"];
+  } else if (values[released_val] === "private") {
+    return values["ILO-name"];
+  } else {
+    return "";
+  }
 };
 
 export const printCheckHelper = (
@@ -241,11 +244,13 @@ export const printCheckHelper = (
   data: { field_name: string; field_val?: string | string[] },
   key: string
 ): boolean => {
-  return typeof values[data.field_name] === "boolean"
-    ? data.field_val === "false"
+  if (typeof values[data.field_name] === "boolean") {
+    return data.field_val === "false"
       ? !values[data.field_name]
-      : values[data.field_name]
-    : Array.isArray(data.field_val)
-    ? data.field_val.includes(values[data.field_name])
-    : values[data.field_name] === data.field_val;
+      : values[data.field_name];
+  }
+  if (Array.isArray(data.field_val)) {
+    return data.field_val.includes(values[data.field_name]);
+  }
+  return values[data.field_name] === data.field_val;
 };
