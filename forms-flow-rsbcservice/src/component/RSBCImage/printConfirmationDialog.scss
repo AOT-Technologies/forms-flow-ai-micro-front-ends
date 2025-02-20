@@ -1,0 +1,45 @@
+/* ConfirmationDialog.scss */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; 
+}
+
+.confirmation-dialog {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  z-index: 1001; 
+}
+
+.confirmation-dialog p {
+  margin-bottom: 15px;
+}
+
+.confirmation-dialog button {
+  margin: 10px;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.confirmation-dialog .yes-button {
+  background: #4caf50;
+  color: white;
+}
+
+.confirmation-dialog .no-button {
+  background: #f44336;
+  color: white;
+}
