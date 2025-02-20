@@ -95,6 +95,9 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       if(e.target.type == "checkbox"){
         value = e.target.checked ? "wizard" : "form";
       }
+      if(name === "title") {
+        value = value.replace(/[#+]/g, '');
+      }
       setValues(prev => ({...prev,[name]:value}))
       setCachedTitle(""); //reseting caching on type
     }
