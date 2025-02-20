@@ -1,0 +1,5 @@
+node_modules
+.git
+.env
+secrets/
+docker-compose.yml
