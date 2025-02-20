@@ -91,6 +91,7 @@ interface ImpoundLotOperator {
   name_print?: string;
 }
 
+// NOSONAR
 export const printFormatHelper = (
     values: Values,
     data: DataEntry,

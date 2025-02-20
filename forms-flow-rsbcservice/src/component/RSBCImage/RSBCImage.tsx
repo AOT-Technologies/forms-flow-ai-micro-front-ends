@@ -25,7 +25,7 @@ export default class RSBCImage extends ReactComponent {
     this.component = component || {};
   }
 
-  static builderInfo = {
+  static readonly builderInfo = {
     title: "RSBC Image",
     group: "basic",
     icon: "image",
@@ -42,7 +42,7 @@ export default class RSBCImage extends ReactComponent {
     };
   }
 
-  static editForm = settingsForm;
+  static readonly editForm = settingsForm;
   
   private transformedDataCache: any = null;
   private lastData: any = null;
@@ -206,7 +206,7 @@ export default class RSBCImage extends ReactComponent {
         createRoot(element).render(
           <div className="rsbc-image-container">
             {svgComponents.map((svg, index) => (
-              <div key={index} className="rsbc-image">
+              <div key={'rsbc-image-'+index} className="rsbc-image">
                 {svg}
               </div>
             ))}
@@ -355,9 +355,8 @@ export default class RSBCImage extends ReactComponent {
 
   // Checks if the preview panel of form.io form builder is currently visible.
   isPreviewPanelVisible(): boolean {
-    const previewPanel = document.querySelector(
-      ".card.panel.preview-panel"
-    ) as HTMLElement;
-    return previewPanel?.offsetHeight > 0 && previewPanel?.offsetWidth > 0;
+    const previewPanel = document.querySelector<HTMLElement>(".card.panel.preview-panel");
+    return !!previewPanel && previewPanel.offsetHeight > 0 && previewPanel.offsetWidth > 0;
   }
+  
 }

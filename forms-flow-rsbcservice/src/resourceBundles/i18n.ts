@@ -1,6 +1,6 @@
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import i18next, { InitOptions } from "i18next";
+import { InitOptions } from "i18next";
 import { i18nService } from "@formsflow/service";
 
 const initOptions: InitOptions = {

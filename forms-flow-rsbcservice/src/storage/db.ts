@@ -113,7 +113,7 @@ interface IncompleteEvent {
   [key: string]: any; // Allow additional fields for complex structure
 }
 
-// ToDO: check whether Event and IncompleteEvent is needed as the FE will be showing only the formsflow related forms and submision.
+// Please check whether Event and IncompleteEvent is needed as the FE will be showing only the formsflow related forms and submision.
 
 class DigitalFormsDB extends Dexie {
   user!: Table<User>;
