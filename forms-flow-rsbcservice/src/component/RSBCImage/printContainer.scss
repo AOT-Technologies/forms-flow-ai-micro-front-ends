@@ -1,0 +1,43 @@
+@media print {
+  /* Hide everything except #print-container */
+  body * {
+    display: none !important;
+  }
+
+  #print-container,
+  #print-container * {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  #print-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .rsbc-image {
+    display: block !important;
+    background: white !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .rsbc-image:not(:first-child) {
+    page-break-before: always !important;
+  }
+
+  .rsbc-image:last-child {
+    page-break-after: avoid !important;
+  }
+
+  svg {
+    width: 100% !important;
+    height: auto !important;
+    background: transparent !important;
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "ts-config-single-spa",
+  "files": ["src/formsflow-rsbcservices.ts"],
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "dist",
+    "jsx": "react-jsx",
+    
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test*"]
+}

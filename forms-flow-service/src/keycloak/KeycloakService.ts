@@ -60,19 +60,24 @@ import Keycloak, {
         return 60000;
       }
     }
-  
+    
     /**
      * Refresh the keycloak token before expiring
      */
     private refreshToken(): void {
       this.timerId = setInterval(() => {
+        if (!navigator.onLine) {
+          console.debug("Offline: Skipping token refresh.");
+          return;
+        }
+    
         this.kc
           ?.updateToken(-1)
           .then((refreshed) => {
             if (refreshed) {
               console.log("Token refreshed!");
               clearInterval(this.timerId);
-              this.token = this.kc.token
+              this.token = this.kc.token;
               StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
               this.refreshToken();
             } else {
@@ -82,10 +87,40 @@ import Keycloak, {
           .catch((err) => {
             console.error("Keycloak token update failed!", err);
             clearInterval(this.timerId);
-            this.logout();
+            this.handleTokenRefreshFailure();
           });
       }, this.getTokenExpireTime());
     }
+
+    /**
+     * Prevents multiple event listeners
+     */
+    private isWaitingForOnline = false;
+
+    /**
+     * Handle token refresh failure
+     */
+    private handleTokenRefreshFailure(): void {
+      if (!navigator.onLine) {
+        if (!this.isWaitingForOnline) {
+          this.isWaitingForOnline = true;
+          console.debug("Offline detected: Retrying token refresh when back online.");
+          window.addEventListener("online", this.retryTokenRefresh, { once: true });
+        }
+      } else {
+        this.logout();
+      }
+    }
+
+    /**
+     * Retry token refresh when the user is back online
+    */
+    private readonly retryTokenRefresh = (): void => {
+      console.log("Back online: Retrying token refresh.");
+      this.isWaitingForOnline = false;
+      this.refreshToken();
+    };
+
   
     /**
      *
