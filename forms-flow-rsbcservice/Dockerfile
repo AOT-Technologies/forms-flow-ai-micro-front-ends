@@ -14,7 +14,7 @@ RUN apk update && apk upgrade && \
 COPY package-lock.json /forms-flow-rsbcservice/app/package-lock.json
 COPY package.json /forms-flow-rsbcservice/app/package.json
 
-RUN npm install
+RUN npm install --ignore-scripts
 
 COPY src /forms-flow-rsbcservice/app/src
 COPY babel.config.json /forms-flow-rsbcservice/app/babel.config.json
