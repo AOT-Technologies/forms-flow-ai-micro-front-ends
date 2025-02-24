@@ -1,9 +1,9 @@
 import { db } from "./db";
 import { fetchStaticData } from "../request/staticDataApi";
 import { handleError } from "../helpers/helperServices";
+import { getUserData } from "../request/getUserDataApi";
 
 class DBService {
-    
   public static async saveToIndexedDB(resourceName: string, data: any) {
     try {
       // Check if IndexedDB is available
@@ -77,6 +77,11 @@ class DBService {
           await db.jurisdictionCountry.bulkPut(data);
           console.log("Jurisdiction Country data saved to IndexedDB.");
           break;
+        case "user":
+          await db.user.clear();
+          await db.user.put(data);
+          console.log("User data saved to IndexedDB.");
+          break;
         default:
           console.log(`No matching table found for resource: ${resourceName}`);
       }
@@ -104,16 +109,15 @@ class DBService {
         "nsc_puj",
         "jurisdiction_country",
       ];
-      
 
       // Create an array of promises for fetching data
       const fetchPromises = resources.map(async (resource) => {
-        try {              
-            await fetchStaticData(
-              resource,
-              (data: any) => this.saveToIndexedDB(resource, data),
-              (error: any) => handleError(error)
-            );          
+        try {
+          await fetchStaticData(
+            resource,
+            (data: any) => this.saveToIndexedDB(resource, data),
+            (error: any) => handleError(error)
+          );
         } catch (error) {
           console.error(`Error processing resource ${resource}:`, error);
         }
@@ -127,7 +131,27 @@ class DBService {
       console.error("Error in data fetching and saving process:", error);
     }
   }
-  
+
+  public static async fetchUserData(keycloak: any): Promise<void> {
+    if (keycloak.authenticated && keycloak.tokenParsed) {
+      let userId = null;
+      if (keycloak.tokenParsed.identity_provider === "idir") {
+        userId = keycloak.tokenParsed.idir_user_guid;
+      } else if (keycloak.tokenParsed.identity_provider === "bceid") {
+        userId = keycloak.tokenParsed.bceid_user_guid;
+      } else {
+        userId = keycloak.tokenParsed.bceid_user_guid;
+        //userId = keycloak.tokenParsed.sub; //--> for testing with non BCGov Keycloak
+      }
+      if (userId !== null && userId !== undefined) {
+        await getUserData(
+          userId,
+          (data: any) => this.saveToIndexedDB("user", data),
+          (error: any) => handleError(error)
+        );
+      }
+    }
+  }
 
   public static async fetchStaticDataFromTable(
     tableName: string
@@ -150,7 +174,7 @@ class DBService {
 
       // Fetch all records from the table
       const data = await table.toArray();
-  
+
       if (data.length === 0) {
         console.log(`No data found in table ${tableName}.`);
       }
@@ -160,6 +184,6 @@ class DBService {
       console.error(`Error fetching data from table ${tableName}:`, error);
       throw error; // Propagate the error so it can be handled by the caller
     }
-  }  
+  }
 }
 export default DBService;
