@@ -1,0 +1,60 @@
+name: forms-flow-review-CD
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - release/*
+  push:
+    branches:
+      - main
+      - develop
+      - release/*
+    paths:
+      - "forms-flow-review/**"
+      - "VERSION"
+defaults:
+  run:
+    shell: bash
+jobs:
+  build:
+    name: Build and push artifacts to s3
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.17.0'
+      - name: Set version
+        if: ${{ github.ref != 'refs/heads/main' }}
+        working-directory: .
+        run: |
+          VER=$(cat VERSION)
+          echo "VERSION=$VER" >> $GITHUB_ENV
+          
+      - name: Set version
+        if: ${{ github.ref == 'refs/heads/main' }}
+        working-directory: .
+        run: |
+          VER=$(cat VERSION)
+          VER=${VER/-alpha/''}
+          echo "VERSION=$VER" >> $GITHUB_ENV
+
+        #TODO: force installing due to dependency conflict need to resolve the dependency
+      - run: npm ci --force
+        working-directory: ./forms-flow-review
+      - run: npm run build:webpack
+        working-directory: ./forms-flow-review
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.REGION }}
+      - run: npm ci
+        working-directory: ./scripts
+      - run: node index forms-flow-review
+        env:
+          BUCKET: ${{ secrets.BUCKET}}
+          VERSION: ${{ env.VERSION }}
+        working-directory: ./scripts
