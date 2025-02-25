@@ -119,7 +119,6 @@ export const SVGprint: React.FC<SVGPrintProps> = ({
                   x={`${field["start"]["x"]}px`}
                   y={`${field["start"]["y"]}px`}
                   className={field["classNames"]}
-                  fill="black"
                 >
                   {printFormatHelper(values, field, item, impoundLotOperators)}
                 </foreignObject>
