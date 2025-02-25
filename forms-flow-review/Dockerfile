@@ -18,8 +18,10 @@ COPY package.json /forms-flow-review/app/package.json
 
 RUN npm install
 
-COPY . /forms-flow-review/app/
-
+# Copy only necessary files
+COPY src/ /forms-flow-review/app/src/
+COPY webpack.config.js tsconfig.json babel.config.json jest.config.js /forms-flow-review/app/
+ 
 RUN npm run build:webpack
 
 
