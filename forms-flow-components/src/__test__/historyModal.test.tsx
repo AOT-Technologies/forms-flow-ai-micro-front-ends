@@ -276,36 +276,28 @@ describe("History Modal component", () => {
 
   });
 
-  it("handles revert click correctly for history with correct parameters", () => {
+  it("handles revert click correctly for form history with correct parameters", () => {
     renderHistoryModal({
       ...defaultProps,
       allHistory: formHistory,
       categoryType: "FORM",
     });
-  
+
     // Get the second revert button (first one is usually disabled)
     const revertButton = screen.getAllByTestId("revert-button")[1];
     
     // Click the revert button
     fireEvent.click(revertButton);
-  
-    // Verify the confirm modal appears with correct version
-    if (defaultProps.categoryType === "FORM") {
-      expect(screen.getByText("Use Layout from Version 1.22")).toBeInTheDocument();
-    } else if (defaultProps.categoryType === "WORKFLOW") {
-      expect(screen.getByText("Use flow from Version 18.1")).toBeInTheDocument();
-    }
-  
-    // Verify the confirm modal message
-    if(defaultProps.categoryType === "FORM"){
-    expect(screen.getByText("This will copy the layout from Version  1.22  overwriting your existing layout" )).toBeInTheDocument();
-      
-    }else {
-      if(defaultProps.categoryType === "WORKFLOW"){
-        expect(screen.getByText("This will copy the flow from Version  18.1  overwriting your existing flow" )).toBeInTheDocument();
 
-      }
-    };
+    // Verify the confirm modal appears with correct version
+    expect(screen.getByText("Use Layout from Version 1.22")).toBeInTheDocument();
+
+    // Verify the confirm modal message
+    expect(
+      screen.getByText(
+        "This will copy the layout from Version 1.22 overwriting your existing layout."
+      )
+    ).toBeInTheDocument();
   });
   it("closes history modal when revert button is clicked", () => {
     renderHistoryModal({
