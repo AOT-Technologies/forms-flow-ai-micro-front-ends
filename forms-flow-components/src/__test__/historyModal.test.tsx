@@ -300,8 +300,11 @@ describe("History Modal component", () => {
     if(defaultProps.categoryType === "FORM"){
     expect(screen.getByText("This will copy the layout from Version  1.22  overwriting your existing layout" )).toBeInTheDocument();
       
-    }else if(defaultProps.categoryType === "WORKFLOW"){
-      expect(screen.getByText("This will copy the flow from Version  18.1  overwriting your existing flow" )).toBeInTheDocument();
+    }else {
+      if(defaultProps.categoryType === "WORKFLOW"){
+        expect(screen.getByText("This will copy the flow from Version  18.1  overwriting your existing flow" )).toBeInTheDocument();
+
+      }
     };
   });
   it("closes history modal when revert button is clicked", () => {
