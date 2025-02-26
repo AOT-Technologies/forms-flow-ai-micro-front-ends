@@ -54,13 +54,27 @@ const run = async (params) => {
  * @param {string} file - artifact path
  */
 async function upload(file_name, file) {
-  const isCss = file_name.includes(".css")
+  const ext = path.extname(file_name).toLowerCase();
+  let contentType = "application/octet-stream";
+  let contentEncoding;
+
+  if (ext === ".css") {
+    contentType = "text/css; charset=utf-8";
+  } else if (ext === ".js") {
+    contentType = "application/javascript";
+    contentEncoding = "gzip";
+  } else if (ext === ".png") {
+    contentType = "image/png";
+  } else if (ext === ".woff") {
+    contentType = "font/woff";
+  }
+
   const params = {
     Bucket: BUCKET,
     Key: `${component}@${VERSION}/${file_name}`,
     Body: createReadStream(file),
-    ContentType: isCss ? "text/css; charset=utf-8" : "application/javascript",
-    ContentEncoding: isCss ? undefined : "gzip",
+    ContentType: contentType,
+    ContentEncoding: contentEncoding,
   };
   run(params);
 }
@@ -73,37 +87,47 @@ Walk.walk(`../${component}/dist`, walkFunc)
     console.log("Failed to collect the artifacts", reason);
   });
 
-// walkFunc must be async, or return a Promise
-function walkFunc(err, pathname, dirent) {
-  if (err) {
+  // walkFunc must be async, or return a Promise
+  function walkFunc(err, pathname, dirent) {
+    if (err) {
     // throw an error to stop walking
     // (or return to ignore and keep going)
-    console.warn("fs stat error for %s: %s", pathname, err.message);
-    return Promise.resolve();
-  }
-
-  // return false to skip a directory
-  // (ex: skipping "dot file" directories)
-  if (dirent.isDirectory() && dirent.name.startsWith(".")) {
-    return Promise.resolve(false);
-  }
-
-  if (dirent.isFile()) {
-    try {
-      const filePath = path.dirname(pathname);
-      const fileName = dirent.name;
-      console.log(`Collecting artifact -> ${filePath}/${fileName}`);
-
-      if (fileName === `${component}.js`) {
-        compressFileAndUpload(fileName, filePath);
-      }
-      if (fileName === `${component}.min.css`) {
-        upload(fileName, `${filePath}/${fileName}`);
-      }
-    } catch (err) {
-      console.log("Upload failed", err);
-      throw err;
+      console.warn("fs stat error for %s: %s", pathname, err.message);
+      return Promise.resolve();
     }
-  }
-  return Promise.resolve();
-}
+  
+    // return false to skip a directory
+    // (ex: skipping "dot file" directories)
+    if (dirent.isDirectory() && dirent.name.startsWith(".")) {
+      return Promise.resolve(false);
+    }
+  
+    if (dirent.isFile()) {
+      try {
+        const filePath = path.dirname(pathname);
+        const fileName = dirent.name;
+        const ext = path.extname(fileName).toLowerCase();
+  
+        // Allowed file extensions
+        const allowedExtensions = [".css", ".js", ".png", ".woff"];
+  
+        // Only process allowed files
+        if (!allowedExtensions.includes(ext)) {
+          console.log(`Skipping ${fileName} (not an allowed file type)`);
+          return Promise.resolve();
+        }
+  
+        console.log(`Collecting artifact -> ${filePath}/${fileName}`);
+  
+        if (fileName === `${component}.js`) {
+          compressFileAndUpload(fileName, filePath);
+        } else {
+          upload(fileName, `${filePath}/${fileName}`);
+        }
+      } catch (err) {
+        console.log("Upload failed", err);
+        throw err;
+      }
+    }
+    return Promise.resolve();
+  }  
