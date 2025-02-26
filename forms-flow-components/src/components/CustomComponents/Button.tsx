@@ -119,14 +119,16 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   }
 
   if (iconOnly) {
+    const iconButtonClassName = `d-flex justify-content-center align-items-center p-0 ${size !== "md" ? className : `btn-md ${className}`}`;
+
     return (
       <Button
         variant={variant}
-        size={size != "md" ? size : undefined}
+        size={size !== "md" ? size : undefined}
         onClick={onClick}
         disabled={disabled || buttonLoading}
         name={name}
-        className={`d-flex justify-content-center align-items-center p-0 ${size !== "md" ? className : `btn-md ${className}`}`}
+        className={iconButtonClassName}
         data-testid={dataTestId}
         aria-label={ariaLabel}
       >
@@ -140,7 +142,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   return (
     <Button
       variant={variant}
-      size={size!='md' ? size : undefined}
+      size={size !== "md" ? size : undefined}
       onClick={onClick}
       disabled={disabled || buttonLoading}
       name={name}
