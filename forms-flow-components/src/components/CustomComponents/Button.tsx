@@ -119,8 +119,15 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   }
 
   if (iconOnly) {
-    const iconButtonClassName = `d-flex justify-content-center align-items-center p-0 ${size !== "md" ? className : `btn-md ${className}`}`;
-
+    let buttonClassName = "d-flex justify-content-center align-items-center p-0";
+  
+    // Add size-based class
+    if (size !== "md") {
+      buttonClassName += ` ${className}`;
+    } else {
+      buttonClassName += ` btn-md ${className}`;
+    }
+  
     return (
       <Button
         variant={variant}
@@ -128,7 +135,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         onClick={onClick}
         disabled={disabled || buttonLoading}
         name={name}
-        className={iconButtonClassName}
+        className={buttonClassName}
         data-testid={dataTestId}
         aria-label={ariaLabel}
       >
