@@ -1,6 +1,6 @@
 // export all services here
-import DBService from "./storage/dbService";
+import OfflineFetchService from "./storage/dbFetchServices";
+import OfflineSaveService from "./storage/dbInsertServices";
 import RSBCImage from "./component/RSBCImage/RSBCImage";
 
-export { DBService, RSBCImage };
-
+export { OfflineFetchService,  OfflineSaveService, RSBCImage};
