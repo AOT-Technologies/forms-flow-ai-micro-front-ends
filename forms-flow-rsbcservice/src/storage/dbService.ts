@@ -2,6 +2,7 @@ import { db } from "./db";
 import { fetchStaticData } from "../request/staticDataApi";
 import { handleError } from "../helpers/helperServices";
 import { getUserData } from "../request/getUserDataApi";
+import { getUserRoles } from "../request/getUserRolesApi";
 
 class DBService {
   public static async saveToIndexedDB(resourceName: string, data: any) {
@@ -82,6 +83,11 @@ class DBService {
           await db.user.put(data);
           console.log("User data saved to IndexedDB.");
           break;
+        case "userRoles":
+          await db.userRoles.clear();
+          await db.userRoles.bulkPut(data);
+          console.log("User roles saved to IndexedDB.");
+          break;
         default:
           console.log(`No matching table found for resource: ${resourceName}`);
       }
@@ -151,6 +157,14 @@ class DBService {
         );
       }
     }
+  }
+
+  public static async fetchUserRoles(keycloak: any): Promise<void> {
+    await getUserRoles(
+      keycloak,
+      (data: any) => this.saveToIndexedDB("userRoles", data),
+      (error: any) => handleError(error)
+    );
   }
 
   public static async fetchStaticDataFromTable(
