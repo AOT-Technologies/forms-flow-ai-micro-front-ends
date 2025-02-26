@@ -29,17 +29,8 @@ interface CustomButtonProps {
   iconOnly?: boolean;  
 }
 
-const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean) => {
-  let buttonClassName = "d-flex justify-content-center align-items-center p-0";
-
-  if (size !== "md") {
-    buttonClassName += ` ${className}`;
-  } else {
-    buttonClassName += ` btn-md ${className}`;
-  }
-
-  return buttonClassName;
-};
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false) => 
+  `d-flex justify-content-center align-items-center p-0 ${size === "md" ? 'btn-md' : ''} ${className}`;
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
   variant,
@@ -57,6 +48,9 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   buttonLoading = false,
   iconOnly = false,  
 }) => {
+  const classNameForButton = getButtonClassName(size, className, iconOnly);
+  const sizeOfButton = size !== "md" ? size : undefined;
+
   const buttonRef = useRef<HTMLButtonElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
@@ -100,7 +94,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           data-testid={dataTestId}
           aria-label={ariaLabel}
           name={name}
-          className={getButtonClassName(size, className, false)}
+          className={classNameForButton}
         >
           {t(label)}
         </Button>
@@ -133,16 +127,14 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 
   // Icon-only Button
   if (iconOnly) {
-    const buttonClassName = getButtonClassName(size, className, true);
-
     return (
       <Button
         variant={variant}
-        size={size !== "md" ? size : undefined}
+        size={sizeOfButton}
         onClick={onClick}
         disabled={disabled || buttonLoading}
         name={name}
-        className={buttonClassName}
+        className={classNameForButton}
         data-testid={dataTestId}
         aria-label={ariaLabel}
       >
@@ -157,11 +149,11 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   return (
     <Button
       variant={variant}
-      size={size !== "md" ? size : undefined}
+      size={sizeOfButton}
       onClick={onClick}
       disabled={disabled || buttonLoading}
       name={name}
-      className={getButtonClassName(size, className, false)}
+      className={classNameForButton}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
