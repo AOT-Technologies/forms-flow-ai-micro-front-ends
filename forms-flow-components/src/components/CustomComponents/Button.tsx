@@ -26,6 +26,7 @@ interface CustomButtonProps {
   dataTestId?: string;
   ariaLabel?: string;
   buttonLoading?: boolean;
+  iconOnly?: boolean;  
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -42,6 +43,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   ariaLabel = "",
   name =  "",
   buttonLoading = false,
+  iconOnly = false,  
 }) => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -113,6 +115,25 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           ))}
         </Dropdown.Menu>
       </Dropdown>
+    );
+  }
+
+  if (iconOnly) {
+    return (
+      <Button
+        variant={variant}
+        size={size != "md" ? size : undefined}
+        onClick={onClick}
+        disabled={disabled || buttonLoading}
+        name={name}
+        className={`d-flex justify-content-center align-items-center p-0 ${size !== "md" ? className : `btn-md ${className}`}`}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+      >
+        <div className="d-inline-flex align-items-center">
+          {icon}
+        </div>
+      </Button>
     );
   }
 
