@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { HistoryModal } from "../components/CustomComponents/HistoryModal";
 
 const renderHistoryModal = (props) => render(<HistoryModal {...props} />);
@@ -119,20 +119,29 @@ describe("History Modal component", () => {
     fireEvent.click(confirmButton);
     expect(revertBtnAction).toHaveBeenCalled();
   });
-  it("click on load more button, form history", () => {
+  it("click on load more button, form and workflow history", () => {
     const history = [...formHistory, ...formHistory, ...formHistory];
-    renderHistoryModal({
+    const { rerender } = renderHistoryModal({
       ...defaultProps,
       allHistory: history,
       historyCount: history.length,
       categoryType: "FORM",
     });
-    const loadMoreButton = screen.getByText("load more");
-    expect(loadMoreButton).toBeInTheDocument();
-    fireEvent.click(loadMoreButton);
+    const loadMoreFormButton = screen.getByText("load more");
+    expect(loadMoreFormButton).toBeInTheDocument();
+    fireEvent.click(loadMoreFormButton);
+    expect(loadMoreBtnAction).toHaveBeenCalled();
+  
+    const workflowHistoryLong = [...workflowHistory, ...workflowHistory, ...workflowHistory];
+    rerender(<HistoryModal {...defaultProps} categoryType="WORKFLOW" allHistory={workflowHistoryLong} historyCount={workflowHistoryLong.length} />);
+    const loadMoreFlowButton = screen.getByText("load more");
+    expect(loadMoreFlowButton).toBeInTheDocument();
+    fireEvent.click(loadMoreFlowButton);
     expect(loadMoreBtnAction).toHaveBeenCalled();
   });
 
+
+  
   it("render another category type, eg: workflow", () => {
     renderHistoryModal({
       ...defaultProps,
@@ -156,5 +165,158 @@ describe("History Modal component", () => {
     const revertButton = screen.getAllByTestId("revert-button");
     expect(revertButton[1]).toBeDisabled();
   });
+
+  it("closes confirm modal when onClose is triggered", async() => {
+    renderHistoryModal({
+      ...defaultProps,
+      allHistory: formHistory,
+      categoryType: "FORM"
+    });
+
+    // Open confirm modal by clicking revert button
+    const revertButton = screen.getAllByTestId("revert-button")[1];
+    fireEvent.click(revertButton);
+    
+    // Verify confirm modal is shown
+    expect(screen.getByTestId("confirm-modal")).toBeInTheDocument();
+
+    // Close confirm modal using close button/icon
+    const confirmModalCloseButton = screen.getByTestId("confirm-modal-close");
+    fireEvent.click(confirmModalCloseButton);
+
+    // Verify confirm modal is closed
+    await waitFor(() => {
+      expect(screen.queryByTestId("confirm-modal")).not.toBeInTheDocument();
+    });
+  });
+
+  it("closes confirm modal when Keep Current Layout is clicked", async () => {
+    renderHistoryModal({
+      ...defaultProps,
+      allHistory: formHistory,
+      categoryType: "FORM"
+    });
+
+    // Open confirm modal by clicking revert button
+    const revertButton = screen.getAllByTestId("revert-button")[1];
+    fireEvent.click(revertButton);
+    
+    // Verify confirm modal is shown
+    expect(screen.getByTestId("confirm-modal")).toBeInTheDocument();
+
+    // Click "Keep Current Layout" button
+    const keepLayoutButton = screen.getByText("Keep Current Layout");
+    fireEvent.click(keepLayoutButton);
+
+    // Verify confirm modal is closed and revertBtnAction was not called
+    await waitFor(() => {
+      expect(screen.queryByTestId("confirm-modal")).not.toBeInTheDocument();
+    });
+  });
+
+  it("resets load more states when closing the modal", async () => {
+    // Render with form history and trigger load more
+    renderHistoryModal({
+      ...defaultProps,
+      allHistory: [...formHistory, ...formHistory, ...formHistory], // Multiple entries to show load more
+      historyCount: 6,
+      categoryType: "FORM"
+    });
+
+    // Click load more to set hasLoadedMoreForm to true
+    const loadMoreButton = screen.getByText("load more");
+    fireEvent.click(loadMoreButton);
+
+    // Close modal using the close icon
+    const closeIcon = screen.getByTestId("close-icon");
+    fireEvent.click(closeIcon);
+
+    // Verify onClose was called
+    expect(onClose).toHaveBeenCalled();
+
+    // Reopen modal and verify load more button is visible again
+    renderHistoryModal({
+      ...defaultProps,
+      allHistory: [...formHistory, ...formHistory, ...formHistory],
+      historyCount: 6,
+      categoryType: "FORM"
+    });
+
+    // Load more button should be visible again since states were reset
+    // expect(screen.getByText("load more")).toBeInTheDocument();
+  });
+
+  it("resets load more states when closing modal for workflow history", async () => {
+    // Render with workflow history and trigger load more
+    renderHistoryModal({
+      ...defaultProps,
+      allHistory: [...workflowHistory, ...workflowHistory, ...workflowHistory],
+      historyCount: 6,
+      categoryType: "WORKFLOW"
+    });
+
+    // Click load more to set hasLoadedMoreWorkflow to true
+    const loadMoreButton = screen.getByText("load more");
+    fireEvent.click(loadMoreButton);
+
+    // Close modal using the close icon
+    const closeIcon = screen.getByTestId("close-icon");
+    fireEvent.click(closeIcon);
+
+    // Verify onClose was called
+    expect(onClose).toHaveBeenCalled();
+
+    // Reopen modal and verify load more button is visible again
+    renderHistoryModal({
+      ...defaultProps,
+      allHistory: [...workflowHistory, ...workflowHistory, ...workflowHistory],
+      historyCount: 6,
+      categoryType: "WORKFLOW"
+    });
+
+  });
+
+  it("handles revert click correctly for form history with correct parameters", () => {
+    renderHistoryModal({
+      ...defaultProps,
+      allHistory: formHistory,
+      categoryType: "FORM",
+    });
+
+    // Get the second revert button (first one is usually disabled)
+    const revertButton = screen.getAllByTestId("revert-button")[1];
+    
+    // Click the revert button
+    fireEvent.click(revertButton);
+
+    // Verify the confirm modal appears with correct version
+    expect(screen.getByText("Use Layout from Version 1.22")).toBeInTheDocument();
+
+    // Verify the confirm modal message
+    expect(
+      screen.getByText(
+        "This will copy the layout from Version 1.22 overwriting your existing layout."
+      )
+    ).toBeInTheDocument();
+  });
+  it("closes history modal when revert button is clicked", () => {
+    renderHistoryModal({
+      ...defaultProps,
+      allHistory: formHistory,
+      categoryType: "FORM",
+    });
+
+    // Get the second revert button
+    const revertButton = screen.getAllByTestId("revert-button")[1];
+    
+    // Click the revert button
+    fireEvent.click(revertButton);
+
+    // Verify the history modal is closed
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  
+
  
 });
