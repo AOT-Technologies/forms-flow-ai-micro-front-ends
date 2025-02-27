@@ -250,7 +250,9 @@ hr {
   overflow-y: auto; 
   padding-bottom: 5rem;
 }
-
+.form-border{
+  border-radius: var(--radius-md) !important ;
+}
 @mixin generate-overflow($axis, $value) {
   .overflow-#{$axis}-#{$value} {
     overflow-#{$axis}: #{$value} !important;
