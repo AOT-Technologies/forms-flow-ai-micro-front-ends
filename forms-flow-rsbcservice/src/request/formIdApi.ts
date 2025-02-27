@@ -3,16 +3,16 @@ import API from "../endpoints/index";
 import { createRequestHeader } from "./requestHeaders";
 
 export const fetchFormIDs = async (
-    payload: any, // Data payload for the POST request
-    callback: (response: any) => void, // Callback for success response
-    errorHandler: (error: string) => void // Callback for handling errors
+    payload: any,
+    callback: (response: any) => void,
+    errorHandler: (error: string) => void
 ) => {
-    const headers = await createRequestHeader(); // Generate headers
+    const headers = await createRequestHeader();
 
     RequestService.httpPOSTRequest(API.FORM_ID_ALLOCATION, payload)
         .then((res: any) => {
             if (res.data) {
-                callback(res.data); // Call success callback with response data
+                callback(res.data);
             } else {
                 errorHandler(`No response received from ${API.FORM_ID_ALLOCATION}`);
             }
