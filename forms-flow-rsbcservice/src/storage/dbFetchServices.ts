@@ -274,8 +274,9 @@ class OfflineFetchService {
       const topUnleasedForm = await rsbcDb.formID
         .where("form_type")
         .equals(formType)
-        .filter(form => form.leased === false)
-        .first();
+        .and(form => form.leased === false)
+        .sortBy("lease_expiry")
+        .then(forms => forms[0]);
 
       return topUnleasedForm ? topUnleasedForm.id : null;
     } catch (error) {
