@@ -29,6 +29,8 @@ export const StaticResources = [
     'jurisdictionCountry'
   ];
 
+  export const FormTypes = ["12Hour", "24Hour", "VI"];
+
   export const TableMetadataMapping = Object.freeze({
     formList: { metadataTable: "formListMetaData", dataKey: "forms" },
     application: { metadataTable: "applicationMetaData", dataKey: "applications" },
