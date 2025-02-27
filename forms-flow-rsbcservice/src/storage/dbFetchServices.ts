@@ -2,6 +2,8 @@ import { rsbcDb } from "./rsbcDb";
 import { ffDb, IndividualFormDefinition } from "./ffDb";
 import { StaticTables } from "../constants/constants";
 import DBServiceHelper from "../helpers/helperDbServices";
+import { FormTypes } from "../constants/constants";
+
 
 class OfflineFetchService {
   
@@ -204,6 +206,115 @@ class OfflineFetchService {
     } catch (error) {
       console.error("Error fetching and transforming form definitions:", error);
       return { forms: [], limit: 5, pageNo: 1, totalCount: 0 };
+    }
+  }
+
+  /**
+   * Fetches the all form Ids data from the "formID" table in IndexedDB.
+   */
+  public static async fetchFormIdDataFromTable(): Promise<any[]> {
+    const tableName = "formID";
+    try {
+      if (!rsbcDb) throw new Error("IndexedDB is not available.");
+
+      await rsbcDb.open(); // Ensure the database is open
+
+      const table = rsbcDb[tableName];
+      if (!table) throw new Error(`Table ${tableName} not found in IndexedDB.`);
+
+      const data = await table.toArray();
+      if (!data.length) console.warn(`No data found in table ${tableName}.`);
+
+      return data;
+    } catch (error) {
+      console.error(`Error fetching data from table ${tableName}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Returns the unleased form IDs for a given form type.
+   * @param formType - "12Hour", "24Hour", "VI"
+   */
+  public static async getAvailableFormIds(formType: string): Promise<any[]> {
+    try {
+      if (!rsbcDb.formID) {
+        throw new Error("FormID table is not available.");
+      }
+      if (!formType || !FormTypes.includes(formType)) {
+        throw new Error(`Valid formTypes: ${FormTypes.join(", ")}`);
+      }
+      const unleasedForms = await rsbcDb.formID
+        .where("form_type")
+        .equals(formType)
+        .filter(form => form.leased === false)
+        .toArray();
+
+      return unleasedForms.map((form) => form.id);
+    } catch (error) {
+        console.error(`Error fetching available form IDs from IndexedDB:`, error);
+        return [];
+    }
+  }
+
+  /**
+   * Fetches the form availability data from the "formID" table in IndexedDB.
+   * @param formType - "12Hour", "24Hour", "VI"
+   */
+  public static async getNextAvailabeFormId(formType: string): Promise<string | null> {
+    try {
+      if (!rsbcDb.formID) {
+        throw new Error("FormID table is not available.");
+      }
+
+      if (!formType || !FormTypes.includes(formType)) {
+        throw new Error(`Valid formTypes: ${FormTypes.join(", ")}`);
+      }
+
+      const topUnleasedForm = await rsbcDb.formID
+        .where("form_type")
+        .equals(formType)
+        .and(form => form.leased === false)
+        .sortBy("lease_expiry")
+        .then(forms => forms[0]);
+
+      return topUnleasedForm ? topUnleasedForm.id : null;
+    } catch (error) {
+      console.error(`Error fetching next available form ID from IndexedDB:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Fetches the form unleased Ids data from the "formID" table in IndexedDB.
+   * @return [{"form_type": string, "count": number}]
+   */
+  public static async getFormAvailability(): Promise<{ form_type: string; count: number }[]> {
+    try {
+      if (!rsbcDb.formID) {
+        throw new Error("FormID table is not available.");
+      }
+
+      const unleasedForms = await rsbcDb.formID
+        .filter(form => form.leased === false)
+        .toArray();
+
+      const formTypeCounts: { [key: string]: number } = {};
+      unleasedForms.forEach(form => {
+        formTypeCounts[form.form_type] = (formTypeCounts[form.form_type] || 0) + 1;
+      });
+
+      const result = Object.entries(formTypeCounts)
+        .map(([form_type, count]) => ({
+          form_type,
+          count
+        })
+      );
+
+      return result;
+    } catch (error) {
+      console.error(`Error fetching form availability from IndexedDB:`, error);
+      return [];
     }
   }
   
