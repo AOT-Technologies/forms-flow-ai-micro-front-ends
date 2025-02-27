@@ -3,14 +3,25 @@
 This is a utility module which exposes the following services across all modules
  - `DBService`
 
-## 1. DBService
+## 1. OfflineFetchService
+   
+| Method    | Description | Parameters| 
+| -------- | ------- | ------- |
+| fetchStaticDataFromTable | Fetch data from IndexedDB Object Storage | `tableName` - ObjectStorage/Table name to fetch data |
+| fetchOfflineFormDefinitions | Fetch Offline form definitions dashboard data from IndexedDB Object Storage |
+| fetchOfflineFormById | Fetch Offline Form Definition by ID from IndexedDB Object Storage | `formId` - FormId to fetch data |
+| fetchOfflineSubmissionList | Fetch Offline Submissions dashboard data from IndexedDB Object Storage |
+| fetchOfflineSubmissionById | Fetch Offline Form Definition by ID from IndexedDB Object Storage | `submissionId` - submissionId to fetch data |
+
+## 2. OfflineSaveService
    
 | Method    | Description | Parameters| 
 | -------- | ------- | ------- |
 | fetchAndSaveStaticData  | Fetch and save static data to IndexedDB |
-| fetchStaticDataFromTable | Fetch data from IndexedDB Object Storage | `tableName` - ObjectStorage/Table name to fetch data |
+| saveOfflineFormDefinition | Save form definition to IndexedDB Object Storage | `form` - form definition object |
+| insertSubmissionData | Save submission data to IndexedDB Object Storage | `submission` - individual submission object |
 
-## 2. RSBCImage (Custom Form.io Component)
+## 3. RSBCImage (Custom Form.io Component)
 
 The `RSBCImage` is a custom Form.io component designed to render specific RSBC images based on form submission data.
 
