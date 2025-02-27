@@ -172,7 +172,6 @@ class OfflineSaveService {
           console.log("Form List data saved to IndexedDB.");
           break;
         case "applications":
-          // await ffDb.application.clear();
           await ffDb.applications.put(data);
           break;
         case "drafts":
@@ -186,7 +185,6 @@ class OfflineSaveService {
           console.log("Drafts data saved to IndexedDB.");
           break;
         case "offlineSubmission":
-          // await ffDb.submission.clear();
           await ffDb.offlineSubmissions.put(data);
           console.log("Offline submission data saved to IndexedDB.");
           break;
