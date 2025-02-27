@@ -47,7 +47,6 @@ export default class RSBCImage extends ReactComponent {
   private transformedDataCache: any = null;
   private lastData: any = null;
   private lastSettings: any = null;
-  
   private getTransformedInputData(): any {
     // Avoid recomputation if data and settings haven't changed
     if (
