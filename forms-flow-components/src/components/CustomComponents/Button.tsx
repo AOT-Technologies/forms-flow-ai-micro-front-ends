@@ -30,7 +30,7 @@ interface CustomButtonProps {
 }
 
 const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false) => 
-  `d-flex justify-content-center align-items-center p-0 ${size === "md" ? 'btn-md' : ''} ${className}`;
+  `${size === "md" ? 'btn-md' : ''} ${className}`;
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
   variant,
@@ -134,7 +134,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         onClick={onClick}
         disabled={disabled || buttonLoading}
         name={name}
-        className={classNameForButton}
+        className={`p-0 ${classNameForButton}`}
         data-testid={dataTestId}
         aria-label={ariaLabel}
       >
