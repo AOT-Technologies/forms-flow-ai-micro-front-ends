@@ -61,7 +61,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             </b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-              <CloseIcon onClick={onClose} />
+              <CloseIcon onClick={onClose} data-testid="confirm-modal-close"/>
           </div>
         </Modal.Header>
         <Modal.Body className="build-modal-body">
