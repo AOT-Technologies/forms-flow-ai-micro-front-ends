@@ -68,7 +68,7 @@ class DBServiceHelper {
      */
     public static constructApplicationData(formId: string, submissionId: string, formData: any): any {
         const userDetails = this.getUserDetails();
-        const randomId = Math.floor(Math.random() * 1000000000);
+        const randomId = crypto.getRandomValues(new Uint32Array(1))[0];;
         const now = new Date().toISOString();
         const applicationName = formData?.form?.title;
 
