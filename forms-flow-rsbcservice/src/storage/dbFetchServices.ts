@@ -16,10 +16,11 @@ interface UpdateFilter {
 }
 
 class OfflineFetchService {
+
   /**
    * Fetches static data from a given table in IndexedDB.
    * Ensures that the table is within the predefined static tables list.
-   *
+   * 
    * @param tableName - Name of the table to fetch data from.
    * @param filter - Optional filter object for filtering results
    * @param filter.column - The column name to filter on
@@ -254,7 +255,7 @@ class OfflineFetchService {
 
         return finalData;
     } catch (error) {
-        console.error(`Error fetching data from formDefinition with id ${formId}:`,error);
+        console.error(`Error fetching data from formDefinition with id ${formId}:`, error);
         throw error;
     }
   }
@@ -287,7 +288,7 @@ class OfflineFetchService {
         throw new Error("IndexedDB is not available.");
       }
       await ffDb.open();
-      const table = ffDb["applications"]; 
+      const table = ffDb["applications"];  
       if (!table) {
         throw new Error(`Table application not found in IndexedDB.`);
       }
@@ -344,7 +345,7 @@ class OfflineFetchService {
 
         return updatedSubmission;
     } catch (error) {
-        console.error(`Error fetching data from offlineSubmission with id ${submissionId}:`,error);
+        console.error(`Error fetching data from offlineSubmission with id ${submissionId}:`, error);
         throw error;
     }
   }
@@ -387,7 +388,7 @@ class OfflineFetchService {
       const totalCount = forms.length;
 
       // Transform and return the data
-      const finalData = DBServiceHelper.transformFormDefinitions(forms,totalCount);
+      const finalData = DBServiceHelper.transformFormDefinitions(forms, totalCount);
       return finalData;
     } catch (error) {
       console.error("Error fetching and transforming form definitions:", error);
@@ -433,13 +434,13 @@ class OfflineFetchService {
       const unleasedForms = await rsbcDb.formID
         .where("form_type")
         .equals(formType)
-        .filter((form) => form.leased === false)
+        .filter(form => form.leased === false)
         .toArray();
 
       return unleasedForms.map((form) => form.id);
     } catch (error) {
-      console.error(`Error fetching available form IDs from IndexedDB:`, error);
-      return [];
+        console.error(`Error fetching available form IDs from IndexedDB:`, error);
+        return [];
     }
   }
 
@@ -447,9 +448,7 @@ class OfflineFetchService {
    * Fetches the form availability data from the "formID" table in IndexedDB.
    * @param formType - "12Hour", "24Hour", "VI"
    */
-  public static async getNextAvailabeFormId(
-    formType: string
-  ): Promise<string | null> {
+  public static async getNextAvailabeFormId(formType: string): Promise<string | null> {
     try {
       if (!rsbcDb.formID) {
         throw new Error("FormID table is not available.");
@@ -462,16 +461,13 @@ class OfflineFetchService {
       const topUnleasedForm = await rsbcDb.formID
         .where("form_type")
         .equals(formType)
-        .and((form) => form.leased === false)
+        .and(form => form.leased === false)
         .sortBy("lease_expiry")
-        .then((forms) => forms[0]);
+        .then(forms => forms[0]);
 
       return topUnleasedForm ? topUnleasedForm.id : null;
     } catch (error) {
-      console.error(
-        `Error fetching next available form ID from IndexedDB:`,
-        error
-      );
+      console.error(`Error fetching next available form ID from IndexedDB:`,error);
       return null;
     }
   }
@@ -480,28 +476,25 @@ class OfflineFetchService {
    * Fetches the form unleased Ids data from the "formID" table in IndexedDB.
    * @return [{"form_type": string, "count": number}]
    */
-  public static async getFormAvailability(): Promise<
-    { form_type: string; count: number }[]
-  > {
+  public static async getFormAvailability(): Promise<{ form_type: string; count: number }[]> {
     try {
       if (!rsbcDb.formID) {
         throw new Error("FormID table is not available.");
       }
 
       const unleasedForms = await rsbcDb.formID
-        .filter((form) => form.leased === false)
+        .filter(form => form.leased === false)
         .toArray();
 
       const formTypeCounts: { [key: string]: number } = {};
       unleasedForms.forEach((form) => {
-        formTypeCounts[form.form_type] =
-          (formTypeCounts[form.form_type] || 0) + 1;
+        formTypeCounts[form.form_type] = (formTypeCounts[form.form_type] || 0) + 1;
       });
 
-      const result = Object.entries(formTypeCounts).map(
-        ([form_type, count]) => ({
+      const result = Object.entries(formTypeCounts)
+      .map(([form_type, count]) => ({
           form_type,
-          count,
+          count
         })
       );
 
@@ -511,6 +504,6 @@ class OfflineFetchService {
       return [];
     }
   }
-  
+
 }
 export default OfflineFetchService;
