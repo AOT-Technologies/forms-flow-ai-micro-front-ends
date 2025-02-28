@@ -28,7 +28,7 @@ const Review = React.memo(({ props }: any) => {
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
   React.useEffect(() => {
-    publish("ES_ROUTE", { pathname: `${baseUrl}integration` });
+    publish("ES_ROUTE", { pathname: `${baseUrl}review` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     })
@@ -61,7 +61,7 @@ const Review = React.memo(({ props }: any) => {
     }
     const locale = localStorage.getItem("i18nextLng")
     if (locale) i18n.changeLanguage(locale);
-    publish("ES_ROUTE", { pathname: `${baseUrl}integration` });
+    publish("ES_ROUTE", { pathname: `${baseUrl}review` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     })

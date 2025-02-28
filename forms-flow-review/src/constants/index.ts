@@ -2,8 +2,6 @@ const MULTITENANCY_ENABLED_VARIABLE =
   (window._env_ && window._env_.REACT_APP_MULTI_TENANCY_ENABLED) || false;
 const KEYCLOAK_ENABLE_CLIENT_AUTH_VARIABLE =
   (window._env_ && window._env_.REACT_APP_KEYCLOAK_ENABLE_CLIENT_AUTH) || false;
-const INTEGRATION_ENABLED_VARIABLE =
-  (window._env_ && window._env_.REACT_APP_ENABLE_INTEGRATION_PREMIUM) || false;
 
 export const MULTITENANCY_ENABLED =
   MULTITENANCY_ENABLED_VARIABLE === "true" ||
