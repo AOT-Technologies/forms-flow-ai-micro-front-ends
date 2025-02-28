@@ -16,7 +16,7 @@ interface UpdateFilter {
 }
 
 class OfflineFetchService {
-
+  
   /**
    * Fetches static data from a given table in IndexedDB.
    * Ensures that the table is within the predefined static tables list.
@@ -303,7 +303,6 @@ class OfflineFetchService {
         ["applications"]: data,
         metadata
       };
-
       return finalData;
     } catch (error) {
       console.error(`Error fetching data from table application:`, error);
