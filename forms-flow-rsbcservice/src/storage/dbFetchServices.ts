@@ -467,7 +467,7 @@ class OfflineFetchService {
 
       return topUnleasedForm ? topUnleasedForm.id : null;
     } catch (error) {
-      console.error(`Error fetching next available form ID from IndexedDB:`,error);
+      console.error(`Error fetching next available form ID from IndexedDB:`, error);
       return null;
     }
   }
@@ -487,12 +487,12 @@ class OfflineFetchService {
         .toArray();
 
       const formTypeCounts: { [key: string]: number } = {};
-      unleasedForms.forEach((form) => {
+      unleasedForms.forEach(form => {
         formTypeCounts[form.form_type] = (formTypeCounts[form.form_type] || 0) + 1;
       });
 
       const result = Object.entries(formTypeCounts)
-      .map(([form_type, count]) => ({
+        .map(([form_type, count]) => ({
           form_type,
           count
         })
@@ -504,6 +504,6 @@ class OfflineFetchService {
       return [];
     }
   }
-
+  
 }
 export default OfflineFetchService;
