@@ -10,8 +10,8 @@ interface TableFilter {
 }
 
 interface UpdateFilter {
-  column: string;
-  values: any;
+  conditions: Record<string, any>; // Object with search conditions
+  updates: Record<string, any>; // Object with updates to make
 }
 
 class OfflineFetchService {
@@ -106,8 +106,8 @@ class OfflineFetchService {
    *
    * @param tableName - Name of the table to update data in
    * @param filter - Filter object for updating records
-   * @param filter.column - The column name to update
-   * @param filter.values - The value to update with
+   * @param filter.conditions - Object with conditions to match records (e.g., {id: 3} or {date: "1990-12-12", status: "new"})
+   * @param filter.updates - Object with updates to make (e.g., {status: "completed"})
    * @returns A promise that resolves to the number of updated records
    * @throws Error if IndexedDB is unavailable, the table is inaccessible, or update fails.
    */
@@ -125,22 +125,45 @@ class OfflineFetchService {
 
       await rsbcDb.open(); // Ensure the database is open
 
-      const table = rsbcDb[tableName];
+      // Get table using Dexie's table() method
+      const table = rsbcDb.table(tableName);
       if (!table) {
         throw new Error(`Table ${tableName} not found in IndexedDB.`);
       }
 
       // Validate filter
-      if (!filter?.column) {
-        throw new Error("Invalid filter: column is required");
+      if (
+        !filter?.conditions ||
+        !filter?.updates ||
+        Object.keys(filter.conditions).length === 0 ||
+        Object.keys(filter.updates).length === 0
+      ) {
+        throw new Error(
+          "Invalid filter: conditions and updates are required and must not be empty"
+        );
       }
 
-      // Perform the update
-      const updateCount = await table
-        .where(filter.column)
-        .modify((item: any) => {
-          item[filter.column] = filter.values;
+      // Get all records first
+      const allRecords = await table.toArray();
+
+      // Filter records that match ALL conditions
+      const recordsToUpdate = allRecords.filter((record) => {
+        return Object.entries(filter.conditions).every(
+          ([key, value]) => record[key] === value
+        );
+      });
+
+      // Update each record with all specified updates
+      const updatePromises = recordsToUpdate.map(async (record) => {
+        // Apply all updates to the record
+        Object.entries(filter.updates).forEach(([key, value]) => {
+          record[key] = value;
         });
+        return await table.put(record);
+      });
+
+      await Promise.all(updatePromises);
+      const updateCount = recordsToUpdate.length;
 
       if (updateCount === 0) {
         console.warn(`No records updated in table ${tableName}.`);
@@ -149,6 +172,51 @@ class OfflineFetchService {
       return updateCount;
     } catch (error) {
       console.error(`Error updating data in table ${tableName}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Creates a new record in a static table in IndexedDB.
+   * Ensures that the table is within the predefined static tables list.
+   *
+   * @param tableName - Name of the table to create data in
+   * @param data - The data object to insert into the table
+   * @returns A promise that resolves to the id of the created record
+   * @throws Error if IndexedDB is unavailable, the table is inaccessible, or creation fails.
+   */
+  public static async createStaticDataTable(
+    tableName: string,
+    data: any
+  ): Promise<any> {
+    try {
+      if (!rsbcDb) {
+        throw new Error("IndexedDB is not available.");
+      }
+      if (!StaticTables.includes(tableName)) {
+        throw new Error(`Table ${tableName} is not accessible.`);
+      }
+
+      await rsbcDb.open(); // Ensure the database is open
+
+      const table = rsbcDb.table(tableName);
+      if (!table) {
+        throw new Error(`Table ${tableName} not found in IndexedDB.`);
+      }
+
+      // Validate data
+      if (!data || Object.keys(data).length === 0) {
+        throw new Error(
+          "Invalid data: data object is required and must not be empty"
+        );
+      }
+
+      // Add the record to the table
+      const id = await table.add(data);
+
+      return id;
+    } catch (error) {
+      console.error(`Error creating data in table ${tableName}:`, error);
       throw error;
     }
   }
