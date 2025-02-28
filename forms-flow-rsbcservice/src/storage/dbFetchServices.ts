@@ -317,6 +317,6 @@ class OfflineFetchService {
       return [];
     }
   }
-  
+
 }
 export default OfflineFetchService;
