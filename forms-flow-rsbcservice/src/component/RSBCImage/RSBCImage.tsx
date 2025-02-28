@@ -43,7 +43,7 @@ export default class RSBCImage extends ReactComponent {
   }
 
   static readonly editForm = settingsForm;
-  
+
   private transformedDataCache: any = null;
   private lastData: any = null;
   private lastSettings: any = null;
@@ -54,7 +54,7 @@ export default class RSBCImage extends ReactComponent {
       this.transformedDataCache &&
       _.isEqual(this.data, this.lastData) &&
       _.isEqual(this.component.rsbcImageSettings, this.lastSettings)
-    ) {      
+    ) {
       return this.transformedDataCache;
     }
 
@@ -72,7 +72,7 @@ export default class RSBCImage extends ReactComponent {
   // Maps input data to the settings JSON, transforming it accordingly.
   getOutputJson(settingsJson: any, inputData: any): any {
     try {
-      return _.mapValues(settingsJson, (rule) => {
+      let transformedValues = _.mapValues(settingsJson, (rule) => {
         if (typeof rule === "string") return _.get(inputData, rule, null);
         if (typeof rule === "object") {
           if (rule.mapping) {
@@ -86,6 +86,9 @@ export default class RSBCImage extends ReactComponent {
         }
         return null;
       });
+      // Remove keys from inputData that exist in settingsJson
+      let filteredInputData = _.omit(inputData, Object.keys(settingsJson));
+      return { ...transformedValues, ...filteredInputData };
     } catch (error) {
       console.error("Invalid RSBC Image Settings:", error);
       return {};
@@ -206,7 +209,7 @@ export default class RSBCImage extends ReactComponent {
         createRoot(element).render(
           <div className="rsbc-image-container">
             {svgComponents.map((svg, index) => (
-              <div key={'rsbc-image-'+index} className="rsbc-image">
+              <div key={"rsbc-image-" + index} className="rsbc-image">
                 {svg}
               </div>
             ))}
@@ -355,8 +358,13 @@ export default class RSBCImage extends ReactComponent {
 
   // Checks if the preview panel of form.io form builder is currently visible.
   isPreviewPanelVisible(): boolean {
-    const previewPanel = document.querySelector<HTMLElement>(".card.panel.preview-panel");
-    return !!previewPanel && previewPanel.offsetHeight > 0 && previewPanel.offsetWidth > 0;
+    const previewPanel = document.querySelector<HTMLElement>(
+      ".card.panel.preview-panel"
+    );
+    return (
+      !!previewPanel &&
+      previewPanel.offsetHeight > 0 &&
+      previewPanel.offsetWidth > 0
+    );
   }
-  
 }

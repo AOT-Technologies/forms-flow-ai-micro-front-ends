@@ -44,8 +44,14 @@ const settingsForm = (...extend) => {
             as: "json",
             validate: {
               custom: function (context) {
-                // If empty or default to ""
-                let currValue = context.data.rsbcImageSettings.trim();
+                let currValue = context.data.rsbcImageSettings;
+
+                // Ensure currValue is a string before calling trim()
+                if (typeof currValue !== "string") {
+                  return true;
+                }
+
+                currValue = currValue.trim();
                 if (currValue === "" || currValue === '""') {
                   context.data.rsbcImageSettings = "";
                   return true;
