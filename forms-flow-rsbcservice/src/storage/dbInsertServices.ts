@@ -5,6 +5,8 @@ import { handleError } from "../helpers/helperServices";
 import { StaticResources } from "../constants/constants";
 import OfflineFetchService from "./dbFetchServices";
 import DBServiceHelper from "../helpers/helperDbServices";
+import { fetchFormIDs } from "../request/formIdApi";
+import { FORM_ID_12HOUR_LIMIT, FORM_ID_24HOUR_LIMIT, FORM_ID_VI_LIMIT } from "./config";
 
 class OfflineSaveService {
   
@@ -172,7 +174,6 @@ class OfflineSaveService {
           console.log("Form List data saved to IndexedDB.");
           break;
         case "applications":
-          // await ffDb.application.clear();
           await ffDb.applications.put(data);
           break;
         case "drafts":
@@ -186,7 +187,6 @@ class OfflineSaveService {
           console.log("Drafts data saved to IndexedDB.");
           break;
         case "offlineSubmission":
-          // await ffDb.submission.clear();
           await ffDb.offlineSubmissions.put(data);
           console.log("Offline submission data saved to IndexedDB.");
           break;
@@ -213,7 +213,110 @@ class OfflineSaveService {
     } catch (error) {
       console.error(`Error processing offline submission or application data:`, error);
     }
-  }   
-  
+  }
+
+  /**
+   * Calculates the how many new form IDs are required and fetches them from the server
+   * and save them to the IndexedDB with leased status as false.
+   */
+  public static async fetchAndSaveFormIDs(): Promise<any> {
+    try {
+      if (!rsbcDb.formID) {
+        throw new Error("IndexedDB formID table is not available.");
+      }
+      const existingFormIds = await rsbcDb.formID.toArray();
+      const countByFormType = existingFormIds.reduce((acc, obj) => {
+        if (!obj.leased) {
+          acc[obj.form_type] = (acc[obj.form_type] || 0) + 1;
+        }
+        return acc;
+      }, {});
+
+      const required12Hour = Math.max(0, FORM_ID_12HOUR_LIMIT - (countByFormType["12Hour"] || 0));
+      const required24Hour = Math.max(0, FORM_ID_24HOUR_LIMIT - (countByFormType["24Hour"] || 0));
+      const requiredVI = Math.max(0, FORM_ID_VI_LIMIT - (countByFormType["VI"] || 0));
+      try {
+        const requiredIds = {
+          "12Hour": required12Hour,
+          "24Hour": required24Hour,
+          "VI": requiredVI,
+        };
+        const now_ts = new Date().toUTCString()
+        await fetchFormIDs(
+          requiredIds,
+          async (data: any) => {
+            const formIdData = data.forms.map((item: any) => ({
+              id: item.id,
+              form_type: item.form_type,
+              user_guid: item.user_guid,
+              leased: false,
+              lease_expiry: item.lease_expiry,
+              printed_timestamp: item.printed_timestamp,
+              spoiled_timestamp: item.spoiled_timestamp,
+              created: now_ts,
+              last_updated: now_ts,
+            }));
+            if(formIdData && formIdData.length > 0){
+              await this._saveForIdDataToIndexedDB(formIdData);
+            }
+          },
+          (error: any) => {
+            console.error("Error loading formIDs from the server:", error);
+            return [];
+          }
+        );
+      } catch (error) {
+        console.error(`Error saving formIDs to indexed db:`, error);
+      }
+      if (existingFormIds.length === 0) {
+        console.log(`No data found in table form_id.`);
+      }
+      const latestIds = await rsbcDb.formID.toArray();
+      return latestIds;
+    } catch (error) {
+      console.error(`Error fetching data from table form_id:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Marks a form as leased in IndexedDB.
+   * @param formId - The form ID.
+   * @param formType - The form type.
+   */
+  public static async markFormAsLeased(formId: number, formType: string): Promise<void> {
+    try {
+      if (!rsbcDb.formID) {
+        throw new Error("FormID table is not available.");
+      }
+      const form = await rsbcDb.formID.where({ id: formId, form_type: formType }).first();
+      if (!form) {
+        throw new Error(`Form with ID ${formId} and type ${formType} not found.`);
+      }
+      await rsbcDb.formID.update(form.id, { leased: true, last_updated: new Date().toUTCString() });
+    } catch (error) {
+      console.error(`Error updating lease status in IndexedDB:`, error);
+    }
+  }
+
+  /**
+   * private function to save formID data to IndexedDB.
+   * @param data - list of formID data to be saved.
+   * @private
+   */
+  private static async _saveForIdDataToIndexedDB(data: any) : Promise<void> {
+    try {
+      if (!rsbcDb) {
+        throw new Error("IndexedDB is not available.");
+      }
+      if (!data || data.length === 0) {
+        throw new Error(`No valid data provided for formID.`);
+      }
+      await rsbcDb.formID.bulkPut(data);
+    } catch (error) {
+      console.error(`Error saving formID to IndexedDB:`, error);
+    }
+  }
+
 }
 export default OfflineSaveService;

@@ -83,6 +83,11 @@ interface FormID {
   form_type: string;
   user_guid: string;
   leased: boolean;
+  lease_expiry: string;
+  printed_timestamp: string;
+  spoiled_timestamp: string;
+  created: string;
+  last_updated: string;
 }
 
 interface VehicleType {
