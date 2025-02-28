@@ -10,6 +10,17 @@ import PropTypes from "prop-types";
 export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
   const customTitle = StyleServices?.getCSSVariable("--custom-title");
+  const customLogoAlignment =  StyleServices?.getCSSVariable("--custom-logo-horizontal-align");
+  const logoAlignmentClass = (() => {
+    switch(customLogoAlignment) {
+      case "left":
+        return "justify-content-start";
+      case "right":
+        return "justify-content-end";
+      default:
+        return "justify-content-center";
+    }
+  })();
   const headerRef = useRef(null); 
   const sidenavRef = useRef(null); 
   const [sidenavHeight, setSidenavHeight] = useState("100%");
@@ -38,7 +49,7 @@ export default function Root(props) {
       {/* <NavBar props={props} /> */}
       <>
       {hasMultitenancyHeader && (
-          <div ref={headerRef} className="multitenancy-header">
+          <div ref={headerRef} className={`multitenancy-header ${logoAlignmentClass}`}>
             {customLogoPath && (
               <img
                 className="multitenancy-logo"

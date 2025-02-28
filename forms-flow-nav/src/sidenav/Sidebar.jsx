@@ -25,6 +25,7 @@ import MenuComponent from "./MenuComponent";
 import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
+import { StyleServices } from "@formsflow/service";
 
 const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
@@ -39,7 +40,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const [showProfile, setShowProfile] = useState(false);
-
+  const hideLogo =  StyleServices?.getCSSVariable("--hide-formsflow-logo");
   const { t } = useTranslation();
   const currentLocation = useLocation();
 
@@ -237,15 +238,11 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
   return (
       <div className="sidenav" style={{ height: sidenavHeight }}>
-        <div className="logo-container">
-          {/* <img
-            className=""
-            src={Appname}
-            alt="applicationName"
-            data-testid="app-logo"
-          /> */}
-          <ApplicationLogo data-testid="application-logo" />
-        </div>
+              {hideLogo !== "true" ? (
+               <div className="logo-container">
+               <ApplicationLogo data-testid="application-logo" />
+               </div> )
+               : null}  
         <div className="options-container" data-testid="options-container">
           <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
             {ENABLE_FORMS_MODULE &&
