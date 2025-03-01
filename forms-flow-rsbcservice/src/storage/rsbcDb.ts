@@ -86,7 +86,6 @@ interface FormID {
   lease_expiry: string;
   printed_timestamp: string;
   spoiled_timestamp: string;
-  created: string;
   last_updated: string;
 }
 

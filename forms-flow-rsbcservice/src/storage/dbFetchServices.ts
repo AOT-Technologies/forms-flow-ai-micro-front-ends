@@ -275,7 +275,7 @@ class OfflineFetchService {
         .where("form_type")
         .equals(formType)
         .and(form => form.leased === false)
-        .sortBy("lease_expiry")
+        .sortBy("last_updated")
         .then(forms => forms[0]);
 
       return topUnleasedForm ? topUnleasedForm.id : null;

@@ -241,7 +241,7 @@ class OfflineSaveService {
           "24Hour": required24Hour,
           "VI": requiredVI,
         };
-        const now_ts = new Date().toUTCString()
+
         await fetchFormIDs(
           requiredIds,
           async (data: any) => {
@@ -253,8 +253,7 @@ class OfflineSaveService {
               lease_expiry: item.lease_expiry,
               printed_timestamp: item.printed_timestamp,
               spoiled_timestamp: item.spoiled_timestamp,
-              created: now_ts,
-              last_updated: now_ts,
+              last_updated: new Date().toISOString(),
             }));
             if(formIdData && formIdData.length > 0){
               await this._saveForIdDataToIndexedDB(formIdData);
@@ -293,7 +292,7 @@ class OfflineSaveService {
       if (!form) {
         throw new Error(`Form with ID ${formId} and type ${formType} not found.`);
       }
-      await rsbcDb.formID.update(form.id, { leased: true, last_updated: new Date().toUTCString() });
+      await rsbcDb.formID.update(form.id, { leased: true, last_updated: new Date().toISOString() });
     } catch (error) {
       console.error(`Error updating lease status in IndexedDB:`, error);
     }
