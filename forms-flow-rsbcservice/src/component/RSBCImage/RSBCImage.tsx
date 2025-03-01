@@ -8,7 +8,7 @@ import { renderToString } from "react-dom/server";
 import PrintConfirmationDialog from "./PrintConfirmationDialog";
 import {
   moveElementsToPrintContainer,
-  restoreOriginalPositions,
+  removeElementsFromPrintContainer,
 } from "./printUtils";
 import _ from "lodash";
 import "./printContainer.scss";
@@ -65,7 +65,7 @@ export default class RSBCImage extends ReactComponent {
     // Compute new transformed data
     this.transformedDataCache = this.component.rsbcImageSettings
       ? this.getOutputJson(this.component.rsbcImageSettings, this.data)
-      : this.data;    
+      : this.data;
     return this.transformedDataCache;
   }
 
@@ -132,7 +132,7 @@ export default class RSBCImage extends ReactComponent {
       });
     };
 
-    if(this.component.stage !== "stageTwo") {
+    if (this.component.stage !== "stageTwo") {
       const proceedToPrint = await showConfirmationDialog(
         "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
         "Proceed",
@@ -154,8 +154,9 @@ export default class RSBCImage extends ReactComponent {
         return;
       }
     }
-    const { printContainer, originalPositions } =
-      moveElementsToPrintContainer(rsbcImages);
+
+    const { printContainer, clonedElements } =
+      await moveElementsToPrintContainer(rsbcImages);
 
     const handleAfterPrint = async () => {
       window.removeEventListener("afterprint", handleAfterPrint);
@@ -175,16 +176,12 @@ export default class RSBCImage extends ReactComponent {
           data: "NO",
         });
       }
+      removeElementsFromPrintContainer(clonedElements, printContainer);
     };
 
     window.addEventListener("afterprint", handleAfterPrint);
 
     window.print();
-
-    setTimeout(
-      () => restoreOriginalPositions(originalPositions, printContainer),
-      1000
-    );
   };
 
   // Renders the RSBC Image component within the given HTML element.
