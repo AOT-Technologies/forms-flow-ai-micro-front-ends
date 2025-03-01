@@ -303,7 +303,7 @@ class OfflineFetchService {
         ["applications"]: data,
         metadata
       };
-
+      
       return finalData;
 
     } catch (error) {
