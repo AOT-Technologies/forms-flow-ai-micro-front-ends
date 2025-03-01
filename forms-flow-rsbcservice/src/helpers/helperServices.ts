@@ -167,7 +167,7 @@ const processFieldValue = (
   let val = values[data.field_name];
 
   if (data.barcode) return `*${String(val).slice(2)}*`;
-  if (values[data.field_name] instanceof Date)
+  if (moment(values[data.field_name], moment.ISO_8601, true).isValid())
     return moment(values[data.field_name]).format(
       data.date_val || "YYYY-MM-DD"
     );
