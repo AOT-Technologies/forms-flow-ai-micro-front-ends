@@ -303,7 +303,9 @@ class OfflineFetchService {
         ["applications"]: data,
         metadata
       };
+
       return finalData;
+
     } catch (error) {
       console.error(`Error fetching data from table application:`, error);
       throw error;
