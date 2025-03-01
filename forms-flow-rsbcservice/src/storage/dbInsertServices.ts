@@ -6,7 +6,7 @@ import { StaticResources } from "../constants/constants";
 import OfflineFetchService from "./dbFetchServices";
 import DBServiceHelper from "../helpers/helperDbServices";
 import { fetchFormIDs } from "../request/formIdApi";
-import { FORM_ID_12HOUR_LIMIT, FORM_ID_24HOUR_LIMIT, FORM_ID_VI_LIMIT } from "./config";
+import { REACT_APP_FORM_ID_12HOUR_LIMIT, REACT_APP_FORM_ID_24HOUR_LIMIT, REACT_APP_FORM_ID_VI_LIMIT } from "./config";
 
 class OfflineSaveService {
   
@@ -232,9 +232,9 @@ class OfflineSaveService {
         return acc;
       }, {});
 
-      const required12Hour = Math.max(0, FORM_ID_12HOUR_LIMIT - (countByFormType["12Hour"] || 0));
-      const required24Hour = Math.max(0, FORM_ID_24HOUR_LIMIT - (countByFormType["24Hour"] || 0));
-      const requiredVI = Math.max(0, FORM_ID_VI_LIMIT - (countByFormType["VI"] || 0));
+      const required12Hour = Math.max(0, REACT_APP_FORM_ID_12HOUR_LIMIT - (countByFormType["12Hour"] || 0));
+      const required24Hour = Math.max(0, REACT_APP_FORM_ID_24HOUR_LIMIT - (countByFormType["24Hour"] || 0));
+      const requiredVI = Math.max(0, REACT_APP_FORM_ID_VI_LIMIT - (countByFormType["VI"] || 0));
       try {
         const requiredIds = {
           "12Hour": required12Hour,
