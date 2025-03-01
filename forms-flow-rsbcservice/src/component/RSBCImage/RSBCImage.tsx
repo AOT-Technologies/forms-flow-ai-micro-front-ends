@@ -18,6 +18,7 @@ export default class RSBCImage extends ReactComponent {
   component: any;
   builderMode: boolean;
   emit!: (event: string, ...args: any[]) => void;
+  private isTriggerPrintListenerRegistered = false;
 
   constructor(component: any, options: any, data: any) {
     super(component, options, data);
@@ -184,8 +185,20 @@ export default class RSBCImage extends ReactComponent {
     window.print();
   };
 
+  triggerPrintEventHandler = (data: any) => {
+    console.log("triggerPrint Event received:", data);
+    if (data.data === "YES") {
+      this.handlePrint();
+    }
+  };
+
   // Renders the RSBC Image component within the given HTML element.
   attachReact(element: HTMLElement): void {
+    if (!this.isTriggerPrintListenerRegistered) {
+      (this as any).on("triggerPrint", this.triggerPrintEventHandler);
+      this.isTriggerPrintListenerRegistered = true;
+    }
+
     const printServices = new PrintServices();
     if (!printServices?.renderSVGForm) {
       throw new Error("printServices.renderSVGForm is not available.");
@@ -211,23 +224,6 @@ export default class RSBCImage extends ReactComponent {
                 {svg}
               </div>
             ))}
-            <button
-              style={{
-                position: "fixed",
-                bottom: "20px",
-                right: "20px",
-                padding: "10px 20px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontSize: "16px",
-              }}
-              onClick={this.handlePrint}
-            >
-              Print
-            </button>
           </div>
         );
       })
@@ -351,6 +347,10 @@ export default class RSBCImage extends ReactComponent {
 
   // Unmounts the React component from the given HTML element.
   detachReact(element: HTMLElement): void {
+    if (this.isTriggerPrintListenerRegistered) {
+      (this as any).off("triggerPrint", this.triggerPrintEventHandler);
+      this.isTriggerPrintListenerRegistered = false;
+    }
     createRoot(element).unmount();
   }
 
