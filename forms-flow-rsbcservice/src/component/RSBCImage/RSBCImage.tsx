@@ -132,27 +132,28 @@ export default class RSBCImage extends ReactComponent {
       });
     };
 
-    const proceedToPrint = await showConfirmationDialog(
-      "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
-      "Proceed",
-      "Cancel"
-    );
-
-    if (proceedToPrint) {
-      console.log(
-        "User confirmed proceeding to printing step, FormInputs are locked."
+    if(this.component.stage !== "stageTwo") {
+      const proceedToPrint = await showConfirmationDialog(
+        "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
+        "Proceed",
+        "Cancel"
       );
-      (this as any).emit("lockFormInput", {
-        data: "YES",
-      });
-    } else {
-      console.log("User cancel proceeding to printing.");
-      (this as any).emit("lockFormInput", {
-        data: "NO",
-      });
-      return;
-    }
 
+      if (proceedToPrint) {
+        console.log(
+          "User confirmed proceeding to printing step, FormInputs are locked."
+        );
+        (this as any).emit("lockFormInput", {
+          data: "YES",
+        });
+      } else {
+        console.log("User cancel proceeding to printing.");
+        (this as any).emit("lockFormInput", {
+          data: "NO",
+        });
+        return;
+      }
+    }
     const { printContainer, originalPositions } =
       moveElementsToPrintContainer(rsbcImages);
 
