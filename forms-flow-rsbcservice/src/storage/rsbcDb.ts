@@ -83,6 +83,10 @@ interface FormID {
   form_type: string;
   user_guid: string;
   leased: boolean;
+  lease_expiry: string;
+  printed_timestamp: string;
+  spoiled_timestamp: string;
+  last_updated: string;
 }
 
 interface VehicleType {
@@ -142,7 +146,7 @@ class DigitalFormsDB extends Dexie {
       countries: "id, objectCd, objectDsc",
       cities: "id, objectCd, objectDsc",
       agencies: "id, vjur, agency_name",
-      formID: "id, form_type, user_guid, leased, [form_type+leased]",
+      formID: "id, form_type, leased, [form_type+leased], last_updated, user_guid",
       vehicleTypes: "type_cd, description",
     });
 
