@@ -506,5 +506,43 @@ class OfflineFetchService {
     }
   }
 
+    /**
+   * Fetches the offline submission from the "applications" table based on ID.
+   *
+   * @returns A promise resolving to an object containing submission.
+   * @throws Error if IndexedDB is unavailable or the table is missing.
+   */
+    public static async fetchApplicationById(
+      applicationId: number
+    ): Promise<any> {
+      try {
+        if (!ffDb) {
+          throw new Error("IndexedDB is not available.");
+        }
+        await ffDb.open();
+        // Get reference to the formDefinition table
+        const offlineApplications = ffDb["applications"];
+        if (!offlineApplications) {
+          throw new Error("Table application not found in IndexedDB.");
+        }
+        // Fetch row by ID
+        const application = await offlineApplications
+          .where("id")
+          .equals(Number(applicationId))
+          .first();
+        if (!application) {
+          console.log(`No record found with id: ${applicationId}`);
+          return null;
+        }
+        return application;
+      } catch (error) {
+        console.error(
+          `Error fetching data from application with id ${applicationId}:`,
+          error
+        );
+        throw error;
+      }
+    }
+
 }
 export default OfflineFetchService;
