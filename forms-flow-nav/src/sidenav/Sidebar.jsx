@@ -26,7 +26,6 @@ import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
-
 const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");
@@ -239,16 +238,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   return (
       <div className="sidenav" style={{ height: sidenavHeight }}>
         <div className="logo-container">
-        {APPLICATION_NAME === "roadsafety" ? (
-          <img
-            width="160"
-            height="auto"
-            src="/RoadsafteyLogo.png"
+          {/* <img
+            className=""
+            src={Appname}
             alt="applicationName"
-          />
-        ) : (
+            data-testid="app-logo"
+          /> */}
           <ApplicationLogo data-testid="application-logo" />
-        )}
         </div>
         <div className="options-container" data-testid="options-container">
           <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
