@@ -26,6 +26,7 @@ import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
+
 const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");
