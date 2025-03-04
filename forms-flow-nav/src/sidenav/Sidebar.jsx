@@ -14,7 +14,7 @@ import {
   ENABLE_INTEGRATION_PREMIUM,
   IS_ENTERPRISE
 } from "../constants/constants";
-import { StorageService } from "@formsflow/service";
+import { StorageService, StyleServices } from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
 import { fetchTenantDetails } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
@@ -25,8 +25,6 @@ import MenuComponent from "./MenuComponent";
 import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
-import { StyleServices } from "@formsflow/service";
-
 const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");

@@ -1,7 +1,7 @@
 import NavBar from "./Navbar";
 import { BrowserRouter as Router } from "react-router-dom";
 import Sidebar from "./sidenav/Sidebar";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
 import { StyleServices ,HelperServices } from "@formsflow/service"; 
@@ -11,8 +11,8 @@ export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
   const customTitle = StyleServices?.getCSSVariable("--custom-title");
   const customLogoAlignment =  StyleServices?.getCSSVariable("--custom-logo-horizontal-align");
-  const logoAlignmentClass = (() => {
-    switch(customLogoAlignment) {
+  const logoAlignmentClass = useMemo(() => {
+    switch (customLogoAlignment) {
       case "left":
         return "justify-content-start";
       case "right":
@@ -20,7 +20,7 @@ export default function Root(props) {
       default:
         return "justify-content-center";
     }
-  })();
+  }, [customLogoAlignment]);
   const headerRef = useRef(null); 
   const sidenavRef = useRef(null); 
   const [sidenavHeight, setSidenavHeight] = useState("100%");
