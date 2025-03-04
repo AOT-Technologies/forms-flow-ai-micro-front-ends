@@ -148,6 +148,16 @@ const formatMultipleFields = (
 const formatFieldValue = (field: string, fieldValue: any): string => {
   if (!fieldValue) return "";
   if (typeof fieldValue === "object" && fieldValue !== null) {
+    const isValidValue =
+      typeof fieldValue.value === "string" ||
+      Array.isArray(fieldValue.value) ||
+      ArrayBuffer.isView(fieldValue.value);
+    if (!isValidValue) {
+      console.error(
+        `Error: fieldValue.value is not a valid type (string, array, or typed array) for field "${field}".`,
+        fieldValue
+      );
+    }
     return (
       fieldValue.label ||
       (fieldValue.value.includes("_")
@@ -176,14 +186,26 @@ const processFieldValue = (
   if (["DRIVER_DL_EXPIRY", "REPORT_DRIVER_DL_EXPIRY"].includes(key))
     return moment(val).format("YYYY");
   if (typeof val === "object" && val !== null)
-    return extractObjectValue(val, key);
+    return extractObjectValue(val, key, data.field_name);
 
   return formatReleaseInformation(values, key, val, impoundLotOperators);
 };
 
-const extractObjectValue = (fieldValue: any, key: string): string => {
+const extractObjectValue = (
+  fieldValue: any,
+  key: string,
+  field_name: any
+): string => {
   if (key === "LOCATION_CITY") return fieldValue?.label || "";
   let val = fieldValue?.value || "";
+  const isValidValue =
+    typeof val === "string" || Array.isArray(val) || ArrayBuffer.isView(val);
+  if (!isValidValue) {
+    console.error(
+      `Error: val is not a valid type (string, array, or typed array) for field "${field_name}".`,
+      val
+    );
+  }
   return val.includes("_") ? val.split("_")[1] : val;
 };
 
