@@ -26,7 +26,9 @@ export const StaticResources = [
     'agencies',
     'vehicleTypes',
     'nscPuj',
-    'jurisdictionCountry'
+    'jurisdictionCountry', 
+    'formID',
+    'user'
   ];
 
   export const FormTypes = ["12Hour", "24Hour", "VI"];
