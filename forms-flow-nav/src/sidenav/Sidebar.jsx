@@ -39,9 +39,9 @@ const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t }) =>
         </p>
       </div>
     </button>
-    <div className="sign-out-button" onClick={logout} data-testid="sign-out-button">
+    <button className="button-as-div sign-out-button" onClick={logout} data-testid="sign-out-button">
       <p className="m-0">{t("Sign Out")}</p>
-    </div>
+    </button>
   </div>
 );
 
