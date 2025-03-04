@@ -20,10 +20,10 @@ const PrintConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     <div className="modal-overlay">
       <div className="confirmation-dialog">
         <p>{message}</p>
-        <button className="yes-button" onClick={onConfirm}>
+        <button className="btn btn-primary" onClick={onConfirm}>
           {primaryBtnCaption}
         </button>
-        <button className="no-button" onClick={onCancel}>
+        <button className="btn btn-secondary" onClick={onCancel}>
           {secondaryBtnCaption}
         </button>
       </div>
