@@ -106,7 +106,8 @@ export const printFormatHelper = (
     return handleSplitField(
       values[data.field_name],
       fieldsToSplit[key],
-      data.delimeter
+      data.delimeter,
+      data.field_name
     );
   }
 
@@ -117,10 +118,13 @@ export const printFormatHelper = (
   return processFieldValue(values, data, key, impoundLotOperators);
 };
 
-const handleSplitField = (rawValue: any, index: number, delimiter = " ") => {
+const handleSplitField = (rawValue: any, index: number, delimiter = " ", field_name:any) => {
   if (!rawValue) return "";
   let splitData: string[] = [];
   if (typeof rawValue === "object" && rawValue.value) {
+    if (typeof rawValue.value !== "string") {
+      console.error(`Error: Expected string in rawValue.value in field_name "${field_name}" but got`, rawValue.value);
+    }
     splitData = rawValue.value.split(delimiter);
   } else if (typeof rawValue === "string") {
     splitData = rawValue.split(delimiter);
