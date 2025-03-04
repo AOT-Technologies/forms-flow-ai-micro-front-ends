@@ -154,7 +154,7 @@ $white-color: var(--ff-white);
   @extend .status-circle;
   background-color: $gray-medium;
 }
-.status-public {
+.status-new {
   @extend .status-circle;
   background-color: $primary;
   border: 1px solid $white-color;
