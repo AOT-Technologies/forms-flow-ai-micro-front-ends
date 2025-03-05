@@ -278,15 +278,7 @@ class OfflineSaveService {
         throw new Error("Invalid input: data must be a non-empty array");
       }
 
-      // Validate each form process
-      data.forEach((formProcess, index) => {
-        if (!formProcess || typeof formProcess !== "object") {
-          throw new Error(`Invalid form process at index ${index}`);
-        }
-      });
-
-      // Insert all records into IndexedDB
-      await Promise.all(data.map(formProcess => table.put(formProcess)));
+      await table.bulkPut(data);
 
       return { 
         status: "success", 
