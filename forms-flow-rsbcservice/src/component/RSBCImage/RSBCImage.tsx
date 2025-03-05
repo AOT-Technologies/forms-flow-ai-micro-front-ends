@@ -18,7 +18,6 @@ export default class RSBCImage extends ReactComponent {
   component: any;
   builderMode: boolean;
   emit!: (event: string, ...args: any[]) => void;
-  private isTriggerPrintListenerRegistered = false;
 
   constructor(component: any, options: any, data: any) {
     super(component, options, data);
@@ -96,8 +95,36 @@ export default class RSBCImage extends ReactComponent {
     }
   }
 
+  private async showConfirmationDialog(
+    message: string,
+    primaryBtnCaption: string,
+    secondaryBtnCaption: string
+  ) {
+    return new Promise<boolean>((resolve) => {
+      if (document.querySelector(".modal-overlay")) return; // Prevent multiple instances
+
+      const modalContainer = document.createElement("div");
+      document.body.appendChild(modalContainer);
+
+      const handleClose = (result: boolean) => {
+        resolve(result);
+        document.body.removeChild(modalContainer);
+      };
+
+      createRoot(modalContainer).render(
+        <PrintConfirmationDialog
+          message={message}
+          onConfirm={() => handleClose(true)}
+          onCancel={() => handleClose(false)}
+          primaryBtnCaption={primaryBtnCaption}
+          secondaryBtnCaption={secondaryBtnCaption}
+        />
+      );
+    });
+  }
+
   // Manages the print workflow, including a confirmation dialog and form input locking.
-  handlePrint = async (values?: any) => {
+  private handlePrintProcess = async (requireConfirmation: boolean) => {
     const rsbcImages = document.querySelectorAll(".rsbc-image");
 
     if (rsbcImages.length === 0) {
@@ -105,36 +132,8 @@ export default class RSBCImage extends ReactComponent {
       return;
     }
 
-    const showConfirmationDialog = (
-      message: string,
-      primaryBtnCaption: string,
-      secondaryBtnCaption: string
-    ) => {
-      return new Promise<boolean>((resolve) => {
-        if (document.querySelector(".modal-overlay")) return; // Prevent multiple instances
-
-        const modalContainer = document.createElement("div");
-        document.body.appendChild(modalContainer);
-
-        const handleClose = (result: boolean) => {
-          resolve(result);
-          document.body.removeChild(modalContainer);
-        };
-
-        createRoot(modalContainer).render(
-          <PrintConfirmationDialog
-            message={message}
-            onConfirm={() => handleClose(true)}
-            onCancel={() => handleClose(false)}
-            primaryBtnCaption={primaryBtnCaption}
-            secondaryBtnCaption={secondaryBtnCaption}
-          />
-        );
-      });
-    };
-
-    if (this.component.stage !== "stageTwo") {
-      const proceedToPrint = await showConfirmationDialog(
+    if (requireConfirmation && this.component.stage !== "stageTwo") {
+      const proceedToPrint = await this.showConfirmationDialog(
         "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
         "Proceed",
         "Cancel"
@@ -161,21 +160,23 @@ export default class RSBCImage extends ReactComponent {
 
     const handleAfterPrint = async () => {
       window.removeEventListener("afterprint", handleAfterPrint);
-      const userConfirmed = await showConfirmationDialog(
-        "Did it print successfully?",
-        "Yes",
-        "No"
-      );
-      if (userConfirmed) {
-        console.log("User confirmed successful printing.");
-        (this as any).emit("printResponse", {
-          data: "YES",
-        });
-      } else {
-        console.log("User reported an issue with printing.");
-        (this as any).emit("printResponse", {
-          data: "NO",
-        });
+      if (requireConfirmation && this.component.stage !== "stageTwo") {
+        const userConfirmed = await this.showConfirmationDialog(
+          "Did it print successfully?",
+          "Yes",
+          "No"
+        );
+        if (userConfirmed) {
+          console.log("User confirmed successful printing.");
+          (this as any).emit("printResponse", {
+            data: "YES",
+          });
+        } else {
+          console.log("User reported an issue with printing.");
+          (this as any).emit("printResponse", {
+            data: "NO",
+          });
+        }
       }
       removeElementsFromPrintContainer(clonedElements, printContainer);
     };
@@ -185,20 +186,16 @@ export default class RSBCImage extends ReactComponent {
     window.print();
   };
 
-  triggerPrintEventHandler = (data: any) => {
-    console.log("triggerPrint Event received:", data);
-    if (data.data === "YES") {
-      this.handlePrint();
-    }
+  handlePrint = async () => {
+    await this.handlePrintProcess(true);
+  };
+
+  handleSubmissionPrint = async () => {
+    await this.handlePrintProcess(false);
   };
 
   // Renders the RSBC Image component within the given HTML element.
   attachReact(element: HTMLElement): void {
-    if (!this.isTriggerPrintListenerRegistered) {
-      (this as any).on("triggerPrint", this.triggerPrintEventHandler);
-      this.isTriggerPrintListenerRegistered = true;
-    }
-
     const printServices = new PrintServices();
     if (!printServices?.renderSVGForm) {
       throw new Error("printServices.renderSVGForm is not available.");
@@ -347,10 +344,6 @@ export default class RSBCImage extends ReactComponent {
 
   // Unmounts the React component from the given HTML element.
   detachReact(element: HTMLElement): void {
-    if (this.isTriggerPrintListenerRegistered) {
-      (this as any).off("triggerPrint", this.triggerPrintEventHandler);
-      this.isTriggerPrintListenerRegistered = false;
-    }
     createRoot(element).unmount();
   }
 
