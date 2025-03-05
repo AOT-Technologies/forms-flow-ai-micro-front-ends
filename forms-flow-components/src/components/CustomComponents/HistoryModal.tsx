@@ -16,7 +16,7 @@ interface HistoryModalProps {
   loadMoreBtnText: string;
   revertBtndataTestid?: string;
   revertBtnariaLabel?: string;
-  loadMoreBtndataTestid?: string;
+  loadMoreBtndataTestId?: string;
   loadMoreBtnariaLabel?: string;
   allHistory: AllHistory[];
   categoryType: string;
@@ -94,7 +94,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     loadMoreBtnText,
     revertBtndataTestid = "revert-button",
     revertBtnariaLabel = "Revert Button",
-    loadMoreBtndataTestid = "loadmore-button",
+    loadMoreBtndataTestId = "loadmore-button",
     loadMoreBtnariaLabel = "Loadmore Button",
     allHistory,
     categoryType,
@@ -203,7 +203,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
               size="sm"
               label={loadMoreBtnText}
               onClick={handleLoadMore}
-             dataTestId={loadMoreBtndataTestid}
+             dataTestId={loadMoreBtndataTestId}
               ariaLabel={loadMoreBtnariaLabel}
             />
           </div>
@@ -293,7 +293,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
               <b>{t(title)}</b>
             </Modal.Title>
             <div className="d-flex align-items-center ">
-              <CloseIcon onClick={handleClose} />
+              <CloseIcon onClick={handleClose} data-testid="close-icon" />
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">

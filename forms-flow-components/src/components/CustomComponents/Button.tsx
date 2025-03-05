@@ -26,7 +26,11 @@ interface CustomButtonProps {
   dataTestId?: string;
   ariaLabel?: string;
   buttonLoading?: boolean;
+  iconOnly?: boolean;  
 }
+
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false) => 
+  `${size === "md" ? 'btn-md' : ''} ${className}`;
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
   variant,
@@ -42,7 +46,11 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   ariaLabel = "",
   name =  "",
   buttonLoading = false,
+  iconOnly = false,  
 }) => {
+  const classNameForButton = getButtonClassName(size, className, iconOnly);
+  const sizeOfButton = size !== "md" ? size : undefined;
+
   const buttonRef = useRef<HTMLButtonElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
@@ -70,6 +78,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     return () => window.removeEventListener("resize", updateMenuStyle);
   }, []);
 
+  // Dropdown Button
   if (isDropdown) {
     return (
       <Dropdown
@@ -79,13 +88,13 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       >
         <Button
           variant={variant}
-          size={size!='md' ? size : undefined}
+          size={size !== "md" ? size : undefined}
           disabled={disabled}
           ref={buttonRef}
           data-testid={dataTestId}
           aria-label={ariaLabel}
           name={name}
-          className={`${size !== 'md' ? className : `btn-md ${className}`}`}
+          className={classNameForButton}
         >
           {t(label)}
         </Button>
@@ -116,14 +125,35 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     );
   }
 
+  // Icon-only Button
+  if (iconOnly) {
+    return (
+      <Button
+        variant={variant}
+        size={sizeOfButton}
+        onClick={onClick}
+        disabled={disabled || buttonLoading}
+        name={name}
+        className={`p-0 ${classNameForButton}`}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+      >
+        <div className="d-inline-flex align-items-center">
+          {icon}
+        </div>
+      </Button>
+    );
+  }
+
+  // Default Button with icon and label
   return (
     <Button
       variant={variant}
-      size={size!='md' ? size : undefined}
+      size={sizeOfButton}
       onClick={onClick}
       disabled={disabled || buttonLoading}
       name={name}
-      className={`${size !== 'md' ? className : `btn-md ${className}`}`}
+      className={classNameForButton}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
