@@ -26,6 +26,38 @@ import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
+const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t }) => (
+  <div className="user-container">
+    <button className="button-as-div justify-content-start m-2" onClick={handleProfileModal}>
+      <div className="user-icon cursor-pointer" data-testid="user-icon">
+        {initials}
+      </div>
+      <div>
+        <p className="user-name" data-testid="user-name">{userDetail?.name}</p>
+        <p className="user-email" data-testid="user-email">
+          {userDetail?.email || userDetail?.preferred_username}
+        </p>
+      </div>
+    </button>
+    <button className="button-as-div sign-out-button" onClick={logout} data-testid="sign-out-button">
+      <p className="m-0">{t("Sign Out")}</p>
+    </button>
+  </div>
+);
+
+UserProfile.propTypes = {
+  userDetail: PropTypes.shape({
+    name: PropTypes.string,
+    email: PropTypes.string,
+    preferred_username: PropTypes.string,
+  }).isRequired, 
+
+  initials: PropTypes.string.isRequired,
+  handleProfileModal: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired, 
+};
+
 const renderLogo = (hideLogo) => {
   if (hideLogo === "true") return null;
 
@@ -368,30 +400,14 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             )}
           </Accordion>
         </div>
-        {isAuthenticated && (<div className="user-container">
-          <button className="button-as-div justify-content-start m-2" onClick={handleProfileModal}>
-            <div className="user-icon cursor-pointer" data-testid="user-icon">
-              {initials}
-            </div>
-            <div>
-            <p
-                className="user-name"
-                data-testid="user-name"              >
-                {userDetail?.name}
-              </p>
-              <p className="user-email" data-testid="user-email">
-                  {userDetail?.email || userDetail?.preferred_username}
-              </p>
-            </div>
-          </button>
-          <div
-            className="sign-out-button"
-            onClick={logout}
-            data-testid="sign-out-button"
-          >
-            <p className="m-0">{t("Sign Out")}</p>
-          </div>
-        </div>)}
+        {isAuthenticated && (        
+        <UserProfile 
+        userDetail={userDetail}
+        initials={initials}
+        handleProfileModal={handleProfileModal}
+        logout={logout}
+        t={t}
+        />)}
         {
           showProfile && <ProfileSettingsModal 
           show={showProfile}  
