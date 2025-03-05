@@ -292,7 +292,7 @@ class OfflineFetchService {
       if (!table) {
         throw new Error(`Table application not found in IndexedDB.`);
       }
-      const data = await table.toArray();
+      const data = await table.orderBy("modified").reverse().toArray();
       if (data.length === 0) {
         console.log(`No data found in table application.`);
         return;
@@ -398,6 +398,39 @@ class OfflineFetchService {
   }
 
   /**
+   * Fetches offline drafts from the "offlineSubmission" table.
+   * 
+   * @returns A promise resolving to the draft data or null if not found.
+   * @throws Error if IndexedDB is unavailable or the table is missing.
+   */
+  public static async fetchOfflineDrafts(): Promise<any> {
+    try {
+        if (!ffDb) {
+            throw new Error("IndexedDB is not available.");
+        }
+        await ffDb.open();
+
+        // Get reference to the formDefinition table
+        const offlineSubmissions = ffDb["offlineSubmissions"];
+
+        if (!offlineSubmissions) {
+            throw new Error("Table offlineSubmission not found in IndexedDB.");
+        }
+
+        // Fetch drafts by type      
+        const drafts = await offlineSubmissions.where("type").equals("draft").toArray();
+        const transformedDrafts = DBServiceHelper.tranformOfflineDrafts(drafts);
+        if (!transformedDrafts) {
+          console.log("No draft records found.");
+          return {drafts: [], applicationCount: 0, totalCount: 0}; // totalCount = draftsCount, applicationCount=submissionCount
+        }
+        return transformedDrafts;
+    } catch (error) {
+        console.error(`Error fetching data from offlineSubmission with offline draft information :`, error);
+        throw error;
+    }
+  }
+  /**
    * Fetches the all form Ids data from the "formID" table in IndexedDB.
    */
   public static async fetchFormIdDataFromTable(): Promise<any[]> {
@@ -420,6 +453,108 @@ class OfflineFetchService {
     }
   }
 
+  /**
+   * Fetches a specific offline draft by ID from the "offlineSubmission" table.
+   * 
+   * @param draftId - The ID of the draft to retrieve.
+   * @returns A promise resolving to the draft data or null if not found.
+   * @throws Error if IndexedDB is unavailable or the table is missing.
+   */
+  public static async fetchOfflineDraftById(draftId: string): Promise<any> {
+    try {
+        const localDraftId = Number(draftId);
+
+        if (isNaN(localDraftId)) {
+          console.error("Invalid draftId: Not a valid number");
+          return null;
+        }
+        if (!ffDb) {
+            throw new Error("IndexedDB is not available.");
+        }
+        await ffDb.open();
+
+        // Get reference to the formDefinition table
+        const offlineSubmissions = ffDb["offlineSubmissions"];
+
+        if (!offlineSubmissions) {
+            throw new Error("Table offlineSubmission not found in IndexedDB.");
+        }
+
+        // Fetch row by ID
+        const draft = await offlineSubmissions
+          .where("localDraftId")
+          .equals(localDraftId)
+          .first();
+        if (!draft) {
+            console.log(`No record found with localDraftId: ${localDraftId}`);
+            return null;
+        }
+        const updatedDraft = DBServiceHelper.transformEditDraftData(draft);
+
+        return updatedDraft;
+    } catch (error) {
+        console.error(`Error fetching data from offlineSubmission with localDraftId ${draftId}:`, error);
+        throw error;
+    }
+  }
+
+  public static async fetchOfflineFormProcessById(formId: string): Promise<any> {
+    try {
+        if (!ffDb) {
+            throw new Error("IndexedDB is not available.");
+        }
+        await ffDb.open();
+
+        // Get reference to the formProcesses table
+        const table = ffDb["formProcesses"];
+
+        if (!table) {
+            throw new Error("Table formProcesses not found in IndexedDB.");
+        }
+
+        // Fetch row by ID
+        const data = await table.get(formId);
+
+        if (!data) {
+            console.log(`No record found with id: ${formId}`);
+            return null;
+        }
+
+        return data;
+    } catch (error) {
+        console.error(`Error fetching data from formProcesses with id ${formId}:`, error);
+        throw error;
+    }
+  }
+  
+  public static async isDraftIdInActiveForm(draftId: string): Promise<boolean> {
+    try {
+        const localDraftId = Number(draftId);
+        if (isNaN(localDraftId)) {
+            console.error("Invalid localDraftId: Not a valid number");
+            return false;
+        }
+        if (!ffDb) {
+            throw new Error("IndexedDB is not available.");
+        }
+
+        await ffDb.open();
+        const table = ffDb["activeForm"];
+
+        if (!table) {
+            throw new Error("Table 'activeForm' not found in IndexedDB.");
+        }
+
+        // Check if the draftId exists
+        const data = await table.get(localDraftId);
+        return !!data; // Return true if data exists, false otherwise
+
+    } catch (error) {
+        console.error(`Error checking draftId in activeForm with id ${draftId}:`, error);
+        return false;
+    }
+  }
+  
   /**
    * Returns the unleased form IDs for a given form type.
    * @param formType - "12Hour", "24Hour", "VI"

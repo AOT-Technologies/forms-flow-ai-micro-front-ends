@@ -45,7 +45,7 @@ interface FormListMetaData {
 
 }
 
-interface Application {
+export interface Application {
   id: number;
   applicationName: string;
   applicationStatus: string;
@@ -55,6 +55,7 @@ interface Application {
   formId: string;
   formProcessMapperId: string;
   formType: string;
+  isClientEdit: boolean;
   isResubmit: boolean;
   modified: string;
   modifiedBy: string;
@@ -65,16 +66,22 @@ interface Application {
   submissionId: string;
 }
 
-interface ApplicationMetaData {
-  key: string;
-  draftCount: number;
-  totalCount: number;
-  pageNo: number;
-  limit: number; 
+
+export interface ApplicationMetaData {
+  owner: string;
+  access: any[];
+  externalIds: any[];
+  roles: any[];
+  metadata: Record<string, any>;
+  form: string;
+  created: string;
+  modified: string;
+  data: Record<string, any>;
+  _id: string;
 
 }
 
-interface Draft {
+export interface Draft {
   id: number;
   applicationId: number;
   formId: string;
@@ -96,7 +103,7 @@ interface DraftMetaData {
 interface DraftData {
   CreatedBy: string;
   DraftName: string;
-  localApplicationId: string;
+  localApplicationId: number;
   serverDraftId: string; // can be removed if not needed
   serverApplicationId: string; // can be removed if not needed
   formType: string;
@@ -104,7 +111,7 @@ interface DraftData {
   processName: string;
 }
 
-interface SubmissionData {
+export interface SubmissionData {
   owner: string;
   access: any[];
   externalIds: any[];
@@ -115,30 +122,68 @@ interface SubmissionData {
 
 // brought localDraftId and localSubmissionId here because,
 // Dexie does not allow indexes on nested properties like submissionData.localSubmissionId 
-interface OfflineSubmission {
+export interface OfflineSubmission {
   _id: string;
   formId: string;
   data: Record<string, any>;
-  localDraftId?: string;
-  draftData: DraftData;
-  submissionData: SubmissionData;
+  localDraftId?: number;
+  draftData?: DraftData;
+  submissionData?: SubmissionData;
   localSubmissionId?: string;
   created: string;
   modified: string;
   type: string;
 }
 
+export interface ActiveForm {
+  localDraftId: string;
+  serverDraftId?: string;
+}
+
+interface TaskVariable {
+  key: string;
+  label: string;
+  type: string;
+}
+
+export interface FormProcess {
+  anonymous: boolean;
+  canBundle: boolean;
+  comments?: Record<string, any>;
+  created: string;
+  createdBy: string;
+  deleted: boolean;
+  description: string;
+  formId: string;
+  formName: string;
+  formType: string;
+  id: string;
+  isBundle:boolean;
+  isMigrated: boolean;
+  majorVersion: number;
+  minorVersion:number;
+  modified: string;
+  modifiedBy?: string;
+  parentFormId:string;
+  processKey: string;
+  processName: string;
+  processTenant?: string;
+  promptNewVersion:boolean;
+  status: string;
+  taskVariables: TaskVariable[];
+  version: string;
+}
+
 // Database class extending Dexie to manage IndexedDB storage
 class FormsFlowDB extends Dexie {
   // Declaring tables with their respective interfaces
   formDefinitionList!: Table<FormDefinisionList>;
-  formListMetaData!: Table<FormListMetaData>;
   applications!: Table<Application>;
-  applicationMetaData!: Table<ApplicationMetaData>;
   drafts!: Table<Draft>;
-  draftMetaData!: Table<DraftMetaData>;
   offlineSubmissions!: Table<OfflineSubmission>;
   formDefinitions!: Table<IndividualFormDefinition>;
+  activeForm!: Table<ActiveForm>;
+  formProcesses!: Table<FormProcess>;
 
   constructor() {
     super("formsflowTables");
@@ -149,13 +194,12 @@ class FormsFlowDB extends Dexie {
 
     this.version(1).stores({
       formDefinitionList: "id, formId, formName, formType, processKey, modified",
-      formListMetaData: "key",
-      applications: "id, formId, submissionId",
-      applicationMetaData: "key",
+      applications: "id, modified, formId, submissionId",
       drafts: "id, applicationId, formId",
-      draftMetaData:"key",
       offlineSubmissions: "_id, formId, localSubmissionId, localDraftId, type",
-      formDefinitions: "_id, title, name, path, type, created, modified, machineName, parentFormId"
+      formDefinitions: "_id, title, name, path, type, created, modified, machineName, parentFormId",
+      activeForm: "localDraftId, serverDraftId",
+      formProcesses: "formId, formName"
 
     });
   }
