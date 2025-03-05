@@ -1,5 +1,5 @@
 import { rsbcDb } from "./rsbcDb";
-import { ffDb, IndividualFormDefinition } from "./ffDb";
+import { ffDb, IndividualFormDefinition, ActiveForm, FormProcess } from "./ffDb";
 import { fetchStaticData } from "../request/staticDataApi";
 import { handleError } from "../helpers/helperServices";
 import { StaticResources } from "../constants/constants";
@@ -148,7 +148,7 @@ class OfflineSaveService {
    * @param {string} resourceName - The name of the resource.
    * @param {any} data - The data to be saved.
    */
-  private static async saveFFDataToIndexedDB(resourceName: string, data: any) {
+  public static async saveFFDataToIndexedDB(resourceName: string, data: any) {
     try {
       // Check if IndexedDB is available
       if (!ffDb) {
@@ -161,34 +161,17 @@ class OfflineSaveService {
       }
 
       switch (resourceName) {
-        case "formDefinitionList":
-          await ffDb.formDefinitionList.clear();
-          await ffDb.formDefinitionList.bulkPut(data.forms);
-          await ffDb.formListMetaData.clear();
-          await ffDb.formListMetaData.put({
-            key: "metadata",
-            totalCount: data.totalCount,
-            pageNo: data.pageNo,
-            limit: data.limit
-          })
-          console.log("Form List data saved to IndexedDB.");
-          break;
         case "applications":
           await ffDb.applications.put(data);
-          break;
-        case "drafts":
-          await ffDb.drafts.clear();
-          await ffDb.drafts.bulkPut(data.drafts);
-          await ffDb.draftMetaData.put({
-            key: "metadata",
-            applicationCount: data.applicationCount,
-            totalCount: data.totalCount,
-          })
-          console.log("Drafts data saved to IndexedDB.");
           break;
         case "offlineSubmission":
           await ffDb.offlineSubmissions.put(data);
           console.log("Offline submission data saved to IndexedDB.");
+          break;
+        case "activeForm":
+          await ffDb.activeForm.clear();
+          await ffDb.activeForm.put(data);
+          console.log("Offline activeForm data saved to IndexedDB.");
           break;
         default:
           console.log(`No matching table found for resource: ${resourceName}`);
@@ -203,7 +186,7 @@ class OfflineSaveService {
    * @param {any} data - Submission data to be stored.
    * @param {string} formId - Form ID associated with the submission.
    */
-  public static async insertSubmissionData (data: any, formId: string): Promise<void> {
+  public static async insertOfflineSubmissionData (data: any, formId: string): Promise<void> {
     try {
       const formData = await OfflineFetchService.fetchOfflineFormById(formId);
       const submissionData = DBServiceHelper.constructOfflineSubmissionData(data, formId);
@@ -212,6 +195,84 @@ class OfflineSaveService {
       await this.saveFFDataToIndexedDB("applications", applicationData);
     } catch (error) {
       console.error(`Error processing offline submission or application data:`, error);
+    }
+  }
+
+  /**
+   * Inserts submission data into IndexedDB.
+   * @param {any} draft - Submission data to be stored.
+   */
+  public static async insertOfflineDraftData (draft: any, serverDraftId: string | null = null): Promise<Record<string, any>> {
+    try {
+      const formId = draft?.formId;
+      if (!formId) {
+        console.warn("No valid formId found. Using empty formData.");
+      }
+      const formData = formId ? await OfflineFetchService.fetchOfflineFormById(formId) : {};
+      const offlineDraft = DBServiceHelper.constructOfflineDraftData(draft, formId, formData);
+      await this.saveFFDataToIndexedDB("offlineSubmission", offlineDraft?.inputDraft);
+      const activeFormData = {
+        localDraftId: offlineDraft?.inputDraft?.localDraftId,
+        serverDraftId: serverDraftId ?? null
+      };
+      await this.saveFFDataToIndexedDB("activeForm", activeFormData);
+      return offlineDraft?.res;
+    } catch (error) {
+      console.error("Error processing offline draft or application data:", error);
+    }
+  }
+
+  // This will insert either localDraftId alone or (localDraftId, serverDraftId) together
+  public static async insertDataIntoActiveFormTable(
+    data: ActiveForm
+  ): Promise<{ status: string; message?: string }> {
+    try {
+        if (!ffDb) {
+            throw new Error("IndexedDB is not available.");
+        }
+        await ffDb.open();
+
+        // Get reference to the specified table
+        const table = ffDb["activeForm"];
+
+        if (!table) {
+            throw new Error(`Table activeForm not found in IndexedDB.`);
+        }
+
+        // Insert the record into IndexedDB
+        await table.clear();
+        await table.put(data);
+
+        return { status: "success", message: `Data inserted into activeForm successfully.` };
+    } catch (error) {
+        console.error(`Error inserting data into activeForm:`, error);
+        return { status: "failure", message: error.message };
+    }
+  }
+
+  public static async insertDataIntoFormProcessTable(
+    data: FormProcess
+  ): Promise<{ status: string; message?: string }> {
+    try {
+        if (!ffDb) {
+            throw new Error("IndexedDB is not available.");
+        }
+        await ffDb.open();
+
+        // Get reference to the specified table
+        const table = ffDb["formProcesses"];
+
+        if (!table) {
+            throw new Error(`Table formProcesses not found in IndexedDB.`);
+        }
+
+        // Insert the record into IndexedDB
+        await table.put(data);
+
+        return { status: "success", message: `Data inserted into formProcesses successfully.` };
+    } catch (error) {
+        console.error(`Error inserting data into formProcesses:`, error);
+        return { status: "failure", message: error.message };
     }
   }
 
