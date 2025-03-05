@@ -45,6 +45,19 @@ const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t }) =>
   </div>
 );
 
+UserProfile.propTypes = {
+  userDetail: PropTypes.shape({
+    name: PropTypes.string,
+    email: PropTypes.string,
+    preferred_username: PropTypes.string,
+  }).isRequired, 
+  
+  initials: PropTypes.string.isRequired,
+  handleProfileModal: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired, 
+};
+
 const renderLogo = (hideLogo) => {
   if (hideLogo === "true") return null;
 
