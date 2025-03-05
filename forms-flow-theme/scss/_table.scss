@@ -8,6 +8,9 @@ $status-radius: 50%;
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $green-color: var(--ff-green);
+$primary: var(--ff-primary);
+$white-color: var(--ff-white);
+
 
 .custom-tables-wrapper {
   height: auto;
@@ -151,7 +154,11 @@ $green-color: var(--ff-green);
   @extend .status-circle;
   background-color: $gray-medium;
 }
-
+.status-new {
+  @extend .status-circle;
+  background-color: $primary;
+  border: 1px solid $white-color;
+}
 .pagination-text {
   overflow: hidden;
   color: var(--ff-black);

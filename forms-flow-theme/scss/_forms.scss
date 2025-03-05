@@ -576,6 +576,50 @@ select option:hover {
   }
   
 }
+
+.userform-wrapper{
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-200);
+  background-color: $gray-light;
+
+  .user-form-header{
+    .icon-title-container{
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-200);
+
+    }
+    .card-body{
+      padding: 0px !important;
+    }
+    gap: var(--spacer-150);
+    padding: var(--spacer-100) var(--spacer-200);
+    border-radius: var(--radius-md) !important;
+    background-color: $gray-darkest !important;
+    font-size: var(--font-size-sm);
+
+    
+  .user-form-header-text{
+    color: $white;
+    font-weight: var(--font-weight-xl);
+  }
+  .form-modified-date{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: var(--font-weight-sm) !important;
+    color: $white;
+  }
+ }
+  .user-form-container{
+    gap: var(--spacer-100);
+    padding: var(--spacer-200) var(--spacer-225);
+    background-color: $white;
+    border-radius: var(--radius-md) !important;
+  }
+}
+
 //custom switch for sdpr
 .form-check-input[type=checkbox] {
   background-color: #EDEBE9;
