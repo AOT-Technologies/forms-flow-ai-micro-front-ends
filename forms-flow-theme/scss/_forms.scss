@@ -2,6 +2,7 @@
 // Variables for reused values
 $primary: var(--ff-primary);
 $secondary: var(--ff-secondary);
+$danger: var(--ff-danger);
 
 .forms-text {
   vertical-align: bottom;
@@ -253,11 +254,11 @@ select option:hover {
 
   &.is-invalid {
     background-image: none !important;
-    border: 1px solid var(--ff-red-000) !important;
+    border: 1px solid $danger !important;
 
     &:focus {
-      outline: 1px solid var(--ff-red-000) !important;
-      border: 1px solid var(--ff-red-000) !important;
+      outline: 1px solid $danger !important;
+      border: 1px solid $danger !important;
     }
   }
 
@@ -320,7 +321,7 @@ select option:hover {
 
   .custom-feedback {
     display: flex;
-    color: var(--ff-red-000);
+    color: $danger;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
@@ -456,4 +457,45 @@ select option:hover {
 .dashed-line {
   width: 8.8125rem;
   border-top: 0.1875rem dashed var(--ff-gray-300);
+}
+
+//custom switch for sdpr
+.form-check-input[type=checkbox] {
+  background-color: #EDEBE9;
+  border: none;
+  position: relative;
+  transition: all 0.3s ease;
+
+  &:after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border: 2px solid #898785;
+    border-radius: 50%;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+    transition: all 0.2s ease;
+  }
+  &:hover:not(:checked):after {
+    border-color: #353433;
+  }
+  &:checked {
+    background-color: var(--ff-primary);
+    border: none;
+
+    &:after {
+      background-color: white;
+      border-color: var(--ff-primary);
+      left: 100%;
+      transform: translate(-100%, -50%);
+    }
+  }
+
+  &:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 }

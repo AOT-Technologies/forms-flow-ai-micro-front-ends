@@ -1,7 +1,7 @@
 import NavBar from "./Navbar";
 import { BrowserRouter as Router } from "react-router-dom";
 import Sidebar from "./sidenav/Sidebar";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
 import { StyleServices ,HelperServices } from "@formsflow/service"; 
@@ -10,6 +10,17 @@ import PropTypes from "prop-types";
 export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
   const customTitle = StyleServices?.getCSSVariable("--custom-title");
+  const customLogoAlignment =  StyleServices?.getCSSVariable("--custom-logo-horizontal-align");
+  const logoAlignmentClass = useMemo(() => {
+    switch (customLogoAlignment) {
+      case "left":
+        return "justify-content-start";
+      case "right":
+        return "justify-content-end";
+      default:
+        return "justify-content-center";
+    }
+  }, [customLogoAlignment]);
   const headerRef = useRef(null); 
   const sidenavRef = useRef(null); 
   const [sidenavHeight, setSidenavHeight] = useState("100%");
@@ -38,7 +49,7 @@ export default function Root(props) {
       {/* <NavBar props={props} /> */}
       <>
       {hasMultitenancyHeader && (
-          <div ref={headerRef} className="multitenancy-header">
+          <div ref={headerRef} className={`multitenancy-header ${logoAlignmentClass}`}>
             {customLogoPath && (
               <img
                 className="multitenancy-logo"
