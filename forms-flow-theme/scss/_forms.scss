@@ -576,3 +576,44 @@ select option:hover {
   }
   
 }
+//custom switch for sdpr
+.form-check-input[type=checkbox] {
+  background-color: #EDEBE9;
+  border: none;
+  position: relative;
+  transition: all 0.3s ease;
+  
+  &:after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border: 2px solid #898785;
+    border-radius: 50%;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+    transition: all 0.2s ease;
+  }
+  &:hover:not(:checked):after {
+    border-color: #353433;
+  }
+  &:checked {
+    background-color: var(--ff-primary);
+    border: none;
+    
+    &:after {
+      background-color: white;
+      border-color: var(--ff-primary);
+      left: 100%;
+      transform: translate(-100%, -50%);
+    }
+  }
+  
+  &:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+

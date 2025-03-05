@@ -1,7 +1,6 @@
 //New Colors
 $black: #000000;
 $white: #ffffff;
-$danger: #FF4242;
 $green: #57C20A;
 $green-dark: #006621;
 
@@ -58,6 +57,14 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --navbar-active-submenu-bg-color: #{$gray-darkest};
   --navbar-active-submenu-font-color: #{$white};
   --navbar-menu-hover-bg-color: #{$primary-light};
+
+  --navbar-active-submenu-font-weight: var(--font-weight-lg);
+  --navbar-active-submenu-font-size: var(--font-size-sm);
+  --navbar-hover-submenu-bg-color: #{$primary-light};
+  --navbar-hover-submenu-font-color: #{$gray-darkest};
+  --navbar-hover-submenu-font-weight: var(--font-weight-sm);
+  --navbar-hover-submenu-font-size: var(--font-size-sm);
+
   --navbar-main-menu-active-bg-color: #{$gray-medium};
   --navbar-main-menu-active-font-color: #{$gray-darkest};
   --navbar-bg-color: #{$white};
@@ -69,6 +76,10 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --primary-btn-bg-color: #{$primary};
   --secondary-btn-font-color: #{$primary};
   --secondary-btn-bg-color: #{$primary-light};
+  --default-link-color: #{$primary};
+  --sm-btn-border-radius: var(--radius-md);
+  --md-btn-border-radius: var(--radius-md);
+  --lg-btn-border-radius: var(--radius-lg);
   --default-font-size: 1rem; 
   --default-font-color: #{$gray-dark};
   --navbar-width: 192px;
@@ -79,7 +90,9 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --no-code-warning: #{$no-code-warning};
 
   //font-style
-  --primary-font: "Roboto", sans-serif;
+  --default-font-family-url:" ";
+  --default-font-family: "Roboto", sans-serif;
+  --primary-font: var(--default-font-family);
   //font-size
   --font-size-xs: 0.875rem;
   --font-size-sm: var(--default-font-size);
@@ -129,8 +142,11 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   //custom
   --client-nav: 3rem;
   --header-close-btn: 4.625rem;
+  --default-danger-color: #FF4242;
 }
-  
+//for cutomize danger color
+$danger: var(--default-danger-color);
+
 body {
   color: var(--default-font-color) !important; 
   min-height: 100vh !important;
