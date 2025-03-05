@@ -250,29 +250,51 @@ class OfflineSaveService {
     }
   }
 
+  /**
+   * Inserts form process data into the formProcesses table in IndexedDB.
+   * 
+   * @param data - Array of form process objects to insert
+   * @returns A promise that resolves to an object with status and message
+   * @throws Error if IndexedDB is unavailable or insertion fails.
+   */
   public static async insertDataIntoFormProcessTable(
-    data: FormProcess
+    data: FormProcess[]
   ): Promise<{ status: string; message?: string }> {
     try {
-        if (!ffDb) {
-            throw new Error("IndexedDB is not available.");
+      if (!ffDb) {
+        throw new Error("IndexedDB is not available.");
+      }
+      await ffDb.open();
+
+      // Get reference to the specified table
+      const table = ffDb["formProcesses"];
+
+      if (!table) {
+        throw new Error(`Table formProcesses not found in IndexedDB.`);
+      }
+
+      // Validate input
+      if (!Array.isArray(data) || data.length === 0) {
+        throw new Error("Invalid input: data must be a non-empty array");
+      }
+
+      // Validate each form process
+      data.forEach((formProcess, index) => {
+        if (!formProcess || typeof formProcess !== "object") {
+          throw new Error(`Invalid form process at index ${index}`);
         }
-        await ffDb.open();
+      });
 
-        // Get reference to the specified table
-        const table = ffDb["formProcesses"];
+      // Insert all records into IndexedDB
+      await Promise.all(data.map(formProcess => table.put(formProcess)));
 
-        if (!table) {
-            throw new Error(`Table formProcesses not found in IndexedDB.`);
-        }
-
-        // Insert the record into IndexedDB
-        await table.put(data);
-
-        return { status: "success", message: `Data inserted into formProcesses successfully.` };
+      return { 
+        status: "success", 
+        message: `Successfully inserted ${data.length} form processes.` 
+      };
     } catch (error) {
-        console.error(`Error inserting data into formProcesses:`, error);
-        return { status: "failure", message: error.message };
+      console.error(`Error inserting data into formProcesses:`, error);
+      return { status: "failure", message: error.message };
     }
   }
 
