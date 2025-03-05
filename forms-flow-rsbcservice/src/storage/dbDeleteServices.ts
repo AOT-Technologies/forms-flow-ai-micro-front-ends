@@ -1,7 +1,4 @@
-import { ffDb, OfflineSubmission } from "./ffDb";
-import DBServiceHelper from "../helpers/helperDbServices";
-import OfflineFetchService from "./dbFetchServices";
-import OfflineSaveService from "./dbInsertServices";
+import { ffDb } from "./ffDb";
 
 class OfflineDeleteService {
   
