@@ -1,44 +1,81 @@
-// Moves elements to a dedicated print container while keeping track of their original positions.
-export const moveElementsToPrintContainer = (elements: NodeListOf<Element>) => {
-  const printContainer = document.createElement("div");
-  printContainer.id = "print-container";
+// Moves elements to a dedicated print container
+export const moveElementsToPrintContainer = async (
+  elements: NodeListOf<Element>
+) => {
+  let printContainer = document.getElementById("print-container");
+  if (!printContainer) {
+    printContainer = document.createElement("div");
+    printContainer.id = "print-container";
+    document.body.appendChild(printContainer);
+  }
 
-  const originalPositions: {
-    element: HTMLElement;
-    parent: Node;
-    placeholder: HTMLElement;
-  }[] = [];
+  const clonedElements: HTMLElement[] = [];
 
-  elements.forEach((element) => {
+  for (const element of Array.from(elements)) {
     if (element instanceof HTMLElement) {
-      const parent = element.parentNode as Node;
-      const placeholder = document.createElement("span");
-      placeholder.style.display = "none";
-      parent.insertBefore(placeholder, element);
+      const clone = element.cloneNode(true) as HTMLElement;
 
-      originalPositions.push({ element, parent, placeholder });
+      // Convert the <image> inside <svg> to Base64
+      const svgElement = clone.querySelector("svg");
+      if (svgElement) {
+        const imageElement = svgElement.querySelector("image");
+        if (imageElement) {
+          const href = imageElement.getAttribute("href");
+          if (href) {
+            try {
+              const base64Data = await convertImageToBase64(href);
+              imageElement.setAttribute("href", base64Data);
+            } catch (error) {
+              console.error("Error converting image to Base64:", error);
+            }
+          }
+        }
+      }
 
-      printContainer.appendChild(element);
+      clonedElements.push(clone);
+      printContainer.appendChild(clone);
+    }
+  }
+
+  return { printContainer, clonedElements };
+};
+
+export const convertImageToBase64 = (imageUrl: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = imageUrl;
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+
+      if (ctx) {
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      } else {
+        reject(new Error("Canvas context is not available"));
+      }
+    };
+
+    img.onerror = (err) => reject(err);
+  });
+};
+
+// Remove cloned elements from print container after printing
+export const removeElementsFromPrintContainer = (
+  clonedElements: HTMLElement[],
+  printContainer: HTMLElement
+) => {
+  clonedElements.forEach((clone) => {
+    if (clone.parentNode) {
+      clone.parentNode.removeChild(clone);
     }
   });
 
-  document.body.appendChild(printContainer);
-  return { printContainer, originalPositions };
-};
-
-// Restores elements to their original positions after printing.
-export const restoreOriginalPositions = (
-  originalPositions: {
-    element: HTMLElement;
-    parent: Node;
-    placeholder: HTMLElement;
-  }[],
-  printContainer: HTMLElement
-) => {
-  originalPositions.forEach(({ element, parent, placeholder }) => {
-    parent.insertBefore(element, placeholder);
-    parent.removeChild(placeholder);
-  });
-
-  document.body.removeChild(printContainer);
+  if (printContainer.parentNode) {
+    printContainer.parentNode.removeChild(printContainer);
+  }
 };

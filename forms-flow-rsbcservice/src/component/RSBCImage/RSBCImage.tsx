@@ -8,7 +8,7 @@ import { renderToString } from "react-dom/server";
 import PrintConfirmationDialog from "./PrintConfirmationDialog";
 import {
   moveElementsToPrintContainer,
-  restoreOriginalPositions,
+  removeElementsFromPrintContainer,
 } from "./printUtils";
 import _ from "lodash";
 import "./printContainer.scss";
@@ -43,7 +43,7 @@ export default class RSBCImage extends ReactComponent {
   }
 
   static readonly editForm = settingsForm;
-  
+
   private transformedDataCache: any = null;
   private lastData: any = null;
   private lastSettings: any = null;
@@ -54,7 +54,7 @@ export default class RSBCImage extends ReactComponent {
       this.transformedDataCache &&
       _.isEqual(this.data, this.lastData) &&
       _.isEqual(this.component.rsbcImageSettings, this.lastSettings)
-    ) {      
+    ) {
       return this.transformedDataCache;
     }
 
@@ -65,14 +65,14 @@ export default class RSBCImage extends ReactComponent {
     // Compute new transformed data
     this.transformedDataCache = this.component.rsbcImageSettings
       ? this.getOutputJson(this.component.rsbcImageSettings, this.data)
-      : this.data;    
+      : this.data;
     return this.transformedDataCache;
   }
 
   // Maps input data to the settings JSON, transforming it accordingly.
   getOutputJson(settingsJson: any, inputData: any): any {
     try {
-      return _.mapValues(settingsJson, (rule) => {
+      let transformedValues = _.mapValues(settingsJson, (rule) => {
         if (typeof rule === "string") return _.get(inputData, rule, null);
         if (typeof rule === "object") {
           if (rule.mapping) {
@@ -86,14 +86,45 @@ export default class RSBCImage extends ReactComponent {
         }
         return null;
       });
+      // Remove keys from inputData that exist in settingsJson
+      let filteredInputData = _.omit(inputData, Object.keys(settingsJson));
+      return { ...transformedValues, ...filteredInputData };
     } catch (error) {
       console.error("Invalid RSBC Image Settings:", error);
       return {};
     }
   }
 
+  private async showConfirmationDialog(
+    message: string,
+    primaryBtnCaption: string,
+    secondaryBtnCaption: string
+  ) {
+    return new Promise<boolean>((resolve) => {
+      if (document.querySelector(".modal-overlay")) return; // Prevent multiple instances
+
+      const modalContainer = document.createElement("div");
+      document.body.appendChild(modalContainer);
+
+      const handleClose = (result: boolean) => {
+        resolve(result);
+        document.body.removeChild(modalContainer);
+      };
+
+      createRoot(modalContainer).render(
+        <PrintConfirmationDialog
+          message={message}
+          onConfirm={() => handleClose(true)}
+          onCancel={() => handleClose(false)}
+          primaryBtnCaption={primaryBtnCaption}
+          secondaryBtnCaption={secondaryBtnCaption}
+        />
+      );
+    });
+  }
+
   // Manages the print workflow, including a confirmation dialog and form input locking.
-  handlePrint = async (values?: any) => {
+  private handlePrintProcess = async (requireConfirmation: boolean) => {
     const rsbcImages = document.querySelectorAll(".rsbc-image");
 
     if (rsbcImages.length === 0) {
@@ -101,86 +132,66 @@ export default class RSBCImage extends ReactComponent {
       return;
     }
 
-    const showConfirmationDialog = (
-      message: string,
-      primaryBtnCaption: string,
-      secondaryBtnCaption: string
-    ) => {
-      return new Promise<boolean>((resolve) => {
-        if (document.querySelector(".modal-overlay")) return; // Prevent multiple instances
+    if (requireConfirmation && this.component.stage !== "stageTwo") {
+      const proceedToPrint = await this.showConfirmationDialog(
+        "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
+        "Proceed",
+        "Cancel"
+      );
 
-        const modalContainer = document.createElement("div");
-        document.body.appendChild(modalContainer);
-
-        const handleClose = (result: boolean) => {
-          resolve(result);
-          document.body.removeChild(modalContainer);
-        };
-
-        createRoot(modalContainer).render(
-          <PrintConfirmationDialog
-            message={message}
-            onConfirm={() => handleClose(true)}
-            onCancel={() => handleClose(false)}
-            primaryBtnCaption={primaryBtnCaption}
-            secondaryBtnCaption={secondaryBtnCaption}
-          />
+      if (proceedToPrint) {
+        console.log(
+          "User confirmed proceeding to printing step, FormInputs are locked."
         );
-      });
-    };
-
-    const proceedToPrint = await showConfirmationDialog(
-      "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
-      "Proceed",
-      "Cancel"
-    );
-
-    if (proceedToPrint) {
-      console.log(
-        "User confirmed proceeding to printing step, FormInputs are locked."
-      );
-      (this as any).emit("lockFormInput", {
-        data: "YES",
-      });
-    } else {
-      console.log("User cancel proceeding to printing.");
-      (this as any).emit("lockFormInput", {
-        data: "NO",
-      });
-      return;
-    }
-
-    const { printContainer, originalPositions } =
-      moveElementsToPrintContainer(rsbcImages);
-
-    const handleAfterPrint = async () => {
-      window.removeEventListener("afterprint", handleAfterPrint);
-      const userConfirmed = await showConfirmationDialog(
-        "Did it print successfully?",
-        "Yes",
-        "No"
-      );
-      if (userConfirmed) {
-        console.log("User confirmed successful printing.");
-        (this as any).emit("printResponse", {
+        (this as any).emit("lockFormInput", {
           data: "YES",
         });
       } else {
-        console.log("User reported an issue with printing.");
-        (this as any).emit("printResponse", {
+        console.log("User cancel proceeding to printing.");
+        (this as any).emit("lockFormInput", {
           data: "NO",
         });
+        return;
       }
+    }
+
+    const { printContainer, clonedElements } =
+      await moveElementsToPrintContainer(rsbcImages);
+
+    const handleAfterPrint = async () => {
+      window.removeEventListener("afterprint", handleAfterPrint);
+      if (requireConfirmation && this.component.stage !== "stageTwo") {
+        const userConfirmed = await this.showConfirmationDialog(
+          "Did it print successfully?",
+          "Yes",
+          "No"
+        );
+        if (userConfirmed) {
+          console.log("User confirmed successful printing.");
+          (this as any).emit("printResponse", {
+            data: "YES",
+          });
+        } else {
+          console.log("User reported an issue with printing.");
+          (this as any).emit("printResponse", {
+            data: "NO",
+          });
+        }
+      }
+      removeElementsFromPrintContainer(clonedElements, printContainer);
     };
 
     window.addEventListener("afterprint", handleAfterPrint);
 
     window.print();
+  };
 
-    setTimeout(
-      () => restoreOriginalPositions(originalPositions, printContainer),
-      1000
-    );
+  handlePrint = async () => {
+    await this.handlePrintProcess(true);
+  };
+
+  handleSubmissionPrint = async () => {
+    await this.handlePrintProcess(false);
   };
 
   // Renders the RSBC Image component within the given HTML element.
@@ -206,27 +217,10 @@ export default class RSBCImage extends ReactComponent {
         createRoot(element).render(
           <div className="rsbc-image-container">
             {svgComponents.map((svg, index) => (
-              <div key={'rsbc-image-'+index} className="rsbc-image">
+              <div key={"rsbc-image-" + index} className="rsbc-image">
                 {svg}
               </div>
             ))}
-            <button
-              style={{
-                position: "fixed",
-                bottom: "20px",
-                right: "20px",
-                padding: "10px 20px",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                fontSize: "16px",
-              }}
-              onClick={this.handlePrint}
-            >
-              Print
-            </button>
           </div>
         );
       })
@@ -355,8 +349,13 @@ export default class RSBCImage extends ReactComponent {
 
   // Checks if the preview panel of form.io form builder is currently visible.
   isPreviewPanelVisible(): boolean {
-    const previewPanel = document.querySelector<HTMLElement>(".card.panel.preview-panel");
-    return !!previewPanel && previewPanel.offsetHeight > 0 && previewPanel.offsetWidth > 0;
+    const previewPanel = document.querySelector<HTMLElement>(
+      ".card.panel.preview-panel"
+    );
+    return (
+      !!previewPanel &&
+      previewPanel.offsetHeight > 0 &&
+      previewPanel.offsetWidth > 0
+    );
   }
-  
 }

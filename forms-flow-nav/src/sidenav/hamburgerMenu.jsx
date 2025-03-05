@@ -10,6 +10,7 @@ import Sidebar from "./Sidebar";
 // import hamburger from "./hamburger.svg";
 // import closebutton from "./closebutton.svg";
 import { HamburgerIcon, CloseIcon, ApplicationLogo } from "@formsflow/components";
+import { APPLICATION_NAME } from "../constants/constants";
 function HamburgerMenu({ props }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -29,8 +30,16 @@ function HamburgerMenu({ props }) {
           <HamburgerIcon data-testid="hamburger-button" aria-label="hamburger button" color={getComputedStyle(document.documentElement).getPropertyValue("--ff-gray-800")} />
         </button>
         <Navbar.Brand href="" className="mx-auto">
-          {/* <img className="" src={Appname} alt="applicationName" /> */}
-          <ApplicationLogo data-testid="application-logo" />
+          {APPLICATION_NAME === "roadsafety" ? (
+            <img
+              width="160"
+              height="auto"
+              src="/RoadsafteyLogo.png"
+              alt="applicationName"
+            />
+          ) : (
+            <ApplicationLogo data-testid="application-logo" />
+          )}
         </Navbar.Brand>
         <Navbar.Collapse id="basic-navbar-nav" className="order-2">
           <Nav className="me-auto">

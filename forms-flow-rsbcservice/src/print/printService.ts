@@ -1,7 +1,7 @@
 import React, { JSX } from "react";
 import { formsPNG } from "../helpers/helperServices";
 import { SVGprint } from "./svgPrint";
-import DBService from "../storage/dbService";
+import { OfflineFetchService } from "../formsflow-rsbcservices";
 
 interface ComponentSettings {
   stage?: string;
@@ -14,8 +14,8 @@ class PrintServices {
     builderMode: boolean,
     renderStage: string,
     isForSubmissionPayload: boolean
-  ): Promise<JSX.Element[]> {
-    let impoundLotOperators = await DBService.fetchStaticDataFromTable(
+  ): Promise<JSX.Element[]> {    
+    let impoundLotOperators = await OfflineFetchService.fetchStaticDataFromTable(
       "impoundLotOperators"
     );
 
