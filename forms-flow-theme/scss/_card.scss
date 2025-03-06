@@ -236,3 +236,10 @@ $gray-darkest: var(--ff-gray-darkest);
   line-height: var(--text-line-height);
 }
 
+
+.form-submission-button{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--spacer-100);
+}
