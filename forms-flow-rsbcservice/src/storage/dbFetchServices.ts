@@ -418,7 +418,12 @@ class OfflineFetchService {
         }
 
         // Fetch drafts by type      
-        const drafts = await offlineSubmissions.where("type").equals("draft").toArray();
+        const drafts = await offlineSubmissions
+          .where("type")
+          .equals("draft")
+          .toArray();
+        drafts.sort((a, b) => (b.modified > a.modified ? 1 : -1));
+
         const transformedDrafts = DBServiceHelper.tranformOfflineDrafts(drafts);
         if (!transformedDrafts) {
           console.log("No draft records found.");
