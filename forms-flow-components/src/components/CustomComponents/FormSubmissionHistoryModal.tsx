@@ -49,7 +49,7 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
       <Modal
         show={show}
         onHide={onClose}
-        dialogClassName="modal-50w"
+        dialogClassName="form-submission-history-modal"
         data-testid="form-history-modal"
         aria-labelledby="form-history-modal-title"
         aria-describedby="form-history-modal-message"
