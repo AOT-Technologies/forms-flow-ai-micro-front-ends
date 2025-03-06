@@ -34,6 +34,7 @@ import Keycloak, {
       silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
       pkceMethod: "S256",
       checkLoginIframe: false,
+      scope: "openid offline_access"
     };
   
     private login(): void {

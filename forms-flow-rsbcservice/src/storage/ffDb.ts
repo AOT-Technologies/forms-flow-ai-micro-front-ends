@@ -196,7 +196,7 @@ class FormsFlowDB extends Dexie {
       formDefinitionList: "id, formId, formName, formType, processKey, modified",
       applications: "id, modified, formId, submissionId",
       drafts: "id, applicationId, formId",
-      offlineSubmissions: "_id, formId, localSubmissionId, localDraftId, type",
+      offlineSubmissions: "_id, formId, localSubmissionId, localDraftId, type, modified",
       formDefinitions: "_id, title, name, path, type, created, modified, machineName, parentFormId",
       activeForm: "localDraftId, serverDraftId",
       formProcesses: "formId, formName"
