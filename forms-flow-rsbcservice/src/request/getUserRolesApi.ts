@@ -7,7 +7,7 @@ export const getUserRoles = async (
   callback: any,
   errorHandler: any
 ) => {
-  const url = API.GET_USER_ROLES;
+  const url = API.GET_ROLES;
   const headers = await createRequestHeader({"Authorization":"Bearer "+keycloak.token});
   RequestService.httpGETRequest(url, null, null, true, headers)
     .then((res: any) => {

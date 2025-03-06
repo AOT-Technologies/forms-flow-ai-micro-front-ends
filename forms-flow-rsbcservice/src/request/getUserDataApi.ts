@@ -7,7 +7,7 @@ export const getUserData = async (
   callback: any,
   errorHandler: any
 ) => {
-  const url = API.GET_USER_DATA.replace("<user_id>", userId);
+  const url = API.GET_USER.replace("<user_id>", userId);
   const headers = await createRequestHeader();
   RequestService.httpGETRequest(url, null, null, true, headers)
     .then((res: any) => {

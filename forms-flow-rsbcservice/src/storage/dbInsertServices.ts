@@ -6,6 +6,8 @@ import { StaticResources } from "../constants/constants";
 import OfflineFetchService from "./dbFetchServices";
 import DBServiceHelper from "../helpers/helperDbServices";
 import { fetchFormIDs } from "../request/formIdApi";
+import { getUserData } from "../request/getUserDataApi";
+import { getUserRoles } from "../request/getUserRolesApi";
 import { REACT_APP_FORM_ID_12HOUR_LIMIT, REACT_APP_FORM_ID_24HOUR_LIMIT, REACT_APP_FORM_ID_VI_LIMIT } from "./config";
 
 class OfflineSaveService {
@@ -88,6 +90,16 @@ class OfflineSaveService {
           await rsbcDb.jurisdictionCountry.bulkPut(data);
           console.log("Jurisdiction Country data saved to IndexedDB.");
           break;
+        case "user":
+          await rsbcDb.user.clear();
+          await rsbcDb.user.put(data);
+          console.log("User data saved to IndexedDB.");
+          break;
+        case "userRoles":
+          await rsbcDb.userRoles.clear();
+          await rsbcDb.userRoles.bulkPut(data);
+          console.log("User roles saved to IndexedDB.");
+          break;  
         default:
           console.log(`No matching table found for resource: ${resourceName}`);
       }
@@ -180,6 +192,39 @@ class OfflineSaveService {
       console.error(`Error saving ${resourceName} to IndexedDB:`, error);
     }
   }  
+
+  /**
+   * Fetches user data and roles from API and saves it to IndexedDB.
+   */
+  public static async fetchAndSaveUserDataAndRoles(
+    keycloak: any
+  ): Promise<void> {
+    // get user data
+    if (keycloak.authenticated && keycloak.tokenParsed) {
+      let userId = null;
+      if (keycloak.tokenParsed.identity_provider === "idir") {
+        userId = keycloak.tokenParsed.idir_user_guid;
+      } else if (keycloak.tokenParsed.identity_provider === "bceid") {
+        userId = keycloak.tokenParsed.bceid_user_guid;
+      } else {
+        userId = keycloak.tokenParsed.bceid_user_guid;
+        //userId = keycloak.tokenParsed.sub; //--> for testing with non BCGov Keycloak
+      }
+      if (userId !== null && userId !== undefined) {
+        await getUserData(
+          userId,
+          (data: any) => this.saveRSBCDataToIndexedDB("user", data),
+          (error: any) => handleError(error)
+        );
+      }
+    }
+    // get user roles
+    await getUserRoles(
+      keycloak,
+      (data: any) => this.saveRSBCDataToIndexedDB("userRoles", data),
+      (error: any) => handleError(error)
+    );
+  }
   
   /**
    * Inserts submission data into IndexedDB.
