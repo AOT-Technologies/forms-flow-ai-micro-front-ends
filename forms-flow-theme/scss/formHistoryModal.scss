@@ -2,9 +2,7 @@ $gray-medium: var(--ff-gray-medium);
 $primary: var(--ff-primary);
 $white-color: var(--ff-white);
 $gray-darkest: var(--ff-gray-darkest);
-.modal-50w {
-  width: 40% !important;
-  max-width: 40% !important;
+.form-submission-history-modal {
   margin: var(--spacer-150) auto !important;
 
   .form-history-modal-body {
