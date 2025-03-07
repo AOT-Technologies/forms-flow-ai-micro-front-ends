@@ -22,7 +22,7 @@ const Review = React.memo((props: any) => {
   const { tenantId } = useParams();
   const [instance, setInstance] = useState(props.getKcInstance());
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
-  const [isReviewer, setReviewer] = useState(false);
+  const [isReviewer, setIsReviewer] = useState(false);
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const Review = React.memo((props: any) => {
     if (!isAuth) return
     const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
     if (roles.some((role: any) => authorizedRoles.has(role))) {
-      setReviewer(true);
+      setIsReviewer(true);
     }
     const locale = localStorage.getItem("i18nextLng")
     if (locale) i18n.changeLanguage(locale);
