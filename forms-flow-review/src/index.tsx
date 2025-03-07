@@ -11,8 +11,6 @@ import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/Loading";
 import TaskList from "./Routes/TaskListing/List";
-import { useDispatch } from "react-redux";
-import { setTasks } from "./actions/taskActions";
 const authorizedRoles = new Set(["view_tasks",
   "manage_all_filters",
   "manage_tasks",
@@ -25,7 +23,6 @@ const Review = React.memo((props: any) => {
   const [instance, setInstance] = useState(props.getKcInstance());
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
   const [isReviewer, setReviewer] = useState(false);
-  const dispatch = useDispatch();
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
   useEffect(() => {
