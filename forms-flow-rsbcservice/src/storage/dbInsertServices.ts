@@ -207,8 +207,7 @@ class OfflineSaveService {
       } else if (keycloak.tokenParsed.identity_provider === "bceid") {
         userId = keycloak.tokenParsed.bceid_user_guid;
       } else {
-        userId = keycloak.tokenParsed.bceid_user_guid;
-        //userId = keycloak.tokenParsed.sub; //--> for testing with non BCGov Keycloak
+        userId = keycloak.tokenParsed.sub; // for non BCGov Keycloak
       }
       if (userId !== null && userId !== undefined) {
         await getUserData(
