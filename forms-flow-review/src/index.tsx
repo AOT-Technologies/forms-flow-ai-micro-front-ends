@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Route, Switch, Redirect, useParams } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
@@ -20,7 +20,7 @@ const authorizedRoles = new Set(["view_tasks",
 const Review = React.memo((props: any) => {
   const { publish, subscribe } = props;
   const { tenantId } = useParams();
-  const [instance, _] = useState(props.getKcInstance());
+  const instance = useMemo(()=>props.getKcInstance(),[]);
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
   const [isReviewer, setIsReviewer] = useState(false);
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
