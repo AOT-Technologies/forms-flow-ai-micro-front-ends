@@ -1,44 +1,46 @@
-import React, { useState } from "react";
-import { Route, Switch, Redirect, useHistory, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Route, Switch, Redirect, useParams } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
-} from "./endpoints/config"; 
+} from "./api/config"; 
 import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/Loading";
 import TaskList from "./Routes/TaskListing/List";
+import { useDispatch } from "react-redux";
+import { setTasks } from "./actions/taskActions";
 const authorizedRoles = new Set(["view_tasks",
   "manage_all_filters",
   "manage_tasks",
   "view_filters",
   "create_filters",])
 
-const Review = React.memo(({ props }: any) => {
+const Review = React.memo((props: any) => {
   const { publish, subscribe } = props;
-  const history = useHistory();
   const { tenantId } = useParams();
-  const [instance, setInstance] = React.useState(props.getKcInstance());
-  const [isAuth, setIsAuth] = React.useState(instance?.isAuthenticated());
-  const [isReviewer, setReviewer] = React.useState(false);
- 
+  const [instance, setInstance] = useState(props.getKcInstance());
+  const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
+  const [isReviewer, setReviewer] = useState(false);
+  const dispatch = useDispatch();
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
-  React.useEffect(() => {
+  useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}review` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     })
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     StorageService.save("tenantKey", tenantId || '')
   }, [tenantId])
+  
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAuth) {
 
       let instance = KeycloakService.getInstance(
@@ -53,7 +55,7 @@ const Review = React.memo(({ props }: any) => {
       });
     }
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAuth) return
     const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
     if (roles.some((role: any) => authorizedRoles.has(role))) {

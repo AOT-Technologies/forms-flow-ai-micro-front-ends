@@ -52,13 +52,18 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.6.0",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
+    "connected-react-router": "^6.9.3",
+    "history": "^4.7.2",
     "i18next-browser-languagedetector": "^8.0.4",
     "react-i18next": "^12.1.4",
-    "react-router-dom": "5.1.2", 
+    "react-redux": "^7.2.8",
+    "react-router-dom": "5.1.2",
+    "redux-logger": "^3.0.6",
     "single-spa": "^5.9.3",
     "single-spa-react": "^4.3.1"
   },
