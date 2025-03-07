@@ -460,11 +460,12 @@ select option:hover {
 }
 
 //custom switch for sdpr
-.form-check-input[type=checkbox] {
-  background-color: #EDEBE9;
-  border: none;
+.custom-switch-checkbox {
+  background-color: #EDEBE9 !important;
+  border: none !important;
   position: relative;
   transition: all 0.3s ease;
+  cursor: pointer;
 
   &:after {
     content: '';
@@ -483,7 +484,7 @@ select option:hover {
     border-color: #353433;
   }
   &:checked {
-    background-color: var(--ff-primary);
+    background-color: var(--ff-primary) !important;
     border: none;
 
     &:after {

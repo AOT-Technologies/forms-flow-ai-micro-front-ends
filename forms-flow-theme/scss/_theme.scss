@@ -138,9 +138,9 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --secondary-btn-hover-bg-color: #{$base-200};
 
   --default-link-color: #{$primary};
-  --sm-btn-border-radius: var(--radius-md);
-  --md-btn-border-radius: var(--radius-md);
-  --lg-btn-border-radius: var(--radius-lg);
+  --sm-btn-border-radius: var(--radius-0100);
+  --md-btn-border-radius: var(--radius-0125);
+  --lg-btn-border-radius: var(--radius-0150);
 
   --default-font-size: 1rem; 
   --default-font-color: #{$gray-800};
