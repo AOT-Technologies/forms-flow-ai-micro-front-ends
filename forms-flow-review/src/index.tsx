@@ -20,7 +20,7 @@ const authorizedRoles = new Set(["view_tasks",
 const Review = React.memo((props: any) => {
   const { publish, subscribe } = props;
   const { tenantId } = useParams();
-  const [instance, setInstance] = useState(props.getKcInstance());
+  const [instance, _] = useState(props.getKcInstance());
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
   const [isReviewer, setIsReviewer] = useState(false);
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
