@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Route, Switch, Redirect, useHistory, useParams } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Route, Switch, Redirect, useParams } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
-} from "./endpoints/config"; 
+} from "./api/config"; 
 import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
@@ -17,28 +17,27 @@ const authorizedRoles = new Set(["view_tasks",
   "view_filters",
   "create_filters",])
 
-const Review = React.memo(({ props }: any) => {
+const Review = React.memo((props: any) => {
   const { publish, subscribe } = props;
-  const history = useHistory();
   const { tenantId } = useParams();
-  const [instance, setInstance] = React.useState(props.getKcInstance());
-  const [isAuth, setIsAuth] = React.useState(instance?.isAuthenticated());
-  const [isReviewer, setReviewer] = React.useState(false);
- 
+  const instance = useMemo(()=>props.getKcInstance(),[]);
+  const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
+  const [isReviewer, setIsReviewer] = useState(false);
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
-  React.useEffect(() => {
+  useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}review` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     })
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     StorageService.save("tenantKey", tenantId || '')
   }, [tenantId])
+  
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAuth) {
 
       let instance = KeycloakService.getInstance(
@@ -53,11 +52,11 @@ const Review = React.memo(({ props }: any) => {
       });
     }
   }, []);
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAuth) return
     const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
     if (roles.some((role: any) => authorizedRoles.has(role))) {
-      setReviewer(true);
+      setIsReviewer(true);
     }
     const locale = localStorage.getItem("i18nextLng")
     if (locale) i18n.changeLanguage(locale);
