@@ -3,12 +3,12 @@ import API from "../endpoints/index";
 import { createRequestHeader } from "./requestHeaders";
 
 export const getUserRoles = async (
-  keycloak:any,
+  authToken:string,
   callback: any,
   errorHandler: any
 ) => {
   const url = API.GET_ROLES;
-  const headers = await createRequestHeader({"Authorization":"Bearer "+keycloak.token});
+  const headers = await createRequestHeader({"Authorization":"Bearer "+authToken});
   RequestService.httpGETRequest(url, null, null, true, headers)
     .then((res: any) => {
       if (res.data) {

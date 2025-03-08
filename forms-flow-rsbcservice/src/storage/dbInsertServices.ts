@@ -196,30 +196,29 @@ class OfflineSaveService {
   /**
    * Fetches user data and roles from API and saves it to IndexedDB.
    */
-  public static async fetchAndSaveUserDataAndRoles(
-    keycloak: any
-  ): Promise<void> {
+  public static async fetchAndSaveUserDataAndRoles(): Promise<void> {
     // get user data
-    if (keycloak.authenticated && keycloak.tokenParsed) {
-      let userId = null;
-      if (keycloak.tokenParsed.identity_provider === "idir") {
-        userId = keycloak.tokenParsed.idir_user_guid;
-      } else if (keycloak.tokenParsed.identity_provider === "bceid") {
-        userId = keycloak.tokenParsed.bceid_user_guid;
-      } else {
-        userId = keycloak.tokenParsed.sub; // for non BCGov Keycloak
-      }
-      if (userId !== null && userId !== undefined) {
-        await getUserData(
-          userId,
-          (data: any) => this.saveRSBCDataToIndexedDB("user", data),
-          (error: any) => handleError(error)
-        );
-      }
+    const userDetails = DBServiceHelper.getUserDetails();
+    
+    let userId = null;
+    if (userDetails?.identity_provider === "idir") {
+      userId = userDetails.idir_user_guid;
+    } else if (userDetails?.identity_provider === "bceid") {
+      userId = userDetails.bceid_user_guid;
+    } else {
+      userId = userDetails.sub; // for non BCGov Keycloak
     }
+    if (userId !== null && userId !== undefined) {
+      await getUserData(
+        userId,
+        (data: any) => this.saveRSBCDataToIndexedDB("user", data),
+        (error: any) => handleError(error)
+      );
+    }
+    
     // get user roles
     await getUserRoles(
-      keycloak,
+      DBServiceHelper.getAuthorizationToken(),
       (data: any) => this.saveRSBCDataToIndexedDB("userRoles", data),
       (error: any) => handleError(error)
     );
