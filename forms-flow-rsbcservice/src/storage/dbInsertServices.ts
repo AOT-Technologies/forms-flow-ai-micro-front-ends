@@ -208,7 +208,7 @@ class OfflineSaveService {
     } else {
       userId = userDetails.sub; // for non BCGov Keycloak
     }
-    if (userId !== null && userId !== undefined) {
+    if (userId) {
       await getUserData(
         userId,
         (data: any) => this.saveRSBCDataToIndexedDB("user", data),
