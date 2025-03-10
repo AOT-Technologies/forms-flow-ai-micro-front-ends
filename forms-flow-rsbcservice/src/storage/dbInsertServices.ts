@@ -293,29 +293,43 @@ class OfflineSaveService {
     }
   }
 
+  /**
+   * Inserts form process data into the formProcesses table in IndexedDB.
+   * 
+   * @param data - Array of form process objects to insert
+   * @returns A promise that resolves to an object with status and message
+   * @throws Error if IndexedDB is unavailable or insertion fails.
+   */
   public static async insertDataIntoFormProcessTable(
-    data: FormProcess
+    data: FormProcess[]
   ): Promise<{ status: string; message?: string }> {
     try {
-        if (!ffDb) {
-            throw new Error("IndexedDB is not available.");
-        }
-        await ffDb.open();
+      if (!ffDb) {
+        throw new Error("IndexedDB is not available.");
+      }
+      await ffDb.open();
 
-        // Get reference to the specified table
-        const table = ffDb["formProcesses"];
+      // Get reference to the specified table
+      const table = ffDb["formProcesses"];
 
-        if (!table) {
-            throw new Error(`Table formProcesses not found in IndexedDB.`);
-        }
+      if (!table) {
+        throw new Error(`Table formProcesses not found in IndexedDB.`);
+      }
 
-        // Insert the record into IndexedDB
-        await table.put(data);
+      // Validate input
+      if (!Array.isArray(data) || data.length === 0) {
+        throw new Error("Invalid input: data must be a non-empty array");
+      }
 
-        return { status: "success", message: `Data inserted into formProcesses successfully.` };
+      await table.bulkPut(data);
+
+      return { 
+        status: "success", 
+        message: `Successfully inserted ${data.length} form processes.` 
+      };
     } catch (error) {
-        console.error(`Error inserting data into formProcesses:`, error);
-        return { status: "failure", message: error.message };
+      console.error(`Error inserting data into formProcesses:`, error);
+      return { status: "failure", message: error.message };
     }
   }
 
