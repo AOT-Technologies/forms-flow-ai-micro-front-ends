@@ -1,5 +1,6 @@
 // Variables for reused values
 $secondary: var(--ff-secondary);
+$danger: var(--ff-danger);
 .ai-modal {
   .modal-dialog {
     margin-top: 2.5vh !important;
@@ -151,7 +152,7 @@ $secondary: var(--ff-secondary);
     }
 
     .danger-message {
-      color: var(--ff-red-000);
+      color: $danger;
     }
 
     .form-container {

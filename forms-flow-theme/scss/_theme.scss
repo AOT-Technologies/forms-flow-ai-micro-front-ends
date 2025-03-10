@@ -4,7 +4,6 @@ $base: hsl(233, 90%, 55%);
 $gray: hsl(199, 5%, 40%);
 $black: hsl(0, 0%, 0%);
 $white: hsl(0, 0%, 100%);
-$red-000: hsl(0, 100%, 63%);
 $live: hsl(95, 90%, 40%);
 
 @function set-lightness($color, $target-lightness) {
@@ -40,7 +39,6 @@ $gray-000: set-lightness($gray, 95%);
 $primary : $base-600;
 $secondary : $base-100; 
 $success: #198754;
-$danger: #dc3545;
 $dark: #000000;
 $gray: #232323;
 $info: #008599;
@@ -99,7 +97,6 @@ $custom-colors: (
   "black": $black,
   "white": $white,
   "live": $live,
-  "red-000": $red-000,
   //old colors - to be removed.
   "primary-100": tint-color($primary, 95%),
   "primary-200": tint-color($primary, 60%),
@@ -108,8 +105,6 @@ $custom-colors: (
   "primary-500": shade-color($primary, 10%),
   "primary-600": shade-color($primary, 40%),
   "primary-700": shade-color($primary, 60%),
-  "danger-200": tint-color($danger, 80%),
-  "danger-400": tint-color($danger, 40%),
   "success-200": tint-color($success, 85%),
   "alert-200": tint-color($alert, 80%),
   "alert-400": tint-color($alert, 55%),
@@ -122,6 +117,14 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --navbar-active-submenu-bg-color: #{$gray-800};
   --navbar-active-submenu-font-color: #{$white};
   --navbar-menu-hover-bg-color: #{$base-100};
+
+  --navbar-active-submenu-font-weight: var(--font-weight-lg);
+  --navbar-active-submenu-font-size: var(--font-size-sm);
+  --navbar-hover-submenu-bg-color: #{$base-100};
+  --navbar-hover-submenu-font-color: #{$gray-800};
+  --navbar-hover-submenu-font-weight: var(--font-weight-sm);
+  --navbar-hover-submenu-font-size: var(--font-size-sm);
+
   --navbar-main-menu-active-bg-color: #{$gray-100};
   --navbar-main-menu-active-font-color: #{$gray-800};
   --navbar-bg-color: #{$white};
@@ -133,11 +136,19 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --secondary-btn-font-color: #{$base-600};
   --secondary-btn-bg-color: #{$base-100};
   --secondary-btn-hover-bg-color: #{$base-200};
+
+  --default-link-color: #{$primary};
+  --sm-btn-border-radius: var(--radius-0100);
+  --md-btn-border-radius: var(--radius-0125);
+  --lg-btn-border-radius: var(--radius-0150);
+
   --default-font-size: 1rem; 
   --default-font-color: #{$gray-800};
   --navbar-width: 192px;
   //font-style
-  --primary-font: "Roboto", sans-serif;
+  --default-font-family-url:" ";
+  --default-font-family: "Roboto", sans-serif;
+  --primary-font: var(--default-font-family);
   //font-size
   --font-size-xs: 0.875rem;
   --font-size-sm: var(--default-font-size);
@@ -190,8 +201,12 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   //custom
   --client-nav: 3rem;
   --header-close-btn: 4.625rem;
+  //custom danger 
+  --default-danger-color: #dc3545;
 }
-  
+
+$danger: --default-danger-color;
+
 body {
   color: var(--default-font-color) !important; 
   min-height: 100vh !important;
@@ -200,7 +215,7 @@ body {
 }
 
 .info-background {
-  background-color: var(--ff-danger-200);
+  background-color: var(--ff-danger);
 }
 
 .custom_primary_color {

@@ -14,7 +14,7 @@ import {
   ENABLE_INTEGRATION_PREMIUM,
   IS_ENTERPRISE
 } from "../constants/constants";
-import { StorageService } from "@formsflow/service";
+import { StorageService, StyleServices} from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
 import { fetchTenantDetails } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
@@ -25,6 +25,48 @@ import MenuComponent from "./MenuComponent";
 import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
+
+const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t }) => (
+  <div className="user-container">
+    <button className="button-as-div justify-content-start m-2" onClick={handleProfileModal}>
+      <div className="user-icon cursor-pointer" data-testid="user-icon">
+        {initials}
+      </div>
+      <div>
+        <p className="user-name" data-testid="user-name">{userDetail?.name}</p>
+        <p className="user-email" data-testid="user-email">
+          {userDetail?.email || userDetail?.preferred_username}
+        </p>
+      </div>
+    </button>
+    <button className="button-as-div sign-out-button" onClick={logout} data-testid="sign-out-button">
+      <p className="m-0">{t("Sign Out")}</p>
+    </button>
+  </div>
+);
+
+UserProfile.propTypes = {
+  userDetail: PropTypes.shape({
+    name: PropTypes.string,
+    email: PropTypes.string,
+    preferred_username: PropTypes.string,
+  }).isRequired, 
+
+  initials: PropTypes.string.isRequired,
+  handleProfileModal: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  t: PropTypes.func.isRequired, 
+};
+
+const renderLogo = (hideLogo) => {
+  if (hideLogo === "true") return null;
+
+  return (
+    <div className="logo-container">
+      <ApplicationLogo data-testid="application-logo" />
+    </div>
+  );
+};
 
 const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
@@ -71,6 +113,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
   const [activeKey,setActiveKey] = useState(0);
+  const hideLogo =  StyleServices?.getCSSVariable("--hide-formsflow-logo");
 
   const getInitials = (name) => {
     if (!name) return "";
@@ -237,15 +280,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
   return (
       <div className="sidenav" style={{ height: sidenavHeight }}>
-        <div className="logo-container">
-          {/* <img
-            className=""
-            src={Appname}
-            alt="applicationName"
-            data-testid="app-logo"
-          /> */}
-          <ApplicationLogo data-testid="application-logo" />
-        </div>
+      {renderLogo(hideLogo)} 
         <div className="options-container" data-testid="options-container">
           <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
             {ENABLE_FORMS_MODULE &&
@@ -365,30 +400,14 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             )}
           </Accordion>
         </div>
-        {isAuthenticated && (<div className="user-container">
-          <button className="button-as-div justify-content-start m-2" onClick={handleProfileModal}>
-            <div className="user-icon cursor-pointer" data-testid="user-icon">
-              {initials}
-            </div>
-            <div>
-            <p
-                className="user-name"
-                data-testid="user-name"              >
-                {userDetail?.name}
-              </p>
-              <p className="user-email" data-testid="user-email">
-                  {userDetail?.email || userDetail?.preferred_username}
-              </p>
-            </div>
-          </button>
-          <div
-            className="sign-out-button"
-            onClick={logout}
-            data-testid="sign-out-button"
-          >
-            <p className="m-0">{t("Sign Out")}</p>
-          </div>
-        </div>)}
+        {isAuthenticated && (        
+        <UserProfile 
+        userDetail={userDetail}
+        initials={initials}
+        handleProfileModal={handleProfileModal}
+        logout={logout}
+        t={t}
+        />)}
         {
           showProfile && <ProfileSettingsModal 
           show={showProfile}  
