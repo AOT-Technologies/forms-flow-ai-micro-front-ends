@@ -1,6 +1,6 @@
 import "./Sidebar.scss";
 import Accordion from "react-bootstrap/Accordion";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory ,useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -12,7 +12,8 @@ import {
   ENABLE_APPLICATIONS_MODULE,
   ENABLE_TASKS_MODULE,
   ENABLE_INTEGRATION_PREMIUM,
-  IS_ENTERPRISE
+  IS_ENTERPRISE,
+  USER_NAME_DISPLAY_CLAIM
 } from "../constants/constants";
 import { StorageService } from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
@@ -79,7 +80,16 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     return initials.substring(0, 2).toUpperCase(); // Get the first two initials
   };
 
-  const userName = userDetail?.name || userDetail?.preferred_username || "";
+ 
+  // fetch the username form the user details
+  const userName = useMemo(()=>{
+    const value = userDetail[USER_NAME_DISPLAY_CLAIM] || userDetail?.name || userDetail?.preferred_username || "";
+    if(Array.isArray(value)){
+      return value.length > 0 ? value[0] : "";
+    }
+    return value;
+  },[userDetail]);
+
   const initials = getInitials(userName);
 
   React.useEffect(() => {
