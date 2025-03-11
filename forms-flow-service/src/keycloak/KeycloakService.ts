@@ -117,8 +117,9 @@ import Keycloak, {
         .then((authenticated) => {
           if (authenticated) {
             console.log("Authenticated");
-            if (!!this.kc?.resourceAccess) {
-              const UserRoles = this.kc?.resourceAccess[this.kc.clientId!]?.roles;
+            const tokenParsed = this.kc.tokenParsed || {};
+            const UserRoles = tokenParsed.roles || tokenParsed.role || tokenParsed.client_roles || [];
+            if (UserRoles.length > 0) {
               if(!UserRoles){
                 callback(false);
               }
