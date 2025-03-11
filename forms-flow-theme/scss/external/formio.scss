@@ -119,7 +119,6 @@ $secondary: var(--ff-secondary);
     .card-vertical{
       display: flex;
       flex-direction: row;
-      margin-top: 5px;
       .card-header{
         min-height: fit-content !important;
         border-bottom: none !important;
