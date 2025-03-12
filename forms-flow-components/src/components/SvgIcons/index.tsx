@@ -766,16 +766,16 @@ export const ConnectIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M5 1L5 9"
       stroke= {color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M1 5L9 5"
       stroke= {color}
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
