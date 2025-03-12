@@ -753,21 +753,6 @@ export const SortIcon = ({ color = grayColor, ...props }) => (
       strokeLinejoin="round"
     />
   </svg>
-<<<<<<< Updated upstream
-);
-
-export const ConnectIcon = ({ color = baseColor, ...props }) => (
-  <svg
-    width="10"
-    height="10"
-    viewBox="0 0 10 10"
-    fill= {color}
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M5 1L5 9"
-      stroke= {color}
-=======
 ); 
 
 export const RightFarIcon = ({ color = baseColor, ...props }) => (
@@ -782,16 +767,11 @@ export const RightFarIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M3 12L7 7.99982L3.00036 4"
       stroke={color}
->>>>>>> Stashed changes
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
-<<<<<<< Updated upstream
-      d="M1 5L9 5"
-      stroke= {color}
-=======
       d="M9 12L13 7.99982L9.00036 4"
       stroke={color}
       strokeWidth="2"
@@ -836,7 +816,6 @@ export const UpArrowIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M14.5003 8.25034L8.00028 1.74976L1.49969 8.24976"
       stroke={color}
->>>>>>> Stashed changes
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
