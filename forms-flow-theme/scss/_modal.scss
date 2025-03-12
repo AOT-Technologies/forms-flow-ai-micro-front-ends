@@ -7,6 +7,7 @@ $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $black-color: var(--ff-black);
 
+
 .modal {
   .modal-dialog {
     display: flex;
@@ -989,3 +990,53 @@ $black-color: var(--ff-black);
   padding: 0.1875rem;
   border-radius: var(--radius-sm); /* Optional: Add some rounding */
 } 
+.drag-drop-container {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacer-200) var(--spacer-225);
+  gap: var(--spacer-150);
+
+  .draggable-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacer-100);
+    min-height: 2.625rem;
+    border-radius: var(--radius-sm);
+      padding: 0px var(--spacer-050) ;
+      transition: 
+        transform 3s cubic-bezier(0.25, 1, 0.5, 1), 
+        background-color 3s ease-in-out, 
+        opacity 3s ease-in-out, 
+        box-shadow 3s ease-in-out;
+
+    .draggable-icon {
+      cursor: grab;
+    }
+
+    .hover-buttons {
+      display: none;
+      gap: var(--spacer-050);
+    }
+
+    &:hover {
+      .hover-buttons {
+        display: flex;
+      }
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &.dragging {
+      background-color: $gray-medium;
+      transform: scale(1.03); 
+    }
+  }
+}
+
+.dotted-line {
+  flex-grow: 1;
+  border-bottom: 1px dashed $gray-medium;
+}
