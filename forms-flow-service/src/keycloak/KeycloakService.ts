@@ -117,9 +117,9 @@ import Keycloak, {
         .then((authenticated) => {
           if (authenticated) {
             console.log("Authenticated");
-            const tokenParsed = this.kc.tokenParsed || {};
-            const UserRoles = tokenParsed.roles || tokenParsed.role || tokenParsed.client_roles || [];
-            if (UserRoles.length > 0) {
+            const tokenParsed = this.kc.tokenParsed;
+            if(tokenParsed){
+              const UserRoles = tokenParsed.roles || tokenParsed.role || tokenParsed.client_roles;
               if(!UserRoles){
                 callback(false);
               }
@@ -138,10 +138,10 @@ import Keycloak, {
               });
               this.refreshToken();
               }
-            }
-              else {
+            }else{
               this.logout();
             }
+ 
           } else {
             console.warn("not authenticated!");
             this.login();
