@@ -753,6 +753,7 @@ export const SortIcon = ({ color = grayColor, ...props }) => (
       strokeLinejoin="round"
     />
   </svg>
+<<<<<<< Updated upstream
 );
 
 export const ConnectIcon = ({ color = baseColor, ...props }) => (
@@ -766,13 +767,76 @@ export const ConnectIcon = ({ color = baseColor, ...props }) => (
     <path
       d="M5 1L5 9"
       stroke= {color}
+=======
+); 
+
+export const RightFarIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    {...props}
+  >
+    <path
+      d="M3 12L7 7.99982L3.00036 4"
+      stroke={color}
+>>>>>>> Stashed changes
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
     <path
+<<<<<<< Updated upstream
       d="M1 5L9 5"
       stroke= {color}
+=======
+      d="M9 12L13 7.99982L9.00036 4"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+export const LeftFarIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    {...props}
+  >
+    <path
+      d="M13 12L9 8L12.9996 4"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M7 12L3 8L6.99964 4"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+export const UpArrowIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="10"
+    viewBox="0 0 16 10"
+    fill="none"
+  >
+    <path
+      d="M14.5003 8.25034L8.00028 1.74976L1.49969 8.24976"
+      stroke={color}
+>>>>>>> Stashed changes
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
