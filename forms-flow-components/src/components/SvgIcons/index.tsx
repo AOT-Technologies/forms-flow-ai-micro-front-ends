@@ -753,4 +753,29 @@ export const SortIcon = ({ color = grayColor, ...props }) => (
       strokeLinejoin="round"
     />
   </svg>
-); 
+);
+
+export const ConnectIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    width="10"
+    height="10"
+    viewBox="0 0 10 10"
+    fill= {color}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M5 1L5 9"
+      stroke= {color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M1 5L9 5"
+      stroke= {color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

@@ -343,6 +343,13 @@ $danger-color: var(--ff-danger);
   }
 }
 
+.application-search-box {
+  width: 20rem !important;
+}
+.appliation-dropdown {
+  width: 15rem !important;
+}
+
 .default-arrow {
   &::after {
     display: none !important;
