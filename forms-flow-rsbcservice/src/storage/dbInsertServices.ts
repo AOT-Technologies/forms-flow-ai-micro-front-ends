@@ -125,7 +125,27 @@ class OfflineSaveService {
       console.error("Error in data fetching and saving process:", error);
     }
   }
+  
+  public static async saveOfflineFormDefinition(forms: IndividualFormDefinition[]): Promise<void> {
+    try {
+        if (!ffDb) {
+            throw new Error("IndexedDB is not available.");
+        }
 
+        if (!Array.isArray(forms) || forms.length === 0) {
+            console.warn("No valid forms provided.");
+            return;
+        }
+
+        await ffDb.formDefinitions.bulkPut(forms);
+
+        console.log(`${forms.length} forms added or updated in IndexedDB.`);
+    } catch (error) {
+        console.error("Error saving forms to IndexedDB:", error);
+    }
+}
+
+/*
   public static async saveOfflineFormDefinition(form: IndividualFormDefinition): Promise<void> {
     try {
       if (!ffDb) {
@@ -141,7 +161,7 @@ class OfflineSaveService {
     } catch (error) {
       console.error("Error saving form to IndexedDB:", error);
     }
-  }
+  }*/
 
   /**
    * Saves FormFlow data to IndexedDB.
