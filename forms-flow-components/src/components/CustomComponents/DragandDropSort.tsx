@@ -104,7 +104,6 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
                   label={t("Edit")}
                   dataTestId="Edit-button"
                   ariaLabel="Edit Button"
-                  onClick={() => console.log("Edit", item)}
                 />
                 <CustomButton
                   variant="secondary"
