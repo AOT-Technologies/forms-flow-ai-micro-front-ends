@@ -22,10 +22,16 @@ class DBServiceHelper {
      * Retrieves user details from storage.
      * @returns {any} - Parsed user details.
      */
-    private static getUserDetails(): any {
+    public static getUserDetails(): any {
         return JSON.parse(StorageService.get(StorageService.User.USER_DETAILS));
     }
-
+    /**
+     * Retrieves authorization token from storage.
+     * @returns string - authorization token.
+     */
+    public static getAuthorizationToken(): any {
+        return StorageService.get(StorageService.User.AUTH_TOKEN);
+    }
     /**
      * Constructs a submission data object.
      * @param {any} submission - The submission data.
