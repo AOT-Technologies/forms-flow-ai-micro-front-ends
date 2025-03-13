@@ -761,18 +761,18 @@ export const DraggableIcon = ({ color = baseColor, ...props }) => (
     width="16"
     height="14"
     viewBox="0 0 16 14"
-    fill="none"
+    fill={color}
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
       d="M1.5 4H16.5"
-      stroke="#253DF4"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
     />
     <path
       d="M1.5 12H16.5"
-      stroke="#253DF4"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
     />
@@ -789,17 +789,17 @@ export const DraggableIcon = ({ color = baseColor, ...props }) => (
    >
      <path
        d="M3 2H13V0H3V2ZM13 2V14H15V2H13ZM13 14H3V16H13V14ZM3 14V2H1V14H3ZM3 14H3H1C1 15.1046 1.89543 16 3 16V14ZM13 14V16C14.1046 16 15 15.1046 15 14H13ZM13 2H15C15 0.895431 14.1046 0 13 0V2ZM3 0C1.89543 0 1 0.895431 1 2H3V2V0Z"
-       fill="#253DF4"
+       fill={color}
      />
      <path
        d="M6 8L8 8"
-       stroke="#253DF4"
+       stroke={color}
        strokeWidth="2"
        strokeLinecap="round"
      />
      <path
        d="M6 5H10"
-       stroke="#253DF4"
+       stroke={color}
        strokeWidth="2"
        strokeLinecap="round"
      />

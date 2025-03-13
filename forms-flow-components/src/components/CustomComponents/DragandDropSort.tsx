@@ -15,6 +15,9 @@ interface DragAndDropFilterProps {
 }
 
 export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate }) => {
+
+  const computedStyle = getComputedStyle(document.documentElement);
+  const darkColor = computedStyle.getPropertyValue("--ff-gray-darkest");
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
 
@@ -68,9 +71,6 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
         <div
           key={item.name}
           className={`draggable-item ${draggingIndex === index ? "dragging" : ""} `}
-          draggable
-          role="listitem" 
-          tabIndex={0}
           onDragOver={onDragOver}
           onDrop={onDrop}
           onDragEnter={(e) => onDragEnter(e, index)}
@@ -83,19 +83,19 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
           >
             <DraggableIcon />
           </div>
+          <div className="checkbox-container">
           <input 
           type="checkbox" 
-          className="form-check-input m-0" 
+          className="form-check-input" 
           checked={item.isChecked} 
           onChange={() => onCheckboxChange(index)}
            />
-          <span>{item.label}</span>
-          <div className="dotted-line"></div>
-          <div className="icon-btn-container">
-            {item.isTaskVariable && (
-              <FormVariableIcon />
-            ) }
           </div>
+          {item.label}
+          <div className="dotted-line"></div>
+            {item.isTaskVariable && (
+              <FormVariableIcon color={darkColor} />
+            ) }
         </div>
       ))}
     </div>

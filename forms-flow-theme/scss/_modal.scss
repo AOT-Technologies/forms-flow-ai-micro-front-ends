@@ -1022,6 +1022,10 @@ $black-color: var(--ff-black);
       background-color: $gray-medium;
       transform: scale(1.03); 
     }
+    .checkbox-container{
+      display: flex;
+      margin-bottom: 0.188rem;
+    }
   }
 }
 
