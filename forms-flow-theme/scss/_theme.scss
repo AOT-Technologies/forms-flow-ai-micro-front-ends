@@ -205,7 +205,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --default-danger-color: #dc3545;
 }
 
-$danger: --default-danger-color;
+$danger: var(--default-danger-color);
 
 body {
   color: var(--default-font-color) !important; 

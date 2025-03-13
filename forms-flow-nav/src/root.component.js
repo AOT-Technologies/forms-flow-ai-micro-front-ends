@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
   const customTitle = StyleServices?.getCSSVariable("--custom-title");
-  const customLogoAlignment =  StyleServices?.getCSSVariable("--custom-logo-horizontal-align");
+  const customLogoAlignment =  StyleServices?.getCSSVariable("--custom-logo-horizontal-align")?.toLowerCase();
   const logoAlignmentClass = useMemo(() => {
     switch (customLogoAlignment) {
       case "left":
