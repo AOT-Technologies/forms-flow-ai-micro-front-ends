@@ -18,3 +18,6 @@ export const KEYCLOAK_ENABLE_CLIENT_AUTH =
 export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
 
 
+export const WEBSOCKET_ENCRYPT_KEY = `${
+  window._env_?.REACT_APP_WEBSOCKET_ENCRYPT_KEY
+}`;
