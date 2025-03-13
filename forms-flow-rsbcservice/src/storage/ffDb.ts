@@ -28,17 +28,6 @@ export interface IndividualFormDefinition {
   parentFormId: string;
 }
 
-//export type FormDefinitionsArray = IndividualFormDefinition[];
-/*
-interface FormDefinisionList {
-  id: string;
-  formId: string;
-  formName: string;
-  formType: string;
-  processKey: string;
-  modified: string;
-
-}*/
 
 interface FormListMetaData {
   key: string;
@@ -180,7 +169,6 @@ export interface FormProcess {
 // Database class extending Dexie to manage IndexedDB storage
 class FormsFlowDB extends Dexie {
   // Declaring tables with their respective interfaces
-  //formDefinitionList!: Table<IndividualFormDefinition>;
   applications!: Table<Application>;
   drafts!: Table<Draft>;
   offlineSubmissions!: Table<OfflineSubmission>;
@@ -196,7 +184,6 @@ class FormsFlowDB extends Dexie {
     //requires a migration you need to add a .upgrade(() => {}) to the end of the version to handle how the data is migrated.
 
     this.version(1).stores({
-      //formDefinitionList: "id, formId, formName, formType, processKey, modified",
       applications: "id, modified, formId, submissionId",
       drafts: "id, applicationId, formId",
       offlineSubmissions: "_id, formId, localSubmissionId, localDraftId, type",
