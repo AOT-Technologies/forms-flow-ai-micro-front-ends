@@ -221,9 +221,9 @@ class DBServiceHelper {
         totalCount: number;
     } {
         const transformedForms = forms.map((form, index) => ({
-        description: form.title || "No Description",
+        description: form.description || "No Description",
         formId: form._id,
-        formName: form.name,
+        formName: form.title,
         formType: form.type,
         id: (index + 1).toString(),
         modified: form.modified,
