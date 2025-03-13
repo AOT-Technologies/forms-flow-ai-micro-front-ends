@@ -1001,30 +1001,19 @@ $black-color: var(--ff-black);
     flex-direction: row;
     align-items: center;
     gap: var(--spacer-100);
-    min-height: 2.625rem;
     border-radius: var(--radius-sm);
-      padding: 0px var(--spacer-050) ;
-      transition: 
-        transform 3s cubic-bezier(0.25, 1, 0.5, 1), 
-        background-color 3s ease-in-out, 
-        opacity 3s ease-in-out, 
-        box-shadow 3s ease-in-out;
+    padding: 0px var(--spacer-050) ;
+    transition: 
+      transform 3s cubic-bezier(0.25, 1, 0.5, 1), 
+      background-color 3s ease-in-out, 
+      opacity 3s ease-in-out, 
+      box-shadow 3s ease-in-out;
 
     .draggable-icon {
+      display: flex;
+      align-self: center;
       cursor: grab;
     }
-
-    .hover-buttons {
-      display: none;
-      gap: var(--spacer-050);
-    }
-
-    &:hover {
-      .hover-buttons {
-        display: flex;
-      }
-    }
-
     &:active {
       cursor: grabbing;
     }

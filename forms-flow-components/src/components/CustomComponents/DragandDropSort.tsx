@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { FormVariableIcon,DraggableIcon } from "../SvgIcons/index";
-import { CustomButton } from "./Button";
+    import { FormVariableIcon,DraggableIcon } from "../SvgIcons/index";
 
 interface FilterItem {
   label: string;
@@ -17,7 +15,6 @@ interface DragAndDropFilterProps {
 }
 
 export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate }) => {
-  const { t } = useTranslation();
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
 
@@ -35,10 +32,6 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
     e.preventDefault();
   };
 
-  const onRemove = (indexToRemove: number) => {
-    setFilterItems((prevItems) => prevItems.filter((_, index) => index !== indexToRemove)
-      .map((item, index) => ({ ...item, sortOrder: index + 1 })));
-  };
 
   const onDragEnter = (e: React.DragEvent<HTMLDivElement>, targetIndex: number) => {
     e.preventDefault();
@@ -76,45 +69,32 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
           key={item.name}
           className={`draggable-item ${draggingIndex === index ? "dragging" : ""} `}
           draggable
+          role="listitem" 
+          tabIndex={0}
           onDragOver={onDragOver}
           onDrop={onDrop}
           onDragEnter={(e) => onDragEnter(e, index)}
-          onDragStart={(e) => onDragStart(e, index)}
           onDragEnd={onDragEnd}
         >
-          <span className="draggable-icon">
+          <div 
+          draggable 
+          className="draggable-icon"
+          onDragStart={(e) => onDragStart(e, index)}
+          >
             <DraggableIcon />
-          </span>
+          </div>
           <input 
           type="checkbox" 
-          className="form-check-input" 
+          className="form-check-input m-0" 
           checked={item.isChecked} 
           onChange={() => onCheckboxChange(index)}
            />
           <span>{item.label}</span>
           <div className="dotted-line"></div>
           <div className="icon-btn-container">
-            {item.isTaskVariable ? (
+            {item.isTaskVariable && (
               <FormVariableIcon />
-            ) : (
-              <div className="hover-buttons">
-                <CustomButton
-                  variant="secondary"
-                  size="sm"
-                  label={t("Edit")}
-                  dataTestId="Edit-button"
-                  ariaLabel="Edit Button"
-                />
-                <CustomButton
-                  variant="secondary"
-                  size="sm"
-                  label={t("Remove")}
-                  dataTestId="Remove-button"
-                  ariaLabel="Remove Button"
-                  onClick={() => onRemove(index)}
-                />
-              </div>
-            )}
+            ) }
           </div>
         </div>
       ))}
