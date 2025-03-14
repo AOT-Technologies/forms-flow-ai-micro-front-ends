@@ -46,6 +46,7 @@
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
     "axios": "^1.3.0",
+    "crypto-js": "^4.2.0",
     "i18next": "^23.2.11",
     "keycloak-js": "^25.0.4",
     "moment": "^2.29.4",

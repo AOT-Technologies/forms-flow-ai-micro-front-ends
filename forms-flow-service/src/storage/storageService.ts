@@ -1,7 +1,8 @@
 enum User {
     AUTH_TOKEN = "AUTH_TOKEN",
     USER_DETAILS = "USER_DETAILS",
-    USER_ROLE = "USER_ROLE"
+    USER_ROLE = "USER_ROLE",
+    REFRESH_TOKEN = "REFRESH_TOKEN"
   }
   
   class StorageService {
