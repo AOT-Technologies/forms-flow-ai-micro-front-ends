@@ -114,7 +114,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
   const [activeKey,setActiveKey] = useState(0);
-  const hideLogo =  StyleServices?.getCSSVariable("--hide-formsflow-logo");
+  const hideLogo =  StyleServices?.getCSSVariable("--hide-formsflow-logo")?.toLowerCase();
 
   const getInitials = (name) => {
     if (!name) return "";

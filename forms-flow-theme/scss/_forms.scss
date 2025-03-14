@@ -243,6 +243,7 @@ select option:hover {
 
   &:focus {
     outline: 1px solid var(--ff-primary);
+    box-shadow: none !important;
   }
 
   &::placeholder {
@@ -259,6 +260,7 @@ select option:hover {
     &:focus {
       outline: 1px solid $danger !important;
       border: 1px solid $danger !important;
+      box-shadow: none !important;
     }
   }
 
@@ -397,7 +399,21 @@ select option:hover {
       transform: translate(-50%, -50%) !important;
     }
   }
+  &:focus{
+    box-shadow: none !important;
+  }
 }
+
+.form-check-input[type="checkbox"] {
+  border-color: $primary !important;
+  &:checked{
+    background-color: $primary !important;
+  }
+  &:focus{
+    box-shadow: none !important;
+  }
+}
+
 
 .valiation-astrisk {
   color: $primary;
