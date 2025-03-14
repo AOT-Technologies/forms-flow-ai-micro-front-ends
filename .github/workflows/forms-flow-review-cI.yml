@@ -6,6 +6,9 @@ on:
       - main
       - develop
       - release/*
+    paths:
+      - "forms-flow-review/**"
+      - "VERSION"
   push:
     branches:
       - main
