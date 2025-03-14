@@ -459,7 +459,7 @@ select option:hover {
   border-top: 0.1875rem dashed var(--ff-gray-300);
 }
 
-//custom switch for sdpr
+//custom styles  for sdpr
 .custom-switch-checkbox {
   background-color: #EDEBE9 !important;
   border: none !important;
@@ -499,4 +499,17 @@ select option:hover {
     outline: none !important;
     box-shadow: none !important;
   }
+}
+
+.btn-danger{
+  background-color: var(--default-danger-color) !important;
+}
+
+div.text-danger,
+p.text-danger,
+i.text-danger,
+span.text-danger,
+.btn-link.text-danger,
+.modal-title.text-danger {
+  color: var(--default-danger-color) !important;
 }

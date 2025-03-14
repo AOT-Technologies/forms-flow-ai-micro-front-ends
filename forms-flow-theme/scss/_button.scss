@@ -75,7 +75,7 @@ $btn-font-weight: bold;
 }
 
 .delete_button {
-  color: var(--ff-danger);
+  color: var(--default-danger-color) !important;
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
 
