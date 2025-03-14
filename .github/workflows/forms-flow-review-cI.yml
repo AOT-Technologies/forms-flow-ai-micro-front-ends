@@ -1,6 +1,11 @@
-name: forms-flow-review-CD
+name: forms-flow-review-CI
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - release/*
   push:
     branches:
       - main
