@@ -9,6 +9,14 @@ on:
     paths:
       - "forms-flow-components/**"
       - "VERSION"
+  push:
+    branches:
+      - main
+      - develop
+      - release/*
+    paths:
+      - "forms-flow-components/**"
+      - "VERSION"
 defaults:
   run:
     shell: bash
