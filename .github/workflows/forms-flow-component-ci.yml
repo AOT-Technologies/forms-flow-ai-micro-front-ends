@@ -6,11 +6,6 @@ on:
       - main
       - develop
       - release/*
-  push:
-    branches:
-      - main
-      - develop
-      - release/*
     paths:
       - "forms-flow-components/**"
       - "VERSION"
