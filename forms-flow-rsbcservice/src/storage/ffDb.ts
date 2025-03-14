@@ -2,6 +2,18 @@ import Dexie, { Table } from "dexie";
 
 // Below are formsflow.ai specific interfaces
 // These define the structure of various objects stored in IndexedDB
+export interface ApplicationMetaData {
+  owner: string;
+  access: any[];
+  externalIds: any[];
+  roles: any[];
+  metadata: Record<string, any>;
+  form: string;
+  created: string;
+  modified: string;
+  data: Record<string, any>;
+  _id: string;
+}
 
 interface FormAccess {
   type: string;
@@ -11,7 +23,7 @@ interface FormAccess {
 export interface IndividualFormDefinition {
   _id: string;
   title: string;
-  description:string;
+  description: string;
   name: string;
   path: string;
   type: string;
@@ -26,15 +38,6 @@ export interface IndividualFormDefinition {
   modified: string;
   machineName: string;
   parentFormId: string;
-}
-
-
-interface FormListMetaData {
-  key: string;
-  totalCount: number;
-  pageNo: number;
-  limit: number; 
-
 }
 
 export interface Application {
@@ -58,21 +61,6 @@ export interface Application {
   submissionId: string;
 }
 
-
-export interface ApplicationMetaData {
-  owner: string;
-  access: any[];
-  externalIds: any[];
-  roles: any[];
-  metadata: Record<string, any>;
-  form: string;
-  created: string;
-  modified: string;
-  data: Record<string, any>;
-  _id: string;
-
-}
-
 export interface Draft {
   id: number;
   applicationId: number;
@@ -86,39 +74,38 @@ export interface Draft {
   formType: string;
 }
 
-interface DraftMetaData {
-  key: string;
-  totalCount: number;
-  applicationCount: number;
+interface DeletedDraft {
+  serverDraftId: number;
 }
 
 interface DraftData {
-  CreatedBy: string;
-  DraftName: string;
-  localApplicationId: number;
-  serverDraftId: string; // can be removed if not needed
-  serverApplicationId: string; // can be removed if not needed
-  formType: string;
-  processKey: string;
-  processName: string;
+  CreatedBy?: string;
+  DraftName?: string;
+  localApplicationId?: number;
+  formType?: string;
+  processKey?: string;
+  processName?: string;
 }
 
 export interface SubmissionData {
-  owner: string;
-  access: any[];
-  externalIds: any[];
-  roles: any[];
-  metadata: Record<string, any>;
-
+  owner?: string;
+  access?: any[];
+  externalIds?: any[];
+  roles?: any[];
+  metadata?: Record<string, any>;
+  state?: string;
+  _vnote?: string;
 }
 
 // brought localDraftId and localSubmissionId here because,
-// Dexie does not allow indexes on nested properties like submissionData.localSubmissionId 
+// Dexie does not allow indexes on nested properties like submissionData.localSubmissionId
 export interface OfflineSubmission {
   _id: string;
   formId: string;
   data: Record<string, any>;
   localDraftId?: number;
+  serverDraftId?: number;
+  serverApplicationId?: number;
   draftData?: DraftData;
   submissionData?: SubmissionData;
   localSubmissionId?: string;
@@ -128,8 +115,8 @@ export interface OfflineSubmission {
 }
 
 export interface ActiveForm {
-  localDraftId: string;
-  serverDraftId?: string;
+  localDraftId?: number;
+  serverDraftId?: number;
 }
 
 interface TaskVariable {
@@ -150,17 +137,17 @@ export interface FormProcess {
   formName: string;
   formType: string;
   id: string;
-  isBundle:boolean;
+  isBundle: boolean;
   isMigrated: boolean;
   majorVersion: number;
-  minorVersion:number;
+  minorVersion: number;
   modified: string;
   modifiedBy?: string;
-  parentFormId:string;
+  parentFormId: string;
   processKey: string;
   processName: string;
   processTenant?: string;
-  promptNewVersion:boolean;
+  promptNewVersion: boolean;
   status: string;
   taskVariables: TaskVariable[];
   version: string;
@@ -170,11 +157,11 @@ export interface FormProcess {
 class FormsFlowDB extends Dexie {
   // Declaring tables with their respective interfaces
   applications!: Table<Application>;
-  drafts!: Table<Draft>;
   offlineSubmissions!: Table<OfflineSubmission>;
   formDefinitions!: Table<IndividualFormDefinition>;
   activeForm!: Table<ActiveForm>;
   formProcesses!: Table<FormProcess>;
+  deletedDrafts!: Table<DeletedDraft>;
 
   constructor() {
     super("formsflowTables");
@@ -185,13 +172,13 @@ class FormsFlowDB extends Dexie {
 
     this.version(1).stores({
       applications: "id, modified, formId, submissionId",
-      drafts: "id, applicationId, formId",
-      offlineSubmissions: "_id, formId, localSubmissionId, localDraftId, type, modified",
-      formDefinitions: "_id, title, description, name, path, type, created, modified, machineName, parentFormId",
-
+      offlineSubmissions:
+        "_id, formId, localSubmissionId, localDraftId, type, modified, serverDraftId",
+      formDefinitions:
+        "_id, title, description, name, path, type, created, modified, machineName, parentFormId",
       activeForm: "localDraftId, serverDraftId",
-      formProcesses: "formId, formName"
-
+      formProcesses: "formId, formName",
+      deletedDrafts: "serverDraftId",
     });
   }
 }
