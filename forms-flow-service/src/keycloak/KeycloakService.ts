@@ -3,8 +3,12 @@ import Keycloak, {
     KeycloakTokenParsed,
     KeycloakConfig,
   } from "keycloak-js";
-  import StorageService from "../storage/storageService";
-  
+import StorageService from "../storage/storageService";
+import HelperServices from "../helpers/helperServices";
+import {
+  APPLICATION_NAME,
+} from "../constants/constants";
+
   class KeycloakService {
     /**
      * Used to create Keycloak object
@@ -65,7 +69,7 @@ import Keycloak, {
     /**
      * Refresh the keycloak token before expiring
      */
-    private refreshToken(): void {
+    private refreshToken(skipTimer: boolean = false): void {
       this.timerId = setInterval(() => {
         if (!navigator.onLine) {
           console.debug("Offline: Skipping token refresh.");
@@ -80,6 +84,11 @@ import Keycloak, {
               clearInterval(this.timerId);
               this.token = this.kc.token;
               StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
+              if (this.kc.refreshToken && APPLICATION_NAME === "roadsafety") {
+                StorageService.save(StorageService.User.REFRESH_TOKEN, HelperServices.encrypt(this.kc.refreshToken));
+              } else {
+                console.info("Refreshing Tokens - Not storing the refresh token.");
+              }
               this.refreshToken();
             } else {
               console.log("Token is still valid!");
@@ -90,7 +99,7 @@ import Keycloak, {
             clearInterval(this.timerId);
             this.handleTokenRefreshFailure();
           });
-      }, this.getTokenExpireTime());
+      }, (!skipTimer && APPLICATION_NAME === "roadsafety") ? this.getTokenExpireTime() : 0);
     }
 
     /**
@@ -118,8 +127,16 @@ import Keycloak, {
     */
     private readonly retryTokenRefresh = (): void => {
       console.log("Back online: Retrying token refresh.");
+      let skipTimer: boolean = false;
+      if (APPLICATION_NAME === "roadsafety") {
+        skipTimer = true;
+        const storedEncryptedRefreshToken = StorageService.get(StorageService.User.REFRESH_TOKEN);
+        if (storedEncryptedRefreshToken) {
+          this.kc.refreshToken = HelperServices.decrypt(storedEncryptedRefreshToken);
+        }
+      }
       this.isWaitingForOnline = false;
-      this.refreshToken();
+      this.refreshToken(skipTimer);
     };
 
   
@@ -162,6 +179,14 @@ import Keycloak, {
               StorageService.save(StorageService.User.USER_ROLE, JSON.stringify(UserRoles));
               this.token = this.kc.token;
               this._tokenParsed = this.kc.tokenParsed;
+
+              if (this.kc.refreshToken && APPLICATION_NAME === "roadsafety") {
+                StorageService.save(StorageService.User.REFRESH_TOKEN, HelperServices.encrypt(this.kc.refreshToken));
+                window.addEventListener("online", this.retryTokenRefresh, { once: false });
+              } else {
+                console.info("Init KC - not storing the refresh token.");
+              }
+
               StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
               this.kc.loadUserInfo().then((data) => {
                 this.userData = data;
