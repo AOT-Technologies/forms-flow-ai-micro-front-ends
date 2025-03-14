@@ -2,13 +2,13 @@ import { RequestService } from "@formsflow/service";
 import { API_URL, WEB_BASE_URL } from "../endpoints/config";
 import {
   OfflineDeleteService,
-  OfflineFetchService,
+  OfflineFetchService
 } from "../formsflow-rsbcservices";
 import { OfflineSubmission } from "../storage/ffDb";
 import {
   FormData,
   FormioCreateResponse,
-  RequestCreateFormat,
+  RequestCreateFormat
 } from "./offlineSubmissions.interface";
 
 class OfflineSubmissions {
@@ -79,11 +79,10 @@ class OfflineSubmissions {
     const url = `${WEB_BASE_URL}/draft`;
     const payload = {
       data: draft.data,
-      formId: draft.formId,
+      formId: draft.formId
     };
-    RequestService.httpPOSTRequest(url, payload).then(
-      async () => await this.deleteLocalSubmissions(draft)
-    );
+    await RequestService.httpPOSTRequest(url, payload);
+    await this.deleteLocalSubmissions(draft);
   }
 
   /**
@@ -97,11 +96,10 @@ class OfflineSubmissions {
     const url = `${WEB_BASE_URL}/draft/${draft.serverDraftId}`;
     const payload = {
       data: draft.data,
-      formId: draft.formId,
+      formId: draft.formId
     };
-    RequestService.httpPUTRequest(url, payload).then(
-      async () => await this.deleteLocalSubmissions(draft)
-    );
+    await RequestService.httpPUTRequest(url, payload);
+    await this.deleteLocalSubmissions(draft);
   }
 
   /**
@@ -146,12 +144,10 @@ class OfflineSubmissions {
     data: OfflineSubmission
   ): Promise<void> {
     try {
-      this.prepareAndSubmitFormioSubmission(data).then(
-        async (response: FormioCreateResponse) => {
-          await this.triggerApplicationCreate(response);
-          await this.deleteLocalSubmissions(data);
-        }
-      );
+      const response: FormioCreateResponse =
+        await this.prepareAndSubmitFormioSubmission(data);
+      await this.triggerApplicationCreate(response);
+      await this.deleteLocalSubmissions(data);
     } catch (error) {
       console.error("Error creating the submission:", error);
     }
@@ -171,7 +167,7 @@ class OfflineSubmissions {
         data: data.data,
         metadata: data.submissionData?.metadata,
         state: data.submissionData?.state,
-        _vnote: data.submissionData?._vnote,
+        _vnote: data.submissionData?._vnote
       };
       const header = { "x-jwt-token": localStorage.getItem("formioToken") };
       console.log(formioUrl, formioPayload);
@@ -233,12 +229,10 @@ class OfflineSubmissions {
   ): Promise<void> {
     console.log(data);
     try {
-      this.prepareAndSubmitFormioSubmission(data).then(
-        async (response: FormioCreateResponse) => {
-          await this.triggerApplicationUpdate(response, data?.serverDraftId);
-          await this.deleteLocalSubmissions(data);
-        }
-      );
+      const response: FormioCreateResponse =
+        await this.prepareAndSubmitFormioSubmission(data);
+      await this.triggerApplicationUpdate(response, data?.serverDraftId);
+      await this.deleteLocalSubmissions(data);
     } catch (error) {
       console.error("Error creating and updating the submission:", error);
     }
@@ -311,7 +305,7 @@ class OfflineSubmissions {
       submissionId: submissionId,
       formUrl: this.getFormUrlWithFormIdSubmissionId(form._id, submissionId),
       webFormUrl: `${origin}form/${form._id}/submission/${submissionId}`,
-      data: submissionData,
+      data: submissionData
     };
     return requestFormat;
   }
