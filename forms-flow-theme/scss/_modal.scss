@@ -1002,7 +1002,7 @@ $black-color: var(--ff-black);
     align-items: center;
     gap: var(--spacer-100);
     border-radius: var(--radius-sm);
-    padding: 0px var(--spacer-050) ;
+    padding: var(--spacer-050) ;
     transition: 
       transform 3s cubic-bezier(0.25, 1, 0.5, 1), 
       background-color 3s ease-in-out, 
@@ -1020,6 +1020,8 @@ $black-color: var(--ff-black);
 
     &.dragging {
       background-color: $gray-medium;
+      opacity: 1;
+      z-index: 1000;
       transform: scale(1.03); 
     }
     .checkbox-container{

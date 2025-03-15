@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-    import { FormVariableIcon,DraggableIcon } from "../SvgIcons/index";
+import { FormVariableIcon,DraggableIcon } from "../SvgIcons/index";
+import { StyleServices } from "@formsflow/service";
 
 interface FilterItem {
   label: string;
@@ -16,8 +17,8 @@ interface DragAndDropFilterProps {
 
 export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate }) => {
 
-  const computedStyle = getComputedStyle(document.documentElement);
-  const darkColor = computedStyle.getPropertyValue("--ff-gray-darkest");
+  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
+  
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
 
@@ -25,18 +26,18 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
     onUpdate(filterItems);
   }, [filterItems, onUpdate]);
 
-  const onDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+  const onDragStart = (e: React.DragEvent<HTMLLIElement>, index: number) => {
     e.stopPropagation();
     e.dataTransfer.setData("drag-index", index.toString());
     setDraggingIndex(index);
   };
 
-  const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+  const onDragOver = (e: React.DragEvent<HTMLLIElement>) => {
     e.preventDefault();
   };
 
 
-  const onDragEnter = (e: React.DragEvent<HTMLDivElement>, targetIndex: number) => {
+  const onDragEnter = (e: React.DragEvent<HTMLLIElement>, targetIndex: number) => {
     e.preventDefault();
     if (draggingIndex === null || draggingIndex === targetIndex) return;
     
@@ -49,7 +50,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
     setDraggingIndex(targetIndex);  
   };
 
-  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const onDrop = (e: React.DragEvent<HTMLLIElement>) => {
     e.preventDefault();
     setDraggingIndex(null);
   };
@@ -67,24 +68,26 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
   };
   return (
     <div className="drag-drop-container">
-      {filterItems.map((item, index) => (
-        <div
+        <ul>
+        {filterItems.map((item, index) => (
+        <li
           key={item.name}
+          draggable 
           className={`draggable-item ${draggingIndex === index ? "dragging" : ""} `}
           onDragOver={onDragOver}
           onDrop={onDrop}
           onDragEnter={(e) => onDragEnter(e, index)}
           onDragEnd={onDragEnd}
-        >
-          <div 
-          draggable 
-          className="draggable-icon"
           onDragStart={(e) => onDragStart(e, index)}
+        >
+          <span 
+          className="draggable-icon"
           >
             <DraggableIcon />
-          </div>
+          </span>
           <div className="checkbox-container">
           <input 
+          data-testid={`${item.name}-checkbox`}
           type="checkbox" 
           className="form-check-input" 
           checked={item.isChecked} 
@@ -96,8 +99,9 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
             {item.isTaskVariable && (
               <FormVariableIcon color={darkColor} />
             ) }
-        </div>
+        </li>
       ))}
+        </ul>
     </div>
   );
 };
