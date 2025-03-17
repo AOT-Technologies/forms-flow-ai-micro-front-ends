@@ -43,5 +43,6 @@ declare module "@formsflow/service" {
     RequestService,
     StorageService,
     i18nService,
+    KeycloakService
   }: any;
 }

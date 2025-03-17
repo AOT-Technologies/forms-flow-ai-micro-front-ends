@@ -11,7 +11,7 @@ class OfflineDeleteService {
         console.error("Invalid inputValue: Not a valid number");
         return {
           status: "error",
-          message: `Invalid inputValue: Not a valid number`
+          message: `Invalid inputValue: Not a valid number`,
         };
       }
       if (!ffDb) {
@@ -38,7 +38,7 @@ class OfflineDeleteService {
       } else {
         return {
           status: "success",
-          message: `No draft found with localDraftId: ${localDraftId}`
+          message: `No draft found with localDraftId: ${localDraftId}`,
         };
       }
     } catch (error) {
@@ -70,7 +70,7 @@ class OfflineDeleteService {
       await table.clear();
       return {
         status: "success",
-        message: "activeForm table cleared successfully!"
+        message: "activeForm table cleared successfully!",
       };
     } catch (error) {
       console.error(`Error in clearing activeForm table:`, error);
@@ -113,7 +113,6 @@ class OfflineDeleteService {
     localSubmissionId: string | number
   ): Promise<void> {
     try {
-      console.log(localSubmissionId, "___storage localSubmissionIdsToDelete");
       if (!ffDb) {
         throw new Error("IndexedDB is not available.");
       }
