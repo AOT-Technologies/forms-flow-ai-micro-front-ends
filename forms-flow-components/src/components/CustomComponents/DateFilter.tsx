@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, FC } from "react";
+import React, { useState, useRef, useEffect, FC, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   AngleLeftIcon,
@@ -30,7 +30,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 }) => {
   const { t } = useTranslation();
   const calendarRef = useRef<HTMLDivElement>(null);
-  
+
   // Parse date strings if provided in any format (including ISO format)
   const parseDate = (dateInput: Date | string | null): Date => {
     if (!dateInput) return new Date();
@@ -77,7 +77,9 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   const [currentMonth, setCurrentMonth] = useState<Date>(() => {
     // Safely get start date for current month
     const range = parsedInitialRange();
-    return range.startDate instanceof Date ? range.startDate : parseDate(range.startDate);
+    return range.startDate instanceof Date
+      ? range.startDate
+      : parseDate(range.startDate);
   });
 
   // Update state when initialDateRange prop changes
@@ -96,8 +98,8 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       // Safely update current month
       if (newDateRange.startDate) {
         setCurrentMonth(
-          newDateRange.startDate instanceof Date 
-            ? newDateRange.startDate 
+          newDateRange.startDate instanceof Date
+            ? newDateRange.startDate
             : parseDate(newDateRange.startDate)
         );
       }
@@ -118,10 +120,18 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   // Format date range for display
   const formatDateRange = (): string => {
     const start = dateRange?.startDate
-      ? formatDate(dateRange.startDate instanceof Date ? dateRange.startDate : parseDate(dateRange.startDate))
+      ? formatDate(
+          dateRange.startDate instanceof Date
+            ? dateRange.startDate
+            : parseDate(dateRange.startDate)
+        )
       : "MM/DD/YYYY";
     const end = dateRange?.endDate
-      ? formatDate(dateRange.endDate instanceof Date ? dateRange.endDate : parseDate(dateRange.endDate))
+      ? formatDate(
+          dateRange.endDate instanceof Date
+            ? dateRange.endDate
+            : parseDate(dateRange.endDate)
+        )
       : "MM/DD/YYYY";
     return `${start} - ${end}`;
   };
@@ -219,12 +229,16 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     normalizedDate.setHours(0, 0, 0, 0);
 
     const normalizedStartDate = new Date(
-      dateRange.startDate instanceof Date ? dateRange.startDate : parseDate(dateRange.startDate)
+      dateRange.startDate instanceof Date
+        ? dateRange.startDate
+        : parseDate(dateRange.startDate)
     );
     normalizedStartDate.setHours(0, 0, 0, 0);
 
     const normalizedEndDate = new Date(
-      dateRange.endDate instanceof Date ? dateRange.endDate : parseDate(dateRange.endDate)
+      dateRange.endDate instanceof Date
+        ? dateRange.endDate
+        : parseDate(dateRange.endDate)
     );
     normalizedEndDate.setHours(0, 0, 0, 0);
 
@@ -242,7 +256,9 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     normalizedDate.setHours(0, 0, 0, 0);
 
     const normalizedStartDate = new Date(
-      dateRange.startDate instanceof Date ? dateRange.startDate : parseDate(dateRange.startDate)
+      dateRange.startDate instanceof Date
+        ? dateRange.startDate
+        : parseDate(dateRange.startDate)
     );
     normalizedStartDate.setHours(0, 0, 0, 0);
 
@@ -257,7 +273,9 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     normalizedDate.setHours(0, 0, 0, 0);
 
     const normalizedEndDate = new Date(
-      dateRange.endDate instanceof Date ? dateRange.endDate : parseDate(dateRange.endDate)
+      dateRange.endDate instanceof Date
+        ? dateRange.endDate
+        : parseDate(dateRange.endDate)
     );
     normalizedEndDate.setHours(0, 0, 0, 0);
 
@@ -282,9 +300,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       let newStartDate: Date;
       let newEndDate: Date;
 
-      const currentStartDate = dateRange.startDate instanceof Date
-        ? dateRange.startDate
-        : parseDate(dateRange.startDate);
+      const currentStartDate =
+        dateRange.startDate instanceof Date
+          ? dateRange.startDate
+          : parseDate(dateRange.startDate);
 
       if (selectedDate < currentStartDate) {
         newStartDate = selectedDate;
@@ -306,6 +325,17 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
           endDate: newEndDate,
         });
       }
+    }
+  };
+
+  // Handle keyboard event for date selection
+  const handleDateKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+    date: Date
+  ): void => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleDateSelect(date);
     }
   };
 
@@ -336,6 +366,60 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     setCurrentMonth(
       new Date(currentMonth.getFullYear() + 1, currentMonth.getMonth(), 1)
     );
+  };
+
+  // Handle keyboard navigation
+  const handlePrevMonthKeyDown = (
+    event: KeyboardEvent<HTMLSpanElement>
+  ): void => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      goToPrevMonth();
+    }
+  };
+
+  const handleNextMonthKeyDown = (
+    event: KeyboardEvent<HTMLSpanElement>
+  ): void => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      goToNextMonth();
+    }
+  };
+
+  const handlePrevYearKeyDown = (
+    event: KeyboardEvent<HTMLSpanElement>
+  ): void => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      goToPrevYear();
+    }
+  };
+
+  const handleNextYearKeyDown = (
+    event: KeyboardEvent<HTMLSpanElement>
+  ): void => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      goToNextYear();
+    }
+  };
+
+  // Handle keyboard toggle for calendar
+  const handleToggleKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleCalendar();
+    }
+  };
+
+  // Handle keyboard close for calendar
+  const handleCloseKeyDown = (event: KeyboardEvent<HTMLSpanElement>): void => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      event.stopPropagation();
+      setIsOpen(false);
+    }
   };
 
   // Format month and year for display
@@ -373,7 +457,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   // Close calendar when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
         // Reset if selection is incomplete
         if (!dateRange?.endDate) {
@@ -408,10 +495,12 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       <div
         className={`date-range-display ${isOpen ? "open" : ""}`}
         onClick={toggleCalendar}
+        onKeyDown={handleToggleKeyDown}
         data-testid="date-range-display"
         aria-label={t("Date range selector")}
         aria-expanded={isOpen}
         role="button"
+        tabIndex={0}
       >
         <span data-testid="date-range-text">{formatDateRange()}</span>
         <div className="date-range-controls">
@@ -420,6 +509,8 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
             data-testid="date-range-close-btn"
             aria-label={t("Close calendar")}
             role="button"
+            tabIndex={0}
+            onKeyDown={handleCloseKeyDown}
           >
             <CloseIcon
               color="white"
@@ -455,9 +546,11 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
               <span
                 className="calendar-prev-year-btn"
                 onClick={goToPrevYear}
+                onKeyDown={handlePrevYearKeyDown}
                 data-testid="calendar-prev-year"
                 aria-label={t("Previous year")}
                 role="button"
+                tabIndex={0}
               >
                 <LeftFarIcon />
               </span>
@@ -466,8 +559,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 data-testid="calendar-prev-month"
                 aria-label={t("Previous month")}
                 role="button"
+                tabIndex={0}
+                onKeyDown={handlePrevMonthKeyDown}
               >
-                {<AngleLeftIcon onClick={goToPrevMonth} />}
+                <AngleLeftIcon onClick={goToPrevMonth} />
               </span>
             </div>
             <span
@@ -482,15 +577,19 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 data-testid="calendar-next-month"
                 aria-label={t("Next month")}
                 role="button"
+                tabIndex={0}
+                onKeyDown={handleNextMonthKeyDown}
               >
-                {<AngleRightIcon onClick={goToNextMonth} />}
+                <AngleRightIcon onClick={goToNextMonth} />
               </span>
               <span
                 className="calendar-next-year-btn"
                 onClick={goToNextYear}
+                onKeyDown={handleNextYearKeyDown}
                 data-testid="calendar-next-year"
                 aria-label={t("Next year")}
                 role="button"
+                tabIndex={0}
               >
                 <RightFarIcon />
               </span>
@@ -502,13 +601,13 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
             data-testid="calendar-days-header"
           >
             {[
-              t("MO"), 
-              t("TU"), 
-              t("WE"), 
-              t("TH"), 
-              t("FR"), 
-              t("SA"), 
-              t("SU")
+              t("MO"),
+              t("TU"),
+              t("WE"),
+              t("TH"),
+              t("FR"),
+              t("SA"),
+              t("SU"),
             ].map((day) => (
               <div
                 key={day}
@@ -544,6 +643,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 <div
                   key={index}
                   onClick={() => handleDateSelect(dayObj.date)}
+                  onKeyDown={(e) => handleDateKeyDown(e, dayObj.date)}
                   className={dayClasses}
                   data-testid={`calendar-day-${dayNumber}`}
                   aria-label={`${dayObj.date.toLocaleDateString()}, ${
@@ -551,6 +651,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                   }`}
                   aria-selected={selected}
                   role="gridcell"
+                  tabIndex={0}
                 >
                   {dayNumber}
                 </div>
