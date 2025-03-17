@@ -33,7 +33,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   const calendarRef = useRef<HTMLDivElement>(null);
 
   // Parse date strings if provided in any format (including ISO format)
-  const parseDate = (dateInput: Date | string | null): Date => {
+  const parseDate = (dateInput: DateValue): Date => {
     if (!dateInput) return new Date();
 
     // If it's already a Date object
@@ -454,10 +454,9 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
             data-testid="date-range-close-btn"
             aria-label={t("Close calendar")}
             type="button"
-           
             onKeyDown={(e) => handleNavKeyDown(e, () => handleCloseCalendar())}
           >
-            <CloseIcon color="white"   onClick={(e) => handleCloseCalendar(e)}/>
+            <CloseIcon color="white" onClick={(e) => handleCloseCalendar(e)} />
           </button>
           <span
             className="date-range-toggle-icon"
@@ -477,7 +476,6 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         <div
           className="calendar-container"
           data-testid="calendar-container"
-          role="dialog"
           aria-label={t("Date picker")}
         >
           <div className="calendar-header" data-testid="calendar-header">
@@ -494,13 +492,12 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
               </button>
               <button
                 className="calendar-prev-month-btn button-as-div"
-              
                 onKeyDown={(e) => handleNavKeyDown(e, goToPrevMonth)}
                 data-testid="calendar-prev-month"
                 aria-label={t("Previous month")}
                 type="button"
               >
-                <AngleLeftIcon   onClick={goToPrevMonth} />
+                <AngleLeftIcon onClick={goToPrevMonth} />
               </button>
             </div>
             <span
@@ -512,13 +509,12 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
             <div className="calendar-nav-buttons">
               <button
                 className="calendar-next-month-btn button-as-div"
-              
                 onKeyDown={(e) => handleNavKeyDown(e, goToNextMonth)}
                 data-testid="calendar-next-month"
                 aria-label={t("Next month")}
                 type="button"
               >
-                <AngleRightIcon   onClick={goToNextMonth}/>
+                <AngleRightIcon onClick={goToNextMonth} />
               </button>
               <button
                 className="calendar-next-year-btn button-as-div"
@@ -557,38 +553,36 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
           </div>
 
           <div className="calendar-days" data-testid="calendar-days">
-            {generateDays().map((dayObj, index) => {
-              // Safety check
-              if (!dayObj || !dayObj.date) return null;
+            {generateDays().map((dayObj) => {
+              const date = dayObj?.date;
+              if (!date) return null;
 
-              const selected = isInRange(dayObj.date);
-              const isStart = isStartDate(dayObj.date);
-              const isEnd = isEndDate(dayObj.date);
-              const dayNumber = dayObj.date.getDate();
+              const selected = isInRange(date);
+              const isStart = isStartDate(date);
+              const isEnd = isEndDate(date);
+              const dayNumber = date.getDate();
 
               const dayClasses = [
                 "calendar-day",
-                "button-as-div", // Added class here
-                dayObj.isCurrentMonth ? "current-month" : "other-month",
+                "button-as-div",
+                dayObj?.isCurrentMonth ? "current-month" : "other-month",
                 selected ? "selected" : "",
                 isStart ? "start-date" : "",
                 isEnd ? "end-date" : "",
               ]
                 .filter(Boolean)
                 .join(" ");
-              
 
               return (
                 <button
-                  key={index}
-                  onClick={() => handleDateSelect(dayObj.date)}
-                  onKeyDown={(e) => handleDateKeyDown(e, dayObj.date)}
+                  key={date.toISOString()} // Unique key using ISO string
+                  onClick={() => handleDateSelect(date)}
+                  onKeyDown={(e) => handleDateKeyDown(e, date)}
                   className={dayClasses}
                   data-testid={`calendar-day-${dayNumber}`}
-                  aria-label={`${dayObj.date.toLocaleDateString()}, ${
+                  aria-label={`${date.toLocaleDateString()}, ${
                     selected ? t("selected") : t("not selected")
                   }`}
-                  aria-selected={selected}
                   type="button"
                 >
                   {dayNumber}
