@@ -114,8 +114,16 @@ import {
       if (!navigator.onLine) {
         if (!this.isWaitingForOnline) {
           this.isWaitingForOnline = true;
-          console.debug("Offline detected: Retrying token refresh when back online.");
-          window.addEventListener("online", this.retryTokenRefresh, { once: true });
+          console.debug(
+            "Offline detected: Retrying token refresh when back online."
+          );
+          window.addEventListener(
+            "online",
+            () => {
+              this.retryTokenRefresh(); // This will be executed when the 'online' event occurs
+            },
+            { once: true }
+          );
         }
       } else {
         this.logout();
@@ -125,7 +133,7 @@ import {
     /**
      * Retry token refresh when the user is back online
     */
-    public readonly retryTokenRefresh = (): void => {
+    public retryTokenRefresh(): void  {
       console.log("Back online: Retrying token refresh.");
       let skipTimer: boolean = false;
       if (APPLICATION_NAME === "roadsafety") {
@@ -182,7 +190,13 @@ import {
 
               if (this.kc.refreshToken && APPLICATION_NAME === "roadsafety") {
                 StorageService.save(StorageService.User.REFRESH_TOKEN, HelperServices.encrypt(this.kc.refreshToken));
-                window.addEventListener("online", this.retryTokenRefresh, { once: false });
+                window.addEventListener(
+                  "online",
+                  () => {
+                    this.retryTokenRefresh(); // This will be executed when the 'online' event occurs
+                  },
+                  { once: false }
+                );
               } else {
                 console.info("Init KC - not storing the refresh token.");
               }

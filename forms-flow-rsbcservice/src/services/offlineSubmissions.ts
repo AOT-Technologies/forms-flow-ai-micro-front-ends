@@ -19,7 +19,7 @@ class OfflineSubmissions {
   public static async processOfflineSubmissions(): Promise<void> {
     try {
       // Call token refresh.
-      KeycloakService.retryTokenRefresh;
+      KeycloakService.retryTokenRefresh();
       // Fetch all non-active offline submissions
       const submissions =
         await OfflineFetchService.fetchAllNonActiveOfflineSubmissions();
