@@ -34,5 +34,6 @@ module.exports = (webpackConfigEnv, argv) => {
         },
       ],
     },
+    externals: ["@formsflow/*","react","react-dom"]
   });
 };

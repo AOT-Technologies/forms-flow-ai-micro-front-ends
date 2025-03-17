@@ -10,7 +10,7 @@ import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/Loading";
-import TaskList from "./Routes/TaskListing/List";
+import TaskList from "./Routes/TaskListing";
 const authorizedRoles = new Set(["view_tasks",
   "manage_all_filters",
   "manage_tasks",
