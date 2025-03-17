@@ -2,13 +2,13 @@ import { RequestService, KeycloakService } from "@formsflow/service";
 import { API_URL, WEB_BASE_URL } from "../endpoints/config";
 import {
   OfflineDeleteService,
-  OfflineFetchService
+  OfflineFetchService,
 } from "../formsflow-rsbcservices";
 import { OfflineSubmission } from "../storage/ffDb";
 import {
   FormData,
   FormioCreateResponse,
-  RequestCreateFormat
+  RequestCreateFormat,
 } from "./offlineSubmissions.interface";
 
 class OfflineSubmissions {
@@ -77,7 +77,7 @@ class OfflineSubmissions {
     const url = `${WEB_BASE_URL}/draft`;
     const payload = {
       data: draft.data,
-      formId: draft.formId
+      formId: draft.formId,
     };
     await RequestService.httpPOSTRequest(url, payload);
     await this.deleteLocalSubmissions(draft);
@@ -93,7 +93,7 @@ class OfflineSubmissions {
     const url = `${WEB_BASE_URL}/draft/${draft.serverDraftId}`;
     const payload = {
       data: draft.data,
-      formId: draft.formId
+      formId: draft.formId,
     };
     await RequestService.httpPUTRequest(url, payload);
     await this.deleteLocalSubmissions(draft);
@@ -161,7 +161,7 @@ class OfflineSubmissions {
         data: data.data,
         metadata: data.submissionData?.metadata,
         state: data.submissionData?.state,
-        _vnote: data.submissionData?._vnote
+        _vnote: data.submissionData?._vnote,
       };
       const header = { "x-jwt-token": localStorage.getItem("formioToken") };
       return RequestService.httpPOSTRequest(
@@ -297,7 +297,7 @@ class OfflineSubmissions {
       submissionId: submissionId,
       formUrl: this.getFormUrlWithFormIdSubmissionId(form._id, submissionId),
       webFormUrl: `${origin}form/${form._id}/submission/${submissionId}`,
-      data: submissionData
+      data: submissionData,
     };
     return requestFormat;
   }
