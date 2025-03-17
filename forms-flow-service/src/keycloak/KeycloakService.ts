@@ -125,7 +125,7 @@ import {
     /**
      * Retry token refresh when the user is back online
     */
-    private readonly retryTokenRefresh = (): void => {
+    public readonly retryTokenRefresh = (): void => {
       console.log("Back online: Retrying token refresh.");
       let skipTimer: boolean = false;
       if (APPLICATION_NAME === "roadsafety") {

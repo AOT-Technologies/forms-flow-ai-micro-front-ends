@@ -1,4 +1,4 @@
-import { RequestService } from "@formsflow/service";
+import { RequestService, KeycloakService } from "@formsflow/service";
 import { API_URL, WEB_BASE_URL } from "../endpoints/config";
 import {
   OfflineDeleteService,
@@ -18,10 +18,11 @@ class OfflineSubmissions {
    */
   public static async processOfflineSubmissions(): Promise<void> {
     try {
+      // Call token refresh.
+      KeycloakService.retryTokenRefresh;
       // Fetch all non-active offline submissions
       const submissions =
         await OfflineFetchService.fetchAllNonActiveOfflineSubmissions();
-      console.log(submissions, "++++++++++++++submissions");
 
       // Process drafts and submissions concurrently using Promise.all
       const processDraftsPromise = this.processDrafts(submissions);
@@ -52,7 +53,6 @@ class OfflineSubmissions {
       ) {
         // When localDraftId is present if both serverDraftId, serverApplicationId
         // then draft submission need to updated.
-        console.log(draft);
         await this.prepareAndUpdateDraft(draft);
       }
       if (
@@ -62,7 +62,6 @@ class OfflineSubmissions {
       ) {
         // When localDraftId is present without serverDraftId, serverApplicationId
         //then a new draft submission is created.
-        console.log(draft);
         await this.prepareAndSubmitDraft(draft);
       }
     });
@@ -75,7 +74,6 @@ class OfflineSubmissions {
   private static async prepareAndSubmitDraft(
     draft: OfflineSubmission
   ): Promise<void> {
-    console.log(draft);
     const url = `${WEB_BASE_URL}/draft`;
     const payload = {
       data: draft.data,
@@ -92,7 +90,6 @@ class OfflineSubmissions {
   private static async prepareAndUpdateDraft(
     draft: OfflineSubmission
   ): Promise<void> {
-    console.log(draft);
     const url = `${WEB_BASE_URL}/draft/${draft.serverDraftId}`;
     const payload = {
       data: draft.data,
@@ -120,7 +117,6 @@ class OfflineSubmissions {
       ) {
         // When localDraftId is present if both serverDraftId, serverApplicationId
         // then the data need to updated.
-        console.log(data);
         await this.prepareAndUpdateSubmission(data);
       }
       if (
@@ -130,7 +126,6 @@ class OfflineSubmissions {
       ) {
         // When localDraftId is present without serverDraftId, serverApplicationId
         //then a the data need to be created as a new submission.
-        console.log(data);
         await this.prepareAndSubmitSubmission(data);
       }
     });
@@ -161,7 +156,6 @@ class OfflineSubmissions {
     data: OfflineSubmission
   ): Promise<any> {
     try {
-      console.log(data);
       const formioUrl = `${API_URL}/form/${data.formId}/submission`;
       const formioPayload = {
         data: data.data,
@@ -170,7 +164,6 @@ class OfflineSubmissions {
         _vnote: data.submissionData?._vnote
       };
       const header = { "x-jwt-token": localStorage.getItem("formioToken") };
-      console.log(formioUrl, formioPayload);
       return RequestService.httpPOSTRequest(
         formioUrl,
         formioPayload,
@@ -227,7 +220,6 @@ class OfflineSubmissions {
   private static async prepareAndUpdateSubmission(
     data: OfflineSubmission
   ): Promise<void> {
-    console.log(data);
     try {
       const response: FormioCreateResponse =
         await this.prepareAndSubmitFormioSubmission(data);

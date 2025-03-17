@@ -113,7 +113,6 @@ class OfflineDeleteService {
     localSubmissionId: string | number
   ): Promise<void> {
     try {
-      console.log(localSubmissionId, "___storage localSubmissionIdsToDelete");
       if (!ffDb) {
         throw new Error("IndexedDB is not available.");
       }

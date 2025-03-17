@@ -690,7 +690,6 @@ class OfflineFetchService {
       // Get the localDraftId from the activeForm table.
       const activeForm = await ffDb.activeForm.limit(1).first();
       const localDraftId = activeForm?.localDraftId;
-      console.log(localDraftId);
       // Get all non active offline submissions.
       const submissions = await ffDb.offlineSubmissions
         .filter((eachRow) => eachRow.localDraftId !== localDraftId)
