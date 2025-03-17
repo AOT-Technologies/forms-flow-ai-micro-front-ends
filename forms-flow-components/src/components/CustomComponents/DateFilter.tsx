@@ -10,9 +10,10 @@ import {
   UpArrowIcon,
 } from "../SvgIcons";
 
+type DateValue = Date | string | null;
 interface DateRange {
-  startDate: Date | string | null;
-  endDate: Date | string | null;
+  startDate: DateValue;
+  endDate: DateValue;
 }
 
 interface DateRangePickerProps {
@@ -117,22 +118,15 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     return `${month}/${day}/${year}`;
   };
 
-  // Format date range for display
+  const getFormattedDate = (date: Date | string | null): string => {
+    if (!date) return "MM/DD/YYYY";
+    const parsedDate = date instanceof Date ? date : parseDate(date);
+    return formatDate(parsedDate);
+  };
+
   const formatDateRange = (): string => {
-    const start = dateRange?.startDate
-      ? formatDate(
-          dateRange.startDate instanceof Date
-            ? dateRange.startDate
-            : parseDate(dateRange.startDate)
-        )
-      : "MM/DD/YYYY";
-    const end = dateRange?.endDate
-      ? formatDate(
-          dateRange.endDate instanceof Date
-            ? dateRange.endDate
-            : parseDate(dateRange.endDate)
-        )
-      : "MM/DD/YYYY";
+    const start = getFormattedDate(dateRange?.startDate ?? null);
+    const end = getFormattedDate(dateRange?.endDate ?? null);
     return `${start} - ${end}`;
   };
 
@@ -219,67 +213,50 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     return [...daysFromPrevMonth, ...currentMonthDays, ...nextMonthDays];
   };
 
+  const normalizeDate = (date: Date | string | null): Date | null => {
+    if (!date) return null;
+    const parsedDate = date instanceof Date ? date : parseDate(date);
+    parsedDate.setHours(0, 0, 0, 0);
+    return parsedDate;
+  };
+
   // Check if date is in selected range
   const isInRange = (date: Date): boolean => {
-    if (!date || !dateRange || !dateRange.startDate || !dateRange.endDate)
-      return false;
+    const startDate = normalizeDate(dateRange?.startDate);
+    const endDate = normalizeDate(dateRange?.endDate);
+    const targetDate = normalizeDate(date);
 
-    // Reset hours, minutes, seconds and milliseconds for proper comparison
-    const normalizedDate = new Date(date);
-    normalizedDate.setHours(0, 0, 0, 0);
-
-    const normalizedStartDate = new Date(
-      dateRange.startDate instanceof Date
-        ? dateRange.startDate
-        : parseDate(dateRange.startDate)
-    );
-    normalizedStartDate.setHours(0, 0, 0, 0);
-
-    const normalizedEndDate = new Date(
-      dateRange.endDate instanceof Date
-        ? dateRange.endDate
-        : parseDate(dateRange.endDate)
-    );
-    normalizedEndDate.setHours(0, 0, 0, 0);
-
-    return (
-      normalizedDate >= normalizedStartDate &&
-      normalizedDate <= normalizedEndDate
+    return !!(
+      targetDate &&
+      startDate &&
+      endDate &&
+      targetDate >= startDate &&
+      targetDate <= endDate
     );
   };
 
   // Check if date is start date
   const isStartDate = (date: Date): boolean => {
-    if (!date || !dateRange || !dateRange.startDate) return false;
+    const startDate = normalizeDate(dateRange?.startDate);
+    const targetDate = normalizeDate(date);
 
-    const normalizedDate = new Date(date);
-    normalizedDate.setHours(0, 0, 0, 0);
-
-    const normalizedStartDate = new Date(
-      dateRange.startDate instanceof Date
-        ? dateRange.startDate
-        : parseDate(dateRange.startDate)
+    return !!(
+      targetDate &&
+      startDate &&
+      targetDate.getTime() === startDate.getTime()
     );
-    normalizedStartDate.setHours(0, 0, 0, 0);
-
-    return normalizedDate.getTime() === normalizedStartDate.getTime();
   };
 
   // Check if date is end date
   const isEndDate = (date: Date): boolean => {
-    if (!date || !dateRange || !dateRange.endDate) return false;
+    const endDate = normalizeDate(dateRange?.endDate);
+    const targetDate = normalizeDate(date);
 
-    const normalizedDate = new Date(date);
-    normalizedDate.setHours(0, 0, 0, 0);
-
-    const normalizedEndDate = new Date(
-      dateRange.endDate instanceof Date
-        ? dateRange.endDate
-        : parseDate(dateRange.endDate)
+    return !!(
+      targetDate &&
+      endDate &&
+      targetDate.getTime() === endDate.getTime()
     );
-    normalizedEndDate.setHours(0, 0, 0, 0);
-
-    return normalizedDate.getTime() === normalizedEndDate.getTime();
   };
 
   // Handle date selection
@@ -330,7 +307,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
   // Handle keyboard event for date selection
   const handleDateKeyDown = (
-    event: KeyboardEvent<HTMLDivElement>,
+    event: KeyboardEvent<HTMLButtonElement>,
     date: Date
   ): void => {
     if (event.key === "Enter" || event.key === " ") {
@@ -369,56 +346,36 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   };
 
   // Handle keyboard navigation
-  const handlePrevMonthKeyDown = (
-    event: KeyboardEvent<HTMLSpanElement>
+  const handleNavKeyDown = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    action: () => void
   ): void => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      goToPrevMonth();
+      action();
     }
   };
 
-  const handleNextMonthKeyDown = (
-    event: KeyboardEvent<HTMLSpanElement>
-  ): void => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      goToNextMonth();
+  // Handle calendar toggle
+  const toggleCalendar = (): void => {
+    setIsOpen(!isOpen);
+    if (isOpen) {
+      // Reset to initial date range if calendar is closing without selection
+      if (!dateRange?.endDate) {
+        setDateRange(parsedInitialRange());
+      }
     }
   };
 
-  const handlePrevYearKeyDown = (
-    event: KeyboardEvent<HTMLSpanElement>
-  ): void => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      goToPrevYear();
-    }
-  };
-
-  const handleNextYearKeyDown = (
-    event: KeyboardEvent<HTMLSpanElement>
-  ): void => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      goToNextYear();
-    }
-  };
-
-  // Handle keyboard toggle for calendar
-  const handleToggleKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      toggleCalendar();
-    }
-  };
-
-  // Handle keyboard close for calendar
-  const handleCloseKeyDown = (event: KeyboardEvent<HTMLSpanElement>): void => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
+  // Handle close calendar
+  const handleCloseCalendar = (event?: React.MouseEvent): void => {
+    if (event) {
       event.stopPropagation();
-      setIsOpen(false);
+    }
+    setIsOpen(false);
+    // Reset if selection is incomplete
+    if (!dateRange?.endDate) {
+      setDateRange(parsedInitialRange());
     }
   };
 
@@ -441,17 +398,6 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       t("December"),
     ];
     return `${months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
-  };
-
-  // Toggle calendar open/close
-  const toggleCalendar = (): void => {
-    setIsOpen(!isOpen);
-    if (isOpen) {
-      // Reset to initial date range if calendar is closing without selection
-      if (!dateRange?.endDate) {
-        setDateRange(parsedInitialRange());
-      }
-    }
   };
 
   // Close calendar when clicking outside
@@ -492,34 +438,27 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       ref={calendarRef}
       data-testid="date-range-picker"
     >
-      <div
-        className={`date-range-display ${isOpen ? "open" : ""}`}
+      <button
+        className={`date-range-display ${isOpen ? "open" : ""} button-as-div`}
         onClick={toggleCalendar}
-        onKeyDown={handleToggleKeyDown}
+        onKeyDown={(e) => handleNavKeyDown(e, toggleCalendar)}
         data-testid="date-range-display"
         aria-label={t("Date range selector")}
         aria-expanded={isOpen}
-        role="button"
-        tabIndex={0}
+        type="button"
       >
         <span data-testid="date-range-text">{formatDateRange()}</span>
         <div className="date-range-controls">
-          <span
-            className="date-range-close"
+          <button
+            className="date-range-close button-as-div"
             data-testid="date-range-close-btn"
             aria-label={t("Close calendar")}
-            role="button"
-            tabIndex={0}
-            onKeyDown={handleCloseKeyDown}
+            type="button"
+           
+            onKeyDown={(e) => handleNavKeyDown(e, () => handleCloseCalendar())}
           >
-            <CloseIcon
-              color="white"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(false);
-              }}
-            />
-          </span>
+            <CloseIcon color="white"   onClick={(e) => handleCloseCalendar(e)}/>
+          </button>
           <span
             className="date-range-toggle-icon"
             data-testid="date-range-toggle-icon"
@@ -532,7 +471,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
             )}
           </span>
         </div>
-      </div>
+      </button>
 
       {isOpen && (
         <div
@@ -543,27 +482,26 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         >
           <div className="calendar-header" data-testid="calendar-header">
             <div className="calendar-nav-buttons">
-              <span
-                className="calendar-prev-year-btn"
+              <button
+                className="calendar-prev-year-btn button-as-div"
                 onClick={goToPrevYear}
-                onKeyDown={handlePrevYearKeyDown}
+                onKeyDown={(e) => handleNavKeyDown(e, goToPrevYear)}
                 data-testid="calendar-prev-year"
                 aria-label={t("Previous year")}
-                role="button"
-                tabIndex={0}
+                type="button"
               >
                 <LeftFarIcon />
-              </span>
-              <span
-                className="calendar-prev-month-btn"
+              </button>
+              <button
+                className="calendar-prev-month-btn button-as-div"
+              
+                onKeyDown={(e) => handleNavKeyDown(e, goToPrevMonth)}
                 data-testid="calendar-prev-month"
                 aria-label={t("Previous month")}
-                role="button"
-                tabIndex={0}
-                onKeyDown={handlePrevMonthKeyDown}
+                type="button"
               >
-                <AngleLeftIcon onClick={goToPrevMonth} />
-              </span>
+                <AngleLeftIcon   onClick={goToPrevMonth} />
+              </button>
             </div>
             <span
               className="calendar-month-year"
@@ -572,27 +510,26 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
               {formatMonthYear()}
             </span>
             <div className="calendar-nav-buttons">
-              <span
-                className="calendar-next-month-btn"
+              <button
+                className="calendar-next-month-btn button-as-div"
+              
+                onKeyDown={(e) => handleNavKeyDown(e, goToNextMonth)}
                 data-testid="calendar-next-month"
                 aria-label={t("Next month")}
-                role="button"
-                tabIndex={0}
-                onKeyDown={handleNextMonthKeyDown}
+                type="button"
               >
-                <AngleRightIcon onClick={goToNextMonth} />
-              </span>
-              <span
-                className="calendar-next-year-btn"
+                <AngleRightIcon   onClick={goToNextMonth}/>
+              </button>
+              <button
+                className="calendar-next-year-btn button-as-div"
                 onClick={goToNextYear}
-                onKeyDown={handleNextYearKeyDown}
+                onKeyDown={(e) => handleNavKeyDown(e, goToNextYear)}
                 data-testid="calendar-next-year"
                 aria-label={t("Next year")}
-                role="button"
-                tabIndex={0}
+                type="button"
               >
                 <RightFarIcon />
-              </span>
+              </button>
             </div>
           </div>
 
@@ -621,7 +558,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
           <div className="calendar-days" data-testid="calendar-days">
             {generateDays().map((dayObj, index) => {
-              // Safe checks for all properties
+              // Safety check
               if (!dayObj || !dayObj.date) return null;
 
               const selected = isInRange(dayObj.date);
@@ -631,6 +568,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
               const dayClasses = [
                 "calendar-day",
+                "button-as-div", // Added class here
                 dayObj.isCurrentMonth ? "current-month" : "other-month",
                 selected ? "selected" : "",
                 isStart ? "start-date" : "",
@@ -638,9 +576,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
               ]
                 .filter(Boolean)
                 .join(" ");
+              
 
               return (
-                <div
+                <button
                   key={index}
                   onClick={() => handleDateSelect(dayObj.date)}
                   onKeyDown={(e) => handleDateKeyDown(e, dayObj.date)}
@@ -650,11 +589,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                     selected ? t("selected") : t("not selected")
                   }`}
                   aria-selected={selected}
-                  role="gridcell"
-                  tabIndex={0}
+                  type="button"
                 >
                   {dayNumber}
-                </div>
+                </button>
               );
             })}
           </div>
