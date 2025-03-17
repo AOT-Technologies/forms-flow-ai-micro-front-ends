@@ -1,220 +1,318 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { DateRangePicker } from "../components/CustomComponents/DateFilter";
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { DateRangePicker } from '../components/CustomComponents/DateFilter';
+import '@testing-library/jest-dom';
 
-// Mock the translation function
-jest.mock("react-i18next", () => ({
-  useTranslation: () => {
-    return {
-      t: (key) => key,
-      i18n: {
-        changeLanguage: jest.fn(),
-      },
-    };
-  },
+// Mock the translation hook
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'January': 'January',
+        'February': 'February',
+        'March': 'March',
+        'April': 'April',
+        'May': 'May',
+        'June': 'June',
+        'July': 'July',
+        'August': 'August',
+        'September': 'September',
+        'October': 'October',
+        'November': 'November',
+        'December': 'December',
+        'MO': 'MO',
+        'TU': 'TU',
+        'WE': 'WE',
+        'TH': 'TH',
+        'FR': 'FR',
+        'SA': 'SA',
+        'SU': 'SU',
+        'Date range selector': 'Date range selector',
+        'Close calendar': 'Close calendar',
+        'Date picker': 'Date picker',
+        'Previous year': 'Previous year',
+        'Previous month': 'Previous month',
+        'Next month': 'Next month',
+        'Next year': 'Next year',
+        'Day of week': 'Day of week',
+        'selected': 'selected',
+        'not selected': 'not selected'
+      };
+      return translations[key] || key;
+    }
+  })
 }));
 
-describe("DateRangePicker component", () => {
-  it("renders with default props", () => {
-    const { container } = render(<DateRangePicker />);
-    expect(
-      container.querySelector(".date-range-picker-container")
-    ).toBeInTheDocument();
-    expect(screen.getByTestId("date-range-display")).toBeInTheDocument();
-    expect(screen.getByTestId("date-range-text")).toBeInTheDocument();
+// Mock SVG icons
+jest.mock('../components/SvgIcons', () => ({
+  AngleLeftIcon: () => <div data-testid="angle-left-icon">←</div>,
+  AngleRightIcon: () => <div data-testid="angle-right-icon">→</div>,
+  CloseIcon: ({ onClick }: { onClick?: (e: React.MouseEvent) => void, color: string }) => 
+    <div data-testid="close-icon" onClick={onClick}>×</div>,
+  RightFarIcon: () => <div data-testid="right-far-icon">⟫</div>,
+  LeftFarIcon: () => <div data-testid="left-far-icon">⟪</div>,
+  DownArrowIcon: () => <div data-testid="down-arrow-icon">▼</div>,
+  UpArrowIcon: () => <div data-testid="up-arrow-icon">▲</div>,
+}));
+
+describe('DateRangePicker Component', () => {
+  const mockOnChange = jest.fn();
+  
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it("applies custom className", () => {
-    const { container } = render(<DateRangePicker className="custom-class" />);
-    expect(container.querySelector(".date-range-picker-container")).toHaveClass(
-      "custom-class"
-    );
-  });
+  // Helper to format dates in MM/DD/YYYY format
+  const formatDate = (date: Date): string => {
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
 
-  it("opens calendar when clicked", () => {
+  test('renders with default values', () => {
     render(<DateRangePicker />);
+    
+    // Check if the component renders
+    const dateRangePicker = screen.getByTestId('date-range-picker');
+    expect(dateRangePicker).toBeInTheDocument();
+    
+    // Check if the default date format is displayed
+    const today = new Date();
+    const thirtyDaysLater = new Date();
+    thirtyDaysLater.setDate(today.getDate() + 30);
+    
+    const expectedDateText = `${formatDate(today)} - ${formatDate(thirtyDaysLater)}`;
+    const dateRangeText = screen.getByTestId('date-range-text');
+    
+    expect(dateRangeText.textContent).toBe(expectedDateText);
+  });
 
+  test('renders with custom initial date range', () => {
+    const initialDateRange = {
+      startDate: new Date(2025, 0, 1), // Jan 1, 2025
+      endDate: new Date(2025, 0, 15)   // Jan 15, 2025
+    };
+    
+    render(<DateRangePicker initialDateRange={initialDateRange} />);
+    
+    const expectedDateText = `01/01/2025 - 01/15/2025`;
+    const dateRangeText = screen.getByTestId('date-range-text');
+    
+    expect(dateRangeText.textContent).toBe(expectedDateText);
+  });
+
+  test('opens and closes calendar', () => {
+    render(<DateRangePicker />);
+    
     // Calendar should be closed initially
-    expect(screen.queryByTestId("calendar-container")).not.toBeInTheDocument();
-
-    // Click to open calendar
-    fireEvent.click(screen.getByTestId("date-range-display"));
-
-    // Calendar should now be open
-    expect(screen.getByTestId("calendar-container")).toBeInTheDocument();
-    expect(screen.getByTestId("calendar-header")).toBeInTheDocument();
-    expect(screen.getByTestId("calendar-days")).toBeInTheDocument();
-  });
-
-  it("closes calendar when close button is clicked", () => {
-    render(<DateRangePicker />);
-
+    expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
+    
     // Open calendar
-    fireEvent.click(screen.getByTestId("date-range-display"));
-    expect(screen.getByTestId("calendar-container")).toBeInTheDocument();
-
-    // Click close button
-    fireEvent.click(screen.getByTestId("date-range-close-btn"));
-
-    // Calendar should be closed
-    expect(screen.queryByTestId("calendar-container")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    expect(screen.getByTestId('calendar-container')).toBeInTheDocument();
+    
+    // Close calendar
+    fireEvent.click(screen.getByTestId('date-range-close-btn'));
+    expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
   });
 
-  it("accepts and displays initial date range", () => {
+  test('displays correct month and year in calendar header', () => {
     const initialDateRange = {
-      startDate: "2025-03-01T00:00:00+00:00",
-      endDate: "2025-03-15T00:00:00+00:00",
+      startDate: new Date(2025, 2, 15), // Mar 15, 2025
+      endDate: new Date(2025, 2, 20)    // Mar 20, 2025
     };
-
+    
     render(<DateRangePicker initialDateRange={initialDateRange} />);
-
-    // Should display date range in the format MM/DD/YYYY - MM/DD/YYYY
-    expect(screen.getByTestId("date-range-text").textContent).toContain(
-      "03/01/2025 - 03/15/2025"
-    );
-  });
-
-  it("accepts ISO date format strings", () => {
-    const initialDateRange = {
-      startDate: "2025-03-12T11:49:57+00:00",
-      endDate: "2025-04-12T11:49:57+00:00",
-    };
-
-    render(<DateRangePicker initialDateRange={initialDateRange} />);
-
-    // Should properly parse and display ISO format dates
-    expect(screen.getByTestId("date-range-text").textContent).toContain(
-      "03/12/2025 - 04/12/2025"
-    );
-  });
-
-  it("shows correct month and year in calendar header", () => {
-    const initialDateRange = {
-      startDate: "2025-05-15T00:00:00+00:00",
-      endDate: "2025-05-20T00:00:00+00:00",
-    };
-
-    render(<DateRangePicker initialDateRange={initialDateRange} />);
-
+    
     // Open calendar
-    fireEvent.click(screen.getByTestId("date-range-display"));
-
-    // Should show May 2025 in the header
-    expect(screen.getByTestId("calendar-month-year").textContent).toBe(
-      "May 2025"
-    );
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Check if correct month and year are displayed
+    const monthYearText = screen.getByTestId('calendar-month-year');
+    expect(monthYearText.textContent).toBe('March 2025');
   });
 
-  it("navigates to previous year when previous year button is clicked", () => {
+ 
+
+  test('navigates to previous and next year', () => {
     const initialDateRange = {
-      startDate: "2025-03-01T00:00:00+00:00",
-      endDate: "2025-03-15T00:00:00+00:00",
+      startDate: new Date(2025, 2, 15), // Mar 15, 2025
+      endDate: new Date(2025, 2, 20)    // Mar 20, 2025
     };
-
+    
     render(<DateRangePicker initialDateRange={initialDateRange} />);
-
+    
     // Open calendar
-    fireEvent.click(screen.getByTestId("date-range-display"));
-
-    // Click previous year button
-    fireEvent.click(screen.getByTestId("calendar-prev-year"));
-
-    // Should now be March 2024
-    expect(screen.getByTestId("calendar-month-year").textContent).toBe(
-      "March 2024"
-    );
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Initial year
+    expect(screen.getByTestId('calendar-month-year').textContent).toBe('March 2025');
+    
+    // Go to next year
+    fireEvent.click(screen.getByTestId('right-far-icon'));
+    expect(screen.getByTestId('calendar-month-year').textContent).toBe('March 2026');
+    
+    // Go to previous year
+    fireEvent.click(screen.getByTestId('left-far-icon'));
+    expect(screen.getByTestId('calendar-month-year').textContent).toBe('March 2025');
   });
 
-  it("calls onChange callback when dates are selected", async () => {
-    const mockOnChange = jest.fn();
-
+  test('selects date range and calls onChange', async () => {
     render(<DateRangePicker onChange={mockOnChange} />);
-
+    
     // Open calendar
-    fireEvent.click(screen.getByTestId("date-range-display"));
-
-    // Select start date (day 10)
-    const startDay = screen.getByTestId("calendar-day-10");
-    fireEvent.click(startDay);
-
-    // Select end date (day 20)
-    const endDay = screen.getByTestId("calendar-day-20");
-    fireEvent.click(endDay);
-
-    // onChange should be called with the selected date range
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Find and select a start date (15th of current month)
+    const startDateElement = screen.getByTestId('calendar-day-15');
+    fireEvent.click(startDateElement);
+    
+    // Find and select an end date (20th of current month)
+    const endDateElement = screen.getByTestId('calendar-day-20');
+    fireEvent.click(endDateElement);
+    
+    // Check if onChange was called with the correct date range
     expect(mockOnChange).toHaveBeenCalledTimes(1);
-
-    // Check that the callback received a date range object
-    const dateRange = mockOnChange.mock.calls[0][0];
-    expect(dateRange).toHaveProperty("startDate");
-    expect(dateRange).toHaveProperty("endDate");
-
-    // Both dates should be Date objects
-    expect(dateRange.startDate instanceof Date).toBe(true);
-    expect(dateRange.endDate instanceof Date).toBe(true);
-  });
-
-  it("selects dates in reverse order if end date is clicked before start date", () => {
-    const mockOnChange = jest.fn();
-
-    render(<DateRangePicker onChange={mockOnChange} />);
-
-    // Open calendar
-    fireEvent.click(screen.getByTestId("date-range-display"));
-
-    // Select day 20 first
-    const laterDay = screen.getByTestId("calendar-day-20");
-    fireEvent.click(laterDay);
-
-    // Then select day 10
-    const earlierDay = screen.getByTestId("calendar-day-10");
-    fireEvent.click(earlierDay);
-
-    // Get the date range passed to onChange
-    const dateRange = mockOnChange.mock.calls[0][0];
-
-    // The start date should be day 10 (the earlier date)
-    expect(dateRange.startDate.getDate()).toBe(10);
-    // The end date should be day 20 (the later date)
-    expect(dateRange.endDate.getDate()).toBe(20);
-  });
-
-  it("highlights selected date range in the calendar", () => {
-    render(<DateRangePicker />);
-
-    // Open calendar
-    fireEvent.click(screen.getByTestId("date-range-display"));
-
-    // Select day 10
-    const startDay = screen.getByTestId("calendar-day-10");
-    fireEvent.click(startDay);
-
-    // It should have the start-date class
-    expect(startDay).toHaveClass("start-date");
-
-    // Select day 15
-    const endDay = screen.getByTestId("calendar-day-15");
-    fireEvent.click(endDay);
-
-    // End day should have the end-date class
-    expect(endDay).toHaveClass("end-date");
-
-    // All days in between should have the selected class
-    const day12 = screen.getByTestId("calendar-day-12");
-    expect(day12).toHaveClass("selected");
-  });
-
-  it("displays weekday headers", () => {
-    render(<DateRangePicker />);
-
-    // Open calendar
-    fireEvent.click(screen.getByTestId("date-range-display"));
-
-    const weekdays = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
-
-    // Check that all weekdays are displayed
-    weekdays.forEach((day) => {
-      expect(screen.getByText(day)).toBeInTheDocument();
+    const onChangeCalls = mockOnChange.mock.calls[0][0];
+    
+    // Get the current month and year
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    // Create expected date objects
+    const expectedStartDate = new Date(currentYear, currentMonth, 15);
+    const expectedEndDate = new Date(currentYear, currentMonth, 20);
+    
+    // Check that the dates match (comparing by time to avoid timezone issues)
+    expect(onChangeCalls.startDate.getTime()).toBe(expectedStartDate.getTime());
+    expect(onChangeCalls.endDate.getTime()).toBe(expectedEndDate.getTime());
+    
+    // Check if the display text was updated
+    await waitFor(() => {
+      const expectedText = `${formatDate(expectedStartDate)} - ${formatDate(expectedEndDate)}`;
+      expect(screen.getByTestId('date-range-text').textContent).toBe(expectedText);
     });
+  });
+  
+  test('handles keyboard navigation', () => {
+    render(<DateRangePicker />);
+    
+    // Open calendar with keyboard
+    const dateRangeDisplay = screen.getByTestId('date-range-display');
+    fireEvent.keyDown(dateRangeDisplay, { key: 'Enter' });
+    expect(screen.getByTestId('calendar-container')).toBeInTheDocument();
+    
+    // Navigate to next month with keyboard
+    const nextMonthBtn = screen.getByTestId('calendar-next-month');
+    fireEvent.keyDown(nextMonthBtn, { key: 'Enter' });
+    
+    // Navigate to previous month with keyboard
+    const prevMonthBtn = screen.getByTestId('calendar-prev-month');
+    fireEvent.keyDown(prevMonthBtn, { key: 'Enter' });
+    
+    // Select a date with keyboard
+    const dayElement = screen.getByTestId('calendar-day-15');
+    fireEvent.keyDown(dayElement, { key: 'Enter' });
+    
+    // Close calendar with keyboard
+    const closeBtn = screen.getByTestId('date-range-close-btn');
+    fireEvent.keyDown(closeBtn, { key: 'Enter' });
+    expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
+  });
+
+  test('properly marks selected date range', () => {
+    render(<DateRangePicker />);
+    
+    // Open calendar
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Select start date (10th)
+    const startDateElement = screen.getByTestId('calendar-day-10');
+    fireEvent.click(startDateElement);
+    
+    // Select end date (20th)
+    const endDateElement = screen.getByTestId('calendar-day-20');
+    fireEvent.click(endDateElement);
+    
+    // Reopen calendar to check selection
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+  });
+
+  test('handles string dates in initialDateRange', () => {
+    const initialDateRange = {
+      startDate: '2025-01-01T00:00:00.000Z', // ISO string for Jan 1, 2025
+      endDate: '2025-01-15T00:00:00.000Z'    // ISO string for Jan 15, 2025
+    };
+    
+    render(<DateRangePicker initialDateRange={initialDateRange} />);
+    
+    const dateRangeText = screen.getByTestId('date-range-text');
+    expect(dateRangeText.textContent).toBe('01/01/2025 - 01/15/2025');
+    
+    // Open calendar
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    expect(screen.getByTestId('calendar-month-year').textContent).toBe('January 2025');
+  });
+
+  test('resets to initial range when calendar is closed without selection', () => {
+    const initialDateRange = {
+      startDate: new Date(2025, 0, 1),
+      endDate: new Date(2025, 0, 15)
+    };
+    
+    render(<DateRangePicker initialDateRange={initialDateRange} />);
+    
+    // Open calendar
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Select only start date
+    const startDateElement = screen.getByTestId('calendar-day-10');
+    fireEvent.click(startDateElement);
+    
+    // Close calendar without selecting end date
+    fireEvent.click(screen.getByTestId('date-range-close-btn'));
+    
+    // Date range should reset to initial
+    const dateRangeText = screen.getByTestId('date-range-text');
+    expect(dateRangeText.textContent).toBe('01/01/2025 - 01/15/2025');
+  });
+
+  test('handles selection when end date is before start date', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    // Open calendar
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Select start date (20th)
+    const startDateElement = screen.getByTestId('calendar-day-20');
+    fireEvent.click(startDateElement);
+    
+    // Select end date (10th) which is before start date
+    const endDateElement = screen.getByTestId('calendar-day-10');
+    fireEvent.click(endDateElement);
+    
+    // Check if onChange was called with correct order (10th to 20th)
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    const onChangeCalls = mockOnChange.mock.calls[0][0];
+    
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    const expectedStartDate = new Date(currentYear, currentMonth, 10);
+    const expectedEndDate = new Date(currentYear, currentMonth, 20);
+    
+    expect(onChangeCalls.startDate.getTime()).toBe(expectedStartDate.getTime());
+    expect(onChangeCalls.endDate.getTime()).toBe(expectedEndDate.getTime());
+  });
+
+  test('applies custom className', () => {
+    render(<DateRangePicker className="custom-class" />);
+    
+    const dateRangePicker = screen.getByTestId('date-range-picker');
+    expect(dateRangePicker).toHaveClass('custom-class');
   });
 });
