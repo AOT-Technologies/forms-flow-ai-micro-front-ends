@@ -1443,4 +1443,6 @@ export const RESOURCE_BUNDLES_PT ={
   "Replace Current flow": "Substituir o fluxo atual",
   "Load More": "Carregar mais",
   "Invalid expression": "Expressão inválida",
+  "Add Alternative Label": "Adicionar rótulo alternativo",
+  "Add Variable": "Adicionar variável",
 };

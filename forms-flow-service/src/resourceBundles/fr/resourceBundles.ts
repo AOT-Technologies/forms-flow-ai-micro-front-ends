@@ -1443,6 +1443,8 @@ export const RESOURCE_BUNDLES_FR ={
   "Replace Current flow": "Remplacer le flux actuel",
   "Load More": "Charger plus",
   "Invalid expression": "Expression invalide",
+  "Add Alternative Label": "Ajouter une étiquette alternative",
+  "Add Variable": "Ajouter une variable",  
 }
 
 

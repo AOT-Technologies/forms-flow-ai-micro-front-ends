@@ -1432,4 +1432,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Replace Current flow": "替换当前流程",
   "Load More": "加载更多",
   "Invalid expression": "无效表达式",
+  "Variable": "变量",
+  "Add Alternative Label": "添加替代标签",
+  "Add Variable": "添加变量",
 }

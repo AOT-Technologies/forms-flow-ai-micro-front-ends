@@ -937,4 +937,6 @@ export const RESOURCE_BUNDLES_EN ={
   "Replace Current flow": "Replace Current flow",
   "Load More": "Load More",
   "Invalid expression": "Invalid expression",
+  "Add Alternative Label": "Add Alternative Label",
+  "Add Variable": "Add Variable",  
 }

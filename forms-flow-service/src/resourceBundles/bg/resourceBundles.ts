@@ -1442,4 +1442,6 @@ export const RESOURCE_BUNDLES_BG = {
   "Replace Current flow": "Заменете текущия поток",
   "Load More": "Зареди още",
   "Invalid Expression": "Невалиден израз",
+  "Add Alternative Label": "Добавяне на алтернативен етикет",
+  "Add Variable": "Добавяне на променлива",
 }
