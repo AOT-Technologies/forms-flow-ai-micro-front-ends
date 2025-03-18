@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { printFormatHelper, printCheckHelper } from "../helpers/helperServices";
 import formFieldLayout from "./print_layout.json";
 import "./svgPrint.scss";
@@ -27,11 +27,40 @@ export const SVGprint: React.FC<SVGPrintProps> = ({
   isPreview,
   isForSubmissionPayload,
 }) => {
+  const [imageData, setImageData] = useState<string | null>(null);
   const formFields = formFieldLayout[formLayout]?.[formType];
   const allFormFields = formFieldLayout[formLayout]?.["fields"];
   const viewBox = formFieldLayout[formLayout]?.["viewbox"];
 
   let svgStyle: React.CSSProperties = {};
+
+  useEffect(() => {
+    // Fetch and convert images to base64 when needed
+    const preloadImage = async (imageSrc: string) => {
+      try {
+        const response = await fetch(imageSrc);
+        const blob = await response.blob();
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+      } catch (error) {
+        console.error('Error loading image:', error);
+        return null;
+      }
+    };
+    
+    // Only convert if needed
+    if (form) {
+      preloadImage(form).then(base64Image => {
+        if (base64Image) {
+          // Store the base64 image in state
+          setImageData(base64Image);
+        }
+      });
+    }
+  }, [form]);
 
   if (Object.keys(values).length) {
     if (renderStage === "stageTwo" && isForSubmissionPayload) {
@@ -68,7 +97,7 @@ export const SVGprint: React.FC<SVGPrintProps> = ({
           xmlns="http://www.w3.org/2000/svg"
           className={"svg-wrapper" + formAspect}
         >
-          <image href={form} width="223" height="202" />
+          <image href={imageData || form} width="223" height="202" crossOrigin="anonymous" />
           {formFields?.map((item: string) => {
             const fieldKey = item;
             const field = allFormFields?.[item];
