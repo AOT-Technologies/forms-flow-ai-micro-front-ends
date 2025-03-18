@@ -20,7 +20,8 @@ import {
     private _tokenParsed: KeycloakTokenParsed | undefined;
     private timerId: any = 0;
     private userData: any
-  
+    private isInitialized: boolean = false;  // Track if Keycloak is initialized
+
     private constructor(url: string, realm: string, clientId: string, tenantId?: string) {
       this._keycloakConfig = {
         url: url,
@@ -45,9 +46,10 @@ import {
       this.kc?.login();
     }
   
-    private logout(): void {
+    private logout (): void {
+      this.isInitialized = false; // Reset initialization state
       this.kc?.logout();
-      StorageService.clear()
+      StorageService.clear();
     }
   
     /**
@@ -172,11 +174,17 @@ import {
      * make sure `silent-check-sso.html` is present in public folder
      * @param callback - Optional - callback function to excecute after succeessful authentication
      */
-    public initKeycloak(callback: (authenticated) => void = () => {}): void {
+    public initKeycloak (callback: (authenticated) => void = () => { }): void {
+        if (this.isInitialized) {
+          console.log("Keycloak is already initialized.");
+          callback(true); // Proceed as initialized
+          return; // Exit the method if already initialized
+        }
       this.kc
         ?.init(this.keycloakInitConfig)
         .then((authenticated) => {
           if (authenticated) {
+            this.isInitialized = true;  // Mark as initialized
             console.log("Authenticated");
             if (!!this.kc?.resourceAccess) {
               const UserRoles = this.kc?.resourceAccess[this.kc.clientId!]?.roles;
@@ -228,7 +236,8 @@ import {
     /**
      * logs the user out and clear all user data from session.
      */
-    public userLogout(): void {
+    public userLogout (): void {
+      this.isInitialized = false; // Reset initialization state
       StorageService.clear();
       this.logout();
     }
