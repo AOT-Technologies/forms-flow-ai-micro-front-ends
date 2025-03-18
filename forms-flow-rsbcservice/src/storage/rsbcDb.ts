@@ -160,7 +160,7 @@ class DigitalFormsDB extends Dexie {
 // Initialize the database
 export const rsbcDb = new DigitalFormsDB();
 
-// Open the database and clear formID for testing
+// Open the database
 const initDB = async () => {
   try {
     if (!rsbcDb.isOpen()) {
@@ -169,8 +169,6 @@ const initDB = async () => {
     } else {
       console.log("IndexedDB is already open.");
     }
-    await rsbcDb.formID.clear();
-    console.log("Form IDs cleared.");
   } catch (error) {
     console.error("Open failed: " + error);
   }
