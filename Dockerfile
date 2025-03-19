@@ -73,5 +73,5 @@ COPY --from=builder /app/versioned/ /usr/share/nginx/html/
 HEALTHCHECK --interval=30s --timeout=3s CMD wget -q --spider http://localhost/ || exit 1
 
 # Expose Nginx port
-EXPOSE 80
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
