@@ -1,8 +1,8 @@
 export const DATE_FORMAT =
-  (window as any)._env_ && (window as any)._env_.REACT_APP_DATE_FORMAT || "DD-MM-YYYY";
+  (window as any)._env_ && (window as any)._env_.REACT_APP_DATE_FORMAT || "YYYY-MM-DD";
 
 export const TIME_FORMAT =
-(window as any)._env_ && (window as any)._env_.REACT_APP_TIME_FORMAT || "hh:mm:ss A";
+(window as any)._env_ && (window as any)._env_.REACT_APP_TIME_FORMAT || "HH:mm:ss";
 
 const MULTITENANCY_ENABLED_VARIABLE = (window as any)._env_?.REACT_APP_MULTI_TENANCY_ENABLED || false;
 
