@@ -131,6 +131,28 @@ class OfflineDeleteService {
       console.error(`Error deleting data ${localSubmissionId}:`, error);
     }
   }
+
+  /**
+   * Function is delete the draft deleted table with server draft id.
+   * @param serverDraftId server draft id to be deleted.
+   */
+  public static async deleteDraftDeleteWithServerId(
+    serverDraftId: number
+  ): Promise<void> {
+    try {
+      if (!ffDb) {
+        throw new Error("IndexedDB is not available.");
+      }
+      await ffDb.open();
+      // Perform the delete operation
+      const applications = ffDb.deletedDrafts
+        .where("serverDraftId")
+        .equals(serverDraftId)
+        .delete();
+    } catch (error) {
+      console.error(`Error deleting data ${serverDraftId}:`, error);
+    }
+  }
 }
 
 export default OfflineDeleteService;
