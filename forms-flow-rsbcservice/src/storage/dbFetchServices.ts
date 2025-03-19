@@ -1,5 +1,5 @@
 import { rsbcDb } from "./rsbcDb";
-import { ffDb, IndividualFormDefinition, OfflineSubmission } from "./ffDb";
+import { DeletedDraft, ffDb, IndividualFormDefinition, OfflineSubmission } from "./ffDb";
 import { StaticTables } from "../constants/constants";
 import DBServiceHelper from "../helpers/helperDbServices";
 import { FormTypes } from "../constants/constants";
@@ -736,6 +736,23 @@ class OfflineFetchService {
         `Error fetching data from application with id ${applicationId}:`,
         error
       );
+      throw error;
+    }
+  }
+
+  /**
+   * Fetch all drafts to be deleted from the indexdb deleted  draft table.
+   * @returns all drafts to be deleted.
+   */
+  public static async fetchAllDraftDelete(): Promise<DeletedDraft[]> {
+    try {
+      if (!ffDb) {
+        throw new Error("IndexedDB is not available.");
+      }
+      await ffDb.open();
+      return ffDb.deletedDrafts.toArray();
+    } catch (error) {
+      console.error("Error fetching data.", error);
       throw error;
     }
   }

@@ -176,7 +176,6 @@ import {
      */
     public initKeycloak (callback: (authenticated) => void = () => { }): void {
         if (this.isInitialized) {
-          console.log("Keycloak is already initialized.");
           callback(true); // Proceed as initialized
           return; // Exit the method if already initialized
         }

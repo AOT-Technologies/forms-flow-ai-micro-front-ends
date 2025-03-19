@@ -74,7 +74,7 @@ export interface Draft {
   formType: string;
 }
 
-interface DeletedDraft {
+export interface DeletedDraft {
   serverDraftId: number;
 }
 
@@ -178,7 +178,7 @@ class FormsFlowDB extends Dexie {
         "_id, title, description, name, path, type, created, modified, machineName, parentFormId",
       activeForm: "localDraftId, serverDraftId",
       formProcesses: "formId, formName",
-      deletedDrafts: "serverDraftId",
+      deletedDrafts: "serverDraftId"
     });
   }
 }
