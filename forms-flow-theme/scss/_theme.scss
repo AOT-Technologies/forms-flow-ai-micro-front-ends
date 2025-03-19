@@ -1,143 +1,98 @@
 //New Colors
+$black: #000000;
+$white: #ffffff;
+$green: #57C20A;
+$green-dark: #006621;
 
-$base: hsl(233, 90%, 55%);
-$gray: hsl(199, 5%, 40%);
-$black: hsl(0, 0%, 0%);
-$white: hsl(0, 0%, 100%);
-$red-000: hsl(0, 100%, 63%);
-$live: hsl(95, 90%, 40%);
+//primary shades
+$primary: #253DF4;
+$primary-light: #E2E1FC;
 
-@function set-lightness($color, $target-lightness) {
-  //USE: call the function with a color and its expected lightness. (the L of HSL will be replaced).
-  $hue: hue($color);
-  $saturation: saturation($color);
-  @return hsl($hue, $saturation, $target-lightness);
-}
+//gray shades
+$gray-darkest: #303436;
+$gray-dark: #4C4C4C;
+$gray-medium-dark: #AFB4B6;
+$gray-medium: #E4E6E7;
+$gray-light: #F2F2F3;
 
-$base-1000: set-lightness($base, 15%); //darker.
-$base-900: set-lightness($base, 25%);
-$base-800: set-lightness($base, 35%);
-$base-700: set-lightness($base, 45%);
-$base-600: set-lightness($base, 55%); //Used as primary color.
-$base-500: set-lightness($base, 65%);
-$base-400: set-lightness($base, 75%);
-$base-300: set-lightness($base, 85%);
-$base-200: set-lightness($base, 90%);
-$base-100: set-lightness($base, 95%); //brighter.
 
-$gray-1000: set-lightness($gray, 5%);
-$gray-900: set-lightness($gray, 10%);
-$gray-800: set-lightness($gray, 20%);
-$gray-700: set-lightness($gray, 30%);
-$gray-600: set-lightness($gray, 40%);
-$gray-500: set-lightness($gray, 50%);
-$gray-400: set-lightness($gray, 60%);
-$gray-300: set-lightness($gray, 70%);
-$gray-200: set-lightness($gray, 80%);
-$gray-100: set-lightness($gray, 90%);
-$gray-000: set-lightness($gray, 95%);
-
-$primary : $base-600;
-$secondary : $base-100; 
-$success: #198754;
-$danger: #dc3545;
-$dark: #000000;
-$gray: #232323;
-$info: #008599;
-$main-bg: $gray-000;
-$alert: #ffbb00;
-$body-bg: $white;
-$body-color: $white;
-$dropdown-link-color: $dark;
-$dropdown-link-hover-bg: $gray-200;
-$dropdown-link-hover-color: $dark;
-$btn-color: $dark;
-$popover-body-color: $dark;
-$btn-disabled-border-color: $gray-100;
+$success: $green-dark;
+$btn-color: $black;
+//no-code colors
+$no-code-success: #1B9C85;
+$no-code-secondary: #EA9389;
+$no-code-warning: #faad14;
 
 $theme-colors: (
   "primary": $primary,
-  "secondary": $secondary,
   "success": $success,
-  "danger": $danger,
   "black":$black,
-  "dark": $dark,
   "white": $white,
-  "gray": $gray,
-  "info": $info,
-  "main-bg": $main-bg,
-  "body-bg":$white,
-  "body-color":$white,
-  "input-color": $dark,
-  "btn-disabled-border-color":$btn-disabled-border-color,
 );
 
 $custom-colors: (
-  "base-1000": $base-1000, //darker
-  "base-900": $base-900,
-  "base-800": $base-800,
-  "base-700": $base-700,
-  "base-600": $base-600, //primary
-  "base-500": $base-500,
-  "base-400": $base-400,
-  "base-300": $base-300,
-  "base-200": $base-200,
-  "base-100": $base-100, //lighter
+  //blue shades
+  "primary": $primary,
+  "primary-light": $primary-light,
 
-  "gray-1000": $gray-1000, //darker
-  "gray-900": $gray-900,
-  "gray-800": $gray-800,
-  "gray-700": $gray-700,
-  "gray-600": $gray-600,
-  "gray-500": $gray-500,
-  "gray-400": $gray-400,
-  "gray-300": $gray-300,
-  "gray-200": $gray-200,
-  "gray-100": $gray-100,
-  "gray-000": $gray-000, //lighter
+  //gray shades
+  "gray-darkest": $gray-darkest,
+  "gray-dark": $gray-dark,
+  "gray-medium-dark": $gray-medium-dark,
+  "gray-medium": $gray-medium,
+  "gray-light": $gray-light,
 
+  //others
   "black": $black,
   "white": $white,
-  "live": $live,
-  "red-000": $red-000,
-  //old colors - to be removed.
-  "primary-100": tint-color($primary, 95%),
-  "primary-200": tint-color($primary, 60%),
-  "primary-300": tint-color($primary, 20%),
-  "primary-400": tint-color($primary, 10%),
-  "primary-500": shade-color($primary, 10%),
-  "primary-600": shade-color($primary, 40%),
-  "primary-700": shade-color($primary, 60%),
-  "danger-200": tint-color($danger, 80%),
-  "danger-400": tint-color($danger, 40%),
-  "success-200": tint-color($success, 85%),
-  "alert-200": tint-color($alert, 80%),
-  "alert-400": tint-color($alert, 55%),
+  "green": $green,
+  "danger": $danger,
 );
 
 // Merge the maps
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 :root {
-  --navbar-active-submenu-bg-color: #{$gray-800};
+  //for navbar
+  --navbar-active-submenu-bg-color: #{$gray-darkest};
   --navbar-active-submenu-font-color: #{$white};
-  --navbar-menu-hover-bg-color: #{$base-100};
-  --navbar-main-menu-active-bg-color: #{$gray-100};
-  --navbar-main-menu-active-font-color: #{$gray-800};
+  --navbar-menu-hover-bg-color: #{$primary-light};
+
+  --navbar-active-submenu-font-weight: var(--font-weight-lg);
+  --navbar-active-submenu-font-size: var(--font-size-sm);
+  --navbar-hover-submenu-bg-color: #{$primary-light};
+  --navbar-hover-submenu-font-color: #{$gray-darkest};
+  --navbar-hover-submenu-font-weight: var(--font-weight-sm);
+  --navbar-hover-submenu-font-size: var(--font-size-sm);
+
+  --navbar-main-menu-active-bg-color: #{$gray-medium};
+  --navbar-main-menu-active-font-color: #{$gray-darkest};
   --navbar-bg-color: #{$white};
   --custom-logo-path: " ";
   --custom-title: " ";
+
+  //for buttons
   --primary-btn-font-color: #{$white};
-  --primary-btn-bg-color: #{$base-600};
-  --primary-btn-hover-bg-color: #{$base-500};
-  --secondary-btn-font-color: #{$base-600};
-  --secondary-btn-bg-color: #{$base-100};
-  --secondary-btn-hover-bg-color: #{$base-200};
+  --primary-btn-bg-color: #{$primary};
+  --secondary-btn-font-color: #{$primary};
+  --secondary-btn-bg-color: #{$primary-light};
+  --default-link-color: #{$primary};
+  --sm-btn-border-radius: var(--radius-md);
+  --md-btn-border-radius: var(--radius-md);
+  --lg-btn-border-radius: var(--radius-lg);
   --default-font-size: 1rem; 
-  --default-font-color: #{$gray-800};
+  --default-font-color: #{$gray-dark};
   --navbar-width: 192px;
+
+  //no-code colors
+  --no-code-success: #{$no-code-success};
+  --no-code-secondary: #{$no-code-secondary};
+  --no-code-warning: #{$no-code-warning};
+
   //font-style
-  --primary-font: "Roboto", sans-serif;
+  --default-font-family-url:" ";
+  --default-font-family: "Roboto", sans-serif;
+  --primary-font: var(--default-font-family);
   //font-size
   --font-size-xs: 0.875rem;
   --font-size-sm: var(--default-font-size);
@@ -180,18 +135,18 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --shadow-3xl: 0px 24px 48px -8px rgba(48, 52, 54, 0.016);
   --shadow-nav: 4px 0px 8px -2px rgba(48, 52, 54, 0.08);
   //radius
-  --radius-025: 0.25rem;
-  --radius-050: 0.5rem;
-  --radius-075: 0.75rem;
-  --radius-0100: 1rem;
-  --radius-0125: 1.25rem;
-  --radius-0150: 1.5rem;
-  --radius-200: 2rem;
+  --radius-sm: 1.09375rem; //17.5px
+  --radius-md: 1.34375rem; //21.5px
+  --radius-lg: 1.59375rem; //25.5px
+  --radius-modal: 1.5rem; //24px
   //custom
   --client-nav: 3rem;
   --header-close-btn: 4.625rem;
+  --default-danger-color: #FF4242;
 }
-  
+//for cutomize danger color
+$danger: var(--default-danger-color);
+
 body {
   color: var(--default-font-color) !important; 
   min-height: 100vh !important;
@@ -200,16 +155,16 @@ body {
 }
 
 .info-background {
-  background-color: var(--ff-danger-200);
+  background-color: var(--ff-danger);
 }
 
 .custom_primary_color {
-  color: var(--ff-primary);
+  color: $primary;
 }
 
 .bg-default {
-  background-color: var(--ff-primary-600);
-  border: var(--ff-primary-600);
+  background-color: $primary;
+  border: $primary;
   color: var(--ff-white) !important;
 }
 
@@ -228,8 +183,8 @@ body {
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: var(--ff-base-200);
-      border-radius: var(--radius-0125);
+      background-color: $primary-light;
+      border-radius: var(--radius-md);
       width: var(--spacer-050);
       background-clip: padding-box;
       border: var(--spacer-025) solid transparent;
@@ -238,6 +193,6 @@ body {
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    box-shadow: inset 0 0 0 0.0625rem var(--ff-base-600);
+    box-shadow: inset 0 0 0 0.0625rem $primary;
   }
 }

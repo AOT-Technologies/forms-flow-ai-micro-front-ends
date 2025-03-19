@@ -15,6 +15,17 @@ enum User {
     public static get(key: string): string | null {
       return sessionStorage.getItem(key);
     }
+     /**
+     *
+     * @param key
+     * @returns the current value present in the session storage for
+     * the given key, null if key is not present
+     */
+    
+    public static getParsedData(key: string): Object | null {
+      const data = sessionStorage.getItem(key);
+      return data ? JSON.parse(data) : null
+    }
     /**
      * sets a new value for the key if present in the session storage
      * new key/value pair is created if the key is not present

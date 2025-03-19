@@ -1,5 +1,9 @@
 // Variables for reused values
-$secondary: var(--ff-secondary);
+$primary-light: var(--ff-primary-light);
+$gray-darkest: var(--ff-gray-darkest);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
+$danger-color: var(--ff-danger);
 .ai-modal {
   .modal-dialog {
     margin-top: 2.5vh !important;
@@ -8,7 +12,7 @@ $secondary: var(--ff-secondary);
   }
 
   .modal-header {
-    border-bottom: 1px solid var(--ff-gray-000) !important;
+    border-bottom: 1px solid $gray-medium !important;
   }
 
   .modal-body {
@@ -35,8 +39,8 @@ $secondary: var(--ff-secondary);
     }
 
     .form-column {
-      background-color: var(--ff-gray-000) !important;
-      border-bottom-right-radius: var(--radius-0150) !important;
+      background-color: $gray-medium !important;
+      border-bottom-right-radius: var(--radius-lg) !important;
       height: 100%;
     }
 
@@ -88,23 +92,23 @@ $secondary: var(--ff-secondary);
         .ai-message-box {
           margin-right: var(--spacer-200);
           padding: var(--spacer-200);
-          background: $secondary !important;
-          border-radius: var(--radius-0100);
+          background: $primary-light !important;
+          border-radius: var(--radius-sm);
           margin-top: var(--spacer-050);
         }
 
         .ai-user-message {
-          background-color: var(--ff-gray-100) !important;
+          background-color: $gray-medium !important;
           padding: var(--spacer-200);
           margin-left: var(--spacer-200);
-          border-radius: var(--radius-0100);
+          border-radius: var(--radius-sm);
           margin-bottom: var(--spacer-100);
         }
 
         .ai-response-loading {
-          border-radius: var(--radius-0100);
+          border-radius: var(--radius-sm);
           padding: var(--spacer-200);
-          background: $secondary !important;
+          background: $primary-light !important;
           max-width: 0.938rem;
 
           .loading-dots {
@@ -115,7 +119,7 @@ $secondary: var(--ff-secondary);
             div {
               width: 0.125rem;
               height: 0.125rem;
-              background-color: var(--ff-gray-800) !important;
+              background-color: $gray-darkest !important;
               border-radius: 50%;
               margin: 0 2px;
               animation: loading 1s infinite;
@@ -151,7 +155,7 @@ $secondary: var(--ff-secondary);
     }
 
     .danger-message {
-      color: var(--ff-red-000);
+      color: $danger-color;
     }
 
     .form-container {
@@ -166,9 +170,9 @@ $secondary: var(--ff-secondary);
       }
 
       &::-webkit-scrollbar-thumb {
-        background-color: var(--ff-gray-200);
-        border: 1px solid var(--ff-gray-200);
-        border-radius: var(--radius-0125);
+        background-color: $gray-medium;
+        border: 1px solid $gray-medium;
+        border-radius: var(--radius-md);
       }
     }
 
@@ -176,9 +180,8 @@ $secondary: var(--ff-secondary);
     .button-container {
       background-color: var(--ff-white) !important;
       padding: var(--spacer-200) var(--spacer-100);
-      border-bottom-right-radius: var(--radius-0150) !important;
-      border-left: 1px solid var(--ff-gray-000) !important;
-      ;
+      border-bottom-right-radius: var(--radius-lg) !important;
+      border-left: 1px solid $gray-medium !important;
     }
 
     padding: 0;

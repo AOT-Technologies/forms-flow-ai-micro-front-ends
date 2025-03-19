@@ -16,7 +16,7 @@ interface HistoryModalProps {
   loadMoreBtnText: string;
   revertBtndataTestid?: string;
   revertBtnariaLabel?: string;
-  loadMoreBtndataTestid?: string;
+  loadMoreBtndataTestId?: string;
   loadMoreBtnariaLabel?: string;
   allHistory: AllHistory[];
   categoryType: string;
@@ -64,7 +64,7 @@ const RevertField = ({
   size,
   label,
   onClick,
-  dataTestid,
+ dataTestId,
   ariaLabel,
   disabled=false
 }) => {
@@ -76,7 +76,7 @@ const RevertField = ({
         disabled={disabled}
         label={label}
         onClick={onClick}
-        dataTestid={dataTestid}
+       dataTestId={dataTestId}
         ariaLabel={ariaLabel}
       />
     </div>
@@ -94,7 +94,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     loadMoreBtnText,
     revertBtndataTestid = "revert-button",
     revertBtnariaLabel = "Revert Button",
-    loadMoreBtndataTestid = "loadmore-button",
+    loadMoreBtndataTestId = "loadmore-button",
     loadMoreBtnariaLabel = "Loadmore Button",
     allHistory,
     categoryType,
@@ -203,7 +203,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
               size="sm"
               label={loadMoreBtnText}
               onClick={handleLoadMore}
-              dataTestid={loadMoreBtndataTestid}
+             dataTestId={loadMoreBtndataTestId}
               ariaLabel={loadMoreBtnariaLabel}
             />
           </div>
@@ -247,7 +247,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
-                  dataTestid={revertBtndataTestid}
+                 dataTestId={revertBtndataTestid}
                   ariaLabel={revertBtnariaLabel}
                 />
               </div>
@@ -269,7 +269,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
-                  dataTestid={revertBtndataTestid}
+                 dataTestId={revertBtndataTestid}
                   ariaLabel={revertBtnariaLabel}
                 />
               </div>
@@ -290,10 +290,10 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         >
           <Modal.Header>
             <Modal.Title id="history-modal-title">
-              <b>{title}</b>
+              <b>{t(title)}</b>
             </Modal.Title>
             <div className="d-flex align-items-center ">
-              <CloseIcon onClick={handleClose} />
+              <CloseIcon onClick={handleClose} data-testid="close-icon" />
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">
@@ -320,6 +320,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             primaryBtnText={t(`Keep Current ${currentCategoryLabel}`)}
             secondaryBtnText={t(`Replace Current ${currentCategoryLabel}`)}
             secondayBtnAction={handleReplaceLayout}
+            secondoryBtndataTestid="confirm-revert-button"
           />
         )}
       </>

@@ -73,11 +73,11 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
   }) => {
     const { t } = useTranslation();
     const computedStyle = getComputedStyle(document.documentElement);
-    const redColor = computedStyle.getPropertyValue("--ff-red-000");
+    const redColor = computedStyle.getPropertyValue("--ff-danger");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const hasVersion = (item) => item?.majorVersion != null || item?.minorVersion != null;
-    const skipImport = "Skip, do not import";
+    const skipImport = t("Skip, do not import");
     const [selectedLayoutVersion, setSelectedLayoutVersion] = useState<{
       value: any;
       label: string;
@@ -95,30 +95,29 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
     const [showFileItems, setShowFileItems] = useState(false);
     const [inprogress, setInprogress] = useState(true);
-
     const layoutOptions = [
-      { value: true, label: "Skip, do not import" },
+      { value: true, label: t("Skip, do not import") },
       {
         value: "major",
-        label: `import as version ${
+        label: t(`import as version ${
           fileItems?.form?.majorVersion + 1
-        }.0 (only impacts new submissions)`,
+        }.0 (only impacts new submissions)`),
       },
       {
         value: "minor",
-        label: `import as version ${fileItems?.form?.majorVersion}.${
+        label: t(`import as version ${fileItems?.form?.majorVersion}.${
           fileItems?.form?.minorVersion + 1
-        }  (impacts previous and new submissions)`,
+        }  (impacts previous and new submissions)`),
       },
     ];
 
     const flowOptions = [
-      { value: true, label: "Skip, do not import" },
+      { value: true, label:  t("Skip, do not import") },
       {
         value: "major",
-        label: `import as version ${fileItems?.workflow?.majorVersion ?? 1}.${
+        label: t(`import as version ${fileItems?.workflow?.majorVersion ?? 1}.${
           fileItems?.workflow?.minorVersion ?? 0
-        } (only impacts new submissions)`,
+        } (only impacts new submissions)`),
       },
     ];
 
@@ -165,23 +164,20 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       !selectedFile ||
       inprogress ||
       importLoader ||
-      (importError && primaryButtonText !== "Try Again") ||
-      (showFileItems &&
-        fileItems &&
-        selectedFlowVersion?.label === skipImport &&
+      (importError && primaryButtonText !== "Try Again") || 
+      (showFileItems && fileItems &&
+        selectedFlowVersion?.label === skipImport && 
         selectedLayoutVersion?.label === skipImport);
-    
-
-   useEffect(() => {
-     const fileItemsHasVersion =
-       fileItems && Object.values(fileItems).some(hasVersion);
-     const processVersionHasVersion = hasVersion(processVersion);
-     if (fileItemsHasVersion || processVersionHasVersion) {
-       setShowFileItems(true);
-     } else {
-       setShowFileItems(false);
-     }
-   }, [importError, fileItems, processVersion]);
+       
+      useEffect(() => {
+        const fileItemsHasVersion = fileItems && Object.values(fileItems).some(hasVersion);
+        const processVersionHasVersion = hasVersion(processVersion);
+        if (fileItemsHasVersion || processVersionHasVersion) {
+          setShowFileItems(true);
+         } else {
+          setShowFileItems(false);
+        }
+      }, [importError, fileItems, processVersion]);
 
     useEffect(() => {
       if (!showModal) {
@@ -363,7 +359,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                     <div className="text-truncate">
                       {selectedLayoutVersion
                         ? selectedLayoutVersion.label
-                        : "Skip, do not import"}
+                        : t("Skip, do not import")}
                     </div>
                     <DropdownIcon />
                   </div>
@@ -398,7 +394,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                     <div className="text-truncate">
                       {selectedFlowVersion
                         ? selectedFlowVersion.label
-                        : "Skip, do not import"}
+                        : t("Skip, do not import")}
                     </div>
                     <DropdownIcon />
                   </div>
@@ -438,6 +434,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       return (
         <div
           role="button"
+          data-testid="import-modal-file-upload-area"
           className="file-upload"
           tabIndex={0}
           onDragOver={(e) => {
@@ -464,6 +461,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         >
           <input
             id="file-input"
+            data-testid="import-modal-file-input"
             type="file"
             style={{ display: "none" }}
             onChange={onUpload}
@@ -525,6 +523,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             }
             disabled={ primaryButtonDisabled }
             size="md"
+           dataTestId="import-modal-primary-button"
             label={primaryButtonText}
             onClick={() => {
               primaryButtonText === "Try Again" ? closeModal() : onImport();

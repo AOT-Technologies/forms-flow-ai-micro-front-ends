@@ -1,9 +1,14 @@
 // Variables for reused values
 $primary: var(--ff-primary);
+$gray-dark: var(--ff-gray-dark);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
+$primary-light: var(--ff-primary-light);
+$gray-darkest: var(--ff-gray-darkest);
 
 .wraper {
   .card {
-    border-radius: var(--radius-0150) !important;
+    border-radius: var(--radius-lg) !important;
     border: none !important;
   }
 
@@ -22,7 +27,7 @@ $primary: var(--ff-primary);
   }
 
   .card-body {
-    border-top: 1px solid var(--ff-gray-000) !important;
+    border-top: 1px solid $gray-medium !important;
   }
 }
 .flow-edit{
@@ -47,8 +52,8 @@ $primary: var(--ff-primary);
   overflow-x: hidden;
 
   .card {
-    border: 1px solid var(--ff-gray-000) !important;
-    border-radius: var(--radius-0150) !important;
+    border: 1px solid $gray-medium !important;
+    border-radius: var(--radius-lg) !important;
     margin-bottom: var(--spacer-050) !important;
   }
 
@@ -59,14 +64,14 @@ $primary: var(--ff-primary);
 }
 
 .no-drop {
-  border-top: 1px solid var(--ff-gray-000);
+  border-top: 1px solid $gray-medium;
 }
 
 .editor-header {
-  background-color: var(--ff-gray-800) !important;
+  background-color: $gray-darkest !important;
   width: 100% !important;
   height: auto !important;
-  border-radius: var(--radius-0100) !important;
+  border-radius: var(--radius-sm) !important;
   margin-bottom: var(--spacer-150);
 
   .editor-header-text {
@@ -89,19 +94,18 @@ $primary: var(--ff-primary);
   padding-bottom: var(--spacer-200) !important;
   padding-left: var(--spacer-200) !important;
   padding-right: 2.25rem !important;
-  background-color: var(--ff-base-200);
+  background-color: $primary-light; 
   width: 6.0625rem;
   height: calc(100vh - 9.8rem) !important;
   cursor: pointer;
-  height: auto;
   position: absolute;
   left: 94%;
   overflow: hidden;
   writing-mode: vertical-rl;
   text-align: end;
   transform: rotate(180deg);
-  border-top-right-radius: var(--radius-0100);
-  border-bottom-right-radius: var(--radius-0100);
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
   opacity: 1;
   transition: opacity 0.5s ease;
 
@@ -135,7 +139,7 @@ $primary: var(--ff-primary);
   padding-bottom: var(--spacer-200) !important;
   padding-left: var(--spacer-200) !important;
   padding-right: 2.25rem !important;
-  background-color: var(--ff-base-200);
+  background-color: $primary-light;
   height: calc(100vh - 9.8rem) !important;
   height: auto;
   position: absolute;
@@ -144,8 +148,8 @@ $primary: var(--ff-primary);
   cursor: pointer;
   text-align: end;
   transform: rotate(180deg);
-  border-top-left-radius: var(--radius-0100);
-  border-bottom-left-radius: var(--radius-0100);
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
   opacity: 0;
   transition: opacity 0.5s ease;
 
@@ -209,8 +213,13 @@ $primary: var(--ff-primary);
   align-items: flex-start;
   gap: var(--spacer-050);
   align-self: stretch;
-  border-radius: var(--radius-0100);
-  background: var(--ff-gray-000);
+  border-radius: var(--radius-sm);
+  background: $gray-medium;
+  .field-label{
+    font-weight: 700;
+    font-size:var(--font-size-xs);
+    color: $gray-darkest;
+  }
 }
 
 .info-content {
@@ -227,3 +236,10 @@ $primary: var(--ff-primary);
   line-height: var(--text-line-height);
 }
 
+
+.form-submission-button{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--spacer-100);
+}

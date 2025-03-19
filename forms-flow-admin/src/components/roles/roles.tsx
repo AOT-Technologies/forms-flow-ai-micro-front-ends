@@ -19,11 +19,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
-import {
-  KEYCLOAK_ENABLE_CLIENT_AUTH,
-  MULTITENANCY_ENABLED,
-} from "../../constants";
-import { DEFAULT_ROLES } from "../../constants";
+
 
 import {removingTenantId} from "../../utils/utils.js";
 import { TableFooter, CustomSearch } from "@formsflow/components";
@@ -60,7 +56,7 @@ const Roles = React.memo((props: any) => {
     React.useState("");
   const [editCandidate, setEditCandidate] = React.useState(initialRoleType);
   const [disabled, setDisabled] = React.useState(true);
-  const [search, setSerach] = React.useState("");
+  const [search, setSearch] = React.useState("");
   const [permission, setPermission] = React.useState([]);
 
   const filterList = (filterTerm, List) => {
@@ -120,7 +116,7 @@ const Roles = React.memo((props: any) => {
 
   const handlFilter = (e) => {
     if (e && e.key === 'Enter') {
-      setSerach(e.target.value);
+      setSearch(e.target.value);
       setRoles(filterList(e.target.value, props.roles));
 
     }    
@@ -340,29 +336,8 @@ const Roles = React.memo((props: any) => {
     setDisabled(false);
   };
 
-  const checkDefaultRoleOrNot = (role: any) => {
-    if (MULTITENANCY_ENABLED && tenantId) {
-      const roles = [
-        `${tenantId}-designer`,
-        `${tenantId}-client`,
-        `${tenantId}-reviewer`,
-        `${tenantId}-admin`,
-        "formsflow-reviewer",
-        "formsflow-designer",
-        "formsflow-client",
-        "camunda-admin",
-        "Approver",
-        "clerk",
-        "designer",
-      ];
-      return roles.includes(role);
-    } else {
-      return DEFAULT_ROLES.includes(role);
-    }
-  };
-
   const handleClearSearch = () => {
-    setSerach("");
+    setSearch("");
     let updatedRoleName = removingTenantId(props.roles,tenantId);
     setRoles(updatedRoleName);
   };
@@ -696,7 +671,7 @@ const Roles = React.memo((props: any) => {
       dataField: "id",
       text: <Translation>{(t) => t("Actions")}</Translation>,
       formatter: (cell, rowData, rowIdx, formatExtraData) => {
-        return checkDefaultRoleOrNot(rowData.name) ? null : (
+        return (
           <div>
             <i
               className="fa fa-pencil  me-4"
@@ -733,7 +708,7 @@ const Roles = React.memo((props: any) => {
              <CustomSearch
               handleClearSearch={handleClearSearch}
               search={search}
-              setSearch={setSerach}
+              setSearch={setSearch}
               handleSearch={handlFilter}
               placeholder="Search by role name"
               title="Search"

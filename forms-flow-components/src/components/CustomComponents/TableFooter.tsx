@@ -2,8 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Pagination from "react-js-pagination";
 import { Dropdown } from "react-bootstrap";
-import { DownArrowIcon } from "../SvgIcons/index";
-
+import { DownArrowIcon, AngleLeftIcon, AngleRightIcon } from "../SvgIcons/index";
 interface PageOption {
   value: number;
   text: string;
@@ -32,17 +31,17 @@ export const TableFooter: React.FC<TableFooterProps> = ({
     <tr>
       <td colSpan={3}>
         <div className="d-flex justify-content-between align-items-center flex-column flex-md-row">
-          <span className="ms-2">
+          <span>
             {t("Showing")} {limit * activePage - (limit - 1)} {t("to")}&nbsp;
             {Math.min(limit * activePage, totalCount)} {t("of")}&nbsp;
-            {totalCount} {t("results")}
+            {totalCount}
           </span>
         </div>
       </td>
       {totalCount > 5 ? (
         <>
           <td colSpan={3}>
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center justify-content-center">
               <Pagination
                 activePage={activePage}
                 itemsCountPerPage={limit}
@@ -51,6 +50,12 @@ export const TableFooter: React.FC<TableFooterProps> = ({
                 itemClass="page-item"
                 linkClass="page-link"
                 onChange={handlePageChange}
+                prevPageText={
+                  <span><AngleLeftIcon onClick={() => {}}/></span>
+                }
+                nextPageText={
+                  <span><AngleRightIcon onClick={() => {}} /></span>
+                }
               />
             </div>
           </td>
@@ -59,13 +64,14 @@ export const TableFooter: React.FC<TableFooterProps> = ({
              <div className="d-flex align-items-center justify-content-end">              
               <span className="pagination-text">{t("Rows per page")}</span>
               <div className="pagination-dropdown">
-                <Dropdown data-testid="page-limit-dropdown">
+                <Dropdown data-testid="page-limit-dropdown" >
                   <Dropdown.Toggle
                     variant="light"
                     id="dropdown-basic"
                     data-testid="page-limit-dropdown-toggle"
                   >
                     {limit}
+                    <DownArrowIcon />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {pageOptions.map((option) => (
@@ -80,7 +86,6 @@ export const TableFooter: React.FC<TableFooterProps> = ({
                     ))}
                   </Dropdown.Menu>
                 </Dropdown>
-                <DownArrowIcon />
               </div>
             </div>
           </td>

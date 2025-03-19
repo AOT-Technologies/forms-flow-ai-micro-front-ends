@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import {CustomButton} from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
+import { useTranslation } from "react-i18next";
 
 interface ConfirmModalProps {
   show: boolean;
@@ -33,7 +34,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   primaryBtnAction,
   primaryBtnText,
   primaryBtnDisable = false,
-  primaryBtndataTestid = 'Confirm-button',
+  primaryBtndataTestid = 'confirm-button',
   primaryBtnariaLabel = 'Confirm Button',
   buttonLoading= false,
   secondaryBtnText,
@@ -42,9 +43,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   secondoryBtnariaLabel = 'Cancel Button',
   secondaryBtnLoading= false
 }) => {
+  const { t } = useTranslation();
   return (
-    <>
-      <Modal
+    <Modal
         show={show}
         onHide={onClose}
         size="sm"
@@ -56,11 +57,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         <Modal.Header>
           <Modal.Title id="confirm-modal-title">
             <b>
-              {title}
+              {t(title)}
             </b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-              <CloseIcon onClick={onClose} />
+              <CloseIcon onClick={onClose} data-testid="confirm-modal-close"/>
           </div>
         </Modal.Header>
         <Modal.Body className="build-modal-body">
@@ -73,7 +74,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
               data-testid="confirm-modal-primary-message"
               aria-label="Primary message"
             >
-              {message}
+              {t(message)}
             </div>
             {messageSecondary && (
               <div
@@ -81,7 +82,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
                 data-testid="confirm-modal-secondary-message"
                 aria-label="Secondary message"
               >
-                {messageSecondary}
+                {t(messageSecondary)}
               </div>
             )}
           </div>
@@ -93,7 +94,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             label={primaryBtnText}
             disabled={primaryBtnDisable}
             onClick={primaryBtnAction}
-            dataTestid={primaryBtndataTestid}
+            dataTestId={primaryBtndataTestid}
             ariaLabel={primaryBtnariaLabel}
             buttonLoading={buttonLoading}
           />
@@ -102,13 +103,12 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             size="lg"
             label={secondaryBtnText}
             onClick={secondayBtnAction}
-            dataTestid={secondoryBtndataTestid}
+            dataTestId={secondoryBtndataTestid}
             ariaLabel={secondoryBtnariaLabel}
             disabled={secondaryBtnDisable}
             buttonLoading={secondaryBtnLoading}
           />}
         </Modal.Footer>
       </Modal>
-    </>
   );
 });

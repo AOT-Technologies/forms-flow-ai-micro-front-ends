@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { InfoIcon } from "../SvgIcons/index";
+import { NewInfoIcon } from "../SvgIcons/index";
 
 
 interface CustomInfoProps {
@@ -28,7 +28,7 @@ export const CustomInfo: FC<CustomInfoProps> = ( {
   return (
     <div className={`info-panel ${className}`}>
       <div className="d-flex align-items-center">
-        <InfoIcon />
+        <NewInfoIcon />
         <div className="field-label ms-2">{t(heading)}</div>
       </div>
       <div className="info-content">{formattedContent}</div> {/* Render formatted content */}

@@ -1,0 +1,97 @@
+$gray-medium: var(--ff-gray-medium);
+$primary: var(--ff-primary);
+$white-color: var(--ff-white);
+$gray-darkest: var(--ff-gray-darkest);
+.form-submission-history-modal {
+  margin: var(--spacer-150) auto !important;
+
+  .form-history-modal-body {
+    padding: var(--spacer-200) var(--spacer-250) !important;
+    margin-top: var(--spacer-200);
+    position: relative;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-xl);
+    /* Timeline styles */
+    .form-timeline {
+      position: absolute;
+      top: -8px;
+      bottom: 0;
+      left: 121px;
+      width: 2px;
+      background-color: $gray-darkest !important; 
+      z-index: 0;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: -15px;
+        top: 0;
+        width: 32px;
+        height: 32px;
+        background-color: $white-color !important;
+        border: 2px solid $gray-darkest !important;
+        border-radius: 50%;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background-color: $gray-darkest !important;
+        border-radius: 50%;
+        top: 8px;
+        left: -7px;
+        z-index: 2;
+      }
+    }
+
+    .form-history-entry {
+      position: relative;
+      background-color: $white-color !important; 
+      z-index: 2; 
+    }
+
+    .version-grid {
+      display: grid;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .version-style{
+        padding: var(--spacer-075) var(--spacer-100) ;
+        border-radius: var(--radius-lg);
+    }
+
+    .form-version-grid {
+      @extend .version-style;
+      @extend .version-grid;
+      @extend .form-history-entry;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
+      border: 2px solid $gray-darkest !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 66px;
+    }
+    
+    .text-style{
+        color: var(--default-font-color) !important;
+        font-size: var(--font-size-xs);
+    }
+    .content-headings {
+      @extend .text-style;
+      font-weight: var(--font-weight-xl);
+    }
+
+    .normal-text {
+      @extend .text-style;
+      font-weight: var(--font-weight-sm);
+    }
+  }
+}
+

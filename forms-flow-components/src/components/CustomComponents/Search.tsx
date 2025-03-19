@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { InputGroup, FormControl } from 'react-bootstrap';
 import { CloseIcon } from "../SvgIcons/index";
+import { useTranslation } from "react-i18next";
+
 
 interface CustomSearchProps {
     searchLoading: boolean;
@@ -23,6 +25,7 @@ export const CustomSearch: FC<CustomSearchProps> = ({
     title = "Search",
     dataTestId
 }) => {
+    const { t } = useTranslation();
     const inputClassNames = `d-flex align-items-center search-box-input ${searchLoading ? 'is-searching' : search ? 'has-value' : ''
         }`;
 
@@ -34,8 +37,8 @@ export const CustomSearch: FC<CustomSearchProps> = ({
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     onKeyDown={(e) => (e.key === 'Enter' && handleSearch())}
-                    placeholder={placeholder}
-                    title={title}
+                    placeholder={t(placeholder)}
+                    title={t(title)}
                     data-testid={dataTestId}
                     aria-label={placeholder}
                 />
@@ -51,7 +54,7 @@ export const CustomSearch: FC<CustomSearchProps> = ({
                                 data-testid="form-search-clear-button"
                             />
                         ) : (
-                            <div className="search-spinner"></div>
+                            <div className="search-spinner" data-testid="search-spinner"></div>
                         )}
 
                     </span>
