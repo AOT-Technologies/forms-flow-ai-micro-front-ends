@@ -8,29 +8,25 @@ import { StyleServices } from "@formsflow/service";
 
 interface DropdownItem {
   content?: React.ReactNode;
-  onClick: () => void;
+  onClick: (type?: string) => void;
+  type?: string;
   dataTestId?: string;
   ariaLabel?: string;
 }
 
 interface ButtonDropdownProps {
-  dropdownType: "DROPDOWN_ONLY" | "DROPDOWN_WITH_EXTRA_ACTION";
   variant: string;
   size?: "sm" | "md" | "lg" ;
   label: string;
   name?: string,
-  dropdownItems?: DropdownItem[];
-  disabled?: boolean;
-  extraActionIcon?: React.ReactNode;
-  extraActionOnClick?:() => void;
   className?: string;
+  dropdownType: "DROPDOWN_ONLY" | "DROPDOWN_WITH_EXTRA_ACTION";
+  dropdownItems?: DropdownItem[];
+  extraActionIcon?: React.ReactNode;
+  extraActionOnClick?:() => void; 
   dataTestId?: string;
-  ariaLabel?: string;
-//   buttonLoading?: boolean;  
+  ariaLabel?: string; 
 }
-
-// const getButtonClassName = (size: string | undefined, className: string) => 
-//   `${size === "md" ? 'btn-md' : ''} ${className}`;
 
 export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   dropdownType,
@@ -38,7 +34,6 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   size,
   label,
   dropdownItems = [],
-  disabled = false,
   extraActionIcon = false,
   extraActionOnClick,
   className = "",
@@ -46,7 +41,7 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   ariaLabel = "",
   name =  "",
 }) => {
-//   const classNameForButton = getButtonClassName(size, className);
+
   const buttonRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
@@ -93,14 +88,13 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
    return (
       <Dropdown
         as={ButtonGroup}
-        className={className}
-        onToggle={(isOpen) => setDropdownOpen(isOpen)}
+        className={`${className} custom-btn-width`}
+        onToggle={(isOpen) => setDropdownOpen(isOpen)} 
       >
-        <div ref={buttonRef} className="d-flex">
+        <div ref={buttonRef} className="label-extra-action">
         <Button
           variant={variant}
           size={size !== "md" ? size : undefined}
-          disabled={disabled}
           data-testid={dataTestId}
           aria-label={ariaLabel}
           name={name}
@@ -132,7 +126,7 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
           {dropdownItems.map((item, index) => (
             <Dropdown.Item
               key={index}
-              onClick={item.onClick}
+              onClick={() => item.onClick(item.type)}
               data-testid={item.dataTestId}
               aria-label={item.ariaLabel}
             >
