@@ -221,7 +221,7 @@ export const CloseIcon = ({
     height={height}
     viewBox="0 0 14 14"
     fill="none"
-    onClick={onClick} 
+    onClick={onClick}
     {...props}
   >
     <path
@@ -240,7 +240,8 @@ export const CloseIcon = ({
 );
 
 export const DeleteIcon = ({ color = baseColor, onClick, ...props }) => (
-  <svg xmlns="http://www.w3.org/2000/svg"
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
     width="14"
     height="16"
     viewBox="0 0 14 16"
@@ -248,17 +249,16 @@ export const DeleteIcon = ({ color = baseColor, onClick, ...props }) => (
     onClick={onClick}
     {...props}
   >
-      <path d="M7 8L7 11" 
-    stroke={color} 
-    strokeWidth="2" 
-    strokeLinecap="round" />
-    <path d="M2.41176 3.94737L3.82353 15H10.1765L11.5882 3.94737M1 3.94737H4.52941M13 3.94737H9.47059M4.52941 3.94737L5.23529 1H8.76471L9.47059 3.94737M4.52941 3.94737H9.47059" 
-    stroke={color} 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" />
+    <path d="M7 8L7 11" stroke={color} strokeWidth="2" strokeLinecap="round" />
+    <path
+      d="M2.41176 3.94737L3.82353 15H10.1765L11.5882 3.94737M1 3.94737H4.52941M13 3.94737H9.47059M4.52941 3.94737L5.23529 1H8.76471L9.47059 3.94737M4.52941 3.94737H9.47059"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
-)
+);
 
 export const SuccessIcon = ({ color = baseColor, ...props }) => (
   <svg
@@ -471,7 +471,6 @@ export const AngleLeftIcon = ({ color = baseColor, onClick, ...props }) => (
   </svg>
 );
 
-
 export const UploadIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -594,7 +593,7 @@ export const CopyIcon = ({ color = baseColor, ...props }) => (
     </defs>
   </svg>
 );
-export const NewInfoIcon = ({ color = grayColor,  ...props }) => (
+export const NewInfoIcon = ({ color = grayColor, ...props }) => (
   <svg
     width="16"
     height="16"
@@ -638,22 +637,24 @@ export const TrashIcon = ({ color = baseColor, ...props }) => (
 );
 
 export const TickIcon = ({ color = baseColor, ...props }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width="16" 
-    height="13" 
-    viewBox="0 0 16 13" 
-    fill="none">
-  <path
-   d="M1 6.96876L6.69828 12L15 1" 
-   stroke={color}
-   strokeWidth="2" 
-   strokeLinecap="round" 
-   strokeLinejoin="round"/>
-</svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="13"
+    viewBox="0 0 16 13"
+    fill="none"
+  >
+    <path
+      d="M1 6.96876L6.69828 12L15 1"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 );
 
-export const DropdownIcon = ({color = baseColor}) => (
+export const DropdownIcon = ({ color = baseColor }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -670,7 +671,7 @@ export const DropdownIcon = ({color = baseColor}) => (
     />
   </svg>
 );
-export const StarPremiumIcon = ({ color = baseColor,...props }) => (
+export const StarPremiumIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -753,8 +754,57 @@ export const SortIcon = ({ color = grayColor, ...props }) => (
       strokeLinejoin="round"
     />
   </svg>
-); 
+);
 
+export const DraggableIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    width="16"
+    height="14"
+    viewBox="0 0 16 14"
+    fill={color}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M1.5 4H16.5"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <path
+      d="M1.5 12H16.5"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+ export const FormVariableIcon = ({ color = baseColor, ...props }) => (
+   <svg
+     width="16"
+     height="16"
+     viewBox="0 0 16 16"
+     fill="none"
+     xmlns="http://www.w3.org/2000/svg"
+   >
+     <path
+       d="M3 2H13V0H3V2ZM13 2V14H15V2H13ZM13 14H3V16H13V14ZM3 14V2H1V14H3ZM3 14H3H1C1 15.1046 1.89543 16 3 16V14ZM13 14V16C14.1046 16 15 15.1046 15 14H13ZM13 2H15C15 0.895431 14.1046 0 13 0V2ZM3 0C1.89543 0 1 0.895431 1 2H3V2V0Z"
+       fill={color}
+     />
+     <path
+       d="M6 8L8 8"
+       stroke={color}
+       strokeWidth="2"
+       strokeLinecap="round"
+     />
+     <path
+       d="M6 5H10"
+       stroke={color}
+       strokeWidth="2"
+       strokeLinecap="round"
+     />
+   </svg>
+ );
 export const RightFarIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
