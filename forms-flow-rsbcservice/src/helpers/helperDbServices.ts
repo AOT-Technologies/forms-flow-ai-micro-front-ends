@@ -421,6 +421,7 @@ class DBServiceHelper {
       id: draft.localDraftId,
       localDraftId: draft.localDraftId,
       serverDraftId: draft?.serverDraftId,
+      serverApplicationId: draft?.serverApplicationId,
       modified: draft.modified,
       processKey: draft.draftData.processKey,
       processName: draft.draftData.processName,
