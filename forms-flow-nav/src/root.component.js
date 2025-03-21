@@ -42,6 +42,9 @@ export default function Root(props) {
     const headerHeight = headerRef.current?.offsetHeight || 0;
     const totalHeight = `calc(100% - ${headerHeight}px)`;
     setSidenavHeight(totalHeight);
+    if (hasMultitenancyHeader) {
+      StyleServices?.setCSSVariable("--client-nav", "3rem");
+    } 
   }, [ hasMultitenancyHeader ]); 
 
   return (

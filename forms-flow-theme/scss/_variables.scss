@@ -200,7 +200,7 @@ hr {
   background: var(--ff-main-bg);
   margin-left: var(--navbar-width);
   margin-top: 0;
-  height: 100vh !important;
+  height: calc(100vh - var(--client-nav)) !important;
 }
 
 .min-container-height {

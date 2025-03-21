@@ -145,6 +145,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --default-font-size: 1rem; 
   --default-font-color: #{$gray-800};
   --navbar-width: 192px;
+  --custom-logo-height: 1.5rem;
   //font-style
   --default-font-family-url:" ";
   --default-font-family: "Roboto", sans-serif;
@@ -199,7 +200,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --radius-0150: 1.5rem;
   --radius-200: 2rem;
   //custom
-  --client-nav: 3rem;
+  --client-nav: 0px;
   --header-close-btn: 4.625rem;
   //custom danger 
   --default-danger-color: #dc3545;
