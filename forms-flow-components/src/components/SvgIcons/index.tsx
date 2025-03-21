@@ -433,14 +433,14 @@ export const CurlyBracketsIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AngleRightIcon = ({ color = baseColor, onClick, ...props }) => (
+export const AngleRightIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="10"
     height="15"
     viewBox="0 0 10 15"
     fill="none"
-    onClick={onClick}
+    onClick={props.onClick}
   >
     <path
       d="M1.74951 14.0005L8.2501 7.4999L1.75009 0.999901"
@@ -452,14 +452,14 @@ export const AngleRightIcon = ({ color = baseColor, onClick, ...props }) => (
   </svg>
 );
 
-export const AngleLeftIcon = ({ color = baseColor, onClick, ...props }) => (
+export const AngleLeftIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="10"
     height="15"
     viewBox="0 0 10 15"
     fill="none"
-    onClick={onClick}
+    onClick={props.onClick}
   >
     <path
       d="M8.2501 14.0005L1.74951 7.4999L8.24951 0.999901"

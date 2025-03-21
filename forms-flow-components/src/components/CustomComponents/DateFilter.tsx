@@ -496,8 +496,9 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 data-testid="calendar-prev-month"
                 aria-label={t("Previous month")}
                 type="button"
+                onClick={goToPrevMonth}
               >
-                <AngleLeftIcon onClick={goToPrevMonth} />
+                <AngleLeftIcon />
               </button>
             </div>
             <span
@@ -513,8 +514,9 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 data-testid="calendar-next-month"
                 aria-label={t("Next month")}
                 type="button"
+                onClick={goToNextMonth}
               >
-                <AngleRightIcon onClick={goToNextMonth} />
+                <AngleRightIcon />
               </button>
               <button
                 className="calendar-next-year-btn button-as-div"
