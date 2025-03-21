@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - rsbc/7.0.0
-    paths:
-      - "forms-flow-*/**"
-      - "VERSION"
 
 defaults:
   run:
