@@ -613,6 +613,10 @@ select option:hover {
   }
  }
   .user-form-container{
+    max-height:94vh ;
+    min-height: calc(100vh - 5.5625rem);
+    overflow-y: auto;
+    overflow-x: hidden;
     gap: var(--spacer-100);
     padding: var(--spacer-200) var(--spacer-225);
     background-color: $white;
