@@ -356,28 +356,33 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     }
   };
 
-  // Handle calendar toggle
-  const toggleCalendar = (): void => {
-    setIsOpen(!isOpen);
-    if (isOpen) {
-      // Reset to initial date range if calendar is closing without selection
-      if (!dateRange?.endDate) {
-        setDateRange(parsedInitialRange());
-      }
-    }
-  };
 
-  // Handle close calendar
-  const handleCloseCalendar = (event?: React.MouseEvent): void => {
-    if (event) {
-      event.stopPropagation();
-    }
-    setIsOpen(false);
-    // Reset if selection is incomplete
-    if (!dateRange?.endDate) {
-      setDateRange(parsedInitialRange());
-    }
-  };
+// Handle calendar toggle
+const toggleCalendar = (): void => {
+  setIsOpen(!isOpen);
+  if (!isOpen) {
+    // Only reset when opening the calendar if needed
+    // Don't reset when closing
+  } else {
+    // When closing, reset both dates to null
+    setDateRange({
+      startDate: null,
+      endDate: null
+    });
+  }
+};
+ // Handle close calendar
+const handleCloseCalendar = (event?: React.MouseEvent): void => {
+  if (event) {
+    event.stopPropagation();
+  }
+  setIsOpen(false);
+  // Reset both start and end date to null when closing
+  setDateRange({
+    startDate: null,
+    endDate: null
+  });
+};
 
   // Format month and year for display
   const formatMonthYear = (): string => {
@@ -464,9 +469,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
             aria-hidden="true"
           >
             {isOpen ? (
-              <DownArrowIcon color="white" />
+               <UpArrowIcon color="white" />
+             
             ) : (
-              <UpArrowIcon color="white" />
+              <DownArrowIcon color="white" />
             )}
           </span>
         </div>

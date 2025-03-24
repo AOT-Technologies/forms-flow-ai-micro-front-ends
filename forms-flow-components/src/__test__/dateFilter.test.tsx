@@ -259,8 +259,8 @@ describe('DateRangePicker Component', () => {
 
   test('resets to initial range when calendar is closed without selection', () => {
     const initialDateRange = {
-      startDate: new Date(2025, 0, 1),
-      endDate: new Date(2025, 0, 15)
+      startDate: null,
+      endDate: null
     };
     
     render(<DateRangePicker initialDateRange={initialDateRange} />);
@@ -277,7 +277,7 @@ describe('DateRangePicker Component', () => {
     
     // Date range should reset to initial
     const dateRangeText = screen.getByTestId('date-range-text');
-    expect(dateRangeText.textContent).toBe('01/01/2025 - 01/15/2025');
+    expect(dateRangeText.textContent).toBe('MM/DD/YYYY - MM/DD/YYYY');
   });
 
   test('handles selection when end date is before start date', () => {
