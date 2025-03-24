@@ -1444,4 +1444,14 @@ export const RESOURCE_BUNDLES_BG = {
   "Invalid Expression": "Невалиден израз",
   "Add Alternative Label": "Добавяне на алтернативен етикет",
   "Add Variable": "Добавяне на променлива",
+  "Tasks Accessible To": "Задачи, достъпни за",
+  "dropdown for selecting options": "разделно меню за избор на опции",
+  "input for typing option": "вход за въвеждане на опция",
+  "specific role dropdown": "специфично ролево меню",
+  "specific role input": "вход за специфична роля",
+  "assignee dropdown": "разделно меню за назначен",
+  "assignee input": "вход за назначен",
+  "dropdown for sort options": "разделно меню за сортиране на опции",
+  "candidate dropdown": "разделно меню за кандидат",
+  "candidate input": "вход за кандидат"
 }

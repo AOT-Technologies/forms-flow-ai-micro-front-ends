@@ -14,7 +14,7 @@ interface DropdownItem {
 interface InputDropdownProps {
   Options: DropdownItem[];
   firstItemLabel?: string;
-  dropdownLabel: string;
+  dropdownLabel?: string;
   placeholder?: string;
   isAllowInput?: boolean;
   required?: boolean;

@@ -1,5 +1,8 @@
 import { useEffect, useCallback } from "react";
 import SocketIOService from "../services/SocketIOService";
+import { useState } from 'react';
+import { CustomButton } from '@formsflow/components'; 
+import TaskFilterModal from "../components/TaskFilterModal";
 
 interface SocketUpdateParams {
   refreshedTaskId: string | number;
@@ -8,6 +11,15 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
+  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false); 
+
+  const handleOpenFilterModal = () => {
+      setShowTaskFilterModal(true); 
+  };
+
+  const handleCloseFilterModal = () => {
+      setShowTaskFilterModal(false); 
+  };
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
       console.log("SocketIOCallback called");
@@ -41,6 +53,22 @@ const TaskList = () => {
     };
   }, [SocketIOCallback]);
 
-  return <h1> Hello world</h1>;
+  return (
+    <div>
+        <h1>Hello World</h1>
+        <CustomButton
+            variant="secondary"
+            size="md"
+            label="Create Filter"
+            onClick={handleOpenFilterModal}
+            dataTestId="open-create-filter-modal"
+            ariaLabel="Open Create Filter Modal"
+        />
+        <TaskFilterModal
+            show={showTaskFilterModal} 
+            onClose={handleCloseFilterModal} 
+        />
+    </div>
+);
 };
 export default TaskList;
