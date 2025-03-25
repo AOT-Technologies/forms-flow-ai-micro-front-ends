@@ -434,14 +434,14 @@ export const CurlyBracketsIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AngleRightIcon = ({ color = baseColor, onClick, ...props }) => (
+export const AngleRightIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="10"
     height="15"
     viewBox="0 0 10 15"
     fill="none"
-    onClick={onClick}
+    onClick={props.onClick}
   >
     <path
       d="M1.74951 14.0005L8.2501 7.4999L1.75009 0.999901"
@@ -453,14 +453,14 @@ export const AngleRightIcon = ({ color = baseColor, onClick, ...props }) => (
   </svg>
 );
 
-export const AngleLeftIcon = ({ color = baseColor, onClick, ...props }) => (
+export const AngleLeftIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="10"
     height="15"
     viewBox="0 0 10 15"
     fill="none"
-    onClick={onClick}
+    onClick={props.onClick}
   >
     <path
       d="M8.2501 14.0005L1.74951 7.4999L8.24951 0.999901"
@@ -778,7 +778,7 @@ export const DraggableIcon = ({ color = baseColor, ...props }) => (
       strokeLinecap="round"
     />
   </svg>
-); 
+);
 
  export const FormVariableIcon = ({ color = baseColor, ...props }) => (
    <svg
@@ -805,7 +805,75 @@ export const DraggableIcon = ({ color = baseColor, ...props }) => (
        strokeLinecap="round"
      />
    </svg>
- ); 
+ );
+export const RightFarIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    {...props}
+  >
+    <path
+      d="M3 12L7 7.99982L3.00036 4"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9 12L13 7.99982L9.00036 4"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+export const LeftFarIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    {...props}
+  >
+    <path
+      d="M13 12L9 8L12.9996 4"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M7 12L3 8L6.99964 4"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+export const UpArrowIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="10"
+    viewBox="0 0 16 10"
+    fill="none"
+  >
+    <path
+      d="M14.5003 8.25034L8.00028 1.74976L1.49969 8.24976"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const ConnectIcon = ({ color = baseColor, ...props }) => (
   <svg
     width="10"
