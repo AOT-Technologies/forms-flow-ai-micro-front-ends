@@ -162,6 +162,12 @@ const formatFieldValue = (field: string, fieldValue: any): string => {
         fieldValue
       );
     }
+
+    if(field === "driver_prov_state"){
+      return (fieldValue.value.includes("_")
+        ? fieldValue.value.split("_")[1]
+        : fieldValue.value);
+    }
     return (
       fieldValue.label ||
       (fieldValue.value.includes("_")
