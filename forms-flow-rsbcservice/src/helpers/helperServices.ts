@@ -201,8 +201,10 @@ const processFieldValue = (
     );
   if (Array.isArray(values[data.field_name]))
     return values[data.field_name].join("");
-  if (["DRIVER_DL_EXPIRY", "REPORT_DRIVER_DL_EXPIRY"].includes(key))
-    return moment(val).format("YYYY");
+  if (["DRIVER_DL_EXPIRY", "REPORT_DRIVER_DL_EXPIRY"].includes(key)) {
+    return val ? moment(val).format("YYYY") : "";
+  }
+
   if (typeof val === "object" && val !== null)
     return extractObjectValue(val, key, data.field_name);
 
