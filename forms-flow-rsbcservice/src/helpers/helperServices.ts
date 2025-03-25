@@ -118,12 +118,20 @@ export const printFormatHelper = (
   return processFieldValue(values, data, key, impoundLotOperators);
 };
 
-const handleSplitField = (rawValue: any, index: number, delimiter = " ", field_name:any) => {
+const handleSplitField = (
+  rawValue: any,
+  index: number,
+  delimiter = " ",
+  field_name: any
+) => {
   if (!rawValue) return "";
   let splitData: string[] = [];
   if (typeof rawValue === "object" && rawValue.value) {
     if (typeof rawValue.value !== "string") {
-      console.error(`Error: Expected string in rawValue.value in field_name "${field_name}" but got`, rawValue.value);
+      console.error(
+        `Error: Expected string in rawValue.value in field_name "${field_name}" but got`,
+        rawValue.value
+      );
     }
     splitData = rawValue.value.split(delimiter);
   } else if (typeof rawValue === "string") {
@@ -163,10 +171,10 @@ const formatFieldValue = (field: string, fieldValue: any): string => {
       );
     }
 
-    if(field === "driver_prov_state"){
-      return (fieldValue.value.includes("_")
+    if (field === "driver_prov_state") {
+      return fieldValue.value.includes("_")
         ? fieldValue.value.split("_")[1]
-        : fieldValue.value);
+        : fieldValue.value;
     }
     return (
       fieldValue.label ||
@@ -233,6 +241,13 @@ const formatReleaseInformation = (
   }
 
   if (["NOT_IMPOUNDED_REASON", "RELEASE_LOCATION_VEHICLE"].includes(key)) {
+    if (
+      key === "RELEASE_LOCATION_VEHICLE" &&
+      (values["VI"] ||
+        (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES"))
+    ) {
+      return "IMPOUNDED";
+    }
     return (
       {
         released: "RELEASED TO OTHER DRIVER",
