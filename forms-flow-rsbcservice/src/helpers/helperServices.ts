@@ -260,13 +260,55 @@ const formatReleaseInformation = (
     );
   }
 
+  if (key === "RELEASE_LOCATION_KEYS") {
+    if (
+      values["VI"] ||
+      (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES")
+    ) {
+      return values["location_of_keys"];
+    } else {
+      return (
+        {
+          released: "WITH OTHER DRIVER",
+          private: values["location_of_keys"],
+          roadside: values["location_of_keys"],
+        }[values[released_val]] || ""
+      );
+    }
+  }
+
   if (key === "RELEASE_PERSON")
     return determineReleasePerson(values, released_val);
-  if (["IMPOUND_LOT_NAME", "IMPOUNDED_LOT"].includes(key))
-    return (
-      impoundLotOperators.find((x) => x.name === values["ILO-name"])
-        ?.name_print || values["ILO-name"]
-    );
+  if (values["incident_details"] && values["incident_details"].length > 0) {
+    values["incident_details_explained_below"] = true;
+  }
+  if (key === "REPORT_INCIDENT_DETAILS") {
+    if (values["incident_details"] && values["incident_details"].length > 500) {
+      return values["incident_details"].substring(0, 500);
+    }
+  }
+  if (key === "DETAILS_INCIDENT_DETAILS") {
+    if (values["incident_details"] && values["incident_details"].length > 500) {
+      return values["incident_details"].substring(500);
+    }
+  }
+  if (
+    key === "IMPOUND_LOT_NAME" ||
+    key === "IMPOUNDED_LOT" ||
+    (key === "RELEASE_PERSON" &&
+      values["TwelveHour"] &&
+      !values["VI"] &&
+      values["vehicle_location"] === "private")
+  ) {
+    const tmp = impoundLotOperators.filter(
+      (x) => x["name"] === values["ILO-name"]
+    )[0];
+    if (tmp && tmp.name_print) {
+      return tmp.name_print;
+    } else {
+      return values["ILO-name"];
+    }
+  }
   return val;
 };
 
