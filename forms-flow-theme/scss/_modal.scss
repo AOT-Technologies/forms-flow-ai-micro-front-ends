@@ -1007,10 +1007,10 @@ $black-color: var(--ff-black);
     border-radius: var(--radius-sm);
     padding-top: var(--spacer-150);
     transition: 
-      transform 3s cubic-bezier(0.25, 1, 0.5, 1), 
-      background-color 3s ease-in-out, 
-      opacity 3s ease-in-out, 
-      box-shadow 3s ease-in-out;
+      transform 1s cubic-bezier(0.25, 1, 0.5, 1), 
+      background-color 1s ease-in-out, 
+      opacity 1s ease-in-out, 
+      box-shadow 1s ease-in-out;
 
     .draggable-icon {
       display: flex;

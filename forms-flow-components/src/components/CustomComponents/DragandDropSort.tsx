@@ -45,7 +45,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
       const updatedItems = [...prevItems];
       const [draggedItem] = updatedItems.splice(draggingIndex, 1);
       updatedItems.splice(targetIndex, 0, draggedItem);
-      return updatedItems.map((item, index) => ({ ...item, sortOrder: index + 1,  isMoving: true, }));
+      return updatedItems.map((item, index) => ({ ...item, sortOrder: index + 1}));
     });
     setDraggingIndex(targetIndex);  
   };

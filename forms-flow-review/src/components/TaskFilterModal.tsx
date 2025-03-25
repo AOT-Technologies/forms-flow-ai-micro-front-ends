@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import Modal from 'react-bootstrap/Modal';
@@ -38,6 +38,11 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
     const firstResult = useSelector((state: any) => state.task.firstResult);
     const defaultFilter = useSelector((state: any) => state.task.defaultFilter);
+    const userRoles = JSON.parse(
+        StorageService.get(StorageService.User.USER_ROLE)
+    );
+    const isCreateFilters = userRoles?.includes("create_filters");
+
 
     const assigneeOptions = useMemo(() => userList.map(user => ({
         value: user.username,
@@ -72,7 +77,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const handleNameError = (e) => {
         const value = e.target.value;
         setFilterName(value);
-        setFilterNameError(value.length >= 50 ? t("filter_name_error") : "");
+        setFilterNameError(value.length >= 50 ? t("Filter name should be less than 50 characters") : "");
     };
 
     const accessOptions = [
@@ -114,15 +119,18 @@ export const TaskFilterModal = ({ show, onClose }) => {
     ];
     
     const sortOptions = {
-        createdDate: createSortOptions('Oldest to Newest', 'Newest to Oldest'),
+        created: createSortOptions('Oldest to Newest', 'Newest to Oldest'),
         dueDate: createSortOptions('Oldest to Newest', 'Newest to Oldest'),
         assignee: createSortOptions('A to Z', 'Z to A'),
-        task: createSortOptions('A to Z', 'Z to A'),
+        name: createSortOptions('A to Z', 'Z to A'),
         formName: createSortOptions('A to Z', 'Z to A'),
         submissionId: createSortOptions('Largest to Smallest', 'Smallest to Largest'),
     };
 
     const getIconColor = (disabled) => disabled ? whiteColor : baseColor;
+    const isInvalidFilter = !filterName.trim() || filterNameError || !isCreateFilters;
+    const isButtonDisabled = isInvalidFilter;
+    const iconColor = getIconColor(isInvalidFilter);
 
     const renderDropdown = (options) => (
         <div className="d-flex filter-dropdown">
@@ -156,7 +164,6 @@ export const TaskFilterModal = ({ show, onClose }) => {
     ];
 
     const getCriteria = () => ({
-        processVariables: [],
         candidateGroupsExpression: "${currentUserGroups()}",
         candidateGroup: MULTITENANCY_ENABLED && specificRole
             ? tenantKey + '-' + trimFirstSlash(specificRole)
@@ -167,6 +174,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
 
     const getProperties = () => ({
         displayLinesCount: dataLineValue,
+        /*static form id to be replaced after task design completion*/
         formId: "6721debe9c3135103599ba2b"
     });
 
@@ -423,10 +431,10 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     size="md"
                     label={t("Save This Filter")}
                     onClick={saveCurrentFilter}
-                    icon={<SaveIcon color={getIconColor(filterName.length === 0 || filterNameError)} />}
+                    icon={<SaveIcon color={iconColor} />}
                     dataTestId="save-task-filter"
                     ariaLabel={t("Save Task Filter")}
-                    disabled={!filterName.trim()}
+                    disabled={isButtonDisabled}
                 />
             </div>
         </>

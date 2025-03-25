@@ -1461,7 +1461,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Filter Tabs": "筛选器标签",
   "Filter Results": "筛选结果",
   "Cancel filter": "取消筛选器",
-  "filter_name_error": "过滤器名称应少于50个字符",
+  "Filter name should be less than 50 characters": "过滤器名称应少于50个字符",
   "Tasks Accessible To": "可访问的任务",
   "dropdown for selecting options": "选择选项的下拉菜单",
   "input for typing option": "输入选项",

@@ -1,7 +1,8 @@
 export interface FilterCriteria {
     candidateGroup?: string;
     assignee?: string;
-    processVariables: Array<{
+    /*processVariables required for attribute filter only*/
+    processVariables?: Array<{ 
       name: string;
       operator: string;
       value: string;
