@@ -1,6 +1,6 @@
 import API from "../api/endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
-import { setBPMUserList, serviceActionError, setProcessStatusLoading, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader } from "../actions/taskActions";
+import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader } from "../actions/taskActions";
 import { MAX_RESULTS } from "../constants";
 
 export const fetchUserList = (...rest) => {
@@ -36,8 +36,8 @@ export const fetchUserList = (...rest) => {
   export const fetchServiceTaskList = (reqData, taskIdToRemove, firstResult, maxResults, ...rest) => {
     const done = rest.length ? rest[0] : () => {};
     const apiUrlgetTaskList =
-      `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${ 
-        maxResults ? maxResults : MAX_RESULTS}`;
+        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${maxResults || MAX_RESULTS}`;
+
     return (dispatch) => {
       RequestService.httpPOSTRequestWithHAL(
         apiUrlgetTaskList,
@@ -48,14 +48,14 @@ export const fetchUserList = (...rest) => {
           if (res.data) {
             let responseData = res.data;
             const _embedded = responseData[0]?._embedded; // data._embedded.task is where the task list is.
-            if (!_embedded || !_embedded["task"] || !responseData[0]?.count) {
+            if (!_embedded?.task || !responseData?.[0]?.count) {
               // Display error if the necessary values are unavailable.
-              // console.log("Error", res);
               dispatch(setBPMTaskList([]));
               dispatch(setBPMTaskCount(0));
               dispatch(serviceActionError(res));
               dispatch(setBPMTaskLoader(false));
-            } else {
+            }
+             else {
               const taskListFromResponse = _embedded["task"]; // Gets the task array
               const taskCount = {
                 count: responseData[0]?.count,
@@ -79,7 +79,6 @@ export const fetchUserList = (...rest) => {
               done(null, taskData);
             }
           } else {
-            // console.log("Error", res);
             dispatch(setBPMTaskCount(0));
             dispatch(setBPMTaskList([]));
             dispatch(serviceActionError(res));
@@ -87,7 +86,6 @@ export const fetchUserList = (...rest) => {
           }
         })
         .catch((error) => {
-          // console.log("Error", error);
           dispatch(setBPMTaskList([]));
           dispatch(setBPMTaskCount(0));
           dispatch(serviceActionError(error));

@@ -21,7 +21,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const [accessDropdownValue, setAccessDropdownValue] = useState('specificRole');
     const [specificRole, setSpecificRole] = useState('');
     const [specificAssignee, setSpecificAssignee] = useState('');
-    const [sortValue, setSortedValue] = useState('dueDate');
+    const [sortValue, setSortValue] = useState('dueDate');
     const [sortOrder, setSortOrder] = useState('asc');
     const [dataLineValue, setDataLineValue] = useState(1);
     const [shareFilter, setShareFilter] = useState(PRIVATE_ONLY_YOU);
@@ -101,7 +101,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const createDateSortOption = (labelKey, value) => ({
         label: t(labelKey),
         value,
-        onClick: () => setSortedValue(value),
+        onClick: () => setSortValue(value),
     });
     
     const dateSortOptions = [
@@ -280,7 +280,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
         setSpecificRole("");
         setSpecificAssignee("");
         setFilterName("");
-        setSortedValue("dueDate");
+        setSortValue("dueDate");
         setSortOrder("asc");
         setShareFilter(PRIVATE_ONLY_YOU);
         setVariableArray([]);
@@ -362,7 +362,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 ariaLabelforDropdown={t("dropdown for sort options")}
                 ariaLabelforInput={t("input for typing option")}
                 selectedOption={sortValue}
-                setNewInput={setSortedValue}
+                setNewInput={setSortValue}
             />
             {sortValue && sortOptions[sortValue] ? renderDropdown(sortOptions[sortValue]) : null}
             <div className='pt-4'>
