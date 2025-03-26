@@ -118,12 +118,20 @@ export const printFormatHelper = (
   return processFieldValue(values, data, key, impoundLotOperators);
 };
 
-const handleSplitField = (rawValue: any, index: number, delimiter = " ", field_name:any) => {
+const handleSplitField = (
+  rawValue: any,
+  index: number,
+  delimiter = " ",
+  field_name: any
+) => {
   if (!rawValue) return "";
   let splitData: string[] = [];
   if (typeof rawValue === "object" && rawValue.value) {
     if (typeof rawValue.value !== "string") {
-      console.error(`Error: Expected string in rawValue.value in field_name "${field_name}" but got`, rawValue.value);
+      console.error(
+        `Error: Expected string in rawValue.value in field_name "${field_name}" but got`,
+        rawValue.value
+      );
     }
     splitData = rawValue.value.split(delimiter);
   } else if (typeof rawValue === "string") {
@@ -162,6 +170,12 @@ const formatFieldValue = (field: string, fieldValue: any): string => {
         fieldValue
       );
     }
+
+    if (field === "driver_prov_state") {
+      return fieldValue.value.includes("_")
+        ? fieldValue.value.split("_")[1]
+        : fieldValue.value;
+    }
     return (
       fieldValue.label ||
       (fieldValue.value.includes("_")
@@ -187,8 +201,10 @@ const processFieldValue = (
     );
   if (Array.isArray(values[data.field_name]))
     return values[data.field_name].join("");
-  if (["DRIVER_DL_EXPIRY", "REPORT_DRIVER_DL_EXPIRY"].includes(key))
-    return moment(val).format("YYYY");
+  if (["DRIVER_DL_EXPIRY", "REPORT_DRIVER_DL_EXPIRY"].includes(key)) {
+    return val ? moment(val).format("YYYY") : "";
+  }
+
   if (typeof val === "object" && val !== null)
     return extractObjectValue(val, key, data.field_name);
 
@@ -227,6 +243,13 @@ const formatReleaseInformation = (
   }
 
   if (["NOT_IMPOUNDED_REASON", "RELEASE_LOCATION_VEHICLE"].includes(key)) {
+    if (
+      key === "RELEASE_LOCATION_VEHICLE" &&
+      (values["VI"] ||
+        (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES"))
+    ) {
+      return "IMPOUNDED";
+    }
     return (
       {
         released: "RELEASED TO OTHER DRIVER",
@@ -237,13 +260,55 @@ const formatReleaseInformation = (
     );
   }
 
+  if (key === "RELEASE_LOCATION_KEYS") {
+    if (
+      values["VI"] ||
+      (values["TwentyFourHour"] && values["vehicle_impounded"] === "YES")
+    ) {
+      return values["location_of_keys"];
+    } else {
+      return (
+        {
+          released: "WITH OTHER DRIVER",
+          private: values["location_of_keys"],
+          roadside: values["location_of_keys"],
+        }[values[released_val]] || ""
+      );
+    }
+  }
+
   if (key === "RELEASE_PERSON")
     return determineReleasePerson(values, released_val);
-  if (["IMPOUND_LOT_NAME", "IMPOUNDED_LOT"].includes(key))
-    return (
-      impoundLotOperators.find((x) => x.name === values["ILO-name"])
-        ?.name_print || values["ILO-name"]
-    );
+  if (values["incident_details"] && values["incident_details"].length > 0) {
+    values["incident_details_explained_below"] = true;
+  }
+  if (key === "REPORT_INCIDENT_DETAILS") {
+    if (values["incident_details"] && values["incident_details"].length > 500) {
+      return values["incident_details"].substring(0, 500);
+    }
+  }
+  if (key === "DETAILS_INCIDENT_DETAILS") {
+    if (values["incident_details"] && values["incident_details"].length > 500) {
+      return values["incident_details"].substring(500);
+    }
+  }
+  if (
+    key === "IMPOUND_LOT_NAME" ||
+    key === "IMPOUNDED_LOT" ||
+    (key === "RELEASE_PERSON" &&
+      values["TwelveHour"] &&
+      !values["VI"] &&
+      values["vehicle_location"] === "private")
+  ) {
+    const tmp = impoundLotOperators.filter(
+      (x) => x["name"] === values["ILO-name"]
+    )[0];
+    if (tmp && tmp.name_print) {
+      return tmp.name_print;
+    } else {
+      return values["ILO-name"];
+    }
+  }
   return val;
 };
 
