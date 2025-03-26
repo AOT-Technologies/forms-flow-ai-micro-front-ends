@@ -1,5 +1,10 @@
 import { rsbcDb } from "./rsbcDb";
-import { DeletedDraft, ffDb, IndividualFormDefinition, OfflineSubmission } from "./ffDb";
+import {
+  DeletedDraft,
+  ffDb,
+  IndividualFormDefinition,
+  OfflineSubmission
+} from "./ffDb";
 import { StaticTables } from "../constants/constants";
 import DBServiceHelper from "../helpers/helperDbServices";
 import { FormTypes } from "../constants/constants";
@@ -328,7 +333,7 @@ class OfflineFetchService {
       const result = Object.entries(formTypeCounts).map(
         ([form_type, count]) => ({
           form_type,
-          count,
+          count
         })
       );
 
@@ -350,7 +355,7 @@ class OfflineFetchService {
       draftCount: 0,
       totalCount: data?.length,
       pageNo: 1,
-      limit: 5,
+      limit: 5
     };
   }
 
@@ -507,7 +512,7 @@ class OfflineFetchService {
       const metadata = this.getMetadata(data);
       const finalData: Record<string, any> = {
         ["applications"]: data,
-        metadata,
+        metadata
       };
 
       return finalData;
@@ -619,7 +624,7 @@ class OfflineFetchService {
           console.error("Invalid draftId: Not a valid number");
           return {
             status: "error",
-            message: `Invalid draftId: Not a valid number`,
+            message: `Invalid draftId: Not a valid number`
           };
         }
         // Find the draft by localDraftId/serverDraftId
@@ -751,6 +756,24 @@ class OfflineFetchService {
       }
       await ffDb.open();
       return ffDb.deletedDrafts.toArray();
+    } catch (error) {
+      console.error("Error fetching data.", error);
+      throw error;
+    }
+  }
+  /**
+   * Check if there is any entry in offline submission table.
+   * @returns true or false.
+   */
+  public static async anyOfflineSubmissions(): Promise<boolean> {
+    try {
+      if (!ffDb) {
+        throw new Error("IndexedDB is not available.");
+      }
+      await ffDb.open();
+      // Check if there are any entries in offlineSubmissions
+      const hasSubmissions = (await ffDb.offlineSubmissions.count()) > 0;
+      return hasSubmissions;
     } catch (error) {
       console.error("Error fetching data.", error);
       throw error;
