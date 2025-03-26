@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react";
 import SocketIOService from "../services/SocketIOService";
+import { ResizableTable } from "../components";
 
 interface SocketUpdateParams {
   refreshedTaskId: string | number;
@@ -41,6 +42,10 @@ const TaskList = () => {
     };
   }, [SocketIOCallback]);
 
-  return <h1> Hello world</h1>;
+  return (
+    <div>
+        <ResizableTable />
+    </div>
+);
 };
 export default TaskList;

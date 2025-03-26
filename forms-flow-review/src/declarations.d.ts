@@ -39,5 +39,20 @@ declare module "*.svg" {
 }
 
 declare module "@formsflow/service" {
-	export const {KeycloakService, RequestService, StorageService,i18nService}: any;
+  export const {
+    KeycloakService,
+    RequestService,
+    StorageService,
+    i18nService,
+  }: any;
+}
+
+declare module "@formsflow/components" {
+  export const {
+    TableFooter,
+    SortableHeader,
+    FilterSortActions,
+    CustomButton,
+    DateRangePicker
+  }: any;
 }

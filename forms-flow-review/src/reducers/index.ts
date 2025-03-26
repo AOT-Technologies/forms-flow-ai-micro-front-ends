@@ -1,12 +1,14 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { connectRouter } from "connected-react-router"; 
-
-import task from "./taskReducer";
- 
+import taskReducer from "./taskReducer";
+import tableReducer  from "./tableReducer";
+// Define the type for your root state (if needed)
+import { History } from 'history';
 
 const createRootReducer = (history:any) =>
   combineReducers({
-    task,
+    task: taskReducer,
+    taskList: tableReducer,
     router: connectRouter(history),
   });
 

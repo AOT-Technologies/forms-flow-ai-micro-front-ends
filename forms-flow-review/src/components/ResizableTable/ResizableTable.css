@@ -1,0 +1,123 @@
+.resizable-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.resizable-column {
+  position: relative;
+  background-color: #f8f9fa;
+}
+
+.column-resizer {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 6px;
+  height: 100%;
+  z-index: 2;
+}
+
+.column-resizer::before,
+.column-resizer::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 16px;
+  background-color: #dee2e6;
+  transition: background-color 0.2s;
+}
+
+.column-resizer::before {
+  left: 1px;
+  background-color: #0d6efd;
+  height: 20px;
+}
+
+.column-resizer::after {
+  right: 1px;
+  background-color: #0d6efd;
+  height: 20px;
+}
+
+.table-container {
+  position: relative;
+  max-height: 400px;
+  overflow: auto; /* Change from overflow-x to overflow */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #e1d7f9 #f1f1f1; /* For Firefox */
+}
+
+/* Webkit (Chrome, Safari, newer versions of Opera) scrollbar styling */
+.table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #a5c8f3;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #a5c8f3;
+}
+
+.table thead {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background-color: #f8f9fa;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  padding: 12px;
+  font-weight: 600;
+  user-select: none;
+}
+
+.table tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table tbody tr td:last-child,
+.table thead tr th:last-child {
+  position: sticky;
+  right: 0;
+  background-color: #f8f9fa;
+  z-index: 2;
+  box-shadow: -2px 0 3px rgba(0,0,0,0.1);
+}
+
+.pagination-container {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border-top: 1px solid #dee2e6;
+}
+
+.view-button {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+}

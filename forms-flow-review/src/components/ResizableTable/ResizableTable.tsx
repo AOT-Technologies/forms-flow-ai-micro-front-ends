@@ -1,0 +1,270 @@
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import "./ResizableTable.css";
+import {
+  TableFooter,
+  SortableHeader,
+  FilterSortActions,
+  CustomButton,
+  DateRangePicker
+} from "@formsflow/components";
+import { useTranslation } from 'react-i18next';
+import { updateTaskSort } from "../../actions/tableActions";
+
+interface TableData {
+  submissionId: string;
+  task: string;
+  createdDate: string;
+  assignedTo: string;
+  submitterName: string;
+}
+
+interface Column {
+  name: string;
+  width: number;
+  sortKey: string;
+  resizable?: boolean;
+}
+
+export function ResizableTable(): JSX.Element {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const { tasks, sort: taskSort } = useSelector((state: any) => state.taskList);
+
+  const [columns, setColumns] = useState<Column[]>([
+    { name: "Submission ID", width: 150, sortKey: "submissionId", resizable: true },
+    { name: "Task", width: 250, sortKey: "task", resizable: true },
+    { name: "Created Date", width: 150, sortKey: "createdDate", resizable: true },
+    { name: "Assigned To", width: 200, sortKey: "assignedTo", resizable: true },
+    { name: "Submitter Name", width: 200, sortKey: "submitterName", resizable: true },
+    { name: "Actions", width: 100, sortKey: "", resizable: false },
+  ]);
+
+  const tableRef = useRef<HTMLTableElement>(null);
+  const resizingRef = useRef<number | null>(null);
+  const startXRef = useRef<number>(0);
+  const startWidthRef = useRef<number>(0);
+  
+  const [activePage, setActivePage] = useState(1);
+  const [sizePerPage, setSizePerPage] = useState(5);
+  const [showSortModal, setShowSortModal] = useState(false);
+
+  const optionSortBy = [
+    { value: "submissionId", label: t("Submission ID") },
+    { value: "task", label: t("Task") },
+    { value: "createdDate", label: t("Created Date") },
+    { value: "assignedTo", label: t("Assigned To") },
+    { value: "submitterName", label: t("Submitter Name") },
+  ];
+
+  // Improved Sorting Logic
+  const handleSort = (key: string) => {
+    const currentSort = taskSort[key];
+    const newSortOrder = currentSort.sortOrder === 'asc' ? 'desc' : 'asc';
+  
+    // Reset all other columns to default (ascending) except the active one
+    const updatedSort = columns.reduce((acc, column) => {
+      acc[column.sortKey] = { 
+        sortOrder: column.sortKey === key ? newSortOrder : 'asc' 
+      };
+      return acc;
+    }, {});
+  
+    dispatch(
+      updateTaskSort({
+        ...updatedSort,
+        activeKey: key,
+      })
+    );
+  };
+
+  // Sorting logic for data
+  const sortedData = useMemo(() => {
+    const activeKey = taskSort.activeKey;
+    const sortOrder = taskSort[activeKey]?.sortOrder || 'asc';
+
+    return [...tasks].sort((a, b) => {
+      const valueA = a[activeKey];
+      const valueB = b[activeKey];
+
+      if (valueA == null) return sortOrder === 'asc' ? 1 : -1;
+      if (valueB == null) return sortOrder === 'asc' ? -1 : 1;
+
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return sortOrder === 'asc'
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      }
+
+      return sortOrder === 'asc'
+        ? (valueA > valueB ? 1 : -1)
+        : (valueA < valueB ? 1 : -1);
+    });
+  }, [tasks, taskSort]);
+
+  // Column resizing logic (updated to only resize specific columns)
+  const handleMouseDown = (index: number, e: React.MouseEvent): void => {
+    if (!columns[index].resizable) return;
+
+    resizingRef.current = index;
+    startXRef.current = e.pageX;
+    startWidthRef.current = columns[index].width;
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e: MouseEvent): void => {
+    if (resizingRef.current === null) return;
+
+    const diff = e.pageX - startXRef.current;
+    const newWidth = Math.max(50, startWidthRef.current + diff);
+
+    setColumns((prev) =>
+      prev.map((col, i) =>
+        i === resizingRef.current ? { ...col, width: newWidth } : col
+      )
+    );
+  };
+
+  const handleMouseUp = (): void => {
+    resizingRef.current = null;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  // Sorting modal handlers
+  const handleSortModalClose = () => {
+    setShowSortModal(false);
+  };
+
+  const handleFilterIconClick = () => {
+    setShowSortModal(true);
+  };
+
+  const handleSortApply = (selectedSortOption, selectedSortOrder) => {
+    dispatch(
+      updateTaskSort({
+        ...taskSort,
+        activeKey: selectedSortOption,
+        [selectedSortOption]: { sortOrder: selectedSortOrder },
+      })
+    );
+    setShowSortModal(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
+  // Pagination and limit change handlers
+  const handleLimitChange = (newLimit: number) => {
+    setSizePerPage(newLimit);
+    setActivePage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setActivePage(page);
+  };
+
+  return (
+    <div className="container-fluid py-4">
+      <div className="d-md-flex justify-content-end align-items-center button-align mb-3">
+        <DateRangePicker/>
+        <FilterSortActions
+          showSortModal={showSortModal}
+          handleFilterIconClick={handleFilterIconClick}
+          handleRefresh={() => {}}
+          handleSortModalClose={handleSortModalClose}
+          handleSortApply={handleSortApply}
+          optionSortBy={optionSortBy}
+          defaultSortOption={taskSort.activeKey}
+          defaultSortOrder={taskSort[taskSort.activeKey]?.sortOrder || "asc"}
+          filterDataTestId="form-list-filter"
+          filterAriaLabel="Filter the form list"
+          refreshDataTestId="form-list-refresh"
+          refreshAriaLabel="Refresh the form list"
+        />
+      </div>
+      <div className="table-container custom-scroll">
+        <table ref={tableRef} className="table resizable-table">
+          <thead>
+            <tr>
+              {columns.map((column, index) => (
+                <th
+                  key={column.name}
+                  className="resizable-column"
+                  style={{ width: column.width }}
+                >
+                  {column.sortKey ? (
+                    <SortableHeader
+                      title={column.name}
+                      columnKey={column.sortKey}
+                      currentSort={taskSort}
+                      handleSort={() => handleSort(column.sortKey)}
+                      className="gap-2"
+                    />
+                  ) : (
+                    column.name
+                  )}
+
+                  {column.resizable && index < columns.length - 1 && (
+                    <div
+                      className={`column-resizer ${
+                        resizingRef.current === index ? "resizing" : ""
+                      }`}
+                      onMouseDown={(e) => handleMouseDown(index, e)}
+                    />
+                  )}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody >
+            {sortedData.slice(
+              (activePage - 1) * sizePerPage, 
+              activePage * sizePerPage
+            ).map((row, index) => (
+              <tr key={index}>
+                <td>{row.submissionId}</td>
+                <td>{row.task}</td>
+                <td>{row.createdDate}</td>
+                <td>{row.assignedTo}</td>
+                <td>{row.submitterName}</td>
+                <td>
+                  <CustomButton
+                   className="btn-table"
+                    variant="secondary"
+                    label={"View"}
+                    onClick={() => {}}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table className="table">
+          <tfoot>
+            <TableFooter
+              limit={sizePerPage}
+              activePage={activePage}
+              totalCount={tasks.length}
+              handlePageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              pageOptions={[
+                { text: "5", value: 5 },
+                { text: "25", value: 25 },
+                { text: "50", value: 50 },
+                { text: "100", value: 100 },
+              ]}
+            />
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
+}
