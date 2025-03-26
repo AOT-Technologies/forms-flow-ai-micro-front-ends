@@ -4,7 +4,8 @@ import {
   KEYCLOAK_CLIENT,
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
-  WEB_BASE_URL
+  WEB_BASE_URL,
+  FORMIO_URL
 } from "../endpoints/config";
 import {
   OfflineDeleteService,
@@ -332,7 +333,7 @@ class OfflineSubmissions {
     formId: string | number,
     submissionId: string | number
   ): string {
-    return `${WEB_BASE_URL}/form/${formId}/submission/${submissionId}`;
+    return `${FORMIO_URL}/form/${formId}/submission/${submissionId}`;
   }
 
   /**
