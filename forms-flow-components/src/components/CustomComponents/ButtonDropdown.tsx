@@ -17,6 +17,7 @@ interface DropdownItem {
 interface ButtonDropdownProps {
   variant: string;
   size?: "sm" | "md" | "lg" ;
+  defaultLabel: string;
   label: string;
   name?: string,
   className?: string;
@@ -32,6 +33,7 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   dropdownType,
   variant,
   size,
+  defaultLabel, 
   label,
   dropdownItems = [],
   extraActionIcon = false,
@@ -49,7 +51,15 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   const { t } = useTranslation();
   const primaryBtnBgColor = StyleServices.getCSSVariable('--primary-btn-bg-color');
   const secondaryBtnBgColor = StyleServices.getCSSVariable('--secondary-btn-bg-color');  
-
+  console.log(label);
+  // Check if we should use the default label
+  const isUsingDefaultLabel = !label || label === "";
+  // Display label if provided, otherwise use defaultLabel
+  const displayLabel = isUsingDefaultLabel ? defaultLabel : label;
+  // Define the label style as a separate variable
+  const labelStyle: React.CSSProperties = isUsingDefaultLabel 
+    ? { fontStyle: 'italic' } 
+    : {};
   const updateMenuStyle = () => {
     if (buttonRef.current && toggleRef.current) {
       const buttonWidth = buttonRef.current.getBoundingClientRect().width;
@@ -57,7 +67,7 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
       const totalWidth = buttonWidth + toggleWidth - 1;
       setMenuStyle({
         minWidth: `${totalWidth}px`,
-        borderTop: "none",
+        border: "2px solid var(--primary-btn-bg-color)",
         borderTopLeftRadius: "0",
         borderTopRightRadius: "0",
         padding: "0",
@@ -100,7 +110,9 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
           name={name}
           className="button-dropdown"
         >
-          {t(label)}
+         <span style={labelStyle}>
+          {t(displayLabel)}
+        </span>
         </Button>
         {dropdownType === "DROPDOWN_WITH_EXTRA_ACTION" && extraActionIcon && (
           <div

@@ -587,16 +587,11 @@ $danger-color: var(--ff-danger);
     cursor: pointer;
     opacity: 0.8;
   }
-  .dropdown-menu {
-    display: flex;
-    flex-direction: column !important;
-    gap: var(--spacer-025) !important;
-
     .dropdown-item {
       padding: var(--spacer-050) var(--spacer-100) !important;
+      margin: 0.25rem !important;
     }
-  }
-  
+
 }
 
 
