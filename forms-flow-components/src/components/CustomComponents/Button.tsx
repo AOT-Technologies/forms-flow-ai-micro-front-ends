@@ -94,7 +94,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           data-testid={dataTestId}
           aria-label={ariaLabel}
           name={name}
-          className={classNameForButton}
+          className={`${classNameForButton} justify-content-start`}
         >
           {t(label)}
         </Button>
