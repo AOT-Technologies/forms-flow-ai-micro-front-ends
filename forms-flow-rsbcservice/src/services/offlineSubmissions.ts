@@ -417,7 +417,7 @@ class OfflineSubmissions {
    */
   public static async anyOfflineSubmissions(): Promise<boolean> {
     try {
-      return OfflineFetchService.anyOfflineSubmissions();
+      return await OfflineFetchService.anyOfflineSubmissions();
     } catch (error) {
       console.error("Error checking offline submissions:", error);
       return false;
