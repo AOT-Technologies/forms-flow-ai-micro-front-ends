@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, ReactElement } from "react";
+import { useRef, useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -116,9 +116,13 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
         </Button>
         {dropdownType === "DROPDOWN_WITH_EXTRA_ACTION" && extraActionIcon && (
           <div
+            role="button"
+            tabIndex={0}
             onClick={extraActionOnClick}
+            onKeyDown={(e) => e.key === "Enter" && extraActionOnClick?.()}
             className={extraActionClass}
             style={{ backgroundColor }}
+            aria-label="Extra action"
           >
             {extraActionIcon}
           </div>
@@ -135,9 +139,9 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
         </Dropdown.Toggle>
 
         <Dropdown.Menu style={menuStyle}>
-          {dropdownItems.map((item, index) => (
+          {dropdownItems.map((item) => (
             <Dropdown.Item
-              key={index}
+              key={item.type}
               onClick={() => item.onClick(item.type)}
               data-testid={item.dataTestId}
               aria-label={item.ariaLabel}
