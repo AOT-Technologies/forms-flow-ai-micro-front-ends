@@ -115,17 +115,15 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
         </span>
         </Button>
         {dropdownType === "DROPDOWN_WITH_EXTRA_ACTION" && extraActionIcon && (
-          <div
-            role="button"
-            tabIndex={0}
+          <Button
             onClick={extraActionOnClick}
-            onKeyDown={(e) => e.key === "Enter" && extraActionOnClick?.()}
-            className={extraActionClass}
+            className={`${extraActionClass} border-0`}
             style={{ backgroundColor }}
+            data-testid="extra-action-button"
             aria-label="Extra action"
           >
             {extraActionIcon}
-          </div>
+          </Button>
         )}
         </div>
         <Dropdown.Toggle
