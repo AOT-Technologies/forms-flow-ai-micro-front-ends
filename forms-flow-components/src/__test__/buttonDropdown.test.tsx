@@ -48,8 +48,8 @@ describe("ButtonDropdown Component", () => {
   it("handles dropdown item clicks correctly", () => {
     render(<ButtonDropdown {...defaultProps} />);
 
-    // Open dropdown using the split button
-    const toggleButton = screen.getByRole("button", { name: "" });
+    // Open dropdown using the toggle button with a specific test ID
+    const toggleButton = screen.getByTestId("test-dropdown-toggle");
     fireEvent.click(toggleButton);
 
     // Find and click the dropdown item
