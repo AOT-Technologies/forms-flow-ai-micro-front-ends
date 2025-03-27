@@ -99,6 +99,7 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
         as={ButtonGroup}
         className={`${className} custom-btn-width`}
         onToggle={(isOpen) => setDropdownOpen(isOpen)} 
+        data-testid={`${dataTestId}-container`}
       >
         <div ref={buttonRef} className="label-extra-action">
         <Button
@@ -118,8 +119,8 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
             onClick={extraActionOnClick}
             className={`${extraActionClass} border-0`}
             style={{ backgroundColor }}
-            data-testid="extra-action-button"
-            aria-label="Extra action"
+            data-testid={`${dataTestId}-extra-action`}
+            aria-label={`${t(displayLabel)} extra action`}
           >
             {extraActionIcon}
           </Button>
@@ -131,6 +132,8 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
           variant={variant}
           id="dropdown-split-basic"
           className={`default-arrow ${dropdownOpen ? "collapsed" : ""} button-dropdown-toggle`}
+          data-testid={`${dataTestId}-toggle`}
+          aria-label={`${t(displayLabel)} dropdown toggle`}
         >
           <ChevronIcon color="white" />
         </Dropdown.Toggle>
