@@ -83,13 +83,13 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
             onDragEnter={(e) => onDragEnter(e, index)}
             onDragEnd={onDragEnd}
           >
-            <span
-              className="draggable-icon"
+            <button
+              className="draggable-icon drag-as-div"
               draggable
               onDragStart={(e) => onDragStart(e, index)}
             >
               <DraggableIcon />
-            </span>
+            </button>
             
 
             <div className="checkbox-container">
@@ -102,9 +102,9 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
               />
             </div>
 
-            <span className="label cursor-pointer" onClick={() => onLabelClick(index)}>
+            <button className="label cursor-pointer drag-as-div" onClick={() => onLabelClick(index)}>
               {item.label}
-            </span>
+            </button>
 
             <div className="dotted-line"></div>
 
