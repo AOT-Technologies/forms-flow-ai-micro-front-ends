@@ -6,7 +6,7 @@ import { CloseIcon, PencilIcon, SaveIcon, CustomButton, CustomTabs, InputDropdow
 import { removeTenantKey, trimFirstSlash } from "../helper/helper.js";
 import { ACCESSIBLE_FOR_ALL_GROUPS, MAX_RESULTS, MULTITENANCY_ENABLED, PRIVATE_ONLY_YOU, SPECIFIC_USER_OR_GROUP } from '../constants/index';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchServiceTaskList, fetchTaskVariables, fetchUserList, getUserRoles, saveFilters, updateDefaultFilter } from '../services/bpmTaskServices';
+import { fetchServiceTaskList, fetchTaskVariables, fetchUserList, getUserRoles, saveFilters, updateDefaultFilter } from '../api/services/filterServices';
 import { setDefaultFilter, setUserGroups } from '../actions/taskActions';
 import { Filter, UserDetail } from '../types/taskFilter.js';
 import { StorageService } from '@formsflow/service';

@@ -1,7 +1,7 @@
 import ACTION_CONSTANTS from "../actions/actionConstants";
 import { setShowApplications } from "./../helper/helper.js"
 import { TASK_FILTER_LIST_DEFAULT_PARAM } from "../constants/"
-import { getFirstResultIndex } from "../services/bpmTaskServices";
+import { getFirstResultIndex } from "../api/services/filterServices";
 
 
 const initialState = {

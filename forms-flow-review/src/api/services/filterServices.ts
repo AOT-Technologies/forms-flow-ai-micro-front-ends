@@ -1,7 +1,7 @@
-import API from "../api/endpoints";
+import API from "../endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
-import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader } from "../actions/taskActions";
-import { MAX_RESULTS } from "../constants";
+import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader } from "../../actions/taskActions";
+import { MAX_RESULTS } from "../../constants";
 
 export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};

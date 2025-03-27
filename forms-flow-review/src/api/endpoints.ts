@@ -3,7 +3,6 @@ import { WEB_BASE_URL, BPM_URL, BPM_BASE_URL_EXT } from "./config";
 
 
 const API = {
-    SAMPLE: `${WEB_BASE_URL}/sample`,
     BPM_BASE_URL_SOCKET_IO: `${BPM_URL}/forms-flow-bpm-socket`,
     GET_API_USER_LIST: `${WEB_BASE_URL}/user`,
     GET_BPM_PROCESS_LIST: `${BPM_BASE_URL_EXT}/v1/process-definition`,
