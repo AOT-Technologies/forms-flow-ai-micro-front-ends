@@ -51,7 +51,6 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   const { t } = useTranslation();
   const primaryBtnBgColor = StyleServices.getCSSVariable('--primary-btn-bg-color');
   const secondaryBtnBgColor = StyleServices.getCSSVariable('--secondary-btn-bg-color');  
-  console.log(label);
   // Check if we should use the default label
   const isUsingDefaultLabel = !label || label === "";
   // Display label if provided, otherwise use defaultLabel
