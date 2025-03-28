@@ -6,9 +6,9 @@ import {
   SortableHeader,
   FilterSortActions,
   CustomButton,
-  DateRangePicker
+  DateRangePicker,
 } from "@formsflow/components";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { updateTaskSort } from "../../actions/tableActions";
 
 interface TableData {
@@ -32,11 +32,26 @@ export function ResizableTable(): JSX.Element {
   const { tasks, sort: taskSort } = useSelector((state: any) => state.taskList);
 
   const [columns, setColumns] = useState<Column[]>([
-    { name: "Submission ID", width: 150, sortKey: "submissionId", resizable: true },
+    {
+      name: "Submission ID",
+      width: 150,
+      sortKey: "submissionId",
+      resizable: true,
+    },
     { name: "Task", width: 250, sortKey: "task", resizable: true },
-    { name: "Created Date", width: 150, sortKey: "createdDate", resizable: true },
+    {
+      name: "Created Date",
+      width: 150,
+      sortKey: "createdDate",
+      resizable: true,
+    },
     { name: "Assigned To", width: 200, sortKey: "assignedTo", resizable: true },
-    { name: "Submitter Name", width: 200, sortKey: "submitterName", resizable: true },
+    {
+      name: "Submitter Name",
+      width: 200,
+      sortKey: "submitterName",
+      resizable: true,
+    },
     { name: "Actions", width: 100, sortKey: "", resizable: false },
   ]);
 
@@ -44,7 +59,7 @@ export function ResizableTable(): JSX.Element {
   const resizingRef = useRef<number | null>(null);
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(0);
-  
+
   const [activePage, setActivePage] = useState(1);
   const [sizePerPage, setSizePerPage] = useState(5);
   const [showSortModal, setShowSortModal] = useState(false);
@@ -60,16 +75,16 @@ export function ResizableTable(): JSX.Element {
   // Improved Sorting Logic
   const handleSort = (key: string) => {
     const currentSort = taskSort[key];
-    const newSortOrder = currentSort.sortOrder === 'asc' ? 'desc' : 'asc';
-  
+    const newSortOrder = currentSort.sortOrder === "asc" ? "desc" : "asc";
+
     // Reset all other columns to default (ascending) except the active one
     const updatedSort = columns.reduce((acc, column) => {
-      acc[column.sortKey] = { 
-        sortOrder: column.sortKey === key ? newSortOrder : 'asc' 
+      acc[column.sortKey] = {
+        sortOrder: column.sortKey === key ? newSortOrder : "asc",
       };
       return acc;
     }, {});
-  
+
     dispatch(
       updateTaskSort({
         ...updatedSort,
@@ -81,24 +96,28 @@ export function ResizableTable(): JSX.Element {
   // Sorting logic for data
   const sortedData = useMemo(() => {
     const activeKey = taskSort.activeKey;
-    const sortOrder = taskSort[activeKey]?.sortOrder || 'asc';
+    const sortOrder = taskSort[activeKey]?.sortOrder || "asc";
 
     return [...tasks].sort((a, b) => {
       const valueA = a[activeKey];
       const valueB = b[activeKey];
 
-      if (valueA == null) return sortOrder === 'asc' ? 1 : -1;
-      if (valueB == null) return sortOrder === 'asc' ? -1 : 1;
+      if (valueA == null) return sortOrder === "asc" ? 1 : -1;
+      if (valueB == null) return sortOrder === "asc" ? -1 : 1;
 
-      if (typeof valueA === 'string' && typeof valueB === 'string') {
-        return sortOrder === 'asc'
+      if (typeof valueA === "string" && typeof valueB === "string") {
+        return sortOrder === "asc"
           ? valueA.localeCompare(valueB)
           : valueB.localeCompare(valueA);
       }
 
-      return sortOrder === 'asc'
-        ? (valueA > valueB ? 1 : -1)
-        : (valueA < valueB ? 1 : -1);
+      return sortOrder === "asc"
+        ? valueA > valueB
+          ? 1
+          : -1
+        : valueA < valueB
+        ? 1
+        : -1;
     });
   }, [tasks, taskSort]);
 
@@ -172,7 +191,7 @@ export function ResizableTable(): JSX.Element {
   return (
     <div className="container-fluid py-4">
       <div className="d-md-flex justify-content-end align-items-center button-align mb-3">
-        <DateRangePicker/>
+        <DateRangePicker />
         <FilterSortActions
           showSortModal={showSortModal}
           handleFilterIconClick={handleFilterIconClick}
@@ -188,82 +207,84 @@ export function ResizableTable(): JSX.Element {
           refreshAriaLabel="Refresh the form list"
         />
       </div>
-      <div className="table-container custom-scroll">
-        <table ref={tableRef} className="table resizable-table">
-          <thead>
-            <tr>
-              {columns.map((column, index) => (
-                <th
-                  key={column.name}
-                  className="resizable-column"
-                  style={{ width: column.width }}
-                >
-                  {column.sortKey ? (
-                    <SortableHeader
-                      title={column.name}
-                      columnKey={column.sortKey}
-                      currentSort={taskSort}
-                      handleSort={() => handleSort(column.sortKey)}
-                      className="gap-2"
-                    />
-                  ) : (
-                    column.name
-                  )}
+      <div className="container-wrapper">
+        <div className="resizable-table-container custom-scroll">
+          <table ref={tableRef} className="resizable-table">
+            <thead className="resizable-header">
+              <tr>
+                {columns.map((column, index) => (
+                  <th
+                    key={column.name}
+                    className="resizable-column"
+                    style={{ width: column.width }}
+                  >
+                    {column.sortKey ? (
+                      <SortableHeader
+                        title={column.name}
+                        columnKey={column.sortKey}
+                        currentSort={taskSort}
+                        handleSort={() => handleSort(column.sortKey)}
+                        className="gap-2"
+                      />
+                    ) : (
+                      column.name
+                    )}
 
-                  {column.resizable && index < columns.length - 1 && (
-                    <div
-                      className={`column-resizer ${
-                        resizingRef.current === index ? "resizing" : ""
-                      }`}
-                      onMouseDown={(e) => handleMouseDown(index, e)}
-                    />
-                  )}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody >
-            {sortedData.slice(
-              (activePage - 1) * sizePerPage, 
-              activePage * sizePerPage
-            ).map((row, index) => (
-              <tr key={index}>
-                <td>{row.submissionId}</td>
-                <td>{row.task}</td>
-                <td>{row.createdDate}</td>
-                <td>{row.assignedTo}</td>
-                <td>{row.submitterName}</td>
-                <td>
-                  <CustomButton
-                   className="btn-table"
-                    variant="secondary"
-                    label={"View"}
-                    onClick={() => {}}
-                  />
-                </td>
+                    {column.resizable && index < columns.length - 1 && (
+                      <div
+                        className={`column-resizer ${
+                          resizingRef.current === index ? "resizing" : ""
+                        }`}
+                        onMouseDown={(e) => handleMouseDown(index, e)}
+                      />
+                    )}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <table className="table">
-          <tfoot>
-            <TableFooter
-              limit={sizePerPage}
-              activePage={activePage}
-              totalCount={tasks.length}
-              handlePageChange={handlePageChange}
-              onLimitChange={handleLimitChange}
-              pageOptions={[
-                { text: "5", value: 5 },
-                { text: "25", value: 25 },
-                { text: "50", value: 50 },
-                { text: "100", value: 100 },
-              ]}
-            />
-          </tfoot>
-        </table>
+            </thead>
+            <tbody>
+              {sortedData
+                .slice((activePage - 1) * sizePerPage, activePage * sizePerPage)
+                .map((row, index) => (
+                  <tr key={index}>
+                    <td>{row.submissionId}</td>
+                    <td>{row.task}</td>
+                    <td>{row.createdDate}</td>
+                    <td>{row.assignedTo}</td>
+                    <td>{row.submitterName}</td>
+                    <td>
+                      <CustomButton
+                        className="btn-table"
+                        variant="secondary"
+                        label={"View"}
+                        onClick={() => {}}
+                      />
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+        {tasks.length ? (
+          <table className="custom-tables">
+            <tfoot>
+              <TableFooter
+                limit={sizePerPage}
+                activePage={activePage}
+                totalCount={tasks.length}
+                handlePageChange={handlePageChange}
+                onLimitChange={handleLimitChange}
+                pageOptions={[
+                  { text: "5", value: 5 },
+                  { text: "25", value: 25 },
+                  { text: "50", value: 50 },
+                  { text: "100", value: 100 },
+                  { text: "All", value: tasks.length },
+                ]}
+              />
+            </tfoot>
+          </table>
+        ) : null}
       </div>
     </div>
   );
