@@ -86,7 +86,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const currentLocation = useLocation();
 
   // const [activeLink, setActiveLink] = useState("");
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey || userDetail?.tenantKey}/` : "/";
   // const defaultLogoPath =
   //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
   //   "/logo.svg";
