@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormVariableIcon,DraggableIcon } from "../SvgIcons/index";
+import { FormVariableIcon, DraggableIcon } from "../SvgIcons/index";
 import { StyleServices } from "@formsflow/service";
 
 interface FilterItem {
@@ -26,7 +26,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
     onUpdate(filterItems);
   }, [filterItems, onUpdate]);
 
-  const onDragStart = (e: React.DragEvent<HTMLLIElement>, index: number) => {
+  const onDragStart = (e: React.DragEvent<HTMLSpanElement>, index: number) => {
     e.stopPropagation();
     e.dataTransfer.setData("drag-index", index.toString());
     setDraggingIndex(index);
@@ -45,7 +45,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
       const updatedItems = [...prevItems];
       const [draggedItem] = updatedItems.splice(draggingIndex, 1);
       updatedItems.splice(targetIndex, 0, draggedItem);
-      return updatedItems.map((item, index) => ({ ...item, sortOrder: index + 1,  isMoving: true, }));
+      return updatedItems.map((item, index) => ({ ...item, sortOrder: index + 1}));
     });
     setDraggingIndex(targetIndex);  
   };
@@ -66,43 +66,52 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
       )
     );
   };
+
+  const onLabelClick = (index: number) => {
+    onCheckboxChange(index);
+  };
+
   return (
     <div className="drag-drop-container">
-        <ul>
+      <ul>
         {filterItems.map((item, index) => (
-        <li
-          key={item.name}
-          draggable 
-          className={`draggable-item ${draggingIndex === index ? "dragging" : ""} `}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
-          onDragEnter={(e) => onDragEnter(e, index)}
-          onDragEnd={onDragEnd}
-          onDragStart={(e) => onDragStart(e, index)}
-        >
-          <span 
-          className="draggable-icon"
+          <li
+            key={item.name}
+            className={`draggable-item ${draggingIndex === index ? "dragging" : ""}`}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onDragEnter={(e) => onDragEnter(e, index)}
+            onDragEnd={onDragEnd}
           >
-            <DraggableIcon />
-          </span>
-          <div className="checkbox-container">
-          <input 
-          data-testid={`${item.name}-checkbox`}
-          type="checkbox" 
-          className="form-check-input" 
-          checked={item.isChecked} 
-          onChange={() => onCheckboxChange(index)}
-           />
-          </div>
-          {item.label}
-          <div className="dotted-line"></div>
-            {item.isTaskVariable && (
-              <FormVariableIcon color={darkColor} />
-            ) }
-        </li>
-      ))}
-        </ul>
+            <button
+              className="draggable-icon drag-as-div"
+              draggable
+              onDragStart={(e) => onDragStart(e, index)}
+            >
+              <DraggableIcon />
+            </button>
+            
+
+            <div className="checkbox-container">
+              <input
+                data-testid={`${item.name}-checkbox`}
+                type="checkbox"
+                className="form-check-input"
+                checked={item.isChecked}
+                onChange={() => onCheckboxChange(index)}
+              />
+            </div>
+
+            <button className="label cursor-pointer drag-as-div" onClick={() => onLabelClick(index)}>
+              {item.label}
+            </button>
+
+            <div className="dotted-line"></div>
+
+            {item.isTaskVariable && <FormVariableIcon color={darkColor} />}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
-
