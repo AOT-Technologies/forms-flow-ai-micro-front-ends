@@ -81,7 +81,11 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const handleNameError = (e) => {
         const value = e.target.value;
         setFilterName(value);
-        setFilterNameError(value.length >= filterNameLength ? t("Filter name should be less than 50 characters") : "");
+        setFilterNameError(
+            value.length >= filterNameLength 
+              ? t("Filter name should be less than {{filterNameLength}} characters", { filterNameLength: filterNameLength }) 
+              : ""
+          );
     };
 
     const accessOptions = [
@@ -132,7 +136,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
     };
 
     const getIconColor = (disabled) => disabled ? whiteColor : baseColor;
-    const isInvalidFilter = !filterName.trim() || filterNameError || !isCreateFilters;
+    const isInvalidFilter = !filterName.trim() || filterNameError || !isCreateFilters || (shareFilter === SPECIFIC_USER_OR_GROUP && filterRole.length === 0);  ;
     const isButtonDisabled = isInvalidFilter;
     const iconColor = getIconColor(isInvalidFilter);
 

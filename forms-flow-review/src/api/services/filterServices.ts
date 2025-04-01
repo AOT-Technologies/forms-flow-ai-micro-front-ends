@@ -108,10 +108,7 @@ export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};
     const getTaskFiltersAPI = `${API.GET_FILTERS}/user`;
     return (dispatch) => {
-      RequestService.httpGETRequest(
-        getTaskFiltersAPI,
-        {}
-      )
+      RequestService.httpGETRequest(getTaskFiltersAPI)
         .then((res) => {
           if (res.data) {
             dispatch(setDefaultFilter(res.data.defaultFilter));

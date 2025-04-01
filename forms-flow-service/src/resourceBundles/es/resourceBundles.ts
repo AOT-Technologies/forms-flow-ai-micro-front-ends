@@ -966,7 +966,7 @@ export const RESOURCE_BUNDLES_ES = {
   "Filter Tabs": "Pestañas de filtro",
   "Filter Results": "Resultados del filtro",
   "Cancel filter": "Cancelar filtro",
-  "Filter name should be less than 50 characters": "El nombre del filtro debe tener menos de 50 caracteres",
+  "Filter name should be less than {{filterNameLength}} characters": "El nombre del filtro debe tener menos de {{filterNameLength}} caracteres",
   "Tasks Accessible To": "Tareas accesibles para",
   "dropdown for selecting options": "desplegable para seleccionar opciones",
   "input for typing option": "entrada para escribir opción",

@@ -1479,7 +1479,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Filter Tabs": "Вкладки за филтър",
   "Filter Results": "Резултати от филтъра",
   "Cancel filter": "Отмени филтъра",
-  "Filter name should be less than 50 characters": "Името на филтъра трябва да бъде по-малко от 50 символа",
+  "Filter name should be less than {{filterNameLength}} characters": "Името на филтъра трябва да бъде по-малко от {{filterNameLength}} символа",
   "dropdown_for_sort_order": "Падащо меню за подреждане",
   "input_for_sort_order": "Вход за подреждане"
 }
