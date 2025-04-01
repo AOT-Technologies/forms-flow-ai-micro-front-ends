@@ -26,33 +26,21 @@ class OfflineSubmissions {
    * It returns the count of drafts and submissions processed.
    */
   public static async processOfflineSubmissions(): Promise<void> {
-    let draftsProcessed = 0;
-    let submissionsProcessed = 0;
-    let totalSubmission = 0;
-
     try {
       await this.retryToken();
 
       const submissions =
         await OfflineFetchService.fetchAllNonActiveOfflineSubmissions();
-      totalSubmission = submissions.length ?? 0;
-      console.log(submissions);
       const processPromises = [
-        this.processDrafts(submissions, (count) => (draftsProcessed += count)),
-        this.processSubmission(
-          submissions,
-          (count) => (submissionsProcessed += count)
-        ),
+        this.processDrafts(submissions),
+        this.processSubmission(submissions),
         this.processDraftDelete()
       ];
 
       // Wait for all processes to finish
       await Promise.all(processPromises);
       PubSub.publish("DRAFT_ENABLED_SYNC_COMPLETED", {
-        status: "completed",
-        totalSubmission: totalSubmission,
-        draftsProcessed: draftsProcessed ?? 0,
-        submissionsProcessed: submissionsProcessed ?? 0
+        status: "completed"
       });
     } catch (error) {
       // Log error and track failed drafts/submissions
@@ -60,10 +48,7 @@ class OfflineSubmissions {
 
       // Publish the failure status with counts
       PubSub.publish("DRAFT_ENABLED_SYNC_COMPLETED", {
-        status: "incompleted",
-        totalSubmission: totalSubmission,
-        draftsProcessed: draftsProcessed ?? 0,
-        submissionsProcessed: submissionsProcessed ?? 0
+        status: "incompleted"
       });
     }
   }
@@ -120,11 +105,9 @@ class OfflineSubmissions {
    * - If the draft exists and has both a server draft ID and application ID, it will be updated.
    * - If the draft is new (no server IDs), it will be created.
    * @param submissions List of offline submissions to process.
-   * @param countCallback Callback to update the draft count.
    */
   private static async processDrafts(
-    submissions: OfflineSubmission[],
-    countCallback: (count: number) => void
+    submissions: OfflineSubmission[]
   ): Promise<void> {
     const draftSubmissions = submissions.filter(
       (submission) => submission.type === "draft"
@@ -134,7 +117,6 @@ class OfflineSubmissions {
     await Promise.all(
       draftSubmissions.map(async (draft) => {
         await this.handleDraftSubmission(draft);
-        countCallback(1); // Increment count for each processed draft
       })
     );
   }
@@ -206,11 +188,9 @@ class OfflineSubmissions {
    * - If the application exists and has both server draft ID and application ID, it will be updated.
    * - If the application is new (no server IDs), it will be created.
    * @param submissions List of offline submissions to process.
-   * @param countCallback Callback to update the submission count.
    */
   private static async processSubmission(
-    submissions: OfflineSubmission[],
-    countCallback: (count: number) => void
+    submissions: OfflineSubmission[]
   ): Promise<void> {
     const submittedData = submissions.filter(
       (submission) => submission.type === "application"
@@ -220,8 +200,6 @@ class OfflineSubmissions {
     await Promise.all(
       submittedData.map(async (data) => {
         await this.handleSubmission(data);
-        // Increment count for each processed submission
-        countCallback(1);
       })
     );
   }
