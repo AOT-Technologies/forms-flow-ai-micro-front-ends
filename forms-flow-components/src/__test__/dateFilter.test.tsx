@@ -229,7 +229,7 @@ describe('DateRangePicker Component', () => {
     fireEvent.click(screen.getByTestId('date-range-display'));
     
     // Select start date (10th)
-    const startDateElement = screen.getByTestId('calendar-day-10');
+    const startDateElement = screen.getAllByTestId('calendar-day-10')?.[0];
     fireEvent.click(startDateElement);
     
     // Select end date (20th)
@@ -269,7 +269,7 @@ describe('DateRangePicker Component', () => {
     fireEvent.click(screen.getByTestId('date-range-display'));
     
     // Select only start date
-    const startDateElement = screen.getByTestId('calendar-day-10');
+    const startDateElement = screen.getAllByTestId('calendar-day-10')?.[0];
     fireEvent.click(startDateElement);
     
     // Close calendar without selecting end date
@@ -291,7 +291,7 @@ describe('DateRangePicker Component', () => {
     fireEvent.click(startDateElement);
     
     // Select end date (10th) which is before start date
-    const endDateElement = screen.getByTestId('calendar-day-10');
+    const endDateElement = screen.getAllByTestId('calendar-day-10')?.[0];
     fireEvent.click(endDateElement);
     
     // Check if onChange was called with correct order (10th to 20th)
