@@ -149,6 +149,8 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 ariaLabelforDropdown={t("dropdown for sort order")}
                 ariaLabelforInput={t("input for sort order")}
                 data-testid="sort-order-dropdown"
+                dataTestIdforInput="sort-order-input"
+                dataTestIdforDropdown="sort-order-list"
                 selectedOption={sortOrder}
                 setNewInput={setSortOrder}
             />
@@ -304,7 +306,8 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 isAllowInput={false}
                 ariaLabelforDropdown={t("dropdown for selecting options")}
                 ariaLabelforInput={t("input for typing option")}
-                data-testid="access-dropdown"
+                dataTestIdforInput="access-options-input"
+                dataTestIdforDropdown="access-options"
                 selectedOption={accessDropdownValue}
                 setNewInput={setAccessDropdownValue}
             />
@@ -316,7 +319,8 @@ export const TaskFilterModal = ({ show, onClose }) => {
                         isAllowInput={false}
                         ariaLabelforDropdown={t("specific role dropdown")}
                         ariaLabelforInput={t("specific role input")}
-                        data-testid="role-dropdown"
+                        dataTestIdforInput="specific-roles-input"
+                        dataTestIdforDropdown="specific-roles"
                         selectedOption={specificRole}
                         setNewInput={setSpecificRole}
                     />
@@ -330,6 +334,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                         ariaLabelforDropdown={t("assignee dropdown")}
                         ariaLabelforInput={t("assignee input")}
                         data-testid="assignee-dropdown"
+                        dataTestIdforInput="assignee-input"
                         selectedOption={specificAssignee}
                         setNewInput={setSpecificAssignee}
                         name="assigneeOptions"
@@ -343,7 +348,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     type="text"
                     label={t("Form")}
                     aria-label={t("Name of the form")}
-                    data-testid="form-name-input"
+                    dataTestId="form-name-input"
                     icon={<PencilIcon data-testid="close-input" aria-label="Close input" />}
                     maxLength={200}
                     value={selectedForm}
@@ -376,7 +381,8 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 isAllowInput={false}
                 ariaLabelforDropdown={t("dropdown for sort options")}
                 ariaLabelforInput={t("input for typing option")}
-                data-testid="date-sort-dropdown"
+                dataTestIdforInput="date-sort-input"
+                dataTestIdforDropdown="date-sort"
                 selectedOption={sortValue}
                 setNewInput={setSortValue}
             />
@@ -388,7 +394,8 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     isAllowInput={false}
                     ariaLabelforDropdown={t("line of data dropdown ")}
                     ariaLabelforInput={t("line of data input")}
-                    data-testid="data-line-dropdown"
+                    dataTestIdforInput="data-line-input"
+                    dataTestIdforDropdown="data-line"
                     selectedOption={dataLineValue}
                     setNewInput={setDataLineValue}
                 />
@@ -403,7 +410,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 type="text"
                 label={t("Filter Name")}
                 aria-label={t("Filter Name")}
-                data-testid="filter-name-input"
+                dataTestId="filter-name-input"
                 maxLength={200}
                 value={filterName}
                 onChange={handleFilterName}
@@ -421,7 +428,8 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     dropdownLabel={t("Share This Filter With")}
                     isAllowInput={false}
                     ariaLabelforDropdown={t("filter sharing dropdown")}
-                    data-testid="share-filter-dropdown"
+                    dataTestIdforInput="share-filter-input"
+                    dataTestIdforDropdown="share-filter-options"
                     selectedOption={shareFilter}
                     setNewInput={setShareFilter}
                 />
@@ -433,7 +441,8 @@ export const TaskFilterModal = ({ show, onClose }) => {
                             isAllowInput={false}
                             ariaLabelforDropdown={t("candidate dropdown")}
                             ariaLabelforInput={t("candidate input")}
-                            data-testid="candidate-dropdown"
+                            dataTestIdforInput="candidate-options-input"
+                            dataTestIdforDropdown="candidate-options"
                             selectedOption={filterRole}
                             setNewInput={setFilterRole}
                         />
@@ -455,7 +464,6 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     icon={<SaveIcon color={iconColor} />}
                     dataTestId="save-task-filter"
                     ariaLabel={t("Save Task Filter")}
-                    data-testid="save-task-filter-button"
                     disabled={isButtonDisabled}
                 />
             </div>
@@ -507,7 +515,6 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     label={t("Filter Results")}
                     dataTestId="filter-results"
                     ariaLabel={t("Filter results")}
-                    data-testid="filter-results"
                     disabled={(specificRole === "" && specificAssignee === "")}
                     onClick={filterResults}
                 />
@@ -518,7 +525,6 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     onClick={cancelFilter}
                     dataTestId="cancel-filter"
                     ariaLabel={t("Cancel filter")}
-                    data-testid="cancel-filter"
                 />
             </Modal.Footer>
         </Modal>
