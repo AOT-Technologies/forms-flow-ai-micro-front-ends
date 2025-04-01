@@ -15,12 +15,10 @@ export const fetchUserList = (...rest) => {
             dispatch(setBPMUserList(res.data));
             done(null, res.data);
           } else {
-            console.log("Error", res);
             dispatch(serviceActionError(res));
           }
         })
         .catch((error) => {
-          console.log("Error", error);
           dispatch(serviceActionError(error));
           done(error);
         });
@@ -120,13 +118,11 @@ export const fetchUserList = (...rest) => {
             dispatch(setBPMFilterList(res.data.filters));
             done(null, res.data);
           } else {
-            console.log("Error", res);
             dispatch(setBPMFilterLoader(false));
             dispatch(serviceActionError(res));
           }
         })
         .catch((error) => {
-          console.log("Error", error);
           dispatch(setBPMFilterLoader(false));
           dispatch(serviceActionError(error));
           done(error);
