@@ -1053,10 +1053,10 @@ $black-color: var(--ff-black);
   align-content: center;
   .create-filter {
     display: flex;
-    padding: var(--rem-200, 32px) var(--rem-225, 40px);
+    padding: var(--spacer-200) var(--spacer-225);
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--rem-150, 24px);
+    gap: var(--spacer-150);
     align-self: stretch;
   }
 

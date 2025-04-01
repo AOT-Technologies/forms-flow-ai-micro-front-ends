@@ -976,5 +976,7 @@ export const RESOURCE_BUNDLES_ES = {
   "assignee input": "entrada para asignado",
   "dropdown for sort options": "desplegable para opciones de ordenación",
   "candidate dropdown": "desplegable para candidato",
-  "candidate input": "entrada para candidato"
+  "candidate input": "entrada para candidato",
+  "dropdown_for_sort_order": "Desplegable para el orden de clasificación",
+  "input_for_sort_order": "Entrada para el orden de clasificación"
 }

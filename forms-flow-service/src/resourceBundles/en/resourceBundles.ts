@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-export const RESOURCE_BUNDLES_EN ={
+export const RESOURCE_BUNDLES_EN = {
   "Filter Created by": "Filter Created by",
   "Submit Form": "Submit Form",
   "Changes Applied Successfully": "Changes Applied Successfully",
@@ -708,8 +708,8 @@ export const RESOURCE_BUNDLES_EN ={
   "Proceed to Sign In": "Proceed to Sign In",
   "Contact formsflow.ai support": "Contact formsflow.ai support",
   "Please provide your tenant name to sign in": "Please provide your tenant name to sign in",
-  "Tenant not found":"Tenant not found",
-  "Access Roles" :"Access Roles",
+  "Tenant not found": "Tenant not found",
+  "Access Roles": "Access Roles",
   "Description of the new form": "Description of the new form",
   "Name of the form": "Name of the form",
   "Duplicate": "Duplicate",
@@ -853,7 +853,7 @@ export const RESOURCE_BUNDLES_EN ={
   "Unpublish This Form": "Unpublish This Form",
   "A system error occurred during export. Please try again.": "A system error occurred during export. Please try again.",
   "Try Again": "Try Again",
-  "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.":  "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.",
+  "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.": "No forms have been found. Create a new form by clicking the \"New Form\" button in the top right.",
   "No subflows have been found. Create a new subflow by clicking \"New BPMN\" button in the top right.": "No subflows have been found. Create a new subflow by clicking \"New BPMN\" button in the top right.",
   "No decision tables have been found. Create a new decision table by clicking \"New DMN\" button in the top right.": "No decision tables have been found. Create a new decision table by clicking \"New DMN\" button in the top right.",
   "Form Submitted": "Form Submitted",
@@ -938,7 +938,7 @@ export const RESOURCE_BUNDLES_EN ={
   "Load More": "Load More",
   "Invalid expression": "Invalid expression",
   "Add Alternative Label": "Add Alternative Label",
-  "Add Variable": "Add Variable",  
+  "Add Variable": "Add Variable",
   "Specific role": "Specific role",
   "Specific assignee": "Specific assignee",
   "Task": "Task",
@@ -976,5 +976,7 @@ export const RESOURCE_BUNDLES_EN ={
   "assignee input": "assignee input",
   "dropdown for sort options": "dropdown for sort options",
   "candidate dropdown": "candidate dropdown",
-  "candidate input": "candidate input"
+  "candidate input": "candidate input",
+  "dropdown_for_sort_order": "Dropdown for sort order",
+  "input_for_sort_order": "Input for sort order"
 }

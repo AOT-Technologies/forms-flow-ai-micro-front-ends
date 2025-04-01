@@ -12,13 +12,10 @@ interface SocketUpdateParams {
 const TaskList = () => {
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false); 
 
-  const handleOpenFilterModal = () => {
-      setShowTaskFilterModal(true); 
-  };
+  const handleToggleFilterModal = () => {
+    setShowTaskFilterModal(prevState => !prevState);
+};
 
-  const handleCloseFilterModal = () => {
-      setShowTaskFilterModal(false); 
-  };
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
       console.log("SocketIOCallback called");
@@ -55,18 +52,18 @@ const TaskList = () => {
   return (
     <div>
         <h1>Hello World</h1>
-        <CustomButton
-            variant="secondary"
-            size="md"
-            label="Create Filter"
-            onClick={handleOpenFilterModal}
-            dataTestId="open-create-filter-modal"
-            ariaLabel="Open Create Filter Modal"
-        />
-        <TaskFilterModal
-            show={showTaskFilterModal} 
-            onClose={handleCloseFilterModal} 
-        />
+      <CustomButton
+        variant="secondary"
+        size="md"
+        label="Create Filter"
+        onClick={handleToggleFilterModal}
+        dataTestId="open-create-filter-modal"
+        ariaLabel="Toggle Create Filter Modal"
+      />
+      <TaskFilterModal
+        show={showTaskFilterModal}
+        onClose={handleToggleFilterModal}
+      />
     </div>
 );
 };

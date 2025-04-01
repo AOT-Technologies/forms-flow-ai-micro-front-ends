@@ -1471,5 +1471,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "assignee input": "受托人输入",
   "dropdown for sort options": "排序选项的下拉菜单",
   "candidate dropdown": "候选人下拉菜单",
-  "candidate input": "候选人输入"
+  "candidate input": "候选人输入",
+  "dropdown_for_sort_order": "排序顺序的下拉菜单",
+  "input_for_sort_order": "排序顺序的输入"
 }

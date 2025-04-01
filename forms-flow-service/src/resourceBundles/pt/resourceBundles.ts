@@ -1481,5 +1481,7 @@ export const RESOURCE_BUNDLES_PT ={
   "assignee input": "entrada para atribuído",
   "dropdown for sort options": "menu suspenso para opções de ordenação",
   "candidate dropdown": "menu suspenso para candidato",
-  "candidate input": "entrada para candidato"
+  "candidate input": "entrada para candidato",
+  "dropdown_for_sort_order": "Menu suspenso para ordem de classificação",
+  "input_for_sort_order": "Entrada para ordem de classificação"
 };

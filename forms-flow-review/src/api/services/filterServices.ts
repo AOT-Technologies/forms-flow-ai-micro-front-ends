@@ -33,6 +33,14 @@ export const fetchUserList = (...rest) => {
   };
 
 
+  const handleTaskError = (dispatch, error) => {
+    dispatch(setBPMTaskList([]));
+    dispatch(setBPMTaskCount(0));
+    dispatch(serviceActionError(error));
+    dispatch(setBPMTaskLoader(false));
+  };
+  
+
   export const fetchServiceTaskList = (reqData, taskIdToRemove, firstResult, maxResults, ...rest) => {
     const done = rest.length ? rest[0] : () => {};
     const apiUrlgetTaskList =
@@ -50,10 +58,7 @@ export const fetchUserList = (...rest) => {
             const _embedded = responseData[0]?._embedded; // data._embedded.task is where the task list is.
             if (!_embedded?.task || !responseData?.[0]?.count) {
               // Display error if the necessary values are unavailable.
-              dispatch(setBPMTaskList([]));
-              dispatch(setBPMTaskCount(0));
-              dispatch(serviceActionError(res));
-              dispatch(setBPMTaskLoader(false));
+              handleTaskError(dispatch, res);
             }
              else {
               const taskListFromResponse = _embedded["task"]; // Gets the task array
@@ -79,17 +84,11 @@ export const fetchUserList = (...rest) => {
               done(null, taskData);
             }
           } else {
-            dispatch(setBPMTaskCount(0));
-            dispatch(setBPMTaskList([]));
-            dispatch(serviceActionError(res));
-            dispatch(setBPMTaskLoader(false));
+            handleTaskError(dispatch, res);
           }
         })
         .catch((error) => {
-          dispatch(setBPMTaskList([]));
-          dispatch(setBPMTaskCount(0));
-          dispatch(serviceActionError(error));
-          dispatch(setBPMTaskLoader(false));
+          handleTaskError(dispatch, error);          
           done(error);
         });
     };
@@ -113,8 +112,7 @@ export const fetchUserList = (...rest) => {
     return (dispatch) => {
       RequestService.httpGETRequest(
         getTaskFiltersAPI,
-        {},
-        StorageService.get(StorageService.User.AUTH_TOKEN)
+        {}
       )
         .then((res) => {
           if (res.data) {

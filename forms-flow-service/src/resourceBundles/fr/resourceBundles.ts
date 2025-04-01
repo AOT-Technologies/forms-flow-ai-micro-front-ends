@@ -1480,7 +1480,9 @@ export const RESOURCE_BUNDLES_FR ={
     "assignee input": "entrée pour le destinataire",
     "dropdown for sort options": "menu déroulant pour options de tri",
     "candidate dropdown": "menu déroulant pour candidat",
-    "candidate input": "entrée pour candidat"
+    "candidate input": "entrée pour candidat",
+    "dropdown_for_sort_order": "Menu déroulant pour l'ordre de tri",
+    "input_for_sort_order": "Entrée pour l'ordre de tri"
   }
 
 

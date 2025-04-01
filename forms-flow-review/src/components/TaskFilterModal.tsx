@@ -17,7 +17,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const computedStyle = getComputedStyle(document.documentElement);
     const baseColor = computedStyle.getPropertyValue("--ff-primary");
     const whiteColor = computedStyle.getPropertyValue("--ff-white");
-
+    const filterNameLength = 50;
     const [accessDropdownValue, setAccessDropdownValue] = useState('specificRole');
     const [specificRole, setSpecificRole] = useState('');
     const [specificAssignee, setSpecificAssignee] = useState('');
@@ -32,26 +32,30 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const [selectedForm, setSelectedForm] = useState(null);
     const [variableArray, setVariableArray] = useState([]);
 
-    const userListResponse = useSelector((state: any) => state.task.userList) || { data: [] };
-    const userList = userListResponse?.data || [];
-    const candidateGroups = useSelector((state: any) => state.task.userGroups) || { data: [] };
-    const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
-    const firstResult = useSelector((state: any) => state.task.firstResult);
-    const defaultFilter = useSelector((state: any) => state.task.defaultFilter);
+  
+    const {
+        userList = { data: [] },
+        userGroups: candidateGroups = { data: [] },
+        firstResult,
+        defaultFilter,
+      } = useSelector((state: any) => state.task);
+      
+      const userListData = userList.data || [];
+      const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
     const userRoles = JSON.parse(
         StorageService.get(StorageService.User.USER_ROLE)
     );
     const isCreateFilters = userRoles?.includes("create_filters");
 
 
-    const assigneeOptions = useMemo(() => userList.map(user => ({
+    const assigneeOptions = useMemo(() => userListData.map(user => ({
         value: user.username,
         label: user.username,
-    })), [userList]);
+    })), [userListData]);
 
     useEffect(() => {
-        const userDetails = StorageService.get(StorageService.User.USER_DETAILS);
-        if (userDetails) setUserDetail(JSON.parse(userDetails));
+        StorageService.getParsedData(StorageService.User.USER_DETAILS) && 
+        setUserDetail(StorageService.getParsedData(StorageService.User.USER_DETAILS));
     }, [shareFilter]);
 
     useEffect(() => {
@@ -77,7 +81,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const handleNameError = (e) => {
         const value = e.target.value;
         setFilterName(value);
-        setFilterNameError(value.length >= 50 ? t("Filter name should be less than 50 characters") : "");
+        setFilterNameError(value.length >= filterNameLength ? t("Filter name should be less than 50 characters") : "");
     };
 
     const accessOptions = [
@@ -138,8 +142,9 @@ export const TaskFilterModal = ({ show, onClose }) => {
             <InputDropdown
                 Options={options}
                 isAllowInput={false}
-                ariaLabelforDropdown="dropdown for selecting dependent options"
-                ariaLabelforInput="input for typing dependent option"
+                ariaLabelforDropdown={t("dropdown for sort order")}
+                ariaLabelforInput={t("input for sort order")}
+                data-testid="sort-order-dropdown"
                 selectedOption={sortOrder}
                 setNewInput={setSortOrder}
             />
@@ -295,6 +300,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 isAllowInput={false}
                 ariaLabelforDropdown={t("dropdown for selecting options")}
                 ariaLabelforInput={t("input for typing option")}
+                data-testid="access-dropdown"
                 selectedOption={accessDropdownValue}
                 setNewInput={setAccessDropdownValue}
             />
@@ -306,6 +312,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                         isAllowInput={false}
                         ariaLabelforDropdown={t("specific role dropdown")}
                         ariaLabelforInput={t("specific role input")}
+                        data-testid="role-dropdown"
                         selectedOption={specificRole}
                         setNewInput={setSpecificRole}
                     />
@@ -318,6 +325,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                         isAllowInput={false}
                         ariaLabelforDropdown={t("assignee dropdown")}
                         ariaLabelforInput={t("assignee input")}
+                        data-testid="assignee-dropdown"
                         selectedOption={specificAssignee}
                         setNewInput={setSpecificAssignee}
                         name="assigneeOptions"
@@ -331,6 +339,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     type="text"
                     label={t("Form")}
                     aria-label={t("Name of the form")}
+                    data-testid="form-name-input"
                     icon={<PencilIcon data-testid="close-input" aria-label="Close input" />}
                     maxLength={200}
                     value={selectedForm}
@@ -345,10 +354,12 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 className="note"
                 heading="Note"
                 content={t("Toggle the visibility of columns and re-order them as per your requirement")}
+                data-testid="columns-note"
             />
             <DragandDropSort
                 items={variableArray}
                 onUpdate={handleUpdateOrder}
+                data-testid="columns-sort"
             />
         </div>
     );
@@ -361,6 +372,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 isAllowInput={false}
                 ariaLabelforDropdown={t("dropdown for sort options")}
                 ariaLabelforInput={t("input for typing option")}
+                data-testid="date-sort-dropdown"
                 selectedOption={sortValue}
                 setNewInput={setSortValue}
             />
@@ -372,6 +384,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     isAllowInput={false}
                     ariaLabelforDropdown={t("line of data dropdown ")}
                     ariaLabelforInput={t("line of data input")}
+                    data-testid="data-line-dropdown"
                     selectedOption={dataLineValue}
                     setNewInput={setDataLineValue}
                 />
@@ -386,6 +399,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 type="text"
                 label={t("Filter Name")}
                 aria-label={t("Filter Name")}
+                data-testid="filter-name-input"
                 maxLength={200}
                 value={filterName}
                 onChange={handleFilterName}
@@ -403,6 +417,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     dropdownLabel={t("Share This Filter With")}
                     isAllowInput={false}
                     ariaLabelforDropdown={t("filter sharing dropdown")}
+                    data-testid="share-filter-dropdown"
                     selectedOption={shareFilter}
                     setNewInput={setShareFilter}
                 />
@@ -414,6 +429,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                             isAllowInput={false}
                             ariaLabelforDropdown={t("candidate dropdown")}
                             ariaLabelforInput={t("candidate input")}
+                            data-testid="candidate-dropdown"
                             selectedOption={filterRole}
                             setNewInput={setFilterRole}
                         />
@@ -424,6 +440,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 className="note"
                 heading="Note"
                 content={t("Column widths are saved within a filter. If you wish to adjust them. Click Filter Results, adjust the widths of the columns in the table until you are happy and then save the filter afterwards.")}
+                data-testid="filter-note"
             />
             <div className='pt-4'>
                 <CustomButton
@@ -434,6 +451,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     icon={<SaveIcon color={iconColor} />}
                     dataTestId="save-task-filter"
                     ariaLabel={t("Save Task Filter")}
+                    data-testid="save-task-filter-button"
                     disabled={isButtonDisabled}
                 />
             </div>
@@ -474,6 +492,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                         tabs={tabs}
                         dataTestId="create-filter-tabs"
                         ariaLabel={t("Filter Tabs")}
+                        data-testid="create-filter-tabs"
                     />
                 </div>
             </Modal.Body>
@@ -484,6 +503,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     label={t("Filter Results")}
                     dataTestId="filter-results"
                     ariaLabel={t("Filter results")}
+                    data-testid="filter-results"
                     disabled={(specificRole === "" && specificAssignee === "")}
                     onClick={filterResults}
                 />
@@ -494,6 +514,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     onClick={cancelFilter}
                     dataTestId="cancel-filter"
                     ariaLabel={t("Cancel filter")}
+                    data-testid="cancel-filter"
                 />
             </Modal.Footer>
         </Modal>
