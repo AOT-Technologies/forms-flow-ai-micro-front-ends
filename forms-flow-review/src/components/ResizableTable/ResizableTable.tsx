@@ -9,6 +9,7 @@ import {
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { updateTaskSort } from "../../actions/tableActions";
+import TaskFilterModal from "../TaskFilterModal";
 
 interface TableData {
   submissionId: string;
@@ -29,7 +30,11 @@ export function ResizableTable(): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { tasks, sort: taskSort } = useSelector((state: any) => state.taskList);
-
+   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
+  
+    const handleToggleFilterModal = () => {
+      setShowTaskFilterModal(prevState => !prevState);
+  };
   const [columns, setColumns] = useState<Column[]>([
     {
       name: "Submission ID",
@@ -193,6 +198,18 @@ export function ResizableTable(): JSX.Element {
   return (
     <div className="container-fluid py-4">
       <div className="d-md-flex justify-content-end align-items-center button-align mb-3">
+      <CustomButton
+        variant="secondary"
+        size="md"
+        label="Create Filter"
+        onClick={handleToggleFilterModal}
+        dataTestId="open-create-filter-modal"
+        ariaLabel="Toggle Create Filter Modal"
+      />
+      <TaskFilterModal
+        show={showTaskFilterModal}
+        onClose={handleToggleFilterModal}
+      />
         <DateRangePicker />
         <FilterSortActions
           showSortModal={showSortModal}

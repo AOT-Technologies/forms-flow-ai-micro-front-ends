@@ -16,8 +16,19 @@ export const KEYCLOAK_ENABLE_CLIENT_AUTH =
     : false;
 
 export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
+export const MAX_RESULTS = 15;
+export const TASK_FILTER_LIST_DEFAULT_PARAM = {
+  sortBy: "created",
+  sortOrder: "desc",
+  // label: <TranslationProps>{(t) => t("Created",
+};
 
 
 export const WEBSOCKET_ENCRYPT_KEY = `${
   window._env_?.REACT_APP_WEBSOCKET_ENCRYPT_KEY
 }`;
+
+
+export const ACCESSIBLE_FOR_ALL_GROUPS = 'Accessible for all users';
+export const PRIVATE_ONLY_YOU = 'Private (Only You)';
+export const SPECIFIC_USER_OR_GROUP = 'Specific User/ Group';

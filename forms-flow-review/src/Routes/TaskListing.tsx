@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import SocketIOService from "../services/SocketIOService";
 import { ResizableTable } from "../components";
 
@@ -9,6 +9,7 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
+ 
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
       console.log("SocketIOCallback called");
@@ -44,7 +45,7 @@ const TaskList = () => {
 
   return (
     <div>
-        <ResizableTable />
+      <ResizableTable/>
     </div>
 );
 };
