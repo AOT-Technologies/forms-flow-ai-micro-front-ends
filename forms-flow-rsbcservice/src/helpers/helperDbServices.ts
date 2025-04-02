@@ -146,7 +146,8 @@ class DBServiceHelper {
   public static constructApplicationData(
     formId: string,
     submissionId: string,
-    formData: any
+    formData: any,
+    submission: any
   ): Application {
     const userDetails = this.getUserDetails();
     const randomId = this.generateRandomNumber();
@@ -172,6 +173,7 @@ class DBServiceHelper {
       processName: null,
       processTenant: null,
       submissionId,
+      dashboardColumns: submission?.data?.dashboardColumns,
     };
   }
 

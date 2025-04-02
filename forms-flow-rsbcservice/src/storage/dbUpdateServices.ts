@@ -81,7 +81,8 @@ class OfflineEditService {
       const applicationData = DBServiceHelper.constructApplicationData(
         formId,
         draft.localSubmissionId,
-        formData
+        formData,
+        newSubmissionData
       );
       await OfflineSaveService.saveFFDataToIndexedDB(
         "applications",
