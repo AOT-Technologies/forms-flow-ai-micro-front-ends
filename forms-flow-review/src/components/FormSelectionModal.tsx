@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useTranslation } from "react-i18next";
 import { CloseIcon, CustomSearch } from "@formsflow/components";
-import { Form, getForm,Formio } from "@aot-technologies/formio-react";
-import { fetchAllForms,getFormProcesses } from "../api/services/filterServices";
+import { Form, Formio } from "@aot-technologies/formio-react";
+import { fetchAllForms,fetchFormById } from "../api/services/filterServices";
 import { useSelector,useDispatch } from "react-redux";
 interface FormSelectionModalProps {
   showModal: boolean;
@@ -61,11 +61,42 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
       return searchFormName ? filteredFormNames : formNames.data;
     };
     console.log(selectedFormId);
-     useEffect(() => {
+    //  useEffect(() => {
+    //   if (selectedFormId) {
+    //     dispatch(getForm("form",selectedFormId));
+    //   }
+    // }, [selectedFormId]);
+
+    // useEffect(() => {
+    //   console.log("selectedFormId  inside", selectedFormId);
+    //   if (selectedFormId) {
+       
+    //   }
+    // }, [selectedFormId]);
+    useEffect(() => {
       if (selectedFormId) {
-        dispatch(getForm("form",selectedFormId));
+       // setLoading(true);
+        // Fetch form data by ID
+        fetchFormById(selectedFormId)
+          .then((res) => {
+            if (res.data) {
+              const { data } = res;
+              setForm(data);
+            }
+          })
+          .catch((err) => {
+            console.error(
+              "Error fetching form data:",
+              err.response?.data || err.message
+            );
+          })
+          .finally(() => {
+            //setLoading(false);
+          });
       }
     }, [selectedFormId]);
+
+
     return (
       <Modal show={showModal} size="lg" className="form-selection-modal">
         <Modal.Header className="form-selection-header">
@@ -110,19 +141,17 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             </div>
           </div>
           <div className="template-right">
-            {/* <div className="sub-container wizard-tab">
-          <Form
-            form={updatedForm}
-            options={{
-              viewAsHtml: true,
-              readOnly: true,
+          <div className="px-4 pt-4 form-preview">
+                        <Form
+                          form={form}
+                          options={{
+                            //disableAlerts: true,
+                            noAlerts: true,
+                            //language: lang, i18n: RESOURCE_BUNDLES_DATA
                           }}
-            showHiddenFields={false}
-            formReady={(e) => {
-              formRef.current = e;
-            }}
-          />
-          </div> */}
+                        />
+                      </div>
+   
           </div>
         </Modal.Body>
       </Modal>

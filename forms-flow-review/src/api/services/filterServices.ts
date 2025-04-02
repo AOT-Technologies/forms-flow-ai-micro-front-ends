@@ -91,7 +91,8 @@ export const fetchUserList = (...rest) => {
         });
     };
   };
-
+ 
+  
   export const fetchBPMTaskCount = (data) => {
     return RequestService.httpPOSTRequest(
       `${API.GET_BPM_TASK_FILTERS}/count`,
@@ -148,23 +149,16 @@ export const fetchUserList = (...rest) => {
     //activeForms means published forms only : status = Active
     return RequestService.httpGETRequest(`${API.FORM}?activeForms=true`);
   };
-  export const getFormProcesses = (formId, ...rest) => {
-    const done = rest.length ? rest[0] : () => {};
-    return (dispatch) => {
-      RequestService.httpGETRequest(
-        `${API.FORM_PROCESSES}/${formId}`,
-        {},
-        StorageService.get(StorageService.User.AUTH_TOKEN),
-        true
-      )
-        .then((res) => {
-          if (res) {
-            console.log(res,"rers");
-        }})
-        // eslint-disable-next-line no-unused-vars
-        .catch((error) => {
-         // dispatch(setProcessStatusLoading(false));
-          console.log(error);
-        });
-    };
-  };  
+
+
+ export const fetchFormById = (id) => {
+  let token = StorageService.getFormioToken() ? { "x-jwt-token": StorageService.getFormioToken() } : {};
+  return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${id}`, {}, "", false, {
+    ...token
+  });
+
+};
+
+
+
+  
