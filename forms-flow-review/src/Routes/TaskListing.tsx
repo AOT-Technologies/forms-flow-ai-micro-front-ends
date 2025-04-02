@@ -1,7 +1,7 @@
-import { useEffect, useCallback ,useState} from "react";
+import { useEffect, useCallback, useState } from "react";
 import SocketIOService from "../services/SocketIOService";
 import { FormSelectionModal } from "../components/FormSelectionModal";
-import { CustomButton } from '@formsflow/components'; 
+import { CustomButton } from "@formsflow/components";
 import TaskFilterModal from "../components/TaskFilterModal";
 
 interface SocketUpdateParams {
@@ -12,15 +12,18 @@ interface SocketUpdateParams {
 
 const TaskList = () => {
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
-  const handleFormSelection = () => {
+  const handleModalclose = () => {
     setShowFormSelectionModal(false);
+    return {};
   };
-  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false); 
+  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
 
   const handleToggleFilterModal = () => {
-    setShowTaskFilterModal(prevState => !prevState);
-};
-
+    setShowTaskFilterModal((prevState) => !prevState);
+  }; 
+  const onClose = () => {
+    setShowFormSelectionModal(false);
+  };
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
       console.log("SocketIOCallback called");
@@ -54,22 +57,9 @@ const TaskList = () => {
     };
   }, [SocketIOCallback]);
 
-  return( <div>
-    <h1> Hello world</h1>
-    <button 
-        type="button"
-        onClick={()=>setShowFormSelectionModal(true)}
-        >
-          Form selection modAL
-        </button>
-    <FormSelectionModal 
-    showModal={showFormSelectionModal}
-    onClose={()=>handleFormSelection}
-     />
-    </div>)
   return (
     <div>
-        <h1>Hello World</h1>
+      <h1> Hello world</h1>
       <CustomButton
         variant="secondary"
         size="md"
@@ -82,7 +72,13 @@ const TaskList = () => {
         show={showTaskFilterModal}
         onClose={handleToggleFilterModal}
       />
+      <button type="button" onClick={() => setShowFormSelectionModal(true)}>
+        Form selection modAL
+      </button>
+      <FormSelectionModal
+        showModal={showFormSelectionModal}
+        onClose={handleModalclose}
+      />
     </div>
-);
-};
-export default TaskList;
+  );
+};export default TaskList;
