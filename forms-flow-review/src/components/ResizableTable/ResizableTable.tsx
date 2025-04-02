@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import "./ResizableTable.css";
 import {
   TableFooter,
   SortableHeader,
@@ -56,6 +55,7 @@ export function ResizableTable(): JSX.Element {
   ]);
 
   const tableRef = useRef<HTMLTableElement>(null);
+  const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const resizingRef = useRef<number | null>(null);
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(0);
@@ -79,9 +79,11 @@ export function ResizableTable(): JSX.Element {
 
     // Reset all other columns to default (ascending) except the active one
     const updatedSort = columns.reduce((acc, column) => {
-      acc[column.sortKey] = {
-        sortOrder: column.sortKey === key ? newSortOrder : "asc",
-      };
+      if (column.sortKey) {
+        acc[column.sortKey] = {
+          sortOrder: column.sortKey === key ? newSortOrder : "asc",
+        };
+      }
       return acc;
     }, {});
 
@@ -208,62 +210,69 @@ export function ResizableTable(): JSX.Element {
         />
       </div>
       <div className="container-wrapper">
-        <div className="resizable-table-container custom-scroll">
-          <table ref={tableRef} className="resizable-table">
-            <thead className="resizable-header">
-              <tr>
-                {columns.map((column, index) => (
-                  <th
-                    key={column.name}
-                    className="resizable-column"
-                    style={{ width: column.width }}
-                  >
-                    {column.sortKey ? (
-                      <SortableHeader
-                        title={column.name}
-                        columnKey={column.sortKey}
-                        currentSort={taskSort}
-                        handleSort={() => handleSort(column.sortKey)}
-                        className="gap-2"
-                      />
-                    ) : (
-                      column.name
-                    )}
+        {/* Outer container with border and border-radius */}
+        <div className="table-outer-container">
+          {/* Scroll wrapper handles the scrolling */}
+          <div className="table-scroll-wrapper custom-scroll" ref={scrollWrapperRef}>
+            {/* Table container */}
+            <div className="resizable-table-container">
+              <table ref={tableRef} className="resizable-table">
+                <thead className="resizable-header">
+                  <tr>
+                    {columns.map((column, index) => (
+                      <th
+                        key={column.name}
+                        className="resizable-column"
+                        style={{ width: column.width }}
+                      >
+                        {column.sortKey ? (
+                          <SortableHeader
+                            title={column.name}
+                            columnKey={column.sortKey}
+                            currentSort={taskSort}
+                            handleSort={() => handleSort(column.sortKey)}
+                            className="gap-2"
+                          />
+                        ) : (
+                          column.name
+                        )}
 
-                    {column.resizable && index < columns.length - 1 && (
-                      <div
-                        className={`column-resizer ${
-                          resizingRef.current === index ? "resizing" : ""
-                        }`}
-                        onMouseDown={(e) => handleMouseDown(index, e)}
-                      />
-                    )}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sortedData
-                .slice((activePage - 1) * sizePerPage, activePage * sizePerPage)
-                .map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.submissionId}</td>
-                    <td>{row.task}</td>
-                    <td>{row.createdDate}</td>
-                    <td>{row.assignedTo}</td>
-                    <td>{row.submitterName}</td>
-                    <td>
-                      <CustomButton
-                        className="btn-table"
-                        variant="secondary"
-                        label={"View"}
-                        onClick={() => {}}
-                      />
-                    </td>
+                        {column.resizable && index < columns.length - 1 && (
+                          <div
+                            className={`column-resizer ${
+                              resizingRef.current === index ? "resizing" : ""
+                            }`}
+                            onMouseDown={(e) => handleMouseDown(index, e)}
+                          />
+                        )}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-            </tbody>
-          </table>
+                </thead>
+                <tbody>
+                  {sortedData
+                    .slice((activePage - 1) * sizePerPage, activePage * sizePerPage)
+                    .map((row, index) => (
+                      <tr key={index}>
+                        <td>{row.submissionId}</td>
+                        <td>{row.task}</td>
+                        <td>{row.createdDate}</td>
+                        <td>{row.assignedTo}</td>
+                        <td>{row.submitterName}</td>
+                        <td>
+                          <CustomButton
+                            className="btn-table"
+                            variant="secondary"
+                            label={"View"}
+                            onClick={() => {}}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
         {tasks.length ? (
           <table className="custom-tables">
