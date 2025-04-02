@@ -30,10 +30,10 @@ export function ResizableTable(): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { tasks, sort: taskSort } = useSelector((state: any) => state.taskList);
-   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
+  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   
-    const handleToggleFilterModal = () => {
-      setShowTaskFilterModal(prevState => !prevState);
+  const handleToggleFilterModal = () => {
+    setShowTaskFilterModal(prevState => !prevState);
   };
   const [columns, setColumns] = useState<Column[]>([
     {
@@ -196,21 +196,24 @@ export function ResizableTable(): JSX.Element {
   };
 
   return (
-    <div className="container-fluid py-4">
+    <div className="container-fluid py-4" data-testid="resizable-table-container" aria-label="Resizable tasks table container">
       <div className="d-md-flex justify-content-end align-items-center button-align mb-3">
-      <CustomButton
-        variant="secondary"
-        size="md"
-        label="Create Filter"
-        onClick={handleToggleFilterModal}
-        dataTestId="open-create-filter-modal"
-        ariaLabel="Toggle Create Filter Modal"
-      />
-      <TaskFilterModal
-        show={showTaskFilterModal}
-        onClose={handleToggleFilterModal}
-      />
-        <DateRangePicker />
+        <CustomButton
+          variant="secondary"
+          size="md"
+          label="Create Filter"
+          onClick={handleToggleFilterModal}
+          dataTestId="open-create-filter-modal"
+          ariaLabel="Toggle Create Filter Modal"
+        />
+        <TaskFilterModal
+          show={showTaskFilterModal}
+          onClose={handleToggleFilterModal}
+        />
+        <DateRangePicker 
+          dataTestId="task-date-range-picker"
+          ariaLabel="Filter tasks by date range"
+        />
         <FilterSortActions
           showSortModal={showSortModal}
           handleFilterIconClick={handleFilterIconClick}
@@ -220,20 +223,30 @@ export function ResizableTable(): JSX.Element {
           optionSortBy={optionSortBy}
           defaultSortOption={taskSort.activeKey}
           defaultSortOrder={taskSort[taskSort.activeKey]?.sortOrder || "asc"}
-          filterDataTestId="form-list-filter"
-          filterAriaLabel="Filter the form list"
-          refreshDataTestId="form-list-refresh"
-          refreshAriaLabel="Refresh the form list"
+          filterDataTestId="task-list-filter"
+          filterAriaLabel="Filter the task list"
+          refreshDataTestId="task-list-refresh"
+          refreshAriaLabel="Refresh the task list"
         />
       </div>
-      <div className="container-wrapper">
+      <div className="container-wrapper" data-testid="table-container-wrapper">
         {/* Outer container with border and border-radius */}
-        <div className="table-outer-container">
+        <div className="table-outer-container" data-testid="table-outer-container">
           {/* Scroll wrapper handles the scrolling */}
-          <div className="table-scroll-wrapper custom-scroll" ref={scrollWrapperRef}>
+          <div 
+            className="table-scroll-wrapper custom-scroll" 
+            ref={scrollWrapperRef}
+            data-testid="table-scroll-wrapper"
+            aria-label="Scrollable task table content"
+          >
             {/* Table container */}
-            <div className="resizable-table-container">
-              <table ref={tableRef} className="resizable-table">
+            <div className="resizable-table-container" data-testid="inner-table-container">
+              <table 
+                ref={tableRef} 
+                className="resizable-table"
+                data-testid="task-resizable-table"
+                aria-label="Tasks data table with resizable columns"
+              >
                 <thead className="resizable-header">
                   <tr>
                     {columns.map((column, index) => (
@@ -241,6 +254,8 @@ export function ResizableTable(): JSX.Element {
                         key={column.name}
                         className="resizable-column"
                         style={{ width: column.width }}
+                        data-testid={`column-header-${column.sortKey || 'actions'}`}
+                        aria-label={`${column.name} column${column.sortKey ? ', sortable' : ''}`}
                       >
                         {column.sortKey ? (
                           <SortableHeader
@@ -249,6 +264,8 @@ export function ResizableTable(): JSX.Element {
                             currentSort={taskSort}
                             handleSort={() => handleSort(column.sortKey)}
                             className="gap-2"
+                            dataTestId={`sort-header-${column.sortKey}`}
+                            ariaLabel={`Sort by ${column.name}`}
                           />
                         ) : (
                           column.name
@@ -260,6 +277,8 @@ export function ResizableTable(): JSX.Element {
                               resizingRef.current === index ? "resizing" : ""
                             }`}
                             onMouseDown={(e) => handleMouseDown(index, e)}
+                            data-testid={`column-resizer-${column.sortKey}`}
+                            aria-label={`Resize ${column.name} column`}
                           />
                         )}
                       </th>
@@ -270,18 +289,23 @@ export function ResizableTable(): JSX.Element {
                   {sortedData
                     .slice((activePage - 1) * sizePerPage, activePage * sizePerPage)
                     .map((row, index) => (
-                      <tr key={index}>
-                        <td>{row.submissionId}</td>
-                        <td>{row.task}</td>
-                        <td>{row.createdDate}</td>
-                        <td>{row.assignedTo}</td>
-                        <td>{row.submitterName}</td>
+                      <tr 
+                        key={index}
+                        data-testid={`task-row-${index}`}
+                      >
+                        <td data-testid={`task-${index}-submission-id`}>{row.submissionId}</td>
+                        <td data-testid={`task-${index}-task-name`}>{row.task}</td>
+                        <td data-testid={`task-${index}-created-date`}>{row.createdDate}</td>
+                        <td data-testid={`task-${index}-assigned-to`}>{row.assignedTo}</td>
+                        <td data-testid={`task-${index}-submitter-name`}>{row.submitterName}</td>
                         <td>
                           <CustomButton
                             className="btn-table"
                             variant="secondary"
                             label={"View"}
                             onClick={() => {}}
+                            dataTestId={`view-task-${index}`}
+                            ariaLabel={`View details for task ${row.task}`}
                           />
                         </td>
                       </tr>
@@ -292,7 +316,7 @@ export function ResizableTable(): JSX.Element {
           </div>
         </div>
         {tasks.length ? (
-          <table className="custom-tables">
+          <table className="custom-tables" data-testid="table-footer-container">
             <tfoot>
               <TableFooter
                 limit={sizePerPage}
@@ -307,6 +331,12 @@ export function ResizableTable(): JSX.Element {
                   { text: "100", value: 100 },
                   { text: "All", value: tasks.length },
                 ]}
+                dataTestId="task-table-footer"
+                ariaLabel="Table pagination controls"
+                pageSizeDataTestId="task-page-size-selector"
+                pageSizeAriaLabel="Select number of tasks per page"
+                paginationDataTestId="task-pagination-controls"
+                paginationAriaLabel="Navigate between task pages"
               />
             </tfoot>
           </table>

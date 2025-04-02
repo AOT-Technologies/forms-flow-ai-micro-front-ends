@@ -239,15 +239,115 @@ $white-color: var(--ff-white);
 
 //resizable table
 
+/* Container wrapper with padding */
+.container-wrapper {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--ff-body-bg);
+}
+
+/* Table outer container to position scrollbar correctly */
+.table-outer-container {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden; /* Hide overflow but keep border radius intact */
+  border: 1px solid var(--ff-gray-medium-dark);
+}
+
+/* Scroll wrapper that handles scrolling */
+.table-scroll-wrapper {
+  height: calc(100vh - 14rem) !important; /* Adjust height as needed */
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.custom-scroll {
+  &::-webkit-scrollbar {
+    margin-top: 2px;
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(---ff-gray-medium-dark);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ff-primary-light);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--ff-primary-light);
+    }
+  }
+}
+
+/* Remove border from resizable table since it's now on the outer container */
 .resizable-table {
   width: 100%;
   table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--ff-gray-medium-dark);
+  border: none; /* Remove border from table itself */
+
+  /* Fixed header styling */
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: var(--ff-body-bg);
+
+    th {
+      border-bottom: 1px solid var(--ff-gray-medium);
+      padding: var(--spacer-050) var(--spacer-075);
+      font-weight: 600;
+      user-select: none;
+      background-color: var(--ff-body-bg);
+    }
+
+    tr th:last-child {
+      position: sticky;
+      right: 0;
+      background-color: var(--ff-body-bg);
+      z-index: 2;
+      border-left: 1px solid var(--ff-gray-medium-dark);
+      text-align: center;
+      vertical-align: middle;
+    }
+  }
+
+  /* Table body styling */
+  tbody {
+    td {
+      padding: var(--spacer-050) var(--spacer-075);
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid var(--ff-gray-medium);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    tr {
+      &:hover td {
+        border-top: 1px solid var(--ff-primary);
+        border-bottom: 1px solid var(--ff-primary);
+      }
+
+      td:last-child {
+        position: sticky;
+        right: 0;
+        background-color: var(--ff-body-bg);
+        z-index: 2;
+        border-left: 1px solid var(--ff-gray-medium-dark);
+        text-align: center;
+        vertical-align: middle;
+      }
+    }
+  }
 }
 
+/* Column resizer styling */
 .resizable-column {
   position: relative;
   background-color: var(--ff-body-bg);
@@ -260,8 +360,10 @@ $white-color: var(--ff-white);
   width: 6px;
   height: 100%;
   z-index: 2;
-  
-  &::before, &::after {
+  cursor: col-resize;
+
+  &::before,
+  &::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -271,135 +373,12 @@ $white-color: var(--ff-white);
     height: 20px;
     transition: background-color 0.2s;
   }
-  
+
   &::before {
     left: 1px;
   }
-  
+
   &::after {
     right: 1px;
-  }
-}
-
-/* Container wrapper with padding */
-.container-wrapper {
-  padding: 16px;
-  border-radius: var(--radius-md);
-  background-color: var(--ff-body-bg);
-}
-
-/* Table outer container to position scrollbar correctly */
-.table-outer-container {
-  position: relative;
-  overflow: hidden; /* Hide overflow but keep border radius intact */
-}
-
-/* Scroll wrapper that handles scrolling */
-.table-scroll-wrapper {
-  max-height: 400px;
-  overflow: auto;
-  
-  &::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    
-    &-track {
-      background: var(---ff-gray-medium-dark);
-      border-radius: 4px;
-    }
-    
-    &-thumb {
-      background: var(--ff-primary-light);
-      border-radius: 4px;
-      
-      &:hover {
-        background: var(--ff-primary-light);
-      }
-    }
-  }
-}
-
-/* Remove border from table container since it's on the outer container */
-.resizable-table-container {
-  position: relative;
-}
-
-.resizable-table {
-  thead {
-    position: sticky;
-    top: 0;
-    z-index: 3;
-    background-color: var(--ff-body-bg);
-    
-    th {
-      border-bottom: 1px solid var(--ff-gray-medium);
-      padding: 6px;
-      font-weight: 600;
-      user-select: none;
-    }
-    
-    tr:first-child {
-      th:first-child {
-        border-top-left-radius: calc(var(--radius-md) - 0px);
-      }
-      
-      th:last-child {
-        border-top-right-radius: calc(var(--radius-md) - 0px);
-      }
-    }
-  }
-  
-  tbody {
-    td {
-      padding: 6px;
-      border-top: 1px solid transparent;
-      border-bottom: 1px solid var(--ff-gray-medium);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    tr {
-      &:hover td {
-        border-top: 1px solid var(--ff-primary);
-        border-bottom: 1px solid var(--ff-primary);
-      }
-      
-      &:last-child td {
-        border-bottom: none !important;
-        
-        &:first-child {
-          border-bottom-left-radius: calc(var(--radius-md) - 0px);
-        }
-        
-        &:last-child {
-          border-bottom-right-radius: calc(var(--radius-md) - 0px);
-        }
-      }
-      
-      &:hover:last-child td {
-        border-bottom: none !important;
-      }
-      
-      td:last-child {
-        position: sticky;
-        right: 0;
-        background-color: var(--ff-body-bg);
-        z-index: 2;
-        border-left: 1px solid var(--ff-gray-medium-dark);
-        text-align: center;
-        vertical-align: middle;
-      }
-    }
-  }
-  
-  thead tr th:last-child {
-    position: sticky;
-    right: 0;
-    background-color: var(--ff-body-bg);
-    z-index: 2;
-    border-left: 1px solid var(--ff-gray-medium-dark);
-    text-align: center;
-    vertical-align: middle;
   }
 }
