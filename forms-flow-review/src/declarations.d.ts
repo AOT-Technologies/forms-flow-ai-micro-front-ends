@@ -41,6 +41,7 @@ declare module "*.svg" {
 declare module "@formsflow/service" {
 	export const {KeycloakService, RequestService, StorageService,i18nService}: any;
 }
-declare  module "@formsflow/components" {
-  export const { CustomSearch,CloseIcon  }
+
+declare module "@formsflow/components" {
+  export const {CloseIcon,CustomSearch, PencilIcon, SaveIcon, InputDropdown,CustomButton, CustomTabs, FormInput, CustomInfo, DragandDropSort }: any;
 }

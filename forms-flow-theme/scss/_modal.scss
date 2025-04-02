@@ -2,6 +2,7 @@
 // Variables for reused values
 $primary: var(--ff-primary);
 $primary-light: var(--ff-primary-light);
+$gray-light: var(--ff-gray-light);
 $gray-dark: var(--ff-gray-dark);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
@@ -993,8 +994,10 @@ $black-color: var(--ff-black);
 .drag-drop-container {
   display: flex;
   flex-direction: column;
-  padding: var(--spacer-200) var(--spacer-225);
   gap: var(--spacer-150);
+  ul{
+    padding-left: 0rem;
+  }
 
   .draggable-item {
     display: flex;
@@ -1002,17 +1005,28 @@ $black-color: var(--ff-black);
     align-items: center;
     gap: var(--spacer-100);
     border-radius: var(--radius-sm);
-    padding: var(--spacer-050) ;
+    padding-top: var(--spacer-150);
     transition: 
-      transform 3s cubic-bezier(0.25, 1, 0.5, 1), 
-      background-color 3s ease-in-out, 
-      opacity 3s ease-in-out, 
-      box-shadow 3s ease-in-out;
+      transform 1s cubic-bezier(0.25, 1, 0.5, 1), 
+      background-color 1s ease-in-out, 
+      opacity 1s ease-in-out, 
+      box-shadow 1s ease-in-out;
+      .drag-as-div {
+        background: none;
+        border: none;
+        margin: 0;
+        color: inherit;
+        font: inherit;
+        text-align: inherit;
+        display: flex;
+        align-items: center;
+    }
 
     .draggable-icon {
       display: flex;
       align-self: center;
       cursor: grab;
+      padding: var(--spacer-050);
     }
     &:active {
       cursor: grabbing;
@@ -1110,3 +1124,71 @@ $black-color: var(--ff-black);
   }
 
 }
+
+.create-filter-modal {
+  align-content: center;
+  .create-filter {
+    display: flex;
+    padding: var(--spacer-200) var(--spacer-225);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacer-150);
+    align-self: stretch;
+  }
+
+  .filter-tab-container-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .filter-tab-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 15.79rem);
+    padding: var(--spacer-200) var(--spacer-225);
+    gap: var(--spacer-150);
+    .tab-content{
+      overflow-y: auto;
+
+    }
+  }
+
+  .modal-body {
+    padding: 0;
+
+    .filter-tab-container-wrapper {
+      height: 100%;
+    }
+  }
+
+  .custom-tabs {
+    &.nav-tabs {
+      border-bottom: 1px solid $gray-light !important;
+      gap: var(--spacer-100);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background-color: $white;
+    }
+  }
+
+  .L-style {
+    height: 25px;
+    width: 12px;
+    border-left: 1px solid $primary;
+    border-bottom: 1px solid $primary;
+    margin-right: var(--spacer-075);
+  }
+
+  .filter-dropdown {
+    padding-top: var(--spacer-075);
+  }
+
+  .task-form-filter {
+    background-color: $gray-light !important;
+  }
+}
+

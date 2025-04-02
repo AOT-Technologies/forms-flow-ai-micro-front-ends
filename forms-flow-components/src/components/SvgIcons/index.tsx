@@ -1,6 +1,7 @@
 const computedStyle = getComputedStyle(document.documentElement);
 const baseColor = computedStyle.getPropertyValue("--ff-primary");
 const grayColor = computedStyle.getPropertyValue("--ff-gray-dark");
+const whiteColor = computedStyle.getPropertyValue("--ff-white")
 export const ChevronIcon = ({
   color = baseColor,
   width = "10",
@@ -896,4 +897,16 @@ export const ConnectIcon = ({ color = baseColor, ...props }) => (
       strokeLinejoin="round"
     />
   </svg>
+);
+ 
+
+export const SaveIcon = ({ color = whiteColor}) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+  <path d="M3 15.5H13C14.1046 15.5 15 14.6046 15 13.5V6.74948C15 6.21905 14.7893 5.71034 14.4142 5.33527L11.1647 2.08579C10.7897 1.71071 10.281 1.5 9.75052 1.5H3C1.89543 1.5 1 2.39543 1 3.5V13.5C1 14.6046 1.89543 15.5 3 15.5Z"
+  stroke={color} 
+  strokeWidth="2"/>
+  <path d="M11.3157 15.4997V12.3418C11.3157 11.2372 10.4202 10.3418 9.31566 10.3418H6.68408C5.57951 10.3418 4.68408 11.2372 4.68408 12.3418V15.4997" 
+  stroke={color} 
+  strokeWidth="2"/>
+</svg>
 );
