@@ -1,6 +1,6 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback ,useState} from "react";
 import SocketIOService from "../services/SocketIOService";
-
+import { FormSelectionModal } from "../components/FormSelectionModal";
 interface SocketUpdateParams {
   refreshedTaskId: string | number;
   forceReload: boolean;
@@ -8,6 +8,10 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
+  const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
+  const handleFormSelection = () => {
+    setShowFormSelectionModal(false);
+  };
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
       console.log("SocketIOCallback called");
@@ -41,6 +45,18 @@ const TaskList = () => {
     };
   }, [SocketIOCallback]);
 
-  return <h1> Hello world</h1>;
+  return( <div>
+    <h1> Hello world</h1>
+    <button 
+        type="button"
+        onClick={()=>setShowFormSelectionModal(true)}
+        >
+          Form selection modAL
+        </button>
+    <FormSelectionModal 
+    showModal={showFormSelectionModal}
+    onClose={()=>handleFormSelection}
+     />
+    </div>)
 };
 export default TaskList;
