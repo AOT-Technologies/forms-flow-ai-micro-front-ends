@@ -436,7 +436,8 @@ class OfflineSaveService {
       const applicationData = DBServiceHelper.constructApplicationData(
         formId,
         draft.localSubmissionId,
-        formData
+        formData,
+        data
       );
       await this.saveFFDataToIndexedDB("offlineSubmission", draft);
       await this.saveFFDataToIndexedDB("applications", applicationData);
