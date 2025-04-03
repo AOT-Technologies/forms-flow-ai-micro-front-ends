@@ -152,7 +152,8 @@ export const fetchUserList = (...rest) => {
 
 
  export const fetchFormById = (id) => {
-  let token = StorageService.getFormioToken() ? { "x-jwt-token": StorageService.getFormioToken() } : {};
+  let formioToken = sessionStorage.getItem("formioToken");
+  let token = formioToken ? { "x-jwt-token": formioToken } : {};
   return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${id}`, {}, "", false, {
     ...token
   });
