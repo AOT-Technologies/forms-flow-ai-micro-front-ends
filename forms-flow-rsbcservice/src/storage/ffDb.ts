@@ -59,6 +59,7 @@ export interface Application {
   processName: string;
   processTenant: string;
   submissionId: string;
+  dashboardColumns: Record<string, any>[];
 }
 
 export interface Draft {
@@ -178,7 +179,7 @@ class FormsFlowDB extends Dexie {
         "_id, title, description, name, path, type, created, modified, machineName, parentFormId",
       activeForm: "localDraftId, serverDraftId",
       formProcesses: "formId, formName",
-      deletedDrafts: "serverDraftId"
+      deletedDrafts: "serverDraftId",
     });
   }
 }
