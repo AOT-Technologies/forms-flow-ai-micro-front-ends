@@ -313,7 +313,7 @@ class OfflineSaveService {
         console.warn("No valid forms provided.");
         return;
       }
-
+      await ffDb.formDefinitions.clear();
       await ffDb.formDefinitions.bulkPut(forms);
 
       console.log(`${forms.length} forms added or updated in IndexedDB.`);
@@ -387,7 +387,7 @@ class OfflineSaveService {
       if (!Array.isArray(data) || data.length === 0) {
         throw new Error("Invalid input: data must be a non-empty array");
       }
-
+      await ffDb.formProcesses.clear();
       await table.bulkPut(data);
 
       return {
