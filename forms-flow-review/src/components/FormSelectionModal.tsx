@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useTranslation } from "react-i18next";
-import { CloseIcon, CustomSearch } from "@formsflow/components";
+import { CloseIcon, CustomSearch, CustomButton } from "@formsflow/components";
 import { Form, Formio } from "@aot-technologies/formio-react";
-import { fetchAllForms,fetchFormById } from "../api/services/filterServices";
-import { useSelector,useDispatch } from "react-redux";
+import { fetchAllForms, fetchFormById } from "../api/services/filterServices";
+import { useSelector, useDispatch } from "react-redux";
 interface FormSelectionModalProps {
   showModal: boolean;
-  onClose: () => {};
-  onSelectForm?: (formId: string) => {};
-  isLoading?: boolean;
+  onClose: () => void;
+  onSelectForm: ({formId,formName}) => void;
 }
 
 export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
-  ({ showModal, onClose, onSelectForm,  isLoading }) => {
-  const dispatch = useDispatch();
+  ({ showModal, onClose, onSelectForm }) => {
+    const dispatch = useDispatch();
 
     const { t } = useTranslation();
-    const [selectedForm, setSelectedForm] = useState<string>("");
+    const [selectedFormName, setSelectedFormN] = useState<string>("");
     const [searchFormName, setSearchFormName] = useState<string>("");
     const [loadingForms, setLoadingForm] = useState<boolean>(false);
-    const [selectedFormId, setSelectedFormId] = useState(null);
+    const [selectedForm, setSelectedForm] = useState({ formId: "", formName: "" });
+    const [loading, setLoading] = useState(false);
     const [form, setForm] = useState<any>(null);
     const [formNames, setFormNames] = useState({ data: [], isLoading: true });
-    const [filteredFormNames, setFilteredFormNames] = useState<any[]>(formNames.data);
-    const formstate = useSelector((state: any) => state.form); 
-    console.log("formstate", formstate);
+    const [filteredFormNames, setFilteredFormNames] = useState<any[]>(
+      formNames.data
+    );
 
     useEffect(() => {
       handleFormNameSearch();
@@ -39,12 +39,16 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
         });
       });
     }, []);
-    
+    useEffect (()=>{
+      if(formNames.data.length > 0) {
+        setSelectedForm( ({ formId: formNames.data[0].formId, formName: formNames.data[0].formName }));
+      }
+    },[formNames.data])
     const handleFormNameSearch = () => {
       setLoadingForm(true);
       if (searchFormName?.trim()) {
         setFilteredFormNames(
-            formNames?.data.filter((i) =>
+          formNames?.data.filter((i) =>
             i.formName
               .toLowerCase()
               ?.includes(searchFormName?.trim()?.toLowerCase())
@@ -60,24 +64,11 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     const getFormOptions = () => {
       return searchFormName ? filteredFormNames : formNames.data;
     };
-    console.log(selectedFormId);
-    //  useEffect(() => {
-    //   if (selectedFormId) {
-    //     dispatch(getForm("form",selectedFormId));
-    //   }
-    // }, [selectedFormId]);
-
-    // useEffect(() => {
-    //   console.log("selectedFormId  inside", selectedFormId);
-    //   if (selectedFormId) {
-       
-    //   }
-    // }, [selectedFormId]);
     useEffect(() => {
-      if (selectedFormId) {
-       // setLoading(true);
+      if (selectedForm.formId) {
+        setLoading(true);
         // Fetch form data by ID
-        fetchFormById(selectedFormId)
+        fetchFormById(selectedForm.formId)
           .then((res) => {
             if (res.data) {
               const { data } = res;
@@ -91,14 +82,16 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             );
           })
           .finally(() => {
-            //setLoading(false);
+            setLoading(false);
           });
       }
-    }, [selectedFormId]);
-
-
+    }, [selectedForm]);
     return (
-      <Modal show={showModal} size="lg" className="form-selection-modal">
+      <Modal 
+      show={showModal} 
+      centered
+      size="lg" 
+      className="form-selection-modal">
         <Modal.Header className="form-selection-header">
           <Modal.Title> {t("Select a Form")} </Modal.Title>
           <div className="d-flex align-items-center">
@@ -108,8 +101,8 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             />
           </div>
         </Modal.Header>
-        <Modal.Body className="create-form-modal-body">
-          <div className="template-left">
+        <Modal.Body className="form-selection-modal-body">
+          <div className="form-selection-left">
             <div className="search-form">
               <CustomSearch
                 placeholder={t("Search ...")}
@@ -117,41 +110,62 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
                 setSearch={setSearchFormName}
                 handleClearSearch={handleClearSearch}
                 handleSearch={handleFormNameSearch}
-                dataTestId="template-custom-search"
+                dataTestId="form-custom-search"
               />
             </div>
             <div className="form-list">
-              {loadingForms || isLoading ? (
-                <div className="template-spinner"></div>
-              ) : (
+              {loadingForms || formNames.isLoading ? (
+                <div className="form-selection-spinner"></div>
+              ) : getFormOptions().length > 0 ? (
                 getFormOptions().map((item) => {
                   return (
-                    <div
-                      className={`form-list-item ${
-                        selectedFormId === item.formId ? "active-form" : ""
+                    <button
+                      className={`form-list-item button-as-div ${
+                        selectedForm.formId === item.formId ? "active-form" : ""
                       }`}
-                      onClick={() => setSelectedFormId(item.formId)}
+                      onClick={() => setSelectedForm({formId:item.formId , formName:item.formName})}
                       key={item.formId}
+                      data-testid="form-selection-modal-form-item"
                     >
-                      <p>{item.formName}</p>
-                    </div>
+                      {item.formName}
+                    </button>
                   );
                 })
+              ) : (
+                <span className="noting-found-text">
+                  Nothing is found. Please try again.
+                </span>
               )}
             </div>
           </div>
-          <div className="template-right">
-          <div className="px-4 pt-4 form-preview">
-                        <Form
-                          form={form}
-                          options={{
-                            //disableAlerts: true,
-                            noAlerts: true,
-                            //language: lang, i18n: RESOURCE_BUNDLES_DATA
-                          }}
-                        />
-                      </div>
-   
+          <div className="form-selection-right">
+            <div className="form-selection-preview custom-scroll">
+              {loading ? (
+                <div className="form-selection-spinner"></div>
+              ) : (
+                <Form
+                  form={form}
+                  options={{
+                    noAlerts: true,
+                    viewAsHtml: true,
+                    readOnly: true,
+                    showHiddenFields:true
+                  } as any}
+                  
+                />
+              )}
+            </div>
+            <div className="form-select-btn">
+              <CustomButton
+               onClick={() => {
+                 onSelectForm(selectedForm);
+                }}
+                variant="primary"
+                label="Select This Form"
+                size="md"
+                dataTestid="select-form-btn"
+              />
+            </div>
           </div>
         </Modal.Body>
       </Modal>

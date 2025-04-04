@@ -1052,15 +1052,23 @@ $black-color: var(--ff-black);
 
 
 .form-selection-modal{
-  .modal-dialog {
-    margin-top: 6.5vh !important;
-    margin-bottom: 2.5vh !important;
-    height: 87vh;
-    background: var(--ff-white);
-    border-radius: var(--radius-lg);
+  
+  .form-selection-spinner {
+    @include spinner-base;
+    width: 0.9rem;
+    height: 0.9rem;
+    font-size: small;
+    position: relative;
+    top: 50%;
+    left: 50%;
   }
   .modal-content {
     overflow: hidden;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    height: calc(100vh - 2rem);
+    background: var(--ff-white);
+    border-radius: var(--radius-lg);
   }
 
   .form-selection-header{
@@ -1070,60 +1078,78 @@ $black-color: var(--ff-black);
     gap: var(--spacer-200);
     align-self: stretch;
   }
-  .create-form-modal-body{
+  .form-selection-modal-body{
     display: flex;
+    padding: 0 !important;
     flex-direction: row;
-    .template-left {
+    .form-selection-left {
       width: 30%;
       float: left;
       align-items: center;
       gap: var(--spacer-100);
+      padding-bottom: var(--spacer-200);
     }
   
-    .template-right {
+    .form-selection-right {
       width: 70%;
       float: right;
       border-left: 0.0625rem solid $gray-medium !important;
+      .form-selection-preview{
+        padding: var(--spacer-200) var(--spacer-250);
+        background-color: $gray-light;
+        overflow-y: auto;
+        height: calc(100vh - 15.2rem);
+      }
+      .form-select-btn{
+        display: flex;
+        padding: var(--spacer-200);
+        flex-direction: column;
+        align-items: center;
+      }
     }
     .search-form{
       display: flex;
-      padding: var(--spacer-200) var(--spacer-225);
+      padding: var(--spacer-200) var(--spacer-225) var(--spacer-150);
       flex-direction: column;
       align-items: flex-start;
       gap: var(--spacer-150);
       flex-shrink: 0;
     }
     .form-list{
-      overflow-y: scroll;
-      -ms-overflow-style: none;
-      max-height: 72vh;
-      height: 70vh;
-      border-top: 1px solid $gray-medium; 
-  
-      
-      .form-list-item{
-        padding: var(--spacer-050) var(--spacer-225) !important;
       display: flex;
       flex-direction: column;
-      border-bottom: 1px solid $gray-medium;
-      justify-content: center;
-      overflow: hidden;
-      white-space: nowrap;
-      min-width: 8rem;
-      min-height: 4.5rem;
+      padding: 0px  var(--spacer-225);
+      gap: var(--spacer-050);
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      max-height: calc(100vh - 15.5rem); 
+      
+      .form-list-item{
+      padding: var(--spacer-075) var(--spacer-100) !important;
+      border-radius: var(--radius-sm);
       gap: var(--spacer-050);
       cursor: pointer;
       &:hover{
-        background: $primary-light;
+        background: $primary-light !important;
       }
     }
       .active-form{
-        background: $primary-light !important;
+        background: $primary !important;
+        color: $white;
       }
+    }
+    .noting-found-text {
+      color: $gray-medium-dark;
+      text-align: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-sm);
+      line-height: var(--text-line-height);
+      padding: var(--spacer-250) 0px; 
     }
   }
 
 }
+
 
 .create-filter-modal {
   align-content: center;
@@ -1135,7 +1161,7 @@ $black-color: var(--ff-black);
     gap: var(--spacer-150);
     align-self: stretch;
   }
-
+  
   .filter-tab-container-wrapper {
     display: flex;
     flex-direction: column;

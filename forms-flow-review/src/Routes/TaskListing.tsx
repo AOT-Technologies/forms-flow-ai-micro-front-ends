@@ -1,6 +1,5 @@
 import { useEffect, useCallback, useState } from "react";
 import SocketIOService from "../services/SocketIOService";
-import { FormSelectionModal } from "../components/FormSelectionModal";
 import { CustomButton } from "@formsflow/components";
 import TaskFilterModal from "../components/TaskFilterModal";
 
@@ -11,19 +10,14 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
-  const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
-  const handleModalclose = () => {
-    setShowFormSelectionModal(false);
-    return {};
-  };
+  
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
+   
 
   const handleToggleFilterModal = () => {
     setShowTaskFilterModal((prevState) => !prevState);
   }; 
-  const onClose = () => {
-    setShowFormSelectionModal(false);
-  };
+
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
       console.log("SocketIOCallback called");
@@ -71,13 +65,6 @@ const TaskList = () => {
       <TaskFilterModal
         show={showTaskFilterModal}
         onClose={handleToggleFilterModal}
-      />
-      <button type="button" onClick={() => setShowFormSelectionModal(true)}>
-        Form selection modAL
-      </button>
-      <FormSelectionModal
-        showModal={showFormSelectionModal}
-        onClose={handleModalclose}
       />
     </div>
   );
