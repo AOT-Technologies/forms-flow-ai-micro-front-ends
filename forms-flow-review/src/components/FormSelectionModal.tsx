@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useTranslation } from "react-i18next";
 import { CloseIcon, CustomSearch, CustomButton } from "@formsflow/components";
-import { Form, Formio } from "@aot-technologies/formio-react";
+import { Form } from "@aot-technologies/formio-react";
 import { fetchAllForms, fetchFormById } from "../api/services/filterServices";
-import { useSelector, useDispatch } from "react-redux";
 interface FormSelectionModalProps {
   showModal: boolean;
   onClose: () => void;
@@ -13,12 +12,10 @@ interface FormSelectionModalProps {
 
 export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
   ({ showModal, onClose, onSelectForm }) => {
-    const dispatch = useDispatch();
 
     const { t } = useTranslation();
-    const [selectedFormName, setSelectedFormN] = useState<string>("");
     const [searchFormName, setSearchFormName] = useState<string>("");
-    const [loadingForms, setLoadingForm] = useState<boolean>(false);
+    const [loadingForm, setLoadingForm] = useState<boolean>(false);
     const [selectedForm, setSelectedForm] = useState({ formId: "", formName: "" });
     const [loading, setLoading] = useState(false);
     const [form, setForm] = useState<any>(null);
@@ -32,7 +29,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     }, [searchFormName]);
     useEffect(() => {
       fetchAllForms().then((res) => {
-        const data = res.data?.forms || [];
+        const data = res.data?.forms ?? [];
         setFormNames({
           data: data.map((i) => ({ formName: i.formName, formId: i.formId })),
           isLoading: false,
@@ -78,14 +75,40 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
           .catch((err) => {
             console.error(
               "Error fetching form data:",
-              err.response?.data || err.message
+              err.response?.data ?? err.message
             );
           })
           .finally(() => {
             setLoading(false);
           });
       }
-    }, [selectedForm]);
+    }, [selectedForm]); 
+
+
+    function renderFormList() {
+      if (loadingForm || formNames.isLoading) {
+        return <div className="form-selection-spinner"></div>;
+      }
+    
+      const formOptions = getFormOptions();
+      if (formOptions.length > 0) {
+        return formOptions.map((item) => (
+          <button
+            className={`form-list-item button-as-div ${
+              selectedForm.formId === item.formId ? "active-form" : ""
+            }`}
+            onClick={() => setSelectedForm({ formId: item.formId, formName: item.formName })}
+            key={item.formId}
+            data-testid="form-selection-modal-form-item"
+          >
+            {item.formName}
+          </button>
+        ));
+      }
+    
+      return <span className="nothing-found-text">{t("Nothing is found. Please try again.")}</span>;
+    }
+    
     return (
       <Modal 
       show={showModal} 
@@ -114,28 +137,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
               />
             </div>
             <div className="form-list">
-              {loadingForms || formNames.isLoading ? (
-                <div className="form-selection-spinner"></div>
-              ) : getFormOptions().length > 0 ? (
-                getFormOptions().map((item) => {
-                  return (
-                    <button
-                      className={`form-list-item button-as-div ${
-                        selectedForm.formId === item.formId ? "active-form" : ""
-                      }`}
-                      onClick={() => setSelectedForm({formId:item.formId , formName:item.formName})}
-                      key={item.formId}
-                      data-testid="form-selection-modal-form-item"
-                    >
-                      {item.formName}
-                    </button>
-                  );
-                })
-              ) : (
-                <span className="noting-found-text">
-                  {t("Nothing is found. Please try again.")}
-                </span>
-              )}
+            {renderFormList()}
             </div>
           </div>
           <div className="form-selection-right">
