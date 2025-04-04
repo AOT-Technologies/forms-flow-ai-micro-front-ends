@@ -133,7 +133,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
                 })
               ) : (
                 <span className="noting-found-text">
-                  Nothing is found. Please try again.
+                  {t("Nothing is found. Please try again.")}
                 </span>
               )}
             </div>
@@ -161,7 +161,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
                  onSelectForm(selectedForm);
                 }}
                 variant="primary"
-                label="Select This Form"
+                label={t("Select This Form")}
                 size="md"
                 dataTestid="select-form-btn"
               />
