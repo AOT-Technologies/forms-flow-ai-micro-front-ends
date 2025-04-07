@@ -25,6 +25,7 @@ import MenuComponent from "./MenuComponent";
 import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
+import DateTimeNetworkWidget from "./DateTimeNetworkWidget"
 
 const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
@@ -368,6 +369,9 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             )}
           </Accordion>
         </div>
+        {(APPLICATION_NAME === "roadsafety") && isAuthenticated && (
+          <DateTimeNetworkWidget/>
+        )}
         {isAuthenticated && (<div className="user-container">
           <button className="button-as-div justify-content-start m-2" onClick={handleProfileModal}>
             <div className="user-icon cursor-pointer" data-testid="user-icon">
