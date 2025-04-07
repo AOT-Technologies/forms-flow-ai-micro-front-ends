@@ -1,0 +1,58 @@
+$primary: var(--ff-primary);
+$gray-darkest: var(--ff-gray-darkest);
+
+.assign-user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.063rem solid $primary;
+  border-radius: var(--radius-sm) !important;
+  overflow: hidden;
+
+  &.sm {
+    width: 11.25rem;
+    height: 1.563rem;
+  }
+
+  &.md {
+    width: 15rem;
+    height: 2.188rem;
+  }
+
+  .option {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 700;
+    color: $primary;
+    border: none;
+    cursor: pointer;
+    line-height: 120%; 
+    text-align: left;
+    padding-left: var(--spacer-050);
+    padding-block: var(--spacer-025);
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .divider {
+    width: 0.063rem;
+    height: 120%;
+    background: $primary;
+    transform: translate(-50%, 0%) rotate(30deg); 
+  }
+  .selected-name {
+    width: 100%;
+    padding: var(--spacer-025) var(--spacer-050);
+    font-weight: 400;
+    font-size: 14px;
+    color: $gray-darkest;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+  }
+    &:has(.selected-name):hover {
+      border: 0.125rem solid $primary;
+    }
+}
