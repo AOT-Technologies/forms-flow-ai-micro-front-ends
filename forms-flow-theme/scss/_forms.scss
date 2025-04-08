@@ -628,14 +628,13 @@ select option:hover {
   }
  }
   .user-form-container{
-    max-height:94vh ;
-    min-height: calc(100vh - 5.5625rem);
+    height: calc(100vh - 7.5625rem - var(--client-nav));
     overflow-y: auto;
     overflow-x: hidden;
     gap: var(--spacer-100);
     padding: var(--spacer-200) var(--spacer-225);
     background-color: $white;
-    border-radius: var(--radius-md) !important;
+    border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
   }
 }
 
