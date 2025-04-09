@@ -1116,3 +1116,9 @@ $black-color: var(--ff-black);
   }
 }
 
+.import-modal-footer{
+  .btn-dark{
+    background-color: var(--ff-gray-medium-dark) !important;
+    color: var(--ff-white) !important;
+  }
+}

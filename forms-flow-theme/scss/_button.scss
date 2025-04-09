@@ -207,10 +207,17 @@ $danger-color: var(--ff-danger);
       @extend .btn-disabled;
     }
   }
-
+  &.btn-success { 
+    background-color: $primary !important;
+    color: $white-color !important;
+  }
+  &.btn-danger {
+    background-color: $danger-color !important;
+    color: $white-color !important;
+  }
   &.btn-dark {
     background-color: $gray-dark !important;
-    border: 1px solid $gray-dark !important;
+    color:$white-color !important;
 
     &:hover {
       opacity: 0.8;

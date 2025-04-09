@@ -513,7 +513,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             renderFileUploadArea()
           )}
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="import-modal-footer">
           <CustomButton
             variant={
               !selectedFile ||
