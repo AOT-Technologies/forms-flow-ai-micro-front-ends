@@ -29,6 +29,7 @@ interface InputDropdownProps {
   inputClassName?: string;
   onBlurDropDown?: () => void; 
   disabled?: boolean;
+  variant?: 'assign-user-sm' | 'assign-user-md'; 
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -48,7 +49,8 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   isInvalid,
   inputClassName='',
   onBlurDropDown,
-  disabled = false
+  disabled = false,
+  variant
 }) => {
   const { t } = useTranslation();
   const primaryColor = StyleServices.getCSSVariable('--ff-primary');
@@ -125,8 +127,13 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
     setNewInput(e.target.value);
     setInputValue(e.target.value);
   }
+  const variantClass = variant === 'assign-user-sm'
+  ? 'assign-user-sm-width'
+  : variant === 'assign-user-md'
+  ? 'assign-user-md-width'
+  : '';
   return (
-      <div ref={dropdownRef} className="input-dropdown w-100">
+      <div ref={dropdownRef}  className={`input-dropdown ${variantClass ? variantClass : 'w-100'}`}>
           {textBoxInput ? (
               <InputGroup>
                   <FormInput
@@ -140,6 +147,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       className="input-with-close"
                       label={t(dropdownLabel)}
                       feedback={t(feedback)}
+                      variant={variant}
                   />
               </InputGroup>
           ) : (
@@ -159,6 +167,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       onBlur={onBlurDropDown}
                       isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
                       feedback={t(feedback)}
+                      variant={variant}
                   />
               </InputGroup>
           )}

@@ -13,54 +13,74 @@ interface User {
 interface AssignUserProps {
   size?: "sm" | "md";
   users: User[];
+  username: string;
+  meOnClick?: () => void;
+  othersOnClick?: () => void;
+  optionSelect?: () => void;
 }
 
 export const AssignUser: React.FC<AssignUserProps> = ({
   size = "md",
   users,
+  username,
+  meOnClick,
+  othersOnClick,
+  optionSelect,
 }) => {
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
+  const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
+  const variant = size === "sm" ? "assign-user-sm" : "assign-user-md"
   const handleMeClick = () => {
     setSelected("Me");
+    meOnClick?.();
   };
 
   const handleOthersClick = () => {
     setSelected("Others");
+    othersOnClick?.();
   };
 
-  // Map user data to dropdown options
   const options = users.map((user) => ({
     label: user.username,
     value: user.id,
     onClick: () => console.log(`Selected user: ${user.username}`),
   }));
-  console.log(options);
 
   return (
-    <div className={`assign-user ${size}`}>
-      {selected === null ? (
-        <>
-          <div
-            className={`option ${selected === "Me" ? "selected" : ""}`}
-            onClick={handleMeClick}
-          >
-            Me
-          </div>
-          <div className="divider"></div>
-          <div
-            className={`option ${selected === "Others" ? "selected" : ""}`}
-            onClick={handleOthersClick}
-          >
-            Others
-          </div>
-        </>
-      ) : selected === "Me" ? (
-        <div className="selected-name">Ajay krishna</div>
-      ) : (
-        <div>
-        <InputDropdown Options={options} />
+    <>
+      {/* Show Me/Others Selection if not Others */}
+      {selected !== "Others" && (
+        <div className={`assign-user ${size}`} data-hover-side={hoverSide}>
+          {selected === null ? (
+            <>
+              <div
+                className={`option ${hoverSide === "left" ? "left-selected" : ""}`}
+                onClick={handleMeClick}
+                onMouseEnter={() => setHoverSide("left")}
+                onMouseLeave={() => setHoverSide(null)}
+              >
+                Me
+              </div>
+              <div className="divider"></div>
+              <div
+                className={`option ${hoverSide === "right" ? "right-selected" : ""}`}
+                onClick={handleOthersClick}
+                onMouseEnter={() => setHoverSide("right")}
+                onMouseLeave={() => setHoverSide(null)}
+              >
+                Others
+              </div>
+            </>
+          ) : (
+            <div className="selected-name">{username}</div>
+          )}
         </div>
       )}
-    </div>
+
+      {/* Show dropdown alone if Others selected */}
+      {selected === "Others" && (
+          <InputDropdown Options={options} variant={variant}/>
+      )}
+    </>
   );
 };
