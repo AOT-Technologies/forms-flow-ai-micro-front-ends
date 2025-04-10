@@ -10,6 +10,7 @@ import { fetchServiceTaskList, fetchTaskVariables, fetchUserList, getUserRoles, 
 import { setDefaultFilter, setUserGroups } from '../actions/taskActions';
 import { Filter, UserDetail } from '../types/taskFilter.js';
 import { StorageService } from '@formsflow/service';
+import { FormSelectionModal } from "./FormSelectionModal";
 
 export const TaskFilterModal = ({ show, onClose }) => {
     const { t } = useTranslation();
@@ -29,9 +30,10 @@ export const TaskFilterModal = ({ show, onClose }) => {
     const [filterName, setFilterName] = useState('');
     const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
     const [filterNameError, setFilterNameError] = useState('');
-    const [selectedForm, setSelectedForm] = useState(null);
+    const [selectedForm, setSelectedForm] = useState({formId:'',formName:''});
     const [variableArray, setVariableArray] = useState([]);
-
+    const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
+    
   
     const {
         userList = { data: [] },
@@ -71,7 +73,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
     useEffect(() => {
         const properties = getProperties();
         if (properties.formId) {
-            setSelectedForm(properties.formId || null);
+            setSelectedForm({formName:properties.formId || '', formId: ''});
             handleFetchTaskVariables(properties?.formId);
         }
     }, []);
@@ -183,10 +185,11 @@ export const TaskFilterModal = ({ show, onClose }) => {
         sorting: [{ sortBy: sortValue, sortOrder: sortOrder }]
     });
 
+
     const getProperties = () => ({
         displayLinesCount: dataLineValue,
         /*static form id to be replaced after task design completion*/
-        formId: "6721debe9c3135103599ba2b"
+        formId: selectedForm.formId
     });
 
     const getRoles = () => {
@@ -297,64 +300,78 @@ export const TaskFilterModal = ({ show, onClose }) => {
         setVariableArray([]);
         onClose();
     };
-
+    const handleModalclose = () => {
+        setShowFormSelectionModal(false);
+      };
+      const handleFormSelectionModal = (selectedFormObj) => {
+        setSelectedForm(selectedFormObj);
+        setShowFormSelectionModal(false);
+       }
     const parametersTab = () => (
-        <>
+      <>
+        <InputDropdown
+          Options={accessOptions}
+          dropdownLabel={t("Tasks Accessible To")}
+          isAllowInput={false}
+          ariaLabelforDropdown={t("dropdown for selecting options")}
+          ariaLabelforInput={t("input for typing option")}
+          dataTestIdforInput="access-options-input"
+          dataTestIdforDropdown="access-options"
+          selectedOption={accessDropdownValue}
+          setNewInput={setAccessDropdownValue}
+        />
+        {accessDropdownValue === "specificRole" ? (
+          <div className="d-flex filter-dropdown">
+            <div className="L-style"></div>
             <InputDropdown
-                Options={accessOptions}
-                dropdownLabel={t("Tasks Accessible To")}
-                isAllowInput={false}
-                ariaLabelforDropdown={t("dropdown for selecting options")}
-                ariaLabelforInput={t("input for typing option")}
-                dataTestIdforInput="access-options-input"
-                dataTestIdforDropdown="access-options"
-                selectedOption={accessDropdownValue}
-                setNewInput={setAccessDropdownValue}
+              Options={candidateOptions}
+              isAllowInput={false}
+              ariaLabelforDropdown={t("specific role dropdown")}
+              ariaLabelforInput={t("specific role input")}
+              dataTestIdforInput="specific-roles-input"
+              dataTestIdforDropdown="specific-roles"
+              selectedOption={specificRole}
+              setNewInput={setSpecificRole}
             />
-            {accessDropdownValue === "specificRole" ? (
-                <div className="d-flex filter-dropdown">
-                    <div className="L-style"></div>
-                    <InputDropdown
-                        Options={candidateOptions}
-                        isAllowInput={false}
-                        ariaLabelforDropdown={t("specific role dropdown")}
-                        ariaLabelforInput={t("specific role input")}
-                        dataTestIdforInput="specific-roles-input"
-                        dataTestIdforDropdown="specific-roles"
-                        selectedOption={specificRole}
-                        setNewInput={setSpecificRole}
-                    />
-                </div>
-            ) : (
-                <div className="d-flex filter-dropdown">
-                    <div className="L-style"></div>
-                    <InputDropdown
-                        Options={assigneeOptions}
-                        isAllowInput={false}
-                        ariaLabelforDropdown={t("assignee dropdown")}
-                        ariaLabelforInput={t("assignee input")}
-                        data-testid="assignee-dropdown"
-                        dataTestIdforInput="assignee-input"
-                        selectedOption={specificAssignee}
-                        setNewInput={setSpecificAssignee}
-                        name="assigneeOptions"
-                    />
-                </div>
-            )}
-            <div className='pt-4'>
-                <FormInput
-                    className='task-form-filter'
-                    name="title"
-                    type="text"
-                    label={t("Form")}
-                    aria-label={t("Name of the form")}
-                    dataTestId="form-name-input"
-                    icon={<PencilIcon data-testid="close-input" aria-label="Close input" />}
-                    maxLength={200}
-                    value={selectedForm}
-                />
-            </div>
-        </>
+          </div>
+        ) : (
+          <div className="d-flex filter-dropdown">
+            <div className="L-style"></div>
+            <InputDropdown
+              Options={assigneeOptions}
+              isAllowInput={false}
+              ariaLabelforDropdown={t("assignee dropdown")}
+              ariaLabelforInput={t("assignee input")}
+              data-testid="assignee-dropdown"
+              dataTestIdforInput="assignee-input"
+              selectedOption={specificAssignee}
+              setNewInput={setSpecificAssignee}
+              name="assigneeOptions"
+            />
+          </div>
+        )}
+        <div className="pt-4">
+          <FormInput
+            className="task-form-filter"
+            name="title"
+            type="text"
+            label={t("Form")}
+            aria-label={t("Name of the form")}
+            dataTestId="form-name-input"
+            icon={
+              <PencilIcon data-testid="close-input" aria-label="Close input" />
+            }
+            maxLength={200}
+            value={selectedForm.formName}
+            onIconClick={() => setShowFormSelectionModal(true)}
+          />
+          <FormSelectionModal
+            showModal={showFormSelectionModal}
+            onClose={handleModalclose}
+            onSelectForm={handleFormSelectionModal}
+          />
+        </div>
+      </>
     );
 
     const columnsTab = () => (

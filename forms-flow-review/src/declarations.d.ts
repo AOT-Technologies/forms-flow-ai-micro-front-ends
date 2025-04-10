@@ -58,5 +58,5 @@ declare module "@formsflow/components" {
 }
 
 declare module "@formsflow/components" {
-  export const {CloseIcon, PencilIcon, SaveIcon, InputDropdown,CustomButton, CustomTabs, FormInput, CustomInfo, DragandDropSort }: any;
+  export const {CloseIcon,CustomSearch, PencilIcon, SaveIcon, InputDropdown,CustomButton, CustomTabs, FormInput, CustomInfo, DragandDropSort }: any;
 }

@@ -9,7 +9,12 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
- 
+  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false); 
+
+  const handleToggleFilterModal = () => {
+    setShowTaskFilterModal(prevState => !prevState);
+};
+
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
       console.log("SocketIOCallback called");
@@ -47,6 +52,5 @@ const TaskList = () => {
     <div>
       <ResizableTable/>
     </div>
-);
-};
-export default TaskList;
+  );
+};export default TaskList;

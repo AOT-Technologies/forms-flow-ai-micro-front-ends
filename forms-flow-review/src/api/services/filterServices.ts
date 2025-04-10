@@ -91,7 +91,8 @@ export const fetchUserList = (...rest) => {
         });
     };
   };
-
+ 
+  
   export const fetchBPMTaskCount = (data) => {
     return RequestService.httpPOSTRequest(
       `${API.GET_BPM_TASK_FILTERS}/count`,
@@ -142,4 +143,20 @@ export const fetchUserList = (...rest) => {
   export const fetchTaskVariables = (formId) =>{
     let url = `${API.FORM_PROCESSES}/${formId}`;
     return RequestService.httpGETRequest(url);
+  }; 
+
+  export const fetchAllForms = ()=>{
+    //activeForms means published forms only : status = Active
+    return RequestService.httpGETRequest(`${API.FORM}?activeForms=true`);
   };
+
+
+ export const fetchFormById = (id) => {
+  let formioToken = sessionStorage.getItem("formioToken");
+  let token = formioToken ? { "x-jwt-token": formioToken } : {};
+  return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${id}`, {}, "", false, {
+    ...token
+  });
+
+};
+

@@ -14,7 +14,7 @@ interface DropdownItem {
 
 interface CustomButtonProps {
   variant: string;
-  size?: "sm" | "md" | "lg" ;
+  size?: "sm" | "md" | "lg" | "table" | "table-sm";
   label: string;
   name?: string,
   onClick?: () => void;
@@ -29,8 +29,15 @@ interface CustomButtonProps {
   iconOnly?: boolean;  
 }
 
-const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false) => 
-  `${size === "md" ? 'btn-md' : ''} ${className}`;
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false) => {
+  const sizeClassMap: Record<string, string> = {
+    md: "btn-md",
+    table: "btn-table",
+    "table-sm": "btn-table-sm"
+  };
+
+  return `${size ? sizeClassMap[size] || '' : ''} ${className}`.trim();
+};
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
   variant,
@@ -49,7 +56,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   iconOnly = false,  
 }) => {
   const classNameForButton = getButtonClassName(size, className, iconOnly);
-  const sizeOfButton = size !== "md" ? size : undefined;
+  const sizeOfButton = size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -88,7 +95,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       >
         <Button
           variant={variant}
-          size={size !== "md" ? size : undefined}
+          size={sizeOfButton}
           disabled={disabled}
           ref={buttonRef}
           data-testid={dataTestId}
