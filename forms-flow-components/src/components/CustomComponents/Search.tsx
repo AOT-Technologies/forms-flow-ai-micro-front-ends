@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 
 interface CustomSearchProps {
-    searchLoading: boolean;
+    searchLoading?: boolean;
     handleClearSearch: () => void;
     search: string;
     setSearch: (value: string) => void;
