@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState } from "react";
 import SocketIOService from "../services/SocketIOService";
-import { CustomButton } from '@formsflow/components'; 
+import { CustomButton } from "@formsflow/components";
 import TaskFilterModal from "../components/TaskFilterModal";
 
 interface SocketUpdateParams {
@@ -10,11 +10,13 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
-  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false); 
+  
+  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
+   
 
   const handleToggleFilterModal = () => {
-    setShowTaskFilterModal(prevState => !prevState);
-};
+    setShowTaskFilterModal((prevState) => !prevState);
+  }; 
 
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
@@ -51,7 +53,7 @@ const TaskList = () => {
 
   return (
     <div>
-        <h1>Hello World</h1>
+      <h1> Hello world</h1>
       <CustomButton
         variant="secondary"
         size="md"
@@ -65,6 +67,5 @@ const TaskList = () => {
         onClose={handleToggleFilterModal}
       />
     </div>
-);
-};
-export default TaskList;
+  );
+};export default TaskList;

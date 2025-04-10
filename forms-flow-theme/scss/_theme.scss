@@ -83,6 +83,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --default-font-size: 1rem; 
   --default-font-color: #{$gray-dark};
   --navbar-width: 192px;
+  --custom-logo-height: 1.5rem;
 
   //no-code colors
   --no-code-success: #{$no-code-success};
@@ -94,8 +95,8 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --default-font-family: "Roboto", sans-serif;
   --primary-font: var(--default-font-family);
   //font-size
-  --font-size-xs: 0.875rem;
-  --font-size-sm: var(--default-font-size);
+  --font-size-xs: 0.875rem; // 14px
+  --font-size-sm: var(--default-font-size); 
   --font-size-md: 1.25rem;
   --font-size-lg: 1.5rem;
   --font-size-xl: 2rem;
@@ -140,7 +141,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
   --radius-lg: 1.59375rem; //25.5px
   --radius-modal: 1.5rem; //24px
   //custom
-  --client-nav: 3rem;
+  --client-nav: 0px;
   --header-close-btn: 4.625rem;
   --default-danger-color: #FF4242;
 }

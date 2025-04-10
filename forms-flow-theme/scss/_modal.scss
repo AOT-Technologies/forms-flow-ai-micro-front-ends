@@ -1048,7 +1048,109 @@ $black-color: var(--ff-black);
 .dotted-line {
   flex-grow: 1;
   border-bottom: 1px dashed $gray-medium;
+} 
+
+
+.form-selection-modal{
+  
+  .form-selection-spinner {
+    @include spinner-base;
+    width: 0.9rem;
+    height: 0.9rem;
+    font-size: small;
+    position: relative;
+    top: 50%;
+    left: 50%;
+  }
+  .modal-content {
+    overflow: hidden;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    height: calc(100vh - 2rem);
+    background: var(--ff-white);
+    border-radius: var(--radius-lg);
+  }
+
+  .form-selection-header{
+    display: flex;
+    padding: var(--spacer-200) 6.5rem var(--spacer-200) var(--spacer-250);
+    align-items: center;
+    gap: var(--spacer-200);
+    align-self: stretch;
+  }
+  .form-selection-modal-body{
+    display: flex;
+    padding: 0 !important;
+    flex-direction: row;
+    .form-selection-left {
+      width: 30%;
+      float: left;
+      align-items: center;
+      gap: var(--spacer-100);
+      padding-bottom: var(--spacer-200);
+    }
+  
+    .form-selection-right {
+      width: 70%;
+      float: right;
+      border-left: 0.0625rem solid $gray-medium !important;
+      .form-selection-preview{
+        padding: var(--spacer-200) var(--spacer-250);
+        background-color: $gray-light;
+        overflow-y: auto;
+        height: calc(100vh - 15.2rem);
+      }
+      .form-select-btn{
+        display: flex;
+        padding: var(--spacer-200);
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    .search-form{
+      display: flex;
+      padding: var(--spacer-200) var(--spacer-225) var(--spacer-150);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacer-150);
+      flex-shrink: 0;
+    }
+    .form-list{
+      display: flex;
+      flex-direction: column;
+      padding: 0px  var(--spacer-225);
+      gap: var(--spacer-050);
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      max-height: calc(100vh - 15.5rem); 
+      
+      .form-list-item{
+      padding: var(--spacer-075) var(--spacer-100) !important;
+      border-radius: var(--radius-sm);
+      gap: var(--spacer-050);
+      cursor: pointer;
+      &:hover{
+        background: $primary-light !important;
+      }
+    }
+      .active-form{
+        background: $primary !important;
+        color: $white;
+      }
+    }
+    .nothing-found-text {
+      color: $gray-medium-dark;
+      text-align: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-sm);
+      line-height: var(--text-line-height);
+      padding: var(--spacer-250) 0px; 
+    }
+  }
+
 }
+
+
 .create-filter-modal {
   align-content: center;
   .create-filter {
@@ -1059,7 +1161,7 @@ $black-color: var(--ff-black);
     gap: var(--spacer-150);
     align-self: stretch;
   }
-
+  
   .filter-tab-container-wrapper {
     display: flex;
     flex-direction: column;
