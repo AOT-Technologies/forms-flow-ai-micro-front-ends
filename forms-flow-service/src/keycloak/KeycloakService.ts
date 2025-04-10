@@ -67,41 +67,57 @@ import {
         return 60000;
       }
     }
-    
+
+    private keycloackUpdateToken(timeEnabled = false): void {
+      this.kc
+        ?.updateToken(-1)
+        .then((refreshed) => {
+          if (refreshed) {
+            console.log("Token refreshed!");
+            this.token = this.kc.token;
+            StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
+            if (this.kc.refreshToken && APPLICATION_NAME === "roadsafety") {
+              StorageService.save(
+                StorageService.User.REFRESH_TOKEN,
+                HelperServices.encrypt(this.kc.refreshToken)
+              );
+            } else {
+              console.info(
+                "Refreshing Tokens - Not storing the refresh token."
+              );
+            }
+            this.refreshToken();
+          } else {
+            console.log("Token is still valid!");
+          }
+        })
+        .catch((err) => {
+          console.error("Keycloak token update failed!", err);
+          this.handleTokenRefreshFailure();
+        })
+        .finally(() => {
+          if (timeEnabled) {
+            clearInterval(this.timerId);
+          }
+        });
+    }
+
     /**
      * Refresh the keycloak token before expiring
      */
     private refreshToken(skipTimer: boolean = false): void {
-      this.timerId = setInterval(() => {
-        if (!navigator.onLine) {
-          console.debug("Offline: Skipping token refresh.");
-          return;
-        }
-    
-        this.kc
-          ?.updateToken(-1)
-          .then((refreshed) => {
-            if (refreshed) {
-              console.log("Token refreshed!");
-              clearInterval(this.timerId);
-              this.token = this.kc.token;
-              StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
-              if (this.kc.refreshToken && APPLICATION_NAME === "roadsafety") {
-                StorageService.save(StorageService.User.REFRESH_TOKEN, HelperServices.encrypt(this.kc.refreshToken));
-              } else {
-                console.info("Refreshing Tokens - Not storing the refresh token.");
-              }
-              this.refreshToken();
-            } else {
-              console.log("Token is still valid!");
-            }
-          })
-          .catch((err) => {
-            console.error("Keycloak token update failed!", err);
-            clearInterval(this.timerId);
-            this.handleTokenRefreshFailure();
-          });
-      }, (!skipTimer && APPLICATION_NAME === "roadsafety") ? this.getTokenExpireTime() : 0);
+      this.timerId = setInterval(
+        () => {
+          if (!navigator.onLine) {
+            console.debug("Offline: Skipping token refresh.");
+            return;
+          }
+          this.keycloackUpdateToken(true);
+        },
+        !skipTimer && APPLICATION_NAME === "roadsafety"
+          ? this.getTokenExpireTime()
+          : 0
+      );
     }
 
     /**
@@ -146,7 +162,7 @@ import {
         }
       }
       this.isWaitingForOnline = false;
-      this.refreshToken(skipTimer);
+    this.keycloackUpdateToken();
     };
 
   
