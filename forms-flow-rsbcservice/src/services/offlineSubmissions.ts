@@ -56,7 +56,7 @@ class OfflineSubmissions {
   /**
    * Initializes Keycloak if it's not already initialized and retry token.
    */
-  private static async retryToken(): Promise<void> {
+  public static async retryToken(): Promise<void> {
     const instance = KeycloakService.getInstance(
       KEYCLOAK_URL_AUTH,
       KEYCLOAK_URL_REALM,
