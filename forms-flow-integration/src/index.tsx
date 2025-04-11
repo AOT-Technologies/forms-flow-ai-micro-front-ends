@@ -9,7 +9,7 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/Footer";
-import { BASE_ROUTE, MULTITENANCY_ENABLED, ENABLE_INTEGRATION_PREMIUM } from "./constants";
+import { BASE_ROUTE, MULTITENANCY_ENABLED, APP_BASE_ROUTE, ENABLE_INTEGRATION_PREMIUM } from "./constants";
 import Recipes from "./components/Recipes";
 import ConnectedApps from "./components/ConnectedApps";
 import PremiumSubscription from "./components/PremiumSubscription";
@@ -31,8 +31,8 @@ const Integration = React.memo(({ props }: any) => {
   const [page, setPage] = React.useState("Recipes");
   const [isDesigner, setIsDesigner] = React.useState(false);
   const [integrationCheckLoading, setIntegrationCheckLoading] = useState(true);
-
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
+  
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : `${APP_BASE_ROUTE}/`;
 
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}integration` });

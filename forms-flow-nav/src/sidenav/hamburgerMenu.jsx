@@ -10,12 +10,12 @@ import Sidebar from "./Sidebar";
 // import hamburger from "./hamburger.svg";
 // import closebutton from "./closebutton.svg";
 import { HamburgerIcon, CloseIcon, ApplicationLogo } from "@formsflow/components";
-import { APPLICATION_NAME } from "../constants/constants";
+import { APPLICATION_NAME, APP_BASE_ROUTE } from "../constants/constants";
 function HamburgerMenu({ props }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  
   return (
     <Navbar expand="lg" className="bg-body-tertiary custom-navbar">
       <Container>
@@ -34,7 +34,7 @@ function HamburgerMenu({ props }) {
             <img
               width="160"
               height="auto"
-              src="/RoadsafteyLogo.png"
+              src= {APP_BASE_ROUTE + "/RoadsafteyLogo.png"}
               alt="applicationName"
             />
           ) : (
