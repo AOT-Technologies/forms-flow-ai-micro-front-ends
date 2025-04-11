@@ -8,6 +8,7 @@ on:
       - FWF-3440-Design-System-MF
       - release/*
       - rsbc/7.0.0
+      - rsbc/7.0.0-subpath
     paths:
       - "forms-flow-components/**"
       - "VERSION"

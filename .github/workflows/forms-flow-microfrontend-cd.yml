@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - rsbc/7.0.0
+      - rsbc/7.0.0-subpath
 
 defaults:
   run:

@@ -10,6 +10,7 @@ import {
   APPLICATION_NAME,
   STAFF_DESIGNER,
   MULTITENANCY_ENABLED,
+  APP_BASE_ROUTE,
   ADMIN_ROLE,
   ENABLE_FORMS_MODULE,
   ENABLE_PROCESSES_MODULE,
@@ -104,7 +105,7 @@ const NavBar = React.memo(({ props }) => {
   const showApplications = setShowApplications(userDetail?.groups);
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : `${APP_BASE_ROUTE}/`;
   const navbarRef = useRef(null);
 const isCreateSubmissions = userRoles?.includes("create_submissions");
 const isViewSubmissions = userRoles?.includes("view_submissions");
@@ -157,7 +158,7 @@ const isUserManager = userRoles?.includes("manage_users");
 
   const [loginUrl, setLoginUrl] = useState(baseUrl);
 
-  const logoPath = MULTITENANCY_ENABLED ? tenantLogo : defaultLogoPath;
+  const logoPath = MULTITENANCY_ENABLED ? tenantLogo : APP_BASE_ROUTE + defaultLogoPath;
   
 
   const getAppName = useMemo(
