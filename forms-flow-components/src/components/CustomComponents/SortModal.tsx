@@ -119,7 +119,9 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
           <CustomButton
             variant="primary"
             size="md"
-            disabled={!selectedOption || !selectedOrder}
+            disabled={!selectedOption ||
+              !selectedOrder ||
+              (selectedOption === defaultSortOption && selectedOrder === defaultSortOrder)}
             label={t(primaryBtnLabel)}
             onClick={handlePrimaryAction}
             name="applyButton"
