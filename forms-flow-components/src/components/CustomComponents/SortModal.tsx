@@ -64,6 +64,11 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
       }
     }, [showSortModal, defaultSortOption, defaultSortOrder]);
 
+    const isPrimaryButtonDisabled =
+      !selectedOption ||
+      !selectedOrder ||
+      (selectedOption === defaultSortOption &&
+        selectedOrder === defaultSortOrder);
     return (
       <Modal show={showSortModal} onHide={onClose} size="sm" centered={true}>
         <Modal.Header>
@@ -119,9 +124,7 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
           <CustomButton
             variant="primary"
             size="md"
-            disabled={!selectedOption ||
-              !selectedOrder ||
-              (selectedOption === defaultSortOption && selectedOrder === defaultSortOrder)}
+            disabled={isPrimaryButtonDisabled}
             label={t(primaryBtnLabel)}
             onClick={handlePrimaryAction}
             name="applyButton"
