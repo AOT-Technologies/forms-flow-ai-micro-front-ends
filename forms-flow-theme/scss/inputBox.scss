@@ -82,6 +82,7 @@ $gray-light: var(--ff-gray-light);
     max-height: 12.5rem;
     overflow-y: scroll;
     background-color: $white-color;
+    gap: var(--spacer-050) !important;
 
     .list-group-item {
       &.list-first-item-btn {
@@ -101,7 +102,12 @@ $gray-light: var(--ff-gray-light);
       line-height: var(--text-line-height);
 
       &:hover {
-        background: $gray-medium;
+        background: $gray-medium; 
+        background-color: $primary !important;
+        color: $white-color !important;
+        border-radius:  var(--radius-sm) !important;
+        margin-left: var(--spacer-025);
+        margin-right: var(--spacer-025);
       }
 
       &:last-child {

@@ -1,5 +1,6 @@
 $primary: var(--ff-primary);
 $gray-darkest: var(--ff-gray-darkest);
+$white-color: var(--ff-white);
 
 .assign-user {
   display: flex;
@@ -18,7 +19,9 @@ $gray-darkest: var(--ff-gray-darkest);
     height: 2.188rem;
   }
 
-  .option {
+
+  .option-me,
+  .option-others {
     flex: 1;
     font-size: 14px;
     font-weight: 700;
@@ -34,90 +37,41 @@ $gray-darkest: var(--ff-gray-darkest);
     }
   }
 
-  .divider {
-    width: 0.063rem;
-    height: 120%;
-    background: $primary;
-    transform: translate(-50%, 0%) rotate(30deg); 
-  }
-  // // Left hover effect
-  // &[data-hover-side="left"] {
-  //   .left-selected {
-  //     position: relative;
-  //     border: 0.125rem solid $primary;
-  //     border-right: none; // Remove straight border
-  //     border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-      
-  //     // Diagonal right border replacement
-  //     &::after {
-  //       content: '';
-  //       position: absolute;
-  //       right: -0.063rem;
-  //       top: -0.125rem;
-  //       bottom: -0.125rem;
-  //       width: 0.125rem;
-  //       background: $primary;
-  //       transform: rotate(30deg);
-  //     }
-  //   }
+  // .option-me {
+  //   clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 0% 100%);
+  //   border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  //   border: 0.063rem solid $primary;
   // }
-  
-  // // Right hover effect
-  // &[data-hover-side="right"] {
-  //   .right-selected {
-  //     position: relative;
-  //     border: 0.125rem solid $primary;
-  //     border-left: none; // Remove straight border
-  //     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-      
-  //     // Diagonal left border replacement
-  //     &::before {
-  //       content: '';
-  //       position: absolute;
-  //       left: -0.063rem;
-  //       top: -0.125rem;
-  //       bottom: -0.125rem;
-  //       width: 0.125rem;
-  //       background: $primary;
-  //       transform: rotate(30deg);
-  //     }
-  //   }
-  // }
-  .selected-name {
-    width: 100%;
-    padding: var(--spacer-025) var(--spacer-050);
-    font-weight: 400;
-    font-size: 14px;
-    color: $gray-darkest;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    cursor: pointer;
-  }
-  &:has(.selected-name):hover {
-    border: 0.125rem solid $primary;
-  }
-  
+
+  // .option-others {
+  //   clip-path: polygon(15% 0, 100% 0%, 100% 100%, 0% 100%);
+  //   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  //   border: 0.063rem solid $primary;
+  // }  
 }
 
 //Added custom variants prop to the AssignUser component to allow overriding styles in the InputDropdown component.
-// .assign-user-sm{
-//   width: 11.25rem !important;
-//   height: 1.563rem !important;
-// }
-// .assign-user-md{
-//   width: 15rem !important;
-//   height: 2.188rem !important;
-// }
 .assign-user-sm-width{
   width: 11.25rem !important;
 }
 .assign-user-sm-height{
   height: 1.563rem !important;
+  border: 0.125rem solid $primary !important;
+  padding-left: var(--spacer-050) !important;
+  padding-block: var(--spacer-025) !important;
+  font-size: var(--font-size-xs) !important;
 }
 .assign-user-md-width{
   width: 15rem !important;
 }
 .assign-user-md-height{
   height: 2.188rem !important;
+  border: 0.125rem solid $primary !important; 
 }
+.assignee-dropdown-border{
+  border-left: 0.125rem solid $primary !important;
+  border-right: 0.125rem solid $primary !important;
+  border-bottom: 0.125rem solid $primary !important;
+  border-top: none;
+}
+

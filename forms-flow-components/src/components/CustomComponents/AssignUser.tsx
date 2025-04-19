@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { InputDropdown } from "./InputDropdown";
+import { CloseIcon } from "../SvgIcons/index";
+import { StyleServices } from "@formsflow/service";
 
 interface User {
   id: string;
@@ -16,7 +18,8 @@ interface AssignUserProps {
   username: string;
   meOnClick?: () => void;
   othersOnClick?: () => void;
-  optionSelect?: () => void;
+  optionSelect?: (userId: string) => void;
+  handleCloseClick?: () => void;
 }
 
 export const AssignUser: React.FC<AssignUserProps> = ({
@@ -26,60 +29,70 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   meOnClick,
   othersOnClick,
   optionSelect,
+  handleCloseClick,
 }) => {
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
-  const [hoverSide, setHoverSide] = useState<"left" | "right" | null>(null);
-  const variant = size === "sm" ? "assign-user-sm" : "assign-user-md"
+  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+  const variant = size === "sm" ? "assign-user-sm" : "assign-user-md";
   const handleMeClick = () => {
     setSelected("Me");
     meOnClick?.();
+    
+    // Auto-select the current user when "Me" is clicked
+    const currentUser = users.find(user => user.username === username);
+    if (currentUser && optionSelect) {
+      optionSelect(currentUser.id);
+    }
   };
 
   const handleOthersClick = () => {
     setSelected("Others");
+    setOpenDropdown(true);
     othersOnClick?.();
+  };
+
+  const handleClose = () => {
+    setSelected(null);
+    setOpenDropdown(false);
+    handleCloseClick?.();
   };
 
   const options = users.map((user) => ({
     label: user.username,
     value: user.id,
-    onClick: () => console.log(`Selected user: ${user.username}`),
+    onClick: () => {
+      if (optionSelect) {
+        optionSelect(user.id);
+      }
+    },
   }));
+
+  // Determine the selected option based on the state
+  const selectedOption = selected === "Me" ? username : undefined;
 
   return (
     <>
-      {/* Show Me/Others Selection if not Others */}
-      {selected !== "Others" && (
-        <div className={`assign-user ${size}`} data-hover-side={hoverSide}>
-          {selected === null ? (
-            <>
-              <div
-                className={`option ${hoverSide === "left" ? "left-selected" : ""}`}
-                onClick={handleMeClick}
-                onMouseEnter={() => setHoverSide("left")}
-                onMouseLeave={() => setHoverSide(null)}
-              >
-                Me
-              </div>
-              <div className="divider"></div>
-              <div
-                className={`option ${hoverSide === "right" ? "right-selected" : ""}`}
-                onClick={handleOthersClick}
-                onMouseEnter={() => setHoverSide("right")}
-                onMouseLeave={() => setHoverSide(null)}
-              >
-                Others
-              </div>
-            </>
-          ) : (
-            <div className="selected-name">{username}</div>
-          )}
+      {/* Show Me/Others Selection if nothing is selected */}
+      {selected === null && (
+        <div className={`assign-user ${size}`}>
+          <div className="option-me" onClick={handleMeClick}>
+            Me
+          </div>
+          <div className="option-others" onClick={handleOthersClick}>
+            Others
+          </div>
         </div>
       )}
 
-      {/* Show dropdown alone if Others selected */}
-      {selected === "Others" && (
-          <InputDropdown Options={options} variant={variant}/>
+      {/* Show InputDropdown when either Me or Others is selected */}
+      {(selected === "Me" || selected === "Others") && (
+        <InputDropdown 
+          Options={options} 
+          variant={variant} 
+          selectedOption={selectedOption}
+          handleCloseClick={handleClose}
+          openByDefault={openDropdown}
+        />
       )}
     </>
   );
