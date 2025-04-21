@@ -9,6 +9,7 @@ import { setBPMFiltersAndCount, setBPMTaskListActivePage, setDefaultFilter, setS
 import { Dropdown, NavDropdown } from "react-bootstrap";
 
 
+import { ResizableTable } from "../components";
 
 interface SocketUpdateParams {
   refreshedTaskId: string | number;
@@ -24,11 +25,9 @@ const TaskList = () => {
  
   const dispatch = useDispatch();
   const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
-  // const [shareTaskFilter, setShareTaskFilter] = useState("PRIVATE_ONLY_YOU");
   const filterList = useSelector((state: any) => state.task.filtersAndCount);
   const filterListItems = useSelector((state: any) => state.task.filterList);
   const defaultFilter = useSelector((state: any) => state.task.defaultFilter);
-  // const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
   const reqData = useSelector((state: any) => state.task.listReqParams);
   const firstResult = useSelector((state: any) => state.task.firstResult);  
   const [taskAttributeData, setTaskAttributeData] = useState([]);
@@ -59,28 +58,14 @@ useEffect(() => {
               console.error(err);
             }
           })
-          // .finally(() => {
-          //   if (selectedFilterData) {
-          //     if (selectedFilterData?.id === selectedFilter?.id) {
-          //       dispatch(setSelectedBPMFilter(resData));
-          //       fetchTasks(resData);
-          //     }
-          //     toast.success(t("Changes Applied Successfully"));
-          //   } else {
-          //     toast.success(t("Filter Created Successfully"));
-          //   }
-          //   dispatch(setBPMFilterLoader(false));
-          // });
       }
     })
   );
 }, [dispatch]);
 useEffect(() => {
-  //The search fields get clear when switching the filter
   setFilterParams({});
 }, [selectedFilter]);
 
-// Log filterList when it changes
 useEffect(() => {
   console.log("Filter List Updated:", filterListItems);
   console.log("Filter count:", filterList.length);
@@ -139,71 +124,6 @@ useEffect(() => {
     };
 
   
-    // if (filterList.length) {
-    //   return (
-    //     <>
-    //       {filterList.map((filter, index) => {
-    //         // const matchingFilterItem = filterListItems.find(
-    //         //   (item) => item.id === filter.id
-    //         // );
-    //         // const editPermission =
-    //         //   matchingFilterItem && matchingFilterItem.editPermission;
-    //         return (
-    //           <Dropdown.Item
-    //             // as={Link}
-    //             // to={`${redirectUrl}task`}
-    //             className="custom-dropdown-menu"
-    //             key={index}
-    //           >
-    //             <div className="d-flex align-items-center">
-    //               <span
-    //                 onClick={() => changeFilterSelection(filter)}
-    //                 className="w-100"
-    //               >
-    //                 {filter?.name} {`(${filter.count || 0})`}
-    //               </span>
-    //               <button
-    //                 onClick={() => {
-    //                   // handleFilter(
-    //                   //   filter?.id,
-    //                   //   createFilters
-    //                   // );
-    //                 }}
-    //                 className="btn btn-link"
-    //               >
-    //                 {/* <i
-    //                   className={`me-1 fa fa-${
-    //                     (createFilters || manageAllFilters) && editPermission
-    //                       ? "pencil"
-    //                       : viewFilters
-    //                       ? `eye`
-    //                       : ""
-    //                   }`}
-    //                 /> */}
-    //                 {/* <Translation>
-    //                   {(t) =>
-    //                     t(
-    //                       (createFilters || manageAllFilters) &&
-    //                         editPermission
-    //                         ? `Edit`
-    //                         : viewFilters
-    //                         ? `View`
-    //                         : ""
-    //                     )
-    //                   }
-    //                 </Translation> */}
-    //               </button>
-    //             </div>
-    //           </Dropdown.Item>
-    //         );
-    //       })}
-    //     </>
-    //   );
-    // }
-  
-
- 
-
 
   return (
     <div>

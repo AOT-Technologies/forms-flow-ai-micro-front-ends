@@ -356,33 +356,41 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     }
   };
 
+  // Keep track of last valid date range
+  const [lastValidDateRange, setLastValidDateRange] = useState<DateRange>(parsedInitialRange());
 
-// Handle calendar toggle
-const toggleCalendar = (): void => {
-  setIsOpen(!isOpen);
-  if (!isOpen) {
-    // Only reset when opening the calendar if needed
-    // Don't reset when closing
-  } else {
-    // When closing, reset both dates to null
-    setDateRange({
+  // Update lastValidDateRange whenever we have a complete valid selection
+  useEffect(() => {
+    if (dateRange.startDate && dateRange.endDate) {
+      setLastValidDateRange({...dateRange});
+    }
+  }, [dateRange]);
+
+  // Handle calendar toggle
+  const toggleCalendar = (): void => {
+    setIsOpen(!isOpen);
+  };
+
+  // Handle close calendar (X button)
+  const handleCloseCalendar = (event?: React.MouseEvent): void => {
+    if (event) {
+      event.stopPropagation();
+    }
+    setIsOpen(false);
+    
+    // Reset both dates to null when closing with the X button
+    const emptyDateRange = {
       startDate: null,
       endDate: null
-    });
-  }
-};
- // Handle close calendar
-const handleCloseCalendar = (event?: React.MouseEvent): void => {
-  if (event) {
-    event.stopPropagation();
-  }
-  setIsOpen(false);
-  // Reset both start and end date to null when closing
-  setDateRange({
-    startDate: null,
-    endDate: null
-  });
-};
+    };
+    
+    setDateRange(emptyDateRange);
+    
+    // Notify parent component of the reset
+    if (onChange) {
+      onChange(emptyDateRange);
+    }
+  };
 
   // Format month and year for display
   const formatMonthYear = (): string => {
@@ -413,9 +421,21 @@ const handleCloseCalendar = (event?: React.MouseEvent): void => {
         !calendarRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
-        // Reset if selection is incomplete
-        if (!dateRange?.endDate) {
-          setDateRange(parsedInitialRange());
+        
+        // If selection is incomplete, complete it with current dates
+        // instead of resetting to lastValidDateRange
+        if (dateRange.startDate && !dateRange.endDate) {
+          const completedRange = {
+            startDate: dateRange.startDate,
+            endDate: dateRange.startDate // Set end date same as start date
+          };
+          
+          setDateRange(completedRange);
+          
+          // Notify parent component of the completed selection
+          if (onChange) {
+            onChange(completedRange);
+          }
         }
       }
     };
@@ -424,7 +444,7 @@ const handleCloseCalendar = (event?: React.MouseEvent): void => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dateRange]);
+  }, [dateRange, onChange]);
 
   // Reset current month when opening calendar
   useEffect(() => {
