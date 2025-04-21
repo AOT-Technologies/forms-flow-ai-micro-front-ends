@@ -147,11 +147,9 @@ $gray-dark: var(--ff-gray-dark);
       }
     }
   }
-  .formio-component {
-    .formio-component-hidden{
-     padding-top: 0;
-    }
-  }
+  .formio-component-hidden{
+    padding-top: 0 !important;
+   }
 }
 
 .ace_scrollbar-h {

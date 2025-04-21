@@ -207,10 +207,17 @@ $danger-color: var(--ff-danger);
       @extend .btn-disabled;
     }
   }
-
+  &.btn-success { 
+    background-color: $primary !important;
+    color: $white-color !important;
+  }
+  &.btn-danger {
+    background-color: $danger-color !important;
+    color: $white-color !important;
+  }
   &.btn-dark {
     background-color: $gray-dark !important;
-    border: 1px solid $gray-dark !important;
+    color:$white-color !important;
 
     &:hover {
       opacity: 0.8;
@@ -237,8 +244,16 @@ $danger-color: var(--ff-danger);
     }
   }
 
-  &.btn-table {
+  &.btn-table { // This is for the Btn-Action-Table in figma
     padding: var(--spacer-050) var(--spacer-100) !important;
+    border-radius: var(--radius-sm) !important;
+    line-height: var(--text-line-height);
+  }
+
+
+  &.btn-table-sm { // This is for the Btn-Action-Table-Small in figma
+    font-size: var(--font-size-xs) !important;
+    padding: var(--spacer-025) var(--spacer-075) !important;
     border-radius: var(--radius-sm) !important;
     line-height: var(--text-line-height);
   }

@@ -104,11 +104,6 @@ $white-color: var(--ff-white);
   }
 }
 
-.table {
-  tr {
-    border-bottom: 0.0625rem solid $gray-medium;
-  }
-}
 
 .custom-table th,
 .custom-table td {
@@ -261,11 +256,14 @@ $white-color: var(--ff-white);
   overflow-x: auto;
 }
 
-.custom-scroll {
+.resizable-scroll {
   &::-webkit-scrollbar {
-    margin-top: 2px;
-    width: 8px;
+    width: 8px; // unified value from second block
     height: 8px;
+    margin-top: 2px;
+    background-color: transparent;
+    display: block;
+    opacity: 0;
   }
 
   &::-webkit-scrollbar-track {
@@ -275,13 +273,28 @@ $white-color: var(--ff-white);
 
   &::-webkit-scrollbar-thumb {
     background: var(--ff-primary-light);
-    border-radius: 4px;
+    border-radius: var(--radius-md); // using variable from first block
+    background-clip: padding-box;
+    border: var(--spacer-025) solid transparent;
+    opacity: 1;
 
     &:hover {
       background: var(--ff-primary-light);
+      box-shadow: inset 0 0 0 0.0625rem $primary;
+    }
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      opacity: 1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $primary-light;
     }
   }
 }
+
 
 /* Remove border from resizable table since it's now on the outer container */
 .resizable-table {
@@ -381,4 +394,11 @@ $white-color: var(--ff-white);
   &::after {
     right: 1px;
   }
+}
+.filter-large {
+  display: inline-block;
+  max-width: 100px; /* adjust width as needed */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

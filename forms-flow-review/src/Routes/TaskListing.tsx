@@ -9,7 +9,7 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
- 
+
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
       console.log("SocketIOCallback called");
@@ -47,6 +47,5 @@ const TaskList = () => {
     <div>
       <ResizableTable/>
     </div>
-);
-};
-export default TaskList;
+  );
+};export default TaskList;

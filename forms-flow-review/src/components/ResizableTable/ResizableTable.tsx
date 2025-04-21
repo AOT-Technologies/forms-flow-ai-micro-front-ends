@@ -234,7 +234,7 @@ export function ResizableTable(): JSX.Element {
         <div className="table-outer-container" data-testid="table-outer-container">
           {/* Scroll wrapper handles the scrolling */}
           <div 
-            className="table-scroll-wrapper custom-scroll" 
+            className="table-scroll-wrapper resizable-scroll" 
             ref={scrollWrapperRef}
             data-testid="table-scroll-wrapper"
             aria-label="Scrollable task table content"
