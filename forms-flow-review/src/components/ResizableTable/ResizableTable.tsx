@@ -43,14 +43,6 @@ import Loading from "../Loading";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { StorageService, HelperServices } from "@formsflow/service";
 
-// interface TableData {
-//   submissionId: string;
-//   task: string;
-//   createdDate: string;
-//   assignedTo: string;
-//   submitterName: string;
-// }
-
 interface Column {
   name: string;
   width: number;
@@ -97,11 +89,9 @@ export function ResizableTable(): JSX.Element {
   const [showSortModal, setShowSortModal] = useState(false);
   const [dateRange, setDateRange] = useState({
     startDate: null,
-    endDate: null
+    endDate: null,
   });
   const optionSortBy = [
-    // { value: "applicationId", label: t("Submission ID") },
-    // { value: "submitterName", label: t("Submitter Name") },
     { value: "name", label: t("Task") },
     { value: "created", label: t("Created Date") },
     { value: "assignee", label: t("Assigned To") },
@@ -181,8 +171,6 @@ export function ResizableTable(): JSX.Element {
     }
   }, [taskvariables]);
 
-
-
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
     dispatch(
       setFilterListSortParams({
@@ -197,15 +185,17 @@ export function ResizableTable(): JSX.Element {
   const handleSort = (key) => {
     const newSortOrder = sortParams[key].sortOrder === "asc" ? "desc" : "asc";
     const updatedSort = Object.keys(sortParams).reduce((acc, columnKey) => {
-        acc[columnKey] = { sortOrder: columnKey === key ? newSortOrder : "asc" };
-        return acc;
+      acc[columnKey] = { sortOrder: columnKey === key ? newSortOrder : "asc" };
+      return acc;
     }, {});
 
-    dispatch(setFilterListSortParams({
+    dispatch(
+      setFilterListSortParams({
         ...updatedSort,
         activeKey: key,
-    }));
-};
+      })
+    );
+  };
   const handleEditFilter = () => {
     if (!selectedFilter) return;
     const matchingFilter = filterList.find((f) => f.id === selectedFilter.id);
@@ -280,23 +270,28 @@ export function ResizableTable(): JSX.Element {
   useEffect(() => {
     const activeKey = sortParams?.activeKey;
 
-    const transformedSorting = activeKey && sortParams?.[activeKey]?.sortOrder
-      ? [
-          {
-            sortBy: activeKey,
-            sortOrder: sortParams[activeKey].sortOrder,
-          },
-        ]
-      : [];
+    const transformedSorting =
+      activeKey && sortParams?.[activeKey]?.sortOrder
+        ? [
+            {
+              sortBy: activeKey,
+              sortOrder: sortParams[activeKey].sortOrder,
+            },
+          ]
+        : [];
 
-      const reqParamData = {
-        ...searchParams,
-        sorting: transformedSorting,
-      };
-      if (dateRange?.startDate && dateRange?.endDate) {
-        reqParamData.dueAfter = HelperServices.getISODateTime(dateRange.startDate);
-        reqParamData.dueBefore = HelperServices.getISODateTime(dateRange.endDate);
-      }
+    const reqParamData = {
+      ...searchParams,
+      sorting: transformedSorting,
+    };
+    if (dateRange?.startDate && dateRange?.endDate) {
+      reqParamData.createdAfter = HelperServices.getISODateTime(
+        dateRange.startDate
+      );
+      reqParamData.createdBefore = HelperServices.getISODateTime(
+        dateRange.endDate
+      );
+    }
     let selectedParams = bpmFiltersList.find(
       (item) => item.id === selectedFilterId
     );
@@ -314,11 +309,14 @@ export function ResizableTable(): JSX.Element {
     if (!isEqual(selectedParams, reqData) && selectedParams) {
       dispatch(setFilterListParams(cloneDeep(selectedParams)));
     }
-
-
-  }, [selectedFilterId, searchParams, sortParams, dispatch, reqData,dateRange]);
-
-
+  }, [
+    selectedFilterId,
+    searchParams,
+    sortParams,
+    dispatch,
+    reqData,
+    dateRange,
+  ]);
 
   useEffect(() => {
     if (selectedFilter) {
@@ -395,7 +393,6 @@ export function ResizableTable(): JSX.Element {
     let firstResultIndex = limit * pageNumber - limit;
     dispatch(fetchServiceTaskList(reqData, null, firstResultIndex, limit));
   };
-
 
   const renderTaskList = () => {
     if (selectedFilter) {
@@ -556,7 +553,7 @@ export function ResizableTable(): JSX.Element {
           </div>
           <table className="custom-tables" data-testid="table-footer-container">
             <tfoot>
-              {tasksCount > 0 ? (
+              {tasksCount > 0  && taskList.length > 0? (
                 <TableFooter
                   limit={limit}
                   activePage={activePage}
@@ -599,7 +596,7 @@ export function ResizableTable(): JSX.Element {
             <ButtonDropdown
               label={
                 <span
-                className="filter-large"
+                  className="filter-large"
                   title={
                     selectedFilter?.name
                       ? `${selectedFilter.name} (${tasksCount || 0})`
@@ -667,7 +664,9 @@ export function ResizableTable(): JSX.Element {
             handleSortModalClose={handleSortModalClose}
             handleSortApply={handleSortApply}
             defaultSortOption={sortParams?.activeKey}
-            defaultSortOrder={sortParams?.[sortParams?.activeKey]?.sortOrder || "asc"}
+            defaultSortOrder={
+              sortParams?.[sortParams?.activeKey]?.sortOrder || "asc"
+            }
             optionSortBy={optionSortBy}
             filterDataTestId="task-list-filter"
             filterAriaLabel="Filter the task list"
