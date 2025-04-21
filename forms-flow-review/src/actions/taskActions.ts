@@ -96,6 +96,40 @@ export const setTasks = (data: any) => ({
     });
   };
 
+  export const setSelectedBPMFilter = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_SELECTED_FILTER,
+      payload: data,
+    });
+  };
+
+  export const setBPMFiltersAndCount = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_FILTERS_AND_COUNT, 
+      payload: data,
+    });
+  };
+
+  export const setSelectedTaskID = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.SELECTED_TASK_ID,
+      payload: data,
+    });
+  };
+
+  export const setBPMTaskListActivePage = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_TASK_LIST_ACTIVE_PAGE,
+      payload: data,
+    });
+  };
+
+  export const setBPMFilterSearchParams = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS, 
+      payload: data,
+    });
+  };
 
   
   

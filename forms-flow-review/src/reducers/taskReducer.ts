@@ -14,6 +14,9 @@ const initialState = {
   firstResult: 0,
   selectedFilter: {},
   defaultFilter: "",
+  filtersAndCount:[],
+  taskDetail: null,
+  filterListSearchParams: {},
 
 
 
@@ -50,10 +53,18 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         activePage: action.payload,
         firstResult: getFirstResultIndex(action.payload),
       };
+    case ACTION_CONSTANTS.BPM_FILTER_LIST:
+        return { ...state, filterList: action.payload };
     case ACTION_CONSTANTS.BPM_SELECTED_FILTER:
       return { ...state, selectedFilter: action.payload, filterListSearchParams: {} };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
       return { ...state, defaultFilter: action.payload };
+    case ACTION_CONSTANTS.BPM_FILTERS_AND_COUNT:
+        return { ...state, filtersAndCount: action.payload };
+    case ACTION_CONSTANTS.SELECTED_TASK_ID:
+          return { ...state, taskId: action.payload, taskDetail: null };
+    case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
+          return { ...state, filterListSearchParams: action.payload };
     default:
       return state;
   }
