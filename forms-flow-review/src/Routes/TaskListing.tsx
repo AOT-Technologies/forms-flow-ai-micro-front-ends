@@ -3,10 +3,10 @@ import SocketIOService from "../services/SocketIOService";
 import { CustomButton } from "@formsflow/components";
 import TaskFilterModal from "../components/TaskFilterModal";
 import AttributeFilterModal from "../components/AttributeFilterModal";
-import { fetchBPMTaskCount, fetchFilterList, fetchServiceTaskList, updateDefaultFilter } from "../api/services/filterServices";
+import { fetchBPMTaskCount, fetchFilterList, updateDefaultFilter } from "../api/services/filterServices";
 import { useDispatch, useSelector } from "react-redux";
-import { setBPMFiltersAndCount, setBPMTaskListActivePage, setDefaultFilter, setSelectedBPMFilter, setSelectedTaskID } from "../actions/taskActions";
-import { Dropdown, NavDropdown } from "react-bootstrap";
+import { setBPMFiltersAndCount, setBPMTaskListActivePage, setDefaultFilter, setSelectedTaskID } from "../actions/taskActions";
+import { Dropdown } from "react-bootstrap";
 
 
 import { ResizableTable } from "../components";
@@ -28,8 +28,6 @@ const TaskList = () => {
   const filterList = useSelector((state: any) => state.task.filtersAndCount);
   const filterListItems = useSelector((state: any) => state.task.filterList);
   const defaultFilter = useSelector((state: any) => state.task.defaultFilter);
-  const reqData = useSelector((state: any) => state.task.listReqParams);
-  const firstResult = useSelector((state: any) => state.task.firstResult);  
   const [taskAttributeData, setTaskAttributeData] = useState([]);
   const [shareFilter, setShareFilter] = useState("PRIVATE_ONLY_YOU");
   const [selectedFilter, setSelectedFilter] = useState(null);
@@ -166,20 +164,20 @@ useEffect(() => {
       </Dropdown.Toggle>
     
       <Dropdown.Menu className="custom-dropdown-menu">
-        {filterList.length ? (
-          filterList.map((filter, index) => (
-            <Dropdown.Item
-              key={index}
-              onClick={() => changeFilterSelection(filter)}
-            >
-              <div className="d-flex align-items-center">
-                <span className="w-100">
-                  {filter?.name} ({filter.count || 0})
-                </span>
-              </div>
-            </Dropdown.Item>
-          ))
-        ) : (
+          {filterList.length ? (
+            filterList.map((filter) => (
+              <Dropdown.Item
+                key={filter.name}
+                onClick={() => changeFilterSelection(filter)}
+              >
+                <div className="d-flex align-items-center">
+                  <span className="w-100">
+                    {filter?.name} ({filter.count || 0})
+                  </span>
+                </div>
+              </Dropdown.Item>
+            ))
+          ) : (
           <Dropdown.Item disabled>No Filters Found</Dropdown.Item>
         )}
       </Dropdown.Menu>

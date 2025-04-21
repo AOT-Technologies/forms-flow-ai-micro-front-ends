@@ -42,7 +42,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
         defaultFilter,
       } = useSelector((state: any) => state.task);
       
-      const userListData = userList.data || [];
+      const userListData = userList.data ?? [];
       const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
     const userRoles = JSON.parse(
         StorageService.get(StorageService.User.USER_ROLE)

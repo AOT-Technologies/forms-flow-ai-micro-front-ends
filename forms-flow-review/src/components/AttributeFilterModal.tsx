@@ -1,16 +1,14 @@
 import Modal from 'react-bootstrap/Modal';
-import { CloseIcon, PencilIcon, SaveIcon, CustomButton, CustomTabs, InputDropdown, FormInput, CustomInfo, DragandDropSort } from '@formsflow/components';
+import { CloseIcon, SaveIcon, CustomButton, CustomTabs, InputDropdown, FormInput } from '@formsflow/components';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
-import { useState, useMemo, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useState, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {  MAX_RESULTS, PRIVATE_ONLY_YOU } from '../constants/index';
 import { StorageService } from '@formsflow/service';
-import { Filter, FilterCriteria, UserDetail } from '../types/taskFilter';
-import _ from "lodash";
+import { Filter, FilterCriteria } from '../types/taskFilter';
 import { setBPMFilterSearchParams, setBPMTaskLoader } from '../actions/taskActions';
 import { fetchServiceTaskList, saveFilters } from '../api/services/filterServices';
-import { useDispatch } from 'react-redux';
 
 
 
@@ -23,17 +21,17 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
     const [filterNameError, setFilterNameError] = useState('');
     const [filterName, setFilterName] = useState('');
     const [shareAttrFilter, setShareAttrFilter] = useState(PRIVATE_ONLY_YOU);
-    const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
+    // const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
     const firstResult = useSelector((state : any) => state.task.firstResult);
 
     const userRoles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
     const isCreateFilters = userRoles?.includes("create_filters");
     const filterNameLength = 50;
 
-    useEffect(() => {
-        StorageService.getParsedData(StorageService.User.USER_DETAILS) && 
-        setUserDetail(StorageService.getParsedData(StorageService.User.USER_DETAILS));
-    }, [shareAttrFilter]);
+    // useEffect(() => {
+    //     StorageService.getParsedData(StorageService.User.USER_DETAILS) && 
+    //     setUserDetail(StorageService.getParsedData(StorageService.User.USER_DETAILS));
+    // }, [shareAttrFilter]);
 
    
     const handleNameError = (e) => {
@@ -51,7 +49,7 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
     }
 
     const userListResponse = useSelector((state: any) => state.task.userList) || { data: [] };
-    const userList = userListResponse?.data || [];
+    const userList = userListResponse?.data ?? [];
     const searchParams = useSelector((state: any) => state.task.searchParams);
 
 
@@ -63,7 +61,7 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
     const [attributeData, setAttributeData] = useState(() => {
         return taskAttributeData.reduce((acc, item) => {
             if (item.isChecked) {
-                acc[item.key] = filterParams[item.key] || ''; 
+                acc[item.key] = filterParams[item.key] ?? ''; 
             }
             return acc;
         }, {});
@@ -98,7 +96,14 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
     const getNonEmptyTaskAccess = () => {
         const { users, roles } = getTaskAccess();
     
-        return users.length ? users : roles.length ? roles : undefined;
+        if (users.length) {
+            return users;
+          }
+          
+          if (roles.length) {
+            return roles;
+          }
+          
     };
      
 
@@ -152,7 +157,8 @@ const getAssignee = () => {
     const assigneeItem = taskAttributeData.find(item => item.key === "assignee");
     if (assigneeItem) {
         const value = attributeData[assigneeItem.key];
-        return value ? value : selectedFilter.criteria.assignee;
+        return value || selectedFilter.criteria.assignee;
+
     }
     return selectedFilter.criteria.assignee;
 };
@@ -237,7 +243,7 @@ const buildUpdatedFilterParams = () => {
     
 
     const getIconColor = (disabled) => disabled ? whiteColor : baseColor;
-    const isInvalidFilter = !(filterName?.trim()) || filterNameError || !isCreateFilters;  
+    const isInvalidFilter = !(filterName?.trim()) || filterNameError || !isCreateFilters;
     const isButtonDisabled = isInvalidFilter;
     const iconColor = getIconColor(isInvalidFilter);
 
