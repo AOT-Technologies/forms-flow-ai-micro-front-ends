@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   TableFooter,
@@ -6,18 +12,44 @@ import {
   FilterSortActions,
   CustomButton,
   DateRangePicker,
+  ButtonDropdown,
+  AddIcon,
+  PencilIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
-import { updateTaskSort } from "../../actions/tableActions";
-import TaskFilterModal from "../TaskFilterModal";
+import {
+  setBPMFilterLoader,
+  setBPMFiltersAndCount,
+  setSelectedBPMFilter,
+  setBPMTaskLoader,
+  setBPMTaskListActivePage,
+  setFilterListParams,
+  setFilterListSortParams,
+  setTaskListLimit,
+} from "../../actions/taskActions";
 
-interface TableData {
-  submissionId: string;
-  task: string;
-  createdDate: string;
-  assignedTo: string;
-  submitterName: string;
-}
+import TaskFilterModal from "../TaskFilterModal";
+import { useHistory } from "react-router-dom";
+import {
+  fetchFilterList,
+  fetchBPMTaskCount,
+  fetchServiceTaskList,
+} from "../../api/services/filterServices";
+import { ALL_TASKS } from "../constants/taskConstants";
+
+import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
+import Loading from "../Loading";
+import { MULTITENANCY_ENABLED } from "../../constants";
+import { StorageService, HelperServices } from "@formsflow/service";
+
+// interface TableData {
+//   submissionId: string;
+//   task: string;
+//   createdDate: string;
+//   assignedTo: string;
+//   submitterName: string;
+// }
 
 interface Column {
   name: string;
@@ -29,104 +61,280 @@ interface Column {
 export function ResizableTable(): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { tasks, sort: taskSort } = useSelector((state: any) => state.taskList);
+
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
+  const history = useHistory();
+  const {
+    filterList = [],
+    selectedFilter = null,
+    taskId: bpmTaskId = null,
+    firstResult = 0,
+    limit,
+    tasksList: taskList = [],
+    defaultFilter = null,
+    filtersAndCount: filtersCount = null,
+    filterListSearchParams: searchParams,
+    filterListSortParams: sortParams,
+    listReqParams: reqData,
+    activePage,
+    tasksCount,
+    isTaskListLoading,
+  } = useSelector((state: any) => state.task || {});
   
+  const selectedFilterId = selectedFilter?.id || null;
+  const bpmFiltersList = filterList;
+  const taskvariables = selectedFilter?.variables || [];
   const handleToggleFilterModal = () => {
-    setShowTaskFilterModal(prevState => !prevState);
+    setShowTaskFilterModal((prevState) => !prevState);
   };
-  const [columns, setColumns] = useState<Column[]>([
-    {
-      name: "Submission ID",
-      width: 150,
-      sortKey: "submissionId",
-      resizable: true,
-    },
-    { name: "Task", width: 250, sortKey: "task", resizable: true },
-    {
-      name: "Created Date",
-      width: 150,
-      sortKey: "createdDate",
-      resizable: true,
-    },
-    { name: "Assigned To", width: 200, sortKey: "assignedTo", resizable: true },
-    {
-      name: "Submitter Name",
-      width: 200,
-      sortKey: "submitterName",
-      resizable: true,
-    },
-    { name: "Actions", width: 100, sortKey: "", resizable: false },
-  ]);
+  const [columns, setColumns] = useState<Column[]>([]);
 
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const resizingRef = useRef<number | null>(null);
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(0);
-
-  const [activePage, setActivePage] = useState(1);
-  const [sizePerPage, setSizePerPage] = useState(5);
   const [showSortModal, setShowSortModal] = useState(false);
-
+  const [dateRange, setDateRange] = useState({
+    startDate: null,
+    endDate: null
+  });
   const optionSortBy = [
-    { value: "submissionId", label: t("Submission ID") },
-    { value: "task", label: t("Task") },
-    { value: "createdDate", label: t("Created Date") },
-    { value: "assignedTo", label: t("Assigned To") },
-    { value: "submitterName", label: t("Submitter Name") },
+    // { value: "applicationId", label: t("Submission ID") },
+    // { value: "submitterName", label: t("Submitter Name") },
+    { value: "name", label: t("Task") },
+    { value: "created", label: t("Created Date") },
+    { value: "assignee", label: t("Assigned To") },
   ];
 
-  // Improved Sorting Logic
-  const handleSort = (key: string) => {
-    const currentSort = taskSort[key];
-    const newSortOrder = currentSort.sortOrder === "asc" ? "desc" : "asc";
+  const [filterToEdit, setFilterToEdit] = useState(null);
+  const [canEditFilter, setCanEditFilter] = useState(false);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const redirectUrl = useRef(
+    MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
+  );
 
-    // Reset all other columns to default (ascending) except the active one
-    const updatedSort = columns.reduce((acc, column) => {
-      if (column.sortKey) {
-        acc[column.sortKey] = {
-          sortOrder: column.sortKey === key ? newSortOrder : "asc",
-        };
-      }
-      return acc;
-    }, {});
+  const userRoles = JSON.parse(
+    StorageService.get(StorageService.User.USER_ROLE)
+  );
+  const isFilterCreator = userRoles.includes("createFilters");
+  const isFilterAdmin = userRoles.includes("manageAllFilters");
+  //const isFilterViewer = userRoles.includes("viewFilters");
 
+  useEffect(() => {
+    dispatch(setBPMFilterLoader(true));
     dispatch(
-      updateTaskSort({
-        ...updatedSort,
-        activeKey: key,
+      fetchFilterList((err, data) => {
+        if (data) {
+          fetchBPMTaskCount(data.filters)
+            .then((res) => {
+              dispatch(setBPMFiltersAndCount(res.data));
+            })
+            .catch((err) => console.error(err))
+            .finally(() => {
+              dispatch(setBPMFilterLoader(false));
+            });
+        }
       })
     );
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (filterList?.length) {
+      let filterSelected;
+      if (filterList.length > 1) {
+        filterSelected = filterList?.find(
+          (filter) => filter.id === defaultFilter || filter.name === ALL_TASKS
+        );
+        if (!filterSelected) {
+          filterSelected = filterList[0];
+        }
+      } else {
+        filterSelected = filterList[0];
+      }
+      dispatch(setSelectedBPMFilter(filterSelected));
+    }
+  }, [filterList?.length]);
+
+  useEffect(() => {
+    if (taskvariables && Array.isArray(taskvariables)) {
+      const dynamicColumns = taskvariables
+        .filter((variable) => variable.isChecked)
+        .sort((a, b) => a.sortOrder - b.sortOrder)
+        .map((variable) => ({
+          name: variable.label,
+          width: 200,
+          sortKey: variable.name,
+          resizable: true,
+        }));
+  
+      if (dynamicColumns.length > 0) {
+        dynamicColumns.push({
+          name: "Actions",
+          width: 100,
+          sortKey: "",
+          resizable: false,
+        });
+      }
+  
+      setColumns(dynamicColumns);
+    }
+  }, [taskvariables]);
+  
+
+
+  const handleSortApply = (selectedSortOption, selectedSortOrder) => {
+    dispatch(
+      setFilterListSortParams({
+        ...sortParams,
+        activeKey: selectedSortOption,
+        [selectedSortOption]: { sortOrder: selectedSortOrder },
+      })
+    );
+    setShowSortModal(false);
   };
 
-  // Sorting logic for data
-  const sortedData = useMemo(() => {
-    const activeKey = taskSort.activeKey;
-    const sortOrder = taskSort[activeKey]?.sortOrder || "asc";
+  const handleSort = (key) => {
+    const newSortOrder = sortParams[key].sortOrder === "asc" ? "desc" : "asc";
+    const updatedSort = Object.keys(sortParams).reduce((acc, columnKey) => {
+        acc[columnKey] = { sortOrder: columnKey === key ? newSortOrder : "asc" };
+        return acc;
+    }, {});
 
-    return [...tasks].sort((a, b) => {
-      const valueA = a[activeKey];
-      const valueB = b[activeKey];
+    dispatch(setFilterListSortParams({
+        ...updatedSort,
+        activeKey: key,
+    }));
+};
+  const handleEditFilter = () => {
+    if (!selectedFilter) return;
+    const matchingFilter = filterList.find((f) => f.id === selectedFilter.id);
+    const editPermission = matchingFilter?.editPermission;
+    const isEditable = (isFilterCreator || isFilterAdmin) && editPermission;
+    setFilterToEdit(matchingFilter);
+    setCanEditFilter(isEditable);
+    setShowTaskFilterModal(true);
+  };
 
-      if (valueA == null) return sortOrder === "asc" ? 1 : -1;
-      if (valueB == null) return sortOrder === "asc" ? -1 : 1;
+  const filterDropdownItems = useMemo(() => {
+    if (!Array.isArray(filtersCount) || filtersCount.length === 0) {
+      return [
+        {
+          content: <em>{t("No filters found")}</em>,
+          onClick: () => {},
+          type: "none",
+          dataTestId: "no-filters",
+          ariaLabel: t("No filters available"),
+        },
+      ];
+    }
 
-      if (typeof valueA === "string" && typeof valueB === "string") {
-        return sortOrder === "asc"
-          ? valueA.localeCompare(valueB)
-          : valueB.localeCompare(valueA);
+    const mappedItems = filtersCount.map((filter) => ({
+      content: `${t(filter.name)} (${filter.count})`,
+      onClick: () => {
+        const filterToSet = filterList.find((f) => f.id === filter.id);
+        if (filterToSet) {
+          dispatch(setSelectedBPMFilter(filterToSet));
+          dispatch({ type: "SET_BPM_TASK_LIST_ACTIVE_PAGE", payload: 1 });
+        }
+      },
+      type: String(filter.id),
+      dataTestId: `filter-item-${filter.id}`,
+      ariaLabel: `${t("Select filter")} ${t(filter.name)}`,
+    }));
+
+    const extraItems = [
+      {
+        content: (
+          <span>
+            <span>
+              <AddIcon />
+            </span>{" "}
+            {t("Custom Filter")}
+          </span>
+        ),
+        onClick: () => handleToggleFilterModal(),
+        type: "custom",
+        dataTestId: "filter-item-custom",
+        ariaLabel: t("Custom Filter"),
+      },
+      {
+        content: (
+          <span>
+            <span>
+              <PencilIcon />
+            </span>{" "}
+            {t("Re-order And Hide Filters")}
+          </span>
+        ),
+        onClick: () => console.log("Re-order clicked"),
+        type: "reorder",
+        dataTestId: "filter-item-reorder",
+        ariaLabel: t("Re-order And Hide Filters"),
+      },
+    ];
+
+    return [...mappedItems, ...extraItems];
+  }, [filtersCount, filterList, dispatch]);
+
+  useEffect(() => {
+    const activeKey = sortParams?.activeKey;
+  
+    const transformedSorting = activeKey && sortParams?.[activeKey]?.sortOrder
+      ? [
+          {
+            sortBy: activeKey,
+            sortOrder: sortParams[activeKey].sortOrder,
+          },
+        ]
+      : [];
+   
+      const reqParamData = {
+        ...searchParams,
+        sorting: transformedSorting,
+      };
+      if (dateRange?.startDate && dateRange?.endDate) {
+        reqParamData.dueAfter = HelperServices.getISODateTime(dateRange.startDate);
+        reqParamData.dueBefore = HelperServices.getISODateTime(dateRange.endDate);
       }
+    let selectedParams = bpmFiltersList.find(
+      (item) => item.id === selectedFilterId
+    );
+  
+    if (selectedParams) {
+      selectedParams = {
+        ...selectedParams,
+        criteria: {
+          ...selectedParams.criteria,
+          ...reqParamData,
+        },
+      };
+    }
+  
+    if (!isEqual(selectedParams, reqData) && selectedParams) {
+      dispatch(setFilterListParams(cloneDeep(selectedParams)));
+    }
+  
+    
+  }, [selectedFilterId, searchParams, sortParams, dispatch, reqData,dateRange]);
+  
 
-      return sortOrder === "asc"
-        ? valueA > valueB
-          ? 1
-          : -1
-        : valueA < valueB
-        ? 1
-        : -1;
-    });
-  }, [tasks, taskSort]);
+
+  useEffect(() => {
+    if (selectedFilter) {
+      dispatch(setBPMTaskLoader(true));
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
+    }
+  }, [dispatch, reqData]);
+
+  const handleRefresh = useCallback(() => {
+    if (selectedFilter) {
+      dispatch(setBPMTaskLoader(true));
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
+    }
+  }, [dispatch, reqData, selectedFilter, firstResult]);
 
   // Column resizing logic (updated to only resize specific columns)
   const handleMouseDown = (index: number, e: React.MouseEvent): void => {
@@ -167,17 +375,6 @@ export function ResizableTable(): JSX.Element {
     setShowSortModal(true);
   };
 
-  const handleSortApply = (selectedSortOption, selectedSortOrder) => {
-    dispatch(
-      updateTaskSort({
-        ...taskSort,
-        activeKey: selectedSortOption,
-        [selectedSortOption]: { sortOrder: selectedSortOrder },
-      })
-    );
-    setShowSortModal(false);
-  };
-
   useEffect(() => {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -186,162 +383,307 @@ export function ResizableTable(): JSX.Element {
   }, []);
 
   // Pagination and limit change handlers
-  const handleLimitChange = (newLimit: number) => {
-    setSizePerPage(newLimit);
-    setActivePage(1);
+  const handleLimitChange = (limit) => {
+    dispatch(setBPMTaskLoader(true));
+    dispatch(setTaskListLimit(limit));
+    dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
   };
 
-  const handlePageChange = (page: number) => {
-    setActivePage(page);
+  const handlePageChange = (pageNumber) => {
+    dispatch(setBPMTaskListActivePage(pageNumber));
+    dispatch(setBPMTaskLoader(true));
+    let firstResultIndex = limit * pageNumber - limit;
+    dispatch(fetchServiceTaskList(reqData, null, firstResultIndex, limit));
   };
 
+
+  const renderTaskList = () => {
+    if (selectedFilter) {
+      return (
+        <div
+          className="container-wrapper"
+          data-testid="table-container-wrapper"
+        >
+          <div
+            className="table-outer-container"
+            data-testid="table-outer-container"
+          >
+            <div
+              className="table-scroll-wrapper resizable-scroll"
+              ref={scrollWrapperRef}
+              data-testid="table-scroll-wrapper"
+              aria-label="Scrollable task table content"
+            >
+              {/* Table container */}
+              <div
+                className="resizable-table-container"
+                data-testid="inner-table-container"
+              >
+                <table
+                  ref={tableRef}
+                  className="resizable-table"
+                  data-testid="task-resizable-table"
+                  aria-label="Tasks data table with resizable columns"
+                >
+                  <thead className="resizable-header">
+                    <tr>
+                      {columns.map((column, index) => {
+                        const isSortableColumn =
+                          column.sortKey === "name" ||
+                          column.sortKey === "created" ||
+                          column.sortKey === "assignee";
+
+                        return (
+                          <th
+                            key={column.name}
+                            className="resizable-column"
+                            style={{ width: column.width }}
+                            data-testid={`column-header-${
+                              column.sortKey || "actions"
+                            }`}
+                            aria-label={`${column.name} column${
+                              isSortableColumn ? ", sortable" : ""
+                            }`}
+                          >
+                            {isSortableColumn ? (
+                              <SortableHeader
+                                columnKey={column.sortKey}
+                                title={column.name}
+                                currentSort={sortParams}
+                                handleSort={handleSort}
+                                className="w-100 d-flex justify-content-between align-items-center"
+                              />
+                            ) : (
+                              column.name
+                            )}
+
+                            {column.resizable && index < columns.length - 1 && (
+                              <div
+                                className={`column-resizer ${
+                                  resizingRef.current === index
+                                    ? "resizing"
+                                    : ""
+                                }`}
+                                onMouseDown={(e) => handleMouseDown(index, e)}
+                                data-testid={`column-resizer-${column.sortKey}`}
+                                aria-label={`Resize ${column.name} column`}
+                              />
+                            )}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {taskList && taskList.length > 0 ? (
+                      taskList.map((task, index) => {
+                        //const taskVars = task?._embedded?.variable || [];
+
+                        return (
+                          <tr key={task.id} data-testid={`task-row-${index}`}>
+                            {columns.map((column, colIndex) => {
+                              let cellValue = "";
+
+                              if (column.name === "Actions") {
+                                return (
+                                  <td key={colIndex}>
+                                    <CustomButton
+                                      className="btn-table"
+                                      variant="secondary"
+                                      label={"View"}
+                                      onClick={() =>
+                                        history.push(
+                                          `${redirectUrl.current}review/${task?.id}`
+                                        )
+                                      }
+                                      dataTestId={`view-task-${index}`}
+                                      ariaLabel={`View details for task ${task?.name}`}
+                                    />
+                                  </td>
+                                );
+                              }
+
+                              if (column.name === "Submission ID") {
+                                cellValue =
+                                  task?._embedded?.variable?.find(
+                                    (v) => v.name === "applicationId"
+                                  )?.value || "-";
+                              } else if (column.sortKey === "name") {
+                                cellValue = task?.name || "-";
+                              } else if (column.sortKey === "created") {
+                                cellValue = task?.created
+                                  ? HelperServices.getLocaldate(task.created)
+                                  : "N/A";
+                              } else if (column.sortKey === "assignee") {
+                                cellValue = task?.assignee || "Unassigned";
+                              } else {
+                                const matchVar =
+                                  task?._embedded?.variable?.find(
+                                    (v) => v.name === column.sortKey
+                                  );
+                                cellValue = matchVar?.value ?? "-";
+                              }
+
+                              return (
+                                <td
+                                  key={colIndex}
+                                  data-testid={`task-${index}-${column.sortKey}`}
+                                >
+                                  {cellValue}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={columns.length}
+                          style={{ textAlign: "center" }}
+                        >
+                          {t(
+                            "No tasks have been found. Try a different filter combination or contact your admin."
+                          )}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <table className="custom-tables" data-testid="table-footer-container">
+            <tfoot>
+              {tasksCount > 0 ? (
+                <TableFooter
+                  limit={limit}
+                  activePage={activePage}
+                  totalCount={tasksCount}
+                  handlePageChange={handlePageChange}
+                  onLimitChange={handleLimitChange}
+                  pageOptions={[
+                    { text: "5", value: 5 },
+                    { text: "25", value: 25 },
+                    { text: "50", value: 50 },
+                    { text: "100", value: 100 },
+                    { text: "All", value: tasksCount },
+                  ]}
+                  dataTestId="task-table-footer"
+                  ariaLabel="Table pagination controls"
+                  pageSizeDataTestId="task-page-size-selector"
+                  pageSizeAriaLabel="Select number of tasks per page"
+                  paginationDataTestId="task-pagination-controls"
+                  paginationAriaLabel="Navigate between task pages"
+                />
+              ) : null}
+            </tfoot>
+          </table>
+        </div>
+      );
+    } else {
+      return <div>{t("No filter selected.")}</div>;
+    }
+  };
   return (
-    <div className="container-fluid py-4" data-testid="resizable-table-container" aria-label="Resizable tasks table container">
-      <div className="d-md-flex justify-content-end align-items-center button-align mb-3">
-        <CustomButton
-          variant="secondary"
-          size="md"
-          label="Create Filter"
-          onClick={handleToggleFilterModal}
-          dataTestId="open-create-filter-modal"
-          ariaLabel="Toggle Create Filter Modal"
-        />
+    <div
+      className="container-fluid py-4"
+      data-testid="resizable-table-container"
+      aria-label="Resizable tasks table container"
+    >
+      <div className="row w-100 mb-3 g-2">
+        {/* Left Filters - Stack on small, inline on md+ */}
+        <div className="col-12 col-md d-flex flex-wrap align-items-center">
+          <div className="me-2 mb-2">
+            <ButtonDropdown
+              label={
+                <span
+                className="filter-large"
+                  title={
+                    selectedFilter?.name
+                      ? `${selectedFilter.name} (${tasksCount || 0})`
+                      : "Select Filter"
+                  }
+                >
+                  {selectedFilter?.name
+                    ? `${selectedFilter.name} (${tasksCount || 0})`
+                    : "Select Filter"}
+                </span>
+              }
+              variant="primary"
+              size="md"
+              dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
+              dropdownItems={filterDropdownItems}
+              extraActionIcon={<PencilIcon color="white" />}
+              extraActionOnClick={handleEditFilter}
+              dataTestId="business-filter-dropdown"
+              ariaLabel="Select business filter"
+            />
+          </div>
+
+          <span className="text-muted me-2">
+            <AddIcon size="8" />
+          </span>
+
+          <div className="me-2 mb-2">
+            <ButtonDropdown label="Form Fields" />
+          </div>
+
+          <span className="text-muted me-2">
+            <AddIcon size="8" />
+          </span>
+
+          <div className="me-2 mb-2">
+            <DateRangePicker
+              value={dateRange}
+              onChange={setDateRange}
+              placeholder="Filter Dates"
+            />
+          </div>
+
+          <span className="text-muted me-2">
+            <AddIcon size="8" />
+          </span>
+
+          <div className="mb-2">
+            <CustomButton
+              variant="secondary"
+              size="md"
+              label="Filter Created Date"
+              onClick={handleToggleFilterModal}
+              dataTestId="open-create-filter-modal"
+              ariaLabel="Toggle Create Filter Modal"
+            />
+          </div>
+        </div>
+
+        {/* Right actions - Stack below on small */}
+        <div className="col-12 col-md-auto d-flex justify-content-end button-align">
+          <FilterSortActions
+            showSortModal={showSortModal}
+            handleFilterIconClick={handleFilterIconClick}
+            handleRefresh={handleRefresh}
+            handleSortModalClose={handleSortModalClose}
+            handleSortApply={handleSortApply}
+            defaultSortOption={sortParams?.activeKey}
+            defaultSortOrder={sortParams?.[sortParams?.activeKey]?.sortOrder || "asc"}
+            optionSortBy={optionSortBy}
+            filterDataTestId="task-list-filter"
+            filterAriaLabel="Filter the task list"
+            refreshDataTestId="task-list-refresh"
+            refreshAriaLabel="Refresh the task list"
+          />
+        </div>
+
         <TaskFilterModal
           show={showTaskFilterModal}
           onClose={handleToggleFilterModal}
-        />
-        <DateRangePicker 
-          dataTestId="task-date-range-picker"
-          ariaLabel="Filter tasks by date range"
-        />
-        <FilterSortActions
-          showSortModal={showSortModal}
-          handleFilterIconClick={handleFilterIconClick}
-          handleRefresh={() => {}}
-          handleSortModalClose={handleSortModalClose}
-          handleSortApply={handleSortApply}
-          optionSortBy={optionSortBy}
-          defaultSortOption={taskSort.activeKey}
-          defaultSortOrder={taskSort[taskSort.activeKey]?.sortOrder || "asc"}
-          filterDataTestId="task-list-filter"
-          filterAriaLabel="Filter the task list"
-          refreshDataTestId="task-list-refresh"
-          refreshAriaLabel="Refresh the task list"
+          filter={filterToEdit}
+          canEdit={canEditFilter}
         />
       </div>
-      <div className="container-wrapper" data-testid="table-container-wrapper">
-        {/* Outer container with border and border-radius */}
-        <div className="table-outer-container" data-testid="table-outer-container">
-          {/* Scroll wrapper handles the scrolling */}
-          <div 
-            className="table-scroll-wrapper custom-scroll" 
-            ref={scrollWrapperRef}
-            data-testid="table-scroll-wrapper"
-            aria-label="Scrollable task table content"
-          >
-            {/* Table container */}
-            <div className="resizable-table-container" data-testid="inner-table-container">
-              <table 
-                ref={tableRef} 
-                className="resizable-table"
-                data-testid="task-resizable-table"
-                aria-label="Tasks data table with resizable columns"
-              >
-                <thead className="resizable-header">
-                  <tr>
-                    {columns.map((column, index) => (
-                      <th
-                        key={column.name}
-                        className="resizable-column"
-                        style={{ width: column.width }}
-                        data-testid={`column-header-${column.sortKey || 'actions'}`}
-                        aria-label={`${column.name} column${column.sortKey ? ', sortable' : ''}`}
-                      >
-                        {column.sortKey ? (
-                          <SortableHeader
-                            title={column.name}
-                            columnKey={column.sortKey}
-                            currentSort={taskSort}
-                            handleSort={() => handleSort(column.sortKey)}
-                            className="gap-2"
-                            dataTestId={`sort-header-${column.sortKey}`}
-                            ariaLabel={`Sort by ${column.name}`}
-                          />
-                        ) : (
-                          column.name
-                        )}
-
-                        {column.resizable && index < columns.length - 1 && (
-                          <div
-                            className={`column-resizer ${
-                              resizingRef.current === index ? "resizing" : ""
-                            }`}
-                            onMouseDown={(e) => handleMouseDown(index, e)}
-                            data-testid={`column-resizer-${column.sortKey}`}
-                            aria-label={`Resize ${column.name} column`}
-                          />
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedData
-                    .slice((activePage - 1) * sizePerPage, activePage * sizePerPage)
-                    .map((row, index) => (
-                      <tr 
-                        key={index}
-                        data-testid={`task-row-${index}`}
-                      >
-                        <td data-testid={`task-${index}-submission-id`}>{row.submissionId}</td>
-                        <td data-testid={`task-${index}-task-name`}>{row.task}</td>
-                        <td data-testid={`task-${index}-created-date`}>{row.createdDate}</td>
-                        <td data-testid={`task-${index}-assigned-to`}>{row.assignedTo}</td>
-                        <td data-testid={`task-${index}-submitter-name`}>{row.submitterName}</td>
-                        <td>
-                          <CustomButton
-                            className="btn-table"
-                            variant="secondary"
-                            label={"View"}
-                            onClick={() => {}}
-                            dataTestId={`view-task-${index}`}
-                            ariaLabel={`View details for task ${row.task}`}
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        {tasks.length ? (
-          <table className="custom-tables" data-testid="table-footer-container">
-            <tfoot>
-              <TableFooter
-                limit={sizePerPage}
-                activePage={activePage}
-                totalCount={tasks.length}
-                handlePageChange={handlePageChange}
-                onLimitChange={handleLimitChange}
-                pageOptions={[
-                  { text: "5", value: 5 },
-                  { text: "25", value: 25 },
-                  { text: "50", value: 50 },
-                  { text: "100", value: 100 },
-                  { text: "All", value: tasks.length },
-                ]}
-                dataTestId="task-table-footer"
-                ariaLabel="Table pagination controls"
-                pageSizeDataTestId="task-page-size-selector"
-                pageSizeAriaLabel="Select number of tasks per page"
-                paginationDataTestId="task-pagination-controls"
-                paginationAriaLabel="Navigate between task pages"
-              />
-            </tfoot>
-          </table>
-        ) : null}
-      </div>
+      {isTaskListLoading ? <Loading /> : renderTaskList()}
     </div>
   );
 }

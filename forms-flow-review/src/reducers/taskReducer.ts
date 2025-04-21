@@ -1,22 +1,35 @@
 import ACTION_CONSTANTS from "../actions/actionConstants";
 import { setShowApplications } from "./../helper/helper.js"
 import { TASK_FILTER_LIST_DEFAULT_PARAM } from "../constants/"
-import { getFirstResultIndex } from "../api/services/filterServices";
 
 
 const initialState = {
-  tasks: [],
+  isTaskListLoading: true,
+  tasksList: [],
   userList: [],
   userGroups: [],
   userDetail: {},
   filterList: [],
-  listReqParams: { sorting: [{ ...TASK_FILTER_LIST_DEFAULT_PARAM }] },
+  listReqParams: { 
+    activeKey: "created", 
+    created: { sortOrder: "asc" },
+    name: { sortOrder: "asc" },
+    assignee: { sortOrder: "asc" },},
   firstResult: 0,
+  limit: 5,
   selectedFilter: {},
+  taskId: null,
   defaultFilter: "",
-
-
-
+  filtersAndCount:[],
+  filterListSearchParams: {},
+  filterListSortParams: {
+    activeKey: "created", 
+    created: { sortOrder: "asc" },
+    name: { sortOrder: "asc" },
+    assignee: { sortOrder: "asc" },
+  },
+  appHistory: [],
+  tasksCount: 0,
 };
 
 interface TaskAction {
@@ -26,8 +39,8 @@ interface TaskAction {
 
 const TaskHandler = (state = initialState, action: TaskAction) => {
   switch (action.type) {
-    case ACTION_CONSTANTS.SET_TASKS:
-      return { ...state, tasks: action.payload };
+    case ACTION_CONSTANTS.BPM_LIST_TASKS:
+      return { ...state, tasksList: action.payload };
     case ACTION_CONSTANTS.BPM_USER_LIST:
       return { ...state, userList: action.payload };
     case ACTION_CONSTANTS.SET_USER_ROLES:
@@ -48,12 +61,31 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return {
         ...state,
         activePage: action.payload,
-        firstResult: getFirstResultIndex(action.payload),
       };
     case ACTION_CONSTANTS.BPM_SELECTED_FILTER:
       return { ...state, selectedFilter: action.payload, filterListSearchParams: {} };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
       return { ...state, defaultFilter: action.payload };
+    case ACTION_CONSTANTS.SELECTED_TASK_ID:
+      return { ...state, taskId: action.payload, taskDetail: null };
+    case ACTION_CONSTANTS.BPM_FILTER_LIST:
+      return { ...state, filterList: action.payload };
+    case ACTION_CONSTANTS.BPM_FILTERS_AND_COUNT:
+      return { ...state, filtersAndCount: action.payload };
+    case ACTION_CONSTANTS.BPM_SELECTED_FILTER:
+      return { ...state, selectedFilter: action.payload,filterListSearchParams:{} };
+    case ACTION_CONSTANTS.UPDATE_FILTER_LIST_SORT_PARAMS:
+        return { ...state, filterListSortParams: action.payload  };
+    case ACTION_CONSTANTS.LIST_APPLICATION_HISTORY:
+        return { ...state, appHistory: action.payload };
+    case ACTION_CONSTANTS.BPM_TASKS_COUNT:
+      return { ...state, tasksCount: action.payload};
+    case ACTION_CONSTANTS.IS_BPM_TASK_LOADING:
+      return { ...state, isTaskListLoading: action.payload };
+    case ACTION_CONSTANTS.TASK_LIST_LIMIT_CHANGE:
+      return { ...state, limit: action.payload };
+    case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
+      return { ...state, filterListSearchParams: action.payload };    
     default:
       return state;
   }
