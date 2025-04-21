@@ -21,17 +21,12 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
     const [filterNameError, setFilterNameError] = useState('');
     const [filterName, setFilterName] = useState('');
     const [shareAttrFilter, setShareAttrFilter] = useState(PRIVATE_ONLY_YOU);
-    // const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
     const firstResult = useSelector((state : any) => state.task.firstResult);
 
     const userRoles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
     const isCreateFilters = userRoles?.includes("create_filters");
     const filterNameLength = 50;
 
-    // useEffect(() => {
-    //     StorageService.getParsedData(StorageService.User.USER_DETAILS) && 
-    //     setUserDetail(StorageService.getParsedData(StorageService.User.USER_DETAILS));
-    // }, [shareAttrFilter]);
 
    
     const handleNameError = (e) => {
@@ -48,7 +43,7 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
         onClose();
     }
 
-    const userListResponse = useSelector((state: any) => state.task.userList) || { data: [] };
+    const userListResponse = useSelector((state: any) => state.task.userList) ?? { data: [] };
     const userList = userListResponse?.data ?? [];
     const searchParams = useSelector((state: any) => state.task.searchParams);
 
@@ -157,7 +152,7 @@ const getAssignee = () => {
     const assigneeItem = taskAttributeData.find(item => item.key === "assignee");
     if (assigneeItem) {
         const value = attributeData[assigneeItem.key];
-        return value || selectedFilter.criteria.assignee;
+        return value ?? selectedFilter.criteria.assignee;
 
     }
     return selectedFilter.criteria.assignee;
@@ -243,7 +238,11 @@ const buildUpdatedFilterParams = () => {
     
 
     const getIconColor = (disabled) => disabled ? whiteColor : baseColor;
-    const isInvalidFilter = !(filterName?.trim()) || filterNameError || !isCreateFilters;
+    const isFilterNameEmpty = !(filterName?.trim?.());
+    const hasFilterNameError = filterNameError ?? false;
+    const isCreateDisabled = !isCreateFilters;
+    
+    const isInvalidFilter = isFilterNameEmpty || hasFilterNameError || isCreateDisabled;
     const isButtonDisabled = isInvalidFilter;
     const iconColor = getIconColor(isInvalidFilter);
 

@@ -29,7 +29,6 @@ const TaskList = () => {
   const filterListItems = useSelector((state: any) => state.task.filterList);
   const defaultFilter = useSelector((state: any) => state.task.defaultFilter);
   const [taskAttributeData, setTaskAttributeData] = useState([]);
-  const [shareFilter, setShareFilter] = useState("PRIVATE_ONLY_YOU");
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [filterParams, setFilterParams] = useState({});
 
@@ -60,9 +59,7 @@ useEffect(() => {
     })
   );
 }, [dispatch]);
-useEffect(() => {
-  setFilterParams({});
-}, [selectedFilter]);
+
 
 useEffect(() => {
   console.log("Filter List Updated:", filterListItems);
@@ -102,9 +99,7 @@ useEffect(() => {
     };
   }, [SocketIOCallback]);
 
-  useEffect(() => {
-    setFilterParams({});
-  }, [shareFilter]);
+ 
 
     const changeFilterSelection = (filter) => {
       const selectedFilter = filterListItems.find(
@@ -172,7 +167,7 @@ useEffect(() => {
               >
                 <div className="d-flex align-items-center">
                   <span className="w-100">
-                    {filter?.name} ({filter.count || 0})
+                    {filter?.name} ({filter.count ?? 0})
                   </span>
                 </div>
               </Dropdown.Item>
