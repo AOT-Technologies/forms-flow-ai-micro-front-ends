@@ -231,3 +231,174 @@ $white-color: var(--ff-white);
   transform: rotate(180deg);
   transition: transform 0.3s ease;
 }
+
+//resizable table
+
+/* Container wrapper with padding */
+.container-wrapper {
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--ff-body-bg);
+}
+
+/* Table outer container to position scrollbar correctly */
+.table-outer-container {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden; /* Hide overflow but keep border radius intact */
+  border: 1px solid var(--ff-gray-medium-dark);
+}
+
+/* Scroll wrapper that handles scrolling */
+.table-scroll-wrapper {
+  height: calc(100vh - 14rem) !important; /* Adjust height as needed */
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.resizable-scroll {
+  &::-webkit-scrollbar {
+    width: 8px; // unified value from second block
+    height: 8px;
+    margin-top: 2px;
+    background-color: transparent;
+    display: block;
+    opacity: 0;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(---ff-gray-medium-dark);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ff-primary-light);
+    border-radius: var(--radius-md); // using variable from first block
+    background-clip: padding-box;
+    border: var(--spacer-025) solid transparent;
+    opacity: 1;
+
+    &:hover {
+      background: var(--ff-primary-light);
+      box-shadow: inset 0 0 0 0.0625rem $primary;
+    }
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      opacity: 1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $primary-light;
+    }
+  }
+}
+
+
+/* Remove border from resizable table since it's now on the outer container */
+.resizable-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: none; /* Remove border from table itself */
+
+  /* Fixed header styling */
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background-color: var(--ff-body-bg);
+
+    th {
+      border-bottom: 1px solid var(--ff-gray-medium);
+      padding: var(--spacer-050) var(--spacer-075);
+      font-weight: 600;
+      user-select: none;
+      background-color: var(--ff-body-bg);
+    }
+
+    tr th:last-child {
+      position: sticky;
+      right: 0;
+      background-color: var(--ff-body-bg);
+      z-index: 2;
+      border-left: 1px solid var(--ff-gray-medium-dark);
+      text-align: center;
+      vertical-align: middle;
+    }
+  }
+
+  /* Table body styling */
+  tbody {
+    td {
+      padding: var(--spacer-050) var(--spacer-075);
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid var(--ff-gray-medium);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    tr {
+      &:hover td {
+        border-top: 1px solid var(--ff-primary);
+        border-bottom: 1px solid var(--ff-primary);
+      }
+
+      td:last-child {
+        position: sticky;
+        right: 0;
+        background-color: var(--ff-body-bg);
+        z-index: 2;
+        border-left: 1px solid var(--ff-gray-medium-dark);
+        text-align: center;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+/* Column resizer styling */
+.resizable-column {
+  position: relative;
+  background-color: var(--ff-body-bg);
+}
+
+.column-resizer {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  width: 6px;
+  height: 100%;
+  z-index: 2;
+  cursor: col-resize;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    background-color: var(--ff-primary);
+    height: 20px;
+    transition: background-color 0.2s;
+  }
+
+  &::before {
+    left: 1px;
+  }
+
+  &::after {
+    right: 1px;
+  }
+}
+.filter-large {
+  display: inline-block;
+  max-width: 100px; /* adjust width as needed */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
