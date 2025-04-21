@@ -84,6 +84,13 @@ class HelperServices {
       exactRouteMatches.some((route) => location == route) || 
       partOfRouteMatches.some((route) => location.includes(route))
     );
+  } 
+
+  public static getResetSortOrders(options){
+    return options.reduce((acc, option) => {
+      acc[option.value] = {sortOrder:"asc"} // Reset all to ascending
+      return acc;
+    }, {});
   }
 }
 
