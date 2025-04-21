@@ -7,6 +7,7 @@ import StorageService from "../storage/storageService";
 import HelperServices from "../helpers/helperServices";
 import {
   APPLICATION_NAME,
+  APP_BASE_ROUTE
 } from "../constants/constants";
 
   class KeycloakService {
@@ -36,7 +37,7 @@ import {
      */
     private keycloakInitConfig: KeycloakInitOptions = {
       onLoad: "check-sso",
-      silentCheckSsoRedirectUri: `${window.location.origin}/silent-check-sso.html`,
+      silentCheckSsoRedirectUri: `${window.location.origin}${APP_BASE_ROUTE}/silent-check-sso.html`,
       pkceMethod: "S256",
       checkLoginIframe: false,
       scope: "openid offline_access"

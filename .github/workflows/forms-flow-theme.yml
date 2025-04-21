@@ -6,7 +6,8 @@ on:
       - main
       - develop
       - release/*
-      - rsbc/7.0.0      
+      - rsbc/7.0.0
+      - rsbc/7.0.0-subpath     
     paths:
       - "forms-flow-theme/**"
       - "VERSION"

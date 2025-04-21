@@ -9,7 +9,7 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/footer";
-import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
+import { BASE_ROUTE, MULTITENANCY_ENABLED, APP_BASE_ROUTE } from "./constants";
 import AdminDashboard from "./components/dashboard";
 import RoleManagement from "./components/roles";
 import UserManagement from "./components/users";
@@ -27,7 +27,7 @@ const Admin = React.memo(({ props }: any) => {
   const [dashboardCount, setDashboardCount] = React.useState();
   const [roleCount, setRoleCount] = React.useState();
   const [userCount, setUserCount] = React.useState();
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : `${APP_BASE_ROUTE}/`;
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
@@ -76,11 +76,11 @@ const Admin = React.memo(({ props }: any) => {
   
   React.useEffect(()=>{
     const restricted = 
-    (location === '/admin/dashboard' && !isDashboardManager) ||
-    (location === '/admin/roles' && !isRoleManager) ||
-    (location === '/admin/users' && !isUserManager) ||
+    (location === `${APP_BASE_ROUTE}/admin/dashboard` && !isDashboardManager) ||
+    (location === `${APP_BASE_ROUTE}/admin/roles` && !isRoleManager) ||
+    (location === `${APP_BASE_ROUTE}/admin/users` && !isUserManager) ||
     (!(isDashboardManager ||isRoleManager ||isUserManager));
-    setIsAccessRestricted(restricted);
+     setIsAccessRestricted(restricted);
   },[location,userRoles]);
   return (
     <>

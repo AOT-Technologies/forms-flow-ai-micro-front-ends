@@ -44,8 +44,9 @@ export const MULTITENANCY_ENABLED =
     MULTITENANCY_ENABLED_VARIABLE === true
     ? true
     : false;
-
-export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
+const baseRoute = window._env_ && window._env_.REACT_APP_BASE_ROUTE;
+export const APP_BASE_ROUTE = baseRoute ? "/" + baseRoute : "";
+export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : `${APP_BASE_ROUTE}/`;
 
 export const Keycloak_Tenant_Client = "forms-flow-web";
 
