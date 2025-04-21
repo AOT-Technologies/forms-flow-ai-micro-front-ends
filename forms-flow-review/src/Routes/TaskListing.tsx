@@ -9,11 +9,6 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
-  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false); 
-
-  const handleToggleFilterModal = () => {
-    setShowTaskFilterModal(prevState => !prevState);
-};
 
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {

@@ -80,7 +80,7 @@ export function ResizableTable(): JSX.Element {
     tasksCount,
     isTaskListLoading,
   } = useSelector((state: any) => state.task || {});
-  
+
   const selectedFilterId = selectedFilter?.id || null;
   const bpmFiltersList = filterList;
   const taskvariables = selectedFilter?.variables || [];
@@ -167,7 +167,7 @@ export function ResizableTable(): JSX.Element {
           sortKey: variable.name,
           resizable: true,
         }));
-  
+
       if (dynamicColumns.length > 0) {
         dynamicColumns.push({
           name: "Actions",
@@ -176,11 +176,11 @@ export function ResizableTable(): JSX.Element {
           resizable: false,
         });
       }
-  
+
       setColumns(dynamicColumns);
     }
   }, [taskvariables]);
-  
+
 
 
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
@@ -279,7 +279,7 @@ export function ResizableTable(): JSX.Element {
 
   useEffect(() => {
     const activeKey = sortParams?.activeKey;
-  
+
     const transformedSorting = activeKey && sortParams?.[activeKey]?.sortOrder
       ? [
           {
@@ -288,7 +288,7 @@ export function ResizableTable(): JSX.Element {
           },
         ]
       : [];
-   
+
       const reqParamData = {
         ...searchParams,
         sorting: transformedSorting,
@@ -300,7 +300,7 @@ export function ResizableTable(): JSX.Element {
     let selectedParams = bpmFiltersList.find(
       (item) => item.id === selectedFilterId
     );
-  
+
     if (selectedParams) {
       selectedParams = {
         ...selectedParams,
@@ -310,14 +310,14 @@ export function ResizableTable(): JSX.Element {
         },
       };
     }
-  
+
     if (!isEqual(selectedParams, reqData) && selectedParams) {
       dispatch(setFilterListParams(cloneDeep(selectedParams)));
     }
-  
-    
+
+
   }, [selectedFilterId, searchParams, sortParams, dispatch, reqData,dateRange]);
-  
+
 
 
   useEffect(() => {
