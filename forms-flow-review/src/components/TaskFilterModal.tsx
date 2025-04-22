@@ -71,7 +71,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
     useEffect(() => {
         const properties = getProperties();
         if (properties.formId) {
-            setSelectedForm({ formId: properties.formId || "", formName: "" });            
+            setSelectedForm({ formId: properties.formId ?? "", formName: "" });            
             handleFetchTaskVariables(properties?.formId);
         }
     }, []);
