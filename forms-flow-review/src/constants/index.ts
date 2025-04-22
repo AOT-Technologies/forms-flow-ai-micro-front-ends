@@ -29,6 +29,6 @@ export const WEBSOCKET_ENCRYPT_KEY = `${
 }`;
 
 
-export const ACCESSIBLE_FOR_ALL_GROUPS = 'Accessible for all users';
-export const PRIVATE_ONLY_YOU = 'Private (Only You)';
-export const SPECIFIC_USER_OR_GROUP = 'Specific User/ Group';
+export const ACCESSIBLE_FOR_ALL_GROUPS = 'Everybody';
+export const PRIVATE_ONLY_YOU = 'Nobody(Keep it private)';
+export const SPECIFIC_USER_OR_GROUP = 'Specific role';
