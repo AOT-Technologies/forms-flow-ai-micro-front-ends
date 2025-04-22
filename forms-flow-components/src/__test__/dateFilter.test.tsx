@@ -2,14 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { DateRangePicker } from '../components/CustomComponents/DateFilter';
 import '@testing-library/jest-dom';
-// import { StyleServices } from '../../../services/StyleServices';
-
-// Mock StyleServices
-// jest.mock('../../../services/StyleServices', () => ({
-//   StyleServices: {
-//     getCSSVariable: jest.fn().mockReturnValue('#000000')
-//   }
-// }));
 
 // Mock the translation function
 jest.mock('react-i18next', () => ({
@@ -73,19 +65,6 @@ describe('DateRangePicker Component', () => {
     jest.clearAllMocks();
   });
 
-  // Helper function to get a day from the current month
-  const getCurrentMonthDay = (dayNumber: number) => {
-    // Get all calendar days
-    const calendarDays = screen.getAllByRole('button', { 
-      name: new RegExp(`.*${dayNumber}.*`) 
-    }).filter(day => 
-      day.classList.contains('calendar-day') && 
-      day.classList.contains('current-month')
-    );
-    
-    // Find the one with the correct day number
-    return calendarDays.find(day => day.textContent === String(dayNumber));
-  };
 
   it('renders with default placeholder when no dates are selected', () => {
     render(<DateRangePicker onChange={mockOnChange} />);
