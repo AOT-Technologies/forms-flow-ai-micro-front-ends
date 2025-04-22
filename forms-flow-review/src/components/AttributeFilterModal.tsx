@@ -72,8 +72,6 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
     };
 
     const handleSelectChange = (name, selectedValue) => {
-        console.log(selectedFilter,"SELECTED FILTER");
-
         setAttributeData(prevData => {
             const updatedData = { ...prevData, [name]: selectedValue };
             setFilterParams({ ...filterParams, [name]: selectedValue });
@@ -191,9 +189,7 @@ const buildUpdatedFilterParams = () => {
     const updatedParams = buildUpdatedFilterParams();
   
     dispatch(setBPMFilterSearchParams(updatedParams));
-    setFilterParams(updatedParams);
-    console.log(updatedParams,"UPDATED PARAMS");
-  
+    setFilterParams(updatedParams);  
     dispatch(
       fetchServiceTaskList(getFilterData(updatedParams), null, firstResult, MAX_RESULTS)
     );
@@ -249,8 +245,6 @@ const buildUpdatedFilterParams = () => {
     const parametersTab = () => (
         <>
             {taskAttributeData.map((item) => {
-                        console.log(taskAttributeData,"TASK ATTRIBUTE DATA");
-
                 if (item.isChecked && item.type !== 'datetime') {
                     if (item.key === "assignee") {
                         return (

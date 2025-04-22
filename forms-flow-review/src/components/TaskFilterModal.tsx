@@ -225,12 +225,9 @@ export const TaskFilterModal = ({ show, onClose }) => {
     };
 
     const handleFetchTaskVariables = (formId) => {
-        console.log("Fetching variables for formId:", formId);
     
         fetchTaskVariables(formId)
-            .then(res => {
-                console.log("Variables fetched:", res.data);
-    
+            .then(res => {    
                 const taskVariables = res.data?.taskVariables || [];
                 const staticVariables = [
                     { key: 'applicationId', label: 'Submission ID', type: 'textfield', name: 'Submission ID', isChecked: true, sortOrder: 1, isTaskVariable: false },

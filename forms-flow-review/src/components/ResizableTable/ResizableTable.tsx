@@ -10,6 +10,10 @@ import {
 import { useTranslation } from "react-i18next";
 import { updateTaskSort } from "../../actions/tableActions";
 import TaskFilterModal from "../TaskFilterModal";
+import AttributeFilterModal from "../AttributeFilterModal";
+import { Dropdown } from "react-bootstrap";
+import { updateDefaultFilter } from "../../api/services/filterServices";
+import { setBPMTaskListActivePage, setDefaultFilter, setSelectedTaskID } from "../../actions/taskActions";
 
 interface TableData {
   submissionId: string;
@@ -31,6 +35,11 @@ export function ResizableTable(): JSX.Element {
   const { t } = useTranslation();
   const { tasks, sort: taskSort } = useSelector((state: any) => state.taskList);
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
+  const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
+  const { filtersAndCount: filterList, filterList: filterListItems, defaultFilter } = useSelector(
+    (state: any) => state.task
+  );
+  
   
   const handleToggleFilterModal = () => {
     setShowTaskFilterModal(prevState => !prevState);
@@ -68,6 +77,12 @@ export function ResizableTable(): JSX.Element {
   const [activePage, setActivePage] = useState(1);
   const [sizePerPage, setSizePerPage] = useState(5);
   const [showSortModal, setShowSortModal] = useState(false);
+  const [taskAttributeData, setTaskAttributeData] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState(null);
+  const [filterParams, setFilterParams] = useState({});
+
+
+
 
   const optionSortBy = [
     { value: "submissionId", label: t("Submission ID") },
@@ -195,6 +210,24 @@ export function ResizableTable(): JSX.Element {
     setActivePage(page);
   };
 
+  const handleToggleAttrFilterModal = () => {
+    setShowAttrFilterModal(prevState => !prevState);
+  };
+
+  const changeFilterSelection = (filter) => {
+    const selectedFilter = filterListItems.find(
+      (item) => item.id === filter.id
+    );
+    const taskAttributes = selectedFilter.variables.filter(variable => variable.isChecked === true);
+    setTaskAttributeData(taskAttributes);
+    setSelectedFilter(selectedFilter);
+    const isDefaultFilter = selectedFilter.id === defaultFilter ? null : selectedFilter.id;
+    updateDefaultFilter(isDefaultFilter)
+      .then(updateRes => dispatch(setDefaultFilter(updateRes.data.defaultFilter)))
+      .catch(error => console.error("Error updating default filter:", error));
+    dispatch(setSelectedTaskID(null));
+    dispatch(setBPMTaskListActivePage(1));
+  };
   return (
     <div className="container-fluid py-4" data-testid="resizable-table-container" aria-label="Resizable tasks table container">
       <div className="d-md-flex justify-content-end align-items-center button-align mb-3">
@@ -210,7 +243,50 @@ export function ResizableTable(): JSX.Element {
           show={showTaskFilterModal}
           onClose={handleToggleFilterModal}
         />
-        <DateRangePicker 
+        <Dropdown>
+          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+            Select Filter
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu className="custom-dropdown-menu">
+            {filterList.length ? (
+              filterList.map((filter) => (
+                <Dropdown.Item
+                  key={filter.name}
+                  onClick={() => changeFilterSelection(filter)}
+                >
+                  <div className="d-flex align-items-center">
+                    <span className="w-100">
+                      {filter?.name} ({filter.count ?? 0})
+                    </span>
+                  </div>
+                </Dropdown.Item>
+              ))
+            ) : (
+              <Dropdown.Item disabled>No Filters Found</Dropdown.Item>
+            )}
+          </Dropdown.Menu>
+        </Dropdown>
+        <CustomButton
+          variant="secondary"
+          size="md"
+          label="Attribute Filter"
+          onClick={handleToggleAttrFilterModal}
+          dataTestId="open-create-filter-modal"
+          ariaLabel="Open Create Filter Modal"
+        />
+
+        <AttributeFilterModal
+          show={showAttrFilterModal}
+          onClose={handleToggleAttrFilterModal}
+          taskAttributeData={taskAttributeData}
+          filterParams={filterParams}
+          setFilterParams={setFilterParams}
+          selectedFilter={selectedFilter}
+        />
+
+
+        <DateRangePicker
           dataTestId="task-date-range-picker"
           ariaLabel="Filter tasks by date range"
         />
