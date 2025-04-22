@@ -4,6 +4,9 @@ export const DATE_FORMAT =
 export const TIME_FORMAT =
 (window as any)._env_ && (window as any)._env_.REACT_APP_TIME_FORMAT || "HH:mm:ss";
 
+const baseRoute = (window as any)._env_ && (window as any)._env_.REACT_APP_BASE_ROUTE;
+export const APP_BASE_ROUTE = baseRoute ? "/" + baseRoute : "";
+
 const MULTITENANCY_ENABLED_VARIABLE = (window as any)._env_?.REACT_APP_MULTI_TENANCY_ENABLED || false;
 
 export const MULTITENANCY_ENABLED =

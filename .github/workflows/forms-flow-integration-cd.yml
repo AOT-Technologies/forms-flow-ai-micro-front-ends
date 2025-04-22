@@ -7,6 +7,7 @@ on:
       - develop
       - release/*
       - rsbc/7.0.0
+      - rsbc/7.0.0-subpath
     paths:
       - "forms-flow-integration/**"
       - "VERSION"
