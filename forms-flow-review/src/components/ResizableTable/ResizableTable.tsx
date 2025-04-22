@@ -221,11 +221,11 @@ export function ResizableTable(): JSX.Element {
     const taskAttributes = selectedFilter.variables.filter(variable => variable.isChecked === true);
     setTaskAttributeData(taskAttributes);
     setSelectedFilter(selectedFilter);
-    const isDefaultFilter = selectedFilter.id === defaultFilter ? null : selectedFilter.id;
-    updateDefaultFilter(isDefaultFilter)
+    const defaultFilterId = selectedFilter.id === defaultFilter ? null : selectedFilter.id;
+    updateDefaultFilter(defaultFilterId)
       .then(updateRes => dispatch(setDefaultFilter(updateRes.data.defaultFilter)))
       .catch(error => console.error("Error updating default filter:", error));
-    dispatch(setSelectedTaskID(null));
+    dispatch(setSelectedTaskID(defaultFilterId));
     dispatch(setBPMTaskListActivePage(1));
   };
   return (

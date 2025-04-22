@@ -1218,7 +1218,7 @@ $black-color: var(--ff-black);
     background-color: $gray-light !important;
   }
 }
-.custom-dropdown-menu {
+.custom-dropdown-menu { // will remove after integrating the actual dropdown
   max-height: 200px;
   overflow-y: auto;
 }

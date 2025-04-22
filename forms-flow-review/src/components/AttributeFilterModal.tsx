@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {  MAX_RESULTS, PRIVATE_ONLY_YOU } from '../constants/index';
-import { StorageService } from '@formsflow/service';
+import { StorageService, StyleServices } from '@formsflow/service';
 import { Filter, FilterCriteria } from '../types/taskFilter';
 import { setBPMFilterSearchParams, setBPMTaskLoader } from '../actions/taskActions';
 import { fetchServiceTaskList, saveFilters } from '../api/services/filterServices';
@@ -15,15 +15,13 @@ import { fetchServiceTaskList, saveFilters } from '../api/services/filterService
 export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttributeData, filterParams, setFilterParams }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const computedStyle = getComputedStyle(document.documentElement);
-    const baseColor = computedStyle.getPropertyValue("--ff-primary");
-    const whiteColor = computedStyle.getPropertyValue("--ff-white");
+    const baseColor = StyleServices.getCSSVariable('--ff-primary');
+    const whiteColor = StyleServices.getCSSVariable('--ff-white');
     const [filterNameError, setFilterNameError] = useState('');
     const [filterName, setFilterName] = useState('');
     const [shareAttrFilter, setShareAttrFilter] = useState(PRIVATE_ONLY_YOU);
     const firstResult = useSelector((state : any) => state.task.firstResult);
-
-    const userRoles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
+    const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE)
     const isCreateFilters = userRoles?.includes("create_filters");
     const filterNameLength = 50;
 
@@ -32,10 +30,9 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
     const handleNameError = (e) => {
         const value = e.target.value;
         setFilterName(value);
+        if(value.length >= filterNameLength )
         setFilterNameError(
-            value.length >= filterNameLength 
-              ? t("Filter name should be less than {{filterNameLength}} characters", { filterNameLength: filterNameLength }) 
-              : ""
+            t("Filter name should be less than {{filterNameLength}} characters", { filterNameLength: filterNameLength })              
           );
     };
 
@@ -64,11 +61,7 @@ export const AttributeFilterModal = ({ show, onClose, selectedFilter, taskAttrib
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setAttributeData(prevData => {
-            const updatedData = { ...prevData, [name]: value };
-            setFilterParams({ ...filterParams, [name]: value });
-            return updatedData;
-        });
+        handleSelectChange(name, value)
     };
 
     const handleSelectChange = (name, selectedValue) => {
@@ -239,7 +232,6 @@ const buildUpdatedFilterParams = () => {
     const isCreateDisabled = !isCreateFilters;
     
     const isInvalidFilter = isFilterNameEmpty ?? hasFilterNameError ?? isCreateDisabled;
-    const isButtonDisabled = isInvalidFilter;
     const iconColor = getIconColor(isInvalidFilter);
 
     const parametersTab = () => (
@@ -255,6 +247,7 @@ const buildUpdatedFilterParams = () => {
                                     isAllowInput={false}
                                     ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
                                     ariaLabelforInput={t(`input for attribute ${item.label}`)}
+                                    dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
                                     selectedOption={attributeData[item.key]}
                                     setNewInput={(selectedOption) => handleSelectChange(item.key, selectedOption)}
                                     name={item.key}
@@ -268,7 +261,8 @@ const buildUpdatedFilterParams = () => {
                                     name={item.key}
                                     type={item.type}
                                     label={t(item.label)}
-                                    aria-label={t(item.label)}
+                                    ariaLabel={t(item.label)}
+                                    dataTestId={`${item.key}-attribute-input`}
                                     value={attributeData[item.key]}
                                     onChange={handleInputChange}
                                 />
@@ -287,18 +281,15 @@ const buildUpdatedFilterParams = () => {
                 name="filterName"
                 type="text"
                 label={t("Filter Name")}
-                aria-label={t("Filter Name")}
-                maxLength={200}
+                ariaLabel={t("Filter Name")}
                 value={filterName}
                 onChange={attrFilterName}
                 isInvalid={!!filterNameError}
                 onBlur={handleNameError}
+                dataTestId="attribute-filter-name"
+                feedback={filterNameError}
             />
-            {filterNameError && (
-                <div className="validation-text">
-                    {filterNameError}
-                </div>
-            )}
+          
             <div className='pt-4 pb-4'>
                 <InputDropdown
                     Options={filterShareOptions}
@@ -307,6 +298,8 @@ const buildUpdatedFilterParams = () => {
                     ariaLabelforDropdown={t("attribute filter sharing dropdown")}
                     selectedOption={shareAttrFilter}
                     setNewInput={setShareAttrFilter}
+                    dataTestIdforInput="share-attribute-filter-input"
+                    dataTestIdforDropdown="share-attribute-filter-options"
                 />
             </div>
             <div>
@@ -317,7 +310,7 @@ const buildUpdatedFilterParams = () => {
                     icon={<SaveIcon color={iconColor} />}
                     dataTestId="save-task-filter"
                     ariaLabel={t("Save Task Filter")}
-                    disabled={isButtonDisabled}
+                    disabled={isInvalidFilter}
                     onClick={saveFilterAttributes}
                 />
             </div>
@@ -375,7 +368,7 @@ const buildUpdatedFilterParams = () => {
                     variant="primary"
                     size="md"
                     label={t("Filter Results")}
-                    dataTestId="filter-results"
+                    dataTestId="attribute-filter-results"
                     ariaLabel={t("Filter results")}
                     onClick={searchFilterAttributes}
                     disabled={!isAtLeastOneAttributeFilled()}
@@ -385,7 +378,7 @@ const buildUpdatedFilterParams = () => {
                     size="md"
                     label={t("Cancel")}
                     onClick={cancelFilter}
-                    dataTestId="cancel-filter"
+                    dataTestId="cancel-attribute-filter"
                     ariaLabel={t("Cancel filter")}
                 />
             </Modal.Footer>

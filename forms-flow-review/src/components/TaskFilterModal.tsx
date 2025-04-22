@@ -42,11 +42,9 @@ export const TaskFilterModal = ({ show, onClose }) => {
         defaultFilter,
       } = useSelector((state: any) => state.task);
       
-      const userListData = userList.data ?? [];
-      const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
-    const userRoles = JSON.parse(
-        StorageService.get(StorageService.User.USER_ROLE)
-    );
+    const userListData = userList.data ?? [];
+    const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+    const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE)
     const isCreateFilters = userRoles?.includes("create_filters");
 
 
@@ -384,7 +382,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
             name="title"
             type="text"
             label={t("Form")}
-            aria-label={t("Name of the form")}
+            ariaLabel={t("Name of the form")}
             dataTestId="form-name-input"
             icon={
               <PencilIcon data-testid="close-input" aria-label="Close input" />
@@ -408,7 +406,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 className="note"
                 heading="Note"
                 content={t("Toggle the visibility of columns and re-order them as per your requirement")}
-                data-testid="columns-note"
+                dataTestId="task-filter-columns-note"
             />
             {variableArray.length !== 0 && (
                 <DragandDropSort
@@ -457,19 +455,15 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 name="filter-name"
                 type="text"
                 label={t("Filter Name")}
-                aria-label={t("Filter Name")}
-                dataTestId="filter-name-input"
-                maxLength={200}
+                ariaLabel={t("Task Filter Name")}
+                dataTestId="task-filter-name"
                 value={filterName}
                 onChange={handleFilterName}
                 isInvalid={!!filterNameError}
                 onBlur={handleNameError}
+                feedback={filterNameError}
             />
-            {filterNameError && (
-                <div className="validation-text">
-                    {filterNameError}
-                </div>
-            )}
+
             <div className='pt-4 pb-4'>
                 <InputDropdown
                     Options={filterShareOptions}
@@ -501,7 +495,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                 className="note"
                 heading="Note"
                 content={t("Column widths are saved within a filter. If you wish to adjust them. Click Filter Results, adjust the widths of the columns in the table until you are happy and then save the filter afterwards.")}
-                data-testid="filter-note"
+                dataTestId="task-filter-save-note"
             />
             <div className='pt-4'>
                 <CustomButton
@@ -550,9 +544,8 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     <CustomTabs
                         defaultActiveKey="parametersTab"
                         tabs={tabs}
-                        dataTestId="create-filter-tabs"
                         ariaLabel={t("Filter Tabs")}
-                        data-testid="create-filter-tabs"
+                        dataTestId="create-filter-tabs"
                     />
                 </div>
             </Modal.Body>
@@ -561,7 +554,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     variant="primary"
                     size="md"
                     label={t("Filter Results")}
-                    dataTestId="filter-results"
+                    dataTestId="task-filter-results"
                     ariaLabel={t("Filter results")}
                     onClick={filterResults}
                 />
@@ -570,7 +563,7 @@ export const TaskFilterModal = ({ show, onClose }) => {
                     size="md"
                     label={t("Cancel")}
                     onClick={cancelFilter}
-                    dataTestId="cancel-filter"
+                    dataTestId="cancel-task-filter"
                     ariaLabel={t("Cancel filter")}
                 />
             </Modal.Footer>
