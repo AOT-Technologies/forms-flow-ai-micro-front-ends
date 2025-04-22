@@ -22,22 +22,22 @@ interface DateRangePickerProps {
    * @param dateRange Object containing startDate and endDate
    */
   onChange: (dateRange: DateRange) => void;
-  
+
   /**
    * Initial date range to display
    */
   value?: DateRange;
-  
+
   /**
    * Format for displaying dates (default: MM/DD/YYYY)
    */
   dateFormat?: string;
-  
+
   /**
    * Additional CSS class names
    */
   className?: string;
-  
+
   /**
    * Placeholder text when no dates are selected
    */
@@ -81,15 +81,11 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   // Parse initial date range with fallbacks for null values
   const parsedInitialRange = (): DateRange => {
     return {
-      startDate: value?.startDate
-        ? parseDate(value.startDate)
-        : null,
-      endDate: value?.endDate
-        ? parseDate(value.endDate)
-        : null,
+      startDate: value?.startDate ? parseDate(value.startDate) : null,
+      endDate: value?.endDate ? parseDate(value.endDate) : null,
     };
   };
-  
+
   const [dateRange, setDateRange] = useState<DateRange>(parsedInitialRange());
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentMonth, setCurrentMonth] = useState<Date>(() => {
@@ -107,14 +103,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   useEffect(() => {
     if (value) {
       const newDateRange = {
-        startDate: value?.startDate
-          ? parseDate(value.startDate)
-          : null,
-        endDate: value?.endDate
-          ? parseDate(value.endDate)
-          : null,
+        startDate: value?.startDate ? parseDate(value.startDate) : null,
+        endDate: value?.endDate ? parseDate(value.endDate) : null,
       };
-      
+
       setDateRange(newDateRange);
 
       // Safely update current month if startDate exists
@@ -135,22 +127,23 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   const formatDate = (date: Date | null): string => {
     if (!date) {
       // Return a properly formatted placeholder using the dateFormat pattern
-      return dateFormat.replace(/M+/g, 'MM')
-                       .replace(/D+/g, 'DD')
-                       .replace(/Y+/g, 'YYYY');
+      return dateFormat
+        .replace(/M+/g, "MM")
+        .replace(/D+/g, "DD")
+        .replace(/Y+/g, "YYYY");
     }
-  
+
     // Default format (MM/DD/YYYY)
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const year = date.getFullYear();
-    
+
     // Apply the specified format
     let formattedDate = dateFormat;
     formattedDate = formattedDate.replace(/M+/g, month);
     formattedDate = formattedDate.replace(/D+/g, day);
     formattedDate = formattedDate.replace(/Y+/g, year.toString());
-    
+
     return formattedDate;
   };
 
@@ -158,9 +151,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     if (!date) {
       // Return a properly formatted placeholder using the dateFormat pattern
       // This ensures we return "MM/DD/YYYY" instead of repeating characters
-      return dateFormat.replace(/M+/g, 'MM')
-                      .replace(/D+/g, 'DD')
-                      .replace(/Y+/g, 'YYYY');
+      return dateFormat
+        .replace(/M+/g, "MM")
+        .replace(/D+/g, "DD")
+        .replace(/Y+/g, "YYYY");
     }
     const parsedDate = date instanceof Date ? date : parseDate(date);
     return formatDate(parsedDate);
@@ -170,10 +164,14 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     if (!dateRange.startDate && !dateRange.endDate) {
       return placeholder; // This case is already handled correctly
     }
-    
+
     // Modified to show date format instead of dash for missing dates
-    const start = dateRange?.startDate ? getFormattedDate(dateRange.startDate) : getFormattedDate(null);
-    const end = dateRange?.endDate ? getFormattedDate(dateRange.endDate) : getFormattedDate(null);
+    const start = dateRange?.startDate
+      ? getFormattedDate(dateRange.startDate)
+      : getFormattedDate(null);
+    const end = dateRange?.endDate
+      ? getFormattedDate(dateRange.endDate)
+      : getFormattedDate(null);
     return `${start} - ${end}`;
   };
 
@@ -320,11 +318,10 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         startDate: selectedDate,
         endDate: null,
       };
-      
+
       setDateRange(newRange);
       // Always notify parent of changes, even for partial selections
       onChange(newRange);
-      
     } else {
       // Complete the selection
       let newStartDate: Date;
@@ -347,7 +344,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         startDate: newStartDate,
         endDate: newEndDate,
       };
-      
+
       setDateRange(newRange);
       // Notify parent component of the complete selection
       onChange(newRange);
@@ -416,15 +413,15 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       event.stopPropagation();
     }
     setIsOpen(false);
-    
+
     // Reset both dates to null when closing with the X button
     const emptyDateRange = {
       startDate: null,
-      endDate: null
+      endDate: null,
     };
-    
+
     setDateRange(emptyDateRange);
-    
+
     // Notify parent component of the reset
     onChange(emptyDateRange);
   };
@@ -458,16 +455,16 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         !calendarRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
-        
+
         // If selection is incomplete, complete it with current dates
         if (dateRange.startDate && !dateRange.endDate) {
           const completedRange = {
             startDate: dateRange.startDate,
-            endDate: dateRange.startDate // Set end date same as start date
+            endDate: dateRange.startDate, // Set end date same as start date
           };
-          
+
           setDateRange(completedRange);
-          
+
           // Notify parent component of the completed selection
           onChange(completedRange);
         }
@@ -508,23 +505,27 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       >
         <span data-testid="date-range-text">{formatDateRange()}</span>
         <div className="date-range-controls">
-          <button
-            className="date-range-close button-as-div"
-            data-testid="date-range-close-btn"
-            aria-label={t("Close calendar")}
-            type="button"
-            onKeyDown={(e) => handleNavKeyDown(e, () => handleCloseCalendar())}
-          >
-            <CloseIcon color="white" onClick={(e) => handleCloseCalendar(e)} />
-          </button>
+          {isOpen && (
+            <button
+              className="date-range-close button-as-div"
+              data-testid="date-range-close-btn"
+              aria-label={t("Close calendar")}
+              type="button"
+              onClick={(e) => handleCloseCalendar(e)}
+              onKeyDown={(e) =>
+                handleNavKeyDown(e, () => handleCloseCalendar())
+              }
+            >
+              <CloseIcon width={10} height={10} color="white" />
+            </button>
+          )}
           <span
-            className="date-range-toggle-icon"
+            className={`date-range-toggle-icon ${isOpen ? "open" : ""}`}
             data-testid="date-range-toggle-icon"
             aria-hidden="true"
           >
             {isOpen ? (
-               <UpArrowIcon color="white" />
-             
+              <UpArrowIcon color="white" />
             ) : (
               <DownArrowIcon color="white" />
             )}

@@ -215,7 +215,6 @@ export const CloseIcon = ({
   color = grayColor,
   width = 14,
   height = 14,
-  onClick,
   ...props
 }) => (
   <svg
@@ -224,7 +223,7 @@ export const CloseIcon = ({
     height={height}
     viewBox="0 0 14 14"
     fill="none"
-    onClick={onClick}
+    onClick={props.onClick}
     {...props}
   >
     <path
