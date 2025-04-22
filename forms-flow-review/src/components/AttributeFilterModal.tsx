@@ -242,7 +242,7 @@ const buildUpdatedFilterParams = () => {
     const hasFilterNameError = filterNameError ?? false;
     const isCreateDisabled = !isCreateFilters;
     
-    const isInvalidFilter = isFilterNameEmpty || hasFilterNameError || isCreateDisabled;
+    const isInvalidFilter = isFilterNameEmpty ?? hasFilterNameError ?? isCreateDisabled;
     const isButtonDisabled = isInvalidFilter;
     const iconColor = getIconColor(isInvalidFilter);
 
