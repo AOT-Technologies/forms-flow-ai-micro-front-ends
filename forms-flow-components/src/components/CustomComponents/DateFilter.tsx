@@ -162,7 +162,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
   const formatDateRange = (): string => {
     if (!dateRange.startDate && !dateRange.endDate) {
-      return placeholder; // This case is already handled correctly
+      return t(placeholder); // Added translation tag
     }
 
     // Modified to show date format instead of dash for missing dates

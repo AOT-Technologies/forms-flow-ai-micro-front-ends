@@ -28,7 +28,6 @@ const initialState = {
     name: { sortOrder: "asc" },
     assignee: { sortOrder: "asc" },
   },
-  appHistory: [],
   tasksCount: 0,
 };
 
@@ -78,8 +77,6 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, filtersAndCount: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_LIST_SORT_PARAMS:
       return { ...state, filterListSortParams: action.payload };
-    case ACTION_CONSTANTS.LIST_APPLICATION_HISTORY:
-      return { ...state, appHistory: action.payload };
     case ACTION_CONSTANTS.BPM_TASKS_COUNT:
       return { ...state, tasksCount: action.payload };
     case ACTION_CONSTANTS.IS_BPM_TASK_LOADING:

@@ -132,12 +132,7 @@ export const setFilterListParams = (data) => (dispatch) => {
   });
 };
 
-export const setApplicationHistoryList = (data) => (dispatch) => {
-  dispatch({
-    type: ACTION_CONSTANTS.LIST_APPLICATION_HISTORY,
-    payload: data,
-  });
-};
+
 
 export const setFilterListSortParams = (data) => (dispatch) => {
   dispatch({
