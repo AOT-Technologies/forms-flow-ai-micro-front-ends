@@ -5,33 +5,54 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; 
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.3) !important;
 }
 
 .confirmation-dialog {
-  background: white;
+  background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  z-index: 1001; 
+  width: 400px;
+  max-width: 90%;
+  word-wrap: break-word;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-.confirmation-dialog p {
-  margin-bottom: 15px;
+.dialog-header {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+  padding-right: 25px;
 }
 
-.confirmation-dialog button {
-  margin: 10px;
-  padding: 8px 16px;
+.dialog-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
   border: none;
+  font-size: 1.2rem;
   cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
+  line-height: 1;
+  color: var(--secondary-btn-bg-color);
+}
+
+.dialog-message {
+  margin: 20px 0;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  text-align: right;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .confirmation-dialog .yes-button {

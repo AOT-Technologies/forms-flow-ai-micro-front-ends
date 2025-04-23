@@ -135,8 +135,8 @@ export default class RSBCImage extends ReactComponent {
     if (requireConfirmation && this.component.stage !== "stageTwo") {
       const proceedToPrint = await this.showConfirmationDialog(
         "If you print this form you cannot go back and edit it, please confirm you wish to proceed.",
-        "Proceed",
-        "Cancel"
+        "Print",
+        "Close"
       );
 
       if (proceedToPrint) {
