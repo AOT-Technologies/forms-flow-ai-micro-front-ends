@@ -425,11 +425,13 @@ export function ResizableTable(): JSX.Element {
     }
   }, [taskvariables]);
 
+
   const handleSortApply = useCallback(
     (selectedSortOption, selectedSortOrder) => {
+      const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy);
       dispatch(
         setFilterListSortParams({
-          ...sortParams,
+          ...resetSortOrders,
           activeKey: selectedSortOption,
           [selectedSortOption]: { sortOrder: selectedSortOrder },
         })
