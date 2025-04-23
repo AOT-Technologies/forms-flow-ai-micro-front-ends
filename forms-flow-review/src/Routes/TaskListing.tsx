@@ -1,5 +1,8 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback } from "react";
 import SocketIOService from "../services/SocketIOService";
+import { fetchBPMTaskCount, fetchFilterList } from "../api/services/filterServices";
+import { useDispatch, } from "react-redux";
+import { setBPMFiltersAndCount } from "../actions/taskActions";
 import { ResizableTable } from "../components";
 
 interface SocketUpdateParams {
@@ -9,6 +12,33 @@ interface SocketUpdateParams {
 }
 
 const TaskList = () => {
+
+
+
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchFilterList());
+    dispatch(
+      fetchFilterList((err, data) => {
+        if (data) {
+          fetchBPMTaskCount(data.filters)
+            .then((res) => {
+              dispatch(setBPMFiltersAndCount(res.data));
+            })
+            .catch((err) => {
+              if (err) {
+                console.error(err);
+              }
+            })
+        }
+      })
+    );
+  }, [dispatch]);
+
+
+
 
   const SocketIOCallback = useCallback(
     ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
@@ -43,9 +73,19 @@ const TaskList = () => {
     };
   }, [SocketIOCallback]);
 
+
+
+
   return (
     <div>
-      <ResizableTable/>
+      <ResizableTable />
     </div>
+
+
+
   );
-};export default TaskList;
+};
+
+
+
+export default TaskList;

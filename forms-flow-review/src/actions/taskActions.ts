@@ -98,7 +98,7 @@ export const setTasks = (data: any) => ({
 
   export const setBPMFiltersAndCount = (data) => (dispatch) => {
     dispatch({
-      type: ACTION_CONSTANTS.BPM_FILTERS_AND_COUNT, 
+      type: ACTION_CONSTANTS.BPM_FILTERS_AND_COUNT,
       payload: data,
     });
   };
@@ -109,8 +109,8 @@ export const setTasks = (data: any) => ({
     });
   };
 
-  
-  
+
+
 export const setBPMTaskDetailLoader = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_LOADING,
@@ -155,7 +155,14 @@ export const setTaskListLimit = (pageLimit) => (dispatch) => {
 
 export const setBPMFilterSearchParams = (data) => (dispatch) => {
   dispatch({
-    type: ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS, 
+    type: ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS,
     payload: data,
   });
 };
+
+  export const setSelectedTaskID = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.SELECTED_TASK_ID,
+      payload: data,
+    });
+  };

@@ -8,8 +8,8 @@ const initialState = {
   userGroups: [],
   userDetail: {},
   filterList: [],
-  listReqParams: { 
-    activeKey: "created", 
+  listReqParams: {
+    activeKey: "created",
     created: { sortOrder: "asc" },
     name: { sortOrder: "asc" },
     assignee: { sortOrder: "asc" },},
@@ -20,8 +20,9 @@ const initialState = {
   defaultFilter: "",
   filtersAndCount:[],
   filterListSearchParams: {},
+  taskDetail: null,
   filterListSortParams: {
-    activeKey: "created", 
+    activeKey: "created",
     created: { sortOrder: "asc" },
     name: { sortOrder: "asc" },
     assignee: { sortOrder: "asc" },
@@ -60,6 +61,8 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         ...state,
         activePage: action.payload,
       };
+    case ACTION_CONSTANTS.BPM_FILTER_LIST:
+        return { ...state, filterList: action.payload };
     case ACTION_CONSTANTS.BPM_SELECTED_FILTER:
       return { ...state, selectedFilter: action.payload, filterListSearchParams: {} };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
@@ -81,7 +84,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
     case ACTION_CONSTANTS.TASK_LIST_LIMIT_CHANGE:
       return { ...state, limit: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
-      return { ...state, filterListSearchParams: action.payload };    
+      return { ...state, filterListSearchParams: action.payload };
     default:
       return state;
   }

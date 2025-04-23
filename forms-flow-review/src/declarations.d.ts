@@ -44,6 +44,7 @@ declare module "@formsflow/service" {
     RequestService,
     StorageService,
     i18nService,
+    StyleServices,
     HelperServices,
   }: any;
 }
