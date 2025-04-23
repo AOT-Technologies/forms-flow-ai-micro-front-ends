@@ -33,8 +33,14 @@ $primary-light: var(--ff-primary-light);
 
     // Text area
     span {
+      color: $primary-color;
       padding: 0.5rem 0.9375rem; // 8px 15px
       flex: 1;
+      font-weight: var(--font-weight-xl) !important;
+      &.open {
+        background-color: $primary-color;
+        color: $white-color;
+      }
     }
   }
 
@@ -51,7 +57,8 @@ $primary-light: var(--ff-primary-light);
       align-items: center;
       justify-content: center;
       height: 100%;
-      padding: 0 0.5rem; // 0 8px
+      padding: 0.5rem 0.9375rem;
+      border-right: 1px solid rgb(0, 0, 255) !important;
       background-color: $primary-color;
       opacity: 0.8;
     }
@@ -191,3 +198,10 @@ $primary-light: var(--ff-primary-light);
     }
   }
 }
+.date-range-test{
+
+  &.open {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}  

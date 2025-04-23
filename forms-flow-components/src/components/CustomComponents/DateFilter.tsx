@@ -503,7 +503,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         aria-expanded={isOpen}
         type="button"
       >
-        <span data-testid="date-range-text">{formatDateRange()}</span>
+        <span  className={`date-range-text ${isOpen ? "open" : ""}`}  data-testid="date-range-text">{formatDateRange()}</span>
         <div className="date-range-controls">
           {isOpen && (
             <button
