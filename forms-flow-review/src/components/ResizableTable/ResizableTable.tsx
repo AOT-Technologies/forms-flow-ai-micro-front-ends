@@ -91,25 +91,22 @@ const TaskTableCell = ({ task, column, index, redirectUrl, history }) => {
   const { name: taskName, created, assignee, _embedded } = task ?? {};
   const variables = _embedded?.variable ?? [];
 
-  const cellValue =
-    column.name === "Submission ID"
-      ? variables.find((v) => v.name === "applicationId")?.value ?? "-"
-      : sortKey === "name"
-      ? taskName ?? "-"
-      : sortKey === "created"
-      ? created
-        ? HelperServices.getLocaldate(created)
-        : "N/A"
-      : sortKey === "assignee"
-      ? assignee ?? "Unassigned"
-      : variables.find((v) => v.name === sortKey)?.value ?? "-";
-
   return (
     <td
       key={`cell-${task.id}-${sortKey}`}
       data-testid={`task-${task.id}-${column.sortKey}`}
     >
-      {cellValue}
+      {column.name === "Submission ID"
+        ? variables.find((v) => v.name === "applicationId")?.value ?? "-"
+        : sortKey === "name"
+        ? taskName ?? "-"
+        : sortKey === "created"
+        ? created
+          ? HelperServices.getLocaldate(created)
+          : "N/A"
+        : sortKey === "assignee"
+        ? assignee ?? "Unassigned"
+        : variables.find((v) => v.name === sortKey)?.value ?? "-"}
     </td>
   );
 };
