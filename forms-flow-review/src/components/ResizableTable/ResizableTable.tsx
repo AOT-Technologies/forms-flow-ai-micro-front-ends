@@ -91,18 +91,18 @@ const TaskTableCell = ({ task, column, index, redirectUrl, history }) => {
   const { name: taskName, created, assignee, _embedded } = task ?? {};
   const variables = _embedded?.variable ?? [];
 
-  let cellValue = "-";
-  if (column.name === "Submission ID") {
-    cellValue = variables.find((v) => v.name === "applicationId")?.value ?? "-";
-  } else if (sortKey === "name") {
-    cellValue = taskName ?? "-";
-  } else if (sortKey === "created") {
-    cellValue = created ? HelperServices.getLocaldate(created) : "N/A";
-  } else if (sortKey === "assignee") {
-    cellValue = assignee ?? "Unassigned";
-  } else {
-    cellValue = variables.find((v) => v.name === sortKey)?.value ?? "-";
-  }
+  const cellValue =
+    column.name === "Submission ID"
+      ? variables.find((v) => v.name === "applicationId")?.value ?? "-"
+      : sortKey === "name"
+      ? taskName ?? "-"
+      : sortKey === "created"
+      ? created
+        ? HelperServices.getLocaldate(created)
+        : "N/A"
+      : sortKey === "assignee"
+      ? assignee ?? "Unassigned"
+      : variables.find((v) => v.name === sortKey)?.value ?? "-";
 
   return (
     <td
@@ -128,10 +128,10 @@ const TableHeaderCell = ({
 
   return (
     <th
-      key={`header-${column.sortKey || index}`}
+      key={`header-${column.sortKey ?? index}`}
       className="resizable-column"
       style={{ width: column.width }}
-      data-testid={`column-header-${column.sortKey || "actions"}`}
+      data-testid={`column-header-${column.sortKey ?? "actions"}`}
       aria-label={`${column.name} column${isSortable ? ", sortable" : ""}`}
     >
       {isSortable ? (
@@ -165,7 +165,7 @@ const TaskRow = ({ task, columns, redirectUrl, history }) => {
     <tr key={`row-${task.id}`} data-testid={`task-row-${task.id}`}>
       {columns.map((column, colIndex) => (
         <TaskTableCell
-          key={`cell-${task.id}-${column.sortKey || colIndex}`}
+          key={`cell-${task.id}-${column.sortKey ?? colIndex}`}
           task={task}
           column={column}
           index={colIndex}
@@ -191,7 +191,7 @@ const TaskTable = ({
   redirectUrl,
   history,
 }) => {
-  if (!taskList || taskList.length === 0) {
+  if (taskList?.length === 0) {
     return (
       <table
         ref={tableRef}
@@ -203,7 +203,7 @@ const TaskTable = ({
           <tr>
             {columns.map((column, index) => (
               <TableHeaderCell
-                key={`header-${column.sortKey || index}`}
+                key={`header-${column.sortKey ?? index}`}
                 column={column}
                 index={index}
                 columnsLength={columns.length}
@@ -239,7 +239,7 @@ const TaskTable = ({
         <tr>
           {columns.map((column, index) => (
             <TableHeaderCell
-              key={`header-${column.sortKey || index}`}
+              key={`header-${column.sortKey ?? index}`}
               column={column}
               index={index}
               columnsLength={columns.length}
@@ -290,7 +290,7 @@ export function ResizableTable(): JSX.Element {
     activePage,
     tasksCount,
     isTaskListLoading,
-  } = useSelector((state: any) => state.task || {});
+  } = useSelector((state: any) => state.task ?? {});
 
   const selectedFilterId = selectedFilter?.id ?? null;
   const bpmFiltersList = filterList;
@@ -359,19 +359,15 @@ export function ResizableTable(): JSX.Element {
   }, [dispatch]);
 
   useEffect(() => {
-    if (filterList?.length) {
-      let filterSelected;
-      if (filterList.length > 1) {
-        filterSelected = filterList?.find(
+    if (filterList.length > 0) {
+      const filterSelected =
+        filterList.find(
           (filter) => filter.id === defaultFilter || filter.name === ALL_TASKS
-        );
-        filterSelected ??= filterList[0];
-      } else {
-        filterSelected = filterList[0];
-      }
+        ) ?? filterList[0];
+
       dispatch(setSelectedBPMFilter(filterSelected));
     }
-  }, [filterList?.length, defaultFilter, dispatch]);
+  }, [filterList.length, defaultFilter, dispatch]);
 
   useEffect(() => {
     if (Array.isArray(taskvariables)) {
@@ -537,6 +533,66 @@ export function ResizableTable(): JSX.Element {
 
   useEffect(() => {
     const activeKey = sortParams?.activeKey;
+    const transformedSorting =
+      activeKey && sortParams?.[activeKey]?.sortOrder
+        ? [{ sortBy: activeKey, sortOrder: sortParams[activeKey].sortOrder }]
+        : [];
+
+    const reqParamData = {
+      ...searchParams,
+      sorting: transformedSorting,
+    };
+
+    if (dateRange?.startDate && dateRange?.endDate) {
+      reqParamData.createdAfter = HelperServices.getISODateTime(
+        dateRange.startDate
+      );
+      reqParamData.createdBefore = HelperServices.getISODateTime(
+        dateRange.endDate
+      );
+    }
+
+    const selectedParams = bpmFiltersList.find(
+      (item) => item.id === selectedFilterId
+    );
+    if (!selectedParams) return;
+
+    const updatedParams = {
+      ...selectedParams,
+      criteria: {
+        ...selectedParams.criteria,
+        ...reqParamData,
+      },
+    };
+
+    const areParamsEqual = isEqual(updatedParams, reqData);
+
+    if (!areParamsEqual) {
+      dispatch(setFilterListParams(cloneDeep(updatedParams)));
+    }
+
+    if (selectedFilter && !areParamsEqual) {
+      dispatch(setBPMTaskLoader(true));
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(
+        fetchServiceTaskList(cloneDeep(updatedParams), null, firstResult, limit)
+      );
+    }
+  }, [
+    selectedFilterId,
+    searchParams,
+    dispatch,
+    dateRange,
+    bpmFiltersList,
+    selectedFilter,
+    sortParams,
+    firstResult,
+    limit,
+  ]);
+
+  // Refresh handler (same logic as useEffect)
+  const handleRefresh = useCallback(() => {
+    const activeKey = sortParams?.activeKey;
 
     const transformedSorting =
       activeKey && sortParams?.[activeKey]?.sortOrder
@@ -579,31 +635,30 @@ export function ResizableTable(): JSX.Element {
         dispatch(setFilterListParams(cloneDeep(updatedParams)));
       }
     }
+
+    const formattedReqData = {
+      ...reqData,
+      sorting: transformedSorting,
+    };
+
+    if (selectedFilter) {
+      dispatch(setBPMTaskLoader(true));
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(
+        fetchServiceTaskList(formattedReqData, null, firstResult, limit)
+      );
+    }
   }, [
-    selectedFilterId,
-    searchParams,
-    sortParams,
     dispatch,
     reqData,
-    dateRange,
+    selectedFilter,
+    firstResult,
+    limit,
+    searchParams,
     bpmFiltersList,
+    dateRange,
+    selectedFilterId,
   ]);
-
-  useEffect(() => {
-    if (selectedFilter) {
-      dispatch(setBPMTaskLoader(true));
-      dispatch(setBPMTaskListActivePage(1));
-      dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
-    }
-  }, [dispatch, reqData, selectedFilter, firstResult, limit]);
-
-  const handleRefresh = useCallback(() => {
-    if (selectedFilter) {
-      dispatch(setBPMTaskLoader(true));
-      dispatch(setBPMTaskListActivePage(1));
-      dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
-    }
-  }, [dispatch, reqData, selectedFilter, firstResult, limit]);
 
   // Column resizing logic (updated to only resize specific columns)
   const handleMouseDown = useCallback(

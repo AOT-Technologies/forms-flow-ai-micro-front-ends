@@ -51,7 +51,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return {
         ...state,
         userDetail: action.payload,
-        showApplications: setShowApplications(action.payload?.groups || []),
+        showApplications: setShowApplications(action.payload?.groups ?? []),
       };
     case ACTION_CONSTANTS.IS_PROCESS_STATUS_LOADING:
       return { ...state, isProcessLoading: action.payload };
