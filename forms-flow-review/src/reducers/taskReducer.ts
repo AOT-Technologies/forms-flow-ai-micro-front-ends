@@ -1,5 +1,5 @@
 import ACTION_CONSTANTS from "../actions/actionConstants";
-import { setShowApplications } from "./../helper/helper.js"
+import { setShowApplications } from "./../helper/helper.js";
 
 const initialState = {
   isTaskListLoading: true,
@@ -12,13 +12,14 @@ const initialState = {
     activeKey: "created",
     created: { sortOrder: "asc" },
     name: { sortOrder: "asc" },
-    assignee: { sortOrder: "asc" },},
+    assignee: { sortOrder: "asc" },
+  },
   firstResult: 0,
   limit: 5,
   selectedFilter: {},
   taskId: null,
   defaultFilter: "",
-  filtersAndCount:[],
+  filtersAndCount: [],
   filterListSearchParams: {},
   taskDetail: null,
   filterListSortParams: {
@@ -32,8 +33,8 @@ const initialState = {
 };
 
 interface TaskAction {
-  type: string,
-  payload: any
+  type: string;
+  payload: any;
 }
 
 const TaskHandler = (state = initialState, action: TaskAction) => {
@@ -50,7 +51,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return {
         ...state,
         userDetail: action.payload,
-        showApplications: setShowApplications(action.payload?.groups || [])
+        showApplications: setShowApplications(action.payload?.groups || []),
       };
     case ACTION_CONSTANTS.IS_PROCESS_STATUS_LOADING:
       return { ...state, isProcessLoading: action.payload };
@@ -62,23 +63,25 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         activePage: action.payload,
       };
     case ACTION_CONSTANTS.BPM_FILTER_LIST:
-        return { ...state, filterList: action.payload };
+      return { ...state, filterList: action.payload };
     case ACTION_CONSTANTS.BPM_SELECTED_FILTER:
-      return { ...state, selectedFilter: action.payload, filterListSearchParams: {} };
+      return {
+        ...state,
+        selectedFilter: action.payload,
+        filterListSearchParams: {},
+      };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
       return { ...state, defaultFilter: action.payload };
     case ACTION_CONSTANTS.SELECTED_TASK_ID:
       return { ...state, taskId: action.payload, taskDetail: null };
-    case ACTION_CONSTANTS.BPM_FILTER_LIST:
-      return { ...state, filterList: action.payload };
     case ACTION_CONSTANTS.BPM_FILTERS_AND_COUNT:
       return { ...state, filtersAndCount: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_LIST_SORT_PARAMS:
-        return { ...state, filterListSortParams: action.payload  };
+      return { ...state, filterListSortParams: action.payload };
     case ACTION_CONSTANTS.LIST_APPLICATION_HISTORY:
-        return { ...state, appHistory: action.payload };
+      return { ...state, appHistory: action.payload };
     case ACTION_CONSTANTS.BPM_TASKS_COUNT:
-      return { ...state, tasksCount: action.payload};
+      return { ...state, tasksCount: action.payload };
     case ACTION_CONSTANTS.IS_BPM_TASK_LOADING:
       return { ...state, isTaskListLoading: action.payload };
     case ACTION_CONSTANTS.TASK_LIST_LIMIT_CHANGE:
@@ -88,7 +91,6 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
     default:
       return state;
   }
-
 };
 
 export default TaskHandler;
