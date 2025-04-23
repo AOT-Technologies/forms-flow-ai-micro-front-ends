@@ -69,6 +69,27 @@ interface DateRange {
 }
 
 // Extracted table cell rendering component
+const getCellValue = (column, task) => {
+  const { sortKey } = column;
+  const { name: taskName, created, assignee, _embedded } = task ?? {};
+  const variables = _embedded?.variable ?? [];
+
+  if (column.name === "Submission ID") {
+    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
+  }
+
+  switch (sortKey) {
+    case "name":
+      return taskName ?? "-";
+    case "created":
+      return created ? HelperServices.getLocaldate(created) : "N/A";
+    case "assignee":
+      return assignee ?? "Unassigned";
+    default:
+      return variables.find((v) => v.name === sortKey)?.value ?? "-";
+  }
+};
+
 const TaskTableCell = ({ task, column, index, redirectUrl, history }) => {
   if (column.name === "Actions") {
     return (
@@ -77,9 +98,7 @@ const TaskTableCell = ({ task, column, index, redirectUrl, history }) => {
           className="btn-table"
           variant="secondary"
           label="View"
-          onClick={() =>
-            history.push(`${redirectUrl.current}review/${task?.id}`)
-          }
+          onClick={() => history.push(`${redirectUrl.current}review/${task?.id}`)}
           dataTestId={`view-task-${task.id}`}
           ariaLabel={`View details for task ${task?.name ?? "unnamed"}`}
         />
@@ -87,29 +106,16 @@ const TaskTableCell = ({ task, column, index, redirectUrl, history }) => {
     );
   }
 
-  const { sortKey } = column;
-  const { name: taskName, created, assignee, _embedded } = task ?? {};
-  const variables = _embedded?.variable ?? [];
-
   return (
     <td
-      key={`cell-${task.id}-${sortKey}`}
+      key={`cell-${task.id}-${column.sortKey}`}
       data-testid={`task-${task.id}-${column.sortKey}`}
     >
-      {column.name === "Submission ID"
-        ? variables.find((v) => v.name === "applicationId")?.value ?? "-"
-        : sortKey === "name"
-        ? taskName ?? "-"
-        : sortKey === "created"
-        ? created
-          ? HelperServices.getLocaldate(created)
-          : "N/A"
-        : sortKey === "assignee"
-        ? assignee ?? "Unassigned"
-        : variables.find((v) => v.name === sortKey)?.value ?? "-"}
+      {getCellValue(column, task)}
     </td>
   );
 };
+
 
 // Extracted table header component
 const TableHeaderCell = ({
