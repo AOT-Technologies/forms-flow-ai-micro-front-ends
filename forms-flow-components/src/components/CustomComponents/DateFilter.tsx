@@ -124,54 +124,44 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   }, [value]);
 
   // Format date according to specified format (default: MM/DD/YYYY)
-  const formatDate = (date: Date | null): string => {
+  const formatDateValue = (
+    date: Date | string | null,
+    format: string = dateFormat
+  ): string => {
+    // If no date, return formatted placeholder
     if (!date) {
-      // Return a properly formatted placeholder using the dateFormat pattern
-      return dateFormat
+      return format
         .replace(/M+/g, "MM")
         .replace(/D+/g, "DD")
         .replace(/Y+/g, "YYYY");
     }
-
-    // Default format (MM/DD/YYYY)
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const year = date.getFullYear();
-
-    // Apply the specified format
-    let formattedDate = dateFormat;
+    
+    // Convert to Date object if string
+    const dateObj = date instanceof Date ? date : parseDate(date);
+    
+    // Format according to specified pattern
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const year = dateObj.getFullYear();
+    
+    let formattedDate = format;
     formattedDate = formattedDate.replace(/M+/g, month);
     formattedDate = formattedDate.replace(/D+/g, day);
     formattedDate = formattedDate.replace(/Y+/g, year.toString());
-
+    
     return formattedDate;
   };
-
-  const getFormattedDate = (date: Date | string | null): string => {
-    if (!date) {
-      // Return a properly formatted placeholder using the dateFormat pattern
-      // This ensures we return "MM/DD/YYYY" instead of repeating characters
-      return dateFormat
-        .replace(/M+/g, "MM")
-        .replace(/D+/g, "DD")
-        .replace(/Y+/g, "YYYY");
-    }
-    const parsedDate = date instanceof Date ? date : parseDate(date);
-    return formatDate(parsedDate);
-  };
-
+  
   const formatDateRange = (): string => {
+    // If neither date is selected, show placeholder
     if (!dateRange.startDate && !dateRange.endDate) {
-      return t(placeholder); // Added translation tag
+      return t(placeholder);
     }
-
-    // Modified to show date format instead of dash for missing dates
-    const start = dateRange?.startDate
-      ? getFormattedDate(dateRange.startDate)
-      : getFormattedDate(null);
-    const end = dateRange?.endDate
-      ? getFormattedDate(dateRange.endDate)
-      : getFormattedDate(null);
+    
+    // Simplified - no need for conditional check as formatDateValue handles nulls
+    const start = formatDateValue(dateRange.startDate);
+    const end = formatDateValue(dateRange.endDate);
+    
     return `${start} - ${end}`;
   };
 

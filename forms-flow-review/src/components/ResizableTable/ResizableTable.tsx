@@ -73,8 +73,7 @@ const getCellValue = (column, task) => {
   const { sortKey } = column;
   const { name: taskName, created, assignee, _embedded } = task ?? {};
   const variables = _embedded?.variable ?? [];
-
-  if (column.name === "Submission ID") {
+  if (column.sortKey === "applicationId") {
     return variables.find((v) => v.name === "applicationId")?.value ?? "-";
   }
 
@@ -91,7 +90,7 @@ const getCellValue = (column, task) => {
 };
 
 const TaskTableCell = ({ task, column, index, redirectUrl, history, t }) => {
-  if (column.name === "Actions") {
+  if (column.sortKey === "actions") {
     return (
       <td key={`action-${task.id}-${index}`}>
         <CustomButton
@@ -240,10 +239,10 @@ const TaskTable = ({
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr className="empty-row">
             <td
               colSpan={columns.length}
-              style={{ textAlign: "center" }}
+              className="empty-table-message"
               data-testid="empty-tasks-message"
               aria-label={t("No tasks message")}
             >
@@ -414,9 +413,9 @@ export function ResizableTable(): JSX.Element {
 
       if (dynamicColumns.length > 0) {
         dynamicColumns.push({
-          name: "Actions",
+          name: "",
           width: 100,
-          sortKey: "",
+          sortKey: "actions",
           resizable: false,
         });
       }
@@ -810,7 +809,29 @@ export function ResizableTable(): JSX.Element {
         </div>
       );
     }
-
+    if (columns.length === 0) {
+      return (
+        <div
+          className="container-wrapper"
+          data-testid="no-columns-message"
+          aria-label={t("No columns message")}
+        >
+          <div className="table-outer-container">
+            <div className="table-scroll-wrapper">
+              <table className="resizable-table">
+                <tbody>
+                  <tr>
+                    <td className="empty-table-message" data-testid="empty-columns-message">
+                      {t("No tasks have been found. Try a different filter combination or contact your admin.")}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      );
+    }
     return (
       <div
         className="container-wrapper"
