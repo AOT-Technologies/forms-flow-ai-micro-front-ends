@@ -2,6 +2,13 @@ import moment from 'moment'
 import { DATE_FORMAT ,MULTITENANCY_ENABLED ,TIME_FORMAT} from '../constants/constants';
 
 class HelperServices {
+  public static getISODateTime(date: any): string | null {
+    if (date) {
+      return moment(date).format("YYYY-MM-DDTHH:mm:ss.SSSZZ"); // strict ISO with colon
+    }
+    return null;
+  }
+  
   public static getLocalDateAndTime(date: string): any {
     if (!date) {
       return '-'

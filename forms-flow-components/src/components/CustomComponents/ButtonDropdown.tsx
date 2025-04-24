@@ -65,7 +65,9 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
       const toggleWidth = toggleRef.current.getBoundingClientRect().width;
       const totalWidth = buttonWidth + toggleWidth - 1;
       setMenuStyle({
-        minWidth: `${totalWidth}px`,
+        width: `${totalWidth}px`,
+        maxHeight: "200px",
+        overflowY: "auto",
         border: "2px solid var(--primary-btn-bg-color)",
         borderTopLeftRadius: "0",
         borderTopRightRadius: "0",
