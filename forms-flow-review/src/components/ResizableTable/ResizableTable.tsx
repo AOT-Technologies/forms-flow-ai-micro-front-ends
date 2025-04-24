@@ -213,7 +213,7 @@ const TaskTable = ({
   redirectUrl,
   history,
 }) => {
-  if (taskList?.length === 0) {
+  if (taskList?.length === 0 ) {
     return (
       <table
         ref={tableRef}
@@ -819,6 +819,11 @@ export function ResizableTable(): JSX.Element {
           <div className="table-outer-container">
             <div className="table-scroll-wrapper">
               <table className="resizable-table">
+                <thead className="visually-hidden">
+                  <tr className="no-hover">
+                    <th scope="col">{t("Message")}</th>
+                  </tr>
+                </thead>
                 <tbody>
                   <tr>
                     <td className="empty-table-message" data-testid="empty-columns-message">
@@ -832,6 +837,7 @@ export function ResizableTable(): JSX.Element {
         </div>
       );
     }
+    
     return (
       <div
         className="container-wrapper"
