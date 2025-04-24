@@ -12,7 +12,7 @@ import { updateTaskSort } from "../../actions/tableActions";
 import TaskFilterModal from "../TaskFilterModal";
 import AttributeFilterModal from "../AttributeFilterModal";
 import { Dropdown } from "react-bootstrap";
-import { updateDefaultFilter } from "../../api/services/filterServices";
+import { editFilters, updateDefaultFilter } from "../../api/services/filterServices";
 import { setBPMTaskListActivePage, setDefaultFilter, setSelectedTaskID } from "../../actions/taskActions";
 
 interface TableData {
@@ -80,8 +80,7 @@ export function ResizableTable(): JSX.Element {
   const [taskAttributeData, setTaskAttributeData] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [filterParams, setFilterParams] = useState({});
-
-
+  const [isAssigned,setIsAssigned] = useState(false);
 
 
   const optionSortBy = [
@@ -214,6 +213,23 @@ export function ResizableTable(): JSX.Element {
     setShowAttrFilterModal(prevState => !prevState);
   };
 
+  useEffect(() => {  
+     const currentFilter = filterListItems.find((item) => item.id === defaultFilter);
+    if (currentFilter) {
+      setSelectedFilter(currentFilter);
+      const checkedVariables = currentFilter.variables?.filter(variable => variable.isChecked);
+      setTaskAttributeData(checkedVariables);
+    }
+  }, [filterListItems]);
+  useEffect(()=>{ 
+    if (selectedFilter) {
+      const updatedFilter = {
+        ...selectedFilter,
+        isMyTasksEnabled: isAssigned
+      };
+      editFilters(updatedFilter,selectedFilter.id);
+    }
+  },[isAssigned])
   const changeFilterSelection = (filter) => {
     const selectedFilter = filterListItems.find(
       (item) => item.id === filter.id
@@ -226,9 +242,16 @@ export function ResizableTable(): JSX.Element {
       .then(updateRes => dispatch(setDefaultFilter(updateRes.data.defaultFilter)))
       .catch(error => console.error("Error updating default filter:", error));
     dispatch(setSelectedTaskID(defaultFilterId));
-    dispatch(setBPMTaskListActivePage(1));
+    dispatch(setBPMTaskListActivePage(1)); 
   };
-  return (
+  const handleCheckBoxChange = ()=> {
+    setIsAssigned(!isAssigned)
+   }; 
+   const onLabelClick = () => {
+    handleCheckBoxChange(); 
+  };
+  
+   return (
     <div className="container-fluid py-4" data-testid="resizable-table-container" aria-label="Resizable tasks table container">
       <div className="d-md-flex justify-content-end align-items-center button-align mb-3">
         <CustomButton
@@ -285,6 +308,19 @@ export function ResizableTable(): JSX.Element {
           selectedFilter={selectedFilter}
         />
 
+        <div className={`assign-to-me-container ${
+              isAssigned ? "checked" :""
+            }`} 
+            onClick={onLabelClick}>
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={isAssigned}
+            onChange={handleCheckBoxChange}
+            data-testid="assign-to-me-checkbox"
+          />
+          <label className="assign-to-me-label">{t("Assign to me")}</label>
+        </div>
 
         <DateRangePicker
           dataTestId="task-date-range-picker"
