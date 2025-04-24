@@ -308,7 +308,7 @@ export function ResizableTable(): JSX.Element {
           selectedFilter={selectedFilter}
         />
 
-        <div className={`assign-to-me-container ${
+        <button className={`assign-to-me-container button-as-div ${
               isAssigned ? "checked" :""
             }`} 
             onClick={onLabelClick}>
@@ -320,7 +320,7 @@ export function ResizableTable(): JSX.Element {
             data-testid="assign-to-me-checkbox"
           />
           <label className="assign-to-me-label">{t("Assign to me")}</label>
-        </div>
+        </button>
 
         <DateRangePicker
           dataTestId="task-date-range-picker"

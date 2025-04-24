@@ -696,12 +696,13 @@ span.text-danger,
 
 .assign-to-me-container {
   display: flex;
-  background-color: $white-color;
-  color: $primary;
-  padding :  var(--spacer-050) var(--spacer-075);
-  gap:var(--spacer-050);
-  border: 1px solid $primary;
-  border-radius: var(--radius-sm);
+  background-color: $white-color !important;
+  color: $primary !important;
+  padding :  var(--spacer-050) var(--spacer-075) !important;
+  gap:var(--spacer-050) !important;
+  border: 1px solid $primary !important;
+  border-radius: var(--radius-sm) !important;
+  width: inherit !important;
   &:hover {
      opacity: 0.9 !important;
   }
@@ -711,6 +712,7 @@ span.text-danger,
   }
   .form-check-input[type="checkbox"]{
     border: 2px solid $primary !important;
+    margin-top: 0px !important;
   &:checked{
     border-color:$white-color !important;
   }
