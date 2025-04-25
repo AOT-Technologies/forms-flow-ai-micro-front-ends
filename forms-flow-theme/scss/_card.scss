@@ -24,6 +24,8 @@ $gray-darkest: var(--ff-gray-darkest);
     font-size: var(--font-size-lg) !important;
     font-weight: var(--font-weight-xl) !important;
     line-height: var(--text-line-height) !important;
+
+    background-color: $white-color;
   }
 
   .card-body {

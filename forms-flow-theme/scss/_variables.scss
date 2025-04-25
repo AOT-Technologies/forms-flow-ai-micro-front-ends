@@ -4,6 +4,7 @@ $gray-medium: var(--ff-gray-medium);
 $gray-light: var(--ff-gray-light);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $primary-color: var(--ff-primary);
+$primary-light-color: var(--ff-primary-light);
 $danger-color: var(--ff-danger);
 $white-color: var(--ff-white);
 
@@ -268,3 +269,29 @@ hr {
 @include generate-overflow(y, auto);
 @include generate-overflow(x, hidden);
 @include generate-overflow(y, hidden);
+
+
+
+
+
+
+
+// variables added by Max
+$base: 1rem;
+$lineThin: 1px;
+$lineThick: $lineThin*2;
+
+$fontBase: $base;
+$fontLineHeight: 1.2;
+
+$fontModalTitle: $fontBase*1.5;
+
+
+$borderRadiusHeightESM: $base*0.78; // 12.5px
+$borderRadiusHeightSM: $base*1.094; // 17.5px
+$borderRadiusHeightM: $base*1.344;  // 21.5px
+$borderRadiusHeightL: $base*1.594; // 25.5px
+$borderRadiusModal: $base*1.5; // 24px
+
+$colorDivider: $gray-medium;
+$colorDividerDark: $gray-medium-dark;

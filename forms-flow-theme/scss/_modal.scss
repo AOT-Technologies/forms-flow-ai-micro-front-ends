@@ -10,6 +10,7 @@ $black-color: var(--ff-black);
 
 
 .modal {
+
   .modal-dialog {
     display: flex;
     align-items: center;
@@ -93,30 +94,41 @@ $black-color: var(--ff-black);
 
       .modal-header,
       .modal-footer {
-        height: auto;
-        min-height: 5.9375rem;
-        margin-left: 0 !important;
-        padding: var(--spacer-200) 2.5rem !important;
-        flex-shrink: 0;
-        color: var(--default-font-color);
-        font-size: var(--spacer-150);
-        font-weight: var(--font-weight-sm);
-        line-height: normal;
+        // height: auto;
+        // min-height: 5.9375rem;
+        // margin-left: 0 !important;
+        // flex-shrink: 0;
+        // color: var(--default-font-color);
+        // font-size: var(--spacer-150);
+        // font-weight: var(--font-weight-sm);
+        // line-height: normal;
       }
 
       .modal-header {
-        justify-content: space-between !important;
+        align-items: stretch;
+
+        padding: 0;
 
         .modal-title {
-          font-size: var(--font-size-lg) !important;
-          font-weight: var(--font-weight-sm) !important;
-          line-height: var(--text-line-height) !important;
-          text-transform: capitalize !important;
+          @include paddingLvl2();
+          @include textBase($fontModalTitle);
+
+          display: flex;
+          flex-grow: 1;
 
           b,
           strong {
             font-weight: inherit; // Inherit the font-weight from .modal-title
           }
+        }
+
+        .icon-close {
+          @include clickableFeedback1();
+
+          display: flex;
+          align-items: center;
+
+          padding: 0 $paddingLvl2LR;
         }
       }
 
@@ -189,10 +201,20 @@ $black-color: var(--ff-black);
       }
 
       .modal-footer {
-        justify-content: flex-start !important;
-        &.space-between {
-          justify-content: space-between !important;
+        @include paddingLvl2-buttons();
+
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+
+        & > * {
+          margin: 0;
         }
+
+        // justify-content: flex-start !important;
+        // &.space-between {
+        //   justify-content: space-between !important;
+        // }
       }
     }
   }
@@ -876,11 +898,10 @@ $black-color: var(--ff-black);
 
 
 
-
-
 .task-variable-modal {
   padding-top: 5rem;
   padding-bottom: 5rem;
+
   .modal-body {
     padding: 0px !important;
   }
@@ -897,7 +918,6 @@ $black-color: var(--ff-black);
     padding: var(--spacer-200) var(--spacer-250);
   }
   .field-details-container{
-    padding:var(--spacer-200) var(--spacer-250) ;
     width: 20%;
     float: right;
     background: #FFF;

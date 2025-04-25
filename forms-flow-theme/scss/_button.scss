@@ -149,16 +149,14 @@ $danger-color: var(--ff-danger);
   @extend .default-button-styles;
 
   &.btn-primary {
+    @include clickableFeedback1();
+    min-width: $base*10;
+
     background-color: var(--primary-btn-bg-color) !important;
     border: 1px solid var(--primary-btn-bg-color) !important;
     color: var(--primary-btn-font-color) !important;
     &:focus {
       outline: none !important;
-    }
-
-    &:hover {
-      opacity: 0.8;
-      box-shadow: var(--shadow-md) !important;
     }
 
     &:active {
@@ -190,15 +188,12 @@ $danger-color: var(--ff-danger);
   }
 
   &.btn-secondary {
+    @include clickableFeedback1();
+
     border: none;
     color: var(--secondary-btn-font-color) !important;
     background: var(--secondary-btn-bg-color) !important;
     line-height: var(--text-line-height) !important;
-
-    &:hover {
-      opacity: 0.8;
-      font-weight: var(--font-weight-xl) !important;
-    }
 
     &:focus {
       outline: none !important;
@@ -209,6 +204,7 @@ $danger-color: var(--ff-danger);
   }
 
   &.btn-dark {
+    color: $white-color;
     background-color: $gray-dark !important;
     border: 1px solid $gray-dark !important;
 
