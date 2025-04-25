@@ -1032,7 +1032,7 @@ export function ResizableTable(): JSX.Element {
           </span>
 
           <div className="mb-2">
-          <button className={`assign-to-me-container button-as-div ${
+          <button className={`custom-checkbox-container button-as-div ${
               isAssigned ? "checked" :""
             }`} 
             onClick={onLabelClick}>
@@ -1043,7 +1043,7 @@ export function ResizableTable(): JSX.Element {
             onChange={handleCheckBoxChange}
             data-testid="assign-to-me-checkbox"
           />
-          <label className="assign-to-me-label">{t("Assign to me")}</label>
+          <label className="custom-checkbox-label">{t("Assign to me")}</label>
         </button>
           </div>
         </div>

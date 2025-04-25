@@ -694,7 +694,7 @@ span.text-danger,
   color: var(--default-danger-color) !important;
 }
 
-.assign-to-me-container {
+.custom-checkbox-container {
   display: flex;
   background-color: $white-color !important;
   color: $primary !important;
@@ -721,8 +721,7 @@ span.text-danger,
     padding: var(--spacer-050);
     border-radius: 4px;
   }
-  .assign-to-me-label {
-    
+  .custom-checkbox-label {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-xl);
   }
