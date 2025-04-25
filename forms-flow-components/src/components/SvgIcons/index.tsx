@@ -146,13 +146,14 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AddIcon = ({ color = baseColor, ...props }) => (
+export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
+    width={size}
+    height={size}
     viewBox="0 0 16 16"
     fill="none"
+    {...props}
   >
     <path
       d="M8 1V15"
@@ -170,6 +171,7 @@ export const AddIcon = ({ color = baseColor, ...props }) => (
     />
   </svg>
 );
+
 
 export const DuplicateIcon = ({ color = baseColor, ...props }) => (
   <svg
@@ -213,7 +215,6 @@ export const CloseIcon = ({
   color = grayColor,
   width = 14,
   height = 14,
-  onClick,
   ...props
 }) => (
   <svg
@@ -222,7 +223,7 @@ export const CloseIcon = ({
     height={height}
     viewBox="0 0 14 14"
     fill="none"
-    onClick={onClick}
+    onClick={props.onClick}
     {...props}
   >
     <path

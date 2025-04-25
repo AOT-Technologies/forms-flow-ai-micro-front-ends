@@ -17,10 +17,11 @@ export const KEYCLOAK_ENABLE_CLIENT_AUTH =
 
 export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
 export const MAX_RESULTS = 15;
+
 export const TASK_FILTER_LIST_DEFAULT_PARAM = {
-  sortBy: "created",
-  sortOrder: "desc",
-  // label: <TranslationProps>{(t) => t("Created",
+  activeKey: "created", 
+  name: { sortOrder: "asc" },
+  assignee: { sortOrder: "asc" },
 };
 
 

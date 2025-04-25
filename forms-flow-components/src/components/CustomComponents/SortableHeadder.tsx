@@ -25,7 +25,6 @@ export const SortableHeader: React.FC<SortableHeaderProps> = ({
 }) => {
   const { t } = useTranslation();
   const sortedOrder = currentSort[columnKey]?.sortOrder;
-  console.log("currentSort", currentSort,sortedOrder);
   const isSorted = currentSort.activeKey === columnKey;
   const iconColor = isSorted
     ? StyleServices.getCSSVariable("--ff-primary")

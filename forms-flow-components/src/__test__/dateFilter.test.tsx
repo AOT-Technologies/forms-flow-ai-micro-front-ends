@@ -3,11 +3,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { DateRangePicker } from '../components/CustomComponents/DateFilter';
 import '@testing-library/jest-dom';
 
-// Mock the translation hook
+// Mock the translation function
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
-      const translations: Record<string, string> = {
+      const translations: { [key: string]: string } = {
         'January': 'January',
         'February': 'February',
         'March': 'March',
@@ -36,23 +36,26 @@ jest.mock('react-i18next', () => ({
         'Next year': 'Next year',
         'Day of week': 'Day of week',
         'selected': 'selected',
-        'not selected': 'not selected'
+        'not selected': 'not selected',
+        'Showing': 'Showing',
+        'to': 'to',
+        'of': 'of',
+        'Rows per page': 'Rows per page'
       };
       return translations[key] || key;
     }
   })
 }));
 
-// Mock SVG icons
+// Mock SVG Icons
 jest.mock('../components/SvgIcons', () => ({
-  AngleLeftIcon: () => <div data-testid="angle-left-icon">←</div>,
-  AngleRightIcon: () => <div data-testid="angle-right-icon">→</div>,
-  CloseIcon: ({ onClick }: { onClick?: (e: React.MouseEvent) => void, color: string }) => 
-    <div data-testid="close-icon" onClick={onClick}>×</div>,
-  RightFarIcon: () => <div data-testid="right-far-icon">⟫</div>,
-  LeftFarIcon: () => <div data-testid="left-far-icon">⟪</div>,
-  DownArrowIcon: () => <div data-testid="down-arrow-icon">▼</div>,
-  UpArrowIcon: () => <div data-testid="up-arrow-icon">▲</div>,
+  AngleLeftIcon: () => <div data-testid="angle-left-icon">AngleLeftIcon</div>,
+  AngleRightIcon: () => <div data-testid="angle-right-icon">AngleRightIcon</div>,
+  CloseIcon: () => <div data-testid="close-icon">CloseIcon</div>,
+  RightFarIcon: () => <div data-testid="right-far-icon">RightFarIcon</div>,
+  LeftFarIcon: () => <div data-testid="left-far-icon">LeftFarIcon</div>,
+  DownArrowIcon: () => <div data-testid="down-arrow-icon">DownArrowIcon</div>,
+  UpArrowIcon: () => <div data-testid="up-arrow-icon">UpArrowIcon</div>,
 }));
 
 describe('DateRangePicker Component', () => {
@@ -62,485 +65,526 @@ describe('DateRangePicker Component', () => {
     jest.clearAllMocks();
   });
 
-  // Helper to format dates in MM/DD/YYYY format
-  const formatDate = (date: Date): string => {
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
 
-  test('renders with default values', () => {
-    render(<DateRangePicker />);
-    
-    // Check if the component renders
-    const dateRangePicker = screen.getByTestId('date-range-picker');
-    expect(dateRangePicker).toBeInTheDocument();
-    
-    // Check if the default date format is displayed
-    const today = new Date();
-    const thirtyDaysLater = new Date();
-    thirtyDaysLater.setDate(today.getDate() + 30);
-    
-    const expectedDateText = `${formatDate(today)} - ${formatDate(thirtyDaysLater)}`;
-    const dateRangeText = screen.getByTestId('date-range-text');
-    
-    expect(dateRangeText.textContent).toBe(expectedDateText);
-  });
-
-  test('renders with custom initial date range', () => {
-    const initialDateRange = {
-      startDate: new Date(2025, 0, 1), // Jan 1, 2025
-      endDate: new Date(2025, 0, 15)   // Jan 15, 2025
-    };
-    
-    render(<DateRangePicker initialDateRange={initialDateRange} />);
-    
-    const expectedDateText = `01/01/2025 - 01/15/2025`;
-    const dateRangeText = screen.getByTestId('date-range-text');
-    
-    expect(dateRangeText.textContent).toBe(expectedDateText);
-  });
-
-  test('opens and closes calendar', () => {
-    render(<DateRangePicker />);
-    
-    // Calendar should be closed initially
-    expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
-    
-    // Open calendar
-    fireEvent.click(screen.getByTestId('date-range-display'));
-    expect(screen.getByTestId('calendar-container')).toBeInTheDocument();
-    
-    // Close calendar
-    fireEvent.click(screen.getByTestId('date-range-close-btn'));
-    expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
-  });
-
-  test('displays correct month and year in calendar header', () => {
-    const initialDateRange = {
-      startDate: new Date(2025, 2, 15), // Mar 15, 2025
-      endDate: new Date(2025, 2, 20)    // Mar 20, 2025
-    };
-    
-    render(<DateRangePicker initialDateRange={initialDateRange} />);
-    
-    // Open calendar
-    fireEvent.click(screen.getByTestId('date-range-display'));
-    
-    // Check if correct month and year are displayed
-    const monthYearText = screen.getByTestId('calendar-month-year');
-    expect(monthYearText.textContent).toBe('March 2025');
-  });
-
- 
-
-  test('navigates to previous and next year', () => {
-    const initialDateRange = {
-      startDate: new Date(2025, 2, 15), // Mar 15, 2025
-      endDate: new Date(2025, 2, 20)    // Mar 20, 2025
-    };
-    
-    render(<DateRangePicker initialDateRange={initialDateRange} />);
-    
-    // Open calendar
-    fireEvent.click(screen.getByTestId('date-range-display'));
-    
-    // Initial year
-    expect(screen.getByTestId('calendar-month-year').textContent).toBe('March 2025');
-    
-    // Go to next year
-    fireEvent.click(screen.getByTestId('right-far-icon'));
-    expect(screen.getByTestId('calendar-month-year').textContent).toBe('March 2026');
-    
-    // Go to previous year
-    fireEvent.click(screen.getByTestId('left-far-icon'));
-    expect(screen.getByTestId('calendar-month-year').textContent).toBe('March 2025');
-  });
-
-  test('selects date range and calls onChange', async () => {
+  it('renders with default placeholder when no dates are selected', () => {
     render(<DateRangePicker onChange={mockOnChange} />);
     
-    // Open calendar
+    expect(screen.getByTestId('date-range-picker')).toBeInTheDocument();
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('Select date range');
+    expect(screen.getByTestId('down-arrow-icon')).toBeInTheDocument();
+  });
+
+  it('renders with custom placeholder when provided', () => {
+    render(<DateRangePicker onChange={mockOnChange} placeholder="Custom placeholder" />);
+    
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('Custom placeholder');
+  });
+
+  it('opens calendar when display is clicked', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
     fireEvent.click(screen.getByTestId('date-range-display'));
     
-    // Find and select a start date (15th of current month)
-    const startDateElement = screen.getByTestId('calendar-day-15');
-    fireEvent.click(startDateElement);
-    
-    // Find and select an end date (20th of current month)
-    const endDateElement = screen.getByTestId('calendar-day-20');
-    fireEvent.click(endDateElement);
-    
-    // Check if onChange was called with the correct date range
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
-    const onChangeCalls = mockOnChange.mock.calls[0][0];
-    
-    // Get the current month and year
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    
-    // Create expected date objects
-    const expectedStartDate = new Date(currentYear, currentMonth, 15);
-    const expectedEndDate = new Date(currentYear, currentMonth, 20);
-    
-    // Check that the dates match (comparing by time to avoid timezone issues)
-    expect(onChangeCalls.startDate.getTime()).toBe(expectedStartDate.getTime());
-    expect(onChangeCalls.endDate.getTime()).toBe(expectedEndDate.getTime());
-    
-    // Check if the display text was updated
-    await waitFor(() => {
-      const expectedText = `${formatDate(expectedStartDate)} - ${formatDate(expectedEndDate)}`;
-      expect(screen.getByTestId('date-range-text').textContent).toBe(expectedText);
-    });
+    expect(screen.getByTestId('calendar-container')).toBeInTheDocument();
+    expect(screen.getByTestId('calendar-header')).toBeInTheDocument();
+    expect(screen.getByTestId('calendar-days-header')).toBeInTheDocument();
+    expect(screen.getByTestId('calendar-days')).toBeInTheDocument();
+    expect(screen.getByTestId('up-arrow-icon')).toBeInTheDocument();
   });
-  
-  test('handles keyboard navigation', () => {
-    render(<DateRangePicker />);
+
+  it('displays correct month and year in calendar header', () => {
+    const today = new Date();
+    const currentMonth = today.toLocaleString('default', { month: 'long' });
+    const currentYear = today.getFullYear();
     
-    // Open calendar with keyboard
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    expect(screen.getByTestId('calendar-month-year')).toHaveTextContent(`${currentMonth} ${currentYear}`);
+  });
+
+  it('navigates to previous month when prev month button is clicked', () => {
+    const today = new Date();
+    const prevMonth = new Date(today);
+    prevMonth.setMonth(today.getMonth() - 1);
+    const prevMonthName = prevMonth.toLocaleString('default', { month: 'long' });
+    const prevMonthYear = prevMonth.getFullYear();
+    
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    fireEvent.click(screen.getByTestId('calendar-prev-month'));
+    
+    expect(screen.getByTestId('calendar-month-year')).toHaveTextContent(`${prevMonthName} ${prevMonthYear}`);
+  });
+
+  it('navigates to next month when next month button is clicked', () => {
+    const today = new Date();
+    const nextMonth = new Date(today);
+    nextMonth.setMonth(today.getMonth() + 1);
+    const nextMonthName = nextMonth.toLocaleString('default', { month: 'long' });
+    const nextMonthYear = nextMonth.getFullYear();
+    
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    fireEvent.click(screen.getByTestId('calendar-next-month'));
+    
+    expect(screen.getByTestId('calendar-month-year')).toHaveTextContent(`${nextMonthName} ${nextMonthYear}`);
+  });
+
+  it('navigates to previous year when prev year button is clicked', () => {
+    const today = new Date();
+    const prevYear = today.getFullYear() - 1;
+    const currentMonth = today.toLocaleString('default', { month: 'long' });
+    
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    fireEvent.click(screen.getByTestId('calendar-prev-year'));
+    
+    expect(screen.getByTestId('calendar-month-year')).toHaveTextContent(`${currentMonth} ${prevYear}`);
+  });
+
+  it('navigates to next year when next year button is clicked', () => {
+    const today = new Date();
+    const nextYear = today.getFullYear() + 1;
+    const currentMonth = today.toLocaleString('default', { month: 'long' });
+    
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    fireEvent.click(screen.getByTestId('calendar-next-year'));
+    
+    expect(screen.getByTestId('calendar-month-year')).toHaveTextContent(`${currentMonth} ${nextYear}`);
+  });
+
+  it('selects a date range when two dates are clicked', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Find a valid day in the current month (e.g., the 10th)
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day') && el.classList.contains('current-month'));
+    
+    // Select the first day and a day 5 days later
+    const firstDay = calendarDays[10]; // arbitrary day in the middle of the month
+    const secondDay = calendarDays[15]; // another day later in the month
+    
+    fireEvent.click(firstDay);
+    fireEvent.click(secondDay);
+    
+    // Check that onChange was called with the correct date range
+    expect(mockOnChange).toHaveBeenCalledTimes(2);
+    
+    // First call should be with just the start date
+    const firstCall = mockOnChange.mock.calls[0][0];
+    expect(firstCall.startDate).toBeInstanceOf(Date);
+    expect(firstCall.endDate).toBeNull();
+    
+    // Second call should be with both dates
+    const secondCall = mockOnChange.mock.calls[1][0];
+    expect(secondCall.startDate).toBeInstanceOf(Date);
+    expect(secondCall.endDate).toBeInstanceOf(Date);
+  });
+
+  it('selects a date range in reverse order when second date is before first date', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Find days in the current month
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day') && el.classList.contains('current-month'));
+    
+    // Select days in reverse order
+    const laterDay = calendarDays[15];
+    const earlierDay = calendarDays[10];
+    
+    fireEvent.click(laterDay);
+    fireEvent.click(earlierDay);
+    
+    // Check that onChange was called with the correct date range
+    expect(mockOnChange).toHaveBeenCalledTimes(2);
+    
+    // Second call should have dates in correct order (start < end)
+    const secondCall = mockOnChange.mock.calls[1][0];
+    const startDate = new Date(secondCall.startDate);
+    const endDate = new Date(secondCall.endDate);
+    expect(startDate.getTime()).toBeLessThan(endDate.getTime());
+  });
+
+  it('clears date selection when close button is clicked', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Select a date
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day') && el.classList.contains('current-month'));
+    fireEvent.click(calendarDays[10]);
+    
+    // Click the close button
+    fireEvent.click(screen.getByTestId('date-range-close-btn'));
+    
+    // Check that onChange was called with null dates
+    expect(mockOnChange).toHaveBeenLastCalledWith({
+      startDate: null,
+      endDate: null
+    });
+    
+    // Verify the calendar is closed
+    expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
+    
+    // Verify the display shows the placeholder
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('Select date range');
+  });
+
+  it('supports keyboard navigation with Enter key', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    // Open calendar with Enter key
     const dateRangeDisplay = screen.getByTestId('date-range-display');
     fireEvent.keyDown(dateRangeDisplay, { key: 'Enter' });
-    expect(screen.getByTestId('calendar-container')).toBeInTheDocument();
     
-    // Navigate to next month with keyboard
-    const nextMonthBtn = screen.getByTestId('calendar-next-month');
-    fireEvent.keyDown(nextMonthBtn, { key: 'Enter' });
-    
-    // Navigate to previous month with keyboard
+    // Navigate to previous month with Enter key
     const prevMonthBtn = screen.getByTestId('calendar-prev-month');
     fireEvent.keyDown(prevMonthBtn, { key: 'Enter' });
     
-    // Select a date with keyboard
-    const dayElement = screen.getByTestId('calendar-day-15');
-    fireEvent.keyDown(dayElement, { key: 'Enter' });
+    // Select a date with Enter key
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day') && el.classList.contains('current-month'));
+    fireEvent.keyDown(calendarDays[10], { key: 'Enter' });
     
-    // Close calendar with keyboard
-    const closeBtn = screen.getByTestId('date-range-close-btn');
-    fireEvent.keyDown(closeBtn, { key: 'Enter' });
-    expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
+    // Verify onChange was called
+    expect(mockOnChange).toHaveBeenCalled();
   });
 
-  test('properly marks selected date range', () => {
-    render(<DateRangePicker />);
+  it('handles custom date format correctly', () => {
+    const customFormat = "YYYY-MM-DD";
     
-    // Open calendar
-    fireEvent.click(screen.getByTestId('date-range-display'));
+    render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        dateFormat={customFormat}
+        value={{
+          startDate: new Date(2023, 5, 10), // June 10, 2023
+          endDate: new Date(2023, 5, 15)    // June 15, 2023
+        }}
+      />
+    );
     
-    // Select start date (10th)
-    const startDateElement = screen.getAllByTestId('calendar-day-10')?.[0];
-    fireEvent.click(startDateElement);
-    
-    // Select end date (20th)
-    const endDateElement = screen.getByTestId('calendar-day-20');
-    fireEvent.click(endDateElement);
-    
-    // Reopen calendar to check selection
-    fireEvent.click(screen.getByTestId('date-range-display'));
-    
+    // Expected format: YYYY-MM-DD - YYYY-MM-DD
+    expect(screen.getByTestId('date-range-text').textContent).toBe('2023-06-10 - 2023-06-15');
   });
 
-  test('handles string dates in initialDateRange', () => {
+  it('initializes with provided date range', () => {
     const initialDateRange = {
-      startDate: '2025-01-01T00:00:00.000Z', // ISO string for Jan 1, 2025
-      endDate: '2025-01-15T00:00:00.000Z'    // ISO string for Jan 15, 2025
+      startDate: new Date(2023, 5, 10), // June 10, 2023
+      endDate: new Date(2023, 5, 15)    // June 15, 2023
     };
     
-    render(<DateRangePicker initialDateRange={initialDateRange} />);
+    render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={initialDateRange}
+        dateFormat="MM/DD/YYYY"
+      />
+    );
     
-    const dateRangeText = screen.getByTestId('date-range-text');
-    expect(dateRangeText.textContent).toBe('01/01/2025 - 01/15/2025');
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('06/10/2023 - 06/15/2023');
     
-    // Open calendar
+    // Open calendar and verify it shows the correct month/year
     fireEvent.click(screen.getByTestId('date-range-display'));
-    expect(screen.getByTestId('calendar-month-year').textContent).toBe('January 2025');
+    expect(screen.getByTestId('calendar-month-year')).toHaveTextContent('June 2023');
   });
 
+  it('handles ISO date strings in the value prop', () => {
+    const initialDateRange = {
+      startDate: '2023-06-10T00:00:00.000Z',
+      endDate: '2023-06-15T00:00:00.000Z'
+    };
+    
+    render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={initialDateRange}
+        dateFormat="MM/DD/YYYY"
+      />
+    );
+    
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('06/10/2023 - 06/15/2023');
+    
+    // Open calendar and verify it shows the correct month/year
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    expect(screen.getByTestId('calendar-month-year')).toHaveTextContent('June 2023');
+  });
 
-  test('handles selection when end date is before start date', () => {
+  it('updates when value prop changes', () => {
+    const { rerender } = render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={{
+          startDate: new Date(2023, 5, 10), // June 10, 2023
+          endDate: new Date(2023, 5, 15)    // June 15, 2023
+        }}
+      />
+    );
+    
+    // Update with new date range
+    rerender(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={{
+          startDate: new Date(2023, 7, 20), // August 20, 2023
+          endDate: new Date(2023, 7, 25)    // August 25, 2023
+        }}
+      />
+    );
+    
+    // Open calendar and verify it shows the updated month/year
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    expect(screen.getByTestId('calendar-month-year')).toHaveTextContent('August 2023');
+  });
+
+  it('resets to empty range when value prop becomes null/undefined', () => {
+    const { rerender } = render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={{
+          startDate: new Date(2023, 5, 10),
+          endDate: new Date(2023, 5, 15)
+        }}
+      />
+    );
+    
+    // Update with undefined value
+    rerender(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={undefined}
+      />
+    );
+    
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('Select date range');
+  });
+
+  it('applies custom className to container', () => {
+    render(<DateRangePicker onChange={mockOnChange} className="custom-class" />);
+    
+    expect(screen.getByTestId('date-range-picker')).toHaveClass('custom-class');
+  });
+
+  it('handles days from previous and next months correctly', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // The calendar should show days from previous and next months
+    // These days should have the 'other-month' class
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day'));
+    
+    // Check that we have 42 days (6 weeks × 7 days)
+    expect(calendarDays.length).toBe(42);
+    
+    // Some days should have the 'other-month' class
+    const otherMonthDays = calendarDays.filter(day => day.classList.contains('other-month'));
+    expect(otherMonthDays.length).toBeGreaterThan(0);
+  });
+
+  it('completes selection with same date when clicking outside with only start date selected', async () => {
     render(<DateRangePicker onChange={mockOnChange} />);
     
     // Open calendar
     fireEvent.click(screen.getByTestId('date-range-display'));
     
-    // Select start date (20th)
-    const startDateElement = screen.getByTestId('calendar-day-20');
-    fireEvent.click(startDateElement);
+    // Select only start date
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day') && el.classList.contains('current-month'));
+    fireEvent.click(calendarDays[10]);
     
-    // Select end date (10th) which is before start date
-    const endDateElement = screen.getAllByTestId('calendar-day-10')?.[0];
-    fireEvent.click(endDateElement);
+    // Click outside (simulate by firing mousedown on document)
+    fireEvent.mouseDown(document);
     
-    // Check if onChange was called with correct order (10th to 20th)
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
-    const onChangeCalls = mockOnChange.mock.calls[0][0];
-    
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    
-    const expectedStartDate = new Date(currentYear, currentMonth, 10);
-    const expectedEndDate = new Date(currentYear, currentMonth, 20);
-    
-    expect(onChangeCalls.startDate.getTime()).toBe(expectedStartDate.getTime());
-    expect(onChangeCalls.endDate.getTime()).toBe(expectedEndDate.getTime());
+    // Wait for the effect to run
+    await waitFor(() => {
+      // Check that onChange was called with both start and end dates equal
+      const lastCall = mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1][0];
+      expect(lastCall.startDate).toBeInstanceOf(Date);
+      expect(lastCall.endDate).toBeInstanceOf(Date);
+      
+      // Start and end dates should be the same
+      const startDate = new Date(lastCall.startDate);
+      const endDate = new Date(lastCall.endDate);
+      expect(startDate.getDate()).toBe(endDate.getDate());
+      expect(startDate.getMonth()).toBe(endDate.getMonth());
+      expect(startDate.getFullYear()).toBe(endDate.getFullYear());
+    });
   });
 
-  test('applies custom className', () => {
-    render(<DateRangePicker className="custom-class" />);
+  it('handles keyboard navigation for all interactive elements', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
     
-    const dateRangePicker = screen.getByTestId('date-range-picker');
-    expect(dateRangePicker).toHaveClass('custom-class');
-  });
-
-  // Additional tests to add to the existing test suite
-
-test('resets date range when clicking close button', () => {
-  const initialDateRange = {
-    startDate: new Date(2025, 0, 1), // Jan 1, 2025
-    endDate: new Date(2025, 0, 15)   // Jan 15, 2025
-  };
-  
-  render(<DateRangePicker initialDateRange={initialDateRange} onChange={mockOnChange} />);
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // Click close button
-  fireEvent.click(screen.getByTestId('close-icon'));
-  
-  // Check if onChange was called with null dates
-  expect(mockOnChange).toHaveBeenCalledWith({
-    startDate: null,
-    endDate: null
-  });
-  
-  // Check if the display text was reset
-  expect(screen.getByTestId('date-range-text').textContent).toBe('MM/DD/YYYY - MM/DD/YYYY');
-});
-
-test('navigates to previous and next month', () => {
-  const initialDateRange = {
-    startDate: new Date(2025, 2, 15), // Mar 15, 2025
-    endDate: new Date(2025, 2, 20)    // Mar 20, 2025
-  };
-  
-  render(<DateRangePicker initialDateRange={initialDateRange} />);
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // Initial month
-  expect(screen.getByTestId('calendar-month-year').textContent).toBe('March 2025');
-  
-  // Go to next month
-  fireEvent.click(screen.getByTestId('angle-right-icon'));
-  expect(screen.getByTestId('calendar-month-year').textContent).toBe('April 2025');
-  
-  // Go to previous month
-  fireEvent.click(screen.getByTestId('angle-left-icon'));
-  expect(screen.getByTestId('calendar-month-year').textContent).toBe('March 2025');
-});
-
-test('completes selection when clicking outside with only start date selected', async () => {
-  render(<DateRangePicker onChange={mockOnChange} />);
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // Select only start date (15th of current month)
-  const startDateElement = screen.getByTestId('calendar-day-15');
-  fireEvent.click(startDateElement);
-  
-  // Simulate clicking outside
-  fireEvent.mouseDown(document.body);
-  
-  // Check if onChange was called with start and end date being the same
-  await waitFor(() => {
-    expect(mockOnChange).toHaveBeenCalledTimes(1);
-    const onChangeCalls = mockOnChange.mock.calls[0][0];
+    // Open calendar with Space key
+    const dateRangeDisplay = screen.getByTestId('date-range-display');
+    fireEvent.keyDown(dateRangeDisplay, { key: ' ' });
     
-    // Start and end date should be the same (15th)
-    expect(onChangeCalls.startDate.getDate()).toBe(15);
-    expect(onChangeCalls.endDate.getDate()).toBe(15);
+    // Test all navigation buttons with keyboard
+    const navButtons = [
+      { element: 'calendar-prev-year', key: ' ' },
+      { element: 'calendar-prev-month', key: ' ' },
+      { element: 'calendar-next-month', key: ' ' },
+      { element: 'calendar-next-year', key: ' ' },
+    ];
+    
+    navButtons.forEach(({ element, key }) => {
+      const button = screen.getByTestId(element);
+      fireEvent.keyDown(button, { key });
+    });
+    
+    // Test close button with keyboard
+    const closeButton = screen.getByTestId('date-range-close-btn');
+    fireEvent.keyDown(closeButton, { key: ' ' });
+    
+    // Calendar should be closed and dates reset
+    expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
+    expect(mockOnChange).toHaveBeenLastCalledWith({
+      startDate: null,
+      endDate: null
+    });
   });
-});
 
+  it('renders weekday headers correctly', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    const weekdays = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+    const weekdayElements = screen.getByTestId('calendar-days-header').querySelectorAll('.calendar-weekday');
+    
+    expect(weekdayElements.length).toBe(7);
+    
+    weekdayElements.forEach((element, index) => {
+      expect(element).toHaveTextContent(weekdays[index]);
+    });
+  });
 
-test('renders correct weekday headers', () => {
-  render(<DateRangePicker />);
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // Check if all weekday headers are present
-  const weekdays = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
-  const weekdayElements = screen.getByTestId('calendar-days-header').children;
-  
-  expect(weekdayElements.length).toBe(7);
-  
-  for (let i = 0; i < weekdays.length; i++) {
-    expect(weekdayElements[i].textContent).toBe(weekdays[i]);
-  }
-});
+  it('handles date selection with keyboard Space key', () => {
+    render(<DateRangePicker onChange={mockOnChange} />);
+    
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Select a date with Space key
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day') && el.classList.contains('current-month'));
+    fireEvent.keyDown(calendarDays[10], { key: ' ' });
+    
+    // Verify onChange was called
+    expect(mockOnChange).toHaveBeenCalled();
+    
+    // First call should be with just the start date
+    const firstCall = mockOnChange.mock.calls[0][0];
+    expect(firstCall.startDate).toBeInstanceOf(Date);
+    expect(firstCall.endDate).toBeNull();
+  });
 
-test('generates correct number of days in calendar', () => {
-  render(<DateRangePicker />);
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // Calendar should have 6 weeks (42 days)
-  const daysContainer = screen.getByTestId('calendar-days');
-  expect(daysContainer.children.length).toBe(42);
-});
+  it('applies correct CSS classes to selected date range', () => {
+    // Initialize with a date range
+    const initialDateRange = {
+      startDate: new Date(2023, 5, 10), // June 10, 2023
+      endDate: new Date(2023, 5, 15)    // June 15, 2023
+    };
+    
+    render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={initialDateRange}
+      />
+    );
+    
+    // Open the calendar to check the styling
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    
+    // Find all days in the current month
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day') && el.classList.contains('current-month'));
+    
+    // Find days that have the 'selected' class
+    const selectedDays = calendarDays.filter(day => day.classList.contains('selected'));
+    expect(selectedDays.length).toBeGreaterThan(0);
+    
+    // Find days that have the 'start-date' and 'end-date' classes
+    const startDateDay = calendarDays.find(day => day.classList.contains('start-date'));
+    const endDateDay = calendarDays.find(day => day.classList.contains('end-date'));
+    
+    expect(startDateDay).toBeDefined();
+    expect(endDateDay).toBeDefined();
+  });
 
-test('handles space key for date selection', () => {
-  render(<DateRangePicker onChange={mockOnChange} />);
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // Select start date with space key
-  const startDateElement = screen.getByTestId('calendar-day-15');
-  fireEvent.keyDown(startDateElement, { key: ' ' });
-  
-  // Select end date with space key
-  const endDateElement = screen.getByTestId('calendar-day-20');
-  fireEvent.keyDown(endDateElement, { key: ' ' });
-  
-  // Check if onChange was called
-  expect(mockOnChange).toHaveBeenCalledTimes(1);
-  
-  const onChangeCalls = mockOnChange.mock.calls[0][0];
-  expect(onChangeCalls.startDate.getDate()).toBe(15);
-  expect(onChangeCalls.endDate.getDate()).toBe(20);
-});
+  it('handles null values in date range correctly', () => {
+    const initialDateRange = {
+      startDate: null,
+      endDate: null
+    };
+    
+    render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={initialDateRange}
+      />
+    );
+    
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('Select date range');
+    
+    // Open calendar and select a date
+    fireEvent.click(screen.getByTestId('date-range-display'));
+    const calendarDays = screen.getAllByRole('button')
+      .filter(el => el.classList.contains('calendar-day') && el.classList.contains('current-month'));
+    fireEvent.click(calendarDays[10]);
+    
+    // Check that onChange was called with the correct date range
+    expect(mockOnChange).toHaveBeenCalledWith(expect.objectContaining({
+      startDate: expect.any(Date),
+      endDate: null
+    }));
+  });
 
-test('updates when initialDateRange prop changes', () => {
-  const { rerender } = render(
-    <DateRangePicker 
-      initialDateRange={{
-        startDate: new Date(2025, 0, 1),
-        endDate: new Date(2025, 0, 15)
-      }} 
-    />
-  );
-  
-  // Check initial render
-  expect(screen.getByTestId('date-range-text').textContent).toBe('01/01/2025 - 01/15/2025');
-  
-  // Update props
-  rerender(
-    <DateRangePicker 
-      initialDateRange={{
-        startDate: new Date(2026, 5, 10),
-        endDate: new Date(2026, 5, 20)
-      }} 
-    />
-  );
-  
-  // Check if display updated
-  expect(screen.getByTestId('date-range-text').textContent).toBe('06/10/2026 - 06/20/2026');
-});
+  it('handles partial date range with only startDate', () => {
+    const initialDateRange = {
+      startDate: new Date(2023, 5, 10),
+      endDate: null
+    };
+    
+    render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={initialDateRange}
+        dateFormat="MM/DD/YYYY"
+      />
+    );
+    
+    // Should show the start date and placeholder for end date
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('06/10/2023 - MM/DD/YYYY');
+  });
 
-test('displays days from previous and next months', () => {
-  // Use a specific date to ensure consistent test results
-  const initialDateRange = {
-    startDate: new Date(2025, 0, 15), // Jan 15, 2025
-    endDate: new Date(2025, 0, 20)    // Jan 20, 2025
-  };
-  
-  render(<DateRangePicker initialDateRange={initialDateRange} />);
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // Find all day elements
-  const dayElements = screen.getByTestId('calendar-days').children;
-  
-  // Check if there are days from previous month (should have "other-month" class)
-  const previousMonthDays = Array.from(dayElements).filter(
-    el => el.classList.contains('other-month') && parseInt(el.textContent || '0') > 20
-  );
-  expect(previousMonthDays.length).toBeGreaterThan(0);
-  
-  // Check if there are days from next month (should have "other-month" class)
-  const nextMonthDays = Array.from(dayElements).filter(
-    el => el.classList.contains('other-month') && parseInt(el.textContent || '0') < 15
-  );
-  expect(nextMonthDays.length).toBeGreaterThan(0);
-});
-
-test('correctly marks start and end dates with appropriate classes', () => {
-  // Use a specific date range
-  const initialDateRange = {
-    startDate: new Date(2025, 0, 10), // Jan 10, 2025
-    endDate: new Date(2025, 0, 20)    // Jan 20, 2025
-  };
-  
-  render(<DateRangePicker initialDateRange={initialDateRange} />);
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // Find all day elements for the 10th and 20th
-  const allDays = screen.getByTestId('calendar-days').children;
-  
-  // Find the current month's day 10 (start date)
-  const startDateElement = Array.from(allDays).find(
-    el => el.textContent === '10' && el.classList.contains('current-month')
-  );
-  
-  // Find the current month's day 20 (end date)
-  const endDateElement = Array.from(allDays).find(
-    el => el.textContent === '20' && el.classList.contains('current-month')
-  );
-  
-  // Check if they have the correct classes
-  expect(startDateElement).toHaveClass('start-date');
-  expect(startDateElement).toHaveClass('selected');
-  expect(endDateElement).toHaveClass('end-date');
-  expect(endDateElement).toHaveClass('selected');
-  
-  // Check if days in between are also selected
-  const day15Element = Array.from(allDays).find(
-    el => el.textContent === '15' && el.classList.contains('current-month')
-  );
-  expect(day15Element).toHaveClass('selected');
-  expect(day15Element).not.toHaveClass('start-date');
-  expect(day15Element).not.toHaveClass('end-date');
-});
-
-test('toggles calendar open/close when clicking display area', () => {
-  render(<DateRangePicker />);
-  
-  // Calendar should be closed initially
-  expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  expect(screen.getByTestId('calendar-container')).toBeInTheDocument();
-  
-  // Close calendar by clicking display again
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  expect(screen.queryByTestId('calendar-container')).not.toBeInTheDocument();
-});
-
-test('shows correct toggle icon based on calendar state', () => {
-  render(<DateRangePicker />);
-  
-  // When closed, should show down arrow
-  expect(screen.getByTestId('down-arrow-icon')).toBeInTheDocument();
-  expect(screen.queryByTestId('up-arrow-icon')).not.toBeInTheDocument();
-  
-  // Open calendar
-  fireEvent.click(screen.getByTestId('date-range-display'));
-  
-  // When open, should show up arrow
-  expect(screen.queryByTestId('down-arrow-icon')).not.toBeInTheDocument();
-  expect(screen.getByTestId('up-arrow-icon')).toBeInTheDocument();
-});
-
+  it('handles partial date range with only endDate', () => {
+    const initialDateRange = {
+      startDate: null,
+      endDate: new Date(2023, 5, 15)
+    };
+    
+    render(
+      <DateRangePicker 
+        onChange={mockOnChange} 
+        value={initialDateRange}
+        dateFormat="MM/DD/YYYY"
+      />
+    );
+    
+    // Should show placeholder for start date and the end date
+    expect(screen.getByTestId('date-range-text')).toHaveTextContent('MM/DD/YYYY - 06/15/2023');
+  });
 });

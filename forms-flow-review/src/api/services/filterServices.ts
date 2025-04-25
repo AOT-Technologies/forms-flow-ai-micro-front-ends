@@ -43,20 +43,19 @@ const handleTaskError = (dispatch, error) => {
   const done = rest.length ? rest[0] : () => {};
     const apiUrlgetTaskList =
         `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${maxResults || MAX_RESULTS}`;
-
-  return (dispatch) => {
-    RequestService.httpPOSTRequestWithHAL(
-      apiUrlgetTaskList,
-      reqData,
-      StorageService.get(StorageService.User.AUTH_TOKEN)
-    )
-      .then((res) => {
-        if (res.data) {
-          let responseData = res.data;
-          const _embedded = responseData[0]?._embedded; // data._embedded.task is where the task list is.
-          if (!_embedded?.task || !responseData?.[0]?.count) {
-            // Display error if the necessary values are unavailable.
-            handleTaskError(dispatch, res);
+    return (dispatch) => {
+      RequestService.httpPOSTRequestWithHAL(
+        apiUrlgetTaskList,
+        reqData,
+        StorageService.get(StorageService.User.AUTH_TOKEN)
+      )  
+        .then((res) => {
+          if (res.data) {
+            let responseData = res.data;
+            const _embedded = responseData[0]?._embedded; // data._embedded.task is where the task list is.
+            if (!_embedded?.task || !responseData?.[0]?.count) {
+              // Display error if the necessary values are unavailable.
+              handleTaskError(dispatch, res);
             }
              else {
             const taskListFromResponse = _embedded["task"]; // Gets the task array

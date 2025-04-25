@@ -346,7 +346,7 @@ $white-color: var(--ff-white);
         border-top: 1px solid var(--ff-primary);
         border-bottom: 1px solid var(--ff-primary);
       }
-
+      
       td:last-child {
         position: sticky;
         right: 0;
@@ -357,6 +357,12 @@ $white-color: var(--ff-white);
         vertical-align: middle;
       }
     }
+  }
+  .empty-table-message {
+    text-align: center;
+    border: none;
+    padding: var(--spacer-100);
+    color: var(--ff-gray-medium-dark);
   }
 }
 

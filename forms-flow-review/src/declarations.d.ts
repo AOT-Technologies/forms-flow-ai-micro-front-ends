@@ -44,7 +44,8 @@ declare module "@formsflow/service" {
     RequestService,
     StorageService,
     i18nService,
-    StyleServices
+    StyleServices,
+    HelperServices,
   }: any;
 }
 
@@ -53,18 +54,19 @@ declare module "@formsflow/components" {
     TableFooter,
     SortableHeader,
     FilterSortActions,
+    CustomButton,
+    ButtonDropdown,
     DateRangePicker,
     CloseIcon,
-    CustomSearch, 
-    PencilIcon, 
-    SaveIcon, 
+    PencilIcon,
+    SaveIcon,
     InputDropdown,
-    CustomButton, 
-    CustomTabs, 
-    FormInput, 
-    CustomInfo, 
-    DragandDropSort
+    CustomTabs,
+    FormInput,
+    CustomInfo,
+    DragandDropSort,
+    CustomSearch,
+    AddIcon
   }: any;
 }
-
 

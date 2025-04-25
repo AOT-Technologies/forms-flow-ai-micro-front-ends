@@ -83,7 +83,7 @@ const Review = React.memo((props: any) => {
                   path={`${BASE_ROUTE}review`}
                   render={() => <TaskList {...props}/>}
                 />
-                <Redirect from="*" to="/404" />
+                {/* <Redirect from="*" to="/404" /> */}
               </Switch>
             </div>
      

@@ -96,6 +96,12 @@ export const setTasks = (data: any) => ({
     });
   };
 
+  export const setBPMFiltersAndCount = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_FILTERS_AND_COUNT,
+      payload: data,
+    });
+  };
   export const setSelectedBPMFilter = (data) => (dispatch) => {
     dispatch({
       type: ACTION_CONSTANTS.BPM_SELECTED_FILTER,
@@ -103,12 +109,51 @@ export const setTasks = (data: any) => ({
     });
   };
 
-  export const setBPMFiltersAndCount = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.BPM_FILTERS_AND_COUNT, 
-      payload: data,
-    });
-  };
+
+
+export const setBPMTaskDetailLoader = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_LOADING,
+    payload: data,
+  });
+};
+
+export const setBPMTaskListActivePage = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.BPM_TASK_LIST_ACTIVE_PAGE,
+    payload: data,
+  });
+};
+
+export const setFilterListParams = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.UPDATE_LIST_PARAMS,
+    payload: data,
+  });
+};
+
+
+
+export const setFilterListSortParams = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.UPDATE_FILTER_LIST_SORT_PARAMS,
+    payload: data,
+  });
+};
+
+export const setTaskListLimit = (pageLimit) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.TASK_LIST_LIMIT_CHANGE,
+    payload: pageLimit,
+  });
+};
+
+export const setBPMFilterSearchParams = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS,
+    payload: data,
+  });
+};
 
   export const setSelectedTaskID = (data) => (dispatch) => {
     dispatch({
@@ -116,20 +161,3 @@ export const setTasks = (data: any) => ({
       payload: data,
     });
   };
-
-  export const setBPMTaskListActivePage = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.BPM_TASK_LIST_ACTIVE_PAGE,
-      payload: data,
-    });
-  };
-
-  export const setBPMFilterSearchParams = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS, 
-      payload: data,
-    });
-  };
-
-  
-  
