@@ -37,7 +37,6 @@ import {
   fetchBPMTaskCount,
   fetchServiceTaskList,
   updateDefaultFilter,
-  editFilters
 } from "../../api/services/filterServices";
 import { ALL_TASKS } from "../constants/taskConstants";
 
@@ -47,7 +46,6 @@ import Loading from "../Loading";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { StorageService, HelperServices } from "@formsflow/service";
 import AttributeFilterModal from "../AttributeFilterModal";
-import { Dropdown } from "react-bootstrap";
 
 
 interface Column {
@@ -326,7 +324,6 @@ export function ResizableTable(): JSX.Element {
     tasksCount,
     isTaskListLoading,
   } = useSelector((state: any) => state.task ?? {});
-  const [selectedFilterDetails, setSelectedFilterDetails] = useState(null);
   const selectedFilterId = selectedFilter?.id ?? null;
   const bpmFiltersList = filterList;
   const taskvariables = selectedFilter?.variables ?? [];
@@ -403,23 +400,21 @@ export function ResizableTable(): JSX.Element {
       dispatch(setSelectedBPMFilter(filterSelected));
     }
   }, [filterList.length, defaultFilter, dispatch]);
-//   useEffect(() => {  
-//     const currentFilter = filterList.find((item) => item.id === defaultFilter);
-//    if (currentFilter) {
-//     //  setSelectedFilter(currentFilter);
-//      const checkedVariables = currentFilter.variables?.filter(variable => variable.isChecked);
-//      setTaskAttributeData(checkedVariables);
-//    }
-//  }, [filterList]);
- useEffect(()=>{ 
-   if (selectedFilter) {
-     const updatedFilter = {
-       ...selectedFilter,
-       isMyTasksEnabled: isAssigned
-     };
-     editFilters(updatedFilter,selectedFilter.id);
-   }
- },[isAssigned])
+
+useEffect(() => {
+  if (selectedFilter.id) {
+    const updatedFilter = {
+      ...reqData,
+      criteria: {
+        ...reqData.criteria,
+        ...(isAssigned && { assignee: selectedFilter.users[0] })
+      }
+    };
+    dispatch(setBPMTaskLoader(true));
+    dispatch(fetchServiceTaskList(updatedFilter, null, firstResult, limit));
+  }
+}, [isAssigned]);
+
   useEffect(() => {
     if (Array.isArray(taskvariables)) {
       const dynamicColumns = taskvariables
