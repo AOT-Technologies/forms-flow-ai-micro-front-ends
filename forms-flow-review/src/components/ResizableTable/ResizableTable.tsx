@@ -407,7 +407,7 @@ useEffect(() => {
       ...reqData,
       criteria: {
         ...reqData.criteria,
-        ...(isAssigned && { assignee: selectedFilter.users[0] })
+        ...(isAssigned && { assigneeExpression:  "${ currentUser() }"})
       }
     };
     dispatch(setBPMTaskLoader(true));
