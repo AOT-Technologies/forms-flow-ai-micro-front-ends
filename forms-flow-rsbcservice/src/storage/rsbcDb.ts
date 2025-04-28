@@ -106,7 +106,6 @@ interface JurisdictionCountry {
   objectDsc: string;
 }
 
-
 // Database class extending Dexie to manage IndexedDB storage
 class DigitalFormsDB extends Dexie {
   // Declaring tables with their respective interfaces
@@ -127,7 +126,7 @@ class DigitalFormsDB extends Dexie {
   jurisdictionCountry!: Table<JurisdictionCountry>;
 
   constructor() {
-    super("digitalForms");
+    super("digitalFormsFF");
 
     // Database schema definitions
     //if you need to change any of these definitions add a new version below instead of changing the current one. If there is a change that
@@ -146,7 +145,8 @@ class DigitalFormsDB extends Dexie {
       countries: "id, objectCd, objectDsc",
       cities: "id, objectCd, objectDsc",
       agencies: "id, vjur, agency_name",
-      formID: "id, form_type, leased, [form_type+leased], last_updated, user_guid",
+      formID:
+        "id, form_type, leased, [form_type+leased], last_updated, user_guid",
       vehicleTypes: "type_cd, description",
     });
 
