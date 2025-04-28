@@ -73,7 +73,6 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   };
   
   useEffect(() => {
-    console.log("test",openByDefault);
     if (openByDefault) {
       setIsDropdownOpen(true);
     }

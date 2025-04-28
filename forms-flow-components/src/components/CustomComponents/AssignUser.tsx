@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { InputDropdown } from "./InputDropdown";
-import { CloseIcon } from "../SvgIcons/index";
-import { StyleServices } from "@formsflow/service";
 
 interface User {
   id: string;
@@ -20,6 +18,8 @@ interface AssignUserProps {
   othersOnClick?: () => void;
   optionSelect?: (userId: string) => void;
   handleCloseClick?: () => void;
+  ariaLabel?: string;
+  dataTestId?: string;
 }
 
 export const AssignUser: React.FC<AssignUserProps> = ({
@@ -30,6 +30,8 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   othersOnClick,
   optionSelect,
   handleCloseClick,
+  ariaLabel = "assign-user",
+  dataTestId = "assign-user",
 }) => {
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
@@ -39,7 +41,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     meOnClick?.();
     
     // Auto-select the current user when "Me" is clicked
-    const currentUser = users.find(user => user.username === username);
+    const currentUser = users.find((user) => user.username === username);
     if (currentUser && optionSelect) {
       optionSelect(currentUser.id);
     }
@@ -74,24 +76,42 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     <>
       {/* Show Me/Others Selection if nothing is selected */}
       {selected === null && (
-        <div className={`assign-user ${size}`}>
-          <div className="option-me" onClick={handleMeClick}>
-            Me
+          <div
+            className={`assign-user ${size}`}
+            aria-label={`${ariaLabel}-select-user-option`}
+            data-testid={`${dataTestId}-select-user-option`}
+          >
+            <div
+              className="option-me"
+              onClick={handleMeClick}
+              aria-label={`${ariaLabel}-me-button`}
+              data-testid={`${dataTestId}-me-button`}
+            >
+              Me
+            </div>
+            <div
+              className="option-others"
+              onClick={handleOthersClick}
+              aria-label={`${ariaLabel}-others-button`}
+              data-testid={`${dataTestId}-others-button`}
+            >
+              Others
+            </div>
           </div>
-          <div className="option-others" onClick={handleOthersClick}>
-            Others
-          </div>
-        </div>
       )}
 
       {/* Show InputDropdown when either Me or Others is selected */}
       {(selected === "Me" || selected === "Others") && (
-        <InputDropdown 
-          Options={options} 
-          variant={variant} 
+        <InputDropdown
+          Options={options}
+          variant={variant}
           selectedOption={selectedOption}
           handleCloseClick={handleClose}
           openByDefault={openDropdown}
+          ariaLabelforDropdown={`${ariaLabel}-dropdown-label`}
+          ariaLabelforInput={`${ariaLabel}-input-dropdown`}
+          dataTestIdforDropdown={`${dataTestId}-dropdown-component`}
+          dataTestIdforInput={`${dataTestId}-dropdown-input`}
         />
       )}
     </>
