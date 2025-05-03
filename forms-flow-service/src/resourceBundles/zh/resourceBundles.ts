@@ -1544,5 +1544,6 @@ export const RESOURCE_BUNDLES_ZH = {
   "SU": "日",
   "Day of week": "星期几",
   "selected": "已选择",
-  "not selected": "未选择"
+  "not selected": "未选择",
+  "Select Date": "选择日期",
 }

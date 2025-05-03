@@ -38,7 +38,7 @@ import {
   fetchServiceTaskList,
   updateDefaultFilter,
 } from "../../api/services/filterServices";
-import { ALL_TASKS } from "../constants/taskConstants";
+import { UN_SAVED_FILTER } from "../constants/taskConstants";
 
 import isEqual from "lodash/isEqual";
 import cloneDeep from "lodash/cloneDeep";
@@ -386,17 +386,17 @@ export function ResizableTable(): JSX.Element {
         }
       })
     );
-  }, [dispatch]);
+  }, [dispatch, defaultFilter]);
 
   useEffect(() => {
     if (filterList.length > 0) {
       const filterSelected =
         filterList.find(
-          (filter) => filter.id === defaultFilter || filter.name === ALL_TASKS
+          (filter) => filter.id === defaultFilter || filter.name === UN_SAVED_FILTER
         ) ?? filterList[0];
-
       dispatch(setSelectedBPMFilter(filterSelected));
     }
+   
   }, [filterList.length, defaultFilter, dispatch]);
 
   useEffect(() => {

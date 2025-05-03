@@ -1050,4 +1050,5 @@ export const RESOURCE_BUNDLES_EN = {
   "Day of week": "Day of week",
   "selected": "selected",
   "not selected": "not selected",
+  "Select Date": "Select Date",
 }

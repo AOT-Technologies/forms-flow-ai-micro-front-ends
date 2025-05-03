@@ -103,6 +103,7 @@ $primary-light: var(--ff-primary-light);
     width: 18.75rem; // 300px
     z-index: 1000;
     padding: 0.625rem; // 10px
+    font-weight: bold;
     // box-shadow: 0 0.3125rem 0.625rem rgba(0, 0, 0, 0.1); // 5px 10px
 
     // Calendar header
@@ -173,7 +174,7 @@ $primary-light: var(--ff-primary-light);
 
         // Current month day
         &.current-month {
-          color: $gray-darkest;
+          color: $primary-color;
         }
 
         // Other month day

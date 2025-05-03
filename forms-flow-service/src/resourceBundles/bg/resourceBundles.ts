@@ -1553,4 +1553,5 @@ export const RESOURCE_BUNDLES_BG = {
   "Day of week": "Ден от седмицата",
   "selected": "избрано",
   "not selected": "не е избрано",
+  "Select Date": "Изберете дата",
 }
