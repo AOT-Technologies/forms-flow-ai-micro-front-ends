@@ -1,7 +1,8 @@
 import API from "../endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
-import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader } from "../../actions/taskActions";
+import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader,setAttributeFilterList } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
+import { replaceUrl } from "../../helper/helper";
 
 export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};
@@ -113,6 +114,33 @@ export const fetchUserList = (...rest) => {
           if (res.data) {
             dispatch(setDefaultFilter(res.data.defaultFilter));
             dispatch(setBPMFilterList(res.data.filters));
+            done(null, res.data);
+          } else {
+            dispatch(setBPMFilterLoader(false));
+            dispatch(serviceActionError(res));
+          }
+        })
+        .catch((error) => {
+          dispatch(setBPMFilterLoader(false));
+          dispatch(serviceActionError(error));
+          done(error);
+        });
+    };
+  };
+
+
+  export const fetchAttributeFilterList = (filterId, ...rest) => {
+    const done = rest.length ? rest[0] : () => {};
+    const getAttributeFiltersAPI = replaceUrl(
+      API.GET_ATTRIBUTE_FILTERS,
+      "<filter_id>",
+      filterId
+    );
+    return (dispatch) => {
+      RequestService.httpGETRequest(getAttributeFiltersAPI)
+        .then((res) => {
+          if (res.data) {
+            dispatch(setAttributeFilterList(res.data.attributeFilters));
             done(null, res.data);
           } else {
             dispatch(setBPMFilterLoader(false));

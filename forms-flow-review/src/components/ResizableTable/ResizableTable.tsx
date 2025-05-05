@@ -37,6 +37,7 @@ import {
   fetchBPMTaskCount,
   fetchServiceTaskList,
   updateDefaultFilter,
+  fetchAttributeFilterList
 } from "../../api/services/filterServices";
 import { UN_SAVED_FILTER } from "../constants/taskConstants";
 
@@ -307,6 +308,7 @@ export function ResizableTable(): JSX.Element {
   const history = useHistory();
   const {
     filterList = [],
+    attributeFilterList = [],
     selectedFilter = null,
     taskId: bpmTaskId = null,
     firstResult = 0,
@@ -324,6 +326,11 @@ export function ResizableTable(): JSX.Element {
 
   const selectedFilterId = selectedFilter?.id ?? null;
   const bpmFiltersList = filterList;
+  const bpmattributeFilterList = attributeFilterList;
+  const selectedAttributeFilter = bpmattributeFilterList.length > 0 
+  ? bpmattributeFilterList[0]
+  : null;
+ 
   const taskvariables = selectedFilter?.variables ?? [];
 
   const handleToggleFilterModal = useCallback(() => {
@@ -398,6 +405,19 @@ export function ResizableTable(): JSX.Element {
     }
    
   }, [filterList.length, defaultFilter, dispatch]);
+
+
+  useEffect(() => {
+    if (selectedFilterId) {
+      dispatch(setBPMFilterLoader(true));
+      dispatch(
+        fetchAttributeFilterList(selectedFilterId, (err: Error | null, data: any) => {
+          if (data) {
+          dispatch(setBPMFilterLoader(false));
+    }})
+      );
+    }
+  }, [selectedFilterId, dispatch, selectedFilter]);
 
   useEffect(() => {
     if (Array.isArray(taskvariables)) {
@@ -498,6 +518,30 @@ export function ResizableTable(): JSX.Element {
     },
     [dispatch, defaultFilter, filterList]
   );
+
+
+  const changeAttributeFilterSelection = useCallback(
+    (attributeFilter) => {
+     
+      // Apply the attribute filter to the current task list
+      const updatedParams = {
+        ...reqData,
+        criteria: {
+          ...reqData.criteria,
+          attributeFilter: attributeFilter.id
+        }
+      };
+      
+      dispatch(setFilterListParams(cloneDeep(updatedParams)));
+      dispatch(setBPMTaskLoader(true));
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(
+        fetchServiceTaskList(cloneDeep(updatedParams), null, firstResult, limit)
+      );
+    },
+    [dispatch, reqData, firstResult, limit]
+  );
+
   const filterDropdownItems = useMemo(() => {
     if (!Array.isArray(filtersCount) || filtersCount.length === 0) {
       return [
@@ -562,6 +606,27 @@ export function ResizableTable(): JSX.Element {
   ]);
 
   const filterDropdownAttributeItems = useMemo(() => {
+    // Generate items based on the attributeFilterList
+    const attributeItems = Array.isArray(attributeFilterList) && attributeFilterList.length > 0
+      ? attributeFilterList.map((filter) => ({
+          content: `${t(filter.name)}`,
+          onClick: () => changeAttributeFilterSelection(filter),
+          type: String(filter.id),
+          dataTestId: `attr-filter-item-${filter.id}`,
+          ariaLabel: t("Select attribute filter {{filterName}}", {
+            filterName: t(filter.name),
+          }),
+        }))
+      : [
+          {
+            content: <em>{t("No attribute filters found")}</em>,
+            onClick: () => {},
+            type: "none",
+            dataTestId: "no-attr-filters",
+            ariaLabel: t("No attribute filters available"),
+          },
+        ];
+
     const extraItems = [
       {
         content: (
@@ -569,13 +634,13 @@ export function ResizableTable(): JSX.Element {
             <span>
               <AddIcon />
             </span>{" "}
-            {t("Custom Filter")}
+            {t("Custom Attribute Filter")}
           </span>
         ),
         onClick: handleToggleAttrFilterModal,
         type: "custom",
-        dataTestId: "filter-item-custom",
-        ariaLabel: t("Custom Filter"),
+        dataTestId: "attr-filter-item-custom",
+        ariaLabel: t("Custom Attribute Filter"),
       },
       {
         content: (
@@ -583,18 +648,23 @@ export function ResizableTable(): JSX.Element {
             <span>
               <PencilIcon />
             </span>{" "}
-            {t("Re-order And Hide Filters")}
+            {t("Re-order And Hide Attribute Filters")}
           </span>
         ),
-        onClick: () => console.log("Re-order clicked"),
+        onClick: () => console.log("Re-order attribute filters clicked"),
         type: "reorder",
-        dataTestId: "filter-item-reorder",
-        ariaLabel: t("Re-order And Hide Filters"),
+        dataTestId: "attr-filter-item-reorder",
+        ariaLabel: t("Re-order And Hide Attribute Filters"),
       },
     ];
 
-    return [...extraItems];
-  }, [t, handleToggleAttrFilterModal]);
+    return [...attributeItems, ...extraItems];
+  }, [
+    attributeFilterList,
+    t,
+    handleToggleAttrFilterModal,
+    changeAttributeFilterSelection,
+  ]);
 
   useEffect(() => {
     const activeKey = sortParams?.activeKey;
@@ -972,7 +1042,13 @@ export function ResizableTable(): JSX.Element {
 
           <div className="me-2 mb-2">
             <ButtonDropdown
-              label={t("Attribute Filter")}
+              label={   <span
+                className="filter-large"
+                >
+                {selectedAttributeFilter?.name
+                  ? `${t(selectedAttributeFilter.name)}`
+                  : t("Attribute Filter")}
+              </span>}
               variant="primary"
               size="md"
               dropdownType="DROPDOWN_WITH_EXTRA_ACTION"

@@ -89,6 +89,13 @@ export const setTasks = (data: any) => ({
     });
   };
 
+  export const setAttributeFilterList = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.ATTRIBUTE_FILTER_LIST,
+      payload: data,
+    });
+  };
+
   export const setBPMFilterLoader = (data) => (dispatch) => {
     dispatch({
       type: ACTION_CONSTANTS.IS_BPM_FILTERS_LOADING,

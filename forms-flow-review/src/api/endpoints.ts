@@ -9,6 +9,7 @@ const API = {
     USER_ROLES: `${WEB_BASE_URL}/roles`,
     GET_BPM_TASK_FILTERS: `${BPM_BASE_URL_EXT}/v1/task-filters`,
     GET_FILTERS: `${WEB_BASE_URL}/filter`,
+    GET_ATTRIBUTE_FILTERS: `${WEB_BASE_URL}/filter/<filter_id>`,
     UPDATE_DEFAULT_FILTER: `${WEB_BASE_URL}/user/default-filter`,
     GET_FORM_BY_ID: `${API_PROJECT_URL}/form`,
  }

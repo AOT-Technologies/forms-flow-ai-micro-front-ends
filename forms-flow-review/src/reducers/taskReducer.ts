@@ -8,6 +8,7 @@ const initialState = {
   userGroups: [],
   userDetail: {},
   filterList: [],
+  attributeFilterList: [],
   listReqParams: {
     activeKey: "created",
     created: { sortOrder: "asc" },
@@ -63,6 +64,8 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       };
     case ACTION_CONSTANTS.BPM_FILTER_LIST:
       return { ...state, filterList: action.payload };
+    case ACTION_CONSTANTS.ATTRIBUTE_FILTER_LIST:
+      return { ...state, attributeFilterList: action.payload };
     case ACTION_CONSTANTS.BPM_SELECTED_FILTER:
       return {
         ...state,
