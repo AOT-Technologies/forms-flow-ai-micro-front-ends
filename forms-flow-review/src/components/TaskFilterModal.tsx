@@ -230,6 +230,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     const getCriteria = (): FilterCriteria => {
         const criteria = {
             candidateGroupsExpression: "${currentUserGroups()}",
+            includeAssignedTasks:true,
             processVariables: [{
                 name: "formId",
                 operator: 'eq',
