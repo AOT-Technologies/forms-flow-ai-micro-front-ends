@@ -127,11 +127,22 @@ export const fetchUserList = (...rest) => {
     };
   };
 
+  
   export const saveFilters = (data) => {
     return RequestService.httpPOSTRequest(`${API.GET_FILTERS}`, data);
   };
 
-  
+
+/**
+ * 
+ * @param updatedVariables - array of objects containing variable details to be updated
+ * @param selectedFilterId - id of the filter to be updated
+ * @returns 
+ */
+  export const updateFilter = (updatedVariables:any,selectedFilterId:number) => {
+    return RequestService.httpPUTRequest(`${API.GET_FILTERS}/${selectedFilterId}`, updatedVariables);
+  };
+
   export const updateDefaultFilter = (defaultFilter) => {
     return RequestService.httpPOSTRequest(
       API.UPDATE_DEFAULT_FILTER,
