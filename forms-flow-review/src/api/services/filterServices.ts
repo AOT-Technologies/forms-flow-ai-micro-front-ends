@@ -43,13 +43,12 @@ export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};
     const apiUrlgetTaskList =
         `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${maxResults || MAX_RESULTS}`;
-
     return (dispatch) => {
       RequestService.httpPOSTRequestWithHAL(
         apiUrlgetTaskList,
         reqData,
         StorageService.get(StorageService.User.AUTH_TOKEN)
-      )
+      )  
         .then((res) => {
           if (res.data) {
             let responseData = res.data;

@@ -35,14 +35,15 @@ export interface FilterCriteria {
     tenant?: string | null;
     name: string;
     criteria: FilterCriteria;
-    variables: FilterVariable[];
-    properties: Record<string, any>;
+    variables?: FilterVariable[];
+    properties?: Record<string, any>;
     roles: string[];    
     users: string[];
     status?: string;
-    taskVisibleAttributes: TaskVisibleAttributes;
+    taskVisibleAttributes?: TaskVisibleAttributes;
     parentFilterId?: string | null;
     editPermission?: boolean;
+    filterType?: string;
   }
   
   export interface FilterResponse {

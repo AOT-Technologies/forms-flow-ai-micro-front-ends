@@ -7,12 +7,14 @@ interface CustomInfoProps {
     heading: string ;
     content: string ;
     className?: string ;
+    dataTestId?: string;
 }
 
 export const CustomInfo: FC<CustomInfoProps> = ( { 
     heading ,
     content ,
     className ,
+    dataTestId
 }) => { 
   const { t } = useTranslation();
   
@@ -26,7 +28,7 @@ export const CustomInfo: FC<CustomInfoProps> = ( {
 
 
   return (
-    <div className={`info-panel ${className}`}>
+    <div className={`info-panel ${className}`} data-test-id={dataTestId}>
       <div className="d-flex align-items-center">
         <NewInfoIcon />
         <div className="field-label ms-2">{t(heading)}</div>

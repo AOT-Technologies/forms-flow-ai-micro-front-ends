@@ -1005,7 +1005,7 @@ $black-color: var(--ff-black);
     align-items: center;
     gap: var(--spacer-100);
     border-radius: var(--radius-sm);
-    padding-top: var(--spacer-150);
+    padding: var(--spacer-075) 0px;
     transition: 
       transform 1s cubic-bezier(0.25, 1, 0.5, 1), 
       background-color 1s ease-in-out, 
@@ -1034,9 +1034,10 @@ $black-color: var(--ff-black);
 
     &.dragging {
       background-color: $gray-medium;
+      padding-right: 3px;
       opacity: 1;
       z-index: 1000;
-      transform: scale(1.03); 
+      transform: scale(0.98); 
     }
     .checkbox-container{
       display: flex;
@@ -1217,4 +1218,15 @@ $black-color: var(--ff-black);
     background-color: $gray-light !important;
   }
 }
+.custom-dropdown-menu { // will remove after integrating the actual dropdown
+  max-height: 200px;
+  overflow-y: auto;
+}
 
+
+.import-modal-footer{
+  .btn-dark{
+    background-color: var(--ff-gray-medium-dark) !important;
+    color: var(--ff-white) !important;
+  }
+}

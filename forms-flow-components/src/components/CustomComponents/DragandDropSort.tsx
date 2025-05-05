@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useRef} from "react";
 import { FormVariableIcon, DraggableIcon } from "../SvgIcons/index";
 import { StyleServices } from "@formsflow/service";
 
@@ -18,7 +18,7 @@ interface DragAndDropFilterProps {
 export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate }) => {
 
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
-  
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
 
@@ -34,6 +34,20 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
 
   const onDragOver = (e: React.DragEvent<HTMLLIElement>) => {
     e.preventDefault();
+    const container = containerRef.current;
+    if (!container) return;
+  
+    const bounding = container.getBoundingClientRect();
+    const offset = 40; 
+    const scrollSpeed = 5; //scroll speed  can be adjusted here
+  
+    if (e.clientY < bounding.top + offset) {
+      // scroll up
+      container.scrollTop -= scrollSpeed;
+    } else if (e.clientY > bounding.bottom - offset) {
+      // scroll down
+      container.scrollTop += scrollSpeed;
+    }
   };
 
 
@@ -72,7 +86,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
   };
 
   return (
-    <div className="drag-drop-container">
+    <div className="drag-drop-container" ref={containerRef}>
       <ul>
         {filterItems.map((item, index) => (
           <li

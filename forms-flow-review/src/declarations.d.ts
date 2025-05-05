@@ -39,9 +39,34 @@ declare module "*.svg" {
 }
 
 declare module "@formsflow/service" {
-	export const {KeycloakService, RequestService, StorageService,i18nService}: any;
+  export const {
+    KeycloakService,
+    RequestService,
+    StorageService,
+    i18nService,
+    StyleServices,
+    HelperServices,
+  }: any;
 }
 
 declare module "@formsflow/components" {
-  export const {CloseIcon,CustomSearch, PencilIcon, SaveIcon, InputDropdown,CustomButton, CustomTabs, FormInput, CustomInfo, DragandDropSort }: any;
+  export const {
+    TableFooter,
+    SortableHeader,
+    FilterSortActions,
+    CustomButton,
+    ButtonDropdown,
+    DateRangePicker,
+    CloseIcon,
+    PencilIcon,
+    SaveIcon,
+    InputDropdown,
+    CustomTabs,
+    FormInput,
+    CustomInfo,
+    DragandDropSort,
+    CustomSearch,
+    AddIcon
+  }: any;
 }
+

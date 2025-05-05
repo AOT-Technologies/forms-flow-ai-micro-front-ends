@@ -146,13 +146,14 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AddIcon = ({ color = baseColor, ...props }) => (
+export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
+    width={size}
+    height={size}
     viewBox="0 0 16 16"
     fill="none"
+    {...props}
   >
     <path
       d="M8 1V15"
@@ -170,6 +171,7 @@ export const AddIcon = ({ color = baseColor, ...props }) => (
     />
   </svg>
 );
+
 
 export const DuplicateIcon = ({ color = baseColor, ...props }) => (
   <svg
@@ -213,7 +215,6 @@ export const CloseIcon = ({
   color = grayColor,
   width = 14,
   height = 14,
-  onClick,
   ...props
 }) => (
   <svg
@@ -222,7 +223,7 @@ export const CloseIcon = ({
     height={height}
     viewBox="0 0 14 14"
     fill="none"
-    onClick={onClick}
+    onClick={props.onClick}
     {...props}
   >
     <path
@@ -334,7 +335,7 @@ export const ImportIcon = ({ color = baseColor, ...props }) => (
   >
     <path
       d="M5 17L5 5.21053M5 5.21053L9 8.57895M5 5.21053L1 8.57895M9 1L1 0.999999"
-      stroke={color}
+      stroke={props.disabled ? whiteColor : color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -623,13 +624,13 @@ export const TrashIcon = ({ color = baseColor, ...props }) => (
   >
     <path
       d="M7 8.5L7 11.5"
-      stroke={color}
+      stroke={props.disabled ? whiteColor : color}
       strokeWidth="2"
       strokeLinecap="round"
     />
     <path
       d="M2.41176 4.44737L3.82353 15.5H10.1765L11.5882 4.44737M1 4.44737H4.52941M13 4.44737H9.47059M4.52941 4.44737L5.23529 1.5H8.76471L9.47059 4.44737M4.52941 4.44737H9.47059"
-      stroke={color}
+      stroke={props.disabled ? whiteColor : color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
