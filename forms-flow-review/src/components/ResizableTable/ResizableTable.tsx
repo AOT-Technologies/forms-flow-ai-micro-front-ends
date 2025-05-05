@@ -312,7 +312,7 @@ export function ResizableTable(): JSX.Element {
 
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
-  const resizingRef = useRef<any | null>(null);
+  const resizingRef = useRef(null);
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(0);
   const [showSortModal, setShowSortModal] = useState(false);
