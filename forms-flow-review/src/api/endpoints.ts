@@ -11,6 +11,7 @@ const API = {
     GET_FILTERS: `${WEB_BASE_URL}/filter`,
     UPDATE_DEFAULT_FILTER: `${WEB_BASE_URL}/user/default-filter`,
     GET_FORM_BY_ID: `${API_PROJECT_URL}/form`,
+    CLAIM_BPM_TASK: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/claim`,
  }
 
 export default API;

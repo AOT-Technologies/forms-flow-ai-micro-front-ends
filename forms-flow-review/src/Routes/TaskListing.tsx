@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
 import SocketIOService from "../services/SocketIOService";
-import { ResizableTable } from "../components";
+import { ResizableTable } from "../components/ResizableTable/ResizableTable";
 
 interface SocketUpdateParams {
   refreshedTaskId: string | number;

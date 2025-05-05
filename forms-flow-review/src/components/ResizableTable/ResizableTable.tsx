@@ -15,6 +15,7 @@ import {
   ButtonDropdown,
   AddIcon,
   PencilIcon,
+  AssignUser,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import {
@@ -28,6 +29,7 @@ import {
   setTaskListLimit,
   setDefaultFilter,
   setSelectedTaskID,
+  setBPMTaskDetailUpdating,
 } from "../../actions/taskActions";
 
 import TaskFilterModal from "../TaskFilterModal";
@@ -37,6 +39,7 @@ import {
   fetchBPMTaskCount,
   fetchServiceTaskList,
   updateDefaultFilter,
+  claimBPMTask,
 } from "../../api/services/filterServices";
 import { ALL_TASKS } from "../constants/taskConstants";
 
@@ -68,234 +71,6 @@ interface DateRange {
   endDate: Date | null;
 }
 
-// Extracted table cell rendering component
-const getCellValue = (column, task) => {
-  const { sortKey } = column;
-  const { name: taskName, created, assignee, _embedded } = task ?? {};
-  const variables = _embedded?.variable ?? [];
-  if (column.sortKey === "applicationId") {
-    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
-  }
-
-  switch (sortKey) {
-    case "name":
-      return taskName ?? "-";
-    case "created":
-      return created ? HelperServices.getLocaldate(created) : "N/A";
-    case "assignee":
-      return assignee ?? "Unassigned";
-    default:
-      return variables.find((v) => v.name === sortKey)?.value ?? "-";
-  }
-};
-
-const TaskTableCell = ({ task, column, index, redirectUrl, history, t }) => {
-  if (column.sortKey === "actions") {
-    return (
-      <td key={`action-${task.id}-${index}`}>
-        <CustomButton
-          className="btn-table"
-          variant="secondary"
-          label={t("View")}
-          onClick={() =>
-            history.push(`${redirectUrl.current}review/${task?.id}`)
-          }
-          dataTestId={`view-task-${task.id}`}
-          ariaLabel={t("View details for task {{taskName}}", {
-            taskName: task?.name ?? t("unnamed"),
-          })}
-        />
-      </td>
-    );
-  }
-
-  return (
-    <td
-      key={`cell-${task.id}-${column.sortKey}`}
-      data-testid={`task-${task.id}-${column.sortKey}`}
-      aria-label={`${t(column.name)}: ${getCellValue(column, task)}`}
-    >
-      {getCellValue(column, task)}
-    </td>
-  );
-};
-
-// Extracted table header component
-const TableHeaderCell = ({
-  column,
-  index,
-  columnsLength,
-  resizingIndex,
-  sortParams,
-  handleSort,
-  handleMouseDown,
-  t,
-}) => {
-  const isSortable = ["name", "created", "assignee"].includes(column.sortKey);
-
-  return (
-    <th
-      key={`header-${column.sortKey ?? index}`}
-      className="resizable-column"
-      style={{ width: column.width }}
-      data-testid={`column-header-${column.sortKey ?? "actions"}`}
-      aria-label={`${t(column.name)} ${t("column")}${
-        isSortable ? ", " + t("sortable") : ""
-      }`}
-    >
-      {isSortable ? (
-        <SortableHeader
-          columnKey={column.sortKey}
-          title={t(column.name)}
-          currentSort={sortParams}
-          handleSort={handleSort}
-          className="w-100 d-flex justify-content-between align-items-center"
-          dataTestId={`sort-header-${column.sortKey}`}
-          ariaLabel={t("Sort by {{columnName}}", {
-            columnName: t(column.name),
-          })}
-        />
-      ) : (
-        t(column.name)
-      )}
-      {column.resizable && index < columnsLength - 1 && (
-        <div
-          className={`column-resizer ${
-            resizingIndex === index ? "resizing" : ""
-          }`}
-          onMouseDown={(e) => handleMouseDown(index, e)}
-          data-testid={`column-resizer-${column.sortKey}`}
-          aria-label={t("Resize {{columnName}} column", {
-            columnName: t(column.name),
-          })}
-        />
-      )}
-    </th>
-  );
-};
-
-// Extracted task row component
-const TaskRow = ({ task, columns, redirectUrl, history, t }) => {
-  return (
-    <tr
-      key={`row-${task.id}`}
-      data-testid={`task-row-${task.id}`}
-      aria-label={t("Task row for task {{taskName}}", {
-        taskName: task.name ?? t("unnamed"),
-      })}
-    >
-      {columns.map((column, colIndex) => (
-        <TaskTableCell
-          key={`cell-${task.id}-${column.sortKey ?? colIndex}`}
-          task={task}
-          column={column}
-          index={colIndex}
-          redirectUrl={redirectUrl}
-          history={history}
-          t={t}
-        />
-      ))}
-    </tr>
-  );
-};
-
-// Extracted table component
-const TaskTable = ({
-  columns,
-  taskList,
-  tasksCount,
-  t,
-  sortParams,
-  handleSort,
-  resizingRef,
-  handleMouseDown,
-  tableRef,
-  redirectUrl,
-  history,
-}) => {
-  if (taskList?.length === 0 ) {
-    return (
-      <table
-        ref={tableRef}
-        className="resizable-table"
-        data-testid="task-resizable-table"
-        aria-label={t("Tasks data table with resizable columns")}
-      >
-        <thead className="resizable-header">
-          <tr>
-            {columns.map((column, index) => (
-              <TableHeaderCell
-                key={`header-${column.sortKey ?? index}`}
-                column={column}
-                index={index}
-                columnsLength={columns.length}
-                resizingIndex={resizingRef.current}
-                sortParams={sortParams}
-                handleSort={handleSort}
-                handleMouseDown={handleMouseDown}
-                t={t}
-              />
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="empty-row">
-            <td
-              colSpan={columns.length}
-              className="empty-table-message"
-              data-testid="empty-tasks-message"
-              aria-label={t("No tasks message")}
-            >
-              {t(
-                "No tasks have been found. Try a different filter combination or contact your admin."
-              )}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    );
-  }
-
-  return (
-    <table
-      ref={tableRef}
-      className="resizable-table"
-      data-testid="task-resizable-table"
-      aria-label={t("Tasks data table with resizable columns")}
-    >
-      <thead className="resizable-header">
-        <tr>
-          {columns.map((column, index) => (
-            <TableHeaderCell
-              key={`header-${column.sortKey ?? index}`}
-              column={column}
-              index={index}
-              columnsLength={columns.length}
-              resizingIndex={resizingRef.current}
-              sortParams={sortParams}
-              handleSort={handleSort}
-              handleMouseDown={handleMouseDown}
-              t={t}
-            />
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {taskList.map((task) => (
-          <TaskRow
-            key={`row-${task.id}`}
-            task={task}
-            columns={columns}
-            redirectUrl={redirectUrl}
-            history={history}
-            t={t}
-          />
-        ))}
-      </tbody>
-    </table>
-  );
-};
-
 export function ResizableTable(): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -320,8 +95,8 @@ export function ResizableTable(): JSX.Element {
     activePage,
     tasksCount,
     isTaskListLoading,
+    taskId,
   } = useSelector((state: any) => state.task ?? {});
-
   const selectedFilterId = selectedFilter?.id ?? null;
   const bpmFiltersList = filterList;
   const taskvariables = selectedFilter?.variables ?? [];
@@ -358,6 +133,7 @@ export function ResizableTable(): JSX.Element {
   const [filterToEdit, setFilterToEdit] = useState(null);
   const [canEditFilter, setCanEditFilter] = useState(false);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const userList = useSelector((state: any) => state.task?.userList);
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
@@ -365,6 +141,9 @@ export function ResizableTable(): JSX.Element {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
+  const userData =
+  JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+
   const isFilterCreator = userRoles.includes("createFilters");
   const isFilterAdmin = userRoles.includes("manageAllFilters");
 
@@ -419,11 +198,258 @@ export function ResizableTable(): JSX.Element {
           resizable: false,
         });
       }
-
       setColumns(dynamicColumns);
     }
   }, [taskvariables]);
+  
+  const renderAssigneeComponent = (task) => {
+    const onClaim = () => {
+      dispatch(setBPMTaskDetailUpdating(true));
+      dispatch(
+        // eslint-disable-next-line no-unused-vars
+        // claimBPMTask(task?.id, userData?.name,updateBpmTasksAndDetails)
+        claimBPMTask(task?.id, userData?.name)
+      );
+    };
+    return (
+      <AssignUser
+        size="sm"
+        users={userList?.data || []}
+        username={userData?.name || ""}
+        meOnClick={onClaim}
+        // othersOnClick={othersOnClick}
+        // optionSelect={onChangeClaim}
+        // handleCloseClick={onUnClaimTask}
+      />
+    );
+  };
+  // Extracted table cell rendering component
+  const getCellValue = (column, task) => {
+    const { sortKey } = column;
+    const { name: taskName, created, assignee, _embedded } = task ?? {};
+    const variables = _embedded?.variable ?? [];
+    if (column.sortKey === "applicationId") {
+      return variables.find((v) => v.name === "applicationId")?.value ?? "-";
+    }
 
+    switch (sortKey) {
+      case "name":
+        return taskName ?? "-";
+      case "created":
+        return created ? HelperServices.getLocaldate(created) : "N/A";
+      case "assignee":
+        return renderAssigneeComponent(task);
+      default:
+        return variables.find((v) => v.name === sortKey)?.value ?? "-";
+    }
+  };
+
+  const TaskTableCell = ({ task, column, index, redirectUrl, history, t }) => {
+    if (column.sortKey === "actions") {
+      return (
+        <td key={`action-${task.id}-${index}`}>
+          <CustomButton
+            className="btn-table"
+            variant="secondary"
+            label={t("View")}
+            onClick={() =>
+              history.push(`${redirectUrl.current}review/${task?.id}`)
+            }
+            dataTestId={`view-task-${task.id}`}
+            ariaLabel={t("View details for task {{taskName}}", {
+              taskName: task?.name ?? t("unnamed"),
+            })}
+          />
+        </td>
+      );
+    }
+
+    return (
+      <td
+        key={`cell-${task.id}-${column.sortKey}`}
+        data-testid={`task-${task.id}-${column.sortKey}`}
+        aria-label={`${t(column.name)}: ${getCellValue(column, task)}`}
+      >
+        {getCellValue(column, task)}
+      </td>
+    );
+  };
+
+  // Extracted table header component
+  const TableHeaderCell = ({
+    column,
+    index,
+    columnsLength,
+    resizingIndex,
+    sortParams,
+    handleSort,
+    handleMouseDown,
+    t,
+  }) => {
+    const isSortable = ["name", "created", "assignee"].includes(column.sortKey);
+
+    return (
+      <th
+        key={`header-${column.sortKey ?? index}`}
+        className="resizable-column"
+        style={{ width: column.width }}
+        data-testid={`column-header-${column.sortKey ?? "actions"}`}
+        aria-label={`${t(column.name)} ${t("column")}${
+          isSortable ? ", " + t("sortable") : ""
+        }`}
+      >
+        {isSortable ? (
+          <SortableHeader
+            columnKey={column.sortKey}
+            title={t(column.name)}
+            currentSort={sortParams}
+            handleSort={handleSort}
+            className="w-100 d-flex justify-content-between align-items-center"
+            dataTestId={`sort-header-${column.sortKey}`}
+            ariaLabel={t("Sort by {{columnName}}", {
+              columnName: t(column.name),
+            })}
+          />
+        ) : (
+          t(column.name)
+        )}
+        {column.resizable && index < columnsLength - 1 && (
+          <div
+            className={`column-resizer ${
+              resizingIndex === index ? "resizing" : ""
+            }`}
+            onMouseDown={(e) => handleMouseDown(index, e)}
+            data-testid={`column-resizer-${column.sortKey}`}
+            aria-label={t("Resize {{columnName}} column", {
+              columnName: t(column.name),
+            })}
+          />
+        )}
+      </th>
+    );
+  };
+
+  // Extracted task row component
+  const TaskRow = ({ task, columns, redirectUrl, history, t }) => {
+    return (
+      <tr
+        key={`row-${task.id}`}
+        data-testid={`task-row-${task.id}`}
+        aria-label={t("Task row for task {{taskName}}", {
+          taskName: task.name ?? t("unnamed"),
+        })}
+      >
+        {columns.map((column, colIndex) => (
+          <TaskTableCell
+            key={`cell-${task.id}-${column.sortKey ?? colIndex}`}
+            task={task}
+            column={column}
+            index={colIndex}
+            redirectUrl={redirectUrl}
+            history={history}
+            t={t}
+          />
+        ))}
+      </tr>
+    );
+  };
+
+  // Extracted table component
+  const TaskTable = ({
+    columns,
+    taskList,
+    tasksCount,
+    t,
+    sortParams,
+    handleSort,
+    resizingRef,
+    handleMouseDown,
+    tableRef,
+    redirectUrl,
+    history,
+  }) => {
+    if (taskList?.length === 0) {
+      return (
+        <table
+          ref={tableRef}
+          className="resizable-table"
+          data-testid="task-resizable-table"
+          aria-label={t("Tasks data table with resizable columns")}
+        >
+          <thead className="resizable-header">
+            <tr>
+              {columns.map((column, index) => (
+                <TableHeaderCell
+                  key={`header-${column.sortKey ?? index}`}
+                  column={column}
+                  index={index}
+                  columnsLength={columns.length}
+                  resizingIndex={resizingRef.current}
+                  sortParams={sortParams}
+                  handleSort={handleSort}
+                  handleMouseDown={handleMouseDown}
+                  t={t}
+                />
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="empty-row">
+              <td
+                colSpan={columns.length}
+                className="empty-table-message"
+                data-testid="empty-tasks-message"
+                aria-label={t("No tasks message")}
+              >
+                {t(
+                  "No tasks have been found. Try a different filter combination or contact your admin."
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      );
+    }
+
+    return (
+      <table
+        ref={tableRef}
+        className="resizable-table"
+        data-testid="task-resizable-table"
+        aria-label={t("Tasks data table with resizable columns")}
+      >
+        <thead className="resizable-header">
+          <tr>
+            {columns.map((column, index) => (
+              <TableHeaderCell
+                key={`header-${column.sortKey ?? index}`}
+                column={column}
+                index={index}
+                columnsLength={columns.length}
+                resizingIndex={resizingRef.current}
+                sortParams={sortParams}
+                handleSort={handleSort}
+                handleMouseDown={handleMouseDown}
+                t={t}
+              />
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {taskList.map((task) => (
+            <TaskRow
+              key={`row-${task.id}`}
+              task={task}
+              columns={columns}
+              redirectUrl={redirectUrl}
+              history={history}
+              t={t}
+            />
+          ))}
+        </tbody>
+      </table>
+    );
+  };
 
   const handleSortApply = useCallback(
     (selectedSortOption, selectedSortOrder) => {
@@ -796,8 +822,6 @@ export function ResizableTable(): JSX.Element {
     [dispatch, limit, reqData]
   );
 
-  
-
   const renderTaskList = useCallback(() => {
     if (!selectedFilter) {
       return (
@@ -826,8 +850,13 @@ export function ResizableTable(): JSX.Element {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="empty-table-message" data-testid="empty-columns-message">
-                      {t("No tasks have been found. Try a different filter combination or contact your admin.")}
+                    <td
+                      className="empty-table-message"
+                      data-testid="empty-columns-message"
+                    >
+                      {t(
+                        "No tasks have been found. Try a different filter combination or contact your admin."
+                      )}
                     </td>
                   </tr>
                 </tbody>
@@ -837,7 +866,7 @@ export function ResizableTable(): JSX.Element {
         </div>
       );
     }
-    
+
     return (
       <div
         className="container-wrapper"

@@ -161,3 +161,11 @@ export const setBPMFilterSearchParams = (data) => (dispatch) => {
       payload: data,
     });
   };
+
+export const setBPMTaskDetailUpdating = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING,
+      payload: data,
+    });
+  };  
+

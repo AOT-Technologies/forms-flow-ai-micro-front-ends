@@ -1,7 +1,8 @@
 import API from "../endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
-import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader } from "../../actions/taskActions";
+import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader, setBPMTaskDetailUpdating, } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
+import { replaceUrl } from "../../helper/helper.js";
 
 export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};
@@ -159,3 +160,23 @@ export const fetchUserList = (...rest) => {
 
 };
 
+export const claimBPMTask = (taskId, user, ...rest) => {
+  console.log(taskId);
+  console.log(user);
+  const done = rest.length ? rest[0] : () => {};
+  const apiUrlClaimTask = replaceUrl(API.CLAIM_BPM_TASK, "<task_id>", taskId);
+  console.log(apiUrlClaimTask);
+  return (dispatch) => {
+    RequestService.httpPOSTRequest(apiUrlClaimTask, { userId: user })
+      .then((res) => {
+        console.log(res.data);
+        done(null, res.data);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        dispatch(serviceActionError(error));
+        dispatch(setBPMTaskDetailUpdating(false));
+        done(error);
+      });
+  };                   
+};
