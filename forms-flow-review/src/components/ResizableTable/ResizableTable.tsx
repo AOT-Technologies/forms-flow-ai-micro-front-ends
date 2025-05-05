@@ -47,6 +47,8 @@ import Loading from "../Loading";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { StorageService, HelperServices } from "@formsflow/service";
 import AttributeFilterModal from "../AttributeFilterModal";
+
+
 interface Column {
   name: string;
   width: number;
@@ -303,6 +305,7 @@ export function ResizableTable(): JSX.Element {
 
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
+  const [isAssigned,setIsAssigned] = useState(false);
   const [taskAttributeData, setTaskAttributeData] = useState([]);
   const [filterParams, setFilterParams] = useState({});
   const history = useHistory();
@@ -323,7 +326,6 @@ export function ResizableTable(): JSX.Element {
     tasksCount,
     isTaskListLoading,
   } = useSelector((state: any) => state.task ?? {});
-
   const selectedFilterId = selectedFilter?.id ?? null;
   const bpmFiltersList = filterList;
   const bpmattributeFilterList = attributeFilterList;
@@ -405,6 +407,20 @@ export function ResizableTable(): JSX.Element {
     }
    
   }, [filterList.length, defaultFilter, dispatch]);
+
+useEffect(() => {
+  if (selectedFilter.id) {
+    const updatedFilter = {
+      ...reqData,
+      criteria: {
+        ...reqData.criteria,
+        ...(isAssigned && { assigneeExpression:  "${ currentUser() }"})
+      }
+    };
+    dispatch(setBPMTaskLoader(true));
+    dispatch(fetchServiceTaskList(updatedFilter, null, firstResult, limit));
+  }
+}, [isAssigned]);
 
 
   useEffect(() => {
@@ -725,7 +741,6 @@ export function ResizableTable(): JSX.Element {
     limit,
     reqData,
   ]);
-
   // Refresh handler (same logic as useEffect)
   const handleRefresh = useCallback(() => {
     const activeKey = sortParams?.activeKey;
@@ -866,6 +881,12 @@ export function ResizableTable(): JSX.Element {
     [dispatch, limit, reqData]
   );
 
+  const handleCheckBoxChange = ()=> {
+    setIsAssigned(!isAssigned)
+   }; 
+   const onLabelClick = () => {
+    handleCheckBoxChange(); 
+  };
   
 
   const renderTaskList = useCallback(() => {
@@ -1082,14 +1103,19 @@ export function ResizableTable(): JSX.Element {
           </span>
 
           <div className="mb-2">
-            <CustomButton
-              variant="secondary"
-              size="md"
-              label={t("Filter Created Date")}
-              onClick={handleToggleFilterModal}
-              dataTestId="open-create-filter-modal"
-              ariaLabel={t("Toggle Create Filter Modal")}
-            />
+          <button className={`custom-checkbox-container button-as-div ${
+              isAssigned ? "checked" :""
+            }`} 
+            onClick={onLabelClick}>
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={isAssigned}
+            onChange={handleCheckBoxChange}
+            data-testid="assign-to-me-checkbox"
+          />
+          <label className="custom-checkbox-label">{t("Assign to me")}</label>
+        </button>
           </div>
         </div>
 

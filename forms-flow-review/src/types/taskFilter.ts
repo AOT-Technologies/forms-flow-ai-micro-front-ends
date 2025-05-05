@@ -36,6 +36,7 @@ export interface FilterCriteria {
     name: string;
     criteria: FilterCriteria;
     variables?: FilterVariable[];
+    isMyTasksEnabled ?: boolean;
     properties?: Record<string, any>;
     roles: string[];    
     users: string[];

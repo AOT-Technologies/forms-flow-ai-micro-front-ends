@@ -158,7 +158,6 @@ export const fetchUserList = (...rest) => {
   export const saveFilters = (data) => {
     return RequestService.httpPOSTRequest(`${API.GET_FILTERS}`, data);
   };
-
   
   export const updateDefaultFilter = (defaultFilter) => {
     return RequestService.httpPOSTRequest(
@@ -186,4 +185,3 @@ export const fetchUserList = (...rest) => {
   });
 
 };
-
