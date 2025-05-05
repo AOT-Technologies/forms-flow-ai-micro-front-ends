@@ -216,49 +216,6 @@ const TaskTable = ({
   redirectUrl,
   history,
 }) => {
-  if (taskList?.length === 0 ) {
-    return (
-      <table
-        ref={tableRef}
-        className="resizable-table"
-        data-testid="task-resizable-table"
-        aria-label={t("Tasks data table with resizable columns")}
-      >
-        <thead className="resizable-header">
-          <tr>
-            {columns.map((column, index) => (
-              <TableHeaderCell
-                key={`header-${column.sortKey ?? index}`}
-                column={column}
-                index={index}
-                columnsLength={columns.length}
-                currentResizingColumn={resizingRef.current}
-                sortParams={sortParams}
-                handleSort={handleSort}
-                handleMouseDown={handleMouseDown}
-                t={t}
-              />
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="empty-row">
-            <td
-              colSpan={columns.length}
-              className="empty-table-message"
-              data-testid="empty-tasks-message"
-              aria-label={t("No tasks message")}
-            >
-              {t(
-                "No tasks have been found. Try a different filter combination or contact your admin."
-              )}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    );
-  }
-
   return (
     <table
       ref={tableRef}
@@ -284,16 +241,30 @@ const TaskTable = ({
         </tr>
       </thead>
       <tbody>
-        {taskList.map((task) => (
-          <TaskRow
-            key={`row-${task.id}`}
-            task={task}
-            columns={columns}
-            redirectUrl={redirectUrl}
-            history={history}
-            t={t}
-          />
-        ))}
+        {taskList.length === 0 ? 
+          <tr className="empty-row">
+            <td
+              colSpan={columns.length}
+              className="empty-table-message"
+              data-testid="empty-tasks-message"
+              aria-label={t("No tasks message")}
+            >
+              {t(
+                "No tasks have been found. Try a different filter combination or contact your admin."
+              )}
+            </td>
+          </tr>: 
+          taskList.map((task) => (
+            <TaskRow
+              key={`row-${task.id}`}
+              task={task}
+              columns={columns}
+              redirectUrl={redirectUrl}
+              history={history}
+              t={t}
+            />
+          ))
+        }
       </tbody>
     </table>
   );
@@ -423,7 +394,7 @@ useEffect(() => {
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map((variable) =>({
           name: variable.label,
-          width: variable.width ||200,
+          width: variable.width ?? 200,
           sortKey: variable.name,
           resizable: true,
         }));
