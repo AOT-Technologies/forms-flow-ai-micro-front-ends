@@ -143,6 +143,7 @@ export const fetchUserList = (...rest) => {
     return RequestService.httpPUTRequest(`${API.GET_FILTERS}/${selectedFilterId}`, updatedVariables);
   };
 
+  
   export const updateDefaultFilter = (defaultFilter) => {
     return RequestService.httpPOSTRequest(
       API.UPDATE_DEFAULT_FILTER,
@@ -169,4 +170,3 @@ export const fetchUserList = (...rest) => {
   });
 
 };
-
