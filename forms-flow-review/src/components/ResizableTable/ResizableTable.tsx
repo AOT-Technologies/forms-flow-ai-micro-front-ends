@@ -37,6 +37,7 @@ import {
   fetchBPMTaskCount,
   fetchServiceTaskList,
   updateDefaultFilter,
+  updateFilter,
 } from "../../api/services/filterServices";
 import { ALL_TASKS } from "../constants/taskConstants";
 
@@ -127,7 +128,7 @@ const TableHeaderCell = ({
   column,
   index,
   columnsLength,
-  resizingIndex,
+  currentResizingColumn,
   sortParams,
   handleSort,
   handleMouseDown,
@@ -163,9 +164,9 @@ const TableHeaderCell = ({
       {column.resizable && index < columnsLength - 1 && (
         <div
           className={`column-resizer ${
-            resizingIndex === index ? "resizing" : ""
+            currentResizingColumn?.sortKey === column.sortKey ? "resizing" : ""
           }`}
-          onMouseDown={(e) => handleMouseDown(index, e)}
+          onMouseDown={(e) => handleMouseDown(index, column, e)}
           data-testid={`column-resizer-${column.sortKey}`}
           aria-label={t("Resize {{columnName}} column", {
             columnName: t(column.name),
@@ -215,49 +216,6 @@ const TaskTable = ({
   redirectUrl,
   history,
 }) => {
-  if (taskList?.length === 0 ) {
-    return (
-      <table
-        ref={tableRef}
-        className="resizable-table"
-        data-testid="task-resizable-table"
-        aria-label={t("Tasks data table with resizable columns")}
-      >
-        <thead className="resizable-header">
-          <tr>
-            {columns.map((column, index) => (
-              <TableHeaderCell
-                key={`header-${column.sortKey ?? index}`}
-                column={column}
-                index={index}
-                columnsLength={columns.length}
-                resizingIndex={resizingRef.current}
-                sortParams={sortParams}
-                handleSort={handleSort}
-                handleMouseDown={handleMouseDown}
-                t={t}
-              />
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="empty-row">
-            <td
-              colSpan={columns.length}
-              className="empty-table-message"
-              data-testid="empty-tasks-message"
-              aria-label={t("No tasks message")}
-            >
-              {t(
-                "No tasks have been found. Try a different filter combination or contact your admin."
-              )}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    );
-  }
-
   return (
     <table
       ref={tableRef}
@@ -273,7 +231,7 @@ const TaskTable = ({
               column={column}
               index={index}
               columnsLength={columns.length}
-              resizingIndex={resizingRef.current}
+              currentResizingColumn={resizingRef.current}
               sortParams={sortParams}
               handleSort={handleSort}
               handleMouseDown={handleMouseDown}
@@ -283,16 +241,30 @@ const TaskTable = ({
         </tr>
       </thead>
       <tbody>
-        {taskList.map((task) => (
-          <TaskRow
-            key={`row-${task.id}`}
-            task={task}
-            columns={columns}
-            redirectUrl={redirectUrl}
-            history={history}
-            t={t}
-          />
-        ))}
+        {taskList.length === 0 ? 
+          <tr className="empty-row">
+            <td
+              colSpan={columns.length}
+              className="empty-table-message"
+              data-testid="empty-tasks-message"
+              aria-label={t("No tasks message")}
+            >
+              {t(
+                "No tasks have been found. Try a different filter combination or contact your admin."
+              )}
+            </td>
+          </tr>: 
+          taskList.map((task) => (
+            <TaskRow
+              key={`row-${task.id}`}
+              task={task}
+              columns={columns}
+              redirectUrl={redirectUrl}
+              history={history}
+              t={t}
+            />
+          ))
+        }
       </tbody>
     </table>
   );
@@ -340,7 +312,7 @@ export function ResizableTable(): JSX.Element {
 
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
-  const resizingRef = useRef<number | null>(null);
+  const resizingRef = useRef(null);
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(0);
   const [showSortModal, setShowSortModal] = useState(false);
@@ -420,9 +392,9 @@ useEffect(() => {
       const dynamicColumns = taskvariables
         .filter((variable) => variable.isChecked)
         .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((variable) => ({
+        .map((variable) =>({
           name: variable.label,
-          width: 200,
+          width: variable.width ?? 200,
           sortKey: variable.name,
           resizable: true,
         }));
@@ -744,10 +716,9 @@ useEffect(() => {
 
   // Column resizing logic (updated to only resize specific columns)
   const handleMouseDown = useCallback(
-    (index: number, e: React.MouseEvent): void => {
+    (index: number, column: any, e: React.MouseEvent): void => {
       if (!columns[index].resizable) return;
-
-      resizingRef.current = index;
+      resizingRef.current = column;
       startXRef.current = e.pageX;
       startWidthRef.current = columns[index].width;
       document.addEventListener("mousemove", handleMouseMove);
@@ -758,22 +729,35 @@ useEffect(() => {
 
   const handleMouseMove = useCallback((e: MouseEvent): void => {
     if (resizingRef.current === null) return;
-
     const diff = e.pageX - startXRef.current;
     const newWidth = Math.max(50, startWidthRef.current + diff);
-
+    resizingRef.current.newWidth = newWidth;
     setColumns((prev) =>
-      prev.map((col, i) =>
-        i === resizingRef.current ? { ...col, width: newWidth } : col
+      prev.map((col) =>
+        col.sortKey === resizingRef.current.sortKey ? { ...col, width: newWidth } : col
       )
     );
   }, []);
 
   const handleMouseUp = useCallback((): void => {
+    
+    // fetch the current column details and udpate with new width
+    const updatedData = cloneDeep(selectedFilter);
+    const variables = updatedData.variables.map((variable: any) => {
+      if (variable.name === resizingRef.current.sortKey) {
+        return { ...variable, width: resizingRef.current.newWidth };
+      }
+      return variable;
+    });
+    // Update the selected filter with the new width
+    // not waiting for response because we don't want to block the UI
+    updateFilter({variables}, selectedFilterId)
+
+    //reset the resizing reference and remove event listeners
     resizingRef.current = null;
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-  }, [handleMouseMove]);
+  }, [handleMouseMove,selectedFilter,selectedFilterId]);
 
   // Sorting modal handlers
   const handleSortModalClose = useCallback(() => {
@@ -784,6 +768,8 @@ useEffect(() => {
     setShowSortModal(true);
   }, []);
 
+  // Cleanup function to remove event listeners
+  // This is important to prevent memory leaks and ensure that the event listeners are removed when the component unmounts
   useEffect(() => {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
