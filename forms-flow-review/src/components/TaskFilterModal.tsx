@@ -12,6 +12,9 @@ import {
   FormInput,
   CustomInfo,
   DragandDropSort,
+  DeleteIcon,
+  UpdateIcon,
+  ConfirmModal,
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash } from "../helper/helper.js";
 import {
@@ -23,19 +26,25 @@ import {
 } from "../constants/index";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  deleteFilter,
+  editFilters,
+  fetchAllForms,
+  fetchBPMTaskCount,
+  fetchFilterList,
   fetchServiceTaskList,
   fetchTaskVariables,
   fetchUserList,
   getUserRoles,
-  saveFilters,
+  createFilter,
   updateDefaultFilter,
 } from "../api/services/filterServices";
-import { setDefaultFilter, setUserGroups } from "../actions/taskActions";
+import { setBPMFiltersAndCount, setDefaultFilter, setUserGroups } from "../actions/taskActions";
 import { Filter, FilterCriteria, UserDetail } from "../types/taskFilter.js";
 import { StorageService } from "@formsflow/service";
 import { FormSelectionModal } from "./FormSelectionModal";
 
-export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
+
+export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const computedStyle = getComputedStyle(document.documentElement);
@@ -75,6 +84,12 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     StorageService.getParsedData(StorageService.User.USER_ROLE)
 
   const isCreateFilters = userRoles?.includes("create_filters");
+  const [currentFilter, setCurrentFilter] = useState(filter);
+  const [initialFilterSnapshot, setInitialFilterSnapshot] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+
 
   const assigneeOptions = useMemo(
     () =>
@@ -84,6 +99,13 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
       })),
     [userListData]
   );
+  useEffect(() => {
+    setCurrentFilter(null);
+    setSelectedForm({
+      formId: '',
+      formName: '',
+    });
+  }, [onClose])
 
   useEffect(() => {
     StorageService.getParsedData(StorageService.User.USER_DETAILS) &&
@@ -91,6 +113,78 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         StorageService.getParsedData(StorageService.User.USER_DETAILS)
       );
   }, [shareFilter]);
+
+  useEffect(() => {
+    if (filter) {
+      console.log("filter data", filter)
+      setFilterName(filter.name);
+      if (filter.criteria.assignee) {
+        setAccessDropdownValue("specificAssignee");
+        setSpecificAssignee(filter.criteria.assignee);
+      } else {
+        if (filter.criteria.candidateGroup) {
+          setAccessDropdownValue("specificRole");
+          setSpecificRole(filter.criteria.candidateGroup);
+        }
+
+      }
+      setVariableArray(filter.variables);
+      if (filter.criteria.sorting) {
+        const sort = filter.criteria.sorting[0];
+        setSortValue(sort.sortBy);
+        setSortOrder(sort.sortOrder);
+      }
+      if (filter.roles.length) {
+        setShareFilter(SPECIFIC_USER_OR_GROUP)
+      }
+      else if (filter.users.length) {
+        setShareFilter(PRIVATE_ONLY_YOU);
+      }
+      else {
+        setShareFilter(ACCESSIBLE_FOR_ALL_GROUPS)
+      }
+      if (filter.criteria.dataLine) {
+        setDataLineValue(filter.criteria.dataLine);
+      }
+      else {
+        setDataLineValue(1);
+      }
+      if (filter.criteria.formId) {
+        setSelectedForm({
+          formId: filter.criteria.formId,
+          formName: filter.criteria.formName,
+        });
+      }
+      setFilterRole(filter.roles);
+      const snapshot = JSON.stringify(filter);
+      setInitialFilterSnapshot(snapshot);
+    }
+
+
+  }, [filter]);
+
+  useEffect(() => {
+    fetchAllForms()
+      .then((res) => {
+        const data = res.data?.forms || [];
+        const matchedForm = data.find(
+          (form) => form.formId === filter?.properties?.formId
+        );
+
+        if (matchedForm) {
+          setSelectedForm({
+            formId: matchedForm.formId,
+            formName: matchedForm.formName,
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [show, filter]);
+
+
+
 
   useEffect(() => {
     getUserRoles()
@@ -102,13 +196,13 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     if (accessDropdownValue === "specificRole") dispatch(fetchUserList());
   }, [accessDropdownValue]);
 
-    useEffect(() => {
-        const properties = getProperties();
-        if (properties.formId) {
-            setSelectedForm({ formId: properties.formId ?? "", formName: "" });
-            handleFetchTaskVariables(properties?.formId);
-        }
-    }, []);
+  useEffect(() => {
+    const properties = getProperties();
+    if (properties.formId) {
+      setSelectedForm({ formId: properties.formId ?? "", formName: "" });
+      handleFetchTaskVariables(properties?.formId);
+    }
+  }, []);
 
   const handleFilterName = (e) => setFilterName(e.target.value);
 
@@ -118,11 +212,136 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     setFilterNameError(
       value.length >= filterNameLength
         ? t("Filter name should be less than {{filterNameLength}} characters", {
-            filterNameLength: filterNameLength,
-          })
+          filterNameLength: filterNameLength,
+        })
         : ""
     );
   };
+
+
+
+
+  const getCriteria = (): FilterCriteria => {
+    const criteria = {
+      includeAssignedTasks: filter?.criteria?.includeAssignedTasks,
+      processVariables: [{
+        name: "formId",
+        operator: 'eq',
+        value: selectedForm.formId
+      }],
+      candidateGroupsExpression: "${currentUserGroups()}",
+      sorting: [{ sortBy: sortValue, sortOrder: sortOrder }]
+    } as {
+      candidateGroupsExpression: string;
+      processVariables: { name: string; operator: string; value: string }[];
+      sorting: { sortBy: string; sortOrder: string }[];
+      candidateGroup?: string;
+      assignee?: string;
+      [key: string]: any;
+    };
+
+    if (specificRole) {
+      criteria.candidateGroup = MULTITENANCY_ENABLED && specificRole
+        ? tenantKey + '-' + trimFirstSlash(specificRole)
+        : trimFirstSlash(specificRole);
+    }
+
+    if (specificAssignee) {
+      criteria.assignee = specificAssignee;
+    }
+
+    return criteria;
+  };
+
+
+
+
+
+  const getProperties = () => ({
+    displayLinesCount: dataLineValue,
+
+    formId: selectedForm.formId,
+  });
+
+  const getRoles = () => {
+    let roles = [];
+    if (
+      shareFilter === SPECIFIC_USER_OR_GROUP &&
+      typeof filterRole === "string"
+    ) {
+      roles.push(filterRole);
+    }
+    return roles;
+  };
+
+  const getUsers = () => {
+    let users = [
+
+    ];
+    if (shareFilter === PRIVATE_ONLY_YOU) {
+      users.push(userDetail?.preferred_username);
+    }
+    return users;
+  };
+
+  const getData = (): Filter => ({
+    created: filter?.created,
+    modified: filter?.modified,
+    id: filter?.id,
+    tenant: filter?.tenant,
+    name: filterName,
+    description: filter?.description,
+    resourceId: filter?.resourceId,
+    criteria: getCriteria(),
+    variables: variableArray,
+    properties: getProperties(),
+    roles: getRoles(),
+    users: getUsers(),
+    status: filter?.status,
+    createdBy: filter?.createdBy,
+    modifiedBy: filter?.modifiedBy,
+    taskVisibleAttributes: {
+      applicationId: true,
+      assignee: true,
+      created: true,
+      dueDate: true,
+      followUp: true,
+      priority: true,
+    },
+    order: filter?.order,
+    hide: filter?.hide,
+    filterType: "TASK",
+    parentFilterId: filter?.parentFilterId,
+    editPermission: filter?.editPermission,
+    sortOrder: filter?.sortOrder,
+
+  });
+
+ 
+
+
+  const isFilterUnchanged = useMemo(() => {
+    
+    const currentSnapshot = JSON.stringify(getData());
+    return currentSnapshot === initialFilterSnapshot;
+  }, [
+    filterName,
+    filterNameError,
+    specificRole,
+    specificAssignee,
+    sortValue,
+    sortOrder,
+    shareFilter,
+    filterRole,
+    selectedForm,
+    variableArray,
+  ]);
+  
+  
+  
+ 
+  
+  
 
   const accessOptions = [
     {
@@ -139,33 +358,33 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
 
   const candidateOptions = useMemo(() => {
     const filteredGroups = candidateGroups.filter((group) =>
-      group.permissions.includes("manage_all_filters")
+      group.permissions.includes("view_filters")
     );
     return MULTITENANCY_ENABLED
       ? filteredGroups.map((group) => ({
-          value: removeTenantKey(group.name, tenantKey),
-          label: removeTenantKey(group.name, tenantKey),
-        }))
+        value: removeTenantKey(group.name, tenantKey),
+        label: removeTenantKey(group.name, tenantKey),
+      }))
       : filteredGroups.map((group) => ({
-          value: trimFirstSlash(group.name),
-          label: group.name,
-        }));
+        value: group.name,
+        label: group.name,
+      }));
   }, [candidateGroups, MULTITENANCY_ENABLED, tenantKey]);
 
-    const createDateSortOption = (labelKey, value) => ({
-        label: t(labelKey),
-        value,
-        onClick: () => setSortValue(value),
-    });
-    
-    const dateSortOptions = [
-        createDateSortOption('Due Date', 'dueDate'),
-        createDateSortOption('Created Date', 'created'),
-        createDateSortOption('Assignee', 'assignee'),
-        createDateSortOption('Task', 'name'),
-        createDateSortOption('Form Name', 'formName'),
-        createDateSortOption('Submission ID', 'applicationId'),
-    ];
+  const createDateSortOption = (labelKey, value) => ({
+    label: t(labelKey),
+    value,
+    onClick: () => setSortValue(value),
+  });
+
+  const dateSortOptions = [
+    createDateSortOption('Due Date', 'dueDate'),
+    createDateSortOption('Created Date', 'created'),
+    createDateSortOption('Assignee', 'assignee'),
+    createDateSortOption('Task', 'name'),
+    createDateSortOption('Form Name', 'formName'),
+    createDateSortOption('Submission ID', 'applicationId'),
+  ];
 
   const createSortOptions = (ascLabel, descLabel) => [
     { label: t(ascLabel), value: "asc" },
@@ -189,9 +408,11 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     !filterName.trim() ||
     filterNameError ||
     !isCreateFilters ||
+    (specificRole.length === 0 && specificAssignee.length === 0) ||
     (shareFilter === SPECIFIC_USER_OR_GROUP && filterRole.length === 0);
   const isButtonDisabled = isInvalidFilter;
-  const iconColor = getIconColor(isInvalidFilter);
+  const saveIconColor = getIconColor(isInvalidFilter);
+  const updateIconColor = getIconColor(isFilterUnchanged);
 
   const renderDropdown = (options) => (
     <div className="d-flex filter-dropdown">
@@ -227,91 +448,69 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     createFilterShareOption("Specific role", SPECIFIC_USER_OR_GROUP),
   ];
 
-    const getCriteria = (): FilterCriteria => {
-        const criteria = {
-            candidateGroupsExpression: "${currentUserGroups()}",
-            includeAssignedTasks:true,
-            processVariables: [{
-                name: "formId",
-                operator: 'eq',
-                value: selectedForm.formId
-            }],
-            sorting: [{ sortBy: sortValue, sortOrder: sortOrder }]
-        } as {
-            candidateGroupsExpression: string;
-            processVariables: { name: string; operator: string; value: string }[];
-            sorting: { sortBy: string; sortOrder: string }[];
-            candidateGroup?: string;
-            assignee?: string;
-            [key: string]: any;
-        };
-
-        if (specificRole) {
-            criteria.candidateGroup = MULTITENANCY_ENABLED && specificRole
-                ? tenantKey + '-' + trimFirstSlash(specificRole)
-                : specificRole;
-        }
-
-        if (specificAssignee) {
-            criteria.assignee = specificAssignee;
-        }
-
-        return criteria;
-    };
 
 
+  const handleFetchTaskVariables = (formId) => {
 
+    fetchTaskVariables(formId)
+      .then(res => {
+        const taskVariables = res.data?.taskVariables || [];
+        const staticVariables = [
+          { key: 'applicationId', label: 'Submission ID', type: 'textfield', name: 'Submission ID', isChecked: true, sortOrder: 1, isTaskVariable: false },
+          { key: 'submitterName', label: 'Submitter Name', type: 'textfield', name: 'Submitter Name', isChecked: true, sortOrder: 2, isTaskVariable: false },
+          { key: 'assignee', label: 'Assignee', type: 'textfield', name: 'Assignee', isChecked: true, sortOrder: 3, isTaskVariable: false },
+          { key: 'name', label: 'Task', type: 'textfield', name: 'Task', isChecked: true, sortOrder: 4, isTaskVariable: false },
+          { key: 'created', label: 'Created Date', type: 'datetime', name: 'Created Date', isChecked: true, sortOrder: 5, isTaskVariable: false },
+          { key: 'formName', label: 'Form Name', type: 'textfield', name: 'Form Name', isChecked: true, sortOrder: 6, isTaskVariable: false },
+        ].map(variable => ({
+          ...variable,
+          key: variable.key,
+          name: variable.key,
+        }));
 
+        const dynamicVariables = taskVariables.map((variable, index) => ({
+          ...variable,
+          key: variable.key,
+          name: variable.key,
+          isChecked: true,
+          sortOrder: staticVariables.length + index + 1,
+          isTaskVariable: true,
+        }));
 
-  const getProperties = () => ({
-    displayLinesCount: dataLineValue,
-
-    formId: selectedForm.formId,
-  });
-
-  const getRoles = () => {
-    let roles = [];
-    if (
-      shareFilter === SPECIFIC_USER_OR_GROUP &&
-      typeof filterRole === "string"
-    ) {
-      roles.push(filterRole);
-    }
-    return roles;
+        setVariableArray([...staticVariables, ...dynamicVariables]);
+      })
+      .catch(err => console.error(err));
   };
 
-    const handleFetchTaskVariables = (formId) => {
+  const handleFilterDelete = () => {
+    deleteFilter(filter?.id)
+      .then(() => {
+        dispatch(
+          fetchFilterList((err, data) => {
+            if (data) {
+              fetchBPMTaskCount(data.filters)
+                .then((res) => {
+                  dispatch(setBPMFiltersAndCount(res.data));
+                  const filter = data.filters.find((i) => data.defaultFilter == i.id) ||
+                    data.filters[0];
+                  dispatch(fetchServiceTaskList(filter, null, firstResult, 15));
+                })
+                .catch((err) => {
+                  if (err) {
+                    console.error(err);
+                  }
+                });
+            }
+          })
+        );
+      })
 
-        fetchTaskVariables(formId)
-            .then(res => {
-                const taskVariables = res.data?.taskVariables || [];
-                const staticVariables = [
-                    { key: 'applicationId', label: 'Submission ID', type: 'textfield', name: 'Submission ID', isChecked: true, sortOrder: 1, isTaskVariable: false },
-                    { key: 'submitterName', label: 'Submitter Name', type: 'textfield', name: 'Submitter Name', isChecked: true, sortOrder: 2, isTaskVariable: false },
-                    { key: 'assignee', label: 'Assignee', type: 'textfield', name: 'Assignee', isChecked: true, sortOrder: 3, isTaskVariable: false },
-                    { key: 'name', label: 'Task', type: 'textfield', name: 'Task', isChecked: true, sortOrder: 4, isTaskVariable: false },
-                    { key: 'created', label: 'Created Date', type: 'datetime', name: 'Created Date', isChecked: true, sortOrder: 5, isTaskVariable: false },
-                    { key: 'formName', label: 'Form Name', type: 'textfield', name: 'Form Name', isChecked: true, sortOrder: 6, isTaskVariable: false },
-                ].map(variable => ({
-                    ...variable,
-                    key: variable.key,
-                    name: variable.key,
-                }));
-
-                const dynamicVariables = taskVariables.map((variable, index) => ({
-                    ...variable,
-                    key: variable.key,
-                    name: variable.key,
-                    isChecked: true,
-                    sortOrder: staticVariables.length + index + 1,
-                    isTaskVariable: true,
-                }));
-
-                setVariableArray([...staticVariables, ...dynamicVariables]);
-            })
-            .catch(err => console.error(err));
-    };
-
+      .catch((error) => {
+        console.error("error", error);
+      });
+    setShowDeleteModal(false);
+    onClose();
+  };
 
   const handleUpdateOrder = (updatedItems) => {
     const updatedVariableArray = updatedItems.map((item, index) => ({
@@ -325,61 +524,71 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     }
   };
 
-  const getUsers = () => {
-    let users = [];
-    if (shareFilter === PRIVATE_ONLY_YOU) {
-      users.push(userDetail.preferred_username);
-    }
-    return users;
+
+
+  
+
+
+
+  const filterResults = () => {
+    dispatch(fetchServiceTaskList(getData(), null, firstResult, MAX_RESULTS, (error) => {
+      if (error) {
+        console.error("Error fetching tasks:", error);
+        return;
+      }
+      onClose();
+    }));
   };
-
-  const getData = (): Filter => ({
-    name: filterName,
-    criteria: getCriteria(),
-    variables: variableArray,
-    properties: getProperties(),
-    roles: getRoles(),
-    users: getUsers(),
-    taskVisibleAttributes: {
-      applicationId: true,
-      assignee: true,
-      created: true,
-      dueDate: true,
-      followUp: true,
-      priority: true,
-    },
-  });
-
-
-
-    const filterResults = () => {
-        dispatch(fetchServiceTaskList(getData(), null, firstResult, MAX_RESULTS, (error) => {
-            if (error) {
-                console.error("Error fetching tasks:", error);
-                return;
-            }
-            onClose();
-        }));
-    };
 
   const saveCurrentFilter = () => {
-    saveFilters(getData())
+
+
+    const saveAction = filter
+      ? editFilters(getData(), filter.id)
+      : createFilter(getData());
+
+    saveAction
       .then((res) => {
-        const savedFilterId = res.data.id;
-        const isDefaultFilter =
-          savedFilterId === defaultFilter ? null : savedFilterId;
-        updateDefaultFilter(isDefaultFilter)
-          .then((updateRes) =>
-            dispatch(setDefaultFilter(updateRes.data.defaultFilter))
-          )
-          .catch((error) =>
-            console.error("Error updating default filter:", error)
-          );
-        onClose();
+        dispatch(
+          fetchFilterList((err, data) => {
+            if (data) {
+              fetchBPMTaskCount(data.filters)
+                .then((res) => {
+                  dispatch(setBPMFiltersAndCount(res.data));
+                })
+                .catch((err) => {
+                  if (err) {
+                    console.error(err);
+                  }
+                })
+                .finally(() => {
+                  const savedFilterId = res.data.id;
+                  const isDefaultFilter =
+                    savedFilterId === defaultFilter ? null : savedFilterId;
+
+                  updateDefaultFilter(isDefaultFilter)
+                    .then((updateRes) =>
+                      dispatch(setDefaultFilter(updateRes.data.defaultFilter))
+                    )
+                    .catch((error) =>
+                      console.error("Error updating default filter:", error)
+                    );
+
+                  onClose();
+                  setShowUpdateModal(false);
+                });
+            }
+          })
+        );
       })
       .catch((error) => console.error("Error saving filter:", error));
+    onClose();
+    setShowUpdateModal(false);
   };
 
+  const roleAccess = filter?.roles.some(role => userDetail.groups.includes(`${role}`));
+  const viewOnly = !userRoles.includes("manage_all_filters") && roleAccess;
+  const editRole = userRoles.includes("manage_all_filters") && (roleAccess || (filter?.roles.length === 0 && filter?.users.length === 0));
   const cancelFilter = () => {
     setSpecificRole("");
     setSpecificAssignee("");
@@ -388,6 +597,10 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     setSortOrder("asc");
     setShareFilter(PRIVATE_ONLY_YOU);
     setVariableArray([]);
+    setSelectedForm({
+      formId: '',
+      formName: '',
+    });
     onClose();
   };
   const handleModalclose = () => {
@@ -465,24 +678,24 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     </>
   );
 
-     const columnsTab = () => (
-        <div>
-            <CustomInfo
-                className="note"
-                heading="Note"
-                content={t("Toggle the visibility of columns and re-order them as per your requirement")}
-                dataTestId="task-filter-columns-note"
-            />
-            {variableArray.length !== 0 && (
-                <DragandDropSort
-                    items={variableArray}
-                    onUpdate={handleUpdateOrder}
-                    data-testid="columns-sort"
-                />
-            )}
+  const columnsTab = () => (
+    <div>
+      <CustomInfo
+        className="note"
+        heading="Note"
+        content={t("Toggle the visibility of columns and re-order them if needed.")}
+        dataTestId="task-filter-columns-note"
+      />
+      {variableArray.length !== 0 && (
+        <DragandDropSort
+          items={variableArray}
+          onUpdate={handleUpdateOrder}
+          data-testid="columns-sort"
+        />
+      )}
 
-        </div>
-    );
+    </div>
+  );
 
   const settingsTab = () => (
     <>
@@ -528,9 +741,10 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         onChange={handleFilterName}
         isInvalid={!!filterNameError}
         onBlur={handleNameError}
-      feedback=
-      {filterNameError }
-        />
+        feedback=
+        {filterNameError}
+        disabled={viewOnly}
+      />
 
       <div className="pt-4 pb-4">
         <InputDropdown
@@ -542,6 +756,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
           dataTestIdforDropdown="share-filter-options"
           selectedOption={shareFilter}
           setNewInput={setShareFilter}
+          disabled={viewOnly}
         />
         {shareFilter === SPECIFIC_USER_OR_GROUP && (
           <div className="d-flex filter-dropdown">
@@ -555,30 +770,129 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
               dataTestIdforDropdown="candidate-options"
               selectedOption={filterRole}
               setNewInput={setFilterRole}
+              disabled={viewOnly}
             />
           </div>
         )}
       </div>
-      <CustomInfo
+      {filter ? (
+        filter.createdBy === userDetail.preferred_username ? (
+          <>
+            <div className="pb-4">
+              <CustomInfo
+                className="note"
+                heading="Note"
+                content={t("This filter is created and managed by you")}
+                dataTestId="task-self-share-note"
+              />
+            </div>
+
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "Column widths are saved within a filter. If you wish to adjust them. Click Filter Results, adjust the widths of the columns in the table until you are happy and then save the filter afterwards."
+              )}
+              dataTestId="task-filter-save-note"
+            />
+          </>
+        ) :
+          viewOnly ? (
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "This filter is created and managed by {{createdBy}}",
+                { createdBy: filter?.createdBy }
+              )}
+              dataTestId="task-filter-save-note"
+            />
+          ) :
+            editRole &&
+            (
+              <>
+                <div className="pb-4">
+                  <CustomInfo
+                    className="note"
+                    heading="Note"
+                    content={t(
+                      "This filter is created and managed by {{createdBy}}",
+                      { createdBy: filter?.createdBy }
+                    )}
+                    dataTestId="task-filter-save-note"
+                  /></div>
+                <CustomInfo
+                  className="note"
+                  heading="Note"
+                  content={t(
+                    "Column widths are saved within a filter. If you wish to adjust them. Click Filter Results, adjust the widths of the columns in the table until you are happy and then save the filter afterwards."
+                  )}
+                  dataTestId="task-filter-save-note"
+                />
+              </>
+            )
+      ) : (<CustomInfo
         className="note"
         heading="Note"
         content={t(
           "Column widths are saved within a filter. If you wish to adjust them. Click Filter Results, adjust the widths of the columns in the table until you are happy and then save the filter afterwards."
         )}
         dataTestId="task-filter-save-note"
-      />
-      <div className="pt-4">
-        <CustomButton
-          variant="secondary"
-          size="md"
-          label={t("Save This Filter")}
-          onClick={saveCurrentFilter}
-          icon={<SaveIcon color={iconColor} />}
-          dataTestId="save-task-filter"
-          ariaLabel={t("Save Task Filter")}
-          disabled={isButtonDisabled}
-        />
-      </div>
+      />)
+
+      }
+
+
+      {filter ? (
+        filter.createdBy === userDetail.preferred_username || editRole ? (
+          <div className="pt-4 d-flex">
+            <CustomButton
+              className="me-3"
+              variant="secondary"
+              size="md"
+              label={t("Update This Filter")}
+              onClick={() => {
+                onClose();
+                setShowUpdateModal(true);
+              }}
+              icon={<UpdateIcon color={updateIconColor} />}
+              dataTestId="save-task-filter"
+              ariaLabel={t("Update This Filter")}
+              disabled={isFilterUnchanged}
+            />
+
+
+            <CustomButton
+              variant="secondary"
+              size="md"
+              label={t("Delete This Filter")}
+              onClick={() => {
+                onClose();
+                setShowDeleteModal(true);
+              }}
+              icon={<DeleteIcon />}
+              dataTestId="delete-task-filter"
+              ariaLabel={t("Delete This Filter")}
+            />
+
+          </div>
+        ) : viewOnly && null
+      ) : (
+        <div className="pt-4">
+          <CustomButton
+            variant="secondary"
+            size="md"
+            label={t("Save This Filter")}
+            onClick={saveCurrentFilter}
+            icon={<SaveIcon color={saveIconColor} />}
+            dataTestId="save-task-filter"
+            ariaLabel={t("Save Task Filter")}
+            disabled={isButtonDisabled}
+          />
+        </div>
+      )}
+
+
     </>
   );
 
@@ -593,62 +907,132 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     { eventKey: "saveFilterTab", title: t("Save"), content: saveFilterTab() },
   ];
 
-    return (
-        <Modal
-            show={show}
-            onHide={onClose}
-            size="sm"
-            centered={true}
-            data-testid="create-filter-modal"
-            aria-labelledby={t("create filter modal title")}
-            aria-describedby="create-filter-modal"
-            backdrop="static"
-            className='create-filter-modal'
-        >
-            <Modal.Header>
-                <Modal.Title id="create-filter-title">
-                    <b>{t("Tasks: Unsaved Filter")}</b>
-                </Modal.Title>
-                <div className="d-flex align-items-center">
-                    <CloseIcon onClick={onClose} />
-                </div>
-            </Modal.Header>
-            <Modal.Body className='modal-body p-0'>
-                <div className='filter-tab-container'>
-                    <CustomTabs
-                        defaultActiveKey="parametersTab"
-                        tabs={tabs}
-                        ariaLabel={t("Filter Tabs")}
-                        dataTestId="create-filter-tabs"
-                    />
-                </div>
-            </Modal.Body>
-            <Modal.Footer className="d-flex justify-content-start">
-                <CustomButton
-                    variant="primary"
-                    size="md"
-                    label={t("Filter Results")}
-                    dataTestId="task-filter-results"
-                    ariaLabel={t("Filter results")}
-                    onClick={filterResults}
-                />
-                <CustomButton
-                    variant="secondary"
-                    size="md"
-                    label={t("Cancel")}
-                    onClick={cancelFilter}
-                    dataTestId="cancel-task-filter"
-                    ariaLabel={t("Cancel filter")}
-                />
-            </Modal.Footer>
-        </Modal>
-    );
+  const currentFilterName = () => {
+    if (filter) {
+      return `${t("Tasks")}: ${filter.name}`;
+    }
+
+
+    else {
+      return (t("Tasks: Unsaved Filter"));
+    }
+  }
+
+  return (
+    <>
+      <Modal
+        show={show}
+        onHide={onClose}
+        size="sm"
+        centered
+        data-testid="create-filter-modal"
+        aria-labelledby={t("create filter modal title")}
+        aria-describedby="create-filter-modal"
+        backdrop="static"
+        className="create-filter-modal"
+      >
+        <Modal.Header>
+          <Modal.Title id="create-filter-title">
+            <b>{currentFilterName()}</b>
+          </Modal.Title>
+          <div className="d-flex align-items-center">
+            <CloseIcon onClick={cancelFilter} style={{ cursor: 'pointer' }} />
+          </div>
+        </Modal.Header>
+
+        <Modal.Body className="modal-body p-0">
+          <div className="filter-tab-container">
+            <CustomTabs
+              defaultActiveKey="parametersTab"
+              tabs={tabs}
+              ariaLabel={t("Filter Tabs")}
+              dataTestId="create-filter-tabs"
+            />
+          </div>
+        </Modal.Body>
+
+        <Modal.Footer className="d-flex justify-content-start">
+          <CustomButton
+            variant="primary"
+            size="md"
+            label={t("Filter Results")}
+            dataTestId="task-filter-results"
+            ariaLabel={t("Filter results")}
+            onClick={filterResults}
+          />
+          <CustomButton
+            variant="secondary"
+            size="md"
+            label={t("Cancel")}
+            onClick={cancelFilter}
+            dataTestId="cancel-task-filter"
+            ariaLabel={t("Cancel filter")}
+          />
+        </Modal.Footer>
+      </Modal>
+
+      {showDeleteModal && (
+        <ConfirmModal
+          show={showDeleteModal}
+          title={t("Delete This Filter?")}
+          message={
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow."
+              )}
+              dataTestId="task-filter-delete-note"
+            />
+          }
+
+
+          primaryBtnAction={() => {
+            setShowDeleteModal(false);
+            setShow(true);
+          }}
+          onClose={() => setShowDeleteModal(false)}
+          primaryBtnText={t("No, Keep This Filter")}
+          secondaryBtnText={t("Yes, Delete This Filter For Everybody")}
+          secondaryBtnAction={handleFilterDelete}
+          secondaryBtnDataTestId="confirm-revert-button"
+        />
+      )}
+
+      {showUpdateModal && (
+        <ConfirmModal
+          show={showUpdateModal}
+          title={t("Update This Filter?")}
+          message={
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution."
+              )}
+              dataTestId="task-filter-update-note"
+            />
+          }
+
+
+          primaryBtnAction={() => { setShowUpdateModal(false) }}
+          onClose={() => setShowUpdateModal(false)}
+          primaryBtnText={t("No, Cancel Changes")}
+          secondaryBtnText={t("Yes, Update This Filter For Everybody")}
+          secondaryBtnAction={saveCurrentFilter}
+          secondaryBtnDataTestId="confirm-revert-button"
+        />
+      )}
+    </>
+  );
+
+
 };
 
 TaskFilterModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  filter: PropTypes.object, // ✅ add this
+  filter: PropTypes.object,
   canEdit: PropTypes.bool,
 };
 

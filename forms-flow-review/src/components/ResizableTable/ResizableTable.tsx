@@ -367,8 +367,8 @@ export function ResizableTable(): JSX.Element {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
-  const isFilterCreator = userRoles.includes("createFilters");
-  const isFilterAdmin = userRoles.includes("manageAllFilters");
+  const isFilterCreator = userRoles.includes("create_filters");
+  const isFilterAdmin = userRoles.includes("manage_all_filters");
 
   useEffect(() => {
     dispatch(setBPMFilterLoader(true));
@@ -415,30 +415,36 @@ useEffect(() => {
   }
 }, [isAssigned]);
 
-  useEffect(() => {
-    if (Array.isArray(taskvariables)) {
-      const dynamicColumns = taskvariables
-        .filter((variable) => variable.isChecked)
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((variable) => ({
-          name: variable.label,
-          width: 200,
-          sortKey: variable.name,
-          resizable: true,
-        }));
+useEffect(() => {
+  if (Array.isArray(taskvariables)) {
+    const dynamicColumns = taskvariables
+      .filter((variable) => variable.isChecked)
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((variable) => ({
+        name: variable.label,
+        width: 200,
+        sortKey: variable.name,
+        resizable: true,
+      }));
 
-      if (dynamicColumns.length > 0) {
-        dynamicColumns.push({
-          name: "",
-          width: 100,
-          sortKey: "actions",
-          resizable: false,
-        });
-      }
-
-      setColumns(dynamicColumns);
+    if (dynamicColumns.length > 0) {
+      dynamicColumns.push({
+        name: "",
+        width: 100,
+        sortKey: "actions",
+        resizable: false,
+      });
     }
-  }, [taskvariables]);
+
+    // Only update if columns are different
+    setColumns((prevColumns) => {
+      if (!isEqual(prevColumns, dynamicColumns)) {
+        return dynamicColumns;
+      }
+      return prevColumns;
+    });
+  }
+}, [taskvariables]);
 
 
   const handleSortApply = useCallback(
@@ -488,9 +494,19 @@ useEffect(() => {
     setCanEditFilter(isEditable);
     setShowTaskFilterModal(true);
   }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
+
+  useEffect(() => {  
+    const currentFilter = filterList.find((item) => item.id === defaultFilter);
+    if (currentFilter) {
+      const checkedVariables = currentFilter.variables?.filter(variable => variable.isChecked);
+      setTaskAttributeData(checkedVariables);
+    }
+  }, [filterList]);
+
   const changeFilterSelection = useCallback(
     (filter) => {
       const selectedFilter = filterList.find((item) => item.id === filter.id);
+      console.log(selectedFilter,"SEEEEE");
       if (!selectedFilter) return;
 
       const taskAttributes = selectedFilter.variables.filter(
@@ -1074,6 +1090,7 @@ useEffect(() => {
 
         <TaskFilterModal
           show={showTaskFilterModal}
+          setShow={setShowTaskFilterModal}
           onClose={handleToggleFilterModal}
           filter={filterToEdit}
           canEdit={canEditFilter}

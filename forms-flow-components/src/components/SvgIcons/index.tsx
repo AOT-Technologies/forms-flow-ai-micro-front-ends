@@ -689,7 +689,25 @@ export const StarPremiumIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const RefreshIcon = ({ color = baseColor, ...props }) => (
+export const UpdateIcon = ({ color = baseColor, ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="19" 
+    viewBox="0 0 20 19" 
+    fill="none"
+  >
+    <path d="M3.0903 6.45238C4.22418 3.5458 6.93121 1.5 10.0903 1.5C13.2494 1.5 15.9564 3.5458 17.0903 6.45238M17.0903 12.5476C15.9564 15.4542 13.2494 17.5 10.0903 17.5C6.93121 17.5 4.22418 15.4542 3.0903 12.5476M13.6831 12.4777L17.7605 11.2539L18.9843 15.3312M6.58742 6.28665L2.5947 7.86523L1.01611 3.87252" 
+      stroke={color} 
+      stroke-width="2" 
+      stroke-linecap="round" 
+      stroke-linejoin="round" 
+    />
+  </svg>
+);
+
+export const RefreshIcon = ({ color = baseColor,   width="43",
+  height="43", ...props }) => (
   <svg
     className="icon-wrapper-change"
     width="43"

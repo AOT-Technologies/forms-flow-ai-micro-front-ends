@@ -20,7 +20,7 @@ import {
 } from "../actions/taskActions";
 import {
   fetchServiceTaskList,
-  saveFilters,
+  createFilter,
 } from "../api/services/filterServices";
 
 export const AttributeFilterModal = ({
@@ -243,7 +243,7 @@ export const AttributeFilterModal = ({
       filterType: "ATTRIBUTE",
     };
 
-    saveFilters(filterToSave);
+    createFilter(filterToSave);
     onClose();
   };
 
