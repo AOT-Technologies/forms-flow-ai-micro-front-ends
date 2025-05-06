@@ -27,7 +27,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import {
   deleteFilter,
-  editFilters,
+  updateFilter,
   fetchAllForms,
   fetchBPMTaskCount,
   fetchFilterList,
@@ -544,7 +544,7 @@ export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => 
 
 
     const saveAction = filter
-      ? editFilters(getData(), filter.id)
+      ? updateFilter(getData(), filter.id)
       : createFilter(getData());
 
     saveAction
@@ -562,7 +562,7 @@ export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => 
                   }
                 })
                 .finally(() => {
-                  const savedFilterId = res.data.id;
+                  const savedFilterId = filter? filter.id : res.data.id;
                   const isDefaultFilter =
                     savedFilterId === defaultFilter ? null : savedFilterId;
 
@@ -573,17 +573,15 @@ export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => 
                     .catch((error) =>
                       console.error("Error updating default filter:", error)
                     );
-
-                  onClose();
-                  setShowUpdateModal(false);
-                });
+                    setShowUpdateModal(false);
+                    onClose();
+                  });
             }
           })
         );
       })
       .catch((error) => console.error("Error saving filter:", error));
-    onClose();
-    setShowUpdateModal(false);
+    
   };
 
   const roleAccess = filter?.roles.some(role => userDetail.groups.includes(`${role}`));
