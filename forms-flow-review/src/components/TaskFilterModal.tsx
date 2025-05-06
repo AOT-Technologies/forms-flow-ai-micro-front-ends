@@ -442,20 +442,32 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         </div>
       )}
       <div className="pt-4">
-        <FormInput
-          className="task-form-filter"
-          name="title"
-          type="text"
-          label={t("Form")}
-          ariaLabel={t("Name of the form")}
-          dataTestId="form-name-input"
-          icon={
-            <PencilIcon data-testid="close-input" aria-label="Close input" />
-          }
-          maxLength={200}
-          value={selectedForm.formName}
-          onIconClick={() => setShowFormSelectionModal(true)}
-        />
+        <label className="mb-2">{t("Form")}</label>
+        <div className="form-selection-input d-flex justify-content-end">
+          <label className="w-100">{selectedForm.formName}</label> 
+          { selectedForm.formName && (<div className="form-selection-input-container">
+            <CloseIcon
+              color={baseColor}
+              width="15px"
+              height="15px"
+              className="form-selection-icon"
+              data-testid="clear-formId"
+              aria-label="clear-formId"
+              onClick={() => setSelectedForm({
+                formId: "",
+                formName: "",
+              })}
+            />
+          </div>) }
+          <div className="form-selection-input-container">
+            <PencilIcon
+              className="form-selection-icon"
+              aria-label="open modal"
+              data-testid="open-modal"
+              onClick={() => setShowFormSelectionModal(true)}
+            />
+          </div>
+        </div>
         <FormSelectionModal
           showModal={showFormSelectionModal}
           onClose={handleModalclose}
@@ -528,8 +540,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         onChange={handleFilterName}
         isInvalid={!!filterNameError}
         onBlur={handleNameError}
-      feedback=
-      {filterNameError }
+        feedback={filterNameError }
         />
 
       <div className="pt-4 pb-4">

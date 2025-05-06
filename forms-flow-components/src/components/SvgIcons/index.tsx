@@ -146,8 +146,9 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
+export const AddIcon = ({ color = baseColor,className, size = 16, ...props }) => (
   <svg
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
     width={size}
     height={size}
@@ -156,6 +157,7 @@ export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
     {...props}
   >
     <path
+      className={className}
       d="M8 1V15"
       stroke={color}
       strokeWidth="2"
@@ -163,6 +165,7 @@ export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
       strokeLinejoin="round"
     />
     <path
+      className={className}
       d="M1 8L15 8"
       stroke={color}
       strokeWidth="2"
@@ -392,15 +395,18 @@ export const DownArrowIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const PencilIcon = ({ color = baseColor, ...props }) => (
+export const PencilIcon = ({ color = baseColor,className, ...props }) => (
   <svg
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
     width="18"
     height="18"
     viewBox="0 0 18 18"
     fill="none"
+    onClick={props.onClick}
   >
     <path
+      className={className}
       d="M6.53858 3.58705L15.0242 12.0727L16.5 16.5L12.0727 15.0242L3.58705 6.53858M6.53858 3.58705L5.06281 2.11128C4.24777 1.29624 2.92633 1.29624 2.11128 2.11128C1.29624 2.92633 1.29624 4.24777 2.11128 5.06281L3.58705 6.53858M6.53858 3.58705L3.58705 6.53858"
       stroke={color}
       strokeWidth="2"
