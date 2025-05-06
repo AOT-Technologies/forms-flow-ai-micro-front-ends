@@ -181,6 +181,7 @@
       "REQUESTED_PRESCRIBED_TEST_USED_DRUG_INSTRUMENT",
       "REQUESTED_PRESCRIBED_TEST_USED_DRUG_PPCT",
       "REQUESTED_APPROVED_INSTRUMENT",
+      "REQUESTED_NO_TEST_ADMINISTERED",
       "REQUESTED_TEST_TIME",
       "REQUESTED_TEST_BAC",
       "REQUESTED_TEST_BAC_RESULT",
@@ -940,6 +941,16 @@
         "start": {
           "x": 121.25,
           "y": 127.75
+        }
+      },      
+      "REQUESTED_NO_TEST_ADMINISTERED": {
+        "field_type": "checkbox",
+        "field_name": "requested_test_used_alcohol",
+        "field_val": "no-test",
+        "classNames": "fontSmall",
+        "start": {
+          "x": 121.25,
+          "y": 132
         }
       },
       "REQUESTED_APPROVED_INSTRUMENT": {
