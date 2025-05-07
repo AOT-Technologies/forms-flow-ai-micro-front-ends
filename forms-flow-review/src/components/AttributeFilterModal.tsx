@@ -221,7 +221,7 @@ export const AttributeFilterModal = ({
     onClose();
   };
 
-  const saveFilterAttributes = () => {
+  const saveFilterAttributes = async() => {
     const updatedParams = buildUpdatedFilterParams();
     const { roles, users } = getTaskAccess();
     const assignee = getAssignee();
@@ -243,7 +243,7 @@ export const AttributeFilterModal = ({
       filterType: "ATTRIBUTE",
     };
 
-    createFilter(filterToSave);
+    await createFilter(filterToSave);
     onClose();
   };
 

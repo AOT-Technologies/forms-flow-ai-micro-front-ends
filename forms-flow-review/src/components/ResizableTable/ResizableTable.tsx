@@ -524,48 +524,51 @@ useEffect(() => {
       }),
     }));
 
-    const extraItems = [
-      {
-        content: (
-          <span>
+    const extraItems = isFilterAdmin
+    ? [
+        {
+          content: (
             <span>
-              <AddIcon />
-            </span>{" "}
-            {t("Custom Filter")}
-          </span>
-        ),
-        onClick: handleToggleFilterModal,
-        type: "custom",
-        dataTestId: "filter-item-custom",
-        ariaLabel: t("Custom Filter"),
-      },
-      {
-        content: (
-          <span>
+              <span>
+                <AddIcon />
+              </span>{" "}
+              {t("Custom Filter")}
+            </span>
+          ),
+          onClick: handleToggleFilterModal,
+          type: "custom",
+          dataTestId: "filter-item-custom",
+          ariaLabel: t("Custom Filter"),
+        },
+        {
+          content: (
             <span>
-              <PencilIcon />
-            </span>{" "}
-            {t("Re-order And Hide Filters")}
-          </span>
-        ),
-        onClick: () => console.log("Re-order clicked"),
-        type: "reorder",
-        dataTestId: "filter-item-reorder",
-        ariaLabel: t("Re-order And Hide Filters"),
-      },
-    ];
+              <span>
+                <PencilIcon />
+              </span>{" "}
+              {t("Re-order And Hide Filters")}
+            </span>
+          ),
+          onClick: () => console.log("Re-order clicked"),
+          type: "reorder",
+          dataTestId: "filter-item-reorder",
+          ariaLabel: t("Re-order And Hide Filters"),
+        },
+      ]
+    : [];
 
-    return [...mappedItems, ...extraItems];
-  }, [
-    filtersCount,
-    filterList,
-    t,
-    handleToggleFilterModal,
-    changeFilterSelection,
-  ]);
+  return [...mappedItems, ...extraItems];
+}, [
+  filtersCount,
+  t,
+  handleToggleFilterModal,
+  changeFilterSelection,
+  isFilterAdmin,
+]);
 
   const filterDropdownAttributeItems = useMemo(() => {
-    const extraItems = [
+    const extraItems = isFilterAdmin
+    ?[
       {
         content: (
           <span>
@@ -594,7 +597,7 @@ useEffect(() => {
         dataTestId: "filter-item-reorder",
         ariaLabel: t("Re-order And Hide Filters"),
       },
-    ];
+    ] : [];
 
     return [...extraItems];
   }, [t, handleToggleAttrFilterModal]);
