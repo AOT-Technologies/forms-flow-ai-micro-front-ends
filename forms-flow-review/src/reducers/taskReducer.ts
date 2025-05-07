@@ -18,6 +18,7 @@ const initialState = {
   firstResult: 0,
   limit: 5,
   selectedFilter: {},
+  selectedAttributeFilter: {},
   taskId: null,
   defaultFilter: "",
   filtersAndCount: [],
@@ -72,6 +73,11 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         selectedFilter: action.payload,
         filterListSearchParams: {},
       };
+    case ACTION_CONSTANTS.BPM_SELECTED_ATTRIBUTE_FILTER:
+        return {
+          ...state,
+          selectedAttributeFilter: action.payload,
+        };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
       return { ...state, defaultFilter: action.payload };
     case ACTION_CONSTANTS.SELECTED_TASK_ID:

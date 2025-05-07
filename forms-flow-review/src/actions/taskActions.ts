@@ -116,6 +116,12 @@ export const setTasks = (data: any) => ({
     });
   };
 
+  export const setSelectedBpmAttributeFilter = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_SELECTED_ATTRIBUTE_FILTER,
+      payload: data,
+    });
+  };
 
 
 export const setBPMTaskDetailLoader = (data) => (dispatch) => {
