@@ -1078,7 +1078,6 @@ useEffect(() => {
 
         <TaskFilterModal
           show={showTaskFilterModal}
-          setShow={setShowTaskFilterModal}
           onClose={handleToggleFilterModal}
           filter={filterToEdit}
           canEdit={canEditFilter}

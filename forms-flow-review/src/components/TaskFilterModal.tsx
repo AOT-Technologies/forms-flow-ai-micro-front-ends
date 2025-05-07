@@ -44,7 +44,7 @@ import { StorageService } from "@formsflow/service";
 import { FormSelectionModal } from "./FormSelectionModal";
 
 
-export function TaskFilterModal({ show, setShow, onClose, filter, canEdit }) {
+export function TaskFilterModal({ show, onClose, filter, canEdit }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const computedStyle = getComputedStyle(document.documentElement);
@@ -598,7 +598,7 @@ export function TaskFilterModal({ show, setShow, onClose, filter, canEdit }) {
 const createdByMe = filter?.createdBy === userDetail?.preferred_username
 const publicAccess = filter?.roles.length === 0 && filter?.users.length === 0;
 const roleAccess = filter?.roles.some(role => userDetail.groups.includes(role));
-const canAccess = roleAccess ?? publicAccess ?? createdByMe;
+const canAccess = roleAccess || publicAccess || createdByMe;
 const viewOnly = !isFilterAdmin && canAccess;
 const editRole = isFilterAdmin && canAccess;
 
@@ -1023,7 +1023,7 @@ const editRole = isFilterAdmin && canAccess;
 
           primaryBtnAction={() => {
             setShowDeleteModal(false);
-            setShow(true);
+            onClose();
           }}
           onClose={() => setShowDeleteModal(false)}
           primaryBtnText={t("No, Keep This Filter")}
