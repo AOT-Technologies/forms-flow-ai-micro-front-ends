@@ -54,7 +54,7 @@ export const fetchUserList = (...rest) => {
     const firstResultIndex = getFirstResultIndex(pageNo,maxResults);
 
     const apiUrlgetTaskList =
-        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResultIndex}&maxResults=${maxResults || MAX_RESULTS}`;
+        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
     return (dispatch) => {
       RequestService.httpPOSTRequestWithHAL(
         apiUrlgetTaskList,
