@@ -52,7 +52,7 @@ export const fetchUserList = (...rest) => {
     // create the firstResult value based on the page number and maxResults
     // firstResult = (pageNo - 1) * maxResults
     const firstResultIndex = getFirstResultIndex(pageNo,maxResults);
-    
+
     const apiUrlgetTaskList =
         `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResultIndex}&maxResults=${maxResults || MAX_RESULTS}`;
     return (dispatch) => {
@@ -112,7 +112,7 @@ export const fetchUserList = (...rest) => {
   };
 
   export const getFirstResultIndex = (activePage,limit) => {
-    const limits = limit || MAX_RESULTS;
+    const limits = limit ?? MAX_RESULTS;
     return (activePage * limits) - limits;
   };
 

@@ -643,13 +643,11 @@ export function ResizableTable(): JSX.Element {
       dispatch(
         fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
       );
-    }else{
-      if(filterCached){
+    }else if(filterCached){ 
         dispatch(restTaskListParams({filterCached:false}));
         dispatch(
           fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
         );
-      }
     }
   }, [
     selectedFilterId,
