@@ -42,8 +42,7 @@ export const fetchUserList = (...rest) => {
   export const fetchServiceTaskList = (reqData, taskIdToRemove, firstResult, maxResults, ...rest) => {
     const done = rest.length ? rest[0] : () => {};
     const apiUrlgetTaskList =
-        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${ 
-          maxResults ? maxResults : MAX_RESULTS}`;
+     `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${maxResults ?? MAX_RESULTS}`
     return (dispatch) => {
       RequestService.httpPOSTRequestWithHAL(
         apiUrlgetTaskList,

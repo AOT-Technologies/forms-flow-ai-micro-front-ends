@@ -84,11 +84,10 @@ export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => 
     StorageService.getParsedData(StorageService.User.USER_ROLE)
 
   const isCreateFilters = userRoles?.includes("create_filters");
-  const [currentFilter, setCurrentFilter] = useState(filter);
   const [initialFilterSnapshot, setInitialFilterSnapshot] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-
+ const isFilterAdmin = userRoles?.includes("manage_all_filters"); 
 
 
   const assigneeOptions = useMemo(
@@ -99,13 +98,6 @@ export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => 
       })),
     [userListData]
   );
-  useEffect(() => {
-    setCurrentFilter(null);
-    setSelectedForm({
-      formId: '',
-      formName: '',
-    });
-  }, [onClose])
 
   useEffect(() => {
     StorageService.getParsedData(StorageService.User.USER_DETAILS) &&
@@ -116,7 +108,6 @@ export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => 
 
   useEffect(() => {
     if (filter) {
-      console.log("filter data", filter)
       setFilterName(filter.name);
       if (filter.criteria.assignee) {
         setAccessDropdownValue("specificAssignee");
@@ -483,33 +474,36 @@ export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => 
   };
 
   const handleFilterDelete = () => {
-    deleteFilter(filter?.id)
-      .then(() => {
-        dispatch(
-          fetchFilterList((err, data) => {
-            if (data) {
-              fetchBPMTaskCount(data.filters)
-                .then((res) => {
-                  dispatch(setBPMFiltersAndCount(res.data));
-                  const filter = data.filters.find((i) => data.defaultFilter == i.id) ||
-                    data.filters[0];
-                  dispatch(fetchServiceTaskList(filter, null, firstResult, 15));
-                })
-                .catch((err) => {
-                  if (err) {
-                    console.error(err);
-                  }
-                });
+    const onBPMTaskCountFetched = (filters, defaultFilterId) => (res) => {
+      dispatch(setBPMFiltersAndCount(res.data));
+      const filter =
+        filters.find((i) => defaultFilterId === i.id) || filters[0];
+      dispatch(fetchServiceTaskList(filter, null, firstResult, 15));
+    };
+  
+    const onFilterListFetched = (err, data) => {
+      if (data) {
+        fetchBPMTaskCount(data.filters)
+          .then(onBPMTaskCountFetched(data.filters, data.defaultFilter))
+          .catch((err) => {
+            if (err) {
+              console.error(err);
             }
-          })
-        );
-      })
-
+          });
+      }
+    };
+  
+    const onDeleteSuccess = () => {
+      dispatch(fetchFilterList(onFilterListFetched));
+      setShowDeleteModal(false);
+      onClose();
+    };
+  
+    deleteFilter(filter?.id)
+      .then(onDeleteSuccess)
       .catch((error) => {
         console.error("error", error);
       });
-    setShowDeleteModal(false);
-    onClose();
   };
 
   const handleUpdateOrder = (updatedItems) => {
@@ -584,9 +578,13 @@ export const TaskFilterModal = ({ show, setShow, onClose, filter, canEdit }) => 
     
   };
 
-  const roleAccess = filter?.roles.some(role => userDetail.groups.includes(`${role}`));
-  const viewOnly = !userRoles.includes("manage_all_filters") && roleAccess;
-  const editRole = userRoles.includes("manage_all_filters") && (roleAccess || (filter?.roles.length === 0 && filter?.users.length === 0));
+  
+const publicAccess = filter?.roles.length === 0 && filter?.users.length === 0;
+const roleAccess = filter?.roles.some(role => userDetail.groups.includes(role));
+const canAccess = roleAccess || publicAccess;
+const viewOnly = !isFilterAdmin && canAccess;
+const editRole = isFilterAdmin && canAccess;
+
   const cancelFilter = () => {
     setSpecificRole("");
     setSpecificAssignee("");
