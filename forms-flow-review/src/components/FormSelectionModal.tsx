@@ -116,12 +116,9 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
       size="lg" 
       className="form-selection-modal">
         <Modal.Header className="form-selection-header">
-          <Modal.Title> {t("Select a Form")} </Modal.Title>
-          <div className="d-flex align-items-center">
-            <CloseIcon
-              onClick={onClose}
-              data-testid="form-selection-modal-close-icon"
-            />
+          <Modal.Title> <p> {t("Select a Form")} </p></Modal.Title>
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon data-testid="form-selection-modal-close-icon" />
           </div>
         </Modal.Header>
         <Modal.Body className="form-selection-modal-body">

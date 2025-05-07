@@ -134,10 +134,11 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       <Modal show={showBuildForm} onHide={onClose} size="sm" centered={true}>
         <Modal.Header>
           <Modal.Title>
-            <b>{t(modalHeader)}</b>
+            <p>{t(modalHeader)}</p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} />
+
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon />
           </div>
         </Modal.Header>
         <Modal.Body className="form-builder-modal">

@@ -65,10 +65,10 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
       >
         <Modal.Header>
           <Modal.Title id="build-modal-title">
-            <b>{t(title)}</b>
+            <p>{t(title)}</p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} />
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon />
           </div>
         </Modal.Header>
         <Modal.Body className="d-flex">

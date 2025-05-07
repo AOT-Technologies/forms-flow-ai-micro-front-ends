@@ -73,10 +73,10 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
       <Modal show={showSortModal} onHide={onClose} size="sm" centered={true}>
         <Modal.Header>
           <Modal.Title>
-            <b>{t(modalHeader)}</b>
+            <p>{t(modalHeader)}</p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} data-testid={closedataTestid} />
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon data-testid={closedataTestid} />
           </div>
         </Modal.Header>
         <Modal.Body className="sort-settings p-0">

@@ -1,2 +1,41 @@
-$primary: var(--ff-primary);
-$white: var(--ff-white);
+//New Colors
+$black: #000000;
+$white: #ffffff;
+$green: #57C20A;
+$green-dark: #006621;
+
+//primary shades
+$primary: #253DF4;
+$primary-light: #E2E1FC;
+
+//gray shades
+$gray-darkest: #303436;
+$gray-dark: #4C4C4C;
+$gray-medium-dark: #AFB4B6;
+$gray-medium: #E4E6E7;
+$gray-light: #F2F2F3;
+
+
+// variables added by Max
+$base: 1rem;
+$lineThin: 1px;
+$lineThick: $lineThin*2;
+
+$fontBase: $base;
+$fontSmallest: $fontBase*0.875;
+$fontLineHeight: 1.2;
+
+$fontModalTitle: $fontBase*1.5;
+
+
+$borderRadiusHeightESM: $base*0.78; // 12.5px
+$borderRadiusHeightSM: $base*1.094; // 17.5px
+$borderRadiusHeightM: $base*1.344;  // 21.5px
+$borderRadiusHeightL: $base*1.594; // 25.5px
+$borderRadiusModal: $base*1.5; // 24px
+
+$colorDivider: $gray-medium;
+$colorDividerDark: $gray-medium-dark;
+
+$modalWidthSmall: $base*60;
+$modalWidthLarge: $base*75;

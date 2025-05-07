@@ -1,3 +1,5 @@
+@import "_mixins.scss";
+
 // Variables for reused values
 $primary: var(--ff-primary);
 $gray-dark: var(--ff-gray-dark);
@@ -243,3 +245,85 @@ $gray-darkest: var(--ff-gray-darkest);
   align-items: center;
   gap: var(--spacer-100);
 }
+
+
+// .nav-bar - (M) Nav Bar
+.nav-bar {
+  $paddingTB: var(--spacer-150);
+  $paddingLR: var(--spacer-200);
+  $spaceBetween: var(--spacer-150);
+  $spaceBetweenSubElements: var(--spacer-100);
+
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+
+  margin-bottom: $paddingLvl1S;
+
+  background-color: $gray-darkest;
+
+  border-radius: $borderRadiusHeightM;
+
+  & > div {
+    &:first-child {
+      padding-left: $paddingLR;
+    }
+
+    &:last-child {
+      padding-right: $paddingLR;
+    }
+  }
+
+  .icon-back {
+    @include clickableFeedback1();
+
+    display: flex;
+    align-items: center;
+
+    padding-right: $spaceBetween;
+  }
+
+  .description {
+    display: flex;
+    flex-grow: 1;
+
+    padding-right: $spaceBetween;
+
+    margin-top: $paddingTB;
+    margin-bottom: $paddingTB;
+
+    gap: $spaceBetween;
+
+    color: $white;
+    font-weight: 700;
+
+    p {
+      @include textBase($fontBase, $white);
+
+      display: flex;
+      flex-grow: 1;
+    }
+
+    .text-main {
+      overflow: hidden;
+      display: block;
+      width: 4rem;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status {
+      flex-grow: 0;
+      align-items: center;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+
+    gap: $spaceBetweenSubElements;
+  }
+}
+

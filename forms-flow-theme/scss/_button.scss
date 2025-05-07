@@ -605,3 +605,104 @@ $danger-color: var(--ff-danger);
 
 
 
+@mixin buttonBase($color: $white-color) {
+  @include textBase($fontBase, $color);
+
+  padding: $base $base*1.5;
+  
+  font-weight: 700;
+  border: none;
+}
+
+
+// Buttons - (A) Btn-Primary (A) Btn-Action (A) Btn-Icon (A) Btn-Secondary (A) Btn-Action-Table (A) Btn-Icon-Special (A) Btn-Action-Table-Small
+.button {
+
+  &-primary {
+    @include buttonBase();
+
+    min-width: $base*10;
+
+    background-color: $primary-color;
+
+    border-radius: $borderRadiusHeightL;
+  }
+
+  &-secondary {
+    @include buttonBase($primary-color);
+
+    background-color: $primary-light;
+
+    border-radius: $borderRadiusHeightL;
+  }
+
+  &-icon {
+    @include buttonBase($primary-color);
+    
+    background-color: $primary-light;
+
+    border-radius: $borderRadiusHeightL;
+  }
+
+  &-icon-special {
+    @include buttonBase();
+
+    background-color: $primary-light;
+
+    border-radius: 50%;
+  }
+
+  &-action {
+    @include buttonBase();
+
+    padding: $base/2 $base*0.75;
+
+    background-color: $primary-color;
+
+    border-radius: $borderRadiusHeightM;
+  }
+
+  &-action-table {
+    @include buttonBase($primary-color);
+
+    padding: $base/2 $base;
+
+    background-color: $primary-light;
+
+    border-radius: $borderRadiusHeightSM;
+  }
+
+  &-action-table-small {
+    @include buttonBase($primary-color);
+
+    padding: $base/4 $base*0.75;
+
+    font-size: $fontSmallest;
+
+    background-color: $primary-light;
+
+    border-radius: $borderRadiusHeightSM;
+  }
+
+  &-dark {
+    @include buttonBase();
+    @include clickableFeedback1();
+
+    padding: $base/2 $base;
+
+    background-color: $gray-dark;
+
+    border-radius: $borderRadiusHeightSM;
+  }
+
+  &-dark-primary {
+    @include buttonBase($gray-darkest);
+    @include clickableFeedback1();
+
+    padding: $base/2 $base;
+
+    background-color: $white-color;
+
+    border-radius: $borderRadiusHeightSM;
+  }
+}

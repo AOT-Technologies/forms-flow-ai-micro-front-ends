@@ -347,7 +347,7 @@ const Roles = React.memo((props: any) => {
     <div data-testid="roles-confirm-delete-modal">
       <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
         <Modal.Header closeButton>
-          <Modal.Title>{t("Confirm Delete")}</Modal.Title>
+          <Modal.Title><p>{t("Confirm Delete")}</p></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
@@ -378,7 +378,7 @@ const Roles = React.memo((props: any) => {
     <div data-testid="create-role-modal">
       <Modal show={showRoleModal} onHide={handleCloseRoleModal} centered={true}>
         <Modal.Header closeButton>
-          <Modal.Title>{t("Create Role")}</Modal.Title>
+          <Modal.Title><p>{t("Create Role")}</p></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3">
@@ -467,7 +467,7 @@ const Roles = React.memo((props: any) => {
     <div data-testid="edit-role-modal">
       <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} centered={true}>
         <Modal.Header closeButton>
-          <Modal.Title>{t("Edit Role")}</Modal.Title>
+          <Modal.Title><p>{t("Edit Role")}</p></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3">

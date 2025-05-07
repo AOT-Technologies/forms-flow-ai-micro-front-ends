@@ -151,7 +151,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       onClick={toggleDropdown}
                       ariaLabel={ariaLabelforDropdown}
                       dataTestId={dataTestIdforDropdown}
-                      icon={<ChevronIcon color={disabled ? disabledColor : primaryColor} data-testid="dropdown-input" aria-label="dropdown input"/>}
+                      icon={<ChevronIcon className={disabled ? "svgIcon-disabled" : "svgIcon-primary"} data-testid="dropdown-input" aria-label="dropdown input"/>}
                       className={`${inputClassName} ${isDropdownOpen && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
                       onIconClick={toggleDropdown}
                       label={t(dropdownLabel)}

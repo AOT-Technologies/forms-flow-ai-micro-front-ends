@@ -57,9 +57,12 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
       >
         <Modal.Header data-testid="form-history-modal-header">
           <Modal.Title id="form-history-modal-title" data-testid="form-history-modal-title" aria-label="Form history modal title">
-            <b>{t(title)}</b>
+            <p>{t(title)}</p>
           </Modal.Title>
-          <CloseIcon onClick={onClose} aria-label="Close form-history-modal" data-testid="close-icon" />
+
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon aria-label="Close form-history-modal" data-testid="close-icon" />
+          </div>
         </Modal.Header>
         <Modal.Body className="form-history-modal-body" data-testid="form-history-modal-body" aria-label="Form history modal body">
           {historyCount > 0 ? (

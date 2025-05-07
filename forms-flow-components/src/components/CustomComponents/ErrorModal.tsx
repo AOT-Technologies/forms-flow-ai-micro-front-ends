@@ -39,12 +39,12 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
       >
         <Modal.Header>
           <Modal.Title id="error-modal-title" className="text-danger">
-            <b>
+            <p>
               {t(title)}
-            </b>
+            </p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
-              <CloseIcon onClick={onClose} />
+          <div className="icon-close" onClick={onClose}>
+              <CloseIcon />
           </div>
         </Modal.Header>
         <Modal.Body className="build-modal-body">

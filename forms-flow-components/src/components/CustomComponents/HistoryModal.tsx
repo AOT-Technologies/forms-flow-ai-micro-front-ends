@@ -283,17 +283,17 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         <Modal
           show={show}
           onHide={handleClose}
-          dialogClassName="modal-70w"
+          dialogClassName="modal-small"
           data-testid="history-modal"
           aria-labelledby="history-modal-title"
           aria-describedby="history-modal-message"
         >
           <Modal.Header>
             <Modal.Title id="history-modal-title">
-              <b>{t(title)}</b>
+              <p>{t(title)}</p>
             </Modal.Title>
-            <div className="d-flex align-items-center ">
-              <CloseIcon onClick={handleClose} data-testid="close-icon" />
+            <div className="icon-close" onClick={handleClose}>
+              <CloseIcon data-testid="close-icon" />
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">

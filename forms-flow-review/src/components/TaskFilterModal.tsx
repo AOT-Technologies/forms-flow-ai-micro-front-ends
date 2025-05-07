@@ -606,10 +606,10 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         >
             <Modal.Header>
                 <Modal.Title id="create-filter-title">
-                    <b>{t("Tasks: Unsaved Filter")}</b>
+                    <p>{t("Tasks: Unsaved Filter")}</p>
                 </Modal.Title>
-                <div className="d-flex align-items-center">
-                    <CloseIcon onClick={onClose} />
+                <div className="icon-close" onClick={onClose}>
+                    <CloseIcon />
                 </div>
             </Modal.Header>
             <Modal.Body className='modal-body p-0'>
