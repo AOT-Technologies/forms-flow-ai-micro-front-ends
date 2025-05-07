@@ -144,8 +144,11 @@ $white-color: var(--ff-white);
 .status-circle {
   width: $status-size;
   height: $status-size;
-  border-radius: $status-radius;
+
   margin-right: $status-margin;
+  
+  border: $lineThin solid $white;
+  border-radius: $status-radius;
 }
 
 .status-live {

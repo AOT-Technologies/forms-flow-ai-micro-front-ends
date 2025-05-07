@@ -62,10 +62,10 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     >
       <Modal.Header>
         <Modal.Title id="profile-modal-title">
-          <b>{t("Settings")}</b>
+          <p>{t("Settings")}</p>
         </Modal.Title>
-        <div className="d-flex align-items-center">
-          <CloseIcon onClick={onClose} />
+        <div className="icon-close" onClick={onClose}>
+          <CloseIcon />
         </div>
       </Modal.Header>
 

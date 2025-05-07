@@ -489,7 +489,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       <Modal show={showModal} onHide={closeModal} centered size="sm">
         <Modal.Header>
           <Modal.Title>
-            <b>{t(headerText)}</b>
+            <p>{t(headerText)}</p>
           </Modal.Title>
           <div className="d-flex align-items-center">
             <CloseIcon

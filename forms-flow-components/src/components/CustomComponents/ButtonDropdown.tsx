@@ -157,7 +157,7 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
           data-testid={`${dataTestId}-toggle`}
           aria-label={`${t(displayLabel)} dropdown toggle`}
         >
-          <ChevronIcon color="white" />
+          <ChevronIcon className="svgIcon-onDark"/>
         </Dropdown.Toggle>
 
         <Dropdown.Menu style={menuStyle}>

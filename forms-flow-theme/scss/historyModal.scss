@@ -1,34 +1,38 @@
 $gray-medium: var(--ff-gray-medium);
 $primary: var(--ff-primary);
 $white-color: var(--ff-white);
-.modal-70w {
-  width: 66.2% !important;
-  max-width: 66.2% !important;
-  margin: var(--spacer-150) auto !important;
+.modal-small {
+  width: $modalWidthSmall !important;
+  max-width: calc(100% - ( $base*2 ) ) !important;
+  margin: $base auto !important;
 
   .history-modal-body {
+    $colorMain: $gray-darkest;
+    $colorSecondary: $gray-medium;
+
     padding: var(--spacer-200) var(--spacer-250) !important;
     margin-top: var(--spacer-200);
     position: relative;
+
     /* Timeline styles */
     .timeline {
       position: absolute;
-      top: -8px;
+      top: calc(0px - $base/2);
       bottom: 0;
       left: 121px;
-      width: 2px;
-      background-color: $primary !important; 
+      width: $lineThick;
+      background-color: $colorMain !important; 
       z-index: 0;
 
       &::before {
         content: "";
         position: absolute;
-        left: -15px;
+        left: calc(0px - ( $base - $lineThick/2 ) );
         top: 0;
-        width: 32px;
-        height: 32px;
+        width: $base*2;
+        height: $base*2;
         background-color: $white-color !important;
-        border: 2px solid $primary !important;
+        border: $lineThick solid $colorMain !important;
         border-radius: 50%;
         z-index: 1;
         display: flex;
@@ -36,15 +40,18 @@ $white-color: var(--ff-white);
         justify-content: center;
       }
 
+
+
+
       &::after {
         content: "";
         position: absolute;
-        width: 16px;
-        height: 16px;
-        background-color: $primary !important;
+        width: $base;
+        height: $base;
+        background-color: $colorMain !important;
         border-radius: 50%;
-        top: 8px;
-        left: -7px;
+        top: $base/2;
+        left: calc(0px - ( $base/2 - $lineThick/2 ) );
         z-index: 2;
       }
     }
@@ -59,7 +66,7 @@ $white-color: var(--ff-white);
       display: grid;
       gap: 1rem;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: $base/2;
 
       .revert-btn {
         justify-self: end;
@@ -75,7 +82,7 @@ $white-color: var(--ff-white);
       @extend .version-grid;
       @extend .history-entry;
       grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
-      border: 2px solid $primary !important;
+      border: 1px solid $colorMain;
     }
     .workflow-major-grid {
       grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -87,7 +94,7 @@ $white-color: var(--ff-white);
       @extend .history-entry;
       margin-left: 2rem;
       grid-template-columns: 1.75fr 1fr 1fr 1fr 1fr 0fr;
-      border: 2px solid $gray-medium !important;
+      border: $lineThin solid $colorSecondary;
     }
     .workflow-minor-grid {
       grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr;

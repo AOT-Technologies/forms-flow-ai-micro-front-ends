@@ -117,7 +117,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           id="dropdown-split-basic"
           className={`default-arrow ${dropdownOpen ? "collapsed" : ""}`}
         >
-          <ChevronIcon color="white" />
+          <ChevronIcon className="svgIcon-onDark" />
         </Dropdown.Toggle>
 
         <Dropdown.Menu style={menuStyle}>

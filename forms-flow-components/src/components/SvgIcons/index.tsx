@@ -6,25 +6,16 @@ const grayDarkestColor = computedStyle.getPropertyValue("--ff-gray-darkest");
 const grayMediumColor = computedStyle.getPropertyValue("--ff-gray-medium-dark");
 export const ChevronIcon = ({
   color = baseColor,
-  width = "10",
-  height = "16",
+  className="svgIcon-dark",
   ...props
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={width}
-    height={height}
-    viewBox="0 0 16 10"
-    fill="none"
+    className={className}
+    viewBox="0 0 16 16"
     {...props}
   >
-    <path
-      d="M1.49969 1.74976L8.00028 8.25034L14.5003 1.75034"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M3 6L8.00022 11L13 6.00045"/>
   </svg>
 );
 
@@ -225,26 +216,14 @@ export const CloseIcon = ({
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width={width}
-    height={height}
-    viewBox="0 0 14 14"
+    viewBox="0 0 16 16"
     fill="none"
+    className="svgIcon-dark"
     onClick={props.onClick}
     data-testid={dataTestId} 
     {...props}
   >
-    <path
-      d="M1.5 1.5L12.5 12.5"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M12.5 1.5L1.5 12.5"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
+    <path d="M2.5 2.5L13.5 13.5M13.5 2.5L2.5 13.5" />
   </svg>
 );
 

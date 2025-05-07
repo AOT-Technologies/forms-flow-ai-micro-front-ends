@@ -91,32 +91,38 @@ $black-color: var(--ff-black);
         flex-shrink: 0;
       }
 
-      .modal-header,
       .modal-footer {
-        height: auto;
-        min-height: 5.9375rem;
         margin-left: 0 !important;
         padding: var(--spacer-200) 2.5rem !important;
-        flex-shrink: 0;
-        color: var(--default-font-color);
-        font-size: var(--spacer-150);
-        font-weight: var(--font-weight-sm);
-        line-height: normal;
       }
 
       .modal-header {
+        display: flex;
         justify-content: space-between !important;
+        align-items: stretch;
+
+        padding: 0;
+
+        color: var(--default-font-color);
+        font-size: var(--spacer-150);
+        font-weight: var(--font-weight-sm);
 
         .modal-title {
+          @include paddingLvl2();
+
           font-size: var(--font-size-lg) !important;
           font-weight: var(--font-weight-sm) !important;
           line-height: var(--text-line-height) !important;
           text-transform: capitalize !important;
+        }
 
-          b,
-          strong {
-            font-weight: inherit; // Inherit the font-weight from .modal-title
-          }
+        .icon-close {
+          @include clickableFeedback1();
+
+          display: flex;
+          align-items: center;
+
+          padding: 0 $paddingLvl2LR;
         }
       }
 
