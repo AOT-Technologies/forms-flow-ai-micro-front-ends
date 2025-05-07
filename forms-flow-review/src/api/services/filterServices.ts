@@ -39,10 +39,22 @@ export const fetchUserList = (...rest) => {
   };
   
 
-  export const fetchServiceTaskList = (reqData, taskIdToRemove, firstResult, maxResults, ...rest) => {
+  /**
+   * Fetches the task list from the server and updates the redux store with the task list and count.
+   * @param {Object} reqData - The request data to be sent to the server.
+   * @param {string} taskIdToRemove - The task ID to be removed from the task list.
+   * @param {number} pageNo - The current page number.
+   * @param {number} maxResults - The maximum number of results to be fetched.
+   * @param {function} done - A callback function to be called after the request is completed.
+   */
+  export const fetchServiceTaskList = (reqData, taskIdToRemove, pageNo, maxResults, ...rest) => {
     const done = rest.length ? rest[0] : () => {};
+    // create the firstResult value based on the page number and maxResults
+    // firstResult = (pageNo - 1) * maxResults
+    const firstResultIndex = getFirstResultIndex(pageNo,maxResults);
+    
     const apiUrlgetTaskList =
-        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${maxResults || MAX_RESULTS}`;
+        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResultIndex}&maxResults=${maxResults || MAX_RESULTS}`;
     return (dispatch) => {
       RequestService.httpPOSTRequestWithHAL(
         apiUrlgetTaskList,
@@ -99,8 +111,9 @@ export const fetchUserList = (...rest) => {
     );
   };
 
-  export const getFirstResultIndex = (activePage) => {
-    return (activePage * MAX_RESULTS) - MAX_RESULTS;
+  export const getFirstResultIndex = (activePage,limit) => {
+    const limits = limit || MAX_RESULTS;
+    return (activePage * limits) - limits;
   };
 
 

@@ -28,6 +28,7 @@ import {
   setTaskListLimit,
   setDefaultFilter,
   setSelectedTaskID,
+  restTaskListParams,
 } from "../../actions/taskActions";
 
 import TaskFilterModal from "../TaskFilterModal";
@@ -309,7 +310,6 @@ export function ResizableTable(): JSX.Element {
     filterList = [],
     selectedFilter = null,
     taskId: bpmTaskId = null,
-    firstResult = 0,
     limit,
     tasksList: taskList = [],
     defaultFilter = null,
@@ -320,6 +320,7 @@ export function ResizableTable(): JSX.Element {
     activePage,
     tasksCount,
     isTaskListLoading,
+    filterCached,
   } = useSelector((state: any) => state.task ?? {});
 
   const selectedFilterId = selectedFilter?.id ?? null;
@@ -640,8 +641,15 @@ export function ResizableTable(): JSX.Element {
       dispatch(setBPMTaskLoader(true));
       dispatch(setBPMTaskListActivePage(1));
       dispatch(
-        fetchServiceTaskList(cloneDeep(updatedParams), null, firstResult, limit)
+        fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
       );
+    }else{
+      if(filterCached){
+        dispatch(restTaskListParams({filterCached:false}));
+        dispatch(
+          fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
+        );
+      }
     }
   }, [
     selectedFilterId,
@@ -651,8 +659,6 @@ export function ResizableTable(): JSX.Element {
     bpmFiltersList,
     selectedFilter,
     sortParams,
-    firstResult,
-    limit,
     reqData,
   ]);
 
@@ -711,14 +717,14 @@ export function ResizableTable(): JSX.Element {
       dispatch(setBPMTaskLoader(true));
       dispatch(setBPMTaskListActivePage(1));
       dispatch(
-        fetchServiceTaskList(formattedReqData, null, firstResult, limit)
+        fetchServiceTaskList(formattedReqData, null, activePage, limit)
       );
     }
   }, [
     dispatch,
     reqData,
     selectedFilter,
-    firstResult,
+    activePage,
     limit,
     searchParams,
     bpmFiltersList,
@@ -781,17 +787,17 @@ export function ResizableTable(): JSX.Element {
     (newLimit) => {
       dispatch(setBPMTaskLoader(true));
       dispatch(setTaskListLimit(newLimit));
-      dispatch(fetchServiceTaskList(reqData, null, firstResult, newLimit));
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(fetchServiceTaskList(reqData, null, 1, newLimit));
     },
-    [dispatch, reqData, firstResult]
+    [dispatch, reqData, activePage]
   );
 
   const handlePageChange = useCallback(
     (pageNumber) => {
       dispatch(setBPMTaskListActivePage(pageNumber));
       dispatch(setBPMTaskLoader(true));
-      const firstResultIndex = limit * pageNumber - limit;
-      dispatch(fetchServiceTaskList(reqData, null, firstResultIndex, limit));
+      dispatch(fetchServiceTaskList(reqData, null, pageNumber, limit));
     },
     [dispatch, limit, reqData]
   );

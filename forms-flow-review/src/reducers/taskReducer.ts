@@ -14,8 +14,8 @@ const initialState = {
     name: { sortOrder: "asc" },
     assignee: { sortOrder: "asc" },
   },
-  firstResult: 0,
   limit: 5,
+  activePage: 1,
   selectedFilter: {},
   taskId: null,
   defaultFilter: "",
@@ -85,6 +85,8 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, limit: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
       return { ...state, filterListSearchParams: action.payload };
+    case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:
+      return {...state, ...action.payload}
     default:
       return state;
   }

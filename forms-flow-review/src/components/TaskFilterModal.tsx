@@ -16,7 +16,6 @@ import {
 import { removeTenantKey, trimFirstSlash } from "../helper/helper.js";
 import {
   ACCESSIBLE_FOR_ALL_GROUPS,
-  MAX_RESULTS,
   MULTITENANCY_ENABLED,
   PRIVATE_ONLY_YOU,
   SPECIFIC_USER_OR_GROUP,
@@ -65,8 +64,9 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
   const {
     userList = { data: [] },
     userGroups: candidateGroups = { data: [] },
-    firstResult,
+    activePage,
     defaultFilter,
+    limit
   } = useSelector((state: any) => state.task);
 
   const userListData = userList.data ?? [];
@@ -352,7 +352,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
 
 
     const filterResults = () => {
-        dispatch(fetchServiceTaskList(getData(), null, firstResult, MAX_RESULTS, (error) => {
+        dispatch(fetchServiceTaskList(getData(), null, activePage, limit, (error) => {
             if (error) {
                 console.error("Error fetching tasks:", error);
                 return;
