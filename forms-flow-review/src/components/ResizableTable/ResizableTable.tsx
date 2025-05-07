@@ -524,7 +524,7 @@ useEffect(() => {
       }),
     }));
 
-    const extraItems = isFilterAdmin
+    const extraItems = isFilterCreator
     ? [
         {
           content: (
@@ -563,11 +563,11 @@ useEffect(() => {
   t,
   handleToggleFilterModal,
   changeFilterSelection,
-  isFilterAdmin,
+  isFilterCreator,
 ]);
 
   const filterDropdownAttributeItems = useMemo(() => {
-    const extraItems = isFilterAdmin
+    const extraItems = isFilterCreator
     ?[
       {
         content: (
