@@ -6,7 +6,7 @@ import StoreService from "./services/StoreService";
 import { ConnectedRouter } from "connected-react-router";
 import { useEffect } from "react";
 import { StorageService} from "@formsflow/service";
- import { restTaskListParams } from "./actions/taskActions";
+ import { resetTaskListParams } from "./actions/taskActions";
 export default function Root(props: any) {
   const REVIEW_APP_KEY = "TASK_APP_DATA";
   const store = StoreService.configureStore();
@@ -19,7 +19,7 @@ export default function Root(props: any) {
      */
     const existingTaskData = StorageService.getParsedData(REVIEW_APP_KEY);
     if(existingTaskData){
-      store.dispatch(restTaskListParams({...existingTaskData,filterCached:true}));
+      store.dispatch(resetTaskListParams({...existingTaskData,filterCached:true}));
     }
     StorageService.delete(REVIEW_APP_KEY);
     return()=>{

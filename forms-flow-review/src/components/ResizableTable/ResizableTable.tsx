@@ -28,7 +28,7 @@ import {
   setTaskListLimit,
   setDefaultFilter,
   setSelectedTaskID,
-  restTaskListParams,
+  resetTaskListParams,
 } from "../../actions/taskActions";
 
 import TaskFilterModal from "../TaskFilterModal";
@@ -644,7 +644,7 @@ export function ResizableTable(): JSX.Element {
         fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
       );
     }else if(filterCached){ 
-        dispatch(restTaskListParams({filterCached:false}));
+        dispatch(resetTaskListParams({filterCached:false}));
         dispatch(
           fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
         );
