@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, batch } from "react-redux";
 import {
   TableFooter,
   SortableHeader,
@@ -17,7 +17,6 @@ import {
   PencilIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
-import { batch } from "react-redux";
 import {
   setBPMFilterLoader,
   setBPMFiltersAndCount,
@@ -370,44 +369,38 @@ export function ResizableTable(): JSX.Element {
   }, [dispatch, defaultFilter]);
 
   useEffect(() => {
-    if (filterList.length > 0) {
-      // Step 1: Determine the default or unsaved filter
-      const filterSelected =
-        filterList.find(
-          (filter) =>
-            filter.id === defaultFilter || filter.name === UN_SAVED_FILTER
-        ) ?? filterList[0];
-
-      // Step 2: Set selected task filter
-
-      if (filterSelected?.id) {
-        // Step 3: Clear current attribute filters
-        dispatch(setSelectedBpmAttributeFilter({}));
-
-        // Step 4: Fetch attribute filters for the selected filter ID
-        dispatch(
-          fetchAttributeFilterList(
-            filterSelected.id,
-            (err: Error | null, data: any) => {
-              batch(() => {
-                // Step 5: Select initial attribute filter from response
-                const attributefilterSelected =
-                  (data.attributeFilters &&
-                    data.attributeFilters.find(
-                      (f: any) => f.name === UN_SAVED_FILTER
-                    )) ||
-                  data.attributeFilters[0];
-                dispatch(setSelectedBPMFilter(filterSelected));
-                dispatch(
-                  setSelectedBpmAttributeFilter(attributefilterSelected || {})
-                );
-              });
-            }
-          )
-        );
-      }
-    }
+    if (filterList.length === 0) return;
+  
+    // Step 1: Determine the default or unsaved filter
+    const filterSelected =
+      filterList.find(
+        (filter) =>
+          filter.id === defaultFilter || filter.name === UN_SAVED_FILTER
+      ) ?? filterList[0];
+  
+    if (!filterSelected?.id) return;
+  
+    // Step 2: Clear current attribute filters
+    dispatch(setSelectedBpmAttributeFilter({}));
+  
+    // Step 3: Fetch attribute filters for the selected filter ID
+    const handleAttributeFilterList = (err: Error | null, data: any) => {
+      if (err) return;
+  
+      const attributeFilters = data?.attributeFilters ?? [];
+      const attributefilterSelected =
+        attributeFilters.find((f: any) => f.name === UN_SAVED_FILTER) ||
+        attributeFilters[0];
+  
+      batch(() => {
+        dispatch(setSelectedBPMFilter(filterSelected));
+        dispatch(setSelectedBpmAttributeFilter(attributefilterSelected || {}));
+      });
+    };
+  
+    dispatch(fetchAttributeFilterList(filterSelected.id, handleAttributeFilterList));
   }, [filterList.length, defaultFilter, dispatch]);
+  
 
   useEffect(() => {
     if (selectedFilter.id) {
@@ -511,8 +504,6 @@ export function ResizableTable(): JSX.Element {
         (variable) => variable.isChecked === true
       );
       setTaskAttributeData(taskAttributes);
-      // dispatch(setSelectedBPMFilter(selectedFilter));
-
       const defaultFilterId =
         selectedFilter.id === defaultFilter ? null : selectedFilter.id;
       updateDefaultFilter(defaultFilterId)
