@@ -375,9 +375,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         updateDefaultFilter(isDefaultFilter)
           .then((updateRes) =>
             dispatch(setDefaultFilter(updateRes.data.defaultFilter)),
-          startSuccessCountdown(() => {
-            onClose();
-          }, 2)
+          startSuccessCountdown(onClose,2)
           )
           .catch((error) =>
             console.error("Error updating default filter:", error)
