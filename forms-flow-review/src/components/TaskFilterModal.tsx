@@ -15,6 +15,7 @@ import {
   DeleteIcon,
   UpdateIcon,
   ConfirmModal,
+  useSuccessCountdown
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash } from "../helper/helper.js";
 import {
@@ -70,14 +71,13 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
   const [variableArray, setVariableArray] = useState([]);
 
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
-
   const {
     userList = { data: [] },
     userGroups: candidateGroups = { data: [] },
     firstResult,
     defaultFilter,
   } = useSelector((state: any) => state.task);
-
+  const { successState, startSuccessCountdown } = useSuccessCountdown();
   const userListData = userList.data ?? [];
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
   const userRoles =
@@ -90,6 +90,10 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
  const isFilterAdmin = userRoles?.includes("manage_all_filters"); 
 
 
+  let buttonVariant = "secondary"; // Default value
+  if (successState.showSuccess) {
+    buttonVariant = "success";
+  }
   const assigneeOptions = useMemo(
     () =>
       userListData.map((user) => ({
@@ -451,6 +455,7 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
 
 
 
+
   const handleFetchTaskVariables = (formId) => {
 
     fetchTaskVariables(formId)
@@ -521,6 +526,9 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
   };
   
 
+
+    
+
   const handleUpdateOrder = (updatedItems) => {
     const updatedVariableArray = updatedItems.map((item, index) => ({
       ...item,
@@ -587,7 +595,8 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
   
     updateDefaultFilter(isDefaultFilter)
       .then((updateRes) =>
-        dispatch(setDefaultFilter(updateRes.data.defaultFilter))
+        dispatch(setDefaultFilter(updateRes.data.defaultFilter)),
+      startSuccessCountdown(onClose,2)
       )
       .catch((error) =>
         console.error("Error updating default filter:", error)
@@ -616,14 +625,17 @@ const editRole = isFilterAdmin && canAccess;
     });
     onClose();
   };
+
   const handleModalclose = () => {
     setShowFormSelectionModal(false);
   };
+
   const handleFormSelectionModal = (selectedFormObj) => {
     setSelectedForm(selectedFormObj);
     handleFetchTaskVariables(selectedFormObj.formId);
     setShowFormSelectionModal(false);
   };
+
   const parametersTab = () => (
     <>
       <InputDropdown
@@ -641,6 +653,7 @@ const editRole = isFilterAdmin && canAccess;
         <div className="d-flex filter-dropdown">
           <div className="L-style"></div>
           <InputDropdown
+            key="specificRoleDropdown" // 👈 Force remount
             Options={candidateOptions}
             isAllowInput={false}
             ariaLabelforDropdown={t("specific role dropdown")}
@@ -655,6 +668,7 @@ const editRole = isFilterAdmin && canAccess;
         <div className="d-flex filter-dropdown">
           <div className="L-style"></div>
           <InputDropdown
+            key="assigneeDropdown" // 👈 Force remount
             Options={assigneeOptions}
             isAllowInput={false}
             ariaLabelforDropdown={t("assignee dropdown")}
@@ -667,21 +681,34 @@ const editRole = isFilterAdmin && canAccess;
           />
         </div>
       )}
+
       <div className="pt-4">
-        <FormInput
-          className="task-form-filter"
-          name="title"
-          type="text"
-          label={t("Form")}
-          ariaLabel={t("Name of the form")}
-          dataTestId="form-name-input"
-          icon={
-            <PencilIcon data-testid="close-input" aria-label="Close input" />
-          }
-          maxLength={200}
-          value={selectedForm.formName}
-          onIconClick={() => setShowFormSelectionModal(true)}
-        />
+        <label className="mb-2">{t("Form")}</label>
+        <div className="form-selection-input d-flex justify-content-end">
+          <label className="w-100">{selectedForm.formName}</label>
+          { selectedForm.formName && (<div className="form-selection-input-container">
+            <CloseIcon
+              color={baseColor}
+              width="15px"
+              height="15px"
+              className="form-selection-icon"
+              data-testid="clear-formId"
+              aria-label="clear-formId"
+              onClick={() => setSelectedForm({
+                formId: "",
+                formName: "",
+              })}
+            />
+          </div>) }
+          <div className="form-selection-input-container">
+            <PencilIcon
+              className="form-selection-icon"
+              aria-label="open modal"
+              data-testid="open-modal"
+              onClick={() => setShowFormSelectionModal(true)}
+            />
+          </div>
+        </div>
         <FormSelectionModal
           showModal={showFormSelectionModal}
           onClose={handleModalclose}
