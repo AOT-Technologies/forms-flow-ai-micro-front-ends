@@ -12,6 +12,7 @@ import {
   FormInput,
   CustomInfo,
   DragandDropSort,
+  useSuccessCountdown
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash } from "../helper/helper.js";
 import {
@@ -68,14 +69,17 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     firstResult,
     defaultFilter,
   } = useSelector((state: any) => state.task);
-
+  const { successState, startSuccessCountdown } = useSuccessCountdown();
   const userListData = userList.data ?? [];
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
   const userRoles =
     StorageService.getParsedData(StorageService.User.USER_ROLE)
 
   const isCreateFilters = userRoles?.includes("create_filters");
-
+  let buttonVariant = "secondary"; // Default value
+  if (successState.showSuccess) {
+    buttonVariant = "success";
+  } 
   const assigneeOptions = useMemo(
     () =>
       userListData.map((user) => ({
@@ -370,12 +374,12 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
           savedFilterId === defaultFilter ? null : savedFilterId;
         updateDefaultFilter(isDefaultFilter)
           .then((updateRes) =>
-            dispatch(setDefaultFilter(updateRes.data.defaultFilter))
+            dispatch(setDefaultFilter(updateRes.data.defaultFilter)),
+          startSuccessCountdown(onClose,2)
           )
           .catch((error) =>
             console.error("Error updating default filter:", error)
           );
-        onClose();
       })
       .catch((error) => console.error("Error saving filter:", error));
   };
@@ -580,9 +584,9 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
       />
       <div className="pt-4">
         <CustomButton
-          variant="secondary"
+          variant={buttonVariant} 
           size="md"
-          label={t("Save This Filter")}
+          label={ successState.showSuccess ? `Saving (${successState.countdown})` : t("Save This Filter")}
           onClick={saveCurrentFilter}
           icon={<SaveIcon color={iconColor} />}
           dataTestId="save-task-filter"
