@@ -57,6 +57,9 @@ $white-color: var(--ff-white);
   color: $white-color !important;
   filter: none;
   width: auto !important;
+  .filter-edit-icon,.filter-plus-icon{
+    stroke: $white-color !important;
+  }
 }
 
 .taskDropdown>.dropdown-menu::before {

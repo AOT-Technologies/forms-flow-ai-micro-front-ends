@@ -12,6 +12,7 @@ import {
   FormInput,
   CustomInfo,
   DragandDropSort,
+  useSuccessCountdown
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash } from "../helper/helper.js";
 import {
@@ -30,8 +31,8 @@ import {
   saveFilters,
   updateDefaultFilter,
 } from "../api/services/filterServices";
-import { 
-  setDefaultFilter, 
+import {
+  setDefaultFilter,
   setUserGroups
 } from "../actions/taskActions";
 import { Filter, FilterCriteria, UserDetail } from "../types/taskFilter.js";
@@ -70,14 +71,17 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     firstResult,
     defaultFilter,
   } = useSelector((state: any) => state.task);
-
+  const { successState, startSuccessCountdown } = useSuccessCountdown();
   const userListData = userList.data ?? [];
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
   const userRoles =
     StorageService.getParsedData(StorageService.User.USER_ROLE)
 
   const isCreateFilters = userRoles?.includes("create_filters");
-
+  let buttonVariant = "secondary"; // Default value
+  if (successState.showSuccess) {
+    buttonVariant = "success";
+  }
   const assigneeOptions = useMemo(
     () =>
       userListData.map((user) => ({
@@ -346,7 +350,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     },
   });
 
-  
+
 
   const filterResults = () => {
     dispatch(fetchServiceTaskList(getData(), null, firstResult, MAX_RESULTS, (error) => {
@@ -364,12 +368,12 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         const savedFilterId = res.data.id;
         const isDefaultFilter =
           savedFilterId === defaultFilter ? null : savedFilterId;
-        
+
         updateDefaultFilter(isDefaultFilter)
-          .then((updateRes) => {
-            dispatch(setDefaultFilter(updateRes.data.defaultFilter));
-            onClose();
-          })
+          .then((updateRes) =>
+            dispatch(setDefaultFilter(updateRes.data.defaultFilter)),
+          startSuccessCountdown(onClose,2)
+          )
           .catch((error) =>
             console.error("Error updating default filter:", error)
           );
@@ -387,17 +391,17 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     setVariableArray([]);
     onClose();
   };
-  
+
   const handleModalclose = () => {
     setShowFormSelectionModal(false);
   };
-  
+
   const handleFormSelectionModal = (selectedFormObj) => {
     setSelectedForm(selectedFormObj);
     handleFetchTaskVariables(selectedFormObj.formId);
     setShowFormSelectionModal(false);
   };
-  
+
   const parametersTab = () => (
     <>
       <InputDropdown
@@ -445,20 +449,32 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
       )}
 
       <div className="pt-4">
-        <FormInput
-          className="task-form-filter"
-          name="title"
-          type="text"
-          label={t("Form")}
-          ariaLabel={t("Name of the form")}
-          dataTestId="form-name-input"
-          icon={
-            <PencilIcon data-testid="close-input" aria-label="Close input" />
-          }
-          maxLength={200}
-          value={selectedForm.formName}
-          onIconClick={() => setShowFormSelectionModal(true)}
-        />
+        <label className="mb-2">{t("Form")}</label>
+        <div className="form-selection-input d-flex justify-content-end">
+          <label className="w-100">{selectedForm.formName}</label>
+          { selectedForm.formName && (<div className="form-selection-input-container">
+            <CloseIcon
+              color={baseColor}
+              width="15px"
+              height="15px"
+              className="form-selection-icon"
+              data-testid="clear-formId"
+              aria-label="clear-formId"
+              onClick={() => setSelectedForm({
+                formId: "",
+                formName: "",
+              })}
+            />
+          </div>) }
+          <div className="form-selection-input-container">
+            <PencilIcon
+              className="form-selection-icon"
+              aria-label="open modal"
+              data-testid="open-modal"
+              onClick={() => setShowFormSelectionModal(true)}
+            />
+          </div>
+        </div>
         <FormSelectionModal
           showModal={showFormSelectionModal}
           onClose={handleModalclose}
@@ -570,9 +586,9 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
       />
       <div className="pt-4">
         <CustomButton
-          variant="secondary"
+          variant={buttonVariant}
           size="md"
-          label={t("Save This Filter")}
+          label={ successState.showSuccess ? `Saving (${successState.countdown})` : t("Save This Filter")}
           onClick={saveCurrentFilter}
           icon={<SaveIcon color={iconColor} />}
           dataTestId="save-task-filter"

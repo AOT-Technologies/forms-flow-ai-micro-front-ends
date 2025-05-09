@@ -68,7 +68,7 @@ $gray-darkest: var(--ff-gray-darkest);
 }
 
 .editor-header {
-  background-color: $gray-darkest !important;
+  background-color: var(--navbar-active-submenu-bg-color) !important;
   width: 100% !important;
   height: auto !important;
   border-radius: var(--radius-sm) !important;

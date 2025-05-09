@@ -141,7 +141,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             </div>
           </div>
           <div className="form-selection-right">
-            <div className="form-selection-preview custom-scroll">
+            <div className="form-selection-preview custom-scroll wizard-tab">
               {loading ? (
                 <div className="form-selection-spinner"></div>
               ) : (

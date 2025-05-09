@@ -24,7 +24,7 @@ $primary-light: var(--ff-primary-light);
     border-radius: $border-radius;
     border: 0.0625rem solid $primary-color; // 1px
     overflow: hidden;
-    height: 2.375rem; // 38px
+    height: 2.25rem; // 36px
 
     &.open {
       border-bottom-left-radius: 0;
@@ -34,9 +34,11 @@ $primary-light: var(--ff-primary-light);
     // Text area
     span {
       color: $primary-color;
-      padding: 0.5rem 0.9375rem; // 8px 15px
+      padding: var(--spacer-050) var(--spacer-075); // 8px 15px
       flex: 1;
       font-weight: var(--font-weight-xl) !important;
+      display: flex;
+      align-items: center;
       &.open {
         background-color: $primary-color;
         color: $white-color;
@@ -96,14 +98,13 @@ $primary-light: var(--ff-primary-light);
     top: 100%;
     left: 0;
     background-color: $white-color;
-    border: 0.0625rem solid $primary-color; // 1px
+    border: 0.125rem solid $primary-color; // 1px
     border-bottom-left-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
     border-top: none;
     width: 18.75rem; // 300px
     z-index: 1000;
-    padding: 0.625rem; // 10px
-    font-weight: bold;
+    padding: var(--spacer-050);
     // box-shadow: 0 0.3125rem 0.625rem rgba(0, 0, 0, 0.1); // 5px 10px
 
     // Calendar header
@@ -113,8 +114,8 @@ $primary-light: var(--ff-primary-light);
       align-items: center;
       margin-bottom: 0.625rem; // 10px
       color: $primary-color;
-      opacity: 0.8;
-      font-weight: bold;
+      font-weight: var(--font-weight-xl);
+      font-size: var(--font-size-sm);
 
       // Navigation buttons container
       .calendar-nav-buttons {
@@ -154,7 +155,9 @@ $primary-light: var(--ff-primary-light);
       // Individual weekday header
       .calendar-weekday {
         padding: 0.3125rem; // 5px
-        font-size: 0.75rem; // 12px
+        font-size: var(--font-size-sm) ; // 12px
+        font-weight: var(--font-weight-xl);
+
       }
     }
 
@@ -171,29 +174,32 @@ $primary-light: var(--ff-primary-light);
         display: flex;
         align-items: center;
         justify-content: center;
+        color: $primary-color !important;
+        font-weight: var(--font-weight-xl) !important;
+        font-size: var(--font-size-sm) !important;
 
         // Current month day
         &.current-month {
-          color: $primary-color;
+          color: $gray-darkest;
         }
 
         // Other month day
         &.other-month {
-          color: $primary-light;
+          color: $primary-light !important;
         }
 
         // Selected date
         &.selected {
-          background-color: $primary-color;
-          color: $white-color;
+          background-color: $primary-color !important;
+          color: $white-color !important;
         }
 
         // Start and end date styles
         &.start-date,
         &.end-date {
           font-weight: bold;
-          background-color: $primary-color;
-          color: $white-color;
+          background-color: $primary-color !important;
+          color: $white-color !important;
         }
       }
     }

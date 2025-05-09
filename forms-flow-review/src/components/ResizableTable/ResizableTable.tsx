@@ -97,7 +97,7 @@ const TaskTableCell = ({ task, column, index, redirectUrl, history, t }) => {
     return (
       <td key={`action-${task.id}-${index}`}>
         <CustomButton
-          className="btn-table"
+          size="table-sm"
           variant="secondary"
           label={t("View")}
           onClick={() =>
@@ -370,37 +370,37 @@ export function ResizableTable(): JSX.Element {
 
   useEffect(() => {
     if (filterList.length === 0) return;
-  
+
     // Step 1: Determine the default or unsaved filter
     const filterSelected =
       filterList.find(
         (filter) =>
           filter.id === defaultFilter || filter.name === UN_SAVED_FILTER
       ) ?? filterList[0];
-  
+
     if (!filterSelected?.id) return;
-  
+
     // Step 2: Clear current attribute filters
     dispatch(setSelectedBpmAttributeFilter({}));
-  
+
     // Step 3: Fetch attribute filters for the selected filter ID
     const handleAttributeFilterList = (err: Error | null, data: any) => {
       if (err) return;
-  
+
       const attributeFilters = data?.attributeFilters ?? [];
       const attributefilterSelected =
         attributeFilters.find((f: any) => f.name === UN_SAVED_FILTER) ||
         attributeFilters[0];
-  
+
       batch(() => {
         dispatch(setSelectedBPMFilter(filterSelected));
         dispatch(setSelectedBpmAttributeFilter(attributefilterSelected || {}));
       });
     };
-  
+
     dispatch(fetchAttributeFilterList(filterSelected.id, handleAttributeFilterList));
   }, [filterList.length, defaultFilter, dispatch]);
-  
+
 
   useEffect(() => {
     if (selectedFilter.id) {
@@ -559,7 +559,7 @@ export function ResizableTable(): JSX.Element {
         content: (
           <span>
             <span>
-              <AddIcon />
+              <AddIcon className="filter-plus-icon" />
             </span>{" "}
             {t("Custom Filter")}
           </span>
@@ -572,8 +572,8 @@ export function ResizableTable(): JSX.Element {
       {
         content: (
           <span>
-            <span>
-              <PencilIcon />
+            <span >
+              <PencilIcon className="filter-edit-icon"  />
             </span>{" "}
             {t("Re-order And Hide Filters")}
           </span>
@@ -619,9 +619,9 @@ export function ResizableTable(): JSX.Element {
     const extraItems = [
       {
         content: (
-          <span>
             <span>
-              <AddIcon />
+            <span>
+              <AddIcon className="filter-plus-icon" />
             </span>{" "}
             {t("Custom Attribute Filter")}
           </span>
@@ -633,9 +633,9 @@ export function ResizableTable(): JSX.Element {
       },
       {
         content: (
-          <span>
             <span>
-              <PencilIcon />
+            <span>
+              <PencilIcon className="filter-edit-icon" />
             </span>{" "}
             {t("Re-order And Hide Attribute Filters")}
           </span>
@@ -1038,8 +1038,8 @@ export function ResizableTable(): JSX.Element {
     >
       <div className="row w-100 mb-3 g-2">
         {/* Left Filters - Stack on small, inline on md+ */}
-        <div className="col-12 col-md d-flex flex-wrap align-items-center">
-          <div className="me-2 mb-2">
+        <div className="col-12 col-md d-flex flex-wrap gap-3 align-items-center">
+          <div className="mb-2">
             <ButtonDropdown
               label={
                 <span
@@ -1067,11 +1067,11 @@ export function ResizableTable(): JSX.Element {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
-          <div className="me-2 mb-2">
+          <div className="mb-2">
             <ButtonDropdown
               label={
                 <span
@@ -1099,15 +1099,15 @@ export function ResizableTable(): JSX.Element {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
-          <div className="me-2 mb-2">
+          <div className="mb-2">
             <DateRangePicker
               value={dateRange}
               onChange={setDateRange}
-              placeholder={t("Filter Dates")}
+              placeholder={t("Filter Created Date")}
               dataTestId="date-range-picker"
               ariaLabel={t("Select date range for filtering")}
               startDateAriaLabel={t("Start date")}
@@ -1115,28 +1115,24 @@ export function ResizableTable(): JSX.Element {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
           <div className="mb-2">
-            <button
-              className={`custom-checkbox-container button-as-div ${
-                isAssigned ? "checked" : ""
-              }`}
-              onClick={onLabelClick}
-            >
-              <input
-                type="checkbox"
-                className="form-check-input"
-                checked={isAssigned}
-                onChange={handleCheckBoxChange}
-                data-testid="assign-to-me-checkbox"
-              />
-              <label className="custom-checkbox-label">
-                {t("Assign to me")}
-              </label>
-            </button>
+          <button className={`custom-checkbox-container button-as-div ${
+              isAssigned ? "checked" :""
+            }`}
+            onClick={onLabelClick}>
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={isAssigned}
+            onChange={handleCheckBoxChange}
+            data-testid="assign-to-me-checkbox"
+          />
+          <span className="custom-checkbox-label">{t("Assign to me")}</span>
+        </button>
           </div>
         </div>
 
