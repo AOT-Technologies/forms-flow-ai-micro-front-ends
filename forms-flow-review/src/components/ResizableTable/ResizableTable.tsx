@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, batch } from "react-redux";
 import {
   TableFooter,
   SortableHeader,
@@ -27,7 +27,7 @@ import {
   setFilterListSortParams,
   setTaskListLimit,
   setDefaultFilter,
-  setSelectedTaskID,
+  setSelectedBpmAttributeFilter,
 } from "../../actions/taskActions";
 
 import TaskFilterModal from "../TaskFilterModal";
@@ -38,8 +38,9 @@ import {
   fetchServiceTaskList,
   updateDefaultFilter,
   updateFilter,
+  fetchAttributeFilterList,
 } from "../../api/services/filterServices";
-import { ALL_TASKS } from "../constants/taskConstants";
+import { UN_SAVED_FILTER } from "../constants/taskConstants";
 
 import isEqual from "lodash/isEqual";
 import cloneDeep from "lodash/cloneDeep";
@@ -47,7 +48,6 @@ import Loading from "../Loading";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { StorageService, HelperServices } from "@formsflow/service";
 import AttributeFilterModal from "../AttributeFilterModal";
-
 
 interface Column {
   name: string;
@@ -241,7 +241,7 @@ const TaskTable = ({
         </tr>
       </thead>
       <tbody>
-        {taskList.length === 0 ? 
+        {taskList.length === 0 ? (
           <tr className="empty-row">
             <td
               colSpan={columns.length}
@@ -253,7 +253,8 @@ const TaskTable = ({
                 "No tasks have been found. Try a different filter combination or contact your admin."
               )}
             </td>
-          </tr>: 
+          </tr>
+        ) : (
           taskList.map((task) => (
             <TaskRow
               key={`row-${task.id}`}
@@ -264,7 +265,7 @@ const TaskTable = ({
               t={t}
             />
           ))
-        }
+        )}
       </tbody>
     </table>
   );
@@ -276,13 +277,15 @@ export function ResizableTable(): JSX.Element {
 
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
-  const [isAssigned,setIsAssigned] = useState(false);
+  const [isAssigned, setIsAssigned] = useState(false);
   const [taskAttributeData, setTaskAttributeData] = useState([]);
   const [filterParams, setFilterParams] = useState({});
   const history = useHistory();
   const {
     filterList = [],
+    attributeFilterList = [],
     selectedFilter = null,
+    selectedAttributeFilter = null,
     taskId: bpmTaskId = null,
     firstResult = 0,
     limit,
@@ -297,7 +300,10 @@ export function ResizableTable(): JSX.Element {
     isTaskListLoading,
   } = useSelector((state: any) => state.task ?? {});
   const selectedFilterId = selectedFilter?.id ?? null;
+  const selectedAttributeFilterId = selectedAttributeFilter?.id ?? null;
   const bpmFiltersList = filterList;
+  const bpmattributeFilterList = attributeFilterList;
+
   const taskvariables = selectedFilter?.variables ?? [];
 
   const handleToggleFilterModal = useCallback(() => {
@@ -360,39 +366,62 @@ export function ResizableTable(): JSX.Element {
         }
       })
     );
-  }, [dispatch]);
+  }, [dispatch, defaultFilter]);
 
   useEffect(() => {
-    if (filterList.length > 0) {
-      const filterSelected =
-        filterList.find(
-          (filter) => filter.id === defaultFilter || filter.name === ALL_TASKS
-        ) ?? filterList[0];
+    if (filterList.length === 0) return;
 
-      dispatch(setSelectedBPMFilter(filterSelected));
-    }
+    // Step 1: Determine the default or unsaved filter
+    const filterSelected =
+      filterList.find(
+        (filter) =>
+          filter.id === defaultFilter || filter.name === UN_SAVED_FILTER
+      ) ?? filterList[0];
+
+    if (!filterSelected?.id) return;
+
+    // Step 2: Clear current attribute filters
+    dispatch(setSelectedBpmAttributeFilter({}));
+
+    // Step 3: Fetch attribute filters for the selected filter ID
+    const handleAttributeFilterList = (err: Error | null, data: any) => {
+      if (err) return;
+
+      const attributeFilters = data?.attributeFilters ?? [];
+      const attributefilterSelected =
+        attributeFilters.find((f: any) => f.name === UN_SAVED_FILTER) ||
+        attributeFilters[0];
+
+      batch(() => {
+        dispatch(setSelectedBPMFilter(filterSelected));
+        dispatch(setSelectedBpmAttributeFilter(attributefilterSelected || {}));
+      });
+    };
+
+    dispatch(fetchAttributeFilterList(filterSelected.id, handleAttributeFilterList));
   }, [filterList.length, defaultFilter, dispatch]);
 
-useEffect(() => {
-  if (selectedFilter.id) {
-    const updatedFilter = {
-      ...reqData,
-      criteria: {
-        ...reqData.criteria,
-        ...(isAssigned && { assigneeExpression:  "${ currentUser() }"})
-      }
-    };
-    dispatch(setBPMTaskLoader(true));
-    dispatch(fetchServiceTaskList(updatedFilter, null, firstResult, limit));
-  }
-}, [isAssigned]);
+
+  useEffect(() => {
+    if (selectedFilter.id) {
+      const updatedFilter = {
+        ...reqData,
+        criteria: {
+          ...reqData.criteria,
+          ...(isAssigned && { assigneeExpression: "${ currentUser() }" }),
+        },
+      };
+      dispatch(setBPMTaskLoader(true));
+      dispatch(fetchServiceTaskList(updatedFilter, null, firstResult, limit));
+    }
+  }, [isAssigned]);
 
   useEffect(() => {
     if (Array.isArray(taskvariables)) {
       const dynamicColumns = taskvariables
         .filter((variable) => variable.isChecked)
         .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map((variable) =>({
+        .map((variable) => ({
           name: variable.label,
           width: variable.width ?? 200,
           sortKey: variable.name,
@@ -408,10 +437,15 @@ useEffect(() => {
         });
       }
 
-      setColumns(dynamicColumns);
+      // Only update if columns are different
+      setColumns((prevColumns) => {
+        if (!isEqual(prevColumns, dynamicColumns)) {
+          return dynamicColumns;
+        }
+        return prevColumns;
+      });
     }
   }, [taskvariables]);
-
 
   const handleSortApply = useCallback(
     (selectedSortOption, selectedSortOrder) => {
@@ -460,6 +494,7 @@ useEffect(() => {
     setCanEditFilter(isEditable);
     setShowTaskFilterModal(true);
   }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
+
   const changeFilterSelection = useCallback(
     (filter) => {
       const selectedFilter = filterList.find((item) => item.id === filter.id);
@@ -469,8 +504,6 @@ useEffect(() => {
         (variable) => variable.isChecked === true
       );
       setTaskAttributeData(taskAttributes);
-      dispatch(setSelectedBPMFilter(selectedFilter));
-
       const defaultFilterId =
         selectedFilter.id === defaultFilter ? null : selectedFilter.id;
       updateDefaultFilter(defaultFilterId)
@@ -480,12 +513,24 @@ useEffect(() => {
         .catch((error) =>
           console.error("Error updating default filter:", error)
         );
-
-      dispatch(setSelectedTaskID(defaultFilterId));
       dispatch(setBPMTaskListActivePage(1));
     },
     [dispatch, defaultFilter, filterList]
   );
+
+  const changeAttributeFilterSelection = useCallback(
+    (attributeFilter) => {
+      const selectedAttributeFilter = bpmattributeFilterList.find(
+        (item) => item.id === attributeFilter.id
+      );
+      if (!selectedAttributeFilter) return;
+
+      dispatch(setSelectedBpmAttributeFilter(selectedAttributeFilter));
+      // Do not trigger fetch here; useEffect will handle it
+    },
+    [dispatch, bpmattributeFilterList]
+  );
+
   const filterDropdownItems = useMemo(() => {
     if (!Array.isArray(filtersCount) || filtersCount.length === 0) {
       return [
@@ -548,8 +593,29 @@ useEffect(() => {
     handleToggleFilterModal,
     changeFilterSelection,
   ]);
-
   const filterDropdownAttributeItems = useMemo(() => {
+    // Generate items based on the attributeFilterList
+    const attributeItems =
+      Array.isArray(attributeFilterList) && attributeFilterList.length > 0
+        ? attributeFilterList.map((filter) => ({
+            content: `${t(filter.name)}`,
+            onClick: () => changeAttributeFilterSelection(filter),
+            type: String(filter.id),
+            dataTestId: `attr-filter-item-${filter.id}`,
+            ariaLabel: t("Select attribute filter {{filterName}}", {
+              filterName: t(filter.name),
+            }),
+          }))
+        : [
+            {
+              content: <em>{t("No attribute filters found")}</em>,
+              onClick: () => {},
+              type: "none",
+              dataTestId: "no-attr-filters",
+              ariaLabel: t("No attribute filters available"),
+            },
+          ];
+
     const extraItems = [
       {
         content: (
@@ -557,13 +623,13 @@ useEffect(() => {
             <span>
               <AddIcon className="filter-plus-icon" />
             </span>{" "}
-            {t("Custom Filter")}
+            {t("Custom Attribute Filter")}
           </span>
         ),
         onClick: handleToggleAttrFilterModal,
         type: "custom",
-        dataTestId: "filter-item-custom",
-        ariaLabel: t("Custom Filter"),
+        dataTestId: "attr-filter-item-custom",
+        ariaLabel: t("Custom Attribute Filter"),
       },
       {
         content: (
@@ -571,20 +637,32 @@ useEffect(() => {
             <span>
               <PencilIcon className="filter-edit-icon" />
             </span>{" "}
-            {t("Re-order And Hide Filters")}
+            {t("Re-order And Hide Attribute Filters")}
           </span>
         ),
-        onClick: () => console.log("Re-order clicked"),
+        onClick: () => console.log("Re-order attribute filters clicked"),
         type: "reorder",
-        dataTestId: "filter-item-reorder",
-        ariaLabel: t("Re-order And Hide Filters"),
+        dataTestId: "attr-filter-item-reorder",
+        ariaLabel: t("Re-order And Hide Attribute Filters"),
       },
     ];
 
-    return [...extraItems];
-  }, [t, handleToggleAttrFilterModal]);
+    return [...attributeItems, ...extraItems];
+  }, [
+    attributeFilterList,
+    t,
+    handleToggleAttrFilterModal,
+    changeAttributeFilterSelection,
+  ]);
+
+  const hasFetchedInitially = useRef(false);
 
   useEffect(() => {
+    if (!hasFetchedInitially.current) {
+      hasFetchedInitially.current = true;
+      return;
+    }
+
     const activeKey = sortParams?.activeKey;
     const transformedSorting =
       activeKey && sortParams?.[activeKey]?.sortOrder
@@ -610,10 +688,19 @@ useEffect(() => {
     );
     if (!selectedParams) return;
 
+    const selectedBpmAttributeFilter = bpmattributeFilterList.find(
+      (item) => item.id === selectedAttributeFilterId
+    );
+
+    if (selectedAttributeFilterId && !selectedBpmAttributeFilter) return;
+
+    const criteriaToUse =
+      selectedBpmAttributeFilter?.criteria ?? selectedParams.criteria;
+
     const updatedParams = {
       ...selectedParams,
       criteria: {
-        ...selectedParams.criteria,
+        ...criteriaToUse,
         ...reqParamData,
       },
     };
@@ -632,17 +719,19 @@ useEffect(() => {
       );
     }
   }, [
-    selectedFilterId,
+    selectedAttributeFilterId,
     searchParams,
     dispatch,
     dateRange,
     bpmFiltersList,
+    bpmattributeFilterList,
     selectedFilter,
     sortParams,
     firstResult,
     limit,
     reqData,
   ]);
+
   // Refresh handler (same logic as useEffect)
   const handleRefresh = useCallback(() => {
     const activeKey = sortParams?.activeKey;
@@ -734,13 +823,14 @@ useEffect(() => {
     resizingRef.current.newWidth = newWidth;
     setColumns((prev) =>
       prev.map((col) =>
-        col.sortKey === resizingRef.current.sortKey ? { ...col, width: newWidth } : col
+        col.sortKey === resizingRef.current.sortKey
+          ? { ...col, width: newWidth }
+          : col
       )
     );
   }, []);
 
   const handleMouseUp = useCallback((): void => {
-    
     // fetch the current column details and udpate with new width
     const updatedData = cloneDeep(selectedFilter);
     const variables = updatedData.variables.map((variable: any) => {
@@ -751,13 +841,13 @@ useEffect(() => {
     });
     // Update the selected filter with the new width
     // not waiting for response because we don't want to block the UI
-    updateFilter({variables}, selectedFilterId)
+    updateFilter({ variables }, selectedFilterId);
 
     //reset the resizing reference and remove event listeners
     resizingRef.current = null;
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-  }, [handleMouseMove,selectedFilter,selectedFilterId]);
+  }, [handleMouseMove, selectedFilter, selectedFilterId]);
 
   // Sorting modal handlers
   const handleSortModalClose = useCallback(() => {
@@ -797,13 +887,12 @@ useEffect(() => {
     [dispatch, limit, reqData]
   );
 
-  const handleCheckBoxChange = ()=> {
-    setIsAssigned(!isAssigned)
-   }; 
-   const onLabelClick = () => {
-    handleCheckBoxChange(); 
+  const handleCheckBoxChange = () => {
+    setIsAssigned(!isAssigned);
   };
-  
+  const onLabelClick = () => {
+    handleCheckBoxChange();
+  };
 
   const renderTaskList = useCallback(() => {
     if (!selectedFilter) {
@@ -833,8 +922,13 @@ useEffect(() => {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="empty-table-message" data-testid="empty-columns-message">
-                      {t("No tasks have been found. Try a different filter combination or contact your admin.")}
+                    <td
+                      className="empty-table-message"
+                      data-testid="empty-columns-message"
+                    >
+                      {t(
+                        "No tasks have been found. Try a different filter combination or contact your admin."
+                      )}
                     </td>
                   </tr>
                 </tbody>
@@ -844,7 +938,7 @@ useEffect(() => {
         </div>
       );
     }
-    
+
     return (
       <div
         className="container-wrapper"
@@ -979,7 +1073,20 @@ useEffect(() => {
 
           <div className="mb-2">
             <ButtonDropdown
-              label={t("Attribute Filter")}
+              label={
+                <span
+                  className="filter-large"
+                  title={
+                    selectedAttributeFilter?.name
+                      ? `${t(selectedAttributeFilter.name)}`
+                      : t("Select  Attribute Filter")
+                  }
+                >
+                  {selectedAttributeFilter?.name
+                    ? `${t(selectedAttributeFilter.name)}`
+                    : t("Select Attribute Filter")}
+                </span>
+              }
               variant="primary"
               size="md"
               dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
@@ -1015,7 +1122,7 @@ useEffect(() => {
           <div className="mb-2">
           <button className={`custom-checkbox-container button-as-div ${
               isAssigned ? "checked" :""
-            }`} 
+            }`}
             onClick={onLabelClick}>
           <input
             type="checkbox"

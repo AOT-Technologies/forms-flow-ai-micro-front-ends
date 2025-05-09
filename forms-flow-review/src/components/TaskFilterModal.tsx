@@ -31,7 +31,10 @@ import {
   saveFilters,
   updateDefaultFilter,
 } from "../api/services/filterServices";
-import { setDefaultFilter, setUserGroups } from "../actions/taskActions";
+import {
+  setDefaultFilter,
+  setUserGroups
+} from "../actions/taskActions";
 import { Filter, FilterCriteria, UserDetail } from "../types/taskFilter.js";
 import { StorageService } from "@formsflow/service";
 import { FormSelectionModal } from "./FormSelectionModal";
@@ -62,7 +65,6 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
   const [variableArray, setVariableArray] = useState([]);
 
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
-
   const {
     userList = { data: [] },
     userGroups: candidateGroups = { data: [] },
@@ -79,7 +81,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
   let buttonVariant = "secondary"; // Default value
   if (successState.showSuccess) {
     buttonVariant = "success";
-  } 
+  }
   const assigneeOptions = useMemo(
     () =>
       userListData.map((user) => ({
@@ -105,6 +107,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
   useEffect(() => {
     if (accessDropdownValue === "specificRole") dispatch(fetchUserList());
   }, [accessDropdownValue]);
+
 
     useEffect(() => {
         const properties = getProperties();
@@ -263,13 +266,8 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         return criteria;
     };
 
-
-
-
-
   const getProperties = () => ({
     displayLinesCount: dataLineValue,
-
     formId: selectedForm.formId,
   });
 
@@ -285,7 +283,6 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
   };
 
     const handleFetchTaskVariables = (formId) => {
-
         fetchTaskVariables(formId)
             .then(res => {
                 const taskVariables = res.data?.taskVariables || [];
@@ -315,7 +312,6 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
             })
             .catch(err => console.error(err));
     };
-
 
   const handleUpdateOrder = (updatedItems) => {
     const updatedVariableArray = updatedItems.map((item, index) => ({
@@ -356,15 +352,15 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
 
 
 
-    const filterResults = () => {
-        dispatch(fetchServiceTaskList(getData(), null, firstResult, MAX_RESULTS, (error) => {
-            if (error) {
-                console.error("Error fetching tasks:", error);
-                return;
-            }
-            onClose();
-        }));
-    };
+  const filterResults = () => {
+    dispatch(fetchServiceTaskList(getData(), null, firstResult, MAX_RESULTS, (error) => {
+        if (error) {
+            console.error("Error fetching tasks:", error);
+            return;
+        }
+    }));
+    onClose();
+  };
 
   const saveCurrentFilter = () => {
     saveFilters(getData())
@@ -372,6 +368,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         const savedFilterId = res.data.id;
         const isDefaultFilter =
           savedFilterId === defaultFilter ? null : savedFilterId;
+
         updateDefaultFilter(isDefaultFilter)
           .then((updateRes) =>
             dispatch(setDefaultFilter(updateRes.data.defaultFilter)),
@@ -394,14 +391,17 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     setVariableArray([]);
     onClose();
   };
+
   const handleModalclose = () => {
     setShowFormSelectionModal(false);
   };
+
   const handleFormSelectionModal = (selectedFormObj) => {
     setSelectedForm(selectedFormObj);
     handleFetchTaskVariables(selectedFormObj.formId);
     setShowFormSelectionModal(false);
   };
+
   const parametersTab = () => (
     <>
       <InputDropdown
@@ -419,6 +419,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         <div className="d-flex filter-dropdown">
           <div className="L-style"></div>
           <InputDropdown
+            key="specificRoleDropdown" // 👈 Force remount
             Options={candidateOptions}
             isAllowInput={false}
             ariaLabelforDropdown={t("specific role dropdown")}
@@ -433,6 +434,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         <div className="d-flex filter-dropdown">
           <div className="L-style"></div>
           <InputDropdown
+            key="assigneeDropdown" // 👈 Force remount
             Options={assigneeOptions}
             isAllowInput={false}
             ariaLabelforDropdown={t("assignee dropdown")}
@@ -445,10 +447,11 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
           />
         </div>
       )}
+
       <div className="pt-4">
         <label className="mb-2">{t("Form")}</label>
         <div className="form-selection-input d-flex justify-content-end">
-          <label className="w-100">{selectedForm.formName}</label> 
+          <label className="w-100">{selectedForm.formName}</label>
           { selectedForm.formName && (<div className="form-selection-input-container">
             <CloseIcon
               color={baseColor}
@@ -496,7 +499,6 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
                     data-testid="columns-sort"
                 />
             )}
-
         </div>
     );
 
@@ -544,8 +546,8 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
         onChange={handleFilterName}
         isInvalid={!!filterNameError}
         onBlur={handleNameError}
-        feedback={filterNameError }
-        />
+        feedback={filterNameError}
+      />
 
       <div className="pt-4 pb-4">
         <InputDropdown
@@ -584,7 +586,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
       />
       <div className="pt-4">
         <CustomButton
-          variant={buttonVariant} 
+          variant={buttonVariant}
           size="md"
           label={ successState.showSuccess ? `Saving (${successState.countdown})` : t("Save This Filter")}
           onClick={saveCurrentFilter}
