@@ -1557,4 +1557,5 @@ export const RESOURCE_BUNDLES_ZH = {
   "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution.": "此筛选器与他人共享。更新此筛选器将更新所有人的筛选器，并可能影响他们的工作流程。请谨慎操作。",
   "No, Cancel Changes": "不，取消更改",
   "Yes, Update This Filter For Everybody": "是的，为所有人更新此筛选器",
+  "Select Date": "选择日期"
 }

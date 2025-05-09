@@ -724,5 +724,8 @@ span.text-danger,
   .custom-checkbox-label {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-xl);
+    height: 19px;
+    display: flex;
+    align-items: center;
   }
 }
