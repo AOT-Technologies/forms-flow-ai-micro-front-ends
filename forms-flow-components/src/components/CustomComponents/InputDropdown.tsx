@@ -170,6 +170,11 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
             />;
     }};
 
+      // Check if an item is the currently selected one
+  const isItemSelected = (item: DropdownItem) => {
+    return item.label === inputValue || item.value === selectedOption;
+  };
+
   return (
       <div ref={dropdownRef}  className={`input-dropdown ${variantClass ? variantClass : 'w-100'}`}>
           {textBoxInput ? (
@@ -227,6 +232,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                           onClick={() => handleSelect(item)}
                           data-testid={`list-${index}-item`}
                           aria-label={`list-${item.label}-item`}
+                          className={`${isItemSelected(item) ? 'selected-dropdown-item' : ''}`}
                       >
                           {t(item.label)}
                       </ListGroup.Item>

@@ -127,3 +127,10 @@ $gray-light: var(--ff-gray-light);
     border-color: $gray-light !important;
   }
 }
+
+.selected-dropdown-item{
+  background-color: $gray-medium !important;
+  border-radius:  var(--radius-sm) !important;
+  margin-left: var(--spacer-025);
+  margin-right: var(--spacer-025);
+}

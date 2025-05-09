@@ -36,18 +36,12 @@ $white-color: var(--ff-white);
       outline: none;
     }
   }
-
-  // .option-me {
-  //   clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 0% 100%);
-  //   border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-  //   border: 0.063rem solid $primary;
-  // }
-
-  // .option-others {
-  //   clip-path: polygon(15% 0, 100% 0%, 100% 100%, 0% 100%);
-  //   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  //   border: 0.063rem solid $primary;
-  // }  
+  .divider {
+    width: 0.063rem;
+    height: 120%;
+    background: $primary;
+    transform: translate(-50%, 0%) rotate(30deg); 
+  }
 }
 
 //Added custom variants prop to the AssignUser component to allow overriding styles in the InputDropdown component.

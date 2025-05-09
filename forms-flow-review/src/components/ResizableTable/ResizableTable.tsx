@@ -29,7 +29,7 @@ import {
   setTaskListLimit,
   setDefaultFilter,
   setSelectedTaskID,
-  setBPMTaskDetailUpdating,
+  // setBPMTaskDetailUpdating,
 } from "../../actions/taskActions";
 
 import TaskFilterModal from "../TaskFilterModal";
@@ -40,6 +40,8 @@ import {
   fetchServiceTaskList,
   updateDefaultFilter,
   claimBPMTask,
+  unClaimBPMTask,
+  updateAssigneeBPMTask
 } from "../../api/services/filterServices";
 import { ALL_TASKS } from "../constants/taskConstants";
 
@@ -74,7 +76,7 @@ interface DateRange {
 export function ResizableTable(): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
+  const RETRY_DELAY_TIME = 2000;
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
   const [taskAttributeData, setTaskAttributeData] = useState([]);
@@ -95,7 +97,7 @@ export function ResizableTable(): JSX.Element {
     activePage,
     tasksCount,
     isTaskListLoading,
-    taskId,
+    error,
   } = useSelector((state: any) => state.task ?? {});
   const selectedFilterId = selectedFilter?.id ?? null;
   const bpmFiltersList = filterList;
@@ -110,7 +112,6 @@ export function ResizableTable(): JSX.Element {
   }, []);
 
   const [columns, setColumns] = useState<Column[]>([]);
-
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const resizingRef = useRef<number | null>(null);
@@ -201,25 +202,71 @@ export function ResizableTable(): JSX.Element {
       setColumns(dynamicColumns);
     }
   }, [taskvariables]);
+
+    // Utility function for retry logic
+    const retryTaskUpdate = (taskId, reqData, firstResult, dispatch) => {
+      setTimeout(() => {
+        // dispatch(getBPMTaskDetail(taskId));
+        dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
+        // dispatch(setBPMTaskDetailUpdating(false));
+      }, RETRY_DELAY_TIME);
+    };
   
-  const renderAssigneeComponent = (task) => {
-    const onClaim = () => {
-      dispatch(setBPMTaskDetailUpdating(true));
+  const updateBpmTasksAndDetails = (err, taskId) =>{
+    // if (!err) {
+    //   if (!SocketIOService.isConnected()) {
+    //     if (selectedFilter) {
+    //       dispatch(getBPMTaskDetail(taskId));
+    //       dispatch(
+    //         fetchServiceTaskList(reqData,null,firstResult)
+    //       );
+    //     } else {
+    //       dispatch(setBPMTaskDetailUpdating(false));
+    //     }
+    //   }
+    // } else {
+    //   dispatch(setBPMTaskDetailUpdating(false));
+    // }
+    // Above code commented and added below 3 lines for refreshing the tasks on each update operation without checking conditions.
+    if(err)
+      console.log('Error in task updation-',err);
+    retryTaskUpdate(taskId, reqData, firstResult, dispatch);
+  };
+  
+  const onChangeClaim = (task, selectedUserName: string) => {
+    if (selectedUserName && selectedUserName !== task.assignee) {
+      // dispatch(setBPMTaskDetailUpdating(true));
       dispatch(
         // eslint-disable-next-line no-unused-vars
-        // claimBPMTask(task?.id, userData?.name,updateBpmTasksAndDetails)
-        claimBPMTask(task?.id, userData?.name)
+        updateAssigneeBPMTask(task?.id, selectedUserName, (err) => updateBpmTasksAndDetails(err, task?.id))
       );
-    };
+    }
+  };
+
+  const onClaim = (taskId: string) => {
+    // dispatch(setBPMTaskDetailUpdating(true));
+    dispatch(
+      claimBPMTask(taskId, userData?.preferred_username, (err) => updateBpmTasksAndDetails(err, taskId))
+    );
+  };
+
+  const onUnClaimTask = (taskId: string) => {
+    // dispatch(setBPMTaskDetailUpdating(true));
+    dispatch(
+      // eslint-disable-next-line no-unused-vars
+      unClaimBPMTask(taskId, (err) => updateBpmTasksAndDetails(err, taskId))
+    );
+  };
+ 
+  const renderAssigneeComponent = (task) => {
     return (
       <AssignUser
         size="sm"
         users={userList?.data || []}
-        username={userData?.name || ""}
-        meOnClick={onClaim}
-        // othersOnClick={othersOnClick}
-        // optionSelect={onChangeClaim}
-        // handleCloseClick={onUnClaimTask}
+        username={task?.assignee}
+        meOnClick={() => onClaim(task?.id)}
+        optionSelect={(userName) => onChangeClaim(task, userName)}
+        handleCloseClick={() => onUnClaimTask(task?.id)}
       />
     );
   };
@@ -822,7 +869,7 @@ export function ResizableTable(): JSX.Element {
     [dispatch, limit, reqData]
   );
 
-  const renderTaskList = useCallback(() => {
+  const renderTaskList = () => {
     if (!selectedFilter) {
       return (
         <div
@@ -938,25 +985,7 @@ export function ResizableTable(): JSX.Element {
         </table>
       </div>
     );
-  }, [
-    selectedFilter,
-    t,
-    columns,
-    sortParams,
-    handleSort,
-    taskList,
-    tasksCount,
-    limit,
-    activePage,
-    handlePageChange,
-    handleLimitChange,
-    history,
-    redirectUrl,
-    handleMouseDown,
-    scrollWrapperRef,
-    tableRef,
-    resizingRef,
-  ]);
+  }
 
   return (
     <div

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { InputDropdown } from "./InputDropdown";
-
+import { StorageService } from "@formsflow/service";
 interface User {
   id: string;
   email: string;
@@ -15,8 +15,7 @@ interface AssignUserProps {
   users: User[];
   username: string;
   meOnClick?: () => void;
-  othersOnClick?: () => void;
-  optionSelect?: (userId: string) => void;
+  optionSelect?: (userName: string) => void;
   handleCloseClick?: () => void;
   ariaLabel?: string;
   dataTestId?: string;
@@ -24,10 +23,9 @@ interface AssignUserProps {
 
 export const AssignUser: React.FC<AssignUserProps> = ({
   size = "md",
-  users,
+  users = [],
   username,
   meOnClick,
-  othersOnClick,
   optionSelect,
   handleCloseClick,
   ariaLabel = "assign-user",
@@ -36,21 +34,30 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
   const variant = size === "sm" ? "assign-user-sm" : "assign-user-md";
+  const [selectedName, setSelectedName] = useState(null);
+  const userData =
+  JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+  useEffect(() => {
+    if(!username){
+      setSelected(null);
+    }
+    else {
+      setSelected("Me");
+      setSelectedName(username);
+    }
+  }, [username])
+
   const handleMeClick = () => {
     setSelected("Me");
     meOnClick?.();
-    
-    // Auto-select the current user when "Me" is clicked
-    const currentUser = users.find((user) => user.username === username);
-    if (currentUser && optionSelect) {
-      optionSelect(currentUser.id);
+    if(!username){
+      setSelectedName(userData.preferred_username);
     }
   };
 
   const handleOthersClick = () => {
     setSelected("Others");
     setOpenDropdown(true);
-    othersOnClick?.();
   };
 
   const handleClose = () => {
@@ -59,18 +66,19 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     handleCloseClick?.();
   };
 
-  const options = users.map((user) => ({
-    label: user.username,
-    value: user.id,
-    onClick: () => {
-      if (optionSelect) {
-        optionSelect(user.id);
-      }
-    },
-  }));
-
+  const options = Array.isArray(users) && users.length > 0
+  ? users.map((user) => ({
+      label: user.username,
+      value: user.id,
+      onClick: () => {
+        if (optionSelect) {
+          optionSelect(user.username);
+        }
+      },
+    }))
+  : [];
   // Determine the selected option based on the state
-  const selectedOption = selected === "Me" ? username : undefined;
+  const selectedOption = selected === "Me" ? selectedName : undefined;
 
   return (
     <>
@@ -89,6 +97,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
             >
               Me
             </div>
+            <div className="divider"></div>
             <div
               className="option-others"
               onClick={handleOthersClick}
