@@ -97,7 +97,7 @@ const TaskTableCell = ({ task, column, index, redirectUrl, history, t }) => {
     return (
       <td key={`action-${task.id}-${index}`}>
         <CustomButton
-          className="btn-table"
+          size="table-sm"
           variant="secondary"
           label={t("View")}
           onClick={() =>
@@ -514,7 +514,7 @@ useEffect(() => {
         content: (
           <span>
             <span>
-              <AddIcon />
+              <AddIcon className="filter-plus-icon" />
             </span>{" "}
             {t("Custom Filter")}
           </span>
@@ -527,8 +527,8 @@ useEffect(() => {
       {
         content: (
           <span>
-            <span>
-              <PencilIcon />
+            <span >
+              <PencilIcon className="filter-edit-icon"  />
             </span>{" "}
             {t("Re-order And Hide Filters")}
           </span>
@@ -553,9 +553,9 @@ useEffect(() => {
     const extraItems = [
       {
         content: (
-          <span>
             <span>
-              <AddIcon />
+            <span>
+              <AddIcon className="filter-plus-icon" />
             </span>{" "}
             {t("Custom Filter")}
           </span>
@@ -567,9 +567,9 @@ useEffect(() => {
       },
       {
         content: (
-          <span>
             <span>
-              <PencilIcon />
+            <span>
+              <PencilIcon className="filter-edit-icon" />
             </span>{" "}
             {t("Re-order And Hide Filters")}
           </span>
@@ -944,8 +944,8 @@ useEffect(() => {
     >
       <div className="row w-100 mb-3 g-2">
         {/* Left Filters - Stack on small, inline on md+ */}
-        <div className="col-12 col-md d-flex flex-wrap align-items-center">
-          <div className="me-2 mb-2">
+        <div className="col-12 col-md d-flex flex-wrap gap-3 align-items-center">
+          <div className="mb-2">
             <ButtonDropdown
               label={
                 <span
@@ -973,11 +973,11 @@ useEffect(() => {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
-          <div className="me-2 mb-2">
+          <div className="mb-2">
             <ButtonDropdown
               label={t("Attribute Filter")}
               variant="primary"
@@ -992,15 +992,15 @@ useEffect(() => {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
-          <div className="me-2 mb-2">
+          <div className="mb-2">
             <DateRangePicker
               value={dateRange}
               onChange={setDateRange}
-              placeholder={t("Filter Dates")}
+              placeholder={t("Filter Created Date")}
               dataTestId="date-range-picker"
               ariaLabel={t("Select date range for filtering")}
               startDateAriaLabel={t("Start date")}
@@ -1008,7 +1008,7 @@ useEffect(() => {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
@@ -1024,7 +1024,7 @@ useEffect(() => {
             onChange={handleCheckBoxChange}
             data-testid="assign-to-me-checkbox"
           />
-          <label className="custom-checkbox-label">{t("Assign to me")}</label>
+          <span className="custom-checkbox-label">{t("Assign to me")}</span>
         </button>
           </div>
         </div>
