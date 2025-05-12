@@ -6,6 +6,8 @@ $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $danger-color: var(--ff-danger);
+$white-color: var(--ff-white);
+
 .forms-text {
   vertical-align: bottom;
   margin-left: 0.625rem;
@@ -692,3 +694,38 @@ span.text-danger,
   color: var(--default-danger-color) !important;
 }
 
+.custom-checkbox-container {
+  display: flex;
+  background-color: $white-color !important;
+  color: $primary !important;
+  padding :  var(--spacer-050) var(--spacer-075) !important;
+  gap:var(--spacer-050) !important;
+  border: 1px solid $primary !important;
+  border-radius: var(--radius-sm) !important;
+  width: inherit !important;
+  &:hover {
+     opacity: 0.9 !important;
+  }
+  &.checked{
+    background-color: $primary !important;
+    color: $white-color !important;
+  }
+  .form-check-input[type="checkbox"]{
+    border: 2px solid $primary !important;
+    margin-top: 0px !important;
+  &:checked{
+    border-color:$white-color !important;
+  }
+  }
+  .assign-check-input { 
+    padding: var(--spacer-050);
+    border-radius: 4px;
+  }
+  .custom-checkbox-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-xl);
+    height: 19px;
+    display: flex;
+    align-items: center;
+  }
+}
