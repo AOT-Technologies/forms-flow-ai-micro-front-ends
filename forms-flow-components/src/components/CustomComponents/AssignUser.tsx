@@ -90,6 +90,11 @@ export const AssignUser: React.FC<AssignUserProps> = ({
             data-testid={`${dataTestId}-select-user-option`}
           >
             <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') handleMeClick();
+              }}
               className="option-me"
               onClick={handleMeClick}
               aria-label={`${ariaLabel}-me-button`}
@@ -99,6 +104,11 @@ export const AssignUser: React.FC<AssignUserProps> = ({
             </div>
             <div className="divider"></div>
             <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') handleOthersClick();
+              }}
               className="option-others"
               onClick={handleOthersClick}
               aria-label={`${ariaLabel}-others-button`}

@@ -3,9 +3,7 @@ function getEnv(env_string) {
       (window._env_ && window._env_["REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK"]) ||
       false;
 
-  return ENV_BOOLEAN === "true" || ENV_BOOLEAN === true
-      ? true
-      : false;
+      return ENV_BOOLEAN === "true" || ENV_BOOLEAN === true;
 }
 
 let userAccessGroupCheckforApplications =getEnv('REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK');

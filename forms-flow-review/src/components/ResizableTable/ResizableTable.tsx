@@ -28,7 +28,6 @@ import {
   setFilterListSortParams,
   setTaskListLimit,
   setDefaultFilter,
-  setSelectedTaskID,
   // setBPMTaskDetailUpdating,
   setSelectedBpmAttributeFilter,
 } from "../../actions/taskActions";
@@ -203,7 +202,7 @@ const renderAssigneeComponent = (
 return (
   <AssignUser
     size="sm"
-    users={userList?.data || []}
+    users={userList?.data ?? []}
     username={task?.assignee}
     meOnClick={() => onClaim(task?.id, userData, dispatch, limit, RETRY_DELAY_TIME, reqData, firstResult)}
     optionSelect={(userName) => onChangeClaim(task, userName, dispatch, limit, RETRY_DELAY_TIME, reqData, firstResult)}
@@ -521,7 +520,6 @@ export function ResizableTable(): JSX.Element {
     activePage,
     tasksCount,
     isTaskListLoading,
-    error,
   } = useSelector((state: any) => state.task ?? {});
   const selectedFilterId = selectedFilter?.id ?? null;
   const selectedAttributeFilterId = selectedAttributeFilter?.id ?? null;
@@ -569,8 +567,7 @@ export function ResizableTable(): JSX.Element {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
-  const userData =
-  JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+  const userData = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) ?? {};
 
   const isFilterCreator = userRoles.includes("createFilters");
   const isFilterAdmin = userRoles.includes("manageAllFilters");

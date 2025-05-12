@@ -144,11 +144,13 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
     setNewInput(e.target.value);
     setInputValue(e.target.value);
   }
-  const variantClass = variant === 'assign-user-sm'
-  ? 'assign-user-sm-width'
-  : variant === 'assign-user-md'
-  ? 'assign-user-md-width'
-  : '';
+  let variantClass = '';
+
+  if (variant === 'assign-user-sm') {
+    variantClass = 'assign-user-sm-width';
+  } else if (variant === 'assign-user-md') {
+    variantClass = 'assign-user-md-width';
+  }
 
   // Determine which icon to show based on variant and inputValue
   const renderIcon = () => {

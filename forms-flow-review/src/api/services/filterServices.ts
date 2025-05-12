@@ -1,9 +1,8 @@
 import API from "../endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
-import { setAttributeFilterList, bpmActionError, setBPMTaskDetailLoader, setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader, setBPMTaskDetailUpdating, setBPMTaskDetail } from "../../actions/taskActions";
+import { setAttributeFilterList, setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader, setBPMTaskDetailUpdating, setBPMTaskDetail } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
-import { replaceUrl } from "../../helper/helper.js";
-import { taskDetailVariableDataFormatter } from "./formatterService"; 
+import { replaceUrl } from "../../helper/helper.js"; 
 
 export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};
