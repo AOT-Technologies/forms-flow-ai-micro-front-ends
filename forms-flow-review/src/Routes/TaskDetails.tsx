@@ -1,11 +1,8 @@
 import React, { useEffect, useCallback } from "react";
-import { Card, Row } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import LoadingOverlay from "react-loading-overlay-ts";
 import { useTranslation } from "react-i18next";
-import PropTypes from "prop-types";
-
 import { textTruncate } from "../helper/helper.js";
 import {
   getBPMTaskDetail,
@@ -50,12 +47,6 @@ const TaskDetails = () => {
   );
   const task = useSelector((state: any) => state.task.taskDetail);
   const bpmTaskId = useSelector((state: any) => state.task.taskId);
-  const isTaskLoading = useSelector(
-    (state: any) => state.task.isTaskDetailLoading
-  );
-  const isTaskUpdating = useSelector(
-    (state: any) => state.task.isTaskDetailUpdating
-  );
   const taskFormSubmissionReload = useSelector(
     (state: any) => state.task.taskFormSubmissionReload
   );
@@ -81,6 +72,25 @@ const TaskDetails = () => {
     return () => Formio.clearCache();
   }, [bpmTaskId, dispatch]);
 
+  // Flattened retry logic for token errors
+  const handleFormRetry = (fetchForm: () => void) => (retryErr: any) => {
+    if (!retryErr) {
+      fetchForm();
+    } else {
+      dispatch(setFormSubmissionLoading(false));
+    }
+  };
+
+  // Handles submission fetching after form is successfully fetched
+  const handleSuccessfulFormFetch = (formId: string, submissionId: string) => {
+    if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
+      dispatch(getCustomSubmission(submissionId, formId));
+    } else {
+      dispatch(getSubmission("submission", submissionId, formId));
+    }
+    dispatch(setFormSubmissionLoading(false));
+  };
+
   // Load form and submission
   const getFormSubmissionData = useCallback(
     (formUrl) => {
@@ -93,27 +103,10 @@ const TaskDetails = () => {
           //getform takes the project url from fromsflow-review.tsx file internally.
           getForm("form", formId, ((err: any) => {
             if (!err) {
-              if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
-                dispatch(getCustomSubmission(submissionId, formId));
-              } else {
-                // getSubmission will update the submission data in redux store internally
-                dispatch(getSubmission("submission", submissionId, formId));
-              }
-              dispatch(setFormSubmissionLoading(false));
-              return;
-            }
-  
-            if (err === "Bad Token" || err === "Token Expired") {
+              handleSuccessfulFormFetch(formId, submissionId);
+            } else if (err === "Bad Token" || err === "Token Expired") {
               dispatch(resetFormData("form"));
-              dispatch(
-                getFormioRoleIds(((retryErr: any) => {
-                  if (!retryErr) {
-                    fetchForm();
-                  } else {
-                    dispatch(setFormSubmissionLoading(false));
-                  }
-                }) as any)
-              );
+              dispatch(getFormioRoleIds(handleFormRetry(fetchForm)) as any);
             } else {
               dispatch(setFormSubmissionLoading(false));
             }

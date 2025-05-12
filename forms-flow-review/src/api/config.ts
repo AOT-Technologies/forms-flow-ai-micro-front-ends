@@ -4,12 +4,12 @@ declare global {
   }
 }
 let PROJECT_URL =
-  window._env_?.REACT_APP_API_PROJECT_URL ||
-  process.env.REACT_APP_API_PROJECT_URL ||
+  window._env_?.REACT_APP_API_PROJECT_URL ??
+  process.env.REACT_APP_API_PROJECT_URL ??
   "http://127.0.0.1:3001";
 let API_URL =
-  window._env_?.REACT_APP_API_SERVER_URL ||
-  process.env.REACT_APP_API_SERVER_URL ||
+  window._env_?.REACT_APP_API_SERVER_URL ??
+  process.env.REACT_APP_API_SERVER_URL ??
   "http://127.0.0.1:3001";
 export const WEB_BASE_URL = window._env_?.REACT_APP_WEB_BASE_URL
 export const API_PROJECT_URL = window._env_?.REACT_APP_API_PROJECT_URL

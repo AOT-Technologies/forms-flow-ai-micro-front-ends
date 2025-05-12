@@ -5,9 +5,7 @@ import {
   selectError,
   Form,
 } from "@aot-technologies/formio-react";
-import LoadingOverlay from "react-loading-overlay-ts";
 import Loading from "./Loading";
-import { useTranslation } from "react-i18next";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
 import {
   CUSTOM_SUBMISSION_ENABLE,
@@ -31,11 +29,10 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onFormSubmit,
   onCustomEvent = () => {},
 }) => {
-  const { t } = useTranslation();
-  const language = localStorage.getItem("lang") || "en";
+  const language = localStorage.getItem("lang") ?? "en";
   const isReadOnly = taskAssignee !== currentUser;
   const customSubmission = useSelector(
-    (state: any) => state.customSubmission?.submission || {}
+    (state: any) => state.customSubmission?.submission ?? {}
   );
   const rawSubmission = useMemo(() => {
     if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
@@ -43,7 +40,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
     }
     return reduxSubmission.submission;
   }, [customSubmission, reduxSubmission]);
-  
+
  // Deep clone submission to prevent mutation issues
   const safeSubmission = useMemo(() => {
     return rawSubmission ? JSON.parse(JSON.stringify(rawSubmission)) : null;
@@ -51,7 +48,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
 
   const isLoading =
-    isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data;
+    isFormActive ?? reduxSubmission?.isActive ?? !form ?? !safeSubmission?.data;
 // Show loading UI if loading
   if (isLoading) {
     return (
