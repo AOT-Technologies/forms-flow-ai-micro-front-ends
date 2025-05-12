@@ -640,6 +640,7 @@ export function ResizableTable(): JSX.Element {
     }
   }, [isAssigned]);
 
+
   useEffect(() => {
     if (Array.isArray(taskvariables)) {
       const dynamicColumns = taskvariables
@@ -669,7 +670,8 @@ export function ResizableTable(): JSX.Element {
         return prevColumns;
       });
     }
-  }, [taskvariables]);
+
+}, [taskvariables]);
 
   const handleSortApply = useCallback(
     (selectedSortOption, selectedSortOrder) => {
@@ -718,6 +720,14 @@ export function ResizableTable(): JSX.Element {
     setCanEditFilter(isEditable);
     setShowTaskFilterModal(true);
   }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
+
+  useEffect(() => {  
+    const currentFilter = filterList.find((item) => item.id === defaultFilter);
+    if (currentFilter) {
+      const checkedVariables = currentFilter.variables?.filter(variable => variable.isChecked);
+      setTaskAttributeData(checkedVariables);
+    }
+  }, [filterList]);
 
   const changeFilterSelection = useCallback(
     (filter) => {
@@ -778,7 +788,7 @@ export function ResizableTable(): JSX.Element {
       }),
     }));
 
-    const extraItems = [
+const extraItems = isFilterCreator ? [
       {
         content: (
           <span>
@@ -807,7 +817,7 @@ export function ResizableTable(): JSX.Element {
         dataTestId: "filter-item-reorder",
         ariaLabel: t("Re-order And Hide Filters"),
       },
-    ];
+    ]: [];
 
     return [...mappedItems, ...extraItems];
   }, [
@@ -816,6 +826,7 @@ export function ResizableTable(): JSX.Element {
     t,
     handleToggleFilterModal,
     changeFilterSelection,
+    isFilterCreator
   ]);
   const filterDropdownAttributeItems = useMemo(() => {
     // Generate items based on the attributeFilterList
@@ -840,7 +851,7 @@ export function ResizableTable(): JSX.Element {
             },
           ];
 
-    const extraItems = [
+    const extraItems = isFilterCreator ? [
       {
         content: (
             <span>
@@ -869,7 +880,7 @@ export function ResizableTable(): JSX.Element {
         dataTestId: "attr-filter-item-reorder",
         ariaLabel: t("Re-order And Hide Attribute Filters"),
       },
-    ];
+    ]: [];
 
     return [...attributeItems, ...extraItems];
   }, [
@@ -877,7 +888,9 @@ export function ResizableTable(): JSX.Element {
     t,
     handleToggleAttrFilterModal,
     changeAttributeFilterSelection,
+    isFilterCreator
   ]);
+
 
   const hasFetchedInitially = useRef(false);
 
