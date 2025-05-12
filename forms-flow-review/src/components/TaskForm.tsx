@@ -48,7 +48,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
 
   const isLoading =
-    isFormActive ?? reduxSubmission?.isActive ?? !form ?? !safeSubmission?.data;
+  isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data;
 // Show loading UI if loading
   if (isLoading) {
     return (
