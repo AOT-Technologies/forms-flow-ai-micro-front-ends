@@ -5,7 +5,7 @@ import { form, submission } from "@aot-technologies/formio-react";
 import TaskHandler from "./taskReducer";
 import { History } from 'history';
 import customSubmission from "./customSubmissionReducer";
-import tenants from "./taskReducer"
+import tenants from "./tenantReducer";
 const createRootReducer = (history: History) =>
   combineReducers({
     task: TaskHandler,

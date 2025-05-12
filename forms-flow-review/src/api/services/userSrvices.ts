@@ -16,7 +16,7 @@ export const getFormioRoleIds = (...rest) => {
     )
       .then((res) => {
         const token = res.headers["x-jwt-token"];
-        if (res.data && res.data.form && token) {
+        if (res?.data?.form && token) {
           StorageService.save("formioToken", token);
           localStorage.setItem("roleIds", JSON.stringify(res.data.form));
           dispatch(setRoleIds(res.data?.form));

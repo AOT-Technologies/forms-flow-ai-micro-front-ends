@@ -1,9 +1,8 @@
 import API from "../endpoints";
-import { StorageService, RequestService } from "@formsflow/service";
+import { RequestService } from "@formsflow/service";
 import { replaceUrl } from "../../helper/helper";
 import axios from "axios";
-import { setBPMTaskFormId, setBPMTaskDetail, setCustomSubmission, serviceActionError } from "../../actions/taskActions";
-import { form } from "@aot-technologies/formio-react";
+import { setBPMTaskDetail, setCustomSubmission, serviceActionError } from "../../actions/taskActions";
 import { taskDetailVariableDataFormatter } from "./formatterService";
 
 export const getBPMTaskDetail = (taskId, ...rest) => {
@@ -84,10 +83,7 @@ export const onBPMTaskFormSubmit = (taskId, formReq, ...rest) => {
   return (dispatch) => {
     RequestService.httpPOSTRequest(apiUrlOnFormSubmit, formReq)
       .then((res) => {
-        // if (res.status === 204) {
-        //TODO REMOVE
         done(null, res.data);
-        // }
       })
       .catch((error) => {
         console.log("Error", error);

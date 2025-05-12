@@ -6,12 +6,10 @@ const initialState = {
 };
 
 const customSubmission = (state = initialState, action) => {
-  switch (action.type) {
-    case ACTION_CONSTANTS.CUSTOM_SUBMISSION:
-      return { ...state, submission: cloneDeep(action.payload)};
-    default:
-      return state;
+  if (action.type === ACTION_CONSTANTS.CUSTOM_SUBMISSION) {
+    return { ...state, submission: cloneDeep(action.payload) };
   }
+  return state;
 };
 
 export default customSubmission;

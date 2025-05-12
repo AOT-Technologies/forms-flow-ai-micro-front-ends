@@ -13,7 +13,12 @@ import {
   onBPMTaskFormSubmit,
   getCustomSubmission,
 } from "../api/services/bpmTaskServices";
-import { getForm, getSubmission, Formio, resetSubmission } from "@aot-technologies/formio-react";
+import {
+  getForm,
+  getSubmission,
+  Formio,
+  resetSubmission,
+} from "@aot-technologies/formio-react";
 import { BackToPrevIcon, CustomButton } from "@formsflow/components";
 import {
   getFormIdSubmissionIdFromURL,
@@ -32,17 +37,17 @@ import {
   CUSTOM_EVENT_TYPE,
   MULTITENANCY_ENABLED,
 } from "../constants/index";
-import FormEdit from "../components/TaskViewOrEdit/TaskEdit";
-import FormView from "../components/TaskViewOrEdit/TaskView";
+import TaskForm from "../components/TaskForm";
 import { push } from "connected-react-router";
 
 const TaskDetails = () => {
   const { t } = useTranslation();
   const { taskId } = useParams();
   const dispatch = useDispatch();
-  
   // Redux State Selectors
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
+  const tenantKey = useSelector(
+    (state: any) => state.tenants?.tenantData?.tenantkey
+  );
   const task = useSelector((state: any) => state.task.taskDetail);
   const bpmTaskId = useSelector((state: any) => state.task.taskId);
   const isTaskLoading = useSelector(
@@ -59,7 +64,7 @@ const TaskDetails = () => {
   )?.preferred_username;
 
   // Redirection URL
-  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"; 
+  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
   // Set selected task ID on mount
   useEffect(() => {
@@ -73,7 +78,7 @@ const TaskDetails = () => {
       dispatch(getBPMTaskDetail(bpmTaskId));
       dispatch(getBPMGroups(bpmTaskId));
     }
-     return () => Formio.clearCache();
+    return () => Formio.clearCache();
   }, [bpmTaskId, dispatch]);
 
   // Load form and submission
@@ -95,18 +100,22 @@ const TaskDetails = () => {
                 dispatch(getSubmission("submission", submissionId, formId));
               }
               dispatch(setFormSubmissionLoading(false));
+              return;
+            }
+  
+            if (err === "Bad Token" || err === "Token Expired") {
+              dispatch(resetFormData("form"));
+              dispatch(
+                getFormioRoleIds(((retryErr: any) => {
+                  if (!retryErr) {
+                    fetchForm();
+                  } else {
+                    dispatch(setFormSubmissionLoading(false));
+                  }
+                }) as any)
+              );
             } else {
-              if (err === "Bad Token" || err === "Token Expired") {
-                dispatch(resetFormData("form"));
-                dispatch(
-                  getFormioRoleIds(((err: any) => {
-                    if (!err) fetchForm();
-                    else dispatch(setFormSubmissionLoading(false));
-                  }) as any)
-                );
-              } else {
-                dispatch(setFormSubmissionLoading(false));
-              }
+              dispatch(setFormSubmissionLoading(false));
             }
           }) as any)
         );
@@ -156,6 +165,7 @@ const TaskDetails = () => {
         () => dispatch(setBPMTaskDetailLoader(false))
       )
     );
+    handleBack();
   };
 
   // Custom event handler for form
@@ -172,16 +182,7 @@ const TaskDetails = () => {
     Formio.clearCache();
     dispatch(resetSubmission("submission"));
     dispatch(push(`${redirectUrl}review`));
-  }
-
-  if (!bpmTaskId || isTaskLoading) {
-    return (
-      <Row className="not-selected mt-2 ms-1">
-        <i className="fa fa-info-circle me-2 mt-1" />
-        {t("Select a task in the list.")}
-      </Row>
-    );
-  }
+  };
 
   return (
     <div className="task-details-view">
@@ -205,16 +206,12 @@ const TaskDetails = () => {
         </Card.Body>
       </Card>
       <div className="scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border">
-        <LoadingOverlay active={isTaskUpdating} spinner text={t("Loading...")}>
-          {task?.assignee === currentUser ? (
-            <FormEdit
-              onFormSubmit={onFormSubmitCallback}
-              onCustomEvent={onCustomEventCallBack}
-            />
-          ) : (
-            <FormView />
-          )}
-        </LoadingOverlay>
+        <TaskForm
+          currentUser={currentUser}
+          taskAssignee={task?.assignee}
+          onFormSubmit={onFormSubmitCallback}
+          onCustomEvent={onCustomEventCallBack}
+        />
       </div>
     </div>
   );
