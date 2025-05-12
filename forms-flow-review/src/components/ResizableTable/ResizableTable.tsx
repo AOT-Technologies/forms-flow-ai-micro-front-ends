@@ -1131,7 +1131,7 @@ const extraItems = isFilterCreator ? [
     handleCheckBoxChange();
   };
 
-  const renderTaskList = useCallback(() => {
+  const renderTaskList = () => {
     if (!selectedFilter) {
       return (
         <div
@@ -1254,25 +1254,7 @@ const extraItems = isFilterCreator ? [
         </table>
       </div>
     );
-  }, [
-    selectedFilter,
-    t,
-    columns,
-    sortParams,
-    handleSort,
-    taskList,
-    tasksCount,
-    limit,
-    activePage,
-    handlePageChange,
-    handleLimitChange,
-    history,
-    redirectUrl,
-    handleMouseDown,
-    scrollWrapperRef,
-    tableRef,
-    resizingRef,
-  ]);
+  };
 
   return (
     <div

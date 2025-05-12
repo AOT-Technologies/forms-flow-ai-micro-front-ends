@@ -42,6 +42,10 @@ $white-color: var(--ff-white);
     background: $primary;
     transform: translate(-50%, 0%) rotate(30deg); 
   }
+  .button-reset{
+    background: none;
+    cursor: pointer;
+  }
 }
 
 //Added custom variants prop to the AssignUser component to allow overriding styles in the InputDropdown component.

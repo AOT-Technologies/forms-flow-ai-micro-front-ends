@@ -178,7 +178,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   };
 
   return (
-      <div ref={dropdownRef}  className={`input-dropdown ${variantClass ? variantClass : 'w-100'}`}>
+      <div ref={dropdownRef}  className={`input-dropdown ${variantClass || 'w-100'}`}>
           {textBoxInput ? (
               <InputGroup>
                   <FormInput

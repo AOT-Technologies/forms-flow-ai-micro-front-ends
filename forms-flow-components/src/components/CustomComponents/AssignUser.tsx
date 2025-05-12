@@ -36,7 +36,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   const variant = size === "sm" ? "assign-user-sm" : "assign-user-md";
   const [selectedName, setSelectedName] = useState(null);
   const userData =
-  JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+  JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) ?? {};
   useEffect(() => {
     if(!username){
       setSelected(null);
@@ -89,33 +89,23 @@ export const AssignUser: React.FC<AssignUserProps> = ({
             aria-label={`${ariaLabel}-select-user-option`}
             data-testid={`${dataTestId}-select-user-option`}
           >
-            <div
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') handleMeClick();
-              }}
-              className="option-me"
+            <button
+              className="option-me button-reset"
               onClick={handleMeClick}
               aria-label={`${ariaLabel}-me-button`}
               data-testid={`${dataTestId}-me-button`}
             >
               Me
-            </div>
+            </button>
             <div className="divider"></div>
-            <div
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') handleOthersClick();
-              }}
-              className="option-others"
+            <button
+              className="option-others button-reset"
               onClick={handleOthersClick}
               aria-label={`${ariaLabel}-others-button`}
               data-testid={`${dataTestId}-others-button`}
             >
               Others
-            </div>
+            </button>
           </div>
       )}
 
