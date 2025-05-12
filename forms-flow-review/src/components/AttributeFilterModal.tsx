@@ -20,7 +20,7 @@ import {
 } from "../actions/taskActions";
 import {
   fetchServiceTaskList,
-  saveFilters,
+  createFilter,
 } from "../api/services/filterServices";
 
 export const AttributeFilterModal = ({
@@ -221,7 +221,7 @@ export const AttributeFilterModal = ({
     onClose();
   };
 
-  const saveFilterAttributes = () => {
+  const saveFilterAttributes = async() => {
     const updatedParams = buildUpdatedFilterParams();
     const { roles, users } = getTaskAccess();
     const assignee = getAssignee();
@@ -243,7 +243,7 @@ export const AttributeFilterModal = ({
       filterType: "ATTRIBUTE",
     };
 
-    saveFilters(filterToSave);
+    await createFilter(filterToSave);
     onClose();
   };
 

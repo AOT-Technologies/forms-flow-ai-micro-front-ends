@@ -10,7 +10,7 @@ describe("Confirm Modal Component",()=>{
     const defaultProps = {
         show: true,
         onClose:mockOnClose,
-        secondayBtnAction: mockSecondaryAction,
+        secondaryBtnAction: mockSecondaryAction,
         title:"Confirm",
         message:"Do you want to confirm?",
         messageSecondary: 'are you sure',

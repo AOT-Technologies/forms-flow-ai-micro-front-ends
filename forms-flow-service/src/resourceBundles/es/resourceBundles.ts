@@ -1050,5 +1050,17 @@ export const RESOURCE_BUNDLES_ES = {
   "Day of week": "Día de la semana",
   "selected": "seleccionado",
   "not selected": "no seleccionado",
-  "Select Date": "Seleccionar fecha",
+  "This filter is created and managed by you": "Este filtro ha sido creado y gestionado por usted",
+  "Column widths are saved within a filter. If you wish to adjust them. Click Filter Results, adjust the widths of the columns in the table until you are happy and then save the filter afterwards.": "Los anchos de las columnas se guardan dentro de un filtro. Si desea ajustarlos, haga clic en Resultados del filtro, ajuste los anchos de las columnas en la tabla hasta que esté satisfecho y luego guarde el filtro.",
+  "This filter is created and managed by {{createdBy}}": "Este filtro ha sido creado y gestionado por {{createdBy}}",
+  "Update This Filter": "Actualizar este filtro",
+  "Delete This Filter": "Eliminar este filtro",
+  "Delete This Filter?": "¿Eliminar este filtro?",
+  "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow.": "Este filtro se comparte con otros. Eliminar este filtro lo eliminará para todos y podría afectar su flujo de trabajo.",
+  "No, Keep This Filter": "No, mantener este filtro",
+  "Yes, Delete This Filter For Everybody": "Sí, eliminar este filtro para todos",
+  "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution.": "Este filtro se comparte con otros. Actualizar este filtro lo actualizará para todos y podría afectar su flujo de trabajo. Proceda con precaución.",
+  "No, Cancel Changes": "No, cancelar cambios",
+  "Yes, Update This Filter For Everybody": "Sí, actualizar este filtro para todos",
+  "Select Date": "Seleccionar fecha"
 }

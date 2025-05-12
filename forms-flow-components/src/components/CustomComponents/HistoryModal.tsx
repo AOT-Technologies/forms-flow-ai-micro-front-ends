@@ -319,7 +319,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             onClose={() => setShowConfirmModal(false)}
             primaryBtnText={t(`Keep Current ${currentCategoryLabel}`)}
             secondaryBtnText={t(`Replace Current ${currentCategoryLabel}`)}
-            secondayBtnAction={handleReplaceLayout}
+            secondaryBtnAction={handleReplaceLayout}
             secondoryBtndataTestid="confirm-revert-button"
           />
         )}
