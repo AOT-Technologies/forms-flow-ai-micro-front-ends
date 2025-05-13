@@ -15,8 +15,8 @@ const initialState = {
     name: { sortOrder: "asc" },
     assignee: { sortOrder: "asc" },
   },
-  firstResult: 0,
   limit: 5,
+  activePage: 1,
   selectedFilter: {},
   selectedAttributeFilter: {},
   taskId: null,
@@ -36,6 +36,8 @@ const initialState = {
   taskGroups: [],
   isGroupLoading: false,
   taskFormSubmissionReload: false,
+  isTaskDetailUpdating: false,
+  error : null,
 };
 
 interface TaskAction {
@@ -98,7 +100,6 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, limit: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
       return { ...state, filterListSearchParams: action.payload };
-    //
     case ACTION_CONSTANTS.BPM_TASK_DETAIL:
       return { ...state, taskDetail: action.payload };
     case ACTION_CONSTANTS.BPM_TASK_FORM_ID:
@@ -109,14 +110,16 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, taskGroups: action.payload, isGroupLoading: false };
     case ACTION_CONSTANTS.IS_TASK_GROUP_LOADING:
       return { ...state, isGroupLoading: action.payload };
-    case ACTION_CONSTANTS.ERROR:
-      return {
-        ...state,
-        taskId: null,
-        error: action.payload
-      };
+
     case ACTION_CONSTANTS.RELOAD_TASK_FORM_SUBMISSION:
       return { ...state, taskFormSubmissionReload: action.payload };
+    case ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING:
+        return { ...state, isTaskDetailUpdating: action.payload };
+    case ACTION_CONSTANTS.ERROR:
+      return { ...state, error: action.payload };   
+    case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:
+      return {...state, ...action.payload}
+
     default:
       return state;
   }

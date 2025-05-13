@@ -23,9 +23,10 @@ export const getFormUrlWithFormIdSubmissionId = (formId, submissionId) => {
 };
 
 export const taskDetailVariableDataFormatter = (taskVariableData) => {
-  const res = {};
-  for (let variable in taskVariableData) {
-    res[variable] = taskVariableData[variable].value;
-  }
-  return res;
-};
+    const res = {};
+    for (let variable in taskVariableData) {
+      res[variable] = taskVariableData[variable].value;
+    }
+    return res;
+  };
+

@@ -15,6 +15,7 @@ import {
   ButtonDropdown,
   AddIcon,
   PencilIcon,
+  AssignUser,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import {
@@ -26,7 +27,8 @@ import {
   setFilterListParams,
   setFilterListSortParams,
   setTaskListLimit,
-  setDefaultFilter,
+  setDefaultFilter, 
+  resetTaskListParams,
   setSelectedBpmAttributeFilter,
 } from "../../actions/taskActions";
 
@@ -37,6 +39,9 @@ import {
   fetchBPMTaskCount,
   fetchServiceTaskList,
   updateDefaultFilter,
+  claimBPMTask,
+  unClaimBPMTask,
+  updateAssigneeBPMTask,
   updateFilter,
   fetchAttributeFilterList,
 } from "../../api/services/filterServices";
@@ -71,10 +76,135 @@ interface DateRange {
   endDate: Date | null;
 }
 
+ // Utility function for retry logic
+ const retryTaskUpdate = (
+  taskId: string,
+  reqData: any,
+  firstResult: number,
+  dispatch: Function,
+  RETRY_DELAY_TIME: number,
+  limit: number
+) => {
+  setTimeout(() => {
+    dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
+  }, RETRY_DELAY_TIME);
+};
+
+const updateBpmTasksAndDetails = (
+  err: Error | null,
+  taskId: string,
+  dispatch: Function,
+  reqData: any,
+  firstResult: number,
+  RETRY_DELAY_TIME: number,
+  limit: number
+) =>{
+if(err)
+  console.log('Error in task updation-',err);
+retryTaskUpdate(taskId, reqData, firstResult, dispatch, RETRY_DELAY_TIME, limit);}
+
+const onChangeClaim = (
+  task: Task,
+  selectedUserName: string,
+  dispatch: Function,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number
+) => {
+if (selectedUserName && selectedUserName !== task.assignee) {
+  dispatch(
+    // eslint-disable-next-line no-unused-vars
+    updateAssigneeBPMTask(task?.id, selectedUserName, (err) => updateBpmTasksAndDetails(
+      err, 
+      task?.id, 
+      dispatch, 
+      reqData, 
+      firstResult, 
+      RETRY_DELAY_TIME,
+      limit))
+  );
+}
+};
+
+const onClaim = (
+  taskId: string,
+  userData: any,
+  dispatch: Function,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number
+) => {
+dispatch(
+  claimBPMTask(taskId, userData?.preferred_username, (err) => updateBpmTasksAndDetails(
+    err, 
+    taskId, 
+    dispatch,
+    reqData, 
+    firstResult, 
+    RETRY_DELAY_TIME,
+    limit))
+);
+};
+
+const onUnClaimTask = (
+  taskId: string,
+  dispatch: Function,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number
+) => {
+dispatch(
+  // eslint-disable-next-line no-unused-vars
+  unClaimBPMTask(taskId, (err) => updateBpmTasksAndDetails(
+    err, 
+    taskId, 
+    dispatch,
+    reqData, 
+    firstResult, 
+    RETRY_DELAY_TIME,
+    limit))
+);
+};
+
+const renderAssigneeComponent = (
+  task: Task,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number,
+  dispatch: Function,
+  userData: any,
+  userList: any
+) => {
+return (
+  <AssignUser
+    size="sm"
+    users={userList?.data ?? []}
+    username={task?.assignee}
+    meOnClick={() => onClaim(task?.id, userData, dispatch, limit, RETRY_DELAY_TIME, reqData, firstResult)}
+    optionSelect={(userName) => onChangeClaim(task, userName, dispatch, limit, RETRY_DELAY_TIME, reqData, firstResult)}
+    handleCloseClick={() => onUnClaimTask(task?.id, dispatch, limit, RETRY_DELAY_TIME, reqData, firstResult)}
+  />
+);
+};
+
 // Extracted table cell rendering component
-const getCellValue = (column, task) => {
+const getCellValue = (
+  column: Column,
+  task: Task,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number,
+  dispatch: Function,
+  userData: any,
+  userList: any
+) => {
   const { sortKey } = column;
-  const { name: taskName, created, assignee, _embedded } = task ?? {};
+  const { name: taskName, created, _embedded } = task ?? {};
   const variables = _embedded?.variable ?? [];
   if (column.sortKey === "applicationId") {
     return variables.find((v) => v.name === "applicationId")?.value ?? "-";
@@ -86,13 +216,34 @@ const getCellValue = (column, task) => {
     case "created":
       return created ? HelperServices.getLocaldate(created) : "N/A";
     case "assignee":
-      return assignee ?? "Unassigned";
+      return renderAssigneeComponent(
+        task, 
+        limit, 
+        RETRY_DELAY_TIME,
+        reqData,   
+        firstResult,
+        dispatch,
+        userData,
+        userList);
     default:
       return variables.find((v) => v.name === sortKey)?.value ?? "-";
   }
 };
 
-const TaskTableCell = ({ task, column, index, redirectUrl, history, t }) => {
+const TaskTableCell = ({ 
+  task, 
+  column, 
+  index, 
+  redirectUrl, 
+  history, 
+  t, 
+  limit,
+  RETRY_DELAY_TIME,
+  reqData,
+  firstResult,
+  dispatch,
+  userData,
+  userList }) => {
   if (column.sortKey === "actions") {
     return (
       <td key={`action-${task.id}-${index}`}>
@@ -116,9 +267,27 @@ const TaskTableCell = ({ task, column, index, redirectUrl, history, t }) => {
     <td
       key={`cell-${task.id}-${column.sortKey}`}
       data-testid={`task-${task.id}-${column.sortKey}`}
-      aria-label={`${t(column.name)}: ${getCellValue(column, task)}`}
+      aria-label={`${t(column.name)}: ${getCellValue(
+        column, 
+        task, 
+        limit, 
+        RETRY_DELAY_TIME, 
+        reqData,   
+        firstResult,
+        dispatch,
+        userData,
+        userList)}`}
     >
-      {getCellValue(column, task)}
+      {getCellValue(
+        column, 
+        task, 
+        limit, 
+        RETRY_DELAY_TIME, 
+        reqData,   
+        firstResult,
+        dispatch,
+        userData,
+        userList)}
     </td>
   );
 };
@@ -178,7 +347,19 @@ const TableHeaderCell = ({
 };
 
 // Extracted task row component
-const TaskRow = ({ task, columns, redirectUrl, history, t }) => {
+const TaskRow = ({ 
+  task, 
+  columns, 
+  redirectUrl, 
+  history, 
+  t,   
+  limit,
+  RETRY_DELAY_TIME,
+  reqData,
+  firstResult,
+  dispatch,
+  userData,
+  userList }) => {
   return (
     <tr
       key={`row-${task.id}`}
@@ -196,6 +377,13 @@ const TaskRow = ({ task, columns, redirectUrl, history, t }) => {
           redirectUrl={redirectUrl}
           history={history}
           t={t}
+          limit={limit}
+          RETRY_DELAY_TIME={RETRY_DELAY_TIME}
+          reqData={reqData}
+          firstResult={firstResult}
+          dispatch={dispatch}
+          userData={userData}
+          userList={userList}
         />
       ))}
     </tr>
@@ -215,6 +403,13 @@ const TaskTable = ({
   tableRef,
   redirectUrl,
   history,
+  limit,
+  RETRY_DELAY_TIME,
+  reqData,
+  firstResult,
+  dispatch,
+  userData,
+  userList
 }) => {
   return (
     <table
@@ -263,6 +458,13 @@ const TaskTable = ({
               redirectUrl={redirectUrl}
               history={history}
               t={t}
+              limit={limit}
+              RETRY_DELAY_TIME={RETRY_DELAY_TIME}
+              reqData={reqData}
+              firstResult={firstResult}
+              dispatch={dispatch}
+              userData={userData}
+              userList={userList}
             />
           ))
         )}
@@ -274,7 +476,7 @@ const TaskTable = ({
 export function ResizableTable(): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
+  const RETRY_DELAY_TIME = 2000;
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
   const [isAssigned, setIsAssigned] = useState(false);
@@ -287,7 +489,6 @@ export function ResizableTable(): JSX.Element {
     selectedFilter = null,
     selectedAttributeFilter = null,
     taskId: bpmTaskId = null,
-    firstResult = 0,
     limit,
     tasksList: taskList = [],
     defaultFilter = null,
@@ -298,6 +499,7 @@ export function ResizableTable(): JSX.Element {
     activePage,
     tasksCount,
     isTaskListLoading,
+    filterCached,
   } = useSelector((state: any) => state.task ?? {});
   const selectedFilterId = selectedFilter?.id ?? null;
   const selectedAttributeFilterId = selectedAttributeFilter?.id ?? null;
@@ -315,7 +517,6 @@ export function ResizableTable(): JSX.Element {
   }, []);
 
   const [columns, setColumns] = useState<Column[]>([]);
-
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const resizingRef = useRef(null);
@@ -338,6 +539,7 @@ export function ResizableTable(): JSX.Element {
   const [filterToEdit, setFilterToEdit] = useState(null);
   const [canEditFilter, setCanEditFilter] = useState(false);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const userList = useSelector((state: any) => state.task?.userList);
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
@@ -345,6 +547,8 @@ export function ResizableTable(): JSX.Element {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
+  const userData = StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
+
   const isFilterCreator = userRoles.includes("create_filters");
   const isFilterAdmin = userRoles.includes("manage_all_filters");
 
@@ -412,7 +616,7 @@ export function ResizableTable(): JSX.Element {
         },
       };
       dispatch(setBPMTaskLoader(true));
-      dispatch(fetchServiceTaskList(updatedFilter, null, firstResult, limit));
+      dispatch(fetchServiceTaskList(updatedFilter, null, activePage, limit));
     }
   }, [isAssigned]);
 
@@ -728,8 +932,13 @@ const extraItems = isFilterCreator ? [
       dispatch(setBPMTaskLoader(true));
       dispatch(setBPMTaskListActivePage(1));
       dispatch(
-        fetchServiceTaskList(cloneDeep(updatedParams), null, firstResult, limit)
+        fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
       );
+    }else if(filterCached){ 
+        dispatch(resetTaskListParams({filterCached:false}));
+        dispatch(
+          fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
+        );
     }
   }, [
     selectedAttributeFilterId,
@@ -740,8 +949,6 @@ const extraItems = isFilterCreator ? [
     bpmattributeFilterList,
     selectedFilter,
     sortParams,
-    firstResult,
-    limit,
     reqData,
   ]);
 
@@ -800,14 +1007,14 @@ const extraItems = isFilterCreator ? [
       dispatch(setBPMTaskLoader(true));
       dispatch(setBPMTaskListActivePage(1));
       dispatch(
-        fetchServiceTaskList(formattedReqData, null, firstResult, limit)
+        fetchServiceTaskList(formattedReqData, null, activePage, limit)
       );
     }
   }, [
     dispatch,
     reqData,
     selectedFilter,
-    firstResult,
+    activePage,
     limit,
     searchParams,
     bpmFiltersList,
@@ -885,17 +1092,17 @@ const extraItems = isFilterCreator ? [
     (newLimit) => {
       dispatch(setBPMTaskLoader(true));
       dispatch(setTaskListLimit(newLimit));
-      dispatch(fetchServiceTaskList(reqData, null, firstResult, newLimit));
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(fetchServiceTaskList(reqData, null, 1, newLimit));
     },
-    [dispatch, reqData, firstResult]
+    [dispatch, reqData, activePage]
   );
 
   const handlePageChange = useCallback(
     (pageNumber) => {
       dispatch(setBPMTaskListActivePage(pageNumber));
       dispatch(setBPMTaskLoader(true));
-      const firstResultIndex = limit * pageNumber - limit;
-      dispatch(fetchServiceTaskList(reqData, null, firstResultIndex, limit));
+      dispatch(fetchServiceTaskList(reqData, null, pageNumber, limit));
     },
     [dispatch, limit, reqData]
   );
@@ -907,7 +1114,7 @@ const extraItems = isFilterCreator ? [
     handleCheckBoxChange();
   };
 
-  const renderTaskList = useCallback(() => {
+  const renderTaskList = () => {
     if (!selectedFilter) {
       return (
         <div
@@ -986,6 +1193,13 @@ const extraItems = isFilterCreator ? [
                 tableRef={tableRef}
                 redirectUrl={redirectUrl}
                 history={history}
+                limit={limit}
+                RETRY_DELAY_TIME={RETRY_DELAY_TIME}
+                reqData={reqData}
+                firstResult={activePage}
+                dispatch={dispatch}
+                userData={userData}
+                userList={userList}
               />
             </div>
           </div>
@@ -1023,25 +1237,7 @@ const extraItems = isFilterCreator ? [
         </table>
       </div>
     );
-  }, [
-    selectedFilter,
-    t,
-    columns,
-    sortParams,
-    handleSort,
-    taskList,
-    tasksCount,
-    limit,
-    activePage,
-    handlePageChange,
-    handleLimitChange,
-    history,
-    redirectUrl,
-    handleMouseDown,
-    scrollWrapperRef,
-    tableRef,
-    resizingRef,
-  ]);
+  };
 
   return (
     <div

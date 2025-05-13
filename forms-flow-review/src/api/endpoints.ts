@@ -19,6 +19,10 @@ const API = {
     BPM_GROUP: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/identity-links`,
     BPM_FORM_SUBMIT: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/submit-form`,
     GET_FORM_BY_ALIAS:`${API_PROJECT_URL}/<form_path>`,
+    CLAIM_BPM_TASK: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/claim`,
+    UNCLAIM_BPM_TASK: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/unclaim`,
+    UPDATE_ASSIGNEE_BPM_TASK: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/assignee`,
+
  }
 
 export default API;
