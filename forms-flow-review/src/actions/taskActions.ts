@@ -213,19 +213,13 @@ export const setBPMTaskDetailUpdating = (data) => (dispatch) => {
     });
   };  
 
-export const setBPMTaskDetail = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.BPM_TASK_DETAIL,
-      payload: data,
-    });
-  };
-
 export const bpmActionError = (data) => (dispatch) => {
     dispatch({
       type: ACTION_CONSTANTS.BPM_ERROR,
       payload: data,
     });
   };
+  
 export const resetTaskListParams = (data) =>({
   type: ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS,
   payload: data,
