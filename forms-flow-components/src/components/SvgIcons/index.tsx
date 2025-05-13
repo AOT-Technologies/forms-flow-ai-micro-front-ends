@@ -146,8 +146,9 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
+export const AddIcon = ({ color = baseColor,className, size = 16, ...props }) => (
   <svg
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
     width={size}
     height={size}
@@ -156,6 +157,7 @@ export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
     {...props}
   >
     <path
+      className={className}
       d="M8 1V15"
       stroke={color}
       strokeWidth="2"
@@ -163,6 +165,7 @@ export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
       strokeLinejoin="round"
     />
     <path
+      className={className}
       d="M1 8L15 8"
       stroke={color}
       strokeWidth="2"
@@ -392,15 +395,18 @@ export const DownArrowIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const PencilIcon = ({ color = baseColor, ...props }) => (
+export const PencilIcon = ({ color = baseColor,className, ...props }) => (
   <svg
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
     width="18"
     height="18"
     viewBox="0 0 18 18"
     fill="none"
+    onClick={props.onClick}
   >
     <path
+      className={className}
       d="M6.53858 3.58705L15.0242 12.0727L16.5 16.5L12.0727 15.0242L3.58705 6.53858M6.53858 3.58705L5.06281 2.11128C4.24777 1.29624 2.92633 1.29624 2.11128 2.11128C1.29624 2.92633 1.29624 4.24777 2.11128 5.06281L3.58705 6.53858M6.53858 3.58705L3.58705 6.53858"
       stroke={color}
       strokeWidth="2"
@@ -689,7 +695,25 @@ export const StarPremiumIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const RefreshIcon = ({ color = baseColor, ...props }) => (
+export const UpdateIcon = ({ color = baseColor, ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="19" 
+    viewBox="0 0 20 19" 
+    fill="none"
+  >
+    <path d="M3.0903 6.45238C4.22418 3.5458 6.93121 1.5 10.0903 1.5C13.2494 1.5 15.9564 3.5458 17.0903 6.45238M17.0903 12.5476C15.9564 15.4542 13.2494 17.5 10.0903 17.5C6.93121 17.5 4.22418 15.4542 3.0903 12.5476M13.6831 12.4777L17.7605 11.2539L18.9843 15.3312M6.58742 6.28665L2.5947 7.86523L1.01611 3.87252" 
+      stroke={color} 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+    />
+  </svg>
+);
+
+export const RefreshIcon = ({ color = baseColor,   width="43",
+  height="43", ...props }) => (
   <svg
     className="icon-wrapper-change"
     width="43"

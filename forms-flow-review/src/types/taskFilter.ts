@@ -31,19 +31,29 @@ export interface FilterCriteria {
   }
   
   export interface Filter {
+    created?: string;
+    modified?: string;
     id?: number;
     tenant?: string | null;
+    description?: string;
     name: string;
+    resourceId?: string;
     criteria: FilterCriteria;
     variables?: FilterVariable[];
+    isMyTasksEnabled ?: boolean;
     properties?: Record<string, any>;
     roles: string[];    
     users: string[];
     status?: string;
+    createdBy?: string;
+    modifiedBy?: string;
     taskVisibleAttributes?: TaskVisibleAttributes;
+    order?: string;
     parentFilterId?: string | null;
     editPermission?: boolean;
     filterType?: string;
+    hide?: boolean;
+    sortOrder?: string;
   }
   
   export interface FilterResponse {

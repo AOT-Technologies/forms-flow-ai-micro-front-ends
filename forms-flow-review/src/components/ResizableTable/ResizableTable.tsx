@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, batch } from "react-redux";
 import {
   TableFooter,
   SortableHeader,
@@ -26,9 +26,9 @@ import {
   setFilterListParams,
   setFilterListSortParams,
   setTaskListLimit,
-  setDefaultFilter,
-  setSelectedTaskID,
+  setDefaultFilter, 
   resetTaskListParams,
+  setSelectedBpmAttributeFilter,
 } from "../../actions/taskActions";
 
 import TaskFilterModal from "../TaskFilterModal";
@@ -38,8 +38,10 @@ import {
   fetchBPMTaskCount,
   fetchServiceTaskList,
   updateDefaultFilter,
+  updateFilter,
+  fetchAttributeFilterList,
 } from "../../api/services/filterServices";
-import { ALL_TASKS } from "../constants/taskConstants";
+import { UN_SAVED_FILTER } from "../constants/taskConstants";
 
 import isEqual from "lodash/isEqual";
 import cloneDeep from "lodash/cloneDeep";
@@ -47,6 +49,7 @@ import Loading from "../Loading";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { StorageService, HelperServices } from "@formsflow/service";
 import AttributeFilterModal from "../AttributeFilterModal";
+
 interface Column {
   name: string;
   width: number;
@@ -95,7 +98,7 @@ const TaskTableCell = ({ task, column, index, redirectUrl, history, t }) => {
     return (
       <td key={`action-${task.id}-${index}`}>
         <CustomButton
-          className="btn-table"
+          size="table-sm"
           variant="secondary"
           label={t("View")}
           onClick={() =>
@@ -126,7 +129,7 @@ const TableHeaderCell = ({
   column,
   index,
   columnsLength,
-  resizingIndex,
+  currentResizingColumn,
   sortParams,
   handleSort,
   handleMouseDown,
@@ -162,9 +165,9 @@ const TableHeaderCell = ({
       {column.resizable && index < columnsLength - 1 && (
         <div
           className={`column-resizer ${
-            resizingIndex === index ? "resizing" : ""
+            currentResizingColumn?.sortKey === column.sortKey ? "resizing" : ""
           }`}
-          onMouseDown={(e) => handleMouseDown(index, e)}
+          onMouseDown={(e) => handleMouseDown(index, column, e)}
           data-testid={`column-resizer-${column.sortKey}`}
           aria-label={t("Resize {{columnName}} column", {
             columnName: t(column.name),
@@ -214,49 +217,6 @@ const TaskTable = ({
   redirectUrl,
   history,
 }) => {
-  if (taskList?.length === 0 ) {
-    return (
-      <table
-        ref={tableRef}
-        className="resizable-table"
-        data-testid="task-resizable-table"
-        aria-label={t("Tasks data table with resizable columns")}
-      >
-        <thead className="resizable-header">
-          <tr>
-            {columns.map((column, index) => (
-              <TableHeaderCell
-                key={`header-${column.sortKey ?? index}`}
-                column={column}
-                index={index}
-                columnsLength={columns.length}
-                resizingIndex={resizingRef.current}
-                sortParams={sortParams}
-                handleSort={handleSort}
-                handleMouseDown={handleMouseDown}
-                t={t}
-              />
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="empty-row">
-            <td
-              colSpan={columns.length}
-              className="empty-table-message"
-              data-testid="empty-tasks-message"
-              aria-label={t("No tasks message")}
-            >
-              {t(
-                "No tasks have been found. Try a different filter combination or contact your admin."
-              )}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    );
-  }
-
   return (
     <table
       ref={tableRef}
@@ -272,7 +232,7 @@ const TaskTable = ({
               column={column}
               index={index}
               columnsLength={columns.length}
-              resizingIndex={resizingRef.current}
+              currentResizingColumn={resizingRef.current}
               sortParams={sortParams}
               handleSort={handleSort}
               handleMouseDown={handleMouseDown}
@@ -282,16 +242,31 @@ const TaskTable = ({
         </tr>
       </thead>
       <tbody>
-        {taskList.map((task) => (
-          <TaskRow
-            key={`row-${task.id}`}
-            task={task}
-            columns={columns}
-            redirectUrl={redirectUrl}
-            history={history}
-            t={t}
-          />
-        ))}
+        {taskList.length === 0 ? (
+          <tr className="empty-row">
+            <td
+              colSpan={columns.length}
+              className="empty-table-message"
+              data-testid="empty-tasks-message"
+              aria-label={t("No tasks message")}
+            >
+              {t(
+                "No tasks have been found. Try a different filter combination or contact your admin."
+              )}
+            </td>
+          </tr>
+        ) : (
+          taskList.map((task) => (
+            <TaskRow
+              key={`row-${task.id}`}
+              task={task}
+              columns={columns}
+              redirectUrl={redirectUrl}
+              history={history}
+              t={t}
+            />
+          ))
+        )}
       </tbody>
     </table>
   );
@@ -303,12 +278,15 @@ export function ResizableTable(): JSX.Element {
 
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
+  const [isAssigned, setIsAssigned] = useState(false);
   const [taskAttributeData, setTaskAttributeData] = useState([]);
   const [filterParams, setFilterParams] = useState({});
   const history = useHistory();
   const {
     filterList = [],
+    attributeFilterList = [],
     selectedFilter = null,
+    selectedAttributeFilter = null,
     taskId: bpmTaskId = null,
     limit,
     tasksList: taskList = [],
@@ -322,9 +300,11 @@ export function ResizableTable(): JSX.Element {
     isTaskListLoading,
     filterCached,
   } = useSelector((state: any) => state.task ?? {});
-
   const selectedFilterId = selectedFilter?.id ?? null;
+  const selectedAttributeFilterId = selectedAttributeFilter?.id ?? null;
   const bpmFiltersList = filterList;
+  const bpmattributeFilterList = attributeFilterList;
+
   const taskvariables = selectedFilter?.variables ?? [];
 
   const handleToggleFilterModal = useCallback(() => {
@@ -339,7 +319,7 @@ export function ResizableTable(): JSX.Element {
 
   const tableRef = useRef<HTMLTableElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
-  const resizingRef = useRef<number | null>(null);
+  const resizingRef = useRef(null);
   const startXRef = useRef<number>(0);
   const startWidthRef = useRef<number>(0);
   const [showSortModal, setShowSortModal] = useState(false);
@@ -366,8 +346,8 @@ export function ResizableTable(): JSX.Element {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
-  const isFilterCreator = userRoles.includes("createFilters");
-  const isFilterAdmin = userRoles.includes("manageAllFilters");
+  const isFilterCreator = userRoles.includes("create_filters");
+  const isFilterAdmin = userRoles.includes("manage_all_filters");
 
   useEffect(() => {
     dispatch(setBPMFilterLoader(true));
@@ -387,18 +367,56 @@ export function ResizableTable(): JSX.Element {
         }
       })
     );
-  }, [dispatch]);
+  }, [dispatch, defaultFilter]);
 
   useEffect(() => {
-    if (filterList.length > 0) {
-      const filterSelected =
-        filterList.find(
-          (filter) => filter.id === defaultFilter || filter.name === ALL_TASKS
-        ) ?? filterList[0];
+    if (filterList.length === 0) return;
 
-      dispatch(setSelectedBPMFilter(filterSelected));
-    }
+    // Step 1: Determine the default or unsaved filter
+    const filterSelected =
+      filterList.find(
+        (filter) =>
+          filter.id === defaultFilter || filter.name === UN_SAVED_FILTER
+      ) ?? filterList[0];
+
+    if (!filterSelected?.id) return;
+
+    // Step 2: Clear current attribute filters
+    dispatch(setSelectedBpmAttributeFilter({}));
+
+    // Step 3: Fetch attribute filters for the selected filter ID
+    const handleAttributeFilterList = (err: Error | null, data: any) => {
+      if (err) return;
+
+      const attributeFilters = data?.attributeFilters ?? [];
+      const attributefilterSelected =
+        attributeFilters.find((f: any) => f.name === UN_SAVED_FILTER) ||
+        attributeFilters[0];
+
+      batch(() => {
+        dispatch(setSelectedBPMFilter(filterSelected));
+        dispatch(setSelectedBpmAttributeFilter(attributefilterSelected || {}));
+      });
+    };
+
+    dispatch(fetchAttributeFilterList(filterSelected.id, handleAttributeFilterList));
   }, [filterList.length, defaultFilter, dispatch]);
+
+
+  useEffect(() => {
+    if (selectedFilter.id) {
+      const updatedFilter = {
+        ...reqData,
+        criteria: {
+          ...reqData.criteria,
+          ...(isAssigned && { assigneeExpression: "${ currentUser() }" }),
+        },
+      };
+      dispatch(setBPMTaskLoader(true));
+      dispatch(fetchServiceTaskList(updatedFilter, null, activePage, limit));
+    }
+  }, [isAssigned]);
+
 
   useEffect(() => {
     if (Array.isArray(taskvariables)) {
@@ -407,7 +425,7 @@ export function ResizableTable(): JSX.Element {
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map((variable) => ({
           name: variable.label,
-          width: 200,
+          width: variable.width ?? 200,
           sortKey: variable.name,
           resizable: true,
         }));
@@ -421,10 +439,16 @@ export function ResizableTable(): JSX.Element {
         });
       }
 
-      setColumns(dynamicColumns);
+      // Only update if columns are different
+      setColumns((prevColumns) => {
+        if (!isEqual(prevColumns, dynamicColumns)) {
+          return dynamicColumns;
+        }
+        return prevColumns;
+      });
     }
-  }, [taskvariables]);
 
+}, [taskvariables]);
 
   const handleSortApply = useCallback(
     (selectedSortOption, selectedSortOrder) => {
@@ -473,6 +497,15 @@ export function ResizableTable(): JSX.Element {
     setCanEditFilter(isEditable);
     setShowTaskFilterModal(true);
   }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
+
+  useEffect(() => {  
+    const currentFilter = filterList.find((item) => item.id === defaultFilter);
+    if (currentFilter) {
+      const checkedVariables = currentFilter.variables?.filter(variable => variable.isChecked);
+      setTaskAttributeData(checkedVariables);
+    }
+  }, [filterList]);
+
   const changeFilterSelection = useCallback(
     (filter) => {
       const selectedFilter = filterList.find((item) => item.id === filter.id);
@@ -482,8 +515,6 @@ export function ResizableTable(): JSX.Element {
         (variable) => variable.isChecked === true
       );
       setTaskAttributeData(taskAttributes);
-      dispatch(setSelectedBPMFilter(selectedFilter));
-
       const defaultFilterId =
         selectedFilter.id === defaultFilter ? null : selectedFilter.id;
       updateDefaultFilter(defaultFilterId)
@@ -493,12 +524,24 @@ export function ResizableTable(): JSX.Element {
         .catch((error) =>
           console.error("Error updating default filter:", error)
         );
-
-      dispatch(setSelectedTaskID(defaultFilterId));
       dispatch(setBPMTaskListActivePage(1));
     },
     [dispatch, defaultFilter, filterList]
   );
+
+  const changeAttributeFilterSelection = useCallback(
+    (attributeFilter) => {
+      const selectedAttributeFilter = bpmattributeFilterList.find(
+        (item) => item.id === attributeFilter.id
+      );
+      if (!selectedAttributeFilter) return;
+
+      dispatch(setSelectedBpmAttributeFilter(selectedAttributeFilter));
+      // Do not trigger fetch here; useEffect will handle it
+    },
+    [dispatch, bpmattributeFilterList]
+  );
+
   const filterDropdownItems = useMemo(() => {
     if (!Array.isArray(filtersCount) || filtersCount.length === 0) {
       return [
@@ -522,12 +565,12 @@ export function ResizableTable(): JSX.Element {
       }),
     }));
 
-    const extraItems = [
+const extraItems = isFilterCreator ? [
       {
         content: (
           <span>
             <span>
-              <AddIcon />
+              <AddIcon className="filter-plus-icon" />
             </span>{" "}
             {t("Custom Filter")}
           </span>
@@ -540,8 +583,8 @@ export function ResizableTable(): JSX.Element {
       {
         content: (
           <span>
-            <span>
-              <PencilIcon />
+            <span >
+              <PencilIcon className="filter-edit-icon"  />
             </span>{" "}
             {t("Re-order And Hide Filters")}
           </span>
@@ -551,7 +594,7 @@ export function ResizableTable(): JSX.Element {
         dataTestId: "filter-item-reorder",
         ariaLabel: t("Re-order And Hide Filters"),
       },
-    ];
+    ]: [];
 
     return [...mappedItems, ...extraItems];
   }, [
@@ -560,44 +603,80 @@ export function ResizableTable(): JSX.Element {
     t,
     handleToggleFilterModal,
     changeFilterSelection,
+    isFilterCreator
   ]);
-
   const filterDropdownAttributeItems = useMemo(() => {
-    const extraItems = [
+    // Generate items based on the attributeFilterList
+    const attributeItems =
+      Array.isArray(attributeFilterList) && attributeFilterList.length > 0
+        ? attributeFilterList.map((filter) => ({
+            content: `${t(filter.name)}`,
+            onClick: () => changeAttributeFilterSelection(filter),
+            type: String(filter.id),
+            dataTestId: `attr-filter-item-${filter.id}`,
+            ariaLabel: t("Select attribute filter {{filterName}}", {
+              filterName: t(filter.name),
+            }),
+          }))
+        : [
+            {
+              content: <em>{t("No attribute filters found")}</em>,
+              onClick: () => {},
+              type: "none",
+              dataTestId: "no-attr-filters",
+              ariaLabel: t("No attribute filters available"),
+            },
+          ];
+
+    const extraItems = isFilterCreator ? [
       {
         content: (
-          <span>
             <span>
-              <AddIcon />
+            <span>
+              <AddIcon className="filter-plus-icon" />
             </span>{" "}
-            {t("Custom Filter")}
+            {t("Custom Attribute Filter")}
           </span>
         ),
         onClick: handleToggleAttrFilterModal,
         type: "custom",
-        dataTestId: "filter-item-custom",
-        ariaLabel: t("Custom Filter"),
+        dataTestId: "attr-filter-item-custom",
+        ariaLabel: t("Custom Attribute Filter"),
       },
       {
         content: (
-          <span>
             <span>
-              <PencilIcon />
+            <span>
+              <PencilIcon className="filter-edit-icon" />
             </span>{" "}
-            {t("Re-order And Hide Filters")}
+            {t("Re-order And Hide Attribute Filters")}
           </span>
         ),
-        onClick: () => console.log("Re-order clicked"),
+        onClick: () => console.log("Re-order attribute filters clicked"),
         type: "reorder",
-        dataTestId: "filter-item-reorder",
-        ariaLabel: t("Re-order And Hide Filters"),
+        dataTestId: "attr-filter-item-reorder",
+        ariaLabel: t("Re-order And Hide Attribute Filters"),
       },
-    ];
+    ]: [];
 
-    return [...extraItems];
-  }, [t, handleToggleAttrFilterModal]);
+    return [...attributeItems, ...extraItems];
+  }, [
+    attributeFilterList,
+    t,
+    handleToggleAttrFilterModal,
+    changeAttributeFilterSelection,
+    isFilterCreator
+  ]);
+
+
+  const hasFetchedInitially = useRef(false);
 
   useEffect(() => {
+    if (!hasFetchedInitially.current) {
+      hasFetchedInitially.current = true;
+      return;
+    }
+
     const activeKey = sortParams?.activeKey;
     const transformedSorting =
       activeKey && sortParams?.[activeKey]?.sortOrder
@@ -623,10 +702,19 @@ export function ResizableTable(): JSX.Element {
     );
     if (!selectedParams) return;
 
+    const selectedBpmAttributeFilter = bpmattributeFilterList.find(
+      (item) => item.id === selectedAttributeFilterId
+    );
+
+    if (selectedAttributeFilterId && !selectedBpmAttributeFilter) return;
+
+    const criteriaToUse =
+      selectedBpmAttributeFilter?.criteria ?? selectedParams.criteria;
+
     const updatedParams = {
       ...selectedParams,
       criteria: {
-        ...selectedParams.criteria,
+        ...criteriaToUse,
         ...reqParamData,
       },
     };
@@ -650,11 +738,12 @@ export function ResizableTable(): JSX.Element {
         );
     }
   }, [
-    selectedFilterId,
+    selectedAttributeFilterId,
     searchParams,
     dispatch,
     dateRange,
     bpmFiltersList,
+    bpmattributeFilterList,
     selectedFilter,
     sortParams,
     reqData,
@@ -733,10 +822,9 @@ export function ResizableTable(): JSX.Element {
 
   // Column resizing logic (updated to only resize specific columns)
   const handleMouseDown = useCallback(
-    (index: number, e: React.MouseEvent): void => {
+    (index: number, column: any, e: React.MouseEvent): void => {
       if (!columns[index].resizable) return;
-
-      resizingRef.current = index;
+      resizingRef.current = column;
       startXRef.current = e.pageX;
       startWidthRef.current = columns[index].width;
       document.addEventListener("mousemove", handleMouseMove);
@@ -747,22 +835,36 @@ export function ResizableTable(): JSX.Element {
 
   const handleMouseMove = useCallback((e: MouseEvent): void => {
     if (resizingRef.current === null) return;
-
     const diff = e.pageX - startXRef.current;
     const newWidth = Math.max(50, startWidthRef.current + diff);
-
+    resizingRef.current.newWidth = newWidth;
     setColumns((prev) =>
-      prev.map((col, i) =>
-        i === resizingRef.current ? { ...col, width: newWidth } : col
+      prev.map((col) =>
+        col.sortKey === resizingRef.current.sortKey
+          ? { ...col, width: newWidth }
+          : col
       )
     );
   }, []);
 
   const handleMouseUp = useCallback((): void => {
+    // fetch the current column details and udpate with new width
+    const updatedData = cloneDeep(selectedFilter);
+    const variables = updatedData.variables.map((variable: any) => {
+      if (variable.name === resizingRef.current.sortKey) {
+        return { ...variable, width: resizingRef.current.newWidth };
+      }
+      return variable;
+    });
+    // Update the selected filter with the new width
+    // not waiting for response because we don't want to block the UI
+    updateFilter({ variables }, selectedFilterId);
+
+    //reset the resizing reference and remove event listeners
     resizingRef.current = null;
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
-  }, [handleMouseMove]);
+  }, [handleMouseMove, selectedFilter, selectedFilterId]);
 
   // Sorting modal handlers
   const handleSortModalClose = useCallback(() => {
@@ -773,6 +875,8 @@ export function ResizableTable(): JSX.Element {
     setShowSortModal(true);
   }, []);
 
+  // Cleanup function to remove event listeners
+  // This is important to prevent memory leaks and ensure that the event listeners are removed when the component unmounts
   useEffect(() => {
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
@@ -800,7 +904,12 @@ export function ResizableTable(): JSX.Element {
     [dispatch, limit, reqData]
   );
 
-  
+  const handleCheckBoxChange = () => {
+    setIsAssigned(!isAssigned);
+  };
+  const onLabelClick = () => {
+    handleCheckBoxChange();
+  };
 
   const renderTaskList = useCallback(() => {
     if (!selectedFilter) {
@@ -830,8 +939,13 @@ export function ResizableTable(): JSX.Element {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="empty-table-message" data-testid="empty-columns-message">
-                      {t("No tasks have been found. Try a different filter combination or contact your admin.")}
+                    <td
+                      className="empty-table-message"
+                      data-testid="empty-columns-message"
+                    >
+                      {t(
+                        "No tasks have been found. Try a different filter combination or contact your admin."
+                      )}
                     </td>
                   </tr>
                 </tbody>
@@ -841,7 +955,7 @@ export function ResizableTable(): JSX.Element {
         </div>
       );
     }
-    
+
     return (
       <div
         className="container-wrapper"
@@ -941,8 +1055,8 @@ export function ResizableTable(): JSX.Element {
     >
       <div className="row w-100 mb-3 g-2">
         {/* Left Filters - Stack on small, inline on md+ */}
-        <div className="col-12 col-md d-flex flex-wrap align-items-center">
-          <div className="me-2 mb-2">
+        <div className="col-12 col-md d-flex flex-wrap gap-3 align-items-center">
+          <div className="mb-2">
             <ButtonDropdown
               label={
                 <span
@@ -970,13 +1084,26 @@ export function ResizableTable(): JSX.Element {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
-          <div className="me-2 mb-2">
+          <div className="mb-2">
             <ButtonDropdown
-              label={t("Attribute Filter")}
+              label={
+                <span
+                  className="filter-large"
+                  title={
+                    selectedAttributeFilter?.name
+                      ? `${t(selectedAttributeFilter.name)}`
+                      : t("Select  Attribute Filter")
+                  }
+                >
+                  {selectedAttributeFilter?.name
+                    ? `${t(selectedAttributeFilter.name)}`
+                    : t("Select Attribute Filter")}
+                </span>
+              }
               variant="primary"
               size="md"
               dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
@@ -989,15 +1116,15 @@ export function ResizableTable(): JSX.Element {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
-          <div className="me-2 mb-2">
+          <div className="mb-2">
             <DateRangePicker
               value={dateRange}
               onChange={setDateRange}
-              placeholder={t("Filter Dates")}
+              placeholder={t("Filter Created Date")}
               dataTestId="date-range-picker"
               ariaLabel={t("Select date range for filtering")}
               startDateAriaLabel={t("Start date")}
@@ -1005,19 +1132,24 @@ export function ResizableTable(): JSX.Element {
             />
           </div>
 
-          <span className="text-muted me-2">
+          <span className="text-muted">
             <AddIcon size="8" />
           </span>
 
           <div className="mb-2">
-            <CustomButton
-              variant="secondary"
-              size="md"
-              label={t("Filter Created Date")}
-              onClick={handleToggleFilterModal}
-              dataTestId="open-create-filter-modal"
-              ariaLabel={t("Toggle Create Filter Modal")}
-            />
+          <button className={`custom-checkbox-container button-as-div ${
+              isAssigned ? "checked" :""
+            }`}
+            onClick={onLabelClick}>
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={isAssigned}
+            onChange={handleCheckBoxChange}
+            data-testid="assign-to-me-checkbox"
+          />
+          <span className="custom-checkbox-label">{t("Assign to me")}</span>
+        </button>
           </div>
         </div>
 

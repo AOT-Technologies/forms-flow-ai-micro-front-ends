@@ -1132,6 +1132,7 @@ $black-color: var(--ff-black);
       cursor: pointer;
       &:hover{
         background: $primary-light !important;
+        color:$black-color !important;
       }
     }
       .active-form{
@@ -1214,8 +1215,25 @@ $black-color: var(--ff-black);
     padding-top: var(--spacer-075);
   }
 
-  .task-form-filter {
-    background-color: $gray-light !important;
+
+  .form-selection-input{
+    color: var(--default-font-color) !important;
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid var(--ff-primary) !important;
+    outline: none;
+    display: flex;
+    padding:  var(--spacer-050) 0px var(--spacer-050) var(--spacer-100) !important;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    background-color: var(--ff-gray-light) !important;
+    height: 40px !important;
+    .form-selection-input-container{
+      display:flex;
+      padding: var(--spacer-050) var(--spacer-075) !important;
+      cursor: pointer ;
+    }
   }
 }
 .custom-dropdown-menu { // will remove after integrating the actual dropdown
