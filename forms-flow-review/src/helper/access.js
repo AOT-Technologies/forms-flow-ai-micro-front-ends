@@ -56,10 +56,6 @@ export const setFormAndSubmissionAccess = (type, data) => {
             roles: [CLIENT_ID],
             type: "create_own",
           },
-          // {
-          //   roles: [CLIENT_ID],
-          //   type: "create_own",
-          // },
           {
             roles: [CLIENT_ID],
             type: "read_own",
