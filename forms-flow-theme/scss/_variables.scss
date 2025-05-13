@@ -60,6 +60,9 @@ $white-color: var(--ff-white);
   .filter-edit-icon,.filter-plus-icon{
     stroke: $white-color !important;
   }
+  .shared-icon {
+    stroke: $white-color !important;
+  }
 }
 
 .taskDropdown>.dropdown-menu::before {

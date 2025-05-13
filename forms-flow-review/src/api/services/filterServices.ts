@@ -196,5 +196,8 @@ export const fetchUserList = (...rest) => {
   return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${id}`, {}, "", false, {
     ...token
   });
-
+ }; 
+ 
+export const saveFilterPreference= (data) =>{
+  return RequestService.httpPOSTRequest(`${API.GET_FILTER_PREFERENCE}`,data);
 };

@@ -3,28 +3,40 @@ import { FormVariableIcon, DraggableIcon } from "../SvgIcons/index";
 import { StyleServices } from "@formsflow/service";
 
 interface FilterItem {
-  label: string;
+  label?: string;
   name: string;
-  isChecked: boolean;
-  sortOrder: number;
-  isTaskVariable: boolean;
+  isChecked?: boolean;
+  sortOrder?: number;
+  isTaskVariable?: boolean;
+  itemId?:number;
+  icon?:React.ReactNode;
 }
 
 interface DragAndDropFilterProps {
   items: FilterItem[];
-  onUpdate: (updatedItems: FilterItem[]) => void;
+  onUpdate?: (updatedItems: FilterItem[]) => void;
+  icon?:React.ReactNode;
 }
 
-export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate }) => {
+export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate, icon }) => {
 
-  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
-
   useEffect(() => {
+    
     onUpdate(filterItems);
   }, [filterItems, onUpdate]);
+  useEffect(() => {
+    // Update the sortOrder i key in each item if it is null or undefined to ensure that it is a number 
+    const updatedItems = filterItems.map((items,index)=>{
+      return {
+        ...items,
+        sortOrder: items.sortOrder ?? index,
+      };
+    })
+    setFilterItems(updatedItems);
+  }, []);
 
   const onDragStart = (e: React.DragEvent<HTMLSpanElement>, index: number) => {
     e.stopPropagation();
@@ -90,7 +102,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
       <ul>
         {filterItems.map((item, index) => (
           <li
-            key={item.name}
+            key={index}
             className={`draggable-item ${draggingIndex === index ? "dragging" : ""}`}
             onDragOver={onDragOver}
             onDrop={onDrop}
@@ -117,12 +129,12 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
             </div>
 
             <button className="label cursor-pointer drag-as-div" onClick={() => onLabelClick(index)}>
-              {item.label}
+              {item.label ? item.label : item.name}
             </button>
 
             <div className="dotted-line"></div>
 
-            {item.isTaskVariable && <FormVariableIcon color={darkColor} />}
+            {item.isTaskVariable && icon }{item.icon}
           </li>
         ))}
       </ul>

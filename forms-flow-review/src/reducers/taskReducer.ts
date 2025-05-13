@@ -31,6 +31,7 @@ const initialState = {
     assignee: { sortOrder: "asc" },
   },
   tasksCount: 0,
+  taskFilterPreference: [],
 };
 
 interface TaskAction {
@@ -77,7 +78,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         return {
           ...state,
           selectedAttributeFilter: action.payload,
-        };
+      };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
       return { ...state, defaultFilter: action.payload };
     case ACTION_CONSTANTS.SELECTED_TASK_ID:
@@ -94,6 +95,8 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, limit: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
       return { ...state, filterListSearchParams: action.payload };
+    case ACTION_CONSTANTS.FILTER_PREFERENCE_LIST:
+      return { ...state, taskFilterPreference: action.payload };
     default:
       return state;
   }

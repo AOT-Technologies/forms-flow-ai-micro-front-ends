@@ -12,6 +12,7 @@ const API = {
     GET_ATTRIBUTE_FILTERS: `${WEB_BASE_URL}/filter/<filter_id>`,
     UPDATE_DEFAULT_FILTER: `${WEB_BASE_URL}/user/default-filter`,
     GET_FORM_BY_ID: `${API_PROJECT_URL}/form`,
+    GET_FILTER_PREFERENCE: `${WEB_BASE_URL}/filter/filter-preference`,
  }
 
 export default API;

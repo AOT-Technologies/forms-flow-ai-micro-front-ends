@@ -12,7 +12,8 @@ import {
   FormInput,
   CustomInfo,
   DragandDropSort,
-  useSuccessCountdown
+  useSuccessCountdown,
+  FormVariableIcon
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash } from "../helper/helper.js";
 import {
@@ -36,7 +37,7 @@ import {
   setUserGroups
 } from "../actions/taskActions";
 import { Filter, FilterCriteria, UserDetail } from "../types/taskFilter.js";
-import { StorageService } from "@formsflow/service";
+import { StorageService ,StyleServices} from "@formsflow/service";
 import { FormSelectionModal } from "./FormSelectionModal";
 
 export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
@@ -63,7 +64,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
     formName: "",
   });
   const [variableArray, setVariableArray] = useState([]);
-
+  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
   const {
     userList = { data: [] },
@@ -496,6 +497,7 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
                 <DragandDropSort
                     items={variableArray}
                     onUpdate={handleUpdateOrder}
+                    icon = { <FormVariableIcon color = {darkColor} /> }
                     data-testid="columns-sort"
                 />
             )}
