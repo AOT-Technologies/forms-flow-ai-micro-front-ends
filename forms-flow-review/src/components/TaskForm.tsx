@@ -1,12 +1,16 @@
 import React, { useMemo } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-
-import { selectRoot, selectError, Form } from "@aot-technologies/formio-react";
+import {
+  selectRoot,
+  selectError,
+  Form,
+} from "@aot-technologies/formio-react";
 import Loading from "./Loading";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
-import { CUSTOM_SUBMISSION_ENABLE, CUSTOM_SUBMISSION_URL } from "../constants";
+import {
+  CUSTOM_SUBMISSION_ENABLE,
+  CUSTOM_SUBMISSION_URL,
+} from "../constants";
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
@@ -37,31 +41,24 @@ const TaskForm: React.FC<TaskFormProps> = ({
     return reduxSubmission.submission;
   }, [customSubmission, reduxSubmission]);
 
-  // Deep clone submission to prevent mutation issues
+ // Deep clone submission to prevent mutation issues
   const safeSubmission = useMemo(() => {
     return rawSubmission ? JSON.parse(JSON.stringify(rawSubmission)) : null;
   }, [rawSubmission]);
 
+
   const isLoading =
-    isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data;
-  // Show loading UI if loading
+  isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data;
+// Show loading UI if loading
   if (isLoading) {
     return (
-      <div className="ms-4 mb-5 me-4 wizard-tab service-task-details">
-        <div className="skeleton-form-wrapper pt-3">
-          <Skeleton height={70} className="mb-3" />
-          <Skeleton height={30} width={200} className="mb-3" />
-          <Skeleton count={5} height={45} className="mb-3" />
-          <Skeleton height={40} width={100} className="mt-4" />
+      <div className="container">
+        <div className="main-header">
+          <h3 className="task-head text-truncate form-title">
+          </h3>
         </div>
+        <Loading />
       </div>
-      // <div className="container">
-      //   <div className="main-header">
-      //     <h3 className="task-head text-truncate form-title">
-      //     </h3>
-      //   </div>
-      //   <Loading />
-      // </div>
     );
   }
 
@@ -71,22 +68,22 @@ const TaskForm: React.FC<TaskFormProps> = ({
       <div className="main-header">
         <h3 className="task-head text-truncate form-title">{form?.title}</h3>
       </div>
-      <div className="ms-4 mb-5 me-4 wizard-tab service-task-details">
-        <Form
-          form={form}
-          submission={safeSubmission}
-          url={reduxSubmission?.url}
-          options={{
-            ...options,
-            i18n: RESOURCE_BUNDLES_DATA,
-            language,
-            readOnly: isReadOnly,
-            viewAsHtml: isReadOnly,
-          }}
-          onSubmit={isReadOnly ? undefined : onFormSubmit}
-          onCustomEvent={onCustomEvent}
-        />
-      </div>
+        <div className="ms-4 mb-5 me-4 wizard-tab service-task-details">
+          <Form
+            form={form}
+            submission={safeSubmission}
+            url={reduxSubmission?.url}
+            options={{
+              ...options,
+              i18n: RESOURCE_BUNDLES_DATA,
+              language,
+              readOnly: isReadOnly,
+              viewAsHtml: isReadOnly,
+            }}
+            onSubmit={isReadOnly ? undefined : onFormSubmit}
+            onCustomEvent={onCustomEvent}
+          />
+        </div>
     </div>
   );
 };

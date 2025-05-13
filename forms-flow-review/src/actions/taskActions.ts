@@ -206,28 +206,19 @@ export const setBPMFilterSearchParams = (data) => (dispatch) => {
     });
   };
 
-
-  // Actions for Task History
-  export const setAppHistoryLoading = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.IS_HISTORY_LOADING,
-      payload: data,
-    });
-  };
-
-  export const setApplicationHistoryList = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.LIST_APPLICATION_HISTORY,
-      payload: data,
-    });
-  };
-
-  export const setBPMTaskDetailUpdating = (data) => (dispatch) => {
+export const setBPMTaskDetailUpdating = (data) => (dispatch) => {
     dispatch({
       type: ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING,
       payload: data,
     });
   };  
+
+export const setBPMTaskDetail = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_TASK_DETAIL,
+      payload: data,
+    });
+  };
 
 export const bpmActionError = (data) => (dispatch) => {
     dispatch({

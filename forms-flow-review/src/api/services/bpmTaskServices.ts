@@ -2,7 +2,7 @@ import API from "../endpoints";
 import { RequestService } from "@formsflow/service";
 import { replaceUrl } from "../../helper/helper";
 import axios from "axios";
-import { setBPMTaskDetail, setCustomSubmission, serviceActionError, setAppHistoryLoading, setApplicationHistoryList } from "../../actions/taskActions";
+import { setBPMTaskDetail, setCustomSubmission, serviceActionError } from "../../actions/taskActions";
 import { taskDetailVariableDataFormatter } from "./formatterService";
 
 export const getBPMTaskDetail = (taskId, ...rest) => {
@@ -107,38 +107,6 @@ export const getCustomSubmission = (submissionId, formId, ...rest) => {
       })
       .catch((err) => {
         done(err, null);
-      });
-  };
-};
-
-export const getApplicationHistory = (applicationId, ...rest) => {
-  const done = rest.length ? rest[0] : () => {};
-  return (dispatch) => {
-    const apiUrlAppHistory = replaceUrl(
-      API.GET_APPLICATION_HISTORY_API,
-      "<application_id>",
-      applicationId
-    );
-
-    RequestService.httpGETRequest(apiUrlAppHistory, {} )
-      .then((res) => {
-        if (res.data) {
-          const applications = res.data.applications;
-          let data = applications.map((app) => {
-            return { ...app };
-          });
-          dispatch(setApplicationHistoryList(data));
-          dispatch(setAppHistoryLoading(false));
-          done(null, res.data);
-        } else {
-          dispatch(serviceActionError(res));
-          dispatch(setAppHistoryLoading(false));
-        }
-      })
-      .catch((error) => {
-        dispatch(serviceActionError(error));
-        dispatch(setAppHistoryLoading(false));
-        done(error);
       });
   };
 };

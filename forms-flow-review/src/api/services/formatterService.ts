@@ -22,9 +22,6 @@ export const getFormUrlWithFormIdSubmissionId = (formId, submissionId) => {
   return `${AppConfig.projectUrl}/form/${formId}/submission/${submissionId}`;
 };
 
-export const getFormUrl = (formId, submissionId, redirectUrl) => {
-  return `${window.location.origin}${redirectUrl}form/${formId}/submission/${submissionId}`;
-};
 export const taskDetailVariableDataFormatter = (taskVariableData) => {
     const res = {};
     for (let variable in taskVariableData) {

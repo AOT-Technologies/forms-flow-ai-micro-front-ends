@@ -38,9 +38,6 @@ const initialState = {
   taskFormSubmissionReload: false,
   isTaskDetailUpdating: false,
   error : null,
-  isHistoryListLoading: false,
-  appHistory: [],
-
 };
 
 interface TaskAction {
@@ -62,7 +59,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return {
         ...state,
         userDetail: action.payload,
-      };
+  };
     case ACTION_CONSTANTS.IS_PROCESS_STATUS_LOADING:
       return { ...state, isProcessLoading: action.payload };
     case ACTION_CONSTANTS.UPDATE_LIST_PARAMS:
@@ -83,10 +80,10 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         filterListSearchParams: {},
       };
     case ACTION_CONSTANTS.BPM_SELECTED_ATTRIBUTE_FILTER:
-      return {
-        ...state,
-        selectedAttributeFilter: action.payload,
-      };
+        return {
+          ...state,
+          selectedAttributeFilter: action.payload,
+        };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
       return { ...state, defaultFilter: action.payload };
     case ACTION_CONSTANTS.SELECTED_TASK_ID:
@@ -116,18 +113,12 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
 
     case ACTION_CONSTANTS.RELOAD_TASK_FORM_SUBMISSION:
       return { ...state, taskFormSubmissionReload: action.payload };
-
     case ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING:
         return { ...state, isTaskDetailUpdating: action.payload };
     case ACTION_CONSTANTS.ERROR:
       return { ...state, error: action.payload };   
     case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:
       return {...state, ...action.payload}
-
-    case ACTION_CONSTANTS.IS_HISTORY_LOADING:
-      return { ...state, isHistoryListLoading: action.payload };
-    case ACTION_CONSTANTS.LIST_APPLICATION_HISTORY:
-      return { ...state, appHistory: action.payload };
 
     default:
       return state;
