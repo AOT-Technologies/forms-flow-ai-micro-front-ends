@@ -174,3 +174,8 @@ export const setBPMFilterSearchParams = (data) => (dispatch) => {
       payload: data,
     });
   };
+
+export const resetTaskListParams = (data) =>({
+  type: ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS,
+  payload: data,
+})

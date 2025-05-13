@@ -37,12 +37,22 @@ class StorageService {
     localStorage.setItem(key,value);
   }
   /**
+   * sets a new value for the key if present in the session storage
+   * new key/value pair is created if the key is not present
+   * @param key - key to be set in the session storage
+   * @param value - value to be set in the session storage don't need to be stringified
+   */
+  public static saveDataToSessionStorage(key: string, value: Object): void {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  }
+  /**
    * removes the key value pair from the session storage if
    * the key is present.
    * @param key
    */
   public static delete(key: string): void {
     sessionStorage.removeItem(key);
+    localStorage.removeItem(key);
   }
   /**
    * Removes all key/value pairs present in the session storage

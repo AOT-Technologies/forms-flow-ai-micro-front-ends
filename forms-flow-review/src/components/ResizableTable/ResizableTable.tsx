@@ -26,7 +26,8 @@ import {
   setFilterListParams,
   setFilterListSortParams,
   setTaskListLimit,
-  setDefaultFilter,
+  setDefaultFilter, 
+  resetTaskListParams,
   setSelectedBpmAttributeFilter,
 } from "../../actions/taskActions";
 
@@ -287,7 +288,6 @@ export function ResizableTable(): JSX.Element {
     selectedFilter = null,
     selectedAttributeFilter = null,
     taskId: bpmTaskId = null,
-    firstResult = 0,
     limit,
     tasksList: taskList = [],
     defaultFilter = null,
@@ -298,6 +298,7 @@ export function ResizableTable(): JSX.Element {
     activePage,
     tasksCount,
     isTaskListLoading,
+    filterCached,
   } = useSelector((state: any) => state.task ?? {});
   const selectedFilterId = selectedFilter?.id ?? null;
   const selectedAttributeFilterId = selectedAttributeFilter?.id ?? null;
@@ -412,7 +413,7 @@ export function ResizableTable(): JSX.Element {
         },
       };
       dispatch(setBPMTaskLoader(true));
-      dispatch(fetchServiceTaskList(updatedFilter, null, firstResult, limit));
+      dispatch(fetchServiceTaskList(updatedFilter, null, activePage, limit));
     }
   }, [isAssigned]);
 
@@ -728,8 +729,13 @@ const extraItems = isFilterCreator ? [
       dispatch(setBPMTaskLoader(true));
       dispatch(setBPMTaskListActivePage(1));
       dispatch(
-        fetchServiceTaskList(cloneDeep(updatedParams), null, firstResult, limit)
+        fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
       );
+    }else if(filterCached){ 
+        dispatch(resetTaskListParams({filterCached:false}));
+        dispatch(
+          fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
+        );
     }
   }, [
     selectedAttributeFilterId,
@@ -740,8 +746,6 @@ const extraItems = isFilterCreator ? [
     bpmattributeFilterList,
     selectedFilter,
     sortParams,
-    firstResult,
-    limit,
     reqData,
   ]);
 
@@ -800,14 +804,14 @@ const extraItems = isFilterCreator ? [
       dispatch(setBPMTaskLoader(true));
       dispatch(setBPMTaskListActivePage(1));
       dispatch(
-        fetchServiceTaskList(formattedReqData, null, firstResult, limit)
+        fetchServiceTaskList(formattedReqData, null, activePage, limit)
       );
     }
   }, [
     dispatch,
     reqData,
     selectedFilter,
-    firstResult,
+    activePage,
     limit,
     searchParams,
     bpmFiltersList,
@@ -885,17 +889,17 @@ const extraItems = isFilterCreator ? [
     (newLimit) => {
       dispatch(setBPMTaskLoader(true));
       dispatch(setTaskListLimit(newLimit));
-      dispatch(fetchServiceTaskList(reqData, null, firstResult, newLimit));
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(fetchServiceTaskList(reqData, null, 1, newLimit));
     },
-    [dispatch, reqData, firstResult]
+    [dispatch, reqData, activePage]
   );
 
   const handlePageChange = useCallback(
     (pageNumber) => {
       dispatch(setBPMTaskListActivePage(pageNumber));
       dispatch(setBPMTaskLoader(true));
-      const firstResultIndex = limit * pageNumber - limit;
-      dispatch(fetchServiceTaskList(reqData, null, firstResultIndex, limit));
+      dispatch(fetchServiceTaskList(reqData, null, pageNumber, limit));
     },
     [dispatch, limit, reqData]
   );

@@ -206,7 +206,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     },
     REVIEW: {
       value: "review",
-      supportedRoutes: ["task"],
+      supportedRoutes: ["task","review"],
     },
     ANALYZE: {
       value: "analyze",
@@ -363,6 +363,10 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                   {
                     name: "Tasks",
                     path: "task",
+                  },
+                  {
+                    name: "Review",
+                    path: "review",
                   },
                 ]}
                 subscribe={props.subscribe}
