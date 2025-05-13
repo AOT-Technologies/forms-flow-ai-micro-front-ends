@@ -123,7 +123,38 @@ export const setTasks = (data: any) => ({
     });
   };
 
-
+  export const setBPMTaskDetail = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_TASK_DETAIL,
+      payload: data,
+    });
+  };
+  export const setBPMTaskFormId = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_TASK_FORM_ID,
+      payload: data,
+    });
+  };
+  
+  export const setFormSubmissionLoading = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.IS_FORM_SUBMISSION_LOADING,
+      payload: data,
+    });
+  };
+  export const resetFormData = (name) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.FORM_RESET,
+      name,
+    });
+  };
+  
+  export const setCustomSubmission = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.CUSTOM_SUBMISSION,
+      payload: data,
+    });
+  };
 export const setBPMTaskDetailLoader = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_LOADING,

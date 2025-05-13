@@ -46,6 +46,8 @@ declare module "@formsflow/service" {
     i18nService,
     StyleServices,
     HelperServices,
+    formioResourceBundle,
+    RESOURCE_BUNDLES_DATA,  
   }: any;
 }
 
@@ -73,6 +75,7 @@ declare module "@formsflow/components" {
     UpdateIcon,
     ConfirmModal,
     useSuccessCountdown
+    BackToPrevIcon,
   }: any;
 }
 
