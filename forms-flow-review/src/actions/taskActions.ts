@@ -173,4 +173,11 @@ export const setBPMFilterSearchParams = (data) => (dispatch) => {
       type: ACTION_CONSTANTS.SELECTED_TASK_ID,
       payload: data,
     });
-  };
+  }; 
+
+  export const setFilterPreference = (data) => (dispatch) => { 
+    dispatch ({ 
+      type: ACTION_CONSTANTS.FILTER_PREFERENCE_LIST,
+      payload: data,
+    })
+  }

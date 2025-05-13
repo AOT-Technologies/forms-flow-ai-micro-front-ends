@@ -67,7 +67,10 @@ declare module "@formsflow/components" {
     DragandDropSort,
     CustomSearch,
     AddIcon,
-    useSuccessCountdown
+    useSuccessCountdown,
+    FormVariableIcon,
+    SharedWithOthersIcon,
+    SharedWithMeIcon
   }: any;
 }
 

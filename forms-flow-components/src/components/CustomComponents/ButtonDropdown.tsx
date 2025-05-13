@@ -12,6 +12,7 @@ interface DropdownItem {
   type?: string;
   dataTestId?: string;
   ariaLabel?: string;
+  className?: string;
 }
 
 interface ButtonDropdownProps {
@@ -66,7 +67,7 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
       const totalWidth = buttonWidth + toggleWidth - 1;
       setMenuStyle({
         width: `${totalWidth}px`,
-        maxHeight: "200px",
+        maxHeight: "480px",
         overflowY: "auto",
         border: "2px solid var(--primary-btn-bg-color)",
         borderTopLeftRadius: "0",
@@ -147,6 +148,7 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
               onClick={() => item.onClick(item.type)}
               data-testid={item.dataTestId}
               aria-label={item.ariaLabel}
+              className={item.className}
             >
               {item.content}
             </Dropdown.Item>

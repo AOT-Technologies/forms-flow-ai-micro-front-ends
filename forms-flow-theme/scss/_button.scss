@@ -375,6 +375,15 @@ $danger-color: var(--ff-danger);
       color: $primary !important; 
       white-space: normal !important;
       word-break: break-word;
+      &.selected-filter-item {
+        background-color: $gray-medium !important;
+        color: $primary !important;
+        border-radius: var(--radius-sm) !important;
+        &:hover {
+          background-color: $primary !important;
+          color:$white-color !important;
+          }
+      }
       &:hover {
         color: $white-color !important;
       }
