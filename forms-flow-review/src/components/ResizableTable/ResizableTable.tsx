@@ -140,11 +140,6 @@ export function ResizableTable(): JSX.Element {
 
   const [columns, setColumns] = useState<Column[]>([]);
 
-  const redirectUrl = useRef(
-    MULTITENANCY_ENABLED
-      ? `/tenant/${useSelector((state: any) => state.tenants?.tenantId)}/`
-      : "/"
-  );
   const [showSortModal, setShowSortModal] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: null,
@@ -162,7 +157,9 @@ export function ResizableTable(): JSX.Element {
   const [filterToEdit, setFilterToEdit] = useState(null);
   const [canEditFilter, setCanEditFilter] = useState(false);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
-
+  const redirectUrl = useRef(
+    MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
+  );
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
