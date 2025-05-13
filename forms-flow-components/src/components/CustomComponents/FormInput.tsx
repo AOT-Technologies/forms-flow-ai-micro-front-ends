@@ -26,6 +26,7 @@ interface FormInputProps {
   autoFocusInput?: boolean;
   minLength?: number;
   maxLength?: number; 
+  variant?: string;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -52,9 +53,16 @@ export const FormInput: React.FC<FormInputProps> = ({
   autoFocusInput = false,
   minLength,
   maxLength, 
+  variant,
 }) => {
   const { t } = useTranslation();
-  const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${className}`;
+  let variantInputHeightClass = '';
+  if (variant === 'assign-user-sm') {
+    variantInputHeightClass = 'assign-user-sm-height';
+  } else if (variant === 'assign-user-md') {
+    variantInputHeightClass = 'assign-user-md-height';
+  }
+  const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${variantInputHeightClass} ${className}`;
   const inputRef = useRef(null);
   useEffect(()=>{ 
     if(autoFocusInput && inputRef.current){

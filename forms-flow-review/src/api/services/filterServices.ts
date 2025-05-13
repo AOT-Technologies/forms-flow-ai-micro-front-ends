@@ -1,8 +1,8 @@
 import API from "../endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
-import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader,setAttributeFilterList } from "../../actions/taskActions";
+import { setAttributeFilterList, setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader, setBPMTaskDetailUpdating } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
-import { replaceUrl } from "../../helper/helper";
+import { replaceUrl } from "../../helper/helper"; 
 
 export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};
@@ -40,10 +40,22 @@ export const fetchUserList = (...rest) => {
   };
   
 
-  export const fetchServiceTaskList = (reqData, taskIdToRemove, firstResult, maxResults, ...rest) => {
+  /**
+   * Fetches the task list from the server and updates the redux store with the task list and count.
+   * @param {Object} reqData - The request data to be sent to the server.
+   * @param {string} taskIdToRemove - The task ID to be removed from the task list.
+   * @param {number} pageNo - The current page number.
+   * @param {number} maxResults - The maximum number of results to be fetched.
+   * @param {function} done - A callback function to be called after the request is completed.
+   */
+  export const fetchServiceTaskList = (reqData, taskIdToRemove, pageNo, maxResults, ...rest) => {
     const done = rest.length ? rest[0] : () => {};
+    // create the firstResult value based on the page number and maxResults
+    // firstResult = (pageNo - 1) * maxResults
+    const firstResultIndex = getFirstResultIndex(pageNo,maxResults);
+
     const apiUrlgetTaskList =
-        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${maxResults || MAX_RESULTS}`;
+        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
     return (dispatch) => {
       RequestService.httpPOSTRequestWithHAL(
         apiUrlgetTaskList,
@@ -100,8 +112,9 @@ export const fetchUserList = (...rest) => {
     );
   };
 
-  export const getFirstResultIndex = (activePage) => {
-    return (activePage * MAX_RESULTS) - MAX_RESULTS;
+  export const getFirstResultIndex = (activePage,limit) => {
+    const limits = limit ?? MAX_RESULTS;
+    return (activePage * limits) - limits;
   };
 
 
@@ -156,9 +169,17 @@ export const fetchUserList = (...rest) => {
   };
 
 
-  export const saveFilters = (data) => {
+  export const createFilter = (data) => {
     return RequestService.httpPOSTRequest(`${API.GET_FILTERS}`, data);
   };
+
+ 
+
+  export const deleteFilter = (id) => {
+    return RequestService.httpDELETERequest(`${API.GET_FILTERS}/${id}`);
+  };
+  
+ 
 
 
 /**
@@ -201,3 +222,66 @@ export const fetchUserList = (...rest) => {
 export const saveFilterPreference= (data) =>{
   return RequestService.httpPOSTRequest(`${API.GET_FILTER_PREFERENCE}`,data);
 };
+
+
+export const claimBPMTask = (taskId, user, ...rest) => {
+  const done = rest.length ? rest[0] : () => {};
+  const apiUrlClaimTask = replaceUrl(API.CLAIM_BPM_TASK, "<task_id>", taskId);
+  return (dispatch) => {
+    RequestService.httpPOSTRequest(apiUrlClaimTask, { userId: user })
+      .then((res) => {
+        done(null, res.data);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        dispatch(serviceActionError(error));
+        dispatch(setBPMTaskDetailUpdating(false));
+        done(error);
+      });
+  };                   
+};
+
+export const unClaimBPMTask = (taskId, ...rest) => {
+  const done = rest.length ? rest[0] : () => {};
+  const apiUrlUnClaimTask = replaceUrl(
+    API.UNCLAIM_BPM_TASK,
+    "<task_id>",
+    taskId
+  );
+  return (dispatch) => {
+    RequestService.httpPOSTRequest(apiUrlUnClaimTask)
+      .then((res) => {
+        // if (res.status === 204) {
+        //TODO REMOVE
+        done(null, res.data);
+        // }
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        dispatch(serviceActionError(error));
+        done(error);
+      });
+  };
+};
+
+export const updateAssigneeBPMTask = (taskId, user, ...rest) => {
+  const done = rest.length ? rest[0] : () => {};
+  const apiUrlClaimTask = replaceUrl(
+    API.UPDATE_ASSIGNEE_BPM_TASK,
+    "<task_id>",
+    taskId
+  );
+  return (dispatch) => {
+    RequestService.httpPOSTRequest(apiUrlClaimTask, { userId: user })
+      .then((res) => {
+        done(null, res.data);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        dispatch(serviceActionError(error));
+        dispatch(setBPMTaskDetailUpdating(false));
+        done(error);
+      });
+  };
+};
+

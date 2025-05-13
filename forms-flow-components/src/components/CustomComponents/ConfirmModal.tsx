@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 interface ConfirmModalProps {
   show: boolean;
   onClose: () => void;
-  secondayBtnAction: () => void;
+  secondaryBtnAction: () => void;
   title: string;
   message: any;
   messageSecondary?: string;
@@ -27,7 +27,7 @@ interface ConfirmModalProps {
 export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   show,
   onClose,
-  secondayBtnAction,
+  secondaryBtnAction,
   title,
   message,
   messageSecondary = '',
@@ -102,7 +102,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             variant="secondary"
             size="lg"
             label={secondaryBtnText}
-            onClick={secondayBtnAction}
+            onClick={secondaryBtnAction}
             dataTestId={secondoryBtndataTestid}
             ariaLabel={secondoryBtnariaLabel}
             disabled={secondaryBtnDisable}

@@ -123,7 +123,38 @@ export const setTasks = (data: any) => ({
     });
   };
 
-
+  export const setBPMTaskDetail = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_TASK_DETAIL,
+      payload: data,
+    });
+  };
+  export const setBPMTaskFormId = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_TASK_FORM_ID,
+      payload: data,
+    });
+  };
+  
+  export const setFormSubmissionLoading = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.IS_FORM_SUBMISSION_LOADING,
+      payload: data,
+    });
+  };
+  export const resetFormData = (name) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.FORM_RESET,
+      name,
+    });
+  };
+  
+  export const setCustomSubmission = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.CUSTOM_SUBMISSION,
+      payload: data,
+    });
+  };
 export const setBPMTaskDetailLoader = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_LOADING,
@@ -180,4 +211,23 @@ export const setBPMFilterSearchParams = (data) => (dispatch) => {
       type: ACTION_CONSTANTS.FILTER_PREFERENCE_LIST,
       payload: data,
     })
-  }
+  };
+
+export const setBPMTaskDetailUpdating = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING,
+      payload: data,
+    });
+  };  
+
+export const bpmActionError = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.BPM_ERROR,
+      payload: data,
+    });
+  };
+  
+export const resetTaskListParams = (data) =>({
+  type: ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS,
+  payload: data,
+})

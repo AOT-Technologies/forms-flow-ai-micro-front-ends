@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { MAX_RESULTS, PRIVATE_ONLY_YOU } from "../constants/index";
+import {  PRIVATE_ONLY_YOU } from "../constants/index";
 import { StorageService, StyleServices } from "@formsflow/service";
 import { Filter, FilterCriteria } from "../types/taskFilter";
 import {
@@ -20,7 +20,7 @@ import {
 } from "../actions/taskActions";
 import {
   fetchServiceTaskList,
-  saveFilters,
+  createFilter,
 } from "../api/services/filterServices";
 
 export const AttributeFilterModal = ({
@@ -38,7 +38,8 @@ export const AttributeFilterModal = ({
   const [filterNameError, setFilterNameError] = useState("");
   const [filterName, setFilterName] = useState("");
   const [shareAttrFilter, setShareAttrFilter] = useState(PRIVATE_ONLY_YOU);
-  const firstResult = useSelector((state: any) => state.task.firstResult);
+  const activePage = useSelector((state: any) => state.task.activePage);
+  const limit = useSelector((state: any) => state.task.limit);
   const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE);
   const isCreateFilters = userRoles?.includes("create_filters");
   const filterNameLength = 50;
@@ -213,15 +214,15 @@ export const AttributeFilterModal = ({
       fetchServiceTaskList(
         getFilterData(updatedParams),
         null,
-        firstResult,
-        MAX_RESULTS
+        activePage,
+        limit,
       )
     );
 
     onClose();
   };
 
-  const saveFilterAttributes = () => {
+  const saveFilterAttributes = async() => {
     const updatedParams = buildUpdatedFilterParams();
     const { roles, users } = getTaskAccess();
     const assignee = getAssignee();
@@ -243,7 +244,7 @@ export const AttributeFilterModal = ({
       filterType: "ATTRIBUTE",
     };
 
-    saveFilters(filterToSave);
+    await createFilter(filterToSave);
     onClose();
   };
 

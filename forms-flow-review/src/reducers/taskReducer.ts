@@ -15,8 +15,8 @@ const initialState = {
     name: { sortOrder: "asc" },
     assignee: { sortOrder: "asc" },
   },
-  firstResult: 0,
   limit: 5,
+  activePage: 1,
   selectedFilter: {},
   selectedAttributeFilter: {},
   taskId: null,
@@ -32,6 +32,13 @@ const initialState = {
   },
   tasksCount: 0,
   taskFilterPreference: [],
+  formId: "",
+  isFormSubmissionLoading: false,
+  taskGroups: [],
+  isGroupLoading: false,
+  taskFormSubmissionReload: false,
+  isTaskDetailUpdating: false,
+  error : null,
 };
 
 interface TaskAction {
@@ -53,8 +60,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return {
         ...state,
         userDetail: action.payload,
-        showApplications: setShowApplications(action.payload?.groups ?? []),
-      };
+  };
     case ACTION_CONSTANTS.IS_PROCESS_STATUS_LOADING:
       return { ...state, isProcessLoading: action.payload };
     case ACTION_CONSTANTS.UPDATE_LIST_PARAMS:
@@ -97,6 +103,26 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, filterListSearchParams: action.payload };
     case ACTION_CONSTANTS.FILTER_PREFERENCE_LIST:
       return { ...state, taskFilterPreference: action.payload };
+    case ACTION_CONSTANTS.BPM_TASK_DETAIL:
+      return { ...state, taskDetail: action.payload };
+    case ACTION_CONSTANTS.BPM_TASK_FORM_ID:
+      return { ...state, formId: action.payload };
+    case ACTION_CONSTANTS.IS_FORM_SUBMISSION_LOADING:
+      return { ...state, isFormSubmissionLoading: action.payload };
+    case ACTION_CONSTANTS.SET_TASK_GROUP:
+      return { ...state, taskGroups: action.payload, isGroupLoading: false };
+    case ACTION_CONSTANTS.IS_TASK_GROUP_LOADING:
+      return { ...state, isGroupLoading: action.payload };
+
+    case ACTION_CONSTANTS.RELOAD_TASK_FORM_SUBMISSION:
+      return { ...state, taskFormSubmissionReload: action.payload };
+    case ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING:
+        return { ...state, isTaskDetailUpdating: action.payload };
+    case ACTION_CONSTANTS.ERROR:
+      return { ...state, error: action.payload };   
+    case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:
+      return {...state, ...action.payload}
+
     default:
       return state;
   }
