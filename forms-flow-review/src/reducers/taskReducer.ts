@@ -15,8 +15,8 @@ const initialState = {
     name: { sortOrder: "asc" },
     assignee: { sortOrder: "asc" },
   },
-  firstResult: 0,
   limit: 5,
+  activePage: 1,
   selectedFilter: {},
   selectedAttributeFilter: {},
   taskId: null,
@@ -100,6 +100,8 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         return { ...state, isTaskDetailUpdating: action.payload };
     case ACTION_CONSTANTS.ERROR:
       return { ...state, error: action.payload };   
+    case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:
+      return {...state, ...action.payload}
     default:
       return state;
   }
