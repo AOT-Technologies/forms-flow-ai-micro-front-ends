@@ -43,7 +43,7 @@ export const fetchUserList = (...rest) => {
   export const fetchServiceTaskList = (reqData, taskIdToRemove, firstResult, maxResults, ...rest) => {
     const done = rest.length ? rest[0] : () => {};
     const apiUrlgetTaskList =
-        `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${maxResults || MAX_RESULTS}`;
+     `${API.GET_BPM_TASK_FILTERS}?firstResult=${firstResult}&maxResults=${maxResults ?? MAX_RESULTS}`
     return (dispatch) => {
       RequestService.httpPOSTRequestWithHAL(
         apiUrlgetTaskList,
@@ -156,9 +156,17 @@ export const fetchUserList = (...rest) => {
   };
 
 
-  export const saveFilters = (data) => {
+  export const createFilter = (data) => {
     return RequestService.httpPOSTRequest(`${API.GET_FILTERS}`, data);
   };
+
+ 
+
+  export const deleteFilter = (id) => {
+    return RequestService.httpDELETERequest(`${API.GET_FILTERS}/${id}`);
+  };
+  
+ 
 
 
 /**
@@ -198,3 +206,5 @@ export const fetchUserList = (...rest) => {
   });
 
 };
+
+
