@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { InputDropdown } from "./InputDropdown";
 import { StorageService } from "@formsflow/service";
+import { useTranslation } from "react-i18next";
 interface User {
   id: string;
   email: string;
@@ -31,12 +32,13 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   ariaLabel = "assign-user",
   dataTestId = "assign-user",
 }) => {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
   const [openDropdown, setOpenDropdown] = useState<boolean>(false);
   const variant = size === "sm" ? "assign-user-sm" : "assign-user-md";
   const [selectedName, setSelectedName] = useState(null);
   const userData =
-  JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) ?? {};
+  StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
   useEffect(() => {
     if(!username){
       setSelected(null);
@@ -71,9 +73,9 @@ export const AssignUser: React.FC<AssignUserProps> = ({
       label: user.username,
       value: user.id,
       onClick: () => {
-        if (optionSelect) {
-          optionSelect(user.username);
-        }
+           setSelectedName(user.username);
+           setOpenDropdown(false);
+           optionSelect?.(user.username);
       },
     }))
   : [];
@@ -95,7 +97,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
               aria-label={`${ariaLabel}-me-button`}
               data-testid={`${dataTestId}-me-button`}
             >
-              Me
+               {t("Me")}
             </button>
             <div className="divider"></div>
             <button
@@ -104,7 +106,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
               aria-label={`${ariaLabel}-others-button`}
               data-testid={`${dataTestId}-others-button`}
             >
-              Others
+              {t("Others")}
             </button>
           </div>
       )}

@@ -23,8 +23,8 @@ $white-color: var(--ff-white);
   .option-me,
   .option-others {
     flex: 1;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: var(--font-size-xs) !important;
+    font-weight: var(--font-weight-xl) !important;
     color: $primary;
     border: none;
     cursor: pointer;
@@ -38,7 +38,7 @@ $white-color: var(--ff-white);
   }
   .divider {
     width: 0.063rem;
-    height: 120%;
+    height: var(--text-line-height) !important;
     background: $primary;
     transform: translate(-50%, 0%) rotate(30deg); 
   }
@@ -67,10 +67,8 @@ $white-color: var(--ff-white);
   border: 0.125rem solid $primary !important; 
 }
 .assignee-dropdown-border{
-  border-left: 0.125rem solid $primary !important;
-  border-right: 0.125rem solid $primary !important;
-  border-bottom: 0.125rem solid $primary !important;
-  border-top: none;
+  border: 0.125rem solid $primary !important;
+  border-top: none !important;
 }
 
 

@@ -80,7 +80,8 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
 
   // Handle clear input when using CloseIcon
   const handleClearInput = (e: React.MouseEvent) => {
-    handleCloseClick();
+    e.stopPropagation();
+    handleCloseClick?.();
     setInputValue('');
     setNewInput('');
   };

@@ -2,7 +2,7 @@ import API from "../endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
 import { setAttributeFilterList, setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader, setBPMTaskDetailUpdating } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
-import { replaceUrl } from "../../helper/helper.js"; 
+import { replaceUrl } from "../../helper/helper"; 
 
 export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};
@@ -213,7 +213,6 @@ export const claimBPMTask = (taskId, user, ...rest) => {
   return (dispatch) => {
     RequestService.httpPOSTRequest(apiUrlClaimTask, { userId: user })
       .then((res) => {
-        console.log(res.data);
         done(null, res.data);
       })
       .catch((error) => {
@@ -224,52 +223,6 @@ export const claimBPMTask = (taskId, user, ...rest) => {
       });
   };                   
 };
-
-// export const getBPMTaskDetail = (taskId, ...rest) => {
-//   const done = rest.length ? rest[0] : () => {};
-//   const apiUrlgetTaskDetail = replaceUrl(
-//     API.GET_BPM_TASK_DETAIL,
-//     "<task_id>",
-//     taskId
-//   );
-
-//   const apiUrlgetTaskVariables = replaceUrl(
-//     API.GET_BPM_TASK_VARIABLES,
-//     "<task_id>",
-//     taskId
-//   );
-
-//   const taskDetailReq = RequestService.httpGETRequest(apiUrlgetTaskDetail);
-//   const taskDetailsWithVariableReq = RequestService.httpGETRequest(apiUrlgetTaskVariables);
-
-//   return (dispatch) => {
-//     Promise.all([taskDetailReq, taskDetailsWithVariableReq])
-//       .then(([taskDetailRes, taskVarsRes]) => {
-//         if (taskDetailRes?.data) {
-//           let taskDetail = taskDetailRes.data;
-
-//           if (taskVarsRes?.data) {
-//             const taskDetailUpdates = taskVarsRes.data;
-//             taskDetail = {
-//               ...taskDetailVariableDataFormatter(taskDetailUpdates),
-//               ...taskDetail,
-//             };
-//           }
-
-//           dispatch(setBPMTaskDetail(taskDetail));
-//           dispatch(setBPMTaskDetailLoader(false));
-//           dispatch(setBPMTaskDetailUpdating(false));
-//           done(null, taskDetail);
-//         }
-//       })
-//       .catch((error) => {
-//         dispatch(bpmActionError(error));
-//         dispatch(setBPMTaskDetailLoader(false));
-//         dispatch(setBPMTaskDetailUpdating(false));
-//         done(error);
-//       });
-//   };
-// };
 
 export const unClaimBPMTask = (taskId, ...rest) => {
   const done = rest.length ? rest[0] : () => {};

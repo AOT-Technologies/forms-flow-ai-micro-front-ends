@@ -86,9 +86,7 @@ interface DateRange {
   limit: number
 ) => {
   setTimeout(() => {
-    // dispatch(getBPMTaskDetail(taskId));
     dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
-    // dispatch(setBPMTaskDetailUpdating(false));
   }, RETRY_DELAY_TIME);
 };
 
@@ -101,21 +99,6 @@ const updateBpmTasksAndDetails = (
   RETRY_DELAY_TIME: number,
   limit: number
 ) =>{
-// if (!err) {
-//   if (!SocketIOService.isConnected()) {
-//     if (selectedFilter) {
-//       dispatch(getBPMTaskDetail(taskId));
-//       dispatch(
-//         fetchServiceTaskList(reqData,null,firstResult)
-//       );
-//     } else {
-//       dispatch(setBPMTaskDetailUpdating(false));
-//     }
-//   }
-// } else {
-//   dispatch(setBPMTaskDetailUpdating(false));
-// }
-// Above code commented and added below 3 lines for refreshing the tasks on each update operation without checking conditions.
 if(err)
   console.log('Error in task updation-',err);
 retryTaskUpdate(taskId, reqData, firstResult, dispatch, RETRY_DELAY_TIME, limit);}
@@ -130,7 +113,6 @@ const onChangeClaim = (
   firstResult: number
 ) => {
 if (selectedUserName && selectedUserName !== task.assignee) {
-  // dispatch(setBPMTaskDetailUpdating(true));
   dispatch(
     // eslint-disable-next-line no-unused-vars
     updateAssigneeBPMTask(task?.id, selectedUserName, (err) => updateBpmTasksAndDetails(
@@ -154,7 +136,6 @@ const onClaim = (
   reqData: any,
   firstResult: number
 ) => {
-// dispatch(setBPMTaskDetailUpdating(true));
 dispatch(
   claimBPMTask(taskId, userData?.preferred_username, (err) => updateBpmTasksAndDetails(
     err, 
@@ -175,7 +156,6 @@ const onUnClaimTask = (
   reqData: any,
   firstResult: number
 ) => {
-// dispatch(setBPMTaskDetailUpdating(true));
 dispatch(
   // eslint-disable-next-line no-unused-vars
   unClaimBPMTask(taskId, (err) => updateBpmTasksAndDetails(
@@ -567,10 +547,10 @@ export function ResizableTable(): JSX.Element {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
-  const userData = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) ?? {};
+  const userData = StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
 
-  const isFilterCreator = userRoles.includes("createFilters");
-  const isFilterAdmin = userRoles.includes("manageAllFilters");
+  const isFilterCreator = userRoles.includes("create_filters");
+  const isFilterAdmin = userRoles.includes("manage_all_filters");
 
   useEffect(() => {
     dispatch(setBPMFilterLoader(true));
