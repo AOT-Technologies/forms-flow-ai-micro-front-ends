@@ -12,6 +12,11 @@ const API = {
     GET_ATTRIBUTE_FILTERS: `${WEB_BASE_URL}/filter/<filter_id>`,
     UPDATE_DEFAULT_FILTER: `${WEB_BASE_URL}/user/default-filter`,
     GET_FORM_BY_ID: `${API_PROJECT_URL}/form`,
+    CLAIM_BPM_TASK: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/claim`,
+    GET_BPM_TASK_DETAIL: `${BPM_BASE_URL_EXT}/v1/task/<task_id>`,
+    GET_BPM_TASK_VARIABLES: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/variables`,
+    UNCLAIM_BPM_TASK: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/unclaim`,
+    UPDATE_ASSIGNEE_BPM_TASK: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/assignee`,
  }
 
 export default API;

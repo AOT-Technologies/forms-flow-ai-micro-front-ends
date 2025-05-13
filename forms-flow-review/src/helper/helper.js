@@ -1,3 +1,13 @@
+function getEnv(env_string) {
+  let ENV_BOOLEAN =
+      (window._env_ && window._env_["REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK"]) ||
+      false;
+
+      return ENV_BOOLEAN === "true" || ENV_BOOLEAN === true;
+}
+
+let userAccessGroupCheckforApplications =getEnv('REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK');
+
 export const trimFirstSlash = (inputString) => {
   if (inputString.startsWith('/')) {
     return inputString.substring(1);
@@ -19,7 +29,7 @@ export const removeTenantKey = (value, tenantkey) => {
   };
 
 export const setShowApplications = (userGroups) => {
-  if (!userAccessGroupCheck.accessAllowApplications) {
+  if (!userAccessGroupCheckforApplications) {
     return true;
   } else if (userGroups?.length) {
     const applicationAccess = GROUPS.applicationsAccess.some((group) =>

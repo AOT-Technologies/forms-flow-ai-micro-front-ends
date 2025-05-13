@@ -31,6 +31,8 @@ const initialState = {
     assignee: { sortOrder: "asc" },
   },
   tasksCount: 0,
+  isTaskDetailUpdating: false,
+  error : null,
 };
 
 interface TaskAction {
@@ -94,6 +96,10 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, limit: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
       return { ...state, filterListSearchParams: action.payload };
+    case ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING:
+        return { ...state, isTaskDetailUpdating: action.payload };
+    case ACTION_CONSTANTS.ERROR:
+      return { ...state, error: action.payload };   
     case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:
       return {...state, ...action.payload}
     default:
