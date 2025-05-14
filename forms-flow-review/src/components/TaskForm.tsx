@@ -76,9 +76,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
             options={{
               ...options,
               i18n: RESOURCE_BUNDLES_DATA,
-              language: lang,
               readOnly: isReadOnly,
-              viewAsHtml: isReadOnly,
             }}
             onSubmit={isReadOnly ? undefined : onFormSubmit}
             onCustomEvent={onCustomEvent}
