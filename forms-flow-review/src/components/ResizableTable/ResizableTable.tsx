@@ -15,6 +15,7 @@ import {
   ButtonDropdown,
   AddIcon,
   PencilIcon,
+  AssignUser,
   ReusableResizableTable,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
@@ -39,6 +40,9 @@ import {
   fetchBPMTaskCount,
   fetchServiceTaskList,
   updateDefaultFilter,
+  claimBPMTask,
+  unClaimBPMTask,
+  updateAssigneeBPMTask,
   updateFilter,
   fetchAttributeFilterList,
 } from "../../api/services/filterServices";
@@ -74,10 +78,180 @@ interface DateRange {
   endDate: Date | null;
 }
 
+// Utility function for retry logic
+const retryTaskUpdate = (
+  taskId: string,
+  reqData: any,
+  firstResult: number,
+  dispatch: Function,
+  RETRY_DELAY_TIME: number,
+  limit: number
+) => {
+  setTimeout(() => {
+    dispatch(fetchServiceTaskList(reqData, null, firstResult, limit));
+  }, RETRY_DELAY_TIME);
+};
+
+const updateBpmTasksAndDetails = (
+  err: Error | null,
+  taskId: string,
+  dispatch: Function,
+  reqData: any,
+  firstResult: number,
+  RETRY_DELAY_TIME: number,
+  limit: number
+) => {
+  if (err) console.log("Error in task updation-", err);
+  retryTaskUpdate(
+    taskId,
+    reqData,
+    firstResult,
+    dispatch,
+    RETRY_DELAY_TIME,
+    limit
+  );
+};
+
+const onChangeClaim = (
+  task: Task,
+  selectedUserName: string,
+  dispatch: Function,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number
+) => {
+  if (selectedUserName && selectedUserName !== task.assignee) {
+    dispatch(
+      // eslint-disable-next-line no-unused-vars
+      updateAssigneeBPMTask(task?.id, selectedUserName, (err) =>
+        updateBpmTasksAndDetails(
+          err,
+          task?.id,
+          dispatch,
+          reqData,
+          firstResult,
+          RETRY_DELAY_TIME,
+          limit
+        )
+      )
+    );
+  }
+};
+
+const onClaim = (
+  taskId: string,
+  userData: any,
+  dispatch: Function,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number
+) => {
+  dispatch(
+    claimBPMTask(taskId, userData?.preferred_username, (err) =>
+      updateBpmTasksAndDetails(
+        err,
+        taskId,
+        dispatch,
+        reqData,
+        firstResult,
+        RETRY_DELAY_TIME,
+        limit
+      )
+    )
+  );
+};
+
+const onUnClaimTask = (
+  taskId: string,
+  dispatch: Function,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number
+) => {
+  dispatch(
+    // eslint-disable-next-line no-unused-vars
+    unClaimBPMTask(taskId, (err) =>
+      updateBpmTasksAndDetails(
+        err,
+        taskId,
+        dispatch,
+        reqData,
+        firstResult,
+        RETRY_DELAY_TIME,
+        limit
+      )
+    )
+  );
+};
+
+const renderAssigneeComponent = (
+  task: Task,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number,
+  dispatch: Function,
+  userData: any,
+  userList: any
+) => {
+  return (
+    <AssignUser
+      size="sm"
+      users={userList?.data ?? []}
+      username={task?.assignee}
+      meOnClick={() =>
+        onClaim(
+          task?.id,
+          userData,
+          dispatch,
+          limit,
+          RETRY_DELAY_TIME,
+          reqData,
+          firstResult
+        )
+      }
+      optionSelect={(userName) =>
+        onChangeClaim(
+          task,
+          userName,
+          dispatch,
+          limit,
+          RETRY_DELAY_TIME,
+          reqData,
+          firstResult
+        )
+      }
+      handleCloseClick={() =>
+        onUnClaimTask(
+          task?.id,
+          dispatch,
+          limit,
+          RETRY_DELAY_TIME,
+          reqData,
+          firstResult
+        )
+      }
+    />
+  );
+};
+
 // Extracted table cell rendering component
-const getCellValue = (column, task) => {
+const getCellValue = (
+  column: Column,
+  task: Task,
+  limit: number,
+  RETRY_DELAY_TIME: number,
+  reqData: any,
+  firstResult: number,
+  dispatch: Function,
+  userData: any,
+  userList: any
+) => {
   const { sortKey } = column;
-  const { name: taskName, created, assignee, _embedded } = task ?? {};
+  const { name: taskName, created, _embedded } = task ?? {};
   const variables = _embedded?.variable ?? [];
   if (column.sortKey === "applicationId") {
     return variables.find((v) => v.name === "applicationId")?.value ?? "-";
@@ -89,7 +263,16 @@ const getCellValue = (column, task) => {
     case "created":
       return created ? HelperServices.getLocaldate(created) : "N/A";
     case "assignee":
-      return assignee ?? "Unassigned";
+      return renderAssigneeComponent(
+        task,
+        limit,
+        RETRY_DELAY_TIME,
+        reqData,
+        firstResult,
+        dispatch,
+        userData,
+        userList
+      );
     default:
       return variables.find((v) => v.name === sortKey)?.value ?? "-";
   }
@@ -98,7 +281,7 @@ const getCellValue = (column, task) => {
 export function ResizableTable(): JSX.Element {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
+  const RETRY_DELAY_TIME = 2000;
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
   const [isAssigned, setIsAssigned] = useState(false);
@@ -139,7 +322,7 @@ export function ResizableTable(): JSX.Element {
   }, []);
 
   const [columns, setColumns] = useState<Column[]>([]);
-
+  const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const [showSortModal, setShowSortModal] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: null,
@@ -157,16 +340,20 @@ export function ResizableTable(): JSX.Element {
   const [filterToEdit, setFilterToEdit] = useState(null);
   const [canEditFilter, setCanEditFilter] = useState(false);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const userList = useSelector((state: any) => state.task?.userList);
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
+
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
+  const userData =
+    StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
+
   const isFilterCreator = userRoles.includes("create_filters");
   const isFilterAdmin = userRoles.includes("manage_all_filters");
 
-  // Fetch filters and task counts
   useEffect(() => {
     dispatch(setBPMFilterLoader(true));
     dispatch(
@@ -187,7 +374,6 @@ export function ResizableTable(): JSX.Element {
     );
   }, [dispatch, defaultFilter]);
 
-  // Select default filter and fetch attribute filters
   useEffect(() => {
     if (filterList.length === 0) return;
 
@@ -223,7 +409,6 @@ export function ResizableTable(): JSX.Element {
     );
   }, [filterList.length, defaultFilter, dispatch]);
 
-  // Handle assigned filter change
   useEffect(() => {
     if (selectedFilter.id) {
       const updatedFilter = {
@@ -238,7 +423,6 @@ export function ResizableTable(): JSX.Element {
     }
   }, [isAssigned]);
 
-  // Update columns based on task variables
   useEffect(() => {
     if (Array.isArray(taskvariables)) {
       const dynamicColumns = taskvariables
@@ -270,7 +454,6 @@ export function ResizableTable(): JSX.Element {
     }
   }, [taskvariables]);
 
-  // Sort handlers
   const handleSortApply = useCallback(
     (selectedSortOption, selectedSortOrder) => {
       const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy);
@@ -307,7 +490,6 @@ export function ResizableTable(): JSX.Element {
     [dispatch, sortParams]
   );
 
-  // Edit filter handler
   const handleEditFilter = useCallback(() => {
     if (!selectedFilter) return;
     const matchingFilter = filterList.find((f) => f.id === selectedFilter.id);
@@ -320,7 +502,6 @@ export function ResizableTable(): JSX.Element {
     setShowTaskFilterModal(true);
   }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
 
-  // Load task attributes
   useEffect(() => {
     const currentFilter = filterList.find((item) => item.id === defaultFilter);
     if (currentFilter) {
@@ -331,7 +512,6 @@ export function ResizableTable(): JSX.Element {
     }
   }, [filterList, defaultFilter]);
 
-  // Filter selection handlers
   const changeFilterSelection = useCallback(
     (filter) => {
       const selectedFilter = filterList.find((item) => item.id === filter.id);
@@ -363,11 +543,11 @@ export function ResizableTable(): JSX.Element {
       if (!selectedAttributeFilter) return;
 
       dispatch(setSelectedBpmAttributeFilter(selectedAttributeFilter));
+      // Do not trigger fetch here; useEffect will handle it
     },
     [dispatch, bpmattributeFilterList]
   );
 
-  // Dropdown items for filters
   const filterDropdownItems = useMemo(() => {
     if (!Array.isArray(filtersCount) || filtersCount.length === 0) {
       return [
@@ -433,8 +613,8 @@ export function ResizableTable(): JSX.Element {
     isFilterCreator,
   ]);
 
-  // Dropdown items for attribute filters
   const filterDropdownAttributeItems = useMemo(() => {
+    // Generate items based on the attributeFilterList
     const attributeItems =
       Array.isArray(attributeFilterList) && attributeFilterList.length > 0
         ? attributeFilterList.map((filter) => ({
@@ -500,7 +680,6 @@ export function ResizableTable(): JSX.Element {
 
   const hasFetchedInitially = useRef(false);
 
-  // Fetch tasks when filters or sort parameters change
   useEffect(() => {
     if (!hasFetchedInitially.current) {
       hasFetchedInitially.current = true;
@@ -582,7 +761,7 @@ export function ResizableTable(): JSX.Element {
     filterCached,
   ]);
 
-  // Refresh handler
+  // Refresh handler (same logic as useEffect)
   const handleRefresh = useCallback(() => {
     const activeKey = sortParams?.activeKey;
 
@@ -651,22 +830,20 @@ export function ResizableTable(): JSX.Element {
     sortParams,
   ]);
 
-  // Column resize handler
+  // Handle column resize
   const handleColumnResize = useCallback(
-    (column, newWidth) => {
+    (column: Column, newWidth: number) => {
       // Update the selected filter with the new width
       const updatedData = cloneDeep(selectedFilter);
-      if (updatedData && updatedData.variables) {
-        const variables = updatedData.variables.map((variable: any) => {
-          if (variable.name === column.sortKey) {
-            return { ...variable, width: newWidth };
-          }
-          return variable;
-        });
+      const variables = updatedData.variables.map((variable: any) => {
+        if (variable.name === column.sortKey) {
+          return { ...variable, width: newWidth };
+        }
+        return variable;
+      });
 
-        // Update the filter with the new column widths
-        updateFilter({ variables }, selectedFilterId);
-      }
+      // Update the filter with the new width
+      updateFilter({ variables }, selectedFilterId);
     },
     [selectedFilter, selectedFilterId]
   );
@@ -708,9 +885,15 @@ export function ResizableTable(): JSX.Element {
     handleCheckBoxChange();
   };
 
-  // Render header cell for the reusable table
+  // Render header cell for ReusableResizableTable
   const renderHeaderCell = useCallback(
-    (column, index, columnsLength, currentResizingColumn, handleMouseDown) => {
+    (
+      column: Column,
+      index: number,
+      columnsLength: number,
+      currentResizingColumn: any,
+      handleMouseDown: (index: number, column: any, e: React.MouseEvent) => void
+    ) => {
       const isSortable = ["name", "created", "assignee"].includes(
         column.sortKey
       );
@@ -760,9 +943,9 @@ export function ResizableTable(): JSX.Element {
     [t, sortParams, handleSort]
   );
 
-  // Render row for the reusable table
+  // Render row for ReusableResizableTable
   const renderRow = useCallback(
-    (task, columns, rowIndex) => {
+    (task: Task, columns: Column[], rowIndex: number) => {
       return (
         <tr
           key={`row-${task.id}`}
@@ -795,20 +978,50 @@ export function ResizableTable(): JSX.Element {
               <td
                 key={`cell-${task.id}-${column.sortKey}`}
                 data-testid={`task-${task.id}-${column.sortKey}`}
-                aria-label={`${t(column.name)}: ${getCellValue(column, task)}`}
+                aria-label={`${t(column.name)}: ${getCellValue(
+                  column,
+                  task,
+                  limit,
+                  RETRY_DELAY_TIME,
+                  reqData,
+                  activePage,
+                  dispatch,
+                  userData,
+                  userList
+                )}`}
               >
-                {getCellValue(column, task)}
+                {getCellValue(
+                  column,
+                  task,
+                  limit,
+                  RETRY_DELAY_TIME,
+                  reqData,
+                  activePage,
+                  dispatch,
+                  userData,
+                  userList
+                )}
               </td>
             );
           })}
         </tr>
       );
     },
-    [t, history, redirectUrl]
+    [
+      t,
+      history,
+      redirectUrl,
+      limit,
+      RETRY_DELAY_TIME,
+      reqData,
+      activePage,
+      dispatch,
+      userData,
+      userList,
+    ]
   );
 
-  // Render the task list with the reusable table component
-  const renderTaskList = useCallback(() => {
+  const renderTaskList = () => {
     if (!selectedFilter) {
       return (
         <div
@@ -865,23 +1078,35 @@ export function ResizableTable(): JSX.Element {
           data-testid="table-outer-container"
           aria-label={t("Table outer container")}
         >
-          {/* Use the reusable ResizableTable component here */}
-          <ReusableResizableTable
-            columns={columns}
-            data={taskList}
-            renderRow={renderRow}
-            renderHeaderCell={renderHeaderCell}
-            emptyMessage={t(
-              "No tasks have been found. Try a different filter combination or contact your admin."
-            )}
-            onColumnResize={handleColumnResize}
-            tableClassName="resizable-table"
-            headerClassName="resizable-header"
-            containerClassName="resizable-table-container"
-            scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
-            data-testid="task-resizable-table"
-            aria-label={t("Tasks data table with resizable columns")}
-          />
+          <div
+            className="table-scroll-wrapper resizable-scroll"
+            ref={scrollWrapperRef}
+            data-testid="table-scroll-wrapper"
+            aria-label={t("Scrollable task table content")}
+          >
+            <div
+              className="resizable-table-container"
+              data-testid="inner-table-container"
+              aria-label={t("Inner table container")}
+            >
+              <ReusableResizableTable
+                columns={columns}
+                data={taskList}
+                renderRow={renderRow}
+                renderHeaderCell={renderHeaderCell}
+                emptyMessage={t(
+                  "No tasks have been found. Try a different filter combination or contact your admin."
+                )}
+                onColumnResize={handleColumnResize}
+                tableClassName="resizable-table"
+                headerClassName="resizable-header"
+                containerClassName="resizable-table-container"
+                scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+                dataTestId="task-resizable-table"
+                ariaLabel={t("Tasks data table with resizable columns")}
+              />
+            </div>
+          </div>
         </div>
 
         <table
@@ -916,20 +1141,7 @@ export function ResizableTable(): JSX.Element {
         </table>
       </div>
     );
-  }, [
-    selectedFilter,
-    t,
-    columns,
-    taskList,
-    tasksCount,
-    limit,
-    activePage,
-    handlePageChange,
-    handleLimitChange,
-    renderRow,
-    renderHeaderCell,
-    handleColumnResize,
-  ]);
+  };
 
   return (
     <div

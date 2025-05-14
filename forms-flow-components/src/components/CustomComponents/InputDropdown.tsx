@@ -29,6 +29,9 @@ interface InputDropdownProps {
   inputClassName?: string;
   onBlurDropDown?: () => void; 
   disabled?: boolean;
+  variant?: 'assign-user-sm' | 'assign-user-md'; 
+  handleCloseClick?: () => void;
+  openByDefault?: boolean;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -48,7 +51,10 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   isInvalid,
   inputClassName='',
   onBlurDropDown,
-  disabled = false
+  disabled = false,
+  variant,
+  handleCloseClick,
+  openByDefault = false,
 }) => {
   const { t } = useTranslation();
   const primaryColor = StyleServices.getCSSVariable('--ff-primary');
@@ -64,6 +70,20 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
     if(!disabled){
      setIsDropdownOpen((prev) => !prev);
     }
+  };
+  
+  useEffect(() => {
+    if (openByDefault) {
+      setIsDropdownOpen(true);
+    }
+  }, [openByDefault]);
+
+  // Handle clear input when using CloseIcon
+  const handleClearInput = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleCloseClick?.();
+    setInputValue('');
+    setNewInput('');
   };
 
   useEffect(() => {
@@ -125,8 +145,41 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
     setNewInput(e.target.value);
     setInputValue(e.target.value);
   }
+  let variantClass = '';
+
+  if (variant === 'assign-user-sm') {
+    variantClass = 'assign-user-sm-width';
+  } else if (variant === 'assign-user-md') {
+    variantClass = 'assign-user-md-width';
+  }
+
+  // Determine which icon to show based on variant and inputValue
+  const renderIcon = () => {
+    // Only show CloseIcon when variant is present AND inputValue exists
+    if (variant && inputValue) {
+    return <CloseIcon 
+            onClick={handleClearInput} 
+            color={disabled ? disabledColor : primaryColor} 
+            data-testid="clear-input" 
+            aria-label="Clear input"
+            width={9}
+            height={9}/>;
+    } else {
+    // Default to ChevronIcon in all other cases
+    return <ChevronIcon 
+            color={disabled ? disabledColor : primaryColor} 
+            data-testid="dropdown-input" 
+            aria-label="dropdown input"
+            />;
+    }};
+
+      // Check if an item is the currently selected one
+  const isItemSelected = (item: DropdownItem) => {
+    return item.label === inputValue || item.value === selectedOption;
+  };
+
   return (
-      <div ref={dropdownRef} className="input-dropdown w-100">
+      <div ref={dropdownRef}  className={`input-dropdown ${variantClass || 'w-100'}`}>
           {textBoxInput ? (
               <InputGroup>
                   <FormInput
@@ -140,6 +193,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       className="input-with-close"
                       label={t(dropdownLabel)}
                       feedback={t(feedback)}
+                      variant={variant}
                   />
               </InputGroup>
           ) : (
@@ -151,7 +205,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       onClick={toggleDropdown}
                       ariaLabel={ariaLabelforDropdown}
                       dataTestId={dataTestIdforDropdown}
-                      icon={<ChevronIcon color={disabled ? disabledColor : primaryColor} data-testid="dropdown-input" aria-label="dropdown input"/>}
+                      icon={renderIcon()}
                       className={`${inputClassName} ${isDropdownOpen && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
                       onIconClick={toggleDropdown}
                       label={t(dropdownLabel)}
@@ -159,12 +213,13 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       onBlur={onBlurDropDown}
                       isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
                       feedback={t(feedback)}
+                      variant={variant}
                   />
               </InputGroup>
           )}
 
           {!textBoxInput && isDropdownOpen && !disabled && (
-              <ListGroup>
+              <ListGroup className={`${variant ? "assignee-dropdown-border" : ""}`}>
                   {isAllowInput && (
                       <ListGroup.Item
                           onClick={onFirstItemClick}
@@ -180,6 +235,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                           onClick={() => handleSelect(item)}
                           data-testid={`list-${index}-item`}
                           aria-label={`list-${item.label}-item`}
+                          className={`${isItemSelected(item) ? 'selected-dropdown-item' : ''}`}
                       >
                           {t(item.label)}
                       </ListGroup.Item>

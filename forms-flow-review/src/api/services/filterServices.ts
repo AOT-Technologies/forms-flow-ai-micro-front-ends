@@ -1,8 +1,8 @@
 import API from "../endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
-import { setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader,setAttributeFilterList } from "../../actions/taskActions";
+import { setAttributeFilterList, setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader, setBPMTaskDetailUpdating } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
-import { replaceUrl } from "../../helper/helper";
+import { replaceUrl } from "../../helper/helper"; 
 
 export const fetchUserList = (...rest) => {
     const done = rest.length ? rest[0] : () => {};
@@ -220,4 +220,64 @@ export const fetchUserList = (...rest) => {
 
 };
 
+export const claimBPMTask = (taskId, user, ...rest) => {
+  const done = rest.length ? rest[0] : () => {};
+  const apiUrlClaimTask = replaceUrl(API.CLAIM_BPM_TASK, "<task_id>", taskId);
+  return (dispatch) => {
+    RequestService.httpPOSTRequest(apiUrlClaimTask, { userId: user })
+      .then((res) => {
+        done(null, res.data);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        dispatch(serviceActionError(error));
+        dispatch(setBPMTaskDetailUpdating(false));
+        done(error);
+      });
+  };                   
+};
+
+export const unClaimBPMTask = (taskId, ...rest) => {
+  const done = rest.length ? rest[0] : () => {};
+  const apiUrlUnClaimTask = replaceUrl(
+    API.UNCLAIM_BPM_TASK,
+    "<task_id>",
+    taskId
+  );
+  return (dispatch) => {
+    RequestService.httpPOSTRequest(apiUrlUnClaimTask)
+      .then((res) => {
+        // if (res.status === 204) {
+        //TODO REMOVE
+        done(null, res.data);
+        // }
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        dispatch(serviceActionError(error));
+        done(error);
+      });
+  };
+};
+
+export const updateAssigneeBPMTask = (taskId, user, ...rest) => {
+  const done = rest.length ? rest[0] : () => {};
+  const apiUrlClaimTask = replaceUrl(
+    API.UPDATE_ASSIGNEE_BPM_TASK,
+    "<task_id>",
+    taskId
+  );
+  return (dispatch) => {
+    RequestService.httpPOSTRequest(apiUrlClaimTask, { userId: user })
+      .then((res) => {
+        done(null, res.data);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        dispatch(serviceActionError(error));
+        dispatch(setBPMTaskDetailUpdating(false));
+        done(error);
+      });
+  };
+};
 

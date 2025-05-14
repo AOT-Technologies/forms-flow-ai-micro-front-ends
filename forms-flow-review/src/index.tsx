@@ -5,13 +5,15 @@ import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
-} from "./api/config"; 
+} from "./api/config";
 import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/Loading";
 import TaskList from "./Routes/TaskListing";
-const authorizedRoles = new Set(["view_tasks",
+import TaskDetails from "./Routes/TaskDetails";
+const authorizedRoles = new Set([
+  "view_tasks",
   "manage_all_filters",
   "manage_tasks",
   "view_filters",
@@ -74,22 +76,25 @@ const Review = React.memo((props: any) => {
   if(!isReviewer) return <p>unauthorized</p>
   return (
     <>
-        <div className="main-container " tabIndex={0}>
-          <div className="container">
-            <div className="min-container-height ps-md-3">
-              <Switch>
-                <Route
-                  exact
-                  path={`${BASE_ROUTE}review`}
-                  render={() => <TaskList {...props}/>}
-                />
-                {/* <Redirect from="*" to="/404" /> */}
-              </Switch>
-            </div>
-     
+      <div className="main-container " tabIndex={0}>
+        <div className="container">
+          <div className="min-container-height ps-md-3">
+            <Switch>
+              <Route
+                exact
+                path={`${BASE_ROUTE}review`}
+                render={() => <TaskList {...props} />}
+              />
+              <Route
+                exact
+                path={`${BASE_ROUTE}review/:taskId`}
+                render={() => <TaskDetails {...props} />}
+              />
+              <Redirect from="*" to="/404" />
+            </Switch>
           </div>
         </div>
-   
+        </div>
     </>
   );
 });

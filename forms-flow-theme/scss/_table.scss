@@ -252,8 +252,6 @@ $white-color: var(--ff-white);
 /* Scroll wrapper that handles scrolling */
 .table-scroll-wrapper {
   height: calc(100vh - 14rem) !important; /* Adjust height as needed */
-  overflow-y: auto;
-  overflow-x: auto;
 }
 
 .resizable-scroll {
@@ -339,7 +337,6 @@ $white-color: var(--ff-white);
       border-top: 1px solid transparent;
       border-bottom: 1px solid var(--ff-gray-medium);
       white-space: nowrap;
-      overflow: hidden;
       text-overflow: ellipsis;
     }
 

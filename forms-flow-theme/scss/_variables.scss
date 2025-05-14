@@ -246,11 +246,20 @@ hr {
   max-height: 45vh;
   overflow-y: auto;
 }
-.scrollable-overview {
-  max-height: 90vh;
-  overflow-y: auto; 
+.scrollable-overview,
+.scrollable-overview-with-header {
+  overflow-y: auto;
   padding-bottom: 5rem;
 }
+
+.scrollable-overview {
+  max-height: 90vh;
+}
+
+.scrollable-overview-with-header {
+  max-height: calc(100vh - 10.25rem);
+}
+
 .form-border{
   border-radius: var(--radius-md) !important ;
 }
