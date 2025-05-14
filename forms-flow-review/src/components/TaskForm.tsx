@@ -29,7 +29,6 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onFormSubmit,
   onCustomEvent = () => {},
 }) => {
-  const lang = localStorage.getItem("lang") ?? "en";
   const isReadOnly = taskAssignee !== currentUser;
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
