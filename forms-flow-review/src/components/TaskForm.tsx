@@ -29,7 +29,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onFormSubmit,
   onCustomEvent = () => {},
 }) => {
-  const language = localStorage.getItem("lang") ?? "en";
+  const lang = localStorage.getItem("lang") ?? "en";
   const isReadOnly = taskAssignee !== currentUser;
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
@@ -76,7 +76,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
             options={{
               ...options,
               i18n: RESOURCE_BUNDLES_DATA,
-              language,
+              language: lang,
               readOnly: isReadOnly,
               viewAsHtml: isReadOnly,
             }}
