@@ -6,14 +6,18 @@ import {
   CustomTabs,
   InputDropdown,
   FormInput,
+  ConfirmModal,
+  CustomInfo,
+  DeleteIcon,
+  UpdateIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {  PRIVATE_ONLY_YOU } from "../constants/index";
 import { StorageService, StyleServices } from "@formsflow/service";
-import { Filter, FilterCriteria } from "../types/taskFilter";
+import { Filter, FilterCriteria, UserDetail } from "../types/taskFilter";
 import {
   setBPMFilterSearchParams,
   setBPMTaskLoader,
@@ -21,6 +25,8 @@ import {
 import {
   fetchServiceTaskList,
   createFilter,
+  updateFilter,
+  deleteFilter
 } from "../api/services/filterServices";
 
 export const AttributeFilterModal = ({
@@ -30,6 +36,7 @@ export const AttributeFilterModal = ({
   taskAttributeData,
   filterParams,
   setFilterParams,
+  attributeFilter
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -43,6 +50,8 @@ export const AttributeFilterModal = ({
   const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE);
   const isCreateFilters = userRoles?.includes("create_filters");
   const filterNameLength = 50;
+  const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
+
 
   const handleNameError = (e) => {
     const value = e.target.value;
@@ -65,6 +74,9 @@ export const AttributeFilterModal = ({
   const userList = userListResponse?.data ?? [];
   const searchParams = useSelector((state: any) => state.task.searchParams);
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
   const assigneeOptions = useMemo(
     () =>
       userList.map((user) => ({
@@ -73,7 +85,12 @@ export const AttributeFilterModal = ({
       })),
     [userList]
   );
-
+  useEffect(() => {
+    StorageService.getParsedData(StorageService.User.USER_DETAILS) &&
+      setUserDetail(
+        StorageService.getParsedData(StorageService.User.USER_DETAILS)
+      );
+  }, [shareAttrFilter]);
   const [attributeData, setAttributeData] = useState(() => {
     return taskAttributeData.reduce((acc, item) => {
       if (item.isChecked) {
@@ -97,24 +114,46 @@ export const AttributeFilterModal = ({
   };
 
   const getTaskAccess = () => {
-    const users = selectedFilter?.users?.length
-      ? [...selectedFilter.users]
-      : [];
-    const roles = selectedFilter?.roles?.length
-      ? [...selectedFilter.roles]
-      : [];
+    if (shareAttrFilter === PRIVATE_ONLY_YOU) {
+      return { users: [userDetail?.preferred_username], roles: [] };
+    }
+    else {
+      const users = selectedFilter?.users?.length
+        ? [...selectedFilter.users]
+        : [];
+      const roles = selectedFilter?.roles?.length
+        ? [...selectedFilter.roles]
+        : [];
 
-    return { users, roles };
+      return { users, roles };
+    }
+
   };
 
+
+  useEffect(() => {
+    if (attributeFilter) {
+      setFilterName(attributeFilter.name);
+      if (attributeFilter?.roles?.length > 0) {
+        setShareAttrFilter(attributeFilter.roles);
+      } else {
+        if (attributeFilter?.users?.length > 0) {
+          setShareAttrFilter(attributeFilter.users);
+        }
+      }
+
+
+    }
+
+  }, [attributeFilter])
   const getNonEmptyTaskAccess = () => {
     const { users, roles } = getTaskAccess();
 
-    if (users.length) {
+    if (users?.length) {
       return users;
     }
 
-    if (roles.length) {
+    if (roles?.length) {
       return roles;
     }
   };
@@ -167,41 +206,46 @@ export const AttributeFilterModal = ({
       const value = attributeData[assigneeItem.key];
       return value ?? selectedFilter.criteria.assignee;
     }
-    return selectedFilter.criteria.assignee;
+    return selectedFilter?.criteria?.assignee;
   };
 
   const buildUpdatedFilterParams = () => {
+    const currentVariables = attributeFilter?.criteria?.processVariables || [];
+    
     const updatedFilterParams: {
       name: string;
       operator: string;
       value: string;
-    }[] = [];
-
-    updatedFilterParams.push({
+    }[] = [...currentVariables];
+  
+    const filteredParams = updatedFilterParams.filter(param => param.name !== "formId");
+  
+    filteredParams.push({
       name: "formId",
       operator: "eq",
-      value: selectedFilter.properties.formId,
+      value: selectedFilter?.properties?.formId,
     });
-
+  
     taskAttributeData.forEach((item) => {
       const value = attributeData[item.key];
-
+  
       if (
         item.isChecked &&
         item.key !== "assignee" &&
         value &&
         item.key !== "formId"
       ) {
-        updatedFilterParams.push({
+        filteredParams.push({
           name: item.key,
           operator: "eq",
           value: item.key === "applicationId" ? JSON.parse(value) : value,
         });
       }
     });
-
-    return updatedFilterParams;
+  
+    return filteredParams;
   };
+  
 
   const searchFilterAttributes = () => {
     dispatch(setBPMTaskLoader(true));
@@ -222,31 +266,68 @@ export const AttributeFilterModal = ({
     onClose();
   };
 
-  const saveFilterAttributes = async() => {
-    const updatedParams = buildUpdatedFilterParams();
-    const { roles, users } = getTaskAccess();
-    const assignee = getAssignee();
 
-    const criteria: FilterCriteria = {
-      ...selectedFilter.criteria,
-      processVariables: updatedParams,
-    };
+  const saveFilterAttributes = async () => {
+    try {
+      const updatedParams = buildUpdatedFilterParams();
+      const { roles, users } = getTaskAccess();
+      const assignee = getAssignee();
 
-    criteria.assignee = assignee;
+      const criteria: FilterCriteria = {
+        ...selectedFilter.criteria,
+        processVariables: updatedParams,
+      };
 
-    const filterToSave = {
-      name: filterName,
-      criteria,
-      parentFilterId: selectedFilter.id,
-      roles,
-      users,
-      variables: selectedFilter.variables,
-      filterType: "ATTRIBUTE",
-    };
+      criteria.assignee = assignee;
 
-    await createFilter(filterToSave);
+      const filterToSave = {
+        created: attributeFilter?.created,
+        modified: attributeFilter?.modified,
+        id: attributeFilter?.id,
+        tenant: attributeFilter?.tenant,
+        name: filterName,
+        criteria,
+        parentFilterId: selectedFilter.id,
+        roles,
+        users,
+        variables: selectedFilter.variables,
+        status: attributeFilter?.status,
+        createdBy: attributeFilter?.createdBy,
+        modifiedBy: attributeFilter?.modifiedBy,
+        order: attributeFilter?.order,
+        hide: attributeFilter?.hide,
+        filterType: "ATTRIBUTE",
+        editPermission: attributeFilter?.editPermission,
+        sortOrder: attributeFilter?.sortOrder,
+      };
+
+      const saveAction = attributeFilter
+        ? updateFilter(filterToSave, attributeFilter.id)
+        : createFilter(filterToSave);
+
+      await saveAction;
+      setShowUpdateModal(false)
+
+    } catch (error) {
+      console.error("Failed to save filter attributes:", error);
+    }
     onClose();
   };
+
+  const handleFilterDelete = () => {
+    deleteFilter(attributeFilter?.id)
+      .catch((error) => {
+        console.error("error", error);
+      });
+
+    setShowDeleteModal(false);
+  };
+
+
+
+
+
+
 
   const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
   const isFilterNameEmpty = !filterName?.trim?.();
@@ -256,12 +337,133 @@ export const AttributeFilterModal = ({
   const isInvalidFilter =
     isFilterNameEmpty ?? hasFilterNameError ?? isCreateDisabled;
   const iconColor = getIconColor(isInvalidFilter);
+  const isFilterAdmin = userRoles?.includes("manage_all_filters");
+
+  const createdByMe = attributeFilter?.createdBy === userDetail?.preferred_username
+  const publicAccess = attributeFilter?.roles?.length === 0 && attributeFilter?.users?.length === 0;
+  const roleAccess = attributeFilter?.roles?.some(role => userDetail.groups.includes(role));
+  const canAccess = roleAccess || publicAccess || createdByMe;
+  const viewOnly = !isFilterAdmin && canAccess;
+  const editRole = isFilterAdmin && canAccess;
+
+  const renderActionButtons = () => {
+    if (attributeFilter) {
+      if (canAccess && isFilterAdmin) {
+        return (
+          <div className="pt-4 d-flex">
+            <CustomButton
+              className="me-3"
+              variant="secondary"
+              size="md"
+              label={t("Update This Filter")}
+              onClick={() => {
+                onClose();
+                setShowUpdateModal(true);
+              }}
+              icon={<UpdateIcon />}
+              dataTestId="save-attribute-filter"
+              ariaLabel={t("Update This Filter")}
+            />
+            <CustomButton
+              variant="secondary"
+              size="md"
+              label={t("Delete This Filter")}
+              onClick={() => {
+                onClose();
+                setShowDeleteModal(true);
+              }}
+              icon={<DeleteIcon />}
+              dataTestId="delete-attribute-filter"
+              ariaLabel={t("Delete This Filter")}
+            />
+          </div>
+        );
+      }
+      return null;
+    }
+
+    if (isFilterAdmin) {
+      return (
+        <div className="pt-4">
+          <CustomButton
+            variant="secondary"
+            size="md"
+            label={t("Save This Filter")}
+            onClick={saveFilterAttributes}
+            icon={<SaveIcon/>}
+            dataTestId="save-attribute-filter"
+            ariaLabel={t("Save Attribute Filter")}
+          />
+        </div>
+      );
+    }
+
+    return null;
+  };
+  const renderOwnershipNote = () => {
+
+    const isCreator = attributeFilter?.createdBy === userDetail?.preferred_username;
+
+    if (isCreator) {
+      return (
+        <>
+          <div className="pb-4">
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t("This filter is created and managed by you")}
+              dataTestId="attribute-self-share-note"
+            />
+          </div>
+        </>
+      );
+    }
+
+    if (viewOnly) {
+      return (
+        <CustomInfo
+          className="note"
+          heading="Note"
+          content={t("This filter is created and managed by {{createdBy}}", {
+            createdBy: attributeFilter?.createdBy,
+          })}
+          dataTestId="attribute-filter-save-note"
+        />
+      );
+    }
+
+    if (editRole) {
+      return (
+        <>
+          <div className="pb-4">
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t("This filter is created and managed by {{createdBy}}", {
+                createdBy: attributeFilter?.createdBy,
+              })}
+              dataTestId="attribute-filter-save-note"
+            />
+          </div>
+        </>
+      );
+    }
+
+    return null;
+  };
+
 
   const parametersTab = () => (
     <>
       {taskAttributeData.map((item) => {
         if (item.isChecked && item.type !== "datetime") {
-          if (item.key === "assignee") {
+          const matchingProcessVariable = attributeFilter?.criteria?.processVariables?.find(
+            (pv) => pv.name === item.key
+          );
+
+          const valueFromProcessVariable = matchingProcessVariable ? matchingProcessVariable.value : '';
+
+          if (item?.key === "assignee") {
             return (
               <div className="pt-4" key={item.key}>
                 <InputDropdown
@@ -271,10 +473,8 @@ export const AttributeFilterModal = ({
                   ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
                   ariaLabelforInput={t(`input for attribute ${item.label}`)}
                   dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-                  selectedOption={attributeData[item.key]}
-                  setNewInput={(selectedOption) =>
-                    handleSelectChange(item.key, selectedOption)
-                  }
+                  selectedOption={attributeData[item.key] || valueFromProcessVariable}
+                  setNewInput={(selectedOption) => handleSelectChange(item.key, selectedOption)}
                   name={item.key}
                 />
               </div>
@@ -288,7 +488,7 @@ export const AttributeFilterModal = ({
                   label={t(item.label)}
                   ariaLabel={t(item.label)}
                   dataTestId={`${item.key}-attribute-input`}
-                  value={attributeData[item.key]}
+                  value={attributeData[item.key] || valueFromProcessVariable}
                   onChange={handleInputChange}
                 />
               </div>
@@ -327,18 +527,8 @@ export const AttributeFilterModal = ({
           dataTestIdforDropdown="share-attribute-filter-options"
         />
       </div>
-      <div>
-        <CustomButton
-          variant="secondary"
-          size="md"
-          label={t("Save This Filter")}
-          icon={<SaveIcon color={iconColor} />}
-          dataTestId="save-task-filter"
-          ariaLabel={t("Save Task Filter")}
-          disabled={isInvalidFilter}
-          onClick={saveFilterAttributes}
-        />
-      </div>
+      {renderOwnershipNote()}
+      {renderActionButtons()}
     </>
   );
 
@@ -352,7 +542,7 @@ export const AttributeFilterModal = ({
   ];
 
   const isAtLeastOneAttributeFilled = () => {
-    return taskAttributeData.some((item) => {
+    return taskAttributeData?.some((item) => {
       if (item.isChecked && item.type !== "datetime") {
         const value = attributeData[item.key];
         return value !== null && value !== undefined && value !== "";
@@ -360,57 +550,123 @@ export const AttributeFilterModal = ({
       return false;
     });
   };
+  const currentFilterName = () => {
+    if (attributeFilter) {
+      return `${t("Attributes")}: ${attributeFilter.name}`;
+    }
+
+
+    else {
+      return (t("Attributes: Unsaved Filter"));
+    }
+  }
 
   return (
-    <Modal
-      show={show}
-      onHide={onClose}
-      size="sm"
-      centered={true}
-      data-testid="create-filter-modal"
-      aria-labelledby={t("create filter modal title")}
-      aria-describedby="create-filter-modal"
-      backdrop="static"
-      className="create-filter-modal"
-    >
-      <Modal.Header>
-        <Modal.Title id="create-filter-title">
-          <b>{t("Attributes: Unsaved Filter")}</b>
-        </Modal.Title>
-        <div className="d-flex align-items-center">
-          <CloseIcon onClick={onClose} />
-        </div>
-      </Modal.Header>
-      <Modal.Body className="modal-body p-0">
-        <div className="filter-tab-container">
-          <CustomTabs
-            defaultActiveKey="parametersTab"
-            tabs={tabs}
-            dataTestId="create-filter-tabs"
-            ariaLabel={t("Filter Tabs")}
+    <>
+      <Modal
+        show={show}
+        onHide={onClose}
+        size="sm"
+        centered={true}
+        data-testid="create-filter-modal"
+        aria-labelledby={t("create filter modal title")}
+        aria-describedby="create-filter-modal"
+        backdrop="static"
+        className="create-filter-modal"
+      >
+        <Modal.Header>
+          <Modal.Title id="create-filter-title">
+            <b>{currentFilterName()}</b>
+          </Modal.Title>
+          <div className="d-flex align-items-center">
+            <CloseIcon onClick={cancelFilter} />
+          </div>
+        </Modal.Header>
+        <Modal.Body className="modal-body p-0">
+          <div className="filter-tab-container">
+            <CustomTabs
+              defaultActiveKey="parametersTab"
+              tabs={tabs}
+              dataTestId="attribute-filter-tabs"
+              ariaLabel={t("Filter Tabs")}
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="d-flex justify-content-start">
+          <CustomButton
+            variant="primary"
+            size="md"
+            label={t("Filter Results")}
+            dataTestId="attribute-filter-results"
+            ariaLabel={t("Filter results")}
+            onClick={searchFilterAttributes}
+            disabled={!isAtLeastOneAttributeFilled()}
           />
-        </div>
-      </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-start">
-        <CustomButton
-          variant="primary"
-          size="md"
-          label={t("Filter Results")}
-          dataTestId="attribute-filter-results"
-          ariaLabel={t("Filter results")}
-          onClick={searchFilterAttributes}
-          disabled={!isAtLeastOneAttributeFilled()}
+          <CustomButton
+            variant="secondary"
+            size="md"
+            label={t("Cancel")}
+            onClick={cancelFilter}
+            dataTestId="cancel-attribute-filter"
+            ariaLabel={t("Cancel filter")}
+          />
+        </Modal.Footer>
+      </Modal>
+      {showUpdateModal && (
+        <ConfirmModal
+          show={showUpdateModal}
+          title={t("Update This Filter?")}
+          message={
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution."
+              )}
+              dataTestId="attribute-filter-update-note"
+            />
+          }
+
+
+          primaryBtnAction={() => { setShowUpdateModal(false) }}
+          onClose={() => setShowUpdateModal(false)}
+          primaryBtnText={t("No, Cancel Changes")}
+          secondaryBtnText={t("Yes, Update This Filter For Everybody")}
+          secondaryBtnAction={saveFilterAttributes}
+          secondoryBtndataTestid="confirm-attribute-revert-button"
         />
-        <CustomButton
-          variant="secondary"
-          size="md"
-          label={t("Cancel")}
-          onClick={cancelFilter}
-          dataTestId="cancel-attribute-filter"
-          ariaLabel={t("Cancel filter")}
+      )}
+
+
+      {showDeleteModal && (
+        <ConfirmModal
+          show={showDeleteModal}
+          title={t("Delete This Filter?")}
+          message={
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow."
+              )}
+              dataTestId="attribute-filter-delete-note"
+            />
+          }
+
+
+          primaryBtnAction={() => {
+            setShowDeleteModal(false);
+            onClose();
+          }}
+          onClose={() => setShowDeleteModal(false)}
+          primaryBtnText={t("No, Keep This Filter")}
+          secondaryBtnText={t("Yes, Delete This Filter For Everybody")}
+          secondaryBtnAction={handleFilterDelete}
+          secondoryBtndataTestid="confirm-revert-button"
         />
-      </Modal.Footer>
-    </Modal>
+      )}
+
+    </>
   );
 };
 

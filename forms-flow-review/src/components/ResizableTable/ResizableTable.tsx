@@ -537,6 +537,7 @@ export function ResizableTable(): JSX.Element {
   );
 
   const [filterToEdit, setFilterToEdit] = useState(null);
+  const [attrFilterToEdit, setAttrFilterToEdit] = useState(null);
   const [canEditFilter, setCanEditFilter] = useState(false);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
   const userList = useSelector((state: any) => state.task?.userList);
@@ -689,7 +690,7 @@ export function ResizableTable(): JSX.Element {
     [dispatch, sortParams]
   );
 
-  const handleEditFilter = useCallback(() => {
+  const handleEditTaskFilter = useCallback(() => {
     if (!selectedFilter) return;
     const matchingFilter = filterList.find((f) => f.id === selectedFilter.id);
     if (!matchingFilter) return;
@@ -700,6 +701,18 @@ export function ResizableTable(): JSX.Element {
     setCanEditFilter(isEditable);
     setShowTaskFilterModal(true);
   }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
+
+  const handleEditAttrFilter = useCallback(() => {
+    if (!selectedAttributeFilter) return;
+    const matchingFilter = bpmattributeFilterList.find((f) => f.id === selectedAttributeFilter.id);
+    if (!matchingFilter) return;
+
+    const editPermission = matchingFilter?.editPermission;
+    const isEditable = (isFilterCreator || isFilterAdmin) && editPermission;
+    setAttrFilterToEdit(matchingFilter);
+    setCanEditFilter(isEditable);
+    setShowAttrFilterModal(true);
+  }, [selectedAttributeFilter, bpmattributeFilterList, isFilterCreator, isFilterAdmin]);
 
   useEffect(() => {  
     const currentFilter = filterList.find((item) => item.id === defaultFilter);
@@ -1269,7 +1282,7 @@ const extraItems = isFilterCreator ? [
               dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
               dropdownItems={filterDropdownItems}
               extraActionIcon={<PencilIcon color="white" />}
-              extraActionOnClick={handleEditFilter}
+              extraActionOnClick={handleEditTaskFilter}
               dataTestId="business-filter-dropdown"
               ariaLabel={t("Select business filter")}
               extraActionAriaLabel={t("Edit selected filter")}
@@ -1301,7 +1314,7 @@ const extraItems = isFilterCreator ? [
               dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
               dropdownItems={filterDropdownAttributeItems}
               extraActionIcon={<PencilIcon color="white" />}
-              extraActionOnClick={handleToggleAttrFilterModal}
+              extraActionOnClick={handleEditAttrFilter}
               dataTestId="attribute-filter-dropdown"
               ariaLabel={t("Select attribute filter")}
               extraActionAriaLabel={t("Edit attribute filters")}
@@ -1387,6 +1400,7 @@ const extraItems = isFilterCreator ? [
           filterParams={filterParams}
           setFilterParams={setFilterParams}
           selectedFilter={selectedFilter}
+          attributeFilter={attrFilterToEdit}
         />
       </div>
       {isTaskListLoading ? <Loading /> : renderTaskList()}

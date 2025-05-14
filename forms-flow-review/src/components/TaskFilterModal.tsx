@@ -229,16 +229,18 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
   const getCriteria = (): FilterCriteria => {
     const criteria = {
       includeAssignedTasks: filter?.criteria?.includeAssignedTasks,
-      processVariables: [{
-        name: "formId",
-        operator: 'eq',
-        value: selectedForm.formId
-      }],
       candidateGroupsExpression: "${currentUserGroups()}",
-      sorting: [{ sortBy: sortValue, sortOrder: sortOrder }]
+      sorting: [{ sortBy: sortValue, sortOrder: sortOrder }],
+      ...(selectedForm && {
+        processVariables: [{
+          name: "formId",
+          operator: 'eq',
+          value: selectedForm.formId
+        }]
+      })
     } as {
       candidateGroupsExpression: string;
-      processVariables: { name: string; operator: string; value: string }[];
+      processVariables?: { name: string; operator: string; value: string }[];
       sorting: { sortBy: string; sortOrder: string }[];
       candidateGroup?: string;
       assignee?: string;
@@ -339,7 +341,7 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
     shareFilter,
     filterRole,
     selectedForm,
-    variableArray,
+    variableArray
   ]);
   
   
@@ -462,7 +464,7 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
       .then(res => {
         const taskVariables = res.data?.taskVariables || [];
         const staticVariables = [
-          { key: 'applicationId', label: 'Submission ID', type: 'textfield', name: 'Submission ID', isChecked: true, sortOrder: 1, isTaskVariable: false },
+          { key: 'applicationId', label: 'Submission Id', type: 'number', name: 'Submission Id', isChecked: true, sortOrder: 1, isTaskVariable: false },
           { key: 'submitterName', label: 'Submitter Name', type: 'textfield', name: 'Submitter Name', isChecked: true, sortOrder: 2, isTaskVariable: false },
           { key: 'assignee', label: 'Assignee', type: 'textfield', name: 'Assignee', isChecked: true, sortOrder: 3, isTaskVariable: false },
           { key: 'name', label: 'Task', type: 'textfield', name: 'Task', isChecked: true, sortOrder: 4, isTaskVariable: false },
