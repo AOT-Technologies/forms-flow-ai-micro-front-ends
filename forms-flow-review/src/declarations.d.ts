@@ -74,7 +74,7 @@ declare module "@formsflow/components" {
     DeleteIcon,
     UpdateIcon,
     ConfirmModal,
-    useSuccessCountdown
+    useSuccessCountdown,
     BackToPrevIcon,
   }: any;
 }

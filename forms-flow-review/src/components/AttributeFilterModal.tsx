@@ -86,11 +86,12 @@ export const AttributeFilterModal = ({
     [userList]
   );
   useEffect(() => {
-    StorageService.getParsedData(StorageService.User.USER_DETAILS) &&
-      setUserDetail(
-        StorageService.getParsedData(StorageService.User.USER_DETAILS)
-      );
-  }, [shareAttrFilter]);
+    const userData = StorageService.getParsedData(StorageService.User.USER_DETAILS);
+    if (userData) {
+      setUserDetail(userData);
+    }
+  }, []);
+  
   const [attributeData, setAttributeData] = useState(() => {
     return taskAttributeData.reduce((acc, item) => {
       if (item.isChecked) {
@@ -134,29 +135,29 @@ export const AttributeFilterModal = ({
   useEffect(() => {
     if (attributeFilter) {
       setFilterName(attributeFilter.name);
+  
       if (attributeFilter?.roles?.length > 0) {
         setShareAttrFilter(attributeFilter.roles);
-      } else {
-        if (attributeFilter?.users?.length > 0) {
-          setShareAttrFilter(attributeFilter.users);
-        }
+      } else if (attributeFilter?.users?.length > 0) {
+        setShareAttrFilter(attributeFilter.users);
       }
-
-
     }
-
-  }, [attributeFilter])
+  }, [attributeFilter]);
+  
   const getNonEmptyTaskAccess = () => {
     const { users, roles } = getTaskAccess();
-
+  
     if (users?.length) {
       return users;
     }
-
+  
     if (roles?.length) {
       return roles;
     }
+  
+    return [];
   };
+  
 
   const createFilterShareOption = (labelKey, value) => ({
     label: t(labelKey),
@@ -210,7 +211,7 @@ export const AttributeFilterModal = ({
   };
 
   const buildUpdatedFilterParams = () => {
-    const currentVariables = attributeFilter?.criteria?.processVariables || [];
+    const currentVariables = attributeFilter?.criteria?.processVariables ?? [];
     
     const updatedFilterParams: {
       name: string;
@@ -406,18 +407,17 @@ export const AttributeFilterModal = ({
 
     if (isCreator) {
       return (
-        <>
-          <div className="pb-4">
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={t("This filter is created and managed by you")}
-              dataTestId="attribute-self-share-note"
-            />
-          </div>
-        </>
+        <div className="pb-4">
+          <CustomInfo
+            className="note"
+            heading="Note"
+            content={t("This filter is created and managed by you")}
+            dataTestId="attribute-self-share-note"
+          />
+        </div>
       );
     }
+    
 
     if (viewOnly) {
       return (
@@ -434,7 +434,6 @@ export const AttributeFilterModal = ({
 
     if (editRole) {
       return (
-        <>
           <div className="pb-4">
             <CustomInfo
               className="note"
@@ -445,7 +444,6 @@ export const AttributeFilterModal = ({
               dataTestId="attribute-filter-save-note"
             />
           </div>
-        </>
       );
     }
 
@@ -473,7 +471,7 @@ export const AttributeFilterModal = ({
                   ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
                   ariaLabelforInput={t(`input for attribute ${item.label}`)}
                   dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-                  selectedOption={attributeData[item.key] || valueFromProcessVariable}
+                  selectedOption={attributeData[item.key] ?? valueFromProcessVariable}
                   setNewInput={(selectedOption) => handleSelectChange(item.key, selectedOption)}
                   name={item.key}
                 />
@@ -488,7 +486,7 @@ export const AttributeFilterModal = ({
                   label={t(item.label)}
                   ariaLabel={t(item.label)}
                   dataTestId={`${item.key}-attribute-input`}
-                  value={attributeData[item.key] || valueFromProcessVariable}
+                  value={attributeData[item.key] ?? valueFromProcessVariable}
                   onChange={handleInputChange}
                 />
               </div>
