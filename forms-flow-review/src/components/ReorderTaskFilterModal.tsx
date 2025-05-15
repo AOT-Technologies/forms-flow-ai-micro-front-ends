@@ -32,21 +32,33 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> = Rea
     
     const updatedFilters = useMemo(() => {
       if (!filtersList || !userDetail) return [];
-      return filtersList.map((item) => {
-        const createdByMe = userDetail.preferred_username === item.createdBy;
-        const isSharedToPublic = (!item.roles?.length && !item.users?.length);
-        const isShareToMe = item.roles?.some(role => userDetail.groups?.includes(role));
-        const icon = createdByMe ? <SharedWithOthersIcon /> : (isSharedToPublic || isShareToMe ? <SharedWithMeIcon /> : null);
-        const preference = taskFilterPreference?.find(pref => pref.filterId === item.id);
-    
-        return {
-          id: item.id,
-          name: item.name,
-          isChecked: preference ? preference.hide : item.hide,
-          sortOrder: preference ? preference.sortOrder : item.sortOrder,
-          icon,
-        };
-      }).sort((a, b) => a.sortOrder - b.sortOrder);
+      return filtersList
+        .map((item) => {
+          const createdByMe = userDetail.preferred_username === item.createdBy;
+          const isSharedToPublic = !item.roles?.length && !item.users?.length;
+          const isShareToMe = item.roles?.some((role) =>
+            userDetail.groups?.includes(role)
+          );
+          let icon = null;
+
+          if (createdByMe) {
+            icon = <SharedWithOthersIcon />;
+          } else if (isSharedToPublic || isShareToMe) {
+            icon = <SharedWithMeIcon />;
+          }
+          const preference = taskFilterPreference?.find(
+            (pref) => pref.filterId === item.id
+          );
+
+          return {
+            id: item.id,
+            name: item.name,
+            isChecked: preference ? preference.hide : item.hide,
+            sortOrder: preference ? preference.sortOrder : item.sortOrder,
+            icon,
+          };
+        })
+        .sort((a, b) => a.sortOrder - b.sortOrder);
     }, [filtersList, userDetail, taskFilterPreference]);
 
     useEffect(() => {

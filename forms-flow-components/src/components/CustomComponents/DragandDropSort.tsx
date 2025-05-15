@@ -132,7 +132,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
             </div>
 
             <button className="label cursor-pointer drag-as-div" onClick={() => onLabelClick(index)}>
-              {item.label ? item.label : item.name}
+              {item.label ?? item.name}
             </button>
 
             <div className="dotted-line"></div>

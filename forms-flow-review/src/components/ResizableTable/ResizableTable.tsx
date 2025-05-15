@@ -591,11 +591,14 @@ export function ResizableTable(): JSX.Element {
         const isShareToMe =
         Array.isArray(filterDetails.roles) &&
         filterDetails.roles.some((role) => userDetail?.groups?.includes(role));
-         icon = createdByMe ? (
+        let icon = null;
+
+        if (createdByMe) {
           <SharedWithOthersIcon className="shared-icon" />
-        ) : isSharedToPublic || isShareToMe ? (
+        } else if (isSharedToPublic || isShareToMe) {
           <SharedWithMeIcon className="shared-icon" />
-        ) : null;
+        }
+
       }
       return {
         className:  filter.id === selectedFilter.id ? "selected-filter-item" : "",
