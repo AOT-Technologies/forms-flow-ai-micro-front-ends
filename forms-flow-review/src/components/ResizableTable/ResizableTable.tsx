@@ -594,9 +594,9 @@ export function ResizableTable(): JSX.Element {
         let icon = null;
 
         if (createdByMe) {
-          <SharedWithOthersIcon className="shared-icon" />
+          icon =  <SharedWithOthersIcon className="shared-icon" />
         } else if (isSharedToPublic || isShareToMe) {
-          <SharedWithMeIcon className="shared-icon" />
+          icon =  <SharedWithMeIcon className="shared-icon" />
         }
 
       }
