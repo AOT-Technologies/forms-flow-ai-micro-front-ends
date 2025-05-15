@@ -32,7 +32,6 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> = Rea
     
     const updatedFilters = useMemo(() => {
       if (!filtersList || !userDetail) return [];
-    
       return filtersList.map((item) => {
         const createdByMe = userDetail.preferred_username === item.createdBy;
         const isSharedToPublic = (!item.roles?.length && !item.users?.length);
@@ -44,16 +43,16 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> = Rea
           id: item.id,
           name: item.name,
           isChecked: preference ? preference.hide : item.hide,
-          sortOrder: preference ? preference.sortOrder : item.order,
+          sortOrder: preference ? preference.sortOrder : item.sortOrder,
           icon,
         };
       }).sort((a, b) => a.sortOrder - b.sortOrder);
     }, [filtersList, userDetail, taskFilterPreference]);
-    
+
     useEffect(() => {
       setUpdateFilterList(updatedFilters);
       setFilterPreferenceList(updatedFilters);
-    }, [updatedFilters]);
+    }, [updatedFilters,showModal]);
     
     const onUpdateFilterOrder = (sortedFilterList) => {
       setFilterPreferenceList(sortedFilterList);
@@ -71,12 +70,30 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> = Rea
           hide: item.isChecked,
           sortOrder: item.sortOrder,
         }));
-        saveFilterPreference(updatedFiltersPreference);
-        dispatch(setFilterPreference(updatedFiltersPreference));
+        saveFilterPreference(updatedFiltersPreference)
+        .then(() => dispatch(setFilterPreference(updatedFiltersPreference)))
+        .catch((error) => console.error('Failed to save preferences', error));
 
       }
       onClose();
-    };
+    }; 
+   
+     const isSaveBtnDisabled = useMemo(() => {
+       if (!filterPreferenceList || !updateFilterList) return true;
+
+       return !filterPreferenceList.some((updatedItem) => {
+         const originalItem = updateFilterList.find(
+           (item) => item.id === updatedItem.id
+         );
+         if (!originalItem) return true;
+         return (
+           originalItem.isChecked !== updatedItem.isChecked ||
+           originalItem.sortOrder !== updatedItem.sortOrder
+         );
+       });
+     }, [filterPreferenceList, updateFilterList]);
+
+    
     return (
       <Modal
         show={showModal}
@@ -109,7 +126,7 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> = Rea
             dataTestId="save-changes"
             ariaLabel={t("Save Changes")}
             onClick={handleSaveChanges}
-          //disabled={!isAtLeastOneAttributeFilled()}
+            disabled={isSaveBtnDisabled}
           />
           <CustomButton
             variant="secondary"

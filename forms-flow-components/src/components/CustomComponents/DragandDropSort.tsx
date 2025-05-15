@@ -23,10 +23,13 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
+ 
   useEffect(() => {
-    
-    onUpdate(filterItems);
+    if (onUpdate) {
+      onUpdate(filterItems);
+    }
   }, [filterItems, onUpdate]);
+
   useEffect(() => {
     // Update the sortOrder i key in each item if it is null or undefined to ensure that it is a number 
     const updatedItems = filterItems.map((items,index)=>{
@@ -102,7 +105,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
       <ul>
         {filterItems.map((item, index) => (
           <li
-            key={index}
+            key={item.itemId ?? item.name}
             className={`draggable-item ${draggingIndex === index ? "dragging" : ""}`}
             onDragOver={onDragOver}
             onDrop={onDrop}

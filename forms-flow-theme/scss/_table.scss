@@ -361,8 +361,7 @@ $white-color: var(--ff-white);
       }
     }
   }
-  .empty-row{
-    border-left: none !important;
+
     .empty-table-message {
       display: flex;  
       text-align: center;
@@ -376,7 +375,6 @@ $white-color: var(--ff-white);
         }
     }
   }
-}
 
 /* Column resizer styling */
 .resizable-column {

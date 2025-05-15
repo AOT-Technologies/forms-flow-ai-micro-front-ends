@@ -2,6 +2,8 @@ const computedStyle = getComputedStyle(document.documentElement);
 const baseColor = computedStyle.getPropertyValue("--ff-primary");
 const grayColor = computedStyle.getPropertyValue("--ff-gray-dark");
 const whiteColor = computedStyle.getPropertyValue("--ff-white")
+const grayDarkestColor = computedStyle.getPropertyValue("--ff-gray-darkest");
+const grayMediumColor = computedStyle.getPropertyValue("--ff-gray-medium-dark");
 export const ChevronIcon = ({
   color = baseColor,
   width = "10",
@@ -936,7 +938,7 @@ export const SaveIcon = ({ color = whiteColor}) => (
 </svg>
 );
 
-export const SharedWithOthersIcon = ({ color = baseColor,className, ...props }) => (
+export const SharedWithOthersIcon = ({ color = grayDarkestColor,className, ...props }) => (
   <svg
     width="18"
     height="16"
@@ -948,7 +950,7 @@ export const SharedWithOthersIcon = ({ color = baseColor,className, ...props }) 
     <path
       className={className}
       d="M14.0257 2.69922C14.0257 5.84985 12.9744 7.34985 10.9744 8.34985"
-      stroke="#303436"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
     />
@@ -957,7 +959,7 @@ export const SharedWithOthersIcon = ({ color = baseColor,className, ...props }) 
       cx="5.91937"
       cy="5.79168"
       r="1.945"
-      stroke="#303436"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -965,7 +967,7 @@ export const SharedWithOthersIcon = ({ color = baseColor,className, ...props }) 
     <path
       className={className}
       d="M9.8718 13.8263C9.8718 11.8438 8.1039 10.2366 5.92308 10.2366C3.74227 10.2366 1.97437 11.8438 1.97437 13.8263"
-      stroke="#303436"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -973,14 +975,14 @@ export const SharedWithOthersIcon = ({ color = baseColor,className, ...props }) 
     <path
       className={className}
       d="M12.0769 3.60948L14.2308 2.17358L16.0257 3.96846"
-      stroke="#303436"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
   </svg>
 );
-export const SharedWithMeIcon = ({ color = baseColor,className, ...props }) => (
+export const SharedWithMeIcon = ({ color = grayMediumColor,className, ...props }) => (
   <svg
     width="16"
     height="16"
@@ -992,7 +994,7 @@ export const SharedWithMeIcon = ({ color = baseColor,className, ...props }) => (
     <path
       className={className}
       d="M15.0001 3.14893C15.0001 5.14893 13.3787 7.20109 10.3332 7.38493"
-      stroke="#AFB4B6"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
     />
@@ -1001,7 +1003,7 @@ export const SharedWithMeIcon = ({ color = baseColor,className, ...props }) => (
       cx="4.94444"
       cy="4.95445"
       r="1.94444"
-      stroke="#AFB4B6"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1009,7 +1011,7 @@ export const SharedWithMeIcon = ({ color = baseColor,className, ...props }) => (
     <path
       className={className}
       d="M8.89988 12.9898C8.89988 11.0066 7.1314 9.39893 4.94988 9.39893C2.76835 9.39893 0.999878 11.0066 0.999878 12.9898"
-      stroke="#AFB4B6"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1017,7 +1019,7 @@ export const SharedWithMeIcon = ({ color = baseColor,className, ...props }) => (
     <path
       className={className}
       d="M12.6666 8.9404L10.3332 7.38485L11.4999 5.05151"
-      stroke="#AFB4B6"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

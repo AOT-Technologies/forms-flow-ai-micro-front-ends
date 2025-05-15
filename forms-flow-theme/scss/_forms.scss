@@ -613,7 +613,7 @@ select option:hover {
     gap: var(--spacer-150);
     padding: var(--spacer-100) var(--spacer-200);
     border-radius: var(--radius-md) !important;
-    background-color: $gray-darkest !important;
+    background-color: var(--navbar-active-submenu-bg-color) !important;
     font-size: var(--font-size-sm);
 
     
