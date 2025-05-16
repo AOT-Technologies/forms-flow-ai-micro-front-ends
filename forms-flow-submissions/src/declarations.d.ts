@@ -54,3 +54,8 @@ declare module "@formsflow/components" {
     SubmissionHistoryWithViewButton,
   }: any;
 }
+declare module "@formsflow/components" {
+  export const {
+    CollapsibleSearch
+  }: any;
+}
