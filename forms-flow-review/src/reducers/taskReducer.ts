@@ -1,5 +1,4 @@
 import ACTION_CONSTANTS from "../actions/actionConstants";
-import { setShowApplications } from "./../helper/helper.js";
 
 const initialState = {
   isTaskListLoading: true,
@@ -78,6 +77,11 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         ...state,
         selectedFilter: action.payload,
         filterListSearchParams: {},
+      };
+    case ACTION_CONSTANTS.UPDATE_SELECTED_FILTER:
+      return {
+        ...state,
+        selectedFilter: action.payload,
       };
     case ACTION_CONSTANTS.BPM_SELECTED_ATTRIBUTE_FILTER:
         return {

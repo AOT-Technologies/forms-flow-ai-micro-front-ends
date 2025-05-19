@@ -31,6 +31,7 @@ import {
   setDefaultFilter,
   resetTaskListParams,
   setSelectedBpmAttributeFilter,
+  updatedSelectBpmFilter,
 } from "../../actions/taskActions";
 
 import TaskFilterModal from "../TaskFilterModal";
@@ -491,16 +492,12 @@ export function ResizableTable(): JSX.Element {
   );
 
   const handleEditFilter = useCallback(() => {
-    if (!selectedFilter) return;
-    const matchingFilter = filterList.find((f) => f.id === selectedFilter.id);
-    if (!matchingFilter) return;
-
-    const editPermission = matchingFilter?.editPermission;
+    const editPermission = selectedFilter?.editPermission;
     const isEditable = (isFilterCreator || isFilterAdmin) && editPermission;
-    setFilterToEdit(matchingFilter);
+    setFilterToEdit(cloneDeep(selectedFilter));
     setCanEditFilter(isEditable);
     setShowTaskFilterModal(true);
-  }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
+  }, [selectedFilter]);
 
   useEffect(() => {
     const currentFilter = filterList.find((item) => item.id === defaultFilter);
@@ -831,22 +828,15 @@ export function ResizableTable(): JSX.Element {
   ]);
 
   // Handle column resize
-  const handleColumnResize = useCallback(
-    (column: Column, newWidth: number) => {
+  const handleColumnResize =  (column: Column, newWidth: number) => {
       // Update the selected filter with the new width
       const updatedData = cloneDeep(selectedFilter);
-      const variables = updatedData.variables.map((variable: any) => {
-        if (variable.name === column.sortKey) {
-          return { ...variable, width: newWidth };
-        }
-        return variable;
-      });
-
-      // Update the filter with the new width
-      updateFilter({ variables }, selectedFilterId);
-    },
-    [selectedFilter, selectedFilterId]
-  );
+      const currentVaribale = updatedData.variables.find((varibale:any)=> varibale?.name === column?.sortKey);
+      if(currentVaribale){
+        currentVaribale.width = newWidth;
+      }
+     dispatch(updatedSelectBpmFilter(updatedData));
+    };
 
   // Sorting modal handlers
   const handleSortModalClose = useCallback(() => {
