@@ -135,9 +135,10 @@ export const AttributeFilterModal = ({
       setFilterName(attributeFilter.name);
   
       if (attributeFilter?.roles?.length > 0) {
-        setShareAttrFilter(attributeFilter.roles);
+        createFilterShareOption("Share with same users as the selected tasks filter",
+      getNonEmptyTaskAccess());
       } else if (attributeFilter?.users?.length > 0) {
-        setShareAttrFilter(attributeFilter.users);
+        setShareAttrFilter(PRIVATE_ONLY_YOU);
       }
     }
   }, [attributeFilter]);
@@ -575,7 +576,7 @@ export const AttributeFilterModal = ({
             <b>{currentFilterName()}</b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose()} />
+            <CloseIcon onClick={onClose} />
           </div>
         </Modal.Header>
         <Modal.Body className="modal-body p-0">
@@ -602,7 +603,7 @@ export const AttributeFilterModal = ({
             variant="secondary"
             size="md"
             label={t("Cancel")}
-            onClick={onClose()}
+            onClick={onClose}
             dataTestId="cancel-attribute-filter"
             ariaLabel={t("Cancel filter")}
           />
