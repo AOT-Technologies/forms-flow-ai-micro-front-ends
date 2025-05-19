@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
   getBPMGroups,
   onBPMTaskFormSubmit,
   getCustomSubmission,
+  getApplicationHistory,
 } from "../api/services/bpmTaskServices";
 import {
   getForm,
@@ -26,6 +27,7 @@ import {
   setFormSubmissionLoading,
   setBPMTaskDetailLoader,
   setSelectedTaskID,
+  setAppHistoryLoading,
 } from "../actions/taskActions";
 import { getFormioRoleIds } from "../api/services/userSrvices";
 import {
@@ -35,12 +37,14 @@ import {
   MULTITENANCY_ENABLED,
 } from "../constants/index";
 import TaskForm from "../components/TaskForm";
+import { TaskHistoryModal } from "../components/TaskHistory";
 import { push } from "connected-react-router";
 
 const TaskDetails = () => {
   const { t } = useTranslation();
   const { taskId } = useParams();
   const dispatch = useDispatch();
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
   // Redux State Selectors
   const tenantKey = useSelector(
     (state: any) => state.tenants?.tenantData?.tenantkey
@@ -177,8 +181,21 @@ const TaskDetails = () => {
     dispatch(push(`${redirectUrl}review`));
   };
 
+  //Application History
+  const handleHistory = () => {
+    dispatch(setAppHistoryLoading(true));
+    dispatch(getApplicationHistory(task?.applicationId));
+    setShowHistoryModal(true);
+  };
+  // Main Renderor
   return (
     <div className="task-details-view">
+      {showHistoryModal && (
+        <TaskHistoryModal
+          show={showHistoryModal}
+          onClose={() => setShowHistoryModal(false)}
+        />
+      )}
       <Card className="editor-header">
         <Card.Body>
           <div className="d-flex justify-content-between align-items-center">
@@ -194,6 +211,7 @@ const TaskDetails = () => {
               label={t("History")}
               dataTestId="handle-task-details-history-testid"
               ariaLabel={t("Submission History Button")}
+              onClick={handleHistory}
             />
           </div>
         </Card.Body>
