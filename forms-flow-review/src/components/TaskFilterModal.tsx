@@ -483,28 +483,30 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
 
 
 
+  const isDuplicateVariable = (taskVar, existingVars) => {
+    return existingVars.some(
+      existingVar => existingVar.key === taskVar.key && existingVar.label === taskVar.label
+    );
+  };
+  
+  const transformToDynamicVariables = (taskVariables, existingVars) => {
+    return taskVariables
+      .filter(taskVar => !isDuplicateVariable(taskVar, existingVars))
+      .map((variable, index) => ({
+        ...variable,
+        name: variable.key,
+        isChecked: true,
+        sortOrder: existingVars.length + index + 1,
+        isTaskVariable: true
+      }));
+  };
+  
   const handleFetchTaskVariables = (formId) => {
-
     fetchTaskVariables(formId)
       .then(res => {
         const taskVariables = res.data?.taskVariables || [];
-  
-        const dynamicVariables = taskVariables
-          .filter(taskVar => {
-            return !variableArray.some(existingVar =>
-              existingVar.key === taskVar.key && existingVar.label === taskVar.label
-            );
-          })
-          .map((variable, index) => ({
-            ...variable,
-            name: variable.key,
-            isChecked: true,
-            sortOrder: variableArray.length + index + 1,
-            isTaskVariable: true,
-          }));
-  
+        const dynamicVariables = transformToDynamicVariables(taskVariables, variableArray);
         const combinedVars = [...variableArray, ...dynamicVariables];
-  
         setVariableArray(combinedVars);
       })
       .catch(err => console.error(err));
