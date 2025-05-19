@@ -64,9 +64,7 @@ export const AttributeFilterModal = ({
       );
   };
 
-  const cancelFilter = () => {
-    onClose();
-  };
+
 
   const userListResponse = useSelector((state: any) => state.task.userList) ?? {
     data: [],
@@ -577,7 +575,7 @@ export const AttributeFilterModal = ({
             <b>{currentFilterName()}</b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-            <CloseIcon onClick={cancelFilter} />
+            <CloseIcon onClick={onClose()} />
           </div>
         </Modal.Header>
         <Modal.Body className="modal-body p-0">
@@ -604,7 +602,7 @@ export const AttributeFilterModal = ({
             variant="secondary"
             size="md"
             label={t("Cancel")}
-            onClick={cancelFilter}
+            onClick={onClose()}
             dataTestId="cancel-attribute-filter"
             ariaLabel={t("Cancel filter")}
           />

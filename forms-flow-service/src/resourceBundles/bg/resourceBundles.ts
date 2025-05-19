@@ -1566,5 +1566,6 @@ export const RESOURCE_BUNDLES_BG = {
   "No, Cancel Changes": "Не, отменете промените",
   "Yes, Update This Filter For Everybody": "Да, актуализирайте този филтър за всички",
   "Select Date": "Изберете дата",
-  "Save Attribute Filter": "Запази филтъра по атрибути"
+  "Save Attribute Filter": "Запази филтъра по атрибути",
+  "Attributes: Unsaved Filter": "Атрибути: Незапазен филтър"
 }
