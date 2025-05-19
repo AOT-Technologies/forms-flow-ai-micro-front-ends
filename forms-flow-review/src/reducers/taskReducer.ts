@@ -35,6 +35,8 @@ const initialState = {
   taskGroups: [],
   isGroupLoading: false,
   taskFormSubmissionReload: false,
+  isHistoryListLoading: true,
+  appHistory: [],
   isTaskDetailUpdating: false,
   error : null,
 };
@@ -123,6 +125,10 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, error: action.payload };   
     case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:
       return {...state, ...action.payload}
+      case ACTION_CONSTANTS.IS_HISTORY_LOADING:
+        return { ...state, isHistoryListLoading: action.payload };
+      case ACTION_CONSTANTS.LIST_APPLICATION_HISTORY:
+        return { ...state, appHistory: action.payload };
 
     default:
       return state;
