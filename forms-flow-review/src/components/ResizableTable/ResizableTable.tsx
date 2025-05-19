@@ -16,6 +16,7 @@ import {
   AddIcon,
   PencilIcon,
   AssignUser,
+  ReusableResizableTable,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import {
@@ -27,7 +28,7 @@ import {
   setFilterListParams,
   setFilterListSortParams,
   setTaskListLimit,
-  setDefaultFilter, 
+  setDefaultFilter,
   resetTaskListParams,
   setSelectedBpmAttributeFilter,
 } from "../../actions/taskActions";
@@ -59,6 +60,7 @@ interface Column {
   width: number;
   sortKey: string;
   resizable?: boolean;
+  newWidth?: number;
 }
 
 interface Task {
@@ -76,8 +78,8 @@ interface DateRange {
   endDate: Date | null;
 }
 
- // Utility function for retry logic
- const retryTaskUpdate = (
+// Utility function for retry logic
+const retryTaskUpdate = (
   taskId: string,
   reqData: any,
   firstResult: number,
@@ -98,10 +100,17 @@ const updateBpmTasksAndDetails = (
   firstResult: number,
   RETRY_DELAY_TIME: number,
   limit: number
-) =>{
-if(err)
-  console.log('Error in task updation-',err);
-retryTaskUpdate(taskId, reqData, firstResult, dispatch, RETRY_DELAY_TIME, limit);}
+) => {
+  if (err) console.log("Error in task updation-", err);
+  retryTaskUpdate(
+    taskId,
+    reqData,
+    firstResult,
+    dispatch,
+    RETRY_DELAY_TIME,
+    limit
+  );
+};
 
 const onChangeClaim = (
   task: Task,
@@ -112,19 +121,22 @@ const onChangeClaim = (
   reqData: any,
   firstResult: number
 ) => {
-if (selectedUserName && selectedUserName !== task.assignee) {
-  dispatch(
-    // eslint-disable-next-line no-unused-vars
-    updateAssigneeBPMTask(task?.id, selectedUserName, (err) => updateBpmTasksAndDetails(
-      err, 
-      task?.id, 
-      dispatch, 
-      reqData, 
-      firstResult, 
-      RETRY_DELAY_TIME,
-      limit))
-  );
-}
+  if (selectedUserName && selectedUserName !== task.assignee) {
+    dispatch(
+      // eslint-disable-next-line no-unused-vars
+      updateAssigneeBPMTask(task?.id, selectedUserName, (err) =>
+        updateBpmTasksAndDetails(
+          err,
+          task?.id,
+          dispatch,
+          reqData,
+          firstResult,
+          RETRY_DELAY_TIME,
+          limit
+        )
+      )
+    );
+  }
 };
 
 const onClaim = (
@@ -136,16 +148,19 @@ const onClaim = (
   reqData: any,
   firstResult: number
 ) => {
-dispatch(
-  claimBPMTask(taskId, userData?.preferred_username, (err) => updateBpmTasksAndDetails(
-    err, 
-    taskId, 
-    dispatch,
-    reqData, 
-    firstResult, 
-    RETRY_DELAY_TIME,
-    limit))
-);
+  dispatch(
+    claimBPMTask(taskId, userData?.preferred_username, (err) =>
+      updateBpmTasksAndDetails(
+        err,
+        taskId,
+        dispatch,
+        reqData,
+        firstResult,
+        RETRY_DELAY_TIME,
+        limit
+      )
+    )
+  );
 };
 
 const onUnClaimTask = (
@@ -156,17 +171,20 @@ const onUnClaimTask = (
   reqData: any,
   firstResult: number
 ) => {
-dispatch(
-  // eslint-disable-next-line no-unused-vars
-  unClaimBPMTask(taskId, (err) => updateBpmTasksAndDetails(
-    err, 
-    taskId, 
-    dispatch,
-    reqData, 
-    firstResult, 
-    RETRY_DELAY_TIME,
-    limit))
-);
+  dispatch(
+    // eslint-disable-next-line no-unused-vars
+    unClaimBPMTask(taskId, (err) =>
+      updateBpmTasksAndDetails(
+        err,
+        taskId,
+        dispatch,
+        reqData,
+        firstResult,
+        RETRY_DELAY_TIME,
+        limit
+      )
+    )
+  );
 };
 
 const renderAssigneeComponent = (
@@ -179,16 +197,45 @@ const renderAssigneeComponent = (
   userData: any,
   userList: any
 ) => {
-return (
-  <AssignUser
-    size="sm"
-    users={userList?.data ?? []}
-    username={task?.assignee}
-    meOnClick={() => onClaim(task?.id, userData, dispatch, limit, RETRY_DELAY_TIME, reqData, firstResult)}
-    optionSelect={(userName) => onChangeClaim(task, userName, dispatch, limit, RETRY_DELAY_TIME, reqData, firstResult)}
-    handleCloseClick={() => onUnClaimTask(task?.id, dispatch, limit, RETRY_DELAY_TIME, reqData, firstResult)}
-  />
-);
+  return (
+    <AssignUser
+      size="sm"
+      users={userList?.data ?? []}
+      username={task?.assignee}
+      meOnClick={() =>
+        onClaim(
+          task?.id,
+          userData,
+          dispatch,
+          limit,
+          RETRY_DELAY_TIME,
+          reqData,
+          firstResult
+        )
+      }
+      optionSelect={(userName) =>
+        onChangeClaim(
+          task,
+          userName,
+          dispatch,
+          limit,
+          RETRY_DELAY_TIME,
+          reqData,
+          firstResult
+        )
+      }
+      handleCloseClick={() =>
+        onUnClaimTask(
+          task?.id,
+          dispatch,
+          limit,
+          RETRY_DELAY_TIME,
+          reqData,
+          firstResult
+        )
+      }
+    />
+  );
 };
 
 // Extracted table cell rendering component
@@ -217,260 +264,18 @@ const getCellValue = (
       return created ? HelperServices.getLocaldate(created) : "N/A";
     case "assignee":
       return renderAssigneeComponent(
-        task, 
-        limit, 
+        task,
+        limit,
         RETRY_DELAY_TIME,
-        reqData,   
+        reqData,
         firstResult,
         dispatch,
         userData,
-        userList);
+        userList
+      );
     default:
       return variables.find((v) => v.name === sortKey)?.value ?? "-";
   }
-};
-
-const TaskTableCell = ({ 
-  task, 
-  column, 
-  index, 
-  redirectUrl, 
-  history, 
-  t, 
-  limit,
-  RETRY_DELAY_TIME,
-  reqData,
-  firstResult,
-  dispatch,
-  userData,
-  userList }) => {
-  if (column.sortKey === "actions") {
-    return (
-      <td key={`action-${task.id}-${index}`}>
-        <CustomButton
-          size="table-sm"
-          variant="secondary"
-          label={t("View")}
-          onClick={() =>
-            history.push(`${redirectUrl.current}review/${task?.id}`)
-          }
-          dataTestId={`view-task-${task.id}`}
-          ariaLabel={t("View details for task {{taskName}}", {
-            taskName: task?.name ?? t("unnamed"),
-          })}
-        />
-      </td>
-    );
-  }
-
-  return (
-    <td
-      key={`cell-${task.id}-${column.sortKey}`}
-      data-testid={`task-${task.id}-${column.sortKey}`}
-      aria-label={`${t(column.name)}: ${getCellValue(
-        column, 
-        task, 
-        limit, 
-        RETRY_DELAY_TIME, 
-        reqData,   
-        firstResult,
-        dispatch,
-        userData,
-        userList)}`}
-    >
-      {getCellValue(
-        column, 
-        task, 
-        limit, 
-        RETRY_DELAY_TIME, 
-        reqData,   
-        firstResult,
-        dispatch,
-        userData,
-        userList)}
-    </td>
-  );
-};
-
-// Extracted table header component
-const TableHeaderCell = ({
-  column,
-  index,
-  columnsLength,
-  currentResizingColumn,
-  sortParams,
-  handleSort,
-  handleMouseDown,
-  t,
-}) => {
-  const isSortable = ["name", "created", "assignee"].includes(column.sortKey);
-
-  return (
-    <th
-      key={`header-${column.sortKey ?? index}`}
-      className="resizable-column"
-      style={{ width: column.width }}
-      data-testid={`column-header-${column.sortKey ?? "actions"}`}
-      aria-label={`${t(column.name)} ${t("column")}${
-        isSortable ? ", " + t("sortable") : ""
-      }`}
-    >
-      {isSortable ? (
-        <SortableHeader
-          columnKey={column.sortKey}
-          title={t(column.name)}
-          currentSort={sortParams}
-          handleSort={handleSort}
-          className="w-100 d-flex justify-content-between align-items-center"
-          dataTestId={`sort-header-${column.sortKey}`}
-          ariaLabel={t("Sort by {{columnName}}", {
-            columnName: t(column.name),
-          })}
-        />
-      ) : (
-        t(column.name)
-      )}
-      {column.resizable && index < columnsLength - 1 && (
-        <div
-          className={`column-resizer ${
-            currentResizingColumn?.sortKey === column.sortKey ? "resizing" : ""
-          }`}
-          onMouseDown={(e) => handleMouseDown(index, column, e)}
-          data-testid={`column-resizer-${column.sortKey}`}
-          aria-label={t("Resize {{columnName}} column", {
-            columnName: t(column.name),
-          })}
-        />
-      )}
-    </th>
-  );
-};
-
-// Extracted task row component
-const TaskRow = ({ 
-  task, 
-  columns, 
-  redirectUrl, 
-  history, 
-  t,   
-  limit,
-  RETRY_DELAY_TIME,
-  reqData,
-  firstResult,
-  dispatch,
-  userData,
-  userList }) => {
-  return (
-    <tr
-      key={`row-${task.id}`}
-      data-testid={`task-row-${task.id}`}
-      aria-label={t("Task row for task {{taskName}}", {
-        taskName: task.name ?? t("unnamed"),
-      })}
-    >
-      {columns.map((column, colIndex) => (
-        <TaskTableCell
-          key={`cell-${task.id}-${column.sortKey ?? colIndex}`}
-          task={task}
-          column={column}
-          index={colIndex}
-          redirectUrl={redirectUrl}
-          history={history}
-          t={t}
-          limit={limit}
-          RETRY_DELAY_TIME={RETRY_DELAY_TIME}
-          reqData={reqData}
-          firstResult={firstResult}
-          dispatch={dispatch}
-          userData={userData}
-          userList={userList}
-        />
-      ))}
-    </tr>
-  );
-};
-
-// Extracted table component
-const TaskTable = ({
-  columns,
-  taskList,
-  tasksCount,
-  t,
-  sortParams,
-  handleSort,
-  resizingRef,
-  handleMouseDown,
-  tableRef,
-  redirectUrl,
-  history,
-  limit,
-  RETRY_DELAY_TIME,
-  reqData,
-  firstResult,
-  dispatch,
-  userData,
-  userList
-}) => {
-  return (
-    <table
-      ref={tableRef}
-      className="resizable-table"
-      data-testid="task-resizable-table"
-      aria-label={t("Tasks data table with resizable columns")}
-    >
-      <thead className="resizable-header">
-        <tr>
-          {columns.map((column, index) => (
-            <TableHeaderCell
-              key={`header-${column.sortKey ?? index}`}
-              column={column}
-              index={index}
-              columnsLength={columns.length}
-              currentResizingColumn={resizingRef.current}
-              sortParams={sortParams}
-              handleSort={handleSort}
-              handleMouseDown={handleMouseDown}
-              t={t}
-            />
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {taskList.length === 0 ? (
-          <tr className="empty-row">
-            <td
-              colSpan={columns.length}
-              className="empty-table-message"
-              data-testid="empty-tasks-message"
-              aria-label={t("No tasks message")}
-            >
-              {t(
-                "No tasks have been found. Try a different filter combination or contact your admin."
-              )}
-            </td>
-          </tr>
-        ) : (
-          taskList.map((task) => (
-            <TaskRow
-              key={`row-${task.id}`}
-              task={task}
-              columns={columns}
-              redirectUrl={redirectUrl}
-              history={history}
-              t={t}
-              limit={limit}
-              RETRY_DELAY_TIME={RETRY_DELAY_TIME}
-              reqData={reqData}
-              firstResult={firstResult}
-              dispatch={dispatch}
-              userData={userData}
-              userList={userList}
-            />
-          ))
-        )}
-      </tbody>
-    </table>
-  );
 };
 
 export function ResizableTable(): JSX.Element {
@@ -517,11 +322,7 @@ export function ResizableTable(): JSX.Element {
   }, []);
 
   const [columns, setColumns] = useState<Column[]>([]);
-  const tableRef = useRef<HTMLTableElement>(null);
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
-  const resizingRef = useRef(null);
-  const startXRef = useRef<number>(0);
-  const startWidthRef = useRef<number>(0);
   const [showSortModal, setShowSortModal] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: null,
@@ -547,7 +348,8 @@ export function ResizableTable(): JSX.Element {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
-  const userData = StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
+  const userData =
+    StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
 
   const isFilterCreator = userRoles.includes("create_filters");
   const isFilterAdmin = userRoles.includes("manage_all_filters");
@@ -602,9 +404,10 @@ export function ResizableTable(): JSX.Element {
       });
     };
 
-    dispatch(fetchAttributeFilterList(filterSelected.id, handleAttributeFilterList));
+    dispatch(
+      fetchAttributeFilterList(filterSelected.id, handleAttributeFilterList)
+    );
   }, [filterList.length, defaultFilter, dispatch]);
-
 
   useEffect(() => {
     if (selectedFilter.id) {
@@ -619,7 +422,6 @@ export function ResizableTable(): JSX.Element {
       dispatch(fetchServiceTaskList(updatedFilter, null, activePage, limit));
     }
   }, [isAssigned]);
-
 
   useEffect(() => {
     if (Array.isArray(taskvariables)) {
@@ -650,8 +452,7 @@ export function ResizableTable(): JSX.Element {
         return prevColumns;
       });
     }
-
-}, [taskvariables]);
+  }, [taskvariables]);
 
   const handleSortApply = useCallback(
     (selectedSortOption, selectedSortOrder) => {
@@ -665,7 +466,7 @@ export function ResizableTable(): JSX.Element {
       );
       setShowSortModal(false);
     },
-    [dispatch, sortParams]
+    [dispatch, optionSortBy]
   );
 
   const handleSort = useCallback(
@@ -701,13 +502,15 @@ export function ResizableTable(): JSX.Element {
     setShowTaskFilterModal(true);
   }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
 
-  useEffect(() => {  
+  useEffect(() => {
     const currentFilter = filterList.find((item) => item.id === defaultFilter);
     if (currentFilter) {
-      const checkedVariables = currentFilter.variables?.filter(variable => variable.isChecked);
+      const checkedVariables = currentFilter.variables?.filter(
+        (variable) => variable.isChecked
+      );
       setTaskAttributeData(checkedVariables);
     }
-  }, [filterList]);
+  }, [filterList, defaultFilter]);
 
   const changeFilterSelection = useCallback(
     (filter) => {
@@ -768,46 +571,48 @@ export function ResizableTable(): JSX.Element {
       }),
     }));
 
-const extraItems = isFilterCreator ? [
-      {
-        content: (
-          <span>
-            <span>
-              <AddIcon className="filter-plus-icon" />
-            </span>{" "}
-            {t("Custom Filter")}
-          </span>
-        ),
-        onClick: handleToggleFilterModal,
-        type: "custom",
-        dataTestId: "filter-item-custom",
-        ariaLabel: t("Custom Filter"),
-      },
-      {
-        content: (
-          <span>
-            <span >
-              <PencilIcon className="filter-edit-icon"  />
-            </span>{" "}
-            {t("Re-order And Hide Filters")}
-          </span>
-        ),
-        onClick: () => console.log("Re-order clicked"),
-        type: "reorder",
-        dataTestId: "filter-item-reorder",
-        ariaLabel: t("Re-order And Hide Filters"),
-      },
-    ]: [];
+    const extraItems = isFilterCreator
+      ? [
+          {
+            content: (
+              <span>
+                <span>
+                  <AddIcon className="filter-plus-icon" />
+                </span>{" "}
+                {t("Custom Filter")}
+              </span>
+            ),
+            onClick: handleToggleFilterModal,
+            type: "custom",
+            dataTestId: "filter-item-custom",
+            ariaLabel: t("Custom Filter"),
+          },
+          {
+            content: (
+              <span>
+                <span>
+                  <PencilIcon className="filter-edit-icon" />
+                </span>{" "}
+                {t("Re-order And Hide Filters")}
+              </span>
+            ),
+            onClick: () => console.log("Re-order clicked"),
+            type: "reorder",
+            dataTestId: "filter-item-reorder",
+            ariaLabel: t("Re-order And Hide Filters"),
+          },
+        ]
+      : [];
 
     return [...mappedItems, ...extraItems];
   }, [
     filtersCount,
-    filterList,
     t,
     handleToggleFilterModal,
     changeFilterSelection,
-    isFilterCreator
+    isFilterCreator,
   ]);
+
   const filterDropdownAttributeItems = useMemo(() => {
     // Generate items based on the attributeFilterList
     const attributeItems =
@@ -831,36 +636,38 @@ const extraItems = isFilterCreator ? [
             },
           ];
 
-    const extraItems = isFilterCreator ? [
-      {
-        content: (
-            <span>
-            <span>
-              <AddIcon className="filter-plus-icon" />
-            </span>{" "}
-            {t("Custom Attribute Filter")}
-          </span>
-        ),
-        onClick: handleToggleAttrFilterModal,
-        type: "custom",
-        dataTestId: "attr-filter-item-custom",
-        ariaLabel: t("Custom Attribute Filter"),
-      },
-      {
-        content: (
-            <span>
-            <span>
-              <PencilIcon className="filter-edit-icon" />
-            </span>{" "}
-            {t("Re-order And Hide Attribute Filters")}
-          </span>
-        ),
-        onClick: () => console.log("Re-order attribute filters clicked"),
-        type: "reorder",
-        dataTestId: "attr-filter-item-reorder",
-        ariaLabel: t("Re-order And Hide Attribute Filters"),
-      },
-    ]: [];
+    const extraItems = isFilterCreator
+      ? [
+          {
+            content: (
+              <span>
+                <span>
+                  <AddIcon className="filter-plus-icon" />
+                </span>{" "}
+                {t("Custom Attribute Filter")}
+              </span>
+            ),
+            onClick: handleToggleAttrFilterModal,
+            type: "custom",
+            dataTestId: "attr-filter-item-custom",
+            ariaLabel: t("Custom Attribute Filter"),
+          },
+          {
+            content: (
+              <span>
+                <span>
+                  <PencilIcon className="filter-edit-icon" />
+                </span>{" "}
+                {t("Re-order And Hide Attribute Filters")}
+              </span>
+            ),
+            onClick: () => console.log("Re-order attribute filters clicked"),
+            type: "reorder",
+            dataTestId: "attr-filter-item-reorder",
+            ariaLabel: t("Re-order And Hide Attribute Filters"),
+          },
+        ]
+      : [];
 
     return [...attributeItems, ...extraItems];
   }, [
@@ -868,9 +675,8 @@ const extraItems = isFilterCreator ? [
     t,
     handleToggleAttrFilterModal,
     changeAttributeFilterSelection,
-    isFilterCreator
+    isFilterCreator,
   ]);
-
 
   const hasFetchedInitially = useRef(false);
 
@@ -934,11 +740,11 @@ const extraItems = isFilterCreator ? [
       dispatch(
         fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
       );
-    }else if(filterCached){ 
-        dispatch(resetTaskListParams({filterCached:false}));
-        dispatch(
-          fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
-        );
+    } else if (filterCached) {
+      dispatch(resetTaskListParams({ filterCached: false }));
+      dispatch(
+        fetchServiceTaskList(cloneDeep(updatedParams), null, activePage, limit)
+      );
     }
   }, [
     selectedAttributeFilterId,
@@ -950,6 +756,9 @@ const extraItems = isFilterCreator ? [
     selectedFilter,
     sortParams,
     reqData,
+    activePage,
+    limit,
+    filterCached,
   ]);
 
   // Refresh handler (same logic as useEffect)
@@ -1006,9 +815,7 @@ const extraItems = isFilterCreator ? [
     if (selectedFilter) {
       dispatch(setBPMTaskLoader(true));
       dispatch(setBPMTaskListActivePage(1));
-      dispatch(
-        fetchServiceTaskList(formattedReqData, null, activePage, limit)
-      );
+      dispatch(fetchServiceTaskList(formattedReqData, null, activePage, limit));
     }
   }, [
     dispatch,
@@ -1023,51 +830,23 @@ const extraItems = isFilterCreator ? [
     sortParams,
   ]);
 
-  // Column resizing logic (updated to only resize specific columns)
-  const handleMouseDown = useCallback(
-    (index: number, column: any, e: React.MouseEvent): void => {
-      if (!columns[index].resizable) return;
-      resizingRef.current = column;
-      startXRef.current = e.pageX;
-      startWidthRef.current = columns[index].width;
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
+  // Handle column resize
+  const handleColumnResize = useCallback(
+    (column: Column, newWidth: number) => {
+      // Update the selected filter with the new width
+      const updatedData = cloneDeep(selectedFilter);
+      const variables = updatedData.variables.map((variable: any) => {
+        if (variable.name === column.sortKey) {
+          return { ...variable, width: newWidth };
+        }
+        return variable;
+      });
+
+      // Update the filter with the new width
+      updateFilter({ variables }, selectedFilterId);
     },
-    [columns]
+    [selectedFilter, selectedFilterId]
   );
-
-  const handleMouseMove = useCallback((e: MouseEvent): void => {
-    if (resizingRef.current === null) return;
-    const diff = e.pageX - startXRef.current;
-    const newWidth = Math.max(50, startWidthRef.current + diff);
-    resizingRef.current.newWidth = newWidth;
-    setColumns((prev) =>
-      prev.map((col) =>
-        col.sortKey === resizingRef.current.sortKey
-          ? { ...col, width: newWidth }
-          : col
-      )
-    );
-  }, []);
-
-  const handleMouseUp = useCallback((): void => {
-    // fetch the current column details and udpate with new width
-    const updatedData = cloneDeep(selectedFilter);
-    const variables = updatedData.variables.map((variable: any) => {
-      if (variable.name === resizingRef.current.sortKey) {
-        return { ...variable, width: resizingRef.current.newWidth };
-      }
-      return variable;
-    });
-    // Update the selected filter with the new width
-    // not waiting for response because we don't want to block the UI
-    updateFilter({ variables }, selectedFilterId);
-
-    //reset the resizing reference and remove event listeners
-    resizingRef.current = null;
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-  }, [handleMouseMove, selectedFilter, selectedFilterId]);
 
   // Sorting modal handlers
   const handleSortModalClose = useCallback(() => {
@@ -1078,15 +857,6 @@ const extraItems = isFilterCreator ? [
     setShowSortModal(true);
   }, []);
 
-  // Cleanup function to remove event listeners
-  // This is important to prevent memory leaks and ensure that the event listeners are removed when the component unmounts
-  useEffect(() => {
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [handleMouseMove, handleMouseUp]);
-
   // Pagination and limit change handlers
   const handleLimitChange = useCallback(
     (newLimit) => {
@@ -1095,7 +865,7 @@ const extraItems = isFilterCreator ? [
       dispatch(setBPMTaskListActivePage(1));
       dispatch(fetchServiceTaskList(reqData, null, 1, newLimit));
     },
-    [dispatch, reqData, activePage]
+    [dispatch, reqData]
   );
 
   const handlePageChange = useCallback(
@@ -1110,9 +880,146 @@ const extraItems = isFilterCreator ? [
   const handleCheckBoxChange = () => {
     setIsAssigned(!isAssigned);
   };
+
   const onLabelClick = () => {
     handleCheckBoxChange();
   };
+
+  // Render header cell for ReusableResizableTable
+  const renderHeaderCell = useCallback(
+    (
+      column: Column,
+      index: number,
+      columnsLength: number,
+      currentResizingColumn: any,
+      handleMouseDown: (index: number, column: any, e: React.MouseEvent) => void
+    ) => {
+      const isSortable = ["name", "created", "assignee"].includes(
+        column.sortKey
+      );
+
+      return (
+        <th
+          key={`header-${column.sortKey ?? index}`}
+          className="resizable-column"
+          style={{ width: column.width }}
+          data-testid={`column-header-${column.sortKey ?? "actions"}`}
+          aria-label={`${t(column.name)} ${t("column")}${
+            isSortable ? ", " + t("sortable") : ""
+          }`}
+        >
+          {isSortable ? (
+            <SortableHeader
+              columnKey={column.sortKey}
+              title={t(column.name)}
+              currentSort={sortParams}
+              handleSort={handleSort}
+              className="w-100 d-flex justify-content-between align-items-center"
+              dataTestId={`sort-header-${column.sortKey}`}
+              ariaLabel={t("Sort by {{columnName}}", {
+                columnName: t(column.name),
+              })}
+            />
+          ) : (
+            t(column.name)
+          )}
+          {column.resizable && index < columnsLength - 1 && (
+            <div
+              className={`column-resizer ${
+                currentResizingColumn?.sortKey === column.sortKey
+                  ? "resizing"
+                  : ""
+              }`}
+              onMouseDown={(e) => handleMouseDown(index, column, e)}
+              data-testid={`column-resizer-${column.sortKey}`}
+              aria-label={t("Resize {{columnName}} column", {
+                columnName: t(column.name),
+              })}
+            />
+          )}
+        </th>
+      );
+    },
+    [t, sortParams, handleSort]
+  );
+
+  // Render row for ReusableResizableTable
+  const renderRow = useCallback(
+    (task: Task, columns: Column[], rowIndex: number) => {
+      return (
+        <tr
+          key={`row-${task.id}`}
+          data-testid={`task-row-${task.id}`}
+          aria-label={t("Task row for task {{taskName}}", {
+            taskName: task.name ?? t("unnamed"),
+          })}
+        >
+          {columns.map((column, colIndex) => {
+            if (column.sortKey === "actions") {
+              return (
+                <td key={`action-${task.id}-${colIndex}`}>
+                  <CustomButton
+                    size="table-sm"
+                    variant="secondary"
+                    label={t("View")}
+                    onClick={() =>
+                      history.push(`${redirectUrl.current}review/${task?.id}`)
+                    }
+                    dataTestId={`view-task-${task.id}`}
+                    ariaLabel={t("View details for task {{taskName}}", {
+                      taskName: task?.name ?? t("unnamed"),
+                    })}
+                  />
+                </td>
+              );
+            }
+
+            return (
+              <td
+                key={`cell-${task.id}-${column.sortKey}`}
+                data-testid={`task-${task.id}-${column.sortKey}`}
+                aria-label={`${t(column.name)}: ${getCellValue(
+                  column,
+                  task,
+                  limit,
+                  RETRY_DELAY_TIME,
+                  reqData,
+                  activePage,
+                  dispatch,
+                  userData,
+                  userList
+                )}`}
+              >
+                {getCellValue(
+                  column,
+                  task,
+                  limit,
+                  RETRY_DELAY_TIME,
+                  reqData,
+                  activePage,
+                  dispatch,
+                  userData,
+                  userList
+                )}
+              </td>
+            );
+          })}
+        </tr>
+      );
+    },
+    [
+      t,
+      history,
+      redirectUrl,
+      limit,
+      RETRY_DELAY_TIME,
+      reqData,
+      activePage,
+      dispatch,
+      userData,
+      userList,
+    ]
+  );
 
   const renderTaskList = () => {
     if (!selectedFilter) {
@@ -1125,6 +1032,7 @@ const extraItems = isFilterCreator ? [
         </div>
       );
     }
+
     if (columns.length === 0) {
       return (
         <div
@@ -1181,25 +1089,21 @@ const extraItems = isFilterCreator ? [
               data-testid="inner-table-container"
               aria-label={t("Inner table container")}
             >
-              <TaskTable
+              <ReusableResizableTable
                 columns={columns}
-                taskList={taskList}
-                tasksCount={tasksCount}
-                t={t}
-                sortParams={sortParams}
-                handleSort={handleSort}
-                resizingRef={resizingRef}
-                handleMouseDown={handleMouseDown}
-                tableRef={tableRef}
-                redirectUrl={redirectUrl}
-                history={history}
-                limit={limit}
-                RETRY_DELAY_TIME={RETRY_DELAY_TIME}
-                reqData={reqData}
-                firstResult={activePage}
-                dispatch={dispatch}
-                userData={userData}
-                userList={userList}
+                data={taskList}
+                renderRow={renderRow}
+                renderHeaderCell={renderHeaderCell}
+                emptyMessage={t(
+                  "No tasks have been found. Try a different filter combination or contact your admin."
+                )}
+                onColumnResize={handleColumnResize}
+                tableClassName="resizable-table"
+                headerClassName="resizable-header"
+                containerClassName="resizable-table-container"
+                scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+                dataTestId="task-resizable-table"
+                ariaLabel={t("Tasks data table with resizable columns")}
               />
             </div>
           </div>
@@ -1329,19 +1233,21 @@ const extraItems = isFilterCreator ? [
           </span>
 
           <div className="mb-2">
-          <button className={`custom-checkbox-container button-as-div ${
-              isAssigned ? "checked" :""
-            }`}
-            onClick={onLabelClick}>
-          <input
-            type="checkbox"
-            className="form-check-input"
-            checked={isAssigned}
-            onChange={handleCheckBoxChange}
-            data-testid="assign-to-me-checkbox"
-          />
-          <span className="custom-checkbox-label">{t("Assign to me")}</span>
-        </button>
+            <button
+              className={`custom-checkbox-container button-as-div ${
+                isAssigned ? "checked" : ""
+              }`}
+              onClick={onLabelClick}
+            >
+              <input
+                type="checkbox"
+                className="form-check-input"
+                checked={isAssigned}
+                onChange={handleCheckBoxChange}
+                data-testid="assign-to-me-checkbox"
+              />
+              <span className="custom-checkbox-label">{t("Assign to me")}</span>
+            </button>
           </div>
         </div>
 
