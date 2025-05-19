@@ -31,15 +31,17 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
   }, [filterItems, onUpdate]);
 
   useEffect(() => {
-    // Update the sortOrder i key in each item if it is null or undefined to ensure that it is a number 
-    const updatedItems = filterItems.map((items,index)=>{
-      return {
-        ...items,
-        sortOrder: items.sortOrder ?? index,
-      };
-    })
-    setFilterItems(updatedItems);
-  }, []);
+  // Only update items that are missing sortOrder
+  const needsUpdate = filterItems.some(item => item.sortOrder == null);
+  if (!needsUpdate) return;
+
+  const updatedItems = filterItems.map((item, index) => ({
+    ...item,
+    sortOrder: item.sortOrder ?? index,
+  }));
+
+  setFilterItems(updatedItems);
+}, []);
 
   const onDragStart = (e: React.DragEvent<HTMLSpanElement>, index: number) => {
     e.stopPropagation();

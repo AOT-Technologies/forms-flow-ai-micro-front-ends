@@ -220,7 +220,7 @@ export const fetchUserList = (...rest) => {
  }; 
  
 export const saveFilterPreference= (data) =>{
-  return RequestService.httpPOSTRequest(`${API.GET_FILTER_PREFERENCE}`,data);
+  return RequestService.httpPOSTRequest(`${API.SAVE_FILTER_PREFERENCE}`,data);
 };
 
 

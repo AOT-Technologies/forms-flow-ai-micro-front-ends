@@ -357,15 +357,14 @@ export function ResizableTable(): JSX.Element {
   const isFilterCreator = userRoles.includes("create_filters");
   const isFilterAdmin = userRoles.includes("manage_all_filters");
   const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
-
+  
+  const userData =
+    StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
   // Get user details
   useEffect(() => {
-            StorageService.getParsedData(StorageService.User.USER_DETAILS) &&
-              setUserDetail(
-                StorageService.getParsedData(StorageService.User.USER_DETAILS)
-              );
-          }, []);
-  const userData = StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
+    userData && setUserDetail(userData);
+  }, []);
+    
 
 
   useEffect(() => {
