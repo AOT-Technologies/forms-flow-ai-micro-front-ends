@@ -228,7 +228,7 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
 
   const getCriteria = (): FilterCriteria => {
     const criteria = {
-      includeAssignedTasks: filter?.criteria?.includeAssignedTasks,
+      includeAssignedTasks:  true,
       processVariables: [{
         name: "formId",
         operator: 'eq',
