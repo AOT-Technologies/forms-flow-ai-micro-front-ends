@@ -75,8 +75,8 @@ declare module "@formsflow/components" {
     UpdateIcon,
     ConfirmModal,
     ReusableResizableTable,
-    useSuccessCountdown
-    BackToPrevIcon,
+    useSuccessCountdown,
+    BackToPrevIcon
   }: any;
 }
 

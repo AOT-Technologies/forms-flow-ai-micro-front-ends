@@ -1062,5 +1062,6 @@ export const RESOURCE_BUNDLES_ES = {
   "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution.": "Este filtro se comparte con otros. Actualizar este filtro lo actualizará para todos y podría afectar su flujo de trabajo. Proceda con precaución.",
   "No, Cancel Changes": "No, cancelar cambios",
   "Yes, Update This Filter For Everybody": "Sí, actualizar este filtro para todos",
-  "Select Date": "Seleccionar fecha"
+  "Select Date": "Seleccionar fecha",
+   "Save Attribute Filter": "Guardar filtro de atributos"
 }
