@@ -12,6 +12,7 @@ import {
   FormInput,
   CustomInfo,
   DragandDropSort,
+  FormVariableIcon,
   DeleteIcon,
   UpdateIcon,
   ConfirmModal,
@@ -40,7 +41,7 @@ import {
 } from "../api/services/filterServices";
 import { setBPMFiltersAndCount, setDefaultFilter, setUserGroups } from "../actions/taskActions";
 import { Filter, FilterCriteria, UserDetail } from "../types/taskFilter.js";
-import { StorageService } from "@formsflow/service";
+import { StorageService ,StyleServices} from "@formsflow/service";
 import { FormSelectionModal } from "./FormSelectionModal";
 
 
@@ -68,7 +69,7 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
     formName: "",
   });
   const [variableArray, setVariableArray] = useState([]);
-
+  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
   const {
     userList = { data: [] },
@@ -756,12 +757,13 @@ const editRole = isFilterAdmin && canAccess;
         dataTestId="task-filter-columns-note"
       />
       {variableArray.length !== 0 && (
-        <DragandDropSort
-          key={variableArray.length}
-          items={variableArray}
-          onUpdate={handleUpdateOrder}
-          data-testid="columns-sort"
-        />
+       <DragandDropSort
+       key={variableArray.length}
+       items={variableArray}
+       onUpdate={handleUpdateOrder}
+       icon = { <FormVariableIcon color = {darkColor} /> }
+       data-testid="columns-sort"
+       />
       )}
 
     </div>

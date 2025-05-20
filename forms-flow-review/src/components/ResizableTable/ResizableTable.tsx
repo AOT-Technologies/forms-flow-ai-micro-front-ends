@@ -15,6 +15,8 @@ import {
   ButtonDropdown,
   AddIcon,
   PencilIcon,
+  SharedWithMeIcon,
+  SharedWithOthersIcon,
   AssignUser,
   ReusableResizableTable,
 } from "@formsflow/components";
@@ -54,6 +56,8 @@ import Loading from "../Loading";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { StorageService, HelperServices } from "@formsflow/service";
 import AttributeFilterModal from "../AttributeFilterModal";
+import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
+import {  UserDetail } from "../../types/taskFilter";
 
 interface Column {
   name: string;
@@ -304,6 +308,7 @@ export function ResizableTable(): JSX.Element {
     activePage,
     tasksCount,
     isTaskListLoading,
+    taskFilterPreference,
     filterCached,
   } = useSelector((state: any) => state.task ?? {});
   const selectedFilterId = selectedFilter?.id ?? null;
@@ -336,10 +341,10 @@ export function ResizableTable(): JSX.Element {
     ],
     [t]
   );
-
   const [filterToEdit, setFilterToEdit] = useState(null);
   const [attrFilterToEdit, setAttrFilterToEdit] = useState(null);
   const [canEditFilter, setCanEditFilter] = useState(false);
+  const [showReorderFilterModal,setShowReorderFilterModal] = useState(false); 
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
   const userList = useSelector((state: any) => state.task?.userList);
   const redirectUrl = useRef(
@@ -349,11 +354,18 @@ export function ResizableTable(): JSX.Element {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
   );
-  const userData =
-    StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
-
   const isFilterCreator = userRoles.includes("create_filters");
   const isFilterAdmin = userRoles.includes("manage_all_filters");
+  const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
+  
+  const userData =
+    StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
+  // Get user details
+  useEffect(() => {
+    userData && setUserDetail(userData);
+  }, []);
+    
+
 
   useEffect(() => {
     dispatch(setBPMFilterLoader(true));
@@ -573,49 +585,80 @@ export function ResizableTable(): JSX.Element {
         },
       ];
     }
+    const sortedFilters = [...filtersCount].sort((a, b) => {
+      const prefA = taskFilterPreference?.find(p => p.filterId === a.id);
+      const prefB = taskFilterPreference?.find(p => p.filterId === b.id);
+    
+      const orderA = prefA?.sortOrder ?? 0;
+      const orderB = prefB?.sortOrder ?? 0;
+    
+      return orderA - orderB;
+    });
+    const mappedItems = sortedFilters.map((filter) => {
+      const filterDetails = filterList.find((meta) => meta.id === filter.id);
+      let icon = null;
+      if(filterDetails){
+        const createdByMe = userDetail?.preferred_username === filterDetails?.createdBy ;
+        const isSharedToPublic = (!filterDetails?.roles || filterDetails?.roles.length === 0) &&
+        (!filterDetails?.users || filterDetails?.users.length === 0);
+        const isShareToMe =
+        Array.isArray(filterDetails.roles) &&
+        filterDetails.roles.some((role) => userDetail?.groups?.includes(role));
 
-    const mappedItems = filtersCount.map((filter) => ({
-      content: `${t(filter.name)} (${filter.count})`,
+        if (createdByMe) {
+          icon =  <SharedWithOthersIcon className="shared-icon" />
+        } else if (isSharedToPublic || isShareToMe) {
+          icon =  <SharedWithMeIcon className="shared-icon" />
+        }
+
+      }
+      return {
+        className:  filter.id === selectedFilter.id ? "selected-filter-item" : "",
+      content: (
+        <span className="d-flex justify-content-between align-items-center">
+          {t(filter.name)} ({filter.count})
+          {icon && <span>{icon}</span>}
+        </span>
+      ),
       onClick: () => changeFilterSelection(filter),
       type: String(filter.id),
       dataTestId: `filter-item-${filter.id}`,
       ariaLabel: t("Select filter {{filterName}}", {
         filterName: t(filter.name),
       }),
-    }));
+      };
+    });
 
-    const extraItems = isFilterCreator
-      ? [
-          {
-            content: (
-              <span>
-                <span>
-                  <AddIcon className="filter-plus-icon" />
-                </span>{" "}
-                {t("Custom Filter")}
-              </span>
-            ),
-            onClick: handleToggleFilterModal,
-            type: "custom",
-            dataTestId: "filter-item-custom",
-            ariaLabel: t("Custom Filter"),
-          },
-          {
-            content: (
-              <span>
-                <span>
-                  <PencilIcon className="filter-edit-icon" />
-                </span>{" "}
-                {t("Re-order And Hide Filters")}
-              </span>
-            ),
-            onClick: () => console.log("Re-order clicked"),
-            type: "reorder",
-            dataTestId: "filter-item-reorder",
-            ariaLabel: t("Re-order And Hide Filters"),
-          },
-        ]
-      : [];
+const extraItems = isFilterCreator ? [
+      {
+        content: (
+          <span>
+            <span>
+              <AddIcon className="filter-plus-icon" />
+            </span>{" "}
+            {t("Custom Filter")}
+          </span>
+        ),
+        onClick: handleToggleFilterModal,
+        type: "custom",
+        dataTestId: "filter-item-custom",
+        ariaLabel: t("Custom Filter"),
+      },
+      {
+        content: (
+          <span>
+            <span >
+              <PencilIcon className="filter-edit-icon"  />
+            </span>{" "}
+            {t("Re-order And Hide Filters")}
+          </span>
+        ),
+        onClick: () => setShowReorderFilterModal(true),
+        type: "reorder",
+        dataTestId: "filter-item-reorder",
+        ariaLabel: t("Re-order And Hide Filters"),
+      },
+    ]: [];
 
     return [...mappedItems, ...extraItems];
   }, [
@@ -623,7 +666,8 @@ export function ResizableTable(): JSX.Element {
     t,
     handleToggleFilterModal,
     changeFilterSelection,
-    isFilterCreator,
+    taskFilterPreference,
+    isFilterCreator
   ]);
 
   const filterDropdownAttributeItems = useMemo(() => {
@@ -1307,6 +1351,13 @@ export function ResizableTable(): JSX.Element {
           setFilterParams={setFilterParams}
           selectedFilter={selectedFilter}
           attributeFilter={attrFilterToEdit}
+        />
+        <ReorderTaskFilterModal
+          showModal={showReorderFilterModal}
+          onClose={() => {
+            setShowReorderFilterModal(false);
+          }}
+          filtersList={bpmFiltersList}
         />
       </div>
       {isTaskListLoading ? <Loading /> : renderTaskList()}

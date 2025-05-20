@@ -11,6 +11,7 @@ const API = {
     GET_ATTRIBUTE_FILTERS: `${WEB_BASE_URL}/filter/<filter_id>`,
     UPDATE_DEFAULT_FILTER: `${WEB_BASE_URL}/user/default-filter`,
     GET_FORM_BY_ID: `${API_PROJECT_URL}/form`,
+    SAVE_FILTER_PREFERENCE: `${WEB_BASE_URL}/filter/filter-preference`,
     GET_BPM_TASK_DETAIL: `${BPM_BASE_URL_EXT}/v1/task/<task_id>`,
     GET_BPM_TASK_VARIABLES: `${BPM_BASE_URL_EXT}/v1/task/<task_id>/variables`,
     CUSTOM_SUBMISSION: `${CUSTOM_SUBMISSION_URL}/form/<form_id>/submission`,
