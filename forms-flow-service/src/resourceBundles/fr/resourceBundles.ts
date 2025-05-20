@@ -1566,7 +1566,9 @@ export const RESOURCE_BUNDLES_FR ={
     "No, Cancel Changes": "Non, annuler les modifications",
     "Yes, Update This Filter For Everybody": "Oui, mettre à jour ce filtre pour tout le monde",
     "Select Date": "Sélectionner une date",
-    "Save Attribute Filter": "Enregistrer le filtre d’attributs"}
+    "Save Attribute Filter": "Enregistrer le filtre d’attributs",
+    "Attributes: Unsaved Filter": "Attributs : Filtre non enregistré"
+  }
 
 
 

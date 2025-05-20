@@ -103,6 +103,26 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
     [userListData]
   );
 
+
+
+ const staticVariables = [
+  { key: 'applicationId', label: 'Submission Id', type: 'number', name: 'Submission Id', isChecked: true, sortOrder: 1, isTaskVariable: false },
+  { key: 'submitterName', label: 'Submitter Name', type: 'textfield', name: 'Submitter Name', isChecked: true, sortOrder: 2, isTaskVariable: false },
+  { key: 'assignee', label: 'Assignee', type: 'textfield', name: 'Assignee', isChecked: true, sortOrder: 3, isTaskVariable: false },
+  { key: 'name', label: 'Task', type: 'textfield', name: 'Task', isChecked: true, sortOrder: 4, isTaskVariable: false },
+  { key: 'created', label: 'Created Date', type: 'datetime', name: 'Created Date', isChecked: true, sortOrder: 5, isTaskVariable: false },
+  { key: 'formName', label: 'Form Name', type: 'textfield', name: 'Form Name', isChecked: true, sortOrder: 6, isTaskVariable: false },
+].map(variable => ({
+  ...variable,
+  key: variable.key,
+  name: variable.key,
+}));
+  
+
+  useEffect(()=>{
+    setVariableArray(staticVariables);
+  },[])
+
   useEffect(() => {
     StorageService.getParsedData(StorageService.User.USER_DETAILS) &&
       setUserDetail(
@@ -421,7 +441,7 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
     filterNameError ||
     !isCreateFilters ||
     (specificRole.length === 0 && specificAssignee.length === 0) ||
-    (shareFilter === SPECIFIC_USER_OR_GROUP && filterRole.length === 0);
+    (shareFilter === SPECIFIC_USER_OR_GROUP && filterRole.length === 0) || variableArray.every(item => !item.isChecked);
   const isButtonDisabled = isInvalidFilter;
   const saveIconColor = getIconColor(isInvalidFilter);
   const updateIconColor = getIconColor(isFilterUnchanged);
@@ -463,37 +483,35 @@ export function TaskFilterModal({ show, onClose, filter, canEdit }) {
 
 
 
+  const isDuplicateVariable = (taskVar, existingVars) => {
+    return existingVars.some(
+      existingVar => existingVar.key === taskVar.key && existingVar.label === taskVar.label
+    );
+  };
+  
+  const transformToDynamicVariables = (taskVariables, existingVars) => {
+    return taskVariables
+      .filter(taskVar => !isDuplicateVariable(taskVar, existingVars))
+      .map((variable, index) => ({
+        ...variable,
+        name: variable.key,
+        isChecked: true,
+        sortOrder: existingVars.length + index + 1,
+        isTaskVariable: true
+      }));
+  };
+  
   const handleFetchTaskVariables = (formId) => {
-
     fetchTaskVariables(formId)
       .then(res => {
         const taskVariables = res.data?.taskVariables || [];
-        const staticVariables = [
-          { key: 'applicationId', label: 'Submission Id', type: 'number', name: 'Submission Id', isChecked: true, sortOrder: 1, isTaskVariable: false },
-          { key: 'submitterName', label: 'Submitter Name', type: 'textfield', name: 'Submitter Name', isChecked: true, sortOrder: 2, isTaskVariable: false },
-          { key: 'assignee', label: 'Assignee', type: 'textfield', name: 'Assignee', isChecked: true, sortOrder: 3, isTaskVariable: false },
-          { key: 'name', label: 'Task', type: 'textfield', name: 'Task', isChecked: true, sortOrder: 4, isTaskVariable: false },
-          { key: 'created', label: 'Created Date', type: 'datetime', name: 'Created Date', isChecked: true, sortOrder: 5, isTaskVariable: false },
-          { key: 'formName', label: 'Form Name', type: 'textfield', name: 'Form Name', isChecked: true, sortOrder: 6, isTaskVariable: false },
-        ].map(variable => ({
-          ...variable,
-          key: variable.key,
-          name: variable.key,
-        }));
-
-        const dynamicVariables = taskVariables.map((variable, index) => ({
-          ...variable,
-          key: variable.key,
-          name: variable.key,
-          isChecked: true,
-          sortOrder: staticVariables.length + index + 1,
-          isTaskVariable: true,
-        }));
-
-        setVariableArray([...staticVariables, ...dynamicVariables]);
+        const dynamicVariables = transformToDynamicVariables(taskVariables, variableArray);
+        const combinedVars = [...variableArray, ...dynamicVariables];
+        setVariableArray(combinedVars);
       })
       .catch(err => console.error(err));
   };
+  
 
   const handleFilterDelete = () => {
     deleteFilter(filter?.id)
@@ -660,7 +678,7 @@ const editRole = isFilterAdmin && canAccess;
         <div className="d-flex filter-dropdown">
           <div className="L-style"></div>
           <InputDropdown
-            key="specificRoleDropdown" // 👈 Force remount
+            key="specificRoleDropdown" 
             Options={candidateOptions}
             isAllowInput={false}
             ariaLabelforDropdown={t("specific role dropdown")}
@@ -675,7 +693,7 @@ const editRole = isFilterAdmin && canAccess;
         <div className="d-flex filter-dropdown">
           <div className="L-style"></div>
           <InputDropdown
-            key="assigneeDropdown" // 👈 Force remount
+            key="assigneeDropdown"
             Options={assigneeOptions}
             isAllowInput={false}
             ariaLabelforDropdown={t("assignee dropdown")}
@@ -701,11 +719,15 @@ const editRole = isFilterAdmin && canAccess;
               className="form-selection-icon"
               data-testid="clear-formId"
               aria-label="clear-formId"
-              onClick={() => setSelectedForm({
-                formId: "",
-                formName: "",
-              })}
+              onClick={() => {
+                setSelectedForm({
+                  formId: "",
+                  formName: "",
+                });
+                setVariableArray(staticVariables);
+              }}
             />
+
           </div>) }
           <div className="form-selection-input-container">
             <PencilIcon
@@ -735,6 +757,7 @@ const editRole = isFilterAdmin && canAccess;
       />
       {variableArray.length !== 0 && (
         <DragandDropSort
+          key={variableArray.length}
           items={variableArray}
           onUpdate={handleUpdateOrder}
           data-testid="columns-sort"
@@ -1027,6 +1050,7 @@ const editRole = isFilterAdmin && canAccess;
             dataTestId="task-filter-results"
             ariaLabel={t("Filter results")}
             onClick={filterResults}
+            disabled={variableArray.every(item => !item.isChecked)}
           />
           <CustomButton
             variant="secondary"
