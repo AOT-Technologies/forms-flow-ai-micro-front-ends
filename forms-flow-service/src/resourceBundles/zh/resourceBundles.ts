@@ -1559,4 +1559,5 @@ export const RESOURCE_BUNDLES_ZH = {
   "Yes, Update This Filter For Everybody": "是的，为所有人更新此筛选器",
   "Select Date": "选择日期",
   "Save Attribute Filter": "保存属性筛选器",
+  "Attributes: Unsaved Filter": "属性：未保存的筛选器",
 }
