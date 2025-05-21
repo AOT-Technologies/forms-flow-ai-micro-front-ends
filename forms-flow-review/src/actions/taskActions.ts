@@ -109,9 +109,9 @@ export const setTasks = (data: any) => ({
       payload: data,
     });
   };
-  export const setSelectedBPMFilter = (data) => (dispatch) => {
+  export const setSelectedFilter = (data) => (dispatch) => {
     dispatch({
-      type: ACTION_CONSTANTS.BPM_SELECTED_FILTER,
+      type: ACTION_CONSTANTS.SET_SELECTED_FILTER,
       payload: data,
     });
   };

@@ -75,7 +75,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, filterList: action.payload };
     case ACTION_CONSTANTS.ATTRIBUTE_FILTER_LIST:
       return { ...state, attributeFilterList: action.payload };
-    case ACTION_CONSTANTS.BPM_SELECTED_FILTER:
+    case ACTION_CONSTANTS.SET_SELECTED_FILTER:
       return {
         ...state,
         selectedFilter: action.payload,

@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 import {
   setBPMFilterLoader,
   setBPMFiltersAndCount,
-  setSelectedBPMFilter,
+  setSelectedFilter,
   setBPMTaskLoader,
   setBPMTaskListActivePage,
   setFilterListParams,
@@ -33,7 +33,7 @@ import {
   setSelectedBpmAttributeFilter,
 } from "../../actions/taskActions";
 
-import TaskFilterModal from "../TaskFilterModal";
+import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { useHistory } from "react-router-dom";
 import {
   fetchFilterList,
@@ -45,6 +45,7 @@ import {
   updateAssigneeBPMTask,
   updateFilter,
   fetchAttributeFilterList,
+  fetchUserList,
 } from "../../api/services/filterServices";
 import { UN_SAVED_FILTER } from "../constants/taskConstants";
 
@@ -313,9 +314,15 @@ export function ResizableTable(): JSX.Element {
 
   const taskvariables = selectedFilter?.variables ?? [];
 
-  const handleToggleFilterModal = useCallback(() => {
-    setShowTaskFilterModal((prevState) => !prevState);
-  }, []);
+  const handleToggleFilterModal = ()=>{
+     setShowTaskFilterModal((prevState) => !prevState);
+  }
+
+const handleCloseFilterModal = ()=>{
+  setShowTaskFilterModal(false);
+  setFilterToEdit(null);
+  setCanEditFilter(false);
+}
 
   const handleToggleAttrFilterModal = useCallback(() => {
     setShowAttrFilterModal((prevState) => !prevState);
@@ -354,6 +361,11 @@ export function ResizableTable(): JSX.Element {
 
   const isFilterCreator = userRoles.includes("create_filters");
   const isFilterAdmin = userRoles.includes("manage_all_filters");
+
+  useEffect(() => {
+    dispatch(fetchUserList())
+  }
+  , [dispatch]);
 
   useEffect(() => {
     dispatch(setBPMFilterLoader(true));
@@ -400,7 +412,7 @@ export function ResizableTable(): JSX.Element {
         attributeFilters[0];
 
       batch(() => {
-        dispatch(setSelectedBPMFilter(filterSelected));
+        dispatch(setSelectedFilter(filterSelected));
         dispatch(setSelectedBpmAttributeFilter(attributefilterSelected || {}));
       });
     };
@@ -411,7 +423,7 @@ export function ResizableTable(): JSX.Element {
   }, [filterList.length, defaultFilter, dispatch]);
 
   useEffect(() => {
-    if (selectedFilter.id) {
+    if (selectedFilter?.id) {
       const updatedFilter = {
         ...reqData,
         criteria: {
@@ -493,12 +505,9 @@ export function ResizableTable(): JSX.Element {
 
   const handleEditTaskFilter = useCallback(() => {
     if (!selectedFilter) return;
-    const matchingFilter = filterList.find((f) => f.id === selectedFilter.id);
-    if (!matchingFilter) return;
-
-    const editPermission = matchingFilter?.editPermission;
+    const editPermission = selectedFilter?.editPermission;
     const isEditable = (isFilterCreator || isFilterAdmin) && editPermission;
-    setFilterToEdit(matchingFilter);
+    setFilterToEdit(selectedFilter);
     setCanEditFilter(isEditable);
     setShowTaskFilterModal(true);
   }, [selectedFilter, filterList, isFilterCreator, isFilterAdmin]);
@@ -535,7 +544,7 @@ export function ResizableTable(): JSX.Element {
       );
       setTaskAttributeData(taskAttributes);
       const defaultFilterId =
-        selectedFilter.id === defaultFilter ? null : selectedFilter.id;
+        selectedFilter?.id === defaultFilter ? null : selectedFilter?.id;
       updateDefaultFilter(defaultFilterId)
         .then((updateRes) =>
           dispatch(setDefaultFilter(updateRes.data.defaultFilter))
@@ -1171,13 +1180,13 @@ export function ResizableTable(): JSX.Element {
                 <span
                   className="filter-large"
                   title={
-                    selectedFilter?.name
-                      ? `${t(selectedFilter.name)} (${tasksCount ?? 0})`
+                    selectedFilter
+                      ? `${selectedFilter.unsaved? t("Unsaved Filter") : t(selectedFilter.name)} (${tasksCount ?? 0})`
                       : t("Select Filter")
                   }
                 >
-                  {selectedFilter?.name
-                    ? `${t(selectedFilter.name)} (${tasksCount ?? 0})`
+                  {selectedFilter
+                    ? `${selectedFilter.unsaved? t("Unsaved Filter") : t(selectedFilter.name)} (${tasksCount ?? 0})`
                     : t("Select Filter")}
                 </span>
               }
@@ -1295,8 +1304,9 @@ export function ResizableTable(): JSX.Element {
 
         <TaskFilterModal
           show={showTaskFilterModal}
-          onClose={handleToggleFilterModal}
           filter={filterToEdit}
+          onClose={handleCloseFilterModal}
+          toggleFilterModal={handleToggleFilterModal} 
           canEdit={canEditFilter}
         />
         <AttributeFilterModal
