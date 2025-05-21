@@ -718,8 +718,8 @@ export const RefreshIcon = ({ color = baseColor,   width="43",
   height="43", ...props }) => (
   <svg
     className="icon-wrapper-change"
-    width="43"
-    height="43"
+    width={width}
+    height={height}
     viewBox="0 0 43 43"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
