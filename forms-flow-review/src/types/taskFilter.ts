@@ -54,6 +54,9 @@ export interface FilterCriteria {
     hide?: boolean;
     sortOrder?: number | string;
     unsaved?: boolean;
+    description?: string;
+    order?: number | string;
+    resourceId?: string;
   }
   
   export interface FilterResponse {

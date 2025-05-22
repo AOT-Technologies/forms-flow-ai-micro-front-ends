@@ -5,6 +5,11 @@ export const setTasks = (data: any) => ({
     payload: data,
   })
 
+  export const setIsUnsavedFilter =(data: boolean) => ({
+    type: ACTION_CONSTANTS.SET_IS_UNSAVED_FILTER,
+    payload: data,
+  })
+
   export const setBPMUserList = (data: any) => ({
  
       type: ACTION_CONSTANTS.BPM_USER_LIST,

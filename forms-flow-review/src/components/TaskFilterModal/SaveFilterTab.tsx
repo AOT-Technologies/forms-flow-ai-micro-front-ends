@@ -20,25 +20,26 @@ const SaveFilterTab = ({
   handleUpdateFilter,
   handleDeleteFilter, 
   handleSaveCurrentFilter,
-  saveFilterButtonDisabled = false,  
+  createAndUpdateFilterButtonDisabled,  
   shareFilter,
   setShareFilter,
   candidateOptions,
   shareFilterForSpecificRole,
   setShareFilterForSpecificRole,
   handleFilterName,
-  filterName,
+  filterName, 
 
 }) => {
   const { t } = useTranslation();
     const computedStyle = getComputedStyle(document.documentElement);
   const baseColor = computedStyle.getPropertyValue("--ff-primary");
   const whiteColor = computedStyle.getPropertyValue("--ff-white");
-
+  const [filterNameError, setFilterNameError] = useState("");
   const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
-  const saveIconColor = getIconColor(saveFilterButtonDisabled);
+  const saveIconColor = getIconColor(createAndUpdateFilterButtonDisabled || filterNameError); 
   const userRoles =
     StorageService.getParsedData(StorageService.User.USER_ROLE)
+ 
   const isCreateFilters = userRoles?.includes("create_filters");
   const isFilterAdmin = userRoles?.includes("manage_all_filters"); 
   const createdByMe = filter?.createdBy === userDetail?.preferred_username
@@ -48,8 +49,8 @@ const SaveFilterTab = ({
   const viewOnly = !isFilterAdmin && canAccess;
   const editRole = isFilterAdmin && canAccess;
   const isCreator = filter?.createdBy === userDetail?.preferred_username;
-  const [filterNameError, setFilterNameError] = useState("");
 
+  
     const createFilterShareOption = (labelKey, value) => ({
     label: t(labelKey),
     value, 
@@ -158,7 +159,7 @@ const SaveFilterTab = ({
   };
 
   const renderActionButtons = () => {
-    if (filter) {
+    if (filter && filter?.id) {
       if (canAccess && isFilterAdmin) {
         return (
           <div className="pt-4 d-flex">
@@ -168,10 +169,10 @@ const SaveFilterTab = ({
               size="md"
               label={t("Update This Filter")}
               onClick={handleUpdateFilter}
-              icon={<UpdateIcon color={"updateIconColor"} />}
+              icon={<UpdateIcon color={saveIconColor} />}
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
-            //   disabled={isFilterUnchanged}
+              disabled={createAndUpdateFilterButtonDisabled || filterNameError}
             />
             <CustomButton
               variant="secondary"
@@ -188,7 +189,7 @@ const SaveFilterTab = ({
       return null;
     }
 
-    if (isFilterAdmin) {
+    if (isCreateFilters) {
       return (
         <div className="pt-4">
           <CustomButton
@@ -199,7 +200,7 @@ const SaveFilterTab = ({
             icon={<SaveIcon color={saveIconColor} />}
             dataTestId="save-task-filter"
             ariaLabel={t("Save Task Filter")}
-            disabled={saveFilterButtonDisabled}
+            disabled={createAndUpdateFilterButtonDisabled ||filterNameError}
           />
         </div>
       );

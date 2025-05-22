@@ -2,10 +2,9 @@ import {
   useState,
   useMemo,
   useEffect,
-  useImperativeHandle,
-  forwardRef,
 } from "react";
 import { useTranslation } from "react-i18next";
+import isEqual from "lodash/isEqual";
 import {
   CustomTabs,
   InputDropdown,
@@ -13,6 +12,7 @@ import {
   DragandDropSort,
   ConfirmModal,
   useSuccessCountdown,
+  CustomButton,
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
 import {
@@ -21,7 +21,7 @@ import {
   PRIVATE_ONLY_YOU,
   SPECIFIC_USER_OR_GROUP,
 } from "../../constants/index";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, batch } from "react-redux";
 import {
   deleteFilter,
   updateFilter,
@@ -35,8 +35,10 @@ import {
   updateDefaultFilter,
 } from "../../api/services/filterServices";
 import {
+  setBPMFilterList,
   setBPMFiltersAndCount,
   setDefaultFilter,
+  setIsUnsavedFilter,
   setSelectedFilter,
   setUserGroups,
 } from "../../actions/taskActions";
@@ -45,12 +47,10 @@ import { StorageService } from "@formsflow/service";
 import { defaultTaskVariable } from "../../constants/defaultTaskVariable";
 import ParametersTab from "./ParametersTab";
 import SaveFilterTab from "./SaveFilterTab";
+import { Modal } from "react-bootstrap";
 
-type Ref = {
-  filterResults: () => void;
-};
-
-const TaskFilterModalBody = forwardRef<Ref, any>(
+ 
+const TaskFilterModalBody =  
   (
     {
       toggleFilterModal,
@@ -58,22 +58,22 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
       closeTaskFilterMainModal,
       filter,
       canEdit,
-    },
-    ref
+    }
   ) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
     const {
-      userGroups: candidateGroups = { data: [] },
-      activePage,
-      defaultFilter,
-      limit,
+      userGroups: candidateGroups = { data: [] }, 
+      defaultFilter, 
+      isUnsavedFilter,
+      filterList,
     } = useSelector((state: any) => state.task);
-
+    const activePage = 1;
+    const limit = 5;
     const [accessOption, setAccessOption] = useState("specificRole");
     const [accessValue, setAccessValue] = useState("");
-    const [variableArray, setVariableArray] = useState(defaultTaskVariable);
+    const [variableArray, setVariableArray] = useState(filter?.variables || defaultTaskVariable);
     const { successState, startSuccessCountdown } = useSuccessCountdown();
     const userDetail: UserDetail | null = StorageService.getParsedData(
       StorageService.User.USER_DETAILS
@@ -98,8 +98,7 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
     const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
 
     const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
-
-    const [initialFilterSnapshot, setInitialFilterSnapshot] = useState(null);
+ 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
 
@@ -117,7 +116,7 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
     const toggleFormSelectionModal = () => {
       setShowFormSelectionModal(!showFormSelectionModal);
     };
-    const handleFormSelectionClear = () => {
+    const handleFormSelectionClear = () => { 
       setVariableArray(defaultTaskVariable);
       setSelectedForm({ formId: "", formName: "" });
     };
@@ -129,14 +128,14 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
         sorting: [{ sortBy: sortValue, sortOrder: sortOrder }],
       };
 
-      if (selectedForm) {
-        criteria.processVariables = [
-          {
-            name: "formId",
-            operator: "eq",
-            value: selectedForm.formId,
-          },
-        ];
+      criteria.processVariables = []
+
+      if (selectedForm.formId) { 
+        criteria.processVariables.push({
+          name: "formId",
+          operator: "eq",
+          value: selectedForm.formId,
+        });
       }
 
       if (accessOption === "specificRole") {
@@ -195,8 +194,12 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
       hide: filter?.hide,
       filterType: "TASK",
       editPermission: filter?.editPermission,
-      sortOrder: filter?.sortOrder,
-      unsaved: false,
+      sortOrder: filter?.sortOrder, 
+      //these variables are not used in the filter but keeping for comparison prvious and current filter state
+      description: null,
+     order: null,
+     parentFilterId: null,
+     resourceId: null,
     });
 
     const handleFilterName = (value) => setFilterName(value);
@@ -222,11 +225,9 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
     /* -------------------- set values for editing the filter ------------------- */
     useEffect(() => {
       if (!filter) return;
-      const { name, variables, roles, users, criteria } = filter;
+      const {  roles, users, criteria } = filter;
       const { assignee, sorting, dataLine, candidateGroup } = criteria;
-      setVariableArray(variables);
       setShareFilterForSpecificRole(roles);
-      setInitialFilterSnapshot(JSON.stringify(filter));
       setAccessOption(assignee ? "specificAssignee" : "specificRole");
       setAccessValue(assignee ? assignee : candidateGroup);
       handleSorting(sorting);
@@ -326,9 +327,9 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
       );
     };
 
-    const transformToDynamicVariables = (taskVariables, existingVars) => {
+    const transformToDynamicVariables = (taskVariables, existingVars) => { 
       return taskVariables
-        .filter((taskVar) => !isDuplicateVariable(taskVar, existingVars))
+        .filter((taskVar) => taskVar.type !=="hidden" && !isDuplicateVariable(taskVar, existingVars))
         .map((variable, index) => ({
           ...variable,
           name: variable.key,
@@ -346,7 +347,7 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
             taskVariables,
             variableArray
           );
-          const combinedVars = [...variableArray, ...dynamicVariables];
+          const combinedVars = [...variableArray, ...dynamicVariables]; 
           setVariableArray(combinedVars);
         })
         .catch((err) => console.error(err));
@@ -354,51 +355,42 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
 
     const handleFilterDelete = () => {
       deleteFilter(filter?.id)
-        .then(handleDeleteSuccess)
+        .then(()=>{
+          setShowDeleteModal(false);
+          handleDeleteSuccess();
+          closeTaskFilterMainModal();
+        })
         .catch((error) => {
           console.error("error", error);
         });
-
-      setShowDeleteModal(false);
     };
 
     const handleDeleteSuccess = () => {
-      dispatch(fetchFilterList(handleFilterListFetched));
-      setShowDeleteModal(false);
-      closeTaskFilterMainModal();
+       const nextFilters = filterList.filter(i=> i.id !== filter.id);
+        const nextFilter = nextFilters.length > 0 ? nextFilters[0] : null;
+       batch(()=>{
+        dispatch(setBPMFilterList(nextFilters));
+        dispatch(setSelectedFilter(nextFilter));
+       if(nextFilter){
+         dispatch(setDefaultFilter(nextFilter?.id));
+         updateDefaultFilter(nextFilter?.id) //update default filter value in background
+       }
+       })
     };
-
-    const handleFilterListFetched = (err, data) => {
-      if (!data) return;
-      fetchBPMTaskCount(data.filters)
-        .then((res) =>
-          handleTaskCountFetched(res, data.filters, data.defaultFilter)
-        )
-        .catch((err) => {
-          if (err) {
-            console.error(err);
-          }
-        });
-    };
-
-    const handleTaskCountFetched = (res, filters, defaultFilterId) => {
-      dispatch(setBPMFiltersAndCount(res.data));
-
-      const selectedFilter =
-        filters.find((i) => defaultFilterId === i.id) ?? filters[0];
-
-      dispatch(fetchServiceTaskList(selectedFilter, null, activePage, limit));
-    };
+ 
+   
 
     // need to check if this function is used anywhere else
-    const handleUpdateOrder = (updatedItems) => {
+    const handleUpdateOrder = (updatedItems) => { 
       setVariableArray(updatedItems);
     };
 
     //handling filter result after clicking on filter result button
     const filterResults = () => {
       // keeping latest data with unsaved true
-      dispatch(setSelectedFilter({ ...getData(), unsaved: true }));
+      dispatch(setSelectedFilter({ ...getData()}));
+      dispatch(setIsUnsavedFilter(true));
+      closeTaskFilterMainModal();
       dispatch(
         fetchServiceTaskList(getData(), null, activePage, limit, (error) => {
           if (error) {
@@ -409,49 +401,43 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
       );
     };
 
+    /* -------------------- handling create or update filter -------------------- */
     const handleSaveFilter = () => {
-      const saveAction = filter
+      const saveAction = filter && filter.id
         ? updateFilter(getData(), filter.id)
         : createFilter(getData());
 
       saveAction
-        .then((res) => handleFilterSaved(res))
+        .then((res) => {
+          setSelectedFilter(res.data);
+          dispatch(setIsUnsavedFilter(false));
+          handleSuccessSaveFilter(res)
+        })
         .catch((error) => console.error("Error saving filter:", error));
     };
 
-    const handleFilterSaved = (res) => {
-      dispatch(
-        fetchFilterList((err, data) => handleFilterSaveFetched(res, data))
-      );
+    const handleSuccessSaveFilter = (res) => {
+      const filtersList = filterList.filter(
+        (item) => item.id !== res.data.id);
+      const updatedFilterList = [res.data,...filtersList];
+      dispatch(setBPMFilterList(updatedFilterList));
+      dispatch(fetchBPMTaskCount(updatedFilterList,(err)=>{
+        if(!err){
+             startSuccessCountdown(closeTaskFilterMainModal, 2);
+        }
+      }) )
+      updateDefaultAfterSave(res);
+      
     };
 
-    const handleFilterSaveFetched = (res, data) => {
-      if (!data) return;
-
-      fetchBPMTaskCount(data.filters)
-        .then((countRes) => {
-          dispatch(setBPMFiltersAndCount(countRes.data));
-        })
-        .catch((err) => {
-          console.error("Error fetching BPM task count:", err);
-        })
-        .finally(() => {
-          updateDefaultAfterSave(res);
-          setShowUpdateModal(false);
-          closeTaskFilterMainModal();
-        });
-    };
-
-    const updateDefaultAfterSave = (res) => {
-      const savedFilterId = filter ? filter.id : res.data.id;
-      const isDefaultFilter =
-        savedFilterId === defaultFilter ? null : savedFilterId;
-
-      updateDefaultFilter(isDefaultFilter)
+ 
+    const updateDefaultAfterSave = (res) => { 
+      const isDefaultFilter = res.data.id === defaultFilter ;
+      if(isDefaultFilter) return;
+      updateDefaultFilter(res.data.id)
         .then(
           (updateRes) =>
             dispatch(setDefaultFilter(updateRes.data.defaultFilter)),
-          startSuccessCountdown(closeTaskFilterMainModal, 2)
         )
         .catch((error) =>
           console.error("Error updating default filter:", error)
@@ -471,13 +457,13 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
     const toggleDeleteConfirmationModal = () => {
       setShowDeleteModal(!showDeleteModal);
     };
-
-    useImperativeHandle(ref, () => ({
-      filterResults,
-      disableFilterButton: false,
-    }));
-
-    /* ------------------------------- tab values ------------------------------- */
+ 
+    // disable filter button when all variable array value unchecked or previous filter and current filter are same
+   const isFilterSame = isUnsavedFilter ? false: isEqual(getData(), filter);
+   const isVariableArrayEmpty = variableArray.every((item) => !item.isChecked);
+   const disableFilterButton = isVariableArrayEmpty || isFilterSame ;   
+   const saveFilterButtonDisabled = !filterName || !accessValue || (filter?.id ? disableFilterButton : isVariableArrayEmpty);
+     /* ------------------------------- tab values ------------------------------- */
     const columnsTab = () => (
       <>
         <CustomInfo
@@ -572,6 +558,7 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
         content: (
           <SaveFilterTab
             filter={filter}
+            createAndUpdateFilterButtonDisabled={saveFilterButtonDisabled}
             userDetail={userDetail}
             handleUpdateFilter={toggleupdateConfirmationModal}
             handleDeleteFilter={toggleDeleteConfirmationModal}
@@ -590,6 +577,8 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
 
     return (
       <>
+
+       <Modal.Body className="modal-body p-0">
         <div className="filter-tab-container">
           <CustomTabs
             defaultActiveKey="parametersTab"
@@ -598,6 +587,26 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
             dataTestId="create-filter-tabs"
           />
         </div>
+        </Modal.Body>
+          <Modal.Footer className="d-flex justify-content-start">
+          <CustomButton
+            variant="primary"
+            size="md"
+            label={t("Filter Results")}
+            dataTestId="task-filter-results"
+            ariaLabel={t("Filter results")}
+            onClick={filterResults}
+            disabled={disableFilterButton}
+          />
+          <CustomButton
+            variant="secondary"
+            size="md"
+            label={t("Cancel")}
+            onClick={closeTaskFilterMainModal}
+            dataTestId="cancel-task-filter"
+            ariaLabel={t("Cancel filter")}
+          />
+        </Modal.Footer>
 
         {showDeleteModal && (
           <ConfirmModal
@@ -652,6 +661,6 @@ const TaskFilterModalBody = forwardRef<Ref, any>(
       </>
     );
   }
-);
+;
 
 export default TaskFilterModalBody;

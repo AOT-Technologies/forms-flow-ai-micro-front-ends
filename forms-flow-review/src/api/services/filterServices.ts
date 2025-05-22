@@ -1,6 +1,6 @@
 import API from "../endpoints";
 import { StorageService, RequestService } from "@formsflow/service";
-import { setAttributeFilterList, setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader, setBPMTaskDetailUpdating } from "../../actions/taskActions";
+import { setAttributeFilterList, setBPMUserList, serviceActionError, setBPMTaskList, setBPMTaskCount, setBPMTaskLoader, setVisibleAttributes, setDefaultFilter, setBPMFilterList, setBPMFilterLoader, setBPMTaskDetailUpdating, setBPMFiltersAndCount } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
 import { replaceUrl } from "../../helper/helper"; 
 
@@ -105,12 +105,17 @@ export const fetchUserList = (...rest) => {
   };
  
   
-  export const fetchBPMTaskCount = (data) => {
-    return RequestService.httpPOSTRequest(
+  export const fetchBPMTaskCount = (data,callback =(err:any, data:any)=>{}) => {
+    return (dispatch)=>{
+    RequestService.httpPOSTRequest(
       `${API.GET_BPM_TASK_FILTERS}/count`,
       data
-    );
+    ).then((res) => {
+      dispatch(setBPMFiltersAndCount(res.data));
+      callback(null, res.data);
+    }).catch(callback);
   };
+};
 
   export const getFirstResultIndex = (activePage,limit) => {
     const limits = limit ?? MAX_RESULTS;
@@ -118,29 +123,8 @@ export const fetchUserList = (...rest) => {
   };
 
 
-  export const fetchFilterList = (...rest) => {
-    const done = rest.length ? rest[0] : () => {};
-    const getTaskFiltersAPI = `${API.GET_FILTERS}/user`;
-    return (dispatch) => {
-      RequestService.httpGETRequest(getTaskFiltersAPI)
-        .then((res) => {
-          if (res.data) {
-            dispatch(setDefaultFilter(res.data.defaultFilter));
-            dispatch(setBPMFilterList(res.data.filters));
-            done(null, res.data);
-          } else {
-            dispatch(setBPMFilterLoader(false));
-            dispatch(serviceActionError(res));
-          }
-        })
-        .catch((error) => {
-          dispatch(setBPMFilterLoader(false));
-          dispatch(serviceActionError(error));
-          done(error);
-        });
-    };
-  };
-
+  export const fetchFilterList = () =>  RequestService.httpGETRequest(`${API.GET_FILTERS}/user`);
+ 
 
   export const fetchAttributeFilterList = (filterId, ...rest) => {
     const done = rest.length ? rest[0] : () => {};

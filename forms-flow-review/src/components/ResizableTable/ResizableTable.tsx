@@ -31,6 +31,7 @@ import {
   setDefaultFilter,
   resetTaskListParams,
   setSelectedBpmAttributeFilter,
+  setBPMFilterList,
 } from "../../actions/taskActions";
 
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
@@ -285,8 +286,7 @@ export function ResizableTable(): JSX.Element {
   const RETRY_DELAY_TIME = 2000;
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showAttrFilterModal, setShowAttrFilterModal] = useState(false);
-  const [isAssigned, setIsAssigned] = useState(false);
-  const [taskAttributeData, setTaskAttributeData] = useState([]);
+  const [isAssigned, setIsAssigned] = useState(false); 
   const [filterParams, setFilterParams] = useState({});
   const history = useHistory();
   const {
@@ -306,6 +306,7 @@ export function ResizableTable(): JSX.Element {
     tasksCount,
     isTaskListLoading,
     filterCached,
+    isUnsavedFilter
   } = useSelector((state: any) => state.task ?? {});
   const selectedFilterId = selectedFilter?.id ?? null;
   const selectedAttributeFilterId = selectedAttributeFilter?.id ?? null;
@@ -362,41 +363,42 @@ const handleCloseFilterModal = ()=>{
   const isFilterCreator = userRoles.includes("create_filters");
   const isFilterAdmin = userRoles.includes("manage_all_filters");
 
+  const findFilterById = (id,filterList)=>{
+    return filterList.find((filter) => filter.id === id);
+  }
+ 
+
   useEffect(() => {
     dispatch(fetchUserList())
   }
   , [dispatch]);
 
-  useEffect(() => {
-    dispatch(setBPMFilterLoader(true));
-    dispatch(
-      fetchFilterList((err: Error | null, data: any) => {
-        if (data) {
-          fetchBPMTaskCount(data.filters)
-            .then((res) => {
-              dispatch(setBPMFiltersAndCount(res.data));
-            })
-            .catch((err) =>
-              console.error("Error fetching BPM task count:", err)
-            )
-            .finally(() => {
-              dispatch(setBPMFilterLoader(false));
-            });
-        }
+
+  /* -- 1.handling inital useEffect for filter fetching and filter's task count 
+        2. handling inital useEffect for attribute filter fetching against a filter
+        3. handling inital useEffect for tasks fetching against a filter also update default filter if it is not set
+  - */
+  useEffect(()=>{
+      dispatch(setBPMFilterLoader(true));
+      fetchFilterList().then(res=>{
+        const filters = res.data.filters;
+        const defaultFilterId = res.data.defaultFilter;
+        batch(()=>{
+        dispatch(setBPMFilterList(filters || []));
+        dispatch(fetchBPMTaskCount(filters));
+        dispatch(setDefaultFilter(defaultFilterId));
+        if(filters.length > 0 && !defaultFilterId) updateDefaultFilter(filters[0]?.id)
+        })
+      }).finally(()=>{
+         dispatch(setBPMFilterLoader(false));
       })
-    );
-  }, [dispatch, defaultFilter]);
+  },[])
+ 
 
   useEffect(() => {
-    if (filterList.length === 0) return;
-
+    if (filterList.length === 0 || !defaultFilter) return;  
     // Step 1: Determine the default or unsaved filter
-    const filterSelected =
-      filterList.find(
-        (filter) =>
-          filter.id === defaultFilter || filter.name === UN_SAVED_FILTER
-      ) ?? filterList[0];
-
+    const filterSelected = findFilterById(defaultFilter,filterList);
     if (!filterSelected?.id) return;
 
     // Step 2: Clear current attribute filters
@@ -407,10 +409,7 @@ const handleCloseFilterModal = ()=>{
       if (err) return;
 
       const attributeFilters = data?.attributeFilters ?? [];
-      const attributefilterSelected =
-        attributeFilters.find((f: any) => f.name === UN_SAVED_FILTER) ||
-        attributeFilters[0];
-
+      const attributefilterSelected = attributeFilters[0];
       batch(() => {
         dispatch(setSelectedFilter(filterSelected));
         dispatch(setSelectedBpmAttributeFilter(attributefilterSelected || {}));
@@ -524,35 +523,21 @@ const handleCloseFilterModal = ()=>{
     setShowAttrFilterModal(true);
   }, [selectedAttributeFilter, bpmattributeFilterList, isFilterCreator, isFilterAdmin]);
 
-  useEffect(() => {  
-    const currentFilter = filterList.find((item) => item.id === defaultFilter);
-    if (currentFilter) {
-      const checkedVariables = currentFilter.variables?.filter(
-        (variable) => variable.isChecked
-      );
-      setTaskAttributeData(checkedVariables);
-    }
-  }, [filterList, defaultFilter]);
+ 
 
   const changeFilterSelection = useCallback(
     (filter) => {
       const selectedFilter = filterList.find((item) => item.id === filter.id);
       if (!selectedFilter) return;
-
-      const taskAttributes = selectedFilter.variables.filter(
-        (variable) => variable.isChecked === true
-      );
-      setTaskAttributeData(taskAttributes);
+ 
       const defaultFilterId =
         selectedFilter?.id === defaultFilter ? null : selectedFilter?.id;
-      updateDefaultFilter(defaultFilterId)
-        .then((updateRes) =>
-          dispatch(setDefaultFilter(updateRes.data.defaultFilter))
-        )
-        .catch((error) =>
-          console.error("Error updating default filter:", error)
-        );
-      dispatch(setBPMTaskListActivePage(1));
+        if(defaultFilter){
+        dispatch(setDefaultFilter(defaultFilter))
+        updateDefaultFilter(defaultFilterId)
+        }
+         dispatch(setBPMTaskListActivePage(1));
+
     },
     [dispatch, defaultFilter, filterList]
   );
@@ -571,16 +556,15 @@ const handleCloseFilterModal = ()=>{
   );
 
   const filterDropdownItems = useMemo(() => {
+    const noFilter = []
     if (!Array.isArray(filtersCount) || filtersCount.length === 0) {
-      return [
-        {
+      noFilter.push({
           content: <em>{t("No filters found")}</em>,
           onClick: () => {},
           type: "none",
           dataTestId: "no-filters",
           ariaLabel: t("No filters available"),
-        },
-      ];
+        },)
     }
 
     const mappedItems = filtersCount.map((filter) => ({
@@ -593,9 +577,10 @@ const handleCloseFilterModal = ()=>{
       }),
     }));
 
-    const extraItems = isFilterCreator
-      ? [
-          {
+    const extraItems = [];
+
+    if(isFilterCreator){
+      extraItems.push({
             content: (
               <span>
                 <span>
@@ -608,8 +593,10 @@ const handleCloseFilterModal = ()=>{
             type: "custom",
             dataTestId: "filter-item-custom",
             ariaLabel: t("Custom Filter"),
-          },
-          {
+      })
+    }
+    if(isFilterCreator && filtersCount > 1){
+      extraItems.push({
             content: (
               <span>
                 <span>
@@ -622,11 +609,10 @@ const handleCloseFilterModal = ()=>{
             type: "reorder",
             dataTestId: "filter-item-reorder",
             ariaLabel: t("Re-order And Hide Filters"),
-          },
-        ]
-      : [];
+          })
+    }
 
-    return [...mappedItems, ...extraItems];
+    return [...noFilter,...mappedItems, ...extraItems];
   }, [
     filtersCount,
     t,
@@ -708,7 +694,7 @@ const handleCloseFilterModal = ()=>{
       return;
     }
 
-    const activeKey = sortParams?.activeKey;
+    const activeKey = sortParams?.activeKey; 
     const transformedSorting =
       activeKey && sortParams?.[activeKey]?.sortOrder
         ? [{ sortBy: activeKey, sortOrder: sortParams[activeKey].sortOrder }]
@@ -1181,12 +1167,12 @@ const handleCloseFilterModal = ()=>{
                   className="filter-large"
                   title={
                     selectedFilter
-                      ? `${selectedFilter.unsaved? t("Unsaved Filter") : t(selectedFilter.name)} (${tasksCount ?? 0})`
+                      ? `${isUnsavedFilter? t("Unsaved Filter") : t(selectedFilter.name)} (${tasksCount ?? 0})`
                       : t("Select Filter")
                   }
                 >
                   {selectedFilter
-                    ? `${selectedFilter.unsaved? t("Unsaved Filter") : t(selectedFilter.name)} (${tasksCount ?? 0})`
+                    ? `${isUnsavedFilter? t("Unsaved Filter") : t(selectedFilter.name)} (${tasksCount ?? 0})`
                     : t("Select Filter")}
                 </span>
               }
@@ -1311,11 +1297,9 @@ const handleCloseFilterModal = ()=>{
         />
         <AttributeFilterModal
           show={showAttrFilterModal}
-          onClose={handleToggleAttrFilterModal}
-          taskAttributeData={taskAttributeData}
+          onClose={handleToggleAttrFilterModal} 
           filterParams={filterParams}
-          setFilterParams={setFilterParams}
-          selectedFilter={selectedFilter}
+          setFilterParams={setFilterParams} 
           attributeFilter={attrFilterToEdit}
         />
       </div>

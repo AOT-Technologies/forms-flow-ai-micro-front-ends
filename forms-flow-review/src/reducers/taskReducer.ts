@@ -17,7 +17,7 @@ const initialState = {
   },
   limit: 5,
   activePage: 1,
-  selectedFilter: {},
+  selectedFilter: null,
   selectedAttributeFilter: {},
   taskId: null,
   defaultFilter: "",
@@ -40,6 +40,7 @@ const initialState = {
   appHistory: [],
   isTaskDetailUpdating: false,
   error : null,
+  isUnsavedFilter: false,
 };
 
 interface TaskAction {
@@ -75,9 +76,12 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, filterList: action.payload };
     case ACTION_CONSTANTS.ATTRIBUTE_FILTER_LIST:
       return { ...state, attributeFilterList: action.payload };
+    case ACTION_CONSTANTS.SET_IS_UNSAVED_FILTER:
+      return { ...state, isUnsavedFilter: action.payload };
     case ACTION_CONSTANTS.SET_SELECTED_FILTER:
       return {
         ...state,
+        isUnsavedFilter:false,
         selectedFilter: action.payload,
         filterListSearchParams: {},
       };

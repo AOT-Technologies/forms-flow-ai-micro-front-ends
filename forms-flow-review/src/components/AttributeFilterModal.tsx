@@ -32,8 +32,6 @@ import {
 export const AttributeFilterModal = ({
   show,
   onClose,
-  selectedFilter,
-  taskAttributeData,
   filterParams,
   setFilterParams,
   attributeFilter
@@ -51,6 +49,16 @@ export const AttributeFilterModal = ({
   const isCreateFilters = userRoles?.includes("create_filters");
   const filterNameLength = 50;
   const [userDetail, setUserDetail] = useState<UserDetail | null>(null);
+  const userListResponse = useSelector((state: any) => state.task.userList) ?? {
+    data: [],
+  };
+  const userList = userListResponse?.data ?? [];
+  const searchParams = useSelector((state: any) => state.task.searchParams);
+  const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
+  const taskAttributeData = selectedFilter?.variables ?? [];
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
 
   const handleNameError = (e) => {
@@ -66,14 +74,7 @@ export const AttributeFilterModal = ({
 
 
 
-  const userListResponse = useSelector((state: any) => state.task.userList) ?? {
-    data: [],
-  };
-  const userList = userListResponse?.data ?? [];
-  const searchParams = useSelector((state: any) => state.task.searchParams);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const assigneeOptions = useMemo(
     () =>
