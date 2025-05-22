@@ -6,22 +6,22 @@ import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import Loading from "../loading";
 import { useParams } from "react-router-dom";
-import {removeTenantKey} from "../../utils/utils.js";
+import { removeTenantKey } from "../../utils/utils.js";
 import { MULTITENANCY_ENABLED } from "../../constants";
 
 import {
   updateAuthorization,
-  fetchAuthorizations,
+  fetchdashboards,
 } from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
 import { TableFooter } from "@formsflow/components";  
 
 const InsightDashboard = React.memo((props: any) => {
-  const { dashboards, groups, authorizations, setCount, authReceived } = props;
+  const { dashboards, groups, setCount, authReceived, loading: parentLoading } = props;
 
   const isGroupUpdated = groups.length > 0;
-  const [authDashBoardList, setAuthDashboardList] = React.useState([]);
-  const [isAuthUpdated, setIsAuthUpdated] = React.useState(false);
+  const [dashboardList, setDashboardList] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -32,61 +32,18 @@ const InsightDashboard = React.memo((props: any) => {
   const [activePage, setActivePage] = React.useState(1);
   const [err, setErr] = React.useState({});
   const [limit, setLimit] = React.useState(5); 
-  const [isLoading, setIsLoading] = React.useState(true);
 
+  // Use the authorizations data passed from parent
   React.useEffect(() => {
-    if (props.error) {
+    if (dashboards && dashboards.length > 0) {
+      setDashboardList(dashboards);
+      setCount(dashboards.length);
+      setIsLoading(false);
+    } else if (!parentLoading && authReceived) {
+      // If parent is done loading but no authorizations were received
       setIsLoading(false);
     }
-  }, [props.error]);
-
-  React.useEffect(() => {
-    if (!props.loading) {
-      setIsLoading(false);
-    }
-  }, [props.loading])
-
-  function compare(a, b) {
-    if (Number(a.resourceId) < Number(b.resourceId)) {
-      return -1;
-    }
-    if (Number(a.resourceId) > Number(b.resourceId)) {
-      return 1;
-    }
-    return 0;
-  }
-
-  const updateAuthList = (authorizations) => {
-    let newList = [...authorizations];
-    let authIds = newList.map((item) => item.resourceId);
-    for (let item of dashboards?.results) {
-      if (!authIds.includes(String(item.id))) {
-        let obj = {
-          resourceId: String(item.id),
-          resourceDetails: {
-            name: item.name,
-          },
-          roles: [],
-        };
-        newList.push(obj);
-      }
-    }
-    return newList.sort(compare);
-  };
-
-  React.useEffect(() => {
-    if (
-      dashboards?.results?.length > 0 &&
-      authReceived &&
-      !isAuthUpdated
-    ) {
-      let authList = updateAuthList(authorizations);
-      setAuthDashboardList(authList);
-      setCount(authList.length)
-      setIsAuthUpdated(true);
-      setIsLoading(false);
-    }
-  }, [dashboards, authReceived, isAuthUpdated]);
+  }, [dashboards, parentLoading, authReceived]);
 
   // handles the add button click event
   const handleClick = (event, rowData) => {
@@ -103,7 +60,7 @@ const InsightDashboard = React.memo((props: any) => {
 
   const removeDashboardAuth = (rowData, groupPath) => {
     let dashboard = {
-      ...authDashBoardList.find(
+      ...dashboardList.find(
         (element) => element.resourceId === rowData.resourceId
       ),
     };
@@ -113,8 +70,9 @@ const InsightDashboard = React.memo((props: any) => {
     updateAuthorization(
       dashboard,
       () => {
-        fetchAuthorizations((data) => {
-          setAuthDashboardList(updateAuthList(data));
+        fetchdashboards((data) => {
+          setDashboardList(data);
+          setCount(data.length);
           setIsLoading(false);
           toast.success(t("Update success!"))
         }, (err) => {
@@ -135,8 +93,9 @@ const InsightDashboard = React.memo((props: any) => {
     updateAuthorization(
       currentRow,
       () => {
-        fetchAuthorizations((data) => {
-          setAuthDashboardList(updateAuthList(data));
+        fetchdashboards((data) => {
+          setDashboardList(data);
+          setCount(data.length);
           setIsLoading(false);
           toast.success(t("Update success!"))
         }, (err) => {
@@ -148,7 +107,7 @@ const InsightDashboard = React.memo((props: any) => {
     );
   };
 
-  const paginatedDashboard = authDashBoardList.slice(
+  const paginatedDashboard = dashboardList.slice(
     (activePage - 1) * limit, 
     activePage * limit 
   );
@@ -267,7 +226,7 @@ const InsightDashboard = React.memo((props: any) => {
       },
       {
         text: t("All"),
-        value: authDashBoardList.length
+        value: dashboardList.length
       },
     ];
     return list;
@@ -298,7 +257,7 @@ const InsightDashboard = React.memo((props: any) => {
               <TableFooter
               limit={limit}
               activePage={activePage}
-              totalCount={authDashBoardList.length}
+              totalCount={dashboardList.length}
               handlePageChange={(page: number) => setActivePage(page)}
               onLimitChange={handleLimitChange}
               pageOptions={getpageList()}

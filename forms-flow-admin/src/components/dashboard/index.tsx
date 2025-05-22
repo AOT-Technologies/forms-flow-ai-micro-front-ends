@@ -4,7 +4,6 @@ import InsightDashboard from "./dashboard";
 import {
   fetchdashboards,
   fetchGroups,
-  fetchAuthorizations,
 } from "../../services/dashboard";
 import "./insightDashboard.scss";
 
@@ -30,11 +29,6 @@ const AdminDashboard = React.memo((props : any) => {
     fetchGroups((data)=>{
       setGroups(data);
       setGroupLoading(false);
-    }, setError);
-    fetchAuthorizations((data)=>{
-      setAuthorizations(data);
-      setAuthLoading(false);
-      setAuthReceived(true);
     }, setError);
   }, []);
 
