@@ -27,8 +27,10 @@ class OfflineSubmissions {
    */
   public static async processOfflineSubmissions(): Promise<void> {
     try {
+      // Access and JWT token refresh before processing the drafts and submissions
       await this.retryToken();
-
+      await KeycloakService.updateJwtToken();
+      
       const submissions =
         await OfflineFetchService.fetchAllNonActiveOfflineSubmissions();
       const processPromises = [
