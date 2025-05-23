@@ -7,10 +7,13 @@ import StorageService from "../storage/storageService";
 import HelperServices from "../helpers/helperServices";
 import {
   APPLICATION_NAME,
-  APP_BASE_ROUTE
+  APP_BASE_ROUTE,
+  DEFAULT_FORMIO_JWT_EXPIRE,
+  FORMIO_JWT_EXPIRE,
 } from "../constants/constants";
+import { getUpdatedJwtToken } from "../request/jwtTokenService";
 
-  class KeycloakService {
+class KeycloakService {
     /**
      * Used to create Keycloak object
      */
@@ -20,8 +23,9 @@ import {
     private token: string | undefined;
     private _tokenParsed: KeycloakTokenParsed | undefined;
     private timerId: any = 0;
-    private userData: any
-    private isInitialized: boolean = false;  // Track if Keycloak is initialized
+    private static jwtTimerId: any = 0;
+    private userData: any;
+    private isInitialized: boolean = false; // Track if Keycloak is initialized
 
     private constructor(url: string, realm: string, clientId: string, tenantId?: string) {
       this._keycloakConfig = {
@@ -166,6 +170,87 @@ import {
     this.keycloackUpdateToken();
     };
 
+    /**
+     * Extracts the JWT token from the response headers and saves it 
+     * to local storage for future authenticated requests.
+     * 
+     * @param response - The HTTP response containing the JWT token in headers.
+     */
+    private static saveJwtToken(response: any): void {
+      const jwtToken = response.headers["x-jwt-token"];
+      if (jwtToken) {
+        StorageService.save(StorageService.User.FORMIO_TOKEN, jwtToken);
+      }
+    }
+
+    /**
+     * Fetches a new JWT token using the `getUpdatedJwtToken()` method and 
+     * stores it using `saveJwtToken()`. This is useful for refreshing
+     * the token periodically or on session extension.
+     */
+    public static async updateJwtToken(): Promise<void> {
+      try {
+        const response = await getUpdatedJwtToken();
+        if (response) {
+          this.saveJwtToken(response);
+        }
+      } catch (error) {
+        console.error("Failed to update JWT token", error);
+      }
+    }
+
+    /**
+     * Stops the polling mechanism for refreshing the JWT token
+     * by clearing the interval timer.
+     */
+    private static clearPolling(): void {
+      if (this.jwtTimerId) {
+        clearInterval(this.jwtTimerId);
+        this.jwtTimerId = 0;
+        console.log("Polling stopped.");
+      }
+    }
+
+
+    /**
+     * Starts a background polling mechanism to refresh the JWT token periodically before it expires.
+     *
+     * - Retrieves the JWT expiration interval from the environment/config (`FORMIO_JWT_EXPIRE`).
+     * - If the value is invalid or missing, falls back to a default (`DEFAULT_FORMIO_JWT_EXPIRE`).
+     * - Adds a small buffer (2 seconds) to ensure the token is refreshed slightly before actual expiration.
+     * - Clears any existing polling interval before starting a new one.
+     * - Sets up a `setInterval` that checks for online status and asynchronously refreshes the JWT token.
+     * - If `skipTimer` is true or the application is not `"roadsafety"`, the interval is set to 0 (executes immediately).
+     *
+     * @param skipTimer - If true, bypasses the default interval check (used for forced/immediate refresh).
+    */
+    private static refreshJwtToken(skipTimer: boolean = false): void {
+      const parsedValue = Number(FORMIO_JWT_EXPIRE);
+      const jwtExpireMinutes = isNaN(parsedValue)
+        ? DEFAULT_FORMIO_JWT_EXPIRE
+        : parsedValue;
+
+      // 2 seconds buffer (2000 ms)
+      const checkInterval = jwtExpireMinutes * 60 * 1000 - 2000;
+
+      this.clearPolling(); // Clear previous interval before starting new
+
+      this.jwtTimerId = setInterval(
+        () => {
+          (async () => {
+            if (!navigator.onLine) {
+              console.debug("Offline: Skipping token refresh.");
+              return;
+            }
+            await this.updateJwtToken();
+          })(); // Async IIFE inside setInterval
+        },
+        !skipTimer && APPLICATION_NAME === "roadsafety" ? checkInterval : 0
+      );
+      console.log(
+        `JWT polling started with interval: ${checkInterval} ms (${jwtExpireMinutes} minutes - 2 seconds)`
+      );
+    }
   
     /**
      *
@@ -218,6 +303,7 @@ import {
                   "online",
                   () => {
                     this.retryTokenRefresh(); // This will be executed when the 'online' event occurs
+                    KeycloakService.updateJwtToken();
                   },
                   { once: false }
                 );
@@ -235,6 +321,7 @@ import {
                 callback(true);
               });
               this.refreshToken();
+              KeycloakService.refreshJwtToken();
               }
             }
               else {
@@ -254,6 +341,7 @@ import {
      */
     public userLogout (): void {
       this.isInitialized = false; // Reset initialization state
+      KeycloakService.clearPolling();
       StorageService.clear();
       this.logout();
     }

@@ -2,9 +2,10 @@ enum User {
     AUTH_TOKEN = "AUTH_TOKEN",
     USER_DETAILS = "USER_DETAILS",
     USER_ROLE = "USER_ROLE",
-    REFRESH_TOKEN = "REFRESH_TOKEN"
+    REFRESH_TOKEN = "REFRESH_TOKEN",
+    FORMIO_TOKEN = "formioToken",
   }
-  
+
   class StorageService {
     public static readonly User = User;
     /**
@@ -23,7 +24,9 @@ enum User {
      * @param value
      */
     public static save(key: string, value: string): void {
-      sessionStorage.setItem(key, value);
+      if (key !== this.User.FORMIO_TOKEN) {
+        sessionStorage.setItem(key, value);
+      }
       localStorage.setItem(key,value);
     }
     /**

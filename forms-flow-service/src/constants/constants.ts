@@ -15,10 +15,22 @@ export const MULTITENANCY_ENABLED =
 
 //application details
 export const APPLICATION_NAME =
-        (window as any).REACT_APP_APPLICATION_NAME || "roadsafety"
-        // "formsflow.ai";
+  (window as any)._env_?.REACT_APP_APPLICATION_NAME ?? "formsflow.ai";
 
 // Used in encyrpting and decrypting the token from local storage.
-export const TOKEN_ENCRYPTION_KEY =
-        (window as any).REACT_APP_TOKEN_ENCRYPTION_KEY ||
-        "8f4a4e01b639aa73d2b5bdb6e9f2e6aef471b3dbba3d5e48e3a798fc3d6d6cbb";
+export const TOKEN_ENCRYPTION_KEY = (window as any)._env_
+  ?.REACT_APP_TOKEN_ENCRYPTION_KEY;
+
+//default value for FORMIO_JWT_EXPIRE
+export const DEFAULT_FORMIO_JWT_EXPIRE = 240;
+
+// Used for jwt token refresh.
+export const FORMIO_JWT_EXPIRE =
+  (window as any)._env_?.REACT_APP_FORMIO_JWT_EXPIRE ??
+  DEFAULT_FORMIO_JWT_EXPIRE;
+
+export const WEB_BASE_URL =
+  (window as any)._env_?.REACT_APP_WEB_BASE_URL ?? "http://localhost:5000";
+export const API = {
+  FORMIO_ROLES: `${WEB_BASE_URL}/formio/roles`,
+};
