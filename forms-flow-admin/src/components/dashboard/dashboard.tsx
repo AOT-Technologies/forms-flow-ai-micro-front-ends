@@ -35,15 +35,19 @@ const InsightDashboard = React.memo((props: any) => {
 
   // Use the authorizations data passed from parent
   React.useEffect(() => {
-    if (dashboards && dashboards.length > 0) {
-      setDashboardList(dashboards);
-      setCount(dashboards.length);
-      setIsLoading(false);
-    } else if (!parentLoading && authReceived) {
-      // If parent is done loading but no authorizations were received
+    // Set loading to false when parent has finished loading
+    if (!parentLoading) {
       setIsLoading(false);
     }
-  }, [dashboards, parentLoading, authReceived]);
+  }, [parentLoading]);
+
+  // Update dashboard list when dashboards data changes
+  React.useEffect(() => {
+    if (dashboards && Array.isArray(dashboards)) {
+      setDashboardList(dashboards);
+      setCount(dashboards.length);
+    }
+  }, [dashboards, setCount]);
 
   // handles the add button click event
   const handleClick = (event, rowData) => {
