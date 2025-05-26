@@ -15,35 +15,37 @@ import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { useState, useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {  PRIVATE_ONLY_YOU } from "../constants/index";
+import { MULTITENANCY_ENABLED, PRIVATE_ONLY_YOU } from "../../constants/index";
 import { StorageService, StyleServices } from "@formsflow/service";
-import { Filter, FilterCriteria, UserDetail } from "../types/taskFilter";
+import { Filter, FilterCriteria, UserDetail } from "../../types/taskFilter";
 import {
   setBPMFilterSearchParams,
   setBPMTaskLoader,
-} from "../actions/taskActions";
+  setUserGroups,
+} from "../../actions/taskActions";
 import {
   fetchServiceTaskList,
   createFilter,
   updateFilter,
-  deleteFilter
-} from "../api/services/filterServices";
-
-export const AttributeFilterModal = ({
-  show,
-  onClose,
-  filterParams,
-  setFilterParams,
-  attributeFilter
-}) => {
+  deleteFilter,
+  getUserRoles,
+} from "../../api/services/filterServices";
+import { RootState } from "../../reducers";
+import { removeTenantKey } from "../../helper/helper";
+import { cloneDeep } from "lodash";
+export const AttributeFilterModal = ({ show, onClose }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
   const baseColor = StyleServices.getCSSVariable("--ff-primary");
   const whiteColor = StyleServices.getCSSVariable("--ff-white");
   const [filterNameError, setFilterNameError] = useState("");
   const [filterName, setFilterName] = useState("");
   const [shareAttrFilter, setShareAttrFilter] = useState(PRIVATE_ONLY_YOU);
   const activePage = useSelector((state: any) => state.task.activePage);
+  const attributeFilter = useSelector(
+    (state: RootState) => state.task.attributeFilterToEdit
+  );
   const limit = useSelector((state: any) => state.task.limit);
   const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE);
   const isCreateFilters = userRoles?.includes("create_filters");
@@ -55,11 +57,17 @@ export const AttributeFilterModal = ({
   const userList = userListResponse?.data ?? [];
   const searchParams = useSelector((state: any) => state.task.searchParams);
   const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
+  const candidateGroups = useSelector((state: any) => state.task.userGroups);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+
   const taskAttributeData = selectedFilter?.variables ?? [];
+  const isCheckedData = taskAttributeData.reduce((acc, item) => {
+    acc[item.key] = item.isChecked;
+    return acc;
+  }, {});
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-
 
   const handleNameError = (e) => {
     const value = e.target.value;
@@ -72,10 +80,6 @@ export const AttributeFilterModal = ({
       );
   };
 
-
-
-
-
   const assigneeOptions = useMemo(
     () =>
       userList.map((user) => ({
@@ -85,19 +89,28 @@ export const AttributeFilterModal = ({
     [userList]
   );
   useEffect(() => {
-    const userData = StorageService.getParsedData(StorageService.User.USER_DETAILS);
+    const userData = StorageService.getParsedData(
+      StorageService.User.USER_DETAILS
+    );
     if (userData) {
       setUserDetail(userData);
     }
   }, []);
-  
+
+  /* ---------------------------- get users groups ---------------------------- */
+  useEffect(() => {
+    getUserRoles()
+      .then((res) => res && dispatch(setUserGroups(res.data)))
+      .catch((error) => console.error("error", error));
+  }, []);
+
   const [attributeData, setAttributeData] = useState(() => {
-    return taskAttributeData.reduce((acc, item) => {
-      if (item.isChecked) {
-        acc[item.key] = filterParams[item.key] ?? "";
-      }
+    return attributeFilter?.criteria?.processVariables.reduce((acc, item) => {
+       if(isCheckedData[item.name]) {
+        acc[item.key] = item.value;
+       }
       return acc;
-    }, {});
+    }, {}) || {};
   });
 
   const handleInputChange = (e) => {
@@ -108,7 +121,7 @@ export const AttributeFilterModal = ({
   const handleSelectChange = (name, selectedValue) => {
     setAttributeData((prevData) => {
       const updatedData = { ...prevData, [name]: selectedValue };
-      setFilterParams({ ...filterParams, [name]: selectedValue });
+      // setFilterParams({ ...filterParams, [name]: selectedValue });
       return updatedData;
     });
   };
@@ -116,8 +129,7 @@ export const AttributeFilterModal = ({
   const getTaskAccess = () => {
     if (shareAttrFilter === PRIVATE_ONLY_YOU) {
       return { users: [userDetail?.preferred_username], roles: [] };
-    }
-    else {
+    } else {
       const users = selectedFilter?.users?.length
         ? [...selectedFilter.users]
         : [];
@@ -127,37 +139,49 @@ export const AttributeFilterModal = ({
 
       return { users, roles };
     }
-
   };
-
 
   useEffect(() => {
     if (attributeFilter) {
       setFilterName(attributeFilter.name);
-  
+
       if (attributeFilter?.roles?.length > 0) {
-        createFilterShareOption("Share with same users as the selected tasks filter",
-      getNonEmptyTaskAccess());
+        createFilterShareOption(
+          "Share with same users as the selected tasks filter",
+          getNonEmptyTaskAccess()
+        );
       } else if (attributeFilter?.users?.length > 0) {
         setShareAttrFilter(PRIVATE_ONLY_YOU);
       }
     }
   }, [attributeFilter]);
-  
+
   const getNonEmptyTaskAccess = () => {
     const { users, roles } = getTaskAccess();
-  
+
     if (users?.length) {
       return users;
     }
-  
+
     if (roles?.length) {
       return roles;
     }
-  
+
     return [];
   };
-  
+
+  const candidateOptions = useMemo(() => {
+    return candidateGroups.reduce((acc, group) => {
+      if (!group.permissions.includes("view_filters")) return acc;
+
+      const name = MULTITENANCY_ENABLED
+        ? removeTenantKey(group.name, tenantKey)
+        : group.name;
+
+      acc.push({ value: name, label: name });
+      return acc;
+    }, []);
+  }, [candidateGroups, MULTITENANCY_ENABLED, tenantKey]);
 
   const createFilterShareOption = (labelKey, value) => ({
     label: t(labelKey),
@@ -183,10 +207,11 @@ export const AttributeFilterModal = ({
     const criteria = {
       ...selectedFilter.criteria,
       processVariables: customParams,
+      assignee,
     };
 
     const { roles, users } = getTaskAccess();
-    criteria.assignee = assignee;
+ 
 
     return {
       name: filterName,
@@ -210,43 +235,36 @@ export const AttributeFilterModal = ({
     return selectedFilter?.criteria?.assignee;
   };
 
+   
   const buildUpdatedFilterParams = () => {
-    const currentVariables = attributeFilter?.criteria?.processVariables ?? [];
+     // need to feth task list based on selected attribute filter
+    // need to reset all params
+        // need to rest all pagination and date
+    if (!selectedFilter) return;
+   
+    //this is current selected filter criteria
+    const currentCriteria = cloneDeep(selectedFilter.criteria);
+    const newProcessVariable = []
     
-    const updatedFilterParams: {
-      name: string;
-      operator: string;
-      value: string;
-    }[] = [...currentVariables];
-  
-    const filteredParams = updatedFilterParams.filter(param => param.name !== "formId");
-  
-    filteredParams.push({
-      name: "formId",
-      operator: "eq",
-      value: selectedFilter?.properties?.formId,
-    });
-  
-    taskAttributeData.forEach((item) => {
-      const value = attributeData[item.key];
-  
-      if (
-        item.isChecked &&
-        item.key !== "assignee" &&
-        value &&
-        item.key !== "formId"
-      ) {
-        filteredParams.push({
-          name: item.key,
-          operator: "eq",
-          value: item.key === "applicationId" ? JSON.parse(value) : value,
-        });
+    const types = taskAttributeData.reduce((acc, item) => {
+      acc[item.key] = item.type;
+      return acc;
+    },{});
+
+    const ignoredKeys = ["assignee"];
+    Object.keys(attributeData).forEach((key)=>{ 
+      if(!ignoredKeys.includes(key) && attributeData[key]){
+        newProcessVariable.push({
+          name: key,
+          operator: types[key] === "number" ? "eq" : "like",
+          value: key === "applicationId" ? JSON.parse(attributeData[key]) : attributeData[key],
+        })
       }
-    });
-  
-    return filteredParams;
+    })
+    newProcessVariable.push(...currentCriteria.processVariables);
+    return newProcessVariable;
+    // return filteredParams;
   };
-  
 
   const searchFilterAttributes = () => {
     dispatch(setBPMTaskLoader(true));
@@ -254,19 +272,18 @@ export const AttributeFilterModal = ({
     const updatedParams = buildUpdatedFilterParams();
 
     dispatch(setBPMFilterSearchParams(updatedParams));
-    setFilterParams(updatedParams);
+    // setFilterParams(updatedParams);
     dispatch(
       fetchServiceTaskList(
         getFilterData(updatedParams),
         null,
         activePage,
-        limit,
+        limit
       )
     );
 
     onClose();
   };
-
 
   const saveFilterAttributes = async () => {
     try {
@@ -278,7 +295,6 @@ export const AttributeFilterModal = ({
         ...selectedFilter.criteria,
         processVariables: updatedParams,
       };
-
       criteria.assignee = assignee;
 
       const filterToSave = {
@@ -307,8 +323,7 @@ export const AttributeFilterModal = ({
         : createFilter(filterToSave);
 
       await saveAction;
-      setShowUpdateModal(false)
-
+      setShowUpdateModal(false);
     } catch (error) {
       console.error("Failed to save filter attributes:", error);
     }
@@ -316,19 +331,12 @@ export const AttributeFilterModal = ({
   };
 
   const handleFilterDelete = () => {
-    deleteFilter(attributeFilter?.id)
-      .catch((error) => {
-        console.error("error", error);
-      });
+    deleteFilter(attributeFilter?.id).catch((error) => {
+      console.error("error", error);
+    });
 
     setShowDeleteModal(false);
   };
-
-
-
-
-
-
 
   const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
   const isFilterNameEmpty = !filterName?.trim?.();
@@ -340,9 +348,14 @@ export const AttributeFilterModal = ({
   const iconColor = getIconColor(isInvalidFilter);
   const isFilterAdmin = userRoles?.includes("manage_all_filters");
 
-  const createdByMe = attributeFilter?.createdBy === userDetail?.preferred_username
-  const publicAccess = attributeFilter?.roles?.length === 0 && attributeFilter?.users?.length === 0;
-  const roleAccess = attributeFilter?.roles?.some(role => userDetail.groups.includes(role));
+  const createdByMe =
+    attributeFilter?.createdBy === userDetail?.preferred_username;
+  const publicAccess =
+    attributeFilter?.roles?.length === 0 &&
+    attributeFilter?.users?.length === 0;
+  const roleAccess = attributeFilter?.roles?.some((role) =>
+    userDetail.groups.includes(role)
+  );
   const canAccess = roleAccess || publicAccess || createdByMe;
   const viewOnly = !isFilterAdmin && canAccess;
   const editRole = isFilterAdmin && canAccess;
@@ -391,7 +404,7 @@ export const AttributeFilterModal = ({
             size="md"
             label={t("Save This Filter")}
             onClick={saveFilterAttributes}
-            icon={<SaveIcon/>}
+            icon={<SaveIcon />}
             dataTestId="save-attribute-filter"
             ariaLabel={t("Save Attribute Filter")}
           />
@@ -402,8 +415,8 @@ export const AttributeFilterModal = ({
     return null;
   };
   const renderOwnershipNote = () => {
-
-    const isCreator = attributeFilter?.createdBy === userDetail?.preferred_username;
+    const isCreator =
+      attributeFilter?.createdBy === userDetail?.preferred_username;
 
     if (isCreator) {
       return (
@@ -417,7 +430,6 @@ export const AttributeFilterModal = ({
         </div>
       );
     }
-    
 
     if (viewOnly) {
       return (
@@ -434,32 +446,34 @@ export const AttributeFilterModal = ({
 
     if (editRole) {
       return (
-          <div className="pb-4">
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={t("This filter is created and managed by {{createdBy}}", {
-                createdBy: attributeFilter?.createdBy,
-              })}
-              dataTestId="attribute-filter-save-note"
-            />
-          </div>
+        <div className="pb-4">
+          <CustomInfo
+            className="note"
+            heading="Note"
+            content={t("This filter is created and managed by {{createdBy}}", {
+              createdBy: attributeFilter?.createdBy,
+            })}
+            dataTestId="attribute-filter-save-note"
+          />
+        </div>
       );
     }
 
     return null;
   };
 
-
   const parametersTab = () => (
     <>
       {taskAttributeData.map((item) => {
         if (item.isChecked && item.type !== "datetime") {
-          const matchingProcessVariable = attributeFilter?.criteria?.processVariables?.find(
-            (pv) => pv.name === item.key
-          );
+          const matchingProcessVariable =
+            attributeFilter?.criteria?.processVariables?.find(
+              (pv) => pv.name === item.key
+            );
 
-          const valueFromProcessVariable = matchingProcessVariable ? matchingProcessVariable.value : '';
+          const valueFromProcessVariable = matchingProcessVariable
+            ? matchingProcessVariable.value
+            : "";
 
           if (item?.key === "assignee") {
             return (
@@ -471,8 +485,32 @@ export const AttributeFilterModal = ({
                   ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
                   ariaLabelforInput={t(`input for attribute ${item.label}`)}
                   dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-                  selectedOption={attributeData[item.key] ?? valueFromProcessVariable}
-                  setNewInput={(selectedOption) => handleSelectChange(item.key, selectedOption)}
+                  selectedOption={
+                    attributeData[item.key] ?? valueFromProcessVariable
+                  }
+                  setNewInput={(selectedOption) =>
+                    handleSelectChange(item.key, selectedOption)
+                  }
+                  name={item.key}
+                />
+              </div>
+            );
+          } else if (item.key === "roles") {
+            return (
+              <div className="pt-4" key={item.key}>
+                <InputDropdown
+                  Options={candidateOptions}
+                  dropdownLabel={t(item.label)}
+                  isAllowInput={false}
+                  ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
+                  ariaLabelforInput={t(`input for attribute ${item.label}`)}
+                  dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
+                  selectedOption={
+                    attributeData[item.key] ?? valueFromProcessVariable
+                  }
+                  setNewInput={(selectedOption) =>
+                    handleSelectChange(item.key, selectedOption)
+                  }
                   name={item.key}
                 />
               </div>
@@ -551,13 +589,10 @@ export const AttributeFilterModal = ({
   const currentFilterName = () => {
     if (attributeFilter) {
       return `${t("Attributes")}: ${attributeFilter.name}`;
+    } else {
+      return t("Attributes: Unsaved Filter");
     }
-
-
-    else {
-      return (t("Attributes: Unsaved Filter"));
-    }
-  }
+  };
 
   return (
     <>
@@ -624,9 +659,9 @@ export const AttributeFilterModal = ({
               dataTestId="attribute-filter-update-note"
             />
           }
-
-
-          primaryBtnAction={() => { setShowUpdateModal(false) }}
+          primaryBtnAction={() => {
+            setShowUpdateModal(false);
+          }}
           onClose={() => setShowUpdateModal(false)}
           primaryBtnText={t("No, Cancel Changes")}
           secondaryBtnText={t("Yes, Update This Filter For Everybody")}
@@ -634,7 +669,6 @@ export const AttributeFilterModal = ({
           secondoryBtndataTestid="confirm-attribute-revert-button"
         />
       )}
-
 
       {showDeleteModal && (
         <ConfirmModal
@@ -650,8 +684,6 @@ export const AttributeFilterModal = ({
               dataTestId="attribute-filter-delete-note"
             />
           }
-
-
           primaryBtnAction={() => {
             setShowDeleteModal(false);
             onClose();
@@ -663,16 +695,13 @@ export const AttributeFilterModal = ({
           secondoryBtndataTestid="confirm-revert-button"
         />
       )}
-
     </>
   );
 };
 
 AttributeFilterModal.propTypes = {
   show: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  filterParams: PropTypes.object.isRequired,
-  setFilterParams: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired, 
 };
 
 export default AttributeFilterModal;

@@ -20,9 +20,8 @@ const initialState = {
   selectedFilter: null,
   selectedAttributeFilter: {},
   taskId: null,
-  defaultFilter: "",
-  filtersAndCount: [],
-  filterListSearchParams: {},
+  defaultFilter: null,
+  filtersAndCount: [], 
   taskDetail: null,
   filterListSortParams: {
     activeKey: "created",
@@ -41,6 +40,8 @@ const initialState = {
   isTaskDetailUpdating: false,
   error : null,
   isUnsavedFilter: false,
+  filterToEdit:null,
+  attributeFilterToEdit:null,
 };
 
 interface TaskAction {
@@ -78,12 +79,18 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, attributeFilterList: action.payload };
     case ACTION_CONSTANTS.SET_IS_UNSAVED_FILTER:
       return { ...state, isUnsavedFilter: action.payload };
+    case ACTION_CONSTANTS.SET_FILTER_TO_EDIT:
+      return { ...state, filterToEdit: action.payload };
+          case ACTION_CONSTANTS.SET_ATTRIBUTE_FILTER_TO_EDIT:
+      return { ...state, attributeFilterToEdit: action.payload };
     case ACTION_CONSTANTS.SET_SELECTED_FILTER:
       return {
         ...state,
         isUnsavedFilter:false,
         selectedFilter: action.payload,
-        filterListSearchParams: {},
+        limit: 15,
+        activePage: 1,
+        selectedAttributeFilter: null,
       };
     case ACTION_CONSTANTS.BPM_SELECTED_ATTRIBUTE_FILTER:
         return {

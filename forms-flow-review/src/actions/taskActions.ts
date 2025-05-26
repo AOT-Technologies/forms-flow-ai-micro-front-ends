@@ -197,6 +197,18 @@ export const setTaskListLimit = (pageLimit) => (dispatch) => {
   });
 };
 
+export const setFilterToEdit = (data) => ({
+  type: ACTION_CONSTANTS.SET_FILTER_TO_EDIT,
+  payload: data,
+})
+
+
+export const setAttributeFilterToEdit = (data) => ({
+  type: ACTION_CONSTANTS.SET_ATTRIBUTE_FILTER_TO_EDIT,
+  payload: data,
+})
+
+
 export const setBPMFilterSearchParams = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS,

@@ -140,12 +140,10 @@ export const fetchUserList = (...rest) => {
             dispatch(setAttributeFilterList(res.data.attributeFilters));
             done(null, res.data);
           } else {
-            dispatch(setBPMFilterLoader(false));
             dispatch(serviceActionError(res));
           }
         })
         .catch((error) => {
-          dispatch(setBPMFilterLoader(false));
           dispatch(serviceActionError(error));
           done(error);
         });

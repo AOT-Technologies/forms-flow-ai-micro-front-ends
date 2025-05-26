@@ -8,7 +8,11 @@ import {
   UpdateIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
-import { ACCESSIBLE_FOR_ALL_GROUPS, PRIVATE_ONLY_YOU, SPECIFIC_USER_OR_GROUP } from "../../constants";
+import {
+  ACCESSIBLE_FOR_ALL_GROUPS,
+  PRIVATE_ONLY_YOU,
+  SPECIFIC_USER_OR_GROUP,
+} from "../../constants";
 import { StorageService } from "@formsflow/service";
 import { useState } from "react";
 
@@ -18,42 +22,49 @@ const SaveFilterTab = ({
   filter,
   userDetail,
   handleUpdateFilter,
-  handleDeleteFilter, 
+  handleDeleteFilter,
   handleSaveCurrentFilter,
-  createAndUpdateFilterButtonDisabled,  
+  createAndUpdateFilterButtonDisabled,
   shareFilter,
   setShareFilter,
   candidateOptions,
   shareFilterForSpecificRole,
   setShareFilterForSpecificRole,
   handleFilterName,
-  filterName, 
-
+  filterName,
+  successState,
 }) => {
   const { t } = useTranslation();
-    const computedStyle = getComputedStyle(document.documentElement);
+  const computedStyle = getComputedStyle(document.documentElement);
   const baseColor = computedStyle.getPropertyValue("--ff-primary");
   const whiteColor = computedStyle.getPropertyValue("--ff-white");
   const [filterNameError, setFilterNameError] = useState("");
   const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
-  const saveIconColor = getIconColor(createAndUpdateFilterButtonDisabled || filterNameError); 
-  const userRoles =
-    StorageService.getParsedData(StorageService.User.USER_ROLE)
- 
+  const saveIconColor = getIconColor(
+    createAndUpdateFilterButtonDisabled || filterNameError
+  );
+  const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE);
+
   const isCreateFilters = userRoles?.includes("create_filters");
-  const isFilterAdmin = userRoles?.includes("manage_all_filters"); 
-  const createdByMe = filter?.createdBy === userDetail?.preferred_username
+  const isFilterAdmin = userRoles?.includes("manage_all_filters");
+  const createdByMe = filter?.createdBy === userDetail?.preferred_username;
   const publicAccess = filter?.roles.length === 0 && filter?.users.length === 0;
-  const roleAccess = filter?.roles.some(role => userDetail?.groups.includes(role));
+  const roleAccess = filter?.roles.some((role) =>
+    userDetail?.groups.includes(role)
+  );
   const canAccess = roleAccess || publicAccess || createdByMe;
   const viewOnly = !isFilterAdmin && canAccess;
   const editRole = isFilterAdmin && canAccess;
   const isCreator = filter?.createdBy === userDetail?.preferred_username;
 
-  
-    const createFilterShareOption = (labelKey, value) => ({
+  let buttonVariant = "secondary"; // Default value
+  if (successState.showSuccess) {
+    buttonVariant = "success";
+  }
+
+  const createFilterShareOption = (labelKey, value) => ({
     label: t(labelKey),
-    value, 
+    value,
   });
 
   const filterShareOptions = [
@@ -62,20 +73,18 @@ const SaveFilterTab = ({
     createFilterShareOption("Specific role", SPECIFIC_USER_OR_GROUP),
   ];
 
-
-  
-    const handleNameError = (e) => {
-      const value = e.target.value;
-      handleFilterName(value);
-      setFilterNameError(
-        value.length >= filterNameLength
-          ? t("Filter name should be less than {{filterNameLength}} characters", {
+  const handleNameError = (e) => {
+    const value = e.target.value;
+    handleFilterName(value);
+    setFilterNameError(
+      value.length >= filterNameLength
+        ? t("Filter name should be less than {{filterNameLength}} characters", {
             filterNameLength: filterNameLength,
           })
-          : ""
-      );
-    };
-  
+        : ""
+    );
+  };
+
   const renderOwnershipNote = () => {
     if (!filter) {
       return (
@@ -89,7 +98,6 @@ const SaveFilterTab = ({
         />
       );
     }
-
 
     if (isCreator) {
       return (
@@ -165,11 +173,17 @@ const SaveFilterTab = ({
           <div className="pt-4 d-flex">
             <CustomButton
               className="me-3"
-              variant="secondary"
+              variant={buttonVariant}
               size="md"
               label={t("Update This Filter")}
               onClick={handleUpdateFilter}
-              icon={<UpdateIcon color={saveIconColor} />}
+              icon={
+                successState?.showSuccess ? (
+                  successState.countdown
+                ) : (
+                  <UpdateIcon color={saveIconColor} />
+                )
+              }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
               disabled={createAndUpdateFilterButtonDisabled || filterNameError}
@@ -193,19 +207,24 @@ const SaveFilterTab = ({
       return (
         <div className="pt-4">
           <CustomButton
-            variant="secondary"
             size="md"
+            variant={buttonVariant}
             label={t("Save This Filter")}
             onClick={handleSaveCurrentFilter}
-            icon={<SaveIcon color={saveIconColor} />}
+            icon={
+              successState?.showSuccess ? (
+                successState.countdown
+              ) : (
+                <SaveIcon color={saveIconColor} />
+              )
+            }
             dataTestId="save-task-filter"
             ariaLabel={t("Save Task Filter")}
-            disabled={createAndUpdateFilterButtonDisabled ||filterNameError}
+            disabled={createAndUpdateFilterButtonDisabled || filterNameError}
           />
         </div>
       );
     }
-
     return null;
   };
 
@@ -218,7 +237,7 @@ const SaveFilterTab = ({
         ariaLabel={t("TaskFilter Name")}
         dataTestId="task-filter-name"
         value={filterName}
-        onChange={(e)=>handleFilterName(e.target.value)}
+        onChange={(e) => handleFilterName(e.target.value)}
         isInvalid={!!filterNameError}
         onBlur={handleNameError}
         feedback={filterNameError}

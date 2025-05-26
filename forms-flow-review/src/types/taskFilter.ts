@@ -76,3 +76,8 @@ export interface FilterCriteria {
      family_name?: string;
      email?: string;
    }  
+  
+  export interface DateRange {
+  startDate: Date | null;
+  endDate: Date | null;
+}
