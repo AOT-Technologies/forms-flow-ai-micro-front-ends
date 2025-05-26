@@ -88,7 +88,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
           </div>
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-start">
-          <CustomButton
+        {primaryBtnText && <CustomButton
             variant={"primary"}
             size="lg"
             label={primaryBtnText}
@@ -97,7 +97,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             dataTestId={primaryBtndataTestid}
             ariaLabel={primaryBtnariaLabel}
             buttonLoading={buttonLoading}
-          />
+          />}
           {secondaryBtnText && <CustomButton
             variant="secondary"
             size="lg"
