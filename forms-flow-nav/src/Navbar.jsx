@@ -437,7 +437,8 @@ const isUserManager = userRoles?.includes("manage_users");
             data-testid="dashboards-nav-link"
             className={`nav-menu-item py-md-3 px-0 mx-2 ${
               pathname.match(createURLPathMatchExp("metrics", baseUrl)) ||
-              pathname.match(createURLPathMatchExp("insights", baseUrl))
+              pathname.match(createURLPathMatchExp("insights", baseUrl)) ||
+              pathname.match(createURLPathMatchExp("submisssions", baseUrl))
                 ? "active"
                 : ""
             }`}

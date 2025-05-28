@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Switch, Redirect, useHistory, useParams } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
@@ -10,31 +10,37 @@ import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/Loading";
-import SubmissionsList from "./Routes/SubmissionsListing/List";
-const authorizedRoles = new Set(["create_submissions","view_submissions"]);
+import SubmissionsList from "./Routes/SubmissionListiong";
+const authorizedRoles = new Set(["create_submissions", "view_submissions"]);
 
-const Submissions = React.memo(({ props }: any) => {
-  const { publish, subscribe } = props;
+interface SubmissionsProps {
+  publish?: (event: string, data?: any) => void;
+  subscribe?: (event: string, callback: (msg: string, data: any) => void) => void;
+  getKcInstance: () => any;
+}
+
+const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
+  const { publish = () => {}, subscribe = () => {} } = props;
   const history = useHistory();
-  const { tenantId } = useParams();
-  const [instance, setInstance] = React.useState(props.getKcInstance());
-  const [isAuth, setIsAuth] = React.useState(instance?.isAuthenticated());
-  const [isClient, setClient] = React.useState(false);
- 
+  const { tenantId } = useParams<{ tenantId?: string }>();
+  const [instance, setInstance] = useState(props.getKcInstance());
+  const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
+  const [isClient, setClient] = useState(false);
+
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
-  React.useEffect(() => {
+  useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}submissions` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     })
   }, []);
 
-  React.useEffect(() => {
-    StorageService.save("tenantKey", tenantId || '')
-  }, [tenantId])
+  useEffect(() => {
+    StorageService.save("tenantKey", tenantId || "");
+  }, [tenantId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAuth) {
 
       let instance = KeycloakService.getInstance(
@@ -49,9 +55,11 @@ const Submissions = React.memo(({ props }: any) => {
       });
     }
   }, []);
-  React.useEffect(() => {
-    if (!isAuth) return
-    const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
+
+  useEffect(() => {
+    if (!isAuth) return;
+
+    const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE) || "[]");
     if (roles.some((role: any) => authorizedRoles.has(role))) {
       setClient(true);
     }
@@ -70,24 +78,20 @@ const Submissions = React.memo(({ props }: any) => {
   }
   if(!isClient) return <p>unauthorized</p>
   return (
-    <>
-        <div className="main-container " tabIndex={0}>
-          <div className="container mt-5">
-            <div className="min-container-height ps-md-3">
-              <Switch>
-                <Route
-                  exact
-                  path={`${BASE_ROUTE}submissions`}
-                  render={() => <SubmissionsList {...props}/>}
-                />
-                <Redirect from="*" to="/404" />
-              </Switch>
-            </div>
-     
-          </div>
+    <div className="main-container" tabIndex={0}>
+      <div className="container mt-5">
+        <div className="min-container-height ps-md-3">
+          <Switch>
+            <Route
+              exact
+              path={`${BASE_ROUTE}submissions`}
+              render={() => <SubmissionsList />}
+            />
+            <Redirect from="*" to="/404" />
+          </Switch>
         </div>
-   
-    </>
+      </div>
+    </div>
   );
 });
 
