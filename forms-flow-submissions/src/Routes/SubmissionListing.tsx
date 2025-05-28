@@ -44,7 +44,7 @@ const TaskSubmissionList: React.FC = () => {
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
   const columns: Column[] = useMemo(() => [
-    { name: "Submission ID", sortKey: "submissionId", width: 200, resizable: true },
+    { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
     { name: "Form Name", sortKey: "formName", width: 200, resizable: true },
     { name: "Submitter", sortKey: "createdBy", width: 200, resizable: true },
     { name: "Submission Date", sortKey: "submissionDate", width: 180, resizable: true },
@@ -85,8 +85,8 @@ const TaskSubmissionList: React.FC = () => {
 
 
   const renderRow = (row: Submission) => (
-    <tr key={row.submissionId}>
-      <td>{row.submissionId}</td>
+    <tr key={row.id}>
+      <td>{row.id}</td>
       <td>{row.formName}</td>
       <td>{row.createdBy}</td>
       <td>{formatDate(row.created)}</td>

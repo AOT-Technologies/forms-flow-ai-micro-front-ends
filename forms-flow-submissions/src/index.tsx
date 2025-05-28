@@ -10,7 +10,7 @@ import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/Loading";
-import SubmissionsList from "./Routes/SubmissionListiong";
+import SubmissionsList from "./Routes/SubmissionListing";
 const authorizedRoles = new Set(["create_submissions", "view_submissions"]);
 
 interface SubmissionsProps {

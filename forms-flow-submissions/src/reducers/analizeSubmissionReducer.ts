@@ -4,7 +4,7 @@ const initialState = {
     analyzeSubmissionSortParams: {
         activeKey: "formName",
         formName: { sortOrder: "asc" },
-        submissionId: { sortOrder: "asc" },
+        id: { sortOrder: "asc" },
         createdBy: { sortOrder: "asc" },
         submissionDate: { sortOrder: "asc" },
         applicationStatus: { sortOrder: "asc" },
