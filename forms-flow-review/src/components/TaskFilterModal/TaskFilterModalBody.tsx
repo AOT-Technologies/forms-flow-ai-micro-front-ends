@@ -17,13 +17,10 @@ import {
   PRIVATE_ONLY_YOU,
   SPECIFIC_USER_OR_GROUP,
 } from "../../constants/index";
-import { useSelector, useDispatch, batch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
-  deleteFilter,
-  updateFilter,
   fetchAllForms,
   fetchBPMTaskCount,
-  fetchFilterList,
   fetchServiceTaskList,
   fetchTaskVariables,
   getUserRoles,
@@ -33,44 +30,48 @@ import {
 import {
   setBPMFilterList,
   setDefaultFilter,
+  setFilterToEdit,
   setIsUnsavedFilter,
   setSelectedFilter,
   setUserGroups,
 } from "../../actions/taskActions";
 import { Filter, FilterCriteria, UserDetail } from "../../types/taskFilter";
-import { StorageService } from "@formsflow/service";
 import { defaultTaskVariable } from "../../constants/defaultTaskVariable";
 import ParametersTab from "./ParametersTab";
 import SaveFilterTab from "./SaveFilterTab";
 import { Modal } from "react-bootstrap";
+import { RootState } from "../../reducers";
 
 const TaskFilterModalBody = ({
   showTaskFilterMainModal,
   closeTaskFilterMainModal,
-  filter,
+  toggleDeleteModal,
+  toggleUpdateModal,
+  filterToEdit,
+  deleteSuccess,
+  updateSuccess,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const {
     userGroups: candidateGroups = { data: [] },
-    defaultFilter,
     isUnsavedFilter,
     filterList,
+    userDetails = {} as UserDetail,
   } = useSelector((state: any) => state.task);
 
   const [accessOption, setAccessOption] = useState("specificRole");
   const [accessValue, setAccessValue] = useState("");
+  const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
-    filter?.variables || defaultTaskVariable
+    filterToEdit?.variables || defaultTaskVariable
   );
   const { successState, startSuccessCountdown } = useSuccessCountdown();
-  const userDetail: UserDetail | null = StorageService.getParsedData(
-    StorageService.User.USER_DETAILS
-  );
+
   const [forms, setForms] = useState([]);
 
-  const [filterName, setFilterName] = useState(filter?.name || "");
+  const [filterName, setFilterName] = useState(filterToEdit?.name || "");
 
   const [sortValue, setSortValue] = useState("dueDate");
   const [sortOrder, setSortOrder] = useState("asc");
@@ -88,9 +89,6 @@ const TaskFilterModalBody = ({
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
 
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const changeAcessOption = (option: string) => {
     setAccessOption(option);
@@ -143,7 +141,7 @@ const TaskFilterModalBody = ({
     let users = [];
     let roles = [];
     if (shareFilter === PRIVATE_ONLY_YOU) {
-      users.push(userDetail?.preferred_username);
+      users.push(userDetails?.preferred_username);
     } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
       roles.push(shareFilterForSpecificRole);
     } else {
@@ -154,10 +152,10 @@ const TaskFilterModalBody = ({
   };
 
   const getData = (): Filter => ({
-    created: filter?.created,
-    modified: filter?.modified,
-    id: filter?.id,
-    tenant: filter?.tenant,
+    created: filterToEdit?.created,
+    modified: filterToEdit?.modified,
+    id: filterToEdit?.id,
+    tenant: filterToEdit?.tenant,
     name: filterName,
     criteria: getCriteria(),
     variables: variableArray,
@@ -166,9 +164,9 @@ const TaskFilterModalBody = ({
       formId: selectedForm.formId,
     },
     ...handleFilterAccess(),
-    status: filter?.status,
-    createdBy: filter?.createdBy,
-    modifiedBy: filter?.modifiedBy,
+    status: filterToEdit?.status,
+    createdBy: filterToEdit?.createdBy,
+    modifiedBy: filterToEdit?.modifiedBy,
     //task visible attributes need to remove after checking with backend
     taskVisibleAttributes: {
       applicationId: true,
@@ -178,10 +176,10 @@ const TaskFilterModalBody = ({
       followUp: true,
       priority: true,
     },
-    hide: filter?.hide,
+    hide: filterToEdit?.hide,
     filterType: "TASK",
-    editPermission: filter?.editPermission,
-    sortOrder: filter?.sortOrder,
+    editPermission: filterToEdit?.editPermission,
+    sortOrder: filterToEdit?.sortOrder,
     //these variables are not used in the filter but keeping for comparison prvious and current filter state
     description: null,
     order: null,
@@ -211,8 +209,8 @@ const TaskFilterModalBody = ({
 
   /* -------------------- set values for editing the filter ------------------- */
   useEffect(() => {
-    if (!filter) return;
-    const { roles, users, criteria } = filter;
+    if (!filterToEdit) return;
+    const { roles, users, criteria } = filterToEdit;
     const { assignee, sorting, dataLine, candidateGroup } = criteria;
     setShareFilterForSpecificRole(roles);
     setAccessOption(assignee ? "specificAssignee" : "specificRole");
@@ -220,13 +218,13 @@ const TaskFilterModalBody = ({
     handleSorting(sorting);
     handleShareFilter(roles, users);
     setDataLineValue(dataLine ?? 1);
-  }, [filter]);
+  }, [filterToEdit]);
 
   /* -------- handling already selected forms when after forms fetching ------- */
   useEffect(() => {
-    if (filter && forms.length) {
+    if (filterToEdit && forms.length) {
       const matchedForm = forms.find(
-        (form) => form.formId === filter?.properties?.formId
+        (form) => form.formId === filterToEdit?.properties?.formId
       );
       if (matchedForm) {
         setSelectedForm({
@@ -235,7 +233,7 @@ const TaskFilterModalBody = ({
         });
       }
     }
-  }, [filter, forms.length]);
+  }, [filterToEdit, forms.length]);
 
   /* ------------------- fetching all form from webapi side ------------------- */
   useEffect(() => {
@@ -344,31 +342,6 @@ const TaskFilterModalBody = ({
       .catch((err) => console.error(err));
   };
 
-  const handleFilterDelete = () => {
-    deleteFilter(filter?.id)
-      .then(() => {
-        setShowDeleteModal(false);
-        handleDeleteSuccess();
-        closeTaskFilterMainModal();
-      })
-      .catch((error) => {
-        console.error("error", error);
-      });
-  };
-
-  const handleDeleteSuccess = () => {
-    const nextFilters = filterList.filter((i) => i.id !== filter.id);
-    const nextFilter = nextFilters.length > 0 ? nextFilters[0] : null;
-    batch(() => {
-      dispatch(setBPMFilterList(nextFilters));
-      dispatch(setSelectedFilter(nextFilter)); //need to comment this
-      if (nextFilter) {
-        dispatch(setDefaultFilter(nextFilter?.id));
-        updateDefaultFilter(nextFilter?.id); //update default filter value in background
-      }
-    });
-  };
-
   // need to check if this function is used anywhere else
   const handleUpdateOrder = (updatedItems) => {
     setVariableArray(updatedItems);
@@ -397,38 +370,14 @@ const TaskFilterModalBody = ({
 
   /* -------------------- handling create or update filter -------------------- */
   const handleSaveFilter = () => {
-    /**
-     * this function will handle both create and update filter
-     * if the filter has like unsaved changes we will alredy cleared the default filter id to null
-     * so after updating [after unsaved changes] we need to just update the default filter id it
-     * will call the tasklist from tasklist.tsx [useEffect] setting current filter, attribute filter, task list etc
-     */
-    const isUpdate = filter && filter.id;
-    const saveAction = isUpdate
-      ? updateFilter(getData(), filter.id)
-      : createFilter(getData());
-
-    saveAction
+    createFilter(getData())
       .then((res) => {
-        dispatch(setIsUnsavedFilter(false));
-        const filtersList = filterList.filter(
-          (item) => item.id !== res.data.id
-        );
-        const updatedFilterList = [res.data, ...filtersList];
+        const updatedFilterList = [...filterList, res.data];
         dispatch(setBPMFilterList(updatedFilterList));
-        if (isUpdate) toggleupdateConfirmationModal();
         startSuccessCountdown(closeTaskFilterMainModal, 2);
         dispatch(fetchBPMTaskCount(updatedFilterList));
-
-        const isDefaultFilter = res.data.id === defaultFilter;
-        if (isDefaultFilter) {
-          // if default filter is ther we need to fetch the data manually
-          fetchTaskList();
-          dispatch(setSelectedFilter(res.data));
-        } else {
-          dispatch(setDefaultFilter(res.data.id));
-          updateDefaultFilter(res.data.id);
-        }
+        dispatch(setDefaultFilter(res.data.id));
+        updateDefaultFilter(res.data.id);
       })
       .catch((error) => console.error("Error saving filter:", error));
   };
@@ -439,22 +388,25 @@ const TaskFilterModalBody = ({
     toggleFormSelectionModal();
   };
 
-  const toggleupdateConfirmationModal = () => {
-    setShowUpdateModal(!showUpdateModal);
+  const handleUpdateModalClick = () => {
+    dispatch(setFilterToEdit(getData()));
+    toggleUpdateModal();
   };
-
-  const toggleDeleteConfirmationModal = () => {
-    setShowDeleteModal(!showDeleteModal);
+  const handleDeleteClick = () => {
+    dispatch(setFilterToEdit(getData()));
+    toggleDeleteModal();
   };
 
   // disable filter button when all variable array value unchecked or previous filter and current filter are same
-  const isFilterSame = isUnsavedFilter ? false : isEqual(getData(), filter);
+  const isFilterSame = isUnsavedFilter
+    ? false
+    : isEqual(getData(), selectedFilterExistingData);
   const isVariableArrayEmpty = variableArray.every((item) => !item.isChecked);
   const disableFilterButton = isVariableArrayEmpty || isFilterSame;
   const saveFilterButtonDisabled =
     !filterName ||
     !accessValue ||
-    (filter?.id ? disableFilterButton : isVariableArrayEmpty);
+    (filterToEdit?.id ? disableFilterButton : isVariableArrayEmpty);
   /* ------------------------------- tab values ------------------------------- */
   const columnsTab = () => (
     <>
@@ -549,12 +501,14 @@ const TaskFilterModalBody = ({
       title: t("Save"),
       content: (
         <SaveFilterTab
-          filter={filter}
-          successState={successState}
+          deleteSuccess={deleteSuccess}
+          filterToEdit={filterToEdit}
+          successState={
+            updateSuccess?.showSuccess ? updateSuccess : successState
+          }
           createAndUpdateFilterButtonDisabled={saveFilterButtonDisabled}
-          userDetail={userDetail}
-          handleUpdateFilter={toggleupdateConfirmationModal}
-          handleDeleteFilter={toggleDeleteConfirmationModal}
+          handleUpdateFilter={handleUpdateModalClick}
+          handleDeleteFilter={handleDeleteClick}
           handleSaveCurrentFilter={handleSaveFilter}
           handleFilterName={handleFilterName}
           filterName={filterName}
@@ -573,7 +527,11 @@ const TaskFilterModalBody = ({
       <Modal.Body className="modal-body p-0">
         <div className="filter-tab-container">
           <CustomTabs
-            defaultActiveKey="parametersTab"
+            defaultActiveKey={
+              updateSuccess?.showSuccess || deleteSuccess?.showSuccess
+                ? "saveFilterTab"
+                : "parametersTab"
+            }
             tabs={tabs}
             ariaLabel={t("Filter Tabs")}
             dataTestId="create-filter-tabs"
@@ -588,7 +546,12 @@ const TaskFilterModalBody = ({
           dataTestId="task-filter-results"
           ariaLabel={t("Filter results")}
           onClick={filterResults}
-          disabled={disableFilterButton}
+          disabled={
+            successState.showSuccess ||
+            updateSuccess?.showSuccess ||
+            deleteSuccess?.showSuccess ||
+            disableFilterButton
+          }
         />
         <CustomButton
           variant="secondary"
@@ -599,57 +562,6 @@ const TaskFilterModalBody = ({
           ariaLabel={t("Cancel filter")}
         />
       </Modal.Footer>
-
-      {showDeleteModal && (
-        <ConfirmModal
-          show={showDeleteModal}
-          title={t("Delete This Filter?")}
-          message={
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={t(
-                "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow."
-              )}
-              dataTestId="task-filter-delete-note"
-            />
-          }
-          primaryBtnAction={() => {
-            setShowDeleteModal(false);
-            closeTaskFilterMainModal();
-          }}
-          onClose={() => setShowDeleteModal(false)}
-          primaryBtnText={t("No, Keep This Filter")}
-          secondaryBtnText={t("Yes, Delete This Filter For Everybody")}
-          secondaryBtnAction={handleFilterDelete}
-          secondoryBtndataTestid="confirm-revert-button"
-        />
-      )}
-
-      {showUpdateModal && (
-        <ConfirmModal
-          show={showUpdateModal}
-          title={t("Update This Filter?")}
-          message={
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={t(
-                "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution."
-              )}
-              dataTestId="task-filter-update-note"
-            />
-          }
-          primaryBtnAction={() => {
-            setShowUpdateModal(false);
-          }}
-          onClose={() => setShowUpdateModal(false)}
-          primaryBtnText={t("No, Cancel Changes")}
-          secondaryBtnText={t("Yes, Update This Filter For Everybody")}
-          secondaryBtnAction={handleSaveFilter}
-          secondoryBtndataTestid="confirm-revert-button"
-        />
-      )}
     </>
   );
 };

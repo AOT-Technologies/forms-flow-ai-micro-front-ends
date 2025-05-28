@@ -1,15 +1,110 @@
 import Modal from "react-bootstrap/Modal";
-import { CloseIcon } from "@formsflow/components";
+import {
+  CloseIcon,
+  ConfirmModal,
+  CustomInfo,
+  useSuccessCountdown,
+} from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskFilterModalBody from "./TaskFilterModalBody";
-import { useSelector } from "react-redux";
+import { batch, useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import {
+  deleteFilter,
+  fetchBPMTaskCount,
+  fetchServiceTaskList,
+  updateDefaultFilter,
+  updateFilter,
+} from "../../api/services/filterServices";
+import { RootState } from "../../reducers";
+import {
+  setBPMFilterList,
+  setBPMFiltersAndCount,
+  setBPMTaskList,
+  setDefaultFilter,
+  setIsUnsavedFilter,
+  setSelectedFilter,
+} from "../../actions/taskActions";
 
-const TaskFilterModal = ({ show, onClose }) => {
+const TaskFilterModal = ({ show, onClose, toggleModal }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const isUnsavedFilter = useSelector(
     (state: any) => state.task.isUnsavedFilter
   );
-  const filter = useSelector((state: any) => state.task.filterToEdit);
+  const filterToEdit = useSelector((state: any) => state.task.filterToEdit);
+  const filterList = useSelector((state: RootState) => state.task.filterList);
+  const filterListAndCount =  useSelector((state:RootState)=>state.task.filtersAndCount);
+  const defaultFilter = useSelector(
+    (state: RootState) => state.task.defaultFilter
+  );
+  const limit = useSelector((state: RootState) => state.task.limit);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const {
+    successState: updateSuccess,
+    startSuccessCountdown: setUpdateSuccess,
+  } = useSuccessCountdown();
+  const {
+    successState: deleteSuccess,
+    startSuccessCountdown: setDeleteSuccess,
+  } = useSuccessCountdown();
+
+  const toggleUpdateModal = () => {
+    toggleModal();
+    setShowUpdateModal((prev) => !prev);
+  };
+
+  const toggleDeleteModal = () => {
+    toggleModal();
+    setShowDeleteModal((prev) => !prev);
+  };
+
+  const handleBatchFunctionWhenThereIsNoFilter = () => {
+    dispatch(setDefaultFilter(null));
+    dispatch(setSelectedFilter(null));
+    dispatch(setBPMTaskList([]));
+    dispatch(setBPMFiltersAndCount([]));
+  };
+
+  const resetDefaultFilter = (defaultFilterId) => {
+    dispatch(setDefaultFilter(defaultFilterId));
+    updateDefaultFilter(defaultFilterId);
+  };
+
+  const handleFilterDelete = async () => {
+    toggleDeleteModal();
+    await deleteFilter(filterToEdit?.id);
+    const newFilters = filterList.filter((i) => i.id !== filterToEdit?.id);
+    setDeleteSuccess(onClose, 2);
+    const newFilterAndCount = filterListAndCount.filter(i=>i.id !==filterToEdit?.id);
+    dispatch(setBPMFiltersAndCount(newFilterAndCount));
+    dispatch(setBPMFilterList(newFilters));
+    if (newFilters.length) {
+      resetDefaultFilter(newFilters[0]?.id);
+    } else {
+      batch(handleBatchFunctionWhenThereIsNoFilter);
+    }
+  };
+
+  const handleSaveFilter = async () => {
+    toggleUpdateModal();
+    const response = await updateFilter(filterToEdit, filterToEdit?.id);
+    setUpdateSuccess(onClose, 2);
+    dispatch(setIsUnsavedFilter(false));
+    const filtersList = filterList.filter(
+      (item) => item.id !== response.data.id
+    );
+    const updatedFilterList = [response.data, ...filtersList];
+    dispatch(setBPMFilterList(updatedFilterList));
+    dispatch(fetchBPMTaskCount(updatedFilterList));
+    const isDefaultFilter = response.data.id === defaultFilter;
+    if (isDefaultFilter) {
+      dispatch(fetchServiceTaskList(response.data, null, 1, limit));
+    } else {
+      resetDefaultFilter(response.data.id);
+    }
+  };
 
   return (
     <>
@@ -27,8 +122,8 @@ const TaskFilterModal = ({ show, onClose }) => {
         <Modal.Header>
           <Modal.Title id="create-filter-title">
             <b>{`${t("Tasks")}: ${
-              filter && !isUnsavedFilter
-                ? filter.name //need to check if it is unsaved or not
+              filterToEdit && !isUnsavedFilter
+                ? filterToEdit.name //need to check if it is unsaved or not
                 : "Unsaved Filter"
             }`}</b>
           </Modal.Title>
@@ -38,13 +133,61 @@ const TaskFilterModal = ({ show, onClose }) => {
         </Modal.Header>
 
         <TaskFilterModalBody
-          // toggleFilterModal={toggleFilterModal}
-          // canEdit={canEdit}
+          toggleDeleteModal={toggleDeleteModal}
+          toggleUpdateModal={toggleUpdateModal}
+          deleteSuccess={deleteSuccess}
+          updateSuccess={updateSuccess}
           showTaskFilterMainModal={show}
           closeTaskFilterMainModal={onClose}
-          filter={filter}
+          filterToEdit={filterToEdit}
         />
       </Modal>
+
+      {showDeleteModal && (
+        <ConfirmModal
+          show={showDeleteModal}
+          title={t("Delete This Filter?")}
+          message={
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow."
+              )}
+              dataTestId="task-filter-delete-note"
+            />
+          }
+          primaryBtnAction={toggleDeleteModal}
+          onClose={toggleDeleteModal}
+          primaryBtnText={t("No, Keep This Filter")}
+          secondaryBtnText={t("Yes, Delete This Filter For Everybody")}
+          secondaryBtnAction={handleFilterDelete}
+          secondoryBtndataTestid="confirm-revert-button"
+        />
+      )}
+
+      {showUpdateModal && (
+        <ConfirmModal
+          show={showUpdateModal}
+          title={t("Update This Filter?")}
+          message={
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution."
+              )}
+              dataTestId="task-filter-update-note"
+            />
+          }
+          primaryBtnAction={toggleUpdateModal}
+          onClose={toggleUpdateModal}
+          primaryBtnText={t("No, Cancel Changes")}
+          secondaryBtnText={t("Yes, Update This Filter For Everybody")}
+          secondaryBtnAction={handleSaveFilter}
+          secondoryBtndataTestid="confirm-revert-button"
+        />
+      )}
     </>
   );
 };

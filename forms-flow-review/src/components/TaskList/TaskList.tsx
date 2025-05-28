@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  resetTaskListParams,
   setBPMFilterList,
   setBPMFilterLoader,
   setBPMTaskListActivePage,
   setBPMTaskLoader,
+  setDateRangeFilter,
   setDefaultFilter,
   setFilterListSortParams,
+  setIsAssigned,
   setSelectedFilter,
   setTaskListLimit,
 } from "../../actions/taskActions";
@@ -27,36 +30,29 @@ import TaskListDropdownItems from "./TaskFilterDropdown";
 import { RootState } from "../../reducers";
 import TaskListTable from "./TasklistTable";
 import { HelperServices } from "@formsflow/service";
-import { DateRange } from "../../types/taskFilter";
 import AttributeFilterDropdown from "./AttributeFilterDropdown";
 import { createReqPayload } from "../../helper/taskHelper";
 import { optionSortBy } from "../../helper/tableHelper";
 
-
 const TaskList = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
-  //   const tasksCount = useSelector((state:any) => state.task.tasksCount);
-  //   const isUnsavedFilter = useSelector((state:any) => state.task.isUnsavedFilter);
-  const defaultFilterId = useSelector(
-    (state: RootState) => state.task.defaultFilter
-  );
-  const filters = useSelector((state: RootState) => state.task.filterList);
-  const activePage = useSelector((state: RootState) => state.task.activePage);
-  const selectedAttributeFilter = useSelector(
-    (state: RootState) => state.task.selectedAttributeFilter
-  );
-  const limit = useSelector((state: RootState) => state.task.limit);
-  const filterListSortParams = useSelector(
-    (state: RootState) => state.task.filterListSortParams
-  );
-  const [isAssigned, setIsAssigned] = useState(false);
+  const {
+    limit,
+    dateRange,
+    activePage,
+    filterListSortParams: filterListSortParams,
+    selectedFilter,
+    filterList: filters,
+    filterCached,
+    defaultFilter: defaultFilterId,
+    lastRequestedPayload: lastReqPayload,
+    selectedAttributeFilter,
+    isAssigned
+  } = useSelector((state: RootState) => state.task);
+
+   
   const [showSortModal, setShowSortModal] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange>({
-    startDate: null,
-    endDate: null,
-  });
 
   //inital data loading
   const initialDataLoading = async () => {
@@ -75,22 +71,47 @@ const TaskList = () => {
   };
 
   const handleCheckBoxChange = () => {
-    setIsAssigned(!isAssigned);
+    dispatch(setIsAssigned(!isAssigned));
   };
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
-  const fetchTaskListData = ({sortData=null,newPage=null, newLimit=null, newDateRange=null} = {}) => {
-    if (selectedFilter?.id) {
-      const payload = createReqPayload(
+
+  const fetchTaskListData = ({
+    sortData = null,
+    newPage = null,
+    newLimit = null,
+    newDateRange = null,
+  } = {}) => {
+    /**
+     * we need to create paylaod for the task list
+     * if filterCached is true we need to use lastReqPayload [this will use for persist]
+     * if selectedFilter is not null we need to create payload using selectedFilter, selectedAttributeFilter, sortData, newDateRange and isAssigned
+     */
+
+    let payload = null;
+    if (filterCached) {
+      payload = lastReqPayload;
+      dispatch(resetTaskListParams({ filterCached: false }));
+    } else if (selectedFilter) {
+      payload = createReqPayload(
         selectedFilter,
         selectedAttributeFilter,
         sortData || filterListSortParams,
         newDateRange || dateRange,
         isAssigned
       );
-      dispatch(setBPMTaskLoader(true));
-      dispatch(fetchServiceTaskList(payload, null, newPage|| activePage, newLimit || limit));
     }
+
+    if (!payload) return;
+    dispatch(setBPMTaskLoader(true));
+    dispatch(
+      fetchServiceTaskList(
+        payload,
+        null,
+        newPage || activePage,
+        newLimit || limit
+      )
+    );
   };
 
   const handleRefresh = () => {
@@ -98,56 +119,68 @@ const TaskList = () => {
   };
 
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
-     // if need to reset the sort orders use this function
-      const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
-      const updatedData = {
-          ...resetSortOrders,
-          activeKey: selectedSortOption,
-          [selectedSortOption]: { sortOrder: selectedSortOrder },
-        }
-      dispatch(
-        setFilterListSortParams(updatedData)
-      );
-      setShowSortModal(false);
-      fetchTaskListData({sortData:updatedData})
-    }
+    // if need to reset the sort orders use this function
+    const resetSortOrders = HelperServices.getResetSortOrders(
+      optionSortBy.options
+    );
+    const updatedData = {
+      ...resetSortOrders,
+      activeKey: selectedSortOption,
+      [selectedSortOption]: { sortOrder: selectedSortOrder },
+    };
+    dispatch(setFilterListSortParams(updatedData));
+    setShowSortModal(false);
+    fetchTaskListData({ sortData: updatedData });
+  };
 
-    const handleDateRangeChange = (newDateRange) => {
-    setDateRange(newDateRange);
-    if(!newDateRange?.startDate ||  !newDateRange?.endDate) return
+  const handleDateRangeChange = (newDateRange) => {
+    /**
+     * the values means we need to call the api for date range change when start date or end date is selected
+     * if it is cleared we need to call the api again but newDateRange will be null
+     * if any one of the values selected we don't want to call the api
+     */
+    const values = Object.values(newDateRange);
+    console.log(values)
+    dispatch(setDateRangeFilter(newDateRange));
+    if (values.length == 1) return;
     // Reset active page and limit when date range changes
-    dispatch(setBPMTaskListActivePage(1)); 
+    dispatch(setBPMTaskListActivePage(1));
     // Fetch task list with new date range
-    fetchTaskListData({newPage: 1, newDateRange});
-  }
+    fetchTaskListData({
+      newPage: 1,
+      newDateRange: values.length ? newDateRange : null,
+    });
+  };
 
   useEffect(() => {
+    // no neeed to call this on if filterCached is true
+    if (filterCached) return;
     initialDataLoading();
     dispatch(fetchUserList());
   }, []);
 
   /* this useEffect will work each time default filter changes*/
   useEffect(() => {
+    // no neeed to call this on if filterCached is true
+    if (filterCached) return;
     if (defaultFilterId) {
-      // need to set default filter in redux store
-      // need to fetch attribute filters against the default filter
-      // need to fetch task count against the default filter
-      // need to fetch task list against the default filter
-
       const currentFilter = filters.find(
         (filter) => filter.id === defaultFilterId
       );
       if (!currentFilter) return;
-      dispatch(setSelectedFilter(currentFilter));
-      dispatch(fetchAttributeFilterList(currentFilter.id));
-      dispatch(setBPMTaskListActivePage(1));
-      dispatch(setTaskListLimit(15));
-      dispatch(fetchServiceTaskList(currentFilter, null, 1, 15));
+      batch(() => {
+        dispatch(setSelectedFilter(currentFilter));
+        dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
+        dispatch(fetchAttributeFilterList(currentFilter.id));
+        dispatch(setBPMTaskListActivePage(1));
+        dispatch(setTaskListLimit(15));
+        dispatch(fetchServiceTaskList(currentFilter, null, 1, 15));
+      });
     }
   }, [defaultFilterId]);
 
   useEffect(() => {
-    fetchTaskListData(); 
+    fetchTaskListData();
   }, [isAssigned, activePage, limit]);
 
   return (
@@ -238,7 +271,7 @@ const TaskList = () => {
               />
             </div>
 
-            <TaskListTable isAssigned={isAssigned} dateRange={dateRange} />
+            <TaskListTable />
           </div>
         </div>
       </div>

@@ -64,7 +64,7 @@ const getCellValue = (column: Column, task: Task) => {
   }
 };
 
-const TaskListTable = ({ isAssigned, dateRange }) => {
+const TaskListTable = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -74,8 +74,10 @@ const TaskListTable = ({ isAssigned, dateRange }) => {
     tasksList,
     activePage,
     limit,
+    dateRange,
     selectedAttributeFilter,
     filterListSortParams,
+    isAssigned
   } = useSelector((state: any) => state.task);
 
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);

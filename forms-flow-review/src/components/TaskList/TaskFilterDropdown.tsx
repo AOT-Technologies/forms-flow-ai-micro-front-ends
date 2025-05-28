@@ -42,10 +42,10 @@ const TaskListDropdownItems = memo(() => {
   };
 
   const handleToggleFilterModal = () => {
-    setShowTaskFilterModal((prev) => !prev);
+    setShowTaskFilterModal((prev) => !prev); 
   };
 
-  const changeFilterSelection = (filter) => {
+  const changeFilterSelection = (filter) => { 
     if (filter?.id == defaultFilter) return;
     const upcomingFilter = filterList.find((item) => item.id == filter.id);
     if (!upcomingFilter) return;
@@ -116,7 +116,7 @@ const TaskListDropdownItems = memo(() => {
     }
 
     return filterDropdownItemsArray;
-  }, [filtersAndCount.length, defaultFilter, filterList.length]);
+  }, [filtersAndCount, defaultFilter ]);
 
   const title = selectedFilter
     ? `${isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name)} (${
@@ -142,6 +142,7 @@ const TaskListDropdownItems = memo(() => {
         extraActionAriaLabel={t("Edit selected filter")}
       />
       <TaskFilterModal
+        toggleModal={handleToggleFilterModal}
         show={showTaskFilterModal}
         onClose={handleCloseFilterModal} 
       />

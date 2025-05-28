@@ -15,12 +15,14 @@ import {
 } from "../../constants";
 import { StorageService } from "@formsflow/service";
 import { useState } from "react";
-
+import { useSelector } from "react-redux";
+import { RootState } from "../../reducers";
+import { UserDetail } from "../../types/taskFilter";
+ 
 const filterNameLength = 50;
 
 const SaveFilterTab = ({
-  filter,
-  userDetail,
+  filterToEdit, 
   handleUpdateFilter,
   handleDeleteFilter,
   handleSaveCurrentFilter,
@@ -33,6 +35,7 @@ const SaveFilterTab = ({
   handleFilterName,
   filterName,
   successState,
+  deleteSuccess,
 }) => {
   const { t } = useTranslation();
   const computedStyle = getComputedStyle(document.documentElement);
@@ -44,22 +47,27 @@ const SaveFilterTab = ({
     createAndUpdateFilterButtonDisabled || filterNameError
   );
   const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE);
-
+  const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
   const isCreateFilters = userRoles?.includes("create_filters");
   const isFilterAdmin = userRoles?.includes("manage_all_filters");
-  const createdByMe = filter?.createdBy === userDetail?.preferred_username;
-  const publicAccess = filter?.roles.length === 0 && filter?.users.length === 0;
-  const roleAccess = filter?.roles.some((role) =>
-    userDetail?.groups.includes(role)
+  const createdByMe = filterToEdit?.createdBy === userDetails?.preferred_username;
+  const publicAccess = filterToEdit?.roles.length === 0 && filterToEdit?.users.length === 0;
+  const roleAccess = filterToEdit?.roles.some((role) =>
+    userDetails?.groups.includes(role)
   );
   const canAccess = roleAccess || publicAccess || createdByMe;
   const viewOnly = !isFilterAdmin && canAccess;
   const editRole = isFilterAdmin && canAccess;
-  const isCreator = filter?.createdBy === userDetail?.preferred_username;
+  const isCreator = filterToEdit?.createdBy === userDetails?.preferred_username;
 
-  let buttonVariant = "secondary"; // Default value
+  let saveAndUpdateButtonVariant = "secondary"; // Default value
   if (successState.showSuccess) {
-    buttonVariant = "success";
+    saveAndUpdateButtonVariant = "success";
+  }
+
+  let deleteButtonVariant = "secondary"; // Default value
+  if (deleteSuccess.showSuccess) {
+    deleteButtonVariant = "success";
   }
 
   const createFilterShareOption = (labelKey, value) => ({
@@ -86,7 +94,7 @@ const SaveFilterTab = ({
   };
 
   const renderOwnershipNote = () => {
-    if (!filter) {
+    if (!filterToEdit) {
       return (
         <CustomInfo
           className="note"
@@ -128,7 +136,7 @@ const SaveFilterTab = ({
           className="note"
           heading="Note"
           content={t("This filter is created and managed by {{createdBy}}", {
-            createdBy: filter?.createdBy,
+            createdBy: filterToEdit?.createdBy,
           })}
           dataTestId="task-filter-save-note"
         />
@@ -145,7 +153,7 @@ const SaveFilterTab = ({
               content={t(
                 "This filter is created and managed by {{createdBy}}",
                 {
-                  createdBy: filter?.createdBy,
+                  createdBy: filterToEdit?.createdBy,
                 }
               )}
               dataTestId="task-filter-save-note"
@@ -167,13 +175,13 @@ const SaveFilterTab = ({
   };
 
   const renderActionButtons = () => {
-    if (filter && filter?.id) {
+    if (filterToEdit && filterToEdit?.id) {
       if (canAccess && isFilterAdmin) {
         return (
           <div className="pt-4 d-flex">
             <CustomButton
               className="me-3"
-              variant={buttonVariant}
+              variant={saveAndUpdateButtonVariant}
               size="md"
               label={t("Update This Filter")}
               onClick={handleUpdateFilter}
@@ -186,21 +194,22 @@ const SaveFilterTab = ({
               }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
-              disabled={createAndUpdateFilterButtonDisabled || filterNameError}
+              disabled={deleteSuccess?.showSuccess || createAndUpdateFilterButtonDisabled || filterNameError}
             />
             <CustomButton
-              variant="secondary"
+              variant={deleteButtonVariant}
               size="md"
               label={t("Delete This Filter")}
               onClick={handleDeleteFilter}
-              icon={<DeleteIcon />}
+              icon={deleteSuccess?.showSuccess ? deleteSuccess.countdown : <DeleteIcon />}
               dataTestId="delete-task-filter"
               ariaLabel={t("Delete This Filter")}
+              disabled={successState?.showSuccess}
             />
           </div>
         );
       }
-      return null;
+      return null; 
     }
 
     if (isCreateFilters) {
@@ -208,7 +217,7 @@ const SaveFilterTab = ({
         <div className="pt-4">
           <CustomButton
             size="md"
-            variant={buttonVariant}
+            variant={saveAndUpdateButtonVariant}
             label={t("Save This Filter")}
             onClick={handleSaveCurrentFilter}
             icon={

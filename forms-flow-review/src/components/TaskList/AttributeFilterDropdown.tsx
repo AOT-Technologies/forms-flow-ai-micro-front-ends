@@ -25,12 +25,21 @@ const AttributeFilterDropdown = () => {
     (state: RootState) => state.task.attributeFilterList || []
   );
   const [showAttributeFilter, setShowAttributeFilter] = useState(false);
+  const isUnsavedAttributeFilter = useSelector(
+    (state: RootState) => state.task.isUnsavedAttributeFilter
+  );
   const selectedFilter = useSelector(
     (state: RootState) => state.task.selectedFilter
   );
   const handleToggleAttrFilterModal = () => {
     setShowAttributeFilter((prev) => !prev);
   };
+
+  const handleAttributeFilterModalClose = () => {
+    dispatch(setAttributeFilterToEdit(null));
+    setShowAttributeFilter(false);
+  };
+
   // fetching task list with current filter with reset page and limit
   const fetchTaskList = (data) => {
     dispatch(
@@ -47,7 +56,8 @@ const AttributeFilterDropdown = () => {
     dispatch(setSelectedBpmAttributeFilter(attributeFilter));
     // need to feth task list based on selected attribute filter
     // need to reset all params
-    if (!selectedFilter || !attributeFilter) return;
+    if (!selectedFilter || attributeFilter?.id === selectedAttributeFilter?.id) return; 
+ 
     //this is current selected filter criteria
     const currentCriteria = cloneDeep(selectedFilter.criteria);
     // we only need process variables from attribute filter data
@@ -64,16 +74,8 @@ const AttributeFilterDropdown = () => {
 
   const handleEditAttrFilter = () => {
     if (!selectedAttributeFilter) return;
-    const matchingFilter = attributeFilterList.find(
-      (f) => f.id === selectedAttributeFilter.id
-    );
-    if (!matchingFilter) return;
-
-    const editPermission = matchingFilter?.editPermission;
-    const isEditable =
-      (createFilterPermission || isFilterAdmin) && editPermission;
     setShowAttributeFilter(true);
-    dispatch(setAttributeFilterToEdit(matchingFilter));
+    dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
   };
 
   const filterDropdownAttributeItems = () => {
@@ -89,67 +91,80 @@ const AttributeFilterDropdown = () => {
               filterName: t(filter.name),
             }),
           }))
-        : [
-            {
-              content: <em>{t("No attribute filters found")}</em>,
-              onClick: () => {},
-              type: "none",
-              dataTestId: "no-attr-filters",
-              ariaLabel: t("No attribute filters available"),
-            },
-          ];
+        : [];
+    const noAttributeFilter = {
+      content: <em>{t("No attribute filters found")}</em>,
+      onClick: () => {},
+      type: "none",
+      dataTestId: "no-attr-filters",
+      ariaLabel: t("No attribute filters available"),
+    };
 
-    const extraItems = createFilterPermission
-      ? [
-          {
-            content: (
-              <span>
-                <span>
-                  <AddIcon className="filter-plus-icon" />
-                </span>{" "}
-                {t("Custom Attribute Filter")}
-              </span>
-            ),
-            onClick: handleToggleAttrFilterModal,
-            type: "custom",
-            dataTestId: "attr-filter-item-custom",
-            ariaLabel: t("Custom Attribute Filter"),
-          },
-          {
-            content: (
-              <span>
-                <span>
-                  <PencilIcon className="filter-edit-icon" />
-                </span>{" "}
-                {t("Re-order And Hide Attribute Filters")}
-              </span>
-            ),
-            onClick: () => console.log("Re-order attribute filters clicked"),
-            type: "reorder",
-            dataTestId: "attr-filter-item-reorder",
-            ariaLabel: t("Re-order And Hide Attribute Filters"),
-          },
-        ]
-      : [];
+    const clearAttributeFilter = {
+      content: <em>{t("not select")}</em>,
+      onClick: () => changeAttributeFilterSelection(null),
+      type: "none",
+      dataTestId: "no-attr-filters",
+      ariaLabel: t("no select"),
+    };
 
-    return [...attributeItems, ...extraItems];
+    const customAttribute = {
+      content: (
+        <span>
+          <span>
+            <AddIcon className="filter-plus-icon" />
+          </span>{" "}
+          {t("Custom Attribute Filter")}
+        </span>
+      ),
+      onClick: handleToggleAttrFilterModal,
+      type: "custom",
+      dataTestId: "attr-filter-item-custom",
+      ariaLabel: t("Custom Attribute Filter"),
+    };
+    const reorderOption = {
+      content: (
+        <span>
+          <span>
+            <PencilIcon className="filter-edit-icon" />
+          </span>{" "}
+          {t("Re-order And Hide Attribute Filters")}
+        </span>
+      ),
+      onClick: () => console.log("Re-order attribute filters clicked"),
+      type: "reorder",
+      dataTestId: "attr-filter-item-reorder",
+      ariaLabel: t("Re-order And Hide Attribute Filters"),
+    };
+    let options = [];
+    if (attributeItems.length) {
+      options = [
+        clearAttributeFilter,
+        ...attributeItems,
+        customAttribute,
+        reorderOption,
+      ];
+    } else {
+      options = [noAttributeFilter, customAttribute];
+    }
+
+    return options;
   };
+
+  const title = selectedAttributeFilter
+    ? `${
+        isUnsavedAttributeFilter
+          ? t("Unsaved Filter")
+          : t(selectedAttributeFilter.name)
+      }`
+    : t("Select Filter");
 
   return (
     <>
       <ButtonDropdown
         label={
-          <span
-            className="filter-large"
-            title={
-              selectedAttributeFilter?.name
-                ? `${t(selectedAttributeFilter.name)}`
-                : t("Select  Attribute Filter")
-            }
-          >
-            {selectedAttributeFilter?.name
-              ? `${t(selectedAttributeFilter.name)}`
-              : t("Select Attribute Filter")}
+          <span className="filter-large" title={title}>
+            {title}
           </span>
         }
         variant="primary"
@@ -164,7 +179,8 @@ const AttributeFilterDropdown = () => {
       />
       <AttributeFilterModal
         show={showAttributeFilter}
-        onClose={handleToggleAttrFilterModal}
+        toggleModal={handleToggleAttrFilterModal}
+        onClose={handleAttributeFilterModalClose}
       />
     </>
   );
