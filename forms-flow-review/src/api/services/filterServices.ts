@@ -218,6 +218,7 @@ export const fetchFormById = (id) => {
   );
 };
 
+
 export const claimBPMTask = (taskId, user, ...rest) => {
   const done = rest.length ? rest[0] : () => {};
   const apiUrlClaimTask = replaceUrl(API.CLAIM_BPM_TASK, "<task_id>", taskId);

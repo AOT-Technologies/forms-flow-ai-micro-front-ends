@@ -27,6 +27,7 @@ const initialState = {
     assignee: { sortOrder: "asc" },
   },
   tasksCount: 0,
+  taskFilterPreference: [],
   formId: "",
   isFormSubmissionLoading: false,
   taskGroups: [],
@@ -103,7 +104,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
           dateRange: { startDate: null, endDate: null },
           isUnsavedAttributeFilter: false,
           selectedAttributeFilter: action.payload,
-        };
+      };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
       return { ...state, defaultFilter: action.payload };
     case ACTION_CONSTANTS.SELECTED_TASK_ID:
@@ -120,6 +121,8 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, limit: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
       return { ...state, filterListSearchParams: action.payload };
+    case ACTION_CONSTANTS.FILTER_PREFERENCE_LIST:
+      return { ...state, taskFilterPreference: action.payload };
     case ACTION_CONSTANTS.BPM_TASK_DETAIL:
       return { ...state, taskDetail: action.payload };
     case ACTION_CONSTANTS.BPM_TASK_FORM_ID:
