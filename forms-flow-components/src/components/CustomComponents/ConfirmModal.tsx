@@ -49,7 +49,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         show={show}
         onHide={onClose}
         size="sm"
-        centered={true}
         data-testid="confirm-modal"
         aria-labelledby="confirm-modal-title"
         aria-describedby="confirm-modal-message"
@@ -87,27 +86,29 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
             )}
           </div>
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-start">
-          <CustomButton
-            variant={"primary"}
-            size="lg"
-            label={primaryBtnText}
-            disabled={primaryBtnDisable}
-            onClick={primaryBtnAction}
-            dataTestId={primaryBtndataTestid}
-            ariaLabel={primaryBtnariaLabel}
-            buttonLoading={buttonLoading}
-          />
-          {secondaryBtnText && <CustomButton
-            variant="secondary"
-            size="lg"
-            label={secondaryBtnText}
-            onClick={secondayBtnAction}
-            dataTestId={secondoryBtndataTestid}
-            ariaLabel={secondoryBtnariaLabel}
-            disabled={secondaryBtnDisable}
-            buttonLoading={secondaryBtnLoading}
-          />}
+        <Modal.Footer>
+          <div className="buttons-row">
+            <CustomButton
+              variant={"primary"}
+              size="lg"
+              label={primaryBtnText}
+              disabled={primaryBtnDisable}
+              onClick={primaryBtnAction}
+              dataTestId={primaryBtndataTestid}
+              ariaLabel={primaryBtnariaLabel}
+              buttonLoading={buttonLoading}
+            />
+            {secondaryBtnText && <CustomButton
+              variant="secondary"
+              size="lg"
+              label={secondaryBtnText}
+              onClick={secondayBtnAction}
+              dataTestId={secondoryBtndataTestid}
+              ariaLabel={secondoryBtnariaLabel}
+              disabled={secondaryBtnDisable}
+              buttonLoading={secondaryBtnLoading}
+            />}
+          </div>
         </Modal.Footer>
       </Modal>
   );

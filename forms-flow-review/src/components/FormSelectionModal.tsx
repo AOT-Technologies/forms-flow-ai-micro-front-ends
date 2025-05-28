@@ -112,7 +112,6 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     return (
       <Modal 
       show={showModal} 
-      centered
       size="lg" 
       className="form-selection-modal">
         <Modal.Header className="form-selection-header">

@@ -32,7 +32,6 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
         show={show}
         onHide={onClose}
         size="sm"
-        centered={true}
         data-testid="error-modal"
         aria-labelledby="error-modal-title"
         aria-describedby="error-modal-message"
@@ -61,15 +60,17 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
             </div>
           </div>
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-start">
-          <CustomButton
-            variant={"secondary"}
-            size="lg"
-            label={primaryBtnText}
-            onClick={primaryBtnAction}
-            dataTestId={primaryBtndataTestid}
-            ariaLabel={primaryBtnariaLabel}
-          />
+        <Modal.Footer>
+          <div className="buttons-row">
+            <CustomButton
+              variant={"secondary"}
+              size="lg"
+              label={primaryBtnText}
+              onClick={primaryBtnAction}
+              dataTestId={primaryBtndataTestid}
+              ariaLabel={primaryBtnariaLabel}
+            />
+          </div>
         </Modal.Footer>
       </Modal>
   );

@@ -1,118 +1,131 @@
 $gray-medium: var(--ff-gray-medium);
 $primary: var(--ff-primary);
 $white-color: var(--ff-white);
-.modal-small {
-  width: $modalWidthSmall !important;
-  max-width: calc(100% - ( $base*2 ) ) !important;
-  margin: $base auto !important;
 
-  .history-modal-body {
-    $colorMain: $gray-darkest;
-    $colorSecondary: $gray-medium;
+.history-modal-body {
+  @include paddingLvl2();
 
-    padding: var(--spacer-200) var(--spacer-250) !important;
-    margin-top: var(--spacer-200);
-    position: relative;
+  $colorMain: $gray-darkest;
+  $colorSecondary: $gray-medium;
+  $detailsWidth: $base*10;
+  $spaceBetweenVersions: $paddingLvl5S;
+  $timelineLineLeft: $base*5;
 
-    /* Timeline styles */
-    .timeline {
-      position: absolute;
-      top: calc(0px - $base/2);
-      bottom: 0;
-      left: 121px;
-      width: $lineThick;
-      background-color: $colorMain !important; 
-      z-index: 0;
+  position: relative;
 
-      &::before {
-        content: "";
-        position: absolute;
-        left: calc(0px - ( $base - $lineThick/2 ) );
-        top: 0;
-        width: $base*2;
-        height: $base*2;
-        background-color: $white-color !important;
-        border: $lineThick solid $colorMain !important;
-        border-radius: 50%;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+  /* Timeline styles */
+  .timeline {
+    position: absolute;
+    bottom: 0;
+    left: $timelineLineLeft;
+    width: $lineThick;
+    height: 100%;
 
-
-
-
-      &::after {
-        content: "";
-        position: absolute;
-        width: $base;
-        height: $base;
-        background-color: $colorMain !important;
-        border-radius: 50%;
-        top: $base/2;
-        left: calc(0px - ( $base/2 - $lineThick/2 ) );
-        z-index: 2;
-      }
-    }
-
-    .history-entry {
-      position: relative;
-      background-color: $white-color !important; 
-      z-index: 2; 
-    }
-
-    .version-grid {
-      display: grid;
-      gap: 1rem;
-      align-items: center;
-      margin-bottom: $base/2;
-
-      .revert-btn {
-        justify-self: end;
-      }
-    }
-    .version-style{
-        padding: 0.688rem var(--spacer-100);
-        border-radius: var(--radius-lg);
-    }
-
-    .major-version-grid {
-      @extend .version-style;
-      @extend .version-grid;
-      @extend .history-entry;
-      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
-      border: 1px solid $colorMain;
-    }
-    .workflow-major-grid {
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    }
-
-    .minor-version-grid {
-      @extend .version-style;
-      @extend .version-grid;
-      @extend .history-entry;
-      margin-left: 2rem;
-      grid-template-columns: 1.75fr 1fr 1fr 1fr 1fr 0fr;
-      border: $lineThin solid $colorSecondary;
-    }
-    .workflow-minor-grid {
-      grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr;
-    }
+    background-color: $colorMain !important; 
     
-    .text-style{
-        color: var(--default-font-color) !important;
-        font-size: var(--font-size-xs);
-    }
-    .content-headings {
-      @extend .text-style;
-      font-weight: var(--font-weight-xl);
+    z-index: 0;
+  }
+
+  .history-entry {
+    position: relative;
+    background-color: $white-color; 
+    z-index: 2; 
+  }
+
+  .history-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    gap: calc($base / 2);
+
+    & > div {
+      &:nth-child(2) {
+        background-color: $primary-light;
+
+        border: $lineThin solid $primary-light;
+
+        & .revert-btn {
+          opacity: 0;
+
+          pointer-events: none;
+        }
+      }
     }
 
-    .normal-text {
-      @extend .text-style;
-      font-weight: var(--font-weight-sm);
+    .version {
+      display: flex;
+
+      gap: $spaceBetweenVersions;
+
+      .details {
+        display: flex;
+        gap: $paddingLvl5S;
+
+        & > div {
+          width: $detailsWidth;
+        }
+      }
     }
   }
+
+  .version-grid {
+    display: grid;
+    align-items: center;
+
+    .revert-btn {
+      justify-self: end;
+    }
+  }
+  .version-style{
+      padding: $paddingLvl5TB $paddingLvl5LR;
+      border-radius: $borderRadiusHeightM;
+  }
+
+  .major-version-grid {
+    @extend .version-style;
+    @extend .version-grid;
+    @extend .history-entry;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
+
+    border: $lineThin solid $colorMain;
+  }
+  .workflow-major-grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  }
+
+  .minor-version-grid {
+    @extend .version-style;
+    @extend .version-grid;
+    @extend .history-entry;
+    margin-left: 2rem;
+    grid-template-columns: 1.75fr 1fr 1fr 1fr 1fr 0fr;
+    border: $lineThin solid $colorSecondary;
+  }
+  .workflow-minor-grid {
+    grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr;
+  }
+  
+  .text-style{
+      color: $gray-darkest !important;
+      font-size: var(--font-size-xs);
+      line-height: $fontLineHeight;
+  }
+  .content-headings {
+    @extend .text-style;
+    font-weight: var(--font-weight-xl);
+
+    flex-grow: 1;
+  }
+
+  .normal-text {
+    @extend .text-style;
+    font-weight: var(--font-weight-sm);
+
+    margin-top: $paddingLvl5S;
+
+    word-break: break-all;
+  }
 }
+
 

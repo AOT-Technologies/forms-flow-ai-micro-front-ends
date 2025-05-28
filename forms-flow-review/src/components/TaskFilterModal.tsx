@@ -597,7 +597,6 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
             show={show}
             onHide={onClose}
             size="sm"
-            centered={true}
             data-testid="create-filter-modal"
             aria-labelledby={t("create filter modal title")}
             aria-describedby="create-filter-modal"
@@ -622,23 +621,25 @@ export const TaskFilterModal = ({ show, onClose, filter, canEdit }) => {
                     />
                 </div>
             </Modal.Body>
-            <Modal.Footer className="d-flex justify-content-start">
-                <CustomButton
-                    variant="primary"
-                    size="md"
-                    label={t("Filter Results")}
-                    dataTestId="task-filter-results"
-                    ariaLabel={t("Filter results")}
-                    onClick={filterResults}
-                />
-                <CustomButton
-                    variant="secondary"
-                    size="md"
-                    label={t("Cancel")}
-                    onClick={cancelFilter}
-                    dataTestId="cancel-task-filter"
-                    ariaLabel={t("Cancel filter")}
-                />
+            <Modal.Footer>
+              <div className="buttons-row">
+                  <CustomButton
+                      variant="primary"
+                      size="md"
+                      label={t("Filter Results")}
+                      dataTestId="task-filter-results"
+                      ariaLabel={t("Filter results")}
+                      onClick={filterResults}
+                  />
+                  <CustomButton
+                      variant="secondary"
+                      size="md"
+                      label={t("Cancel")}
+                      onClick={cancelFilter}
+                      dataTestId="cancel-task-filter"
+                      ariaLabel={t("Cancel filter")}
+                  />
+                </div>
             </Modal.Footer>
         </Modal>
     );

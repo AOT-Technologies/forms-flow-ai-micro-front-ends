@@ -54,7 +54,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       show={show}
       onHide={onClose}
       size="sm"
-      centered={true}
       data-testid="profile-settings-modal"
       aria-labelledby={t("profile settings modal title")}
       aria-describedby="profile-settings-modal"
@@ -90,24 +89,26 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
         </div>
       </Modal.Body>
 
-      <Modal.Footer className="d-flex justify-content-start">
-        <CustomButton
-          variant="primary"
-          size="md"
-          label={t("Save Changes")}
-          onClick={handleConfirmProfile}
-         dataTestId="save-profile-settings"
-          ariaLabel={t("Save Profile Settings")}
-          disabled={isSaveDisabled}
-        />
-        <CustomButton
-          variant="secondary"
-          size="md"
-          label={t("Cancel")}
-          onClick={onClose}
-         dataTestId="cancel-profile-settings"
-          ariaLabel={t("Cancel profile settings")}
-        />
+      <Modal.Footer>
+        <div className="buttons-row">
+          <CustomButton
+            variant="primary"
+            size="md"
+            label={t("Save Changes")}
+            onClick={handleConfirmProfile}
+          dataTestId="save-profile-settings"
+            ariaLabel={t("Save Profile Settings")}
+            disabled={isSaveDisabled}
+          />
+          <CustomButton
+            variant="secondary"
+            size="md"
+            label={t("Cancel")}
+            onClick={onClose}
+          dataTestId="cancel-profile-settings"
+            ariaLabel={t("Cancel profile settings")}
+          />
+        </div>
       </Modal.Footer>
     </Modal>
   );

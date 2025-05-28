@@ -39,11 +39,13 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
       aria-label={ariaLabel}
       onSelect={onSelect}
     >
+      
       {tabs.map((tab, index) => (
         <Tab key={index} eventKey={tab.eventKey} title={tab.title} data-testid={`${dataTestId}-tab-${tab.eventKey}`} >
           {tab.content}
         </Tab>
       ))}
+      
     </Tabs>
   );
 };

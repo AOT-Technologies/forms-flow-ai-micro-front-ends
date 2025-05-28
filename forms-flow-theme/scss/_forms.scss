@@ -361,25 +361,90 @@ select option:hover {
 
 /* ------------------------- Tabs Style ------------------------ */
 
-.custom-tabs {
-  .nav-link {
-    background-color: transparent !important;
-    font-weight: var(--font-weight-xl) !important;
-    color: $primary !important; 
-    border: none !important;
-    display: flex !important;
-    align-items: flex-start !important;
-    padding: 0 0 var(--spacer-050) 0 !important;
+// .custom-tabs {
+//   .nav-link {
+//     background-color: transparent !important;
+//     font-weight: var(--font-weight-xl) !important;
+//     color: $primary !important; 
+//     border: none !important;
+//     display: flex !important;
+//     align-items: flex-start !important;
+//     padding: 0 0 var(--spacer-050) 0 !important;
 
-    &.active {
-      border-bottom: 0.125rem solid $gray-darkest !important;
-      background-color: transparent !important;
-      color: $gray-darkest !important;
+//     &.active {
+//       border-bottom: 0.125rem solid $gray-darkest !important;
+//       background-color: transparent !important;
+//       color: $gray-darkest !important;
+//     }
+//   }
+
+//   &.nav-tabs {
+//     border-bottom: none !important;
+//   }
+// }
+
+
+
+.tabs {
+  margin-right: calc(0px - $paddingLvl2LR);
+  margin-left: calc(0px - $paddingLvl2LR);
+
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  width: calc( 100% + ($paddingLvl2LR * 2));
+
+  // for when Tabs component is created
+  // .nav {
+  //   overflow-x: scroll;
+  //   width: 100%;
+  // }
+
+  nav {
+    display: flex;
+    flex-direction: row;
+    // width: max-content;
+    width: auto;
+    gap: $paddingLvl2MinS;
+    
+    margin-right: $paddingLvl2LR;
+    margin-left: $paddingLvl2LR;
+
+    border-bottom: $lineThin solid $gray-light;
+
+    a {
+      @include textBaseHightlight($fontBase, $primary-color);
+      @include clickableFeedback1();
+
+      padding: 0;
+      padding-bottom: $base;
+
+      margin: 0 !important;
+      margin-bottom: calc(0px - $lineThin) !important;
+
+      border: none !important;
+      border-bottom: $lineThick solid $transparent !important;
+
+      &:hover {
+        color: $primary-color;
+      }
+
+      &.active {
+        color: $gray-darkest;
+
+        border-bottom: $lineThick solid $gray-darkest !important;
+      }
     }
   }
 
-  &.nav-tabs {
-    border-bottom: none !important;
+  .tab-content {
+    overflow-y: auto;
+
+    & > div {
+      @include paddingLvl2();
+
+      // margin-bottom: calc( 0px - $paddingLvl2TB);
+    }
   }
 }
 
