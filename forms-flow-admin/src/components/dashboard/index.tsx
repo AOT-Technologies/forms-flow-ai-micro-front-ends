@@ -4,7 +4,6 @@ import InsightDashboard from "./dashboard";
 import {
   fetchdashboards,
   fetchGroups,
-  fetchAuthorizations,
 } from "../../services/dashboard";
 import "./insightDashboard.scss";
 
@@ -16,7 +15,6 @@ const AdminDashboard = React.memo((props : any) => {
   const [error, setError] = React.useState();
   const [dashboardLoading, setDashboardLoading] = React.useState(true);
   const [groupLoading, setGroupLoading] = React.useState(true);
-  const [authLoading, setAuthLoading] = React.useState(true);
   const [loading, setLoading] = React.useState(true);
   const [authReceived, setAuthReceived] = React.useState(true);
 
@@ -31,18 +29,13 @@ const AdminDashboard = React.memo((props : any) => {
       setGroups(data);
       setGroupLoading(false);
     }, setError);
-    fetchAuthorizations((data)=>{
-      setAuthorizations(data);
-      setAuthLoading(false);
-      setAuthReceived(true);
-    }, setError);
   }, []);
 
   React.useEffect(()=>{
-    if(!dashboardLoading && !groupLoading && !authLoading){
+    if(!dashboardLoading && !groupLoading){
       setLoading(false)
     }
-  },[dashboardLoading, groupLoading, authLoading])
+  },[dashboardLoading, groupLoading])
 
   return (
     <InsightDashboard
