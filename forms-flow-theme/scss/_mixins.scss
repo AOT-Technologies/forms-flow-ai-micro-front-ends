@@ -103,6 +103,19 @@ $paddingLvl3S: var(--spacer-100);
 
 $paddingLvl4S: var(--spacer-075);
 
+$paddingLvl5LR: var(--spacer-100);
+$paddingLvl5TB: var(--spacer-075);
+$paddingLvl5S: var(--spacer-050);
+
+$paddingLvl6LR: var(--spacer-075);
+$paddingLvl6TB: var(--spacer-050);
+$paddingLvl6S: var(--spacer-025);
+
+
+$paddingLvl2MinLR: var(--spacer-250);
+$paddingLvl2MinTB: var(--spacer-100);
+$paddingLvl2MinS: var(--spacer-100);
+
 @mixin paddingLvl1 {
   padding: $paddingLvl1TB $paddingLvl1LR !important;
 
@@ -125,6 +138,24 @@ $paddingLvl4S: var(--spacer-075);
       margin-bottom: 0 !important;
     }
   }
+}
+
+@mixin paddingLvl2-outter {
+  padding: 0 !important;
+  
+  gap: $paddingLvl2S;
+
+  // & > * {
+    // margin-bottom: $paddingLvl2S !important;
+
+    // &:last-child {
+    //   margin-bottom: 0 !important;
+    // }
+  // }
+}
+
+@mixin paddingLvl2Min-outter {
+  padding: $paddingLvl2MinTB $paddingLvl2MinLR !important;
 }
 
 @mixin paddingLvl2-buttons {
@@ -156,6 +187,30 @@ $paddingLvl4S: var(--spacer-075);
   }
 }
 
+@mixin paddingLvl5 {
+  padding: $paddingLvl5TB $paddingLvl5LR !important;
+
+  & > * {
+    margin-bottom: $paddingLvl5S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+@mixin paddingLvl6 {
+  padding: $paddingLvl6TB $paddingLvl6LR !important;
+
+  & > * {
+    margin-bottom: $paddingLvl6S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
 @mixin textBase($fontSize: $fontBase, $fontColor: $gray-darkest) {
   font-size: $fontSize;
   line-height: $fontLineHeight;
@@ -165,8 +220,20 @@ $paddingLvl4S: var(--spacer-075);
   margin: 0;
 }
 
+@mixin textBaseHightlight($fontSize: $fontBase, $fontColor: $gray-darkest) {
+  @include textBase($fontSize, $fontColor);
+
+  font-weight: 700;
+}
+
 @mixin textModalHighlight {
   @include textBase();
+
+  font-weight: 700;
+}
+
+@mixin textCardHead {
+  @include textBase($fontBase*1.5);
 
   font-weight: 700;
 }
@@ -177,13 +244,32 @@ $paddingLvl4S: var(--spacer-075);
 
   transition: 300ms opacity;
 
-  &:hover {
+  &[disabled] {
+    cursor: default;
+  }
+
+  &:not([disabled]):hover {
     opacity: 0.8;
+  }
+}
+
+@mixin clickableFeedback2 {
+  cursor: pointer;
+
+  transition: 300ms background-color;
+
+  &[disabled] {
+    cursor: default;
+  }
+
+  &:not([disabled]):hover {
+    background-color: $primary-light;
   }
 }
 
 
 @mixin svgIcon($color: $primary) {
+  overflow: visible;
   width: $base;
   height: auto;
 

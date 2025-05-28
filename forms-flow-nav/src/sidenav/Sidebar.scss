@@ -16,32 +16,41 @@ $gray-medium: #E4E6E7;
 $gray-light: #F2F2F3;
 
 
-// variables added by Max
+
+// VARIABLES ADDED BY MAX
+
+//base
 $base: 1rem;
 $lineThin: 1px;
 $lineThick: $lineThin*2;
 
+// fonts
 $fontBase: $base;
 $fontSmallest: $fontBase*0.875;
 $fontLineHeight: 1.2;
 
 $fontModalTitle: $fontBase*1.5;
 
-
+// borders
 $borderRadiusHeightESM: $base*0.78; // 12.5px
 $borderRadiusHeightSM: $base*1.094; // 17.5px
 $borderRadiusHeightM: $base*1.344;  // 21.5px
 $borderRadiusHeightL: $base*1.594; // 25.5px
 $borderRadiusModal: $base*1.5; // 24px
 
+// color globals
 $colorDivider: $gray-medium;
 $colorDividerDark: $gray-medium-dark;
 
+// modals
 $modalWidthSmall: $base*60;
 $modalWidthLarge: $base*75;
 
+// nav
 $navPadding: $base;
+$navSpacing: $base;
 
+// transitions
 $animSpeed: 300ms;
 
 
@@ -70,8 +79,14 @@ $animSpeed: 300ms;
     overflow-y: auto;
   }
 
+  .accordion {
+    display: flex;
+    flex-direction: column;
+    gap: calc($navSpacing/2);
+  }
+
   .accordion-button {
-    gap: $base;
+    gap: $navSpacing;
     padding: $navPadding;
 
     color: var(--navbar-main-menu-active-font-color);
@@ -119,7 +134,6 @@ $animSpeed: 300ms;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
-    margin-bottom: 0.5rem;
 
     &:first-of-type > .accordion-header .accordion-button {
       border-top-left-radius: 0 !important;
@@ -135,8 +149,8 @@ $animSpeed: 300ms;
     display: block;
     width: 100%;
     
-    padding-block: var(--spacer-100);
-    padding-inline: var(--spacer-250) var(--spacer-100);
+    padding: $navPadding;
+    padding-left: calc($navPadding + $navSpacing + $base);
 
     font-size: $fontSmallest;
     font-weight: 700;

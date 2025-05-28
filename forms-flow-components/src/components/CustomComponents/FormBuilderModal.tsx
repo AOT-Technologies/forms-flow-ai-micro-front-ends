@@ -131,7 +131,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     },[showBuildForm])
 
     return (
-      <Modal show={showBuildForm} onHide={onClose} size="sm" centered={true}>
+      <Modal show={showBuildForm} onHide={onClose} size="sm">
         <Modal.Header>
           <Modal.Title>
             <p>{t(modalHeader)}</p>
@@ -195,36 +195,38 @@ Further clarification on this is to be determined for EE. */}
    }
 */}
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-start">
-          <CustomButton
-            variant={buttonVariant} // Set color based on success or error
-            size="md"
-            disabled={
-              !!nameError ||
-              isSaveBtnLoading ||
-              !values.title ||
-              isFormNameValidating ||
-              showSuccess
-            } // Disable if errors or fields are empty
-            label={
-              showSuccess ? `Saving (${successCountdown})` : primaryBtnLabel
-            } // Display countdown or primary label
-            buttonLoading={isSaveBtnLoading}
-            onClick={handlePrimaryAction} // Trigger action on button click
-            name="createButton"
-            dataTestId={primaryBtndataTestid}
-            ariaLabel={primaryBtnariaLabel}
-          />
+        <Modal.Footer>
+          <div className="buttons-row">
+            <CustomButton
+              variant={buttonVariant} // Set color based on success or error
+              size="md"
+              disabled={
+                !!nameError ||
+                isSaveBtnLoading ||
+                !values.title ||
+                isFormNameValidating ||
+                showSuccess
+              } // Disable if errors or fields are empty
+              label={
+                showSuccess ? `Saving (${successCountdown})` : primaryBtnLabel
+              } // Display countdown or primary label
+              buttonLoading={isSaveBtnLoading}
+              onClick={handlePrimaryAction} // Trigger action on button click
+              name="createButton"
+              dataTestId={primaryBtndataTestid}
+              ariaLabel={primaryBtnariaLabel}
+            />
 
-          <CustomButton
-            variant="secondary"
-            size="md"
-            name="cancelButton"
-            label={secondaryBtnLabel}
-            onClick={secondaryBtnAction}
-            dataTestId={secondoryBtndataTestid}
-            ariaLabel={secondoryBtnariaLabel}
-          />
+            <CustomButton
+              variant="secondary"
+              size="md"
+              name="cancelButton"
+              label={secondaryBtnLabel}
+              onClick={secondaryBtnAction}
+              dataTestId={secondoryBtndataTestid}
+              ariaLabel={secondoryBtnariaLabel}
+            />
+          </div>
         </Modal.Footer>
       </Modal>
     );

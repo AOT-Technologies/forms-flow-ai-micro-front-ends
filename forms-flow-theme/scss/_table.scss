@@ -1,5 +1,4 @@
 $th-width: 8.125rem;
-$tr-th-border-radius: var(--radius-lg);
 $th-z-index-default: 2;
 $th-z-index-special: 3;
 $status-size: var(--spacer-050);
@@ -17,11 +16,11 @@ $white-color: var(--ff-white);
   height: auto;
   overflow-y: auto;
   overflow-x: hidden;
-  border-radius: var(--radius-lg) !important;
+  border-radius: $borderRadiusModal;
 }
 
 .custom-tables-wrapper {
-  max-height: calc(100vh - 5.2rem) !important;
+  height: 100%;
 }
 //For adjusting the header height.
 .custom-tables-wrapper-application {
@@ -29,11 +28,42 @@ $white-color: var(--ff-white);
 }
 
 .custom-tables {
+  $table-scrollbar-padding: 1rem;
+
+  display: flex;
+  height: 100%;
+  flex-direction: column;
   table-layout: fixed;
   width: 100%;
-  border-collapse: separate !important;
+
+  border-collapse: collapse;
   border-spacing: 0 !important;
-  border-radius: var(--radius-lg) !important;
+
+  margin: 0 !important;
+
+  .table-scroll-container {
+    overflow-y: scroll;
+    height: 100%;
+    
+    border-bottom-left-radius: $borderRadiusHeightSM;
+    border-bottom-right-radius: $borderRadiusHeightSM;
+    border: $lineThin solid $gray-medium-dark;
+    border-top: none;
+
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #888;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  }
 
   td {
     vertical-align: middle !important;
@@ -42,39 +72,82 @@ $white-color: var(--ff-white);
   }
 
   thead {
-    display: table;
+    display: block;
     table-layout: fixed;
     width: 100%;
-    z-index: 2;
+
+    padding: $table-scrollbar-padding;
+    padding-bottom: 0;
+
     background-color: var(--ff-white);
     font-size: var(--font-size-xs) !important;
-    vertical-align: middle !important;
+    // vertical-align: middle !important;
+    
+    z-index: 2;
+
+    // border-bottom: $lineThin solid $gray-medium;
+
+    tr {
+      overflow: hidden;
+      width: 100%;
+      display: flex;
+      border: $lineThin solid $gray-medium-dark;
+      border-top-left-radius: $borderRadiusHeightSM;
+      border-top-right-radius: $borderRadiusHeightSM;
+    }
+
     // Table Header Styles
     th {
-      width: $th-width;
-      position: sticky;
-      top: 0;
-      z-index: $th-z-index-default;
+      @include textBase($fontSmallest);
+
+      display: flex;
+      align-items: center;
+      
+      padding: var(--spacer-100) var(--spacer-125);
+      
       background-color: inherit;
-      padding: var(--spacer-100) var(--spacer-125) !important;
+      border: none;
 
-      &:first-child,
-      &:last-child {
-        position: sticky;
-        top: 0;
-        z-index: $th-z-index-special;
-      }
+      &.header-sortable {
+        align-items: stretch;
 
-      &:last-child {
-        border-top-right-radius: $tr-th-border-radius !important;
+        padding: 0;
+
+        button {
+          @include clickableFeedback2();
+
+          display: flex;
+          align-items: center;
+          width: 100%;
+          gap: $paddingLvl5S;
+          
+          padding: var(--spacer-100) var(--spacer-125);
+          
+          border: none;
+          background-color: $white-color;
+
+          &[aria-pressed="false"] {
+            & .svgIcon-primary path {
+              stroke: $gray-medium-dark;
+            }
+          }
+
+          & > span {
+            @include textBaseHightlight($fontSmallest);
+
+            display: flex;
+
+            text-align: left;
+          }
+        }
       }
     }
   }
 
-  tbody {
+  tbody,
+  tfoot {
     display: block;
     width: 100%;
-    overflow-y: auto;
     font-size: var(--font-size-xs) !important;
 
     // Table Row Styles
@@ -83,13 +156,77 @@ $white-color: var(--ff-white);
       table-layout: fixed;
       width: 100%;
 
-      &:last-child {
-        td:first-child {
-          border-bottom-left-radius: $tr-th-border-radius !important;
-        }
+      & td {
+        border: none;
+      }
+    }
+  }
 
-        td:last-child {
-          border-bottom-right-radius: $tr-th-border-radius !important;
+  tbody {
+    position: relative;
+    overflow-y: auto;
+    height: 100%;
+
+    padding: $table-scrollbar-padding;
+    padding-top: 0;
+    padding-bottom: 0;
+
+    background-color: $white;
+
+    &.table-empty {
+      padding-bottom: $table-scrollbar-padding;
+
+      & .empty-message {
+        @include textBase($fontSmallest, $gray-medium-dark);
+        @include paddingLvl2();
+
+        text-align: center;
+      }
+    }
+
+    & > .custom-scrollbar {
+      position: absolute;
+      display: block;
+      top: 0;
+      right: 0;
+
+      width: $table-scrollbar-padding;
+      height: 100%;
+
+      padding: calc($table-scrollbar-padding/4);
+
+      & > div {
+        width: 100%;
+        height: 200px;
+
+        padding: 0;
+
+        background-color: $primary-light;
+        border-radius: calc($table-scrollbar-padding/4);
+      }
+    }
+
+    tr {
+      border: none;
+      border-top: $lineThin solid $gray-medium;
+
+      &:first-of-type {
+        border-top: $lineThin solid $transparent;
+      }
+
+      &:last-of-type {
+        border-bottom: $lineThin solid $gray-medium;
+
+        &:hover {
+          border-bottom: $lineThin solid $primary-color;
+        }
+      }
+
+      &:hover {
+        border-top: $lineThin solid $primary-color;
+
+        & + tr {
+          border-top: $lineThin solid $primary-color;
         }
       }
     }
@@ -101,6 +238,125 @@ $white-color: var(--ff-white);
     z-index: 1;
     background-color: var(--ff-white);
     width: 100%;
+  }
+
+  .table-footer {
+    $sideElementWidth: calc($base*15);
+
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    padding: 0 !important;
+
+    .table-footer-showing {
+      display: flex;
+      width: $sideElementWidth;
+
+      padding: $paddingLvl2S $paddingLvl1S;
+    }
+
+    .table-footer-pages {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .table-footer-rowsper {
+      display: flex;
+      justify-content: flex-end;
+      align-items: stretch;
+      width: $sideElementWidth;
+
+      & > .pagination-text {
+        @include textBase($fontSmallest, $gray-darkest);
+
+        display: flex;
+        align-items: center;
+      }
+
+      .pagination-dropdown {
+        display: flex;
+        align-items: stretch;
+
+        & > .dropdown {
+          display: flex;
+
+          .dropdown-menu {
+            @include paddingLvl6();
+
+            .dropdown-item {
+              @include paddingLvl6();
+              @include textBaseHightlight($fontSmallest, $primary-color);
+            }
+          }
+
+          & > button {
+            padding: $paddingLvl2S $paddingLvl1S $paddingLvl2S $paddingLvl4S !important;
+
+            font-size: $fontSmallest !important;
+          }
+        }
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    margin-bottom: 0 !important;
+    gap: calc($base/2);
+
+    .page-link {
+      @include textBaseHightlight($fontSmallest, $primary-color);
+
+      padding: calc($base/2) calc($base/8*6);
+
+      margin: 0 !important;
+
+      color: $primary-color;
+      
+      border: none;
+      background-color: $transparent !important;
+
+      &:hover {
+        color: $white-color !important;
+
+        background-color: $primary-color !important;
+
+        .svgIcon-primary path {
+          stroke: $white-color;
+        }
+      }
+    }
+
+    .page-item {
+      overflow: hidden;
+      display: flex;
+
+      border-radius: $borderRadiusModal;
+
+      &:first-of-type,
+      &:last-of-type {
+        display: none;
+      }
+
+      &.active {
+        pointer-events: none;
+
+        .page-link {
+          color: $gray-darkest;
+
+          background-color: $gray-light !important;
+        }
+      }
+
+      &.disabled {
+        .svgIcon-primary path {
+          stroke: $gray-medium-dark;
+        }
+      }
+    }
   }
 }
 
@@ -129,13 +385,13 @@ $white-color: var(--ff-white);
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.5rem;
+  line-height: 1.2;
   color: var(--ff-black);
   font-weight: var(--font-weight-sm);
 }
 
 .text-container-expand {
-  line-height: 1.5rem;
+  line-height: 1.2;
   color: var(--ff-black);
   font-size: var(--font-size-xs) !important;
   font-weight: var(--font-weight-sm);
@@ -180,6 +436,10 @@ $white-color: var(--ff-white);
 
 .w-30 {
   width: 30% !important;
+}
+
+.w-15 {
+  width: 15% !important;
 }
 
 .w-13 {

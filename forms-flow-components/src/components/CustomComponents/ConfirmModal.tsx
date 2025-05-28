@@ -53,7 +53,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         show={show}
         onHide={onClose}
         size="sm"
-        centered={true}
         data-testid="confirm-modal"
         aria-labelledby="confirm-modal-title"
         aria-describedby="confirm-modal-message"

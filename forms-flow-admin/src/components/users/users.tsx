@@ -375,7 +375,6 @@ const Users = React.memo((props: any) => {
       <Modal
         show={showSuccessModal}
         onHide={closeSuccessModal}
-        centered
         className="overflow-hidden">
         <Modal.Header closeButton>
           <Modal.Title></Modal.Title>
@@ -487,12 +486,14 @@ const Users = React.memo((props: any) => {
                   </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={closeInviteModal}>
-          {t("Cancel")}
-          </Button>
-          <Button variant="primary" onClick={sendInvites} disabled={!formData.user || selectedRolesModal.length === 0}>
-          {t("Add User")}
-          </Button>
+          <div className="buttons-row">
+            <Button variant="secondary" onClick={closeInviteModal}>
+            {t("Cancel")}
+            </Button>
+            <Button variant="primary" onClick={sendInvites} disabled={!formData.user || selectedRolesModal.length === 0}>
+            {t("Add User")}
+            </Button>
+          </div>
         </Modal.Footer>
       </Modal>
     )}

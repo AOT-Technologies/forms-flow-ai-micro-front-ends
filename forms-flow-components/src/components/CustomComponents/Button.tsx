@@ -13,7 +13,7 @@ interface DropdownItem {
 }
 
 interface CustomButtonProps {
-  variant: string;
+  variant?: string;
   size?: "sm" | "md" | "lg" | "table" | "table-sm";
   label: string;
   name?: string,
@@ -27,9 +27,11 @@ interface CustomButtonProps {
   ariaLabel?: string;
   buttonLoading?: boolean;
   iconOnly?: boolean;  
+  actionTable?: boolean;
+  action?: boolean;
 }
 
-const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false) => {
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false) => {
   const sizeClassMap: Record<string, string> = {
     md: "btn-md",
     table: "btn-table",
@@ -53,9 +55,11 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   ariaLabel = "",
   name =  "",
   buttonLoading = false,
-  iconOnly = false,  
+  iconOnly = false, 
+  actionTable = false, 
+  action = false, 
 }) => {
-  const classNameForButton = getButtonClassName(size, className, iconOnly);
+  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable);
   const sizeOfButton = size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -139,45 +143,85 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   // Icon-only Button
   if (iconOnly) {
     return (
-      <Button
-        variant={variant}
-        size={sizeOfButton}
+      <button
         onClick={onClick}
         disabled={disabled || buttonLoading}
         name={name}
-        className={`p-0 ${classNameForButton}`}
+        className="button-icon-special"
         data-testid={dataTestId}
         aria-label={ariaLabel}
       >
-        <div className="d-inline-flex align-items-center">
-          {icon}
-        </div>
-      </Button>
+        {icon}
+      </button>
+    );
+  }
+
+  // Action-table Button
+  if (actionTable) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled || buttonLoading}
+      name={name}
+      className="button-action-table"
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+    </button>
+    );
+  }
+  
+  // Action Button
+  if (action) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled || buttonLoading}
+      name={name}
+      className="button-action"
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+    </button>
     );
   }
 
   // Default Button with icon and label
   return (
-    <Button
-      variant={variant}
-      size={sizeOfButton}
+    <button
       onClick={onClick}
       disabled={disabled || buttonLoading}
       name={name}
-      className={classNameForButton}
+      className="button-icon"
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
-      <div
-        className={`d-inline-flex align-items-center ${
-          buttonLoading ? "button-content" : ""
-        }`}
-      >
-        {icon && <span className="me-2">{icon}</span>}
-        {t(label)}
-      </div>
+      {icon}
+      {t(label)}
       {buttonLoading && <span className="dotted-spinner"></span>}
-    </Button>
+    </button>
+    // <Button
+    //   variant={variant}
+    //   size={sizeOfButton}
+    //   onClick={onClick}
+    //   disabled={disabled || buttonLoading}
+    //   name={name}
+    //   className={classNameForButton}
+    //   data-testid={dataTestId}
+    //   aria-label={ariaLabel}
+    // >
+    //   <div
+    //     className={`d-inline-flex align-items-center ${
+    //       buttonLoading ? "button-content" : ""
+    //     }`}
+    //   >
+    //     {icon && <span className="me-2">{icon}</span>}
+    //   </div>
+    //   {t(label)}
+    //   {buttonLoading && <span className="dotted-spinner"></span>}
+    // </Button>
     
   );
 };

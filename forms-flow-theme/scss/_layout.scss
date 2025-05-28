@@ -41,6 +41,11 @@ input[type="checkbox"]+label,
 }
 
 
+.w-15 {
+  width: 15% !important;
+}
+
+
 .svgIcon-dark {
   @include svgIcon($gray-darkest);
 }
@@ -55,4 +60,40 @@ input[type="checkbox"]+label,
 
 .svgIcon-disabled {
   @include svgIcon($gray-medium-dark);
+}
+
+.svgIcon-disabled-onDark {
+  @include svgIcon($white);
+}
+
+
+.load-more {
+  display: flex;
+  justify-content: center;
+}
+
+.buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $paddingLvl3S;
+  align-items: flex-start;
+}
+
+
+.page-content {
+  @include paddingLvl1();
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  & ._loading_overlay_wrapper {
+    overflow: hidden;
+    height: 100%;
+  }
+}
+
+
+.Toastify {
+  margin: 0 !important;
 }

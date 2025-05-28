@@ -486,7 +486,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     };
 
     return (
-      <Modal show={showModal} onHide={closeModal} centered size="sm">
+      <Modal show={showModal} onHide={closeModal} size="sm">
         <Modal.Header>
           <Modal.Title>
             <p>{t(headerText)}</p>

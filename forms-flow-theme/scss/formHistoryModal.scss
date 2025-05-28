@@ -25,33 +25,33 @@ $gray-darkest: var(--ff-gray-darkest);
       background-color: $gray-darkest !important; 
       z-index: 0;
 
-      &::before {
-        content: "";
-        position: absolute;
-        left: -15px;
-        top: 0;
-        width: 32px;
-        height: 32px;
-        background-color: $white-color !important;
-        border: 2px solid $gray-darkest !important;
-        border-radius: 50%;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+      // &::before {
+      //   content: "";
+      //   position: absolute;
+      //   left: -15px;
+      //   top: 0;
+      //   width: 32px;
+      //   height: 32px;
+      //   background-color: $white-color !important;
+      //   border: 2px solid $gray-darkest !important;
+      //   border-radius: 50%;
+      //   z-index: 1;
+      //   display: flex;
+      //   align-items: center;
+      //   justify-content: center;
+      // }
 
-      &::after {
-        content: "";
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        background-color: $gray-darkest !important;
-        border-radius: 50%;
-        top: 8px;
-        left: -7px;
-        z-index: 2;
-      }
+      // &::after {
+      //   content: "";
+      //   position: absolute;
+      //   width: 16px;
+      //   height: 16px;
+      //   background-color: $gray-darkest !important;
+      //   border-radius: 50%;
+      //   top: 8px;
+      //   left: -7px;
+      //   z-index: 2;
+      // }
     }
 
     .form-history-entry {

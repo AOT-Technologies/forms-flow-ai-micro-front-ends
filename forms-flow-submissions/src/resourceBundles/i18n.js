@@ -13,3 +13,4 @@ export const RESOURCE_BUNDLES_DATA = Object.entries(resources)
 }, {});
 
 export default i18nService;
+  

@@ -70,7 +70,7 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
       (selectedOption === defaultSortOption &&
         selectedOrder === defaultSortOrder);
     return (
-      <Modal show={showSortModal} onHide={onClose} size="sm" centered={true}>
+      <Modal show={showSortModal} onHide={onClose} size="sm">
         <Modal.Header>
           <Modal.Title>
             <p>{t(modalHeader)}</p>
@@ -120,26 +120,28 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
           </div>
         </Modal.Body>
 
-        <Modal.Footer className="d-flex justify-content-start">
-          <CustomButton
-            variant="primary"
-            size="md"
-            disabled={isPrimaryButtonDisabled}
-            label={t(primaryBtnLabel)}
-            onClick={handlePrimaryAction}
-            name="applyButton"
-            dataTestId={primaryBtndataTestid}
-            ariaLabel={t(primaryBtnariaLabel)}
-          />
-          <CustomButton
-            variant="secondary"
-            size="md"
-            name="cancelButton"
-            label={t(secondaryBtnLabel)}
-            onClick={secondaryBtnAction}
-            dataTestId={secondaryBtndataTestid}
-            ariaLabel={t(secondaryBtnariaLabel)}
-          />
+        <Modal.Footer>
+          <div className="buttons-row">
+            <CustomButton
+              variant="primary"
+              size="md"
+              disabled={isPrimaryButtonDisabled}
+              label={t(primaryBtnLabel)}
+              onClick={handlePrimaryAction}
+              name="applyButton"
+              dataTestId={primaryBtndataTestid}
+              ariaLabel={t(primaryBtnariaLabel)}
+            />
+            <CustomButton
+              variant="secondary"
+              size="md"
+              name="cancelButton"
+              label={t(secondaryBtnLabel)}
+              onClick={secondaryBtnAction}
+              dataTestId={secondaryBtndataTestid}
+              ariaLabel={t(secondaryBtnariaLabel)}
+            />
+          </div>
         </Modal.Footer>
       </Modal>
     );

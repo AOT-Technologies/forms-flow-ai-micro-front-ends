@@ -33,7 +33,6 @@ const buildModalContent = (
     <>
       {contents.map(({ id, heading, body, onClick }) => (
         <button
-          className="col-md-6 build-contents"
           key={id}
           onClick={onClick}
           tabIndex={0}
@@ -41,8 +40,8 @@ const buildModalContent = (
           aria-label={`Button for ${heading}`} 
           data-testid={`button-${id}`}
         >
-          <span className="mb-3 content-heading">{t(heading)}</span>
-          <span className="content-body">{t(body)}</span>
+          <h3>{t(heading)}</h3>
+          <p>{t(body)}</p>
         </button>
       ))}
     </>
@@ -56,11 +55,9 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
       <Modal
         show={show}
         onHide={onClose}
-        centered={true}
         data-testid="build-modal"
         aria-labelledby="build-modal-title"
         aria-describedby="build-modal-message"
-        dialogClassName="build-modal"
         size="sm"
       >
         <Modal.Header>
@@ -71,7 +68,7 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
             <CloseIcon onClick={onClose} dataTestId="modal-close"/>
           </div>
         </Modal.Header>
-        <Modal.Body className="d-flex">
+        <Modal.Body className="choice">
         {buildModalContent(contents, t)}
         </Modal.Body>
       </Modal>
