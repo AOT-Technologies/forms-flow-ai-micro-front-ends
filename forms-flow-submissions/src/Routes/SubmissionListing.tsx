@@ -6,7 +6,10 @@ import { push } from "connected-react-router";
 
 import { getSubmissionList } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate } from "../helper/helper";
-import { setAnalizeSubmissionSort, setAnalyzeSubmissionPage } from "../actions/analyzeSubmissionActions";
+import {
+  setAnalizeSubmissionSort,
+  setAnalyzeSubmissionPage,
+} from "../actions/analyzeSubmissionActions";
 import {
   ReusableResizableTable,
   TableFooter,
@@ -38,43 +41,66 @@ const TaskSubmissionList: React.FC = () => {
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const [limit, setLimit] = useState(10);
 
-  const sortParams = useSelector((state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams || {});
-  const {page} = useSelector((state: any) => state?.analyzeSubmission.page || 1 );
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
+  const sortParams = useSelector(
+    (state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {}
+  );
+  const { page } = useSelector(
+    (state: any) => state?.analyzeSubmission.page ?? 1
+  );
+  const tenantKey = useSelector(
+    (state: any) => state.tenants?.tenantData?.tenantkey
+  );
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
-  const columns: Column[] = useMemo(() => [
-    { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
-    { name: "Form Name", sortKey: "formName", width: 200, resizable: true },
-    { name: "Submitter", sortKey: "createdBy", width: 200, resizable: true },
-    { name: "Submission Date", sortKey: "submissionDate", width: 180, resizable: true },
-    { name: "Status", sortKey: "applicationStatus", width: 160, resizable: true },
-    { name: "", sortKey: "actions", width: 100 },
-  ], []);
+  const columns: Column[] = useMemo(
+    () => [
+      { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
+      { name: "Form Name", sortKey: "formName", width: 200, resizable: true },
+      { name: "Submitter", sortKey: "createdBy", width: 200, resizable: true },
+      {
+        name: "Submission Date",
+        sortKey: "submissionDate",
+        width: 180,
+        resizable: true,
+      },
+      {
+        name: "Status",
+        sortKey: "applicationStatus",
+        width: 160,
+        resizable: true,
+      },
+      { name: "", sortKey: "actions", width: 100 },
+    ],
+    []
+  );
 
   const activeSortKey = sortParams.activeKey;
-  const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder || "asc";
+  const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
 
   const { data } = useQuery({
     queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder],
-    queryFn: () => getSubmissionList(limit, page, activeSortOrder, activeSortKey),
+    queryFn: () =>
+      getSubmissionList(limit, page, activeSortOrder, activeSortKey),
     keepPreviousData: true,
     staleTime: 0,
   });
 
-  const submissions = data?.submissions || [];
-  const totalCount = data?.totalCount || 0;
+  const submissions = data?.submissions ?? [];
+  const totalCount = data?.totalCount ?? 0;
 
-  const handleSort = useCallback((key: string) => {
-    const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
-    const updatedSort = Object.fromEntries(
-      Object.keys(sortParams).map((k) => [
-        k,
-        { sortOrder: k === key ? newOrder : "asc" },
-      ])
-    );
-    dispatch(setAnalizeSubmissionSort({ ...updatedSort, activeKey: key }));
-  }, [dispatch, sortParams]);
+  const handleSort = useCallback(
+    (key: string) => {
+      const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
+      const updatedSort = Object.fromEntries(
+        Object.keys(sortParams).map((k) => [
+          k,
+          { sortOrder: k === key ? newOrder : "asc" },
+        ])
+      );
+      dispatch(setAnalizeSubmissionSort({ ...updatedSort, activeKey: key }));
+    },
+    [dispatch, sortParams]
+  );
 
   const handlePageChange = useCallback(
     (pageNumber) => {
@@ -82,7 +108,6 @@ const TaskSubmissionList: React.FC = () => {
     },
     [dispatch, limit]
   );
-
 
   const renderRow = (row: Submission) => (
     <tr key={row.id}>
@@ -112,7 +137,11 @@ const TaskSubmissionList: React.FC = () => {
       index: number,
       columnsLength: number,
       currentResizingColumn: any,
-      handleMouseDown: (index: number, column: Column, e: React.MouseEvent) => void
+      handleMouseDown: (
+        index: number,
+        column: Column,
+        e: React.MouseEvent
+      ) => void
     ) => {
       const isLast = index === columnsLength - 1;
       const headerKey = column.sortKey || `col-${index}`;
@@ -140,11 +169,17 @@ const TaskSubmissionList: React.FC = () => {
           ) : (
             column.name && t(column.name)
           )}
-
           {column.resizable && (
             <div
-              className={`column-resizer ${currentResizingColumn?.sortKey === column.sortKey ? "resizing" : ""}`}
+              className={`column-resizer ${
+                currentResizingColumn?.sortKey === column.sortKey
+                  ? "resizing"
+                  : ""
+              }`}
               onMouseDown={(e) => handleMouseDown(index, column, e)}
+              tabIndex={0}
+              role="separator"
+              aria-orientation="horizontal"
               data-testid={`column-resizer-${column.sortKey}`}
               aria-label={t("Resize {{columnName}} column", {
                 columnName: t(column.name),
@@ -165,15 +200,22 @@ const TaskSubmissionList: React.FC = () => {
   return (
     <div className="container-wrapper" data-testid="table-container-wrapper">
       <div className="table-outer-container">
-        <div className="table-scroll-wrapper resizable-scroll" ref={scrollWrapperRef}>
+        <div
+          className="table-scroll-wrapper resizable-scroll"
+          ref={scrollWrapperRef}
+        >
           <div className="resizable-table-container">
             <ReusableResizableTable
               columns={columns}
               data={submissions}
               renderRow={renderRow}
               renderHeaderCell={renderHeaderCell}
-              emptyMessage={t("No submissions have been found. Try a different filter combination or contact your admin.")}
-              onColumnResize={(newWidths) => console.log("Column resized:", newWidths)}
+              emptyMessage={t(
+                "No submissions have been found. Try a different filter combination or contact your admin."
+              )}
+              onColumnResize={(newWidths) =>
+                console.log("Column resized:", newWidths)
+              }
               tableClassName="resizable-table"
               headerClassName="resizable-header"
               containerClassName="resizable-table-container"
