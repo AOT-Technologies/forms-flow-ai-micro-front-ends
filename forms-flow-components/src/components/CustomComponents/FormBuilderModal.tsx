@@ -137,7 +137,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <b>{t(modalHeader)}</b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} />
+            <CloseIcon onClick={onClose} data-testid="close-duplicate-modal"/>
           </div>
         </Modal.Header>
         <Modal.Body className="form-builder-modal">

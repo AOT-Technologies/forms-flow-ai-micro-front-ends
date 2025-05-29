@@ -22,6 +22,8 @@ interface ConfirmModalProps {
   secondoryBtndataTestid?: string;
   secondoryBtnariaLabel?: string;
   secondaryBtnLoading?:boolean;
+  datatestId?: string;
+  titleDataTestId?: string;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
@@ -41,7 +43,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   secondaryBtnDisable = false,
   secondoryBtndataTestid = 'cancel-button',
   secondoryBtnariaLabel = 'Cancel Button',
-  secondaryBtnLoading= false
+  secondaryBtnLoading= false,
+  datatestId,
+  titleDataTestId,
 }) => {
   const { t } = useTranslation();
   return (
@@ -55,7 +59,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         aria-describedby="confirm-modal-message"
       >
         <Modal.Header>
-          <Modal.Title id="confirm-modal-title">
+          <Modal.Title id="confirm-modal-title" data-testid={titleDataTestId}>
             <b>
               {t(title)}
             </b>
@@ -71,7 +75,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
           >
             <div
               className="message-primary"
-              data-testid="confirm-modal-primary-message"
+              data-testid={ datatestId }
               aria-label="Primary message"
             >
               {t(message)}
