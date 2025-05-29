@@ -1,0 +1,33 @@
+.table-skeleton {
+    width: 100%;
+    table-layout: fixed; // ensures all columns are equal width
+  
+    th,
+    td {
+      text-align: center;
+      padding: 12px !important;
+    }
+  
+    th {
+      .react-loading-skeleton {
+        --highlight-color: #b4b4b4;
+      }
+    }
+  
+    tbody {
+      tr:last-child {
+        td {
+          border-bottom: none !important;
+        }
+      }
+    }
+  }
+  
+  .rounded-bl {
+    border-bottom-left-radius: 23px;
+  }
+  
+  .rounded-br {
+    border-bottom-right-radius: 23px;
+  }
+  
