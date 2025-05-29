@@ -252,7 +252,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         if (!ignoredKeys.includes(key) && attributeData[key]) {
           newProcessVariable.push({
             name: key,
-            operator: types[key] === "number" ? "eq" : "like",
+            operator: (types[key] === "number" || key === "applicationId")? "eq" : "like",
             value:
                 key === "applicationId"
                 ? JSON.parse(attributeData[key])
