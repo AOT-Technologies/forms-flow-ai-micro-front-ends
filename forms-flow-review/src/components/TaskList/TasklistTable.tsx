@@ -326,18 +326,7 @@ const TaskListTable = () => {
         data-testid="table-outer-container"
         aria-label={t("Table outer container")}
       >
-        <div
-          className="table-scroll-wrapper resizable-scroll"
-          //   ref={scrollWrapperRef}
-          data-testid="table-scroll-wrapper"
-          aria-label={t("Scrollable task table content")}
-        >
-          <div
-            className="resizable-table-container"
-            data-testid="inner-table-container"
-            aria-label={t("Inner table container")}
-          >
-            <ReusableResizableTable
+        <ReusableResizableTable
               columns={columns}
               data={tasksList}
               renderRow={renderRow}
@@ -353,8 +342,6 @@ const TaskListTable = () => {
               dataTestId="task-resizable-table"
               ariaLabel={t("Tasks data table with resizable columns")}
             />
-          </div>
-        </div>
       </div>
       {renderTableFooter()}
     </div>

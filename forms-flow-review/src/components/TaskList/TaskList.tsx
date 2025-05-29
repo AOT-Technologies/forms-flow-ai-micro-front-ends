@@ -270,9 +270,10 @@ const TaskList = () => {
               />
             </div>
 
-            <TaskListTable />
           </div>
+            
         </div>
+         <TaskListTable />
       </div>
     </>
   );
