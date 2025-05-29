@@ -2,11 +2,10 @@ import { CustomInfo } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
-import { isFilterAdmin } from "../../helper/permissions";
-
+ 
 const RenderOwnerShipNotes = ({isCreator, viewOnly, editRole, attributeFilter}) => {
   const { t } = useTranslation();
-  const filter = useSelector((state: any) => state.task.selectedFilter);
+  const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
   
   if (isCreator) {
     return (
@@ -21,7 +20,7 @@ const RenderOwnerShipNotes = ({isCreator, viewOnly, editRole, attributeFilter}) 
     );
   }
 
-  if (!filter.id) {
+  if (isUnsavedFilter) {
     return (
       <div className="pb-4">
         <CustomInfo

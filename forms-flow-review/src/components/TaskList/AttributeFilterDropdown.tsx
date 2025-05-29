@@ -68,6 +68,8 @@ const AttributeFilterDropdown = () => {
     if (processVariables && processVariables.length > 0) {
       currentCriteria.processVariables.push(...processVariables);
     }
+    // changing  assignee if assignee changed in attirbuite filter
+    currentCriteria.assignee =  attributeFilter?.criteria.assignee;
     const data = { ...selectedFilter, criteria: currentCriteria };
     fetchTaskList(data);
   };

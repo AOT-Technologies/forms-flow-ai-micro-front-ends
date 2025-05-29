@@ -87,7 +87,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     }
   };
 
-  const handleSaveFilter = async () => {
+  const handleFilterUpdate = async () => {
     toggleUpdateModal();
     const response = await updateFilter(filterToEdit, filterToEdit?.id);
     setUpdateSuccess(onClose, 2);
@@ -100,6 +100,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     dispatch(fetchBPMTaskCount(updatedFilterList));
     const isDefaultFilter = response.data.id === defaultFilter;
     if (isDefaultFilter) {
+      dispatch(setSelectedFilter(response.data));
       dispatch(fetchServiceTaskList(response.data, null, 1, limit));
     } else {
       resetDefaultFilter(response.data.id);
@@ -184,7 +185,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           onClose={toggleUpdateModal}
           primaryBtnText={t("No, Cancel Changes")}
           secondaryBtnText={t("Yes, Update This Filter For Everybody")}
-          secondaryBtnAction={handleSaveFilter}
+          secondaryBtnAction={handleFilterUpdate}
           secondoryBtndataTestid="confirm-revert-button"
         />
       )}

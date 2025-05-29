@@ -140,7 +140,6 @@ const TaskList = () => {
      * if any one of the values selected we don't want to call the api
      */
     const values = Object.values(newDateRange);
-    console.log(values)
     dispatch(setDateRangeFilter(newDateRange));
     if (values.length == 1) return;
     // Reset active page and limit when date range changes
