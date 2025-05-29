@@ -1,16 +1,16 @@
 .table-skeleton {
     width: 100%;
-    table-layout: fixed; // ensures all columns are equal width
+    table-layout: fixed; 
   
     th,
     td {
       text-align: center;
-      padding: 12px !important;
+      padding: var(--spacer-075) !important;
     }
   
     th {
       .react-loading-skeleton {
-        --highlight-color: #b4b4b4;
+        --highlight-color: $gray-medium-dark;
       }
     }
   
@@ -24,10 +24,10 @@
   }
   
   .rounded-bl {
-    border-bottom-left-radius: 23px;
+    border-bottom-left-radius: var(--radius-md);
   }
   
   .rounded-br {
-    border-bottom-right-radius: 23px;
+    border-bottom-right-radius: var(--radius-md);
   }
   
