@@ -239,13 +239,6 @@ export const setBPMFilterSearchParams = (data) => (dispatch) => {
     });
   }; 
 
-  export const setFilterPreference = (data) => (dispatch) => { 
-    dispatch ({ 
-      type: ACTION_CONSTANTS.FILTER_PREFERENCE_LIST,
-      payload: data,
-    })
-  };
-
 
   // Actions for Task History
   export const setAppHistoryLoading = (data) => (dispatch) => {

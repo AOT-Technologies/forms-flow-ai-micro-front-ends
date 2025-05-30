@@ -1,4 +1,4 @@
-import { AddIcon, ButtonDropdown, PencilIcon } from "@formsflow/components";
+import { AddIcon, ButtonDropdown, PencilIcon, SharedWithMeIcon, SharedWithOthersIcon } from "@formsflow/components";
 import { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -9,7 +9,10 @@ import { RootState } from "../../reducers";
 import { setDefaultFilter, setFilterToEdit } from "../../actions/taskActions";
 import { updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
-
+import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
+import {  UserDetail } from "../../types/taskFilter";
+import { StorageService } from "@formsflow/service";
+ 
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -23,13 +26,15 @@ const TaskListDropdownItems = memo(() => {
   const filtersAndCount = useSelector(
     (state: RootState) => state.task.filtersAndCount
   );
-  const filterList = useSelector((state: RootState) => state.task.filterList);
+  const filterList = useSelector((state: RootState) => state.task.filterList); 
   const defaultFilter = useSelector(
     (state: RootState) => state.task.defaultFilter
-  );
+  );  
+  const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
 
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
-
+  const [showReorderFilterModal,setShowReorderFilterModal] = useState(false); 
+  
   const handleEditTaskFilter = () => {
     if (!selectedFilter) return;
     dispatch(setFilterToEdit(selectedFilter));
@@ -52,7 +57,7 @@ const TaskListDropdownItems = memo(() => {
     dispatch(setDefaultFilter(upcomingFilter.id));
     updateDefaultFilter(upcomingFilter.id);
   };
-
+  
   const filterDropdownItems = useMemo(() => {
     const filterDropdownItemsArray = [];
     const noFilter = {
@@ -86,12 +91,31 @@ const TaskListDropdownItems = memo(() => {
         </span>
       ),
       type: "reorder",
+      onClick: () => setShowReorderFilterModal(true),
       dataTestId: "filter-item-reorder",
       ariaLabel: t("Re-order And Hide Filters"),
     };
+    const mappedItems = filtersAndCount.map((filter) => { 
+      const filterDetails = filterList.find((item) => item.id === filter.id);
+      let icon = null;
+      if(filterDetails){
+        const createdByMe =userDetails?.preferred_username === filterDetails?.createdBy;
+        const isSharedToPublic =!filterDetails?.roles?.length && !filterDetails?.users?.length;
+        const isSharedToMe = filterDetails?.roles?.some((role) =>
+          userDetails?.groups?.includes(role)
+        );
 
-    const mappedItems = filtersAndCount.map((filter) => ({
-      content: `${t(filter.name)} (${filter.count})`,
+        if (createdByMe) {
+          icon = <SharedWithOthersIcon className="shared-icon" />;
+        } else if (isSharedToPublic || isSharedToMe) {
+          icon = <SharedWithMeIcon className="shared-icon" />;
+        }
+      return { 
+        className:  filter.id === selectedFilter.id ? "selected-filter-item" : "",
+        content: <span className="d-flex justify-content-between align-items-center">
+          {t(filter.name)} ({filter.count})
+          {icon && <span>{icon}</span>}
+        </span>,
       type: String(filter.id),
       onClick: () => {
         changeFilterSelection(filter);
@@ -99,8 +123,8 @@ const TaskListDropdownItems = memo(() => {
       dataTestId: `filter-item-${filter.id}`,
       ariaLabel: t("Select filter {{filterName}}", {
         filterName: t(filter.name),
-      }),
-    }));
+      }),}
+    }})
 
     if (filtersAndCount.length === 0) {
       filterDropdownItemsArray.push(noFilter);
@@ -116,7 +140,7 @@ const TaskListDropdownItems = memo(() => {
     }
 
     return filterDropdownItemsArray;
-  }, [filtersAndCount, defaultFilter ]);
+  }, [filtersAndCount, defaultFilter, ]);
 
   const title = selectedFilter
     ? `${isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name)} (${
@@ -146,6 +170,14 @@ const TaskListDropdownItems = memo(() => {
         show={showTaskFilterModal}
         onClose={handleCloseFilterModal} 
       />
+       <ReorderTaskFilterModal
+          showModal={showReorderFilterModal}
+          setShowReorderFilterModal={setShowReorderFilterModal}
+          onClose={() => {
+            setShowReorderFilterModal(false);
+          }}
+          filtersList={filterList}
+        />
     </>
   );
 });

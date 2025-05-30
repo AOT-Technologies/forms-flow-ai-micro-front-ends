@@ -121,8 +121,6 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, limit: action.payload };
     case ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS:
       return { ...state, filterListSearchParams: action.payload };
-    case ACTION_CONSTANTS.FILTER_PREFERENCE_LIST:
-      return { ...state, taskFilterPreference: action.payload };
     case ACTION_CONSTANTS.BPM_TASK_DETAIL:
       return { ...state, taskDetail: action.payload };
     case ACTION_CONSTANTS.BPM_TASK_FORM_ID:
