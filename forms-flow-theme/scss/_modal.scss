@@ -244,6 +244,7 @@ $black-color: var(--ff-black);
           display: -webkit-box;
          -webkit-box-orient: vertical; 
          -webkit-line-clamp: 2; 
+         line-clamp: 2; 
          overflow: hidden; 
          text-overflow: ellipsis; 
          line-height: 1.2em; 
@@ -354,6 +355,7 @@ $black-color: var(--ff-black);
     .template-desc {
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       /* Show 2 lines */
       -webkit-box-orient: vertical;
       overflow: hidden;
@@ -370,6 +372,7 @@ $black-color: var(--ff-black);
     .template-desc {
       display: block;
       -webkit-line-clamp: unset;
+      line-clamp: unset;
       overflow: visible;
       white-space: normal;
     }

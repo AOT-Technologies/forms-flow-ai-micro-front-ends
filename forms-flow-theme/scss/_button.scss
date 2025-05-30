@@ -627,11 +627,30 @@ $danger-color: var(--ff-danger);
 
 @mixin buttonBase($color: $white-color) {
   @include textBase($fontBase, $color);
+  @include clickableFeedback1();
 
   padding: $base $base*1.5;
   
   font-weight: 700;
   border: none;
+
+  user-select: none;
+
+  &.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    color: $transparent;
+
+    & svg:not(.loading) > path {
+      stroke: $transparent;
+    }
+
+    .loading {
+      position: absolute;
+    }
+  }
 }
 
 
@@ -646,7 +665,12 @@ $danger-color: var(--ff-danger);
     background-color: $primary-color;
 
     border-radius: $borderRadiusHeightL;
+
+    &[disabled] {
+      background-color: $gray-medium-dark;
+    }
   }
+  
 
   &-secondary {
     @include buttonBase($primary-color);
@@ -654,10 +678,21 @@ $danger-color: var(--ff-danger);
     background-color: $primary-light;
 
     border-radius: $borderRadiusHeightL;
+
+    &[disabled] {
+      @include buttonBase($gray-light);
+
+      background-color: $gray-medium-dark;
+    }
+
+    .loading {
+      path {
+        stroke: $primary-color;
+      }
+    }
   }
 
   &-icon {
-    @include clickableFeedback1();
     @include buttonBase($primary-color);
 
     display: flex;
@@ -669,19 +704,24 @@ $danger-color: var(--ff-danger);
     border-radius: $borderRadiusHeightL;
 
     &[disabled] {
-      @include buttonBase($white-color);
+      @include buttonBase($gray-light);
 
       background-color: $gray-medium-dark;
 
       & svg path {
-        stroke: $white-color;
+        stroke: $gray-light;
+      }
+    }
+
+    .loading {
+      path {
+        stroke: $primary-color;
       }
     }
   }
 
   &-icon-special {
     @include buttonBase();
-    @include clickableFeedback1();
 
     display: flex;
     justify-content: center;
@@ -694,11 +734,24 @@ $danger-color: var(--ff-danger);
     background-color: $primary-light;
 
     border-radius: $borderRadiusHeightSM;
+
+    &[disabled] {
+      background-color: $gray-medium-dark;
+
+      & svg path {
+        stroke: $gray-light;
+      }
+    }
+
+    .loading {
+      path {
+        stroke: $primary-color;
+      }
+    }
   }
 
   &-action {
     @include buttonBase();
-    @include clickableFeedback1();
 
     padding: $base/2 $base*0.75;
 
@@ -707,7 +760,9 @@ $danger-color: var(--ff-danger);
     border-radius: $borderRadiusHeightM;
 
     &[disabled] {
-      color: $gray-medium;
+      @include buttonBase($gray-light);
+
+      padding: $base/2 $base*0.75;
 
       background-color: $gray-medium-dark;
     }
@@ -715,13 +770,26 @@ $danger-color: var(--ff-danger);
 
   &-action-table {
     @include buttonBase($primary-color);
-    @include clickableFeedback1();
 
     padding: $base/2 $base;
 
     background-color: $primary-light;
 
     border-radius: $borderRadiusHeightSM;
+
+    &[disabled] {
+      @include buttonBase($gray-light);
+
+      padding: $base/2 $base;
+
+      background-color: $gray-medium-dark;
+    }
+
+    .loading {
+      path {
+        stroke: $primary-color;
+      }
+    }
   }
 
   &-action-table-small {
@@ -734,36 +802,70 @@ $danger-color: var(--ff-danger);
     background-color: $primary-light;
 
     border-radius: $borderRadiusHeightSM;
+
+    &[disabled] {
+      @include buttonBase($gray-light);
+
+      padding: $base/4 $base*0.75;
+
+      font-size: $fontSmallest;
+
+      background-color: $gray-medium-dark;
+    }
+
+    .loading {
+      path {
+        stroke: $primary-color;
+      }
+    }
   }
 
   &-dark {
     @include buttonBase();
-    @include clickableFeedback1();
 
     padding: $base/2 $base;
 
     background-color: $gray-dark;
 
     border-radius: $borderRadiusHeightSM;
+
+    &[disabled] {
+      @include buttonBase($gray-medium-dark);
+
+      padding: $base/2 $base;
+
+      background-color: $gray-dark;
+    }
   }
 
   &-dark-primary {
     @include buttonBase($gray-darkest);
-    @include clickableFeedback1();
 
     padding: $base/2 $base;
 
     background-color: $white-color;
 
     border-radius: $borderRadiusHeightSM;
+
+    &[disabled] {
+      @include buttonBase($gray-medium-dark);
+
+      padding: $base/2 $base;
+    }
+
+    .loading {
+      path {
+        stroke: $gray-darkest;
+      }
+    }
   }
 }
 
 
 .input {
-  &-filter {
+  // &-filter {
 
-  }
+  // }
 
   &-search {
     $width: 20rem;

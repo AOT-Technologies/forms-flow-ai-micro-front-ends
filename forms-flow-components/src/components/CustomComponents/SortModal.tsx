@@ -79,8 +79,7 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
             <CloseIcon data-testid={closedataTestid} />
           </div>
         </Modal.Header>
-        <Modal.Body className="sort-settings p-0">
-          <div className="sortbody-settings">
+        <Modal.Body>
             <InputDropdown
               firstItemLabel={t(firstItemLabel)}
               isAllowInput={false}
@@ -117,14 +116,11 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
               dataTestIdforDropdown="dropdown-sort-order"
               dataTestIdforInput="input-sort-order"
             />
-          </div>
         </Modal.Body>
 
         <Modal.Footer>
           <div className="buttons-row">
             <CustomButton
-              variant="primary"
-              size="md"
               disabled={isPrimaryButtonDisabled}
               label={t(primaryBtnLabel)}
               onClick={handlePrimaryAction}
@@ -133,13 +129,12 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
               ariaLabel={t(primaryBtnariaLabel)}
             />
             <CustomButton
-              variant="secondary"
-              size="md"
               name="cancelButton"
               label={t(secondaryBtnLabel)}
               onClick={secondaryBtnAction}
               dataTestId={secondaryBtndataTestid}
               ariaLabel={t(secondaryBtnariaLabel)}
+              secondary
             />
           </div>
         </Modal.Footer>

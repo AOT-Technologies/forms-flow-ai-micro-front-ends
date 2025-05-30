@@ -197,23 +197,13 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         
         return shouldRenderButton ? (
           <div className="load-more" ref={loadMoreRef}>
-            <button
-              onClick={handleLoadMore}
-              data-test-id={loadMoreBtndataTestId}
-              aria-label={loadMoreBtnariaLabel}
-              className="button-secondary"
-              >
-              {loadMoreBtnText}
-            </button>
-
-            {/* <CustomButton
-              variant="secondary"
-              size="sm"
+            <CustomButton
               label={loadMoreBtnText}
               onClick={handleLoadMore}
              dataTestId={loadMoreBtndataTestId}
               ariaLabel={loadMoreBtnariaLabel}
-            /> */}
+              secondary
+            />
           </div>
         ) : null;
       };      

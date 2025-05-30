@@ -218,13 +218,12 @@ Further clarification on this is to be determined for EE. */}
             />
 
             <CustomButton
-              variant="secondary"
-              size="md"
               name="cancelButton"
               label={secondaryBtnLabel}
               onClick={secondaryBtnAction}
               dataTestId={secondoryBtndataTestid}
               ariaLabel={secondoryBtnariaLabel}
+              secondary
             />
           </div>
         </Modal.Footer>

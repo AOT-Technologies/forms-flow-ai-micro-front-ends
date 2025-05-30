@@ -215,6 +215,7 @@ $paddingLvl2MinS: var(--spacer-100);
   font-size: $fontSize;
   line-height: $fontLineHeight;
   color: $fontColor;
+  font-weight: 400;
 
   padding: 0;
   margin: 0;
@@ -244,11 +245,14 @@ $paddingLvl2MinS: var(--spacer-100);
 
   transition: 300ms opacity;
 
-  &[disabled] {
+  &[disabled],
+  &.loading {
     cursor: default;
+    pointer-events: none;
   }
 
-  &:not([disabled]):hover {
+  &:not([disabled]):hover,
+  &:not(.loading):hover {
     opacity: 0.8;
   }
 }
@@ -260,6 +264,7 @@ $paddingLvl2MinS: var(--spacer-100);
 
   &[disabled] {
     cursor: default;
+    pointer-events: none;
   }
 
   &:not([disabled]):hover {
@@ -283,6 +288,10 @@ $paddingLvl2MinS: var(--spacer-100);
     stroke-linecap: round;
     stroke-linejoin: round;
     vector-effect: non-scaling-stroke;
+  }
+
+  &.loading {
+    animation: rotating 1s linear infinite;
   }
 }
 
