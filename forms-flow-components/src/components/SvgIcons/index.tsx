@@ -171,6 +171,20 @@ export const CloseIcon = ({
   </svg>
 );
 
+export const LoadingIcon = ({
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    className="svgIcon-onDark loading"
+    onClick={props.onClick}
+    {...props}
+  >
+    <path d="M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1" stroke-dasharray="1 4 1 4"/>
+  </svg>
+);
+
 export const ClearIcon = ({
   ...props
 }) => (

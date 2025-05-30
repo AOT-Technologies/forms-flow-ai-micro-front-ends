@@ -89,8 +89,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         <Modal.Footer>
           <div className="buttons-row">
             <CustomButton
-              variant={"primary"}
-              size="lg"
               label={primaryBtnText}
               disabled={primaryBtnDisable}
               onClick={primaryBtnAction}
@@ -99,14 +97,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
               buttonLoading={buttonLoading}
             />
             {secondaryBtnText && <CustomButton
-              variant="secondary"
-              size="lg"
               label={secondaryBtnText}
               onClick={secondayBtnAction}
               dataTestId={secondoryBtndataTestid}
               ariaLabel={secondoryBtnariaLabel}
               disabled={secondaryBtnDisable}
               buttonLoading={secondaryBtnLoading}
+              secondary
             />}
           </div>
         </Modal.Footer>

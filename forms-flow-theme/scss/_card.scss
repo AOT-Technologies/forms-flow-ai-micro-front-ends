@@ -315,17 +315,14 @@ $gray-darkest: var(--ff-gray-darkest);
 
     gap: $spaceBetween;
 
-    color: $white;
-    font-weight: 700;
-
     p {
-      @include textBase($fontBase, $white);
-
       display: flex;
       flex-grow: 1;
     }
 
     .text-main {
+      @include textBaseHightlight($fontBase, $white);
+
       overflow: hidden;
       display: block;
       width: 4rem;
@@ -335,8 +332,14 @@ $gray-darkest: var(--ff-gray-darkest);
     }
 
     .status {
+      @include textBaseHightlight($fontBase, $white);
+
       flex-grow: 0;
       align-items: center;
+    }
+
+    .date {
+      @include textBase($fontBase, $white);
     }
   }
 

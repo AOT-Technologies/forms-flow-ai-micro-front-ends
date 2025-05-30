@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, ReactElement } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
-import { ChevronIcon } from "../SvgIcons/index";
+import { ChevronIcon, LoadingIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 
 interface DropdownItem {
@@ -29,9 +29,13 @@ interface CustomButtonProps {
   iconOnly?: boolean;  
   actionTable?: boolean;
   action?: boolean;
+  iconWithText?: boolean;
+  secondary?: boolean;
+  dark?: boolean;
+  darkPrimary?: boolean;
 }
 
-const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false) => {
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false, action: boolean = false, iconWithText: boolean = false, secondary: boolean = false, dark: boolean = false, darkPrimary: boolean = false) => {
   const sizeClassMap: Record<string, string> = {
     md: "btn-md",
     table: "btn-table",
@@ -58,8 +62,12 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   iconOnly = false, 
   actionTable = false, 
   action = false, 
+  iconWithText = false,
+  secondary = false,
+  dark = false,
+  darkPrimary = false,
 }) => {
-  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable);
+  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable, action, iconWithText, secondary, dark, darkPrimary);
   const sizeOfButton = size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -136,67 +144,138 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     );
   }
 
-  // Icon-only Button
+  // Btn-Icon-Special
   if (iconOnly) {
     return (
       <button
         onClick={onClick}
-        disabled={disabled || buttonLoading}
+        disabled={disabled}
         name={name}
-        className="button-icon-special"
+        className={`button-icon-special ${buttonLoading ? "loading" : ""}`}
         data-testid={dataTestId}
         aria-label={ariaLabel}
       >
         {icon}
+        {buttonLoading && <LoadingIcon />}
       </button>
     );
   }
 
-  // Action-table Button
+  // Btn-Action-Table
   if (actionTable) {
     return (
       <button
       onClick={onClick}
-      disabled={disabled || buttonLoading}
+      disabled={disabled}
       name={name}
-      className="button-action-table"
+      className={`button-action-table ${buttonLoading ? "loading" : ""}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
       {t(label)}
+      {buttonLoading && <LoadingIcon />}
     </button>
     );
   }
   
-  // Action Button
+  // Btn-Action
   if (action) {
     return (
       <button
       onClick={onClick}
-      disabled={disabled || buttonLoading}
+      disabled={disabled}
       name={name}
-      className="button-action"
+      className={`button-action ${buttonLoading ? "loading" : ""}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
       {t(label)}
+      {buttonLoading && <LoadingIcon />}
     </button>
     );
   }
 
-  // Default Button with icon and label
-  return (
-    <button
+  // Btn-Icon
+  if (iconWithText) {
+    return (
+      <button
       onClick={onClick}
-      disabled={disabled || buttonLoading}
+      disabled={disabled}
       name={name}
-      className="button-icon"
+      className={`button-icon ${buttonLoading ? "loading" : ""}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
       {icon}
       {t(label)}
-      {buttonLoading && <span className="dotted-spinner"></span>}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Secondary
+  if (secondary) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-secondary ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Dark
+  if (dark) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-dark ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Dark-Primary
+  if (darkPrimary) {
+    return (
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        name={name}
+        className={`button-dark-primary ${buttonLoading ? "loading" : ""}`}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+      >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Primary
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-primary ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
     </button>
     // <Button
     //   variant={variant}

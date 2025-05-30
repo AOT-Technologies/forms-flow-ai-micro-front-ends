@@ -68,8 +68,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
         </div>
       </Modal.Header>
 
-      <Modal.Body className='profile-settings p-0'>
-        <div className='lang-settings'>
+      <Modal.Body>
           <InputDropdown
             isAllowInput={false}
             Options={selectLanguages.map((lang) => ({
@@ -86,14 +85,11 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           />
           <CustomInfo className="note" heading="Note" 
             content={`You are running version ${version.version} of Formsflow`} />
-        </div>
       </Modal.Body>
 
       <Modal.Footer>
         <div className="buttons-row">
           <CustomButton
-            variant="primary"
-            size="md"
             label={t("Save Changes")}
             onClick={handleConfirmProfile}
           dataTestId="save-profile-settings"
@@ -101,12 +97,11 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             disabled={isSaveDisabled}
           />
           <CustomButton
-            variant="secondary"
-            size="md"
             label={t("Cancel")}
             onClick={onClose}
           dataTestId="cancel-profile-settings"
             ariaLabel={t("Cancel profile settings")}
+            secondary
           />
         </div>
       </Modal.Footer>

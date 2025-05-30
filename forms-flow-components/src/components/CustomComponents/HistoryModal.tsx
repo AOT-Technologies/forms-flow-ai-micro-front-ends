@@ -70,24 +70,14 @@ const RevertField = ({
 }) => {
   return (
     <div className="revert-btn">
-      <button
-        disabled={disabled}
-        onClick={onClick}
-        data-test-id={dataTestId}
-        aria-label={ariaLabel}
-        className="button-action-table"
-        >
-          {label}
-      </button>
-      {/* <CustomButton
-        variant={variant}
-        size={size}
+      <CustomButton
         disabled={disabled}
         label={label}
         onClick={onClick}
        dataTestId={dataTestId}
         ariaLabel={ariaLabel}
-      /> */}
+        actionTable
+      />
     </div>
   );
 };
@@ -207,23 +197,13 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         
         return shouldRenderButton ? (
           <div className="load-more" ref={loadMoreRef}>
-            <button
-              onClick={handleLoadMore}
-              data-test-id={loadMoreBtndataTestId}
-              aria-label={loadMoreBtnariaLabel}
-              className="button-secondary"
-              >
-              {loadMoreBtnText}
-            </button>
-
-            {/* <CustomButton
-              variant="secondary"
-              size="sm"
+            <CustomButton
               label={loadMoreBtnText}
               onClick={handleLoadMore}
              dataTestId={loadMoreBtndataTestId}
               ariaLabel={loadMoreBtnariaLabel}
-            /> */}
+              secondary
+            />
           </div>
         ) : null;
       };      

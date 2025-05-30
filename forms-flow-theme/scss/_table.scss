@@ -358,6 +358,14 @@ $white-color: var(--ff-white);
       }
     }
   }
+
+  .text-end {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+    
+    text-align: revert;
+  }
 }
 
 
@@ -382,6 +390,7 @@ $white-color: var(--ff-white);
 .text-container {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
