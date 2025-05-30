@@ -1,7 +1,9 @@
+import { TaskVariables } from "./task_filter_variables";
+
 export interface FilterCriteria {
+    includeAssignedTasks?: boolean;
     candidateGroup?: string;
-    assignee?: string;
-    /*processVariables required for attribute filter only*/
+    assignee?: string; 
     processVariables?: Array<{ 
       name: string;
       operator: string;
@@ -34,12 +36,10 @@ export interface FilterCriteria {
     created?: string;
     modified?: string;
     id?: number;
-    tenant?: string | null;
-    description?: string;
-    name: string;
-    resourceId?: string;
+    tenant?: string | null; 
+    name: string; 
     criteria: FilterCriteria;
-    variables?: FilterVariable[];
+    variables?: TaskVariables[];
     isMyTasksEnabled ?: boolean;
     properties?: Record<string, any>;
     roles: string[];    
@@ -48,12 +48,15 @@ export interface FilterCriteria {
     createdBy?: string;
     modifiedBy?: string;
     taskVisibleAttributes?: TaskVisibleAttributes;
-    order?: string;
     parentFilterId?: string | null;
     editPermission?: boolean;
     filterType?: string;
     hide?: boolean;
-    sortOrder?: string;
+    sortOrder?: number | string;
+    unsaved?: boolean;
+    description?: string;
+    order?: number | string;
+    resourceId?: string;
   }
   
   export interface FilterResponse {
@@ -73,3 +76,8 @@ export interface FilterCriteria {
      family_name?: string;
      email?: string;
    }  
+  
+  export interface DateRange {
+  startDate: Date | null;
+  endDate: Date | null;
+}
