@@ -238,9 +238,15 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   
 
   return (
-      <div className="sidenav" style={{ height: sidenavHeight }}>
-        <div className="logo-container">
-          {APPLICATION_NAME === "roadsafety" ? (
+    <div className="sidenav" style={{ height: sidenavHeight }}>
+      <div
+        className="logo-container cursor-pointer"
+        onClick={() => {
+          const redirectPath = `/${window?._env_?.REACT_APP_BASE_ROUTE || ""}`;
+          window.location.href = redirectPath;
+        }}
+      >
+        {APPLICATION_NAME === "roadsafety" ? (
           <img
             width="160"
             height="auto"
