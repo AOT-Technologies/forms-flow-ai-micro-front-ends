@@ -95,7 +95,13 @@ const TaskListDropdownItems = memo(() => {
       dataTestId: "filter-item-reorder",
       ariaLabel: t("Re-order And Hide Filters"),
     };
-    const mappedItems = filtersAndCount.map((filter) => { 
+    const mappedItems = filtersAndCount
+    .filter((filter) => {
+    const details = filterList.find((item) => item.id === filter.id);
+    
+    return details && !details.hide; // only include visible filters
+  })
+    .map((filter) => { 
       const filterDetails = filterList.find((item) => item.id === filter.id);
       let icon = null;
       if(filterDetails){
@@ -140,7 +146,7 @@ const TaskListDropdownItems = memo(() => {
     }
 
     return filterDropdownItemsArray;
-  }, [filtersAndCount, defaultFilter, ]);
+  }, [filtersAndCount, defaultFilter,filterList ]);
 
   const title = selectedFilter
     ? `${isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name)} (${
