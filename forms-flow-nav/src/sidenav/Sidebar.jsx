@@ -278,7 +278,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   
 
   return (
-      <div className="sidenav" style={{ height: sidenavHeight }}>
+      <div className="sidenav" style={{ height: sidenavHeight }} data-testid="sidenav">
         {renderLogo(hideLogo)} 
         <div className="options-container" data-testid="options-container">
           <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
