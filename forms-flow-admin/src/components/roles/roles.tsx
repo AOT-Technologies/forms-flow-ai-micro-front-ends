@@ -19,10 +19,17 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
+import PermissionTree from "./permissionTree";
 
 
 import {removingTenantId} from "../../utils/utils.js";
-import { TableFooter, CustomSearch } from "@formsflow/components";
+import { TableFooter,
+   CustomSearch, 
+   CloseIcon, 
+   CustomTabs, 
+   FormInput, 
+   FormTextArea,
+   CustomButton } from "@formsflow/components";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -58,6 +65,7 @@ const Roles = React.memo((props: any) => {
   const [disabled, setDisabled] = React.useState(true);
   const [search, setSearch] = React.useState("");
   const [permission, setPermission] = React.useState([]);
+  const  [key,setKey] = useState("Details");
 
   const filterList = (filterTerm, List) => {
     let roleList = removingTenantId(List, tenantId);
@@ -342,6 +350,231 @@ const Roles = React.memo((props: any) => {
     setRoles(updatedRoleName);
   };
 
+  const permissionsData = [
+    {
+        "name": "view_tasks",
+        "description": "View tasks",
+        "depends_on": ["view_filters"],
+        "category": "TASKS",
+        "order": 1
+    },
+    {
+        "name": "manage_tasks",
+        "description": "Work on tasks (assign to themselves + complete tasks)",
+        "depends_on": ["view_filters","view_tasks"],
+        "category": "TASKS",
+        "order": 2
+    },
+    {
+        "name": "assign_task_to_others",
+        "description": "Assign/re-assign tasks to anybody within the group",
+        "depends_on": ["view_filters","view_tasks","manage_tasks"],
+        "category": "TASKS",
+        "order": 3
+    },
+    {
+        "name": "reviewer_view_history",
+        "description": "View task history",
+        "depends_on": ["view_filters","view_tasks"],
+        "category": "TASKS",
+        "order": 4
+    },
+    {
+        "name": "view_filters",
+        "description": "View filters",
+        "depends_on": [],
+        "category": "TASKS",
+        "order":5
+    },
+    {
+        "name": "create_filters",
+        "description": "Manage filters you create",
+        "depends_on": [],
+        "category": "TASKS",
+        "order": 6
+    },
+    {
+        "name": "manage_all_filters",
+        "description": "Manage all shared filters (delete and edit filters others shared, excluding private filters)",
+        "depends_on": ["view_filters"],
+        "category": "TASKS",
+        "order": 7
+    },
+    {
+        "name": "view_designs",
+        "description": "View forms & flows",
+        "depends_on": [],
+        "category": "DESIGN",
+        "order": 1
+    },
+    {
+        "name": "create_designs",
+        "description": "Manage forms & flows you create and that are shared with you",
+        "depends_on": ["view_designs"],
+        "category": "DESIGN",
+        "order":2
+    },
+    {
+        "name": "manage_advance_workflows",
+        "description": "Manage advance flows (BPMNs + SubFlows + Decision Tables)",
+        "depends_on": ["view_designs"],
+        "category": "DESIGN",
+        "order": 3
+    }, // combined form of ‘manage_subflows’ & ‘manage_decision_tables’
+    {
+        "name": "manage_templates",
+        "description": "Manage templates",
+        "depends_on": ["view_designs"],
+        "category": "DESIGN",
+        "order": 4
+    },
+    {
+        "name": "manage_bundles",
+        "description": "Manage bundles",
+        "depends_on": ["view_designs"],
+        "category": "DESIGN",
+        "order": 5
+    },
+    {
+        "name": "manage_integrations",
+        "description": "Manage integrations",
+        "depends_on": [],
+        "category": "DESIGN",
+        "order": 6
+    },
+    {
+        "name": "create_submissions",
+        "description": "Manage submissions (create, save drafts, resubmit)",
+        "depends_on": ["view_submissions"],
+        "category": "SUBMIT",
+        "order": 1
+    }, // combined form of create_submissions & resubmit_submissions
+    {
+        "name": "view_submissions",
+        "description": "View their own past submissions",
+        "depends_on": [],
+        "category": "SUBMIT",
+        "order": 2
+    },
+    {
+        "name": "submission_view_history",
+        "description": "View submission history",
+        "depends_on": ["view_submissions"],
+        "category": "SUBMIT",
+        "order": 3
+    },
+    {
+        "name": "analyze_metrics_view",
+        "description": "View metrics",
+        "depends_on": [],
+        "category": "ANALYZE",
+        "order": 1
+    },
+    {
+        "name": "view_dashboards",
+        "description": "View dashboards",
+        "depends_on": [],
+        "category": "ANALYZE",
+        "order": 2
+    },
+    {
+        "name": "analyze_submissions_view",
+        "description": "View submissions",
+        "depends_on": [],
+        "category": "ANALYZE",
+        "order": 3
+    },
+    {
+        "name": "analyze_submissions_view_history",
+        "description": "View submissions history",
+        "depends_on": ["analyze_submissions_view"],
+        "category": "ANALYZE",
+        "order": 4
+    },
+    {
+        "name": "analyze_process_view",
+        "description": "View submissions process diagram",
+        "depends_on": ["analyze_submissions_view","analyze_submissions_view_history"],
+        "category": "ANALYZE",
+        "order": 5
+    },
+    {
+        "name": "manage_users",
+        "description": "Manage users",
+        "depends_on": [],
+        "category": "ADMIN",
+        "order": 1
+    },
+    {
+        "name": "manage_roles",
+        "description": "Manage roles",
+        "depends_on": [],
+        "category": "ADMIN",
+        "order": 2
+    },
+    {
+        "name": "manage_dashboard_authorizations",
+        "description": "Manage dashboards",
+        "depends_on": [],
+        "category": "ADMIN",
+        "order": 3
+    },
+    {
+        "name": "manage_links",
+        "description": "View links",
+        "depends_on": [],
+        "category": "ADMIN",
+        "order": 4
+    }
+];
+
+  const tabs = [
+    {
+      eventKey: "Details",
+      title: "Details",
+      content: (
+        <div className="role-details">
+        <FormInput
+        required
+        value={showEditRoleModal ? editCandidate.name : payload.name}
+        label={t("Role Name")}
+        onChange={showEditRoleModal ? handleEditName : handleChangeName}
+        dataTestId="role-name"
+        name="role-name"
+        ariaLabel={t("Role Name")}
+        // isInvalid = {!!errors.title}
+        // feedback = {errors.title}
+        // turnOnLoader={isValidating.name}
+        // onBlur={() => handleBlur('title', formDetails.title)}   
+        maxLength={200} 
+        />
+        <FormTextArea
+        dataTestId="role-description"
+        label={t("Description")}
+        name="description"
+        value={showEditRoleModal ? editCandidate.description : payload.description}
+        onChange={showEditRoleModal ? handleEditDescription : handleChangeDescription}
+        aria-label={t("Description of role")}
+        data-testid="role-description"
+        maxRows={3}
+        minRows={3}
+      />
+      </div>
+      )
+    },
+    {
+      eventKey: "Permissions",
+      title: "Permissions",
+      content: (
+        <PermissionTree
+        permissions={permissionsData}
+        payload={payload}
+        handlePermissionCheck={handlePermissionCheck}
+        setPayload={setPayload}
+      />
+
+      )
+    }]
   // Delete confirmation
   const confirmDelete = () => (
     <div data-testid="roles-confirm-delete-modal">
@@ -375,13 +608,23 @@ const Roles = React.memo((props: any) => {
   );
 
   const showCreateModal = () => (
-    <div data-testid="create-role-modal">
-      <Modal show={showRoleModal} onHide={handleCloseRoleModal} centered={true}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("Create Role")}</Modal.Title>
+      <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="sm">
+        <Modal.Header>
+          <Modal.Title><b>{t("Create Role")}</b></Modal.Title>
+          <div className="d-flex align-items-center">
+              <CloseIcon onClick={handleCloseRoleModal} data-testid="role-modal-close"/>
+          </div>
         </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
+        <Modal.Body className="role-modal-body">
+        <CustomTabs
+          defaultActiveKey={key}
+          onSelect={setKey}
+          tabs={tabs}
+          dataTestId="create-roles-tabs"
+          ariaLabel="Create roles tabs"
+          className="d-flex gap-3"
+        />
+          {/* <Form.Group className="mb-3">
             <Form.Label htmlFor="role-name" aria-required>
               {t("Role Name")}
             </Form.Label>
@@ -404,9 +647,9 @@ const Roles = React.memo((props: any) => {
               rows={3}
               onChange={handleChangeDescription}
               title={t("Enter Description")}
-            />
+            /> */}
 
-            <Form.Label
+            {/* <Form.Label
               htmlFor="role-permissions"
               aria-required
               className="mt-2"
@@ -415,8 +658,8 @@ const Roles = React.memo((props: any) => {
             >
               {t("Permissions")}
             </Form.Label>
-            <i className="text-danger">*</i>
-            <div className="row">
+            <i className="text-danger">*</i> */}
+            {/* <div className="row">
               {permission.map((permission) => (
                 <div
                   key={permission.name}
@@ -438,19 +681,36 @@ const Roles = React.memo((props: any) => {
                   />
                 </div>
               ))}
-            </div>
-          </Form.Group>
+            </div> */}
+          {/* </Form.Group> */}
         </Modal.Body>
         <Modal.Footer>
-          <button
+          {/* <button
             type="button"
             className="btn btn-link text-dark"
             onClick={handleCloseRoleModal}
             data-testid="create-new-role-modal-cancel-button"
           >
             {t("Cancel")}
-          </button>
-          <Button
+          </button> */}
+          <CustomButton
+            variant={"primary"}
+            size="lg"
+            label={t("Save Changes")}
+            // disabled={disabled}
+            onClick={handleCreateRole}
+            dataTestId="create-new-role-modal-submit-button"
+            // ariaLabel={primaryBtnariaLabel}
+            />
+          <CustomButton
+            variant={"secondary"}
+            size="lg"
+            label={t("Discard Changes")}
+            onClick={handleCloseRoleModal}
+            dataTestId="create-new-role-modal-cancel-button"
+            // ariaLabel={primaryBtnariaLabel}
+          />
+          {/* <Button
             variant="primary"
             disabled={disabled}
             onClick={handleCreateRole}
@@ -458,19 +718,30 @@ const Roles = React.memo((props: any) => {
             data-testid="create-new-role-modal-submit-button"
           >
             {t("Create")}
-          </Button>
+          </Button> */}
         </Modal.Footer>
       </Modal>
-    </div>
+    // </div>
   );
   const showEditModal = () => (
-    <div data-testid="edit-role-modal">
-      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} centered={true}>
-        <Modal.Header closeButton>
+    // <div data-testid="edit-role-modal">
+      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} size="sm">
+        <Modal.Header>
           <Modal.Title>{t("Edit Role")}</Modal.Title>
+          <div className="d-flex align-items-center">
+              <CloseIcon onClick={handleCloseEditRoleModal} data-testid="role-modal-close"/>
+          </div>
         </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
+        <Modal.Body className="role-modal-body">
+        <CustomTabs
+          defaultActiveKey={key}
+          onSelect={setKey}
+          tabs={tabs}
+          dataTestId="edit-roles-tabs"
+          ariaLabel="Edit roles tabs"
+          className="d-flex gap-3"
+        />
+          {/* <Form.Group className="mb-3">
             <Form.Label htmlFor="edit-role-name" aria-required>
               {t("Role Name")}
             </Form.Label>
@@ -528,10 +799,27 @@ const Roles = React.memo((props: any) => {
                 </div>
               ))}
             </div>
-          </Form.Group>
+          </Form.Group> */}
         </Modal.Body>
         <Modal.Footer>
-          <button
+        <CustomButton
+            variant={"primary"}
+            size="lg"
+            label={t("Save Changes")}
+            // disabled={disabled}
+            onClick={handleUpdateRole}
+            dataTestId="create-new-role-modal-submit-button"
+            // ariaLabel={primaryBtnariaLabel}
+            />
+          <CustomButton
+            variant={"secondary"}
+            size="lg"
+            label={t("Discard Changes")}
+            onClick={handleCloseEditRoleModal}
+            dataTestId="create-new-role-modal-cancel-button"
+            // ariaLabel={primaryBtnariaLabel}
+          />
+          {/* <button
             type="button"
             className="btn btn-link text-dark"
             onClick={handleCloseEditRoleModal}
@@ -547,10 +835,10 @@ const Roles = React.memo((props: any) => {
             data-testid="edit-role-modal-save-button"
           >
             {t("Save")}
-          </Button>
+          </Button> */}
         </Modal.Footer>
       </Modal>
-    </div>
+    // </div>
   );
 
   const noData = () => (

@@ -199,45 +199,63 @@ select option:hover {
 }
 
 /* Custom Form.Check */
-.custom-checkbox .form-check-input {
-  width: 1.25em;
-  height: 1.25em;
-  border-radius: var(--radius-sm);
-  border: 2px solid $primary !important;
-  background-color: transparent;
-  position: relative;
+.form-check{
+  .form-check-input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid $primary !important;
+    background-color: transparent;
+    position: relative;
+    float: none !important;
 
-  &:focus {
-    box-shadow: none;
-  }
+    &:focus {
+      box-shadow: none;
+    }
 
-  &:checked {
-    background-color: var(--ff-white) !important;
-    border-color: $primary !important;
+    &:checked {
+      background-color: var(--ff-white) !important;
+      border-color: $primary !important;
 
-    &:after {
-      content: '';
-      position: absolute;
-      top: 0.1em;
-      left: 0.35em;
-      width: 0.35em;
-      height: 0.7em;
-      border: solid $primary;
-      border-width: 0 0.15em 0.15em 0;
-      transform: rotate(45deg);
+      &::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        left: 4px;
+        width: 5px;
+        height: 8px;
+        border: solid $primary;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+    &:indeterminate {
+      background-color: transparent !important;
+      border-color: $primary !important;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 2px;
+        background-color: $primary;
+        transform: translate(-50%, -50%);
+      }
     }
   }
+  .form-check-label {
+    color: var(--default-font-color);
+    margin-left: 8px;
+    margin-top: var(--spacer-025);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-sm);
+    line-height: var(--text-line-height);
+  
+  }
 }
 
-.custom-checkbox .form-check-label {
-  color: var(--default-font-color);
-  margin-left: var(--default-font-color);
-  margin-top: var(--spacer-025);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
 
-}
 
 //FormInput styles
 
