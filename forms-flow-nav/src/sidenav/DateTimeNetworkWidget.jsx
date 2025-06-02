@@ -1,6 +1,6 @@
 import "./Sidebar.scss";
-import React, { useState, useEffect } from "react";
-import moment from "moment";
+import { useState, useEffect } from "react";
+import moment from "moment-timezone";
 import { WifiOff, Wifi } from "lucide-react";
 
 const DateTimeNetworkWidget = () => {
@@ -11,12 +11,12 @@ const DateTimeNetworkWidget = () => {
 
   useEffect(() => {
     const updateTime = () => {
-      const now = moment();
+      const now = moment().tz("America/Los_Angeles"); // Pacific Time
       setTime(now.format("HH:mm"));
       setDate(now.format("dddd, YYYY-MM-DD"));
 
       const hour = now.hour();
-      setIsDaytime(hour >= 6 && hour < 18); // Sun between 6AM - 6PM
+      setIsDaytime(hour >= 6 && hour < 18);
     };
 
     const updateNetworkStatus = () => {
