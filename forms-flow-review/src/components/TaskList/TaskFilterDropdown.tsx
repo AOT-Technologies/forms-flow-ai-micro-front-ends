@@ -146,7 +146,7 @@ const TaskListDropdownItems = memo(() => {
     }
 
     return filterDropdownItemsArray;
-  }, [filtersAndCount, defaultFilter,filterList ]);
+  }, [filtersAndCount, defaultFilter,filterList,userDetails ]);
 
   const title = selectedFilter
     ? `${isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name)} (${

@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { fetchBPMTaskCount,fetchFilterList, saveFilterPreference } from "../api/services/filterServices";
 import { useSelector,useDispatch } from "react-redux";
 import { RootState } from "../reducers/index.js";
-import { setBPMFilterList,setBPMFiltersAndCount, setBPMTaskList } from "../actions/taskActions";
+import { setBPMFilterList } from "../actions/taskActions";
 
 
 interface ReorderTaskFilterModalProps {
@@ -86,9 +86,9 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         try {
           await saveFilterPreference(updatedFiltersPreference);
 
-          const { data } = await fetchFilterList();
-          dispatch(fetchBPMTaskCount(data.filters));
-          dispatch(setBPMFilterList(data.filters));
+          const { data: { filters } } = await fetchFilterList();
+          dispatch(fetchBPMTaskCount(filters));
+          dispatch(setBPMFilterList(filters));
           setShowReorderFilterModal(false);
         } catch (error) {
           console.error("Failed to save filter preferences:", error);
