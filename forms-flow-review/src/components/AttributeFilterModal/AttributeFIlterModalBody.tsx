@@ -245,39 +245,49 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     }
 
 
-    const buildNewProcessVariables = () => {
-      // need to feth task list based on selected attribute filter
+   const buildNewProcessVariables = () => {
+    // need to feth task list based on selected attribute filter
       // need to reset all params
       // need to rest all pagination and date
-      if (!selectedFilter) return;
+  if (!selectedFilter) return;
 
-      //this is current selected filter criteria
-      const currentCriteria = cloneDeep(selectedFilter.criteria);
-      const newProcessVariable = [];
+  //this is current selected filter criteria
+  const currentCriteria = cloneDeep(selectedFilter.criteria);
+  const newProcessVariable = [];
 
-      const types = taskVariables.reduce((acc, item) => {
-        acc[item.key] = item.type;
-        return acc;
-      }, {});
+  const types = taskVariables.reduce((acc, item) => {
+    acc[item.key] = item.type;
+    return acc;
+  }, {});
 
-      const ignoredKeys = ["assignee"];
-      Object.keys(attributeData).forEach((key) => {
-        if (!ignoredKeys.includes(key) && attributeData[key]) {
-          newProcessVariable.push({
-            name: key,
-            operator: (types[key] === "number" || key === "applicationId")? "eq" : "like",
-            value:
-                key === "applicationId"
-                ? JSON.parse(attributeData[key])
-                :key === "roles" ? removeSlashFromValue(attributeData[key])
-                : attributeData[key],
-          });
-        }
+  const ignoredKeys = ["assignee"];
+
+  Object.keys(attributeData).forEach((key) => {
+    if (!ignoredKeys.includes(key) && attributeData[key]) {
+      const isNumberOrAppId = types[key] === "number" || key === "applicationId";
+      const operator = isNumberOrAppId ? "eq" : "like";
+
+      let value;
+      if (key === "applicationId") {
+        value = JSON.parse(attributeData[key]);
+      } else if (key === "roles") {
+        value = removeSlashFromValue(attributeData[key]);
+      } else {
+        value = attributeData[key];
+      }
+
+      newProcessVariable.push({
+        name: key,
+        operator,
+        value,
       });
-      newProcessVariable.push(...currentCriteria.processVariables);
-      return newProcessVariable;
-    };
-     const newProcessVariables = buildNewProcessVariables(); 
+    }
+  });
+
+  newProcessVariable.push(...currentCriteria.processVariables);
+  return newProcessVariable;
+};
+
 
       
 

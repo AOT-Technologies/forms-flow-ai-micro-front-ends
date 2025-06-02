@@ -50,20 +50,19 @@ const TaskListDropdownItems = memo(() => {
     setShowTaskFilterModal((prev) => !prev); 
   };
 const changeFilterSelection = (filter) => { 
-  if (filter?.id == defaultFilter) return;
+  if (filter?.id === defaultFilter) return;
 
-  let upcomingFilter = filterList.find((item) => item.id == filter.id);
+  //if selecetd filter is not in filter list, then select All tasks filter
+  const upcomingFilter =
+    filterList.find(item => item.id === filter?.id) ||
+    filterList.find(item => item.name === "All taskss"); //
 
-  if (!upcomingFilter) {
-    // If the Selected filter is not found, find the "All taskss" filter
-    upcomingFilter = filterList.find((item) => item.name === "All taskss");
-  }
-
-  if (!upcomingFilter) return; 
+  if (!upcomingFilter) return;
 
   dispatch(setDefaultFilter(upcomingFilter.id));
   updateDefaultFilter(upcomingFilter.id);
 };
+
 
   
   const filterDropdownItems = useMemo(() => {

@@ -188,10 +188,11 @@ const SaveFilterTab = ({
               size="md"
               onClick={handleUpdateFilter}
               icon={
-                successState?.showSuccess ? " " : (
-                  <UpdateIcon color={saveIconColor} />
-                )
+                successState?.showSuccess
+                  ? null
+                  : <UpdateIcon color={saveIconColor} />
               }
+
               label={
               successState?.showSuccess ?  `Updated! (${successState.countdown})` : "Update This Filter"
             }
