@@ -49,14 +49,22 @@ const TaskListDropdownItems = memo(() => {
   const handleToggleFilterModal = () => {
     setShowTaskFilterModal((prev) => !prev); 
   };
+const changeFilterSelection = (filter) => { 
+  if (filter?.id == defaultFilter) return;
 
-  const changeFilterSelection = (filter) => { 
-    if (filter?.id == defaultFilter) return;
-    const upcomingFilter = filterList.find((item) => item.id == filter.id);
-    if (!upcomingFilter) return;
-    dispatch(setDefaultFilter(upcomingFilter.id));
-    updateDefaultFilter(upcomingFilter.id);
-  };
+  let upcomingFilter = filterList.find((item) => item.id == filter.id);
+
+  if (!upcomingFilter) {
+    // If the Selected filter is not found, find the "All taskss" filter
+    upcomingFilter = filterList.find((item) => item.name === "All taskss");
+  }
+
+  if (!upcomingFilter) return; 
+
+  dispatch(setDefaultFilter(upcomingFilter.id));
+  updateDefaultFilter(upcomingFilter.id);
+};
+
   
   const filterDropdownItems = useMemo(() => {
     const filterDropdownItemsArray = [];
@@ -111,7 +119,7 @@ const TaskListDropdownItems = memo(() => {
           icon = <SharedWithMeIcon className="shared-icon" />;
         }
       return { 
-        className:  filter.id === selectedFilter.id ? "selected-filter-item" : "",
+        className:  filter.id === selectedFilter?.id ? "selected-filter-item" : "",
         content: <span className="d-flex justify-content-between align-items-center">
           {t(filter.name)} ({filter.count})
           {icon && <span>{icon}</span>}

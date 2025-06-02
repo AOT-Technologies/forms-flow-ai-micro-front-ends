@@ -44,8 +44,9 @@ const SaveFilterTab = ({
   const [filterNameError, setFilterNameError] = useState("");
   const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
   const saveIconColor = getIconColor(
-    createAndUpdateFilterButtonDisabled || filterNameError
+    createAndUpdateFilterButtonDisabled || filterNameError || deleteSuccess?.showSuccess
   );
+  const deleteIconColor = getIconColor(successState?.showSuccess);
   const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE);
   const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
   const isCreateFilters = userRoles?.includes("create_filters");
@@ -59,6 +60,8 @@ const SaveFilterTab = ({
   const viewOnly = !isFilterAdmin && canAccess;
   const editRole = isFilterAdmin && canAccess;
   const isCreator = filterToEdit?.createdBy === userDetails?.preferred_username;
+  const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
+
 
   let saveAndUpdateButtonVariant = "secondary"; // Default value
   if (successState.showSuccess) {
@@ -175,7 +178,7 @@ const SaveFilterTab = ({
   };
 
   const renderActionButtons = () => {
-    if (filterToEdit && filterToEdit?.id) {
+    if (filterToEdit && filterToEdit?.id && filterToEdit.name !== "All Taskss") {
       if (canAccess && isFilterAdmin) {
         return (
           <div className="pt-4 d-flex">
@@ -183,15 +186,15 @@ const SaveFilterTab = ({
               className="me-3"
               variant={saveAndUpdateButtonVariant}
               size="md"
-              label={t("Update This Filter")}
               onClick={handleUpdateFilter}
               icon={
-                successState?.showSuccess ? (
-                  successState.countdown
-                ) : (
+                successState?.showSuccess ? " " : (
                   <UpdateIcon color={saveIconColor} />
                 )
               }
+              label={
+              successState?.showSuccess ?  `Updated! (${successState.countdown})` : "Update This Filter"
+            }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
               disabled={deleteSuccess?.showSuccess || createAndUpdateFilterButtonDisabled || filterNameError}
@@ -199,9 +202,12 @@ const SaveFilterTab = ({
             <CustomButton
               variant={deleteButtonVariant}
               size="md"
-              label={t("Delete This Filter")}
               onClick={handleDeleteFilter}
-              icon={deleteSuccess?.showSuccess ? deleteSuccess.countdown : <DeleteIcon />}
+              icon={deleteSuccess?.showSuccess ? "" : <DeleteIcon color={deleteIconColor}/>}
+             
+              label={
+              deleteSuccess?.showSuccess ?  `Deleted! (${deleteSuccess.countdown})` : "Delete This Filter"
+            }
               dataTestId="delete-task-filter"
               ariaLabel={t("Delete This Filter")}
               disabled={successState?.showSuccess}
@@ -212,20 +218,21 @@ const SaveFilterTab = ({
       return null; 
     }
 
-    if (isCreateFilters) {
+    if (isCreateFilters && selectedFilter.name !== "All Taskss") {
       return (
         <div className="pt-4">
           <CustomButton
             size="md"
             variant={saveAndUpdateButtonVariant}
-            label={t("Save This Filter")}
             onClick={handleSaveCurrentFilter}
             icon={
-              successState?.showSuccess ? (
-                successState.countdown
-              ) : (
+              successState?.showSuccess ? "" : (
                 <SaveIcon color={saveIconColor} />
               )
+            }
+
+            label={
+              successState?.showSuccess ? `Saved! (${successState.countdown})` : "Save This Filter"
             }
             dataTestId="save-task-filter"
             ariaLabel={t("Save Task Filter")}

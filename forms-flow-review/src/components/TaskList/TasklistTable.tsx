@@ -13,6 +13,7 @@ import { isEqual, cloneDeep } from "lodash";
 import {
   setBPMTaskListActivePage,
   setFilterListSortParams,
+  setIsUnsavedFilter,
   setSelectedFilter,
   setTaskListLimit,
 } from "../../actions/taskActions";
@@ -116,6 +117,8 @@ const TaskListTable = () => {
       return variable;
     });
     dispatch(setSelectedFilter({ ...updatedData, variables }));
+    dispatch(setIsUnsavedFilter(true));
+
   };
 
   useEffect(() => {

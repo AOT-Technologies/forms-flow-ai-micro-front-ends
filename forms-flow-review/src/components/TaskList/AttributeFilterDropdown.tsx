@@ -103,11 +103,11 @@ const AttributeFilterDropdown = () => {
     };
 
     const clearAttributeFilter = {
-      content: <em>{t("not select")}</em>,
+      content: <em>{t("All Fields")}</em>,
       onClick: () => changeAttributeFilterSelection(null),
       type: "none",
       dataTestId: "no-attr-filters",
-      ariaLabel: t("no select"),
+      ariaLabel: t("All Fields"),
     };
 
     const customAttribute = {
@@ -116,7 +116,7 @@ const AttributeFilterDropdown = () => {
           <span>
             <AddIcon className="filter-plus-icon" />
           </span>{" "}
-          {t("Custom Attribute Filter")}
+          {t("Custom Form Fields")}
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
@@ -159,7 +159,7 @@ const AttributeFilterDropdown = () => {
           ? t("Unsaved Filter")
           : t(selectedAttributeFilter.name)
       }`
-    : t("Select Filter");
+    : t("All Fields");
 
   return (
     <>

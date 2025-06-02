@@ -23,14 +23,7 @@ export interface FilterCriteria {
     label: string;
   }
   
-  export interface TaskVisibleAttributes {
-    applicationId: boolean;
-    assignee: boolean;
-    created: boolean;
-    dueDate: boolean;
-    followUp: boolean;
-    priority: boolean;
-  }
+
   
   export interface Filter {
     created?: string;
@@ -47,7 +40,6 @@ export interface FilterCriteria {
     status?: string;
     createdBy?: string;
     modifiedBy?: string;
-    taskVisibleAttributes?: TaskVisibleAttributes;
     parentFilterId?: string | null;
     editPermission?: boolean;
     filterType?: string;
