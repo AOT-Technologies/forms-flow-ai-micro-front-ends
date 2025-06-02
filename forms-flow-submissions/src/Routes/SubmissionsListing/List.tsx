@@ -1,6 +1,11 @@
 import React from 'react';
+import { CollapsibleSearch } from "@formsflow/components";
 
 const SubmissionsList = ()=>{
-    return <h1> Hello world</h1>
+    return (
+        <>
+        <CollapsibleSearch />
+        </>
+    )
 }
 export default SubmissionsList;

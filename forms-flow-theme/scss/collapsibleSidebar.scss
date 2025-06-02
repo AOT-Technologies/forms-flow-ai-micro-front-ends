@@ -1,0 +1,90 @@
+$primary: var(--ff-primary);
+$white-color: var(--ff-white);
+$gray-darkest: var(--ff-gray-darkest);
+$gray-medium: var(--ff-gray-medium);
+$expanded-width : 20rem;
+$chevron-bg: #5e61f2;
+.collapsible-toggle {
+    writing-mode: vertical-rl;
+    height: 90vh;
+    border: 1px solid $primary;
+    color: $primary;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    border-radius: var(--radius-modal);
+    position: relative;
+    cursor: pointer;
+    font-weight: var(--font-weight-xl);
+    font-size: var(--font-size-sm);
+    line-height: 120%;
+    transition: width 0.4s ease;
+    background-color: $white-color;
+    overflow: hidden;
+    width: 3rem;
+  
+    &.expanded {
+      width: $expanded-width;
+    }
+  
+    .chevron-icon {
+      height: 2.188rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: $chevron-bg;
+        .collapse-text {
+          writing-mode: horizontal-tb;
+          font-size: var(--font-size-sm);
+          font-weight: var(--font-weight-xl);
+          color: $white-color;
+          margin-left: var(--spacer-050);
+        }
+    }
+  
+    .collapsible-label {
+      writing-mode: vertical-rl;
+      text-align: end;
+      transform: rotate(180deg);
+      font-style: italic;
+    //   margin-top: var(--spacer-100);
+      padding: var(--spacer-100) var(--spacer-075);
+    }
+  
+    .panel-content {
+      display: flex;
+      flex-direction: column;
+      writing-mode: horizontal-tb;
+      height: 100%;
+      width: 100%;
+      gap: var(--spacer-100);
+      justify-content: space-between;
+  
+      .main-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacer-100);
+        padding: var(--spacer-150) var(--spacer-125);
+  
+        .panel-width {
+          width: 100%;
+          text-align: start;
+  
+          .panel-label {
+            color: $gray-darkest;
+          }
+        }
+      }
+  
+      .search-clear {
+        display: flex;
+        gap: var(--spacer-100);
+        padding: var(--spacer-150) var(--spacer-125);
+        border-top: 1px solid $gray-medium;
+      }
+    }
+  }
+  
