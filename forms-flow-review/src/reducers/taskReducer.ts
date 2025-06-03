@@ -53,7 +53,7 @@ interface TaskAction {
 const TaskHandler = (state = initialState, action: TaskAction) => {
   switch (action.type) {
     case ACTION_CONSTANTS.BPM_LIST_TASKS:
-      return { ...state, tasksList: action.payload, taskIds: new Set(action.payload?.map(i=>i.id)|| [])};
+      return { ...state, tasksList: action.payload, taskIds: new Set(action.payload?.map(i=>i.id) ?? [])};
     case ACTION_CONSTANTS.IS_ASSIGNED:
       return { ...state, isAssigned: action.payload };
     case ACTION_CONSTANTS.BPM_USER_LIST:

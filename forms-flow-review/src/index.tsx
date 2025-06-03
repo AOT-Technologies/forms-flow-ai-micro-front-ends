@@ -27,7 +27,7 @@ const authorizedRoles = new Set([
 ]);
 
 interface SocketUpdateParams {
-  refreshedTaskId: string | number;
+  refreshedTaskId: string;
   forceReload: boolean;
   isUpdateEvent: boolean;
 }
@@ -56,7 +56,7 @@ const Review = React.memo((props: any) => {
   }, []);
 
   useEffect(() => {
-    StorageService.save("tenantKey", tenantId || "");
+    StorageService.save("tenantKey", tenantId ?? "");
   }, [tenantId]);
 
   useEffect(() => {
@@ -87,6 +87,7 @@ const Review = React.memo((props: any) => {
     });
   }, [isAuth]);
 
+  /* ------------------------ handling socket callback function ------------------------ */
   const checkTheTaskIdExistThenRefetchTaskList = (taskId) => {
     // if the id exist or taskList empty we need to recall
     const isExist = taskIds.has(taskId)
@@ -96,37 +97,49 @@ const Review = React.memo((props: any) => {
       );
     }
   };
-  const SocketIOCallback = ({
-    refreshedTaskId,
-    forceReload,
-    isUpdateEvent,
-  }: SocketUpdateParams) => {
-    /**
-     * use of this socket call back , need to update task realtime and also tasklist if the task id is exist inthe tasklist
+
+  const handleTaskUpdate = (refreshedTaskId: string) => {
+  if (taskId === refreshedTaskId) {
+    // if a task opened, some changes made against this task we need to recall the details
+    getOnlyTaskDetails(refreshedTaskId).then((response) => {
+      dispatch(
+        setBPMTaskDetail({
+          ...response.data,
+          variables: taskDetails?.variables,
+        })
+      );
+    });
+  }
+  checkTheTaskIdExistThenRefetchTaskList(refreshedTaskId);
+};
+
+const handleForceReload = (refreshedTaskId: string) => {
+  checkTheTaskIdExistThenRefetchTaskList(refreshedTaskId);
+  // TBD: Future scope: Handle two users scenario where one completes the task
+};
+
+const SocketIOCallback = ({
+  refreshedTaskId,
+  forceReload,
+  isUpdateEvent,
+}: SocketUpdateParams) => {
+  if (!refreshedTaskId) return;
+   /**
+     * use of this socket call back , need to update task realtime and 
+     * also tasklist if the task id is exist inthe tasklist
      */
-    if (isUpdateEvent && refreshedTaskId) {
-      // if a task opened, some changes made against this task we need to recall the details
-      if (taskId == refreshedTaskId) {
-        // need to call the task details again
-        getOnlyTaskDetails(refreshedTaskId).then((response) => {
-          dispatch(
-            setBPMTaskDetail({
-              ...response.data,
-              variables: taskDetails?.variables,
-            })
-          );
-        });
-      }
-      checkTheTaskIdExistThenRefetchTaskList(refreshedTaskId);
-    } else if (forceReload) {
-      // TBD: if two users opened same task and one person completed the task what we need to do
-      checkTheTaskIdExistThenRefetchTaskList(refreshedTaskId);
-    }
-  };
+  if (isUpdateEvent) {
+    handleTaskUpdate(refreshedTaskId);
+  } else if (forceReload) {
+    handleForceReload(refreshedTaskId);
+  }
+};
+
+ 
 
   useEffect(() => {
     const handleConnection = (
-      refreshedTaskId: string | number,
+      refreshedTaskId: string,
       forceReload: boolean,
       isUpdateEvent: boolean
     ) => {
