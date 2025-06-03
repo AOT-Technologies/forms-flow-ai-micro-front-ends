@@ -178,7 +178,7 @@ const SaveFilterTab = ({
   };
 
   const renderActionButtons = () => {
-    if (filterToEdit && filterToEdit?.id && filterToEdit.name !== "All Taskss") {
+    if (filterToEdit && filterToEdit?.id && filterToEdit.name !== "All Tasks") {
       if (canAccess && isFilterAdmin) {
         return (
           <div className="pt-4 d-flex">
@@ -219,7 +219,7 @@ const SaveFilterTab = ({
       return null; 
     }
 
-    if (isCreateFilters && selectedFilter.name !== "All Taskss") {
+    if (isCreateFilters && selectedFilter.name !== "All Tasks") {
       return (
         <div className="pt-4">
           <CustomButton

@@ -55,7 +55,7 @@ const changeFilterSelection = (filter) => {
   //if selecetd filter is not in filter list, then select All tasks filter
   const upcomingFilter =
     filterList.find(item => item.id === filter?.id) ||
-    filterList.find(item => item.name === "All taskss"); //
+    filterList.find(item => item.name === "All tasks"); 
 
   if (!upcomingFilter) return;
 
