@@ -42,6 +42,8 @@ const initialState = {
   filterToEdit:null,
   attributeFilterToEdit:null,
   dateRange:{startDate: null, endDate: null},
+  taskAssignee:'',
+  taskDetailsLoading: false,
 };
 
 interface TaskAction {
@@ -146,6 +148,11 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
         return { ...state, appHistory: action.payload };
       case ACTION_CONSTANTS.SET_DATE_RANGE_FILTER:
         return { ...state, dateRange: action.payload };
+        case ACTION_CONSTANTS. SET_TASK_ASSIGNEE:
+        return { ...state, taskAssignee: action.payload };
+         case ACTION_CONSTANTS.SET_TASK_DETAILS_LOADING:
+        return { ...state, taskDetailsLoading: action.payload };
+        
 
     default:
       return state;
