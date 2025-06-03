@@ -199,7 +199,8 @@ select option:hover {
 }
 
 /* Custom Form.Check */
-.form-check{
+.form-check:not(.form-switch),
+.checkbox-container{
   .form-check-input[type="checkbox"] {
     width: 1rem;
     height: 1rem;
