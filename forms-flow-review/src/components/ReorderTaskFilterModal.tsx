@@ -10,9 +10,11 @@ import {
   SharedWithOthersIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
-import { saveFilterPreference } from "../api/services/filterServices";
-import { useSelector } from "react-redux";
+import { fetchBPMTaskCount,fetchFilterList, saveFilterPreference } from "../api/services/filterServices";
+import { useSelector,useDispatch } from "react-redux";
 import { RootState } from "../reducers/index.js";
+import { setBPMFilterList } from "../actions/taskActions";
+
 
 interface ReorderTaskFilterModalProps {
   showModal?: boolean;
@@ -28,6 +30,8 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         (state: RootState) => state.task.userDetails
       );
       const { t } = useTranslation();
+      const dispatch = useDispatch();
+
       const [sortedFilterList, setSortedFilterList] = useState<any[]>([
         filtersList,
       ]);
@@ -69,17 +73,28 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       const handleDiscardChanges = () => {
         onClose();
       };
-      const handleSaveChanges = () => {
-        // here need to call the saveFilterPreference api to save the updated filterList before
-        //   payload only contains the id and sortOrder ,hide: the isChecked
-        const updatedFiltersPreference = sortedFilterList.map((item) => ({
-          filterId: item.id,
-          hide: item.isChecked,
-          sortOrder: item.sortOrder,
-        }));
-        saveFilterPreference(updatedFiltersPreference);
-        setShowReorderFilterModal(false);
+      const handleSaveChanges = async () => {
+        // saveFilterPreference  payload only contains the id and sortOrder ,hide
+        const updatedFiltersPreference = sortedFilterList.map(
+          ({ id, isChecked, sortOrder }) => ({
+            filterId: id,
+            hide: isChecked,
+            sortOrder,
+          })
+        );
+
+        try {
+          await saveFilterPreference(updatedFiltersPreference);
+
+          const { data: { filters } } = await fetchFilterList();
+          dispatch(fetchBPMTaskCount(filters));
+          dispatch(setBPMFilterList(filters));
+          setShowReorderFilterModal(false);
+        } catch (error) {
+          console.error("Failed to save filter preferences:", error);
+        }
       };
+
       const isSaveBtnDisabled = useMemo(() => {
         const original = JSON.stringify(
           updateFilterList.map(({ id, isChecked, sortOrder }) => ({
@@ -145,3 +160,5 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       );
     }
   );
+
+
