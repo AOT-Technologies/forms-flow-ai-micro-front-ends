@@ -17,6 +17,8 @@ $white-color: var(--ff-white);
   &.md {
     width: 15rem;
     height: 2.188rem;
+    background-color: var(--ff-gray-light);
+    border: none;
   }
 
 
@@ -45,6 +47,7 @@ $white-color: var(--ff-white);
   .button-reset{
     background: none;
     cursor: pointer;
+    border-radius: var(--radius-sm) !important;
   }
 }
 

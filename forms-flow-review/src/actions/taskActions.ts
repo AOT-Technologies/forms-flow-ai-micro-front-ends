@@ -274,3 +274,13 @@ export const resetTaskListParams = (data) =>({
   type: ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS,
   payload: data,
 })
+
+export const setTaskAssignee = (data) =>({
+  type: ACTION_CONSTANTS.SET_TASK_ASSIGNEE,
+  payload: data,
+})
+
+export const setTaskDetailsLoading = (data) =>({
+  type: ACTION_CONSTANTS.SET_TASK_DETAILS_LOADING,
+  payload: data,
+})

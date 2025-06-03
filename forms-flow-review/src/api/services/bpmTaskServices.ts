@@ -2,7 +2,7 @@ import API from "../endpoints";
 import { RequestService } from "@formsflow/service";
 import { replaceUrl } from "../../helper/helper";
 import axios from "axios";
-import { setBPMTaskDetail, setCustomSubmission, serviceActionError, setAppHistoryLoading, setApplicationHistoryList } from "../../actions/taskActions";
+import { setBPMTaskDetail, setCustomSubmission, serviceActionError, setAppHistoryLoading, setApplicationHistoryList, setTaskAssignee, setTaskDetailsLoading } from "../../actions/taskActions";
 import { taskDetailVariableDataFormatter } from "./formatterService";
 
 
@@ -51,7 +51,10 @@ export const getBPMTaskDetail = (taskId, ...rest) => {
               };
             }
             dispatch(setBPMTaskDetail(taskDetails));
+            dispatch(setTaskAssignee(taskDetails.assignee));
+            dispatch(setTaskDetailsLoading(false));
             done(null, taskDetails);
+
           }
         })
       )

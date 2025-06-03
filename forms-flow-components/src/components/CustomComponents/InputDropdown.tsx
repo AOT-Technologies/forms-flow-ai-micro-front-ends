@@ -86,18 +86,21 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
     setNewInput('');
   };
 
-  useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-          if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-              setIsDropdownOpen(false);
-          }
-      };
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsDropdownOpen(false);
+      if (onBlurDropDown && !inputValue) {
+        onBlurDropDown();
+      }
+    }
+  };
 
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-      };
-  }, [dropdownRef]);
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [onBlurDropDown, inputValue]);
 
   useEffect(() => {
     if (selectedOption) {
