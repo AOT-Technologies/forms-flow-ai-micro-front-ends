@@ -194,7 +194,7 @@ const SaveFilterTab = ({
               }
 
               label={
-              successState?.showSuccess ?  `${("Updated!")} (${successState.countdown})` : t("Update This Filter")
+              successState?.showSuccess ?  `${t("Updated!")} (${successState.countdown})` : t("Update This Filter")
             }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
