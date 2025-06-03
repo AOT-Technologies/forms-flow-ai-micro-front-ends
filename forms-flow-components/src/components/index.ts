@@ -32,3 +32,4 @@ export * from "./CustomComponents/FilterSortAction";
 export * from "./CustomComponents/SortableHeadder";
 export * from "../customHooks/useSuccessCountdown";
 export * from "./CustomComponents/ResizableTable";
+export * from "./SkeletonLoader/TableSkeletonLoader";
