@@ -53,7 +53,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     setSelected("Me");
     meOnClick?.();
     if(!username){
-      setSelectedName(userData.preferred_username);
+      setSelectedName(`${userData.family_name}, ${userData.given_name}`);
     }
   };
 
@@ -68,17 +68,29 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     handleCloseClick?.();
   };
 
-  const options = Array.isArray(users) && users.length > 0
-  ? users.map((user) => ({
-      label: user.username,
-      value: user.id,
-      onClick: () => {
-           setSelectedName(user.username);
-           setOpenDropdown(false);
-           optionSelect?.(user.username);
-      },
-    }))
+ const options = Array.isArray(users) && users.length > 0
+  ? users.map((user) => {
+      const hasFullName = user.firstName && user.lastName;
+      const label = hasFullName 
+        ? `${user.lastName}, ${user.firstName} (${user.email})` 
+        : user.username;
+
+      const fullName = hasFullName 
+        ? `${user.lastName}, ${user.firstName}` 
+        : user.username;
+
+      return {
+        label,
+        value: user.id,
+        onClick: () => {
+          setSelectedName(fullName);
+          setOpenDropdown(false);
+          optionSelect?.(fullName);
+        },
+      };
+    })
   : [];
+
   // Determine the selected option based on the state
   const selectedOption = selected === "Me" ? selectedName : undefined;
 
