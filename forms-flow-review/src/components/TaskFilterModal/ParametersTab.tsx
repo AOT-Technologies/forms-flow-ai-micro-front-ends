@@ -62,6 +62,8 @@ const ParametersTab = ({
             dataTestIdforDropdown="specific-roles"
             selectedOption={accessValue}
             setNewInput={setAccessValue}
+            required={true}
+
           />
         </div>
       ) : (
@@ -78,6 +80,8 @@ const ParametersTab = ({
             selectedOption={accessValue}
             setNewInput={setAccessValue}
             name="assigneeOptions"
+            required={true}
+
           />
         </div>
       )}

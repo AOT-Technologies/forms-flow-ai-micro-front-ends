@@ -26,7 +26,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   const title = `${t("Form Fields")}: ${
     attributeFilterToEdit && !isUnsavedAttributeFilter
       ? attributeFilterToEdit.name //need to check if it is unsaved or not
-      : t("Unsaved form fields filter")
+      : t("Unsaved Filter")
   }`;
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);

@@ -1567,5 +1567,9 @@ export const RESOURCE_BUNDLES_BG = {
   "Yes, Update This Filter For Everybody": "Да, актуализирайте този филтър за всички",
   "Select Date": "Изберете дата",
   "Save Attribute Filter": "Запази филтъра по атрибути",
-  "Attributes: Unsaved Filter": "Атрибути: Незапазен филтър"
+  "Attributes: Unsaved Filter": "Атрибути: Незапазен филтър",
+  "Custom Form Fields": "Персонализирани формуляри",
+  "Saved!": "Запазено!",
+  "Deleted!": "Изтрито!",
+  "Updated!": "Актуализирано!"
 }

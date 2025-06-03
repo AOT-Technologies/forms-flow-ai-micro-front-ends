@@ -167,24 +167,10 @@ const TaskFilterModalBody = ({
     status: filterToEdit?.status,
     createdBy: filterToEdit?.createdBy,
     modifiedBy: filterToEdit?.modifiedBy,
-    //task visible attributes need to remove after checking with backend
-    taskVisibleAttributes: {
-      applicationId: true,
-      assignee: true,
-      created: true,
-      dueDate: true,
-      followUp: true,
-      priority: true,
-    },
     hide: filterToEdit?.hide,
     filterType: "TASK",
     editPermission: filterToEdit?.editPermission,
     sortOrder: filterToEdit?.sortOrder,
-    //these variables are not used in the filter but keeping for comparison prvious and current filter state
-    description: null,
-    order: null,
-    parentFilterId: null,
-    resourceId: null,
   });
 
   const handleFilterName = (value) => setFilterName(value);
@@ -316,7 +302,7 @@ const TaskFilterModalBody = ({
     return taskVariables
       .filter(
         (taskVar) =>
-          taskVar.type !== "hidden" &&
+          taskVar.type !== "hidden" && taskVar.type !== "radio" &&
           !isDuplicateVariable(taskVar, existingVars)
       )
       .map((variable, index) => ({

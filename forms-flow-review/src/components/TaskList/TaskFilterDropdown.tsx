@@ -6,7 +6,7 @@ import {
 } from "../../helper/permissions";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
-import { setDefaultFilter, setFilterToEdit } from "../../actions/taskActions";
+import { setDefaultFilter, setFilterToEdit, setSelectedFilter } from "../../actions/taskActions";
 import { updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
@@ -49,14 +49,22 @@ const TaskListDropdownItems = memo(() => {
   const handleToggleFilterModal = () => {
     setShowTaskFilterModal((prev) => !prev); 
   };
+const changeFilterSelection = (filter) => { 
+  if (filter?.id === defaultFilter) return;
 
-  const changeFilterSelection = (filter) => { 
-    if (filter?.id == defaultFilter) return;
-    const upcomingFilter = filterList.find((item) => item.id == filter.id);
-    if (!upcomingFilter) return;
-    dispatch(setDefaultFilter(upcomingFilter.id));
-    updateDefaultFilter(upcomingFilter.id);
-  };
+  //if selecetd filter is not in filter list, then select All tasks filter
+  const upcomingFilter =
+    filterList.find(item => item.id === filter?.id) ||
+    filterList.find(item => item.name === "All tasks"); 
+
+  if (!upcomingFilter) return;
+
+  dispatch(setDefaultFilter(upcomingFilter.id));
+  updateDefaultFilter(upcomingFilter.id);
+  dispatch(setSelectedFilter(upcomingFilter));
+};
+
+
   
   const filterDropdownItems = useMemo(() => {
     const filterDropdownItemsArray = [];
@@ -110,8 +118,9 @@ const TaskListDropdownItems = memo(() => {
         } else if (isSharedToPublic || isSharedToMe) {
           icon = <SharedWithMeIcon className="shared-icon" />;
         }
+   
       return { 
-        className:  filter.id === selectedFilter.id ? "selected-filter-item" : "",
+        className:  filter.id === selectedFilter?.id ? "selected-filter-item" : "",
         content: <span className="d-flex justify-content-between align-items-center">
           {t(filter.name)} ({filter.count})
           {icon && <span>{icon}</span>}

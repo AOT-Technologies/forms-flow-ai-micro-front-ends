@@ -20,6 +20,8 @@ import {
   getUserRoles,
   updateFilter,
 } from "../../api/services/filterServices";
+import isEqual from "lodash/isEqual";
+
 import { setAttributeFilterList, setAttributeFilterToEdit, setBPMTaskListActivePage, setBPMTaskLoader, setIsUnsavedAttributeFilter, setSelectedBpmAttributeFilter, setUserGroups } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED, PRIVATE_ONLY_YOU } from "../../constants"; 
 import { StyleServices } from "@formsflow/service";
@@ -49,11 +51,20 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
  
   const limit = useSelector((state: any) => state.task.limit);
   const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
+  const selectedAttributeFilter = useSelector((state: any) => state.task.selectedAttributeFilter);
   const candidateGroups = useSelector((state: any) => state.task.userGroups);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
   const userDetails = useSelector((state: any) => state.task.userDetails);
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
-  
+  const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
+  const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
+  const [filterNameError, setFilterNameError] = useState("");
+    const attributeFilter = useSelector(
+    (state: any) => state.task.attributeFilterToEdit
+  );
+  const [filterName, setFilterName] = useState(attributeFilter?.name || "");
+  const saveIconColor = getIconColor(isUnsavedFilter || !filterName || filterNameError || deleteSuccess?.showSuccess);
+  const deleteIconColor = getIconColor(updateSuccess?.showSuccess);
   const { data: userList } = useSelector(
     (state: any) => state.task.userList
   ) ?? {
@@ -61,9 +72,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   };
 
   const taskVariables = selectedFilter?.variables ?? [];
-  const attributeFilter = useSelector(
-    (state: any) => state.task.attributeFilterToEdit
-  );
+
   const exisitngProcessvariables =
     attributeFilter?.criteria?.processVariables ?? [];
 
@@ -85,8 +94,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     return { ...initialData, ...existingValues };
   });
 
-  const [filterNameError, setFilterNameError] = useState("");
-  const [filterName, setFilterName] = useState(attributeFilter?.name || "");
+  
   const [shareAttrFilter, setShareAttrFilter] = useState(PRIVATE_ONLY_YOU); // need to handle in edit stage
  
   /* ---------------------------- access management --------------------------- */
@@ -129,7 +137,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 
   const assigneeOptions = useMemo(
     () =>
-      userList.map((user) => ({
+      userList?.map((user) => ({
         value: user.username,
         label: user.username,
       })),
@@ -201,6 +209,10 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       return  attributeData["assignee"] ||selectedFilter?.criteria?.assignee;
     };
 
+    const getCandidateGroup = () => {
+      return  attributeData["roles"] ||selectedFilter?.criteria?.candidateGroup;
+    };
+
     const getFilterData = (newProcessVariables): Filter => {
       const assignee = getAssignee();
 
@@ -222,48 +234,62 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         filterType: "ATTRIBUTE",
       };
     };
+         
 
 
-    // TBD: need to discuss about the roles
-    // const removeSlashFromValue = (value)=>{
-    //       return MULTITENANCY_ENABLED && value
-    //       ? tenantKey + "-" + trimFirstSlash(value)
-    //       : trimFirstSlash(value);
-    // }
+
+    const removeSlashFromValue = (value)=>{
+          return MULTITENANCY_ENABLED && value
+          ? tenantKey + "-" + trimFirstSlash(value)
+          : trimFirstSlash(value);
+    }
 
 
-    const buildNewProcessVariables = () => {
-      // need to feth task list based on selected attribute filter
+   const buildNewProcessVariables = () => {
+    // need to feth task list based on selected attribute filter
       // need to reset all params
       // need to rest all pagination and date
-      if (!selectedFilter) return;
+  if (!selectedFilter) return;
 
-      //this is current selected filter criteria
-      const currentCriteria = cloneDeep(selectedFilter.criteria);
-      const newProcessVariable = [];
+  //this is current selected filter criteria
+  const currentCriteria = cloneDeep(selectedFilter.criteria);
+  const newProcessVariable = [];
 
-      const types = taskVariables.reduce((acc, item) => {
-        acc[item.key] = item.type;
-        return acc;
-      }, {});
+  const types = taskVariables.reduce((acc, item) => {
+    acc[item.key] = item.type;
+    return acc;
+  }, {});
 
-      const ignoredKeys = ["assignee"];
-      Object.keys(attributeData).forEach((key) => {
-        if (!ignoredKeys.includes(key) && attributeData[key]) {
-          newProcessVariable.push({
-            name: key,
-            operator: (types[key] === "number" || key === "applicationId")? "eq" : "like",
-            value:
-                key === "applicationId"
-                ? JSON.parse(attributeData[key])
-                // :key === "roles" ? removeSlashFromValue(attributeData[key])
-                : attributeData[key],
-          });
-        }
+  const ignoredKeys = ["assignee"];
+
+  Object.keys(attributeData).forEach((key) => {
+    if (!ignoredKeys.includes(key) && attributeData[key]) {
+      const isNumberOrAppId = types[key] === "number" || key === "applicationId";
+      const operator = isNumberOrAppId ? "eq" : "like";
+
+      let value;
+      if (key === "applicationId") {
+        value = JSON.parse(attributeData[key]);
+      } else if (key === "roles") {
+        value = removeSlashFromValue(attributeData[key]);
+      } else {
+        value = attributeData[key];
+      }
+
+      newProcessVariable.push({
+        name: key,
+        operator,
+        value,
       });
-      newProcessVariable.push(...currentCriteria.processVariables);
-      return newProcessVariable;
-    };
+    }
+  });
+
+  newProcessVariable.push(...currentCriteria.processVariables);
+  return newProcessVariable;
+};
+
+
+      
 
     const searchFilterAttributes = () => {
      
@@ -286,12 +312,14 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       const updatedParams = buildNewProcessVariables();
         const { roles, users } = getTaskAccess(); 
         const assignee = getAssignee();
+        const candiateGroup = getCandidateGroup();
 
         const criteria: FilterCriteria = {
           ...selectedFilter.criteria,
           processVariables: updatedParams,
         };
         criteria.assignee = assignee;
+        criteria.candidateGroup = candiateGroup;
 
         const filterToSave = {
           created: attributeFilter?.created,
@@ -315,6 +343,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         };
         return filterToSave;
     }
+    const noFieldChanged =  isUnsavedFilter ? false :  isEqual(selectedAttributeFilter, createAttributeFilterPayload());
     const saveFilterAttributes = async () => {
       try {
         
@@ -346,7 +375,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     if (attributeFilter?.id) { 
       if (canAccess && isFilterAdmin) {
         return (
-          <div className="pt-4 d-flex">
+          <div className="d-flex">
             <CustomButton
               className="me-3"
               variant={updateButtonVariant}
@@ -354,10 +383,10 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
               label={t("Update This Filter")}
                 onClick={handleUpdateModalClick}
               icon={ updateSuccess?.showSuccess ? 
-                updateSuccess.countdown : <UpdateIcon />}
+                updateSuccess.countdown : <UpdateIcon color={saveIconColor} />}
               dataTestId="save-attribute-filter"
               ariaLabel={t("Update This Filter")}
-              disabled={deleteSuccess.showSuccess}
+              disabled={deleteSuccess.showSuccess ||noFieldChanged}
             />
             <CustomButton
               variant={deleteButtonVariant}
@@ -365,7 +394,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
               label={t("Delete This Filter")}
               onClick={handleDeleteClick}
               icon={deleteSuccess?.showSuccess ? 
-                deleteSuccess.countdown :<DeleteIcon />}
+                deleteSuccess.countdown :<DeleteIcon color={deleteIconColor} />}
               dataTestId="delete-attribute-filter"
               ariaLabel={t("Delete This Filter")}
               disabled={updateSuccess.showSuccess}
@@ -384,9 +413,10 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
             size="md"
             label={t("Save This Filter")}
             onClick={saveFilterAttributes}
-            icon={<SaveIcon />}
+            icon={<SaveIcon color={saveIconColor}/>}
             dataTestId="save-attribute-filter"
             ariaLabel={t("Save Attribute Filter")}
+            disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
           />
         </div>
       );
@@ -420,6 +450,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
           setNewInput={setShareAttrFilter}
           dataTestIdforInput="share-attribute-filter-input"
           dataTestIdforDropdown="share-attribute-filter-options"
+          required={true}
         />
       </div>
       <RenderOwnerShipNotes
@@ -470,7 +501,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
           dataTestId="attribute-filter-results"
           ariaLabel={t("Filter results")}
           onClick={searchFilterAttributes}
-            disabled={(updateSuccess.showSuccess|| deleteSuccess.showSuccess)}
+          disabled={(updateSuccess.showSuccess|| deleteSuccess.showSuccess || noFieldChanged)}
         />
         <CustomButton
           variant="secondary"
