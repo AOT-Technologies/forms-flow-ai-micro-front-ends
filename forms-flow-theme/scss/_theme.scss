@@ -14,6 +14,7 @@ $gray-dark: #4C4C4C;
 $gray-medium-dark: #AFB4B6;
 $gray-medium: #E4E6E7;
 $gray-light: #F2F2F3;
+$transparent: #f2f2f300;
 
 
 $success: $green-dark;
@@ -176,6 +177,7 @@ body {
     background-color: transparent;
     display: block;
     opacity: 0;
+    cursor: pointer;
   }
 
   &:hover {
@@ -190,6 +192,7 @@ body {
       background-clip: padding-box;
       border: var(--spacer-025) solid transparent;
       opacity: 1;
+      cursor: pointer;
     }
   }
 
@@ -197,3 +200,42 @@ body {
     box-shadow: inset 0 0 0 0.0625rem $primary;
   }
 }
+
+
+
+
+// VARIABLES ADDED BY MAX
+
+//base
+$base: 1rem;
+$lineThin: 1px;
+$lineThick: $lineThin*2;
+
+// fonts
+$fontBase: $base;
+$fontSmallest: $fontBase*0.875;
+$fontChoiceHead: $fontBase*1.25;
+$fontLineHeight: 1.2;
+
+$fontModalTitle: $fontBase*1.5;
+
+// borders
+$borderRadiusHeightESM: $base*0.78; // 12.5px
+$borderRadiusHeightSM: $base*1.094; // 17.5px
+$borderRadiusHeightM: $base*1.344;  // 21.5px
+$borderRadiusHeightL: $base*1.594; // 25.5px
+$borderRadiusModal: $base*1.5; // 24px
+
+// color globals
+$colorDivider: $gray-medium;
+$colorDividerDark: $gray-medium-dark;
+
+// modals
+$modalWidthSmall: $base*60;
+$modalWidthLarge: $base*75;
+
+// nav
+$navPadding: $base;
+
+// transitions
+$animSpeed: 300ms;

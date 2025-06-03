@@ -86,12 +86,7 @@ const MenuComponent = ({
       >
         {!noOptionsMenu && (
           <ChevronIcon
-            width="10"
-            height="5"
-            className="custom-chevron"
-            color={getComputedStyle(document.documentElement).getPropertyValue(
-              "--ff-gray-800"
-            )}
+            className="svgIcon-dark"
           />
         )}
         <span>{t(mainMenu)}</span>

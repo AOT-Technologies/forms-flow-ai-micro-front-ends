@@ -10,14 +10,21 @@ $black-color: var(--ff-black);
 
 
 .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  padding: $base;
+
   .modal-dialog {
     display: flex;
     align-items: center;
     justify-content: center;
-    // height: 100vh;
+    width: 100%;
+
     margin: auto;
-    // min-height: auto;
-    // margin: 8.75rem auto !important; // Full height of the viewport
 
     &.show {
       transform: translateY(0) !important;
@@ -32,14 +39,12 @@ $black-color: var(--ff-black);
 
     // for modals with size="sm" . 63.5% given to make it 960px as per figma size
     &.modal-sm {
-      width: 63.5% !important;
-      max-width: 63.5% !important;
+      max-width: $modalWidthSmall !important;
     }
 
     // for modals with size="lg" . 95% given to make it 1440px as per figma size
     &.modal-lg {
-      width: 95.2% !important;
-      max-width: 95.2% !important;
+      max-width: $modalWidthLarge !important;
     }
 
 
@@ -48,12 +53,16 @@ $black-color: var(--ff-black);
       display: flex;
       flex-direction: column;
       width: 100% !important;
-      pointer-events: auto;
+      max-height: calc( 100vh - $base*2);
+
       background-color: var(--ff-white);
       background-clip: padding-box;
+      outline: 0;
+      
       border: none !important;
       border-radius: var(--radius-lg) !important;
-      outline: 0;
+      
+      pointer-events: auto;
 
       &.form-modal-content {
         width: 56.25rem !important;
@@ -91,43 +100,99 @@ $black-color: var(--ff-black);
         flex-shrink: 0;
       }
 
-      .modal-header,
       .modal-footer {
-        height: auto;
-        min-height: 5.9375rem;
-        margin-left: 0 !important;
-        padding: var(--spacer-200) 2.5rem !important;
-        flex-shrink: 0;
-        color: var(--default-font-color);
-        font-size: var(--spacer-150);
-        font-weight: var(--font-weight-sm);
-        line-height: normal;
+        @include paddingLvl2();
+
+        & > * {
+          margin: 0;
+        }
       }
 
       .modal-header {
+        display: flex;
         justify-content: space-between !important;
+        align-items: stretch;
+
+        padding: 0;
+
+        color: var(--default-font-color);
+        font-size: var(--spacer-150);
+        font-weight: var(--font-weight-sm);
 
         .modal-title {
+          @include paddingLvl2();
+
           font-size: var(--font-size-lg) !important;
           font-weight: var(--font-weight-sm) !important;
           line-height: var(--text-line-height) !important;
           text-transform: capitalize !important;
+        }
 
-          b,
-          strong {
-            font-weight: inherit; // Inherit the font-weight from .modal-title
-          }
+        .icon-close {
+          @include clickableFeedback1();
+
+          display: flex;
+          align-items: center;
+
+          padding: 0 $paddingLvl2LR;
         }
       }
 
       .modal-body {
+        @include paddingLvl2();
 
-        &.build-modal-body {
-          padding: 2rem 2.5rem !important;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+
+        &.with-tabs {
+          overflow: hidden;
+
+          padding-bottom: 0 !important;
         }
 
-        &.create-form-modal-body {
+        &.choice {
+          display: flex;
+          flex-direction: row;
+
           padding: 0 !important;
+
+          & > button {
+            @include paddingLvl2();
+            @include clickableFeedback2();
+
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            flex-basis: 0;
+
+            text-align: left;
+
+            border: none;
+            background-color: $white-color;
+
+            &:first-of-type {
+              border-bottom-left-radius: $borderRadiusModal;
+            }
+
+            &:last-of-type {
+              border-bottom-right-radius: $borderRadiusModal;
+            }
+
+            &:not(:last-of-type) {
+              margin: 0 !important;
+  
+              border-right: $lineThin solid $gray-medium;
+            }
+          }
+
+          h3 {
+            @include textBaseHightlight($fontChoiceHead, $primary-color);
+          }
+
+          p {
+            @include textBase($fontBase);
+          }
         }
 
         .message-primary,
@@ -141,33 +206,33 @@ $black-color: var(--ff-black);
           margin-top: var(--spacer-150);
         }
 
-        .content-wrapper {
-          display: flex;
-          width: 14.0625rem;
-          height: 10rem;
-          padding: var(--spacer-250) var(--spacer-200);
-          flex-direction: column;
-          align-items: flex-start;
-          gap: var(--spacer-150);
-          border-left: 0.0625rem solid $gray-medium !important;
-          flex-shrink: 0;
-          position: relative;
-          cursor: pointer;
+        // .content-wrapper {
+        //   display: flex;
+        //   width: 14.0625rem;
+        //   height: 10rem;
+        //   padding: var(--spacer-250) var(--spacer-200);
+        //   flex-direction: column;
+        //   align-items: flex-start;
+        //   gap: var(--spacer-150);
+        //   border-left: 0.0625rem solid $gray-medium !important;
+        //   flex-shrink: 0;
+        //   position: relative;
+        //   cursor: pointer;
 
-          &:first-child {
-            border-left: 0 !important;
-            border-top: 0 !important;
-            border-right: 0 !important;
-          }
+        //   &:first-child {
+        //     border-left: 0 !important;
+        //     border-top: 0 !important;
+        //     border-right: 0 !important;
+        //   }
 
-          &:last-child {
-            border-right: none !important;
-          }
+        //   &:last-child {
+        //     border-right: none !important;
+        //   }
 
-          &.col-6:nth-child(4) {
-            border-right: 0 !important;
-          }
-        }
+        //   &.col-6:nth-child(4) {
+        //     border-right: 0 !important;
+        //   }
+        // }
         
         .text-content {
           display: flex;
@@ -179,6 +244,7 @@ $black-color: var(--ff-black);
           display: -webkit-box;
          -webkit-box-orient: vertical; 
          -webkit-line-clamp: 2; 
+         line-clamp: 2; 
          overflow: hidden; 
          text-overflow: ellipsis; 
          line-height: 1.2em; 
@@ -197,11 +263,6 @@ $black-color: var(--ff-black);
     }
   }
 
-  &.create-form-modal-ee {
-    .modal-dialog {
-      max-width: 57rem;
-    }
-  }
 }
 
 .modal.show .modal-dialog {
@@ -294,6 +355,7 @@ $black-color: var(--ff-black);
     .template-desc {
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       /* Show 2 lines */
       -webkit-box-orient: vertical;
       overflow: hidden;
@@ -310,6 +372,7 @@ $black-color: var(--ff-black);
     .template-desc {
       display: block;
       -webkit-line-clamp: unset;
+      line-clamp: unset;
       overflow: visible;
       white-space: normal;
     }
@@ -403,11 +466,6 @@ $black-color: var(--ff-black);
 
 //settingsmodal 
 .settings-modal {
-  .modal-content{
-    max-height: calc(100vh - 2rem);
-    margin-top: var(--spacer-100);
-    margin-bottom: var(--spacer-100);
-  }
  
 
   .settings-tab-container{
@@ -425,7 +483,7 @@ $black-color: var(--ff-black);
     .custom-tab {
       display: flex;
       gap: var(--spacer-100);  
-      border-bottom: 1px solid $gray-medium !important;  
+      border-bottom: $lineThin solid $gray-light !important;  
       }
       .tab-content { 
         max-height: calc(100vh - 22.3375rem);
@@ -879,8 +937,6 @@ $black-color: var(--ff-black);
 
 
 .task-variable-modal {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
   .modal-body {
     padding: 0px !important;
   }
@@ -1192,16 +1248,16 @@ $black-color: var(--ff-black);
     }
   }
 
-  .custom-tabs {
-    &.nav-tabs {
-      border-bottom: 1px solid $gray-light !important;
-      gap: var(--spacer-100);
-      position: sticky;
-      top: 0;
-      z-index: 1;
-      background-color: $white;
-    }
-  }
+  // .custom-tabs {
+  //   &.nav-tabs {
+  //     border-bottom: 1px solid $gray-light !important;
+  //     gap: var(--spacer-100);
+  //     position: sticky;
+  //     top: 0;
+  //     z-index: 1;
+  //     background-color: $white;
+  //   }
+  // }
 
   .L-style {
     height: 25px;

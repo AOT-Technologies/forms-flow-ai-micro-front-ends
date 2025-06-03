@@ -70,3 +70,228 @@
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
 }
+
+
+
+
+
+// mixins added by Max
+
+@mixin divider {
+  border-bottom: $lineThin solid $colorDivider;
+}
+
+@mixin dividerDarker {
+  border-bottom: $lineThin solid $colorDividerDark;
+}
+
+@mixin textEmphasis {
+  font-weight: 700;
+}
+
+$paddingLvl1LR: var(--spacer-300);
+$paddingLvl1TB: var(--spacer-250);
+$paddingLvl1S: var(--spacer-200);
+
+$paddingLvl2LR: var(--spacer-250);
+$paddingLvl2TB: var(--spacer-200);
+$paddingLvl2S: var(--spacer-150);
+
+$paddingLvl3LR: var(--spacer-150);
+$paddingLvl3TB: var(--spacer-125);
+$paddingLvl3S: var(--spacer-100);
+
+$paddingLvl4S: var(--spacer-075);
+
+$paddingLvl5LR: var(--spacer-100);
+$paddingLvl5TB: var(--spacer-075);
+$paddingLvl5S: var(--spacer-050);
+
+$paddingLvl6LR: var(--spacer-075);
+$paddingLvl6TB: var(--spacer-050);
+$paddingLvl6S: var(--spacer-025);
+
+
+$paddingLvl2MinLR: var(--spacer-250);
+$paddingLvl2MinTB: var(--spacer-100);
+$paddingLvl2MinS: var(--spacer-100);
+
+@mixin paddingLvl1 {
+  padding: $paddingLvl1TB $paddingLvl1LR !important;
+
+  & > * {
+    margin-bottom: $paddingLvl1S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+@mixin paddingLvl2 {
+  padding: $paddingLvl2TB $paddingLvl2LR !important;
+
+  & > * {
+    margin-bottom: $paddingLvl2S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+@mixin paddingLvl2-outter {
+  padding: 0 !important;
+  
+  gap: $paddingLvl2S;
+
+  // & > * {
+    // margin-bottom: $paddingLvl2S !important;
+
+    // &:last-child {
+    //   margin-bottom: 0 !important;
+    // }
+  // }
+}
+
+@mixin paddingLvl2Min-outter {
+  padding: $paddingLvl2MinTB $paddingLvl2MinLR !important;
+}
+
+@mixin paddingLvl2-buttons {
+  padding: $paddingLvl2TB $paddingLvl2LR !important;
+  gap: var(--spacer-100) !important;
+}
+
+@mixin paddingLvl3 {
+  padding: $paddingLvl3TB $paddingLvl3LR !important;
+
+  & > * {
+    margin-bottom: $paddingLvl3S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+@mixin paddingLvl4-inner {
+  padding: 0 !important;
+
+  & > * {
+    margin-bottom: $paddingLvl4S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+@mixin paddingLvl5 {
+  padding: $paddingLvl5TB $paddingLvl5LR !important;
+
+  & > * {
+    margin-bottom: $paddingLvl5S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+@mixin paddingLvl6 {
+  padding: $paddingLvl6TB $paddingLvl6LR !important;
+
+  & > * {
+    margin-bottom: $paddingLvl6S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+@mixin textBase($fontSize: $fontBase, $fontColor: $gray-darkest) {
+  font-size: $fontSize;
+  line-height: $fontLineHeight;
+  color: $fontColor;
+  font-weight: 400;
+
+  padding: 0;
+  margin: 0;
+}
+
+@mixin textBaseHightlight($fontSize: $fontBase, $fontColor: $gray-darkest) {
+  @include textBase($fontSize, $fontColor);
+
+  font-weight: 700;
+}
+
+@mixin textModalHighlight {
+  @include textBase();
+
+  font-weight: 700;
+}
+
+@mixin textCardHead {
+  @include textBase($fontBase*1.5);
+
+  font-weight: 700;
+}
+
+@mixin clickableFeedback1 {
+  cursor: pointer;
+  opacity: 1;
+
+  transition: 300ms opacity;
+
+  &[disabled],
+  &.loading {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &:not([disabled]):hover,
+  &:not(.loading):hover {
+    opacity: 0.8;
+  }
+}
+
+@mixin clickableFeedback2 {
+  cursor: pointer;
+
+  transition: 300ms background-color;
+
+  &[disabled] {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &:not([disabled]):hover {
+    background-color: $primary-light;
+  }
+}
+
+
+@mixin svgIcon($color: $primary) {
+  overflow: visible;
+  width: $base;
+  height: auto;
+
+  fill: none;
+
+  transition: all 300ms;
+
+  & path {
+    stroke-width: $lineThick;
+    stroke: $color;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  &.loading {
+    animation: rotating 1s linear infinite;
+  }
+}
+

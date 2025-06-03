@@ -163,11 +163,12 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
             data-testid="clear-input" 
             aria-label="Clear input"
             width={9}
-            height={9}/>;
+            height={9}
+            />;
     } else {
     // Default to ChevronIcon in all other cases
     return <ChevronIcon 
-            color={disabled ? disabledColor : primaryColor} 
+            className={disabled ? "svgIcon-disabled" : "svgIcon-primary"} 
             data-testid="dropdown-input" 
             aria-label="dropdown input"
             />;

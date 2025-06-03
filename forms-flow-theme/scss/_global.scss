@@ -1,0 +1,13 @@
+// global styles, iestyles not attached to any component
+
+.svgIcon-dark {
+  @include svgIcon($gray-darkest);
+}
+
+.svgIcon-primary {
+  @include svgIcon();
+}
+
+.svgIcon-onDark {
+  @include svgIcon($white);
+}
