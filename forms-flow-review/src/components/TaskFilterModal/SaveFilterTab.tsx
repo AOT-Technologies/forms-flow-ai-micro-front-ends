@@ -194,7 +194,7 @@ const SaveFilterTab = ({
               }
 
               label={
-              successState?.showSuccess ?  `Updated! (${successState.countdown})` : "Update This Filter"
+              successState?.showSuccess ?  `${("Updated!")} (${successState.countdown})` : t("Update This Filter")
             }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
@@ -207,8 +207,9 @@ const SaveFilterTab = ({
               icon={deleteSuccess?.showSuccess ? "" : <DeleteIcon color={deleteIconColor}/>}
              
               label={
-              deleteSuccess?.showSuccess ?  `Deleted! (${deleteSuccess.countdown})` : "Delete This Filter"
+              deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : t("Delete This Filter")
             }
+             
               dataTestId="delete-task-filter"
               ariaLabel={t("Delete This Filter")}
               disabled={successState?.showSuccess}
@@ -233,8 +234,11 @@ const SaveFilterTab = ({
             }
 
             label={
-              successState?.showSuccess ? `Saved! (${successState.countdown})` : "Save This Filter"
+              successState?.showSuccess
+                ? `${t("Saved!")} (${successState.countdown})`
+                : t("Save This Filter")
             }
+
             dataTestId="save-task-filter"
             ariaLabel={t("Save Task Filter")}
             disabled={createAndUpdateFilterButtonDisabled || filterNameError}

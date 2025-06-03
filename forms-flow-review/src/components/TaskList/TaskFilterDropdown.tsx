@@ -6,7 +6,7 @@ import {
 } from "../../helper/permissions";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
-import { setDefaultFilter, setFilterToEdit } from "../../actions/taskActions";
+import { setDefaultFilter, setFilterToEdit, setSelectedFilter } from "../../actions/taskActions";
 import { updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
@@ -61,6 +61,7 @@ const changeFilterSelection = (filter) => {
 
   dispatch(setDefaultFilter(upcomingFilter.id));
   updateDefaultFilter(upcomingFilter.id);
+  dispatch(setSelectedFilter(upcomingFilter));
 };
 
 
@@ -117,6 +118,7 @@ const changeFilterSelection = (filter) => {
         } else if (isSharedToPublic || isSharedToMe) {
           icon = <SharedWithMeIcon className="shared-icon" />;
         }
+   
       return { 
         className:  filter.id === selectedFilter?.id ? "selected-filter-item" : "",
         content: <span className="d-flex justify-content-between align-items-center">

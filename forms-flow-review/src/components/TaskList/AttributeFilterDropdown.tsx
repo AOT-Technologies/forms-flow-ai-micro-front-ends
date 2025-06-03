@@ -2,10 +2,6 @@ import { AddIcon, ButtonDropdown, PencilIcon } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { useTranslation } from "react-i18next";
-import {
-  createFilterPermission,
-  isFilterAdmin,
-} from "../../helper/permissions";
 import { useState } from "react";
 import {
   setAttributeFilterToEdit,

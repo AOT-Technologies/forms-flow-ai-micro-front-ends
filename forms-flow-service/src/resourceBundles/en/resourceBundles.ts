@@ -1064,5 +1064,9 @@ export const RESOURCE_BUNDLES_EN = {
   "Yes, Update This Filter For Everybody": "Yes, Update This Filter For Everybody",
   "Select Date": "Select Date",
   "Save Attribute Filter": "Save Attribute Filter",
-  "Attributes: Unsaved Filter": "Attributes: Unsaved Filter"
+  "Attributes: Unsaved Filter": "Attributes: Unsaved Filter",
+  "Custom Form Fields": "Custom Form Fields",
+  "Saved!": "Saved!",
+  "Deleted!": "Deleted!",
+  "Updated!": "Updated!"
 }
