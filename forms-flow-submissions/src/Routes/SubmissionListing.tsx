@@ -7,7 +7,7 @@ import { push } from "connected-react-router";
 import { getSubmissionList } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate } from "../helper/helper";
 import {
-  setAnalizeSubmissionSort,
+  setAnalyzeSubmissionSort,
   setAnalyzeSubmissionPage,
 } from "../actions/analyzeSubmissionActions";
 import {
@@ -97,7 +97,7 @@ const TaskSubmissionList: React.FC = () => {
           { sortOrder: k === key ? newOrder : "asc" },
         ])
       );
-      dispatch(setAnalizeSubmissionSort({ ...updatedSort, activeKey: key }));
+      dispatch(setAnalyzeSubmissionSort({ ...updatedSort, activeKey: key }));
     },
     [dispatch, sortParams]
   );

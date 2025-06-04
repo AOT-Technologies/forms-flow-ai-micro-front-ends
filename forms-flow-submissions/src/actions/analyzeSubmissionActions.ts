@@ -1,6 +1,6 @@
 import ACTION_CONSTANTS from "../constants/actionConstants";
 
-export const setAnalizeSubmissionSort = (data) => (dispatch) => {
+export const setAnalyzeSubmissionSort = (data) => (dispatch) => {
     dispatch({
       type: ACTION_CONSTANTS.UPDATE_SUBMISSION_SORT_PARAMS,
       payload: data,

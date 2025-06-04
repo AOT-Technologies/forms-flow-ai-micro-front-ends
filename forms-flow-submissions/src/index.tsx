@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Route, Switch, Redirect, useParams } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
-} from "./endpoints/config"; 
+} from "./endpoints/config";
 import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
@@ -16,14 +16,18 @@ const authorizedRoles = new Set(["create_submissions", "view_submissions"]);
 
 interface SubmissionsProps {
   publish?: (event: string, data?: any) => void;
-  subscribe?: (event: string, callback: (msg: string, data: any) => void) => void;
+  subscribe?: (
+    event: string,
+    callback: (msg: string, data: any) => void
+  ) => void;
   getKcInstance: () => any;
 }
 
 const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
   const { publish = () => {}, subscribe = () => {} } = props;
   const { tenantId } = useParams<{ tenantId?: string }>();
-  const [isAuth, setIsAuth] = useState(false);
+  const instance = useMemo(() => props.getKcInstance(), []);
+  const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
   const [isClient, setIsClient] = useState(false);
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
@@ -40,23 +44,26 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
   }, [tenantId]);
 
   useEffect(() => {
-    const kcInstance = KeycloakService.getInstance(
-      KEYCLOAK_URL_AUTH,
-      KEYCLOAK_URL_REALM,
-      KEYCLOAK_CLIENT,
-      tenantId
-    );
-
-    kcInstance.initKeycloak(() => {
-      setIsAuth(kcInstance.isAuthenticated());
-      publish("FF_AUTH", kcInstance);
-    });
+    if (!isAuth) {
+      const kcInstance = KeycloakService.getInstance(
+        KEYCLOAK_URL_AUTH,
+        KEYCLOAK_URL_REALM,
+        KEYCLOAK_CLIENT,
+        tenantId
+      );
+      kcInstance.initKeycloak(() => {
+        setIsAuth(kcInstance.isAuthenticated());
+        publish("FF_AUTH", kcInstance);
+      });
+    }
   }, []);
 
   useEffect(() => {
     if (!isAuth) return;
 
-    const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE) ?? "[]");
+    const roles = JSON.parse(
+      StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
+    );
     if (roles.some((role: any) => authorizedRoles.has(role))) {
       setIsClient(true);
     }
