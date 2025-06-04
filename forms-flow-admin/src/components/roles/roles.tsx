@@ -65,7 +65,7 @@ const Roles = React.memo((props: any) => {
   const [editCandidate, setEditCandidate] = React.useState(initialRoleType);
   const [disabled, setDisabled] = React.useState(true);
   const [search, setSearch] = React.useState("");
-  const [permission, setPermission] = React.useState([]);
+  const [permissionData, setPermissionData] = React.useState([]);
   const  [key,setKey] = useState("Details");
 
   const filterList = (filterTerm, List) => {
@@ -115,7 +115,7 @@ const Roles = React.memo((props: any) => {
   React.useEffect(() => {
     fetchPermissions(
       (data) => {
-        setPermission(data);
+        setPermissionData(data);
       },
       (err) => {
         setError(err);
@@ -346,194 +346,12 @@ const Roles = React.memo((props: any) => {
     setDeleteCandidate(initialRoleType);
     setDisabled(true);
   };
-  const handleShowDeleteModal = () => {
-    setShowConfirmDelete(true);
-    setDisabled(false);
-  };
 
   const handleClearSearch = () => {
     setSearch("");
     let updatedRoleName = removingTenantId(props.roles,tenantId);
     setRoles(updatedRoleName);
   };
-
-  const permissionsData = [
-    {
-        "name": "view_tasks",
-        "description": "View tasks",
-        "depends_on": ["view_filters"],
-        "category": "TASKS",
-        "order": 1
-    },
-    {
-        "name": "manage_tasks",
-        "description": "Work on tasks (assign to themselves + complete tasks)",
-        "depends_on": ["view_filters","view_tasks"],
-        "category": "TASKS",
-        "order": 2
-    },
-    {
-        "name": "assign_task_to_others",
-        "description": "Assign/re-assign tasks to anybody within the group",
-        "depends_on": ["view_filters","view_tasks","manage_tasks"],
-        "category": "TASKS",
-        "order": 3
-    },
-    {
-        "name": "reviewer_view_history",
-        "description": "View task history",
-        "depends_on": ["view_filters","view_tasks"],
-        "category": "TASKS",
-        "order": 4
-    },
-    {
-        "name": "view_filters",
-        "description": "View filters",
-        "depends_on": [],
-        "category": "TASKS",
-        "order":5
-    },
-    {
-        "name": "create_filters",
-        "description": "Manage filters you create",
-        "depends_on": [],
-        "category": "TASKS",
-        "order": 6
-    },
-    {
-        "name": "manage_all_filters",
-        "description": "Manage all shared filters (delete and edit filters others shared, excluding private filters)",
-        "depends_on": ["view_filters"],
-        "category": "TASKS",
-        "order": 7
-    },
-    {
-        "name": "view_designs",
-        "description": "View forms & flows",
-        "depends_on": [],
-        "category": "DESIGN",
-        "order": 1
-    },
-    {
-        "name": "create_designs",
-        "description": "Manage forms & flows you create and that are shared with you",
-        "depends_on": ["view_designs"],
-        "category": "DESIGN",
-        "order":2
-    },
-    {
-        "name": "manage_advance_workflows",
-        "description": "Manage advance flows (BPMNs + SubFlows + Decision Tables)",
-        "depends_on": ["view_designs"],
-        "category": "DESIGN",
-        "order": 3
-    }, // combined form of ‘manage_subflows’ & ‘manage_decision_tables’
-    {
-        "name": "manage_templates",
-        "description": "Manage templates",
-        "depends_on": ["view_designs"],
-        "category": "DESIGN",
-        "order": 4
-    },
-    {
-        "name": "manage_bundles",
-        "description": "Manage bundles",
-        "depends_on": ["view_designs"],
-        "category": "DESIGN",
-        "order": 5
-    },
-    {
-        "name": "manage_integrations",
-        "description": "Manage integrations",
-        "depends_on": [],
-        "category": "DESIGN",
-        "order": 6
-    },
-    {
-        "name": "create_submissions",
-        "description": "Manage submissions (create, save drafts, resubmit)",
-        "depends_on": ["view_submissions"],
-        "category": "SUBMIT",
-        "order": 1
-    }, // combined form of create_submissions & resubmit_submissions
-    {
-        "name": "view_submissions",
-        "description": "View their own past submissions",
-        "depends_on": [],
-        "category": "SUBMIT",
-        "order": 2
-    },
-    {
-        "name": "submission_view_history",
-        "description": "View submission history",
-        "depends_on": ["view_submissions"],
-        "category": "SUBMIT",
-        "order": 3
-    },
-    {
-        "name": "analyze_metrics_view",
-        "description": "View metrics",
-        "depends_on": [],
-        "category": "ANALYZE",
-        "order": 1
-    },
-    {
-        "name": "view_dashboards",
-        "description": "View dashboards",
-        "depends_on": [],
-        "category": "ANALYZE",
-        "order": 2
-    },
-    {
-        "name": "analyze_submissions_view",
-        "description": "View submissions",
-        "depends_on": [],
-        "category": "ANALYZE",
-        "order": 3
-    },
-    {
-        "name": "analyze_submissions_view_history",
-        "description": "View submissions history",
-        "depends_on": ["analyze_submissions_view"],
-        "category": "ANALYZE",
-        "order": 4
-    },
-    {
-        "name": "analyze_process_view",
-        "description": "View submissions process diagram",
-        "depends_on": ["analyze_submissions_view","analyze_submissions_view_history"],
-        "category": "ANALYZE",
-        "order": 5
-    },
-    {
-        "name": "manage_users",
-        "description": "Manage users",
-        "depends_on": [],
-        "category": "ADMIN",
-        "order": 1
-    },
-    {
-        "name": "manage_roles",
-        "description": "Manage roles",
-        "depends_on": [],
-        "category": "ADMIN",
-        "order": 2
-    },
-    {
-        "name": "manage_dashboard_authorizations",
-        "description": "Manage dashboards",
-        "depends_on": [],
-        "category": "ADMIN",
-        "order": 3
-    },
-    {
-        "name": "manage_links",
-        "description": "View links",
-        "depends_on": [],
-        "category": "ADMIN",
-        "order": 4
-    }
-];
 
   const tabs = [
     {
@@ -584,7 +402,7 @@ const Roles = React.memo((props: any) => {
       title: "Permissions",
       content: (
         <PermissionTree
-        permissions={permissionsData}
+        permissions={permissionData}
         payload={showEditRoleModal ? editCandidate : payload}
         handlePermissionCheck={showEditRoleModal ? handleEditPermissionCheck : handlePermissionCheck}
         setPayload={showEditRoleModal ? setEditCandidate : setPayload}
@@ -593,43 +411,7 @@ const Roles = React.memo((props: any) => {
       )
     }]
 
-    const isSaveDisabled = !(
-      (showEditRoleModal ? editCandidate.name.trim() : payload.name.trim()) &&
-      (showEditRoleModal ? editCandidate.permissions.length : payload.permissions.length)
-    );
     
-  // Delete confirmation
-  const confirmDelete = () => (
-    <div data-testid="roles-confirm-delete-modal">
-      <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("Confirm Delete")}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            type="button"
-            className="btn btn-link text-dark"
-            onClick={handleCloseDeleteModal}
-            data-testid="roles-cancel-delete-button"
-          >
-            {t("Cancel")}
-          </button>
-          <Button
-            variant="danger"
-            disabled={disabled}
-            onClick={() => deleteRole(deleteCandidate)}
-            data-testid="roles-confirm-delete-button"
-          >
-            {t("Delete")}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
-
   const showCreateModal = () => (
       <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="sm">
         <Modal.Header>
@@ -653,7 +435,7 @@ const Roles = React.memo((props: any) => {
             variant={"primary"}
             size="lg"
             label={t("Save Changes")}
-            disabled={isSaveDisabled}
+            disabled={disabled}
             onClick={handleCreateRole}
             dataTestId="create-new-role-button"
             ariaLabel="Create new role button"
@@ -693,7 +475,7 @@ const Roles = React.memo((props: any) => {
             variant={"primary"}
             size="lg"
             label={t("Save Changes")}
-            disabled={isSaveDisabled}
+            disabled={disabled}
             onClick={handleUpdateRole}
             dataTestId="edit-role-button"
             ariaLabel="Edit role button"
@@ -907,7 +689,6 @@ const Roles = React.memo((props: any) => {
           <Loading />
         )}
         {showCreateModal()}
-        {confirmDelete()}
         {showEditModal()}
       </div>
     </>
