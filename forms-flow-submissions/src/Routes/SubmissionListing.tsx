@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { push } from "connected-react-router";
-
+import { Submission } from "../types/submissions";
 import { getSubmissionList } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate } from "../helper/helper";
 import {
   setAnalyzeSubmissionSort,
   setAnalyzeSubmissionPage,
+  setAnalyzeSubmissionLimit,
 } from "../actions/analyzeSubmissionActions";
 import {
   ReusableResizableTable,
@@ -17,16 +18,6 @@ import {
   SortableHeader,
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
-
-type Submission = {
-  applicationStatus: string;
-  createdBy: string;
-  data: any;
-  formName: string;
-  id: string;
-  submissionId: string;
-  created?: string;
-};
 
 interface Column {
   name: string;
@@ -39,10 +30,11 @@ const TaskSubmissionList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
-  const [limit, setLimit] = useState(10);
-
   const sortParams = useSelector(
     (state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {}
+  );
+  const limit = useSelector(
+    (state: any) => state?.analyzeSubmission.limit ?? 10
   );
   const { page } = useSelector(
     (state: any) => state?.analyzeSubmission.page ?? 1
@@ -193,7 +185,7 @@ const TaskSubmissionList: React.FC = () => {
   );
 
   const handleLimitChange = (newLimit: number) => {
-    setLimit(newLimit);
+    setAnalyzeSubmissionLimit(newLimit);
     setAnalyzeSubmissionPage(1);
   };
 
@@ -214,6 +206,7 @@ const TaskSubmissionList: React.FC = () => {
                 "No submissions have been found. Try a different filter combination or contact your admin."
               )}
               onColumnResize={(newWidths) =>
+                //TBD
                 console.log("Column resized:", newWidths)
               }
               tableClassName="resizable-table"
