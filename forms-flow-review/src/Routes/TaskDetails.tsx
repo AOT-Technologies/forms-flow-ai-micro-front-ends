@@ -28,6 +28,7 @@ import {
   setBPMTaskDetailLoader,
   setSelectedTaskID,
   setAppHistoryLoading,
+  setBPMTaskDetail,
 } from "../actions/taskActions";
 import { getFormioRoleIds } from "../api/services/userSrvices";
 import {
@@ -177,6 +178,7 @@ const TaskDetails = () => {
 
   const handleBack = () => {
     Formio.clearCache();
+    dispatch(setSelectedTaskID(null));
     dispatch(resetSubmission("submission"));
     dispatch(push(`${redirectUrl}review`));
   };

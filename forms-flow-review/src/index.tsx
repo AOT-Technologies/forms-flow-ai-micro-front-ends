@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
 import { setBPMTaskDetail } from "./actions/taskActions";
+import { useHistory } from "react-router-dom";
+
 import { fetchServiceTaskList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
   "view_tasks",
@@ -34,6 +36,7 @@ interface SocketUpdateParams {
 const Review = React.memo((props: any) => {
   const { publish, subscribe } = props;
   const { tenantId } = useParams();
+    const history = useHistory();
   const dispatch = useDispatch();
   const instance = useMemo(() => props.getKcInstance(), []);
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
@@ -42,7 +45,7 @@ const Review = React.memo((props: any) => {
   const {
     taskId,
     taskDetails,
-    taskIds, // this variable is a set of taskIds which already in the table
+    // taskIds, // this variable is a set of taskIds which already in the table
     lastRequestedPayload,
     activePage,
     limit,
@@ -88,14 +91,18 @@ const Review = React.memo((props: any) => {
   }, [isAuth]);
 
   /* ------------------------ handling socket callback function ------------------------ */
-  const checkTheTaskIdExistThenRefetchTaskList = (taskId) => {
+  const checkTheTaskIdExistThenRefetchTaskList = () => {
     // if the id exist or taskList empty we need to recall
-    const isExist = taskIds.has(taskId)
-    if (isExist || !taskIds.size) {
-      dispatch(
+    // const isExist = taskIds.has(taskId)
+    // if (isExist || !taskIds.size) {
+    //   dispatch(
+    //     fetchServiceTaskList(lastRequestedPayload, null, activePage, limit)
+    //   );
+    // }
+    // NOTE: currently we just commented the code and use below code to all users fetch tasklist again if any event trigger in this socket
+     dispatch(
         fetchServiceTaskList(lastRequestedPayload, null, activePage, limit)
-      );
-    }
+     );
   };
 
   const handleTaskUpdate = (refreshedTaskId: string) => {
@@ -110,12 +117,18 @@ const Review = React.memo((props: any) => {
       );
     });
   }
-  checkTheTaskIdExistThenRefetchTaskList(refreshedTaskId);
+  checkTheTaskIdExistThenRefetchTaskList();
 };
 
 const handleForceReload = (refreshedTaskId: string) => {
-  checkTheTaskIdExistThenRefetchTaskList(refreshedTaskId);
-  // TBD: Future scope: Handle two users scenario where one completes the task
+  //  if opened task is there we need to push back to review route
+  //  if it push back to review route it will automatically call the tasklist api again
+  // else we need to fetch again task list
+  if(taskId == refreshedTaskId){
+   history.push(`${baseUrl}review`)
+  }else{
+    checkTheTaskIdExistThenRefetchTaskList();
+  }
 };
 
 const SocketIOCallback = ({
