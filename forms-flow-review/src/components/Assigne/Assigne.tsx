@@ -13,6 +13,7 @@ import SocketIOService from "../../services/SocketIOService";
 
 
 const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
+const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
   const dispatch = useDispatch();
   const taskId = task?.id;
   const {
