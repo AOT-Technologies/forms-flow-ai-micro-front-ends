@@ -284,7 +284,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     }
   });
 
-  newProcessVariable.push(...currentCriteria.processVariables);
+  newProcessVariable.push(...(currentCriteria.processVariables ?? []));
+
   return newProcessVariable;
 };
 
