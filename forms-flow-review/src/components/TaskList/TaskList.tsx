@@ -34,7 +34,6 @@ import { HelperServices } from "@formsflow/service";
 import AttributeFilterDropdown from "./AttributeFilterDropdown";
 import { createReqPayload } from "../../helper/taskHelper";
 import { optionSortBy } from "../../helper/tableHelper";
-import {  UserDetail } from "../../types/taskFilter";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 
 const TaskList = () => {
@@ -53,12 +52,9 @@ const TaskList = () => {
     selectedAttributeFilter,
     isAssigned,
     filterList,
-    filterToEdit
-  } = useSelector((state: RootState) => state.task);
-    const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
-  
+  } = useSelector((state: RootState) => state.task);  
 
-   const allTasksPayload = useAllTasksPayload();
+  const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
  
   //inital data loading
