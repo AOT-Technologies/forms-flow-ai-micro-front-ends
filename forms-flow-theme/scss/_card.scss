@@ -64,13 +64,16 @@ $gray-darkest: var(--ff-gray-darkest);
 
   .card {
     border: 1px solid $gray-medium !important;
-    border-radius: var(--radius-lg) !important;
+    border-radius: 0 !important;
     margin-bottom: var(--spacer-050) !important;
   }
 
   .card-header {
-    height: var(--spacer-200) !important;
-    padding-left: var(--spacer-050) !important;
+    padding: 0 !important;
+
+    h5 {
+      width: 100%;
+    }
   }
 }
 

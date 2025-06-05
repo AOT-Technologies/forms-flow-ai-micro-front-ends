@@ -140,7 +140,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <CloseIcon onClick={onClose} data-testid="close-duplicate-modal"/>
           </div>
         </Modal.Header>
-        <Modal.Body className="form-builder-modal">
+        <Modal.Body>
           <FormInput
             name="title"
             type="text"

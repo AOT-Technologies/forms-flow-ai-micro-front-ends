@@ -914,4 +914,137 @@ $danger-color: var(--ff-danger);
       border-bottom-right-radius: $borderRadiusHeightSM;
     }
   }
+
+  &-text {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: $paddingLvl5S;
+
+    &.error {
+      input {
+        border: $lineThin solid $danger-color;
+
+        &:focus {
+          outline: $lineThin solid $danger-color;
+        }
+      }
+
+      .error-text {
+        display: block;
+      }
+    }
+
+    &.with-icon {
+      input {
+        padding-right: calc($paddingLvl6LR*2 + $base);
+
+        &.collapsed {
+          & + .icon svg {
+            transform: rotate(180deg);
+          }
+        }
+      }
+
+      .icon {
+        @include clickableFeedback1();
+  
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: flex;
+        height: 100%;
+  
+        padding: 0 $paddingLvl6LR;
+
+        svg {
+          transform: rotate(0deg);
+
+          transition: transform $animSpeed;
+        }
+      }
+    }
+
+    label {
+      @include textBase($fontSmallest);
+
+      width: fit-content;
+
+      cursor: pointer;
+    }
+
+    .field {
+      position: relative;
+    }
+
+    input {
+      @include textBase();
+
+      width: 100%;
+
+      padding: $paddingLvl6TB $paddingLvl5LR;
+
+      border: $lineThin solid $primary;
+      border-radius: $borderRadiusHeightSM;
+
+      &:focus,
+      &.collapsed {
+        outline: $lineThin solid $primary;
+      }
+    }
+
+    .error-text {
+      @include textBaseHightlight($fontBase, $danger-color);
+
+      display: none;
+      width: fit-content;
+
+      cursor: pointer;
+    }
+  }
+
+  &-select {
+    position: relative;
+
+    .input-text.with-icon:not(:last-child) .field input {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .select-options {
+      @include paddingLvl7();
+
+      position: absolute;
+      width: 100%;
+
+      border: $lineThin solid $primary;
+      border-top: none;
+      outline: $lineThin solid $primary;
+
+      border-bottom-left-radius: $borderRadiusHeightSM;
+      border-bottom-right-radius: $borderRadiusHeightSM;
+
+      background-color: $white-color;
+
+      z-index: 2;
+
+      & > div {
+        @include clickableFeedback2();
+        @include textBase($fontBase, $primary-color);
+        @include paddingLvl6();
+
+        border-radius: $borderRadiusHeightSM;
+
+        &.chosen {
+          @include textBaseHightlight($fontBase, $white-color);
+
+          background-color: $primary-color;
+
+          cursor: default;
+          pointer-events: none;
+        }
+
+      }
+    }
+  }
 }

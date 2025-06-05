@@ -71,7 +71,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
-    if(!disabled){
+    if(!disabled) {
      setIsDropdownOpen((prev) => !prev);
     }
   };
