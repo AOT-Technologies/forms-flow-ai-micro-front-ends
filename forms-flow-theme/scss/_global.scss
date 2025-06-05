@@ -8,6 +8,10 @@
   @include svgIcon();
 }
 
+.svgIcon-success {
+  @include svgIcon($success);
+}
+
 .svgIcon-onDark {
   @include svgIcon($white);
 }

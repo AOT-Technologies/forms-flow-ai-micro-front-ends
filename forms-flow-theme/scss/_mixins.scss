@@ -75,7 +75,7 @@
 
 
 
-// mixins added by Max
+// ===============MIXINS ADDED BY MAX=================
 
 @mixin divider {
   border-bottom: $lineThin solid $colorDivider;
@@ -88,6 +88,8 @@
 @mixin textEmphasis {
   font-weight: 700;
 }
+
+// Paddings / LR=LeftRight TB=TopBottom S=SpacingBetween / LVL1->LVL9 = outside->inside
 
 $paddingLvl1LR: var(--spacer-300);
 $paddingLvl1TB: var(--spacer-250);
@@ -110,6 +112,10 @@ $paddingLvl5S: var(--spacer-050);
 $paddingLvl6LR: var(--spacer-075);
 $paddingLvl6TB: var(--spacer-050);
 $paddingLvl6S: var(--spacer-025);
+
+$paddingLvl7LR: var(--spacer-025);
+$paddingLvl7TB: var(--spacer-050);
+$paddingLvl7S: var(--spacer-025);
 
 
 $paddingLvl2MinLR: var(--spacer-250);
@@ -211,6 +217,20 @@ $paddingLvl2MinS: var(--spacer-100);
   }
 }
 
+@mixin paddingLvl7 {
+  padding: $paddingLvl7TB $paddingLvl7LR !important;
+
+  & > * {
+    margin-bottom: $paddingLvl7S !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+// Text bases to get stylin started
+
 @mixin textBase($fontSize: $fontBase, $fontColor: $gray-darkest) {
   font-size: $fontSize;
   line-height: $fontLineHeight;
@@ -227,17 +247,15 @@ $paddingLvl2MinS: var(--spacer-100);
   font-weight: 700;
 }
 
-@mixin textModalHighlight {
-  @include textBase();
-
-  font-weight: 700;
-}
-
 @mixin textCardHead {
   @include textBase($fontBase*1.5);
 
   font-weight: 700;
 }
+
+
+// For clickable elements
+// opacity changes
 
 @mixin clickableFeedback1 {
   cursor: pointer;
@@ -257,6 +275,8 @@ $paddingLvl2MinS: var(--spacer-100);
   }
 }
 
+// background changes
+
 @mixin clickableFeedback2 {
   cursor: pointer;
 
@@ -272,6 +292,7 @@ $paddingLvl2MinS: var(--spacer-100);
   }
 }
 
+// main svg icon base
 
 @mixin svgIcon($color: $primary) {
   overflow: visible;

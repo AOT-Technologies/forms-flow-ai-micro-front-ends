@@ -98,7 +98,7 @@ $white-color: var(--ff-white);
 
     // Table Header Styles
     th {
-      @include textBase($fontSmallest);
+      @include textBaseHightlight($fontSmallest);
 
       display: flex;
       align-items: center;

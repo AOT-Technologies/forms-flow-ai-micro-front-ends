@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FocusEvent, KeyboardEvent, useEffect, useRef } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
+import { LoadingIcon } from "../SvgIcons/index";
 
 interface FormInputProps {
   type?: string;
@@ -25,7 +26,7 @@ interface FormInputProps {
   turnOnLoader?: boolean;
   autoFocusInput?: boolean;
   minLength?: number;
-  maxLength?: number; 
+  maxLength?: number;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -69,14 +70,16 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   return (
-    <Form.Group controlId={id}>
+    <div className={`input-text ${icon? "with-icon":""} ${isInvalid ? "error" : ""}`}>
       {label && (
-        <Form.Label className='custom-form-control-label'>
+        <Form.Label htmlFor={id} className='custom-form-control-label'>
           {t(label)}{required && <span className='required-icon'>*</span>}
         </Form.Label>
       )}
-      <InputGroup className="custom-form-input-group">
+      
+      <div className="field">
         <Form.Control
+          id={id} // make the input id UNIQUE
           type={type}
           name={name}
           value={value}
@@ -96,24 +99,27 @@ export const FormInput: React.FC<FormInputProps> = ({
           minLength={minLength}
           maxLength={maxLength}
         />
-        {turnOnLoader && (
-          <div className="input-spinner"></div>
+
+        {turnOnLoader && <LoadingIcon />}
+
+        {icon && !turnOnLoader && (
+          <div
+            className="icon"
+            id="input-icon" 
+            onClick={onIconClick}
+            >
+            {icon}
+          </div>
         )}
-          {icon && !turnOnLoader &&(
-            <InputGroup.Text
-             id="input-icon" 
-             onClick={onIconClick}
-             className={disabled ? 'disabled-icon' : ''}>
-              {icon}
-            </InputGroup.Text>
-          )}
-        </InputGroup>
+        </div>
+
         {isInvalid && (
-            <Form.Control.Feedback className='custom-feedback' type="invalid">
-              {t(feedback)}
-            </Form.Control.Feedback>
-          )}
-      </Form.Group>
+          <label htmlFor='name-input' className='error-text'>
+            {t(feedback)}
+          </label>
+        )}
+
+      </div>
   );
 };
 

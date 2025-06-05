@@ -141,7 +141,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <CloseIcon />
           </div>
         </Modal.Header>
-        <Modal.Body className="form-builder-modal">
+        <Modal.Body>
           <FormInput
             name="title"
             type="text"
