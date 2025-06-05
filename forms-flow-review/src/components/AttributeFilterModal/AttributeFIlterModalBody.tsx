@@ -284,7 +284,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     }
   });
 
-  newProcessVariable.push(...currentCriteria.processVariables);
+  newProcessVariable.push(...(currentCriteria.processVariables ?? []));
+
   return newProcessVariable;
 };
 
@@ -380,10 +381,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
               className="me-3"
               variant={updateButtonVariant}
               size="md"
-              label={t("Update This Filter")}
+              label={
+              updateSuccess.showSuccess ?   `${t("Updated!")} (${updateSuccess.countdown})` : t("Update This Filter")
+            }
                 onClick={handleUpdateModalClick}
               icon={ updateSuccess?.showSuccess ? 
-                updateSuccess.countdown : <UpdateIcon color={saveIconColor} />}
+                null: <UpdateIcon color={saveIconColor} />}
               dataTestId="save-attribute-filter"
               ariaLabel={t("Update This Filter")}
               disabled={deleteSuccess.showSuccess ||noFieldChanged}
@@ -391,10 +394,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
             <CustomButton
               variant={deleteButtonVariant}
               size="md"
-              label={t("Delete This Filter")}
+               label={
+              deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : t("Delete This Filter")
+            }
               onClick={handleDeleteClick}
               icon={deleteSuccess?.showSuccess ? 
-                deleteSuccess.countdown :<DeleteIcon color={deleteIconColor} />}
+                null :<DeleteIcon color={deleteIconColor} />}
               dataTestId="delete-attribute-filter"
               ariaLabel={t("Delete This Filter")}
               disabled={updateSuccess.showSuccess}

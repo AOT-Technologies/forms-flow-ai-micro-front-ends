@@ -113,9 +113,10 @@ const TaskFilterModalBody = ({
       sorting: [{ sortBy: sortValue, sortOrder: sortOrder }],
     };
 
-    criteria.processVariables = [];
+    
 
-    if (selectedForm.formId) {
+    if (selectedForm?.formId) {
+      criteria.processVariables = [];
       criteria.processVariables.push({
         name: "formId",
         operator: "eq",
