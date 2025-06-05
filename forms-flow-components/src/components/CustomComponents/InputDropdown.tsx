@@ -32,6 +32,7 @@ interface InputDropdownProps {
   variant?: 'assign-user-sm' | 'assign-user-md'; 
   handleCloseClick?: () => void;
   openByDefault?: boolean;
+  id?: string;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -55,6 +56,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   variant,
   handleCloseClick,
   openByDefault = false,
+  id
 }) => {
   const { t } = useTranslation();
   const primaryColor = StyleServices.getCSSVariable('--ff-primary');
@@ -67,7 +69,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
-    if(!disabled){
+    if(!disabled) {
      setIsDropdownOpen((prev) => !prev);
     }
   };
@@ -180,9 +182,9 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   };
 
   return (
-      <div ref={dropdownRef}  className={`input-dropdown ${variantClass || 'w-100'}`}>
+      <div className="input-select" ref={dropdownRef}>
           {textBoxInput ? (
-              <InputGroup>
+              <InputGroup ref={dropdownRef}>
                   <FormInput
                       autoFocusInput
                       value={inputValue}
@@ -198,29 +200,28 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                   />
               </InputGroup>
           ) : (
-              <InputGroup>
-                  <FormInput
-                      placeholder={t(placeholder)}
-                      value={inputValue}
-                      onChange={handleInputDropdownChange}
-                      onClick={toggleDropdown}
-                      ariaLabel={ariaLabelforDropdown}
-                      dataTestId={dataTestIdforDropdown}
-                      icon={renderIcon()}
-                      className={`${inputClassName} ${isDropdownOpen && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
-                      onIconClick={toggleDropdown}
-                      label={t(dropdownLabel)}
-                      required={required}
-                      onBlur={onBlurDropDown}
-                      isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
-                      feedback={t(feedback)}
-                      variant={variant}
-                  />
-              </InputGroup>
+            <FormInput
+                placeholder={t(placeholder)}
+                value={inputValue}
+                onChange={handleInputDropdownChange}
+                onClick={toggleDropdown}
+                ariaLabel={ariaLabelforDropdown}
+                dataTestId={dataTestIdforDropdown}
+                icon={renderIcon()}
+                className={`${inputClassName} ${isDropdownOpen && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
+                onIconClick={toggleDropdown}
+                label={t(dropdownLabel)}
+                required={required}
+                onBlur={onBlurDropDown}
+                isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
+                feedback={t(feedback)}
+                id={id}
+                variant={variant}
+            />
           )}
 
           {!textBoxInput && isDropdownOpen && !disabled && (
-              <ListGroup className={`${variant ? "assignee-dropdown-border" : ""}`}>
+              <div className="select-options">
                   {isAllowInput && (
                       <ListGroup.Item
                           onClick={onFirstItemClick}
@@ -241,7 +242,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                           {t(item.label)}
                       </ListGroup.Item>
                   ))}
-              </ListGroup>
+              </div>
           )}
       </div>
   );
