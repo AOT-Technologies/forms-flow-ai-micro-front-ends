@@ -118,9 +118,9 @@ const Integration = React.memo(({ props }: any) => {
 
   return (
     <>
-        <div className="main-container " tabIndex={0}>
-          <div className="container mt-5">
-            <div className="min-container-height ps-md-3">
+        <div className="main-container" tabIndex={0}>
+          <div className="container">
+            <div className="min-container-height">
                 <Head items={headerList()} page={page} />
               <ToastContainer theme="colored" />
               <Switch>

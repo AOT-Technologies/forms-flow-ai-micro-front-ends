@@ -20,9 +20,20 @@ interface SubmissionHistory {
 
 const HistoryField = ({ fields }: { fields: { id: number; value: string }[] }) => (
   <>
-    {fields.map(({ id, value }) => (
-      <div key={id} className="normal-text" data-testid={`history-field-${id}`} aria-label={`History field ${id}`}>{value}</div>
-    ))}
+    <div className="content-headings">
+      {fields.map(({ id, value }) => (
+        <>
+          {value}
+        </>
+      ))}
+    </div>
+
+    <div className="details">
+      <div>
+        <div className="content-headings">Created On</div>
+        <div className="normal-text">28-05-2025, 02:44:06 PM</div>
+      </div>
+    </div>
   </>
 );
 
@@ -57,20 +68,24 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
       >
         <Modal.Header data-testid="form-history-modal-header">
           <Modal.Title id="form-history-modal-title" data-testid="form-history-modal-title" aria-label="Form history modal title">
-            <b>{t(title)}</b>
+            <p>{t(title)}</p>
           </Modal.Title>
-          <CloseIcon onClick={onClose} aria-label="Close form-history-modal" data-testid="close-icon" />
+
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon aria-label="Close form-history-modal" data-testid="close-icon" />
+          </div>
         </Modal.Header>
-        <Modal.Body className="form-history-modal-body" data-testid="form-history-modal-body" aria-label="Form history modal body">
+        <Modal.Body className="history-modal-body" data-testid="form-history-modal-body" aria-label="Form history modal body">
           {historyCount > 0 ? (
             <>
-              <div ref={timelineRef} className="form-timeline" data-testid="form-history-timeline" aria-label="Form history timeline"></div>
-              <div className="history-content" data-testid="form-history-content" aria-label="Form history content">
+            <div className="history-content" data-testid="form-history-content" aria-label="Form history content">
+              <div ref={timelineRef} className="timeline" data-testid="form-history-timeline" aria-label="Form history timeline"></div>
+              
                 {allHistory.map((entry, index) => (
                   <div
                     key={entry.id || index}
                     ref={index === allHistory.length - 1 ? lastEntryRef : null}
-                    className="form-version-grid"
+                    className="version major-version-grid"
                     data-testid={`form-history-entry-${index}`}
                     aria-label={`Form history entry ${index}`}
                   >

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { InputGroup, FormControl } from 'react-bootstrap';
-import { CloseIcon } from "../SvgIcons/index";
+import { ClearIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 
 
@@ -26,13 +26,14 @@ export const CustomSearch: FC<CustomSearchProps> = ({
     dataTestId
 }) => {
     const { t } = useTranslation();
-    const inputClassNames = `d-flex align-items-center search-box-input ${searchLoading ? 'is-searching' : search ? 'has-value' : ''
+    const inputClassNames = ` ${searchLoading ? 'is-searching' : search ? 'has-value' : ''
         }`;
 
     return (
-        <InputGroup className="d-flex align-items-center p-0 search-box input-group">
-            <div className="form-control-with-icon w-100">
-                <FormControl
+        // <InputGroup className="d-flex align-items-center p-0 search-box input-group">
+        <div className="input-search">
+            {/* <div className="form-control-with-icon w-25"> */}
+                <input
                     className={inputClassNames}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -43,24 +44,26 @@ export const CustomSearch: FC<CustomSearchProps> = ({
                     aria-label={placeholder}
                 />
                 {search && (
-                    <span
-                        className={`d-flex search-box-icon ${searchLoading ? 'loading' : ''}`}
-                    >
+                    // <span className={`d-flex search-box-icon ${searchLoading ? 'loading' : ''}`} >
+                    <>
                         {!searchLoading ? (
-                            <CloseIcon
-                                width={16}
-                                height={16}
-                                onClick={handleClearSearch}
-                                data-testid="form-search-clear-button"
-                            />
+                            <button className="icon" onClick={handleClearSearch}>
+                                <ClearIcon
+                                    // width={16}
+                                    // height={16}
+                                    // onClick={handleClearSearch}
+                                    data-testid="form-search-clear-button"
+                                />
+                            </button>
                         ) : (
                             <div className="search-spinner" data-testid="search-spinner"></div>
                         )}
 
-                    </span>
+                    </>
                 )}
-            </div>
-        </InputGroup>
+            {/* </div> */}
+        </div>
+        // </InputGroup>
     );
 };
 

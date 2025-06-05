@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, ReactElement } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
-import { ChevronIcon } from "../SvgIcons/index";
+import { ChevronIcon, LoadingIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 
 interface DropdownItem {
@@ -13,7 +13,7 @@ interface DropdownItem {
 }
 
 interface CustomButtonProps {
-  variant: string;
+  variant?: string;
   size?: "sm" | "md" | "lg" | "table" | "table-sm";
   label: string;
   name?: string,
@@ -27,9 +27,15 @@ interface CustomButtonProps {
   ariaLabel?: string;
   buttonLoading?: boolean;
   iconOnly?: boolean;  
+  actionTable?: boolean;
+  action?: boolean;
+  iconWithText?: boolean;
+  secondary?: boolean;
+  dark?: boolean;
+  darkPrimary?: boolean;
 }
 
-const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false) => {
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false, action: boolean = false, iconWithText: boolean = false, secondary: boolean = false, dark: boolean = false, darkPrimary: boolean = false) => {
   const sizeClassMap: Record<string, string> = {
     md: "btn-md",
     table: "btn-table",
@@ -53,9 +59,15 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   ariaLabel = "",
   name =  "",
   buttonLoading = false,
-  iconOnly = false,  
+  iconOnly = false, 
+  actionTable = false, 
+  action = false, 
+  iconWithText = false,
+  secondary = false,
+  dark = false,
+  darkPrimary = false,
 }) => {
-  const classNameForButton = getButtonClassName(size, className, iconOnly);
+  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable, action, iconWithText, secondary, dark, darkPrimary);
   const sizeOfButton = size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -113,7 +125,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           id="dropdown-split-basic"
           className={`default-arrow ${dropdownOpen ? "collapsed" : ""}`}
         >
-          <ChevronIcon color="white" />
+          <ChevronIcon className="svgIcon-onDark" />
         </Dropdown.Toggle>
 
         <Dropdown.Menu style={menuStyle}>
@@ -132,48 +144,159 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     );
   }
 
-  // Icon-only Button
+  // Btn-Icon-Special
   if (iconOnly) {
     return (
-      <Button
-        variant={variant}
-        size={sizeOfButton}
+      <button
         onClick={onClick}
-        disabled={disabled || buttonLoading}
+        disabled={disabled}
         name={name}
-        className={`p-0 ${classNameForButton}`}
+        className={`button-icon-special ${buttonLoading ? "loading" : ""}`}
         data-testid={dataTestId}
         aria-label={ariaLabel}
       >
-        <div className="d-inline-flex align-items-center">
-          {icon}
-        </div>
-      </Button>
+        {icon}
+        {buttonLoading && <LoadingIcon />}
+      </button>
     );
   }
 
-  // Default Button with icon and label
-  return (
-    <Button
-      variant={variant}
-      size={sizeOfButton}
+  // Btn-Action-Table
+  if (actionTable) {
+    return (
+      <button
       onClick={onClick}
-      disabled={disabled || buttonLoading}
+      disabled={disabled}
       name={name}
-      className={classNameForButton}
+      className={`button-action-table ${buttonLoading ? "loading" : ""}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
-      <div
-        className={`d-inline-flex align-items-center ${
-          buttonLoading ? "button-content" : ""
-        }`}
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+  
+  // Btn-Action
+  if (action) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-action ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Icon
+  if (iconWithText) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-icon ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {icon}
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Secondary
+  if (secondary) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-secondary ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Dark
+  if (dark) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-dark ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Dark-Primary
+  if (darkPrimary) {
+    return (
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        name={name}
+        className={`button-dark-primary ${buttonLoading ? "loading" : ""}`}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
       >
-        {icon && <span className="me-2">{icon}</span>}
-        {t(label)}
-      </div>
-      {buttonLoading && <span className="dotted-spinner"></span>}
-    </Button>
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Primary
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-primary ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    // <Button
+    //   variant={variant}
+    //   size={sizeOfButton}
+    //   onClick={onClick}
+    //   disabled={disabled || buttonLoading}
+    //   name={name}
+    //   className={classNameForButton}
+    //   data-testid={dataTestId}
+    //   aria-label={ariaLabel}
+    // >
+    //   <div
+    //     className={`d-inline-flex align-items-center ${
+    //       buttonLoading ? "button-content" : ""
+    //     }`}
+    //   >
+    //     {icon && <span className="me-2">{icon}</span>}
+    //   </div>
+    //   {t(label)}
+    //   {buttonLoading && <span className="dotted-spinner"></span>}
+    // </Button>
     
   );
 };

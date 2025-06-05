@@ -486,21 +486,18 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     };
 
     return (
-      <Modal show={showModal} onHide={closeModal} centered size="sm">
+      <Modal show={showModal} onHide={closeModal} size="sm">
         <Modal.Header>
           <Modal.Title>
-            <b>{t(headerText)}</b>
+            <p>{t(headerText)}</p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
-            <CloseIcon
-            dataTestId="import-modal-close-icon"
-              width={16.5}
-              height={16.5}
-              onClick={() => {
-                resetState();
-                closeModal();
-              }}
-            />
+          <div className="icon-close"
+          data-testid="import-modal-close-icon"
+          onClick={() => {
+            resetState();
+            closeModal();
+          }}>
+            <CloseIcon />
           </div>
         </Modal.Header>
         <Modal.Body className="p-5">
@@ -514,33 +511,35 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             renderFileUploadArea()
           )}
         </Modal.Body>
-        <Modal.Footer className="import-modal-footer">
-          <CustomButton
-            variant={
-              !selectedFile ||
-              (importError && primaryButtonText !== "Try Again")
-                ? "dark"
-                : "primary"
-            }
-            disabled={ primaryButtonDisabled }
-            size="md"
-           dataTestId="import-modal-primary-button"
-            label={primaryButtonText}
-            onClick={() => {
-              primaryButtonText === "Try Again" ? closeModal() : onImport();
-            }}
-            buttonLoading={!importError && importLoader}
-          />
-          <CustomButton
-          dataTestId="import-modal-close-button"
-            variant="secondary"
-            size="md"
-            label="Cancel"
-            onClick={() => {
-              resetState();
-              closeModal();
-            }}
-          />
+        <Modal.Footer>
+          <div className="buttons-row">
+            <CustomButton
+              variant={
+                !selectedFile ||
+                (importError && primaryButtonText !== "Try Again")
+                  ? "dark"
+                  : "primary"
+              }
+              disabled={ primaryButtonDisabled }
+              size="md"
+            dataTestId="import-modal-primary-button"
+              label={primaryButtonText}
+              onClick={() => {
+                primaryButtonText === "Try Again" ? closeModal() : onImport();
+              }}
+              buttonLoading={!importError && importLoader}
+            />
+            <CustomButton
+              variant="secondary"
+              size="md"
+              dataTestId="import-modal-close-button"
+              label="Cancel"
+              onClick={() => {
+                resetState();
+                closeModal();
+              }}
+            />
+          </div>
         </Modal.Footer>
       </Modal>
     );
