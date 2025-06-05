@@ -62,8 +62,8 @@ const AttributeFilterDropdown = () => {
     );
     // we need to patch the current criteria with process variables from attribute filter
     if (processVariables && processVariables.length > 0) {
-      currentCriteria.processVariables.push(...processVariables);
-    }
+      currentCriteria.processVariables?.push(...processVariables);    
+  }
     // changing  assignee if assignee changed in attirbuite filter
     currentCriteria.assignee =  attributeFilter?.criteria.assignee;
     const data = { ...selectedFilter, criteria: currentCriteria };

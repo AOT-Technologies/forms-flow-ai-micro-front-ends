@@ -156,3 +156,6 @@ $gray-dark: var(--ff-gray-dark);
   display: block;
   scrollbar-width: thin;
 }
+.btn.btn-secondary.btn-wizard-nav-cancel {
+  display: none !important;
+}
