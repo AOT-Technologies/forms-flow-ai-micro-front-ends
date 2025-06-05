@@ -361,7 +361,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                         ? selectedLayoutVersion.label
                         : t("Skip, do not import")}
                     </div>
-                    <DropdownIcon />
+                    <DropdownIcon dataTestId="import-dropdown-layout"/>
                   </div>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -396,7 +396,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                         ? selectedFlowVersion.label
                         : t("Skip, do not import")}
                     </div>
-                    <DropdownIcon />
+                    <DropdownIcon dataTestId="import-dropdown-flow" />
                   </div>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -492,6 +492,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             <p>{t(headerText)}</p>
           </Modal.Title>
           <div className="icon-close"
+          data-testid="import-modal-close-icon"
           onClick={() => {
             resetState();
             closeModal();
@@ -531,6 +532,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             <CustomButton
               variant="secondary"
               size="md"
+              dataTestId="import-modal-close-button"
               label="Cancel"
               onClick={() => {
                 resetState();

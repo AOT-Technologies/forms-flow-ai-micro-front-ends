@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 interface ConfirmModalProps {
   show: boolean;
   onClose: () => void;
-  secondayBtnAction: () => void;
+  secondaryBtnAction: () => void;
   title: string;
   message: any;
   messageSecondary?: string;
@@ -22,12 +22,14 @@ interface ConfirmModalProps {
   secondoryBtndataTestid?: string;
   secondoryBtnariaLabel?: string;
   secondaryBtnLoading?:boolean;
+  datatestId?: string;
+  titleDataTestId?: string;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   show,
   onClose,
-  secondayBtnAction,
+  secondaryBtnAction,
   title,
   message,
   messageSecondary = '',
@@ -41,7 +43,9 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   secondaryBtnDisable = false,
   secondoryBtndataTestid = 'cancel-button',
   secondoryBtnariaLabel = 'Cancel Button',
-  secondaryBtnLoading= false
+  secondaryBtnLoading= false,
+  datatestId,
+  titleDataTestId,
 }) => {
   const { t } = useTranslation();
   return (
@@ -54,7 +58,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         aria-describedby="confirm-modal-message"
       >
         <Modal.Header>
-          <Modal.Title id="confirm-modal-title">
+          <Modal.Title id="confirm-modal-title" data-testid={titleDataTestId}>
             <p>
               {t(title)}
             </p>
@@ -70,7 +74,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
           >
             <div
               className="message-primary"
-              data-testid="confirm-modal-primary-message"
+              data-testid={ datatestId }
               aria-label="Primary message"
             >
               {t(message)}
@@ -88,17 +92,17 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-            <CustomButton
+            {primaryBtnText && <CustomButton
               label={primaryBtnText}
               disabled={primaryBtnDisable}
               onClick={primaryBtnAction}
               dataTestId={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
               buttonLoading={buttonLoading}
-            />
+            />}
             {secondaryBtnText && <CustomButton
               label={secondaryBtnText}
-              onClick={secondayBtnAction}
+              onClick={secondaryBtnAction}
               dataTestId={secondoryBtndataTestid}
               ariaLabel={secondoryBtnariaLabel}
               disabled={secondaryBtnDisable}

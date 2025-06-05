@@ -1552,10 +1552,27 @@ export const RESOURCE_BUNDLES_FR ={
     "SU": "DI",
     "Day of week": "Jour de la semaine",
     "selected": "sélectionné",
-    "not selected": "non sélectionné"
+    "not selected": "non sélectionné",
+    "This filter is created and managed by you": "Ce filtre est créé et géré par vous",
+    "Column widths are saved within a filter. If you wish to adjust them. Click Filter Results, adjust the widths of the columns in the table until you are happy and then save the filter afterwards.": "Les largeurs de colonnes sont enregistrées dans un filtre. Si vous souhaitez les ajuster, cliquez sur Résultats du filtre, ajustez les largeurs des colonnes dans le tableau jusqu'à ce que vous soyez satisfait, puis enregistrez le filtre.",
+    "This filter is created and managed by {{createdBy}}": "Ce filtre est créé et géré par {{createdBy}}",
+    "Update This Filter": "Mettre à jour ce filtre",
+    "Delete This Filter": "Supprimer ce filtre",
+    "Delete This Filter?": "Supprimer ce filtre ?",
+    "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow.": "Ce filtre est partagé avec d'autres. Supprimer ce filtre le supprimera pour tout le monde et pourrait affecter leur flux de travail.",
+    "No, Keep This Filter": "Non, garder ce filtre",
+    "Yes, Delete This Filter For Everybody": "Oui, supprimer ce filtre pour tout le monde",
+    "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution.": "Ce filtre est partagé avec d'autres. Mettre à jour ce filtre le mettra à jour pour tout le monde et pourrait affecter leur flux de travail. Proceed with caution.",
+    "No, Cancel Changes": "Non, annuler les modifications",
+    "Yes, Update This Filter For Everybody": "Oui, mettre à jour ce filtre pour tout le monde",
+    "Select Date": "Sélectionner une date",
+    "Save Attribute Filter": "Enregistrer le filtre d’attributs",
+    "Attributes: Unsaved Filter": "Attributs : Filtre non enregistré",
+    "Custom Form Fields": "Champs de formulaire personnalisés",
+    "Saved!": "Enregistré !",
+    "Deleted!": "Supprimé !",
+    "Updated!": "Mis à jour !"
   }
-
-
 
 
 

@@ -153,18 +153,18 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   };
   
   const formatDateRange = (): string => {
-    // If neither date is selected, show placeholder
+    // If no dates selected
     if (!dateRange.startDate && !dateRange.endDate) {
-      return t(placeholder);
+      return isOpen ? t("Select Date") : t(placeholder);
     }
-    
-    // Simplified - no need for conditional check as formatDateValue handles nulls
+  
     const start = formatDateValue(dateRange.startDate);
     const end = formatDateValue(dateRange.endDate);
-    
+  
     return `${start} - ${end}`;
   };
-
+  
+  
   interface CalendarDay {
     date: Date;
     isCurrentMonth: boolean;

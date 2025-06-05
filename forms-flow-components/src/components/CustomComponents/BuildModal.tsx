@@ -64,7 +64,7 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
           <Modal.Title id="build-modal-title">
             <p>{t(title)}</p>
           </Modal.Title>
-          <div className="icon-close" onClick={onClose}>
+          <div className="icon-close" onClick={onClose} data-testId="modal-close">
             <CloseIcon />
           </div>
         </Modal.Header>

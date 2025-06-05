@@ -2,6 +2,8 @@ const computedStyle = getComputedStyle(document.documentElement);
 const baseColor = computedStyle.getPropertyValue("--ff-primary");
 const grayColor = computedStyle.getPropertyValue("--ff-gray-dark");
 const whiteColor = computedStyle.getPropertyValue("--ff-white")
+const grayDarkestColor = computedStyle.getPropertyValue("--ff-gray-darkest");
+const grayMediumColor = computedStyle.getPropertyValue("--ff-gray-medium-dark");
 export const ChevronIcon = ({
   color = baseColor,
   className="svgIcon-dark",
@@ -102,8 +104,9 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
+export const AddIcon = ({ color = baseColor,className, size = 16, ...props }) => (
   <svg
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
     width={size}
     height={size}
@@ -112,6 +115,7 @@ export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
     {...props}
   >
     <path
+      className={className}
       d="M8 1V15"
       stroke={color}
       strokeWidth="2"
@@ -119,6 +123,7 @@ export const AddIcon = ({ color = baseColor, size = 16, ...props }) => (
       strokeLinejoin="round"
     />
     <path
+      className={className}
       d="M1 8L15 8"
       stroke={color}
       strokeWidth="2"
@@ -158,6 +163,8 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
 );
 
 export const CloseIcon = ({
+  color = grayColor,
+  dataTestId = "close-icon",
   ...props
 }) => (
   <svg
@@ -165,6 +172,7 @@ export const CloseIcon = ({
     viewBox="0 0 16 16"
     className="svgIcon-dark"
     onClick={props.onClick}
+    data-testid={dataTestId} 
     {...props}
   >
     <path d="M2.5 2.5L13.5 13.5M13.5 2.5L2.5 13.5" />
@@ -334,11 +342,12 @@ export const DownArrowIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const PencilIcon = ({ color = baseColor, ...props }) => (
+export const PencilIcon = ({ color = baseColor,className, ...props }) => (
   <svg
+    className={`svgIcon-primary ${className}`}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 18 18"
-    className="svgIcon-primary"
+    onClick={props.onClick}
   >
     <path d="M6.53858 3.58705L15.0242 12.0727L16.5 16.5L12.0727 15.0242L3.58705 6.53858M6.53858 3.58705L5.06281 2.11128C4.24777 1.29624 2.92633 1.29624 2.11128 2.11128C1.29624 2.92633 1.29624 4.24777 2.11128 5.06281L3.58705 6.53858M6.53858 3.58705L3.58705 6.53858"/>
   </svg>
@@ -401,7 +410,9 @@ export const BackToPrevIcon = ({ color = baseColor, onClick, ...props }) => (
   viewBox="0 0 16 16"
   className="svgIcon-onDark"
   xmlns="http://www.w3.org/2000/svg"
-  onClick={onClick}>
+  onClick={onClick}
+  {...props}
+  >
     
   <path d="M15 8L1 8M1 8L5 3M1 8L5 13"/>
 </svg>
@@ -535,8 +546,9 @@ export const TickIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const DropdownIcon = ({ color = baseColor }) => (
+export const DropdownIcon = ({ color = baseColor,dataTestId, ...props}) => (
   <svg
+    data-testid={dataTestId}
     xmlns="http://www.w3.org/2000/svg"
     width="16"
     height="9"
@@ -568,7 +580,25 @@ export const StarPremiumIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const RefreshIcon = ({ color = baseColor, ...props }) => (
+export const UpdateIcon = ({ color = baseColor, ...props }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="19" 
+    viewBox="0 0 20 19" 
+    fill="none"
+  >
+    <path d="M3.0903 6.45238C4.22418 3.5458 6.93121 1.5 10.0903 1.5C13.2494 1.5 15.9564 3.5458 17.0903 6.45238M17.0903 12.5476C15.9564 15.4542 13.2494 17.5 10.0903 17.5C6.93121 17.5 4.22418 15.4542 3.0903 12.5476M13.6831 12.4777L17.7605 11.2539L18.9843 15.3312M6.58742 6.28665L2.5947 7.86523L1.01611 3.87252" 
+      stroke={color} 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+    />
+  </svg>
+);
+
+export const RefreshIcon = ({ color = baseColor,   width="43",
+  height="43", ...props }) => (
   <svg
     className="svgIcon-primary"
     viewBox="0 0 20 16"
@@ -601,10 +631,11 @@ export const FilterIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const SortIcon = ({ color = grayColor, ...props }) => (
+export const SortIcon = ({ dataTestId, color = grayColor, ...props }) => (
   <svg
     viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
+    data-testid={dataTestId}
     className="svgIcon-primary"
   >
     <path
@@ -765,4 +796,93 @@ export const SaveIcon = ({ color = whiteColor}) => (
   stroke={color} 
   strokeWidth="2"/>
 </svg>
+);
+
+export const SharedWithOthersIcon = ({ color = grayDarkestColor,className, ...props }) => (
+  <svg
+    width="18"
+    height="16"
+    viewBox="0 0 18 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      className={className}
+      d="M14.0257 2.69922C14.0257 5.84985 12.9744 7.34985 10.9744 8.34985"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <circle
+    className={className}
+      cx="5.91937"
+      cy="5.79168"
+      r="1.945"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      className={className}
+      d="M9.8718 13.8263C9.8718 11.8438 8.1039 10.2366 5.92308 10.2366C3.74227 10.2366 1.97437 11.8438 1.97437 13.8263"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      className={className}
+      d="M12.0769 3.60948L14.2308 2.17358L16.0257 3.96846"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+export const SharedWithMeIcon = ({ color = grayMediumColor,className, ...props }) => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      className={className}
+      d="M15.0001 3.14893C15.0001 5.14893 13.3787 7.20109 10.3332 7.38493"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    <circle
+    className={className}
+      cx="4.94444"
+      cy="4.95445"
+      r="1.94444"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      className={className}
+      d="M8.89988 12.9898C8.89988 11.0066 7.1314 9.39893 4.94988 9.39893C2.76835 9.39893 0.999878 11.0066 0.999878 12.9898"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      className={className}
+      d="M12.6666 8.9404L10.3332 7.38485L11.4999 5.05151"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 );

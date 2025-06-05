@@ -100,7 +100,7 @@ const MenuComponent = ({
               className={`accordion-link d-flex justify-content-between ${
                 isActive(menu) && "active"
               }`}
-              data-testid={`accordion-link-${index}`}
+              data-testid={`sidenav-${(menu.name || menu.path).replace(/\s+/g, '-').toLowerCase()}`}
               aria-label={`Link to ${menu.name}`}
             >
               {t(menu.name)}

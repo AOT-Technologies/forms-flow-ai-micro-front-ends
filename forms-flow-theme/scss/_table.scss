@@ -524,8 +524,6 @@ $white-color: var(--ff-white);
 /* Scroll wrapper that handles scrolling */
 .table-scroll-wrapper {
   height: calc(100vh - 14rem) !important; /* Adjust height as needed */
-  overflow-y: auto;
-  overflow-x: auto;
 }
 
 .resizable-scroll {
@@ -586,9 +584,12 @@ $white-color: var(--ff-white);
     th {
       border-bottom: 1px solid var(--ff-gray-medium);
       padding: var(--spacer-050) var(--spacer-075);
-      font-weight: 600;
+      font-weight: var(--font-weight-xl);
+      font-size: var(--font-size-xs);
+      line-height: 90%; //To be updated .actually it is 120%
       user-select: none;
       background-color: var(--ff-body-bg);
+      border-left: 1px solid var(--ff-gray-medium-dark);
     }
 
     tr th:last-child {
@@ -609,7 +610,6 @@ $white-color: var(--ff-white);
       border-top: 1px solid transparent;
       border-bottom: 1px solid var(--ff-gray-medium);
       white-space: nowrap;
-      overflow: hidden;
       text-overflow: ellipsis;
     }
 
@@ -626,17 +626,26 @@ $white-color: var(--ff-white);
         z-index: 2;
         border-left: 1px solid var(--ff-gray-medium-dark);
         text-align: center;
-        vertical-align: middle;
+        vertical-align: middle; 
+        .empty-table-message{
+          border-left: none !important;
+        }
       }
     }
   }
-  .empty-table-message {
-    text-align: center;
-    border: none;
-    padding: var(--spacer-100);
-    color: var(--ff-gray-medium-dark);
+
+    .empty-table-message {
+      text-align: center;
+      border: none;
+      padding: var(--spacer-200);
+      gap: var(--spacer-100);
+      color: var(--ff-gray-medium-dark);
+      overflow: visible !important;
+      &:hover {
+        border: none !important;
+        }
+    }
   }
-}
 
 /* Column resizer styling */
 .resizable-column {
@@ -647,8 +656,8 @@ $white-color: var(--ff-white);
 .column-resizer {
   position: absolute;
   top: 0;
-  right: -3px;
-  width: 6px;
+  right: -4px;
+  width: 7px;
   height: 100%;
   z-index: 2;
   cursor: col-resize;
@@ -674,7 +683,7 @@ $white-color: var(--ff-white);
   }
 }
 .filter-large {
-  display: inline-block;
+  display: block;
   max-width: 100px; /* adjust width as needed */
   overflow: hidden;
   text-overflow: ellipsis;

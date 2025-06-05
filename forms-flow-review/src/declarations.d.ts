@@ -46,6 +46,8 @@ declare module "@formsflow/service" {
     i18nService,
     StyleServices,
     HelperServices,
+    formioResourceBundle,
+    RESOURCE_BUNDLES_DATA,  
   }: any;
 }
 
@@ -66,7 +68,18 @@ declare module "@formsflow/components" {
     CustomInfo,
     DragandDropSort,
     CustomSearch,
-    AddIcon
+    AddIcon,
+    FormVariableIcon,
+    SharedWithOthersIcon,
+    SharedWithMeIcon,
+    AssignUser,
+    RefreshIcon,
+    DeleteIcon,
+    UpdateIcon,
+    ConfirmModal,
+    useSuccessCountdown,
+    ReusableResizableTable,
+    BackToPrevIcon
   }: any;
 }
 

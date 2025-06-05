@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import { useTranslation } from "react-i18next";
+import Tabs from "react-bootstrap/Tabs"; 
 
 
 interface TabItem {
@@ -28,16 +27,24 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
   ariaLabel = "",
   onSelect,
   className ,
-}) => {
-  const { t } = useTranslation();
+}) => { 
+  const [key,setKey] = useState(defaultActiveKey)
+  const handleChange = (newKey)=>{
+    setKey(newKey);
+    onSelect?.(newKey);
+  }
+  useEffect(()=>{
+    setKey(defaultActiveKey);
+  },[defaultActiveKey])
+
   return (
     <Tabs
-      defaultActiveKey={defaultActiveKey}
       id={id}
+      activeKey={key}
       className={`custom-tabs ${className}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
-      onSelect={onSelect}
+      onSelect={handleChange}
     >
       
       {tabs.map((tab, index) => (

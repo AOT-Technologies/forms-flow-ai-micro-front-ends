@@ -55,7 +55,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   disabled = false,
   icon = false,
   className = "",
-  dataTestId = "",
+  dataTestId,
   ariaLabel = "",
   name =  "",
   buttonLoading = false,

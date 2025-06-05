@@ -11,7 +11,7 @@ class HelperServices {
   
   public static getLocalDateAndTime(date: string): any {
     if (!date) {
-      return '-'
+      return null;
     }
     // Parse the input date string as a moment.js object
     const momentDate = moment.utc(date?.replace(' ', 'T'));
@@ -25,7 +25,7 @@ class HelperServices {
 
   public static getLocaldate(date: string): any {
     if (!date) {
-      return '-'
+      return null;
     }
     const momentDate = moment.utc(date?.replace(' ', 'T'));
 
@@ -37,7 +37,7 @@ class HelperServices {
 
   public static getLocalTime(date: string): any {
     if (!date) {
-      return '-'
+      return null;
     }
 
     const momentDate = moment.utc(date?.replace(' ', 'T')); 
