@@ -18,6 +18,7 @@ import {
   fetchFilterList,
   fetchServiceTaskList,
   fetchUserList,
+  updateDefaultFilter,
 } from "../../api/services/filterServices";
 import { batch, useDispatch, useSelector } from "react-redux";
 import {
@@ -33,6 +34,8 @@ import { HelperServices } from "@formsflow/service";
 import AttributeFilterDropdown from "./AttributeFilterDropdown";
 import { createReqPayload } from "../../helper/taskHelper";
 import { optionSortBy } from "../../helper/tableHelper";
+import {  UserDetail } from "../../types/taskFilter";
+import  useAllTasksPayload  from "../../constants/allTasksPayload";
 
 const TaskList = () => {
   const dispatch = useDispatch();
@@ -48,12 +51,16 @@ const TaskList = () => {
     defaultFilter: defaultFilterId,
     lastRequestedPayload: lastReqPayload,
     selectedAttributeFilter,
-    isAssigned
+    isAssigned,
+    filterList,
+    filterToEdit
   } = useSelector((state: RootState) => state.task);
+    const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
+  
 
-   
+   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
-
+ 
   //inital data loading
   const initialDataLoading = async () => {
     dispatch(setBPMFilterLoader(true));
@@ -66,6 +73,18 @@ const TaskList = () => {
         defaultFilterId && dispatch(setDefaultFilter(defaultFilterId));
         dispatch(fetchBPMTaskCount(filters));
       });
+      // If no default filter, will select All Tasks filter if its exists, else will select first filter
+      if (!defaultFilterId) {
+        const newFilter = (filterList.find(filter => filter.name === "All Tasks") || filterList[0]);
+        dispatch(setDefaultFilter(newFilter.id));
+        updateDefaultFilter(newFilter.id)
+
+      }
+    }
+    // if no filter is present, the data will be shown as All Tasks response
+    else {
+      dispatch(setSelectedFilter(allTasksPayload));
+      dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
     }
     dispatch(setBPMFilterLoader(false));
   };
@@ -76,43 +95,54 @@ const TaskList = () => {
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
 
+  useEffect(() => {
+  if (filterList && filterList.length > 0) {
+    fetchTaskListData();
+  }
+}, [filterList]);
+
+
   const fetchTaskListData = ({
-    sortData = null,
-    newPage = null,
-    newLimit = null,
-    newDateRange = null,
-  } = {}) => {
-    /**
-     * we need to create paylaod for the task list
-     * if filterCached is true we need to use lastReqPayload [this will use for persist]
-     * if selectedFilter is not null we need to create payload using selectedFilter, selectedAttributeFilter, sortData, newDateRange and isAssigned
-     */
+  sortData = null,
+  newPage = null,
+  newLimit = null,
+  newDateRange = null,
+} = {}) => {
+  /**
+   * We need to create payload for the task list
+   * If filterCached is true, use lastReqPayload (for persist)
+   * If selectedFilter is not null, create payload using selectedFilter
+   * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
+   */
 
-    let payload = null;
-    if (filterCached) {
-      payload = lastReqPayload;
-      dispatch(resetTaskListParams({ filterCached: false }));
-    } else if (selectedFilter) {
-      payload = createReqPayload(
-        selectedFilter,
-        selectedAttributeFilter,
-        sortData || filterListSortParams,
-        newDateRange || dateRange,
-        isAssigned
-      );
-    }
+  let payload = null;
 
-    if (!payload) return;
-    dispatch(setBPMTaskLoader(true));
-    dispatch(
-      fetchServiceTaskList(
-        payload,
-        null,
-        newPage || activePage,
-        newLimit || limit
-      )
-    );
-  };
+  if (filterCached) {
+    payload = lastReqPayload;
+    dispatch(resetTaskListParams({ filterCached: false }));
+  } else if (selectedFilter) {
+    payload = createReqPayload(
+      selectedFilter,
+      selectedAttributeFilter,
+      sortData || filterListSortParams,
+      newDateRange || dateRange,
+      isAssigned
+    );  
+  }
+
+  if (!payload) return;
+
+  dispatch(setBPMTaskLoader(true));
+  dispatch(
+    fetchServiceTaskList(
+      payload,
+      null,
+      newPage || activePage,
+      newLimit || limit
+    )
+  );
+};
+
 
   const handleRefresh = () => {
     fetchTaskListData();

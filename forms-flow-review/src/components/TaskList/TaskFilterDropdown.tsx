@@ -54,8 +54,7 @@ const changeFilterSelection = (filter) => {
 
   //if selecetd filter is not in filter list, then select All tasks filter
   const upcomingFilter =
-    filterList.find(item => item.id === filter?.id) ||
-    filterList.find(item => item.name === "All tasks"); 
+    filterList.find(item => item.id === filter?.id)  
 
   if (!upcomingFilter) return;
 
@@ -157,7 +156,7 @@ const changeFilterSelection = (filter) => {
     return filterDropdownItemsArray;
   }, [filtersAndCount, defaultFilter,filterList,userDetails ]);
 
-  const title = selectedFilter
+  const title = filterList.length === 0 ? t("All Tasks") : selectedFilter
     ? `${isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name)} (${
         tasksCount ?? 0
       })`
