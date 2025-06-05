@@ -156,11 +156,17 @@ const changeFilterSelection = (filter) => {
     return filterDropdownItemsArray;
   }, [filtersAndCount, defaultFilter,filterList,userDetails ]);
 
-  const title = filterList.length === 0 ? t("All Tasks") : selectedFilter
-    ? `${isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name)} (${
-        tasksCount ?? 0
-      })`
-    : t("Select Filter");
+  let title;
+
+if (filterList.length === 0) {
+  title = t("All Tasks");
+} else if (selectedFilter) {
+  const filterName = isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name);
+  title = `${filterName} (${tasksCount ?? 0})`;
+} else {
+  title = t("Select Filter");
+}
+
   return (
     <>
       <ButtonDropdown
