@@ -210,8 +210,8 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     },
     ANALYZE: {
       value: "analyze",
-      supportedRoutes: ["metrics", "insights"],
-    },
+      supportedRoutes: ["metrics", "insights", "submissions"],
+    },  
     MANAGE: {
       value: "manage",
       supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users"],
@@ -278,7 +278,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   
 
   return (
-      <div className="sidenav" style={{ height: sidenavHeight }}>
+      <div className="sidenav" style={{ height: sidenavHeight }} data-testid="sidenav">
         {renderLogo(hideLogo)} 
         <div className="options-container" data-testid="options-container">
           <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
@@ -386,6 +386,10 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                   {
                     name: "Insights",
                     path: "insights",
+                  },
+                  {
+                    name: "Submissions",
+                    path: "submissions",
                   }
                 ]}
                 subscribe={props.subscribe}

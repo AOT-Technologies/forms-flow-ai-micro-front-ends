@@ -3,15 +3,16 @@ import Modal from "react-bootstrap/Modal";
 import { useTranslation } from "react-i18next";
 import { CloseIcon, CustomSearch, CustomButton } from "@formsflow/components";
 import { Form } from "@aot-technologies/formio-react";
-import { fetchAllForms, fetchFormById } from "../api/services/filterServices";
+import {  fetchFormById } from "../api/services/filterServices";
 interface FormSelectionModalProps {
   showModal: boolean;
   onClose: () => void;
   onSelectForm: ({formId,formName}) => void;
+  forms: any[];
 }
 
 export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
-  ({ showModal, onClose, onSelectForm }) => {
+  ({ showModal, onClose, onSelectForm, forms }) => {
 
     const { t } = useTranslation();
     const [searchFormName, setSearchFormName] = useState<string>("");
@@ -28,14 +29,14 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
       handleFormNameSearch();
     }, [searchFormName]);
     useEffect(() => {
-      fetchAllForms().then((res) => {
-        const data = res.data?.forms ?? [];
-        setFormNames({
-          data: data.map((i) => ({ formName: i.formName, formId: i.formId })),
+       if(forms.length){
+         setFormNames({
+          data: forms.map((i) => ({ formName: i.formName, formId: i.formId })),
           isLoading: false,
         });
-      });
-    }, []);
+       }
+    }, [forms.length]);
+
     useEffect (()=>{
       if(formNames.data.length > 0) {
         setSelectedForm( ({ formId: formNames.data[0].formId, formName: formNames.data[0].formName }));

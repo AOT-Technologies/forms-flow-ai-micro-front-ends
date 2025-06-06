@@ -1560,4 +1560,8 @@ export const RESOURCE_BUNDLES_ZH = {
   "Select Date": "选择日期",
   "Save Attribute Filter": "保存属性筛选器",
   "Attributes: Unsaved Filter": "属性：未保存的筛选器",
+  "Custom Form Fields": "自定义表单字段",
+  "Saved!": "已保存！",
+  "Deleted!": "已删除！",
+  "Updated!": "已更新！"
 }

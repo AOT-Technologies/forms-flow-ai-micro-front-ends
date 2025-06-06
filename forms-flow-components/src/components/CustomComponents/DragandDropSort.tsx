@@ -107,7 +107,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
       <ul>
         {filterItems.map((item, index) => (
           <li
-            key={item.itemId ?? item.name}
+            key={item.itemId ?? `${item.name}-${index}`}
             className={`draggable-item ${draggingIndex === index ? "dragging" : ""}`}
             onDragOver={onDragOver}
             onDrop={onDrop}

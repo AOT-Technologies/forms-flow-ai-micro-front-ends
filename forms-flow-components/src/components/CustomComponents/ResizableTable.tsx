@@ -125,6 +125,7 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
       <div 
         className={scrollWrapperClassName}
         ref={scrollWrapperRef}
+        style={{overflow:"scroll"}} //TBD: need to handle dynamically for scroll bar
         data-testid={`${dataTestId}-scroll-wrapper`}
       >
         <table 

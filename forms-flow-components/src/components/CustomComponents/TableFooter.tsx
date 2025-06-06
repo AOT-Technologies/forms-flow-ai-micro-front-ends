@@ -51,11 +51,12 @@ export const TableFooter: React.FC<TableFooterProps> = ({
                 linkClass="page-link"
                 onChange={handlePageChange}
                 prevPageText={
-                  <span><AngleLeftIcon /></span>
+                  <span data-testid="goto-previous"><AngleLeftIcon /></span>
                 }
                 nextPageText={
-                  <span><AngleRightIcon /></span>
+                  <span data-testid="goto-next"><AngleRightIcon /></span>
                 }
+                
               />
             </div>
           </td>

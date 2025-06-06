@@ -220,6 +220,7 @@ export const CloseIcon = ({
   color = grayColor,
   width = 14,
   height = 14,
+  dataTestId = "close-icon",
   ...props
 }) => (
   <svg
@@ -229,6 +230,7 @@ export const CloseIcon = ({
     viewBox="0 0 14 14"
     fill="none"
     onClick={props.onClick}
+    data-testid={dataTestId} 
     {...props}
   >
     <path
@@ -508,6 +510,7 @@ export const BackToPrevIcon = ({ color = baseColor, onClick, ...props }) => (
     viewBox="0 0 32 33"
     fill="none"
     onClick={onClick}
+    {...props}
   >
     <path
       fillRule="evenodd"
@@ -664,8 +667,9 @@ export const TickIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const DropdownIcon = ({ color = baseColor }) => (
+export const DropdownIcon = ({ color = baseColor,dataTestId, ...props}) => (
   <svg
+    data-testid={dataTestId}
     xmlns="http://www.w3.org/2000/svg"
     width="16"
     height="9"
@@ -766,13 +770,14 @@ export const FilterIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const SortIcon = ({ color = grayColor, ...props }) => (
+export const SortIcon = ({ dataTestId, color = grayColor, ...props }) => (
   <svg
     width="12"
     height="17"
     viewBox="0 0 12 17"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    data-testid={dataTestId}
   >
     <path
       d="M6 15.5L6 1.5M6 1.5L11 5.5M6 1.5L1 5.5"

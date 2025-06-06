@@ -23,7 +23,11 @@ export default function Root(props: any) {
     }
     StorageService.delete(REVIEW_APP_KEY);
     return()=>{
-       StorageService.saveDataToSessionStorage(REVIEW_APP_KEY,store.getState().task);
+        // if user logout we don't want to keep their data so while logout the auth token will be clear from session storage
+        const isAuth = StorageService.get("AUTH_TOKEN");
+        if(isAuth){
+          StorageService.saveDataToSessionStorage(REVIEW_APP_KEY,store.getState().task);
+        }
     }
   },[])
 
