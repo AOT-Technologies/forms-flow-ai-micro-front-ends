@@ -20,8 +20,7 @@ import {
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useHistory } from "react-router-dom";
 import {
-  fetchServiceTaskList,
-  updateFilter,
+  fetchServiceTaskList, 
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";

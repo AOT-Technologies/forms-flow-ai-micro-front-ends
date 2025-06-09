@@ -7,6 +7,7 @@ import {
   unClaimBPMTask,
   updateAssigneeBPMTask,
 } from "../../api/services/filterServices";
+import SocketIOService from "../../services/SocketIOService";
  
 
 const TaskAssigneeManager = ({ task }) => {
@@ -43,7 +44,9 @@ const TaskAssigneeManager = ({ task }) => {
     dispatch(
       unClaimBPMTask(taskId, () => {
         callTaskListcountApi();
-        fetchTaskList();
+        if(!SocketIOService.isConnected){
+          fetchTaskList();
+        }
       })
     );
   };
@@ -52,7 +55,9 @@ const TaskAssigneeManager = ({ task }) => {
     if (newuser && newuser !== task.assignee) {
       dispatch(
         updateAssigneeBPMTask(task?.id, newuser, () => {
+          if(!SocketIOService.isConnected){
           fetchTaskList();
+        }
         })
       );
     }
