@@ -60,25 +60,29 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
     return [...perms].sort((a, b) => a.order - b.order);
   };
 
+  const removePermissionAndDeps = (perm: Permission, permissionsSet: Set<string>) => {
+    permissionsSet.delete(perm.name);
+    perm.depends_on.forEach(dep => permissionsSet.delete(dep));
+  };
+  
+  const addPermissionAndDeps = (perm: Permission, permissionsSet: Set<string>) => {
+    permissionsSet.add(perm.name);
+    perm.depends_on.forEach(dep => permissionsSet.add(dep));
+  };
+
   const handleParentCheck = (category: string, perms: Permission[]) => {
     setPayload(prev => {
-      // Create a new Set from current permissions for mutation
       const newPermissions = new Set(prev.permissions);
-      // Determine if all permissions in this category are currently checked
       const allChecked = perms.every(perm => newPermissions.has(perm.name));
       
-      // Process each permission in the category
-      perms.forEach(perm => {
-        if (allChecked) {
-          // Remove permission and its dependencies
-          newPermissions.delete(perm.name);
-          perm.depends_on.forEach(dep => newPermissions.delete(dep));
-        } else {
-          // Add permission and its dependencies
-          newPermissions.add(perm.name);
-          perm.depends_on.forEach(dep => newPermissions.add(dep));
-        }
-      });
+      const updatePermissions = (perm: Permission) => {
+        allChecked 
+          ? removePermissionAndDeps(perm, newPermissions)
+          : addPermissionAndDeps(perm, newPermissions);
+      };
+
+      perms.forEach(updatePermissions);
+      
       return {
         ...prev,
         permissions: Array.from(newPermissions)
