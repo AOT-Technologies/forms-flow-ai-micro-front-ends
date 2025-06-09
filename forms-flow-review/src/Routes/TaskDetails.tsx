@@ -27,8 +27,7 @@ import {
   setFormSubmissionLoading,
   setBPMTaskDetailLoader,
   setSelectedTaskID,
-  setAppHistoryLoading,
-  setBPMTaskDetail,
+  setAppHistoryLoading, 
 } from "../actions/taskActions";
 import { getFormioRoleIds } from "../api/services/userSrvices";
 import {

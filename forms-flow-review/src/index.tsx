@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState } from "react";
-import { Route, Switch, Redirect, useParams } from "react-router-dom";
+import { Route, Switch, Redirect, useParams,useHistory } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
@@ -16,8 +16,7 @@ import SocketIOService from "./services/SocketIOService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
-import { setBPMTaskDetail } from "./actions/taskActions";
-import { useHistory } from "react-router-dom";
+import { setBPMTaskDetail } from "./actions/taskActions"; 
 
 import { fetchServiceTaskList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
