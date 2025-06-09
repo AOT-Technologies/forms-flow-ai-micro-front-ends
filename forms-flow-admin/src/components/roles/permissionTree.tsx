@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
@@ -45,7 +45,10 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
 
   const isChecked = (name: string) => payload.permissions.includes(name);
 
-  const groupedPermissions = groupByCategory(permissions);
+  const groupedPermissions = useMemo(
+    () => groupByCategory(permissions),
+    [permissions]
+    );
 
   const formatCategoryLabel = (category: string): string => {
     return `Access to ${category.charAt(0).toUpperCase()}${category
@@ -58,26 +61,29 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
   };
 
   const handleParentCheck = (category: string, perms: Permission[]) => {
-    const checkedCount = perms.filter((perm) => isChecked(perm.name)).length;
-    const allChecked = checkedCount === perms.length;
-    const newPermissions = new Set(payload.permissions);
-
-    if (allChecked) {
-      perms.forEach((perm) => {
-        newPermissions.delete(perm.name);
-        perm.depends_on.forEach((dep) => newPermissions.delete(dep));
+    setPayload(prev => {
+      // Create a new Set from current permissions for mutation
+      const newPermissions = new Set(prev.permissions);
+      // Determine if all permissions in this category are currently checked
+      const allChecked = perms.every(perm => newPermissions.has(perm.name));
+      
+      // Process each permission in the category
+      perms.forEach(perm => {
+        if (allChecked) {
+          // Remove permission and its dependencies
+          newPermissions.delete(perm.name);
+          perm.depends_on.forEach(dep => newPermissions.delete(dep));
+        } else {
+          // Add permission and its dependencies
+          newPermissions.add(perm.name);
+          perm.depends_on.forEach(dep => newPermissions.add(dep));
+        }
       });
-    } else {
-      perms.forEach((perm) => {
-        newPermissions.add(perm.name);
-        perm.depends_on.forEach((dep) => newPermissions.add(dep));
-      });
-    }
-
-    setPayload((prev) => ({
-      ...prev,
-      permissions: Array.from(newPermissions),
-    }));
+      return {
+        ...prev,
+        permissions: Array.from(newPermissions)
+      };
+    });
   };
 
   useEffect(() => {
