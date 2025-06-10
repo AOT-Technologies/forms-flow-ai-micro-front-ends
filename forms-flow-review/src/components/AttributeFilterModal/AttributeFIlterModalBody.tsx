@@ -81,18 +81,29 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     return acc;
   }, {});
   //Handle if existing data is there need to set it in attributeData
-  const [attributeData, setAttributeData] = useState(() => {
-    const initialData = {assignee:attributeFilter?.criteria?.assignee || ""};
-    const existingValues = (
-      exisitngProcessvariables.reduce((acc, item) => {
-        if (isCheckedData[item.name]) {
-          acc[item.name] = item.value;
+ const [attributeData, setAttributeData] = useState(() => {
+  const initialData = {
+    assignee: attributeFilter?.criteria?.assignee || ""
+  };
+
+  const existingValues = (
+    exisitngProcessvariables.reduce((acc, item) => {
+      if (isCheckedData[item.name]) {
+        let resetValue = item.value;
+
+        // Remove '%' from displaying
+        if (typeof resetValue !== "number" || item.name !== "applicationId") {
+          resetValue = resetValue.replace(/%/g, '');
         }
-        return acc;
-      }, {}) || {}
-    );
-    return { ...initialData, ...existingValues };
-  });
+
+        acc[item.name] = resetValue;
+      }
+      return acc;
+    }, {}) || {}
+  );
+
+  return { ...initialData, ...existingValues };
+});
 
   
   const [shareAttrFilter, setShareAttrFilter] = useState(PRIVATE_ONLY_YOU); // need to handle in edit stage
@@ -263,26 +274,29 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const ignoredKeys = ["assignee"];
 
   Object.keys(attributeData).forEach((key) => {
-    if (!ignoredKeys.includes(key) && attributeData[key]) {
-      const isNumberOrAppId = types[key] === "number" || key === "applicationId";
-      const operator = isNumberOrAppId ? "eq" : "like";
+  if (!ignoredKeys.includes(key) && attributeData[key]) {
+    const isNumberOrAppId = types[key] === "number" || key === "applicationId";
+    const operator = isNumberOrAppId ? "eq" : "like";
 
-      let value;
-      if (key === "applicationId") {
-        value = JSON.parse(attributeData[key]);
-      } else if (key === "roles") {
-        value = removeSlashFromValue(attributeData[key]);
-      } else {
-        value = attributeData[key];
-      }
+    let value = attributeData[key];
 
-      newProcessVariable.push({
-        name: key,
-        operator,
-        value,
-      });
+    if (key === "applicationId") {
+      value = JSON.parse(attributeData[key]);
+    } else if (key === "roles") {
+      value = removeSlashFromValue(attributeData[key]);
+    } else if (!isNumberOrAppId) {
+      // like search
+      value = `%${value}%`;
     }
-  });
+
+    newProcessVariable.push({
+      name: key,
+      operator,
+      value,
+    });
+  }
+});
+
 
   newProcessVariable.push(...(currentCriteria.processVariables ?? []));
 
