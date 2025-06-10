@@ -120,6 +120,71 @@
     border-top-right-radius:0;
     border-bottom-right-radius:0;
 }
+.role-modal-body {
+    padding: var(--spacer-200) var(--spacer-250) !important;
+    display: flex;
+    gap: var(--spacer-150);
+    flex-direction: column;
+  }
+.role-details{
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-150);
+}
+
+.permission-tree {
+    max-height: 50vh;
+    overflow: auto;
+    .form-check.fw-bold {
+      font-weight: var(--font-weight-lg);
+    }
+  
+    .tree-branch {
+      position: relative;
+      margin-left: .4rem;
+      padding-left: var(--spacer-150);
+      border-left: 0.125rem solid transparent;
+      margin-top: var(--spacer-075);
+  
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0.6rem;
+        width: 0.031rem;
+        background: var(--ff-primary);
+      }
+    }
+  
+    .tree-node {
+      position: relative;
+      padding-left: var(--spacer-150);
+      margin-bottom: var(--spacer-075);
+      
+      &::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: -1.5rem;
+        width: 1.5rem;
+        height: 0.063rem;
+        background-color: var(--ff-primary);
+      }
+  
+      &.last-child::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: -1.5rem;
+        width: 0.125rem;
+        height: 45%;
+        background-color: var(--ff-white); 
+      }
+    }
+  }
+  
+  
 @media (max-width: 768px) {
     .font-size{
         white-space: nowrap;

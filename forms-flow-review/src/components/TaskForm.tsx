@@ -29,7 +29,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onFormSubmit,
   onCustomEvent = () => {},
 }) => {
-  const isReadOnly = taskAssignee !== currentUser;
+  const isReadOnly = taskAssignee !== currentUser; 
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
   );
@@ -62,6 +62,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
   }
 
   // Render the Form
+  //TBD: need to redraw the form when we change the assignee
   return (
     <div>
       <div className="main-header">
