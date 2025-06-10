@@ -36,7 +36,8 @@ const TaskListDropdownItems = memo(() => {
   const [showReorderFilterModal,setShowReorderFilterModal] = useState(false); 
   
   const handleEditTaskFilter = () => {
-    if (!selectedFilter) return;
+    // Prevent editing if the active filter is the initial "All Tasks".
+    if (!selectedFilter || (!isUnsavedFilter && filterList.length === 0)) return;
     dispatch(setFilterToEdit(selectedFilter));
     setShowTaskFilterModal(true);
   };
@@ -156,16 +157,20 @@ const changeFilterSelection = (filter) => {
     return filterDropdownItemsArray;
   }, [filtersAndCount, defaultFilter,filterList,userDetails ]);
 
+// filter title based on unsaved filter, empty list or selected filter
   let title;
 
-if (filterList.length === 0) {
-  title = t("All Tasks");
-} else if (selectedFilter) {
-  const filterName = isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name);
-  title = `${filterName} (${tasksCount ?? 0})`;
-} else {
-  title = t("Select Filter");
-}
+  if (selectedFilter) {
+    if (isUnsavedFilter) {
+      title = t("Unsaved Filter");
+    }
+    else if (filterList.length === 0) {
+      title = t("All Tasks");
+    } else {
+      title = `${selectedFilter.name} (${tasksCount ?? 0})`;
+    }
+  }
+  
 
   return (
     <>
