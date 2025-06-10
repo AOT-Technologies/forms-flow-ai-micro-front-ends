@@ -4,14 +4,14 @@ import './accessDenied.scss';
 import { useTranslation } from "react-i18next";
 import { BASE_ROUTE } from "../../constants/index";
 import { useHistory } from "react-router-dom";
-
+import { KeycloakService } from "@formsflow/service";
 
 const AccessDenied = ({ userRoles }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
   const handleLogout = () => {
-    const kcInstance = kcServiceInstance(); 
+    const kcInstance = KeycloakService.getInstance();
     kcInstance.userLogout();
   };
 

@@ -97,9 +97,9 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const isCreateDesigns = userRoles?.includes("create_designs");
   const isViewDesigns = userRoles?.includes("view_designs");
   const isManageWorkflows = userRoles?.includes("manage_advance_workflows");
-  const isManageTemplates = userRoles?.includes("manage_templates");
+  //const isManageTemplates = userRoles?.includes("manage_templates");
   const isManageBundles = userRoles?.includes("manage_bundles");
-  const isManageintegrations = userRoles?.includes("manage_integrations");
+  const isManageIntegrations = userRoles?.includes("manage_integrations");
   const isViewTask = userRoles?.includes("view_tasks");
   const isManageTask = userRoles?.includes("manage_tasks");
   const isViewDashboard = userRoles?.includes("view_dashboards");
@@ -228,7 +228,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     },  
     MANAGE: {
       value: "manage",
-      supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users", "admin/links"],
+      supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users"],
     },
   };  
   
@@ -351,19 +351,19 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                       },
                     ]
                   : []),
-                  ...(IS_ENTERPRISE &&
-                isManageTemplates
-                  ? [
-                      {
-                        name: "Templates",
-                        path: "forms-template-library",
-                        isPremium: true,
-                      },
-                    ]
-                  : []),
+                //   ...(IS_ENTERPRISE &&
+                // isManageTemplates
+                //   ? [
+                //       {
+                //         name: "Templates",
+                //         path: "forms-template-library",
+                //         isPremium: true,
+                //       },
+                //     ]
+                //   : []),
                 // { name: "Templates", path: "forms-template-library" }, // TBD : Templates to be added on a later stage
                 ...(IS_ENTERPRISE &&
-               isManageintegrations &&
+               isManageIntegrations &&
                 (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
                   ? [
                       {

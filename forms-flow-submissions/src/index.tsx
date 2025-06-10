@@ -10,7 +10,7 @@ import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/loading";
-import Accessdenied from "./components/accessdenied";
+import AccessDenied from "./components/AccessDenied";
 import SubmissionsList from "./Routes/SubmissionListing";
 
 interface SubmissionsProps {
@@ -100,7 +100,7 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
     </div>) : <div className="main-container ">
          <div className="container mt-5">
          <div className="min-container-height ps-md-3" >
-          <Accessdenied userRoles={userRoles} />
+          <AccessDenied userRoles={userRoles} />
           </div>
           </div> 
         </div>} </>
