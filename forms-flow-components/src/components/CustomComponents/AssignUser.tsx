@@ -39,16 +39,22 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   const [selectedName, setSelectedName] = useState(null);
   const userData =
   StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
-  useEffect(() => {
-    if(!username){
-      setSelected(null);
-    }
-    else {
+   useEffect(() => {
+    if(username){
       setSelected("Me");
-      setSelectedName(username);
+      // if username is not null or empty,set selectedName to its lastname and firstname
+      const matchedUser = users.find((user) => user.username === username);
+      if (matchedUser && matchedUser.firstName && matchedUser.lastName){
+        setSelectedName(`${matchedUser.lastName}, ${matchedUser.firstName}`);
+      }else{
+        setSelectedName(username);
+      }
+    } else {
+      setSelected(null);
+      setSelectedName(null);
     }
-  }, [username])
-
+  }, [username,users]);
+  
   const handleMeClick = () => {
     setSelected("Me");
     meOnClick?.();
@@ -68,8 +74,8 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     handleCloseClick?.();
   };
 
- const options = Array.isArray(users) && users.length > 0
-  ? users.map((user) => {
+ const options = Array.isArray(users) 
+  ? users?.map((user) => {
       const hasFullName = user.firstName && user.lastName;
       const label = hasFullName 
         ? `${user.lastName}, ${user.firstName} (${user.email})` 
@@ -84,15 +90,15 @@ export const AssignUser: React.FC<AssignUserProps> = ({
         value: user.id,
         onClick: () => {
           setSelectedName(fullName);
+          optionSelect?.(user.username);
           setOpenDropdown(false);
-          optionSelect?.(fullName);
         },
       };
     })
   : [];
 
   // Determine the selected option based on the state
-  const selectedOption = selected === "Me" ? selectedName : undefined;
+  const selectedOption =  selectedName ?? undefined;
 
   return (
     <>
