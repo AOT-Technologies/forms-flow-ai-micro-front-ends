@@ -1127,6 +1127,7 @@ $black-color: var(--ff-black);
       
       .form-list-item{
       padding: var(--spacer-075) var(--spacer-100) !important;
+      overflow: hidden;
       border-radius: var(--radius-sm);
       gap: var(--spacer-050);
       cursor: pointer;

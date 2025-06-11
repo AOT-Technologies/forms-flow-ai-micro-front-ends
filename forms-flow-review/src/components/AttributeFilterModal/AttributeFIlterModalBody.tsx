@@ -210,16 +210,18 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     };
 
     const getCandidateGroup = () => {
-      return  attributeData["roles"] ||selectedFilter?.criteria?.candidateGroup;
+      return  removeSlashFromValue(attributeData["roles"]) ||selectedFilter?.criteria?.candidateGroup;
     };
 
     const getFilterData = (newProcessVariables): Filter => {
       const assignee = getAssignee();
+      const candidateGroup = getCandidateGroup();
 
       const criteria = {
         ...selectedFilter.criteria,
         processVariables: newProcessVariables,
         assignee,
+        candidateGroup
       };
 
       const { roles, users } = getTaskAccess();
@@ -260,7 +262,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     return acc;
   }, {});
 
-  const ignoredKeys = ["assignee"];
+  // we don't need assignee and roles inside process variables
+  const ignoredKeys = ["assignee", "roles"];
 
   Object.keys(attributeData).forEach((key) => {
     if (!ignoredKeys.includes(key) && attributeData[key]) {
@@ -270,9 +273,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       let value;
       if (key === "applicationId") {
         value = JSON.parse(attributeData[key]);
-      } else if (key === "roles") {
-        value = removeSlashFromValue(attributeData[key]);
-      } else {
+      } 
+       else {
         value = attributeData[key];
       }
 

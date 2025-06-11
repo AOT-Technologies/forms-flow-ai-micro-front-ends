@@ -13,7 +13,7 @@ const useAllTasksPayload = () => {
       candidateGroupsExpression: "${currentUserGroups()}",
       sorting: [
         {
-          sortBy: "dueDate",
+          sortBy: "created",
           sortOrder: "asc",
         },
       ],
