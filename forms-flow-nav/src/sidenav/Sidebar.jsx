@@ -341,8 +341,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                   name: "Forms",
                   path: "formflow",
                 },
-                ...(IS_ENTERPRISE &&
-                isManageBundles
+                ...(IS_ENTERPRISE && isManageBundles
                   ? [
                       {
                         name: "Bundle",
@@ -363,7 +362,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 //   : []),
                 // { name: "Templates", path: "forms-template-library" }, // TBD : Templates to be added on a later stage
                 ...(IS_ENTERPRISE &&
-               isManageIntegrations &&
+                isManageIntegrations &&
                 (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
                   ? [
                       {
@@ -394,6 +393,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               subscribe={props.subscribe}
             />
           )}
+
           {(isCreateSubmissions ||
             (showApplications &&
               isViewSubmissions &&
@@ -439,6 +439,28 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               subscribe={props.subscribe}
             />
           )}
+          {isManageWorkflows &&
+            !isCreateDesigns &&
+            !isViewDesigns &&
+            ENABLE_PROCESSES_MODULE && (
+              <MenuComponent
+                baseUrl={baseUrl}
+                eventKey={SectionKeys.DESIGN.value}
+                optionsCount="2"
+                mainMenu="Design"
+                subMenu={[
+                  {
+                    name: "Subflows",
+                    path: "subflow",
+                  },
+                  {
+                    name: "Decision Tables",
+                    path: "decision-table",
+                  },
+                ]}
+                subscribe={props.subscribe}
+              />
+            )}
           {isAnalyzeManager && ENABLE_DASHBOARDS_MODULE && (
             <MenuComponent
               baseUrl={baseUrl}

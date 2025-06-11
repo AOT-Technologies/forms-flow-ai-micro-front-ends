@@ -67,11 +67,10 @@ const RevertField = ({
   dataTestId,
   ariaLabel,
   disabled=false,
-  isCreateDesigns
 }) => {
   return (
     <div className="revert-btn">
-    { isCreateDesigns && <CustomButton
+    {  <CustomButton
         variant={variant}
         size={size}
         disabled={disabled}
@@ -114,8 +113,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const timelineRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
-    const userRoles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
-    const isCreateDesigns = userRoles?.includes("create_designs");
     const currentCategoryLabel = categoryType === "FORM" ? "Layout" : "Flow";
 
     const handleRevertClick = (
@@ -220,7 +217,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
           categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
         const process_id = categoryType === "WORKFLOW" ? entry.id : null;
         const isLastEntry = index === allHistory.length - 1;  
-        const revertButtonDisabled = disableAllRevertButton || entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
+        const userRoles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
+        const isCreateDesigns = userRoles?.includes("create_designs");
+        const isViewDesigns = userRoles?.includes("view_designs");
+        const isReadOnly = isViewDesigns && !isCreateDesigns
+        const revertButtonDisabled = isReadOnly || disableAllRevertButton || entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
         const fields = [
             { id:1, heading: t("Last Edit On"), value: HelperServices?.getLocalDateAndTime(entry.created) },
             { id:2, heading: t("Last Edit By"), value: entry.createdBy },
@@ -251,7 +252,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   }
                  dataTestId={revertBtndataTestid}
                  ariaLabel={revertBtnariaLabel}
-                 isCreateDesigns={isCreateDesigns}
                 />
               </div>
             )}
@@ -274,7 +274,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   }
                   dataTestId={revertBtndataTestid}
                   ariaLabel={revertBtnariaLabel}
-                  isCreateDesigns={isCreateDesigns}
                 />
               </div>
             )}
