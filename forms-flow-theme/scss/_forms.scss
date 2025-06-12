@@ -132,7 +132,9 @@ select option:hover {
     padding: var(--spacer-075) var(--spacer-100)  !important;
     height: 2.063rem;
 
-
+    &:hover{
+      background-color: $primary-light !important;
+    }
 
     &.has-value {
       border: 2px solid $primary;

@@ -90,7 +90,7 @@ const MenuComponent = ({
             height="5"
             className="custom-chevron"
             color={getComputedStyle(document.documentElement).getPropertyValue(
-              "--ff-gray-800"
+              "--navbar-main-menu-active-font-color"
             )}
           />
         )}
