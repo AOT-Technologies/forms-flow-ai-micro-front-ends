@@ -221,16 +221,18 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     };
 
     const getCandidateGroup = () => {
-      return  attributeData["roles"] ||selectedFilter?.criteria?.candidateGroup;
+      return  removeSlashFromValue(attributeData["roles"]) ||selectedFilter?.criteria?.candidateGroup;
     };
 
     const getFilterData = (newProcessVariables): Filter => {
       const assignee = getAssignee();
+      const candidateGroup = getCandidateGroup();
 
       const criteria = {
         ...selectedFilter.criteria,
         processVariables: newProcessVariables,
         assignee,
+        candidateGroup
       };
 
       const { roles, users } = getTaskAccess();
@@ -271,7 +273,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     return acc;
   }, {});
 
-  const ignoredKeys = ["assignee"];
+  // TBD:now we don't need assignee and roles inside process variables, miight remove this line after discussion
+  const ignoredKeys = ["assignee", "roles"];
 
   Object.keys(attributeData).forEach((key) => {
   if (!ignoredKeys.includes(key) && attributeData[key]) {
