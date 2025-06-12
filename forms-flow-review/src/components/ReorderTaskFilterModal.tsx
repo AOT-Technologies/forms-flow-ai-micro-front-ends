@@ -10,10 +10,10 @@ import {
   SharedWithOthersIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
-import { fetchBPMTaskCount,fetchFilterList, saveFilterPreference } from "../api/services/filterServices";
+import { fetchBPMTaskCount,fetchFilterList, saveFilterPreference, updateDefaultFilter } from "../api/services/filterServices";
 import { useSelector,useDispatch } from "react-redux";
 import { RootState } from "../reducers/index.js";
-import { setBPMFilterList } from "../actions/taskActions";
+import { setBPMFilterList, setDefaultFilter, setSelectedFilter } from "../actions/taskActions";
 
 
 interface ReorderTaskFilterModalProps {
@@ -31,7 +31,7 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       );
       const { t } = useTranslation();
       const dispatch = useDispatch();
-
+      const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
       const [sortedFilterList, setSortedFilterList] = useState<any[]>([
         filtersList,
       ]);
@@ -53,7 +53,7 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
           return {
             id: item.id,
             name: item.name,
-            isChecked: item.hide,
+            isChecked: !item.hide,
             sortOrder: item.sortOrder,
             icon: icon,
           };
@@ -78,16 +78,28 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         const updatedFiltersPreference = sortedFilterList.map(
           ({ id, isChecked, sortOrder }) => ({
             filterId: id,
-            hide: isChecked,
+            hide: !isChecked,
             sortOrder,
           })
+        );
+        // check if the selected filter is hidden or not
+        const selectedFilterHide = sortedFilterList.some(
+          ({ id, isChecked }) => id === selectedFilter.id && !isChecked
         );
 
         try {
           await saveFilterPreference(updatedFiltersPreference);
 
           const { data: { filters } } = await fetchFilterList();
-          dispatch(fetchBPMTaskCount(filters));
+           //create an array of filters with no hidden filters
+          const updatedfilters = filters.filter((filter) => !filter.hide);
+          //If the selected filter is unchecked(hide) ,then set the first sorted filter with hide false as the selected filter
+          if(selectedFilterHide){
+          dispatch(setSelectedFilter(updatedfilters[0]));
+          dispatch(setDefaultFilter(updatedfilters[0].id));
+          updateDefaultFilter(updatedfilters[0].id); 
+          }        
+          dispatch(fetchBPMTaskCount(updatedfilters));
           dispatch(setBPMFilterList(filters));
           setShowReorderFilterModal(false);
         } catch (error) {
@@ -135,6 +147,7 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
             <DragandDropSort
               items={updateFilterList}
               onUpdate={onUpdateFilterOrder}
+              preventLastCheck={true}
             />
           </Modal.Body>
           <Modal.Footer className="d-flex justify-content-start">

@@ -104,11 +104,6 @@ const changeFilterSelection = (filter) => {
       ariaLabel: t("Re-order And Hide Filters"),
     };
     const mappedItems = filtersAndCount
-    .filter((filter) => {
-    const details = filterList.find((item) => item.id === filter.id);
-    
-    return details && !details.hide; // only include visible filters
-  })
     .map((filter) => { 
       const filterDetails = filterList.find((item) => item.id === filter.id);
       let icon = null;
