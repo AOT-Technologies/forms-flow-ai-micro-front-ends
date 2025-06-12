@@ -18,14 +18,13 @@ import {
   setTaskListLimit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList, 
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
-import { useParams } from "react-router-dom";
 interface Column {
   name: string;
   width: number;
