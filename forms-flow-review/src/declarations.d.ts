@@ -69,6 +69,7 @@ declare module "@formsflow/components" {
     DragandDropSort,
     CustomSearch,
     AddIcon,
+    ConnectIcon,
     FormVariableIcon,
     SharedWithOthersIcon,
     SharedWithMeIcon,

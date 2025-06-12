@@ -477,21 +477,21 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
         onBlur={handleNameError}
         dataTestId="attribute-filter-name"
         feedback={filterNameError}
+        id="filter-name"
       />
 
-      <div className="pt-4 pb-4">
-        <InputDropdown
-          Options={filterShareOptions}
-          dropdownLabel={t("Share This Filter With")}
-          isAllowInput={false}
-          ariaLabelforDropdown={t("attribute filter sharing dropdown")}
-          selectedOption={shareAttrFilter}
-          setNewInput={setShareAttrFilter}
-          dataTestIdforInput="share-attribute-filter-input"
-          dataTestIdforDropdown="share-attribute-filter-options"
-          required={true}
-        />
-      </div>
+      <InputDropdown
+        Options={filterShareOptions}
+        dropdownLabel={t("Share This Filter With")}
+        isAllowInput={false}
+        ariaLabelforDropdown={t("attribute filter sharing dropdown")}
+        selectedOption={shareAttrFilter}
+        setNewInput={setShareAttrFilter}
+        dataTestIdforInput="share-attribute-filter-input"
+        dataTestIdforDropdown="share-attribute-filter-options"
+        required={true}
+        id="shave-this-filter"
+      />
       <RenderOwnerShipNotes
         attributeFilter={attributeFilter}
         isCreator={createdByMe}
@@ -520,8 +520,8 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
 
    return (
     <>
-      <Modal.Body className="modal-body p-0">
-        <div className="filter-tab-container">
+      <Modal.Body className="with-tabs">
+        <div className="tabs">
           <CustomTabs
             defaultActiveKey={(updateSuccess?.showSuccess || deleteSuccess?.showSuccess) ? "saveFilterTab":"parametersTab"}
             tabs={tabs}
@@ -530,10 +530,9 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
           />
         </div>
       </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-start">
+      <Modal.Footer>
+        <div className="buttons-row">
         <CustomButton
-          variant="primary"
-          size="md"
           label={t("Filter Results")}
           dataTestId="attribute-filter-results"
           ariaLabel={t("Filter results")}
@@ -541,13 +540,13 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
           disabled={(updateSuccess.showSuccess|| deleteSuccess.showSuccess || noFieldChanged)}
         />
         <CustomButton
-          variant="secondary"
-          size="md"
           label={t("Cancel")}
           onClick={onClose}
           dataTestId="cancel-attribute-filter"
           ariaLabel={t("Cancel filter")}
+          secondary
         />
+        </div>
       </Modal.Footer>
 
     </>

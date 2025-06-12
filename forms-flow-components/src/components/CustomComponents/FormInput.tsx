@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FocusEvent, KeyboardEvent, useEffect, useRef } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
-import { LoadingIcon } from "../SvgIcons/index";
+import { LoadingIcon, CloseIcon } from "../SvgIcons/index";
 
 interface FormInputProps {
   type?: string;
@@ -19,9 +19,11 @@ interface FormInputProps {
   ariaLabel?: string;
   className?: string;
   required?: boolean;
+  clear?: boolean;
   icon?: React.ReactNode;
   id?: string;
   onIconClick?: () => void;
+  onClearClick?: () => void;
   onClick?: () => void;
   turnOnLoader?: boolean;
   autoFocusInput?: boolean;
@@ -44,11 +46,13 @@ export const FormInput: React.FC<FormInputProps> = ({
   size,
   dataTestId,
   ariaLabel,
-  className = '',
+  className,
   required = false,
   icon,
+  clear,
   id,
   onIconClick,
+  onClearClick,
   onClick,
   turnOnLoader = false,
   autoFocusInput = false,
@@ -78,7 +82,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   return (
-    <div className={`input-text ${icon? "with-icon":""} ${isInvalid ? "error" : ""}`}>
+    <div className={`input-text ${icon ? "with-icon" : ""} ${isInvalid ? "error" : ""} ${className ? className : ""}`}>
       {label && (
         <Form.Label htmlFor={id} className='custom-form-control-label'>
           {t(label)}{required && <span className='required-icon'>*</span>}
@@ -117,6 +121,18 @@ export const FormInput: React.FC<FormInputProps> = ({
             onClick={onIconClick}
             >
             {icon}
+          </div>
+        )}
+
+        {clear && (
+          <div
+            className="clear"
+            onClick={onClearClick}
+            >
+            <CloseIcon
+              data-testid="clear-field"
+              aria-label="clear-field"
+            />
           </div>
         )}
         </div>

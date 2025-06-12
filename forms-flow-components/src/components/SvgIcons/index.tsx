@@ -106,30 +106,13 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
 
 export const AddIcon = ({ color = baseColor,className, size = 16, ...props }) => (
   <svg
-    className={className}
+    className="svgIcon-primary"
     xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
     viewBox="0 0 16 16"
-    fill="none"
     {...props}
   >
-    <path
-      className={className}
-      d="M8 1V15"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      className={className}
-      d="M1 8L15 8"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M8 1V15" />
+    <path d="M1 8L15 8"/>
   </svg>
 );
 
@@ -206,6 +189,21 @@ export const ClearIcon = ({
     {...props}
   >
     <path d="M5 5L11 11M11 5L5 11"/>
+  </svg>
+);
+
+export const ConnectIcon = ({
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 10 10"
+    className="svgIconSmall-primary"
+    onClick={props.onClick}
+    {...props}
+  >
+    <path d="M5 1.5L5 9.5"/>
+    <path d="M1 5.5L9 5.5"/>
   </svg>
 );
 
@@ -835,7 +833,12 @@ export const SaveIcon = ({ color = whiteColor}) => (
 </svg>
 );
 
-export const SharedWithOthersIcon = ({ color = grayDarkestColor,className, ...props }) => (
+export const NavbarTaskIcon = ({
+  fillColor = grayDarkestColor,
+  strokeColor = whiteColor,
+  className,
+  ...props
+}) => (
   <svg
     width="18"
     height="16"

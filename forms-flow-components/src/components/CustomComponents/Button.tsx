@@ -33,9 +33,10 @@ interface CustomButtonProps {
   secondary?: boolean;
   dark?: boolean;
   darkPrimary?: boolean;
+  successMessage?: string;
 }
 
-const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false, action: boolean = false, iconWithText: boolean = false, secondary: boolean = false, dark: boolean = false, darkPrimary: boolean = false) => {
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false, action: boolean = false, iconWithText: boolean = false, secondary: boolean = false, dark: boolean = false, darkPrimary: boolean = false, successMessage: string) => {
   const sizeClassMap: Record<string, string> = {
     md: "btn-md",
     table: "btn-table",
@@ -66,8 +67,9 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   secondary = false,
   dark = false,
   darkPrimary = false,
+  successMessage = "",
 }) => {
-  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable, action, iconWithText, secondary, dark, darkPrimary);
+  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable, action, iconWithText, secondary, dark, darkPrimary, successMessage);
   const sizeOfButton = size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -206,13 +208,14 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       name={name}
-      className={`button-icon ${buttonLoading ? "loading" : ""}`}
+      className={`button-icon ${buttonLoading ? "loading" : ""} ${successMessage ? "success" : ""}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
       {icon}
       {t(label)}
       {buttonLoading && <LoadingIcon />}
+      {successMessage && <p className="success-message">{successMessage}</p>}
     </button>
     );
   }
@@ -224,12 +227,13 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       name={name}
-      className={`button-secondary ${buttonLoading ? "loading" : ""}`}
+      className={`button-secondary ${buttonLoading ? "loading" : ""} ${successMessage ? "success" : ""}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
       {t(label)}
       {buttonLoading && <LoadingIcon />}
+      {successMessage && <p className="success-message">{successMessage}</p>}
     </button>
     );
   }
@@ -274,34 +278,14 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       name={name}
-      className={`button-primary ${buttonLoading ? "loading" : ""}`}
+      className={`button-primary ${buttonLoading ? "loading" : ""} ${successMessage ? "success" : ""}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
       {t(label)}
       {buttonLoading && <LoadingIcon />}
+      {successMessage && <p className="success-message">{successMessage}</p>}
     </button>
-    // <Button
-    //   variant={variant}
-    //   size={sizeOfButton}
-    //   onClick={onClick}
-    //   disabled={disabled || buttonLoading}
-    //   name={name}
-    //   className={classNameForButton}
-    //   data-testid={dataTestId}
-    //   aria-label={ariaLabel}
-    // >
-    //   <div
-    //     className={`d-inline-flex align-items-center ${
-    //       buttonLoading ? "button-content" : ""
-    //     }`}
-    //   >
-    //     {icon && <span className="me-2">{icon}</span>}
-    //   </div>
-    //   {t(label)}
-    //   {buttonLoading && <span className="dotted-spinner"></span>}
-    // </Button>
-    
   );
 };
 

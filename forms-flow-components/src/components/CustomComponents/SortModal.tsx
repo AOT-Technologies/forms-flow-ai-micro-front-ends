@@ -97,6 +97,7 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
               ariaLabelforInput={t("Sort By Input")}
               dataTestIdforDropdown="dropdown-sort-by"
               dataTestIdforInput="input-sort-by"
+              id="sort-by"
             />
             <InputDropdown
               firstItemLabel={t(secondItemLabel)}
@@ -115,6 +116,7 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
               ariaLabelforInput={t("Order Input")}
               dataTestIdforDropdown="dropdown-sort-order"
               dataTestIdforInput="input-sort-order"
+              id="in-a"
             />
         </Modal.Body>
 

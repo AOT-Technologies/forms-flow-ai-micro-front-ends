@@ -119,22 +119,20 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
         show={show}
         onHide={onClose}
         size="sm"
-        centered
         data-testid="create-filter-modal"
         aria-labelledby={t("create filter modal title")}
         aria-describedby="create-filter-modal"
         backdrop="static"
-        className="create-filter-modal"
       >
         <Modal.Header>
           <Modal.Title id="create-filter-title">
-            <b>{`${t("Tasks")}: ${
+            <p>{`${t("Tasks")}: ${
               filterToEdit && !isUnsavedFilter
                 ? filterToEdit.name //need to check if it is unsaved or not
                 : "Unsaved Filter"
-            }`}</b>
+            }`}</p>
           </Modal.Title>
-          <div className="d-flex align-items-center cursor-pointer">
+          <div className="icon-close">
             <CloseIcon onClick={onClose} />
           </div>
         </Modal.Header>

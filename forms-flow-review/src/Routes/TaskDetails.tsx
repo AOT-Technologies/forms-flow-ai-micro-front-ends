@@ -211,7 +211,7 @@ const TaskDetails = () => {
   };
   // Main Renderor
   return (
-    <div className="task-details-view">
+    <>
       {showHistoryModal && (
         <TaskHistoryModal
           show={showHistoryModal}
@@ -252,7 +252,7 @@ const TaskDetails = () => {
           onCustomEvent={onCustomEventCallBack}
         />
       </div>
-    </div>
+    </>
   );
 };
 

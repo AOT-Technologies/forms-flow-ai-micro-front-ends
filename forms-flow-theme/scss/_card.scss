@@ -391,3 +391,35 @@ $gray-darkest: var(--ff-gray-darkest);
     }
   }
 }
+
+
+.scroll-list {
+  @include paddingLvl2();
+
+  .items {
+    @include paddingLvl4-inner();
+
+    display: flex;
+    flex-direction: column;
+
+    button {
+      @include textBase($fontSmallest);
+      @include paddingLvl5();
+      @include clickableFeedback2();
+
+      text-align: left;
+
+      border: none;
+      border-radius: $borderRadiusHeightSM;
+      background-color: transparent;
+
+      &.active {
+        color: $white-color;
+
+        background-color: $primary;
+
+        pointer-events: none;
+      }
+    }
+  }
+}

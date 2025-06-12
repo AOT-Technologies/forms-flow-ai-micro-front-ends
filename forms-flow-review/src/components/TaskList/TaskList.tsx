@@ -25,6 +25,7 @@ import {
   AddIcon,
   DateRangePicker,
   FilterSortActions,
+  ConnectIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskListDropdownItems from "./TaskFilterDropdown";
@@ -214,12 +215,7 @@ else {
   }, [isAssigned, activePage, limit]);
   return (
     <>
-      <div
-        className="container-fluid py-4"
-        data-testid="resizable-table-container"
-        aria-label={t("Resizable tasks table container")}
-      >
-        <div className="row w-100 mb-3 g-2">
+        <div className="table-bar">
           {/* Left Filters - Stack on small, inline on md+ */}
           { viewFilters &&
           <div className="col-12 col-md d-flex flex-wrap gap-3 align-items-center">
@@ -227,26 +223,21 @@ else {
               <TaskListDropdownItems />
             </div>
 
-            <span className="text-muted">
-              <AddIcon size="8" />
-            </span>
-            <div className="mb-2">
-              <AttributeFilterDropdown />
-            </div>
-            <span className="text-muted">
-              <AddIcon size="8" />
-            </span>
-            <div className="mb-2">
-              <DateRangePicker
-                value={dateRange}
-                onChange={handleDateRangeChange}
-                placeholder={t("Filter Created Date")}
-                dataTestId="date-range-picker"
-                ariaLabel={t("Select date range for filtering")}
-                startDateAriaLabel={t("Start date")}
-                endDateAriaLabel={t("End date")}
-              />
-            </div>
+            <AttributeFilterDropdown />
+
+            <ConnectIcon />
+
+            <DateRangePicker
+              value={dateRange}
+              onChange={handleDateRangeChange}
+              placeholder={t("Filter Created Date")}
+              dataTestId="date-range-picker"
+              ariaLabel={t("Select date range for filtering")}
+              startDateAriaLabel={t("Start date")}
+              endDateAriaLabel={t("End date")}
+            />
+
+            <ConnectIcon />
 
             <span className="text-muted">
               <AddIcon size="8" />
@@ -272,7 +263,7 @@ else {
             </div>
 
             {/* Right actions - Stack below on small */}
-            <div className="col-12 col-md-auto d-flex justify-content-end button-align">
+            <div className="actions">
               <FilterSortActions
                 showSortModal={showSortModal}
                 handleFilterIconClick={toggleFilterModal}

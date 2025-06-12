@@ -121,11 +121,12 @@ $black-color: var(--ff-black);
 
         .modal-title {
           @include paddingLvl2();
+          @include textBase($fontModalTitle)
 
-          font-size: var(--font-size-lg) !important;
-          font-weight: var(--font-weight-sm) !important;
-          line-height: var(--text-line-height) !important;
-          text-transform: capitalize !important;
+          // font-size: var(--font-size-lg) !important;
+          // font-weight: var(--font-weight-sm) !important;
+          // line-height: var(--text-line-height) !important;
+          // text-transform: capitalize !important;
         }
 
         .icon-close {
@@ -192,6 +193,58 @@ $black-color: var(--ff-black);
 
           p {
             @include textBase($fontBase);
+          }
+        }
+
+        &.with-sections {
+          padding: 0 !important;
+        }
+
+        &.side-by-side {
+          $leftSideWidth: 25rem;
+
+          display: flex;
+          flex-direction: row;
+
+          padding: 0 !important;
+
+          & > div {
+            margin: 0 !important;
+          }
+
+          .left {
+            overflow-y: auto;
+            max-height: 100%;
+            width: $leftSideWidth;
+
+            border-right: $lineThin solid $colorDivider;
+          }
+
+          .right {
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            max-height: 100%;
+
+            & > div {
+              @include paddingLvl2();
+
+              display: flex;
+              flex-direction: column;
+
+              &.preview {
+                overflow-y: auto;
+                flex-grow: 1;
+              }
+
+              &.actions {
+                display: flex;
+                align-items: center;
+
+                border-top: $lineThin solid $colorDivider;
+              }
+            }
           }
         }
 

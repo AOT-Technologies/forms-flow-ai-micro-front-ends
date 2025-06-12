@@ -215,7 +215,7 @@ const AttributeFilterDropdown = () => {
     <>
       <ButtonDropdown
         label={
-          <span className="filter-large" title={title}>
+          <span title={title}>
             {title}
           </span>
         }
@@ -233,6 +233,7 @@ const AttributeFilterDropdown = () => {
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
         extraActionAriaLabel={t("Edit attribute filters")}
+        className="input-filter"
       />
       <AttributeFilterModal
         show={showAttributeFilter}

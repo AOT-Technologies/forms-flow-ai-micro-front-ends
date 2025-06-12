@@ -83,9 +83,7 @@ const onSearch = (searchTerm: string) => {
     const createFilter = {
       content: (
         <span>
-          <span>
-            <AddIcon className="filter-plus-icon" />
-          </span>{" "}
+          <AddIcon />
           {t("Custom Filter")}
         </span>
       ),
@@ -97,9 +95,7 @@ const onSearch = (searchTerm: string) => {
     const reOrderFilter = {
       content: (
         <span>
-          <span>
-            <PencilIcon className="filter-edit-icon" />
-          </span>{" "}
+          <PencilIcon />
           {t("Re-order And Hide Filters")}
         </span>
       ),
@@ -135,7 +131,7 @@ const onSearch = (searchTerm: string) => {
         else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
           icon = <SharedWithOthersIcon className="shared-icon" />;
         } else if (isSharedToPublic || isSharedToMe) {
-          icon = <SharedWithMeIcon className="shared-icon" />;
+          icon = <SharedWithMeIcon/>;
         }
    
       return { 
@@ -189,7 +185,7 @@ const onSearch = (searchTerm: string) => {
     <>
       <ButtonDropdown
         label={
-          <span className="filter-large" title={title}>
+          <span title={title}>
             {title}
           </span>
         }
@@ -198,11 +194,12 @@ const onSearch = (searchTerm: string) => {
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
         onSearch={onSearch}
         dropdownItems={filterDropdownItems}
-        extraActionIcon={<PencilIcon color="white" />}
+        extraActionIcon={<PencilIcon/>}
         extraActionOnClick={handleEditTaskFilter}
         dataTestId="business-filter-dropdown"
-        ariaLabel={t("Select business filter")}
-        extraActionAriaLabel={t("Edit selected filter")}
+        ariaLabel={t("Select task filter")}
+        extraActionAriaLabel={t("Edit task filter")}
+        className="input-filter"
       />
       <TaskFilterModal
         toggleModal={handleToggleFilterModal}
