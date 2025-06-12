@@ -301,10 +301,10 @@ describe('DateRangePicker Component', () => {
     expect(screen.getByTestId('calendar-month-year')).toHaveTextContent('June 2023');
   });
 
-  it('handles ISO date strings in the value prop', () => {
+   it('handles ISO date strings in the value prop', () => {
     const initialDateRange = {
-      startDate: '2023-06-10T00:00:00.000Z',
-      endDate: '2023-06-15T00:00:00.000Z'
+      startDate: '2023-06-10T12:00:00.000Z', // Use midday UTC to avoid timezone issues
+      endDate: '2023-06-15T12:00:00.000Z'    // Use midday UTC to avoid timezone issues
     };
     
     render(
@@ -321,6 +321,7 @@ describe('DateRangePicker Component', () => {
     fireEvent.click(screen.getByTestId('date-range-display'));
     expect(screen.getByTestId('calendar-month-year')).toHaveTextContent('June 2023');
   });
+
 
   it('updates when value prop changes', () => {
     const { rerender } = render(

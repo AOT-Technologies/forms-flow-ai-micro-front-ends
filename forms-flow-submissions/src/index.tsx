@@ -9,10 +9,9 @@ import {
 import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
-import Loading from "./components/Loading";
+import Loading from "./components/loading";
+import AccessDenied from "./components/AccessDenied";
 import SubmissionsList from "./Routes/SubmissionListing";
-
-const authorizedRoles = new Set(["create_submissions", "view_submissions"]);
 
 interface SubmissionsProps {
   publish?: (event: string, data?: any) => void;
@@ -28,8 +27,12 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
   const { tenantId } = useParams<{ tenantId?: string }>();
   const instance = useMemo(() => props.getKcInstance(), []);
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
-  const [isClient, setIsClient] = useState(false);
-
+   const userRoles = JSON.parse(
+      StorageService.get(StorageService.User.USER_ROLE));
+  // const isViewDashboard = userRoles?.includes("view_dashboards");
+  const isAnalyzeSubmissionView = userRoles?.includes("analyze_submissions_view");
+  // const isAnalyzeMetricsView = userRoles?.includes("analyze_metrics_view");
+  const isAnalyzeManager = isAnalyzeSubmissionView;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
   useEffect(() => {
@@ -64,10 +67,7 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
     const roles = JSON.parse(
       StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
     );
-    if (roles.some((role: any) => authorizedRoles.has(role))) {
-      setIsClient(true);
-    }
-
+  
     const locale = localStorage.getItem("i18nextLng");
     if (locale) {
       i18n.changeLanguage(locale);
@@ -83,12 +83,8 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
     return <Loading />;
   }
 
-  if (!isClient) {
-    return <p>unauthorized</p>;
-  }
-
   return (
-    <div className="main-container" tabIndex={0}>
+    <>{ isAnalyzeManager ? (<div className="main-container" tabIndex={0}>
       <div className="container mt-5">
         <div className="min-container-height ps-md-3">
           <Switch>
@@ -101,7 +97,14 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
           </Switch>
         </div>
       </div>
-    </div>
+    </div>) : <div className="main-container ">
+         <div className="container mt-5">
+         <div className="min-container-height ps-md-3" >
+          <AccessDenied userRoles={userRoles} />
+          </div>
+          </div> 
+        </div>} </>
+    
   );
 });
 
