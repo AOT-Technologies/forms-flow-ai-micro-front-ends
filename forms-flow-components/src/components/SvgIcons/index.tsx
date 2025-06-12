@@ -106,30 +106,13 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
 
 export const AddIcon = ({ color = baseColor,className, size = 16, ...props }) => (
   <svg
-    className={className}
+    className="svgIcon-primary"
     xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
     viewBox="0 0 16 16"
-    fill="none"
     {...props}
   >
-    <path
-      className={className}
-      d="M8 1V15"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      className={className}
-      d="M1 8L15 8"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M8 1V15" />
+    <path d="M1 8L15 8"/>
   </svg>
 );
 
@@ -204,6 +187,21 @@ export const ClearIcon = ({
     {...props}
   >
     <path d="M5 5L11 11M11 5L5 11"/>
+  </svg>
+);
+
+export const ConnectIcon = ({
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 10 10"
+    className="svgIconSmall-primary"
+    onClick={props.onClick}
+    {...props}
+  >
+    <path d="M5 1.5L5 9.5"/>
+    <path d="M1 5.5L9 5.5"/>
   </svg>
 );
 
@@ -344,7 +342,7 @@ export const DownArrowIcon = ({ color = baseColor, ...props }) => (
 
 export const PencilIcon = ({ color = baseColor,className, ...props }) => (
   <svg
-    className={`svgIcon-primary ${className}`}
+    className={`svgIcon-primary`}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 18 18"
     onClick={props.onClick}
@@ -761,128 +759,39 @@ export const UpArrowIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const ConnectIcon = ({ color = baseColor, ...props }) => (
-  <svg
-    width="10"
-    height="10"
-    viewBox="0 0 10 10"
-    fill= {color}
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M5 1L5 9"
-      stroke= {color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M1 5L9 5"
-      stroke= {color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
  
 
 export const SaveIcon = ({ color = whiteColor}) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-  <path d="M3 15.5H13C14.1046 15.5 15 14.6046 15 13.5V6.74948C15 6.21905 14.7893 5.71034 14.4142 5.33527L11.1647 2.08579C10.7897 1.71071 10.281 1.5 9.75052 1.5H3C1.89543 1.5 1 2.39543 1 3.5V13.5C1 14.6046 1.89543 15.5 3 15.5Z"
-  stroke={color} 
-  strokeWidth="2"/>
-  <path d="M11.3157 15.4997V12.3418C11.3157 11.2372 10.4202 10.3418 9.31566 10.3418H6.68408C5.57951 10.3418 4.68408 11.2372 4.68408 12.3418V15.4997" 
-  stroke={color} 
-  strokeWidth="2"/>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className="svgIcon-primary">
+  <path d="M3 15H13C14.1046 15 15 14.1046 15 13V6.24948C15 5.71905 14.7893 5.21034 14.4142 4.83527L11.1647 1.58579C10.7897 1.21071 10.281 1 9.75052 1H3C1.89543 1 1 1.89543 1 3V13C1 14.1046 1.89543 15 3 15Z"/>
+  <path d="M11.3158 14.9999V11.842C11.3158 10.7375 10.4204 9.84204 9.31578 9.84204H6.6842C5.57963 9.84204 4.6842 10.7375 4.6842 11.842V14.9999"/>
 </svg>
 );
 
 export const SharedWithOthersIcon = ({ color = grayDarkestColor,className, ...props }) => (
   <svg
-    width="18"
-    height="16"
-    viewBox="0 0 18 16"
-    fill="none"
+    viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
-    className={className}
+    className="svgIcon-greyDarkest"
   >
-    <path
-      className={className}
-      d="M14.0257 2.69922C14.0257 5.84985 12.9744 7.34985 10.9744 8.34985"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <circle
-    className={className}
-      cx="5.91937"
-      cy="5.79168"
-      r="1.945"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      className={className}
-      d="M9.8718 13.8263C9.8718 11.8438 8.1039 10.2366 5.92308 10.2366C3.74227 10.2366 1.97437 11.8438 1.97437 13.8263"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      className={className}
-      d="M12.0769 3.60948L14.2308 2.17358L16.0257 3.96846"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M14.0257 2.69922C14.0257 5.84985 12.9744 7.34985 10.9744 8.34985" />
+    <path d="M7.86437 5.79168C7.86437 4.71749 6.99356 3.84668 5.91937 3.84668C4.84517 3.84668 3.97437 4.71749 3.97437 5.79168" />
+    <path d="M7.86437 5.79175C7.86437 6.86594 6.99356 7.73675 5.91937 7.73675C4.84517 7.73675 3.97437 6.86594 3.97437 5.79175"/>
+    <path d="M9.8718 13.8263C9.8718 11.8438 8.1039 10.2366 5.92308 10.2366C3.74227 10.2366 1.97437 11.8438 1.97437 13.8263"/>
+    <path d="M12.0769 3.60948L14.2308 2.17358L16.0257 3.96846"/>
   </svg>
 );
+
 export const SharedWithMeIcon = ({ color = grayMediumColor,className, ...props }) => (
   <svg
-    width="16"
-    height="16"
     viewBox="0 0 16 16"
-    fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className={className}
+    className="svgIcon-greyMediumDark"
   >
-    <path
-      className={className}
-      d="M15.0001 3.14893C15.0001 5.14893 13.3787 7.20109 10.3332 7.38493"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <circle
-    className={className}
-      cx="4.94444"
-      cy="4.95445"
-      r="1.94444"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      className={className}
-      d="M8.89988 12.9898C8.89988 11.0066 7.1314 9.39893 4.94988 9.39893C2.76835 9.39893 0.999878 11.0066 0.999878 12.9898"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      className={className}
-      d="M12.6666 8.9404L10.3332 7.38485L11.4999 5.05151"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M15.0001 3.14893C15.0001 5.14893 13.3787 7.20109 10.3332 7.38493"/>
+    <path d="M6.88889 4.95445C6.88889 3.88057 6.01833 3.01001 4.94444 3.01001C3.87056 3.01001 3 3.88057 3 4.95445"/>
+    <path d="M6.88889 4.95435C6.88889 6.02823 6.01833 6.89879 4.94444 6.89879C3.87056 6.89879 3 6.02823 3 4.95435"/>
+    <path d="M8.89988 12.9898C8.89988 11.0066 7.1314 9.39893 4.94988 9.39893C2.76835 9.39893 0.999878 11.0066 0.999878 12.9898"/>
+    <path d="M12.6666 8.9404L10.3332 7.38485L11.4999 5.05151"/>
   </svg>
 );

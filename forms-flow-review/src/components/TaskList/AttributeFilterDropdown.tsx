@@ -109,10 +109,8 @@ const AttributeFilterDropdown = () => {
     const customAttribute = {
       content: (
         <span>
-          <span>
-            <AddIcon className="filter-plus-icon" />
-          </span>{" "}
-          {t("Custom Form Fields")}
+          <AddIcon />
+          {t("Custom Filter")}
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
@@ -123,9 +121,7 @@ const AttributeFilterDropdown = () => {
     const reorderOption = {
       content: (
         <span>
-          <span>
-            <PencilIcon className="filter-edit-icon" />
-          </span>{" "}
+          <PencilIcon />
           {t("Re-order And Hide Attribute Filters")}
         </span>
       ),
@@ -161,7 +157,7 @@ const AttributeFilterDropdown = () => {
     <>
       <ButtonDropdown
         label={
-          <span className="filter-large" title={title}>
+          <span title={title}>
             {title}
           </span>
         }
@@ -169,11 +165,12 @@ const AttributeFilterDropdown = () => {
         size="md"
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
         dropdownItems={filterDropdownAttributeItems()}
-        extraActionIcon={<PencilIcon color="white" />}
+        extraActionIcon={<PencilIcon />}
         extraActionOnClick={handleEditAttrFilter}
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
         extraActionAriaLabel={t("Edit attribute filters")}
+        className="input-filter"
       />
       <AttributeFilterModal
         show={showAttributeFilter}

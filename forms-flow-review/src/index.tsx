@@ -77,13 +77,12 @@ const Review = React.memo((props: any) => {
   return (
     <>
       <div className="main-container " tabIndex={0}>
-        <div className="container">
-          <div className="min-container-height ps-md-3">
+        <div className="page-content">
             <Switch>
               <Route
                 exact
                 path={`${BASE_ROUTE}review`}
-                render={() => <TaskList {...props} />}
+                render={() => <TaskList {...props}/>}
               />
               <Route
                 exact
@@ -92,7 +91,6 @@ const Review = React.memo((props: any) => {
               />
               <Redirect from="*" to="/404" />
             </Switch>
-          </div>
         </div>
         </div>
     </>

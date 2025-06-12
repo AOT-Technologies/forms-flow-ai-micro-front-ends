@@ -79,18 +79,16 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
         show={show}
         onHide={onClose}
         size="sm"
-        centered={true}
         data-testid="create-filter-modal"
         aria-labelledby={t("create filter modal title")}
         aria-describedby="create-filter-modal"
         backdrop="static"
-        className="create-filter-modal"
       >
         <Modal.Header>
           <Modal.Title id="create-filter-title">
-            <b>{title}</b>
+            <p>{title}</p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
+          <div className="icon-close">
             <CloseIcon onClick={onClose} />
           </div>
         </Modal.Header>

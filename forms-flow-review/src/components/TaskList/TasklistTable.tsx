@@ -242,8 +242,7 @@ const TaskListTable = () => {
   const renderActionCell = (task, colIndex) => (
     <td key={`action-${task.id}-${colIndex}`}>
       <CustomButton
-        size="table-sm"
-        variant="secondary"
+        actionTable
         label={t("View")}
         onClick={() => history.push(`${redirectUrl.current}review/${task.id}`)}
         dataTestId={`view-task-${task.id}`}

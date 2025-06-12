@@ -189,33 +189,37 @@ const TaskDetails = () => {
   };
   // Main Renderor
   return (
-    <div className="task-details-view">
+    <>
       {showHistoryModal && (
         <TaskHistoryModal
           show={showHistoryModal}
           onClose={() => setShowHistoryModal(false)}
         />
       )}
-      <Card className="editor-header">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="d-flex align-items-center justify-content-between">
-              <BackToPrevIcon onClick={handleBack} />
-              <div className="mx-4 editor-header-text">
-                {textTruncate(75, 75, task?.name)}
-              </div>
-            </div>
-            <CustomButton
-              variant="gray-dark"
-              size="table"
-              label={t("History")}
-              dataTestId="handle-task-details-history-testid"
-              ariaLabel={t("Submission History Button")}
-              onClick={handleHistory}
-            />
-          </div>
-        </Card.Body>
-      </Card>
+      
+      <div className="nav-bar">
+        <div className="icon-back" onClick={handleBack}>
+          <BackToPrevIcon data-testid="back-to-prev"/>
+        </div>
+
+        <div className="description">
+          <p className="text-main">
+            {textTruncate(75, 75, task?.name)}
+          </p>
+        </div>
+      
+        <div className="buttons">
+          <CustomButton
+            label={t("History")}
+            onClick={handleHistory}
+            dataTestId="handle-task-details-history-testid"
+            ariaLabel={t("Submission History Button")}
+            dark
+          />
+        </div>
+      </div>
+
+
       <div className="scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border">
         <TaskForm
           currentUser={currentUser}
@@ -224,7 +228,7 @@ const TaskDetails = () => {
           onCustomEvent={onCustomEventCallBack}
         />
       </div>
-    </div>
+    </>
   );
 };
 

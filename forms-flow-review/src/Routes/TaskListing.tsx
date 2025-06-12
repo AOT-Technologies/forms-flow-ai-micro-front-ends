@@ -41,9 +41,7 @@ const TaskListing = () => {
   }, [SocketIOCallback]);
 
   return (
-    <div>
-      <TaskList />
-    </div>
+    <TaskList />
   );
 };
 

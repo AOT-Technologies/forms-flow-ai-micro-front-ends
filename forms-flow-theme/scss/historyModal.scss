@@ -39,7 +39,7 @@ $white-color: var(--ff-white);
 
     gap: calc($base / 2);
 
-    & > div {
+    &:not(.submissions) > div {
       &:nth-child(2) {
         background-color: $primary-light;
 

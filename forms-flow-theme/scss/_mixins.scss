@@ -103,7 +103,8 @@ $paddingLvl3LR: var(--spacer-150);
 $paddingLvl3TB: var(--spacer-125);
 $paddingLvl3S: var(--spacer-100);
 
-$paddingLvl4S: var(--spacer-075);
+$paddingLvl4LR: var(--spacer-125);
+$paddingLvl4S: var(--spacer-050);
 
 $paddingLvl5LR: var(--spacer-100);
 $paddingLvl5TB: var(--spacer-075);
@@ -289,6 +290,26 @@ $paddingLvl2MinS: var(--spacer-100);
 
   &:not([disabled]):hover {
     background-color: $primary-light;
+  }
+}
+
+// filters special usecase
+
+@mixin clickableFeedback3 {
+  cursor: pointer;
+  opacity: 1;
+
+  transition: 300ms opacity;
+
+  &[disabled],
+  &.loading {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &:not([disabled]):hover,
+  &:not(.loading):hover {
+    opacity: 0.9;
   }
 }
 

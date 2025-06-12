@@ -412,18 +412,15 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 
     if (isFilterAdmin) {
       return (
-        <div className="pt-4">
           <CustomButton
-            variant="secondary"
-            size="md"
             label={t("Save This Filter")}
             onClick={saveFilterAttributes}
-            icon={<SaveIcon color={saveIconColor}/>}
+            icon={<SaveIcon/>}
             dataTestId="save-attribute-filter"
             ariaLabel={t("Save Attribute Filter")}
             disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
+            iconWithText
           />
-        </div>
       );
     }
 
@@ -443,21 +440,21 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         onBlur={handleNameError}
         dataTestId="attribute-filter-name"
         feedback={filterNameError}
+        id="filter-name"
       />
 
-      <div className="pt-4 pb-4">
-        <InputDropdown
-          Options={filterShareOptions}
-          dropdownLabel={t("Share This Filter With")}
-          isAllowInput={false}
-          ariaLabelforDropdown={t("attribute filter sharing dropdown")}
-          selectedOption={shareAttrFilter}
-          setNewInput={setShareAttrFilter}
-          dataTestIdforInput="share-attribute-filter-input"
-          dataTestIdforDropdown="share-attribute-filter-options"
-          required={true}
-        />
-      </div>
+      <InputDropdown
+        Options={filterShareOptions}
+        dropdownLabel={t("Share This Filter With")}
+        isAllowInput={false}
+        ariaLabelforDropdown={t("attribute filter sharing dropdown")}
+        selectedOption={shareAttrFilter}
+        setNewInput={setShareAttrFilter}
+        dataTestIdforInput="share-attribute-filter-input"
+        dataTestIdforDropdown="share-attribute-filter-options"
+        required={true}
+        id="shave-this-filter"
+      />
       <RenderOwnerShipNotes
         attributeFilter={attributeFilter}
         isCreator={isCreator}
@@ -488,8 +485,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 
    return (
     <>
-      <Modal.Body className="modal-body p-0">
-        <div className="filter-tab-container">
+      <Modal.Body className="with-tabs">
+        <div className="tabs">
           <CustomTabs
             defaultActiveKey={(updateSuccess?.showSuccess || deleteSuccess?.showSuccess) ? "saveFilterTab":"parametersTab"}
             tabs={tabs}
@@ -498,10 +495,9 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
           />
         </div>
       </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-start">
+      <Modal.Footer>
+        <div className="buttons-row">
         <CustomButton
-          variant="primary"
-          size="md"
           label={t("Filter Results")}
           dataTestId="attribute-filter-results"
           ariaLabel={t("Filter results")}
@@ -509,13 +505,13 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
           disabled={(updateSuccess.showSuccess|| deleteSuccess.showSuccess || noFieldChanged)}
         />
         <CustomButton
-          variant="secondary"
-          size="md"
           label={t("Cancel")}
           onClick={onClose}
           dataTestId="cancel-attribute-filter"
           ariaLabel={t("Cancel filter")}
+          secondary
         />
+        </div>
       </Modal.Footer>
 
     </>

@@ -118,16 +118,15 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
           show={showModal}
           centered
           size="sm"
-          className="reorder-task-filter-modal"
           backdrop="static"
         >
-          <Modal.Header className="reorder-task-filter-header">
+          <Modal.Header>
             <Modal.Title> {t("Re-order And Hide Filters")} </Modal.Title>
-            <div className="d-flex align-items-center">
+            <div className="icon-close">
               <CloseIcon onClick={onClose} />
             </div>
           </Modal.Header>
-          <Modal.Body className="reorder-task-filter-modal-body">
+          <Modal.Body>
             <CustomInfo
               heading="Note"
               content="Toggle the visibility of filters and re-arrange them."
@@ -137,24 +136,23 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
               onUpdate={onUpdateFilterOrder}
             />
           </Modal.Body>
-          <Modal.Footer className="d-flex justify-content-start">
-            <CustomButton
-              variant="primary"
-              size="md"
-              label={t("Save Changes")}
-              dataTestId="save-changes"
-              ariaLabel={t("Save Changes")}
-              onClick={handleSaveChanges}
-              disabled={isSaveBtnDisabled}
-            />
-            <CustomButton
-              variant="secondary"
-              size="md"
-              label={t("Discard Changes")}
-              onClick={handleDiscardChanges}
-              dataTestId="discard-changes"
-              ariaLabel={t("Discard Changes")}
-            />
+          <Modal.Footer>
+            <div className="buttons-row">
+              <CustomButton
+                label={t("Save Changes")}
+                dataTestId="save-changes"
+                ariaLabel={t("Save Changes")}
+                onClick={handleSaveChanges}
+                disabled={isSaveBtnDisabled}
+              />
+              <CustomButton
+                label={t("Discard Changes")}
+                onClick={handleDiscardChanges}
+                dataTestId="discard-changes"
+                ariaLabel={t("Discard Changes")}
+                secondary
+              />
+            </div>
           </Modal.Footer>
         </Modal>
       );

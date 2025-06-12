@@ -54,6 +54,12 @@ input[type="checkbox"]+label,
   @include svgIcon();
 }
 
+.svgIconSmall-primary {
+  @include svgIcon();
+
+  width: $base/3*2;
+}
+
 @keyframes rotating {
   from {
     -ms-transform: rotate(0deg);
@@ -81,6 +87,14 @@ input[type="checkbox"]+label,
 
 .svgIcon-disabled-onDark {
   @include svgIcon($white);
+}
+
+.svgIcon-greyDarkest {
+  @include svgIcon($gray-darkest);
+}
+
+.svgIcon-greyMediumDark {
+  @include svgIcon($gray-medium-dark);
 }
 
 

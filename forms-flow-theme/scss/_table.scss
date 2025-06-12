@@ -705,6 +705,7 @@ $white-color: var(--ff-white);
     display: flex;
     align-items: center;
     flex-grow: 1;
+    flex-wrap: wrap;
     gap: $paddingLvl5S;
 
     margin: 0;
@@ -712,6 +713,7 @@ $white-color: var(--ff-white);
 
   & > .actions {
     display: flex;
+    align-items: flex-end;
     gap: $paddingLvl3S;
   }
 }

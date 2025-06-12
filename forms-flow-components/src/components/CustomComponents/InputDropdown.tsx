@@ -197,6 +197,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       label={t(dropdownLabel)}
                       feedback={t(feedback)}
                       variant={variant}
+                      id={id}
                   />
               </InputGroup>
           ) : (
@@ -237,7 +238,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                           onClick={() => handleSelect(item)}
                           data-testid={`list-${index}-item`}
                           aria-label={`list-${item.label}-item`}
-                          className={`${isItemSelected(item) ? 'selected-dropdown-item' : ''}`}
+                          className={`${isItemSelected(item) ? 'chosen' : ''}`}
                       >
                           {t(item.label)}
                       </ListGroup.Item>

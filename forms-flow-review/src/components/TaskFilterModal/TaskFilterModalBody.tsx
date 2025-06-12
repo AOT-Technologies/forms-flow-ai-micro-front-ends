@@ -418,6 +418,7 @@ const TaskFilterModalBody = ({
 
   const settingsTab = () => (
     <>
+    <div className="input-combination">
       <InputDropdown
         Options={dateSortOptions}
         dropdownLabel={t("Default Sort")}
@@ -428,36 +429,35 @@ const TaskFilterModalBody = ({
         dataTestIdforDropdown="date-sort"
         selectedOption={sortValue}
         setNewInput={setSortValue}
+        id="default-sort"
       />
       {sortValue && sortOptions[sortValue] ? (
-        <div className="d-flex filter-dropdown">
-          <div className="L-style"></div>
-          <InputDropdown
-            Options={sortOptions[sortValue]}
-            isAllowInput={false}
-            ariaLabelforDropdown={t("dropdown for sort order")}
-            ariaLabelforInput={t("input for sort order")}
-            data-testid="sort-order-dropdown"
-            dataTestIdforInput="sort-order-input"
-            dataTestIdforDropdown="sort-order-list"
-            selectedOption={sortOrder}
-            setNewInput={setSortOrder}
-          />
-        </div>
-      ) : null}
-      <div className="pt-4">
         <InputDropdown
-          Options={dataLineCount}
-          dropdownLabel={t("How Many Line of Data To Show Per Row?")}
+          Options={sortOptions[sortValue]}
           isAllowInput={false}
-          ariaLabelforDropdown={t("line of data dropdown ")}
-          ariaLabelforInput={t("line of data input")}
-          dataTestIdforInput="data-line-input"
-          dataTestIdforDropdown="data-line"
-          selectedOption={dataLineValue}
-          setNewInput={setDataLineValue}
+          ariaLabelforDropdown={t("dropdown for sort order")}
+          ariaLabelforInput={t("input for sort order")}
+          data-testid="sort-order-dropdown"
+          dataTestIdforInput="sort-order-input"
+          dataTestIdforDropdown="sort-order-list"
+          selectedOption={sortOrder}
+          setNewInput={setSortOrder}
+          id="sort-order"
         />
+      ) : null}
       </div>
+      <InputDropdown
+        Options={dataLineCount}
+        dropdownLabel={t("How Many Lines of Data To Show Per Row")}
+        isAllowInput={false}
+        ariaLabelforDropdown={t("line of data dropdown ")}
+        ariaLabelforInput={t("line of data input")}
+        dataTestIdforInput="data-line-input"
+        dataTestIdforDropdown="data-line"
+        selectedOption={dataLineValue}
+        setNewInput={setDataLineValue}
+        id="how-many-lines-of-data-to-show-per-row"
+      />
     </>
   );
 
@@ -511,8 +511,8 @@ const TaskFilterModalBody = ({
 
   return (
     <>
-      <Modal.Body className="modal-body p-0">
-        <div className="filter-tab-container">
+      <Modal.Body className="with-tabs">
+        <div className="tabs">
           <CustomTabs
             defaultActiveKey={
               updateSuccess?.showSuccess || deleteSuccess?.showSuccess
@@ -525,29 +525,28 @@ const TaskFilterModalBody = ({
           />
         </div>
       </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-start">
-        <CustomButton
-          variant="primary"
-          size="md"
-          label={t("Filter Results")}
-          dataTestId="task-filter-results"
-          ariaLabel={t("Filter results")}
-          onClick={filterResults}
-          disabled={
-            successState.showSuccess ||
-            updateSuccess?.showSuccess ||
-            deleteSuccess?.showSuccess ||
-            disableFilterButton
-          }
-        />
-        <CustomButton
-          variant="secondary"
-          size="md"
-          label={t("Cancel")}
-          onClick={closeTaskFilterMainModal}
-          dataTestId="cancel-task-filter"
-          ariaLabel={t("Cancel filter")}
-        />
+      <Modal.Footer>
+        <div className="buttons-row">
+          <CustomButton
+            label={t("Filter Results")}
+            dataTestId="task-filter-results"
+            ariaLabel={t("Filter results")}
+            onClick={filterResults}
+            disabled={
+              successState.showSuccess ||
+              updateSuccess?.showSuccess ||
+              deleteSuccess?.showSuccess ||
+              disableFilterButton
+            }
+          />
+          <CustomButton
+            label={t("Cancel")}
+            onClick={closeTaskFilterMainModal}
+            dataTestId="cancel-task-filter"
+            ariaLabel={t("Cancel filter")}
+            secondary
+          />
+        </div>
       </Modal.Footer>
     </>
   );

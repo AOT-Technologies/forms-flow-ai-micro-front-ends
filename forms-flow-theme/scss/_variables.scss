@@ -51,20 +51,6 @@ $white-color: var(--ff-white);
   filter: invert(36%) sepia(38%) saturate(7152%) hue-rotate(227deg) brightness(101%) contrast(98%);
 }
 
-.dropdown-item:hover {
-  border-radius: var(--radius-sm);
-  background: $primary-color !important;
-  color: $white-color !important;
-  filter: none;
-  width: auto !important;
-  .filter-edit-icon,.filter-plus-icon{
-    stroke: $white-color !important;
-  }
-  .shared-icon {
-    stroke: $white-color !important;
-  }
-}
-
 .taskDropdown>.dropdown-menu::before {
   left: 10%;
   right: 100%;
