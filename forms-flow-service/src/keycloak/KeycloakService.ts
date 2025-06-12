@@ -26,6 +26,7 @@ class KeycloakService {
     private static jwtTimerId: any = 0;
     private userData: any;
     private isInitialized: boolean = false; // Track if Keycloak is initialized
+    private isOfflineMode: boolean = false; // Track if running in offline mode
 
     private constructor(url: string, realm: string, clientId: string, tenantId?: string) {
       this._keycloakConfig = {
@@ -53,9 +54,76 @@ class KeycloakService {
   
     private logout (): void {
       this.isInitialized = false; // Reset initialization state
+      this.isOfflineMode = false; // Reset offline mode
       this.kc?.logout();
       StorageService.clear();
     }
+
+    /**
+     * Check if we have valid stored credentials for offline mode
+    */
+    private hasValidOfflineCredentials(): boolean {
+      const storedToken = StorageService.get(StorageService.User.AUTH_TOKEN);
+      const storedUserDetails = StorageService.get(StorageService.User.USER_DETAILS);
+      const storedUserRole = StorageService.get(StorageService.User.USER_ROLE);
+      
+      return !!(storedToken && storedUserDetails && storedUserRole);
+    }
+
+
+    /**
+   * Initialize offline mode with stored credentials
+   */
+  private initOfflineMode(): boolean {
+    if (!this.hasValidOfflineCredentials()) {
+      return false;
+    }
+
+    try {
+      this.token = StorageService.get(StorageService.User.AUTH_TOKEN);
+      const userDetailsStr = StorageService.get(StorageService.User.USER_DETAILS);
+      
+      if (userDetailsStr) {
+        this.userData = JSON.parse(userDetailsStr);
+      }
+
+      this.isOfflineMode = true;
+      this.isInitialized = true;
+      
+      console.log("Initialized in offline mode with stored credentials");
+      
+      // Set up online listener to reinitialize when back online
+      this.setupOnlineListener();
+      
+      return true;
+    } catch (error) {
+      console.error("Failed to initialize offline mode:", error);
+      return false;
+    }
+  }
+
+  /**
+   * Setup listener for when the user comes back online
+   */
+  private setupOnlineListener(): void {
+    const handleOnline = () => {
+      console.log("Back online: Reinitializing Keycloak");
+      this.isOfflineMode = false;
+      this.isInitialized = false;
+      
+      // Reinitialize Keycloak when back online
+      this.initKeycloak((authenticated) => {
+        if (authenticated) {
+          console.log("Successfully reinitialized Keycloak after coming back online");
+        }
+      });
+      
+      // Remove the listener as we've handled the online event
+      window.removeEventListener("online", handleOnline);
+    };
+
+    window.addEventListener("online", handleOnline, { once: true });
+  }
   
     /**
      *
@@ -74,6 +142,13 @@ class KeycloakService {
     }
 
     private keycloackUpdateToken(timeEnabled = false): void {
+
+      // Skip token update if in offline mode
+      if (this.isOfflineMode) {
+        console.debug("Offline mode: Skipping token update");
+        return;
+      }
+
       this.kc
         ?.updateToken(-1)
         .then((refreshed) => {
@@ -111,6 +186,12 @@ class KeycloakService {
      * Refresh the keycloak token before expiring
      */
     private refreshToken(skipTimer: boolean = false): void {
+
+      // Skip token refresh setup if in offline mode
+      if (this.isOfflineMode) {
+        console.debug("Offline mode: Skipping token refresh setup");
+        return;
+      }
       this.timerId = setInterval(
         () => {
           if (!navigator.onLine) {
@@ -281,6 +362,20 @@ class KeycloakService {
           callback(true); // Proceed as initialized
           return; // Exit the method if already initialized
         }
+
+        // Check if offline and try to initialize with stored credentials
+        if (!navigator.onLine) {
+          console.log("Offline detected during initialization");
+          if (this.initOfflineMode()) {
+            callback(true);
+            return;
+          } else {
+            console.warn("No valid offline credentials found");
+            callback(false);
+            return;
+          }
+        }
+
       this.kc
         ?.init(this.keycloakInitConfig)
         .then((authenticated) => {
@@ -341,6 +436,7 @@ class KeycloakService {
      */
     public userLogout (): void {
       this.isInitialized = false; // Reset initialization state
+      this.isOfflineMode = false; // Reset offline mode
       KeycloakService.clearPolling();
       StorageService.clear();
       this.logout();
@@ -362,6 +458,13 @@ class KeycloakService {
 
     public isAuthenticated(): boolean {
       return !!this.token;
+    }
+    
+    /**
+     * Check if currently running in offline mode
+     */
+    public isInOfflineMode(): boolean {
+      return this.isOfflineMode;
     }
   }
   
