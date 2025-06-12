@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
 import { setBPMTaskDetail } from "./actions/taskActions"; 
+import { setTenantData } from "./actions/tenantActions";
 
 import { fetchServiceTaskList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
@@ -55,6 +56,12 @@ const Review = React.memo((props: any) => {
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     });
+    subscribe("ES_TENANT", (msg, data) => {
+      console.log("ES_TENANT", data);
+          if (data) {
+            dispatch(setTenantData(data));
+          }
+        });
   }, []);
 
   useEffect(() => {
@@ -87,6 +94,12 @@ const Review = React.memo((props: any) => {
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     });
+     subscribe("ES_TENANT", (msg, data) => {
+      console.log("ES_TENANT", data);
+          if (data) {
+            dispatch(setTenantData(data));
+          }
+        });
   }, [isAuth]);
 
   /* ------------------------ handling socket callback function ------------------------ */

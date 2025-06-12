@@ -25,7 +25,7 @@ import {
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
-
+import { useParams } from "react-router-dom";
 interface Column {
   name: string;
   width: number;
@@ -79,8 +79,8 @@ const TaskListTable = () => {
     filterListSortParams,
     isAssigned
   } = useSelector((state: any) => state.task);
-
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const { tenantId } = useParams();
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
 
   const taskvariables = selectedFilter?.variables ?? []; 
   const redirectUrl = useRef(
