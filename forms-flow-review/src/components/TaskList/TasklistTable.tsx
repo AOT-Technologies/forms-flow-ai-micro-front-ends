@@ -263,15 +263,6 @@ const TaskListTable = () => {
     </td>
   );
 
-  // Conditional Renders
-  const renderNoFilterSelected = () => (
-    <div
-      data-testid="no-filter-selected"
-      aria-label={t("No filter selected message")}
-    >
-      {t("No filter selected.")}
-    </div>
-  );
 
   const renderEmptyTable = () => (
     <div
@@ -376,10 +367,7 @@ const TaskListTable = () => {
     </table>
   );
 
-  // Main Render Logic
-  if (!selectedFilter) {
-    return renderNoFilterSelected();
-  }
+
 
   if (columns.length === 0) {
     return renderEmptyTable();

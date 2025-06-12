@@ -37,7 +37,8 @@ const TaskListDropdownItems = memo(() => {
   const [filterSearchTerm, setFilterSearchTerm] = useState("");
   
   const handleEditTaskFilter = () => {
-    if (!selectedFilter) return;
+    // Prevent editing if the active filter is the initial "All Tasks".
+    if (!selectedFilter || (!isUnsavedFilter && filterList.length === 0)) return;
     dispatch(setFilterToEdit(selectedFilter));
     setShowTaskFilterModal(true);
   };
@@ -55,8 +56,7 @@ const changeFilterSelection = (filter) => {
 
   //if selecetd filter is not in filter list, then select All tasks filter
   const upcomingFilter =
-    filterList.find(item => item.id === filter?.id) ||
-    filterList.find(item => item.name === "All tasks"); 
+    filterList.find(item => item.id === filter?.id)  
 
   if (!upcomingFilter) return;
 
@@ -164,11 +164,21 @@ const onSearch = (searchTerm: string) => {
     return filterDropdownItemsArray;
   }, [filtersAndCount, defaultFilter,filterList,userDetails, filterSearchTerm ]);
 
-  const title = selectedFilter
-    ? `${isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name)} (${
-        tasksCount ?? 0
-      })`
-    : t("Select Filter");
+// filter title based on unsaved filter, empty list or selected filter
+  let title;
+
+  if (selectedFilter) {
+    if (isUnsavedFilter) {
+      title = t("Unsaved Filter");
+    }
+    else if (filterList.length === 0) {
+      title = t("All Tasks");
+    } else {
+      title = `${selectedFilter.name} (${tasksCount ?? 0})`;
+    }
+  }
+  
+
   return (
     <>
       <ButtonDropdown

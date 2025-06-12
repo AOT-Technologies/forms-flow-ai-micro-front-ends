@@ -38,22 +38,37 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   const variant = size === "sm" ? "assign-user-sm" : "assign-user-md";
   const [selectedName, setSelectedName] = useState(null);
   const userData =
-  StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
+    StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
+
+  const getDisplayName = (user) => {
+    if (user.firstName && user.lastName)
+      return `${user.lastName}, ${user.firstName}`;
+    if (user.lastName) return user.lastName;
+    if (user.firstName) return user.firstName;
+    return user.username;
+  };
+
   useEffect(() => {
-    if(!username){
-      setSelected(null);
-    }
-    else {
+    if(username){
       setSelected("Me");
-      setSelectedName(username);
+      // if username is not null or empty,set selectedName to its lastname and firstname
+      const matchedUser = users.find((user) => user.username === username);
+      if (matchedUser) {
+        setSelectedName(getDisplayName(matchedUser));
+      }else{
+        setSelectedName(username);
+      }
+    } else {
+      setSelected(null);
+      setSelectedName(null);
     }
-  }, [username])
+  }, [username,users]);
 
   const handleMeClick = () => {
     setSelected("Me");
     meOnClick?.();
     if(!username){
-      setSelectedName(userData.preferred_username);
+      setSelectedName(`${userData.family_name}, ${userData.given_name}`);
     }
   };
 
@@ -64,51 +79,57 @@ export const AssignUser: React.FC<AssignUserProps> = ({
 
   const handleClose = () => {
     setSelected(null);
+    setSelectedName(null);
     setOpenDropdown(false);
     handleCloseClick?.();
   };
 
-  const options = Array.isArray(users) && users.length > 0
-  ? users.map((user) => ({
-      label: user.username,
-      value: user.id,
-      onClick: () => {
-           setSelectedName(user.username);
-           setOpenDropdown(false);
-           optionSelect?.(user.username);
-      },
-    }))
-  : [];
+  const options = Array.isArray(users)
+    ? users?.map((user) => {
+        const fullName = getDisplayName(user);
+        const label = user.email ? `${fullName} (${user.email})` : fullName;
+        return {
+          label,
+          value: user.id,
+          onClick: () => {
+            setSelectedName(fullName);
+            optionSelect?.(user.username);
+            setOpenDropdown(false);
+          },
+        };
+      })
+    : [];
+
   // Determine the selected option based on the state
-  const selectedOption = selected === "Me" ? selectedName : undefined;
+  const selectedOption = selectedName ?? undefined;
 
   return (
     <>
       {/* Show Me/Others Selection if nothing is selected */}
       {selected === null && (
-          <div
-            className={`assign-user ${size}`}
-            aria-label={`${ariaLabel}-select-user-option`}
-            data-testid={`${dataTestId}-select-user-option`}
+        <div
+          className={`assign-user ${size}`}
+          aria-label={`${ariaLabel}-select-user-option`}
+          data-testid={`${dataTestId}-select-user-option`}
+        >
+          <button
+            className="option-me button-reset"
+            onClick={handleMeClick}
+            aria-label={`${ariaLabel}-me-button`}
+            data-testid={`${dataTestId}-me-button`}
           >
-            <button
-              className="option-me button-reset"
-              onClick={handleMeClick}
-              aria-label={`${ariaLabel}-me-button`}
-              data-testid={`${dataTestId}-me-button`}
-            >
-               {t("Me")}
-            </button>
-            <div className="divider"></div>
-            <button
-              className="option-others button-reset"
-              onClick={handleOthersClick}
-              aria-label={`${ariaLabel}-others-button`}
-              data-testid={`${dataTestId}-others-button`}
-            >
-              {t("Others")}
-            </button>
-          </div>
+            {t("Me")}
+          </button>
+          <div className="divider"></div>
+          <button
+            className="option-others button-reset"
+            onClick={handleOthersClick}
+            aria-label={`${ariaLabel}-others-button`}
+            data-testid={`${dataTestId}-others-button`}
+          >
+            {t("Others")}
+          </button>
+        </div>
       )}
 
       {/* Show InputDropdown when either Me or Others is selected */}
