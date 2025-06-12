@@ -73,6 +73,12 @@ const MenuComponent = ({
       : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
   };
   
+  const chevronColor =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-main-menu-active-font-color"
+  )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
+    "--ff-gray-800"
+  ).trim();
 
   return (
     <Accordion.Item eventKey={eventKey}>
@@ -89,9 +95,7 @@ const MenuComponent = ({
             width="10"
             height="5"
             className="custom-chevron"
-            color={getComputedStyle(document.documentElement).getPropertyValue(
-              "--navbar-main-menu-active-font-color"
-            )}
+            color={chevronColor}
           />
         )}
         <span>{t(mainMenu)}</span>
