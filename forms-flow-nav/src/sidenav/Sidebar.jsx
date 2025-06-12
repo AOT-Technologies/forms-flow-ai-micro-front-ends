@@ -428,10 +428,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               mainMenu="Review"
               subMenu={[
                 {
-                  name: "Tasks",
-                  path: "task",
-                },
-                {
                   name: "Review",
                   path: "review",
                 },
