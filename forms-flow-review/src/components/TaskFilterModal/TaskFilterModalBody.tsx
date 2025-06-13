@@ -43,7 +43,7 @@ import SaveFilterTab from "./SaveFilterTab";
 import { Modal } from "react-bootstrap";
 import { StyleServices } from "@formsflow/service";
 import { RootState } from "../../reducers";
-
+import { useParams } from "react-router-dom";
 const TaskFilterModalBody = ({
   showTaskFilterMainModal,
   closeTaskFilterMainModal,
@@ -90,8 +90,8 @@ const TaskFilterModalBody = ({
   });
 
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
-
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const { tenantId } = useParams();
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId);
 
   const changeAcessOption = (option: string) => {
     setAccessOption(option);

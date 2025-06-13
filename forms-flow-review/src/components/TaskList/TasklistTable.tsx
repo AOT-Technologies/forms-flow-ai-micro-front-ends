@@ -18,14 +18,13 @@ import {
   setTaskListLimit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList, 
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
-
 interface Column {
   name: string;
   width: number;
@@ -79,8 +78,8 @@ const TaskListTable = () => {
     filterListSortParams,
     isAssigned
   } = useSelector((state: any) => state.task);
-
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const { tenantId } = useParams();
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
 
   const taskvariables = selectedFilter?.variables ?? []; 
   const redirectUrl = useRef(
