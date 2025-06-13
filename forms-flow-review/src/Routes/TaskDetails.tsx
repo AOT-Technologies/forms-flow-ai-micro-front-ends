@@ -153,16 +153,17 @@ const TaskDetails = () => {
     const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
     const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
     const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
-
+    const payload = {
+      variables:{
+        formUrl:{value:formUrl},
+        applicationId:{value:task.applicationId},
+        webFormUrl:{value:webFormUrl},
+        action:{value:actionType}
+      }
+    }
     dispatch(
       onBPMTaskFormSubmit(
-        bpmTaskId,
-        {
-          formUrl,
-          applicationId: task.applicationId,
-          actionType,
-          webFormUrl,
-        },
+        bpmTaskId,payload,
         () => dispatch(setBPMTaskDetailLoader(false))
       )
     );
