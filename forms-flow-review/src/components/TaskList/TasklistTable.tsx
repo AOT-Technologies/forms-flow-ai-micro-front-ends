@@ -234,7 +234,7 @@ const TaskListTable = () => {
     if (column.sortKey === "actions") {
       return renderActionCell(task, colIndex);
     }
-    return renderDataCell(task, column);
+    return renderDataCell(task, column,colIndex);
   };
 
   const renderActionCell = (task, colIndex) => (
@@ -252,13 +252,20 @@ const TaskListTable = () => {
     </td>
   );
 
-  const renderDataCell = (task, column) => (
+  const renderDataCell = (task, column, colIndex) => (
     <td
-      key={`cell-${task.id}-${column.sortKey}`}
+      key={`cell-${task.id}-${column.sortKey}-${colIndex}`}
       data-testid={`task-${task.id}-${column.sortKey}`}
       aria-label={getCellAriaLabel(column, task)}
     >
-      {getCellValue(column, task)}
+      <div
+        className="customizable_td_row"
+        style={{
+          WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 2 lines of content
+        }}
+      >
+        {getCellValue(column, task)}
+      </div>
     </td>
   );
 

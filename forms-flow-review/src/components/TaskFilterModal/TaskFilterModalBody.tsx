@@ -202,14 +202,14 @@ const TaskFilterModalBody = ({
   /* -------------------- set values for editing the filter ------------------- */
   useEffect(() => {
     if (!filterToEdit) return;
-    const { roles, users, criteria } = filterToEdit;
-    const { assignee, sorting, dataLine, candidateGroup } = criteria;
+    const { roles, users, criteria, properties } = filterToEdit;
+    const { assignee, sorting, candidateGroup } = criteria;
     setShareFilterForSpecificRole(roles);
     setAccessOption(assignee ? "specificAssignee" : "specificRole");
     setAccessValue(assignee ? assignee : candidateGroup);
     handleSorting(sorting);
     handleShareFilter(roles, users);
-    setDataLineValue(dataLine ?? 1);
+    setDataLineValue(properties?.displayLinesCount ?? 1);
   }, [filterToEdit]);
 
   /* -------- handling already selected forms when after forms fetching ------- */
