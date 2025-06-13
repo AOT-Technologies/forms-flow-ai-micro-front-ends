@@ -261,7 +261,7 @@ const TaskListTable = () => {
       <div
         className="customizable_td_row"
         style={{
-          WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 2 lines of content
+          WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
         }}
       >
         {getCellValue(column, task)}
