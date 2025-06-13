@@ -220,7 +220,7 @@ const SaveFilterTab = ({
       return null; 
     }
 
-    if (isCreateFilters && selectedFilter.name !== "All Tasks") {
+    if (isCreateFilters && filterName !== "All Tasks") {
       return (
         <div className="pt-4">
           <CustomButton

@@ -113,7 +113,13 @@ const TaskFilterModalBody = ({
     const criteria: FilterCriteria = {
       includeAssignedTasks: true,
       candidateGroupsExpression: "${currentUserGroups()}",
-      sorting: [{ sortBy: sortValue, sortOrder: sortOrder }],
+      // If sorting is based on submission id or form name, that should be passed as process variable in sorting
+      sorting: sortValue === "applicationId" || sortValue === "formName" ?
+        ([{
+          sortBy: "processVariable", sortOrder: sortOrder,
+          "parameters": { "variable": sortValue, "type": sortValue === "applicationId" ? "integer" : "string" }
+        }]) :
+        [{ sortBy: sortValue, sortOrder: sortOrder }],
     };
 
     
@@ -184,8 +190,14 @@ const TaskFilterModalBody = ({
   const handleSorting = (sorting) => {
     if (sorting?.length > 0) {
       const [sort] = sorting;
-      setSortValue(sort.sortBy);
-      setSortOrder(sort.sortOrder);
+      if(sort.sortBy === "processVariable"){
+        setSortValue(sort.parameters.variable);
+        setSortOrder(sort.sortOrder);
+      }
+      else{
+        setSortValue(sort.sortBy);
+        setSortOrder(sort.sortOrder);
+      }
     }
   };
 
@@ -286,8 +298,8 @@ const TaskFilterModalBody = ({
     name: createSortOrderOptions("A to Z", "Z to A"),
     formName: createSortOrderOptions("A to Z", "Z to A"),
     applicationId: createSortOrderOptions(
-      "Largest to Smallest",
-      "Smallest to Largest"
+      "Smallest to Largest",
+      "Largest to Smallest"
     ),
   };
 
