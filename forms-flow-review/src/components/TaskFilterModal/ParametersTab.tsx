@@ -1,4 +1,4 @@
-import { CloseIcon, InputDropdown, PencilIcon, FormInput } from "@formsflow/components";
+import { InputDropdown, PencilIcon, FormInput } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { FormSelectionModal } from "../FormSelectionModal";

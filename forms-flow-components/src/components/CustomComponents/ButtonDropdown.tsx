@@ -98,68 +98,6 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
 const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
 
    return (
-      // <Dropdown
-      //   as={ButtonGroup}
-      //   className={`${className} custom-btn-width`}
-      //   onToggle={(isOpen) => setDropdownOpen(isOpen)} 
-      //   data-testid={`${dataTestId}-container`}
-      // >
-      //   <div ref={buttonRef} className="label-extra-action">
-      //     <Button
-      //       variant={variant}
-      //       size={size !== "md" ? size : undefined}
-      //       data-testid={dataTestId}
-      //       aria-label={ariaLabel}
-      //       name={name}
-      //       className="button-dropdown"
-      //     >
-      //       <span style={labelStyle}>
-      //         {t(displayLabel)}
-      //       </span>
-      //     </Button>
-
-      //     {dropdownType === "DROPDOWN_WITH_EXTRA_ACTION" && extraActionIcon && (
-      //       <Button
-      //         onClick={extraActionOnClick}
-      //         className={`${extraActionClass} border-0`}
-      //         style={{ backgroundColor }}
-      //         data-testid={`${dataTestId}-extra-action`}
-      //         aria-label={`${t(displayLabel)} extra action`}
-      //       >
-      //         {extraActionIcon}
-      //       </Button>
-      //     )}
-      //   </div>
-
-      //   <Dropdown.Toggle
-      //     ref={toggleRef}
-      //     split
-      //     variant={variant}
-      //     id="dropdown-split-basic"
-      //     className={`default-arrow ${dropdownOpen ? "collapsed" : ""} button-dropdown-toggle`}
-      //     data-testid={`${dataTestId}-toggle`}
-      //     aria-label={`${t(displayLabel)} dropdown toggle`}
-      //   >
-      //     <ChevronIcon className="svgIcon-onDark"/>
-      //   </Dropdown.Toggle>
-
-      //   <Dropdown.Menu style={menuStyle}>
-      //     {dropdownItems.map((item) => (
-      //       <Dropdown.Item
-      //         key={item.type}
-      //         onClick={() => item.onClick(item.type)}
-      //         data-testid={item.dataTestId}
-      //         aria-label={item.ariaLabel}
-      //         className={item.className}
-      //       >
-      //         {item.content}
-      //       </Dropdown.Item>
-      //     ))}
-      //   </Dropdown.Menu>
-      // </Dropdown>
-
-
-
       <Dropdown
         as={ButtonGroup}
         className={`${className}`}
@@ -172,7 +110,9 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
             aria-label={ariaLabel}
             name={name}
           >
-            {t(displayLabel)}
+            <span title={t(displayLabel)}>
+              {t(displayLabel)}
+            </span>
           </Button>
 
           {dropdownType === "DROPDOWN_WITH_EXTRA_ACTION" && extraActionIcon && (
@@ -191,7 +131,6 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
           split
           variant={variant}
           id="dropdown-split-basic"
-          // className={`${dropdownOpen ? "opened" : ""} toggle`}
           className={`toggle`}
           data-testid={`${dataTestId}-toggle`}
           aria-label={`${t(displayLabel)} dropdown toggle`}

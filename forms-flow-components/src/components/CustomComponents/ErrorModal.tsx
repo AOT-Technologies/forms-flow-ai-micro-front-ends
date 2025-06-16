@@ -63,12 +63,11 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
         <Modal.Footer>
           <div className="buttons-row">
             <CustomButton
-              variant={"secondary"}
-              size="lg"
               label={primaryBtnText}
               onClick={primaryBtnAction}
               dataTestId={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
+              secondary
             />
           </div>
         </Modal.Footer>

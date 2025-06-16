@@ -19,10 +19,11 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
+// import { CustomButton } from "@formsflow/components";
 
 
 import {removingTenantId} from "../../utils/utils.js";
-import { TableFooter, CustomSearch } from "@formsflow/components";
+import { TableFooter, CustomSearch, CloseIcon } from "@formsflow/components";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -345,30 +346,32 @@ const Roles = React.memo((props: any) => {
   // Delete confirmation
   const confirmDelete = () => (
     <div data-testid="roles-confirm-delete-modal">
-      <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title><p>{t("Confirm Delete")}</p></Modal.Title>
+      <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal} size="sm">
+        <Modal.Header>
+          <Modal.Title><p>{`${t("Delete ")} ${deleteCandidate.name} ${t("?")}`}</p></Modal.Title>
+          <div className="icon-close" onClick={handleCloseDeleteModal}>
+            <CloseIcon dataTestId="action-modal-close"/>
+          </div>
         </Modal.Header>
         <Modal.Body>
-          {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
+          {`${t("You are about to delete this role. This action cannot be undone.")}`}
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-            <button
-              type="button"
-              className="btn btn-link text-dark"
-              onClick={handleCloseDeleteModal}
-              data-testid="roles-cancel-delete-button"
-            >
-              {t("Cancel")}
-            </button>
             <Button
-              variant="danger"
+              variant="primary"
+              onClick={handleCloseDeleteModal}
+              data-testid="roles-confirm-delete-button"
+            >
+              {t("No, Keep This Role")}
+            </Button>
+            <Button
+              variant="secondary"
               disabled={disabled}
               onClick={() => deleteRole(deleteCandidate)}
               data-testid="roles-confirm-delete-button"
             >
-              {t("Delete")}
+              {t("Yes, Delete This Role")}
             </Button>
           </div>
         </Modal.Footer>
@@ -378,9 +381,12 @@ const Roles = React.memo((props: any) => {
 
   const showCreateModal = () => (
     <div data-testid="create-role-modal">
-      <Modal show={showRoleModal} onHide={handleCloseRoleModal}>
-        <Modal.Header closeButton>
+      <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="sm">
+        <Modal.Header>
           <Modal.Title><p>{t("Create Role")}</p></Modal.Title>
+          <div className="icon-close" onClick={handleCloseRoleModal}>
+            <CloseIcon dataTestId="action-modal-close"/>
+          </div>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3">
@@ -445,14 +451,6 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-            <button
-              type="button"
-              className="btn btn-link text-dark"
-              onClick={handleCloseRoleModal}
-              data-testid="create-new-role-modal-cancel-button"
-            >
-              {t("Cancel")}
-            </button>
             <Button
               variant="primary"
               disabled={disabled}
@@ -460,7 +458,14 @@ const Roles = React.memo((props: any) => {
               type="submit"
               data-testid="create-new-role-modal-submit-button"
             >
-              {t("Create")}
+              {t("Create This Role")}
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleCloseRoleModal}
+              data-testid="create-new-role-modal-cancel-button"
+            >
+              {t("Cancel, Do Not Create")}
             </Button>
           </div>
         </Modal.Footer>
@@ -469,9 +474,12 @@ const Roles = React.memo((props: any) => {
   );
   const showEditModal = () => (
     <div data-testid="edit-role-modal">
-      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal}>
-        <Modal.Header closeButton>
+      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} size="sm">
+        <Modal.Header>
           <Modal.Title><p>{t("Edit Role")}</p></Modal.Title>
+          <div className="icon-close" onClick={handleCloseEditRoleModal}>
+            <CloseIcon dataTestId="action-modal-close"/>
+          </div>
         </Modal.Header>
         <Modal.Body>
           <Form.Group className="mb-3">
@@ -536,23 +544,24 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-            <button
-              type="button"
-              className="btn btn-link text-dark"
-              onClick={handleCloseEditRoleModal}
-              data-testid="edit-role-modal-cancel-button"
-            >
-              {t("Cancel")}
-            </button>
-            <Button
+          <Button
               variant="primary"
               disabled={disabled}
               onClick={handleUpdateRole}
               type="submit"
               data-testid="edit-role-modal-save-button"
             >
-              {t("Save")}
+              {t("Save Changes")}
             </Button>
+
+            <Button
+              variant="secondary"
+              onClick={handleCloseEditRoleModal}
+              data-testid="edit-role-modal-cancel-button"
+            >
+              {t("Discard Changes")}
+            </Button>
+            
           </div>
         </Modal.Footer>
       </Modal>
@@ -727,7 +736,7 @@ const Roles = React.memo((props: any) => {
             data-testid="roles-create-new-role-button"
           >
             <i className="fa-solid fa-plus me-2"></i>{" "}
-            <Translation>{(t) => t("Create New Role")}</Translation>
+            <Translation>{(t) => t("New Role")}</Translation>
           </Button>
         </div>
         {!props?.loading ? (
@@ -746,7 +755,7 @@ const Roles = React.memo((props: any) => {
             data-testid="admin-roles-table"
           />
     
-          <table className="table mt-3">
+          <table className="table mt-3 old-design">
             <tfoot>
             <TableFooter
             limit={sizePerPage}

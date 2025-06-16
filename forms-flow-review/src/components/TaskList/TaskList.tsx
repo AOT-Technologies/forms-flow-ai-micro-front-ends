@@ -25,6 +25,8 @@ import {
   DateRangePicker,
   FilterSortActions,
   ConnectIcon,
+  CheckboxCheckedIcon,
+  CheckboxUncheckedIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskListDropdownItems from "./TaskFilterDropdown";
@@ -208,23 +210,18 @@ const TaskList = () => {
 
             <ConnectIcon />
 
-            <button
-              className={`custom-checkbox-container button-as-div ${
-                isAssigned ? "checked" : ""
-              }`}
-              onClick={handleCheckBoxChange}
-            >
+            {/* should probably be created as a separate component "InputFilterSingle" */}
+            <label htmlFor="assigned-to-me" className="input-filter single">
               <input
+                id="assigned-to-me"
                 type="checkbox"
-                className="form-check-input"
                 checked={isAssigned}
-                onChange={handleCheckBoxChange}
+                onClick={handleCheckBoxChange}
                 data-testid="assign-to-me-checkbox"
-              />
-              <span className="custom-checkbox-label">
-                {t("Assign to me")}
-              </span>
-            </button>
+                />
+              <span>Assigned to me</span>
+              {isAssigned ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
+            </label>
           </div>
 
               

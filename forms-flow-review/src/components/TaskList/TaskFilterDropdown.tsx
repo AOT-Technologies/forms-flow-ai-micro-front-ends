@@ -161,13 +161,7 @@ const changeFilterSelection = (filter) => {
   return (
     <>
       <ButtonDropdown
-        label={
-          <span title={title}>
-            {title}
-          </span>
-        }
-        variant="primary"
-        size="md"
+        label={title}
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
         dropdownItems={filterDropdownItems}
         extraActionIcon={<PencilIcon/>}

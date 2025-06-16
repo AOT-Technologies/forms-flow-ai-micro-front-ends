@@ -320,13 +320,7 @@ $white-color: var(--ff-white);
       background-color: $transparent !important;
 
       &:hover {
-        color: $white-color !important;
-
-        background-color: $primary-color !important;
-
-        .svgIcon-primary path {
-          stroke: $white-color;
-        }
+        background-color: $primary-light !important;
       }
     }
 
@@ -715,5 +709,72 @@ $white-color: var(--ff-white);
     display: flex;
     align-items: flex-end;
     gap: $paddingLvl3S;
+  }
+}
+
+
+
+
+.old-design {
+  &.table {
+    td.table-footer {
+      display: flex;
+
+      background-color: transparent;
+      border-bottom: none;
+
+      & > div {
+        display: flex;
+        align-items: center;
+      }
+
+      .table-footer-pages {
+        display: flex;
+        justify-content: center;
+        flex-grow: 1;
+
+        .pagination {
+          margin-bottom: 0;
+        }
+
+        .page-item {
+          &.active {
+            .page-link {
+              color: $white !important;
+            }
+          }
+        }
+      }
+
+      .table-footer-rowsper {
+        .pagination-dropdown .dropdown-toggle {
+          background-color: transparent !important;
+        }
+
+        .dropdown-menu {
+          overflow: hidden;
+        }
+      }
+    }
+  }
+
+  &-metrics {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .dashboard {
+      min-height: 6rem;
+
+      margin-top: 0;
+    }
+  }
+}
+
+// fixing old design features 
+
+.filter-sort-bar .filter-list-view {
+  .rounded-pill {
+    color: $gray-darkest;
   }
 }

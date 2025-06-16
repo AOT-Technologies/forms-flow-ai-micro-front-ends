@@ -514,15 +514,8 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         <Modal.Footer>
           <div className="buttons-row">
             <CustomButton
-              variant={
-                !selectedFile ||
-                (importError && primaryButtonText !== "Try Again")
-                  ? "dark"
-                  : "primary"
-              }
               disabled={ primaryButtonDisabled }
-              size="md"
-            dataTestId="import-modal-primary-button"
+              dataTestId="import-modal-primary-button"
               label={primaryButtonText}
               onClick={() => {
                 primaryButtonText === "Try Again" ? closeModal() : onImport();
@@ -530,14 +523,13 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
               buttonLoading={!importError && importLoader}
             />
             <CustomButton
-              variant="secondary"
-              size="md"
               dataTestId="import-modal-close-button"
               label="Cancel"
               onClick={() => {
                 resetState();
                 closeModal();
               }}
+              secondary
             />
           </div>
         </Modal.Footer>

@@ -440,6 +440,8 @@ select option:hover {
   }
 
   .tab-content {
+    @extend .custom-scroll;
+
     overflow-y: auto;
 
     & > div {

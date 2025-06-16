@@ -910,25 +910,24 @@ $danger-color: var(--ff-danger);
     width: 100%;
     max-width: $maxWidth;
 
+    background-color: $primary;
+
+    border-radius: $borderRadiusHeightSM !important;
+
     .extra-action {
       overflow: hidden;
       display: flex;
       flex-grow: 1;
       width: 100%;
 
-      &:after {
-        content: "\00a0";
-        display: flex;
-        width: $lineThin;
-        height: 100%;
+      background-color: $primary;
 
-        background-color: $primary;
-      }
+      border-bottom-left-radius: $borderRadiusHeightSM !important;
+      border-top-left-radius: $borderRadiusHeightSM !important;
 
       button {
         &:nth-child(1) {
           @include clickableFeedback3();
-          @include paddingLvl6();
 
           display: flex !important;
           justify-content: flex-start !important;
@@ -957,7 +956,11 @@ $danger-color: var(--ff-danger);
         &:nth-child(2) {
           @include clickableFeedback1();
 
+          position: relative;
+
           padding: 0 $paddingLvl6LR !important;
+
+          margin-right: $lineThin;
 
           background-color: mix($primary, $white-color, 80%) !important;
 
@@ -965,6 +968,15 @@ $danger-color: var(--ff-danger);
 
           .svgIcon-primary path {
             stroke: $white;
+          }
+
+          &:after {
+            content: "\00a0";
+            position: absolute;
+            right: calc(0px - $lineThin);
+            display: flex;
+            width: $lineThin;
+            height: 100%;
           }
         }
       }
@@ -1033,7 +1045,11 @@ $danger-color: var(--ff-danger);
 
     
     &.show {
+      border-bottom-right-radius: 0 !important;
+
       .extra-action {
+        border-bottom-left-radius: 0 !important;
+
         button {
           &:nth-child(1) {
             border-bottom-left-radius: 0 !important;
@@ -1063,6 +1079,8 @@ $danger-color: var(--ff-danger);
 
     &.not-selected { // for when nothing is selected like Date
       .extra-action {
+        background-color: $white-color !important;
+
         &:after {
           display: none;
         }
@@ -1093,7 +1111,68 @@ $danger-color: var(--ff-danger);
         }
       }
     }
+
+    &.unsaved { // for when the filter is unsaved
+      .extra-action {
+        button {
+          &:nth-child(1) {
+            & > span {
+              font-style: italic;
+            }
+          }
+        }
+      }
+    }
     
+
+    &.single {
+      @include clickableFeedback1();
+
+      overflow: hidden;
+      position: relative;
+      max-width: fit-content;
+
+      background-color: $white;
+      border: $lineThick/2 solid $primary;
+
+      border-radius: $borderRadiusHeightSM;
+
+      input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+
+        opacity: 0;
+
+        &:checked + {
+          span {
+            color: $white;
+
+            background-color: $primary;
+            & + .svgIcon-primary path {
+              stroke: $white;
+            }
+          }
+        }
+      }
+
+      & > span {
+        @include textBaseHightlight($fontBase, $primary);
+
+        padding: calc($paddingLvl6TB - $lineThick/2) $paddingLvl6LR calc($paddingLvl6TB - $lineThick/2) calc($base + $paddingLvl5S + $paddingLvl6LR) !important;
+
+        background-color: $white;
+      }
+
+      .svgIcon-primary {
+        position: absolute;
+        height: 100%;
+
+        margin: 0 $paddingLvl5S 0 $paddingLvl6LR;
+      }
+    }
   }
 
   &-search {
@@ -1313,6 +1392,10 @@ $danger-color: var(--ff-danger);
       }
     }
   }
+ //future
+  // &-textarea {
+
+  // }
 
   &-combination {
     $spacing: $paddingLvl4S;
@@ -1352,6 +1435,46 @@ $danger-color: var(--ff-danger);
         }
         
       }
+    }
+  }
+
+  &-checkbox {
+    $checkboxSize: calc($base + $paddingLvl5S*2);
+
+    @include clickableFeedback1();
+    
+    position: relative;
+    display: flex !important;
+    align-items: stretch;
+
+    width: fit-content;
+
+    input {
+      position: absolute;
+
+      width: 100%;
+      height: 100%;
+
+      opacity: 0;
+    }
+
+    .svgIcon-primary {
+      position: absolute;
+
+      height: 100%;
+
+      margin: 0 $paddingLvl5S;
+    }
+
+    span {
+      @include textBase();
+
+      display: flex;
+      align-items: center;
+
+      padding: $paddingLvl5S;
+
+      margin-left: calc( $base + $paddingLvl5S);
     }
   }
 

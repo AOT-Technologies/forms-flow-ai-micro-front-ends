@@ -522,7 +522,7 @@ const Users = React.memo((props: any) => {
             onTableChange={handleTableChange}
             data-testid="admin-users-table"
           />
-          <table className="table mt-3">
+          <table className="table mt-3 old-design">
             <tfoot>
               <TableFooter
                   limit={props?.limit?.sizePerPage}

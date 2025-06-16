@@ -161,6 +161,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             feedback={nameError}
             turnOnLoader={isFormNameValidating}
             maxLength={200}
+            id="form-name"
           />
           <FormTextArea
             name="description"
@@ -172,6 +173,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             value={values.description} // Bind description state
             onChange={handleInputValueChange}
             minRows={1}
+            id="form-description"
           />
 
           {/* This below commenting is for open-source use only. It should not be included in EE.

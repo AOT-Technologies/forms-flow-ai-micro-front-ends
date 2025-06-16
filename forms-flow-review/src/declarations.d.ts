@@ -70,6 +70,8 @@ declare module "@formsflow/components" {
     CustomSearch,
     AddIcon,
     ConnectIcon,
+    CheckboxCheckedIcon,
+    CheckboxUncheckedIcon,
     FormVariableIcon,
     SharedWithOthersIcon,
     SharedWithMeIcon,
