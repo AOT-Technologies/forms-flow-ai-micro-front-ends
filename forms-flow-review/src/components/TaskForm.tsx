@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
 import {
   selectRoot,
@@ -14,14 +14,12 @@ import {
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
-  taskAssignee: string;
   onFormSubmit?: (submission: any) => void;
   onCustomEvent?: (event: any) => void;
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({
   currentUser,
-  taskAssignee,
   form: { form, isActive: isFormActive },
   submission: reduxSubmission,
   errors,
@@ -29,7 +27,14 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onFormSubmit,
   onCustomEvent = () => {},
 }) => {
-  const isReadOnly = taskAssignee !== currentUser; 
+  const taskAssignee = useSelector(
+    (state: any) => state?.task?.taskAssignee
+  );
+    const taskDetailsLoading = useSelector(
+    (state: any) => state?.task?.taskDetailsLoading
+  );
+  const [isReadOnly, setIsReadOnly] = useState(false)
+
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
   );
@@ -39,16 +44,18 @@ const TaskForm: React.FC<TaskFormProps> = ({
     }
     return reduxSubmission.submission;
   }, [customSubmission, reduxSubmission]);
-
- // Deep clone submission to prevent mutation issues
+  // Deep clone submission to prevent mutation issues
   const safeSubmission = useMemo(() => {
     return rawSubmission ? JSON.parse(JSON.stringify(rawSubmission)) : null;
   }, [rawSubmission]);
 
+const isLoading =
+  isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data || taskDetailsLoading;
+  // Show loading UI if loading
+ useEffect(() => {
+   setIsReadOnly(taskAssignee && currentUser && taskAssignee !== currentUser);
+ }, [taskAssignee, currentUser]);
 
-  const isLoading =
-  isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data;
-// Show loading UI if loading
   if (isLoading) {
     return (
       <div className="container">
@@ -68,20 +75,22 @@ const TaskForm: React.FC<TaskFormProps> = ({
       <div className="main-header">
         <h3 className="task-head text-truncate form-title">{form?.title}</h3>
       </div>
-        <div className="ms-4 mb-5 me-4 wizard-tab service-task-details">
-          <Form
-            form={form}
-            submission={safeSubmission}
-            url={reduxSubmission?.url}
-            options={{
-              ...options,
-              i18n: RESOURCE_BUNDLES_DATA,
-              readOnly: isReadOnly,
-            }}
-            onSubmit={isReadOnly ? undefined : onFormSubmit}
-            onCustomEvent={onCustomEvent}
-          />
-        </div>
+      <div className="ms-4 mb-5 me-4 wizard-tab service-task-details">
+        {/* The key is added to remount the form on change */}
+        <Form
+         key={isReadOnly ? "readonly" : "editable"}
+          form={form}
+          submission={safeSubmission}
+          url={reduxSubmission?.url}
+          options={{
+            ...options,
+            i18n: RESOURCE_BUNDLES_DATA,
+            readOnly: isReadOnly,
+          }}
+          onSubmit={isReadOnly ? undefined : onFormSubmit}
+          onCustomEvent={onCustomEvent}
+        />
+      </div>
     </div>
   );
 };

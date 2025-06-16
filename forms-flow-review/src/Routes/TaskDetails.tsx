@@ -27,8 +27,9 @@ import {
   setFormSubmissionLoading,
   setBPMTaskDetailLoader,
   setSelectedTaskID,
-  setAppHistoryLoading, 
-} from "../actions/taskActions";
+  setAppHistoryLoading,
+  setTaskDetailsLoading,
+  } from "../actions/taskActions";
 import { getFormioRoleIds } from "../api/services/userSrvices";
 import {
   CUSTOM_SUBMISSION_URL,
@@ -39,6 +40,7 @@ import {
 import TaskForm from "../components/TaskForm";
 import { TaskHistoryModal } from "../components/TaskHistory";
 import { push } from "connected-react-router";
+import TaskAssigneeManager from "../components/Assigne/Assigne";
 
 const TaskDetails = () => {
   const { t } = useTranslation();
@@ -54,6 +56,7 @@ const TaskDetails = () => {
   const taskFormSubmissionReload = useSelector(
     (state: any) => state.task.taskFormSubmissionReload
   );
+
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
   )?.preferred_username;
@@ -71,6 +74,7 @@ const TaskDetails = () => {
     if (bpmTaskId) {
       dispatch(setBPMTaskDetailLoader(true));
       dispatch(getBPMTaskDetail(bpmTaskId));
+      dispatch(setTaskDetailsLoading(true));
       dispatch(getBPMGroups(bpmTaskId));
     }
     return () => Formio.clearCache();
@@ -149,16 +153,17 @@ const TaskDetails = () => {
     const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
     const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
     const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
-
+    const payload = {
+      variables:{
+        formUrl:{value:formUrl},
+        applicationId:{value:task.applicationId},
+        webFormUrl:{value:webFormUrl},
+        action:{value:actionType}
+      }
+    }
     dispatch(
       onBPMTaskFormSubmit(
-        bpmTaskId,
-        {
-          formUrl,
-          applicationId: task.applicationId,
-          actionType,
-          webFormUrl,
-        },
+        bpmTaskId,payload,
         () => dispatch(setBPMTaskDetailLoader(false))
       )
     );
@@ -200,27 +205,33 @@ const TaskDetails = () => {
       <Card className="editor-header">
         <Card.Body>
           <div className="d-flex justify-content-between align-items-center">
-            <div className="d-flex align-items-center justify-content-between">
+            {/* Left Section: Back Button + Title */}
+            <div className="d-flex align-items-center">
               <BackToPrevIcon onClick={handleBack} />
               <div className="mx-4 editor-header-text">
                 {textTruncate(75, 75, task?.name)}
               </div>
             </div>
-            <CustomButton
-              variant="gray-dark"
-              size="table"
-              label={t("History")}
-              dataTestId="handle-task-details-history-testid"
-              ariaLabel={t("Submission History Button")}
-              onClick={handleHistory}
-            />
+
+            {/* Right Section: TaskAssigneeManager + History Button */}
+            <div className="d-flex align-items-center ms-auto">
+              <TaskAssigneeManager task={task} isFromTaskDetails={true} />
+              <CustomButton
+                variant="gray-dark"
+                size="table"
+                label={t("History")}
+                dataTestId="handle-task-details-history-testid"
+                ariaLabel={t("Submission History Button")}
+                onClick={handleHistory}
+                className="ms-3"
+              />
+            </div>
           </div>
         </Card.Body>
       </Card>
       <div className="scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border">
         <TaskForm
           currentUser={currentUser}
-          taskAssignee={task?.assignee}
           onFormSubmit={onFormSubmitCallback}
           onCustomEvent={onCustomEventCallBack}
         />
