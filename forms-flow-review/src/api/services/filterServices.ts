@@ -71,6 +71,7 @@ export const fetchServiceTaskList = (
     API.GET_BPM_TASK_FILTERS
   }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
   return (dispatch) => {
+    dispatch(setBPMTaskLoader(true));
     dispatch(setLastReqPayload(reqData));
     RequestService.httpPOSTRequestWithHAL(
       apiUrlgetTaskList,
@@ -114,6 +115,10 @@ export const fetchServiceTaskList = (
       .catch((error) => {
         handleTaskError(dispatch, error);
         done(error);
+      })
+      .finally(() => {
+        // Hide loader regardless of success or error
+        dispatch(setBPMTaskLoader(false));
       });
   };
 };
