@@ -335,7 +335,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               baseUrl={baseUrl}
               eventKey={SectionKeys.DESIGN.value}
               optionsCount="5"
-              mainMenu="Design"
+              mainMenu={t("Design")}
               subMenu={[
                 {
                   name: "Forms",

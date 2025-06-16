@@ -114,7 +114,7 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
           className="button-dropdown"
         >
          <span style={labelStyle}>
-          {t(displayLabel)}
+          {displayLabel}
         </span>
         </Button>
         {dropdownType === "DROPDOWN_WITH_EXTRA_ACTION" && extraActionIcon && (
