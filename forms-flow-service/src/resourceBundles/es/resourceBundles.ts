@@ -1,4 +1,4 @@
-//Spanish
+// 
 export const RESOURCE_BUNDLES_ES = {
   "Dismiss": "Descartar",
   "You Cannot Delete This Form & Flow": "No puedes eliminar este formulario y flujo.",
@@ -155,7 +155,7 @@ export const RESOURCE_BUNDLES_ES = {
     "History": "Historial",
     "Diagram": "Diagrama",
     "Delete Confirmation": "Confirmación de eliminación",
-    "All tasks": "Todas las tareas",
+    "All Tasks": "Todas las tareas",
     "Manage Groups": "Administrar grupos",
     "Group ID": "ID de grupo",
     "Due": "Fecha límite",
@@ -788,7 +788,7 @@ export const RESOURCE_BUNDLES_ES = {
     "Create And Edit BPMN": "Crear y Editar BPMN",
     "Create And Edit DMN": "Crear y Editar DMN",
     "Import New Form": "Importar nuevo formulario",
-    "Confirm and Edit form": "Confirmar y editar formulario",
+    "Confirm and Edit Form": "Confirmar y editar formulario",
     "Click or drag a file to this area to import": "Haga clic o arrastre un archivo a esta área para importarlo",
     "Import New": "Importar Nuevo",
     "Search DMN Name": "Buscar nombre DMN",
@@ -1071,5 +1071,20 @@ export const RESOURCE_BUNDLES_ES = {
   "Custom Form Fields": "Campos de formulario personalizados",
   "Saved!": "¡Guardado!",
   "Deleted!": "¡Eliminado!",
-  "Updated!": "¡Actualizado!"
+  "Updated!": "¡Actualizado!",
+  "Set as default filter": "Establecer como filtro predeterminado",
+  "New Form & Flow": "Nuevo formulario y flujo",
+  "Last Modified On": "Última modificación el",
+  "New Submission": "Nueva presentación",
+  "Design": "Diseño",
+  "Review": "Revisar",
+  "Analyze": "Analizar",
+  "Manage": "Gestionar",
+  "Search By ID": "Buscar por ID",
+  "Link": "Enlace",
+  "Save as template": "Guardar como Plantilla",
+  "Select category for the template": "Seleccionar categoría para la plantilla",
+  "Template Name": "Nombre de la plantilla",
+  "Template Description": "Descripción de la plantilla",
+  "All Fields": "Todos los campos",
 }
