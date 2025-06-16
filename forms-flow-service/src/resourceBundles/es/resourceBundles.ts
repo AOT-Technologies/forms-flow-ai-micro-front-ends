@@ -1087,4 +1087,5 @@ export const RESOURCE_BUNDLES_ES = {
   "Template Name": "Nombre de la plantilla",
   "Template Description": "Descripción de la plantilla",
   "All Fields": "Todos los campos",
+  "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "No se han encontrado formularios. Cree uno nuevo haciendo clic en el botón \"Nuevo formulario y flujo\" en la parte superior derecha."
 }

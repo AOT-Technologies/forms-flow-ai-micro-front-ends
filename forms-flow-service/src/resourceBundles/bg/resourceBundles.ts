@@ -1590,4 +1590,5 @@ export const RESOURCE_BUNDLES_BG = {
   "Template Name": "Име на шаблон",
   "Template Description": "Описание на шаблона",
   "All Fields": "Всички полета",
+  "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "Не са намерени формуляри. Създайте нов формуляр, като щракнете върху бутона „Нова форма и поток“ в горния десен ъгъл."
 }
