@@ -81,7 +81,7 @@ class KeycloakService {
         return null;
       }
     } catch (err) {
-      throw err;
+      throw "error updating token";
     }
   }
 
