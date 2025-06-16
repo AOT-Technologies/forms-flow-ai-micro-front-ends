@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, { useRef, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -25,7 +25,6 @@ import {
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 
-// Interface for columns
 interface Column {
   name: string;
   width: number;
@@ -38,51 +37,30 @@ const TaskSubmissionList: React.FC = () => {
   const dispatch = useDispatch();
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
 
-  // -------------------- Redux State --------------------
+  // Redux State
   const sortParams = useSelector((state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {});
   const limit = useSelector((state: any) => state?.analyzeSubmission.limit ?? 10);
-  const { page } = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
+  const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
-
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
-  // -------------------- Local State --------------------
-  const [pageNumber, setPageNumber] = useState<number>(1);
-  const [newLimit, setNewLimit] = useState<number>(10);
+  // Columns Configuration
+  const columns: Column[] = useMemo(() => [
+    { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
+    { name: "Form Name", sortKey: "formName", width: 200, resizable: true },
+    { name: "Submitter", sortKey: "createdBy", width: 200, resizable: true },
+    { name: "Submission Date", sortKey: "created", width: 180, resizable: true },
+    { name: "Status", sortKey: "applicationStatus", width: 160, resizable: true },
+    { name: "", sortKey: "actions", width: 100 },
+  ], []);
 
-  // -------------------- Columns Configuration --------------------
-  const columns: Column[] = useMemo(
-    () => [
-      { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
-      { name: "Form Name", sortKey: "formName", width: 200, resizable: true },
-      { name: "Submitter", sortKey: "createdBy", width: 200, resizable: true },
-      {
-        name: "Submission Date",
-        sortKey: "created",
-        width: 180,
-        resizable: true,
-      },
-      {
-        name: "Status",
-        sortKey: "applicationStatus",
-        width: 160,
-        resizable: true,
-      },
-      { name: "", sortKey: "actions", width: 100 },
-    ],
-    []
-  );
-
-
-  // -------------------- Active Sort --------------------
   const activeSortKey = sortParams.activeKey;
   const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
 
-  // -------------------- Fetch Submissions --------------------
+  // Fetch Submissions
   const { data } = useQuery({
-    queryKey: ["submissions", pageNumber, newLimit, activeSortKey, activeSortOrder],
-    queryFn: () =>
-      getSubmissionList(newLimit, pageNumber, activeSortOrder, activeSortKey),
+    queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder],
+    queryFn: () => getSubmissionList(limit, page, activeSortOrder, activeSortKey),
     keepPreviousData: true,
     staleTime: 0,
   });
@@ -90,9 +68,7 @@ const TaskSubmissionList: React.FC = () => {
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
 
-  // -------------------- Handlers --------------------
-
-  // Sort handler
+  // Sort Handler
   const handleSort = useCallback((key: string) => {
     const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
     const updatedSort = Object.fromEntries(
@@ -104,23 +80,18 @@ const TaskSubmissionList: React.FC = () => {
     dispatch(setAnalyzeSubmissionSort({ ...updatedSort, activeKey: key }));
   }, [dispatch, sortParams]);
 
-  // Page change handler
+  // Page Change Handler
   const handlePageChange = useCallback((pageNum: number) => {
-    setPageNumber(pageNum);
     dispatch(setAnalyzeSubmissionPage(pageNum));
   }, [dispatch]);
 
-  // Limit change handler
-  const handleLimitChange = (limit: number) => {
-    setNewLimit(limit);
-    setPageNumber(1);
-    dispatch(setAnalyzeSubmissionLimit(limit));
-    dispatch(setAnalyzeSubmissionPage(1));
+  // Limit Change Handler
+  const handleLimitChange = (newLimit: number) => {
+    dispatch(setAnalyzeSubmissionLimit(newLimit));
+    dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
 
-  // -------------------- Render Functions --------------------
-
-  // Row rendering
+  // Row Renderer
   const renderRow = (row: Submission) => (
     <tr key={row.id}>
       <td>{row.id}</td>
@@ -143,7 +114,7 @@ const TaskSubmissionList: React.FC = () => {
     </tr>
   );
 
-  // Header rendering
+  // Header Renderer
   const renderHeaderCell = useCallback((
     column: Column,
     index: number,
@@ -192,7 +163,6 @@ const TaskSubmissionList: React.FC = () => {
     );
   }, [t, sortParams, handleSort]);
 
-  // -------------------- Render --------------------
   return (
     <div className="container-wrapper" data-testid="table-container-wrapper">
       <div className="table-outer-container">
@@ -205,7 +175,7 @@ const TaskSubmissionList: React.FC = () => {
               renderHeaderCell={renderHeaderCell}
               emptyMessage={t("No submissions have been found. Try a different filter combination or contact your admin.")}
               onColumnResize={(newWidths) =>
-                console.log("Column resized:", newWidths) // TODO: handle column resizing persist
+                console.log("Column resized:", newWidths)
               }
               tableClassName="resizable-table"
               headerClassName="resizable-header"
@@ -222,8 +192,8 @@ const TaskSubmissionList: React.FC = () => {
         <table className="custom-tables" data-testid="table-footer-container">
           <tfoot>
             <TableFooter
-              limit={newLimit}
-              activePage={pageNumber}
+              limit={limit}
+              activePage={page}
               totalCount={totalCount}
               handlePageChange={handlePageChange}
               onLimitChange={handleLimitChange}
