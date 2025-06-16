@@ -190,14 +190,8 @@ const TaskFilterModalBody = ({
   const handleSorting = (sorting) => {
     if (sorting?.length > 0) {
       const [sort] = sorting;
-      if(sort.sortBy === "processVariable"){
-        setSortValue(sort.parameters.variable);
-        setSortOrder(sort.sortOrder);
-      }
-      else{
-        setSortValue(sort.sortBy);
-        setSortOrder(sort.sortOrder);
-      }
+      setSortValue(sort.sortBy === "processVariable" ?sort.parameters.variable :sort.sortBy);
+      setSortOrder(sort.sortOrder); 
     }
   };
 

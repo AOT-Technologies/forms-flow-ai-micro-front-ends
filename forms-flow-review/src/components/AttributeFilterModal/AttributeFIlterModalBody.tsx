@@ -1,7 +1,5 @@
 import {
-    ConfirmModal,
   CustomButton,
-  CustomInfo,
   CustomTabs,
   DeleteIcon,
   FormInput,
@@ -15,10 +13,8 @@ import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import {
   createFilter,
-  fetchFilterList,
   fetchServiceTaskList,
   getUserRoles,
-  updateFilter,
 } from "../../api/services/filterServices";
 import isEqual from "lodash/isEqual";
 

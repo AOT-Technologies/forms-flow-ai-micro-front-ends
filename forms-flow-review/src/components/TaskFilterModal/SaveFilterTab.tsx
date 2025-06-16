@@ -60,7 +60,6 @@ const SaveFilterTab = ({
   const viewOnly = !isFilterAdmin && canAccess;
   const editRole = isFilterAdmin && canAccess;
   const isCreator = filterToEdit?.createdBy === userDetails?.preferred_username;
-  const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
 
 
   let saveAndUpdateButtonVariant = "secondary"; // Default value
