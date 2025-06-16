@@ -3,14 +3,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { push } from "connected-react-router";
+
+// Types and Services
 import { Submission } from "../types/submissions";
 import { getSubmissionList } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate } from "../helper/helper";
+
+// Redux Actions
 import {
   setAnalyzeSubmissionSort,
   setAnalyzeSubmissionPage,
   setAnalyzeSubmissionLimit,
 } from "../actions/analyzeSubmissionActions";
+
+// UI Components
 import {
   ReusableResizableTable,
   TableFooter,
@@ -19,6 +25,7 @@ import {
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 
+// Interface for columns
 interface Column {
   name: string;
   width: number;
@@ -30,20 +37,20 @@ const TaskSubmissionList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
-  const sortParams = useSelector(
-    (state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {}
-  );
-  const limit = useSelector(
-    (state: any) => state?.analyzeSubmission.limit ?? 10
-  );
-  const { page } = useSelector(
-    (state: any) => state?.analyzeSubmission.page ?? 1
-  );
-  const tenantKey = useSelector(
-    (state: any) => state.tenants?.tenantData?.tenantkey
-  );
+
+  // -------------------- Redux State --------------------
+  const sortParams = useSelector((state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {});
+  const limit = useSelector((state: any) => state?.analyzeSubmission.limit ?? 10);
+  const { page } = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
+
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
+  // -------------------- Local State --------------------
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [newLimit, setNewLimit] = useState<number>(10);
+
+  // -------------------- Columns Configuration --------------------
   const columns: Column[] = useMemo(
     () => [
       { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
@@ -51,7 +58,7 @@ const TaskSubmissionList: React.FC = () => {
       { name: "Submitter", sortKey: "createdBy", width: 200, resizable: true },
       {
         name: "Submission Date",
-        sortKey: "submissionDate",
+        sortKey: "created",
         width: 180,
         resizable: true,
       },
@@ -66,41 +73,54 @@ const TaskSubmissionList: React.FC = () => {
     []
   );
 
+
+  // -------------------- Active Sort --------------------
   const activeSortKey = sortParams.activeKey;
   const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
 
+  // -------------------- Fetch Submissions --------------------
   const { data } = useQuery({
-    queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder],
+    queryKey: ["submissions", pageNumber, newLimit, activeSortKey, activeSortOrder],
     queryFn: () =>
-      getSubmissionList(limit, page, activeSortOrder, activeSortKey),
+      getSubmissionList(newLimit, pageNumber, activeSortOrder, activeSortKey),
     keepPreviousData: true,
     staleTime: 0,
   });
 
-  const submissions = data?.submissions ?? [];
-  const totalCount = data?.totalCount ?? 0;
+  const submissions: Submission[] = data?.submissions ?? [];
+  const totalCount: number = data?.totalCount ?? 0;
 
-  const handleSort = useCallback(
-    (key: string) => {
-      const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
-      const updatedSort = Object.fromEntries(
-        Object.keys(sortParams).map((k) => [
-          k,
-          { sortOrder: k === key ? newOrder : "asc" },
-        ])
-      );
-      dispatch(setAnalyzeSubmissionSort({ ...updatedSort, activeKey: key }));
-    },
-    [dispatch, sortParams]
-  );
+  // -------------------- Handlers --------------------
 
-  const handlePageChange = useCallback(
-    (pageNumber) => {
-      dispatch(setAnalyzeSubmissionPage(pageNumber));
-    },
-    [dispatch, limit]
-  );
+  // Sort handler
+  const handleSort = useCallback((key: string) => {
+    const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
+    const updatedSort = Object.fromEntries(
+      Object.keys(sortParams).map((k) => [
+        k,
+        { sortOrder: k === key ? newOrder : "asc" },
+      ])
+    );
+    dispatch(setAnalyzeSubmissionSort({ ...updatedSort, activeKey: key }));
+  }, [dispatch, sortParams]);
 
+  // Page change handler
+  const handlePageChange = useCallback((pageNum: number) => {
+    setPageNumber(pageNum);
+    dispatch(setAnalyzeSubmissionPage(pageNum));
+  }, [dispatch]);
+
+  // Limit change handler
+  const handleLimitChange = (limit: number) => {
+    setNewLimit(limit);
+    setPageNumber(1);
+    dispatch(setAnalyzeSubmissionLimit(limit));
+    dispatch(setAnalyzeSubmissionPage(1));
+  };
+
+  // -------------------- Render Functions --------------------
+
+  // Row rendering
   const renderRow = (row: Submission) => (
     <tr key={row.id}>
       <td>{row.id}</td>
@@ -123,91 +143,69 @@ const TaskSubmissionList: React.FC = () => {
     </tr>
   );
 
-  const renderHeaderCell = useCallback(
-    (
-      column: Column,
-      index: number,
-      columnsLength: number,
-      currentResizingColumn: any,
-      handleMouseDown: (
-        index: number,
-        column: Column,
-        e: React.MouseEvent
-      ) => void
-    ) => {
-      const isLast = index === columnsLength - 1;
-      const headerKey = column.sortKey || `col-${index}`;
+  // Header rendering
+  const renderHeaderCell = useCallback((
+    column: Column,
+    index: number,
+    columnsLength: number,
+    currentResizingColumn: any,
+    handleMouseDown: (index: number, column: Column, e: React.MouseEvent) => void
+  ) => {
+    const isLast = index === columnsLength - 1;
+    const headerKey = column.sortKey || `col-${index}`;
 
-      return (
-        <th
-          key={`header-${headerKey}`}
-          className="resizable-column"
-          style={{ width: column.width }}
-          data-testid={`column-header-${column.sortKey || "actions"}`}
-          aria-label={column.name ? `${t(column.name)} ${t("column")}` : ""}
-        >
-          {!isLast && column.name ? (
-            <SortableHeader
-              columnKey={column.sortKey}
-              title={t(column.name)}
-              currentSort={sortParams}
-              handleSort={handleSort}
-              className="w-100 d-flex justify-content-between align-items-center"
-              dataTestId={`sort-header-${column.sortKey}`}
-              ariaLabel={t("Sort by {{columnName}}", {
-                columnName: t(column.name),
-              })}
-            />
-          ) : (
-            column.name && t(column.name)
-          )}
-          {column.resizable && (
-            <div
-              className={`column-resizer ${
-                currentResizingColumn?.sortKey === column.sortKey
-                  ? "resizing"
-                  : ""
-              }`}
-              onMouseDown={(e) => handleMouseDown(index, column, e)}
-              tabIndex={0}
-              role="separator"
-              aria-orientation="horizontal"
-              data-testid={`column-resizer-${column.sortKey}`}
-              aria-label={t("Resize {{columnName}} column", {
-                columnName: t(column.name),
-              })}
-            />
-          )}
-        </th>
-      );
-    },
-    [t, sortParams, handleSort]
-  );
+    return (
+      <th
+        key={`header-${headerKey}`}
+        className="resizable-column"
+        style={{ width: column.width }}
+        data-testid={`column-header-${column.sortKey || "actions"}`}
+        aria-label={column.name ? `${t(column.name)} ${t("column")}` : ""}
+      >
+        {!isLast && column.name ? (
+          <SortableHeader
+            columnKey={column.sortKey}
+            title={t(column.name)}
+            currentSort={sortParams}
+            handleSort={handleSort}
+            className="w-100 d-flex justify-content-between align-items-center"
+            dataTestId={`sort-header-${column.sortKey}`}
+            ariaLabel={t("Sort by {{columnName}}", { columnName: t(column.name) })}
+          />
+        ) : (
+          column.name && t(column.name)
+        )}
+        {column.resizable && (
+          <div
+            className={`column-resizer ${currentResizingColumn?.sortKey === column.sortKey ? "resizing" : ""}`}
+            onMouseDown={(e) => handleMouseDown(index, column, e)}
+            tabIndex={0}
+            role="separator"
+            aria-orientation="horizontal"
+            data-testid={`column-resizer-${column.sortKey}`}
+            aria-label={t("Resize {{columnName}} column", {
+              columnName: t(column.name),
+            })}
+          />
+        )}
+      </th>
+    );
+  }, [t, sortParams, handleSort]);
 
-  const handleLimitChange = (newLimit: number) => {
-    setAnalyzeSubmissionLimit(newLimit);
-    setAnalyzeSubmissionPage(1);
-  };
-
+  // -------------------- Render --------------------
   return (
     <div className="container-wrapper" data-testid="table-container-wrapper">
       <div className="table-outer-container">
-        <div
-          className="table-scroll-wrapper resizable-scroll"
-          ref={scrollWrapperRef}
-        >
+        <div className="table-scroll-wrapper resizable-scroll" ref={scrollWrapperRef}>
           <div className="resizable-table-container">
             <ReusableResizableTable
               columns={columns}
               data={submissions}
               renderRow={renderRow}
               renderHeaderCell={renderHeaderCell}
-              emptyMessage={t(
-                "No submissions have been found. Try a different filter combination or contact your admin."
-              )}
+              emptyMessage={t("No submissions have been found. Try a different filter combination or contact your admin.")}
               onColumnResize={(newWidths) =>
-                //TBD
-                console.log("Column resized:", newWidths)
+                console.log("Column resized:", newWidths) // TODO: handle column resizing persist
               }
               tableClassName="resizable-table"
               headerClassName="resizable-header"
@@ -224,13 +222,13 @@ const TaskSubmissionList: React.FC = () => {
         <table className="custom-tables" data-testid="table-footer-container">
           <tfoot>
             <TableFooter
-              limit={limit}
-              activePage={page}
+              limit={newLimit}
+              activePage={pageNumber}
               totalCount={totalCount}
               handlePageChange={handlePageChange}
               onLimitChange={handleLimitChange}
               pageOptions={[
-                { text: "5", value: 5 },
+                { text: "10", value: 10 },
                 { text: "25", value: 25 },
                 { text: "50", value: 50 },
                 { text: "100", value: 100 },
