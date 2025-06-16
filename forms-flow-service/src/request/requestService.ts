@@ -1,12 +1,67 @@
-import axios from "axios";
+import axios, {
+  AxiosInstance,
+  AxiosResponse,
+  AxiosError,
+  AxiosRequestConfig,
+} from "axios";
 import StorageService from "../storage/storageService";
+import { KeycloakService } from "../formsflow-services";
 
 class RequestService {
-    /**
+  /**
      * 
         Provides utility methods wrapping axios 
         to issue network requests.
      */
+
+  private static axiosInstance: AxiosInstance = RequestService.initAxios();
+
+  private static initAxios(): AxiosInstance {
+    const instance = axios.create();
+
+    instance.interceptors.response.use(
+      (response: AxiosResponse) => {
+        console.log(response);
+        return response;
+      },
+      async (error: AxiosError) => { 
+        const originalRequest = error.config as AxiosRequestConfig & {
+          _retry?: boolean;
+        };
+
+        const isUnauthorized = error.response?.status === 401;
+        const hasNoJwtHeader = !originalRequest.headers?.["x-jwt-token"];
+        const notAlreadyRetried = !originalRequest._retry;
+
+        if (isUnauthorized && hasNoJwtHeader && notAlreadyRetried) {
+          originalRequest._retry = true;
+          try {
+            const newToken = await new Promise<string>((resolve, reject) => {
+              KeycloakService.updateToken()
+                .then(resolve)
+                .catch(() => {
+                  reject(new Error("Failed to refresh token"));
+                });
+            });
+
+            originalRequest.headers = {
+              ...originalRequest.headers,
+              Authorization: `Bearer ${newToken}`,
+            };
+
+            return instance(originalRequest);
+          } catch (refreshError) {
+            console.error("Token refresh failed:", refreshError);
+            return Promise.reject(refreshError);
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
+
+    return instance;
+  }
 
   public static httpGETRequest(
     url: string,
@@ -15,7 +70,7 @@ class RequestService {
     isBearer: boolean = true,
     headers: object | null = null
   ): any {
-    return axios.get(url, {
+    return this.axiosInstance.get(url, {
       params: data,
       headers: !headers
         ? {
@@ -35,7 +90,7 @@ class RequestService {
     isBearer: boolean = true,
     headers: object | null = null
   ): any {
-    return axios.get(url, {
+    return this.axiosInstance.get(url, {
       params: data,
       responseType: "blob",
       headers: !headers
@@ -56,7 +111,7 @@ class RequestService {
     isBearer: boolean = true,
     headers: object | null = null
   ): any {
-    return axios.post(url, data, {
+    return this.axiosInstance.post(url, data, {
       headers: !headers
         ? {
             Authorization: isBearer
@@ -72,7 +127,7 @@ class RequestService {
   public static httpMultipartPOSTRequest(
     url: string,
     importData: File,
-    supportData: string, 
+    supportData: string,
     token: string | null,
     isBearer: boolean = true,
     headers: object | null = null
@@ -80,7 +135,7 @@ class RequestService {
     const formData = new FormData();
     formData.append("file", importData);
     formData.append("data", supportData);
-      return axios.post(url, formData, {
+    return this.axiosInstance.post(url, formData, {
       headers: {
         ...headers,
         Authorization: isBearer
@@ -89,9 +144,9 @@ class RequestService {
         "Content-Type": "multipart/form-data",
       },
     });
-  }  
+  }
 
-    public static httpPOSTBlobRequest(
+  public static httpPOSTBlobRequest(
     url: string,
     params: object | null,
     data: object,
@@ -99,7 +154,7 @@ class RequestService {
     isBearer: boolean = true,
     headers: object | null = null
   ): any {
-    return axios.post(url, data, {
+    return this.axiosInstance.post(url, data, {
       params: params,
       responseType: "blob",
       headers: !headers
@@ -127,7 +182,7 @@ class RequestService {
     token: string | null,
     isBearer: boolean = true
   ): any {
-    return axios.post(url, data, {
+    return this.axiosInstance.post(url, data, {
       headers: {
         Authorization: isBearer
           ? `Bearer ${
@@ -144,7 +199,7 @@ class RequestService {
     token: string | null,
     isBearer: boolean = true
   ): any {
-    return axios.put(url, data, {
+    return this.axiosInstance.put(url, data, {
       headers: {
         Authorization: isBearer
           ? `Bearer ${
@@ -160,7 +215,7 @@ class RequestService {
     token: string | null,
     isBearer: boolean = true
   ): any {
-    return axios.delete(url, {
+    return this.axiosInstance.delete(url, {
       headers: {
         Authorization: isBearer
           ? `Bearer ${
@@ -168,7 +223,7 @@ class RequestService {
             }`
           : token,
       },
-      data: data
+      data: data,
     });
   }
   public static httpPUTRequestWithoutToken(url: string, data: object): any {
