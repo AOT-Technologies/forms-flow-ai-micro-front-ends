@@ -3,7 +3,6 @@ import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { ChevronIcon ,ShowPremiumIcons } from "@formsflow/components";
-import { MULTITENANCY_ENABLED} from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { StorageService } from "@formsflow/service";
 import PropTypes from "prop-types";

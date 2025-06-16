@@ -166,8 +166,8 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
           search={search}
           setSearch={setSearch}
           handleSearch={handleSearch}
-          placeholder="Search"
-          title="Search"
+          placeholder={t("Search")}
+          title={t("Search")}
           dataTestId="search-filter"
         />)}
           {dropdownItems.map((item) => (

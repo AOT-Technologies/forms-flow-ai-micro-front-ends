@@ -11,7 +11,6 @@ import { updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
 import {  UserDetail } from "../../types/taskFilter";
-import { StorageService } from "@formsflow/service";
  
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
