@@ -79,7 +79,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     
     const iconPositionClass = getIconPositionClass(iconPosition);
     return (
-            <Form.Group controlId={id}>
+            <Form.Group controlId={id} className="input-textarea">
                 {label && (
                     <Form.Label className="custom-form-control-label">
                         {t(label)} {required && <span className="required-icon">*</span>}

@@ -207,6 +207,37 @@ export const ConnectIcon = ({
   </svg>
 );
 
+export const CheckboxCheckedIcon = ({
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    className="svgIcon-primary"
+    onClick={props.onClick}
+    {...props}
+  >
+    <path d="M1 8V5C1 2.79086 2.79086 1 5 1H11C13.2091 1 15 2.79086 15 5V8"/>
+    <path d="M1 8V11C1 13.2091 2.79086 15 5 15H11C13.2091 15 15 13.2091 15 11V8"/>
+    <path d="M4 8L7 11L12 6"/>
+  </svg>
+);
+
+export const CheckboxUncheckedIcon = ({
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    className="svgIcon-primary"
+    onClick={props.onClick}
+    {...props}
+  >
+    <path d="M1 8V5C1 2.79086 2.79086 1 5 1H11C13.2091 1 15 2.79086 15 5V8"/>
+    <path d="M1 8V11C1 13.2091 2.79086 15 5 15H11C13.2091 15 15 13.2091 15 11V8"/>
+  </svg>
+);
+
 export const DeleteIcon = ({ color = baseColor, onClick, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

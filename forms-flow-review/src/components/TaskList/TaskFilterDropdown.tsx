@@ -184,13 +184,7 @@ const onSearch = (searchTerm: string) => {
   return (
     <>
       <ButtonDropdown
-        label={
-          <span title={title}>
-            {title}
-          </span>
-        }
-        variant="primary"
-        size="md"
+        label={title}
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
         onSearch={onSearch}
         dropdownItems={filterDropdownItems}

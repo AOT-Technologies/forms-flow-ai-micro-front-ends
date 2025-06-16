@@ -141,6 +141,7 @@ $black-color: var(--ff-black);
 
       .modal-body {
         @include paddingLvl2();
+        @extend .custom-scroll;
 
         overflow: auto;
         display: flex;
@@ -1114,6 +1115,7 @@ $black-color: var(--ff-black);
 .drag-drop-container {
   display: flex;
   flex-direction: column;
+  
   gap: var(--spacer-150);
 
   ul {
@@ -1126,6 +1128,7 @@ $black-color: var(--ff-black);
     display: flex;
     flex-direction: row;
     align-items: center;
+
     gap: var(--spacer-100);
     border-radius: var(--radius-sm);
     padding: var(--spacer-075) 0;
@@ -1146,8 +1149,10 @@ $black-color: var(--ff-black);
     .draggable-icon {
       display: flex;
       align-self: center;
-      cursor: grab;
+
       padding: var(--spacer-050);
+      
+      cursor: grab;
     }
 
     &:active {
@@ -1192,6 +1197,9 @@ $black-color: var(--ff-black);
     
   }
 }
+
+
+
 
 .dotted-line {
   flex-grow: 1;

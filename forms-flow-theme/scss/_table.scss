@@ -320,13 +320,7 @@ $white-color: var(--ff-white);
       background-color: $transparent !important;
 
       &:hover {
-        color: $white-color !important;
-
-        background-color: $primary-color !important;
-
-        .svgIcon-primary path {
-          stroke: $white-color;
-        }
+        background-color: $primary-light !important;
       }
     }
 

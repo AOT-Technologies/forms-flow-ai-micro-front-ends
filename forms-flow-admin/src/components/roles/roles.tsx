@@ -658,7 +658,7 @@ const Roles = React.memo((props: any) => {
             data-testid="roles-create-new-role-button"
           >
             <i className="fa-solid fa-plus me-2"></i>{" "}
-            <Translation>{(t) => t("Create New Role")}</Translation>
+            <Translation>{(t) => t("New Role")}</Translation>
           </Button>
         </div>
         {!props?.loading ? (
@@ -677,7 +677,7 @@ const Roles = React.memo((props: any) => {
             data-testid="admin-roles-table"
           />
     
-          <table className="table mt-3">
+          <table className="table mt-3 old-design">
             <tfoot>
             <TableFooter
             limit={sizePerPage}
