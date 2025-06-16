@@ -39,11 +39,13 @@ import {
 import TaskForm from "../components/TaskForm";
 import { TaskHistoryModal } from "../components/TaskHistory";
 import { push } from "connected-react-router";
+import { userRoles } from "../helper/permissions";
 
 const TaskDetails = () => {
   const { t } = useTranslation();
   const { taskId } = useParams();
   const dispatch = useDispatch();
+  const {viewTaskHistory} = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   // Redux State Selectors
   const tenantKey = useSelector(
@@ -206,14 +208,14 @@ const TaskDetails = () => {
                 {textTruncate(75, 75, task?.name)}
               </div>
             </div>
-            <CustomButton
+            {viewTaskHistory && <CustomButton
               variant="gray-dark"
               size="table"
               label={t("History")}
               dataTestId="handle-task-details-history-testid"
               ariaLabel={t("Submission History Button")}
               onClick={handleHistory}
-            />
+            />}
           </div>
         </Card.Body>
       </Card>
