@@ -81,6 +81,7 @@ const AttributeFilterDropdown = () => {
     const attributeItems =
       Array.isArray(attributeFilterList) && attributeFilterList.length > 0
         ? attributeFilterList.map((filter) => ({
+            className:  filter.id === selectedAttributeFilter?.id ? "selected-filter-item" : "",
             content: `${t(filter.name)}`,
             onClick: () => changeAttributeFilterSelection(filter),
             type: String(filter.id),
