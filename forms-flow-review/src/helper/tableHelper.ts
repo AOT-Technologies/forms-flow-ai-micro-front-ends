@@ -6,7 +6,7 @@ export const buildDynamicColumns = (taskvariables) => {
       if (variable.isChecked) {
         acc.push({
           name: variable.label,
-          width: variable.width ?? 200,
+          width: variable.name ==="assignee" && !variable.width ? 220: variable.width ?? 200,
           sortKey: variable.name,
           resizable: true,
           sortOrder: variable.sortOrder

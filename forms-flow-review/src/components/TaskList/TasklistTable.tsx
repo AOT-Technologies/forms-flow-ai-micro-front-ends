@@ -8,7 +8,6 @@ import { HelperServices } from "@formsflow/service";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../reducers";
 import { isEqual, cloneDeep } from "lodash";
 import {
   setBPMTaskListActivePage,
@@ -18,14 +17,13 @@ import {
   setTaskListLimit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList, 
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
-
 interface Column {
   name: string;
   width: number;
@@ -79,8 +77,8 @@ const TaskListTable = () => {
     filterListSortParams,
     isAssigned
   } = useSelector((state: any) => state.task);
-
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const { tenantId } = useParams();
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
 
   const taskvariables = selectedFilter?.variables ?? []; 
   const redirectUrl = useRef(
@@ -235,7 +233,7 @@ const TaskListTable = () => {
     if (column.sortKey === "actions") {
       return renderActionCell(task, colIndex);
     }
-    return renderDataCell(task, column);
+    return renderDataCell(task, column,colIndex);
   };
 
   const renderActionCell = (task, colIndex) => (
@@ -253,13 +251,20 @@ const TaskListTable = () => {
     </td>
   );
 
-  const renderDataCell = (task, column) => (
+  const renderDataCell = (task, column, colIndex) => (
     <td
-      key={`cell-${task.id}-${column.sortKey}`}
+      key={`cell-${task.id}-${column.sortKey}-${colIndex}`}
       data-testid={`task-${task.id}-${column.sortKey}`}
       aria-label={getCellAriaLabel(column, task)}
     >
-      {getCellValue(column, task)}
+      <div
+        className="customizable_td_row"
+        style={{
+          WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
+        }}
+      >
+        {getCellValue(column, task)}
+      </div>
     </td>
   );
 

@@ -7,10 +7,14 @@ import {
   unClaimBPMTask,
   updateAssigneeBPMTask,
 } from "../../api/services/filterServices";
+import {  setTaskDetailsLoading } from "../../actions/taskActions";
+import { getBPMTaskDetail } from "../../api/services/bpmTaskServices";
 import SocketIOService from "../../services/SocketIOService";
 import { userRoles } from "../../helper/permissions";
 
-const TaskAssigneeManager = ({ task }) => {
+
+
+const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
   const dispatch = useDispatch();
   const taskId = task?.id;
   const {
@@ -36,7 +40,13 @@ const TaskAssigneeManager = ({ task }) => {
      */
     dispatch(
       claimBPMTask(taskId, userDetails?.preferred_username, () => {
-        callTaskListcountApi();
+        //the check with size added to identify the source of component mounted.
+        if (isFromTaskDetails) {
+          dispatch(setTaskDetailsLoading(true));
+          dispatch(getBPMTaskDetail(task?.id));
+        } else {
+          callTaskListcountApi();
+        }
       })
     );
   };
@@ -44,7 +54,13 @@ const TaskAssigneeManager = ({ task }) => {
   const handleUnClaim = () => {
     dispatch(
       unClaimBPMTask(taskId, () => {
-        callTaskListcountApi();
+         //the check with size added to identify the source of component mounted.
+        if (isFromTaskDetails) {
+          dispatch(setTaskDetailsLoading(true));
+          dispatch(getBPMTaskDetail(task?.id));
+        } else {
+          callTaskListcountApi();
+        }
         if(!SocketIOService.isConnected){
           fetchTaskList();
         }
@@ -56,6 +72,13 @@ const TaskAssigneeManager = ({ task }) => {
     if (newuser && newuser !== task.assignee) {
       dispatch(
         updateAssigneeBPMTask(task?.id, newuser, () => {
+           //the check with size added to identify the source of component mounted.
+          if (isFromTaskDetails) {
+            dispatch(setTaskDetailsLoading(true));
+            dispatch(getBPMTaskDetail(task?.id));
+          } else {
+            fetchTaskList();
+          }
           if(!SocketIOService.isConnected){
           fetchTaskList();
         }
@@ -71,7 +94,7 @@ const TaskAssigneeManager = ({ task }) => {
 
   return (
     <AssignUser
-      size="sm"
+      size={isFromTaskDetails ? 'md' : 'sm'}
       users={userList?.data ?? []}
       username={task.assignee}
       meOnClick={handleClaim}

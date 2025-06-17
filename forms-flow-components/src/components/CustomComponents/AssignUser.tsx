@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { InputDropdown } from "./InputDropdown";
 import { StorageService } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
@@ -38,9 +38,9 @@ export const AssignUser: React.FC<AssignUserProps> = ({
 }) => {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
-  const [openDropdown, setOpenDropdown] = useState<boolean>(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const [selectedName, setSelectedName] = useState<string | null>(null);
   const variant = size === "sm" ? "assign-user-sm" : "assign-user-md";
-  const [selectedName, setSelectedName] = useState(null);
   const userData =
     StorageService.getParsedData(StorageService.User.USER_DETAILS) ?? {};
 
@@ -68,8 +68,11 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     }
   }, [username,users]);
 
+
   const handleMeClick = () => {
+    const name = username ?? userData?.preferred_username;
     setSelected("Me");
+    setSelectedName(name);
     meOnClick?.();
     if(!username){
       setSelectedName(`${userData.family_name}, ${userData.given_name}`);
@@ -81,36 +84,39 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     setOpenDropdown(true);
   };
 
-  const handleClose = () => {
+  const handleDropdownClose = () => {
     setSelected(null);
     setSelectedName(null);
     setOpenDropdown(false);
     handleCloseClick?.();
   };
 
-  const options = Array.isArray(users)
-    ? users?.map((user) => {
-        const fullName = getDisplayName(user);
-        const label = user.email ? `${fullName} (${user.email})` : fullName;
-        return {
-          label,
-          value: user.id,
-          onClick: () => {
-            setSelectedName(fullName);
-            optionSelect?.(user.username);
-            setOpenDropdown(false);
-          },
-        };
-      })
-    : [];
+const dropdownOptions = useMemo(() => {
+  if (Array.isArray(users)) {
+    return users.map((user) => {
+      const fullName = getDisplayName(user);
+      const label = user.email ? `${fullName} (${user.email})` : fullName;
+      return {
+        label,
+        value: user.id,
+        onClick: () => {
+          setSelectedName(fullName);
+          optionSelect?.(user.username);
+          setOpenDropdown(false);
+        },
+      };
+    });
+  }
+  return [];
+}, [users, optionSelect]);
 
-  // Determine the selected option based on the state
-  const selectedOption = selectedName ?? undefined;
+
+  const showSelector = selected === null;
+  const selectedOption = selected === "Me" ? selectedName : undefined;
 
   return (
     <>
-      {/* Show Me/Others Selection if nothing is selected */}
-      {selected === null && (
+      {showSelector && (manageMyTasks || assignToOthers) && (
         <div
           className={`assign-user ${size}`}
           aria-label={`${ariaLabel}-select-user-option`}
@@ -135,19 +141,26 @@ export const AssignUser: React.FC<AssignUserProps> = ({
           </button> }
         </div>
       )}
-
       {/* Show InputDropdown when either Me or Others is selected */}
       {(selected === "Me" || selected === "Others") && (
         <InputDropdown
-          Options={options}
+          Options={dropdownOptions}
           variant={variant}
           selectedOption={selectedOption}
-          handleCloseClick={handleClose}
+          handleCloseClick={handleDropdownClose}
           openByDefault={openDropdown}
           ariaLabelforDropdown={`${ariaLabel}-dropdown-label`}
           ariaLabelforInput={`${ariaLabel}-input-dropdown`}
           dataTestIdforDropdown={`${dataTestId}-dropdown-component`}
           dataTestIdforInput={`${dataTestId}-dropdown-input`}
+          onBlurDropDown={() => {
+            setTimeout(() => {
+              if (!selectedName) {
+                setSelected(null);
+                setOpenDropdown(false);
+              }
+            }, 150);
+          }}
         />
       )}
     </>
