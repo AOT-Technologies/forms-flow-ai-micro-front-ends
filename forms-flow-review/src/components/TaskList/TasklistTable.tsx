@@ -8,7 +8,6 @@ import { HelperServices } from "@formsflow/service";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../reducers";
 import { isEqual, cloneDeep } from "lodash";
 import {
   setBPMTaskListActivePage,
