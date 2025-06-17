@@ -23,7 +23,7 @@ import { MULTITENANCY_ENABLED, PRIVATE_ONLY_YOU } from "../../constants";
 import { StyleServices } from "@formsflow/service";
 import ParametersTab from "./ParametersTab";
 import RenderOwnerShipNotes from "./Notes";
-import { isFilterAdmin } from "../../helper/permissions";
+import { userRoles } from "../../helper/permissions";
 import { cloneDeep } from "lodash";
 import { Filter, FilterCriteria } from "../../types/taskFilter"; 
 import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
@@ -33,7 +33,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
-
+  const { manageAllFilters } = userRoles();
+  
   const baseColor = StyleServices.getCSSVariable("--ff-primary");
   const whiteColor = StyleServices.getCSSVariable("--ff-white");
  let updateButtonVariant = "secondary"; // Default value
@@ -121,8 +122,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     userDetails.groups.includes(role)
   );
   const canAccess = roleAccess || publicAccess || createdByMe;
-  const viewOnly = !isFilterAdmin && canAccess;
-  const editRole = isFilterAdmin && canAccess;
+  const viewOnly = !manageAllFilters && canAccess;
+  const editRole = manageAllFilters && canAccess;
 
   /* ---------------------------- get users groups ---------------------------- */
   useEffect(() => {
@@ -388,7 +389,7 @@ const createFilterShareOption = (labelKey, value) => ({
     }
   const renderActionButtons = () => {
     if (attributeFilter?.id) { 
-      if (canAccess && isFilterAdmin) {
+      if (canAccess && manageAllFilters) {
         return (
           <div className="d-flex">
             <CustomButton
@@ -424,7 +425,7 @@ const createFilterShareOption = (labelKey, value) => ({
       return null;
     }
 
-    if (isFilterAdmin) {
+    if (manageAllFilters) {
       return (
         <div className="pt-4">
           <CustomButton

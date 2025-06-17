@@ -10,6 +10,7 @@ import {
 import {  setTaskDetailsLoading } from "../../actions/taskActions";
 import { getBPMTaskDetail } from "../../api/services/bpmTaskServices";
 import SocketIOService from "../../services/SocketIOService";
+import { userRoles } from "../../helper/permissions";
 
 
 
@@ -23,7 +24,8 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
     activePage,
     limit,
   } = useSelector((state: any) => state.task);
- 
+
+  const { manageMyTasks,AssignTaskToOthers } = userRoles();
   const fetchTaskList = () => {
     dispatch(fetchServiceTaskList(lastReqPayload, null, activePage, limit));
   };
@@ -98,6 +100,9 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
       meOnClick={handleClaim}
       optionSelect={handleChangeClaim}
       handleCloseClick={handleUnClaim}
+      assignToOthers={AssignTaskToOthers}
+      manageMyTasks={manageMyTasks}
+      
     />
   );
 };

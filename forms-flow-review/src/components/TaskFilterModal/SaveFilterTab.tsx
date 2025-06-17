@@ -18,7 +18,8 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { UserDetail } from "../../types/taskFilter";
- 
+import { userRoles  } from "../../helper/permissions";
+
 const filterNameLength = 50;
 
 const SaveFilterTab = ({
@@ -46,20 +47,12 @@ const SaveFilterTab = ({
   const saveIconColor = getIconColor(
     createAndUpdateFilterButtonDisabled || filterNameError || deleteSuccess?.showSuccess
   );
+  const { createFilters,manageAllFilters } = userRoles();
   const deleteIconColor = getIconColor(successState?.showSuccess);
-  const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE);
   const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
-  const isCreateFilters = userRoles?.includes("create_filters");
-  const isFilterAdmin = userRoles?.includes("manage_all_filters");
   const createdByMe = filterToEdit?.createdBy === userDetails?.preferred_username;
-  const publicAccess = filterToEdit?.roles.length === 0 && filterToEdit?.users.length === 0;
-  const roleAccess = filterToEdit?.roles.some((role) =>
-    userDetails?.groups.includes(role)
-  );
-  const canAccess = roleAccess || publicAccess || createdByMe;
-  const viewOnly = !isFilterAdmin && canAccess;
-  const editRole = isFilterAdmin && canAccess;
-  const isCreator = filterToEdit?.createdBy === userDetails?.preferred_username;
+  const editRole = manageAllFilters || (createdByMe && createFilters);
+  const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
 
 
   let saveAndUpdateButtonVariant = "secondary"; // Default value
@@ -109,7 +102,7 @@ const SaveFilterTab = ({
       );
     }
 
-    if (isCreator) {
+    if (createdByMe) {
       return (
         <>
           <div className="pb-4">
@@ -132,7 +125,7 @@ const SaveFilterTab = ({
       );
     }
 
-    if (viewOnly) {
+    if (!editRole) {
       return (
         <CustomInfo
           className="note"
@@ -178,7 +171,7 @@ const SaveFilterTab = ({
 
   const renderActionButtons = () => {
     if (filterToEdit && filterToEdit?.id && filterToEdit.name !== "All Tasks") {
-      if (canAccess && isFilterAdmin) {
+      if (editRole) {
         return (
           <div className="pt-4 d-flex">
             <CustomButton
@@ -219,7 +212,7 @@ const SaveFilterTab = ({
       return null; 
     }
 
-    if (isCreateFilters && filterName !== "All Tasks") {
+    if (createFilters && selectedFilter.name !== "All Tasks") {
       return (
         <div className="pt-4">
           <CustomButton
@@ -261,7 +254,7 @@ const SaveFilterTab = ({
         isInvalid={!!filterNameError}
         onBlur={handleNameError}
         feedback={filterNameError}
-        disabled={viewOnly}
+        disabled={!editRole}
       />
 
       <div className="pt-4 pb-4">
@@ -274,7 +267,7 @@ const SaveFilterTab = ({
           dataTestIdforDropdown="share-filter-options"
           selectedOption={shareFilter}
           setNewInput={setShareFilter}
-          disabled={viewOnly}
+          disabled={!editRole}
         />
         {shareFilter === SPECIFIC_USER_OR_GROUP && (
           <div className="d-flex filter-dropdown">
@@ -288,7 +281,7 @@ const SaveFilterTab = ({
               dataTestIdforDropdown="candidate-options"
               selectedOption={shareFilterForSpecificRole}
               setNewInput={setShareFilterForSpecificRole}
-              disabled={viewOnly}
+              disabled={!editRole}
             />
           </div>
         )}

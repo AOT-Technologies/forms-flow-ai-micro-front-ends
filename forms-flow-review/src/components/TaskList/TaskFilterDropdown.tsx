@@ -2,7 +2,7 @@ import { AddIcon, ButtonDropdown, PencilIcon, SharedWithMeIcon, SharedWithOthers
 import { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  createFilterPermission, 
+userRoles
 } from "../../helper/permissions";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -15,6 +15,7 @@ import {  UserDetail } from "../../types/taskFilter";
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { createFilters } = userRoles();
   const selectedFilter = useSelector(
     (state: RootState) => state.task.selectedFilter
   );
@@ -153,7 +154,7 @@ const onSearch = (searchTerm: string) => {
     // Adding mapped Items
     filterDropdownItemsArray.push(...mappedItems);
     // Adding create filter and reorder filter
-    if (createFilterPermission) {
+    if (createFilters) {
       filterDropdownItemsArray.push(createFilter);
       if (filtersAndCount.length > 1) {
         filterDropdownItemsArray.push(reOrderFilter);

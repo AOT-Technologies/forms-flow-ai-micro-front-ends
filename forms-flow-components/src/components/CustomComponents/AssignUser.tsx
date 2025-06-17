@@ -20,6 +20,8 @@ interface AssignUserProps {
   handleCloseClick?: () => void;
   ariaLabel?: string;
   dataTestId?: string;
+  manageMyTasks?:boolean;
+  assignToOthers?:boolean;
 }
 
 export const AssignUser: React.FC<AssignUserProps> = ({
@@ -31,6 +33,8 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   handleCloseClick,
   ariaLabel = "assign-user",
   dataTestId = "assign-user",
+  assignToOthers = false,
+  manageMyTasks = false,
 }) => {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
@@ -112,29 +116,29 @@ const dropdownOptions = useMemo(() => {
 
   return (
     <>
-      {showSelector && (
+      {showSelector && (manageMyTasks || assignToOthers) && (
         <div
           className={`assign-user ${size}`}
           aria-label={`${ariaLabel}-select-user-option`}
           data-testid={`${dataTestId}-select-user-option`}
         >
-          <button
-            className="option-me button-reset"
+          {manageMyTasks && <button
+             className="option-me button-reset"
             onClick={handleMeClick}
             aria-label={`${ariaLabel}-me-button`}
             data-testid={`${dataTestId}-me-button`}
           >
             {t("Me")}
-          </button>
-          <div className="divider"></div>
-          <button
+          </button>}
+          {(manageMyTasks && assignToOthers) && <div className="divider"></div>}
+          {assignToOthers && <button
             className="option-others button-reset"
             onClick={handleOthersClick}
             aria-label={`${ariaLabel}-others-button`}
             data-testid={`${dataTestId}-others-button`}
           >
             {t("Others")}
-          </button>
+          </button> }
         </div>
       )}
       {/* Show InputDropdown when either Me or Others is selected */}
