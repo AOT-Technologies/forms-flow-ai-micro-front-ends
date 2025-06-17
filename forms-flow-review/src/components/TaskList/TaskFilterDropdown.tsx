@@ -11,7 +11,6 @@ import { updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
 import {  UserDetail } from "../../types/taskFilter";
-import { StorageService } from "@formsflow/service";
  
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
@@ -34,6 +33,7 @@ const TaskListDropdownItems = memo(() => {
 
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showReorderFilterModal,setShowReorderFilterModal] = useState(false); 
+  const [filterSearchTerm, setFilterSearchTerm] = useState("");
   
   const handleEditTaskFilter = () => {
     // Prevent editing if the active filter is the initial "All Tasks".
@@ -64,7 +64,9 @@ const changeFilterSelection = (filter) => {
   dispatch(setSelectedFilter(upcomingFilter));
 };
 
-
+const onSearch = (searchTerm: string) => {
+  setFilterSearchTerm(searchTerm);
+};
   
   const filterDropdownItems = useMemo(() => {
     const filterDropdownItemsArray = [];
@@ -104,6 +106,15 @@ const changeFilterSelection = (filter) => {
       ariaLabel: t("Re-order And Hide Filters"),
     };
     const mappedItems = filtersAndCount
+    .filter((filter) => {
+    const details = filterList.find((item) => item.id === filter.id);
+    const filterName = t(filter.name).toLowerCase();
+          return (
+        details &&
+        !details.hide &&
+        filterName.includes(filterSearchTerm.toLowerCase())
+      ); // only include visible filters
+  })
     .map((filter) => { 
       const filterDetails = filterList.find((item) => item.id === filter.id);
       let icon = null;
@@ -150,7 +161,7 @@ const changeFilterSelection = (filter) => {
     }
 
     return filterDropdownItemsArray;
-  }, [filtersAndCount, defaultFilter,filterList,userDetails ]);
+  }, [filtersAndCount, defaultFilter,filterList,userDetails, filterSearchTerm ]);
 
 // filter title based on unsaved filter, empty list or selected filter
   let title;
@@ -178,6 +189,7 @@ const changeFilterSelection = (filter) => {
         variant="primary"
         size="md"
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
+        onSearch={onSearch}
         dropdownItems={filterDropdownItems}
         extraActionIcon={<PencilIcon color="white" />}
         extraActionOnClick={handleEditTaskFilter}
