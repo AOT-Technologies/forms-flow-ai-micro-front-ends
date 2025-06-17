@@ -125,14 +125,11 @@ const onSearch = (searchTerm: string) => {
         const isSharedToMe = filterDetails?.roles?.some((role) =>
           userDetails?.groups?.includes(role)
         );
-
+        // icon for filters except private and All tasks 
         if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
           icon = <SharedWithOthersIcon className="shared-icon" />;
         } else if (isSharedToPublic || isSharedToMe) {
           icon = <SharedWithMeIcon className="shared-icon" />;
-        }
-        else if (filterDetails?.name === "All Tasks") {
-          icon = null;
         }
    
       return { 
