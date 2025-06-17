@@ -41,14 +41,18 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         return filtersList.map((item) => {
           const createdByMe = userDetails.preferred_username === item.createdBy;
           const isSharedToPublic = !item.roles?.length && !item.users?.length;
+          const isSharedToRoles = item.roles.length
           const isShareToMe = item.roles?.some((role) =>
             userDetails.groups?.includes(role)
           );
           let icon = null;
-          if (createdByMe) {
+          if (createdByMe&& (isSharedToPublic || isSharedToRoles)) {
             icon = <SharedWithOthersIcon />;
           } else if (isSharedToPublic || isShareToMe) {
             icon = <SharedWithMeIcon />;
+          }
+          else if (item?.name === "All Tasks") {
+          icon = null;
           }
           return {
             id: item.id,

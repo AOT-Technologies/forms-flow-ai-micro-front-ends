@@ -121,14 +121,18 @@ const onSearch = (searchTerm: string) => {
       if(filterDetails){
         const createdByMe =userDetails?.preferred_username === filterDetails?.createdBy;
         const isSharedToPublic =!filterDetails?.roles?.length && !filterDetails?.users?.length;
+        const isSharedToRoles = filterDetails?.roles.length
         const isSharedToMe = filterDetails?.roles?.some((role) =>
           userDetails?.groups?.includes(role)
         );
 
-        if (createdByMe) {
+        if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
           icon = <SharedWithOthersIcon className="shared-icon" />;
         } else if (isSharedToPublic || isSharedToMe) {
           icon = <SharedWithMeIcon className="shared-icon" />;
+        }
+        else if (filterDetails?.name === "All Tasks") {
+          icon = null;
         }
    
       return { 
