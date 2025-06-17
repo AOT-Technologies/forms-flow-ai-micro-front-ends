@@ -417,3 +417,12 @@ $white-color: var(--ff-white);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.customizable_td_row {
+  display: -webkit-box; 
+  -webkit-box-orient: vertical;   
+  overflow: hidden;               
+  text-overflow: ellipsis;      
+  white-space: normal;           
+  word-break: break-word;         
+}
