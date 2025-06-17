@@ -100,6 +100,7 @@ $gray-light: var(--ff-gray-light);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);
+      white-space: normal;
 
       &:hover {
         background: $gray-medium; 

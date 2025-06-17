@@ -69,12 +69,13 @@ const TaskList = () => {
     else{
       const filterResponse = await fetchFilterList();
     const filters = filterResponse.data.filters;
+    const updatedfilters = filters.filter((filter) => !filter.hide);
     const defaultFilterId = filterResponse.data.defaultFilter;
     if (filters?.length) {
       batch(() => {
         dispatch(setBPMFilterList(filters));
         defaultFilterId && dispatch(setDefaultFilter(defaultFilterId));
-        dispatch(fetchBPMTaskCount(filters));
+        dispatch(fetchBPMTaskCount(updatedfilters));
       });
       // If no default filter, will select All Tasks filter if its exists, else will select first filter
       if (!defaultFilterId) {

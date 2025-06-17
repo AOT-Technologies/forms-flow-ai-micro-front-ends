@@ -11,7 +11,6 @@ import { updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
 import {  UserDetail } from "../../types/taskFilter";
-import { StorageService } from "@formsflow/service";
  
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
@@ -105,11 +104,6 @@ const changeFilterSelection = (filter) => {
       ariaLabel: t("Re-order And Hide Filters"),
     };
     const mappedItems = filtersAndCount
-    .filter((filter) => {
-    const details = filterList.find((item) => item.id === filter.id);
-    
-    return details && !details.hide; // only include visible filters
-  })
     .map((filter) => { 
       const filterDetails = filterList.find((item) => item.id === filter.id);
       let icon = null;

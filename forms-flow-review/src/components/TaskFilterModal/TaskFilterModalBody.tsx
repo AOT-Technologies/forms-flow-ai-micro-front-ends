@@ -9,6 +9,7 @@ import {
   ConfirmModal,
   useSuccessCountdown,
   CustomButton,
+  FormVariableIcon,
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
 import {
@@ -40,6 +41,7 @@ import { defaultTaskVariable } from "../../constants/defaultTaskVariable";
 import ParametersTab from "./ParametersTab";
 import SaveFilterTab from "./SaveFilterTab";
 import { Modal } from "react-bootstrap";
+import { StyleServices } from "@formsflow/service";
 import { RootState } from "../../reducers";
 
 const TaskFilterModalBody = ({
@@ -59,8 +61,9 @@ const TaskFilterModalBody = ({
     isUnsavedFilter,
     filterList,
     userDetails = {} as UserDetail,
-  } = useSelector((state: any) => state.task);
+  } = useSelector((state: RootState) => state.task);
 
+  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
   const [accessOption, setAccessOption] = useState("specificRole");
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
@@ -73,7 +76,7 @@ const TaskFilterModalBody = ({
 
   const [filterName, setFilterName] = useState(filterToEdit?.name || "");
 
-  const [sortValue, setSortValue] = useState("dueDate");
+  const [sortValue, setSortValue] = useState("created");
   const [sortOrder, setSortOrder] = useState("asc");
   const [dataLineValue, setDataLineValue] = useState(1);
 
@@ -138,19 +141,21 @@ const TaskFilterModalBody = ({
     return criteria;
   };
 
-  const handleFilterAccess = () => {
-    let users = [];
-    let roles = [];
-    if (shareFilter === PRIVATE_ONLY_YOU) {
-      users.push(userDetails?.preferred_username);
-    } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
-      roles.push(shareFilterForSpecificRole);
-    } else {
-      users = [];
-      roles = [];
-    }
-    return { users, roles };
-  };
+ const handleFilterAccess = () => {
+  let users = [];
+  let roles = [];
+
+  if (shareFilter === PRIVATE_ONLY_YOU) {
+    users.push(userDetails?.preferred_username);
+  } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
+    roles = Array.isArray(shareFilterForSpecificRole)
+      ? shareFilterForSpecificRole
+      : [shareFilterForSpecificRole];
+  }
+
+  return { users, roles };
+};
+
 
   const getData = (): Filter => ({
     created: filterToEdit?.created,
@@ -262,7 +267,6 @@ const TaskFilterModalBody = ({
   });
 
   const dateSortOptions = [
-    createSortByOptions("Due Date", "dueDate"),
     createSortByOptions("Created Date", "created"),
     createSortByOptions("Assignee", "assignee"),
     createSortByOptions("Task", "name"),
@@ -311,7 +315,7 @@ const TaskFilterModalBody = ({
         name: variable.key,
         isChecked: true,
         sortOrder: existingVars.length + index + 1,
-        isTaskVariable: true,
+        isFormVariable: true,
       }));
   };
 
@@ -410,6 +414,7 @@ const TaskFilterModalBody = ({
           key={variableArray.length}
           items={variableArray}
           onUpdate={handleUpdateOrder}
+          icon = { <FormVariableIcon color = {darkColor} /> }
           data-testid="columns-sort"
         />
       )}
