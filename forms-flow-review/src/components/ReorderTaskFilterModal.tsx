@@ -136,8 +136,8 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         >
           <Modal.Header>
             <Modal.Title> {t("Re-order And Hide Filters")} </Modal.Title>
-            <div className="icon-close">
-              <CloseIcon onClick={onClose} />
+            <div className="icon-close" onClick={onClose} >
+              <CloseIcon/>
             </div>
           </Modal.Header>
           <Modal.Body>

@@ -466,8 +466,12 @@ select option:hover {
 
     overflow-y: auto;
 
+    scrollbar-gutter: stable;
+
     & > div {
       @include paddingLvl2();
+
+      padding-right: calc($paddingLvl2LR - $scrollBarWidth) !important;
 
       // margin-bottom: calc( 0px - $paddingLvl2TB);
     }

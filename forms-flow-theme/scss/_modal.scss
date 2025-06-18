@@ -147,6 +147,10 @@ $black-color: var(--ff-black);
         display: flex;
         flex-direction: column;
 
+        padding-right: calc($paddingLvl2LR - $scrollBarWidth) !important;
+
+        scrollbar-gutter: stable;
+
         &.with-tabs {
           overflow: hidden;
 
@@ -1115,8 +1119,8 @@ $black-color: var(--ff-black);
 .drag-drop-container {
   display: flex;
   flex-direction: column;
-  
-  gap: var(--spacer-150);
+
+  margin: 0;
 
   ul {
     padding-left: 0;

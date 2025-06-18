@@ -103,9 +103,8 @@ useEffect(() => {
 
             <div className="checkbox-container">
               <input
-                data-testid={`${item.name}-checkbox`}
+                id={`${item.name}-checkbox-id`}
                 type="checkbox"
-                className="form-check-input"
                 checked={item.isChecked}
                 onChange={() => onCheckboxChange(index)}
                 disabled={

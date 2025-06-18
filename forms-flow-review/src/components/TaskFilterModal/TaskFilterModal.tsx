@@ -122,7 +122,6 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
         data-testid="create-filter-modal"
         aria-labelledby={t("create filter modal title")}
         aria-describedby="create-filter-modal"
-        backdrop="static"
       >
         <Modal.Header>
           <Modal.Title id="create-filter-title">
@@ -132,8 +131,8 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
                 : "Unsaved Filter"
             }`}</p>
           </Modal.Title>
-          <div className="icon-close">
-            <CloseIcon onClick={onClose} />
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon />
           </div>
         </Modal.Header>
 

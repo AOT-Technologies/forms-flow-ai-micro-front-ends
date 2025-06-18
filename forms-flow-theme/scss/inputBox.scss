@@ -20,10 +20,10 @@ $gray-light: var(--ff-gray-light);
   resize: none;
   padding-left: 18px !important;
 
-  &:active,
-  &:focus {
-    outline: $form-input-focus-outline !important;
-  }
+  // &:active,
+  // &:focus {
+  //   outline: $form-input-focus-outline !important;
+  // }
 
   // &::-webkit-scrollbar {
   //   display: none;
