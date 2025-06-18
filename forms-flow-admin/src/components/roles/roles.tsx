@@ -20,6 +20,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
+import { CustomInfo, ConfirmModal } from "@formsflow/components";
 
 
 import {removingTenantId} from "../../utils/utils.js";
@@ -38,7 +39,7 @@ const Roles = React.memo((props: any) => {
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
   const [error, setError] = useState({});
-
+  const [handleConfirmation, setHandleConfirmation] = React.useState(false);
   const [users, setUsers] = React.useState([]);
   // Toggle for user list popover
   const [show, setShow] = React.useState(false);
@@ -336,6 +337,7 @@ const Roles = React.memo((props: any) => {
     setShowEditRoleModal(false);
     setEditCandidate(initialRoleType);
     setSelectedRoleIdentifier("");
+    setHandleConfirmation(true);
   };
   const handleShowEditRoleModal = () => {
     setKey("Details");
@@ -353,6 +355,10 @@ const Roles = React.memo((props: any) => {
     setRoles(updatedRoleName);
   };
 
+  const closeConfirmation = () => {
+     setHandleConfirmation(false);
+  }
+
   const tabs = [
     {
       eventKey: "Details",
@@ -362,7 +368,7 @@ const Roles = React.memo((props: any) => {
         <FormInput
         required
         value={showEditRoleModal ? editCandidate.name : payload.name}
-        label={t("Role Name")}
+        label={t("Name")}
         onChange={showEditRoleModal ? handleEditName : handleChangeName}
         dataTestId="role-name"
         name="role-name"
@@ -387,7 +393,6 @@ const Roles = React.memo((props: any) => {
           label={t("Delete This Role")}
           onClick={() => {
             handleCloseEditRoleModal();
-            deleteRole(deleteCandidate);
           }}
           dataTestId="role-delete-button"
           icon={<DeleteIcon />}
@@ -455,7 +460,7 @@ const Roles = React.memo((props: any) => {
 
       <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} size="sm">
         <Modal.Header>
-          <Modal.Title>{t("Edit Role")}</Modal.Title>
+          <Modal.Title>{editCandidate.name}</Modal.Title>
           <div className="d-flex align-items-center">
               <CloseIcon onClick={handleCloseEditRoleModal} data-testid="role-modal-close"/>
           </div>
@@ -691,6 +696,32 @@ const Roles = React.memo((props: any) => {
         {showCreateModal()}
         {showEditModal()}
       </div>
+      {handleConfirmation && (
+        <ConfirmModal
+          show={handleConfirmation}
+          title={t("Delete This Role?")}
+          message={
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "All users that have this role assigned to them might loose access to certain feature of formsflow. This action cannot be undone."
+              )}
+              dataTestId="delete-role-note"
+            />
+          }
+          primaryBtnAction={closeConfirmation}
+          onClose={closeConfirmation}
+          primaryBtnText={t("No, Keep This Role")}
+          secondaryBtnText={t("Yes, Delete This Role")}
+          secondaryBtnAction={() => 
+            {
+             deleteRole(deleteCandidate);
+             closeConfirmation();
+            }}
+          secondoryBtndataTestid="confirm-delete-role-button"
+        />
+      )}
     </>
   );
 });
