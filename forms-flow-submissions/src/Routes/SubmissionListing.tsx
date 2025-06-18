@@ -58,7 +58,7 @@ const TaskSubmissionList: React.FC = () => {
   const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
 
   // Fetch Submissions
-  const { data } = useQuery({
+  const { data, isLoading: isSubmissionsLoading } = useQuery({
     queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder],
     queryFn: () => getSubmissionList(limit, page, activeSortOrder, activeSortKey),
     keepPreviousData: true,
@@ -177,6 +177,7 @@ const TaskSubmissionList: React.FC = () => {
               onColumnResize={(newWidths) =>
                 console.log("Column resized:", newWidths)
               }
+              loading={isSubmissionsLoading}
               tableClassName="resizable-table"
               headerClassName="resizable-header"
               containerClassName="resizable-table-container"
@@ -195,6 +196,7 @@ const TaskSubmissionList: React.FC = () => {
               limit={limit}
               activePage={page}
               totalCount={totalCount}
+              loader={isSubmissionsLoading}
               handlePageChange={handlePageChange}
               onLimitChange={handleLimitChange}
               pageOptions={[

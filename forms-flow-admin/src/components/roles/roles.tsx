@@ -337,7 +337,6 @@ const Roles = React.memo((props: any) => {
     setShowEditRoleModal(false);
     setEditCandidate(initialRoleType);
     setSelectedRoleIdentifier("");
-    setHandleConfirmation(true);
   };
   const handleShowEditRoleModal = () => {
     setKey("Details");
@@ -393,6 +392,7 @@ const Roles = React.memo((props: any) => {
           label={t("Delete This Role")}
           onClick={() => {
             handleCloseEditRoleModal();
+            setHandleConfirmation(true);
           }}
           dataTestId="role-delete-button"
           icon={<DeleteIcon />}
