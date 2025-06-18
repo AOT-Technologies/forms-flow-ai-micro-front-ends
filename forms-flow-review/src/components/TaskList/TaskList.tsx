@@ -206,8 +206,8 @@ const TaskList = () => {
         dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
         dispatch(fetchAttributeFilterList(currentFilter.id));
         dispatch(setBPMTaskListActivePage(1));
-        dispatch(setTaskListLimit(15));
-        dispatch(fetchServiceTaskList(currentFilter, null, 1, 15));
+        dispatch(setTaskListLimit(25));
+        dispatch(fetchServiceTaskList(currentFilter, null, 1, 25));
       });
     }
   }, [defaultFilterId]);

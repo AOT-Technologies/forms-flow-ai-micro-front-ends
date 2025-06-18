@@ -238,6 +238,11 @@ const createFilterShareOption = (labelKey, value) => ({
       return {
         name: filterName,
         criteria,
+        id: attributeFilter?.id,
+        created: attributeFilter?.created,
+        modified: attributeFilter?.modified,
+        createdBy:attributeFilter?.createdBy,
+        modifiedBy:attributeFilter?.modifiedBy,
         parentFilterId: selectedFilter.id,
         roles,
         users,
