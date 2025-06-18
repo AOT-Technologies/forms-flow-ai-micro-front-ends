@@ -1271,3 +1271,10 @@ $black-color: var(--ff-black);
     overflow-y: auto;
   }
 }
+
+.vertical-hr{
+    position: absolute;
+    width: 2px;
+    background-color: var(--ff-gray-medium-dark) !important;
+}
+ 
