@@ -147,6 +147,10 @@ $black-color: var(--ff-black);
         display: flex;
         flex-direction: column;
 
+        padding-right: calc($paddingLvl2LR - $scrollBarWidth) !important;
+
+        scrollbar-gutter: stable;
+
         &.with-tabs {
           overflow: hidden;
 
@@ -1104,14 +1108,21 @@ $black-color: var(--ff-black);
 
 
 
-.drag-drop-container {
+.list-action.rearrangable.checkbox {
   display: flex;
   flex-direction: column;
-  
-  gap: var(--spacer-150);
 
-  ul{
-    padding-left: 0rem;
+  margin: 0;
+
+  ul {
+    display: flex ;
+    flex-direction: column;
+
+    padding-left: 0;
+    margin-bottom: 0;
+
+    margin-top: calc( 0px - $paddingLvl6TB/2 );
+    margin-bottom: calc( 0px - $paddingLvl6TB/2 );
   }
 
   .draggable-item {
@@ -1119,59 +1130,59 @@ $black-color: var(--ff-black);
     flex-direction: row;
     align-items: center;
 
-    gap: var(--spacer-100);
+    padding: $paddingLvl6TB 0;
 
-    padding: var(--spacer-075) 0px;
+    border-radius: $borderRadiusHeightESM;
 
-    border-radius: var(--radius-sm);
-
-    transition: 
-      transform 1s cubic-bezier(0.25, 1, 0.5, 1), 
-      background-color .1s ease-in ,
-      opacity 1s ease-in-out, 
-      box-shadow 1s ease-in-out;
-
-    .drag-as-div {
-      display: flex;
-      align-items: center;
-      
-      margin: 0;
-      
-      color: inherit;
-      font: inherit;
-      text-align: inherit;
-      
-      border: none;
-      background: none;
-    }
-
-    .draggable-icon {
-      display: flex;
-      align-self: center;
-
-      padding: var(--spacer-050);
-      
-      cursor: grab;
-    }
+    transition: all $animSpeed;
 
     &:active {
       cursor: grabbing;
     }
 
     &.dragging {
-      transform: scale(0.98); 
-      padding-right: 3px;
-      
-      background-color: $gray-medium;
-      
       opacity: 1;
       z-index: 1000;
+
+      & .dotted-line {
+        border-bottom: $lineThick dashed $primary;
+      }
+
+      & .draggable-icon {
+        background-color: $primary-light;
+        border-radius: $borderRadiusHeightESM;
+      }
     }
 
-    .checkbox-container{
+    .draggable-icon {
       display: flex;
+      align-self: center;
+
+      padding: $paddingLvl5S;
+
+      margin: 0;
+
+      background: none;
+      border: none;
       
-      margin-bottom: 0.188rem;
+      cursor: grab;
+
+      transition: opacity $animSpeed;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .dotted-line {
+      flex-grow: 1;
+      border-bottom: $lineThin dashed $gray-medium;
+    
+      margin-left: $paddingLvl5S;
+
+      & + svg {
+        margin-left: calc($paddingLvl5S*2);
+      }
     }
   }
 }
@@ -1179,10 +1190,7 @@ $black-color: var(--ff-black);
 
 
 
-.dotted-line {
-  flex-grow: 1;
-  border-bottom: 1px dashed $gray-medium;
-} 
+
 
 
 .form-selection-modal{

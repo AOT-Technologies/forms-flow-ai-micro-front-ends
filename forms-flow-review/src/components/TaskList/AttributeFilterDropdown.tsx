@@ -90,13 +90,7 @@ const AttributeFilterDropdown = () => {
             }),
           }))
         : [];
-    const noAttributeFilter = {
-      content: <em>{t("No attribute filters found")}</em>,
-      onClick: () => {},
-      type: "none",
-      dataTestId: "no-attr-filters",
-      ariaLabel: t("No attribute filters available"),
-    };
+
 
     const clearAttributeFilter = {
       content: <em>{t("All Fields")}</em>,
@@ -139,7 +133,7 @@ const AttributeFilterDropdown = () => {
         reorderOption,
       ];
     } else {
-      options = [noAttributeFilter, customAttribute];
+      options = [customAttribute];
     }
 
     return options;

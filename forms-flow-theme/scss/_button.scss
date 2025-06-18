@@ -1308,10 +1308,9 @@ $danger-color: var(--ff-danger);
 
     label {
       @include textBase($fontSmallest);
+      @include clickableFeedback1();
 
       width: fit-content;
-
-      cursor: pointer;
     }
 
     .field {
@@ -1392,10 +1391,47 @@ $danger-color: var(--ff-danger);
       }
     }
   }
- //future
-  // &-textarea {
 
-  // }
+  &-textarea {
+    $minHeight: calc($base*5);
+    $minHeightLarge: calc($base*23);
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: $paddingLvl5S;
+
+    &.large {
+      textarea {
+        height: $minHeightLarge !important;
+      }
+    }
+    
+    label {
+      @include textBase($fontSmallest);
+      @include clickableFeedback1();
+
+      width: fit-content;
+    }
+
+    textarea {
+      @include textBase();
+
+      width: 100%;
+      height: $minHeight !important;
+
+      padding: $paddingLvl6TB $paddingLvl5LR;
+
+      border: $lineThin solid $primary;
+      border-radius: $borderRadiusHeightSM;
+
+      resize: none;
+
+      &:focus {
+        outline: $lineThin solid $primary;
+      }
+    }
+  }
 
   &-combination {
     $spacing: $paddingLvl4S;
@@ -1456,6 +1492,10 @@ $danger-color: var(--ff-danger);
       height: 100%;
 
       opacity: 0;
+
+      // &:checked {
+
+      // }
     }
 
     .svgIcon-primary {
