@@ -1,7 +1,5 @@
 import {
-    ConfirmModal,
   CustomButton,
-  CustomInfo,
   CustomTabs,
   DeleteIcon,
   FormInput,
@@ -15,10 +13,8 @@ import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import {
   createFilter,
-  fetchFilterList,
   fetchServiceTaskList,
   getUserRoles,
-  updateFilter,
 } from "../../api/services/filterServices";
 import isEqual from "lodash/isEqual";
 
@@ -27,7 +23,7 @@ import { MULTITENANCY_ENABLED, PRIVATE_ONLY_YOU } from "../../constants";
 import { StyleServices } from "@formsflow/service";
 import ParametersTab from "./ParametersTab";
 import RenderOwnerShipNotes from "./Notes";
-import { isFilterAdmin } from "../../helper/permissions";
+import { userRoles } from "../../helper/permissions";
 import { cloneDeep } from "lodash";
 import { Filter, FilterCriteria } from "../../types/taskFilter"; 
 import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
@@ -37,7 +33,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
-
+  const { manageAllFilters } = userRoles();
+  
   const baseColor = StyleServices.getCSSVariable("--ff-primary");
   const whiteColor = StyleServices.getCSSVariable("--ff-white");
  let updateButtonVariant = "secondary"; // Default value
@@ -105,8 +102,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   return { ...initialData, ...existingValues };
 });
 
+  const FILTER_SHARE_OPTIONS = {
+  PRIVATE: 'PRIVATE_ONLY_YOU',
+  SAME_AS_TASKS: 'SAME_AS_TASK_FILTER',
+};
   
-  const [shareAttrFilter, setShareAttrFilter] = useState(PRIVATE_ONLY_YOU); // need to handle in edit stage
+  const [shareAttrFilter, setShareAttrFilter] = useState(FILTER_SHARE_OPTIONS.PRIVATE); // need to handle in edit stage
  
   /* ---------------------------- access management --------------------------- */
 
@@ -121,8 +122,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     userDetails.groups.includes(role)
   );
   const canAccess = roleAccess || publicAccess || createdByMe;
-  const viewOnly = !isFilterAdmin && canAccess;
-  const editRole = isFilterAdmin && canAccess;
+  const viewOnly = !manageAllFilters && canAccess;
+  const editRole = manageAllFilters && canAccess;
 
   /* ---------------------------- get users groups ---------------------------- */
   useEffect(() => {
@@ -167,48 +168,45 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     }, []);
   }, [candidateGroups, tenantKey]);
 
-  const getTaskAccess = () => {
-    if (shareAttrFilter === PRIVATE_ONLY_YOU) {
-      return { users: [userDetails?.preferred_username], roles: [] };
-    } else {
-      const users = selectedFilter?.users?.length
-        ? [...selectedFilter.users]
-        : [];
-      const roles = selectedFilter?.roles?.length
-        ? [...selectedFilter.roles]
-        : [];
 
-      return { users, roles };
+
+  useEffect(() => {
+    if(selectedAttributeFilter?.roles.length > 0 || (selectedAttributeFilter?.users.length == 0 && selectedAttributeFilter.roles.length == 0)){ 
+      setShareAttrFilter(FILTER_SHARE_OPTIONS.SAME_AS_TASKS);
     }
-  };
+    getTaskAccess();
 
-  const getNonEmptyTaskAccess = () => {
-    const { users, roles } = getTaskAccess();
 
-    if (users?.length) {
-      return users;
-    }
+}, [shareAttrFilter, selectedFilter]);
 
-    if (roles?.length) {
-      return roles;
-    }
+const getTaskAccess = () => {
+  if (shareAttrFilter === FILTER_SHARE_OPTIONS.PRIVATE) {
+    return { users: [userDetails?.preferred_username], roles: [] };
+  } else if (shareAttrFilter === FILTER_SHARE_OPTIONS.SAME_AS_TASKS) {
+    const users = selectedFilter?.users?.length ? [...selectedFilter.users] : [];
+    const roles = selectedFilter?.roles?.length ? [...selectedFilter.roles] : [];
+    return { users, roles };
+  }
 
-    return [];
-  };
+  return { users: [], roles: [] };
+};
 
-  const createFilterShareOption = (labelKey, value) => ({
-    label: t(labelKey),
-    value,
-    onClick: () => setShareAttrFilter(value),
-  });
+
+const createFilterShareOption = (labelKey, value) => ({
+  label: t(labelKey),
+  value,
+  onClick: () => setShareAttrFilter(value),
+});
+
+
 
   const filterShareOptions = [
-    createFilterShareOption("Nobody (Keep it private)", PRIVATE_ONLY_YOU),
-    createFilterShareOption(
-      "Share with same users as the selected tasks filter",
-      getNonEmptyTaskAccess()
-    ),
-  ];
+  createFilterShareOption("Nobody (Keep it private)", FILTER_SHARE_OPTIONS.PRIVATE),
+  createFilterShareOption(
+    "Share with same users as the selected tasks filter",
+    FILTER_SHARE_OPTIONS.SAME_AS_TASKS
+  ),
+];
 
 
 
@@ -391,7 +389,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     }
   const renderActionButtons = () => {
     if (attributeFilter?.id) { 
-      if (canAccess && isFilterAdmin) {
+      if (canAccess && manageAllFilters) {
         return (
           <div className="d-flex">
             <CustomButton
@@ -427,7 +425,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       return null;
     }
 
-    if (isFilterAdmin) {
+    if (manageAllFilters) {
       return (
         <div className="pt-4">
           <CustomButton

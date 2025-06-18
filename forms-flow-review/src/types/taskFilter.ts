@@ -11,9 +11,7 @@ export interface FilterCriteria {
     }>;
     candidateGroupsExpression: string;
     sorting: Array<{
-      sortBy: string;
-      sortOrder: string;
-    }>;
+  }>;
     createdAfter?: string;
     createdBefore?: string;
   }

@@ -6,7 +6,7 @@ const initialState = {
         formName: { sortOrder: "asc" },
         id: { sortOrder: "asc" },
         createdBy: { sortOrder: "asc" },
-        submissionDate: { sortOrder: "asc" },
+        created: { sortOrder: "asc" },
         applicationStatus: { sortOrder: "asc" },
     },
     page: 1,

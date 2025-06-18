@@ -40,12 +40,14 @@ import {
 import TaskForm from "../components/TaskForm";
 import { TaskHistoryModal } from "../components/TaskHistory";
 import { push } from "connected-react-router";
+import { userRoles } from "../helper/permissions";
 import TaskAssigneeManager from "../components/Assigne/Assigne";
 
 const TaskDetails = () => {
   const { t } = useTranslation();
   const { taskId } = useParams();
   const dispatch = useDispatch();
+  const {viewTaskHistory} = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   // Redux State Selectors
   const tenantKey = useSelector(
@@ -216,7 +218,7 @@ const TaskDetails = () => {
             {/* Right Section: TaskAssigneeManager + History Button */}
             <div className="d-flex align-items-center ms-auto">
               <TaskAssigneeManager task={task} isFromTaskDetails={true} />
-              <CustomButton
+              {viewTaskHistory && <CustomButton
                 variant="gray-dark"
                 size="table"
                 label={t("History")}
@@ -224,7 +226,7 @@ const TaskDetails = () => {
                 ariaLabel={t("Submission History Button")}
                 onClick={handleHistory}
                 className="ms-3"
-              />
+              />}
             </div>
           </div>
         </Card.Body>

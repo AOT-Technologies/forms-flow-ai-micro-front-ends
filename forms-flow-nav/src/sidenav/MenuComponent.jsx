@@ -3,7 +3,6 @@ import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { ChevronIcon ,ShowPremiumIcons } from "@formsflow/components";
-import { MULTITENANCY_ENABLED} from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { StorageService } from "@formsflow/service";
 import PropTypes from "prop-types";
@@ -73,6 +72,12 @@ const MenuComponent = ({
       : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
   };
   
+  const chevronColor =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-main-menu-active-font-color"
+  )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
+    "--ff-gray-800"
+  ).trim();
 
   return (
     <Accordion.Item eventKey={eventKey}>
@@ -89,9 +94,7 @@ const MenuComponent = ({
             width="10"
             height="5"
             className="custom-chevron"
-            color={getComputedStyle(document.documentElement).getPropertyValue(
-              "--ff-gray-800"
-            )}
+            color={chevronColor}
           />
         )}
         <span>{t(mainMenu)}</span>

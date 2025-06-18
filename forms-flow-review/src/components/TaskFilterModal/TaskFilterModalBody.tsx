@@ -113,7 +113,13 @@ const TaskFilterModalBody = ({
     const criteria: FilterCriteria = {
       includeAssignedTasks: true,
       candidateGroupsExpression: "${currentUserGroups()}",
-      sorting: [{ sortBy: sortValue, sortOrder: sortOrder }],
+      // If sorting is based on submission id or form name, that should be passed as process variable in sorting
+      sorting: sortValue === "applicationId" || sortValue === "formName" ?
+        ([{
+          sortBy: "processVariable", sortOrder: sortOrder,
+          "parameters": { "variable": sortValue, "type": sortValue === "applicationId" ? "integer" : "string" }
+        }]) :
+        [{ sortBy: sortValue, sortOrder: sortOrder }],
     };
 
     
@@ -184,8 +190,8 @@ const TaskFilterModalBody = ({
   const handleSorting = (sorting) => {
     if (sorting?.length > 0) {
       const [sort] = sorting;
-      setSortValue(sort.sortBy);
-      setSortOrder(sort.sortOrder);
+      setSortValue(sort.sortBy === "processVariable" ?sort.parameters.variable :sort.sortBy);
+      setSortOrder(sort.sortOrder); 
     }
   };
 
@@ -202,14 +208,14 @@ const TaskFilterModalBody = ({
   /* -------------------- set values for editing the filter ------------------- */
   useEffect(() => {
     if (!filterToEdit) return;
-    const { roles, users, criteria } = filterToEdit;
-    const { assignee, sorting, dataLine, candidateGroup } = criteria;
+    const { roles, users, criteria, properties } = filterToEdit;
+    const { assignee, sorting, candidateGroup } = criteria;
     setShareFilterForSpecificRole(roles);
     setAccessOption(assignee ? "specificAssignee" : "specificRole");
     setAccessValue(assignee ? assignee : candidateGroup);
     handleSorting(sorting);
     handleShareFilter(roles, users);
-    setDataLineValue(dataLine ?? 1);
+    setDataLineValue(properties?.displayLinesCount ?? 1);
   }, [filterToEdit]);
 
   /* -------- handling already selected forms when after forms fetching ------- */
@@ -286,8 +292,8 @@ const TaskFilterModalBody = ({
     name: createSortOrderOptions("A to Z", "Z to A"),
     formName: createSortOrderOptions("A to Z", "Z to A"),
     applicationId: createSortOrderOptions(
-      "Largest to Smallest",
-      "Smallest to Largest"
+      "Smallest to Largest",
+      "Largest to Smallest"
     ),
   };
 

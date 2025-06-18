@@ -35,6 +35,7 @@ import AttributeFilterDropdown from "./AttributeFilterDropdown";
 import { createReqPayload } from "../../helper/taskHelper";
 import { optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
+import { userRoles } from "../../helper/permissions";
 
 const TaskList = () => {
   const dispatch = useDispatch();
@@ -54,13 +55,19 @@ const TaskList = () => {
     filterList,
   } = useSelector((state: RootState) => state.task);  
 
+  const { viewTasks,viewFilters } = userRoles()
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
  
   //inital data loading
   const initialDataLoading = async () => {
     dispatch(setBPMFilterLoader(true));
-    const filterResponse = await fetchFilterList();
+    if(!viewFilters && viewTasks){
+      dispatch(setSelectedFilter(allTasksPayload));
+      dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit))
+    }
+    else{
+      const filterResponse = await fetchFilterList();
     const filters = filterResponse.data.filters;
     const updatedfilters = filters.filter((filter) => !filter.hide);
     const defaultFilterId = filterResponse.data.defaultFilter;
@@ -72,16 +79,16 @@ const TaskList = () => {
       });
       // If no default filter, will select All Tasks filter if its exists, else will select first filter
       if (!defaultFilterId) {
-        const newFilter = (filters.find(filter => filter.name === "All Tasks") || filters[0]);
-        dispatch(setDefaultFilter(newFilter.id));
-        updateDefaultFilter(newFilter.id)
-
+        const newFilter = (filterList.find(filter => filter.name === "All Tasks") || filterList[0]);
+        dispatch(setDefaultFilter(newFilter?.id));
+        updateDefaultFilter(newFilter?.id)
       }
     }
     // if no filter is present, the data will be shown as All Tasks response
     else {
       dispatch(setSelectedFilter(allTasksPayload));
       dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
+    }
     }
     dispatch(setBPMFilterLoader(false));
   };
@@ -208,7 +215,6 @@ const TaskList = () => {
   useEffect(() => {
     fetchTaskListData();
   }, [isAssigned, activePage, limit]);
-
   return (
     <>
       <div
@@ -218,6 +224,7 @@ const TaskList = () => {
       >
         <div className="row w-100 mb-3 g-2">
           {/* Left Filters - Stack on small, inline on md+ */}
+          { viewFilters &&
           <div className="col-12 col-md d-flex flex-wrap gap-3 align-items-center">
             <div className="mb-2">
               <TaskListDropdownItems />
@@ -297,10 +304,10 @@ const TaskList = () => {
               />
             </div>
 
-          </div>
+          </div>}
             
         </div>
-         <TaskListTable />
+         {viewTasks && <TaskListTable />}
       </div>
     </>
   );

@@ -2,7 +2,7 @@ import { AddIcon, ButtonDropdown, PencilIcon, SharedWithMeIcon, SharedWithOthers
 import { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  createFilterPermission, 
+userRoles
 } from "../../helper/permissions";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -11,11 +11,11 @@ import { updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
 import {  UserDetail } from "../../types/taskFilter";
-import { StorageService } from "@formsflow/service";
  
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { createFilters } = userRoles();
   const selectedFilter = useSelector(
     (state: RootState) => state.task.selectedFilter
   );
@@ -34,6 +34,7 @@ const TaskListDropdownItems = memo(() => {
 
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showReorderFilterModal,setShowReorderFilterModal] = useState(false); 
+  const [filterSearchTerm, setFilterSearchTerm] = useState("");
   
   const handleEditTaskFilter = () => {
     // Prevent editing if the active filter is the initial "All Tasks".
@@ -64,7 +65,9 @@ const changeFilterSelection = (filter) => {
   dispatch(setSelectedFilter(upcomingFilter));
 };
 
-
+const onSearch = (searchTerm: string) => {
+  setFilterSearchTerm(searchTerm);
+};
   
   const filterDropdownItems = useMemo(() => {
     const filterDropdownItemsArray = [];
@@ -104,17 +107,27 @@ const changeFilterSelection = (filter) => {
       ariaLabel: t("Re-order And Hide Filters"),
     };
     const mappedItems = filtersAndCount
+    .filter((filter) => {
+    const details = filterList.find((item) => item.id === filter.id);
+    const filterName = t(filter.name).toLowerCase();
+          return (
+        details &&
+        !details.hide &&
+        filterName.includes(filterSearchTerm.toLowerCase())
+      ); // only include visible filters
+  })
     .map((filter) => { 
       const filterDetails = filterList.find((item) => item.id === filter.id);
       let icon = null;
       if(filterDetails){
         const createdByMe =userDetails?.preferred_username === filterDetails?.createdBy;
         const isSharedToPublic =!filterDetails?.roles?.length && !filterDetails?.users?.length;
+        const isSharedToRoles = filterDetails?.roles.length
         const isSharedToMe = filterDetails?.roles?.some((role) =>
           userDetails?.groups?.includes(role)
         );
-
-        if (createdByMe) {
+        // icon for filters except private and All tasks 
+        if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
           icon = <SharedWithOthersIcon className="shared-icon" />;
         } else if (isSharedToPublic || isSharedToMe) {
           icon = <SharedWithMeIcon className="shared-icon" />;
@@ -142,7 +155,7 @@ const changeFilterSelection = (filter) => {
     // Adding mapped Items
     filterDropdownItemsArray.push(...mappedItems);
     // Adding create filter and reorder filter
-    if (createFilterPermission) {
+    if (createFilters) {
       filterDropdownItemsArray.push(createFilter);
       if (filtersAndCount.length > 1) {
         filterDropdownItemsArray.push(reOrderFilter);
@@ -150,7 +163,7 @@ const changeFilterSelection = (filter) => {
     }
 
     return filterDropdownItemsArray;
-  }, [filtersAndCount, defaultFilter,filterList,userDetails ]);
+  }, [filtersAndCount, defaultFilter,filterList,userDetails, filterSearchTerm ]);
 
 // filter title based on unsaved filter, empty list or selected filter
   let title;
@@ -178,6 +191,7 @@ const changeFilterSelection = (filter) => {
         variant="primary"
         size="md"
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
+        onSearch={onSearch}
         dropdownItems={filterDropdownItems}
         extraActionIcon={<PencilIcon color="white" />}
         extraActionOnClick={handleEditTaskFilter}
