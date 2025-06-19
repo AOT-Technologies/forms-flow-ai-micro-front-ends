@@ -10,10 +10,13 @@ import {
 import AttributeFilterModal from "../AttributeFilterModal/AttributeFilterModal";
 import { fetchServiceTaskList } from "../../api/services/filterServices";
 import { cloneDeep } from "lodash";
+import { userRoles } from "../../helper/permissions";
 
 const AttributeFilterDropdown = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { createFilters } = userRoles();
+
   const selectedAttributeFilter = useSelector(
     (state: RootState) => state.task?.selectedAttributeFilter
   );
@@ -81,7 +84,10 @@ const AttributeFilterDropdown = () => {
     const attributeItems =
       Array.isArray(attributeFilterList) && attributeFilterList.length > 0
         ? attributeFilterList.map((filter) => ({
-            className:  filter?.id === selectedAttributeFilter?.id ? "selected-filter-item" : "",
+            className:
+              filter?.id === selectedAttributeFilter?.id
+                ? "selected-filter-item"
+                : "",
             content: `${t(filter.name)}`,
             onClick: () => changeAttributeFilterSelection(filter),
             type: String(filter.id),
@@ -137,16 +143,17 @@ const AttributeFilterDropdown = () => {
     };
     let options = [];
     if (attributeItems.length) {
-      options = [
-        clearAttributeFilter,
-        ...attributeItems,
-        customAttribute,
-        reorderOption,
-      ];
+      options = [clearAttributeFilter, ...attributeItems];
+      //If only createFilters is there then only push custom attribute filter and reorder option
+      if (createFilters) {
+        options.push(customAttribute, reorderOption);
+      }
     } else {
-      options = [noAttributeFilter, customAttribute];
+      options = [noAttributeFilter];
+      if (createFilters) {
+        options.push(customAttribute);
+      }
     }
-
     return options;
   };
 

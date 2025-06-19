@@ -140,6 +140,7 @@ select option:hover {
       border: 2px solid $primary;
       background: var(--ff-white);
       color: var(--default-font-color) !important;
+      padding-right: 2rem !important;
     }
 
     &.is-searching {

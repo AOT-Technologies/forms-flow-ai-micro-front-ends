@@ -70,14 +70,19 @@ export const AssignUser: React.FC<AssignUserProps> = ({
 
 
   const handleMeClick = () => {
-    const name = username ?? userData?.preferred_username;
-    setSelected("Me");
-    setSelectedName(name);
-    meOnClick?.();
-    if(!username){
-      setSelectedName(`${userData.family_name}, ${userData.given_name}`);
-    }
-  };
+  const defaultName = userData?.preferred_username;
+  const fullName = userData?.family_name && userData?.given_name
+    ? `${userData.family_name}, ${userData.given_name}`
+    : defaultName;
+
+  const name = username ?? fullName;
+
+  setSelected("Me");
+  setSelectedName(name);
+
+  meOnClick?.();
+};
+
 
   const handleOthersClick = () => {
     setSelected("Others");
@@ -91,28 +96,38 @@ export const AssignUser: React.FC<AssignUserProps> = ({
     handleCloseClick?.();
   };
 
-const dropdownOptions = useMemo(() => {
-  if (Array.isArray(users)) {
-    return users.map((user) => {
-      const fullName = getDisplayName(user);
-      const label = user.email ? `${fullName} (${user.email})` : fullName;
-      return {
-        label,
-        value: user.id,
-        onClick: () => {
-          setSelectedName(fullName);
-          optionSelect?.(user.username);
-          setOpenDropdown(false);
-        },
-      };
-    });
-  }
-  return [];
-}, [users, optionSelect]);
-
-
-  const showSelector = selected === null;
+const showSelector = selected === null;
   const selectedOption = selected === "Me" ? selectedName : undefined;
+    //show close icons based on the user permissions
+  const assignedToCurrentUser =
+  selectedOption === userData.preferred_username ||
+  selectedOption === `${userData.family_name}, ${userData.given_name}`;
+ 
+  const showCloseIcon = (assignedToCurrentUser && manageMyTasks) ||(!assignedToCurrentUser && assignToOthers); 
+
+
+const dropdownOptions = useMemo(() => {
+  if (!Array.isArray(users)) return [];
+
+  const filteredUsers = (!assignedToCurrentUser && manageMyTasks &&!assignToOthers)
+    ? users.filter((user) => user.id === userData.sub)
+    : users;
+    
+  return filteredUsers.map((user) => {
+    const fullName = getDisplayName(user);
+    const label = user.email ? `${fullName} (${user.email})` : fullName;
+    return {
+      label,
+      value: user.id,
+      onClick: () => {
+        setSelectedName(fullName);
+        optionSelect?.(user.username);
+        setOpenDropdown(false);
+      },
+    };
+  });
+}, [users, optionSelect, assignedToCurrentUser, userData]);
+
 
   return (
     <>
@@ -142,8 +157,10 @@ const dropdownOptions = useMemo(() => {
         </div>
       )}
       {/* Show InputDropdown when either Me or Others is selected */}
-      {(selected === "Me" || selected === "Others") && (
+      {(selected === "Me" || selected === "Others")  && (
         <InputDropdown
+          showCloseIcon={showCloseIcon}
+          hideDropDownList={(assignedToCurrentUser && !assignToOthers)}
           Options={dropdownOptions}
           variant={variant}
           selectedOption={selectedOption}

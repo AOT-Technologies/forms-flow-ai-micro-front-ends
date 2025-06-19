@@ -33,7 +33,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
-  const { manageAllFilters } = userRoles();
+  const { manageAllFilters,createFilters } = userRoles();
   
   const baseColor = StyleServices.getCSSVariable("--ff-primary");
   const whiteColor = StyleServices.getCSSVariable("--ff-white");
@@ -111,19 +111,9 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
  
   /* ---------------------------- access management --------------------------- */
 
-  const isCreator =
-    attributeFilter?.createdBy === userDetails?.preferred_username;
   const createdByMe =
     attributeFilter?.createdBy === userDetails?.preferred_username;
-  const publicAccess =
-    attributeFilter?.roles?.length === 0 &&
-    attributeFilter?.users?.length === 0;
-  const roleAccess = attributeFilter?.roles?.some((role) =>
-    userDetails.groups.includes(role)
-  );
-  const canAccess = roleAccess || publicAccess || createdByMe;
-  const viewOnly = !manageAllFilters && canAccess;
-  const editRole = manageAllFilters && canAccess;
+  const editRole = manageAllFilters || (createdByMe && createFilters);
 
   /* ---------------------------- get users groups ---------------------------- */
   useEffect(() => {
@@ -389,7 +379,7 @@ const createFilterShareOption = (labelKey, value) => ({
     }
   const renderActionButtons = () => {
     if (attributeFilter?.id) { 
-      if (canAccess && manageAllFilters) {
+      if (editRole ) {
         return (
           <div className="d-flex">
             <CustomButton
@@ -425,7 +415,7 @@ const createFilterShareOption = (labelKey, value) => ({
       return null;
     }
 
-    if (manageAllFilters) {
+    if (createFilters ) {
       return (
         <div className="pt-4">
           <CustomButton
@@ -475,9 +465,7 @@ const createFilterShareOption = (labelKey, value) => ({
       </div>
       <RenderOwnerShipNotes
         attributeFilter={attributeFilter}
-        isCreator={isCreator}
-        viewOnly={viewOnly}
-        editRole={editRole}
+        isCreator={createdByMe}
       />
       {renderActionButtons()}
     </>

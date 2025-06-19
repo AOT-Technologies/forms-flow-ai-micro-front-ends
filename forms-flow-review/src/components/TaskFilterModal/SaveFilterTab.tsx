@@ -102,7 +102,7 @@ const SaveFilterTab = ({
       );
     }
 
-    if (createdByMe) {
+    if (createdByMe && createFilters) {
       return (
         <>
           <div className="pb-4">
@@ -138,7 +138,7 @@ const SaveFilterTab = ({
       );
     }
 
-    if (editRole) {
+    if (manageAllFilters && !createdByMe) {
       return (
         <>
           <div className="pb-4">
@@ -240,7 +240,6 @@ const SaveFilterTab = ({
     }
     return null;
   };
-
   return (
     <>
       <FormInput
@@ -254,7 +253,7 @@ const SaveFilterTab = ({
         isInvalid={!!filterNameError}
         onBlur={handleNameError}
         feedback={filterNameError}
-        disabled={!editRole}
+        disabled={filterToEdit && !editRole}
       />
 
       <div className="pt-4 pb-4">
@@ -267,7 +266,7 @@ const SaveFilterTab = ({
           dataTestIdforDropdown="share-filter-options"
           selectedOption={shareFilter}
           setNewInput={setShareFilter}
-          disabled={!editRole}
+          disabled={filterToEdit && !editRole}
         />
         {shareFilter === SPECIFIC_USER_OR_GROUP && (
           <div className="d-flex filter-dropdown">
@@ -281,7 +280,7 @@ const SaveFilterTab = ({
               dataTestIdforDropdown="candidate-options"
               selectedOption={shareFilterForSpecificRole}
               setNewInput={setShareFilterForSpecificRole}
-              disabled={!editRole}
+              disabled={ filterToEdit &&!editRole}
             />
           </div>
         )}
