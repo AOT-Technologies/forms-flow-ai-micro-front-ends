@@ -78,7 +78,7 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
         <div className="bpmn-viewer-container">
           <div className="bpm-container">
             <div className="d-flex justify-content-center align-items-center h-100">
-              <div className="spinner-border" role="status">
+              <div className="spinner-border">
                 <span className="visually-hidden">{t("Loading...")}</span>
               </div>
             </div>
@@ -96,7 +96,7 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
     }
 
     return (
-      <div>
+      <>
         <div className="bpmn-viewer-container">
           <div
             id="process-diagram-container"
@@ -117,7 +117,7 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
             </button>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 );

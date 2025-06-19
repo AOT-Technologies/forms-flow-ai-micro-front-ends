@@ -42,20 +42,22 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
       const { t } = useTranslation();
       const timelineRef = useRef<HTMLDivElement>(null);
       const lastEntryRef = useRef<HTMLDivElement>(null);
-      const verticalHr = useRef<HTMLDivElement>(null);
       const historyContentRef = useRef(null);
-      const modalBodyRef = useRef<HTMLDivElement>(null);
-      const historyMainRef = useRef<HTMLDivElement>(null);
       const flexClass = showBpmnDiagram
-        ? "flex-column justify-content-start align-items-start"
+        ? "flex-column justify-content-start align-items-start gap-3"
         : "flex-row justify-content-between align-items-center";
       useEffect(() => {
         const adjustTimelineHeight = () => {
           if (timelineRef.current && historyContentRef.current) {
             const contentHeight = historyContentRef.current.offsetHeight;
             timelineRef.current.style.height = `${contentHeight}px`;
+            const bpmnContainer: HTMLElement = document.querySelector(".bpmn-viewer-container");
+            if (bpmnContainer) {
+              bpmnContainer.style.minHeight = `${contentHeight}px`;
+            }
           }
         };
+     
         if (lastEntryRef.current) {
           adjustTimelineHeight();
           window.addEventListener("resize", adjustTimelineHeight);
@@ -67,38 +69,6 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
         histories,
         lastEntryRef,
         historyContentRef?.current?.offsetHeight,
-      ]);
-
-      useEffect(() => {
-        if (!showBpmnDiagram) {
-          return;
-        }
-        const adjustVerticalHr = () => {
-          const modal = modalBodyRef.current;
-          const history = historyMainRef.current;
-          const verticalHrRef = verticalHr.current;
-
-          if (modal && history && verticalHrRef) {
-            const height = modal.offsetHeight;
-            const top = history.offsetTop; // relative to modal
-            const right = modal.offsetWidth - history.offsetLeft; // from right edge
-            verticalHrRef.style.height = `${height}px`;
-            verticalHrRef.style.top = `-${top}px`;
-            verticalHrRef.style.height = `${height + top}px`;
-            verticalHrRef.style.right = `${right + top}px`;
-          }
-        };
-        if (lastEntryRef.current) {
-          adjustVerticalHr();
-          window.addEventListener("resize", adjustVerticalHr);
-          return () => window.removeEventListener("resize", adjustVerticalHr);
-        }
-      }, [
-        show,
-        showBpmnDiagram,
-        histories,
-        lastEntryRef,
-        modalBodyRef?.current?.offsetHeight,
       ]);
 
       const viewSubmission = (data: SubmissionHistory): JSX.Element => {
@@ -140,109 +110,112 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
             />
           </Modal.Header>
           <Modal.Body
-            className="form-history-modal-body"
+            className="p-0"
             data-testid="form-history-modal-body"
             aria-label="Form history modal body"
-            ref={modalBodyRef}
           >
             {isHistoryListLoading ? (
               <>loading</>
             ) : (
               <>
-                {showBpmnDiagram && (
-                  <div ref={verticalHr} className="vertical-hr"></div>
-                )}
                 <div
                   className={`${
                     showBpmnDiagram
-                      ? "d-flex justify-content-between gap-3"
+                      ? "d-flex justify-content-between gap-3 flex-column flex-lg-row "
                       : ""
                   }`}
                 >
                   {showBpmnDiagram && (
-                    <>
+                    <div className="p-5">
                       <ProcessDiagram
-                        diagramXML={diagramXML || ""}
-                        activityId={activityId || ""}
+                        diagramXML={diagramXML ?? ""}
+                        activityId={activityId ?? ""}
                         isProcessDiagramLoading={isProcessDiagramLoading}
                       />
-                    </>
+                    </div>
                   )}
 
                   {histories?.length ? (
                     <div
                       className={`${
-                        showBpmnDiagram ? "position-relative" : ""
+                        showBpmnDiagram ? "p-5 history-div-left-border" : "mt-5"
                       }`}
-                      ref={historyMainRef}
                     >
                       <div
-                        ref={timelineRef}
-                        className="form-timeline"
-                        style={
-                          showBpmnDiagram ? { top: "-43px", left: "80px" } : {}
-                        }
-                        data-testid="form-history-timeline"
-                        aria-label="Form history timeline"
-                      ></div>
-                      <div
-                        className="history-content"
-                        data-testid="form-history-content"
-                        aria-label="Form history content"
-                        ref={historyContentRef}
+                        className={`position-relative ${
+                          showBpmnDiagram ? "mt-5" : "p-5"
+                        }`}
                       >
-                        {histories.map((entry, index) => (
-                          <div
-                            key={entry.id || index}
-                            ref={
-                              index === histories.length - 1
-                                ? lastEntryRef
-                                : null
-                            }
-                            className={`form-version-grid d-flex  ${flexClass}`}
-                            data-testid={`form-history-entry-${index}`}
-                            aria-label={`Form history entry ${index}`}
-                          >
-                            <div className="w-30 content-headings me-auto">
-                              {entry.applicationStatus}
-                            </div>
-
+                        <div
+                          ref={timelineRef}
+                          className="form-timeline"
+                          style={
+                            showBpmnDiagram
+                              ? { top: "-43px", left: "80px" }
+                              : {}
+                          }
+                          data-testid="form-history-timeline"
+                          aria-label="Form history timeline"
+                        ></div>
+                        <div
+                          className="d-flex flex-column gap-3"
+                          data-testid="form-history-content"
+                          aria-label="Form history content"
+                          ref={historyContentRef}
+                        >
+                          {histories.map((entry, index) => (
                             <div
-                              className={`normal-text w-100 gap-${
-                                showBpmnDiagram ? "5" : "3"
-                              } d-flex justify-content-${
-                                showBpmnDiagram ? "between" : "end"
-                              } align-items-center $`}
+                              key={entry.id ?? index}
+                              ref={
+                                index === histories.length - 1
+                                  ? lastEntryRef
+                                  : null
+                              }
+                              className={`form-history-entry version-style d-flex  ${flexClass}`}
+                              data-testid={`form-history-entry-${index}`}
+                              aria-label={`Form history entry ${index}`}
                             >
-                              <div>
-                                <div className="content-headings">
-                                  {t("Submitter By")}
-                                </div>
-                                {entry.submittedBy}
+                              <div className="w-30 content-headings me-auto">
+                                {entry.applicationStatus}
                               </div>
-                              <div>
-                                <div className="content-headings">
-                                  {t("Created On")}
-                                </div>
-                                {entry.created
-                                  ? HelperServices.getLocalDateAndTime(
-                                      entry.created
-                                    )
-                                  : "N/A"}
-                              </div>
-                            </div>
 
-                            <div
-                              className={`${
-                                !showBpmnDiagram
-                                  ? "w-50 d-flex justify-content-end"
-                                  : ""
-                              }`}
-                            >
-                              {viewSubmission(entry)}
+                              <div
+                                className={`normal-text w-100 gap-${
+                                  showBpmnDiagram ? "5" : "3"
+                                } d-flex justify-content-${
+                                  showBpmnDiagram ? "between" : "end"
+                                } align-items-center $`}
+                              >
+                                <div>
+                                  <div className="content-headings">
+                                    {t("Submitter By")}
+                                  </div>
+                                  {entry.submittedBy}
+                                </div>
+                                <div>
+                                  <div className="content-headings">
+                                    {t("Created On")}
+                                  </div>
+                                  {entry.created
+                                    ? HelperServices.getLocalDateAndTime(
+                                        entry.created
+                                      )
+                                    : "N/A"}
+                                </div>
+                              </div>
+
+                              <div
+                                className={`${
+                                  !showBpmnDiagram
+                                    ? "w-50 d-flex justify-content-end"
+                                    : ""
+                                }`}
+                              >
+                                {viewSubmission(entry)}
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
                   ) : (
