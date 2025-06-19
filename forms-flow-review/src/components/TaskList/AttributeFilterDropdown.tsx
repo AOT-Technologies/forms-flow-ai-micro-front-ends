@@ -61,9 +61,11 @@ const AttributeFilterDropdown = () => {
       (item) => item.name !== "formId"
     );
     // we need to patch the current criteria with process variables from attribute filter
-    if (processVariables && processVariables.length > 0) {
-      currentCriteria.processVariables?.push(...processVariables);    
-  }
+   if (processVariables && processVariables.length > 0) {
+    currentCriteria.processVariables = currentCriteria.processVariables || [];
+    currentCriteria.processVariables.push(...processVariables);
+}
+
     // changing  assignee if assignee changed in attirbuite filter
     currentCriteria.assignee =  attributeFilter?.criteria.assignee;
     const data = { ...selectedFilter, criteria: currentCriteria };
@@ -91,16 +93,11 @@ const AttributeFilterDropdown = () => {
             }),
           }))
         : [];
-    const noAttributeFilter = {
-      content: <em>{t("No attribute filters found")}</em>,
-      onClick: () => {},
-      type: "none",
-      dataTestId: "no-attr-filters",
-      ariaLabel: t("No attribute filters available"),
-    };
+  
 
     const clearAttributeFilter = {
-      content: <em>{t("All Fields")}</em>,
+      className:  !selectedAttributeFilter?.id ? "selected-filter-item" : "",   
+      content: <>{t("All Fields")}</>,
       onClick: () => changeAttributeFilterSelection(null),
       type: "none",
       dataTestId: "no-attr-filters",
@@ -144,7 +141,7 @@ const AttributeFilterDropdown = () => {
         reorderOption,
       ];
     } else {
-      options = [noAttributeFilter, customAttribute];
+      options = [clearAttributeFilter, customAttribute];
     }
 
     return options;
@@ -171,7 +168,7 @@ const AttributeFilterDropdown = () => {
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
         dropdownItems={filterDropdownAttributeItems()}
         extraActionIcon={<PencilIcon color="white" />}
-        extraActionOnClick={handleEditAttrFilter}
+        extraActionOnClick={!selectedAttributeFilter ? handleToggleAttrFilterModal : handleEditAttrFilter}
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
         extraActionAriaLabel={t("Edit attribute filters")}
