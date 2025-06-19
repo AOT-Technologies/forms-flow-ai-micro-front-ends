@@ -239,10 +239,11 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
   return (
     <div className="sidenav" style={{ height: sidenavHeight }}>
-        <a
-          href={`/${window?._env_?.REACT_APP_BASE_ROUTE || ""}`}
+        <div
+          onClick={() => history.push(`/${window?._env_?.REACT_APP_BASE_ROUTE || ""}`)}
           className="logo-container"
           aria-label="Go to homepage"
+          style={{ cursor: 'pointer' }}
         >
         {APPLICATION_NAME === "roadsafety" ? (
           <img
@@ -254,7 +255,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
         ) : (
           <ApplicationLogo data-testid="application-logo" />
         )}
-        </a>
+        </div>
         <div className="options-container" data-testid="options-container">
           <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
             {ENABLE_FORMS_MODULE &&
