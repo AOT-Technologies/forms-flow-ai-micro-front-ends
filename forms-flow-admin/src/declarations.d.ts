@@ -61,3 +61,10 @@ declare module "@formsflow/components" {
     CustomInfo
   }: any;
 }
+
+
+declare module "@formsflow/components" {
+  export const {
+    CustomButton
+  }: any;
+}

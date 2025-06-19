@@ -4,7 +4,6 @@ import "./roles.scss";
 import { useParams } from "react-router-dom";
 import { Translation, useTranslation } from "react-i18next";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import { fetchUsers } from "../../services/users";
 import {
   CreateRole,
@@ -652,15 +651,15 @@ const Roles = React.memo((props: any) => {
               dataTestId="search-role-input"
             />
           </div>
-          <Button
-            variant="primary"
+          <CustomButton
             onClick={handleShowRoleModal}
             data-testid="roles-create-new-role-button"
-          >
-            <i className="fa-solid fa-plus me-2"></i>{" "}
-            <Translation>{(t) => t("New Role")}</Translation>
-          </Button>
+            label={<Translation>{(t) => t("New Role")}</Translation>}
+            ariaLabel={<Translation>{(t) => t("New Role")}</Translation>}
+            action
+          />
         </div>
+
         {!props?.loading ? (
           <div>
           <BootstrapTable
