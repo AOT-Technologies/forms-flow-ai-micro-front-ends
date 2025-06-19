@@ -146,7 +146,7 @@ const AttributeFilterDropdown = () => {
     const mappedItems =
       attributeFilterList
         ?.filter((filter) => {
-          const filterName = t(filter.name).toLowerCase();
+          const filterName = (filter.name).toLowerCase();
           return (
             !filter.hide && filterName.includes(filterSearchTerm.toLowerCase())
           );
@@ -199,7 +199,7 @@ const AttributeFilterDropdown = () => {
     // Conditionally add custom and reorder options
     if (createFilters) {
       filterDropdownItemsArray.push(customAttribute);
-      if (mappedItems.length > 1) {
+      if (mappedItems.length > 0) {
         filterDropdownItemsArray.push(reorderOption);
       }
     }
@@ -210,6 +210,7 @@ const AttributeFilterDropdown = () => {
     userDetails,
     filterSearchTerm,
     selectedAttributeFilter,
+    t
   ]);
 
   const title = selectedAttributeFilter
