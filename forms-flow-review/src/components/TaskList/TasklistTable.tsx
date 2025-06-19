@@ -39,6 +39,7 @@ interface Task {
   assignee?: string;
   _embedded?: {
     variable?: Array<{ name: string; value: any }>;
+    candidateGroups?: Array<{ groupId: string }>;
   };
 }
 
@@ -46,9 +47,13 @@ const getCellValue = (column: Column, task: Task) => {
   const { sortKey } = column;
   const { name: taskName, created, _embedded } = task ?? {};
   const variables = _embedded?.variable ?? [];
+  const candidateGroups = _embedded?.candidateGroups ?? [];
+
   if (column.sortKey === "applicationId") {
     return variables.find((v) => v.name === "applicationId")?.value ?? "-";
   }
+
+
 
   switch (sortKey) {
     case "name":
@@ -57,6 +62,9 @@ const getCellValue = (column: Column, task: Task) => {
       return created ? HelperServices.getLocaldate(created) : "N/A";
     case "assignee":
       return <TaskAssigneeManager task={task} />;
+     case "roles": {
+    return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
+  }
     default:
       return variables.find((v) => v.name === sortKey)?.value ?? "-";
   }
