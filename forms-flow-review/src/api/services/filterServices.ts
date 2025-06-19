@@ -280,7 +280,16 @@ export const updateAssigneeBPMTask = (taskId, user, ...rest) => {
   };
 };
 
-
-export const saveFilterPreference= (data) =>{
-  return RequestService.httpPOSTRequest(`${API.SAVE_FILTER_PREFERENCE}`,data);
+/**
+ * Saves filter preference with optional filter type parameter
+ * @param {object} data - The filter preference data to save
+ * @param {string} filterType - Optional filter type (e.g., 'ATTRIBUTE')
+ * @returns {Promise} - The HTTP request promise
+ */
+export const saveFilterPreference = (data, filterType = null) => {
+  const url = filterType 
+    ? `${API.SAVE_FILTER_PREFERENCE}?filterType=${filterType}`
+    : `${API.SAVE_FILTER_PREFERENCE}`;
+  
+  return RequestService.httpPOSTRequest(url, data);
 };
