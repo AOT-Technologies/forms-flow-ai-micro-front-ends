@@ -117,13 +117,10 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
             {isHistoryListLoading ? (
               <>loading</>
             ) : (
-              <>
+         
                 <div
                   className={`${
-                    showBpmnDiagram
-                      ? "d-flex justify-content-between gap-3 flex-column flex-lg-row "
-                      : ""
-                  }`}
+                    showBpmnDiagram && "d-flex justify-content-between gap-3 flex-column flex-lg-row "}`}
                 >
                   {showBpmnDiagram && (
                     <div className="p-5">
@@ -205,11 +202,7 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
                               </div>
 
                               <div
-                                className={`${
-                                  !showBpmnDiagram
-                                    ? "w-50 d-flex justify-content-end"
-                                    : ""
-                                }`}
+                                className={`${!showBpmnDiagram && "w-50 d-flex justify-content-end"}`}
                               >
                                 {viewSubmission(entry)}
                               </div>
@@ -228,7 +221,7 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
                     </div>
                   )}
                 </div>
-              </>
+             
             )}
           </Modal.Body>
         </Modal>
