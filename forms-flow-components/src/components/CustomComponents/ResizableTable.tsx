@@ -111,19 +111,22 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
     };
   }, [handleMouseMove, handleMouseUp]);
 
-  const renderSkeleton = () => (
-    <tbody>
-      {Array.from({ length: skeletonRows }).map((_, rowIndex) => (
-        <tr key={`skeleton-row-${rowIndex}`}>
-          {columnsState.map((_, colIndex) => (
-            <td key={`skeleton-col-${colIndex}`}>
+const renderSkeleton = () => (
+  <tbody>
+    {Array.from({ length: skeletonRows }).map(() => {
+      const rowKey = crypto.randomUUID();
+      return (
+        <tr key={rowKey}>
+          {columnsState.map(() => (
+            <td key={crypto.randomUUID()}>
               <Skeleton height={skeletonCellHeight} />
             </td>
           ))}
         </tr>
-      ))}
-    </tbody>
-  );
+      );
+    })}
+  </tbody>
+);
 
   return (
     <div
@@ -145,8 +148,8 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
           <thead className={headerClassName}>
             <tr>
               {loading
-                ? columnsState.map((_, index) => (
-                    <th key={`skeleton-header-${index}`}>
+                ? columnsState.map(() => (
+                    <th key={crypto.randomUUID()}>
                       <Skeleton height={skeletonCellHeight} />
                     </th>
                   ))

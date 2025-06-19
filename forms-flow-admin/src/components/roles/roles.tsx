@@ -20,9 +20,6 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
-import { CustomInfo, ConfirmModal } from "@formsflow/components";
-
-
 import {removingTenantId} from "../../utils/utils.js";
 import { TableFooter,
    CustomSearch, 
@@ -31,7 +28,10 @@ import { TableFooter,
    FormInput, 
    FormTextArea,
    CustomButton,
-   DeleteIcon } from "@formsflow/components";
+   DeleteIcon,
+   CustomInfo, 
+   ConfirmModal } 
+from "@formsflow/components";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
