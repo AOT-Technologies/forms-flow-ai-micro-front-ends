@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   setAttributeFilterToEdit,
   setSelectedBpmAttributeFilter,
@@ -94,50 +94,8 @@ const AttributeFilterDropdown = () => {
     dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
   };
 
-  const filterDropdownAttributeItems = (() => {
-    const attributeItems = Array.isArray(attributeFilterList)
-      ? attributeFilterList
-          .filter((filter) =>
-            t(filter.name)
-              .toLowerCase()
-              .includes(filterSearchTerm.toLowerCase())
-          )
-          .map((filter) => {
-            const createdByMe =
-              userDetails?.preferred_username === filter?.createdBy;
-            const isSharedToPublic =
-              !filter?.roles?.length && !filter?.users?.length;
-            const isSharedToRoles = filter?.roles?.length;
-            const isSharedToMe = filter?.roles?.some((role) =>
-              userDetails?.groups?.includes(role)
-            );
-
-            let icon = null;
-            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
-              icon = <SharedWithOthersIcon className="shared-icon" />;
-            } else if (isSharedToPublic || isSharedToMe) {
-              icon = <SharedWithMeIcon className="shared-icon" />;
-            }
-
-            return {
-              className:
-                filter?.id === selectedAttributeFilter?.id
-                  ? "selected-filter-item"
-                  : "",
-              content: (
-                <span className="d-flex justify-content-between align-items-center">
-                  {t(filter.name)} {icon && <span>{icon}</span>}
-                </span>
-              ),
-              onClick: () => changeAttributeFilterSelection(filter),
-              type: String(filter.id),
-              dataTestId: `attr-filter-item-${filter.id}`,
-              ariaLabel: t("Select attribute filter {{filterName}}", {
-                filterName: t(filter.name),
-              }),
-            };
-          })
-      : [];
+  const filterDropdownAttributeItems = useMemo(() => {
+    const filterDropdownItemsArray = [];
 
     const noAttributeFilter = {
       content: <em>{t("No attribute filters found")}</em>,
@@ -158,7 +116,10 @@ const AttributeFilterDropdown = () => {
     const customAttribute = {
       content: (
         <span>
-          <AddIcon className="filter-plus-icon" /> {t("Custom Form Fields")}
+          <span>
+            <AddIcon className="filter-plus-icon" />
+          </span>{" "}
+          {t("Custom Form Fields")}
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
@@ -170,7 +131,9 @@ const AttributeFilterDropdown = () => {
     const reorderOption = {
       content: (
         <span>
-          <PencilIcon className="filter-edit-icon" />{" "}
+          <span>
+            <PencilIcon className="filter-edit-icon" />
+          </span>{" "}
           {t("Re-order And Hide Attribute Filters")}
         </span>
       ),
@@ -180,23 +143,74 @@ const AttributeFilterDropdown = () => {
       ariaLabel: t("Re-order And Hide Attribute Filters"),
     };
 
-    if (!attributeItems.length) {
+    const mappedItems =
+      attributeFilterList
+        ?.filter((filter) => {
+          const filterName = t(filter.name).toLowerCase();
+          return (
+            !filter.hide && filterName.includes(filterSearchTerm.toLowerCase())
+          );
+        })
+        .map((filter) => {
+          const createdByMe =
+            userDetails?.preferred_username === filter?.createdBy;
+          const isSharedToPublic =
+            !filter?.roles?.length && !filter?.users?.length;
+          const isSharedToRoles = filter?.roles?.length;
+          const isSharedToMe = filter?.roles?.some((role) =>
+            userDetails?.groups?.includes(role)
+          );
+
+          let icon = null;
+          if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+            icon = <SharedWithOthersIcon className="shared-icon" />;
+          } else if (isSharedToPublic || isSharedToMe) {
+            icon = <SharedWithMeIcon className="shared-icon" />;
+          }
+
+          return {
+            className:
+              filter.id === selectedAttributeFilter?.id
+                ? "selected-filter-item"
+                : "",
+            content: (
+              <span className="d-flex justify-content-between align-items-center">
+                {t(filter.name)} {icon && <span>{icon}</span>}
+              </span>
+            ),
+            onClick: () => changeAttributeFilterSelection(filter),
+            type: String(filter.id),
+            dataTestId: `attr-filter-item-${filter.id}`,
+            ariaLabel: t("Select attribute filter {{filterName}}", {
+              filterName: t(filter.name),
+            }),
+          };
+        }) || [];
+
+    if (!mappedItems.length) {
       return createFilters
         ? [noAttributeFilter, customAttribute]
         : [noAttributeFilter];
     }
 
-    const dropdownArray = [clearAttributeFilter, ...attributeItems];
+    // Add standard filters
+    filterDropdownItemsArray.push(clearAttributeFilter, ...mappedItems);
 
+    // Conditionally add custom and reorder options
     if (createFilters) {
-      dropdownArray.push(customAttribute);
-      if (attributeItems.length > 1) {
-        dropdownArray.push(reorderOption);
+      filterDropdownItemsArray.push(customAttribute);
+      if (mappedItems.length > 1) {
+        filterDropdownItemsArray.push(reorderOption);
       }
     }
 
-    return dropdownArray;
-  })();
+    return filterDropdownItemsArray;
+  }, [
+    attributeFilterList,
+    userDetails,
+    filterSearchTerm,
+    selectedAttributeFilter,
+  ]);
 
   const title = selectedAttributeFilter
     ? `${

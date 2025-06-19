@@ -80,7 +80,7 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
             };
           }) || []
         );
-      }, [attributeFilterList, selectedFilter]);
+      }, [attributeFilterList]);
 
       // set the updated filterList to  sortedfilterLis state ,to compare the updated filterList with the original filterList initially
       useEffect(() => {
@@ -124,7 +124,7 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
 
           // If selected filter is hidden, pick the first visible filter
           const updatedfilters = filters.filter((filter) => !filter.hide);
-          if (selectedFilterHide && updatedfilters.length > 0) {
+          if (selectedFilterHide) {
             dispatch(setSelectedBpmAttributeFilter(updatedfilters[0]));
           }
 
