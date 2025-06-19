@@ -669,24 +669,12 @@ export const SortIcon = ({ dataTestId, color = grayColor, ...props }) => (
 
 export const DraggableIcon = ({ color = baseColor, ...props }) => (
   <svg
-    width="16"
-    height="14"
-    viewBox="0 0 16 14"
-    fill={color}
+    viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
+    className="svgIcon-primary"
   >
-    <path
-      d="M1.5 4H16.5"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M1.5 12H16.5"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
+    <path d="M1.5 4H16.5"/>
+    <path d="M1.5 12H16.5"/>
   </svg>
 );
 

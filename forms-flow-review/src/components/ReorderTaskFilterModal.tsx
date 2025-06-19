@@ -118,7 +118,6 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
           show={showModal}
           centered
           size="sm"
-          backdrop="static"
         >
           <Modal.Header>
             <Modal.Title> {t("Re-order And Hide Filters")} </Modal.Title>

@@ -4,7 +4,6 @@ import "./roles.scss";
 import { useParams } from "react-router-dom";
 import { Translation, useTranslation } from "react-i18next";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import { fetchUsers } from "../../services/users";
 import {
   CreateRole,
@@ -19,7 +18,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
-// import { CustomButton } from "@formsflow/components";
+import { CustomButton } from "@formsflow/components";
 
 
 import {removingTenantId} from "../../utils/utils.js";
@@ -358,21 +357,21 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-            <Button
-              variant="primary"
+            <CustomButton
               onClick={handleCloseDeleteModal}
               data-testid="roles-confirm-delete-button"
-            >
-              {t("No, Keep This Role")}
-            </Button>
-            <Button
-              variant="secondary"
-              disabled={disabled}
+              label={t("No, Keep This Role")}
+              ariaLabel={t("No, Keep This Role")}
+            />
+
+            <CustomButton
               onClick={() => deleteRole(deleteCandidate)}
               data-testid="roles-confirm-delete-button"
-            >
-              {t("Yes, Delete This Role")}
-            </Button>
+              label={t("Yes, Delete This Role")}
+              ariaLabel={t("Yes, Delete This Role")}
+              disabled={disabled}
+              secondary
+            />
           </div>
         </Modal.Footer>
       </Modal>
@@ -451,22 +450,21 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-            <Button
-              variant="primary"
-              disabled={disabled}
+            <CustomButton
               onClick={handleCreateRole}
-              type="submit"
               data-testid="create-new-role-modal-submit-button"
-            >
-              {t("Create This Role")}
-            </Button>
-            <Button
-              variant="secondary"
+              label={t("Create This Role")}
+              ariaLabel={t("Create This Role")}
+              disabled={disabled}
+            />
+
+            <CustomButton
               onClick={handleCloseRoleModal}
               data-testid="create-new-role-modal-cancel-button"
-            >
-              {t("Cancel, Do Not Create")}
-            </Button>
+              label={t("Cancel, Do Not Create")}
+              ariaLabel={t("Cancel, Do Not Create")}
+              secondary
+            />
           </div>
         </Modal.Footer>
       </Modal>
@@ -544,24 +542,21 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-          <Button
-              variant="primary"
+            <CustomButton
               disabled={disabled}
               onClick={handleUpdateRole}
-              type="submit"
               data-testid="edit-role-modal-save-button"
-            >
-              {t("Save Changes")}
-            </Button>
-
-            <Button
-              variant="secondary"
+              label={t("Save Changes")}
+              ariaLabel={t("Save Changes")}
+            />
+            
+            <CustomButton
               onClick={handleCloseEditRoleModal}
               data-testid="edit-role-modal-cancel-button"
-            >
-              {t("Discard Changes")}
-            </Button>
-            
+              label={t("Discard Changes")}
+              ariaLabel={t("Discard Changes")}
+              secondary
+            />
           </div>
         </Modal.Footer>
       </Modal>
@@ -730,15 +725,15 @@ const Roles = React.memo((props: any) => {
               dataTestId="search-role-input"
             />
           </div>
-          <Button
-            variant="primary"
+          <CustomButton
             onClick={handleShowRoleModal}
             data-testid="roles-create-new-role-button"
-          >
-            <i className="fa-solid fa-plus me-2"></i>{" "}
-            <Translation>{(t) => t("New Role")}</Translation>
-          </Button>
+            label={<Translation>{(t) => t("New Role")}</Translation>}
+            ariaLabel={<Translation>{(t) => t("New Role")}</Translation>}
+            action
+          />
         </div>
+
         {!props?.loading ? (
           <div>
           <BootstrapTable
