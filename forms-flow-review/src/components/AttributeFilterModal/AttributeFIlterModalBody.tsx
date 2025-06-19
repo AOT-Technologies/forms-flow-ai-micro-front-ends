@@ -177,7 +177,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     getTaskAccess();
 
 
-}, [shareAttrFilter, selectedFilter]);
+}, [attributeFilter]);
 
 const getTaskAccess = () => {
   if (shareAttrFilter === FILTER_SHARE_OPTIONS.PRIVATE) {
