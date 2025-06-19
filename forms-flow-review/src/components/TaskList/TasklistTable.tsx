@@ -79,6 +79,7 @@ const TaskListTable = () => {
   } = useSelector((state: any) => state.task);
   const { tenantId } = useParams();
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
+  const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const taskvariables = selectedFilter?.variables ?? []; 
   const redirectUrl = useRef(
@@ -324,7 +325,7 @@ const TaskListTable = () => {
         data-testid="table-outer-container"
         aria-label={t("Table outer container")}
       >
-        <ReusableResizableTable
+        <ReusableResizableTable 
               columns={columns}
               data={tasksList}
               renderRow={renderRow}
@@ -333,6 +334,7 @@ const TaskListTable = () => {
                 "No tasks have been found. Try a different filter combination or contact your admin."
               )}
               onColumnResize={handleColumnResize}
+              loading={isTaskListLoading}
               tableClassName="resizable-table"
               headerClassName="resizable-header"
               containerClassName="resizable-table-container"
@@ -366,6 +368,7 @@ const TaskListTable = () => {
             pageSizeAriaLabel={t("Select number of tasks per page")}
             paginationDataTestId="task-pagination-controls"
             paginationAriaLabel={t("Navigate between task pages")}
+            loader={isTaskListLoading}
           />
         )}
       </tfoot>
