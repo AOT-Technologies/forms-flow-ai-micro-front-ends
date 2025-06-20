@@ -306,7 +306,7 @@ $white-color: var(--ff-white);
   thead {
     position: sticky;
     top: 0;
-    z-index: 3;
+    z-index: 102;
     background-color: var(--ff-body-bg);
 
     th {
@@ -351,7 +351,7 @@ $white-color: var(--ff-white);
         position: sticky;
         right: 0;
         background-color: var(--ff-body-bg);
-        z-index: 2;
+        z-index: 101;
         border-left: 1px solid var(--ff-gray-medium-dark);
         text-align: left;
         vertical-align: middle; 
