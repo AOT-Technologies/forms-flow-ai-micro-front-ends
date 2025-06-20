@@ -2,12 +2,12 @@ import ACTION_CONSTANTS from "../actions/actionConstants";
 
 const initialState = {
     analyzeSubmissionSortParams: {
-        activeKey: "formName",
-        formName: { sortOrder: "asc" },
+        activeKey: "form_name",
+        form_name: { sortOrder: "asc" },
         id: { sortOrder: "asc" },
-        createdBy: { sortOrder: "asc" },
+        created_by: { sortOrder: "asc" },
         created: { sortOrder: "asc" },
-        applicationStatus: { sortOrder: "asc" },
+        application_status: { sortOrder: "asc" },
     },
     page: 1,
     limit: 10,
