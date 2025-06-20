@@ -47,10 +47,10 @@ const TaskSubmissionList: React.FC = () => {
   // Columns Configuration
   const columns: Column[] = useMemo(() => [
     { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
-    { name: "Form Name", sortKey: "formName", width: 200, resizable: true },
-    { name: "Submitter", sortKey: "createdBy", width: 200, resizable: true },
+    { name: "Form Name", sortKey: "form_name", width: 200, resizable: true },
+    { name: "Submitter", sortKey: "created_by", width: 200, resizable: true },
     { name: "Submission Date", sortKey: "created", width: 180, resizable: true },
-    { name: "Status", sortKey: "applicationStatus", width: 160, resizable: true },
+    { name: "Status", sortKey: "application_status", width: 160, resizable: true },
     { name: "", sortKey: "actions", width: 100 },
   ], []);
 
