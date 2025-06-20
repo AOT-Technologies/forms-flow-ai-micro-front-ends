@@ -1048,9 +1048,9 @@ export const NavbarTaskIcon = ({
     <path
       d="M8 12.6786L10.5 15.3571L15.5 10"
       stroke="white"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -1071,9 +1071,9 @@ export const NavbarSubmitIcon = ({
       <path 
       d="M6.41992 10.1029L17.3302 9L10.9199 17.8971L10.835 12.75L6.41992 10.1029Z" 
       stroke="white" 
-      stroke-width="2" 
-      stroke-linecap="round" 
-      stroke-linejoin="round"
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
       />
     </svg>
 );

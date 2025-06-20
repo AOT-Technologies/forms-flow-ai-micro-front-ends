@@ -28,6 +28,7 @@
     color: var(--navbar-main-menu-active-font-color);
     background-color: var(--navbar-bg-color);
     gap: 0.5rem;
+    box-shadow: none;
 
     &:focus {
       box-shadow: none;
