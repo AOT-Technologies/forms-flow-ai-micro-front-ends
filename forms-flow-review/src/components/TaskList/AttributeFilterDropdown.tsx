@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { useTranslation } from "react-i18next";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   setAttributeFilterToEdit,
   setSelectedBpmAttributeFilter,
