@@ -100,14 +100,6 @@ const AttributeFilterDropdown = () => {
   const filterDropdownAttributeItems = () => {
     const attributeDropdownItemsArray = [];
 
-    const noFilter = {
-      content: <em>{t("No attribute filters found")}</em>,
-      onClick: () => {},
-      type: "none",
-      dataTestId: "no-attr-filters",
-      ariaLabel: t("No attribute filters available"),
-    };
-
     const createCustomField = {
       content: (
         <span>
@@ -191,12 +183,8 @@ const AttributeFilterDropdown = () => {
 
     const isSearching = filterSearchTerm?.trim().length > 0;
 
-    if (filteredItems.length === 0) {
-      attributeDropdownItemsArray.push(noFilter);
-    }
-
     // Only show "All Fields" when not searching
-    if (!isSearching) {
+    if (!isSearching || filteredItems.length === 0) {
       attributeDropdownItemsArray.push(clearAttributeFilter);
     }
 
