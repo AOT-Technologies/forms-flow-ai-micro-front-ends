@@ -175,13 +175,12 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
                               <div className="w-30 content-headings me-auto">
                                 {entry.applicationStatus}
                               </div>
-
                               <div
                                 className={`normal-text w-100 gap-${
                                   showBpmnDiagram ? "5" : "3"
                                 } d-flex justify-content-${
                                   showBpmnDiagram ? "between" : "end"
-                                } align-items-center $`}
+                                } align-items-center`}
                               >
                                 <div>
                                   <div className="content-headings">

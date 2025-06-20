@@ -90,7 +90,7 @@ const TaskSubmissionList: React.FC = () => {
     dispatch(setAnalyzeSubmissionLimit(newLimit));
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
- const customTdValue = (index, value) => {
+ const customTdValue = (value, index) => {
   return  <td key={index+value}><div className="text-overflow-ellipsis">{value}  </div></td>
 
  }
@@ -98,7 +98,7 @@ const TaskSubmissionList: React.FC = () => {
   const renderRow = ({id, formName,createdBy,created,applicationStatus}: Submission) => (
     <tr key={id}>
       {
-        [id, formName,createdBy,formatDate(created),applicationStatus].map((index,item)=>customTdValue(index,item))
+        [id, formName,createdBy,formatDate(created),applicationStatus].map((item,index)=>customTdValue(item,index))
       }
       <td>
         <div className="text-overflow-ellipsis ">

@@ -20,8 +20,8 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
     const [bpmnViewer, setBpmnViewer] = useState<any>(null);
 
     const containerRef = useCallback((node: HTMLDivElement | null) => {
-      if (node !== null) {
-        const viewerInstance = new BpmnJS({ container: "#process-diagram-container" });
+      if (node) {
+        const viewerInstance = new BpmnJS({ container: node});
         setBpmnViewer(viewerInstance);
       }
     }, []);
