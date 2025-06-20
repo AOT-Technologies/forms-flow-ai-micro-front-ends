@@ -267,7 +267,7 @@ const TaskListTable = () => {
       aria-label={getCellAriaLabel(column, task)}
     >
       <div
-        className="customizable_td_row"
+        className={`${column.sortKey !== "assignee" ? "customizable_td_row" : ""} `}
         style={{
           WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
         }}
