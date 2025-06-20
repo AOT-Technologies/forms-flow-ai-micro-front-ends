@@ -185,9 +185,6 @@
       display: none;
     }
 
-    &.no-arrow .accordion-button {
-      padding-left: 3.2rem;
-    }
 
     &.active .accordion-button {
       background-color: var(--navbar-active-submenu-bg-color);

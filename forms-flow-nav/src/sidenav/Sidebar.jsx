@@ -330,6 +330,48 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       {renderLogo(hideLogo)}
       <div className="options-container" data-testid="options-container">
         <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
+          {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.REVIEW.value}
+              optionsCount="0"
+              mainMenu="Review"
+              subMenu={[
+                {
+                  name: "Review",
+                  path: "review",
+                },
+              ]}
+              subscribe={props.subscribe}
+            />
+          )}
+
+          {(isCreateSubmissions ||
+            (showApplications &&
+              isViewSubmissions &&
+              ENABLE_APPLICATIONS_MODULE)) && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.SUBMIT.value}
+              optionsCount="0"
+              mainMenu="Submit"
+              subMenu={[
+                {
+                  name: "Forms",
+                  path: "form",
+                  supportedSubRoutes: [
+                    "form",
+                    "bundle",
+                    "application",
+                    "draft",
+                  ],
+                  unsupportedSubRoutes: ["formflow", "bundleflow"],
+                },
+              ]}
+              subscribe={props.subscribe}
+            />
+          )}
+
           {ENABLE_FORMS_MODULE && (isCreateDesigns || isViewDesigns) && (
             <MenuComponent
               baseUrl={baseUrl}
@@ -338,13 +380,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               mainMenu="Design"
               subMenu={[
                 {
-                  name: "Forms",
+                  name: "Forms & Flows",
                   path: "formflow",
                 },
                 ...(IS_ENTERPRISE && isManageBundles
                   ? [
                       {
-                        name: "Bundle",
+                        name: "Bundles",
                         path: "bundleflow",
                         isPremium: true,
                       },
@@ -394,47 +436,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             />
           )}
 
-          {(isCreateSubmissions ||
-            (showApplications &&
-              isViewSubmissions &&
-              ENABLE_APPLICATIONS_MODULE)) && (
-            <MenuComponent
-              baseUrl={baseUrl}
-              eventKey={SectionKeys.SUBMIT.value}
-              optionsCount="1"
-              mainMenu="Submit"
-              subMenu={[
-                {
-                  name: "Forms",
-                  path: "form",
-                  supportedSubRoutes: [
-                    "form",
-                    "bundle",
-                    "application",
-                    "draft",
-                  ],
-                  unsupportedSubRoutes: ["formflow", "bundleflow"],
-                },
-              ]}
-              subscribe={props.subscribe}
-            />
-          )}
 
-          {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
-            <MenuComponent
-              baseUrl={baseUrl}
-              eventKey={SectionKeys.REVIEW.value}
-              optionsCount="1"
-              mainMenu="Review"
-              subMenu={[
-                {
-                  name: "Review",
-                  path: "review",
-                },
-              ]}
-              subscribe={props.subscribe}
-            />
-          )}
           {isManageWorkflows &&
             !isCreateDesigns &&
             !isViewDesigns &&
