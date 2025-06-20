@@ -157,7 +157,7 @@ const onSearch = (searchTerm: string) => {
     // Adding create filter and reorder filter
     if (createFilters) {
       filterDropdownItemsArray.push(createFilter);
-      if (filtersAndCount.length > 1) {
+      if (filtersAndCount.length > 0) {
         filterDropdownItemsArray.push(reOrderFilter);
       }
     }
