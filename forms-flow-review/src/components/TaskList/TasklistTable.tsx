@@ -10,10 +10,9 @@ import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { isEqual, cloneDeep } from "lodash";
 import {
+  resetTaskListParams,
   setBPMTaskListActivePage,
   setFilterListSortParams,
-  setIsUnsavedFilter,
-  setSelectedFilter,
   setTaskListLimit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
@@ -122,8 +121,7 @@ const TaskListTable = () => {
       }
       return variable;
     });
-    dispatch(setSelectedFilter({ ...updatedData, variables }));
-    dispatch(setIsUnsavedFilter(true));
+    dispatch(resetTaskListParams({selectedFilter:{ ...updatedData, variables },isUnsavedFilter: true}));
 
   };
 
