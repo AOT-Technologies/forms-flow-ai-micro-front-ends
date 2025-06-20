@@ -24,11 +24,11 @@ const AttributeFilterDropdown = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { createFilters } = userRoles();
-  const selectedAttributeFilter = useSelector(
-    (state: RootState) => state.task?.selectedAttributeFilter
-  );
   const userDetails: UserDetail = useSelector(
     (state: RootState) => state.task.userDetails
+  );
+  const selectedAttributeFilter = useSelector(
+    (state: RootState) => state.task?.selectedAttributeFilter
   );
   const attributeFilterList = useSelector(
     (state: RootState) => state.task.attributeFilterList || []
@@ -36,6 +36,7 @@ const AttributeFilterDropdown = () => {
   const [showAttributeFilter, setShowAttributeFilter] = useState(false);
   const [showReorderAttributeFilterModal, setShowReorderAttributeFilterModal] =
     useState(false);
+  const [filterSearchTerm, setFilterSearchTerm] = useState("");
   const isUnsavedAttributeFilter = useSelector(
     (state: RootState) => state.task.isUnsavedAttributeFilter
   );
@@ -45,7 +46,7 @@ const AttributeFilterDropdown = () => {
   const handleToggleAttrFilterModal = () => {
     setShowAttributeFilter((prev) => !prev);
   };
-  const [filterSearchTerm, setFilterSearchTerm] = useState("");
+
   const handleAttributeFilterModalClose = () => {
     dispatch(setAttributeFilterToEdit(null));
     setShowAttributeFilter(false);
@@ -78,8 +79,10 @@ const AttributeFilterDropdown = () => {
     );
     // we need to patch the current criteria with process variables from attribute filter
     if (processVariables && processVariables.length > 0) {
-      currentCriteria.processVariables?.push(...processVariables);
+      currentCriteria.processVariables = currentCriteria.processVariables || [];
+      currentCriteria.processVariables.push(...processVariables);
     }
+
     // changing  assignee if assignee changed in attirbuite filter
     currentCriteria.assignee = attributeFilter?.criteria.assignee;
     const data = { ...selectedFilter, criteria: currentCriteria };
@@ -94,10 +97,10 @@ const AttributeFilterDropdown = () => {
     dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
   };
 
-  const filterDropdownAttributeItems = useMemo(() => {
-    const filterDropdownItemsArray = [];
+  const filterDropdownAttributeItems = () => {
+    const attributeDropdownItemsArray = [];
 
-    const noAttributeFilter = {
+    const noFilter = {
       content: <em>{t("No attribute filters found")}</em>,
       onClick: () => {},
       type: "none",
@@ -105,21 +108,10 @@ const AttributeFilterDropdown = () => {
       ariaLabel: t("No attribute filters available"),
     };
 
-    const clearAttributeFilter = {
-      content: <em>{t("All Fields")}</em>,
-      onClick: () => changeAttributeFilterSelection(null),
-      type: "none",
-      dataTestId: "attr-filter-clear",
-      ariaLabel: t("All Fields"),
-    };
-
-    const customAttribute = {
+    const createCustomField = {
       content: (
         <span>
-          <span>
-            <AddIcon className="filter-plus-icon" />
-          </span>{" "}
-          {t("Custom Form Fields")}
+          <AddIcon className="filter-plus-icon" /> {t("Custom Form Fields")}
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
@@ -128,12 +120,10 @@ const AttributeFilterDropdown = () => {
       ariaLabel: t("Custom Attribute Filter"),
     };
 
-    const reorderOption = {
+    const reOrderAttribute = {
       content: (
         <span>
-          <span>
-            <PencilIcon className="filter-edit-icon" />
-          </span>{" "}
+          <PencilIcon className="filter-edit-icon" />{" "}
           {t("Re-order And Hide Attribute Filters")}
         </span>
       ),
@@ -143,75 +133,87 @@ const AttributeFilterDropdown = () => {
       ariaLabel: t("Re-order And Hide Attribute Filters"),
     };
 
-    const mappedItems =
-      attributeFilterList
-        ?.filter((filter) => {
-          const filterName = (filter.name).toLowerCase();
-          return (
-            !filter.hide && filterName.includes(filterSearchTerm.toLowerCase())
-          );
-        })
-        .map((filter) => {
-          const createdByMe =
-            userDetails?.preferred_username === filter?.createdBy;
-          const isSharedToPublic =
-            !filter?.roles?.length && !filter?.users?.length;
-          const isSharedToRoles = filter?.roles?.length;
-          const isSharedToMe = filter?.roles?.some((role) =>
-            userDetails?.groups?.includes(role)
-          );
+    const clearAttributeFilter = {
+      className: !selectedAttributeFilter?.id ? "selected-filter-item" : "",
+      content: <>{t("All Fields")}</>,
+      onClick: () => changeAttributeFilterSelection(null),
+      type: "none",
+      dataTestId: "attr-filter-item-none",
+      ariaLabel: t("All Fields"),
+    };
 
-          let icon = null;
-          if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
-            icon = <SharedWithOthersIcon className="shared-icon" />;
-          } else if (isSharedToPublic || isSharedToMe) {
-            icon = <SharedWithMeIcon className="shared-icon" />;
-          }
+    const filteredItems = Array.isArray(attributeFilterList)
+      ? attributeFilterList
+          .filter((filter) => {
+            const nameMatch = filter.name
+              .toLowerCase()
+              .includes(filterSearchTerm?.toLowerCase() || "");
+            const notHidden = !filter?.hide;
+            return nameMatch && notHidden;
+          })
+          .map((filter) => {
+            const createdByMe =
+              userDetails?.preferred_username === filter?.createdBy;
+            const isSharedToPublic =
+              !filter?.roles?.length && !filter?.users?.length;
+            const isSharedToRoles = filter?.roles?.length > 0;
+            const isSharedToMe = filter?.roles?.some((role) =>
+              userDetails?.groups?.includes(role)
+            );
 
-          return {
-            className:
-              filter.id === selectedAttributeFilter?.id
-                ? "selected-filter-item"
-                : "",
-            content: (
-              <span className="d-flex justify-content-between align-items-center">
-                {t(filter.name)} {icon && <span>{icon}</span>}
-              </span>
-            ),
-            onClick: () => changeAttributeFilterSelection(filter),
-            type: String(filter.id),
-            dataTestId: `attr-filter-item-${filter.id}`,
-            ariaLabel: t("Select attribute filter {{filterName}}", {
-              filterName: t(filter.name),
-            }),
-          };
-        }) || [];
+            let icon = null;
+            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+              icon = <SharedWithOthersIcon className="shared-icon" />;
+            } else if (isSharedToPublic || isSharedToMe) {
+              icon = <SharedWithMeIcon className="shared-icon" />;
+            }
 
-    if (!mappedItems.length) {
-      return createFilters
-        ? [noAttributeFilter, customAttribute]
-        : [noAttributeFilter];
+            return {
+              className:
+                filter?.id === selectedAttributeFilter?.id
+                  ? "selected-filter-item"
+                  : "",
+              content: (
+                <span className="d-flex justify-content-between align-items-center">
+                  {t(filter.name)}
+                  {icon && <span>{icon}</span>}
+                </span>
+              ),
+              onClick: () => changeAttributeFilterSelection(filter),
+              type: String(filter.id),
+              dataTestId: `attr-filter-item-${filter.id}`,
+              ariaLabel: t("Select attribute filter {{filterName}}", {
+                filterName: t(filter.name),
+              }),
+            };
+          })
+      : [];
+
+    const isSearching = filterSearchTerm?.trim().length > 0;
+
+    if (filteredItems.length === 0) {
+      attributeDropdownItemsArray.push(noFilter);
     }
 
-    // Add standard filters
-    filterDropdownItemsArray.push(clearAttributeFilter, ...mappedItems);
+    // Only show "All Fields" when not searching
+    if (!isSearching) {
+      attributeDropdownItemsArray.push(clearAttributeFilter);
+    }
 
-    // Conditionally add custom and reorder options
+    // Add dynamic filtered items
+    attributeDropdownItemsArray.push(...filteredItems);
+
+    // Add "Create" and "Reorder" only if feature is enabled
     if (createFilters) {
-      filterDropdownItemsArray.push(customAttribute);
-      if (mappedItems.length > 0) {
-        filterDropdownItemsArray.push(reorderOption);
+      attributeDropdownItemsArray.push(createCustomField);
+
+      if (filteredItems.length > 0) {
+        attributeDropdownItemsArray.push(reOrderAttribute);
       }
     }
 
-    return filterDropdownItemsArray;
-  }, [
-    attributeFilterList,
-    userDetails,
-    filterSearchTerm,
-    selectedAttributeFilter,
-    t
-  ]);
+    return attributeDropdownItemsArray;
+  };
 
   const title = selectedAttributeFilter
     ? `${
@@ -233,9 +235,13 @@ const AttributeFilterDropdown = () => {
         size="md"
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
         onSearch={onSearch}
-        dropdownItems={filterDropdownAttributeItems}
+        dropdownItems={filterDropdownAttributeItems()}
         extraActionIcon={<PencilIcon color="white" />}
-        extraActionOnClick={handleEditAttrFilter}
+        extraActionOnClick={
+          !selectedAttributeFilter
+            ? handleToggleAttrFilterModal
+            : handleEditAttrFilter
+        }
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
         extraActionAriaLabel={t("Edit attribute filters")}

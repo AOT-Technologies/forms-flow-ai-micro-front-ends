@@ -39,6 +39,7 @@ interface Task {
   assignee?: string;
   _embedded?: {
     variable?: Array<{ name: string; value: any }>;
+    candidateGroups?: Array<{ groupId: string }>;
   };
 }
 
@@ -46,9 +47,13 @@ const getCellValue = (column: Column, task: Task) => {
   const { sortKey } = column;
   const { name: taskName, created, _embedded } = task ?? {};
   const variables = _embedded?.variable ?? [];
+  const candidateGroups = _embedded?.candidateGroups ?? [];
+
   if (column.sortKey === "applicationId") {
     return variables.find((v) => v.name === "applicationId")?.value ?? "-";
   }
+
+
 
   switch (sortKey) {
     case "name":
@@ -57,6 +62,9 @@ const getCellValue = (column: Column, task: Task) => {
       return created ? HelperServices.getLocaldate(created) : "N/A";
     case "assignee":
       return <TaskAssigneeManager task={task} />;
+     case "roles": {
+    return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
+  }
     default:
       return variables.find((v) => v.name === sortKey)?.value ?? "-";
   }
@@ -79,6 +87,7 @@ const TaskListTable = () => {
   } = useSelector((state: any) => state.task);
   const { tenantId } = useParams();
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
+  const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const taskvariables = selectedFilter?.variables ?? []; 
   const redirectUrl = useRef(
@@ -324,7 +333,7 @@ const TaskListTable = () => {
         data-testid="table-outer-container"
         aria-label={t("Table outer container")}
       >
-        <ReusableResizableTable
+        <ReusableResizableTable 
               columns={columns}
               data={tasksList}
               renderRow={renderRow}
@@ -333,6 +342,7 @@ const TaskListTable = () => {
                 "No tasks have been found. Try a different filter combination or contact your admin."
               )}
               onColumnResize={handleColumnResize}
+              loading={isTaskListLoading}
               tableClassName="resizable-table"
               headerClassName="resizable-header"
               containerClassName="resizable-table-container"
@@ -366,6 +376,7 @@ const TaskListTable = () => {
             pageSizeAriaLabel={t("Select number of tasks per page")}
             paginationDataTestId="task-pagination-controls"
             paginationAriaLabel={t("Navigate between task pages")}
+            loader={isTaskListLoading}
           />
         )}
       </tfoot>

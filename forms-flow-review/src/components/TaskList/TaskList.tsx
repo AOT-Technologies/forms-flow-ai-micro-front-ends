@@ -72,23 +72,25 @@ const TaskList = () => {
     const updatedfilters = filters.filter((filter) => !filter.hide);
     const defaultFilterId = filterResponse.data.defaultFilter;
     if (filters?.length) {
-      batch(() => {
-        dispatch(setBPMFilterList(filters));
-        defaultFilterId && dispatch(setDefaultFilter(defaultFilterId));
-        dispatch(fetchBPMTaskCount(updatedfilters));
-      });
+
+  batch(() => {
+    dispatch(setBPMFilterList(filters));
+    defaultFilterId && dispatch(setDefaultFilter(defaultFilterId));
+    dispatch(fetchBPMTaskCount(updatedfilters));
+  });
+
       // If no default filter, will select All Tasks filter if its exists, else will select first filter
-      if (!defaultFilterId) {
-        const newFilter = (filterList.find(filter => filter.name === "All Tasks") || filterList[0]);
-        dispatch(setDefaultFilter(newFilter?.id));
-        updateDefaultFilter(newFilter?.id)
-      }
-    }
-    // if no filter is present, the data will be shown as All Tasks response
-    else {
-      dispatch(setSelectedFilter(allTasksPayload));
-      dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
-    }
+  if (defaultFilterId !== filters.find((f) => f.id === defaultFilterId)?.id) {
+    const newFilter = filters.find(f => f.name === "All Tasks") || filters[0];
+    dispatch(setDefaultFilter(newFilter.id));
+    updateDefaultFilter(newFilter.id);
+  }
+}   
+// if no filter is present, the data will be shown as All Tasks response
+else {
+  dispatch(setSelectedFilter(allTasksPayload));
+  dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
+}
     }
     dispatch(setBPMFilterLoader(false));
   };
@@ -206,8 +208,8 @@ const TaskList = () => {
         dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
         dispatch(fetchAttributeFilterList(currentFilter.id));
         dispatch(setBPMTaskListActivePage(1));
-        dispatch(setTaskListLimit(15));
-        dispatch(fetchServiceTaskList(currentFilter, null, 1, 15));
+        dispatch(setTaskListLimit(25));
+        dispatch(fetchServiceTaskList(currentFilter, null, 1, 25));
       });
     }
   }, [defaultFilterId]);

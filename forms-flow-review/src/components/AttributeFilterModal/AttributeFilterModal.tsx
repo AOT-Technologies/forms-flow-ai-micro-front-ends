@@ -57,7 +57,10 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
       attributeFilterToEdit?.id
     );
     setUpdateSuccess(onClose, 2);
+    const filterList = attributeFilterList.filter((item) => item.id !== response.data.id);
     dispatch(setSelectedBpmAttributeFilter(response.data));
+    const newAttributeFilterList = [response.data, ...filterList];
+    dispatch(setAttributeFilterList(newAttributeFilterList));
     dispatch(fetchServiceTaskList(response.data, null, 1, limit));
   };
 
