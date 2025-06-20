@@ -49,6 +49,7 @@ const TaskDetails = () => {
   const dispatch = useDispatch();
   const {viewTaskHistory} = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [disabledMode,setDisabledMode] = useState(false);
   // Redux State Selectors
   const tenantKey = useSelector(
     (state: any) => state.tenants?.tenantData?.tenantkey
@@ -62,9 +63,22 @@ const TaskDetails = () => {
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
   )?.preferred_username;
-
+  const taskAssignee = useSelector(
+    (state: any) => state?.task?.taskAssignee
+  );
   // Redirection URL
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+
+  //disable the form if task not assigned to himself 
+  useEffect(()=>{
+    if(taskAssignee !==currentUser){
+      setDisabledMode(true);
+    }
+    else{
+      setDisabledMode(false);
+    }
+  },[taskAssignee,currentUser])
+
 
   // Set selected task ID on mount
   useEffect(() => {
@@ -231,7 +245,7 @@ const TaskDetails = () => {
           </div>
         </Card.Body>
       </Card>
-      <div className="scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border">
+      <div className ={`scrollable-overview-with-header  ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`} >
         <TaskForm
           currentUser={currentUser}
           onFormSubmit={onFormSubmitCallback}

@@ -33,7 +33,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
     const taskDetailsLoading = useSelector(
     (state: any) => state?.task?.taskDetailsLoading
   );
-  const [isReadOnly, setIsReadOnly] = useState(false)
+  const [isReadOnly, setIsReadOnly] = useState(false);
 
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
@@ -53,9 +53,8 @@ const isLoading =
   isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data || taskDetailsLoading;
   // Show loading UI if loading
  useEffect(() => {
-   setIsReadOnly(taskAssignee && currentUser && taskAssignee !== currentUser);
+   setIsReadOnly( taskAssignee !== currentUser);
  }, [taskAssignee, currentUser]);
-
   if (isLoading) {
     return (
       <div className="container">
