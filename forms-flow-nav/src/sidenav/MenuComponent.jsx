@@ -2,7 +2,7 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
-import { ChevronIcon ,ShowPremiumIcons, NavbarTaskIcon, NavbarSubmitIcon } from "@formsflow/components";
+import { ChevronIcon ,ShowPremiumIcons } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { StorageService } from "@formsflow/service";
 import PropTypes from "prop-types";
