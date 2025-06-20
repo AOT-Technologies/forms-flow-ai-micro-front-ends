@@ -113,7 +113,7 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
 
         try {
           // Save preferences
-          await saveFilterPreference(updatedFiltersPreference, "ATTRIBUTE");
+         await saveFilterPreference(updatedFiltersPreference, "ATTRIBUTE", selectedFilter?.id);
           // Fetch new filters list
           const actionResult = await dispatch(
             fetchAttributeFilterList(selectedFilter?.id) as any
