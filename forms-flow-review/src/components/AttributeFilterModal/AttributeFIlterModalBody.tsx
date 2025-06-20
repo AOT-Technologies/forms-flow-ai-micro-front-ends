@@ -171,7 +171,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 
 
   useEffect(() => {
-    if(selectedAttributeFilter?.roles.length > 0 || (selectedAttributeFilter?.users.length == 0 && selectedAttributeFilter.roles.length == 0)){ 
+    if(attributeFilter &&(selectedAttributeFilter?.roles.length > 0 || (selectedAttributeFilter?.users.length == 0 && selectedAttributeFilter.roles.length == 0))){ 
       setShareAttrFilter(FILTER_SHARE_OPTIONS.SAME_AS_TASKS);
     }
     getTaskAccess();
