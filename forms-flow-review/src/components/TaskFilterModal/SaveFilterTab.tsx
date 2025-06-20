@@ -52,7 +52,6 @@ const SaveFilterTab = ({
   const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
   const createdByMe = filterToEdit?.createdBy === userDetails?.preferred_username;
   const editRole = manageAllFilters || (createdByMe && createFilters);
-  const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
 
 
   let saveAndUpdateButtonVariant = "secondary"; // Default value
@@ -212,8 +211,9 @@ const SaveFilterTab = ({
       return null; 
     }
 
-    if (createFilters && (selectedFilter.name === "All Tasks" && !filterToEdit)) {
-      return (
+    if (createFilters) {
+      if(filterToEdit?.name !== "All Tasks"){
+        return (
         <div className="pt-4">
           <CustomButton
             size="md"
@@ -237,6 +237,7 @@ const SaveFilterTab = ({
           />
         </div>
       );
+      }
     }
     return null;
   };
