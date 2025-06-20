@@ -135,7 +135,8 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
             <CustomInfo
               className="note"
               heading="Note"
-              content={t(
+              content={(attributeFilterToEdit.users.length>0) ? t("This action cannot be undone."): 
+                t(
                 "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow."
               )}
               dataTestId="attribute-filter-delete-note"
@@ -144,7 +145,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
           primaryBtnAction={toggleDeleteModal}
           onClose={toggleDeleteModal}
           primaryBtnText={t("No, Keep This Filter")}
-          secondaryBtnText={t("Yes, Delete This Filter For Everybody")}
+          secondaryBtnText={(attributeFilterToEdit.users.length>0) ? t("Yes, Delete This Filter"): t("Yes, Delete This Filter For Everybody")  }
           secondaryBtnAction={handleDeleteAttributeFilter}
           secondoryBtndataTestid="confirm-revert-button"
         />

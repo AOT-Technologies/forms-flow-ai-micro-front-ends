@@ -426,5 +426,12 @@ $white-color: var(--ff-white);
   overflow: hidden;               
   text-overflow: ellipsis;      
   white-space: normal;           
-  word-break: break-word;         
+  word-break: break-word;
+}
+
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block; 
 }

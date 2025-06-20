@@ -47,10 +47,10 @@ const TaskSubmissionList: React.FC = () => {
   // Columns Configuration
   const columns: Column[] = useMemo(() => [
     { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
-    { name: "Form Name", sortKey: "formName", width: 200, resizable: true },
-    { name: "Submitter", sortKey: "createdBy", width: 200, resizable: true },
+    { name: "Form Name", sortKey: "form_name", width: 200, resizable: true },
+    { name: "Submitter", sortKey: "created_by", width: 200, resizable: true },
     { name: "Submission Date", sortKey: "created", width: 180, resizable: true },
-    { name: "Status", sortKey: "applicationStatus", width: 160, resizable: true },
+    { name: "Status", sortKey: "application_status", width: 160, resizable: true },
     { name: "", sortKey: "actions", width: 100 },
   ], []);
 
@@ -90,26 +90,30 @@ const TaskSubmissionList: React.FC = () => {
     dispatch(setAnalyzeSubmissionLimit(newLimit));
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
+ const customTdValue = (value, index) => {
+  return  <td key={index+value}><div className="text-overflow-ellipsis">{value}  </div></td>
 
+ }
   // Row Renderer
-  const renderRow = (row: Submission) => (
-    <tr key={row.id}>
-      <td>{row.id}</td>
-      <td>{row.formName}</td>
-      <td>{row.createdBy}</td>
-      <td>{formatDate(row.created)}</td>
-      <td>{row.applicationStatus}</td>
+  const renderRow = ({id, formName,createdBy,created,applicationStatus}: Submission) => (
+    <tr key={id}>
+      {
+        [id, formName,createdBy,formatDate(created),applicationStatus].map((item,index)=>customTdValue(item,index))
+      }
       <td>
-        <CustomButton
+        <div className="text-overflow-ellipsis ">
+          <CustomButton
           size="table-sm"
           variant="secondary"
           label={t("View")}
-          onClick={() => dispatch(push(`${redirectUrl}application/${row.id}`))}
-          dataTestId={`view-task-${row.id}`}
+          onClick={() => dispatch(push(`${redirectUrl}application/${id}`))}
+          dataTestId={`view-task-${id}`}
           ariaLabel={t("View details for task {{taskName}}", {
-            taskName: row.formName ?? t("unnamed"),
+            taskName: formName ?? t("unnamed"),
           })}
         />
+        </div>
+        
       </td>
     </tr>
   );
