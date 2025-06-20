@@ -22,7 +22,7 @@ import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
-import { ApplicationLogo } from "@formsflow/components";
+import { ApplicationLogo, NavbarTaskIcon, NavbarSubmitIcon } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
@@ -40,7 +40,7 @@ const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t }) =>
       </div>
     </button>
     <button className="button-as-div sign-out-button" onClick={logout} data-testid="sign-out-button">
-      <p className="m-0">{t("Sign Out")}</p>
+      <p className="m-0">{t("Logout")}</p>
     </button>
   </div>
 );
@@ -319,6 +319,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
    
      return options;
   }
+
+  const iconBgColor =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-main-menu-active-font-color"
+  )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
+    "gray-darkest"
+  ).trim();
   
 
   return (
@@ -343,6 +350,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 },
               ]}
               subscribe={props.subscribe}
+              icon={<NavbarTaskIcon color={iconBgColor} />}
             />
           )}
 
@@ -369,6 +377,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 },
               ]}
               subscribe={props.subscribe}
+              icon={<NavbarSubmitIcon color={iconBgColor} />}
             />
           )}
 

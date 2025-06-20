@@ -13,7 +13,8 @@ const MenuComponent = ({
   subMenu,
   optionsCount,
   subscribe,
-  baseUrl
+  baseUrl,
+  icon
 }) => {
   const [tenant, setTenant] = React.useState({});
   const [activeMenu, setActiveMenu] = React.useState(null); 
@@ -76,9 +77,8 @@ const MenuComponent = ({
   getComputedStyle(document.documentElement).getPropertyValue(
     "--navbar-main-menu-active-font-color"
   )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
-    "--ff-gray-800"
+    "gray-darkest"
   ).trim();
-
   return (
     <Accordion.Item eventKey={eventKey}>
       <Accordion.Header
@@ -89,18 +89,16 @@ const MenuComponent = ({
         }`}
         onClick={noOptionsMenu ? handleHeaderClick : undefined}
       >
-        {mainMenu.toLowerCase() === "review" ? (
-          <NavbarTaskIcon  color={chevronColor}/>
-        ) : mainMenu.toLowerCase() === "submit" ? (
-          <NavbarSubmitIcon  color={chevronColor}/>
-        ) : !noOptionsMenu ? (
-          <ChevronIcon
-            width="10"
-            height="5"
-            className="custom-chevron"
-            color={chevronColor}
-          />
-        ) : null}
+          {icon ? (
+            <span>{icon}</span>
+          ) : !noOptionsMenu && (
+            <ChevronIcon
+              width="10"
+              height="5"
+              className="custom-chevron"
+              color={chevronColor}
+            />
+          )}
         <span>{t(mainMenu)}</span>
       </Accordion.Header>
       {!noOptionsMenu && (
@@ -141,6 +139,7 @@ MenuComponent.propTypes = {
   optionsCount: PropTypes.string.isRequired,
   subscribe: PropTypes.func.isRequired,
   baseUrl: PropTypes.string.isRequired,
+  icon: PropTypes.node,
 };
 
 export default MenuComponent;

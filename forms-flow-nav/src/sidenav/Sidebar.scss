@@ -124,7 +124,7 @@
     }
 
     .sign-out-button {
-      text-align: left;
+      justify-content: center;
       padding: var(--spacer-100) var(--spacer-150);
       border: none;
       cursor: pointer;
@@ -153,6 +153,8 @@
       line-height: var(--text-line-height);
       letter-spacing: var(--text-space-xs);
       background-color: var(--navbar-bg-color) !important;
+      text-align: left;
+      margin-left: var(--spacer-050) !important;
       margin: 0;
       cursor: pointer;
       border: none;
