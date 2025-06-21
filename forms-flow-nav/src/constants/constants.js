@@ -187,20 +187,20 @@ export const OPERATIONS = {
 export const PageSizes = [5, 10, 25, 50, 100, "all"];
 
 // draft config
-const DRAFT_POLLING_RATE_FROM_ENV =
-  (window._env_ && window._env_.REACT_APP_DRAFT_POLLING_RATE)
+const DRAFT_POLLING_RATE_FROM_ENV = window._env_?.REACT_APP_DRAFT_POLLING_RATE;
 
 export const DRAFT_POLLING_RATE = DRAFT_POLLING_RATE_FROM_ENV
   ? Number(DRAFT_POLLING_RATE_FROM_ENV)
   : null;
-const DRAFT_ENABLED_VARIABLE =
-  (window._env_ && window._env_.REACT_APP_DRAFT_ENABLED) ||
-  false;
+const DRAFT_ENABLED_VARIABLE = window._env_?.REACT_APP_DRAFT_ENABLED ||false;
 export const DRAFT_ENABLED =
   DRAFT_ENABLED_VARIABLE === "true" || DRAFT_ENABLED_VARIABLE === true
     ? true
     : false;
 
 // This is to check if the application is running in enterprise mode or not
-export const IS_ENTERPRISE =
-  (window._env_ && window._env_.REACT_APP_IS_ENTERPRISE) || false;
+export const IS_ENTERPRISE = window._env_?.REACT_APP_IS_ENTERPRISE || false;
+
+
+export const USER_NAME_DISPLAY_CLAIM =
+   window.env?.REACT_APP_USER_NAME_DISPLAY_CLAIM;

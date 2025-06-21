@@ -28,6 +28,12 @@ $btn-font-weight: bold;
 
 .btn-link {
   text-decoration: none !important;
+  --ff-btn-color: var(--default-link-color) !important;
+  --ff-btn-border-color: var(--default-link-color) !important;
+  --ff-btn-hover-color: var(--default-link-color) !important;
+  --ff-btn-hover-border-color: var(--default-link-color) !important;
+  --ff-btn-active-color: var(--default-link-color) !important;
+  --ff-btn-active-border-color: var(--default-link-color) !important;
 
   &:hover {
     text-decoration: underline !important;
@@ -35,7 +41,12 @@ $btn-font-weight: bold;
 
   &:focus,
   &.focus {
-    box-shadow: none;
+    box-shadow: none !important;
+  }
+  &:active,
+  &.active {
+    border: solid var(--default-link-color) !important;
+    border: 2px solid var(--default-link-color) !important;
   }
 }
 
@@ -64,7 +75,7 @@ $btn-font-weight: bold;
 }
 
 .delete_button {
-  color: var(--ff-danger);
+  color: var(--default-danger-color) !important;
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
 
@@ -112,8 +123,8 @@ $btn-font-weight: bold;
 }
 
 .btn-primary:focus-visible,
-.btn.btn-link:focus-visible,
-.btn.btn-link:focus,
+// .btn.btn-link:focus-visible,
+// .btn.btn-link:focus,
 .btn-info:focus-visible,
 .btn-info:focus,
 .btn-light:focus-visible,
@@ -123,7 +134,7 @@ $btn-font-weight: bold;
 .btn-secondary.focus-visible,
 .btn-secondary:focus,
 .nav-link:focus-visible,
-.form-check-input:focus-visible,
+// .form-check-input:focus-visible,
 .out-line:focus-visible {
   outline: 0.1875rem solid var(--ff-primary-200) !important;
 }
@@ -265,7 +276,7 @@ $btn-font-weight: bold;
     font-size: var(--font-size-xs) !important;
     padding: var(--spacer-050) var(--spacer-100) !important;
     font-weight: var(--font-weight-xl) !important;
-    border-radius: var(--radius-0100) !important;
+    border-radius: var(--sm-btn-border-radius) !important;
 
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-xs);
@@ -283,8 +294,8 @@ $btn-font-weight: bold;
     font-size: var(--font-size-sm) !important;
     padding: var(--spacer-075) var(--spacer-150) !important;
     font-weight: var(--font-weight-xl) !important;
-    border-radius: var(--radius-0125) !important;
-
+    border-radius: var(--md-btn-border-radius) !important;
+    
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
@@ -301,7 +312,7 @@ $btn-font-weight: bold;
     font-size: var(--font-size-sm) !important;
     padding: var(--spacer-100) var(--spacer-200) !important;
     font-weight: var(--font-weight-xl) !important;
-    border-radius: var(--radius-0150) !important;
+    border-radius: var(--lg-btn-border-radius) !important;
 
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
