@@ -14,7 +14,7 @@ import {
 } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
 import { replaceUrl } from "../../helper/helper";
-
+import { cloneDeep } from "lodash";
 export const fetchUserList = (...rest) => {
   const done = rest.length ? rest[0] : () => {};
   const getReviewerUserListApi = `${API.GET_API_USER_LIST}?permission=manage_tasks`;
@@ -73,9 +73,30 @@ export const fetchServiceTaskList = (
   return (dispatch) => {
     dispatch(setBPMTaskLoader(true));
     dispatch(setLastReqPayload(reqData));
+    // [TBD: need to fix properly ]if name is available in reqData, we need to set it to the name property of reqData
+    // this will cause an issue like if the name will come may be two times one form task name and one form form component key
+    const clonedReqData = cloneDeep(reqData); 
+    let criteria = clonedReqData?.criteria ??  {};
+    let taskName = null;
+    const updatedVariables = criteria.processVariables?.filter(
+      (variable) => {
+        if( variable.name === "name") taskName = variable;
+        return variable.name !== "name";
+      }
+    );
+
+    clonedReqData["criteria"] = {
+      ...criteria,
+      processVariables: updatedVariables,
+    };
+
+    if (taskName) {
+      clonedReqData.criteria["nameLike"] = taskName.value;
+    }
+    //-----------------------------------
     RequestService.httpPOSTRequestWithHAL(
       apiUrlgetTaskList,
-      reqData,
+      clonedReqData,
       StorageService.get(StorageService.User.AUTH_TOKEN)
     )
       .then((res) => {
