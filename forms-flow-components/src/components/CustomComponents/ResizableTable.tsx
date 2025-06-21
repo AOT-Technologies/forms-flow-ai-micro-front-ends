@@ -65,17 +65,14 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
     setColumns(columns);
   }, [columns]);
 
-  const handleMouseDown = useCallback(
-    (index: number, column: Column, e: React.MouseEvent): void => {
+  const handleMouseDown = (index: number, column: Column, e: React.MouseEvent): void => {
       if (!columns[index].resizable) return;
       resizingRef.current = column;
       startXRef.current = e.pageX;
       startWidthRef.current = columns[index].width;
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
-    },
-    [columns]
-  );
+    };
 
   const handleMouseMove = useCallback((e: MouseEvent): void => {
     if (resizingRef.current === null) return;
