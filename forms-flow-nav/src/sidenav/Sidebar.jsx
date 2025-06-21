@@ -22,7 +22,7 @@ import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
-import { ApplicationLogo } from "@formsflow/components";
+import { ApplicationLogo, NavbarTaskIcon, NavbarSubmitIcon } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
@@ -40,7 +40,7 @@ const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t }) =>
       </div>
     </button>
     <button className="button-as-div sign-out-button" onClick={logout} data-testid="sign-out-button">
-      <p className="m-0">{t("Sign Out")}</p>
+      <p className="m-0">{t("Logout")}</p>
     </button>
   </div>
 );
@@ -319,6 +319,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
    
      return options;
   }
+
+  const iconBgColor =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-main-menu-active-font-color"
+  )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
+    "gray-darkest"
+  ).trim();
   
 
   return (
@@ -330,6 +337,50 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       {renderLogo(hideLogo)}
       <div className="options-container" data-testid="options-container">
         <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
+          {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.REVIEW.value}
+              optionsCount="0"
+              mainMenu="Review"
+              subMenu={[
+                {
+                  name: "Review",
+                  path: "review",
+                },
+              ]}
+              subscribe={props.subscribe}
+              icon={<NavbarTaskIcon color={iconBgColor} />}
+            />
+          )}
+
+          {(isCreateSubmissions ||
+            (showApplications &&
+              isViewSubmissions &&
+              ENABLE_APPLICATIONS_MODULE)) && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.SUBMIT.value}
+              optionsCount="0"
+              mainMenu="Submit"
+              subMenu={[
+                {
+                  name: "Forms",
+                  path: "form",
+                  supportedSubRoutes: [
+                    "form",
+                    "bundle",
+                    "application",
+                    "draft",
+                  ],
+                  unsupportedSubRoutes: ["formflow", "bundleflow"],
+                },
+              ]}
+              subscribe={props.subscribe}
+              icon={<NavbarSubmitIcon color={iconBgColor} />}
+            />
+          )}
+
           {ENABLE_FORMS_MODULE && (isCreateDesigns || isViewDesigns) && (
             <MenuComponent
               baseUrl={baseUrl}
@@ -338,13 +389,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               mainMenu="Design"
               subMenu={[
                 {
-                  name: "Forms",
+                  name: "Forms & Flows",
                   path: "formflow",
                 },
                 ...(IS_ENTERPRISE && isManageBundles
                   ? [
                       {
-                        name: "Bundle",
+                        name: "Bundles",
                         path: "bundleflow",
                         isPremium: true,
                       },
@@ -394,47 +445,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             />
           )}
 
-          {(isCreateSubmissions ||
-            (showApplications &&
-              isViewSubmissions &&
-              ENABLE_APPLICATIONS_MODULE)) && (
-            <MenuComponent
-              baseUrl={baseUrl}
-              eventKey={SectionKeys.SUBMIT.value}
-              optionsCount="1"
-              mainMenu="Submit"
-              subMenu={[
-                {
-                  name: "Forms",
-                  path: "form",
-                  supportedSubRoutes: [
-                    "form",
-                    "bundle",
-                    "application",
-                    "draft",
-                  ],
-                  unsupportedSubRoutes: ["formflow", "bundleflow"],
-                },
-              ]}
-              subscribe={props.subscribe}
-            />
-          )}
 
-          {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
-            <MenuComponent
-              baseUrl={baseUrl}
-              eventKey={SectionKeys.REVIEW.value}
-              optionsCount="1"
-              mainMenu="Review"
-              subMenu={[
-                {
-                  name: "Review",
-                  path: "review",
-                },
-              ]}
-              subscribe={props.subscribe}
-            />
-          )}
           {isManageWorkflows &&
             !isCreateDesigns &&
             !isViewDesigns &&

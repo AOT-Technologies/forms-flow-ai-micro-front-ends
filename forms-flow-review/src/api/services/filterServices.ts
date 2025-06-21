@@ -71,7 +71,7 @@ export const fetchServiceTaskList = (
     API.GET_BPM_TASK_FILTERS
   }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
   return (dispatch) => {
-    dispatch(setBPMTaskLoader(true));
+    // dispatch(setBPMTaskLoader(true)); Adding a temporary comment to prevent the skeleton loader in the task table from displaying oddly due to socket.
     dispatch(setLastReqPayload(reqData));
     RequestService.httpPOSTRequestWithHAL(
       apiUrlgetTaskList,

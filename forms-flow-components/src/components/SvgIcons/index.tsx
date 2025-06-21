@@ -1031,3 +1031,49 @@ export const SharedWithMeIcon = ({ color = grayMediumColor,className, ...props }
     />
   </svg>
 );
+
+export const NavbarTaskIcon = ({
+  color = grayDarkestColor,
+  className,
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="25"
+    viewBox="0 0 24 25"
+    fill="none"
+  >
+    <circle cx="12" cy="12.5" r="12" fill={color} />
+    <path
+      d="M8 12.6786L10.5 15.3571L15.5 10"
+      stroke="white"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const NavbarSubmitIcon = ({
+  color = grayDarkestColor,
+  className,
+  ...props
+}) => (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="25" 
+      viewBox="0 0 24 25" 
+      fill="none"
+      >
+      <circle cx="12" cy="12.5" r="12" fill={color}/>
+      <path 
+      d="M6.41992 10.1029L17.3302 9L10.9199 17.8971L10.835 12.75L6.41992 10.1029Z" 
+      stroke="white" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+      />
+    </svg>
+);
