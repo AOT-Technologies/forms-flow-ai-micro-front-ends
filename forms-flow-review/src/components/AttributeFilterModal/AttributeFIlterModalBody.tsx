@@ -6,6 +6,7 @@ import {
   InputDropdown,
   SaveIcon,
   UpdateIcon,
+  useSuccessCountdown,
 } from "@formsflow/components";
 import { useEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
@@ -45,6 +46,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   if (deleteSuccess.showSuccess) {
     deleteButtonVariant = "success";
   }
+
+  const {
+  successState: saveSuccess,
+  startSuccessCountdown: setSaveSuccess,
+} = useSuccessCountdown();
+
  
   const limit = useSelector((state: any) => state.task.limit);
   const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
@@ -60,7 +67,6 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     (state: any) => state.task.attributeFilterToEdit
   );
   const [filterName, setFilterName] = useState(attributeFilter?.name || "");
-  const saveIconColor = getIconColor(isUnsavedFilter || !filterName || filterNameError || deleteSuccess?.showSuccess);
   const deleteIconColor = getIconColor(updateSuccess?.showSuccess);
   const { data: userList } = useSelector(
     (state: any) => state.task.userList
@@ -107,8 +113,10 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   SAME_AS_TASKS: 'SAME_AS_TASK_FILTER',
 };
   
-  const [shareAttrFilter, setShareAttrFilter] = useState(FILTER_SHARE_OPTIONS.PRIVATE); // need to handle in edit stage
- 
+  const [shareAttrFilter, setShareAttrFilter] = useState(FILTER_SHARE_OPTIONS.PRIVATE); 
+   const saveIconColor = getIconColor(isUnsavedFilter || !filterName || filterNameError|| !shareAttrFilter || deleteSuccess?.showSuccess);
+
+
   /* ---------------------------- access management --------------------------- */
 
   const createdByMe =
@@ -356,21 +364,26 @@ const createFilterShareOption = (labelKey, value) => ({
     }
     const noFieldChanged =  isUnsavedFilter ? false :  isEqual(selectedAttributeFilter, createAttributeFilterPayload());
     const saveFilterAttributes = async () => {
-      try {
-        
-        const filterToSave = createAttributeFilterPayload();
-        const response = await createFilter(filterToSave );
-        // need to update selected attribute filter in redux
-        dispatch(setSelectedBpmAttributeFilter(response.data));
-        const newAttributeFilterList = [...attributeFilterList,response.data]
-        dispatch(setAttributeFilterList(newAttributeFilterList));
-        dispatch(fetchServiceTaskList(filterToSave, null, 1, limit));
-        // setShowUpdateModal(false);
-      } catch (error) {
-        console.error("Failed to save filter attributes:", error);
-      }
-      onClose();
-    };
+  try {
+    const filterToSave = createAttributeFilterPayload();
+    const response = await createFilter(filterToSave);
+
+    setSaveSuccess(() => {
+      onClose();  
+    }, 2);
+
+    // need to update selected attribute filter in redux
+    dispatch(setSelectedBpmAttributeFilter(response.data));
+    const newAttributeFilterList = [...attributeFilterList, response.data];
+    dispatch(setAttributeFilterList(newAttributeFilterList));
+    dispatch(fetchServiceTaskList(filterToSave, null, 1, limit));
+  } catch (error) {
+    console.error("Failed to save filter attributes:", error);
+  }
+};
+
+const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
+
 
     const handleUpdateModalClick =()=>{
       dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
@@ -399,7 +412,7 @@ const createFilterShareOption = (labelKey, value) => ({
                 null: <UpdateIcon color={saveIconColor} />}
               dataTestId="save-attribute-filter"
               ariaLabel={t("Update This Filter")}
-              disabled={deleteSuccess.showSuccess ||noFieldChanged}
+              disabled={deleteSuccess.showSuccess || noFieldChanged || !shareAttrFilter}
             />
             <CustomButton
               variant={deleteButtonVariant}
@@ -424,15 +437,20 @@ const createFilterShareOption = (labelKey, value) => ({
       return (
         <div className="pt-4">
           <CustomButton
-            variant="secondary"
-            size="md"
-            label={t("Save This Filter")}
-            onClick={saveFilterAttributes}
-            icon={<SaveIcon color={saveIconColor}/>}
-            dataTestId="save-attribute-filter"
-            ariaLabel={t("Save Attribute Filter")}
-            disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
-          />
+  variant={saveButtonVariant}
+  size="md"
+  label={
+    saveSuccess.showSuccess
+      ? `${t("Saved!")} (${saveSuccess.countdown})`
+      : t("Save This Filter")
+  }
+  onClick={saveFilterAttributes}
+  icon={saveSuccess.showSuccess ? null : <SaveIcon color={saveIconColor} />}
+  dataTestId="save-attribute-filter"
+  ariaLabel={t("Save Attribute Filter")}
+  disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
+/>
+
         </div>
       );
     }

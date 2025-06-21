@@ -45,7 +45,7 @@ const SaveFilterTab = ({
   const [filterNameError, setFilterNameError] = useState("");
   const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
   const saveIconColor = getIconColor(
-    createAndUpdateFilterButtonDisabled || filterNameError || deleteSuccess?.showSuccess
+    createAndUpdateFilterButtonDisabled || filterNameError || deleteSuccess?.showSuccess || !shareFilter|| (shareFilter === SPECIFIC_USER_OR_GROUP && !shareFilterForSpecificRole)
   );
   const { createFilters,manageAllFilters } = userRoles();
   const deleteIconColor = getIconColor(successState?.showSuccess);
@@ -189,7 +189,7 @@ const SaveFilterTab = ({
             }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
-              disabled={deleteSuccess?.showSuccess || createAndUpdateFilterButtonDisabled || filterNameError}
+              disabled={deleteSuccess?.showSuccess || createAndUpdateFilterButtonDisabled || filterNameError ||!shareFilter || (shareFilter === SPECIFIC_USER_OR_GROUP && !shareFilterForSpecificRole)  }
             />
             <CustomButton
               variant={deleteButtonVariant}
