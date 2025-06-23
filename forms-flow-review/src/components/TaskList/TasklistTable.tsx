@@ -121,7 +121,7 @@ const TaskListTable = () => {
       }
       return variable;
     });
-    dispatch(resetTaskListParams({selectedFilter:{ ...updatedData, variables },isUnsavedFilter: true}));
+    dispatch(resetTaskListParams({selectedFilter:{ ...updatedData, variables }}));
 
   };
 
