@@ -86,7 +86,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   //Handle if existing data is there need to set it in attributeData
  const [attributeData, setAttributeData] = useState(() => {
   const initialData = {
-    assignee: attributeFilter?.criteria?.assignee || ""
+    assignee: attributeFilter?.criteria?.assignee || "",
+    roles: attributeFilter?.criteria?.candidateGroup || ""
   };
 
   const existingValues = (
