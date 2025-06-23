@@ -167,6 +167,7 @@ class KeycloakService {
               });
               this.refreshToken();
             }
+ 
           } else {
             this.logout();
           }
