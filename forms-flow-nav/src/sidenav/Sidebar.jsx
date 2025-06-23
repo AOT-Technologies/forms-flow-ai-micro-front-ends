@@ -82,7 +82,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const [showProfile, setShowProfile] = useState(false);
-  const hideLogo =  StyleServices?.getCSSVariable("--hide-formsflow-logo")?.toLowerCase();
   const { t } = useTranslation();
   const currentLocation = useLocation();
 

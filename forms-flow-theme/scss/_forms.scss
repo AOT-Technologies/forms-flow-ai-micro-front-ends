@@ -447,15 +447,6 @@ select option:hover {
   }
 }
 
-.form-check-input[type="checkbox"] {
-  border-color: $primary !important;
-  &:checked{
-    background-color: $primary !important;
-  }
-  &:focus{
-    box-shadow: none !important;
-  }
-}
 
 
 .valiation-astrisk {
