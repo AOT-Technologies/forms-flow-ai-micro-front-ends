@@ -89,6 +89,11 @@ const Review = React.memo((props: any) => {
     });
   }, [isAuth]);
 
+  const getTasks = ()=>{
+     dispatch(
+        fetchServiceTaskList(lastRequestedPayload, null, activePage, limit)
+     );
+  };
   /* ------------------------ handling socket callback function ------------------------ */
   const checkTheTaskIdExistThenRefetchTaskList = () => {
     // if the id exist or taskList empty we need to recall
@@ -99,9 +104,7 @@ const Review = React.memo((props: any) => {
     //   );
     // }
     // NOTE: currently we just commented the code and use below code to all users fetch tasklist again if any event trigger in this socket
-     dispatch(
-        fetchServiceTaskList(lastRequestedPayload, null, activePage, limit)
-     );
+    getTasks();
   };
 
   const handleTaskUpdate = (refreshedTaskId: string) => {
@@ -140,10 +143,14 @@ const SocketIOCallback = ({
      * use of this socket call back , need to update task realtime and 
      * also tasklist if the task id is exist inthe tasklist
      */
-  if (isUpdateEvent) {
+  if (isUpdateEvent) { 
     handleTaskUpdate(refreshedTaskId);
   } else if (forceReload) {
     handleForceReload(refreshedTaskId);
+  }else{
+    // here we just need to refetch the task list
+    // this is used when task is created or deleted
+    getTasks();
   }
 };
 
