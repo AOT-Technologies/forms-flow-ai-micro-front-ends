@@ -52,6 +52,7 @@ const TaskFilterModalBody = ({
   filterToEdit,
   deleteSuccess,
   updateSuccess,
+  handleFilterUpdate
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -386,8 +387,14 @@ const TaskFilterModalBody = ({
   };
 
   const handleUpdateModalClick = () => {
-    dispatch(setFilterToEdit(getData()));
+    const isPrivate = filterToEdit.users.length!==0;
+    const data = getData();
+    if(isPrivate){
+     handleFilterUpdate(isPrivate,data);
+    }else{
+      dispatch(setFilterToEdit(getData()));
     toggleUpdateModal();
+    }
   };
   const handleDeleteClick = () => {
     dispatch(setFilterToEdit(getData()));

@@ -30,7 +30,7 @@ import { Filter, FilterCriteria } from "../../types/taskFilter";
 import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
 import { RootState } from "../../reducers";
 
-const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, toggleDeleteModal,deleteSuccess }) => {
+const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
@@ -386,9 +386,15 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
 
 
     const handleUpdateModalClick =()=>{
-      dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
+       const isPrivate = attributeFilter.users.length!==0;
+    const data = createAttributeFilterPayload();
+    if(isPrivate){
+     handleSaveFilterAttributes(isPrivate,data);
+    }else{
+        dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
       toggleUpdateModal();
-      // need to integrate count down for success
+    }
+    
      }
     const handleDeleteClick = ()=>{
             dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
