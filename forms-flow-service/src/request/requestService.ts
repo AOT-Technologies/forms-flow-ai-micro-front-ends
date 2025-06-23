@@ -21,7 +21,6 @@ class RequestService {
 
     instance.interceptors.response.use(
       (response: AxiosResponse) => {
-        console.log(response);
         return response;
       },
       async (error: AxiosError) => { 
