@@ -250,7 +250,7 @@ select option:hover {
   }
   .form-check-label {
     color: var(--default-font-color);
-    margin-left: 8px;
+    margin-left: var(--spacer-050);
     margin-top: var(--spacer-025);
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);

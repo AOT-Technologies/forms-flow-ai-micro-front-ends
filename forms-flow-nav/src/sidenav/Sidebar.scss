@@ -189,7 +189,7 @@
     }
 
 
-    &.active .accordion-button {
+    &.active-header .accordion-button {
       background-color: var(--navbar-active-submenu-bg-color);
       color: var(--navbar-active-submenu-font-color);
     }

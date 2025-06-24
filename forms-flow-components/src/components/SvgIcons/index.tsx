@@ -1033,7 +1033,8 @@ export const SharedWithMeIcon = ({ color = grayMediumColor,className, ...props }
 );
 
 export const NavbarTaskIcon = ({
-  color = grayDarkestColor,
+  fillColor = grayDarkestColor,
+  strokeColor = whiteColor,
   className,
   ...props
 }) => (
@@ -1044,10 +1045,10 @@ export const NavbarTaskIcon = ({
     viewBox="0 0 24 25"
     fill="none"
   >
-    <circle cx="12" cy="12.5" r="12" fill={color} />
+    <circle cx="12" cy="12.5" r="12" fill={fillColor} />
     <path
       d="M8 12.6786L10.5 15.3571L15.5 10"
-      stroke="white"
+      stroke={strokeColor}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1056,7 +1057,8 @@ export const NavbarTaskIcon = ({
 );
 
 export const NavbarSubmitIcon = ({
-  color = grayDarkestColor,
+  fillColor = grayDarkestColor,
+  strokeColor = whiteColor,
   className,
   ...props
 }) => (
@@ -1067,10 +1069,10 @@ export const NavbarSubmitIcon = ({
       viewBox="0 0 24 25" 
       fill="none"
       >
-      <circle cx="12" cy="12.5" r="12" fill={color}/>
+      <circle cx="12" cy="12.5" r="12" fill={fillColor}/>
       <path 
       d="M6.41992 10.1029L17.3302 9L10.9199 17.8971L10.835 12.75L6.41992 10.1029Z" 
-      stroke="white" 
+      stroke={strokeColor} 
       strokeWidth="2" 
       strokeLinecap="round" 
       strokeLinejoin="round"
