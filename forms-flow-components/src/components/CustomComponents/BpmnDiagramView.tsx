@@ -12,10 +12,11 @@ interface ProcessDiagramProps {
   diagramXML: string;
   activityId: string;
   isProcessDiagramLoading: boolean;
+  showDiagramTools?:boolean;
 }
 
 const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
-  ({ diagramXML, activityId, isProcessDiagramLoading }) => {
+  ({ diagramXML, activityId, isProcessDiagramLoading, showDiagramTools=false }) => {
     const { t } = useTranslation();
     const [bpmnViewer, setBpmnViewer] = useState<any>(null);
 
@@ -104,7 +105,7 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
             ref={containerRef}
           />
         </div>
-        <div className="d-flex justify-content-end">
+       {showDiagramTools && <div className="d-flex justify-content-end">
           <div className="d-flex flex-column">
             <button className="mb-3" title="Reset Zoom" onClick={zoomReset}>
               <i className="fa fa-retweet" aria-hidden="true" />
@@ -116,7 +117,7 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
               <i className="fa fa-search-minus" aria-hidden="true" />
             </button>
           </div>
-        </div>
+        </div>}
       </>
     );
   }

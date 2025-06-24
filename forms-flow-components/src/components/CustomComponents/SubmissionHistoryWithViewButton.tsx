@@ -15,6 +15,7 @@ interface SubmissionHistoryWithViewButtonProps {
   activityId: string;
   isProcessDiagramLoading: boolean;
   isHistoryListLoading: boolean;
+  showDiagramTools?:boolean;
 }
 
 interface SubmissionHistory {
@@ -38,6 +39,7 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
       activityId,
       isProcessDiagramLoading,
       isHistoryListLoading,
+      showDiagramTools = false
     }) => {
       const { t } = useTranslation();
       const timelineRef = useRef<HTMLDivElement>(null);
@@ -51,10 +53,6 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
           if (timelineRef.current && historyContentRef.current) {
             const contentHeight = historyContentRef.current.offsetHeight;
             timelineRef.current.style.height = `${contentHeight}px`;
-            const bpmnContainer: HTMLElement = document.querySelector(".bpmn-viewer-container");
-            if (bpmnContainer) {
-              bpmnContainer.style.minHeight = `${contentHeight}px`;
-            }
           }
         };
      
@@ -120,13 +118,14 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
          
                 <div
                   className={`${
-                    showBpmnDiagram && "d-flex justify-content-between gap-3 flex-column flex-lg-row "}`}
+                    showBpmnDiagram && "d-flex justify-content-between gap-3 flex-column flex-lg-row analyse-submision-history-modal"}`}
                 >
                   {showBpmnDiagram && (
                     <div className="p-5">
                       <ProcessDiagram
                         diagramXML={diagramXML ?? ""}
                         activityId={activityId ?? ""}
+                        showDiagramTools={showDiagramTools}
                         isProcessDiagramLoading={isProcessDiagramLoading}
                       />
                     </div>
