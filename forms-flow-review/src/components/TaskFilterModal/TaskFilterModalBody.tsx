@@ -387,7 +387,7 @@ const TaskFilterModalBody = ({
   };
 
   const handleUpdateModalClick = () => {
-    const isPrivate = filterToEdit.users.length!==0;
+    const isPrivate = filterToEdit?.users?.length!==0;
     const data = getData();
     if(isPrivate){
      handleFilterUpdate(isPrivate,data);
