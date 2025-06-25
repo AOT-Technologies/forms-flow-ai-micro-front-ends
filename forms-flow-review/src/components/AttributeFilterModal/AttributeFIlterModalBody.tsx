@@ -386,7 +386,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
 
 
     const handleUpdateModalClick =()=>{
-       const isPrivate = attributeFilter.users.length!==0;
+       const isPrivate = attributeFilter?.users?.length!==0;
     const data = createAttributeFilterPayload();
     if(isPrivate){
      handleSaveFilterAttributes(isPrivate,data);
