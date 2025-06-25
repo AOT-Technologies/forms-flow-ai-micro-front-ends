@@ -271,7 +271,7 @@ else {
                   data-testid="assign-to-me-checkbox"
                 />
                 <span className="custom-checkbox-label">
-                  {t("Assign to me")}
+                  {t("Assigned to me")}
                 </span>
               </button>
             </div>

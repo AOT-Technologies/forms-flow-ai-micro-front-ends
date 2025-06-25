@@ -74,15 +74,16 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
       document.addEventListener("mouseup", handleMouseUp);
     };
 
-  const handleMouseMove = useCallback((e: MouseEvent): void => {
+ const handleMouseMove = useCallback((e: MouseEvent): void => {
     if (resizingRef.current === null) return;
     const diff = e.pageX - startXRef.current;
-    const newWidth = Math.max(50, startWidthRef.current + diff);
+    const currentColumn = resizingRef.current;
+    const minWidth = currentColumn.name === "Assignee" ? 200 : 50;
+    const newWidth = Math.max(minWidth, startWidthRef.current + diff);
 
     if (resizingRef.current) {
       resizingRef.current.newWidth = newWidth;
     }
-
     setColumns((prev) =>
       prev.map((col) =>
         col.sortKey === resizingRef.current?.sortKey

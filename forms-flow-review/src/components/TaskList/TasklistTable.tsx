@@ -157,7 +157,7 @@ const TaskListTable = () => {
     return (
       <th
         key={`header-${column.sortKey ?? index}`}
-        className="resizable-column"
+        className={`resizable-column ${column.sortKey==="assignee" ? "customizable_assignee" : ''}`}
         style={{ width: column.width }}
         data-testid={`column-header-${column.sortKey ?? "actions"}`}
         aria-label={`${t(column.name)} ${t("column")}${
@@ -265,7 +265,7 @@ const TaskListTable = () => {
       aria-label={getCellAriaLabel(column, task)}
     >
       <div
-        className={`${column.sortKey !== "assignee" ? "customizable_td_row" : ""} `}
+        className={`${column.sortKey !== "assignee" ? "customizable_td_row" : "customizable_assignee"} `}
         style={{
           WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
         }}

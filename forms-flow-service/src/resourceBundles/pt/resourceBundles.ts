@@ -566,7 +566,7 @@ export const RESOURCE_BUNDLES_PT ={
   "Enable bundling ?": "Ativar agrupamento?",
   "Select a task in the List.": "Selecione uma tarefa na lista.",
   "Add Date": "Adicionar data",
-  "Assign to Me": "Atribuir para mim",
+  "Assigned to me": "Atribuído a mim",
   "Filter count:": "Contagem de filtros:",
   "Selected Forms": "Formulários Selecionados",
   "Template Used:": "Modelo Utilizado:",
