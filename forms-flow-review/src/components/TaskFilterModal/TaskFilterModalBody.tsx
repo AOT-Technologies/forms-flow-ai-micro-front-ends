@@ -392,7 +392,7 @@ const TaskFilterModalBody = ({
     if(isPrivate){
      handleFilterUpdate(isPrivate,data);
     }else{
-      dispatch(setFilterToEdit(getData()));
+      dispatch(setFilterToEdit(data));
     toggleUpdateModal();
     }
   };

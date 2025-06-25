@@ -391,7 +391,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
     if(isPrivate){
      handleSaveFilterAttributes(isPrivate,data);
     }else{
-        dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
+        dispatch(setAttributeFilterToEdit(data))
       toggleUpdateModal();
     }
     
