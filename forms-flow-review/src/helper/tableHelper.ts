@@ -1,15 +1,14 @@
 import { HelperServices } from "@formsflow/service";
 
 export const buildDynamicColumns = (taskvariables) => {
-  const ignoredColumns = ["assignee"];
-  return taskvariables
+    return taskvariables
     .reduce((acc, variable) => {
       if (variable.isChecked) {
         acc.push({
           name: variable.label,
-          width: variable.name ==="assignee" && !variable.width ? 220: variable.width ?? 200,
+          width:  variable.width ?? 200,
           sortKey: variable.name,
-          resizable: !ignoredColumns.includes(variable.name),
+          resizable: variable.name,
           sortOrder: variable.sortOrder
         });
       }

@@ -429,6 +429,10 @@ $white-color: var(--ff-white);
   word-break: break-word;
 }
 
+.customizable_assignee{
+  min-width: 11.25rem !important;
+}
+
 .text-overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;

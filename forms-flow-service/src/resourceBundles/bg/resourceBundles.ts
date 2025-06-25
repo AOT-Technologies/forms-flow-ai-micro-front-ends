@@ -565,7 +565,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Enable bundling ?": "Включи опаковане?",
   "Select a task in the List.": "Изберете задача от списъка.",
   "Add Date": "Добавяне на дата",
-  "Assign to Me": "Възложи на мен",
+  "Assigned to me": "Възложено на мен",
   "Filter count:": "Брой филтри:",
   "Selected Forms": "Избрани формуляри",
   "Template Used:": "Използван шаблон:",

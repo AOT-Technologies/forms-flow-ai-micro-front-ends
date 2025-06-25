@@ -565,7 +565,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Enable bundling ?": "启用捆绑？",
   "Select a task in the List.": "选择列表中的任务。",
   "Add Date": "添加日期",
-  "Assign to Me": "分配给我",
+  "Assigned to me": "Atribuído a mim",
   "Filter count:": "过滤器计数：",
   "Selected Forms": "已选择的表单",
   "Template Used:": "使用的模板：",

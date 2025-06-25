@@ -275,7 +275,7 @@ const createFilterShareOption = (labelKey, value) => ({
     return acc;
   }, {});
 
-  // TBD:now we don't need assignee and roles inside process variables, miight remove this line after discussion
+  // TBD:now we don't need assignee and roles inside process variables
   const ignoredKeys = ["assignee", "roles"];
 
   Object.keys(attributeData).forEach((key) => {

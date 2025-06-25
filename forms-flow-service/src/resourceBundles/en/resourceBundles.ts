@@ -563,7 +563,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Enable bundling ?": "Enable bundling?",
   "Select a task in the List.": "Select a task in the List.",
   "Add Date": "Add Date",
-  "Assign to Me": "Assign to Me",
+  "Assigned to Me": "Assigned to Me",
   "Filter count:": "Filter count:",
   "Selected Forms": "Selected Forms",
   "Template Used:": "Template Used:",
