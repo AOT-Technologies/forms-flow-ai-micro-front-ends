@@ -84,6 +84,11 @@ const MenuComponent = ({
     "--navbar-main-menu-active-font-color"
   )?.trim();
 
+  const defaultStroke =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-bg-color"
+  )?.trim();
+
 const renderMenuIcon = () => {
   const lowerMainMenu = mainMenu.toLowerCase();
   let iconFillColor, strokeColor;
@@ -95,9 +100,8 @@ const renderMenuIcon = () => {
     strokeColor =  getComputedStyle(document.documentElement)
       .getPropertyValue("--navbar-active-submenu-bg-color")?.trim();
   } else {
-
     iconFillColor = chevronColor;
-
+    strokeColor = defaultStroke;
   }
   switch (lowerMainMenu) {
     case "task":

@@ -68,7 +68,7 @@ $gray-dark: var(--ff-gray-dark);
       }
       .form-check{
         .form-check-label{
-          line-height: unset !important;
+          line-height: var(--spacer-150);
         }
       }
     }
