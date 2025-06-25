@@ -8,14 +8,14 @@ class StyleServices {
     return value === '" "' ? "" : value;
   }
 
-  // Set CSS variable utility
-  public static setCSSVariable(
-    variableName: string,
-    value: string,
-    element: HTMLElement = document.documentElement
-  ): void {
-    element.style.setProperty(variableName, value);
-  }
+    // Set CSS variable utility
+    public static setCSSVariable(
+      variableName: string,
+      value: string,
+      element: HTMLElement = document.documentElement
+    ): void {
+      element.style.setProperty(variableName, value);
+    }
 }
 
 export default StyleServices;

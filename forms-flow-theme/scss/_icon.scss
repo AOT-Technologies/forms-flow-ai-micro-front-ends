@@ -1,8 +1,16 @@
-
+$primary: var(--ff-primary);
 .icon-wp-forms {
   height: 30px;
 }
 
 i.fa.fa-question-circle.text-muted {
-  color: var(--ff-primary-300) !important;
+  color: $primary !important;
+}
+.icon-wrapper-change {
+  cursor: pointer;
+  transition: transform 0.5s, color 0.5s;
+
+  &:hover {
+    opacity: 0.8;
+  }
 }

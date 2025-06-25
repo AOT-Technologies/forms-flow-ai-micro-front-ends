@@ -15,7 +15,7 @@ import {
   IS_ENTERPRISE,
   USER_NAME_DISPLAY_CLAIM
 } from "../constants/constants";
-import { StorageService, StyleServices} from "@formsflow/service";
+import { StorageService, StyleServices } from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
 import { fetchTenantDetails } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
@@ -23,7 +23,7 @@ import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
-import { ApplicationLogo } from "@formsflow/components";
+import { ApplicationLogo, NavbarTaskIcon, NavbarSubmitIcon } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
@@ -41,7 +41,7 @@ const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t }) =>
       </div>
     </button>
     <button className="button-as-div sign-out-button" onClick={logout} data-testid="sign-out-button">
-      <p className="m-0">{t("Sign Out")}</p>
+      <p className="m-0">{t("Logout")}</p>
     </button>
   </div>
 );
@@ -52,7 +52,7 @@ UserProfile.propTypes = {
     email: PropTypes.string,
     preferred_username: PropTypes.string,
   }).isRequired, 
-
+  
   initials: PropTypes.string.isRequired,
   handleProfileModal: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
@@ -82,12 +82,11 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const [showProfile, setShowProfile] = useState(false);
-
   const { t } = useTranslation();
   const currentLocation = useLocation();
 
   // const [activeLink, setActiveLink] = useState("");
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey || userDetail?.tenantKey}/` : "/";
   // const defaultLogoPath =
   //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
   //   "/logo.svg";
@@ -97,20 +96,34 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const isViewSubmissions = userRoles?.includes("view_submissions");
   const isCreateDesigns = userRoles?.includes("create_designs");
   const isViewDesigns = userRoles?.includes("view_designs");
-  const isManageSubflows = userRoles?.includes("manage_subflows");
-  const isManageDmn = userRoles?.includes("manage_decision_tables");
-  const isAdmin = userRoles?.includes("admin");
+  const isManageWorkflows = userRoles?.includes("manage_advance_workflows");
+  //const isManageTemplates = userRoles?.includes("manage_templates");
+  const isManageBundles = userRoles?.includes("manage_bundles");
+  const isManageIntegrations = userRoles?.includes("manage_integrations");
   const isViewTask = userRoles?.includes("view_tasks");
   const isManageTask = userRoles?.includes("manage_tasks");
   const isViewDashboard = userRoles?.includes("view_dashboards");
   const isDashboardManager = userRoles?.includes(
     "manage_dashboard_authorizations"
   );
+  const isAnalyzeSubmissionView = userRoles?.includes("analyze_submissions_view");
+  const isAnalyzeMetricsView = userRoles?.includes("analyze_metrics_view");
+
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
+  // const isLinkManager = userRoles?.includes("manage_links");
+  const isAdmin = isDashboardManager || isRoleManager || isUserManager; 
+  const isAnalyzeManager = isAnalyzeMetricsView || isViewDashboard || isAnalyzeSubmissionView;
+ 
   const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
+
   const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
   const USER_ROUTE = isUserManager ? "admin/users" : null;
+  // const LINK_ROUTE = isLinkManager ? "admin/links" : null;
+  const METRICS_ROUTE = isAnalyzeMetricsView ? "metrics" : null;
+  const SUBMISSION_ROUTE = isAnalyzeSubmissionView ? "submissions" : null;
+  const VIEW_DASHBOARD_ROUTE = isViewDashboard ? "dashboards" : null;
+
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
   const [activeKey,setActiveKey] = useState(0);
@@ -194,7 +207,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     useEffect(() => {
         const locale = userDetail?.locale || tenant?.tenantData?.details?.locale || LANGUAGE;
         i18n.changeLanguage(locale);
-    }, [userDetail, tenant?.tenantData]);
+    }, [userDetail]);
 
   React.useEffect(() => {
     const data = JSON.parse(StorageService.get("TENANT_DATA"));
@@ -217,12 +230,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     },
     REVIEW: {
       value: "review",
-      supportedRoutes: ["task"],
+      supportedRoutes: ["task","review"],
     },
     ANALYZE: {
       value: "analyze",
-      supportedRoutes: ["metrics", "insights"],
-    },
+      supportedRoutes: ["metrics", "dashboards", "submissions"],
+    },  
     MANAGE: {
       value: "manage",
       supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users"],
@@ -283,150 +296,228 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
         path: USER_ROUTE,
       });
     }
+  // if (isLinkManager) {
+  //     options.push({
+  //       name: "Links",
+  //       path: LINK_ROUTE, 
+  //     });
+  //   }
   
     return options;
   };
+  const manageAnalyseOptions = () => {
+    const options = [];
+    
+    if (isAnalyzeMetricsView) {
+      options.push({
+        name: "Metrics",
+        path: METRICS_ROUTE,
+      });
+    }
+    if (isViewDashboard) {
+      options.push({
+        name: "Dashboards",
+        path: VIEW_DASHBOARD_ROUTE,
+      });
+    }
+    if (isAnalyzeSubmissionView) {
+      options.push({
+        name: "Submissions",
+        path: SUBMISSION_ROUTE,
+      });
+    }
+   
+     return options;
+  }
+
+  const iconBgColor =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-main-menu-active-font-color"
+  )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
+    "gray-darkest"
+  ).trim();
   
 
   return (
-      <div className="sidenav" style={{ height: sidenavHeight }}>
-      {renderLogo(hideLogo)} 
-        <div className="options-container" data-testid="options-container">
-          <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
-            {ENABLE_FORMS_MODULE &&
-              (isCreateDesigns || isViewDesigns) && (
-                <MenuComponent
-                  baseUrl={baseUrl}
-                  eventKey={SectionKeys.DESIGN.value}
-                  optionsCount="5"
-                  mainMenu="Design"
-                  subMenu={[
-                    {
-                      name: "Forms",
-                      path: "formflow",
-                    },
-                    ...(IS_ENTERPRISE
-                      ? [
-                          {
-                            name: "Bundle",
-                            path: "bundleflow",
-                            isPremium:true
-                          },
-                        ]
-                    : []),
-                    // { name: "Templates", path: "forms-template-library" }, // TBD : Templates to be added on a later stage
-                    ...(IS_ENTERPRISE && userRoles?.includes("manage_integrations") &&
-                    (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
-                      ? [
-                          {
-                            name: "Integrations",
-                            path: "integration/recipes",
-                            supportedSubRoutes: ["integration/recipes","integration/connected-apps", "integration/library"],
-                            isPremium:true
-                          },
-                        ]
-                      : []),
-                      ...(isManageSubflows && ENABLE_PROCESSES_MODULE
-                        ? [
-                          {
-                            name: "Subflows",
-                            path: "subflow",
-                          },
-                          ]
-                        : []),
-                      ...(isManageDmn && ENABLE_PROCESSES_MODULE
-                        ? [
-                          {
-                            name: "Decision Tables",
-                            path: "decision-table",
-                          },
-                          ]
-                        : []),
-                  ]}
-                  subscribe={props.subscribe}
-                />
-              )}
-          {(isCreateSubmissions || (showApplications && isViewSubmissions && ENABLE_APPLICATIONS_MODULE)) && (
+    <div
+      className="sidenav"
+      style={{ height: sidenavHeight }}
+      data-testid="sidenav"
+    >
+      {renderLogo(hideLogo)}
+      <div className="options-container" data-testid="options-container">
+        <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
+          {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.REVIEW.value}
+              optionsCount="0"
+              mainMenu="Review"
+              subMenu={[
+                {
+                  name: "Review",
+                  path: "review",
+                },
+              ]}
+              subscribe={props.subscribe}
+              icon={<NavbarTaskIcon color={iconBgColor} />}
+            />
+          )}
+
+          {(isCreateSubmissions ||
+            (showApplications &&
+              isViewSubmissions &&
+              ENABLE_APPLICATIONS_MODULE)) && (
             <MenuComponent
               baseUrl={baseUrl}
               eventKey={SectionKeys.SUBMIT.value}
-              optionsCount="1"
+              optionsCount="0"
               mainMenu="Submit"
               subMenu={[
                 {
                   name: "Forms",
                   path: "form",
-                  supportedSubRoutes: ["form", "bundle", "application", "draft"],
+                  supportedSubRoutes: [
+                    "form",
+                    "bundle",
+                    "application",
+                    "draft",
+                  ],
                   unsupportedSubRoutes: ["formflow", "bundleflow"],
                 },
+              ]}
+              subscribe={props.subscribe}
+              icon={<NavbarSubmitIcon color={iconBgColor} />}
+            />
+          )}
+
+          {ENABLE_FORMS_MODULE && (isCreateDesigns || isViewDesigns) && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.DESIGN.value}
+              optionsCount="5"
+              mainMenu="Design"
+              subMenu={[
+                {
+                  name: "Forms & Flows",
+                  path: "formflow",
+                },
+                ...(IS_ENTERPRISE && isManageBundles
+                  ? [
+                      {
+                        name: "Bundles",
+                        path: "bundleflow",
+                        isPremium: true,
+                      },
+                    ]
+                  : []),
+                //   ...(IS_ENTERPRISE &&
+                // isManageTemplates
+                //   ? [
+                //       {
+                //         name: "Templates",
+                //         path: "forms-template-library",
+                //         isPremium: true,
+                //       },
+                //     ]
+                //   : []),
+                // { name: "Templates", path: "forms-template-library" }, // TBD : Templates to be added on a later stage
+                ...(IS_ENTERPRISE &&
+                isManageIntegrations &&
+                (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
+                  ? [
+                      {
+                        name: "Integrations",
+                        path: "integration/recipes",
+                        supportedSubRoutes: [
+                          "integration/recipes",
+                          "integration/connected-apps",
+                          "integration/library",
+                        ],
+                        isPremium: true,
+                      },
+                    ]
+                  : []),
+                ...(isManageWorkflows && ENABLE_PROCESSES_MODULE
+                  ? [
+                      {
+                        name: "Subflows",
+                        path: "subflow",
+                      },
+                      {
+                        name: "Decision Tables",
+                        path: "decision-table",
+                      },
+                    ]
+                  : []),
               ]}
               subscribe={props.subscribe}
             />
           )}
 
-              {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
+
+          {isManageWorkflows &&
+            !isCreateDesigns &&
+            !isViewDesigns &&
+            ENABLE_PROCESSES_MODULE && (
               <MenuComponent
                 baseUrl={baseUrl}
-                eventKey={SectionKeys.REVIEW.value}
-                optionsCount="1"
-                mainMenu="Review"
-                subMenu={[
-                  {
-                    name: "Tasks",
-                    path: "task",
-                  },
-                ]}
-                subscribe={props.subscribe}
-              />
-            )}
-            {isViewDashboard  && ENABLE_DASHBOARDS_MODULE && (
-              <MenuComponent
-                baseUrl={baseUrl}
-                eventKey={SectionKeys.ANALYZE.value}
+                eventKey={SectionKeys.DESIGN.value}
                 optionsCount="2"
-                mainMenu="Analyze"
+                mainMenu="Design"
                 subMenu={[
                   {
-                    name: "Metrics",
-                    path: "metrics",
+                    name: "Subflows",
+                    path: "subflow",
                   },
                   {
-                    name: "Insights",
-                    path: "insights",
-                  }
+                    name: "Decision Tables",
+                    path: "decision-table",
+                  },
                 ]}
                 subscribe={props.subscribe}
               />
             )}
-            {isAdmin && (
-              <MenuComponent
-                baseUrl={baseUrl}
-                eventKey={SectionKeys.MANAGE.value}
-                optionsCount="3"
-                mainMenu="Manage"
-                subMenu={manageOptions()}
-                subscribe={props.subscribe}
-              />
-            )}
-          </Accordion>
-        </div>
-        {isAuthenticated && (        
-        <UserProfile 
-        userDetail={userDetail}
-        initials={initials}
-        handleProfileModal={handleProfileModal}
-        logout={logout}
-        t={t}
-        />)}
-        {
-          showProfile && <ProfileSettingsModal 
-          show={showProfile}  
-          onClose={handleProfileClose} 
+          {isAnalyzeManager && ENABLE_DASHBOARDS_MODULE && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.ANALYZE.value}
+              optionsCount="2"
+              mainMenu="Analyze"
+              subMenu={manageAnalyseOptions()}
+              subscribe={props.subscribe}
+            />
+          )}
+          {isAdmin && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.MANAGE.value}
+              optionsCount="3"
+              mainMenu="Manage"
+              subMenu={manageOptions()}
+              subscribe={props.subscribe}
+            />
+          )}
+        </Accordion>
+      </div>
+      {isAuthenticated && (
+        <UserProfile
+          userDetail={userDetail}
+          initials={initials}
+          handleProfileModal={handleProfileModal}
+          logout={logout}
+          t={t}
+        />
+      )}
+      {showProfile && (
+        <ProfileSettingsModal
+          show={showProfile}
+          onClose={handleProfileClose}
           tenant={tenant}
           publish={props.publish}
         />
-        }
-      </div>
+      )}
+    </div>
   );
 });
 

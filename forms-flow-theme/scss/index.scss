@@ -24,7 +24,11 @@
 @import "./aiAssistant";
 @import "./customTextArea.scss";
 @import "./historyModal";
-
+@import "./formHistoryModal";
+@import "./customDateRangePicker";
+@import  "./assignUser";
+@import "./skeletonLoader";
+@import "./bpmn.scss";
 // util class
 @import "./utils/index";
 //rest of bootstrap

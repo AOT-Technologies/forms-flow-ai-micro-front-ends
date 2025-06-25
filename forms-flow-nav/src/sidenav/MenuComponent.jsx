@@ -3,7 +3,6 @@ import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { ChevronIcon ,ShowPremiumIcons } from "@formsflow/components";
-import { MULTITENANCY_ENABLED} from "../constants/constants";
 import { useTranslation } from "react-i18next";
 import { StorageService } from "@formsflow/service";
 import PropTypes from "prop-types";
@@ -14,7 +13,8 @@ const MenuComponent = ({
   subMenu,
   optionsCount,
   subscribe,
-  baseUrl
+  baseUrl,
+  icon
 }) => {
   const [tenant, setTenant] = React.useState({});
   const [activeMenu, setActiveMenu] = React.useState(null); 
@@ -73,7 +73,12 @@ const MenuComponent = ({
       : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
   };
   
-
+  const chevronColor =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-main-menu-active-font-color"
+  )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
+    "gray-darkest"
+  ).trim();
   return (
     <Accordion.Item eventKey={eventKey}>
       <Accordion.Header
@@ -84,16 +89,16 @@ const MenuComponent = ({
         }`}
         onClick={noOptionsMenu ? handleHeaderClick : undefined}
       >
-        {!noOptionsMenu && (
-          <ChevronIcon
-            width="10"
-            height="5"
-            className="custom-chevron"
-            color={getComputedStyle(document.documentElement).getPropertyValue(
-              "--ff-gray-800"
-            )}
-          />
-        )}
+          {icon ? (
+            <span>{icon}</span>
+          ) : !noOptionsMenu && (
+            <ChevronIcon
+              width="10"
+              height="5"
+              className="custom-chevron"
+              color={chevronColor}
+            />
+          )}
         <span>{t(mainMenu)}</span>
       </Accordion.Header>
       {!noOptionsMenu && (
@@ -105,7 +110,7 @@ const MenuComponent = ({
               className={`accordion-link d-flex justify-content-between ${
                 isActive(menu) && "active"
               }`}
-              data-testid={`accordion-link-${index}`}
+              data-testid={`sidenav-${(menu.name || menu.path).replace(/\s+/g, '-').toLowerCase()}`}
               aria-label={`Link to ${menu.name}`}
             >
               {t(menu.name)}
@@ -134,6 +139,7 @@ MenuComponent.propTypes = {
   optionsCount: PropTypes.string.isRequired,
   subscribe: PropTypes.func.isRequired,
   baseUrl: PropTypes.string.isRequired,
+  icon: PropTypes.node,
 };
 
 export default MenuComponent;

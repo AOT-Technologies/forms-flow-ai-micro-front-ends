@@ -1,8 +1,12 @@
 @import '_mixins';
 // Variables for reused values
 $primary: var(--ff-primary);
-$secondary: var(--ff-secondary);
-$danger: var(--ff-danger);
+$primary-light: var(--ff-primary-light);
+$gray-darkest: var(--ff-gray-darkest);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
+$danger-color: var(--ff-danger);
+$white-color: var(--ff-white);
 
 .forms-text {
   vertical-align: bottom;
@@ -61,9 +65,9 @@ select option:hover {
 }
 
 .well {
-  border: 0.0625rem solid var(--ff-gray-200);
+  border: 0.0625rem solid $gray-medium;
   padding: var(--spacer-100);
-  background-color: var(--ff-gray-100);
+  background-color: $gray-medium;
 }
 
 .panel-body {
@@ -71,8 +75,8 @@ select option:hover {
 }
 
 .panel-heading {
-  background-color: var(--ff-primary-600);
-  border: 0.0625rem solid var(--ff-primary-600);
+  background-color: $primary;
+  border: 0.0625rem solid $primary;
   color: var(--ff-white) !important;
   padding: 0.75rem 1.25rem;
   margin-bottom: var(--spacer-050);
@@ -85,7 +89,7 @@ select option:hover {
 // formio classes
 
 .formio-component-panel .panel-heading {
-  background-color: var(--ff-gray-200);
+  background-color: $gray-medium;
   padding: 0.625rem 0 0.625rem 0.625rem;
 }
 
@@ -95,17 +99,17 @@ select option:hover {
 
 .formio-error-wrapper,
 .has-error {
-  color: var(--ff-danger);
-  border-color: var(--ff-danger);
+  color: $danger-color;
+  border-color: $danger-color;
 }
 
 .formio-error-wrapper,
 .has-error label {
-  color: var(--ff-danger);
+  color: $danger-color;
 }
 
 .formio-errors .error {
-  color: var(--ff-danger);
+  color: $danger-color;
 }
 
 .formio-wizard-nav-container {
@@ -118,28 +122,39 @@ select option:hover {
   position: relative;
 
   .search-box-input {
-    border-radius: var(--radius-0100) !important; //TBD: To be changed to rem
-    border: 1px solid var(--ff-primary);
+    border-radius: var(--radius-sm) !important; //TBD: To be changed to rem
+    border: 1px solid $primary;
     background: var(--ff-white);
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
-    padding: var(--spacer-050) var(--spacer-200) var(--spacer-050) var(--spacer-100) !important;
+    padding: var(--spacer-075) var(--spacer-100)  !important;
     height: 2.063rem;
 
-
+    &:hover{
+      background-color: $primary-light !important;
+    }
 
     &.has-value {
-      border: 2px solid var(--ff-primary);
+      border: 2px solid $primary;
       background: var(--ff-white);
       color: var(--default-font-color) !important;
+      padding-right: 2rem !important;
     }
 
     &.is-searching {
-      color: var(--ff-gray-700) !important;
-      border: 1px solid var(--ff-gray-800);
-      background-color: var(--ff-gray-100) !important;
+      color: $gray-dark !important;
+      border: 1px solid $gray-dark;
+      background-color: $gray-medium !important;
+    }
+    &::placeholder {
+      color: $gray-medium-dark !important;
+      font-size: var(--font-size-sm) !important;
+      font-weight: var(--font-weight-sm);
+    }
+    &:focus::placeholder {
+      color: $gray-medium-dark !important;
     }
   }
 
@@ -172,67 +187,86 @@ select option:hover {
 
 /* CustomTooltip */
 .custom-tooltip .tooltip-inner {
-  background-color: $secondary;
+  background-color: $primary-light;
   color: var(--default-font-color);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
   white-space: nowrap;
   padding: var(--spacer-050);
-  border-radius: var(--radius-050);
+  border-radius: var(--radius-sm);
 }
 
 .custom-tooltip .tooltip-arrow::before {
-  border-color: $secondary transparent transparent transparent !important;
+  border-color: $primary-light transparent transparent transparent !important;
 }
 
 /* Custom Form.Check */
-.custom-checkbox .form-check-input {
-  width: 1.25em;
-  height: 1.25em;
-  border-radius: var(--radius-025);
-  border: 2px solid $primary !important;
-  background-color: transparent;
-  position: relative;
+.form-check:not(.form-switch),
+.checkbox-container{
+  .form-check-input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid $primary !important;
+    background-color: transparent;
+    position: relative;
+    float: none !important;
 
-  &:focus {
-    box-shadow: none;
-  }
+    &:focus {
+      box-shadow: none;
+    }
 
-  &:checked {
-    background-color: var(--ff-white) !important;
-    border-color: $primary !important;
+    &:checked {
+      background-color: var(--ff-white) !important;
+      border-color: $primary !important;
 
-    &:after {
-      content: '';
-      position: absolute;
-      top: 0.1em;
-      left: 0.35em;
-      width: 0.35em;
-      height: 0.7em;
-      border: solid $primary;
-      border-width: 0 0.15em 0.15em 0;
-      transform: rotate(45deg);
+      &::after {
+        content: '';
+        position: absolute;
+        top: 1px;
+        left: 4px;
+        width: 5px;
+        height: 8px;
+        border: solid $primary;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+    &:indeterminate {
+      background-color: transparent !important;
+      border-color: $primary !important;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 2px;
+        background-color: $primary;
+        transform: translate(-50%, -50%);
+      }
     }
   }
+  .form-check-label {
+    color: var(--default-font-color);
+    margin-left: 8px;
+    margin-top: var(--spacer-025);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-sm);
+    line-height: var(--text-line-height);
+  
+  }
 }
 
-.custom-checkbox .form-check-label {
-  color: var(--default-font-color);
-  margin-left: var(--default-font-color);
-  margin-top: var(--spacer-025);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
 
-}
 
 //FormInput styles
 
 .form-control {
   color: var(--default-font-color) !important;
-  border-radius: var(--radius-0100) !important;
-  border: 1px solid var(--ff-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid $primary !important;
   outline: none;
 
   display: flex;
@@ -242,12 +276,12 @@ select option:hover {
   align-self: stretch;
 
   &:focus {
-    outline: 1px solid var(--ff-primary);
+    outline: 1px solid $primary;
     box-shadow: none !important;
   }
 
   &::placeholder {
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
@@ -255,18 +289,18 @@ select option:hover {
 
   &.is-invalid {
     background-image: none !important;
-    border: 1px solid $danger !important;
+    border: 1px solid $danger-color !important;
 
     &:focus {
-      outline: 1px solid $danger !important;
-      border: 1px solid $danger !important;
+      outline: 1px solid $danger-color !important;
+      border: 1px solid $danger-color !important;
       box-shadow: none !important;
     }
   }
 
   &:disabled {
-    border-color: var(--ff-gray-400) !important;
-    background-color: var(--ff-gray-000);
+    border-color: $gray-medium-dark !important;
+    background-color: $gray-medium;
   }
 
 }
@@ -278,7 +312,7 @@ select option:hover {
   justify-content: center;
 
   .required-icon {
-    color: var(--ff-primary) !important;
+    color: $gray-darkest !important;
   }
 
   .with-icon {
@@ -286,7 +320,7 @@ select option:hover {
   }
 
   .disabled-icon svg path {
-    fill: var(--ff-gray-400);
+    fill: $gray-medium-dark;
   }
 
   .custom-form-input-group {
@@ -298,8 +332,8 @@ select option:hover {
       width: 1em;
       height: 1em;
       position: absolute;
-      right: 1rem; 
-  }
+      right: 1rem;
+    }
   }
 
   .input-group-text {
@@ -310,8 +344,7 @@ select option:hover {
     transform: translateY(-50%);
     border: none;
     background: none;
-    color: var(--ff-primary);
-    z-index: 10;
+    color: $primary;   
   }
 
   .custom-form-control-label {
@@ -323,7 +356,7 @@ select option:hover {
 
   .custom-feedback {
     display: flex;
-    color: $danger;
+    color: $danger-color;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
@@ -339,14 +372,14 @@ select option:hover {
   padding-inline: var(--spacer-100) !important;
   color: var(--default-font-color) !important;
   gap: var(--spacer-050) !important;
-  background-color: $secondary !important;
+  background-color: $primary-light !important;
   border: none !important;
   align-items: center !important;
   font-size: var(--font-size-sm) !important;
   font-weight: var(--ff-badge-font-md) !important;
-  border-radius: var(--radius-0150) !important;
+  border-radius: var(--radius-lg) !important;
   .secondary-label{
-    color: var(--ff-gray-500);
+    color: $gray-medium-dark;
   }
 }
 
@@ -356,16 +389,16 @@ select option:hover {
   .nav-link {
     background-color: transparent !important;
     font-weight: var(--font-weight-xl) !important;
-    color: var(--ff-base-700) !important;
+    color: $primary !important; 
     border: none !important;
     display: flex !important;
     align-items: flex-start !important;
     padding: 0 0 var(--spacer-050) 0 !important;
 
     &.active {
-      border-bottom: 0.125rem solid var(--ff-gray-800) !important;
+      border-bottom: 0.125rem solid $gray-darkest !important;
       background-color: transparent !important;
-      color: var(--gray-gray-800) !important;
+      color: $gray-darkest !important;
     }
   }
 
@@ -415,19 +448,20 @@ select option:hover {
 }
 
 
+
 .valiation-astrisk {
   color: $primary;
 }
-//for not allowing for edit in preview 
+//for not allowing for edit in preview
 .form-preview{
   pointer-events: none;
   cursor: not-allowed;
 }
 .form-preview-tab {
   padding: var(--spacer-200);
-  height: 100vh; 
+  height: 100vh;
   overflow-y: auto;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 .dropdown-main {
@@ -472,17 +506,171 @@ select option:hover {
 
 .dashed-line {
   width: 8.8125rem;
-  border-top: 0.1875rem dashed var(--ff-gray-300);
+  border-top: 0.1875rem dashed $gray-medium-dark;
+}
+.multiple-select-label {
+  padding-bottom: var(--spacer-050);
+  color: $gray-darkest;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-sm);
+  line-height: var(--text-line-height);
 }
 
-//custom styles  for sdpr
+.multiselect-container {
+  width: 100%;
+
+  &.disable_ms {
+    .searchWrapper {
+      background: var(--ff-gray-light);
+      border: none;
+      .chip {
+        background: var(--ff-white);
+        color: $gray-medium-dark;
+      }
+    }
+  }
+
+  .searchWrapper {
+    border-radius: var(--radius-sm);
+    border: 1px solid $primary;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacer-050);
+    
+    .chip {
+      padding: var(--spacer-050) var(--spacer-100);
+      align-items: center;
+      gap: var(--spacer-050);
+      border-radius: var(--radius-modal);
+      background: $primary-light; // #e4e3fc
+      color: $gray-darkest;
+      text-align: center;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-sm);
+      line-height: var(--text-line-height);
+      margin-bottom: 0px !important;
+      margin-right: 0px !important;
+    }
+
+    .custom-close {
+      display: flex;
+      padding: 3px 2px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+  }
+
+  .open-dropdown {
+    .searchWrapper {
+      border-bottom-left-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+  }
+
+  .optionListContainer {
+    margin-top: 0px;
+    border-top: none;
+    border-radius: 0px !important;
+  }
+
+  .optionContainer {
+    border-top: none !important;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-left-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+    display: flex;
+    padding: var(--spacer-050) 0px;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1 0 0;
+    border: 1px solid $primary;
+
+    .option {
+      &:hover {
+        background: $primary;
+        border-radius: var(--radius-0100);
+      }
+      display: flex;
+      padding: var(--spacer-050) var(--spacer-100);
+      align-items: center;
+      align-self: stretch;
+      gap: var(--spacer-050);
+      z-index: 9999 !important;
+    }
+  }
+}
+
+.dropdown-multiselect-component {
+  width: 100%;
+  display: flex;
+    flex-direction: column;
+    gap: var(--spacer-050);
+  .L-style{
+    height: 25px;
+    width: 12px;
+    border-left: 1px solid $primary;
+    border-bottom:  1px solid $primary;
+    margin-right: var(--spacer-075);
+  }
+  
+}
+
+.userform-wrapper{
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-200);
+  background-color: $gray-light;
+
+  .user-form-header{
+    .icon-title-container{
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-200);
+
+    }
+    .card-body{
+      padding: 0px !important;
+    }
+    gap: var(--spacer-150);
+    padding: var(--spacer-100) var(--spacer-200);
+    border-radius: var(--radius-md) !important;
+    background-color: var(--navbar-active-submenu-bg-color) !important;
+    font-size: var(--font-size-sm);
+
+    
+  .user-form-header-text{
+    color: $white;
+    font-weight: var(--font-weight-xl);
+  }
+  .form-modified-date{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: var(--font-weight-sm) !important;
+    color: $white;
+  }
+ }
+  .user-form-container{
+    height: calc(100vh - 7.5625rem - var(--client-nav));
+    overflow-y: auto;
+    overflow-x: hidden;
+    gap: var(--spacer-100);
+    padding: var(--spacer-200) var(--spacer-225);
+    background-color: $white;
+    border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+  }
+}
+
+//custom switch for sdpr
 .custom-switch-checkbox {
-  background-color: #EDEBE9 !important;
-  border: none !important;
+  background-color: #EDEBE9;
+  border: none;
   position: relative;
   transition: all 0.3s ease;
-  cursor: pointer;
-
+  
   &:after {
     content: '';
     position: absolute;
@@ -500,9 +688,9 @@ select option:hover {
     border-color: #353433;
   }
   &:checked {
-    background-color: var(--ff-primary) !important;
+    background-color: var(--ff-primary);
     border: none;
-
+    
     &:after {
       background-color: white;
       border-color: var(--ff-primary);
@@ -510,7 +698,7 @@ select option:hover {
       transform: translate(-100%, -50%);
     }
   }
-
+  
   &:focus {
     outline: none !important;
     box-shadow: none !important;
@@ -528,4 +716,40 @@ span.text-danger,
 .btn-link.text-danger,
 .modal-title.text-danger {
   color: var(--default-danger-color) !important;
+}
+
+.custom-checkbox-container {
+  display: flex;
+  background-color: $white-color !important;
+  color: $primary !important;
+  padding :  var(--spacer-050) var(--spacer-075) !important;
+  gap:var(--spacer-050) !important;
+  border: 1px solid $primary !important;
+  border-radius: var(--radius-sm) !important;
+  width: inherit !important;
+  &:hover {
+     opacity: 0.9 !important;
+  }
+  &.checked{
+    background-color: $primary !important;
+    color: $white-color !important;
+  }
+  .form-check-input[type="checkbox"]{
+    border: 2px solid $primary !important;
+    margin-top: 0px !important;
+  &:checked{
+    border-color:$white-color !important;
+  }
+  }
+  .assign-check-input { 
+    padding: var(--spacer-050);
+    border-radius: 4px;
+  }
+  .custom-checkbox-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-xl);
+    height: 19px;
+    display: flex;
+    align-items: center;
+  }
 }
