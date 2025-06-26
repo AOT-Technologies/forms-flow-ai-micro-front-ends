@@ -50,6 +50,11 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     startSuccessCountdown: setDeleteSuccess,
   } = useSuccessCountdown();
 
+    interface handleFilterUpdate {
+    isPrivate?: boolean;
+    data?: any;
+  }
+
   const toggleUpdateModal = () => {
     toggleModal();
     setShowUpdateModal((prev) => !prev);
@@ -87,9 +92,10 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     }
   };
 
-  const handleFilterUpdate = async () => {
-    toggleUpdateModal();
-    const response = await updateFilter(filterToEdit, filterToEdit?.id);
+  const handleFilterUpdate = async (isPrivate?: boolean, data?: any) => { 
+    if(!isPrivate)toggleUpdateModal();
+    const payload = data ?? filterToEdit;
+    const response = await updateFilter(payload, payload?.id);
     setUpdateSuccess(onClose, 2);
     dispatch(setIsUnsavedFilter(false));
     const filtersList = filterList.filter(
@@ -141,6 +147,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           showTaskFilterMainModal={show}
           closeTaskFilterMainModal={onClose}
           filterToEdit={filterToEdit}
+          handleFilterUpdate={handleFilterUpdate}
         />
       </Modal>
 
@@ -186,7 +193,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           onClose={toggleUpdateModal}
           primaryBtnText={t("No, Cancel Changes")}
           secondaryBtnText={t("Yes, Update This Filter For Everybody")}
-          secondaryBtnAction={handleFilterUpdate}
+          secondaryBtnAction={()=>{handleFilterUpdate();}}
           secondoryBtndataTestid="confirm-revert-button"
         />
       )}

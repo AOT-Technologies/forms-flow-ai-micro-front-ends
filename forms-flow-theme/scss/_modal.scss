@@ -654,6 +654,11 @@ $black-color: var(--ff-black);
   }     
 }
 
+.settings-tab-container{
+  .form-check{
+    width: 100%;
+  }
+}
 
 //expression-builder-modal
 .expression-builder-modal {

@@ -23,7 +23,7 @@ import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
-import { ApplicationLogo, NavbarTaskIcon, NavbarSubmitIcon } from "@formsflow/components";
+import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
@@ -330,14 +330,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
      return options;
   }
 
-  const iconBgColor =
-  getComputedStyle(document.documentElement).getPropertyValue(
-    "--navbar-main-menu-active-font-color"
-  )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
-    "gray-darkest"
-  ).trim();
-  
-
   return (
     <div
       className="sidenav"
@@ -352,7 +344,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               baseUrl={baseUrl}
               eventKey={SectionKeys.REVIEW.value}
               optionsCount="0"
-              mainMenu="Review"
+              mainMenu="Task"
               subMenu={[
                 {
                   name: "Review",
@@ -360,7 +352,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 },
               ]}
               subscribe={props.subscribe}
-              icon={<NavbarTaskIcon color={iconBgColor} />}
             />
           )}
 
@@ -387,7 +378,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 },
               ]}
               subscribe={props.subscribe}
-              icon={<NavbarSubmitIcon color={iconBgColor} />}
             />
           )}
 
