@@ -249,7 +249,7 @@ const TaskListTable = () => {
         size="table-sm"
         variant="secondary"
         label={t("View")}
-        onClick={() => history.push(`${redirectUrl.current}review/${task.id}`)}
+        onClick={() => history.push(`${redirectUrl.current}task/${task.id}`)}
         dataTestId={`view-task-${task.id}`}
         ariaLabel={t("View details for task {{taskName}}", {
           taskName: task.name ?? t("unnamed"),

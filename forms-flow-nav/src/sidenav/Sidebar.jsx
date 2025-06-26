@@ -228,9 +228,9 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       value: "submit",
       supportedRoutes: ["form", "bundle", "application", "draft"],
     },
-    REVIEW: {
-      value: "review",
-      supportedRoutes: ["task","review"],
+    TASK: {
+      value: "task",
+      supportedRoutes: ["task"],
     },
     ANALYZE: {
       value: "analyze",
@@ -246,7 +246,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     const sections = [
       { key: SectionKeys.DESIGN.value, supportedRoutes: SectionKeys.DESIGN.supportedRoutes },
       { key: SectionKeys.SUBMIT.value, supportedRoutes: SectionKeys.SUBMIT.supportedRoutes },
-      { key: SectionKeys.REVIEW.value, supportedRoutes: SectionKeys.REVIEW.supportedRoutes },
+      { key: SectionKeys.TASK.value, supportedRoutes: SectionKeys.TASK.supportedRoutes },
       { key: SectionKeys.ANALYZE.value, supportedRoutes: SectionKeys.ANALYZE.supportedRoutes },
       { key: SectionKeys.MANAGE.value, supportedRoutes: SectionKeys.MANAGE.supportedRoutes },
     ];
@@ -342,13 +342,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
           {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
             <MenuComponent
               baseUrl={baseUrl}
-              eventKey={SectionKeys.REVIEW.value}
+              eventKey={SectionKeys.TASK.value}
               optionsCount="0"
-              mainMenu="Task"
+              mainMenu="Tasks"
               subMenu={[
                 {
-                  name: "Review",
-                  path: "review",
+                  name: "Tasks",
+                  path: "task",
                 },
               ]}
               subscribe={props.subscribe}
