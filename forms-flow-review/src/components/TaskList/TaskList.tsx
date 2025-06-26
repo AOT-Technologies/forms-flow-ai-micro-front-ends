@@ -101,11 +101,6 @@ else {
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
 
-  useEffect(() => {
-  if (filterList && filterList.length > 0) {
-    fetchTaskListData();
-  }
-}, [filterList]);
 
 
   const fetchTaskListData = ({
