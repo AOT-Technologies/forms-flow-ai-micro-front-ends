@@ -6,8 +6,9 @@ import { RootState } from "../../reducers";
 const RenderOwnerShipNotes = ({isCreator, attributeFilter}) => {
   const { t } = useTranslation();
   const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
-  
-  if (isCreator) {
+
+  if(attributeFilter){
+    if (isCreator ) {
     return (
       <div className="pb-4">
         <CustomInfo
@@ -19,6 +20,8 @@ const RenderOwnerShipNotes = ({isCreator, attributeFilter}) => {
       </div>
     );
   }
+  }
+  
 
   if (isUnsavedFilter) {
     return (
@@ -35,7 +38,9 @@ const RenderOwnerShipNotes = ({isCreator, attributeFilter}) => {
     );
   }
 
-  if (!isCreator) {
+  
+if(attributeFilter){
+if (!isCreator) {
     return (
       <div className="pb-4">
         <CustomInfo
@@ -49,6 +54,8 @@ const RenderOwnerShipNotes = ({isCreator, attributeFilter}) => {
       </div>
     );
   }
+}
+  
   return null;
 };
 

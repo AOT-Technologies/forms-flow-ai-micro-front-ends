@@ -68,7 +68,7 @@ const AttributeFilterDropdown = () => {
     dispatch(setSelectedBpmAttributeFilter(attributeFilter));
     // need to feth task list based on selected attribute filter
     // need to reset all params
-    if (!selectedFilter || attributeFilter?.id === selectedAttributeFilter?.id)
+    if (!selectedFilter || ( !isUnsavedAttributeFilter && attributeFilter?.id === selectedAttributeFilter?.id))
       return;
 
     //this is current selected filter criteria

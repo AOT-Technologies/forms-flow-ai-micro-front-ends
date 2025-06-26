@@ -330,14 +330,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
      return options;
   }
 
-  const iconBgColor =
-  getComputedStyle(document.documentElement).getPropertyValue(
-    "--navbar-main-menu-active-font-color"
-  )?.trim() || getComputedStyle(document.documentElement).getPropertyValue(
-    "gray-darkest"
-  ).trim();
-  
-
   return (
     <div
       className="sidenav"
@@ -352,7 +344,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               baseUrl={baseUrl}
               eventKey={SectionKeys.REVIEW.value}
               optionsCount="0"
-              mainMenu="Review"
+              mainMenu="Task"
               subMenu={[
                 {
                   name: "Review",
@@ -360,7 +352,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 },
               ]}
               subscribe={props.subscribe}
-              icon={<NavbarTaskIcon color={iconBgColor} />}
             />
           )}
 
@@ -387,7 +378,70 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 },
               ]}
               subscribe={props.subscribe}
-              icon={<NavbarSubmitIcon color={iconBgColor} />}
+            />
+          )}
+
+          {ENABLE_FORMS_MODULE && (isCreateDesigns || isViewDesigns) && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.DESIGN.value}
+              optionsCount="5"
+              mainMenu="Design"
+              subMenu={[
+                {
+                  name: "Forms & Flows",
+                  path: "formflow",
+                },
+                ...(IS_ENTERPRISE && isManageBundles
+                  ? [
+                      {
+                        name: "Bundles",
+                        path: "bundleflow",
+                        isPremium: true,
+                      },
+                    ]
+                  : []),
+                //   ...(IS_ENTERPRISE &&
+                // isManageTemplates
+                //   ? [
+                //       {
+                //         name: "Templates",
+                //         path: "forms-template-library",
+                //         isPremium: true,
+                //       },
+                //     ]
+                //   : []),
+                // { name: "Templates", path: "forms-template-library" }, // TBD : Templates to be added on a later stage
+                ...(IS_ENTERPRISE &&
+                isManageIntegrations &&
+                (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
+                  ? [
+                      {
+                        name: "Integrations",
+                        path: "integration/recipes",
+                        supportedSubRoutes: [
+                          "integration/recipes",
+                          "integration/connected-apps",
+                          "integration/library",
+                        ],
+                        isPremium: true,
+                      },
+                    ]
+                  : []),
+                ...(isManageWorkflows && ENABLE_PROCESSES_MODULE
+                  ? [
+                      {
+                        name: "Subflows",
+                        path: "subflow",
+                      },
+                      {
+                        name: "Decision Tables",
+                        path: "decision-table",
+                      },
+                    ]
+                  : []),
+              ]}
+              subscribe={props.subscribe}
             />
           )}
 
