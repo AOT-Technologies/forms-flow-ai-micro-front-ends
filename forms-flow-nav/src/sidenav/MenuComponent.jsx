@@ -104,7 +104,7 @@ const renderMenuIcon = () => {
     strokeColor = defaultStroke;
   }
   switch (lowerMainMenu) {
-    case "task":
+    case "tasks":
       return <NavbarTaskIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
 
     case "submit":
