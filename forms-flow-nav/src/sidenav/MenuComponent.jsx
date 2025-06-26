@@ -177,7 +177,6 @@ MenuComponent.propTypes = {
   optionsCount: PropTypes.string.isRequired,
   subscribe: PropTypes.func.isRequired,
   baseUrl: PropTypes.string.isRequired,
-  icon: PropTypes.node,
 };
 
 export default MenuComponent;

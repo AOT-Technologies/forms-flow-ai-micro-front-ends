@@ -23,7 +23,7 @@ import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
-import { ApplicationLogo, NavbarTaskIcon, NavbarSubmitIcon } from "@formsflow/components";
+import { ApplicationLogo } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
@@ -376,70 +376,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                   ],
                   unsupportedSubRoutes: ["formflow", "bundleflow"],
                 },
-              ]}
-              subscribe={props.subscribe}
-            />
-          )}
-
-          {ENABLE_FORMS_MODULE && (isCreateDesigns || isViewDesigns) && (
-            <MenuComponent
-              baseUrl={baseUrl}
-              eventKey={SectionKeys.DESIGN.value}
-              optionsCount="5"
-              mainMenu="Design"
-              subMenu={[
-                {
-                  name: "Forms & Flows",
-                  path: "formflow",
-                },
-                ...(IS_ENTERPRISE && isManageBundles
-                  ? [
-                      {
-                        name: "Bundles",
-                        path: "bundleflow",
-                        isPremium: true,
-                      },
-                    ]
-                  : []),
-                //   ...(IS_ENTERPRISE &&
-                // isManageTemplates
-                //   ? [
-                //       {
-                //         name: "Templates",
-                //         path: "forms-template-library",
-                //         isPremium: true,
-                //       },
-                //     ]
-                //   : []),
-                // { name: "Templates", path: "forms-template-library" }, // TBD : Templates to be added on a later stage
-                ...(IS_ENTERPRISE &&
-                isManageIntegrations &&
-                (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
-                  ? [
-                      {
-                        name: "Integrations",
-                        path: "integration/recipes",
-                        supportedSubRoutes: [
-                          "integration/recipes",
-                          "integration/connected-apps",
-                          "integration/library",
-                        ],
-                        isPremium: true,
-                      },
-                    ]
-                  : []),
-                ...(isManageWorkflows && ENABLE_PROCESSES_MODULE
-                  ? [
-                      {
-                        name: "Subflows",
-                        path: "subflow",
-                      },
-                      {
-                        name: "Decision Tables",
-                        path: "decision-table",
-                      },
-                    ]
-                  : []),
               ]}
               subscribe={props.subscribe}
             />
