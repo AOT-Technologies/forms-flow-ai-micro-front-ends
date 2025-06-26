@@ -288,7 +288,8 @@ $white-color: var(--ff-white);
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: $primary-light;
+      background: var(--ff-primary-light);
+      box-shadow: inset 0 0 0 0.0625rem $primary;
     }
   }
 }
