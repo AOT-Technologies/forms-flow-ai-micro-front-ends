@@ -32,7 +32,7 @@ interface SocketUpdateParams {
   forceReload: boolean;
   isUpdateEvent: boolean;
 }
-const Review = React.memo((props: any) => {
+const Task = React.memo((props: any) => {
   const { publish, subscribe } = props;
   const { tenantId } = useParams();
     const history = useHistory();
@@ -51,7 +51,7 @@ const Review = React.memo((props: any) => {
   } = useSelector((state: RootState) => state.task);
 
   useEffect(() => {
-    publish("ES_ROUTE", { pathname: `${baseUrl}review` });
+    publish("ES_ROUTE", { pathname: `${baseUrl}task` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     });
@@ -83,7 +83,7 @@ const Review = React.memo((props: any) => {
     }
     const locale = localStorage.getItem("i18nextLng");
     if (locale) i18n.changeLanguage(locale);
-    publish("ES_ROUTE", { pathname: `${baseUrl}review` });
+    publish("ES_ROUTE", { pathname: `${baseUrl}task` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     });
@@ -123,11 +123,11 @@ const Review = React.memo((props: any) => {
 };
 
 const handleForceReload = (refreshedTaskId: string) => {
-  //  if opened task is there we need to push back to review route
-  //  if it push back to review route it will automatically call the tasklist api again
+  //  if opened task is there we need to push back to task route
+  //  if it push back to task route it will automatically call the tasklist api again
   // else we need to fetch again task list
   if(taskId == refreshedTaskId){
-   history.push(`${baseUrl}review`)
+   history.push(`${baseUrl}task`)
   }else{
     checkTheTaskIdExistThenRefetchTaskList();
   }
@@ -188,12 +188,12 @@ const SocketIOCallback = ({
             <Switch>
               <Route
                 exact
-                path={`${BASE_ROUTE}review`}
+                path={`${BASE_ROUTE}task`}
                 render={() => <TaskList {...props} />}
               />
               <Route
                 exact
-                path={`${BASE_ROUTE}review/:taskId`}
+                path={`${BASE_ROUTE}task/:taskId`}
                 render={() => <TaskDetails {...props} />}
               />
               <Redirect from="*" to="/404" />
@@ -205,4 +205,4 @@ const SocketIOCallback = ({
   );
 });
 
-export default Review;
+export default Task;

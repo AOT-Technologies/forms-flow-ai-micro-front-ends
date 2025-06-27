@@ -200,7 +200,7 @@ const TaskDetails = () => {
     Formio.clearCache();
     dispatch(setSelectedTaskID(null));
     dispatch(resetSubmission("submission"));
-    dispatch(push(`${redirectUrl}review`));
+    dispatch(push(`${redirectUrl}task`));
   };
 
   //Application History
