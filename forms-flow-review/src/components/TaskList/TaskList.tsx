@@ -52,7 +52,6 @@ const TaskList = () => {
     lastRequestedPayload: lastReqPayload,
     selectedAttributeFilter,
     isAssigned,
-    filterList,
   } = useSelector((state: RootState) => state.task);  
 
   const { viewTasks,viewFilters } = userRoles()
@@ -101,11 +100,6 @@ else {
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
 
-  useEffect(() => {
-  if (filterList && filterList.length > 0) {
-    fetchTaskListData();
-  }
-}, [filterList]);
 
 
   const fetchTaskListData = ({
