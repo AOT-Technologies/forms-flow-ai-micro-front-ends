@@ -1,6 +1,33 @@
 # Changelog for formsflow.ai
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
+## 7.1.0 - 2025-07-01
+
+`Added`
+
+**forms-flow-components**
+* Added new reusable components:
+  * Resizable table 
+  * Drag and drop component to hide and re-order
+  * Button component with checkbox
+  * New svg icons
+
+**forms-flow-review**
+* Added new micro-frontend to handle reviewer journey
+
+**forms-flow-submissions**
+* New micro-frontend to handle analyze submissions
+
+`Modified`
+
+**forms-flow-nav**
+* Modified sidebar menus and sub-menus
+
+**forms-flow-admin**
+* Modified existing permissions
+
+**forms-flow-theme**
+* Modified style changes to support new design
 
 ## 7.0.0 - 2025-01-10
 
