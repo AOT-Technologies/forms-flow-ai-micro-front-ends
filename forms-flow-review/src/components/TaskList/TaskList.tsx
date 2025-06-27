@@ -52,7 +52,6 @@ const TaskList = () => {
     lastRequestedPayload: lastReqPayload,
     selectedAttributeFilter,
     isAssigned,
-    filterList,
   } = useSelector((state: RootState) => state.task);  
 
   const { viewTasks,viewFilters } = userRoles()
