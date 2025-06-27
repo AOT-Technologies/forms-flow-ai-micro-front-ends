@@ -10,6 +10,10 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
   * Resizable table 
   * Drag and drop component to hide and re-order
   * Button component with checkbox
+  * Multi-select dropdown
+  * BPMN diagram view
+  * Date filter
+  * Filter sort
   * New svg icons
 
 **forms-flow-review**
