@@ -1,6 +1,8 @@
 // Variables for reused values
 $primary: var(--ff-primary);
-$secondary: var(--ff-secondary);
+$primary-light: var(--ff-primary-light);
+$gray-darkest: var(--ff-gray-darkest);
+$gray-dark: var(--ff-gray-dark);
 
 .btn-group-xxs>.btn, .btn-xxs, .component-btn-group .component-settings-button{
     width: auto !important;
@@ -19,7 +21,7 @@ $secondary: var(--ff-secondary);
   }
 
   .formbuilder .formarea .breadcrumb {
-    background-color: $gray-800 !important;
+    background-color: $gray-darkest !important;
     padding: 10px;
   }
   .formbuilder .formarea .breadcrumb li{
@@ -32,7 +34,7 @@ $secondary: var(--ff-secondary);
     background-color: $success;
   }
    .formbuilder .formarea .breadcrumb li .badge-info{
-    background-color: $gray-600;
+    background-color: $gray-dark;
   }
 
   // Settings button on hovering formio component
@@ -47,7 +49,7 @@ $secondary: var(--ff-secondary);
 
     .formio-hilighted {
       box-sizing: border-box;
-      border-radius: var(--radius-050);
+      border-radius: var(--radius-sm);
       border: 2px dashed $primary !important;
       padding: 8px 10px; //TBD need to update
     }
@@ -58,10 +60,15 @@ $secondary: var(--ff-secondary);
       padding-top: var(--spacer-050);
   
       .bg-default {
-        background: $secondary !important;
+        background: $primary-light !important;
   
         .card-title {
           color: $primary !important;
+        }
+      }
+      .form-check{
+        .form-check-label{
+          line-height: var(--spacer-150);
         }
       }
     }
@@ -80,6 +87,12 @@ $secondary: var(--ff-secondary);
     );
   
     .task-variable-modal {
+       .form-control:disabled {
+        pointer-events: none;
+       }
+       label {
+        cursor: pointer;
+       }
       .formio-form {
         .formio-component {
           // Apply hover effect only if the component is not in the ignored list
@@ -88,8 +101,8 @@ $secondary: var(--ff-secondary);
             border-style:  dotted;  
             border-color: transparent;
             &:hover {
-              border-color: var(--ff-primary-200);
-              border-radius: var(--radius-050);
+              border-color: $primary-light;
+              border-radius: var(--radius-sm);
             }
           }
 
@@ -98,24 +111,35 @@ $secondary: var(--ff-secondary);
             padding: 0;
             cursor: none;
           }
-                    &.taskvariable-hiddent-component {
-                      label {
-                        text-align: center;
-                        border: dashed 1px !important;
-                        padding: 5px;
-                        cursor: pointer;
-                      }
-          
-                      input {
-                        display: none;
-                      }
-                    }
+          &.taskvariable-hiddent-component {
+            label {
+              text-align: center;
+              border: dashed 1px !important;
+              padding: 5px;
+              cursor: pointer;
+            }
+            input {
+              display: none;
+            }
+          }
         }
       }
     }
 
 .formio-form {
   .formio-component-tabs {
+    .card-vertical{
+      display: flex;
+      flex-direction: row;
+      .card-header{
+        min-height: fit-content !important;
+        border-bottom: none !important;
+        padding-left: var(--spacer-100) !important;
+      }
+    }
+    .nav-tabs-vertical {
+      flex-direction: column;
+    }
     li {
       .form-group {
         margin-bottom: 0rem;
@@ -128,9 +152,15 @@ $secondary: var(--ff-secondary);
       }
     }
   }
+  .formio-component-hidden{
+    padding-top: 0 !important;
+   }
 }
 
 .ace_scrollbar-h {
   display: block;
   scrollbar-width: thin;
+}
+.btn.btn-secondary.btn-wizard-nav-cancel {
+  display: none !important;
 }

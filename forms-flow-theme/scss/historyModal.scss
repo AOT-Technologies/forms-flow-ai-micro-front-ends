@@ -1,3 +1,6 @@
+$gray-medium: var(--ff-gray-medium);
+$primary: var(--ff-primary);
+$white-color: var(--ff-white);
 .modal-70w {
   width: 66.2% !important;
   max-width: 66.2% !important;
@@ -14,7 +17,7 @@
       bottom: 0;
       left: 121px;
       width: 2px;
-      background-color: var(--ff-primary) !important; 
+      background-color: $primary !important; 
       z-index: 0;
 
       &::before {
@@ -24,8 +27,8 @@
         top: 0;
         width: 32px;
         height: 32px;
-        background-color: var(--ff-white) !important;
-        border: 2px solid var(--ff-primary) !important;
+        background-color: $white-color !important;
+        border: 2px solid $primary !important;
         border-radius: 50%;
         z-index: 1;
         display: flex;
@@ -38,7 +41,7 @@
         position: absolute;
         width: 16px;
         height: 16px;
-        background-color: var(--ff-primary) !important;
+        background-color: $primary !important;
         border-radius: 50%;
         top: 8px;
         left: -7px;
@@ -48,7 +51,7 @@
 
     .history-entry {
       position: relative;
-      background-color: var(--ff-white) !important; 
+      background-color: $white-color !important; 
       z-index: 2; 
     }
 
@@ -64,7 +67,7 @@
     }
     .version-style{
         padding: 0.688rem var(--spacer-100);
-        border-radius: var(--radius-0150);
+        border-radius: var(--radius-lg);
     }
 
     .major-version-grid {
@@ -72,7 +75,7 @@
       @extend .version-grid;
       @extend .history-entry;
       grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
-      border: 2px solid var(--ff-primary) !important;
+      border: 2px solid $primary !important;
     }
     .workflow-major-grid {
       grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -84,7 +87,7 @@
       @extend .history-entry;
       margin-left: 2rem;
       grid-template-columns: 1.75fr 1fr 1fr 1fr 1fr 0fr;
-      border: 2px solid var(--ff-gray-100) !important;
+      border: 2px solid $gray-medium !important;
     }
     .workflow-minor-grid {
       grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr;
@@ -106,3 +109,6 @@
   }
 }
 
+.analyse-submision-history-modal{
+  min-height: 80vh;
+}

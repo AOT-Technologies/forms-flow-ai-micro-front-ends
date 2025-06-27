@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import { CloseIcon } from "../SvgIcons/index";
+import { useTranslation } from "react-i18next";
 
 interface BuildModalProps {
   show: boolean;
@@ -20,7 +21,8 @@ const buildModalContent = (
     heading: string;
     body: string;
     onClick?: () => void;
-  }[]
+  }[],
+  t: (key: string) => string
 ) => {
   const handleKeyDown = (event, onClick) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -39,8 +41,8 @@ const buildModalContent = (
           aria-label={`Button for ${heading}`} 
           data-testid={`button-${id}`}
         >
-          <span className="mb-3 content-heading">{heading}</span>
-          <span className="content-body">{body}</span>
+          <span className="mb-3 content-heading">{t(heading)}</span>
+          <span className="content-body">{t(body)}</span>
         </button>
       ))}
     </>
@@ -49,6 +51,7 @@ const buildModalContent = (
 
 export const BuildModal: React.FC<BuildModalProps> = React.memo(
   ({ show, onClose, title, contents }) => {
+    const { t } = useTranslation();
     return (
       <Modal
         show={show}
@@ -62,14 +65,14 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
       >
         <Modal.Header>
           <Modal.Title id="build-modal-title">
-            <b>{title}</b>
+            <b>{t(title)}</b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} />
+            <CloseIcon onClick={onClose} dataTestId="modal-close"/>
           </div>
         </Modal.Header>
         <Modal.Body className="d-flex">
-          {buildModalContent(contents)}
+        {buildModalContent(contents, t)}
         </Modal.Body>
       </Modal>
     );

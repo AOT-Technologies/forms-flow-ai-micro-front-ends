@@ -3,17 +3,18 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import { ChevronIcon } from "../SvgIcons/index";
+import { useTranslation } from "react-i18next";
 
 interface DropdownItem {
   label: string;
   onClick: () => void;
-  dataTestid?: string;
+  dataTestId?: string;
   ariaLabel?: string;
 }
 
 interface CustomButtonProps {
   variant: string;
-  size?: "sm" | "md" | "lg" ;
+  size?: "sm" | "md" | "lg" | "table" | "table-sm";
   label: string;
   name?: string,
   onClick?: () => void;
@@ -22,10 +23,21 @@ interface CustomButtonProps {
   disabled?: boolean;
   icon?: React.ReactNode;
   className?: string;
-  dataTestid?: string;
+  dataTestId?: string;
   ariaLabel?: string;
   buttonLoading?: boolean;
+  iconOnly?: boolean;  
 }
+
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false) => {
+  const sizeClassMap: Record<string, string> = {
+    md: "btn-md",
+    table: "btn-table",
+    "table-sm": "btn-table-sm"
+  };
+
+  return `${size ? sizeClassMap[size] || '' : ''} ${className}`.trim();
+};
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
   variant,
@@ -37,15 +49,20 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   disabled = false,
   icon = false,
   className = "",
-  dataTestid = "",
+  dataTestId,
   ariaLabel = "",
   name =  "",
   buttonLoading = false,
+  iconOnly = false,  
 }) => {
+  const classNameForButton = getButtonClassName(size, className, iconOnly);
+  const sizeOfButton = size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
+
   const buttonRef = useRef<HTMLButtonElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   const updateMenuStyle = () => {
     if (buttonRef.current && toggleRef.current) {
@@ -68,6 +85,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     return () => window.removeEventListener("resize", updateMenuStyle);
   }, []);
 
+  // Dropdown Button
   if (isDropdown) {
     return (
       <Dropdown
@@ -77,15 +95,15 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       >
         <Button
           variant={variant}
-          size={size!='md' ? size : undefined}
+          size={sizeOfButton}
           disabled={disabled}
           ref={buttonRef}
-          data-testid={dataTestid}
+          data-testid={dataTestId}
           aria-label={ariaLabel}
           name={name}
-          className={`${size !== 'md' ? className : `btn-md ${className}`}`}
+          className={`${classNameForButton} justify-content-start`}
         >
-          {label}
+          {t(label)}
         </Button>
 
         <Dropdown.Toggle
@@ -103,10 +121,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             <Dropdown.Item
               key={index}
               onClick={item.onClick}
-              data-testid={item.dataTestid}
+              data-testid={item.dataTestId}
               aria-label={item.ariaLabel}
             >
-              {item.label}
+              {t(item.label)}
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>
@@ -114,15 +132,36 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     );
   }
 
+  // Icon-only Button
+  if (iconOnly) {
+    return (
+      <Button
+        variant={variant}
+        size={sizeOfButton}
+        onClick={onClick}
+        disabled={disabled || buttonLoading}
+        name={name}
+        className={`p-0 ${classNameForButton}`}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+      >
+        <div className="d-inline-flex align-items-center">
+          {icon}
+        </div>
+      </Button>
+    );
+  }
+
+  // Default Button with icon and label
   return (
     <Button
       variant={variant}
-      size={size!='md' ? size : undefined}
+      size={sizeOfButton}
       onClick={onClick}
       disabled={disabled || buttonLoading}
       name={name}
-      className={`${size !== 'md' ? className : `btn-md ${className}`}`}
-      data-testid={dataTestid}
+      className={classNameForButton}
+      data-testid={dataTestId}
       aria-label={ariaLabel}
     >
       <div
@@ -131,10 +170,11 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
         }`}
       >
         {icon && <span className="me-2">{icon}</span>}
-        {label}
+        {t(label)}
       </div>
       {buttonLoading && <span className="dotted-spinner"></span>}
     </Button>
+    
   );
 };
 

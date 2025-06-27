@@ -1,0 +1,9 @@
+services:
+  forms-flow-submissions:
+    container_name: forms-flow-submissions
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3012:8080"
+    tty: true
