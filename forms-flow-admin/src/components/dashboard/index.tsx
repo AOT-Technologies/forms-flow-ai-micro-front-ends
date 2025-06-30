@@ -18,18 +18,32 @@ const AdminDashboard = React.memo((props : any) => {
   const [loading, setLoading] = React.useState(true);
   const [authReceived, setAuthReceived] = React.useState(true);
 
-  React.useEffect(() => {
-    setTab("Dashboard");
-    setLoading(true);
-    fetchdashboards((data)=>{
+React.useEffect(() => {
+  setTab("Dashboard");
+  setLoading(true);
+  
+  fetchdashboards(
+    (data) => {
       setDashboards(data);
       setDashboardLoading(false);
-    }, setError);
-    fetchGroups((data)=>{
+    }, 
+    (error) => {
+      setError(error);
+      setDashboardLoading(false);
+    }
+  );
+  
+  fetchGroups(
+    (data) => {
       setGroups(data);
       setGroupLoading(false);
-    }, setError);
-  }, []);
+    }, 
+    (error) => {
+      setError(error);
+      setGroupLoading(false); 
+    }
+  );
+}, []);
 
   React.useEffect(()=>{
     if(!dashboardLoading && !groupLoading){
