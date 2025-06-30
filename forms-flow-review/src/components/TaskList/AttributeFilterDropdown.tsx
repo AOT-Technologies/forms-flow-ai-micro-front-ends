@@ -103,7 +103,7 @@ const AttributeFilterDropdown = () => {
     const createCustomField = {
       content: (
         <span>
-          <AddIcon className="filter-plus-icon" /> {t("Custom Fields")}
+          <AddIcon className="filter-plus-icon" /> {t("Custom Filter")}
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
@@ -116,13 +116,13 @@ const AttributeFilterDropdown = () => {
       content: (
         <span>
           <PencilIcon className="filter-edit-icon" />{" "}
-          {t("Re-order And Hide Attribute Filters")}
+          {t("Re-order And Hide Filters")}
         </span>
       ),
       onClick: () => setShowReorderAttributeFilterModal(true),
       type: "reorder",
       dataTestId: "attr-filter-item-reorder",
-      ariaLabel: t("Re-order And Hide Attribute Filters"),
+      ariaLabel: t("Re-order And Hide Filters"),
     };
 
     const clearAttributeFilter = {
