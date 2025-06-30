@@ -103,7 +103,7 @@ const AttributeFilterDropdown = () => {
     const createCustomField = {
       content: (
         <span>
-          <AddIcon className="filter-plus-icon" /> {t("Custom Form Fields")}
+          <AddIcon className="filter-plus-icon" /> {t("Custom Fields")}
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
