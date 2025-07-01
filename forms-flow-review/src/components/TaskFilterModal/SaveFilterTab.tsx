@@ -101,7 +101,7 @@ const SaveFilterTab = ({
       );
     }
 
-    if (createdByMe && createFilters) {
+    if (createdByMe && editRole) {
       return (
         <>
           <div className="pb-4">
@@ -130,7 +130,7 @@ const SaveFilterTab = ({
           className="note"
           heading="Note"
           content={t("This filter is created and managed by {{createdBy}}", {
-            createdBy: filterToEdit?.createdBy,
+            createdBy: createdByMe ? "you" : filterToEdit?.createdBy,
           })}
           dataTestId="task-filter-save-note"
         />
