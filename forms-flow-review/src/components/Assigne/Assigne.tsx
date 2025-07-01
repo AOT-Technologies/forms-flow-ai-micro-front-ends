@@ -95,6 +95,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
   return (
     <AssignUser
       size={isFromTaskDetails ? 'md' : 'sm'}
+      isFromTaskDetails={isFromTaskDetails}
       users={userList?.data ?? []}
       username={task.assignee}
       meOnClick={handleClaim}

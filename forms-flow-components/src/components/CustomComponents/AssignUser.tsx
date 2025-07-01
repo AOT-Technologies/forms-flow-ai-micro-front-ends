@@ -13,6 +13,7 @@ interface User {
 
 interface AssignUserProps {
   size?: "sm" | "md";
+  isFromTaskDetails?: boolean;
   users: User[];
   username: string;
   meOnClick?: () => void;
@@ -26,6 +27,7 @@ interface AssignUserProps {
 
 export const AssignUser: React.FC<AssignUserProps> = ({
   size = "md",
+  isFromTaskDetails = false,
   users = [],
   username,
   meOnClick,
@@ -158,9 +160,10 @@ const dropdownOptions = useMemo(() => {
       )}
       {/* Show InputDropdown when either Me or Others is selected */}
       {(selected === "Me" || selected === "Others")  && (
+        ( !manageMyTasks && !assignToOthers && !isFromTaskDetails) ? <label className="assigne-label">{selectedOption}</label> :
         <InputDropdown
           showCloseIcon={showCloseIcon}
-          hideDropDownList={(assignedToCurrentUser && !assignToOthers)}
+          hideDropDownList={!(!assignedToCurrentUser && manageMyTasks && !assignToOthers)}
           Options={dropdownOptions}
           variant={variant}
           selectedOption={selectedOption}
