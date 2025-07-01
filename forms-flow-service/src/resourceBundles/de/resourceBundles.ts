@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 //German
 export const RESOURCE_BUNDLES_DE = {
+  "Dismiss": "Schließen",
+  "You Cannot Delete This Form & Flow": "Sie können dieses Formular und diesen Ablauf nicht löschen.",
+  "You cannot delete a form & flow that has submissions associated with it.": "Sie können ein Formular und einen Ablauf mit zugehörigen Einreichungen nicht löschen.",
   "Latest Submission": "Letzte Einreichung",
   "Filter Created by": "Filter erstellt von",
   "Submit Form": "Formular absenden",
