@@ -55,6 +55,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   const calendarRef = useRef<HTMLDivElement>(null);
 
   // Parse date strings if provided in any format (including ISO format)
+  // Handles both Date objects and string representations of dates currently supports the ISO 8601 format
   const parseDate = (dateInput: DateValue): Date => {
     if (!dateInput) return new Date();
 
