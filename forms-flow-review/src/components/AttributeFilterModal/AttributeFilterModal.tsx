@@ -23,7 +23,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   const isUnsavedAttributeFilter = useSelector(
     (state: RootState) => state.task.isUnsavedAttributeFilter
   );
-  const title = `${t("Form Fields")}: ${
+  const title = `${t("Fields")}: ${
     attributeFilterToEdit && !isUnsavedAttributeFilter
       ? attributeFilterToEdit.name //need to check if it is unsaved or not
       : t("Unsaved Filter")

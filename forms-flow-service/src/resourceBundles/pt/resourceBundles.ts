@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 // Portuguese
 export const RESOURCE_BUNDLES_PT ={
+  "Dismiss": "Dispensar",
+  "You Cannot Delete This Form & Flow": "Você não pode excluir este formulário e fluxo.",
+  "You cannot delete a form & flow that has submissions associated with it.": "Você não pode excluir um formulário e fluxo que tenham submissões associadas.",
   "Latest Submission": "Submissões",
   "Filter Created by": "Filtro criado por",
   "Submit Form": "Enviar Formulário",

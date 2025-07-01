@@ -55,6 +55,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
   const calendarRef = useRef<HTMLDivElement>(null);
 
   // Parse date strings if provided in any format (including ISO format)
+  // Handles both Date objects and string representations of dates currently supports the ISO 8601 format
   const parseDate = (dateInput: DateValue): Date => {
     if (!dateInput) return new Date();
 
@@ -63,7 +64,16 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
     // Parse string date (handles ISO format like "2025-03-12T11:49:57+00:00")
     try {
-      return new Date(dateInput);
+      const parsedDate = new Date(dateInput);
+      // If the input is an ISO string, convert to local date to avoid timezone issues
+      if (typeof dateInput === "string" && dateInput.includes("T")) {
+        return new Date(
+          parsedDate.getFullYear(),
+          parsedDate.getMonth(),
+          parsedDate.getDate()
+        );
+      }
+      return parsedDate;
     } catch (e) {
       console.error("Error parsing date:", e);
       return new Date();
@@ -135,36 +145,35 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         .replace(/D+/g, "DD")
         .replace(/Y+/g, "YYYY");
     }
-    
+
     // Convert to Date object if string
     const dateObj = date instanceof Date ? date : parseDate(date);
-    
+
     // Format according to specified pattern
     const month = String(dateObj.getMonth() + 1).padStart(2, "0");
     const day = String(dateObj.getDate()).padStart(2, "0");
     const year = dateObj.getFullYear();
-    
+
     let formattedDate = format;
     formattedDate = formattedDate.replace(/M+/g, month);
     formattedDate = formattedDate.replace(/D+/g, day);
     formattedDate = formattedDate.replace(/Y+/g, year.toString());
-    
+
     return formattedDate;
   };
-  
+
   const formatDateRange = (): string => {
     // If no dates selected
     if (!dateRange.startDate && !dateRange.endDate) {
       return isOpen ? t("Select Date") : t(placeholder);
     }
-  
+
     const start = formatDateValue(dateRange.startDate);
     const end = formatDateValue(dateRange.endDate);
-  
+
     return `${start} - ${end}`;
   };
-  
-  
+
   interface CalendarDay {
     date: Date;
     isCurrentMonth: boolean;
@@ -250,9 +259,18 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
   const normalizeDate = (date: Date | string | null): Date | null => {
     if (!date) return null;
-    const parsedDate = date instanceof Date ? date : parseDate(date);
-    parsedDate.setHours(0, 0, 0, 0);
-    return parsedDate;
+
+    if (date instanceof Date) {
+      // Create a new date with local timezone to avoid UTC issues
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    const parsedDate = parseDate(date);
+    return new Date(
+      parsedDate.getFullYear(),
+      parsedDate.getMonth(),
+      parsedDate.getDate()
+    );
   };
 
   // Check if date is in selected range
@@ -294,13 +312,44 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     );
   };
 
+  // Helper function to create proper date range for filtering
+  const createFilterDateRange = (startDate: Date, endDate: Date): DateRange => {
+    // Create new date objects to avoid mutating the originals and handle timezone properly
+    const filterStartDate = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate(),
+      0,
+      0,
+      0,
+      0
+    );
+    const filterEndDate = new Date(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      endDate.getDate(),
+      23,
+      59,
+      59,
+      999
+    );
+
+    return {
+      startDate: filterStartDate,
+      endDate: filterEndDate,
+    };
+  };
+
   // Handle date selection
   const handleDateSelect = (date: Date): void => {
     if (!date) return;
 
-    // Clone the date to avoid reference issues
-    const selectedDate = new Date(date);
-    selectedDate.setHours(0, 0, 0, 0);
+    // Create a new date object with local timezone (avoid UTC conversion issues)
+    const selectedDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
 
     if (!dateRange.startDate || (dateRange.startDate && dateRange.endDate)) {
       // Start new selection
@@ -319,7 +368,11 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
       const currentStartDate =
         dateRange.startDate instanceof Date
-          ? dateRange.startDate
+          ? new Date(
+              dateRange.startDate.getFullYear(),
+              dateRange.startDate.getMonth(),
+              dateRange.startDate.getDate()
+            )
           : parseDate(dateRange.startDate);
 
       if (selectedDate < currentStartDate) {
@@ -330,9 +383,12 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         newEndDate = selectedDate;
       }
 
+      // Create proper filter range with start of day and end of day
+      const filterRange = createFilterDateRange(newStartDate, newEndDate);
+
       const newRange = {
-        startDate: newStartDate,
-        endDate: newEndDate,
+        startDate: filterRange.startDate,
+        endDate: filterRange.endDate,
       };
 
       setDateRange(newRange);
@@ -448,15 +504,21 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
         // If selection is incomplete, complete it with current dates
         if (dateRange.startDate && !dateRange.endDate) {
-          const completedRange = {
-            startDate: dateRange.startDate,
-            endDate: dateRange.startDate, // Set end date same as start date
-          };
+          // Create proper filter range for single date selection
+          const startDateObj =
+            dateRange.startDate instanceof Date
+              ? dateRange.startDate
+              : parseDate(dateRange.startDate);
 
-          setDateRange(completedRange);
+          const singleDateRange = createFilterDateRange(
+            startDateObj,
+            startDateObj
+          );
+
+          setDateRange(singleDateRange);
 
           // Notify parent component of the completed selection
-          onChange(completedRange);
+          onChange(singleDateRange);
         }
       }
     };
@@ -493,7 +555,12 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
         aria-expanded={isOpen}
         type="button"
       >
-        <span  className={`date-range-text ${isOpen ? "open" : ""}`}  data-testid="date-range-text">{formatDateRange()}</span>
+        <span
+          className={`date-range-text ${isOpen ? "open" : ""}`}
+          data-testid="date-range-text"
+        >
+          {formatDateRange()}
+        </span>
         <div className="date-range-controls">
           {isOpen && (
             <button
