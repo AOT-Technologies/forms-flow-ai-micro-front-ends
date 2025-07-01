@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 //Bulgarian
 export const RESOURCE_BUNDLES_BG = {
+  "Dismiss": "Отхвърли",
+  "You Cannot Delete This Form & Flow": "Не можете да изтриете този формуляр и процес.",
+  "You cannot delete a form & flow that has submissions associated with it.": "Не можете да изтриете формуляр и процес, които имат свързани подадени данни.",
   "Latest Submission": "Последно подаване",
   "Filter Created by": "Филтър Създаден от",
   "Submit Form": "Изпращане на Формуляр",

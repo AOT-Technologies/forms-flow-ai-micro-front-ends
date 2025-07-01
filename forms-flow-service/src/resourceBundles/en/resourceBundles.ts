@@ -1,5 +1,8 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_EN = {
+  "Dismiss": "Dismiss",
+  "You Cannot Delete This Form & Flow": "You Cannot Delete This Form & Flow",
+  "You cannot delete a form & flow that has submissions associated with it.": "You cannot delete a form & flow that has submissions associated with it.",
   "Filter Created by": "Filter Created by",
   "Submit Form": "Submit Form",
   "Changes Applied Successfully": "Changes Applied Successfully",

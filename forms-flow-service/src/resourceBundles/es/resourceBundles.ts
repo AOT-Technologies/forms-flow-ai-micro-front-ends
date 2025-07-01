@@ -1,5 +1,8 @@
 //Spanish
 export const RESOURCE_BUNDLES_ES = {
+  "Dismiss": "Descartar",
+  "You Cannot Delete This Form & Flow": "No puedes eliminar este formulario y flujo.",
+  "You cannot delete a form & flow that has submissions associated with it.": "No puedes eliminar un formulario y flujo que tiene envíos asociados.",
     "Latest Submission": "Modificado por",
     "Filter Created by": "Filtro creado por",
     "No histories found": "No se encontraron historias",
