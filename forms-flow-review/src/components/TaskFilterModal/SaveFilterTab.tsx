@@ -124,7 +124,7 @@ const SaveFilterTab = ({
       );
     }
 
-    if (!editRole) {
+    if (!editRole && filterToEdit.id) {
       return (
         <CustomInfo
           className="note"
@@ -140,7 +140,8 @@ const SaveFilterTab = ({
     if (manageAllFilters && !createdByMe) {
       return (
         <>
-          <div className="pb-4">
+        {filterToEdit.id && (
+           <div className="pb-4">
             <CustomInfo
               className="note"
               heading="Note"
@@ -153,6 +154,8 @@ const SaveFilterTab = ({
               dataTestId="task-filter-save-note"
             />
           </div>
+        )}
+         
           <CustomInfo
             className="note"
             heading="Note"

@@ -442,7 +442,6 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
 
     if (createFilters ) {
       return (
-        <div className="pt-4">
           <CustomButton
   variant={saveButtonVariant}
   size="md"
@@ -458,7 +457,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
   disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
 />
 
-        </div>
+
       );
     }
 
