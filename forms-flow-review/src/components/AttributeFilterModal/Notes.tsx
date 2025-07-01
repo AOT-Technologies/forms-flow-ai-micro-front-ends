@@ -39,7 +39,7 @@ const RenderOwnerShipNotes = ({isCreator, attributeFilter}) => {
   }
 
   
-if(attributeFilter){
+if(attributeFilter?.id){
 if (!isCreator) {
     return (
       <div className="pb-4">
