@@ -163,7 +163,7 @@ const dropdownOptions = useMemo(() => {
         ( !manageMyTasks && !assignToOthers && !isFromTaskDetails) ? <label className="assigne-label">{selectedOption}</label> :
         <InputDropdown
           showCloseIcon={showCloseIcon}
-          hideDropDownList={!(!assignedToCurrentUser && manageMyTasks && !assignToOthers)}
+          hideDropDownList={(assignedToCurrentUser && !assignToOthers) || (!assignedToCurrentUser && !manageMyTasks)}
           Options={dropdownOptions}
           variant={variant}
           selectedOption={selectedOption}
