@@ -1,6 +1,7 @@
 $primary: var(--ff-primary);
 $gray-darkest: var(--ff-gray-darkest);
 $white-color: var(--ff-white);
+$black: var(--ff-black);
 
 .assign-user {
   display: flex;
@@ -75,3 +76,12 @@ $white-color: var(--ff-white);
 }
 
 
+.assigne-label{
+overflow: hidden;
+color: $black;
+text-overflow: ellipsis;
+white-space: nowrap;
+font-size: var(--font-size-xs);
+font-weight: var(--font-weight-sm);
+line-height: var(--text-line-height);
+}
