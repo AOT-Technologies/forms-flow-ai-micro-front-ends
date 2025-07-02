@@ -87,4 +87,22 @@ $chevron-bg: #5e61f2;
       }
     }
   }
-  
+ /* Main layout container */
+.main-layout-container {
+  display: flex;
+}
+
+/* Left panel - Search form */
+.left-panel {
+  flex-shrink: 0;
+}
+
+/* Right panel - Table area */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 16px;
+  overflow: hidden;
+}
+

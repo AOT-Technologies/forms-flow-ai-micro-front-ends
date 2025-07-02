@@ -22,6 +22,7 @@ import {
   TableFooter,
   CustomButton,
   SortableHeader,
+  CollapsibleSearch,
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 
@@ -168,60 +169,72 @@ const TaskSubmissionList: React.FC = () => {
   }, [t, sortParams, handleSort]);
 
   return (
-    <div className="container-wrapper" data-testid="table-container-wrapper">
-      <div className="table-outer-container">
-        <div className="table-scroll-wrapper resizable-scroll" ref={scrollWrapperRef}>
-          <div className="resizable-table-container">
-            <ReusableResizableTable
-              columns={columns}
-              data={submissions}
-              renderRow={renderRow}
-              renderHeaderCell={renderHeaderCell}
-              emptyMessage={t("No submissions have been found. Try a different filter combination or contact your admin.")}
-              onColumnResize={(newWidths) =>
-                console.log("Column resized:", newWidths)
-              }
-              loading={isSubmissionsLoading}
-              tableClassName="resizable-table"
-              headerClassName="resizable-header"
-              containerClassName="resizable-table-container"
-              scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
-              dataTestId="task-resizable-table"
-              ariaLabel={t("submissions data table with resizable columns")}
-            />
-          </div>
-        </div>
+    <div className="main-layout-container">
+      {/* Left Panel - Collapsible Search Form */}
+      <div className="left-panel">
+        <CollapsibleSearch />
       </div>
 
-      {submissions.length > 0 && (
-        <table className="custom-tables" data-testid="table-footer-container">
-          <tfoot>
-            <TableFooter
-              limit={limit}
-              activePage={page}
-              totalCount={totalCount}
-              loader={isSubmissionsLoading}
-              handlePageChange={handlePageChange}
-              onLimitChange={handleLimitChange}
-              pageOptions={[
-                { text: "10", value: 10 },
-                { text: "25", value: 25 },
-                { text: "50", value: 50 },
-                { text: "100", value: 100 },
-                { text: "All", value: totalCount },
-              ]}
-              dataTestId="submission-table-footer"
-              ariaLabel={t("Table pagination controls")}
-              pageSizeDataTestId="submission-page-size-selector"
-              pageSizeAriaLabel={t("Select number of submissions per page")}
-              paginationDataTestId="submission-pagination-controls"
-              paginationAriaLabel={t("Navigate between submission pages")}
-            />
-          </tfoot>
-        </table>
-      )}
+      {/* Right Panel - Table Container */}
+      <div className="right-panel">
+        <div className="container-wrapper" data-testid="table-container-wrapper">
+          <div className="table-outer-container">
+            <div className="table-scroll-wrapper resizable-scroll" ref={scrollWrapperRef}>
+              <div className="resizable-table-container">
+                <ReusableResizableTable
+                  columns={columns}
+                  data={submissions}
+                  renderRow={renderRow}
+                  renderHeaderCell={renderHeaderCell}
+                  emptyMessage={t("No submissions have been found. Try a different filter combination or contact your admin.")}
+                  onColumnResize={(newWidths) =>
+                    console.log("Column resized:", newWidths)
+                  }
+                  loading={isSubmissionsLoading}
+                  tableClassName="resizable-table"
+                  headerClassName="resizable-header"
+                  containerClassName="resizable-table-container"
+                  scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+                  dataTestId="task-resizable-table"
+                  ariaLabel={t("submissions data table with resizable columns")}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Table Footer */}
+          {submissions.length > 0 && (
+            <div className="table-footer-wrapper">
+              <table className="custom-tables" data-testid="table-footer-container">
+                <tfoot>
+                  <TableFooter
+                    limit={limit}
+                    activePage={page}
+                    totalCount={totalCount}
+                    loader={isSubmissionsLoading}
+                    handlePageChange={handlePageChange}
+                    onLimitChange={handleLimitChange}
+                    pageOptions={[
+                      { text: "10", value: 10 },
+                      { text: "25", value: 25 },
+                      { text: "50", value: 50 },
+                      { text: "100", value: 100 },
+                      { text: "All", value: totalCount },
+                    ]}
+                    dataTestId="submission-table-footer"
+                    ariaLabel={t("Table pagination controls")}
+                    pageSizeDataTestId="submission-page-size-selector"
+                    pageSizeAriaLabel={t("Select number of submissions per page")}
+                    paginationDataTestId="submission-pagination-controls"
+                    paginationAriaLabel={t("Navigate between submission pages")}
+                  />
+                </tfoot>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
-
 export default TaskSubmissionList;
