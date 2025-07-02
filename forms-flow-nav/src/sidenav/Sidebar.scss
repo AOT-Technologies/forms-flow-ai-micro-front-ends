@@ -28,6 +28,7 @@
     color: var(--navbar-main-menu-active-font-color);
     background-color: var(--navbar-bg-color);
     gap: 0.5rem;
+    box-shadow: none;
 
     &:focus {
       box-shadow: none;
@@ -124,7 +125,7 @@
     }
 
     .sign-out-button {
-      text-align: left;
+      justify-content: center;
       padding: var(--spacer-100) var(--spacer-150);
       border: none;
       cursor: pointer;
@@ -153,6 +154,8 @@
       line-height: var(--text-line-height);
       letter-spacing: var(--text-space-xs);
       background-color: var(--navbar-bg-color) !important;
+      text-align: left;
+      margin-left: var(--spacer-050) !important;
       margin: 0;
       cursor: pointer;
       border: none;
@@ -185,11 +188,8 @@
       display: none;
     }
 
-    &.no-arrow .accordion-button {
-      padding-left: 3.2rem;
-    }
 
-    &.active .accordion-button {
+    &.active-header .accordion-button {
       background-color: var(--navbar-active-submenu-bg-color);
       color: var(--navbar-active-submenu-font-color);
     }

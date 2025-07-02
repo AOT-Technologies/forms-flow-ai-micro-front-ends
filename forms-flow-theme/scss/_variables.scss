@@ -60,6 +60,9 @@ $white-color: var(--ff-white);
   .filter-edit-icon,.filter-plus-icon{
     stroke: $white-color !important;
   }
+  .shared-icon {
+    stroke: $white-color !important;
+  }
 }
 
 .taskDropdown>.dropdown-menu::before {
@@ -258,6 +261,11 @@ hr {
 
 .scrollable-overview-with-header {
   max-height: calc(100vh - 10.25rem);
+} 
+.disabled-mode{
+ background: rgba(0, 0, 0, 0.1);
+ cursor: not-allowed !important;
+ opacity: 0.9;
 }
 
 .form-border{

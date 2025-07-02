@@ -1,5 +1,8 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_EN = {
+  "Dismiss": "Dismiss",
+  "You Cannot Delete This Form & Flow": "You Cannot Delete This Form & Flow",
+  "You cannot delete a form & flow that has submissions associated with it.": "You cannot delete a form & flow that has submissions associated with it.",
   "Filter Created by": "Filter Created by",
   "Submit Form": "Submit Form",
   "Changes Applied Successfully": "Changes Applied Successfully",
@@ -563,7 +566,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Enable bundling ?": "Enable bundling?",
   "Select a task in the List.": "Select a task in the List.",
   "Add Date": "Add Date",
-  "Assign to Me": "Assign to Me",
+  "Assigned to Me": "Assigned to Me",
   "Filter count:": "Filter count:",
   "Selected Forms": "Selected Forms",
   "Template Used:": "Template Used:",
@@ -1062,5 +1065,11 @@ export const RESOURCE_BUNDLES_EN = {
   "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution.": "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution.",
   "No, Cancel Changes": "No, Cancel Changes",
   "Yes, Update This Filter For Everybody": "Yes, Update This Filter For Everybody",
-  "Select Date": "Select Date"
+  "Select Date": "Select Date",
+  "Save Attribute Filter": "Save Attribute Filter",
+  "Attributes: Unsaved Filter": "Attributes: Unsaved Filter",
+  "Custom Form Fields": "Custom Form Fields",
+  "Saved!": "Saved!",
+  "Deleted!": "Deleted!",
+  "Updated!": "Updated!"
 }

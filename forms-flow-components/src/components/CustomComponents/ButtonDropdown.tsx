@@ -5,6 +5,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { ChevronIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
+import { CustomSearch } from "./Search";
 
 interface DropdownItem {
   content?: React.ReactNode;
@@ -12,6 +13,7 @@ interface DropdownItem {
   type?: string;
   dataTestId?: string;
   ariaLabel?: string;
+  className?: string;
 }
 
 interface ButtonDropdownProps {
@@ -23,11 +25,12 @@ interface ButtonDropdownProps {
   className?: string;
   dropdownType: "DROPDOWN_ONLY" | "DROPDOWN_WITH_EXTRA_ACTION";
   dropdownItems?: DropdownItem[];
+  onSearch?: (searchTerm: string) => void;
   extraActionIcon?: React.ReactNode;
   extraActionOnClick?:() => void; 
   dataTestId?: string;
   ariaLabel?: string; 
-}
+ }
 
 export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   dropdownType,
@@ -36,6 +39,7 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   defaultLabel, 
   label,
   dropdownItems = [],
+  onSearch,
   extraActionIcon = false,
   extraActionOnClick,
   className = "",
@@ -50,8 +54,24 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const { t } = useTranslation();
   const primaryBtnBgColor = StyleServices.getCSSVariable('--primary-btn-bg-color');
-  const secondaryBtnBgColor = StyleServices.getCSSVariable('--secondary-btn-bg-color');  
-  // Check if we should use the default label
+  const secondaryBtnBgColor = StyleServices.getCSSVariable('--secondary-btn-bg-color'); 
+  const [search, setSearch] = useState("");
+
+  const handleClearSearch = () => {
+    setSearch("");
+    onSearch?.("");
+  }
+
+  const handleSearch = () => {
+    onSearch?.(search);
+  };
+
+  useEffect(()=>{
+      if (onSearch) {
+    onSearch(search);
+  }
+  },[search]);
+    // Check if we should use the default label
   const isUsingDefaultLabel = !label || label === "";
   // Display label if provided, otherwise use defaultLabel
   const displayLabel = isUsingDefaultLabel ? defaultLabel : label;
@@ -66,7 +86,7 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
       const totalWidth = buttonWidth + toggleWidth - 1;
       setMenuStyle({
         width: `${totalWidth}px`,
-        maxHeight: "200px",
+        maxHeight: "480px",
         overflowY: "auto",
         border: "2px solid var(--primary-btn-bg-color)",
         borderTopLeftRadius: "0",
@@ -141,12 +161,22 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
         </Dropdown.Toggle>
 
         <Dropdown.Menu style={menuStyle}>
+        {onSearch && (<CustomSearch
+          handleClearSearch={handleClearSearch}
+          search={search}
+          setSearch={setSearch}
+          handleSearch={handleSearch}
+          placeholder={t("Search")}
+          title={t("Search")}
+          dataTestId="search-filter"
+        />)}
           {dropdownItems.map((item) => (
             <Dropdown.Item
               key={item.type}
               onClick={() => item.onClick(item.type)}
               data-testid={item.dataTestId}
               aria-label={item.ariaLabel}
+              className={item.className}
             >
               {item.content}
             </Dropdown.Item>

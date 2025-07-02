@@ -41,8 +41,13 @@ declare module "*.svg" {
 declare module "@formsflow/service" {
 	export const {KeycloakService, RequestService, StorageService,i18nService}: any;
 }
+
 declare module "@formsflow/components" {
   export const {
-    CollapsibleSearch
+    ReusableResizableTable,
+    TableFooter,
+    CustomButton,
+    SortableHeader,
+    CollapsibleSearch,
   }: any;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
   getBPMGroups,
   onBPMTaskFormSubmit,
   getCustomSubmission,
+  getApplicationHistory,
 } from "../api/services/bpmTaskServices";
 import {
   getForm,
@@ -26,7 +27,9 @@ import {
   setFormSubmissionLoading,
   setBPMTaskDetailLoader,
   setSelectedTaskID,
-} from "../actions/taskActions";
+  setAppHistoryLoading,
+  setTaskDetailsLoading,
+  } from "../actions/taskActions";
 import { getFormioRoleIds } from "../api/services/userSrvices";
 import {
   CUSTOM_SUBMISSION_URL,
@@ -35,12 +38,18 @@ import {
   MULTITENANCY_ENABLED,
 } from "../constants/index";
 import TaskForm from "../components/TaskForm";
+import { TaskHistoryModal } from "../components/TaskHistory";
 import { push } from "connected-react-router";
+import { userRoles } from "../helper/permissions";
+import TaskAssigneeManager from "../components/Assigne/Assigne";
 
 const TaskDetails = () => {
   const { t } = useTranslation();
   const { taskId } = useParams();
   const dispatch = useDispatch();
+  const {viewTaskHistory} = userRoles();
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [disabledMode,setDisabledMode] = useState(false);
   // Redux State Selectors
   const tenantKey = useSelector(
     (state: any) => state.tenants?.tenantData?.tenantkey
@@ -50,12 +59,26 @@ const TaskDetails = () => {
   const taskFormSubmissionReload = useSelector(
     (state: any) => state.task.taskFormSubmissionReload
   );
+
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
   )?.preferred_username;
-
+  const taskAssignee = useSelector(
+    (state: any) => state?.task?.taskAssignee
+  );
   // Redirection URL
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+
+  //disable the form if task not assigned to himself 
+  useEffect(()=>{
+    if(taskAssignee !==currentUser){
+      setDisabledMode(true);
+    }
+    else{
+      setDisabledMode(false);
+    }
+  },[taskAssignee,currentUser])
+
 
   // Set selected task ID on mount
   useEffect(() => {
@@ -67,6 +90,7 @@ const TaskDetails = () => {
     if (bpmTaskId) {
       dispatch(setBPMTaskDetailLoader(true));
       dispatch(getBPMTaskDetail(bpmTaskId));
+      dispatch(setTaskDetailsLoading(true));
       dispatch(getBPMGroups(bpmTaskId));
     }
     return () => Formio.clearCache();
@@ -145,16 +169,17 @@ const TaskDetails = () => {
     const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
     const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
     const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
-
+    const payload = {
+      variables:{
+        formUrl:{value:formUrl},
+        applicationId:{value:task.applicationId},
+        webFormUrl:{value:webFormUrl},
+        action:{value:actionType}
+      }
+    }
     dispatch(
       onBPMTaskFormSubmit(
-        bpmTaskId,
-        {
-          formUrl,
-          applicationId: task.applicationId,
-          actionType,
-          webFormUrl,
-        },
+        bpmTaskId,payload,
         () => dispatch(setBPMTaskDetailLoader(false))
       )
     );
@@ -173,35 +198,56 @@ const TaskDetails = () => {
 
   const handleBack = () => {
     Formio.clearCache();
+    dispatch(setSelectedTaskID(null));
     dispatch(resetSubmission("submission"));
-    dispatch(push(`${redirectUrl}review`));
+    dispatch(push(`${redirectUrl}task`));
   };
 
+  //Application History
+  const handleHistory = () => {
+    dispatch(setAppHistoryLoading(true));
+    dispatch(getApplicationHistory(task?.applicationId));
+    setShowHistoryModal(true);
+  };
+  // Main Renderor
   return (
     <div className="task-details-view">
+      {showHistoryModal && (
+        <TaskHistoryModal
+          show={showHistoryModal}
+          onClose={() => setShowHistoryModal(false)}
+        />
+      )}
       <Card className="editor-header">
         <Card.Body>
           <div className="d-flex justify-content-between align-items-center">
-            <div className="d-flex align-items-center justify-content-between">
+            {/* Left Section: Back Button + Title */}
+            <div className="d-flex align-items-center">
               <BackToPrevIcon onClick={handleBack} />
               <div className="mx-4 editor-header-text">
                 {textTruncate(75, 75, task?.name)}
               </div>
             </div>
-            <CustomButton
-              variant="gray-dark"
-              size="table"
-              label={t("History")}
-              dataTestId="handle-task-details-history-testid"
-              ariaLabel={t("Submission History Button")}
-            />
+
+            {/* Right Section: TaskAssigneeManager + History Button */}
+            <div className="d-flex align-items-center ms-auto">
+              <TaskAssigneeManager task={task} isFromTaskDetails={true} />
+              {viewTaskHistory && <CustomButton
+                variant="gray-dark"
+                size="table"
+                label={t("History")}
+                dataTestId="handle-task-details-history-testid"
+                ariaLabel={t("Submission History Button")}
+                onClick={handleHistory}
+                className="ms-3"
+              />}
+            </div>
           </div>
         </Card.Body>
       </Card>
-      <div className="scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border">
+      <div className ={`scrollable-overview-with-header  ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`} >
         <TaskForm
           currentUser={currentUser}
-          taskAssignee={task?.assignee}
           onFormSubmit={onFormSubmitCallback}
           onCustomEvent={onCustomEventCallBack}
         />

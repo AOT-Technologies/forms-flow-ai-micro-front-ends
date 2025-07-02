@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 // Chinese
 export const RESOURCE_BUNDLES_ZH = {
+   "Dismiss": "关闭",
+  "You Cannot Delete This Form & Flow": "无法删除此表单和流程。",
+  "You cannot delete a form & flow that has submissions associated with it.": "无法删除与提交数据相关的表单和流程。",
   "Latest Submission": "最新提交",
   "Filter Created by": "筛选器创建者",
   "Submit Form": "提交表单",
@@ -565,7 +568,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Enable bundling ?": "启用捆绑？",
   "Select a task in the List.": "选择列表中的任务。",
   "Add Date": "添加日期",
-  "Assign to Me": "分配给我",
+  "Assigned to me": "Atribuído a mim",
   "Filter count:": "过滤器计数：",
   "Selected Forms": "已选择的表单",
   "Template Used:": "使用的模板：",
@@ -1557,5 +1560,11 @@ export const RESOURCE_BUNDLES_ZH = {
   "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution.": "此筛选器与他人共享。更新此筛选器将更新所有人的筛选器，并可能影响他们的工作流程。请谨慎操作。",
   "No, Cancel Changes": "不，取消更改",
   "Yes, Update This Filter For Everybody": "是的，为所有人更新此筛选器",
-  "Select Date": "选择日期"
+  "Select Date": "选择日期",
+  "Save Attribute Filter": "保存属性筛选器",
+  "Attributes: Unsaved Filter": "属性：未保存的筛选器",
+  "Custom Form Fields": "自定义表单字段",
+  "Saved!": "已保存！",
+  "Deleted!": "已删除！",
+  "Updated!": "已更新！"
 }

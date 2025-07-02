@@ -68,7 +68,7 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
             <b>{t(title)}</b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} />
+            <CloseIcon onClick={onClose} dataTestId="modal-close"/>
           </div>
         </Modal.Header>
         <Modal.Body className="d-flex">

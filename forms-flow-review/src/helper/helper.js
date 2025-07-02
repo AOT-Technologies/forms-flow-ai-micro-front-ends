@@ -9,7 +9,7 @@ function getEnv(env_string) {
 let userAccessGroupCheckforApplications =getEnv('REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK');
 
 export const trimFirstSlash = (inputString) => {
-  if (inputString.startsWith('/')) {
+  if (inputString?.startsWith('/')) {
     return inputString.substring(1);
   }
   return inputString;

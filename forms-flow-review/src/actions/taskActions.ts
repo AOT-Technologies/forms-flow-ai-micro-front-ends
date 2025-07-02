@@ -5,6 +5,11 @@ export const setTasks = (data: any) => ({
     payload: data,
   })
 
+  export const setIsUnsavedFilter =(data: boolean) => ({
+    type: ACTION_CONSTANTS.SET_IS_UNSAVED_FILTER,
+    payload: data,
+  })
+
   export const setBPMUserList = (data: any) => ({
  
       type: ACTION_CONSTANTS.BPM_USER_LIST,
@@ -109,9 +114,9 @@ export const setTasks = (data: any) => ({
       payload: data,
     });
   };
-  export const setSelectedBPMFilter = (data) => (dispatch) => {
+  export const setSelectedFilter = (data) => (dispatch) => {
     dispatch({
-      type: ACTION_CONSTANTS.BPM_SELECTED_FILTER,
+      type: ACTION_CONSTANTS.SET_SELECTED_FILTER,
       payload: data,
     });
   };
@@ -169,13 +174,12 @@ export const setBPMTaskListActivePage = (data) => (dispatch) => {
   });
 };
 
-export const setFilterListParams = (data) => (dispatch) => {
+export const setLastReqPayload = (data) => (dispatch) => {
   dispatch({
-    type: ACTION_CONSTANTS.UPDATE_LIST_PARAMS,
+    type: ACTION_CONSTANTS.LAST_REQ_PAYLOAD,
     payload: data,
   });
 };
-
 
 
 export const setFilterListSortParams = (data) => (dispatch) => {
@@ -192,6 +196,35 @@ export const setTaskListLimit = (pageLimit) => (dispatch) => {
   });
 };
 
+export const setFilterToEdit = (data) => ({
+  type: ACTION_CONSTANTS.SET_FILTER_TO_EDIT,
+  payload: data,
+})
+
+
+export const setIsAssigned = (data:boolean) => ({
+  type: ACTION_CONSTANTS.IS_ASSIGNED,
+  payload: data,
+})
+
+export const setAttributeFilterToEdit = (data) => ({
+  type: ACTION_CONSTANTS.SET_ATTRIBUTE_FILTER_TO_EDIT,
+  payload: data,
+})
+
+
+export const setIsUnsavedAttributeFilter = (data) =>({
+  type: ACTION_CONSTANTS.SET_IS_UNSAVED_ATTRIBUTE_FILTER,
+  payload: data,
+})
+
+export const setDateRangeFilter = (data) => ({
+  type: ACTION_CONSTANTS.SET_DATE_RANGE_FILTER,
+  payload: data,
+})
+
+
+
 export const setBPMFilterSearchParams = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.UPDATE_FILTER_SEARCH_PARAMS,
@@ -204,8 +237,25 @@ export const setBPMFilterSearchParams = (data) => (dispatch) => {
       type: ACTION_CONSTANTS.SELECTED_TASK_ID,
       payload: data,
     });
+  }; 
+
+
+  // Actions for Task History
+  export const setAppHistoryLoading = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.IS_HISTORY_LOADING,
+      payload: data,
+    });
   };
 
+  export const setApplicationHistoryList = (data) => (dispatch) => {
+    dispatch({
+      type: ACTION_CONSTANTS.LIST_APPLICATION_HISTORY,
+      payload: data,
+    });
+  };
+
+  
 export const setBPMTaskDetailUpdating = (data) => (dispatch) => {
     dispatch({
       type: ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING,
@@ -222,5 +272,15 @@ export const bpmActionError = (data) => (dispatch) => {
   
 export const resetTaskListParams = (data) =>({
   type: ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS,
+  payload: data,
+})
+
+export const setTaskAssignee = (data) =>({
+  type: ACTION_CONSTANTS.SET_TASK_ASSIGNEE,
+  payload: data,
+})
+
+export const setTaskDetailsLoading = (data) =>({
+  type: ACTION_CONSTANTS.SET_TASK_DETAILS_LOADING,
   payload: data,
 })

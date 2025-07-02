@@ -1,93 +1,110 @@
-import React, { useState } from "react";
-import { Route, Switch, Redirect, useHistory, useParams } from "react-router-dom";
+import React, { useEffect, useState, useMemo } from "react";
+import { Route, Switch, Redirect, useParams } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
-} from "./endpoints/config"; 
+} from "./endpoints/config";
 import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
+import AccessDenied from "./components/AccessDenied";
 import Loading from "./components/Loading";
-import SubmissionsList from "./Routes/SubmissionsListing/List";
-const authorizedRoles = new Set(["create_submissions","view_submissions"]);
+import SubmissionsList from "./Routes/SubmissionListing";
 
-const Submissions = React.memo(({ props }: any) => {
-  const { publish, subscribe } = props;
-  const history = useHistory();
-  const { tenantId } = useParams();
-  const [instance, setInstance] = React.useState(props.getKcInstance());
-  const [isAuth, setIsAuth] = React.useState(instance?.isAuthenticated());
-  const [isClient, setClient] = React.useState(false);
- 
+interface SubmissionsProps {
+  publish?: (event: string, data?: any) => void;
+  subscribe?: (
+    event: string,
+    callback: (msg: string, data: any) => void
+  ) => void;
+  getKcInstance: () => any;
+}
+
+const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
+  const { publish = () => {}, subscribe = () => {} } = props;
+  const { tenantId } = useParams<{ tenantId?: string }>();
+  const instance = useMemo(() => props.getKcInstance(), []);
+  const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
+   const userRoles = JSON.parse(
+      StorageService.get(StorageService.User.USER_ROLE));
+  // const isViewDashboard = userRoles?.includes("view_dashboards");
+  const isAnalyzeSubmissionView = userRoles?.includes("analyze_submissions_view");
+  // const isAnalyzeMetricsView = userRoles?.includes("analyze_metrics_view");
+  const isAnalyzeManager = isAnalyzeSubmissionView;
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
-  React.useEffect(() => {
+  useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}submissions` });
-    subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
+    subscribe("ES_CHANGE_LANGUAGE", (_msg, data) => {
       i18n.changeLanguage(data);
-    })
+    });
   }, []);
 
-  React.useEffect(() => {
-    StorageService.save("tenantKey", tenantId || '')
-  }, [tenantId])
+  useEffect(() => {
+    StorageService.save("tenantKey", tenantId ?? "");
+  }, [tenantId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isAuth) {
-
-      let instance = KeycloakService.getInstance(
+      const kcInstance = KeycloakService.getInstance(
         KEYCLOAK_URL_AUTH,
         KEYCLOAK_URL_REALM,
         KEYCLOAK_CLIENT,
         tenantId
       );
-      instance.initKeycloak(() => {
-        setIsAuth(instance.isAuthenticated());
-        publish("FF_AUTH", instance);
+      kcInstance.initKeycloak(() => {
+        setIsAuth(kcInstance.isAuthenticated());
+        publish("FF_AUTH", kcInstance);
       });
     }
   }, []);
-  React.useEffect(() => {
-    if (!isAuth) return
-    const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
-    if (roles.some((role: any) => authorizedRoles.has(role))) {
-      setClient(true);
+
+  useEffect(() => {
+    if (!isAuth) return;
+
+    const roles = JSON.parse(
+      StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
+    );
+  
+    const locale = localStorage.getItem("i18nextLng");
+    if (locale) {
+      i18n.changeLanguage(locale);
     }
-    const locale = localStorage.getItem("i18nextLng")
-    if (locale) i18n.changeLanguage(locale);
+
     publish("ES_ROUTE", { pathname: `${baseUrl}submissions` });
-    subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
+    subscribe("ES_CHANGE_LANGUAGE", (_msg, data) => {
       i18n.changeLanguage(data);
-    })
-
-  }, [isAuth])
-
+    });
+  }, [isAuth]);
 
   if (!isAuth) {
-    return <Loading />
+    return <Loading />;
   }
-  if(!isClient) return <p>unauthorized</p>
+
   return (
-    <>
-        <div className="main-container " tabIndex={0}>
-          <div className="container mt-5">
-            <div className="min-container-height ps-md-3">
-              <Switch>
-                <Route
-                  exact
-                  path={`${BASE_ROUTE}submissions`}
-                  render={() => <SubmissionsList {...props}/>}
-                />
-                <Redirect from="*" to="/404" />
-              </Switch>
-            </div>
-     
-          </div>
+    <>{ isAnalyzeManager ? (<div className="main-container" tabIndex={0}>
+      <div className="container mt-5">
+        <div className="min-container-height ps-md-3">
+          <Switch>
+            <Route
+              exact
+              path={`${BASE_ROUTE}submissions`}
+              render={() => <SubmissionsList />}
+            />
+            <Redirect from="*" to="/404" />
+          </Switch>
         </div>
-   
-    </>
+      </div>
+    </div>) : <div className="main-container ">
+         <div className="container mt-5">
+         <div className="min-container-height ps-md-3" >
+          <AccessDenied userRoles={userRoles} />
+          </div>
+          </div> 
+        </div>} </>
+    
   );
 });
 

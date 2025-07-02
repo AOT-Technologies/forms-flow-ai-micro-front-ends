@@ -561,6 +561,11 @@ $black-color: var(--ff-black);
   padding: var(--spacer-200);
   border-top: 1px solid $gray-medium;
 }
+.no-code-custom-modal-body{
+  height: 68vh;
+  overflow: auto;
+  padding: 0 !important;
+}
 
 //reusable multi-select
 .multi-select{
@@ -649,6 +654,11 @@ $black-color: var(--ff-black);
   }     
 }
 
+.settings-tab-container{
+  .form-check{
+    width: 100%;
+  }
+}
 
 //expression-builder-modal
 .expression-builder-modal {
@@ -1008,7 +1018,7 @@ $black-color: var(--ff-black);
     padding: var(--spacer-075) 0px;
     transition: 
       transform 1s cubic-bezier(0.25, 1, 0.5, 1), 
-      background-color 1s ease-in-out, 
+      background-color .1s ease-in ,
       opacity 1s ease-in-out, 
       box-shadow 1s ease-in-out;
       .drag-as-div {
@@ -1127,6 +1137,7 @@ $black-color: var(--ff-black);
       
       .form-list-item{
       padding: var(--spacer-075) var(--spacer-100) !important;
+      word-break: break-word;
       border-radius: var(--radius-sm);
       gap: var(--spacer-050);
       cursor: pointer;
@@ -1246,5 +1257,22 @@ $black-color: var(--ff-black);
   .btn-dark{
     background-color: var(--ff-gray-medium-dark) !important;
     color: var(--ff-white) !important;
+  }
+} 
+
+.reorder-task-filter-modal{
+  .modal-dialog{
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .reorder-task-filter-header{
+    padding-left: var(--spacer-225);
+    padding-bottom: var(--spacer-200);
+    padding-top: var(--spacer-200);
+  }
+  .reorder-task-filter-modal-body{
+    padding: var(--spacer-200) var(--spacer-225);
+    max-height: calc(100vh - 15.79rem);
+    overflow-y: auto;
   }
 }

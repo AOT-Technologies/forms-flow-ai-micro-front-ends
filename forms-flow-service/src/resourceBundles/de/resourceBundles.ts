@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 //German
 export const RESOURCE_BUNDLES_DE = {
+  "Dismiss": "Schließen",
+  "You Cannot Delete This Form & Flow": "Sie können dieses Formular und diesen Ablauf nicht löschen.",
+  "You cannot delete a form & flow that has submissions associated with it.": "Sie können ein Formular und einen Ablauf mit zugehörigen Einreichungen nicht löschen.",
   "Latest Submission": "Letzte Einreichung",
   "Filter Created by": "Filter erstellt von",
   "Submit Form": "Formular absenden",
@@ -567,7 +570,7 @@ export const RESOURCE_BUNDLES_DE = {
   "Enable bundling ?": "Bündelung aktivieren?",
   "Select a task in the List.": "Wählen Sie eine Aufgabe in der Liste aus.",
   "Add Date": "Datum hinzufügen",
-  "Assign to Me": "Mir zuweisen",
+  "Assigned to me": "Mir zugewiesen",
   "Filter count:": "Filteranzahl:",
   "Selected Forms": "Ausgewählte Formulare",
   "Template Used:": "Verwendetes Template:",
@@ -1570,5 +1573,11 @@ export const RESOURCE_BUNDLES_DE = {
   "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution.": "Dieser Filter wird mit anderen geteilt. Das Aktualisieren dieses Filters wird ihn für alle aktualisieren und könnte ihren Arbeitsablauf beeinträchtigen. Bitte vorsichtig vorgehen.",
   "No, Cancel Changes": "Nein, Änderungen abbrechen",
   "Yes, Update This Filter For Everybody": "Ja, diesen Filter für alle aktualisieren",
-  "Select Date": "Datum auswählen"
+  "Select Date": "Datum auswählen",
+  "Save Attribute Filter": "Attributfilter speichern",
+  "Attributes: Unsaved Filter": "Attribute: Nicht gespeicherter Filter",
+  "Custom Form Fields": "Benutzerdefinierte Formularfelder",
+  "Saved!": "Gespeichert!",
+  "Deleted!": "Gelöscht!",
+  "Updated!": "Aktualisiert!"
 }

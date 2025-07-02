@@ -2,8 +2,7 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
-import { ChevronIcon ,ShowPremiumIcons } from "@formsflow/components";
-import { MULTITENANCY_ENABLED} from "../constants/constants";
+import { ChevronIcon ,ShowPremiumIcons, NavbarTaskIcon, NavbarSubmitIcon } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { StorageService } from "@formsflow/service";
 import PropTypes from "prop-types";
@@ -14,7 +13,7 @@ const MenuComponent = ({
   subMenu,
   optionsCount,
   subscribe,
-  baseUrl
+  baseUrl,
 }) => {
   const [tenant, setTenant] = React.useState({});
   const [activeMenu, setActiveMenu] = React.useState(null); 
@@ -67,12 +66,65 @@ const MenuComponent = ({
 
   const isActive = (menu) => setActiveTab(menu);
 
+  // Check if any submenu item is active to determine if main menu should be active
+  const isMainMenuActive = () => {
+    if(noOptionsMenu){
+     return subMenu?.some(menu => isActive(menu));
+    }   
+  };
+
   const getIconColor = (menu) => {
     return isActive(menu) 
       ? getComputedStyle(document.documentElement).getPropertyValue("--ff-white")
       : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
   };
   
+  const chevronColor =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-main-menu-active-font-color"
+  )?.trim();
+
+  const defaultStroke =
+  getComputedStyle(document.documentElement).getPropertyValue(
+    "--navbar-bg-color"
+  )?.trim();
+
+const renderMenuIcon = () => {
+  const lowerMainMenu = mainMenu.toLowerCase();
+  let iconFillColor, strokeColor;
+
+  if (isMainMenuActive()) {
+    iconFillColor = getComputedStyle(document.documentElement)
+      .getPropertyValue("--navbar-active-submenu-font-color")?.trim();
+
+    strokeColor =  getComputedStyle(document.documentElement)
+      .getPropertyValue("--navbar-active-submenu-bg-color")?.trim();
+  } else {
+    iconFillColor = chevronColor;
+    strokeColor = defaultStroke;
+  }
+  switch (lowerMainMenu) {
+    case "tasks":
+      return <NavbarTaskIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
+
+    case "submit":
+      return <NavbarSubmitIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
+
+    default:
+      if (!noOptionsMenu) {
+        return (
+          <ChevronIcon
+            width="10"
+            height="5"
+            className="custom-chevron"
+            color={iconFillColor}
+          />
+        );
+      }
+      return null;
+  }
+};
+
 
   return (
     <Accordion.Item eventKey={eventKey}>
@@ -80,20 +132,11 @@ const MenuComponent = ({
         data-testid={`accordion-header-${eventKey}`}
         aria-label={`Accordion header for ${mainMenu}`}
         className={`${noOptionsMenu ? "no-arrow" : ""} ${
-          isActive(mainMenu) && "active-header"
+          isMainMenuActive() ? "active-header" : ""
         }`}
         onClick={noOptionsMenu ? handleHeaderClick : undefined}
       >
-        {!noOptionsMenu && (
-          <ChevronIcon
-            width="10"
-            height="5"
-            className="custom-chevron"
-            color={getComputedStyle(document.documentElement).getPropertyValue(
-              "--ff-gray-800"
-            )}
-          />
-        )}
+        {renderMenuIcon()}
         <span>{t(mainMenu)}</span>
       </Accordion.Header>
       {!noOptionsMenu && (
@@ -105,7 +148,7 @@ const MenuComponent = ({
               className={`accordion-link d-flex justify-content-between ${
                 isActive(menu) && "active"
               }`}
-              data-testid={`accordion-link-${index}`}
+              data-testid={`sidenav-${(menu.name || menu.path).replace(/\s+/g, '-').toLowerCase()}`}
               aria-label={`Link to ${menu.name}`}
             >
               {t(menu.name)}

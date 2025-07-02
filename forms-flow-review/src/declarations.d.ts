@@ -69,14 +69,17 @@ declare module "@formsflow/components" {
     DragandDropSort,
     CustomSearch,
     AddIcon,
+    FormVariableIcon,
+    SharedWithOthersIcon,
+    SharedWithMeIcon,
     AssignUser,
     RefreshIcon,
     DeleteIcon,
     UpdateIcon,
     ConfirmModal,
+    useSuccessCountdown,
     ReusableResizableTable,
-    useSuccessCountdown
-    BackToPrevIcon,
+    BackToPrevIcon
   }: any;
 }
 
