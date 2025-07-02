@@ -36,9 +36,19 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     setExpanded(true);
   };
 
-  const handleCollapse = (e: React.MouseEvent) => {
+  const handleCollapse = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation(); // Prevent event from bubbling up
     setExpanded(false);
+  };
+
+  // Handle keyboard events for accessibility
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (expanded) {
+        handleCollapse(e);
+      }
+    }
   };
 
   // Derived value for disabling buttons
@@ -91,6 +101,10 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
       <div
         className="chevron-icon"
         onClick={expanded ? handleCollapse : undefined}
+        onKeyDown={expanded ? handleKeyDown : undefined}
+        tabIndex={expanded ? 0 : -1}
+        role={expanded ? "button" : undefined}
+        aria-label={expanded ? t("Collapse") : undefined}
       >
         {expanded ? (
           <div className="handle-collapse">
