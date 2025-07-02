@@ -23,6 +23,8 @@ import {
   CustomButton,
   SortableHeader,
   CollapsibleSearch,
+  DateRangePicker,
+  FilterSortActions,
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 
@@ -169,7 +171,7 @@ const TaskSubmissionList: React.FC = () => {
   }, [t, sortParams, handleSort]);
 
   return (
-    <div className="main-layout-container">
+   <div className="main-layout-container">
       {/* Left Panel - Collapsible Search Form */}
       <div className="left-panel">
         <CollapsibleSearch />
@@ -177,16 +179,70 @@ const TaskSubmissionList: React.FC = () => {
 
       {/* Right Panel - Table Container */}
       <div className="right-panel">
-        <div className="container-wrapper" data-testid="table-container-wrapper">
+        {/* Top Controls Row - Date Range Picker and Filter/Sort Actions */}
+        <div className="top-controls-row d-flex justify-content-between align-items-center mb-3">
+          <div className="date-range-section">
+            <DateRangePicker
+              value={""}
+              onChange={() => {}}
+              placeholder={t("Filter Created Date")}
+              dataTestId="date-range-picker"
+              ariaLabel={t("Select date range for filtering")}
+              startDateAriaLabel={t("Start date")}
+              endDateAriaLabel={t("End date")}
+            />
+          </div>
+          
+          <div className="d-flex button-align">
+            <FilterSortActions
+              showSortModal={false}
+              handleFilterIconClick={() => {}}
+              handleRefresh={() => {}}
+              handleSortModalClose={() => {}}
+              handleSortApply={() => {}}
+              defaultSortOption={"asc"}
+              defaultSortOrder={() => {}}
+              optionSortBy={[
+                { value: "name", label: "Task" },
+                { value: "created", label: "Created Date" },
+                { value: "assignee", label: "Assigned To" },
+              ]}
+              filterDataTestId="task-list-filter"
+              filterAriaLabel={t("Filter the task list")}
+              refreshDataTestId="task-list-refresh"
+              refreshAriaLabel={t("Refresh the task list")}
+              sortModalTitle={t("Sort Tasks")}
+              sortModalDataTestId="task-sort-modal"
+              sortModalAriaLabel={t("Modal for sorting tasks")}
+              sortByLabel={t("Sort by")}
+              sortOrderLabel={t("Sort order")}
+              ascendingLabel={t("Ascending")}
+              descendingLabel={t("Descending")}
+              applyLabel={t("Apply")}
+              cancelLabel={t("Cancel")}
+            />
+          </div>
+        </div>
+
+        {/* Table Container */}
+        <div
+          className="container-wrapper"
+          data-testid="table-container-wrapper"
+        >
           <div className="table-outer-container">
-            <div className="table-scroll-wrapper resizable-scroll" ref={scrollWrapperRef}>
+            <div
+              className="table-scroll-wrapper resizable-scroll"
+              ref={scrollWrapperRef}
+            >
               <div className="resizable-table-container">
                 <ReusableResizableTable
                   columns={columns}
                   data={submissions}
                   renderRow={renderRow}
                   renderHeaderCell={renderHeaderCell}
-                  emptyMessage={t("No submissions have been found. Try a different filter combination or contact your admin.")}
+                  emptyMessage={t(
+                    "No submissions have been found. Try a different filter combination or contact your admin."
+                  )}
                   onColumnResize={(newWidths) =>
                     console.log("Column resized:", newWidths)
                   }
@@ -205,7 +261,10 @@ const TaskSubmissionList: React.FC = () => {
           {/* Table Footer */}
           {submissions.length > 0 && (
             <div className="table-footer-wrapper">
-              <table className="custom-tables" data-testid="table-footer-container">
+              <table
+                className="custom-tables"
+                data-testid="table-footer-container"
+              >
                 <tfoot>
                   <TableFooter
                     limit={limit}
@@ -224,7 +283,9 @@ const TaskSubmissionList: React.FC = () => {
                     dataTestId="submission-table-footer"
                     ariaLabel={t("Table pagination controls")}
                     pageSizeDataTestId="submission-page-size-selector"
-                    pageSizeAriaLabel={t("Select number of submissions per page")}
+                    pageSizeAriaLabel={t(
+                      "Select number of submissions per page"
+                    )}
                     paginationDataTestId="submission-pagination-controls"
                     paginationAriaLabel={t("Navigate between submission pages")}
                   />
