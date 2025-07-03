@@ -37,12 +37,11 @@ export const ReusableProcessTableRow: React.FC<ProcessTableRowProps> = ({ item, 
       <td className="w-25">
         <span className="d-flex justify-content-end">
           <CustomButton
-            variant="secondary"
-            size="sm"
             label={t('Edit')}
             ariaLabel={`Edit ${buttonLabel} Button`}
             onClick={() => gotoEdit(item)}
            dataTestId={`Edit ${buttonLabel} Button`}
+           actionTable
           />
         </span>
       </td>

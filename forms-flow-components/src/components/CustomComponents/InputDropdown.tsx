@@ -32,6 +32,7 @@ interface InputDropdownProps {
   variant?: 'assign-user-sm' | 'assign-user-md'; 
   handleCloseClick?: () => void;
   openByDefault?: boolean;
+  id?: string;
   showCloseIcon?: boolean;
   hideDropDownList?: boolean;
 }
@@ -57,6 +58,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   variant,
   handleCloseClick,
   openByDefault = false,
+  id,
   showCloseIcon = true,
   hideDropDownList = false,
 }) => {
@@ -71,7 +73,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
-    if(!disabled){
+    if(!disabled) {
      setIsDropdownOpen((prev) => !prev);
     }
   };
@@ -170,11 +172,12 @@ useEffect(() => {
             data-testid="clear-input" 
             aria-label="Clear input"
             width={9}
-            height={9}/>
+            height={9}
+            />;
     } else {
     // Default to ChevronIcon in all other cases
     return <ChevronIcon 
-            color={disabled ? disabledColor : primaryColor} 
+            className={disabled ? "svgIcon-disabled" : "svgIcon-primary"} 
             data-testid="dropdown-input" 
             aria-label="dropdown input"
             />;
@@ -185,56 +188,69 @@ useEffect(() => {
     return item.label === inputValue || item.value === selectedOption;
   };
   return (
-      <div ref={dropdownRef}  className={`input-dropdown ${variantClass || 'w-100'}`}>
-      {textBoxInput ? (
-        <InputGroup>
-          <FormInput
-            autoFocusInput
-            value={inputValue}
-            onChange={handleInputChange}
-            ariaLabel={ariaLabelforInput}
-            dataTestId={dataTestIdforInput}
-            isInvalid={isInvalid}
+      <div className="input-select" ref={dropdownRef}>
+          {textBoxInput ? (
+              <InputGroup ref={dropdownRef}>
+                  <FormInput
+                      autoFocusInput
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      ariaLabel={ariaLabelforInput}
+                     dataTestId={dataTestIdforInput}
+                      isInvalid={isInvalid}
                       icon={<CloseIcon onClick={handleClose} color={primaryColor} data-testid="close-input" aria-label="Close input "/>} 
-            className="input-with-close"
-            label={t(dropdownLabel)}
-            feedback={t(feedback)}
-            variant={variant}
-          />
-        </InputGroup>
-      ) : (
-        <InputGroup>
-          <FormInput
-            placeholder={t(placeholder)}
-            value={inputValue}
-            onChange={handleInputDropdownChange}
-            onClick={toggleDropdown}
-            ariaLabel={ariaLabelforDropdown}
-            dataTestId={dataTestIdforDropdown}
-            icon={renderIcon()}
-            className={`${inputClassName} ${(isDropdownOpen && !hideDropDownList) && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
-            onIconClick={toggleDropdown}
-            label={t(dropdownLabel)}
-            required={required}
-            onBlur={onBlurDropDown}
-            isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
-            feedback={t(feedback)}
-            variant={variant}
-          />
-        </InputGroup>
-      )}
-
-      {!textBoxInput && isDropdownOpen && !disabled && !hideDropDownList && (
-        <ListGroup className={`${variant ? "assignee-dropdown-border" : ""}`}>
-          {isAllowInput && (
-            <ListGroup.Item
-              onClick={onFirstItemClick}
-              className="list-first-item-btn"
-              data-testid="list-first-item"
-            >
-              {t(firstItemLabel)}
-            </ListGroup.Item>
+                      className="input-with-close"
+                      label={t(dropdownLabel)}
+                      feedback={t(feedback)}
+                      variant={variant}
+                      id={id}
+                  />
+              </InputGroup>
+          ) : (
+            <FormInput
+                placeholder={t(placeholder)}
+                value={inputValue}
+                onChange={handleInputDropdownChange}
+                onClick={toggleDropdown}
+                ariaLabel={ariaLabelforDropdown}
+                dataTestId={dataTestIdforDropdown}
+                icon={renderIcon()}
+                className={`${inputClassName} ${isDropdownOpen && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
+                onIconClick={toggleDropdown}
+                label={t(dropdownLabel)}
+                required={required}
+                onBlur={onBlurDropDown}
+                isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
+                feedback={t(feedback)}
+                id={id}
+                variant={variant}
+            />
           )}
+
+          {!textBoxInput && isDropdownOpen && !disabled && !hideDropDownList && (
+              <div className="select-options">
+                  {isAllowInput && (
+                      <ListGroup.Item
+                          onClick={onFirstItemClick}
+                          className="list-first-item-btn"
+                          data-testid="list-first-item"
+                      >
+                          {t(firstItemLabel)}
+                      </ListGroup.Item>
+                  )}
+                  {/* {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
+                      <ListGroup.Item
+                          key={index}
+                          onClick={() => handleSelect(item)}
+                          data-testid={`list-${index}-item`}
+                          aria-label={`list-${item.label}-item`}
+                          className={`${isItemSelected(item) ? 'chosen' : ''}`}
+                      >
+                          {t(item.label)}
+                      </ListGroup.Item>
+                  ))} 
+              </div> */}
+          {/* )} */}
                   {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
               <ListGroup.Item
                 key={index}
@@ -246,7 +262,7 @@ useEffect(() => {
                 {t(item.label)}
               </ListGroup.Item>
                   ))}
-        </ListGroup>
+        </div>
       )}
     </div>
   );

@@ -25,6 +25,9 @@ import {
   AddIcon,
   DateRangePicker,
   FilterSortActions,
+  ConnectIcon,
+  CheckboxCheckedIcon,
+  CheckboxUncheckedIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskListDropdownItems from "./TaskFilterDropdown";
@@ -214,65 +217,48 @@ else {
   }, [isAssigned, activePage, limit]);
   return (
     <>
-      <div
-        className="container-fluid py-4"
-        data-testid="resizable-table-container"
-        aria-label={t("Resizable tasks table container")}
-      >
-        <div className="row w-100 mb-3 g-2">
+        <div className="table-bar">
           {/* Left Filters - Stack on small, inline on md+ */}
-          { viewFilters &&
-          <div className="col-12 col-md d-flex flex-wrap gap-3 align-items-center">
-            <div className="mb-2">
-              <TaskListDropdownItems />
-            </div>
+          { viewFilters && (
+            <>
+           <div className="filters">
+            <TaskListDropdownItems />
 
-            <span className="text-muted">
-              <AddIcon size="8" />
-            </span>
-            <div className="mb-2">
-              <AttributeFilterDropdown />
-            </div>
-            <span className="text-muted">
-              <AddIcon size="8" />
-            </span>
-            <div className="mb-2">
-              <DateRangePicker
-                value={dateRange}
-                onChange={handleDateRangeChange}
-                placeholder={t("Filter Created Date")}
-                dataTestId="date-range-picker"
-                ariaLabel={t("Select date range for filtering")}
-                startDateAriaLabel={t("Start date")}
-                endDateAriaLabel={t("End date")}
-              />
-            </div>
+            <ConnectIcon />
 
-            <span className="text-muted">
-              <AddIcon size="8" />
-            </span>
-            <div className="mb-2">
-              <button
-                className={`custom-checkbox-container button-as-div ${
-                  isAssigned ? "checked" : ""
-                }`}
+            <AttributeFilterDropdown />
+
+            <ConnectIcon />
+
+            <DateRangePicker
+              value={dateRange}
+              onChange={handleDateRangeChange}
+              placeholder={t("Filter Created Date")}
+              dataTestId="date-range-picker"
+              ariaLabel={t("Select date range for filtering")}
+              startDateAriaLabel={t("Start date")}
+              endDateAriaLabel={t("End date")}
+            />
+
+            <ConnectIcon />
+
+            {/* should probably be created as a separate component "InputFilterSingle" */}
+            <label htmlFor="assigned-to-me" className="input-filter single">
+              <input
+                id="assigned-to-me"
+                type="checkbox"
+                checked={isAssigned}
                 onClick={handleCheckBoxChange}
-              >
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  checked={isAssigned}
-                  onChange={handleCheckBoxChange}
-                  data-testid="assign-to-me-checkbox"
+                data-testid="assign-to-me-checkbox"
                 />
-                <span className="custom-checkbox-label">
-                  {t("Assigned to me")}
-                </span>
-              </button>
-            </div>
+              <span>{t("Assigned to me")}</span>
+              {isAssigned ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
+            </label>
+           </div>
 
-            {/* Right actions - Stack below on small */}
-            <div className="col-12 col-md-auto d-flex justify-content-end button-align">
+              
+
+            <div className="actions">
               <FilterSortActions
                 showSortModal={showSortModal}
                 handleFilterIconClick={toggleFilterModal}
@@ -300,12 +286,10 @@ else {
                 cancelLabel={t("Cancel")}
               />
             </div>
-
-          </div>}
-            
+            </>
+          )}
         </div>
          {viewTasks && <TaskListTable />}
-      </div>
     </>
   );
 };

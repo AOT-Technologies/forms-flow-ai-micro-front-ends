@@ -211,48 +211,46 @@ const TaskDetails = () => {
   };
   // Main Renderor
   return (
-    <div className="task-details-view">
+    <>
       {showHistoryModal && (
         <TaskHistoryModal
           show={showHistoryModal}
           onClose={() => setShowHistoryModal(false)}
         />
       )}
-      <Card className="editor-header">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-center">
-            {/* Left Section: Back Button + Title */}
-            <div className="d-flex align-items-center">
-              <BackToPrevIcon onClick={handleBack} />
-              <div className="mx-4 editor-header-text">
-                {textTruncate(75, 75, task?.name)}
-              </div>
-            </div>
+      
+      <div className="nav-bar">
+        <div className="icon-back" onClick={handleBack}>
+          <BackToPrevIcon data-testid="back-to-prev"/>
+        </div>
 
-            {/* Right Section: TaskAssigneeManager + History Button */}
-            <div className="d-flex align-items-center ms-auto">
-              <TaskAssigneeManager task={task} isFromTaskDetails={true} />
-              {viewTaskHistory && <CustomButton
-                variant="gray-dark"
-                size="table"
-                label={t("History")}
-                dataTestId="handle-task-details-history-testid"
-                ariaLabel={t("Submission History Button")}
-                onClick={handleHistory}
-                className="ms-3"
-              />}
-            </div>
-          </div>
-        </Card.Body>
-      </Card>
-      <div className ={`scrollable-overview-with-header  ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`} >
+        <div className="description">
+          <p className="text-main">
+            {textTruncate(75, 75, task?.name)}
+          </p>
+        </div>
+        {/* Right Section: TaskAssigneeManager + History Button */}
+        <TaskAssigneeManager task={task} isFromTaskDetails={true} />
+        {viewTaskHistory && <div className="buttons">
+          <CustomButton
+            label={t("History")}
+            onClick={handleHistory}
+            dataTestId="handle-task-details-history-testid"
+            ariaLabel={t("Submission History Button")}
+            dark
+          />
+        </div>}
+      </div>
+
+
+      <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
         <TaskForm
           currentUser={currentUser}
           onFormSubmit={onFormSubmitCallback}
           onCustomEvent={onCustomEventCallBack}
         />
       </div>
-    </div>
+    </>
   );
 };
 

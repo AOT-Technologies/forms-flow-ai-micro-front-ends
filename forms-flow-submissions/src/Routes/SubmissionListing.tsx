@@ -103,8 +103,7 @@ const TaskSubmissionList: React.FC = () => {
       <td>
         <div className="text-overflow-ellipsis ">
           <CustomButton
-          size="table-sm"
-          variant="secondary"
+          actionTable
           label={t("View")}
           onClick={() => dispatch(push(`${redirectUrl}application/${id}`))}
           dataTestId={`view-task-${id}`}
