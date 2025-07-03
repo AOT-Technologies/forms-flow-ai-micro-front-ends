@@ -54,7 +54,7 @@ $gray-darkest: var(--ff-gray-darkest);
 }
 
 .flow-builder {
-  height: calc(100vh - 18rem) !important;
+  height: calc(100vh - 15rem) !important;
   overflow: auto;
 }
 
@@ -334,6 +334,7 @@ $gray-darkest: var(--ff-gray-darkest);
 
       text-overflow: ellipsis;
       white-space: nowrap;
+      min-height: 20px;
     }
 
     .status {
