@@ -9,6 +9,7 @@ import {
   ConfirmModal,
   useSuccessCountdown,
   CustomButton,
+  FormVariableIcon,
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
 import {
@@ -40,8 +41,9 @@ import { defaultTaskVariable } from "../../constants/defaultTaskVariable";
 import ParametersTab from "./ParametersTab";
 import SaveFilterTab from "./SaveFilterTab";
 import { Modal } from "react-bootstrap";
+import { StyleServices } from "@formsflow/service";
 import { RootState } from "../../reducers";
-
+import { useParams } from "react-router-dom";
 const TaskFilterModalBody = ({
   showTaskFilterMainModal,
   closeTaskFilterMainModal,
@@ -50,6 +52,7 @@ const TaskFilterModalBody = ({
   filterToEdit,
   deleteSuccess,
   updateSuccess,
+  handleFilterUpdate
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -59,8 +62,9 @@ const TaskFilterModalBody = ({
     isUnsavedFilter,
     filterList,
     userDetails = {} as UserDetail,
-  } = useSelector((state: any) => state.task);
+  } = useSelector((state: RootState) => state.task);
 
+  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
   const [accessOption, setAccessOption] = useState("specificRole");
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
@@ -73,7 +77,7 @@ const TaskFilterModalBody = ({
 
   const [filterName, setFilterName] = useState(filterToEdit?.name || "");
 
-  const [sortValue, setSortValue] = useState("dueDate");
+  const [sortValue, setSortValue] = useState("created");
   const [sortOrder, setSortOrder] = useState("asc");
   const [dataLineValue, setDataLineValue] = useState(1);
 
@@ -87,8 +91,8 @@ const TaskFilterModalBody = ({
   });
 
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
-
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const { tenantId } = useParams();
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId);
 
   const changeAcessOption = (option: string) => {
     setAccessOption(option);
@@ -110,7 +114,13 @@ const TaskFilterModalBody = ({
     const criteria: FilterCriteria = {
       includeAssignedTasks: true,
       candidateGroupsExpression: "${currentUserGroups()}",
-      sorting: [{ sortBy: sortValue, sortOrder: sortOrder }],
+      // If sorting is based on submission id or form name, that should be passed as process variable in sorting
+      sorting: sortValue === "applicationId" || sortValue === "formName" ?
+        ([{
+          sortBy: "processVariable", sortOrder: sortOrder,
+          "parameters": { "variable": sortValue, "type": sortValue === "applicationId" ? "integer" : "string" }
+        }]) :
+        [{ sortBy: sortValue, sortOrder: sortOrder }],
     };
 
     
@@ -138,19 +148,21 @@ const TaskFilterModalBody = ({
     return criteria;
   };
 
-  const handleFilterAccess = () => {
-    let users = [];
-    let roles = [];
-    if (shareFilter === PRIVATE_ONLY_YOU) {
-      users.push(userDetails?.preferred_username);
-    } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
-      roles.push(shareFilterForSpecificRole);
-    } else {
-      users = [];
-      roles = [];
-    }
-    return { users, roles };
-  };
+ const handleFilterAccess = () => {
+  let users = [];
+  let roles = [];
+
+  if (shareFilter === PRIVATE_ONLY_YOU) {
+    users.push(userDetails?.preferred_username);
+  } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
+    roles = Array.isArray(shareFilterForSpecificRole)
+      ? shareFilterForSpecificRole
+      : [shareFilterForSpecificRole];
+  }
+
+  return { users, roles };
+};
+
 
   const getData = (): Filter => ({
     created: filterToEdit?.created,
@@ -179,8 +191,8 @@ const TaskFilterModalBody = ({
   const handleSorting = (sorting) => {
     if (sorting?.length > 0) {
       const [sort] = sorting;
-      setSortValue(sort.sortBy);
-      setSortOrder(sort.sortOrder);
+      setSortValue(sort.sortBy === "processVariable" ?sort.parameters.variable :sort.sortBy);
+      setSortOrder(sort.sortOrder); 
     }
   };
 
@@ -197,14 +209,14 @@ const TaskFilterModalBody = ({
   /* -------------------- set values for editing the filter ------------------- */
   useEffect(() => {
     if (!filterToEdit) return;
-    const { roles, users, criteria } = filterToEdit;
-    const { assignee, sorting, dataLine, candidateGroup } = criteria;
+    const { roles, users, criteria, properties } = filterToEdit;
+    const { assignee, sorting, candidateGroup } = criteria;
     setShareFilterForSpecificRole(roles);
     setAccessOption(assignee ? "specificAssignee" : "specificRole");
     setAccessValue(assignee ? assignee : candidateGroup);
     handleSorting(sorting);
     handleShareFilter(roles, users);
-    setDataLineValue(dataLine ?? 1);
+    setDataLineValue(properties?.displayLinesCount ?? 1);
   }, [filterToEdit]);
 
   /* -------- handling already selected forms when after forms fetching ------- */
@@ -262,7 +274,6 @@ const TaskFilterModalBody = ({
   });
 
   const dateSortOptions = [
-    createSortByOptions("Due Date", "dueDate"),
     createSortByOptions("Created Date", "created"),
     createSortByOptions("Assignee", "assignee"),
     createSortByOptions("Task", "name"),
@@ -282,8 +293,8 @@ const TaskFilterModalBody = ({
     name: createSortOrderOptions("A to Z", "Z to A"),
     formName: createSortOrderOptions("A to Z", "Z to A"),
     applicationId: createSortOrderOptions(
-      "Largest to Smallest",
-      "Smallest to Largest"
+      "Smallest to Largest",
+      "Largest to Smallest"
     ),
   };
 
@@ -311,7 +322,7 @@ const TaskFilterModalBody = ({
         name: variable.key,
         isChecked: true,
         sortOrder: existingVars.length + index + 1,
-        isTaskVariable: true,
+        isFormVariable: true,
       }));
   };
 
@@ -376,8 +387,14 @@ const TaskFilterModalBody = ({
   };
 
   const handleUpdateModalClick = () => {
-    dispatch(setFilterToEdit(getData()));
+    const isPrivate = filterToEdit?.users?.length!==0;
+    const data = getData();
+    if(isPrivate){
+     handleFilterUpdate(isPrivate,data);
+    }else{
+      dispatch(setFilterToEdit(data));
     toggleUpdateModal();
+    }
   };
   const handleDeleteClick = () => {
     dispatch(setFilterToEdit(getData()));
@@ -410,6 +427,7 @@ const TaskFilterModalBody = ({
           key={variableArray.length}
           items={variableArray}
           onUpdate={handleUpdateOrder}
+          icon = { <FormVariableIcon color = {darkColor} /> }
           data-testid="columns-sort"
         />
       )}

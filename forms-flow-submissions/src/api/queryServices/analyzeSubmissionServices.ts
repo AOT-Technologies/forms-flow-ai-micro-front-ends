@@ -30,15 +30,11 @@ export const getSubmissionList = (
 
   const payload = { query };
   const token = StorageService.get("AUTH_TOKEN");
-
-  return RequestService.httpPOSTRequest(
+    return RequestService.httpPOSTRequest(
     API.GRAPHQL_API,
     payload,
     token,
     true,
-    {
-      "Content-Type": "application/json"
-    }
   ).then((response) => {
     const result = response.data?.data?.getSubmission;
     return result;

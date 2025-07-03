@@ -1,14 +1,14 @@
 import { HelperServices } from "@formsflow/service";
 
 export const buildDynamicColumns = (taskvariables) => {
-  return taskvariables
+    return taskvariables
     .reduce((acc, variable) => {
       if (variable.isChecked) {
         acc.push({
           name: variable.label,
-          width: variable.width ?? 200,
+          width:  variable.width ?? 200,
           sortKey: variable.name,
-          resizable: true,
+          resizable: variable.name,
           sortOrder: variable.sortOrder
         });
       }

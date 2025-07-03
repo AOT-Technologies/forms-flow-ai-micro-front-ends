@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import Pagination from "react-js-pagination";
 import { Dropdown } from "react-bootstrap";
 import { DownArrowIcon, AngleLeftIcon, AngleRightIcon } from "../SvgIcons/index";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 interface PageOption {
   value: number;
   text: string;
@@ -15,6 +17,7 @@ interface TableFooterProps {
   handlePageChange: (page: number) => void;
   onLimitChange: (newLimit: number) => void;
   pageOptions: PageOption[];
+  loader?: boolean;
 }
 
 export const TableFooter: React.FC<TableFooterProps> = ({
@@ -24,8 +27,23 @@ export const TableFooter: React.FC<TableFooterProps> = ({
   handlePageChange,
   onLimitChange,
   pageOptions,
+  loader = false,
 }) => {
   const { t } = useTranslation();
+  
+    if (loader) {
+    return (
+      <tr>
+        <td colSpan={9}>
+          <div className="d-flex justify-content-between align-items-center flex-column flex-md-row">
+            <Skeleton height={20} width={200} />
+            <Skeleton height={40} width={40} circle />
+            <Skeleton height={20} width={200} />
+          </div>
+        </td>
+      </tr>
+    );
+  }
 
   return (
     <>

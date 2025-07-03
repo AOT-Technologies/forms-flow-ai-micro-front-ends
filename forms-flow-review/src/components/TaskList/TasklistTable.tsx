@@ -8,25 +8,21 @@ import { HelperServices } from "@formsflow/service";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../reducers";
 import { isEqual, cloneDeep } from "lodash";
 import {
+  resetTaskListParams,
   setBPMTaskListActivePage,
   setFilterListSortParams,
-  setIsUnsavedFilter,
-  setSelectedFilter,
   setTaskListLimit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
-  fetchServiceTaskList,
-  updateFilter,
+  fetchServiceTaskList, 
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
-
 interface Column {
   name: string;
   width: number;
@@ -42,6 +38,7 @@ interface Task {
   assignee?: string;
   _embedded?: {
     variable?: Array<{ name: string; value: any }>;
+    candidateGroups?: Array<{ groupId: string }>;
   };
 }
 
@@ -49,9 +46,13 @@ const getCellValue = (column: Column, task: Task) => {
   const { sortKey } = column;
   const { name: taskName, created, _embedded } = task ?? {};
   const variables = _embedded?.variable ?? [];
+  const candidateGroups = _embedded?.candidateGroups ?? [];
+
   if (column.sortKey === "applicationId") {
     return variables.find((v) => v.name === "applicationId")?.value ?? "-";
   }
+
+
 
   switch (sortKey) {
     case "name":
@@ -60,6 +61,9 @@ const getCellValue = (column: Column, task: Task) => {
       return created ? HelperServices.getLocaldate(created) : "N/A";
     case "assignee":
       return <TaskAssigneeManager task={task} />;
+     case "roles": {
+    return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
+  }
     default:
       return variables.find((v) => v.name === sortKey)?.value ?? "-";
   }
@@ -80,8 +84,9 @@ const TaskListTable = () => {
     filterListSortParams,
     isAssigned
   } = useSelector((state: any) => state.task);
-
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const { tenantId } = useParams();
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
+  const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const taskvariables = selectedFilter?.variables ?? []; 
   const redirectUrl = useRef(
@@ -116,8 +121,7 @@ const TaskListTable = () => {
       }
       return variable;
     });
-    dispatch(setSelectedFilter({ ...updatedData, variables }));
-    dispatch(setIsUnsavedFilter(true));
+    dispatch(resetTaskListParams({selectedFilter:{ ...updatedData, variables }}));
 
   };
 
@@ -153,7 +157,7 @@ const TaskListTable = () => {
     return (
       <th
         key={`header-${column.sortKey ?? index}`}
-        className="resizable-column"
+        className={`resizable-column ${column.sortKey==="assignee" ? "customizable_assignee" : ''}`}
         style={{ width: column.width }}
         data-testid={`column-header-${column.sortKey ?? "actions"}`}
         aria-label={`${t(column.name)} ${t("column")}${
@@ -236,7 +240,7 @@ const TaskListTable = () => {
     if (column.sortKey === "actions") {
       return renderActionCell(task, colIndex);
     }
-    return renderDataCell(task, column);
+    return renderDataCell(task, column,colIndex);
   };
 
   const renderActionCell = (task, colIndex) => (
@@ -244,7 +248,7 @@ const TaskListTable = () => {
       <CustomButton
         actionTable
         label={t("View")}
-        onClick={() => history.push(`${redirectUrl.current}review/${task.id}`)}
+        onClick={() => history.push(`${redirectUrl.current}task/${task.id}`)}
         dataTestId={`view-task-${task.id}`}
         ariaLabel={t("View details for task {{taskName}}", {
           taskName: task.name ?? t("unnamed"),
@@ -253,25 +257,23 @@ const TaskListTable = () => {
     </td>
   );
 
-  const renderDataCell = (task, column) => (
+  const renderDataCell = (task, column, colIndex) => (
     <td
-      key={`cell-${task.id}-${column.sortKey}`}
+      key={`cell-${task.id}-${column.sortKey}-${colIndex}`}
       data-testid={`task-${task.id}-${column.sortKey}`}
       aria-label={getCellAriaLabel(column, task)}
     >
-      {getCellValue(column, task)}
+      <div
+        className={`${column.sortKey !== "assignee" ? "customizable_td_row" : "customizable_assignee"} `}
+        style={{
+          WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
+        }}
+      >
+        {getCellValue(column, task)}
+      </div>
     </td>
   );
 
-  // Conditional Renders
-  const renderNoFilterSelected = () => (
-    <div
-      data-testid="no-filter-selected"
-      aria-label={t("No filter selected message")}
-    >
-      {t("No filter selected.")}
-    </div>
-  );
 
   const renderEmptyTable = () => (
     <div
@@ -328,7 +330,7 @@ const TaskListTable = () => {
         data-testid="table-outer-container"
         aria-label={t("Table outer container")}
       >
-        <ReusableResizableTable
+        <ReusableResizableTable 
               columns={columns}
               data={tasksList}
               renderRow={renderRow}
@@ -337,6 +339,7 @@ const TaskListTable = () => {
                 "No tasks have been found. Try a different filter combination or contact your admin."
               )}
               onColumnResize={handleColumnResize}
+              loading={isTaskListLoading}
               tableClassName="resizable-table"
               headerClassName="resizable-header"
               containerClassName="resizable-table-container"
@@ -370,16 +373,14 @@ const TaskListTable = () => {
             pageSizeAriaLabel={t("Select number of tasks per page")}
             paginationDataTestId="task-pagination-controls"
             paginationAriaLabel={t("Navigate between task pages")}
+            loader={isTaskListLoading}
           />
         )}
       </tfoot>
     </table>
   );
 
-  // Main Render Logic
-  if (!selectedFilter) {
-    return renderNoFilterSelected();
-  }
+
 
   if (columns.length === 0) {
     return renderEmptyTable();

@@ -7,7 +7,7 @@ interface FilterItem {
   name: string;
   isChecked?: boolean;
   sortOrder?: number;
-  isTaskVariable?: boolean;
+  isFormVariable?: boolean;
   itemId?:number;
   icon?:React.ReactNode;
 }
@@ -16,9 +16,10 @@ interface DragAndDropFilterProps {
   items: FilterItem[];
   onUpdate?: (updatedItems: FilterItem[]) => void;
   icon?:React.ReactNode;
+  preventLastCheck?:boolean
 }
 
-export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate, icon }) => {
+export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate, icon, preventLastCheck = false }) => {
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
@@ -128,6 +129,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
                 type="checkbox"
                 checked={item.isChecked}
                 onChange={() => onCheckboxChange(index)}
+                disabled={preventLastCheck && item.isChecked && filterItems.filter(i => i.isChecked).length === 1}
                 data-testid={`${item.name}-checkbox`}
                 />
               <span>{item.label ?? item.name}</span>
@@ -136,7 +138,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
             
             <div className="dotted-line"></div>
 
-            {item.isTaskVariable && icon }{item.icon}
+            {item.isFormVariable && icon }{item.icon}
           </li>
         ))}
       </ul>

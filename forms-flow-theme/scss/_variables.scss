@@ -247,6 +247,11 @@ hr {
 
 .scrollable-overview-with-header {
   max-height: calc(100vh - 10.25rem);
+} 
+.disabled-mode{
+ background: rgba(0, 0, 0, 0.1);
+ cursor: not-allowed !important;
+ opacity: 0.9;
 }
 
 .form-border{

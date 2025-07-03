@@ -2,8 +2,18 @@ import API from "../endpoints";
 import { RequestService } from "@formsflow/service";
 import { replaceUrl } from "../../helper/helper";
 import axios from "axios";
-import { setBPMTaskDetail, setCustomSubmission, serviceActionError, setAppHistoryLoading, setApplicationHistoryList } from "../../actions/taskActions";
+import { setBPMTaskDetail, setCustomSubmission, serviceActionError, setAppHistoryLoading, setApplicationHistoryList, setTaskAssignee, setTaskDetailsLoading } from "../../actions/taskActions";
 import { taskDetailVariableDataFormatter } from "./formatterService";
+
+
+export const getOnlyTaskDetails = (taskId)=>{
+    const apiUrlgetTaskDetail = replaceUrl(
+    API.GET_BPM_TASK_DETAIL,
+    "<task_id>",
+    taskId
+  );
+  return RequestService.httpGETRequest(apiUrlgetTaskDetail);
+}
 
 export const getBPMTaskDetail = (taskId, ...rest) => {
   const done = rest.length ? rest[0] : () => { };
@@ -29,19 +39,22 @@ export const getBPMTaskDetail = (taskId, ...rest) => {
       .all([taskDetailReq, taskDetailsWithVariableReq])
       .then(
         axios.spread((...responses) => {
-          if (responses[0]?.data) {
-            let taskDetail = responses[0].data;
-            if (responses[1]?.data) {
-              let formId = responses[1].data.formId.value
-              let taskDetailUpdates = responses[1]?.data;
-              taskDetail = {
-                ...taskDetailVariableDataFormatter(taskDetailUpdates),
-                ...taskDetail,
-                ...formId,
+          let taskDetails = responses[0]?.data;
+          const variablesDetails = responses[1]?.data;
+          if (taskDetails) {
+            if (variablesDetails) {
+              let formId = variablesDetails.formId.value
+              taskDetails = {
+                ...taskDetailVariableDataFormatter(variablesDetails),
+                ...taskDetails,
+                formId,
               };
             }
-            dispatch(setBPMTaskDetail(taskDetail));
-            done(null, taskDetail);
+            dispatch(setBPMTaskDetail(taskDetails));
+            dispatch(setTaskAssignee(taskDetails.assignee));
+            dispatch(setTaskDetailsLoading(false));
+            done(null, taskDetails);
+
           }
         })
       )

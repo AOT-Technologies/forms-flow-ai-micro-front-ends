@@ -1,6 +1,19 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { HistoryModal } from "../components/CustomComponents/HistoryModal";
+import { HelperServices, StorageService } from "@formsflow/service";
+
+jest.mock("@formsflow/service", () => ({
+  HelperServices: {
+    getLocalDateAndTime: jest.fn(),
+  },
+  StorageService: {
+    get: jest.fn(),
+    User: {
+      USER_ROLE: "USER_ROLE",
+    },
+  },
+}));
 
 const renderHistoryModal = (props) => render(<HistoryModal {...props} />);
 const formHistory = [
@@ -64,6 +77,14 @@ const workflowHistory = [
 ];
 
 describe("History Modal component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (HelperServices.getLocalDateAndTime as jest.Mock).mockReturnValue(
+      "Jan 1, 2023, 10:00 AM"
+    );
+    (StorageService.get as jest.Mock).mockReturnValue('["create_designs"]');
+  });
+
   const onClose = jest.fn();
   const revertBtnAction = jest.fn();
   const loadMoreBtnAction = jest.fn();
@@ -131,17 +152,26 @@ describe("History Modal component", () => {
     expect(loadMoreFormButton).toBeInTheDocument();
     fireEvent.click(loadMoreFormButton);
     expect(loadMoreBtnAction).toHaveBeenCalled();
-  
-    const workflowHistoryLong = [...workflowHistory, ...workflowHistory, ...workflowHistory];
-    rerender(<HistoryModal {...defaultProps} categoryType="WORKFLOW" allHistory={workflowHistoryLong} historyCount={workflowHistoryLong.length} />);
+
+    const workflowHistoryLong = [
+      ...workflowHistory,
+      ...workflowHistory,
+      ...workflowHistory,
+    ];
+    rerender(
+      <HistoryModal
+        {...defaultProps}
+        categoryType="WORKFLOW"
+        allHistory={workflowHistoryLong}
+        historyCount={workflowHistoryLong.length}
+      />
+    );
     const loadMoreFlowButton = screen.getByText("load more");
     expect(loadMoreFlowButton).toBeInTheDocument();
     fireEvent.click(loadMoreFlowButton);
     expect(loadMoreBtnAction).toHaveBeenCalled();
   });
 
-
-  
   it("render another category type, eg: workflow", () => {
     renderHistoryModal({
       ...defaultProps,
@@ -166,17 +196,17 @@ describe("History Modal component", () => {
     expect(revertButton[1]).toBeDisabled();
   });
 
-  it("closes confirm modal when onClose is triggered", async() => {
+  it("closes confirm modal when onClose is triggered", async () => {
     renderHistoryModal({
       ...defaultProps,
       allHistory: formHistory,
-      categoryType: "FORM"
+      categoryType: "FORM",
     });
 
     // Open confirm modal by clicking revert button
     const revertButton = screen.getAllByTestId("revert-button")[1];
     fireEvent.click(revertButton);
-    
+
     // Verify confirm modal is shown
     expect(screen.getByTestId("confirm-modal")).toBeInTheDocument();
 
@@ -194,13 +224,13 @@ describe("History Modal component", () => {
     renderHistoryModal({
       ...defaultProps,
       allHistory: formHistory,
-      categoryType: "FORM"
+      categoryType: "FORM",
     });
 
     // Open confirm modal by clicking revert button
     const revertButton = screen.getAllByTestId("revert-button")[1];
     fireEvent.click(revertButton);
-    
+
     // Verify confirm modal is shown
     expect(screen.getByTestId("confirm-modal")).toBeInTheDocument();
 
@@ -220,7 +250,7 @@ describe("History Modal component", () => {
       ...defaultProps,
       allHistory: [...formHistory, ...formHistory, ...formHistory], // Multiple entries to show load more
       historyCount: 6,
-      categoryType: "FORM"
+      categoryType: "FORM",
     });
 
     // Click load more to set hasLoadedMoreForm to true
@@ -239,7 +269,7 @@ describe("History Modal component", () => {
       ...defaultProps,
       allHistory: [...formHistory, ...formHistory, ...formHistory],
       historyCount: 6,
-      categoryType: "FORM"
+      categoryType: "FORM",
     });
 
     // Load more button should be visible again since states were reset
@@ -252,7 +282,7 @@ describe("History Modal component", () => {
       ...defaultProps,
       allHistory: [...workflowHistory, ...workflowHistory, ...workflowHistory],
       historyCount: 6,
-      categoryType: "WORKFLOW"
+      categoryType: "WORKFLOW",
     });
 
     // Click load more to set hasLoadedMoreWorkflow to true
@@ -271,9 +301,8 @@ describe("History Modal component", () => {
       ...defaultProps,
       allHistory: [...workflowHistory, ...workflowHistory, ...workflowHistory],
       historyCount: 6,
-      categoryType: "WORKFLOW"
+      categoryType: "WORKFLOW",
     });
-
   });
 
   it("handles revert click correctly for form history with correct parameters", () => {
@@ -285,12 +314,14 @@ describe("History Modal component", () => {
 
     // Get the second revert button (first one is usually disabled)
     const revertButton = screen.getAllByTestId("revert-button")[1];
-    
+
     // Click the revert button
     fireEvent.click(revertButton);
 
     // Verify the confirm modal appears with correct version
-    expect(screen.getByText("Use Layout from Version 1.22")).toBeInTheDocument();
+    expect(
+      screen.getByText("Use Layout from Version 1.22")
+    ).toBeInTheDocument();
 
     // Verify the confirm modal message
     expect(
@@ -308,15 +339,11 @@ describe("History Modal component", () => {
 
     // Get the second revert button
     const revertButton = screen.getAllByTestId("revert-button")[1];
-    
+
     // Click the revert button
     fireEvent.click(revertButton);
 
     // Verify the history modal is closed
     expect(onClose).toHaveBeenCalled();
   });
-
-  
-
- 
 });

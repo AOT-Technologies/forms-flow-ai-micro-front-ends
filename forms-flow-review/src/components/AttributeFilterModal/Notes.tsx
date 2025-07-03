@@ -3,11 +3,12 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
  
-const RenderOwnerShipNotes = ({isCreator, viewOnly, editRole, attributeFilter}) => {
+const RenderOwnerShipNotes = ({isCreator, attributeFilter}) => {
   const { t } = useTranslation();
   const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
-  
-  if (isCreator) {
+
+  if(attributeFilter){
+    if (isCreator ) {
     return (
       <div className="pb-4">
         <CustomInfo
@@ -19,6 +20,8 @@ const RenderOwnerShipNotes = ({isCreator, viewOnly, editRole, attributeFilter}) 
       </div>
     );
   }
+  }
+  
 
   if (isUnsavedFilter) {
     return (
@@ -35,9 +38,12 @@ const RenderOwnerShipNotes = ({isCreator, viewOnly, editRole, attributeFilter}) 
     );
   }
 
-  if (viewOnly) {
+  
+if(attributeFilter?.id){
+if (!isCreator) {
     return (
-      <CustomInfo
+      <div className="pb-4">
+        <CustomInfo
         className="note"
         heading="Note"
         content={t("This filter is created and managed by {{createdBy}}", {
@@ -45,24 +51,11 @@ const RenderOwnerShipNotes = ({isCreator, viewOnly, editRole, attributeFilter}) 
         })}
         dataTestId="attribute-filter-save-note"
       />
-    );
-  }
-
-  if (editRole) {
-    return (
-      <div className="pb-4">
-        <CustomInfo
-          className="note"
-          heading="Note"
-          content={t("This filter is created and managed by {{createdBy}}", {
-            createdBy: attributeFilter?.createdBy,
-          })}
-          dataTestId="attribute-filter-save-note"
-        />
       </div>
     );
   }
-
+}
+  
   return null;
 };
 

@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 // Chinese
 export const RESOURCE_BUNDLES_ZH = {
+   "Dismiss": "关闭",
+  "You Cannot Delete This Form & Flow": "无法删除此表单和流程。",
+  "You cannot delete a form & flow that has submissions associated with it.": "无法删除与提交数据相关的表单和流程。",
   "Latest Submission": "最新提交",
   "Filter Created by": "筛选器创建者",
   "Submit Form": "提交表单",
@@ -565,7 +568,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Enable bundling ?": "启用捆绑？",
   "Select a task in the List.": "选择列表中的任务。",
   "Add Date": "添加日期",
-  "Assign to Me": "分配给我",
+  "Assigned to me": "Atribuído a mim",
   "Filter count:": "过滤器计数：",
   "Selected Forms": "已选择的表单",
   "Template Used:": "使用的模板：",
