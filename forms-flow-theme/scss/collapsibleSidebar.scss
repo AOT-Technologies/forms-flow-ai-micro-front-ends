@@ -18,7 +18,7 @@ $chevron-bg: #5e61f2;
     cursor: pointer;
     font-weight: var(--font-weight-xl);
     font-size: var(--font-size-sm);
-    line-height: 120%;
+    line-height: var(--text-line-height);
     transition: width 0.4s ease;
     background-color: $white-color;
     overflow: hidden;
@@ -36,6 +36,7 @@ $chevron-bg: #5e61f2;
       align-items: center;
       justify-content: center;
       background-color: $chevron-bg;
+      border:none;
         .collapse-text {
           writing-mode: horizontal-tb;
           font-size: var(--font-size-sm);
@@ -50,7 +51,6 @@ $chevron-bg: #5e61f2;
       text-align: end;
       transform: rotate(180deg);
       font-style: italic;
-    //   margin-top: var(--spacer-100);
       padding: var(--spacer-100) var(--spacer-075);
     }
   
@@ -102,7 +102,7 @@ $chevron-bg: #5e61f2;
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin: 0 1rem 1rem 1rem;
+  margin-left: var(--spacer-200);
   overflow: hidden;
 }
 

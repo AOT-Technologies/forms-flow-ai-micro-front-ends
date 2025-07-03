@@ -98,12 +98,11 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
-      <div
+      <button
         className="chevron-icon"
         onClick={expanded ? handleCollapse : undefined}
-        onKeyDown={expanded ? handleKeyDown : undefined}
-        tabIndex={expanded ? 0 : -1}
-        role={expanded ? "button" : undefined}
+        type="button"
+        data-testid="collapse-toggle-button"
         aria-label={expanded ? t("Collapse") : undefined}
       >
         {expanded ? (
@@ -114,10 +113,9 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
         ) : (
           <AngleRightIcon color="white" />
         )}
-      </div>
+      </button>
       {!expanded ? (
         <div className="collapsible-label">
-          {/* {t(hasActiveFilters ? activeLabel : inactiveLabel)} */}
           {t("No Filters Are Active")}
         </div>
       ) : (
