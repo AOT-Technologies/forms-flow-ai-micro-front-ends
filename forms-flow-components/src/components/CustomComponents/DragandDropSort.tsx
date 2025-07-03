@@ -1,6 +1,7 @@
-import React, { useState, useEffect ,useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FormVariableIcon, DraggableIcon } from "../SvgIcons/index";
 import { StyleServices } from "@formsflow/service";
+import Sortable from "sortablejs";
 
 interface FilterItem {
   label?: string;
@@ -8,89 +9,74 @@ interface FilterItem {
   isChecked?: boolean;
   sortOrder?: number;
   isFormVariable?: boolean;
-  itemId?:number;
-  icon?:React.ReactNode;
+  itemId?: number;
+  icon?: React.ReactNode;
 }
 
 interface DragAndDropFilterProps {
   items: FilterItem[];
   onUpdate?: (updatedItems: FilterItem[]) => void;
-  icon?:React.ReactNode;
-  preventLastCheck?:boolean
+  icon?: React.ReactNode;
+  preventLastCheck?: boolean;
 }
 
-export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpdate, icon, preventLastCheck = false }) => {
-
+export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({
+  items,
+  onUpdate,
+  icon,
+  preventLastCheck = false,
+}) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLUListElement | null>(null);
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
-  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
- 
+
+  useEffect(() => {
+    const needsUpdate = filterItems.some((item) => item.sortOrder == null);
+    if (needsUpdate) {
+      const updatedItems = filterItems.map((item, index) => ({
+        ...item,
+        sortOrder: item.sortOrder ?? index,
+      }));
+      setFilterItems(updatedItems);
+    }
+  }, []);
+
   useEffect(() => {
     if (onUpdate) {
       onUpdate(filterItems);
     }
   }, [filterItems, onUpdate]);
+useEffect(() => {
+  if (!listRef.current) return;
 
-  useEffect(() => {
-  // Only update items that are missing sortOrder
-  const needsUpdate = filterItems.some(item => item.sortOrder == null);
-  if (!needsUpdate) return;
+  const sortable = Sortable.create(listRef.current, {
+    animation: 200,               // Smooth animation duration
+    handle: ".draggable-icon",   // Only drag from icon
+    ghostClass: "sortable-ghost", // Optional ghost class for visual feedback
+    dragClass: "sortable-drag",   // Optional dragging class
+ 
+    onEnd: (evt) => {
+      if (evt.oldIndex === undefined || evt.newIndex === undefined) return;
+      if (evt.oldIndex === evt.newIndex) return;
 
-  const updatedItems = filterItems.map((item, index) => ({
-    ...item,
-    sortOrder: item.sortOrder ?? index,
-  }));
+      const updatedItems = [...filterItems];
+      const [movedItem] = updatedItems.splice(evt.oldIndex, 1);
+      updatedItems.splice(evt.newIndex, 0, movedItem);
 
-  setFilterItems(updatedItems);
-}, []);
+      const reordered = updatedItems.map((item, index) => ({
+        ...item,
+        sortOrder: index + 1,
+      }));
 
-  const onDragStart = (e: React.DragEvent<HTMLSpanElement>, index: number) => {
-    e.stopPropagation();
-    e.dataTransfer.setData("drag-index", index.toString());
-    setDraggingIndex(index);
+      setFilterItems(reordered);
+    },
+  });
+
+  return () => {
+    sortable.destroy();
   };
+}, [filterItems]);
 
-  const onDragOver = (e: React.DragEvent<HTMLLIElement>) => {
-    e.preventDefault();
-    const container = containerRef.current;
-    if (!container) return;
-  
-    const bounding = container.getBoundingClientRect();
-    const offset = 40; 
-    const scrollSpeed = 5; //scroll speed  can be adjusted here
-  
-    if (e.clientY < bounding.top + offset) {
-      // scroll up
-      container.scrollTop -= scrollSpeed;
-    } else if (e.clientY > bounding.bottom - offset) {
-      // scroll down
-      container.scrollTop += scrollSpeed;
-    }
-  };
-
-
-  const onDragEnter = (e: React.DragEvent<HTMLLIElement>, targetIndex: number) => {
-    e.preventDefault();
-    if (draggingIndex === null || draggingIndex === targetIndex) return;
-    
-    setFilterItems((prevItems) => {
-      const updatedItems = [...prevItems];
-      const [draggedItem] = updatedItems.splice(draggingIndex, 1);
-      updatedItems.splice(targetIndex, 0, draggedItem);
-      return updatedItems.map((item, index) => ({ ...item, sortOrder: index + 1}));
-    });
-    setDraggingIndex(targetIndex);  
-  };
-
-  const onDrop = (e: React.DragEvent<HTMLLIElement>) => {
-    e.preventDefault();
-    setDraggingIndex(null);
-  };
-
-  const onDragEnd = () => {
-    setDraggingIndex(null);
-  }; 
-  
   const onCheckboxChange = (index: number) => {
     setFilterItems((prevItems) =>
       prevItems.map((item, i) =>
@@ -105,24 +91,15 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
 
   return (
     <div className="drag-drop-container" ref={containerRef}>
-      <ul>
+      <ul ref={listRef}>
         {filterItems.map((item, index) => (
           <li
             key={item.itemId ?? `${item.name}-${index}`}
-            className={`draggable-item ${draggingIndex === index ? "dragging" : ""}`}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            onDragEnter={(e) => onDragEnter(e, index)}
-            onDragEnd={onDragEnd}
+            className="draggable-item"
           >
-            <button
-              className="draggable-icon drag-as-div"
-              draggable
-              onDragStart={(e) => onDragStart(e, index)}
-            >
+            <button className="draggable-icon drag-as-div" draggable>
               <DraggableIcon />
             </button>
-            
 
             <div className="checkbox-container">
               <input
@@ -131,17 +108,25 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
                 className="form-check-input"
                 checked={item.isChecked}
                 onChange={() => onCheckboxChange(index)}
-                disabled={preventLastCheck && item.isChecked && filterItems.filter(i => i.isChecked).length === 1}
+                disabled={
+                  preventLastCheck &&
+                  item.isChecked &&
+                  filterItems.filter((i) => i.isChecked).length === 1
+                }
               />
             </div>
 
-            <button className="label cursor-pointer drag-as-div" onClick={() => onLabelClick(index)}>
+            <button
+              className="label cursor-pointer drag-as-div"
+              onClick={() => onLabelClick(index)}
+            >
               {item.label ?? item.name}
             </button>
 
             <div className="dotted-line"></div>
 
-            {item.isFormVariable && icon }{item.icon}
+            {item.isFormVariable && icon}
+            {item.icon}
           </li>
         ))}
       </ul>

@@ -1001,12 +1001,16 @@ $black-color: var(--ff-black);
   padding: 0.1875rem;
   border-radius: var(--radius-sm); /* Optional: Add some rounding */
 } 
+
 .drag-drop-container {
   display: flex;
   flex-direction: column;
   gap: var(--spacer-150);
-  ul{
-    padding-left: 0rem;
+
+  ul {
+    padding-left: 0;
+    margin: 0;
+    list-style: none;
   }
 
   .draggable-item {
@@ -1015,21 +1019,19 @@ $black-color: var(--ff-black);
     align-items: center;
     gap: var(--spacer-100);
     border-radius: var(--radius-sm);
-    padding: var(--spacer-075) 0px;
-    transition: 
-      transform 1s cubic-bezier(0.25, 1, 0.5, 1), 
-      background-color .1s ease-in ,
-      opacity 1s ease-in-out, 
-      box-shadow 1s ease-in-out;
-      .drag-as-div {
-        background: none;
-        border: none;
-        margin: 0;
-        color: inherit;
-        font: inherit;
-        text-align: inherit;
-        display: flex;
-        align-items: center;
+    padding: var(--spacer-075) 0;
+    background-color: transparent;
+ 
+
+    .drag-as-div {
+      background: none;
+      border: none;
+      margin: 0;
+      color: inherit;
+      font: inherit;
+      text-align: inherit;
+      display: flex;
+      align-items: center;
     }
 
     .draggable-icon {
@@ -1038,21 +1040,47 @@ $black-color: var(--ff-black);
       cursor: grab;
       padding: var(--spacer-050);
     }
+
     &:active {
       cursor: grabbing;
     }
 
-    &.dragging {
-      background-color: $gray-medium;
-      padding-right: 3px;
-      opacity: 1;
-      z-index: 1000;
-      transform: scale(0.98); 
-    }
-    .checkbox-container{
+    
+
+    .checkbox-container {
       display: flex;
+      align-items: center;
       margin-bottom: 0.188rem;
     }
+
+    .label { 
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-align: left;
+    }
+
+    .dotted-line { 
+      height: 1px;
+      border-bottom: 1px dashed #ccc;
+      margin-left: var(--spacer-100);
+    }
+  }
+
+  // SortableJS feedback classes
+  .sortable-ghost {
+     background-color: $gray-medium; 
+      opacity: 1;
+      z-index: 1000; 
+    border: 1px dashed #ccc;
+  }
+
+  .sortable-drag {
+    background-color: $gray-light;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    
   }
 }
 
