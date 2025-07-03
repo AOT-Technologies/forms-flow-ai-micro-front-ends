@@ -259,7 +259,7 @@ $danger-color: var(--ff-danger);
   &.btn-sm {
     font-size: $fontBase !important;
     line-height: 1.2 !important;
-    color: $white !important;
+    // color: $white !important;
 
     padding: var(--spacer-050) var(--spacer-075) !important;
     font-weight: var(--font-weight-xl) !important;
@@ -950,6 +950,7 @@ $danger-color: var(--ff-danger);
             text-align: left;
             text-overflow: ellipsis;
             white-space: nowrap;
+            min-height: 20px;
           }
         }
 
