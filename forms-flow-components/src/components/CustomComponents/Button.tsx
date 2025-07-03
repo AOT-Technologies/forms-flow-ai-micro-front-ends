@@ -4,7 +4,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import { ChevronIcon, LoadingIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
-
+import i18n from "../../resourceBundles/i18n";
 interface DropdownItem {
   label: string;
   onClick: () => void;
@@ -96,6 +96,10 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   useEffect(() => {
     updateMenuStyle();
     window.addEventListener("resize", updateMenuStyle);
+    const locale = localStorage.getItem("i18nextLng");
+    if (locale) {
+      i18n.changeLanguage(locale);
+    }
     return () => window.removeEventListener("resize", updateMenuStyle);
   }, []);
 
