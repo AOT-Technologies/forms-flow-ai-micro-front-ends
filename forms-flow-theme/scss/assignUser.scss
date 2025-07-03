@@ -1,6 +1,7 @@
 $primary: var(--ff-primary);
 $gray-darkest: var(--ff-gray-darkest);
 $white-color: var(--ff-white);
+$black-color: var(--ff-black);
 
 .assign-user {
   display: flex;
@@ -10,13 +11,15 @@ $white-color: var(--ff-white);
   border-radius: var(--radius-sm) !important;
 
   &.sm {
-    width: 11.25rem;
+    min-width: 11.25rem;
     height: 1.563rem;
   }
 
   &.md {
     width: 15rem;
     height: 2.188rem;
+    background-color: var(--ff-gray-light);
+    border: none;
   }
 
 
@@ -45,12 +48,13 @@ $white-color: var(--ff-white);
   .button-reset{
     background: none;
     cursor: pointer;
+    border-radius: var(--radius-sm) !important;
   }
 }
 
 //Added custom variants prop to the AssignUser component to allow overriding styles in the InputDropdown component.
 .assign-user-sm-width{
-  width: 11.25rem !important;
+  min-width: 11.25rem !important;
 }
 .assign-user-sm-height{
   height: 1.563rem !important;
@@ -72,3 +76,12 @@ $white-color: var(--ff-white);
 }
 
 
+.assigne-label{
+overflow: hidden;
+color: $black-color;
+text-overflow: ellipsis;
+white-space: nowrap;
+font-size: var(--font-size-xs);
+font-weight: var(--font-weight-sm);
+line-height: var(--text-line-height);
+}

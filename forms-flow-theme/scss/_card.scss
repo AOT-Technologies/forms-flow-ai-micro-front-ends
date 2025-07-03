@@ -96,7 +96,9 @@ $gray-darkest: var(--ff-gray-darkest);
     line-height: var(--text-line-height);
   }
 }
-
+.task-details-view{
+  padding: var(--spacer-250) var(--spacer-150) var(--spacer-250) var(--spacer-150) !important;
+}
 .white-text {
   color: var(--ff-white) !important;
 }

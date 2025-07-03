@@ -66,6 +66,11 @@ $gray-dark: var(--ff-gray-dark);
           color: $primary !important;
         }
       }
+      .form-check{
+        .form-check-label{
+          line-height: var(--spacer-150);
+        }
+      }
     }
   
     // Define a list of ignored components for reuse

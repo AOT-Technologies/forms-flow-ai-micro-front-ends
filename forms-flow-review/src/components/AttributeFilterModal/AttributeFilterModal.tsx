@@ -23,7 +23,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   const isUnsavedAttributeFilter = useSelector(
     (state: RootState) => state.task.isUnsavedAttributeFilter
   );
-  const title = `${t("Form Fields")}: ${
+  const title = `${t("Fields")}: ${
     attributeFilterToEdit && !isUnsavedAttributeFilter
       ? attributeFilterToEdit.name //need to check if it is unsaved or not
       : t("Unsaved Filter")
@@ -35,6 +35,10 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
   const selectedTaskFilter = useSelector((state:RootState)=>state.task.selectedFilter );
   
+   interface handleSaveFilterAttributes {
+    isPrivate?: boolean;
+    data?: any;
+  }
   const toggleUpdateModal = () => {
     toggleModal();
     setShowUpdateModal((prev) => !prev);
@@ -50,14 +54,18 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
 
  
 
-  const handleSaveFilterAttributes = async () => {
-    toggleUpdateModal();
+  const handleSaveFilterAttributes = async (isPrivate?: boolean, data?: any) => {  
+    if(!isPrivate)toggleUpdateModal();
+    const payload = data ?? attributeFilterToEdit;
     const response = await updateFilter(
-      attributeFilterToEdit,
-      attributeFilterToEdit?.id
+      payload,
+      payload?.id
     );
     setUpdateSuccess(onClose, 2);
+    const filterList = attributeFilterList.filter((item) => item.id !== response.data.id);
     dispatch(setSelectedBpmAttributeFilter(response.data));
+    const newAttributeFilterList = [response.data, ...filterList];
+    dispatch(setAttributeFilterList(newAttributeFilterList));
     dispatch(fetchServiceTaskList(response.data, null, 1, limit));
   };
 
@@ -97,6 +105,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
           deleteSuccess={deleteSuccess}
           toggleUpdateModal={toggleUpdateModal}
           toggleDeleteModal={toggleDeleteModal}
+          handleSaveFilterAttributes={handleSaveFilterAttributes}
         />
       </Modal>
       {showUpdateModal && (
@@ -117,7 +126,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
           onClose={toggleUpdateModal}
           primaryBtnText={t("No, Cancel Changes")}
           secondaryBtnText={t("Yes, Update This Filter For Everybody")}
-          secondaryBtnAction={handleSaveFilterAttributes}
+          secondaryBtnAction={() => {handleSaveFilterAttributes();}}
           secondoryBtndataTestid="confirm-attribute-revert-button"
         />
       )}
@@ -129,7 +138,8 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
             <CustomInfo
               className="note"
               heading="Note"
-              content={t(
+              content={(attributeFilterToEdit.users.length>0) ? t("This action cannot be undone."): 
+                t(
                 "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow."
               )}
               dataTestId="attribute-filter-delete-note"
@@ -138,7 +148,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
           primaryBtnAction={toggleDeleteModal}
           onClose={toggleDeleteModal}
           primaryBtnText={t("No, Keep This Filter")}
-          secondaryBtnText={t("Yes, Delete This Filter For Everybody")}
+          secondaryBtnText={(attributeFilterToEdit.users.length>0) ? t("Yes, Delete This Filter"): t("Yes, Delete This Filter For Everybody")  }
           secondaryBtnAction={handleDeleteAttributeFilter}
           secondoryBtndataTestid="confirm-revert-button"
         />

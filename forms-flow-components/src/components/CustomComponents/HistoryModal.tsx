@@ -4,7 +4,7 @@ import { CustomButton } from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
 import { ConfirmModal } from "./ConfirmModal";
 import { useTranslation } from "react-i18next";
-import { HelperServices } from "@formsflow/service";
+import { HelperServices, StorageService} from "@formsflow/service";
 
 interface HistoryModalProps {
   show: boolean;
@@ -64,9 +64,9 @@ const RevertField = ({
   size,
   label,
   onClick,
- dataTestId,
+  dataTestId,
   ariaLabel,
-  disabled=false
+  disabled=false,
 }) => {
   return (
     <div className="revert-btn">
@@ -112,7 +112,6 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     const timelineRef = useRef<HTMLDivElement>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
-
     const currentCategoryLabel = categoryType === "FORM" ? "Layout" : "Flow";
 
     const handleRevertClick = (
@@ -216,7 +215,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
           categoryType === "FORM" ? entry.changeLog.cloned_form_id : null;
         const process_id = categoryType === "WORKFLOW" ? entry.id : null;
         const isLastEntry = index === allHistory.length - 1;  
-        const revertButtonDisabled = disableAllRevertButton || entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
+        const userRoles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
+        const isCreateDesigns = userRoles?.includes("create_designs");
+        const isViewDesigns = userRoles?.includes("view_designs");
+        const isReadOnly = isViewDesigns && !isCreateDesigns
+        const revertButtonDisabled = isReadOnly || disableAllRevertButton || entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
         const fields = [
             { id:1, heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? HelperServices?.getLocalDateAndTime(entry.publishedOn) : "" },
             { id:2, heading: t("Saved On"), value: HelperServices?.getLocalDateAndTime(entry.created) },
@@ -246,7 +249,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
                  dataTestId={revertBtndataTestid}
-                  ariaLabel={revertBtnariaLabel}
+                 ariaLabel={revertBtnariaLabel}
                 />
               </div>
             )}
@@ -267,7 +270,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
                   onClick={() =>
                     handleRevertClick(version, cloned_form_id, process_id)
                   }
-                 dataTestId={revertBtndataTestid}
+                  dataTestId={revertBtndataTestid}
                   ariaLabel={revertBtnariaLabel}
                 />
               </div>

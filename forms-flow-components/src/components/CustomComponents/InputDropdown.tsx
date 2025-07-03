@@ -33,6 +33,8 @@ interface InputDropdownProps {
   handleCloseClick?: () => void;
   openByDefault?: boolean;
   id?: string;
+  showCloseIcon?: boolean;
+  hideDropDownList?: boolean;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -56,7 +58,9 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   variant,
   handleCloseClick,
   openByDefault = false,
-  id
+  id,
+  showCloseIcon = true,
+  hideDropDownList = false,
 }) => {
   const { t } = useTranslation();
   const primaryColor = StyleServices.getCSSVariable('--ff-primary');
@@ -88,18 +92,21 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
     setNewInput('');
   };
 
-  useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-          if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-              setIsDropdownOpen(false);
-          }
-      };
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsDropdownOpen(false);
+      if (onBlurDropDown && !inputValue) {
+        onBlurDropDown();
+      }
+    }
+  };
 
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-      };
-  }, [dropdownRef]);
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [onBlurDropDown, inputValue]);
 
   useEffect(() => {
     if (selectedOption) {
@@ -159,7 +166,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const renderIcon = () => {
     // Only show CloseIcon when variant is present AND inputValue exists
     if (variant && inputValue) {
-    return <CloseIcon 
+    return showCloseIcon && <CloseIcon 
             onClick={handleClearInput} 
             color={disabled ? disabledColor : primaryColor} 
             data-testid="clear-input" 
@@ -180,7 +187,6 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const isItemSelected = (item: DropdownItem) => {
     return item.label === inputValue || item.value === selectedOption;
   };
-
   return (
       <div className="input-select" ref={dropdownRef}>
           {textBoxInput ? (
@@ -221,7 +227,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
             />
           )}
 
-          {!textBoxInput && isDropdownOpen && !disabled && (
+          {!textBoxInput && isDropdownOpen && !disabled && !hideDropDownList && (
               <div className="select-options">
                   {isAllowInput && (
                       <ListGroup.Item
@@ -232,7 +238,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                           {t(firstItemLabel)}
                       </ListGroup.Item>
                   )}
-                  {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
+                  {/* {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
                       <ListGroup.Item
                           key={index}
                           onClick={() => handleSelect(item)}
@@ -242,10 +248,23 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
                       >
                           {t(item.label)}
                       </ListGroup.Item>
+                  ))} 
+              </div> */}
+          {/* )} */}
+                  {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
+              <ListGroup.Item
+                key={index}
+                onClick={() => handleSelect(item)}
+                data-testid={`list-${index}-item`}
+                aria-label={`list-${item.label}-item`}
+                          className={`${isItemSelected(item) ? 'selected-dropdown-item' : ''}`}
+              >
+                {t(item.label)}
+              </ListGroup.Item>
                   ))}
-              </div>
-          )}
-      </div>
+        </div>
+      )}
+    </div>
   );
 };
 

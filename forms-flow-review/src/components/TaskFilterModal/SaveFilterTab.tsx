@@ -18,7 +18,8 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { UserDetail } from "../../types/taskFilter";
- 
+import { userRoles  } from "../../helper/permissions";
+
 const filterNameLength = 50;
 
 const SaveFilterTab = ({
@@ -44,23 +45,13 @@ const SaveFilterTab = ({
   const [filterNameError, setFilterNameError] = useState("");
   const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
   const saveIconColor = getIconColor(
-    createAndUpdateFilterButtonDisabled || filterNameError || deleteSuccess?.showSuccess
+    createAndUpdateFilterButtonDisabled || filterNameError || deleteSuccess?.showSuccess || !shareFilter|| (shareFilter === SPECIFIC_USER_OR_GROUP && !shareFilterForSpecificRole)
   );
+  const { createFilters,manageAllFilters } = userRoles();
   const deleteIconColor = getIconColor(successState?.showSuccess);
-  const userRoles = StorageService.getParsedData(StorageService.User.USER_ROLE);
   const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
-  const isCreateFilters = userRoles?.includes("create_filters");
-  const isFilterAdmin = userRoles?.includes("manage_all_filters");
   const createdByMe = filterToEdit?.createdBy === userDetails?.preferred_username;
-  const publicAccess = filterToEdit?.roles.length === 0 && filterToEdit?.users.length === 0;
-  const roleAccess = filterToEdit?.roles.some((role) =>
-    userDetails?.groups.includes(role)
-  );
-  const canAccess = roleAccess || publicAccess || createdByMe;
-  const viewOnly = !isFilterAdmin && canAccess;
-  const editRole = isFilterAdmin && canAccess;
-  const isCreator = filterToEdit?.createdBy === userDetails?.preferred_username;
-  const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
+  const editRole = manageAllFilters || (createdByMe && createFilters);
 
 
   let saveAndUpdateButtonVariant = "secondary"; // Default value
@@ -110,7 +101,7 @@ const SaveFilterTab = ({
       );
     }
 
-    if (isCreator) {
+    if (createdByMe && editRole) {
       return (
         <>
             <CustomInfo
@@ -131,22 +122,23 @@ const SaveFilterTab = ({
       );
     }
 
-    if (viewOnly) {
+    if (!editRole && filterToEdit.id) {
       return (
         <CustomInfo
           className="note"
           heading="Note"
           content={t("This filter is created and managed by {{createdBy}}", {
-            createdBy: filterToEdit?.createdBy,
+            createdBy: createdByMe ? "you" : filterToEdit?.createdBy,
           })}
           dataTestId="task-filter-save-note"
         />
       );
     }
 
-    if (editRole) {
+    if (manageAllFilters && !createdByMe) {
       return (
         <>
+        {filterToEdit.id && (
           <CustomInfo
             className="note"
             heading="Note"
@@ -158,6 +150,7 @@ const SaveFilterTab = ({
             )}
             dataTestId="task-filter-save-note"
           />
+        )}
           <CustomInfo
             className="note"
             heading="Note"
@@ -175,7 +168,7 @@ const SaveFilterTab = ({
 
   const renderActionButtons = () => {
     if (filterToEdit && filterToEdit?.id && filterToEdit.name !== "All Tasks") {
-      if (canAccess && isFilterAdmin) {
+      if (editRole) {
         return (
           <div className="buttons-row">
             <CustomButton
@@ -188,7 +181,7 @@ const SaveFilterTab = ({
               }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
-              disabled={deleteSuccess?.showSuccess || createAndUpdateFilterButtonDisabled || filterNameError}
+              disabled={deleteSuccess?.showSuccess || createAndUpdateFilterButtonDisabled || filterNameError ||!shareFilter || (shareFilter === SPECIFIC_USER_OR_GROUP && !shareFilterForSpecificRole)  }
               iconWithText
             />
             <CustomButton
@@ -210,8 +203,9 @@ const SaveFilterTab = ({
       return null; 
     }
 
-    if (isCreateFilters && selectedFilter.name !== "All Tasks") {
-      return (
+    if (createFilters) {
+      if(filterToEdit?.name !== "All Tasks"){
+        return (
           <CustomButton
             variant={saveAndUpdateButtonVariant}
             onClick={handleSaveCurrentFilter}
@@ -233,10 +227,10 @@ const SaveFilterTab = ({
             iconWithText
           />
       );
+      }
     }
     return null;
   };
-
   return (
     <>
       <FormInput
@@ -250,7 +244,7 @@ const SaveFilterTab = ({
         isInvalid={!!filterNameError}
         onBlur={handleNameError}
         feedback={filterNameError}
-        disabled={viewOnly}
+        disabled={filterToEdit && !editRole}
         id="filter-name"
       />
 
@@ -264,7 +258,7 @@ const SaveFilterTab = ({
           dataTestIdforDropdown="share-filter-options"
           selectedOption={shareFilter}
           setNewInput={setShareFilter}
-          disabled={viewOnly}
+          disabled={filterToEdit && !editRole}
           id="share-this-filter-with"
         />
         {shareFilter === SPECIFIC_USER_OR_GROUP && (
@@ -277,7 +271,7 @@ const SaveFilterTab = ({
               dataTestIdforDropdown="candidate-options"
               selectedOption={shareFilterForSpecificRole}
               setNewInput={setShareFilterForSpecificRole}
-              disabled={viewOnly}
+              disabled={ filterToEdit &&!editRole}
             />
         )}
       </div>

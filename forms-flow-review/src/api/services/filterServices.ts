@@ -14,7 +14,7 @@ import {
 } from "../../actions/taskActions";
 import { MAX_RESULTS } from "../../constants";
 import { replaceUrl } from "../../helper/helper";
-
+import { cloneDeep } from "lodash";
 export const fetchUserList = (...rest) => {
   const done = rest.length ? rest[0] : () => {};
   const getReviewerUserListApi = `${API.GET_API_USER_LIST}?permission=manage_tasks`;
@@ -71,10 +71,32 @@ export const fetchServiceTaskList = (
     API.GET_BPM_TASK_FILTERS
   }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
   return (dispatch) => {
+    // dispatch(setBPMTaskLoader(true)); Adding a temporary comment to prevent the skeleton loader in the task table from displaying oddly due to socket.
     dispatch(setLastReqPayload(reqData));
+    // [TBD: need to fix properly ]if name is available in reqData, we need to set it to the name property of reqData
+    // this will cause an issue like if the name will come may be two times one form task name and one form form component key
+    const clonedReqData = cloneDeep(reqData); 
+    let criteria = clonedReqData?.criteria ??  {};
+    let taskName = null;
+    const updatedVariables = criteria.processVariables?.filter(
+      (variable) => {
+        if( variable.name === "name") taskName = variable;
+        return variable.name !== "name";
+      }
+    );
+
+    clonedReqData["criteria"] = {
+      ...criteria,
+      processVariables: updatedVariables,
+    };
+
+    if (taskName) {
+      clonedReqData.criteria["nameLike"] = taskName.value;
+    }
+    //-----------------------------------
     RequestService.httpPOSTRequestWithHAL(
       apiUrlgetTaskList,
-      reqData,
+      clonedReqData,
       StorageService.get(StorageService.User.AUTH_TOKEN)
     )
       .then((res) => {
@@ -114,6 +136,10 @@ export const fetchServiceTaskList = (
       .catch((error) => {
         handleTaskError(dispatch, error);
         done(error);
+      })
+      .finally(() => {
+        // Hide loader regardless of success or error
+        dispatch(setBPMTaskLoader(false));
       });
   };
 };
@@ -280,7 +306,28 @@ export const updateAssigneeBPMTask = (taskId, user, ...rest) => {
   };
 };
 
-
-export const saveFilterPreference= (data) =>{
-  return RequestService.httpPOSTRequest(`${API.SAVE_FILTER_PREFERENCE}`,data);
+/**
+ * Saves filter preference with optional filter type and parent filter ID parameters
+ * @param {object} data - The filter preference data to save
+ * @param {string} filterType - Optional filter type (e.g., 'ATTRIBUTE')
+ * @param {string|number|null} parentFilterId - Optional parent filter ID
+ * @returns {Promise} - The HTTP request promise
+ */
+export const saveFilterPreference = (data, filterType = null, parentFilterId = null) => {
+  let url = API.SAVE_FILTER_PREFERENCE;
+  const params = [];
+  
+  if (filterType) {
+    params.push(`filterType=${filterType}`);
+  }
+  
+  if (parentFilterId !== null) {
+    params.push(`parentFilterId=${parentFilterId}`);
+  }
+  
+  if (params.length > 0) {
+    url += `?${params.join('&')}`;
+  }
+  
+  return RequestService.httpPOSTRequest(url, data);
 };

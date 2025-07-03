@@ -2,7 +2,7 @@ import { AddIcon, ButtonDropdown, PencilIcon, SharedWithMeIcon, SharedWithOthers
 import { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  createFilterPermission, 
+userRoles
 } from "../../helper/permissions";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -11,11 +11,11 @@ import { updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
 import {  UserDetail } from "../../types/taskFilter";
-import { StorageService } from "@formsflow/service";
  
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { createFilters } = userRoles();
   const selectedFilter = useSelector(
     (state: RootState) => state.task.selectedFilter
   );
@@ -34,9 +34,11 @@ const TaskListDropdownItems = memo(() => {
 
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
   const [showReorderFilterModal,setShowReorderFilterModal] = useState(false); 
+  const [filterSearchTerm, setFilterSearchTerm] = useState("");
   
   const handleEditTaskFilter = () => {
-    if (!selectedFilter) return;
+    // Prevent editing if the active filter is the initial "All Tasks".
+    if (!selectedFilter || (!isUnsavedFilter && filterList.length === 0)) return;
     dispatch(setFilterToEdit(selectedFilter));
     setShowTaskFilterModal(true);
   };
@@ -54,8 +56,7 @@ const changeFilterSelection = (filter) => {
 
   //if selecetd filter is not in filter list, then select All tasks filter
   const upcomingFilter =
-    filterList.find(item => item.id === filter?.id) ||
-    filterList.find(item => item.name === "All tasks"); 
+    filterList.find(item => item.id === filter?.id)  
 
   if (!upcomingFilter) return;
 
@@ -64,7 +65,9 @@ const changeFilterSelection = (filter) => {
   dispatch(setSelectedFilter(upcomingFilter));
 };
 
-
+const onSearch = (searchTerm: string) => {
+  setFilterSearchTerm(searchTerm);
+};
   
   const filterDropdownItems = useMemo(() => {
     const filterDropdownItemsArray = [];
@@ -102,8 +105,12 @@ const changeFilterSelection = (filter) => {
     const mappedItems = filtersAndCount
     .filter((filter) => {
     const details = filterList.find((item) => item.id === filter.id);
-    
-    return details && !details.hide; // only include visible filters
+    const filterName = t(filter.name).toLowerCase();
+          return (
+        details &&
+        !details.hide &&
+        filterName.includes(filterSearchTerm.toLowerCase())
+      ); // only include visible filters
   })
     .map((filter) => { 
       const filterDetails = filterList.find((item) => item.id === filter.id);
@@ -111,12 +118,16 @@ const changeFilterSelection = (filter) => {
       if(filterDetails){
         const createdByMe =userDetails?.preferred_username === filterDetails?.createdBy;
         const isSharedToPublic =!filterDetails?.roles?.length && !filterDetails?.users?.length;
+        const isSharedToRoles = filterDetails?.roles.length
         const isSharedToMe = filterDetails?.roles?.some((role) =>
           userDetails?.groups?.includes(role)
         );
-
-        if (createdByMe) {
-          icon = <SharedWithOthersIcon/>;
+        // icon for filters except private and All tasks 
+        if (filterDetails?.createdBy === "system"){
+          icon = null;
+        }
+        else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+          icon = <SharedWithOthersIcon className="shared-icon" />;
         } else if (isSharedToPublic || isSharedToMe) {
           icon = <SharedWithMeIcon/>;
         }
@@ -143,26 +154,37 @@ const changeFilterSelection = (filter) => {
     // Adding mapped Items
     filterDropdownItemsArray.push(...mappedItems);
     // Adding create filter and reorder filter
-    if (createFilterPermission) {
+    if (createFilters) {
       filterDropdownItemsArray.push(createFilter);
-      if (filtersAndCount.length > 1) {
+      if (filtersAndCount.length > 0) {
         filterDropdownItemsArray.push(reOrderFilter);
       }
     }
 
     return filterDropdownItemsArray;
-  }, [filtersAndCount, defaultFilter,filterList,userDetails ]);
+  }, [filtersAndCount, defaultFilter,filterList,userDetails, filterSearchTerm ]);
 
-  const title = selectedFilter
-    ? `${isUnsavedFilter ? t("Unsaved Filter") : t(selectedFilter.name)} (${
-        tasksCount ?? 0
-      })`
-    : t("Select Filter");
+// filter title based on unsaved filter, empty list or selected filter
+  let title;
+
+  if (selectedFilter) {
+    if (isUnsavedFilter) {
+      title = t("Unsaved Filter");
+    }
+    else if (filterList.length === 0) {
+      title = t("All Tasks");
+    } else {
+      title = `${selectedFilter.name} (${tasksCount ?? 0})`;
+    }
+  }
+  
+
   return (
     <>
       <ButtonDropdown
         label={title}
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
+        onSearch={onSearch}
         dropdownItems={filterDropdownItems}
         extraActionIcon={<PencilIcon/>}
         extraActionOnClick={handleEditTaskFilter}

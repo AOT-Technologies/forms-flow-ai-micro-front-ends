@@ -31,9 +31,11 @@ const Admin = React.memo(({ props }: any) => {
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
-  const isDashboardManager = userRoles.includes("manage_dashboard_authorizations");
-  const isRoleManager = userRoles.includes("manage_roles");
-  const isUserManager = userRoles.includes("manage_users");
+  const isDashboardManager = userRoles?.includes("manage_dashboard_authorizations");
+  const isRoleManager = userRoles?.includes("manage_roles");
+  const isUserManager = userRoles?.includes("manage_users");
+  // const isLinkManager = userRoles.includes("manage_links");
+  const isAdmin =  isDashboardManager || isRoleManager || isUserManager;
   const location =useLocation().pathname;
   const [isAccessRestricted, setIsAccessRestricted] = React.useState(false);
   React.useEffect(() => {
@@ -84,7 +86,7 @@ const Admin = React.memo(({ props }: any) => {
   },[location,userRoles]);
   return (
     <>
-      {userRoles.includes("admin") ? (
+      {isAdmin ? (
         <div className="main-container " tabIndex={0}>
         <div className="container mt-5">
         {!isAccessRestricted ?(

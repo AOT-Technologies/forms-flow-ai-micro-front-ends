@@ -50,6 +50,11 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     startSuccessCountdown: setDeleteSuccess,
   } = useSuccessCountdown();
 
+    interface handleFilterUpdate {
+    isPrivate?: boolean;
+    data?: any;
+  }
+
   const toggleUpdateModal = () => {
     toggleModal();
     setShowUpdateModal((prev) => !prev);
@@ -87,9 +92,10 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     }
   };
 
-  const handleFilterUpdate = async () => {
-    toggleUpdateModal();
-    const response = await updateFilter(filterToEdit, filterToEdit?.id);
+  const handleFilterUpdate = async (isPrivate?: boolean, data?: any) => { 
+    if(!isPrivate)toggleUpdateModal();
+    const payload = data ?? filterToEdit;
+    const response = await updateFilter(payload, payload?.id);
     setUpdateSuccess(onClose, 2);
     dispatch(setIsUnsavedFilter(false));
     const filtersList = filterList.filter(
@@ -138,6 +144,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           showTaskFilterMainModal={show}
           closeTaskFilterMainModal={onClose}
           filterToEdit={filterToEdit}
+          handleFilterUpdate={handleFilterUpdate}
         />
       </Modal>
 
@@ -149,7 +156,8 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
             <CustomInfo
               className="note"
               heading="Note"
-              content={t(
+              content={(filterToEdit.users.length>0) ? t("This action cannot be undone."): 
+                t(
                 "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow."
               )}
               dataTestId="task-filter-delete-note"
@@ -158,7 +166,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           primaryBtnAction={toggleDeleteModal}
           onClose={toggleDeleteModal}
           primaryBtnText={t("No, Keep This Filter")}
-          secondaryBtnText={t("Yes, Delete This Filter For Everybody")}
+          secondaryBtnText={(filterToEdit.users.length>0) ? t("Yes, Delete This Filter"): t("Yes, Delete This Filter For Everybody")  }
           secondaryBtnAction={handleFilterDelete}
           secondoryBtndataTestid="confirm-revert-button"
         />
@@ -182,7 +190,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           onClose={toggleUpdateModal}
           primaryBtnText={t("No, Cancel Changes")}
           secondaryBtnText={t("Yes, Update This Filter For Everybody")}
-          secondaryBtnAction={handleFilterUpdate}
+          secondaryBtnAction={()=>{handleFilterUpdate();}}
           secondoryBtndataTestid="confirm-revert-button"
         />
       )}

@@ -1,5 +1,8 @@
 //Spanish
 export const RESOURCE_BUNDLES_ES = {
+  "Dismiss": "Descartar",
+  "You Cannot Delete This Form & Flow": "No puedes eliminar este formulario y flujo.",
+  "You cannot delete a form & flow that has submissions associated with it.": "No puedes eliminar un formulario y flujo que tiene envíos asociados.",
     "Latest Submission": "Modificado por",
     "Filter Created by": "Filtro creado por",
     "No histories found": "No se encontraron historias",
@@ -578,7 +581,7 @@ export const RESOURCE_BUNDLES_ES = {
     "Enable bundling ?": "¿Habilitar agrupamiento?",
     "Select a task in the List.": "Seleccione una tarea en la Lista.",
     "Add Date": "Agregar Fecha",
-    "Assign to Me": "Asignar a Mí",
+    "Assigned to me": "Asignado a mí",
     "Filter count:": "Conteo de filtros:",
     "Selected Forms": "Formularios Seleccionados",
     "Template Used:": "Plantilla Utilizada:",
