@@ -196,7 +196,8 @@ else {
       const currentFilter = filters.find(
         (filter) => filter.id === defaultFilterId
       );
-      if (!currentFilter) return;
+
+      if (!currentFilter || defaultFilterId === selectedFilter?.id) return;
       batch(() => {
         dispatch(setSelectedFilter(currentFilter));
         dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
@@ -206,7 +207,7 @@ else {
         dispatch(fetchServiceTaskList(currentFilter, null, 1, 25));
       });
     }
-  }, [defaultFilterId]);
+  }, [defaultFilterId, selectedFilter]);
 
   useEffect(() => {
     fetchTaskListData();
