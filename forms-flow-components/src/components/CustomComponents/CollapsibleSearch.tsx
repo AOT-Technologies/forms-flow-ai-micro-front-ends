@@ -41,16 +41,6 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     setExpanded(false);
   };
 
-  // Handle keyboard events for accessibility
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (expanded) {
-        handleCollapse(e);
-      }
-    }
-  };
-
   // Derived value for disabling buttons
   const isActionDisabled =
     !dropdownSelection &&
