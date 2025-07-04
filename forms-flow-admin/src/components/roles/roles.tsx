@@ -19,14 +19,19 @@ import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
-import {
-  KEYCLOAK_ENABLE_CLIENT_AUTH,
-  MULTITENANCY_ENABLED,
-} from "../../constants";
-import { DEFAULT_ROLES } from "../../constants";
-
+import PermissionTree from "./permissionTree";
 import {removingTenantId} from "../../utils/utils.js";
-import { TableFooter, CustomSearch } from "@formsflow/components";
+import { TableFooter,
+   CustomSearch, 
+   CloseIcon, 
+   CustomTabs, 
+   FormInput, 
+   FormTextArea,
+   CustomButton,
+   DeleteIcon,
+   CustomInfo, 
+   ConfirmModal } 
+from "@formsflow/components";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -34,7 +39,7 @@ const Roles = React.memo((props: any) => {
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
   const [error, setError] = useState({});
-
+  const [handleConfirmation, setHandleConfirmation] = React.useState(false);
   const [users, setUsers] = React.useState([]);
   // Toggle for user list popover
   const [show, setShow] = React.useState(false);
@@ -60,8 +65,9 @@ const Roles = React.memo((props: any) => {
     React.useState("");
   const [editCandidate, setEditCandidate] = React.useState(initialRoleType);
   const [disabled, setDisabled] = React.useState(true);
-  const [search, setSerach] = React.useState("");
-  const [permission, setPermission] = React.useState([]);
+  const [search, setSearch] = React.useState("");
+  const [permissionData, setPermissionData] = React.useState([]);
+  const  [key,setKey] = useState("Details");
 
   const filterList = (filterTerm, List) => {
     let roleList = removingTenantId(List, tenantId);
@@ -110,7 +116,7 @@ const Roles = React.memo((props: any) => {
   React.useEffect(() => {
     fetchPermissions(
       (data) => {
-        setPermission(data);
+        setPermissionData(data);
       },
       (err) => {
         setError(err);
@@ -120,7 +126,7 @@ const Roles = React.memo((props: any) => {
 
   const handlFilter = (e) => {
     if (e && e.key === 'Enter') {
-      setSerach(e.target.value);
+      setSearch(e.target.value);
       setRoles(filterList(e.target.value, props.roles));
 
     }    
@@ -323,259 +329,173 @@ const Roles = React.memo((props: any) => {
     setShowRoleModal(false);
     setPayload({ name: "", description: "", permissions: [] });
   };
-  const handleShowRoleModal = () => setShowRoleModal(true);
+  const handleShowRoleModal = () => {
+    setKey("Details");
+    setShowRoleModal(true);
+  }
   const handleCloseEditRoleModal = () => {
     setShowEditRoleModal(false);
     setEditCandidate(initialRoleType);
     setSelectedRoleIdentifier("");
   };
-  const handleShowEditRoleModal = () => setShowEditRoleModal(true);
+  const handleShowEditRoleModal = () => {
+    setKey("Details");
+    setShowEditRoleModal(true);
+  }
   const handleCloseDeleteModal = () => {
     setShowConfirmDelete(false);
     setDeleteCandidate(initialRoleType);
     setDisabled(true);
   };
-  const handleShowDeleteModal = () => {
-    setShowConfirmDelete(true);
-    setDisabled(false);
-  };
-
-  const checkDefaultRoleOrNot = (role: any) => {
-    if (MULTITENANCY_ENABLED && tenantId) {
-      const roles = [
-        `${tenantId}-designer`,
-        `${tenantId}-client`,
-        `${tenantId}-reviewer`,
-        `${tenantId}-admin`,
-        "formsflow-reviewer",
-        "formsflow-designer",
-        "formsflow-client",
-        "camunda-admin",
-        "Approver",
-        "clerk",
-        "designer",
-      ];
-      return roles.includes(role);
-    } else {
-      return DEFAULT_ROLES.includes(role);
-    }
-  };
 
   const handleClearSearch = () => {
-    setSerach("");
+    setSearch("");
     let updatedRoleName = removingTenantId(props.roles,tenantId);
     setRoles(updatedRoleName);
   };
 
-  // Delete confirmation
-  const confirmDelete = () => (
-    <div data-testid="roles-confirm-delete-modal">
-      <Modal show={showConfirmDelete} onHide={handleCloseDeleteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("Confirm Delete")}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {`${t("Are you sure deleting the role")} ${deleteCandidate.name}`}
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            type="button"
-            className="btn btn-link text-dark"
-            onClick={handleCloseDeleteModal}
-            data-testid="roles-cancel-delete-button"
-          >
-            {t("Cancel")}
-          </button>
-          <Button
-            variant="danger"
-            disabled={disabled}
-            onClick={() => deleteRole(deleteCandidate)}
-            data-testid="roles-confirm-delete-button"
-          >
-            {t("Delete")}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
+  const closeConfirmation = () => {
+     setHandleConfirmation(false);
+  }
 
+  const tabs = [
+    {
+      eventKey: "Details",
+      title: "Details",
+      content: (
+        <div className="role-details">
+        <FormInput
+        required
+        value={showEditRoleModal ? editCandidate.name : payload.name}
+        label={t("Name")}
+        onChange={showEditRoleModal ? handleEditName : handleChangeName}
+        dataTestId="role-name"
+        name="role-name"
+        ariaLabel={t("Role Name")}
+        maxLength={200} 
+        />
+        <FormTextArea
+        dataTestId="role-description"
+        label={t("Description")}
+        name="description"
+        value={showEditRoleModal ? editCandidate.description : payload.description}
+        onChange={showEditRoleModal ? handleEditDescription : handleChangeDescription}
+        aria-label={t("Description of role")}
+        data-testid="role-description"
+        maxRows={3}
+        minRows={3}
+      />
+      {showEditRoleModal && (
+          <CustomButton
+          variant={"secondary"}
+          size="lg"
+          label={t("Delete This Role")}
+          onClick={() => {
+            handleCloseEditRoleModal();
+            setHandleConfirmation(true);
+          }}
+          dataTestId="role-delete-button"
+          icon={<DeleteIcon />}
+          ariaLabel="Role delete button"
+        />
+      )}
+      </div>
+      )
+    },
+    {
+      eventKey: "Permissions",
+      title: "Permissions",
+      content: (
+        <PermissionTree
+        permissions={permissionData}
+        payload={showEditRoleModal ? editCandidate : payload}
+        handlePermissionCheck={showEditRoleModal ? handleEditPermissionCheck : handlePermissionCheck}
+        setPayload={showEditRoleModal ? setEditCandidate : setPayload}
+      />
+
+      )
+    }]
+
+    
   const showCreateModal = () => (
-    <div data-testid="create-role-modal">
-      <Modal show={showRoleModal} onHide={handleCloseRoleModal} centered={true}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("Create Role")}</Modal.Title>
+      <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="sm">
+        <Modal.Header>
+          <Modal.Title><b>{t("Create Role")}</b></Modal.Title>
+          <div className="d-flex align-items-center">
+              <CloseIcon onClick={handleCloseRoleModal} data-testid="role-modal-close"/>
+          </div>
         </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="role-name" aria-required>
-              {t("Role Name")}
-            </Form.Label>
-            <i className="text-danger">*</i>
-            <Form.Control
-              id="role-name"
-              type="text"
-              placeholder={t("Eg: Account Manager")}
-              required
-              onChange={handleChangeName}
-              title={t("Enter role name")}
-            />
-            <Form.Label htmlFor="role-description" className="mt-2">
-              {t("Description")}
-            </Form.Label>
-            <Form.Control
-              id="role-description"
-              as="textarea"
-              placeholder="Eg: Lorem ipsum..."
-              rows={3}
-              onChange={handleChangeDescription}
-              title={t("Enter Description")}
-            />
-
-            <Form.Label
-              htmlFor="role-permissions"
-              aria-required
-              className="mt-2"
-              title={t("Select Permissions")}
-              data-testid="permissions-label"
-            >
-              {t("Permissions")}
-            </Form.Label>
-            <i className="text-danger">*</i>
-            <div className="row">
-              {permission.map((permission) => (
-                <div
-                  key={permission.name}
-                  className="col-md-6 mb-2"
-                  data-testid={`permission-${permission.name}`}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    id={`role-permissions-${permission.name}`}
-                    label={t(permission.description)}
-                    checked={payload.permissions.includes(permission.name)}
-                    onChange={() =>
-                      handlePermissionCheck(
-                        permission.name,
-                        permission.depends_on
-                      )
-                    }
-                    aria-label={t(permission.description)}
-                  />
-                </div>
-              ))}
-            </div>
-          </Form.Group>
+        <Modal.Body className="role-modal-body">
+        <CustomTabs
+          defaultActiveKey={key}
+          onSelect={setKey}
+          tabs={tabs}
+          dataTestId="create-roles-tabs"
+          ariaLabel="Create roles tabs"
+          className="d-flex gap-3"
+        />
         </Modal.Body>
         <Modal.Footer>
-          <button
-            type="button"
-            className="btn btn-link text-dark"
-            onClick={handleCloseRoleModal}
-            data-testid="create-new-role-modal-cancel-button"
-          >
-            {t("Cancel")}
-          </button>
-          <Button
-            variant="primary"
+          <CustomButton
+            variant={"primary"}
+            size="lg"
+            label={t("Save Changes")}
             disabled={disabled}
             onClick={handleCreateRole}
-            type="submit"
-            data-testid="create-new-role-modal-submit-button"
-          >
-            {t("Create")}
-          </Button>
+            dataTestId="create-new-role-button"
+            ariaLabel="Create new role button"
+            />
+          <CustomButton
+            variant={"secondary"}
+            size="lg"
+            label={t("Discard Changes")}
+            onClick={handleCloseRoleModal}
+            dataTestId="create-new-role-cancel-button"
+            ariaLabel="Create new role cancel button"
+          />
         </Modal.Footer>
       </Modal>
-    </div>
   );
   const showEditModal = () => (
-    <div data-testid="edit-role-modal">
-      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} centered={true}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("Edit Role")}</Modal.Title>
+
+      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} size="sm">
+        <Modal.Header>
+          <Modal.Title>{editCandidate.name}</Modal.Title>
+          <div className="d-flex align-items-center">
+              <CloseIcon onClick={handleCloseEditRoleModal} data-testid="role-modal-close"/>
+          </div>
         </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="edit-role-name" aria-required>
-              {t("Role Name")}
-            </Form.Label>
-            <i style={{ color: "#e00" }}>*</i>
-            <Form.Control
-              id="edit-role-name"
-              type="text"
-              placeholder={"Eg: Account Manager"}
-              required
-              onChange={handleEditName}
-              value={editCandidate.name}
-            />
-            <Form.Label htmlFor="edit-description" className="mt-2">
-              {t("Description")}
-            </Form.Label>
-            <Form.Control
-              id="edit-description"
-              as="textarea"
-              rows={3}
-              onChange={handleEditDescription}
-              value={editCandidate.description}
-            />
-            <Form.Label
-              htmlFor="role-edit-permissions"
-              aria-required
-              className="mt-2"
-              title={t("Edit Permissions")}
-              data-testid="edit-permissions-label"
-            >
-              {t("Permissions")}
-            </Form.Label>
-            <i className="text-danger">*</i>
-            <div className="row">
-              {permission.map((permission) => (
-                <div
-                  key={permission.name}
-                  className="col-md-6 mb-2"
-                  data-testid={`edit-permission-${permission.name}`}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    id={`role-edit-permissions-${permission.name}`}
-                    label={t(permission.description)}
-                    checked={editCandidate.permissions.includes(
-                      permission.name
-                    )}
-                    onChange={() =>
-                      handleEditPermissionCheck(
-                        permission.name,
-                        permission.depends_on
-                      )
-                    }
-                    aria-label={t(permission.description)}
-                  />
-                </div>
-              ))}
-            </div>
-          </Form.Group>
+        <Modal.Body className="role-modal-body">
+        <CustomTabs
+          defaultActiveKey={key}
+          onSelect={setKey}
+          tabs={tabs}
+          dataTestId="edit-roles-tabs"
+          ariaLabel="Edit roles tabs"
+          className="d-flex gap-3"
+        />
         </Modal.Body>
         <Modal.Footer>
-          <button
-            type="button"
-            className="btn btn-link text-dark"
-            onClick={handleCloseEditRoleModal}
-            data-testid="edit-role-modal-cancel-button"
-          >
-            {t("Cancel")}
-          </button>
-          <Button
-            variant="primary"
+        <CustomButton
+            variant={"primary"}
+            size="lg"
+            label={t("Save Changes")}
             disabled={disabled}
             onClick={handleUpdateRole}
-            type="submit"
-            data-testid="edit-role-modal-save-button"
-          >
-            {t("Save")}
-          </Button>
+            dataTestId="edit-role-button"
+            ariaLabel="Edit role button"
+            />
+          <CustomButton
+            variant={"secondary"}
+            size="lg"
+            label={t("Discard Changes")}
+            onClick={handleCloseEditRoleModal}
+            dataTestId="edit-role-cancel-button"
+            ariaLabel="Edit role cancel button"
+          />
         </Modal.Footer>
       </Modal>
-    </div>
+
   );
 
   const noData = () => (
@@ -696,29 +616,21 @@ const Roles = React.memo((props: any) => {
       dataField: "id",
       text: <Translation>{(t) => t("Actions")}</Translation>,
       formatter: (cell, rowData, rowIdx, formatExtraData) => {
-        return checkDefaultRoleOrNot(rowData.name) ? null : (
-          <div>
+        return (
+          <div className="ms-3">
             <i
-              className="fa fa-pencil  me-4"
+              className="fa fa-pencil"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
                 setSelectedRoleIdentifier(rowData.id);
                 setEditCandidate(rowData);
                 handleShowEditRoleModal();
+                setDeleteCandidate(rowData);
                 // setSelectedRoleIdentifier(
                 //   KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id
                 // );
               }}
               data-testid="admin-roles-edit-icon"
-            />
-            <i
-              className="fa fa-trash delete_button"
-              style={{ color: "#D04444" }}
-              onClick={() => {
-                setDeleteCandidate(rowData);
-                handleShowDeleteModal();
-              }}
-              data-testid="admin-roles-delete-icon"
             />
           </div>
         );
@@ -733,7 +645,7 @@ const Roles = React.memo((props: any) => {
              <CustomSearch
               handleClearSearch={handleClearSearch}
               search={search}
-              setSearch={setSerach}
+              setSearch={setSearch}
               handleSearch={handlFilter}
               placeholder="Search by role name"
               title="Search"
@@ -782,9 +694,34 @@ const Roles = React.memo((props: any) => {
           <Loading />
         )}
         {showCreateModal()}
-        {confirmDelete()}
         {showEditModal()}
       </div>
+      {handleConfirmation && (
+        <ConfirmModal
+          show={handleConfirmation}
+          title={t("Delete This Role?")}
+          message={
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "All users that have this role assigned to them might loose access to certain feature of formsflow. This action cannot be undone."
+              )}
+              dataTestId="delete-role-note"
+            />
+          }
+          primaryBtnAction={closeConfirmation}
+          onClose={closeConfirmation}
+          primaryBtnText={t("No, Keep This Role")}
+          secondaryBtnText={t("Yes, Delete This Role")}
+          secondaryBtnAction={() => 
+            {
+             deleteRole(deleteCandidate);
+             closeConfirmation();
+            }}
+          secondoryBtndataTestid="confirm-delete-role-button"
+        />
+      )}
     </>
   );
 });

@@ -1,0 +1,33 @@
+.table-skeleton {
+    width: 100%;
+    table-layout: fixed; 
+  
+    th,
+    td {
+      text-align: center;
+      padding: var(--spacer-075) !important;
+    }
+  
+    th {
+      .react-loading-skeleton {
+        --highlight-color: $gray-medium-dark;
+      }
+    }
+  
+    tbody {
+      tr:last-child {
+        td {
+          border-bottom: none !important;
+        }
+      }
+    }
+  }
+  
+  .rounded-bl {
+    border-bottom-left-radius: var(--radius-md);
+  }
+  
+  .rounded-br {
+    border-bottom-right-radius: var(--radius-md);
+  }
+  

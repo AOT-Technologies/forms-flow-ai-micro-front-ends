@@ -2,11 +2,12 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import {CustomButton} from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
+import { useTranslation } from "react-i18next";
 
 interface ConfirmModalProps {
   show: boolean;
   onClose: () => void;
-  secondayBtnAction: () => void;
+  secondaryBtnAction: () => void;
   title: string;
   message: any;
   messageSecondary?: string;
@@ -21,30 +22,34 @@ interface ConfirmModalProps {
   secondoryBtndataTestid?: string;
   secondoryBtnariaLabel?: string;
   secondaryBtnLoading?:boolean;
+  datatestId?: string;
+  titleDataTestId?: string;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
   show,
   onClose,
-  secondayBtnAction,
+  secondaryBtnAction,
   title,
   message,
   messageSecondary = '',
   primaryBtnAction,
   primaryBtnText,
   primaryBtnDisable = false,
-  primaryBtndataTestid = 'Confirm-button',
+  primaryBtndataTestid = 'confirm-button',
   primaryBtnariaLabel = 'Confirm Button',
   buttonLoading= false,
   secondaryBtnText,
   secondaryBtnDisable = false,
   secondoryBtndataTestid = 'cancel-button',
   secondoryBtnariaLabel = 'Cancel Button',
-  secondaryBtnLoading= false
+  secondaryBtnLoading= false,
+  datatestId,
+  titleDataTestId,
 }) => {
+  const { t } = useTranslation();
   return (
-    <>
-      <Modal
+    <Modal
         show={show}
         onHide={onClose}
         size="sm"
@@ -54,13 +59,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         aria-describedby="confirm-modal-message"
       >
         <Modal.Header>
-          <Modal.Title id="confirm-modal-title">
+          <Modal.Title id="confirm-modal-title" data-testid={titleDataTestId}>
             <b>
-              {title}
+              {t(title)}
             </b>
           </Modal.Title>
           <div className="d-flex align-items-center">
-              <CloseIcon onClick={onClose} />
+              <CloseIcon onClick={onClose} data-testid="confirm-modal-close"/>
           </div>
         </Modal.Header>
         <Modal.Body className="build-modal-body">
@@ -70,10 +75,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
           >
             <div
               className="message-primary"
-              data-testid="confirm-modal-primary-message"
+              data-testid={ datatestId }
               aria-label="Primary message"
             >
-              {message}
+              {t(message)}
             </div>
             {messageSecondary && (
               <div
@@ -81,34 +86,33 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
                 data-testid="confirm-modal-secondary-message"
                 aria-label="Secondary message"
               >
-                {messageSecondary}
+                {t(messageSecondary)}
               </div>
             )}
           </div>
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-start">
-          <CustomButton
+        {primaryBtnText && <CustomButton
             variant={"primary"}
             size="lg"
             label={primaryBtnText}
             disabled={primaryBtnDisable}
             onClick={primaryBtnAction}
-            dataTestid={primaryBtndataTestid}
+            dataTestId={primaryBtndataTestid}
             ariaLabel={primaryBtnariaLabel}
             buttonLoading={buttonLoading}
-          />
+          />}
           {secondaryBtnText && <CustomButton
             variant="secondary"
             size="lg"
             label={secondaryBtnText}
-            onClick={secondayBtnAction}
-            dataTestid={secondoryBtndataTestid}
+            onClick={secondaryBtnAction}
+            dataTestId={secondoryBtndataTestid}
             ariaLabel={secondoryBtnariaLabel}
             disabled={secondaryBtnDisable}
             buttonLoading={secondaryBtnLoading}
           />}
         </Modal.Footer>
       </Modal>
-    </>
   );
 });

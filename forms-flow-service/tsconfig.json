@@ -3,7 +3,8 @@
   "files": ["src/formsflow-services.ts"],
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "dist"
+    "declarationDir": "dist",
+    "moduleResolution": "Bundler",
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test*"]

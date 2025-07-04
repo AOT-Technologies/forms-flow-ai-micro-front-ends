@@ -1,0 +1,9 @@
+services:
+  forms-flow-review:
+    container_name: forms-flow-review
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3011:8080"
+    tty: true

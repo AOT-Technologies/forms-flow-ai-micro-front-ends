@@ -1,7 +1,13 @@
 @import '_mixins';
 // Variables for reused values
 $primary: var(--ff-primary);
-$secondary: var(--ff-secondary);
+$primary-light: var(--ff-primary-light);
+$gray-light: var(--ff-gray-light);
+$gray-dark: var(--ff-gray-dark);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
+$black-color: var(--ff-black);
+
 
 .modal {
   .modal-dialog {
@@ -24,16 +30,16 @@ $secondary: var(--ff-secondary);
       opacity: 0;
     }
 
-    // for modals with size="sm" . 50% given to make it 750px as per figma size
+    // for modals with size="sm" . 63.5% given to make it 960px as per figma size
     &.modal-sm {
-      width: 50% !important;
-      max-width: 50% !important;
+      width: 63.5% !important;
+      max-width: 63.5% !important;
     }
 
-    // for modals with size="lg" . 95% given to make it 1432px as per figma size
+    // for modals with size="lg" . 95% given to make it 1440px as per figma size
     &.modal-lg {
-      width: 95% !important;
-      max-width: 95% !important;
+      width: 95.2% !important;
+      max-width: 95.2% !important;
     }
 
 
@@ -46,14 +52,14 @@ $secondary: var(--ff-secondary);
       background-color: var(--ff-white);
       background-clip: padding-box;
       border: none !important;
-      border-radius: var(--radius-0150) !important;
+      border-radius: var(--radius-lg) !important;
       outline: 0;
 
       &.form-modal-content {
         width: 56.25rem !important;
         height: 15.9375rem !important;
         flex-shrink: 0 !important;
-        border-radius: var(--radius-0150, 1.5rem) !important;
+        border-radius: var(--radius-lg) !important;
         position: absolute !important;
         border: none !important;
       }
@@ -143,7 +149,7 @@ $secondary: var(--ff-secondary);
           flex-direction: column;
           align-items: flex-start;
           gap: var(--spacer-150);
-          border-left: 0.0625rem solid var(--ff-gray-100) !important;
+          border-left: 0.0625rem solid $gray-medium !important;
           flex-shrink: 0;
           position: relative;
           cursor: pointer;
@@ -213,8 +219,8 @@ $secondary: var(--ff-secondary);
     margin-top: 6.5vh !important;
     margin-bottom: 2.5vh !important;
     height: 87vh;
-    background: var(--ff-white, #FFF);
-    border-radius: var(--radius-0150);
+    background: var(--ff-white);
+    border-radius: var(--radius-lg);
   }
 
   .modal-content {
@@ -224,7 +230,7 @@ $secondary: var(--ff-secondary);
   .tab-content {
     padding: var(--spacer-100) var(--spacer-125);
     width: 100% !important;
-    background: var(--ff-gray-000, #F2F2F3);
+    background: $gray-medium;
   }
 
   .form-template-list {
@@ -232,7 +238,7 @@ $secondary: var(--ff-secondary);
     -ms-overflow-style: none;
     max-height: 75vh;
     height: 59vh;
-    border-top: 1px solid var(--ff-gray-000);
+    border-top: 1px solid $gray-medium;
   }
   //TBD: Quick fix ,will remove later. 
   .line-height-1{
@@ -256,7 +262,7 @@ $secondary: var(--ff-secondary);
   .template-right {
     width: 70%;
     float: right;
-    border-left: 0.0625rem solid var(--ff-gray-100) !important;
+    border-left: 0.0625rem solid $gray-medium !important;
     display: flex;
     flex-direction: column;
     align-items: none;
@@ -276,7 +282,7 @@ $secondary: var(--ff-secondary);
     padding: var(--spacer-050) var(--spacer-225) !important;
     display: flex;
     flex-direction: column;
-    border-bottom: 1px solid var(--ff-gray-000);
+    border-bottom: 1px solid $gray-medium;
     background: var(--ff-white);
     overflow: hidden;
     white-space: nowrap;
@@ -297,8 +303,8 @@ $secondary: var(--ff-secondary);
   }
 
   .active-template {
-    border-bottom: 1px solid var(--ff-gray-000);
-    background: $secondary;
+    border-bottom: 1px solid $gray-medium;
+    background: $primary-light;
     max-height: none !important;
 
     .template-desc {
@@ -311,7 +317,7 @@ $secondary: var(--ff-secondary);
 
   .template-title,
   .template-desc {
-    color: var(--ff-dark);
+    color: $black-color;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
@@ -363,7 +369,7 @@ $secondary: var(--ff-secondary);
     flex: 1 0 0;
 
     &.not-found-text {
-      color: var(--ff-gray-400);
+      color: $gray-medium-dark;
       text-align: center;
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-sm);
@@ -397,36 +403,50 @@ $secondary: var(--ff-secondary);
 
 //settingsmodal 
 .settings-modal {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
-  margin: 0 !important;
-
-  .section {
-    display: flex;
-    padding: var(--spacer-200) var(--spacer-250) !important;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacer-150);
-    align-self: stretch;
+  .modal-content{
+    max-height: calc(100vh - 2rem);
+    margin-top: var(--spacer-100);
+    margin-bottom: var(--spacer-100);
   }
+ 
 
-  .modal-hr {
-    border-bottom: 1px solid var(--ff-gray-000);
+  .settings-tab-container{
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacer-200) var(--spacer-225);
+    gap: var(--spacer-150);  
+    .settings-sections{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacer-150);
+      align-self: stretch;
+    }
+    .custom-tab {
+      display: flex;
+      gap: var(--spacer-100);  
+      border-bottom: 1px solid $gray-medium !important;  
+      }
+      .tab-content { 
+        max-height: calc(100vh - 22.3375rem);
+        overflow-y: scroll;
+        padding-bottom: 2px;
+      }
   }
 
   .url-input {
     display: flex;
     align-items: center;
     align-self: stretch;
-    border-radius: var(--radius-0100);
+    border-radius: var(--radius-sm);
     border: 1px solid $primary;
     padding: 0.5rem 1rem;
 
     .url-non-edit {
       border: none !important;
-      border-radius: var(--radius-0100) !important;
+      border-radius: var(--radius-sm) !important;
       border-right: none;
-      color: var(--ff-gray-400) !important;
+      color: $gray-medium-dark !important;
       background: none !important;
       overflow: hidden;
       position: relative;
@@ -478,7 +498,7 @@ $secondary: var(--ff-secondary);
     padding: var(--spacer-200) 2.5rem;
     flex-direction: column;
     align-self: stretch;
-    border-top: 1px solid var(--ff-gray-000);
+    border-top: 1px solid $gray-medium;
   }
 
   .save-template-footer {
@@ -487,7 +507,7 @@ $secondary: var(--ff-secondary);
     flex-direction: column;
     align-items: flex-start;
     align-self: stretch;
-    border-top: 1px solid var(--ff-gray-000);
+    border-top: 1px solid $gray-medium;
     float: left;
   }
 
@@ -539,14 +559,19 @@ $secondary: var(--ff-secondary);
 }
 .node-list-row {
   padding: var(--spacer-200);
-  border-top: 1px solid var(--ff-gray-000);
+  border-top: 1px solid $gray-medium;
+}
+.no-code-custom-modal-body{
+  height: 68vh;
+  overflow: auto;
+  padding: 0 !important;
 }
 
 //reusable multi-select
 .multi-select{
   .list-group {
     border: 1px solid $primary;
-    border-radius: var(--radius-0100);
+    border-radius: var(--radius-sm);
     max-height: 16rem;
     overflow: auto;
     .list-group-item {
@@ -557,7 +582,7 @@ $secondary: var(--ff-secondary);
     position: absolute;
     z-index: 100;
     overflow: auto;
-    border-radius: var(--radius-0100);
+    border-radius: var(--radius-sm);
     border-bottom: 1px solid $primary;
   }
   
@@ -568,7 +593,7 @@ $secondary: var(--ff-secondary);
     align-items: center;
     padding: var(--spacer-050) var(--spacer-100);
     border: 1px solid $primary !important;
-    border-radius: var(--radius-0100) !important;
+    border-radius: var(--radius-sm) !important;
     position: relative;
     gap: 5px !important;
   
@@ -600,7 +625,7 @@ $secondary: var(--ff-secondary);
     overflow: hidden;
   }
   .modal-header{
-    border-bottom: 1px solid var(--ff-gray-000);
+    border-bottom: 1px solid $gray-medium;
   }
   .content-style{
     font-size: var(--font-size-sm);
@@ -620,7 +645,7 @@ $secondary: var(--ff-secondary);
   .build-contents{
     display: flex;
     flex-direction: column;
-    border-right: 1px solid var(--ff-gray-000) !important;
+    border-right: 1px solid $gray-medium !important;
     padding-left: var(--spacer-250) !important;
     padding: var(--spacer-200);
     cursor: pointer;
@@ -629,12 +654,32 @@ $secondary: var(--ff-secondary);
   }     
 }
 
-
-//expression-builder-modal
-.expression-builder{
-  .expression-list-group {
+.settings-tab-container{
+  .form-check{
     width: 100%;
   }
+}
+
+//expression-builder-modal
+.expression-builder-modal {
+  .modal-content{
+    margin-top: var(--spacer-100);
+    margin-bottom: var(--spacer-100);
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .expression-section{
+    border-bottom: 1px solid var(--ff-gray-100);
+    padding: var(--spacer-050) var(--spacer-225) !important;
+    padding-bottom: var(--spacer-050);
+    gap: var(--spacer-050);
+    margin-top: var(--spacer-200);
+  }
+}
+  .expression-builder{
+    .expression-list-group {
+      width: 100%;
+}
 
   .expression-list-group .form-variable {
     display: flex;
@@ -644,14 +689,14 @@ $secondary: var(--ff-secondary);
   }
 
   .expression-list-group .form-variable:hover {
-    background: $secondary;
+    background: $primary-light;
    
     .variable-label {
-      color: var(--ff-primary) !important;
+      color: $primary !important;
       
     }
     .variable-key{
-      color: var(--ff-gray-400) !important;
+      color: $gray-medium-dark !important;
       
     }
   }
@@ -660,32 +705,38 @@ $secondary: var(--ff-secondary);
   }
 
   .expression-list-group .variable-label {
-    color: var(--ff-primary);
+    color: $primary;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-lg);
   }
 
   .expression-list-group .variable-key {
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-sm);
     margin-left: 8px;
   }
-
-  .expression-area {
+  .expression-area,
+  .expression-display-area {
     display: flex;
-    min-height: 80px;
     align-items: flex-start;
     gap: var(--spacer-050);
-    border-radius: var(--radius-0100);
-    border: 1px solid $primary;
-    margin-top: 0.5rem;
-    padding-bottom: 0.5rem; 
+    border-radius: var(--radius-sm);
+    border: 0.0625rem solid var(--ff-gray-300);
+    padding: var(--spacer-050) var(--spacer-100);
     flex-wrap: wrap;
+
+    &.expression-area {
+      min-height: 4.375rem;
+    }
+
+    &.expression-display-area {
+      min-height: 2.1875rem;
+      pointer-events: none;
+    }
   }
 
-  .expression-section,
-  .variable-section {
+  .expression-section{
     display: flex;
     padding: var(--spacer-200) var(--spacer-250);
     flex-direction: column;
@@ -694,49 +745,58 @@ $secondary: var(--ff-secondary);
   }
 
   .variable-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
     gap: var(--spacer-150);
+    max-height: calc(100vh - 35.875rem);
+    overflow-y: scroll;
   }
 
   .tab-label {
     font-size: var(--font-size-md);
   }
-
+  .tab-variable-section{
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacer-200);
+    gap: var(--spacer-150);
+  }
   .tab-section {
     display: flex;
     align-items: center;
     gap: var(--spacer-150);
-    padding-left: var(--spacer-250);
-    padding-top: var(--spacer-200);
+    border-bottom: 1px solid var(--ff-gray-000);
   }
 
   .variable-tab {
     gap: var(--spacer-150);
   }
-
-  .custom-value {
-    padding: 42px 24px 40px 40px;
-  }
+  
 
   .save-value {
     display: inline-flex;
-    justify-content: center;
     align-items: center;
     gap: var(--spacer-050);
-    padding-left: var(--spacer-250);
-    padding-bottom: var(--spacer-250);
   }
 
   .pick-operator {
-    padding: var(--spacer-200) var(--spacer-250) var(--spacer-150) var(--spacer-250);
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacer-200);
     gap: var(--spacer-050);
+    max-height: calc(100vh - 26.375rem); 
+    overflow-y: scroll;
   }
 
   .operator-list {
     width: 100%;
+    padding: var(--spacer-050) var(--spacer-100);
   }
 
   .operator-list:hover {
-    background-color: $secondary !important;
+    background-color: $primary-light !important;
   }
 
   .key-label {
@@ -770,13 +830,13 @@ $secondary: var(--ff-secondary);
   }
 
   .no-var-text {
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-weight: var(--font-weight-sm);
   }
 
   .dashed-box {
     border-radius: var(--spacer-050);
-    border: 2px dashed var(--ff-primary);
+    border: 2px dashed $primary;
     margin-left: var(--spacer-050);
     height: 26px;
   }
@@ -808,7 +868,6 @@ $secondary: var(--ff-secondary);
     margin: 0;
     align-items: center;
     width: 100%;
-    padding-block: 1rem;
     gap: var(--spacer-050);
     .badge-pill {
     background-color: $primary !important;
@@ -821,8 +880,8 @@ $secondary: var(--ff-secondary);
     .badge-pill {
       background-color: $primary !important;
       color: var(--ff-white) !important;
-    }
   }
+}
 }
 
 
@@ -844,7 +903,7 @@ $secondary: var(--ff-secondary);
   .form-field-container{
     width: 80%;
     float: left;
-    background: var(--ff-gray-000);  // #F1F1F1
+    background: $gray-medium;  // #F1F1F1
     padding: var(--spacer-200) var(--spacer-250);
   }
   .field-details-container{
@@ -862,17 +921,17 @@ $secondary: var(--ff-secondary);
     align-items: flex-start;
     flex: 1 0 0;
     align-self: stretch;
-    border-radius: var(--radius-0100);
-    border: 1px solid var(--ff-gray-300);
+    border-radius: var(--radius-sm);
+    border: 1px solid $gray-medium-dark;
     background: var(--ff-white);    
   }
   
   .select-text{
-    color: var(--ff-gray-400);
+    color: $gray-medium-dark;
     font-size: var(--font-size-sm);
   }
   .selected-var-text{
-    color: var(--ff-dark);
+    color: $black-color;
     font-size: var(--font-size-sm);
     padding-bottom: var(--spacer-050);
   }
@@ -896,8 +955,8 @@ $secondary: var(--ff-secondary);
  }
 
  .card-body {
-   border-radius: var(--radius-0100) !important;
-   border-color: var(--ff-gray-400) !important;
+   border-radius: var(--radius-sm) !important;
+   border-color: $gray-medium-dark !important;
 
    .formio-editor-read-only-content {
      padding: var(--spacer-025) var(--spacer-050);
@@ -920,11 +979,300 @@ $secondary: var(--ff-secondary);
     margin-top: 1.5rem;
   }
 }
- 
+.sort-settings{
+  .sortbody-settings{
+    display: flex;
+    padding: var(--spacer-200) var(--spacer-250);
+    gap: var(--spacer-150);
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+  }
+  .input-dropdown .list-group {
+    min-height: auto !important;
+  }
+}
+.button-align{
+  gap: var(--spacer-100);
+}
+
+.dashed-selection {
+  border: 0.125rem dotted $primary;
+  padding: 0.1875rem;
+  border-radius: var(--radius-sm); /* Optional: Add some rounding */
+} 
+.drag-drop-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-150);
+  ul{
+    padding-left: 0rem;
+  }
+
+  .draggable-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacer-100);
+    border-radius: var(--radius-sm);
+    padding: var(--spacer-075) 0px;
+    transition: 
+      transform 1s cubic-bezier(0.25, 1, 0.5, 1), 
+      background-color .1s ease-in ,
+      opacity 1s ease-in-out, 
+      box-shadow 1s ease-in-out;
+      .drag-as-div {
+        background: none;
+        border: none;
+        margin: 0;
+        color: inherit;
+        font: inherit;
+        text-align: inherit;
+        display: flex;
+        align-items: center;
+    }
+
+    .draggable-icon {
+      display: flex;
+      align-self: center;
+      cursor: grab;
+      padding: var(--spacer-050);
+    }
+    &:active {
+      cursor: grabbing;
+    }
+
+    &.dragging {
+      background-color: $gray-medium;
+      padding-right: 3px;
+      opacity: 1;
+      z-index: 1000;
+      transform: scale(0.98); 
+    }
+    .checkbox-container{
+      display: flex;
+      margin-bottom: 0.188rem;
+    }
+  }
+}
+
+.dotted-line {
+  flex-grow: 1;
+  border-bottom: 1px dashed $gray-medium;
+} 
 
 
+.form-selection-modal{
+  
+  .form-selection-spinner {
+    @include spinner-base;
+    width: 0.9rem;
+    height: 0.9rem;
+    font-size: small;
+    position: relative;
+    top: 50%;
+    left: 50%;
+  }
+  .modal-content {
+    overflow: hidden;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    height: calc(100vh - 2rem);
+    background: var(--ff-white);
+    border-radius: var(--radius-lg);
+  }
+
+  .form-selection-header{
+    display: flex;
+    padding: var(--spacer-200) 6.5rem var(--spacer-200) var(--spacer-250);
+    align-items: center;
+    gap: var(--spacer-200);
+    align-self: stretch;
+  }
+  .form-selection-modal-body{
+    display: flex;
+    padding: 0 !important;
+    flex-direction: row;
+    .form-selection-left {
+      width: 30%;
+      float: left;
+      align-items: center;
+      gap: var(--spacer-100);
+      padding-bottom: var(--spacer-200);
+    }
+  
+    .form-selection-right {
+      width: 70%;
+      float: right;
+      border-left: 0.0625rem solid $gray-medium !important;
+      .form-selection-preview{
+        padding: var(--spacer-200) var(--spacer-250);
+        background-color: $gray-light;
+        overflow-y: auto;
+        height: calc(100vh - 15.2rem);
+      }
+      .form-select-btn{
+        display: flex;
+        padding: var(--spacer-200);
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    .search-form{
+      display: flex;
+      padding: var(--spacer-200) var(--spacer-225) var(--spacer-150);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacer-150);
+      flex-shrink: 0;
+    }
+    .form-list{
+      display: flex;
+      flex-direction: column;
+      padding: 0px  var(--spacer-225);
+      gap: var(--spacer-050);
+      overflow-y: scroll;
+      -ms-overflow-style: none;
+      max-height: calc(100vh - 15.5rem); 
+      
+      .form-list-item{
+      padding: var(--spacer-075) var(--spacer-100) !important;
+      word-break: break-word;
+      border-radius: var(--radius-sm);
+      gap: var(--spacer-050);
+      cursor: pointer;
+      &:hover{
+        background: $primary-light !important;
+        color:$black-color !important;
+      }
+    }
+      .active-form{
+        background: $primary !important;
+        color: $white;
+      }
+    }
+    .nothing-found-text {
+      color: $gray-medium-dark;
+      text-align: center;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-sm);
+      line-height: var(--text-line-height);
+      padding: var(--spacer-250) 0px; 
+    }
+  }
+
+}
 
 
+.create-filter-modal {
+  align-content: center;
+  .create-filter {
+    display: flex;
+    padding: var(--spacer-200) var(--spacer-225);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacer-150);
+    align-self: stretch;
+  }
+  
+  .filter-tab-container-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .filter-tab-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 15.79rem);
+    padding: var(--spacer-200) var(--spacer-225);
+    gap: var(--spacer-150);
+    .tab-content{
+      overflow-y: auto;
+
+    }
+  }
+
+  .modal-body {
+    padding: 0;
+
+    .filter-tab-container-wrapper {
+      height: 100%;
+    }
+  }
+
+  .custom-tabs {
+    &.nav-tabs {
+      border-bottom: 1px solid $gray-light !important;
+      gap: var(--spacer-100);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background-color: $white;
+    }
+  }
+
+  .L-style {
+    height: 25px;
+    width: 12px;
+    border-left: 1px solid $primary;
+    border-bottom: 1px solid $primary;
+    margin-right: var(--spacer-075);
+  }
+
+  .filter-dropdown {
+    padding-top: var(--spacer-075);
+  }
 
 
+  .form-selection-input{
+    color: var(--default-font-color) !important;
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid var(--ff-primary) !important;
+    outline: none;
+    display: flex;
+    padding:  var(--spacer-050) 0px var(--spacer-050) var(--spacer-100) !important;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    background-color: var(--ff-gray-light) !important;
+    height: 40px !important;
+    .form-selection-input-container{
+      display:flex;
+      padding: var(--spacer-050) var(--spacer-075) !important;
+      cursor: pointer ;
+    }
+  }
+}
+.custom-dropdown-menu { // will remove after integrating the actual dropdown
+  max-height: 200px;
+  overflow-y: auto;
+}
 
+
+.import-modal-footer{
+  .btn-dark{
+    background-color: var(--ff-gray-medium-dark) !important;
+    color: var(--ff-white) !important;
+  }
+} 
+
+.reorder-task-filter-modal{
+  .modal-dialog{
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+  .reorder-task-filter-header{
+    padding-left: var(--spacer-225);
+    padding-bottom: var(--spacer-200);
+    padding-top: var(--spacer-200);
+  }
+  .reorder-task-filter-modal-body{
+    padding: var(--spacer-200) var(--spacer-225);
+    max-height: calc(100vh - 15.79rem);
+    overflow-y: auto;
+  }
+}

@@ -1,25 +1,27 @@
 @import '_mixins';
 // Variables for reused values
 $primary: var(--ff-primary);
+$primary-light: var(--ff-primary-light);
 $black-color: var(--ff-black);
 $white-color: var(--ff-white);
-$gray-000: var(--ff-gray-000);
+$gray-dark: var(--ff-gray-dark);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
 $dropdown-btn-size: 3.2275rem;
 $btn-border-radius: 50%;
 $btn-font-weight: bold;
+$danger-color: var(--ff-danger);
 
 .btn-light {
-  background-color: $gray-100 !important;
+  background-color: $white-color !important;
 
   &:hover {
-    border: 0.0625rem solid var(--ff-gray-400) !important;
-    background-color: var(--ff-gray-300) !important;
+    opacity: 0.8;
   }
 }
 
-
 .form-select {
-  color: $dark !important;
+  color: $black-color !important;
 }
 
 .btn-info {
@@ -34,7 +36,6 @@ $btn-font-weight: bold;
   --ff-btn-hover-border-color: var(--default-link-color) !important;
   --ff-btn-active-color: var(--default-link-color) !important;
   --ff-btn-active-border-color: var(--default-link-color) !important;
-
   &:hover {
     text-decoration: underline !important;
   }
@@ -61,7 +62,7 @@ $btn-font-weight: bold;
 }
 
 .btn-outline-primary {
-  border-color: var(--ff-primary-200) !important;
+  border-color: $primary-light !important;
 }
 
 .btn-center {
@@ -75,12 +76,12 @@ $btn-font-weight: bold;
 }
 
 .delete_button {
-  color: var(--default-danger-color) !important;
+  color: $danger-color;
   cursor: pointer;
   transition: transform 0.5s, color 0.5s;
 
   &:hover {
-    color: var(--ff-danger); // This line can be omitted since the color remains the same.
+    color: $danger-color; // This line can be omitted since the color remains the same.
   }
 
   &:active {
@@ -89,31 +90,15 @@ $btn-font-weight: bold;
   }
 }
 
-// .upload+.uploadButton {
-//   height: 2.375rem;
-// }
-
-// .uploadButton {
-//   background-color: var(--ff-primary-500);
-//   border: none;
-//   border-radius: 0.1875rem;
-//   color: $white-color;
-//   cursor: pointer;
-//   display: inline-block;
-//   height: 1.875rem;
-//   margin-right: 0.9375rem;
-//   width: auto;
-//   padding: 0 1.25rem;
-//   box-sizing: content-box;
-// }
 
 .bg-primary {
-  background-color: var(--ff-primary) !important;
+  background-color: $primary !important;
 }
 
 .table-primary {
   --bs-table-color: #fff;
-  --ff-table-bg: var(--ff-primary) !important;
+  --ff-table-bg: $primary !important;
+  background-color: $primary !important;
 }
 
 .btn-wizard-nav-submit,
@@ -136,42 +121,22 @@ $btn-font-weight: bold;
 .nav-link:focus-visible,
 // .form-check-input:focus-visible,
 .out-line:focus-visible {
-  outline: 0.1875rem solid var(--ff-primary-200) !important;
+  outline: 0.1875rem solid $primary-light !important;
 }
 
-// Mixin for button states
-// @mixin button-states($bg-color, $border-color, $text-color) {
-//   background-color: $bg-color !important;
-//   border-color: $border-color !important;
-//   color: $text-color !important;
-
-//   &:focus {
-//     outline: none !important;
-//   }
-
-//   &:hover {
-//     background-color: darken($bg-color, 10%) !important;
-//     box-shadow: var(--shadow-md) !important;
-//   }
-
-//   &:active {
-//     background-color: $white-color !important;
-//     border: 0.0625rem solid $border-color !important;
-//   }
-
-//   &:disabled {
-//     background-color: var(--ff-gray-300) !important;
-//     color: $white-color !important;
-//     border-color: var(--ff-gray-300) !important;
-//   }
-// }
 
 .default-button-styles {
   font-size: var(--font-size-sm) !important;
   padding: var(--spacer-075) var(--spacer-150) !important;
   font-weight: var(--font-weight-xl) !important;
-  border-radius: var(--radius-0125) !important;
+  border-radius: var(--radius-md) !important;
   width: fit-content;
+}
+
+.btn-disabled {
+  background-color: $gray-medium-dark !important;
+  color: var(--primary-btn-font-color) !important;
+  border-color: $gray-medium-dark !important;
 }
 
 .btn {
@@ -183,8 +148,7 @@ $btn-font-weight: bold;
   // Default styles for buttons for all sizes . Useful for formio buttons
   @extend .default-button-styles;
 
-  &.btn-primary,
-  &.btn-success {
+  &.btn-primary {
     background-color: var(--primary-btn-bg-color) !important;
     border: 1px solid var(--primary-btn-bg-color) !important;
     color: var(--primary-btn-font-color) !important;
@@ -193,20 +157,18 @@ $btn-font-weight: bold;
     }
 
     &:hover {
-      background-color: var(--primary-btn-hover-bg-color) !important;
+      opacity: 0.8;
       box-shadow: var(--shadow-md) !important;
     }
 
     &:active {
       background-color: var(--primary-btn-bg-color) !important;
       color: var(--primary-btn-font-color) !important;
-      border: 0.0625rem solid var(--ff-primary) !important;
+      border: 0.0625rem solid $primary !important;
     }
 
     &.btn:disabled {
-      background-color: var(--ff-gray-300) !important;
-      color: var(--primary-btn-font-color) !important;
-      border-color: var(--ff-gray-300) !important;
+      @extend .btn-disabled;
     }
 
     &+.dropdown-toggle+.dropdown-menu {
@@ -224,7 +186,7 @@ $btn-font-weight: bold;
   }
 
   &.btn-text {
-    color: var(--ff-primary) !important;
+    color: $primary !important;
   }
 
   &.btn-secondary {
@@ -234,32 +196,41 @@ $btn-font-weight: bold;
     line-height: var(--text-line-height) !important;
 
     &:hover {
-      background-color: var(--secondary-btn-hover-bg-color) !important;
+      opacity: 0.8;
       font-weight: var(--font-weight-xl) !important;
     }
 
     &:focus {
       outline: none !important;
     }
+    &.btn:disabled {
+      @extend .btn-disabled;
+    }
   }
-
+  &.btn-success { 
+    color: $white-color !important;
+  }
+  &.btn-danger {
+    background-color: $danger-color !important;
+    color: $white-color !important;
+  }
   &.btn-dark {
-    background-color: var(--ff-gray-700) !important;
-    border: 1px solid var(--ff-gray-700) !important;
+    background-color: $gray-dark !important;
+    color:$white-color !important;
 
     &:hover {
-      background-color: var(--ff-gray-600) !important;
+      opacity: 0.8;
       box-shadow: var(--shadow-md) !important;
     }
 
     &:active {
       background-color: $white-color !important;
       color: var(--default-font-color) !important;
-      border: 0.0625rem solid var(--ff-gray-700) !important;
+      border: 0.0625rem solid $gray-dark !important;
     }
 
     &+.dropdown-toggle+.dropdown-menu {
-      border: 0.0625rem solid var(--ff-gray-700) !important;
+      border: 0.0625rem solid $gray-dark !important;
 
       .dropdown-item {
         color: var(--default-font-color) !important;
@@ -272,12 +243,26 @@ $btn-font-weight: bold;
     }
   }
 
+  &.btn-table { // This is for the Btn-Action-Table in figma
+    padding: var(--spacer-050) var(--spacer-100) !important;
+    border-radius: var(--radius-sm) !important;
+    line-height: var(--text-line-height);
+  }
+
+
+  &.btn-table-sm { // This is for the Btn-Action-Table-Small in figma
+    font-size: var(--font-size-xs) !important;
+    padding: var(--spacer-025) var(--spacer-075) !important;
+    border-radius: var(--radius-sm) !important;
+    line-height: var(--text-line-height);
+  }
+
   &.btn-sm {
     font-size: var(--font-size-xs) !important;
-    padding: var(--spacer-050) var(--spacer-100) !important;
+    padding: var(--spacer-075) var(--spacer-100) !important;
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--sm-btn-border-radius) !important;
-
+    line-height: var(--text-line-height);
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-xl) !important;
@@ -291,11 +276,10 @@ $btn-font-weight: bold;
   }
 
   &.btn-md {
-    font-size: var(--font-size-sm) !important;
-    padding: var(--spacer-075) var(--spacer-150) !important;
-    font-weight: var(--font-weight-xl) !important;
+    padding: var(--spacer-100) var(--spacer-150) !important;
+    font-weight: var(--font-weight-lg) !important;
     border-radius: var(--md-btn-border-radius) !important;
-    
+    line-height: var(--text-line-height);
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
@@ -309,11 +293,10 @@ $btn-font-weight: bold;
   }
 
   &.btn-lg {
-    font-size: var(--font-size-sm) !important;
-    padding: var(--spacer-100) var(--spacer-200) !important;
+    padding: var(--spacer-100) var(--spacer-150) !important;
     font-weight: var(--font-weight-xl) !important;
     border-radius: var(--lg-btn-border-radius) !important;
-
+    line-height: var(--text-line-height);
     ~.dropdown-menu .dropdown-item {
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-xl) !important;
@@ -333,21 +316,23 @@ $btn-font-weight: bold;
   }
 
   .btn-primary.dropdown-toggle {
-    background-color: var(--ff-base-500) !important;
-    border-color: var(--ff-base-500) !important;
+    opacity: 0.8;
   }
 
   .btn-dark.dropdown-toggle {
-    background-color: var(--ff-gray-600) !important;
-    border-color: var(--ff-gray-600) !important;
+    opacity: 0.8;
   }
 
   .dropdown-menu {
     left: 50% !important;
     transform: translateX(-50%) !important;
     top: 100% !important;
-    border-bottom-left-radius: var(--radius-0150) !important;
-    border-bottom-right-radius: var(--radius-0150) !important;
+    border-bottom-left-radius: 1.344rem  !important;
+    border-bottom-right-radius: 1.344rem !important;
+    padding: var(--spacer-050) var(--spacer-025) !important;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-025) !important;
   }
 
   &.show {
@@ -359,21 +344,76 @@ $btn-font-weight: bold;
       border-bottom-right-radius: 0 !important;
     }
   }
+  .label-extra-action{
+    display: flex !important;
+    flex-grow: 1 !important;
+  }
+
+  .button-dropdown {
+    border-top-left-radius: var(--radius-lg) !important;
+    border-bottom-left-radius: var(--radius-lg) !important;
+    padding: var(--spacer-050) var(--spacer-075) !important;
+    justify-content: start !important;
+    width: 100%;
+  }
+
+  .button-dropdown-toggle {
+    padding: var(--spacer-050) var(--spacer-125) var(--spacer-050) var(--spacer-075) !important;
+    flex-grow: 0 !important;
+  }
+  
+  .extra-action-icon {
+    padding: var(--spacer-050) var(--spacer-075) !important;
+    display: flex;
+    cursor: pointer;
+    opacity: 0.8;
+  }
+  .dropdown-item {
+      padding: var(--spacer-050) var(--spacer-100) !important;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-xl) !important;
+      color: $primary !important; 
+      white-space: normal !important;
+      word-break: break-word;
+      &.selected-filter-item {
+        background-color: $gray-medium !important;
+        color: $primary !important;
+        border-radius: var(--radius-sm) !important;
+        &:hover {
+          background-color: $primary !important;
+          color:$white-color !important;
+          }
+      }
+      &:hover {
+        color: $white-color !important;
+      }
+    }
 }
 
 .btn-group {
 
   >.btn:first-child,
   >.btn:first-child:active {
-    border-top-left-radius: var(--radius-0150) !important;
-    border-bottom-left-radius: var(--radius-0150) !important;
+    border-top-left-radius: var(--radius-lg) !important;
+    border-bottom-left-radius: var(--radius-lg) !important;
   }
 
   >.btn:nth-child(2),
   >.btn:nth-child(2):active {
-    border-top-right-radius: var(--radius-0150) !important;
-    border-bottom-right-radius: var(--radius-0150) !important;
+    border-top-right-radius: var(--radius-lg) !important;
+    border-bottom-right-radius: var(--radius-lg) !important;
   }
+}
+
+.application-search-box {
+  width: 20rem !important;
+}
+.appliation-dropdown {
+  width: 15rem !important;
+}
+
+.custom-btn-width{
+  width: 15rem !important;
 }
 
 .default-arrow {
@@ -408,14 +448,14 @@ $btn-font-weight: bold;
     border-color: transparent !important;
 
     &:hover {
-      background-color: $gray-000 !important;
+      background-color: $gray-medium !important;
     }
   }
 
   &.active .page-link {
     border-color: transparent !important;
     color: $black-color !important;
-    background-color: var(--ff-gray-100) !important;
+    background-color: $gray-medium !important;
     font-weight: $btn-font-weight;
     outline: none !important;
   }
@@ -439,7 +479,7 @@ $btn-font-weight: bold;
 
 .sort-icon {
   font-size: 0.5rem !important;
-  color: var(--ff-gray-300) !important;
+  color: $gray-medium-dark !important;
 }
 
 .page-link {
@@ -455,7 +495,7 @@ $btn-font-weight: bold;
 
   &:hover,
   &:focus {
-    background-color: $gray-000 !important;
+    background-color: $gray-medium !important;
     outline: none !important;
     box-shadow: none !important;
   }
@@ -472,6 +512,13 @@ $btn-font-weight: bold;
   // }
 
   // Dropdown Button Styles
+  .dropdown-menu{
+    min-width: 5rem !important;
+  }
+  .dropdown-item{
+    display: flex !important;
+    justify-content: center !important;
+  }
   .dropdown {
     .btn {
       color: $btn-color !important;
@@ -484,15 +531,7 @@ $btn-font-weight: bold;
       min-width: $dropdown-btn-size !important;
       min-height: $dropdown-btn-size !important;
       margin: 0 !important;
-
-      &:hover,
-      &:active,
-      &:focus {
-        color: $black-color !important;
-        background-color: $gray-000 !important;
-        font-weight: $btn-font-weight;
-        outline: transparent !important;
-      }
+      gap: var(--spacer-075) !important;
     }
 
     .dropdown-toggle {
@@ -571,3 +610,17 @@ $btn-font-weight: bold;
     text-underline-offset: var(--spacer-075) !important; 
   }
 }
+
+.button-div {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  align-items: center;
+}
+
+
+

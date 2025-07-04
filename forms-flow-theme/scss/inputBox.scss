@@ -1,8 +1,11 @@
-$form-input-border-radius: var(--radius-0150);
+$form-input-border-radius: var(--radius-lg);
 $primary: var(--ff-primary);
 $form-input-focus-outline: 2px solid var(--ff-primary);
-$danger: var(--ff-danger);
+$danger-color: var(--ff-danger);
 $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+$gray-medium: var(--ff-gray-medium);
+$white-color: var(--ff-white);
+$gray-light: var(--ff-gray-light); 
 
 .form-input {
   width: 100%;
@@ -34,14 +37,14 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
 }
 
 .input-error {
-  border-color: $danger !important;
+  border-color: $danger-color !important;
   outline: none;
   box-shadow: $input-error-box-shadow;
 }
 
 .validation-text {
   font-size: small;
-  color: $danger !important;
+  color: $danger-color !important;
 }
 
 .validation-astrisk {
@@ -52,7 +55,7 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
   position: relative;
 
   .border-input {
-    border-radius: var(--radius-0100) var(--radius-0100) 0px 0px !important;
+    border-radius: var(--radius-sm) var(--radius-sm) 0px 0px !important;
   }
 
   .input-group-text svg {
@@ -75,10 +78,11 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
     align-self: stretch;
     border: 1px solid $primary;
     border-top: none;
-    border-radius: 0px 0px var(--radius-0100) var(--radius-0100);
+    border-radius: 0px 0px var(--radius-sm) var(--radius-sm);
     max-height: 12.5rem;
     overflow-y: scroll;
-    background-color: var(--ff-white);
+    background-color: $white-color;
+    gap: var(--spacer-050) !important;
 
     .list-group-item {
       &.list-first-item-btn {
@@ -96,9 +100,16 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-sm);
       line-height: var(--text-line-height);
+      white-space: normal;
+      word-break: break-all;
 
       &:hover {
-        background: var(--ff-gray-000);
+        background: $gray-medium; 
+        background-color: $primary !important;
+        color: $white-color !important;
+        border-radius:  var(--radius-sm) !important;
+        margin-left: var(--spacer-025);
+        margin-right: var(--spacer-025);
       }
 
       &:last-child {
@@ -107,4 +118,21 @@ $input-error-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
       }
     }
   }
+  .form-control:focus{
+    box-shadow: none !important;
+    z-index: unset !important;
+  }
+  .disabled-inpudropdown{
+    background-color: $gray-light !important;
+    pointer-events: none !important;
+    cursor: not-allowed;
+    border-color: $gray-light !important;
+  }
+}
+
+.selected-dropdown-item{
+  background-color: $gray-medium !important;
+  border-radius:  var(--radius-sm) !important;
+  margin-left: var(--spacer-025);
+  margin-right: var(--spacer-025);
 }

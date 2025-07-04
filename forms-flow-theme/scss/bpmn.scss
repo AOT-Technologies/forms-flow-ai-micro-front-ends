@@ -1,0 +1,34 @@
+
+$primary: var(--ff-primary);
+$gray-darkest: var(--ff-gray-darkest);
+.bpm-container{
+  height:100%;
+  position: absolute;
+  width: 100%;
+  overflow:hidden;
+}
+.bpmn-viewer-container{ 
+  position:relative; 
+  min-height: 45vh; 
+  min-width: 60vw; 
+  width: 100%;
+  height: 100%;
+}
+
+ .grab-cursor {
+   cursor: move;
+   cursor: grab;
+ }
+.highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
+    fill: $primary !important;
+}
+
+.btn_zoom{
+  position: absolute;
+  bottom: 10em;
+  right:5%;
+}
+
+.djs-container svg:focus {
+  outline: none !important;
+}

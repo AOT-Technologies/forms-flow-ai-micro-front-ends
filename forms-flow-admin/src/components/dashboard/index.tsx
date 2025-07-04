@@ -4,7 +4,6 @@ import InsightDashboard from "./dashboard";
 import {
   fetchdashboards,
   fetchGroups,
-  fetchAuthorizations,
 } from "../../services/dashboard";
 import "./insightDashboard.scss";
 
@@ -16,33 +15,41 @@ const AdminDashboard = React.memo((props : any) => {
   const [error, setError] = React.useState();
   const [dashboardLoading, setDashboardLoading] = React.useState(true);
   const [groupLoading, setGroupLoading] = React.useState(true);
-  const [authLoading, setAuthLoading] = React.useState(true);
   const [loading, setLoading] = React.useState(true);
   const [authReceived, setAuthReceived] = React.useState(true);
 
-  React.useEffect(() => {
-    setTab("Dashboard");
-    setLoading(true);
-    fetchdashboards((data)=>{
+React.useEffect(() => {
+  setTab("Dashboard");
+  setLoading(true);
+  
+  fetchdashboards(
+    (data) => {
       setDashboards(data);
       setDashboardLoading(false);
-    }, setError);
-    fetchGroups((data)=>{
+    }, 
+    (error) => {
+      setError(error);
+      setDashboardLoading(false);
+    }
+  );
+  
+  fetchGroups(
+    (data) => {
       setGroups(data);
       setGroupLoading(false);
-    }, setError);
-    fetchAuthorizations((data)=>{
-      setAuthorizations(data);
-      setAuthLoading(false);
-      setAuthReceived(true);
-    }, setError);
-  }, []);
+    }, 
+    (error) => {
+      setError(error);
+      setGroupLoading(false); 
+    }
+  );
+}, []);
 
   React.useEffect(()=>{
-    if(!dashboardLoading && !groupLoading && !authLoading){
+    if(!dashboardLoading && !groupLoading){
       setLoading(false)
     }
-  },[dashboardLoading, groupLoading, authLoading])
+  },[dashboardLoading, groupLoading])
 
   return (
     <InsightDashboard

@@ -1,0 +1,87 @@
+$primary: var(--ff-primary);
+$gray-darkest: var(--ff-gray-darkest);
+$white-color: var(--ff-white);
+$black-color: var(--ff-black);
+
+.assign-user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.063rem solid $primary;
+  border-radius: var(--radius-sm) !important;
+
+  &.sm {
+    min-width: 11.25rem;
+    height: 1.563rem;
+  }
+
+  &.md {
+    width: 15rem;
+    height: 2.188rem;
+    background-color: var(--ff-gray-light);
+    border: none;
+  }
+
+
+  .option-me,
+  .option-others {
+    flex: 1;
+    font-size: var(--font-size-xs) !important;
+    font-weight: var(--font-weight-xl) !important;
+    color: $primary;
+    border: none;
+    cursor: pointer;
+    line-height: 120%;
+    text-align: left;
+    padding-left: var(--spacer-050);
+    padding-block: var(--spacer-025);  
+    &:focus {
+      outline: none;
+    }
+  }
+  .divider {
+    width: 0.063rem;
+    height: var(--text-line-height) !important;
+    background: $primary;
+    transform: translate(-50%, 0%) rotate(30deg); 
+  }
+  .button-reset{
+    background: none;
+    cursor: pointer;
+    border-radius: var(--radius-sm) !important;
+  }
+}
+
+//Added custom variants prop to the AssignUser component to allow overriding styles in the InputDropdown component.
+.assign-user-sm-width{
+  min-width: 11.25rem !important;
+}
+.assign-user-sm-height{
+  height: 1.563rem !important;
+  border: 0.125rem solid $primary !important;
+  padding-left: var(--spacer-050) !important;
+  padding-block: var(--spacer-025) !important;
+  font-size: var(--font-size-xs) !important;
+}
+.assign-user-md-width{
+  width: 15rem !important;
+}
+.assign-user-md-height{
+  height: 2.188rem !important;
+  border: 0.125rem solid $primary !important; 
+}
+.assignee-dropdown-border{
+  border: 0.125rem solid $primary !important;
+  border-top: none !important;
+}
+
+
+.assigne-label{
+overflow: hidden;
+color: $black-color;
+text-overflow: ellipsis;
+white-space: nowrap;
+font-size: var(--font-size-xs);
+font-weight: var(--font-weight-sm);
+line-height: var(--text-line-height);
+}
