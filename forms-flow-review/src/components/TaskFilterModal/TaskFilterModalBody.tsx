@@ -326,15 +326,15 @@ const TaskFilterModalBody = ({
       }));
   };
 
-  const handleFetchTaskVariables = (formId) => {
+const handleFetchTaskVariables = (formId) => {
     fetchTaskVariables(formId)
       .then((res) => {
         const taskVariables = res.data?.taskVariables || [];
         const dynamicVariables = transformToDynamicVariables(
           taskVariables,
-          variableArray
+          defaultTaskVariable
         );
-        const combinedVars = [...variableArray, ...dynamicVariables];
+        const combinedVars = [...defaultTaskVariable, ...dynamicVariables];
         setVariableArray(combinedVars);
       })
       .catch((err) => console.error(err));
