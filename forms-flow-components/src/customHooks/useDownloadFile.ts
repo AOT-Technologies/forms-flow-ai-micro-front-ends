@@ -23,16 +23,16 @@ export const useDownloadFile = ({
   getFileName,
 }: UseDownloadFileParams): UseDownloadFileReturn => {
   const ref = useRef<HTMLAnchorElement | null>(null);
-  const [url, setFileUrl] = useState<string | undefined>();
-  const [name, setFileName] = useState<string | undefined>();
+  const [url, setUrl] = useState<string | undefined>();
+  const [name, setName] = useState<string | undefined>();
 
   const download = async (): Promise<void> => {
     try {
       preDownloading();
       const { data } = await apiDefinition();
       const url = URL.createObjectURL(new Blob([data]));
-      setFileUrl(url);
-      setFileName(getFileName());
+      setUrl(url);
+      setName(getFileName());
       ref.current?.click();
       postDownloading();
       URL.revokeObjectURL(url);
