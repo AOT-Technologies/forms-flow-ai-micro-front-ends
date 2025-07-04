@@ -82,11 +82,18 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   ];
 
   return (
-    <button
+    <div
       className={`collapsible-toggle ${expanded ? "expanded" : ""}`}
       onClick={toggleExpand}
       data-testid={dataTestId}
       aria-label={ariaLabel}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          toggleExpand();
+        }
+      }}
     >
       <button
         className="chevron-icon"
@@ -213,6 +220,6 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
           </div>
         </div>
       )}
-    </button>
+    </div>
   );
 };
