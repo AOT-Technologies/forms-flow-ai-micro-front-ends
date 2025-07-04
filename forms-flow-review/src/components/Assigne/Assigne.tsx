@@ -97,7 +97,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
       size={isFromTaskDetails ? 'md' : 'sm'}
       isFromTaskDetails={isFromTaskDetails}
       users={userList?.data ?? []}
-      username={task.assignee}
+      currentAssignee={task.assignee}
       meOnClick={handleClaim}
       optionSelect={handleChangeClaim}
       handleCloseClick={handleUnClaim}
