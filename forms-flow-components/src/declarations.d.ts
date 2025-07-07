@@ -44,3 +44,8 @@ declare module "@formsflow/service" {
   export const StorageService: any;
   export const RequestService: any;
 }
+
+declare module "@formsflow/components" {
+  export const ButtonDropdown : any;
+  export const FormInput : any;
+}

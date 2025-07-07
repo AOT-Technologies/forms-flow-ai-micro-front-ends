@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { HelperServices } from "@formsflow/service";
 import { getFormUrl } from "../api/services/formatterService";
 import { MULTITENANCY_ENABLED } from "../constants/index";
+import { CustomButton } from "@formsflow/components";
 
 interface TaskHistoryModalProps {
   show: boolean;
@@ -92,11 +93,10 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
       <Modal
         show={show}
         onHide={onClose}
-        dialogClassName="form-submission-history-modal"
+        dialogClassName="modal-sm"
         data-testid="form-history-modal"
         aria-labelledby="form-history-modal-title"
         aria-describedby="form-history-modal-message"
-        size="sm"
       >
         <Modal.Header data-testid="form-history-modal-header">
           <Modal.Title
@@ -104,16 +104,15 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
             data-testid="form-history-modal-title"
             aria-label="Form history modal title"
           >
-            <b>{t("History")}</b>
+            <p>{t("History")}</p>
           </Modal.Title>
-          <CloseIcon
-            onClick={onClose}
-            aria-label="Close form-history-modal"
-            data-testid="close-icon"
-          />
+
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon data-testid="close-icon" aria-label="Close form-history-modal" />
+          </div>
         </Modal.Header>
         <Modal.Body
-          className="form-history-modal-body"
+          className="history-modal-body"
           data-testid="form-history-modal-body"
           aria-label="Form history modal body"
         >
@@ -121,24 +120,45 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
             <>
               <div
                 ref={timelineRef}
-                className="form-timeline"
+                className="history-content submissions"
                 data-testid="form-history-timeline"
                 aria-label="Form history timeline"
-              ></div>
-              <div
-                className="history-content"
-                data-testid="form-history-content"
-                aria-label="Form history content"
               >
+                <div ref={timelineRef} className="timeline"></div>
+
                 {appHistory.map((entry, index) => (
                   <div
                     key={entry.id || index}
                     ref={index === appHistory.length - 1 ? lastEntryRef : null}
-                    className="form-version-grid"
+                    className="version major-version-grid"
                     data-testid={`form-history-entry-${index}`}
                     aria-label={`Form history entry ${index}`}
                   >
-                    <HistoryField
+                    <div className="content-headings">
+                      {entry.applicationStatus || "N/A"}
+                    </div>
+
+                    <div className="details">
+                      <div>
+                        <div className="content-headings">Submitted By</div>
+                        <div className="normal-text">{entry.submittedBy || "N/A"}</div>
+                      </div>
+                      <div>
+                        <div className="content-headings">Created On</div>
+                        <div className="normal-text">{entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A"}</div>
+                      </div>
+                    </div>
+
+                    <div className="revert-btn">
+                      <CustomButton
+                        label="View Submission"
+                        onClick={viewSubmission(entry)}
+                        ariaLabel="view submission button"
+                        actionTable
+                      />
+                    </div>
+
+                    {/* <HistoryField
                       fields={[
                         {
                           id: 1,
@@ -147,7 +167,7 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
                         },
                         {
                           id: 2,
-                          header: "Submitter By",
+                          header: "Submitted By",
                           value: entry.submittedBy || "N/A",
                         },
                         {
@@ -163,9 +183,10 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
                           value: viewSubmission(entry),
                         },
                       ]}
-                    />
+                    /> */}
                   </div>
                 ))}
+
               </div>
             </>
           ) : (

@@ -48,14 +48,14 @@ interface AllHistory {
 
 const HistoryField = ({ fields }) => {
     return (
-      <>
+      <div className="details">
         {fields.map(({ id, heading, value }) => (
           <div key={id}>
             <div className="content-headings">{heading}</div>
             <div className="normal-text">{value}</div>
           </div>
         ))}
-      </>
+      </div>
     );
   };
 
@@ -70,15 +70,14 @@ const RevertField = ({
 }) => {
   return (
     <div className="revert-btn">
-    {  <CustomButton
-        variant={variant}
-        size={size}
+      <CustomButton
         disabled={disabled}
         label={label}
         onClick={onClick}
        dataTestId={dataTestId}
         ariaLabel={ariaLabel}
-      />}
+        actionTable
+      />
     </div>
   );
 };
@@ -166,8 +165,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
     };
 
     useEffect(() => {
-      adjustTimelineHeight();
-      window.addEventListener("resize", adjustTimelineHeight);
+      // adjustTimelineHeight();
+      // window.addEventListener("resize", adjustTimelineHeight);
       if (show) {
         if (!hasLoadedMoreForm && categoryType === "FORM") {
           setHasLoadedMoreForm(false);
@@ -196,14 +195,13 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
           (categoryType === "WORKFLOW" && !hasLoadedMoreWorkflow);
         
         return shouldRenderButton ? (
-          <div className="d-flex justify-content-center mt-4" ref={loadMoreRef}>
+          <div className="load-more" ref={loadMoreRef}>
             <CustomButton
-              variant="secondary"
-              size="sm"
               label={loadMoreBtnText}
               onClick={handleLoadMore}
              dataTestId={loadMoreBtndataTestId}
               ariaLabel={loadMoreBtnariaLabel}
+              secondary
             />
           </div>
         ) : null;
@@ -223,9 +221,9 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         const isReadOnly = isViewDesigns && !isCreateDesigns
         const revertButtonDisabled = isReadOnly || disableAllRevertButton || entry[disabledData.key] == disabledData.value || (!ignoreFirstEntryDisable && index === 0);
         const fields = [
-            { id:1, heading: t("Last Edit On"), value: HelperServices?.getLocalDateAndTime(entry.created) },
-            { id:2, heading: t("Last Edit By"), value: entry.createdBy },
-            { id:3, heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? HelperServices?.getLocalDateAndTime(entry.publishedOn) : "" },
+            { id:1, heading: entry.publishedOn ? t("Published On") : "", value: entry.publishedOn ? HelperServices?.getLocalDateAndTime(entry.publishedOn) : "" },
+            { id:2, heading: t("Saved On"), value: HelperServices?.getLocalDateAndTime(entry.created) },
+            { id:3, heading: t("Saved By"), value: entry.createdBy },
             ...(categoryType === "WORKFLOW"
               ? [{ id:4, heading: t("Type"), value: entry.processType === "LOWCODE" ? "No-Code" : entry.processType }]
               : []),
@@ -236,7 +234,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             {isMajorVersion && (
               <div
                 ref={isLastEntry ? lastEntryRef : null}
-                className={`major-version-grid ${
+                className={`version major-version-grid ${
                   categoryType === "WORKFLOW" ? "workflow-major-grid " : ""
                 }`}
               >
@@ -258,7 +256,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             {!isMajorVersion && (
               <div
                 ref={isLastEntry ? lastEntryRef : null}
-                className={`minor-version-grid ${
+                className={`version minor-version-grid ${
                   categoryType === "WORKFLOW" ? "workflow-minor-grid" : ""
                 }`}
               >
@@ -286,27 +284,27 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
         <Modal
           show={show}
           onHide={handleClose}
-          dialogClassName="modal-70w"
+          dialogClassName="modal-sm"
           data-testid="history-modal"
           aria-labelledby="history-modal-title"
           aria-describedby="history-modal-message"
         >
           <Modal.Header>
             <Modal.Title id="history-modal-title">
-              <b>{t(title)}</b>
+              <p>{t(title)}</p>
             </Modal.Title>
-            <div className="d-flex align-items-center ">
-              <CloseIcon onClick={handleClose} data-testid="close-icon" />
+            <div className="icon-close" onClick={handleClose}>
+              <CloseIcon data-testid="close-icon" />
             </div>
           </Modal.Header>
           <Modal.Body className="history-modal-body">
-            {historyCount > 0 && (
-              <div ref={timelineRef} className="timeline"></div>
-            )}
             <div className="history-content">
+              {historyCount > 0 && (
+                <div ref={timelineRef} className="timeline"></div>
+              )}
               {renderHistory()}
-              {historyCount > 4 && renderLoadMoreButton()}
             </div>
+            {historyCount > 4 && renderLoadMoreButton()}
           </Modal.Body>
         </Modal>
 

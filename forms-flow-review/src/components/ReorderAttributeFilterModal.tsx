@@ -161,13 +161,11 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
           show={showAttributeModal}
           centered
           size="sm"
-          className="reorder-task-filter-modal"
-          backdrop="static"
         >
-          <Modal.Header className="reorder-task-filter-header">
+          <Modal.Header>
             <Modal.Title> {t("Re-order And Hide Filters")} </Modal.Title>
-            <div className="d-flex align-items-center">
-              <CloseIcon onClick={onClose} />
+            <div className="icon-close" onClick={onClose} >
+              <CloseIcon/>
             </div>
           </Modal.Header>
           <Modal.Body className="reorder-task-filter-modal-body">
@@ -181,10 +179,9 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
               preventLastCheck={true}
             />
           </Modal.Body>
-          <Modal.Footer className="d-flex justify-content-start">
+          <Modal.Footer>
+            <div className="buttons-row">
             <CustomButton
-              variant="primary"
-              size="md"
               label={t("Save Changes")}
               dataTestId="save-changes"
               ariaLabel={t("Save Changes")}
@@ -192,13 +189,13 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
               disabled={isSaveBtnDisabled}
             />
             <CustomButton
-              variant="secondary"
-              size="md"
               label={t("Discard Changes")}
               onClick={handleDiscardChanges}
               dataTestId="discard-changes"
               ariaLabel={t("Discard Changes")}
+              secondary
             />
+            </div>
           </Modal.Footer>
         </Modal>
       );

@@ -131,16 +131,17 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     },[showBuildForm])
 
     return (
-      <Modal show={showBuildForm} onHide={onClose} size="sm" centered={true}>
+      <Modal show={showBuildForm} onHide={onClose} size="sm">
         <Modal.Header>
           <Modal.Title>
-            <b>{t(modalHeader)}</b>
+            <p>{t(modalHeader)}</p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} data-testid="close-duplicate-modal"/>
+
+          <div className="icon-close" onClick={onClose} data-testid="close-duplicate-modal">
+            <CloseIcon />
           </div>
         </Modal.Header>
-        <Modal.Body className="form-builder-modal">
+        <Modal.Body>
           <FormInput
             name="title"
             type="text"
@@ -160,6 +161,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             feedback={nameError}
             turnOnLoader={isFormNameValidating}
             maxLength={200}
+            id="form-name"
           />
           <FormTextArea
             name="description"
@@ -171,6 +173,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             value={values.description} // Bind description state
             onChange={handleInputValueChange}
             minRows={1}
+            id="form-description"
           />
 
           {/* This below commenting is for open-source use only. It should not be included in EE.
@@ -195,36 +198,37 @@ Further clarification on this is to be determined for EE. */}
    }
 */}
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-start">
-          <CustomButton
-            variant={buttonVariant} // Set color based on success or error
-            size="md"
-            disabled={
-              !!nameError ||
-              isSaveBtnLoading ||
-              !values.title ||
-              isFormNameValidating ||
-              showSuccess
-            } // Disable if errors or fields are empty
-            label={
-              showSuccess ? `Saving (${successCountdown})` : primaryBtnLabel
-            } // Display countdown or primary label
-            buttonLoading={isSaveBtnLoading}
-            onClick={handlePrimaryAction} // Trigger action on button click
-            name="createButton"
-            dataTestId={primaryBtndataTestid}
-            ariaLabel={primaryBtnariaLabel}
-          />
+        <Modal.Footer>
+          <div className="buttons-row">
+            <CustomButton
+              variant={buttonVariant} // Set color based on success or error
+              size="md"
+              disabled={
+                !!nameError ||
+                isSaveBtnLoading ||
+                !values.title ||
+                isFormNameValidating ||
+                showSuccess
+              } // Disable if errors or fields are empty
+              label={
+                showSuccess ? `Saving (${successCountdown})` : primaryBtnLabel
+              } // Display countdown or primary label
+              buttonLoading={isSaveBtnLoading}
+              onClick={handlePrimaryAction} // Trigger action on button click
+              name="createButton"
+              dataTestId={primaryBtndataTestid}
+              ariaLabel={primaryBtnariaLabel}
+            />
 
-          <CustomButton
-            variant="secondary"
-            size="md"
-            name="cancelButton"
-            label={secondaryBtnLabel}
-            onClick={secondaryBtnAction}
-            dataTestId={secondoryBtndataTestid}
-            ariaLabel={secondoryBtnariaLabel}
-          />
+            <CustomButton
+              name="cancelButton"
+              label={secondaryBtnLabel}
+              onClick={secondaryBtnAction}
+              dataTestId={secondoryBtndataTestid}
+              ariaLabel={secondoryBtnariaLabel}
+              secondary
+            />
+          </div>
         </Modal.Footer>
       </Modal>
     );

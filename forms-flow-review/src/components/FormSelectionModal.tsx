@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useTranslation } from "react-i18next";
 import { CloseIcon, CustomSearch, CustomButton } from "@formsflow/components";
+// import { LoadingIcon } from "@formsflow/components";
 import { Form } from "@aot-technologies/formio-react";
 import {  fetchFormById } from "../api/services/filterServices";
 interface FormSelectionModalProps {
@@ -95,8 +96,8 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
       if (formOptions.length > 0) {
         return formOptions.map((item) => (
           <button
-            className={`form-list-item button-as-div ${
-              selectedForm.formId === item.formId ? "active-form" : ""
+            className={`${
+              selectedForm.formId === item.formId ? "active" : ""
             }`}
             onClick={() => setSelectedForm({ formId: item.formId, formName: item.formName })}
             key={item.formId}
@@ -113,38 +114,32 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     return (
       <Modal 
       show={showModal} 
-      centered
-      size="lg" 
-      className="form-selection-modal">
-        <Modal.Header className="form-selection-header">
-          <Modal.Title> {t("Select a Form")} </Modal.Title>
-          <div className="d-flex align-items-center">
-            <CloseIcon
-              onClick={onClose}
-              data-testid="form-selection-modal-close-icon"
-            />
+      size="lg">
+        <Modal.Header>
+          <Modal.Title> <p> {t("Select a Form")} </p></Modal.Title>
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon data-testid="form-selection-modal-close-icon" />
           </div>
         </Modal.Header>
-        <Modal.Body className="form-selection-modal-body">
-          <div className="form-selection-left">
-            <div className="search-form">
-              <CustomSearch
-                placeholder={t("Search ...")}
-                search={searchFormName}
-                setSearch={setSearchFormName}
-                handleClearSearch={handleClearSearch}
-                handleSearch={handleFormNameSearch}
-                dataTestId="form-custom-search"
-              />
-            </div>
-            <div className="form-list">
+        <Modal.Body className="side-by-side">
+          <div className="left scroll-list">
+            <CustomSearch
+              placeholder={t("Search")}
+              search={searchFormName}
+              setSearch={setSearchFormName}
+              handleClearSearch={handleClearSearch}
+              handleSearch={handleFormNameSearch}
+              dataTestId="form-custom-search"
+            />
+            <div className="items">
             {renderFormList()}
             </div>
           </div>
-          <div className="form-selection-right">
-            <div className="form-selection-preview custom-scroll wizard-tab">
+          <div className="right">
+            <div className="preview">
               {loading ? (
                 <div className="form-selection-spinner"></div>
+                // <LoadingIcon />
               ) : (
                 <Form
                   form={form}
@@ -158,14 +153,12 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
                 />
               )}
             </div>
-            <div className="form-select-btn">
+            <div className="actions">
               <CustomButton
                onClick={() => {
                  onSelectForm(selectedForm);
                 }}
-                variant="primary"
                 label={t("Select This Form")}
-                size="md"
                 dataTestid="select-form-btn"
               />
             </div>

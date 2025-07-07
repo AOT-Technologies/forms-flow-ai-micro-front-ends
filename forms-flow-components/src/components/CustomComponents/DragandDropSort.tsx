@@ -1,5 +1,5 @@
 import React, { useState, useEffect ,useRef} from "react";
-import { FormVariableIcon, DraggableIcon } from "../SvgIcons/index";
+import { FormVariableIcon, DraggableIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon } from "../SvgIcons/index";
 import { StyleServices } from "@formsflow/service";
 
 interface FilterItem {
@@ -104,7 +104,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
   };
 
   return (
-    <div className="drag-drop-container" ref={containerRef}>
+    <div className="list-action rearrangable checkbox" ref={containerRef}>
       <ul>
         {filterItems.map((item, index) => (
           <li
@@ -116,29 +116,26 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({ items, onUpd
             onDragEnd={onDragEnd}
           >
             <button
-              className="draggable-icon drag-as-div"
+              className="draggable-icon"
               draggable
               onDragStart={(e) => onDragStart(e, index)}
             >
               <DraggableIcon />
             </button>
-            
 
-            <div className="checkbox-container">
+            <label htmlFor={`${item.name}-checkbox-id`} className="input-checkbox">
               <input
-                data-testid={`${item.name}-checkbox`}
+                id={`${item.name}-checkbox-id`}
                 type="checkbox"
-                className="form-check-input"
                 checked={item.isChecked}
                 onChange={() => onCheckboxChange(index)}
                 disabled={preventLastCheck && item.isChecked && filterItems.filter(i => i.isChecked).length === 1}
-              />
-            </div>
-
-            <button className="label cursor-pointer drag-as-div" onClick={() => onLabelClick(index)}>
-              {item.label ?? item.name}
-            </button>
-
+                data-testid={`${item.name}-checkbox`}
+                />
+              <span>{item.label ?? item.name}</span>
+              {item.isChecked ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
+            </label>
+            
             <div className="dotted-line"></div>
 
             {item.isFormVariable && icon }{item.icon}
