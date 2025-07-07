@@ -569,6 +569,22 @@ $white-color: var(--ff-white);
   border-spacing: 0;
   border: none; /* Remove border from table itself */
 
+  &.data-lines-1 tbody td .content {
+    @include line-clamp(1);
+  }
+
+  &.data-lines-2 tbody td .content {
+    @include line-clamp(2);
+  }
+  
+  &.data-lines-3 tbody td .content {
+    @include line-clamp(3);
+  }
+  
+  &.data-lines-4 tbody td .content {
+    @include line-clamp(4);
+  }
+
   /* Fixed header styling */
   thead {
     position: sticky;
@@ -577,14 +593,22 @@ $white-color: var(--ff-white);
     background-color: var(--ff-body-bg);
 
     th {
-      border-bottom: 1px solid var(--ff-gray-medium);
+      border-bottom: $lineThin solid $gray-medium;
       padding: var(--spacer-050) var(--spacer-075);
-      font-weight: var(--font-weight-xl);
-      font-size: var(--font-size-xs);
-      line-height: 120%; 
-      user-select: none;
-      background-color: var(--ff-body-bg);
-      border-left: 1px solid var(--ff-gray-medium-dark);
+
+      border-left: $lineThin solid $gray-medium-dark;
+
+      & .text {
+        @include textBaseHightlight($fontSmallest);
+        overflow: hidden;
+        display: block;
+        width: 100%;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        
+        user-select: none;
+      }
     }
 
     tr th:last-child {
@@ -601,11 +625,24 @@ $white-color: var(--ff-white);
   /* Table body styling */
   tbody {
     td {
+      overflow: hidden;
       padding: var(--spacer-050) var(--spacer-075);
       border-top: 1px solid transparent;
       border-bottom: 1px solid var(--ff-gray-medium);
-      white-space: nowrap;
-      text-overflow: ellipsis;
+
+      .content {
+        @include line-clamp(1);
+
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+
+        text-overflow: ellipsis;
+        
+        &.assignee {
+          overflow: visible;
+        }
+      }
     }
 
     tr {
@@ -651,32 +688,45 @@ $white-color: var(--ff-white);
 }
 
 .column-resizer {
+  $size: calc($base/2 + $lineThick);
+
   position: absolute;
   top: 0;
-  right: -4px;
-  width: 7px;
+  right: calc(0px - $size/2);
+  width: $size;
   height: 100%;
+
   z-index: 2;
   cursor: col-resize;
+
+  opacity: 1;
+
+  &:hover {
+    opacity: 0.8;
+  }
 
   &::before,
   &::after {
     content: '';
     position: absolute;
-    top: 50%;
     transform: translateY(-50%);
-    width: 1px;
-    background-color: var(--ff-primary);
-    height: 20px;
+    width: $lineThick;
+    height: $size;
+    top: 50%;
+
+    background-color: $primary-light;
+
+    border-radius: $borderRadiusHeightESM;
+
     transition: background-color 0.2s;
   }
 
   &::before {
-    left: 1px;
+    left: 0;
   }
 
   &::after {
-    right: 1px;
+    right: 0;
   }
 }
 .filter-large {

@@ -104,6 +104,7 @@ $paddingLvl3TB: var(--spacer-125);
 $paddingLvl3S: var(--spacer-100);
 
 $paddingLvl4LR: var(--spacer-125);
+$paddingLvl4TB: var(--spacer-100);
 $paddingLvl4S: var(--spacer-050);
 
 $paddingLvl5LR: var(--spacer-100);
@@ -335,5 +336,10 @@ $paddingLvl2MinS: var(--spacer-100);
   &.loading {
     animation: rotating 1s linear infinite;
   }
+}
+
+@mixin line-clamp($amount) {
+  line-clamp: $amount;
+  -webkit-line-clamp: $amount;
 }
 
