@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AngleRightIcon, AngleLeftIcon, PencilIcon } from "../SvgIcons";
 import { useTranslation } from "react-i18next";
 import { ButtonDropdown, FormInput } from "@formsflow/components";
 import { CustomButton } from "./Button";
 
+interface FormItem {
+  formId: string;
+  formName: string;
+}
 interface CollapsibleSearchProps {
   isOpen: boolean;
   hasActiveFilters: boolean;
@@ -12,6 +16,7 @@ interface CollapsibleSearchProps {
   onToggle: () => void;
   dataTestId?: string;
   ariaLabel?: string;
+  formData: FormItem[];
 }
 
 export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
@@ -22,6 +27,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   onToggle,
   dataTestId = "collapsible-search",
   ariaLabel = "Collapsible sidebar",
+  formData,
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -31,7 +37,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   const [submissionId, setSubmissionId] = useState("");
   const [submitter, setSubmitter] = useState("");
   const [status, setStatus] = useState("");
-
+  console.log("Received formData:", formData);
   const toggleExpand = () => {
     setExpanded(true);
   };
@@ -47,6 +53,17 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     submissionId.trim() === "" &&
     submitter.trim() === "" &&
     status.trim() === "";
+  
+const formNameDropdownItems = formData.map((form) => ({
+  type: "form",
+  content: form.formName, // Display name in dropdown
+  dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
+  ariaLabel: `Select form: ${form.formName}`,
+  onClick: () => {
+    setDropdownSelection(form.formId); // Store the selected form ID
+    console.log("Selected form:", form.formName, "ID:", form.formId);
+  },
+}));
 
   const DropdownItems = [
     {
@@ -125,13 +142,13 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
             <div className="panel-width">
               <label className="form-label panel-label">{t("Form")}</label>
               <ButtonDropdown
-                label="test"
+                label={t("All Forms")}
                 variant="primary"
                 size="md"
                 dataTestId="business-filter-dropdown"
                 ariaLabel={t("Select business filter")}
                 className="w-100"
-                dropdownItems={DropdownItems}
+                dropdownItems={formNameDropdownItems}
               />
             </div>
             <div className="panel-width">
