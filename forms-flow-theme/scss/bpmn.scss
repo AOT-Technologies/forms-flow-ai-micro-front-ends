@@ -32,3 +32,11 @@ $gray-darkest: var(--ff-gray-darkest);
 .djs-container svg:focus {
   outline: none !important;
 }
+
+.bpmn-main-container-editor{
+  width: 100%;
+  display: flex;
+  resize: vertical;
+  overflow: hidden;
+  max-height: calc(100vh - 15rem);
+}

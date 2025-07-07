@@ -39,3 +39,92 @@ input[type="checkbox"]+label,
 .clickable {
   cursor: pointer;
 }
+
+
+.w-15 {
+  width: 15% !important;
+}
+
+
+.svgIcon-dark {
+  @include svgIcon($gray-darkest);
+}
+
+.svgIcon-primary {
+  @include svgIcon();
+}
+
+.svgIconSmall-primary {
+  @include svgIcon();
+
+  width: $base/3*2;
+}
+
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.svgIcon-onDark {
+  @include svgIcon($white);
+}
+
+.svgIcon-disabled {
+  @include svgIcon($gray-medium-dark);
+}
+
+.svgIcon-disabled-onDark {
+  @include svgIcon($white);
+}
+
+.svgIcon-greyDarkest {
+  @include svgIcon($gray-darkest);
+}
+
+.svgIcon-greyMediumDark {
+  @include svgIcon($gray-medium-dark);
+}
+
+
+.load-more {
+  display: flex;
+  justify-content: center;
+}
+
+.buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $paddingLvl3S;
+  align-items: flex-start;
+}
+
+
+.page-content {
+  @include paddingLvl1();
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  & ._loading_overlay_wrapper {
+    overflow: hidden;
+    height: 100%;
+  }
+}
+
+
+.Toastify {
+  margin: 0 !important;
+}
