@@ -48,5 +48,8 @@ declare module "@formsflow/components" {
     TableFooter,
     CustomButton,
     SortableHeader,
+    CollapsibleSearch,
+    DateRangePicker,
+    FilterSortActions 
   }: any;
 }

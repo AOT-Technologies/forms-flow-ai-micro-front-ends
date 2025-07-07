@@ -332,9 +332,9 @@ const TaskFilterModalBody = ({
         const taskVariables = res.data?.taskVariables || [];
         const dynamicVariables = transformToDynamicVariables(
           taskVariables,
-          variableArray
+          defaultTaskVariable
         );
-        const combinedVars = [...variableArray, ...dynamicVariables];
+        const combinedVars = [...defaultTaskVariable, ...dynamicVariables];
         setVariableArray(combinedVars);
       })
       .catch((err) => console.error(err));

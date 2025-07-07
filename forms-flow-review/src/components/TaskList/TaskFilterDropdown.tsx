@@ -7,7 +7,7 @@ userRoles
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { setDefaultFilter, setFilterToEdit, setSelectedFilter } from "../../actions/taskActions";
-import { updateDefaultFilter } from "../../api/services/filterServices";
+import { fetchAttributeFilterList, fetchServiceTaskList, updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
 import {  UserDetail } from "../../types/taskFilter";
@@ -63,6 +63,8 @@ const changeFilterSelection = (filter) => {
   dispatch(setDefaultFilter(upcomingFilter.id));
   updateDefaultFilter(upcomingFilter.id);
   dispatch(setSelectedFilter(upcomingFilter));
+  dispatch(fetchAttributeFilterList(upcomingFilter.id));
+  dispatch(fetchServiceTaskList(upcomingFilter, null, 1, 25));
 };
 
 const onSearch = (searchTerm: string) => {
