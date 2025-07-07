@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from "react";
+import React, { useRef, useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -27,6 +27,8 @@ import {
   FilterSortActions,
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
+import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
+
 
 interface Column {
   name: string;
@@ -46,6 +48,10 @@ const TaskSubmissionList: React.FC = () => {
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
+
+  const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
+  const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
 
   // Columns Configuration
   const columns: Column[] = useMemo(() => [
@@ -173,7 +179,15 @@ const TaskSubmissionList: React.FC = () => {
    <div className="main-layout-container">
       {/* Left Panel - Collapsible Search Form */}
       <div className="left-panel">
-        <CollapsibleSearch />
+        <CollapsibleSearch
+          isOpen={true}
+          hasActiveFilters={false}
+          inactiveLabel="No Filters"
+          activeLabel="Filters Active"
+          onToggle={() => { }}
+          manageFieldsAction={handleManageFieldsOpen}
+        />
+
       </div>
 
       {/* Right Panel - Table Container */}
@@ -190,6 +204,10 @@ const TaskSubmissionList: React.FC = () => {
               startDateAriaLabel={t("Start date")}
               endDateAriaLabel={t("End date")}
             />
+          </div>
+          <div>
+             
+
           </div>
           
           <div className="d-flex button-align">
@@ -294,6 +312,11 @@ const TaskSubmissionList: React.FC = () => {
           )}
         </div>
       </div>
+      <ManageFieldsSortModal
+        show={isManageFieldsModalOpen}
+        onClose={handleManageFieldsClose}
+      />
+
     </div>
   );
 };

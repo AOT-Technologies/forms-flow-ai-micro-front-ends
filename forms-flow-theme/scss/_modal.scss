@@ -1417,3 +1417,19 @@ $black-color: var(--ff-black);
     overflow-y: auto;
   }
 }
+
+//analyze --> submissions
+
+//field sort modal
+.manage-fields-sort-modal {
+  align-content: center;
+
+  .fields-sort-list{
+    width: 100%;
+    margin-top: var(--spacer-075);
+    margin-bottom: var(--spacer-075);
+
+  }
+}
+
+

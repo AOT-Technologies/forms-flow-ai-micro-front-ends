@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AngleRightIcon, AngleLeftIcon, PencilIcon } from "../SvgIcons";
+import { AngleRightIcon, AngleLeftIcon, PencilIcon, AddIcon } from "../SvgIcons";
 import { useTranslation } from "react-i18next";
 import { ButtonDropdown, FormInput } from "@formsflow/components";
 import { CustomButton } from "./Button";
@@ -12,6 +12,7 @@ interface CollapsibleSearchProps {
   onToggle: () => void;
   dataTestId?: string;
   ariaLabel?: string;
+  manageFieldsAction?: () => void;
 }
 
 export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
@@ -22,6 +23,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   onToggle,
   dataTestId = "collapsible-search",
   ariaLabel = "Collapsible sidebar",
+  manageFieldsAction
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -190,6 +192,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
                   size="md"
                   label="Manage fields"
                   icon={<PencilIcon className="" />}
+                  onClick= {manageFieldsAction}
                 />
               </div>
             )}
