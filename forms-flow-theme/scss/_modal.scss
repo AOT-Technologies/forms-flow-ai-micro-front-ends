@@ -1178,12 +1178,7 @@ $black-color: var(--ff-black);
       padding: 0;
       text-align: left;
     }
-
-    .dotted-line { 
-      height: 1px;
-      border-bottom: 1px dashed #ccc;
-      margin-left: var(--spacer-100);
-    }
+ 
   }
 
   // SortableJS feedback classes
