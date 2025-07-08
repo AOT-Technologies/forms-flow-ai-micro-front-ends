@@ -7,6 +7,7 @@ import { CustomButton } from "./Button";
 interface FormItem {
   formId: string;
   formName: string;
+  parentFormId: string;
 }
 interface CollapsibleSearchProps {
   isOpen: boolean;
@@ -37,10 +38,13 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   const [submissionId, setSubmissionId] = useState("");
   const [submitter, setSubmitter] = useState("");
   const [status, setStatus] = useState("");
-  console.log("Received formData:", formData);
+  const [selectedItem, setSelectedItem] = useState("All Forms");
+
   const toggleExpand = () => {
     setExpanded(true);
   };
+  const hasAnyInput = !!dropdownSelection || submissionId.trim() !== "" || submitter.trim() !== "" || status.trim() !== "";
+  const handleSelection = (label) => setSelectedItem(label);
 
   const handleCollapse = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation(); // Prevent event from bubbling up
@@ -53,54 +57,21 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     submissionId.trim() === "" &&
     submitter.trim() === "" &&
     status.trim() === "";
-  
-const formNameDropdownItems = formData.map((form) => ({
-  type: "form",
-  content: form.formName, // Display name in dropdown
-  dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
-  ariaLabel: `Select form: ${form.formName}`,
-  onClick: () => {
-    setDropdownSelection(form.formId); // Store the selected form ID
-    console.log("Selected form:", form.formName, "ID:", form.formId);
-  },
-}));
 
-  const DropdownItems = [
-    {
-      type: "form",
-      content: "New form",
-      dataTestId: "dropdown-item-form",
-      ariaLabel: "Select Form Filter",
-      onClick: (type: string) => {
-        setDropdownSelection(type);
-        console.log("Selected:", type);
-      },
+  const DropdownItems = formData.map((form) => ({
+    type: "form",
+    content: form.formName, // Display name in dropdown
+    dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
+    ariaLabel: `Select form: ${form.formName}`,
+    onClick: () => {
+      handleSelection(form.formName);
+      setDropdownSelection(form.parentFormId); // Store the selected form ID
     },
-    {
-      type: "submission",
-      content: "Single form",
-      dataTestId: "dropdown-item-submission",
-      ariaLabel: "Select Submission Filter",
-      onClick: (type: string) => {
-        setDropdownSelection(type);
-        console.log("Selected:", type);
-      },
-    },
-    {
-      type: "status",
-      content: "Status form",
-      dataTestId: "dropdown-item-status",
-      ariaLabel: "Select Status Filter",
-      onClick: (type: string) => {
-        setDropdownSelection(type);
-        console.log("Selected:", type);
-      },
-    },
-  ];
-
+  }));
+console.log("iddd", dropdownSelection);
   return (
     <div
-      className={`collapsible-toggle ${expanded ? "expanded" : ""}`}
+      className={`collapsible-toggle ${expanded ? "expanded" : ""} ${hasAnyInput ? "active-toggle" : ""}`}
       onClick={toggleExpand}
       data-testid={dataTestId}
       aria-label={ariaLabel}
@@ -122,10 +93,10 @@ const formNameDropdownItems = formData.map((form) => ({
         {expanded ? (
           <div className="handle-collapse">
             <span className="collapse-text">{t("Collapse")}</span>
-            <AngleLeftIcon color="white" />
+            <AngleLeftIcon />
           </div>
         ) : (
-          <AngleRightIcon color="white" />
+          <AngleRightIcon />
         )}
       </button>
       {!expanded ? (
@@ -142,13 +113,12 @@ const formNameDropdownItems = formData.map((form) => ({
             <div className="panel-width">
               <label className="form-label panel-label">{t("Form")}</label>
               <ButtonDropdown
-                label={t("All Forms")}
-                variant="primary"
-                size="md"
+                label={t(selectedItem)}
+                dropdownItems={DropdownItems}
+                dropdownType="DROPDOWN_ONLY"
                 dataTestId="business-filter-dropdown"
                 ariaLabel={t("Select business filter")}
-                className="w-100"
-                dropdownItems={formNameDropdownItems}
+                className="button-collapsible input-filter"
               />
             </div>
             <div className="panel-width">
@@ -203,7 +173,8 @@ const formNameDropdownItems = formData.map((form) => ({
             {dropdownSelection && (
               <div className="panel-width">
                 <CustomButton
-                  variant="secondary"
+                  // variant="secondary"
+                  secondary
                   size="md"
                   label="Manage fields"
                   icon={<PencilIcon className="" />}
@@ -213,7 +184,7 @@ const formNameDropdownItems = formData.map((form) => ({
           </div>
           <div className="search-clear">
             <CustomButton
-              variant={"primary"}
+              // variant={"primary"}
               size="md"
               label="Search"
               // disabled={primaryBtnDisable}
@@ -224,7 +195,7 @@ const formNameDropdownItems = formData.map((form) => ({
               disabled={isActionDisabled}
             />
             <CustomButton
-              variant={"secondary"}
+              secondary
               size="md"
               label="Clear"
               // disabled={primaryBtnDisable}
