@@ -42,6 +42,7 @@ declare module "@formsflow/service" {
   export const HelperServices: any;
   export const StyleServices: any;
   export const StorageService: any;
+  export const RequestService: any;
 }
 
 declare module "@formsflow/components" {
