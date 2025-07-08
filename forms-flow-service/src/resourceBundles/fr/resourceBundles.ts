@@ -1590,7 +1590,8 @@ export const RESOURCE_BUNDLES_FR ={
     "Template Name": "Nom du modèle",
     "Template Description": "Description du modèle",
     "All Fields": "Tous les champs",
-    "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "Aucun formulaire trouvé. Créez un nouveau formulaire en cliquant sur le bouton « Nouveau formulaire et flux » en haut à droite."
+    "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "Aucun formulaire trouvé. Créez un nouveau formulaire en cliquant sur le bouton « Nouveau formulaire et flux » en haut à droite.",
+    "Current user": "Utilisateur actuel"
   }
 
 
