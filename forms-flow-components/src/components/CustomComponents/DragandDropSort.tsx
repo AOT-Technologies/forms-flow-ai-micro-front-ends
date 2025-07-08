@@ -46,6 +46,23 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({
       onUpdate(filterItems);
     }
   }, [filterItems, onUpdate]);
+
+const handleDragOver = (e: DragEvent) => {
+  e.preventDefault();
+  const container = containerRef.current;
+  if (!container) return;
+
+  const bounding = container.getBoundingClientRect();
+  const offset = 40; 
+  const jumpDistance = 0; // Sudden scroll amount
+
+  if (e.clientY < bounding.top + offset) { 
+    container.scrollTop -= jumpDistance;
+  } else if (e.clientY > bounding.bottom - offset) { 
+    container.scrollTop += jumpDistance;
+  }
+};
+
 useEffect(() => {
   if (!listRef.current) return;
 
@@ -71,9 +88,13 @@ useEffect(() => {
       setFilterItems(reordered);
     },
   });
+   
+    const currentList = listRef.current;
+    currentList?.addEventListener("dragover", handleDragOver);
 
   return () => {
     sortable.destroy();
+    currentList?.removeEventListener("dragover", handleDragOver);
   };
 }, [filterItems]);
 
