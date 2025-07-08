@@ -346,36 +346,7 @@ const transformToDynamicVariables = (taskVariables, existingVars) => {
     );
 };
 
-const processEditingMode = (taskVariables, filterToEdit, defaultTaskVariable) => {
-  const existingFormVariables = filterToEdit?.variables?.filter(v => v.isFormVariable) || [];
-  
-  const newDynamicVariables = taskVariables
-    .filter(taskVar => 
-      isValidVariableType(taskVar) && 
-      !isDuplicateVariable(taskVar, defaultTaskVariable)
-    )
-    .map((variable, index) => {
-      const existingVar = findExistingVariable(existingFormVariables, variable);
-      
-      return createVariableFromTask(
-        variable,
-        existingVar ? existingVar.sortOrder - 1 : defaultTaskVariable.length + existingFormVariables.length + index,
-        existingVar ? existingVar.isChecked : false
-      );
-    });
 
-  // Merge default variables with existing values from filter
-  const defaultVars = defaultTaskVariable.map(defaultVar => {
-    const existingVar = findExistingVariable(filterToEdit?.variables || [], defaultVar);
-    return existingVar || defaultVar;
-  });
-
-  // Combine and deduplicate form variables
-  const allFormVariables = [...existingFormVariables, ...newDynamicVariables];
-  const uniqueFormVariables = removeDuplicateVariables(allFormVariables);
-
-  return [...defaultVars, ...uniqueFormVariables];
-};
 
 const processNewFilterMode = (taskVariables, defaultTaskVariable) => {
   const dynamicVariables = transformToDynamicVariables(taskVariables, defaultTaskVariable);
