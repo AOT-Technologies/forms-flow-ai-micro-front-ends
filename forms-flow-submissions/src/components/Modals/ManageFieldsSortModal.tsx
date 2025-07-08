@@ -32,7 +32,6 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
     return (
       <div>
         <CustomInfo
-              className="manage-fields-note"
               heading="Note"
               content={t(
                 "Re-arrange fields shown for the results table and the filter. Toggle their visibility in the results table with the provided checkbox. Form and Submission Date filters will always be persistent and can only be hidden or re-arranged for the results table.\n\n The selected fields and their order are saved for each user for each form. Feel free to customize it for your needs; add or remove fields, show or quickly hide fields."
@@ -59,7 +58,6 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
         data-testid="manage-fields-sort-modal"
         aria-describedby="manage-fields-sort-modal"
         backdrop="static"
-        className="manage-fields-sort-modal"
       >
         <Modal.Header>
       
@@ -75,23 +73,27 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
           </div>
         </Modal.Header>
           <Modal.Body>
-            <div>
               <FormFieldsNote/>
-          <div className="fields-sort-list">
             <DragandDropSort
               items={submissionFields}
               onUpdate={handleUpdateOrder}
               icon={<FormVariableIcon color={darkColor} />}
               data-testid="columns-sort"
-            />
-          </div>
-          
-          <CustomButton variant="secondary"
+        />
+        <div>
+
+
+          <CustomButton
+
             label={t("More System and Form Fields")}
-            icon={<AddIcon />} dataTestId="manage-fields-add"
-            ariaLabel={t("Manage fields add")} iconWithText>
+            secondary
+            icon={<AddIcon />}
+            dataTestId="manage-fields-add"
+            ariaLabel={t("Manage fields add")}
+            iconWithText
+          >
           </CustomButton>
-            </div>
+        </div>
           
 
         </Modal.Body>

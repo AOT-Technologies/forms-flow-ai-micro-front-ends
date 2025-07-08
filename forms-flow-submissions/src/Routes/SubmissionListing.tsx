@@ -205,10 +205,6 @@ const TaskSubmissionList: React.FC = () => {
               endDateAriaLabel={t("End date")}
             />
           </div>
-          <div>
-             
-
-          </div>
           
           <div className="d-flex button-align">
             <FilterSortActions
