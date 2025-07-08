@@ -65,7 +65,7 @@ const TaskFilterModalBody = ({
   } = useSelector((state: RootState) => state.task);
 
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
-  const [accessOption, setAccessOption] = useState("specificRole");
+  const [accessOption, setAccessOption] = useState("currentUser");
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
@@ -140,8 +140,12 @@ const TaskFilterModalBody = ({
           ? tenantKey + "-" + trimFirstSlash(accessValue)
           : trimFirstSlash(accessValue);
       delete criteria.assignee;
-    } else {
+    } else if(accessOption === "specificAssignee"){
       criteria.assignee = accessValue;
+      delete criteria.candidateGroup;
+    }
+    else{
+      delete criteria.assignee;
       delete criteria.candidateGroup;
     }
 
@@ -212,8 +216,8 @@ const TaskFilterModalBody = ({
     const { roles, users, criteria, properties } = filterToEdit;
     const { assignee, sorting, candidateGroup } = criteria;
     setShareFilterForSpecificRole(roles);
-    setAccessOption(assignee ? "specificAssignee" : "specificRole");
-    setAccessValue(assignee ? assignee : candidateGroup);
+    setAccessOption(assignee ? "specificAssignee" : candidateGroup? "specificRole":"currentUser");
+    setAccessValue(assignee ? assignee : candidateGroup ? candidateGroup : "");
     handleSorting(sorting);
     handleShareFilter(roles, users);
     setDataLineValue(properties?.displayLinesCount ?? 1);
@@ -408,8 +412,9 @@ const TaskFilterModalBody = ({
   const isVariableArrayEmpty = variableArray.every((item) => !item.isChecked);
   const disableFilterButton = isVariableArrayEmpty || isFilterSame;
   const saveFilterButtonDisabled =
-    !filterName ||
-    !accessValue ||
+    !filterName || 
+    ((accessOption !== "currentUser") && !accessValue) ||
+    !accessOption ||
     (filterToEdit?.id ? disableFilterButton : isVariableArrayEmpty);
   /* ------------------------------- tab values ------------------------------- */
   const columnsTab = () => (
