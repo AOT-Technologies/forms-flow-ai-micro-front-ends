@@ -256,7 +256,7 @@ const InsightDashboard = React.memo((props: any) => {
               noDataIndication={noData}
               data-testid="admin-dashboard-table"
             />
-            <table className="table">
+            <table className="table old-design">
               <tfoot>
               <TableFooter
               limit={limit}

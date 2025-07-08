@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { FormVariableIcon, DraggableIcon } from "../SvgIcons/index";
-import { StyleServices } from "@formsflow/service";
+import React, { useState, useEffect ,useRef} from "react";
+import { DraggableIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon } from "../SvgIcons/index";
 import Sortable from "sortablejs";
 
 interface FilterItem {
@@ -52,8 +51,7 @@ useEffect(() => {
   const sortable = Sortable.create(listRef.current, {
     animation: 200,               // Smooth animation duration
     handle: ".draggable-icon",   // Only drag from icon
-    ghostClass: "sortable-ghost", // Optional ghost class for visual feedback
-    dragClass: "sortable-drag",   // Optional dragging class
+    ghostClass: "dragging", // Optional ghost class for visual feedback
  
     onEnd: (evt) => {
       if (evt.oldIndex === undefined || evt.newIndex === undefined) return;
@@ -90,39 +88,33 @@ useEffect(() => {
   };
 
   return (
-    <div className="drag-drop-container" ref={containerRef}>
-      <ul ref={listRef}>
+    <div className="drag-drop-container list-action rearrangable checkbox" ref={containerRef}>
+      <ul  ref={listRef}>
         {filterItems.map((item, index) => (
           <li
             key={item.itemId ?? `${item.name}-${index}`}
             className="draggable-item"
           >
-            <button className="draggable-icon drag-as-div" draggable>
+            <button
+              className="draggable-icon"
+              draggable 
+            >
               <DraggableIcon />
             </button>
 
-            <div className="checkbox-container">
+            <label htmlFor={`${item.name}-checkbox-id`} className="input-checkbox">
               <input
-                data-testid={`${item.name}-checkbox`}
+                id={`${item.name}-checkbox-id`}
                 type="checkbox"
-                className="form-check-input"
                 checked={item.isChecked}
                 onChange={() => onCheckboxChange(index)}
-                disabled={
-                  preventLastCheck &&
-                  item.isChecked &&
-                  filterItems.filter((i) => i.isChecked).length === 1
-                }
-              />
-            </div>
-
-            <button
-              className="label cursor-pointer drag-as-div"
-              onClick={() => onLabelClick(index)}
-            >
-              {item.label ?? item.name}
-            </button>
-
+                disabled={preventLastCheck && item.isChecked && filterItems.filter(i => i.isChecked).length === 1}
+                data-testid={`${item.name}-checkbox`}
+                />
+              <span>{item.label ?? item.name}</span>
+              {item.isChecked ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
+            </label>
+            
             <div className="dotted-line"></div>
 
             {item.isFormVariable && icon}

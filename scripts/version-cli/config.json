@@ -1,0 +1,239 @@
+{
+  "version_patterns": {
+    "docker_tag": "{VERSION_WITH_V}",
+    "url_version": "@{VERSION}",
+    "npm_version": "{VERSION_NO_V}",
+    "full_version": "{VERSION}",
+    "changelog_version": "{VERSION_NO_V}"
+  },
+  
+  "files": [
+    {
+      "name": "Forms Flow Admin Package",
+      "path": "forms-flow-admin/package.json",
+      "updates": [
+        {
+          "description": "Admin micro-frontend version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Admin Package Lock",
+      "path": "forms-flow-admin/package-lock.json",
+      "updates": [
+        {
+          "description": "Admin package-lock.json root version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/admin\"",
+            "max_matches": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Components Package",
+      "path": "forms-flow-components/package.json",
+      "updates": [
+        {
+          "description": "Components micro-frontend version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Components Package Lock",
+      "path": "forms-flow-components/package-lock.json",
+      "updates": [
+        {
+          "description": "Components package-lock.json root version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/components\"",
+            "max_matches": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Integration Package",
+      "path": "forms-flow-integration/package.json",
+      "updates": [
+        {
+          "description": "Integration micro-frontend version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Integration Package Lock",
+      "path": "forms-flow-integration/package-lock.json",
+      "updates": [
+        {
+          "description": "Integration package-lock.json root version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/integration\"",
+            "max_matches": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Nav Package",
+      "path": "forms-flow-nav/package.json",
+      "updates": [
+        {
+          "description": "Nav micro-frontend version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Nav Package Lock",
+      "path": "forms-flow-nav/package-lock.json",
+      "updates": [
+        {
+          "description": "Nav package-lock.json root version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/nav\"",
+            "max_matches": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Review Package",
+      "path": "forms-flow-review/package.json",
+      "updates": [
+        {
+          "description": "Review micro-frontend version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Review Package Lock",
+      "path": "forms-flow-review/package-lock.json",
+      "updates": [
+        {
+          "description": "Review package-lock.json root version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/review\"",
+            "max_matches": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Service Package",
+      "path": "forms-flow-service/package.json",
+      "updates": [
+        {
+          "description": "Service micro-frontend version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/services\""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Service Package Lock",
+      "path": "forms-flow-service/package-lock.json",
+      "updates": [
+        {
+          "description": "Service package-lock.json root version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/services\"",
+            "max_matches": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Submissions Package",
+      "path": "forms-flow-submissions/package.json",
+      "updates": [
+        {
+          "description": "Submissions micro-frontend version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Submissions Package Lock",
+      "path": "forms-flow-submissions/package-lock.json",
+      "updates": [
+        {
+          "description": "Submissions package-lock.json root version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/submissions\"",
+            "max_matches": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Theme Package",
+      "path": "forms-flow-theme/package.json",
+      "updates": [
+        {
+          "description": "Theme micro-frontend version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex"
+        }
+      ]
+    },
+    {
+      "name": "Forms Flow Theme Package Lock",
+      "path": "forms-flow-theme/package-lock.json",
+      "updates": [
+        {
+          "description": "Theme package-lock.json root version",
+          "find": "ff_json_version_pattern",
+          "replace": "\"version\": \"{{npm_version}}\"",
+          "type": "regex",
+          "context": {
+            "near": "\"name\": \"@formsflow/theme\"",
+            "max_matches": 2
+          }
+        }
+      ]
+    }
+  ]
+} 

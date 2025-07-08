@@ -226,7 +226,7 @@ export const RESOURCE_BUNDLES_FR ={
   "History": "Histoire",
   "Diagram": "Diagramme",
   "Delete Confirmation": "Confirmation de suppression",
-  "All tasks": "Toutes les tâches",
+  "All Tasks": "Toutes les tâches",
   "Manage Groups": "Gérer les groupes",
   "Group ID": "Identifiant du groupe",
   "Due": "Dû",
@@ -1300,7 +1300,7 @@ export const RESOURCE_BUNDLES_FR ={
   "Create the DMN from scratch": "Créer le DMN à partir de zéro",
   "Upload DMN from a file": "Télécharger le DMN depuis un fichier",
   "Import New Form": "Importer un nouveau formulaire",
-  "Confirm and Edit form": "Confirmer et modifier le formulaire",
+  "Confirm and Edit Form": "Confirmer et modifier le formulaire",
   "Click or drag a file to this area to import": "Cliquez ou glissez un fichier dans cette zone pour l'importer",
   "Create And Edit BPMN": "Créer et modifier le BPMN",
   "Create And Edit DMN": "Créer et modifier le DMN",
@@ -1574,7 +1574,23 @@ export const RESOURCE_BUNDLES_FR ={
     "Custom Form Fields": "Champs de formulaire personnalisés",
     "Saved!": "Enregistré !",
     "Deleted!": "Supprimé !",
-    "Updated!": "Mis à jour !"
+    "Updated!": "Mis à jour !",
+    "Set as default filter": "Définir comme filtre par défaut",
+    "New Form & Flow": "Nouveau formulaire et flux",
+    "Last Modified On": "Dernière modification le",
+    "New Submission": "Nouvelle soumission",
+    "Design": "Conception",
+    "Review": "Revoir",
+    "Analyze": "Analyser",
+    "Manage": "Gérer",
+    "Search By ID": "Rechercher par ID",
+    "Link": "Lien",
+    "Save as template": "Enregistrer en tant que modèle",
+    "Select category for the template": "Sélectionner une catégorie pour le modèle",
+    "Template Name": "Nom du modèle",
+    "Template Description": "Description du modèle",
+    "All Fields": "Tous les champs",
+    "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "Aucun formulaire trouvé. Créez un nouveau formulaire en cliquant sur le bouton « Nouveau formulaire et flux » en haut à droite."
   }
 
 
