@@ -17,11 +17,11 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
     useEffect(() => {
        // this will be replaced with the variables from the selectedc form fields
       const formFields = [
-        { id: "id", name: "Submission ID" },
-        { id: "formName", name: "Form" },
-        { id: "createdBy", name: "Submitter" },
-        { id: "created", name: "Submission Date" },
-        { id: "applicationStatus", name: "Status" }
+        { id: "id", name: "Submission ID", isChecked: "true" },
+        { id: "formName", name: "Form", isChecked: "true" },
+        { id: "createdBy", name: "Submitter", isChecked: "true" },
+        { id: "created", name: "Submission Date", isChecked: "true" },
+        { id: "applicationStatus", name: "Status", isChecked: "true" }
       ];
       setSubmissionFields(formFields);
     }, []);
