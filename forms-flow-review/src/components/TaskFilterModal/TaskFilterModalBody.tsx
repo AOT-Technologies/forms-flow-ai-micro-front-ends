@@ -220,8 +220,23 @@ const TaskFilterModalBody = ({
     const { roles, users, criteria, properties } = filterToEdit;
     const { assignee, sorting, candidateGroup } = criteria;
     setShareFilterForSpecificRole(roles);
-    setAccessOption(assignee ? SPECIFIC_ASSIGNEE : candidateGroup? SPECIFIC_ROLE:CURRENT_USER);
-    setAccessValue(assignee ? assignee : candidateGroup ? candidateGroup : "");
+    let accessOption;
+    let accessValue;
+
+    if (assignee) {
+      accessOption = SPECIFIC_ASSIGNEE;
+      accessValue = assignee;
+    } else if (candidateGroup) {
+      accessOption = SPECIFIC_ROLE;
+      accessValue = candidateGroup;
+    } else {
+      accessOption = CURRENT_USER;
+      accessValue = "";
+    }
+
+    setAccessOption(accessOption);
+    setAccessValue(accessValue);
+
     handleSorting(sorting);
     handleShareFilter(roles, users);
     setDataLineValue(properties?.displayLinesCount ?? 1);
