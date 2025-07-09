@@ -106,7 +106,7 @@ const TaskSubmissionList: React.FC = () => {
           size="table-sm"
           variant="secondary"
           label={t("View")}
-          onClick={() => dispatch(push(`${redirectUrl}application/${id}`))}
+          onClick={() => dispatch(push(`${redirectUrl}submissions/${id}`))} 
           dataTestId={`view-task-${id}`}
           ariaLabel={t("View details for task {{taskName}}", {
             taskName: formName ?? t("unnamed"),
