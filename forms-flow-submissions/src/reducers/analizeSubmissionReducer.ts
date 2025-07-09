@@ -8,6 +8,7 @@ const initialState = {
         created_by: { sortOrder: "asc" },
         created: { sortOrder: "asc" },
         application_status: { sortOrder: "asc" },
+        dateRange:{startDate: null, endDate: null},
     },
     page: 1,
     limit: 10,
@@ -23,6 +24,8 @@ const analyzeSubmission = (state = initialState, action: any) => {
             return { ...state, page: action.payload };
         case ACTION_CONSTANTS.UPDATE_SUBMISSION_LIMIT:
             return { ...state, limit: action.payload };
+        case ACTION_CONSTANTS.UPDATE_SUBMISSION_DATE_RANGE:
+            return { ...state, dateRange: action.payload };
         default:
             return state;
     }
