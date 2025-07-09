@@ -27,10 +27,10 @@ $white-color: var(--ff-white);
   bottom: 0;
 }
 
-.page-item.active .page-link {
-  background-color: $primary-color !important;
-  border-color: $gray-darkest !important;
-}
+// .page-item.active .page-link {
+//   background-color: $primary-color !important;
+//   border-color: $gray-darkest !important;
+// }
 
 .is-invalid {
   background-color: $danger-color;
@@ -49,20 +49,6 @@ $white-color: var(--ff-white);
 .active-tab-dropdown>#task-dropdown {
   background-color: transparent;
   filter: invert(36%) sepia(38%) saturate(7152%) hue-rotate(227deg) brightness(101%) contrast(98%);
-}
-
-.dropdown-item:hover {
-  border-radius: var(--radius-sm);
-  background: $primary-color !important;
-  color: $white-color !important;
-  filter: none;
-  width: auto !important;
-  .filter-edit-icon,.filter-plus-icon{
-    stroke: $white-color !important;
-  }
-  .shared-icon {
-    stroke: $white-color !important;
-  }
 }
 
 .taskDropdown>.dropdown-menu::before {
@@ -288,3 +274,41 @@ hr {
 @include generate-overflow(y, auto);
 @include generate-overflow(x, hidden);
 @include generate-overflow(y, hidden);
+
+
+
+
+// VARIABLES ADDED BY MAX
+
+//base
+$base: 1rem;
+$lineThin: 1px;
+$lineThick: $lineThin*2;
+
+// fonts
+$fontBase: $base;
+$fontSmallest: $fontBase*0.875;
+$fontLineHeight: 1.2;
+
+$fontModalTitle: $fontBase*1.5;
+
+// borders
+$borderRadiusHeightESM: $base*0.78; // 12.5px
+$borderRadiusHeightSM: $base*1.094; // 17.5px
+$borderRadiusHeightM: $base*1.344;  // 21.5px
+$borderRadiusHeightL: $base*1.594; // 25.5px
+$borderRadiusModal: $base*1.5; // 24px
+
+// color globals
+$colorDivider: $gray-medium;
+$colorDividerDark: $gray-medium-dark;
+
+// modals
+$modalWidthSmall: $base*60;
+$modalWidthLarge: $base*75;
+
+// nav
+$navPadding: $base;
+
+// transitions
+$animSpeed: 300ms;

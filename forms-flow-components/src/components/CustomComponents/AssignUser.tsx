@@ -15,7 +15,7 @@ interface AssignUserProps {
   size?: "sm" | "md";
   isFromTaskDetails?: boolean;
   users: User[];
-  username: string;
+  currentAssignee: string;
   meOnClick?: () => void;
   optionSelect?: (userName: string) => void;
   handleCloseClick?: () => void;
@@ -29,7 +29,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   size = "md",
   isFromTaskDetails = false,
   users = [],
-  username,
+  currentAssignee,
   meOnClick,
   optionSelect,
   handleCloseClick,
@@ -55,37 +55,32 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   };
 
   useEffect(() => {
-    if(username){
+    if(currentAssignee){
       setSelected("Me");
       // if username is not null or empty,set selectedName to its lastname and firstname
-      const matchedUser = users.find((user) => user.username === username);
+      const matchedUser = users.find((user) => user.username === currentAssignee);
       if (matchedUser) {
         setSelectedName(getDisplayName(matchedUser));
       }else{
-        setSelectedName(username);
+        setSelectedName(currentAssignee);
       }
     } else {
       setSelected(null);
       setSelectedName(null);
     }
-  }, [username,users]);
+  }, [currentAssignee,users]);
 
 
   const handleMeClick = () => {
-  const defaultName = userData?.preferred_username;
-  const fullName = userData?.family_name && userData?.given_name
-    ? `${userData.family_name}, ${userData.given_name}`
-    : defaultName;
+const fullName = userData?.family_name && userData?.given_name
+  ? `${userData.family_name}, ${userData.given_name}`
+  : userData?.preferred_username;
 
-  const name = username ?? fullName;
+setSelected("Me");
+setSelectedName(fullName);
 
-  setSelected("Me");
-  setSelectedName(name);
-
-  meOnClick?.();
+  meOnClick?.(); 
 };
-
-
   const handleOthersClick = () => {
     setSelected("Others");
     setOpenDropdown(true);

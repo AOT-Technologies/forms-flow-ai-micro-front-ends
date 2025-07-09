@@ -41,16 +41,6 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     setExpanded(false);
   };
 
-  // Handle keyboard events for accessibility
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (expanded) {
-        handleCollapse(e);
-      }
-    }
-  };
-
   // Derived value for disabling buttons
   const isActionDisabled =
     !dropdownSelection &&
@@ -92,18 +82,24 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   ];
 
   return (
-    <button
+    <div
       className={`collapsible-toggle ${expanded ? "expanded" : ""}`}
       onClick={toggleExpand}
       data-testid={dataTestId}
       aria-label={ariaLabel}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          toggleExpand();
+        }
+      }}
     >
-      <div
+      <button
         className="chevron-icon"
         onClick={expanded ? handleCollapse : undefined}
-        onKeyDown={expanded ? handleKeyDown : undefined}
-        tabIndex={expanded ? 0 : -1}
-        role={expanded ? "button" : undefined}
+        type="button"
+        data-testid="collapse-toggle-button"
         aria-label={expanded ? t("Collapse") : undefined}
       >
         {expanded ? (
@@ -114,10 +110,9 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
         ) : (
           <AngleRightIcon color="white" />
         )}
-      </div>
+      </button>
       {!expanded ? (
         <div className="collapsible-label">
-          {/* {t(hasActiveFilters ? activeLabel : inactiveLabel)} */}
           {t("No Filters Are Active")}
         </div>
       ) : (
@@ -225,6 +220,6 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
           </div>
         </div>
       )}
-    </button>
+    </div>
   );
 };

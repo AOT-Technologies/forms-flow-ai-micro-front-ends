@@ -146,15 +146,14 @@ const TaskSubmissionList: React.FC = () => {
       <td>
         <div className="text-overflow-ellipsis ">
           <CustomButton
-            size="table-sm"
-            variant="secondary"
-            label={t("View")}
-            onClick={() => dispatch(push(`${redirectUrl}application/${id}`))}
-            dataTestId={`view-submission-${id}`}
-            ariaLabel={t("View details for submission {{taskName}}", {
-              taskName: formName ?? t("unnamed"),
-            })}
-          />
+          actionTable
+          label={t("View")}
+          onClick={() => dispatch(push(`${redirectUrl}application/${id}`))}
+          dataTestId={`view-submission-${id}`}
+          ariaLabel={t("View details for submission {{taskName}}", {
+            taskName: formName ?? t("unnamed"),
+          })}
+        />
         </div>
       </td>
     </tr>

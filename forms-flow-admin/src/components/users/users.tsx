@@ -375,7 +375,6 @@ const Users = React.memo((props: any) => {
       <Modal
         show={showSuccessModal}
         onHide={closeSuccessModal}
-        centered
         className="overflow-hidden">
         <Modal.Header closeButton>
           <Modal.Title></Modal.Title>
@@ -449,7 +448,7 @@ const Users = React.memo((props: any) => {
     {showInviteModal && (
       <Modal show={showInviteModal} onHide={closeInviteModal}>
         <Modal.Header closeButton>
-          <Modal.Title>{t("Add Registered Users")}</Modal.Title>
+          <Modal.Title><p>{t("Add Registered Users")}</p></Modal.Title>
         </Modal.Header>
 
                   <Modal.Body>
@@ -487,12 +486,14 @@ const Users = React.memo((props: any) => {
                   </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={closeInviteModal}>
-          {t("Cancel")}
-          </Button>
-          <Button variant="primary" onClick={sendInvites} disabled={!formData.user || selectedRolesModal.length === 0}>
-          {t("Add User")}
-          </Button>
+          <div className="buttons-row">
+            <Button variant="secondary" onClick={closeInviteModal}>
+            {t("Cancel")}
+            </Button>
+            <Button variant="primary" onClick={sendInvites} disabled={!formData.user || selectedRolesModal.length === 0}>
+            {t("Add User")}
+            </Button>
+          </div>
         </Modal.Footer>
       </Modal>
     )}
@@ -521,7 +522,7 @@ const Users = React.memo((props: any) => {
             onTableChange={handleTableChange}
             data-testid="admin-users-table"
           />
-          <table className="table mt-3">
+          <table className="table mt-3 old-design">
             <tfoot>
               <TableFooter
                   limit={props?.limit?.sizePerPage}

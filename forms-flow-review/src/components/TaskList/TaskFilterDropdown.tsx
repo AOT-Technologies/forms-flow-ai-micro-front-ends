@@ -7,7 +7,7 @@ userRoles
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { setDefaultFilter, setFilterToEdit, setSelectedFilter } from "../../actions/taskActions";
-import { updateDefaultFilter } from "../../api/services/filterServices";
+import { fetchAttributeFilterList, fetchServiceTaskList, updateDefaultFilter } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
 import {  UserDetail } from "../../types/taskFilter";
@@ -63,6 +63,8 @@ const changeFilterSelection = (filter) => {
   dispatch(setDefaultFilter(upcomingFilter.id));
   updateDefaultFilter(upcomingFilter.id);
   dispatch(setSelectedFilter(upcomingFilter));
+  dispatch(fetchAttributeFilterList(upcomingFilter.id));
+  dispatch(fetchServiceTaskList(upcomingFilter, null, 1, 25));
 };
 
 const onSearch = (searchTerm: string) => {
@@ -81,9 +83,7 @@ const onSearch = (searchTerm: string) => {
     const createFilter = {
       content: (
         <span>
-          <span>
-            <AddIcon className="filter-plus-icon" />
-          </span>{" "}
+          <AddIcon />
           {t("Custom Filter")}
         </span>
       ),
@@ -95,9 +95,7 @@ const onSearch = (searchTerm: string) => {
     const reOrderFilter = {
       content: (
         <span>
-          <span>
-            <PencilIcon className="filter-edit-icon" />
-          </span>{" "}
+          <PencilIcon />
           {t("Re-order And Hide Filters")}
         </span>
       ),
@@ -133,7 +131,7 @@ const onSearch = (searchTerm: string) => {
         else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
           icon = <SharedWithOthersIcon className="shared-icon" />;
         } else if (isSharedToPublic || isSharedToMe) {
-          icon = <SharedWithMeIcon className="shared-icon" />;
+          icon = <SharedWithMeIcon/>;
         }
    
       return { 
@@ -186,21 +184,16 @@ const onSearch = (searchTerm: string) => {
   return (
     <>
       <ButtonDropdown
-        label={
-          <span className="filter-large" title={title}>
-            {title}
-          </span>
-        }
-        variant="primary"
-        size="md"
+        label={title}
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
         onSearch={onSearch}
         dropdownItems={filterDropdownItems}
-        extraActionIcon={<PencilIcon color="white" />}
+        extraActionIcon={<PencilIcon/>}
         extraActionOnClick={handleEditTaskFilter}
         dataTestId="business-filter-dropdown"
-        ariaLabel={t("Select business filter")}
-        extraActionAriaLabel={t("Edit selected filter")}
+        ariaLabel={t("Select task filter")}
+        extraActionAriaLabel={t("Edit task filter")}
+        className="input-filter"
       />
       <TaskFilterModal
         toggleModal={handleToggleFilterModal}

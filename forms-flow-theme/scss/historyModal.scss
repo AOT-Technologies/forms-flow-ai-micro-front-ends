@@ -1,113 +1,133 @@
 $gray-medium: var(--ff-gray-medium);
 $primary: var(--ff-primary);
 $white-color: var(--ff-white);
-.modal-70w {
-  width: 66.2% !important;
-  max-width: 66.2% !important;
-  margin: var(--spacer-150) auto !important;
 
-  .history-modal-body {
-    padding: var(--spacer-200) var(--spacer-250) !important;
-    margin-top: var(--spacer-200);
-    position: relative;
-    /* Timeline styles */
-    .timeline {
-      position: absolute;
-      top: -8px;
-      bottom: 0;
-      left: 121px;
-      width: 2px;
-      background-color: $primary !important; 
-      z-index: 0;
+.history-modal-body {
+  @include paddingLvl2();
 
-      &::before {
-        content: "";
-        position: absolute;
-        left: -15px;
-        top: 0;
-        width: 32px;
-        height: 32px;
-        background-color: $white-color !important;
-        border: 2px solid $primary !important;
-        border-radius: 50%;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+  $colorMain: $gray-darkest;
+  $colorSecondary: $gray-medium;
+  $detailsWidth: $base*8;
+  $spaceBetweenVersions: $paddingLvl5S;
+  $timelineLineLeft: $base*5;
 
-      &::after {
-        content: "";
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        background-color: $primary !important;
-        border-radius: 50%;
-        top: 8px;
-        left: -7px;
-        z-index: 2;
-      }
-    }
+  position: relative;
 
-    .history-entry {
-      position: relative;
-      background-color: $white-color !important; 
-      z-index: 2; 
-    }
+  /* Timeline styles */
+  .timeline {
+    position: absolute;
+    bottom: 0;
+    left: $timelineLineLeft;
+    width: $lineThick;
+    height: 100%;
 
-    .version-grid {
-      display: grid;
-      gap: 1rem;
-      align-items: center;
-      margin-bottom: 1rem;
-
-      .revert-btn {
-        justify-self: end;
-      }
-    }
-    .version-style{
-        padding: 0.688rem var(--spacer-100);
-        border-radius: var(--radius-lg);
-    }
-
-    .major-version-grid {
-      @extend .version-style;
-      @extend .version-grid;
-      @extend .history-entry;
-      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
-      border: 2px solid $primary !important;
-    }
-    .workflow-major-grid {
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    }
-
-    .minor-version-grid {
-      @extend .version-style;
-      @extend .version-grid;
-      @extend .history-entry;
-      margin-left: 2rem;
-      grid-template-columns: 1.75fr 1fr 1fr 1fr 1fr 0fr;
-      border: 2px solid $gray-medium !important;
-    }
-    .workflow-minor-grid {
-      grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr;
-    }
+    background-color: $colorMain !important; 
     
-    .text-style{
-        color: var(--default-font-color) !important;
-        font-size: var(--font-size-xs);
-    }
-    .content-headings {
-      @extend .text-style;
-      font-weight: var(--font-weight-xl);
+    z-index: 0;
+  }
+
+  .history-entry {
+    position: relative;
+    background-color: $white-color; 
+    z-index: 2; 
+  }
+
+  .history-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    gap: calc($base / 2);
+
+    &:not(.submissions) > div {
+      &:nth-child(2) {
+        background-color: $primary-light;
+
+        border: $lineThin solid $primary-light;
+
+        & .revert-btn {
+          opacity: 0;
+
+          pointer-events: none;
+        }
+      }
     }
 
-    .normal-text {
-      @extend .text-style;
-      font-weight: var(--font-weight-sm);
+    .version {
+      display: flex;
+
+      gap: $spaceBetweenVersions;
+
+      .details {
+        display: flex;
+        gap: $paddingLvl5S;
+
+        & > div {
+          width: $detailsWidth;
+        }
+      }
     }
   }
+
+  .version-grid {
+    display: grid;
+    align-items: center;
+
+    .revert-btn {
+      justify-self: end;
+    }
+  }
+  .version-style{
+      padding: $paddingLvl5TB $paddingLvl5LR;
+      border-radius: $borderRadiusHeightM;
+  }
+
+  .major-version-grid {
+    @extend .version-style;
+    @extend .version-grid;
+    @extend .history-entry;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
+
+    border: $lineThin solid $colorMain;
+  }
+  .workflow-major-grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  }
+
+  .minor-version-grid {
+    @extend .version-style;
+    @extend .version-grid;
+    @extend .history-entry;
+    margin-left: 2rem;
+    grid-template-columns: 1.75fr 1fr 1fr 1fr 1fr 0fr;
+    border: $lineThin solid $colorSecondary;
+  }
+  .workflow-minor-grid {
+    grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr;
+  }
+  
+  .text-style{
+      color: $gray-darkest !important;
+      font-size: var(--font-size-xs);
+      line-height: $fontLineHeight;
+  }
+  .content-headings {
+    @extend .text-style;
+    font-weight: var(--font-weight-xl);
+
+    flex-grow: 1;
+  }
+
+  .normal-text {
+    @extend .text-style;
+    font-weight: var(--font-weight-sm);
+
+    margin-top: $paddingLvl5S;
+
+    word-break: break-all;
+  }
 }
+
 
 .analyse-submision-history-modal{
   min-height: 80vh;
