@@ -65,7 +65,6 @@ const TaskFilterModalBody = ({
   } = useSelector((state: RootState) => state.task);
 
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
-  const [accessOption, setAccessOption] = useState("currentUser");
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
@@ -93,6 +92,11 @@ const TaskFilterModalBody = ({
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
   const { tenantId } = useParams();
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId);
+  const SPECIFIC_ROLE = "specificRole";
+  const SPECIFIC_ASSIGNEE = "specificAssignee";
+  const CURRENT_USER = "currentUser";
+  const [accessOption, setAccessOption] = useState(CURRENT_USER);
+
 
   const changeAcessOption = (option: string) => {
     setAccessOption(option);
@@ -134,13 +138,13 @@ const TaskFilterModalBody = ({
       });
     }
 
-    if (accessOption === "specificRole") {
+    if (accessOption === SPECIFIC_ROLE) {
       criteria.candidateGroup =
         MULTITENANCY_ENABLED && accessValue
           ? tenantKey + "-" + trimFirstSlash(accessValue)
           : trimFirstSlash(accessValue);
       delete criteria.assignee;
-    } else if(accessOption === "specificAssignee"){
+    } else if(accessOption === SPECIFIC_ASSIGNEE){
       criteria.assignee = accessValue;
       delete criteria.candidateGroup;
     }
@@ -216,7 +220,7 @@ const TaskFilterModalBody = ({
     const { roles, users, criteria, properties } = filterToEdit;
     const { assignee, sorting, candidateGroup } = criteria;
     setShareFilterForSpecificRole(roles);
-    setAccessOption(assignee ? "specificAssignee" : candidateGroup? "specificRole":"currentUser");
+    setAccessOption(assignee ? SPECIFIC_ASSIGNEE : candidateGroup? SPECIFIC_ROLE:CURRENT_USER);
     setAccessValue(assignee ? assignee : candidateGroup ? candidateGroup : "");
     handleSorting(sorting);
     handleShareFilter(roles, users);
@@ -413,7 +417,7 @@ const TaskFilterModalBody = ({
   const disableFilterButton = isVariableArrayEmpty || isFilterSame;
   const saveFilterButtonDisabled =
     !filterName || 
-    ((accessOption !== "currentUser") && !accessValue) ||
+    ((accessOption !== CURRENT_USER) && !accessValue) ||
     !accessOption ||
     (filterToEdit?.id ? disableFilterButton : isVariableArrayEmpty);
   /* ------------------------------- tab values ------------------------------- */
