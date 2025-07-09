@@ -35,15 +35,42 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(
     null
   );
-  const [submissionId, setSubmissionId] = useState("");
-  const [submitter, setSubmitter] = useState("");
-  const [status, setStatus] = useState("");
   const [selectedItem, setSelectedItem] = useState("All Forms");
+  const initialInputFields = [
+    {
+      id: "submissionId",
+      label: "Submission ID",
+      type: "text",
+      value: "",
+    },
+    {
+      id: "submitter",
+      label: "Submitter",
+      type: "text",
+      value: "",
+    },
+    {
+      id: "status",
+      label: "Status",
+      type: "text",
+      value: "",
+    },
+  ];
+
+  const [inputFields, setInputFields] = useState(initialInputFields);
+  
+  const handleFieldChange = (index: number, newValue: string) => {
+    setInputFields((prevFields) => {
+      const updated = [...prevFields];
+      updated[index] = { ...updated[index], value: newValue };
+      return updated;
+    });
+  };
 
   const toggleExpand = () => {
     setExpanded(true);
   };
-  const hasAnyInput = !!dropdownSelection || submissionId.trim() !== "" || submitter.trim() !== "" || status.trim() !== "";
+
   const handleSelection = (label) => setSelectedItem(label);
 
   const handleCollapse = (e: React.MouseEvent | React.KeyboardEvent) => {
@@ -52,15 +79,12 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   };
 
   // Derived value for disabling buttons
-  const isActionDisabled =
-    !dropdownSelection &&
-    submissionId.trim() === "" &&
-    submitter.trim() === "" &&
-    status.trim() === "";
+  const hasAnyInputInFields = inputFields.some((field) => field.value.trim() !== "");
+  const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
 
-  const DropdownItems = formData.map((form) => ({
-    type: "form",
-    content: form.formName, // Display name in dropdown
+  const DropdownItems = formData.map((form) => ({ 
+    type: `form-${form.formId}`,
+    content: form.formName,
     dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
     ariaLabel: `Select form: ${form.formName}`,
     onClick: () => {
@@ -68,10 +92,23 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
       setDropdownSelection(form.parentFormId); // Store the selected form ID
     },
   }));
-console.log("iddd", dropdownSelection);
+
+    const handleClear = () => {
+    // Reset all input field values
+    setInputFields((prevFields) =>
+      prevFields.map((field) => ({
+        ...field,
+        value: "",
+      }))
+    );
+
+    // Reset dropdown selection
+    setDropdownSelection(null);
+    setSelectedItem("All Forms");
+  };
   return (
     <div
-      className={`collapsible-toggle ${expanded ? "expanded" : ""} ${hasAnyInput ? "active-toggle" : ""}`}
+      className={`collapsible-toggle ${expanded ? "expanded" : ""} ${!isActionDisabled ? "active-toggle" : ""}`}
       onClick={toggleExpand}
       data-testid={dataTestId}
       aria-label={ariaLabel}
@@ -93,10 +130,10 @@ console.log("iddd", dropdownSelection);
         {expanded ? (
           <div className="handle-collapse">
             <span className="collapse-text">{t("Collapse")}</span>
-            <AngleLeftIcon />
+            <AngleLeftIcon className="svgIcon-onDark" />
           </div>
         ) : (
-          <AngleRightIcon />
+          <AngleRightIcon className="svgIcon-onDark" />
         )}
       </button>
       {!expanded ? (
@@ -108,7 +145,7 @@ console.log("iddd", dropdownSelection);
       )}
 
       {expanded && (
-        <div className="panel-content">
+        <div className="panel-content" data-testid="panel-content">
           <div className="main-content">
             <div className="panel-width">
               <label className="form-label panel-label">{t("Form")}</label>
@@ -121,87 +158,46 @@ console.log("iddd", dropdownSelection);
                 className="button-collapsible input-filter"
               />
             </div>
-            <div className="panel-width">
-              <label className="form-label panel-label">
-                {t("Submission ID")}
-              </label>
-              <FormInput
-                name="title"
-                type="text"
-                // placeholder={t(placeholderForForm)}
-                // label={nameLabel}
-                aria-label={t("Name of the form")}
-                // dataTestId={nameInputDataTestid}
-                // onBlur={handleOnBlur}
-                // onChange={(event) => {
-                //   handleInputValueChange(event);
-                //   setNameError("");
-                //   handleChange("title", event);
-                // }}
-                required
-                // value={values.title}
-                // isInvalid={!!nameError}
-                // feedback={nameError}
-                // turnOnLoader={isFormNameValidating}
-                maxLength={200}
-                value={submissionId}
-                onChange={(e) => setSubmissionId(e.target.value)}
-              />
-            </div>
-            <div className="panel-width">
-              <label className="form-label panel-label">{t("Submitter")}</label>
-              <FormInput
-                name="title"
-                type="text"
-                aria-label={t("Name of the form")}
-                required
-                value={submitter}
-                onChange={(e) => setSubmitter(e.target.value)}
-              />
-            </div>
-            <div className="panel-width">
-              <label className="form-label panel-label">{t("Status")}</label>
-              <FormInput
-                name="title"
-                type="text"
-                aria-label={t("Name of the form")}
-                required
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              />
-            </div>
+            {inputFields.map((field, index) => (
+              <div className="panel-width" key={field.id}>
+                <label className="form-label panel-label">{field.label}</label>
+                <FormInput
+                  type={field.type}
+                  value={field.value}
+                  onChange={(e) => handleFieldChange(index, e.target.value)}
+                  aria-label={field.label}
+                  data-testid={`input-${field.id}`} 
+                />
+              </div>
+            ))}
             {dropdownSelection && (
               <div className="panel-width">
                 <CustomButton
-                  // variant="secondary"
                   secondary
-                  size="md"
                   label="Manage fields"
-                  icon={<PencilIcon className="" />}
+                  iconWithText
+                  icon={<PencilIcon />}
+                  dataTestId="manage-fields-button"
+                  ariaLabel="Manage fields" 
                 />
               </div>
             )}
           </div>
           <div className="search-clear">
             <CustomButton
-              // variant={"primary"}
-              size="md"
               label="Search"
-              // disabled={primaryBtnDisable}
               // onClick={primaryBtnAction}
-              // dataTestId={primaryBtndataTestid}
-              // ariaLabel={primaryBtnariaLabel}
               // buttonLoading={buttonLoading}
               disabled={isActionDisabled}
+              dataTestId="search-button"
+              ariaLabel="Search filters" 
             />
             <CustomButton
               secondary
-              size="md"
               label="Clear"
-              // disabled={primaryBtnDisable}
-              // onClick={primaryBtnAction}
-              // dataTestId={primaryBtndataTestid}
-              // ariaLabel={primaryBtnariaLabel}
+              onClick={handleClear}
+              dataTestId="clear-button"
+              ariaLabel="Clear filters" 
               // buttonLoading={buttonLoading}
               disabled={isActionDisabled}
             />
