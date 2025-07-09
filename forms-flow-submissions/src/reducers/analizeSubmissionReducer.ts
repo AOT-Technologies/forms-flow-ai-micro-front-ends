@@ -8,10 +8,10 @@ const initialState = {
         created_by: { sortOrder: "asc" },
         created: { sortOrder: "asc" },
         application_status: { sortOrder: "asc" },
-        dateRange:{startDate: null, endDate: null},
     },
     page: 1,
     limit: 10,
+    dateRange:{startDate: null, endDate: null},
 };
 
 
