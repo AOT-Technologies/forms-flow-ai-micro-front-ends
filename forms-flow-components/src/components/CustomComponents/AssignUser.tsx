@@ -130,27 +130,30 @@ const dropdownOptions = useMemo(() => {
     <>
       {showSelector && (manageMyTasks || assignToOthers) && (
         <div
-          className={`assign-user ${size}`}
+          className={`input-select quick-select minimized`}
           aria-label={`${ariaLabel}-select-user-option`}
           data-testid={`${dataTestId}-select-user-option`}
         >
-          {manageMyTasks && <button
-             className="option-me button-reset"
-            onClick={handleMeClick}
-            aria-label={`${ariaLabel}-me-button`}
-            data-testid={`${dataTestId}-me-button`}
-          >
-            {t("Me")}
-          </button>}
-          {(manageMyTasks && assignToOthers) && <div className="divider"></div>}
-          {assignToOthers && <button
-            className="option-others button-reset"
-            onClick={handleOthersClick}
-            aria-label={`${ariaLabel}-others-button`}
-            data-testid={`${dataTestId}-others-button`}
-          >
-            {t("Others")}
-          </button> }
+
+          <div className="empty">
+            {manageMyTasks && <button
+              className="option-me button-reset"
+              onClick={handleMeClick}
+              aria-label={`${ariaLabel}-me-button`}
+              data-testid={`${dataTestId}-me-button`}
+            >
+              {t("Me")}
+            </button>}
+            {(manageMyTasks && assignToOthers) && <div className="divider"></div>}
+            {assignToOthers && <button
+              className="option-others button-reset"
+              onClick={handleOthersClick}
+              aria-label={`${ariaLabel}-others-button`}
+              data-testid={`${dataTestId}-others-button`}
+            >
+              {t("Others")}
+            </button> }
+          </div>
         </div>
       )}
       {/* Show InputDropdown when either Me or Others is selected */}
@@ -176,6 +179,7 @@ const dropdownOptions = useMemo(() => {
               }
             }, 150);
           }}
+          className="quick-select minimized"
         />
       )}
     </>

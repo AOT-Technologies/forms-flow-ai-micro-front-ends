@@ -169,7 +169,9 @@ const TaskListTable = () => {
           isSortable ? ", " + t("sortable") : ""
         }`}
       >
-        {renderHeaderContent(column, isSortable)}
+        <span className="text">
+          {renderHeaderContent(column, isSortable)}
+        </span>
         {isResizable &&
           renderColumnResizer(column, isResizing, handleMouseDown, index)}
       </th>
@@ -269,7 +271,7 @@ const TaskListTable = () => {
       aria-label={getCellAriaLabel(column, task)}
     >
       <div
-        className={`${column.sortKey !== "assignee" ? "customizable_td_row" : "customizable_assignee"} `}
+        className={`content ${column.sortKey == "assignee"? "assignee" : ""}`}
         style={{
           WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
         }}
