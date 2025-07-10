@@ -170,17 +170,18 @@ const TaskSubmissionList: React.FC = () => {
   }, [t, sortParams, handleSort]);
 
   return (
-   <div className="main-layout-container">
+   <>
       {/* Left Panel - Collapsible Search Form */}
-      <div className="left-panel">
+
+      <div className="side">
         <CollapsibleSearch />
       </div>
-
+      
+      <div className="page-content">
       {/* Right Panel - Table Container */}
-      <div className="right-panel">
         {/* Top Controls Row - Date Range Picker and Filter/Sort Actions */}
-        <div className="top-controls-row d-flex justify-content-between align-items-center mb-3">
-          <div className="date-range-section">
+        <div className="table-bar">
+          <div className="filters">
             <DateRangePicker
               value={""}
               onChange={() => {}}
@@ -192,7 +193,7 @@ const TaskSubmissionList: React.FC = () => {
             />
           </div>
           
-          <div className="d-flex button-align">
+          <div className="actions">
             <FilterSortActions
               showSortModal={false}
               handleFilterIconClick={() => {}}
@@ -294,7 +295,7 @@ const TaskSubmissionList: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 export default TaskSubmissionList;

@@ -201,7 +201,7 @@ hr {
   background: $gray-light;
   margin-left: var(--navbar-width);
   margin-top: 0;
-  height: calc(100vh - var(--client-nav)) !important;
+  height: 100vh !important;
 }
 
 .min-container-height {
@@ -266,7 +266,7 @@ hr {
 @media (max-width: 768px) {
   .main-container {
     margin-left: 0;
-    height: 100vh !important;
+    height: calc(100vh - var(--client-nav)) !important;
   }
 }
 

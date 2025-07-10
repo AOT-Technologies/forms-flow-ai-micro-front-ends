@@ -14,7 +14,7 @@ import { userRoles } from "../../helper/permissions";
 
 
 
-const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
+const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false }) => {
   const dispatch = useDispatch();
   const taskId = task?.id;
   const {
@@ -93,18 +93,52 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false }) => {
   }
 
   return (
-    <AssignUser
-      size={isFromTaskDetails ? 'md' : 'sm'}
-      isFromTaskDetails={isFromTaskDetails}
-      users={userList?.data ?? []}
-      currentAssignee={task.assignee}
-      meOnClick={handleClaim}
-      optionSelect={handleChangeClaim}
-      handleCloseClick={handleUnClaim}
-      assignToOthers={AssignTaskToOthers}
-      manageMyTasks={manageMyTasks}
-      
-    />
+    <>
+    {(() => {
+      if (isFromTaskDetails) {
+        return (
+          <AssignUser
+            size={isFromTaskDetails ? 'md' : 'sm'}
+            users={userList?.data ?? []}
+            currentAssignee={task.assignee}
+            meOnClick={handleClaim}
+            optionSelect={handleChangeClaim}
+            handleCloseClick={handleUnClaim}
+            assignToOthers={AssignTaskToOthers}
+            manageMyTasks={manageMyTasks}
+          />
+        )
+      } else {
+        return (
+          <AssignUser
+            size={isFromTaskDetails ? 'md' : 'sm'}
+            users={userList?.data ?? []}
+            currentAssignee={task.assignee}
+            meOnClick={handleClaim}
+            optionSelect={handleChangeClaim}
+            handleCloseClick={handleUnClaim}
+            assignToOthers={AssignTaskToOthers}
+            manageMyTasks={manageMyTasks}
+            minimized
+          />
+        )
+      }
+  
+    })()}
+    </>
+    
+    // <AssignUser
+    //   size={isFromTaskDetails ? 'md' : 'sm'}
+    //   isFromTaskDetails={isFromTaskDetails}
+    //   users={userList?.data ?? []}
+    //   currentAssignee={task.assignee}
+    //   meOnClick={handleClaim}
+    //   optionSelect={handleChangeClaim}
+    //   handleCloseClick={handleUnClaim}
+    //   assignToOthers={AssignTaskToOthers}
+    //   manageMyTasks={manageMyTasks}
+    //   minimized
+    // />
   );
 };
 

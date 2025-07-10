@@ -29,6 +29,7 @@ $white-color: var(--ff-white);
 
 .custom-tables {
   $table-scrollbar-padding: 1rem;
+  $BP1: 47em;
 
   display: flex;
   height: 100%;
@@ -41,34 +42,22 @@ $white-color: var(--ff-white);
 
   margin: 0 !important;
 
+  container: custom-tables / inline-size;
+
   .table-scroll-container {
-    overflow-y: scroll;
+    @extend .custom-scroll;
+
+    overflow-y: auto;
     height: 100%;
     
-    border-bottom-left-radius: $borderRadiusHeightSM;
-    border-bottom-right-radius: $borderRadiusHeightSM;
-    border: $lineThin solid $gray-medium-dark;
-    border-top: none;
-
-    &::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #888;
-    }
-    &::-webkit-scrollbar-thumb:hover {
-      background: #555;
-    }
+    border-bottom: $lineThin solid $gray-medium-dark;
   }
 
   td {
+    @include textBase($fontSmallest);
+
     vertical-align: middle !important;
-    padding: var(--spacer-050) var(--spacer-125) !important;
-    font-size: var(--font-size-xs) !important;
+    padding: $paddingLvl6TB $paddingLvl4LR !important;
   }
 
   thead {
@@ -76,22 +65,18 @@ $white-color: var(--ff-white);
     table-layout: fixed;
     width: 100%;
 
-    padding: $table-scrollbar-padding;
-    padding-bottom: 0;
+    padding: 0;
 
     background-color: var(--ff-white);
     font-size: var(--font-size-xs) !important;
-    // vertical-align: middle !important;
     
     z-index: 2;
-
-    // border-bottom: $lineThin solid $gray-medium;
 
     tr {
       overflow: hidden;
       width: 100%;
       display: flex;
-      border: $lineThin solid $gray-medium-dark;
+      border-bottom: $lineThin solid $gray-medium-dark;
       border-top-left-radius: $borderRadiusHeightSM;
       border-top-right-radius: $borderRadiusHeightSM;
     }
@@ -167,9 +152,7 @@ $white-color: var(--ff-white);
     overflow-y: auto;
     height: 100%;
 
-    padding: $table-scrollbar-padding;
-    padding-top: 0;
-    padding-bottom: 0;
+    padding: 0;
 
     background-color: $white;
 
@@ -184,27 +167,28 @@ $white-color: var(--ff-white);
       }
     }
 
-    & > .custom-scrollbar {
-      position: absolute;
-      display: block;
-      top: 0;
-      right: 0;
+    // the outside the table scrollbar
+    // & > .custom-scrollbar {
+    //   position: absolute;
+    //   display: block;
+    //   top: 0;
+    //   right: 0;
 
-      width: $table-scrollbar-padding;
-      height: 100%;
+    //   width: $table-scrollbar-padding;
+    //   height: 100%;
 
-      padding: calc($table-scrollbar-padding/4);
+    //   padding: calc($table-scrollbar-padding/4);
 
-      & > div {
-        width: 100%;
-        height: 200px;
+    //   & > div {
+    //     width: 100%;
+    //     height: 200px;
 
-        padding: 0;
+    //     padding: 0;
 
-        background-color: $primary-light;
-        border-radius: calc($table-scrollbar-padding/4);
-      }
-    }
+    //     background-color: $primary-light;
+    //     border-radius: calc($table-scrollbar-padding/4);
+    //   }
+    // }
 
     tr {
       border: none;
@@ -253,7 +237,7 @@ $white-color: var(--ff-white);
       display: flex;
       width: $sideElementWidth;
 
-      padding: $paddingLvl2S $paddingLvl1S;
+      padding: $paddingLvl3TB $paddingLvl4LR !important;
     }
 
     .table-footer-pages {
@@ -293,13 +277,39 @@ $white-color: var(--ff-white);
           }
 
           & > button {
-            padding: $paddingLvl2S $paddingLvl1S $paddingLvl2S $paddingLvl4S !important;
+            padding: $paddingLvl3TB $paddingLvl4LR $paddingLvl3TB $paddingLvl4LR !important;
 
             font-size: $fontSmallest !important;
           }
         }
       }
     }
+
+    @container (max-width: #{$BP1}) {
+      flex-wrap: wrap;
+      align-items: center;
+
+      .table-footer-showing {
+        justify-content: center;
+        order: 2;
+        width: 50%;
+
+        padding: $paddingLvl3TB 0;
+      }
+
+      .table-footer-pages {
+        order: 1;
+        width: 100%;
+
+        padding-top: $paddingLvl3TB;
+      }
+
+      .table-footer-rowsper {
+        order: 3;
+        width: 50%;
+      }
+    }
+
   }
 
   .pagination {

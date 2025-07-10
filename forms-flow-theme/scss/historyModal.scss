@@ -3,15 +3,21 @@ $primary: var(--ff-primary);
 $white-color: var(--ff-white);
 
 .history-modal-body {
+  $BP1: 46em;
+
   @include paddingLvl2();
 
   $colorMain: $gray-darkest;
   $colorSecondary: $gray-medium;
   $detailsWidth: $base*8;
   $spaceBetweenVersions: $paddingLvl5S;
+  $spaceBetweenElementsInside: $paddingLvl5S;
+  $spaceBetweenElementsInsideBP1: $paddingLvl5TB;
   $timelineLineLeft: $base*5;
 
   position: relative;
+
+  container: history-modal-body / inline-size;
 
   /* Timeline styles */
   .timeline {
@@ -26,18 +32,12 @@ $white-color: var(--ff-white);
     z-index: 0;
   }
 
-  .history-entry {
-    position: relative;
-    background-color: $white-color; 
-    z-index: 2; 
-  }
-
   .history-content {
     position: relative;
     display: flex;
     flex-direction: column;
 
-    gap: calc($base / 2);
+    gap: $spaceBetweenVersions;
 
     &:not(.submissions) > div {
       &:nth-child(2) {
@@ -45,7 +45,7 @@ $white-color: var(--ff-white);
 
         border: $lineThin solid $primary-light;
 
-        & .revert-btn {
+        & button {
           opacity: 0;
 
           pointer-events: none;
@@ -54,77 +54,86 @@ $white-color: var(--ff-white);
     }
 
     .version {
+      position: relative;
       display: flex;
+      align-items: center;
 
-      gap: $spaceBetweenVersions;
+      padding: $paddingLvl5TB $paddingLvl5LR;
+      gap: $spaceBetweenElementsInside;
+
+      border: $lineThin solid $gray-medium;
+      border-radius: $borderRadiusHeightM;
+
+      background-color: $white-color; 
+
+      z-index: 2;
+
+      &.minor {
+        margin-left: $paddingLvl1S;
+      }
+
+      &.major {
+        border: $lineThin solid $gray-darkest;
+      }
+
+      .heading {
+        @include textBaseHightlight($fontSmallest);
+
+        display: flex;
+        flex-grow: 1;
+      }
 
       .details {
         display: flex;
+
         gap: $paddingLvl5S;
 
         & > div {
+          display: flex;
+          flex-direction: column;
           width: $detailsWidth;
+
+          gap: $paddingLvl5S;
+        }
+
+        p {
+          &:nth-child(1) {
+            @include textBaseHightlight($fontSmallest, $gray-dark);
+          }
+
+          &:nth-child(2) {
+            @include textBase($fontSmallest, $gray-dark);
+          }
         }
       }
     }
   }
 
-  .version-grid {
-    display: grid;
-    align-items: center;
+  @container history-modal-body (max-width: #{$BP1}) {
+    .history-content {
+      &:not(.submissions) > div {
+        &:nth-child(2) {
+          & button {
+            display: none;
+          }
+        }
+      }
+      .version {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spaceBetweenElementsInsideBP1;
 
-    .revert-btn {
-      justify-self: end;
+        .details {
+          flex-wrap: wrap;
+          width: 100%;
+
+          & > div {
+            flex: 1;
+            width: unset;
+          }
+        }
+      }
     }
-  }
-  .version-style{
-      padding: $paddingLvl5TB $paddingLvl5LR;
-      border-radius: $borderRadiusHeightM;
-  }
-
-  .major-version-grid {
-    @extend .version-style;
-    @extend .version-grid;
-    @extend .history-entry;
-    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
-
-    border: $lineThin solid $colorMain;
-  }
-  .workflow-major-grid {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  }
-
-  .minor-version-grid {
-    @extend .version-style;
-    @extend .version-grid;
-    @extend .history-entry;
-    margin-left: 2rem;
-    grid-template-columns: 1.75fr 1fr 1fr 1fr 1fr 0fr;
-    border: $lineThin solid $colorSecondary;
-  }
-  .workflow-minor-grid {
-    grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr;
-  }
-  
-  .text-style{
-      color: $gray-darkest !important;
-      font-size: var(--font-size-xs);
-      line-height: $fontLineHeight;
-  }
-  .content-headings {
-    @extend .text-style;
-    font-weight: var(--font-weight-xl);
-
-    flex-grow: 1;
-  }
-
-  .normal-text {
-    @extend .text-style;
-    font-weight: var(--font-weight-sm);
-
-    margin-top: $paddingLvl5S;
-
-    word-break: break-all;
   }
 }
 

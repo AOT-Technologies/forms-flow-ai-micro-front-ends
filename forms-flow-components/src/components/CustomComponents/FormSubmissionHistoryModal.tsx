@@ -20,18 +20,18 @@ interface SubmissionHistory {
 
 const HistoryField = ({ fields }: { fields: { id: number; value: string }[] }) => (
   <>
-    <div className="content-headings">
+    <p className="heading">
       {fields.map(({ id, value }) => (
         <>
           {value}
         </>
       ))}
-    </div>
+    </p>
 
     <div className="details">
       <div>
-        <div className="content-headings">Created On</div>
-        <div className="normal-text">28-05-2025, 02:44:06 PM</div>
+        <p>Created On</p>
+        <p>28-05-2025, 02:44:06 PM</p>
       </div>
     </div>
   </>
@@ -85,7 +85,7 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
                   <div
                     key={entry.id || index}
                     ref={index === allHistory.length - 1 ? lastEntryRef : null}
-                    className="version major-version-grid"
+                    className="version major"
                     data-testid={`form-history-entry-${index}`}
                     aria-label={`Form history entry ${index}`}
                   >

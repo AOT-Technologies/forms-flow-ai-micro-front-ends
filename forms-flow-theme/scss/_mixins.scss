@@ -85,44 +85,44 @@
   border-bottom: $lineThin solid $colorDividerDark;
 }
 
-@mixin textEmphasis {
-  font-weight: 700;
-}
-
 // Paddings / LR=LeftRight TB=TopBottom S=SpacingBetween / LVL1->LVL9 = outside->inside
 
-$paddingLvl1LR: var(--spacer-300);
-$paddingLvl1TB: var(--spacer-250);
-$paddingLvl1S: var(--spacer-200);
+$paddingLvl1LR: var(--spacer-300); // calc($base * 3)
+$paddingLvl1TB: var(--spacer-250); // calc($base * 2.5)
+$paddingLvl1S: var(--spacer-200); // calc($base * 2)
 
-$paddingLvl2LR: var(--spacer-250);
-$paddingLvl2TB: var(--spacer-200);
-$paddingLvl2S: var(--spacer-150);
+$paddingLvl2LR: var(--spacer-250); // calc($base * 2.5)
+$paddingLvl2TB: var(--spacer-200); // calc($base * 2)
+$paddingLvl2S: var(--spacer-150); // calc($base * 1.5)
 
-$paddingLvl3LR: var(--spacer-150);
-$paddingLvl3TB: var(--spacer-125);
-$paddingLvl3S: var(--spacer-100);
+$paddingLvl3LR: var(--spacer-150); // calc($base * 1.5)
+$paddingLvl3TB: var(--spacer-125); // calc($base * 1.25)
+$paddingLvl3S: var(--spacer-100); // calc($base)
 
-$paddingLvl4LR: var(--spacer-125);
-$paddingLvl4TB: var(--spacer-100);
-$paddingLvl4S: var(--spacer-050);
+$paddingLvl4LR: var(--spacer-125); // calc($base * 1.25)
+$paddingLvl4TB: var(--spacer-100); // calc($base)
+$paddingLvl4S: var(--spacer-050); // calc($base * 0.5)
 
-$paddingLvl5LR: var(--spacer-100);
-$paddingLvl5TB: var(--spacer-075);
-$paddingLvl5S: var(--spacer-050);
+$paddingLvl5LR: var(--spacer-100); // calc($base)
+$paddingLvl5TB: var(--spacer-075); // calc($base * 0.75)
+$paddingLvl5S: var(--spacer-050); // calc($base * 0.5)
 
-$paddingLvl6LR: var(--spacer-075);
-$paddingLvl6TB: var(--spacer-050);
-$paddingLvl6S: var(--spacer-025);
+$paddingLvl6LR: var(--spacer-075); // calc($base * 0.75)
+$paddingLvl6TB: var(--spacer-050); // calc($base * 0.5)
+$paddingLvl6S: var(--spacer-025); // calc($base * 0.25)
 
-$paddingLvl7LR: var(--spacer-025);
-$paddingLvl7TB: var(--spacer-050);
-$paddingLvl7S: var(--spacer-025);
+$paddingLvl7LR: var(--spacer-025); // calc($base * 0.25)
+$paddingLvl7TB: var(--spacer-050); // calc($base * 0.5)
+$paddingLvl7S: var(--spacer-025); // calc($base * 0.25)
 
+// additional for special usecases
+$paddingLvl2MinLR: var(--spacer-250); // calc($base * 2.5)
+$paddingLvl2MinTB: var(--spacer-100); // calc($base)
+$paddingLvl2MinS: var(--spacer-100); // calc($base)
 
-$paddingLvl2MinLR: var(--spacer-250);
-$paddingLvl2MinTB: var(--spacer-100);
-$paddingLvl2MinS: var(--spacer-100);
+$paddingLvl3MinLR: var(--spacer-100); // calc($base)
+$paddingLvl3MinTB: var(--spacer-050); // calc($base * 0.5)
+$paddingLvl3MinS: var(--spacer-050); // calc($base * 0.5)
 
 @mixin paddingLvl1 {
   padding: $paddingLvl1TB $paddingLvl1LR !important;
@@ -134,6 +134,11 @@ $paddingLvl2MinS: var(--spacer-100);
       margin-bottom: 0 !important;
     }
   }
+}
+
+@mixin paddingLvl1-horizontal {
+  padding: $paddingLvl1TB $paddingLvl1LR !important;
+  gap: $paddingLvl1S !important;
 }
 
 @mixin paddingLvl2 {
@@ -231,7 +236,7 @@ $paddingLvl2MinS: var(--spacer-100);
   }
 }
 
-// Text bases to get stylin started
+// Text bases to get styling started
 
 @mixin textBase($fontSize: $fontBase, $fontColor: $gray-darkest) {
   font-size: $fontSize;
@@ -250,15 +255,19 @@ $paddingLvl2MinS: var(--spacer-100);
 }
 
 @mixin textCardHead {
-  @include textBase($fontBase*1.5);
+  @include textBaseHightlight($fontBase*1.5);
+}
 
-  font-weight: 700;
+@mixin textFilterNotSelected {
+  @include textBaseHightlight($fontBase, $primary);
+
+  font-style: italic;
 }
 
 
 // For clickable elements
-// opacity changes
 
+// opacity changes
 @mixin clickableFeedback1 {
   cursor: pointer;
   opacity: 1;
@@ -278,7 +287,6 @@ $paddingLvl2MinS: var(--spacer-100);
 }
 
 // background changes
-
 @mixin clickableFeedback2 {
   cursor: pointer;
 
@@ -295,7 +303,6 @@ $paddingLvl2MinS: var(--spacer-100);
 }
 
 // filters special usecase
-
 @mixin clickableFeedback3 {
   cursor: pointer;
   opacity: 1;
@@ -315,7 +322,6 @@ $paddingLvl2MinS: var(--spacer-100);
 }
 
 // main svg icon base
-
 @mixin svgIcon($color: $primary) {
   overflow: visible;
   width: $base;
@@ -338,6 +344,7 @@ $paddingLvl2MinS: var(--spacer-100);
   }
 }
 
+// pre-fixes
 @mixin line-clamp($amount) {
   line-clamp: $amount;
   -webkit-line-clamp: $amount;

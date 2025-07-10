@@ -102,15 +102,6 @@
     margin-bottom: 5px;
     justify-content: space-between;
 }
-.clear{
-    border-left: none;
-    border-color: #80bdff;
-    margin-left: 0;
-    background-color: white;
-    border-top-left-radius:0;
-    border-bottom-left-radius:0;
-    width: 4.25rem;
-}
 .search-role-input{
     margin-right: 0;
 }
@@ -133,8 +124,8 @@
 }
 
 .permission-tree {
-    max-height: 50vh;
-    overflow: auto;
+    // max-height: 50vh;
+    // overflow: auto;
     .form-check.fw-bold {
       font-weight: var(--font-weight-lg);
     }

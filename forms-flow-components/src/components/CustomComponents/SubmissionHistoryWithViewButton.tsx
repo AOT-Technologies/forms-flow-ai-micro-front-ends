@@ -171,9 +171,9 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
                               data-testid={`form-history-entry-${index}`}
                               aria-label={`Form history entry ${index}`}
                             >
-                              <div className="w-30 content-headings me-auto">
+                              <p className="w-30 heading me-auto">
                                 {entry.applicationStatus}
-                              </div>
+                              </p>
                               <div
                                 className={`normal-text w-100 gap-${
                                   showBpmnDiagram ? "5" : "3"
@@ -182,20 +182,24 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
                                 } align-items-center`}
                               >
                                 <div>
-                                  <div className="content-headings">
+                                  <p>
                                     {t("Submitter By")}
-                                  </div>
+                                  </p>
+                                  <p>
                                   {entry.submittedBy}
+                                  </p>
                                 </div>
                                 <div>
-                                  <div className="content-headings">
+                                  <p>
                                     {t("Created On")}
-                                  </div>
+                                  </p>
+                                  <p>
                                   {entry.created
                                     ? HelperServices.getLocalDateAndTime(
                                         entry.created
                                       )
                                     : "N/A"}
+                                  </p>
                                 </div>
                               </div>
 

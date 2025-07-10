@@ -371,7 +371,7 @@ export const DownArrowIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const PencilIcon = ({ color = baseColor,className, ...props }) => (
+export const PencilIcon = ({ ...props }) => (
   <svg
     className={`svgIcon-primary`}
     xmlns="http://www.w3.org/2000/svg"
