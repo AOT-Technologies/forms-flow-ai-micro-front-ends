@@ -15,3 +15,13 @@ export const formatDate = (isoString: string): string => {
 
   return date.toLocaleString("en-US", options);
 };
+
+export const textTruncate = (wordLength, targetLength, text) => {
+  return text?.length > wordLength
+    ? text.substring(0, targetLength) + "..."
+    : text;
+};
+export const replaceUrl = (URL, key, value) => {
+  return URL.replace(key, value);
+};
+

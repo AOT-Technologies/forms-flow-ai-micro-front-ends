@@ -3,6 +3,12 @@ import ReactDOM from "react-dom";
 import singleSpaReact from "single-spa-react";
 import Root from "./root.component";
 
+import { Formio } from "@aot-technologies/formio-react";
+import { AppConfig } from "./api/config";
+
+
+Formio.setProjectUrl(AppConfig.projectUrl);
+Formio.setBaseUrl(AppConfig.apiUrl);
 const lifecycles = singleSpaReact({
   React,
   ReactDOM,

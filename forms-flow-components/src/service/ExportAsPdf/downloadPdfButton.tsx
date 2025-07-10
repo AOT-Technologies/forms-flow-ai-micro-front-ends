@@ -102,7 +102,7 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = React.memo(
             style={{ display: "none" }}
           />
           <CustomButton
-            variant="light"
+            darkPrimary
             label={t("Export PDF")}
             onClick={download}
             buttonLoading={isLoading}
