@@ -55,6 +55,10 @@ const handleTaskError = (dispatch, error) => {
  * @param {number} maxResults - The maximum number of results to be fetched.
  * @param {function} done - A callback function to be called after the request is completed.
  */
+
+
+let currentTaskFetchAbortController = null;
+
 export const fetchServiceTaskList = (
   reqData,
   taskIdToRemove,
@@ -71,6 +75,14 @@ export const fetchServiceTaskList = (
     API.GET_BPM_TASK_FILTERS
   }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
   return (dispatch) => {
+    // implemented for multiples api call prevention
+    if (currentTaskFetchAbortController) {
+      currentTaskFetchAbortController.abort();
+    }
+
+    currentTaskFetchAbortController = new AbortController();
+    const signal = currentTaskFetchAbortController.signal;
+   
     // dispatch(setBPMTaskLoader(true)); Adding a temporary comment to prevent the skeleton loader in the task table from displaying oddly due to socket.
     dispatch(setLastReqPayload(reqData));
     // [TBD: need to fix properly ]if name is available in reqData, we need to set it to the name property of reqData
@@ -97,7 +109,9 @@ export const fetchServiceTaskList = (
     RequestService.httpPOSTRequestWithHAL(
       apiUrlgetTaskList,
       clonedReqData,
-      StorageService.get(StorageService.User.AUTH_TOKEN)
+      StorageService.get(StorageService.User.AUTH_TOKEN),
+      true,
+      signal
     )
       .then((res) => {
         if (res.data) {
