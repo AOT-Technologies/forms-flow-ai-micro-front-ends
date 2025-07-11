@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from "react";
+import React, { useRef, useCallback, useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,7 @@ import { push } from "connected-react-router";
 
 // Types and Services
 import { Submission } from "../types/submissions";
-import { getSubmissionList } from "../api/queryServices/analyzeSubmissionServices";
+import { getSubmissionList, fetchAllForms } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate } from "../helper/helper";
 
 // Redux Actions
@@ -39,6 +39,7 @@ const TaskSubmissionList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
+  const [formData, setFormData] = useState([]);
 
   // Redux State
   const sortParams = useSelector((state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {});
@@ -67,6 +68,17 @@ const TaskSubmissionList: React.FC = () => {
     keepPreviousData: true,
     staleTime: 0,
   });
+
+  useEffect(()=>{
+    fetchAllForms()
+        .then((res) => {
+          const data = res.data?.forms ?? [];
+          setFormData(data);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+  },[]);
 
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
@@ -173,7 +185,7 @@ const TaskSubmissionList: React.FC = () => {
    <div className="main-layout-container">
       {/* Left Panel - Collapsible Search Form */}
       <div className="left-panel">
-        <CollapsibleSearch />
+        <CollapsibleSearch formData={formData}/>
       </div>
 
       {/* Right Panel - Table Container */}
