@@ -163,6 +163,8 @@ $black-color: var(--ff-black);
 
           padding: 0 !important;
 
+          scrollbar-gutter: auto;
+
           & > button {
             @include paddingLvl2();
             @include clickableFeedback2();

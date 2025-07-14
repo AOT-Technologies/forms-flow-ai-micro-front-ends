@@ -104,7 +104,7 @@ const AttributeFilterDropdown = () => {
       content: (
         <span>
           <AddIcon />
-          {t("Custom Filter")}
+          <span>{t("Custom Filter")}</span>
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
@@ -117,7 +117,7 @@ const AttributeFilterDropdown = () => {
       content: (
         <span>
           <PencilIcon />
-          {t("Re-order And Hide Filters")}
+          <span>{t("Re-order And Hide Filters")}</span>
         </span>
       ),
       onClick: () => setShowReorderAttributeFilterModal(true),
@@ -155,7 +155,13 @@ const AttributeFilterDropdown = () => {
             );
 
             let icon = null;
-            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+            if (
+              selectedFilter?.users?.length > 0 &&
+              !filter?.roles?.length &&
+              !filter?.users?.length
+            ) {
+              icon = null;
+            } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
               icon = <SharedWithOthersIcon className="shared-icon" />;
             } else if (isSharedToPublic || isSharedToMe) {
               icon = <SharedWithMeIcon className="shared-icon" />;

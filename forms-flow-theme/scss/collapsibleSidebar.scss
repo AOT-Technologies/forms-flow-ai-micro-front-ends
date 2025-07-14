@@ -27,7 +27,17 @@ $chevron-bg: #5e61f2;
     &.expanded {
       width: $expanded-width;
     }
-  
+
+    &.active-toggle:not(.expanded) {
+      background-color: $primary;
+      color: $white-color;
+
+      .collapsible-label,
+      .panel-label,
+      .collapse-text {
+        color: $white-color;
+      }
+    }  
     .chevron-icon {
       height: 2.188rem;
       width: 100%;
@@ -85,6 +95,9 @@ $chevron-bg: #5e61f2;
         padding: var(--spacer-150) var(--spacer-125);
         border-top: 1px solid $gray-medium;
       }
+    }
+    .button-collapsible{
+      max-width: none !important;
     }
   }
  /* Main layout container */

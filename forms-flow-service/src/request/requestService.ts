@@ -179,7 +179,8 @@ class RequestService {
     url: string,
     data: object,
     token: string | null,
-    isBearer: boolean = true
+    isBearer: boolean = true,
+    signal?: AbortSignal 
   ): any {
     return this.axiosInstance.post(url, data, {
       headers: {
@@ -190,6 +191,7 @@ class RequestService {
           : token,
         Accept: "application/hal+json",
       },
+      signal
     });
   }
   public static httpPUTRequest(

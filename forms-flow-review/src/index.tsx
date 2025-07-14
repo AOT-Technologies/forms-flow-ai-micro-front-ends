@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState } from "react";
+import React, {useCallback, useEffect, useMemo, useState } from "react";
 import { Route, Switch, Redirect, useParams,useHistory } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
@@ -133,26 +133,26 @@ const handleForceReload = (refreshedTaskId: string) => {
   }
 };
 
-const SocketIOCallback = ({
-  refreshedTaskId,
-  forceReload,
-  isUpdateEvent,
-}: SocketUpdateParams) => {
-  if (!refreshedTaskId) return;
-   /**
-     * use of this socket call back , need to update task realtime and 
-     * also tasklist if the task id is exist inthe tasklist
-     */
-  if (isUpdateEvent) { 
-    handleTaskUpdate(refreshedTaskId);
-  } else if (forceReload) {
-    handleForceReload(refreshedTaskId);
-  }else{
-    // here we just need to refetch the task list
-    // this is used when task is created or deleted
-    getTasks();
-  }
-};
+const SocketIOCallback = useCallback(({
+    refreshedTaskId,
+    forceReload,
+    isUpdateEvent,
+  }: SocketUpdateParams) => {
+    if (!refreshedTaskId) return;
+    /**
+       * use of this socket call back , need to update task realtime and 
+       * also tasklist if the task id is exist inthe tasklist
+       */
+    if (isUpdateEvent) { 
+      handleTaskUpdate(refreshedTaskId);
+    } else if (forceReload) {
+      handleForceReload(refreshedTaskId);
+    }else{
+      // here we just need to refetch the task list
+      // this is used when task is created or deleted
+      getTasks();
+    }
+  },[taskId, taskDetails, lastRequestedPayload, activePage, limit]);
 
  
 

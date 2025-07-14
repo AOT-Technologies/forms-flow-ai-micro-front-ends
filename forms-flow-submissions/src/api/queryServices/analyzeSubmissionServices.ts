@@ -53,3 +53,8 @@ export const getSubmissionList = (
     return result;
   });
 };
+
+export const fetchAllForms = () => {
+  //activeForms means published forms only : status = Active
+  return RequestService.httpGETRequest(`${API.FORM}?activeForms=true`);
+};

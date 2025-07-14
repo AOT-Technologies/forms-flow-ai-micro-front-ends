@@ -1595,5 +1595,6 @@ export const RESOURCE_BUNDLES_DE = {
   "Template Name": "Vorlagenname",
   "Template Description": "Vorlagenbeschreibung",
   "All Fields": "Alle Felder",
-  "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "Es wurden keine Formulare gefunden. Erstellen Sie ein neues Formular, indem Sie oben rechts auf die Schaltfläche „Neues Formular & Ablauf“ klicken."
+  "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "Es wurden keine Formulare gefunden. Erstellen Sie ein neues Formular, indem Sie oben rechts auf die Schaltfläche „Neues Formular & Ablauf“ klicken.",
+  "Current user": "Aktueller Benutzer"
 }
