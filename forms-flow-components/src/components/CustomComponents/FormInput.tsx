@@ -61,13 +61,13 @@ export const FormInput: React.FC<FormInputProps> = ({
   variant,
 }) => {
   const { t } = useTranslation();
-  let variantInputHeightClass = '';
-  if (variant === 'assign-user-sm') {
-    variantInputHeightClass = 'assign-user-sm-height';
-  } else if (variant === 'assign-user-md') {
-    variantInputHeightClass = 'assign-user-md-height';
-  }
-  const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${variantInputHeightClass} ${className}`;
+  // let variantInputHeightClass = '';
+  // if (variant === 'assign-user-sm') {
+  //   variantInputHeightClass = 'assign-user-sm-height';
+  // } else if (variant === 'assign-user-md') {
+  //   variantInputHeightClass = 'assign-user-md-height';
+  // }
+  const inputClassNames = `${icon ? 'with-icon' : ''}  ${className}`;
   const inputRef = useRef(null);
   useEffect(()=>{ 
     if(autoFocusInput && inputRef.current){

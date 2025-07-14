@@ -104,7 +104,7 @@ const AttributeFilterDropdown = () => {
       content: (
         <span>
           <AddIcon />
-          {t("Custom Filter")}
+          <span>{t("Custom Filter")}</span>
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
@@ -117,7 +117,7 @@ const AttributeFilterDropdown = () => {
       content: (
         <span>
           <PencilIcon />
-          {t("Re-order And Hide Filters")}
+          <span>{t("Re-order And Hide Filters")}</span>
         </span>
       ),
       onClick: () => setShowReorderAttributeFilterModal(true),

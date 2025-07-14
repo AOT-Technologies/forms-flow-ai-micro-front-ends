@@ -1,6 +1,7 @@
-import { GRAPHQL_API} from "./config";
+import { GRAPHQL_API, WEB_BASE_URL} from "./config";
 const API = {
       GRAPHQL_API: GRAPHQL_API,
+      FORM: `${WEB_BASE_URL}/form`,
  }
 
 export default API;

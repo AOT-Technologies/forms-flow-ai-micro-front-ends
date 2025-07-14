@@ -17,6 +17,7 @@ interface DropdownMultiselectProps {
   ariaLabel?:string;
   dataTestId?:string;
   placeholder?:string;
+  className?:string;
   id?:string;
 }
 
@@ -35,7 +36,8 @@ export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
   ariaLabel,
   dataTestId,
   placeholder,
-  id
+  id,
+  className
 }) => { 
   return (
     <div className="dropdown-multiselect-component">
@@ -54,6 +56,7 @@ export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
         disabled={disabled}
         placeholder={placeholder}
         id={id}
+        className={` ${className ? className : ''} `} 
       />
       </div>
             

@@ -29,6 +29,7 @@ interface Column {
   sortKey: string;
   resizable?: boolean;
   newWidth?: number;
+  isFormVariable?:boolean;
 }
 
 interface Task {
@@ -51,9 +52,8 @@ const getCellValue = (column: Column, task: Task) => {
   if (column.sortKey === "applicationId") {
     return variables.find((v) => v.name === "applicationId")?.value ?? "-";
   }
-
-
-
+//checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
+  if(!column.isFormVariable){
   switch (sortKey) {
     case "name":
       return taskName ?? "-";
@@ -63,10 +63,12 @@ const getCellValue = (column: Column, task: Task) => {
       return <TaskAssigneeManager task={task} />;
      case "roles": {
     return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
+    }
   }
-    default:
-      return variables.find((v) => v.name === sortKey)?.value ?? "-";
-  }
+  } 
+  //if the variable is dynamic
+   return variables.find((v) => v.name === sortKey)?.value ?? "-";
+ 
 };
 
 const TaskListTable = () => {
@@ -104,8 +106,11 @@ const TaskListTable = () => {
     { text: "All", value: tasksCount },
   ];
 
-  // checking is column is sortable
-  const isSortableColumn = (columnKey) => SORTABLE_COLUMNS.includes(columnKey);
+  /**
+   * checking is column is sortable 
+   * passing isFormVariable to avoid sorting of dynamic variables
+  **/
+  const isSortableColumn = (columnKey, isFormVariable) => !isFormVariable && SORTABLE_COLUMNS.includes(columnKey);
  
 
   const handleColumnResize = (column: Column, newWidth: number) => {
@@ -150,7 +155,7 @@ const TaskListTable = () => {
     currentResizingColumn,
     handleMouseDown
   ) => {
-    const isSortable = isSortableColumn(column.sortKey);
+    const isSortable = isSortableColumn(column.sortKey, column.isFormVariable);
     const isResizable = column.resizable && index < columnsLength - 1;
     const isResizing = currentResizingColumn?.sortKey === column.sortKey;
 
@@ -164,7 +169,9 @@ const TaskListTable = () => {
           isSortable ? ", " + t("sortable") : ""
         }`}
       >
-        {renderHeaderContent(column, isSortable)}
+        <span className="text">
+          {renderHeaderContent(column, isSortable)}
+        </span>
         {isResizable &&
           renderColumnResizer(column, isResizing, handleMouseDown, index)}
       </th>
@@ -264,7 +271,7 @@ const TaskListTable = () => {
       aria-label={getCellAriaLabel(column, task)}
     >
       <div
-        className={`${column.sortKey !== "assignee" ? "customizable_td_row" : "customizable_assignee"} `}
+        className={`content ${column.sortKey == "assignee"? "assignee" : ""}`}
         style={{
           WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
         }}
