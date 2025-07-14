@@ -6,7 +6,9 @@
 [![forms-flow-admin-CD](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-admin-cd.yml/badge.svg)](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-admin-cd.yml)
 [![forms-flow-service-CD](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-service.yml/badge.svg)](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-service.yml)
 [![forms-flow-theme-CD](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-theme.yml/badge.svg)](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-theme.yml)
-
+[![forms-flow-components-CD](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-component-cd.yml/badge.svg)](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-component-cd.yml)
+[![forms-flow-review-CD](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-review-cd.yml/badge.svg)](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-review-cd.yml)
+[![forms-flow-submissions-CD](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-submissions-cd.yml/badge.svg)](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-submissions-cd.yml)
 forms-flow-ai-micro-front-ends is a collection of micro front-end applications to support formsflow.ai.
 
 ## components overview
@@ -30,6 +32,14 @@ This module contains the common style sheet shared by all micro-front-ends. This
 5. forms-flow-components
 
 This module contains reusable UI components.
+
+6. forms-flow-review
+
+This module contains all the functionalities related to reviewer journey including filters, tasks and all the related actions
+
+7. forms-flow-submissions
+
+This modules contains the functionalities related to analyze  submissions
 
 All the modules are built with `single-spa`, a javascript router for micro front-end microsevices.
 

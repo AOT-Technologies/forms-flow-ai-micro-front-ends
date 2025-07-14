@@ -66,7 +66,7 @@ export default function Root(props) {
           </div>
         )}
         <HamburgerMenu props={props} />
-        { !isPreviewRoute && <div className="main-sidenav" ref={sidenavRef}>
+        { !isPreviewRoute && <div className="main-sidenav" ref={sidenavRef} data-testid="main-sidenav">
           <Sidebar props={props} sidenavHeight={sidenavHeight}/>
         </div>}
       </>

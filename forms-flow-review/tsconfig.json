@@ -1,0 +1,12 @@
+{
+  "extends": "ts-config-single-spa",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "declarationDir": "dist",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "es5"
+  },
+  "files": ["src/formsflow-review.tsx"],
+  "include": ["src/**/*"],
+  "exclude": ["src/__tests__/*.test*"]
+}

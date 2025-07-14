@@ -1,0 +1,25 @@
+ 
+.loader-container{
+display: flex;
+height: 50vh !important;
+justify-content: center;
+align-items: center;
+}
+.loader {
+position: absolute;
+margin: auto;
+left: 0;
+right: 0;
+top: 0;
+bottom: 0;
+}
+.page-item .page-link {
+    color: #0072ed !important;
+}
+.premium{
+    font-size: 36px;
+    color: rgb(255,193,7);
+}
+.checkout-btn{
+    padding: 8px 48px !important;
+}
