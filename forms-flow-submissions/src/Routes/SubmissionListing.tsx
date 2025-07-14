@@ -27,6 +27,7 @@ import {
   FilterSortActions,
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
+import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
 
 interface Column {
   name: string;
@@ -47,6 +48,18 @@ const TaskSubmissionList: React.FC = () => {
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
+
+  const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
+  const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
+  const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState("All Forms");
+  const initialInputFields = [
+    { id: "submissionId", label: "Submission ID", type: "text", value: "" },
+    { id: "submitter", label: "Submitter", type: "text", value: "" },
+    { id: "status", label: "Status", type: "text", value: "" },
+  ];
+
 
   // Columns Configuration
   const columns: Column[] = useMemo(() => [
@@ -185,7 +198,22 @@ const TaskSubmissionList: React.FC = () => {
    <div className="main-layout-container">
       {/* Left Panel - Collapsible Search Form */}
       <div className="left-panel">
-        <CollapsibleSearch formData={formData}/>
+        <CollapsibleSearch
+          isOpen={true}
+          hasActiveFilters={false}
+          inactiveLabel="No Filters"
+          activeLabel="Filters Active"
+          onToggle={() => { }}
+          manageFieldsAction={handleManageFieldsOpen}
+          formData={formData}
+          dropdownSelection={dropdownSelection}
+          setDropdownSelection={setDropdownSelection}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          //this will be replaced dynamically after variable selection part is done
+          initialInputFields={initialInputFields}
+        />
+
       </div>
 
       {/* Right Panel - Table Container */}
@@ -306,6 +334,13 @@ const TaskSubmissionList: React.FC = () => {
           )}
         </div>
       </div>
+      <ManageFieldsSortModal
+        show={isManageFieldsModalOpen}
+        onClose={handleManageFieldsClose}
+        dropdownSelection={dropdownSelection}
+        selectedItem={selectedItem}
+      />
+
     </div>
   );
 };

@@ -9,6 +9,12 @@ interface FormItem {
   formName: string;
   parentFormId: string;
 }
+interface InputField {
+  id: string;
+  label: string;
+  type: string;
+  value: string;
+}
 interface CollapsibleSearchProps {
   isOpen: boolean;
   hasActiveFilters: boolean;
@@ -18,7 +24,17 @@ interface CollapsibleSearchProps {
   dataTestId?: string;
   ariaLabel?: string;
   formData: FormItem[];
+  dropdownSelection: string | null;
+  setDropdownSelection: (value: string | null) => void;
+  selectedItem: string;
+  setSelectedItem: (value: string) => void;
+  initialInputFields: InputField[];
+  manageFieldsAction: () => void
+
 }
+
+
+
 
 export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   isOpen,
@@ -29,35 +45,17 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   dataTestId = "collapsible-search",
   ariaLabel = "Collapsible sidebar",
   formData,
+  dropdownSelection,
+  setDropdownSelection,
+  selectedItem,
+  setSelectedItem,
+  initialInputFields,
+  manageFieldsAction
+    
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
-  const [dropdownSelection, setDropdownSelection] = useState<string | null>(
-    null
-  );
-  const [selectedItem, setSelectedItem] = useState("All Forms");
-  const initialInputFields = [
-    {
-      id: "submissionId",
-      label: "Submission ID",
-      type: "text",
-      value: "",
-    },
-    {
-      id: "submitter",
-      label: "Submitter",
-      type: "text",
-      value: "",
-    },
-    {
-      id: "status",
-      label: "Status",
-      type: "text",
-      value: "",
-    },
-  ];
-
-  const [inputFields, setInputFields] = useState(initialInputFields);
+const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields);
   
   const handleFieldChange = (index: number, newValue: string) => {
     setInputFields((prevFields) => {
@@ -71,7 +69,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     setExpanded(true);
   };
 
-  const handleSelection = (label) => setSelectedItem(label);
+const handleSelection = (label: string) => setSelectedItem(label);
 
   const handleCollapse = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation(); // Prevent event from bubbling up
@@ -95,6 +93,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
 
     const handleClear = () => {
     // Reset all input field values
+    setDropdownSelection(null);
     setInputFields((prevFields) =>
       prevFields.map((field) => ({
         ...field,
@@ -177,6 +176,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
                   label="Manage fields"
                   iconWithText
                   icon={<PencilIcon />}
+                  onClick= {manageFieldsAction}
                   dataTestId="manage-fields-button"
                   ariaLabel="Manage fields" 
                 />
