@@ -1,5 +1,5 @@
 import API from "../endpoints";
-import { StorageService, RequestService } from "@formsflow/service";
+import { StorageService, RequestService, HelperServices } from "@formsflow/service";
 import { SubmissionListResponse } from "../../types/submissions";
 
 
@@ -7,11 +7,24 @@ export const getSubmissionList = (
   limit = 10,
   pageNo = 1,
   sortOrder = "asc",
-  sortBy = "formName"
+  sortBy = "formName",
+  dateRange = { startDate: null, endDate: null }
 ): Promise<SubmissionListResponse> => {
+ const createdAfter = dateRange.startDate
+    ? `, createdAfter: "${HelperServices.getISODateTime(dateRange.startDate)}"`
+    : "";
+
+  const createdBefore = dateRange.endDate
+    ? `, createdBefore: "${HelperServices.getISODateTime(dateRange.endDate)}"`
+    : "";
   const query = `
     query MyQuery {
-      getSubmission(limit: ${limit}, pageNo: ${pageNo}, sortOrder: "${sortOrder}", sortBy: "${sortBy}") {
+      getSubmission(
+        limit: ${limit},
+        pageNo: ${pageNo},
+        sortOrder: "${sortOrder}",
+        sortBy: "${sortBy}"${createdAfter}${createdBefore}
+      )  {
         submissions {
           applicationStatus
           createdBy

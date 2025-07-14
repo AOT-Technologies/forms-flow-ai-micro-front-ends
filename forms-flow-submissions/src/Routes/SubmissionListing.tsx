@@ -7,13 +7,15 @@ import { push } from "connected-react-router";
 // Types and Services
 import { Submission } from "../types/submissions";
 import { getSubmissionList, fetchAllForms } from "../api/queryServices/analyzeSubmissionServices";
-import { formatDate } from "../helper/helper";
+import { formatDate,optionSortBy } from "../helper/helper";
+import { HelperServices } from "@formsflow/service";
 
 // Redux Actions
 import {
   setAnalyzeSubmissionSort,
   setAnalyzeSubmissionPage,
   setAnalyzeSubmissionLimit,
+  setAnalyzeSubmissionDateRange
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -47,6 +49,9 @@ const TaskSubmissionList: React.FC = () => {
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
+  //local state
+  const [showSortModal, setShowSortModal] = useState(false);
 
   // Columns Configuration
   const columns: Column[] = useMemo(() => [
@@ -62,9 +67,9 @@ const TaskSubmissionList: React.FC = () => {
   const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
 
   // Fetch Submissions
-  const { data, isLoading: isSubmissionsLoading } = useQuery({
-    queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder],
-    queryFn: () => getSubmissionList(limit, page, activeSortOrder, activeSortKey),
+  const { data, isLoading: isSubmissionsLoading,refetch } = useQuery({
+    queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder,dateRange],
+    queryFn: () =>getSubmissionList(limit, page, activeSortOrder, activeSortKey,dateRange),
     keepPreviousData: true,
     staleTime: 0,
   });
@@ -84,7 +89,7 @@ const TaskSubmissionList: React.FC = () => {
   const totalCount: number = data?.totalCount ?? 0;
 
   // Sort Handler
-  const handleSort = useCallback((key: string) => {
+   const handleSort = useCallback((key: string) => {
     const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
     const updatedSort = Object.fromEntries(
       Object.keys(sortParams).map((k) => [
@@ -94,7 +99,6 @@ const TaskSubmissionList: React.FC = () => {
     );
     dispatch(setAnalyzeSubmissionSort({ ...updatedSort, activeKey: key }));
   }, [dispatch, sortParams]);
-
   // Page Change Handler
   const handlePageChange = useCallback((pageNum: number) => {
     dispatch(setAnalyzeSubmissionPage(pageNum));
@@ -109,6 +113,42 @@ const TaskSubmissionList: React.FC = () => {
   return  <td key={index+value}><div className="text-overflow-ellipsis">{value}  </div></td>
 
  }
+
+  // sortmodal actions
+  const handleSortApply = (selectedSortOption, selectedSortOrder) => {
+    // if need to reset the sort orders use this function
+    const resetSortOrders = HelperServices.getResetSortOrders(
+      optionSortBy.options
+    );
+    const updatedData = {
+      ...resetSortOrders,
+      activeKey: selectedSortOption,
+      [selectedSortOption]: { sortOrder: selectedSortOrder },
+    };
+    dispatch(setAnalyzeSubmissionSort(updatedData));
+    setShowSortModal(false);
+  };
+
+  const handlerefresh = () => {
+    refetch();
+  };
+
+ const handleDateRangeChange = (newDateRange) => {
+  const { startDate, endDate } = newDateRange;
+
+  // Update state if:
+  // - both dates are selected
+  // - OR both are cleared (null)
+  const bothSelected = startDate && endDate;
+  const bothCleared = !startDate && !endDate;
+
+  if (!(bothSelected || bothCleared)) return;
+
+  dispatch(setAnalyzeSubmissionDateRange(newDateRange));
+  dispatch(setAnalyzeSubmissionPage(1));
+ };
+
+  const toggleFilterModal = () => setShowSortModal(!showSortModal);
   // Row Renderer
   const renderRow = ({id, formName,createdBy,created,applicationStatus}: Submission) => (
     <tr key={id}>
@@ -121,27 +161,31 @@ const TaskSubmissionList: React.FC = () => {
           actionTable
           label={t("View")}
           onClick={() => dispatch(push(`${redirectUrl}application/${id}`))}
-          dataTestId={`view-task-${id}`}
-          ariaLabel={t("View details for task {{taskName}}", {
+          dataTestId={`view-submission-${id}`}
+          ariaLabel={t("View details for submission {{taskName}}", {
             taskName: formName ?? t("unnamed"),
           })}
         />
         </div>
-        
       </td>
     </tr>
   );
 
   // Header Renderer
-  const renderHeaderCell = useCallback((
-    column: Column,
-    index: number,
-    columnsLength: number,
-    currentResizingColumn: any,
-    handleMouseDown: (index: number, column: Column, e: React.MouseEvent) => void
-  ) => {
-    const isLast = index === columnsLength - 1;
-    const headerKey = column.sortKey || `col-${index}`;
+  const renderHeaderCell = useCallback(
+    (
+      column: Column,
+      index: number,
+      columnsLength: number,
+      currentResizingColumn: any,
+      handleMouseDown: (
+        index: number,
+        column: Column,
+        e: React.MouseEvent
+      ) => void
+    ) => {
+      const isLast = index === columnsLength - 1;
+      const headerKey = column.sortKey || `col-${index}`;
 
     return (
       <th
@@ -194,8 +238,8 @@ const TaskSubmissionList: React.FC = () => {
         <div className="top-controls-row d-flex justify-content-between align-items-center mb-3">
           <div className="date-range-section">
             <DateRangePicker
-              value={""}
-              onChange={() => {}}
+              value={dateRange}
+              onChange={handleDateRangeChange}
               placeholder={t("Filter Created Date")}
               dataTestId="date-range-picker"
               ariaLabel={t("Select date range for filtering")}
@@ -203,27 +247,23 @@ const TaskSubmissionList: React.FC = () => {
               endDateAriaLabel={t("End date")}
             />
           </div>
-          
+
           <div className="d-flex button-align">
             <FilterSortActions
-              showSortModal={false}
-              handleFilterIconClick={() => {}}
-              handleRefresh={() => {}}
-              handleSortModalClose={() => {}}
-              handleSortApply={() => {}}
-              defaultSortOption={"asc"}
-              defaultSortOrder={() => {}}
-              optionSortBy={[
-                { value: "name", label: "Task" },
-                { value: "created", label: "Created Date" },
-                { value: "assignee", label: "Assigned To" },
-              ]}
-              filterDataTestId="task-list-filter"
-              filterAriaLabel={t("Filter the task list")}
-              refreshDataTestId="task-list-refresh"
-              refreshAriaLabel={t("Refresh the task list")}
+              showSortModal={showSortModal}
+              handleFilterIconClick={toggleFilterModal}
+              handleRefresh={handlerefresh}
+              handleSortModalClose={toggleFilterModal}
+              handleSortApply={handleSortApply}
+              defaultSortOption={sortParams?.activeKey}
+              defaultSortOrder={sortParams?.[sortParams.activeKey]?.sortOrder}
+              optionSortBy={optionSortBy.options}
+              filterDataTestId="submissiom-list-filter"
+              filterAriaLabel={t("Filter the submission list")}
+              refreshDataTestId="submission-list-refresh"
+              refreshAriaLabel={t("Refresh the submission list")}
               sortModalTitle={t("Sort Tasks")}
-              sortModalDataTestId="task-sort-modal"
+              sortModalDataTestId="submission-sort-modal"
               sortModalAriaLabel={t("Modal for sorting tasks")}
               sortByLabel={t("Sort by")}
               sortOrderLabel={t("Sort order")}
@@ -262,7 +302,7 @@ const TaskSubmissionList: React.FC = () => {
                   headerClassName="resizable-header"
                   containerClassName="resizable-table-container"
                   scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
-                  dataTestId="task-resizable-table"
+                  dataTestId="submission-resizable-table"
                   ariaLabel={t("submissions data table with resizable columns")}
                 />
               </div>
