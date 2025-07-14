@@ -1,4 +1,4 @@
-import ACTION_CONSTANTS from "../constants/actionConstants";
+import ACTION_CONSTANTS from "../actions/actionConstants";
 
 export const setAnalyzeSubmissionSort = (data) => (dispatch) => {
   dispatch({
@@ -20,4 +20,10 @@ export const setAnalyzeSubmissionLimit = (data) => (dispatch) => {
   });
 };
 
+export const setAnalyzeSubmissionDateRange = (data) => (dispatch) =>{ 
+  dispatch({
+    type: ACTION_CONSTANTS.UPDATE_SUBMISSION_DATE_RANGE,
+    payload: data,
+  })
+}
 
