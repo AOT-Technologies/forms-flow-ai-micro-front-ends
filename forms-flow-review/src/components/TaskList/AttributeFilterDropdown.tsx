@@ -155,7 +155,13 @@ const AttributeFilterDropdown = () => {
             );
 
             let icon = null;
-            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+            if (
+              selectedFilter?.users?.length > 0 &&
+              !filter?.roles?.length &&
+              !filter?.users?.length
+            ) {
+              icon = null;
+            } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
               icon = <SharedWithOthersIcon className="shared-icon" />;
             } else if (isSharedToPublic || isSharedToMe) {
               icon = <SharedWithMeIcon className="shared-icon" />;

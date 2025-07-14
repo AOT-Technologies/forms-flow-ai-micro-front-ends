@@ -181,14 +181,11 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 const getTaskAccess = () => {
   if (shareAttrFilter === FILTER_SHARE_OPTIONS.PRIVATE) {
     return { users: [userDetails?.preferred_username], roles: [] };
-  } else if (shareAttrFilter === FILTER_SHARE_OPTIONS.SAME_AS_TASKS) {
-    const users = selectedFilter?.users?.length ? [...selectedFilter.users] : [];
-    const roles = selectedFilter?.roles?.length ? [...selectedFilter.roles] : [];
-    return { users, roles };
+  } else {
+    return { users: [], roles: [] };
   }
-
-  return { users: [], roles: [] };
 };
+
 
 
 const createFilterShareOption = (labelKey, value) => ({
