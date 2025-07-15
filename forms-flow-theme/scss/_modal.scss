@@ -1,4 +1,4 @@
-@import '_mixins';
+@import "_mixins";
 // Variables for reused values
 $primary: var(--ff-primary);
 $primary-light: var(--ff-primary-light);
@@ -7,8 +7,9 @@ $gray-dark: var(--ff-gray-dark);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $black-color: var(--ff-black);
-
-
+//base
+$base: 1rem;
+$lineThin: 1px;
 .modal {
   position: fixed;
   top: 0;
@@ -46,7 +47,6 @@ $black-color: var(--ff-black);
     &.modal-lg {
       max-width: $modalWidthLarge !important;
     }
-
 
     .modal-content {
       position: relative;
@@ -359,10 +359,7 @@ $black-color: var(--ff-black);
     height: 59vh;
     border-top: 1px solid $gray-medium;
   }
-  //TBD: Quick fix ,will remove later. 
-  .line-height-1{
-    line-height: 1 !important;
-  }
+  
   .choose-template-header {
     display: flex;
     padding: var(--spacer-200) 6.5rem var(--spacer-200) var(--spacer-250);
@@ -591,7 +588,6 @@ $black-color: var(--ff-black);
       border: none !important;
     }
   }
-
 }
 
 //Save template modal
@@ -1201,19 +1197,8 @@ $black-color: var(--ff-black);
       padding: 0;
       text-align: left;
     }
- 
   }
-
-
-
- 
 }
-
-
-
-
-
-
 
 .form-selection-modal{
   
@@ -1428,4 +1413,224 @@ $black-color: var(--ff-black);
     max-height: calc(100vh - 15.79rem);
     overflow-y: auto;
   }
+}
+
+.scroll-vertical {
+  overflow-y: auto;
+}
+
+.field-details-container {
+  @include paddingLvl3();
+
+  position: relative;
+
+  h3 {
+    @include textModalHighlight();
+  }
+}
+
+.slideout-variable-selected {
+  $spacingAround: $base;
+  $animSpeed: 300ms;
+  display: none;
+  position: absolute;
+  top: $spacingAround;
+  right: 0;
+  z-index: 20;
+  overflow: hidden;
+
+  transform: translateX(100%);
+  transition: transform $animSpeed;
+
+  display: flex;
+  flex-direction: column;
+  width: 19%;
+  height: calc(100% - #{$spacingAround} * 2);
+
+  background: $white;
+
+  border: $lineThin solid $colorDividerDark;
+  border-right: none;
+  border-top-left-radius: $borderRadiusModal;
+  border-bottom-left-radius: $borderRadiusModal;
+
+  .head {
+    @include divider();
+    padding: var(--spacer-150) var(--spacer-125);
+    & button {
+      padding: $paddingLvl3LR $paddingLvl3TB;
+    }
+  }
+
+  .content {
+    @include paddingLvl3;
+
+    background-color: white;
+  }
+
+  .variable-info {
+    p {
+      margin: 0;
+
+      &:nth-child(2) {
+        @include textEmphasis();
+      }
+    }
+  }
+
+  &.show {
+    transform: translateX(0);
+    display: flex;
+  }
+}
+
+.pill-container-vertical {
+  $iconCloseSize: $base;
+  $paddingRL: $base;
+  $paddingTB: $base/2;
+  $spacingBetween: $base/2;
+  $spacingBetweenLabels: $base/4;
+
+  @include paddingLvl4-inner;
+
+  width: 100%;
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    max-width: 100%;
+
+    background-color: $primary-light;
+
+    border-radius: $borderRadiusHeightSM;
+
+    & > p {
+      @include textBase();
+
+      display: flex;
+      flex-direction: column;
+
+      padding-top: $paddingTB;
+      padding-bottom: $paddingTB;
+      padding-left: $paddingRL;
+      padding-right: 0;
+
+      margin: 0;
+    }
+  }
+
+  .secondary-label {
+    color: $gray-medium-dark;
+
+    margin-top: $spacingBetweenLabels;
+  }
+
+  button {
+    @include clickableFeedback1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc($iconCloseSize + $paddingRL + $spacingBetween);
+
+    padding: $paddingTB $paddingRL;
+    padding-left: $spacingBetween;
+  }
+}
+
+.svg-icon-on-dark {
+  @include svgIcon();
+
+  stroke: $white-color;
+}
+
+.variable-modal {
+  .modal-dialog .modal-content .modal-body {
+    padding: 0px !important;
+    // margin-bottom: 0px !important ;
+    scrollbar-gutter: initial;
+  }
+  .custom-tabs {
+    padding: var(--spacer-200) var(--spacer-225) 0px var(--spacer-225);
+    margin-left: 0px !important;
+  }
+  .variable-modal-body {
+    display: flex;
+    flex-direction: row !important;
+    height: calc(100vh - 11rem);
+    .variable-modal-left-container {
+      width: 80%;
+      float: left;
+      border-right: $lineThin solid $gray-medium;
+       
+    }
+    .variable-modal-right-container {
+      width: 20%;
+      float: right;
+      // max-height: calc(100vh - 11rem);
+      overflow-y: auto;
+      padding: var(--spacer-150) var(--spacer-125);
+      gap: var(--spacer-100);
+      .right-container-header {
+        font-weight: var(--font-weight-xl);
+        font-size: var(--font-size-sm);
+        line-height: var(--text-line-height);
+      }
+      .select-text {
+        color: $gray-medium-dark;
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-sm);
+        line-height: var(--text-line-height);
+      }
+    }
+
+        .tabs {
+          margin-right: 0px;
+          margin-left: 0px;
+    
+          .tab-content {
+            height: 100%;
+          }
+    
+          .tab-content>div {
+            padding: 0px !important;
+          }
+        }
+  }
+  .form-control {
+    &:disabled {
+      background-color: var(--ff-white) !important;
+    }
+  }
+  // .formio-hilighted {
+  //   box-sizing: border-box;
+  //   border-radius: var(--radius-sm);
+  //   border: 2px dashed $primary !important;
+  //   padding: 8px 10px; //TBD need to update
+  // }
+  .form-container {
+      background-color: $gray-medium;
+      padding: 10px 20px;
+      height: 100%;
+    }
+  .pill-container {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacer-150) var(--spacer-125);
+    gap: var(--spacer-100);
+  }
+  .badge-pill {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: space-between;
+    line-height: 120% !important;
+    text-align: left !important;
+  }
+  .primary-label,
+.secondary-label {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
 }

@@ -337,3 +337,9 @@ $paddingLvl2MinS: var(--spacer-100);
   }
 }
 
+@mixin textModalHighlight {
+  @include textBase();
+
+  font-weight: 700;
+}
+

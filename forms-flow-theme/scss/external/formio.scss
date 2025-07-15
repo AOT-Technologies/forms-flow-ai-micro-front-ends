@@ -86,7 +86,7 @@ $gray-dark: var(--ff-gray-dark);
       '.formio-component-hidden',
     );
   
-    .task-variable-modal {
+    .variable-modal {
        .form-control:disabled {
         pointer-events: none;
        }
@@ -97,7 +97,7 @@ $gray-dark: var(--ff-gray-dark);
         .formio-component {
           // Apply hover effect only if the component is not in the ignored list
           &:not(#{$ignored-components}) {
-            padding: 8px 10px; 
+            // padding: 8px 10px; 
             border-style:  dotted;  
             border-color: transparent;
             &:hover {
