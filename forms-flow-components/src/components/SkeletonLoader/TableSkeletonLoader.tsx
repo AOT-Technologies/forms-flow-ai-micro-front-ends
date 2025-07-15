@@ -45,7 +45,7 @@ export const TableSkeleton: FC<TableSkeletonProps> = memo(
     );
 
     return (
-      <div className="custom-tables-wrapper" role="status" aria-label="Loading table data">
+      <div className="custom-table-wrapper-inner" role="status" aria-label="Loading table data">
         <table className="table table-skeleton">
           <thead>
             <tr>

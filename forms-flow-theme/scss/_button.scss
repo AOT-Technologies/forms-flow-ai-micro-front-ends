@@ -1604,6 +1604,10 @@ $danger-color: var(--ff-danger);
         }
 
         .select-options {
+          position: absolute;
+          
+          z-index: 3;
+
           div {
             @include textBase($fontSmallest, $primary-color);
 

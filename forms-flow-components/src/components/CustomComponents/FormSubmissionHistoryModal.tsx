@@ -40,21 +40,7 @@ const HistoryField = ({ fields }: { fields: { id: number; value: string }[] }) =
 export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProps> = React.memo(
   ({ show, onClose, title, allHistory, historyCount }) => {
     const { t } = useTranslation();
-    const timelineRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const adjustTimelineHeight = () => {
-        if (timelineRef.current && lastEntryRef.current) {
-          const lastEntryHeight = lastEntryRef.current.offsetHeight;
-          timelineRef.current.style.height = `calc(100% - ${lastEntryHeight}px)`;
-        }
-      };
-      
-      adjustTimelineHeight();
-      window.addEventListener("resize", adjustTimelineHeight);
-      return () => window.removeEventListener("resize", adjustTimelineHeight);
-    }, [show, allHistory]);
 
     return (
       <Modal
@@ -79,7 +65,7 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
           {historyCount > 0 ? (
             <>
             <div className="history-content" data-testid="form-history-content" aria-label="Form history content">
-              <div ref={timelineRef} className="timeline" data-testid="form-history-timeline" aria-label="Form history timeline"></div>
+              <div className="timeline" data-testid="form-history-timeline" aria-label="Form history timeline"></div>
               
                 {allHistory.map((entry, index) => (
                   <div

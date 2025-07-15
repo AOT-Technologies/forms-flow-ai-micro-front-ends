@@ -681,7 +681,6 @@ const Roles = React.memo((props: any) => {
           />
     
           <table className="table mt-3 old-design">
-            <tfoot>
             <TableFooter
             limit={sizePerPage}
             activePage={activePage}
@@ -690,7 +689,6 @@ const Roles = React.memo((props: any) => {
             onLimitChange={handleLimitChange}
             pageOptions={getPageList()}
           />
-            </tfoot>
           </table>
         </div>
         ) : (

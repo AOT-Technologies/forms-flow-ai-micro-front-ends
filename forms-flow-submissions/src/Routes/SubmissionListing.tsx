@@ -134,7 +134,7 @@ const TaskSubmissionList: React.FC = () => {
     return (
       <th
         key={`header-${headerKey}`}
-        className="resizable-column"
+        className="header-sortable"
         style={{ width: column.width }}
         data-testid={`column-header-${column.sortKey || "actions"}`}
         aria-label={column.name ? `${t(column.name)} ${t("column")}` : ""}
@@ -226,72 +226,52 @@ const TaskSubmissionList: React.FC = () => {
 
         {/* Table Container */}
         <div
-          className="container-wrapper"
+          className="custom-table-wrapper-outter"
           data-testid="table-container-wrapper"
         >
-          <div className="table-outer-container">
-            <div
-              className="table-scroll-wrapper resizable-scroll"
-              ref={scrollWrapperRef}
-            >
-              <div className="resizable-table-container">
-                <ReusableResizableTable
-                  columns={columns}
-                  data={submissions}
-                  renderRow={renderRow}
-                  renderHeaderCell={renderHeaderCell}
-                  emptyMessage={t(
-                    "No submissions have been found. Try a different filter combination or contact your admin."
-                  )}
-                  onColumnResize={(newWidths) =>
-                    console.log("Column resized:", newWidths)
-                  }
-                  loading={isSubmissionsLoading}
-                  tableClassName="resizable-table"
-                  headerClassName="resizable-header"
-                  containerClassName="resizable-table-container"
-                  scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
-                  dataTestId="task-resizable-table"
-                  ariaLabel={t("submissions data table with resizable columns")}
-                />
-              </div>
-            </div>
-          </div>
+          <ReusableResizableTable
+            columns={columns}
+            data={submissions}
+            renderRow={renderRow}
+            renderHeaderCell={renderHeaderCell}
+            emptyMessage={t(
+              "No submissions have been found. Try a different filter combination or contact your admin."
+            )}
+            onColumnResize={(newWidths) =>
+              console.log("Column resized:", newWidths)
+            }
+            loading={isSubmissionsLoading}
+            headerClassName="resizable-header"
+            scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+            dataTestId="task-resizable-table"
+            ariaLabel={t("submissions data table with resizable columns")}
+          />
 
           {/* Table Footer */}
           {submissions.length > 0 && (
-            <div className="table-footer-wrapper">
-              <table
-                className="custom-tables"
-                data-testid="table-footer-container"
-              >
-                <tfoot>
-                  <TableFooter
-                    limit={limit}
-                    activePage={page}
-                    totalCount={totalCount}
-                    loader={isSubmissionsLoading}
-                    handlePageChange={handlePageChange}
-                    onLimitChange={handleLimitChange}
-                    pageOptions={[
-                      { text: "10", value: 10 },
-                      { text: "25", value: 25 },
-                      { text: "50", value: 50 },
-                      { text: "100", value: 100 },
-                      { text: "All", value: totalCount },
-                    ]}
-                    dataTestId="submission-table-footer"
-                    ariaLabel={t("Table pagination controls")}
-                    pageSizeDataTestId="submission-page-size-selector"
-                    pageSizeAriaLabel={t(
-                      "Select number of submissions per page"
-                    )}
-                    paginationDataTestId="submission-pagination-controls"
-                    paginationAriaLabel={t("Navigate between submission pages")}
-                  />
-                </tfoot>
-              </table>
-            </div>
+            <TableFooter
+              limit={limit}
+              activePage={page}
+              totalCount={totalCount}
+              loader={isSubmissionsLoading}
+              handlePageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              pageOptions={[
+                { text: "10", value: 10 },
+                { text: "25", value: 25 },
+                { text: "50", value: 50 },
+                { text: "100", value: 100 },
+                { text: "All", value: totalCount },
+              ]}
+              dataTestId="submission-table-footer"
+              ariaLabel={t("Table pagination controls")}
+              pageSizeDataTestId="submission-page-size-selector"
+              pageSizeAriaLabel={t(
+                "Select number of submissions per page"
+              )}
+              paginationDataTestId="submission-pagination-controls"
+              paginationAriaLabel={t("Navigate between submission pages")}
+            />
           )}
         </div>
       </div>

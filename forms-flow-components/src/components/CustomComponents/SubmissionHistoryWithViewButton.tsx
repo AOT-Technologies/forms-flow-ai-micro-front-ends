@@ -99,16 +99,16 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
               data-testid="form-history-modal-title"
               aria-label="Form history modal title"
             >
-              <b>{t("History")}</b>
+              <p>{t("History")}</p>
             </Modal.Title>
-            <CloseIcon
-              onClick={onClose}
-              aria-label="Close form-history-modal"
-              data-testid="close-icon"
-            />
+
+            <div className="icon-close" onClick={onClose}>
+              <CloseIcon aria-label="Close form-history-modal" data-testid="close-icon" />
+            </div>
+            
           </Modal.Header>
           <Modal.Body
-            className="p-0"
+          className="side-by-side-process-history"
             data-testid="form-history-modal-body"
             aria-label="Form history modal body"
           >
@@ -116,12 +116,9 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
               <>loading</>
             ) : (
          
-                <div
-                  className={`${
-                    showBpmnDiagram && "d-flex justify-content-between gap-3 flex-column flex-lg-row analyse-submision-history-modal"}`}
-                >
+                <>
                   {showBpmnDiagram && (
-                    <div className="p-5">
+                    <div>
                       <ProcessDiagram
                         diagramXML={diagramXML ?? ""}
                         activityId={activityId ?? ""}
@@ -130,99 +127,65 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
                       />
                     </div>
                   )}
-
+                  
                   {histories?.length ? (
-                    <div
-                      className={`${
-                        showBpmnDiagram ? "p-5 history-div-left-border" : "mt-5"
-                      }`}
-                    >
+                    <div className="history-modal-body">
                       <div
-                        className={`position-relative ${
-                          showBpmnDiagram ? "mt-5" : "p-5"
-                        }`}
+                        className="history-content submissions"
+                        data-testid="form-history-content"
+                        aria-label="Form history content"
+                        ref={historyContentRef}
                       >
-                        <div
-                          ref={timelineRef}
-                          className="form-timeline"
-                          style={
-                            showBpmnDiagram
-                              ? { top: "-43px", left: "80px" }
-                              : {}
-                          }
-                          data-testid="form-history-timeline"
-                          aria-label="Form history timeline"
-                        ></div>
-                        <div
-                          className="d-flex flex-column gap-3"
-                          data-testid="form-history-content"
-                          aria-label="Form history content"
-                          ref={historyContentRef}
-                        >
-                          {histories.map((entry, index) => (
-                            <div
-                              key={entry.id ?? index}
-                              ref={
-                                index === histories.length - 1
-                                  ? lastEntryRef
-                                  : null
-                              }
-                              className={`form-history-entry version-style d-flex  ${flexClass}`}
-                              data-testid={`form-history-entry-${index}`}
-                              aria-label={`Form history entry ${index}`}
-                            >
-                              <p className="w-30 heading me-auto">
-                                {entry.applicationStatus}
-                              </p>
-                              <div
-                                className={`normal-text w-100 gap-${
-                                  showBpmnDiagram ? "5" : "3"
-                                } d-flex justify-content-${
-                                  showBpmnDiagram ? "between" : "end"
-                                } align-items-center`}
-                              >
-                                <div>
-                                  <p>
-                                    {t("Submitter By")}
-                                  </p>
-                                  <p>
+                        <div className="timeline" data-testid="form-history-timeline" aria-label="Form history timeline"></div>
+                        {histories.map((entry, index) => (
+                          <div
+                            key={entry.id ?? index}
+                            ref={
+                              index === histories.length - 1
+                                ? lastEntryRef
+                                : null
+                            }
+                            className="version major"
+                            data-testid={`form-history-entry-${index}`}
+                            aria-label={`Form history entry ${index}`}
+                          >
+                            <p className="heading">
+                              {entry.applicationStatus}
+                            </p>
+                            <div className="details">
+                              <div>
+                                <p>
+                                  {t("Submitter By")}
+                                </p>
+                                <p>
                                   {entry.submittedBy}
-                                  </p>
-                                </div>
-                                <div>
-                                  <p>
-                                    {t("Created On")}
-                                  </p>
-                                  <p>
-                                  {entry.created
-                                    ? HelperServices.getLocalDateAndTime(
-                                        entry.created
-                                      )
-                                    : "N/A"}
-                                  </p>
-                                </div>
+                                </p>
                               </div>
-
-                              <div
-                                className={`${!showBpmnDiagram && "w-50 d-flex justify-content-end"}`}
-                              >
-                                {viewSubmission(entry)}
+                              <div>
+                                <p>
+                                  {t("Created On")}
+                                </p>
+                                <p>
+                                  {entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A"}
+                                </p>
                               </div>
                             </div>
-                          ))}
-                        </div>
+
+                            {viewSubmission(entry)}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ) : (
                     <div
-                      className="text-center"
+                      className="history-modal-body"
                       data-testid="form-history-no-entry"
                       aria-label="No submission history found"
                     >
-                      {t("No submission history found")}
+                      {t("No submission history found.")}
                     </div>
                   )}
-                </div>
+                </>
              
             )}
           </Modal.Body>
