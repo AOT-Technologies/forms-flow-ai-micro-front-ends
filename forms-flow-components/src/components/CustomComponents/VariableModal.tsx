@@ -155,7 +155,6 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
           <div>
             <CloseIcon
               dataTestId="close"
-              color="red"
               onClick={() => setShowElement(false)}
             />
           </div>
@@ -233,7 +232,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                   </div>
                   <div>
                     <CloseIcon
-                      color="red"
+                    color={primaryLight}
                       data-testid="pill-remove-icon"
                       onClick={() => removeSelectedVariable(key)}
                     />

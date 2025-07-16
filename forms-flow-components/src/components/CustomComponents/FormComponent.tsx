@@ -132,7 +132,6 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           const componentType = typeClass
             ? (typeClass as string).split("-").pop()
             :componentKey;
-          console.log("hi keyClass", keyClass, "typeClass", typeClass,"componentype",componentType,"cls",classes.length);
 
           // Check if the component type is in the ignored list
           // Check if the component key is in the ignored list

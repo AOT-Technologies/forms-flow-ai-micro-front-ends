@@ -139,7 +139,7 @@ $paddingLvl2MinS: var(--spacer-100);
   padding: $paddingLvl2TB $paddingLvl2LR !important;
 
   & > * {
-    margin-bottom: $paddingLvl2S !important;
+    margin-bottom: $paddingLvl2S ;
 
     &:last-child {
       margin-bottom: 0 !important;
