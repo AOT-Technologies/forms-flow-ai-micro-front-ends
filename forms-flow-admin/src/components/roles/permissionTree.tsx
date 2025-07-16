@@ -112,7 +112,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
 
   return (
     <div
-      className="permission-tree custom-scroll"
+      className="permission-tree"
       data-testid="permission-tree"
       aria-label="Permission Tree"
     >

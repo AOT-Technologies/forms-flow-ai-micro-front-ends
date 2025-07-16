@@ -87,18 +87,17 @@ $borderRadiusModal: $base*1.5; // 24px
 $colorDivider: $gray-medium;
 $colorDividerDark: $gray-medium-dark;
 
+// constants
+$navPadding: $base;
+$scrollBarWidth: $base;
+
 // modals
 $modalWidthSmall: $base*60;
 $modalWidthLarge: $base*75;
-
-// nav
-$navPadding: $base;
+$modalOutterPadding: $base;
 
 // transitions
 $animSpeed: 300ms;
-
-// additional
-$scrollBarWidth: $base;
 
 
 
@@ -200,7 +199,7 @@ $scrollBarWidth: $base;
   --radius-lg: 1.59375rem; //25.5px
   --radius-modal: 1.5rem; //24px
   //custom
-  --client-nav: 0px;
+  --client-nav: 74px;
   --header-close-btn: 4.625rem;
   --default-danger-color: #FF4242;
 }

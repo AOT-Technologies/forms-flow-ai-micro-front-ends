@@ -38,7 +38,6 @@ export const SortableHeader: React.FC<SortableHeaderProps> = ({
 
   return (
     <button
-      className={`button-as-div ${className}`}
       onClick={() => handleSort(columnKey)}
       onKeyDown={handleKeyDown}
       aria-pressed={isSorted}

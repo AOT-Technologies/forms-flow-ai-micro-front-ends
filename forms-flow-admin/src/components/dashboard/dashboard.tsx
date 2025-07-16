@@ -257,7 +257,6 @@ const InsightDashboard = React.memo((props: any) => {
               data-testid="admin-dashboard-table"
             />
             <table className="table old-design">
-              <tfoot>
               <TableFooter
               limit={limit}
               activePage={activePage}
@@ -266,7 +265,6 @@ const InsightDashboard = React.memo((props: any) => {
               onLimitChange={handleLimitChange}
               pageOptions={getpageList()}
             />
-              </tfoot>
           </table>
           </div>
           ) : (

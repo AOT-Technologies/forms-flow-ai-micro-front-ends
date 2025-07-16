@@ -6,8 +6,10 @@ interface NoDataFoundProps {
 
 export const NoDataFound: React.FC<NoDataFoundProps> = ({ message }) => {
   return (
-    <p className="empty-message" data-testid="no-data-found">
-      {message}
-    </p>
+    <tbody className="table-empty">
+      <p className="empty-message" data-testid="no-data-found">
+        {message}
+      </p>
+    </tbody>
   );
 };

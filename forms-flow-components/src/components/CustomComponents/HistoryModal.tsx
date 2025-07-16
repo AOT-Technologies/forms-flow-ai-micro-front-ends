@@ -50,10 +50,14 @@ const HistoryField = ({ fields }) => {
     return (
       <div className="details">
         {fields.map(({ id, heading, value }) => (
-          <div key={id}>
-            <div className="content-headings">{heading}</div>
-            <div className="normal-text">{value}</div>
-          </div>
+          <>
+            {heading? (
+              <div key={id}>
+                <p>{heading}</p>
+                <p>{value}</p>
+              </div>
+              ) : '' }
+          </>
         ))}
       </div>
     );
@@ -69,16 +73,14 @@ const RevertField = ({
   disabled=false,
 }) => {
   return (
-    <div className="revert-btn">
-      <CustomButton
-        disabled={disabled}
-        label={label}
-        onClick={onClick}
-       dataTestId={dataTestId}
-        ariaLabel={ariaLabel}
-        actionTable
-      />
-    </div>
+    <CustomButton
+      disabled={disabled}
+      label={label}
+      onClick={onClick}
+      dataTestId={dataTestId}
+      ariaLabel={ariaLabel}
+      actionTable
+    />
   );
 };
 
@@ -234,11 +236,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             {isMajorVersion && (
               <div
                 ref={isLastEntry ? lastEntryRef : null}
-                className={`version major-version-grid ${
-                  categoryType === "WORKFLOW" ? "workflow-major-grid " : ""
+                className={`version major ${
+                  categoryType === "WORKFLOW" ? "workflow" : ""
                 }`}
               >
-                <div className="content-headings">Version {version}</div>
+                <p className="heading">Version {version}</p>
                 <HistoryField fields={fields} />
                 <RevertField
                   variant="secondary"
@@ -256,11 +258,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = React.memo(
             {!isMajorVersion && (
               <div
                 ref={isLastEntry ? lastEntryRef : null}
-                className={`version minor-version-grid ${
-                  categoryType === "WORKFLOW" ? "workflow-minor-grid" : ""
+                className={`version minor ${
+                  categoryType === "WORKFLOW" ? "workflow" : ""
                 }`}
               >
-                <div className="content-headings">Version {version}</div>
+                <p className="heading">Version {version}</p>
                 <HistoryField key={`${entry.version}-${index}`} fields={fields} />
                 <RevertField
                   variant="secondary"

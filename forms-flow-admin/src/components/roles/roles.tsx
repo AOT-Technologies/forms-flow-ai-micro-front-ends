@@ -385,18 +385,19 @@ const Roles = React.memo((props: any) => {
         minRows={3}
       />
       {showEditRoleModal && (
+        <div className="buttons-row">
           <CustomButton
-          variant={"secondary"}
-          size="lg"
-          label={t("Delete This Role")}
-          onClick={() => {
-            handleCloseEditRoleModal();
-            setHandleConfirmation(true);
-          }}
-          dataTestId="role-delete-button"
-          icon={<DeleteIcon />}
-          ariaLabel="Role delete button"
-        />
+            label={t("Delete This Role")}
+            onClick={() => {
+              handleCloseEditRoleModal();
+              setHandleConfirmation(true);
+            }}
+            dataTestId="role-delete-button"
+            icon={<DeleteIcon />}
+            ariaLabel="Role delete button"
+            iconWithText
+          />
+        </div>
       )}
       </div>
       )
@@ -425,15 +426,16 @@ const Roles = React.memo((props: any) => {
             <CloseIcon dataTestId="action-modal-close"/>
           </div>
         </Modal.Header>
-        <Modal.Body className="role-modal-body">
-        <CustomTabs
-          defaultActiveKey={key}
-          onSelect={setKey}
-          tabs={tabs}
-          dataTestId="create-roles-tabs"
-          ariaLabel="Create roles tabs"
-          className="d-flex gap-3"
-        />
+        <Modal.Body className="with-tabs">
+          <div className="tabs">
+            <CustomTabs
+              defaultActiveKey={key}
+              onSelect={setKey}
+              tabs={tabs}
+              dataTestId="create-roles-tabs"
+              ariaLabel="Create roles tabs"
+            />
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
@@ -465,15 +467,16 @@ const Roles = React.memo((props: any) => {
             <CloseIcon/>
           </div>
         </Modal.Header>
-        <Modal.Body className="role-modal-body">
-        <CustomTabs
-          defaultActiveKey={key}
-          onSelect={setKey}
-          tabs={tabs}
-          dataTestId="edit-roles-tabs"
-          ariaLabel="Edit roles tabs"
-          className="d-flex gap-3"
-        />
+        <Modal.Body className="with-tabs">
+          <div className="tabs">
+            <CustomTabs
+              defaultActiveKey={key}
+              onSelect={setKey}
+              tabs={tabs}
+              dataTestId="edit-roles-tabs"
+              ariaLabel="Edit roles tabs"
+            />
+          </div>
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
@@ -655,8 +658,8 @@ const Roles = React.memo((props: any) => {
           <CustomButton
             onClick={handleShowRoleModal}
             data-testid="roles-create-new-role-button"
-            label={<Translation>{(t) => t("New Role")}</Translation>}
-            ariaLabel={<Translation>{(t) => t("New Role")}</Translation>}
+            label="New Role"
+            ariaLabel="New Role"
             action
           />
         </div>
@@ -678,7 +681,6 @@ const Roles = React.memo((props: any) => {
           />
     
           <table className="table mt-3 old-design">
-            <tfoot>
             <TableFooter
             limit={sizePerPage}
             activePage={activePage}
@@ -687,7 +689,6 @@ const Roles = React.memo((props: any) => {
             onLimitChange={handleLimitChange}
             pageOptions={getPageList()}
           />
-            </tfoot>
           </table>
         </div>
         ) : (

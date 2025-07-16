@@ -28,6 +28,7 @@ interface CustomButtonProps {
   buttonLoading?: boolean;
   iconOnly?: boolean;  
   actionTable?: boolean;
+  actionTableSmall?: boolean;
   action?: boolean;
   iconWithText?: boolean;
   secondary?: boolean;
@@ -36,7 +37,7 @@ interface CustomButtonProps {
   successMessage?: string;
 }
 
-const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false, action: boolean = false, iconWithText: boolean = false, secondary: boolean = false, dark: boolean = false, darkPrimary: boolean = false, successMessage: string) => {
+const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false, actionTableSmall: boolean = false, action: boolean = false, iconWithText: boolean = false, secondary: boolean = false, dark: boolean = false, darkPrimary: boolean = false, successMessage: string) => {
   const sizeClassMap: Record<string, string> = {
     md: "btn-md",
     table: "btn-table",
@@ -62,6 +63,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   buttonLoading = false,
   iconOnly = false, 
   actionTable = false, 
+  actionTableSmall = false, 
   action = false, 
   iconWithText = false,
   secondary = false,
@@ -69,7 +71,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   darkPrimary = false,
   successMessage = "",
 }) => {
-  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable, action, iconWithText, secondary, dark, darkPrimary, successMessage);
+  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable, actionTableSmall, action, iconWithText, secondary, dark, darkPrimary, successMessage);
   const sizeOfButton = size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -85,6 +87,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       const totalWidth = buttonWidth + toggleWidth - 1;
       setMenuStyle({
         minWidth: `${totalWidth}px`,
+        maxWidth: `${totalWidth}px`,
         borderTop: "none",
         borderTopLeftRadius: "0",
         borderTopRightRadius: "0",
@@ -175,6 +178,23 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
       disabled={disabled}
       name={name}
       className={`button-action-table ${buttonLoading ? "loading" : ""}`}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      {t(label)}
+      {buttonLoading && <LoadingIcon />}
+    </button>
+    );
+  }
+
+  // Btn-Action-Table-Small
+  if (actionTableSmall) {
+    return (
+      <button
+      onClick={onClick}
+      disabled={disabled}
+      name={name}
+      className={`button-action-table-small ${buttonLoading ? "loading" : ""}`}
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
