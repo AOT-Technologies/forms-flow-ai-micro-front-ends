@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Form, Utils } from "@aot-technologies/formio-react";
-import { render } from "react-dom";
 import _ from "lodash";
 
 interface SelectedComponent {
@@ -30,7 +28,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
     ignoreKeywords
   }) => {
 
-    const { t } = useTranslation();
+
     const formRef = useRef(null);
     
      

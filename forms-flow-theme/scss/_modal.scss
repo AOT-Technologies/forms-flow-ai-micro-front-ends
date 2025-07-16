@@ -1442,7 +1442,6 @@ $lineThin: 1px;
   transform: translateX(100%);
   transition: transform $animSpeed;
 
-  display: flex;
   flex-direction: column;
   width: 19%;
   height: calc(100% - #{$spacingAround} * 2);
@@ -1548,7 +1547,6 @@ $lineThin: 1px;
 .variable-modal {
   .modal-dialog .modal-content .modal-body {
     padding: 0px !important;
-    // margin-bottom: 0px !important ;
     scrollbar-gutter: initial;
   }
   .custom-tabs {
@@ -1568,7 +1566,6 @@ $lineThin: 1px;
     .variable-modal-right-container {
       width: 20%;
       float: right;
-      // max-height: calc(100vh - 11rem);
       overflow-y: auto;
       padding: var(--spacer-150) var(--spacer-125);
       gap: var(--spacer-100);
@@ -1602,12 +1599,7 @@ $lineThin: 1px;
       background-color: var(--ff-white) !important;
     }
   }
-  // .formio-hilighted {
-  //   box-sizing: border-box;
-  //   border-radius: var(--radius-sm);
-  //   border: 2px dashed $primary !important;
-  //   padding: 8px 10px; //TBD need to update
-  // }
+
   .form-container {
       background-color: $gray-medium;
       padding: 10px 20px;

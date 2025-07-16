@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import {
   CloseIcon,
   CustomButton,
-  CustomPill,
   CustomTabs,
   FormComponent,
   FormInput,
@@ -135,12 +134,8 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
     }, []);
 
   const renderRightContainer = () => {
-  const filteredVariablePills = useMemo(
-    () =>
-      Object.values(alternativeLabels).filter(
-        ({ key }) => !ignoreKeywords.has(key)
-      ),
-    [alternativeLabels]
+   const filteredVariablePills = Object.values(alternativeLabels).filter(
+    ({ key }) => !ignoreKeywords.has(key)
   );
    
   return (
@@ -232,7 +227,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                   </div>
                   <div>
                     <CloseIcon
-                    color={primaryLight}
+                    color={primaryColor}
                       data-testid="pill-remove-icon"
                       onClick={() => removeSelectedVariable(key)}
                     />
@@ -274,8 +269,8 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
           <Modal.Title id="variable-modal-title">
             <p>{modalHeader}</p>
           </Modal.Title>
-          <div className="icon-close" onClick={onClose}>
-            <CloseIcon dataTestId="close-task-var-modal" />
+          <div className="icon-close" >
+            <CloseIcon onClick={onClose} dataTestId="close-task-var-modal" />
           </div>
         </ModalHeader>
         <Modal.Body className="variable-modal-body">

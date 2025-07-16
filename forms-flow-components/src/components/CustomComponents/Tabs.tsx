@@ -50,7 +50,7 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
       {tabs.map((tab, index) => (
         <Tab
           className={tab.className}
-          key={index}
+          key={`${tab.eventKey}-${index}`}
           eventKey={tab.eventKey}
           title={tab.title}
           data-testid={`${dataTestId}-tab-${tab.eventKey}`}
