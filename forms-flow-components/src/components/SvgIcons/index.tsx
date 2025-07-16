@@ -373,7 +373,7 @@ export const DownArrowIcon = ({ color = baseColor, ...props }) => (
 
 export const PencilIcon = ({ ...props }) => (
   <svg
-    className={`svgIcon-primary`}
+    className={props.className || "svgIcon-primary"}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 18 18"
     onClick={props.onClick}
@@ -398,7 +398,7 @@ export const AngleRightIcon = ({ color = baseColor, ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 17 17"
     onClick={props.onClick}
-    className="svgIcon-primary"
+    className={props.className || "svgIcon-primary"}
   >
     <path d="M5.24976 15.0003L11.7503 8.49971L5.25034 1.9997"/>
   </svg>
@@ -409,7 +409,7 @@ export const AngleLeftIcon = ({ color = baseColor, ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 17 17"
     onClick={props.onClick}
-    className="svgIcon-primary"
+    className={props.className || "svgIcon-primary"}
   >
     <path d="M11.7503 1.99971L5.24972 8.50029L11.7497 15.0003"/>
   </svg>

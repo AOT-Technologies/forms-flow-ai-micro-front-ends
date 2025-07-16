@@ -15,3 +15,17 @@ export const formatDate = (isoString: string): string => {
 
   return date.toLocaleString("en-US", options);
 };
+
+
+ export const optionSortBy = {
+  options:[
+  { value: "created", label: "Submission Date" },
+  { value: "form_name", label: "Form Name" },
+  {value:"application_status", label:"Application Status"},
+  {value:"id", label:"Submission Id"},
+  {value:"created_by", label:"Submitter"},
+],
+  get keys(){
+    return this.options.map(option => option.value);
+  }, 
+};

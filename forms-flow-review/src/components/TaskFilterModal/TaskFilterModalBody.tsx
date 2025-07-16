@@ -65,7 +65,6 @@ const TaskFilterModalBody = ({
   } = useSelector((state: RootState) => state.task);
 
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
-  const [accessOption, setAccessOption] = useState("specificRole");
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
@@ -93,6 +92,11 @@ const TaskFilterModalBody = ({
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
   const { tenantId } = useParams();
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId);
+  const SPECIFIC_ROLE = "specificRole";
+  const SPECIFIC_ASSIGNEE = "specificAssignee";
+  const CURRENT_USER = "currentUser";
+  const [accessOption, setAccessOption] = useState(CURRENT_USER);
+
 
   const changeAcessOption = (option: string) => {
     setAccessOption(option);
@@ -134,14 +138,18 @@ const TaskFilterModalBody = ({
       });
     }
 
-    if (accessOption === "specificRole") {
+    if (accessOption === SPECIFIC_ROLE) {
       criteria.candidateGroup =
         MULTITENANCY_ENABLED && accessValue
           ? tenantKey + "-" + trimFirstSlash(accessValue)
           : trimFirstSlash(accessValue);
       delete criteria.assignee;
-    } else {
+    } else if(accessOption === SPECIFIC_ASSIGNEE){
       criteria.assignee = accessValue;
+      delete criteria.candidateGroup;
+    }
+    else{
+      delete criteria.assignee;
       delete criteria.candidateGroup;
     }
 
@@ -212,8 +220,23 @@ const TaskFilterModalBody = ({
     const { roles, users, criteria, properties } = filterToEdit;
     const { assignee, sorting, candidateGroup } = criteria;
     setShareFilterForSpecificRole(roles);
-    setAccessOption(assignee ? "specificAssignee" : "specificRole");
-    setAccessValue(assignee ? assignee : candidateGroup);
+    let accessOption;
+    let accessValue;
+
+    if (assignee) {
+      accessOption = SPECIFIC_ASSIGNEE;
+      accessValue = assignee;
+    } else if (candidateGroup) {
+      accessOption = SPECIFIC_ROLE;
+      accessValue = candidateGroup;
+    } else {
+      accessOption = CURRENT_USER;
+      accessValue = "";
+    }
+
+    setAccessOption(accessOption);
+    setAccessValue(accessValue);
+
     handleSorting(sorting);
     handleShareFilter(roles, users);
     setDataLineValue(properties?.displayLinesCount ?? 1);
@@ -230,6 +253,7 @@ const TaskFilterModalBody = ({
           formId: matchedForm.formId,
           formName: matchedForm.formName,
         });
+        handleFetchTaskVariables(matchedForm.formId);
       }
     }
   }, [filterToEdit, forms.length]);
@@ -303,42 +327,108 @@ const TaskFilterModalBody = ({
     return { label: value, value, onClick: () => setDataLineValue(i + 1) };
   });
 
-  const isDuplicateVariable = (taskVar, existingVars) => {
-    return existingVars.some(
-      (existingVar) =>
-        existingVar.key === taskVar.key && existingVar.label === taskVar.label
+ const isDuplicateVariable = (taskVar, existingVars) => {
+  return existingVars.some(
+    (existingVar) =>
+      existingVar.key === taskVar.key && existingVar.label === taskVar.label
+  );
+};
+
+const isValidVariableType = (taskVar) => {
+  return taskVar.type !== "hidden" && taskVar.type !== "radio";
+};
+
+const createVariableFromTask = (variable, baseIndex, isChecked = true) => ({
+  ...variable,
+  name: variable.key,
+  isChecked,
+  sortOrder: baseIndex + 1,
+  isFormVariable: true,
+});
+
+const findExistingVariable = (variables, targetVar) => {
+  return variables.find(
+    v => v.key === targetVar.key && v.label === targetVar.label
+  );
+};
+
+const removeDuplicateVariables = (variables) => {
+  return variables.filter((variable, index, self) =>
+    index === self.findIndex(v => v.key === variable.key && v.label === variable.label)
+  );
+};
+
+const transformToDynamicVariables = (taskVariables, existingVars) => {
+  return taskVariables
+    .filter(taskVar => 
+      isValidVariableType(taskVar) && 
+      !isDuplicateVariable(taskVar, existingVars)
+    )
+    .map((variable, index) => 
+      createVariableFromTask(variable, existingVars.length + index)
     );
-  };
+};
 
-  const transformToDynamicVariables = (taskVariables, existingVars) => {
-    return taskVariables
-      .filter(
-        (taskVar) =>
-          taskVar.type !== "hidden" && taskVar.type !== "radio" &&
-          !isDuplicateVariable(taskVar, existingVars)
-      )
-      .map((variable, index) => ({
-        ...variable,
-        name: variable.key,
-        isChecked: true,
-        sortOrder: existingVars.length + index + 1,
-        isFormVariable: true,
-      }));
-  };
 
-  const handleFetchTaskVariables = (formId) => {
-    fetchTaskVariables(formId)
-      .then((res) => {
-        const taskVariables = res.data?.taskVariables || [];
-        const dynamicVariables = transformToDynamicVariables(
-          taskVariables,
-          defaultTaskVariable
-        );
-        const combinedVars = [...defaultTaskVariable, ...dynamicVariables];
-        setVariableArray(combinedVars);
-      })
-      .catch((err) => console.error(err));
-  };
+
+const processNewFilterMode = (taskVariables, defaultTaskVariable) => {
+  const dynamicVariables = transformToDynamicVariables(taskVariables, defaultTaskVariable);
+  return [...defaultTaskVariable, ...dynamicVariables];
+};
+
+const handleFetchTaskVariables = (formId) => {
+  fetchTaskVariables(formId)
+    .then((res) => {
+      const taskVariables = res.data?.taskVariables || [];
+      const isEditingWithSameForm = filterToEdit?.id && filterToEdit?.properties?.formId === formId;
+
+      let combinedVars;
+      
+      if (isEditingWithSameForm) {
+        // Get current task variable keys for comparison
+        const currentTaskVariableKeys = taskVariables
+          .filter(taskVar => isValidVariableType(taskVar))
+          .map(taskVar => taskVar.key);
+        
+        // Filter out deleted form variables from existing filter
+        const existingFormVariables = (filterToEdit?.variables?.filter(v => v.isFormVariable) || [])
+          .filter(existingVar => currentTaskVariableKeys.includes(existingVar.key));
+        
+        // Get default variables with existing values preserved
+        const defaultVars = defaultTaskVariable.map(defaultVar => {
+          const existingVar = findExistingVariable(filterToEdit?.variables || [], defaultVar);
+          return existingVar || defaultVar;
+        });
+        
+        // Process new dynamic variables
+        const newDynamicVariables = taskVariables
+          .filter(taskVar => 
+            isValidVariableType(taskVar) && 
+            !isDuplicateVariable(taskVar, defaultTaskVariable)
+          )
+          .map((variable, index) => {
+            const existingVar = findExistingVariable(existingFormVariables, variable);
+            
+            return createVariableFromTask(
+              variable,
+              existingVar ? existingVar.sortOrder - 1 : defaultTaskVariable.length + existingFormVariables.length + index,
+              existingVar ? existingVar.isChecked : false
+            );
+          });
+
+        // Combine and deduplicate
+        const allFormVariables = [...existingFormVariables, ...newDynamicVariables];
+        const uniqueFormVariables = removeDuplicateVariables(allFormVariables);
+        
+        combinedVars = [...defaultVars, ...uniqueFormVariables];
+      } else {
+        combinedVars = processNewFilterMode(taskVariables, defaultTaskVariable);
+      }
+
+      setVariableArray(combinedVars);
+    })
+    .catch((err) => console.error(err));
+};
 
   // need to check if this function is used anywhere else
   const handleUpdateOrder = (updatedItems) => {
@@ -396,6 +486,7 @@ const TaskFilterModalBody = ({
     toggleUpdateModal();
     }
   };
+
   const handleDeleteClick = () => {
     dispatch(setFilterToEdit(getData()));
     toggleDeleteModal();
@@ -408,8 +499,9 @@ const TaskFilterModalBody = ({
   const isVariableArrayEmpty = variableArray.every((item) => !item.isChecked);
   const disableFilterButton = isVariableArrayEmpty || isFilterSame;
   const saveFilterButtonDisabled =
-    !filterName ||
-    !accessValue ||
+    !filterName || 
+    ((accessOption !== CURRENT_USER) && !accessValue) ||
+    !accessOption ||
     (filterToEdit?.id ? disableFilterButton : isVariableArrayEmpty);
   /* ------------------------------- tab values ------------------------------- */
   const columnsTab = () => (

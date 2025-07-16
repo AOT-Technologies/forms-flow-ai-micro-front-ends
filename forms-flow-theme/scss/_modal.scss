@@ -1160,6 +1160,7 @@ $black-color: var(--ff-black);
   }
 
   .draggable-item {
+    position: relative; 
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1168,16 +1169,17 @@ $black-color: var(--ff-black);
 
     border-radius: $borderRadiusHeightESM;
 
-    transition: all $animSpeed;
+    // transition: all $animSpeed; currently commented for smooth transition
 
     &:active {
-      cursor: grabbing;
+      cursor: grabbing; 
     }
 
+    
     &.dragging {
       opacity: 1;
       z-index: 1000;
-
+      background-color: $primary-light;
       & .dotted-line {
         border-bottom: $lineThick dashed $primary;
       }
@@ -1191,11 +1193,8 @@ $black-color: var(--ff-black);
     .draggable-icon {
       display: flex;
       align-self: center;
-
       padding: $paddingLvl5S;
-
       margin: 0;
-
       background: none;
       border: none;
       
@@ -1218,7 +1217,20 @@ $black-color: var(--ff-black);
         margin-left: calc($paddingLvl5S*2);
       }
     }
+
+    .label { 
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-align: left;
+    }
+ 
   }
+
+
+
+ 
 }
 
 
