@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   CloseIcon,
   CustomButton,
+  CustomPill,
   CustomTabs,
   FormComponent,
   FormInput,
@@ -23,9 +24,9 @@ interface VariableModalProps {
   secondaryBtndataTestid?: string;
   primaryBtnariaLabel?: string;
   secondaryBtnariaLabel?: string;
-  closedataTestid?: string;
   form: any;
   updatedAltLabels?: any;
+  saveBtnDisabled?: boolean;
 }
 
 export const VariableModal: React.FC<VariableModalProps> = React.memo(
@@ -42,6 +43,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
     secondaryBtnariaLabel = "Cancel",
     form,
     updatedAltLabels,
+    saveBtnDisabled = false,
   }) => {
     const [alternativeLabels, setAlternativeLabels] =
       useState(updatedAltLabels);
@@ -51,7 +53,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       SYSTEM: "system",
       FORM: "form",
     };
-    const [key, setKey] = useState(TAB_KEYS.SYSTEM);
+    const [key, setKey] = useState(TAB_KEYS.FORM);
     const { t } = useTranslation();
     const [selectedComponent, setSelectedComponent] = useState({
       key: null,
@@ -72,29 +74,31 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       "allAvailableRoles",
     ]);
 
-    const tabs = useMemo(() => [
-  {
-    eventKey: "system",
-    title: t("System"),
-    content: <div className="p-2">System variable show here</div>,
-  },
-  {
-    eventKey: "form",
-    title: t("Form"),
-    className: "form-container",
-    content: (
-      <FormComponent
-        form={form}
-        setShowElement={setShowElement}
-        detailsRef={detailsRef}
-        alternativeLabels={alternativeLabels}
-        setSelectedComponent={setSelectedComponent}
-        ignoreKeywords={ignoreKeywords}
-      />
-    ),
-  },
-], [form, alternativeLabels, t]);
-
+    const tabs = useMemo(
+      () => [
+        {
+          eventKey: "system",
+          title: t("System"),
+          content: <div className="p-2">System variable show here</div>,
+        },
+        {
+          eventKey: "form",
+          title: t("Form"),
+          className: "form-container",
+          content: (
+            <FormComponent
+              form={form}
+              setShowElement={setShowElement}
+              detailsRef={detailsRef}
+              alternativeLabels={alternativeLabels}
+              setSelectedComponent={setSelectedComponent}
+              ignoreKeywords={ignoreKeywords}
+            />
+          ),
+        },
+      ],
+      [form, alternativeLabels, t]
+    );
 
     const handleAddAlternative = () => {
       if (selectedComponent.key) {
@@ -115,145 +119,141 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       setShowElement(false);
     };
 
-    const handleSaveChanges = () =>{
+    const handleSaveChanges = () => {
       primaryBtnAction(alternativeLabels);
-      onClose(); 
-    }
+      onClose();
+    };
 
     const removeSelectedVariable = useCallback((key) => {
-        setSelectedComponent((prev) => ({
-            ...prev,
-            altVariable: "",
-          }));
+      setSelectedComponent((prev) => ({
+        ...prev,
+        altVariable: "",
+      }));
       setAlternativeLabels((prev) => {
         const newLabels = { ...prev };
         delete newLabels[key];
         return newLabels;
       });
-
     }, []);
 
-  const renderRightContainer = () => {
-   const filteredVariablePills = Object.values(alternativeLabels).filter(
-    ({ key }) => !ignoreKeywords.has(key)
-  );
-   
-  return (
-    <div className="">
-      {/* Slideout panel, always mounted */}
-      <div
-        className={`slideout-variable-selected ${
-          showElement ? "show" : ""
-        }`}
-      >
-        <div className="head">
-          <div>
-            <CloseIcon
-              dataTestId="close"
-              onClick={() => setShowElement(false)}
-            />
-          </div>
-        </div>
+    const renderRightContainer = () => {
+      const filteredVariablePills = Object.values(alternativeLabels).filter(
+        ({ key }) => !ignoreKeywords.has(key)
+      );
 
-        <div className="scroll-vertical">
-          <div className="content">
-            <div className="variable-info">
-              <p>{t("Type")}:</p>
-              <p>{selectedComponent.type}</p>
+      return (
+        <div className="">
+          {/* Slideout panel, always mounted */}
+          <div
+            className={`slideout-variable-selected ${
+              showElement ? "show" : ""
+            }`}
+          >
+            <div className="head">
+              <div>
+                <CloseIcon
+                  dataTestId="close"
+                  onClick={() => setShowElement(false)}
+                />
+              </div>
             </div>
 
-            <div className="variable-info">
-              <p>{t("Variable")}:</p>
-              <p>{selectedComponent.key}</p>
+            <div className="scroll-vertical">
+              <div className="content">
+                <div className="variable-info">
+                  <p>{t("Type")}:</p>
+                  <p>{selectedComponent.type}</p>
+                </div>
+
+                <div className="variable-info">
+                  <p>{t("Variable")}:</p>
+                  <p>{selectedComponent.key}</p>
+                </div>
+
+                <FormInput
+                  type="text"
+                  ariaLabel="Add alternative label input"
+                  dataTestId="Add-alternative-input"
+                  label="Add Alternative Label"
+                  value={selectedComponent.altVariable}
+                  onChange={(e) =>
+                    setSelectedComponent((prev) => ({
+                      ...prev,
+                      altVariable: e.target.value,
+                    }))
+                  }
+                />
+
+                <CustomButton
+                  dataTestId="Add-alternative-btn"
+                  ariaLabel="Add alternative label button"
+                  actionTable
+                  label={
+                    alternativeLabels[selectedComponent.key]
+                      ? t("Update This Variable")
+                      : t("Add This Variable")
+                  }
+                  onClick={handleAddAlternative}
+                  disabled={
+                    selectedComponent.altVariable ===
+                    alternativeLabels[selectedComponent.key]?.altVariable
+                  }
+                />
+              </div>
             </div>
-
-            <FormInput
-              type="text"
-              ariaLabel="Add alternative label input"
-              dataTestId="Add-alternative-input"
-              label="Add Alternative Label"
-              value={selectedComponent.altVariable}
-              onChange={(e) =>
-                setSelectedComponent((prev) => ({
-                  ...prev,
-                  altVariable: e.target.value,
-                }))
-              }
-            />
-
-            <CustomButton
-              variant="primary"
-              dataTestId="Add-alternative-btn"
-              ariaLabel="Add alternative label button"
-              size="sm"
-              label={
-                alternativeLabels[selectedComponent.key]
-                  ? t("Update This Variable")
-                  : t("Add This Variable")
-              }
-              onClick={handleAddAlternative}
-              disabled={
-                selectedComponent.altVariable ===
-                alternativeLabels[selectedComponent.key]?.altVariable
-              }
-            />
           </div>
-        </div>
-      </div>
 
-      {/* Pills or empty state - only shown when panel is hidden */}
-      {!showElement && (
-        <>
-          <p className="right-container-header">
-            {t("Selected Variables") + ` (${filteredVariablePills.length})`}
-          </p>
-          
-          {filteredVariablePills.length > 0 ? (
-            <div className="pill-container">
-              {filteredVariablePills.map(
-              ({ key, altVariable, labelOfComponent }: any) => (
-                <Badge
-                  pill
-                  variant={primaryLight}
-                  data-testid="variable-pill"
-                  aria-label="variable-pill"
-                  key={key}
-                >
-                  <div className="d-flex flex-column">
-                    <span className="primary-label">
-                      {altVariable || labelOfComponent}
-                    </span>
-                    <span className="secondary-label">{key}</span>
-                  </div>
-                  <div>
-                    <CloseIcon
-                    color={primaryColor}
-                      data-testid="pill-remove-icon"
-                      onClick={() => removeSelectedVariable(key)}
-                    />
-                  </div>
-                </Badge>
-              )
-            )}
-          </div>
-            
-          ) : (
-            <p className="select-text">
-              {t(
-                "To use variables in the flow, submissions and tasks you need to specify which variables you want to import. Variables get imported at the time of the submission. If specific variables are not selected prior to the submission THEY WILL NOT BE AVAILABLE."
+          {/* Pills or empty state - only shown when panel is hidden */}
+          {!showElement && (
+            <>
+              <p className="right-container-header">
+                {t("Selected Variables") + ` (${filteredVariablePills.length})`}
+              </p>
+
+              {filteredVariablePills.length > 0 ? (
+                <div className="pill-container">
+                  {filteredVariablePills.map(
+                    ({ key, altVariable, labelOfComponent }: any) => (
+                      <CustomPill
+                        key={key}
+                        label={altVariable || labelOfComponent}
+                        icon={
+                          <CloseIcon
+                            color={primaryColor}
+                            data-testid="pill-remove-icon"
+                          />
+                        }
+                        bg={primaryLight}
+                        onClick={() => removeSelectedVariable(key)}
+                        secondaryLabel={key}
+                        className="d-flex flex-row justify-content-between align-items-center"
+                      />
+                    )
+                  )}
+                </div>
+              ) : (
+                <p className="select-text">
+                  {t(
+                    "To use variables in the flow, submissions and tasks you need to specify which variables you want to import. Variables get imported at the time of the submission. If specific variables are not selected prior to the submission THEY WILL NOT BE AVAILABLE."
+                  )}
+                  <br />
+                  <br />
+                  {t(
+                    "Select a form field on the left to add a variable to the list."
+                  )}
+                </p>
               )}
-              <br />
-              <br />
-              {t(
-                "Select a form field on the left to add a variable to the list."
-              )}
-            </p>
+            </>
           )}
-        </>
-      )}
-    </div>
-  );
-};
+        </div>
+      );
+    };
+
+    const hasAltVariableChanged = useMemo(() => {
+      return (
+        JSON.stringify(updatedAltLabels) !== JSON.stringify(alternativeLabels)
+      );
+    }, [updatedAltLabels, alternativeLabels]);
 
     return (
       <Modal
@@ -269,11 +269,15 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
           <Modal.Title id="variable-modal-title">
             <p>{modalHeader}</p>
           </Modal.Title>
-          <div className="icon-close" >
-            <CloseIcon onClick={onClose} dataTestId="close-task-var-modal" />
+          <div
+            className="icon-close"
+            onClick={onClose}
+            data-testid="close-task-var-modal"
+          >
+            <CloseIcon />
           </div>
         </ModalHeader>
-        <Modal.Body className="variable-modal-body">
+        <Modal.Body className={`variable-modal-body ${saveBtnDisabled && "disabled"}`}>
           <div className="variable-modal-left-container tabs">
             <CustomTabs
               defaultActiveKey={key}
@@ -291,7 +295,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
         <Modal.Footer>
           <div className="buttons-row">
             <CustomButton
-              // disabled={}
+              disabled={saveBtnDisabled || !hasAltVariableChanged}
               label={t(primaryBtnLabel)}
               onClick={handleSaveChanges}
               name="applyButton"

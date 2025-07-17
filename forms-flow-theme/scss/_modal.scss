@@ -7,6 +7,7 @@ $gray-dark: var(--ff-gray-dark);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $black-color: var(--ff-black);
+
 //base
 $base: 1rem;
 $lineThin: 1px;
@@ -1554,6 +1555,10 @@ $lineThin: 1px;
     margin-left: 0px !important;
   }
   .variable-modal-body {
+    &.disabled { 
+      pointer-events: none;
+      opacity: 50%;
+    }
     display: flex;
     flex-direction: row !important;
     height: calc(100vh - 11rem);
@@ -1612,11 +1617,12 @@ $lineThin: 1px;
     gap: var(--spacer-100);
   }
   .badge-pill {
-    display: flex !important;
-    flex-direction: row;
-    justify-content: space-between;
+    border-radius: var(--radius-sm) !important;
     line-height: 120% !important;
     text-align: left !important;
+    svg path{
+      stroke: $primary;
+    }
   }
   .primary-label,
 .secondary-label {
