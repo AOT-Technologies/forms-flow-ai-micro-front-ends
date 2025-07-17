@@ -11,7 +11,6 @@ import {
   FormInput,
 } from "../../formsflow-components";
 import { StyleServices } from "@formsflow/service";
-import Badge from "react-bootstrap/Badge";
 
 interface VariableModalProps {
   show: boolean;
