@@ -92,7 +92,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       );
       setUpdatedForm(data);
       setManipulatedKeys(new Set(manipulatedKeys));
-    }, []);
+    }, [form, ignoreKeywords]);
 
     //   These ignored keys and types from rendering the form.
     const ignoredTypes = new Set([

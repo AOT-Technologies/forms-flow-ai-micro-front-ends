@@ -1586,18 +1586,18 @@ $lineThin: 1px;
     display: flex;
     flex-direction: row !important;
     height: calc(100vh - 11rem);
+
     .variable-modal-left-container {
       width: 80%;
       float: left;
       border-right: $lineThin solid $gray-medium;
-       
     }
     .variable-modal-right-container {
       width: 20%;
       float: right;
       overflow-y: auto;
       padding: var(--spacer-150) var(--spacer-125);
-      gap: var(--spacer-100);
+
       .right-container-header {
         font-weight: var(--font-weight-xl);
         font-size: var(--font-size-sm);
@@ -1637,12 +1637,11 @@ $lineThin: 1px;
   .pill-container {
     display: flex;
     flex-direction: column;
-    padding: var(--spacer-150) var(--spacer-125);
     gap: var(--spacer-100);
   }
   .badge-pill {
     border-radius: var(--radius-sm) !important;
-    line-height: 120% !important;
+    line-height: var(--text-line-height) !important;
     text-align: left !important;
     svg path{
       stroke: $primary;
