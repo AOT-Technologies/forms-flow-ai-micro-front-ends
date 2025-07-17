@@ -19,6 +19,7 @@ import { cloneDeep } from "lodash";
 import { ReorderAttributeFilterModal } from "../ReorderAttributeFilterModal";
 import { userRoles } from "../../helper/permissions";
 import { UserDetail } from "../../types/taskFilter";
+import { buildDateRangePayload } from "../../helper/tableHelper";
 
 const AttributeFilterDropdown = () => {
   const { t } = useTranslation();
@@ -43,6 +44,9 @@ const AttributeFilterDropdown = () => {
   const selectedFilter = useSelector(
     (state: RootState) => state.task.selectedFilter
   );
+  const dateRange = useSelector(
+    (state: RootState) => state.task.dateRange
+  );
   const handleToggleAttrFilterModal = () => {
     setShowAttributeFilter((prev) => !prev);
   };
@@ -64,30 +68,46 @@ const AttributeFilterDropdown = () => {
     );
   };
 
-  const changeAttributeFilterSelection = (attributeFilter) => {
-    dispatch(setSelectedBpmAttributeFilter(attributeFilter));
-    // need to feth task list based on selected attribute filter
-    // need to reset all params
-    if (!selectedFilter || ( !isUnsavedAttributeFilter && attributeFilter?.id === selectedAttributeFilter?.id))
-      return;
+const changeAttributeFilterSelection = (attributeFilter) => {
+  dispatch(setSelectedBpmAttributeFilter(attributeFilter));
+  // need to feth task list based on selected attribute filter
+  // need to reset all params
+  if (
+    !selectedFilter ||
+    (!isUnsavedAttributeFilter &&
+      attributeFilter?.id === selectedAttributeFilter?.id)
+  )
+    return;
 
-    //this is current selected filter criteria
-    const currentCriteria = cloneDeep(selectedFilter.criteria);
-    // we only need process variables from attribute filter data
-    const processVariables = attributeFilter?.criteria.processVariables?.filter(
-      (item) => item.name !== "formId"
-    );
-    // we need to patch the current criteria with process variables from attribute filter
-    if (processVariables && processVariables.length > 0) {
-      currentCriteria.processVariables = currentCriteria.processVariables || [];
-      currentCriteria.processVariables.push(...processVariables);
-    }
+  const date = buildDateRangePayload(dateRange);
 
-    // changing  assignee if assignee changed in attirbuite filter
-    currentCriteria.assignee = attributeFilter?.criteria.assignee;
-    const data = { ...selectedFilter, criteria: currentCriteria };
-    fetchTaskList(data);
+  //this is current selected filter criteria
+  const currentCriteria = cloneDeep(selectedFilter.criteria);
+  // we only need process variables from attribute filter data
+  const processVariables = attributeFilter?.criteria.processVariables?.filter(
+    (item) => item.name !== "formId"
+  );
+  // we need to patch the current criteria with process variables from attribute filter
+  if (processVariables && processVariables.length > 0) {
+    currentCriteria.processVariables = currentCriteria.processVariables || [];
+    currentCriteria.processVariables.push(...processVariables);
+  }
+
+  // changing  assignee if assignee changed in attirbuite filter
+  currentCriteria.assignee = attributeFilter?.criteria.assignee;
+
+  // append date range to currentCriteria if date is available
+  const updatedCriteria = {
+    ...currentCriteria,
+    ...date,
   };
+
+  const data = { ...selectedFilter, criteria: updatedCriteria };
+  fetchTaskList(data);
+};
+
+
+
   const onSearch = (searchTerm: string) => {
     setFilterSearchTerm(searchTerm);
   };
