@@ -77,7 +77,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
               data-testid={ datatestId }
               aria-label="Primary message"
             >
-              {t(message)}
+              {message}
             </div>
             {messageSecondary && (
               <div
@@ -85,7 +85,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
                 data-testid="confirm-modal-secondary-message"
                 aria-label="Secondary message"
               >
-                {t(messageSecondary)}
+                {messageSecondary}
               </div>
             )}
           </div>

@@ -523,7 +523,6 @@ const Users = React.memo((props: any) => {
             data-testid="admin-users-table"
           />
           <table className="table mt-3 old-design">
-            <tfoot>
               <TableFooter
                   limit={props?.limit?.sizePerPage}
                   activePage={activePage} 
@@ -532,8 +531,6 @@ const Users = React.memo((props: any) => {
                   onLimitChange={handleLimitChange}
                   pageOptions={getPageList()}
                 />
-
-              </tfoot>
             </table>
           </div>
         ) : (

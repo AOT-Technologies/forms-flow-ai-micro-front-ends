@@ -66,7 +66,13 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
             );
 
             let icon = null;
-            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+            if (
+              selectedFilter?.users?.length > 0 &&
+              !item?.roles?.length &&
+              !item?.users?.length
+            ) {
+              icon = null;
+            } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
               icon = <SharedWithOthersIcon />;
             } else if (isSharedToPublic || isSharedToMe) {
               icon = <SharedWithMeIcon />;

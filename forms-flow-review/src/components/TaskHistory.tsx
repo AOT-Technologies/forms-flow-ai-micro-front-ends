@@ -130,33 +130,31 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
                   <div
                     key={entry.id || index}
                     ref={index === appHistory.length - 1 ? lastEntryRef : null}
-                    className="version major-version-grid"
+                    className="version major"
                     data-testid={`form-history-entry-${index}`}
                     aria-label={`Form history entry ${index}`}
                   >
-                    <div className="content-headings">
+                    <p className="heading">
                       {entry.applicationStatus || "N/A"}
-                    </div>
+                    </p>
 
                     <div className="details">
                       <div>
-                        <div className="content-headings">Submitted By</div>
-                        <div className="normal-text">{entry.submittedBy || "N/A"}</div>
+                        <p>Submitted By</p>
+                        <p>{entry.submittedBy || "N/A"}</p>
                       </div>
                       <div>
-                        <div className="content-headings">Created On</div>
-                        <div className="normal-text">{entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A"}</div>
+                        <p>Created On</p>
+                        <p>{entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A"}</p>
                       </div>
                     </div>
 
-                    <div className="revert-btn">
-                      <CustomButton
-                        label="View Submission"
-                        onClick={viewSubmission(entry)}
-                        ariaLabel="view submission button"
-                        actionTable
-                      />
-                    </div>
+                    <CustomButton
+                      label="View Submission"
+                      onClick={viewSubmission(entry)}
+                      ariaLabel="view submission button"
+                      actionTable
+                    />
 
                     {/* <HistoryField
                       fields={[

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { InputGroup } from 'react-bootstrap';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { FormInput } from './FormInput';
-import { CloseIcon , ChevronIcon } from "../SvgIcons/index";
+import { CloseIcon , ChevronIcon, ClearIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
 
@@ -27,6 +27,7 @@ interface InputDropdownProps {
   setNewInput? : (value: string) => void;
   isInvalid?: boolean;
   inputClassName?: string;
+  className?: string;
   onBlurDropDown?: () => void; 
   disabled?: boolean;
   variant?: 'assign-user-sm' | 'assign-user-md'; 
@@ -53,6 +54,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   dataTestIdforInput,
   isInvalid,
   inputClassName='',
+  className='',
   onBlurDropDown,
   disabled = false,
   variant,
@@ -166,13 +168,10 @@ useEffect(() => {
   const renderIcon = () => {
     // Only show CloseIcon when variant is present AND inputValue exists
     if (variant && inputValue) {
-    return showCloseIcon && <CloseIcon 
+    return showCloseIcon && <ClearIcon 
             onClick={handleClearInput} 
-            color={disabled ? disabledColor : primaryColor} 
             data-testid="clear-input" 
             aria-label="Clear input"
-            width={9}
-            height={9}
             />;
     } else {
     // Default to ChevronIcon in all other cases
@@ -188,7 +187,7 @@ useEffect(() => {
     return item.label === inputValue || item.value === selectedOption;
   };
   return (
-      <div className="input-select" ref={dropdownRef}>
+      <div className={`input-select ${className}`} ref={dropdownRef}>
           {textBoxInput ? (
               <InputGroup ref={dropdownRef}>
                   <FormInput
@@ -211,7 +210,7 @@ useEffect(() => {
                 placeholder={t(placeholder)}
                 value={inputValue}
                 onChange={handleInputDropdownChange}
-                onClick={toggleDropdown}
+                onClick={!(isDropdownOpen)? toggleDropdown : null}
                 ariaLabel={ariaLabelforDropdown}
                 dataTestId={dataTestIdforDropdown}
                 icon={renderIcon()}
@@ -257,7 +256,7 @@ useEffect(() => {
                 onClick={() => handleSelect(item)}
                 data-testid={`list-${index}-item`}
                 aria-label={`list-${item.label}-item`}
-                          className={`${isItemSelected(item) ? 'selected-dropdown-item' : ''}`}
+                          className={`${isItemSelected(item) ? 'chosen' : ''}`}
               >
                 {t(item.label)}
               </ListGroup.Item>

@@ -160,19 +160,35 @@ const TaskListTable = () => {
     const isResizing = currentResizingColumn?.sortKey === column.sortKey;
 
     return (
-      <th
-        key={`header-${column.sortKey ?? index}`}
-        className={`resizable-column ${column.sortKey==="assignee" ? "customizable_assignee" : ''}`}
-        style={{ width: column.width }}
-        data-testid={`column-header-${column.sortKey ?? "actions"}`}
-        aria-label={`${t(column.name)} ${t("column")}${
-          isSortable ? ", " + t("sortable") : ""
-        }`}
-      >
-        {renderHeaderContent(column, isSortable)}
-        {isResizable &&
-          renderColumnResizer(column, isResizing, handleMouseDown, index)}
-      </th>
+      <>
+      {column.name ? (
+        <th
+          key={`header-${column.sortKey ?? index}`}
+          className={`${isSortable ? "header-sortable" : ''}`}
+          style={{ 'minWidth': column.width, 'maxWidth': column.width }}
+          data-testid={`column-header-${column.sortKey ?? "actions"}`}
+          aria-label={`${t(column.name)} ${t("column")}${
+            isSortable ? ", " + t("sortable") : ""
+          }`}
+        >
+          {renderHeaderContent(column, isSortable)}
+          {isResizable &&
+            renderColumnResizer(column, isResizing, handleMouseDown, index)}
+        </th>
+      ) : (
+        <th
+          key={`header-${column.sortKey ?? index}`}
+          data-testid={`column-header-${column.sortKey ?? "actions"}`}
+          aria-label={`${t(column.name)} ${t("column")}${
+            isSortable ? ", " + t("sortable") : ""
+          }`}
+        >
+          {renderHeaderContent(column, isSortable)}
+        </th>
+      )}
+
+      
+      </>
     );
   };
   const handleSort = (key) => {
@@ -201,15 +217,19 @@ const TaskListTable = () => {
 
   const renderHeaderContent = (column, isSortable) => {
     if (!isSortable) {
-      return t(column.name);
+      return (
+        <span className="text">
+          {t(column.name)}
+        </span>
+      ) 
     }
     return (
       <SortableHeader
+        className="header-sortable"
         columnKey={column.sortKey}
         title={t(column.name)}
         currentSort={filterListSortParams}
         handleSort={() => handleSort(column.sortKey)}
-        className="w-100 d-flex justify-content-between align-items-center"
         dataTestId={`sort-header-${column.sortKey}`}
         ariaLabel={t("Sort by {{columnName}}", {
           columnName: t(column.name),
@@ -251,7 +271,7 @@ const TaskListTable = () => {
   const renderActionCell = (task, colIndex) => (
     <td key={`action-${task.id}-${colIndex}`}>
       <CustomButton
-        actionTable
+        actionTableSmall
         label={t("View")}
         onClick={() => history.push(`${redirectUrl.current}task/${task.id}`)}
         dataTestId={`view-task-${task.id}`}
@@ -268,46 +288,37 @@ const TaskListTable = () => {
       data-testid={`task-${task.id}-${column.sortKey}`}
       aria-label={getCellAriaLabel(column, task)}
     >
-      <div
-        className={`${column.sortKey !== "assignee" ? "customizable_td_row" : "customizable_assignee"} `}
+      {column.sortKey == "assignee" ? (
+        getCellValue(column, task)
+      ) : (
+        <div className={`content`}
         style={{
           WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
         }}
       >
         {getCellValue(column, task)}
       </div>
+      )}
     </td>
   );
 
 
   const renderEmptyTable = () => (
     <div
-      className="container-wrapper"
+      className="custom-table-wrapper-outter"
       data-testid="no-columns-message"
       aria-label={t("No columns message")}
     >
-      <div className="table-outer-container">
-        <div className="table-scroll-wrapper">
-          <table className="resizable-table">
-            <thead className="visually-hidden">
-              <tr className="no-hover">
-                <th scope="col">{t("Message")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td
-                  className="empty-table-message"
-                  data-testid="empty-columns-message"
-                >
+      <div className="custom-table-wrapper-inner resizable">
+          <table>
+            <tbody className="table-empty">
+                <p className="empty-message" data-testid="empty-columns-message">
                   {t(
                     "No tasks have been found. Try a different filter combination or contact your admin."
                   )}
-                </td>
-              </tr>
+                </p>
             </tbody>
           </table>
-        </div>
       </div>
     </div>
   );
@@ -325,64 +336,49 @@ const TaskListTable = () => {
 
   /* ----------------------------------- --- ---------------------------------- */
   const renderTableContainer = () => (
-    <div
-      className="container-wrapper"
-      data-testid="table-container-wrapper"
-      aria-label={t("Task table container")}
-    >
-      <div
-        className="table-outer-container"
-        data-testid="table-outer-container"
-        aria-label={t("Table outer container")}
-      >
-        <ReusableResizableTable 
-              columns={columns}
-              data={tasksList}
-              renderRow={renderRow}
-              renderHeaderCell={renderHeaderCell}
-              emptyMessage={t(
-                "No tasks have been found. Try a different filter combination or contact your admin."
-              )}
-              onColumnResize={handleColumnResize}
-              loading={isTaskListLoading}
-              tableClassName="resizable-table"
-              headerClassName="resizable-header"
-              containerClassName="resizable-table-container"
-              scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
-              dataTestId="task-resizable-table"
-              ariaLabel={t("Tasks data table with resizable columns")}
-            />
-      </div>
+    <>
+    <div className="custom-table-wrapper-outter">
+      <ReusableResizableTable 
+            columns={columns}
+            data={tasksList}
+            renderRow={renderRow}
+            renderHeaderCell={renderHeaderCell}
+            emptyMessage={t(
+              "No tasks have been found. Try a different filter combination or contact your admin."
+            )}
+            onColumnResize={handleColumnResize}
+            loading={isTaskListLoading}
+            headerClassName="resizable-header"
+            scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+            dataTestId="task-resizable-table"
+            ariaLabel={t("Tasks data table with resizable columns")}
+          />
+      
       {renderTableFooter()}
-    </div>
+      </div>
+    </>
   );
 
   const renderTableFooter = () => (
-    <table
-      className="custom-tables"
-      data-testid="table-footer-container"
-      aria-label={t("Table footer container")}
-    >
-      <tfoot>
-        {tasksCount > 0 && tasksList?.length > 0 && (
-          <TableFooter
-            limit={limit}
-            activePage={activePage}
-            totalCount={tasksCount}
-            handlePageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-            pageOptions={PAGE_SIZE_OPTIONS}
-            dataTestId="task-table-footer"
-            ariaLabel={t("Table pagination controls")}
-            pageSizeDataTestId="task-page-size-selector"
-            pageSizeAriaLabel={t("Select number of tasks per page")}
-            paginationDataTestId="task-pagination-controls"
-            paginationAriaLabel={t("Navigate between task pages")}
-            loader={isTaskListLoading}
-          />
-        )}
-      </tfoot>
-    </table>
+    <>
+      {tasksCount > 0 && tasksList?.length > 0 && (
+        <TableFooter
+          limit={limit}
+          activePage={activePage}
+          totalCount={tasksCount}
+          handlePageChange={handlePageChange}
+          onLimitChange={handleLimitChange}
+          pageOptions={PAGE_SIZE_OPTIONS}
+          dataTestId="task-table-footer"
+          ariaLabel={t("Table pagination controls")}
+          pageSizeDataTestId="task-page-size-selector"
+          pageSizeAriaLabel={t("Select number of tasks per page")}
+          paginationDataTestId="task-pagination-controls"
+          paginationAriaLabel={t("Navigate between task pages")}
+          loader={isTaskListLoading}
+        />
+      )}
+    </>
   );
 
 

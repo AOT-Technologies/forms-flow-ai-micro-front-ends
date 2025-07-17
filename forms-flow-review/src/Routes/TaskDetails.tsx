@@ -230,16 +230,19 @@ const TaskDetails = () => {
           </p>
         </div>
         {/* Right Section: TaskAssigneeManager + History Button */}
-        <TaskAssigneeManager task={task} isFromTaskDetails={true} />
-        {viewTaskHistory && <div className="buttons">
-          <CustomButton
+        {/* <TaskAssigneeManager task={task} isFromTaskDetails={true} /> */}
+        <div className="buttons">
+          <TaskAssigneeManager task={task} isFromTaskDetails={true} />
+
+          {viewTaskHistory && <CustomButton
             label={t("History")}
             onClick={handleHistory}
             dataTestId="handle-task-details-history-testid"
             ariaLabel={t("Submission History Button")}
             dark
           />
-        </div>}
+          }
+        </div>
       </div>
 
 

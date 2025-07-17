@@ -26,6 +26,10 @@ const ParametersTab = ({
   }));
 
   const accessOptions = [
+      {
+      label: t("Current user"),
+      value: "currentUser",
+    },
     {
       label: t("Specific role"),
       value: "specificRole",
@@ -33,7 +37,7 @@ const ParametersTab = ({
     {
       label: t("Specific assignee"),
       value: "specificAssignee",
-    },
+    }  
   ];
 
   return (
@@ -65,7 +69,7 @@ const ParametersTab = ({
             required={true}
             id="specific-role"
           />
-      ) : (
+      ): accessOption === "specificAssignee" && (
           <InputDropdown
             key="assigneeDropdown"
             Options={assigneeOptions}

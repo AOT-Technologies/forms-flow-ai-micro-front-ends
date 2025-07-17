@@ -18,7 +18,7 @@ $lineThin: 1px;
   width: 100vw;
   height: 100vh;
 
-  padding: $base;
+  padding: $modalOutterPadding;
 
   .modal-dialog {
     display: flex;
@@ -104,6 +104,8 @@ $lineThin: 1px;
       .modal-footer {
         @include paddingLvl2();
 
+        justify-content: flex-start !important;
+
         & > * {
           margin: 0;
         }
@@ -164,6 +166,8 @@ $lineThin: 1px;
 
           padding: 0 !important;
 
+          scrollbar-gutter: auto;
+
           & > button {
             @include paddingLvl2();
             @include clickableFeedback2();
@@ -214,6 +218,8 @@ $lineThin: 1px;
 
           padding: 0 !important;
 
+          scrollbar-gutter: auto;
+
           & > div {
             margin: 0 !important;
           }
@@ -254,6 +260,59 @@ $lineThin: 1px;
           }
         }
 
+        &.side-by-side-process-history {
+          $rightSideWidth: 20rem;
+
+          display: flex;
+          flex-direction: row;
+          height: calc( 100vh - $modalOutterPadding * 2 );
+
+          padding: 0 !important;
+
+          scrollbar-gutter: auto;
+
+          & > div {
+            @extend .custom-scroll;
+
+            overflow: auto;
+
+            &:nth-child(1) {
+              flex-grow: 1;
+
+              margin: 0 !important;
+            }
+
+            &:nth-child(2) {
+              width: $rightSideWidth;
+
+              padding: $paddingLvl4TB $paddingLvl4LR !important;
+
+              border-left: $lineThin solid $colorDivider;
+            }
+
+          }
+
+          .left {
+            // @extend .custom-scroll;
+
+            // overflow: auto;
+            // flex-grow: 1;
+
+            // margin: 0 !important;
+          }
+
+          .right {
+            // @extend .custom-scroll;
+
+            // overflow-y: auto;
+            // width: $rightSideWidth;
+
+            // padding: $paddingLvl4TB $paddingLvl4LR !important;
+
+            // border-left: $lineThin solid $colorDivider;
+          }
+        }
+
         .message-primary,
         .message-secondary {
           @include text-modal-content;
@@ -264,34 +323,6 @@ $lineThin: 1px;
           font-weight: var(--font-weight-xl);
           margin-top: var(--spacer-150);
         }
-
-        // .content-wrapper {
-        //   display: flex;
-        //   width: 14.0625rem;
-        //   height: 10rem;
-        //   padding: var(--spacer-250) var(--spacer-200);
-        //   flex-direction: column;
-        //   align-items: flex-start;
-        //   gap: var(--spacer-150);
-        //   border-left: 0.0625rem solid $gray-medium !important;
-        //   flex-shrink: 0;
-        //   position: relative;
-        //   cursor: pointer;
-
-        //   &:first-child {
-        //     border-left: 0 !important;
-        //     border-top: 0 !important;
-        //     border-right: 0 !important;
-        //   }
-
-        //   &:last-child {
-        //     border-right: none !important;
-        //   }
-
-        //   &.col-6:nth-child(4) {
-        //     border-right: 0 !important;
-        //   }
-        // }
         
         .text-content {
           display: flex;
@@ -312,13 +343,6 @@ $lineThin: 1px;
        }
         
       }
-
-      .modal-footer {
-        justify-content: flex-start !important;
-        &.space-between {
-          justify-content: space-between !important;
-        }
-      }
     }
   }
 
@@ -328,7 +352,7 @@ $lineThin: 1px;
   transform: none;
 }
 
-// Chooste template modal styles
+// Choose template modal styles
 
 .choose-template-modal {
   .modal-title {
@@ -1468,15 +1492,15 @@ $lineThin: 1px;
     background-color: white;
   }
 
-  .variable-info {
-    p {
-      margin: 0;
+  // .variable-info {
+  //   p {
+  //     margin: 0;
 
-      &:nth-child(2) {
-        @include textEmphasis();
-      }
-    }
-  }
+  //     &:nth-child(2) {
+  //       @include textEmphasis();
+  //     }
+  //   }
+  // }
 
   &.show {
     transform: translateX(0);
