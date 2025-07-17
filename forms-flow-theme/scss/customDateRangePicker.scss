@@ -63,6 +63,10 @@ $primary-light: var(--ff-primary-light);
       border-right: 1px solid rgb(0, 0, 255) !important;
       background-color: $primary-color;
       opacity: 0.8;
+
+      svg path {
+        stroke: $white;
+      }
     }
 
     // Toggle icon

@@ -8,7 +8,7 @@
 ::-webkit-scrollbar {
   display: none;
   -ms-overflow-style: none;
-  scrollbar-width: none;
+  // scrollbar-width: none;
 }
 
 
@@ -111,11 +111,29 @@ input[type="checkbox"]+label,
 }
 
 
+
+
+.page-with-side {
+  @include paddingLvl1-horizontal();
+
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+
+  & > .page-content {
+    flex-grow: 1;
+
+    padding: 0 !important;
+  }
+}
+
 .page-content {
   @include paddingLvl1();
 
   display: flex;
   flex-direction: column;
+  width: 100%;
   height: 100%;
 
   & ._loading_overlay_wrapper {

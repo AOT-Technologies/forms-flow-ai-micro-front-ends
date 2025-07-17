@@ -128,7 +128,7 @@ const AttributeFilterDropdown = () => {
 
     const clearAttributeFilter = {
       className: !selectedAttributeFilter?.id ? "selected-filter-item" : "",
-      content: <>{t("All Fields")}</>,
+      content: <span>{t("All Fields")}</span>,
       onClick: () => changeAttributeFilterSelection(null),
       type: "none",
       dataTestId: "attr-filter-item-none",

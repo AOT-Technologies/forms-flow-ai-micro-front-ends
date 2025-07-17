@@ -119,3 +119,106 @@ $chevron-bg: #5e61f2;
   overflow: hidden;
 }
 
+.search-collapsible {
+  $size: calc(20 * $base);
+
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: calc($fontBase * $fontLineHeight + $paddingLvl6LR*2);
+  height: 100%;
+
+  background-color: $white-color;
+
+  border: $lineThin solid $primary;
+  border-radius: $borderRadiusModal;
+
+  // transition: width $animSpeed;
+
+  &.expanded {
+    width: $size;
+
+    outline: $lineThin solid $primary;
+
+    .toggle {
+      button {
+        span {
+          display: inline;
+        }
+
+        svg {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+
+  .toggle {
+    height: calc(($fontBase * $fontLineHeight) + ($paddingLvl3MinTB * 2));
+
+    button {
+      @include clickableFeedback1();
+
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+
+      gap: $paddingLvl3MinS;
+      padding: $paddingLvl3MinTB $paddingLvl3MinLR;
+
+      background-color: $primary;
+      border: none;
+
+      svg {
+        transform: rotate(0deg);
+
+        transition: transform 0ms;
+
+        path {
+          stroke: $white;
+        }
+      }
+
+      span {
+        @include textBaseHightlight($fontBase, $white);
+
+        display: none;
+      }
+    }
+  }
+
+  .collapsed-label {
+    @include textFilterNotSelected();
+
+    width: 100%;
+    height: 50rem; // big enough to fit text
+    align-content: center;
+
+    padding-top: $paddingLvl4TB;
+    
+    writing-mode: sideways-lr;
+    text-align: end;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .fields {
+      @include paddingLvl3();
+      @include divider();
+
+      flex-grow: 1;
+
+      .input-filter {
+        max-width: 100%;
+      }
+    }
+
+    .actions {
+      @include paddingLvl3();
+    }
+  }
+}

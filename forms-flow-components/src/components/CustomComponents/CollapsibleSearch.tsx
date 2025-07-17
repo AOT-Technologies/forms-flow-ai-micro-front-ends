@@ -107,57 +107,55 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     setSelectedItem("All Forms");
   };
   return (
-    <div
-      className={`collapsible-toggle ${expanded ? "expanded" : ""} ${!isActionDisabled ? "active-toggle" : ""}`}
-      onClick={toggleExpand}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          toggleExpand();
-        }
-      }}
-    >
-      <button
-        className="chevron-icon"
-        onClick={expanded ? handleCollapse : undefined}
-        type="button"
-        data-testid="collapse-toggle-button"
-        aria-label={expanded ? t("Collapse") : undefined}
+
+    <div className={`search-collapsible ${expanded ? "expanded" : ""} ${!isActionDisabled ? "active-toggle" : ""}`}>
+      <div
+        className={`toggle`}
+        onClick={toggleExpand}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            toggleExpand();
+          }
+        }}
       >
-        {expanded ? (
-          <div className="handle-collapse">
-            <span className="collapse-text">{t("Collapse")}</span>
-            <AngleLeftIcon className="svgIcon-onDark" />
+
+        <button
+          className="chevron-icon"
+          onClick={expanded ? handleCollapse : undefined}
+          type="button"
+          data-testid="collapse-toggle-button"
+          aria-label={expanded ? t("Collapse") : undefined}
+        >
+          <AngleRightIcon />
+          <span>{t("Collapse")}</span>
+        </button>
+
+        {!expanded ? (
+          <div className="collapsed-label">
+            {t("No Filters Are Active")}
           </div>
         ) : (
-          <AngleRightIcon className="svgIcon-onDark" />
+          ""
         )}
-      </button>
-      {!expanded ? (
-        <div className="collapsible-label">
-          {t("No Filters Are Active")}
-        </div>
-      ) : (
-        ""
-      )}
+
+      </div>
 
       {expanded && (
-        <div className="panel-content" data-testid="panel-content">
-          <div className="main-content">
-            <div className="panel-width">
-              <label className="form-label panel-label">{t("Form")}</label>
-              <ButtonDropdown
-                label={t(selectedItem)}
-                dropdownItems={DropdownItems}
-                dropdownType="DROPDOWN_ONLY"
-                dataTestId="business-filter-dropdown"
-                ariaLabel={t("Select business filter")}
-                className="button-collapsible input-filter"
-              />
-            </div>
+        <div className="content">
+        <div className="fields">
+        <label className="form-label panel-label">{t("Form")}</label>
+          <ButtonDropdown
+            label={selectedItem}
+            dropdownItems={DropdownItems}
+            dropdownType="DROPDOWN_ONLY"
+            dataTestId="business-filter-dropdown"
+            ariaLabel={t("Select business filter")}
+            className="input-filter" />
+
             {inputFields.map((field, index) => (
               <div className="panel-width" key={field.id}>
                 <label className="form-label panel-label">{field.label}</label>
@@ -170,40 +168,102 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
                 />
               </div>
             ))}
-            {dropdownSelection && (
-              <div className="panel-width">
-                <CustomButton
-                  secondary
-                  label="Manage fields"
-                  iconWithText
-                  icon={<PencilIcon />}
-                  dataTestId="manage-fields-button"
-                  ariaLabel="Manage fields" 
-                />
-              </div>
-            )}
-          </div>
-          <div className="search-clear">
+
+          {/* <div className="panel-width">
+    <label className="form-label panel-label">{t("Form")}</label>
+    <ButtonDropdown
+      label="test"
+      variant="primary"
+      size="md"
+      dataTestId="business-filter-dropdown"
+      ariaLabel={t("Select business filter")}
+      className="w-100"
+      dropdownItems={DropdownItems}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">
+      {t("Submission ID")}
+    </label>
+    <FormInput
+      name="title"
+      type="text"
+      // placeholder={t(placeholderForForm)}
+      // label={nameLabel}
+      aria-label={t("Name of the form")}
+      // dataTestId={nameInputDataTestid}
+      // onBlur={handleOnBlur}
+      // onChange={(event) => {
+      //   handleInputValueChange(event);
+      //   setNameError("");
+      //   handleChange("title", event);
+      // }}
+      required
+      // value={values.title}
+      // isInvalid={!!nameError}
+      // feedback={nameError}
+      // turnOnLoader={isFormNameValidating}
+      maxLength={200}
+      value={submissionId}
+      onChange={(e) => setSubmissionId(e.target.value)}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">{t("Submitter")}</label>
+    <FormInput
+      name="title"
+      type="text"
+      aria-label={t("Name of the form")}
+      required
+      value={submitter}
+      onChange={(e) => setSubmitter(e.target.value)}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">{t("Status")}</label>
+    <FormInput
+      name="title"
+      type="text"
+      aria-label={t("Name of the form")}
+      required
+      value={status}
+      onChange={(e) => setStatus(e.target.value)}
+    />
+  </div> */}
+
+
+          {dropdownSelection && (
+            // <div className="panel-width">
             <CustomButton
-              label="Search"
-              // onClick={primaryBtnAction}
-              // buttonLoading={buttonLoading}
-              disabled={isActionDisabled}
-              dataTestId="search-button"
-              ariaLabel="Search filters" 
-            />
-            <CustomButton
-              secondary
-              label="Clear"
-              onClick={handleClear}
-              dataTestId="clear-button"
-              ariaLabel="Clear filters" 
-              // buttonLoading={buttonLoading}
-              disabled={isActionDisabled}
-            />
-          </div>
+              label="Manage Fields"
+              icon={<PencilIcon />}
+              iconWithText 
+              dataTestId="manage-fields-button"
+              ariaLabel="Manage fields" 
+              />
+            // </div>
+          )}
+        </div>
+        <div className="actions">
+            <div className="buttons-row">
+              <CustomButton
+                label="Search"
+                // onClick={primaryBtnAction}
+                dataTestId="search-button"
+                ariaLabel="Search filters" 
+                // buttonLoading={buttonLoading}
+                disabled={isActionDisabled} />
+              <CustomButton
+                label="Clear"
+                onClick={handleClear}
+                dataTestId="clear-button"
+                ariaLabel="Clear filters" 
+                // buttonLoading={buttonLoading}
+                disabled={isActionDisabled}
+                secondary />
+            </div>
+        </div>
         </div>
       )}
     </div>
-  );
-};
+)};
