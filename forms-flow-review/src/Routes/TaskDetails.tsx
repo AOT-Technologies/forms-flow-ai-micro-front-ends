@@ -18,6 +18,7 @@ import {
   resetSubmission,
 } from "@aot-technologies/formio-react";
 import { BackToPrevIcon, CustomButton } from "@formsflow/components";
+import { StyleServices } from "@formsflow/service"; 
 import {
   getFormIdSubmissionIdFromURL,
   getFormUrlWithFormIdSubmissionId,
@@ -50,6 +51,9 @@ const TaskDetails = () => {
   const {viewTaskHistory} = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [disabledMode,setDisabledMode] = useState(false);
+  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customTitle = StyleServices?.getCSSVariable("--custom-title");
+  const hasMultitenancyHeader = customLogoPath || customTitle;
   // Redux State Selectors
   const tenantKey = useSelector(
     (state: any) => state.tenants?.tenantData?.tenantkey
@@ -209,9 +213,15 @@ const TaskDetails = () => {
     dispatch(getApplicationHistory(task?.applicationId));
     setShowHistoryModal(true);
   };
+
+  let scrollableOverview = "task-view-container-with-header"
+  if (hasMultitenancyHeader) {
+    scrollableOverview = "task-view-container-with-custom-header";
+  }
+
   // Main Renderor
   return (
-    <div className="task-details-view">
+    <div> 
       {showHistoryModal && (
         <TaskHistoryModal
           show={showHistoryModal}
@@ -245,7 +255,7 @@ const TaskDetails = () => {
           </div>
         </Card.Body>
       </Card>
-      <div className ={`scrollable-overview-with-header  ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`} >
+      <div className ={`${scrollableOverview}  ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`} >
         <TaskForm
           currentUser={currentUser}
           onFormSubmit={onFormSubmitCallback}
