@@ -10,6 +10,13 @@ $black-color: var(--ff-black);
 
 
 .modal {
+  @mixin modalBodyContent {
+    @include paddingLvl2();
+
+    display: flex;
+    flex-direction: column;
+  }
+
   position: fixed;
   top: 0;
   left: 0;
@@ -105,6 +112,8 @@ $black-color: var(--ff-black);
 
         justify-content: flex-start !important;
 
+        border-top: $lineThin solid $colorDivider;
+
         & > * {
           margin: 0;
         }
@@ -117,18 +126,11 @@ $black-color: var(--ff-black);
 
         padding: 0;
 
-        color: var(--default-font-color);
-        font-size: var(--spacer-150);
-        font-weight: var(--font-weight-sm);
+        border-bottom: $lineThin solid $colorDivider;
 
         .modal-title {
           @include paddingLvl2();
           @include textBase($fontModalTitle)
-
-          // font-size: var(--font-size-lg) !important;
-          // font-weight: var(--font-weight-sm) !important;
-          // line-height: var(--text-line-height) !important;
-          // text-transform: capitalize !important;
         }
 
         .icon-close {
@@ -142,12 +144,10 @@ $black-color: var(--ff-black);
       }
 
       .modal-body {
-        @include paddingLvl2();
+        @include modalBodyContent();
         @extend .custom-scroll;
 
         overflow: auto;
-        display: flex;
-        flex-direction: column;
 
         padding-right: calc($paddingLvl2LR - $scrollBarWidth) !important;
 
@@ -207,6 +207,20 @@ $black-color: var(--ff-black);
 
         &.with-sections {
           padding: 0 !important;
+
+          &.column {
+            scrollbar-gutter: auto;
+
+            & > div {
+              @include modalBodyContent();
+
+              margin-bottom: 0 !important;
+
+              &:not(:first-child) {
+                border-top: $lineThin solid $colorDivider;
+              }
+            }
+          }
         }
 
         &.side-by-side {
@@ -878,7 +892,6 @@ $black-color: var(--ff-black);
 
   .expression-section{
     display: flex;
-    padding: var(--spacer-200) var(--spacer-250);
     flex-direction: column;
     align-items: flex-start;
     align-self: stretch;
@@ -901,7 +914,7 @@ $black-color: var(--ff-black);
     display: flex;
     flex-direction: column;
     padding: var(--spacer-200);
-    gap: var(--spacer-150);
+    // gap: var(--spacer-150);
   }
   .tab-section {
     display: flex;

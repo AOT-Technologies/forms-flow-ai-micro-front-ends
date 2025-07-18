@@ -79,7 +79,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     
     const iconPositionClass = getIconPositionClass(iconPosition);
     return (
-            <Form.Group controlId={id} className="input-textarea">
+            <Form.Group controlId={id} className={`input-textarea ${icon ? 'with-icon' : ''} `}>
                 {label && (
                     <Form.Label className="custom-form-control-label">
                         {t(label)} {required && <span className="required-icon">*</span>}
@@ -100,7 +100,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         data-testid={dataTestId}
                         aria-label={ariaLabel}
                         required={required}
-                        className={` ${icon ? 'with-icon' : ''} `} //custom-textarea form-control-input ${className}
+                        // className={` ${icon ? 'with-icon' : ''} `} //custom-textarea form-control-input ${className}
                         onKeyDown={handleKeyDown}
                         minLength={minLength}
                         maxLength={maxLength}
@@ -109,7 +109,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         <InputGroup.Text
                             id="basic-addon1"
                             onClick={onIconClick}
-                            className={`icon-wrapper  ${iconPositionClass} ${disabled ? 'disabled-icon' : ''}`}
+                            className={` ${disabled ? 'disabled' : ''}`}
                         >
                             {icon}
                         </InputGroup.Text>
