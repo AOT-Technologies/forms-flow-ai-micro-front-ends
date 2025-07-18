@@ -85,8 +85,7 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
 
   return (
     <>{ isAnalyzeManager ? (<div className="main-container" tabIndex={0}>
-      <div className="container mt-5">
-        <div className="min-container-height ps-md-3">
+      <div className="page-with-side">
           <Switch>
             <Route
               exact
@@ -95,10 +94,9 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
             />
             <Redirect from="*" to="/404" />
           </Switch>
-        </div>
       </div>
     </div>) : <div className="main-container ">
-         <div className="container mt-5">
+         <div className="page-content">
          <div className="min-container-height ps-md-3" >
           <AccessDenied userRoles={userRoles} />
           </div>

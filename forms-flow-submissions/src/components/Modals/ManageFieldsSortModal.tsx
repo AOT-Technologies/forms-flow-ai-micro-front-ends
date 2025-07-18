@@ -3,28 +3,41 @@ import { Modal } from "react-bootstrap";
 import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
+import { fetchFormVariables } from "../../api/queryServices/analyzeSubmissionServices";
 
 
 interface ManageFieldsModalProps {
   show: boolean;
   onClose: () => void;
+  dropdownSelection: string | null;
+  selectedItem: string
 }
 
-const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose }) => {
+const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, dropdownSelection, selectedItem }) => {
   const { t } = useTranslation();
     const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
     const [submissionFields,  setSubmissionFields] = React.useState([]);
     useEffect(() => {
        // this will be replaced with the variables from the selectedc form fields
       const formFields = [
-        { id: "id", name: "Submission ID", isChecked: "true" },
-        { id: "formName", name: "Form", isChecked: "true" },
-        { id: "createdBy", name: "Submitter", isChecked: "true" },
-        { id: "created", name: "Submission Date", isChecked: "true" },
-        { id: "applicationStatus", name: "Status", isChecked: "true" }
+        { key: "id", name: "id", label: "Submission ID", isChecked: "true", isFormVariable: false },
+        { key: "formName", name: "formName", label: "Form", isChecked: "true", isFormVariable: false },
+        { key: "createdBy", name: "createdBy", label: "Submitter", isChecked: "true", isFormVariable: false },
+        { key: "created", name: "created", label: "Submission Date", isChecked: "true", isFormVariable: false },
+        { key: "applicationStatus", name: "applicationStatus", label: "Status", isChecked: "true", isFormVariable: false }
       ];
       setSubmissionFields(formFields);
     }, []);
+    useEffect(() => {
+      fetchFormVariables(dropdownSelection).then((response) => {
+        setSubmissionFields([
+          ...submissionFields,
+          ...response.data.taskVariables.map((variable) => ({ ...variable, isChecked: true , isFormVariable: true, name: variable.key }))
+        ]);
+
+      })
+    }, [show])
+
   
 
 
@@ -64,7 +77,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
           <Modal.Title id="manage-fields-sort-title">
             <b>
               {/* form name should be replaced here */}
-              {t("Manage Fields for form name")} 
+              {t(`Manage Fields for ${selectedItem}`)} 
 
             </b> 
           </Modal.Title>

@@ -13,7 +13,6 @@ interface User {
 
 interface AssignUserProps {
   size?: "sm" | "md";
-  isFromTaskDetails?: boolean;
   users: User[];
   currentAssignee: string;
   meOnClick?: () => void;
@@ -23,11 +22,11 @@ interface AssignUserProps {
   dataTestId?: string;
   manageMyTasks?:boolean;
   assignToOthers?:boolean;
+  minimized?:boolean;
 }
 
 export const AssignUser: React.FC<AssignUserProps> = ({
   size = "md",
-  isFromTaskDetails = false,
   users = [],
   currentAssignee,
   meOnClick,
@@ -37,6 +36,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   dataTestId = "assign-user",
   assignToOthers = false,
   manageMyTasks = false,
+  minimized = false,
 }) => {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
@@ -130,35 +130,39 @@ const dropdownOptions = useMemo(() => {
     <>
       {showSelector && (manageMyTasks || assignToOthers) && (
         <div
-          className={`input-select quick-select minimized`}
+          className={"input-select quick-select " + (minimized?'minimized':'')}
           aria-label={`${ariaLabel}-select-user-option`}
           data-testid={`${dataTestId}-select-user-option`}
         >
 
           <div className="empty">
-            {manageMyTasks && <button
-              className="option-me button-reset"
-              onClick={handleMeClick}
-              aria-label={`${ariaLabel}-me-button`}
-              data-testid={`${dataTestId}-me-button`}
-            >
-              {t("Me")}
-            </button>}
-            {(manageMyTasks && assignToOthers) && <div className="divider"></div>}
-            {assignToOthers && <button
-              className="option-others button-reset"
-              onClick={handleOthersClick}
-              aria-label={`${ariaLabel}-others-button`}
-              data-testid={`${dataTestId}-others-button`}
-            >
-              {t("Others")}
-            </button> }
+            {manageMyTasks &&
+              <button
+                className="option-me button-reset"
+                onClick={handleMeClick}
+                aria-label={`${ariaLabel}-me-button`}
+                data-testid={`${dataTestId}-me-button`}
+              >
+                {t("Me")}
+              </button>
+            }
+
+            {assignToOthers &&
+              <button
+                className="option-others button-reset"
+                onClick={handleOthersClick}
+                aria-label={`${ariaLabel}-others-button`}
+                data-testid={`${dataTestId}-others-button`}
+              >
+                {t("Others")}
+              </button>
+            }
           </div>
         </div>
       )}
       {/* Show InputDropdown when either Me or Others is selected */}
       {(selected === "Me" || selected === "Others")  && (
-        ( !manageMyTasks && !assignToOthers && !isFromTaskDetails) ? <label className="assigne-label">{selectedOption}</label> :
+        ( !manageMyTasks && !assignToOthers) ? <label className="assigne-label">{selectedOption}</label> :
         <InputDropdown
           showCloseIcon={showCloseIcon}
           hideDropDownList={(assignedToCurrentUser && !assignToOthers) || (!assignedToCurrentUser && !manageMyTasks)}
@@ -179,7 +183,7 @@ const dropdownOptions = useMemo(() => {
               }
             }, 150);
           }}
-          className="quick-select minimized"
+          className={"quick-select "  + (minimized?'minimized':'')}
         />
       )}
     </>

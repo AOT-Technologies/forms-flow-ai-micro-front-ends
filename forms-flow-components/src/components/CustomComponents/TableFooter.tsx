@@ -47,8 +47,8 @@ export const TableFooter: React.FC<TableFooterProps> = ({
 
   return (
     <>
-    <tr>
-      <td className="table-footer">
+    {/* <tr> */}
+      <div className="table-footer">
         <div className="table-footer-showing">
           <span>
             {t("Showing")} {limit * activePage - (limit - 1)} {t("to")}&nbsp;
@@ -108,8 +108,8 @@ export const TableFooter: React.FC<TableFooterProps> = ({
           )}
           </>
         ) : null}
-      </td>
-    </tr>
+      </div>
+    {/* </tr> */}
 
     {/*  
     <tr>

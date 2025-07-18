@@ -9,6 +9,12 @@ interface FormItem {
   formName: string;
   parentFormId: string;
 }
+interface InputField {
+  id: string;
+  label: string;
+  type: string;
+  value: string;
+}
 interface CollapsibleSearchProps {
   isOpen: boolean;
   hasActiveFilters: boolean;
@@ -19,7 +25,16 @@ interface CollapsibleSearchProps {
   ariaLabel?: string;
   manageFieldsAction?: () => void;
   formData: FormItem[];
+  dropdownSelection: string | null;
+  setDropdownSelection: (value: string | null) => void;
+  selectedItem: string;
+  setSelectedItem: (value: string) => void;
+  initialInputFields: InputField[];
+
 }
+
+
+
 
 export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   isOpen,
@@ -31,35 +46,16 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   ariaLabel = "Collapsible sidebar",
   manageFieldsAction,
   formData,
+  dropdownSelection,
+  setDropdownSelection,
+  selectedItem,
+  setSelectedItem,
+  initialInputFields,
+    
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
-  const [dropdownSelection, setDropdownSelection] = useState<string | null>(
-    null
-  );
-  const [selectedItem, setSelectedItem] = useState("All Forms");
-  const initialInputFields = [
-    {
-      id: "submissionId",
-      label: "Submission ID",
-      type: "text",
-      value: "",
-    },
-    {
-      id: "submitter",
-      label: "Submitter",
-      type: "text",
-      value: "",
-    },
-    {
-      id: "status",
-      label: "Status",
-      type: "text",
-      value: "",
-    },
-  ];
-
-  const [inputFields, setInputFields] = useState(initialInputFields);
+const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields);
   
   const handleFieldChange = (index: number, newValue: string) => {
     setInputFields((prevFields) => {
@@ -73,7 +69,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     setExpanded(true);
   };
 
-  const handleSelection = (label) => setSelectedItem(label);
+const handleSelection = (label: string) => setSelectedItem(label);
 
   const handleCollapse = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation(); // Prevent event from bubbling up
@@ -97,6 +93,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
 
     const handleClear = () => {
     // Reset all input field values
+    setDropdownSelection(null);
     setInputFields((prevFields) =>
       prevFields.map((field) => ({
         ...field,
@@ -109,57 +106,55 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
     setSelectedItem("All Forms");
   };
   return (
-    <div
-      className={`collapsible-toggle ${expanded ? "expanded" : ""} ${!isActionDisabled ? "active-toggle" : ""}`}
-      onClick={toggleExpand}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          toggleExpand();
-        }
-      }}
-    >
-      <button
-        className="chevron-icon"
-        onClick={expanded ? handleCollapse : undefined}
-        type="button"
-        data-testid="collapse-toggle-button"
-        aria-label={expanded ? t("Collapse") : undefined}
+
+    <div className={`search-collapsible ${expanded ? "expanded" : ""} ${!isActionDisabled ? "active-toggle" : ""}`}>
+      <div
+        className={`toggle`}
+        onClick={toggleExpand}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            toggleExpand();
+          }
+        }}
       >
-        {expanded ? (
-          <div className="handle-collapse">
-            <span className="collapse-text">{t("Collapse")}</span>
-            <AngleLeftIcon className="svgIcon-onDark" />
+
+        <button
+          className="chevron-icon"
+          onClick={expanded ? handleCollapse : undefined}
+          type="button"
+          data-testid="collapse-toggle-button"
+          aria-label={expanded ? t("Collapse") : undefined}
+        >
+          <AngleRightIcon />
+          <span>{t("Collapse")}</span>
+        </button>
+
+        {!expanded ? (
+          <div className="collapsed-label">
+            {t("No Filters Are Active")}
           </div>
         ) : (
-          <AngleRightIcon className="svgIcon-onDark" />
+          ""
         )}
-      </button>
-      {!expanded ? (
-        <div className="collapsible-label">
-          {t("No Filters Are Active")}
-        </div>
-      ) : (
-        ""
-      )}
+
+      </div>
 
       {expanded && (
-        <div className="panel-content" data-testid="panel-content">
-          <div className="main-content">
-            <div className="panel-width">
-              <label className="form-label panel-label">{t("Form")}</label>
-              <ButtonDropdown
-                label={t(selectedItem)}
-                dropdownItems={DropdownItems}
-                dropdownType="DROPDOWN_ONLY"
-                dataTestId="business-filter-dropdown"
-                ariaLabel={t("Select business filter")}
-                className="button-collapsible input-filter"
-              />
-            </div>
+        <div className="content">
+        <div className="fields">
+        <label className="form-label panel-label">{t("Form")}</label>
+          <ButtonDropdown
+            label={selectedItem}
+            dropdownItems={DropdownItems}
+            dropdownType="DROPDOWN_ONLY"
+            dataTestId="business-filter-dropdown"
+            ariaLabel={t("Select business filter")}
+            className="input-filter" />
+
             {inputFields.map((field, index) => (
               <div className="panel-width" key={field.id}>
                 <label className="form-label panel-label">{field.label}</label>
@@ -187,26 +182,92 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
             )}
           </div>
           <div className="search-clear">
-            <CustomButton
-              label="Search"
-              // onClick={primaryBtnAction}
-              // buttonLoading={buttonLoading}
-              disabled={isActionDisabled}
-              dataTestId="search-button"
-              ariaLabel="Search filters" 
-            />
-            <CustomButton
-              secondary
-              label="Clear"
-              onClick={handleClear}
-              dataTestId="clear-button"
-              ariaLabel="Clear filters" 
-              // buttonLoading={buttonLoading}
-              disabled={isActionDisabled}
-            />
-          </div>
+
+          {/* <div className="panel-width">
+    <label className="form-label panel-label">{t("Form")}</label>
+    <ButtonDropdown
+      label="test"
+      variant="primary"
+      size="md"
+      dataTestId="business-filter-dropdown"
+      ariaLabel={t("Select business filter")}
+      className="w-100"
+      dropdownItems={DropdownItems}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">
+      {t("Submission ID")}
+    </label>
+    <FormInput
+      name="title"
+      type="text"
+      // placeholder={t(placeholderForForm)}
+      // label={nameLabel}
+      aria-label={t("Name of the form")}
+      // dataTestId={nameInputDataTestid}
+      // onBlur={handleOnBlur}
+      // onChange={(event) => {
+      //   handleInputValueChange(event);
+      //   setNameError("");
+      //   handleChange("title", event);
+      // }}
+      required
+      // value={values.title}
+      // isInvalid={!!nameError}
+      // feedback={nameError}
+      // turnOnLoader={isFormNameValidating}
+      maxLength={200}
+      value={submissionId}
+      onChange={(e) => setSubmissionId(e.target.value)}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">{t("Submitter")}</label>
+    <FormInput
+      name="title"
+      type="text"
+      aria-label={t("Name of the form")}
+      required
+      value={submitter}
+      onChange={(e) => setSubmitter(e.target.value)}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">{t("Status")}</label>
+    <FormInput
+      name="title"
+      type="text"
+      aria-label={t("Name of the form")}
+      required
+      value={status}
+      onChange={(e) => setStatus(e.target.value)}
+    />
+  </div> */}
+
+
+          
+        </div>
+        <div className="actions">
+            <div className="buttons-row">
+              <CustomButton
+                label="Search"
+                // onClick={primaryBtnAction}
+                dataTestId="search-button"
+                ariaLabel="Search filters" 
+                // buttonLoading={buttonLoading}
+                disabled={isActionDisabled} />
+              <CustomButton
+                label="Clear"
+                onClick={handleClear}
+                dataTestId="clear-button"
+                ariaLabel="Clear filters" 
+                // buttonLoading={buttonLoading}
+                disabled={isActionDisabled}
+                secondary />
+            </div>
+        </div>
         </div>
       )}
     </div>
-  );
-};
+)};

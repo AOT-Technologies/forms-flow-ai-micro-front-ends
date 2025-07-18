@@ -138,12 +138,9 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     date: Date | string | null,
     format: string = dateFormat
   ): string => {
-    // If no date, return formatted placeholder
+    // If no date, return empty
     if (!date) {
-      return format
-        .replace(/M+/g, "MM")
-        .replace(/D+/g, "DD")
-        .replace(/Y+/g, "YYYY");
+      return "";
     }
 
     // Convert to Date object if string
@@ -573,7 +570,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 handleNavKeyDown(e, () => handleCloseCalendar())
               }
             >
-              <CloseIcon width={10} height={10} color="white" />
+              <CloseIcon />
             </button>
           )}
           <span

@@ -58,3 +58,8 @@ export const fetchAllForms = () => {
   //activeForms means published forms only : status = Active
   return RequestService.httpGETRequest(`${API.FORM}?activeForms=true`);
 };
+
+export const fetchFormVariables = (formId) => {
+  let url = `${API.FORM_PROCESSES}/${formId}`;
+  return RequestService.httpGETRequest(url);
+};

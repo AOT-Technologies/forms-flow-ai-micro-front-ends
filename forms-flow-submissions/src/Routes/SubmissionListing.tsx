@@ -31,7 +31,6 @@ import {
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
 
-
 interface Column {
   name: string;
   width: number;
@@ -58,6 +57,14 @@ const TaskSubmissionList: React.FC = () => {
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   //local state
   const [showSortModal, setShowSortModal] = useState(false);
+  const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState("All Forms");
+  const initialInputFields = [
+    { id: "submissionId", label: "Submission ID", type: "text", value: "" },
+    { id: "submitter", label: "Submitter", type: "text", value: "" },
+    { id: "status", label: "Status", type: "text", value: "" },
+  ];
+
 
   // Columns Configuration
   const columns: Column[] = useMemo(() => [
@@ -196,7 +203,7 @@ const TaskSubmissionList: React.FC = () => {
     return (
       <th
         key={`header-${headerKey}`}
-        className="resizable-column"
+        className="header-sortable"
         style={{ width: column.width }}
         data-testid={`column-header-${column.sortKey || "actions"}`}
         aria-label={column.name ? `${t(column.name)} ${t("column")}` : ""}
@@ -232,7 +239,7 @@ const TaskSubmissionList: React.FC = () => {
   }, [t, sortParams, handleSort]);
 
   return (
-   <div className="main-layout-container">
+   <>
       {/* Left Panel - Collapsible Search Form */}
       <div className="left-panel">
         <CollapsibleSearch
@@ -243,15 +250,21 @@ const TaskSubmissionList: React.FC = () => {
           onToggle={() => { }}
           manageFieldsAction={handleManageFieldsOpen}
           formData={formData}
+          dropdownSelection={dropdownSelection}
+          setDropdownSelection={setDropdownSelection}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          //this will be replaced dynamically after variable selection part is done
+          initialInputFields={initialInputFields}
         />
 
       </div>
-
+      
+      <div className="page-content">
       {/* Right Panel - Table Container */}
-      <div className="right-panel">
         {/* Top Controls Row - Date Range Picker and Filter/Sort Actions */}
-        <div className="top-controls-row d-flex justify-content-between align-items-center mb-3">
-          <div className="date-range-section">
+        <div className="table-bar">
+          <div className="filters">
             <DateRangePicker
               value={dateRange}
               onChange={handleDateRangeChange}
@@ -263,7 +276,7 @@ const TaskSubmissionList: React.FC = () => {
             />
           </div>
 
-          <div className="d-flex button-align">
+          <div className="actions">
             <FilterSortActions
               showSortModal={showSortModal}
               handleFilterIconClick={toggleFilterModal}
@@ -292,81 +305,63 @@ const TaskSubmissionList: React.FC = () => {
 
         {/* Table Container */}
         <div
-          className="container-wrapper"
+          className="custom-table-wrapper-outter"
           data-testid="table-container-wrapper"
         >
-          <div className="table-outer-container">
-            <div
-              className="table-scroll-wrapper resizable-scroll"
-              ref={scrollWrapperRef}
-            >
-              <div className="resizable-table-container">
-                <ReusableResizableTable
-                  columns={columns}
-                  data={submissions}
-                  renderRow={renderRow}
-                  renderHeaderCell={renderHeaderCell}
-                  emptyMessage={t(
-                    "No submissions have been found. Try a different filter combination or contact your admin."
-                  )}
-                  onColumnResize={(newWidths) =>
-                    console.log("Column resized:", newWidths)
-                  }
-                  loading={isSubmissionsLoading}
-                  tableClassName="resizable-table"
-                  headerClassName="resizable-header"
-                  containerClassName="resizable-table-container"
-                  scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
-                  dataTestId="submission-resizable-table"
-                  ariaLabel={t("submissions data table with resizable columns")}
-                />
-              </div>
-            </div>
-          </div>
+          <ReusableResizableTable
+            columns={columns}
+            data={submissions}
+            renderRow={renderRow}
+            renderHeaderCell={renderHeaderCell}
+            emptyMessage={t(
+              "No submissions have been found. Try a different filter combination or contact your admin."
+            )}
+            onColumnResize={(newWidths) =>
+              console.log("Column resized:", newWidths)
+            }
+            loading={isSubmissionsLoading}
+            headerClassName="resizable-header"
+            scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+            dataTestId="task-resizable-table"
+            ariaLabel={t("submissions data table with resizable columns")}
+          />
 
           {/* Table Footer */}
           {submissions.length > 0 && (
-            <div className="table-footer-wrapper">
-              <table
-                className="custom-tables"
-                data-testid="table-footer-container"
-              >
-                <tfoot>
-                  <TableFooter
-                    limit={limit}
-                    activePage={page}
-                    totalCount={totalCount}
-                    loader={isSubmissionsLoading}
-                    handlePageChange={handlePageChange}
-                    onLimitChange={handleLimitChange}
-                    pageOptions={[
-                      { text: "10", value: 10 },
-                      { text: "25", value: 25 },
-                      { text: "50", value: 50 },
-                      { text: "100", value: 100 },
-                      { text: "All", value: totalCount },
-                    ]}
-                    dataTestId="submission-table-footer"
-                    ariaLabel={t("Table pagination controls")}
-                    pageSizeDataTestId="submission-page-size-selector"
-                    pageSizeAriaLabel={t(
-                      "Select number of submissions per page"
-                    )}
-                    paginationDataTestId="submission-pagination-controls"
-                    paginationAriaLabel={t("Navigate between submission pages")}
-                  />
-                </tfoot>
-              </table>
-            </div>
+            <TableFooter
+              limit={limit}
+              activePage={page}
+              totalCount={totalCount}
+              loader={isSubmissionsLoading}
+              handlePageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              pageOptions={[
+                { text: "10", value: 10 },
+                { text: "25", value: 25 },
+                { text: "50", value: 50 },
+                { text: "100", value: 100 },
+                { text: "All", value: totalCount },
+              ]}
+              dataTestId="submission-table-footer"
+              ariaLabel={t("Table pagination controls")}
+              pageSizeDataTestId="submission-page-size-selector"
+              pageSizeAriaLabel={t(
+                "Select number of submissions per page"
+              )}
+              paginationDataTestId="submission-pagination-controls"
+              paginationAriaLabel={t("Navigate between submission pages")}
+            />
           )}
         </div>
       </div>
       <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
         onClose={handleManageFieldsClose}
+        dropdownSelection={dropdownSelection}
+        selectedItem={selectedItem}
       />
 
-    </div>
+    </>
   );
 };
 export default TaskSubmissionList;
