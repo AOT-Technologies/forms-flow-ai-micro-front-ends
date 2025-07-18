@@ -73,6 +73,7 @@ $gray-darkest: var(--ff-gray-darkest);
   height: auto !important;
   border-radius: var(--radius-sm) !important;
   margin-bottom: var(--spacer-150);
+  margin-top: var(--spacer-150);
 
   .editor-header-text {
     color: var(--ff-white);
@@ -85,6 +86,17 @@ $gray-darkest: var(--ff-gray-darkest);
 .task-details-view{
   padding: var(--spacer-250) var(--spacer-150) var(--spacer-250) var(--spacer-150) !important;
 }
+
+.task-view-container-with-header {
+  max-height: calc(100vh - 8.25rem);
+  overflow-y: auto;
+}
+
+.task-view-container-with-custom-header {
+  max-height: calc(100vh - 11.25rem);
+  overflow-y: auto;
+}
+
 .white-text {
   color: var(--ff-white) !important;
 }
