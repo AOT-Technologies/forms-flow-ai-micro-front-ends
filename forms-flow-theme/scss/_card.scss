@@ -397,6 +397,10 @@ $gray-darkest: var(--ff-gray-darkest);
 .scroll-list {
   @include paddingLvl2();
 
+  &.no-padding {
+    padding: 0 !important;
+  }
+
   &.vars .items {
     button {
       display: flex;
@@ -414,6 +418,14 @@ $gray-darkest: var(--ff-gray-darkest);
 
         span.name {
           @include textBaseHightlight($fontBase, $white);
+        }
+
+        span.pill {
+          @include textBaseHightlight($fontBase, $primary);
+
+          padding: 0 $paddingLvl5S;
+
+          background-color: $white;
         }
       }
 
@@ -435,6 +447,48 @@ $gray-darkest: var(--ff-gray-darkest);
         &.specs {
           @include textBase($fontBase, $gray-medium-dark);
         }
+
+        &.pill {
+          @include textBaseHightlight($fontBase, $white);
+
+          padding: 0 $paddingLvl5S;
+
+          background-color: $primary;
+
+          border-radius: $borderRadiusHeightESM;
+        }
+      }
+    }
+  }
+
+  &.title-description {
+    button {
+      display: flex;
+      flex-direction: column;
+
+      &.active {
+        span:nth-child(2) {
+          @include line-clamp(unset);
+        }
+      }
+
+      span {
+        display: flex;
+        flex-direction: column;
+
+        &:first-child {
+          @include textEmphasis();
+        }
+
+        &:nth-child(2) {
+          @include line-clamp(2);
+
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+
+          text-overflow: ellipsis;
+        }
       }
     }
   }
@@ -454,6 +508,14 @@ $gray-darkest: var(--ff-gray-darkest);
 
           span.name {
             @include textBaseHightlight($fontBase, $white);
+          }
+
+          span.pill {
+            @include textBaseHightlight($fontBase, $primary);
+
+            padding: 0 $paddingLvl5S;
+
+            background-color: $white;
           }
         }
       }
@@ -478,11 +540,7 @@ $gray-darkest: var(--ff-gray-darkest);
       background-color: transparent;
 
       &.active {
-        color: $white-color;
-
-        background-color: $primary;
-
-        pointer-events: none;
+        outline: $lineThick solid $primary;
       }
     }
   }

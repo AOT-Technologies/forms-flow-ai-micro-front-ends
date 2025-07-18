@@ -248,10 +248,13 @@ $paddingLvl3MinS: var(--spacer-050); // calc($base * 0.5)
   margin: 0;
 }
 
+@mixin textEmphasis() {
+  font-weight: 700;
+}
+
 @mixin textBaseHightlight($fontSize: $fontBase, $fontColor: $gray-darkest) {
   @include textBase($fontSize, $fontColor);
-
-  font-weight: 700;
+  @include textEmphasis();
 }
 
 @mixin textCardHead {

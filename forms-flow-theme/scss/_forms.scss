@@ -436,10 +436,6 @@ select option:hover {
 
     border-bottom: $lineThin solid $gray-light;
 
-    & > p {
-      @include textBaseHightlight($fontSectionHead);
-    }
-
     a,
     a.nav-link {
       @include textBaseHightlight($fontBase, $primary-color);
@@ -454,6 +450,8 @@ select option:hover {
       border: none !important;
       border-bottom: $lineThick solid $transparent !important;
 
+      user-select: none;
+
       &:hover {
         color: $primary-color;
       }
@@ -462,6 +460,18 @@ select option:hover {
         color: $gray-darkest;
 
         border-bottom: $lineThick solid $gray-darkest !important;
+
+        pointer-events: none;
+      }
+
+      &.disabled {
+        @include textBaseHightlight($fontSectionHead);
+
+        padding-bottom: $base;
+
+        margin-right: calc($paddingLvl2S - $paddingLvl3S);
+
+        pointer-events: none;
       }
     }
   }
@@ -481,6 +491,12 @@ select option:hover {
       // margin-bottom: calc( 0px - $paddingLvl2TB);
     }
   }
+}
+
+.with-tabs {
+  overflow: hidden !important;
+
+  padding-bottom: 0 !important;
 }
 
 /* ------------------------- Radio Button Style ------------------------ */

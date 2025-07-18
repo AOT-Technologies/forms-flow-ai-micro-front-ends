@@ -17,6 +17,7 @@ interface CustomTabsProps {
   ariaLabel?: string;
   onSelect?: (eventKey: string | null) => void;
   className? : string;
+  heading? : string;
 }
 
 export const CustomTabs: React.FC<CustomTabsProps> = ({
@@ -26,6 +27,7 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
  dataTestId = "",
   ariaLabel = "",
   onSelect,
+  heading,
   className ,
 }) => { 
   const [key,setKey] = useState(defaultActiveKey)
@@ -46,8 +48,11 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
       aria-label={ariaLabel}
       onSelect={handleChange}
     >
+      {heading ? (
+        <Tab title={heading} className="heading" disabled></Tab>
+      ) : ""}
       
-      {tabs.map((tab, index) => (
+      {tabs?.map((tab, index) => (
         <Tab key={index} eventKey={tab.eventKey} title={tab.title} data-testid={`${dataTestId}-tab-${tab.eventKey}`} >
           {tab.content}
         </Tab>
