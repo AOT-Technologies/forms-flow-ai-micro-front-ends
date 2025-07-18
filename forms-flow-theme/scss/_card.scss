@@ -397,6 +397,69 @@ $gray-darkest: var(--ff-gray-darkest);
 .scroll-list {
   @include paddingLvl2();
 
+  &.vars .items {
+    button {
+      display: flex;
+      gap: $paddingLvl5S;
+
+      &.active {
+        background-color: $primary;
+
+        border: none !important;
+
+        span.specs,
+        span.description {
+          @include textBase($fontBase, $white);
+        }
+
+        span.name {
+          @include textBaseHightlight($fontBase, $white);
+        }
+      }
+
+      & > * {
+        margin: 0 !important;
+      }
+
+      span {
+        transition: all $animSpeed;
+
+        &.name {
+          @include textBaseHightlight($fontBase, $primary);
+        }
+
+        &.description {
+          @include textBase();
+        }
+
+        &.specs {
+          @include textBase($fontBase, $gray-medium-dark);
+        }
+      }
+    }
+  }
+
+  &.go-through {
+    &.vars .items {
+      button {
+        &:hover {
+          background-color: $primary;
+
+          border: none !important;
+
+          span.specs,
+          span.description {
+            @include textBase($fontBase, $white);
+          }
+
+          span.name {
+            @include textBaseHightlight($fontBase, $white);
+          }
+        }
+      }
+    }
+  }
+
   .items {
     @include paddingLvl4-inner();
 
