@@ -1,6 +1,4 @@
 import { useSelector } from 'react-redux';
-import { Application } from 'single-spa';
-
 const userRoles = () => {
   const assignedRoles = useSelector((state: any) => state?.applications?.roles || []);
   const role = (role) => assignedRoles.includes(role);

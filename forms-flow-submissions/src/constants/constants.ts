@@ -1,25 +1,20 @@
 
 
 export const CUSTOM_SUBMISSION_URL =
-  (window._env_ && window._env_.REACT_APP_CUSTOM_SUBMISSION_URL) ||
+  (window._env_?.REACT_APP_CUSTOM_SUBMISSION_URL) ??
   "";
 
 const MULTITENANCY_ENABLED_VARIABLE =
-  (window._env_ && window._env_.REACT_APP_MULTI_TENANCY_ENABLED) ||
+  (window._env_?.REACT_APP_MULTI_TENANCY_ENABLED) ??
   false;
 
 export const MULTITENANCY_ENABLED =
-  MULTITENANCY_ENABLED_VARIABLE === "true" ||
-  MULTITENANCY_ENABLED_VARIABLE === true
-    ? true
-    : false;
+MULTITENANCY_ENABLED_VARIABLE === "true" || MULTITENANCY_ENABLED_VARIABLE === true
 
 const CUSTOM_SUBMISSION_ENABLED_VARIABLE =
-  (window._env_ && window._env_.REACT_APP_CUSTOM_SUBMISSION_ENABLED) ||
+  (window._env_?.REACT_APP_CUSTOM_SUBMISSION_ENABLED) ??
   "";
 
 export const CUSTOM_SUBMISSION_ENABLE =
   CUSTOM_SUBMISSION_ENABLED_VARIABLE === "true" ||
   CUSTOM_SUBMISSION_ENABLED_VARIABLE === true
-    ? true
-    : false;

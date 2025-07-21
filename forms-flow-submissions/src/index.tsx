@@ -90,7 +90,7 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
   return (
     <>
       {isAnalyzeManager ? (
-        <div className="main-container" tabIndex={0}>
+        <div className="main-container">
           <div className="container mt-5">
             <div className="min-container-height ps-md-3">
               <Switch>

@@ -6,11 +6,9 @@ import { Card } from "react-bootstrap";
 import {
   CustomButton,
   BackToPrevIcon,
-  // FormSubmissionHistoryModal,
   SubmissionHistoryWithViewButton,
   DownloadPDFButton,
 } from "@formsflow/components";
-import { getApplicationById } from "../api/services/applicationService";
 import Loading from "./Loading";
 import {
   setApplicationDetailLoading,
@@ -27,6 +25,7 @@ import {
 import {
   getCustomSubmission,
   getRoles,
+  getApplicationById
 } from "../api/services/applicationService";
 import { fetchApplicationAuditHistoryList } from "../api/services/applicationHistoryServices";
 import { HelperServices } from "@formsflow/service";
@@ -39,21 +38,17 @@ const ViewApplication = React.memo(() => {
   const { t } = useTranslation();
   const { id: applicationId } = useParams();
   const dispatch = useDispatch();
-  const history = useHistory();
   const {
     viewSubmissionHistory,
     analyze_submissions_view_history,
     analyze_process_view,
   } = getRoles();
-  // const isFromFormEntries =
-  //   new URLSearchParams(history.location.search).get("from") === "formEntries";
   const applicationDetail = useSelector(
     (state: any) => state?.applications.applicationDetails
   );
   const isApplicationDetailLoading = useSelector(
     (state: any) => state?.applications.isApplicationDetailLoading
   );
-  isApplicationDetailLoading;
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
 
   //check
@@ -76,10 +71,7 @@ const ViewApplication = React.memo(() => {
       []
     )
   );
-  // const { appHistory, isHistoryListLoading } = useSelector((state: any) => ({
-  //   appHistory: state.taskAppHistory.appHistory,
-  //   isHistoryListLoading: state.taskAppHistory.isHistoryListLoading,
-  // }));
+
   useEffect(() => {
     if (applicationId) {
       dispatch(setApplicationDetailLoading(true));
@@ -141,7 +133,6 @@ const ViewApplication = React.memo(() => {
 
   const backToSubmissionList = () => {
     dispatch(push(`${redirectUrl}submissions`));
-    // history.goBack();
   };
 
   return (

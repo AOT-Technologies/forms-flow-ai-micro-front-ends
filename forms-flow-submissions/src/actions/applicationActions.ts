@@ -31,7 +31,6 @@ export const setUpdateHistoryLoader = (data) => (dispatch) => {
 };
 
 export const serviceActionError = (data) => (dispatch) => {
-  //TODO update to a common file
   dispatch({
     type: ACTION_CONSTANTS.ERROR,
     payload: "Error Handling API",
