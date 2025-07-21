@@ -24,8 +24,9 @@ interface VariableModalProps {
   primaryBtnariaLabel?: string;
   secondaryBtnariaLabel?: string;
   form: any;
-  updatedAltLabels?: any;
+  savedFormVariables?: any;
   saveBtnDisabled?: boolean;
+  fieldLabel?: string;
 }
 
 export const VariableModal: React.FC<VariableModalProps> = React.memo(
@@ -41,11 +42,11 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
     primaryBtnariaLabel = "save changes",
     secondaryBtnariaLabel = "Cancel",
     form,
-    updatedAltLabels,
+    savedFormVariables,
     saveBtnDisabled = false,
+    fieldLabel = "Variable", // to display the form field labels
   }) => {
-    const [alternativeLabels, setAlternativeLabels] =
-      useState(updatedAltLabels);
+    const [alternativeLabels, setAlternativeLabels] = useState(savedFormVariables);
     const detailsRef = useRef(null);
     const [showElement, setShowElement] = useState(false);
     const TAB_KEYS = {
@@ -62,6 +63,8 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
     });
     const primaryColor = StyleServices.getCSSVariable("--ff-primary");
     const primaryLight = StyleServices.getCSSVariable("--ff-primary-light");
+
+    // ignoring there variables from selection
     const ignoreKeywords = new Set([
       "applicationId",
       "applicationStatus",
@@ -99,6 +102,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       [form, alternativeLabels, t]
     );
 
+    // handling the add alternative variable
     const handleAddAlternative = () => {
       if (selectedComponent.key) {
         setAlternativeLabels((prev) => ({
@@ -123,6 +127,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       onClose();
     };
 
+    // handling the remove selected variables
     const removeSelectedVariable = useCallback((key) => {
       setSelectedComponent((prev) => ({
         ...prev,
@@ -135,6 +140,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       });
     }, []);
 
+    // render the selection of variables and selected variables
     const renderRightContainer = () => {
       const filteredVariablePills = Object.values(alternativeLabels).filter(
         ({ key }) => !ignoreKeywords.has(key)
@@ -159,14 +165,14 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
 
             <div className="scroll-vertical">
               <div className="content">
-                <div className="variable-info">
-                  <p>{t("Type")}:</p>
-                  <p>{selectedComponent.type}</p>
+                <div className="d-flex flex-column">
+                  <span>{t("Type")}:</span>
+                  <span className="text-bold">{selectedComponent.type}</span>
                 </div>
 
-                <div className="variable-info">
-                  <p>{t("Variable")}:</p>
-                  <p>{selectedComponent.key}</p>
+                <div className="d-flex flex-column">
+                  <span>{fieldLabel}:</span>
+                  <span className="text-bold">{selectedComponent.key}</span>
                 </div>
 
                 <FormInput
@@ -248,11 +254,12 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       );
     };
 
+    // checking if the variables list  have changed ornot to update the save button 
     const hasAltVariableChanged = useMemo(() => {
       return (
-        JSON.stringify(updatedAltLabels) !== JSON.stringify(alternativeLabels)
+        JSON.stringify(savedFormVariables) !== JSON.stringify(alternativeLabels)
       );
-    }, [updatedAltLabels, alternativeLabels]);
+    }, [savedFormVariables, alternativeLabels]);
 
     return (
       <Modal

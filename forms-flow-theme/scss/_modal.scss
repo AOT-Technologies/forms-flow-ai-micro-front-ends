@@ -1022,83 +1022,6 @@ $lineThin: 1px;
 }
 
 
-
-
-
-.task-variable-modal {
-  .modal-body {
-    padding: 0px !important;
-  }
-  .info-pill-container{
-    padding:var(--spacer-200) var(--spacer-250) ;
-    display: flex;
-    flex-direction: column;
-    gap:var(--spacer-150);
-  }
-  .form-field-container{
-    width: 80%;
-    float: left;
-    background: $gray-medium;  // #F1F1F1
-    padding: var(--spacer-200) var(--spacer-250);
-  }
-  .field-details-container{
-    padding:var(--spacer-200) var(--spacer-250) ;
-    width: 20%;
-    float: right;
-    background: #FFF;
-  }
-  .pill-container{
-    min-height: 6rem;
-    gap: var(--spacer-025);
-    display: flex;
-    flex-wrap: wrap;
-    padding: var(--spacer-050) var(--spacer-100);
-    align-items: flex-start;
-    flex: 1 0 0;
-    align-self: stretch;
-    border-radius: var(--radius-sm);
-    border: 1px solid $gray-medium-dark;
-    background: var(--ff-white);    
-  }
-  
-  .select-text{
-    color: $gray-medium-dark;
-    font-size: var(--font-size-sm);
-  }
-  .selected-var-text{
-    color: $black-color;
-    font-size: var(--font-size-sm);
-    padding-bottom: var(--spacer-050);
-  }
- 
- .details-section{
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacer-150);
-
-  .text-bold{
-    font-weight: var(--font-weight-xl);
-    font-size: var(--font-size-sm);
-    word-break: break-all;
-   }
- }
-
- .form-control {
-   &:disabled {
-     background-color: var(--ff-white) !important;
-   }
- }
-
- .card-body {
-   border-radius: var(--radius-sm) !important;
-   border-color: $gray-medium-dark !important;
-
-   .formio-editor-read-only-content {
-     padding: var(--spacer-025) var(--spacer-050);
-   }
-
- }
-}
 .profile-settings{
   .lang-settings{
     display: flex;
@@ -1599,6 +1522,11 @@ $lineThin: 1px;
         font-size: var(--font-size-sm);
         font-weight: var(--font-weight-sm);
         line-height: var(--text-line-height);
+      }
+      .text-bold {
+        font-weight: var(--font-weight-xl);
+        font-size: var(--font-size-sm);
+        word-break: break-all;
       }
     }
 
