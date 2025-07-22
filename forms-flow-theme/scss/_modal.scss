@@ -12,6 +12,13 @@ $black-color: var(--ff-black);
 $base: 1rem;
 $lineThin: 1px;
 .modal {
+  @mixin modalBodyContent {
+    @include paddingLvl2();
+
+    display: flex;
+    flex-direction: column;
+  }
+
   position: fixed;
   top: 0;
   left: 0;
@@ -106,6 +113,8 @@ $lineThin: 1px;
 
         justify-content: flex-start !important;
 
+        border-top: $lineThin solid $colorDivider;
+
         & > * {
           margin: 0;
         }
@@ -118,18 +127,11 @@ $lineThin: 1px;
 
         padding: 0;
 
-        color: var(--default-font-color);
-        font-size: var(--spacer-150);
-        font-weight: var(--font-weight-sm);
+        border-bottom: $lineThin solid $colorDivider;
 
         .modal-title {
           @include paddingLvl2();
           @include textBase($fontModalTitle)
-
-          // font-size: var(--font-size-lg) !important;
-          // font-weight: var(--font-weight-sm) !important;
-          // line-height: var(--text-line-height) !important;
-          // text-transform: capitalize !important;
         }
 
         .icon-close {
@@ -143,12 +145,10 @@ $lineThin: 1px;
       }
 
       .modal-body {
-        @include paddingLvl2();
+        @include modalBodyContent();
         @extend .custom-scroll;
 
         overflow: auto;
-        display: flex;
-        flex-direction: column;
 
         padding-right: calc($paddingLvl2LR - $scrollBarWidth) !important;
 
@@ -208,6 +208,20 @@ $lineThin: 1px;
 
         &.with-sections {
           padding: 0 !important;
+
+          &.column {
+            scrollbar-gutter: auto;
+
+            & > div {
+              @include modalBodyContent();
+
+              margin-bottom: 0 !important;
+
+              &:not(:first-child) {
+                border-top: $lineThin solid $colorDivider;
+              }
+            }
+          }
         }
 
         &.side-by-side {
@@ -875,7 +889,6 @@ $lineThin: 1px;
 
   .expression-section{
     display: flex;
-    padding: var(--spacer-200) var(--spacer-250);
     flex-direction: column;
     align-items: flex-start;
     align-self: stretch;
@@ -898,7 +911,7 @@ $lineThin: 1px;
     display: flex;
     flex-direction: column;
     padding: var(--spacer-200);
-    gap: var(--spacer-150);
+    // gap: var(--spacer-150);
   }
   .tab-section {
     display: flex;

@@ -3,12 +3,12 @@ import { DraggableIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon } from "../Sv
 import Sortable from "sortablejs";
 
 interface FilterItem {
+  id:  number;
   label?: string;
   name: string;
   isChecked?: boolean;
   sortOrder?: number;
   isFormVariable?: boolean;
-  itemId?: number;
   icon?: React.ReactNode;
 }
 
@@ -112,20 +112,20 @@ useEffect(() => {
     <div className="drag-drop-container list-action rearrangable checkbox" ref={containerRef}>
       <ul  ref={listRef}>
         {filterItems.map((item, index) => (
-          <li
-            key={item.itemId ?? `${item.name}-${index}`}
+          <li key={item.id ?? `${item.name}-${index}`}
             className="draggable-item"
           >
+
             <button
               className="draggable-icon"
-              draggable 
+              draggable
             >
               <DraggableIcon />
             </button>
 
-            <label htmlFor={`${item.name}-checkbox-id`} className="input-checkbox">
+            <label htmlFor={`${item.id ?? item.name}-checkbox-id`} className="input-checkbox">
               <input
-                id={`${item.name}-checkbox-id`}
+                id={`${item.id ?? item.name}-checkbox-id`}
                 type="checkbox"
                 checked={item.isChecked}
                 onChange={() => onCheckboxChange(index)}
