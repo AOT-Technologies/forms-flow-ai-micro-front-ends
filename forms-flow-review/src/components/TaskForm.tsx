@@ -30,10 +30,10 @@ const TaskForm: React.FC<TaskFormProps> = ({
   const taskAssignee = useSelector(
     (state: any) => state?.task?.taskAssignee
   );
-    const taskDetailsLoading = useSelector(
+  const taskDetailsLoading = useSelector(
     (state: any) => state?.task?.taskDetailsLoading
   );
-  const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(true);
 
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
@@ -77,7 +77,7 @@ const isLoading =
       <div className="ms-4 mb-5 me-4 wizard-tab service-task-details">
         {/* The key is added to remount the form on change */}
         <Form
-         key={isReadOnly ? "readonly" : "editable"}
+          key={isReadOnly ? "readonly" : "editable"}
           form={form}
           submission={safeSubmission}
           url={reduxSubmission?.url}

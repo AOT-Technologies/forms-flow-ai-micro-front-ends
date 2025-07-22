@@ -83,7 +83,7 @@ export const fetchServiceTaskList = (
     currentTaskFetchAbortController = new AbortController();
     const signal = currentTaskFetchAbortController.signal;
    
-    // dispatch(setBPMTaskLoader(true)); Adding a temporary comment to prevent the skeleton loader in the task table from displaying oddly due to socket.
+    dispatch(setBPMTaskLoader(true));
     dispatch(setLastReqPayload(reqData));
     // [TBD: need to fix properly ]if name is available in reqData, we need to set it to the name property of reqData
     // this will cause an issue like if the name will come may be two times one form task name and one form form component key
