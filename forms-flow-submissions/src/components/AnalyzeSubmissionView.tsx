@@ -26,9 +26,9 @@ import {
 import {
   getCustomSubmission,
   getRoles,
-  getApplicationById
+  getApplicationById,
+  fetchApplicationAuditHistoryList
 } from "../services/applicationServices";
-import { fetchApplicationAuditHistoryList } from "../services/applicationServices";
 import { HelperServices } from "@formsflow/service";
 import {
   getProcessActivities,
