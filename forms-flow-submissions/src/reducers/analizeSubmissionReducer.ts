@@ -12,6 +12,7 @@ const initialState = {
     page: 1,
     limit: 10,
     dateRange:{startDate: null, endDate: null},
+    defaultFilter: null
 };
 
 
@@ -26,6 +27,8 @@ const analyzeSubmission = (state = initialState, action: any) => {
             return { ...state, limit: action.payload };
         case ACTION_CONSTANTS.UPDATE_SUBMISSION_DATE_RANGE:
             return { ...state, dateRange: action.payload };
+        case ACTION_CONSTANTS.UPDATE_DEFAULT_SUBMISSION_FILTER:
+            return { ...state, defaultFilter: action.payload };
         default:
             return state;
     }

@@ -27,3 +27,9 @@ export const setAnalyzeSubmissionDateRange = (data) => (dispatch) =>{
   })
 }
 
+export const setDefaultSubmissionFilter = (data) => (dispatch) =>{ 
+  dispatch({
+    type: ACTION_CONSTANTS.UPDATE_DEFAULT_SUBMISSION_FILTER,
+    payload: data,
+  })
+}
