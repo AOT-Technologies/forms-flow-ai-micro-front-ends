@@ -52,7 +52,7 @@ const TaskDetails = () => {
   const [disabledMode,setDisabledMode] = useState(false);
   // Redux State Selectors
   const tenantKey = useSelector(
-    (state: any) => state.tenants?.tenantData?.tenantkey
+    (state: any) => state.tenants?.tenantData?.key
   );
   const task = useSelector((state: any) => state.task.taskDetail);
   const bpmTaskId = useSelector((state: any) => state.task.taskId);

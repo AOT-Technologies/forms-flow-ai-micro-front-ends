@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
 import { setBPMTaskDetail } from "./actions/taskActions"; 
-
+import { setTenantData } from "./actions/tenantActions";
 import { fetchServiceTaskList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
   "view_tasks",
@@ -56,6 +56,26 @@ const Task = React.memo((props: any) => {
       i18n.changeLanguage(data);
     });
   }, []);
+
+useEffect(() => {
+  if (MULTITENANCY_ENABLED && tenantId) {
+    // Get tenant data from StorageService
+    const storedTenantData = StorageService.get("TENANT_DATA");
+    
+    if (storedTenantData) {
+      try {
+        const parsedTenantData = JSON.parse(storedTenantData);
+        // Set tenant data in Redux state
+        dispatch(setTenantData(parsedTenantData));
+      } catch (error) {
+        console.error("Error parsing tenant data from storage:", error);
+      }
+    } else {
+      console.log("No tenant data found in storage");
+    }
+  }
+}, [dispatch,tenantId]);
+
 
   useEffect(() => {
     StorageService.save("tenantKey", tenantId ?? "");

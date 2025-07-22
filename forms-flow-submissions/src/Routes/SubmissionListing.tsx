@@ -47,7 +47,8 @@ const TaskSubmissionList: React.FC = () => {
   const sortParams = useSelector((state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {});
   const limit = useSelector((state: any) => state?.analyzeSubmission.limit ?? 10);
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
+  const tenantId = localStorage.getItem("tenantKey");
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.key || tenantId);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   //local state
