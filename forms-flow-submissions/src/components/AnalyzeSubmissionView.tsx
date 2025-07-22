@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import startCase from "lodash/startCase";
 import { Card } from "react-bootstrap";
@@ -10,7 +10,6 @@ import {
   SubmissionHistoryWithViewButton,
   DownloadPDFButton,
 } from "@formsflow/components";
-import { getApplicationById } from "../services/applicationServices";
 import Loading from "./Loading";
 import {
   setApplicationDetailLoading,
@@ -27,8 +26,9 @@ import {
 import {
   getCustomSubmission,
   getRoles,
+  getApplicationById
 } from "../services/applicationServices";
-import { fetchApplicationAuditHistoryList } from "../services/applicationHistoryServices";
+import { fetchApplicationAuditHistoryList } from "../services/applicationServices";
 import { HelperServices } from "@formsflow/service";
 import {
   getProcessActivities,
@@ -50,14 +50,9 @@ const ViewApplication = React.memo(() => {
   const isApplicationDetailLoading = useSelector(
     (state: any) => state?.applications.isApplicationDetailLoading
   );
-  isApplicationDetailLoading;
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
-
-  //check
   const [isDiagramLoading, setIsDiagramLoading] = useState(false);
-  //check
   const [diagramXML, setDiagramXML] = useState("");
-  //check
   const markers = useSelector(
     (state: any) => state.process?.processActivityList
   );
@@ -73,10 +68,7 @@ const ViewApplication = React.memo(() => {
       []
     )
   );
-  // const { appHistory, isHistoryListLoading } = useSelector((state: any) => ({
-  //   appHistory: state.taskAppHistory.appHistory,
-  //   isHistoryListLoading: state.taskAppHistory.isHistoryListLoading,
-  // }));
+
   useEffect(() => {
     if (applicationId) {
       dispatch(setApplicationDetailLoading(true));
