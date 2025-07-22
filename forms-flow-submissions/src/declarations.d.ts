@@ -50,6 +50,10 @@ declare module "@formsflow/components" {
     SortableHeader,
     CollapsibleSearch,
     DateRangePicker,
-    FilterSortActions 
+    FilterSortActions,
+    DownloadPDFButton,
+    BackToPrevIcon,
+    FormSubmissionHistoryModal,
+    SubmissionHistoryWithViewButton,  
   }: any;
 }
