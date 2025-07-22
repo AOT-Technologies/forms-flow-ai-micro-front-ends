@@ -76,7 +76,6 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
       
           <Modal.Title id="manage-fields-sort-title">
             <b>
-              {/* form name should be replaced here */}
               {t(`Manage Fields for ${selectedItem}`)} 
 
             </b> 
