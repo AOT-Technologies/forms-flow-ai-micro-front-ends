@@ -28,15 +28,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
       ];
       setSubmissionFields(formFields);
     }, []);
-    useEffect(() => {
-      fetchFormVariables(dropdownSelection).then((response) => {
-        setSubmissionFields([
-          ...submissionFields,
-          ...response.data.taskVariables.map((variable) => ({ ...variable, isChecked: true , isFormVariable: true, name: variable.key }))
-        ]);
-
-      })
-    }, [show])
+    
 
   
 
