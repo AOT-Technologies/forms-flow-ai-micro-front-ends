@@ -3,7 +3,6 @@ import { Modal } from "react-bootstrap";
 import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
-import { fetchFormVariables } from "../../api/queryServices/analyzeSubmissionServices";
 
 
 interface ManageFieldsModalProps {
@@ -11,23 +10,14 @@ interface ManageFieldsModalProps {
   onClose: () => void;
   dropdownSelection: string | null;
   selectedItem: string
+  submissionFields: any[]
+  setSubmissionFields: ([]) => void
 }
 
-const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, dropdownSelection, selectedItem }) => {
+const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, submissionFields, setSubmissionFields, selectedItem }) => {
   const { t } = useTranslation();
     const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
-    const [submissionFields,  setSubmissionFields] = React.useState([]);
-    useEffect(() => {
-       // this will be replaced with the variables from the selectedc form fields
-      const formFields = [
-        { key: "id", name: "id", label: "Submission ID", isChecked: "true", isFormVariable: false },
-        { key: "formName", name: "formName", label: "Form", isChecked: "true", isFormVariable: false },
-        { key: "createdBy", name: "createdBy", label: "Submitter", isChecked: "true", isFormVariable: false },
-        { key: "created", name: "created", label: "Submission Date", isChecked: "true", isFormVariable: false },
-        { key: "applicationStatus", name: "applicationStatus", label: "Status", isChecked: "true", isFormVariable: false }
-      ];
-      setSubmissionFields(formFields);
-    }, []);
+
     
 
   
@@ -66,11 +56,8 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
       >
         <Modal.Header>
       
-          <Modal.Title id="manage-fields-sort-title">
-            <b>
-              {t(`Manage Fields for ${selectedItem}`)} 
-
-            </b> 
+          <Modal.Title id="manage-fields-sort-title">         
+            <p>{t(`Manage Fields for ${selectedItem}`)}</p>   
           </Modal.Title>
            <div className="icon-close" onClick={onClose}>
             <CloseIcon />
@@ -88,15 +75,13 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
 
 
           <CustomButton
-
             label={t("More System and Form Fields")}
             secondary
             icon={<AddIcon />}
             dataTestId="manage-fields-add"
             ariaLabel={t("Manage fields add")}
             iconWithText
-          >
-          </CustomButton>
+          />       
         </div>
           
 
@@ -105,8 +90,8 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
         <Modal.Footer>
                   <div className="buttons-row">
 
-          <CustomButton  label={t("Save Changes")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")}> </CustomButton>
-          <CustomButton secondary label={t("Cancel")} onClick={onClose} dataTestId="manage-fields-cancel" ariaLabel={t("Manage fields cancel")}> </CustomButton>
+          <CustomButton  label={t("Save Changes")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")} />
+          <CustomButton secondary label={t("Cancel")} onClick={onClose} dataTestId="manage-fields-cancel" ariaLabel={t("Manage fields cancel")}/>
         </div>
         </Modal.Footer>
 

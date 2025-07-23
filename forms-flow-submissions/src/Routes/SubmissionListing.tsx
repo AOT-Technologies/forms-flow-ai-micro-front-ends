@@ -59,11 +59,23 @@ const TaskSubmissionList: React.FC = () => {
   const [showSortModal, setShowSortModal] = useState(false);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState("All Forms");
+  const [submissionFields,  setSubmissionFields] = React.useState([]);
   const initialInputFields = [
     { id: "submissionId", label: "Submission ID", type: "text", value: "" },
     { id: "submitter", label: "Submitter", type: "text", value: "" },
     { id: "status", label: "Status", type: "text", value: "" },
   ];
+   useEffect(() => {
+         // this will be replaced with the variables from the selectedc form fields
+        const formFields = [
+          { key: "id", name: "id", label: "Submission ID", isChecked: "true", isFormVariable: false },
+          { key: "formName", name: "formName", label: "Form", isChecked: "true", isFormVariable: false },
+          { key: "createdBy", name: "createdBy", label: "Submitter", isChecked: "true", isFormVariable: false },
+          { key: "created", name: "created", label: "Submission Date", isChecked: "true", isFormVariable: false },
+          { key: "applicationStatus", name: "applicationStatus", label: "Status", isChecked: "true", isFormVariable: false }
+        ];
+        setSubmissionFields(formFields);
+      }, []);
 
 
   // Columns Configuration
@@ -359,6 +371,8 @@ const TaskSubmissionList: React.FC = () => {
         onClose={handleManageFieldsClose}
         dropdownSelection={dropdownSelection}
         selectedItem={selectedItem}
+        submissionFields={submissionFields}
+        setSubmissionFields={setSubmissionFields}
       />
 
     </>
