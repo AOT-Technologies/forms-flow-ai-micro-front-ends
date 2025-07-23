@@ -13,6 +13,11 @@ interface ManageFieldsModalProps {
   setSubmissionFields: ([]) => void
 }
 
+interface FormFieldsNoteProps {
+  content: string;
+  ariaLabel: string;
+}
+
 const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, submissionFields, setSubmissionFields, selectedItem }) => {
   const { t } = useTranslation();
     const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
@@ -22,20 +27,17 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
   
 
 
-  const FormFieldsNote = () => {
-    return (
-      <div>
-        <CustomInfo
-              heading="Note"
-              content={t(
-                "Re-arrange fields shown for the results table and the filter. Toggle their visibility in the results table with the provided checkbox. Form and Submission Date filters will always be persistent and can only be hidden or re-arranged for the results table.\n\n The selected fields and their order are saved for each user for each form. Feel free to customize it for your needs; add or remove fields, show or quickly hide fields."
-              )}
-              dataTestId="manage-fields-note"
-              aria-label={t("Manage fields note")}
-            />
-      </div>
-    );
-  }
+ 
+const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) => (
+  <div>
+    <CustomInfo
+      heading="Note"
+      content={content}
+      dataTestId="manage-fields-note"
+      aria-label={ariaLabel}
+    />
+  </div>
+);
 
  const handleUpdateOrder = (updatedFieldOrder) => {
   setSubmissionFields(updatedFieldOrder);
@@ -53,8 +55,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
         aria-describedby="manage-fields-sort-modal"
         backdrop="static"
       >
-        <Modal.Header>
-      
+        <Modal.Header>      
           <Modal.Title id="manage-fields-sort-title">         
             <p className="text-break">{t(`Manage Fields for ${selectedItem}`)}</p>   
           </Modal.Title>
@@ -63,12 +64,17 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
           </div>
         </Modal.Header>
           <Modal.Body>
-              <FormFieldsNote/>
-            <DragandDropSort
-              items={submissionFields}
-              onUpdate={handleUpdateOrder}
-              icon={<FormVariableIcon color={darkColor} />}
-              data-testid="columns-sort"
+        <FormFieldsNote
+          content={t(
+            "Re-arrange fields shown for the results table and the filter. Toggle their visibility in the results table with the provided checkbox. Form and Submission Date filters will always be persistent and can only be hidden or re-arranged for the results table.\n\n The selected fields and their order are saved for each user for each form. Feel free to customize it for your needs; add or remove fields, show or quickly hide fields."
+          )}
+          ariaLabel={t("Manage fields note")}
+        />
+        <DragandDropSort
+          items={submissionFields}
+          onUpdate={handleUpdateOrder}
+          icon={<FormVariableIcon color={darkColor} />}
+          data-testid="columns-sort"
         />
         <div>
 
@@ -80,7 +86,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
             dataTestId="manage-fields-add"
             ariaLabel={t("Manage fields add")}
             iconWithText
-          />       
+          />
         </div>
           
 

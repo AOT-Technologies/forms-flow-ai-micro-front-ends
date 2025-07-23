@@ -370,7 +370,6 @@ const TaskSubmissionList: React.FC = () => {
        <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
         onClose={handleManageFieldsClose}
-        dropdownSelection={dropdownSelection}
         selectedItem={selectedItem}
         submissionFields={submissionFields}
         setSubmissionFields={setSubmissionFields}
