@@ -57,7 +57,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
         <Modal.Header>
       
           <Modal.Title id="manage-fields-sort-title">         
-            <p>{t(`Manage Fields for ${selectedItem}`)}</p>   
+            <p className="text-break">{t(`Manage Fields for ${selectedItem}`)}</p>   
           </Modal.Title>
            <div className="icon-close" onClick={onClose}>
             <CloseIcon />

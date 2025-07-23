@@ -21,7 +21,7 @@ export const formatDate = (isoString: string): string => {
   options:[
   { value: "created", label: "Submission Date" },
   { value: "form_name", label: "Form Name" },
-  {value:"application_status", label:"Application Status"},
+  {value:"application_status", label:"Status"},
   {value:"id", label:"Submission Id"},
   {value:"created_by", label:"Submitter"},
 ],
