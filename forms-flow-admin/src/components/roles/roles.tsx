@@ -172,11 +172,6 @@ const Roles = React.memo((props: any) => {
       updatedPermissions = updatedPermissions.filter(
         (permission) => permission !== permissionName
       );
-      dependsOn.forEach((dependency) => {
-        updatedPermissions = updatedPermissions.filter(
-          (permission) => permission !== dependency
-        );
-      });
     }
     setPayload({ ...payload, permissions: updatedPermissions });
   };
@@ -314,11 +309,6 @@ const Roles = React.memo((props: any) => {
       updatedPermissions = updatedPermissions.filter(
         (permission) => permission !== permissionName
       );
-      dependsOn.forEach((dependency) => {
-        updatedPermissions = updatedPermissions.filter(
-          (permission) => permission !== dependency
-        );
-      });
     }
     setEditCandidate({ ...editCandidate, permissions: updatedPermissions });
   };
@@ -356,7 +346,7 @@ const Roles = React.memo((props: any) => {
   const closeConfirmation = () => {
      setHandleConfirmation(false);
   }
-
+  
   const tabs = [
     {
       eventKey: "Details",

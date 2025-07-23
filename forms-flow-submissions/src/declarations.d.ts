@@ -55,6 +55,10 @@ declare module "@formsflow/components" {
     CustomInfo,
     AddIcon,
     DragandDropSort,
-    FormVariableIcon
+    FormVariableIcon,
+    DownloadPDFButton,
+    BackToPrevIcon,
+    FormSubmissionHistoryModal,
+    SubmissionHistoryWithViewButton,
   }: any;
 }

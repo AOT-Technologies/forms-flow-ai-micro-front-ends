@@ -103,7 +103,6 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
     case ACTION_CONSTANTS.BPM_SELECTED_ATTRIBUTE_FILTER:
         return {
           ...state,
-          dateRange: { startDate: null, endDate: null },
           isUnsavedAttributeFilter: false,
           selectedAttributeFilter: action.payload,
       };

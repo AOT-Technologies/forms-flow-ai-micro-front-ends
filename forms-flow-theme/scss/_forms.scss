@@ -336,16 +336,16 @@ select option:hover {
     }
   }
 
-  .input-group-text {
-    cursor: pointer;
-    position: absolute;
-    right: var(--spacer-025);
-    top: 50%;
-    transform: translateY(-50%);
-    border: none;
-    background: none;
-    color: $primary;   
-  }
+  // .input-group-text {
+  //   cursor: pointer;
+  //   position: absolute;
+  //   right: var(--spacer-025);
+  //   top: 50%;
+  //   transform: translateY(-50%);
+  //   border: none;
+  //   background: none;
+  //   color: $primary;   
+  // }
 
   .custom-form-control-label {
     color: var(--default-font-color);
@@ -436,7 +436,12 @@ select option:hover {
 
     border-bottom: $lineThin solid $gray-light;
 
-    a {
+    & > p {
+      @include textBaseHightlight($fontSectionHead);
+    }
+
+    a,
+    a.nav-link {
       @include textBaseHightlight($fontBase, $primary-color);
       @include clickableFeedback1();
 
@@ -655,6 +660,8 @@ select option:hover {
   }
 
   .optionListContainer {
+    position: relative !important;
+
     margin: 0;
 
     border: $lineThin solid $primary;

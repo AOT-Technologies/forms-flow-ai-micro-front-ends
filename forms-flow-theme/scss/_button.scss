@@ -636,6 +636,8 @@ $danger-color: var(--ff-danger);
 
 
   position: relative;
+  width: fit-content;
+
   padding: $base $base*1.5;
   
   font-weight: 700;
@@ -1607,7 +1609,7 @@ $danger-color: var(--ff-danger);
 
         .select-options {
           position: absolute;
-          
+
           z-index: 3;
 
           div {
@@ -1636,6 +1638,29 @@ $danger-color: var(--ff-danger);
         height: $minHeightLarge !important;
       }
     }
+
+    &.with-icon {
+      textarea {
+        padding-right: calc($paddingLvl5LR + $iconWidth + $paddingLvl6LR*2);
+      }
+
+      .field {
+        & > span {
+          @include clickableFeedback1();
+          
+          position: absolute;
+          right: 0;
+
+          padding: $paddingLvl6TB $paddingLvl6LR;
+
+          background-color: $transparent;
+          border-radius: 0;
+          border: none;
+
+          z-index: 6;
+        }
+      }
+    }
     
     label {
       @include textBase($fontSmallest);
@@ -1653,9 +1678,10 @@ $danger-color: var(--ff-danger);
       padding: $paddingLvl6TB $paddingLvl5LR;
 
       border: $lineThin solid $primary;
-      border-radius: $borderRadiusHeightSM;
+      border-radius: $borderRadiusHeightSM !important;
 
       resize: none;
+      z-index: 1;
 
       &:focus {
         outline: $lineThin solid $primary;
