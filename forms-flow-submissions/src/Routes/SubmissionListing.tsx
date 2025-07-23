@@ -194,7 +194,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
           <CustomButton
           actionTable
           label={t("View")}
-          onClick={() => dispatch(push(`${redirectUrl}application/${id}`))}
+          onClick={() => dispatch(push(`${redirectUrl}submissions/${id}`))}
           dataTestId={`view-submission-${id}`}
           ariaLabel={t("View details for submission {{taskName}}", {
             taskName: formName ?? t("unnamed"),
