@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Modal } from "react-bootstrap";
 import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon } from "@formsflow/components"; 
@@ -27,6 +27,11 @@ interface VariableListPayload {
   parentFormId: string | null;
   variables: SubmissionField[];
 }
+
+interface FormFieldsNoteProps {
+  content: string;
+  ariaLabel: string;
+}
 const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, dropdownSelection, selectedItem }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -42,26 +47,22 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
         { key: "applicationStatus", name: "applicationStatus", label: "Status", isChecked: "true", isFormVariable: false }
       ];
       setSubmissionFields(formFields);
-    }, []);
+    }, [selectedItem]);
     
 
   
 
 
-  const FormFieldsNote = () => {
-    return (
-      <div>
-        <CustomInfo
-              heading="Note"
-              content={t(
-                "Re-arrange fields shown for the results table and the filter. Toggle their visibility in the results table with the provided checkbox. Form and Submission Date filters will always be persistent and can only be hidden or re-arranged for the results table.\n\n The selected fields and their order are saved for each user for each form. Feel free to customize it for your needs; add or remove fields, show or quickly hide fields."
-              )}
-              dataTestId="manage-fields-note"
-              aria-label={t("Manage fields note")}
-            />
-      </div>
-    );
-  }
+ const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) => (
+  <div>
+    <CustomInfo
+      heading="Note"
+      content={content}
+      dataTestId="manage-fields-note"
+      aria-label={ariaLabel}
+    />
+  </div>
+);
 const variableList = (): VariableListPayload => ({
   parentFormId: dropdownSelection,
   variables: submissionFields
@@ -107,7 +108,12 @@ const handleSaveSubmissionFields = () => {
           </div>
         </Modal.Header>
           <Modal.Body>
-              <FormFieldsNote/>
+        <FormFieldsNote
+          content={t(
+            "Re-arrange fields shown for the results table and the filter. Toggle their visibility in the results table with the provided checkbox. Form and Submission Date filters will always be persistent and can only be hidden or re-arranged for the results table.\n\n The selected fields and their order are saved for each user for each form. Feel free to customize it for your needs; add or remove fields, show or quickly hide fields."
+          )}
+          ariaLabel={t("Manage fields note")}
+        />
             <DragandDropSort
               items={submissionFields}
               onUpdate={handleUpdateOrder}
