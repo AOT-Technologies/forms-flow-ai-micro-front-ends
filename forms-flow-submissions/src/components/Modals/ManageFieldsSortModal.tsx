@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import React from "react";
 import { Modal } from "react-bootstrap";
 import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
@@ -8,7 +8,6 @@ import { StyleServices } from "@formsflow/service";
 interface ManageFieldsModalProps {
   show: boolean;
   onClose: () => void;
-  dropdownSelection: string | null;
   selectedItem: string
   submissionFields: any[]
   setSubmissionFields: ([]) => void
