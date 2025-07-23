@@ -18,16 +18,6 @@ interface FormFieldsNoteProps {
   ariaLabel: string;
 }
 
-const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, submissionFields, setSubmissionFields, selectedItem }) => {
-  const { t } = useTranslation();
-    const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
-
-    
-
-  
-
-
- 
 const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) => (
   <div>
     <CustomInfo
@@ -38,6 +28,11 @@ const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) =
     />
   </div>
 );
+
+const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, submissionFields, setSubmissionFields, selectedItem }) => {
+  const { t } = useTranslation();
+  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
+ 
 
  const handleUpdateOrder = (updatedFieldOrder) => {
   setSubmissionFields(updatedFieldOrder);
