@@ -1393,26 +1393,34 @@ $lineThin: 1px;
 .slideout-variable-selected {
   $spacingAround: $base;
   $animSpeed: 300ms;
-  display: none;
   position: absolute;
   top: $spacingAround;
   right: 0;
   z-index: 20;
-  overflow: hidden;
 
-  transform: translateX(100%);
-  transition: transform $animSpeed;
-
-  flex-direction: column;
   width: 19%;
   height: calc(100% - #{$spacingAround} * 2);
-
   background: $white;
+  overflow: hidden;
+  flex-direction: column;
 
   border: $lineThin solid $colorDividerDark;
   border-right: none;
   border-top-left-radius: $borderRadiusModal;
   border-bottom-left-radius: $borderRadiusModal;
+
+  /* Transition */
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform $animSpeed ease, opacity $animSpeed ease, visibility $animSpeed ease;
+
+  &.show {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+    display: flex;
+  }
 
   .head {
     @include divider();
@@ -1424,14 +1432,7 @@ $lineThin: 1px;
 
   .content {
     @include paddingLvl3;
-
     background-color: white;
-  }
-
-
-  &.show {
-    transform: translateX(0);
-    display: flex;
   }
 }
 
@@ -1500,10 +1501,7 @@ $lineThin: 1px;
   .modal-dialog .modal-content .modal-body {
     padding: 0px !important;
     scrollbar-gutter: initial;
-  }
-  .custom-tabs {
-    padding: var(--spacer-200) var(--spacer-225) 0px var(--spacer-225);
-    margin-left: 0px !important;
+   overflow: hidden;
   }
   .variable-modal-body {
     &.disabled { 
@@ -1545,13 +1543,12 @@ $lineThin: 1px;
 
         .tabs {
           margin: 0px !important ;
-    
+          .nav{
+          padding: var(--spacer-200) var(--spacer-225) 0px var(--spacer-225);
+          margin-left: 0px !important;
+          }
           .tab-content {
             height: 100%;
-          }
-    
-          .tab-content>div {
-            padding: 0px !important;
           }
         }
   }
