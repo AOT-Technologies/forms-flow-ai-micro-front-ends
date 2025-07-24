@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal } from "react-bootstrap";
-import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon } from "@formsflow/components"; 
+import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon,VariableModal } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
+import { fetchFormVariables,fetchFormById } from "../../api/queryServices/analyzeSubmissionServices";
 
 
 interface ManageFieldsModalProps {
   show: boolean;
   onClose: () => void;
+  formId: string | null;
   selectedItem: string
-  submissionFields: any[]
-  setSubmissionFields: ([]) => void
+  setSubmissionFields: ([]) => void;
+  submissionFields:any[];
+  handleShowVariableModal:()=>void;
 }
+
 
 interface FormFieldsNoteProps {
   content: string;
@@ -28,18 +32,19 @@ const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) =
     />
   </div>
 );
-
-const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, submissionFields, setSubmissionFields, selectedItem }) => {
+const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = React.memo(
+  ({ show, onClose, formId, selectedItem,setSubmissionFields,submissionFields,handleShowVariableModal }) => {
   const { t } = useTranslation();
-  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
- 
+    const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
+
+
+    
+
 
  const handleUpdateOrder = (updatedFieldOrder) => {
   setSubmissionFields(updatedFieldOrder);
   }
   
- 
-
   return (
     <Modal
         show={show}
@@ -81,7 +86,9 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
             dataTestId="manage-fields-add"
             ariaLabel={t("Manage fields add")}
             iconWithText
+            onClick={handleShowVariableModal}
           />
+          
         </div>
           
 
@@ -98,6 +105,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
         
       </Modal>
   );
-};
+}
+)
 
 export default ManageFieldsSortModal;

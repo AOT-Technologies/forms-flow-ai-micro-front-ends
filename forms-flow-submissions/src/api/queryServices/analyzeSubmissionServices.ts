@@ -62,4 +62,18 @@ export const fetchAllForms = () => {
 export const fetchFormVariables = (formId) => {
   let url = `${API.FORM_PROCESSES}/${formId}`;
   return RequestService.httpGETRequest(url);
+}; 
+
+export const fetchFormById = (id) => {
+  let formioToken = sessionStorage.getItem("formioToken");
+  let token = formioToken ? { "x-jwt-token": formioToken } : {};
+  return RequestService.httpGETRequest(
+    `${API.GET_FORM_BY_ID}/${id}`,
+    {},
+    "",
+    false,
+    {
+      ...token,
+    }
+  );
 };
