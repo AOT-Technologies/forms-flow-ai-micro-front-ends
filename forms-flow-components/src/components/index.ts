@@ -36,3 +36,5 @@ export * from "./CustomComponents/ResizableTable";
 export * from "./SkeletonLoader/TableSkeletonLoader";
 export * from "./CustomComponents/BpmnDiagramView";
 export * from "./CustomComponents/SubmissionHistoryWithViewButton";
+export * from "./CustomComponents/VariableModal"
+export * from "./CustomComponents/FormComponent"

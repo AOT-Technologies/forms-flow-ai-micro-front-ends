@@ -29,6 +29,7 @@ import {
   FilterSortActions,
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
+import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
 
 interface Column {
   name: string;
@@ -36,6 +37,16 @@ interface Column {
   sortKey: string;
   resizable?: boolean;
 }
+
+interface SubmissionField {
+  key: string;
+  name: string;
+  label: string;
+  isChecked: boolean; 
+  isFormVariable: boolean;
+  sortOrder?: number;
+}
+
 
 const TaskSubmissionList: React.FC = () => {
   const { t } = useTranslation();
@@ -49,9 +60,33 @@ const TaskSubmissionList: React.FC = () => {
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
+
+  const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
+  const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   //local state
   const [showSortModal, setShowSortModal] = useState(false);
+  const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState("All Forms");
+const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
+  const initialInputFields = [
+    { id: "submissionId", label: "Submission ID", type: "text", value: "" },
+    { id: "submitter", label: "Submitter", type: "text", value: "" },
+    { id: "status", label: "Status", type: "text", value: "" },
+  ];
+   useEffect(() => {
+         // this will be replaced with the variables from the selected form fields
+        const formFields = [
+          { key: "id", name: "id", label: "Submission ID", isChecked: true, isFormVariable: false },
+          { key: "formName", name: "formName", label: "Form", isChecked: true, isFormVariable: false },
+          { key: "createdBy", name: "createdBy", label: "Submitter", isChecked: true, isFormVariable: false },
+          { key: "created", name: "created", label: "Submission Date", isChecked: true, isFormVariable: false },
+          { key: "applicationStatus", name: "applicationStatus", label: "Status", isChecked: true, isFormVariable: false }
+        ];
+        setSubmissionFields(formFields);
+      }, []);
+
 
   // Columns Configuration
   const columns: Column[] = useMemo(() => [
@@ -228,8 +263,23 @@ const TaskSubmissionList: React.FC = () => {
   return (
    <>
       {/* Left Panel - Collapsible Search Form */}
-      <div className="side">
-        <CollapsibleSearch formData={formData}/>
+      <div className="left-panel">
+        <CollapsibleSearch
+          isOpen={true}
+          hasActiveFilters={false}
+          inactiveLabel="No Filters"
+          activeLabel="Filters Active"
+          onToggle={() => { }}
+          manageFieldsAction={handleManageFieldsOpen}
+          formData={formData}
+          dropdownSelection={dropdownSelection}
+          setDropdownSelection={setDropdownSelection}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          //this will be replaced dynamically after variable selection part is done
+          initialInputFields={initialInputFields}
+        />
+
       </div>
       
       <div className="page-content">
@@ -326,6 +376,17 @@ const TaskSubmissionList: React.FC = () => {
           )}
         </div>
       </div>
+      {isManageFieldsModalOpen && (
+       <ManageFieldsSortModal
+        show={isManageFieldsModalOpen}
+        onClose={handleManageFieldsClose}
+        selectedItem={selectedItem}
+        submissionFields={submissionFields}
+        setSubmissionFields={setSubmissionFields}
+      /> 
+      )}
+      
+
     </>
   );
 };

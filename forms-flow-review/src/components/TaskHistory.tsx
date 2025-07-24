@@ -26,7 +26,7 @@ const HistoryField = ({
   fields: {
     id?: number;
     header?: string;
-    value?: string;
+    value?: string | React.ReactNode;
     applicationStatus?: string;
   }[];
 }) => (
@@ -44,7 +44,7 @@ const HistoryField = ({
           <div className="content-headings me-auto">{applicationStatus}</div>
           <div className="text-end">
             <div className="content-headings">{header}</div>
-            {value}
+            <div>{value}</div>
           </div>
         </div>
       ))}
