@@ -77,7 +77,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
   };
 
   // Derived value for disabling buttons
-  const hasAnyInputInFields = inputFields.some((field) => field.value.trim() !== "");
+  const hasAnyInputInFields = inputFields?.some((field) => field.value.trim() !== "");
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
 
   const DropdownItems = formData.map((form) => ({ 
