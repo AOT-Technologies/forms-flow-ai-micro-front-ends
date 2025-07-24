@@ -8,6 +8,7 @@ const API = {
       PROCESS_ACTIVITIES: `${BPM_BASE_URL_EXT}/v1/process-instance/<process_instance_id>/activity-instances`,
       GET_PROCESS_XML: `${WEB_BASE_URL}/process/key/<process_key>`,
       FORM: `${WEB_BASE_URL}/form`,
+      FORM_PROCESSES: `${WEB_BASE_URL}/form/formid`
  }
 
 export default API;
