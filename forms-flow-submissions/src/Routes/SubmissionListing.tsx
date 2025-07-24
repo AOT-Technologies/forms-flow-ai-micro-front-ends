@@ -44,6 +44,7 @@ interface SubmissionField {
   label: string;
   isChecked: boolean; 
   isFormVariable: boolean;
+  sortOrder?: number;
 }
 
 
