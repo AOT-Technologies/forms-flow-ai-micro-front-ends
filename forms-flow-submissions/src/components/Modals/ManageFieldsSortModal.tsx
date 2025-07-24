@@ -26,7 +26,7 @@ interface SubmissionField {
 }
 
 interface VariableListPayload {
-  parentFormId: string | null;
+  parentFormId: string ;
   variables: SubmissionField[];
 }
 
