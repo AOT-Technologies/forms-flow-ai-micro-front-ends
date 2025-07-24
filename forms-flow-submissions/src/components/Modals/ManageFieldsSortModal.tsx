@@ -3,13 +3,11 @@ import { Modal } from "react-bootstrap";
 import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon,VariableModal } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
-import { fetchFormVariables,fetchFormById } from "../../api/queryServices/analyzeSubmissionServices";
 
 
 interface ManageFieldsModalProps {
   show: boolean;
   onClose: () => void;
-  formId: string | null;
   selectedItem: string
   setSubmissionFields: ([]) => void;
   submissionFields:any[];
@@ -33,7 +31,7 @@ const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) =
   </div>
 );
 const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = React.memo(
-  ({ show, onClose, formId, selectedItem,setSubmissionFields,submissionFields,handleShowVariableModal }) => {
+  ({ show, onClose, selectedItem,setSubmissionFields,submissionFields,handleShowVariableModal }) => {
   const { t } = useTranslation();
     const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
 

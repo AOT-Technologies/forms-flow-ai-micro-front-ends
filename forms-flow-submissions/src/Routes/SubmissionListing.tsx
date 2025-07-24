@@ -57,13 +57,6 @@ const TaskSubmissionList: React.FC = () => {
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState([]);
 
-  // const formFields = [
-  //       { key: "id", name: "id", label: "Submission ID", isChecked: "true", isFormVariable: false },
-  //       { key: "formName", name: "formName", label: "Form", isChecked: "true", isFormVariable: false },
-  //       { key: "createdBy", name: "createdBy", label: "Submitter", isChecked: "true", isFormVariable: false },
-  //       { key: "created", name: "created", label: "Submission Date", isChecked: "true", isFormVariable: false },
-  //       { key: "applicationStatus", name: "applicationStatus", label: "Status", isChecked: "true", isFormVariable: false }
-  //     ];
   // Redux State
   const sortParams = useSelector((state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {});
   const limit = useSelector((state: any) => state?.analyzeSubmission.limit ?? 10);
@@ -428,7 +421,6 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
       {isManageFieldsModalOpen && <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
         onClose={handleManageFieldsClose}
-        formId={dropdownSelection}
         selectedItem={selectedItem}
         setSubmissionFields={setSubmissionFields}
         submissionFields={submissionFields}
@@ -439,6 +431,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
           show={showVariableModal}
           onClose={handleCloseVariableModal}
           primaryBtnAction={handleSaveVariables}
+          fieldLabel="Field"
         />}
 
     </>
