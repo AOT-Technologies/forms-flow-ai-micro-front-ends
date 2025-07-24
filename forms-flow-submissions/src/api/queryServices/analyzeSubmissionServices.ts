@@ -1,4 +1,4 @@
-import API from "../endpoints";
+import API from "../../api/endpoints";
 import { StorageService, RequestService, HelperServices } from "@formsflow/service";
 import { SubmissionListResponse } from "../../types/submissions";
 

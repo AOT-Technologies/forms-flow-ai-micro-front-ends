@@ -67,13 +67,14 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 $base: 1rem;
 $lineThin: 1px;
 $lineThick: $lineThin*2;
+$iconWidth: $base;
 
 // fonts
 $fontBase: $base;
-$fontSmallest: $fontBase*0.875;
-$fontChoiceHead: $fontBase*1.25;
 $fontLineHeight: 1.2;
-
+$fontSmallest: $fontBase*0.875;
+$fontSectionHead: $fontBase*1.125;
+$fontChoiceHead: $fontBase*1.25;
 $fontModalTitle: $fontBase*1.5;
 
 // borders

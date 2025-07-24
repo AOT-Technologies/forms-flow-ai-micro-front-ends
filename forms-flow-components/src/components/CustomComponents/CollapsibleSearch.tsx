@@ -77,7 +77,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
   };
 
   // Derived value for disabling buttons
-  const hasAnyInputInFields = inputFields.some((field) => field.value.trim() !== "");
+  const hasAnyInputInFields = inputFields?.some((field) => field.value.trim() !== "");
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
 
   const DropdownItems = formData.map((form) => ({ 
@@ -95,7 +95,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
     // Reset all input field values
     setDropdownSelection(null);
     setInputFields((prevFields) =>
-      prevFields.map((field) => ({
+      prevFields?.map((field) => ({
         ...field,
         value: "",
       }))
@@ -155,7 +155,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
             ariaLabel={t("Select business filter")}
             className="input-filter" />
 
-            {inputFields.map((field, index) => (
+            {inputFields?.map((field, index) => (
               <div className="panel-width" key={field.id}>
                 <label className="form-label panel-label">{field.label}</label>
                 <FormInput

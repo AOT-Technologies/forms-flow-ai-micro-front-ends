@@ -1,4 +1,4 @@
-@import '_mixins';
+@import "_mixins";
 // Variables for reused values
 $primary: var(--ff-primary);
 $primary-light: var(--ff-primary-light);
@@ -8,8 +8,17 @@ $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $black-color: var(--ff-black);
 
-
+//base
+$base: 1rem;
+$lineThin: 1px;
 .modal {
+  @mixin modalBodyContent {
+    @include paddingLvl2();
+
+    display: flex;
+    flex-direction: column;
+  }
+
   position: fixed;
   top: 0;
   left: 0;
@@ -46,7 +55,6 @@ $black-color: var(--ff-black);
     &.modal-lg {
       max-width: $modalWidthLarge !important;
     }
-
 
     .modal-content {
       position: relative;
@@ -105,6 +113,8 @@ $black-color: var(--ff-black);
 
         justify-content: flex-start !important;
 
+        border-top: $lineThin solid $colorDivider;
+
         & > * {
           margin: 0;
         }
@@ -117,18 +127,11 @@ $black-color: var(--ff-black);
 
         padding: 0;
 
-        color: var(--default-font-color);
-        font-size: var(--spacer-150);
-        font-weight: var(--font-weight-sm);
+        border-bottom: $lineThin solid $colorDivider;
 
         .modal-title {
           @include paddingLvl2();
           @include textBase($fontModalTitle)
-
-          // font-size: var(--font-size-lg) !important;
-          // font-weight: var(--font-weight-sm) !important;
-          // line-height: var(--text-line-height) !important;
-          // text-transform: capitalize !important;
         }
 
         .icon-close {
@@ -142,12 +145,10 @@ $black-color: var(--ff-black);
       }
 
       .modal-body {
-        @include paddingLvl2();
+        @include modalBodyContent();
         @extend .custom-scroll;
 
         overflow: auto;
-        display: flex;
-        flex-direction: column;
 
         padding-right: calc($paddingLvl2LR - $scrollBarWidth) !important;
 
@@ -207,6 +208,20 @@ $black-color: var(--ff-black);
 
         &.with-sections {
           padding: 0 !important;
+
+          &.column {
+            scrollbar-gutter: auto;
+
+            & > div {
+              @include modalBodyContent();
+
+              margin-bottom: 0 !important;
+
+              &:not(:first-child) {
+                border-top: $lineThin solid $colorDivider;
+              }
+            }
+          }
         }
 
         &.side-by-side {
@@ -383,10 +398,7 @@ $black-color: var(--ff-black);
     height: 59vh;
     border-top: 1px solid $gray-medium;
   }
-  //TBD: Quick fix ,will remove later. 
-  .line-height-1{
-    line-height: 1 !important;
-  }
+  
   .choose-template-header {
     display: flex;
     padding: var(--spacer-200) 6.5rem var(--spacer-200) var(--spacer-250);
@@ -615,7 +627,6 @@ $black-color: var(--ff-black);
       border: none !important;
     }
   }
-
 }
 
 //Save template modal
@@ -878,7 +889,6 @@ $black-color: var(--ff-black);
 
   .expression-section{
     display: flex;
-    padding: var(--spacer-200) var(--spacer-250);
     flex-direction: column;
     align-items: flex-start;
     align-self: stretch;
@@ -901,7 +911,7 @@ $black-color: var(--ff-black);
     display: flex;
     flex-direction: column;
     padding: var(--spacer-200);
-    gap: var(--spacer-150);
+    // gap: var(--spacer-150);
   }
   .tab-section {
     display: flex;
@@ -1025,83 +1035,6 @@ $black-color: var(--ff-black);
 }
 
 
-
-
-
-.task-variable-modal {
-  .modal-body {
-    padding: 0px !important;
-  }
-  .info-pill-container{
-    padding:var(--spacer-200) var(--spacer-250) ;
-    display: flex;
-    flex-direction: column;
-    gap:var(--spacer-150);
-  }
-  .form-field-container{
-    width: 80%;
-    float: left;
-    background: $gray-medium;  // #F1F1F1
-    padding: var(--spacer-200) var(--spacer-250);
-  }
-  .field-details-container{
-    padding:var(--spacer-200) var(--spacer-250) ;
-    width: 20%;
-    float: right;
-    background: #FFF;
-  }
-  .pill-container{
-    min-height: 6rem;
-    gap: var(--spacer-025);
-    display: flex;
-    flex-wrap: wrap;
-    padding: var(--spacer-050) var(--spacer-100);
-    align-items: flex-start;
-    flex: 1 0 0;
-    align-self: stretch;
-    border-radius: var(--radius-sm);
-    border: 1px solid $gray-medium-dark;
-    background: var(--ff-white);    
-  }
-  
-  .select-text{
-    color: $gray-medium-dark;
-    font-size: var(--font-size-sm);
-  }
-  .selected-var-text{
-    color: $black-color;
-    font-size: var(--font-size-sm);
-    padding-bottom: var(--spacer-050);
-  }
- 
- .details-section{
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacer-150);
-
-  .text-bold{
-    font-weight: var(--font-weight-xl);
-    font-size: var(--font-size-sm);
-    word-break: break-all;
-   }
- }
-
- .form-control {
-   &:disabled {
-     background-color: var(--ff-white) !important;
-   }
- }
-
- .card-body {
-   border-radius: var(--radius-sm) !important;
-   border-color: $gray-medium-dark !important;
-
-   .formio-editor-read-only-content {
-     padding: var(--spacer-025) var(--spacer-050);
-   }
-
- }
-}
 .profile-settings{
   .lang-settings{
     display: flex;
@@ -1225,19 +1158,8 @@ $black-color: var(--ff-black);
       padding: 0;
       text-align: left;
     }
- 
   }
-
-
-
- 
 }
-
-
-
-
-
-
 
 .form-selection-modal{
   
@@ -1454,6 +1376,210 @@ $black-color: var(--ff-black);
   }
 }
 
+.scroll-vertical {
+  overflow-y: auto;
+}
 
+.field-details-container {
+  @include paddingLvl3();
 
+  position: relative;
 
+  h3 {
+    @include textModalHighlight();
+  }
+}
+
+.slideout-variable-selected {
+  $spacingAround: $base;
+  $animSpeed: 300ms;
+  position: absolute;
+  top: $spacingAround;
+  right: 0;
+  z-index: 20;
+
+  width: 19%;
+  height: calc(100% - #{$spacingAround} * 2);
+  background: $white;
+  overflow: hidden;
+  flex-direction: column;
+
+  border: $lineThin solid $colorDividerDark;
+  border-right: none;
+  border-top-left-radius: $borderRadiusModal;
+  border-bottom-left-radius: $borderRadiusModal;
+
+  /* Transition */
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform $animSpeed ease, opacity $animSpeed ease, visibility $animSpeed ease;
+
+  &.show {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+    display: flex;
+  }
+
+  .head {
+    @include divider();
+    padding: var(--spacer-150) var(--spacer-125);
+    & button {
+      padding: $paddingLvl3LR $paddingLvl3TB;
+    }
+  }
+
+  .content {
+    @include paddingLvl3;
+    background-color: white;
+  }
+}
+
+.pill-container-vertical {
+  $iconCloseSize: $base;
+  $paddingRL: $base;
+  $paddingTB: $base/2;
+  $spacingBetween: $base/2;
+  $spacingBetweenLabels: $base/4;
+
+  @include paddingLvl4-inner;
+
+  width: 100%;
+
+  & > div {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    max-width: 100%;
+
+    background-color: $primary-light;
+
+    border-radius: $borderRadiusHeightSM;
+
+    & > p {
+      @include textBase();
+
+      display: flex;
+      flex-direction: column;
+
+      padding-top: $paddingTB;
+      padding-bottom: $paddingTB;
+      padding-left: $paddingRL;
+      padding-right: 0;
+
+      margin: 0;
+    }
+  }
+
+  .secondary-label {
+    color: $gray-medium-dark;
+
+    margin-top: $spacingBetweenLabels;
+  }
+
+  button {
+    @include clickableFeedback1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc($iconCloseSize + $paddingRL + $spacingBetween);
+
+    padding: $paddingTB $paddingRL;
+    padding-left: $spacingBetween;
+  }
+}
+
+.svg-icon-on-dark {
+  @include svgIcon();
+
+  stroke: $white-color;
+}
+
+.variable-modal {
+  .modal-dialog .modal-content .modal-body {
+    padding: 0px !important;
+    scrollbar-gutter: initial;
+   overflow: hidden;
+  }
+  .variable-modal-body {
+    &.disabled { 
+      pointer-events: none;
+      opacity: 50%;
+    }
+    display: flex;
+    flex-direction: row !important;
+    height: calc(100vh - 11rem);
+
+    .variable-modal-left-container {
+      width: 80%;
+      float: left;
+      border-right: $lineThin solid $gray-medium;
+    }
+    .variable-modal-right-container {
+      width: 20%;
+      float: right;
+      overflow-y: auto;
+      padding: var(--spacer-150) var(--spacer-125);
+
+      .right-container-header {
+        font-weight: var(--font-weight-xl);
+        font-size: var(--font-size-sm);
+        line-height: var(--text-line-height);
+      }
+      .select-text {
+        color: $gray-medium-dark;
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-sm);
+        line-height: var(--text-line-height);
+      }
+      .text-bold {
+        font-weight: var(--font-weight-xl);
+        font-size: var(--font-size-sm);
+        word-break: break-all;
+      }
+    }
+
+        .tabs {
+          margin: 0px !important ;
+          .nav{
+          padding: var(--spacer-200) var(--spacer-225) 0px var(--spacer-225);
+          margin-left: 0px !important;
+          }
+          .tab-content {
+            height: 100%;
+          }
+        }
+  }
+  .form-control {
+    &:disabled {
+      background-color: var(--ff-white) !important;
+    }
+  }
+
+  .form-container {
+      background-color: $gray-medium;
+      padding: 10px 20px;
+      height: 100%;
+    }
+  .pill-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-100);
+  }
+  .badge-pill {
+    border-radius: var(--radius-sm) !important;
+    line-height: var(--text-line-height) !important;
+    text-align: left !important;
+    svg path{
+      stroke: $primary;
+    }
+  }
+  .primary-label,
+.secondary-label {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+}

@@ -38,6 +38,16 @@ interface Column {
   resizable?: boolean;
 }
 
+interface SubmissionField {
+  key: string;
+  name: string;
+  label: string;
+  isChecked: boolean; 
+  isFormVariable: boolean;
+  sortOrder?: number;
+}
+
+
 const TaskSubmissionList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -59,11 +69,23 @@ const TaskSubmissionList: React.FC = () => {
   const [showSortModal, setShowSortModal] = useState(false);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState("All Forms");
+const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
   const initialInputFields = [
     { id: "submissionId", label: "Submission ID", type: "text", value: "" },
     { id: "submitter", label: "Submitter", type: "text", value: "" },
     { id: "status", label: "Status", type: "text", value: "" },
   ];
+   useEffect(() => {
+         // this will be replaced with the variables from the selected form fields
+        const formFields = [
+          { key: "id", name: "id", label: "Submission ID", isChecked: true, isFormVariable: false },
+          { key: "formName", name: "formName", label: "Form", isChecked: true, isFormVariable: false },
+          { key: "createdBy", name: "createdBy", label: "Submitter", isChecked: true, isFormVariable: false },
+          { key: "created", name: "created", label: "Submission Date", isChecked: true, isFormVariable: false },
+          { key: "applicationStatus", name: "applicationStatus", label: "Status", isChecked: true, isFormVariable: false }
+        ];
+        setSubmissionFields(formFields);
+      }, []);
 
 
   // Columns Configuration
@@ -173,7 +195,7 @@ const TaskSubmissionList: React.FC = () => {
           <CustomButton
           actionTable
           label={t("View")}
-          onClick={() => dispatch(push(`${redirectUrl}application/${id}`))}
+          onClick={() => dispatch(push(`${redirectUrl}submissions/${id}`))}
           dataTestId={`view-submission-${id}`}
           ariaLabel={t("View details for submission {{taskName}}", {
             taskName: formName ?? t("unnamed"),
@@ -354,12 +376,17 @@ const TaskSubmissionList: React.FC = () => {
           )}
         </div>
       </div>
-      <ManageFieldsSortModal
+      {isManageFieldsModalOpen && (
+       <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
         onClose={handleManageFieldsClose}
-        dropdownSelection={dropdownSelection}
         selectedItem={selectedItem}
-      />
+        submissionFields={submissionFields}
+        setSubmissionFields={setSubmissionFields}
+        dropdownSelection={dropdownSelection}
+      /> 
+      )}
+      
 
     </>
   );

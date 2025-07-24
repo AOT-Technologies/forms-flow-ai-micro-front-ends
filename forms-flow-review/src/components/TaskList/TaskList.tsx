@@ -17,7 +17,6 @@ import {
   fetchBPMTaskCount,
   fetchFilterList,
   fetchServiceTaskList,
-  fetchUserList,
   updateDefaultFilter,
 } from "../../api/services/filterServices";
 import { batch, useDispatch, useSelector } from "react-redux";
@@ -188,7 +187,6 @@ else {
     // no neeed to call this on if filterCached is true
     if (filterCached) return;
     initialDataLoading();
-    dispatch(fetchUserList());
   }, []);
 
   /* this useEffect will work each time default filter changes*/
