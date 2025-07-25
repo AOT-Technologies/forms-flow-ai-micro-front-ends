@@ -27,8 +27,7 @@ import {
   CollapsibleSearch,
   DateRangePicker,
   FilterSortActions,
-  VariableModal,
-  AddIcon,
+  VariableModal
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -74,6 +73,7 @@ const TaskSubmissionList: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState("All Forms");
   const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
+  const [savedFormVariables, setSavedFormVariables] = useState({});
   
 const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
   const initialInputFields = [
@@ -127,27 +127,37 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
   },[]);
   
  useEffect(() => {
-  if (dropdownSelection) {
-    Promise.all([
-      fetchFormVariables(dropdownSelection),
-      fetchFormById(dropdownSelection)
-    ])
-      .then(([variablesRes, formRes]) => {
-        const variables = variablesRes.data?.taskVariables ?? [];
-        setForm(formRes.data);
-        setSubmissionFields(prev => [
-          ...prev,
-          ...variables.map(variable => ({
-            ...variable,
-            isChecked: true,
-            isFormVariable: true,
-            name: variable.key
-          }))
-        ]);
-      })
-      .catch(console.error);
-  }
+  if (!dropdownSelection) return;
+
+  const handleFetchSuccess = ([variablesRes, formRes]) => {
+    const variables = variablesRes?.data?.taskVariables ?? [];
+    const mappedVariables = mapVariables(variables);
+
+    setForm(formRes.data);
+    setSubmissionFields((prev) => [...prev, ...mappedVariables]);
+  };
+
+  const handleFetchError = (error) => {
+    console.error("Error fetching form or variables:", error);
+  };
+
+  const mapVariables = (variables) =>
+    variables.map((variable) => ({
+      ...variable,
+      isChecked: true,
+      isFormVariable: true,
+      name: variable.key,
+    }));
+
+  Promise.all([
+    fetchFormVariables(dropdownSelection),
+    fetchFormById(dropdownSelection),
+  ])
+    .then(handleFetchSuccess)
+    .catch(handleFetchError);
+
 }, [dropdownSelection]);
+
 
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
@@ -300,6 +310,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
   const handleSaveVariables = (variables) => { 
     //will remove once bonyis changes came
   console.log(variables,"saved variables");
+  setSavedFormVariables(variables);
  }
   return (
    <>
@@ -431,6 +442,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
           show={showVariableModal}
           onClose={handleCloseVariableModal}
           primaryBtnAction={handleSaveVariables}
+          savedFormVariables={savedFormVariables}
           fieldLabel="Field"
         />}
 

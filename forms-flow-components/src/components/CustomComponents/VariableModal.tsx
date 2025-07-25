@@ -230,20 +230,35 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                 <div className="pill-container">
                   {filteredVariablePills.map(
                     ({ key, altVariable, labelOfComponent }: any) => (
-                      <CustomPill
-                        key={key}
-                        label={altVariable || labelOfComponent}
-                        icon={
-                          <CloseIcon
-                            color={primaryColor}
-                            data-testid="pill-remove-icon"
-                          />
-                        }
-                        bg={primaryLight}
-                        onClick={() => removeSelectedVariable(key)}
-                        secondaryLabel={key}
-                        className="d-flex flex-row justify-content-between align-items-center"
-                      />
+                      <div
+                        className="button-as-div"
+                        onClick={() => {
+                          if(!selectedComponent){
+                          const selected = alternativeLabels[key];
+                          setSelectedComponent({
+                            key: selected.key,
+                            type: selected.type,
+                            label: selected.labelOfComponent,
+                            altVariable: selected.altVariable,
+                          });}
+                          setShowElement(true);
+                        }}
+                      >
+                        <CustomPill
+                          key={key}
+                          label={altVariable || labelOfComponent}
+                          icon={
+                            <CloseIcon
+                              color={primaryColor}
+                              data-testid="pill-remove-icon"
+                            />
+                          }
+                          bg={primaryLight}
+                          onClick={() => removeSelectedVariable(key)}
+                          secondaryLabel={key}
+                          className="d-flex flex-row justify-content-between align-items-center"
+                        />
+                      </div>
                     )
                   )}
                 </div>
