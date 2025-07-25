@@ -18,7 +18,7 @@ import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
 import { setBPMTaskDetail } from "./actions/taskActions"; 
 import { setTenantData } from "./actions/tenantActions";
-import { fetchServiceTaskList } from "./api/services/filterServices";
+import { fetchServiceTaskList, fetchUserList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
   "view_tasks",
   "manage_all_filters",
@@ -48,6 +48,7 @@ const Task = React.memo((props: any) => {
     lastRequestedPayload,
     activePage,
     limit,
+    userList,
   } = useSelector((state: RootState) => state.task);
 
   useEffect(() => {
@@ -60,8 +61,8 @@ const Task = React.memo((props: any) => {
 useEffect(() => {
   if (MULTITENANCY_ENABLED && tenantId) {
     // Get tenant data from StorageService
-    const storedTenantData = StorageService.get("TENANT_DATA");
-    
+    const storedTenantData = localStorage.getItem("TENANT_DATA");
+
     if (storedTenantData) {
       try {
         const parsedTenantData = JSON.parse(storedTenantData);
@@ -107,6 +108,11 @@ useEffect(() => {
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     });
+
+    // Fetch userList if not already present in the state
+    if (!userList?.data || userList.data.length === 0) {
+      dispatch(fetchUserList());
+    }
   }, [isAuth]);
 
   const getTasks = ()=>{

@@ -39,7 +39,7 @@ declare module "*.svg" {
 }
 
 declare module "@formsflow/service" {
-	export const {KeycloakService, RequestService, StorageService,i18nService,HelperServices}: any;
+	export const {KeycloakService, RequestService, StorageService,i18nService,HelperServices, StyleServices}: any;
 }
 
 declare module "@formsflow/components" {
@@ -50,6 +50,15 @@ declare module "@formsflow/components" {
     SortableHeader,
     CollapsibleSearch,
     DateRangePicker,
-    FilterSortActions 
+    FilterSortActions,
+    CloseIcon,
+    CustomInfo,
+    AddIcon,
+    DragandDropSort,
+    FormVariableIcon,
+    DownloadPDFButton,
+    BackToPrevIcon,
+    FormSubmissionHistoryModal,
+    SubmissionHistoryWithViewButton,
   }: any;
 }

@@ -1,4 +1,4 @@
-import API from "../endpoints";
+import API from "../../api/endpoints";
 import { StorageService, RequestService, HelperServices } from "@formsflow/service";
 import { SubmissionListResponse } from "../../types/submissions";
 
@@ -57,4 +57,9 @@ export const getSubmissionList = (
 export const fetchAllForms = () => {
   //activeForms means published forms only : status = Active
   return RequestService.httpGETRequest(`${API.FORM}?activeForms=true`);
+};
+
+export const fetchFormVariables = (formId) => {
+  let url = `${API.FORM_PROCESSES}/${formId}`;
+  return RequestService.httpGETRequest(url);
 };

@@ -145,7 +145,7 @@ $paddingLvl3MinS: var(--spacer-050); // calc($base * 0.5)
   padding: $paddingLvl2TB $paddingLvl2LR !important;
 
   & > * {
-    margin-bottom: $paddingLvl2S !important;
+    margin-bottom: $paddingLvl2S ;
 
     &:last-child {
       margin-bottom: 0 !important;
@@ -344,6 +344,11 @@ $paddingLvl3MinS: var(--spacer-050); // calc($base * 0.5)
   }
 }
 
+@mixin textModalHighlight {
+  @include textBase();
+
+  font-weight: 700;
+}
 // pre-fixes
 @mixin line-clamp($amount) {
   line-clamp: $amount;
