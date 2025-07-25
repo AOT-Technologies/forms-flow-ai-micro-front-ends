@@ -232,20 +232,20 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                     ({ key, altVariable, labelOfComponent }: any) => (
                       <div
                         className="button-as-div"
+                        key={key}
                         onClick={() => {
-                          if(!selectedComponent){
                           const selected = alternativeLabels[key];
                           setSelectedComponent({
                             key: selected.key,
                             type: selected.type,
                             label: selected.labelOfComponent,
                             altVariable: selected.altVariable,
-                          });}
+                          });
                           setShowElement(true);
                         }}
                       >
                         <CustomPill
-                          key={key}
+                          
                           label={altVariable || labelOfComponent}
                           icon={
                             <CloseIcon
