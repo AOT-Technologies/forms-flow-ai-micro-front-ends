@@ -230,22 +230,22 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                 <div className="pill-container">
                   {filteredVariablePills.map(
                     ({ key, altVariable, labelOfComponent }: any) => (
-                      <div
-                        className="button-as-div"
-                        key={key}
-                        onClick={() => {
-                          const selected = alternativeLabels[key];
-                          setSelectedComponent({
-                            key: selected.key,
-                            type: selected.type,
-                            label: selected.labelOfComponent,
-                            altVariable: selected.altVariable,
-                          });
-                          setShowElement(true);
-                        }}
-                      >
+                      // <div
+                      //   className="button-as-div"
+                      //   key={key}
+                      //   onClick={() => {
+                      //     const selected = alternativeLabels[key];
+                      //     setSelectedComponent({
+                      //       key: selected.key,
+                      //       type: selected.type,
+                      //       label: selected.labelOfComponent,
+                      //       altVariable: selected.altVariable,
+                      //     });
+                      //     setShowElement(true);
+                      //   }}
+                      // >
                         <CustomPill
-                          
+                          key={key}
                           label={altVariable || labelOfComponent}
                           icon={
                             <CloseIcon
@@ -258,7 +258,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                           secondaryLabel={key}
                           className="d-flex flex-row justify-content-between align-items-center"
                         />
-                      </div>
+                     // </div>
                     )
                   )}
                 </div>
