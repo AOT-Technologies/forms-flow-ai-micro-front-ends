@@ -436,6 +436,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
         setSubmissionFields={setSubmissionFields}
         submissionFields={submissionFields}
         handleShowVariableModal={handleShowVariableModal}
+        dropdownSelection={dropdownSelection}
       />}
       {showVariableModal && <VariableModal
           form={form}

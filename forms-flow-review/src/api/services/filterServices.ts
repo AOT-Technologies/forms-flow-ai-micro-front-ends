@@ -44,7 +44,6 @@ const handleTaskError = (dispatch, error) => {
   dispatch(setBPMTaskList([]));
   dispatch(setBPMTaskCount(0));
   dispatch(serviceActionError(error));
-  dispatch(setBPMTaskLoader(false));
 };
 
 /**
@@ -73,22 +72,24 @@ export const fetchServiceTaskList = (
 
   const apiUrlgetTaskList = `${
     API.GET_BPM_TASK_FILTERS
-  }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
+    }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
   return (dispatch) => {
+    dispatch(setBPMTaskLoader(true));
+    let abortFlag = 0;
     // implemented for multiples api call prevention
     if (currentTaskFetchAbortController) {
+      abortFlag = 1;
       currentTaskFetchAbortController.abort();
     }
 
     currentTaskFetchAbortController = new AbortController();
     const signal = currentTaskFetchAbortController.signal;
-   
-    // dispatch(setBPMTaskLoader(true)); Adding a temporary comment to prevent the skeleton loader in the task table from displaying oddly due to socket.
+
     dispatch(setLastReqPayload(reqData));
     // [TBD: need to fix properly ]if name is available in reqData, we need to set it to the name property of reqData
     // this will cause an issue like if the name will come may be two times one form task name and one form form component key
-    const clonedReqData = cloneDeep(reqData); 
-    let criteria = clonedReqData?.criteria ??  {};
+    const clonedReqData = cloneDeep(reqData);
+    let criteria = clonedReqData?.criteria ?? {};
     let taskName = null;
     const updatedVariables = criteria.processVariables?.filter(
       (variable) => {
@@ -140,7 +141,6 @@ export const fetchServiceTaskList = (
             dispatch(setBPMTaskCount(taskCount.count));
             dispatch(setBPMTaskList(taskData));
             dispatch(setVisibleAttributes(responseData[1]));
-            dispatch(setBPMTaskLoader(false));
             done(null, taskData);
           }
         } else {
@@ -152,9 +152,11 @@ export const fetchServiceTaskList = (
         done(error);
       })
       .finally(() => {
-        // Hide loader regardless of success or error
-        dispatch(setBPMTaskLoader(false));
-      });
+        //the abort flag will determine the final call and make the loader false.
+        if (abortFlag == 1) {
+          dispatch(setBPMTaskLoader(false));
+        }
+      })
   };
 };
 
@@ -163,12 +165,18 @@ export const fetchBPMTaskCount = (
   callback = (err: any, data: any) => {}
 ) => {
   return (dispatch) => {
+    dispatch(setBPMTaskLoader(true));
     RequestService.httpPOSTRequest(`${API.GET_BPM_TASK_FILTERS}/count`, data)
       .then((res) => {
         dispatch(setBPMFiltersAndCount(res.data));
         callback(null, res.data);
       })
-      .catch(callback);
+      .catch((err) => {
+        callback(err, null);
+      })
+      .finally(() => {
+        dispatch(setBPMTaskLoader(false));
+      });
   };
 };
 
@@ -330,18 +338,18 @@ export const updateAssigneeBPMTask = (taskId, user, ...rest) => {
 export const saveFilterPreference = (data, filterType = null, parentFilterId = null) => {
   let url = API.SAVE_FILTER_PREFERENCE;
   const params = [];
-  
+
   if (filterType) {
     params.push(`filterType=${filterType}`);
   }
-  
+
   if (parentFilterId !== null) {
     params.push(`parentFilterId=${parentFilterId}`);
   }
-  
+
   if (params.length > 0) {
     url += `?${params.join('&')}`;
   }
-  
+
   return RequestService.httpPOSTRequest(url, data);
 };

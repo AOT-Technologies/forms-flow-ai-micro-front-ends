@@ -77,3 +77,15 @@ export const fetchFormById = (id) => {
     }
   );
 };
+
+export const createOrUpdateSubmissionFilter = (data) => {
+  let url = `${API.CREATE_OR_UPDATE_FILTER}`;
+  return RequestService.httpPOSTRequest(url, data);
+}
+
+export const updateDefaultSubmissionFilter = (data) => {
+  let url = `${API.UPDATE_DEFAULT_FILTER}`;
+  return RequestService.httpPOSTRequest(url, data);
+}
+
+

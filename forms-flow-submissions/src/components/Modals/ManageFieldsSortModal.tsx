@@ -1,17 +1,34 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Modal } from "react-bootstrap";
 import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
+import { createOrUpdateSubmissionFilter, updateDefaultSubmissionFilter } from "../../api/queryServices/analyzeSubmissionServices";
+import { setDefaultSubmissionFilter } from "../../actions/analyzeSubmissionActions";
 
 
 interface ManageFieldsModalProps {
   show: boolean;
   onClose: () => void;
   selectedItem: string
-  setSubmissionFields: ([]) => void;
-  submissionFields:any[];
+  submissionFields: any[]
+  setSubmissionFields: ([]) => void
+  dropdownSelection: string
   handleShowVariableModal:()=>void;
+}
+interface SubmissionField {
+  sortOrder: string;
+  key: string;
+  name: string;
+  label: string;
+  isChecked: boolean; 
+  isFormVariable: boolean;
+}
+
+interface VariableListPayload {
+  parentFormId: string ;
+  variables: SubmissionField[];
 }
 
 
@@ -30,18 +47,36 @@ const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) =
     />
   </div>
 );
-const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = React.memo(
-  ({ show, onClose, selectedItem,setSubmissionFields,submissionFields,handleShowVariableModal }) => {
+
+const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ 
+  show, 
+  onClose, 
+  dropdownSelection, 
+  submissionFields, 
+  setSubmissionFields, 
+  selectedItem,
+  handleShowVariableModal }) => {
   const { t } = useTranslation();
-    const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
-
-
-    
-
+  const dispatch = useDispatch();
+  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
+ 
 
  const handleUpdateOrder = (updatedFieldOrder) => {
   setSubmissionFields(updatedFieldOrder);
   }
+  const variableList = (): VariableListPayload => ({
+  parentFormId: dropdownSelection,
+  variables: submissionFields
+});
+
+
+const handleSaveSubmissionFields = () => {
+  createOrUpdateSubmissionFilter(variableList()).then((res) => {
+    updateDefaultSubmissionFilter({ defaultSubmissionsFilter: res.data.id });
+    dispatch(setDefaultSubmissionFilter(res.data.id))
+    onClose();
+  });
+};
   
   return (
     <Modal
@@ -95,7 +130,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = React.memo(
         <Modal.Footer>
                   <div className="buttons-row">
 
-          <CustomButton  label={t("Save Changes")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")} />
+          <CustomButton  label={t("Save Changes")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")} onClick={handleSaveSubmissionFields}/>
           <CustomButton secondary label={t("Cancel")} onClick={onClose} dataTestId="manage-fields-cancel" ariaLabel={t("Manage fields cancel")}/>
         </div>
         </Modal.Footer>
@@ -104,6 +139,5 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = React.memo(
       </Modal>
   );
 }
-)
 
 export default ManageFieldsSortModal;
