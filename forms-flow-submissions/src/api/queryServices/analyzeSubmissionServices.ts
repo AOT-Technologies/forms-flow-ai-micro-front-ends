@@ -63,3 +63,15 @@ export const fetchFormVariables = (formId) => {
   let url = `${API.FORM_PROCESSES}/${formId}`;
   return RequestService.httpGETRequest(url);
 };
+
+export const createOrUpdateSubmissionFilter = (data) => {
+  let url = `${API.CREATE_OR_UPDATE_FILTER}`;
+  return RequestService.httpPOSTRequest(url, data);
+}
+
+export const updateDefaultSubmissionFilter = (data) => {
+  let url = `${API.UPDATE_DEFAULT_FILTER}`;
+  return RequestService.httpPOSTRequest(url, data);
+}
+
+

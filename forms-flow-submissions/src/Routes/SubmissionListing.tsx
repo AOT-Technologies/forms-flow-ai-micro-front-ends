@@ -383,6 +383,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
         selectedItem={selectedItem}
         submissionFields={submissionFields}
         setSubmissionFields={setSubmissionFields}
+        dropdownSelection={dropdownSelection}
       /> 
       )}
       
