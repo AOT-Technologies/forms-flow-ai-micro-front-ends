@@ -46,7 +46,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   size,
   dataTestId,
   ariaLabel,
-  className,
+  className='',
   required = false,
   icon,
   clear,

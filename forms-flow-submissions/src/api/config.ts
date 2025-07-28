@@ -28,3 +28,4 @@ export const CUSTOM_SUBMISSION_URL =
  export const BPM_BASE_URL_EXT = `${
    (window._env_?.REACT_APP_BPM_URL)
  }/engine-rest-ext`;
+  export const API_PROJECT_URL = window._env_?.REACT_APP_API_PROJECT_URL;

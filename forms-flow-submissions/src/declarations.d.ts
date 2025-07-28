@@ -60,5 +60,6 @@ declare module "@formsflow/components" {
     BackToPrevIcon,
     FormSubmissionHistoryModal,
     SubmissionHistoryWithViewButton,
+    VariableModal
   }: any;
 }
