@@ -10,10 +10,12 @@ import Sidebar from "./Sidebar";
 // import hamburger from "./hamburger.svg";
 // import closebutton from "./closebutton.svg";
 import { HamburgerIcon, CloseIcon, ApplicationLogo } from "@formsflow/components";
+import { StyleServices } from "@formsflow/service";
 function HamburgerMenu({ props }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const hideLogo =  StyleServices?.getCSSVariable("--hide-formsflow-logo")?.toLowerCase();
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary custom-navbar">
@@ -30,7 +32,9 @@ function HamburgerMenu({ props }) {
         </button>
         <Navbar.Brand href="" className="mx-auto">
           {/* <img className="" src={Appname} alt="applicationName" /> */}
+          {hideLogo !== "true" && (
           <ApplicationLogo data-testid="application-logo" />
+          )}
         </Navbar.Brand>
         <Navbar.Collapse id="basic-navbar-nav" className="order-2">
           <Nav className="me-auto">
