@@ -6,7 +6,7 @@ import { push } from "connected-react-router";
 
 // Types and Services
 import { Submission } from "../types/submissions";
-import { getSubmissionList, fetchAllForms, fetchFormVariables, fetchFormById } from "../api/queryServices/analyzeSubmissionServices";
+import { getSubmissionList, fetchAllForms, fetchFormVariables, fetchFormById, createOrUpdateSubmissionFilter, updateDefaultSubmissionFilter } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate,optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
 
@@ -15,7 +15,8 @@ import {
   setAnalyzeSubmissionSort,
   setAnalyzeSubmissionPage,
   setAnalyzeSubmissionLimit,
-  setAnalyzeSubmissionDateRange
+  setAnalyzeSubmissionDateRange,
+  setDefaultSubmissionFilter
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -31,7 +32,7 @@ import {
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
-
+import { SystemVariables } from "../constants/variables";
 
 interface Column {
   name: string;
@@ -39,7 +40,10 @@ interface Column {
   sortKey: string;
   resizable?: boolean;
 }
-
+interface VariableListPayload {
+  parentFormId: string ;
+  variables: SubmissionField[];
+}
 interface SubmissionField {
   key: string;
   name: string;
@@ -307,11 +311,41 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
      handleManageFieldsClose();
     };
     
-  const handleSaveVariables = (variables) => { 
-    //will remove once bonyis changes came
-  console.log(variables,"saved variables");
-  setSavedFormVariables(variables);
- }
+    const handleSaveVariables = useCallback((variables) => {
+       // Convert object to array of SubmissionField
+  const convertedVariableArray = Object.values(variables).map(({key,altVariable,labelOfComponent},index) => ({
+    key: key,
+    name: key,
+    label: altVariable || labelOfComponent ||key,
+    isChecked: true,
+    isFormVariable: true,
+    sortOrder: submissionFields.length + index + 1, 
+  }));
+
+  // Merge with existing fields and filter to remove duplicates by key 
+  // ensure the need of filtering submissionfields
+  const merged = [
+    ...submissionFields.filter(
+      (field) => !convertedVariableArray.find((newField) => newField.key === field.key)
+    ),
+    ...convertedVariableArray,
+  ];
+  // const merged = [...submissionFields, ...convertedVariableArray];
+
+  setSubmissionFields(merged);
+
+  // payload interface 
+  const payload: VariableListPayload = {
+    parentFormId: dropdownSelection,
+    variables: merged,
+  };
+
+  createOrUpdateSubmissionFilter(payload).then((res) => {
+    updateDefaultSubmissionFilter({ defaultSubmissionsFilter: res.data.id });
+    dispatch(setDefaultSubmissionFilter(res.data.id));
+  });
+    },[dispatch,dropdownSelection,submissionFields]);
+
   return (
    <>
       {/* Left Panel - Collapsible Search Form */}
@@ -445,6 +479,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
           primaryBtnAction={handleSaveVariables}
           savedFormVariables={savedFormVariables}
           fieldLabel="Field"
+          systemVariables={SystemVariables}
         />}
 
     </>

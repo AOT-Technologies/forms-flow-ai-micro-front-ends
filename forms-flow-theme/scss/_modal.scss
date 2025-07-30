@@ -1560,6 +1560,7 @@ $lineThin: 1px;
 
   .form-container {
       background-color: $gray-medium;
+      min-height: calc(100vh - 15.25rem);
     }
   .pill-container {
     display: flex;
@@ -1579,5 +1580,21 @@ $lineThin: 1px;
   white-space: normal;
   word-break: break-word;
   overflow-wrap: break-word;
+}
+.system-tab-container{
+  display: flex;
+  flex-direction: column;
+
+  .system-item{
+    display: flex;
+    gap: var(--spacer-050);
+    color: $primary;
+    padding: var(--spacer-075) var(--spacer-100);
+    border-radius: var(--radius-sm);
+    &.selected-item{
+      background-color: $primary-light;
+
+    }
+  }
 }
 }
