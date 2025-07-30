@@ -200,13 +200,10 @@ export const DRAFT_ENABLED =
 
 // This is to check if the application is running in enterprise mode or not
 const ENTERPRISE_ENABLED_VARIABLE =
-  (window._env_ && window._env_?.REACT_APP_IS_ENTERPRISE) || false;
+  (window._env_ && window._env_.REACT_APP_IS_ENTERPRISE) || false;
 
-export const IS_ENTERPRISE = 
-  ENTERPRISE_ENABLED_VARIABLE === "true" || ENTERPRISE_ENABLED_VARIABLE === true
-    ? true
-    : false;
-
+export const IS_ENTERPRISE =
+  ENTERPRISE_ENABLED_VARIABLE === "true" || ENTERPRISE_ENABLED_VARIABLE === true;
 
 export const USER_NAME_DISPLAY_CLAIM =
     window._env_?.REACT_APP_USER_NAME_DISPLAY_CLAIM;
