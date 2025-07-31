@@ -15,6 +15,7 @@ interface ManageFieldsModalProps {
   submissionFields: any[]
   setSubmissionFields: ([]) => void
   dropdownSelection: string
+  handleShowVariableModal:()=>void;
 }
 interface SubmissionField {
   sortOrder: string;
@@ -29,6 +30,7 @@ interface VariableListPayload {
   parentFormId: string ;
   variables: SubmissionField[];
 }
+
 
 interface FormFieldsNoteProps {
   content: string;
@@ -46,7 +48,14 @@ const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) =
   </div>
 );
 
-const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, dropdownSelection, submissionFields, setSubmissionFields, selectedItem }) => {
+const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ 
+  show, 
+  onClose, 
+  dropdownSelection, 
+  submissionFields, 
+  setSubmissionFields, 
+  selectedItem,
+  handleShowVariableModal }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
@@ -69,8 +78,6 @@ const handleSaveSubmissionFields = () => {
   });
 };
   
- 
-
   return (
     <Modal
         show={show}
@@ -112,7 +119,9 @@ const handleSaveSubmissionFields = () => {
             dataTestId="manage-fields-add"
             ariaLabel={t("Manage fields add")}
             iconWithText
+            onClick={handleShowVariableModal}
           />
+          
         </div>
           
 
@@ -129,6 +138,6 @@ const handleSaveSubmissionFields = () => {
         
       </Modal>
   );
-};
+}
 
 export default ManageFieldsSortModal;

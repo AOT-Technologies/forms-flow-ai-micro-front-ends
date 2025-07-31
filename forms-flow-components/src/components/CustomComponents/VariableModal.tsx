@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import ModalHeader from "react-bootstrap/esm/ModalHeader";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,12 @@ import {
 } from "../../formsflow-components";
 import { StyleServices } from "@formsflow/service";
 
+interface FormVariable {
+  key: string;
+  altVariable: string;
+  labelOfComponent: string;
+  type: string;
+}
 interface VariableModalProps {
   show: boolean;
   onClose: () => void;
@@ -24,7 +30,7 @@ interface VariableModalProps {
   primaryBtnariaLabel?: string;
   secondaryBtnariaLabel?: string;
   form: any;
-  savedFormVariables?: any;
+  savedFormVariables?: FormVariable[];
   saveBtnDisabled?: boolean;
   fieldLabel?: string;
 }
@@ -46,7 +52,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
     saveBtnDisabled = false,
     fieldLabel = "Variable", // to display the form field labels
   }) => {
-    const [alternativeLabels, setAlternativeLabels] = useState(savedFormVariables);
+    const [alternativeLabels, setAlternativeLabels] = useState([]);
     const detailsRef = useRef(null);
     const [showElement, setShowElement] = useState(false);
     const TAB_KEYS = {
@@ -75,6 +81,12 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       "currentUserRoles",
       "allAvailableRoles",
     ]);
+
+    useEffect(() => {
+      if (savedFormVariables) {
+        setAlternativeLabels(savedFormVariables);
+      }
+    }, [savedFormVariables]);
 
     const tabs = useMemo(
       () => [
@@ -139,13 +151,11 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
         return newLabels;
       });
     }, []);
-
     // render the selection of variables and selected variables
     const renderRightContainer = () => {
       const filteredVariablePills = Object.values(alternativeLabels).filter(
         ({ key }) => !ignoreKeywords.has(key)
       );
-
       return (
         <div className="">
           {/* Slideout panel, always mounted */}
@@ -181,6 +191,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                   dataTestId="Add-alternative-input"
                   label="Add Alternative Label"
                   value={selectedComponent.altVariable}
+                  id="add-alternative"
                   onChange={(e) =>
                     setSelectedComponent((prev) => ({
                       ...prev,
@@ -219,20 +230,35 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                 <div className="pill-container">
                   {filteredVariablePills.map(
                     ({ key, altVariable, labelOfComponent }: any) => (
-                      <CustomPill
-                        key={key}
-                        label={altVariable || labelOfComponent}
-                        icon={
-                          <CloseIcon
-                            color={primaryColor}
-                            data-testid="pill-remove-icon"
-                          />
-                        }
-                        bg={primaryLight}
-                        onClick={() => removeSelectedVariable(key)}
-                        secondaryLabel={key}
-                        className="d-flex flex-row justify-content-between align-items-center"
-                      />
+                      // <div
+                      //   className="button-as-div"
+                      //   key={key}
+                      //   onClick={() => {
+                      //     const selected = alternativeLabels[key];
+                      //     setSelectedComponent({
+                      //       key: selected.key,
+                      //       type: selected.type,
+                      //       label: selected.labelOfComponent,
+                      //       altVariable: selected.altVariable,
+                      //     });
+                      //     setShowElement(true);
+                      //   }}
+                      // >
+                        <CustomPill
+                          key={key}
+                          label={altVariable || labelOfComponent}
+                          icon={
+                            <CloseIcon
+                              color={primaryColor}
+                              data-testid="pill-remove-icon"
+                            />
+                          }
+                          bg={primaryLight}
+                          onClick={() => removeSelectedVariable(key)}
+                          secondaryLabel={key}
+                          className="d-flex flex-row justify-content-between align-items-center"
+                        />
+                     // </div>
                     )
                   )}
                 </div>
@@ -260,7 +286,6 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
         JSON.stringify(savedFormVariables) !== JSON.stringify(alternativeLabels)
       );
     }, [savedFormVariables, alternativeLabels]);
-
     return (
       <Modal
         show={show}

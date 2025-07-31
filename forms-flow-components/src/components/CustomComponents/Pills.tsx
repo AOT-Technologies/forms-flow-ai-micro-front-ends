@@ -46,7 +46,10 @@ export const CustomPill: React.FC<CustomPillProps> = ({
         className="button-as-div"
         aria-label="click icon" 
         data-testid="click-icon"
-        onClick={onClick}>{icon}</button>
+         onClick={(e) => {
+                  e.stopPropagation(); 
+                  onClick?.();
+                }}>{icon}</button>
         </div>
       )}
     </div>

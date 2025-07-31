@@ -100,10 +100,6 @@ $gray-dark: var(--ff-gray-dark);
             // padding: 8px 10px; 
             border-style:  dotted;  
             border-color: transparent;
-            &:hover {
-              border-color: $primary-light;
-              border-radius: var(--radius-sm);
-            }
           }
 
           &.formio-component-hidden{

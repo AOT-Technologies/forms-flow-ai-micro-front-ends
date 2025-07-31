@@ -6,7 +6,7 @@ import { push } from "connected-react-router";
 
 // Types and Services
 import { Submission } from "../types/submissions";
-import { getSubmissionList, fetchAllForms, fetchSubmissionList } from "../api/queryServices/analyzeSubmissionServices";
+import { getSubmissionList, fetchAllForms, fetchSubmissionList, fetchFormVariables, fetchFormById } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate,optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
 
@@ -30,9 +30,11 @@ import {
   CollapsibleSearch,
   DateRangePicker,
   FilterSortActions,
+  VariableModal
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
+
 
 interface Column {
   name: string;
@@ -66,6 +68,7 @@ const TaskSubmissionList: React.FC = () => {
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
+
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   //local state
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
@@ -73,6 +76,9 @@ const TaskSubmissionList: React.FC = () => {
   const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
   const [showSortModal, setShowSortModal] = useState(false);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
+  const [showVariableModal, setShowVariableModal] = React.useState(false);
+  const [form, setForm] = React.useState([]);
+  const [savedFormVariables, setSavedFormVariables] = useState({});
   const [selectedItem, setSelectedItem] = useState(selectedSubmissionFilter ||"All Forms");
   const [submissionFields, setSubmissionFields] = useState([
           { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false },
@@ -105,6 +111,9 @@ const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
       .filter(Boolean), 
     //adding remaining items that are not pinned
     ...filteredVars.filter((item) => !pinnedOrder.includes(item.key)),
+
+  
+
   ];
 
   return sortedVars.map((item) => ({
@@ -216,10 +225,41 @@ const {
           console.error(err);
         });
   },[]);
+  
+ useEffect(() => {
+  if (!dropdownSelection) return;
 
+  const handleFetchSuccess = ([variablesRes, formRes]) => {
+    const variables = variablesRes?.data?.taskVariables ?? [];
+    const mappedVariables = mapVariables(variables);
+
+    setForm(formRes.data);
+    setSubmissionFields((prev) => [...prev, ...mappedVariables]);
+  };
+
+  const handleFetchError = (error) => {
+    console.error("Error fetching form or variables:", error);
+  };
+
+  const mapVariables = (variables) =>
+    variables.map((variable) => ({
+      ...variable,
+      isChecked: true,
+      isFormVariable: true,
+      name: variable.key,
+    }));
+
+  Promise.all([
+    fetchFormVariables(dropdownSelection),
+    fetchFormById(dropdownSelection),
+  ])
+    .then(handleFetchSuccess)
+    .catch(handleFetchError);
+
+}, [dropdownSelection]);
+  // TO DO: data keys should change based on the response variable keys
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
-
   // Sort Handler
    const handleSort = useCallback((key: string) => {
     const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
@@ -357,6 +397,20 @@ const {
     );
   }, [t, sortParams, handleSort]);
 
+  const handleCloseVariableModal = () => { 
+    setShowVariableModal(false) 
+    handleManageFieldsOpen();
+  };
+  const handleShowVariableModal = () => {
+     setShowVariableModal(true) ;
+     handleManageFieldsClose();
+    };
+    
+  const handleSaveVariables = (variables) => { 
+    //will remove once bonyis changes came
+  console.log(variables,"saved variables");
+  setSavedFormVariables(variables);
+ }
   return (
    <>
       {/* Left Panel - Collapsible Search Form */}
@@ -394,6 +448,7 @@ const {
               startDateAriaLabel={t("Start date")}
               endDateAriaLabel={t("End date")}
             />
+            
           </div>
 
           <div className="actions">
@@ -474,17 +529,23 @@ const {
           )}
         </div>
       </div>
-      {isManageFieldsModalOpen && (
-       <ManageFieldsSortModal
+      {isManageFieldsModalOpen && <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
         onClose={handleManageFieldsClose}
         selectedItem={selectedItem}
-        submissionFields={submissionFields}
         setSubmissionFields={setSubmissionFields}
+        submissionFields={submissionFields}
+        handleShowVariableModal={handleShowVariableModal}
         dropdownSelection={dropdownSelection}
-      /> 
-      )}
-      
+      />}
+      {showVariableModal && <VariableModal
+          form={form}
+          show={showVariableModal}
+          onClose={handleCloseVariableModal}
+          primaryBtnAction={handleSaveVariables}
+          savedFormVariables={savedFormVariables}
+          fieldLabel="Field"
+        />}
 
     </>
   );
