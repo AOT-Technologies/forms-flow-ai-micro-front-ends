@@ -9,6 +9,7 @@ import {
 import { RootState } from "../reducers/index";
 import { RouteComponentProps } from "react-router-dom";
 import Loading from "./Loading";
+import { StyleServices } from "@formsflow/service";
 
 interface OwnProps extends RouteComponentProps<{ formId: string }> {
   page?: string;
@@ -38,6 +39,10 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
     (state: any) => state.customSubmission?.submission ?? {}
   );
 
+  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customTitle = StyleServices?.getCSSVariable("--custom-title");
+  const hasMultitenancyHeader = customLogoPath || customTitle;
+
   const rawSubmission = useMemo(() => {
     if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
       return customSubmission;
@@ -65,8 +70,18 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
     );
   }
 
+  let scrollableOverview = "scrollable-overview";
+
+  if (form?.display === "wizard") {
+    scrollableOverview = hasMultitenancyHeader
+      ? "scrollable-overview-with-custom-header-and-wizard"
+      : "scrollable-overview-with-wizard";
+  }else if (hasMultitenancyHeader) {
+    scrollableOverview = "scrollable-overview-with-custom-header-and-wizard";
+  }
+
   return (
-    <div className="scrollable-overview bg-white ps-3 pe-3 m-0 form-border">
+    <div className={`${scrollableOverview} bg-white ps-3 pe-3 m-0 form-border`}>
       <div className="sub-container wizard-tab">
         <Form
           form={form}
