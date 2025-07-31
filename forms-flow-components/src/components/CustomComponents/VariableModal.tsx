@@ -11,6 +11,7 @@ import {
   FormInput,
 } from "../../formsflow-components";
 import { StyleServices } from "@formsflow/service";
+import { ListGroup } from 'react-bootstrap';
 
 interface FormVariable {
   key: string;
@@ -94,7 +95,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       () => (
         <div className="system-tab-container">
           {systemVariables?.map(({ key, labelOfComponent, type }) => (
-            <span
+            <ListGroup.Item
               key={key}
               className={`system-item ${
                 selectedComponent?.key === key ? "selected-item" : ""
@@ -110,7 +111,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
               }}
             >
               {labelOfComponent}
-            </span>
+            </ListGroup.Item>
           ))}
         </div>
       ),
@@ -234,7 +235,9 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                   />
                 )}
 
-                <CustomButton
+                {!(selectedComponent.altVariable ===
+                    alternativeLabels[selectedComponent.key]?.altVariable && ignoreKeywords.has(selectedComponent.key)) && 
+                  <CustomButton
                   dataTestId="Add-alternative-btn"
                   ariaLabel="Add alternative label button"
                   actionTable
@@ -248,7 +251,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                     selectedComponent.altVariable ===
                     alternativeLabels[selectedComponent.key]?.altVariable
                   }
-                />
+                />}
               </div>
             </div>
           </div>

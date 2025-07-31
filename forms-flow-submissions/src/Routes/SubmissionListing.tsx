@@ -130,36 +130,16 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
         });
   },[]);
   
+  //fetch form by id to render in the variable modal
  useEffect(() => {
   if (!dropdownSelection) return;
-
-  const handleFetchSuccess = ([variablesRes, formRes]) => {
-    const variables = variablesRes?.data?.taskVariables ?? [];
-    const mappedVariables = mapVariables(variables);
-
-    setForm(formRes.data);
-    setSubmissionFields((prev) => [...prev, ...mappedVariables]);
-  };
-
-  const handleFetchError = (error) => {
-    console.error("Error fetching form or variables:", error);
-  };
-
-  const mapVariables = (variables) =>
-    variables.map((variable) => ({
-      ...variable,
-      isChecked: true,
-      isFormVariable: true,
-      name: variable.key,
-    }));
-
-  Promise.all([
-    fetchFormVariables(dropdownSelection),
-    fetchFormById(dropdownSelection),
-  ])
-    .then(handleFetchSuccess)
-    .catch(handleFetchError);
-
+  fetchFormById(dropdownSelection)
+  .then((res) => {
+    setForm(res.data);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 }, [dropdownSelection]);
 
 
@@ -311,40 +291,51 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
      handleManageFieldsClose();
     };
     
-    const handleSaveVariables = useCallback((variables) => {
-       // Convert object to array of SubmissionField
-  const convertedVariableArray = Object.values(variables).map(({key,altVariable,labelOfComponent},index) => ({
-    key: key,
-    name: key,
-    label: altVariable || labelOfComponent ||key,
-    isChecked: true,
-    isFormVariable: true,
-    sortOrder: submissionFields.length + index + 1, 
-  }));
+    const handleSaveVariables = useCallback(
+      (variables) => {
+        setSavedFormVariables(variables);
+        // Convert object to array of SubmissionField
+        const convertedVariableArray = Object.values(variables).map(
+          ({ key, altVariable, labelOfComponent }, index) => ({
+            key: key,
+            name: key,
+            label: altVariable || labelOfComponent || key,
+            isChecked: true,
+            isFormVariable: true,
+            sortOrder: submissionFields.length + index + 1,
+          })
+        );
 
-  // Merge with existing fields and filter to remove duplicates by key 
-  // ensure the need of filtering submissionfields
-  const merged = [
-    ...submissionFields.filter(
-      (field) => !convertedVariableArray.find((newField) => newField.key === field.key)
-    ),
-    ...convertedVariableArray,
-  ];
-  // const merged = [...submissionFields, ...convertedVariableArray];
+        // Merge with existing fields and filter to remove duplicates by key
+        // ensure the need of filtering submissionfields
+        const merged = [
+          ...submissionFields.filter(
+            (field) =>
+              !convertedVariableArray.find(
+                (newField) => newField.key === field.key
+              )
+          ),
+          ...convertedVariableArray,
+        ];
+        // const merged = [...submissionFields, ...convertedVariableArray];
 
-  setSubmissionFields(merged);
+        setSubmissionFields(merged);
 
-  // payload interface 
-  const payload: VariableListPayload = {
-    parentFormId: dropdownSelection,
-    variables: merged,
-  };
+        // payload interface
+        const payload: VariableListPayload = {
+          parentFormId: dropdownSelection,
+          variables: merged,
+        };
 
-  createOrUpdateSubmissionFilter(payload).then((res) => {
-    updateDefaultSubmissionFilter({ defaultSubmissionsFilter: res.data.id });
-    dispatch(setDefaultSubmissionFilter(res.data.id));
-  });
-    },[dispatch,dropdownSelection,submissionFields]);
+        createOrUpdateSubmissionFilter(payload).then((res) => {
+          updateDefaultSubmissionFilter({
+            defaultSubmissionsFilter: res.data.id,
+          });
+          dispatch(setDefaultSubmissionFilter(res.data.id));
+        });
+      },
+      [dispatch, dropdownSelection, submissionFields]
+    );
 
   return (
    <>
