@@ -33,3 +33,17 @@ export const setDefaultSubmissionFilter = (data) => (dispatch) =>{
     payload: data,
   })
 }
+
+export const setSelectedSubmisionFilter = (data) => (dispatch) =>{
+  dispatch({
+    type: ACTION_CONSTANTS.UPDATE_SELECTED_SUBMISSION_FILTER,
+    payload: data,
+  })
+}
+
+export const setSubmissionFilterList = (data) => (dispatch) =>{ 
+  dispatch({
+    type: ACTION_CONSTANTS.SUBMISSION_FILTER_LIST,
+    payload: data,
+  })
+}

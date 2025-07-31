@@ -30,6 +30,7 @@ interface CollapsibleSearchProps {
   selectedItem: string;
   setSelectedItem: (value: string) => void;
   initialInputFields: InputField[];
+  onSearch: (filters: Record<string, string>) => void;
 
 }
 
@@ -51,7 +52,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   selectedItem,
   setSelectedItem,
   initialInputFields,
-    
+  onSearch
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -65,6 +66,11 @@ const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields)
     });
   };
 
+  useEffect(() => {
+  setInputFields(initialInputFields);
+}, [initialInputFields]);
+
+
   const toggleExpand = () => {
     setExpanded(true);
   };
@@ -77,7 +83,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
   };
 
   // Derived value for disabling buttons
-  const hasAnyInputInFields = inputFields?.some((field) => field.value.trim() !== "");
+  const hasAnyInputInFields = inputFields?.some((field) => field.value?.trim() !== "");
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
 
   const DropdownItems = formData.map((form) => ({ 
@@ -105,6 +111,16 @@ const handleSelection = (label: string) => setSelectedItem(label);
     setDropdownSelection(null);
     setSelectedItem("All Forms");
   };
+  const handleSearch = () => {
+  const filters = inputFields.reduce((acc, field) => {
+    if (field.value?.trim()) {
+      acc[field.id] = field.value.trim();
+    }
+    return acc;
+  }, {} as Record<string, string>);
+
+  onSearch(filters); 
+};
   return (
 
     <div className={`search-collapsible ${expanded ? "expanded" : ""} ${!isActionDisabled ? "active-toggle" : ""}`}>
@@ -250,13 +266,14 @@ const handleSelection = (label: string) => setSelectedItem(label);
         </div>
         <div className="actions">
             <div className="buttons-row">
-              <CustomButton
-                label="Search"
-                // onClick={primaryBtnAction}
-                dataTestId="search-button"
-                ariaLabel="Search filters" 
-                // buttonLoading={buttonLoading}
-                disabled={isActionDisabled} />
+            <CustomButton
+  label="Search"
+  onClick={handleSearch}
+  dataTestId="search-button"
+  ariaLabel="Search filters"
+  disabled={isActionDisabled}
+/>
+
               <CustomButton
                 label="Clear"
                 onClick={handleClear}

@@ -115,7 +115,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
         if (highlightedElement) {
           highlightedElement.classList.remove("formio-hilighted");
         }
-        const parentComponent = formioComponent?.parentElement;
+        const parentComponent = formioComponent.parentElement;
         const parentKeys = getParentKeys(parentComponent);
 
         if (formioComponent) {
@@ -225,6 +225,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
             viewAsHtml: true,
             readOnly: true,
           }}
+          // showHiddenFields={false}
           formReady={(e) => {
             formRef.current = e;
           }}

@@ -76,7 +76,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
             i18n: RESOURCE_BUNDLES_DATA,
             viewAsHtml: true,
             buttonSettings: { showCancel: false },
-          }}
+          } as any}
         />
       </div>
     </div>
