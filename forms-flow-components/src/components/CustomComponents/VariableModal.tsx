@@ -18,6 +18,7 @@ interface FormVariable {
   altVariable: string;
   labelOfComponent: string;
   type: string;
+  isFormVariable?: boolean;
 }
 interface VariableModalProps {
   show: boolean;
@@ -69,6 +70,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       type: "",
       label: "",
       altVariable: "",
+      isFormVariable: true,
     });
     const primaryColor = StyleServices.getCSSVariable("--ff-primary");
     const primaryLight = StyleServices.getCSSVariable("--ff-primary-light");
@@ -106,6 +108,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                   type,
                   label: labelOfComponent,
                   altVariable: "",
+                  isFormVariable: false,
                 });
                 setShowElement(true);
               }}
@@ -155,6 +158,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
             labelOfComponent: selectedComponent.label,
             type: selectedComponent.type,
             key: selectedComponent.key,
+            isFormVariable: selectedComponent.isFormVariable,
           },
         }));
         const highlightedElement = document.querySelector(".formio-hilighted");
@@ -184,9 +188,6 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
     }, []);
     // render the selection of variables and selected variables
     const renderRightContainer = () => {
-      // const filteredVariablePills = Object.values(alternativeLabels).filter(
-      //   ({ key }) => !ignoreKeywords.has(key)
-      // );
       return (
         <div className="">
           {/* Slideout panel, always mounted */}

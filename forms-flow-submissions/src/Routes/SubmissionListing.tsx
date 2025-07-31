@@ -6,7 +6,13 @@ import { push } from "connected-react-router";
 
 // Types and Services
 import { Submission } from "../types/submissions";
-import { getSubmissionList, fetchAllForms, fetchFormVariables, fetchFormById, createOrUpdateSubmissionFilter, updateDefaultSubmissionFilter } from "../api/queryServices/analyzeSubmissionServices";
+import {
+  getSubmissionList,
+  fetchAllForms,
+  fetchFormById,
+  createOrUpdateSubmissionFilter,
+  updateDefaultSubmissionFilter,
+} from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate,optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
 
@@ -296,12 +302,12 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
         setSavedFormVariables(variables);
         // Convert object to array of SubmissionField
         const convertedVariableArray = Object.values(variables).map(
-          ({ key, altVariable, labelOfComponent }, index) => ({
+          ({ key, altVariable, labelOfComponent ,isFormVariable}, index) => ({
             key: key,
             name: key,
             label: altVariable || labelOfComponent || key,
             isChecked: true,
-            isFormVariable: true,
+            isFormVariable: isFormVariable,
             sortOrder: submissionFields.length + index + 1,
           })
         );
@@ -317,7 +323,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
           ),
           ...convertedVariableArray,
         ];
-        // const merged = [...submissionFields, ...convertedVariableArray];
+        
 
         setSubmissionFields(merged);
 
