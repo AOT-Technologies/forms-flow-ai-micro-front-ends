@@ -511,7 +511,7 @@ export const RESOURCE_BUNDLES_EN = {
   "No Process Found": "No Process Found",
   "Search workflow": "Search workflow",
   "No Dmn Found": "No Dmn Found",
-  "Submission ID": "Submission Id",
+  "Submission ID": "Submission ID",
   "Submission Name": "Submission Name",
   "Submission History": "Submission History",
   "No Submission History found": "No Submission History found",

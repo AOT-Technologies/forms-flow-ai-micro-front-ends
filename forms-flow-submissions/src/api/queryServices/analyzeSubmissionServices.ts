@@ -8,38 +8,53 @@ export const getSubmissionList = (
   pageNo = 1,
   sortOrder = "asc",
   sortBy = "formName",
-  dateRange = { startDate: null, endDate: null }
+  dateRange = { startDate: null, endDate: null },
+  filters: Record<string, any> = {}
 ): Promise<SubmissionListResponse> => {
- const createdAfter = dateRange.startDate
-    ? `, createdAfter: "${HelperServices.getISODateTime(dateRange.startDate)}"`
-    : "";
 
-  const createdBefore = dateRange.endDate
-    ? `, createdBefore: "${HelperServices.getISODateTime(dateRange.endDate)}"`
-    : "";
-  const query = `
-    query MyQuery {
-      getSubmission(
-        limit: ${limit},
-        pageNo: ${pageNo},
-        sortOrder: "${sortOrder}",
-        sortBy: "${sortBy}"${createdAfter}${createdBefore}
-      )  {
-        submissions {
-          applicationStatus
-          createdBy
-          data
-          formName
-          id
-          submissionId
-          created
-        }
-        totalCount
-        pageNo     
-        limit
+const filtersString = Object.entries(filters)
+  .filter(([_, value]) => value !== undefined && value !== "")
+  .map(([key, value]) => {
+    const formattedValue = key !== "id" ? `"${value}"` : value ;
+    return `${key}: ${formattedValue}`;
+  })
+  .join(", ");
+
+
+const createdAfter = dateRange.startDate
+  ? `, createdAfter: "${HelperServices.getISODateTime(dateRange.startDate)}"`
+  : "";
+
+const createdBefore = dateRange.endDate
+  ? `, createdBefore: "${HelperServices.getISODateTime(dateRange.endDate)}"`
+  : "";
+
+const query = `
+  query MyQuery {
+    getSubmission(
+      limit: ${limit},
+      pageNo: ${pageNo},
+      sortOrder: "${sortOrder}",
+      sortBy: "${sortBy}"${createdAfter}${createdBefore}${
+  filtersString ? `, filters: { ${filtersString} }` : ""
+}
+    ) {
+      submissions {
+        applicationStatus
+        createdBy
+        data
+        formName
+        id
+        submissionId
+        created
       }
+      totalCount
+      pageNo     
+      limit
     }
-  `;
+  }
+`;
+
 
   const payload = { query };
   const token = StorageService.get("AUTH_TOKEN");
@@ -64,8 +79,11 @@ export const fetchFormVariables = (formId) => {
   return RequestService.httpGETRequest(url);
 };
 
+export const fetchSubmissionList = () => {
+  return RequestService.httpGETRequest(`${API.SUBMISSION_FILTER}`);
+}
 export const createOrUpdateSubmissionFilter = (data) => {
-  let url = `${API.CREATE_OR_UPDATE_FILTER}`;
+  let url = `${API.SUBMISSION_FILTER}`;
   return RequestService.httpPOSTRequest(url, data);
 }
 
