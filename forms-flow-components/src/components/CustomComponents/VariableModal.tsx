@@ -236,8 +236,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                   />
                 )}
 
-                {!(selectedComponent.altVariable ===
-                    alternativeLabels[selectedComponent.key]?.altVariable && ignoreKeywords.has(selectedComponent.key)) && 
+                {!(selectedComponent.key in alternativeLabels && ignoreKeywords.has(selectedComponent.key)) && 
                   <CustomButton
                   dataTestId="Add-alternative-btn"
                   ariaLabel="Add alternative label button"
