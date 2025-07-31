@@ -13,6 +13,7 @@ import AccessDenied from "./components/AccessDenied";
 import Loading from "./components/Loading";
 import SubmissionsList from "./Routes/SubmissionListing";
 import ViewApplication from "./components/AnalyzeSubmissionView"
+import { StyleServices } from "@formsflow/service";
 interface SubmissionsProps {
   publish?: (event: string, data?: any) => void;
   subscribe?: (
@@ -83,10 +84,14 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
     return <Loading />;
   }
 
+  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customTitle = StyleServices?.getCSSVariable("--custom-title");
+  const hasMultitenancyHeader = customLogoPath || customTitle;
+
   return (
     <>
       {isAnalyzeManager ? (
-        <div className="main-container">
+        <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'main-container' } `}>
           <Switch>
             <Route
               exact
