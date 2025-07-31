@@ -11,6 +11,7 @@ export default function Root(props) {
   const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
   const customTitle = StyleServices?.getCSSVariable("--custom-title");
   const customLogoAlignment =  StyleServices?.getCSSVariable("--custom-logo-horizontal-align")?.toLowerCase();
+  const [logoError, setLogoError] = useState(false);
   const logoAlignmentClass = useMemo(() => {
     switch (customLogoAlignment) {
       case "left":
@@ -53,11 +54,12 @@ export default function Root(props) {
       <>
       {hasMultitenancyHeader && (
           <div ref={headerRef} className={`multitenancy-header ${logoAlignmentClass}`}>
-            {customLogoPath && (
+            {customLogoPath && !logoError && (
               <img
                 className="multitenancy-logo"
                 src={customLogoPath}
                 alt="custom logo"
+                onError={() => setLogoError(true)}
               />
             )}
             {customTitle && (
