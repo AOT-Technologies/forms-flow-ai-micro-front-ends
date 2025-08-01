@@ -60,7 +60,6 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
   const dispatch = useDispatch();
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
  
-
  const handleUpdateOrder = (updatedFieldOrder) => {
   setSubmissionFields(updatedFieldOrder);
   }
@@ -110,8 +109,6 @@ const handleSaveSubmissionFields = () => {
           data-testid="columns-sort"
         />
         <div>
-
-
           <CustomButton
             label={t("More System and Form Fields")}
             secondary
@@ -121,7 +118,6 @@ const handleSaveSubmissionFields = () => {
             iconWithText
             onClick={handleShowVariableModal}
           />
-          
         </div>
           
 

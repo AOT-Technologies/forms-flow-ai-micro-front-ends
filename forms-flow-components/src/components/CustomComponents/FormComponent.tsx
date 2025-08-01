@@ -7,6 +7,7 @@ interface SelectedComponent {
   type: string;
   label: string;
   altVariable: string;
+  isFormVariable: boolean;
 }
 interface FormComponentProps {
   form: any;
@@ -115,7 +116,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
         if (highlightedElement) {
           highlightedElement.classList.remove("formio-hilighted");
         }
-        const parentComponent = formioComponent?.parentElement;
+        const parentComponent = formioComponent.parentElement;
         const parentKeys = getParentKeys(parentComponent);
 
         if (formioComponent) {
@@ -144,6 +145,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
               type: "",
               label: "",
               altVariable: "",
+              isFormVariable: true,
             });
             return;
           }
@@ -176,6 +178,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
             type: manipulatedKeys.has(componentKey) ? "hidden" : componentType,
             label,
             altVariable: alternativeLabels[componentKey]?.altVariable ?? "",
+            isFormVariable: true,
           });
         } else {
           setSelectedComponent({
@@ -183,6 +186,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
             type: "",
             label: "",
             altVariable: "",
+            isFormVariable: true,
           });
         }
       },
@@ -225,6 +229,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
             viewAsHtml: true,
             readOnly: true,
           }}
+          // showHiddenFields={false}
           formReady={(e) => {
             formRef.current = e;
           }}
