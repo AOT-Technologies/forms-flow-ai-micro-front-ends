@@ -1520,13 +1520,21 @@ $lineThin: 1px;
     .variable-modal-right-container {
       width: 20%;
       float: right;
+      padding: 0 var(--spacer-125) var(--spacer-150) var(--spacer-125);
+      max-height: calc(100vh - 15.25rem);
+      @extend .custom-scroll;
+      margin-top: var(--spacer-150);
       overflow-y: auto;
-      padding: var(--spacer-150) var(--spacer-125);
-
+      scrollbar-gutter: stable;
       .right-container-header {
         font-weight: var(--font-weight-xl);
         font-size: var(--font-size-sm);
         line-height: var(--text-line-height);
+        position: sticky;
+        top: 0;
+        background-color: white;
+        padding-bottom: var(--spacer-100);
+        margin: 0 !important;
       }
       .select-text {
         color: $gray-medium-dark;
@@ -1560,6 +1568,7 @@ $lineThin: 1px;
 
   .form-container {
       background-color: $gray-medium;
+      min-height: calc(100vh - 15.25rem);
     }
   .pill-container {
     display: flex;
@@ -1579,5 +1588,21 @@ $lineThin: 1px;
   white-space: normal;
   word-break: break-word;
   overflow-wrap: break-word;
+}
+.system-tab-container{
+  display: flex;
+  flex-direction: column;
+
+  .system-item{
+    display: flex;
+    gap: var(--spacer-050);
+    color: $primary;
+    padding: var(--spacer-075) var(--spacer-100);
+    border-radius: var(--radius-sm);
+    &.selected-item{
+      background-color: $primary-light;
+
+    }
+  }
 }
 }
