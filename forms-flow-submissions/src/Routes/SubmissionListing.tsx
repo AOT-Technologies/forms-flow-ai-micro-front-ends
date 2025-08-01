@@ -6,9 +6,11 @@ import { push } from "connected-react-router";
 
 // Types and Services
 import { Submission } from "../types/submissions";
+
 import {
   getSubmissionList,
   fetchAllForms,
+  fetchSubmissionList,
   fetchFormById,
   createOrUpdateSubmissionFilter,
   updateDefaultSubmissionFilter,
@@ -22,7 +24,9 @@ import {
   setAnalyzeSubmissionPage,
   setAnalyzeSubmissionLimit,
   setAnalyzeSubmissionDateRange,
-  setDefaultSubmissionFilter
+  setDefaultSubmissionFilter,
+  setSelectedSubmisionFilter,
+  setSubmissionFilterList
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -71,59 +75,156 @@ const TaskSubmissionList: React.FC = () => {
   const limit = useSelector((state: any) => state?.analyzeSubmission.limit ?? 10);
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
+  const defaultSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.defaultFilter);
+  const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
-  const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
-  
-  const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
-  const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
+ const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
+
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   //local state
+  const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
+   const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
+  const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
   const [showSortModal, setShowSortModal] = useState(false);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState("All Forms");
   const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
+  const [selectedItem, setSelectedItem] = useState(selectedSubmissionFilter ||"All Forms");
+  const [submissionFields, setSubmissionFields] = useState([
+          { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false },
+          { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false },
+          { key: "created_by", name: "Submitter", label: "Submitter", isChecked: true, isFormVariable: false },
+          { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false },
+          { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false }
+        ]);
+  const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
+const handleFieldSearch = (filters: Record<string, string>) => {
+  setFieldFilters(filters);
+};
+
+const selectedFilter = useMemo(() => {
+  return filterList?.find((item) => dropdownSelection === item.parentFormId);
+}, [dropdownSelection, filterList]);
+
+const initialInputFields = useMemo(() => {
+  //these pinned fileds should always come  first in sidebar
+  const pinnedOrder = ["id", "created_by", "application_status"];
+const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
+
+  // Removing  form name & created date since it is always available
+  const filteredVars = allVars.filter(
+    (item) => item.key !== "form_name" && item.key !== "created"
+  );
+  const sortedVars = [
+    ...pinnedOrder
+      .map((key) => filteredVars.find((item) => item.key === key))
+      .filter(Boolean), 
+    //adding remaining items that are not pinned
+    ...filteredVars.filter((item) => !pinnedOrder.includes(item.key)),
+
   
-const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
-  const initialInputFields = [
-    { id: "submissionId", label: "Submission ID", type: "text", value: "" },
-    { id: "submitter", label: "Submitter", type: "text", value: "" },
-    { id: "status", label: "Status", type: "text", value: "" },
+
   ];
-   useEffect(() => {
-         // this will be replaced with the variables from the selected form fields
-        const formFields = [
-          { key: "id", name: "id", label: "Submission ID", isChecked: true, isFormVariable: false },
-          { key: "formName", name: "formName", label: "Form", isChecked: true, isFormVariable: false },
-          { key: "createdBy", name: "createdBy", label: "Submitter", isChecked: true, isFormVariable: false },
-          { key: "created", name: "created", label: "Submission Date", isChecked: true, isFormVariable: false },
-          { key: "applicationStatus", name: "applicationStatus", label: "Status", isChecked: true, isFormVariable: false }
-        ];
-        setSubmissionFields(formFields);
-      }, []);
+
+  return sortedVars.map((item) => ({
+    id: item.key,
+    name: item.key,
+    type: "text",
+    label: t(item.label),
+    value: "",
+  }));
+}, [selectedFilter]);
+  useEffect(() => {
+
+    if (!formData.length || dropdownSelection == null) return;
+
+    const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
+    setSelectedItem(selectedForm?.formName ?? "All Forms");
+  }, [defaultSubmissionFilter, filterList, formData]);
 
 
-  // Columns Configuration
-  const columns: Column[] = useMemo(() => [
-    { name: "Submission ID", sortKey: "id", width: 200, resizable: true },
-    { name: "Form Name", sortKey: "form_name", width: 200, resizable: true },
-    { name: "Submitter", sortKey: "created_by", width: 200, resizable: true },
-    { name: "Submission Date", sortKey: "created", width: 180, resizable: true },
-    { name: "Status", sortKey: "application_status", width: 160, resizable: true },
-    { name: "", sortKey: "actions", width: 100 },
-  ], []);
+useEffect(() => {
+  fetchSubmissionList()
+    .then((res) => {
+      const { filters = [], defaultSubmissionsFilter } = res.data || {};
+
+      dispatch(setSubmissionFilterList(filters));
+      dispatch(setDefaultSubmissionFilter(defaultSubmissionsFilter));
+
+      const defaultFilter = filters.find((f) => f.id === defaultSubmissionsFilter);
+      if (defaultFilter) {
+        dispatch(setSelectedSubmisionFilter(defaultFilter.parentFormId));
+        setDropdownSelection(defaultFilter.parentFormId);
+        setSelectedItem(defaultFilter.name);
+      } else {
+        setDropdownSelection(null);
+        setSelectedItem("All Forms");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching submission list:", error);
+    });
+}, []);
+
+const columns: Column[] = useMemo(() => {
+  const sourceFields = selectedFilter?.variables?.length
+    ? selectedFilter.variables
+    : submissionFields;
+
+    const getColumnWidth = (key: string): number => {
+  const widthMap: Record<string, number> = {
+    created: 180,
+    application_status: 160,
+  };
+  return widthMap[key] ?? 200;
+};
+
+  const dynamicColumns: Column[] = sourceFields
+    .filter((item) => item.isChecked)
+    .map((item) => ({
+      name: item.name,
+      sortKey: item.key,
+      width: getColumnWidth(item.key),
+      resizable: true,
+    }));
+
+  return [
+    ...dynamicColumns,
+    {
+      name: "", 
+      sortKey: "actions",
+      width: 100,
+    },
+  ];
+}, [selectedFilter, submissionFields]);
+
 
   const activeSortKey = sortParams.activeKey;
   const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
 
   // Fetch Submissions
-  const { data, isLoading: isSubmissionsLoading,refetch } = useQuery({
-    queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder,dateRange],
-    queryFn: () =>getSubmissionList(limit, page, activeSortOrder, activeSortKey,dateRange),
-    keepPreviousData: true,
-    staleTime: 0,
-  });
+const {
+  data,
+  isLoading: isSubmissionsLoading,
+  refetch,
+} = useQuery({
+  queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder, dateRange, fieldFilters],
+  queryFn: () =>
+    getSubmissionList(
+      limit,
+      page,
+      activeSortOrder,
+      activeSortKey,
+      dateRange,
+      fieldFilters 
+    ),
+  keepPreviousData: true,
+  staleTime: 0,
+});
+
+
+  
 
   useEffect(()=>{
     fetchAllForms()
@@ -147,8 +248,7 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
     console.error(err);
   });
 }, [dropdownSelection]);
-
-
+  // TO DO: data keys should change based on the response variable keys
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
   // Sort Handler
@@ -359,8 +459,9 @@ const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>([]);
           setDropdownSelection={setDropdownSelection}
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
-          //this will be replaced dynamically after variable selection part is done
           initialInputFields={initialInputFields}
+            onSearch={handleFieldSearch}
+
         />
 
       </div>

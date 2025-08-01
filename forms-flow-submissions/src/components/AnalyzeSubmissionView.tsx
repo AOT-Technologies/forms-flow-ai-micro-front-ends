@@ -172,11 +172,13 @@ const ViewApplication = React.memo(() => {
                   onClick={() => setShowHistoryModal(true)}
                 />
               )}
-              <DownloadPDFButton
-                form_id={applicationDetail?.formId}
-                submission_id={applicationDetail?.submissionId}
-                title={applicationDetail?.applicationName}
-              />
+              {applicationDetail?.formId && applicationDetail?.submissionId && (
+                <DownloadPDFButton
+                  form_id={applicationDetail.formId}
+                  submission_id={applicationDetail.submissionId}
+                  title={applicationDetail?.applicationName}
+                />
+              )}
             </div>
           </div>
         </Card.Body>

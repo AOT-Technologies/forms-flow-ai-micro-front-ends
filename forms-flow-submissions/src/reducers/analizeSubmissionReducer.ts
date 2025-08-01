@@ -12,7 +12,9 @@ const initialState = {
     page: 1,
     limit: 10,
     dateRange:{startDate: null, endDate: null},
-    defaultFilter: null
+    defaultFilter: null,
+    selectedFilter: "All Forms",
+    submissionFilterList: [],
 };
 
 
@@ -29,6 +31,10 @@ const analyzeSubmission = (state = initialState, action: any) => {
             return { ...state, dateRange: action.payload };
         case ACTION_CONSTANTS.UPDATE_DEFAULT_SUBMISSION_FILTER:
             return { ...state, defaultFilter: action.payload };
+        case ACTION_CONSTANTS.UPDATE_SELECTED_SUBMISSION_FILTER:
+            return { ...state, selectedFilter: action.payload };
+        case ACTION_CONSTANTS.SUBMISSION_FILTER_LIST:
+            return { ...state, submissionFilterList: action.payload };
         default:
             return state;
     }

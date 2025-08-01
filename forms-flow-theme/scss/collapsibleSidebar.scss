@@ -205,13 +205,15 @@ $chevron-bg: #5e61f2;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+     overflow-y: auto; 
+     max-height: 100%;
 
     .fields {
       @include paddingLvl3();
       @include divider();
 
       flex-grow: 1;
-
+      overflow-y: auto;
       .input-filter {
         max-width: 100%;
       }
