@@ -85,7 +85,7 @@ const TaskSubmissionList: React.FC = () => {
           { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false },
           { key: "created_by", name: "Submitter", label: "Submitter", isChecked: true, isFormVariable: false },
           { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false },
-          { key: "applicationStatus", name: "Status", label: "Status", isChecked: true, isFormVariable: false }
+          { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false }
         ]);
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
 const handleFieldSearch = (filters: Record<string, string>) => {
@@ -98,7 +98,7 @@ const selectedFilter = useMemo(() => {
 
 const initialInputFields = useMemo(() => {
   //these pinned fileds should always come  first in sidebar
-  const pinnedOrder = ["id", "created_by", "applicationStatus"];
+  const pinnedOrder = ["id", "created_by", "application_status"];
 const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
 
   // Removing  form name & created date since it is always available
