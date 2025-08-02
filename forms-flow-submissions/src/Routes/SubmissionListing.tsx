@@ -11,9 +11,9 @@ import {
   getSubmissionList,
   fetchAllForms,
   fetchSubmissionList,
-  fetchFormById,
   createOrUpdateSubmissionFilter,
   updateDefaultSubmissionFilter,
+  fetchFormById,
 } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate,optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
@@ -26,7 +26,9 @@ import {
   setAnalyzeSubmissionDateRange,
   setDefaultSubmissionFilter,
   setSelectedSubmisionFilter,
-  setSubmissionFilterList
+  setSubmissionFilterList,
+  setSearchFieldValues,
+  clearSearchFieldValues
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -81,6 +83,7 @@ const TaskSubmissionList: React.FC = () => {
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
 
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
+  const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
   //local state
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
    const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
@@ -90,7 +93,16 @@ const TaskSubmissionList: React.FC = () => {
   const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
+  const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState(selectedSubmissionFilter ||"All Forms");
+  
+  // Wrapper function to reset lastFetchedFormId when dropdown selection changes
+  const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
+    if (newSelection !== dropdownSelection) {
+      setLastFetchedFormId(null); // Reset the cached form ID when selection changes
+    }
+    setDropdownSelection(newSelection);
+  }, [dropdownSelection]);
   const [submissionFields, setSubmissionFields] = useState([
           { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false },
           { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false },
@@ -101,6 +113,14 @@ const TaskSubmissionList: React.FC = () => {
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
 const handleFieldSearch = (filters: Record<string, string>) => {
   setFieldFilters(filters);
+  // Store the search field values globally
+  dispatch(setSearchFieldValues(filters));
+};
+
+const handleClearSearch = () => {
+  setFieldFilters({});
+  // Clear the search field values globally
+  dispatch(clearSearchFieldValues());
 };
 
 const selectedFilter = useMemo(() => {
@@ -123,8 +143,6 @@ const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
     //adding remaining items that are not pinned
     ...filteredVars.filter((item) => !pinnedOrder.includes(item.key)),
 
-  
-
   ];
 
   return sortedVars.map((item) => ({
@@ -132,9 +150,9 @@ const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
     name: item.key,
     type: "text",
     label: t(item.label),
-    value: "",
+    value: searchFieldValues[item.key] || "",
   }));
-}, [selectedFilter]);
+}, [selectedFilter, searchFieldValues]);
   useEffect(() => {
 
     if (!formData.length || dropdownSelection == null) return;
@@ -142,7 +160,6 @@ const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
     const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
     setSelectedItem(selectedForm?.formName ?? "All Forms");
   }, [defaultSubmissionFilter, filterList, formData]);
-
 
 useEffect(() => {
   fetchSubmissionList()
@@ -153,14 +170,14 @@ useEffect(() => {
       dispatch(setDefaultSubmissionFilter(defaultSubmissionsFilter));
 
       const defaultFilter = filters.find((f) => f.id === defaultSubmissionsFilter);
-      if (defaultFilter) {
-        dispatch(setSelectedSubmisionFilter(defaultFilter.parentFormId));
-        setDropdownSelection(defaultFilter.parentFormId);
-        setSelectedItem(defaultFilter.name);
-      } else {
-        setDropdownSelection(null);
-        setSelectedItem("All Forms");
-      }
+             if (defaultFilter) {
+         dispatch(setSelectedSubmisionFilter(defaultFilter.parentFormId));
+         handleDropdownSelectionChange(defaultFilter.parentFormId);
+         setSelectedItem(defaultFilter.name);
+       } else {
+         handleDropdownSelectionChange(null);
+         setSelectedItem("All Forms");
+       }
     })
     .catch((error) => {
       console.error("Error fetching submission list:", error);
@@ -238,16 +255,23 @@ const {
   },[]);
   
   //fetch form by id to render in the variable modal
- useEffect(() => {
-  if (!dropdownSelection) return;
-  fetchFormById(dropdownSelection)
-  .then((res) => {
-    setForm(res.data);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-}, [dropdownSelection]);
+  const fetchFormData = useCallback(() => {
+    if (!dropdownSelection) return;
+    
+    // Check if we already have the form data for this dropdownSelection
+    if (lastFetchedFormId === dropdownSelection) {
+      return; // Skip API call if we already have the data
+    }
+    
+    fetchFormById(dropdownSelection)
+    .then((res) => {
+      setForm(res.data);
+      setLastFetchedFormId(dropdownSelection); // Track the last fetched form ID
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }, [dropdownSelection, lastFetchedFormId]);
   // TO DO: data keys should change based on the response variable keys
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
@@ -393,6 +417,7 @@ const {
     handleManageFieldsOpen();
   };
   const handleShowVariableModal = () => {
+     fetchFormData(); // Fetch form data when the button is clicked
      setShowVariableModal(true) ;
      handleManageFieldsClose();
     };
@@ -449,19 +474,19 @@ const {
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={false}
+          hasActiveFilters={Object.keys(searchFieldValues).length > 0 }
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}
           manageFieldsAction={handleManageFieldsOpen}
           formData={formData}
           dropdownSelection={dropdownSelection}
-          setDropdownSelection={setDropdownSelection}
+          setDropdownSelection={handleDropdownSelectionChange}
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
           initialInputFields={initialInputFields}
-            onSearch={handleFieldSearch}
-
+          onSearch={handleFieldSearch}
+          onClearSearch={handleClearSearch}
         />
 
       </div>

@@ -31,7 +31,7 @@ interface CollapsibleSearchProps {
   setSelectedItem: (value: string) => void;
   initialInputFields: InputField[];
   onSearch: (filters: Record<string, string>) => void;
-
+  onClearSearch?: () => void;
 }
 
 
@@ -52,7 +52,8 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   selectedItem,
   setSelectedItem,
   initialInputFields,
-  onSearch
+  onSearch,
+  onClearSearch
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -85,6 +86,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
   // Derived value for disabling buttons
   const hasAnyInputInFields = inputFields?.some((field) => field.value?.trim() !== "");
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
+  
 
   const DropdownItems = formData.map((form) => ({ 
     type: `form-${form.formId}`,
@@ -99,7 +101,6 @@ const handleSelection = (label: string) => setSelectedItem(label);
 
     const handleClear = () => {
     // Reset all input field values
-    setDropdownSelection(null);
     setInputFields((prevFields) =>
       prevFields?.map((field) => ({
         ...field,
@@ -110,6 +111,11 @@ const handleSelection = (label: string) => setSelectedItem(label);
     // Reset dropdown selection
     setDropdownSelection(null);
     setSelectedItem("All Forms");
+    
+    // Call the onClearSearch callback if provided
+    if (onClearSearch) {
+      onClearSearch();
+    }
   };
   const handleSearch = () => {
   const filters = inputFields.reduce((acc, field) => {
@@ -123,7 +129,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
 };
   return (
 
-    <div className={`search-collapsible ${expanded ? "expanded" : ""} ${!isActionDisabled ? "active-toggle" : ""}`}>
+    <div className={`search-collapsible ${expanded ? "expanded" : ""}`}>
       <div
         className={`toggle`}
         onClick={toggleExpand}
@@ -150,8 +156,8 @@ const handleSelection = (label: string) => setSelectedItem(label);
         </button>
 
         {!expanded ? (
-          <div className="collapsed-label">
-            {t("No Filters Are Active")}
+          <div className={`collapsed-label ${hasActiveFilters ? "active-filter" : ""}`}>
+            {hasActiveFilters ? t("Some Filters Are Active") : t("No Filters Are Active")}
           </div>
         ) : (
           ""
