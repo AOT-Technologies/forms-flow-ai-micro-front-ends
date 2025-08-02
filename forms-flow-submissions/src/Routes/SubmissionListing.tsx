@@ -241,8 +241,6 @@ const {
 });
 
 
-  
-
   useEffect(()=>{
     fetchAllForms()
         .then((res) => {
@@ -258,15 +256,19 @@ const {
   const fetchFormData = useCallback(() => {
     if (!dropdownSelection) return;
     
-    // Check if we already have the form data for this dropdownSelection
+    // Check if we already have the form data for this dropdownSelection if yes then open the modal
     if (lastFetchedFormId === dropdownSelection) {
-      return; // Skip API call if we already have the data
+      setShowVariableModal(true);
+      handleManageFieldsClose();
+      return;
     }
     
     fetchFormById(dropdownSelection)
     .then((res) => {
       setForm(res.data);
-      setLastFetchedFormId(dropdownSelection); // Track the last fetched form ID
+      setLastFetchedFormId(dropdownSelection); // update the last fetched form ID to avoid duplicate api calls
+      setShowVariableModal(true);
+      handleManageFieldsClose();
     })
     .catch((err) => {
       console.error(err);
@@ -416,10 +418,10 @@ const {
     setShowVariableModal(false) 
     handleManageFieldsOpen();
   };
+
+  //will wait for the form data to be fetched before opening the modal
   const handleShowVariableModal = () => {
      fetchFormData(); // Fetch form data when the button is clicked
-     setShowVariableModal(true) ;
-     handleManageFieldsClose();
     };
     
     const handleSaveVariables = useCallback(
