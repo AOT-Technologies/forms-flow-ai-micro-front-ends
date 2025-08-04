@@ -114,6 +114,7 @@ const Task = React.memo((props: any) => {
   };
 
   const handleTaskUpdate = (refreshedTaskId: string) => {
+    console.log("handleTaskUpdate test",refreshedTaskId,taskId);
   if (taskId === refreshedTaskId) {
     // if a task opened, some changes made against this task we need to recall the details
     getOnlyTaskDetails(refreshedTaskId).then((response) => {
@@ -149,6 +150,7 @@ const SocketIOCallback = useCallback(({
        * use of this socket call back , need to update task realtime and 
        * also tasklist if the task id is exist inthe tasklist
        */
+      console.log("SocketIOCallback test",isUpdateEvent,refreshedTaskId);
     if (isUpdateEvent) { 
       handleTaskUpdate(refreshedTaskId);
     } else if (forceReload) {
