@@ -9,65 +9,91 @@ export const getSubmissionList = (
   sortOrder = "asc",
   sortBy = "formName",
   dateRange = { startDate: null, endDate: null },
-  filters: Record<string, any> = {}
+  parentFormId?: string,
+  filters: Record<string, any> = {},
+  selectedFormFields: string[] = []
 ): Promise<SubmissionListResponse> => {
+  const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
 
-const filtersString = Object.entries(filters)
-  .filter(([_, value]) => value !== undefined && value !== "")
-  .map(([key, value]) => {
-    const formattedValue = key !== "id" ? `"${value}"` : value ;
-    return `${key}: ${formattedValue}`;
-  })
-  .join(", ");
+  const filtersString = Object.entries(filters)
+    .filter(([key, value]) =>
+      value !== undefined &&
+      value !== "" &&
+      (systemFields.includes(key) || selectedFormFields.includes(key))
+    )
+    .map(([key, value]) => {
+      const formattedValue = key !== "id" ? `"${value}"` : value;
+      return `${key}: ${formattedValue}`;
+    })
+    .join(", ");
 
+  const createdAfter = dateRange.startDate
+    ? `createdAfter: "${HelperServices.getISODateTime(dateRange.startDate)}"`
+    : "";
 
-const createdAfter = dateRange.startDate
-  ? `, createdAfter: "${HelperServices.getISODateTime(dateRange.startDate)}"`
-  : "";
+  const createdBefore = dateRange.endDate
+    ? `createdBefore: "${HelperServices.getISODateTime(dateRange.endDate)}"`
+    : "";
 
-const createdBefore = dateRange.endDate
-  ? `, createdBefore: "${HelperServices.getISODateTime(dateRange.endDate)}"`
-  : "";
+  const parentFormIdStr = parentFormId ? `parentFormId: "${parentFormId}"` : "";
 
-const query = `
-  query MyQuery {
-    getSubmission(
-      limit: ${limit},
-      pageNo: ${pageNo},
-      sortOrder: "${sortOrder}",
-      sortBy: "${sortBy}"${createdAfter}${createdBefore}${
-  filtersString ? `, filters: { ${filtersString} }` : ""
-}
-    ) {
-      submissions {
-        applicationStatus
-        createdBy
-        data
-        formName
-        id
-        submissionId
-        created
+  const selectedFieldsStr = selectedFormFields.length
+    ? `selectedFormFields: [${selectedFormFields.map((f) => `"${f}"`).join(", ")}]`
+    : "";
+
+  const filtersStr = filtersString ? `filters: { ${filtersString} }` : "";
+
+  const queryArgs = [
+    `limit: ${limit}`,
+    `pageNo: ${pageNo}`,
+    `sortOrder: "${sortOrder}"`,
+    `sortBy: "${sortBy}"`,
+    createdAfter,
+    createdBefore,
+    parentFormIdStr,
+        filtersStr,
+
+    selectedFieldsStr,
+  ]
+    .filter(Boolean)
+    .join(",\n      ");
+
+  const query = `
+    query MyQuery {
+      getSubmission(
+        ${queryArgs}
+      ) {
+        submissions {
+          applicationStatus
+          createdBy
+          data
+          formName
+          id
+          submissionId
+          created
+        }
+        totalCount
+        pageNo     
+        limit
       }
-      totalCount
-      pageNo     
-      limit
     }
-  }
-`;
-
+  `;
 
   const payload = { query };
   const token = StorageService.get("AUTH_TOKEN");
-    return RequestService.httpPOSTRequest(
+
+  return RequestService.httpPOSTRequest(
     API.GRAPHQL_API,
     payload,
     token,
-    true,
+    true
   ).then((response) => {
     const result = response.data?.data?.getSubmission;
     return result;
   });
 };
+
+
 
 export const fetchAllForms = () => {
   //activeForms means published forms only : status = Active

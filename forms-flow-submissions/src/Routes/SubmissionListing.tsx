@@ -90,30 +90,72 @@ const TaskSubmissionList: React.FC = () => {
   const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
-  const [selectedItem, setSelectedItem] = useState(selectedSubmissionFilter ||"All Forms");
-  const [submissionFields, setSubmissionFields] = useState([
-          { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false },
-          { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false },
-          { key: "created_by", name: "Submitter", label: "Submitter", isChecked: true, isFormVariable: false },
-          { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false },
-          { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false }
-        ]);
-  const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
-const handleFieldSearch = (filters: Record<string, string>) => {
-  setFieldFilters(filters);
-};
+  const [selectedItem, setSelectedItem] = useState("");
+  const [filtersApplied, setFiltersApplied] = useState(false);
 
-const selectedFilter = useMemo(() => {
-  return filterList?.find((item) => dropdownSelection === item.parentFormId);
+
+useEffect(() => {
+  const matched = filterList?.find(
+    (item) => dropdownSelection === item.parentFormId
+  );
+  const filter = matched ?? null; 
+
+  dispatch(setSelectedSubmisionFilter(filter));
+  setSubmissionFields(filter?.variables ?? submissionFields);
 }, [dropdownSelection, filterList]);
 
+useEffect(() => {
+    if (selectedSubmissionFilter?.variables) {
+      // Filter out system fields
+      const filtered = selectedSubmissionFilter.variables
+      .filter((item) => !systemFields.includes(item.key))
+      .map((item)=>{ 
+        const { label,...rest} = item;
+        return { ...rest,labelOfComponent:label}
+      });
+      // Convert to object with key as property (if that's your structure)
+      const obj = {};
+      filtered.forEach((v) => {
+        obj[v.key] = v;
+      });
+      setSavedFormVariables(obj);
+    }
+  }, [selectedSubmissionFilter]);
+
+
+useEffect (() => {
+  if(!selectedSubmissionFilter?.id){
+    setSubmissionFields(submissionFields);
+  }
+},[dropdownSelection])
+
+
+  const [submissionFields, setSubmissionFields] = useState( [
+          { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden" },
+          { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false,  type: "hidden" },
+          { key: "created_by", name: "Submitter", label: "Submitter", isChecked: true, isFormVariable: false,  type: "hidden" },
+          { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false,  type: "hidden" },
+          { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false,  type: "hidden" }
+        ]);
+  const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
+  
+const handleFieldSearch = (filters: Record<string, string>) => {
+  setFieldFilters(filters);
+  setFiltersApplied(true);
+};
+ 
+
+
+
+
+
 const initialInputFields = useMemo(() => {
+  setSubmissionFields(selectedSubmissionFilter?.variables ?? submissionFields);
   //these pinned fileds should always come  first in sidebar
   const pinnedOrder = ["id", "created_by", "application_status"];
-const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
 
   // Removing  form name & created date since it is always available
-  const filteredVars = allVars.filter(
+  const filteredVars = submissionFields.filter(
     (item) => item.key !== "form_name" && item.key !== "created"
   );
   const sortedVars = [
@@ -134,7 +176,7 @@ const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
     label: t(item.label),
     value: "",
   }));
-}, [selectedFilter]);
+}, [selectedSubmissionFilter,dropdownSelection, submissionFields]);
   useEffect(() => {
 
     if (!formData.length || dropdownSelection == null) return;
@@ -142,6 +184,13 @@ const allVars = [...submissionFields, ...(selectedFilter?.variables ?? [])];
     const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
     setSelectedItem(selectedForm?.formName ?? "All Forms");
   }, [defaultSubmissionFilter, filterList, formData]);
+
+  useEffect (() => {
+    if(selectedItem === "All Forms") {
+      setDropdownSelection(null);
+      setSelectedSubmisionFilter(null);
+    }
+  },[dropdownSelection])
 
 
 useEffect(() => {
@@ -154,7 +203,7 @@ useEffect(() => {
 
       const defaultFilter = filters.find((f) => f.id === defaultSubmissionsFilter);
       if (defaultFilter) {
-        dispatch(setSelectedSubmisionFilter(defaultFilter.parentFormId));
+        dispatch(setSelectedSubmisionFilter(defaultFilter));
         setDropdownSelection(defaultFilter.parentFormId);
         setSelectedItem(defaultFilter.name);
       } else {
@@ -168,8 +217,8 @@ useEffect(() => {
 }, []);
 
 const columns: Column[] = useMemo(() => {
-  const sourceFields = selectedFilter?.variables?.length
-    ? selectedFilter.variables
+  const sourceFields = selectedSubmissionFilter?.variables?.length
+    ? selectedSubmissionFilter.variables
     : submissionFields;
 
     const getColumnWidth = (key: string): number => {
@@ -180,14 +229,15 @@ const columns: Column[] = useMemo(() => {
   return widthMap[key] ?? 200;
 };
 
-  const dynamicColumns: Column[] = sourceFields
-    .filter((item) => item.isChecked)
-    .map((item) => ({
-      name: item.name,
-      sortKey: item.key,
-      width: getColumnWidth(item.key),
-      resizable: true,
-    }));
+ const dynamicColumns: Column[] = sourceFields
+  .filter((item) => item.isChecked)
+  .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+  .map((item) => ({
+    name: item.label,
+    sortKey: item.key,
+    width: getColumnWidth(item.key),
+    resizable: true,
+  }));
 
   return [
     ...dynamicColumns,
@@ -197,19 +247,41 @@ const columns: Column[] = useMemo(() => {
       width: 100,
     },
   ];
-}, [selectedFilter, submissionFields]);
+}, [selectedSubmissionFilter, submissionFields]);
 
 
   const activeSortKey = sortParams.activeKey;
   const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
 
   // Fetch Submissions
+const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
+
+
+const selectedFormFields = useMemo(() => {
+  return (selectedSubmissionFilter?.variables ?? [])
+    .map((v) => v.key)
+    .filter((key) => !systemFields.includes(key));
+}, [selectedSubmissionFilter]);
+
+
+
+//data for searching data in filter table
 const {
   data,
   isLoading: isSubmissionsLoading,
   refetch,
 } = useQuery({
-  queryKey: ["submissions", page, limit, activeSortKey, activeSortOrder, dateRange, fieldFilters],
+  queryKey: [
+    "submissions",
+    page,
+    limit,
+    activeSortKey,
+    activeSortOrder,
+    dateRange,
+    dropdownSelection,
+    filtersApplied ? fieldFilters : {}, 
+    selectedFormFields
+  ],
   queryFn: () =>
     getSubmissionList(
       limit,
@@ -217,7 +289,9 @@ const {
       activeSortOrder,
       activeSortKey,
       dateRange,
-      fieldFilters 
+      dropdownSelection,
+      filtersApplied ? fieldFilters : {},
+      selectedFormFields
     ),
   keepPreviousData: true,
   staleTime: 0,
@@ -248,9 +322,27 @@ const {
     console.error(err);
   });
 }, [dropdownSelection]);
-  // TO DO: data keys should change based on the response variable keys
-  const submissions: Submission[] = data?.submissions ?? [];
+const submissions: Submission[] = data?.submissions ?? [];
+
+
+
   const totalCount: number = data?.totalCount ?? 0;
+  //map submission keys 
+  const mapSubmissionKeys = (submission: Submission, fieldMap: Record<string, string>) => {
+  const remapped: Record<string, any> = {};
+  for (const [newKey, originalKey] of Object.entries(fieldMap)) {
+    remapped[newKey] = submission[originalKey];
+  }
+  return remapped;
+};
+const fieldKeyMap: Record<string, string> = {
+  id: "id",
+  form_name: "formName",
+  created_by: "createdBy",
+  created: "created",
+  application_status: "applicationStatus",
+};
+
   // Sort Handler
    const handleSort = useCallback((key: string) => {
     const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
@@ -313,26 +405,58 @@ const {
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
   // Row Renderer
-  const renderRow = ({id, formName,createdBy,created,applicationStatus}: Submission) => (
-    <tr key={id}>
-      {
-        [id, formName,createdBy,formatDate(created),applicationStatus].map((item,index)=>customTdValue(item,index))
-      }
+const renderRow = (submission: Submission) => {
+  const fieldsToRender = (selectedSubmissionFilter?.variables ?? submissionFields)
+    .filter((field) => field.isChecked)
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+
+  return (
+    <tr key={submission.id}>
+      {fieldsToRender.map((field, index) => {
+        const { key } = field;
+
+        // Map form variable keys to backend keys
+        const fieldKeyMap: Record<string, string> = {
+          form_name: "formName",
+          created_by: "createdBy",
+          application_status: "applicationStatus",
+          created: "created",
+        };
+
+        const backendKey = fieldKeyMap[key] ?? key;
+
+        //  fallback to submission.data
+        const rawValue =
+          submission[backendKey as keyof Submission] ??
+          submission.data?.[backendKey];
+
+        const value =
+          backendKey === "created" ? formatDate(rawValue) : rawValue;
+
+        return customTdValue(value, index);
+      })}
+
+      {/* Action column */}
       <td>
-        <div className="text-overflow-ellipsis ">
+        <div className="text-overflow-ellipsis">
           <CustomButton
-          actionTable
-          label={t("View")}
-          onClick={() => dispatch(push(`${redirectUrl}submissions/${id}`))}
-          dataTestId={`view-submission-${id}`}
-          ariaLabel={t("View details for submission {{taskName}}", {
-            taskName: formName ?? t("unnamed"),
-          })}
-        />
+            actionTable
+            label={t("View")}
+            onClick={() =>
+              dispatch(push(`${redirectUrl}submissions/${submission.id}`))
+            }
+            dataTestId={`view-submission-${submission.id}`}
+            ariaLabel={t("View details for submission {{taskName}}", {
+              taskName: submission.formName ?? t("unnamed"),
+            })}
+          />
         </div>
       </td>
     </tr>
   );
+};
+
+
 
   // Header Renderer
   const renderHeaderCell = useCallback(
@@ -402,13 +526,14 @@ const {
         setSavedFormVariables(variables);
         // Convert object to array of SubmissionField
         const convertedVariableArray = Object.values(variables).map(
-          ({ key, altVariable, labelOfComponent ,isFormVariable}, index) => ({
+          ({ key, altVariable, labelOfComponent ,isFormVariable, type}, index) => ({
             key: key,
             name: key,
             label: altVariable || labelOfComponent || key,
-            isChecked: true,
+            isChecked: false,
             isFormVariable: isFormVariable,
             sortOrder: submissionFields.length + index + 1,
+            type
           })
         );
 
@@ -438,6 +563,8 @@ const {
             defaultSubmissionsFilter: res.data.id,
           });
           dispatch(setDefaultSubmissionFilter(res.data.id));
+          dispatch(setSelectedSubmisionFilter(res.data));
+          
         });
       },
       [dispatch, dropdownSelection, submissionFields]
@@ -460,7 +587,7 @@ const {
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
           initialInputFields={initialInputFields}
-            onSearch={handleFieldSearch}
+          onSearch={handleFieldSearch}
 
         />
 
