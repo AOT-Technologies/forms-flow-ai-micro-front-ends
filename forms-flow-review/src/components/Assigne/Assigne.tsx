@@ -30,10 +30,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
     dispatch(fetchServiceTaskList(lastReqPayload, null, activePage, limit));
   };
   const callTaskListcountApi = () => {
-    dispatch(fetchBPMTaskCount(filterList,(err,data)=>{
-      console.log("task count api called",err,data);
-      fetchTaskList();
-    }));
+    dispatch(fetchBPMTaskCount(filterList));
   };
 
   const handleClaim = () => {
