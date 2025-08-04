@@ -71,6 +71,7 @@ const TaskDetails = () => {
 
   //disable the form if task not assigned to himself 
   useEffect(()=>{
+    console.log("taskAssignee test",taskAssignee,currentUser);
     if(taskAssignee !==currentUser){
       setDisabledMode(true);
     }
