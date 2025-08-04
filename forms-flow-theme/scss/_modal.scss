@@ -1597,6 +1597,7 @@ $lineThin: 1px;
     display: flex;
     gap: var(--spacer-050);
     color: $primary;
+    cursor: pointer;
     padding: var(--spacer-075) var(--spacer-100);
     border-radius: var(--radius-sm);
     &.selected-item{
