@@ -241,8 +241,10 @@ $lineThin: 1px;
           .left {
             overflow-y: auto;
             max-height: 100%;
-            width: $leftSideWidth;
-
+            min-height: 75vh;
+            width: $leftSideWidth !important;
+            min-width: 17.5rem;
+            flex-shrink: 0;
             border-right: $lineThin solid $colorDivider;
           }
 
