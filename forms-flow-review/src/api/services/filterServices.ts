@@ -74,7 +74,7 @@ export const fetchServiceTaskList = (
     API.GET_BPM_TASK_FILTERS
     }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
   return (dispatch) => {
-    dispatch(setBPMTaskLoader(true));
+    //  dispatch(setBPMTaskLoader(true));
     let abortFlag = 0;
     // implemented for multiples api call prevention
     if (currentTaskFetchAbortController) {
@@ -165,7 +165,7 @@ export const fetchBPMTaskCount = (
   callback = (err: any, data: any) => {}
 ) => {
   return (dispatch) => {
-    dispatch(setBPMTaskLoader(true));
+    //  dispatch(setBPMTaskLoader(true));
     RequestService.httpPOSTRequest(`${API.GET_BPM_TASK_FILTERS}/count`, data)
       .then((res) => {
         dispatch(setBPMFiltersAndCount(res.data));
