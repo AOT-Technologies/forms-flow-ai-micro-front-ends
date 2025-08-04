@@ -41,7 +41,7 @@ export const getUserRoles = () => {
 };
 
 const handleTaskError = (dispatch, error) => {
-  dispatch(setBPMTaskList([]));
+  // dispatch(setBPMTaskList([]));
   dispatch(setBPMTaskCount(0));
   dispatch(serviceActionError(error));
 };

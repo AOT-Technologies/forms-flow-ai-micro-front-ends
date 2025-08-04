@@ -68,7 +68,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
   const handleBatchFunctionWhenThereIsNoFilter = () => {
     dispatch(setDefaultFilter(null));
     dispatch(setSelectedFilter(null));
-    dispatch(setBPMTaskList([]));
+    // dispatch(setBPMTaskList([]));
     dispatch(setBPMFiltersAndCount([]));
   };
 
