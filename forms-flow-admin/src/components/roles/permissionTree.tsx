@@ -50,11 +50,12 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
     [permissions]
     );
 
-  const formatCategoryLabel = (category: string): string => {
-    return `Access to ${category.charAt(0).toUpperCase()}${category
-      .slice(1)
-      .toLowerCase()}`;
-  };
+const formatCategoryLabel = (category: string): string => {
+  if (category.toLowerCase() === "admin") {
+    return "Access to Manage";
+  }
+  return `Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`;
+};
 
   const sortPermissionsByOrder = (perms: Permission[]): Permission[] => {
     return [...perms].sort((a, b) => a.order - b.order);
