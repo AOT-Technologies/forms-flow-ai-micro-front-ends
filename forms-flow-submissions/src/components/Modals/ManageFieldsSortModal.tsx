@@ -62,10 +62,10 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
  
  const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
 
- const [sortFields, setSortFields] = useState(selectedSubmissionFilter?.variables ||  submissionFields)
+ const [sortFields, setSortFields] = useState(selectedSubmissionFilter?.variables ||  submissionFields);
 
 useEffect (() => {
-  setSortFields(selectedSubmissionFilter?.variables);
+  setSortFields(selectedSubmissionFilter?.variables ||  submissionFields);
 },[selectedSubmissionFilter, submissionFields])
  const handleUpdateOrder = (updatedFieldOrder) => {
   setSortFields(updatedFieldOrder);

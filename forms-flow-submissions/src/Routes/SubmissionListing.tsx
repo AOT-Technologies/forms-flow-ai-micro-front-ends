@@ -11,9 +11,9 @@ import {
   getSubmissionList,
   fetchAllForms,
   fetchSubmissionList,
-  fetchFormById,
   createOrUpdateSubmissionFilter,
   updateDefaultSubmissionFilter,
+  fetchFormById,
 } from "../api/queryServices/analyzeSubmissionServices";
 import { formatDate,optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
@@ -26,7 +26,9 @@ import {
   setAnalyzeSubmissionDateRange,
   setDefaultSubmissionFilter,
   setSelectedSubmisionFilter,
-  setSubmissionFilterList
+  setSubmissionFilterList,
+  setSearchFieldValues,
+  clearSearchFieldValues
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -61,6 +63,7 @@ interface SubmissionField {
   isChecked: boolean; 
   isFormVariable: boolean;
   sortOrder?: number;
+  type?: string;
 }
 
 
@@ -81,6 +84,7 @@ const TaskSubmissionList: React.FC = () => {
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
 
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
+  const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
   //local state
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
    const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
@@ -92,18 +96,61 @@ const TaskSubmissionList: React.FC = () => {
   const [savedFormVariables, setSavedFormVariables] = useState({});
   const [selectedItem, setSelectedItem] = useState("");
   const [filtersApplied, setFiltersApplied] = useState(false);
+  const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
+  
+  // Wrapper function to reset lastFetchedFormId when dropdown selection changes
+  const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
+    if (newSelection !== dropdownSelection) {
+      setLastFetchedFormId(null); // Reset the cached form ID when selection changes
+    }
+    setDropdownSelection(newSelection);
+  }, [dropdownSelection]);
+ 
+  const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
+
+  const baseSubmissionFields: SubmissionField[] = [
+  { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 1 },
+  { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 2 },
+  { key: "created_by", name: "Submitter", label: "Submitter", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 3 },
+  { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 4 },
+  { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 5 }
+];
+const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>(baseSubmissionFields);
+
+useEffect(() => {
+  if (selectedSubmissionFilter?.variables?.length) {
+    setSubmissionFields(selectedSubmissionFilter.variables);
+  } else {
+    setSubmissionFields(baseSubmissionFields); 
+  }
+}, [selectedSubmissionFilter]);
+
+const handleFieldSearch = (filters: Record<string, string>) => {
+  setFieldFilters(filters);
+  setFiltersApplied(true);
+   // Store the search field values globally
+  dispatch(setSearchFieldValues(filters));
+  
+};
+
+const handleClearSearch = () => {
+  setFieldFilters({});
+  // Clear the search field values globally
+  dispatch(clearSearchFieldValues());
+  dispatch(setSelectedSubmisionFilter({}));
+  dispatch(setDefaultSubmissionFilter({}));  
+};
 
 
 useEffect(() => {
   const matched = filterList?.find(
     (item) => dropdownSelection === item.parentFormId
   );
-  const filter = matched ?? null; 
+  const filter = matched ?? {}; 
 
   dispatch(setSelectedSubmisionFilter(filter));
-  setSubmissionFields(filter?.variables ?? submissionFields);
+   setSubmissionFields(filter?.variables ?? submissionFields); 
 }, [dropdownSelection, filterList]);
-
 useEffect(() => {
     if (selectedSubmissionFilter?.variables) {
       // Filter out system fields
@@ -130,53 +177,7 @@ useEffect (() => {
 },[dropdownSelection])
 
 
-  const [submissionFields, setSubmissionFields] = useState( [
-          { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden" },
-          { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false,  type: "hidden" },
-          { key: "created_by", name: "Submitter", label: "Submitter", isChecked: true, isFormVariable: false,  type: "hidden" },
-          { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false,  type: "hidden" },
-          { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false,  type: "hidden" }
-        ]);
-  const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
-  
-const handleFieldSearch = (filters: Record<string, string>) => {
-  setFieldFilters(filters);
-  setFiltersApplied(true);
-};
- 
 
-
-
-
-
-const initialInputFields = useMemo(() => {
-  setSubmissionFields(selectedSubmissionFilter?.variables ?? submissionFields);
-  //these pinned fileds should always come  first in sidebar
-  const pinnedOrder = ["id", "created_by", "application_status"];
-
-  // Removing  form name & created date since it is always available
-  const filteredVars = submissionFields.filter(
-    (item) => item.key !== "form_name" && item.key !== "created"
-  );
-  const sortedVars = [
-    ...pinnedOrder
-      .map((key) => filteredVars.find((item) => item.key === key))
-      .filter(Boolean), 
-    //adding remaining items that are not pinned
-    ...filteredVars.filter((item) => !pinnedOrder.includes(item.key)),
-
-  
-
-  ];
-
-  return sortedVars.map((item) => ({
-    id: item.key,
-    name: item.key,
-    type: "text",
-    label: t(item.label),
-    value: "",
-  }));
-}, [selectedSubmissionFilter,dropdownSelection, submissionFields]);
   useEffect(() => {
 
     if (!formData.length || dropdownSelection == null) return;
@@ -184,6 +185,31 @@ const initialInputFields = useMemo(() => {
     const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
     setSelectedItem(selectedForm?.formName ?? "All Forms");
   }, [defaultSubmissionFilter, filterList, formData]);
+
+  
+const initialInputFields = useMemo(() => {
+  //these pinned fileds should always come  first in sidebar
+  const pinnedOrder = ["id", "created_by", "application_status"];
+
+  // Removing  form name & created date since it is always available
+  const filteredVars = submissionFields.filter(
+    (item) => item.key !== "form_name" && item.key !== "created"
+  );
+
+  const sortedVars = [
+    ...pinnedOrder.map((key) => filteredVars.find((item) => item.key === key)).filter(Boolean),
+    //adding remaining items that are not pinned
+    ...filteredVars.filter((item) => !pinnedOrder.includes(item.key)),
+  ];
+
+  return sortedVars.map((item) => ({
+    id: item.key,
+    name: item.key,
+    type: "text",
+    label: t(item.label),
+    value: searchFieldValues[item.key] || "",
+  }));
+}, [submissionFields, searchFieldValues, t]);
 
   useEffect (() => {
     if(selectedItem === "All Forms") {
@@ -298,8 +324,6 @@ const {
 });
 
 
-  
-
   useEffect(()=>{
     fetchAllForms()
         .then((res) => {
@@ -312,20 +336,29 @@ const {
   },[]);
   
   //fetch form by id to render in the variable modal
- useEffect(() => {
-  if (!dropdownSelection) return;
-  fetchFormById(dropdownSelection)
-  .then((res) => {
-    setForm(res.data);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-}, [dropdownSelection]);
-const submissions: Submission[] = data?.submissions ?? [];
-
-
-
+  const fetchFormData = useCallback(() => {
+    if (!dropdownSelection) return;
+    
+    // Check if we already have the form data for this dropdownSelection if yes then open the modal
+    if (lastFetchedFormId === dropdownSelection) {
+      setShowVariableModal(true);
+      handleManageFieldsClose();
+      return;
+    }
+    
+    fetchFormById(dropdownSelection)
+    .then((res) => {
+      setForm(res.data);
+      setLastFetchedFormId(dropdownSelection); // update the last fetched form ID to avoid duplicate api calls
+      setShowVariableModal(true);
+      handleManageFieldsClose();
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }, [dropdownSelection, lastFetchedFormId]);
+  // TO DO: data keys should change based on the response variable keys
+  const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
   //map submission keys 
   const mapSubmissionKeys = (submission: Submission, fieldMap: Record<string, string>) => {
@@ -516,9 +549,10 @@ const renderRow = (submission: Submission) => {
     setShowVariableModal(false) 
     handleManageFieldsOpen();
   };
+
+  //will wait for the form data to be fetched before opening the modal
   const handleShowVariableModal = () => {
-     setShowVariableModal(true) ;
-     handleManageFieldsClose();
+     fetchFormData(); // Fetch form data when the button is clicked
     };
     
     const handleSaveVariables = useCallback(
@@ -576,19 +610,19 @@ const renderRow = (submission: Submission) => {
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={false}
+          hasActiveFilters={Object.keys(searchFieldValues).length > 0 }
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}
           manageFieldsAction={handleManageFieldsOpen}
           formData={formData}
           dropdownSelection={dropdownSelection}
-          setDropdownSelection={setDropdownSelection}
+          setDropdownSelection={handleDropdownSelectionChange}
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
           initialInputFields={initialInputFields}
           onSearch={handleFieldSearch}
-
+          onClearSearch={handleClearSearch}
         />
 
       </div>

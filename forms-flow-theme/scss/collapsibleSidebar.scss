@@ -199,6 +199,10 @@ $chevron-bg: #5e61f2;
     
     writing-mode: sideways-lr;
     text-align: end;
+    &.active-filter{
+      background-color: $primary;
+      color: $white-color;
+    }
   }
 
   .content {

@@ -241,8 +241,10 @@ $lineThin: 1px;
           .left {
             overflow-y: auto;
             max-height: 100%;
-            width: $leftSideWidth;
-
+            min-height: 75vh;
+            width: $leftSideWidth !important;
+            min-width: 17.5rem;
+            flex-shrink: 0;
             border-right: $lineThin solid $colorDivider;
           }
 
@@ -1597,6 +1599,7 @@ $lineThin: 1px;
     display: flex;
     gap: var(--spacer-050);
     color: $primary;
+    cursor: pointer;
     padding: var(--spacer-075) var(--spacer-100);
     border-radius: var(--radius-sm);
     &.selected-item{
