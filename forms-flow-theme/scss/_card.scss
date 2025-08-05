@@ -487,3 +487,8 @@ $gray-darkest: var(--ff-gray-darkest);
     }
   }
 }
+
+.workflow-edit-container {
+  max-height: calc(100vh - 16.25rem);
+  overflow: auto;
+}

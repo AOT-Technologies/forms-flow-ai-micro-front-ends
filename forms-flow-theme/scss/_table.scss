@@ -146,6 +146,11 @@ $white-color: var(--ff-white);
               @include paddingLvl6();
               @include textBaseHightlight($fontSmallest, $primary-color);
             }
+            .dropdown-item:hover {
+              background-color: var(--ff-primary);
+              color: var(--ff-white);
+              border-radius: var(--radius-sm);
+            }
           }
 
           & > button {
