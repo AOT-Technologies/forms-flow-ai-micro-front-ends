@@ -484,24 +484,22 @@ const renderRow = (submission: Submission) => {
       index: number,
       columnsLength: number,
       currentResizingColumn: any,
-      handleMouseDown: (
-        index: number,
-        column: Column,
-        e: React.MouseEvent
-      ) => void
+      handleMouseDown
     ) => {
-      const isLast = index === columnsLength - 1;
+      const isSortable = column.sortKey !== "actions";
+      const isResizable = column.resizable && index < columnsLength - 1;
+      const isResizing = currentResizingColumn?.sortkey === column.sortKey;
       const headerKey = column.sortKey || `col-${index}`;
 
     return (
       <th
         key={`header-${headerKey}`}
-        className="header-sortable"
-        style={{ width: column.width }}
+        className={`${isSortable ? "header-sortable" : ''}`}
+        style={{ "minWidth": column.width, "maxWidth" : column.width }}
         data-testid={`column-header-${column.sortKey || "actions"}`}
-        aria-label={column.name ? `${t(column.name)} ${t("column")}` : ""}
+        aria-label={`${t(column.name)} ${t("column")} ${isSortable ? "," + t("sortable") : ""}`}
       >
-        {!isLast && column.name ? (
+        {isSortable ? (
           <SortableHeader
             columnKey={column.sortKey}
             title={t(column.name)}
@@ -512,11 +510,13 @@ const renderRow = (submission: Submission) => {
             ariaLabel={t("Sort by {{columnName}}", { columnName: t(column.name) })}
           />
         ) : (
-          column.name && t(column.name)
+          <span className="text">
+           {t(column.name)}
+          </span>
         )}
-        {column.resizable && (
+        {isResizable && (
           <div
-            className={`column-resizer ${currentResizingColumn?.sortKey === column.sortKey ? "resizing" : ""}`}
+            className={`column-resizer ${isResizing ? "resizing" : ""}`}
             onMouseDown={(e) => handleMouseDown(index, column, e)}
             tabIndex={0}
             role="separator"
