@@ -63,11 +63,10 @@ interface SubmissionField {
   isChecked: boolean; 
   isFormVariable: boolean;
   sortOrder?: number;
-  type?: string;
 }
 
 
-const TaskSubmissionList: React.FC = () => {
+const AnalyzeSubmissionList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
@@ -94,10 +93,20 @@ const TaskSubmissionList: React.FC = () => {
   const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
-  const [selectedItem, setSelectedItem] = useState("");
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
-  
+  const [selectedItem, setSelectedItem] = useState("");
+  const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
+
+  // Default submission fields constant
+  const DEFAULT_SUBMISSION_FIELDS = [
+    { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden",sortOrder:0 },
+    { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false,  type: "hidden" ,sortOrder:1},
+    { key: "created_by", name: "Submitter", label: "Submitter", isChecked: true, isFormVariable: false,  type: "hidden",sortOrder:2 },
+    { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false,  type: "hidden",sortOrder:3 },
+    { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false,  type: "hidden",sortOrder:4 }
+  ];
+
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
   const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
     if (newSelection !== dropdownSelection) {
@@ -105,40 +114,12 @@ const TaskSubmissionList: React.FC = () => {
     }
     setDropdownSelection(newSelection);
   }, [dropdownSelection]);
- 
-  const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
 
-  const baseSubmissionFields: SubmissionField[] = [
-  { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 1 },
-  { key: "form_name", name: "Form", label: "Form", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 2 },
-  { key: "created_by", name: "Submitter", label: "Submitter", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 3 },
-  { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 4 },
-  { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false, type: "hidden", sortOrder: 5 }
-];
-const [submissionFields, setSubmissionFields] = useState<SubmissionField[]>(baseSubmissionFields);
-
-useEffect(() => {
-  if (selectedSubmissionFilter?.variables?.length) {
-    setSubmissionFields(selectedSubmissionFilter.variables);
-  } else {
-    setSubmissionFields(baseSubmissionFields); 
-  }
-}, [selectedSubmissionFilter]);
-
-const handleFieldSearch = (filters: Record<string, string>) => {
-  setFieldFilters(filters);
-  setFiltersApplied(true);
-   // Store the search field values globally
-  dispatch(setSearchFieldValues(filters));
   
-};
-
 const handleClearSearch = () => {
   setFieldFilters({});
   // Clear the search field values globally
   dispatch(clearSearchFieldValues());
-  dispatch(setSelectedSubmisionFilter({}));
-  dispatch(setDefaultSubmissionFilter({}));  
 };
 
 
@@ -146,11 +127,17 @@ useEffect(() => {
   const matched = filterList?.find(
     (item) => dropdownSelection === item.parentFormId
   );
-  const filter = matched ?? {}; 
+  const filter = matched ?? null; 
 
   dispatch(setSelectedSubmisionFilter(filter));
-   setSubmissionFields(filter?.variables ?? submissionFields); 
+  setSubmissionFields(filter?.variables ?? DEFAULT_SUBMISSION_FIELDS);
 }, [dropdownSelection, filterList]);
+
+useEffect(() => {
+  // Update submissionFields when selectedSubmissionFilter changes
+  setSubmissionFields(selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS);
+}, [selectedSubmissionFilter]);
+
 useEffect(() => {
     if (selectedSubmissionFilter?.variables) {
       // Filter out system fields
@@ -158,48 +145,56 @@ useEffect(() => {
       .filter((item) => !systemFields.includes(item.key))
       .map((item)=>{ 
         const { label,...rest} = item;
-        return { ...rest,labelOfComponent:label}
+        return { ...rest,labelOfComponent:label,altVariable: label}
       });
       // Convert to object with key as property (if that's your structure)
       const obj = {};
       filtered.forEach((v) => {
         obj[v.key] = v;
       });
+      
       setSavedFormVariables(obj);
+    } else {
+      // When there's no selectedSubmissionFilter or no variables, set to empty object
+      setSavedFormVariables({});
     }
   }, [selectedSubmissionFilter]);
 
-
 useEffect (() => {
   if(!selectedSubmissionFilter?.id){
-    setSubmissionFields(submissionFields);
+    setSubmissionFields(DEFAULT_SUBMISSION_FIELDS);
   }
 },[dropdownSelection])
 
 
-
-  useEffect(() => {
-
-    if (!formData.length || dropdownSelection == null) return;
-
-    const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
-    setSelectedItem(selectedForm?.formName ?? "All Forms");
-  }, [defaultSubmissionFilter, filterList, formData]);
-
+  const [submissionFields, setSubmissionFields] = useState( DEFAULT_SUBMISSION_FIELDS );
   
+const handleFieldSearch = (filters: Record<string, string>) => {
+  setFieldFilters(filters);
+  setFiltersApplied(true);
+  dispatch(setSearchFieldValues(filters));
+
+};
+ 
+
 const initialInputFields = useMemo(() => {
+  // Use the current submissionFields state for calculation
+  const currentFields = selectedSubmissionFilter?.variables ?? submissionFields;
+  
   //these pinned fileds should always come  first in sidebar
   const pinnedOrder = ["id", "created_by", "application_status"];
 
   // Removing  form name & created date since it is always available
-  const filteredVars = submissionFields.filter(
+  const filteredVars = currentFields.filter(
     (item) => item.key !== "form_name" && item.key !== "created"
   );
-
   const sortedVars = [
-    ...pinnedOrder.map((key) => filteredVars.find((item) => item.key === key)).filter(Boolean),
+    ...pinnedOrder
+      .map((key) => filteredVars.find((item) => item.key === key))
+      .filter(Boolean), 
     //adding remaining items that are not pinned
     ...filteredVars.filter((item) => !pinnedOrder.includes(item.key)),
+
   ];
 
   return sortedVars.map((item) => ({
@@ -209,7 +204,15 @@ const initialInputFields = useMemo(() => {
     label: t(item.label),
     value: searchFieldValues[item.key] || "",
   }));
-}, [submissionFields, searchFieldValues, t]);
+}, [selectedSubmissionFilter, submissionFields, searchFieldValues, t]);
+
+  useEffect(() => {
+
+    if (!formData.length || dropdownSelection == null) return;
+
+    const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
+    setSelectedItem(selectedForm?.formName ?? "All Forms");
+  }, [defaultSubmissionFilter, filterList, formData]);
 
   useEffect (() => {
     if(selectedItem === "All Forms") {
@@ -245,7 +248,7 @@ useEffect(() => {
 const columns: Column[] = useMemo(() => {
   const sourceFields = selectedSubmissionFilter?.variables?.length
     ? selectedSubmissionFilter.variables
-    : submissionFields;
+    : DEFAULT_SUBMISSION_FIELDS;
 
     const getColumnWidth = (key: string): number => {
   const widthMap: Record<string, number> = {
@@ -273,7 +276,7 @@ const columns: Column[] = useMemo(() => {
       width: 100,
     },
   ];
-}, [selectedSubmissionFilter, submissionFields]);
+}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS]);
 
 
   const activeSortKey = sortParams.activeKey;
@@ -439,7 +442,7 @@ const fieldKeyMap: Record<string, string> = {
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
   // Row Renderer
 const renderRow = (submission: Submission) => {
-  const fieldsToRender = (selectedSubmissionFilter?.variables ?? submissionFields)
+  const fieldsToRender = (selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS)
     .filter((field) => field.isChecked)
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
@@ -557,14 +560,15 @@ const renderRow = (submission: Submission) => {
     
     const handleSaveVariables = useCallback(
       (variables) => {
+
         setSavedFormVariables(variables);
         // Convert object to array of SubmissionField
         const convertedVariableArray = Object.values(variables).map(
-          ({ key, altVariable, labelOfComponent ,isFormVariable, type}, index) => ({
+          ({ key, altVariable, labelOfComponent ,isFormVariable, type, isChecked}, index) => ({
             key: key,
             name: key,
             label: altVariable || labelOfComponent || key,
-            isChecked: false,
+            isChecked: isChecked ?? false,
             isFormVariable: isFormVariable,
             sortOrder: submissionFields.length + index + 1,
             type
@@ -601,7 +605,7 @@ const renderRow = (submission: Submission) => {
           
         });
       },
-      [dispatch, dropdownSelection, submissionFields]
+      [dispatch, dropdownSelection, DEFAULT_SUBMISSION_FIELDS]
     );
 
   return (
@@ -727,7 +731,7 @@ const renderRow = (submission: Submission) => {
         onClose={handleManageFieldsClose}
         selectedItem={selectedItem}
         setSubmissionFields={setSubmissionFields}
-        submissionFields={submissionFields}
+        submissionFields={DEFAULT_SUBMISSION_FIELDS}
         handleShowVariableModal={handleShowVariableModal}
         dropdownSelection={dropdownSelection}
       />}
@@ -744,4 +748,4 @@ const renderRow = (submission: Submission) => {
     </>
   );
 };
-export default TaskSubmissionList;
+export default AnalyzeSubmissionList;

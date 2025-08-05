@@ -53,7 +53,6 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
   onClose, 
   dropdownSelection, 
   submissionFields, 
-  setSubmissionFields, 
   selectedItem,
   handleShowVariableModal }) => {
   const { t } = useTranslation();
@@ -62,14 +61,17 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
  
  const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
 
- const [sortFields, setSortFields] = useState(selectedSubmissionFilter?.variables ||  submissionFields);
-
+ const [sortFields, setSortFields] = useState(selectedSubmissionFilter?.variables || submissionFields)
 useEffect (() => {
-  setSortFields(selectedSubmissionFilter?.variables ||  submissionFields);
-},[selectedSubmissionFilter, submissionFields])
+  setSortFields(selectedSubmissionFilter?.variables || submissionFields);
+},[selectedSubmissionFilter]);
+
+
  const handleUpdateOrder = (updatedFieldOrder) => {
   setSortFields(updatedFieldOrder);
   }
+
+
   const variableList = (): VariableListPayload => ({
   parentFormId: dropdownSelection,
   variables: sortFields
