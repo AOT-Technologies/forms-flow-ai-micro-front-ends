@@ -37,9 +37,14 @@ export const getSubmissionList = (
 
   const parentFormIdStr = parentFormId ? `parentFormId: "${parentFormId}"` : "";
 
-  const selectedFieldsStr = selectedFormFields.length
-    ? `selectedFormFields: [${selectedFormFields.map((f) => `"${f}"`).join(", ")}]`
-    : "";
+  const selectedFieldsStr = (() => {
+  if (!selectedFormFields.length) return "";
+
+  const fieldsArray = selectedFormFields.map((f) => `"${f}"`);
+  const fieldsJoined = fieldsArray.join(", ");
+  return "selectedFormFields: [" + fieldsJoined + "]";
+})();
+
 
   const filtersStr = filtersString ? `filters: { ${filtersString} }` : "";
 

@@ -97,7 +97,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
-
+  
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
     { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden",sortOrder:0 },
@@ -106,6 +106,7 @@ const AnalyzeSubmissionList: React.FC = () => {
     { key: "created", name: "Submission Date", label: "Submission Date", isChecked: true, isFormVariable: false,  type: "hidden",sortOrder:3 },
     { key: "application_status", name: "Status", label: "Status", isChecked: true, isFormVariable: false,  type: "hidden",sortOrder:4 }
   ];
+ const [submissionFields, setSubmissionFields] = useState( DEFAULT_SUBMISSION_FIELDS );
 
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
   const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
@@ -136,9 +137,6 @@ useEffect(() => {
 useEffect(() => {
   // Update submissionFields when selectedSubmissionFilter changes
   setSubmissionFields(selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS);
-}, [selectedSubmissionFilter]);
-
-useEffect(() => {
     if (selectedSubmissionFilter?.variables) {
       // Filter out system fields
       const filtered = selectedSubmissionFilter.variables
@@ -164,10 +162,14 @@ useEffect (() => {
   if(!selectedSubmissionFilter?.id){
     setSubmissionFields(DEFAULT_SUBMISSION_FIELDS);
   }
+    if(selectedItem === "All Forms") {
+      setDropdownSelection(null);
+      setSelectedSubmisionFilter(null);
+    }
 },[dropdownSelection])
 
 
-  const [submissionFields, setSubmissionFields] = useState( DEFAULT_SUBMISSION_FIELDS );
+
   
 const handleFieldSearch = (filters: Record<string, string>) => {
   setFieldFilters(filters);
@@ -204,7 +206,7 @@ const initialInputFields = useMemo(() => {
     label: t(item.label),
     value: searchFieldValues[item.key] || "",
   }));
-}, [selectedSubmissionFilter, submissionFields, searchFieldValues, t]);
+}, [selectedSubmissionFilter, submissionFields, searchFieldValues]);
 
   useEffect(() => {
 
@@ -214,12 +216,7 @@ const initialInputFields = useMemo(() => {
     setSelectedItem(selectedForm?.formName ?? "All Forms");
   }, [defaultSubmissionFilter, filterList, formData]);
 
-  useEffect (() => {
-    if(selectedItem === "All Forms") {
-      setDropdownSelection(null);
-      setSelectedSubmisionFilter(null);
-    }
-  },[dropdownSelection])
+
 
 
 useEffect(() => {
@@ -360,24 +357,10 @@ const {
       console.error(err);
     });
   }, [dropdownSelection, lastFetchedFormId]);
-  // TO DO: data keys should change based on the response variable keys
+  // taking data from submission response for mapping to the table
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
-  //map submission keys 
-  const mapSubmissionKeys = (submission: Submission, fieldMap: Record<string, string>) => {
-  const remapped: Record<string, any> = {};
-  for (const [newKey, originalKey] of Object.entries(fieldMap)) {
-    remapped[newKey] = submission[originalKey];
-  }
-  return remapped;
-};
-const fieldKeyMap: Record<string, string> = {
-  id: "id",
-  form_name: "formName",
-  created_by: "createdBy",
-  created: "created",
-  application_status: "applicationStatus",
-};
+
 
   // Sort Handler
    const handleSort = useCallback((key: string) => {
