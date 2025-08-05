@@ -558,55 +558,62 @@ const renderRow = (submission: Submission) => {
      fetchFormData(); // Fetch form data when the button is clicked
     };
     
-    const handleSaveVariables = useCallback(
-      (variables) => {
+  const handleSaveVariables = useCallback(
+    (variables) => {
+      const prevKeys = Object.keys(savedFormVariables);
+      const currentKeys = Object.keys(variables);
 
-        setSavedFormVariables(variables);
-        // Convert object to array of SubmissionField
-        const convertedVariableArray = Object.values(variables).map(
-          ({ key, altVariable, labelOfComponent ,isFormVariable, type, isChecked}, index) => ({
-            key: key,
-            name: key,
-            label: altVariable || labelOfComponent || key,
-            isChecked: isChecked ?? false,
-            isFormVariable: isFormVariable,
-            sortOrder: submissionFields.length + index + 1,
-            type
-          })
-        );
+      const removedKeys = prevKeys.filter(key => !currentKeys.includes(key));
 
-        // Merge with existing fields and filter to remove duplicates by key
-        // ensure the need of filtering submissionfields
-        const merged = [
-          ...submissionFields.filter(
-            (field) =>
-              !convertedVariableArray.find(
-                (newField) => newField.key === field.key
-              )
-          ),
-          ...convertedVariableArray,
-        ];
-        
+      // Convert object to array of SubmissionField
+      const convertedVariableArray = Object.values(variables).map(
+        ({ key, altVariable, labelOfComponent, isFormVariable, type, isChecked }, index) => ({
+          key: key,
+          name: key,
+          label: altVariable || labelOfComponent || key,
+          isChecked: isChecked ?? false,
+          isFormVariable: isFormVariable,
+          sortOrder: submissionFields.length + index + 1,
+          type
+        })
+      );
 
-        setSubmissionFields(merged);
+      setSavedFormVariables(variables);
 
-        // payload interface
-        const payload: VariableListPayload = {
-          parentFormId: dropdownSelection,
-          variables: merged,
-        };
 
-        createOrUpdateSubmissionFilter(payload).then((res) => {
-          updateDefaultSubmissionFilter({
-            defaultSubmissionsFilter: res.data.id,
-          });
-          dispatch(setDefaultSubmissionFilter(res.data.id));
-          dispatch(setSelectedSubmisionFilter(res.data));
-          
+      // Merge with existing fields and filter to remove duplicates by key
+      // ensure the need of filtering submissionfields
+      const merged = [
+        ...submissionFields.filter(
+          (field) =>
+            !convertedVariableArray.find(
+              (newField) => newField.key === field.key
+            ) &&
+            !removedKeys.includes(field.key)
+        ),
+        ...convertedVariableArray,
+      ];
+
+
+      setSubmissionFields(merged);
+
+      // payload interface
+      const payload: VariableListPayload = {
+        parentFormId: dropdownSelection,
+        variables: merged,
+      };
+
+      createOrUpdateSubmissionFilter(payload).then((res) => {
+        updateDefaultSubmissionFilter({
+          defaultSubmissionsFilter: res.data.id,
         });
-      },
-      [dispatch, dropdownSelection, DEFAULT_SUBMISSION_FIELDS]
-    );
+        dispatch(setDefaultSubmissionFilter(res.data.id));
+        dispatch(setSelectedSubmisionFilter(res.data));
+
+      });
+    },
+    [dispatch, dropdownSelection, DEFAULT_SUBMISSION_FIELDS]
+  );
 
   return (
    <>
