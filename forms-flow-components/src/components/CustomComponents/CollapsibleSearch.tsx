@@ -97,6 +97,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
       handleSelection(form.formName);
       setDropdownSelection(form.parentFormId); // Store the selected form ID
     },
+    className:  form.parentFormId === dropdownSelection ? "selected-filter-item" : "",
   }));
 
     const handleClear = () => {

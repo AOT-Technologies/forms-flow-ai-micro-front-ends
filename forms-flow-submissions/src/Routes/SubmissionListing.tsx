@@ -97,7 +97,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
-  const [isFormfetched,setIsFormFetched] =useState(false);
+  const [isFormFetched,setIsFormFetched] =useState(false);
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
     { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden",sortOrder:0 },
@@ -731,7 +731,7 @@ const renderRow = (submission: Submission) => {
           savedFormVariables={savedFormVariables}
           fieldLabel="Field"
           systemVariables={SystemVariables}
-          isLoading={isFormfetched}
+          isLoading={isFormFetched}
         />}
 
     </>
