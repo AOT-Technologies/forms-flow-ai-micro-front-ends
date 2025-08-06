@@ -16,7 +16,7 @@ import SocketIOService from "./services/SocketIOService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
-import { setBPMTaskDetail } from "./actions/taskActions"; 
+import { setBPMTaskDetail,setTaskAssignee } from "./actions/taskActions"; 
 
 import { fetchServiceTaskList, fetchUserList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
@@ -115,6 +115,7 @@ const Task = React.memo((props: any) => {
 
   const handleTaskUpdate = (refreshedTaskId: string) => {
     console.log("handleTaskUpdate test",refreshedTaskId,taskId);
+    // taskId & refreshedTaskId will be equal if user is in task details page
   if (taskId === refreshedTaskId) {
     // if a task opened, some changes made against this task we need to recall the details
     getOnlyTaskDetails(refreshedTaskId).then((response) => {
@@ -124,6 +125,8 @@ const Task = React.memo((props: any) => {
           variables: taskDetails?.variables,
         })
       );
+      // Added to update assignee when socket trigger happens when user is in task details page 
+      dispatch(setTaskAssignee(response.data.assignee))
     });
   }
   checkTheTaskIdExistThenRefetchTaskList();
