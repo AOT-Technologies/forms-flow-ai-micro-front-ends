@@ -114,6 +114,9 @@ const AnalyzeSubmissionList: React.FC = () => {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
     }
     setDropdownSelection(newSelection);
+    dispatch(clearSearchFieldValues());
+    setFiltersApplied(false); 
+    setFieldFilters({});
   }, [dropdownSelection]);
 
   
@@ -122,6 +125,27 @@ const handleClearSearch = () => {
   // Clear the search field values globally
   dispatch(clearSearchFieldValues());
 };
+const prevSearchValuesRef = useRef<Record<string, string>>({});
+
+useEffect(() => {
+  const prev = prevSearchValuesRef.current;
+  const curr = searchFieldValues;
+
+  const hasAnyPreviouslySet = Object.values(prev).some((val) => val?.trim());
+  const hasAnyCleared = Object.keys(prev).some(
+    (key) => prev[key]?.trim() && !curr[key]?.trim()
+  );
+
+  // If a value was cleared after filters were applied
+  if (hasAnyPreviouslySet && hasAnyCleared) {
+    setFieldFilters(curr); // trigger re-query
+    setFiltersApplied(true);
+
+    dispatch(setAnalyzeSubmissionPage(1)); 
+  }
+
+  prevSearchValuesRef.current = curr;
+}, [searchFieldValues]);
 
 
 useEffect(() => {
@@ -617,6 +641,9 @@ const renderRow = (submission: Submission) => {
           initialInputFields={initialInputFields}
           onSearch={handleFieldSearch}
           onClearSearch={handleClearSearch}
+          onLiveFilterUpdate={(updatedFilters) => {
+            dispatch(setSearchFieldValues(updatedFilters)); //if a searched value is cleared the table data should be resetted
+          }}
         />
 
       </div>

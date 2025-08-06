@@ -32,6 +32,8 @@ interface CollapsibleSearchProps {
   initialInputFields: InputField[];
   onSearch: (filters: Record<string, string>) => void;
   onClearSearch?: () => void;
+  onLiveFilterUpdate?: (filters: Record<string, string>) => void;
+
 }
 
 
@@ -53,7 +55,8 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   setSelectedItem,
   initialInputFields,
   onSearch,
-  onClearSearch
+  onClearSearch,
+  onLiveFilterUpdate
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -63,6 +66,20 @@ const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields)
     setInputFields((prevFields) => {
       const updated = [...prevFields];
       updated[index] = { ...updated[index], value: newValue };
+  
+     
+      const updatedFilters = updated.reduce((acc, field) => {
+        if (field.value?.trim()) {
+          acc[field.id] = field.value.trim();
+        }
+        return acc;
+      }, {} as Record<string, string>);
+  
+      // for live filter resetting if cleared
+      if (onLiveFilterUpdate) {
+        onLiveFilterUpdate(updatedFilters);
+      }
+  
       return updated;
     });
   };
@@ -186,6 +203,8 @@ const handleSelection = (label: string) => setSelectedItem(label);
                   onChange={(e) => handleFieldChange(index, e.target.value)}
                   aria-label={field.label}
                   data-testid={`input-${field.id}`} 
+                  onClearClick={() => handleFieldChange(index, "")}
+                  clear={field.value !== ""} 
                 />
               </div>
             ))}
@@ -272,21 +291,18 @@ const handleSelection = (label: string) => setSelectedItem(label);
         </div>
         <div className="actions">
             <div className="buttons-row">
-            <CustomButton
-  label="Search"
-  onClick={handleSearch}
-  dataTestId="search-button"
-  ariaLabel="Search filters"
-  disabled={isActionDisabled}
-/>
+              <CustomButton
+                label="Search"
+                onClick={handleSearch}
+                dataTestId="search-button"
+                ariaLabel="Search filters"
+              />
 
               <CustomButton
                 label="Clear"
                 onClick={handleClear}
                 dataTestId="clear-button"
                 ariaLabel="Clear filters" 
-                // buttonLoading={buttonLoading}
-                disabled={isActionDisabled}
                 secondary />
             </div>
         </div>
