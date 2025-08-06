@@ -97,7 +97,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
-  
+  const [isFormFetched,setIsFormFetched] =useState(false);
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
     { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden",sortOrder:0 },
@@ -359,26 +359,22 @@ const {
         });
   },[]);
   
-  //fetch form by id to render in the variable modal
+  //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection 
   const fetchFormData = useCallback(() => {
-    if (!dropdownSelection) return;
-    
-    // Check if we already have the form data for this dropdownSelection if yes then open the modal
-    if (lastFetchedFormId === dropdownSelection) {
-      setShowVariableModal(true);
-      handleManageFieldsClose();
+    if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
     }
-    
+    setIsFormFetched(true);
     fetchFormById(dropdownSelection)
     .then((res) => {
       setForm(res.data);
       setLastFetchedFormId(dropdownSelection); // update the last fetched form ID to avoid duplicate api calls
-      setShowVariableModal(true);
-      handleManageFieldsClose();
     })
     .catch((err) => {
       console.error(err);
+    })
+    .finally(() => {
+      setIsFormFetched(false);
     });
   }, [dropdownSelection, lastFetchedFormId]);
   // taking data from submission response for mapping to the table
@@ -508,24 +504,22 @@ const renderRow = (submission: Submission) => {
       index: number,
       columnsLength: number,
       currentResizingColumn: any,
-      handleMouseDown: (
-        index: number,
-        column: Column,
-        e: React.MouseEvent
-      ) => void
+      handleMouseDown
     ) => {
-      const isLast = index === columnsLength - 1;
+      const isSortable = column.sortKey !== "actions";
+      const isResizable = column.resizable && index < columnsLength - 1;
+      const isResizing = currentResizingColumn?.sortkey === column.sortKey;
       const headerKey = column.sortKey || `col-${index}`;
 
     return (
       <th
         key={`header-${headerKey}`}
-        className="header-sortable"
-        style={{ width: column.width }}
+        className={`${isSortable ? "header-sortable" : ''}`}
+        style={{ "minWidth": column.width, "maxWidth" : column.width }}
         data-testid={`column-header-${column.sortKey || "actions"}`}
-        aria-label={column.name ? `${t(column.name)} ${t("column")}` : ""}
+        aria-label={`${t(column.name)} ${t("column")} ${isSortable ? "," + t("sortable") : ""}`}
       >
-        {!isLast && column.name ? (
+        {isSortable ? (
           <SortableHeader
             columnKey={column.sortKey}
             title={t(column.name)}
@@ -536,11 +530,13 @@ const renderRow = (submission: Submission) => {
             ariaLabel={t("Sort by {{columnName}}", { columnName: t(column.name) })}
           />
         ) : (
-          column.name && t(column.name)
+          <span className="text">
+           {t(column.name)}
+          </span>
         )}
-        {column.resizable && (
+        {isResizable && (
           <div
-            className={`column-resizer ${currentResizingColumn?.sortKey === column.sortKey ? "resizing" : ""}`}
+            className={`column-resizer ${isResizing ? "resizing" : ""}`}
             onMouseDown={(e) => handleMouseDown(index, column, e)}
             tabIndex={0}
             role="separator"
@@ -562,7 +558,9 @@ const renderRow = (submission: Submission) => {
 
   //will wait for the form data to be fetched before opening the modal
   const handleShowVariableModal = () => {
+    setShowVariableModal(true);
      fetchFormData(); // Fetch form data when the button is clicked
+    handleManageFieldsClose();
     };
     
   const handleSaveVariables = useCallback(
@@ -760,6 +758,7 @@ const renderRow = (submission: Submission) => {
           savedFormVariables={savedFormVariables}
           fieldLabel="Field"
           systemVariables={SystemVariables}
+          isLoading={isFormFetched}
         />}
 
     </>
