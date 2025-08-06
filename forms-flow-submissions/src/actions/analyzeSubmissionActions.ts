@@ -60,3 +60,10 @@ export const clearSearchFieldValues = () => (dispatch) => {
     type: ACTION_CONSTANTS.CLEAR_SEARCH_FIELD_VALUES,
   })
 }
+
+export const setColumnWidths = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.UPDATE_COLUMN_WIDTHS,
+    payload: data,
+  })
+}

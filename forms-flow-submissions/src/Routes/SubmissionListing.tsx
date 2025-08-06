@@ -28,7 +28,8 @@ import {
   setSelectedSubmisionFilter,
   setSubmissionFilterList,
   setSearchFieldValues,
-  clearSearchFieldValues
+  clearSearchFieldValues,
+  setColumnWidths
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -51,6 +52,8 @@ interface Column {
   width: number;
   sortKey: string;
   resizable?: boolean;
+  newWidth?: number;
+  isFormVariable?: boolean;
 }
 interface VariableListPayload {
   parentFormId: string ;
@@ -84,6 +87,7 @@ const AnalyzeSubmissionList: React.FC = () => {
 
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
+  const columnWidths = useSelector((state: any) => state?.analyzeSubmission?.columnWidths ?? {});
   //local state
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
    const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
@@ -97,7 +101,6 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
-  
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
     { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden",sortOrder:0 },
@@ -177,7 +180,6 @@ const handleFieldSearch = (filters: Record<string, string>) => {
   dispatch(setSearchFieldValues(filters));
 
 };
- 
 
 const initialInputFields = useMemo(() => {
   // Use the current submissionFields state for calculation
@@ -242,18 +244,26 @@ useEffect(() => {
     });
 }, []);
 
+  // Column width helper function
+  const getColumnWidth = useCallback((key: string): number => {
+    // Get width from Redux store, fallback to default widths
+    if (columnWidths[key]) {
+      return columnWidths[key];
+    }
+   
+    const widthMap: Record<string, number> = {
+      created: 180,
+      application_status: 160,
+    };
+    return widthMap[key] ?? 200;
+  }, [columnWidths]);
+
+
 const columns: Column[] = useMemo(() => {
   const sourceFields = selectedSubmissionFilter?.variables?.length
     ? selectedSubmissionFilter.variables
     : DEFAULT_SUBMISSION_FIELDS;
 
-    const getColumnWidth = (key: string): number => {
-  const widthMap: Record<string, number> = {
-    created: 180,
-    application_status: 160,
-  };
-  return widthMap[key] ?? 200;
-};
 
  const dynamicColumns: Column[] = sourceFields
   .filter((item) => item.isChecked)
@@ -263,17 +273,20 @@ const columns: Column[] = useMemo(() => {
     sortKey: item.key,
     width: getColumnWidth(item.key),
     resizable: true,
+    isFormVariable: item.isFormVariable ?? false,
   }));
 
   return [
     ...dynamicColumns,
     {
-      name: "", 
+      name: "",
       sortKey: "actions",
       width: 100,
+      resizable: false,
+      isFormVariable: false,
     },
   ];
-}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS]);
+}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth]);
 
 
   const activeSortKey = sortParams.activeKey;
@@ -383,9 +396,11 @@ const {
     dispatch(setAnalyzeSubmissionLimit(newLimit));
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
- const customTdValue = (value, index) => {
-  return  <td key={index+value}><div className="text-overflow-ellipsis">{value}  </div></td>
-
+ const customTdValue = (value, index, submissionId) => {
+  return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`} 
+              className="custom-td">
+            <div className="text-overflow-ellipsis">{value}</div>
+          </td>
  }
 
   // sortmodal actions
@@ -422,6 +437,14 @@ const {
   dispatch(setAnalyzeSubmissionPage(1));
  };
 
+  // Column resize handler for ReusableResizableTable
+  const handleColumnResize = useCallback((column: Column, newWidth: number) => {
+    // Update Redux column widths
+    dispatch(setColumnWidths({ [column.sortKey]: newWidth }));
+   
+  }, [dispatch]);
+
+
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
   // Row Renderer
 const renderRow = (submission: Submission) => {
@@ -452,11 +475,11 @@ const renderRow = (submission: Submission) => {
         const value =
           backendKey === "created" ? formatDate(rawValue) : rawValue;
 
-        return customTdValue(value, index);
+        return customTdValue(value, index, submission.id);
       })}
 
       {/* Action column */}
-      <td>
+      <td key={`${submission.id}-action`}>
         <div className="text-overflow-ellipsis">
           <CustomButton
             actionTable
@@ -484,7 +507,7 @@ const renderRow = (submission: Submission) => {
       index: number,
       columnsLength: number,
       currentResizingColumn: any,
-      handleMouseDown
+      handleMouseDown: (index: number, column: any, e: React.MouseEvent) => void
     ) => {
       const isSortable = column.sortKey !== "actions";
       const isResizable = column.resizable && index < columnsLength - 1;
@@ -495,7 +518,11 @@ const renderRow = (submission: Submission) => {
       <th
         key={`header-${headerKey}`}
         className={`${isSortable ? "header-sortable" : ''}`}
-        style={{ "minWidth": column.width, "maxWidth" : column.width }}
+        style={{
+          minWidth: `${column.width}px`,
+          maxWidth: `${column.width}px`,
+          width: `${column.width}px`
+        }}
         data-testid={`column-header-${column.sortKey || "actions"}`}
         aria-label={`${t(column.name)} ${t("column")} ${isSortable ? "," + t("sortable") : ""}`}
       >
@@ -629,7 +656,7 @@ const renderRow = (submission: Submission) => {
             <DateRangePicker
               value={dateRange}
               onChange={handleDateRangeChange}
-              placeholder={t("Filter Created Date")}
+              placeholder={t("Filter by Submission Date")}
               dataTestId="date-range-picker"
               ariaLabel={t("Select date range for filtering")}
               startDateAriaLabel={t("Start date")}
@@ -678,9 +705,7 @@ const renderRow = (submission: Submission) => {
             emptyMessage={t(
               "No submissions have been found. Try a different filter combination or contact your admin."
             )}
-            onColumnResize={(newWidths) =>
-              console.log("Column resized:", newWidths)
-            }
+            onColumnResize={handleColumnResize}
             loading={isSubmissionsLoading}
             headerClassName="resizable-header"
             scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
