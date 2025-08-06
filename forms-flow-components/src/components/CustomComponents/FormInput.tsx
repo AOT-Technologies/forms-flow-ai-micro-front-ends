@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FocusEvent, KeyboardEvent, useEffect, useRef } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
-import { LoadingIcon, CloseIcon } from "../SvgIcons/index";
+import { ClearIcon } from "../SvgIcons/index";
 
 interface FormInputProps {
   type?: string;
@@ -127,7 +127,7 @@ export const FormInput: React.FC<FormInputProps> = ({
             className="clear"
             onClick={onClearClick}
             >
-            <CloseIcon
+            <ClearIcon
               data-testid="clear-field"
               aria-label="clear-field"
             />
