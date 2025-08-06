@@ -228,7 +228,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           options={{
             viewAsHtml: true,
             readOnly: true,
-          }}
+          } as any}
           // showHiddenFields={false}
           formReady={(e) => {
             formRef.current = e;

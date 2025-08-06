@@ -80,7 +80,7 @@ $white-color: var(--ff-white);
 
         margin: 0 !important;
 
-        color: $primary-color;
+        color: $primary-color !important;
         
         border: none;
         background-color: $transparent !important;
@@ -145,6 +145,11 @@ $white-color: var(--ff-white);
             .dropdown-item {
               @include paddingLvl6();
               @include textBaseHightlight($fontSmallest, $primary-color);
+            }
+            .dropdown-item:hover {
+              background-color: var(--ff-primary);
+              color: var(--ff-white);
+              border-radius: var(--radius-sm);
             }
           }
 

@@ -47,3 +47,16 @@ export const setSubmissionFilterList = (data) => (dispatch) =>{
     payload: data,
   })
 }
+
+export const setSearchFieldValues = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.UPDATE_SEARCH_FIELD_VALUES,
+    payload: data,
+  })
+}
+
+export const clearSearchFieldValues = () => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.CLEAR_SEARCH_FIELD_VALUES,
+  })
+}

@@ -47,7 +47,7 @@ input[type="checkbox"]+label,
 
 
 .svgIcon-dark {
-  @include svgIcon($gray-darkest);
+  @include svgIcon(var(--navbar-main-menu-active-font-color));
 }
 
 .svgIcon-primary {

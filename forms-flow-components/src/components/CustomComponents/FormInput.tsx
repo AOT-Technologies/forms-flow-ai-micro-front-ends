@@ -112,8 +112,6 @@ export const FormInput: React.FC<FormInputProps> = ({
           maxLength={maxLength}
         />
 
-        {turnOnLoader && <LoadingIcon />}
-
         {icon && !turnOnLoader && (
           <div
             className="icon"

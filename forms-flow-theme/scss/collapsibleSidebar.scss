@@ -192,13 +192,17 @@ $chevron-bg: #5e61f2;
     @include textFilterNotSelected();
 
     width: 100%;
-    height: 50rem; // big enough to fit text
+    height: 100vh; // big enough to fit text
     align-content: center;
 
     padding-top: $paddingLvl4TB;
     
     writing-mode: sideways-lr;
     text-align: end;
+    &.active-filter{
+      background-color: $primary;
+      color: $white-color;
+    }
   }
 
   .content {
@@ -211,7 +215,7 @@ $chevron-bg: #5e61f2;
     .fields {
       @include paddingLvl3();
       @include divider();
-
+      @extend .custom-scroll;
       flex-grow: 1;
       overflow-y: auto;
       .input-filter {

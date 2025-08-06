@@ -403,7 +403,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
     if (attributeFilter?.id) { 
       if (editRole ) {
         return (
-          <div className="d-flex">
+          <div className="buttons-row">
             <CustomButton
               className="me-3"
               variant={updateButtonVariant}
@@ -417,6 +417,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
               dataTestId="save-attribute-filter"
               ariaLabel={t("Update This Filter")}
               disabled={deleteSuccess.showSuccess || noFieldChanged || !shareAttrFilter}
+              iconWithText
             />
             <CustomButton
               variant={deleteButtonVariant}
@@ -430,6 +431,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
               dataTestId="delete-attribute-filter"
               ariaLabel={t("Delete This Filter")}
               disabled={updateSuccess.showSuccess}
+              iconWithText
             />
           </div>
         );

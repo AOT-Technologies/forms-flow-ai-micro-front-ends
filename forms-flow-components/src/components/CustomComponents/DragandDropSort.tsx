@@ -30,7 +30,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
 
   useEffect(() => {
-    const needsUpdate = filterItems.some((item) => item.sortOrder == null);
+    const needsUpdate = filterItems?.some((item) => item.sortOrder == null);
     if (needsUpdate) {
       const updatedItems = filterItems.map((item, index) => ({
         ...item,
@@ -111,7 +111,7 @@ useEffect(() => {
   return (
     <div className="drag-drop-container list-action rearrangable checkbox" ref={containerRef}>
       <ul  ref={listRef}>
-        {filterItems.map((item, index) => (
+        {filterItems?.map((item, index) => (
           <li key={item.id ?? `${item.name}-${index}`}
             className="draggable-item"
           >

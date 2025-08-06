@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
 import { setBPMTaskDetail,setTaskAssignee } from "./actions/taskActions"; 
+import { StyleServices } from "@formsflow/service";
 
 import { fetchServiceTaskList, fetchUserList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
@@ -191,9 +192,14 @@ const SocketIOCallback = useCallback(({
     return <Loading />;
   }
   if (!isReviewer) return <p>unauthorized</p>;
+
+  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customTitle = StyleServices?.getCSSVariable("--custom-title");
+  const hasMultitenancyHeader = customLogoPath || customTitle;
+
   return (
     <>
-      <div className="main-container " tabIndex={0}>
+      <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'main-container' } `}>
         <div className="page-content">
             <Switch>
               <Route

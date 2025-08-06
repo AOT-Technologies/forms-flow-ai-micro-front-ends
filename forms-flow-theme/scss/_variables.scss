@@ -202,7 +202,15 @@ hr {
   margin-left: var(--navbar-width);
   margin-top: 0;
   height: 100vh !important;
-}
+ }
+ .main-container-with-custom-header {
+  overflow: hidden !important;
+  background: $gray-light;
+  margin-left: var(--navbar-width);
+  margin-top: 0;
+  height: calc(100vh - 3rem)!important;
+ }
+ 
 
 .min-container-height {
   min-height: calc(100vh - 10.625rem);
@@ -236,18 +244,28 @@ hr {
   overflow-y: auto;
 }
 .scrollable-overview,
-.scrollable-overview-with-header {
-  overflow-y: auto;
-  padding-bottom: 5rem;
+.scrollable-overview-with-header,
+.scrollable-overview-with-wizard,
+.scrollable-overview-with-custom-header-and-wizard {
+ overflow-y: auto;
+ padding-bottom: 5rem;
 }
 
-.scrollable-overview {
-  max-height: 90vh;
+
+.scrollable-overview { 
+ max-height: 90vh;
 }
 
-.scrollable-overview-with-header {
-  max-height: calc(100vh - 10.25rem);
-} 
+
+.scrollable-overview-with-wizard {
+ max-height: calc(90vh - 5rem);
+}
+
+
+.scrollable-overview-with-custom-header-and-wizard {
+ max-height: calc(90vh - 7rem);
+}
+
 .disabled-mode{
  background: rgba(0, 0, 0, 0.1);
  cursor: not-allowed !important;
