@@ -1348,6 +1348,21 @@ $danger-color: var(--ff-danger);
 
       cursor: pointer;
     }
+    .clear {
+      @include clickableFeedback1();
+
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      height: 100%;
+
+      padding: 0 $paddingLvl6LR;
+
+      path {
+        stroke: $primary-color;
+      }
+    }
   }
 
   &-select {
