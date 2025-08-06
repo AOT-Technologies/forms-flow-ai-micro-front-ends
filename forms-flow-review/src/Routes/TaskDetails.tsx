@@ -162,11 +162,6 @@ const TaskDetails = () => {
     dispatch,
   ]);
 
-  //test to see task assignee data is captured
-  useEffect(() => {
-    console.log("task test",task);
-  }, [task]);
-
   // Form submission callback
   const onFormSubmitCallback = (actionType = "") => {
     if (!bpmTaskId || !task?.formUrl) return;
