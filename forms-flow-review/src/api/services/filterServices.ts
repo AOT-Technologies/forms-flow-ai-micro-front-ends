@@ -41,10 +41,13 @@ export const getUserRoles = () => {
 };
 
 const handleTaskError = (dispatch, error) => {
-  // dispatch(setBPMTaskList([]));
-  dispatch(setBPMTaskCount(0));
   dispatch(serviceActionError(error));
 };
+
+const clearTableData = (dispatch) => {
+  dispatch(setBPMTaskList([]));
+  dispatch(setBPMTaskCount(0));
+}
 
 /**
  * Fetches the task list from the server and updates the redux store with the task list and count.
@@ -120,7 +123,9 @@ export const fetchServiceTaskList = (
           const _embedded = responseData[0]?._embedded; // data._embedded.task is where the task list is.
           if (!_embedded?.task || !responseData?.[0]?.count) {
             // Display error if the necessary values are unavailable.
-            handleTaskError(dispatch, res);
+            // handleTaskError(dispatch, res);
+            // Clear table data if the response has count as 0 or if response has empty tasks
+            clearTableData(dispatch);
           } else {
             const taskListFromResponse = _embedded["task"]; // Gets the task array
             const taskCount = {
@@ -144,7 +149,7 @@ export const fetchServiceTaskList = (
             done(null, taskData);
           }
         } else {
-          handleTaskError(dispatch, res);
+          clearTableData(dispatch);
         }
       })
       .catch((error) => {
