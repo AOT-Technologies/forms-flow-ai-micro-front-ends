@@ -286,7 +286,7 @@ $gray-darkest: var(--ff-gray-darkest);
 
   margin-bottom: $paddingLvl1S;
 
-  background-color: $gray-darkest; //TBD
+  background-color: var(--navbar-active-submenu-bg-color);
 
   border-radius: $borderRadiusHeightM;
 

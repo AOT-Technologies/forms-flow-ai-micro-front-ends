@@ -1,5 +1,6 @@
 import ACTION_CONSTANTS from "../actions/actionConstants";
 
+
 const initialState = {
     analyzeSubmissionSortParams: {
         activeKey: "form_name",
@@ -16,7 +17,18 @@ const initialState = {
     selectedFilter: "All Forms",
     submissionFilterList: [],
     searchFieldValues: {},
+    columnWidths: {
+        id: 200,
+        form_name: 200,
+        created_by: 200,
+        created: 180,
+        application_status: 160,
+        actions: 100
+    },
 };
+
+
+
 
 
 
@@ -40,10 +52,12 @@ const analyzeSubmission = (state = initialState, action: any) => {
             return { ...state, searchFieldValues: action.payload };
         case ACTION_CONSTANTS.CLEAR_SEARCH_FIELD_VALUES:
             return { ...state, searchFieldValues: {} };
+        case ACTION_CONSTANTS.UPDATE_COLUMN_WIDTHS:
+            return { ...state, columnWidths: { ...state.columnWidths, ...action.payload } };
         default:
             return state;
     }
 };
 
-export default analyzeSubmission;
 
+export default analyzeSubmission;
