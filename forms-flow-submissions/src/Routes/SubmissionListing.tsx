@@ -114,6 +114,9 @@ const AnalyzeSubmissionList: React.FC = () => {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
     }
     setDropdownSelection(newSelection);
+    dispatch(clearSearchFieldValues());
+    setFiltersApplied(false); 
+    setFieldFilters({});
   }, [dropdownSelection]);
 
   
@@ -122,6 +125,7 @@ const handleClearSearch = () => {
   // Clear the search field values globally
   dispatch(clearSearchFieldValues());
 };
+
 
 
 useEffect(() => {
@@ -359,16 +363,19 @@ const {
 
 
   // Sort Handler
-   const handleSort = useCallback((key: string) => {
-    const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
-    const updatedSort = Object.fromEntries(
-      Object.keys(sortParams).map((k) => [
-        k,
-        { sortOrder: k === key ? newOrder : "asc" },
-      ])
-    );
-    dispatch(setAnalyzeSubmissionSort({ ...updatedSort, activeKey: key }));
-  }, [dispatch, sortParams]);
+const handleSort = useCallback((key: string) => {
+  const currentOrder = sortParams[key]?.sortOrder || "asc";
+  const newOrder = currentOrder === "asc" ? "desc" : "asc";
+
+  const updatedSort = {
+    ...sortParams,
+    [key]: { sortOrder: newOrder },
+    activeKey: key,
+  };
+
+  dispatch(setAnalyzeSubmissionSort(updatedSort));
+}, [dispatch, sortParams]);
+
   // Page Change Handler
   const handlePageChange = useCallback((pageNum: number) => {
     dispatch(setAnalyzeSubmissionPage(pageNum));

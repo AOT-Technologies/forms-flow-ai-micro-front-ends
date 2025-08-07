@@ -53,7 +53,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   setSelectedItem,
   initialInputFields,
   onSearch,
-  onClearSearch
+  onClearSearch  
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -62,7 +62,7 @@ const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields)
   const handleFieldChange = (index: number, newValue: string) => {
     setInputFields((prevFields) => {
       const updated = [...prevFields];
-      updated[index] = { ...updated[index], value: newValue };
+      updated[index] = { ...updated[index], value: newValue }; 
       return updated;
     });
   };
@@ -88,7 +88,11 @@ const handleSelection = (label: string) => setSelectedItem(label);
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
   
 
-  const DropdownItems = formData.map((form) => ({ 
+  const [searchQuery, setSearchQuery] = useState("");
+
+const DropdownItems = formData
+  .filter((form) => form.formName.toLowerCase().includes(searchQuery.toLowerCase()))
+  .map((form) => ({
     type: `form-${form.formId}`,
     content: form.formName,
     dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
@@ -173,6 +177,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
           <ButtonDropdown
             label={selectedItem}
             dropdownItems={DropdownItems}
+            onSearch={(query) => setSearchQuery(query)}
             dropdownType="DROPDOWN_ONLY"
             dataTestId="business-filter-dropdown"
             ariaLabel={t("Select business filter")}
@@ -187,6 +192,8 @@ const handleSelection = (label: string) => setSelectedItem(label);
                   onChange={(e) => handleFieldChange(index, e.target.value)}
                   aria-label={field.label}
                   data-testid={`input-${field.id}`} 
+                  onClearClick={() => handleFieldChange(index, "")}
+                  clear={field.value !== ""} 
                 />
               </div>
             ))}
@@ -273,21 +280,18 @@ const handleSelection = (label: string) => setSelectedItem(label);
         </div>
         <div className="actions">
             <div className="buttons-row">
-            <CustomButton
-  label="Search"
-  onClick={handleSearch}
-  dataTestId="search-button"
-  ariaLabel="Search filters"
-  disabled={isActionDisabled}
-/>
+              <CustomButton
+                label="Search"
+                onClick={handleSearch}
+                dataTestId="search-button"
+                ariaLabel="Search filters"
+              />
 
               <CustomButton
                 label="Clear"
                 onClick={handleClear}
                 dataTestId="clear-button"
                 ariaLabel="Clear filters" 
-                // buttonLoading={buttonLoading}
-                disabled={isActionDisabled}
                 secondary />
             </div>
         </div>
