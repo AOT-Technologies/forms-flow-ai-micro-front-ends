@@ -208,7 +208,7 @@ hr {
   background: $gray-light;
   margin-left: var(--navbar-width);
   margin-top: 0;
-  height: 95vh !important;
+  height: calc(100vh - 3rem)!important;
  }
  
 

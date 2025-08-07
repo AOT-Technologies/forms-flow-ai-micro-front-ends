@@ -36,6 +36,7 @@ interface VariableModalProps {
   saveBtnDisabled?: boolean;
   fieldLabel?: string;
   systemVariables: FormVariable[];
+  isLoading?:boolean;
 }
 
 export const VariableModal: React.FC<VariableModalProps> = React.memo(
@@ -54,7 +55,8 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
     savedFormVariables,
     saveBtnDisabled = false,
     fieldLabel = "Variable", // to display the form field labels
-    systemVariables
+    systemVariables,
+    isLoading=false 
   }) => {
     const [alternativeLabels, setAlternativeLabels] = useState([]);
     const detailsRef = useRef(null);
@@ -128,12 +130,14 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
           eventKey: "system",
           title: t("System"),
           content: SystemTabContent(),
+          className:`${saveBtnDisabled && "disabled"} `
         },
         {
           eventKey: "form",
           title: t("Form"),
-          className: "form-container",
+          className:`${saveBtnDisabled && "disabled"} form-container`    ,
           content: (
+            isLoading ? <div className="form-spinner"></div> :
             <FormComponent
               form={form}
               setShowElement={setShowElement}
@@ -145,7 +149,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
           ),
         },
       ],
-      [form, alternativeLabels, t,selectedComponent.key]
+      [form, alternativeLabels, t,selectedComponent.key,isLoading]
     );
 
     // handling the add alternative variable
@@ -285,7 +289,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                         key={key}
                         label={altVariable || labelOfComponent}
                         icon={
-                          <CloseIcon
+                          !saveBtnDisabled && <CloseIcon
                             color={primaryColor}
                             data-testid="pill-remove-icon"
                           />
@@ -345,7 +349,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
             <CloseIcon />
           </div>
         </ModalHeader>
-        <Modal.Body className={`variable-modal-body ${saveBtnDisabled && "disabled"}`}>
+        <Modal.Body className="variable-modal-body" >
           <div className="variable-modal-left-container tabs">
             <CustomTabs
               defaultActiveKey={key}
@@ -353,7 +357,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
               tabs={tabs}
               dataTestId="template-form-flow-tabs"
               ariaLabel="Template forms flow  tabs"
-              className=""
+              className={`${saveBtnDisabled && "disabled"}`}
             />
           </div>
           <div className="variable-modal-right-container" ref={detailsRef}>

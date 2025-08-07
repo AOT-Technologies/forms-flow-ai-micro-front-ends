@@ -1506,7 +1506,7 @@ $lineThin: 1px;
    overflow: hidden;
   }
   .variable-modal-body {
-    &.disabled { 
+    .disabled { 
       pointer-events: none;
       opacity: 50%;
     }
@@ -1607,5 +1607,14 @@ $lineThin: 1px;
 
     }
   }
+}
+.form-spinner {
+  @include spinner-base;
+  width: 0.9rem;
+  height: 0.9rem;
+  font-size: small;
+  position: relative;
+  top: 50%;
+  left: 50%;
 }
 }
