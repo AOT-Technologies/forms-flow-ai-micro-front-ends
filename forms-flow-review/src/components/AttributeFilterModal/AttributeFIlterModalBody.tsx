@@ -96,7 +96,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         let resetValue = item.value;
 
         // Remove '%' from displaying
-        if (typeof resetValue !== "number" || item.name !== "applicationId") {
+        if (typeof resetValue === "string" && item.name !== "applicationId") {
           resetValue = resetValue.replace(/%/g, '');
         }
 
@@ -286,6 +286,9 @@ const createFilterShareOption = (labelKey, value) => ({
       value = JSON.parse(attributeData[key]);
     } else if (key === "roles") {
       value = removeSlashFromValue(attributeData[key]);
+    } else if (types[key] === "number") {
+      // Convert string to number for number type fields
+      value = Number(value);
     } else if (!isNumberOrAppId) {
       // like search
       value = `%${value}%`;
