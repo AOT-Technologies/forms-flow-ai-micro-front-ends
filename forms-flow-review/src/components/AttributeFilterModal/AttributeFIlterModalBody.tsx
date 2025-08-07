@@ -96,7 +96,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         let resetValue = item.value;
 
         // Remove '%' from displaying
-        if (typeof resetValue === "string" && item.name !== "applicationId") {
+         if (typeof resetValue !== "number" && item.name !== "applicationId") {
           resetValue = resetValue.replace(/%/g, '');
         }
 
