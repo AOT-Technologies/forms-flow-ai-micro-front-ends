@@ -135,6 +135,8 @@ useEffect(() => {
   const filter = matched ?? null; 
 
   dispatch(setSelectedSubmisionFilter(filter));
+  dispatch(setDefaultSubmissionFilter(filter?.id));
+  updateDefaultSubmissionFilter({ defaultSubmissionsFilter: filter?.id });
   setSubmissionFields(filter?.variables ?? DEFAULT_SUBMISSION_FIELDS);
 }, [dropdownSelection, filterList]);
 
@@ -609,7 +611,7 @@ const renderRow = (submission: Submission) => {
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={Object.keys(searchFieldValues).length > 0 }
+          hasActiveFilters={Object.keys(searchFieldValues).length > 0 || dropdownSelection !== null}
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}
