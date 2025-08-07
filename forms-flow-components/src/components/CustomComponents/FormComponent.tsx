@@ -104,6 +104,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       "container",
       "htmlelement",
       "tabs",
+      "survey"
     ]);
     const ignoredKeys = new Set(["hidden"]);
 
