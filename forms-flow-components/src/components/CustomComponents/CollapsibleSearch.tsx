@@ -62,16 +62,7 @@ const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields)
   const handleFieldChange = (index: number, newValue: string) => {
     setInputFields((prevFields) => {
       const updated = [...prevFields];
-      updated[index] = { ...updated[index], value: newValue };
-  
-     
-      const updatedFilters = updated.reduce((acc, field) => {
-        if (field.value?.trim()) {
-          acc[field.id] = field.value.trim();
-        }
-        return acc;
-      }, {} as Record<string, string>);
-  
+      updated[index] = { ...updated[index], value: newValue }; 
       return updated;
     });
   };
