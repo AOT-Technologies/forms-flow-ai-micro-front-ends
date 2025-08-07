@@ -88,7 +88,11 @@ const handleSelection = (label: string) => setSelectedItem(label);
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
   
 
-  const DropdownItems = formData.map((form) => ({ 
+  const [searchQuery, setSearchQuery] = useState("");
+
+const DropdownItems = formData
+  .filter((form) => form.formName.toLowerCase().includes(searchQuery.toLowerCase()))
+  .map((form) => ({
     type: `form-${form.formId}`,
     content: form.formName,
     dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
@@ -173,6 +177,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
           <ButtonDropdown
             label={selectedItem}
             dropdownItems={DropdownItems}
+            onSearch={(query) => setSearchQuery(query)}
             dropdownType="DROPDOWN_ONLY"
             dataTestId="business-filter-dropdown"
             ariaLabel={t("Select business filter")}
