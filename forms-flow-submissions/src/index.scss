@@ -14,8 +14,16 @@ top: 0;
 bottom: 0;
 }
 
-.page-item .page-link {
-    color: var(--ff-primary) !important;
+.page-item 
+{
+    &.active{
+        .page-link{
+            color:var(--ff-white) !important;
+        }
+    }
+    .page-link {
+        color: var(--ff-primary) !important;
+    }
 }
 
 .premium{
