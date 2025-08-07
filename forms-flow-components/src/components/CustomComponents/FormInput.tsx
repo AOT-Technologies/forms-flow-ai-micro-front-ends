@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FocusEvent, KeyboardEvent, useEffect, useRef } from 'react';
-import { Form, InputGroup } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
-import { LoadingIcon, ClearIcon } from "../SvgIcons/index";
+import { ClearIcon } from "../SvgIcons/index";
 
 interface FormInputProps {
   type?: string;
