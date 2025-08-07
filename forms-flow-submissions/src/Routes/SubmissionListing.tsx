@@ -125,27 +125,7 @@ const handleClearSearch = () => {
   // Clear the search field values globally
   dispatch(clearSearchFieldValues());
 };
-const prevSearchValuesRef = useRef<Record<string, string>>({});
 
-useEffect(() => {
-  const prev = prevSearchValuesRef.current;
-  const curr = searchFieldValues;
-
-  const hasAnyPreviouslySet = Object.values(prev).some((val) => val?.trim());
-  const hasAnyCleared = Object.keys(prev).some(
-    (key) => prev[key]?.trim() && !curr[key]?.trim()
-  );
-
-  // If a value was cleared after filters were applied
-  if (hasAnyPreviouslySet && hasAnyCleared) {
-    setFieldFilters(curr); // trigger re-query
-    setFiltersApplied(true);
-
-    dispatch(setAnalyzeSubmissionPage(1)); 
-  }
-
-  prevSearchValuesRef.current = curr;
-}, [searchFieldValues]);
 
 
 useEffect(() => {
@@ -383,16 +363,19 @@ const {
 
 
   // Sort Handler
-   const handleSort = useCallback((key: string) => {
-    const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
-    const updatedSort = Object.fromEntries(
-      Object.keys(sortParams).map((k) => [
-        k,
-        { sortOrder: k === key ? newOrder : "asc" },
-      ])
-    );
-    dispatch(setAnalyzeSubmissionSort({ ...updatedSort, activeKey: key }));
-  }, [dispatch, sortParams]);
+const handleSort = useCallback((key: string) => {
+  const currentOrder = sortParams[key]?.sortOrder || "asc";
+  const newOrder = currentOrder === "asc" ? "desc" : "asc";
+
+  const updatedSort = {
+    ...sortParams,
+    [key]: { sortOrder: newOrder },
+    activeKey: key,
+  };
+
+  dispatch(setAnalyzeSubmissionSort(updatedSort));
+}, [dispatch, sortParams]);
+
   // Page Change Handler
   const handlePageChange = useCallback((pageNum: number) => {
     dispatch(setAnalyzeSubmissionPage(pageNum));
@@ -639,9 +622,6 @@ const renderRow = (submission: Submission) => {
           initialInputFields={initialInputFields}
           onSearch={handleFieldSearch}
           onClearSearch={handleClearSearch}
-          onLiveFilterUpdate={(updatedFilters) => {
-            dispatch(setSearchFieldValues(updatedFilters)); //if a searched value is cleared the table data should be resetted
-          }}
         />
 
       </div>

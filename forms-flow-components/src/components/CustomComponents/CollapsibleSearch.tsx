@@ -32,8 +32,6 @@ interface CollapsibleSearchProps {
   initialInputFields: InputField[];
   onSearch: (filters: Record<string, string>) => void;
   onClearSearch?: () => void;
-  onLiveFilterUpdate?: (filters: Record<string, string>) => void;
-
 }
 
 
@@ -55,8 +53,7 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   setSelectedItem,
   initialInputFields,
   onSearch,
-  onClearSearch,
-  onLiveFilterUpdate
+  onClearSearch  
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -74,11 +71,6 @@ const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields)
         }
         return acc;
       }, {} as Record<string, string>);
-  
-      // for live filter resetting if cleared
-      if (onLiveFilterUpdate) {
-        onLiveFilterUpdate(updatedFilters);
-      }
   
       return updated;
     });
