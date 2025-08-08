@@ -226,6 +226,13 @@ const initialInputFields = useMemo(() => {
     setSelectedItem(selectedForm?.formName ?? "All Forms");
   }, [defaultSubmissionFilter, filterList, formData]);
 
+  useEffect (() => {
+      fetchSubmissionList()
+     .then ((res) => {
+      const { filters = [] } = res.data || {};
+      dispatch(setSubmissionFilterList(filters));
+     })
+  },[defaultSubmissionFilter])
 
 
 
