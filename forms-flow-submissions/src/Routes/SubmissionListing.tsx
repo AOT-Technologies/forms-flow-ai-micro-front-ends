@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo, useEffect, useState } from "react";
+import React, { useRef, useCallback, useMemo, useEffect, useState, use } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -226,6 +226,13 @@ const initialInputFields = useMemo(() => {
     setSelectedItem(selectedForm?.formName ?? "All Forms");
   }, [defaultSubmissionFilter, filterList, formData]);
 
+  useEffect (() => {
+      fetchSubmissionList()
+     .then ((res) => {
+      const { filters = [] } = res.data || {};
+      dispatch(setSubmissionFilterList(filters));
+     })
+  },[defaultSubmissionFilter])
 
 
 

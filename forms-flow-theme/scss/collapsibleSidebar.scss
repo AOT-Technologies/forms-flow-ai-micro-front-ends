@@ -73,6 +73,7 @@ $chevron-bg: #5e61f2;
       gap: var(--spacer-100);
       justify-content: space-between;
   
+      // need to check & remove if unused
       .main-content {
         display: flex;
         flex-direction: column;
@@ -221,6 +222,10 @@ $chevron-bg: #5e61f2;
       .input-filter {
         max-width: 100%;
       }
+    }
+
+    .panel-width{
+      word-break: break-word;
     }
 
     .actions {
