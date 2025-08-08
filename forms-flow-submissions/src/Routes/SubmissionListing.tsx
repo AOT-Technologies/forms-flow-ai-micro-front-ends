@@ -179,9 +179,10 @@ useEffect (() => {
   
 const handleFieldSearch = (filters: Record<string, string>) => {
   setFieldFilters(filters);
+  dispatch(setAnalyzeSubmissionPage(1)); 
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
-
+  refetch(); 
 };
  
 
