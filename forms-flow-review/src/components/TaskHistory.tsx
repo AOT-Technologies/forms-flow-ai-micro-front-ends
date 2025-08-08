@@ -78,15 +78,7 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
     const viewSubmission = (data) => {
       const { formId, submissionId } = data;
       const url = getFormUrl(formId, submissionId, redirectUrl);
-      return (
-        <button
-          data-testid={`submission-details-button-${data.id}`}
-          className="btn-table btn btn-secondary"
-          onClick={() => window.open(url, "_blank")}
-        >
-          {t("View Submission")}
-        </button>
-      );
+      return window.open(url, "_blank")
     };
 
     return (
@@ -151,7 +143,7 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
 
                     <CustomButton
                       label="View Submission"
-                      onClick={viewSubmission(entry)}
+                      onClick={() => viewSubmission(entry)}
                       ariaLabel="view submission button"
                       actionTable
                     />
