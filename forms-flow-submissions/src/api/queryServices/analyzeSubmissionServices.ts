@@ -102,7 +102,7 @@ export const getSubmissionList = (
 
 export const fetchAllForms = () => {
   //activeForms means published forms only : status = Active
-  return RequestService.httpGETRequest(`${API.FORM}?activeForms=true`);
+  return RequestService.httpGETRequest(`${API.FORM}?allForms=true`);
 };
 
 export const fetchFormVariables = (formId) => {

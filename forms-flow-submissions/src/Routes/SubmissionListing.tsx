@@ -28,7 +28,8 @@ import {
   setSelectedSubmisionFilter,
   setSubmissionFilterList,
   setSearchFieldValues,
-  clearSearchFieldValues
+  clearSearchFieldValues,
+  setColumnWidths
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -51,6 +52,8 @@ interface Column {
   width: number;
   sortKey: string;
   resizable?: boolean;
+  newWidth?: number;
+  isFormVariable?: boolean;
 }
 interface VariableListPayload {
   parentFormId: string ;
@@ -84,6 +87,7 @@ const AnalyzeSubmissionList: React.FC = () => {
 
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
+  const columnWidths = useSelector((state: any) => state?.analyzeSubmission?.columnWidths ?? {});
   //local state
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
    const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
@@ -97,7 +101,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
-  
+  const [isFormFetched,setIsFormFetched] =useState(false);
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
     { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden",sortOrder:0 },
@@ -110,10 +114,14 @@ const AnalyzeSubmissionList: React.FC = () => {
 
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
   const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
+    dispatch(setAnalyzeSubmissionPage(1)); 
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
     }
     setDropdownSelection(newSelection);
+    dispatch(clearSearchFieldValues());
+    setFiltersApplied(false); 
+    setFieldFilters({});
   }, [dropdownSelection]);
 
   
@@ -124,6 +132,7 @@ const handleClearSearch = () => {
 };
 
 
+
 useEffect(() => {
   const matched = filterList?.find(
     (item) => dropdownSelection === item.parentFormId
@@ -131,6 +140,8 @@ useEffect(() => {
   const filter = matched ?? null; 
 
   dispatch(setSelectedSubmisionFilter(filter));
+  dispatch(setDefaultSubmissionFilter(filter?.id));
+  updateDefaultSubmissionFilter({ defaultSubmissionsFilter: filter?.id });
   setSubmissionFields(filter?.variables ?? DEFAULT_SUBMISSION_FIELDS);
 }, [dropdownSelection, filterList]);
 
@@ -173,11 +184,10 @@ useEffect (() => {
   
 const handleFieldSearch = (filters: Record<string, string>) => {
   setFieldFilters(filters);
+  dispatch(setAnalyzeSubmissionPage(1)); 
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
-
 };
- 
 
 const initialInputFields = useMemo(() => {
   // Use the current submissionFields state for calculation
@@ -216,6 +226,13 @@ const initialInputFields = useMemo(() => {
     setSelectedItem(selectedForm?.formName ?? "All Forms");
   }, [defaultSubmissionFilter, filterList, formData]);
 
+  useEffect (() => {
+      fetchSubmissionList()
+     .then ((res) => {
+      const { filters = [] } = res.data || {};
+      dispatch(setSubmissionFilterList(filters));
+     })
+  },[defaultSubmissionFilter])
 
 
 
@@ -242,18 +259,26 @@ useEffect(() => {
     });
 }, []);
 
+  // Column width helper function
+  const getColumnWidth = useCallback((key: string): number => {
+    // Get width from Redux store, fallback to default widths
+    if (columnWidths[key]) {
+      return columnWidths[key];
+    }
+   
+    const widthMap: Record<string, number> = {
+      created: 180,
+      application_status: 160,
+    };
+    return widthMap[key] ?? 200;
+  }, [columnWidths]);
+
+
 const columns: Column[] = useMemo(() => {
   const sourceFields = selectedSubmissionFilter?.variables?.length
     ? selectedSubmissionFilter.variables
     : DEFAULT_SUBMISSION_FIELDS;
 
-    const getColumnWidth = (key: string): number => {
-  const widthMap: Record<string, number> = {
-    created: 180,
-    application_status: 160,
-  };
-  return widthMap[key] ?? 200;
-};
 
  const dynamicColumns: Column[] = sourceFields
   .filter((item) => item.isChecked)
@@ -263,17 +288,20 @@ const columns: Column[] = useMemo(() => {
     sortKey: item.key,
     width: getColumnWidth(item.key),
     resizable: true,
+    isFormVariable: item.isFormVariable ?? false,
   }));
 
   return [
     ...dynamicColumns,
     {
-      name: "", 
+      name: "",
       sortKey: "actions",
       width: 100,
+      resizable: false,
+      isFormVariable: false,
     },
   ];
-}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS]);
+}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth]);
 
 
   const activeSortKey = sortParams.activeKey;
@@ -335,26 +363,22 @@ const {
         });
   },[]);
   
-  //fetch form by id to render in the variable modal
+  //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection 
   const fetchFormData = useCallback(() => {
-    if (!dropdownSelection) return;
-    
-    // Check if we already have the form data for this dropdownSelection if yes then open the modal
-    if (lastFetchedFormId === dropdownSelection) {
-      setShowVariableModal(true);
-      handleManageFieldsClose();
+    if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
     }
-    
+    setIsFormFetched(true);
     fetchFormById(dropdownSelection)
     .then((res) => {
       setForm(res.data);
       setLastFetchedFormId(dropdownSelection); // update the last fetched form ID to avoid duplicate api calls
-      setShowVariableModal(true);
-      handleManageFieldsClose();
     })
     .catch((err) => {
       console.error(err);
+    })
+    .finally(() => {
+      setIsFormFetched(false);
     });
   }, [dropdownSelection, lastFetchedFormId]);
   // taking data from submission response for mapping to the table
@@ -363,16 +387,19 @@ const {
 
 
   // Sort Handler
-   const handleSort = useCallback((key: string) => {
-    const newOrder = sortParams[key]?.sortOrder === "asc" ? "desc" : "asc";
-    const updatedSort = Object.fromEntries(
-      Object.keys(sortParams).map((k) => [
-        k,
-        { sortOrder: k === key ? newOrder : "asc" },
-      ])
-    );
-    dispatch(setAnalyzeSubmissionSort({ ...updatedSort, activeKey: key }));
-  }, [dispatch, sortParams]);
+const handleSort = useCallback((key: string) => {
+  const currentOrder = sortParams[key]?.sortOrder || "asc";
+  const newOrder = currentOrder === "asc" ? "desc" : "asc";
+
+  const updatedSort = {
+    ...sortParams,
+    [key]: { sortOrder: newOrder },
+    activeKey: key,
+  };
+
+  dispatch(setAnalyzeSubmissionSort(updatedSort));
+}, [dispatch, sortParams]);
+
   // Page Change Handler
   const handlePageChange = useCallback((pageNum: number) => {
     dispatch(setAnalyzeSubmissionPage(pageNum));
@@ -383,9 +410,11 @@ const {
     dispatch(setAnalyzeSubmissionLimit(newLimit));
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
- const customTdValue = (value, index) => {
-  return  <td key={index+value}><div className="text-overflow-ellipsis">{value}  </div></td>
-
+ const customTdValue = (value, index, submissionId) => {
+  return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`} 
+              className="custom-td">
+            <div className="text-overflow-ellipsis">{value}</div>
+          </td>
  }
 
   // sortmodal actions
@@ -422,6 +451,14 @@ const {
   dispatch(setAnalyzeSubmissionPage(1));
  };
 
+  // Column resize handler for ReusableResizableTable
+  const handleColumnResize = useCallback((column: Column, newWidth: number) => {
+    // Update Redux column widths
+    dispatch(setColumnWidths({ [column.sortKey]: newWidth }));
+   
+  }, [dispatch]);
+
+
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
   // Row Renderer
 const renderRow = (submission: Submission) => {
@@ -452,11 +489,11 @@ const renderRow = (submission: Submission) => {
         const value =
           backendKey === "created" ? formatDate(rawValue) : rawValue;
 
-        return customTdValue(value, index);
+        return customTdValue(value, index, submission.id);
       })}
 
       {/* Action column */}
-      <td>
+      <td key={`${submission.id}-action`}>
         <div className="text-overflow-ellipsis">
           <CustomButton
             actionTable
@@ -484,24 +521,26 @@ const renderRow = (submission: Submission) => {
       index: number,
       columnsLength: number,
       currentResizingColumn: any,
-      handleMouseDown: (
-        index: number,
-        column: Column,
-        e: React.MouseEvent
-      ) => void
+      handleMouseDown: (index: number, column: any, e: React.MouseEvent) => void
     ) => {
-      const isLast = index === columnsLength - 1;
+      const isSortable = column.sortKey !== "actions";
+      const isResizable = column.resizable && index < columnsLength - 1;
+      const isResizing = currentResizingColumn?.sortkey === column.sortKey;
       const headerKey = column.sortKey || `col-${index}`;
 
     return (
       <th
         key={`header-${headerKey}`}
-        className="header-sortable"
-        style={{ width: column.width }}
+        className={`${isSortable ? "header-sortable" : ''}`}
+        style={{
+          minWidth: `${column.width}px`,
+          maxWidth: `${column.width}px`,
+          width: `${column.width}px`
+        }}
         data-testid={`column-header-${column.sortKey || "actions"}`}
-        aria-label={column.name ? `${t(column.name)} ${t("column")}` : ""}
+        aria-label={`${t(column.name)} ${t("column")} ${isSortable ? "," + t("sortable") : ""}`}
       >
-        {!isLast && column.name ? (
+        {isSortable ? (
           <SortableHeader
             columnKey={column.sortKey}
             title={t(column.name)}
@@ -512,11 +551,13 @@ const renderRow = (submission: Submission) => {
             ariaLabel={t("Sort by {{columnName}}", { columnName: t(column.name) })}
           />
         ) : (
-          column.name && t(column.name)
+          <span className="text">
+           {t(column.name)}
+          </span>
         )}
-        {column.resizable && (
+        {isResizable && (
           <div
-            className={`column-resizer ${currentResizingColumn?.sortKey === column.sortKey ? "resizing" : ""}`}
+            className={`column-resizer ${isResizing ? "resizing" : ""}`}
             onMouseDown={(e) => handleMouseDown(index, column, e)}
             tabIndex={0}
             role="separator"
@@ -538,7 +579,9 @@ const renderRow = (submission: Submission) => {
 
   //will wait for the form data to be fetched before opening the modal
   const handleShowVariableModal = () => {
+    setShowVariableModal(true);
      fetchFormData(); // Fetch form data when the button is clicked
+    handleManageFieldsClose();
     };
     
   const handleSaveVariables = useCallback(
@@ -604,7 +647,7 @@ const renderRow = (submission: Submission) => {
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={Object.keys(searchFieldValues).length > 0 }
+          hasActiveFilters={Object.keys(searchFieldValues).length > 0 || dropdownSelection !== null}
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}
@@ -629,7 +672,7 @@ const renderRow = (submission: Submission) => {
             <DateRangePicker
               value={dateRange}
               onChange={handleDateRangeChange}
-              placeholder={t("Filter Created Date")}
+              placeholder={t("Filter by Submission Date")}
               dataTestId="date-range-picker"
               ariaLabel={t("Select date range for filtering")}
               startDateAriaLabel={t("Start date")}
@@ -678,9 +721,7 @@ const renderRow = (submission: Submission) => {
             emptyMessage={t(
               "No submissions have been found. Try a different filter combination or contact your admin."
             )}
-            onColumnResize={(newWidths) =>
-              console.log("Column resized:", newWidths)
-            }
+            onColumnResize={handleColumnResize}
             loading={isSubmissionsLoading}
             headerClassName="resizable-header"
             scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
@@ -733,6 +774,7 @@ const renderRow = (submission: Submission) => {
           savedFormVariables={savedFormVariables}
           fieldLabel="Field"
           systemVariables={SystemVariables}
+          isLoading={isFormFetched}
         />}
 
     </>

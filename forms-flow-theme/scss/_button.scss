@@ -387,10 +387,6 @@ $danger-color: var(--ff-danger);
         background-color: $gray-medium !important;
         color: $primary !important;
         border-radius: var(--radius-sm) !important;
-        &:hover {
-          background-color: $primary !important;
-          color:$white-color !important;
-          }
       }
       // &:hover {
       //   color: $white-color !important;
@@ -1351,6 +1347,21 @@ $danger-color: var(--ff-danger);
       width: fit-content;
 
       cursor: pointer;
+    }
+    .clear {
+      @include clickableFeedback1();
+
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      height: 100%;
+
+      padding: 0 $paddingLvl6LR;
+
+      path {
+        stroke: $primary-color;
+      }
     }
   }
 

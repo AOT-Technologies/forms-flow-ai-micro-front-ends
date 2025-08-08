@@ -109,6 +109,7 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = React.memo(
             dataTestId="export-pdf-button"
             ariaLabel="Export PDF Button"
             size="table"
+            darkPrimary
           />
         </div>
         <ToastContainer

@@ -42,7 +42,7 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
     <Tabs
       id={id}
       activeKey={key}
-      className={` `}
+      className={className}
       data-testid={dataTestId}
       aria-label={ariaLabel}
       onSelect={handleChange}
