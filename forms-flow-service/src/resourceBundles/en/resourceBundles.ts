@@ -986,6 +986,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Attribute Filter": "Attribute Filter",
   "Filter Dates": "Filter Dates",
   "Filter Created Date": "Filter Created Date",
+  "Filter by Submission Date" : "Filter by Submission Date",
   "Sort Tasks": "Sort Tasks",
   "Sort order": "Sort order",
   "Apply": "Apply",

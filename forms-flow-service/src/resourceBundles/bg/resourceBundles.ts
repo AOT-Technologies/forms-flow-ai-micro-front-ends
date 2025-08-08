@@ -1489,6 +1489,7 @@ export const RESOURCE_BUNDLES_BG = {
   "Attribute Filter": "Филтър по атрибути",
   "Filter Dates": "Филтър по дати",
   "Filter Created Date": "Филтър по дата на създаване",
+  "Filter by Submission Date": "Филтрирай по дата на изпращане",
   "Sort Tasks": "Сортиране на задачи",
   "Sort order": "Ред на сортиране",
   "Apply": "Приложи",

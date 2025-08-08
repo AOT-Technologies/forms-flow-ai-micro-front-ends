@@ -1029,7 +1029,10 @@ $white-color: var(--ff-white);
 // .customizable_assignee{
 //   min-width: 11.25rem !important;
 // }
-
+.custom-td{
+  min-width: 7.5rem;
+  max-width: 12.5rem;
+}
 .text-overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;

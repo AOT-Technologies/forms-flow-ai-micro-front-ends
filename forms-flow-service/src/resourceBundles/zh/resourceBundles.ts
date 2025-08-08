@@ -1481,6 +1481,7 @@ export const RESOURCE_BUNDLES_ZH = {
   "Attribute Filter": "属性筛选器",
   "Filter Dates": "筛选日期",
   "Filter Created Date": "筛选创建日期",
+  "Filter by Submission Date": "按提交日期筛选",
   "Sort Tasks": "排序任务",
   "Sort order": "排序顺序",
   "Apply": "应用",
