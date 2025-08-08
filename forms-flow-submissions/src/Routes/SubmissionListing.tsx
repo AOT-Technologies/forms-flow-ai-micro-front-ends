@@ -110,6 +110,7 @@ const AnalyzeSubmissionList: React.FC = () => {
 
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
   const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
+    dispatch(setAnalyzeSubmissionPage(1)); 
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
     }
@@ -182,7 +183,6 @@ const handleFieldSearch = (filters: Record<string, string>) => {
   dispatch(setAnalyzeSubmissionPage(1)); 
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
-  refetch(); 
 };
  
 
