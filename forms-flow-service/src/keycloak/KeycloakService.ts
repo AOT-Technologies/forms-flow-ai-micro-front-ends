@@ -429,15 +429,22 @@ class KeycloakService {
         let user = await this.userManager!.getUser();
         
         if (!user) {
-          // Try silent signin first
+          // Try silent signin first with a timeout
           try {
-            user = await this.userManager!.signinSilent();
+            console.log("Attempting silent signin...");
+            user = await Promise.race([
+              this.userManager!.signinSilent(),
+              new Promise<User | null>((_, reject) => 
+                setTimeout(() => reject(new Error("Silent signin timeout")), 1000)
+              )
+            ]);
           } catch (silentError) {
-            console.log("Silent signin failed, checking if redirect callback");
+            console.log("Silent signin failed:", silentError.message);
             
             // Check if this is a callback from authentication
             if (window.location.pathname.includes('/callback')) {
               try {
+                console.log("Handling authentication callback...");
                 user = await this.userManager!.signinRedirectCallback();
               } catch (callbackError) {
                 console.error("Signin redirect callback failed:", callbackError);
@@ -485,8 +492,14 @@ class KeycloakService {
           KeycloakService.refreshJwtToken();
           callback(true);
         } else {
-          console.warn("Not authenticated!");
-          await this.login();
+          console.warn("Not authenticated! Initiating login...");
+          // Don't await the login as it will redirect the page
+          // The callback should be called with false to indicate auth is needed
+          callback(false);
+          // Start the login process without waiting
+          this.login().catch(error => {
+            console.error("Login initiation failed:", error);
+          });
         }
       } catch (error) {
         console.error("Failed to initialize OIDC Service", error);
@@ -590,6 +603,23 @@ class KeycloakService {
         console.error("Error handling signin callback:", error);
         return null;
       }
+    }
+
+    /**
+     * Manually trigger login process
+     * This is a public method that can be called when authentication is needed
+     */
+    public async triggerLogin(): Promise<void> {
+      console.log("Manually triggering login process");
+      await this.login();
+    }
+
+    /**
+     * Check if user needs authentication
+     * Returns true if user needs to authenticate, false if already authenticated
+     */
+    public needsAuthentication(): boolean {
+      return !this.isAuthenticated() && !this.isOfflineMode;
     }
   }
   
