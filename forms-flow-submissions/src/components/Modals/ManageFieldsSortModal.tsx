@@ -117,6 +117,7 @@ const handleSaveSubmissionFields = () => {
           onUpdate={handleUpdateOrder}
           icon={<FormVariableIcon color={darkColor} />}
           data-testid="columns-sort"
+          preventLastCheck={true}
         />
         <div>
           <CustomButton
