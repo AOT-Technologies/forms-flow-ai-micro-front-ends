@@ -1,6 +1,27 @@
 # Changelog for formsflow.ai
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
+
+## 7.2.0 - date to be added
+
+`Added`
+
+**forms-flow-components**
+* Added new reusable components:
+  * Variable selection modal component
+  * Collapsible search component
+
+**forms-flow-submissions**
+* Added data layer in analyse-submissions to support form specific submissions filtering 
+
+`Modified`
+**forms-flow-submissions**
+* Modified the UI of analyse-submissions with reusable components
+
+`Fixed`
+**forms-flow-review**
+* Fixed bugs in review module
+
 ## 7.1.0 - 2025-07-01
 
 `Added`

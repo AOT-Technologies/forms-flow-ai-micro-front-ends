@@ -347,7 +347,6 @@ const {
       filtersApplied ? fieldFilters : {},
       selectedFormFields
     ),
-  keepPreviousData: true,
   staleTime: 0,
 });
 
