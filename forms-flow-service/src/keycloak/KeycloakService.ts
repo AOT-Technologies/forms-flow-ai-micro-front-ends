@@ -1,8 +1,10 @@
-import Keycloak, {
-    KeycloakInitOptions,
-    KeycloakTokenParsed,
-    KeycloakConfig,
-  } from "keycloak-js";
+import { 
+  UserManager, 
+  User, 
+  UserManagerSettings,
+  WebStorageStateStore,
+  Log
+} from "oidc-client-ts";
 import StorageService from "../storage/storageService";
 import HelperServices from "../helpers/helperServices";
 import {
@@ -15,47 +17,112 @@ import { getUpdatedJwtToken } from "../request/jwtTokenService";
 
 class KeycloakService {
     /**
-     * Used to create Keycloak object
+     * Used to create UserManager object
      */
-    private _keycloakConfig: KeycloakConfig | undefined;
-    private kc: Keycloak | undefined;
+    private _userManagerConfig: UserManagerSettings | undefined;
+    private userManager: UserManager | undefined;
     private static instance: KeycloakService;
     private token: string | undefined;
-    private _tokenParsed: KeycloakTokenParsed | undefined;
+    private _user: User | undefined;
     private timerId: any = 0;
     private static jwtTimerId: any = 0;
     private userData: any;
-    private isInitialized: boolean = false; // Track if Keycloak is initialized
+    private isInitialized: boolean = false; // Track if UserManager is initialized
     private isOfflineMode: boolean = false; // Track if running in offline mode
 
     private constructor(url: string, realm: string, clientId: string, tenantId?: string) {
-      this._keycloakConfig = {
-        url: url,
-        realm: realm,
-        clientId: tenantId ? `${tenantId}-${clientId}` : clientId,
+      const actualClientId = tenantId ? `${tenantId}-${clientId}` : clientId;
+      this._userManagerConfig = {
+        authority: `${url}/realms/${realm}`,
+        client_id: actualClientId,
+        redirect_uri: `${window.location.origin}${APP_BASE_ROUTE}/callback`,
+        response_type: "code",
+        scope: "openid profile email offline_access",
+        post_logout_redirect_uri: `${window.location.origin}${APP_BASE_ROUTE}/`,
+        silent_redirect_uri: `${window.location.origin}${APP_BASE_ROUTE}/silent-check-sso.html`,
+        automaticSilentRenew: true,
+        userStore: new WebStorageStateStore({ store: window.localStorage }),
+        monitorSession: false,
+        loadUserInfo: true
       };
-      this.kc = new Keycloak(this._keycloakConfig);
+      this.userManager = new UserManager(this._userManagerConfig);
+      
+      // Set up event handlers
+      this.setupEventHandlers();
     }
-  
+
     /**
-     * used to call the `init` method from keycloak
+     * Set up event handlers for oidc-client-ts
      */
-    private keycloakInitConfig: KeycloakInitOptions = {
-      onLoad: "check-sso",
-      silentCheckSsoRedirectUri: `${window.location.origin}${APP_BASE_ROUTE}/silent-check-sso.html`,
-      pkceMethod: "S256",
-      checkLoginIframe: false,
-      scope: "openid offline_access"
-    };
-  
-    private login(): void {
-      this.kc?.login();
+    private setupEventHandlers(): void {
+      this.userManager!.events.addAccessTokenExpiring(() => {
+        console.log("Access token expiring...");
+      });
+
+      this.userManager!.events.addAccessTokenExpired(() => {
+        console.log("Access token expired");
+        this.handleTokenRefreshFailure();
+      });
+
+      this.userManager!.events.addSilentRenewError((error) => {
+        console.error("Silent renew error:", error);
+        this.handleTokenRefreshFailure();
+      });
+
+      this.userManager!.events.addUserLoaded((user) => {
+        console.log("User loaded:", user);
+        this.handleUserLoaded(user);
+      });
+
+      this.userManager!.events.addUserUnloaded(() => {
+        console.log("User unloaded");
+        this.handleUserUnloaded();
+      });
+    }
+
+    /**
+     * Handle when user is loaded
+     */
+    private handleUserLoaded(user: User): void {
+      this._user = user;
+      this.token = user.access_token;
+      this.userData = user.profile;
+      
+      StorageService.save(StorageService.User.AUTH_TOKEN, this.token);
+      StorageService.save(StorageService.User.USER_DETAILS, JSON.stringify(this.userData));
+      
+      // Handle refresh token for roadsafety application
+      if (user.refresh_token && APPLICATION_NAME === "roadsafety") {
+        StorageService.save(
+          StorageService.User.REFRESH_TOKEN,
+          HelperServices.encrypt(user.refresh_token)
+        );
+      }
+    }
+
+    /**
+     * Handle when user is unloaded
+     */
+    private handleUserUnloaded(): void {
+      this._user = undefined;
+      this.token = undefined;
+      this.userData = undefined;
+      this.isInitialized = false;
+      this.isOfflineMode = false;
     }
   
-    private logout (): void {
+    private async login(): Promise<void> {
+      if (this.userManager) {
+        await this.userManager.signinRedirect();
+      }
+    }
+  
+    private async logout(): Promise<void> {
       this.isInitialized = false; // Reset initialization state
       this.isOfflineMode = false; // Reset offline mode
-      this.kc?.logout();
+      if (this.userManager) {
+        await this.userManager.signoutRedirect();
+      }
       StorageService.clear();
     }
 
@@ -127,78 +194,58 @@ class KeycloakService {
   
     /**
      *
-     * @returns Keycloak token validity in milliseconds
+     * @returns Token validity in milliseconds
      */
     private getTokenExpireTime(): number {
-      const exp = this._tokenParsed?.exp;
-      const iat = this._tokenParsed?.iat;
-      if (exp && iat) {
-        const toeknExpiretime =
-          new Date(exp * 1000).valueOf() - new Date(iat * 1000).valueOf();
-        return toeknExpiretime;
+      if (this._user?.expires_at) {
+        const currentTime = Math.floor(Date.now() / 1000);
+        const tokenExpireTime = (this._user.expires_at - currentTime) * 1000;
+        return Math.max(tokenExpireTime, 60000); // Minimum 1 minute
       } else {
-        return 60000;
+        return 60000; // Default 1 minute
       }
     }
 
-    private keycloackUpdateToken(timeEnabled = false): void {
-
+    private async oidcUpdateToken(timeEnabled = false): Promise<void> {
       // Skip token update if in offline mode
       if (this.isOfflineMode) {
         console.debug("Offline mode: Skipping token update");
         return;
       }
 
-      this.kc
-        ?.updateToken(-1)
-        .then((refreshed) => {
-          if (refreshed) {
-            console.log("Token refreshed!");
-            this.token = this.kc.token;
-            StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
-            if (this.kc.refreshToken && APPLICATION_NAME === "roadsafety") {
-              StorageService.save(
-                StorageService.User.REFRESH_TOKEN,
-                HelperServices.encrypt(this.kc.refreshToken)
-              );
-            } else {
-              console.info(
-                "Refreshing Tokens - Not storing the refresh token."
-              );
-            }
-            this.refreshToken();
-          } else {
-            console.log("Token is still valid!");
-          }
-        })
-        .catch((err) => {
-          console.error("Keycloak token update failed!", err);
-          this.handleTokenRefreshFailure();
-        })
-        .finally(() => {
-          if (timeEnabled) {
-            clearInterval(this.timerId);
-          }
-        });
+      try {
+        const user = await this.userManager!.signinSilent();
+        if (user) {
+          console.log("Token refreshed!");
+          this.handleUserLoaded(user);
+        }
+      } catch (error) {
+        console.error("OIDC token update failed!", error);
+        this.handleTokenRefreshFailure();
+      } finally {
+        if (timeEnabled) {
+          clearInterval(this.timerId);
+        }
+      }
     }
 
     /**
-     * Refresh the keycloak token before expiring
+     * Refresh the token before expiring
      */
     private refreshToken(skipTimer: boolean = false): void {
-
       // Skip token refresh setup if in offline mode
       if (this.isOfflineMode) {
         console.debug("Offline mode: Skipping token refresh setup");
         return;
       }
+      
       this.timerId = setInterval(
-        () => {
+        async () => {
           if (!navigator.onLine) {
             console.debug("Offline: Skipping token refresh.");
             return;
           }
-          this.keycloackUpdateToken(true);
+          await this.oidcUpdateToken(true);
         },
         !skipTimer && APPLICATION_NAME === "roadsafety"
           ? this.getTokenExpireTime()
@@ -237,18 +284,19 @@ class KeycloakService {
     /**
      * Retry token refresh when the user is back online
     */
-    public retryTokenRefresh(): void  {
+    public async retryTokenRefresh(): Promise<void> {
       console.log("Back online: Retrying token refresh.");
       let skipTimer: boolean = false;
       if (APPLICATION_NAME === "roadsafety") {
         skipTimer = true;
         const storedEncryptedRefreshToken = StorageService.get(StorageService.User.REFRESH_TOKEN);
         if (storedEncryptedRefreshToken) {
-          this.kc.refreshToken = HelperServices.decrypt(storedEncryptedRefreshToken);
+          // With oidc-client-ts, refresh tokens are handled automatically
+          console.log("Found stored refresh token for retry");
         }
       }
       this.isWaitingForOnline = false;
-    this.keycloackUpdateToken();
+      await this.oidcUpdateToken();
     };
 
     /**
@@ -353,94 +401,146 @@ class KeycloakService {
     }
   
     /**
-     * Initialize the keycloak
+     * Initialize the OIDC client
      * make sure `silent-check-sso.html` is present in public folder
-     * @param callback - Optional - callback function to excecute after succeessful authentication
+     * @param callback - Optional - callback function to execute after successful authentication
      */
-    public initKeycloak (callback: (authenticated) => void = () => { }): void {
-        if (this.isInitialized) {
-          callback(true); // Proceed as initialized
-          return; // Exit the method if already initialized
+    public async initKeycloak(callback: (authenticated: boolean) => void = () => {}): Promise<void> {
+      if (this.isInitialized) {
+        callback(true); // Proceed as initialized
+        return; // Exit the method if already initialized
+      }
+
+      // Check if offline and try to initialize with stored credentials
+      if (!navigator.onLine) {
+        console.log("Offline detected during initialization");
+        if (this.initOfflineMode()) {
+          callback(true);
+          return;
+        } else {
+          console.warn("No valid offline credentials found");
+          callback(false);
+          return;
+        }
+      }
+
+      try {
+        // Check if user is already authenticated
+        let user = await this.userManager!.getUser();
+        
+        if (!user) {
+          // Try silent signin first
+          try {
+            user = await this.userManager!.signinSilent();
+          } catch (silentError) {
+            console.log("Silent signin failed, checking if redirect callback");
+            
+            // Check if this is a callback from authentication
+            if (window.location.pathname.includes('/callback')) {
+              try {
+                user = await this.userManager!.signinRedirectCallback();
+              } catch (callbackError) {
+                console.error("Signin redirect callback failed:", callbackError);
+                callback(false);
+                return;
+              }
+            }
+          }
         }
 
-        // Check if offline and try to initialize with stored credentials
-        if (!navigator.onLine) {
-          console.log("Offline detected during initialization");
-          if (this.initOfflineMode()) {
-            callback(true);
-            return;
-          } else {
-            console.warn("No valid offline credentials found");
+        if (user && !user.expired) {
+          this.isInitialized = true;
+          console.log("Authenticated");
+          
+          // Extract user roles from token claims
+          const userRoles = this.extractUserRoles(user);
+          if (!userRoles || userRoles.length === 0) {
+            console.warn("No user roles found");
             callback(false);
             return;
           }
-        }
 
-      this.kc
-        ?.init(this.keycloakInitConfig)
-        .then((authenticated) => {
-          if (authenticated) {
-            this.isInitialized = true;  // Mark as initialized
-            console.log("Authenticated");
-            if (!!this.kc?.resourceAccess) {
-              const UserRoles = this.kc?.resourceAccess[this.kc.clientId!]?.roles;
-              if(!UserRoles){
-                callback(false);
-              }
-              else{
-              StorageService.save(StorageService.User.USER_ROLE, JSON.stringify(UserRoles));
-              this.token = this.kc.token;
-              this._tokenParsed = this.kc.tokenParsed;
+          StorageService.save(StorageService.User.USER_ROLE, JSON.stringify(userRoles));
+          this.handleUserLoaded(user);
 
-              if (this.kc.refreshToken && APPLICATION_NAME === "roadsafety") {
-                StorageService.save(StorageService.User.REFRESH_TOKEN, HelperServices.encrypt(this.kc.refreshToken));
-                window.addEventListener(
-                  "online",
-                  () => {
-                    this.retryTokenRefresh(); // This will be executed when the 'online' event occurs
-                    KeycloakService.updateJwtToken();
-                  },
-                  { once: false }
-                );
-              } else {
-                console.info("Init KC - not storing the refresh token.");
-              }
-
-              StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
-              this.kc.loadUserInfo().then((data) => {
-                this.userData = data;
-                StorageService.save(
-                  StorageService.User.USER_DETAILS,
-                  JSON.stringify(data)
-                );
-                callback(true);
-              });
-              this.refreshToken();
-              KeycloakService.refreshJwtToken();
-              }
-            }
-              else {
-              this.logout();
-            }
+          if (user.refresh_token && APPLICATION_NAME === "roadsafety") {
+            StorageService.save(
+              StorageService.User.REFRESH_TOKEN, 
+              HelperServices.encrypt(user.refresh_token)
+            );
+            
+            window.addEventListener(
+              "online",
+              async () => {
+                await this.retryTokenRefresh();
+                await KeycloakService.updateJwtToken();
+              },
+              { once: false }
+            );
           } else {
-            console.warn("not authenticated!");
-            this.login();
+            console.info("Init OIDC - not storing the refresh token.");
           }
-        })
-        .catch((err) =>
-          console.error("Failed to initialize KeycloakService", err)
-        );
+
+          this.refreshToken();
+          KeycloakService.refreshJwtToken();
+          callback(true);
+        } else {
+          console.warn("Not authenticated!");
+          await this.login();
+        }
+      } catch (error) {
+        console.error("Failed to initialize OIDC Service", error);
+        callback(false);
+      }
+    }
+
+    /**
+     * Extract user roles from OIDC user token
+     */
+    private extractUserRoles(user: User): string[] | null {
+      // Try to get roles from various possible claim locations
+      const profile = user.profile as any;
+      
+      // Check resource_access for client-specific roles (Keycloak style)
+      if (profile.resource_access) {
+        const clientId = this._userManagerConfig?.client_id;
+        if (clientId && profile.resource_access[clientId]?.roles) {
+          console.log("Found roles in resource_access for client:", clientId);
+          return profile.resource_access[clientId].roles;
+        }
+      }
+      
+      // Check realm_access for realm roles
+      if (profile.realm_access?.roles) {
+        console.log("Found roles in realm_access");
+        return profile.realm_access.roles;
+      }
+      
+      // Check direct roles claim
+      if (profile.role && Array.isArray(profile.role)) {
+        console.log("Found roles in direct role claim");
+        return profile.role;
+      }
+      
+      // Check groups as roles
+      if (profile.groups && Array.isArray(profile.groups)) {
+        console.log("Found roles in groups");
+        return profile.groups;
+      }
+      
+      return null;
     }
     /**
      * logs the user out and clear all user data from session.
      */
-    public userLogout (): void {
+    public async userLogout(): Promise<void> {
       this.isInitialized = false; // Reset initialization state
       this.isOfflineMode = false; // Reset offline mode
       KeycloakService.clearPolling();
       StorageService.clear();
-      this.logout();
+      await this.logout();
     }
+    
     /**
      *
      * @returns the user token
@@ -448,16 +548,17 @@ class KeycloakService {
     public getToken(): string {
       return this.token!;
     }
+    
     /**
      * 
      * @returns the user details
      */
-    public getUserData():any {
+    public getUserData(): any {
       return this.userData;
     }
 
     public isAuthenticated(): boolean {
-      return !!this.token;
+      return !!this.token && !!this._user && !this._user.expired;
     }
     
     /**
@@ -465,6 +566,30 @@ class KeycloakService {
      */
     public isInOfflineMode(): boolean {
       return this.isOfflineMode;
+    }
+
+    /**
+     * Get the current user object
+     */
+    public getUser(): User | undefined {
+      return this._user;
+    }
+
+    /**
+     * Handle signin redirect callback
+     */
+    public async handleCallback(): Promise<User | null> {
+      try {
+        const user = await this.userManager!.signinRedirectCallback();
+        if (user) {
+          this.handleUserLoaded(user);
+          this.isInitialized = true;
+        }
+        return user;
+      } catch (error) {
+        console.error("Error handling signin callback:", error);
+        return null;
+      }
     }
   }
   

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Silent Check SSO</title>
+</head>
+<body>
+    <script>
+        // This file is used for silent authentication with oidc-client-ts
+        // Import oidc-client-ts and handle silent authentication
+        window.addEventListener('load', function() {
+            // This will be handled by oidc-client-ts automatically
+            // when the silent renewal process is triggered
+            new Promise((resolve, reject) => {
+                if (window.parent && window.parent !== window) {
+                    // This is running in an iframe, send message to parent
+                    window.parent.postMessage({
+                        type: 'silent-check-sso-result',
+                        data: window.location.href
+                    }, window.location.origin);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
