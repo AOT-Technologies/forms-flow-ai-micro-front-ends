@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Authentication Callback</title>
+</head>
+<body>
+    <div id="loading">Authenticating...</div>
+    <script>
+        // This page handles the callback from the OIDC provider
+        // In a real application, you would import oidc-client-ts here
+        // and handle the callback using UserManager.signinRedirectCallback()
+        
+        window.addEventListener('load', function() {
+            // Notify parent window that callback is complete
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: 'oidc-callback-complete',
+                    url: window.location.href
+                }, window.location.origin);
+                window.close();
+            } else {
+                // If no opener, redirect to main application
+                window.location.href = '/';
+            }
+        });
+    </script>
+</body>
+</html>
