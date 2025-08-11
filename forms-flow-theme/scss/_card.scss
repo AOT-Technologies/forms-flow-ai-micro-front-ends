@@ -286,7 +286,7 @@ $gray-darkest: var(--ff-gray-darkest);
 
   margin-bottom: $paddingLvl1S;
 
-  background-color: $gray-darkest;
+  background-color: $gray-darkest; //TBD
 
   border-radius: $borderRadiusHeightM;
 
@@ -486,4 +486,9 @@ $gray-darkest: var(--ff-gray-darkest);
       }
     }
   }
+}
+
+.workflow-edit-container {
+  max-height: calc(100vh - 16.25rem);
+  overflow: auto;
 }

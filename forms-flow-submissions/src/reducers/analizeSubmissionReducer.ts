@@ -15,6 +15,7 @@ const initialState = {
     defaultFilter: null,
     selectedFilter: "All Forms",
     submissionFilterList: [],
+    searchFieldValues: {},
 };
 
 
@@ -35,6 +36,10 @@ const analyzeSubmission = (state = initialState, action: any) => {
             return { ...state, selectedFilter: action.payload };
         case ACTION_CONSTANTS.SUBMISSION_FILTER_LIST:
             return { ...state, submissionFilterList: action.payload };
+        case ACTION_CONSTANTS.UPDATE_SEARCH_FIELD_VALUES:
+            return { ...state, searchFieldValues: action.payload };
+        case ACTION_CONSTANTS.CLEAR_SEARCH_FIELD_VALUES:
+            return { ...state, searchFieldValues: {} };
         default:
             return state;
     }

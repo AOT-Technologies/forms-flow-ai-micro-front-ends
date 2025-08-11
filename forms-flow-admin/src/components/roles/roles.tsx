@@ -222,7 +222,7 @@ const Roles = React.memo((props: any) => {
       (err) => {
         setError(err);
         setDisabled(false);
-        toast.error(t("Failed to create role!"));
+        toast.error(t(`${err}`));
       }
     );
   };
