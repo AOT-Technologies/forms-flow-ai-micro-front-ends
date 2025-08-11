@@ -126,6 +126,7 @@ const Task = React.memo((props: any) => {
           variables: taskDetails?.variables,
         })
       );
+      console.log("handleTaskUpdate inside",response.data.assignee);
       // Added to update assignee when socket trigger happens when user is in task details page 
       dispatch(setTaskAssignee(response.data.assignee))
     });
