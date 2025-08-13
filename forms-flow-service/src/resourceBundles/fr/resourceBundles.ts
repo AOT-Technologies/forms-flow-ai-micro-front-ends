@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 //French
 export const RESOURCE_BUNDLES_FR ={
+  "Unpublish This Form & Flow": "Annuler la publication de ce formulaire et de ce flux",
   "Dismiss": "Fermer",
   "You Cannot Delete This Form & Flow": "Vous ne pouvez pas supprimer ce formulaire et ce flux.",
   "You cannot delete a form & flow that has submissions associated with it.": "Vous ne pouvez pas supprimer un formulaire et un flux ayant des soumissions associées.",
@@ -1229,10 +1230,10 @@ export const RESOURCE_BUNDLES_FR ={
   "Note": "Remarque",
   "Stay in the Editor": "Rester dans l'éditeur",
   "Discard Changes and Leave the Page": "Annuler les modifications et quitter la page",
-  "Confirm Unpublish": "Confirmer la dépublication",
+  "By unpublishing this form & flow, you will make it unavailable for new submissions.": "En annulant la publication de ce formulaire et de ce flux, vous le rendrez indisponible pour de nouvelles soumissions.",
   "This form is currently live. To save changes to form edits, you need to unpublish it first. By Unpublishing this form, you will make it unavailable for new submissions to those who currently have access to it. You can republish the form after making your edits.": "Ce formulaire est actuellement actif. Pour enregistrer les modifications des éditions du formulaire, vous devez d'abord le dépublier. En dépubliant ce formulaire, vous le rendrez inaccessible aux nouvelles soumissions pour ceux qui y ont actuellement accès. Vous pouvez republier le formulaire après avoir apporté vos modifications.",
   "Unpublish and Edit This Form": "Dépublier et éditer ce formulaire",
-  "Cancel, Keep This Form Unpublished": "Annuler, garder ce formulaire non publié",
+  "Cancel, Keep This Form & Flow Published": "Annuler, garder ce formulaire et ce flux publiés",
   "Confirm Publish": "Confirmer la publication",
   "Publishing will save any unsaved changes and lock the entire form, including the layout and the flow. To perform any additional changes you will need to unpublish the form again.": "La publication enregistrera toutes les modifications non enregistrées et verrouillera l'ensemble du formulaire, y compris la disposition et le flux. Pour effectuer des modifications supplémentaires, vous devrez dépublier le formulaire.",
   "Publish This Form": "Publier ce formulaire",
