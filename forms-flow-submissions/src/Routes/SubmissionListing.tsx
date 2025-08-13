@@ -15,7 +15,7 @@ import {
   updateDefaultSubmissionFilter,
   fetchFormById,
 } from "../api/queryServices/analyzeSubmissionServices";
-import { formatDate,optionSortBy } from "../helper/helper";
+import { optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
 
 // Redux Actions
@@ -486,7 +486,9 @@ const renderRow = (submission: Submission) => {
           submission.data?.[backendKey];
 
         const value =
-          backendKey === "created" ? formatDate(rawValue) : rawValue;
+          backendKey === "created" ? HelperServices?.getLocalDateAndTime(
+                  rawValue
+                ) : rawValue;
 
         return customTdValue(value, index, submission.id);
       })}
