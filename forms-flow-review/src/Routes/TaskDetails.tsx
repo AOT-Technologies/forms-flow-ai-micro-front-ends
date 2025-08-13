@@ -49,7 +49,6 @@ const TaskDetails = () => {
   const dispatch = useDispatch();
   const {viewTaskHistory} = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [disabledMode,setDisabledMode] = useState(false);
   // Redux State Selectors
   const tenantKey = useSelector(
     (state: any) => state.tenants?.tenantData?.key
@@ -66,18 +65,17 @@ const TaskDetails = () => {
   const taskAssignee = useSelector(
     (state: any) => state?.task?.taskAssignee
   );
+  console.log("taskAssignee",taskAssignee,'currentUser',currentUser);
+  const disabledMode = taskAssignee !== currentUser;
   // Redirection URL
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
-  //disable the form if task not assigned to himself 
-  useEffect(()=>{
-    if(taskAssignee !==currentUser){
-      setDisabledMode(true);
-    }
-    else{
-      setDisabledMode(false);
-    }
-  },[taskAssignee,currentUser])
+  //disable the form if task not assigned to himself
+
+    //test to see task assignee data is captured
+    useEffect(() => {
+      console.log("task test",task);
+    }, [task]);
 
 
   // Set selected task ID on mount

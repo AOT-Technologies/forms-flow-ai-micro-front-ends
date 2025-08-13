@@ -7,6 +7,7 @@ interface SelectedComponent {
   type: string;
   label: string;
   altVariable: string;
+  isFormVariable: boolean;
 }
 interface FormComponentProps {
   form: any;
@@ -103,6 +104,8 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       "container",
       "htmlelement",
       "tabs",
+      "survey",
+      "selectboxes" 
     ]);
     const ignoredKeys = new Set(["hidden"]);
 
@@ -144,6 +147,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
               type: "",
               label: "",
               altVariable: "",
+              isFormVariable: true,
             });
             return;
           }
@@ -176,6 +180,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
             type: manipulatedKeys.has(componentKey) ? "hidden" : componentType,
             label,
             altVariable: alternativeLabels[componentKey]?.altVariable ?? "",
+            isFormVariable: true,
           });
         } else {
           setSelectedComponent({
@@ -183,6 +188,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
             type: "",
             label: "",
             altVariable: "",
+            isFormVariable: true,
           });
         }
       },
@@ -224,7 +230,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           options={{
             viewAsHtml: true,
             readOnly: true,
-          }}
+          } as any}
           // showHiddenFields={false}
           formReady={(e) => {
             formRef.current = e;

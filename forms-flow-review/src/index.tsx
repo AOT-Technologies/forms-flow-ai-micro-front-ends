@@ -16,7 +16,8 @@ import SocketIOService from "./services/SocketIOService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
-import { setBPMTaskDetail } from "./actions/taskActions"; 
+import { setBPMTaskDetail,setTaskAssignee } from "./actions/taskActions";
+import { StyleServices } from "@formsflow/service";
 import { setTenantData } from "./actions/tenantActions";
 import { fetchServiceTaskList, fetchUserList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
@@ -134,6 +135,8 @@ useEffect(() => {
   };
 
   const handleTaskUpdate = (refreshedTaskId: string) => {
+    console.log("handleTaskUpdate test",refreshedTaskId,taskId);
+    // taskId & refreshedTaskId will be equal if user is in task details page
   if (taskId === refreshedTaskId) {
     // if a task opened, some changes made against this task we need to recall the details
     getOnlyTaskDetails(refreshedTaskId).then((response) => {
@@ -143,6 +146,9 @@ useEffect(() => {
           variables: taskDetails?.variables,
         })
       );
+      console.log("handleTaskUpdate inside",response.data.assignee);
+      // Added to update assignee when socket trigger happens when user is in task details page
+      dispatch(setTaskAssignee(response.data.assignee))
     });
   }
   checkTheTaskIdExistThenRefetchTaskList();
@@ -169,7 +175,8 @@ const SocketIOCallback = useCallback(({
        * use of this socket call back , need to update task realtime and 
        * also tasklist if the task id is exist inthe tasklist
        */
-    if (isUpdateEvent) { 
+      console.log("SocketIOCallback test",isUpdateEvent,refreshedTaskId);
+    if (isUpdateEvent) {
       handleTaskUpdate(refreshedTaskId);
     } else if (forceReload) {
       handleForceReload(refreshedTaskId);
@@ -206,9 +213,14 @@ const SocketIOCallback = useCallback(({
     return <Loading />;
   }
   if (!isReviewer) return <p>unauthorized</p>;
+
+  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customTitle = StyleServices?.getCSSVariable("--custom-title");
+  const hasMultitenancyHeader = customLogoPath || customTitle;
+
   return (
     <>
-      <div className="main-container " tabIndex={0}>
+      <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'main-container' } `}>
         <div className="page-content">
             <Switch>
               <Route

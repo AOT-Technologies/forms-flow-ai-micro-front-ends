@@ -7,9 +7,29 @@ right: 0;
 top: 0;
 bottom: 0;
 }
-// .page-item .page-link {
-//     color: #0072ed !important;
-// }
+.page-link {
+  color: var(--ff-primary);
+
+  &:hover,
+  &:focus {
+    color: var(--ff-primary);
+    outline: none;
+    box-shadow: none;
+  }
+
+  &.active,
+  .active > & {
+    z-index: 3;
+    background-color: var(--ff-primary);
+    border-color: var(--ff-primary);
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+}
+
 
 
 

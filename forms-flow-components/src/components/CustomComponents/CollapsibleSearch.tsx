@@ -30,7 +30,8 @@ interface CollapsibleSearchProps {
   selectedItem: string;
   setSelectedItem: (value: string) => void;
   initialInputFields: InputField[];
-
+  onSearch: (filters: Record<string, string>) => void;
+  onClearSearch?: () => void;
 }
 
 
@@ -51,7 +52,8 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   selectedItem,
   setSelectedItem,
   initialInputFields,
-    
+  onSearch,
+  onClearSearch  
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -60,10 +62,15 @@ const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields)
   const handleFieldChange = (index: number, newValue: string) => {
     setInputFields((prevFields) => {
       const updated = [...prevFields];
-      updated[index] = { ...updated[index], value: newValue };
+      updated[index] = { ...updated[index], value: newValue }; 
       return updated;
     });
   };
+
+  useEffect(() => {
+  setInputFields(initialInputFields);
+}, [initialInputFields]);
+
 
   const toggleExpand = () => {
     setExpanded(true);
@@ -77,10 +84,15 @@ const handleSelection = (label: string) => setSelectedItem(label);
   };
 
   // Derived value for disabling buttons
-  const hasAnyInputInFields = inputFields?.some((field) => field.value.trim() !== "");
+  const hasAnyInputInFields = inputFields?.some((field) => field.value?.trim() !== "");
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
+  
 
-  const DropdownItems = formData.map((form) => ({ 
+  const [searchQuery, setSearchQuery] = useState("");
+
+const DropdownItems = formData
+  .filter((form) => form.formName.toLowerCase().includes(searchQuery.toLowerCase()))
+  .map((form) => ({
     type: `form-${form.formId}`,
     content: form.formName,
     dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
@@ -89,11 +101,11 @@ const handleSelection = (label: string) => setSelectedItem(label);
       handleSelection(form.formName);
       setDropdownSelection(form.parentFormId); // Store the selected form ID
     },
+    className:  form.parentFormId === dropdownSelection ? "selected-filter-item" : "",
   }));
 
     const handleClear = () => {
     // Reset all input field values
-    setDropdownSelection(null);
     setInputFields((prevFields) =>
       prevFields?.map((field) => ({
         ...field,
@@ -104,10 +116,25 @@ const handleSelection = (label: string) => setSelectedItem(label);
     // Reset dropdown selection
     setDropdownSelection(null);
     setSelectedItem("All Forms");
+    
+    // Call the onClearSearch callback if provided
+    if (onClearSearch) {
+      onClearSearch();
+    }
   };
+  const handleSearch = () => {
+  const filters = inputFields.reduce((acc, field) => {
+    if (field.value?.trim()) {
+      acc[field.id] = field.value.trim();
+    }
+    return acc;
+  }, {} as Record<string, string>);
+
+  onSearch(filters); 
+};
   return (
 
-    <div className={`search-collapsible ${expanded ? "expanded" : ""} ${!isActionDisabled ? "active-toggle" : ""}`}>
+    <div className={`search-collapsible ${expanded ? "expanded" : ""}`}>
       <div
         className={`toggle`}
         onClick={toggleExpand}
@@ -134,8 +161,8 @@ const handleSelection = (label: string) => setSelectedItem(label);
         </button>
 
         {!expanded ? (
-          <div className="collapsed-label">
-            {t("No Filters Are Active")}
+          <div className={`collapsed-label ${hasActiveFilters ? "active-filter" : ""}`}>
+            {hasActiveFilters ? t("Some Filters Are Active") : t("No Filters Are Active")}
           </div>
         ) : (
           ""
@@ -150,6 +177,7 @@ const handleSelection = (label: string) => setSelectedItem(label);
           <ButtonDropdown
             label={selectedItem}
             dropdownItems={DropdownItems}
+            onSearch={(query) => setSearchQuery(query)}
             dropdownType="DROPDOWN_ONLY"
             dataTestId="business-filter-dropdown"
             ariaLabel={t("Select business filter")}
@@ -164,6 +192,8 @@ const handleSelection = (label: string) => setSelectedItem(label);
                   onChange={(e) => handleFieldChange(index, e.target.value)}
                   aria-label={field.label}
                   data-testid={`input-${field.id}`} 
+                  onClearClick={() => handleFieldChange(index, "")}
+                  clear={field.value !== ""} 
                 />
               </div>
             ))}
@@ -252,18 +282,16 @@ const handleSelection = (label: string) => setSelectedItem(label);
             <div className="buttons-row">
               <CustomButton
                 label="Search"
-                // onClick={primaryBtnAction}
+                onClick={handleSearch}
                 dataTestId="search-button"
-                ariaLabel="Search filters" 
-                // buttonLoading={buttonLoading}
-                disabled={isActionDisabled} />
+                ariaLabel="Search filters"
+              />
+
               <CustomButton
                 label="Clear"
                 onClick={handleClear}
                 dataTestId="clear-button"
                 ariaLabel="Clear filters" 
-                // buttonLoading={buttonLoading}
-                disabled={isActionDisabled}
                 secondary />
             </div>
         </div>

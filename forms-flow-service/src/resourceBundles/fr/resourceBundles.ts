@@ -1490,6 +1490,7 @@ export const RESOURCE_BUNDLES_FR ={
     "Attribute Filter": "Filtre d'attributs",
     "Filter Dates": "Filtrer les dates",
     "Filter Created Date": "Filtrer par date de création",
+    "Filter by Submission Date": "Filtrer par date de soumission",
     "Sort Tasks": "Trier les tâches",
     "Apply": "Appliquer",
     "No filters found": "Aucun filtre trouvé",

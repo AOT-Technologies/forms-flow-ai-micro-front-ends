@@ -73,6 +73,7 @@ $chevron-bg: #5e61f2;
       gap: var(--spacer-100);
       justify-content: space-between;
   
+      // need to check & remove if unused
       .main-content {
         display: flex;
         flex-direction: column;
@@ -192,29 +193,39 @@ $chevron-bg: #5e61f2;
     @include textFilterNotSelected();
 
     width: 100%;
-    height: 50rem; // big enough to fit text
+    height: 100vh; // big enough to fit text
     align-content: center;
 
     padding-top: $paddingLvl4TB;
     
     writing-mode: sideways-lr;
     text-align: end;
+    &.active-filter{
+      background-color: $primary;
+      color: $white-color;
+    }
   }
 
   .content {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+     overflow-y: auto; 
+     max-height: 100%;
 
     .fields {
       @include paddingLvl3();
       @include divider();
-
+      @extend .custom-scroll;
       flex-grow: 1;
-
+      overflow-y: auto;
       .input-filter {
         max-width: 100%;
       }
+    }
+
+    .panel-width{
+      word-break: break-word;
     }
 
     .actions {

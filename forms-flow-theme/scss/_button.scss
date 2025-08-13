@@ -1,6 +1,6 @@
 @import '_mixins';
 // Variables for reused values
-$primary: #253DF4;
+$primary: var(--primary-btn-bg-color);
 $primary-light: var(--ff-primary-light);
 $black-color: var(--ff-black);
 $white-color: #ffffff;
@@ -387,10 +387,6 @@ $danger-color: var(--ff-danger);
         background-color: $gray-medium !important;
         color: $primary !important;
         border-radius: var(--radius-sm) !important;
-        &:hover {
-          background-color: $primary !important;
-          color:$white-color !important;
-          }
       }
       // &:hover {
       //   color: $white-color !important;
@@ -693,7 +689,7 @@ $danger-color: var(--ff-danger);
   }
 }
 
-
+//start of buttton styles
 // Buttons - (A) Btn-Primary (A) Btn-Action (A) Btn-Icon (A) Btn-Secondary (A) Btn-Action-Table (A) Btn-Icon-Special (A) Btn-Action-Table-Small
 .button {
 
@@ -703,9 +699,9 @@ $danger-color: var(--ff-danger);
     min-width: $base*10;
     max-width: fit-content;
 
-    background-color: $primary-color;
+    background-color: var(--primary-btn-bg-color);
 
-    border-radius: $borderRadiusHeightL;
+    border-radius: var(--lg-btn-border-radius, #{$borderRadiusHeightL});
 
     &[disabled] {
       background-color: $gray-medium-dark;
@@ -715,9 +711,9 @@ $danger-color: var(--ff-danger);
   &-secondary {
     @include buttonBase($primary-color);
 
-    background-color: $primary-light;
+    background-color: var(--secondary-btn-bg-color);
 
-    border-radius: $borderRadiusHeightL;
+    border-radius: var(--lg-btn-border-radius, #{$borderRadiusHeightL});
 
     &[disabled] {
       @include buttonBase($gray-light);
@@ -741,7 +737,7 @@ $danger-color: var(--ff-danger);
     
     background-color: $primary-light;
 
-    border-radius: $borderRadiusHeightL;
+    border-radius: var(--lg-btn-border-radius, #{$borderRadiusHeightL});
 
     &[disabled] {
       @include buttonBase($gray-light);
@@ -773,7 +769,7 @@ $danger-color: var(--ff-danger);
 
     background-color: $primary-light;
 
-    border-radius: $borderRadiusHeightSM;
+    border-radius: var(--sm-btn-border-radius, #{$borderRadiusHeightSM});
 
     &[disabled] {
       background-color: $gray-medium-dark;
@@ -795,9 +791,9 @@ $danger-color: var(--ff-danger);
 
     padding: $base/2 $base*0.75;
 
-    background-color: $primary-color;
+    background-color: var(--primary-btn-bg-color);
 
-    border-radius: $borderRadiusHeightM;
+    border-radius: var(--sm-btn-border-radius, #{$borderRadiusHeightM});
 
     &[disabled] {
       @include buttonBase($gray-light);
@@ -813,9 +809,9 @@ $danger-color: var(--ff-danger);
 
     padding: $base/2 $base;
 
-    background-color: $primary-light;
+    background-color: var(--secondary-btn-bg-color);
 
-    border-radius: $borderRadiusHeightSM;
+    border-radius: var(--sm-btn-border-radius, #{$borderRadiusHeightSM});
 
     &[disabled] {
       @include buttonBase($gray-light);
@@ -839,9 +835,9 @@ $danger-color: var(--ff-danger);
 
     font-size: $fontSmallest;
 
-    background-color: $primary-light;
+    background-color: var(--secondary-btn-bg-color);
 
-    border-radius: $borderRadiusHeightSM;
+    border-radius: var(--sm-btn-border-radius, #{$borderRadiusHeightSM});
 
     &[disabled] {
       @include buttonBase($gray-light);
@@ -867,7 +863,7 @@ $danger-color: var(--ff-danger);
 
     background-color: $gray-dark;
 
-    border-radius: $borderRadiusHeightSM;
+    border-radius: var(--sm-btn-border-radius, #{$borderRadiusHeightSM});
 
     &[disabled] {
       @include buttonBase($gray-medium-dark);
@@ -885,7 +881,7 @@ $danger-color: var(--ff-danger);
 
     background-color: $white-color;
 
-    border-radius: $borderRadiusHeightSM;
+    border-radius: var(--sm-btn-border-radius, #{$borderRadiusHeightSM});
 
     &[disabled] {
       @include buttonBase($gray-medium-dark);
@@ -900,7 +896,7 @@ $danger-color: var(--ff-danger);
     }
   }
 }
-
+// end of button styles
 
 .input {
   &-filter {
@@ -964,7 +960,8 @@ $danger-color: var(--ff-danger);
 
           margin-right: $lineThin;
 
-          background-color: mix($primary, $white-color, 80%) !important;
+          background-color: color-mix(in srgb, $primary 15%, $white-color 0%) !important;
+
 
           border: none !important;
 
@@ -994,8 +991,7 @@ $danger-color: var(--ff-danger);
 
       margin-left: 0 !important;
 
-      background-color: mix($primary, $white-color, 80%) !important;
-
+      background-color: color-mix(in srgb, $primary 15%, $white-color 0%) !important;
       border-top-right-radius: $borderRadiusHeightSM !important;
       border-bottom-right-radius: $borderRadiusHeightSM !important;
 
@@ -1351,6 +1347,21 @@ $danger-color: var(--ff-danger);
       width: fit-content;
 
       cursor: pointer;
+    }
+    .clear {
+      @include clickableFeedback1();
+
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      height: 100%;
+
+      padding: 0 $paddingLvl6LR;
+
+      path {
+        stroke: $primary-color;
+      }
     }
   }
 

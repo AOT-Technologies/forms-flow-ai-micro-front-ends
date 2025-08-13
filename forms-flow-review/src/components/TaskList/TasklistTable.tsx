@@ -18,11 +18,12 @@ import {
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useHistory, useParams } from "react-router-dom";
 import {
-  fetchServiceTaskList, 
+  fetchServiceTaskList,
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
+import Loading from "../Loading/Loading";
 interface Column {
   name: string;
   width: number;
@@ -52,23 +53,23 @@ const getCellValue = (column: Column, task: Task) => {
   if (column.sortKey === "applicationId") {
     return variables.find((v) => v.name === "applicationId")?.value ?? "-";
   }
-//checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
+  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
   if(!column.isFormVariable){
-  switch (sortKey) {
-    case "name":
-      return taskName ?? "-";
-    case "created":
-      return created ? HelperServices.getLocaldate(created) : "N/A";
-    case "assignee":
-      return <TaskAssigneeManager task={task} />;
-     case "roles": {
-    return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
+    switch (sortKey) {
+      case "name":
+        return taskName ?? "-";
+      case "created":
+        return created ? HelperServices.getLocaldate(created) : "N/A";
+      case "assignee":
+        return <TaskAssigneeManager task={task} />;
+      case "roles": {
+        return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
+      }
     }
   }
-  } 
   //if the variable is dynamic
-   return variables.find((v) => v.name === sortKey)?.value ?? "-";
- 
+  return variables.find((v) => v.name === sortKey)?.value ?? "-";
+
 };
 
 const TaskListTable = () => {
@@ -91,7 +92,7 @@ const TaskListTable = () => {
 ?.key || tenantId);
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
-  const taskvariables = selectedFilter?.variables ?? []; 
+  const taskvariables = selectedFilter?.variables ?? [];
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
@@ -112,7 +113,7 @@ const TaskListTable = () => {
    * passing isFormVariable to avoid sorting of dynamic variables
   **/
   const isSortableColumn = (columnKey, isFormVariable) => !isFormVariable && SORTABLE_COLUMNS.includes(columnKey);
- 
+
 
   const handleColumnResize = (column: Column, newWidth: number) => {
     /**
@@ -162,33 +163,33 @@ const TaskListTable = () => {
 
     return (
       <>
-      {column.name ? (
-        <th
-          key={`header-${column.sortKey ?? index}`}
-          className={`${isSortable ? "header-sortable" : ''}`}
-          style={{ 'minWidth': column.width, 'maxWidth': column.width }}
-          data-testid={`column-header-${column.sortKey ?? "actions"}`}
+        {column.name ? (
+          <th
+            key={`header-${column.sortKey ?? index}`}
+            className={`${isSortable ? "header-sortable" : ''}`}
+            style={{ 'minWidth': column.width, 'maxWidth': column.width }}
+            data-testid={`column-header-${column.sortKey ?? "actions"}`}
           aria-label={`${t(column.name)} ${t("column")}${
             isSortable ? ", " + t("sortable") : ""
-          }`}
-        >
-          {renderHeaderContent(column, isSortable)}
-          {isResizable &&
-            renderColumnResizer(column, isResizing, handleMouseDown, index)}
-        </th>
-      ) : (
-        <th
-          key={`header-${column.sortKey ?? index}`}
-          data-testid={`column-header-${column.sortKey ?? "actions"}`}
+              }`}
+          >
+            {renderHeaderContent(column, isSortable)}
+            {isResizable &&
+              renderColumnResizer(column, isResizing, handleMouseDown, index)}
+          </th>
+        ) : (
+          <th
+            key={`header-${column.sortKey ?? index}`}
+            data-testid={`column-header-${column.sortKey ?? "actions"}`}
           aria-label={`${t(column.name)} ${t("column")}${
             isSortable ? ", " + t("sortable") : ""
-          }`}
-        >
-          {renderHeaderContent(column, isSortable)}
-        </th>
-      )}
+              }`}
+          >
+            {renderHeaderContent(column, isSortable)}
+          </th>
+        )}
 
-      
+
       </>
     );
   };
@@ -222,7 +223,7 @@ const TaskListTable = () => {
         <span className="text">
           {t(column.name)}
         </span>
-      ) 
+      )
     }
     return (
       <SortableHeader
@@ -293,12 +294,12 @@ const TaskListTable = () => {
         getCellValue(column, task)
       ) : (
         <div className={`content`}
-        style={{
-          WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
-        }}
-      >
-        {getCellValue(column, task)}
-      </div>
+          style={{
+            WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
+          }}
+        >
+          {getCellValue(column, task)}
+        </div>
       )}
     </td>
   );
@@ -311,15 +312,15 @@ const TaskListTable = () => {
       aria-label={t("No columns message")}
     >
       <div className="custom-table-wrapper-inner resizable">
-          <table>
-            <tbody className="table-empty">
-                <p className="empty-message" data-testid="empty-columns-message">
-                  {t(
-                    "No tasks have been found. Try a different filter combination or contact your admin."
-                  )}
-                </p>
-            </tbody>
-          </table>
+        <table>
+          <tbody className="table-empty">
+            <p className="empty-message" data-testid="empty-columns-message">
+              {t(
+                "No tasks have been found. Try a different filter combination or contact your admin."
+              )}
+            </p>
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -338,24 +339,24 @@ const TaskListTable = () => {
   /* ----------------------------------- --- ---------------------------------- */
   const renderTableContainer = () => (
     <>
-    <div className="custom-table-wrapper-outter">
-      <ReusableResizableTable 
-            columns={columns}
-            data={tasksList}
-            renderRow={renderRow}
-            renderHeaderCell={renderHeaderCell}
-            emptyMessage={t(
-              "No tasks have been found. Try a different filter combination or contact your admin."
-            )}
-            onColumnResize={handleColumnResize}
-            loading={isTaskListLoading}
-            headerClassName="resizable-header"
-            scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
-            dataTestId="task-resizable-table"
-            ariaLabel={t("Tasks data table with resizable columns")}
-          />
-      
-      {renderTableFooter()}
+      <div className="custom-table-wrapper-outter">
+        <ReusableResizableTable
+          columns={columns}
+          data={tasksList}
+          renderRow={renderRow}
+          renderHeaderCell={renderHeaderCell}
+          emptyMessage={t(
+            "No tasks have been found. Try a different filter combination or contact your admin."
+          )}
+          onColumnResize={handleColumnResize}
+          loading={isTaskListLoading}
+          headerClassName="resizable-header"
+          scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+          dataTestId="task-resizable-table"
+          ariaLabel={t("Tasks data table with resizable columns")}
+        />
+
+        {renderTableFooter()}
       </div>
     </>
   );
@@ -384,9 +385,9 @@ const TaskListTable = () => {
 
 
 
-  if (columns.length === 0) {
-    return renderEmptyTable();
-  }
+if (!columns?.length) {
+  return isTaskListLoading ? <Loading /> : renderEmptyTable();
+}
 
   return renderTableContainer();
 };

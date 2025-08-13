@@ -718,7 +718,6 @@ select option:hover {
 .userform-wrapper{
   display: flex;
   flex-direction: column;
-  gap: var(--spacer-200);
   background-color: $gray-light;
 
   .user-form-header{
@@ -750,15 +749,23 @@ select option:hover {
     color: $white;
   }
  }
+  .user-form-container-with-wizard,
   .user-form-container{
-    height: calc(100vh - 7.5625rem - var(--client-nav));
     overflow-y: auto;
     overflow-x: hidden;
     gap: var(--spacer-100);
     padding: var(--spacer-200) var(--spacer-225);
     background-color: $white;
-    border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+    border-radius: var(--radius-md)!important;
+    min-width: 75vw;
   }
+  .user-form-container {
+    height: calc(100vh - 7.5625rem - var(--client-nav));
+  }
+  .user-form-container-with-wizard {
+    height: calc(100vh - 8.5625rem - var(--client-nav));
+  }
+
 }
 
 //custom switch for sdpr

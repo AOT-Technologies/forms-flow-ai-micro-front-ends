@@ -150,7 +150,7 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
           split
           variant={variant}
           id="dropdown-split-basic"
-          className={`toggle`}
+          className="toggle"
           data-testid={`${dataTestId}-toggle`}
           aria-label={`${t(displayLabel)} dropdown toggle`}
         >
@@ -173,6 +173,7 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
               onClick={() => item.onClick(item.type)}
               data-testid={item.dataTestId}
               aria-label={item.ariaLabel}
+              className={item.className}
             >
               {item.content}
             </Dropdown.Item>

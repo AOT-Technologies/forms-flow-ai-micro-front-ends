@@ -80,7 +80,7 @@ $white-color: var(--ff-white);
 
         margin: 0 !important;
 
-        color: $primary-color;
+        color: $primary-color !important;
         
         border: none;
         background-color: $transparent !important;
@@ -145,6 +145,11 @@ $white-color: var(--ff-white);
             .dropdown-item {
               @include paddingLvl6();
               @include textBaseHightlight($fontSmallest, $primary-color);
+            }
+            .dropdown-item:hover {
+              background-color: var(--ff-primary);
+              color: var(--ff-white);
+              border-radius: var(--radius-sm);
             }
           }
 
@@ -1024,7 +1029,10 @@ $white-color: var(--ff-white);
 // .customizable_assignee{
 //   min-width: 11.25rem !important;
 // }
-
+.custom-td{
+  min-width: 7.5rem;
+  max-width: 12.5rem;
+}
 .text-overflow-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;

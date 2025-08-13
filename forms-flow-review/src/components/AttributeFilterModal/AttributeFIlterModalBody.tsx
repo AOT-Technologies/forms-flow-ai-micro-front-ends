@@ -96,7 +96,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         let resetValue = item.value;
 
         // Remove '%' from displaying
-        if (typeof resetValue !== "number" || item.name !== "applicationId") {
+         if (typeof resetValue !== "number" && item.name !== "applicationId") {
           resetValue = resetValue.replace(/%/g, '');
         }
 
@@ -283,6 +283,9 @@ const removeSlashFromValue = (value) => {
       value = JSON.parse(attributeData[key]);
     } else if (key === "roles") {
       value = removeSlashFromValue(attributeData[key]);
+    } else if (types[key] === "number") {
+      // Convert string to number for number type fields
+      value = Number(value);
     } else if (!isNumberOrAppId) {
       // like search
       value = `%${value}%`;
@@ -400,7 +403,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
     if (attributeFilter?.id) { 
       if (editRole ) {
         return (
-          <div className="d-flex">
+          <div className="buttons-row">
             <CustomButton
               className="me-3"
               variant={updateButtonVariant}
@@ -414,6 +417,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
               dataTestId="save-attribute-filter"
               ariaLabel={t("Update This Filter")}
               disabled={deleteSuccess.showSuccess || noFieldChanged || !shareAttrFilter}
+              iconWithText
             />
             <CustomButton
               variant={deleteButtonVariant}
@@ -427,6 +431,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
               dataTestId="delete-attribute-filter"
               ariaLabel={t("Delete This Filter")}
               disabled={updateSuccess.showSuccess}
+              iconWithText
             />
           </div>
         );

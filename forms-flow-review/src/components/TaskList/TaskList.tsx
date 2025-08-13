@@ -54,6 +54,7 @@ const TaskList = () => {
     lastRequestedPayload: lastReqPayload,
     selectedAttributeFilter,
     isAssigned,
+    isUnsavedFilter,
   } = useSelector((state: RootState) => state.task);  
 
   const { viewTasks,viewFilters } = userRoles()
@@ -62,6 +63,11 @@ const TaskList = () => {
  
   //inital data loading
   const initialDataLoading = async () => {
+    // If we have an unsaved filter, do not reset filter state
+    if (isUnsavedFilter) {
+      dispatch(setBPMFilterLoader(false));
+      return;
+    }
     dispatch(setBPMFilterLoader(true));
     if(!viewFilters && viewTasks){
       dispatch(setSelectedFilter(allTasksPayload));
@@ -69,29 +75,27 @@ const TaskList = () => {
     }
     else{
       const filterResponse = await fetchFilterList();
-    const filters = filterResponse.data.filters;
-    const updatedfilters = filters.filter((filter) => !filter.hide);
-    const defaultFilterId = filterResponse.data.defaultFilter;
-    if (filters?.length) {
-
-  batch(() => {
-    dispatch(setBPMFilterList(filters));
-    defaultFilterId && dispatch(setDefaultFilter(defaultFilterId));
-    dispatch(fetchBPMTaskCount(updatedfilters));
-  });
-
-      // If no default filter, will select All Tasks filter if its exists, else will select first filter
-  if (defaultFilterId !== filters.find((f) => f.id === defaultFilterId)?.id) {
-    const newFilter = filters.find(f => f.name === "All Tasks") || filters[0];
-    dispatch(setDefaultFilter(newFilter.id));
-    updateDefaultFilter(newFilter.id);
-  }
-}   
-// if no filter is present, the data will be shown as All Tasks response
-else {
-  dispatch(setSelectedFilter(allTasksPayload));
-  dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
-}
+      const filters = filterResponse.data.filters;
+      const updatedfilters = filters.filter((filter) => !filter.hide);
+      const defaultFilterId = filterResponse.data.defaultFilter;
+      if (filters?.length) {
+        batch(() => {
+          dispatch(setBPMFilterList(filters));
+          defaultFilterId && dispatch(setDefaultFilter(defaultFilterId));
+          dispatch(fetchBPMTaskCount(updatedfilters));
+        });
+        // If no default filter, will select All Tasks filter if its exists, else will select first filter
+        if (defaultFilterId !== filters.find((f) => f.id === defaultFilterId)?.id) {
+          const newFilter = filters.find(f => f.name === "All Tasks") || filters[0];
+          dispatch(setDefaultFilter(newFilter.id));
+          updateDefaultFilter(newFilter.id);
+        }
+      }   
+      // if no filter is present, the data will be shown as All Tasks response
+      else {
+        dispatch(setSelectedFilter(allTasksPayload));
+        dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
+      }
     }
     dispatch(setBPMFilterLoader(false));
   };
@@ -187,8 +191,7 @@ else {
     // no neeed to call this on if filterCached is true
     if (filterCached) return;
     initialDataLoading();
-  }, []);
-
+  }, [isUnsavedFilter]);
   /* this useEffect will work each time default filter changes*/
   useEffect(() => {
     // no neeed to call this on if filterCached is true

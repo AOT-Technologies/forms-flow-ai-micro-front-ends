@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Modal } from "react-bootstrap";
 import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
+import { createOrUpdateSubmissionFilter, updateDefaultSubmissionFilter } from "../../api/queryServices/analyzeSubmissionServices";
+import { setDefaultSubmissionFilter, setSelectedSubmisionFilter } from "../../actions/analyzeSubmissionActions";
 
 
 interface ManageFieldsModalProps {
@@ -11,7 +14,23 @@ interface ManageFieldsModalProps {
   selectedItem: string
   submissionFields: any[]
   setSubmissionFields: ([]) => void
+  dropdownSelection: string
+  handleShowVariableModal:()=>void;
 }
+interface SubmissionField {
+  sortOrder: string;
+  key: string;
+  name: string;
+  label: string;
+  isChecked: boolean; 
+  isFormVariable: boolean;
+}
+
+interface VariableListPayload {
+  parentFormId: string ;
+  variables: SubmissionField[];
+}
+
 
 interface FormFieldsNoteProps {
   content: string;
@@ -29,17 +48,44 @@ const FormFieldsNote: React.FC<FormFieldsNoteProps> = ({ content, ariaLabel }) =
   </div>
 );
 
-const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose, submissionFields, setSubmissionFields, selectedItem }) => {
+const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ 
+  show, 
+  onClose, 
+  dropdownSelection, 
+  submissionFields, 
+  selectedItem,
+  handleShowVariableModal }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
  
+ const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
+
+ const [sortFields, setSortFields] = useState(selectedSubmissionFilter?.variables || submissionFields)
+useEffect (() => {
+  setSortFields(selectedSubmissionFilter?.variables || submissionFields);
+},[selectedSubmissionFilter]);
+
 
  const handleUpdateOrder = (updatedFieldOrder) => {
-  setSubmissionFields(updatedFieldOrder);
+  setSortFields(updatedFieldOrder);
   }
-  
- 
 
+
+  const variableList = (): VariableListPayload => ({
+  parentFormId: dropdownSelection,
+  variables: sortFields
+});
+
+const handleSaveSubmissionFields = () => {
+  createOrUpdateSubmissionFilter(variableList()).then((res) => {
+    updateDefaultSubmissionFilter({ defaultSubmissionsFilter: res.data.id });
+    dispatch(setDefaultSubmissionFilter(res.data.id));
+    dispatch(setSelectedSubmisionFilter(res.data));
+    onClose();
+  });
+};
+  
   return (
     <Modal
         show={show}
@@ -66,14 +112,14 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
           ariaLabel={t("Manage fields note")}
         />
         <DragandDropSort
-          items={submissionFields}
+          key={sortFields?.length}
+          items={sortFields}
           onUpdate={handleUpdateOrder}
           icon={<FormVariableIcon color={darkColor} />}
           data-testid="columns-sort"
+          preventLastCheck={true}
         />
         <div>
-
-
           <CustomButton
             label={t("More System and Form Fields")}
             secondary
@@ -81,6 +127,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
             dataTestId="manage-fields-add"
             ariaLabel={t("Manage fields add")}
             iconWithText
+            onClick={handleShowVariableModal}
           />
         </div>
           
@@ -90,7 +137,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
         <Modal.Footer>
                   <div className="buttons-row">
 
-          <CustomButton  label={t("Save Changes")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")} />
+          <CustomButton  label={t("Save Changes")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")} onClick={handleSaveSubmissionFields}/>
           <CustomButton secondary label={t("Cancel")} onClick={onClose} dataTestId="manage-fields-cancel" ariaLabel={t("Manage fields cancel")}/>
         </div>
         </Modal.Footer>
@@ -98,6 +145,6 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({ show, onClose
         
       </Modal>
   );
-};
+}
 
 export default ManageFieldsSortModal;

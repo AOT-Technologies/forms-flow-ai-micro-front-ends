@@ -146,14 +146,13 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
 );
 
 export const CloseIcon = ({
-  color = grayColor,
   dataTestId = "close-icon",
   ...props
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 16 16"
-    className="svgIcon-dark"
+    className="svgIcon-primary"
     onClick={props.onClick}
     data-testid={dataTestId} 
     {...props}
@@ -531,7 +530,7 @@ export const NewInfoIcon = ({ color = grayColor, ...props }) => (
   <svg
     viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"
-    className="svgIcon-dark"
+    className="svgIcon-primary"
   >
     <path d="M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8"/>
     <path d="M15 8C15 4.13401 11.866 1 8 1C4.13401 1 1 4.13401 1 8"/>

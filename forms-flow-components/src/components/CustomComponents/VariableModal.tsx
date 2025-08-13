@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import ModalHeader from "react-bootstrap/esm/ModalHeader";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,15 @@ import {
   FormInput,
 } from "../../formsflow-components";
 import { StyleServices } from "@formsflow/service";
+import { ListGroup } from 'react-bootstrap';
 
+interface FormVariable {
+  key: string;
+  altVariable: string;
+  labelOfComponent: string;
+  type: string;
+  isFormVariable?: boolean;
+}
 interface VariableModalProps {
   show: boolean;
   onClose: () => void;
@@ -24,9 +32,11 @@ interface VariableModalProps {
   primaryBtnariaLabel?: string;
   secondaryBtnariaLabel?: string;
   form: any;
-  savedFormVariables?: any;
+  savedFormVariables?: FormVariable[];
   saveBtnDisabled?: boolean;
   fieldLabel?: string;
+  systemVariables: FormVariable[];
+  isLoading?:boolean;
 }
 
 export const VariableModal: React.FC<VariableModalProps> = React.memo(
@@ -45,21 +55,24 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
     savedFormVariables,
     saveBtnDisabled = false,
     fieldLabel = "Variable", // to display the form field labels
+    systemVariables,
+    isLoading=false 
   }) => {
-    const [alternativeLabels, setAlternativeLabels] = useState(savedFormVariables);
+    const [alternativeLabels, setAlternativeLabels] = useState([]);
     const detailsRef = useRef(null);
     const [showElement, setShowElement] = useState(false);
     const TAB_KEYS = {
       SYSTEM: "system",
       FORM: "form",
     };
-    const [key, setKey] = useState(TAB_KEYS.FORM);
+    const [key, setKey] = useState(TAB_KEYS.SYSTEM);
     const { t } = useTranslation();
     const [selectedComponent, setSelectedComponent] = useState({
       key: null,
       type: "",
       label: "",
       altVariable: "",
+      isFormVariable: true,
     });
     const primaryColor = StyleServices.getCSSVariable("--ff-primary");
     const primaryLight = StyleServices.getCSSVariable("--ff-primary-light");
@@ -76,18 +89,55 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
       "allAvailableRoles",
     ]);
 
+    useEffect(() => {
+      if (savedFormVariables) {
+        setAlternativeLabels(savedFormVariables);
+      }
+    }, [savedFormVariables]);
+
+    const SystemTabContent = useCallback(
+      () => (
+        <div className="system-tab-container">
+          {systemVariables?.map(({ key, labelOfComponent, type }) => (
+            <ListGroup.Item
+              key={key}
+              className={`system-item ${
+                selectedComponent?.key === key ? "selected-item" : ""
+              }`}
+              onClick={() => {
+                setSelectedComponent({
+                  key,
+                  type,
+                  label: labelOfComponent,
+                  altVariable: "",
+                  isFormVariable: false,
+                });
+                setShowElement(true);
+              }}
+            >
+              {labelOfComponent}
+            </ListGroup.Item>
+          ))}
+        </div>
+      ),
+      [systemVariables, selectedComponent]
+    );
+
+
     const tabs = useMemo(
       () => [
         {
           eventKey: "system",
           title: t("System"),
-          content: <div className="p-2">System variable show here</div>,
+          content: SystemTabContent(),
+          className:`${saveBtnDisabled && "disabled"} `
         },
         {
           eventKey: "form",
           title: t("Form"),
-          className: "form-container",
+          className:`${saveBtnDisabled && "disabled"} form-container`    ,
           content: (
+            isLoading ? <div className="form-spinner"></div> :
             <FormComponent
               form={form}
               setShowElement={setShowElement}
@@ -99,7 +149,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
           ),
         },
       ],
-      [form, alternativeLabels, t]
+      [form, alternativeLabels, t,selectedComponent.key,isLoading]
     );
 
     // handling the add alternative variable
@@ -112,6 +162,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
             labelOfComponent: selectedComponent.label,
             type: selectedComponent.type,
             key: selectedComponent.key,
+            isFormVariable: selectedComponent.isFormVariable,
           },
         }));
         const highlightedElement = document.querySelector(".formio-hilighted");
@@ -139,13 +190,8 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
         return newLabels;
       });
     }, []);
-
     // render the selection of variables and selected variables
     const renderRightContainer = () => {
-      const filteredVariablePills = Object.values(alternativeLabels).filter(
-        ({ key }) => !ignoreKeywords.has(key)
-      );
-
       return (
         <div className="">
           {/* Slideout panel, always mounted */}
@@ -165,45 +211,51 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
 
             <div className="scroll-vertical">
               <div className="content">
-                <div className="d-flex flex-column">
-                  <span>{t("Type")}:</span>
-                  <span className="text-bold">{selectedComponent.type}</span>
-                </div>
+                {!ignoreKeywords.has(selectedComponent.key)  && (
+                  <div className="d-flex flex-column">
+                    <span>{t("Type")}:</span>
+                    <span className="text-bold">{selectedComponent.type}</span>
+                  </div>
+                )}
 
                 <div className="d-flex flex-column">
                   <span>{fieldLabel}:</span>
                   <span className="text-bold">{selectedComponent.key}</span>
                 </div>
 
-                <FormInput
-                  type="text"
-                  ariaLabel="Add alternative label input"
-                  dataTestId="Add-alternative-input"
-                  label="Add Alternative Label"
-                  value={selectedComponent.altVariable}
-                  onChange={(e) =>
-                    setSelectedComponent((prev) => ({
-                      ...prev,
-                      altVariable: e.target.value,
-                    }))
-                  }
-                />
+                {!ignoreKeywords.has(selectedComponent.key) && (
+                  <FormInput
+                    type="text"
+                    ariaLabel="Add alternative label input"
+                    dataTestId="Add-alternative-input"
+                    label="Add Alternative Label"
+                    value={selectedComponent.altVariable}
+                    id="add-alternative"
+                    onChange={(e) =>
+                      setSelectedComponent((prev) => ({
+                        ...prev,
+                        altVariable: e.target.value,
+                      }))
+                    }
+                  />
+                )}
 
-                <CustomButton
+                {!(selectedComponent.key in alternativeLabels && ignoreKeywords.has(selectedComponent.key)) && 
+                  <CustomButton
                   dataTestId="Add-alternative-btn"
                   ariaLabel="Add alternative label button"
                   actionTable
                   label={
                     alternativeLabels[selectedComponent.key]
-                      ? t("Update This Variable")
-                      : t("Add This Variable")
+                      ? t(`Update This ${fieldLabel}`)
+                      : t(`Add This ${fieldLabel}`)
                   }
                   onClick={handleAddAlternative}
                   disabled={
                     selectedComponent.altVariable ===
                     alternativeLabels[selectedComponent.key]?.altVariable
                   }
-                />
+                />}
               </div>
             </div>
           </div>
@@ -212,18 +264,32 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
           {!showElement && (
             <>
               <p className="right-container-header">
-                {t("Selected Variables") + ` (${filteredVariablePills.length})`}
+                {t("Selected Variables") + ` (${Object.keys(alternativeLabels).length })`}
               </p>
 
-              {filteredVariablePills.length > 0 ? (
+              {Object.keys(alternativeLabels).length > 0 ? (
                 <div className="pill-container">
-                  {filteredVariablePills.map(
+                  {Object.values(alternativeLabels).map(
                     ({ key, altVariable, labelOfComponent }: any) => (
+                      // <div
+                      //   className="button-as-div"
+                      //   key={key}
+                      //   onClick={() => {
+                      //     const selected = alternativeLabels[key];
+                      //     setSelectedComponent({
+                      //       key: selected.key,
+                      //       type: selected.type,
+                      //       label: selected.labelOfComponent,
+                      //       altVariable: selected.altVariable,
+                      //     });
+                      //     setShowElement(true);
+                      //   }}
+                      // >
                       <CustomPill
                         key={key}
                         label={altVariable || labelOfComponent}
                         icon={
-                          <CloseIcon
+                          !saveBtnDisabled && <CloseIcon
                             color={primaryColor}
                             data-testid="pill-remove-icon"
                           />
@@ -233,6 +299,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
                         secondaryLabel={key}
                         className="d-flex flex-row justify-content-between align-items-center"
                       />
+                      // </div>
                     )
                   )}
                 </div>
@@ -260,7 +327,6 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
         JSON.stringify(savedFormVariables) !== JSON.stringify(alternativeLabels)
       );
     }, [savedFormVariables, alternativeLabels]);
-
     return (
       <Modal
         show={show}
@@ -283,7 +349,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
             <CloseIcon />
           </div>
         </ModalHeader>
-        <Modal.Body className={`variable-modal-body ${saveBtnDisabled && "disabled"}`}>
+        <Modal.Body className="variable-modal-body" >
           <div className="variable-modal-left-container tabs">
             <CustomTabs
               defaultActiveKey={key}
@@ -291,7 +357,7 @@ export const VariableModal: React.FC<VariableModalProps> = React.memo(
               tabs={tabs}
               dataTestId="template-form-flow-tabs"
               ariaLabel="Template forms flow  tabs"
-              className=""
+              className={`${saveBtnDisabled && "disabled"}`}
             />
           </div>
           <div className="variable-modal-right-container" ref={detailsRef}>

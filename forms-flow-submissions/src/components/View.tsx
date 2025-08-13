@@ -25,6 +25,7 @@ const mapStateToProps = (state: RootState, props: OwnProps) => {
   };
 };
 
+
 const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -53,6 +54,12 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
   const isLoading =
    reduxSubmission?.isActive || !form || !safeSubmission?.data;
 
+   let scrollableOverview = "scrollable-overview";
+
+   if (form?.display === "wizard") {
+    scrollableOverview =  "scrollable-overview-with-custom-header-and-wizard"
+  }
+
    if (isLoading) {
     return (
       <div className="container">
@@ -66,7 +73,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
   }
 
   return (
-    <div className="scrollable-overview bg-white ps-3 pe-3 m-0 form-border">
+    <div className={`${scrollableOverview} bg-white ps-3 pe-3 m-0 form-border`}>
       <div className="sub-container wizard-tab">
         <Form
           form={form}
@@ -76,7 +83,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
             i18n: RESOURCE_BUNDLES_DATA,
             viewAsHtml: true,
             buttonSettings: { showCancel: false },
-          }}
+          } as any}
         />
       </div>
     </div>
