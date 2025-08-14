@@ -289,7 +289,26 @@ const createFilterShareOption = (labelKey, value) => ({
     } else if (types[key] === "number") {
       // Convert string to number for number type fields
       value = Number(value);
-    } else if (!isNumberOrAppId) {
+    } 
+    else if (types[key] === "day") {
+      //chnaging '/' to '-'
+      const [day, month, year] = value.split("-");
+      value = `%${month}/${day}/${year}%`;
+    }
+    else if (types[key] === "datetime") {
+      //changing date and time to camunda expected format
+      if (value && value.includes(",")) {
+
+        const [datePart, timePart] = value.split(",").map(s => s.trim());
+        const [day, month, year] = datePart.split("-");
+
+        const dateObj = new Date(`${year}-${month}-${day} ${timePart}`);
+
+        value = `%${dateObj.toISOString()}%`;
+      }
+    }
+
+      else if (!isNumberOrAppId) {
       // like search
       value = `%${value}%`;
     }
