@@ -418,6 +418,14 @@ select option:hover {
   flex-direction: column;
   width: calc( 100% + ($paddingLvl2LR * 2));
 
+  &.template-selection{
+    margin-right: 0px;
+    margin-left: 0px;
+    width: 100%;
+    .form-tab{
+      padding: 0px !important;
+    }
+  }
   // for when Tabs component is created
   // .nav {
   //   overflow-x: scroll;
