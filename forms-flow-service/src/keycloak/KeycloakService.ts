@@ -42,7 +42,7 @@ class KeycloakService {
         silent_redirect_uri: `${window.location.origin}${APP_BASE_ROUTE}/silent-check-sso.html`,
         automaticSilentRenew: true,
         userStore: new WebStorageStateStore({ store: window.localStorage }),
-        monitorSession: false,
+        monitorSession: true,
         loadUserInfo: true
       };
       this.userManager = new UserManager(this._userManagerConfig);
@@ -435,7 +435,7 @@ class KeycloakService {
             user = await Promise.race([
               this.userManager!.signinSilent(),
               new Promise<User | null>((_, reject) => 
-                setTimeout(() => reject(new Error("Silent signin timeout")), 1000)
+                setTimeout(() => reject(new Error("Silent signin timeout")), 2000)
               )
             ]);
           } catch (silentError) {
