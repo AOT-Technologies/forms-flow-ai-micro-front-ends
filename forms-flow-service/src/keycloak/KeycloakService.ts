@@ -445,7 +445,7 @@ class KeycloakService {
             if (window.location.pathname.includes('/callback')) {
               try {
                 console.log("Handling authentication callback...");
-                user = await this.userManager!.signinRedirectCallback();
+                user = await this.userManager!.signinCallback();
               } catch (callbackError) {
                 console.error("Signin redirect callback failed:", callbackError);
                 callback(false);
