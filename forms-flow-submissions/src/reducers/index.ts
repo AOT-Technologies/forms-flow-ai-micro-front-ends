@@ -6,6 +6,7 @@ import { submission, form } from "@aot-technologies/formio-react";
 import  applications from './applicationReducer';
 import customSubmission from './customSubmissionReducer';
 import taskAppHistory from './taskAppHistoryReducer';
+import process from './processReducer'
 
 
 const createRootReducer = (history: History) =>
@@ -17,6 +18,7 @@ const createRootReducer = (history: History) =>
     submission: submission({ name: "submission" }),
     customSubmission: customSubmission,
     form: form({ name: "form" }),
+    process: process,
   });
 
 export default createRootReducer;
