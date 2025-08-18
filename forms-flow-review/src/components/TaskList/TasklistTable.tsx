@@ -112,12 +112,13 @@ const TaskListTable = () => {
   }
 
   if (dateField) {
-    return matchingVar.value
-      ? HelperServices.getLocaldate(matchingVar.value)
-      : "-";
-  } 
-  return matchingVar.value ?? "-";
-};
+  return matchingVar.value
+    ? new Date(matchingVar.value).toLocaleDateString("en-GB") // format date as dd/mm/yyyy
+        .replace(/\//g, "-") // convert `/` to `-`
+    : "-";
+}
+return matchingVar.value ?? "-";
+  }
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
