@@ -27,7 +27,7 @@ import RenderOwnerShipNotes from "./Notes";
 import { userRoles } from "../../helper/permissions";
 import { cloneDeep } from "lodash";
 import { Filter, FilterCriteria } from "../../types/taskFilter"; 
-import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
+import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import { RootState } from "../../reducers";
 
 const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes }) => {
@@ -57,7 +57,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
   const selectedAttributeFilter = useSelector((state: any) => state.task.selectedAttributeFilter);
   const candidateGroups = useSelector((state: any) => state.task.userGroups);
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key);
   const userDetails = useSelector((state: any) => state.task.userDetails);
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
   const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
@@ -87,7 +87,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
  const [attributeData, setAttributeData] = useState(() => {
   const initialData = {
     assignee: attributeFilter?.criteria?.assignee || "",
-    roles: attributeFilter?.criteria?.candidateGroup || ""
+    roles: removeTenantKey(attributeFilter?.criteria?.candidateGroup, tenantKey, MULTITENANCY_ENABLED) || ""
   };
 
   const existingValues = (
@@ -158,10 +158,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const candidateOptions = useMemo(() => {
     return candidateGroups.reduce((acc, group) => {
       if (!group.permissions.includes("view_filters")) return acc;
-      const name = MULTITENANCY_ENABLED
-        ? removeTenantKey(group.name, tenantKey)
-        : group.name;
-
+      const name =  removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED);
       acc.push({ value: name, label: name });
       return acc;
     }, []);
@@ -250,11 +247,11 @@ const createFilterShareOption = (labelKey, value) => ({
 
 
 
-    const removeSlashFromValue = (value)=>{
-          return MULTITENANCY_ENABLED && value
-          ? tenantKey + "-" + trimFirstSlash(value)
-          : trimFirstSlash(value);
-    }
+const removeSlashFromValue = (value) => {
+  const trimmedValue = trimFirstSlash(value);
+  return addTenantPrefixIfNeeded(trimmedValue, tenantKey, MULTITENANCY_ENABLED);
+};
+
 
 
    const buildNewProcessVariables = () => {

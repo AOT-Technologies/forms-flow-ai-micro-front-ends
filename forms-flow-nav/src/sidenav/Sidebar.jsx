@@ -77,6 +77,7 @@ const renderLogo = (hideLogo) => {
 const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");
+  const [applicationTitle, setApplicationTitle] = React.useState("");
   const [userDetail, setUserDetail] = React.useState({});
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [tenant, setTenant] = React.useState({});

@@ -79,7 +79,8 @@ const AnalyzeSubmissionList: React.FC = () => {
   const sortParams = useSelector((state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {});
   const limit = useSelector((state: any) => state?.analyzeSubmission.limit ?? 10);
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
+  const tenantId = localStorage.getItem("tenantKey");
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.key || tenantId);
   const defaultSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.defaultFilter);
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -114,17 +115,17 @@ const AnalyzeSubmissionList: React.FC = () => {
 
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
   const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
-    dispatch(setAnalyzeSubmissionPage(1)); 
+    dispatch(setAnalyzeSubmissionPage(1));
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
     }
     setDropdownSelection(newSelection);
     dispatch(clearSearchFieldValues());
-    setFiltersApplied(false); 
+    setFiltersApplied(false);
     setFieldFilters({});
   }, [dropdownSelection]);
 
-  
+
 const handleClearSearch = () => {
   setFieldFilters({});
   // Clear the search field values globally
@@ -137,7 +138,7 @@ useEffect(() => {
   const matched = filterList?.find(
     (item) => dropdownSelection === item.parentFormId
   );
-  const filter = matched ?? null; 
+  const filter = matched ?? null;
 
   dispatch(setSelectedSubmisionFilter(filter));
   dispatch(setDefaultSubmissionFilter(filter?.id));
@@ -152,7 +153,7 @@ useEffect(() => {
       // Filter out system fields
       const filtered = selectedSubmissionFilter.variables
       .filter((item) => !systemFields.includes(item.key))
-      .map((item)=>{ 
+      .map((item)=>{
         const { label,...rest} = item;
         return { ...rest,labelOfComponent:label,altVariable: label}
       });
@@ -161,7 +162,7 @@ useEffect(() => {
       filtered.forEach((v) => {
         obj[v.key] = v;
       });
-      
+
       setSavedFormVariables(obj);
     } else {
       // When there's no selectedSubmissionFilter or no variables, set to empty object
@@ -181,10 +182,10 @@ useEffect (() => {
 
 
 
-  
+
 const handleFieldSearch = (filters: Record<string, string>) => {
   setFieldFilters(filters);
-  dispatch(setAnalyzeSubmissionPage(1)); 
+  dispatch(setAnalyzeSubmissionPage(1));
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
 };
@@ -192,7 +193,7 @@ const handleFieldSearch = (filters: Record<string, string>) => {
 const initialInputFields = useMemo(() => {
   // Use the current submissionFields state for calculation
   const currentFields = selectedSubmissionFilter?.variables ?? submissionFields;
-  
+
   //these pinned fileds should always come  first in sidebar
   const pinnedOrder = ["id", "created_by", "application_status"];
 
@@ -203,7 +204,7 @@ const initialInputFields = useMemo(() => {
   const sortedVars = [
     ...pinnedOrder
       .map((key) => filteredVars.find((item) => item.key === key))
-      .filter(Boolean), 
+      .filter(Boolean),
     //adding remaining items that are not pinned
     ...filteredVars.filter((item) => !pinnedOrder.includes(item.key)),
 
@@ -265,7 +266,7 @@ useEffect(() => {
     if (columnWidths[key]) {
       return columnWidths[key];
     }
-   
+
     const widthMap: Record<string, number> = {
       created: 180,
       application_status: 160,
@@ -333,7 +334,7 @@ const {
     activeSortOrder,
     dateRange,
     dropdownSelection,
-    filtersApplied ? fieldFilters : {}, 
+    filtersApplied ? fieldFilters : {},
     selectedFormFields
   ],
   queryFn: () =>
@@ -361,8 +362,8 @@ const {
           console.error(err);
         });
   },[]);
-  
-  //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection 
+
+  //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection
   const fetchFormData = useCallback(() => {
     if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
@@ -410,7 +411,7 @@ const handleSort = useCallback((key: string) => {
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
  const customTdValue = (value, index, submissionId) => {
-  return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`} 
+  return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`}
               className="custom-td">
             <div className="text-overflow-ellipsis">{value}</div>
           </td>
@@ -454,7 +455,7 @@ const handleSort = useCallback((key: string) => {
   const handleColumnResize = useCallback((column: Column, newWidth: number) => {
     // Update Redux column widths
     dispatch(setColumnWidths({ [column.sortKey]: newWidth }));
-   
+
   }, [dispatch]);
 
 
@@ -571,8 +572,8 @@ const renderRow = (submission: Submission) => {
     );
   }, [t, sortParams, handleSort]);
 
-  const handleCloseVariableModal = () => { 
-    setShowVariableModal(false) 
+  const handleCloseVariableModal = () => {
+    setShowVariableModal(false)
     handleManageFieldsOpen();
   };
 
@@ -582,7 +583,7 @@ const renderRow = (submission: Submission) => {
      fetchFormData(); // Fetch form data when the button is clicked
     handleManageFieldsClose();
     };
-    
+
   const handleSaveVariables = useCallback(
     (variables) => {
       const prevKeys = Object.keys(savedFormVariables);
@@ -677,7 +678,7 @@ const renderRow = (submission: Submission) => {
               startDateAriaLabel={t("Start date")}
               endDateAriaLabel={t("End date")}
             />
-            
+
           </div>
 
           <div className="actions">
