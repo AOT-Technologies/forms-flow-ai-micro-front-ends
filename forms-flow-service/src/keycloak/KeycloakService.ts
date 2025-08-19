@@ -493,10 +493,6 @@ class KeycloakService {
           callback(true);
         } else {
           console.warn("Not authenticated! Initiating login...");
-          // Don't await the login as it will redirect the page
-          // The callback should be called with false to indicate auth is needed
-          callback(false);
-          // Start the login process without waiting
           this.login().catch(error => {
             console.error("Login initiation failed:", error);
           });
