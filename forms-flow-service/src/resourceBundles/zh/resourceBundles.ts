@@ -1,7 +1,8 @@
 /* eslint-disable max-len */
 // Chinese
 export const RESOURCE_BUNDLES_ZH = {
-   "Dismiss": "关闭",
+  "Unpublish This Form & Flow": "取消发布此表单和流程",
+  "Dismiss": "关闭",
   "You Cannot Delete This Form & Flow": "无法删除此表单和流程。",
   "You cannot delete a form & flow that has submissions associated with it.": "无法删除与提交数据相关的表单和流程。",
   "Latest Submission": "最新提交",
@@ -1216,10 +1217,10 @@ export const RESOURCE_BUNDLES_ZH = {
   "Note": "注意",
   "Stay in the Editor": "留在编辑器",
   "Discard Changes and Leave the Page": "放弃更改并离开页面",
-  "Confirm Unpublish": "确认取消发布",
+  "By unpublishing this form & flow, you will make it unavailable for new submissions.": "通过取消发布此表单和流程，您将使其无法进行新的提交。",
   "This form is currently live. To save changes to form edits, you need to unpublish it first. By Unpublishing this form, you will make it unavailable for new submissions to those who currently have access to it. You can republish the form after making your edits.": "此表单当前已上线。要保存对表单的更改，您需要先取消发布。取消发布此表单后，将无法向当前有访问权限的用户提交新内容。完成编辑后，您可以重新发布表单。",
   "Unpublish and Edit This Form": "取消发布并编辑此表单",
-  "Cancel, Keep This Form Unpublished": "取消，保持此表单未发布",
+  "Cancel, Keep This Form & Flow Published": "取消，保持此表单和流程已发布",
   "Confirm Publish": "确认发布",
   "Publishing will save any unsaved changes and lock the entire form, including the layout and the flow. To perform any additional changes you will need to unpublish the form again.": "发布将保存所有未保存的更改，并锁定整个表单，包括布局和流程。要进行任何其他更改，您需要再次取消发布表单。",
   "Publish This Form": "发布此表单",
