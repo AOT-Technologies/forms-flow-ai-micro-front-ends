@@ -117,6 +117,11 @@ const AnalyzeSubmissionList: React.FC = () => {
     dispatch(setAnalyzeSubmissionPage(1)); 
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
+       if(newSelection === null){
+       dispatch(setDefaultSubmissionFilter(null));
+       updateDefaultSubmissionFilter({ defaultSubmissionsFilter: null });
+       dispatch(setSelectedSubmisionFilter(null));
+      }
     }
     setDropdownSelection(newSelection);
     dispatch(clearSearchFieldValues());
@@ -646,7 +651,7 @@ const renderRow = (submission: Submission) => {
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={Object.keys(searchFieldValues).length > 0 || dropdownSelection !== null}
+          hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0)}
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}

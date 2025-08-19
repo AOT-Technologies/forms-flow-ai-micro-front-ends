@@ -90,19 +90,38 @@ const handleSelection = (label: string) => setSelectedItem(label);
 
   const [searchQuery, setSearchQuery] = useState("");
 
-const DropdownItems = formData
-  .filter((form) => form.formName.toLowerCase().includes(searchQuery.toLowerCase()))
-  .map((form) => ({
-    type: `form-${form.formId}`,
-    content: form.formName,
-    dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
-    ariaLabel: `Select form: ${form.formName}`,
+const DropdownItems = [
+  {
+    type: "all-forms",
+    content: "All Forms",
+    dataTestId: "dropdown-item-all-forms",
+    ariaLabel: "Select all forms",
     onClick: () => {
-      handleSelection(form.formName);
-      setDropdownSelection(form.parentFormId); // Store the selected form ID
+      handleSelection("All Forms");
+      setDropdownSelection(null); 
     },
-    className:  form.parentFormId === dropdownSelection ? "selected-filter-item" : "",
-  }));
+    className: dropdownSelection === null ? "selected-filter-item" : "",
+  },
+  ...formData
+    .filter((form) =>
+      form.formName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .map((form) => ({
+      type: `form-${form.formId}`,
+      content: form.formName,
+      dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, "-").toLowerCase()}`,
+      ariaLabel: `Select form: ${form.formName}`,
+      onClick: () => {
+        handleSelection(form.formName);
+        setDropdownSelection(form.parentFormId); // Store the selected form ID
+      },
+      className:
+        form.parentFormId === dropdownSelection
+          ? "selected-filter-item"
+          : "",
+    })),
+];
+
 
     const handleClear = () => {
     // Reset all input field values
@@ -179,8 +198,8 @@ const DropdownItems = formData
             dropdownItems={DropdownItems}
             onSearch={(query) => setSearchQuery(query)}
             dropdownType="DROPDOWN_ONLY"
-            dataTestId="business-filter-dropdown"
-            ariaLabel={t("Select business filter")}
+            dataTestId="submission-search-filter-dropdown"
+            ariaLabel={t("Select submission filter")}
             className="input-filter" />
 
             {inputFields?.map((field, index) => (
@@ -292,6 +311,10 @@ const DropdownItems = formData
                 onClick={handleClear}
                 dataTestId="clear-button"
                 ariaLabel="Clear filters" 
+                disabled={
+                  dropdownSelection === null &&
+                  !inputFields.some(field => field.value && field.value.trim() !== "")
+                }
                 secondary />
             </div>
         </div>
