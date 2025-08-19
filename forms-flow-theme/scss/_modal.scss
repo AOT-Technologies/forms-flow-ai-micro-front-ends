@@ -205,7 +205,13 @@ $lineThin: 1px;
             @include textBase($fontBase);
           }
         }
-
+        &.template-selection{
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          padding: 0px !important;
+          scrollbar-gutter: unset;
+        }
         &.with-sections {
           padding: 0 !important;
 
@@ -486,11 +492,15 @@ $lineThin: 1px;
     overflow-y: scroll;
     -ms-overflow-style: none;
     height: 56vh;
+    scrollbar-gutter: stable;
+
   }
 
   .bpmn-container {
     height: 56vh;
-    overflow: auto;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+
   }
 
   .select-temp-btn {
@@ -502,10 +512,11 @@ $lineThin: 1px;
 
   .form-flow-tabs {
     display: flex;
-    padding: var(--spacer-200) var(--spacer-225);
+    padding: var(--spacer-200) var(--spacer-225) 0px var(--spacer-225);
     align-items: center;
     gap: var(--spacer-150);
     align-self: stretch;
+    margin-left: 0px;
   }
 
   .template-spinner {

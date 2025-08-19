@@ -187,7 +187,7 @@ useEffect(() => {
     return item.label === inputValue || item.value === selectedOption;
   };
   return (
-      <div className={`input-select ${className}`} ref={dropdownRef}>
+      <div className={`input-select w-100 ${className}`} ref={dropdownRef}>
           {textBoxInput ? (
               <InputGroup ref={dropdownRef}>
                   <FormInput
@@ -256,7 +256,7 @@ useEffect(() => {
                 onClick={() => handleSelect(item)}
                 data-testid={`list-${index}-item`}
                 aria-label={`list-${item.label}-item`}
-                          className={`${isItemSelected(item) ? 'chosen' : ''}`}
+                className={`${isItemSelected(item) ? 'chosen' : ''}`}
               >
                 {t(item.label)}
               </ListGroup.Item>
