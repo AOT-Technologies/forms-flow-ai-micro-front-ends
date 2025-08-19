@@ -1379,7 +1379,7 @@ $danger-color: var(--ff-danger);
       @extend .custom-scroll;
       @include paddingLvl7();
 
-      // position: absolute;
+      position: absolute;
       overflow-y: scroll;
       width: 100%;
       max-height: $dropdownMaxHeight;
@@ -1684,7 +1684,7 @@ $danger-color: var(--ff-danger);
       @include textBase();
 
       width: 100%;
-      height: $minHeight !important;
+      // height: $minHeight !important;
 
       padding: $paddingLvl6TB $paddingLvl5LR;
 

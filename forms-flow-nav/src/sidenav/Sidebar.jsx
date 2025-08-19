@@ -77,6 +77,7 @@ const renderLogo = (hideLogo) => {
 const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");
+  const [applicationTitle, setApplicationTitle] = React.useState("");
   const [userDetail, setUserDetail] = React.useState({});
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [tenant, setTenant] = React.useState({});
@@ -386,70 +387,86 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             />
           )}
 
-          {ENABLE_FORMS_MODULE && (isCreateDesigns || isViewDesigns) && (
-            <MenuComponent
-              baseUrl={baseUrl}
-              eventKey={SectionKeys.DESIGN.value}
-              optionsCount="5"
-              mainMenu={t("Design")}
-              subMenu={[
-                {
-                  name: "Forms & Flows",
-                  path: "formflow",
-                },
-                ...(IS_ENTERPRISE && isManageBundles
-                  ? [
-                      {
-                        name: "Bundles",
-                        path: "bundleflow",
-                        isPremium: true,
-                      },
-                    ]
-                  : []),
-                //   ...(IS_ENTERPRISE &&
-                // isManageTemplates
-                //   ? [
-                //       {
-                //         name: "Templates",
-                //         path: "forms-template-library",
-                //         isPremium: true,
-                //       },
-                //     ]
-                //   : []),
-                // { name: "Templates", path: "forms-template-library" }, // TBD : Templates to be added on a later stage
-                ...(IS_ENTERPRISE &&
-                isManageIntegrations &&
-                (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
-                  ? [
-                      {
-                        name: "Integrations",
-                        path: "integration/recipes",
-                        supportedSubRoutes: [
-                          "integration/recipes",
-                          "integration/connected-apps",
-                          "integration/library",
-                        ],
-                        isPremium: true,
-                      },
-                    ]
-                  : []),
-                ...(isManageWorkflows && ENABLE_PROCESSES_MODULE
-                  ? [
-                      {
-                        name: "Subflows",
-                        path: "subflow",
-                      },
-                      {
-                        name: "Decision Tables",
-                        path: "decision-table",
-                      },
-                    ]
-                  : []),
-              ]}
-              subscribe={props.subscribe}
-            />
-          )}
-
+          {ENABLE_FORMS_MODULE &&
+            (isCreateDesigns || isViewDesigns || isManageIntegrations) && (
+              <MenuComponent
+                baseUrl={baseUrl}
+                eventKey={SectionKeys.DESIGN.value}
+                optionsCount="5"
+                mainMenu={t("Design")}
+                subMenu={
+                  // If only isManageIntegrations is true → show only Integrations
+                  isManageIntegrations && !isCreateDesigns && !isViewDesigns
+                    ? [
+                        {
+                          name: "Integrations",
+                          path: "integration/recipes",
+                          supportedSubRoutes: [
+                            "integration/recipes",
+                            "integration/connected-apps",
+                            "integration/library",
+                          ],
+                          isPremium: true,
+                        },
+                      ]
+                    : [
+                        {
+                          name: "Forms & Flows",
+                          path: "formflow",
+                        },
+                        ...(IS_ENTERPRISE && isManageBundles
+                          ? [
+                              {
+                                name: "Bundles",
+                                path: "bundleflow",
+                                isPremium: true,
+                              },
+                            ]
+                          : []),
+                        ...(IS_ENTERPRISE &&
+                        isManageIntegrations &&
+                        (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
+                          ? [
+                              {
+                                name: "Integrations",
+                                path: "integration/recipes",
+                                supportedSubRoutes: [
+                                  "integration/recipes",
+                                  "integration/connected-apps",
+                                  "integration/library",
+                                ],
+                                isPremium: true,
+                              },
+                            ]
+                          : []),
+                        //             ...(IS_ENTERPRISE &&
+                        // isManageTemplates
+                        //   ? [
+                        //       {
+                        //         name: "Templates",
+                        //         path: "forms-template-library",
+                        //         isPremium: true,
+                        //       },
+                        //     ]
+                        //   : []),
+                        // // { name: "Templates", path: "forms-template-library" },
+                        ...(isManageWorkflows && ENABLE_PROCESSES_MODULE
+                          ? [
+                              {
+                                name: "Subflows",
+                                path: "subflow",
+                              },
+                              {
+                                name: "Decision Tables",
+                                path: "decision-table",
+                              },
+                            ]
+                          : []),
+                      ]
+                }
+                subscribe={props.subscribe}
+              />
+            )}
 
           {isManageWorkflows &&
             !isCreateDesigns &&

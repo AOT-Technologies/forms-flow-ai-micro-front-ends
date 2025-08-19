@@ -492,3 +492,7 @@ $gray-darkest: var(--ff-gray-darkest);
   max-height: calc(100vh - 16.25rem);
   overflow: auto;
 }
+
+.list-group-item{
+  padding: var(--spacer-050) !important;
+}

@@ -19,8 +19,17 @@ $gray-darkest: var(--ff-gray-darkest);
    cursor: move;
    cursor: grab;
  }
-.highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
-    fill: $primary !important;
+ .highlight {
+  &:not(.djs-connection) {
+    .djs-visual {
+      > :nth-child(1) {
+        fill: $primary !important;
+      }
+    }
+  }
+  .djs-label {
+    fill: $white !important;
+  }
 }
 
 .btn_zoom{

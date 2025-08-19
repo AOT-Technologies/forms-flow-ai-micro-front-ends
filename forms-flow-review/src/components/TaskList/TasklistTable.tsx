@@ -88,7 +88,8 @@ const TaskListTable = () => {
     isAssigned
   } = useSelector((state: any) => state.task);
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData
+?.key || tenantId);
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const taskvariables = selectedFilter?.variables ?? [];
