@@ -14,18 +14,54 @@ export const getSubmissionList = (
   selectedFormFields: string[] = []
 ): Promise<SubmissionListResponse> => {
   const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
+const formatValue = (value: any): string => {
+  if (typeof value === "number" || typeof value === "boolean") {
+    return `${value}`;
+  }
+  if (value === null) {
+    return "null";
+  }
+  if (Array.isArray(value)) {
+    return `[${value.map(formatValue).join(", ")}]`;
+  }
+  if (typeof value === "object") {
+    return `{ ${Object.entries(value)
+      .map(([k, v]) => `${k}: ${formatValue(v)}`)
+      .join(", ")} }`;
+  }
+  return `"${value}"`; // string by default
+};
 
-  const filtersString = Object.entries(filters)
-    .filter(([key, value]) =>
-      value !== undefined &&
-      value !== "" &&
-      (systemFields.includes(key) || selectedFormFields.includes(key))
-    )
-    .map(([key, value]) => {
-      const formattedValue = key !== "id" ? `"${value}"` : value;
-      return `${key}: ${formattedValue}`;
-    })
-    .join(", ");
+const normalizeValue = (value: any): any => {
+  if (typeof value !== "string") return value;
+
+  // number check
+  if (!isNaN(value as any) && value.trim() !== "") {
+    return Number(value);
+  }
+
+  // boolean check
+  if (value.toLowerCase() === "true") return true;
+  if (value.toLowerCase() === "false") return false;
+
+  // null/undefined
+  if (value.toLowerCase() === "null") return null;
+
+  return value; // keep as string
+};
+
+
+ const filtersString = Object.entries(filters)
+  .filter(([key, value]) =>
+    value !== undefined &&
+    value !== "" &&
+    (systemFields.includes(key) || selectedFormFields.includes(key))
+  )
+  .map(([key, value]) => {
+    const normalized = normalizeValue(value);
+    return `${key}: ${formatValue(normalized)}`;
+  })
+  .join(", ");
 
   const createdAfter = dateRange.startDate
     ? `createdAfter: "${HelperServices.getISODateTime(dateRange.startDate)}"`
