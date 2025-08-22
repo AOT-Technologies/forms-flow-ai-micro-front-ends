@@ -413,12 +413,12 @@ class KeycloakService {
 
       // Check if offline and try to initialize with stored credentials
       if (!navigator.onLine) {
-        console.log("Offline detected during initialization");
+        console.log("[KeycloakService] - Offline detected during initialization");
         if (this.initOfflineMode()) {
           callback(true);
           return;
         } else {
-          console.warn("No valid offline credentials found");
+          console.warn("[KeycloakService] - No valid offline credentials found");
           callback(false);
           return;
         }
@@ -428,10 +428,12 @@ class KeycloakService {
         // Check if user is already authenticated
         let user = await this.userManager!.getUser();
         
-        if (!user) {
+        console.log("[KeycloakService] - User: ", user);
+        console.log("[KeycloakService] - Is expired: ", user?.expired);
+        if (!user || user.expired) {
           // Try silent signin first with a timeout
           try {
-            console.log("Attempting silent signin...");
+            console.log("[KeycloakService] - Attempting silent signin...");
             user = await Promise.race([
               this.userManager!.signinSilent(),
               new Promise<User | null>((_, reject) => 
@@ -439,15 +441,15 @@ class KeycloakService {
               )
             ]);
           } catch (silentError) {
-            console.log("Silent signin failed:", silentError.message);
+            console.log("[KeycloakService] - Silent signin failed:", silentError.message);
             
             // Check if this is a callback from authentication
             if (window.location.pathname.includes('/callback')) {
               try {
-                console.log("Handling authentication callback...");
+                console.log("[KeycloakService] - Handling authentication callback...");
                 user = await this.userManager!.signinCallback();
               } catch (callbackError) {
-                console.error("Signin redirect callback failed:", callbackError);
+                console.error("[KeycloakService] - Signin redirect callback failed:", callbackError);
                 callback(false);
                 return;
               }
@@ -457,12 +459,12 @@ class KeycloakService {
 
         if (user && !user.expired) {
           this.isInitialized = true;
-          console.log("Authenticated");
+          console.log("[KeycloakService] - Authenticated");
           
           // Extract user roles from token claims
           const userRoles = this.extractUserRoles(user);
           if (!userRoles || userRoles.length === 0) {
-            console.warn("No user roles found");
+            console.warn("[KeycloakService] - No user roles found");
             callback(false);
             return;
           }
@@ -485,20 +487,18 @@ class KeycloakService {
               { once: false }
             );
           } else {
-            console.info("Init OIDC - not storing the refresh token.");
+            console.info("[KeycloakService] - Init OIDC - not storing the refresh token.");
           }
 
           this.refreshToken();
           KeycloakService.refreshJwtToken();
           callback(true);
         } else {
-          console.warn("Not authenticated! Initiating login...");
-          this.login().catch(error => {
-            console.error("Login initiation failed:", error);
-          });
+          console.warn("[KeycloakService] - Not authenticated! Initiating login...");
+          this.login();
         }
       } catch (error) {
-        console.error("Failed to initialize OIDC Service", error);
+        console.error("[KeycloakService] - Failed to initialize OIDC Service", error);
         callback(false);
       }
     }
@@ -589,7 +589,8 @@ class KeycloakService {
      */
     public async handleCallback(): Promise<User | null> {
       try {
-        const user = await this.userManager!.signinRedirectCallback();
+        console.log("Handling signin callback...");
+        const user = await this.userManager!.signinCallback();
         if (user) {
           this.handleUserLoaded(user);
           this.isInitialized = true;
