@@ -15,7 +15,7 @@ import {
   updateDefaultSubmissionFilter,
   fetchFormById,
 } from "../api/queryServices/analyzeSubmissionServices";
-import { formatDate,optionSortBy } from "../helper/helper";
+import { optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
 
 // Redux Actions
@@ -118,6 +118,11 @@ const AnalyzeSubmissionList: React.FC = () => {
     dispatch(setAnalyzeSubmissionPage(1));
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
+       if(newSelection === null){
+       dispatch(setDefaultSubmissionFilter(null));
+       updateDefaultSubmissionFilter({ defaultSubmissionsFilter: null });
+       dispatch(setSelectedSubmisionFilter(null));
+      }
     }
     setDropdownSelection(newSelection);
     dispatch(clearSearchFieldValues());
@@ -487,7 +492,9 @@ const renderRow = (submission: Submission) => {
           submission.data?.[backendKey];
 
         const value =
-          backendKey === "created" ? formatDate(rawValue) : rawValue;
+          backendKey === "created" ? HelperServices?.getLocalDateAndTime(
+                  rawValue
+                ) : rawValue;
 
         return customTdValue(value, index, submission.id);
       })}
@@ -647,7 +654,7 @@ const renderRow = (submission: Submission) => {
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={Object.keys(searchFieldValues).length > 0 || dropdownSelection !== null}
+          hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0)}
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}

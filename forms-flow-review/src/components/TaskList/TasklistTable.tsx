@@ -45,39 +45,8 @@ interface Task {
   };
 }
 
-const getCellValue = (column: Column, task: Task) => {
-  const { sortKey } = column;
-  const { name: taskName, created, _embedded } = task ?? {};
-  const variables = _embedded?.variable ?? [];
-  const candidateGroups = _embedded?.candidateGroups ?? [];
 
-  if (column.sortKey === "applicationId") {
-    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
-  }
-  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
-  if(!column.isFormVariable){
-    switch (sortKey) {
-      case "name":
-        return taskName ?? "-";
-      case "created":
-        return created ? HelperServices.getLocaldate(created) : "N/A";
-      case "assignee":
-        return <TaskAssigneeManager task={task} />;
-      case "roles": {
-        return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
-      }
-    }
-  }
- // if the variable is dynamic
-const dynamicValue = variables.find((v) => v.name === sortKey)?.value;
 
-if (typeof dynamicValue === "boolean") {
-  return dynamicValue ? "True" : "False"; 
-}
-
-return dynamicValue ?? "-";
-
-};
 
 const TaskListTable = () => {
   const { t } = useTranslation();
@@ -100,6 +69,65 @@ const TaskListTable = () => {
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const taskvariables = selectedFilter?.variables ?? [];
+
+  const getCellValue = (column: Column, task: Task) => {
+  const { sortKey } = column;
+  const { name: taskName, created, _embedded } = task ?? {};
+  const variables = _embedded?.variable ?? [];
+  const candidateGroups = _embedded?.candidateGroups ?? [];
+
+  if (column.sortKey === "applicationId") {
+    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
+  }
+
+  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
+  if (!column.isFormVariable) {
+    switch (sortKey) {
+      case "name":
+        return taskName ?? "-";
+      case "created":
+        return created ? HelperServices.getLocaldate(created) : "N/A";
+      case "assignee":
+        return <TaskAssigneeManager task={task} />;
+      case "roles": {
+        return candidateGroups.length > 0
+          ? candidateGroups[0]?.groupId ?? "-"
+          : "-";
+      }
+    }
+  }
+
+  const matchingVar = variables.find((v) => v.name === sortKey);
+  if (!matchingVar) return "-";
+
+  // check if this is a datetime field & date field
+  const dateTimeField = taskvariables.find(
+    (taskVar) => taskVar.key === sortKey && taskVar.type === "datetime"
+  );
+  const dateField = taskvariables.find(
+    (taskVar) => taskVar.key === sortKey && taskVar.type === "day"
+  )
+ 
+  if (dateTimeField) {
+    return matchingVar.value
+      ? HelperServices.getLocalDateAndTime(matchingVar.value)
+      : "-";
+  }
+
+  if (dateField) {
+  return matchingVar.value
+    ? new Date(matchingVar.value).toLocaleDateString("en-GB") // format date as dd/mm/yyyy
+        .replace(/\//g, "-") // convert `/` to `-`
+    : "-";
+}
+// return matchingVar.value ?? "-";
+
+if (typeof matchingVar.value === "boolean") {
+  return matchingVar.value ? "True" : "False"; 
+}
+
+return matchingVar.value ?? "-";
+  }
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
@@ -119,7 +147,7 @@ const TaskListTable = () => {
    * checking is column is sortable 
    * passing isFormVariable to avoid sorting of dynamic variables
   **/
-  const isSortableColumn = (columnKey, isFormVariable) => !isFormVariable && SORTABLE_COLUMNS.includes(columnKey);
+
 
 
   const handleColumnResize = (column: Column, newWidth: number) => {

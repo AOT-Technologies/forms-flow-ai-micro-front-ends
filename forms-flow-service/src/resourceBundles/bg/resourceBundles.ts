@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 //Bulgarian
 export const RESOURCE_BUNDLES_BG = {
+  "Unpublish This Form & Flow": "Отменете публикуването на тази форма и поток",
   "Dismiss": "Отхвърли",
   "You Cannot Delete This Form & Flow": "Не можете да изтриете този формуляр и процес.",
   "You cannot delete a form & flow that has submissions associated with it.": "Не можете да изтриете формуляр и процес, които имат свързани подадени данни.",
@@ -1227,10 +1228,10 @@ export const RESOURCE_BUNDLES_BG = {
   "Note": "Забележка",
   "Stay in the Editor": "Останете в редактора",
   "Discard Changes and Leave the Page": "Отхвърлете промените и напуснете страницата",
-  "Confirm Unpublish": "Потвърдете оттеглянето на публикацията",
+  "By unpublishing this form & flow, you will make it unavailable for new submissions.": "С премахването на публикацията на тази форма и поток, те ще станат недостъпни за нови подавания.",
   "This form is currently live. To save changes to form edits, you need to unpublish it first. By Unpublishing this form, you will make it unavailable for new submissions to those who currently have access to it. You can republish the form after making your edits.": "Тази форма е в момента активна. За да запазите промените в редакциите на формата, трябва първо да оттеглите публикацията. С оттеглянето на публикацията, формата ще стане недостъпна за нови подавания за тези, които в момента имат достъп до нея. Можете да публикувате формата отново след редактирането.",
   "Unpublish and Edit This Form": "Оттеглете публикацията и редактирайте тази форма",
-  "Cancel, Keep This Form Unpublished": "Отказ, оставете тази форма непубликувана",
+  "Cancel, Keep This Form & Flow Published": "Отказ, оставете тази форма и поток публикувани",
   "Confirm Publish": "Потвърдете публикуването",
   "Publishing will save any unsaved changes and lock the entire form, including the layout and the flow. To perform any additional changes you will need to unpublish the form again.": "Публикуването ще запази всички незапазени промени и ще заключи цялата форма, включително оформлението и потока. За да направите допълнителни промени, ще трябва да премахнете публикацията на формата отново.",
   "Publish This Form": "Публикувайте тази форма",
