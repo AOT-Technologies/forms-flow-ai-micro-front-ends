@@ -12,6 +12,7 @@ import { isEqual, cloneDeep } from "lodash";
 import {
   resetTaskListParams,
   setBPMTaskListActivePage,
+  setBPMTaskLoader,
   setFilterListSortParams,
   setTaskListLimit,
 } from "../../actions/taskActions";
@@ -149,6 +150,27 @@ const TaskListTable = () => {
     return `${columnName}: ${cellValue}`;
   };
 
+  const sortableList = new Set(
+      [
+      "phoneNumber",
+      "checkbox",
+      "currency",
+      "radio",
+      "datetime",
+      "select",
+      "selectboxes",
+      "time",
+      "url",
+      "day",
+      "textfield",
+      "number",
+      "textarea",
+      "address",
+      "password",
+      "email",
+      "tags" 
+    ] 
+  )
   // Render Functions
   const renderHeaderCell = (
     column,
@@ -157,23 +179,23 @@ const TaskListTable = () => {
     currentResizingColumn,
     handleMouseDown
   ) => {
-    const isSortable = isSortableColumn(column.sortKey, column.isFormVariable);
     const isResizable = column.resizable && index < columnsLength - 1;
     const isResizing = currentResizingColumn?.sortKey === column.sortKey;
+    const isSortableHeader =["actions", "roles"].includes(column.sortKey) || !column.type ||  !sortableList.has(column.type);
 
     return (
       <>
         {column.name ? (
           <th
             key={`header-${column.sortKey ?? index}`}
-            className={`${isSortable ? "header-sortable" : ''}`}
+            className={!isSortableHeader? "header-sortable" : ""}
             style={{ 'minWidth': column.width, 'maxWidth': column.width }}
             data-testid={`column-header-${column.sortKey ?? "actions"}`}
           aria-label={`${t(column.name)} ${t("column")}${
-            isSortable ? ", " + t("sortable") : ""
+            !isSortableHeader ? ", " + t("sortable") : ""
               }`}
           >
-            {renderHeaderContent(column, isSortable)}
+            {renderHeaderContent(column)}
             {isResizable &&
               renderColumnResizer(column, isResizing, handleMouseDown, index)}
           </th>
@@ -182,10 +204,10 @@ const TaskListTable = () => {
             key={`header-${column.sortKey ?? index}`}
             data-testid={`column-header-${column.sortKey ?? "actions"}`}
           aria-label={`${t(column.name)} ${t("column")}${
-            isSortable ? ", " + t("sortable") : ""
+            !isSortableHeader ? ", " + t("sortable") : ""
               }`}
           >
-            {renderHeaderContent(column, isSortable)}
+            {renderHeaderContent(column)}
           </th>
         )}
 
@@ -193,17 +215,26 @@ const TaskListTable = () => {
       </>
     );
   };
-  const handleSort = (key) => {
+  const handleSort = (column) => {
+      dispatch(setBPMTaskLoader(true));
     const resetSortOrders = HelperServices.getResetSortOrders(
       optionSortBy.options
     );
+    const enabledSort = new Set ([
+      "applicationId",
+      "submitterName",
+      "formName"
+    ])
     const updatedFilterListSortParams = {
       ...resetSortOrders,
-      [key]: {
+      [column.sortKey]: {
         sortOrder:
-          filterListSortParams[key]?.sortOrder === "asc" ? "desc" : "asc",
+          filterListSortParams[column.sortKey]?.sortOrder === "asc" ? "desc" : "asc",
+          ...((column.isFormVariable || enabledSort.has(column.sortKey)) && {
+            type: column.type ,
+          })
       },
-      activeKey: key,
+      activeKey: column.sortKey,
     };
 
     dispatch(setFilterListSortParams(updatedFilterListSortParams));
@@ -212,13 +243,16 @@ const TaskListTable = () => {
       selectedAttributeFilter,
       updatedFilterListSortParams,
       dateRange,
-      isAssigned
+      isAssigned,
+      column.isFormVariable
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
   };
 
-  const renderHeaderContent = (column, isSortable) => {
-    if (!isSortable) {
+  const renderHeaderContent = (column) => {
+    //If the header is for the View button or the variable type is null, then there should be no sorting option for those columns.
+    if (["actions", "roles"].includes(column.sortKey) || !column.type || !sortableList.has(column.type))
+      {
       return (
         <span className="text">
           {t(column.name)}
@@ -231,7 +265,7 @@ const TaskListTable = () => {
         columnKey={column.sortKey}
         title={t(column.name)}
         currentSort={filterListSortParams}
-        handleSort={() => handleSort(column.sortKey)}
+        handleSort={() => handleSort(column)}
         dataTestId={`sort-header-${column.sortKey}`}
         ariaLabel={t("Sort by {{columnName}}", {
           columnName: t(column.name),
