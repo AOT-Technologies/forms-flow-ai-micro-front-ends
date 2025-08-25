@@ -68,8 +68,14 @@ const getCellValue = (column: Column, task: Task) => {
       }
     }
   }
-  //if the variable is dynamic
-  return variables.find((v) => v.name === sortKey)?.value ?? "-";
+ // if the variable is dynamic
+const dynamicValue = variables.find((v) => v.name === sortKey)?.value;
+
+if (typeof dynamicValue === "boolean") {
+  return dynamicValue ? "True" : "False"; 
+}
+
+return dynamicValue ?? "-";
 
 };
 
@@ -166,7 +172,6 @@ const TaskListTable = () => {
       "number",
       "textarea",
       "address",
-      "password",
       "email",
       "tags" 
     ] 

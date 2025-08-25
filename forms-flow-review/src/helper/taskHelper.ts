@@ -48,7 +48,6 @@ export const createReqPayload = (
     number:"Integer",
     textarea:"String",
     address:"String",
-    password:"String",
     email:"String",
     tags:"String"
   }; 
