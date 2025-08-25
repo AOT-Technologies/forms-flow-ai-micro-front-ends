@@ -84,7 +84,8 @@ const AnalyzeSubmissionList: React.FC = () => {
   const defaultSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.defaultFilter);
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
- const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
+  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
+  const [isFormBundle, setIsFormBundle] = useState(false);
 
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
@@ -183,6 +184,7 @@ useEffect (() => {
       setDropdownSelection(null);
       setSelectedSubmisionFilter(null);
     }
+    fetchFormData();
 },[dropdownSelection])
 
 
@@ -369,23 +371,25 @@ const {
   },[]);
 
   //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection
-  const fetchFormData = useCallback(() => {
-    if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
-      return;
-    }
-    setIsFormFetched(true);
-    fetchFormById(dropdownSelection)
+ const fetchFormData = useCallback(() => {
+  if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
+    return;
+  }
+  setIsFormFetched(true);
+  fetchFormById(dropdownSelection)
     .then((res) => {
       setForm(res.data);
-      setLastFetchedFormId(dropdownSelection); // update the last fetched form ID to avoid duplicate api calls
+      setIsFormBundle(res.data?.isBundle ?? false); // Update local bundle state
+      setLastFetchedFormId(dropdownSelection);
     })
     .catch((err) => {
       console.error(err);
+      setIsFormBundle(false);
     })
     .finally(() => {
       setIsFormFetched(false);
     });
-  }, [dropdownSelection, lastFetchedFormId]);
+}, [dropdownSelection, lastFetchedFormId]);
   // taking data from submission response for mapping to the table
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
@@ -587,7 +591,6 @@ const renderRow = (submission: Submission) => {
   //will wait for the form data to be fetched before opening the modal
   const handleShowVariableModal = () => {
     setShowVariableModal(true);
-     fetchFormData(); // Fetch form data when the button is clicked
     handleManageFieldsClose();
     };
 
@@ -654,6 +657,7 @@ const renderRow = (submission: Submission) => {
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
+          isFormBundle={isFormBundle}
           hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0)}
           inactiveLabel="No Filters"
           activeLabel="Filters Active"

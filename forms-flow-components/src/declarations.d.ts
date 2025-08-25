@@ -48,4 +48,5 @@ declare module "@formsflow/service" {
 declare module "@formsflow/components" {
   export const ButtonDropdown : any;
   export const FormInput : any;
+  export const CustomInfo : any;
 }
