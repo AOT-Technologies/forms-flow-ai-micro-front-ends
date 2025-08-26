@@ -1585,5 +1585,6 @@ export const RESOURCE_BUNDLES_ZH = {
   "Template Description": "模板描述",
   "All Fields": "所有字段",
   "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "未找到表单。请点击右上角的“新表单和流程”按钮创建新表单。",
-   "Current user": "当前用户"
+   "Current user": "当前用户",
+  "Field selection is not available for bundles at this time.": "目前无法为捆绑包选择字段。"
 }
