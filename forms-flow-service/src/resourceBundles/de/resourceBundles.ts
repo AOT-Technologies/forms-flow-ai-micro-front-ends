@@ -1599,5 +1599,7 @@ export const RESOURCE_BUNDLES_DE = {
   "All Fields": "Alle Felder",
   "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "Es wurden keine Formulare gefunden. Erstellen Sie ein neues Formular, indem Sie oben rechts auf die Schaltfläche „Neues Formular & Ablauf“ klicken.",
   "Current user": "Aktueller Benutzer",
-  "Field selection is not available for bundles at this time.": "Die Feldauswahl ist für Bundles derzeit nicht verfügbar."
+  "Field selection is not available for bundles at this time.": "Die Feldauswahl ist für Bundles derzeit nicht verfügbar.",
+  "Owner and specific roles": "Eigentümer und bestimmte Rollen",
+  "Only owner": "Nur Eigentümer"
 }
