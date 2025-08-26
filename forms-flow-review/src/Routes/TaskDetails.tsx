@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { textTruncate } from "../helper/helper.js";
+import {fetchTaskVariables, executeRule} from "../api/services/filterServices"
+import BundleTaskForm from "../components/BundleTaskForm";
 import {
   getBPMTaskDetail,
   getBPMGroups,
@@ -29,6 +31,9 @@ import {
   setSelectedTaskID,
   setAppHistoryLoading,
   setTaskDetailsLoading,
+  setBundleSelectedForms,
+  setBundleLoading,
+  setBundleErrors,
   } from "../actions/taskActions";
 import { getFormioRoleIds } from "../api/services/userSrvices";
 import {
@@ -49,6 +54,10 @@ const TaskDetails = () => {
   const dispatch = useDispatch();
   const {viewTaskHistory} = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
+    formId: "",
+    submissionId: "",
+  });
   // Redux State Selectors
   const tenantKey = useSelector(
     (state: any) => state.tenants?.tenantData?.key
@@ -58,6 +67,7 @@ const TaskDetails = () => {
   const taskFormSubmissionReload = useSelector(
     (state: any) => state.task.taskFormSubmissionReload
   );
+  const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
 
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
@@ -77,6 +87,42 @@ const TaskDetails = () => {
       console.log("task test",task);
     }, [task]);
 
+    useEffect(() => {
+      if (task?.formType === "bundle") {
+        Formio.clearCache();
+        dispatch(resetFormData("form"));
+        setBundleLoading(false);
+    
+        const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
+        setBundleFormData({ formId, submissionId });
+    
+        fetchTaskVariables(task?.formId)
+          .then((res) => {
+            executeRule(
+              {
+                submissionType: "fetch",
+                formId: formId,
+                submissionId: submissionId,
+              },
+              res.data.id
+            )
+              .then((res: { data: unknown }) => {
+                dispatch(setBundleSelectedForms(res.data));
+              })
+              .catch((err: unknown) => {
+                setBundleErrors(String(err));
+              })
+              .finally(() => {
+                setBundleLoading(false);
+              });
+          });
+    
+        return () => {
+          dispatch(setBundleSelectedForms([]));
+        };
+      }
+    }, [task?.formType, task?.formId]);
+    
 
   // Set selected task ID on mount
   useEffect(() => {
@@ -142,18 +188,19 @@ const TaskDetails = () => {
   );
 
   useEffect(() => {
-    if (task?.formUrl) {
+    if (task?.formUrl && task?.formType !== "bundle") {
       getFormSubmissionData(task.formUrl);
     }
-  }, [task?.formUrl, getFormSubmissionData]);
-
+  }, [task?.formUrl, task?.formType, getFormSubmissionData]);
+ 
   useEffect(() => {
-    if (task?.formUrl && taskFormSubmissionReload) {
+    if (task?.formUrl && taskFormSubmissionReload && task?.formType !== "bundle") {
       dispatch(setFormSubmissionLoading(false));
       getFormSubmissionData(task.formUrl);
     }
   }, [
     task?.formUrl,
+    task?.formType,
     taskFormSubmissionReload,
     getFormSubmissionData,
     dispatch,
@@ -245,11 +292,16 @@ const TaskDetails = () => {
 
 
       <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
-        <TaskForm
-          currentUser={currentUser}
-          onFormSubmit={onFormSubmitCallback}
-          onCustomEvent={onCustomEventCallBack}
-        />
+      {task?.formType === "bundle" && selectedForms?.length ? <BundleTaskForm
+         bundleId={task?.formId}
+         currentUser={currentUser}
+         onFormSubmit={onFormSubmitCallback}
+         bundleFormData={bundleFormData}
+       /> :  <TaskForm
+       currentUser={currentUser}
+       onFormSubmit={onFormSubmitCallback}
+       onCustomEvent={onCustomEventCallBack}
+     /> }
       </div>
     </>
   );

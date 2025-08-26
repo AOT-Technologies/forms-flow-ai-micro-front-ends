@@ -1,3 +1,4 @@
+import { useDispatch } from "react-redux";
 import ACTION_CONSTANTS from "./actionConstants";
 
 export const setTasks = (data: any) => ({
@@ -284,3 +285,49 @@ export const setTaskDetailsLoading = (data) =>({
   type: ACTION_CONSTANTS.SET_TASK_DETAILS_LOADING,
   payload: data,
 })
+
+//===== Bundle Actions  ==>
+
+export const setBundleSelectedForms = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.BUNDLE_SELECTED_FORMS,
+    payload: data,
+  });
+};
+
+export const setBundleLoading = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.BUNDLE_LOADING,
+    payload: data,
+  });
+};
+
+export const setBundleErrors = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.BUNDLE_ERROR,
+    payload: data,
+  });
+};
+
+export const clearFormError = (name) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.FORM_CLEAR_ERROR,
+    name,
+  });
+};
+
+export const setBundleSubmissionData = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.BUNDLE_FORM_SUBMISSION,
+    payload: data,
+  });
+};
+
+export const setFormFailureErrorData = (name, error) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.FORM_FAILURE,
+    payload: {name, error}
+  });
+};
+
+
