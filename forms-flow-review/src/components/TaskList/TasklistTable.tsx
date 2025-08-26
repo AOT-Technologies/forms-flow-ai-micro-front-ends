@@ -44,33 +44,8 @@ interface Task {
   };
 }
 
-const getCellValue = (column: Column, task: Task) => {
-  const { sortKey } = column;
-  const { name: taskName, created, _embedded } = task ?? {};
-  const variables = _embedded?.variable ?? [];
-  const candidateGroups = _embedded?.candidateGroups ?? [];
 
-  if (column.sortKey === "applicationId") {
-    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
-  }
-  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
-  if(!column.isFormVariable){
-    switch (sortKey) {
-      case "name":
-        return taskName ?? "-";
-      case "created":
-        return created ? HelperServices.getLocaldate(created) : "N/A";
-      case "assignee":
-        return <TaskAssigneeManager task={task} />;
-      case "roles": {
-        return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
-      }
-    }
-  }
-  //if the variable is dynamic
-  return variables.find((v) => v.name === sortKey)?.value ?? "-";
 
-};
 
 const TaskListTable = () => {
   const { t } = useTranslation();
@@ -93,6 +68,58 @@ const TaskListTable = () => {
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const taskvariables = selectedFilter?.variables ?? [];
+  const getCellValue = (column: Column, task: Task) => {
+  const { sortKey } = column;
+  const { name: taskName, created, _embedded } = task ?? {};
+  const variables = _embedded?.variable ?? [];
+  const candidateGroups = _embedded?.candidateGroups ?? [];
+
+  if (column.sortKey === "applicationId") {
+    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
+  }
+
+  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
+  if (!column.isFormVariable) {
+    switch (sortKey) {
+      case "name":
+        return taskName ?? "-";
+      case "created":
+        return created ? HelperServices.getLocaldate(created) : "N/A";
+      case "assignee":
+        return <TaskAssigneeManager task={task} />;
+      case "roles": {
+        return candidateGroups.length > 0
+          ? candidateGroups[0]?.groupId ?? "-"
+          : "-";
+      }
+    }
+  }
+
+  const matchingVar = variables.find((v) => v.name === sortKey);
+  if (!matchingVar) return "-";
+
+  // check if this is a datetime field & date field
+  const dateTimeField = taskvariables.find(
+    (taskVar) => taskVar.key === sortKey && taskVar.type === "datetime"
+  );
+  const dateField = taskvariables.find(
+    (taskVar) => taskVar.key === sortKey && taskVar.type === "day"
+  )
+ 
+  if (dateTimeField) {
+    return matchingVar.value
+      ? HelperServices.getLocalDateAndTime(matchingVar.value)
+      : "-";
+  }
+
+  if (dateField) {
+  return matchingVar.value
+    ? new Date(matchingVar.value).toLocaleDateString("en-GB") // format date as dd/mm/yyyy
+        .replace(/\//g, "-") // convert `/` to `-`
+    : "-";
+}
+return matchingVar.value ?? "-";
+  }
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
