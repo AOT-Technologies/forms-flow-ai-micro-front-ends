@@ -1039,3 +1039,7 @@ $white-color: var(--ff-white);
   white-space: nowrap;
   display: block; 
 }
+//bundle specific
+.bundle-table-body{
+  max-height: 75vh;
+}
