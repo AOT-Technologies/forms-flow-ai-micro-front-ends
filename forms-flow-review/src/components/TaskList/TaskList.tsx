@@ -35,9 +35,10 @@ import TaskListTable from "./TasklistTable";
 import { HelperServices } from "@formsflow/service";
 import AttributeFilterDropdown from "./AttributeFilterDropdown";
 import { createReqPayload } from "../../helper/taskHelper";
-import { optionSortBy } from "../../helper/tableHelper";
+import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
+import { sortableList } from "../constants/taskConstants";
 
 const TaskList = () => {
   const dispatch = useDispatch();
@@ -60,6 +61,7 @@ const TaskList = () => {
   const { viewTasks,viewFilters } = userRoles()
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
+  const taskvariables = selectedFilter?.variables ?? [];
  
   //inital data loading
   const initialDataLoading = async () => {
@@ -120,8 +122,11 @@ const TaskList = () => {
    * If selectedFilter is not null, create payload using selectedFilter
    * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
    */
-
   let payload = null;
+
+
+  //this can be filtered from the taskVariable with its type . getting mismatch of sortkey and sortablelist
+  const isFormVariable = sortableList.has(sortData?.activeKey);
 
   if (filterCached) {
     payload = lastReqPayload;
@@ -132,7 +137,8 @@ const TaskList = () => {
       selectedAttributeFilter,
       sortData || filterListSortParams,
       newDateRange || dateRange,
-      isAssigned
+      isAssigned,
+      isFormVariable
     );  
   }
 
@@ -159,10 +165,14 @@ const TaskList = () => {
     const resetSortOrders = HelperServices.getResetSortOrders(
       optionSortBy.options
     );
+  const isFormVariable = sortableList.has(selectedSortOption);
     const updatedData = {
       ...resetSortOrders,
       activeKey: selectedSortOption,
-      [selectedSortOption]: { sortOrder: selectedSortOrder },
+      [selectedSortOption]: { sortOrder: selectedSortOrder ,
+        ...(isFormVariable  && {
+        type: taskvariables.find(item => item.key === selectedSortOption)?.type,
+      })  },
     };
     dispatch(setFilterListSortParams(updatedData));
     setShowSortModal(false);
@@ -216,6 +226,20 @@ const TaskList = () => {
   useEffect(() => {
     fetchTaskListData();
   }, [isAssigned, activePage, limit]);
+
+
+  const optionSortByForFilterModal = ()=>{ 
+    const dynamicColumns = buildDynamicColumns(taskvariables); 
+    return [
+      ...optionSortBy.options,
+      ...dynamicColumns.map((column)=>{ 
+        return { 
+        value:column.sortKey,
+        label:column.name
+        }
+      })
+    ]
+  }
   return (
     <>
         <div className="table-bar">
@@ -271,7 +295,7 @@ const TaskList = () => {
                   filterListSortParams?.[filterListSortParams?.activeKey]
                     ?.sortOrder ?? "asc"
                 }
-                optionSortBy={optionSortBy.options}
+                optionSortBy={optionSortByForFilterModal()}
                 filterDataTestId="task-list-filter"
                 filterAriaLabel={t("Filter the task list")}
                 refreshDataTestId="task-list-refresh"
