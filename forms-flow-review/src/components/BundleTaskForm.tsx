@@ -17,13 +17,10 @@ import { CUSTOM_SUBMISSION_ENABLE } from "../constants";
 import Loading from "./Loading";
 
 interface TaskFormProps extends PropsFromRedux {
-  bundleId: string;
   currentUser: string;
   bundleFormData: { formId: string; submissionId: string };
   onChange?: (event: any) => void;
   onFormSubmit?: (submission: any) => void;
-  onCustomEvent?: (event: any) => void;
-  
 }
 
 const BundleTaskForm: React.FC<TaskFormProps> = ({
@@ -39,7 +36,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
   const [formStep, setFormStep] = useState(0);
   const [getFormLoading, setGetFormLoading] = useState(false);
   const [form, setForm] = useState<any>({});
-  const [cacheSubmission, setCacheSubmissions] = useState<any>({});
+  const [cacheSubmissions, setCacheSubmissions] = useState<any>({});
   const [formCache, setFormCache] = useState<any>({});
   const [submission, setSubmission] = useState<any>(null);
   const bundleLoading = useSelector((state: any) => state.task.bundleLoading);
@@ -75,7 +72,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
     setGetFormLoading(true);
 
     const { formId } = selectedForms[formStep];
-    const cachedData = cacheSubmission[formId];
+    const cachedData = cacheSubmissions[formId];
     const readOnlyOrHasSubmissionId = isReadOnly || bundleFormData?.submissionId;
 
     try {

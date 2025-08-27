@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import ACTION_CONSTANTS from "./actionConstants";
 
 export const setTasks = (data: any) => ({

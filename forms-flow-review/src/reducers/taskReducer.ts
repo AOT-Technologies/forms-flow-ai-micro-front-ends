@@ -1,7 +1,6 @@
  
 import ACTION_CONSTANTS from "../actions/actionConstants";
 import { StorageService } from "@formsflow/service";
-import { setBundleLoading } from "../actions/taskActions";
 
 const initialState = {
   isTaskListLoading: true,

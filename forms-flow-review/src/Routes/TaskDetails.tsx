@@ -110,7 +110,7 @@ const TaskDetails = () => {
                 dispatch(setBundleSelectedForms(res.data));
               })
               .catch((err: unknown) => {
-                setBundleErrors(String(err));
+                setBundleErrors(err);
               })
               .finally(() => {
                 setBundleLoading(false);
