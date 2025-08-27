@@ -1090,5 +1090,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Template Description": "Template Description",
   "All Fields": "All Fields",
   "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.",
-  "Current user": "Current user"
+  "Current user": "Current user",
+  "Field selection is not available for bundles at this time.": "Field selection is not available for bundles at this time.",
+  "Owner and specific roles": "Owner and specific roles",
+  "Only owner": "Only owner"
 }

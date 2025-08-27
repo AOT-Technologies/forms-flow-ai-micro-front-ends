@@ -1090,5 +1090,8 @@ export const RESOURCE_BUNDLES_ES = {
   "Template Description": "Descripción de la plantilla",
   "All Fields": "Todos los campos",
   "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "No se han encontrado formularios. Cree uno nuevo haciendo clic en el botón \"Nuevo formulario y flujo\" en la parte superior derecha.",
-  "Current user": "Usuario actual"
+  "Current user": "Usuario actual",
+  "Field selection is not available for bundles at this time.": "La selección de campos no está disponible para paquetes en este momento.",
+  "Owner and specific roles": "Propietario y roles específicos",
+  "Only owner": "Solo propietario"
 }

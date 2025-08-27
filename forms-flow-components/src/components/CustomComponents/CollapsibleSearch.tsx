@@ -3,11 +3,14 @@ import { AngleRightIcon, AngleLeftIcon, PencilIcon } from "../SvgIcons";
 import { useTranslation } from "react-i18next";
 import { ButtonDropdown, FormInput } from "@formsflow/components";
 import { CustomButton } from "./Button";
+import { CustomInfo } from "./CustomInfo";
 
 interface FormItem {
   formId: string;
   formName: string;
   parentFormId: string;
+  formType: string;
+  status: string;
 }
 interface InputField {
   id: string;
@@ -87,6 +90,9 @@ const handleSelection = (label: string) => setSelectedItem(label);
   const hasAnyInputInFields = inputFields?.some((field) => field.value?.trim() !== "");
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
   
+  // Find the selected form to get its formType
+  const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
+  const selectedFormType = selectedForm?.formType;
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -216,7 +222,15 @@ const DropdownItems = [
                 />
               </div>
             ))}
-            {dropdownSelection && (
+            {dropdownSelection && selectedFormType === "bundle" ? (
+              <div className="panel-width">
+                <CustomInfo
+                  heading="Note"
+                  content={t("Field selection is not available for bundles at this time.")}
+                  dataTestId="bundle-note-section"
+                />
+              </div>
+            ) :
               <div className="panel-width">
                 <CustomButton
                   secondary
@@ -228,7 +242,7 @@ const DropdownItems = [
                   ariaLabel="Manage fields" 
                 />
               </div>
-            )}
+           }
           </div>
           <div className="search-clear">
 
