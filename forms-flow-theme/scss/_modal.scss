@@ -118,6 +118,9 @@ $lineThin: 1px;
         & > * {
           margin: 0;
         }
+        &.bundle-select-form {
+          justify-content: space-between !important;
+        }
       }
 
       .modal-header {
@@ -1629,3 +1632,10 @@ $lineThin: 1px;
   left: 50%;
 }
 }
+
+//bundle specific
+.form-list-modal-header{
+  padding: var(--spacer-200) var(--spacer-250) !important;
+}
+
+

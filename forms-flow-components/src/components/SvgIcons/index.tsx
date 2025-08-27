@@ -662,6 +662,7 @@ export const SortIcon = ({ dataTestId, color = grayColor, ...props }) => (
   >
     <path
       d="M8 15.5L8 1.5M8 1.5L13 5.5M8 1.5L3 5.5"
+      style={{ stroke: color }}
     />
   </svg>
 );
