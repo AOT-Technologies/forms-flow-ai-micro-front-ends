@@ -31,7 +31,7 @@ export const StaticResources = [
     'user'
   ];
 
-  export const FormTypes = ["12Hour", "24Hour", "VI"];
+  export const FormTypes = ["12Hour", "24Hour", "VI", "MV6020"];
 
   export const TableMetadataMapping = Object.freeze({
     formList: { metadataTable: "formListMetaData", dataKey: "forms" },
