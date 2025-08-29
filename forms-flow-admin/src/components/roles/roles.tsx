@@ -450,7 +450,12 @@ const Roles = React.memo((props: any) => {
   );
   const showEditModal = () => (
     <div data-testid="edit-role-modal">
-      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} size="sm">
+      <Modal
+        show={showEditRoleModal}
+        onHide={handleCloseEditRoleModal}
+        size="sm"
+        restoreFocus={false}
+      >
         <Modal.Header>
           <Modal.Title><p>{editCandidate.name}</p></Modal.Title>
           <div className="icon-close" onClick={handleCloseEditRoleModal} data-testid="role-modal-close">

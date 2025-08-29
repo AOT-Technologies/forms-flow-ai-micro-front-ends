@@ -145,6 +145,9 @@ export const fetchServiceTaskList = (
             }
             dispatch(setBPMTaskCount(taskCount.count));
             dispatch(setBPMTaskList(taskData));
+            if(taskData){
+              abortFlag = 1;
+            }
             dispatch(setVisibleAttributes(responseData[1]));
             done(null, taskData);
           }
