@@ -492,11 +492,16 @@ return (
       const matchingField = currentFields.find(
         (col) => col.key === key
       );
-      const value =
-        backendKey === "created" ? HelperServices?.getLocalDateAndTime(
-          rawValue
-        ) : matchingField?.type === "datetime" ?
-          HelperServices.getLocalDateAndTime(rawValue) : rawValue;
+      const value = (() => {
+        if (backendKey === "created") {
+          return HelperServices?.getLocalDateAndTime(rawValue);
+        }
+        if (matchingField?.type === "datetime") {
+          return HelperServices.getLocalDateAndTime(rawValue);
+        }
+        return rawValue;
+      })();
+
 
       return customTdValue(value, index, submission.id);
     })}
