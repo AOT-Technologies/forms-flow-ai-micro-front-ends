@@ -393,11 +393,13 @@ const {
 
   // Sort Handler
 const handleSort = useCallback((key: string) => {
+const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
+
   const currentOrder = sortParams[key]?.sortOrder || "asc";
   const newOrder = currentOrder === "asc" ? "desc" : "asc";
 
   const updatedSort = {
-    ...sortParams,
+    ...resetSortOrders,
     [key]: { sortOrder: newOrder },
     activeKey: key,
   };
@@ -428,14 +430,14 @@ const handleSort = useCallback((key: string) => {
     const resetSortOrders = HelperServices.getResetSortOrders(
       optionSortBy.options
     );
-    const updatedData = {
-      ...resetSortOrders,
-      activeKey: selectedSortOption,
-      [selectedSortOption]: { sortOrder: selectedSortOrder },
-    };
-    dispatch(setAnalyzeSubmissionSort(updatedData));
-    setShowSortModal(false);
+  const updatedData = {
+    ...resetSortOrders,
+    activeKey: selectedSortOption,
+    [selectedSortOption]: { sortOrder: selectedSortOrder },
   };
+  dispatch(setAnalyzeSubmissionSort(updatedData));
+  setShowSortModal(false);
+};
 
   const handlerefresh = () => {
     refetch();
