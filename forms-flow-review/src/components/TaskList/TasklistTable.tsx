@@ -25,6 +25,7 @@ import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
 import Loading from "../Loading/Loading";
+import { sortableList } from "../constants/taskConstants";
 interface Column {
   name: string;
   width: number;
@@ -184,26 +185,7 @@ return matchingVar.value ?? "-";
     return `${columnName}: ${cellValue}`;
   };
 
-  const sortableList = new Set(
-      [
-      "phoneNumber",
-      "checkbox",
-      "currency",
-      "radio",
-      "datetime",
-      "select",
-      "selectboxes",
-      "time",
-      "url",
-      "day",
-      "textfield",
-      "number",
-      "textarea",
-      "address",
-      "email",
-      "tags" 
-    ] 
-  )
+
   // Render Functions
   const renderHeaderCell = (
     column,
