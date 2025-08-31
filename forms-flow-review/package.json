@@ -40,7 +40,6 @@
     "prettier": "^2.3.2",
     "pretty-quick": "^3.1.1",
     "react": "^17.0.2",
-    "react-bootstrap": "^1.6.0",
     "react-dom": "^17.0.2",
     "react-i18next": "^12.3.1",
     "react-redux": "^7.2.8",
@@ -72,6 +71,7 @@
     "i18next": "^21.6.16",
     "i18next-browser-languagedetector": "^8.0.4",
     "lodash": "^4.17.21",
+    "react-bootstrap": "^2.10.6",
     "redux-logger": "^3.0.6",
     "single-spa": "^5.9.3",
     "single-spa-react": "^4.3.1",
@@ -79,7 +79,6 @@
   },
   "peerDependencies": {
     "react": "^17.0.2",
-    "react-bootstrap": "^1.6.0",
     "react-dom": "^17.0.2",
     "react-i18next": "^12.1.4",
     "react-redux": "^7.2.8",
