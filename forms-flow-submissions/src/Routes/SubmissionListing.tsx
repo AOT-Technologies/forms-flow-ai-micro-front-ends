@@ -415,10 +415,20 @@ const handleSort = useCallback((key: string) => {
     dispatch(setAnalyzeSubmissionLimit(newLimit));
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
- const customTdValue = (value, index, submissionId) => {
+ const customTdValue = (value, index, submissionId, fieldKey) => {
+  // Remove tenant name from currentUserRoles when multitenancy is enabled
+  let displayValue = value;
+  if (fieldKey === "currentUserRoles" && MULTITENANCY_ENABLED && typeof value === "string") {
+    // Extract tenant key from localStorage or Redux state
+    const tenantKey = localStorage.getItem("tenantKey") || tenantId;
+    if (tenantKey) {
+      displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
+    }
+  }
+  
   return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`}
               className="custom-td">
-            <div className="text-overflow-ellipsis">{value}</div>
+            <div className="text-overflow-ellipsis">{displayValue}</div>
           </td>
  }
 
@@ -496,7 +506,7 @@ const renderRow = (submission: Submission) => {
                   rawValue
                 ) : rawValue;
 
-        return customTdValue(value, index, submission.id);
+        return customTdValue(value, index, submission.id, key);
       })}
 
       {/* Action column */}

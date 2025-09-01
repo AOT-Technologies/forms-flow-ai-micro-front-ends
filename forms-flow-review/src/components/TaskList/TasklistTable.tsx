@@ -23,6 +23,7 @@ import {
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
+import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
 interface Column {
   name: string;
@@ -88,9 +89,10 @@ const TaskListTable = () => {
       case "assignee":
         return <TaskAssigneeManager task={task} />;
       case "roles": {
-        return candidateGroups.length > 0
+        const roleValue = candidateGroups.length > 0
           ? candidateGroups[0]?.groupId ?? "-"
           : "-";
+        return removeTenantKey(roleValue, tenantKey, MULTITENANCY_ENABLED);
       }
     }
   }
