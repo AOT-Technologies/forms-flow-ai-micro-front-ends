@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useTranslation } from "react-i18next";
 import { CloseIcon, CustomSearch, CustomButton } from "@formsflow/components";
-// import { LoadingIcon } from "@formsflow/components";
 import { Form } from "@aot-technologies/formio-react";
 import {  fetchFormById } from "../api/services/filterServices";
 interface FormSelectionModalProps {
@@ -29,14 +28,22 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     useEffect(() => {
       handleFormNameSearch();
     }, [searchFormName]);
+
     useEffect(() => {
-       if(forms.length){
-         setFormNames({
-          data: forms.map((i) => ({ formName: i.formName, formId: i.formId })),
+      if (forms.length) {
+        setFormNames({
+          data: forms
+            .filter((i) => i.formType === "form") 
+            .map((i) => ({
+              formName: i.formName,
+              formId: i.formId,
+              formType: i.formType,
+            })),
           isLoading: false,
         });
-       }
-    }, [forms.length]);
+      }
+    }, [forms.length, forms]);
+    
 
     useEffect (()=>{
       if(formNames.data.length > 0) {
@@ -47,18 +54,24 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
       setLoadingForm(true);
       if (searchFormName?.trim()) {
         setFilteredFormNames(
-          formNames?.data.filter((i) =>
-            i.formName
-              .toLowerCase()
-              ?.includes(searchFormName?.trim()?.toLowerCase())
+          formNames?.data.filter(
+            (i) =>
+              i.formType === "form" && 
+              i.formName
+                .toLowerCase()
+                .includes(searchFormName.trim().toLowerCase())
           )
         );
+      } else {
+        // no search term → show all items with formType = "form"
+        setFilteredFormNames(formNames?.data.filter((i) => i.formType === "form"));
       }
+    
       setLoadingForm(false);
     };
     const handleClearSearch = () => {
       setSearchFormName("");
-      setFilteredFormNames(formNames.data);
+      setFilteredFormNames(formNames?.data.filter((i) => i.formType === "form"));
     };
     const getFormOptions = () => {
       return searchFormName ? filteredFormNames : formNames.data;
@@ -139,7 +152,6 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             <div className="preview">
               {loading ? (
                 <div className="form-selection-spinner"></div>
-                // <LoadingIcon />
               ) : (
                 <Form
                   form={form}
