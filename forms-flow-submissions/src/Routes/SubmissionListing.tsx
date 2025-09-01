@@ -243,6 +243,10 @@ const initialInputFields = useMemo(() => {
 
 
 useEffect(() => {
+  // persist previously searched fields
+    if (Object.keys(searchFieldValues).length > 0) {
+    handleFieldSearch(searchFieldValues); 
+  };
   fetchSubmissionList()
     .then((res) => {
       const { filters = [], defaultSubmissionsFilter } = res.data || {};
