@@ -12,6 +12,7 @@ import { isEqual, cloneDeep } from "lodash";
 import {
   resetTaskListParams,
   setBPMTaskListActivePage,
+  setBPMTaskLoader,
   setFilterListSortParams,
   setTaskListLimit,
 } from "../../actions/taskActions";
@@ -25,6 +26,7 @@ import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
+import { sortableList } from "../constants/taskConstants";
 interface Column {
   name: string;
   width: number;
@@ -69,6 +71,7 @@ const TaskListTable = () => {
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const taskvariables = selectedFilter?.variables ?? [];
+
   const getCellValue = (column: Column, task: Task) => {
   const { sortKey } = column;
   const { name: taskName, created, _embedded } = task ?? {};
@@ -120,6 +123,12 @@ const TaskListTable = () => {
         .replace(/\//g, "-") // convert `/` to `-`
     : "-";
 }
+// return matchingVar.value ?? "-";
+
+if (typeof matchingVar.value === "boolean") {
+  return matchingVar.value ? "True" : "False"; 
+}
+
 return matchingVar.value ?? "-";
   }
   const redirectUrl = useRef(
@@ -141,7 +150,7 @@ return matchingVar.value ?? "-";
    * checking is column is sortable 
    * passing isFormVariable to avoid sorting of dynamic variables
   **/
-  const isSortableColumn = (columnKey, isFormVariable) => !isFormVariable && SORTABLE_COLUMNS.includes(columnKey);
+
 
 
   const handleColumnResize = (column: Column, newWidth: number) => {
@@ -178,6 +187,7 @@ return matchingVar.value ?? "-";
     return `${columnName}: ${cellValue}`;
   };
 
+
   // Render Functions
   const renderHeaderCell = (
     column,
@@ -186,23 +196,23 @@ return matchingVar.value ?? "-";
     currentResizingColumn,
     handleMouseDown
   ) => {
-    const isSortable = isSortableColumn(column.sortKey, column.isFormVariable);
     const isResizable = column.resizable && index < columnsLength - 1;
     const isResizing = currentResizingColumn?.sortKey === column.sortKey;
+    const isSortableHeader =["actions", "roles"].includes(column.sortKey) || !column.type ||  !sortableList.has(column.type);
 
     return (
       <>
         {column.name ? (
           <th
             key={`header-${column.sortKey ?? index}`}
-            className={`${isSortable ? "header-sortable" : ''}`}
+            className={!isSortableHeader? "header-sortable" : ""}
             style={{ 'minWidth': column.width, 'maxWidth': column.width }}
             data-testid={`column-header-${column.sortKey ?? "actions"}`}
           aria-label={`${t(column.name)} ${t("column")}${
-            isSortable ? ", " + t("sortable") : ""
+            !isSortableHeader ? ", " + t("sortable") : ""
               }`}
           >
-            {renderHeaderContent(column, isSortable)}
+            {renderHeaderContent(column)}
             {isResizable &&
               renderColumnResizer(column, isResizing, handleMouseDown, index)}
           </th>
@@ -211,10 +221,10 @@ return matchingVar.value ?? "-";
             key={`header-${column.sortKey ?? index}`}
             data-testid={`column-header-${column.sortKey ?? "actions"}`}
           aria-label={`${t(column.name)} ${t("column")}${
-            isSortable ? ", " + t("sortable") : ""
+            !isSortableHeader ? ", " + t("sortable") : ""
               }`}
           >
-            {renderHeaderContent(column, isSortable)}
+            {renderHeaderContent(column)}
           </th>
         )}
 
@@ -222,17 +232,26 @@ return matchingVar.value ?? "-";
       </>
     );
   };
-  const handleSort = (key) => {
+  const handleSort = (column) => {
+      dispatch(setBPMTaskLoader(true));
     const resetSortOrders = HelperServices.getResetSortOrders(
       optionSortBy.options
     );
+    const enabledSort = new Set ([
+      "applicationId",
+      "submitterName",
+      "formName"
+    ])
     const updatedFilterListSortParams = {
       ...resetSortOrders,
-      [key]: {
+      [column.sortKey]: {
         sortOrder:
-          filterListSortParams[key]?.sortOrder === "asc" ? "desc" : "asc",
+          filterListSortParams[column.sortKey]?.sortOrder === "asc" ? "desc" : "asc",
+          ...((column.isFormVariable || enabledSort.has(column.sortKey)) && {
+            type: column.type ,
+          })
       },
-      activeKey: key,
+      activeKey: column.sortKey,
     };
 
     dispatch(setFilterListSortParams(updatedFilterListSortParams));
@@ -241,13 +260,16 @@ return matchingVar.value ?? "-";
       selectedAttributeFilter,
       updatedFilterListSortParams,
       dateRange,
-      isAssigned
+      isAssigned,
+      column.isFormVariable
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
   };
 
-  const renderHeaderContent = (column, isSortable) => {
-    if (!isSortable) {
+  const renderHeaderContent = (column) => {
+    //If the header is for the View button or the variable type is null, then there should be no sorting option for those columns.
+    if (["actions", "roles"].includes(column.sortKey) || !column.type || !sortableList.has(column.type))
+      {
       return (
         <span className="text">
           {t(column.name)}
@@ -260,7 +282,7 @@ return matchingVar.value ?? "-";
         columnKey={column.sortKey}
         title={t(column.name)}
         currentSort={filterListSortParams}
-        handleSort={() => handleSort(column.sortKey)}
+        handleSort={() => handleSort(column)}
         dataTestId={`sort-header-${column.sortKey}`}
         ariaLabel={t("Sort by {{columnName}}", {
           columnName: t(column.name),

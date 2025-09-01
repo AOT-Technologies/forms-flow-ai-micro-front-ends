@@ -194,11 +194,10 @@ const handleFieldSearch = (filters: Record<string, string>) => {
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
 };
+// Use the current submissionFields state for calculation
+const currentFields = selectedSubmissionFilter?.variables ?? submissionFields;
 
 const initialInputFields = useMemo(() => {
-  // Use the current submissionFields state for calculation
-  const currentFields = selectedSubmissionFilter?.variables ?? submissionFields;
-
   //these pinned fileds should always come  first in sidebar
   const pinnedOrder = ["id", "created_by", "application_status"];
 
@@ -243,6 +242,10 @@ const initialInputFields = useMemo(() => {
 
 
 useEffect(() => {
+  // persist previously searched fields
+    if (Object.keys(searchFieldValues).length > 0) {
+    handleFieldSearch(searchFieldValues);
+  };
   fetchSubmissionList()
     .then((res) => {
       const { filters = [], defaultSubmissionsFilter } = res.data || {};
@@ -393,11 +396,13 @@ const {
 
   // Sort Handler
 const handleSort = useCallback((key: string) => {
+const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
+
   const currentOrder = sortParams[key]?.sortOrder || "asc";
   const newOrder = currentOrder === "asc" ? "desc" : "asc";
 
   const updatedSort = {
-    ...sortParams,
+    ...resetSortOrders,
     [key]: { sortOrder: newOrder },
     activeKey: key,
   };
@@ -425,7 +430,7 @@ const handleSort = useCallback((key: string) => {
       displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
     }
   }
-  
+
   return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`}
               className="custom-td">
             <div className="text-overflow-ellipsis">{displayValue}</div>
@@ -438,14 +443,14 @@ const handleSort = useCallback((key: string) => {
     const resetSortOrders = HelperServices.getResetSortOrders(
       optionSortBy.options
     );
-    const updatedData = {
-      ...resetSortOrders,
-      activeKey: selectedSortOption,
-      [selectedSortOption]: { sortOrder: selectedSortOrder },
-    };
-    dispatch(setAnalyzeSubmissionSort(updatedData));
-    setShowSortModal(false);
+  const updatedData = {
+    ...resetSortOrders,
+    activeKey: selectedSortOption,
+    [selectedSortOption]: { sortOrder: selectedSortOrder },
   };
+  dispatch(setAnalyzeSubmissionSort(updatedData));
+  setShowSortModal(false);
+};
 
   const handlerefresh = () => {
     refetch();
@@ -481,52 +486,60 @@ const renderRow = (submission: Submission) => {
     .filter((field) => field.isChecked)
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
-  return (
-    <tr key={submission.id}>
-      {fieldsToRender.map((field, index) => {
-        const { key } = field;
+return (
+  <tr key={submission.id}>
+    {fieldsToRender.map((field, index) => {
+      const { key } = field;
 
-        // Map form variable keys to backend keys
-        const fieldKeyMap: Record<string, string> = {
-          form_name: "formName",
-          created_by: "createdBy",
-          application_status: "applicationStatus",
-          created: "created",
-        };
+      // Map form variable keys to backend keys
+      const fieldKeyMap: Record<string, string> = {
+        form_name: "formName",
+        created_by: "createdBy",
+        application_status: "applicationStatus",
+        created: "created",
+      };
 
-        const backendKey = fieldKeyMap[key] ?? key;
+      const backendKey = fieldKeyMap[key] ?? key;
 
-        //  fallback to submission.data
-        const rawValue =
-          submission[backendKey as keyof Submission] ??
-          submission.data?.[backendKey];
+      //  fallback to submission.data
+      const rawValue =
+        submission[backendKey as keyof Submission] ??
+        submission.data?.[backendKey];
+      const matchingField = currentFields.find(
+        (col) => col.key === key
+      );
+      const value = (() => {
+        if (backendKey === "created") {
+          return HelperServices?.getLocalDateAndTime(rawValue);
+        }
+        if (matchingField?.type === "datetime") {
+          return HelperServices.getLocalDateAndTime(rawValue);
+        }
+        return rawValue;
+      })();
 
-        const value =
-          backendKey === "created" ? HelperServices?.getLocalDateAndTime(
-                  rawValue
-                ) : rawValue;
 
-        return customTdValue(value, index, submission.id, key);
-      })}
+      return customTdValue(value, index, submission.id, key);
+    })}
 
-      {/* Action column */}
-      <td key={`${submission.id}-action`}>
-        <div className="text-overflow-ellipsis">
-          <CustomButton
-            actionTable
-            label={t("View")}
-            onClick={() =>
-              dispatch(push(`${redirectUrl}submissions/${submission.id}`))
-            }
-            dataTestId={`view-submission-${submission.id}`}
-            ariaLabel={t("View details for submission {{taskName}}", {
-              taskName: submission.formName ?? t("unnamed"),
-            })}
-          />
-        </div>
-      </td>
-    </tr>
-  );
+    {/* Action column */}
+    <td key={`${submission.id}-action`}>
+      <div className="text-overflow-ellipsis">
+        <CustomButton
+          actionTable
+          label={t("View")}
+          onClick={() =>
+            dispatch(push(`${redirectUrl}submissions/${submission.id}`))
+          }
+          dataTestId={`view-submission-${submission.id}`}
+          ariaLabel={t("View details for submission {{taskName}}", {
+            taskName: submission.formName ?? t("unnamed"),
+          })}
+        />
+      </div>
+    </td>
+  </tr>
+);
 };
 
 

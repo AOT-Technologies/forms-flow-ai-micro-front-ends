@@ -337,7 +337,7 @@ const candidateOptions = useMemo(() => {
 };
 
 const isValidVariableType = (taskVar) => {
-  return taskVar.type !== "hidden" && taskVar.type !== "radio";
+  return taskVar.type !== "hidden" ;
 };
 
 const createVariableFromTask = (variable, baseIndex, isChecked = true) => ({

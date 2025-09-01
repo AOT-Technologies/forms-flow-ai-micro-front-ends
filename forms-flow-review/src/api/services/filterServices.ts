@@ -145,6 +145,9 @@ export const fetchServiceTaskList = (
             }
             dispatch(setBPMTaskCount(taskCount.count));
             dispatch(setBPMTaskList(taskData));
+            if(taskData){
+              abortFlag = 1;
+            }
             dispatch(setVisibleAttributes(responseData[1]));
             done(null, taskData);
           }
@@ -252,6 +255,11 @@ export const fetchTaskVariables = (formId) => {
   return RequestService.httpGETRequest(url);
 };
 
+export const executeRule = (submissionData, mapperId) => { 
+  const url = replaceUrl(API.BUNDLE_EXECUTE_RULE,"<mapper_id>", mapperId);
+  return RequestService.httpPOSTRequest(url, submissionData);
+};
+
 export const fetchAllForms = () => {
   //activeForms means published forms only : status = Active
   return RequestService.httpGETRequest(`${API.FORM}?activeForms=true`);
@@ -269,6 +277,21 @@ export const fetchFormById = (id) => {
       ...token,
     }
   );
+};
+
+export const fetchBundleSubmissionData = (bundleId,submissionId,formId) => {
+  let formioToken = sessionStorage.getItem("formioToken");
+  let token = formioToken ? { "x-jwt-token": formioToken } : {};
+  return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${bundleId}/submission/${submissionId}?formId=${formId}`, {}, "", false, {
+    ...token
+  });
+
+};
+
+export const getBundleCustomSubmissionData = (bundleId, submissionId, selectedFormId) =>{
+  const submissionUrl = replaceUrl(API.CUSTOM_SUBMISSION, "<form_id>", bundleId);
+  return  RequestService.
+  httpGETRequest(`${submissionUrl}/${submissionId}?formId=${selectedFormId}`, {});
 };
 
 
