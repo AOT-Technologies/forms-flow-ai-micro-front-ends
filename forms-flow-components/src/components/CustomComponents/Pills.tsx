@@ -29,7 +29,7 @@ export const CustomPill: React.FC<CustomPillProps> = ({
     <div>
   <Badge
     pill
-    variant={bg}
+    bg={bg}
     data-testid={dataTestId}
     aria-label={ariaLabel}
   >
