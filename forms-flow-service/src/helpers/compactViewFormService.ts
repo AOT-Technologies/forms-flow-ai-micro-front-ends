@@ -26,6 +26,9 @@ export const applyCompactFormStyles = () => {
     .col-form-label {
       padding-bottom: 0 !important;
     }
+    .choices__item.choices__item--selectable{
+      overflow: visible !important;
+    }
   `;
 };
 
