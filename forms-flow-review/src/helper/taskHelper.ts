@@ -15,7 +15,8 @@ export const createReqPayload = (
   selectedAttributeFilter,
   filterListSortParams,
   dateRange,
-  isAssigned
+  isAssigned,
+  isFormVariable=false
 ) => {
   const clonedFilter = cloneDeep(selectedFilter); 
   const {
@@ -30,11 +31,55 @@ export const createReqPayload = (
     assignee: attributeAssignee || clonedFilter?.criteria?.assignee,
   };
   // here we are taking the sorting from filterListsortparams instead of taking of inside the selectedFilter
-  const newFilter = {
-    sortBy: filterListSortParams?.activeKey,
-    sortOrder:
-      filterListSortParams?.[filterListSortParams?.activeKey]?.sortOrder,
-  };
+
+    //  Type mapping between Form.io and Camunda
+  const typeMapping = {
+    phoneNumber: "String",
+    checkbox: "Boolean",
+    currency: "Integer",
+    radio: "String",
+    datetime: "String",
+    select: "String",
+    selectboxes:"String",
+    time:"String",
+    url:"String",
+    day:"String",
+    textfield:"String",
+    number:"Integer",
+    textarea:"String",
+    address:"String",
+    email:"String",
+    tags:"String"
+  }; 
+
+// Adding sorting for these fields (not considered form variables)
+  const enabledSort = new Set ([
+    "applicationId",
+    "submitterName",
+    "formName"
+  ])
+
+  // Build sort filter
+  const newFilter = isFormVariable || enabledSort.has(filterListSortParams?.activeKey)
+    ? {
+        sortBy: "processVariable",
+        sortOrder: filterListSortParams?.[filterListSortParams?.activeKey]?.sortOrder,
+        parameters: {
+          variable: filterListSortParams?.activeKey, 
+          type:
+            typeMapping[
+              filterListSortParams?.[filterListSortParams?.activeKey]?.type
+            ] ||
+            filterListSortParams?.[filterListSortParams?.activeKey]?.type ||
+            null,
+        },
+      }
+    : {
+        sortBy: filterListSortParams?.activeKey,
+        sortOrder:
+          filterListSortParams?.[filterListSortParams?.activeKey]?.sortOrder,
+      };
+
   const date = buildDateRangePayload(dateRange);
   const updatedFilter = {
     ...clonedFilter,

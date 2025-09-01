@@ -50,7 +50,7 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
             return (
               <FormInput
                 name={item.key}
-                type={item.type}
+                type={item.type === "number" ? "number" : "text"}
                 label={t(item.label)}
                 ariaLabel={t(item.label)}
                 dataTestId={`${item.key}-attribute-input`}

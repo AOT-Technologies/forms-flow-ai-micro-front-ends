@@ -10,7 +10,8 @@ export const buildDynamicColumns = (taskvariables) => {
           sortKey: variable.name,
           isFormVariable:variable.isFormVariable,
           resizable: variable.name,
-          sortOrder: variable.sortOrder
+          sortOrder: variable.sortOrder,
+          type: variable.type ?? null 
         });
       }
       return acc;
