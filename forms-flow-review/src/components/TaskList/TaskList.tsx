@@ -35,9 +35,10 @@ import TaskListTable from "./TasklistTable";
 import { HelperServices } from "@formsflow/service";
 import AttributeFilterDropdown from "./AttributeFilterDropdown";
 import { createReqPayload } from "../../helper/taskHelper";
-import { optionSortBy } from "../../helper/tableHelper";
+import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
+import { sortableList } from "../constants/taskConstants";
 
 const TaskList = () => {
   const dispatch = useDispatch();
@@ -60,6 +61,7 @@ const TaskList = () => {
   const { viewTasks,viewFilters } = userRoles()
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
+  const taskvariables = selectedFilter?.variables ?? [];
  
   //inital data loading
   const initialDataLoading = async () => {
@@ -113,6 +115,7 @@ const TaskList = () => {
   newPage = null,
   newLimit = null,
   newDateRange = null,
+  selectedType = null
 } = {}) => {
   /**
    * We need to create payload for the task list
@@ -120,9 +123,10 @@ const TaskList = () => {
    * If selectedFilter is not null, create payload using selectedFilter
    * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
    */
-
   let payload = null;
 
+  // check if selectedType belongs to sortableList
+  const isFormVariable = selectedType ? sortableList.has(selectedType) : false;
   if (filterCached) {
     payload = lastReqPayload;
     dispatch(resetTaskListParams({ filterCached: false }));
@@ -132,7 +136,8 @@ const TaskList = () => {
       selectedAttributeFilter,
       sortData || filterListSortParams,
       newDateRange || dateRange,
-      isAssigned
+      isAssigned,
+      isFormVariable
     );  
   }
 
@@ -155,19 +160,30 @@ const TaskList = () => {
   };
 
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
-    // if need to reset the sort orders use this function
-    const resetSortOrders = HelperServices.getResetSortOrders(
-      optionSortBy.options
-    );
+    // reset the sort orders using helper function
+    const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
+  
+    // get the variable info first
+    const selectedVar = taskvariables.find(item => item.key === selectedSortOption);
+    const selectedType = selectedVar?.type;
+  
+    // check if it's a form variable
+    const isFormVariable = sortableList.has(selectedType);
+  
     const updatedData = {
       ...resetSortOrders,
       activeKey: selectedSortOption,
-      [selectedSortOption]: { sortOrder: selectedSortOrder },
+      [selectedSortOption]: {
+        sortOrder: selectedSortOrder,
+        ...(isFormVariable && { type: selectedType })
+      },
     };
+  
     dispatch(setFilterListSortParams(updatedData));
     setShowSortModal(false);
-    fetchTaskListData({ sortData: updatedData });
+    fetchTaskListData({ sortData: updatedData,selectedType  });
   };
+  
 
   const handleDateRangeChange = (newDateRange) => {
     /**
@@ -216,6 +232,23 @@ const TaskList = () => {
   useEffect(() => {
     fetchTaskListData();
   }, [isAssigned, activePage, limit]);
+
+  const optionsForSortModal = () => {
+    const existingValues = new Set(optionSortBy.keys);  
+    const dynamicColumns = buildDynamicColumns(taskvariables);
+  
+    const filteredDynamicColumns = dynamicColumns
+      .filter(column =>
+      !existingValues.has(column.sortKey) && // filter out duplicates form sorting list 
+       sortableList.has(column.type))  // sorting enabled only for sortablelist items and optionSortBy
+      .map(column => ({
+        value: column.sortKey,
+        label: column.name,
+      }));
+  
+    return [...optionSortBy.options, ...filteredDynamicColumns];
+  };
+  
   return (
     <>
         <div className="table-bar">
@@ -271,7 +304,7 @@ const TaskList = () => {
                   filterListSortParams?.[filterListSortParams?.activeKey]
                     ?.sortOrder ?? "asc"
                 }
-                optionSortBy={optionSortBy.options}
+                optionSortBy={optionsForSortModal()}
                 filterDataTestId="task-list-filter"
                 filterAriaLabel={t("Filter the task list")}
                 refreshDataTestId="task-list-refresh"
