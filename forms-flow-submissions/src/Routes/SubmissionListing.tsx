@@ -214,22 +214,26 @@ const initialInputFields = useMemo(() => {
 
   ];
 
-  return sortedVars.map((item) => ({
+return sortedVars.map((item) => {
+  let placeholder = "";
+
+  if (item.type === "datetime") {
+    placeholder = "DD-MM-YYYY";
+  } else if (item.type === "day") {
+    placeholder = "DD/MM/YYYY";
+  } else if (item.type === "time") {
+    placeholder = "HH:MM";
+  }
+
+  return {
     id: item.key,
     name: item.key,
     type: "text",
     label: t(item.label),
     value: searchFieldValues[item.key] || "",
-    placeholder:
-    item.type === "datetime"
-      ? "DD-MM-YYYY"
-      : item.type === "day" 
-      ? "DD/MM/YYYY"
-      : item.type === "time"
-      ? "HH:MM"
-      : "",
-}
-  ));
+    placeholder,
+  };
+});
 }, [selectedSubmissionFilter, submissionFields, searchFieldValues]);
 
   useEffect(() => {
