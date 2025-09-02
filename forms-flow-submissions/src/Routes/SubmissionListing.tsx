@@ -220,7 +220,16 @@ const initialInputFields = useMemo(() => {
     type: "text",
     label: t(item.label),
     value: searchFieldValues[item.key] || "",
-  }));
+    placeholder:
+    item.type === "datetime"
+      ? "DD-MM-YYYY"
+      : item.type === "day" 
+      ? "DD/MM/YYYY"
+      : item.type === "time"
+      ? "HH:MM"
+      : "",
+}
+  ));
 }, [selectedSubmissionFilter, submissionFields, searchFieldValues]);
 
   useEffect(() => {
