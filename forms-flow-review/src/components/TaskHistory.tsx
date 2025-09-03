@@ -58,7 +58,7 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
     const lastEntryRef = useRef<HTMLDivElement>(null);
     const appHistory = useSelector((state: any) => state.task?.appHistory);
     const tenantKey = useSelector(
-      (state: any) => state.tenants?.tenantData?.tenantkey
+      (state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key
     );
     const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 

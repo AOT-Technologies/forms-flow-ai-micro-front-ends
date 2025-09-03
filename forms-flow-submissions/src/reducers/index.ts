@@ -7,7 +7,7 @@ import  applications from './applicationReducer';
 import customSubmission from './customSubmissionReducer';
 import taskAppHistory from './taskAppHistoryReducer';
 import process from './processReducer'
-
+import tenants from './tenantReducer';
 
 const createRootReducer = (history: History) =>
   combineReducers({
@@ -19,6 +19,7 @@ const createRootReducer = (history: History) =>
     customSubmission: customSubmission,
     form: form({ name: "form" }),
     process: process,
+    tenants: tenants,
   });
 
 export default createRootReducer;

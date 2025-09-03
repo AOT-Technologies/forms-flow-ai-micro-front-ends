@@ -16,7 +16,7 @@ import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
 import { CreateUser } from "../../services/users";
-import { TableFooter, CustomSearch } from "@formsflow/components";
+import { TableFooter, CustomSearch, CloseIcon } from "@formsflow/components";
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -376,7 +376,7 @@ const Users = React.memo((props: any) => {
         show={showSuccessModal}
         onHide={closeSuccessModal}
         className="overflow-hidden">
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title></Modal.Title>
         </Modal.Header>
         <Modal.Body className="modal-md d-flex align-items-center justify-content-center">
@@ -446,9 +446,12 @@ const Users = React.memo((props: any) => {
     </Button>
 
     {showInviteModal && (
-      <Modal show={showInviteModal} onHide={closeInviteModal}>
-        <Modal.Header closeButton>
+      <Modal show={showInviteModal} onHide={closeInviteModal} size="sm">
+        <Modal.Header>
           <Modal.Title><p>{t("Add Registered Users")}</p></Modal.Title>
+          <div className="icon-close" onClick={closeInviteModal} data-testid="role-modal-close">
+            <CloseIcon dataTestId="action-modal-close"/>
+          </div>
         </Modal.Header>
 
                   <Modal.Body>
