@@ -80,7 +80,7 @@ $white-color: var(--ff-white);
         @include textBaseHightlight($fontSmallest);
 
         display: flex;
-        flex-grow: 1;
+        flex-grow: 0.95;
       }
 
       .details {
@@ -128,7 +128,7 @@ $white-color: var(--ff-white);
           width: 100%;
 
           & > div {
-            flex: 1;
+            flex: 1;  
             width: unset;
           }
         }
