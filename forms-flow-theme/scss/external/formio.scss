@@ -27,14 +27,14 @@ $gray-dark: var(--ff-gray-dark);
   .formbuilder .formarea .breadcrumb li{
     margin-right: 5px ;
    }
-  .formbuilder .formarea .breadcrumb li .badge-primary{
-   background-color: $primary ;
+  .formbuilder .formarea .breadcrumb li .badge.bg-primary{
+   background-color: $primary !important;
   }
-  .formbuilder .formarea .breadcrumb li .badge-success{
-    background-color: $success;
+  .formbuilder .formarea .breadcrumb li .badge.bg-success{
+    background-color: $success !important;
   }
-   .formbuilder .formarea .breadcrumb li .badge-info{
-    background-color: $gray-dark;
+   .formbuilder .formarea .breadcrumb li .badge.bg-info{
+    background-color: $gray-dark !important;
   }
 
   // Settings button on hovering formio component
