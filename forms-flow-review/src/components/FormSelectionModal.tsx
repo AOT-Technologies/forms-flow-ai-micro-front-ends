@@ -33,7 +33,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
       if (forms.length) {
         setFormNames({
           data: forms
-            .filter((i) => i.formType === "form") 
+            .filter((i) => !i?.formType || i.formType === "form")
             .map((i) => ({
               formName: i.formName,
               formId: i.formId,
@@ -64,14 +64,18 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
         );
       } else {
         // no search term → show all items with formType = "form"
-        setFilteredFormNames(formNames?.data.filter((i) => i.formType === "form"));
+        setFilteredFormNames(
+          formNames?.data?.filter((i) => !i?.formType || i.formType === "form") || []
+        );        
       }
     
       setLoadingForm(false);
     };
     const handleClearSearch = () => {
       setSearchFormName("");
-      setFilteredFormNames(formNames?.data.filter((i) => i.formType === "form"));
+      setFilteredFormNames(
+        formNames?.data?.filter((i) => !i?.formType || i.formType === "form") || []
+      );      
     };
     const getFormOptions = () => {
       return searchFormName ? filteredFormNames : formNames.data;
