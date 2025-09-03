@@ -938,6 +938,63 @@ $lineThin: 1px;
 
   .variable-tab {
     gap: var(--spacer-150);
+    
+    // Support both old React Bootstrap v1.6.0 and new v2.10.6 structures
+    &.nav-tabs {
+      border-bottom: 1px solid var(--ff-gray-000) !important;
+      
+      // Old structure: direct anchor tags
+      a.nav-link {
+        @include textBaseHightlight($fontBase, $primary-color);
+        @include clickableFeedback1();
+        
+        padding: 0;
+        padding-bottom: $base;
+        margin: 0 !important;
+        margin-bottom: calc(0px - $lineThin) !important;
+        border: none !important;
+        border-bottom: $lineThick solid $transparent !important;
+        background: transparent !important;
+        
+        &:hover {
+          color: $primary-color;
+        }
+        
+        &.active {
+          color: $gray-darkest;
+          border-bottom: $lineThick solid $gray-darkest !important;
+        }
+      }
+      
+      // New structure: list items with button elements
+      li.nav-item {
+        display: flex;
+        
+        button.nav-link {
+          @include textBaseHightlight($fontBase, $primary-color);
+          @include clickableFeedback1();
+          
+          width: 100%;
+          text-align: left;
+          padding: 0;
+          padding-bottom: $base;
+          margin: 0 !important;
+          margin-bottom: calc(0px - $lineThin) !important;
+          border: none !important;
+          border-bottom: $lineThick solid $transparent !important;
+          background: transparent !important;
+          
+          &:hover {
+            color: $primary-color;
+          }
+          
+          &.active {
+            color: $gray-darkest;
+            border-bottom: $lineThick solid $gray-darkest !important;
+          }
+        }
+      }
+    }
   }
   
 
