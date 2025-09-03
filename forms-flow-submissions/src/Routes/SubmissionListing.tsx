@@ -214,13 +214,20 @@ const initialInputFields = useMemo(() => {
 
   ];
 
-  return sortedVars.map((item) => ({
-    id: item.key,
-    name: item.key,
-    type: "text",
-    label: t(item.label),
-    value: searchFieldValues[item.key] || "",
-  }));
+const placeholders: Record<string, string> = {
+datetime: "DD-MM-YYYY",
+day: "DD/MM/YYYY",
+time: "HH:MM",
+};
+
+return sortedVars.map((item) => ({
+id: item.key,
+name: item.key,
+type: "text",
+label: t(item.label),
+value: searchFieldValues[item.key] || "",
+placeholder: placeholders[item.type] || "",
+}));
 }, [selectedSubmissionFilter, submissionFields, searchFieldValues]);
 
   useEffect(() => {
