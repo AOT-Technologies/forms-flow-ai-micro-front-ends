@@ -11,6 +11,8 @@ import {
   BCBoundaries,
   BoundaryValidationResult
 } from './boundaryUtils';
+import { GeocodingService, createGeocodingConfig } from './geocodingUtils';
+import AddressSearch from './AddressSearch';
 
 // Fix for default markers in React-Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -27,6 +29,7 @@ interface MapModalProps {
   boundaries: BCBoundaries;
   initialCenter?: [number, number];
   mapProviderConfig?: MapProviderConfig;
+  componentSettings?: any;
 }
 
 // Component to handle map click events with boundary validation
@@ -103,13 +106,17 @@ const MapModal: React.FC<MapModalProps> = ({
   onLocationSelect,
   boundaries,
   initialCenter,
-  mapProviderConfig
+  mapProviderConfig,
+  componentSettings
 }) => {
   const mapRef = useRef<L.Map | null>(null);
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const [tileLayerOptions, setTileLayerOptions] = useState<TileLayerOptions | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
   const [boundaryViolation, setBoundaryViolation] = useState<BoundaryValidationResult | null>(null);
+  const [geocodingService, setGeocodingService] = useState<GeocodingService | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   // Calculate center point from boundaries if no initial center provided
   const center: [number, number] = initialCenter || getBoundariesCenter(boundaries);
@@ -130,10 +137,43 @@ const MapModal: React.FC<MapModalProps> = ({
     }
   }, [mapProviderConfig]);
 
-  // Handle location selection
+  // Initialize geocoding service
+  useEffect(() => {
+    try {
+      const geocodingConfig = createGeocodingConfig(componentSettings || {});
+      const service = new GeocodingService(geocodingConfig, boundaries);
+      setGeocodingService(service);
+    } catch (error) {
+      console.error('Error creating geocoding service:', error);
+      setGeocodingService(null);
+    }
+  }, [componentSettings, boundaries]);
+
+  // Handle location selection from map click
   const handleLocationSelect = (coordinates: { lat: number; lng: number }) => {
     setSelectedCoords(coordinates);
+    setSelectedAddress(null); // Clear address when selecting from map
     setBoundaryViolation(null); // Clear any previous boundary violation
+    setSearchError(null); // Clear any search errors
+  };
+
+  // Handle location selection from address search
+  const handleAddressLocationSelect = (coordinates: { lat: number; lng: number }, address?: string) => {
+    setSelectedCoords(coordinates);
+    setSelectedAddress(address || null);
+    setBoundaryViolation(null); // Clear any previous boundary violation
+    setSearchError(null); // Clear any search errors
+    
+    // Center map on selected location
+    if (mapRef.current) {
+      mapRef.current.setView([coordinates.lat, coordinates.lng], 15);
+    }
+  };
+
+  // Handle search errors
+  const handleSearchError = (error: string) => {
+    setSearchError(error);
+    setBoundaryViolation(null); // Clear boundary violations when showing search errors
   };
 
   // Handle boundary violation
@@ -153,7 +193,9 @@ const MapModal: React.FC<MapModalProps> = ({
   // Handle modal close
   const handleClose = () => {
     setSelectedCoords(null);
+    setSelectedAddress(null);
     setBoundaryViolation(null);
+    setSearchError(null);
     onClose();
   };
 
@@ -208,13 +250,29 @@ const MapModal: React.FC<MapModalProps> = ({
         
         <div className="map-modal-body">
           <div className="map-instructions">
-            Click anywhere within the highlighted area to select a location
+            Search for an address or click anywhere within the highlighted area to select a location
           </div>
+          
+          {geocodingService && (
+            <AddressSearch
+              geocodingService={geocodingService}
+              onLocationSelect={handleAddressLocationSelect}
+              onError={handleSearchError}
+              disabled={false}
+            />
+          )}
           
           {mapError && (
             <div className="map-error-message">
               <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
               {mapError}
+            </div>
+          )}
+
+          {searchError && (
+            <div className="map-error-message">
+              <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
+              {searchError}
             </div>
           )}
 
@@ -237,6 +295,9 @@ const MapModal: React.FC<MapModalProps> = ({
                 zoom={zoom}
                 style={{ height: '400px', width: '100%' }}
                 ref={mapRef}
+                dragging={true}
+                scrollWheelZoom={true}
+                zoomControl={true}
               >
                 <TileLayer
                   attribution={tileLayerOptions.attribution}
@@ -256,6 +317,11 @@ const MapModal: React.FC<MapModalProps> = ({
                     <Popup>
                       <div>
                         <strong>Selected Location</strong><br />
+                        {selectedAddress && (
+                          <>
+                            <strong>Address:</strong> {selectedAddress}<br />
+                          </>
+                        )}
                         Lat: {selectedCoords.lat.toFixed(6)}<br />
                         Lng: {selectedCoords.lng.toFixed(6)}
                       </div>
@@ -274,7 +340,13 @@ const MapModal: React.FC<MapModalProps> = ({
           {selectedCoords && (
             <div className="selected-location-info">
               <p>
-                <strong>Selected Coordinates:</strong><br />
+                <strong>Selected Location:</strong><br />
+                {selectedAddress && (
+                  <>
+                    <strong>Address:</strong> {selectedAddress}<br />
+                  </>
+                )}
+                <strong>Coordinates:</strong><br />
                 Latitude: {selectedCoords.lat.toFixed(6)}<br />
                 Longitude: {selectedCoords.lng.toFixed(6)}
               </p>

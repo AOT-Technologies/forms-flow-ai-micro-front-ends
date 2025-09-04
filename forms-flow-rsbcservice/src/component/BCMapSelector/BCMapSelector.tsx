@@ -180,6 +180,7 @@ export default class BCMapSelector extends ReactComponent {
           onLocationSelect={this.handleMapSelection}
           boundaries={boundaries}
           mapProviderConfig={mapProviderConfig}
+          componentSettings={this.component}
         />
       </div>
     );

@@ -78,6 +78,254 @@
     text-align: center;
   }
   
+  // Address Search Styles
+  .address-search-container {
+    margin-bottom: 16px;
+    position: relative;
+    
+    .search-input-wrapper {
+      position: relative;
+      
+      .input-group {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        width: 100%;
+        
+        .address-search-input {
+          position: relative;
+          flex: 1 1 auto;
+          width: 1%;
+          min-width: 0;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 400;
+          line-height: 1.5;
+          color: #495057;
+          background-color: #fff;
+          background-clip: padding-box;
+          border: 1px solid #ced4da;
+          border-radius: 0.375rem 0 0 0.375rem;
+          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+          
+          &::placeholder {
+            color: #6c757d;
+            opacity: 1;
+          }
+          
+          &:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            z-index: 3;
+          }
+          
+          &:disabled {
+            background-color: #e9ecef;
+            opacity: 1;
+          }
+        }
+        
+        .input-group-append {
+          display: flex;
+          margin-left: -1px;
+          
+          .input-group-text {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            text-align: center;
+            white-space: nowrap;
+            background-color: #e9ecef;
+            height: 30px;
+            background: white;
+            border-radius: 0 0.375rem 0.375rem 0;
+            
+            i {
+              color: #6c757d;
+            }
+          }
+          
+          .btn {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            cursor: pointer;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 0 0.375rem 0.375rem 0;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            
+            &:hover {
+              color: #495057;
+              background-color: #d4edda;
+              border-color: #c3e6cb;
+            }
+            
+            &:focus {
+              color: #495057;
+              background-color: #d4edda;
+              border-color: #c3e6cb;
+              outline: 0;
+              box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            }
+            
+            &:active {
+              color: #495057;
+              background-color: #c3e6cb;
+              border-color: #b8dfcc;
+            }
+            
+            i {
+              color: #6c757d;
+            }
+          }
+        }
+        
+        // Focus state for the entire input group
+        &:focus-within {
+          .address-search-input {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+          }
+          
+          .input-group-append {
+            .input-group-text,
+            .btn {
+              border-color: #86b7fe;
+            }
+          }
+        }
+      }
+    }
+    
+    .search-results-dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 1000;
+      
+      .search-result-item {
+        padding: 12px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f3f4;
+        transition: background-color 0.2s ease;
+        
+        &:hover,
+        &.selected {
+          background-color: #f8f9fa;
+        }
+        
+        &:first-child {
+          border-radius: 6px 6px 0 0;
+        }
+        
+        &:last-child {
+          border-bottom: none;
+          border-radius: 0 0 6px 6px;
+        }
+        
+        &:first-child:last-child {
+          border-radius: 6px;
+        }
+        
+        .result-content {
+          .result-name {
+            font-size: 14px;
+            color: #212529;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            
+            i {
+              color: #007bff;
+              font-size: 12px;
+              width: 12px;
+              text-align: center;
+            }
+          }
+          
+          .result-coordinates {
+            font-size: 12px;
+            color: #6c757d;
+            font-family: 'Courier New', monospace;
+            margin-left: 20px;
+          }
+        }
+      }
+    }
+    
+    .search-no-results {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      color: #6c757d;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      
+      i {
+        margin-right: 8px;
+        color: #ffc107;
+      }
+    }
+  }
+  
+  .address-search-disabled {
+    margin-bottom: 16px;
+    
+    .search-disabled-message {
+      padding: 12px 16px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      color: #6c757d;
+      font-size: 14px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-style: italic;
+      
+      i {
+        color: #17a2b8;
+      }
+    }
+  }
+  
   .map-error-message {
     margin-bottom: 16px;
     padding: 12px;
@@ -277,6 +525,44 @@
   .map-modal-body {
     padding: 16px;
     
+    .address-search-container {
+      .search-input-wrapper {
+        .input-group {
+          .address-search-input {
+            padding: 0.375rem 0.5rem; // Smaller padding on mobile
+            font-size: 0.8125rem;
+          }
+          
+          .input-group-append {
+            .input-group-text,
+            .btn {
+              padding: 0.375rem 0.5rem;
+              font-size: 0.8125rem;
+            }
+          }
+        }
+      }
+      
+      .search-results-dropdown {
+        max-height: 180px; // Reduce height on mobile
+      }
+      
+      .search-result-item {
+        padding: 10px 12px; // Slightly smaller padding
+        
+        .result-content {
+          .result-name {
+            font-size: 13px; // Smaller font on mobile
+          }
+          
+          .result-coordinates {
+            font-size: 11px; // Smaller coordinates font
+            margin-left: 16px;
+          }
+        }
+      }
+    }
+    
     .map-container {
       // Adjust map height for mobile
       .leaflet-container {
@@ -319,4 +605,44 @@
   .selected-location-info {
     border-color: #000;
   }
+  
+  .address-search-container {
+    .search-input-wrapper {
+      .input-group {
+        border-color: #000;
+      }
+    }
+    
+    .search-results-dropdown,
+    .search-no-results {
+      border-color: #000;
+    }
+    
+    .search-result-item {
+      border-bottom-color: #000;
+      
+      &:hover,
+      &.selected {
+        background-color: #000;
+        color: #fff;
+        
+        .result-content {
+          .result-name,
+          .result-coordinates {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+  
+  .address-search-disabled {
+    .search-disabled-message {
+      border-color: #000;
+    }
+  }
+}
+
+.clear-search-btn {
+  margin-left: 5px;
 }
