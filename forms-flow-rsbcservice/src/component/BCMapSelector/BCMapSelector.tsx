@@ -4,6 +4,7 @@ import { ReactComponent } from '@aot-technologies/formio-react';
 import settingsForm from './BCMapSelector.settingsForm';
 import MapModal from './MapModal';
 import { MapProviderFactory, MapProviderConfig } from './mapProviders';
+import { BCBoundaries, DEFAULT_BC_BOUNDARIES, validateCoordinatesWithinBoundaries } from './boundaryUtils';
 import './BCMapSelector.scss';
 import './mapModal.scss';
 
@@ -14,12 +15,7 @@ interface MapSelectionData {
   timestamp: string;
 }
 
-interface BCBoundaries {
-  north: number;
-  south: number;
-  east: number;
-  west: number;
-}
+
 
 export default class BCMapSelector extends ReactComponent {
   data: any;
@@ -59,15 +55,15 @@ export default class BCMapSelector extends ReactComponent {
     return MapProviderFactory.getProviderConfigFromSettings(this.component);
   }
 
-  // Default BC province boundaries
+  // Get configured boundaries (custom or default BC province boundaries)
   private getBCBoundaries(): BCBoundaries {
     // Check if custom boundaries are configured
     if (this.component.useCustomBoundaries) {
       return {
-        north: this.component.northBoundary || 60.0,
-        south: this.component.southBoundary || 48.0,
-        east: this.component.eastBoundary || -114.0,
-        west: this.component.westBoundary || -139.0,
+        north: this.component.northBoundary || DEFAULT_BC_BOUNDARIES.north,
+        south: this.component.southBoundary || DEFAULT_BC_BOUNDARIES.south,
+        east: this.component.eastBoundary || DEFAULT_BC_BOUNDARIES.east,
+        west: this.component.westBoundary || DEFAULT_BC_BOUNDARIES.west,
       };
     }
 
@@ -77,10 +73,10 @@ export default class BCMapSelector extends ReactComponent {
         const settings = JSON.parse(this.component.bcMapSettings);
         if (settings.boundaries) {
           return {
-            north: settings.boundaries.north || 60.0,
-            south: settings.boundaries.south || 48.0,
-            east: settings.boundaries.east || -114.0,
-            west: settings.boundaries.west || -139.0,
+            north: settings.boundaries.north || DEFAULT_BC_BOUNDARIES.north,
+            south: settings.boundaries.south || DEFAULT_BC_BOUNDARIES.south,
+            east: settings.boundaries.east || DEFAULT_BC_BOUNDARIES.east,
+            west: settings.boundaries.west || DEFAULT_BC_BOUNDARIES.west,
           };
         }
       } catch (error) {
@@ -88,17 +84,29 @@ export default class BCMapSelector extends ReactComponent {
       }
     }
 
-    // Default BC boundaries
-    return {
-      north: 60.0,
-      south: 48.0,
-      east: -114.0,
-      west: -139.0,
-    };
+    // Return default BC boundaries
+    return DEFAULT_BC_BOUNDARIES;
   }
 
-  // Handle map selection and emit event
+  // Handle map selection and emit event with boundary validation
   private handleMapSelection = (coordinates: { lat: number; lng: number }) => {
+    const boundaries = this.getBCBoundaries();
+    
+    // Validate coordinates against boundaries (double-check, though MapModal should prevent invalid selections)
+    const validationResult = validateCoordinatesWithinBoundaries(coordinates, boundaries);
+    
+    if (!validationResult.isValid) {
+      console.warn('Invalid coordinates selected:', validationResult.message);
+      // Emit boundary violation event
+      this.emit('boundaryViolation', {
+        data: {
+          attempted: coordinates,
+          message: validationResult.message
+        }
+      });
+      return;
+    }
+
     const mapData: MapSelectionData = {
       lat: coordinates.lat.toString(),
       long: coordinates.lng.toString(),
@@ -113,6 +121,7 @@ export default class BCMapSelector extends ReactComponent {
         long: mapData.long,
       },
       selectionTimestamp: mapData.timestamp,
+      boundaryViolation: false, // Clear any previous boundary violation flag
     };
 
     // Emit mapSelected event as specified in requirements

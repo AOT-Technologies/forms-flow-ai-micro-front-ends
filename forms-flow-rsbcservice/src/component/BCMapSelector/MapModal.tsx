@@ -1,8 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, useMapEvents, Marker, Popup, Rectangle, useMap } from 'react-leaflet';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapProviderFactory, MapProviderConfig, TileLayerOptions } from './mapProviders';
+import { 
+  validateCoordinatesWithinBoundaries, 
+  createLeafletBounds, 
+  getBoundariesCenter,
+  calculateZoomForBoundaries,
+  BCBoundaries,
+  BoundaryValidationResult
+} from './boundaryUtils';
 
 // Fix for default markers in React-Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -16,26 +24,76 @@ interface MapModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLocationSelect: (coordinates: { lat: number; lng: number }) => void;
-  boundaries: {
-    north: number;
-    south: number;
-    east: number;
-    west: number;
-  };
+  boundaries: BCBoundaries;
   initialCenter?: [number, number];
   mapProviderConfig?: MapProviderConfig;
 }
 
-// Component to handle map click events
-function MapClickHandler({ onLocationSelect }: { onLocationSelect: (coordinates: { lat: number; lng: number }) => void }) {
+// Component to handle map click events with boundary validation
+function MapClickHandler({ 
+  onLocationSelect, 
+  boundaries, 
+  onBoundaryViolation 
+}: { 
+  onLocationSelect: (coordinates: { lat: number; lng: number }) => void;
+  boundaries: BCBoundaries;
+  onBoundaryViolation: (result: BoundaryValidationResult) => void;
+}) {
   useMapEvents({
     click: (e) => {
-      onLocationSelect({
+      const coordinates = {
         lat: e.latlng.lat,
         lng: e.latlng.lng
-      });
+      };
+
+      // Validate coordinates against boundaries
+      const validationResult = validateCoordinatesWithinBoundaries(coordinates, boundaries);
+      
+      if (validationResult.isValid) {
+        onLocationSelect(coordinates);
+      } else {
+        onBoundaryViolation(validationResult);
+      }
     },
   });
+  return null;
+}
+
+// Component to fit map view to boundaries and add boundary rectangle
+function BoundaryManager({ boundaries }: { boundaries: BCBoundaries }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (map && boundaries) {
+      // Fit map view to boundaries
+      const bounds = createLeafletBounds(boundaries);
+      map.fitBounds(bounds, { padding: [20, 20] });
+
+      // Add boundary rectangle
+      const boundaryRect = L.rectangle(bounds, {
+        color: '#007bff',
+        weight: 2,
+        opacity: 0.8,
+        fillColor: '#007bff',
+        fillOpacity: 0.1,
+        dashArray: '5, 5'
+      });
+
+      boundaryRect.addTo(map);
+
+      // Add tooltip to boundary rectangle
+      boundaryRect.bindTooltip('Allowed selection area', {
+        permanent: false,
+        direction: 'center'
+      });
+
+      // Cleanup on unmount
+      return () => {
+        map.removeLayer(boundaryRect);
+      };
+    }
+  }, [map, boundaries]);
+
   return null;
 }
 
@@ -51,12 +109,11 @@ const MapModal: React.FC<MapModalProps> = ({
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [tileLayerOptions, setTileLayerOptions] = useState<TileLayerOptions | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [boundaryViolation, setBoundaryViolation] = useState<BoundaryValidationResult | null>(null);
 
   // Calculate center point from boundaries if no initial center provided
-  const center: [number, number] = initialCenter || [
-    (boundaries.north + boundaries.south) / 2,
-    (boundaries.east + boundaries.west) / 2
-  ];
+  const center: [number, number] = initialCenter || getBoundariesCenter(boundaries);
+  const zoom = calculateZoomForBoundaries(boundaries);
 
   // Initialize tile layer options based on provider configuration
   useEffect(() => {
@@ -76,6 +133,13 @@ const MapModal: React.FC<MapModalProps> = ({
   // Handle location selection
   const handleLocationSelect = (coordinates: { lat: number; lng: number }) => {
     setSelectedCoords(coordinates);
+    setBoundaryViolation(null); // Clear any previous boundary violation
+  };
+
+  // Handle boundary violation
+  const handleBoundaryViolation = (result: BoundaryValidationResult) => {
+    setBoundaryViolation(result);
+    setSelectedCoords(null); // Clear any previous selection
   };
 
   // Handle choosing the selected area
@@ -89,6 +153,7 @@ const MapModal: React.FC<MapModalProps> = ({
   // Handle modal close
   const handleClose = () => {
     setSelectedCoords(null);
+    setBoundaryViolation(null);
     onClose();
   };
 
@@ -143,7 +208,7 @@ const MapModal: React.FC<MapModalProps> = ({
         
         <div className="map-modal-body">
           <div className="map-instructions">
-            Click anywhere on the map to select a location
+            Click anywhere within the highlighted area to select a location
           </div>
           
           {mapError && (
@@ -152,12 +217,24 @@ const MapModal: React.FC<MapModalProps> = ({
               {mapError}
             </div>
           )}
+
+          {boundaryViolation && (
+            <div className="boundary-violation-message">
+              <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
+              <strong>Selection Outside Boundaries:</strong> {boundaryViolation.message}
+              {boundaryViolation.suggestedCoordinates && (
+                <div className="suggested-coordinates">
+                  Suggested location: {boundaryViolation.suggestedCoordinates.lat.toFixed(6)}, {boundaryViolation.suggestedCoordinates.lng.toFixed(6)}
+                </div>
+              )}
+            </div>
+          )}
           
           <div className="map-container">
             {tileLayerOptions ? (
               <MapContainer
                 center={center}
-                zoom={6}
+                zoom={zoom}
                 style={{ height: '400px', width: '100%' }}
                 ref={mapRef}
               >
@@ -168,7 +245,12 @@ const MapModal: React.FC<MapModalProps> = ({
                   minZoom={tileLayerOptions.minZoom}
                   subdomains={tileLayerOptions.subdomains}
                 />
-                <MapClickHandler onLocationSelect={handleLocationSelect} />
+                <BoundaryManager boundaries={boundaries} />
+                <MapClickHandler 
+                  onLocationSelect={handleLocationSelect} 
+                  boundaries={boundaries}
+                  onBoundaryViolation={handleBoundaryViolation}
+                />
                 {selectedCoords && (
                   <Marker position={[selectedCoords.lat, selectedCoords.lng]}>
                     <Popup>

@@ -95,6 +95,32 @@
     }
   }
   
+  .boundary-violation-message {
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 14px;
+    
+    i {
+      color: #ffc107;
+      margin-right: 8px;
+    }
+    
+    strong {
+      color: #664d03;
+    }
+    
+    .suggested-coordinates {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #6c757d;
+      font-style: italic;
+    }
+  }
+  
   .map-loading {
     display: flex;
     align-items: center;
