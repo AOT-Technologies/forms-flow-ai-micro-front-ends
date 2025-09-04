@@ -1,0 +1,296 @@
+// Map Modal Styles
+.map-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 20px;
+}
+
+.map-modal-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #495057;
+  }
+  
+  .map-modal-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    
+    &:hover {
+      color: #495057;
+      background-color: #e9ecef;
+    }
+    
+    &:focus {
+      outline: 2px solid #80bdff;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.map-modal-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  
+  .map-instructions {
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 4px;
+    color: #0c5460;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  .map-error-message {
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    color: #721c24;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    i {
+      color: #dc3545;
+    }
+  }
+  
+  .map-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #6c757d;
+    font-size: 16px;
+    gap: 12px;
+    
+    i {
+      font-size: 20px;
+    }
+  }
+  
+  .map-container {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    
+    // Ensure Leaflet controls are properly styled
+    .leaflet-container {
+      font-family: inherit;
+    }
+    
+    .leaflet-control-zoom {
+      border: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .leaflet-control-zoom a {
+      background-color: white;
+      color: #495057;
+      border-bottom: 1px solid #dee2e6;
+      
+      &:hover {
+        background-color: #f8f9fa;
+        color: #212529;
+      }
+    }
+  }
+  
+  .selected-location-info {
+    padding: 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    text-align: center;
+    
+    p {
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      color: #495057;
+      
+      strong {
+        color: #212529;
+      }
+    }
+    
+    .choose-area-button {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 4px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: #218838;
+      }
+      
+      &:focus {
+        outline: 2px solid #80bdff;
+        outline-offset: 2px;
+      }
+      
+      &:active {
+        background-color: #1e7e34;
+      }
+      
+      i {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+.map-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+  
+  .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &.btn-secondary {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      color: white;
+      
+      &:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+      }
+      
+      &:focus {
+        outline: 2px solid #80bdff;
+        outline-offset: 2px;
+      }
+      
+      &:active {
+        background-color: #545b62;
+        border-color: #4e555b;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .map-modal-overlay {
+    padding: 10px;
+  }
+  
+  .map-modal-content {
+    max-height: 95vh;
+  }
+  
+  .map-modal-header {
+    padding: 12px 16px;
+    
+    h3 {
+      font-size: 16px;
+    }
+  }
+  
+  .map-modal-body {
+    padding: 16px;
+    
+    .map-container {
+      // Adjust map height for mobile
+      .leaflet-container {
+        height: 300px !important;
+      }
+    }
+  }
+  
+  .map-modal-footer {
+    padding: 12px 16px;
+  }
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  .map-modal-overlay,
+  .map-modal-content,
+  .map-modal-close,
+  .choose-area-button,
+  .btn {
+    transition: none;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .map-modal-content {
+    border: 2px solid #000;
+  }
+  
+  .map-modal-header,
+  .map-modal-footer {
+    border-color: #000;
+  }
+  
+  .map-instructions {
+    border-color: #000;
+  }
+  
+  .selected-location-info {
+    border-color: #000;
+  }
+}
