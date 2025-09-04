@@ -412,6 +412,100 @@
         color: #212529;
       }
     }
+    
+    // Locate control styles
+    .leaflet-control-locate {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      
+      .leaflet-control-locate-button {
+        background-color: white;
+        color: #495057;
+        border: none;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        
+        &:hover {
+          background-color: #f8f9fa;
+          color: #212529;
+        }
+        
+        &:focus {
+          outline: 2px solid #80bdff;
+          outline-offset: 2px;
+        }
+        
+        &:disabled {
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+        
+        &.locating {
+          background-color: #e3f2fd;
+          color: #1976d2;
+        }
+        
+        i {
+          font-size: 14px;
+        }
+      }
+    }
+    
+    // User location marker styles
+    .user-location-marker {
+      background: transparent !important;
+      border: none !important;
+      
+      .user-location-dot {
+        width: 20px;
+        height: 20px;
+        position: relative;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 12px;
+          height: 12px;
+          background-color: #007bff;
+          border: 3px solid white;
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          z-index: 2;
+        }
+        
+        .user-location-pulse {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 20px;
+          height: 20px;
+          background-color: rgba(0, 123, 255, 0.3);
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          animation: pulse 2s infinite;
+          z-index: 1;
+        }
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+      }
+    }
   }
   
   .selected-location-info {

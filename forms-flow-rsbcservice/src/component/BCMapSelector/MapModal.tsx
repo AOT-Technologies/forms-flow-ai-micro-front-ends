@@ -12,7 +12,9 @@ import {
   BoundaryValidationResult
 } from './boundaryUtils';
 import { GeocodingService, createGeocodingConfig } from './geocodingUtils';
+import { GeolocationService, UserLocation, GeolocationError } from './geolocationUtils';
 import AddressSearch from './AddressSearch';
+import LocateControl from './LocateControl';
 
 // Fix for default markers in React-Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -117,6 +119,10 @@ const MapModal: React.FC<MapModalProps> = ({
   const [boundaryViolation, setBoundaryViolation] = useState<BoundaryValidationResult | null>(null);
   const [geocodingService, setGeocodingService] = useState<GeocodingService | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
+  const [geolocationError, setGeolocationError] = useState<GeolocationError | null>(null);
+  const [isRequestingLocation, setIsRequestingLocation] = useState<boolean>(false);
+  const [userLocationMarker, setUserLocationMarker] = useState<{ lat: number; lng: number } | null>(null);
 
   // Calculate center point from boundaries if no initial center provided
   const center: [number, number] = initialCenter || getBoundariesCenter(boundaries);
@@ -148,6 +154,63 @@ const MapModal: React.FC<MapModalProps> = ({
       setGeocodingService(null);
     }
   }, [componentSettings, boundaries]);
+
+  // Automatic geolocation request when modal opens
+  useEffect(() => {
+    if (isOpen && GeolocationService.isSupported()) {
+      requestUserLocation();
+    }
+  }, [isOpen]);
+
+  // Request user location
+  const requestUserLocation = async () => {
+    if (isRequestingLocation) {
+      return;
+    }
+
+    setIsRequestingLocation(true);
+    setGeolocationError(null);
+
+    try {
+      const location = await GeolocationService.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 30000
+      });
+
+      setUserLocation(location);
+
+      // Validate location against boundaries
+      const validationResult = GeolocationService.validateLocationWithinBoundaries(
+        location,
+        boundaries
+      );
+
+      if (validationResult.isValid) {
+        // Location is within boundaries - show marker and center map
+        setUserLocationMarker({ lat: location.lat, lng: location.lng });
+        
+        // Center map on user location
+        if (mapRef.current) {
+          mapRef.current.setView([location.lat, location.lng], 12, {
+            animate: true,
+            duration: 1
+          });
+        }
+      } else {
+        // Location is outside boundaries - center on boundaries but don't show marker
+        setUserLocationMarker(null);
+        console.info('User location is outside configured boundaries');
+      }
+
+    } catch (error) {
+      const geolocationError = error as GeolocationError;
+      setGeolocationError(geolocationError);
+      console.warn('Geolocation error:', geolocationError.message);
+    } finally {
+      setIsRequestingLocation(false);
+    }
+  };
 
   // Handle location selection from map click
   const handleLocationSelect = (coordinates: { lat: number; lng: number }) => {
@@ -190,12 +253,47 @@ const MapModal: React.FC<MapModalProps> = ({
     }
   };
 
+  // Handle geolocation events from LocateControl
+  const handleLocationFound = (location: UserLocation) => {
+    setUserLocation(location);
+    setGeolocationError(null);
+  };
+
+  const handleLocationError = (error: GeolocationError) => {
+    setGeolocationError(error);
+    setUserLocation(null);
+    setUserLocationMarker(null);
+  };
+
+  const handleLocationWithinBoundaries = (location: UserLocation) => {
+    setUserLocationMarker({ lat: location.lat, lng: location.lng });
+  };
+
+  const handleLocationOutsideBoundaries = (location: UserLocation) => {
+    setUserLocationMarker(null);
+    // Show a temporary message about location being outside boundaries
+    setBoundaryViolation({
+      isValid: false,
+      message: 'Your current location is outside the allowed selection area',
+      suggestedCoordinates: null
+    });
+    
+    // Clear the boundary violation message after 5 seconds
+    setTimeout(() => {
+      setBoundaryViolation(null);
+    }, 5000);
+  };
+
   // Handle modal close
   const handleClose = () => {
     setSelectedCoords(null);
     setSelectedAddress(null);
     setBoundaryViolation(null);
     setSearchError(null);
+    setUserLocation(null);
+    setGeolocationError(null);
+    setUserLocationMarker(null);
+    setIsRequestingLocation(false);
     onClose();
   };
 
@@ -250,7 +348,10 @@ const MapModal: React.FC<MapModalProps> = ({
         
         <div className="map-modal-body">
           <div className="map-instructions">
-            Search for an address or click anywhere within the highlighted area to select a location
+            {GeolocationService.isSupported() 
+              ? "Use the locate button to find your current location, search for an address, or click anywhere within the highlighted area to select a location"
+              : "Search for an address or click anywhere within the highlighted area to select a location"
+            }
           </div>
           
           {geocodingService && (
@@ -273,6 +374,13 @@ const MapModal: React.FC<MapModalProps> = ({
             <div className="map-error-message">
               <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
               {searchError}
+            </div>
+          )}
+
+          {geolocationError && (
+            <div className="map-error-message">
+              <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
+              {GeolocationService.getErrorMessage(geolocationError)}
             </div>
           )}
 
@@ -312,6 +420,37 @@ const MapModal: React.FC<MapModalProps> = ({
                   boundaries={boundaries}
                   onBoundaryViolation={handleBoundaryViolation}
                 />
+                <LocateControl
+                  boundaries={boundaries}
+                  onLocationFound={handleLocationFound}
+                  onLocationError={handleLocationError}
+                  onLocationWithinBoundaries={handleLocationWithinBoundaries}
+                  onLocationOutsideBoundaries={handleLocationOutsideBoundaries}
+                />
+                {userLocationMarker && (
+                  <Marker 
+                    position={[userLocationMarker.lat, userLocationMarker.lng]}
+                    icon={L.divIcon({
+                      className: 'user-location-marker',
+                      html: '<div class="user-location-dot"><div class="user-location-pulse"></div></div>',
+                      iconSize: [20, 20],
+                      iconAnchor: [10, 10]
+                    })}
+                  >
+                    <Popup>
+                      <div>
+                        <strong>Your Current Location</strong><br />
+                        Lat: {userLocationMarker.lat.toFixed(6)}<br />
+                        Lng: {userLocationMarker.lng.toFixed(6)}<br />
+                        {userLocation && (
+                          <>
+                            Accuracy: ±{Math.round(userLocation.accuracy)}m
+                          </>
+                        )}
+                      </div>
+                    </Popup>
+                  </Marker>
+                )}
                 {selectedCoords && (
                   <Marker position={[selectedCoords.lat, selectedCoords.lng]}>
                     <Popup>
