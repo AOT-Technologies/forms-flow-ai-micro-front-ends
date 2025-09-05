@@ -34,6 +34,8 @@ interface MapModalProps {
   componentSettings?: any;
   useCustomBoundaries?: boolean;
   geoJsonUrl?: string;
+  existingCoordinates?: { lat: number; lng: number } | null;
+  existingAddress?: string;
 }
 
 // Component to handle map click events with boundary validation
@@ -232,12 +234,14 @@ const MapModal: React.FC<MapModalProps> = ({
   mapProviderConfig,
   componentSettings,
   useCustomBoundaries,
-  geoJsonUrl
+  geoJsonUrl,
+  existingCoordinates,
+  existingAddress
 }) => {
   const mapRef = useRef<L.Map | null>(null);
   const selectButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(existingCoordinates || null);
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(existingAddress || null);
   const [tileLayerOptions, setTileLayerOptions] = useState<TileLayerOptions | null>(null);
   const [mapError, setMapError] = useState<string | null>(null);
   const [boundaryViolation, setBoundaryViolation] = useState<BoundaryValidationResult | null>(null);
@@ -280,12 +284,20 @@ const MapModal: React.FC<MapModalProps> = ({
     }
   }, [componentSettings, boundaries]);
 
-  // Automatic geolocation request when modal opens
+  // Reset modal state when opening with existing coordinates
   useEffect(() => {
-    if (isOpen && GeolocationService.isSupported()) {
-      requestUserLocation();
+    if (isOpen) {
+      setSelectedCoords(existingCoordinates || null);
+      setSelectedAddress(existingAddress || null);
+      setBoundaryViolation(null);
+      setSearchError(null);
+      
+      // Automatic geolocation request when modal opens (only if no existing coordinates)
+      if (!existingCoordinates && GeolocationService.isSupported()) {
+        requestUserLocation();
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, existingCoordinates, existingAddress]);
 
   // Request user location
   const requestUserLocation = async () => {
@@ -465,10 +477,11 @@ const MapModal: React.FC<MapModalProps> = ({
     }, 5000);
   };
 
-  // Handle modal close
+  // Handle modal close - reset to existing coordinates instead of clearing
   const handleClose = () => {
-    setSelectedCoords(null);
-    setSelectedAddress(null);
+    // Reset to existing coordinates instead of clearing completely
+    setSelectedCoords(existingCoordinates || null);
+    setSelectedAddress(existingAddress || null);
     setBoundaryViolation(null);
     setSearchError(null);
     setUserLocation(null);

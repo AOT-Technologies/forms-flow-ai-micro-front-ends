@@ -417,6 +417,11 @@ export default class BCMapSelector extends ReactComponent {
           initialCenter={this.getInitialMapCenter()}
           useCustomBoundaries={this.component.useCustomBoundaries}
           geoJsonUrl={this.component.geoJsonUrl}
+          existingCoordinates={this.data?.coordinates ? {
+            lat: parseFloat(this.data.coordinates.lat),
+            lng: parseFloat(this.data.coordinates.long)
+          } : null}
+          existingAddress={this.data?.address}
         />
       </div>
     );
