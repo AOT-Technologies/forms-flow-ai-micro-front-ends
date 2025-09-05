@@ -3,9 +3,9 @@ import { MapContainer, TileLayer, useMapEvents, Marker, Popup, Rectangle, useMap
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapProviderFactory, MapProviderConfig, TileLayerOptions } from './mapProviders';
-import { 
-  validateCoordinatesWithinBoundaries, 
-  createLeafletBounds, 
+import {
+  validateCoordinatesWithinBoundaries,
+  createLeafletBounds,
   getBoundariesCenter,
   calculateZoomForBoundaries,
   BCBoundaries,
@@ -35,11 +35,11 @@ interface MapModalProps {
 }
 
 // Component to handle map click events with boundary validation
-function MapClickHandler({ 
-  onLocationSelect, 
-  boundaries, 
-  onBoundaryViolation 
-}: { 
+function MapClickHandler({
+  onLocationSelect,
+  boundaries,
+  onBoundaryViolation
+}: {
   onLocationSelect: (coordinates: { lat: number; lng: number }) => void;
   boundaries: BCBoundaries;
   onBoundaryViolation: (result: BoundaryValidationResult) => void;
@@ -53,7 +53,7 @@ function MapClickHandler({
 
       // Validate coordinates against boundaries
       const validationResult = validateCoordinatesWithinBoundaries(coordinates, boundaries);
-      
+
       if (validationResult.isValid) {
         onLocationSelect(coordinates);
       } else {
@@ -189,7 +189,7 @@ const MapModal: React.FC<MapModalProps> = ({
       if (validationResult.isValid) {
         // Location is within boundaries - show marker and center map
         setUserLocationMarker({ lat: location.lat, lng: location.lng });
-        
+
         // Center map on user location
         if (mapRef.current) {
           mapRef.current.setView([location.lat, location.lng], 12, {
@@ -226,7 +226,7 @@ const MapModal: React.FC<MapModalProps> = ({
     setSelectedAddress(address || null);
     setBoundaryViolation(null); // Clear any previous boundary violation
     setSearchError(null); // Clear any search errors
-    
+
     // Center map on selected location
     if (mapRef.current) {
       mapRef.current.setView([coordinates.lat, coordinates.lng], 15);
@@ -277,7 +277,7 @@ const MapModal: React.FC<MapModalProps> = ({
       message: 'Your current location is outside the allowed selection area',
       suggestedCoordinates: null
     });
-    
+
     // Clear the boundary violation message after 5 seconds
     setTimeout(() => {
       setBoundaryViolation(null);
@@ -345,15 +345,15 @@ const MapModal: React.FC<MapModalProps> = ({
             <i className="fa fa-times" aria-hidden="true"></i>
           </button>
         </div>
-        
+
         <div className="map-modal-body">
           <div className="map-instructions">
-            {GeolocationService.isSupported() 
+            {GeolocationService.isSupported()
               ? "Use the locate button to find your current location, search for an address, or click anywhere within the highlighted area to select a location"
               : "Search for an address or click anywhere within the highlighted area to select a location"
             }
           </div>
-          
+
           {geocodingService && (
             <AddressSearch
               geocodingService={geocodingService}
@@ -362,7 +362,7 @@ const MapModal: React.FC<MapModalProps> = ({
               disabled={false}
             />
           )}
-          
+
           {mapError && (
             <div className="map-error-message">
               <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>
@@ -395,7 +395,7 @@ const MapModal: React.FC<MapModalProps> = ({
               )}
             </div>
           )}
-          
+
           <div className="map-container">
             {tileLayerOptions ? (
               <MapContainer
@@ -415,8 +415,8 @@ const MapModal: React.FC<MapModalProps> = ({
                   subdomains={tileLayerOptions.subdomains}
                 />
                 <BoundaryManager boundaries={boundaries} />
-                <MapClickHandler 
-                  onLocationSelect={handleLocationSelect} 
+                <MapClickHandler
+                  onLocationSelect={handleLocationSelect}
                   boundaries={boundaries}
                   onBoundaryViolation={handleBoundaryViolation}
                 />
@@ -428,7 +428,7 @@ const MapModal: React.FC<MapModalProps> = ({
                   onLocationOutsideBoundaries={handleLocationOutsideBoundaries}
                 />
                 {userLocationMarker && (
-                  <Marker 
+                  <Marker
                     position={[userLocationMarker.lat, userLocationMarker.lng]}
                     icon={L.divIcon({
                       className: 'user-location-marker',
@@ -475,33 +475,36 @@ const MapModal: React.FC<MapModalProps> = ({
               </div>
             )}
           </div>
-          
+
           {selectedCoords && (
             <div className="selected-location-info">
-              <p>
-                <strong>Selected Location:</strong><br />
+              <div className="location-info-content">
+                <div className="location-info-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <i className="fa fa-map-marker" aria-hidden="true" style={{ color: '#28a745', fontSize: '16px' }}></i>
+                  <strong>Selected Location</strong>
+                </div>
                 {selectedAddress && (
-                  <>
-                    <strong>Address:</strong> {selectedAddress}<br />
-                  </>
+                  <div className="location-info-item" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+                    <i className="fa fa-home" aria-hidden="true" style={{ color: '#6c757d', fontSize: '14px', marginTop: '2px' }}></i>
+                    <span><strong>Address:</strong> {selectedAddress}</span>
+                  </div>
                 )}
-                <strong>Coordinates:</strong><br />
-                Latitude: {selectedCoords.lat.toFixed(6)}<br />
-                Longitude: {selectedCoords.lng.toFixed(6)}
-              </p>
-              <button
-                type="button"
-                className="btn btn-success choose-area-button"
-                onClick={handleChooseArea}
-              >
-                <i className="fa fa-check" aria-hidden="true"></i>
-                Choose Area
-              </button>
+                <div className="location-info-coordinates" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  <div className="coordinate-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="fa fa-compass" aria-hidden="true" style={{ color: '#007bff', fontSize: '14px' }}></i>
+                    <span><strong>Lat:</strong> {selectedCoords.lat.toFixed(6)}</span>
+                  </div>
+                  <div className="coordinate-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="fa fa-globe" aria-hidden="true" style={{ color: '#007bff', fontSize: '14px' }}></i>
+                    <span><strong>Lng:</strong> {selectedCoords.lng.toFixed(6)}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
-        
-        <div className="map-modal-footer">
+
+        <div className="map-modal-footer" style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
           <button
             type="button"
             className="btn btn-secondary"
@@ -509,6 +512,16 @@ const MapModal: React.FC<MapModalProps> = ({
           >
             Cancel
           </button>
+          {selectedCoords && (
+            <button
+              type="button"
+              className="btn btn-success choose-area-button"
+              onClick={handleChooseArea}
+            >
+              <i className="fa fa-check" aria-hidden="true"></i>
+              Select
+            </button>
+          )}
         </div>
       </div>
     </div>

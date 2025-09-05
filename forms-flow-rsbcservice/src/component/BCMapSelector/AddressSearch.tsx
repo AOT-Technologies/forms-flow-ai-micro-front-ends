@@ -45,7 +45,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
       switch (event.key) {
         case 'ArrowDown':
           event.preventDefault();
-          setSelectedIndex(prev => 
+          setSelectedIndex(prev =>
             prev < results.length - 1 ? prev + 1 : prev
           );
           break;
@@ -79,7 +79,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (resultsRef.current && !resultsRef.current.contains(event.target as Node) &&
-          searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
+        searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
         setShowResults(false);
         setSelectedIndex(-1);
       }
@@ -119,7 +119,9 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
       { lat: result.lat, lng: result.lng },
       result.address || result.display_name
     );
-    setQuery(result.display_name);
+    // Clear the search input after selection
+    setQuery('');
+    setResults([]);
     setShowResults(false);
     setSelectedIndex(-1);
   };
@@ -127,10 +129,15 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setQuery(value);
-    
+
     if (!value.trim()) {
       setResults([]);
       setShowResults(false);
+    } else {
+      // Show results if we have them, or they will be shown when search completes
+      if (results.length > 0) {
+        setShowResults(true);
+      }
     }
   };
 
@@ -164,46 +171,40 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
   return (
     <div className="address-search-container">
       <div className="search-input-wrapper">
-        <div className="input-group">
-          <input
-            ref={searchInputRef}
-            type="text"
-            className="form-control address-search-input"
-            placeholder={`Search addresses using ${geocodingService.getProviderName()}...`}
-            value={query}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-            disabled={disabled}
-            aria-label="Search for addresses"
-            aria-expanded={showResults}
-            aria-haspopup="listbox"
-            role="combobox"
-          />
-          <div className="input-group-append">
-            {isSearching ? (
-              <span className="input-group-text">
-                <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
-              </span>
-            ) : query ? (
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={clearSearch}
-                aria-label="Clear search"
-              >
-                <i className="fa fa-times" aria-hidden="true"></i>
-              </button>
-            ) : (
-              <span className="input-group-text">
-                <i className="fa fa-search" aria-hidden="true"></i>
-              </span>
-            )}
-          </div>
+        <input
+          ref={searchInputRef}
+          type="text"
+          className="address-search-input"
+          placeholder={`Search addresses using ${geocodingService.getProviderName()}...`}
+          value={query}
+          onChange={handleInputChange}
+          onFocus={handleInputFocus}
+          disabled={disabled}
+          aria-label="Search for addresses"
+          aria-expanded={showResults}
+          aria-haspopup="listbox"
+          role="combobox"
+        />
+        <div className={`search-icon-container ${!query ? 'non-interactive' : ''}`}>
+          {isSearching ? (
+            <i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
+          ) : query ? (
+            <button
+              type="button"
+              className="btn-clear-search"
+              onClick={clearSearch}
+              aria-label="Clear search"
+            >
+              <i className="fa fa-times" aria-hidden="true"></i>
+            </button>
+          ) : (
+            <i className="fa fa-search" aria-hidden="true"></i>
+          )}
         </div>
       </div>
 
       {showResults && results.length > 0 && (
-        <div 
+        <div
           ref={resultsRef}
           className="search-results-dropdown"
           role="listbox"

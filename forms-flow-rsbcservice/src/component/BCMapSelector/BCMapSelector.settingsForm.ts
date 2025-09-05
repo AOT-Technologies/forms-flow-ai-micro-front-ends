@@ -15,6 +15,24 @@ const settingsForm = (...extend) => {
             weight: 10,
           },
           {
+            type: "textfield",
+            key: "buttonLabelEmpty",
+            label: "Button Label(Empty)",
+            input: true,
+            weight: 15,
+            placeholder: "Select from Map",
+            description: "Custom label for the map selection button. If empty, defaults to 'Select from Map'.",
+          },
+          {
+            type: "textfield",
+            key: "buttonLabelSelected",
+            label: "Button Label(Selected)",
+            input: true,
+            weight: 15,
+            placeholder: "Change Location",
+            description: "Custom label for the map selection button. If selected, defaults to 'Change Location'.",
+          },
+          {
             type: "select",
             key: "mapProvider",
             label: "Map Provider",
@@ -243,6 +261,15 @@ const settingsForm = (...extend) => {
               },
             },
           },
+          {
+            type: "checkbox",
+            key: "showSelectedCoordinates",
+            label: "Show Selected Coordinates",
+            input: true,
+            weight: 70,
+            defaultValue: true,
+            description: "Display the selected coordinates information below the map",
+          },
         ],
       },
       {
@@ -381,14 +408,14 @@ const settingsForm = (...extend) => {
                 }
                 try {
                   const parsed = JSON.parse(context.value);
-                  
+
                   // Validate structure if JSON is provided
                   if (parsed && typeof parsed === 'object') {
                     // Validate boundaries if provided
                     if (parsed.boundaries) {
                       const { north, south, east, west } = parsed.boundaries;
-                      if (typeof north !== 'number' || typeof south !== 'number' || 
-                          typeof east !== 'number' || typeof west !== 'number') {
+                      if (typeof north !== 'number' || typeof south !== 'number' ||
+                        typeof east !== 'number' || typeof west !== 'number') {
                         return "Boundaries must contain numeric values for north, south, east, west";
                       }
                       if (south >= north) {
@@ -398,18 +425,18 @@ const settingsForm = (...extend) => {
                         return "West boundary must be less than east boundary";
                       }
                     }
-                    
+
                     // Validate map provider if provided
                     if (parsed.mapProvider && !['openstreetmap', 'google', 'mapbox', 'custom'].includes(parsed.mapProvider)) {
                       return "Invalid map provider. Must be one of: openstreetmap, google, mapbox, custom";
                     }
-                    
+
                     // Validate geocoding provider if provided
                     if (parsed.geocodingProvider && !['nominatim', 'google', 'mapbox', 'disabled'].includes(parsed.geocodingProvider)) {
                       return "Invalid geocoding provider. Must be one of: nominatim, google, mapbox, disabled";
                     }
                   }
-                  
+
                   return true;
                 } catch (error) {
                   return "Invalid JSON format";

@@ -41,7 +41,7 @@ class LeafletLocateControl extends L.Control {
 
   onAdd(map: L.Map): HTMLElement {
     const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-locate');
-    
+
     this.button = L.DomUtil.create('button', 'leaflet-control-locate-button', container) as HTMLButtonElement;
     this.button.type = 'button';
     this.button.title = 'Show me where I am';
@@ -64,7 +64,11 @@ class LeafletLocateControl extends L.Control {
     }
   }
 
-  private handleLocateClick = async (): Promise<void> => {
+  private handleLocateClick = async (e: Event): Promise<void> => {
+    // Prevent event propagation to the map
+    L.DomEvent.stopPropagation(e);
+    L.DomEvent.preventDefault(e);
+
     if (this.isLocating || !this.button) {
       return;
     }
@@ -110,7 +114,7 @@ class LeafletLocateControl extends L.Control {
 
     } catch (error) {
       const geolocationError = error as GeolocationError;
-      
+
       if (this.onLocationError) {
         this.onLocationError(geolocationError);
       }
@@ -123,7 +127,7 @@ class LeafletLocateControl extends L.Control {
 
   private setLocatingState(isLocating: boolean): void {
     this.isLocating = isLocating;
-    
+
     if (this.button) {
       if (isLocating) {
         this.button.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>';

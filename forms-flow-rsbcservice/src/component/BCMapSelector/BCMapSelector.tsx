@@ -129,7 +129,7 @@ export default class BCMapSelector extends ReactComponent {
   // Update form.io value and trigger change events (for form integration)
   updateComponentValue(value: BCMapSelectorData): void {
     this.data = value;
-    
+
     // Trigger form.io change event for proper form integration (Requirement 6.2)
     (this as any).emit('componentChange', {
       component: this.component,
@@ -147,11 +147,11 @@ export default class BCMapSelector extends ReactComponent {
 
     const coords = this.data.coordinates!;
     let result = this.formatCoordinatesForDisplay(coords);
-    
+
     if (this.data.address) {
       result += ` (${this.data.address})`;
     }
-    
+
     return result;
   }
 
@@ -220,10 +220,10 @@ export default class BCMapSelector extends ReactComponent {
   // Handle map selection and emit event with boundary validation
   private handleMapSelection = (coordinates: { lat: number; lng: number }, address?: string) => {
     const boundaries = this.getBCBoundaries();
-    
+
     // Validate coordinates against boundaries (double-check, though MapModal should prevent invalid selections)
     const validationResult = validateCoordinatesWithinBoundaries(coordinates, boundaries);
-    
+
     if (!validationResult.isValid) {
       console.warn('Invalid coordinates selected:', validationResult.message);
       // Emit boundary violation event
@@ -312,10 +312,10 @@ export default class BCMapSelector extends ReactComponent {
   private formatCoordinatesForDisplay(coordinates: { lat: string; long: string }): string {
     const lat = parseFloat(coordinates.lat);
     const lng = parseFloat(coordinates.long);
-    
+
     const latDirection = lat >= 0 ? 'N' : 'S';
     const lngDirection = lng >= 0 ? 'E' : 'W';
-    
+
     return `${Math.abs(lat).toFixed(6)}°${latDirection}, ${Math.abs(lng).toFixed(6)}°${lngDirection}`;
   }
 
@@ -344,9 +344,9 @@ export default class BCMapSelector extends ReactComponent {
             onClick={this.openMapModal}
           >
             <i className="fa fa-map-marker" aria-hidden="true"></i>
-            {hasSelection ? 'Change Location' : 'Select from Map'}
+            {hasSelection ? (this.component.buttonLabelSelected || 'Change Location') : (this.component.buttonLabelEmpty || 'Select from Map')}
           </button>
-          
+
           {hasSelection && (
             <button
               type="button"
@@ -359,9 +359,9 @@ export default class BCMapSelector extends ReactComponent {
             </button>
           )}
         </div>
-        
+
         {/* Display coordinates in readable format (Requirement 6.4) */}
-        {hasSelection && selectedCoordinates && (
+        {hasSelection && selectedCoordinates && this.component.showSelectedCoordinates !== false && (
           <div className="selected-coordinates">
             <div className="coordinates-header">
               <strong>Selected Location:</strong>
@@ -454,7 +454,7 @@ export default class BCMapSelector extends ReactComponent {
     try {
       // Close modal if open
       this.isModalOpen = false;
-      
+
       if (this.reactRoot) {
         this.reactRoot.unmount();
         this.reactRoot = null;
@@ -462,7 +462,7 @@ export default class BCMapSelector extends ReactComponent {
     } catch (error) {
       console.warn('Error unmounting BC Map Selector:', error);
     }
-    
+
     // Clear element content as fallback
     element.innerHTML = '';
   }
