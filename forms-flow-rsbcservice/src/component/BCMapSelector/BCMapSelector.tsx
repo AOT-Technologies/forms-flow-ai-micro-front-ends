@@ -295,6 +295,9 @@ export default class BCMapSelector extends ReactComponent {
     // Trigger form.io change event
     this.updateComponentValue(this.data);
 
+    // Emit mapCleared event
+    (this as any).emit('mapCleared', null);
+
     // Re-render to show cleared state
     this.renderComponent();
   };

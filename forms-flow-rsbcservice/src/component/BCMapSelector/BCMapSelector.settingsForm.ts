@@ -435,6 +435,35 @@ const settingsForm = (...extend) => {
         label: "Advanced Settings",
         components: [
           {
+            type: "htmlelement",
+            key: "eventsDocumentation",
+            tag: "div",
+            weight: 5,
+            content: `
+              <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; margin-bottom: 15px;">
+                <h4 style="margin-top: 0; color: #495057;">Component Events</h4>
+                <p style="margin-bottom: 10px; color: #6c757d;">The BC Map Selector component emits the following events:</p>
+                <ul style="margin-bottom: 15px; color: #6c757d;">
+                  <li><strong>mapSelected</strong> - Fired when a location is selected on the map. Event data contains lat/long coordinates.</li>
+                  <li><strong>mapCleared</strong> - Fired when the selected location is cleared from the map.</li>
+                </ul>
+                <h5 style="color: #495057;">Example Event Listeners:</h5>
+                <pre style="background-color: #f1f3f4; padding: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto;"><code>if(instance && !instance.mapSelectedListner){
+  instance.root.on('mapSelected', async (event) => {
+    const loc_data = event.data;
+    instance.root.getComponent("lat").setValue(loc_data.lat)
+    instance.root.getComponent("long").setValue(loc_data.long)
+  });
+  
+  instance.root.on('mapCleared', async (event) => {
+    instance.root.getComponent("lat").setValue('')
+    instance.root.getComponent("long").setValue('')
+  });
+}</code></pre>
+              </div>
+            `,
+          },
+          {
             type: "textarea",
             key: "bcMapSettings",
             label: "BC Map Settings (JSON format)",
