@@ -28,6 +28,7 @@
     "@types/react-leaflet": "^3.0.0",
     "babel-jest": "^27.0.6",
     "concurrently": "^6.2.1",
+    "copy-webpack-plugin": "^13.0.1",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "eslint": "^7.32.0",
