@@ -27,7 +27,7 @@ L.Icon.Default.mergeOptions({
 interface MapModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLocationSelect: (coordinates: { lat: number; lng: number }) => void;
+  onLocationSelect: (coordinates: { lat: number; lng: number }, address?: string) => void;
   boundaries: BCBoundaries;
   initialCenter?: [number, number];
   mapProviderConfig?: MapProviderConfig;
@@ -248,7 +248,7 @@ const MapModal: React.FC<MapModalProps> = ({
   // Handle choosing the selected area
   const handleChooseArea = () => {
     if (selectedCoords) {
-      onLocationSelect(selectedCoords);
+      onLocationSelect(selectedCoords, selectedAddress || undefined);
       onClose();
     }
   };

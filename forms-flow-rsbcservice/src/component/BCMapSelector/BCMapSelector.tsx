@@ -15,10 +15,20 @@ interface MapSelectionData {
   timestamp: string;
 }
 
+interface BCMapSelectorData {
+  coordinates: {
+    lat: string;
+    long: string;
+  } | null;
+  address?: string;
+  selectionTimestamp?: string;
+  boundaryViolation?: boolean;
+}
+
 
 
 export default class BCMapSelector extends ReactComponent {
-  data: any;
+  data: BCMapSelectorData;
   component: any;
   builderMode: boolean;
   emit!: (event: string, ...args: any[]) => void;
@@ -27,8 +37,127 @@ export default class BCMapSelector extends ReactComponent {
 
   constructor(component: any, options: any, data: any) {
     super(component, options, data);
-    this.data = data || {};
+    this.data = this.initializeData(data);
     this.component = component || {};
+  }
+
+  // Initialize and validate component data
+  private initializeData(inputData: any): BCMapSelectorData {
+    // Handle null or undefined input data
+    if (!inputData) {
+      return {
+        coordinates: null,
+        address: undefined,
+        selectionTimestamp: undefined,
+        boundaryViolation: false,
+      };
+    }
+
+    // If inputData is already in the correct format, validate and return
+    if (this.isValidCoordinateData(inputData)) {
+      return {
+        coordinates: inputData.coordinates ? {
+          lat: this.sanitizeCoordinate(inputData.coordinates.lat),
+          long: this.sanitizeCoordinate(inputData.coordinates.long),
+        } : null,
+        address: inputData.address,
+        selectionTimestamp: inputData.selectionTimestamp,
+        boundaryViolation: inputData.boundaryViolation || false,
+      };
+    }
+
+    // Handle legacy or direct coordinate format (e.g., {lat: "48.123", long: "-123.456"})
+    if (inputData.lat && inputData.long) {
+      return {
+        coordinates: {
+          lat: this.sanitizeCoordinate(inputData.lat),
+          long: this.sanitizeCoordinate(inputData.long),
+        },
+        address: inputData.address,
+        selectionTimestamp: inputData.selectionTimestamp || new Date().toISOString(),
+        boundaryViolation: false,
+      };
+    }
+
+    // Return empty state for any other format
+    return {
+      coordinates: null,
+      address: undefined,
+      selectionTimestamp: undefined,
+      boundaryViolation: false,
+    };
+  }
+
+  // Validate if data has the expected coordinate structure
+  private isValidCoordinateData(data: any): boolean {
+    return data && (
+      (data.coordinates && typeof data.coordinates === 'object') ||
+      data.coordinates === null
+    );
+  }
+
+  // Sanitize and validate coordinate values
+  private sanitizeCoordinate(value: any): string {
+    if (typeof value === 'string') {
+      const parsed = parseFloat(value);
+      if (!isNaN(parsed) && isFinite(parsed)) {
+        return parsed.toString();
+      }
+    }
+    if (typeof value === 'number' && isFinite(value)) {
+      return value.toString();
+    }
+    throw new Error(`Invalid coordinate value: ${value}`);
+  }
+
+  // Get the current data in the format expected by form.io
+  getValue(): BCMapSelectorData {
+    return this.data;
+  }
+
+  // Set data from form.io (called when form loads existing data)
+  setValue(value: any): void {
+    this.data = this.initializeData(value);
+    this.renderComponent();
+  }
+
+  // Check if the component has a valid selection
+  hasValidSelection(): boolean {
+    return !!(this.data?.coordinates?.lat && this.data?.coordinates?.long);
+  }
+
+  // Update form.io value and trigger change events (for form integration)
+  updateComponentValue(value: BCMapSelectorData): void {
+    this.data = value;
+    
+    // Trigger form.io change event for proper form integration (Requirement 6.2)
+    (this as any).emit('componentChange', {
+      component: this.component,
+      value: value,
+      flags: {},
+      isValid: this.hasValidSelection() || value.coordinates === null
+    });
+  }
+
+  // Get value as string for form.io compatibility (commonly used for display/export)
+  getValueAsString(): string {
+    if (!this.hasValidSelection()) {
+      return '';
+    }
+
+    const coords = this.data.coordinates!;
+    let result = this.formatCoordinatesForDisplay(coords);
+    
+    if (this.data.address) {
+      result += ` (${this.data.address})`;
+    }
+    
+    return result;
+  }
+
+  // Check if component is empty (for form.io validation)
+  isEmpty(): boolean {
+    return !this.hasValidSelection();
   }
 
   static readonly builderInfo = {
@@ -89,7 +218,7 @@ export default class BCMapSelector extends ReactComponent {
   }
 
   // Handle map selection and emit event with boundary validation
-  private handleMapSelection = (coordinates: { lat: number; lng: number }) => {
+  private handleMapSelection = (coordinates: { lat: number; lng: number }, address?: string) => {
     const boundaries = this.getBCBoundaries();
     
     // Validate coordinates against boundaries (double-check, though MapModal should prevent invalid selections)
@@ -98,7 +227,7 @@ export default class BCMapSelector extends ReactComponent {
     if (!validationResult.isValid) {
       console.warn('Invalid coordinates selected:', validationResult.message);
       // Emit boundary violation event
-      this.emit('boundaryViolation', {
+      (this as any).emit('boundaryViolation', {
         data: {
           attempted: coordinates,
           message: validationResult.message
@@ -107,32 +236,63 @@ export default class BCMapSelector extends ReactComponent {
       return;
     }
 
-    const mapData: MapSelectionData = {
-      lat: coordinates.lat.toString(),
-      long: coordinates.lng.toString(),
-      timestamp: new Date().toISOString(),
-    };
+    try {
+      const mapData: MapSelectionData = {
+        lat: this.sanitizeCoordinate(coordinates.lat),
+        long: this.sanitizeCoordinate(coordinates.lng),
+        address: address,
+        timestamp: new Date().toISOString(),
+      };
 
-    // Store in component data
+      // Update component data with proper validation
+      this.data = {
+        coordinates: {
+          lat: mapData.lat,
+          long: mapData.long,
+        },
+        address: mapData.address,
+        selectionTimestamp: mapData.timestamp,
+        boundaryViolation: false, // Clear any previous boundary violation flag
+      };
+
+      // Emit mapSelected event as specified in requirements (6.1, 6.2)
+      (this as any).emit('mapSelected', {
+        data: {
+          lat: mapData.lat,
+          long: mapData.long,
+        },
+      });
+
+      // Trigger form.io change event for form integration
+      this.updateComponentValue(this.data);
+
+      // Re-render to show updated coordinates (6.4)
+      this.renderComponent();
+    } catch (error) {
+      console.error('Error processing map selection:', error);
+      // Handle invalid coordinate data gracefully
+      (this as any).emit('coordinateError', {
+        data: {
+          error: 'Invalid coordinate data',
+          attempted: coordinates,
+        }
+      });
+    }
+  };
+
+  // Clear the selected coordinates
+  private clearSelection = () => {
     this.data = {
-      ...this.data,
-      coordinates: {
-        lat: mapData.lat,
-        long: mapData.long,
-      },
-      selectionTimestamp: mapData.timestamp,
-      boundaryViolation: false, // Clear any previous boundary violation flag
+      coordinates: null,
+      address: undefined,
+      selectionTimestamp: undefined,
+      boundaryViolation: false,
     };
 
-    // Emit mapSelected event as specified in requirements
-    this.emit('mapSelected', {
-      data: {
-        lat: mapData.lat,
-        long: mapData.long,
-      },
-    });
+    // Trigger form.io change event
+    this.updateComponentValue(this.data);
 
-    // Re-render to show updated coordinates
+    // Re-render to show cleared state
     this.renderComponent();
   };
 
@@ -148,29 +308,99 @@ export default class BCMapSelector extends ReactComponent {
     this.renderComponent();
   };
 
+  // Format coordinates for display in readable format (Requirement 6.4)
+  private formatCoordinatesForDisplay(coordinates: { lat: string; long: string }): string {
+    const lat = parseFloat(coordinates.lat);
+    const lng = parseFloat(coordinates.long);
+    
+    const latDirection = lat >= 0 ? 'N' : 'S';
+    const lngDirection = lng >= 0 ? 'E' : 'W';
+    
+    return `${Math.abs(lat).toFixed(6)}°${latDirection}, ${Math.abs(lng).toFixed(6)}°${lngDirection}`;
+  }
+
+  // Get initial map center based on existing data or boundaries
+  private getInitialMapCenter(): [number, number] | undefined {
+    if (this.hasValidSelection()) {
+      const coords = this.data.coordinates!;
+      return [parseFloat(coords.lat), parseFloat(coords.long)];
+    }
+    return undefined; // Let MapModal use default center
+  }
+
   // Render the Select from Map button component
   private renderSelectButton(): React.ReactElement {
     const selectedCoordinates = this.data?.coordinates;
-    const hasSelection = selectedCoordinates?.lat && selectedCoordinates?.long;
+    const hasSelection = this.hasValidSelection();
     const boundaries = this.getBCBoundaries();
     const mapProviderConfig = this.getMapProviderConfig();
 
     return (
       <div className="bc-map-selector-container">
-        <button
-          type="button"
-          className="btn btn-primary select-from-map-button"
-          onClick={this.openMapModal}
-        >
-          <i className="fa fa-map-marker" aria-hidden="true"></i>
-          Select from Map
-        </button>
+        <div className="bc-map-selector-controls">
+          <button
+            type="button"
+            className="btn btn-primary select-from-map-button"
+            onClick={this.openMapModal}
+          >
+            <i className="fa fa-map-marker" aria-hidden="true"></i>
+            {hasSelection ? 'Change Location' : 'Select from Map'}
+          </button>
+          
+          {hasSelection && (
+            <button
+              type="button"
+              className="btn btn-secondary clear-selection-button"
+              onClick={this.clearSelection}
+              title="Clear selected location"
+            >
+              <i className="fa fa-times" aria-hidden="true"></i>
+              Clear
+            </button>
+          )}
+        </div>
         
-        {hasSelection && (
+        {/* Display coordinates in readable format (Requirement 6.4) */}
+        {hasSelection && selectedCoordinates && (
           <div className="selected-coordinates">
-            <strong>Selected Location:</strong><br />
-            Latitude: {selectedCoordinates.lat}<br />
-            Longitude: {selectedCoordinates.long}
+            <div className="coordinates-header">
+              <strong>Selected Location:</strong>
+            </div>
+            <div className="coordinates-display">
+              <div className="coordinates-formatted">
+                {this.formatCoordinatesForDisplay(selectedCoordinates)}
+              </div>
+              <div className="coordinates-raw">
+                <small>
+                  Lat: {selectedCoordinates.lat}, Long: {selectedCoordinates.long}
+                </small>
+              </div>
+              {this.data.address && (
+                <div className="coordinates-address">
+                  <small>
+                    <i className="fa fa-map-pin" aria-hidden="true"></i>
+                    {this.data.address}
+                  </small>
+                </div>
+              )}
+              {this.data.selectionTimestamp && (
+                <div className="coordinates-timestamp">
+                  <small>
+                    Selected: {new Date(this.data.selectionTimestamp).toLocaleString()}
+                  </small>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Display empty state message (Requirement 6.3) */}
+        {!hasSelection && (
+          <div className="no-selection-message">
+            <small className="text-muted">
+              <i className="fa fa-info-circle" aria-hidden="true"></i>
+              No location selected. Click "Select from Map" to choose a location.
+            </small>
           </div>
         )}
 
@@ -181,6 +411,7 @@ export default class BCMapSelector extends ReactComponent {
           boundaries={boundaries}
           mapProviderConfig={mapProviderConfig}
           componentSettings={this.component}
+          initialCenter={this.getInitialMapCenter()}
         />
       </div>
     );
