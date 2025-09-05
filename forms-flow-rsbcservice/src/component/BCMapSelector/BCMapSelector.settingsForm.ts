@@ -283,7 +283,34 @@ const settingsForm = (...extend) => {
             input: true,
             weight: 10,
             defaultValue: false,
-            description: "Enable to set custom geographic boundaries. If disabled, BC province boundaries will be used.",
+            description: "Enable to set custom geographic boundaries. If disabled, no boundary validation will be applied.",
+          },
+          {
+            type: "textfield",
+            key: "geoJsonUrl",
+            label: "GeoJSON Boundary URL",
+            input: true,
+            weight: 15,
+            placeholder: "https://example.com/boundary.geojson",
+            conditional: {
+              show: true,
+              when: "useCustomBoundaries",
+              eq: true
+            },
+            validate: {
+              custom: function (context) {
+                if (context.value && context.value.trim()) {
+                  try {
+                    new URL(context.value.trim());
+                    return true;
+                  } catch (error) {
+                    return "Please enter a valid URL";
+                  }
+                }
+                return true;
+              },
+            },
+            description: "URL to fetch GeoJSON polygon data for boundary validation. If provided, rectangular boundaries below will be ignored.",
           },
           {
             type: "number",
@@ -296,13 +323,19 @@ const settingsForm = (...extend) => {
             step: 0.000001,
             conditional: {
               show: true,
-              when: "useCustomBoundaries",
-              eq: true
+              json: {
+                "and": [
+                  { "==": [{ "var": "useCustomBoundaries" }, true] },
+                  { "!": [{ "var": "geoJsonUrl" }] }
+                ]
+              }
             },
             validate: {
               min: -90,
               max: 90,
-              required: true,
+              required: function (context) {
+                return context.data.useCustomBoundaries && !context.data.geoJsonUrl;
+              },
             },
           },
           {
@@ -316,13 +349,19 @@ const settingsForm = (...extend) => {
             step: 0.000001,
             conditional: {
               show: true,
-              when: "useCustomBoundaries",
-              eq: true
+              json: {
+                "and": [
+                  { "==": [{ "var": "useCustomBoundaries" }, true] },
+                  { "!": [{ "var": "geoJsonUrl" }] }
+                ]
+              }
             },
             validate: {
               min: -90,
               max: 90,
-              required: true,
+              required: function (context) {
+                return context.data.useCustomBoundaries && !context.data.geoJsonUrl;
+              },
               custom: function (context) {
                 if (context.data.northBoundary && context.value >= context.data.northBoundary) {
                   return "South boundary must be less than north boundary";
@@ -342,13 +381,19 @@ const settingsForm = (...extend) => {
             step: 0.000001,
             conditional: {
               show: true,
-              when: "useCustomBoundaries",
-              eq: true
+              json: {
+                "and": [
+                  { "==": [{ "var": "useCustomBoundaries" }, true] },
+                  { "!": [{ "var": "geoJsonUrl" }] }
+                ]
+              }
             },
             validate: {
               min: -180,
               max: 180,
-              required: true,
+              required: function (context) {
+                return context.data.useCustomBoundaries && !context.data.geoJsonUrl;
+              },
             },
           },
           {
@@ -362,13 +407,19 @@ const settingsForm = (...extend) => {
             step: 0.000001,
             conditional: {
               show: true,
-              when: "useCustomBoundaries",
-              eq: true
+              json: {
+                "and": [
+                  { "==": [{ "var": "useCustomBoundaries" }, true] },
+                  { "!": [{ "var": "geoJsonUrl" }] }
+                ]
+              }
             },
             validate: {
               min: -180,
               max: 180,
-              required: true,
+              required: function (context) {
+                return context.data.useCustomBoundaries && !context.data.geoJsonUrl;
+              },
               custom: function (context) {
                 if (context.data.eastBoundary && context.value >= context.data.eastBoundary) {
                   return "West boundary must be less than east boundary";

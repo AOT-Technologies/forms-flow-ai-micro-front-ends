@@ -219,21 +219,24 @@ export default class BCMapSelector extends ReactComponent {
 
   // Handle map selection and emit event with boundary validation
   private handleMapSelection = (coordinates: { lat: number; lng: number }, address?: string) => {
-    const boundaries = this.getBCBoundaries();
+    // Skip boundary validation if custom boundaries are disabled
+    if (this.component.useCustomBoundaries) {
+      const boundaries = this.getBCBoundaries();
 
-    // Validate coordinates against boundaries (double-check, though MapModal should prevent invalid selections)
-    const validationResult = validateCoordinatesWithinBoundaries(coordinates, boundaries);
+      // Validate coordinates against boundaries (double-check, though MapModal should prevent invalid selections)
+      const validationResult = validateCoordinatesWithinBoundaries(coordinates, boundaries);
 
-    if (!validationResult.isValid) {
-      console.warn('Invalid coordinates selected:', validationResult.message);
-      // Emit boundary violation event
-      (this as any).emit('boundaryViolation', {
-        data: {
-          attempted: coordinates,
-          message: validationResult.message
-        }
-      });
-      return;
+      if (!validationResult.isValid) {
+        console.warn('Invalid coordinates selected:', validationResult.message);
+        // Emit boundary violation event
+        (this as any).emit('boundaryViolation', {
+          data: {
+            attempted: coordinates,
+            message: validationResult.message
+          }
+        });
+        return;
+      }
     }
 
     try {
@@ -412,6 +415,8 @@ export default class BCMapSelector extends ReactComponent {
           mapProviderConfig={mapProviderConfig}
           componentSettings={this.component}
           initialCenter={this.getInitialMapCenter()}
+          useCustomBoundaries={this.component.useCustomBoundaries}
+          geoJsonUrl={this.component.geoJsonUrl}
         />
       </div>
     );
