@@ -45,7 +45,7 @@ export const SortableHeader: React.FC<SortableHeaderProps> = ({
       aria-label={`${title}-header-btn`}
     >
       <span className="text">{t(title)}</span>
-      <span className={sortedOrder === "asc" ? "arrow-up" : "arrow-down"}>
+      <span className={sortedOrder === "desc" ? "arrow-down" : "arrow-up"}>
         <SortIcon color={iconColor} dataTestId="sort" />
       </span>
     </button>
