@@ -214,13 +214,20 @@ const initialInputFields = useMemo(() => {
 
   ];
 
-  return sortedVars.map((item) => ({
-    id: item.key,
-    name: item.key,
-    type: "text",
-    label: t(item.label),
-    value: searchFieldValues[item.key] || "",
-  }));
+const placeholders: Record<string, string> = {
+datetime: "DD-MM-YYYY",
+day: "DD/MM/YYYY",
+time: "HH:MM",
+};
+
+return sortedVars.map((item) => ({
+id: item.key,
+name: item.key,
+type: "text",
+label: t(item.label),
+value: searchFieldValues[item.key] || "",
+placeholder: placeholders[item.type] || "",
+}));
 }, [selectedSubmissionFilter, submissionFields, searchFieldValues]);
 
   useEffect(() => {
@@ -244,7 +251,7 @@ const initialInputFields = useMemo(() => {
 useEffect(() => {
   // persist previously searched fields
     if (Object.keys(searchFieldValues).length > 0) {
-    handleFieldSearch(searchFieldValues); 
+    handleFieldSearch(searchFieldValues);
   };
   fetchSubmissionList()
     .then((res) => {
@@ -420,10 +427,20 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
     dispatch(setAnalyzeSubmissionLimit(newLimit));
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
- const customTdValue = (value, index, submissionId) => {
+ const customTdValue = (value, index, submissionId, fieldKey) => {
+  // Remove tenant name from currentUserRoles when multitenancy is enabled
+  let displayValue = value;
+  if (fieldKey === "currentUserRoles" && MULTITENANCY_ENABLED && typeof value === "string") {
+    // Extract tenant key from localStorage or Redux state
+    const tenantKey = localStorage.getItem("tenantKey") || tenantId;
+    if (tenantKey) {
+      displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
+    }
+  }
+
   return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`}
               className="custom-td">
-            <div className="text-overflow-ellipsis">{value}</div>
+            <div className="text-overflow-ellipsis">{displayValue}</div>
           </td>
  }
 
@@ -509,7 +526,7 @@ return (
       })();
 
 
-      return customTdValue(value, index, submission.id);
+      return customTdValue(value, index, submission.id, key);
     })}
 
     {/* Action column */}

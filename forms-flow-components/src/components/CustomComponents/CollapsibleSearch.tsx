@@ -17,6 +17,7 @@ interface InputField {
   label: string;
   type: string;
   value: string;
+  placeholder?: string;
 }
 interface CollapsibleSearchProps {
   isOpen: boolean;
@@ -218,8 +219,10 @@ const DropdownItems = [
                   aria-label={field.label}
                   data-testid={`input-${field.id}`} 
                   onClearClick={() => handleFieldChange(index, "")}
-                  clear={field.value !== ""} 
-                />
+                  clear={field.value !== ""}
+                  placeholder={
+                    field.placeholder
+                  }                 />
               </div>
             ))}
             {dropdownSelection && selectedFormType === "bundle" ? (

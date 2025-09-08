@@ -5,10 +5,12 @@ import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n.js";
 import {
   CUSTOM_SUBMISSION_URL,
   CUSTOM_SUBMISSION_ENABLE,
+  MULTITENANCY_ENABLED,
 } from "../constants/constants";
 import { RootState } from "../reducers/index";
 import { RouteComponentProps } from "react-router-dom";
 import Loading from "./Loading";
+import { HelperServices } from "@formsflow/service";
 
 interface OwnProps extends RouteComponentProps<{ formId: string }> {
   page?: string;
@@ -46,9 +48,24 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
     return reduxSubmission.submission;
   }, [customSubmission, reduxSubmission]);
 
-  // Deep clone submission to prevent mutation issues
+  // Deep clone submission to prevent mutation issues and process currentUserRoles
   const safeSubmission = useMemo(() => {
-    return rawSubmission ? JSON.parse(JSON.stringify(rawSubmission)) : null;
+    if (!rawSubmission) return null;
+    
+    const clonedSubmission = JSON.parse(JSON.stringify(rawSubmission));
+    
+    // Remove tenant name from currentUserRoles when multitenancy is enabled
+    if (MULTITENANCY_ENABLED && clonedSubmission.data?.currentUserRoles) {
+      const tenantKey = localStorage.getItem("tenantKey");
+      if (tenantKey) {
+        const rolesString = clonedSubmission.data.currentUserRoles;
+        if (typeof rolesString === "string") {
+          clonedSubmission.data.currentUserRoles = HelperServices.removeTenantFromRoles(rolesString, tenantKey);
+        }
+      }
+    }
+    
+    return clonedSubmission;
   }, [rawSubmission]);
 
   const isLoading =
