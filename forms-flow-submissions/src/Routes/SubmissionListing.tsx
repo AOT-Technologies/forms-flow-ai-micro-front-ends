@@ -85,7 +85,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
-
+ 
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
   const columnWidths = useSelector((state: any) => state?.analyzeSubmission?.columnWidths ?? {});
@@ -114,7 +114,7 @@ const AnalyzeSubmissionList: React.FC = () => {
  const [submissionFields, setSubmissionFields] = useState( DEFAULT_SUBMISSION_FIELDS );
 
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
-  const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
+   const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
     dispatch(setAnalyzeSubmissionPage(1));
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
@@ -261,14 +261,14 @@ useEffect(() => {
       dispatch(setDefaultSubmissionFilter(defaultSubmissionsFilter));
 
       const defaultFilter = filters.find((f) => f.id === defaultSubmissionsFilter);
-      if (defaultFilter) {
+                  if (defaultFilter) {
         dispatch(setSelectedSubmisionFilter(defaultFilter));
         setDropdownSelection(defaultFilter.parentFormId);
-        setSelectedItem(defaultFilter.name);
-      } else {
+         setSelectedItem(defaultFilter.name);
+       } else {
         setDropdownSelection(null);
-        setSelectedItem("All Forms");
-      }
+         setSelectedItem("All Forms");
+       }
     })
     .catch((error) => {
       console.error("Error fetching submission list:", error);
@@ -379,7 +379,7 @@ const {
   },[]);
 
   //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection
-  const fetchFormData = useCallback(() => {
+    const fetchFormData = useCallback(() => {
     if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
     }
@@ -684,7 +684,7 @@ return (
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0)}
+          hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0) || dropdownSelection !==null}
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}

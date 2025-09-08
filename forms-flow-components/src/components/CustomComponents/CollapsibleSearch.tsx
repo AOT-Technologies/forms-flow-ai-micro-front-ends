@@ -233,7 +233,8 @@ const DropdownItems = [
                   dataTestId="bundle-note-section"
                 />
               </div>
-            ) :
+            ) : dropdownSelection &&
+            (
               <div className="panel-width">
                 <CustomButton
                   secondary
@@ -245,6 +246,8 @@ const DropdownItems = [
                   ariaLabel="Manage fields" 
                 />
               </div>
+            )
+              
            }
           </div>
           <div className="search-clear">
