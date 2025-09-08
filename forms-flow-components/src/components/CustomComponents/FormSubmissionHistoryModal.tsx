@@ -18,20 +18,21 @@ interface SubmissionHistory {
   id?: string;
 }
 
-const HistoryField = ({ fields }: { fields: { id: number; value: string }[] }) => (
+const HistoryField = ({ fields, created }: { fields: { id: number; value: string }[]; created?: string }) => (
+  
   <>
     <p className="heading">
       {fields.map(({ id, value }) => (
-        <>
+        <React.Fragment key={id}>
           {value}
-        </>
+        </React.Fragment>
       ))}
     </p>
 
     <div className="details">
       <div>
         <p>Created On</p>
-        <p>28-05-2025, 02:44:06 PM</p>
+        <p className="text-nowrap">{created ? HelperServices.getLocalDateAndTime(created) : "N/A"}</p>
       </div>
     </div>
   </>
@@ -78,8 +79,8 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
                     <HistoryField
                       fields={[
                         { id: 1, value: entry.applicationStatus || "N/A" },
-                        { id: 2, value: entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A" },
                       ]}
+                      created={entry.created}
                     />
                   </div>
                 ))}

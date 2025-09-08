@@ -14,6 +14,8 @@ import Loading from "./components/Loading";
 import SubmissionsList from "./Routes/SubmissionListing";
 import ViewApplication from "./components/AnalyzeSubmissionView"
 import { StyleServices } from "@formsflow/service";
+import { useDispatch } from "react-redux";
+import { setTenantData } from "./actions/tenantActions";
 interface SubmissionsProps {
   publish?: (event: string, data?: any) => void;
   subscribe?: (
@@ -26,6 +28,7 @@ interface SubmissionsProps {
 const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
   const { publish = () => { }, subscribe = () => { } } = props;
   const { tenantId } = useParams<{ tenantId?: string }>();
+  const dispatch = useDispatch();
   const instance = useMemo(() => props.getKcInstance(), []);
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
   const userRoles = JSON.parse(
@@ -42,6 +45,25 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
       i18n.changeLanguage(data);
     });
   }, []);
+
+  useEffect(() => {
+    if (MULTITENANCY_ENABLED && tenantId) {
+      // Get tenant data from StorageService
+      const storedTenantData = localStorage.getItem("TENANT_DATA");
+  
+      if (storedTenantData) {
+        try {
+          const parsedTenantData = JSON.parse(storedTenantData);
+          // Set tenant data in Redux state
+          dispatch(setTenantData(parsedTenantData));
+        } catch (error) {
+          console.error("Error parsing tenant data from storage:", error);
+        }
+      } else {
+        console.log("No tenant data found in storage");
+      }
+    }
+  }, [dispatch,tenantId]);
 
   useEffect(() => {
     StorageService.save("tenantKey", tenantId ?? "");

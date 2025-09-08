@@ -85,7 +85,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
-
+ 
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
   const columnWidths = useSelector((state: any) => state?.analyzeSubmission?.columnWidths ?? {});
@@ -114,7 +114,7 @@ const AnalyzeSubmissionList: React.FC = () => {
  const [submissionFields, setSubmissionFields] = useState( DEFAULT_SUBMISSION_FIELDS );
 
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
-  const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
+   const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
     dispatch(setAnalyzeSubmissionPage(1));
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
@@ -214,13 +214,20 @@ const initialInputFields = useMemo(() => {
 
   ];
 
-  return sortedVars.map((item) => ({
-    id: item.key,
-    name: item.key,
-    type: "text",
-    label: t(item.label),
-    value: searchFieldValues[item.key] || "",
-  }));
+const placeholders: Record<string, string> = {
+datetime: "DD-MM-YYYY",
+day: "DD/MM/YYYY",
+time: "HH:MM",
+};
+
+return sortedVars.map((item) => ({
+id: item.key,
+name: item.key,
+type: "text",
+label: t(item.label),
+value: searchFieldValues[item.key] || "",
+placeholder: placeholders[item.type] || "",
+}));
 }, [selectedSubmissionFilter, submissionFields, searchFieldValues]);
 
   useEffect(() => {
@@ -244,7 +251,7 @@ const initialInputFields = useMemo(() => {
 useEffect(() => {
   // persist previously searched fields
     if (Object.keys(searchFieldValues).length > 0) {
-    handleFieldSearch(searchFieldValues); 
+    handleFieldSearch(searchFieldValues);
   };
   fetchSubmissionList()
     .then((res) => {
@@ -254,14 +261,14 @@ useEffect(() => {
       dispatch(setDefaultSubmissionFilter(defaultSubmissionsFilter));
 
       const defaultFilter = filters.find((f) => f.id === defaultSubmissionsFilter);
-      if (defaultFilter) {
+                  if (defaultFilter) {
         dispatch(setSelectedSubmisionFilter(defaultFilter));
         setDropdownSelection(defaultFilter.parentFormId);
-        setSelectedItem(defaultFilter.name);
-      } else {
+         setSelectedItem(defaultFilter.name);
+       } else {
         setDropdownSelection(null);
-        setSelectedItem("All Forms");
-      }
+         setSelectedItem("All Forms");
+       }
     })
     .catch((error) => {
       console.error("Error fetching submission list:", error);
@@ -374,7 +381,7 @@ const {
   },[]);
 
   //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection
-  const fetchFormData = useCallback(() => {
+    const fetchFormData = useCallback(() => {
     if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
     }
@@ -422,10 +429,20 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
     dispatch(setAnalyzeSubmissionLimit(newLimit));
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
- const customTdValue = (value, index, submissionId) => {
+ const customTdValue = (value, index, submissionId, fieldKey) => {
+  // Remove tenant name from currentUserRoles when multitenancy is enabled
+  let displayValue = value;
+  if (fieldKey === "currentUserRoles" && MULTITENANCY_ENABLED && typeof value === "string") {
+    // Extract tenant key from localStorage or Redux state
+    const tenantKey = localStorage.getItem("tenantKey") || tenantId;
+    if (tenantKey) {
+      displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
+    }
+  }
+
   return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`}
               className="custom-td">
-            <div className="text-overflow-ellipsis">{value}</div>
+            <div className="text-overflow-ellipsis">{displayValue}</div>
           </td>
  }
 
@@ -515,7 +532,7 @@ return (
       })();
 
 
-      return customTdValue(value, index, submission.id);
+      return customTdValue(value, index, submission.id, key);
     })}
 
     {/* Action column */}
@@ -673,7 +690,7 @@ return (
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0)}
+          hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0) || dropdownSelection !==null}
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}

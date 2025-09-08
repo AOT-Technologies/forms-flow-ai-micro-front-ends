@@ -8,7 +8,7 @@ interface CustomPillProps {
   secondaryLabel: string;
   icon?: React.ReactNode;
   bg: string;
- dataTestId?: string;
+  dataTestId?: string;
   ariaLabel?: string;
   onClick?: () => void; 
   className?: string;
