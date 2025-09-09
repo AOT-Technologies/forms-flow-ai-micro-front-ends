@@ -1,5 +1,6 @@
 const { merge } = require("webpack-merge");
 const singleSpaDefaults = require("webpack-config-single-spa-ts");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 module.exports = (webpackConfigEnv, argv) => {
   const defaultConfig = singleSpaDefaults({
@@ -16,9 +17,19 @@ module.exports = (webpackConfigEnv, argv) => {
       },
       port: 3011
     },
-    output:{
-      filename:"forms-flow-rsbcservice.js"
+    output: {
+      filename: "forms-flow-rsbcservice.js"
     },
+    plugins: [
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: "src/component/BCMapSelector/*.geojson",
+            to: "[name][ext]"
+          }
+        ]
+      })
+    ],
     module: {
       rules: [
         {
@@ -28,7 +39,7 @@ module.exports = (webpackConfigEnv, argv) => {
             'css-loader',    // Resolves CSS imports
             'sass-loader'    // Compiles SCSS to CSS
           ]
-        },
+        }
       ]
     }
   });
