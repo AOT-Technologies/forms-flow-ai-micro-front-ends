@@ -96,8 +96,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         let resetValue = item.value;
 
         // Remove '%' from displaying
-         if (typeof resetValue !== "number" && item.name !== "applicationId") {
-          resetValue = resetValue.replace(/%/g, '');
+         if (typeof resetValue !== "number" && item.name !== "applicationId" && typeof resetValue !== "boolean" ) {
+          resetValue = resetValue?.replace(/%/g, '');
         }
 
         acc[item.name] = resetValue;
@@ -273,8 +273,15 @@ const removeSlashFromValue = (value) => {
   const ignoredKeys = ["assignee", "roles"];
 
   Object.keys(attributeData).forEach((key) => {
-  if (!ignoredKeys.includes(key) && attributeData[key]) {
-    const isNumberOrAppId = types[key] === "number" || key === "applicationId";
+  if (
+    !ignoredKeys.includes(key) &&
+    attributeData[key] != null &&
+    attributeData[key] !== ""
+  ) {
+    const isNumberOrAppId =
+      types[key] === "number" ||
+      key === "applicationId" ||
+      types[key] === "checkbox";
     const operator = isNumberOrAppId ? "eq" : "like";
 
     let value = attributeData[key];
@@ -286,26 +293,21 @@ const removeSlashFromValue = (value) => {
     } else if (types[key] === "number") {
       // Convert string to number for number type fields
       value = Number(value);
-    } 
-    else if (types[key] === "day") {
+    } else if (types[key] === "day") {
       //chnaging '/' to '-'
       const [day, month, year] = value.split("-");
       value = `%${month}/${day}/${year}%`;
-    }
-    else if (types[key] === "datetime") {
+    } else if (types[key] === "datetime") {
       //changing date and time to camunda expected format
       if (value && value.includes(",")) {
-
-        const [datePart, timePart] = value.split(",").map(s => s.trim());
+        const [datePart, timePart] = value.split(",").map((s) => s.trim());
         const [day, month, year] = datePart.split("-");
 
         const dateObj = new Date(`${year}-${month}-${day} ${timePart}`);
 
         value = `%${dateObj.toISOString()}%`;
       }
-    }
-
-      else if (!isNumberOrAppId) {
+    } else if (!isNumberOrAppId) {
       // like search
       value = `%${value}%`;
     }
