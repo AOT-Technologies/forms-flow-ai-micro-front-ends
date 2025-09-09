@@ -446,6 +446,11 @@ const settingsForm = (...extend) => {
                 <ul style="margin-bottom: 15px; color: #6c757d;">
                   <li><strong>mapSelected</strong> - Fired when a location is selected on the map. Event data contains lat/long coordinates.</li>
                   <li><strong>mapCleared</strong> - Fired when the selected location is cleared from the map.</li>
+                  <li><strong>addressSet</strong> - Fired when an address is programmatically set using the setAddress method. Event data contains the address string.</li>
+                </ul>
+                <h5 style="color: #495057;">Public Methods:</h5>
+                <ul style="margin-bottom: 15px; color: #6c757d;">
+                  <li><strong>setAddress(address: string)</strong> - Public method to set address programmatically. This method can be called externally to update the map location based on an address string.</li>
                 </ul>
                 <h5 style="color: #495057;">Example Event Listeners:</h5>
                 <pre style="background-color: #f1f3f4; padding: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto;"><code>if(instance && !instance.mapSelectedListner){
@@ -459,7 +464,15 @@ const settingsForm = (...extend) => {
     instance.root.getComponent("lat").setValue('')
     instance.root.getComponent("long").setValue('')
   });
+
+  instance.root.on('addressSet', async (event) => {
+    const address = event.data;
+    console.log('Address set programmatically:', address);
+  });
 }</code></pre>
+                <h5 style="color: #495057;">Example Method Usage:</h5>
+                <pre style="background-color: #f1f3f4; padding: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto;"><code>// Set address programmatically
+await instance.setAddress('123 Main St, Vancouver, BC');</code></pre>
               </div>
             `,
           },

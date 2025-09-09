@@ -113,6 +113,53 @@ function MapClickHandler({
   return null;
 }
 
+// Component to handle map instance reference
+function MapInstanceManager({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    mapRef.current = map;
+    return () => {
+      // Don't manually remove the map, React-Leaflet handles this
+      mapRef.current = null;
+    };
+  }, [map, mapRef]);
+  
+  return null;
+}
+
+// Component to zoom to existing coordinates when modal opens
+function ZoomToExistingCoordinates({ 
+  existingCoordinates, 
+  isModalOpen 
+}: { 
+  existingCoordinates: { lat: number; lng: number } | null;
+  isModalOpen: boolean;
+}) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (isModalOpen && existingCoordinates && map) {
+      // Add a small delay to ensure map is fully rendered
+      const timer = setTimeout(() => {
+        try {
+          // Zoom to existing coordinates with smooth animation
+          map.setView([existingCoordinates.lat, existingCoordinates.lng], 16, {
+            animate: true,
+            duration: 0.8
+          });
+        } catch (error) {
+          console.warn('Error zooming to existing coordinates:', error);
+        }
+      }, 200); // Slightly longer delay for better reliability
+
+      return () => clearTimeout(timer);
+    }
+  }, [map, existingCoordinates, isModalOpen]);
+  
+  return null;
+}
+
 // Component to fit map view to boundaries and add boundary layer
 function BoundaryManager({
   boundaries,
@@ -130,14 +177,23 @@ function BoundaryManager({
   useEffect(() => {
     if (map && useCustomBoundaries) {
       let boundaryLayer: L.GeoJSON | L.Rectangle | null = null;
+      let isMounted = true; // Track if component is still mounted
+      const abortController = new AbortController(); // For cancelling fetch requests
 
       // Load boundary data
       const loadBoundary = async () => {
         try {
           // Use custom GeoJSON URL if provided
           const url = geoJsonUrl || "";
-          const response = await fetch(url);
+          const response = await fetch(url, { signal: abortController.signal });
+          
+          // Check if component is still mounted before proceeding
+          if (!isMounted) return;
+          
           const boundaryData = await response.json();
+
+          // Check again after async operation
+          if (!isMounted) return;
 
           // Pass the GeoJSON data to parent for validation
           if (onBoundaryDataLoaded) {
@@ -157,42 +213,60 @@ function BoundaryManager({
           });
 
           boundaryLayer = geoJsonLayer;
-          boundaryLayer.addTo(map);
+          
+          // Check if map is still valid before adding layer
+          if (isMounted && map && map.getContainer()) {
+            boundaryLayer.addTo(map);
 
-          // Add tooltip to boundary
-          const tooltipText = geoJsonUrl ? 'Custom Boundary - Allowed selection area' : 'British Columbia - Allowed selection area';
-          boundaryLayer.bindTooltip(tooltipText, {
-            permanent: false,
-            direction: 'center'
-          });
+            // Add tooltip to boundary
+            const tooltipText = geoJsonUrl ? 'Custom Boundary - Allowed selection area' : 'British Columbia - Allowed selection area';
+            boundaryLayer.bindTooltip(tooltipText, {
+              permanent: false,
+              direction: 'center'
+            });
 
-          // Fit map to the boundary bounds
-          map.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] });
+            // Fit map to the boundary bounds - check if map is still valid
+            if (map.getContainer()) {
+              map.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] });
+            }
+          }
 
         } catch (error) {
+          // Don't log error if it's just an aborted fetch
+          if (error.name === 'AbortError') {
+            return;
+          }
+          
           console.warn('Could not load boundary GeoJSON, falling back to rectangle:', error);
+
+          // Check if component is still mounted before fallback
+          if (!isMounted) return;
 
           // Fallback to rectangle if GeoJSON fails to load
           const bounds = createLeafletBounds(boundaries);
-          map.fitBounds(bounds, { padding: [20, 20] });
+          
+          // Check if map is still valid before operations
+          if (isMounted && map && map.getContainer()) {
+            map.fitBounds(bounds, { padding: [20, 20] });
 
-          const rectangleLayer = L.rectangle(bounds, {
-            color: '#007bff',
-            weight: 2,
-            opacity: 0.8,
-            fillColor: '#007bff',
-            fillOpacity: 0.1,
-            dashArray: '5, 5'
-          });
+            const rectangleLayer = L.rectangle(bounds, {
+              color: '#007bff',
+              weight: 2,
+              opacity: 0.8,
+              fillColor: '#007bff',
+              fillOpacity: 0.1,
+              dashArray: '5, 5'
+            });
 
-          boundaryLayer = rectangleLayer;
-          boundaryLayer.addTo(map);
+            boundaryLayer = rectangleLayer;
+            boundaryLayer.addTo(map);
 
-          // Add tooltip to boundary rectangle
-          boundaryLayer.bindTooltip('Allowed selection area', {
-            permanent: false,
-            direction: 'center'
-          });
+            // Add tooltip to boundary rectangle
+            boundaryLayer.bindTooltip('Allowed selection area', {
+              permanent: false,
+              direction: 'center'
+            });
+          }
         }
       };
 
@@ -200,14 +274,24 @@ function BoundaryManager({
 
       // Cleanup on unmount
       return () => {
-        if (boundaryLayer && map) {
-          map.removeLayer(boundaryLayer);
+        isMounted = false; // Mark as unmounted to prevent async operations
+        abortController.abort(); // Cancel any ongoing fetch requests
+        if (boundaryLayer && map && map.getContainer()) {
+          try {
+            map.removeLayer(boundaryLayer);
+          } catch (error) {
+            // Ignore cleanup errors if map is already destroyed
+            console.warn('Error removing boundary layer:', error);
+          }
         }
       };
     } else if (map && !useCustomBoundaries) {
       // If custom boundaries are disabled, fit to default view without boundary layer
       const bounds = createLeafletBounds(boundaries);
-      map.fitBounds(bounds, { padding: [20, 20] });
+      // Check if map is still valid before fitting bounds
+      if (map.getContainer()) {
+        map.fitBounds(bounds, { padding: [20, 20] });
+      }
     }
   }, [map, boundaries, onBoundaryDataLoaded, useCustomBoundaries, geoJsonUrl]);
 
@@ -277,9 +361,13 @@ const MapModal: React.FC<MapModalProps> = ({
   const [userLocationMarker, setUserLocationMarker] = useState<{ lat: number; lng: number } | null>(null);
   const [bcBoundaryData, setBcBoundaryData] = useState<any>(null);
 
-  // Calculate center point from boundaries if no initial center provided
-  const center: [number, number] = initialCenter || getBoundariesCenter(boundaries);
-  const zoom = calculateZoomForBoundaries(boundaries);
+  // Calculate center point - prioritize existing coordinates, then initial center, then boundaries center
+  const center: [number, number] = existingCoordinates 
+    ? [existingCoordinates.lat, existingCoordinates.lng]
+    : initialCenter || getBoundariesCenter(boundaries);
+  
+  // Use higher zoom if we have existing coordinates to focus on
+  const zoom = existingCoordinates ? 16 : calculateZoomForBoundaries(boundaries);
 
   // Initialize tile layer options based on provider configuration
   useEffect(() => {
@@ -316,12 +404,41 @@ const MapModal: React.FC<MapModalProps> = ({
       setBoundaryViolation(null);
       setSearchError(null);
       
-      // Automatic geolocation request when modal opens (only if no existing coordinates)
-      if (!existingCoordinates && GeolocationService.isSupported()) {
+      // Automatic geolocation request when modal opens (only if no existing coordinates and no existing address)
+      if (!existingCoordinates && !existingAddress && GeolocationService.isSupported()) {
         requestUserLocation();
       }
+    } else {
+      // Clean up state when modal is closed
+      setUserLocation(null);
+      setGeolocationError(null);
+      setUserLocationMarker(null);
+      setIsRequestingLocation(false);
+      setBcBoundaryData(null);
     }
   }, [isOpen, existingCoordinates, existingAddress]);
+
+  // Zoom to existing coordinates when modal opens and map is ready
+  useEffect(() => {
+    if (isOpen && existingCoordinates && mapRef.current && mapRef.current.getContainer()) {
+      // Add a small delay to ensure map is fully initialized
+      const timer = setTimeout(() => {
+        if (mapRef.current && mapRef.current.getContainer()) {
+          try {
+            // Center and zoom to the existing coordinates with a higher zoom level for better focus
+            mapRef.current.setView([existingCoordinates.lat, existingCoordinates.lng], 16, {
+              animate: true,
+              duration: 0.5
+            });
+          } catch (error) {
+            console.warn('Error zooming to existing coordinates:', error);
+          }
+        }
+      }, 100); // Small delay to ensure map is ready
+
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, existingCoordinates]);
 
   // Request user location
   const requestUserLocation = async () => {
@@ -352,11 +469,15 @@ const MapModal: React.FC<MapModalProps> = ({
         setUserLocationMarker({ lat: location.lat, lng: location.lng });
 
         // Center map on user location
-        if (mapRef.current) {
-          mapRef.current.setView([location.lat, location.lng], 12, {
-            animate: true,
-            duration: 1
-          });
+        if (mapRef.current && mapRef.current.getContainer()) {
+          try {
+            mapRef.current.setView([location.lat, location.lng], 12, {
+              animate: true,
+              duration: 1
+            });
+          } catch (error) {
+            console.warn('Error setting map view:', error);
+          }
         }
       } else {
         // Location is outside boundaries - center on boundaries but don't show marker
@@ -398,8 +519,12 @@ const MapModal: React.FC<MapModalProps> = ({
       setSearchError(null);
 
       // Center map on selected location
-      if (mapRef.current) {
-        mapRef.current.setView([coordinates.lat, coordinates.lng], 15);
+      if (mapRef.current && mapRef.current.getContainer()) {
+        try {
+          mapRef.current.setView([coordinates.lat, coordinates.lng], 15);
+        } catch (error) {
+          console.warn('Error setting map view:', error);
+        }
       }
 
       // Focus the Select button for keyboard accessibility
@@ -432,8 +557,12 @@ const MapModal: React.FC<MapModalProps> = ({
       setSearchError(null); // Clear any search errors
 
       // Center map on selected location
-      if (mapRef.current) {
-        mapRef.current.setView([coordinates.lat, coordinates.lng], 15);
+      if (mapRef.current && mapRef.current.getContainer()) {
+        try {
+          mapRef.current.setView([coordinates.lat, coordinates.lng], 15);
+        } catch (error) {
+          console.warn('Error setting map view:', error);
+        }
       }
 
       // Focus the Select button for keyboard accessibility
@@ -512,6 +641,12 @@ const MapModal: React.FC<MapModalProps> = ({
     setGeolocationError(null);
     setUserLocationMarker(null);
     setIsRequestingLocation(false);
+    
+    // Clear map reference safely to prevent cleanup issues
+    if (mapRef.current) {
+      mapRef.current = null;
+    }
+    
     onClose();
   };
 
@@ -538,8 +673,8 @@ const MapModal: React.FC<MapModalProps> = ({
   // Cleanup map instance on unmount
   useEffect(() => {
     return () => {
+      // Clear the map reference safely
       if (mapRef.current) {
-        mapRef.current.remove();
         mapRef.current = null;
       }
     };
@@ -583,6 +718,7 @@ const MapModal: React.FC<MapModalProps> = ({
               onLocationSelect={handleAddressLocationSelect}
               onError={handleSearchError}
               disabled={false}
+              initialAddress={existingAddress || ''}
             />
           )}
 
@@ -625,7 +761,6 @@ const MapModal: React.FC<MapModalProps> = ({
                 center={center}
                 zoom={zoom}
                 style={{ height: '400px', width: '100%' }}
-                ref={mapRef}
                 dragging={true}
                 scrollWheelZoom={true}
                 zoomControl={true}
@@ -636,6 +771,11 @@ const MapModal: React.FC<MapModalProps> = ({
                   maxZoom={tileLayerOptions.maxZoom}
                   minZoom={tileLayerOptions.minZoom}
                   subdomains={tileLayerOptions.subdomains}
+                />
+                <MapInstanceManager mapRef={mapRef} />
+                <ZoomToExistingCoordinates 
+                  existingCoordinates={existingCoordinates} 
+                  isModalOpen={isOpen} 
                 />
                 <BoundaryManager
                   boundaries={boundaries}

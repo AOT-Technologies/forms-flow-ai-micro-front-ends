@@ -5,6 +5,7 @@ import settingsForm from './BCMapSelector.settingsForm';
 import MapModal from './MapModal';
 import { MapProviderFactory, MapProviderConfig } from './mapProviders';
 import { BCBoundaries, DEFAULT_BC_BOUNDARIES, validateCoordinatesWithinBoundaries } from './boundaryUtils';
+import { GeocodingService, createGeocodingConfig } from './geocodingUtils';
 import './BCMapSelector.scss';
 import './mapModal.scss';
 
@@ -284,6 +285,85 @@ export default class BCMapSelector extends ReactComponent {
     }
   };
 
+  // Set address and coordinates programmatically (for form.io component integration)
+  private setAddressInternal = async (address: string): Promise<void> => {
+    if (!address || !address.trim()) {
+      this.clearSelection();
+      return;
+    }
+
+    try {
+      // Create geocoding service to search for the address
+      const geocodingConfig = this.getGeocodingConfig();
+      const geocodingService = new GeocodingService(geocodingConfig, this.getBCBoundaries());
+
+      if (!geocodingService.isEnabled()) {
+        console.warn('Geocoding service is disabled, cannot set address');
+        return;
+      }
+
+      // Search for the address
+      const results = await geocodingService.searchAddress(address);
+      
+      if (!results || results.length === 0) {
+        console.warn('No results found for address:', address);
+        // Emit event for no results found
+        (this as any).emit('addressNotFound', {
+          data: {
+            address: address,
+            message: 'No results found for the provided address'
+          }
+        });
+        return;
+      }
+
+      // Use the first result
+      const result = results[0];
+      
+      // Update component data
+      this.data = {
+        coordinates: {
+          lat: result.lat.toString(),
+          long: result.lng.toString(),
+        },
+        address: result.address || result.display_name,
+        selectionTimestamp: new Date().toISOString(),
+        boundaryViolation: false,
+      };
+
+      // Trigger form.io change event
+      this.updateComponentValue(this.data);
+
+      // Emit addressSet event
+      (this as any).emit('addressSet', {
+        data: {
+          lat: result.lat.toString(),
+          long: result.lng.toString(),
+          address: result.address || result.display_name,
+          originalQuery: address
+        }
+      });
+
+      // Re-render to show updated coordinates
+      this.renderComponent();
+
+    } catch (error) {
+      console.error('Error setting address:', error);
+      // Emit error event
+      (this as any).emit('addressError', {
+        data: {
+          address: address,
+          error: error.message || 'Failed to set address'
+        }
+      });
+    }
+  };
+
+  // Get geocoding configuration
+  private getGeocodingConfig() {
+    return createGeocodingConfig(this.component);
+  }
+
   // Clear the selected coordinates
   private clearSelection = () => {
     this.data = {
@@ -436,6 +516,11 @@ export default class BCMapSelector extends ReactComponent {
     if (this.reactRoot) {
       this.reactRoot.render(this.renderSelectButton());
     }
+  }
+
+  // Public method to set address programmatically (exposed for external use)
+  public async setAddress(address: string): Promise<void> {
+    return this.setAddressInternal(address);
   }
 
   // Renders the BC Map Selector component within the given HTML element

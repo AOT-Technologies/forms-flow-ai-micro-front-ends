@@ -6,21 +6,28 @@ interface AddressSearchProps {
   onLocationSelect: (coordinates: { lat: number; lng: number }, address?: string) => void;
   onError: (error: string) => void;
   disabled?: boolean;
+  initialAddress?: string;
 }
 
 const AddressSearch: React.FC<AddressSearchProps> = ({
   geocodingService,
   onLocationSelect,
   onError,
-  disabled = false
+  disabled = false,
+  initialAddress = ''
 }) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialAddress);
   const [results, setResults] = useState<GeocodingResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Update query when initialAddress changes
+  useEffect(() => {
+    setQuery(initialAddress);
+  }, [initialAddress]);
 
   // Handle search input change with debouncing
   useEffect(() => {
