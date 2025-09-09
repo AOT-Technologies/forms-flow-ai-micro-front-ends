@@ -56,9 +56,9 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
         setFilteredFormNames(
           formNames?.data.filter(
             (i) =>
-              i.formType === "form" && 
+              (!i?.formType || i.formType === "form") &&
               i.formName
-                .toLowerCase()
+                ?.toLowerCase()
                 .includes(searchFormName.trim().toLowerCase())
           )
         );

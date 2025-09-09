@@ -339,6 +339,7 @@ const selectedFormFields = useMemo(() => {
 const {
   data,
   isLoading: isSubmissionsLoading,
+  isFetching,
   refetch,
 } = useQuery({
   queryKey: [
@@ -364,6 +365,7 @@ const {
       selectedFormFields
     ),
   staleTime: 0,
+  cacheTime:0
 });
 
 
@@ -522,6 +524,10 @@ return (
         if (matchingField?.type === "datetime") {
           return HelperServices.getLocalDateAndTime(rawValue);
         }
+        if(matchingField?.type === "checkbox"){
+          return rawValue ? "true" : "false" ; 
+        }
+        
         return rawValue;
       })();
 
@@ -759,7 +765,7 @@ return (
               "No submissions have been found. Try a different filter combination or contact your admin."
             )}
             onColumnResize={handleColumnResize}
-            loading={isSubmissionsLoading}
+            loading={isSubmissionsLoading || isFetching}
             headerClassName="resizable-header"
             scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
             dataTestId="task-resizable-table"
@@ -772,7 +778,7 @@ return (
               limit={limit}
               activePage={page}
               totalCount={totalCount}
-              loader={isSubmissionsLoading}
+              loader={isSubmissionsLoading || isFetching}
               handlePageChange={handlePageChange}
               onLimitChange={handleLimitChange}
               pageOptions={[
