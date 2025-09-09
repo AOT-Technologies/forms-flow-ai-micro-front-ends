@@ -190,6 +190,145 @@ describe('GeocodingService', () => {
       expect(service.isEnabled()).toBe(false);
     });
   });
+
+  describe('Reverse Geocoding', () => {
+    describe('Nominatim Provider', () => {
+      it('should reverse geocode coordinates using Nominatim API', async () => {
+        const mockResponse = {
+          display_name: '123 Main Street, Vancouver, BC, Canada',
+          place_id: '12345'
+        };
+
+        (fetch as jest.Mock).mockResolvedValue({
+          ok: true,
+          json: () => Promise.resolve(mockResponse)
+        });
+
+        const config = {
+          provider: 'nominatim' as const,
+          nominatim: {
+            baseUrl: 'https://nominatim.openstreetmap.org/search'
+          }
+        };
+
+        const service = new GeocodingService(config, DEFAULT_BC_BOUNDARIES);
+        const result = await service.reverseGeocode(49.2827, -123.1207);
+
+        expect(result).toEqual({
+          address: '123 Main Street, Vancouver, BC, Canada',
+          display_name: '123 Main Street, Vancouver, BC, Canada',
+          place_id: '12345'
+        });
+      });
+
+      it('should return null when reverse geocoding fails', async () => {
+        (fetch as jest.Mock).mockResolvedValue({
+          ok: true,
+          json: () => Promise.resolve({ error: 'No results found' })
+        });
+
+        const config = {
+          provider: 'nominatim' as const,
+          nominatim: {
+            baseUrl: 'https://nominatim.openstreetmap.org/search'
+          }
+        };
+
+        const service = new GeocodingService(config, DEFAULT_BC_BOUNDARIES);
+        const result = await service.reverseGeocode(49.2827, -123.1207);
+
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('Google Provider', () => {
+      it('should reverse geocode coordinates using Google API', async () => {
+        const mockResponse = {
+          status: 'OK',
+          results: [
+            {
+              formatted_address: '123 Main Street, Vancouver, BC, Canada',
+              place_id: 'ChIJs0-pQ_FzhlQRi_OBm-qWkbs'
+            }
+          ]
+        };
+
+        (fetch as jest.Mock).mockResolvedValue({
+          ok: true,
+          json: () => Promise.resolve(mockResponse)
+        });
+
+        const config = {
+          provider: 'google' as const,
+          google: {
+            apiKey: 'test-api-key'
+          }
+        };
+
+        const service = new GeocodingService(config, DEFAULT_BC_BOUNDARIES);
+        const result = await service.reverseGeocode(49.2827, -123.1207);
+
+        expect(result).toEqual({
+          address: '123 Main Street, Vancouver, BC, Canada',
+          display_name: '123 Main Street, Vancouver, BC, Canada',
+          place_id: 'ChIJs0-pQ_FzhlQRi_OBm-qWkbs'
+        });
+      });
+
+      it('should return null when no results found', async () => {
+        const mockResponse = {
+          status: 'ZERO_RESULTS',
+          results: []
+        };
+
+        (fetch as jest.Mock).mockResolvedValue({
+          ok: true,
+          json: () => Promise.resolve(mockResponse)
+        });
+
+        const config = {
+          provider: 'google' as const,
+          google: {
+            apiKey: 'test-api-key'
+          }
+        };
+
+        const service = new GeocodingService(config, DEFAULT_BC_BOUNDARIES);
+        const result = await service.reverseGeocode(49.2827, -123.1207);
+
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('Disabled Provider', () => {
+      it('should return null when reverse geocoding is disabled', async () => {
+        const config = {
+          provider: 'disabled' as const
+        };
+
+        const service = new GeocodingService(config, DEFAULT_BC_BOUNDARIES);
+        const result = await service.reverseGeocode(49.2827, -123.1207);
+
+        expect(result).toBeNull();
+      });
+    });
+
+    it('should handle network errors gracefully', async () => {
+      (fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+      const config = {
+        provider: 'nominatim' as const,
+        nominatim: {
+          baseUrl: 'https://nominatim.openstreetmap.org/search'
+        }
+      };
+
+      const service = new GeocodingService(config, DEFAULT_BC_BOUNDARIES);
+      const result = await service.reverseGeocode(49.2827, -123.1207);
+
+      expect(result).toBeNull();
+    });
+  });
 });
 
 describe('createGeocodingConfig', () => {

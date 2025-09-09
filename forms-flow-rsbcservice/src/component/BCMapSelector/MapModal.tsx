@@ -11,7 +11,7 @@ import {
   BCBoundaries,
   BoundaryValidationResult
 } from './boundaryUtils';
-import { GeocodingService, createGeocodingConfig } from './geocodingUtils';
+import { GeocodingService, createGeocodingConfig, ReverseGeocodingResult } from './geocodingUtils';
 import { GeolocationService, UserLocation, GeolocationError } from './geolocationUtils';
 import AddressSearch from './AddressSearch';
 import LocateControl from './LocateControl';
@@ -44,16 +44,18 @@ function MapClickHandler({
   boundaries,
   onBoundaryViolation,
   bcBoundaryData,
-  useCustomBoundaries
+  useCustomBoundaries,
+  geocodingService
 }: {
-  onLocationSelect: (coordinates: { lat: number; lng: number }) => void;
+  onLocationSelect: (coordinates: { lat: number; lng: number }, address?: string) => void;
   boundaries: BCBoundaries;
   onBoundaryViolation: (result: BoundaryValidationResult) => void;
   bcBoundaryData?: any;
   useCustomBoundaries?: boolean;
+  geocodingService?: GeocodingService | null;
 }) {
   useMapEvents({
-    click: (e) => {
+    click: async (e) => {
       const coordinates = {
         lat: e.latlng.lat,
         lng: e.latlng.lng
@@ -61,7 +63,18 @@ function MapClickHandler({
 
       // If custom boundaries are disabled, allow any selection
       if (!useCustomBoundaries) {
-        onLocationSelect(coordinates);
+        // Perform reverse geocoding to get address
+        let address: string | undefined;
+        if (geocodingService) {
+          try {
+            const reverseResult = await geocodingService.reverseGeocode(coordinates.lat, coordinates.lng);
+            address = reverseResult?.address;
+          } catch (error) {
+            console.warn('Reverse geocoding failed:', error);
+            // Continue without address
+          }
+        }
+        onLocationSelect(coordinates, address);
         return;
       }
 
@@ -80,7 +93,18 @@ function MapClickHandler({
       }
 
       if (validationResult.isValid) {
-        onLocationSelect(coordinates);
+        // Perform reverse geocoding to get address
+        let address: string | undefined;
+        if (geocodingService) {
+          try {
+            const reverseResult = await geocodingService.reverseGeocode(coordinates.lat, coordinates.lng);
+            address = reverseResult?.address;
+          } catch (error) {
+            console.warn('Reverse geocoding failed:', error);
+            // Continue without address
+          }
+        }
+        onLocationSelect(coordinates, address);
       } else {
         onBoundaryViolation(validationResult);
       }
@@ -350,9 +374,9 @@ const MapModal: React.FC<MapModalProps> = ({
   };
 
   // Handle location selection from map click
-  const handleLocationSelect = (coordinates: { lat: number; lng: number }) => {
+  const handleLocationSelect = (coordinates: { lat: number; lng: number }, address?: string) => {
     setSelectedCoords(coordinates);
-    setSelectedAddress(null); // Clear address when selecting from map
+    setSelectedAddress(address || null); // Set address from reverse geocoding if available
     setBoundaryViolation(null); // Clear any previous boundary violation
     setSearchError(null); // Clear any search errors
 
@@ -625,6 +649,7 @@ const MapModal: React.FC<MapModalProps> = ({
                   onBoundaryViolation={handleBoundaryViolation}
                   bcBoundaryData={bcBoundaryData}
                   useCustomBoundaries={useCustomBoundaries}
+                  geocodingService={geocodingService}
                 />
                 <LocateControl
                   boundaries={boundaries}

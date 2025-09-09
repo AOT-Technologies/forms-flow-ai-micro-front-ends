@@ -263,6 +263,7 @@ export default class BCMapSelector extends ReactComponent {
         data: {
           lat: mapData.lat,
           long: mapData.long,
+          address: mapData.address,
         },
       });
 
