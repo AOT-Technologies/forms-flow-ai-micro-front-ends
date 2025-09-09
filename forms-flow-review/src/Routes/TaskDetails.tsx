@@ -1,5 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
-import { Card } from "react-bootstrap";
+import { useEffect, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -290,19 +289,19 @@ const TaskDetails = () => {
         </div>
       </div>
 
-
-      <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
       {task?.formType === "bundle" && selectedForms?.length ? <BundleTaskForm
          bundleId={task?.formId}
          currentUser={currentUser}
          onFormSubmit={onFormSubmitCallback}
          bundleFormData={bundleFormData}
-       /> :  <TaskForm
+       /> : 
+      <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
+       <TaskForm
        currentUser={currentUser}
        onFormSubmit={onFormSubmitCallback}
        onCustomEvent={onCustomEventCallBack}
-     /> }
-      </div>
+     /> 
+      </div>}
     </>
   );
 };

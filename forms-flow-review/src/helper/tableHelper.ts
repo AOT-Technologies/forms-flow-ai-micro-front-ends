@@ -59,3 +59,9 @@ export const buildDateRangePayload = (dateRange) => {
   }, 
 };
 
+export const textTruncate = (wordLength, targetLength, text) => {
+  return text?.length > wordLength
+    ? text.substring(0, targetLength) + "..."
+    : text;
+};
+

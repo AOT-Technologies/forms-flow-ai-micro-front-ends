@@ -10,7 +10,7 @@ export const StepperComponent: React.FC<StepperProps> = ({ steps, activeStep, on
   const defaultFunction = () => {};
 
   return (
-    <div>
+    <div className="m-0">
       <ol className="ff-stepper">
         {steps.map((label, index) => (
           <li
