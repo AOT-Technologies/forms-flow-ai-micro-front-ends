@@ -22,7 +22,7 @@ import {
   resetFormData,
 } from "../actions/bundleSubmissionActions";
 import View from "./View";
-import { getForm, getSubmission, submission, Formio } from "@aot-technologies/formio-react";
+import { getForm, getSubmission, Formio } from "@aot-technologies/formio-react";
 import { useTranslation } from "react-i18next";
 import {
   CUSTOM_SUBMISSION_URL,

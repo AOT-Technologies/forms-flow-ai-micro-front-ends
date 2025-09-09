@@ -133,9 +133,6 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
       <div className="p-3 analyze-Submission-buindle-view ">
         {taskDetailsLoading || loadingForm || !selectedForms?.length ? (
           <div className="container">
-            <div className="main-header">
-              <h3 className="task-head text-truncate form-title"></h3>
-            </div>
             <Loading />
           </div>
         ) : (
