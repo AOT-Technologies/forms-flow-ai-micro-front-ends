@@ -1,0 +1,825 @@
+// Map Modal Styles
+.map-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  padding: 20px;
+}
+
+.map-modal-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #495057;
+  }
+  
+  .map-modal-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    
+    &:hover {
+      color: #495057;
+      background-color: #e9ecef;
+    }
+    
+    &:focus {
+      outline: 2px solid #80bdff;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.map-modal-body {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  
+  .map-instructions {
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 4px;
+    color: #0c5460;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  // Address Search Styles
+  .address-search-container {
+    margin-bottom: 16px;
+    position: relative;
+    
+    .search-input-wrapper {
+      position: relative;
+      
+      .address-search-input {
+        width: 100%;
+        padding: 0.5rem 40px 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        
+        &::placeholder {
+          color: #6c757d;
+          opacity: 1;
+        }
+        
+        &:focus {
+          color: #495057;
+          background-color: #fff;
+          border-color: #86b7fe;
+          outline: 0;
+          box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        
+        &:disabled {
+          background-color: #e9ecef;
+          opacity: 1;
+        }
+      }
+      
+      .search-icon-container {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        
+        &.non-interactive {
+          pointer-events: none;
+        }
+        
+        .fa-search,
+        .fa-spinner {
+          color: #6c757d;
+          font-size: 14px;
+        }
+        
+        .btn-clear-search {
+          background: #f8f9fa;
+          border: none;
+          padding: 4px;
+          cursor: pointer;
+          color: #6c757d;
+          font-size: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          transition: background-color 0.2s, color 0.2s;
+          
+          &:hover {
+            background-color: #e9ecef;
+            color: #495057;
+          }
+          
+          &:focus {
+            outline: 2px solid #80bdff;
+            outline-offset: 2px;
+          }
+          
+          &:active {
+            background-color: #dee2e6;
+          }
+        }
+      }
+    }
+    
+    .search-input-wrapper {
+      position: relative;
+      
+      .input-group {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        width: 100%;
+        
+        .address-search-input {
+          position: relative;
+          flex: 1 1 auto;
+          width: 1%;
+          min-width: 0;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.875rem;
+          font-weight: 400;
+          line-height: 1.5;
+          color: #495057;
+          background-color: #fff;
+          background-clip: padding-box;
+          border: 1px solid #ced4da;
+          border-radius: 0.375rem 0 0 0.375rem;
+          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+          
+          &::placeholder {
+            color: #6c757d;
+            opacity: 1;
+          }
+          
+          &:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            z-index: 3;
+          }
+          
+          &:disabled {
+            background-color: #e9ecef;
+            opacity: 1;
+          }
+        }
+        
+        .input-group-append {
+          display: flex;
+          margin-left: -1px;
+          
+          .input-group-text {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            text-align: center;
+            white-space: nowrap;
+            background-color: #e9ecef;
+            height: 30px;
+            background: white;
+            border-radius: 0 0.375rem 0.375rem 0;
+            
+            i {
+              color: #6c757d;
+            }
+          }
+          
+          .btn {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            cursor: pointer;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 0 0.375rem 0.375rem 0;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            
+            &:hover {
+              color: #495057;
+              background-color: #d4edda;
+              border-color: #c3e6cb;
+            }
+            
+            &:focus {
+              color: #495057;
+              background-color: #d4edda;
+              border-color: #c3e6cb;
+              outline: 0;
+              box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            }
+            
+            &:active {
+              color: #495057;
+              background-color: #c3e6cb;
+              border-color: #b8dfcc;
+            }
+            
+            i {
+              color: #6c757d;
+            }
+          }
+        }
+        
+        // Focus state for the entire input group
+        &:focus-within {
+          .address-search-input {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+          }
+          
+          .input-group-append {
+            .input-group-text,
+            .btn {
+              border-color: #86b7fe;
+            }
+          }
+        }
+      }
+    }
+    
+    .search-results-dropdown {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-height: 240px;
+      overflow-y: auto;
+      z-index: 1100;
+      
+      .search-result-item {
+        padding: 12px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f3f4;
+        transition: background-color 0.2s ease;
+        
+        &:hover,
+        &.selected {
+          background-color: #f8f9fa;
+        }
+        
+        &:first-child {
+          border-radius: 6px 6px 0 0;
+        }
+        
+        &:last-child {
+          border-bottom: none;
+          border-radius: 0 0 6px 6px;
+        }
+        
+        &:first-child:last-child {
+          border-radius: 6px;
+        }
+        
+        .result-content {
+          .result-name {
+            font-size: 14px;
+            color: #212529;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            
+            i {
+              color: #007bff;
+              font-size: 12px;
+              width: 12px;
+              text-align: center;
+            }
+          }
+          
+          .result-coordinates {
+            font-size: 12px;
+            color: #6c757d;
+            font-family: 'Courier New', monospace;
+            margin-left: 20px;
+          }
+        }
+      }
+    }
+    
+    .search-no-results {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 16px;
+      text-align: center;
+      color: #6c757d;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1100;
+      
+      i {
+        margin-right: 8px;
+        color: #ffc107;
+      }
+    }
+  }
+  
+  .address-search-disabled {
+    margin-bottom: 16px;
+    
+    .search-disabled-message {
+      padding: 12px 16px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      color: #6c757d;
+      font-size: 14px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-style: italic;
+      
+      i {
+        color: #17a2b8;
+      }
+    }
+  }
+  
+  .map-error-message {
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    color: #721c24;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    i {
+      color: #dc3545;
+    }
+  }
+  
+  .boundary-violation-message {
+    margin-bottom: 16px;
+    padding: 12px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 14px;
+    
+    i {
+      color: #ffc107;
+      margin-right: 8px;
+    }
+    
+    strong {
+      color: #664d03;
+    }
+    
+    .suggested-coordinates {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #6c757d;
+      font-style: italic;
+    }
+  }
+  
+  .map-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #6c757d;
+    font-size: 16px;
+    gap: 12px;
+    
+    i {
+      font-size: 20px;
+    }
+  }
+  
+  .map-container {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    
+    // Ensure Leaflet controls are properly styled
+    .leaflet-container {
+      font-family: inherit;
+    }
+    
+    .leaflet-control-zoom {
+      border: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .leaflet-control-zoom a {
+      background-color: white;
+      color: #495057;
+      border-bottom: 1px solid #dee2e6;
+      
+      &:hover {
+        background-color: #f8f9fa;
+        color: #212529;
+      }
+    }
+    
+    // Locate control styles
+    .leaflet-control-locate {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      
+      .leaflet-control-locate-button {
+        background-color: white;
+        color: #495057;
+        border: none;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        
+        &:hover {
+          background-color: #f8f9fa;
+          color: #212529;
+        }
+        
+        &:focus {
+          outline: 2px solid #80bdff;
+          outline-offset: 2px;
+        }
+        
+        &:disabled {
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+        
+        &.locating {
+          background-color: #e3f2fd;
+          color: #1976d2;
+        }
+        
+        i {
+          font-size: 14px;
+        }
+      }
+    }
+    
+    // User location marker styles
+    .user-location-marker {
+      background: transparent !important;
+      border: none !important;
+      
+      .user-location-dot {
+        width: 20px;
+        height: 20px;
+        position: relative;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 12px;
+          height: 12px;
+          background-color: #007bff;
+          border: 3px solid white;
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          z-index: 2;
+        }
+        
+        .user-location-pulse {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 20px;
+          height: 20px;
+          background-color: rgba(0, 123, 255, 0.3);
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          animation: pulse 2s infinite;
+          z-index: 1;
+        }
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+      }
+    }
+  }
+  
+  .selected-location-info {
+    padding: 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;    
+    p {
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      color: #495057;
+      
+      strong {
+        color: #212529;
+      }
+    }
+    
+    .choose-area-button {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 4px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background-color: #218838;
+      }
+      
+      &:focus {
+        outline: 2px solid #80bdff;
+        outline-offset: 2px;
+      }
+      
+      &:active {
+        background-color: #1e7e34;
+      }
+      
+      i {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+.map-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+  
+  .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &.btn-secondary {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      color: white;
+      
+      &:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+      }
+      
+      &:focus {
+        outline: 2px solid #80bdff;
+        outline-offset: 2px;
+      }
+      
+      &:active {
+        background-color: #545b62;
+        border-color: #4e555b;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .map-modal-overlay {
+    padding: 10px;
+  }
+  
+  .map-modal-content {
+    max-height: 95vh;
+  }
+  
+  .map-modal-header {
+    padding: 12px 16px;
+    
+    h3 {
+      font-size: 16px;
+    }
+  }
+  
+  .map-modal-body {
+    padding: 16px;
+    
+    .address-search-container {
+      .search-input-wrapper {
+        .input-group {
+          .address-search-input {
+            padding: 0.375rem 0.5rem; // Smaller padding on mobile
+            font-size: 0.8125rem;
+          }
+          
+          .input-group-append {
+            .input-group-text,
+            .btn {
+              padding: 0.375rem 0.5rem;
+              font-size: 0.8125rem;
+            }
+          }
+        }
+      }
+      
+      .search-results-dropdown {
+        max-height: 180px; // Reduce height on mobile
+      }
+      
+      .search-result-item {
+        padding: 10px 12px; // Slightly smaller padding
+        
+        .result-content {
+          .result-name {
+            font-size: 13px; // Smaller font on mobile
+          }
+          
+          .result-coordinates {
+            font-size: 11px; // Smaller coordinates font
+            margin-left: 16px;
+          }
+        }
+      }
+    }
+    
+    .map-container {
+      // Adjust map height for mobile
+      .leaflet-container {
+        height: 300px !important;
+      }
+    }
+  }
+  
+  .map-modal-footer {
+    padding: 12px 16px;
+  }
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  .map-modal-overlay,
+  .map-modal-content,
+  .map-modal-close,
+  .choose-area-button,
+  .btn {
+    transition: none;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .map-modal-content {
+    border: 2px solid #000;
+  }
+  
+  .map-modal-header,
+  .map-modal-footer {
+    border-color: #000;
+  }
+  
+  .map-instructions {
+    border-color: #000;
+  }
+  
+  .selected-location-info {
+    border-color: #000;
+  }
+  
+  .address-search-container {
+    .search-input-wrapper {
+      .input-group {
+        border-color: #000;
+      }
+    }
+    
+    .search-results-dropdown,
+    .search-no-results {
+      border-color: #000;
+    }
+    
+    .search-result-item {
+      border-bottom-color: #000;
+      
+      &:hover,
+      &.selected {
+        background-color: #000;
+        color: #fff;
+        
+        .result-content {
+          .result-name,
+          .result-coordinates {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+  
+  .address-search-disabled {
+    .search-disabled-message {
+      border-color: #000;
+    }
+  }
+}
+
+.clear-search-btn {
+  margin-left: 5px;
+}
