@@ -67,6 +67,7 @@ const TaskDetails = () => {
     (state: any) => state.task.taskFormSubmissionReload
   );
   const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
+  const [bundleName, setBunleName] = useState('');
 
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
@@ -97,6 +98,7 @@ const TaskDetails = () => {
     
         fetchTaskVariables(task?.formId)
           .then((res) => {
+            setBunleName(res.data.formName);
             executeRule(
               {
                 submissionType: "fetch",
@@ -270,7 +272,7 @@ const TaskDetails = () => {
 
         <div className="description">
           <p className="text-main">
-            {textTruncate(75, 75, task?.name)}
+            {textTruncate(75, 75, task?.formType === "bundle" ? bundleName : task?.name)}
           </p>
         </div>
         {/* Right Section: TaskAssigneeManager + History Button */}
