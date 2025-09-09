@@ -17,6 +17,7 @@ const initialState = {
     selectedFilter: "All Forms",
     submissionFilterList: [],
     searchFieldValues: {},
+    selectedForm: null,
     columnWidths: {
         id: 200,
         form_name: 200,
@@ -52,6 +53,8 @@ const analyzeSubmission = (state = initialState, action: any) => {
             return { ...state, searchFieldValues: action.payload };
         case ACTION_CONSTANTS.CLEAR_SEARCH_FIELD_VALUES:
             return { ...state, searchFieldValues: {} };
+        case ACTION_CONSTANTS.SELECTED_FORM:
+            return { ...state, selectedForm: action.payload};
         case ACTION_CONSTANTS.UPDATE_COLUMN_WIDTHS:
             return { ...state, columnWidths: { ...state.columnWidths, ...action.payload } };
         default:
