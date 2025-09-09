@@ -16,7 +16,6 @@ export const StepperComponent: React.FC<StepperProps> = ({ steps, activeStep, on
           <li
           key={label}
           role={onClick ? "button" : undefined}
-          tabIndex={onClick ? 0 : -1}
           className={`ff-step ${activeStep > index ? "active " : ""} ${
             onClick ? "cursor-pointer " : "cursor-default "
           }`}

@@ -130,7 +130,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
         }}
       />
   
-      <div className="p-3 analyze-Submission-buindle-view ">
+      <div className="p-3 analyze-Submission-bundle-view ">
         {taskDetailsLoading || loadingForm || !selectedForms?.length ? (
           <div className="container">
             <Loading />

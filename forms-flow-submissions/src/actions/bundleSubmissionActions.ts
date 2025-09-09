@@ -1,52 +1,48 @@
 import ACTION_CONSTANTS from "../actions/actionConstants";
 
-export const setBundleSelectedForms = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.SUBMISSION_BUNDLE_SELECTED_FORMS,
-      payload: data,
-    });
+// Generic helper for actions with "payload"
+const createAction =
+  (type: string) =>
+  (payload: unknown) =>
+  (dispatch: any) => {
+    dispatch({ type, payload });
   };
 
-  export const setBundleLoading = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.SUBMISSION_BUNDLE_LOADING,
-      payload: data,
-    });
+// Generic helper for actions with "name"
+const createNameAction =
+  (type: string) =>
+  (name: string) =>
+  (dispatch: any) => {
+    dispatch({ type, name });
   };
 
-
-export const setSubmissionBundleErrors = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.SUBMISSION_BUNDLE_ERROR,
-      payload: data,
-    });
+// Special case for actions with {name, error}
+const createErrorAction =
+  (type: string) =>
+  (name: string, error: unknown) =>
+  (dispatch: any) => {
+    dispatch({ type, payload: { name, error } });
   };
 
-export const resetFormData = (name) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.FORM_RESET,
-      name,
-    });
-  };
+// Now define your actions
+export const setBundleSelectedForms = createAction(
+  ACTION_CONSTANTS.SUBMISSION_BUNDLE_SELECTED_FORMS
+);
 
-  export const clearFormError = (name) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.FORM_CLEAR_ERROR,
-      name,
-    });
-  };
+export const setBundleLoading = createAction(
+  ACTION_CONSTANTS.SUBMISSION_BUNDLE_LOADING
+);
 
-  export const setBundleSubmissionData = (data) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.BUNDLE_FORM_SUBMISSION,
-      payload: data,
-    });
-  };
+export const setSubmissionBundleErrors = createAction(
+  ACTION_CONSTANTS.SUBMISSION_BUNDLE_ERROR
+);
 
-  export const setFormFailureErrorData = (name, error) => (dispatch) => {
-    dispatch({
-      type: ACTION_CONSTANTS.FORM_FAILURE,
-      payload: {name, error}
-    });
-  };
-  
+export const resetFormData = createNameAction(ACTION_CONSTANTS.FORM_RESET);
+
+export const clearFormError = createNameAction(ACTION_CONSTANTS.FORM_CLEAR_ERROR);
+
+export const setBundleSubmissionData = createAction(
+  ACTION_CONSTANTS.BUNDLE_FORM_SUBMISSION
+);
+
+export const setFormFailureErrorData = createErrorAction(ACTION_CONSTANTS.FORM_FAILURE);

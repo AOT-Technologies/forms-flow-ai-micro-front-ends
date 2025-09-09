@@ -133,7 +133,7 @@ const ViewApplication = React.memo(() => {
               dispatch(setBundleSelectedForms(res.data));
             })
             .catch((err: unknown) => {
-              setSubmissionBundleErrors(err);
+              dispatch(setSubmissionBundleErrors(err));
             })
             .finally(() => {
               setBundleLoading(false);
