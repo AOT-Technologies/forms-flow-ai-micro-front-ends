@@ -96,14 +96,24 @@ export const fetchServiceTaskList = (
     let taskName = null;
     const updatedVariables = criteria.processVariables?.filter(
       (variable) => {
-        if( variable.name === "name") taskName = variable;
-        return variable.name !== "name";
+        // Only move task name (isFormVariable: false) to nameLike, keep form variables (isFormVariable: true) in processVariables
+        if( variable.name === "name" && !variable.isFormVariable) {
+          taskName = variable;
+          return false; // Remove from processVariables
+        }
+        return true; // Keep all other variables including form variables with name "name"
       }
     );
 
+    // Clean up process variables by removing the isFormVariable metadata before sending to API
+    const cleanedVariables = updatedVariables?.map(variable => {
+      const { isFormVariable, ...cleanVariable } = variable;
+      return cleanVariable;
+    });
+
     clonedReqData["criteria"] = {
       ...criteria,
-      processVariables: updatedVariables,
+      processVariables: cleanedVariables,
     };
 
     if (taskName) {

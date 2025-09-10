@@ -77,35 +77,91 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const taskVariables = selectedFilter?.variables ?? [];
 
   const exisitngProcessvariables =
-    attributeFilter?.criteria?.processVariables ?? [];
+    selectedAttributeFilter?.criteria?.processVariables ?? [];
+
+  // Create unique identifier for fields with same key but different isFormVariable
+  const getUniqueFieldKey = (item) => {
+    return item.isFormVariable ? `${item.key}_form` : item.key;
+  };
 
   const isCheckedData = taskVariables.reduce((acc, item) => {
-    acc[item.key] = item.isChecked;
+    const uniqueKey = getUniqueFieldKey(item);
+    acc[uniqueKey] = item.isChecked;
     return acc;
   }, {});
+  
   //Handle if existing data is there need to set it in attributeData
  const [attributeData, setAttributeData] = useState(() => {
   const initialData = {
-    assignee: attributeFilter?.criteria?.assignee || "",
-    roles: removeTenantKey(attributeFilter?.criteria?.candidateGroup, tenantKey, MULTITENANCY_ENABLED) || ""
+    assignee: selectedAttributeFilter?.criteria?.assignee || "",
+    roles: removeTenantKey(selectedAttributeFilter?.criteria?.candidateGroup, tenantKey, MULTITENANCY_ENABLED) || ""
   };
 
-  const existingValues = (
-    exisitngProcessvariables.reduce((acc, item) => {
-      if (isCheckedData[item.name]) {
-        let resetValue = item.value;
+  // Initialize with empty object
+  const existingValues = {};
 
+  // 1. Handle nameLike field for Task field (isFormVariable: false)
+  const nameLikeValue = selectedAttributeFilter?.criteria?.nameLike;
+  
+  if (nameLikeValue) {
+    const taskNameVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
+    if (taskNameVariable) {
+      // Don't check isCheckedData here as we want to always populate if nameLike exists
+      let resetValue = nameLikeValue;
+      // Remove '%' from displaying
+      if (typeof resetValue !== "number") {
+        resetValue = resetValue.replace(/%/g, '');
+      }
+      const uniqueKey = getUniqueFieldKey(taskNameVariable);
+      existingValues[uniqueKey] = resetValue;
+    } 
+  } 
+
+  exisitngProcessvariables.forEach((item) => {
+    if (item.name === "name") {
+      // Check if this is a form variable or task variable based on isFormVariable flag
+      if (item.isFormVariable) {
+        // This is a form variable
+        const formVariable = taskVariables.find(tv => tv.name === "name" && tv.isFormVariable);
+        if (formVariable) {
+          let resetValue = item.value;
+          // Remove '%' from displaying
+          if (typeof resetValue !== "number") {
+            resetValue = resetValue.replace(/%/g, '');
+          }
+          const uniqueKey = getUniqueFieldKey(formVariable);
+          existingValues[uniqueKey] = resetValue;
+        }
+      } else {
+        // This is a task variable (since isFormVariable is false)
+        const taskVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
+       
+        if (taskVariable) {
+          let resetValue = item.value;
+          // Remove '%' from displaying
+          if (typeof resetValue !== "number") {
+            resetValue = resetValue.replace(/%/g, '');
+          }
+          const uniqueKey = getUniqueFieldKey(taskVariable);
+         
+          existingValues[uniqueKey] = resetValue;
+        }
+      }
+    } else {
+      // For other variables, find the corresponding task variable
+      const taskVariable = taskVariables.find(tv => tv.name === item.name);
+      if (taskVariable) {
+        let resetValue = item.value;
         // Remove '%' from displaying
-         if (typeof resetValue !== "number" && item.name !== "applicationId") {
+        if (typeof resetValue !== "number" && item.name !== "applicationId") {
           resetValue = resetValue.replace(/%/g, '');
         }
-
-        acc[item.name] = resetValue;
+        existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
       }
-      return acc;
-    }, {}) || {}
-  );
-
+    }
+  });
+  
+ 
   return { ...initialData, ...existingValues };
 });
 
@@ -274,25 +330,30 @@ const removeSlashFromValue = (value) => {
 
   Object.keys(attributeData).forEach((key) => {
   if (!ignoredKeys.includes(key) && attributeData[key]) {
-    const isNumberOrAppId = types[key] === "number" || key === "applicationId";
+    // Find the original task variable to get the correct field name and type
+    const taskVariable = taskVariables.find(tv => getUniqueFieldKey(tv) === key);
+    if (!taskVariable) return;
+
+    const originalKey = taskVariable.key;
+    const isNumberOrAppId = types[originalKey] === "number" || originalKey === "applicationId";
     const operator = isNumberOrAppId ? "eq" : "like";
 
     let value = attributeData[key];
 
-    if (key === "applicationId") {
+    if (originalKey === "applicationId") {
       value = JSON.parse(attributeData[key]);
-    } else if (key === "roles") {
+    } else if (originalKey === "roles") {
       value = removeSlashFromValue(attributeData[key]);
-    } else if (types[key] === "number") {
+    } else if (types[originalKey] === "number") {
       // Convert string to number for number type fields
       value = Number(value);
     } 
-    else if (types[key] === "day") {
+    else if (types[originalKey] === "day") {
       //chnaging '/' to '-'
       const [day, month, year] = value.split("-");
       value = `%${month}/${day}/${year}%`;
     }
-    else if (types[key] === "datetime") {
+    else if (types[originalKey] === "datetime") {
       //changing date and time to camunda expected format
       if (value && value.includes(",")) {
 
@@ -311,9 +372,10 @@ const removeSlashFromValue = (value) => {
     }
 
     newProcessVariable.push({
-      name: key,
+      name: taskVariable.name, // Use the original name from taskVariable
       operator,
       value,
+      isFormVariable: taskVariable.isFormVariable, // Add metadata to distinguish form variables
     });
   }
 });

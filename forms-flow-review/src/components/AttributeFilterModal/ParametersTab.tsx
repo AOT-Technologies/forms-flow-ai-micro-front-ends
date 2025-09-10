@@ -4,6 +4,11 @@ import { useTranslation } from "react-i18next";
 const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assigneeOptions, candidateOptions}) => {
     const {t} = useTranslation();
     
+  // Create unique identifier for fields with same key but different isFormVariable
+  const getUniqueFieldKey = (item) => {
+    return item.isFormVariable ? `${item.key}_form` : item.key;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     handleSelectChange(name, value);
@@ -12,6 +17,8 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
     return <>
          {taskVariables.map((item) => {
         if (item.isChecked && item.name !== "created") { 
+          const uniqueKey = getUniqueFieldKey(item);
+          
           if (item?.key === "assignee") {
             return (
               <InputDropdown
@@ -20,13 +27,13 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
                 isAllowInput={false}
                 ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
                 ariaLabelforInput={t(`input for attribute ${item.label}`)}
-                dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-                selectedOption={attributeData[item.key] || ""}
+                dataTestIdforDropdown={`${uniqueKey}-attribute-dropdown`}
+                selectedOption={attributeData[uniqueKey] || ""}
                 setNewInput={(selectedOption) =>
-                  handleSelectChange(item.key, selectedOption)
+                  handleSelectChange(uniqueKey, selectedOption)
                 }
-                name={item.key}
-                id={item.key}
+                name={uniqueKey}
+                id={uniqueKey}
               />
             );
           } else if (item.key === "roles") {
@@ -37,26 +44,26 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
                 isAllowInput={false}
                 ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
                 ariaLabelforInput={t(`input for attribute ${item.label}`)}
-                dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-                selectedOption={attributeData[item.key] || ""}
+                dataTestIdforDropdown={`${uniqueKey}-attribute-dropdown`}
+                selectedOption={attributeData[uniqueKey] || ""}
                 setNewInput={(selectedOption) =>
-                  handleSelectChange(item.key, selectedOption)
+                  handleSelectChange(uniqueKey, selectedOption)
                 }
-                name={item.key}
-                id={item.key}
+                name={uniqueKey}
+                id={uniqueKey}
               />
             );
           } else {
             return (
               <FormInput
-                name={item.key}
+                name={uniqueKey}
                 type={item.type === "number" ? "number" : "text"}
                 label={t(item.label)}
                 ariaLabel={t(item.label)}
-                dataTestId={`${item.key}-attribute-input`}
-                value={attributeData[item.key] || ""}
+                dataTestId={`${uniqueKey}-attribute-input`}
+                value={attributeData[uniqueKey] || ""}
                 onChange={handleInputChange}
-                id={item.key}
+                id={uniqueKey}
               />
             );
           }
