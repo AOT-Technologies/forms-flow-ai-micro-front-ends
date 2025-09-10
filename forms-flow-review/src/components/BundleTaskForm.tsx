@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
 import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
 import { StepperComponent } from "@formsflow/components";
-import { textTruncate } from "../helper/tableHelper"
+import { textTruncate } from "../helper/helper"
 import _ from "lodash";
 import {
   fetchFormById,
