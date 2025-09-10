@@ -127,7 +127,7 @@ useEffect(() => {
       //filtering out items
       const filtered = Options.filter((item) =>
           item.label.toLowerCase().includes(value.toLowerCase()) || 
-          item.value?.toLowerCase().includes(value.toLowerCase())
+      (typeof item.value === "string" && item.value.toLowerCase().includes(value.toLowerCase()))
       );
       setFilteredItems(filtered);
   };

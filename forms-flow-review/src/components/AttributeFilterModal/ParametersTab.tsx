@@ -55,20 +55,37 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
             );
           } else {
             return (
-              <FormInput
-                name={item.key}
-                type={item.type === "number" ? "number" : "text"}
-                label={t(item.label)}
-                ariaLabel={t(item.label)}
-                dataTestId={`${item.key}-attribute-input`}
-                value={
-                  item.type === "checkbox"
-                    ? String(attributeData[item.key] ?? "")
-                    : attributeData[item.key] || ""
-                }
-                onChange={handleInputChange}
-                id={item.key}
-              />
+              item.type === "checkbox" ? (
+                <InputDropdown
+                  Options={[
+                    { label: "true", value: true },
+                    { label: "false", value: false }
+                  ]}
+                  dropdownLabel={t(item.label)}
+                  isAllowInput={false}
+                  ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
+                  ariaLabelforInput={t(`input for attribute ${item.label}`)}
+                  dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
+                  selectedOption={String(attributeData[item.key] ?? "")}
+                  setNewInput={(selectedOption) =>
+                   { const val = selectedOption === "true" ? true : selectedOption === "false" ? false : selectedOption;
+                    handleSelectChange(item.key, val)}
+                  }
+                  name={item.key}
+                  id={item.key}
+                />
+              ) : (
+                <FormInput
+                  name={item.key}
+                  type={item.type === "number" ? "number" : "text"}
+                  label={t(item.label)}
+                  ariaLabel={t(item.label)}
+                  dataTestId={`${item.key}-attribute-input`}
+                  value={attributeData[item.key] || ""}
+                  onChange={handleInputChange}
+                  id={item.key}
+                />
+              )        
             );
           }
         }
