@@ -105,7 +105,6 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       "htmlelement",
       "tabs",
       "survey",
-      "selectboxes" ,
       "signature",
       "password",
       "file"

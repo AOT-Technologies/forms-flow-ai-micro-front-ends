@@ -110,13 +110,21 @@ const TaskListTable = () => {
   const dateField = taskvariables.find(
     (taskVar) => taskVar.key === sortKey && taskVar.type === "day"
   )
- 
+  const selectBoxes = taskvariables.find(
+    (taskVar) =>  taskVar.key === sortKey && taskVar.type === "selectboxes"
+  )
+  
   if (dateTimeField) {
     return matchingVar.value
       ? HelperServices.getLocalDateAndTime(matchingVar.value)
       : "-";
   }
-
+  if (selectBoxes) {
+    const obj = JSON.parse(matchingVar.value);
+    const trueKeys = Object.keys(obj).filter((key) => obj[key]);
+    const displayValue = trueKeys.length ? trueKeys.join(", ") : "-";
+    return displayValue;
+  }
   if (dateField) {
   return matchingVar.value
     ? new Date(matchingVar.value).toLocaleDateString("en-GB") // format date as dd/mm/yyyy
