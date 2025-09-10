@@ -29,7 +29,8 @@ import {
   setSubmissionFilterList,
   setSearchFieldValues,
   clearSearchFieldValues,
-  setColumnWidths
+  setColumnWidths,
+  setSelectedForm
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -85,7 +86,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
- 
+  const selectedForm = useSelector((state: any) => state?.analyzeSubmission?.selectedForm);
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
   const columnWidths = useSelector((state: any) => state?.analyzeSubmission?.columnWidths ?? {});
@@ -115,6 +116,7 @@ const AnalyzeSubmissionList: React.FC = () => {
 
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
    const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
+    dispatch(setSelectedForm(newSelection));
     dispatch(setAnalyzeSubmissionPage(1));
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
@@ -259,12 +261,12 @@ useEffect(() => {
 
       dispatch(setSubmissionFilterList(filters));
       dispatch(setDefaultSubmissionFilter(defaultSubmissionsFilter));
-
       const defaultFilter = filters.find((f) => f.id === defaultSubmissionsFilter);
-                  if (defaultFilter) {
+      if (defaultFilter) {
+        const currentForm = formData.find((form) => form.parentFormId === selectedForm);
         dispatch(setSelectedSubmisionFilter(defaultFilter));
-        setDropdownSelection(defaultFilter.parentFormId);
-         setSelectedItem(defaultFilter.name);
+        setDropdownSelection(selectedForm ?? defaultFilter.parentFormId);
+        setSelectedItem(selectedForm ? currentForm.formName : defaultFilter.name);
        } else {
         setDropdownSelection(null);
          setSelectedItem("All Forms");
