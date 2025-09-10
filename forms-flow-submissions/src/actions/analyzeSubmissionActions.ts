@@ -55,6 +55,12 @@ export const setSearchFieldValues = (data) => (dispatch) => {
   })
 }
 
+export const setSelectedForm = (data) => (dispatch) => {
+  dispatch({
+    type: ACTION_CONSTANTS.SELECTED_FORM,
+    payload: data
+  })
+}
 export const clearSearchFieldValues = () => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.CLEAR_SEARCH_FIELD_VALUES,
