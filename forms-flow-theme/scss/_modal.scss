@@ -858,7 +858,7 @@ $lineThin: 1px;
   .tab-variable-section{
     .specs{
       @include textBase($fontBase, $gray-medium-dark);
-      margin-left: .5rem;
+      margin-left: var(--spacer-050);
     }
   }
 
