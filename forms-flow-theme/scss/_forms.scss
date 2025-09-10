@@ -304,16 +304,15 @@ select option:hover {
   }
 
 }
-
+ .required-icon {
+   margin-left: 0.188rem;
+   color: $primary !important;
+ }
 .form-group {
   display: flex;
   width: 100%;
   flex-direction: column;
   justify-content: center;
-
-  .required-icon {
-    color: $gray-darkest !important;
-  }
 
   .with-icon {
     padding-right: 3rem !important;
