@@ -205,7 +205,7 @@ const initialInputFields = useMemo(() => {
 
   // Removing  form name & created date since it is always available
   const filteredVars = currentFields.filter(
-    (item) => item.key !== "form_name" && item.key !== "created"
+    (item) => item.key !== "form_name" && item.key !== "created" && item.type !== "selectboxes"
   );
   const sortedVars = [
     ...pinnedOrder
@@ -387,15 +387,15 @@ const {
     if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
     }
-      const matchedForm = filterList?.find(
-        (item) => dropdownSelection === item.parentFormId
-      );
-      const newId = matchedForm?.formId;
-      setIsFormFetched(true);
-      fetchFormById(newId)
-        .then((res) => {
-          setForm(res.data);
-          setLastFetchedFormId(newId); // update the last fetched form ID to avoid duplicate api calls
+     const matchedForm = filterList?.find(
+    (item) => dropdownSelection === item.parentFormId    
+  );
+  const newId = matchedForm?.formId;
+    setIsFormFetched(true);
+    fetchFormById(newId)
+    .then((res) => {
+      setForm(res.data);
+      setLastFetchedFormId(newId); // update the last fetched form ID to avoid duplicate api calls
     })
     .catch((err) => {
       console.error(err);
