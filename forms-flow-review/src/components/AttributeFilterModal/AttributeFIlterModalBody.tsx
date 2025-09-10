@@ -281,7 +281,8 @@ const removeSlashFromValue = (value) => {
     const isNumberOrAppId =
       types[key] === "number" ||
       key === "applicationId" ||
-      types[key] === "checkbox";
+      types[key] === "checkbox"||
+      types[key] === "currency";
     const operator = isNumberOrAppId ? "eq" : "like";
 
     let value = attributeData[key];
@@ -293,7 +294,11 @@ const removeSlashFromValue = (value) => {
     } else if (types[key] === "number") {
       // Convert string to number for number type fields
       value = Number(value);
-    } else if (types[key] === "day") {
+    } 
+    else if (types[key] === "currency"){
+      value = Number(value);
+    }
+    else if (types[key] === "day") {
       //chnaging '/' to '-'
       const [day, month, year] = value.split("-");
       value = `%${month}/${day}/${year}%`;
