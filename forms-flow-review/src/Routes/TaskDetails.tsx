@@ -67,7 +67,7 @@ const TaskDetails = () => {
     (state: any) => state.task.taskFormSubmissionReload
   );
   const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
-  const [bundleName, setBunleName] = useState('');
+  const [bundleName, setBundleName] = useState('');
 
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
@@ -75,7 +75,6 @@ const TaskDetails = () => {
   const taskAssignee = useSelector(
     (state: any) => state?.task?.taskAssignee
   );
-  console.log("taskAssignee",taskAssignee,'currentUser',currentUser);
   const disabledMode = taskAssignee !== currentUser;
   // Redirection URL
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -98,7 +97,7 @@ const TaskDetails = () => {
     
         fetchTaskVariables(task?.formId)
           .then((res) => {
-            setBunleName(res.data.formName);
+            setBundleName(res.data.formName);
             executeRule(
               {
                 submissionType: "fetch",
