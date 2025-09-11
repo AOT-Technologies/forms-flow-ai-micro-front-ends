@@ -387,11 +387,15 @@ const {
     if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
     }
+     const matchedForm = filterList?.find(
+    (item) => dropdownSelection === item.parentFormId    
+  );
+  const newId = matchedForm?.formId;
     setIsFormFetched(true);
-    fetchFormById(dropdownSelection)
+    fetchFormById(newId)
     .then((res) => {
       setForm(res.data);
-      setLastFetchedFormId(dropdownSelection); // update the last fetched form ID to avoid duplicate api calls
+      setLastFetchedFormId(newId); // update the last fetched form ID to avoid duplicate api calls
     })
     .catch((err) => {
       console.error(err);
