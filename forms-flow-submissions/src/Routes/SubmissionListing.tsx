@@ -205,7 +205,7 @@ const initialInputFields = useMemo(() => {
 
   // Removing  form name & created date since it is always available
   const filteredVars = currentFields.filter(
-    (item) => item.key !== "form_name" && item.key !== "created"
+    (item) => item.key !== "form_name" && item.key !== "created" && item.type !== "selectboxes"
   );
   const sortedVars = [
     ...pinnedOrder
@@ -529,7 +529,11 @@ return (
         if(matchingField?.type === "checkbox"){
           return rawValue ? "true" : "false" ; 
         }
-        
+        if (matchingField?.type === "selectboxes") {
+          const trueKeys = Object.keys(rawValue).filter((key) => rawValue[key]);
+          const displayValue = trueKeys.length ? trueKeys.join(", ") : "-";
+          return displayValue;
+        }
         return rawValue;
       })();
 

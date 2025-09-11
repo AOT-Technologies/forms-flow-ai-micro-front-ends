@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
 import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
+import { StepperComponent } from "@formsflow/components";
+import { textTruncate } from "../helper/helper"
 import _ from "lodash";
 import {
   fetchFormById,
@@ -123,23 +125,38 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
     if (!isReadOnly) handleSubmisionData();
   };
 
-  if (taskDetailsLoading || getFormLoading ) {
-    return (
-      <div className="container">
-        <div className="main-header">
-          <h3 className="task-head text-truncate form-title">
-          </h3>
-        </div>
-        <Loading />
-      </div>
-    );
+  const stepLabels = selectedForms?.map((form) => {
+    let stplabal = form.formName.includes(" ") ? form.formName : textTruncate(30, 20, form.formName);
+    return stplabal;
+    }
+  );
+
+const onLabelClick = (step) => {
+  if (step === formStep) {
+    return;
   }
+  else {
+      setFormStep(step);
+  }
+};
   
   return (
-    <div className="p-3 bundle service-task-details">
-      <Errors errors={error} />
-      <h3>{form.title}</h3>
-      <Form
+    <>
+      <StepperComponent
+        steps={stepLabels}
+        activeStep={formStep}
+        onClick={(index) => {
+          onLabelClick(index);
+        }}
+      />
+    
+    <div className="scrollable-overview-with-header bg-white m-0 form-border p-5">
+         { taskDetailsLoading || getFormLoading ? 
+         <div className="container">
+        <Loading />
+      </div> : (<>
+         <Errors errors={error} />
+        <Form
         key={isReadOnly ? "readonly" : "editable"}
         form={form}
         submission={{ data: { ..._.cloneDeep(bundleSubmission?.data), ...submission?.data } }}
@@ -175,8 +192,10 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
         >
           {"Next Form"}
         </button>}
-      </div>
+      </div> 
+      </>) }
     </div>
+    </>
   );
 };
 

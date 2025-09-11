@@ -89,7 +89,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     acc[uniqueKey] = item.isChecked;
     return acc;
   }, {});
-  
+
   //Handle if existing data is there need to set it in attributeData
  const [attributeData, setAttributeData] = useState(() => {
   const initialData = {
@@ -108,7 +108,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const createdValue = selectedAttributeFilter?.criteria?.created;
   const formNameValue = selectedAttributeFilter?.criteria?.formName;
   const applicationIdValue = selectedAttributeFilter?.criteria?.applicationId;
-  
+
   // Handle nameLike field for Task field (isFormVariable: false)
   if (nameLikeValue) {
     const taskNameVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
@@ -121,7 +121,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       }
       const uniqueKey = getUniqueFieldKey(taskNameVariable);
       existingValues[uniqueKey] = resetValue;
-    } 
+    }
   }
 
   // Handle submitterName field for Task field (isFormVariable: false)
@@ -200,12 +200,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       const uniqueKey = getUniqueFieldKey(taskApplicationIdVariable);
       existingValues[uniqueKey] = resetValue;
     }
-  } 
+  }
 
   exisitngProcessvariables.forEach((item) => {
     // Handle conflicting variables that could be either task variables or form variables
     const conflictingVariables = ["name", "submitterName", "assignee", "roles", "created", "formName", "applicationId"];
-    
+
     if (conflictingVariables.includes(item.name)) {
       // Check if this is a form variable or task variable based on isFormVariable flag
       if (item.isFormVariable) {
@@ -214,8 +214,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         if (formVariable) {
           let resetValue = item.value;
           // Remove '%' from displaying
-          if (typeof resetValue !== "number" && item.name !== "applicationId") {
-            resetValue = resetValue.replace(/%/g, '');
+          if (typeof resetValue !== "number" && item.name !== "applicationId" && typeof resetValue !== "boolean" ) {
+            resetValue = resetValue?.replace(/%/g, '');
           }
           const uniqueKey = getUniqueFieldKey(formVariable);
           existingValues[uniqueKey] = resetValue;
@@ -223,7 +223,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       } else {
         // This is a task variable (since isFormVariable is false)
         const taskVariable = taskVariables.find(tv => tv.name === item.name && !tv.isFormVariable);
-       
+
         if (taskVariable) {
           let resetValue = item.value;
           // Remove '%' from displaying
@@ -231,7 +231,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
             resetValue = resetValue.replace(/%/g, '');
           }
           const uniqueKey = getUniqueFieldKey(taskVariable);
-         
+
           existingValues[uniqueKey] = resetValue;
         }
       }
@@ -248,8 +248,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       }
     }
   });
-  
- 
+
+
   return { ...initialData, ...existingValues };
 });
 
@@ -417,13 +417,20 @@ const removeSlashFromValue = (value) => {
   const ignoredKeys = ["assignee", "roles"];
 
   Object.keys(attributeData).forEach((key) => {
-  if (!ignoredKeys.includes(key) && attributeData[key]) {
+  if (
+    !ignoredKeys.includes(key) &&
+    attributeData[key] != null &&
+    attributeData[key] !== ""
+  ) {
     // Find the original task variable to get the correct field name and type
     const taskVariable = taskVariables.find(tv => getUniqueFieldKey(tv) === key);
     if (!taskVariable) return;
 
     const originalKey = taskVariable.key;
-    const isNumberOrAppId = types[originalKey] === "number" || originalKey === "applicationId";
+    const isNumberOrAppId = types[originalKey] === "number" ||
+      originalKey === "applicationId" ||
+      types[key] === "checkbox"||
+      types[key] === "currency";
     const operator = isNumberOrAppId ? "eq" : "like";
 
     let value = attributeData[key];
@@ -436,25 +443,24 @@ const removeSlashFromValue = (value) => {
       // Convert string to number for number type fields
       value = Number(value);
     } 
+    else if (types[key] === "currency"){
+      value = Number(value);
+    }
     else if (types[originalKey] === "day") {
       //chnaging '/' to '-'
       const [day, month, year] = value.split("-");
       value = `%${month}/${day}/${year}%`;
-    }
-    else if (types[originalKey] === "datetime") {
+    } else if (types[originalKey] === "datetime") {
       //changing date and time to camunda expected format
       if (value && value.includes(",")) {
-
-        const [datePart, timePart] = value.split(",").map(s => s.trim());
+        const [datePart, timePart] = value.split(",").map((s) => s.trim());
         const [day, month, year] = datePart.split("-");
 
         const dateObj = new Date(`${year}-${month}-${day} ${timePart}`);
 
         value = `%${dateObj.toISOString()}%`;
       }
-    }
-
-      else if (!isNumberOrAppId) {
+    } else if (!isNumberOrAppId) {
       // like search
       value = `%${value}%`;
     }

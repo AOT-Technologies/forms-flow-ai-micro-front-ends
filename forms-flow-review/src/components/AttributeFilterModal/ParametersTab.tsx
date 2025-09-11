@@ -11,14 +11,21 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    handleSelectChange(name, value);
-  };
+    const variableDef = taskVariables?.find((variable) => variable.key === name);
+    let processedValue = value;
 
+    if (variableDef?.type === "checkbox") {
+      const normalized = String(value).trim().toLowerCase();
+      if (normalized === "true") processedValue = true;
+      else if (normalized === "false") processedValue = false;
+    }
+    handleSelectChange(name, processedValue);
+  };
     return <>
          {taskVariables.map((item) => {
-        if (item.isChecked && item.name !== "created") { 
+        if (item.isChecked && item.name !== "created" && item.type !== "selectboxes") {
           const uniqueKey = getUniqueFieldKey(item);
-          
+
           if (item?.key === "assignee") {
             return (
               <InputDropdown
@@ -55,16 +62,37 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
             );
           } else {
             return (
-              <FormInput
-                name={uniqueKey}
-                type={item.type === "number" ? "number" : "text"}
-                label={t(item.label)}
-                ariaLabel={t(item.label)}
-                dataTestId={`${uniqueKey}-attribute-input`}
-                value={attributeData[uniqueKey] || ""}
-                onChange={handleInputChange}
-                id={uniqueKey}
-              />
+              item.type === "checkbox" ? (
+                <InputDropdown
+                  Options={[
+                    { label: "true", value: true },
+                    { label: "false", value: false }
+                  ]}
+                  dropdownLabel={t(item.label)}
+                  isAllowInput={false}
+                  ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
+                  ariaLabelforInput={t(`input for attribute ${item.label}`)}
+                  dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
+                  selectedOption={String(attributeData[item.key] ?? "")}
+                  setNewInput={(selectedOption) =>
+                   { const val = selectedOption === "true" ? true : selectedOption === "false" ? false : selectedOption;
+                    handleSelectChange(item.key, val)}
+                  }
+                  name={item.key}
+                  id={item.key}
+                />
+              ) : (
+                <FormInput
+                  name={uniqueKey}
+                  type={item.type === "number" ? "number" : "text"}
+                  label={t(item.label)}
+                  ariaLabel={t(item.label)}
+                  dataTestId={`${uniqueKey}-attribute-input`}
+                  value={attributeData[uniqueKey] || ""}
+                  onChange={handleInputChange}
+                  id={uniqueKey}
+                />
+              )
             );
           }
         }

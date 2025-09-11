@@ -15,8 +15,14 @@ import {
   setApplicationDetailLoading,
   setUpdateHistoryLoader,
 } from "../actions/applicationActions";
+import {
+  setBundleSelectedForms,
+  setSubmissionBundleErrors,
+  setBundleLoading,
+  resetFormData,
+} from "../actions/bundleSubmissionActions";
 import View from "./View";
-import { getForm, getSubmission } from "@aot-technologies/formio-react";
+import { getForm, getSubmission, Formio } from "@aot-technologies/formio-react";
 import { useTranslation } from "react-i18next";
 import {
   CUSTOM_SUBMISSION_URL,
@@ -29,16 +35,25 @@ import {
   getApplicationById,
   fetchApplicationAuditHistoryList
 } from "../services/applicationServices";
+
+import {
+  fetchFormVariables,
+  executeRule,
+} from "../api/queryServices/analyzeSubmissionServices"
 import { HelperServices } from "@formsflow/service";
 import {
   getProcessActivities,
   getProcessDetails,
 } from "../services/processServices";
 import { push } from "connected-react-router";
+import BundleSubmissionView from "../components/BundleSubmissionView";
+
+
 const ViewApplication = React.memo(() => {
   const { t } = useTranslation();
   const { id: applicationId } = useParams();
   const dispatch = useDispatch();
+  const [formTypeCheckLoading, setFormTypeCheckLoading] = useState(true);
   const {
     viewSubmissionHistory,
     analyze_submissions_view_history,
@@ -69,6 +84,14 @@ const ViewApplication = React.memo(() => {
     )
   );
 
+  const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
+    formId: "",
+    submissionId: "",
+  });
+
+  const [formType, setFormType] = useState('');
+
+
   useEffect(() => {
     if (applicationId) {
       dispatch(setApplicationDetailLoading(true));
@@ -77,7 +100,60 @@ const ViewApplication = React.memo(() => {
     }
   }, [dispatch]);
 
+
   useEffect(() => {
+    if (!applicationDetail) return;
+  
+    const formId = applicationDetail.formId;
+    const submissionId = applicationDetail.submissionId;
+  
+    Formio.clearCache();
+    dispatch(resetFormData("form"));
+    setFormTypeCheckLoading(true);
+    setBundleFormData({ formId, submissionId });
+  
+    fetchFormVariables(formId)
+      .then((res) => {
+        const formType = res.data?.formType;
+        setFormType(formType);
+        setFormTypeCheckLoading(false);
+  
+        if (formType === "bundle") {
+          setBundleLoading(true);
+  
+          executeRule(
+            {
+              submissionType: "fetch",
+              formId,
+              submissionId,
+            },
+            res.data.id
+          )
+            .then((res: { data: unknown }) => {
+              dispatch(setBundleSelectedForms(res.data));
+            })
+            .catch((err: unknown) => {
+              dispatch(setSubmissionBundleErrors(err));
+            })
+            .finally(() => {
+              setBundleLoading(false);
+            });
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch form variables:", err);
+        setFormTypeCheckLoading(false);
+      });
+  
+    // ✅ Cleanup should always be at top-level
+    return () => {
+      dispatch(setBundleSelectedForms([]));
+    };
+  }, [applicationDetail, dispatch]);
+  
+  
+  useEffect(() => {
+    if (formType === "bundle") return;
     const formId = applicationDetail?.formId;
     const submissionId = applicationDetail?.submissionId;
     if (formId && submissionId) {
@@ -88,7 +164,7 @@ const ViewApplication = React.memo(() => {
         dispatch(getSubmission("submission", submissionId, formId));
       }
     }
-  }, [applicationId, applicationDetail, dispatch]);
+  }, [applicationId, applicationDetail, dispatch, formType]);
   useEffect(() => {
     if (
       (viewSubmissionHistory || analyze_submissions_view_history) &&
@@ -185,7 +261,13 @@ const ViewApplication = React.memo(() => {
       </Card>
 
       {/* View Application Details */}
-      <View page="application-detail" />
+      {!formTypeCheckLoading && (
+        formType === "bundle" ? (
+          <BundleSubmissionView bundleFormData={bundleFormData} />
+        ) : (
+          <View page="application-detail" />
+        )
+      )}
 
       {analyze_submissions_view_history && (
         <SubmissionHistoryWithViewButton
