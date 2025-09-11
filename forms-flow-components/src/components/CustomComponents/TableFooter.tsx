@@ -33,18 +33,21 @@ export const TableFooter: React.FC<TableFooterProps> = ({
   
     if (loader) {
     return (
-      <tr>
-        <td colSpan={9}>
-          <div className="d-flex justify-content-between align-items-center flex-column flex-md-row">
+      <>
+        <td>
+          <div className="d-flex justify-content-between align-items-center flex-md-row p-2">
             <Skeleton height={20} width={200} />
-            <Skeleton height={40} width={40} circle />
+            <div className="d-flex flex-row">
+            {[...Array(5)].map((_, idx) => (
+              <Skeleton key={idx} height={40} width={40} circle />
+            ))}
+            </div>
             <Skeleton height={20} width={200} />
           </div>
         </td>
-      </tr>
+      </>
     );
   }
-
   return (
     <>
     {/* <tr> */}
