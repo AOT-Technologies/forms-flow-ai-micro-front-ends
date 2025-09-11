@@ -496,3 +496,12 @@ $gray-darkest: var(--ff-gray-darkest);
 .list-group-item{
   padding: var(--spacer-050) !important;
 }
+
+.analyze-Submission-bundle-view {
+  min-height: 60vh;
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--ff-white);
+  border-radius: var(--radius-sm);
+}

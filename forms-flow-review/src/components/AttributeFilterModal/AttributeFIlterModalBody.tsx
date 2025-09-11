@@ -89,7 +89,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     acc[uniqueKey] = item.isChecked;
     return acc;
   }, {});
-  
+
   //Handle if existing data is there need to set it in attributeData
  const [attributeData, setAttributeData] = useState(() => {
   const initialData = {
@@ -102,7 +102,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 
   // 1. Handle nameLike field for Task field (isFormVariable: false)
   const nameLikeValue = selectedAttributeFilter?.criteria?.nameLike;
-  
+
   if (nameLikeValue) {
     const taskNameVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
     if (taskNameVariable) {
@@ -114,8 +114,8 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       }
       const uniqueKey = getUniqueFieldKey(taskNameVariable);
       existingValues[uniqueKey] = resetValue;
-    } 
-  } 
+    }
+  }
 
   exisitngProcessvariables.forEach((item) => {
     if (item.name === "name") {
@@ -135,7 +135,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       } else {
         // This is a task variable (since isFormVariable is false)
         const taskVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
-       
+
         if (taskVariable) {
           let resetValue = item.value;
           // Remove '%' from displaying
@@ -143,7 +143,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
             resetValue = resetValue.replace(/%/g, '');
           }
           const uniqueKey = getUniqueFieldKey(taskVariable);
-         
+
           existingValues[uniqueKey] = resetValue;
         }
       }
@@ -153,15 +153,15 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       if (taskVariable) {
         let resetValue = item.value;
         // Remove '%' from displaying
-        if (typeof resetValue !== "number" && item.name !== "applicationId") {
-          resetValue = resetValue.replace(/%/g, '');
+        if (typeof resetValue !== "number" && item.name !== "applicationId" && typeof resetValue !== "boolean" ) {
+          resetValue = resetValue?.replace(/%/g, '');
         }
         existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
       }
     }
   });
-  
- 
+
+
   return { ...initialData, ...existingValues };
 });
 
@@ -329,13 +329,20 @@ const removeSlashFromValue = (value) => {
   const ignoredKeys = ["assignee", "roles"];
 
   Object.keys(attributeData).forEach((key) => {
-  if (!ignoredKeys.includes(key) && attributeData[key]) {
+  if (
+    !ignoredKeys.includes(key) &&
+    attributeData[key] != null &&
+    attributeData[key] !== ""
+  ) {
     // Find the original task variable to get the correct field name and type
     const taskVariable = taskVariables.find(tv => getUniqueFieldKey(tv) === key);
     if (!taskVariable) return;
 
     const originalKey = taskVariable.key;
-    const isNumberOrAppId = types[originalKey] === "number" || originalKey === "applicationId";
+    const isNumberOrAppId = types[originalKey] === "number" ||
+      originalKey === "applicationId" ||
+      types[key] === "checkbox"||
+      types[key] === "currency";
     const operator = isNumberOrAppId ? "eq" : "like";
 
     let value = attributeData[key];
@@ -348,25 +355,24 @@ const removeSlashFromValue = (value) => {
       // Convert string to number for number type fields
       value = Number(value);
     } 
+    else if (types[key] === "currency"){
+      value = Number(value);
+    }
     else if (types[originalKey] === "day") {
       //chnaging '/' to '-'
       const [day, month, year] = value.split("-");
       value = `%${month}/${day}/${year}%`;
-    }
-    else if (types[originalKey] === "datetime") {
+    } else if (types[originalKey] === "datetime") {
       //changing date and time to camunda expected format
       if (value && value.includes(",")) {
-
-        const [datePart, timePart] = value.split(",").map(s => s.trim());
+        const [datePart, timePart] = value.split(",").map((s) => s.trim());
         const [day, month, year] = datePart.split("-");
 
         const dateObj = new Date(`${year}-${month}-${day} ${timePart}`);
 
         value = `%${dateObj.toISOString()}%`;
       }
-    }
-
-      else if (!isNumberOrAppId) {
+    } else if (!isNumberOrAppId) {
       // like search
       value = `%${value}%`;
     }

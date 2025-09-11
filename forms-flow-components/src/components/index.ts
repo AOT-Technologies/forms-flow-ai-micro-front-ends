@@ -38,3 +38,4 @@ export * from "./CustomComponents/BpmnDiagramView";
 export * from "./CustomComponents/SubmissionHistoryWithViewButton";
 export * from "./CustomComponents/VariableModal";
 export * from "./CustomComponents/FormComponent";
+export * from "./CustomComponents/StepperComponent";         

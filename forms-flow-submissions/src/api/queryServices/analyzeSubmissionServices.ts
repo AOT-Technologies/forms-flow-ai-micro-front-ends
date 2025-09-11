@@ -1,6 +1,7 @@
 import API from "../../api/endpoints";
 import { StorageService, RequestService, HelperServices } from "@formsflow/service";
 import { SubmissionListResponse } from "../../types/submissions";
+import { replaceUrl} from "../../helper/helper"
 
 
 export const getSubmissionList = (
@@ -145,6 +146,27 @@ export const fetchFormVariables = (formId) => {
   let url = `${API.FORM_PROCESSES}/${formId}`;
   return RequestService.httpGETRequest(url);
 }; 
+
+//for bundling
+export const executeRule = (submissionData, mapperId) => { 
+  const url = replaceUrl(API.BUNDLE_EXECUTE_RULE,"<mapper_id>", mapperId);
+  return RequestService.httpPOSTRequest(url, submissionData);
+};
+
+export const getBundleCustomSubmissionData = (bundleId, submissionId, selectedFormId) =>{
+  const submissionUrl = replaceUrl(API.CUSTOM_SUBMISSION, "<form_id>", bundleId);
+  return  RequestService.
+  httpGETRequest(`${submissionUrl}/${submissionId}?formId=${selectedFormId}`, {});
+};
+
+export const fetchBundleSubmissionData = (bundleId,submissionId,formId) => {
+  let formioToken = sessionStorage.getItem("formioToken");
+  let token = formioToken ? { "x-jwt-token": formioToken } : {};
+  return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${bundleId}/submission/${submissionId}?formId=${formId}`, {}, "", false, {
+    ...token
+  });
+
+};
 
 export const fetchFormById = (id) => {
   let formioToken = sessionStorage.getItem("formioToken");

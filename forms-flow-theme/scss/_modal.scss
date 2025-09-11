@@ -853,6 +853,13 @@ $lineThin: 1px;
     align-items: center;
     justify-content: flex-start;
     padding: 0.625rem;
+
+  }
+  .tab-variable-section{
+    .specs{
+      @include textBase($fontBase, $gray-medium-dark);
+      margin-left: var(--spacer-050);
+    }
   }
 
   .expression-list-group .form-variable:hover {

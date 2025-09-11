@@ -1,5 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
-import { Card } from "react-bootstrap";
+import { useEffect, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -68,6 +67,7 @@ const TaskDetails = () => {
     (state: any) => state.task.taskFormSubmissionReload
   );
   const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
+  const [bundleName, setBundleName] = useState('');
 
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
@@ -75,7 +75,6 @@ const TaskDetails = () => {
   const taskAssignee = useSelector(
     (state: any) => state?.task?.taskAssignee
   );
-  console.log("taskAssignee",taskAssignee,'currentUser',currentUser);
   const disabledMode = taskAssignee !== currentUser;
   // Redirection URL
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -98,6 +97,7 @@ const TaskDetails = () => {
     
         fetchTaskVariables(task?.formId)
           .then((res) => {
+            setBundleName(res.data.formName);
             executeRule(
               {
                 submissionType: "fetch",
@@ -271,7 +271,7 @@ const TaskDetails = () => {
 
         <div className="description">
           <p className="text-main">
-            {textTruncate(75, 75, task?.name)}
+            {textTruncate(75, 75, task?.formType === "bundle" ? bundleName : task?.name)}
           </p>
         </div>
         {/* Right Section: TaskAssigneeManager + History Button */}
@@ -290,19 +290,19 @@ const TaskDetails = () => {
         </div>
       </div>
 
-
-      <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
       {task?.formType === "bundle" && selectedForms?.length ? <BundleTaskForm
          bundleId={task?.formId}
          currentUser={currentUser}
          onFormSubmit={onFormSubmitCallback}
          bundleFormData={bundleFormData}
-       /> :  <TaskForm
+       /> : 
+      <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
+       <TaskForm
        currentUser={currentUser}
        onFormSubmit={onFormSubmitCallback}
        onCustomEvent={onCustomEventCallBack}
-     /> }
-      </div>
+     /> 
+      </div>}
     </>
   );
 };
