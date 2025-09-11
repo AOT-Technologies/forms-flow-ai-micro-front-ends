@@ -11,7 +11,8 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const variableDef = taskVariables?.find((variable) => variable.key === name);
+    // Find variable by unique key (which includes _form suffix for form variables)
+    const variableDef = taskVariables?.find((variable) => getUniqueFieldKey(variable) === name);
     let processedValue = value;
 
     if (variableDef?.type === "checkbox") {
@@ -27,7 +28,18 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
           const uniqueKey = getUniqueFieldKey(item);
 
           if (item?.key === "assignee") {
-            return (
+            return item.isFormVariable ? (
+              <FormInput
+                name={uniqueKey}
+                type="text"
+                label={t(item.label)}
+                ariaLabel={t(item.label)}
+                dataTestId={`${uniqueKey}-attribute-input`}
+                value={attributeData[uniqueKey] || ""}
+                onChange={handleInputChange}
+                id={uniqueKey}
+              />
+            ) : (
               <InputDropdown
                 Options={assigneeOptions}
                 dropdownLabel={t(item.label)}
@@ -44,7 +56,18 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
               />
             );
           } else if (item.key === "roles") {
-            return (
+            return item.isFormVariable ? (
+              <FormInput
+                name={uniqueKey}
+                type="text"
+                label={t(item.label)}
+                ariaLabel={t(item.label)}
+                dataTestId={`${uniqueKey}-attribute-input`}
+                value={attributeData[uniqueKey] || ""}
+                onChange={handleInputChange}
+                id={uniqueKey}
+              />
+            ) : (
               <InputDropdown
                 Options={candidateOptions}
                 dropdownLabel={t(item.label)}

@@ -117,16 +117,37 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     }
   }
 
+  // Handle other task-level fields similar to nameLike
+  const taskFields = ['submitterName', 'assignee', 'roles', 'created', 'formName'];
+  taskFields.forEach(fieldName => {
+    const fieldValue = selectedAttributeFilter?.criteria?.[fieldName];
+    if (fieldValue) {
+      const taskVariable = taskVariables.find(tv => tv.name === fieldName && !tv.isFormVariable);
+      if (taskVariable) {
+        let resetValue = fieldValue;
+        // Remove '%' from displaying for text fields
+        if (typeof resetValue !== "number" && fieldName !== "created" && typeof resetValue !== "boolean") {
+          resetValue = resetValue.replace(/%/g, '');
+        }
+        const uniqueKey = getUniqueFieldKey(taskVariable);
+        existingValues[uniqueKey] = resetValue;
+      }
+    }
+  });
+
   exisitngProcessvariables.forEach((item) => {
-    if (item.name === "name") {
+    // Handle variables that can be both form and task variables
+    const variablesWithFormSupport = ['name', 'submitterName', 'assignee', 'roles', 'created', 'formName'];
+    
+    if (variablesWithFormSupport.includes(item.name)) {
       // Check if this is a form variable or task variable based on isFormVariable flag
       if (item.isFormVariable) {
         // This is a form variable
-        const formVariable = taskVariables.find(tv => tv.name === "name" && tv.isFormVariable);
+        const formVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable);
         if (formVariable) {
           let resetValue = item.value;
           // Remove '%' from displaying
-          if (typeof resetValue !== "number") {
+          if (typeof resetValue !== "number" && item.name !== "created" && typeof resetValue !== "boolean") {
             resetValue = resetValue.replace(/%/g, '');
           }
           const uniqueKey = getUniqueFieldKey(formVariable);
@@ -134,12 +155,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         }
       } else {
         // This is a task variable (since isFormVariable is false)
-        const taskVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
+        const taskVariable = taskVariables.find(tv => tv.name === item.name && !tv.isFormVariable);
 
         if (taskVariable) {
           let resetValue = item.value;
           // Remove '%' from displaying
-          if (typeof resetValue !== "number") {
+          if (typeof resetValue !== "number" && item.name !== "created" && typeof resetValue !== "boolean") {
             resetValue = resetValue.replace(/%/g, '');
           }
           const uniqueKey = getUniqueFieldKey(taskVariable);
