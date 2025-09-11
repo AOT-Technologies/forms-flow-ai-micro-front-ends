@@ -100,9 +100,16 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   // Initialize with empty object
   const existingValues = {};
 
-  // 1. Handle nameLike field for Task field (isFormVariable: false)
+  // 1. Handle special criteria fields for Task variables (isFormVariable: false)
   const nameLikeValue = selectedAttributeFilter?.criteria?.nameLike;
+  const submitterNameValue = selectedAttributeFilter?.criteria?.submitterName;
+  const assigneeValue = selectedAttributeFilter?.criteria?.assignee;
+  const candidateGroupValue = selectedAttributeFilter?.criteria?.candidateGroup;
+  const createdValue = selectedAttributeFilter?.criteria?.created;
+  const formNameValue = selectedAttributeFilter?.criteria?.formName;
+  const applicationIdValue = selectedAttributeFilter?.criteria?.applicationId;
   
+  // Handle nameLike field for Task field (isFormVariable: false)
   if (nameLikeValue) {
     const taskNameVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
     if (taskNameVariable) {
@@ -115,18 +122,99 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       const uniqueKey = getUniqueFieldKey(taskNameVariable);
       existingValues[uniqueKey] = resetValue;
     } 
+  }
+
+  // Handle submitterName field for Task field (isFormVariable: false)
+  if (submitterNameValue) {
+    const taskSubmitterNameVariable = taskVariables.find(tv => tv.name === "submitterName" && !tv.isFormVariable);
+    if (taskSubmitterNameVariable) {
+      let resetValue = submitterNameValue;
+      if (typeof resetValue !== "number") {
+        resetValue = resetValue.replace(/%/g, '');
+      }
+      const uniqueKey = getUniqueFieldKey(taskSubmitterNameVariable);
+      existingValues[uniqueKey] = resetValue;
+    }
+  }
+
+  // Handle assignee field for Task field (isFormVariable: false)
+  if (assigneeValue) {
+    const taskAssigneeVariable = taskVariables.find(tv => tv.name === "assignee" && !tv.isFormVariable);
+    if (taskAssigneeVariable) {
+      let resetValue = assigneeValue;
+      if (typeof resetValue !== "number") {
+        resetValue = resetValue.replace(/%/g, '');
+      }
+      const uniqueKey = getUniqueFieldKey(taskAssigneeVariable);
+      existingValues[uniqueKey] = resetValue;
+    }
+  }
+
+  // Handle candidateGroup field for Task field (isFormVariable: false) - maps to roles
+  if (candidateGroupValue) {
+    const taskRolesVariable = taskVariables.find(tv => tv.name === "roles" && !tv.isFormVariable);
+    if (taskRolesVariable) {
+      let resetValue = candidateGroupValue;
+      if (typeof resetValue !== "number") {
+        resetValue = resetValue.replace(/%/g, '');
+      }
+      const uniqueKey = getUniqueFieldKey(taskRolesVariable);
+      existingValues[uniqueKey] = resetValue;
+    }
+  }
+
+  // Handle created field for Task field (isFormVariable: false)
+  if (createdValue) {
+    const taskCreatedVariable = taskVariables.find(tv => tv.name === "created" && !tv.isFormVariable);
+    if (taskCreatedVariable) {
+      let resetValue = createdValue;
+      if (typeof resetValue !== "number") {
+        resetValue = resetValue.replace(/%/g, '');
+      }
+      const uniqueKey = getUniqueFieldKey(taskCreatedVariable);
+      existingValues[uniqueKey] = resetValue;
+    }
+  }
+
+  // Handle formName field for Task field (isFormVariable: false)
+  if (formNameValue) {
+    const taskFormNameVariable = taskVariables.find(tv => tv.name === "formName" && !tv.isFormVariable);
+    if (taskFormNameVariable) {
+      let resetValue = formNameValue;
+      if (typeof resetValue !== "number") {
+        resetValue = resetValue.replace(/%/g, '');
+      }
+      const uniqueKey = getUniqueFieldKey(taskFormNameVariable);
+      existingValues[uniqueKey] = resetValue;
+    }
+  }
+
+  // Handle applicationId field for Task field (isFormVariable: false)
+  if (applicationIdValue) {
+    const taskApplicationIdVariable = taskVariables.find(tv => tv.name === "applicationId" && !tv.isFormVariable);
+    if (taskApplicationIdVariable) {
+      let resetValue = applicationIdValue;
+      if (typeof resetValue !== "number") {
+        resetValue = resetValue.replace(/%/g, '');
+      }
+      const uniqueKey = getUniqueFieldKey(taskApplicationIdVariable);
+      existingValues[uniqueKey] = resetValue;
+    }
   } 
 
   exisitngProcessvariables.forEach((item) => {
-    if (item.name === "name") {
+    // Handle conflicting variables that could be either task variables or form variables
+    const conflictingVariables = ["name", "submitterName", "assignee", "roles", "created", "formName", "applicationId"];
+    
+    if (conflictingVariables.includes(item.name)) {
       // Check if this is a form variable or task variable based on isFormVariable flag
       if (item.isFormVariable) {
         // This is a form variable
-        const formVariable = taskVariables.find(tv => tv.name === "name" && tv.isFormVariable);
+        const formVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable);
         if (formVariable) {
           let resetValue = item.value;
           // Remove '%' from displaying
-          if (typeof resetValue !== "number") {
+          if (typeof resetValue !== "number" && item.name !== "applicationId") {
             resetValue = resetValue.replace(/%/g, '');
           }
           const uniqueKey = getUniqueFieldKey(formVariable);
@@ -134,12 +222,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
         }
       } else {
         // This is a task variable (since isFormVariable is false)
-        const taskVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
+        const taskVariable = taskVariables.find(tv => tv.name === item.name && !tv.isFormVariable);
        
         if (taskVariable) {
           let resetValue = item.value;
           // Remove '%' from displaying
-          if (typeof resetValue !== "number") {
+          if (typeof resetValue !== "number" && item.name !== "applicationId") {
             resetValue = resetValue.replace(/%/g, '');
           }
           const uniqueKey = getUniqueFieldKey(taskVariable);

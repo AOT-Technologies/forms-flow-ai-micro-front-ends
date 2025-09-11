@@ -89,19 +89,52 @@ export const fetchServiceTaskList = (
     const signal = currentTaskFetchAbortController.signal;
 
     dispatch(setLastReqPayload(reqData));
-    // [TBD: need to fix properly ]if name is available in reqData, we need to set it to the name property of reqData
-    // this will cause an issue like if the name will come may be two times one form task name and one form form component key
+    // Handle potential conflicts between task variables and form variables with same names
+    // Variables that could conflict: name, submitterName, assignee, roles, created, formName, applicationId
     const clonedReqData = cloneDeep(reqData);
     let criteria = clonedReqData?.criteria ?? {};
+    
+    // Variables to extract from processVariables to special criteria fields
     let taskName = null;
+    let taskSubmitterName = null;
+    let taskAssignee = null;
+    let taskRoles = null;
+    let taskCreated = null;
+    let taskFormName = null;
+    let taskApplicationId = null;
+    
     const updatedVariables = criteria.processVariables?.filter(
       (variable) => {
-        // Only move task name (isFormVariable: false) to nameLike, keep form variables (isFormVariable: true) in processVariables
-        if( variable.name === "name" && !variable.isFormVariable) {
-          taskName = variable;
-          return false; // Remove from processVariables
+        // Extract task variables (isFormVariable: false) to special criteria fields
+        // Keep form variables (isFormVariable: true) in processVariables
+        if (!variable.isFormVariable) {
+          switch (variable.name) {
+            case "name":
+              taskName = variable;
+              return false; // Remove from processVariables
+            case "submitterName":
+              taskSubmitterName = variable;
+              return false; // Remove from processVariables
+            case "assignee":
+              taskAssignee = variable;
+              return false; // Remove from processVariables
+            case "roles":
+              taskRoles = variable;
+              return false; // Remove from processVariables
+            case "created":
+              taskCreated = variable;
+              return false; // Remove from processVariables
+            case "formName":
+              taskFormName = variable;
+              return false; // Remove from processVariables
+            case "applicationId":
+              taskApplicationId = variable;
+              return false; // Remove from processVariables
+            default:
+              return true; // Keep other variables
+          }
         }
-        return true; // Keep all other variables including form variables with name "name"
+        return true; // Keep all form variables (isFormVariable: true)
       }
     );
 
@@ -116,8 +149,27 @@ export const fetchServiceTaskList = (
       processVariables: cleanedVariables,
     };
 
+    // Set special criteria fields for task variables
     if (taskName) {
       clonedReqData.criteria["nameLike"] = taskName.value;
+    }
+    if (taskSubmitterName) {
+      clonedReqData.criteria["submitterName"] = taskSubmitterName.value;
+    }
+    if (taskAssignee) {
+      clonedReqData.criteria["assignee"] = taskAssignee.value;
+    }
+    if (taskRoles) {
+      clonedReqData.criteria["candidateGroup"] = taskRoles.value;
+    }
+    if (taskCreated) {
+      clonedReqData.criteria["created"] = taskCreated.value;
+    }
+    if (taskFormName) {
+      clonedReqData.criteria["formName"] = taskFormName.value;
+    }
+    if (taskApplicationId) {
+      clonedReqData.criteria["applicationId"] = taskApplicationId.value;
     }
     //-----------------------------------
     RequestService.httpPOSTRequestWithHAL(
