@@ -34,11 +34,10 @@ import { RootState } from "../../reducers";
 import TaskListTable from "./TasklistTable";
 import { HelperServices } from "@formsflow/service";
 import AttributeFilterDropdown from "./AttributeFilterDropdown";
-import { createReqPayload } from "../../helper/taskHelper";
+import { createReqPayload ,sortableKeysSet} from "../../helper/taskHelper";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
-import { sortableList } from "../constants/taskConstants";
 
 const TaskList = () => {
   const dispatch = useDispatch();
@@ -114,8 +113,7 @@ const TaskList = () => {
   sortData = null,
   newPage = null,
   newLimit = null,
-  newDateRange = null,
-  selectedType = null
+  newDateRange = null
 } = {}) => {
   /**
    * We need to create payload for the task list
@@ -124,9 +122,14 @@ const TaskList = () => {
    * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
    */
   let payload = null;
-
+  const enabledSort = new Set ([
+    "applicationId",
+    "submitterName",
+    "formName"
+  ])
   // check if selectedType belongs to sortableList
-  const isFormVariable = selectedType ? sortableList.has(selectedType) : false;
+  const currentVariable = taskvariables.find((item)=> item.key === filterListSortParams?.activeKey);
+  const isFormVariable =currentVariable?.isFormVariable || enabledSort.has(filterListSortParams?.activeKey) ;
   if (filterCached) {
     payload = lastReqPayload;
     dispatch(resetTaskListParams({ filterCached: false }));
@@ -168,7 +171,7 @@ const TaskList = () => {
     const selectedType = selectedVar?.type;
   
     // check if it's a form variable
-    const isFormVariable = sortableList.has(selectedType);
+    const isFormVariable = sortableKeysSet.has(selectedType);
   
     const updatedData = {
       ...resetSortOrders,
@@ -181,7 +184,7 @@ const TaskList = () => {
   
     dispatch(setFilterListSortParams(updatedData));
     setShowSortModal(false);
-    fetchTaskListData({ sortData: updatedData,selectedType  });
+    fetchTaskListData({ sortData: updatedData  });
   };
   
 
@@ -240,7 +243,7 @@ const TaskList = () => {
     const filteredDynamicColumns = dynamicColumns
       .filter(column =>
       !existingValues.has(column.sortKey) && // filter out duplicates form sorting list 
-       sortableList.has(column.type))  // sorting enabled only for sortablelist items and optionSortBy
+      sortableKeysSet.has(column.type))  // sorting enabled only for sortablelist items and optionSortBy
       .map(column => ({
         value: column.sortKey,
         label: column.name,
