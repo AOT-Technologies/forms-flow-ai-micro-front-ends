@@ -67,7 +67,12 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
       dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
       selectedOption={String(attributeData[item.key] ?? "")}
       setNewInput={(selectedOption) => {
-        const val = selectedOption === "true" ? true : selectedOption === "false" ? false : selectedOption;
+        let val = selectedOption;
+        if (selectedOption === "true") {
+          val = true;
+        } else if (selectedOption === "false") {
+          val = false;
+        }
         handleSelectChange(item.key, val);
       }}
       name={item.key}
