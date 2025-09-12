@@ -387,7 +387,7 @@ const {
     if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
     }
-     const matchedForm = filterList?.find(
+     const matchedForm = formData?.find(
     (item) => dropdownSelection === item.parentFormId    
   );
   const newId = matchedForm?.formId;
@@ -403,7 +403,7 @@ const {
     .finally(() => {
       setIsFormFetched(false);
     });
-  }, [dropdownSelection, lastFetchedFormId]);
+  }, [dropdownSelection, lastFetchedFormId,formData]);
   // taking data from submission response for mapping to the table
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;

@@ -23,10 +23,10 @@ import {
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
-import { createReqPayload } from "../../helper/taskHelper";
+import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
-import { sortableList } from "../constants/taskConstants";
+
 interface Column {
   name: string;
   width: number;
@@ -206,7 +206,7 @@ return matchingVar.value ?? "-";
   ) => {
     const isResizable = column.resizable && index < columnsLength - 1;
     const isResizing = currentResizingColumn?.sortKey === column.sortKey;
-    const isSortableHeader =["actions", "roles"].includes(column.sortKey) || !column.type ||  !sortableList.has(column.type);
+    const isSortableHeader =["actions", "roles"].includes(column.sortKey) || !column.type ||  !sortableKeysSet.has(column.type);
 
     return (
       <>
@@ -276,7 +276,7 @@ return matchingVar.value ?? "-";
 
   const renderHeaderContent = (column) => {
     //If the header is for the View button or the variable type is null, then there should be no sorting option for those columns.
-    if (["actions", "roles"].includes(column.sortKey) || !column.type || !sortableList.has(column.type))
+    if (["actions", "roles"].includes(column.sortKey) || !column.type || !sortableKeysSet.has(column.type))
       {
       return (
         <span className="text">
