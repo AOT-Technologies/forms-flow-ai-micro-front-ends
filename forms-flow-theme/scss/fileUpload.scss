@@ -60,6 +60,10 @@ $font-size-xs: var(--font-size-xs);
   align-items: center;
   gap: var(--spacer-150);
   align-self: stretch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .upload-body {
@@ -80,12 +84,15 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-form-details {
-  overflow: hidden;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
   color: var(--ff-black);
-  text-overflow: ellipsis;
   font-size: $font-size-xs;
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
+  white-space: normal;
 }
 
 .import-error-note {
