@@ -84,15 +84,12 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-form-details {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-  max-width: 100%;
+  overflow: hidden;
   color: var(--ff-black);
+  text-overflow: ellipsis;
   font-size: $font-size-xs;
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);
-  white-space: normal;
 }
 
 .import-error-note {
