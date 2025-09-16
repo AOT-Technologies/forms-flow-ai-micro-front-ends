@@ -60,6 +60,10 @@ $font-size-xs: var(--font-size-xs);
   align-items: center;
   gap: var(--spacer-150);
   align-self: stretch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .upload-body {
