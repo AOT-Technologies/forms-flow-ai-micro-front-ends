@@ -4,9 +4,15 @@ import { useTranslation } from "react-i18next";
 const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assigneeOptions, candidateOptions}) => {
     const {t} = useTranslation();
     
+  // Create unique identifier for fields with same key but different isFormVariable
+  const getUniqueFieldKey = (item) => {
+    return item.isFormVariable ? `${item.key}_form` : item.key;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const variableDef = taskVariables?.find((variable) => variable.key === name);
+    // Find variable by unique key (which includes _form suffix for form variables)
+    const variableDef = taskVariables?.find((variable) => getUniqueFieldKey(variable) === name);
     let processedValue = value;
 
     if (variableDef?.type === "checkbox") {
@@ -16,81 +22,107 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
     }
     handleSelectChange(name, processedValue);
   };
-    return <>
-         {taskVariables.map((item) => {
-        if (item.isChecked && item.name !== "created" && item.type !== "selectboxes") { 
-          if (item?.key === "assignee") {
-            return (
-              <InputDropdown
-                Options={assigneeOptions}
-                dropdownLabel={t(item.label)}
-                isAllowInput={false}
-                ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
-                ariaLabelforInput={t(`input for attribute ${item.label}`)}
-                dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-                selectedOption={attributeData[item.key] || ""}
-                setNewInput={(selectedOption) =>
-                  handleSelectChange(item.key, selectedOption)
-                }
-                name={item.key}
-                id={item.key}
-              />
-            );
-          } else if (item.key === "roles") {
-            return (
-              <InputDropdown
-                Options={candidateOptions}
-                dropdownLabel={t(item.label)}
-                isAllowInput={false}
-                ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
-                ariaLabelforInput={t(`input for attribute ${item.label}`)}
-                dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-                selectedOption={attributeData[item.key] || ""}
-                setNewInput={(selectedOption) =>
-                  handleSelectChange(item.key, selectedOption)
-                }
-                name={item.key}
-                id={item.key}
-              />
-            );
-          } else {
-            return (
-              item.type === "checkbox" ? (
-                <InputDropdown
-                  Options={[
-                    { label: "true", value: true },
-                    { label: "false", value: false }
-                  ]}
-                  dropdownLabel={t(item.label)}
-                  isAllowInput={false}
-                  ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
-                  ariaLabelforInput={t(`input for attribute ${item.label}`)}
-                  dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-                  selectedOption={String(attributeData[item.key] ?? "")}
-                  setNewInput={(selectedOption) =>
-                   { const val = selectedOption === "true" ? true : selectedOption === "false" ? false : selectedOption;
-                    handleSelectChange(item.key, val)}
-                  }
-                  name={item.key}
-                  id={item.key}
-                />
-              ) : (
-                <FormInput
-                  name={item.key}
-                  type={item.type === "number" ? "number" : "text"}
-                  label={t(item.label)}
-                  ariaLabel={t(item.label)}
-                  dataTestId={`${item.key}-attribute-input`}
-                  value={attributeData[item.key] || ""}
-                  onChange={handleInputChange}
-                  id={item.key}
-                />
-              )        
-            );
-          }
+
+  // Helper function to create FormInput component
+  const createFormInput = (item, uniqueKey) => (
+    <FormInput
+      name={uniqueKey}
+      type="text"
+      label={t(item.label)}
+      ariaLabel={t(item.label)}
+      dataTestId={`${uniqueKey}-attribute-input`}
+      value={attributeData[uniqueKey] || ""}
+      onChange={handleInputChange}
+      id={uniqueKey}
+    />
+  );
+
+  // Helper function to create InputDropdown component
+  const createInputDropdown = (item, uniqueKey, options) => (
+    <InputDropdown
+      Options={options}
+      dropdownLabel={t(item.label)}
+      isAllowInput={false}
+      ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
+      ariaLabelforInput={t(`input for attribute ${item.label}`)}
+      dataTestIdforDropdown={`${uniqueKey}-attribute-dropdown`}
+      selectedOption={attributeData[uniqueKey] || ""}
+      setNewInput={(selectedOption) => handleSelectChange(uniqueKey, selectedOption)}
+      name={uniqueKey}
+      id={uniqueKey}
+    />
+  );
+
+  // Helper function to create checkbox dropdown
+  const createCheckboxDropdown = (item) => (
+    <InputDropdown
+      Options={[
+        { label: "true", value: true },
+        { label: "false", value: false }
+      ]}
+      dropdownLabel={t(item.label)}
+      isAllowInput={false}
+      ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
+      ariaLabelforInput={t(`input for attribute ${item.label}`)}
+      dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
+      selectedOption={String(attributeData[item.key] ?? "")}
+      setNewInput={(selectedOption) => {
+        let val = selectedOption;
+        if (selectedOption === "true") {
+          val = true;
+        } else if (selectedOption === "false") {
+          val = false;
+        }
+        handleSelectChange(item.key, val);
+      }}
+      name={item.key}
+      id={item.key}
+    />
+  );
+
+  // Helper function to create text/number input
+  const createTextNumberInput = (item, uniqueKey) => (
+    <FormInput
+      name={uniqueKey}
+      type={item.type === "number" ? "number" : "text"}
+      label={t(item.label)}
+      ariaLabel={t(item.label)}
+      dataTestId={`${uniqueKey}-attribute-input`}
+      value={attributeData[uniqueKey] || ""}
+      onChange={handleInputChange}
+      id={uniqueKey}
+    />
+  );
+  // Helper function to render field component based on item type
+  const renderFieldComponent = (item) => {
+    const uniqueKey = getUniqueFieldKey(item);
+
+    if (item?.key === "assignee") {
+      return item.isFormVariable 
+        ? createFormInput(item, uniqueKey)
+        : createInputDropdown(item, uniqueKey, assigneeOptions);
+    }
+    
+    if (item.key === "roles") {
+      return item.isFormVariable 
+        ? createFormInput(item, uniqueKey)
+        : createInputDropdown(item, uniqueKey, candidateOptions);
+    }
+    
+    return item.type === "checkbox" 
+      ? createCheckboxDropdown(item)
+      : createTextNumberInput(item, uniqueKey);
+  };
+
+  return (
+    <>
+      {taskVariables.map((item) => {
+        if (item.isChecked && item.name !== "created" && item.type !== "selectboxes") {
+          return renderFieldComponent(item);
         }
         return null;
       })}
     </>
+  );
 }
 export default ParametersTab;
