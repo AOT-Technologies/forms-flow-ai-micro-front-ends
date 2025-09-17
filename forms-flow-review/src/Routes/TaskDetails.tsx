@@ -261,6 +261,7 @@ const TaskDetails = () => {
         <TaskHistoryModal
           show={showHistoryModal}
           onClose={() => setShowHistoryModal(false)}
+          task={task}
         />
       )}
       

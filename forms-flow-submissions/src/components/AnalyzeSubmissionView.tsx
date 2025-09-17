@@ -276,12 +276,13 @@ const ViewApplication = React.memo(() => {
           redirectUrl={redirectUrl}
           histories={appHistory}
           isHistoryListLoading={isHistoryListLoading}
-          title="History"
+          title={t("History")}
           showBpmnDiagram={analyze_process_view}
           diagramXML={diagramXML}
           activityId={markers?.[0]?.activityId ?? ""}
           isProcessDiagramLoading={isDiagramLoading}
           darkPrimary
+          formType={formType}
         />
       )}
     </div>
