@@ -238,7 +238,7 @@ const ViewApplication = React.memo(() => {
 
             {/* Right: Buttons */}
             <div className="form-submission-button">
-              {(viewSubmissionHistory || analyze_submissions_view_history) && (
+              { analyze_submissions_view_history && (
                 <CustomButton
                   dark
                   size="table"
