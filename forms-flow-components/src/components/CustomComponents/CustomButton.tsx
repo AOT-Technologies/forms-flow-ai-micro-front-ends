@@ -37,7 +37,14 @@ export const V8CustomButton: React.FC<CustomButtonProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isPressed, setIsPressed] = useState(false);
-
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (disabled || loading) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    if (onClick) onClick();
+  };
   return (
     <button
       className={[
@@ -55,7 +62,7 @@ export const V8CustomButton: React.FC<CustomButtonProps> = ({
         .join(" ")}
       type="button"
       disabled={disabled}
-      onClick={onClick}
+      onClick={handleClick}
       onMouseDown={() => setIsPressed(true)}     // press start
       onMouseUp={() => setIsPressed(false)}      // press end
       onMouseLeave={() => setIsPressed(false)}   // cancel if moved away
@@ -64,7 +71,6 @@ export const V8CustomButton: React.FC<CustomButtonProps> = ({
       aria-disabled={disabled}
       aria-label={ariaLabel}
       tabIndex={0}
-      role="button"
       {...props}
     >
       {loading && <span className="button-spinner" aria-hidden="true"></span>}
