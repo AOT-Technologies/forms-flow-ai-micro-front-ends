@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import ProgressBar from "react-bootstrap/ProgressBar";
 import Dropdown from "react-bootstrap/Dropdown";
 import {
   CloseIcon,
@@ -210,16 +209,17 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         
 
         const animateProgress = (timestamp: number) => {
+          //  exit immediately if not mounted
+          if (!isMounted) return;
+
           if (!start) start = timestamp;
           const progress = Math.min(
             ((timestamp - start) / duration) * maxProgress,
             maxProgress
           );
 
-          if (isMounted) {
             setUploadProgress(progress);
             setInprogress(progress < maxProgress);
-          }
 
           if (progress < maxProgress) {
             requestAnimationFrame(animateProgress);
