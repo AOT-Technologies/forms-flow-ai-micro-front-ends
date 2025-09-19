@@ -40,5 +40,6 @@
 @import "./external/toastify.scss";
 @import "~bootstrap/scss/bootstrap";
 
-//v8 Custom component style override
+@import "./v8-scss/search";
 @import "./v8-scss/button";
+
