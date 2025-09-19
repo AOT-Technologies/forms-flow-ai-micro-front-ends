@@ -65,7 +65,7 @@ An example has given at the bottom of this section */
 // Font: Figtree (Google Fonts)
 
 $font-tokens: (
-  font-family-base: 'Figtree, sans-serif',
+  font-family-base: '"Figtree", sans-serif',
 
   font-weight-light: 300,
   font-weight-regular: 400,
@@ -157,6 +157,9 @@ $font-tokens: (
         // --indigo-200: #99A4F8;
         // --indigo-300: #CAD2FB;
 
+//Semantic Colors
+
+    --progress-bar-bg-color : var(--primary-dark);
 
 
 /*══════════════════ ⬥ FONT UTILITIES | VERSION 8 ⬥ ══════════════════*/
@@ -167,7 +170,7 @@ $font-tokens: (
     //font variables available on runtime: 
     //==> use the font-weight and size in the mixin.
   
-        // --font-family-base: 'Figtree, sans-serif';
+        // --font-family-base: "Figtree", sans-serif;
 
         // --font-weight-light: 300;
         // --font-weight-regular: 400;

@@ -1,0 +1,120 @@
+.custom-button {
+  display: inline-flex;
+  gap: 5px; /* TBD */
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  min-height: 40px;
+  padding: 11px 22px;
+  cursor: pointer;
+  position: relative;
+  border-radius: 25px;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 100%;
+  transition: background 0.13s, border-color 0.13s, color 0.13s, box-shadow 0.13s;
+
+  &.icon-only {
+    padding: 11px !important;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  /* Disabled state (common fallback for any button) */
+  &.is-disabled,
+  &[disabled] {
+    cursor: not-allowed;
+    pointer-events: none;
+    color: #E5E5E5;
+    background: #FCFCFC;
+    border-color: #E5E5E5;
+    
+    /* Disabled icons */
+    svg path {
+      stroke: #E5E5E5;
+    }
+  }
+
+  /* Loading state */
+  &.is-loading {
+    .button-spinner {
+      display: inline-block;
+    }
+    .button-text {
+      opacity: 0.5;
+    }
+  }
+
+  /* Primary button */
+  &.custom-button--primary {
+    background: #FCFCFC;
+    border: 1px solid #B8ABFF80;
+    color: #4A4A4A;
+
+    &:hover:not(.is-disabled):not(.is-loading) {
+      border-color: #B8ABFF;
+      background: #FCFCFC;
+    }
+
+    &.is-selected {
+      border-color: #B8ABFF;
+      background: #B8ABFF33;
+    }
+
+    &.is-disabled {
+      border-color: #B8ABFF40;
+    }
+
+    &.is-loading:hover {
+      border-color: #B8ABFF;
+      background: #FCFCFC;
+    }
+
+    .button-spinner {
+      border: 0.2em solid #bcb6f5;
+      border-top: 0.2em solid #8969f2;
+    }
+  }
+
+  /* Secondary button */
+  &.custom-button--secondary {
+    background: #FCFCFC;
+    border: 1px solid #E5E5E5;
+    color: #4A4A4A;
+
+    &:hover:not(.is-disabled):not(.is-loading) {
+      border-color: #525254;
+    }
+
+    &.is-selected {
+      border-color: #525254;
+      background: #EDEDED;
+    }
+
+    &.is-loading:hover {
+      border-color: #525254;
+      background: #FCFCFC;
+    }
+
+    .button-spinner {
+      border: 0.2em solid #C5C5C5;
+      border-top: 0.2em solid #525254;
+    }
+  }
+
+  /* Spinner base */
+  .button-spinner {
+    display: none;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    animation: button-spin 0.7s linear infinite;
+    vertical-align: middle;
+  }
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
