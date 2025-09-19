@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import ProgressBar from "react-bootstrap/ProgressBar";
 import Dropdown from "react-bootstrap/Dropdown";
 import {
   CloseIcon,
@@ -12,6 +11,7 @@ import {
 } from "../SvgIcons";
 import { CustomButton } from "../CustomComponents/Button";
 import { useTranslation } from "react-i18next";
+import { CustomProgressBar } from "../CustomComponents/ProgressBar";
 
 // Define the types for props
 interface FileItem {
@@ -23,6 +23,11 @@ interface FileItem {
     majorVersion: number;
     minorVersion: number;
   };
+}
+
+interface CustomProgressBarProps {
+  progress: number;
+  color: string;
 }
 
 interface ProcessVersion {
@@ -53,6 +58,7 @@ interface ImportModalProps {
   primaryButtonText: string;
   headerText: string;
   processVersion: ProcessVersion | null;
+  CustomProgressBarProps: CustomProgressBarProps | null;
 }
 
 export const ImportModal: React.FC<ImportModalProps> = React.memo(
@@ -198,20 +204,24 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
         let start: number | null = null;
         const duration = 2000;
+        // set max target based on error flag
+        const maxProgress = importError ? 50 : 100;
+        
 
         const animateProgress = (timestamp: number) => {
+          //  exit immediately if not mounted
+          if (!isMounted) return;
+
           if (!start) start = timestamp;
           const progress = Math.min(
-            ((timestamp - start) / duration) * 100,
-            100
+            ((timestamp - start) / duration) * maxProgress,
+            maxProgress
           );
 
-          if (isMounted) {
             setUploadProgress(progress);
-            setInprogress(progress < 100);
-          }
+            setInprogress(progress < maxProgress);
 
-          if (progress < 100) {
+          if (progress < maxProgress) {
             requestAnimationFrame(animateProgress);
           }
         };
@@ -223,7 +233,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
           cancelAnimationFrame(animation);
         };
       }
-    }, [selectedFile]);
+    }, [selectedFile, importError]);
 
     const renderUploadDetails = () => {
       return (
@@ -503,7 +513,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         <Modal.Body className="p-5">
           {selectedFile ? (
             <>
-              <ProgressBar now={uploadProgress} />
+              <CustomProgressBar progress={uploadProgress}/>
               {renderUploadDetails()}
               {renderFileItems()}
             </>

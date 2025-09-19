@@ -112,8 +112,11 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .progress {
-  height: var(--spacer-150) !important;
+  // height: var(--spacer-150) !important;
   --ff-progress-border-radius: var(--radius-lg) !important;
+  --ff-progress-bar-bg: var(--progress-bar-bg-color) !important;
+  --ff-progress-bg: var(--gray-light) !important;
+  height: 0.438rem !important;
 }
 
 .progress-stacked {
