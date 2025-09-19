@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { useTranslation } from "react-i18next";
-import { SuccessIcon, WarningIcon } from "../SvgIcons";
+import { PromptInfoIcon, WarningIcon } from "../SvgIcons";
 
 
 interface PromptModalProps {
@@ -69,7 +69,7 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
             {type === 'warning' ? (
               <WarningIcon  />
             ) : (
-              <SuccessIcon/>
+              <PromptInfoIcon/>
             )}
           </div>
 
@@ -99,6 +99,14 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
         <div
           className="buttons-row"
         >
+            {primaryBtnText && <CustomButton
+                label={primaryBtnText}
+                disabled={primaryBtnDisable}
+                onClick={primaryBtnAction}
+                dataTestId={primaryBtndataTestid}
+                ariaLabel={primaryBtnariaLabel}
+                buttonLoading={buttonLoading}
+            />}
           {secondaryBtnText && <CustomButton
             label={secondaryBtnText}
             onClick={secondaryBtnAction}
@@ -107,14 +115,6 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
             disabled={secondaryBtnDisable}
             buttonLoading={secondaryBtnLoading}
             secondary
-          />}
-          {primaryBtnText && <CustomButton
-            label={primaryBtnText}
-            disabled={primaryBtnDisable}
-            onClick={primaryBtnAction}
-            dataTestId={primaryBtndataTestid}
-            ariaLabel={primaryBtnariaLabel}
-            buttonLoading={buttonLoading}
           />}
         </div>
       </Modal.Footer>
