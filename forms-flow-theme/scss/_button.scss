@@ -62,7 +62,6 @@ $danger-color: var(--ff-danger);
 }
 
 .btn-outline-primary {
-  border: 1px solid !important;
   border-color: $primary-light !important;
 }
 
@@ -310,6 +309,10 @@ $danger-color: var(--ff-danger);
     .dotted-spinner {
       font-size: var(--font-size-md);
     }
+  }
+
+  &.btn-outline-primary {
+    border: 1px solid !important;
   }
 }
 
