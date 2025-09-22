@@ -397,9 +397,11 @@ export const AngleRightIcon = ({ color = baseColor, ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 17 17"
     onClick={props.onClick}
-    className={props.className || "svgIcon-primary"}
+    className={props.className}
+    fill="none"
+    {...props}
   >
-    <path d="M5.24976 15.0003L11.7503 8.49971L5.25034 1.9997"/>
+    <path stroke={color} d="M5.24976 15.0003L11.7503 8.49971L5.25034 1.9997"/>
   </svg>
 );
 
@@ -408,9 +410,11 @@ export const AngleLeftIcon = ({ color = baseColor, ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 17 17"
     onClick={props.onClick}
-    className={props.className || "svgIcon-primary"}
+    className={props.className }
+    fill="none"
+    {...props}
   >
-    <path d="M11.7503 1.99971L5.24972 8.50029L11.7497 15.0003"/>
+    <path  stroke={color} d="M11.7503 1.99971L5.24972 8.50029L11.7497 15.0003"/>
   </svg>
 );
 
@@ -761,6 +765,7 @@ export const UpArrowIcon = ({ color = baseColor, ...props }) => (
     height="10"
     viewBox="0 0 16 10"
     fill="none"
+    {...props}
   >
     <path
       d="M14.5003 8.25034L8.00028 1.74976L1.49969 8.24976"
@@ -855,4 +860,34 @@ export const NavbarSubmitIcon = ({
       strokeLinejoin="round"
       />
     </svg>
+);
+
+export const CalenderLeftIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="7"
+    height="12"
+    viewBox="0 0 7 12"
+    fill="none"
+  >
+    <path
+      d="M0.294026 5.29402C-0.0964468 5.6845 -0.0964468 6.31862 0.294026 6.7091L5.29207 11.7071C5.68255 12.0976 6.31667 12.0976 6.70715 11.7071C7.09762 11.3167 7.09762 10.6825 6.70715 10.2921L2.41507 6L6.70402 1.70793C7.09449 1.31745 7.09449 0.683327 6.70402 0.292854C6.31355 -0.0976181 5.67942 -0.0976182 5.28895 0.292854L0.290902 5.2909L0.294026 5.29402Z"
+      fill="#4A4A4A"
+    />
+  </svg>
+);
+
+export const CalenderRightIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="7"
+    height="12"
+    viewBox="0 0 7 12"
+    fill="none"
+  >
+    <path
+      d="M6.70597 6.70597C7.09645 6.3155 7.09645 5.68137 6.70597 5.2909L1.70793 0.292854C1.31745 -0.0976182 0.683326 -0.0976181 0.292854 0.292854C-0.0976186 0.683327 -0.0976186 1.31745 0.292854 1.70793L4.58493 6L0.295978 10.2921C-0.0944947 10.6825 -0.0944946 11.3167 0.295978 11.7071C0.68645 12.0976 1.32058 12.0976 1.71105 11.7071L6.7091 6.7091L6.70597 6.70597Z"
+      fill="#4A4A4A"
+    />
+  </svg>
 );

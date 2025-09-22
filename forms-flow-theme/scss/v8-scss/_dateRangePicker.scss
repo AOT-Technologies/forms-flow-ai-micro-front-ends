@@ -1,0 +1,189 @@
+.drp-input-container {
+  display: flex;
+  align-items: center;
+  width: 18.75rem; // input width 244px but calender width is 300px keeping this as 300px
+  height: 2.5rem;
+  padding: 4px 12px;
+  border: 1px solid #e0e0e0;
+  background: #fcfcfc;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+  // &:focus-within {
+  //   border-color: #1565c0;
+  //   box-shadow: 0 0 0 2px #e3f1ff;
+  // }
+}
+
+.drp-date-input {
+  flex: 1 1 0;
+  background: transparent;
+  min-width: 0;
+  border: none;
+  font-size: 15px;
+  color: #222;
+  padding: 5px 6px;
+  outline: none;
+
+  &::placeholder {
+    color: #b7b7b8;
+  }
+}
+
+.drp-separator {
+  margin: 0 4px;
+  color: #999;
+  font-size: 15px;
+  user-select: none;
+}
+
+.calendar-container {
+  position: absolute;
+  background-color: #ffffff;
+  top: 100%;
+  left: 0;
+  border: 1px solid #ededed;
+  border-radius: 6px;
+  width: 18.75rem; // 300px
+  // height: 324px;
+
+  z-index: 1000;
+  box-shadow: 0px 8px 16px 0px #00000026;
+
+  // Calendar header
+  .calendar-header {
+    width: 300;
+    // height: 48;
+    // angle: 0 deg;
+    opacity: 1;
+    // gap: 31px;
+    padding: 12px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #212529;
+    font-weight: 500;
+    font-size: 14px;
+    background-color: #fcfcfc;
+    line-height: 150%;
+    box-shadow: 0px 1px 0px 0px #f0f0f0 inset;
+    border-bottom: #ededed 1px solid;
+
+    text-align: center;
+    vertical-align: middle;
+
+    // Navigation buttons container
+    .calendar-nav-buttons {
+      display: flex;
+      align-items: center;
+
+      // Navigation buttons
+      .calendar-prev-year-btn,
+      .calendar-prev-month-btn,
+      .calendar-next-month-btn,
+      .calendar-next-year-btn {
+        margin: 0 0.125rem; // 0 2px
+        cursor: pointer;
+        width: 1.5rem; // 24px
+        height: 1.5rem; // 24px
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    // Month and year display
+    .calendar-month-year {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .calender-week-days-container {
+    padding: 8px;
+    // Days of week header
+    .calendar-days-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      // margin-bottom: 0.3125rem; // 5px
+      color: #ededed;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 150%;
+      text-align: center;
+      vertical-align: middle;
+
+      // Individual weekday header
+      .calendar-weekday {
+        // padding: 0.3125rem; // 5px //TBD
+        width: 36px;
+        height: 30px;
+        opacity: 1;
+      }
+    }
+    // Calendar days grid
+    .calendar-days {
+      display: grid;
+      padding: 0px 4px;
+      grid-template-columns: repeat(7, 1fr);
+      // Individual day cell
+      .calendar-day {
+        // padding: 3px 0px;
+
+        // width: 24px;
+        // height: 24px;
+        text-align: center;
+        cursor: pointer;
+        // height: 2.1875rem; // 35px
+        display: flex;
+        padding: 5px 0px;
+        align-items: center;
+        justify-content: center;
+        border-radius: none;
+        // padding: 1px;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 150%;
+        text-align: center;
+        vertical-align: middle;
+
+        color: #b7b7b8;
+
+        // font-weight: var(--font-weight-xl) !important;
+        // font-size: var(--font-size-sm) !important;
+
+        // Current month day
+        &.current-month {
+          color: #212529 !important;
+        }
+
+        // Other month day
+        &.other-month {
+          color: #b7b7b8;
+        }
+
+        // Selected date
+        &.selected {
+          background-color: #f1eeff !important;
+          color: #212529;
+          border: none !important;
+        }
+        // Start and end date styles
+        &.start-date,
+        &.end-date {
+          // font-weight: bold;
+          background-color: #b8abff !important;
+          color: #4a4a4a !important;
+          border-radius: 2px;
+        }
+      }
+    }
+    // Today button section
+    .calendar-today-container {
+      display: flex;
+      justify-content: center;
+      padding: 8px;
+    }
+  }
+}
