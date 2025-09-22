@@ -1,118 +1,219 @@
-.custom-button {
+// Button Variables - Using consistent rem/em units for better scalability
+$button-border-radius: 0.5rem;      // 8px at 16px base
+$button-min-width: 5rem;             // 80px at 16px base  
+$button-min-height: 2.5rem;          // 40px at 16px base
+$button-padding: 0.75rem 1.5rem;     // 12px 24px at 16px base
+$button-icon-padding: 0.75rem;       // 12px at 16px base
+$button-gap: 0.5rem;                 // 8px at 16px base
+$button-font-size: 0.875rem;         // 14px at 16px base
+$button-font-weight: 500;
+$button-line-height: 1.2;
+$button-transition-duration: 0.15s;
+$button-transition-timing: ease-in-out;
+
+// Border and fine details (keep in px for precision)
+$button-border-width: 1px;
+$button-focus-outline-width: 2px;
+$button-focus-outline-offset: 2px;
+$button-active-transform: 1px;
+
+// Component-relative sizes (use em to scale with font-size)
+$spinner-size: 1em;
+$spinner-border-width: 0.125em;      // Slightly thinner for better visual balance
+
+// Shadow variables (using rem for consistent scaling)
+$button-shadow-primary: 0 0.125rem 0.5rem rgba(137, 105, 242, 0.15);
+$button-shadow-secondary: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+
+// Color Variables
+$color-white: #ffffff;
+$color-light-gray: #fcfcfc;
+$color-medium-gray: #e5e5e5;
+$color-dark-gray: #4a4a4a;
+$color-darker-gray: #525254;
+$color-disabled-gray: #c5c5c5;
+$color-selected-gray: #ededed;
+
+$color-primary: #8969f2;
+$color-primary-light: #b8abff;
+$color-primary-lighter: #bcb6f5;
+$color-primary-border: rgba(184, 171, 255, 0.5);
+$color-primary-selected: rgba(184, 171, 255, 0.2);
+$color-primary-disabled: rgba(184, 171, 255, 0.25);
+
+// Button Mixins
+@mixin button-base {
   display: inline-flex;
-  gap: 5px; /* TBD */
+  gap: $button-gap;
   align-items: center;
   justify-content: center;
-  min-width: 80px;
-  min-height: 40px;
-  padding: 11px 22px;
+  min-width: $button-min-width;
+  min-height: $button-min-height;
+  padding: $button-padding;
+  border: $button-border-width solid transparent;
+  border-radius: $button-border-radius;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: $button-font-size;
+  font-weight: $button-font-weight;
+  line-height: $button-line-height;
+  text-decoration: none;
   cursor: pointer;
   position: relative;
-  border-radius: 25px;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 100%;
-  transition: background 0.13s, border-color 0.13s, color 0.13s, box-shadow 0.13s;
+  user-select: none;
+  transition: 
+    background-color $button-transition-duration $button-transition-timing,
+    border-color $button-transition-duration $button-transition-timing,
+    color $button-transition-duration $button-transition-timing,
+    box-shadow $button-transition-duration $button-transition-timing,
+    transform $button-transition-duration $button-transition-timing;
 
-  &.icon-only {
-    padding: 11px !important;
-    min-width: 0;
-    min-height: 0;
+  &:focus {
+    outline: none;
   }
 
-  /* Disabled state (common fallback for any button) */
-  &.is-disabled,
-  &[disabled] {
-    cursor: not-allowed;
-    pointer-events: none;
-    color: #E5E5E5;
-    background: #FCFCFC;
-    border-color: #E5E5E5;
-    
-    /* Disabled icons */
-    svg path {
-      stroke: #E5E5E5;
-    }
+  &:focus-visible {
+    box-shadow: 
+      0 0 0 $button-focus-outline-width $color-white, 
+      0 0 0 ($button-focus-outline-width + $button-focus-outline-offset) $color-primary;
   }
 
-  /* Loading state */
-  &.is-loading {
-    .button-spinner {
-      display: inline-block;
-    }
-    .button-text {
-      opacity: 0.5;
-    }
-  }
-
-  /* Primary button */
-  &.custom-button--primary {
-    background: #FCFCFC;
-    border: 1px solid #B8ABFF80;
-    color: #4A4A4A;
-
-    &:hover:not(.is-disabled):not(.is-loading) {
-      border-color: #B8ABFF;
-      background: #FCFCFC;
-    }
-
-    &.is-selected {
-      border-color: #B8ABFF;
-      background: #B8ABFF33;
-    }
-
-    &.is-disabled {
-      border-color: #B8ABFF40;
-    }
-
-    &.is-loading:hover {
-      border-color: #B8ABFF;
-      background: #FCFCFC;
-    }
-
-    .button-spinner {
-      border: 0.2em solid #bcb6f5;
-      border-top: 0.2em solid #8969f2;
-    }
-  }
-
-  /* Secondary button */
-  &.custom-button--secondary {
-    background: #FCFCFC;
-    border: 1px solid #E5E5E5;
-    color: #4A4A4A;
-
-    &:hover:not(.is-disabled):not(.is-loading) {
-      border-color: #525254;
-    }
-
-    &.is-selected {
-      border-color: #525254;
-      background: #EDEDED;
-    }
-
-    &.is-loading:hover {
-      border-color: #525254;
-      background: #FCFCFC;
-    }
-
-    .button-spinner {
-      border: 0.2em solid #C5C5C5;
-      border-top: 0.2em solid #525254;
-    }
-  }
-
-  /* Spinner base */
-  .button-spinner {
-    display: none;
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-    animation: button-spin 0.7s linear infinite;
-    vertical-align: middle;
+  &:active:not(.is-disabled):not(.is-loading) {
+    transform: translateY($button-active-transform);
   }
 }
 
+@mixin button-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.6;
+  
+  svg path {
+    stroke: $color-medium-gray;
+  }
+}
+
+@mixin button-loading {
+  cursor: wait;
+  
+  .button-spinner {
+    display: inline-block;
+  }
+  
+  .button-text {
+    opacity: 0.7;
+  }
+}
+
+@mixin spinner($border-color: $color-disabled-gray, $active-color: $color-darker-gray) {
+  display: none;
+  width: $spinner-size;
+  height: $spinner-size;
+  border: $spinner-border-width solid $border-color;
+  border-top-color: $active-color;
+  border-radius: 50%;
+  animation: button-spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+// Main Button Component
+.custom-button {
+  @include button-base;
+
+  // Icon-only variant
+  &.icon-only {
+    padding: $button-icon-padding;
+    min-width: auto;
+    min-height: auto;
+    aspect-ratio: 1;
+  }
+
+  // State modifiers
+  &.is-disabled,
+  &[disabled] {
+    @include button-disabled;
+  }
+
+  &.is-loading {
+    @include button-loading;
+  }
+
+  // Primary button variant
+  &.custom-button--primary {
+    background-color: $color-light-gray;
+    border-color: $color-primary-border;
+    color: $color-dark-gray;
+
+    &:hover:not(.is-disabled):not(.is-loading) {
+      border-color: $color-primary-light;
+      background-color: $color-white;
+      box-shadow: $button-shadow-primary;
+    }
+
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 $button-focus-outline-width $color-white, 
+        0 0 0 ($button-focus-outline-width + $button-focus-outline-offset) $color-primary;
+    }
+
+    &.is-selected {
+      border-color: $color-primary-light;
+      background-color: $color-primary-selected;
+    }
+
+    &.is-disabled {
+      background-color: $color-light-gray;
+      border-color: $color-primary-disabled;
+      color: $color-medium-gray;
+    }
+
+    .button-spinner {
+      @include spinner($color-primary-lighter, $color-primary);
+    }
+  }
+
+  // Secondary button variant
+  &.custom-button--secondary {
+    background-color: $color-light-gray;
+    border-color: $color-medium-gray;
+    color: $color-dark-gray;
+
+    &:hover:not(.is-disabled):not(.is-loading) {
+      border-color: $color-darker-gray;
+      background-color: $color-white;
+      box-shadow: $button-shadow-secondary;
+    }
+
+    &:focus-visible {
+      box-shadow: 
+        0 0 0 $button-focus-outline-width $color-white, 
+        0 0 0 ($button-focus-outline-width + $button-focus-outline-offset) $color-darker-gray;
+    }
+
+    &.is-selected {
+      border-color: $color-darker-gray;
+      background-color: $color-selected-gray;
+    }
+
+    &.is-disabled {
+      background-color: $color-light-gray;
+      border-color: $color-medium-gray;
+      color: $color-disabled-gray;
+    }
+
+    .button-spinner {
+      @include spinner($color-disabled-gray, $color-darker-gray);
+    }
+  }
+
+  // Base spinner styles
+  .button-spinner {
+    @include spinner;
+  }
+}
+
+// Animations
 @keyframes button-spin {
   to {
     transform: rotate(360deg);
