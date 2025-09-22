@@ -347,8 +347,8 @@ const removeSlashFromValue = (value) => {
     const originalKey = taskVariable.key;
     const isNumberOrAppId = types[originalKey] === "number" ||
       originalKey === "applicationId" ||
-      types[key] === "checkbox"||
-      types[key] === "currency";
+      types[originalKey] === "checkbox" ||
+      types[originalKey] === "currency";
     const operator = isNumberOrAppId ? "eq" : "like";
 
     let value = attributeData[key];
@@ -365,7 +365,7 @@ const removeSlashFromValue = (value) => {
       // Convert string to number for number type fields
       value = Number(value);
     } 
-    else if (types[key] === "currency"){
+    else if (types[originalKey] === "currency"){
       value = Number(value);
     }
     else if (types[originalKey] === "day") {

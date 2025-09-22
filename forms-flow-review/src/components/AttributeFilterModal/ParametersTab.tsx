@@ -54,31 +54,34 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
   );
 
   // Helper function to create checkbox dropdown
-  const createCheckboxDropdown = (item) => (
-    <InputDropdown
-      Options={[
-        { label: "true", value: true },
-        { label: "false", value: false }
-      ]}
-      dropdownLabel={t(item.label)}
-      isAllowInput={false}
-      ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
-      ariaLabelforInput={t(`input for attribute ${item.label}`)}
-      dataTestIdforDropdown={`${item.key}-attribute-dropdown`}
-      selectedOption={String(attributeData[item.key] ?? "")}
-      setNewInput={(selectedOption) => {
-        let val = selectedOption;
-        if (selectedOption === "true") {
-          val = true;
-        } else if (selectedOption === "false") {
-          val = false;
-        }
-        handleSelectChange(item.key, val);
-      }}
-      name={item.key}
-      id={item.key}
-    />
-  );
+  const createCheckboxDropdown = (item) => {
+    const uniqueKey = getUniqueFieldKey(item);
+    return (
+      <InputDropdown
+        Options={[
+          { label: "true", value: true },
+          { label: "false", value: false }
+        ]}
+        dropdownLabel={t(item.label)}
+        isAllowInput={false}
+        ariaLabelforDropdown={t(`Attribute ${item.label} dropdown`)}
+        ariaLabelforInput={t(`input for attribute ${item.label}`)}
+        dataTestIdforDropdown={`${uniqueKey}-attribute-dropdown`}
+        selectedOption={String(attributeData[uniqueKey] ?? "")}
+        setNewInput={(selectedOption) => {
+          let val = selectedOption;
+          if (selectedOption === "true") {
+            val = true;
+          } else if (selectedOption === "false") {
+            val = false;
+          }
+          handleSelectChange(uniqueKey, val);
+        }}
+        name={uniqueKey}
+        id={uniqueKey}
+      />
+    );
+  };
 
   // Helper function to create text/number input
   const createTextNumberInput = (item, uniqueKey) => (
