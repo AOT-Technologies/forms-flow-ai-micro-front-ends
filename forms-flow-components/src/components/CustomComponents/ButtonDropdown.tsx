@@ -159,12 +159,12 @@ const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
 
         <Dropdown.Menu className={(dropdownType === "DROPDOWN_ONLY") && 'dropdown-only'}>
         {onSearch && (<CustomSearch
-          handleClearSearch={handleClearSearch}
+          // handleClearSearch={handleClearSearch}
           search={search}
           setSearch={setSearch}
           handleSearch={handleSearch}
           placeholder={t("Search")}
-          title={t("Search")}
+          // title={t("Search")}
           dataTestId="search-filter"
         />)}
           {dropdownItems.map((item) => (

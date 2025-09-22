@@ -7,6 +7,7 @@ interface CustomSearchProps {
   handleSearch: () => void;
   placeholder?: string;
   dataTestId: string;
+  disabled?: boolean;
 }
 
 export const CustomSearch: FC<CustomSearchProps> = ({
@@ -15,6 +16,7 @@ export const CustomSearch: FC<CustomSearchProps> = ({
   handleSearch,
   placeholder = "Search",
   dataTestId,
+  disabled = false,
 }) => {
   const { t } = useTranslation();
   return (
@@ -28,6 +30,7 @@ export const CustomSearch: FC<CustomSearchProps> = ({
         aria-label={placeholder}
         value={search}
         role="searchbox"
+        disabled={disabled}
       />
     </div>
   );
