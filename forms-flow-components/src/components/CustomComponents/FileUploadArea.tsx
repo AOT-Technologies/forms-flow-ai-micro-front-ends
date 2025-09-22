@@ -58,7 +58,6 @@ export const FileUploadArea: React.FC<FileUploadAreaProps> = ({
   // State helpers
   const isUploading = file && !error && progress < 100;
   const isCompleted = file && !error && progress === 100;
-  console.log("isCompleted",isCompleted);
   const isError = !!error;
 
   // Upload area (initial state)

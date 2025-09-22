@@ -192,7 +192,6 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
     // Retry with same file
     const handleRetry = () => {
-     console.log(selectedFile,"selectedFile");
         handleImport(
           selectedFile,
           uploadActionType.VALIDATE,
@@ -204,12 +203,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       let isMounted = true;
 
       if (selectedFile) {
-        handleImport(
-          selectedFile,
-          uploadActionType.VALIDATE,
-          selectedLayoutVersion?.value ?? null,
-          selectedFlowVersion?.value ?? null
-        );
+        handleRetry();
 
         let start: number | null = null;
         const duration = 2000;
@@ -478,28 +472,6 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
           />
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <div className="buttons-row">
-            <CustomButton
-              disabled={ primaryButtonDisabled }
-              dataTestId="import-modal-primary-button"
-              label={primaryButtonText}
-              onClick={() => {
-                primaryButtonText === "Try Again" ? closeModal() : onImport();
-              }}
-              buttonLoading={!importError && importLoader}
-            />
-            <CustomButton
-              dataTestId="import-modal-close-button"
-              label="Cancel"
-              onClick={() => {
-                resetState();
-                closeModal();
-              }}
-              secondary
-            />
-          </div>
-        </Modal.Footer>
       </Modal>
     );
   }
