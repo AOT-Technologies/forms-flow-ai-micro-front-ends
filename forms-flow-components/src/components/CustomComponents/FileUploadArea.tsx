@@ -65,21 +65,24 @@ export const FileUploadArea: React.FC<FileUploadAreaProps> = ({
     <>
       <input
         id="file-input"
-        data-testid="import-modal-file-input"
+        data-testid="file-upload-input"
         type="file"
         style={{ display: "none" }}
         onChange={handleChange}
         accept={fileType}
+        aria-label={t("Choose a file to upload")}
       />
-      <div className="upload-area">
-        <FileUploadIcon />
-        <p className="upload-text">
-          {t(
-            `Drag a file to this area to import it${
-              fileType === ".json, .bpmn" ? " (form, layout or bpmn)" : ""
-            }`
-          )}
-        </p>
+      <div
+        className="upload-area"
+        aria-label={t("File upload area")}
+        data-testid="file-upload-area-prompt"
+      >
+        <FileUploadIcon aria-hidden="true" />
+        <p className="upload-text">{t(
+          `Drag a file to this area to import it${
+            fileType === ".json, .bpmn" ? " (form, layout or bpmn)" : ""
+          }`
+        )}</p>
         <div className="upload-size-text">
           <span>{t(`Support for a single ${fileType} file upload.`)}</span>
           <span className="mt-1">{t("Maximum file size 20MB.")}</span>
@@ -119,17 +122,32 @@ const renderUploadStatus = () => {
       ? stateConfig.completed
       : null;
 
-  return (
-    <div className="upload-progress">
-      <FileUploadIcon />
+    return (
+      <div
+        className="upload-progress"
+        aria-label={t("File upload progress")}
+        data-testid="file-upload-progress"
+      >
+        <FileUploadIcon aria-hidden="true" />
 
-      {/* Progress bar */}
-      <div className="upload-progress-bar">
-        <CustomProgressBar progress={progress} />
-      </div>
+        <div
+          className="upload-progress-bar"
+          aria-label={t("Upload progress bar")}
+          data-testid="file-upload-progress-bar"
+        >
+          <CustomProgressBar progress={progress} />
+        </div>
 
       {/* Status text */}
-      {current?.status && <p className="upload-status">{current.status}</p>}
+      {current?.status && (
+        <p
+          className="upload-status"
+          aria-live="polite"
+          data-testid="file-upload-status"
+        >
+          {current.status}
+        </p>
+        )}
 
       {/* Action button */}
       {current && (
@@ -149,7 +167,7 @@ const renderUploadStatus = () => {
   return (
     <div
       role="button"
-      data-testid="import-modal-file-upload-area"
+      data-testid="file-upload-container"
       className={`file-upload ${file ? "file-upload-progress" : ""} ${
         isDragOver ? "file-upload-dragover" : ""
       }`}
@@ -163,7 +181,7 @@ const renderUploadStatus = () => {
           document.getElementById("file-input")?.click();
         }
       }}
-      aria-label="Upload file"
+      aria-label={t("Upload file area")}
     >
       {!file ? renderUploadPrompt() : renderUploadStatus()}
     </div>
