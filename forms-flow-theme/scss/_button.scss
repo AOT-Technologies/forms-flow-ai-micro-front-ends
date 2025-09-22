@@ -62,6 +62,7 @@ $danger-color: var(--ff-danger);
 }
 
 .btn-outline-primary {
+  border: 1px solid !important;
   border-color: $primary-light !important;
 }
 
