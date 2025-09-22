@@ -81,7 +81,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const limit = useSelector((state: any) => state?.analyzeSubmission.limit ?? 10);
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
   const tenantId = localStorage.getItem("tenantKey");
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.key || tenantId);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId);
   const defaultSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.defaultFilter);
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
