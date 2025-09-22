@@ -26,7 +26,7 @@ export const FileUploadArea: React.FC<FileUploadAreaProps> = ({
   error,
 }) => {
   const { t } = useTranslation();
-  const [isDragOver, setIsDragOver] = useState(false); // 👈 track drag state
+  const [isDragOver, setIsDragOver] = useState(false); // track drag state
   // Handle manual file selection
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
@@ -90,53 +90,58 @@ export const FileUploadArea: React.FC<FileUploadAreaProps> = ({
 
 // Upload progress + status
 const renderUploadStatus = () => {
-    let buttonLabel = "";
-    let handleClick = () => {};
-    if (isUploading) {
-      buttonLabel = t("Cancel");
-      handleClick = () => {
-        onCancel?.();      // let parent stop upload
-      };
-    } else if (isError && file) {
-      buttonLabel = t("Try Again");
-      handleClick = () => {
-        onRetry?.(file);   // let parent retry upload
-      };
-    } else if (isCompleted) {
-      buttonLabel = t("Done");
-      handleClick = () => {
-        onDone?.();
-      };
-    }
+  // Map states to config
+  const stateConfig = {
+    uploading: {
+      status: t(`Importing ${file?.name}`),
+      label: t("Cancel"),
+      onClick: () => onCancel?.(),
+    },
+    error: {
+      status: t("There was an error in the upload"),
+      label: t("Try Again"),
+      onClick: () => file && onRetry?.(file),
+    },
+    completed: {
+      status: t("Upload Complete!"),
+      label: t("Done"),
+      onClick: () => onDone?.(),
+    },
+  };
+
+  // Determine current state
+  const current =
+    isUploading
+      ? stateConfig.uploading
+      : isError && file
+      ? stateConfig.error
+      : isCompleted
+      ? stateConfig.completed
+      : null;
 
   return (
     <div className="upload-progress">
       <FileUploadIcon />
+
+      {/* Progress bar */}
       <div className="upload-progress-bar">
         <CustomProgressBar progress={progress} />
       </div>
 
-      {isUploading && (
-        <p className="upload-status">{t(`Importing ${file?.name}`)}</p>
-      )}
-      {isError && (
-        <p className="upload-status">{t("There was an error in the upload")}</p>
-      )}
-      {isCompleted && (
-        <p className="upload-status">{t("Upload Complete!")}</p>
-      )}
+      {/* Status text */}
+      {current?.status && <p className="upload-status">{current.status}</p>}
 
-      {/* Dynamic button */}
-      {/* <div className=""> */}
+      {/* Action button */}
+      {current && (
         <V8CustomButton
           className="file-upload-action-btn"
-          label={buttonLabel}
-          onClick={handleClick}
-          ariaLabel={buttonLabel}
+          label={current.label}
+          onClick={current.onClick}
+          ariaLabel={current.label}
           dataTestId="file-upload-action-btn"
           variant="secondary"
         />
-      {/* </div> */}
+      )}
     </div>
   );
 };
