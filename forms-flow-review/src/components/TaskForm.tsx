@@ -78,7 +78,7 @@ const isLoading =
         {/* The key is added to remount the form on change */}
         <Form
           key={isReadOnly ? "readonly" : "editable"}
-          form={form}
+          src={form}
           submission={safeSubmission}
           url={reduxSubmission?.url}
           options={{

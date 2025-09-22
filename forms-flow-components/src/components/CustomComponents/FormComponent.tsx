@@ -66,7 +66,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
         (component) => {
           // remove display (show/hide) conditions for showing the component in taskvariable modal
           /* --------------------------- ------------------ --------------------------- */
-          component.conditional = {};
+          component.conditional = {"json": {}};
           component.customConditional = "";
           component.logic = [];
           component.hidden = false;
@@ -228,7 +228,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       <div className="flex">
         <div className="flex-grow-1 form-container form-hilighter">
         <Form
-          form={updatedForm}
+          src={updatedForm}
           options={{
             viewAsHtml: true,
             readOnly: true,
