@@ -65,7 +65,8 @@ const ViewApplication = React.memo(() => {
   const isApplicationDetailLoading = useSelector(
     (state: any) => state?.applications.isApplicationDetailLoading
   );
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key);
+  const tenantId = localStorage.getItem("tenantKey");
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId);
   const [isDiagramLoading, setIsDiagramLoading] = useState(false);
   const [diagramXML, setDiagramXML] = useState("");
   const markers = useSelector(
