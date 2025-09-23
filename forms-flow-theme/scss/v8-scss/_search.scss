@@ -23,16 +23,16 @@
       letter-spacing: 0;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
-  
+      color: #4a4a4a;
       &::placeholder {
-        color: #ededed;
+        color: #b7b7b8;
       }
-      &:focus {
-        color: #4a4a4a;
-        border-color: #ededed;
-        background: #fcfcfc;
+      // Style for disabled state
+      &:disabled {
+        cursor: not-allowed;
+
         &::placeholder {
-          color: #b7b7b8;
+          color: #ededed;
         }
       }
     }
