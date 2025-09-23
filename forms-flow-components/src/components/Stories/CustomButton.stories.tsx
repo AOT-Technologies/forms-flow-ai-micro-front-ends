@@ -40,6 +40,7 @@ export const Loading: Story = {
   args: {
     label: 'Loading Button',
     loading: true,
+    loadingText: 'Loading...',
     onClick: action('loading-button-clicked'),
   },
 };
@@ -61,18 +62,18 @@ export const IconOnly: Story = {
   },
 };
 
-export const Small: Story = {
-  args: {
-    label: 'Small Button',
-    size: 'small',
-    onClick: action('small-button-clicked'),
-  },
-};
+// export const Small: Story = {
+//   args: {
+//     label: 'Small Button',
+//     size: 'small',
+//     onClick: action('small-button-clicked'),
+//   },
+// };
 
-export const Large: Story = {
-  args: {
-    label: 'Large Button',
-    size: 'large',
-    onClick: action('large-button-clicked'),
-  },
-};
+// export const Large: Story = {
+//   args: {
+//     label: 'Large Button',
+//     size: 'large',
+//     onClick: action('large-button-clicked'),
+//   },
+// };

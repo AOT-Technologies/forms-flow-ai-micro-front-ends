@@ -1,11 +1,11 @@
 // import function
-@import "../node_modules/bootstrap/scss/functions";
+@import "bootstrap/scss/functions";
 
 //variable override
 @import "./variables";
 //default
-@import "../node_modules/bootstrap/scss/variables";
-@import "../node_modules/bootstrap/scss/mixins";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 
 //theme override
 @import "./typography";
@@ -38,7 +38,7 @@
 //rest of bootstrap
 @import "./external/formio.scss";
 @import "./external/toastify.scss";
-@import "~bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
 
 @import "./v8-scss/search";
 @import "./v8-scss/button";

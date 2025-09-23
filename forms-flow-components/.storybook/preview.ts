@@ -1,5 +1,7 @@
 import type { Preview } from '@storybook/react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// Load shared theme (includes Bootstrap overrides and Bootstrap itself)
+import '../../forms-flow-theme/scss/index.scss';
+import './preview.css';
 // Import your custom styles if needed
 // import '../src/styles/global.scss';
 

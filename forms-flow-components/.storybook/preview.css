@@ -1,0 +1,31 @@
+/* Ensure Storybook Docs tab is scrollable */
+.sbdocs,
+.sbdocs-wrapper,
+.sbdocs-content {
+  max-height: 100vh;
+  overflow: auto !important;
+}
+
+/* Prevent parent containers from blocking scroll */
+:root,
+body,
+#storybook-root {
+  height: auto !important;
+}
+
+/* Fallback to ensure spinner is visible in Storybook */
+.custom-button.is-loading .button-spinner {
+  display: inline-block !important;
+  width: 1em;
+  height: 1em;
+  border: 0.125em solid #c5c5c5;
+  border-top-color: #525254;
+  border-radius: 50%;
+  animation: sb-spin 0.8s linear infinite;
+}
+
+@keyframes sb-spin {
+  to { transform: rotate(360deg); }
+}
+
+

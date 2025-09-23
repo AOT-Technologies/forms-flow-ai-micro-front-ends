@@ -20,10 +20,13 @@ module.exports = {
       use: ['style-loader', 'css-loader', 'sass-loader'],
     });
 
+    const bootstrapPath = resolve(__dirname, '../node_modules/bootstrap');
+
     config.resolve = {
       ...config.resolve,
       alias: {
         ...(config.resolve && config.resolve.alias ? config.resolve.alias : {}),
+        bootstrap: bootstrapPath,
       },
       extensions: Array.from(new Set([...(config.resolve?.extensions || []), '.ts', '.tsx'])),
     };
