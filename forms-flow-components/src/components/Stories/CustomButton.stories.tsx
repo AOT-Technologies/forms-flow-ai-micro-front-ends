@@ -7,12 +7,78 @@ const meta: Meta<typeof V8CustomButton> = {
   component: V8CustomButton,
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: 'A versatile, accessible button component with multiple variants, states, and size options. Built with TypeScript, React.memo, and forwardRef for optimal performance and composability.',
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {
-    variant: { control: 'select', options: ['primary', 'secondary'] },
-    size: { control: 'select', options: ['small', 'medium', 'large'] },
-    onClick: { action: 'clicked' },
+    variant: { 
+      control: 'select', 
+      options: ['primary', 'secondary'],
+      description: 'Button visual style variant'
+    },
+    size: { 
+      control: 'select', 
+      options: ['small', 'medium', 'large'],
+      description: 'Button size affecting padding and font size'
+    },
+    type: {
+      control: 'select',
+      options: ['button', 'submit', 'reset'],
+      description: 'HTML button type'
+    },
+    loading: {
+      control: 'boolean',
+      description: 'Shows spinner and disables interaction'
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disables the button'
+    },
+    selected: {
+      control: 'boolean',
+      description: 'Selected/active state for toggle buttons'
+    },
+    iconOnly: {
+      control: 'boolean',
+      description: 'Icon-only button (hides text label)'
+    },
+    fullWidth: {
+      control: 'boolean',
+      description: 'Full width button'
+    },
+    label: {
+      control: 'text',
+      description: 'Button text label'
+    },
+    ariaLabel: {
+      control: 'text',
+      description: 'Accessible label for screen readers'
+    },
+    loadingText: {
+      control: 'text',
+      description: 'Custom text shown during loading state'
+    },
+    dataTestId: {
+      control: 'text',
+      description: 'Test ID for automated testing'
+    },
+    className: {
+      control: 'text',
+      description: 'Additional CSS classes'
+    },
+    // Exclude complex props from controls
+    icon: {
+      control: 'text',
+      description: 'Icon element to display'
+    },
+    onClick: { 
+      action: 'clicked',
+      description: 'Click handler function'
+    },
   },
 };
 
@@ -28,18 +94,19 @@ export const Primary: Story = {
   },
 };
 
-export const Secondary: Story = {
-  args: {
-    label: 'Secondary Button',
-    variant: 'secondary',
-    onClick: action('secondary-clicked'),
-  },
-};
+// export const Secondary: Story = {
+//   args: {
+//     label: 'Secondary Button',
+//     variant: 'secondary',
+//     onClick: action('secondary-clicked'),
+//   },
+// };
 
 export const Loading: Story = {
   args: {
     label: 'Loading Button',
     loading: true,
+    variant: 'primary',
     loadingText: 'Loading...',
     onClick: action('loading-button-clicked'),
   },
@@ -49,6 +116,7 @@ export const Disabled: Story = {
   args: {
     label: 'Disabled Button',
     disabled: true,
+    variant: 'primary',
     onClick: action('disabled-button-clicked'),
   },
 };
@@ -58,22 +126,130 @@ export const IconOnly: Story = {
     icon: <span>⚙️</span>,
     iconOnly: true,
     ariaLabel: 'Settings',
+    variant: 'primary',
     onClick: action('icon-only-clicked'),
   },
 };
 
-// export const Small: Story = {
-//   args: {
-//     label: 'Small Button',
-//     size: 'small',
-//     onClick: action('small-button-clicked'),
-//   },
-// };
+export const WithIcon: Story = {
+  args: {
+    label: 'Save Document',
+    icon: <span>💾</span>,
+    variant: 'primary',
+    onClick: action('save-clicked'),
+  },
+};
 
-// export const Large: Story = {
-//   args: {
-//     label: 'Large Button',
-//     size: 'large',
-//     onClick: action('large-button-clicked'),
-//   },
-// };
+export const IconOnlyLoading: Story = {
+  args: {
+    icon: <span>⚙️</span>,
+    iconOnly: true,
+    ariaLabel: 'Settings',
+    loading: true,
+    variant: 'primary',
+    onClick: action('icon-only-loading-clicked'),
+  },
+};
+
+
+export const Selected: Story = {
+  args: {
+    label: 'Toggle Feature',
+    selected: true,
+    variant: 'primary',
+    onClick: action('toggle-clicked'),
+  },
+};
+
+export const FullWidth: Story = {
+  args: {
+    label: 'Full Width Button',
+    fullWidth: true,
+    variant: 'primary',
+    onClick: action('fullwidth-clicked'),
+  },
+  parameters: {
+    layout: 'padded', // Show full width in padded container
+  },
+};
+
+export const Small: Story = {
+  args: {
+    label: 'Small Button',
+    size: 'small',
+    variant: 'primary',
+    onClick: action('small-clicked'),
+  },
+};
+
+export const Large: Story = {
+  args: {
+    label: 'Large Button',
+    size: 'large',
+    variant: 'primary',
+    onClick: action('large-clicked'),
+  },
+};
+
+export const SubmitButton: Story = {
+  args: {
+    label: 'Submit Form',
+    type: 'submit',
+    variant: 'primary',
+    dataTestId: 'submit-form-button',
+    onClick: action('form-submitted'),
+  },
+};
+
+export const LoadingWithCustomText: Story = {
+  args: {
+    label: 'Process Payment',
+    loading: true,
+    loadingText: 'Processing...',
+    variant: 'primary',
+    onClick: action('payment-processing'),
+  },
+};
+
+export const SelectedPrimary: Story = {
+  args: {
+    label: 'Active Filter',
+    selected: true,
+    variant: 'primary',
+    onClick: action('filter-toggled'),
+  },
+};
+
+export const DisabledWithIcon: Story = {
+  args: {
+    label: 'Upload File',
+    icon: <span>📁</span>,
+    disabled: true,
+    variant: 'secondary',
+    onClick: action('upload-clicked'),
+  },
+};
+
+// Interactive playground story
+export const Playground: Story = {
+  args: {
+    label: 'Interactive Button',
+    variant: 'primary',
+    size: 'medium',
+    type: 'button',
+    loading: false,
+    disabled: false,
+    selected: false,
+    iconOnly: false,
+    fullWidth: false,
+    dataTestId: 'playground-button',
+    onClick: action('playground-clicked'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Use the controls panel below to experiment with all button properties and see how they affect the component.',
+      },
+    },
+  },
+};

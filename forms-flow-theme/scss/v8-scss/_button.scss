@@ -127,6 +127,11 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25);
     min-width: auto;
     min-height: auto;
     aspect-ratio: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 
   // State modifiers
