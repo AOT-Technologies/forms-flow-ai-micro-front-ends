@@ -158,7 +158,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
                 <div className="form-selection-spinner"></div>
               ) : (
                 <Form
-                  form={form}
+                  src={form}
                   options={{
                     noAlerts: true,
                     viewAsHtml: true,

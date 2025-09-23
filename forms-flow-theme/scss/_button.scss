@@ -310,6 +310,10 @@ $danger-color: var(--ff-danger);
       font-size: var(--font-size-md);
     }
   }
+
+  &.btn-outline-primary {
+    border: 1px solid !important;
+  }
 }
 
 .dropdown.btn-group {

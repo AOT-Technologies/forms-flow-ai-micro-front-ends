@@ -93,7 +93,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
     <div className={`${scrollableOverview} bg-white ps-3 pe-3 m-0 form-border`}>
       <div className="sub-container wizard-tab">
         <Form
-          form={form}
+          src={form}
           submission={safeSubmission}
           options={{
             ...options,
