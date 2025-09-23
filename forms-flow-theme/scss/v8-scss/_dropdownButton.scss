@@ -1,0 +1,56 @@
+// Scoped styles for the V8 custom dropdown button
+.v8-custom-dropdown {
+    // Button (toggle) visuals
+    .v8-dropdown-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid #B8ABFF80 !important;
+        background: #FCFCFC !important;
+        padding: 0 !important;
+        // Ensure any default Bootstrap caret is hidden
+        &::after {
+            display: none;
+        }
+
+        // Label/text styling (the first span is the label)
+        > span:first-child {
+            color: #4A4A4A;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        // Vertical divider between label and chevron
+        .v8-dropdown-divider {
+            width: 1px;
+            align-self: stretch; // fill content box height
+            background: #E5E5E5;
+            margin: 0 8px; // horizontal spacing
+        }
+
+        // Chevron wrapper for rotation/spacing hooks
+        .chevron-icon {
+            display: inline-flex;
+        }
+    }
+}
+ 
+ // Stronger specificity to override `.dropdown.btn-group .btn { border-radius: 0 !important; }`
+ .v8-custom-dropdown.dropdown.btn-group {
+    .v8-dropdown-toggle.btn {
+        // Use CSS variables so divider can compensate for padding
+        --v8-toggle-padding-y: 11px;
+        --v8-toggle-padding-x: 13px;
+
+        border-radius: 20px !important;
+        padding: var(--v8-toggle-padding-y) var(--v8-toggle-padding-x) !important;
+
+        // Make divider span visually full height (extend into button padding)
+        .v8-dropdown-divider {
+            margin-top: calc(-1 * var(--v8-toggle-padding-y));
+            margin-bottom: calc(-1 * var(--v8-toggle-padding-y));
+        }
+    }
+ }
+
+
