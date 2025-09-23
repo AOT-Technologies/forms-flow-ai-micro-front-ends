@@ -58,7 +58,7 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@aot-technologies/formio-react": "file:../../formio-react",
+    "@aot-technologies/formio-react": "npm:@leodube/formio-react@1.0.5",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
     "@types/systemjs": "^6.1.1",
