@@ -1,0 +1,157 @@
+// Variables for consistent styling
+$dropdown-width: 352px;
+$dropdown-height: 40px;
+$dropdown-border-radius: 5px;
+$dropdown-border-color: var(--gray-x-light);
+$dropdown-bg-color: var(--white-200);
+$dropdown-text-color: var(--gray-darkest);
+$dropdown-disabled-color: #e5e5e5;
+$dropdown-padding: 8px 12px;
+$dropdown-gap: 8px;
+$dropdown-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+$dropdown-z-index: 1000;
+$dropdown-max-height: 140px;
+$font-weight-regular: var(--font-weight-regular);
+$font-size-15: var(--font-size-15);
+$font-weight-medium: var(--font-weight-medium);
+
+// Mixins for common patterns
+@mixin dropdown-base {
+  border-radius: $dropdown-border-radius;
+  border: 1px solid $dropdown-border-color;
+  background: $dropdown-bg-color;
+}
+
+@mixin dropdown-selected {
+  border: 1px solid $dropdown-border-color;
+  background: $dropdown-border-color;
+  font-weight: $font-weight-medium;
+  color: $dropdown-text-color;
+}
+
+.selectdropdown-container {
+  position: relative;
+  display: inline-block;
+  width: $dropdown-width;
+  height: $dropdown-height;
+  flex-shrink: 0;
+  color: $dropdown-text-color;
+  font-size: $font-size-15;
+  font-weight: $font-weight-regular;
+  line-height: normal;
+}
+
+.custom-selectdropdown {
+  width: 100%;
+  min-height: $dropdown-height;
+  @include dropdown-base;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $dropdown-padding;
+  position: relative;
+
+  &.disabled {
+    color: $dropdown-disabled-color;
+    cursor: not-allowed;
+  }
+}
+
+.dropdown-text {
+  flex: 1;
+  text-align: left;
+
+  &.placeholder {
+    color: $dropdown-text-color;
+    background: $dropdown-bg-color;
+  }
+
+  // Input field styling for search dropdown mode
+  &[type="text"] {
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: text;
+
+    &:disabled {
+      color: $dropdown-disabled-color;
+      cursor: not-allowed;
+    }
+  }
+}
+
+
+.custom-dropdown-options {
+  display: flex;
+  flex-direction: column;
+  gap: $dropdown-gap;
+  position: absolute;
+  margin-top: $dropdown-gap;
+  top: 100%;
+  padding: $dropdown-gap;
+  left: 0;
+  right: 0;
+  @include dropdown-base;
+  box-shadow: $dropdown-shadow;
+  width: 100%;
+  flex-shrink: 0;
+  z-index: $dropdown-z-index;
+  max-height: $dropdown-max-height;
+  overflow-y: auto;
+
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    display: block;
+    width: $scrollBarWidth;
+    background-color: $dropdown-bg-color;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      opacity: 1;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      width: $scrollBarWidth/4;
+      background-color: #dad9da;
+      background-clip: padding-box;
+      border-radius: 5rem;
+      border: var(--spacer-025) solid transparent;
+      opacity: 1;
+      cursor: pointer;
+    }
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    box-shadow: inset 0 0 0 $lineThin #dad9da;
+  }
+}
+
+.custom-dropdown-item {
+  padding: $dropdown-padding !important;
+  cursor: pointer;
+  color: $dropdown-text-color;
+  border: 1px solid transparent;
+  border-radius: $dropdown-border-radius;
+  border-top-width: 1px !important;
+
+  // Selected option state
+  &.selected {
+    @include dropdown-selected;
+  }
+
+  // Hover states
+  &:hover:not(.selected) {
+    border-color: $dropdown-border-color;
+  }
+
+  &:hover.selected {
+    @include dropdown-selected;
+  }
+}
+
