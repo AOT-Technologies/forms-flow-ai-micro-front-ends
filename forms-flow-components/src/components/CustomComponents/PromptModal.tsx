@@ -2,8 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import { CustomButton } from "./Button";
 import { useTranslation } from "react-i18next";
-import { PromptInfoIcon, WarningIcon } from "../SvgIcons";
-
+import { PromptInfoIcon, WarningIcon, TickIcon, PromptErrorIcon } from "../SvgIcons";
 
 interface PromptModalProps {
   show: boolean;
@@ -16,14 +15,35 @@ interface PromptModalProps {
   primaryBtnDisable?: boolean;
   primaryBtndataTestid?: string;
   primaryBtnariaLabel?: string;
-  buttonLoading?:boolean;
+  buttonLoading?: boolean;
   secondaryBtnText: string;
   secondaryBtnDisable?: boolean;
   secondoryBtndataTestid?: string;
   secondoryBtnariaLabel?: string;
   secondaryBtnLoading?:boolean;
+  btnText: string;
+  btnDisable?: boolean;
+  btndataTestid?: string;
+  btnariaLabel?: string;
+  btnLoading?:boolean;
+  btnAction: ()=>void;
   datatestId?: string;
   type?: string;
+}
+
+const renderModalIcon = (type?: string) => {
+  switch (type?.toLowerCase()) {
+    case "warning":
+      return <WarningIcon />;
+    case "info":
+      return <PromptInfoIcon />;
+    case "success":
+      return <TickIcon color="#00C49A" />;
+    case "error":
+      return <PromptErrorIcon />;
+    default:
+      return null;
+  }
 }
 
 export const PromptModal: React.FC<PromptModalProps> = React.memo(({
@@ -44,7 +64,13 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
   secondoryBtnariaLabel = 'Cancel Button',
   secondaryBtnLoading= false,
   datatestId,
-  type
+  type,
+  btnText,
+  btnDisable = false,
+  btndataTestid='ok-button',
+  btnariaLabel='Ok Button',
+  btnLoading=false,
+  btnAction
 }) => {
   const { t } = useTranslation();
   return (
@@ -55,9 +81,9 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
       data-testid="prompt-modal"
       aria-labelledby="prompt-modal-title"
       aria-describedby="prompt-modal-message"
-      className="prompt-modal"
+      className={`prompt-modal${type === 'error' ? ' error-modal' : type=='success'? ' success-modal':''}`}
       centered
-    >
+      >
       <Modal.Body
         className="prompt-modal-body"
       >
@@ -66,11 +92,7 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
           id="prompt-modal-title"
         >
           <div className="prompt-icon">
-            {type === 'warning' ? (
-              <WarningIcon  />
-            ) : (
-              <PromptInfoIcon/>
-            )}
+            {type && renderModalIcon(type)}
           </div>
 
           <div
@@ -115,6 +137,14 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
             disabled={secondaryBtnDisable}
             buttonLoading={secondaryBtnLoading}
             secondary
+          />}
+          {btnText && <CustomButton
+            label={btnText}
+            onClick={btnAction}
+            dataTestId={btndataTestid}
+            ariaLabel={btnariaLabel}
+            disabled={btnDisable}
+            buttonLoading={btnLoading}
           />}
         </div>
       </Modal.Footer>

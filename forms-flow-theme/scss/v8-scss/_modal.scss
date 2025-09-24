@@ -62,4 +62,16 @@ $base: 1rem;
             }
         }
     }
+        &.error-modal{
+            .modal-content{
+                border-color: #FF9100;
+                box-shadow: none;
+            }
+        }
+        &.success-modal{
+            .modal-content{
+                border-color:#00C49A ;
+                box-shadow: none;
+            }
+        }
 }
