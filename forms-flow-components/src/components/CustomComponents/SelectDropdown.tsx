@@ -89,6 +89,23 @@ export const SelectDropdown: FC<SelectDropdownProps> = ({
   };
 
   /**
+   * Handler: Handle keyboard events for accessibility
+   * Supports Enter and Space keys to toggle dropdown
+   */
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (disabled) return;
+    
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleToggle();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      setIsOpen(false);
+      setSearchTerm("");
+    }
+  };
+
+  /**
    * Handler: Open dropdown when input receives focus
    * Used for search dropdown mode (when searchDropdown is true)
    */
@@ -187,6 +204,7 @@ export const SelectDropdown: FC<SelectDropdownProps> = ({
         <div
           className={`custom-selectdropdown ${disabled ? 'disabled' : ''}`}
           onClick={handleToggle}
+          onKeyDown={handleKeyDown}
           tabIndex={disabled ? -1 : 0}
           aria-expanded={isOpen}
           aria-haspopup="listbox"
