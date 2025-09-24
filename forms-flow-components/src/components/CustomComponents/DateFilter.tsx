@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect, FC, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  AngleLeftIcon,
-  AngleRightIcon,
-  CloseIcon,
   RightFarIcon,
   LeftFarIcon,
   DownArrowIcon,
   UpArrowIcon,
+  CalenderLeftIcon,
+  CalenderRightIcon,
 } from "../SvgIcons";
+import { V8CustomButton } from "../../formsflow-components";
 
 type DateValue = Date | string | null;
 interface DateRange {
@@ -434,6 +434,26 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     );
   };
 
+  // Select today's date 
+  const handleTodayClick = (): void => {
+    const today = new Date();
+    const normalizedToday = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    const filterRange = createFilterDateRange(normalizedToday, normalizedToday);
+    setDateRange({
+      startDate: filterRange.startDate,
+      endDate: filterRange.endDate,
+    });
+    setCurrentMonth(normalizedToday);
+    onChange({
+      startDate: filterRange.startDate,
+      endDate: filterRange.endDate,
+    });
+  };
+
   // Handle keyboard navigation
   const handleNavKeyDown = (
     event: KeyboardEvent<HTMLButtonElement>,
@@ -543,49 +563,40 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       ref={calendarRef}
       data-testid="date-range-picker"
     >
-      <button
-        className={`date-range-display ${isOpen ? "open" : ""} button-as-div`}
+      <div className="drp-input-container">
+        <input
         onClick={toggleCalendar}
-        onKeyDown={(e) => handleNavKeyDown(e, toggleCalendar)}
-        data-testid="date-range-display"
-        aria-label={t("Date range selector")}
-        aria-expanded={isOpen}
-        type="button"
-      >
+          type="text"
+          className="drp-date-input"
+          value={formatDateValue(dateRange.startDate)}
+          readOnly
+          aria-label="Start date"
+          placeholder="Start date"
+        />
+        <span className="drp-separator">to</span>
+        <input
+        onClick={toggleCalendar}
+          type="text"
+          className="drp-date-input"
+          value={formatDateValue(dateRange.endDate)}
+          readOnly
+          aria-label="End date"
+          placeholder="End date"
+        />
+
         <span
-          className={`date-range-text ${isOpen ? "open" : ""}`}
-          data-testid="date-range-text"
+          className={`date-range-toggle-icon cursor-pointer ${isOpen ? "open" : ""}`}
+          data-testid="date-range-toggle-icon"
+          aria-hidden="true"
+          onClick={toggleCalendar}
         >
-          {formatDateRange()}
-        </span>
-        <div className="date-range-controls">
-          {isOpen && (
-            <button
-              className="date-range-close button-as-div"
-              data-testid="date-range-close-btn"
-              aria-label={t("Close calendar")}
-              type="button"
-              onClick={(e) => handleCloseCalendar(e)}
-              onKeyDown={(e) =>
-                handleNavKeyDown(e, () => handleCloseCalendar())
-              }
-            >
-              <CloseIcon />
-            </button>
+          {isOpen ? (
+            <UpArrowIcon color="#4A4A4A" />
+          ) : (
+            <DownArrowIcon color="#4A4A4A" />
           )}
-          <span
-            className={`date-range-toggle-icon ${isOpen ? "open" : ""}`}
-            data-testid="date-range-toggle-icon"
-            aria-hidden="true"
-          >
-            {isOpen ? (
-              <UpArrowIcon color="white" />
-            ) : (
-              <DownArrowIcon color="white" />
-            )}
-          </span>
-        </div>
-      </button>
+        </span>
+      </div>
 
       {isOpen && (
         <div
@@ -603,7 +614,8 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 aria-label={t("Previous year")}
                 type="button"
               >
-                <LeftFarIcon />
+                <CalenderLeftIcon color="#212529" />
+                <CalenderLeftIcon color="#212529" />
               </button>
               <button
                 className="calendar-prev-month-btn button-as-div"
@@ -613,7 +625,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 type="button"
                 onClick={goToPrevMonth}
               >
-                <AngleLeftIcon />
+                <CalenderLeftIcon color="#212529" />
               </button>
             </div>
             <span
@@ -631,7 +643,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 type="button"
                 onClick={goToNextMonth}
               >
-                <AngleRightIcon />
+                <CalenderRightIcon color="#212529" />
               </button>
               <button
                 className="calendar-next-year-btn button-as-div"
@@ -641,23 +653,27 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 aria-label={t("Next year")}
                 type="button"
               >
-                <RightFarIcon />
+                <CalenderRightIcon color="#212529" />
+                <CalenderRightIcon color="#212529" />
+
+
               </button>
             </div>
           </div>
 
+          <div className="calender-week-days-container">
           <div
             className="calendar-days-header"
             data-testid="calendar-days-header"
           >
             {[
-              t("MO"),
-              t("TU"),
-              t("WE"),
-              t("TH"),
-              t("FR"),
-              t("SA"),
-              t("SU"),
+              t("Mon"),
+              t("Tue"),
+              t("Wed"),
+              t("Thu"),
+              t("Fri"),
+              t("Sat"),
+              t("Sun"),
             ].map((day) => (
               <div
                 key={day}
@@ -706,6 +722,16 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
                 </button>
               );
             })}
+          </div>
+          <div className="calendar-today-container">
+            <V8CustomButton 
+            label="Today"
+            onClick={handleTodayClick}
+            ariaLabel="Today"
+            dataTestId="calendar-today-btn"
+            variant="secondary"
+            />
+          </div>
           </div>
         </div>
       )}

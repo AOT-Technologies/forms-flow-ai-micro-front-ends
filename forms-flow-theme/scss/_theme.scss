@@ -151,8 +151,7 @@ $animSpeed: 300ms;
 
   //font-style
   --default-font-family-url:" ";
-  --default-font-family: "Roboto", sans-serif;
-  --primary-font: var(--default-font-family);
+  --primary-font: var(--font-family-base);
   //font-size
   --font-size-xs: 0.875rem; // 14px
   --font-size-sm: var(--default-font-size); 
