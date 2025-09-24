@@ -170,86 +170,97 @@ export const SelectDropdown: FC<SelectDropdownProps> = ({
   // Find the currently selected option for display purposes
   const selectedOption = options.find(opt => opt.value === selectedValue);
 
+  /**
+   * Render arrow icon based on dropdown state
+   */
+  const renderArrowIcon = () => {
+    const iconColor = disabled ? '#E5E5E5' : '#9E9E9E';
+    return isOpen ? (
+      <UpArrowIcon color={iconColor} />
+    ) : (
+      <DownArrowIcon color="#9E9E9E" />
+    );
+  };
+
+  /**
+   * Render search dropdown input
+   */
+  const renderSearchDropdown = () => (
+    <div className={`custom-selectdropdown ${disabled ? 'disabled' : ''}`}>
+      <input
+        ref={searchInputRef}
+        type="text"
+        className="dropdown-text"
+        value={searchTerm || selectedOption?.label || ""}
+        onChange={handleSearchChange}
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
+        disabled={disabled}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-label={ariaLabel}
+        id={id}
+        data-testid={dataTestId}
+      />
+      {renderArrowIcon()}
+    </div>
+  );
+
+  /**
+   * Render traditional dropdown button
+   */
+  const renderTraditionalDropdown = () => (
+    <button
+      className={`custom-selectdropdown ${disabled ? 'disabled' : ''}`}
+      onClick={handleToggle}
+      onKeyDown={handleKeyDown}
+      aria-expanded={isOpen}
+      aria-haspopup="listbox"
+      aria-label={ariaLabel}
+      id={id}
+      data-testid={dataTestId}
+    >
+      <span className="dropdown-text">
+        {selectedOption?.label || defaultValue}
+      </span>
+      {renderArrowIcon()}
+    </button>
+  );
+
+  /**
+   * Render dropdown options
+   */
+  const renderDropdownOptions = () => {
+    if (!isOpen || disabled) return null;
+
+    return (
+      <div className="custom-dropdown-options">
+        {filteredOptions.length > 0 ? (
+          filteredOptions.map((option, index) => (
+            <ListGroup.Item
+              key={option.value}
+              className={`custom-dropdown-item ${option.value === selectedValue ? 'selected' : ''}`}
+              onClick={() => handleOptionClick(option.value)}
+              aria-selected={option.value === selectedValue}
+              data-testid={`${dataTestId}-option-${index}`}
+              aria-label={`${ariaLabel}-option-${index}`}
+            >
+              {option.label}
+            </ListGroup.Item>
+          ))
+        ) : (
+          <ListGroup.Item className="custom-dropdown-item no-results">
+            No Matching Results
+          </ListGroup.Item>   
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="selectdropdown-container" ref={dropdownRef}>
-      {/* Conditional rendering based on searchDropdown prop */}
-      {searchDropdown ? (
-        /* Search Dropdown Mode: Input field with dropdown functionality */
-        <div className={`custom-selectdropdown ${disabled ? 'disabled' : ''}`}>
-          <input
-            ref={searchInputRef}
-            type="text"
-            className="dropdown-text"
-            value={searchTerm || selectedOption?.label || ""}
-            onChange={handleSearchChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            disabled={disabled}
-            tabIndex={disabled ? -1 : 0}
-            aria-expanded={isOpen}
-            aria-haspopup="listbox"
-            aria-label={ariaLabel}
-            id={id}
-            data-testid={dataTestId}
-          />
-          {/* Arrow icon indicating dropdown state */}
-          {isOpen ? (
-            <UpArrowIcon color={disabled ? '#E5E5E5' : '#9E9E9E'} />
-          ) : (
-            <DownArrowIcon color="#9E9E9E" />
-          )}
-        </div>
-      ) : (
-        /* Traditional Dropdown Mode: Click-to-open button */
-        <div
-          className={`custom-selectdropdown ${disabled ? 'disabled' : ''}`}
-          onClick={handleToggle}
-          onKeyDown={handleKeyDown}
-          tabIndex={disabled ? -1 : 0}
-          aria-expanded={isOpen}
-          aria-haspopup="listbox"
-          aria-label={ariaLabel}
-          id={id}
-          data-testid={dataTestId}
-        >
-          <span className="dropdown-text">
-            {selectedOption?.label || defaultValue}
-          </span>
-          {/* Arrow icon indicating dropdown state */}
-          {isOpen ? (
-              <UpArrowIcon color={disabled ? '#E5E5E5' : '#9E9E9E'} />
-            ) : (
-              <DownArrowIcon color="#9E9E9E" />
-            )}
-        </div>
-      )}
-      
-      {/* Dropdown Options: Rendered when dropdown is open and not disabled */}
-      {isOpen && !disabled && (
-        <div className="custom-dropdown-options">
-          {filteredOptions.length > 0 ? (
-            /* Render filtered options */
-            filteredOptions.map((option, index) => (
-              <ListGroup.Item
-                key={option.value}
-                className={`custom-dropdown-item ${option.value === selectedValue ? 'selected' : ''}`}
-                onClick={() => handleOptionClick(option.value)}
-                role="option"
-                aria-selected={option.value === selectedValue}
-                data-testid={`${dataTestId}-option-${index}`}
-                aria-label={`${ariaLabel}-option-${index}`}
-              >
-                {option.label}
-              </ListGroup.Item>
-            ))
-          ) : (
-            /* No results message when search yields no matches */
-            <ListGroup.Item className="custom-dropdown-item no-results">
-              No Matching Results
-            </ListGroup.Item>   
-          )}
-        </div>
-      )}
+      {searchDropdown ? renderSearchDropdown() : renderTraditionalDropdown()}
+      {renderDropdownOptions()}
     </div>
   );
 };
