@@ -47,31 +47,44 @@ export const V8CustomDropdownButton: React.FC<V8CustomDropdownButtonProps> = ({
       show={open}
       onToggle={(isOpen) => setOpen(isOpen)}
       className={`v8-custom-dropdown menu-${menuPosition} ${className}`}
-      data-testid={dataTestId}
+      {...(dataTestId ? { "data-testid": dataTestId } : {})}
     >
       <Dropdown.Toggle
         variant={variant}
         disabled={disabled}
-        aria-label={ariaLabel}
         className={`v8-dropdown-toggle ${open ? "open" : ""}`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        {...(ariaLabel ? { "aria-label": ariaLabel } : {})}
+        {...(dataTestId ? { "data-testid": `${dataTestId}-toggle` } : {})}
       >
-          <div className="label-div"><span className="dropdown-label">{label}</span></div>
-          <span className="v8-dropdown-divider" aria-hidden="true" />
-          <div className="dropdown-icon"><span className="chevron-icon"><ChevronIcon/></span></div>
-
-
+        <div className="label-div">
+          <span className="dropdown-label">{label}</span>
+        </div>
+        <span className="v8-dropdown-divider" aria-hidden="true" />
+        <div className="dropdown-icon">
+          <span className="chevron-icon">
+            <ChevronIcon />
+          </span>
+        </div>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu className="v8-dropdown-menu">
+      <Dropdown.Menu
+        className="v8-dropdown-menu"
+        role="listbox"
+        {...(dataTestId ? { "data-testid": `${dataTestId}-menu` } : {})}
+      >
         {dropdownItems.map((item) => (
           <Dropdown.Item
             key={item.value || item.label}
             onClick={() => handleItemClick(item)}
-            aria-label={item.ariaLabel || item.label}
             className={`v8-dropdown-item ${
               selectedValue === (item.value || item.label) ? "selected" : ""
             }`}
-            data-testid={item.dataTestId}
+            role="option"
+            aria-selected={selectedValue === (item.value || item.label)}
+            {...(item.ariaLabel ? { "aria-label": item.ariaLabel } : {})}
+            {...(item.dataTestId ? { "data-testid": item.dataTestId } : {})}
           >
             {item.label}
           </Dropdown.Item>
