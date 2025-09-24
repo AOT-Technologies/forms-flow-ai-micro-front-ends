@@ -1,7 +1,7 @@
 import "./Sidebar.scss";
 import Accordion from "react-bootstrap/Accordion";
-import React, { useEffect, useMemo, useState } from "react";
-import { useHistory ,useLocation } from "react-router-dom";
+import React, { useEffect, useMemo, useState, useRef } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   APPLICATION_NAME,
@@ -23,30 +23,32 @@ import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
-import { ApplicationLogo } from "@formsflow/components";
+import { ApplicationLogo, LogoutIcon } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
-const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t }) => (
-  <div className="user-container">
+const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t, collapsed }) => (
+  <div className={`user-container${collapsed ? " collapsed" : ""}`}>
     <button onClick={handleProfileModal}>
       <div className="user-icon cursor-pointer" data-testid="user-icon">
         {initials}
       </div>
-      <div className="user-info">
-        <div>
-          <p className="user-name" data-testid="user-name">{userDetail?.name}</p>
-        </div>
-
-        <div>
+      {!collapsed && (
+        <div className="user-info">
+          <div>
+            <p className="user-name" data-testid="user-name">{userDetail?.name}</p>
+          </div>
+          {/* <div>
           <p className="user-email" data-testid="user-email">
             {userDetail?.email || userDetail?.preferred_username}
           </p>
+        </div> */}
         </div>
-      </div>
+      )}
     </button>
     <button className="sign-out-button" onClick={logout} data-testid="sign-out-button">
-      <p className="m-0">{t("Logout")}</p>
+      <LogoutIcon />
+      {!collapsed && <p className="m-0">{t("Logout")}</p>}
     </button>
   </div>
 );
@@ -61,14 +63,21 @@ UserProfile.propTypes = {
   initials: PropTypes.string.isRequired,
   handleProfileModal: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
-  t: PropTypes.func.isRequired, 
+  t: PropTypes.func.isRequired,
+  collapsed: PropTypes.bool
 };
 
-const renderLogo = (hideLogo) => {
-  if (hideLogo === "true") return null;
+const renderLogo = (hideLogo, collapsed) => {
+  
+    document.documentElement.style.setProperty(
+      "--navbar-width",
+      collapsed ? "3rem" : "10rem" // collapsed width : expanded width
+    );
 
+  if (hideLogo === "true") return null;
+  
   return (
-    <div className="logo-container">
+    <div className={`logo-container${collapsed ? " collapsed" : ""}`}>
       <ApplicationLogo data-testid="application-logo" />
     </div>
   );
@@ -132,8 +141,16 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
-  const [activeKey,setActiveKey] = useState(0);
-  const hideLogo =  StyleServices?.getCSSVariable("--hide-formsflow-logo")?.toLowerCase();
+  const [activeKey, setActiveKey] = useState(0);
+  const hideLogo = StyleServices?.getCSSVariable("--hide-formsflow-logo")?.toLowerCase();
+
+  // Collapsible sidebar state
+  const [collapsed, setCollapsed] = useState(true);
+  const sidebarRef = useRef(null);
+
+  // Expand on hover handlers
+  const handleMouseEnter = () => setCollapsed(false);
+  const handleMouseLeave = () => setCollapsed(true);
 
   const getInitials = (name) => {
     if (!name) return "";
@@ -226,8 +243,8 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
 
   const SectionKeys = { 
-    DESIGN: {
-      value: "design",
+    BUILD: {
+      value: "build",
       supportedRoutes: ["formflow", "bundleflow", "subflow", "decision-table","integration/recipes","integration/connected-apps","integration/library"],
     },
     SUBMIT: {
@@ -250,7 +267,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   
   useEffect((()=>{
     const sections = [
-      { key: SectionKeys.DESIGN.value, supportedRoutes: SectionKeys.DESIGN.supportedRoutes },
+      { key: SectionKeys.BUILD.value, supportedRoutes: SectionKeys.BUILD.supportedRoutes },
       { key: SectionKeys.SUBMIT.value, supportedRoutes: SectionKeys.SUBMIT.supportedRoutes },
       { key: SectionKeys.TASK.value, supportedRoutes: SectionKeys.TASK.supportedRoutes },
       { key: SectionKeys.ANALYZE.value, supportedRoutes: SectionKeys.ANALYZE.supportedRoutes },
@@ -336,14 +353,20 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
      return options;
   }
 
+  // Collapsible sidebar class
+  const sidebarClass = `sidenav${collapsed ? " collapsed" : ""}`;
+
   return (
     <div
-      className="sidenav"
+      className={sidebarClass}
       style={{ height: sidenavHeight }}
       data-testid="sidenav"
+      ref={sidebarRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      {renderLogo(hideLogo)}
-      <div className="options-container" data-testid="options-container">
+      {renderLogo(hideLogo, collapsed)}
+      <div className={`options-container${collapsed ? " collapsed" : ""}`} data-testid="options-container">
         <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
           {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
             <MenuComponent
@@ -358,6 +381,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 },
               ]}
               subscribe={props.subscribe}
+              collapsed={collapsed}
             />
           )}
 
@@ -384,6 +408,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 },
               ]}
               subscribe={props.subscribe}
+              collapsed={collapsed}
             />
           )}
 
@@ -391,9 +416,9 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             (isCreateDesigns || isViewDesigns || isManageIntegrations) && (
               <MenuComponent
                 baseUrl={baseUrl}
-                eventKey={SectionKeys.DESIGN.value}
+                eventKey={SectionKeys.BUILD.value}
                 optionsCount="5"
-                mainMenu={t("Design")}
+                mainMenu={t("Build")}
                 subMenu={
                   // If only isManageIntegrations is true → show only Integrations
                   isManageIntegrations && !isCreateDesigns && !isViewDesigns
@@ -411,7 +436,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                       ]
                     : [
                         {
-                          name: "Forms & Flows",
+                          name: "Forms",
                           path: "formflow",
                         },
                         ...(IS_ENTERPRISE && isManageBundles
@@ -465,6 +490,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                       ]
                 }
                 subscribe={props.subscribe}
+                collapsed={collapsed}
               />
             )}
 
@@ -474,9 +500,9 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             ENABLE_PROCESSES_MODULE && (
               <MenuComponent
                 baseUrl={baseUrl}
-                eventKey={SectionKeys.DESIGN.value}
+                eventKey={SectionKeys.BUILD.value}
                 optionsCount="2"
-                mainMenu="Design"
+                mainMenu="Build"
                 subMenu={[
                   {
                     name: "Subflows",
@@ -488,6 +514,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                   },
                 ]}
                 subscribe={props.subscribe}
+                collapsed={collapsed}
               />
             )}
           {isAnalyzeManager && ENABLE_DASHBOARDS_MODULE && (
@@ -498,6 +525,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               mainMenu="Analyze"
               subMenu={manageAnalyseOptions()}
               subscribe={props.subscribe}
+              collapsed={collapsed}
             />
           )}
           {isAdmin && (
@@ -508,6 +536,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               mainMenu="Manage"
               subMenu={manageOptions()}
               subscribe={props.subscribe}
+              collapsed={collapsed}
             />
           )}
         </Accordion>
@@ -519,6 +548,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
           handleProfileModal={handleProfileModal}
           logout={logout}
           t={t}
+          collapsed={collapsed}
         />
       )}
       {showProfile && (
