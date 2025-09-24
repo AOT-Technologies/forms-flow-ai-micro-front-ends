@@ -25,20 +25,8 @@ interface SelectDropdownProps {
   ariaLabel?: string; // HTML aria-label attribute for the dropdown
 }
 
-/**
- * SelectDropdown Component
- * 
- * A versatile dropdown component that can function as either:
- * 1. Traditional dropdown with click-to-open behavior
- * 2. Searchable input field with dropdown options
- * 
- * Features:
- * - Keyboard navigation support
- * - Click outside to close
- * - Real-time search filtering (when searchDropdown is true)
- * - Disabled state support
- * - Customizable styling
- */
+
+
 export const SelectDropdown: FC<SelectDropdownProps> = ({
   options,
   value,
