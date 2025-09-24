@@ -1,56 +1,155 @@
-// Scoped styles for the V8 custom dropdown button
+// V8 Custom Dropdown Styles
 .v8-custom-dropdown {
-    // Button (toggle) visuals
     .v8-dropdown-toggle {
+        // Variant variables (primary defaults)
+        --v8-border-normal: #B8ABFF80;
+        --v8-border-hover: #B8ABFF;
+        --v8-border-active: #B8ABFF;
+        --v8-bg-active: #B8ABFF33;
+        --v8-divider-active: #E5E5E5;
+
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        border: 1px solid #B8ABFF80 !important;
+        // gap: 6px;
+        border: 1px solid var(--v8-border-normal) !important;
         background: #FCFCFC !important;
         padding: 0 !important;
-        // Ensure any default Bootstrap caret is hidden
+
+        // Hide Bootstrap caret
         &::after {
             display: none;
         }
 
-        // Label/text styling (the first span is the label)
-        > span:first-child {
+        // Label (first span inside toggle)
+        .label-div {
+            padding: 11px 14px 11px 13px;
+            border-radius: 20px 0 0 20px; 
+        }
+        .dropdown-icon{
+            padding: 14px 14px 11px 13px;
+            border-radius: 0 20px 20px 0;
+        }
+        .dropdown-label {
             color: #4A4A4A;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 400;
         }
 
-        // Vertical divider between label and chevron
+        // Divider between label and chevron
         .v8-dropdown-divider {
             width: 1px;
-            align-self: stretch; // fill content box height
+            align-self: stretch;
             background: #E5E5E5;
-            margin: 0 8px; // horizontal spacing
         }
 
-        // Chevron wrapper for rotation/spacing hooks
+        // Chevron icon
         .chevron-icon {
-            display: inline-flex;
+            display: grid;
+            transition: transform 0.2s ease;
+        }
+
+        // Hover state
+        &:hover {
+            border: 1px solid var(--v8-border-hover) !important;
+            opacity: 1 !important;
+        }
+
+        // Active state: highlight only label segment
+        &:active {
+            border: 1px solid var(--v8-border-active) !important;
+            opacity: 1 !important;
+            
+            .label-div {
+                background: var(--v8-bg-active) !important;
+            }
+            .v8-dropdown-divider {
+                background: #D9D9D9;
+            }
+        }
+
+        // Open state: highlight only chevron segment and rotate icon
+        &.open {
+            border: 1px solid var(--v8-border-active) !important;
+            opacity: 1 !important;
+
+            .dropdown-icon {
+                background: var(--v8-bg-active) !important;
+            }
+            .v8-dropdown-divider {
+                background: #D9D9D9;
+            }
+            .chevron-icon {
+                transform: rotate(180deg);
+            }
+        }
+
+        // Secondary variant overrides
+        &.btn-secondary {
+            --v8-border-normal: #E5E5E5;
+            --v8-border-hover: #4A4A4A;
+            --v8-border-active: #4A4A4A;
+            --v8-bg-active: #EDEDED;
+            --v8-divider-active: #E5E5E5;
         }
     }
 }
- 
- // Stronger specificity to override `.dropdown.btn-group .btn { border-radius: 0 !important; }`
- .v8-custom-dropdown.dropdown.btn-group {
+
+// Override Bootstrap btn-group reset
+.v8-custom-dropdown.dropdown.btn-group {
     .v8-dropdown-toggle.btn {
-        // Use CSS variables so divider can compensate for padding
         --v8-toggle-padding-y: 11px;
         --v8-toggle-padding-x: 13px;
-
         border-radius: 20px !important;
-        padding: var(--v8-toggle-padding-y) var(--v8-toggle-padding-x) !important;
 
-        // Make divider span visually full height (extend into button padding)
-        .v8-dropdown-divider {
-            margin-top: calc(-1 * var(--v8-toggle-padding-y));
-            margin-bottom: calc(-1 * var(--v8-toggle-padding-y));
+    }
+}
+
+// Dropdown menu styles
+.v8-custom-dropdown.dropdown.btn-group {
+    position: relative;
+
+    .v8-dropdown-menu {
+        margin-top: 4px !important;
+        padding: 14px 6px !important;
+        gap: 10px !important;
+        border-radius: 5px !important;
+        box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+        background-color: #FCFCFC;
+        max-width: 200px;
+
+        .v8-dropdown-item {
+            border-radius: 3px;
+            color: #4A4A4A;
+            font-size: 16px;
+            font-weight: 400;
+            padding: 5px 8px 9px 10px;
+            text-wrap: auto;
+
+            &:hover {
+                background: #EDEDED;
+                color: #4A4A4A;
+            }
+
+            &.selected {
+                border: 1px solid #E5E5E5 !important;
+            }
         }
     }
- }
+}
 
+// Menu alignment modifiers (override Popper centering)
+.v8-custom-dropdown.dropdown.btn-group.menu-left {
+    .v8-dropdown-menu {
+        left: 0 !important;
+        right: auto !important;
+        transform: none !important;
+    }
+}
 
+.v8-custom-dropdown.dropdown.btn-group.menu-right {
+    .v8-dropdown-menu {
+        right: 0 !important;
+        left: auto !important;
+        transform: none !important;
+    }
+}
