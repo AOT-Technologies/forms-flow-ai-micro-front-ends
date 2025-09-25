@@ -3,7 +3,8 @@
     display: flex;
     align-items: center;
     width: 100%;
-    max-width: 20rem;
+    max-width: 40rem;
+   
   
     &.search-disabled {
       opacity: 0.6;
@@ -24,6 +25,8 @@
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
       color: #4a4a4a;
+      margin-right: 1rem;
+
       &::placeholder {
         color: #b7b7b8;
       }

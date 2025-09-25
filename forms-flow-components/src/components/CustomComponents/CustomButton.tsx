@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
  * 
  * Usage:
  * <CustomButton variant="primary" label="submit" onClick={...} loading={...} icon={<Icon />} />
+ * <CustomButton variant="secondary" label="cancel" onClick={...} />
  * <CustomButton icon={<Icon />} iconOnly ariaLabel="Search" />
  */
 
