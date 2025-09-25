@@ -65,10 +65,8 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25) ;
 
 @mixin radio-focus-ring {
   outline: none;
-  // double ring to match button focus visuals
-  box-shadow:
-    0 0 0 $button-focus-outline-width $color-white,
-    0 0 0 ($button-focus-outline-width + $button-focus-outline-offset) $color-primary;
+  // focus style via border color only (no outer halo)
+  box-shadow: none;
 }
 
 @mixin radio-disabled {
@@ -117,14 +115,25 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25) ;
       border-color: $color-primary; // inner ring active
     }
 
+    // keyboard tab-visible state on parent wrapper
+    &:focus {
+      // keep minimal native focus but avoid extra browser shadows
+      outline: none;
+    }
+
     // selected state
     &:checked {
       background-color: $color-white; // keep white bg; dot renders via ::after
-      border-color: $color-primary-light; // use primary color when selected
+      border-color: $color-primary-light; // selected uses primary-light
       &::after {
         transform: translate(-50%, -50%) scale(1);
         background-color: $color-primary; // default selected dot
       }
+    }
+
+    // ensure keyboard focus wins over selected border color
+    &:checked:focus-visible {
+      border-color: $color-primary;
     }
 
     // selected + focus: dot in theme primary
@@ -157,10 +166,14 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25) ;
 
       &:hover { border-color: $color-primary; }
 
+      &:focus-visible { border-color: $color-primary; }
+
       &:checked {
         border-color: $color-primary-light;
         &::after { background-color: $color-primary; }
       }
+
+      &:checked:focus-visible { border-color: $color-primary; }
 
       &:disabled {
         border-color: $color-primary-lighter;
@@ -175,10 +188,14 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25) ;
 
       &:hover { border-color: $color-darker-gray; }
 
+      &:focus-visible { border-color: $color-darker-gray; }
+
       &:checked {
         border-color: $color-medium-gray;
         &::after { background-color: $color-dark-gray; }
       }
+
+      &:checked:focus-visible { border-color: $color-primary; }
 
       &:disabled {
         border-color: $color-disabled-gray;

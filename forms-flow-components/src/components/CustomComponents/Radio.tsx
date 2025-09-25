@@ -130,6 +130,77 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
 
     const groupLegend = legend || label;
 
+    // Manage roving tabindex and arrow-key navigation within the group
+    const optionRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    const enabledIndexes: number[] = items
+      .map((opt, idx) => ({ idx, disabled: disabled || !!opt.disabled }))
+      .filter((x) => !x.disabled)
+      .map((x) => x.idx);
+
+    const checkedIndex = items.findIndex((opt) => effectiveSelectedValue === opt.value);
+    const firstEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes[0] : -1;
+
+    const focusAndSelectByIndex = useCallback(
+      (targetIndex: number) => {
+        const input = optionRefs.current[targetIndex];
+        if (!input) return;
+        input.focus();
+        // Trigger change for controlled update
+        input.click();
+      },
+      []
+    );
+
+    const findNextEnabledIndex = useCallback(
+      (start: number, delta: number) => {
+        if (enabledIndexes.length === 0) return -1;
+        const startPos = Math.max(0, start);
+        let nextPos = startPos;
+        for (let i = 0; i < items.length; i += 1) {
+          nextPos = (nextPos + delta + items.length) % items.length;
+          if (!items[nextPos] || disabled || items[nextPos].disabled) continue;
+          return nextPos;
+        }
+        return -1;
+      },
+      [disabled, enabledIndexes.length, items]
+    );
+
+    const handleKeyDown = useCallback(
+      (event: React.KeyboardEvent<HTMLFieldSetElement>) => {
+        if (disabled) return;
+        const { key } = event;
+        const arrowKeys = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Home", "End"] as const;
+        if (!arrowKeys.includes(key as any)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const activeEl = document.activeElement as HTMLElement | null;
+        const currentIndex = optionRefs.current.findIndex((el) => el === activeEl);
+        const fallbackIndex = checkedIndex !== -1 ? checkedIndex : firstEnabledIndex;
+        const baseIndex = currentIndex !== -1 ? currentIndex : fallbackIndex;
+
+        if (baseIndex === -1) return;
+
+        if (key === "Home") {
+          focusAndSelectByIndex(firstEnabledIndex);
+          return;
+        }
+        if (key === "End") {
+          const lastEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes[enabledIndexes.length - 1] : -1;
+          if (lastEnabledIndex !== -1) focusAndSelectByIndex(lastEnabledIndex);
+          return;
+        }
+
+        const delta = key === "ArrowRight" || key === "ArrowDown" ? 1 : -1;
+        const nextIndex = findNextEnabledIndex(baseIndex, delta);
+        if (nextIndex !== -1) focusAndSelectByIndex(nextIndex);
+      },
+      [checkedIndex, disabled, enabledIndexes, findNextEnabledIndex, firstEnabledIndex, focusAndSelectByIndex]
+    );
+
     return (
       <Form className={groupClassName}>
         <fieldset
@@ -139,6 +210,7 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
           aria-disabled={disabled}
           aria-required={required}
           disabled={disabled}
+          onKeyDown={handleKeyDown}
           {...restProps}
         >
           {groupLegend ? <legend>{t(groupLegend)}</legend> : null}
@@ -146,6 +218,7 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
           const optionId = `${groupIdBase}-${index + 1}`;
           const isChecked = effectiveSelectedValue === option.value;
           const isOptionDisabled = disabled || !!option.disabled;
+          const isTabbable = isChecked || (checkedIndex === -1 && index === firstEnabledIndex);
           return (
             <Form.Check
               inline={inline}
@@ -161,6 +234,10 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
               onChange={handleChange(option.value)}
               onClick={option.onClick}
               className={optionClassName}
+              tabIndex={isTabbable ? 0 : -1}
+              ref={(el: HTMLInputElement | null) => {
+                optionRefs.current[index] = el;
+              }}
             />
           );
         })}
