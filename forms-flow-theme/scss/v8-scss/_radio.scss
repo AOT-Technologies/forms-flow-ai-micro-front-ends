@@ -1,0 +1,197 @@
+// Radio Variables - Using consistent rem/em units for better scalability
+$radio-size: 1.25rem;            // 20px at 16px base
+$radio-dot-size: 0.625rem;       // 10px at 16px base
+$radio-ring-width: 0.125rem;     // visual ring thickness (2px)
+$radio-gap-inline: 2rem;         // space between inline radios
+
+// Transition variables
+$radio-transition-duration: 0.15s;
+$radio-transition-timing: ease-in-out;
+
+// Color Variables
+$color-white: #ffffff ;
+$color-light-gray: #fcfcfc ;
+$color-medium-gray: #e5e5e5 ;
+$color-dark-gray: #4a4a4a ;
+$color-darker-gray: #525254 ;
+$color-disabled-gray: #c5c5c5 ;
+// $color-selected-gray is unused for radios
+
+$color-primary-selected: #8969f2;
+$color-primary: rgba(184, 171, 255, 1);
+$color-primary-light: #b8abff ;
+$color-primary-lighter: #bcb6f5 ;
+// $color-primary-border and $color-primary-disabled are not used by radios
+
+// Radio Mixins
+@mixin radio-input-base {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: $radio-size;
+  height: $radio-size;
+  border: $radio-ring-width solid $color-medium-gray;
+  border-radius: 50%;
+  background: $color-white;
+  position: relative;
+  cursor: pointer;
+  transition:
+    border-color $radio-transition-duration $radio-transition-timing,
+    box-shadow $radio-transition-duration $radio-transition-timing,
+    background-color $radio-transition-duration $radio-transition-timing;
+
+  // inner dot
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: $radio-dot-size;
+    height: $radio-dot-size;
+    border-radius: 50%;
+    background-color: $color-dark-gray; // dormant ON dot (not visible until checked)
+    transition:
+      transform $radio-transition-duration $radio-transition-timing,
+      background-color $radio-transition-duration $radio-transition-timing;
+  }
+}
+
+@mixin radio-focus-ring {
+  outline: none;
+  // focus style via border color only (no outer halo)
+  box-shadow: none;
+}
+
+@mixin radio-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+// Main Radio Component
+.custom-radio-button {
+  // group container spacing
+  margin: var(--spacer-050) 0;
+
+  &--inline {
+    .form-check {
+      display: inline-flex;
+      align-items: center;
+      margin-right: $radio-gap-inline;
+    }
+  }
+
+  .form-check {
+    padding-left: 0; // we handle spacing on the label
+
+    .form-check-label {
+      margin-left: var(--spacer-050);
+      color: $color-dark-gray; // align with palette used in _button.scss
+    }
+  }
+
+  // Base radio appearance and states
+  .form-check .form-check-input[type='radio'] {
+    @include radio-input-base;
+    background-image: none; // override bootstrap default dot
+    box-shadow: none; // remove bootstrap default focus shadow (we add our own)
+    accent-color: initial; // ensure browser accent color does not override
+    border-color: $color-primary-light; // use primary color when selected
+
+    // hover / tab state (deselect / hover)
+    &:hover {
+      border-color: $color-primary-selected; // darker ring on hover
+    }
+
+    // focused state ring
+    &:focus-visible {
+      @include radio-focus-ring;
+      border-color: $color-primary-selected; // inner ring active
+    }
+
+    // keyboard tab-visible state on parent wrapper
+    &:focus {
+      // keep minimal native focus but avoid extra browser shadows
+      outline: none;
+    }
+
+    // selected state
+    &:checked {
+      background-color: $color-white; // keep white bg; dot renders via ::after
+      border-color: $color-primary-light; // selected uses primary-light
+      &::after {
+        transform: translate(-50%, -50%) scale(1);
+        background-color: $color-primary; // default selected dot
+      }
+    }
+
+    // ensure keyboard focus wins over selected border color
+    &:checked:focus-visible {
+      border-color: $color-primary;
+      &::after {
+        background-color: $color-primary; // focused selected dot
+      }
+    }
+
+    // disabled states
+    &:disabled {
+      @include radio-disabled;
+      border-color: $color-light-gray;
+      background-color: $color-light-gray;
+      &::after {
+        background-color: $color-darker-gray;
+      }
+    }
+
+    &:disabled + .form-check-label {
+      @include radio-disabled;
+      color: $color-disabled-gray;
+    }
+  }
+
+  // Variant modifiers
+  &.custom-radio-button--primary {
+    .form-check .form-check-input[type='radio'] {
+      border-color: $color-primary-light;
+
+      &:hover { border-color: $color-primary-selected; }
+
+      &:focus-visible { border-color: $color-primary-selected; }
+
+      &:checked {
+        border-color: $color-primary-light;
+        &::after { background-color: $color-primary; }
+      }
+
+      &:checked:focus-visible { border-color: $color-primary-selected; }
+
+      &:disabled {
+        border-color: $color-primary-border;
+        &::after { background-color: $color-primary-border; }
+      }
+    }
+  }
+
+  &.custom-radio-button--secondary {
+    .form-check .form-check-input[type='radio'] {
+      border-color: $color-medium-gray;
+
+      &:hover { border-color: $color-darker-gray; }
+
+      &:focus-visible { border-color: $color-darker-gray; }
+
+      &:checked {
+        border-color: $color-medium-gray;
+        &::after { background-color: $color-dark-gray; }
+      }
+
+      &:checked:focus-visible { border-color: $color-primary; }
+
+      &:disabled {
+        border-color: $color-disabled-gray;
+        &::after { background-color: $color-darker-gray; }
+      }
+    }
+  }
+}
+
