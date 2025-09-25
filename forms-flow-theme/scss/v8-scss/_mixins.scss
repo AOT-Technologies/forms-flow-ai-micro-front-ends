@@ -4,10 +4,11 @@ $line-height-default: var(--line-height-default);
 $letter-spacing-default: var(--letter-spacing-default);
 
 // Mixin for Typography
-@mixin font-style($size, $weight) {
+@mixin font-style($size, $weight, $color) {
   font-family: $font-family-base;
   font-size: $size;
   font-weight: $weight;
   line-height: $line-height-default;
   letter-spacing: $letter-spacing-default;
+  color: $color;
 }
