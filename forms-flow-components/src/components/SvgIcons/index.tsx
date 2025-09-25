@@ -27,7 +27,7 @@ export const ChevronIcon = ({
     className={className}
     {...props}
   >
-    <path d="M1 9L5 4.99982L1.00036 1" stroke="#7C7D7F" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M1 9L5 4.99982L1.00036 1" stroke="#7C7D7F" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -912,8 +912,8 @@ export const NavbarAnalyzeIcon = ({
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
     <path d="M4.5 9.3L6.5 7.3L8.5 9.3L11.5 6.3" 
       stroke={strokeColor}
-      stroke-linecap="round" 
-      stroke-linejoin="round"
+      strokeLinecap="round" 
+      strokeLinejoin="round"
     />
     <circle cx="8" cy="8" r="7.5" stroke={strokeColor}/>
   </svg>
@@ -926,9 +926,9 @@ export const NavbarBuildIcon = ({
 }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
     <circle cx="8" cy="8" r="7.5" stroke={strokeColor}/>
-    <path d="M5 6H11" stroke={strokeColor} stroke-linecap="round"/>
-    <path d="M5 8H9" stroke={strokeColor} stroke-linecap="round"/>
-    <path d="M5 10H11" stroke={strokeColor} stroke-linecap="round"/>
+    <path d="M5 6H11" stroke={strokeColor} strokeLinecap="round"/>
+    <path d="M5 8H9" stroke={strokeColor} strokeLinecap="round"/>
+    <path d="M5 10H11" stroke={strokeColor} strokeLinecap="round"/>
   </svg>
 );
 export const NavbarManageIcon = ({
@@ -950,8 +950,8 @@ export const LogoutIcon=({color = baseColor, ...props })=>(
   // </svg> 
 
 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M7 5H5V11H7" stroke="#7C7D7F" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M12.0996 7.99902C12.0998 8.10189 12.0674 8.19417 12 8.27148L10.5186 9.97168L10.5156 9.97461C10.4493 10.0445 10.3525 10.0879 10.2559 10.0977C10.1584 10.1075 10.0479 10.084 9.9668 10.001C9.88741 9.91957 9.86018 9.80533 9.86328 9.70508C9.86639 9.60627 9.8994 9.50096 9.96582 9.42773L10.8633 8.39941H7.27734C7.06181 8.39916 6.90039 8.21242 6.90039 7.99902C6.90062 7.78582 7.06197 7.59986 7.27734 7.59961L10.8633 7.59961L9.96582 6.57129V6.57031C9.89245 6.49308 9.85748 6.38793 9.85645 6.28809C9.85548 6.18599 9.88963 6.07652 9.96777 5.99805C10.0502 5.91531 10.1587 5.89178 10.2559 5.90234C10.3278 5.91019 10.3989 5.93656 10.458 5.97656L10.5127 6.02148L10.5186 6.02734L12 7.72754C12.0636 7.80052 12.0964 7.90697 12.0996 7.99609V7.99902Z" fill="#7C7D7F" stroke="#7C7D7F" stroke-width="0.2"/>
+  <path d="M7 5H5V11H7" stroke="#7C7D7F" strokeLinecap="round" strokeLinejoin="round"/>
+  <path d="M12.0996 7.99902C12.0998 8.10189 12.0674 8.19417 12 8.27148L10.5186 9.97168L10.5156 9.97461C10.4493 10.0445 10.3525 10.0879 10.2559 10.0977C10.1584 10.1075 10.0479 10.084 9.9668 10.001C9.88741 9.91957 9.86018 9.80533 9.86328 9.70508C9.86639 9.60627 9.8994 9.50096 9.96582 9.42773L10.8633 8.39941H7.27734C7.06181 8.39916 6.90039 8.21242 6.90039 7.99902C6.90062 7.78582 7.06197 7.59986 7.27734 7.59961L10.8633 7.59961L9.96582 6.57129V6.57031C9.89245 6.49308 9.85748 6.38793 9.85645 6.28809C9.85548 6.18599 9.88963 6.07652 9.96777 5.99805C10.0502 5.91531 10.1587 5.89178 10.2559 5.90234C10.3278 5.91019 10.3989 5.93656 10.458 5.97656L10.5127 6.02148L10.5186 6.02734L12 7.72754C12.0636 7.80052 12.0964 7.90697 12.0996 7.99609V7.99902Z" fill="#7C7D7F" stroke="#7C7D7F" strokeWidth="0.2"/>
   <circle cx="8" cy="8" r="7.5" stroke="#7C7D7F"/>
 </svg>
 );

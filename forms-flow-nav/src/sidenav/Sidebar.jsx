@@ -364,6 +364,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       ref={sidebarRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      role="button"
     >
       {renderLogo(hideLogo, collapsed)}
       <div className={`options-container${collapsed ? " collapsed" : ""}`} data-testid="options-container">
