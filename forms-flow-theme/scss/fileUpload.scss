@@ -1,22 +1,71 @@
+// ----------------------------
+// Variable assignments
+// ----------------------------
 $primary: var(--ff-primary);
+$danger: var(--ff-danger);
+$secondary: var(--secondary);
+$secondary-dark: var(--secondary-dark);
+
 $ff-white: var(--ff-white);
+$white-200: var(--white-200);
+$ff-black: var(--ff-black);
+
 $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
-$danger: var(--ff-danger);
-$font-size-xs: var(--font-size-xs);
+$gray-light: var(--gray-light);
 
+$font-size-xs: var(--font-size-xs);
+$font-size-12: var(--font-size-12);
+$font-size-15: var(--font-size-15);
+
+$font-weight-sm: var(--font-weight-sm);
+$font-weight-regular: var(--font-weight-regular);
+$font-weight-lg: var(--font-weight-lg);
+
+$default-font-color: var(--default-font-color);
+
+$spacer-050: var(--spacer-050);
+$spacer-100: var(--spacer-100);
+$spacer-150: var(--spacer-150);
+$spacer-200: var(--spacer-200);
+
+$radius-lg: var(--radius-lg);
+
+$text-line-height: var(--text-line-height);
+
+// ----------------------------
+// Imports
+// ----------------------------
+@use "./v8-scss/mixins";
+
+// ----------------------------
+// Styles
+// ----------------------------
 .file-upload {
-  display: flex;
-  justify-content: center;
   align-items: center;
-  width: 100%;
-  min-height: 10.125rem;
-  border: 0.09375rem dashed $primary;
-  border-radius: var(--radius-sm);
-  background-color: $ff-white;
+  width: 21.875rem;
+  height: 13.75rem;
+  border: 0.09375rem dashed $secondary;
+  border-radius: 0.313rem;
+  background-color: $white-200;
   cursor: pointer;
   text-align: center;
+  padding: $spacer-200;
+  align-content: center;
+  transition: border-color 0.2s ease;
+}
+
+.file-upload-progress {
+  border-color: $secondary;
+}
+
+.upload-progress-bar {
+  margin-top: 1.375rem;
+}
+
+.file-upload-dragover {
+  border-color: $secondary-dark !important;
 }
 
 .upload-area {
@@ -27,29 +76,25 @@ $font-size-xs: var(--font-size-xs);
 }
 
 .upload-text {
-  color: $gray-darkest;
+  @include mixins.font-style($font-size-15, $font-weight-regular, $gray-darkest);
   text-align: center;
-  font-size: $font-size-xs;
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
-  padding: var(--spacer-100) 0;
   margin: 0;
+  margin-top: 0.688rem;
 }
 
 .upload-size-text {
-  color: $gray-medium-dark;
+  @include mixins.font-style($font-size-12, $font-weight-medium, $gray-medium-dark);
   text-align: center;
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
+  margin-top: 0.563rem;
+  display: inline-grid;
 }
 
 .upload-text-description {
   color: $gray-medium-dark;
   text-align: center;
   font-size: $font-size-xs;
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
+  font-weight: $font-weight-sm;
+  line-height: $text-line-height;
 }
 
 .upload-file-name {
@@ -58,7 +103,7 @@ $font-size-xs: var(--font-size-xs);
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: var(--spacer-150);
+  gap: $spacer-150;
   align-self: stretch;
 }
 
@@ -66,37 +111,47 @@ $font-size-xs: var(--font-size-xs);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacer-100);
+  gap: $spacer-100;
   align-self: stretch;
 }
 
 .upload-details {
-  margin-top: var(--spacer-100);
+  margin-top: $spacer-100;
   display: flex;
   height: auto !important;
   align-items: center;
-  gap: var(--spacer-050);
+  gap: $spacer-050;
   align-self: stretch;
 }
 
 .upload-form-details {
   overflow: hidden;
-  color: var(--ff-black);
+  color: $black;
   text-overflow: ellipsis;
   font-size: $font-size-xs;
-  font-weight: var(--font-weight-sm);
-  line-height: var(--text-line-height);
+  font-weight: $font-weight-sm;
+  line-height: $text-line-height;
 }
 
 .import-error-note {
   display: flex;
-  padding: var(--spacer-100);
+  padding: $spacer-100;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacer-050);
+  gap: $spacer-050;
   align-self: stretch;
-  border-radius: var(--spacer-100);
+  border-radius: $spacer-100;
   background-color: $gray-medium;
+}
+
+.upload-status {
+  margin-top: 0.625rem;
+  margin-bottom: 0rem;
+  text-align: center;
+  @include mixins.font-style($font-size-12, $font-weight-medium, $gray-medium-dark);
+}
+.file-upload-action-btn{
+  margin-top: 0.688rem;
 }
 
 .upload-status-success {
@@ -128,7 +183,7 @@ $font-size-xs: var(--font-size-xs);
 
   .import-details {
     display: flex;
-    padding: var(--spacer-100) 0 var(--spacer-100) 0;
+    padding: $spacer-100 0 $spacer-100 0;
     align-items: center;
     align-self: stretch;
     border-bottom: 1px solid $gray-medium;
@@ -137,16 +192,16 @@ $font-size-xs: var(--font-size-xs);
       display: flex;
       justify-content: flex-start;
       width: 30%;
-      color: var(--default-font-color);
+      color: $default-font-color;
       font-size: 0.875rem;
-      font-weight: var(--font-weight-lg);
-      line-height: var(--text-line-height);
+      font-weight: $font-weight-lg;
+      line-height: $text-line-height;
     }
   }
 
   .file-item-content {
     display: flex;
-    padding: var(--spacer-200) 0 var(--spacer-200) 0;
+    padding: $spacer-200 0 $spacer-200 0;
     align-items: center;
     align-self: stretch;
     border-bottom: 1px solid $gray-medium;
@@ -155,12 +210,11 @@ $font-size-xs: var(--font-size-xs);
     .import-workflow-text {
       width: 30%;
       color: $gray-darkest;
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-sm);
-      line-height: var(--text-line-height);
+      font-size: $font-size-xs;
+      font-weight: $font-weight-sm;
+      line-height: $text-line-height;
     }
 
-    /* Target the last child */
     &:last-child {
       padding-bottom: 0;
       border-bottom: none;

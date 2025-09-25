@@ -1,81 +1,158 @@
-import React, { useState } from "react";
+import React, { useCallback, forwardRef, memo } from "react";
 import { useTranslation } from "react-i18next";
 
-type Variant = "primary" | "secondary";
+/**
+ * CustomButton is a reusable, accessible button for forms-flow apps.
+ * 
+ * Usage:
+ * <CustomButton variant="primary" label="submit" onClick={...} loading={...} icon={<Icon />} />
+ * <CustomButton icon={<Icon />} iconOnly ariaLabel="Search" />
+ */
 
-interface CustomButtonProps {
-  variant?: Variant;
+type ButtonVariant = "primary" | "secondary";
+type ButtonSize = "small" | "medium" | "large";
+type ButtonType = "button" | "submit" | "reset";
+
+interface CustomButtonProps extends Omit<React.ComponentPropsWithoutRef<"button">, 'onClick' | 'disabled' | 'type'> {
+  /** Button visual style variant */
+  variant?: ButtonVariant;
+  /** Button size - affects padding and font size */
+  size?: ButtonSize;
+  /** Button HTML type */
+  type?: ButtonType;
+  /** Loading state - shows spinner and disables interaction */
   loading?: boolean;
+  /** Accessible label for screen readers */
   ariaLabel?: string;
+  /** Button text label (translation key) */
   label?: string;
+  /** Disabled state */
   disabled?: boolean;
-  selected?: boolean;  // for controlled selected state
-  onClick?: () => void;
-  name?: string;
+  /** Selected/active state for toggle buttons */
+  selected?: boolean;
+  /** Click handler */
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /** Test ID for automated testing */
   dataTestId?: string;
+  /** Icon element to display */
   icon?: React.ReactNode;
+  /** Additional CSS classes */
   className?: string;
+  /** Icon-only button (hides text label) */
   iconOnly?: boolean;
+  /** Full width button */
   fullWidth?: boolean;
+  /** Loading text override */
+  loadingText?: string;
 }
 
-export const V8CustomButton: React.FC<CustomButtonProps> = ({
+/**
+ * Utility function to build className string
+ */
+const buildClassNames = (...classes: (string | boolean | undefined)[]): string => {
+  return classes.filter(Boolean).join(" ");
+};
+
+/**
+ * Enhanced CustomButton component with improved accessibility, performance, and maintainability
+ */
+const V8CustomButtonComponent = forwardRef<HTMLButtonElement, CustomButtonProps>(({
   label = "",
   variant = "secondary",
+  size = "medium",
+  type = "button",
   loading = false,
   disabled = false,
-  ariaLabel = "",
+  ariaLabel,
   selected = false,
-  name,
-  dataTestId,
   onClick,
+  dataTestId,
   icon,
   className = "",
   iconOnly = false,
   fullWidth = false,
-  ...props
-}) => {
+  loadingText,
+  name,
+  id,
+  ...restProps
+}, ref) => {
   const { t } = useTranslation();
-  const [isPressed, setIsPressed] = useState(false);
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  
+  // Memoized click handler for better performance
+  const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevent interaction when disabled or loading
     if (disabled || loading) {
-      e.preventDefault();
-      e.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
       return;
     }
-    if (onClick) onClick();
-  };
+    
+    onClick?.(event);
+  }, [disabled, loading, onClick]);
+  
+  // Computed values
+  const isInteractionDisabled = disabled || loading;
+  const translatedLabel = label ? t(label) : "";
+  const effectiveAriaLabel = ariaLabel || translatedLabel || "Button";
+  const displayText = loading && loadingText ? t(loadingText) : translatedLabel;
+  
+  // Build className string
+  const buttonClassName = buildClassNames(
+    "custom-button",
+    `custom-button--${variant}`,
+    size !== "medium" && `custom-button--${size}`,
+    loading && "is-loading",
+    disabled && "is-disabled", 
+    selected && "is-selected",
+    fullWidth && "w-100",
+    iconOnly && "icon-only",
+    className
+  );
+  
   return (
     <button
-      className={[
-        "custom-button",
-        `custom-button--${variant}`,
-        loading ? "is-loading" : "",
-        disabled ? "is-disabled" : "",
-        selected ? "is-selected" : "",
-        isPressed ? "is-selected" : "",  // apply selected style on mousedown
-        fullWidth ? "w-100" : "",
-        iconOnly ? "icon-only" : "",
-        className
-      ]
-        .filter(Boolean) //filter to prevent empty strings
-        .join(" ")}
-      type="button"
-      disabled={disabled}
-      onClick={handleClick}
-      onMouseDown={() => setIsPressed(true)}     // press start
-      onMouseUp={() => setIsPressed(false)}      // press end
-      onMouseLeave={() => setIsPressed(false)}   // cancel if moved away
+      ref={ref}
+      id={id}
       name={name}
+      type={type}
+      className={buttonClassName}
+      disabled={isInteractionDisabled}
+      onClick={handleClick}
       data-testid={dataTestId}
-      aria-disabled={disabled}
-      aria-label={ariaLabel}
-      tabIndex={0}
-      {...props}
+      aria-label={effectiveAriaLabel}
+      aria-disabled={isInteractionDisabled}
+      aria-pressed={selected ? "true" : "false"}
+      aria-busy={loading ? "true" : "false"}
+      {...restProps}
     >
-      {loading && <span className="button-spinner" aria-hidden="true"></span>}
-      {!loading && icon && icon}
-      {!iconOnly && t(label)}
+      {loading && (
+        <span 
+          className="button-spinner" 
+          aria-hidden="true"
+          role="status"
+        />
+      )}
+      
+      {!loading && icon && (
+        <span className="button-icon" aria-hidden="true">
+          {icon}
+        </span>
+      )}
+      
+      {!iconOnly && (
+        <span className="button-text">
+          {displayText}
+        </span>
+      )}
     </button>
   );
-};
+});
+
+// Set display name for better debugging
+V8CustomButtonComponent.displayName = "V8CustomButton";
+
+// Export memoized component for performance optimization
+export const V8CustomButton = memo(V8CustomButtonComponent);
+
+// Export types for consumers
+export type { CustomButtonProps, ButtonVariant, ButtonSize, ButtonType };

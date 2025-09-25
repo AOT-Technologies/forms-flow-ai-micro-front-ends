@@ -1,0 +1,77 @@
+@import "_mixins";
+// Variables for reused values
+$primary: var(--ff-primary);
+$primary-light: var(--ff-primary-light);
+$gray-light: var(--ff-gray-light);
+$gray-dark: var(--ff-gray-dark);
+$gray-medium: var(--ff-gray-medium);
+$gray-medium-dark: var(--ff-gray-medium-dark);
+$black-color: var(--ff-black);
+
+//base
+$base: 1rem;
+
+// Prompt modal styles
+
+.prompt-modal {
+    .modal-dialog {
+        .modal-content {
+            min-width: 28.5rem;
+            border-radius: 5px;
+            border: 1px solid #E0E0E0;
+            background: #FFF;
+            box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+            padding: 2.5rem 0 3rem 0;
+            .prompt-modal-body {
+                margin: 0 auto;
+                .prompt-modal-title-container {
+                    .prompt-icon {
+                        display: flex;
+                        justify-content: center;
+                        width: 100%;
+                    }
+                    .prompt-title {
+                        text-align: center;
+                        font-size: 1.25rem;
+                        font-weight: 400;
+                        width: 100%;
+                        margin-top: 0.5rem;
+                    }
+                }
+                .prompt-message {
+                    color: #000;
+                    text-align: center;
+                    font-size: 0.938rem;
+                    margin-top: 1.188rem;
+                    padding: 0 6rem;
+                }
+            }
+            .modal-footer {
+                border-top: none;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+            .buttons-row {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                gap: 0.5rem;
+            }
+        }
+    }
+        &.error-modal{
+            .modal-content{
+                border-color: #FF9100;
+                box-shadow: none;
+            }
+        }
+        &.success-modal{
+            .modal-content{
+                border-color:#00C49A ;
+                box-shadow: none;
+            }
+        }
+}
