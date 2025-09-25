@@ -198,7 +198,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       if (!formHilighter) return; // Early return if element doesn't exist
 
       const handleOutsideClick = (event) => {
-        const clickedInsideForm = formHilighter.contains(event.target);
+        const clickedInsideForm = formHilighter?.contains(event.target);
         const clickedInsideDetails = detailsRef.current?.contains(event.target);
 
         if (!clickedInsideForm && !clickedInsideDetails) {
@@ -211,11 +211,11 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       };
 
       // Add event listeners
-      formHilighter.addEventListener("click", handleClick);
+      formHilighter?.addEventListener("click", handleClick);
       document.addEventListener("mousedown", handleOutsideClick);
 
       return () => {
-        formHilighter.removeEventListener("click", handleClick);
+        formHilighter?.removeEventListener("click", handleClick);
         document.removeEventListener("mousedown", handleOutsideClick);
       };
     }, [handleClick, setShowElement, detailsRef]);
