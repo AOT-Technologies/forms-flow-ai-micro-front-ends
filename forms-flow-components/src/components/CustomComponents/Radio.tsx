@@ -1,4 +1,4 @@
-import React, { forwardRef, memo, useCallback, useRef } from "react";
+import React, { forwardRef, memo, useCallback, useRef, useMemo } from "react";
 import Form from "react-bootstrap/Form";
 import { useTranslation } from "react-i18next";
 
@@ -101,7 +101,7 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
   ) => {
     const { t } = useTranslation();
 
-    // Prefer selectedValue, but support value as an alias for backward compatibility
+    // Prefer selectedValue; support value as a legacy alias
     const effectiveSelectedValue = selectedValue !== undefined ? selectedValue : value;
 
     const handleChange = useCallback(
@@ -132,11 +132,14 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
 
     // Manage roving tabindex and arrow-key navigation within the group
     const optionRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-    const enabledIndexes: number[] = items
-      .map((opt, idx) => ({ idx, disabled: disabled || !!opt.disabled }))
-      .filter((x) => !x.disabled)
-      .map((x) => x.idx);
+    const enabledIndexes: number[] = useMemo(
+      () =>
+        items
+          .map((opt, idx) => ({ idx, disabled: disabled || !!opt.disabled }))
+          .filter((x) => !x.disabled)
+          .map((x) => x.idx),
+      [items, disabled]
+    );
 
     const checkedIndex = items.findIndex((opt) => effectiveSelectedValue === opt.value);
     const firstEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes[0] : -1;
@@ -228,12 +231,13 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
               type="radio"
               id={optionId}
               data-testid={`${dataTestId}-inline-radio-${index + 1}`}
-              key={option.value ?? option.label}
+              key={String(option.value ?? option.label ?? index)}
               checked={!!isChecked}
               disabled={isOptionDisabled}
               onChange={handleChange(option.value)}
               onClick={option.onClick}
               className={optionClassName}
+              required={required}
               tabIndex={isTabbable ? 0 : -1}
               ref={(el: HTMLInputElement | null) => {
                 optionRefs.current[index] = el;

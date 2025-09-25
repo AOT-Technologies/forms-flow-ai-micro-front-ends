@@ -22,11 +22,12 @@ $color-darker-gray: #525254 ;
 $color-disabled-gray: #c5c5c5 ;
 $color-selected-gray: #ededed ;
 
-$color-primary: #8969f2 ;
+$color-primary-selected: #8969f2 ;
+$color-primary:rgba(184, 171, 255, 1);
 $color-primary-light: #b8abff ;
 $color-primary-lighter: #bcb6f5 ;
 $color-primary-border: rgba(184, 171, 255, 0.5) ;
-$color-primary-selected: rgba(184, 171, 255, 0.2) ;
+// $color-primary-selected: rgba(184, 171, 255, 0.2) ;
 $color-primary-disabled: rgba(184, 171, 255, 0.25) ;
 
 // Radio Mixins
@@ -106,13 +107,13 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25) ;
 
     // hover / tab state (deselect / hover)
     &:hover {
-      border-color: $color-primary; // darker ring on hover
+      border-color: $color-primary-selected; // darker ring on hover
     }
 
     // focused state ring
     &:focus-visible {
       @include radio-focus-ring;
-      border-color: $color-primary; // inner ring active
+      border-color: $color-primary-selected; // inner ring active
     }
 
     // keyboard tab-visible state on parent wrapper
@@ -164,20 +165,20 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25) ;
     .form-check .form-check-input[type='radio'] {
       border-color: $color-primary-light;
 
-      &:hover { border-color: $color-primary; }
+      &:hover { border-color: $color-primary-selected; }
 
-      &:focus-visible { border-color: $color-primary; }
+      &:focus-visible { border-color: $color-primary-selected; }
 
       &:checked {
         border-color: $color-primary-light;
         &::after { background-color: $color-primary; }
       }
 
-      &:checked:focus-visible { border-color: $color-primary; }
+      &:checked:focus-visible { border-color: $color-primary-selected; }
 
       &:disabled {
-        border-color: $color-disabled-gray;
-        &::after { background-color: $color-darker-gray; }
+        border-color: $color-primary-border;
+        &::after { background-color: $color-primary-border; }
       }
     }
   }
