@@ -292,7 +292,6 @@ const TaskList = () => {
               <span>{t("Assigned to me")}</span>
               {isAssigned ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
             </label>
-            <Switch/>
            </div>
 
               

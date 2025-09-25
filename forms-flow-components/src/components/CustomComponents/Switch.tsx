@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { SwitchTickIcon, SwitchCrossIcon } from "../SvgIcons";
 
 interface SwitchProps {
   checked?: boolean;
@@ -34,9 +35,7 @@ export const Switch: React.FC<SwitchProps> = ({
 
         return (
             <span className="custom-switch-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="9" viewBox="0 0 11 9" fill="none">
-                  <path d="M3.8 8.01667L0 4.21667L0.95 3.26667L3.8 6.11667L9.91667 0L10.8667 0.95L3.8 8.01667Z" fill={fillColor}/>
-                </svg>
+                <SwitchTickIcon fillColor = {fillColor}/>
             </span>
         );
     }else{
@@ -45,13 +44,28 @@ export const Switch: React.FC<SwitchProps> = ({
 
         return(
             <span className="custom-switch-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
-                    <path d="M0.933333 9.33333L0 8.4L3.73333 4.66667L0 0.933333L0.933333 0L4.66667 3.73333L8.4 0L9.33333 0.933333L5.6 4.66667L9.33333 8.4L8.4 9.33333L4.66667 5.6L0.933333 9.33333Z" fill={fillColor}/>
-                </svg>
+                <SwitchCrossIcon fillColor={fillColor}/>
             </span>
         )
     }
   };
+
+  const renderClass = () => {
+    let switchClass = 'custom-switch';
+
+    if (isChecked) {
+      if (type.toLowerCase() === 'primary') switchClass += ' custom-switch-on-primary';
+      else switchClass += ' custom-switch-on';
+    } else {
+      if (type.toLowerCase() === 'binary') switchClass += ' custom-switch-off-binary';
+      else switchClass += ' custom-switch-off';
+    }
+
+    if (isFocused) switchClass += ' custom-switch-focused';
+    if (disabled) switchClass += ' custom-switch-disabled';
+
+    return switchClass;
+  }
 
   const handleToggle = () => {
     if (disabled) return;
@@ -88,21 +102,12 @@ export const Switch: React.FC<SwitchProps> = ({
         aria-checked={isChecked}
         aria-disabled={disabled}
         tabIndex={disabled ? -1 : 0}
-        className={`custom-switch
-          ${isChecked ? "custom-switch-on" : "custom-switch-off"}
-          ${isFocused ? "custom-switch-focused" : ""}
-          ${disabled ? "custom-switch-disabled" : ""}
-        `}
+        className={renderClass()}
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
         onBlur={handleBlur}
         disabled={disabled}
-        style={
-          isChecked && type === 'primary'
-            ? { background: '#B8ABFF', boxShadow: '0 0 0 2px #B8ABFF' }
-            : undefined
-        }
       >
         <span className="custom-switch-slider">
           { withIcon && renderIcon() }
