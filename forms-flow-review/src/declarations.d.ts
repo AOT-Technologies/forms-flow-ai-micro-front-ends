@@ -85,6 +85,7 @@ declare module "@formsflow/components" {
     ReusableResizableTable,
     BackToPrevIcon,
     StepperComponent,
+    Switch
   }: any;
 }
 

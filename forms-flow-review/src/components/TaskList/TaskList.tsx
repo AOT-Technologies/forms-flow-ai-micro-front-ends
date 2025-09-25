@@ -27,6 +27,7 @@ import {
   ConnectIcon,
   CheckboxCheckedIcon,
   CheckboxUncheckedIcon,
+  Switch,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskListDropdownItems from "./TaskFilterDropdown";
@@ -291,6 +292,7 @@ const TaskList = () => {
               <span>{t("Assigned to me")}</span>
               {isAssigned ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
             </label>
+            <Switch/>
            </div>
 
               
