@@ -128,10 +128,6 @@ $color-primary-lighter: #bcb6f5 ;
     // ensure keyboard focus wins over selected border color
     &:checked:focus-visible {
       border-color: $color-primary;
-    }
-
-    // selected + focus: dot in theme primary
-    &:checked:focus-visible {
       &::after {
         background-color: $color-primary; // focused selected dot
       }

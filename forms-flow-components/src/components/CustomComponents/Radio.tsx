@@ -141,7 +141,10 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
       [items, disabled]
     );
 
-    const checkedIndex = items.findIndex((opt) => effectiveSelectedValue === opt.value);
+    // Values list for fast equality lookups
+    const itemValues = useMemo(() => items.map((opt) => opt.value), [items]);
+
+    const checkedIndex = itemValues.indexOf(effectiveSelectedValue as any);
     const firstEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes[0] : -1;
 
     const focusAndSelectByIndex = useCallback(
@@ -158,12 +161,14 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
     const findNextEnabledIndex = useCallback(
       (start: number, delta: number) => {
         if (enabledIndexes.length === 0) return -1;
-        const startPos = Math.max(0, start);
-        let nextPos = startPos;
-        for (let i = 0; i < items.length; i += 1) {
-          nextPos = (nextPos + delta + items.length) % items.length;
-          if (!items[nextPos] || disabled || items[nextPos].disabled) continue;
-          return nextPos;
+        let startPos = Math.max(0, start);
+        
+        for (const _ of items) {
+          const nextPos = (startPos + delta + items.length) % items.length;
+          if (items[nextPos] && !disabled && !items[nextPos].disabled) {
+            return nextPos;
+          }
+          startPos = nextPos;
         }
         return -1;
       },
@@ -180,10 +185,10 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
         event.preventDefault();
         event.stopPropagation();
 
-        const activeEl = document.activeElement as HTMLElement | null;
-        const currentIndex = optionRefs.current.findIndex((el) => el === activeEl);
+        const activeEl = document.activeElement as HTMLInputElement | null;
+        const currentIndex = optionRefs.current.indexOf(activeEl);
         const fallbackIndex = checkedIndex !== -1 ? checkedIndex : firstEnabledIndex;
-        const baseIndex = currentIndex !== -1 ? currentIndex : fallbackIndex;
+        const baseIndex = currentIndex === -1 ? fallbackIndex : currentIndex;
 
         if (baseIndex === -1) return;
 
@@ -192,7 +197,7 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
           return;
         }
         if (key === "End") {
-          const lastEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes[enabledIndexes.length - 1] : -1;
+          const lastEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes.at(-1) : -1;
           if (lastEnabledIndex !== -1) focusAndSelectByIndex(lastEnabledIndex);
           return;
         }
