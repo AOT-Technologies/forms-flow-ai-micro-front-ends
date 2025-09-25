@@ -41,3 +41,4 @@ export * from "./CustomComponents/FormComponent";
 export * from "./CustomComponents/StepperComponent";
 export * from "./CustomComponents/PromptModal";      
 export * from "./CustomComponents/CustomButton";  
+export * from "./CustomComponents/FileUploadArea";     
