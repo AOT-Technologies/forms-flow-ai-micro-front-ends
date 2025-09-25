@@ -1,0 +1,64 @@
+// Local tokens sourced from :root variables in _theme.scss
+$ta-color-text: var(--gray-darkest);
+$ta-color-placeholder: var(--gray-darkest);
+$ta-color-placeholder-disabled: var(--secondary);
+$ta-color-border: var(--gray-x-light);
+$ta-color-border-hover: var(--secondary-dark);
+$ta-color-border-focus: var(--gray-dark);
+$ta-color-bg: var(--white-200);
+$ta-font-size: var(--font-size-15);
+$ta-font-weight: var(--font-weight-regular);
+
+.text-area-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 40rem;
+
+    &.text-area-disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .text-area {
+        width: 100%;
+        min-height: 5rem;
+        border-radius: 5px;
+        padding: 11px 10px;
+        border: 1px solid $ta-color-border;
+        background: $ta-color-bg;
+        font-weight: $ta-font-weight;
+        font-size: $ta-font-size;
+        line-height: 1.3;
+        letter-spacing: 0;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        color: $ta-color-text;
+        resize: none;
+
+        &::placeholder {
+            color: $ta-color-placeholder;
+        }
+
+        // Style for disabled state
+        &:disabled {
+            &::placeholder {
+                color: $ta-color-placeholder-disabled;
+            }
+        }
+
+        // Only apply hover if NOT disabled
+        &:not(:disabled):hover {
+            border-color: $ta-color-border-hover;
+        }
+
+        // Only apply focus/active if NOT disabled
+        &:not(:disabled):focus,
+        &:not(:disabled):active {
+            border-color: $ta-color-border-focus;
+        }
+    }
+}
+
+
