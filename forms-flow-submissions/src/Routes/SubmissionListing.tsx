@@ -265,10 +265,10 @@ useEffect(() => {
         setDropdownSelection(selectedForm ?? defaultFilter.parentFormId);
         setSelectedItem(selectedForm ? currentForm.formName : defaultFilter.name);
        } else {
-        const lastSelectedForm = formData.find((form) => form.parentFormId === selectedForm);
+        const lastSelectedForm = formData?.find((form) => form?.parentFormId === selectedForm) || null;
         setDropdownSelection(selectedForm);
         setSelectedItem(selectedForm?lastSelectedForm.formName : "All Forms");
-       }
+      }
     })
     .catch((error) => {
       console.error("Error fetching submission list:", error);
