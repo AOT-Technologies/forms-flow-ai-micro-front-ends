@@ -875,7 +875,7 @@ export const PromptInfoIcon = ({ color = baseColor, ...props }) => (
 export const PromptErrorIcon = ({ color = baseColor, ...props }) => (
   <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="20" cy="20" r="20" fill="white"/>
-    <circle cx="20" cy="20" r="19.5" stroke="#FF9100" stroke-opacity="0.25"/>
+    <circle cx="20" cy="20" r="19.5" stroke="#FF9100" strokeOpacity="0.25"/>
     <path d="M20.5246 23.7711C21.3137 23.7711 21.9542 23.1306 21.9542 22.3415V12.4296C21.9542 11.6405 21.3137 11 20.5246 11C19.7354 11 19.095 11.6405 19.095 12.4296V22.3415C19.095 23.1306 19.7354 23.7711 20.5246 23.7711Z" fill="#FF9100"/>
     <path d="M20.5249 29.5848C21.3671 29.5848 22.0498 28.9021 22.0498 28.0599C22.0498 27.2177 21.3671 26.535 20.5249 26.535C19.6827 26.535 19 27.2177 19 28.0599C19 28.9021 19.6827 29.5848 20.5249 29.5848Z" fill="#FF9100"/>
   </svg>

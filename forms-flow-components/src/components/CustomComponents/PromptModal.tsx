@@ -73,6 +73,13 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
   btnAction
 }) => {
   const { t } = useTranslation();
+  let promptModalClass = 'prompt-modal';
+  if (type === "error") {
+    promptModalClass += " error-modal";
+  } else if (type === "success") {
+    promptModalClass += " success-modal";
+  }
+  
   return (
     <Modal
       show={show}
@@ -81,7 +88,7 @@ export const PromptModal: React.FC<PromptModalProps> = React.memo(({
       data-testid="prompt-modal"
       aria-labelledby="prompt-modal-title"
       aria-describedby="prompt-modal-message"
-      className={`prompt-modal${type === 'error' ? ' error-modal' : type=='success'? ' success-modal':''}`}
+      className={promptModalClass}
       centered
       >
       <Modal.Body
