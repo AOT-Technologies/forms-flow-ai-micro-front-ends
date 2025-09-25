@@ -181,10 +181,7 @@ useEffect (() => {
   if(!selectedSubmissionFilter?.id){
     setSubmissionFields(DEFAULT_SUBMISSION_FIELDS);
   }
-    if(selectedItem === "All Forms") {
-      setDropdownSelection(null);
-      setSelectedSubmisionFilter(null);
-    }
+ 
 },[dropdownSelection])
 
 
@@ -268,8 +265,9 @@ useEffect(() => {
         setDropdownSelection(selectedForm ?? defaultFilter.parentFormId);
         setSelectedItem(selectedForm ? currentForm.formName : defaultFilter.name);
        } else {
-        setDropdownSelection(null);
-         setSelectedItem("All Forms");
+        const lastSelectedForm = formData.find((form) => form.parentFormId === selectedForm);
+        setDropdownSelection(selectedForm);
+        setSelectedItem(selectedForm?lastSelectedForm.formName : "All Forms");
        }
     })
     .catch((error) => {
