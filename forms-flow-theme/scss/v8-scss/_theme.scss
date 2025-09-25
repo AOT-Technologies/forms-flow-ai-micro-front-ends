@@ -160,6 +160,7 @@ $font-tokens: (
 //Semantic Colors
 
     --progress-bar-bg-color : var(--primary-dark);
+    --main-bg: var(--white-300);
 
 
 /*══════════════════ ⬥ FONT UTILITIES | VERSION 8 ⬥ ══════════════════*/
@@ -188,7 +189,7 @@ $font-tokens: (
 
     //EXAMPLE USE OF FONT MIXIN IN CLASS
         // .title {
-        //   @include font-style($font-size-20, $font-weight-semibold);
+        //   @include font-style(--font-size-xl, --font-weight-semibold, --red-100  );
         // }
 
 
@@ -209,7 +210,6 @@ $font-tokens: (
  --spacer-300: 3rem;
 
  --navbar-width:3rem;
- --main-bg: var(--white-300);
  --body-section-height: 80vh; //update dynamically for the pages.
 
 
@@ -226,7 +226,7 @@ $font-tokens: (
     grid-template-columns: auto 1fr; // sidebar + main content
     width: 100%;
     min-height: 100vh;    
-    box-sizing: border-box;
+    box-sizing: border-box; 
     background-color: var(--main-bg);
  
     .nav-space{
