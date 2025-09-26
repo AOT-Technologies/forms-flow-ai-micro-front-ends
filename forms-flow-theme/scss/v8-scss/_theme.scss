@@ -75,11 +75,11 @@ $font-tokens: (
   line-height-default: 100%,
   letter-spacing-default: 0%,
 
-  font-size-20: 20px,
-  font-size-18: 18px,
-  font-size-15: 15px,
-  font-size-12: 12px,
-  font-size-10: 10px
+  font-size-xl: 20px,
+  font-size-l: 18px,
+  font-size-m: 15px,
+  font-size-s: 12px,
+  font-size-xs: 10px
 );
 
 
@@ -160,6 +160,7 @@ $font-tokens: (
 //Semantic Colors
 
     --progress-bar-bg-color : var(--primary-dark);
+    --main-bg: var(--white-300);
 
 
 /*══════════════════ ⬥ FONT UTILITIES | VERSION 8 ⬥ ══════════════════*/
@@ -177,18 +178,18 @@ $font-tokens: (
         // --font-weight-medium: 500;
         // --font-weight-semibold: 600;
 
-        // --font-size-20: 20px;
-        // --font-size-18: 18px;
-        // --font-size-15: 15px;
-        // --font-size-12: 12px;
-        // --font-size-10: 10px;
+        // --font-size-xl: 20px;
+        // --font-size-l: 18px;
+        // --font-size-m: 15px;
+        // --font-size-s: 12px;
+        // --font-size-xs: 10px;
 
         // --line-height-default: 100%;
         // --letter-spacing-default: 0%;
 
     //EXAMPLE USE OF FONT MIXIN IN CLASS
         // .title {
-        //   @include font-style($font-size-20, $font-weight-semibold);
+        //   @include font-style(--font-size-xl, --font-weight-semibold, --red-100  );
         // }
 
 
@@ -208,14 +209,95 @@ $font-tokens: (
  --spacer-275: 2.75rem;
  --spacer-300: 3rem;
 
+ --navbar-width:3rem;
+ --body-section-height: 80vh; //update dynamically for the pages.
+
+
 
 }
 
 
 
+/* ============================
+   BASE CONTAINER:  GRID SYSTEM
+   ============================ */
+   .base-container {
+    display: grid;
+    grid-template-columns: auto 1fr; // sidebar + main content
+    width: 100%;
+    min-height: 100vh;    
+    box-sizing: border-box; 
+    background-color: var(--main-bg);
+ 
+    .nav-space{
+      grid-column: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.3s ease;
+      overflow: hidden;
+      width: 12rem;               // need to be replaced with variable
+    }
 
-/*=========================================================================================================*/
+    .page-container {
+      grid-column: 2;
+      display: flex;
+      justify-content: center;  // center inner page-layout horizontally
+      align-items: flex-start;  // vertical alignment at top
+      width: 100%;
+      min-height: 100vh;
+      padding: 1rem 0;
+      margin: 0;
+  
+      .page-layout {
+        /* Inner page layout wrapper */
+        width: 1088px;         
+        flex-shrink: 0;         
+        flex-grow: 0;
+        display: grid;          // allows toast/header/body grid
+        grid-template-rows: 6fr; // toast + headers + body
+        grid-template-columns: 1fr;
+        padding: 0;
+        box-sizing: border-box;
+  
+        .toast-section {
+          @include mixins.rowLayout(72px, center, 1);
+          transition: width 0.3s ease;
+        }
+  
+        .header-section-1 {
+          @include mixins.rowLayout(72px, space-between, 2);
+        }
+  
+        .header-section-2 {
+          @include mixins.rowLayout(72px, space-between, 3);
+        }
+  
+        .header-section-3 {
+          @include mixins.rowLayout(0px, space-between, 4);
+        }
+  
+        .header-sect  ion-4 {
+          @include mixins.rowLayout($gridRow: 5);
+        }
 
-
-
-
+        // for the tables and other main contents
+        .body-section {
+          grid-row: 6;
+          padding: 1rem 0;
+          max-height: var(--body-section-height); // need to be updated after while implementing inner contets. 
+        }
+  
+        .section-seperation-left {
+          @include mixins.componetAlign;
+          justify-content: flex-start;
+        }
+  
+        .section-seperation-right {
+          @include mixins.componetAlign;
+          justify-content: flex-end;
+        }
+      }
+    }
+  }
+  

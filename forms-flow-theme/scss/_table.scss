@@ -35,6 +35,7 @@ $white-color: var(--ff-white);
   height: 100%;
 
   border-radius: $borderRadiusModal;
+  border: solid 1px var(--gray-x-light);
   background-color: $white;
 
   container: tableSize / inline-size;

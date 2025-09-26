@@ -4,11 +4,34 @@ $line-height-default: var(--line-height-default);
 $letter-spacing-default: var(--letter-spacing-default);
 
 // Mixin for Typography
-@mixin font-style($size, $weight, $color) {
+@mixin font-style($size, $weight, $color: --secondary-dark) {
   font-family: $font-family-base;
-  font-size: $size;
-  font-weight: $weight;
+  font-size: var(#{$size});
+  font-weight: var(#{$weight});
   line-height: $line-height-default;
   letter-spacing: $letter-spacing-default;
-  color: $color;
+  color: var(#{$color});
+}
+
+// Mixin for consistent row alignment
+@mixin rowLayout($height: auto, $justify: space-between, $gridRow) {
+  grid-row: $gridRow;
+  display: flex;
+  align-items: center;     // vertical centering
+  justify-content: $justify;
+  height: $height;        
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--gray-x-light);
+  &:empty {
+    padding: 0;
+    height: 0;
+    border-bottom: none;
+  }
+}
+
+//mixin for fixed gap between. 
+@mixin componetAlign {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
 }
