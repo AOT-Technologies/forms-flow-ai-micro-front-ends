@@ -1,43 +1,111 @@
+// Search Variables - Using consistent rem/em units for better scalability
+$search-input-height: 2.5rem;           // 40px at 16px base
+$search-input-border-radius: 0.3125rem; // 5px at 16px base
+$search-input-padding: 0.6875rem 0.8125rem; // 11px 13px at 16px base
+$search-input-gap: 1rem;                // 16px gap between input and button
+$search-max-width: 40rem;               // 640px max container width
+
+// Transition variables
+$search-transition-duration: 0.2s;
+$search-transition-timing: ease;
+
+// Color Variables
+$color-white: #ffffff;
+$color-light-gray: #fcfcfc;
+$color-medium-gray: #e5e5e5;
+$color-dark-gray: #4a4a4a;
+$color-darker-gray: #525254;
+$color-disabled-gray: #c5c5c5;
+$color-placeholder: #b7b7b8;
+$color-placeholder-disabled: #ededed;
+$color-border: #ededed;
+
+// Search Mixins
+@mixin search-container-base {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: $search-max-width;
+}
+
+@mixin search-input-base {
+  width: 100%;
+  height: $search-input-height;
+  border-radius: $search-input-border-radius;
+  padding: $search-input-padding;
+  border: 1px solid $color-border;
+  background: $color-light-gray;
+  font-weight: 400;
+  font-size: 0.9375rem; // 15px
+  line-height: 1;
+  letter-spacing: 0;
+  outline: none;
+  transition: 
+    border-color $search-transition-duration $search-transition-timing,
+    box-shadow $search-transition-duration $search-transition-timing;
+  color: $color-dark-gray;
+  margin-right: $search-input-gap;
+
+  &::placeholder {
+    color: $color-placeholder;
+  }
+}
+
+@mixin search-input-focus {
+  border-color: $color-darker-gray;
+  box-shadow: 0 0 0 2px rgba($color-darker-gray, 0.2);
+}
+
+@mixin search-input-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: $color-light-gray;
+  border-color: $color-medium-gray;
+
+  &::placeholder {
+    color: $color-placeholder-disabled;
+  }
+}
+
+@mixin search-container-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+// Screen reader only utility class
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Main Search Component
 .search-input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    max-width: 40rem;
-   
-  
-    &.search-disabled {
-      opacity: 0.6;
-      pointer-events: none;
+  @include search-container-base;
+
+  &.search-disabled {
+    @include search-container-disabled;
+  }
+
+  .search-input {
+    @include search-input-base;
+
+    // Focus state
+    &:focus {
+      @include search-input-focus;
     }
-  
-    .search-input {
-      width: 100%;
-      height: 2.5rem;
-      border-radius: 5px;
-      padding: 11px 13px;
-      border: 1px solid #ededed;
-      background: #fcfcfc;
-      font-weight: 400;
-      font-size: 15px;
-      line-height: 1;
-      letter-spacing: 0;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      color: #4a4a4a;
-      margin-right: 1rem;
 
-      &::placeholder {
-        color: #b7b7b8;
-      }
-      // Style for disabled state
-      &:disabled {
-        cursor: not-allowed;
-
-        &::placeholder {
-          color: #ededed;
-        }
-      }
+    // Disabled state
+    &:disabled {
+      @include search-input-disabled;
     }
   }
+}
   

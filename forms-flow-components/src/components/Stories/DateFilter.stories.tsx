@@ -54,7 +54,7 @@ const DateRangePickerTemplate = (args: any) => {
   };
 
   return (
-    <div style={{ width: '400px', minHeight: '300px' }}>
+    <div style={{ width: '400px', minHeight: '400px' }}>
       <DateRangePicker
         {...args}
         value={dateRange}
@@ -82,15 +82,6 @@ export const WithInitialRange: Story = {
     },
     placeholder: 'Select date range',
     dateFormat: 'MM/DD/YYYY',
-  },
-  render: DateRangePickerTemplate,
-};
-
-// Different date formats
-export const DDMMYYYYFormat: Story = {
-  args: {
-    dateFormat: 'DD/MM/YYYY',
-    placeholder: 'Select date range',
   },
   render: DateRangePickerTemplate,
 };
@@ -125,18 +116,3 @@ export const Playground: Story = {
   },
 };
 
-// Real-world usage example
-export const FilterByDateRange: Story = {
-  args: {
-    placeholder: 'Filter by date range',
-    dateFormat: 'MM/DD/YYYY',
-  },
-  render: DateRangePickerTemplate,
-  parameters: {
-    docs: {
-      description: {
-        story: 'Common use case: filtering data by date range. The component provides start and end dates for database queries or data filtering.',
-      },
-    },
-  },
-};

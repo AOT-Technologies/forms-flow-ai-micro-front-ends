@@ -173,52 +173,6 @@ export const FullWidth: Story = {
   },
 };
 
-export const Small: Story = {
-  args: {
-    label: 'Small Button',
-    size: 'small',
-    variant: 'primary',
-    onClick: action('small-clicked'),
-  },
-};
-
-export const Large: Story = {
-  args: {
-    label: 'Large Button',
-    size: 'large',
-    variant: 'primary',
-    onClick: action('large-clicked'),
-  },
-};
-
-export const SubmitButton: Story = {
-  args: {
-    label: 'Submit Form',
-    type: 'submit',
-    variant: 'primary',
-    dataTestId: 'submit-form-button',
-    onClick: action('form-submitted'),
-  },
-};
-
-export const LoadingWithCustomText: Story = {
-  args: {
-    label: 'Process Payment',
-    loading: true,
-    loadingText: 'Processing...',
-    variant: 'primary',
-    onClick: action('payment-processing'),
-  },
-};
-
-export const SelectedPrimary: Story = {
-  args: {
-    label: 'Active Filter',
-    selected: true,
-    variant: 'primary',
-    onClick: action('filter-toggled'),
-  },
-};
 
 export const DisabledWithIcon: Story = {
   args: {

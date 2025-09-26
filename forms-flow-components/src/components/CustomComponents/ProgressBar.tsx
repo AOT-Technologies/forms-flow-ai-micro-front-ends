@@ -9,7 +9,7 @@ import React, { forwardRef, memo, useMemo } from "react";
  * <CustomProgressBar progress={100} />
  */
 
-type ProgressColor = "passive" | "error" | "warning";
+type ProgressColor = "passive" | "error" | "warning" | "default";
 
 interface CustomProgressBarProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children'> {
   /** Current progress value (0-100) - controls the width of the progress bar */
@@ -51,17 +51,13 @@ const CustomProgressBarComponent = forwardRef<HTMLDivElement, CustomProgressBarP
   
   // Memoized color calculation for better performance
   const progressColor = useMemo(() => {
-    // Special case: 50% progress always shows orange
-    if (progress === 50) {
-      return "var(--orange-100, #fd7e14)";
-    }
     
     // Map color prop to CSS variables with fallbacks
     const colorMap: Record<string, string> = {
-      passive: "var(--gray-dark, #6c757d)",
-      error: "var(--orange-100, #fd7e14)",
-      warning: "var(--red-100, #dc3545)",
-      default: "var(--primary-dark, #0d6efd)",
+      passive: "var(--gray-dark)",
+      error: "var(--orange-100)",
+      warning: "var(--red-100)",
+      default: "var(--primary-dark)",
     };
     
     return color ? colorMap[color] || colorMap.default : colorMap.default;

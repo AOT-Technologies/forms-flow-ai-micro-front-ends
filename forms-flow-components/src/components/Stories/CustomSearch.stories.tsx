@@ -124,17 +124,6 @@ export const LongPlaceholder: Story = {
   render: CustomSearchTemplate,
 };
 
-// Search with special characters
-export const SpecialCharacters: Story = {
-  args: {
-    search: 'test@email.com & "quoted text"',
-    placeholder: 'Search with special characters',
-    dataTestId: 'search-input-special',
-    disabled: false,
-  },
-  render: CustomSearchTemplate,
-};
-
 // Interactive playground
 export const Playground: Story = {
   args: {
