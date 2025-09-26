@@ -36,7 +36,7 @@ const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t, coll
       {!collapsed && (
         <div className="user-info">
           <div>
-            <p className="user-name" data-testid="user-name">{userDetail?.name}</p>
+            <p className="user-name" data-testid="user-name">{userDetail?.name}sss</p>
           </div>
           {/* <div>
           <p className="user-email" data-testid="user-email">
@@ -68,12 +68,7 @@ UserProfile.propTypes = {
 };
 
 const renderLogo = (hideLogo, collapsed) => {
-  
-    document.documentElement.style.setProperty(
-      "--navbar-width",
-      collapsed ? "3rem" : "10rem" // collapsed width : expanded width
-    );
-
+ 
   if (hideLogo === "true") return null;
   
   return (
@@ -355,6 +350,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
   // Collapsible sidebar class
   const sidebarClass = `sidenav${collapsed ? " collapsed" : ""}`;
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--navbar-width",
+      collapsed ? "3rem" : "10rem"
+    );
+  }, [collapsed]);
 
   return (
     <div

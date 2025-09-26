@@ -80,32 +80,21 @@ const MenuComponent = ({
       : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
   };
   
-  const chevronColor =
-  getComputedStyle(document.documentElement).getPropertyValue(
-    "--navbar-main-menu-active-font-color"
-  )?.trim();
-
-  const defaultStroke =
-  getComputedStyle(document.documentElement).getPropertyValue(
-    "--navbar-bg-color"
-  )?.trim();
-
 const renderMenuIcon = () => {
   const lowerMainMenu = mainMenu.toLowerCase();
   let iconFillColor, strokeColor;
   if (isMainMenuActive()) {
-    // iconFillColor = getComputedStyle(document.documentElement)
-    //   .getPropertyValue("--navbar-main-menu-active-font-color")?.trim();
-    iconFillColor = '#525254'
+    iconFillColor = getComputedStyle(document.documentElement)
+      .getPropertyValue("--navbar-menu-font-color")?.trim();
 
-    // strokeColor =  getComputedStyle(document.documentElement)
-    //   .getPropertyValue("--navbar-main-menu-active-font-color")?.trim();
-    strokeColor = '#525254'
+    strokeColor =  getComputedStyle(document.documentElement)
+    .getPropertyValue("--navbar-menu-font-color")?.trim();
   } else {
-    // iconFillColor = chevronColor;
-    // strokeColor = defaultStroke;
-    iconFillColor = '#7C7D7F';
-    strokeColor = '#7C7D7F';
+    iconFillColor =  getComputedStyle(document.documentElement)
+    .getPropertyValue("--navbar-submenu-font-color")?.trim();
+
+    strokeColor =  getComputedStyle(document.documentElement)
+    .getPropertyValue("--navbar-submenu-font-color")?.trim();
   }
 
   if(collapsed){
@@ -129,10 +118,8 @@ const renderMenuIcon = () => {
           if (!noOptionsMenu) {
             return (
               <ChevronIcon
-              // width="10"
-              // height="5"
-              className="custom-chevron"
-              color={iconFillColor}
+                className="custom-chevron"
+                color={iconFillColor}
               />
             );
           }
@@ -150,10 +137,8 @@ const renderMenuIcon = () => {
           if (!noOptionsMenu) {
             return (
               <ChevronIcon
-              // width="10"
-              // height="5"
-              className="custom-chevron"
-              color={iconFillColor}
+                className="custom-chevron"
+                color={iconFillColor}
               />
             );
           }

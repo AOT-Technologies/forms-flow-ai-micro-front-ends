@@ -94,8 +94,8 @@ $animSpeed: 300ms;
     // gap: $navSpacing;
     padding: $navPadding;
 
-    // color: var(--navbar-main-menu-active-font-color);
-    color: #7C7D7F !important;
+    color: var(--navbar-menu-font-color);
+    // color: #7C7D7F !important;
     font-size: $fontSmallest;
     padding-left: 0;
     // font-weight: 700;
@@ -117,19 +117,19 @@ $animSpeed: 300ms;
     &:hover {
       // background-color: var(--navbar-menu-hover-bg-color);
       font-weight: 500;
-      color: #525254 !important;
+      // color: #525254 !important;
+      color: var(--navbar-menu-font-color) !important;
     }
 
     &:not(.collapsed) {
-      // color: var(--navbar-main-menu-active-font-color);
       // background-color: var(--navbar-main-menu-active-bg-color);
-
+      
       // & > svg {
-      //   transform: rotate(180deg);
-      // }
-      color: #525254 !important;
+        //   transform: rotate(180deg);
+        // }
       font-size: 0.938rem;
       font-weight: 500;
+      color: var(--navbar-menu-font-color);
       background-color: var(--navbar-bg-color);
       box-shadow: none;
     }
@@ -183,7 +183,7 @@ $animSpeed: 300ms;
     text-decoration: none;
     cursor: pointer;
 
-    color: #7C7D7F;
+    color: var(--navbar-submenu-font-color);
     font-size: 0.875rem;
 
     &:hover {
@@ -192,12 +192,14 @@ $animSpeed: 300ms;
       // color: var(--navbar-hover-submenu-font-color);
       // font-size: var(--navbar-hover-submenu-font-size) !important;
       // font-weight: var(--navbar-hover-submenu-font-weight) !important;
-      color: #525254;
+      // color: #525254;
+      color: var(--navbar-menu-font-color);
       font-weight: 500;
     }
 
     &.active {
-      color: #525254;
+      // color: #525254;
+      color: var(--navbar-menu-font-color);
       font-size: 0.875rem;
       font-weight: 500;
       line-height: 1.05rem;
@@ -255,8 +257,9 @@ $animSpeed: 300ms;
           flex-grow: 1;
           width: 2rem;
           
-          // color: var(--navbar-main-menu-active-font-color) !important;
-          color: #525254;
+          color: var(--navbar-menu-font-color) !important;
+         
+          // color: #525254;
           font-weight: 400;
           font-size: $fontSmallest;
           line-height: $fontLineHeight;
@@ -275,8 +278,8 @@ $animSpeed: 300ms;
       p {
         width: 100%;
 
-        // color: var(--navbar-main-menu-active-font-color) !important;
-        color: #525254;
+        color: var(--navbar-menu-font-color) !important;
+        // color: #525254;
         font-size: $fontSmallest;
         line-height: $fontLineHeight;
         // font-weight: 700;
@@ -397,7 +400,8 @@ $animSpeed: 300ms;
 
 .active-header .accordion-button {
   // background-color: var(--navbar-main-menu-active-bg-color);
-  color: #525254;
+  // color: #525254;
+  color: var(--navbar-menu-font-color);
   font-size: 0.938rem;
   font-weight: 500;
 }

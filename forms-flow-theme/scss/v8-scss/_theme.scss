@@ -89,23 +89,10 @@ $font-tokens: (
 
 :root {
 
-  //for navbar
-  --navbar-active-submenu-bg-color: #{$gray-darkest};
-  --navbar-active-submenu-font-color: #{$white};
-  --navbar-menu-hover-bg-color: #{$primary-light};
-
-  --navbar-active-submenu-font-weight: var(--font-weight-lg);
-  --navbar-active-submenu-font-size: var(--font-size-sm);
-  --navbar-hover-submenu-bg-color: #{$primary-light};
-  --navbar-hover-submenu-font-color: #{$gray-darkest};
-  --navbar-hover-submenu-font-weight: var(--font-weight-xl);
-  --navbar-hover-submenu-font-size: var(--font-size-xs);
-
-  --navbar-main-menu-active-bg-color: #{$gray-medium};
-  --navbar-main-menu-active-font-color: #{$gray-dark};
-  --navbar-bg-color: #{$white-100};
-  --custom-logo-path: " ";
-  --custom-title: " ";
+  // //for navbar
+  --nav-bg-color: var(-- white-100);
+  --navbar-menu-font-color: var(--secondary-dark);
+  --navbar-submenu-font-color: var(--gray-dark);
 
 /*══════════════════ ⬥ COLOUR UTILITIES | VERSION 8 ⬥ ══════════════════*/
 
