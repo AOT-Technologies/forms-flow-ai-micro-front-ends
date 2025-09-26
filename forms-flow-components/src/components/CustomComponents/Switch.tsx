@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { SwitchTickIcon, SwitchCrossIcon } from "../SvgIcons";
+import { StyleServices } from "@formsflow/service";
 
 interface SwitchProps {
   checked?: boolean;
@@ -11,7 +12,6 @@ interface SwitchProps {
   label?: string;
   type?: string; // default|primary|binary
 }
-
 
 export const Switch: React.FC<SwitchProps> = ({
   checked = false,
@@ -27,26 +27,30 @@ export const Switch: React.FC<SwitchProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const switchRef = useRef<HTMLButtonElement>(null);
 
+  // Use CSS variables for colors
+  const colorSuccess = StyleServices.getCSSVariable('--ff-success'); // for #00C49A
+  const colorPrimaryLight = StyleServices.getCSSVariable('--ff-primary-light'); // for #B8ABFF
+  const colorDanger = StyleServices.getCSSVariable('--ff-danger'); // for #E57373
+  const colorGrayLight = StyleServices.getCSSVariable('--ff-gray-light'); // for #E5E5E5
+
   const renderIcon = () => {
-    let fillColor = "#00C49A";
-    
+    let fillColor = colorSuccess;
+
     if (isChecked) {
-        if(type= 'primary') fillColor ='#B8ABFF';
-
-        return (
-            <span className="custom-switch-icon">
-                <SwitchTickIcon fillColor = {fillColor}/>
-            </span>
-        );
-    }else{
-        if(type == 'binary')fillColor = '#E57373';
-        else fillColor = '#E5E5E5';
-
-        return(
-            <span className="custom-switch-icon">
-                <SwitchCrossIcon fillColor={fillColor}/>
-            </span>
-        )
+      if (type.toLowerCase() === 'primary') fillColor = colorPrimaryLight;
+      return (
+        <span className="custom-switch-icon">
+          <SwitchTickIcon fillColor={fillColor} />
+        </span>
+      );
+    } else {
+      if (type.toLowerCase() === 'binary') fillColor = colorDanger;
+      else fillColor = colorGrayLight;
+      return (
+        <span className="custom-switch-icon">
+          <SwitchCrossIcon fillColor={fillColor} />
+        </span>
+      );
     }
   };
 
@@ -57,8 +61,11 @@ export const Switch: React.FC<SwitchProps> = ({
       if (type.toLowerCase() === 'primary') switchClass += ' custom-switch-on-primary';
       else switchClass += ' custom-switch-on';
     } else {
-      if (type.toLowerCase() === 'binary') switchClass += ' custom-switch-off-binary';
-      else switchClass += ' custom-switch-off';
+      if (type.toLowerCase() === 'binary') {
+        switchClass += ' custom-switch-off-binary';
+      } else {
+        switchClass += ' custom-switch-off';
+      }
     }
 
     if (isFocused) switchClass += ' custom-switch-focused';
@@ -71,7 +78,7 @@ export const Switch: React.FC<SwitchProps> = ({
     if (disabled) return;
     setIsChecked((prev) => {
       const newChecked = !prev;
-      onChange && onChange(newChecked);
+      onChange?.(newChecked);
       return newChecked;
     });
   };
@@ -96,11 +103,13 @@ export const Switch: React.FC<SwitchProps> = ({
       )}
       <button
         type="button"
-        id={id}
+        id={id ? `${id}-label` : undefined}
         ref={switchRef}
         role="switch"
         aria-checked={isChecked}
         aria-disabled={disabled}
+        aria-labelledby={label && id ? `${id}-label` : undefined}
+        aria-label={!label ? label ?? 'Toggle' : undefined}
         tabIndex={disabled ? -1 : 0}
         className={renderClass()}
         onClick={handleToggle}
@@ -110,7 +119,7 @@ export const Switch: React.FC<SwitchProps> = ({
         disabled={disabled}
       >
         <span className="custom-switch-slider">
-          { withIcon && renderIcon() }
+          {withIcon && renderIcon()}
         </span>
       </button>
     </div>

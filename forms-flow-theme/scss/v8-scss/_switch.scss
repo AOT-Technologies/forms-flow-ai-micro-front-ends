@@ -12,13 +12,15 @@
     width: 2.75rem;
     height: 1.5rem;
     background: #ccc;
-    border: none;
     border-radius: 0.75rem;
     outline: none;
     cursor: pointer;
     padding: 0;
     display: inline-flex;
     align-items: center;
+    outline: none;
+    box-shadow: none;
+    border: none;
   }
   .custom-switch-on {
     background: #00C49A;
