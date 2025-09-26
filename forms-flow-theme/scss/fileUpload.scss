@@ -105,6 +105,10 @@ $text-line-height: var(--text-line-height);
   align-items: center;
   gap: $spacer-150;
   align-self: stretch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .upload-body {

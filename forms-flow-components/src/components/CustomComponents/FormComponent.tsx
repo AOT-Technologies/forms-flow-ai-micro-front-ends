@@ -9,15 +9,15 @@ interface SelectedComponent {
   altVariable: string;
   isFormVariable: boolean;
 }
+
 interface FormComponentProps {
   form: any;
   alternativeLabels: any;
   setSelectedComponent: (value: SelectedComponent) => void;
   setShowElement: (value: boolean) => void;
-  detailsRef: React.RefObject<HTMLInputElement> ;
+  detailsRef: React.RefObject<HTMLInputElement>;
   ignoreKeywords: Set<string>;
 }
-
 
 export const FormComponent: React.FC<FormComponentProps> = React.memo(
   ({
@@ -28,11 +28,9 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
     detailsRef,
     ignoreKeywords
   }) => {
-
-
     const formRef = useRef(null);
+    const formHilighterRef = useRef<HTMLDivElement>(null); // Add ref for the form container
     
-     
     /* ------------- manipulate the hidden variable to show in form ------------- */
     const [updatedForm, setUpdatedForm] = useState(null);
     const [manipulatedKeys, setManipulatedKeys] = useState(new Set());
@@ -55,8 +53,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
         ? [...getParentKeys(parentComponent.parentElement), nestedContainer]
         : getParentKeys(parentComponent.parentElement);
     }
-    // Filter out applicationId and applicationStatus
-    
+
     // initially we had a problem with the hidden variable not showing in the form so we have to manipulate the hidden variable to show in form
     useEffect(() => {
       const data = _.cloneDeep(form);
@@ -65,7 +62,6 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
         data.components,
         (component) => {
           // remove display (show/hide) conditions for showing the component in taskvariable modal
-          /* --------------------------- ------------------ --------------------------- */
           component.conditional = {};
           component.customConditional = "";
           component.logic = [];
@@ -78,7 +74,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
               [component.key]: component.type,
             }));
           }
-          /* ---------------------------------- ---- ---------------------------------- */
+
           //Keys ignored for the default task variable that don't need to be displayed in the form.
           if (
             component.type == "hidden" &&
@@ -95,7 +91,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       setManipulatedKeys(new Set(manipulatedKeys));
     }, [form, ignoreKeywords]);
 
-    //   These ignored keys and types from rendering the form.
+    // These ignored keys and types from rendering the form.
     const ignoredTypes = new Set([
       "button",
       "columns",
@@ -111,7 +107,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
     ]);
     const ignoredKeys = new Set(["hidden"]);
 
-    //   This function is used to get the  keys and types  of the component.
+    // This function is used to get the keys and types of the component.
     const handleClick = useCallback(
       (e) => {
         const formioComponent = e.target.closest(".formio-component");
@@ -129,16 +125,14 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           );
           const keyClass = classes[classes.length - 1];
           const typeClass = classes[classes.length - 2];
-          //if key and type are same , then there will be only one class for both
           
-          const componentKey =(keyClass as string)?.split("-").pop();
+          const componentKey = (keyClass as string)?.split("-").pop();
           const componentType = typeClass
             ? (typeClass as string).split("-").pop()
-            :componentKey;
+            : componentKey;
 
           // Check if the component type is in the ignored list
           // Check if the component key is in the ignored list
-
           if (
             ignoredTypes.has(componentType) ||
             ignoredKeys.has(componentKey)
@@ -194,12 +188,14 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           });
         }
       },
-      [alternativeLabels, manipulatedKeys]
+      [alternativeLabels, manipulatedKeys, setShowElement, setSelectedComponent]
     );
 
-        // hide details when clicking outside form component and removinf the formio-highlighted class
+    // FIXED: Use ref instead of querySelector and add proper cleanup
     useEffect(() => {
-      const formHilighter = document.querySelector(".form-hilighter");
+      const formHilighter = formHilighterRef.current; // Use ref instead of querySelector
+      
+      if (!formHilighter) return; // Early return if element doesn't exist
 
       const handleOutsideClick = (event) => {
         const clickedInsideForm = formHilighter?.contains(event.target);
@@ -209,10 +205,12 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           setShowElement(false);
           const highlightedElement = document.querySelector(".formio-hilighted");
           if (highlightedElement) {
-            highlightedElement.classList.remove("formio-hilighted"); // Remove the highlight class
+            highlightedElement.classList.remove("formio-hilighted");
           }
         }
       };
+
+      // Add event listeners
       formHilighter?.addEventListener("click", handleClick);
       document.addEventListener("mousedown", handleOutsideClick);
 
@@ -220,25 +218,25 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
         formHilighter?.removeEventListener("click", handleClick);
         document.removeEventListener("mousedown", handleOutsideClick);
       };
-    }, [handleClick]);
+    }, [handleClick, setShowElement, detailsRef]);
 
-
-    
     return (
       <div className="flex">
-        <div className="flex-grow-1 form-container form-hilighter">
-        <Form
-          form={updatedForm}
-          options={{
-            viewAsHtml: true,
-            readOnly: true,
-          } as any}
-          // showHiddenFields={false}
-          formReady={(e) => {
-            formRef.current = e;
-          }}
-        />
-      </div>
+        <div 
+          ref={formHilighterRef} // Add ref to the form container
+          className="flex-grow-1 form-container form-hilighter"
+        >
+          <Form
+            form={updatedForm}
+            options={{
+              viewAsHtml: true,
+              readOnly: true,
+            } as any}
+            formReady={(e) => {
+              formRef.current = e;
+            }}
+          />
+        </div>
       </div>
     );
   }

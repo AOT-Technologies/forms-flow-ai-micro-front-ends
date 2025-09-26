@@ -1381,7 +1381,7 @@ $danger-color: var(--ff-danger);
       @extend .custom-scroll;
       @include paddingLvl7();
 
-      position: absolute;
+      position: relative;
       overflow-y: scroll;
       width: 100%;
       max-height: $dropdownMaxHeight;
@@ -1400,7 +1400,9 @@ $danger-color: var(--ff-danger);
       scrollbar-gutter: auto;
 
       z-index: 2;
-
+      &.template-override{
+        position: absolute !important;
+      }
       & > div {
         @include clickableFeedback2();
         @include textBase($fontBase, $primary-color);
