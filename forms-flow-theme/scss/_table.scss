@@ -523,7 +523,6 @@ $white-color: var(--ff-white);
           @include textBase($fontSmallest, $gray-medium-dark);
           @include paddingLvl2();
 
-          position: absolute;
           width: 100%;
 
           text-align: center;
