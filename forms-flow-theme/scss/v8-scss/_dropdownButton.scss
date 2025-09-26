@@ -1,0 +1,159 @@
+// V8 Custom Dropdown Styles
+.v8-custom-dropdown {
+  &.dropdown.btn-group {
+    position: relative;
+
+    // Toggle button
+    .v8-dropdown-toggle {
+      // Variant variables (primary defaults)
+      --border-normal: #b8abff80;
+      --border-hover: #b8abff;
+      --border-active: #b8abff;
+      --bg-active: #b8abff33;
+      --divider-active: #e5e5e5;
+
+      display: inline-flex;
+      align-items: center;
+      border: 0.0625rem solid var(--border-normal) !important;
+      background: #fcfcfc !important;
+      padding: 0 !important;
+      border-radius: 1.25rem !important;
+
+      // Hide Bootstrap caret
+      &::after {
+        display: none;
+      }
+
+      // Label (first span inside toggle)
+      .label-div {
+        padding: 0.6875rem 0.875rem 0.6875rem 0.8125rem;
+        border-radius: 1.25rem 0 0 1.25rem;
+      }
+
+      .dropdown-icon {
+        padding: 0.875rem 0.875rem 0.6875rem 0.8125rem;
+        border-radius: 0 1.25rem 1.25rem 0;
+      }
+
+      .dropdown-label {
+        color: #4a4a4a;
+        font-size: 1rem;
+        font-weight: 400;
+      }
+
+      // Divider between label and chevron
+      .v8-dropdown-divider {
+        width: 0.0625rem;
+        align-self: stretch;
+        background: #e5e5e5;
+      }
+
+      // Chevron icon
+      .chevron-icon {
+        display: grid;
+        transition: transform 0.2s ease;
+      }
+
+      // Hover state
+      &:hover {
+        border: 0.0625rem solid var(--border-hover) !important;
+        opacity: 1 !important;
+      }
+
+      // Active state: highlight only label segment
+      &:active {
+        border: 0.0625rem solid var(--border-active) !important;
+        opacity: 1 !important;
+
+        .label-div {
+          background: var(--bg-active) !important;
+        }
+
+        .v8-dropdown-divider {
+          background: #d9d9d9;
+        }
+      }
+
+      // Open state: highlight only chevron segment and rotate icon
+      &.open {
+        border: 0.0625rem solid var(--border-active) !important;
+        opacity: 1 !important;
+
+        .dropdown-icon {
+          background: var(--bg-active) !important;
+        }
+
+        .v8-dropdown-divider {
+          background: #d9d9d9;
+        }
+
+        .chevron-icon {
+          transform: rotate(180deg);
+        }
+      }
+
+      // Secondary variant overrides
+      &.btn-secondary {
+        --border-normal: #e5e5e5;
+        --border-hover: #4a4a4a;
+        --border-active: #4a4a4a;
+        --bg-active: #ededed;
+        --divider-active: #e5e5e5;
+      }
+
+      // Override Bootstrap primary active background within scope
+      &.btn-primary {
+        &:active,
+        &.active {
+          background-color: transparent !important;
+        }
+      }
+    }
+
+    // Dropdown menu styles
+    .v8-dropdown-menu {
+      margin-top: 0.25rem !important;
+      padding: 0.875rem 0.375rem !important;
+      gap: 0.625rem !important;
+      border-radius: 0.3125rem !important;
+      box-shadow: 0 0.25rem 0.25rem 0 rgba(0, 0, 0, 0.25);
+      background-color: #fcfcfc;
+      max-width: 12.5rem;
+
+      .v8-dropdown-item {
+        border-radius: 0.1875rem;
+        color: #4a4a4a;
+        font-size: 1rem;
+        font-weight: 400;
+        padding: 0.3125rem 0.5rem 0.5625rem 0.625rem;
+        text-wrap: auto;
+
+        &:hover {
+          background: #ededed;
+          color: #4a4a4a;
+        }
+
+        &.selected {
+          border: 1px solid #e5e5e5 !important;
+        }
+      }
+    }
+
+    // Menu alignment modifiers
+    &.menu-left {
+      .v8-dropdown-menu {
+        left: 0 !important;
+        right: auto !important;
+        transform: none !important;
+      }
+    }
+
+    &.menu-right {
+      .v8-dropdown-menu {
+        right: 0 !important;
+        left: auto !important;
+        transform: none !important;
+      }
+    }
+  }
+}

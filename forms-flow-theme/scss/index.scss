@@ -1,11 +1,11 @@
 // import function
-@import "../node_modules/bootstrap/scss/functions";
+@import "bootstrap/scss/functions";
 
 //variable override
 @import "./variables";
 //default
-@import "../node_modules/bootstrap/scss/variables";
-@import "../node_modules/bootstrap/scss/mixins";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 
 //theme override
 @import "./typography";
@@ -15,12 +15,13 @@
 
 //component override
 @import "./stepper";
-@import "./button";
+// @import "./button";
 @import "./table"; 
 @import "./layout";
 @import "./forms";
 @import "./icon";
-@import "./modal";
+// @import "./modal";
+@import "./v8-scss/modal.scss";
 @import "./fileUpload";
 @import "./inputBox";
 @import "./aiAssistant";
@@ -38,9 +39,13 @@
 //rest of bootstrap
 @import "./external/formio.scss";
 @import "./external/toastify.scss";
-@import "~bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
 
 @import "./v8-scss/search";
 @import "./v8-scss/button";
 @import "./v8-scss/dateRangePicker";
 @import "./v8-scss/selectDropdown";
+@import "./v8-scss/dropdownButton";
+@import "./v8-scss/textInput";
+@import "./v8-scss/textArea";
+@import "./v8-scss/radio";

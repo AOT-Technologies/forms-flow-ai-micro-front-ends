@@ -1,0 +1,61 @@
+// Local tokens sourced from :root variables in _theme.scss
+$ti-color-text: var(--gray-darkest);
+$ti-color-placeholder: var(--gray-darkest);
+$ti-color-placeholder-disabled: var(--secondary);
+$ti-color-border: var(--gray-x-light);
+$ti-color-border-hover: var(--secondary-dark);
+$ti-color-border-focus: var(--gray-dark);
+$ti-color-bg: var(--white-200);
+$ti-font-size: var(--font-size-15);
+$ti-font-weight: var(--font-weight-regular);
+
+.text-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 20rem;
+
+    &.text-input-disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .text-input {
+        width: 100%;
+        height: 2.5rem;
+        border-radius: 5px;
+        padding: 11px 10px;
+        border: 1px solid $ti-color-border;
+        background: $ti-color-bg;
+        font-weight: $ti-font-weight;
+        font-size: $ti-font-size;
+        line-height: 1;
+        letter-spacing: 0;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        color: $ti-color-text;
+
+        &::placeholder {
+            color: $ti-color-placeholder;
+        }
+
+        // Style for disabled state
+        &:disabled {
+            &::placeholder {
+                color: $ti-color-placeholder-disabled;
+            }
+        }
+
+        // Only apply hover if NOT disabled
+        &:not(:disabled):hover {
+            border-color: $ti-color-border-hover;
+        }
+
+        // Only apply focus/active if NOT disabled
+        &:not(:disabled):focus,
+        &:not(:disabled):active {
+            border-color: $ti-color-border-focus;
+        }
+    }
+}
