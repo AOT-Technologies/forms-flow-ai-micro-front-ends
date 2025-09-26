@@ -507,33 +507,6 @@ select option:hover {
 
 /* ------------------------- Radio Button Style ------------------------ */
 
-.form-check-input[type="radio"] {
-  border-color: $primary !important;
-  position: relative;
-
-  &:checked {
-    --bs-form-check-bg-image: none !important;
-    background-color: var(--ff-white) !important;
-    border-color: $primary !important;
-
-    &::before {
-      content: "" !important;
-      position: absolute !important;
-      top: 50% !important;
-      /* Center vertically */
-      left: 50% !important;
-      /* Center horizontally */
-      width: 67% !important;
-      height: 70% !important;
-      background-color: $primary !important;
-      border-radius: 50% !important;
-      transform: translate(-50%, -50%) !important;
-    }
-  }
-  &:focus{
-    box-shadow: none !important;
-  }
-}
 
 .form-check-input[type="checkbox"] {
   border-color: $primary !important;
