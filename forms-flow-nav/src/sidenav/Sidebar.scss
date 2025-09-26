@@ -1,3 +1,5 @@
+@import '../../../forms-flow-theme/scss/v8-scss/mixins';
+
 //New Colors
 $black: #000000;
 $white: #ffffff;
@@ -117,7 +119,6 @@ $animSpeed: 300ms;
     &:hover {
       // background-color: var(--navbar-menu-hover-bg-color);
       font-weight: 500;
-      // color: #525254 !important;
       color: var(--navbar-menu-font-color) !important;
     }
 
@@ -127,9 +128,8 @@ $animSpeed: 300ms;
       // & > svg {
         //   transform: rotate(180deg);
         // }
-      font-size: 0.938rem;
-      font-weight: 500;
-      color: var(--navbar-menu-font-color);
+        @include font-style(0.938rem,500,var(--navbar-menu-font-color));
+      
       background-color: var(--navbar-bg-color);
       box-shadow: none;
     }
@@ -199,9 +199,8 @@ $animSpeed: 300ms;
 
     &.active {
       // color: #525254;
-      color: var(--navbar-menu-font-color);
-      font-size: 0.875rem;
-      font-weight: 500;
+      
+      @include font-style( 0.875rem,500,var(--navbar-menu-font-color));
       line-height: 1.05rem;
       // background-color: var(--navbar-active-submenu-bg-color);
       // color: var(--navbar-active-submenu-font-color);
@@ -254,14 +253,9 @@ $animSpeed: 300ms;
         & > p {
           overflow: hidden;
 
+          @include font-style($fontSmallest,400,var(--navbar-menu-font-color));
           flex-grow: 1;
           width: 2rem;
-          
-          color: var(--navbar-menu-font-color) !important;
-         
-          // color: #525254;
-          font-weight: 400;
-          font-size: $fontSmallest;
           line-height: $fontLineHeight;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -393,9 +387,7 @@ $animSpeed: 300ms;
 }
 
 .multitenancy-app-name {
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-lg);
-  color: var(--navbar-main-menu-active-font-color);
+  @include font-style(var(--font-size-md),var(--font-weight-lg),var(--navbar-main-menu-active-font-color));
 }
 
 .active-header .accordion-button {
@@ -404,6 +396,7 @@ $animSpeed: 300ms;
   color: var(--navbar-menu-font-color);
   font-size: 0.938rem;
   font-weight: 500;
+  @include font-style(0.938rem,500,var(--navbar-main-menu-font-color));
 }
 
 
