@@ -145,21 +145,6 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const CloseIcon = ({
-  dataTestId = "close-icon",
-  ...props
-}) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 16 16"
-    className="svgIcon-primary"
-    onClick={props.onClick}
-    data-testid={dataTestId} 
-    {...props}
-  >
-    <path d="M2.5 2.5L13.5 13.5M13.5 2.5L2.5 13.5" />
-  </svg>
-);
 
 export const LoadingIcon = ({
   ...props
@@ -919,3 +904,35 @@ export const CalenderRightIcon = ({ color = baseColor, ...props }) => (
     />
   </svg>
 );
+
+export const VerticalLineIcon = ({ color = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="2"
+    height="35"
+    viewBox="0 0 2 70"
+    fill="none"
+    {...props}
+  >
+    <path d="M1 1L0.999997 69" stroke="#E5E5E5" stroke-linecap="round" />
+  </svg>
+); 
+
+
+export const CloseIcon = ({
+  dataTestId = "close-icon",
+  color = baseColor,
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="11"
+    height="11"
+    viewBox="0 0 11 11"
+    fill="none"
+    {...props}
+  >
+    <path d="M1 1L10 10M10 1L1 10" stroke={color} strokeLinecap="round" />
+  </svg>
+);
+
