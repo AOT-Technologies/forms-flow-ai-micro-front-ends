@@ -30,10 +30,19 @@ $gray-dark: var(--ff-gray-dark);
   .formbuilder .formarea .breadcrumb li .badge.bg-primary{
    background-color: $primary !important;
   }
+   .formbuilder .formarea .breadcrumb li .badge-primary{
+   background-color: $primary !important;
+  }
   .formbuilder .formarea .breadcrumb li .badge.bg-success{
     background-color: $success !important;
   }
+   .formbuilder .formarea .breadcrumb li .badge-success{
+    background-color: $success !important;
+  }
    .formbuilder .formarea .breadcrumb li .badge.bg-info{
+    background-color: $gray-dark !important;
+  }
+    .formbuilder .formarea .breadcrumb li .badge-info{
     background-color: $gray-dark !important;
   }
 
@@ -71,6 +80,12 @@ $gray-dark: var(--ff-gray-dark);
           line-height: var(--spacer-150);
         }
       }
+      .nav-tabs .nav-link {
+    margin-bottom: calc(-1*var(--ff-nav-tabs-border-width));
+    border: var(--ff-nav-tabs-border-width) solid rgba(0,0,0,0);
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+}
     }
   
     // Define a list of ignored components for reuse
