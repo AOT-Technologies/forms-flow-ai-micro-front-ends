@@ -1,6 +1,7 @@
 import React, { FC, useState, useRef, useEffect } from "react";
 import { DownArrowIcon, UpArrowIcon } from "../../formsflow-components";
 import { ListGroup } from "react-bootstrap";
+import { StyleServices } from "@formsflow/service";
 
 /**
  * Interface for dropdown option items
@@ -42,6 +43,8 @@ export const SelectDropdown: FC<SelectDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false); // Controls dropdown visibility
   const [selectedValue, setSelectedValue] = useState(value || defaultValue); // Currently selected value
   const [searchTerm, setSearchTerm] = useState(""); // Search input value for filtering
+  const disabledColor = StyleServices.getCSSVariable('--gray-x-light');
+  const grayMediumDark = StyleServices.getCSSVariable('--gray-medium-dark');
   
   // Refs for DOM manipulation
   const dropdownRef = useRef<HTMLDivElement>(null); // Reference to dropdown container
@@ -174,11 +177,11 @@ export const SelectDropdown: FC<SelectDropdownProps> = ({
    * Render arrow icon based on dropdown state
    */
   const renderArrowIcon = () => {
-    const iconColor = disabled ? '#E5E5E5' : '#9E9E9E';
+    const iconColor = disabled ? disabledColor : grayMediumDark;
     return isOpen ? (
-      <UpArrowIcon color={iconColor} />
+      <UpArrowIcon color = {grayMediumDark} />
     ) : (
-      <DownArrowIcon color="#9E9E9E" />
+      <DownArrowIcon color={iconColor} />
     );
   };
 
@@ -196,7 +199,6 @@ export const SelectDropdown: FC<SelectDropdownProps> = ({
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         disabled={disabled}
-        aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label={ariaLabel}
         id={id}
