@@ -91,6 +91,10 @@ $font-weight-medium: var(--font-weight-medium);
     line-height: normal;
     color: $multiselect-label-color;
   }
+  .vertical-line-icon {
+    margin-left: var(--spacer-075);
+    margin-top:-8px
+  }
 }
 
 // Multi-select container
