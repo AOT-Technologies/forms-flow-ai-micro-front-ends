@@ -90,7 +90,7 @@ export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
       {enableMultiSelect && (
         <div className='d-flex'>
           {/* Visual separator between dropdown and multi-select */}
-          <VerticalLineIcon className='ms-3' />
+          <VerticalLineIcon className='vertical-line-icon' />
           
           {/* Multi-select component */}
           <MultipleSelect
