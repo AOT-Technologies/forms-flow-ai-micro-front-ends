@@ -252,17 +252,20 @@ const TaskList = () => {
   }, [isAssigned, activePage, limit]);
 
   const optionsForSortModal = () => {
-    const existingValues = new Set(optionSortBy.keys);  
+    // Get predefined sort options and dynamic columns from task variables
+    const existingKeys = new Set(optionSortBy.keys);
     const dynamicColumns = buildDynamicColumns(taskvariables);
     
-    // Track used labels and values to avoid duplicates in the dropdown
+    // Track what we've already used to avoid duplicates
     const usedLabels = new Map();
     const usedValues = new Set();
     
-    // First, add base options to our tracking maps
+    // Process the base options first
     const baseOptions = optionSortBy.options.map(option => {
+      // Mark this label and value as used
       usedLabels.set(option.label, true);
       usedValues.add(option.value);
+      
       return {
         ...option,
         actualSortKey: option.value,
@@ -270,53 +273,54 @@ const TaskList = () => {
       };
     });
     
-    // Then filter and process dynamic columns, excluding any that would create duplicates
-    const filteredDynamicColumns = dynamicColumns
-      .filter(column =>
-        // Only include columns that have sortable types and aren't duplicates of base options
+    // Process dynamic columns from task variables
+    const formFieldOptions = dynamicColumns
+      // Only keep sortable columns that aren't duplicates (unless they're form variables)
+      .filter(column => 
         sortableKeysSet.has(column.type) && 
-        (!existingValues.has(column.sortKey) || column.isFormVariable)
+        (!existingKeys.has(column.sortKey) || column.isFormVariable)
       )
       .map(column => {
-        // Create unique value for form variables to distinguish between columns with the same sortKey
-        const uniqueValue = column.isFormVariable ? `${column.sortKey}_form` : column.sortKey;
+        // Create a unique identifier for this column
+        const uniqueValue = column.isFormVariable ? 
+          `${column.sortKey}_form` : column.sortKey;
         
-        // Skip if this value is already used (prevents duplicate sort keys)
+        // Skip if we already have this value
         if (usedValues.has(uniqueValue)) {
           return null;
         }
         
-        // Create a unique label for duplicate column names
+        // Start with the column name as the label
         let label = column.name;
+        
+        // If this label is already used, make it unique
         if (usedLabels.has(label)) {
-          // If this label already exists, append "(Form Field)" to form variables
-          if (column.isFormVariable) {
-            label = `${label} (Form Field)`;
-          } 
-          // For non-form variables with duplicate names, append "(Task Field)"
-          else {
-            label = `${label} (Task Field)`;
-          }
+          // Add context to the label
+          label = column.isFormVariable ? 
+            `${label} (Form Field)` : 
+            `${label} (Task Field)`;
           
-          // If the modified label is still a duplicate, make it unique
+          // If still a duplicate, add a number
           if (usedLabels.has(label)) {
             let counter = 1;
             let newLabel = label;
+            
             while (usedLabels.has(newLabel)) {
               counter++;
               newLabel = `${label} ${counter}`;
             }
+            
             label = newLabel;
           }
         }
         
+        // Mark this label and value as used
         usedLabels.set(label, true);
         usedValues.add(uniqueValue);
         
         return {
           value: uniqueValue,
           label: label,
-          // Store the actual sortKey to use in API requests
           actualSortKey: column.sortKey,
           isFormVariable: column.isFormVariable,
           type: column.type
@@ -324,7 +328,8 @@ const TaskList = () => {
       })
       .filter(Boolean); // Remove null entries
     
-    return [...baseOptions, ...filteredDynamicColumns];
+    // Combine base options with form field options
+    return [...baseOptions, ...formFieldOptions];
   };
   
   return (
