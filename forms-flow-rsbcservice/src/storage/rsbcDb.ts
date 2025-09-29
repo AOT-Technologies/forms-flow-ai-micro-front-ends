@@ -106,6 +106,21 @@ interface JurisdictionCountry {
   objectDsc: string;
 }
 
+interface LKIHighway {
+  code: string;
+  description: string;
+  letter: string;
+  number: number;
+}
+
+interface LKISegment {
+  code: string;
+  description: string;
+  direction: string;
+  hwy_code: string;
+  length: number;
+}
+
 // Database class extending Dexie to manage IndexedDB storage
 class DigitalFormsDB extends Dexie {
   // Declaring tables with their respective interfaces
@@ -124,6 +139,8 @@ class DigitalFormsDB extends Dexie {
   vehicleTypes!: Table<VehicleType>;
   nscPuj!: Table<NSCPuj>;
   jurisdictionCountry!: Table<JurisdictionCountry>;
+  lkiHighway!: Table<LKIHighway>;
+  lkiSegment!: Table<LKISegment>;
 
   constructor() {
     super("digitalFormsFF");
@@ -153,6 +170,11 @@ class DigitalFormsDB extends Dexie {
     this.version(4).stores({
       nscPuj: "id, objectCd, objectDsc",
       jurisdictionCountry: "id, objectCd, objectDsc",
+    });
+
+    this.version(5).stores({
+      lkiHighway: "code, description, letter, number",
+      lkiSegment: "code, description, direction, hwy_code, length",
     });
   }
 }

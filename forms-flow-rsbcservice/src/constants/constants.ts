@@ -12,6 +12,8 @@ export const StaticResources = [
     "vehicles",
     "nsc_puj",
     "jurisdiction_country",
+    "lki_highway",
+    "lki_segment"
   ];
 
   export const StaticTables = [
@@ -28,7 +30,9 @@ export const StaticResources = [
     'nscPuj',
     'jurisdictionCountry', 
     'formID',
-    'user'
+    'user',
+    "lkiHighway",
+    "lkiSegment"
   ];
 
   export const FormTypes = ["12Hour", "24Hour", "VI", "MV6020"];
