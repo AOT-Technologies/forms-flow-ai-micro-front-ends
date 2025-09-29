@@ -122,16 +122,21 @@ useEffect(() => {
             >
               <DraggableIcon />
             </button>
-
-            <label htmlFor={`${item.id ?? item.name}-checkbox-id`} className="input-checkbox">
+            <label htmlFor={`${!(item.isFormVariable)
+                    ? "static-" + (item.id || item.name)
+                    : item.id || item.name
+                  }-checkbox-id`} className="input-checkbox">
               <input
-                id={`${item.id ?? item.name}-checkbox-id`}
+                id={`${!(item.isFormVariable)
+                    ? "static-" + (item.id || item.name)
+                    : item.id || item.name
+                  }-checkbox-id`}
                 type="checkbox"
                 checked={item.isChecked}
                 onChange={() => onCheckboxChange(index)}
                 disabled={preventLastCheck && item.isChecked && filterItems.filter(i => i.isChecked).length === 1}
                 data-testid={`${item.name}-checkbox`}
-                />
+              />
               <span>{item.label ?? item.name}</span>
               {item.isChecked ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
             </label>

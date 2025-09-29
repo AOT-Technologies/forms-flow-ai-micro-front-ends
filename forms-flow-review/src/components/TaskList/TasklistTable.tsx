@@ -250,16 +250,22 @@ return matchingVar.value ?? "-";
       "submitterName",
       "formName"
     ])
+    
+    // Create a unique key for the column that includes isFormVariable to differentiate between columns with same sortKey
+    const uniqueColumnKey = column.isFormVariable ? `${column.sortKey}_form` : column.sortKey;
+    
     const updatedFilterListSortParams = {
       ...resetSortOrders,
-      [column.sortKey]: {
+      [uniqueColumnKey]: {
         sortOrder:
-          filterListSortParams[column.sortKey]?.sortOrder === "asc" ? "desc" : "asc",
+          filterListSortParams[uniqueColumnKey]?.sortOrder === "asc" ? "desc" : "asc",
           ...((column.isFormVariable || enabledSort.has(column.sortKey)) && {
-            type: column.type ,
+            type: column.type,
           })
       },
-      activeKey: column.sortKey,
+      activeKey: uniqueColumnKey,
+      // Store the actual sortKey to use in API requests
+      actualSortKey: column.sortKey,
     };
 
     dispatch(setFilterListSortParams(updatedFilterListSortParams));
@@ -284,14 +290,18 @@ return matchingVar.value ?? "-";
         </span>
       )
     }
+    
+    // Create a unique key for the column that includes isFormVariable to differentiate between columns with same sortKey
+    const uniqueColumnKey = column.isFormVariable ? `${column.sortKey}_form` : column.sortKey;
+    
     return (
       <SortableHeader
         className="header-sortable"
-        columnKey={column.sortKey}
+        columnKey={uniqueColumnKey}
         title={t(column.name)}
         currentSort={filterListSortParams}
         handleSort={() => handleSort(column)}
-        dataTestId={`sort-header-${column.sortKey}`}
+        dataTestId={`sort-header-${uniqueColumnKey}`}
         ariaLabel={t("Sort by {{columnName}}", {
           columnName: t(column.name),
         })}

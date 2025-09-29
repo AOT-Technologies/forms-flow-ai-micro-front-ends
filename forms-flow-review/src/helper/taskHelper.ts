@@ -60,13 +60,16 @@ export const createReqPayload = (
     "formName"
   ])
 
+  // Get the actual sortKey to use in API requests (for columns with same sortKey but different isFormVariable)
+  const actualSortKey = filterListSortParams?.actualSortKey || filterListSortParams?.activeKey;
+  
   // Build sort filter
-  const newFilter = isFormVariable || enabledSort.has(filterListSortParams?.activeKey)
+  const newFilter = isFormVariable || enabledSort.has(actualSortKey)
     ? {
         sortBy: "processVariable",
         sortOrder: filterListSortParams?.[filterListSortParams?.activeKey]?.sortOrder,
         parameters: {
-          variable: filterListSortParams?.activeKey, 
+          variable: actualSortKey, 
           type:
           sortableList[
               filterListSortParams?.[filterListSortParams?.activeKey]?.type
@@ -76,7 +79,7 @@ export const createReqPayload = (
         },
       }
     : {
-        sortBy: filterListSortParams?.activeKey,
+        sortBy: actualSortKey,
         sortOrder:
           filterListSortParams?.[filterListSortParams?.activeKey]?.sortOrder,
       };

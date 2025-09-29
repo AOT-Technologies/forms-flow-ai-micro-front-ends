@@ -127,9 +127,12 @@ const TaskList = () => {
     "submitterName",
     "formName"
   ])
-  // check if selectedType belongs to sortableList
-  const currentVariable = taskvariables.find((item)=> item.key === filterListSortParams?.activeKey);
-  const isFormVariable =currentVariable?.isFormVariable || enabledSort.has(filterListSortParams?.activeKey) ;
+  // Use the actual sort key stored in filterListSortParams
+  const actualSortKey = filterListSortParams?.actualSortKey || filterListSortParams?.activeKey;
+  // Check if it's explicitly set as a form variable or is in the enabled sort set
+  const isFormVariable = filterListSortParams?.isFormVariable !== undefined 
+    ? filterListSortParams.isFormVariable 
+    : enabledSort.has(actualSortKey);
   if (filterCached) {
     payload = lastReqPayload;
     dispatch(resetTaskListParams({ filterCached: false }));
@@ -163,16 +166,25 @@ const TaskList = () => {
   };
 
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
-    // reset the sort orders using helper function
+    // Reset the sort orders using helper function
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
-  
-    // get the variable info first
-    const selectedVar = taskvariables.find(item => item.key === selectedSortOption);
-    const selectedType = selectedVar?.type;
-  
-    // check if it's a form variable
-    const isFormVariable = sortableKeysSet.has(selectedType);
-  
+    
+    // Get all available sort options
+    const allSortOptions = optionsForSortModal();
+    
+    // Find the selected option from our options list
+    const selectedOption = allSortOptions.find(option => option.value === selectedSortOption);
+    
+    if (!selectedOption) {
+      console.error("Selected sort option not found:", selectedSortOption);
+      return;
+    }
+    
+    // Get the actual sort key and form variable flag from the selected option
+    const actualSortKey = selectedOption.actualSortKey || selectedSortOption;
+    const isFormVariable = selectedOption.isFormVariable;
+    const selectedType = selectedOption.type;
+    
     const updatedData = {
       ...resetSortOrders,
       activeKey: selectedSortOption,
@@ -180,11 +192,14 @@ const TaskList = () => {
         sortOrder: selectedSortOrder,
         ...(isFormVariable && { type: selectedType })
       },
+      // Store the actual sortKey to use in API requests
+      actualSortKey: actualSortKey,
+      isFormVariable: isFormVariable
     };
-  
+    
     dispatch(setFilterListSortParams(updatedData));
     setShowSortModal(false);
-    fetchTaskListData({ sortData: updatedData  });
+    fetchTaskListData({ sortData: updatedData });
   };
   
 
@@ -239,17 +254,77 @@ const TaskList = () => {
   const optionsForSortModal = () => {
     const existingValues = new Set(optionSortBy.keys);  
     const dynamicColumns = buildDynamicColumns(taskvariables);
-  
+    
+    // Track used labels and values to avoid duplicates in the dropdown
+    const usedLabels = new Map();
+    const usedValues = new Set();
+    
+    // First, add base options to our tracking maps
+    const baseOptions = optionSortBy.options.map(option => {
+      usedLabels.set(option.label, true);
+      usedValues.add(option.value);
+      return {
+        ...option,
+        actualSortKey: option.value,
+        isFormVariable: false
+      };
+    });
+    
+    // Then filter and process dynamic columns, excluding any that would create duplicates
     const filteredDynamicColumns = dynamicColumns
       .filter(column =>
-      !existingValues.has(column.sortKey) && // filter out duplicates form sorting list 
-      sortableKeysSet.has(column.type))  // sorting enabled only for sortablelist items and optionSortBy
-      .map(column => ({
-        value: column.sortKey,
-        label: column.name,
-      }));
-  
-    return [...optionSortBy.options, ...filteredDynamicColumns];
+        // Only include columns that have sortable types and aren't duplicates of base options
+        sortableKeysSet.has(column.type) && 
+        (!existingValues.has(column.sortKey) || column.isFormVariable)
+      )
+      .map(column => {
+        // Create unique value for form variables to distinguish between columns with the same sortKey
+        const uniqueValue = column.isFormVariable ? `${column.sortKey}_form` : column.sortKey;
+        
+        // Skip if this value is already used (prevents duplicate sort keys)
+        if (usedValues.has(uniqueValue)) {
+          return null;
+        }
+        
+        // Create a unique label for duplicate column names
+        let label = column.name;
+        if (usedLabels.has(label)) {
+          // If this label already exists, append "(Form Field)" to form variables
+          if (column.isFormVariable) {
+            label = `${label} (Form Field)`;
+          } 
+          // For non-form variables with duplicate names, append "(Task Field)"
+          else {
+            label = `${label} (Task Field)`;
+          }
+          
+          // If the modified label is still a duplicate, make it unique
+          if (usedLabels.has(label)) {
+            let counter = 1;
+            let newLabel = label;
+            while (usedLabels.has(newLabel)) {
+              counter++;
+              newLabel = `${label} ${counter}`;
+            }
+            label = newLabel;
+          }
+        }
+        
+        usedLabels.set(label, true);
+        usedValues.add(uniqueValue);
+        
+        return {
+          value: uniqueValue,
+          label: label,
+          // Store the actual sortKey to use in API requests
+          actualSortKey: column.sortKey,
+          isFormVariable: column.isFormVariable,
+          type: column.type
+        };
+      })
+      .filter(Boolean); // Remove null entries
+    
+    return [...baseOptions, ...filteredDynamicColumns];
   };
   
   return (
