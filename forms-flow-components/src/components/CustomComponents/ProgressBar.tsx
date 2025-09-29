@@ -44,7 +44,7 @@ const CustomProgressBarComponent = forwardRef<HTMLDivElement, CustomProgressBarP
   ariaLabel = "Progress",
   dataTestId,
   className = "",
-  minWidth = "200px",
+  minWidth = "250px",
   height = "20px",
   ...restProps
 }, ref) => {
@@ -74,6 +74,7 @@ const CustomProgressBarComponent = forwardRef<HTMLDivElement, CustomProgressBarP
     width: `${Math.min(100, Math.max(0, progress))}%`, // Clamp between 0-100
     backgroundColor: progressColor,
     transition: 'width 0.3s ease',
+    borderRadius: '100px'
   }), [progress, progressColor]);
 
   // Memoized track styles

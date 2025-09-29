@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
  */
 
 type ButtonVariant = "primary" | "secondary";
-type ButtonSize = "small" | "medium" | "large";
+type ButtonSize = "small" | "medium" | "large"; // Size prop not implemented correctly.CSS missing for this.
 type ButtonType = "button" | "submit" | "reset";
 
 interface CustomButtonProps extends Omit<React.ComponentPropsWithoutRef<"button">, 'onClick' | 'disabled' | 'type'> {

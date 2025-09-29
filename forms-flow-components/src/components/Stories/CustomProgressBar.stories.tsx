@@ -21,7 +21,7 @@ const meta: Meta<typeof CustomProgressBar> = {
     },
     color: {
       control: 'select',
-      options: ['passive', 'error', 'warning', undefined],
+      options: ['passive', 'error', 'warning', 'default'],
       description: 'Color variant for the progress bar',
     },
   },
@@ -76,7 +76,7 @@ export const Warning: Story = {
 export const UploadProgress: Story = {
   args: {
     progress: 65,
-    color: undefined,
+    color: 'default',
   },
   parameters: {
     docs: {
@@ -133,7 +133,7 @@ export const SystemWarning: Story = {
 export const Playground: Story = {
   args: {
     progress: 50,
-    color: undefined,
+    color: 'default',
   },
   parameters: {
     docs: {

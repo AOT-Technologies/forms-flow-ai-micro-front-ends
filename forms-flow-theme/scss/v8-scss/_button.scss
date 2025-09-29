@@ -2,12 +2,12 @@
 $button-border-radius: 1.5625rem;   // 25px at 16px base
 $button-min-width: 5rem;             // 80px at 16px base  
 $button-min-height: 2.5rem;          // 40px at 16px base
-$button-padding: 0.75rem 1.5rem;     // 12px 24px at 16px base
+$button-padding: 0.6875rem 1.375rem; // 11px 22px at 16px base
 $button-icon-padding: 0.75rem;       // 12px at 16px base
 $button-gap: 0.5rem;                 // 8px at 16px base
-$button-font-size: 0.875rem;         // 14px at 16px base
-$button-font-weight: 500;
-$button-line-height: 1.2;
+$button-font-size: 0.9375rem;         // 15px at 16px base
+$button-font-weight: 400;
+$button-line-height: normal;
 $button-transition-duration: 0.15s;
 $button-transition-timing: ease-in-out;
 
@@ -71,12 +71,6 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25);
 
   &:focus {
     outline: none;
-  }
-
-  &:focus-visible {
-    box-shadow: 
-      0 0 0 $button-focus-outline-width $color-white, 
-      0 0 0 ($button-focus-outline-width + $button-focus-outline-offset) $color-primary;
   }
 
   &:active:not(.is-disabled):not(.is-loading) {
@@ -157,9 +151,7 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25);
     }
 
     &:focus-visible {
-      box-shadow: 
-        0 0 0 $button-focus-outline-width $color-white, 
-        0 0 0 ($button-focus-outline-width + $button-focus-outline-offset) $color-primary;
+      border-color: $color-primary;
     }
 
     &.is-selected {
@@ -191,9 +183,7 @@ $color-primary-disabled: rgba(184, 171, 255, 0.25);
     }
 
     &:focus-visible {
-      box-shadow: 
-        0 0 0 $button-focus-outline-width $color-white, 
-        0 0 0 ($button-focus-outline-width + $button-focus-outline-offset) $color-darker-gray;
+      border-color: $color-darker-gray;
     }
 
     &.is-selected {
