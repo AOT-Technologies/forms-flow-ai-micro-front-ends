@@ -1,0 +1,41 @@
+
+@use "mixins";
+$header-font-size: var(--font-size-xl);
+$header-font-weight: var(--font-weight-regular);
+
+.edit-setiings {
+  @include mixins.vertical-padding();
+  overflow: auto;
+  //height: 80vh;
+  
+  .settings-header {
+    @include mixins.font-style($header-font-size, $header-font-weight, );
+  }
+
+  .create-from-scratch {
+    @include mixins.settings-grid(); 
+  }
+
+  .create-from-scratch .grid-item {
+    @include mixins.settings-grid-item();
+    @include mixins.centerAlign();
+  }
+
+  .create-from-form {
+    @include mixins.settings-grid(); 
+  }
+
+  .create-from-form .grid-item {
+    @include mixins.settings-grid-item();
+    @include mixins.centerAlign();  
+  }
+
+  .create-from-template {
+    @include mixins.settings-grid(); 
+  }
+
+  .create-from-template .grid-item {
+    @include mixins.settings-grid-item();
+    @include mixins.centerAlign();  
+  }
+}
