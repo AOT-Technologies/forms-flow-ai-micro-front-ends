@@ -31,8 +31,8 @@ export const StaticResources = [
     'jurisdictionCountry', 
     'formID',
     'user',
-    "lki_highway",
-    "lki_segment"
+    "lkiHighway",
+    "lkiSegment"
   ];
 
   export const FormTypes = ["12Hour", "24Hour", "VI", "MV6020"];
