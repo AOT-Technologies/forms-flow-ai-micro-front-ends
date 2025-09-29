@@ -55,7 +55,7 @@ $font-color: var(--secondary-dark);
 
 //Settings Card Mixins
 
-@mixin settings-grid($gap: 21px, $border-color: #E5E5E5, $padding: 18px 0) {
+@mixin create-grid($gap: 21px, $border-color: #E5E5E5, $padding: 18px 0) {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: $gap;
@@ -66,7 +66,7 @@ $font-color: var(--secondary-dark);
 }
 
 // Grid item mixin
-@mixin settings-grid-item($height: 220px, $width: 350px, $border-radius: 5px, $border-color: #EDEDED, $bg-color: #FCFCFC, $hover-border: #B8ABFF) {
+@mixin create-grid-item($height: 220px, $width: 350px, $border-radius: 5px, $border-color: #EDEDED, $bg-color: #FCFCFC, $hover-border: #B8ABFF) {
   height: $height;
   width: $width;
   border-radius: $border-radius;

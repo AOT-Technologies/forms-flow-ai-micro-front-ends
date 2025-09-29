@@ -8,34 +8,34 @@ $header-font-weight: var(--font-weight-regular);
   overflow: auto;
   //height: 80vh;
   
-  .settings-header {
+  .create-header {
     @include mixins.font-style($header-font-size, $header-font-weight, );
   }
 
   .create-from-scratch {
-    @include mixins.settings-grid(); 
+    @include mixins.create-grid(); 
   }
 
   .create-from-scratch .grid-item {
-    @include mixins.settings-grid-item();
+    @include mixins.create-grid-item();
     @include mixins.centerAlign();
   }
 
   .create-from-form {
-    @include mixins.settings-grid(); 
+    @include mixins.create-grid(); 
   }
 
   .create-from-form .grid-item {
-    @include mixins.settings-grid-item();
+    @include mixins.create-grid-item();
     @include mixins.centerAlign();  
   }
 
   .create-from-template {
-    @include mixins.settings-grid(); 
+    @include mixins.create-grid(); 
   }
 
   .create-from-template .grid-item {
-    @include mixins.settings-grid-item();
+    @include mixins.create-grid-item();
     @include mixins.centerAlign();  
   }
 }
