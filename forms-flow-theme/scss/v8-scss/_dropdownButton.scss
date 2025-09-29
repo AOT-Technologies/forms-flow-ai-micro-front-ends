@@ -7,7 +7,7 @@ $dropdown-divider-width: 0.0625rem;      // 1px at 16px base
 $dropdown-transition: 0.2s ease;
 
 // Spacing variables
-$dropdown-label-padding: 0.6875rem 0.875rem 0.6875rem 0.8125rem;  // 11px 14px 11px 13px
+$dropdown-label-padding: 0.6875rem 0.8125rem;  // 11px 13px
 $dropdown-icon-padding: 0.875rem 0.875rem 0.6875rem 0.8125rem;    // 14px 14px 11px 13px
 $dropdown-menu-padding: 0.875rem 0.375rem;                        // 14px 6px
 $dropdown-item-padding: 0.3125rem 0.5rem 0.5625rem 0.625rem;     // 5px 8px 9px 10px
@@ -60,12 +60,14 @@ $color-secondary-active: #ededed;
 
   // Toggle Button
   .v8-dropdown-toggle {
+    height: 40px;
     @include dropdown-toggle-base;
 
     .label-div {
       padding: $dropdown-label-padding;
       border-radius: $dropdown-border-radius 0 0 $dropdown-border-radius;
       transition: background-color $dropdown-transition;
+      line-height: normal;
     }
 
     .dropdown-icon {

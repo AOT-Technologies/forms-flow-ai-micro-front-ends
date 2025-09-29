@@ -71,6 +71,11 @@ const CustomDropdownButtonTemplate = (args: any) => {
     action('item-clicked')(item);
   };
 
+  const handleLabelClick = () => {
+    setSelectedItem(args.label);
+    action('label-clicked')(args.label);
+  };
+
   // Create dropdown items with click handlers
   const dropdownItems = args.dropdownItems.map((item: any) => ({
     ...item,
@@ -82,6 +87,7 @@ const CustomDropdownButtonTemplate = (args: any) => {
       <V8CustomDropdownButton
         {...args}
         dropdownItems={dropdownItems}
+        onLabelClick={handleLabelClick}
       />
       {selectedItem && (
         <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
