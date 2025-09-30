@@ -60,5 +60,6 @@ declare module "@formsflow/components" {
     ConfirmModal,
     CustomInfo,
     PromptModal,
+    CustomUrl
   }: any;
 }

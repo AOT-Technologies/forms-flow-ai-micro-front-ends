@@ -1,0 +1,102 @@
+@import "_mixins";
+
+.urlInput{
+    width: 100%;
+    max-width: 100%;
+    
+    .title{
+        @include font-style(--spacer-125,--font-weight-medium,--gray-dark);
+        text-transform: capitalize;
+        border-bottom: 1px solid var(--gray-x-light);
+        padding-bottom: 0.69rem;
+        margin-bottom: 1.13rem;
+    }
+    .actions{
+        margin-top: 0.75rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+        
+        .message {
+            color: var(--gray-darkest);
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+        
+        .custom-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: var(--gray-light);
+            border-color: var(--gray-light);
+            color: var(--gray-dark);
+        }
+    }
+    
+    .inputDiv{
+        border: 1px solid var(--gray-x-light);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        position: relative;
+        
+        @media (min-width: 768px) {
+            padding: 2rem;
+            padding-right: 1rem;
+        }
+        
+        .fixedUrl{
+            color: var(--gray-darkest);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .urlInputField{
+            border-radius: 0.3125rem;
+            border: 1px solid var(--gray-x-light);
+            background: var(--white-200);
+            flex: 1;
+            min-width: 200px;
+            padding: 0.5rem;
+            padding-right: 3rem; // Space for the copy button
+            
+            @media (min-width: 768px) {
+                padding: 0.75rem;
+                padding-right: 3.5rem;
+            }
+        }
+        .copyBtn{
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            cursor: pointer;
+            height: 1.5rem;
+            width: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            transition: all 0.15s ease-in-out;
+            z-index: 1;
+            
+            @media (min-width: 768px) {
+                right: 1.5rem;
+            }
+            
+            svg {
+                height: 1.5rem;
+                width: 1.5rem;
+            }
+        }
+        .copyBtn:hover{
+            background: var(--gray-50);
+            border-radius: 50%;
+        }
+    }
+    
+}

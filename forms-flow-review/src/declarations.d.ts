@@ -85,7 +85,8 @@ declare module "@formsflow/components" {
     ReusableResizableTable,
     BackToPrevIcon,
     StepperComponent,
-    PromptModal
+    PromptModal,
+    CustomUrl
   }: any;
 }
 
