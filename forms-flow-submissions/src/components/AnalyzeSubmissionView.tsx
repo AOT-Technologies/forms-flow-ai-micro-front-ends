@@ -238,7 +238,7 @@ const ViewApplication = React.memo(() => {
 
             {/* Right: Buttons */}
             <div className="form-submission-button">
-              {(viewSubmissionHistory || analyze_submissions_view_history) && (
+              { analyze_submissions_view_history && (
                 <CustomButton
                   dark
                   size="table"
@@ -276,12 +276,13 @@ const ViewApplication = React.memo(() => {
           redirectUrl={redirectUrl}
           histories={appHistory}
           isHistoryListLoading={isHistoryListLoading}
-          title="History"
+          title={t("History")}
           showBpmnDiagram={analyze_process_view}
           diagramXML={diagramXML}
           activityId={markers?.[0]?.activityId ?? ""}
           isProcessDiagramLoading={isDiagramLoading}
           darkPrimary
+          formType={formType}
         />
       )}
     </div>

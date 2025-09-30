@@ -16,6 +16,7 @@ interface SubmissionHistoryWithViewButtonProps {
   isProcessDiagramLoading: boolean;
   isHistoryListLoading: boolean;
   showDiagramTools?:boolean;
+  formType?: string;
 }
 
 interface SubmissionHistory {
@@ -39,7 +40,8 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
       activityId,
       isProcessDiagramLoading,
       isHistoryListLoading,
-      showDiagramTools = false
+      showDiagramTools = false,
+      formType = "form"
     }) => {
       const { t } = useTranslation();
       const timelineRef = useRef<HTMLDivElement>(null);
@@ -71,7 +73,8 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
 
       const viewSubmission = (data: SubmissionHistory): JSX.Element => {
         const { formId, submissionId } = data;
-        const url = `${window.location.origin}${redirectUrl}form/${formId}/submission/${submissionId}`;
+        const basePath = formType === "bundle" ? "bundle" : "form";
+        const url = `${window.location.origin}${redirectUrl}${basePath}/${formId}/submission/${submissionId}`;
         return (
           <button
             data-testid={`submission-details-button-${data.id}`}

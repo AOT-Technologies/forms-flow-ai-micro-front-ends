@@ -378,7 +378,10 @@ const Users = React.memo((props: any) => {
         className="overflow-hidden">
         <Modal.Header>
           <Modal.Title></Modal.Title>
-        </Modal.Header>
+          <div className="icon-close" onClick={closeSuccessModal} data-testid="user-add-success-close">
+            <CloseIcon dataTestId="action-success-modal-close" />
+          </div>        
+          </Modal.Header>
         <Modal.Body className="modal-md d-flex align-items-center justify-content-center">
           <div className="p-3 text-center">
             <div className="d-flex flex-column align-items-center">

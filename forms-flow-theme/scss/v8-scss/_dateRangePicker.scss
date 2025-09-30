@@ -1,76 +1,167 @@
-.drp-input-container {
+// Date Range Picker Variables - Using consistent rem/em units for better scalability
+$drp-container-width: 18.75rem;        // 300px at 16px base
+$drp-container-height: 2.5rem;         // 40px at 16px base
+$drp-container-padding: 0.25rem 0.75rem; // 4px 12px at 16px base
+$drp-container-radius: 0.5rem;         // 8px at 16px base
+$drp-input-padding: 0.3125rem 0.375rem; // 5px 6px at 16px base
+$drp-separator-margin: 0 0.25rem;      // 0 4px at 16px base
+$drp-calendar-width: 18.75rem;         // 300px at 16px base
+$drp-calendar-margin-top: 0.3125rem;   // 5px at 16px base
+$drp-calendar-radius: 0.375rem;        // 6px at 16px base
+
+// Font and spacing variables
+$drp-font-size: 0.9375rem;            // 15px at 16px base
+$drp-font-size-small: 0.875rem;       // 14px at 16px base
+$drp-font-weight: 400;
+$drp-font-weight-medium: 500;
+$drp-line-height: 1.5;
+
+// Transition variables
+$drp-transition-duration: 0.2s;
+$drp-transition-timing: ease;
+
+// Color Variables
+$color-white: #ffffff;
+$color-light-gray: #fcfcfc;
+$color-medium-gray: #e5e5e5;
+$color-dark-gray: #4a4a4a;
+$color-darker-gray: #525254;
+$color-disabled-gray: #c5c5c5;
+$color-border: #e0e0e0;
+$color-border-light: #ededed;
+$color-text-primary: #212529;
+$color-text-secondary: #222;
+$color-text-muted: #999;
+$color-text-placeholder: #b7b7b8;
+$color-text-light: #b7b7b8;
+
+$color-primary: #b8abff;
+$color-primary-light: #f1eeff;
+$color-primary-selected: rgba(184, 171, 255, 0.2);
+
+// Shadow variables
+$drp-shadow-container: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.03);
+$drp-shadow-calendar: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+// Date Range Picker Mixins
+@mixin drp-container-base {
   display: flex;
   align-items: center;
-  width: 18.75rem; // input width 244px but calender width is 300px keeping this as 300px
-  height: 2.5rem;
-  padding: 4px 12px;
-  border: 1px solid #e0e0e0;
-  background: #fcfcfc;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-
-  // &:focus-within {
-  //   border-color: #1565c0;
-  //   box-shadow: 0 0 0 2px #e3f1ff;
-  // }
+  width: $drp-container-width;
+  height: $drp-container-height;
+  padding: $drp-container-padding;
+  border: 1px solid $color-border;
+  background: $color-light-gray;
+  border-radius: $drp-container-radius;
+  box-shadow: $drp-shadow-container;
+  transition: border-color $drp-transition-duration $drp-transition-timing;
 }
 
-.drp-date-input {
+@mixin drp-input-base {
   flex: 1 1 0;
   background: transparent;
   min-width: 0;
   border: none;
-  font-size: 15px;
-  color: #222;
-  padding: 5px 6px;
+  font-size: $drp-font-size;
+  color: $color-text-secondary;
+  padding: $drp-input-padding;
   outline: none;
+  transition: color $drp-transition-duration $drp-transition-timing;
 
   &::placeholder {
-    color: #b7b7b8;
+    color: $color-text-placeholder;
   }
 }
 
+@mixin drp-calendar-base {
+  position: absolute;
+  background-color: $color-white;
+  top: 100%;
+  left: 0;
+  border: 1px solid $color-border-light;
+  border-radius: $drp-calendar-radius;
+  width: $drp-calendar-width;
+  margin-top: $drp-calendar-margin-top;
+  z-index: 1000;
+  box-shadow: $drp-shadow-calendar;
+}
+
+@mixin drp-calendar-header {
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: $color-text-primary;
+  font-weight: $drp-font-weight-medium;
+  font-size: $drp-font-size-small;
+  line-height: $drp-line-height;
+  background-color: $color-light-gray;
+  border-bottom: 1px solid $color-border-light;
+  text-align: center;
+  vertical-align: middle;
+}
+
+@mixin drp-calendar-day {
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  padding: 0.3125rem 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: none;
+  font-weight: $drp-font-weight;
+  font-size: $drp-font-size-small;
+  line-height: $drp-line-height;
+  color: $color-text-light;
+  transition: 
+    background-color $drp-transition-duration $drp-transition-timing,
+    color $drp-transition-duration $drp-transition-timing;
+
+  &.current-month {
+    color: $color-text-primary;
+  }
+
+  &.other-month {
+    color: $color-text-light;
+  }
+
+  &.selected {
+    background-color: $color-primary-light;
+    color: $color-text-primary;
+    border: none;
+  }
+
+  &.start-date,
+  &.end-date {
+    background-color: $color-primary;
+    color: $color-dark-gray;
+    border-radius: 0.125rem;
+  }
+}
+
+// Main Date Range Picker Component
+.drp-input-container {
+  @include drp-container-base;
+}
+
+.drp-date-input {
+  @include drp-input-base;
+}
+
 .drp-separator {
-  margin: 0 4px;
-  color: #999;
-  font-size: 15px;
+  margin: $drp-separator-margin;
+  color: $color-text-muted;
+  font-size: $drp-font-size;
   user-select: none;
 }
 
+// Calendar Container
 .calendar-container {
-  position: absolute;
-  background-color: #ffffff;
-  top: 100%;
-  left: 0;
-  border: 1px solid #ededed;
-  border-radius: 6px;
-  width: 18.75rem; // 300px
-  // height: 324px;
-
-  z-index: 1000;
-  box-shadow: 0px 8px 16px 0px #00000026;
+  @include drp-calendar-base;
 
   // Calendar header
   .calendar-header {
-    width: 300;
-    // height: 48;
-    // angle: 0 deg;
-    opacity: 1;
-    // gap: 31px;
-    padding: 12px 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #212529;
-    font-weight: 500;
-    font-size: 14px;
-    background-color: #fcfcfc;
-    line-height: 150%;
-    box-shadow: 0px 1px 0px 0px #f0f0f0 inset;
-    border-bottom: #ededed 1px solid;
-
-    text-align: center;
-    vertical-align: middle;
+    @include drp-calendar-header;
 
     // Navigation buttons container
     .calendar-nav-buttons {
@@ -82,13 +173,21 @@
       .calendar-prev-month-btn,
       .calendar-next-month-btn,
       .calendar-next-year-btn {
-        margin: 0 0.125rem; // 0 2px
+        margin: 0 0.125rem;
         cursor: pointer;
-        width: 1.5rem; // 24px
-        height: 1.5rem; // 24px
+        width: 1.5rem;
+        height: 1.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: 
+          background-color $drp-transition-duration $drp-transition-timing,
+          color $drp-transition-duration $drp-transition-timing;
+
+        &:hover {
+          background-color: $color-primary-light;
+          border-radius: 0.25rem;
+        }
       }
     }
 
@@ -99,91 +198,50 @@
     }
   }
 
+  // Week days container
   .calender-week-days-container {
-    padding: 8px;
+    padding: 0.5rem;
+
     // Days of week header
     .calendar-days-header {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       text-align: center;
-      // margin-bottom: 0.3125rem; // 5px
-      color: #ededed;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 150%;
+      color: $color-border-light;
+      font-weight: $drp-font-weight-medium;
+      font-size: $drp-font-size-small;
+      line-height: $drp-line-height;
       text-align: center;
       vertical-align: middle;
 
       // Individual weekday header
       .calendar-weekday {
-        // padding: 0.3125rem; // 5px //TBD
-        width: 36px;
-        height: 30px;
+        width: 2.25rem;
+        height: 1.875rem;
         opacity: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
+
     // Calendar days grid
     .calendar-days {
       display: grid;
-      padding: 0px 4px;
+      padding: 0 0.25rem;
       grid-template-columns: repeat(7, 1fr);
+
       // Individual day cell
       .calendar-day {
-        // padding: 3px 0px;
-
-        // width: 24px;
-        // height: 24px;
-        text-align: center;
-        cursor: pointer;
-        // height: 2.1875rem; // 35px
-        display: flex;
-        padding: 5px 0px;
-        align-items: center;
-        justify-content: center;
-        border-radius: none;
-        // padding: 1px;
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 150%;
-        text-align: center;
-        vertical-align: middle;
-
-        color: #b7b7b8;
-
-        // font-weight: var(--font-weight-xl) !important;
-        // font-size: var(--font-size-sm) !important;
-
-        // Current month day
-        &.current-month {
-          color: #212529 !important;
-        }
-
-        // Other month day
-        &.other-month {
-          color: #b7b7b8;
-        }
-
-        // Selected date
-        &.selected {
-          background-color: #f1eeff !important;
-          color: #212529;
-          border: none !important;
-        }
-        // Start and end date styles
-        &.start-date,
-        &.end-date {
-          // font-weight: bold;
-          background-color: #b8abff !important;
-          color: #4a4a4a !important;
-          border-radius: 2px;
-        }
+        @include drp-calendar-day;
       }
     }
+
     // Today button section
     .calendar-today-container {
       display: flex;
       justify-content: center;
-      padding: 8px;
+      padding: 0.5rem;
     }
   }
 }

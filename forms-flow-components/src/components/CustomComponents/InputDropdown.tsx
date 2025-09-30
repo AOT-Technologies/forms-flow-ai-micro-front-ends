@@ -36,6 +36,7 @@ interface InputDropdownProps {
   id?: string;
   showCloseIcon?: boolean;
   hideDropDownList?: boolean;
+  useAbsolutePosition?: boolean;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -63,6 +64,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   id,
   showCloseIcon = true,
   hideDropDownList = false,
+  useAbsolutePosition = false,
 }) => {
   const { t } = useTranslation();
   const primaryColor = StyleServices.getCSSVariable('--ff-primary');
@@ -227,7 +229,7 @@ useEffect(() => {
           )}
 
           {!textBoxInput && isDropdownOpen && !disabled && !hideDropDownList && (
-              <div className="select-options">
+              <div className={`select-options ${useAbsolutePosition ? 'template-override' : ''}`}>
                   {isAllowInput && (
                       <ListGroup.Item
                           onClick={onFirstItemClick}
@@ -237,19 +239,6 @@ useEffect(() => {
                           {t(firstItemLabel)}
                       </ListGroup.Item>
                   )}
-                  {/* {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
-                      <ListGroup.Item
-                          key={index}
-                          onClick={() => handleSelect(item)}
-                          data-testid={`list-${index}-item`}
-                          aria-label={`list-${item.label}-item`}
-                          className={`${isItemSelected(item) ? 'chosen' : ''}`}
-                      >
-                          {t(item.label)}
-                      </ListGroup.Item>
-                  ))} 
-              </div> */}
-          {/* )} */}
                   {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
               <ListGroup.Item
                 key={index}
@@ -266,5 +255,3 @@ useEffect(() => {
     </div>
   );
 };
-
-

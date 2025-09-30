@@ -12,6 +12,7 @@ import { CustomButton } from "@formsflow/components";
 interface TaskHistoryModalProps {
   show: boolean;
   onClose: () => void;
+  task?: any;
 }
 
 interface SubmissionHistory {
@@ -52,7 +53,7 @@ const HistoryField = ({
 );
 
 export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
-  ({ show, onClose }) => {
+  ({ show, onClose, task }) => {
     const { t } = useTranslation();
     const timelineRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
@@ -77,7 +78,8 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
 
     const viewSubmission = (data) => {
       const { formId, submissionId } = data;
-      const url = getFormUrl(formId, submissionId, redirectUrl);
+      const formType = task?.formType || "form";
+      const url = getFormUrl(formId, submissionId, redirectUrl, formType);
       return window.open(url, "_blank")
     };
 
