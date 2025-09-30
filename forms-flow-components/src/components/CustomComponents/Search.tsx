@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { V8CustomButton } from "./CustomButton";
 
 /**
  * Props for `CustomSearch` component.
@@ -57,7 +56,6 @@ export const CustomSearch: FC<CustomSearchProps> = ({
         role="searchbox"
         disabled={disabled}
       />
-      <V8CustomButton variant="primary" label="Search" onClick={handleSearch} />
     </div>
   );
 };

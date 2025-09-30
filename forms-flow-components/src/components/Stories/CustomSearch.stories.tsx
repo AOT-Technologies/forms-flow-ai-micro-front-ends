@@ -11,7 +11,7 @@ const meta: Meta<typeof CustomSearch> = {
     docs: {
       description: {
         component:
-          'A search input component with keyboard navigation, accessibility features, and customizable placeholder text. Supports Enter key search and disabled state.',
+          'A simple search input component with keyboard navigation, accessibility features, and customizable placeholder text. Supports Enter key search and disabled state.',
       },
     },
   },
@@ -27,7 +27,7 @@ const meta: Meta<typeof CustomSearch> = {
     },
     handleSearch: {
       action: 'search-submitted',
-      description: 'Called when search is submitted (Enter key or button click)',
+      description: 'Called when search is submitted (Enter key)',
     },
     placeholder: {
       control: 'text',
@@ -69,6 +69,10 @@ const CustomSearchTemplate = (args: any) => {
         setSearch={handleSearchChange}
         handleSearch={handleSearchSubmit}
       />
+      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+        <div><strong>Current search:</strong> "{search}"</div>
+        <div><strong>Tip:</strong> Press Enter to submit search</div>
+      </div>
     </div>
   );
 };
@@ -124,6 +128,23 @@ export const LongPlaceholder: Story = {
   render: CustomSearchTemplate,
 };
 
+// Demonstrates Enter key functionality
+export const EnterKeySearch: Story = {
+  args: {
+    placeholder: 'Type and press Enter to search',
+    dataTestId: 'search-input-enter',
+    disabled: false,
+  },
+  render: CustomSearchTemplate,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Type in the search box and press Enter to trigger the search. The search will be logged to the Actions panel.',
+      },
+    },
+  },
+};
+
 // Interactive playground
 export const Playground: Story = {
   args: {
@@ -135,7 +156,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Use the controls to adjust props and observe behavior. Try different placeholder texts, disabled states, and search values.',
+        story: 'Use the controls to adjust props and observe behavior. Try different placeholder texts, disabled states, and search values. Press Enter to submit searches.',
       },
     },
   },
