@@ -62,5 +62,6 @@ declare module "@formsflow/components" {
     SubmissionHistoryWithViewButton,
     VariableModal, 
     StepperComponent,
+    Switch
   }: any;
 }
