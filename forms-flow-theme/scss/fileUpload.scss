@@ -32,7 +32,7 @@ $spacer-200: var(--spacer-200);
 
 $radius-lg: var(--radius-lg);
 
-$text-line-height: var(--text-line-height);
+$text-line-height: 120%;
 
 // ----------------------------
 // Imports
@@ -46,8 +46,8 @@ $text-line-height: var(--text-line-height);
   align-items: center;
   width: 21.875rem;
   height: 13.75rem;
-  border: 0.09375rem dashed $secondary;
-  border-radius: 0.313rem;
+  border: 1px dashed $secondary;
+  border-radius: 5px;
   background-color: $white-200;
   cursor: pointer;
   text-align: center;
@@ -87,6 +87,7 @@ $text-line-height: var(--text-line-height);
   text-align: center;
   margin-top: 0.563rem;
   display: inline-grid;
+  line-height: normal;
 }
 
 .upload-text-description {
@@ -175,7 +176,7 @@ $text-line-height: var(--text-line-height);
   --ff-progress-border-radius: var(--radius-lg) !important;
   --ff-progress-bar-bg: var(--progress-bar-bg-color) !important;
   --ff-progress-bg: var(--gray-light) !important;
-  height: 0.438rem !important;
+  height: 7px !important;
 }
 
 .progress-stacked {

@@ -1,370 +1,356 @@
-import React, { useState, useRef, useEffect, FC, KeyboardEvent } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  RightFarIcon,
-  LeftFarIcon,
   DownArrowIcon,
   UpArrowIcon,
   CalenderLeftIcon,
   CalenderRightIcon,
 } from "../SvgIcons";
-import { V8CustomButton } from "../../formsflow-components";
+import { V8CustomButton } from "./CustomButton";
 
+/**
+ * Date value type - can be Date object, ISO string, or null
+ */
 type DateValue = Date | string | null;
-interface DateRange {
+
+/**
+ * Date range interface for start and end dates
+ */
+export interface DateRange {
+  /** Start date of the range */
   startDate: DateValue;
+  /** End date of the range */
   endDate: DateValue;
 }
 
-interface DateRangePickerProps {
-  /**
-   * Callback function triggered when date range changes
-   * @param dateRange Object containing startDate and endDate
-   */
+/**
+ * Calendar day interface for rendering calendar grid
+ */
+interface CalendarDay {
+  /** The actual date object */
+  date: Date;
+  /** Whether this day belongs to the current month */
+  isCurrentMonth: boolean;
+}
+
+/**
+ * Props for `DateRangePicker` component.
+ * Optimized, accessible date range picker with calendar interface.
+ */
+export interface DateRangePickerProps
+  extends Omit<React.ComponentPropsWithoutRef<"div">, "onChange"> {
+  /** Callback function triggered when date range changes */
   onChange: (dateRange: DateRange) => void;
-
-  /**
-   * Initial date range to display
-   */
+  /** Initial date range to display */
   value?: DateRange;
-
-  /**
-   * Format for displaying dates (default: MM/DD/YYYY)
-   */
+  /** Format for displaying dates (default: MM/DD/YYYY) */
   dateFormat?: string;
-
-  /**
-   * Additional CSS class names
-   */
-  className?: string;
-
-  /**
-   * Placeholder text when no dates are selected
-   */
+  /** Placeholder text when no dates are selected */
   placeholder?: string;
 }
 
-export const DateRangePicker: FC<DateRangePickerProps> = ({
-  onChange,
-  value,
-  dateFormat = "MM/DD/YYYY",
-  className = "",
-  placeholder = "Select date range",
-}) => {
-  const { t } = useTranslation();
-  const calendarRef = useRef<HTMLDivElement>(null);
+/**
+ * Utility function to build className string
+ */
+const buildClassNames = (
+  ...classes: (string | false | null | undefined)[]
+): string => classes.filter(Boolean).join(" ");
 
-  // Parse date strings if provided in any format (including ISO format)
-  // Handles both Date objects and string representations of dates currently supports the ISO 8601 format
-  const parseDate = (dateInput: DateValue): Date => {
-    if (!dateInput) return new Date();
+/**
+ * DateRangePicker: Accessible, memoized date range picker with calendar interface.
+ *
+ * Usage:
+ * <DateRangePicker
+ *   onChange={(range) => console.log(range)}
+ *   value={{ startDate: new Date(), endDate: new Date() }}
+ *   placeholder="Select date range"
+ *   dateFormat="MM/DD/YYYY"
+ * />
+ */
+const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps>(
+  (
+    {
+      onChange,
+      value,
+      dateFormat = "MM/DD/YYYY",
+      className = "",
+      placeholder = "Select date range",
+      ...restProps
+    },
+    ref
+  ) => {
+    const { t } = useTranslation();
+    const calendarRef = useRef<HTMLDivElement>(null);
 
-    // If it's already a Date object
-    if (dateInput instanceof Date) return dateInput;
+    // Memoized date parsing utility
+    const parseDate = useCallback((dateInput: DateValue): Date => {
+      if (!dateInput) return new Date();
 
-    // Parse string date (handles ISO format like "2025-03-12T11:49:57+00:00")
-    try {
-      const parsedDate = new Date(dateInput);
-      // If the input is an ISO string, convert to local date to avoid timezone issues
-      if (typeof dateInput === "string" && dateInput.includes("T")) {
-        return new Date(
-          parsedDate.getFullYear(),
-          parsedDate.getMonth(),
-          parsedDate.getDate()
-        );
+      if (dateInput instanceof Date) return dateInput;
+
+      try {
+        const parsedDate = new Date(dateInput);
+        // Handle ISO strings by converting to local date
+        if (typeof dateInput === "string" && dateInput.includes("T")) {
+          return new Date(
+            parsedDate.getFullYear(),
+            parsedDate.getMonth(),
+            parsedDate.getDate()
+          );
+        }
+        return parsedDate;
+      } catch (e) {
+        console.error("Error parsing date:", e);
+        return new Date();
       }
-      return parsedDate;
-    } catch (e) {
-      console.error("Error parsing date:", e);
-      return new Date();
-    }
-  };
+    }, []);
 
-  // Set default initial date range
-  const getDefaultDateRange = (): DateRange => {
-    return {
+    // Memoized default date range
+    const defaultDateRange = useMemo((): DateRange => ({
       startDate: null,
       endDate: null,
-    };
-  };
+    }), []);
 
-  // Parse initial date range with fallbacks for null values
-  const parsedInitialRange = (): DateRange => {
-    return {
+    // Memoized parsed initial range
+    const parsedInitialRange = useMemo((): DateRange => ({
       startDate: value?.startDate ? parseDate(value.startDate) : null,
       endDate: value?.endDate ? parseDate(value.endDate) : null,
-    };
-  };
+    }), [value, parseDate]);
 
-  const [dateRange, setDateRange] = useState<DateRange>(parsedInitialRange());
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [currentMonth, setCurrentMonth] = useState<Date>(() => {
-    // Safely get start date for current month
-    const range = parsedInitialRange();
-    if (range.startDate) {
-      return range.startDate instanceof Date
-        ? range.startDate
-        : parseDate(range.startDate);
-    }
-    return new Date(); // Default to current month if no range provided
-  });
-
-  // Update state when value prop changes
-  useEffect(() => {
-    if (value) {
-      const newDateRange = {
-        startDate: value?.startDate ? parseDate(value.startDate) : null,
-        endDate: value?.endDate ? parseDate(value.endDate) : null,
-      };
-
-      setDateRange(newDateRange);
-
-      // Safely update current month if startDate exists
-      if (newDateRange.startDate) {
-        setCurrentMonth(
-          newDateRange.startDate instanceof Date
-            ? new Date(newDateRange.startDate)
-            : parseDate(newDateRange.startDate)
-        );
+    // State management
+    const [dateRange, setDateRange] = useState<DateRange>(parsedInitialRange);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [currentMonth, setCurrentMonth] = useState<Date>(() => {
+      if (parsedInitialRange.startDate) {
+        return parsedInitialRange.startDate instanceof Date
+          ? parsedInitialRange.startDate
+          : parseDate(parsedInitialRange.startDate);
       }
-    } else {
-      // Reset to empty range if value is undefined/null
-      setDateRange(getDefaultDateRange());
-    }
-  }, [value]);
+      return new Date();
+    });
 
-  // Format date according to specified format (default: MM/DD/YYYY)
-  const formatDateValue = (
-    date: Date | string | null,
-    format: string = dateFormat
-  ): string => {
-    // If no date, return empty
-    if (!date) {
-      return "";
-    }
+    // Update state when value prop changes
+    useEffect(() => {
+      if (value) {
+        const newDateRange = {
+          startDate: value?.startDate ? parseDate(value.startDate) : null,
+          endDate: value?.endDate ? parseDate(value.endDate) : null,
+        };
 
-    // Convert to Date object if string
-    const dateObj = date instanceof Date ? date : parseDate(date);
+        setDateRange(newDateRange);
 
-    // Format according to specified pattern
-    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-    const day = String(dateObj.getDate()).padStart(2, "0");
-    const year = dateObj.getFullYear();
+        if (newDateRange.startDate) {
+          setCurrentMonth(
+            newDateRange.startDate instanceof Date
+              ? new Date(newDateRange.startDate)
+              : parseDate(newDateRange.startDate)
+          );
+        }
+      } else {
+        setDateRange(defaultDateRange);
+      }
+    }, [value, parseDate, defaultDateRange]);
 
-    let formattedDate = format;
-    formattedDate = formattedDate.replace(/M+/g, month);
-    formattedDate = formattedDate.replace(/D+/g, day);
-    formattedDate = formattedDate.replace(/Y+/g, year.toString());
+    // Memoized date formatting utility
+    const formatDateValue = useCallback((
+      date: Date | string | null,
+      format: string = dateFormat
+    ): string => {
+      if (!date) return "";
 
-    return formattedDate;
-  };
+      const dateObj = date instanceof Date ? date : parseDate(date);
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const year = dateObj.getFullYear();
 
-  const formatDateRange = (): string => {
-    // If no dates selected
-    if (!dateRange.startDate && !dateRange.endDate) {
-      return isOpen ? t("Select Date") : t(placeholder);
-    }
+      let formattedDate = format;
+      formattedDate = formattedDate.replace(/M+/g, month);
+      formattedDate = formattedDate.replace(/D+/g, day);
+      formattedDate = formattedDate.replace(/Y+/g, year.toString());
 
-    const start = formatDateValue(dateRange.startDate);
-    const end = formatDateValue(dateRange.endDate);
+      return formattedDate;
+    }, [dateFormat, parseDate]);
 
-    return `${start} - ${end}`;
-  };
+    // Memoized date range formatting
+    const formatDateRange = useMemo((): string => {
+      if (!dateRange.startDate && !dateRange.endDate) {
+        return isOpen ? t("Select Date") : t(placeholder);
+      }
 
-  interface CalendarDay {
-    date: Date;
-    isCurrentMonth: boolean;
-  }
+      const start = formatDateValue(dateRange.startDate);
+      const end = formatDateValue(dateRange.endDate);
 
-  // Generate days for the calendar
-  const generateDays = (): CalendarDay[] => {
-    if (!currentMonth) {
-      setCurrentMonth(new Date());
-      return [];
-    }
+      return `${start} - ${end}`;
+    }, [dateRange, isOpen, t, placeholder, formatDateValue]);
 
-    const daysInMonth = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth() + 1,
-      0
-    ).getDate();
+    // Memoized calendar days generation
+    const generateDays = useMemo((): CalendarDay[] => {
+      if (!currentMonth) return [];
 
-    const firstDayOfMonth = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth(),
-      1
-    ).getDay();
-
-    // Adjust for Monday as first day of week (0 = Monday, 6 = Sunday)
-    const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-
-    // Get days from previous month
-    const daysFromPrevMonth: CalendarDay[] = [];
-    if (adjustedFirstDay > 0) {
-      const prevMonthDays = new Date(
+      const daysInMonth = new Date(
         currentMonth.getFullYear(),
-        currentMonth.getMonth(),
+        currentMonth.getMonth() + 1,
         0
       ).getDate();
 
-      for (let i = adjustedFirstDay - 1; i >= 0; i--) {
-        const prevDate = new Date(
+      const firstDayOfMonth = new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
+        1
+      ).getDay();
+
+      // Adjust for Monday as first day of week
+      const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+      // Previous month days
+      const daysFromPrevMonth: CalendarDay[] = [];
+      if (adjustedFirstDay > 0) {
+        const prevMonthDays = new Date(
           currentMonth.getFullYear(),
-          currentMonth.getMonth() - 1,
-          prevMonthDays - i
+          currentMonth.getMonth(),
+          0
+        ).getDate();
+
+        for (let i = adjustedFirstDay - 1; i >= 0; i--) {
+          const prevDate = new Date(
+            currentMonth.getFullYear(),
+            currentMonth.getMonth() - 1,
+            prevMonthDays - i
+          );
+          daysFromPrevMonth.push({
+            date: prevDate,
+            isCurrentMonth: false,
+          });
+        }
+      }
+
+      // Current month days
+      const currentMonthDays: CalendarDay[] = [];
+      for (let i = 1; i <= daysInMonth; i++) {
+        const date = new Date(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth(),
+          i
         );
-        daysFromPrevMonth.push({
-          date: prevDate,
+        currentMonthDays.push({
+          date,
+          isCurrentMonth: true,
+        });
+      }
+
+      // Next month days to fill calendar
+      const nextMonthDays: CalendarDay[] = [];
+      const totalDaysSoFar = daysFromPrevMonth.length + currentMonthDays.length;
+      const daysNeeded = 42 - totalDaysSoFar;
+
+      for (let i = 1; i <= daysNeeded; i++) {
+        const date = new Date(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth() + 1,
+          i
+        );
+        nextMonthDays.push({
+          date,
           isCurrentMonth: false,
         });
       }
-    }
 
-    // Current month days
-    const currentMonthDays: CalendarDay[] = [];
-    for (let i = 1; i <= daysInMonth; i++) {
-      const date = new Date(
-        currentMonth.getFullYear(),
-        currentMonth.getMonth(),
-        i
+      return [...daysFromPrevMonth, ...currentMonthDays, ...nextMonthDays];
+    }, [currentMonth]);
+
+    // Memoized date normalization utility
+    const normalizeDate = useCallback((date: Date | string | null): Date | null => {
+      if (!date) return null;
+
+      if (date instanceof Date) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      }
+
+      const parsedDate = parseDate(date);
+      return new Date(
+        parsedDate.getFullYear(),
+        parsedDate.getMonth(),
+        parsedDate.getDate()
       );
-      currentMonthDays.push({
-        date,
-        isCurrentMonth: true,
-      });
-    }
+    }, [parseDate]);
 
-    // Next month days to fill the calendar
-    const nextMonthDays: CalendarDay[] = [];
-    const totalDaysSoFar = daysFromPrevMonth.length + currentMonthDays.length;
-    const daysNeeded = 42 - totalDaysSoFar; // 6 rows of 7 days
+    // Memoized date range checking utilities
+    const isInRange = useCallback((date: Date): boolean => {
+      const startDate = normalizeDate(dateRange?.startDate);
+      const endDate = normalizeDate(dateRange?.endDate);
+      const targetDate = normalizeDate(date);
 
-    for (let i = 1; i <= daysNeeded; i++) {
-      const date = new Date(
-        currentMonth.getFullYear(),
-        currentMonth.getMonth() + 1,
-        i
+      return !!(
+        targetDate &&
+        startDate &&
+        endDate &&
+        targetDate >= startDate &&
+        targetDate <= endDate
       );
-      nextMonthDays.push({
-        date,
-        isCurrentMonth: false,
-      });
-    }
+    }, [dateRange, normalizeDate]);
 
-    return [...daysFromPrevMonth, ...currentMonthDays, ...nextMonthDays];
-  };
+    const isStartDate = useCallback((date: Date): boolean => {
+      const startDate = normalizeDate(dateRange?.startDate);
+      const targetDate = normalizeDate(date);
 
-  const normalizeDate = (date: Date | string | null): Date | null => {
-    if (!date) return null;
+      return !!(
+        targetDate &&
+        startDate &&
+        targetDate.getTime() === startDate.getTime()
+      );
+    }, [dateRange, normalizeDate]);
 
-    if (date instanceof Date) {
-      // Create a new date with local timezone to avoid UTC issues
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    }
+    const isEndDate = useCallback((date: Date): boolean => {
+      const endDate = normalizeDate(dateRange?.endDate);
+      const targetDate = normalizeDate(date);
 
-    const parsedDate = parseDate(date);
-    return new Date(
-      parsedDate.getFullYear(),
-      parsedDate.getMonth(),
-      parsedDate.getDate()
-    );
-  };
+      return !!(
+        targetDate &&
+        endDate &&
+        targetDate.getTime() === endDate.getTime()
+      );
+    }, [dateRange, normalizeDate]);
 
-  // Check if date is in selected range
-  const isInRange = (date: Date): boolean => {
-    const startDate = normalizeDate(dateRange?.startDate);
-    const endDate = normalizeDate(dateRange?.endDate);
-    const targetDate = normalizeDate(date);
+    // Memoized filter date range creation
+    const createFilterDateRange = useCallback((startDate: Date, endDate: Date): DateRange => {
+      const filterStartDate = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate(),
+        0, 0, 0, 0
+      );
+      const filterEndDate = new Date(
+        endDate.getFullYear(),
+        endDate.getMonth(),
+        endDate.getDate(),
+        23, 59, 59, 999
+      );
 
-    return !!(
-      targetDate &&
-      startDate &&
-      endDate &&
-      targetDate >= startDate &&
-      targetDate <= endDate
-    );
-  };
-
-  // Check if date is start date
-  const isStartDate = (date: Date): boolean => {
-    const startDate = normalizeDate(dateRange?.startDate);
-    const targetDate = normalizeDate(date);
-
-    return !!(
-      targetDate &&
-      startDate &&
-      targetDate.getTime() === startDate.getTime()
-    );
-  };
-
-  // Check if date is end date
-  const isEndDate = (date: Date): boolean => {
-    const endDate = normalizeDate(dateRange?.endDate);
-    const targetDate = normalizeDate(date);
-
-    return !!(
-      targetDate &&
-      endDate &&
-      targetDate.getTime() === endDate.getTime()
-    );
-  };
-
-  // Helper function to create proper date range for filtering
-  const createFilterDateRange = (startDate: Date, endDate: Date): DateRange => {
-    // Create new date objects to avoid mutating the originals and handle timezone properly
-    const filterStartDate = new Date(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate(),
-      0,
-      0,
-      0,
-      0
-    );
-    const filterEndDate = new Date(
-      endDate.getFullYear(),
-      endDate.getMonth(),
-      endDate.getDate(),
-      23,
-      59,
-      59,
-      999
-    );
-
-    return {
-      startDate: filterStartDate,
-      endDate: filterEndDate,
-    };
-  };
-
-  // Handle date selection
-  const handleDateSelect = (date: Date): void => {
-    if (!date) return;
-
-    // Create a new date object with local timezone (avoid UTC conversion issues)
-    const selectedDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-    if (!dateRange.startDate || (dateRange.startDate && dateRange.endDate)) {
-      // Start new selection
-      const newRange = {
-        startDate: selectedDate,
-        endDate: null,
+      return {
+        startDate: filterStartDate,
+        endDate: filterEndDate,
       };
+    }, []);
 
-      setDateRange(newRange);
-      // Always notify parent of changes, even for partial selections
-      onChange(newRange);
-    } else {
-      // Complete the selection
-      let newStartDate: Date;
-      let newEndDate: Date;
+    // Memoized date selection handler
+    const handleDateSelect = useCallback((date: Date): void => {
+      if (!date) return;
 
-      const currentStartDate =
-        dateRange.startDate instanceof Date
+      const selectedDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+
+      if (!dateRange.startDate || (dateRange.startDate && dateRange.endDate)) {
+        const newRange = {
+          startDate: selectedDate,
+          endDate: null,
+        };
+        setDateRange(newRange);
+        onChange(newRange);
+      } else {
+        const currentStartDate = dateRange.startDate instanceof Date
           ? new Date(
               dateRange.startDate.getFullYear(),
               dateRange.startDate.getMonth(),
@@ -372,103 +358,101 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
             )
           : parseDate(dateRange.startDate);
 
-      if (selectedDate < currentStartDate) {
-        newStartDate = selectedDate;
-        newEndDate = currentStartDate;
-      } else {
-        newStartDate = currentStartDate;
-        newEndDate = selectedDate;
+        const newStartDate = selectedDate < currentStartDate ? selectedDate : currentStartDate;
+        const newEndDate = selectedDate < currentStartDate ? currentStartDate : selectedDate;
+
+        const filterRange = createFilterDateRange(newStartDate, newEndDate);
+        const newRange = {
+          startDate: filterRange.startDate,
+          endDate: filterRange.endDate,
+        };
+
+        setDateRange(newRange);
+        onChange(newRange);
       }
+    }, [dateRange, parseDate, createFilterDateRange, onChange]);
 
-      // Create proper filter range with start of day and end of day
-      const filterRange = createFilterDateRange(newStartDate, newEndDate);
+    // Memoized keyboard event handler for date selection
+    const handleDateKeyDown = useCallback((
+      event: React.KeyboardEvent<HTMLButtonElement>,
+      date: Date
+    ): void => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handleDateSelect(date);
+      }
+    }, [handleDateSelect]);
 
-      const newRange = {
+    // Memoized navigation methods
+    const goToPrevMonth = useCallback((): void => {
+      if (!currentMonth) return;
+      setCurrentMonth(
+        new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+      );
+    }, [currentMonth]);
+
+    const goToNextMonth = useCallback((): void => {
+      if (!currentMonth) return;
+      setCurrentMonth(
+        new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+      );
+    }, [currentMonth]);
+
+    const goToPrevYear = useCallback((): void => {
+      if (!currentMonth) return;
+      setCurrentMonth(
+        new Date(currentMonth.getFullYear() - 1, currentMonth.getMonth(), 1)
+      );
+    }, [currentMonth]);
+
+    const goToNextYear = useCallback((): void => {
+      if (!currentMonth) return;
+      setCurrentMonth(
+        new Date(currentMonth.getFullYear() + 1, currentMonth.getMonth(), 1)
+      );
+    }, [currentMonth]);
+
+    // Memoized today button handler
+    const handleTodayClick = useCallback((): void => {
+      const today = new Date();
+      const normalizedToday = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      );
+      const filterRange = createFilterDateRange(normalizedToday, normalizedToday);
+      setDateRange({
         startDate: filterRange.startDate,
         endDate: filterRange.endDate,
-      };
+      });
+      setCurrentMonth(normalizedToday);
+      onChange({
+        startDate: filterRange.startDate,
+        endDate: filterRange.endDate,
+      });
+    }, [createFilterDateRange, onChange]);
 
-      setDateRange(newRange);
-      // Notify parent component of the complete selection
-      onChange(newRange);
-    }
-  };
+    // Memoized keyboard navigation handler
+    const handleNavKeyDown = useCallback((
+      event: React.KeyboardEvent<HTMLButtonElement>,
+      action: () => void
+    ): void => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        action();
+      }
+    }, []);
 
-  // Handle keyboard event for date selection
-  const handleDateKeyDown = (
-    event: KeyboardEvent<HTMLButtonElement>,
-    date: Date
-  ): void => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleDateSelect(date);
-    }
-  };
+    // Memoized calendar toggle handler
+    const toggleCalendar = useCallback((): void => {
+      setIsOpen(!isOpen);
+    }, [isOpen]);
 
-  // Navigation methods
-  const goToPrevMonth = (): void => {
-    if (!currentMonth) return;
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+    // Memoized container className
+    const containerClassName = useMemo(
+      () => buildClassNames("date-range-picker-container", className),
+      [className]
     );
-  };
-
-  const goToNextMonth = (): void => {
-    if (!currentMonth) return;
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
-    );
-  };
-
-  const goToPrevYear = (): void => {
-    if (!currentMonth) return;
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear() - 1, currentMonth.getMonth(), 1)
-    );
-  };
-
-  const goToNextYear = (): void => {
-    if (!currentMonth) return;
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear() + 1, currentMonth.getMonth(), 1)
-    );
-  };
-
-  // Select today's date 
-  const handleTodayClick = (): void => {
-    const today = new Date();
-    const normalizedToday = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    );
-    const filterRange = createFilterDateRange(normalizedToday, normalizedToday);
-    setDateRange({
-      startDate: filterRange.startDate,
-      endDate: filterRange.endDate,
-    });
-    setCurrentMonth(normalizedToday);
-    onChange({
-      startDate: filterRange.startDate,
-      endDate: filterRange.endDate,
-    });
-  };
-
-  // Handle keyboard navigation
-  const handleNavKeyDown = (
-    event: KeyboardEvent<HTMLButtonElement>,
-    action: () => void
-  ): void => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      action();
-    }
-  };
-
-  // Handle calendar toggle
-  const toggleCalendar = (): void => {
-    setIsOpen(!isOpen);
-  };
 
   // Handle close calendar (X button)
   const handleCloseCalendar = (event?: React.MouseEvent): void => {
@@ -510,41 +494,43 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     return `${months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
   };
 
-  // Close calendar when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent): void => {
-      if (
-        calendarRef.current &&
-        !calendarRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
+    // Close calendar when clicking outside
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent): void => {
+        if (
+          calendarRef.current &&
+          !calendarRef.current.contains(event.target as Node)
+        ) {
+          setIsOpen(false);
 
-        // If selection is incomplete, complete it with current dates
-        if (dateRange.startDate && !dateRange.endDate) {
-          // Create proper filter range for single date selection
-          const startDateObj =
-            dateRange.startDate instanceof Date
-              ? dateRange.startDate
-              : parseDate(dateRange.startDate);
+          // If selection is incomplete, complete it with current dates
+          if (dateRange.startDate && !dateRange.endDate) {
+            // Create proper filter range for single date selection
+            const startDateObj =
+              dateRange.startDate instanceof Date
+                ? dateRange.startDate
+                : parseDate(dateRange.startDate);
 
-          const singleDateRange = createFilterDateRange(
-            startDateObj,
-            startDateObj
-          );
+            const singleDateRange = createFilterDateRange(
+              startDateObj,
+              startDateObj
+            );
 
-          setDateRange(singleDateRange);
+            setDateRange(singleDateRange);
 
-          // Notify parent component of the completed selection
-          onChange(singleDateRange);
+            // Notify parent component of the completed selection
+            onChange(singleDateRange);
+          }
         }
-      }
-    };
+      };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dateRange, onChange]);
+      if (isOpen) {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }
+    }, [isOpen, dateRange, parseDate, createFilterDateRange, onChange]);
 
   // Reset current month when opening calendar
   useEffect(() => {
@@ -557,12 +543,12 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
     }
   }, [isOpen, dateRange?.startDate]);
 
-  return (
-    <div
-      className={`date-range-picker-container ${className}`}
-      ref={calendarRef}
-      data-testid="date-range-picker"
-    >
+    return (
+      <div
+        ref={ref}
+        className={containerClassName}
+        data-testid="date-range-picker"
+      >
       <div className="drp-input-container">
         <input
         onClick={toggleCalendar}
@@ -600,6 +586,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
 
       {isOpen && (
         <div
+          ref={calendarRef}
           className="calendar-container"
           data-testid="calendar-container"
           aria-label={t("Date picker")}
@@ -686,7 +673,7 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
           </div>
 
           <div className="calendar-days" data-testid="calendar-days">
-            {generateDays().map((dayObj) => {
+            {generateDays.map((dayObj) => {
               const date = dayObj?.date;
               if (!date) return null;
 
@@ -737,4 +724,13 @@ export const DateRangePicker: FC<DateRangePickerProps> = ({
       )}
     </div>
   );
-};
+});
+
+// Set display name for better debugging
+DateRangePickerComponent.displayName = "DateRangePicker";
+
+// Export memoized component for performance optimization
+export const DateRangePicker = memo(DateRangePickerComponent);
+
+// Export types for consumers
+export type { DateRangePickerProps as DateRangePickerPropsType };

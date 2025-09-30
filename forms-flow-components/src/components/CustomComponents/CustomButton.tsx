@@ -6,11 +6,12 @@ import { useTranslation } from "react-i18next";
  * 
  * Usage:
  * <CustomButton variant="primary" label="submit" onClick={...} loading={...} icon={<Icon />} />
+ * <CustomButton variant="secondary" label="cancel" onClick={...} />
  * <CustomButton icon={<Icon />} iconOnly ariaLabel="Search" />
  */
 
 type ButtonVariant = "primary" | "secondary";
-type ButtonSize = "small" | "medium" | "large";
+type ButtonSize = "small" | "medium" | "large"; // Size prop not implemented correctly.CSS missing for this.
 type ButtonType = "button" | "submit" | "reset";
 
 interface CustomButtonProps extends Omit<React.ComponentPropsWithoutRef<"button">, 'onClick' | 'disabled' | 'type'> {
