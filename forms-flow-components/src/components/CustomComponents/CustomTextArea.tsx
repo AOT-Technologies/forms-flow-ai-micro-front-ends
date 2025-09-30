@@ -29,9 +29,9 @@ export const CustomTextArea: FC<CustomTextAreaProps> = ({
   return (
     <div className={containerClass}>
       {/* Hidden label for accessibility */}
-      <label htmlFor={inputId} className="sr-only">
+      {/* <label htmlFor={inputId} className="sr-only">
         {ariaLabel || t(placeholder)}
-      </label>
+      </label> */}
 
       <textarea
         id={inputId}

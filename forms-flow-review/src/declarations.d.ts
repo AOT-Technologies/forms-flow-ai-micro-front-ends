@@ -86,7 +86,8 @@ declare module "@formsflow/components" {
     BackToPrevIcon,
     StepperComponent,
     PromptModal,
-    CustomUrl
+    CustomUrl,
+    Switch
   }: any;
 }
 

@@ -25,9 +25,9 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
   return (
     <div className="text-input-container">
       {/* Hidden label for accessibility */}
-      <label htmlFor={inputId} className="sr-only">
+      {/* <label htmlFor={inputId} className="sr-only">
         {ariaLabel || t(placeholder)}
-      </label>
+      </label> */}
 
       <input
         id={inputId}
