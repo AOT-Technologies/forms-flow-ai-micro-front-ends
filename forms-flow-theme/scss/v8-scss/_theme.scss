@@ -248,7 +248,6 @@ $font-tokens: (
       min-height: 100vh;
       padding: 1rem 0;
       margin: 0;
-      transition: width 0.3s ease;
   
       .page-layout {
         /* Inner page layout wrapper */
@@ -260,11 +259,10 @@ $font-tokens: (
         grid-template-columns: 1fr;
         padding: 0;
         box-sizing: border-box;
-        transition: width 0.3s ease;
   
         .toast-section {
           @include mixins.rowLayout(72px, center, 1);
-          transition: width 0.3s ease;
+          // transition: width 0.3s ease;
         }
   
         .header-section-1 {

@@ -27,16 +27,6 @@ $font-weight-medium: var(--font-weight-medium);
     border: 1px solid $alert-passive;
     border-radius: 5px;
 
-    // ✅ Animation when appearing
-    &.entering {
-        animation: dropIn $alert-drop-duration ease-out forwards;
-    }
-
-    // ✅ Animation when disappearing
-    &.leaving {
-        animation: dropOut $alert-drop-duration ease-in forwards;
-    }
-
     &-left {
         flex: 1;
     }
@@ -67,31 +57,5 @@ $font-weight-medium: var(--font-weight-medium);
 
     &-warning {
         border-color: $alert-warning;
-    }
-}
-
-// ✅ Drop-in Animation
-@keyframes dropIn {
-    0% {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-// ✅ Drop-out Animation
-@keyframes dropOut {
-    0% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateY(-50px);
-        opacity: 0;
     }
 }

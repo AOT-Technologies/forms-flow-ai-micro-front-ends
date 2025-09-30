@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 
 interface AlertProps {
   message: string;
   variant?: "passive" | "focus" | "error" | "warning";
-  dataTestId?: string;
+  dataTestId?: string; // Main test id for the container
   rightContent?: React.ReactNode;
-  isShowing?: boolean; // ✅ single prop
+  isShowing?: boolean;
 }
 
 export const Alert: FC<AlertProps> = ({
@@ -15,33 +15,40 @@ export const Alert: FC<AlertProps> = ({
   rightContent,
   isShowing = false,
 }) => {
-  const [shouldRender, setShouldRender] = useState(isShowing);
 
-  useEffect(() => {
-    if (isShowing) {
-      setShouldRender(true); // Mount immediately
-    } else {
-      // Delay unmount until animation ends
-      const timer = setTimeout(() => setShouldRender(false), 300); // Match CSS duration
-      return () => clearTimeout(timer);
-    }
-  }, [isShowing]);
-
-  if (!shouldRender) return null;
+  // If alert is not showing, render nothing
+  if (!isShowing) return null;
 
   return (
     <div
+      // Main alert container
       className={`custom-alert custom-alert-${variant} ${
         isShowing ? "entering" : "leaving"
       }`}
       role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
       data-testid={dataTestId}
     >
-      <div className="custom-alert-left">
+      {/* Left section: message area */}
+      <div
+        className="custom-alert-left"
+        data-testid={`${dataTestId}-left`}
+        aria-label="alert-message"
+      >
         <span className="custom-alert-text">{message}</span>
       </div>
 
-      <div className="custom-alert-right">{rightContent}</div>
+      {/* Right section: actions or extra content */}
+      {rightContent && (
+        <div
+          className="custom-alert-right"
+          data-testid={`${dataTestId}-right`}
+          aria-label="alert-action"
+        >
+          {rightContent}
+        </div>
+      )}
     </div>
   );
 };
