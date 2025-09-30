@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { AngleRightIcon, AngleLeftIcon, PencilIcon } from "../SvgIcons";
 import { useTranslation } from "react-i18next";
-import { ButtonDropdown, FormInput } from "@formsflow/components";
+import { ButtonDropdown } from "./ButtonDropdown";
+import { FormInput } from "./FormInput";
 import { CustomButton } from "./Button";
 import { CustomInfo } from "./CustomInfo";
 

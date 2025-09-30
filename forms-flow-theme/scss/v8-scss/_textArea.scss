@@ -38,13 +38,21 @@ $ta-font-weight: var(--font-weight-regular);
         resize: none;
 
         &::placeholder {
-            color: $ta-color-placeholder;
+            color: #DAD9DA;
+            font-size: 15px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
         }
 
         // Style for disabled state
         &:disabled {
             &::placeholder {
-                color: $ta-color-placeholder-disabled;
+                color: #DAD9DA;
+                font-size: 15px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
             }
         }
 

@@ -27,6 +27,7 @@ module.exports = {
       alias: {
         ...(config.resolve && config.resolve.alias ? config.resolve.alias : {}),
         bootstrap: bootstrapPath,
+        '@formsflow/service': resolve(__dirname, '../src/mocks/formsflow-service.js'),
       },
       extensions: Array.from(new Set([...(config.resolve?.extensions || []), '.ts', '.tsx'])),
     };

@@ -2,7 +2,7 @@ import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
-import { ChevronIcon ,ShowPremiumIcons, NavbarTaskIcon, NavbarSubmitIcon } from "@formsflow/components";
+import { ChevronIcon ,ShowPremiumIcons, NavbarTaskIcon, NavbarSubmitIcon, NavbarBuildIcon, NavbarAnalyzeIcon, NavbarManageIcon } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { StorageService } from "@formsflow/service";
 import PropTypes from "prop-types";
@@ -14,6 +14,7 @@ const MenuComponent = ({
   optionsCount,
   subscribe,
   baseUrl,
+  collapsed
 }) => {
   const [tenant, setTenant] = React.useState({});
   const [activeMenu, setActiveMenu] = React.useState(null); 
@@ -79,49 +80,70 @@ const MenuComponent = ({
       : getComputedStyle(document.documentElement).getPropertyValue("--ff-primary");
   };
   
-  const chevronColor =
-  getComputedStyle(document.documentElement).getPropertyValue(
-    "--navbar-main-menu-active-font-color"
-  )?.trim();
-
-  const defaultStroke =
-  getComputedStyle(document.documentElement).getPropertyValue(
-    "--navbar-bg-color"
-  )?.trim();
-
 const renderMenuIcon = () => {
   const lowerMainMenu = mainMenu.toLowerCase();
   let iconFillColor, strokeColor;
-
   if (isMainMenuActive()) {
     iconFillColor = getComputedStyle(document.documentElement)
-      .getPropertyValue("--navbar-active-submenu-font-color")?.trim();
+      .getPropertyValue("--navbar-menu-font-color")?.trim();
 
     strokeColor =  getComputedStyle(document.documentElement)
-      .getPropertyValue("--navbar-active-submenu-bg-color")?.trim();
+    .getPropertyValue("--navbar-menu-font-color")?.trim();
   } else {
-    iconFillColor = chevronColor;
-    strokeColor = defaultStroke;
+    iconFillColor =  getComputedStyle(document.documentElement)
+    .getPropertyValue("--navbar-submenu-font-color")?.trim();
+
+    strokeColor =  getComputedStyle(document.documentElement)
+    .getPropertyValue("--navbar-submenu-font-color")?.trim();
   }
-  switch (lowerMainMenu) {
-    case "tasks":
-      return <NavbarTaskIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
 
-    case "submit":
+  if(collapsed){
+    switch (lowerMainMenu) {
+      case "tasks":
+        return <NavbarTaskIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
+        
+        case "submit":
       return <NavbarSubmitIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
-
-    default:
-      if (!noOptionsMenu) {
-        return (
-          <ChevronIcon
-            // width="10"
-            // height="5"
-            className="svgIcon-dark custom-chevron"
-            color={iconFillColor}
-          />
-        );
-      }
-      return null;
+      
+    case "build":
+      return <NavbarBuildIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
+      
+    case "analyze":
+      return <NavbarAnalyzeIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
+      
+      case "manage":
+        return <NavbarManageIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
+        
+        default:
+          if (!noOptionsMenu) {
+            return (
+              <ChevronIcon
+                className="custom-chevron"
+                color={iconFillColor}
+              />
+            );
+          }
+          return null;
+        }
+  }else{
+    switch (lowerMainMenu) {
+      case "tasks":
+        return <NavbarTaskIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
+        
+        case "submit":
+      return <NavbarSubmitIcon fillColor={iconFillColor} strokeColor={strokeColor}/>;
+        
+        default:
+          if (!noOptionsMenu) {
+            return (
+              <ChevronIcon
+                className="custom-chevron"
+                color={iconFillColor}
+              />
+            );
+          }
+          return null;
+        }
   }
 };
 
@@ -137,10 +159,10 @@ const renderMenuIcon = () => {
         onClick={noOptionsMenu ? handleHeaderClick : undefined}
       >
         {renderMenuIcon()}
-        <span>{t(mainMenu)}</span>
+        <span hidden ={collapsed}>{t(mainMenu)}</span>
       </Accordion.Header>
       {!noOptionsMenu && (
-        <Accordion.Body>
+        <Accordion.Body hidden={collapsed}>
           {subMenu?.map((menu, index) => (
             <Link
               key={index}
@@ -177,6 +199,7 @@ MenuComponent.propTypes = {
   optionsCount: PropTypes.string.isRequired,
   subscribe: PropTypes.func.isRequired,
   baseUrl: PropTypes.string.isRequired,
+  collapsed:PropTypes.string.isRequired
 };
 
 export default MenuComponent;
