@@ -51,21 +51,21 @@ export const Complete: Story = {
 };
 
 // Color variants
-export const Passive: Story = {
+export const PassiveBar: Story = {
   args: {
     progress: 30,
     color: 'passive',
   },
 };
 
-export const Error: Story = {
+export const ErrorBar: Story = {
   args: {
     progress: 45,
     color: 'error',
   },
 };
 
-export const Warning: Story = {
+export const WarningBar: Story = {
   args: {
     progress: 75,
     color: 'warning',
@@ -115,7 +115,7 @@ export const FormCompletion: Story = {
   },
 };
 
-export const SystemWarning: Story = {
+export const SystemWarningBar: Story = {
   args: {
     progress: 90,
     color: 'warning',

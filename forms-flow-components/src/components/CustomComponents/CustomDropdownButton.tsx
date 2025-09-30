@@ -136,7 +136,7 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
       className={containerClassName}
       ref={ref}
       {...(dataTestId ? { "data-testid": dataTestId } : {})}
-      {...restProps}
+      {...(restProps as any)}
     >
       <Dropdown.Toggle
         variant={variant}
@@ -151,6 +151,13 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
         <div 
           className="label-div" 
           onClick={handleLabelClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              e.stopPropagation();
+              handleLabelClick(e as any);
+            }
+          }}
           data-testid={`${dataTestId}-label`}
           role="button"
           tabIndex={disabled ? -1 : 0}
@@ -166,6 +173,12 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
         <div 
           className="dropdown-icon"
           onClick={handleDropdownIconClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleDropdownIconClick(e as any);
+            }
+          }}
           data-testid={`${dataTestId}-icon`}
           role="button"
           tabIndex={disabled ? -1 : 0}
@@ -216,4 +229,4 @@ V8CustomDropdownButtonComponent.displayName = "V8CustomDropdownButton";
 export const V8CustomDropdownButton = memo(V8CustomDropdownButtonComponent);
 
 // Export types for consumers
-export type { V8CustomDropdownButtonProps };
+// export type { V8CustomDropdownButtonProps };
