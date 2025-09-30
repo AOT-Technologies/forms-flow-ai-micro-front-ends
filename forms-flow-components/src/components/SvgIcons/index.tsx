@@ -136,10 +136,7 @@ export const SaveTemplateIcon = ({ color = baseColor, ...props }) => (
     viewBox="0 0 14 16"
     fill="none"
   >
-    <path
-      d="M2 2H12V0H2V2ZM12 2V14H14V2H12ZM12 14H2V16H12V14ZM2 14V2H0V14H2ZM2 14H2H0C0 15.1046 0.89543 16 2 16V14ZM12 14V16C13.1046 16 14 15.1046 14 14H12ZM12 2H14C14 0.895431 13.1046 0 12 0V2ZM2 0C0.89543 0 0 0.895431 0 2H2V2V0Z"
-      fill={color}
-    />
+
     <path d="M7 5L7 11" stroke={color} strokeWidth="2" strokeLinecap="round" />
     <path d="M4 8H10" stroke={color} strokeWidth="2" strokeLinecap="round" />
   </svg>
