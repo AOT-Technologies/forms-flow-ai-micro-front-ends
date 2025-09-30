@@ -81,8 +81,16 @@
             align-items: center;
             justify-content: center;
             background: transparent;
-            transition: all 0.15s ease-in-out;
+            border: none;
+            padding: 0;
+            outline: none;
+            box-shadow: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            transition: opacity 0.15s ease-in-out;
             z-index: 1;
+            border-radius: 50%;
             
             @media (min-width: 768px) {
                 right: 1.5rem;
@@ -93,9 +101,11 @@
                 width: 1.5rem;
             }
         }
-        .copyBtn:hover{
-            background: var(--gray-50);
-            border-radius: 50%;
+        .copyBtn:hover,
+        .copyBtn:focus,
+        .copyBtn:active{
+            background: transparent;
+            border: 1px solid var(--gray-darkest);
         }
     }
     

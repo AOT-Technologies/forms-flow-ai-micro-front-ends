@@ -60,15 +60,14 @@ const CustomUrl: React.FC<CustomUrlProps> = ({
           className="urlInputField flex-1 px-2 py-2 outline-none"
           placeholder="Enter URL"
         />
-        <div
+        <button
+          type="button"
           onClick={handleCopy}
           className="copyBtn"
           aria-label="Copy URL"
-          tabIndex={0}
-          role="button"
         >
           <URLCopyIcon />
-        </div>
+        </button>
       </div>
       <div className="actions">
         {message && (
