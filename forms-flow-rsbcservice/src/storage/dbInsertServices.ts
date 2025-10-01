@@ -112,6 +112,16 @@ class OfflineSaveService {
           await rsbcDb.userRoles.bulkPut(data);
           console.log("User roles saved to IndexedDB.");
           break;
+        case "lki_highway":
+          await rsbcDb.lkiHighway.clear();
+          await rsbcDb.lkiHighway.bulkPut(data);
+          console.log("LKI Highway data saved to IndexedDB.");
+          break;
+        case "lki_segment":
+          await rsbcDb.lkiSegment.clear();
+          await rsbcDb.lkiSegment.bulkPut(data);
+          console.log("LKI Segment data saved to IndexedDB.");
+          break;
         default:
           console.log(`No matching table found for resource: ${resourceName}`);
       }
