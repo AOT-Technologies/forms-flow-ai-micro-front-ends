@@ -1,0 +1,180 @@
+// Checkbox Variables - Using consistent rem/em units for better scalability
+$checkbox-size: 33px;            // 20px at 16px base
+$checkbox-check-size: 0.75rem;       // 12px at 16px base
+$checkbox-border-width: 0.125rem;    // visual border thickness (2px)
+$checkbox-gap-inline: 2rem;          // space between inline checkboxes
+
+// Transition variables
+$checkbox-transition-duration: 0.15s;
+$checkbox-transition-timing: ease-in-out;
+
+// Color Variables
+$color-white: #ffffff;
+$color-light-gray: #fcfcfc;
+$color-medium-gray: #B7B7B8;
+$color-dark-gray: #4a4a4a;
+$color-darker-gray: #525254;
+$color-disabled-gray: #c5c5c5;
+
+$color-primary-selected: #8969f2;
+$color-primary: rgba(184, 171, 255, 1);
+$color-primary-light: #b8abff;
+$color-primary-lighter: #bcb6f5;
+$color-primary-border: rgba(184, 171, 255, 0.5);
+
+// Checkbox Mixins
+@mixin checkbox-input-base {
+  border-width: 3px!important;
+  border-radius: 5px!important;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: $checkbox-size;
+  height: $checkbox-size;
+  border: $checkbox-border-width solid $color-medium-gray;
+  border-radius: 0.25rem; // 4px - slightly rounded corners for checkboxes
+  background: $color-white;
+  position: relative;
+  cursor: pointer;
+  transition:
+    border-color $checkbox-transition-duration $checkbox-transition-timing,
+    box-shadow $checkbox-transition-duration $checkbox-transition-timing,
+    background-color $checkbox-transition-duration $checkbox-transition-timing;
+
+  // inner checkmark
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    // Center the tick perfectly; slight vertical tweak is handled by balanced width/height
+    transform: translate(-50%, -70%) rotate(45deg) scale(1);
+    width: 9px;
+    height: 16px;
+    border-width: 2.25px !important;
+    border: $checkbox-border-width solid $color-white;
+    border-top: none;
+    border-left: none;
+    opacity: 0;
+    transition:
+      transform $checkbox-transition-duration $checkbox-transition-timing,
+      opacity $checkbox-transition-duration $checkbox-transition-timing,
+      background-color $checkbox-transition-duration $checkbox-transition-timing;
+  }
+}
+
+@mixin checkbox-focus-ring {
+  outline: none;
+  // focus style via border color only (no outer halo)
+  box-shadow: none;
+}
+
+@mixin checkbox-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+// Main Checkbox Component
+.custom-checkbox {
+  // group container spacing
+  margin: var(--spacer-050) 0;
+
+  &--inline {
+    .form-check {
+      display: inline-flex;
+      align-items: center;
+      margin-right: $checkbox-gap-inline;
+    }
+  }
+
+  .form-check {
+    padding-left: 0; // we handle spacing on the label
+
+    .form-check-label {
+      margin-left: var(--spacer-050);
+      color: $color-dark-gray; // align with palette used in _button.scss
+    }
+  }
+
+  // Base checkbox appearance and states
+  // Increase specificity inside our v8-form-check wrapper to win over global form styles
+  .v8-form-check.form-check .form-check-input[type='checkbox'],
+  .v8-form-check .form-check-input[type='checkbox'],
+  .form-check .form-check-input[type='checkbox'] {
+    @include checkbox-input-base;
+    background-image: none; // override bootstrap default checkmark
+    box-shadow: none; // remove bootstrap default focus shadow (we add our own)
+    accent-color: initial; // ensure browser accent color does not override
+    border-color: $color-primary-light; // default border
+
+    // hover / tab state (deselect / hover)
+    &:hover { border-color: $color-primary-selected; }
+
+    // focused state ring
+    &:focus-visible { @include checkbox-focus-ring; border-color: $color-primary-selected; }
+
+    // keyboard tab-visible state on parent wrapper
+    &:focus {
+      // keep minimal native focus but avoid extra browser shadows
+      outline: none;
+    }
+
+    // selected state
+    &:checked {
+      background-color: $color-white;
+      border-color: $color-primary; // border matches theme
+      &::after {
+        opacity: 1;
+        border-color: $color-primary; // primary-colored tick        
+        transform: translate(-50%, -70%) rotate(45deg) scale(1);
+        width: 9px;
+        height: 16px;
+        border-width: 2.25px !important;
+      }
+    }
+
+    // ensure keyboard focus wins over selected border color
+    &:checked:focus-visible {
+      border-color: $color-primary-selected;
+      background-color: $color-primary-selected;
+      &::after { border-color: $color-white; }
+    }
+
+    // disabled states
+    &:disabled {
+      @include checkbox-disabled;
+      border-color: $color-light-gray;
+      background-color: $color-light-gray;
+      &::after {
+        border-color: $color-darker-gray;
+        opacity: 0.5;
+      }
+    }
+
+    &:disabled + .form-check-label {
+      @include checkbox-disabled;
+      color: $color-disabled-gray;
+    }
+  }
+
+  // Variant modifiers
+  // Variant modifiers
+  &.custom-checkbox--primary {
+    .form-check .form-check-input[type='checkbox'] {
+      border-color: $color-primary!important;
+      &:hover { border-color: $color-primary-selected!important; &::after { border-color: $color-primary-selected!important; } }
+      &:focus-visible { border-color: $color-primary-selected!important; &::after { border-color: $color-primary-selected!important; } }
+      &:disabled { border-color: $color-primary-disabled!important; &::after { border-color: $color-primary-disabled!important; } }
+    }
+  }
+
+  &.custom-checkbox--secondary {
+    .form-check .form-check-input[type='checkbox'] {
+      border-color: $color-medium-gray!important;
+      &:checked { border-color: $color-medium-gray!important; &::after { border-color: $color-darker-gray!important; } }
+      &:hover { border-color: $color-darker-gray!important; &::after { border-color: $color-darker-gray!important; } }
+      &:focus-visible { border-color: $color-darker-gray!important; &::after { border-color: $color-darker-gray!important; } }
+      &:disabled { border-color: $color-disabled-gray!important; background-color: $color-light-gray!important; &::after { border-color: $color-disabled-gray!important; } }
+    }
+  }
+}
