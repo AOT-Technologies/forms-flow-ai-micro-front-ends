@@ -201,6 +201,8 @@ const DropdownItems = [
         <div className="fields">
         <label className="form-label panel-label">{t("Form")}</label>
           <ButtonDropdown
+            variant="primary"
+            defaultLabel="All Forms"
             label={selectedItem}
             dropdownItems={DropdownItems}
             onSearch={(query) => setSearchQuery(query)}
