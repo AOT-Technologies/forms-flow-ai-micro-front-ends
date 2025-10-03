@@ -128,6 +128,9 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
     open && "open"
   ), [open]);
 
+  // Filter out props that conflict with Dropdown component
+  const { onSelect, ...dropdownProps } = restProps;
+
   return (
     <Dropdown
       as={ButtonGroup}
@@ -136,7 +139,7 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
       className={containerClassName}
       ref={ref}
       {...(dataTestId ? { "data-testid": dataTestId } : {})}
-      {...(restProps as any)}
+      {...dropdownProps}
     >
       <Dropdown.Toggle
         variant={variant}
@@ -227,6 +230,3 @@ V8CustomDropdownButtonComponent.displayName = "V8CustomDropdownButton";
 
 // Export memoized component for performance optimization
 export const V8CustomDropdownButton = memo(V8CustomDropdownButtonComponent);
-
-// Export types for consumers
-// export type { V8CustomDropdownButtonProps };
