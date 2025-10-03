@@ -1,0 +1,27 @@
+@import "_mixins";
+
+// Variables
+$secondary-dark: var(--secondary-dark);
+$font-size-xl: var(--font-size-xl);
+$font-weight-regular: var(--font-weight-regular);
+
+.breadcrumb-custom {
+    @include font-style($font-size-xl, $font-weight-regular, $secondary-dark);
+
+    a {
+        color: $secondary-dark;
+    }
+
+    .breadcrumb-item {
+        color: $secondary-dark;
+
+        &.active {
+            color: $secondary-dark;
+        }
+
+        &+.breadcrumb-item::before {
+            content: ">";
+            color: $secondary-dark;
+        }
+    }
+}

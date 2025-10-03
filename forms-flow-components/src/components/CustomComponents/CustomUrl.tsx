@@ -14,7 +14,7 @@ const extractSlugFromUrl = (fullUrl: string, base: string) => {
   return fullUrl.startsWith(base) ? fullUrl.substring(base.length) : fullUrl;
 };
 
-const CustomUrl: React.FC<CustomUrlProps> = ({
+export const CustomUrl: React.FC<CustomUrlProps> = ({
   baseUrl,
   initialUrl = "",
   onSave,
@@ -86,4 +86,3 @@ const CustomUrl: React.FC<CustomUrlProps> = ({
   );
 };
 
-export default CustomUrl;
