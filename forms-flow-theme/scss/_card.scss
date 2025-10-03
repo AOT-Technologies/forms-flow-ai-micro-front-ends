@@ -74,6 +74,11 @@ $gray-darkest: var(--ff-gray-darkest);
     h5 {
       width: 100%;
     }
+    //overriding formio panel style
+        &:first-child {
+          border-radius: calc(0.375rem - 1px) calc(0.375rem - 1px) 0 0 !important;
+    
+        }
   }
 }
 
