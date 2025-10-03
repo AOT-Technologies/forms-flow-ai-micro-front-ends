@@ -77,6 +77,7 @@ declare module "@formsflow/components" {
     SharedWithOthersIcon,
     SharedWithMeIcon,
     AssignUser,
+    UserSelect,
     RefreshIcon,
     DeleteIcon,
     UpdateIcon,

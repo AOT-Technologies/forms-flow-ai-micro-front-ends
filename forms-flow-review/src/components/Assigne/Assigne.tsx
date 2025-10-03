@@ -1,4 +1,5 @@
-import { AssignUser } from "@formsflow/components";
+// import { AssignUser } from "@formsflow/components";
+import { UserSelect } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
 import {
   claimBPMTask,
@@ -87,6 +88,12 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
     }
   };
 
+    const currentValue = !task?.assignee
+      ? "unassigned"
+      : task.assignee === userDetails?.preferred_username
+      ? "me"
+      : task.assignee;
+
   const userList = useSelector((state: any) => state.task?.userList);
   if (!task?.id) {
     return null;
@@ -97,29 +104,46 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
     {(() => {
       if (isFromTaskDetails) {
         return (
-          <AssignUser
-            size={isFromTaskDetails ? 'md' : 'sm'}
+          // <AssignUser
+          //   size={isFromTaskDetails ? 'md' : 'sm'}
+          //   users={userList?.data ?? []}
+          //   currentAssignee={task.assignee}
+          //   meOnClick={handleClaim}
+          //   optionSelect={handleChangeClaim}
+          //   handleCloseClick={handleUnClaim}
+          //   assignToOthers={AssignTaskToOthers}
+          //   manageMyTasks={manageMyTasks}
+          // />
+          <UserSelect
             users={userList?.data ?? []}
-            currentAssignee={task.assignee}
-            meOnClick={handleClaim}
-            optionSelect={handleChangeClaim}
-            handleCloseClick={handleUnClaim}
-            assignToOthers={AssignTaskToOthers}
-            manageMyTasks={manageMyTasks}
+            value={currentValue}
+            onChange={handleChangeClaim}
+            ariaLabel="task-assignee-select"
+            dataTestId="task-assignee-select"
+            showAsText={true}
           />
         )
       } else {
         return (
-          <AssignUser
-            size={isFromTaskDetails ? 'md' : 'sm'}
+          // <AssignUser
+          //   size={isFromTaskDetails ? 'md' : 'sm'}
+          //   users={userList?.data ?? []}
+          //   currentAssignee={task.assignee}
+          //   meOnClick={handleClaim}
+          //   optionSelect={handleChangeClaim}
+          //   handleCloseClick={handleUnClaim}
+          //   assignToOthers={AssignTaskToOthers}
+          //   manageMyTasks={manageMyTasks}
+          //   minimized
+          // />
+
+          <UserSelect
             users={userList?.data ?? []}
-            currentAssignee={task.assignee}
-            meOnClick={handleClaim}
-            optionSelect={handleChangeClaim}
-            handleCloseClick={handleUnClaim}
-            assignToOthers={AssignTaskToOthers}
-            manageMyTasks={manageMyTasks}
-            minimized
+            value={currentValue}
+            onChange={handleChangeClaim}
+            ariaLabel="task-assignee-select"
+            dataTestId="task-assignee-select"
+            showAsText={true}
           />
         )
       }

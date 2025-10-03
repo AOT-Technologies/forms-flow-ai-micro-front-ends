@@ -221,3 +221,18 @@ $color-primary-selected: rgba(184, 171, 255, 0.2);
   }
 }
 
+.userSelect-container{
+  .selectdropdown-container{
+    .custom-selectdropdown{
+      svg{
+        display: none !important;
+      }
+    }
+  }
+}
+.user-select-text{
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
