@@ -1,16 +1,25 @@
 import React, { FC } from "react";
 
+// Alert variants enum
+export enum AlertVariant {
+  PASSIVE = "passive",
+  FOCUS = "focus",
+  ERROR = "error",
+  WARNING = "warning",
+}
+
+// Props for the Alert component
 interface AlertProps {
   message: string;
-  variant?: "passive" | "focus" | "error" | "warning";
-  dataTestId?: string; // Main test id for the container
+  variant?: AlertVariant;
+  dataTestId?: string; // Test ID for the alert container
   rightContent?: React.ReactNode;
   isShowing?: boolean;
 }
 
 export const Alert: FC<AlertProps> = ({
   message,
-  variant = "focus",
+  variant = AlertVariant.FOCUS,
   dataTestId = "app-alert",
   rightContent,
   isShowing = false,
