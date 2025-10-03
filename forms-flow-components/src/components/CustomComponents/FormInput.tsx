@@ -92,25 +92,25 @@ export const FormInput: React.FC<FormInputProps> = ({
       <div className="field">
         <Form.Control
           id={id} // make the input id UNIQUE
-          type={type}
-          name={name}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          placeholder={placeholder}
-          isInvalid={isInvalid}
-          disabled={disabled}
-          size={size}
-          data-testid={dataTestId}
-          aria-label={ariaLabel}
-          required={required}
-          className={inputClassNames}
-          onKeyDown={handleKeyDown}
-          onClick={onClick}
-          ref={inputRef}
-          minLength={minLength}
-          maxLength={maxLength}
-        />
+  type={type}
+  name={name}
+  value={value}
+  onChange={onChange}
+  onBlur={onBlur}
+  placeholder={placeholder}
+  isInvalid={isInvalid}
+  disabled={disabled}
+  size={size}
+  data-testid={dataTestId}
+  aria-label={ariaLabel}
+  required={required}
+  className={`${inputClassNames} ${type === 'number' ? 'no-spinner' : ''}`}
+  onKeyDown={handleKeyDown}
+  onClick={onClick}
+  ref={inputRef}
+  minLength={minLength}
+  maxLength={maxLength}
+/>
 
         {icon && !turnOnLoader && (
           <div
