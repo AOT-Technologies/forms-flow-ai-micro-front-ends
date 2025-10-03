@@ -68,7 +68,12 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
   const [isDragOver, setIsDragOver] = useState(false);
 
   // Memoized file input ID to avoid re-renders
-  const fileInputId = useMemo(() => `file-input-${Math.random().toString(36).substr(2, 9)}`, []);
+  const fileInputId = useMemo(() => {
+    const crypto = globalThis.crypto || (globalThis as any).msCrypto;
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return `file-input-${array[0].toString(36)}`;
+  }, []);
 
   // Memoized state helpers for better performance
   const uploadState = useMemo(() => ({

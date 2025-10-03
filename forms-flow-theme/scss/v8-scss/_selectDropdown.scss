@@ -1,17 +1,20 @@
+// Import theme variables
+@use "mixins";
+
 // Select Dropdown Variables - Using consistent rem/em units for better scalability
 $dropdown-width: 22rem;              // 352px at 16px base
 $dropdown-height: 2.5rem;             // 40px at 16px base
 $dropdown-border-radius: 0.3125rem;   // 5px at 16px base
-$dropdown-padding: 0.5rem 0.75rem;    // 8px 12px at 16px base
-$dropdown-gap: 0.5rem;                // 8px at 16px base
+$dropdown-padding: var(--spacer-050) var(--spacer-075);    // 8px 12px from theme
+$dropdown-gap: var(--spacer-050);                // 8px from theme
 $dropdown-max-height: 8.75rem;        // 140px at 16px base
 $dropdown-z-index: 1000;
 
-// Font variables
-$dropdown-font-size: 0.9375rem;       // 15px at 16px base
-$dropdown-font-weight: 400;
-$dropdown-font-weight-medium: 500;
-$dropdown-line-height: 1.2;
+// Font variables - Using theme tokens
+$dropdown-font-size: var(--font-size-m);       // 15px from theme
+$dropdown-font-weight: var(--font-weight-regular);
+$dropdown-font-weight-medium: var(--font-weight-medium);
+$dropdown-line-height: var(--line-height-default);
 
 // Transition variables
 $dropdown-transition-duration: 0.15s;
@@ -20,20 +23,20 @@ $dropdown-transition-timing: ease-in-out;
 // Shadow variables
 $dropdown-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
 
-// Color Variables
-$color-white: #ffffff;
-$color-light-gray: #fcfcfc;
-$color-medium-gray: #e5e5e5;
-$color-dark-gray: #4a4a4a;
-$color-darker-gray: #525254;
-$color-disabled-gray: #c5c5c5;
-$color-selected-gray: #ededed;
+// Color Variables - Using theme tokens
+$color-white: var(--white-300);
+$color-light-gray: var(--white-200);
+$color-medium-gray: var(--gray-x-light);
+$color-dark-gray: var(--gray-darkest);
+$color-darker-gray: var(--secondary-dark);
+$color-disabled-gray: var(--gray-medium);
+$color-selected-gray: var(--secondary);
 
-$color-primary: #8969f2;
-$color-primary-light: #b8abff;
-$color-primary-lighter: #bcb6f5;
-$color-primary-border: rgba(184, 171, 255, 0.5);
-$color-primary-selected: rgba(184, 171, 255, 0.2);
+$color-primary: var(--vivid-100);
+$color-primary-light: var(--primary-dark);
+$color-primary-lighter: var(--primary-dark);
+$color-primary-border: var(--primary-dark);
+$color-primary-selected: var(--primary);
 
 // Select Dropdown Mixins
 @mixin dropdown-base {
