@@ -16,6 +16,19 @@ const mockI18n = {
   t: (key: string) => key, // Simple key return for mocking
 };
 
+// Mock StyleServices for components that need CSS variables
+if (typeof window !== 'undefined') {
+  // @ts-ignore - Setting up global mock for Storybook
+  window.StyleServices = {
+    getCSSVariable: (variableName: string) => {
+      // Get CSS variable from document root
+      return getComputedStyle(document.documentElement)
+        .getPropertyValue(variableName)
+        .trim();
+    },
+  };
+}
+
 const preview: Preview = {
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },

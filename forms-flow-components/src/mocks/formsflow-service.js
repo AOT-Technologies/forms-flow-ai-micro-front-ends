@@ -19,6 +19,18 @@ export const StorageService = {
   }
 };
 
+export const StyleServices = {
+  getCSSVariable: (variableName) => {
+    // Get CSS variable from document root
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      return getComputedStyle(document.documentElement)
+        .getPropertyValue(variableName)
+        .trim();
+    }
+    return '';
+  }
+};
+
 export const i18nService = {
   use: function() {
     return this; // Return this for method chaining
@@ -31,5 +43,6 @@ export const i18nService = {
 // Export default for compatibility
 export default {
   StorageService,
+  StyleServices,
   i18nService
 };
