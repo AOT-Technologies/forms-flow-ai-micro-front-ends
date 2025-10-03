@@ -125,9 +125,25 @@ export const UserSelect: React.FC<UserSelectProps> = ({
         className={`user-select-text${className ? ` ${className}` : ""}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onFocus={e => {
+          setIsFocused(true);
+          // Ensure focus is visible when tabbing
+          if (e.type === "focus" && e.currentTarget === document.activeElement) {
+            e.currentTarget.style.outline = "2px solid #2684FF";
+          }
+        }}
+        onBlur={e => {
+          setIsFocused(false);
+          e.currentTarget.style.outline = "none";
+        }}
         onClick={handleTextClick}
+        onKeyDown={e => {
+          if (disabled) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleTextClick();
+          }
+        }}
         tabIndex={disabled ? -1 : 0}
         role="button"
         aria-label={ariaLabel}
