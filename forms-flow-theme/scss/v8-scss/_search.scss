@@ -1,24 +1,27 @@
+// Import theme variables
+@use "mixins";
+
 // Search Variables - Using consistent rem/em units for better scalability
 $search-input-height: 2.5rem;           // 40px at 16px base
 $search-input-border-radius: 0.3125rem; // 5px at 16px base
 $search-input-padding: 0.6875rem 0.8125rem; // 11px 13px at 16px base
-$search-input-gap: 1rem;                // 16px gap between input and button
+$search-input-gap: var(--spacer-100);   // 16px gap from theme
 $search-max-width: 40rem;               // 640px max container width
 
 // Transition variables
 $search-transition-duration: 0.2s;
 $search-transition-timing: ease;
 
-// Color Variables
-$color-white: #ffffff;
-$color-light-gray: #fcfcfc;
-$color-medium-gray: #e5e5e5;
-$color-dark-gray: #4a4a4a;
-$color-darker-gray: #525254;
-$color-disabled-gray: #c5c5c5;
-$color-placeholder: #b7b7b8;
-$color-placeholder-disabled: #ededed;
-$color-border: #ededed;
+// Color Variables - Using theme tokens
+$color-white: var(--white-300);
+$color-light-gray: var(--white-200);
+$color-medium-gray: var(--gray-x-light);
+$color-dark-gray: var(--gray-darkest);
+$color-darker-gray: var(--secondary-dark);
+$color-disabled-gray: var(--gray-medium);
+$color-placeholder: var(--gray-medium-dark);
+$color-placeholder-disabled: var(--secondary);
+$color-border: var(--secondary);
 
 // Search Mixins
 @mixin search-container-base {
@@ -36,10 +39,10 @@ $color-border: #ededed;
   padding: $search-input-padding;
   border: 1px solid $color-border;
   background: $color-light-gray;
-  font-weight: 400;
-  font-size: 0.9375rem; // 15px
-  line-height: 1;
-  letter-spacing: 0;
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-m); // 15px from theme
+  line-height: var(--line-height-default);
+  letter-spacing: var(--letter-spacing-default);
   outline: none;
   transition: 
     border-color $search-transition-duration $search-transition-timing,

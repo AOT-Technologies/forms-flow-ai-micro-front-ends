@@ -1,17 +1,20 @@
+// Import theme variables
+@use "mixins";
+
 .custom-switch-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--spacer-050);
   }
   .custom-switch-label {
     user-select: none;
-    font-size: 1rem;
+    font-size: var(--font-size-m);
   }
   .custom-switch {
     position: relative;
     width: 2.75rem;
     height: 1.5rem;
-    background: #ccc;
+    background: var(--gray-medium);
     border-radius: 0.75rem;
     cursor: pointer;
     padding: 0;
@@ -22,37 +25,38 @@
     border: none;
   }
   .custom-switch-on {
-    background: #00C49A;
+    background: var(--green-100);
   }
   .custom-switch-on:hover:not(.custom-switch-disabled) {
-      box-shadow: 0 0 0 2px #007B61;
+      box-shadow: 0 0 0 2px var(--green-200);
     }
   .custom-switch-on-primary{
-    background: #B8ABFF;
+    background: var(--primary-dark);
     box-shadow: none;
   }
   .custom-switch-off {
-    background: #E5E5E5;
+    background: var(--gray-x-light);
   }
   .custom-switch-off-binary{
-    background: #E57373;
+    background: var(--red-100);
   }
     .custom-switch-on-primary:hover:not(.custom-switch-disabled) {
-        box-shadow: 0 0 0 1px #7A6FB6;
+        box-shadow: 0 0 0 1px var(--vivid-100);
     }
     .custom-switch-off:hover:not(.custom-switch-disabled) {
-        box-shadow: 0 0 0 1px #C5C5C5;
+        box-shadow: 0 0 0 1px var(--gray-medium);
     }
     .custom-switch-off-binary:hover:not(.custom-switch-disabled) {
-        box-shadow: 0 0 0 1px #934A4A;
+        box-shadow: 0 0 0 1px var(--red-200);
     }
   .custom-switch-focused:not(.custom-switch-disabled) {
     box-shadow: none;
   }
   .custom-switch-disabled {
     cursor: not-allowed;
-    border: 1px solid #E5E5E5;
-    background: #E5E5E580;
+    border: 1px solid var(--gray-x-light);
+    background: var(--gray-x-light);
+    opacity: 0.5;
   }
   .custom-switch-slider {
     position: absolute;
@@ -60,7 +64,7 @@
     top: 0.125rem;
     width: 1.25rem;
     height: 1.25rem;
-    background: #fff;
+    background: var(--white-300);
     border-radius: 50%;
     transition: left 0.2s;
     box-shadow: 0 0.0625rem 0.1875rem rgba(0,0,0,0.2); /* 0 1px 3px */
