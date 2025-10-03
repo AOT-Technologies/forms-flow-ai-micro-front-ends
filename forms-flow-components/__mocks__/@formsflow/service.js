@@ -5,7 +5,7 @@ export const  HelperServices = {
 export const StyleServices = {
     "getCSSVariable": (variableName) => {
         // Get CSS variable from document root
-        if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+        if (typeof globalThis.window !== 'undefined' && typeof document !== 'undefined') {
             return getComputedStyle(document.documentElement)
                 .getPropertyValue(variableName)
                 .trim();

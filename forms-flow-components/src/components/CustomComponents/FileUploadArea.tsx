@@ -69,7 +69,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
 
   // Memoized file input ID to avoid re-renders
   const fileInputId = useMemo(() => {
-    const crypto = window.crypto || (window as any).msCrypto;
+    const crypto = globalThis.crypto || (globalThis as any).msCrypto;
     const array = new Uint32Array(1);
     crypto.getRandomValues(array);
     return `file-input-${array[0].toString(36)}`;

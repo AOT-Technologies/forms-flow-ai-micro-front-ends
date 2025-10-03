@@ -290,7 +290,7 @@ export const ManyOptions: Story = {
     })),
     multiSelectOptions: Array.from({ length: 20 }, (_, i) => ({
       id: i + 1,
-      name: `Item ${String.fromCharCode(65 + i)}`,
+      name: `Item ${String.fromCodePoint(65 + i)}`,
     })),
     defaultValue: 'option5',
     multiSelectedValues: [],
