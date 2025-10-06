@@ -102,52 +102,16 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
   return (
     <>
     {(() => {
-      if (isFromTaskDetails) {
-        return (
-          // <AssignUser
-          //   size={isFromTaskDetails ? 'md' : 'sm'}
-          //   users={userList?.data ?? []}
-          //   currentAssignee={task.assignee}
-          //   meOnClick={handleClaim}
-          //   optionSelect={handleChangeClaim}
-          //   handleCloseClick={handleUnClaim}
-          //   assignToOthers={AssignTaskToOthers}
-          //   manageMyTasks={manageMyTasks}
-          // />
-          <UserSelect
-            users={userList?.data ?? []}
-            value={currentValue}
-            onChange={handleChangeClaim}
-            ariaLabel="task-assignee-select"
-            dataTestId="task-assignee-select"
-            showAsText={true}
-          />
-        )
-      } else {
-        return (
-          // <AssignUser
-          //   size={isFromTaskDetails ? 'md' : 'sm'}
-          //   users={userList?.data ?? []}
-          //   currentAssignee={task.assignee}
-          //   meOnClick={handleClaim}
-          //   optionSelect={handleChangeClaim}
-          //   handleCloseClick={handleUnClaim}
-          //   assignToOthers={AssignTaskToOthers}
-          //   manageMyTasks={manageMyTasks}
-          //   minimized
-          // />
-
-          <UserSelect
-            users={userList?.data ?? []}
-            value={currentValue}
-            onChange={handleChangeClaim}
-            ariaLabel="task-assignee-select"
-            dataTestId="task-assignee-select"
-            showAsText={true}
-          />
-        )
-      }
-  
+      return(
+        <UserSelect
+          users={userList?.data ?? []}
+          value={currentValue}
+          onChange={handleChangeClaim}
+          ariaLabel="task-assignee-select"
+          dataTestId="task-assignee-select"
+          showAsText={true}
+        />
+      )
     })()}
     </>
     
