@@ -1,112 +1,241 @@
-@import "_mixins";
+// Import theme variables and mixins
+@use "mixins";
 
-.urlInput{
-    width: 100%;
-    max-width: 100%;
-    
-    .title{
-        @include font-style(--spacer-125,--font-weight-medium,--gray-dark);
-        text-transform: capitalize;
-        border-bottom: 1px solid var(--gray-x-light);
-        padding-bottom: 0.69rem;
-        margin-bottom: 1.13rem;
+// URL Input Variables - Using consistent rem/em units for better scalability
+$url-input-border-radius: 0.3125rem;     // 5px at 16px base
+$url-input-padding: 1rem;                // 16px at 16px base
+$url-input-padding-desktop: 2rem;        // 32px at 16px base
+$url-input-gap: 0.5rem;                  // 8px at 16px base
+$url-input-font-size: 0.9375rem;         // 15px at 16px base
+$url-input-font-weight: 500;
+$url-input-transition-duration: 0.15s;
+$url-input-transition-timing: ease-in-out;
+
+// Border and fine details (keep in px for precision)
+$url-input-border-width: 1px;
+$url-input-focus-outline-width: 1px;
+
+// Component-relative sizes (use em to scale with font-size)
+$copy-button-size: 1.5rem;               // 24px at 16px base
+$copy-button-icon-size: 1.5rem;         // 24px at 16px base
+
+// Shadow variables (using rem for consistent scaling)
+$url-input-shadow-focus: 0 0 0 1px;
+
+// Color Variables - Using theme tokens
+$color-url-input-bg: var(--white-200);
+$color-url-input-border: var(--gray-x-light);
+$color-url-input-border-focus: var(--gray-medium);
+$color-url-input-text: var(--gray-darkest);
+$color-url-input-fixed-text: var(--gray-darkest);
+$color-url-input-message: var(--gray-darkest);
+
+$color-copy-button-bg: transparent;
+$color-copy-button-border: var(--gray-darkest);
+$color-copy-button-hover-bg: transparent;
+
+// URL Input Mixins
+@mixin url-input-base {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $url-input-gap;
+}
+
+@mixin url-input-title {
+  font-size: var(--spacer-125);
+  font-weight: var(--font-weight-medium);
+  color: var(--gray-dark);
+  text-transform: capitalize;
+  border-bottom: $url-input-border-width solid var(--gray-x-light);
+  padding-bottom: 0.69rem;
+  margin-bottom: 1.13rem;
+}
+
+@mixin url-input-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+@mixin url-input-field {
+  border-radius: $url-input-border-radius;
+  border: $url-input-border-width solid $color-url-input-border;
+  background: $color-url-input-bg;
+  flex: 1;
+  min-width: 200px;
+  padding: 0.5rem;
+  padding-right: 3rem; // Space for the copy button
+  font-family: inherit;
+  font-size: $url-input-font-size;
+  color: $color-url-input-text;
+  transition: 
+    border-color $url-input-transition-duration $url-input-transition-timing,
+    box-shadow $url-input-transition-duration $url-input-transition-timing;
+
+  &:focus {
+    outline: none;
+    border-color: $color-url-input-border-focus;
+    box-shadow: $url-input-shadow-focus $color-url-input-border-focus;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--gray-light);
+  }
+
+  @media (min-width: 768px) {
+    padding: 0.75rem;
+    padding-right: 3.5rem;
+  }
+}
+
+@mixin copy-button {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  height: $copy-button-size;
+  width: $copy-button-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-copy-button-bg;
+  border: none;
+  padding: 0;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  transition: 
+    opacity $url-input-transition-duration $url-input-transition-timing,
+    border-color $url-input-transition-duration $url-input-transition-timing;
+  z-index: 1;
+  border-radius: 50%;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled),
+  &:active:not(:disabled) {
+    background: $color-copy-button-hover-bg;
+    border: $url-input-border-width solid $color-copy-button-border;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  svg {
+    height: $copy-button-icon-size;
+    width: $copy-button-icon-size;
+  }
+
+  @media (min-width: 768px) {
+    right: 1.5rem;
+  }
+}
+
+// Main URL Input Component
+.urlInput {
+  @include url-input-base;
+
+  .title {
+    @include url-input-title;
+  }
+
+  .actions {
+    @include url-input-actions;
+
+    .message {
+      color: $color-url-input-message;
+      font-size: $url-input-font-size;
+      font-weight: $url-input-font-weight;
+      transition: opacity $url-input-transition-duration $url-input-transition-timing;
     }
-    .actions{
-        margin-top: 0.75rem;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 1rem;
-        width: 100%;
-        
-        .message {
-            color: var(--gray-darkest);
-            font-size: 0.9375rem;
-            font-weight: 500;
-        }
-        
-        .custom-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: var(--gray-light);
-            border-color: var(--gray-light);
-            color: var(--gray-dark);
-        }
+
+    .custom-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: var(--gray-light);
+      border-color: var(--gray-light);
+      color: var(--gray-dark);
+    }
+  }
+
+  .inputDiv {
+    border: $url-input-border-width solid var(--gray-x-light);
+    padding: $url-input-padding;
+    display: flex;
+    align-items: center;
+    gap: $url-input-gap;
+    flex-wrap: wrap;
+    position: relative;
+    border-radius: $url-input-border-radius;
+    transition: border-color $url-input-transition-duration $url-input-transition-timing;
+
+    @media (min-width: 768px) {
+      padding: $url-input-padding-desktop;
+      padding-right: 1rem;
+    }
+
+    .fixedUrl {
+      color: $color-url-input-fixed-text;
+      font-size: $url-input-font-size;
+      font-weight: $url-input-font-weight;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .urlInputField {
+      @include url-input-field;
+    }
+
+    .copyBtn {
+      @include copy-button;
+    }
+  }
+
+  // Responsive behavior
+  @media (max-width: 768px) {
+    .inputDiv {
+      padding: 0.75rem;
     }
     
-    .inputDiv{
-        border: 1px solid var(--gray-x-light);
-        padding: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        position: relative;
-        
-        @media (min-width: 768px) {
-            padding: 2rem;
-            padding-right: 1rem;
-        }
-        
-        .fixedUrl{
-            color: var(--gray-darkest);
-            font-size: 0.9375rem;
-            font-weight: 500;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .urlInputField{
-            border-radius: 0.3125rem;
-            border: 1px solid var(--gray-x-light);
-            background: var(--white-200);
-            flex: 1;
-            min-width: 200px;
-            padding: 0.5rem;
-            padding-right: 3rem; // Space for the copy button
-            
-            @media (min-width: 768px) {
-                padding: 0.75rem;
-                padding-right: 3.5rem;
-            }
-        }
-        .copyBtn{
-            position: absolute;
-            top: 50%;
-            right: 1rem;
-            transform: translateY(-50%);
-            cursor: pointer;
-            height: 1.5rem;
-            width: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-            padding: 0;
-            outline: none;
-            box-shadow: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            transition: opacity 0.15s ease-in-out;
-            z-index: 1;
-            border-radius: 50%;
-            
-            @media (min-width: 768px) {
-                right: 1.5rem;
-            }
-            
-            svg {
-                height: 1.5rem;
-                width: 1.5rem;
-            }
-        }
-        .copyBtn:hover,
-        .copyBtn:focus,
-        .copyBtn:active{
-            background: transparent;
-            border: 1px solid var(--gray-darkest);
-        }
+    .urlInputField {
+      min-width: 150px;
+      padding-right: 2.5rem;
     }
     
+    .copyBtn {
+      right: 0.75rem;
+    }
+  }
+
+  // High contrast mode support
+  @media (prefers-contrast: high) {
+    .inputDiv {
+      border-width: 2px;
+    }
+    
+    .urlInputField {
+      border-width: 2px;
+    }
+  }
+
+  // Reduced motion support
+  @media (prefers-reduced-motion: reduce) {
+    .urlInputField,
+    .copyBtn,
+    .message {
+      transition: none;
+    }
+  }
 }
