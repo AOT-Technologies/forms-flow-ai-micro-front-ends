@@ -143,8 +143,25 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(({
     );
   }, [className]);
 
+  // Generate secure random ID using crypto API
+  const generateSecureId = useCallback(() => {
+    try {
+      // Client side - use crypto API
+      const crypto = globalThis.crypto || globalThis.msCrypto;
+      if (crypto && crypto.getRandomValues) {
+        const array = new Uint32Array(1);
+        crypto.getRandomValues(array);
+        return array[0].toString(36);
+      }
+    } catch (error) {
+      console.warn('Crypto API not available, falling back to timestamp');
+    }
+    // Fallback to timestamp-based ID
+    return Date.now().toString(36);
+  }, []);
+
   // Computed values
-  const effectiveId = id || `switch-${Math.random().toString(36).substr(2, 9)}`;
+  const effectiveId = id || `switch-${generateSecureId()}`;
   const labelId = `${effectiveId}-label`;
   const isInteractionDisabled = disabled;
 
