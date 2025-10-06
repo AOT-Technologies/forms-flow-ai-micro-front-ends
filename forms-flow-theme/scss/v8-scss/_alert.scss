@@ -4,7 +4,7 @@
 // Alert Variables - Using consistent rem/em units for better scalability
 $alert-border-radius: 0.313rem;        // 5px at 16px base
 $alert-min-height: 3.5rem;             // 56px at 16px base
-$alert-padding: 1.063rem 1.375rem;     // 17px 22px at 16px base
+$alert-padding: 0 1.375rem;     // 17px 22px at 16px base
 $alert-gap: var(--spacer-050);         // 8px from theme
 $alert-font-size: var(--font-size-m);  // 15px from theme
 $alert-font-weight: var(--font-weight-medium);
