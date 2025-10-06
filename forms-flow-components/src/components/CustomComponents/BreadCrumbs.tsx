@@ -34,7 +34,7 @@ export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({
     >
       {items.map((item, index) => (
         <Breadcrumb.Item
-          key={index}
+          key={`${item.label}-${item.path || "no-path"}`}
           href={item.path ? item.path : undefined}
           active={index === items.length - 1}
           data-testid={`breadcrumb-item-${index}`}
