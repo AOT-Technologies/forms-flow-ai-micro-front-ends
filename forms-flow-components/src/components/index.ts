@@ -47,3 +47,4 @@ export * from "./CustomComponents/PromptModal";
 export * from "./CustomComponents/CustomTextInput";
 export * from "./CustomComponents/CustomTextArea";
 export * from "./CustomComponents/FileUploadArea";
+export { default as CustomUrl } from "./CustomComponents/CustomUrl";

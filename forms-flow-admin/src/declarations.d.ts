@@ -59,7 +59,8 @@ declare module "@formsflow/components" {
     DeleteIcon,
     ConfirmModal,
     CustomInfo,
+    PromptModal,
+    CustomUrl,
     Switch,
-    PromptModal
   }: any;
 }
