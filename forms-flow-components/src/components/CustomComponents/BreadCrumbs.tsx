@@ -3,19 +3,32 @@ import { Breadcrumb } from "react-bootstrap";
 
 // Represents a single breadcrumb item
 export interface BreadcrumbItem {
-  label: string; 
-  path?: string; 
+  label: string;
+  path?: string;
+}
+
+export enum BreadcrumbVariant {
+  DEFAULT = "default",
+  MINIMIZED = "minimized",
 }
 
 // Props for the BreadCrumbs component
 interface BreadCrumbsProps {
-  items: BreadcrumbItem[]; 
+  items: BreadcrumbItem[];
+  variant?: BreadcrumbVariant;
+  underline?: boolean;
 }
 
-export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({ items }) => {
+export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({
+  items,
+  variant = BreadcrumbVariant.DEFAULT,
+  underline = false,
+}) => {
   return (
     <Breadcrumb
-      className="breadcrumb-custom"
+      className={`breadcrumb-custom breadcrumb-${variant} ${
+        underline ? "breadcrumb-underline" : ""
+      }`}
       data-testid="breadcrumbs"
       aria-label="breadcrumb-navigation"
     >
