@@ -1,3 +1,6 @@
+// Import theme variables
+@use "mixins";
+
 // Dropdown Button Variables - Using consistent rem/em units for better scalability
 $dropdown-border-radius: 1.5625rem;        // 25px at 16px base
 $dropdown-menu-radius: 0.3125rem;        // 5px at 16px base
@@ -7,23 +10,23 @@ $dropdown-divider-width: 0.0625rem;      // 1px at 16px base
 $dropdown-transition: 0.2s ease;
 
 // Spacing variables
-$dropdown-label-padding: 0.6875rem 0.8125rem;  // 11px 13px
+$dropdown-label-padding: 10px 13px;  // 10px 13px
 $dropdown-icon-padding: 0.875rem 0.875rem 0.6875rem 0.8125rem;    // 14px 14px 11px 13px
 $dropdown-menu-padding: 0.875rem 0.375rem;                        // 14px 6px
 $dropdown-item-padding: 0.3125rem 0.5rem 0.5625rem 0.625rem;     // 5px 8px 9px 10px
 
-// Colors
-$color-white: #ffffff;
-$color-light-gray: #fcfcfc;
-$color-medium-gray: #e5e5e5;
-$color-dark-gray: #4a4a4a;
-$color-darker-gray: #d9d9d9;
-$color-primary: #b8abff;
-$color-primary-light: #b8abff80;
-$color-primary-active: #b8abff33;
-$color-secondary-border: #e5e5e5;
-$color-secondary-hover: #4a4a4a;
-$color-secondary-active: #ededed;
+// Colors - Using theme tokens
+$color-white: var(--white-300);
+$color-light-gray: var(--white-200);
+$color-medium-gray: var(--gray-x-light);
+$color-dark-gray: var(--gray-darkest);
+$color-darker-gray: var(--gray-light);
+$color-primary: var(--primary-dark);
+$color-primary-light: var(--primary-dark);
+$color-primary-active: var(--primary);
+$color-secondary-border: var(--gray-x-light);
+$color-secondary-hover: var(--gray-darkest);
+$color-secondary-active: var(--secondary);
 
 // Base Mixins
 @mixin dropdown-toggle-base {
@@ -40,7 +43,7 @@ $color-secondary-active: #ededed;
 
 @mixin dropdown-menu-base {
   margin-top: 0.1rem;
-  padding: $dropdown-menu-padding;
+  padding: $dropdown-label-padding;
   gap: 0.625rem;
   border-radius: $dropdown-menu-radius;
   box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.25);
@@ -65,9 +68,17 @@ $color-secondary-active: #ededed;
 
     .label-div {
       padding: $dropdown-label-padding;
+      box-shadow: none;
       border-radius: $dropdown-border-radius 0 0 $dropdown-border-radius;
       transition: background-color $dropdown-transition;
       line-height: normal;
+
+      &:focus,
+      &:focus-visible {
+        outline: 2px solid $color-primary!important;
+        box-shadow: none !important;
+        color: $color-dark-gray;
+      }
     }
 
     .dropdown-icon {
@@ -76,6 +87,13 @@ $color-secondary-active: #ededed;
       height: 100%;
       position: relative;
       transition: background-color $dropdown-transition;
+
+      &:focus,
+      &:focus-visible {
+        outline: 2px solid $color-primary!important;
+        box-shadow: none !important;
+        color: $color-dark-gray;
+      }
     }
 
     .dropdown-label {
@@ -94,6 +112,7 @@ $color-secondary-active: #ededed;
     .chevron-icon {
       display: grid;
       transition: transform $dropdown-transition;
+      transform: rotate(90deg);
     }
 
     // States
@@ -109,7 +128,7 @@ $color-secondary-active: #ededed;
       border-color: $color-primary;
       .dropdown-icon { background: $color-primary-active; }
       .v8-dropdown-divider { background: $color-darker-gray; }
-      .chevron-icon { transform: rotate(180deg); }
+      .chevron-icon { transform: rotate(270deg); }
     }
 
     // Secondary variant
@@ -131,6 +150,13 @@ $color-secondary-active: #ededed;
     // Override Bootstrap
     &.btn-primary:active,
     &.btn-primary.active { background-color: transparent; }
+    
+    // Override global focus outline
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
   }
 
   // Dropdown Menu
@@ -149,6 +175,13 @@ $color-secondary-active: #ededed;
 
       &:hover {
         background: $color-secondary-active;
+        color: $color-dark-gray;
+      }
+
+      &:focus,
+      &:focus-visible {
+        outline: 2px solid $color-primary!important;
+        box-shadow: none !important;
         color: $color-dark-gray;
       }
 

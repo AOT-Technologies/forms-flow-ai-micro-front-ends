@@ -1,13 +1,16 @@
+// Import theme variables and mixins
+@use "mixins";
+
 // Button Variables - Using consistent rem/em units for better scalability
 $button-border-radius: 1.5625rem;   // 25px at 16px base
 $button-min-width: 5rem;             // 80px at 16px base  
 $button-min-height: 2.5rem;          // 40px at 16px base
 $button-padding: 0.6875rem 1.375rem; // 11px 22px at 16px base
 $button-icon-padding: 0.75rem;       // 12px at 16px base
-$button-gap: 0.5rem;                 // 8px at 16px base
-$button-font-size: 0.9375rem;         // 15px at 16px base
-$button-font-weight: 400;
-$button-line-height: normal;
+$button-gap: var(--spacer-050);      // 8px from theme
+$button-font-size: var(--font-size-m);  // 15px from theme
+$button-font-weight: var(--font-weight-regular);
+$button-line-height: var(--line-height-default);
 $button-transition-duration: 0.15s;
 $button-transition-timing: ease-in-out;
 
@@ -25,21 +28,21 @@ $spinner-border-width: 0.125em;      // Slightly thinner for better visual balan
 $button-shadow-primary: 0 0.125rem 0.5rem rgba(137, 105, 242, 0.15);
 $button-shadow-secondary: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
 
-// Color Variables
-$color-white: #ffffff;
-$color-light-gray: #fcfcfc;
-$color-medium-gray: #e5e5e5;
-$color-dark-gray: #4a4a4a;
-$color-darker-gray: #525254;
-$color-disabled-gray: #c5c5c5;
-$color-selected-gray: #ededed;
+// Color Variables - Using theme tokens
+$color-white: var(--white-300);
+$color-light-gray: var(--white-200);
+$color-medium-gray: var(--gray-x-light);
+$color-dark-gray: var(--gray-darkest);
+$color-darker-gray: var(--secondary-dark);
+$color-disabled-gray: var(--gray-medium);
+$color-selected-gray: var(--secondary);
 
-$color-primary: #8969f2;
-$color-primary-light: #b8abff;
-$color-primary-lighter: #bcb6f5;
-$color-primary-border: rgba(184, 171, 255, 0.5);
-$color-primary-selected: rgba(184, 171, 255, 0.2);
-$color-primary-disabled: rgba(184, 171, 255, 0.25);
+$color-primary: var(--vivid-100);
+$color-primary-light: var(--primary-dark);
+$color-primary-lighter: var(--primary-dark);
+$color-primary-border: var(--primary-dark);
+$color-primary-selected: var(--primary);
+$color-primary-disabled: var(--gray-medium);
 
 // Button Mixins
 @mixin button-base {

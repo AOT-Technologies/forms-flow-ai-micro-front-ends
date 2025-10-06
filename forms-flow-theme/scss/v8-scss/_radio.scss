@@ -1,3 +1,6 @@
+// Import theme variables
+@use "mixins";
+
 // Radio Variables - Using consistent rem/em units for better scalability
 $radio-size: 1.25rem;            // 20px at 16px base
 $radio-dot-size: 0.625rem;       // 10px at 16px base
@@ -8,19 +11,20 @@ $radio-gap-inline: 2rem;         // space between inline radios
 $radio-transition-duration: 0.15s;
 $radio-transition-timing: ease-in-out;
 
-// Color Variables
-$color-white: #ffffff ;
-$color-light-gray: #fcfcfc ;
-$color-medium-gray: #e5e5e5 ;
-$color-dark-gray: #4a4a4a ;
-$color-darker-gray: #525254 ;
-$color-disabled-gray: #c5c5c5 ;
+// Color Variables - Using theme tokens
+$color-white: var(--white-300);
+$color-light-gray: var(--white-200);
+$color-medium-gray: var(--gray-x-light);
+$color-dark-gray: var(--gray-darkest);
+$color-darker-gray: var(--secondary-dark);
+$color-disabled-gray: var(--gray-medium);
 // $color-selected-gray is unused for radios
 
-$color-primary-selected: #8969f2;
-$color-primary: rgba(184, 171, 255, 1);
-$color-primary-light: #b8abff ;
-$color-primary-lighter: #bcb6f5 ;
+$color-primary-selected: var(--vivid-100);
+$color-primary: var(--primary-dark);
+$color-primary-light: var(--primary-dark);
+$color-primary-lighter: var(--primary-dark);
+$color-primary-border: var(--primary-dark);
 // $color-primary-border and $color-primary-disabled are not used by radios
 
 // Radio Mixins

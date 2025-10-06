@@ -128,6 +128,9 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
     open && "open"
   ), [open]);
 
+  // Filter out props that conflict with Dropdown component
+  const { onSelect, ...dropdownProps } = restProps;
+
   return (
     <Dropdown
       as={ButtonGroup}
@@ -136,7 +139,7 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
       className={containerClassName}
       ref={ref}
       {...(dataTestId ? { "data-testid": dataTestId } : {})}
-      {...restProps}
+      {...dropdownProps}
     >
       <Dropdown.Toggle
         variant={variant}
@@ -151,6 +154,13 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
         <div 
           className="label-div" 
           onClick={handleLabelClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              e.stopPropagation();
+              handleLabelClick(e as any);
+            }
+          }}
           data-testid={`${dataTestId}-label`}
           role="button"
           tabIndex={disabled ? -1 : 0}
@@ -166,6 +176,12 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
         <div 
           className="dropdown-icon"
           onClick={handleDropdownIconClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleDropdownIconClick(e as any);
+            }
+          }}
           data-testid={`${dataTestId}-icon`}
           role="button"
           tabIndex={disabled ? -1 : 0}
@@ -214,6 +230,3 @@ V8CustomDropdownButtonComponent.displayName = "V8CustomDropdownButton";
 
 // Export memoized component for performance optimization
 export const V8CustomDropdownButton = memo(V8CustomDropdownButtonComponent);
-
-// Export types for consumers
-export type { V8CustomDropdownButtonProps };
