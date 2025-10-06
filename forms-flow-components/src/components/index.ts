@@ -48,3 +48,4 @@ export * from "./CustomComponents/CustomTextInput";
 export * from "./CustomComponents/CustomTextArea";
 export * from "./CustomComponents/FileUploadArea";   
 export * from "./CustomComponents/CustomUrl";
+export * from "./CustomComponents/Alert";

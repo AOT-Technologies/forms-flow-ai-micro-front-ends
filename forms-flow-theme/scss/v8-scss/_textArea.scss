@@ -1,3 +1,6 @@
+// Import theme variables
+@use "mixins";
+
 // Local tokens sourced from :root variables in _theme.scss
 $ta-color-text: var(--gray-darkest);
 $ta-color-placeholder: var(--gray-darkest);
@@ -6,7 +9,7 @@ $ta-color-border: var(--gray-x-light);
 $ta-color-border-hover: var(--secondary-dark);
 $ta-color-border-focus: var(--gray-dark);
 $ta-color-bg: var(--white-200);
-$ta-font-size: var(--font-size-15);
+$ta-font-size: var(--font-size-m);
 $ta-font-weight: var(--font-weight-regular);
 
 .text-area-container {
@@ -38,21 +41,21 @@ $ta-font-weight: var(--font-weight-regular);
         resize: none;
 
         &::placeholder {
-            color: #DAD9DA;
-            font-size: 15px;
+            color: var(--gray-medium-dark);
+            font-size: var(--font-size-m);
             font-style: normal;
-            font-weight: 400;
-            line-height: normal;
+            font-weight: var(--font-weight-regular);
+            line-height: var(--line-height-default);
         }
 
         // Style for disabled state
         &:disabled {
             &::placeholder {
-                color: #DAD9DA;
-                font-size: 15px;
+                color: var(--gray-medium-dark);
+                font-size: var(--font-size-m);
                 font-style: normal;
-                font-weight: 400;
-                line-height: normal;
+                font-weight: var(--font-weight-regular);
+                line-height: var(--line-height-default);
             }
         }
 
