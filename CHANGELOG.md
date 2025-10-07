@@ -2,7 +2,22 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
-## 7.2.0 - date to be added
+## 7.3.0 - date to be added
+
+`Modified`
+
+**forms-flow-service**
+* Form.io token fetching logic has been moved to forms-flow-service
+  
+`Fixed`
+
+**forms-flow-review**
+* Minor issues fixed in the reviewer page
+
+**forms-flow-submissions**
+* Minor issues fixed in the analyze-submissions page
+
+## 7.2.0 - 2025-08-14
 
 `Added`
 
