@@ -294,7 +294,6 @@ $font-tokens: (
           &.formedit-layout {
               overflow-y: auto;
               overflow-x: hidden;
-              width: 100%;
               max-width: 100%;
               box-sizing: border-box;
               max-height: calc(100vh - 200px);

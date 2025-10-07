@@ -2,6 +2,10 @@
 @use "mixins";
 $header-font-size: var(--font-size-xl);
 $header-font-weight: var(--font-weight-regular);
+$secondary-dark-color: var(--secondary-dark);
+$white-100-color: var(--white-100);
+$gray-medium-dark-color: var(--gray-medium-dark);
+$font-weight-medium: var(--font-weight-medium);
 
 .edit-setiings {
   @include mixins.vertical-padding();
@@ -41,23 +45,11 @@ $header-font-weight: var(--font-weight-regular);
 }
 
 // FormEdit.scss - New UI styling for FormEdit component
-
-// CSS Variables
-:root {
-  --main-bg: #f8f9fa;
-  --gray-x-light: #e9ecef;
-  --body-section-height: calc(100vh - 300px);
-  --sidebar-width: 12rem;
-  --page-max-width: 1088px;
-}
-
 // Header styling
 .form-title {
-  color: #525254;
-font-family: Figtree;
-font-size: 20px;
-font-style: normal;
-font-weight: 400;
+  color: $secondary-dark-color;
+font-size: $header-font-size;
+font-weight: $header-font-weight;
 line-height: 120%; /* 24px */
 text-transform: capitalize;
 }
@@ -67,12 +59,12 @@ text-transform: capitalize;
   align-items: center;
   gap: 0.5rem;
   border-radius: 25px;
-background: #F6F6F6;
+background: $white-100-color;
 padding: 11px 29px 11px 11px;
   
   .status-text {
     font-size: 0.875rem;
-    font-weight: 500;
-    color: #6c757d;
+    font-weight: $font-weight-medium;
+    color: $gray-medium-dark-color;
   }
 }
