@@ -62,7 +62,7 @@ const Task = React.memo((props: any) => {
 useEffect(() => {
   if (MULTITENANCY_ENABLED && tenantId) {
     // Get tenant data from StorageService
-    const storedTenantData = localStorage.getItem("TENANT_DATA");
+    const storedTenantData = localStorage.getItem("tenantData");
 
     if (storedTenantData) {
       try {
