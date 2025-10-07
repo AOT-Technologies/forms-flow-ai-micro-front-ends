@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { URLCopyIcon } from '../SvgIcons';
+import * as React from "react";
+import { useState, useCallback, useMemo } from "react";
+import { URLCopyIcon } from "../SvgIcons";
 import { V8CustomButton } from "./CustomButton";
 
-interface CustomUrlProps {
+export interface CustomUrlProps {
   baseUrl: string;
   initialUrl?: string;
   onSave?: (fullUrl: string) => void;
@@ -75,9 +76,9 @@ export const CustomUrl: React.FC<CustomUrlProps> = ({
             {message === "copied" ? "URL copied" : "URL saved"}
           </span>
         )}
-        <V8CustomButton 
-          label={saveButtonText} 
-          variant="secondary" 
+        <V8CustomButton
+          label={saveButtonText}
+          variant="secondary"
           disabled={!hasChanges || url.trim().length === 0}
           onClick={handleSave}
         />
