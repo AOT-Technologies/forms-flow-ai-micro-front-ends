@@ -102,7 +102,7 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(({
   // Memoized click handler for better performance
   const handleToggle = useCallback(() => {
     if (disabled) return;
-    const newChecked = isChecked ? false : true;
+    const newChecked = !isChecked;
     setIsChecked(newChecked);
     onChange?.(newChecked);
   }, [disabled, onChange, isChecked]);

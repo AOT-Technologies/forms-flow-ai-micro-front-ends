@@ -109,7 +109,7 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
       textArea.select();
       
       // Use modern selection API instead of deprecated execCommand
-      const selection = window.getSelection();
+      const selection = globalThis.getSelection();
       const range = document.createRange();
       range.selectNodeContents(textArea);
       selection?.removeAllRanges();
@@ -142,7 +142,7 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
     if (disabled) return;
     
     // Check if we're in a secure context (required for Clipboard API)
-    if (!window.isSecureContext) {
+    if (!globalThis.isSecureContext) {
       console.warn('Clipboard API requires secure context (HTTPS)');
       fallbackCopyToClipboard(fullUrl);
       return;
