@@ -496,6 +496,9 @@ $gray-darkest: var(--ff-gray-darkest);
 .workflow-edit-container {
   max-height: calc(100vh - 16.25rem);
   overflow: auto;
+  ._loading_overlay_wrapper{
+    overflow: visible !important;
+  }
 }
 
 .list-group-item{
