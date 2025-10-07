@@ -57,10 +57,13 @@ const TaskDetails = () => {
     formId: "",
     submissionId: "",
   });
+  
   // Redux State Selectors
-  const tenantKey = useSelector(
+  const tenantKeyFromState = useSelector(
     (state: any) => state.tenants?.tenantData?.key
   );
+  // Conditionally select tenantKey from state or localStorage
+  const tenantKey = tenantKeyFromState || localStorage.getItem("tenantKey");
   const task = useSelector((state: any) => state.task.taskDetail);
   const bpmTaskId = useSelector((state: any) => state.task.taskId);
   const taskFormSubmissionReload = useSelector(
