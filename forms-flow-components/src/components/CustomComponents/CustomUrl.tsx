@@ -80,6 +80,14 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
   const fullUrl = useMemo(() => `${baseUrl}${url}`, [baseUrl, url]);
   const hasValidInput = url.trim().length > 0;
   const isSaveDisabled = !hasValidInput || disabled;
+  
+  // Message display text
+  const getMessageText = useCallback((messageType: MessageType) => {
+    if (messageType === "copied") return "URL copied";
+    if (messageType === "saved") return "URL saved";
+    if (messageType === "copy-failed") return "Copy failed";
+    return "";
+  }, []);
 
   // Memoized input change handler
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,11 +95,60 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
     setUrl(e.target.value);
   }, [disabled]);
 
-  // Memoized copy handler
+  // Fallback copy function for older browsers using modern selection API
+  const fallbackCopyToClipboard = useCallback((text: string) => {
+    try {
+      // Create a temporary textarea element
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      // Use modern selection API instead of deprecated execCommand
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(textArea);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      
+      // Check if selection was successful
+      if (selection?.toString().length > 0) {
+        setMessage("copied");
+        setTimeout(() => setMessage(null), 2500);
+      } else {
+        console.warn('Selection-based copy failed');
+        setMessage("copy-failed");
+        setTimeout(() => setMessage(null), 2500);
+      }
+    } catch (error) {
+      console.warn('Fallback copy failed:', error);
+      setMessage("copy-failed");
+      setTimeout(() => setMessage(null), 2500);
+    } finally {
+      // Clean up
+      const textArea = document.querySelector('textarea[style*="position: fixed"]');
+      if (textArea) {
+        textArea.remove();
+      }
+    }
+  }, []);
+
+  // Memoized copy handler using modern Clipboard API
   const handleCopy = useCallback(() => {
     if (disabled) return;
     
-    // Try modern clipboard API first
+    // Check if we're in a secure context (required for Clipboard API)
+    if (!window.isSecureContext) {
+      console.warn('Clipboard API requires secure context (HTTPS)');
+      fallbackCopyToClipboard(fullUrl);
+      return;
+    }
+    
+    // Try modern Clipboard API first (recommended by MDN)
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(fullUrl)
         .then(() => {
@@ -99,42 +156,15 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
           setTimeout(() => setMessage(null), 2500);
         })
         .catch((error) => {
-          console.warn('Failed to copy URL to clipboard:', error);
-          // Fallback for older browsers
+          console.warn('Clipboard API failed, using fallback:', error);
+          // Fallback for permission denied or other errors
           fallbackCopyToClipboard(fullUrl);
         });
     } else {
-      // Fallback for older browsers
+      // Fallback for browsers without Clipboard API support
       fallbackCopyToClipboard(fullUrl);
     }
-  }, [fullUrl, disabled]);
-
-  // Fallback copy function for older browsers
-  const fallbackCopyToClipboard = useCallback((text: string) => {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-      const success = document.execCommand('copy');
-      if (success) {
-        setMessage("copied");
-        setTimeout(() => setMessage(null), 2500);
-      } else {
-        console.warn('Copy command failed');
-        setMessage("copy-failed");
-        setTimeout(() => setMessage(null), 2500);
-      }
-    } catch (error) {
-      console.warn('execCommand is deprecated and failed:', error);
-      setMessage("copy-failed");
-      setTimeout(() => setMessage(null), 2500);
-    } finally {
-      textArea.remove();
-    }
-  }, []);
+  }, [fullUrl, disabled, fallbackCopyToClipboard]);
 
   // Memoized save handler
   const handleSave = useCallback(() => {
@@ -226,7 +256,7 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
             aria-live="polite"
             data-testid={`${dataTestId}-message`}
           >
-            {message === "copied" ? "URL copied" : message === "saved" ? "URL saved" : "Copy failed"}
+            {getMessageText(message)}
           </output>
         )}
         <V8CustomButton

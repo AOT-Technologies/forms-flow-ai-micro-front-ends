@@ -55,11 +55,19 @@ const useButtonClickTracker = () => {
     originalAction();
   }, []);
 
-  const resetClick = React.useCallback(() => {
-    setLastClickedButton(null);
-  }, []);
+  return { lastClickedButton, trackClick };
+};
 
-  return { lastClickedButton, trackClick, resetClick };
+// Wrapper component for stories that need button click tracking
+const AlertWithTracking = ({ children, ...props }: any) => {
+  const { lastClickedButton, trackClick } = useButtonClickTracker();
+  
+  return (
+    <div style={{ width: '100%', maxWidth: '1600px' }}>
+      {children({ trackClick, ...props })}
+      <ButtonClickFeedback lastClickedButton={lastClickedButton} />
+    </div>
+  );
 };
 
 // Reusable component for visual feedback
@@ -82,18 +90,6 @@ const ButtonClickFeedback = ({ lastClickedButton }: { lastClickedButton: string 
 // Helper function to create button click handlers
 const createButtonHandler = (buttonName: string, actionName: string, trackClick: (name: string, action: () => void) => void) => {
   return () => trackClick(buttonName, () => action(actionName)());
-};
-
-// Template to track button clicks and show them visually
-const InteractiveAlertTemplate = (args: any) => {
-  const { lastClickedButton, trackClick } = useButtonClickTracker();
-
-  return (
-    <div style={{ width: '100%', maxWidth: '1600px' }}>
-      <Alert {...args} />
-      <ButtonClickFeedback lastClickedButton={lastClickedButton} />
-    </div>
-  );
 };
 
 export const Focus: Story = {
@@ -139,11 +135,9 @@ export const WithRightContent: Story = {
     isShowing: true,
     dataTestId: 'alert-with-action',
   },
-  render: (args) => {
-    const { lastClickedButton, trackClick } = useButtonClickTracker();
-
-    return (
-      <div style={{ width: '100%', maxWidth: '1600px' }}>
+  render: (args) => (
+    <AlertWithTracking>
+      {({ trackClick }) => (
         <Alert 
           {...args} 
           rightContent={
@@ -156,10 +150,9 @@ export const WithRightContent: Story = {
             />
           }
         />
-        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
-      </div>
-    );
-  },
+      )}
+    </AlertWithTracking>
+  ),
 };
 
 export const WithMultipleActions: Story = {
@@ -169,11 +162,9 @@ export const WithMultipleActions: Story = {
     isShowing: true,
     dataTestId: 'alert-with-actions',
   },
-  render: (args) => {
-    const { lastClickedButton, trackClick } = useButtonClickTracker();
-
-    return (
-      <div style={{ width: '100%', maxWidth: '1600px' }}>
+  render: (args) => (
+    <AlertWithTracking>
+      {({ trackClick }) => (
         <Alert 
           {...args} 
           rightContent={
@@ -195,10 +186,9 @@ export const WithMultipleActions: Story = {
             </div>
           }
         />
-        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
-      </div>
-    );
-  },
+      )}
+    </AlertWithTracking>
+  ),
 };
 
 export const LongMessage: Story = {
@@ -241,11 +231,9 @@ export const WithCustomContent: Story = {
     isShowing: true,
     dataTestId: 'alert-custom-content',
   },
-  render: (args) => {
-    const { lastClickedButton, trackClick } = useButtonClickTracker();
-
-    return (
-      <div style={{ width: '100%', maxWidth: '1600px' }}>
+  render: (args) => (
+    <AlertWithTracking>
+      {({ trackClick }) => (
         <Alert 
           {...args} 
           rightContent={
@@ -265,10 +253,9 @@ export const WithCustomContent: Story = {
             </div>
           }
         />
-        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
-      </div>
-    );
-  },
+      )}
+    </AlertWithTracking>
+  ),
 };
 
 export const WithProgressBar: Story = {
@@ -300,11 +287,9 @@ export const WithErrorProgressBar: Story = {
     isShowing: true,
     dataTestId: 'alert-error-progress',
   },
-  render: (args) => {
-    const { lastClickedButton, trackClick } = useButtonClickTracker();
-
-    return (
-      <div style={{ width: '100%', maxWidth: '1600px' }}>
+  render: (args) => (
+    <AlertWithTracking>
+      {({ trackClick }) => (
         <Alert 
           {...args} 
           rightContent={
@@ -327,10 +312,9 @@ export const WithErrorProgressBar: Story = {
             </div>
           }
         />
-        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
-      </div>
-    );
-  },
+      )}
+    </AlertWithTracking>
+  ),
 };
 
 export const InteractiveButtons: Story = {
@@ -340,11 +324,9 @@ export const InteractiveButtons: Story = {
     isShowing: true,
     dataTestId: 'interactive-alert',
   },
-  render: (args) => {
-    const { lastClickedButton, trackClick } = useButtonClickTracker();
-
-    return (
-      <div style={{ width: '100%', maxWidth: '1600px' }}>
+  render: (args) => (
+    <AlertWithTracking>
+      {({ trackClick }) => (
         <Alert 
           {...args} 
           rightContent={
@@ -386,10 +368,9 @@ export const InteractiveButtons: Story = {
             </div>
           }
         />
-        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
-      </div>
-    );
-  },
+      )}
+    </AlertWithTracking>
+  ),
   parameters: {
     docs: {
       description: {
@@ -397,15 +378,6 @@ export const InteractiveButtons: Story = {
       },
     },
   },
-};
-
-// Template for controlled component
-const AlertTemplate = (args: any) => {
-  return (
-    <div style={{ width: '100%', maxWidth: '1600px' }}>
-      <Alert {...args} style={{ width: '100%' }} />
-    </div>
-  );
 };
 
 // Multiple alerts example
@@ -471,11 +443,9 @@ export const Playground: Story = {
     isShowing: true,
     dataTestId: 'playground-alert',
   },
-  render: (args) => {
-    const { lastClickedButton, trackClick } = useButtonClickTracker();
-
-    return (
-      <div style={{ width: '100%', maxWidth: '1600px' }}>
+  render: (args) => (
+    <AlertWithTracking>
+      {({ trackClick }) => (
         <Alert 
           {...args} 
           rightContent={
@@ -488,10 +458,9 @@ export const Playground: Story = {
             />
           }
         />
-        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
-      </div>
-    );
-  },
+      )}
+    </AlertWithTracking>
+  ),
   parameters: {
     docs: {
       description: {

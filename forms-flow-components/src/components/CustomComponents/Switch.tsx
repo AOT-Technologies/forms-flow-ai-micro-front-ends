@@ -102,7 +102,7 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(({
   // Memoized click handler for better performance
   const handleToggle = useCallback(() => {
     if (disabled) return;
-    const newChecked = !isChecked;
+    const newChecked = isChecked ? false : true;
     setIsChecked(newChecked);
     onChange?.(newChecked);
   }, [disabled, onChange, isChecked]);
@@ -127,14 +127,21 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(({
 
   // Memoized switch className
   const switchClassName = useMemo(() => {
-    return buildClassNames(
-      "custom-switch",
-      isChecked && type === 'primary' && "custom-switch-on-primary",
-      isChecked && type !== 'primary' && "custom-switch-on",
-      !isChecked && type === 'binary' && "custom-switch-off-binary",
-      !isChecked && type !== 'binary' && "custom-switch-off",
-      disabled && "custom-switch-disabled"
-    );
+    if (isChecked) {
+      return buildClassNames(
+        "custom-switch",
+        type === 'primary' && "custom-switch-on-primary",
+        type !== 'primary' && "custom-switch-on",
+        disabled && "custom-switch-disabled"
+      );
+    } else {
+      return buildClassNames(
+        "custom-switch",
+        type === 'binary' && "custom-switch-off-binary",
+        type !== 'binary' && "custom-switch-off",
+        disabled && "custom-switch-disabled"
+      );
+    }
   }, [isChecked, type, disabled]);
 
   // Memoized wrapper className
@@ -189,7 +196,7 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(({
         aria-checked={isChecked}
         aria-disabled={isInteractionDisabled}
         aria-labelledby={label ? labelId : undefined}
-        aria-label={!label ? 'Toggle switch' : undefined}
+        aria-label={label ? undefined : 'Toggle switch'}
         tabIndex={isInteractionDisabled ? -1 : 0}
         className={switchClassName}
         onClick={handleToggle}
