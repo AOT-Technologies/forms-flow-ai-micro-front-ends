@@ -16,7 +16,7 @@ type MessageType = "copied" | "saved" | "copy-failed" | null;
 /**
  * Props for the CustomUrl component
  */
-interface CustomUrlProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children'> {
+export interface CustomUrlProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children'> {
   /** Base URL that will be prepended to the custom URL input */
   baseUrl: string;
   /** Initial full URL value (will extract slug from base URL) */
@@ -281,4 +281,4 @@ export const CustomUrl = memo(CustomUrlComponent);
 export default CustomUrl;
 
 // Export types for consumers
-export type { CustomUrlProps, MessageType };
+export type { MessageType };
