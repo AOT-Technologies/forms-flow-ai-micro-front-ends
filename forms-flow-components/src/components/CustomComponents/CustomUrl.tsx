@@ -87,4 +87,3 @@ export const CustomUrl: React.FC<CustomUrlProps> = ({
   );
 };
 
-export default CustomUrl;
