@@ -11,7 +11,7 @@ import { V8CustomButton } from "./CustomButton";
  * <CustomUrl baseUrl="https://formsflow.ai/" onSave={handleUrlSave} />
  */
 
-type MessageType = "copied" | "saved" | null;
+type MessageType = "copied" | "saved" | "copy-failed" | null;
 
 /**
  * Props for the CustomUrl component
@@ -92,7 +92,7 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
     if (disabled) return;
     
     // Try modern clipboard API first
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(fullUrl)
         .then(() => {
           setMessage("copied");
@@ -114,11 +114,26 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
     const textArea = document.createElement('textarea');
     textArea.value = text;
     document.body.appendChild(textArea);
+    textArea.focus();
     textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
-    setMessage("copied");
-    setTimeout(() => setMessage(null), 2500);
+    
+    try {
+      const success = document.execCommand('copy');
+      if (success) {
+        setMessage("copied");
+        setTimeout(() => setMessage(null), 2500);
+      } else {
+        console.warn('Copy command failed');
+        setMessage("copy-failed");
+        setTimeout(() => setMessage(null), 2500);
+      }
+    } catch (error) {
+      console.warn('execCommand is deprecated and failed:', error);
+      setMessage("copy-failed");
+      setTimeout(() => setMessage(null), 2500);
+    } finally {
+      textArea.remove();
+    }
   }, []);
 
   // Memoized save handler
@@ -205,15 +220,14 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
       </div>
       <div className="actions">
         {message && (
-          <span 
+          <output 
             id={`${dataTestId}-message`}
             className="message"
-            role="status"
             aria-live="polite"
             data-testid={`${dataTestId}-message`}
           >
-            {message === "copied" ? "URL copied" : "URL saved"}
-          </span>
+            {message === "copied" ? "URL copied" : message === "saved" ? "URL saved" : "Copy failed"}
+          </output>
         )}
         <V8CustomButton
           label={saveButtonText}

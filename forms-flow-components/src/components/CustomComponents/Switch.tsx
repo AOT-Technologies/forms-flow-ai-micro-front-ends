@@ -75,26 +75,28 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(({
 
   // Memoized icon rendering for better performance
   const renderIcon = useCallback(() => {
-    if (!withIcon) return null;
+    if (withIcon) {
+      let fillColor = colors.success;
 
-    let fillColor = colors.success;
-
-    if (isChecked) {
-      if (type === 'primary') fillColor = colors.primaryLight;
-      return (
-        <span className="custom-switch-icon" aria-hidden="true">
-          <SwitchTickIcon fillColor={fillColor} />
-        </span>
-      );
-    } else {
-      if (type === 'binary') fillColor = colors.danger;
-      else fillColor = colors.grayLight;
-      return (
-        <span className="custom-switch-icon" aria-hidden="true">
-          <SwitchCrossIcon fillColor={fillColor} />
-        </span>
-      );
+      if (isChecked) {
+        if (type === 'primary') fillColor = colors.primaryLight;
+        return (
+          <span className="custom-switch-icon" aria-hidden="true">
+            <SwitchTickIcon fillColor={fillColor} />
+          </span>
+        );
+      } else {
+        if (type === 'binary') fillColor = colors.danger;
+        else fillColor = colors.grayLight;
+        return (
+          <span className="custom-switch-icon" aria-hidden="true">
+            <SwitchCrossIcon fillColor={fillColor} />
+          </span>
+        );
+      }
     }
+    
+    return null;
   }, [isChecked, type, withIcon, colors]);
 
   // Memoized click handler for better performance
@@ -148,13 +150,13 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(({
     try {
       // Client side - use crypto API
       const crypto = globalThis.crypto || globalThis.msCrypto;
-      if (crypto && crypto.getRandomValues) {
+      if (crypto?.getRandomValues) {
         const array = new Uint32Array(1);
         crypto.getRandomValues(array);
         return array[0].toString(36);
       }
     } catch (error) {
-      console.warn('Crypto API not available, falling back to timestamp');
+      console.warn('Crypto API not available, falling back to timestamp:', error);
     }
     // Fallback to timestamp-based ID
     return Date.now().toString(36);

@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { Alert, AlertVariant } from '../CustomComponents/Alert';
@@ -45,6 +46,56 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
+// Reusable hook for button click tracking
+const useButtonClickTracker = () => {
+  const [lastClickedButton, setLastClickedButton] = React.useState<string | null>(null);
+  
+  const trackClick = React.useCallback((buttonName: string, originalAction: () => void) => {
+    setLastClickedButton(buttonName);
+    originalAction();
+  }, []);
+
+  const resetClick = React.useCallback(() => {
+    setLastClickedButton(null);
+  }, []);
+
+  return { lastClickedButton, trackClick, resetClick };
+};
+
+// Reusable component for visual feedback
+const ButtonClickFeedback = ({ lastClickedButton }: { lastClickedButton: string | null }) => {
+  if (!lastClickedButton) return null;
+  
+  return (
+    <div style={{ 
+      marginTop: '20px', 
+      padding: '10px', 
+      backgroundColor: '#f5f5f5', 
+      borderRadius: '4px',
+      border: '1px solid #ddd'
+    }}>
+      <strong>Last Button Clicked:</strong> {lastClickedButton}
+    </div>
+  );
+};
+
+// Helper function to create button click handlers
+const createButtonHandler = (buttonName: string, actionName: string, trackClick: (name: string, action: () => void) => void) => {
+  return () => trackClick(buttonName, () => action(actionName)());
+};
+
+// Template to track button clicks and show them visually
+const InteractiveAlertTemplate = (args: any) => {
+  const { lastClickedButton, trackClick } = useButtonClickTracker();
+
+  return (
+    <div style={{ width: '100%', maxWidth: '1600px' }}>
+      <Alert {...args} />
+      <ButtonClickFeedback lastClickedButton={lastClickedButton} />
+    </div>
+  );
+};
+
 export const Focus: Story = {
   args: {
     message: 'This is a focus alert message',
@@ -54,7 +105,7 @@ export const Focus: Story = {
   },
 };
 
-export const Error: Story = {
+export const ErrorAlert: Story = {
   args: {
     message: 'This is an error alert message',
     variant: AlertVariant.ERROR,
@@ -87,15 +138,27 @@ export const WithRightContent: Story = {
     variant: AlertVariant.FOCUS,
     isShowing: true,
     dataTestId: 'alert-with-action',
-    rightContent: (
-      <V8CustomButton
-        label="Dismiss"
-        variant="secondary"
-        size="small"
-        onClick={action('dismiss-clicked')}
-        dataTestId="dismiss-button"
-      />
-    ),
+  },
+  render: (args) => {
+    const { lastClickedButton, trackClick } = useButtonClickTracker();
+
+    return (
+      <div style={{ width: '100%', maxWidth: '1600px' }}>
+        <Alert 
+          {...args} 
+          rightContent={
+            <V8CustomButton
+              label="Dismiss"
+              variant="secondary"
+              size="small"
+              onClick={createButtonHandler('Dismiss', 'dismiss-clicked', trackClick)}
+              dataTestId="dismiss-button"
+            />
+          }
+        />
+        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
+      </div>
+    );
   },
 };
 
@@ -105,24 +168,36 @@ export const WithMultipleActions: Story = {
     variant: AlertVariant.WARNING,
     isShowing: true,
     dataTestId: 'alert-with-actions',
-    rightContent: (
-      <div style={{ display: 'flex', gap: '8px' }}>
-        <V8CustomButton
-          label="Cancel"
-          variant="secondary"
-          size="small"
-          onClick={action('cancel-clicked')}
-          dataTestId="cancel-button"
+  },
+  render: (args) => {
+    const { lastClickedButton, trackClick } = useButtonClickTracker();
+
+    return (
+      <div style={{ width: '100%', maxWidth: '1600px' }}>
+        <Alert 
+          {...args} 
+          rightContent={
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <V8CustomButton
+                label="Cancel"
+                variant="secondary"
+                size="small"
+                onClick={createButtonHandler('Cancel', 'cancel-clicked', trackClick)}
+                dataTestId="cancel-button"
+              />
+              <V8CustomButton
+                label="Confirm"
+                variant="primary"
+                size="small"
+                onClick={createButtonHandler('Confirm', 'confirm-clicked', trackClick)}
+                dataTestId="confirm-button"
+              />
+            </div>
+          }
         />
-        <V8CustomButton
-          label="Confirm"
-          variant="primary"
-          size="small"
-          onClick={action('confirm-clicked')}
-          dataTestId="confirm-button"
-        />
+        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
       </div>
-    ),
+    );
   },
 };
 
@@ -165,22 +240,34 @@ export const WithCustomContent: Story = {
     variant: AlertVariant.WARNING,
     isShowing: true,
     dataTestId: 'alert-custom-content',
-    rightContent: (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <span style={{ fontSize: '12px', color: '#666' }}>2 min ago</span>
-        <button 
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-          onClick={action('close-clicked')}
-        >
-          ✕
-        </button>
+  },
+  render: (args) => {
+    const { lastClickedButton, trackClick } = useButtonClickTracker();
+
+    return (
+      <div style={{ width: '100%', maxWidth: '1600px' }}>
+        <Alert 
+          {...args} 
+          rightContent={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '12px', color: '#666' }}>2 min ago</span>
+              <button 
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  cursor: 'pointer',
+                  fontSize: '16px'
+                }}
+                onClick={createButtonHandler('Close', 'close-button-clicked', trackClick)}
+              >
+                ✕
+              </button>
+            </div>
+          }
+        />
+        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
       </div>
-    ),
+    );
   },
 };
 
@@ -212,25 +299,103 @@ export const WithErrorProgressBar: Story = {
     variant: AlertVariant.ERROR,
     isShowing: true,
     dataTestId: 'alert-error-progress',
-    rightContent: (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: '200px' }}>
-        <CustomProgressBar 
-          progress={30}
-          color="error"
-          height="8px"
-          minWidth="150px"
-          dataTestId="error-progress"
-          ariaLabel="Retry progress"
+  },
+  render: (args) => {
+    const { lastClickedButton, trackClick } = useButtonClickTracker();
+
+    return (
+      <div style={{ width: '100%', maxWidth: '1600px' }}>
+        <Alert 
+          {...args} 
+          rightContent={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: '200px' }}>
+              <CustomProgressBar 
+                progress={30}
+                color="error"
+                height="8px"
+                minWidth="150px"
+                dataTestId="error-progress"
+                ariaLabel="Retry progress"
+              />
+              <V8CustomButton
+                label="Cancel"
+                variant="secondary"
+                size="small"
+                onClick={createButtonHandler('Cancel Upload', 'cancel-upload-clicked', trackClick)}
+                dataTestId="cancel-upload-button"
+              />
+            </div>
+          }
         />
-        <V8CustomButton
-          label="Cancel"
-          variant="secondary"
-          size="small"
-          onClick={action('cancel-upload')}
-          dataTestId="cancel-upload-button"
-        />
+        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
       </div>
-    ),
+    );
+  },
+};
+
+export const InteractiveButtons: Story = {
+  args: {
+    message: 'Alert with multiple interactive buttons - check Actions panel',
+    variant: AlertVariant.FOCUS,
+    isShowing: true,
+    dataTestId: 'interactive-alert',
+  },
+  render: (args) => {
+    const { lastClickedButton, trackClick } = useButtonClickTracker();
+
+    return (
+      <div style={{ width: '100%', maxWidth: '1600px' }}>
+        <Alert 
+          {...args} 
+          rightContent={
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <V8CustomButton
+                label="Save"
+                variant="primary"
+                size="small"
+                onClick={createButtonHandler('Save', 'save-button-clicked', trackClick)}
+                dataTestId="save-button"
+              />
+              <V8CustomButton
+                label="Edit"
+                variant="secondary"
+                size="small"
+                onClick={createButtonHandler('Edit', 'edit-button-clicked', trackClick)}
+                dataTestId="edit-button"
+              />
+              <V8CustomButton
+                label="Delete"
+                variant="secondary"
+                size="small"
+                onClick={createButtonHandler('Delete', 'delete-button-clicked', trackClick)}
+                dataTestId="delete-button"
+              />
+              <button
+                style={{
+                  background: 'none',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  padding: '4px 8px',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+                onClick={createButtonHandler('Custom', 'custom-button-clicked', trackClick)}
+              >
+                Custom
+              </button>
+            </div>
+          }
+        />
+        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'This story demonstrates various button interactions. Click any button and see the events tracked both in the Actions panel and in the visual feedback below.',
+      },
+    },
   },
 };
 
@@ -248,18 +413,21 @@ export const MultipleAlerts: Story = {
   render: () => {
     const alerts = [
       {
+        id: 'maintenance-alert-001',
         message: 'System maintenance scheduled for tonight',
         variant: AlertVariant.WARNING,
         isShowing: true,
         dataTestId: 'maintenance-alert',
       },
       {
+        id: 'success-alert-002',
         message: 'Your changes have been saved successfully',
         variant: AlertVariant.FOCUS,
         isShowing: true,
         dataTestId: 'success-alert',
       },
       {
+        id: 'error-alert-003',
         message: 'Failed to connect to server',
         variant: AlertVariant.ERROR,
         isShowing: true,
@@ -278,8 +446,8 @@ export const MultipleAlerts: Story = {
 
     return (
       <div style={{ width: '100%', maxWidth: '1600px' }}>
-        {alerts.map((alert, index) => (
-          <div key={index} style={{ marginBottom: '12px', width: '100%' }}>
+        {alerts.map((alert) => (
+          <div key={alert.id} style={{ marginBottom: '12px', width: '100%' }}>
             <Alert {...alert} />
           </div>
         ))}
@@ -303,11 +471,31 @@ export const Playground: Story = {
     isShowing: true,
     dataTestId: 'playground-alert',
   },
-  render: AlertTemplate,
+  render: (args) => {
+    const { lastClickedButton, trackClick } = useButtonClickTracker();
+
+    return (
+      <div style={{ width: '100%', maxWidth: '1600px' }}>
+        <Alert 
+          {...args} 
+          rightContent={
+            <V8CustomButton
+              label="Action"
+              variant="secondary"
+              size="small"
+              onClick={createButtonHandler('Action', 'playground-button-clicked', trackClick)}
+              dataTestId="playground-button"
+            />
+          }
+        />
+        <ButtonClickFeedback lastClickedButton={lastClickedButton} />
+      </div>
+    );
+  },
   parameters: {
     docs: {
       description: {
-        story: 'Use the controls panel below to experiment with all alert properties and see how they affect the component.',
+        story: 'Use the controls panel below to experiment with all alert properties and see how they affect the component. Click the action button to see events tracked both in the Actions panel and in the visual feedback below.',
       },
     },
   },

@@ -53,11 +53,6 @@ const AlertComponent = forwardRef<HTMLDivElement, AlertProps>(({
   ...restProps
 }, ref) => {
   
-  // Memoized click handler for right content interactions
-  const handleRightContentClick = useCallback((event: React.MouseEvent) => {
-    // Prevent event bubbling to parent elements
-    event.stopPropagation();
-  }, []);
   
   // If alert is not showing, render nothing
   if (!isShowing) return null;
@@ -96,7 +91,6 @@ const AlertComponent = forwardRef<HTMLDivElement, AlertProps>(({
           className="custom-alert-right"
           data-testid={`${dataTestId}-right`}
           aria-label="alert-action"
-          onClick={handleRightContentClick}
         >
           {rightContent}
         </div>
