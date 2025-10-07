@@ -59,3 +59,29 @@ All the modules are built with `single-spa`, a javascript router for micro front
 8. check into `forms-flow-web` directory
 9. run `npm install && npm start` make sure this module run on port 3001
 10. The application should be available at port 3000
+
+## Running Storybook
+
+Storybook is available for the `forms-flow-components` module to showcase and test UI components.
+
+### Prerequisites for Storybook
+- Nodejs 16 or above
+- Make sure port `6006` is available for Storybook
+
+### Steps to run Storybook
+1. Navigate to the `forms-flow-components` directory
+2. Run `npm install` to install dependencies
+3. Run `npm run storybook` to start the Storybook development server
+4. Storybook will be available at `http://localhost:6006`
+
+### Storybook Features
+- Interactive component playground
+- Component documentation
+- Visual testing capabilities
+- Design system showcase
+- Accessibility testing tools
+
+### Storybook Commands
+- `npm run storybook` - Start Storybook development server
+- `npm run build-storybook` - Build static Storybook for production
+- `npm run storybook:test` - Run Storybook tests
