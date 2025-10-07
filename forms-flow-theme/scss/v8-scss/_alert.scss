@@ -1,61 +1,181 @@
-@import "_mixins";
+// Import theme variables and mixins
+@use "mixins";
 
-// ✅ Color Variables
-$alert-bg: var(--white-200);
-$alert-text-color: var(--secondary-dark);
+// Alert Variables - Using consistent rem/em units for better scalability
+$alert-border-radius: 0.313rem;        // 5px at 16px base
+$alert-min-height: 3.5rem;             // 56px at 16px base
+$alert-padding: 0 1.375rem;     // 17px 22px at 16px base
+$alert-gap: var(--spacer-050);         // 8px from theme
+$alert-font-size: var(--font-size-m);  // 15px from theme
+$alert-font-weight: var(--font-weight-medium);
+$alert-line-height: var(--line-height-default);
+$alert-transition-duration: 0.3s;
+$alert-transition-timing: ease-in-out;
 
-$alert-passive: var(--gray-medium-dark);
-$alert-focus: var(--primary-dark);
-$alert-error: var(--orange-100);
-$alert-warning: var(--red-100);
+// Border and fine details (keep in px for precision)
+$alert-border-width: 1px;
 
-// ✅ Animation Variables
-$alert-drop-duration: 0.3s;
-$alert-height: 3.5rem;
+// Animation variables
+$alert-enter-duration: 0.3s;
+$alert-exit-duration: 0.2s;
+$alert-slide-distance: 1rem;
 
-$font-size-15: var(--font-size-15);
-$font-weight-medium: var(--font-weight-medium);
+// Shadow variables (using rem for consistent scaling)
+$alert-shadow-focus: 0 0.125rem 0.5rem rgba(137, 105, 242, 0.1);
+$alert-shadow-error: 0 0.125rem 0.5rem rgba(255, 87, 34, 0.1);
+$alert-shadow-warning: 0 0.125rem 0.5rem rgba(255, 152, 0, 0.1);
 
+// Color Variables - Using theme tokens
+$color-alert-bg: var(--white-200);
+$color-alert-text: var(--secondary-dark);
+$color-alert-border: var(--gray-medium-dark);
+
+$color-alert-passive: var(--gray-medium-dark);
+$color-alert-focus: var(--primary-dark);
+$color-alert-error: var(--orange-100);
+$color-alert-warning: var(--red-100);
+
+// Alert Mixins
+@mixin alert-base {
+  width: 100%;
+  min-height: $alert-min-height;
+  padding: $alert-padding;
+  display: flex;
+  gap: $alert-gap;
+  align-items: center;
+  justify-content: space-between;
+  background-color: $color-alert-bg;
+  border: $alert-border-width solid $color-alert-border;
+  border-radius: $alert-border-radius;
+  color: $color-alert-text;
+  font-family: inherit;
+  font-size: $alert-font-size;
+  font-weight: $alert-font-weight;
+  line-height: $alert-line-height;
+  position: relative;
+  user-select: none;
+  transition: 
+    border-color $alert-transition-duration $alert-transition-timing,
+    background-color $alert-transition-duration $alert-transition-timing,
+    box-shadow $alert-transition-duration $alert-transition-timing,
+    transform $alert-transition-duration $alert-transition-timing,
+    opacity $alert-transition-duration $alert-transition-timing;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+@mixin alert-entering {
+  animation: alert-slide-in $alert-enter-duration $alert-transition-timing forwards;
+}
+
+@mixin alert-leaving {
+  animation: alert-slide-out $alert-exit-duration $alert-transition-timing forwards;
+}
+
+@mixin alert-variant($border-color, $shadow: none) {
+  border-color: $border-color;
+  
+  @if $shadow != none {
+    box-shadow: $shadow;
+  }
+}
+
+// Main Alert Component
 .custom-alert {
-    width: 100%;
-    max-height: $alert-height;
-    padding: 1.063rem 1.375rem;
+  @include alert-base;
+
+  // Alert sections
+  &-left {
+    flex: 1;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background-color: $alert-bg;
-    border: 0.063rem solid $alert-passive;
-    border-radius: 0.313rem;
+    min-width: 0; // Allow text truncation
+  }
 
-    &-left {
-        flex: 1;
-    }
+  &-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $alert-gap;
+  }
 
-    &-right {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-    }
+  &-text {
+    font-family: inherit;
+    font-size: $alert-font-size;
+    font-weight: $alert-font-weight;
+    line-height: $alert-line-height;
+    color: $color-alert-text;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
 
-    &-text {
-        @include font-style($font-size-15, $font-weight-medium, $alert-text-color);
-    }
+  // Animation states
+  &.entering {
+    @include alert-entering;
+  }
 
-    // ✅ Variants (Border Colors)
-    &-passive {
-        border-color: $alert-passive;
-    }
+  &.leaving {
+    @include alert-leaving;
+  }
 
-    &-focus {
-        border-color: $alert-focus;
-    }
+  // Alert variants
+  &-passive {
+    @include alert-variant($color-alert-passive);
+  }
 
-    &-error {
-        border-color: $alert-error;
-    }
+  &-focus {
+    @include alert-variant($color-alert-focus, $alert-shadow-focus);
+  }
 
-    &-warning {
-        border-color: $alert-warning;
-    }
+  &-error {
+    @include alert-variant($color-alert-error, $alert-shadow-error);
+  }
+
+  &-warning {
+    @include alert-variant($color-alert-warning, $alert-shadow-warning);
+  }
+
+  // Responsive behavior
+  @media (max-width: 768px) {
+    padding: 0.875rem 1rem;
+    min-height: 3rem;
+    font-size: 0.875rem;
+  }
+
+  // High contrast mode support
+  @media (prefers-contrast: high) {
+    border-width: 2px;
+  }
+
+  // Reduced motion support
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+  }
+}
+
+// Animations
+@keyframes alert-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-$alert-slide-distance);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes alert-slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-$alert-slide-distance);
+  }
 }

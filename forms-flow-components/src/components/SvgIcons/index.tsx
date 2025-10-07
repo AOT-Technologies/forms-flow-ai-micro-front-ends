@@ -1025,7 +1025,7 @@ export const VerticalLineIcon = ({ color = baseColor, ...props }) => (
     fill="none"
     {...props}
   >
-    <path d="M1 1L0.999997 69" stroke="#E5E5E5" stroke-linecap="round" />
+    <path d="M1 1L0.999997 69" stroke="#E5E5E5" strokeLinecap="round" />
   </svg>
 ); 
 
