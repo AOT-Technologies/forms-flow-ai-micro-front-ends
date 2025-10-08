@@ -90,7 +90,8 @@ $font-tokens: (
 :root {
 
   // //for navbar
-  --nav-bg-color: var(-- white-100);
+  
+  --nav-bg-color: var(--white-100);
   --navbar-menu-font-color: var(--secondary-dark);
   --navbar-submenu-font-color: var(--gray-dark);
 
@@ -239,9 +240,9 @@ $font-tokens: (
       height: 100vh;
       display: flex;
       flex-direction: column;
-      transition: width 0.3s ease;
+      transition: width 0.5s ease;
       overflow: hidden;
-      width: 12rem;               // need to be replaced with variable
+      width: var(--navbar-width);
     }
 
     .page-container {
