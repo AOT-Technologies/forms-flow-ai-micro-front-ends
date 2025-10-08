@@ -278,10 +278,10 @@ $font-tokens: (
         }
   
         .header-section-3 {
-          @include mixins.rowLayout(0px, space-between, 4);
+          @include mixins.rowLayout(72px, space-between, 4);
         }
   
-        .header-sect  ion-4 {
+        .header-section-4 {
           @include mixins.rowLayout($gridRow: 5);
         }
 
@@ -291,6 +291,14 @@ $font-tokens: (
           grid-row: 6;
           padding: 1rem 0;
           max-height: var(--body-section-height); // need to be updated after while implementing inner contets. 
+          &.formedit-layout {
+              overflow-y: auto;
+              overflow-x: hidden;
+              max-width: 100%;
+              box-sizing: border-box;
+              max-height: calc(100vh - 200px);
+              width: 1088px;
+            }
         }
   
         .section-seperation-left {
