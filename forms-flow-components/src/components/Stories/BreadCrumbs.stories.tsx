@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
 import { BreadCrumbs, BreadcrumbItem, BreadcrumbVariant } from '../CustomComponents/BreadCrumbs';
 
 const meta: Meta<typeof BreadCrumbs> = {
