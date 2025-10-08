@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 export const RESOURCE_BUNDLES_EN = {
+  "Unpublish This Form & Flow": "Unpublish This Form & Flow",
   "Dismiss": "Dismiss",
   "You Cannot Delete This Form & Flow": "You Cannot Delete This Form & Flow",
   "You cannot delete a form & flow that has submissions associated with it.": "You cannot delete a form & flow that has submissions associated with it.",
@@ -733,10 +734,10 @@ export const RESOURCE_BUNDLES_EN = {
   "Note": "Note",
   "Stay in the Editor": "Stay in the Editor",
   "Discard Changes and Leave the Page": "Discard Changes and Leave the Page",
-  "Confirm Unpublish": "Confirm Unpublish",
+  "By unpublishing this form & flow, you will make it unavailable for new submissions.": "By unpublishing this form & flow, you will make it unavailable for new submissions.",
   "This form is currently live. To save changes to form edits, you need to unpublish it first. By Unpublishing this form, you will make it unavailable for new submissions to those who currently have access to it. You can republish the form after making your edits.": "This form is currently live. To save changes to form edits, you need to unpublish it first. By Unpublishing this form, you will make it unavailable for new submissions to those who currently have access to it. You can republish the form after making your edits.",
   "Unpublish and Edit This Form": "Unpublish and edit this form",
-  "Cancel, Keep This Form Unpublished": "Cancel, Keep This Form Unpublished",
+  "Cancel, Keep This Form & Flow Published": "Cancel, Keep This Form & Flow Published",
   "Confirm Publish": "Confirm Publish",
   "Publishing will save any unsaved changes and lock the entire form, including the layout and the flow. To perform any additional changes you will need to unpublish the form again.": "Publishing will save any unsaved changes and lock the entire form, including the layout and the flow. To perform any additional changes you will need to unpublish the form again.",
   "Publish This Form": "Publish this form",
@@ -1089,5 +1090,8 @@ export const RESOURCE_BUNDLES_EN = {
   "Template Description": "Template Description",
   "All Fields": "All Fields",
   "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.",
-  "Current user": "Current user"
+  "Current user": "Current user",
+  "Field selection is not available for bundles at this time.": "Field selection is not available for bundles at this time.",
+  "Owner and specific roles": "Owner and specific roles",
+  "Only owner": "Only owner"
 }

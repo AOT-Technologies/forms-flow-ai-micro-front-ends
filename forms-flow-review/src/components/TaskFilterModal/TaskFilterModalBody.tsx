@@ -11,7 +11,7 @@ import {
   CustomButton,
   FormVariableIcon,
 } from "@formsflow/components";
-import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
+import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import {
   ACCESSIBLE_FOR_ALL_GROUPS,
   MULTITENANCY_ENABLED,
@@ -91,7 +91,7 @@ const TaskFilterModalBody = ({
 
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId || state.tenants?.tenantData?.key);
   const SPECIFIC_ROLE = "specificRole";
   const SPECIFIC_ASSIGNEE = "specificAssignee";
   const CURRENT_USER = "currentUser";
@@ -139,11 +139,13 @@ const TaskFilterModalBody = ({
     }
 
     if (accessOption === SPECIFIC_ROLE) {
-      criteria.candidateGroup =
-        MULTITENANCY_ENABLED && accessValue
-          ? tenantKey + "-" + trimFirstSlash(accessValue)
-          : trimFirstSlash(accessValue);
-      delete criteria.assignee;
+   const trimmedAccessValue = trimFirstSlash(accessValue);
+   criteria.candidateGroup = addTenantPrefixIfNeeded(
+     trimmedAccessValue,
+     tenantKey,
+     MULTITENANCY_ENABLED
+   );
+  delete criteria.assignee;
     } else if(accessOption === SPECIFIC_ASSIGNEE){
       criteria.assignee = accessValue;
       delete criteria.candidateGroup;
@@ -219,7 +221,10 @@ const TaskFilterModalBody = ({
     if (!filterToEdit) return;
     const { roles, users, criteria, properties } = filterToEdit;
     const { assignee, sorting, candidateGroup } = criteria;
-    setShareFilterForSpecificRole(roles);
+    const cleanedRoles = roles.map((role) =>
+      removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED)
+    );
+    setShareFilterForSpecificRole(cleanedRoles);
     let accessOption;
     let accessValue;
 
@@ -228,7 +233,7 @@ const TaskFilterModalBody = ({
       accessValue = assignee;
     } else if (candidateGroup) {
       accessOption = SPECIFIC_ROLE;
-      accessValue = candidateGroup;
+      accessValue = removeTenantKey(candidateGroup,tenantKey,MULTITENANCY_ENABLED);
     } else {
       accessOption = CURRENT_USER;
       accessValue = "";
@@ -279,18 +284,15 @@ const TaskFilterModalBody = ({
       .catch((error) => console.error("error", error));
   }, []);
 
-  const candidateOptions = useMemo(() => {
-    return candidateGroups.reduce((acc, group) => {
-      if (!group.permissions.includes("view_filters")) return acc;
+const candidateOptions = useMemo(() => {
+  return candidateGroups.reduce((acc, group) => {
+    if (!group.permissions.includes("view_filters")) return acc;
+    const label = removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED)
+    acc.push({ value: group.name, label });
+    return acc;
+  }, []);
+}, [candidateGroups, MULTITENANCY_ENABLED, tenantKey]);
 
-      const name = MULTITENANCY_ENABLED
-        ? removeTenantKey(group.name, tenantKey)
-        : group.name;
-
-      acc.push({ value: name, label: name });
-      return acc;
-    }, []);
-  }, [candidateGroups, MULTITENANCY_ENABLED, tenantKey]);
 
   const createSortByOptions = (labelKey, value) => ({
     label: t(labelKey),
@@ -335,7 +337,7 @@ const TaskFilterModalBody = ({
 };
 
 const isValidVariableType = (taskVar) => {
-  return taskVar.type !== "hidden" && taskVar.type !== "radio";
+  return taskVar.type !== "hidden" ;
 };
 
 const createVariableFromTask = (variable, baseIndex, isChecked = true) => ({

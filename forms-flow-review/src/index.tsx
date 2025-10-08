@@ -16,9 +16,9 @@ import SocketIOService from "./services/SocketIOService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
-import { setBPMTaskDetail,setTaskAssignee } from "./actions/taskActions"; 
+import { setBPMTaskDetail,setTaskAssignee } from "./actions/taskActions";
 import { StyleServices } from "@formsflow/service";
-
+import { setTenantData } from "./actions/tenantActions";
 import { fetchServiceTaskList, fetchUserList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
   "view_tasks",
@@ -59,6 +59,26 @@ const Task = React.memo((props: any) => {
     });
   }, []);
 
+useEffect(() => {
+  if (MULTITENANCY_ENABLED && tenantId) {
+    // Get tenant data from StorageService
+    const storedTenantData = localStorage.getItem("tenantData");
+
+    if (storedTenantData) {
+      try {
+        const parsedTenantData = JSON.parse(storedTenantData);
+        // Set tenant data in Redux state
+        dispatch(setTenantData(parsedTenantData));
+      } catch (error) {
+        console.error("Error parsing tenant data from storage:", error);
+      }
+    } else {
+      console.log("No tenant data found in storage");
+    }
+  }
+}, [dispatch,tenantId]);
+
+
   useEffect(() => {
     StorageService.save("tenantKey", tenantId ?? "");
   }, [tenantId]);
@@ -89,7 +109,7 @@ const Task = React.memo((props: any) => {
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     });
-    
+
     // Fetch userList if not already present in the state
     if (!userList?.data || userList.data.length === 0) {
       dispatch(fetchUserList());
@@ -126,7 +146,8 @@ const Task = React.memo((props: any) => {
           variables: taskDetails?.variables,
         })
       );
-      // Added to update assignee when socket trigger happens when user is in task details page 
+      console.log("handleTaskUpdate inside",response.data.assignee);
+      // Added to update assignee when socket trigger happens when user is in task details page
       dispatch(setTaskAssignee(response.data.assignee))
     });
   }
@@ -155,7 +176,7 @@ const SocketIOCallback = useCallback(({
        * also tasklist if the task id is exist inthe tasklist
        */
       console.log("SocketIOCallback test",isUpdateEvent,refreshedTaskId);
-    if (isUpdateEvent) { 
+    if (isUpdateEvent) {
       handleTaskUpdate(refreshedTaskId);
     } else if (forceReload) {
       handleForceReload(refreshedTaskId);

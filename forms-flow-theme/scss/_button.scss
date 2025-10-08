@@ -338,9 +338,11 @@ $danger-color: var(--ff-danger);
     border-bottom-left-radius: 1.344rem  !important;
     border-bottom-right-radius: 1.344rem !important;
     padding: var(--spacer-050) var(--spacer-025) !important;
-    display: flex;
     flex-direction: column;
     gap: var(--spacer-025) !important;
+    &.show{
+    display: flex;
+    }
   }
 
   &.show {
@@ -1379,7 +1381,7 @@ $danger-color: var(--ff-danger);
       @extend .custom-scroll;
       @include paddingLvl7();
 
-      // position: absolute;
+      position: relative;
       overflow-y: scroll;
       width: 100%;
       max-height: $dropdownMaxHeight;
@@ -1398,7 +1400,9 @@ $danger-color: var(--ff-danger);
       scrollbar-gutter: auto;
 
       z-index: 2;
-
+      &.template-override{
+        position: absolute !important;
+      }
       & > div {
         @include clickableFeedback2();
         @include textBase($fontBase, $primary-color);
@@ -1684,7 +1688,7 @@ $danger-color: var(--ff-danger);
       @include textBase();
 
       width: 100%;
-      height: $minHeight !important;
+      // height: $minHeight !important;
 
       padding: $paddingLvl6TB $paddingLvl5LR;
 
@@ -1783,3 +1787,13 @@ $danger-color: var(--ff-danger);
 
 
 }
+
+/* Class to remove number form input spinners */
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+

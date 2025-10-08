@@ -96,14 +96,24 @@ export const fetchServiceTaskList = (
     let taskName = null;
     const updatedVariables = criteria.processVariables?.filter(
       (variable) => {
-        if( variable.name === "name") taskName = variable;
-        return variable.name !== "name";
+        // Only move task name (isFormVariable: false) to nameLike, keep form variables (isFormVariable: true) in processVariables
+        if( variable.name === "name" && !variable.isFormVariable) {
+          taskName = variable;
+          return false; // Remove from processVariables
+        }
+        return true; // Keep all other variables including form variables with name "name"
       }
     );
 
+    // Clean up process variables by removing the isFormVariable metadata before sending to API
+    const cleanedVariables = updatedVariables?.map(variable => {
+      const { isFormVariable, ...cleanVariable } = variable;
+      return cleanVariable;
+    });
+
     clonedReqData["criteria"] = {
       ...criteria,
-      processVariables: updatedVariables,
+      processVariables: cleanedVariables,
     };
 
     if (taskName) {
@@ -145,6 +155,9 @@ export const fetchServiceTaskList = (
             }
             dispatch(setBPMTaskCount(taskCount.count));
             dispatch(setBPMTaskList(taskData));
+            if(taskData){
+              abortFlag = 1;
+            }
             dispatch(setVisibleAttributes(responseData[1]));
             done(null, taskData);
           }
@@ -252,6 +265,11 @@ export const fetchTaskVariables = (formId) => {
   return RequestService.httpGETRequest(url);
 };
 
+export const executeRule = (submissionData, mapperId) => { 
+  const url = replaceUrl(API.BUNDLE_EXECUTE_RULE,"<mapper_id>", mapperId);
+  return RequestService.httpPOSTRequest(url, submissionData);
+};
+
 export const fetchAllForms = () => {
   //activeForms means published forms only : status = Active
   return RequestService.httpGETRequest(`${API.FORM}?activeForms=true`);
@@ -269,6 +287,21 @@ export const fetchFormById = (id) => {
       ...token,
     }
   );
+};
+
+export const fetchBundleSubmissionData = (bundleId,submissionId,formId) => {
+  let formioToken = sessionStorage.getItem("formioToken");
+  let token = formioToken ? { "x-jwt-token": formioToken } : {};
+  return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${bundleId}/submission/${submissionId}?formId=${formId}`, {}, "", false, {
+    ...token
+  });
+
+};
+
+export const getBundleCustomSubmissionData = (bundleId, submissionId, selectedFormId) =>{
+  const submissionUrl = replaceUrl(API.CUSTOM_SUBMISSION, "<form_id>", bundleId);
+  return  RequestService.
+  httpGETRequest(`${submissionUrl}/${submissionId}?formId=${selectedFormId}`, {});
 };
 
 

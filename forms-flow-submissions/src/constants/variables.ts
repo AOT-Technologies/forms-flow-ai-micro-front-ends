@@ -7,12 +7,6 @@ export interface SystemVariable {
 export const SystemVariables:SystemVariable[] = [
   {
     "altVariable": "",
-    "labelOfComponent": "Current User",
-    "type": "hidden",
-    "key": "currentUser"
-  },
-  {
-    "altVariable": "",
     "labelOfComponent": "Submitter Email",
     "type": "hidden",
     "key": "submitterEmail"

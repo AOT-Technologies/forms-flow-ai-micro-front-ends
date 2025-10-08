@@ -37,3 +37,9 @@ declare module "*.svg" {
   const src: string;
   export default src;
 }
+declare module "@formsflow/service" {
+  export const {
+    RequestService,
+    StorageService, 
+  }: any;
+}

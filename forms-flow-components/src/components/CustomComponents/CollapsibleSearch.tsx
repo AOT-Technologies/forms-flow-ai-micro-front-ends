@@ -3,17 +3,21 @@ import { AngleRightIcon, AngleLeftIcon, PencilIcon } from "../SvgIcons";
 import { useTranslation } from "react-i18next";
 import { ButtonDropdown, FormInput } from "@formsflow/components";
 import { CustomButton } from "./Button";
+import { CustomInfo } from "./CustomInfo";
 
 interface FormItem {
   formId: string;
   formName: string;
   parentFormId: string;
+  formType: string;
+  status: string;
 }
 interface InputField {
   id: string;
   label: string;
   type: string;
   value: string;
+  placeholder?: string;
 }
 interface CollapsibleSearchProps {
   isOpen: boolean;
@@ -87,22 +91,44 @@ const handleSelection = (label: string) => setSelectedItem(label);
   const hasAnyInputInFields = inputFields?.some((field) => field.value?.trim() !== "");
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
   
+  // Find the selected form to get its formType
+  const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
+  const selectedFormType = selectedForm?.formType;
 
   const [searchQuery, setSearchQuery] = useState("");
 
-const DropdownItems = formData
-  .filter((form) => form.formName.toLowerCase().includes(searchQuery.toLowerCase()))
-  .map((form) => ({
-    type: `form-${form.formId}`,
-    content: form.formName,
-    dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, '-').toLowerCase()}`,
-    ariaLabel: `Select form: ${form.formName}`,
+const DropdownItems = [
+  {
+    type: "all-forms",
+    content: "All Forms",
+    dataTestId: "dropdown-item-all-forms",
+    ariaLabel: "Select all forms",
     onClick: () => {
-      handleSelection(form.formName);
-      setDropdownSelection(form.parentFormId); // Store the selected form ID
+      handleSelection("All Forms");
+      setDropdownSelection(null); 
     },
-    className:  form.parentFormId === dropdownSelection ? "selected-filter-item" : "",
-  }));
+    className: dropdownSelection === null ? "selected-filter-item" : "",
+  },
+  ...formData
+    .filter((form) =>
+      form.formName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .map((form) => ({
+      type: `form-${form.formId}`,
+      content: form.formName,
+      dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, "-").toLowerCase()}`,
+      ariaLabel: `Select form: ${form.formName}`,
+      onClick: () => {
+        handleSelection(form.formName);
+        setDropdownSelection(form.parentFormId); // Store the selected form ID
+      },
+      className:
+        form.parentFormId === dropdownSelection
+          ? "selected-filter-item"
+          : "",
+    })),
+];
+
 
     const handleClear = () => {
     // Reset all input field values
@@ -179,8 +205,8 @@ const DropdownItems = formData
             dropdownItems={DropdownItems}
             onSearch={(query) => setSearchQuery(query)}
             dropdownType="DROPDOWN_ONLY"
-            dataTestId="business-filter-dropdown"
-            ariaLabel={t("Select business filter")}
+            dataTestId="submission-search-filter-dropdown"
+            ariaLabel={t("Select submission filter")}
             className="input-filter" />
 
             {inputFields?.map((field, index) => (
@@ -193,11 +219,22 @@ const DropdownItems = formData
                   aria-label={field.label}
                   data-testid={`input-${field.id}`} 
                   onClearClick={() => handleFieldChange(index, "")}
-                  clear={field.value !== ""} 
-                />
+                  clear={field.value !== ""}
+                  placeholder={
+                    field.placeholder
+                  }                 />
               </div>
             ))}
-            {dropdownSelection && (
+            {dropdownSelection && selectedFormType === "bundle" ? (
+              <div className="panel-width">
+                <CustomInfo
+                  heading="Note"
+                  content={t("Field selection is not available for bundles at this time.")}
+                  dataTestId="bundle-note-section"
+                />
+              </div>
+            ) : dropdownSelection &&
+            (
               <div className="panel-width">
                 <CustomButton
                   secondary
@@ -209,7 +246,9 @@ const DropdownItems = formData
                   ariaLabel="Manage fields" 
                 />
               </div>
-            )}
+            )
+              
+           }
           </div>
           <div className="search-clear">
 
@@ -292,6 +331,10 @@ const DropdownItems = formData
                 onClick={handleClear}
                 dataTestId="clear-button"
                 ariaLabel="Clear filters" 
+                disabled={
+                  dropdownSelection === null &&
+                  !inputFields.some(field => field.value && field.value.trim() !== "")
+                }
                 secondary />
             </div>
         </div>

@@ -304,16 +304,15 @@ select option:hover {
   }
 
 }
-
+ .required-icon {
+   margin-left: 0.188rem;
+   color: $primary !important;
+ }
 .form-group {
   display: flex;
   width: 100%;
   flex-direction: column;
   justify-content: center;
-
-  .required-icon {
-    color: $gray-darkest !important;
-  }
 
   .with-icon {
     padding-right: 3rem !important;
@@ -366,7 +365,7 @@ select option:hover {
 
 /* ------------------------- Badge pills style ------------------------ */
 
-.badge-pill {
+.badge.rounded-pill {
   display: inline-flex !important;
   padding-block: var(--spacer-050) !important;
   padding-inline: var(--spacer-100) !important;
@@ -418,13 +417,23 @@ select option:hover {
   flex-direction: column;
   width: calc( 100% + ($paddingLvl2LR * 2));
 
+  &.template-selection{
+    margin-right: 0px;
+    margin-left: 0px;
+    width: 100%;
+    .form-tab{
+      padding: 0px !important;
+    }
+  }
   // for when Tabs component is created
   // .nav {
   //   overflow-x: scroll;
   //   width: 100%;
   // }
 
-  nav {
+  // Support both old nav structure and new ul structure for React Bootstrap v2.10.6
+  nav,
+  ul.nav {
     display: flex;
     flex-direction: row;
     // width: max-content;
@@ -440,8 +449,10 @@ select option:hover {
       @include textBaseHightlight($fontSectionHead);
     }
 
+    // Support both old anchor tags and new button elements
     a,
-    a.nav-link {
+    a.nav-link,
+    button.nav-link {
       @include textBaseHightlight($fontBase, $primary-color);
       @include clickableFeedback1();
 
@@ -453,6 +464,7 @@ select option:hover {
 
       border: none !important;
       border-bottom: $lineThick solid $transparent !important;
+      background: transparent !important; // Ensure button background is transparent
 
       &:hover {
         color: $primary-color;
@@ -462,6 +474,16 @@ select option:hover {
         color: $gray-darkest;
 
         border-bottom: $lineThick solid $gray-darkest !important;
+      }
+    }
+
+    // Style for list items in new React Bootstrap v2.10.6 structure
+    li.nav-item {
+      display: flex;
+      
+      button.nav-link {
+        width: 100%;
+        text-align: left;
       }
     }
   }

@@ -48,6 +48,7 @@ declare module "@formsflow/service" {
     HelperServices,
     formioResourceBundle,
     RESOURCE_BUNDLES_DATA,  
+    fetchAndStoreFormioRoles
   }: any;
 }
 
@@ -82,7 +83,8 @@ declare module "@formsflow/components" {
     ConfirmModal,
     useSuccessCountdown,
     ReusableResizableTable,
-    BackToPrevIcon
+    BackToPrevIcon,
+    StepperComponent,
   }: any;
 }
 

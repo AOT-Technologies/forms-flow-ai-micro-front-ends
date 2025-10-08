@@ -15,7 +15,7 @@ import {
   updateDefaultSubmissionFilter,
   fetchFormById,
 } from "../api/queryServices/analyzeSubmissionServices";
-import { formatDate,optionSortBy } from "../helper/helper";
+import { optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
 
 // Redux Actions
@@ -29,7 +29,8 @@ import {
   setSubmissionFilterList,
   setSearchFieldValues,
   clearSearchFieldValues,
-  setColumnWidths
+  setColumnWidths,
+  setSelectedForm
 } from "../actions/analyzeSubmissionActions";
 
 // UI Components
@@ -79,12 +80,13 @@ const AnalyzeSubmissionList: React.FC = () => {
   const sortParams = useSelector((state: any) => state?.analyzeSubmission.analyzeSubmissionSortParams ?? {});
   const limit = useSelector((state: any) => state?.analyzeSubmission.limit ?? 10);
   const page = useSelector((state: any) => state?.analyzeSubmission.page ?? 1);
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey);
+  const tenantId = localStorage.getItem("tenantKey");
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.key || tenantId);
   const defaultSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.defaultFilter);
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
-
+  const selectedForm = useSelector((state: any) => state?.analyzeSubmission?.selectedForm);
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
   const searchFieldValues = useSelector((state: any) => state?.analyzeSubmission?.searchFieldValues ?? {});
   const columnWidths = useSelector((state: any) => state?.analyzeSubmission?.columnWidths ?? {});
@@ -113,18 +115,24 @@ const AnalyzeSubmissionList: React.FC = () => {
  const [submissionFields, setSubmissionFields] = useState( DEFAULT_SUBMISSION_FIELDS );
 
   // Wrapper function to reset lastFetchedFormId when dropdown selection changes
-  const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
-    dispatch(setAnalyzeSubmissionPage(1)); 
+   const handleDropdownSelectionChange = useCallback((newSelection: string | null) => {
+    dispatch(setSelectedForm(newSelection));
+    dispatch(setAnalyzeSubmissionPage(1));
     if (newSelection !== dropdownSelection) {
       setLastFetchedFormId(null); // Reset the cached form ID when selection changes
+       if(newSelection === null){
+       dispatch(setDefaultSubmissionFilter(null));
+       updateDefaultSubmissionFilter({ defaultSubmissionsFilter: null });
+       dispatch(setSelectedSubmisionFilter(null));
+      }
     }
     setDropdownSelection(newSelection);
     dispatch(clearSearchFieldValues());
-    setFiltersApplied(false); 
+    setFiltersApplied(false);
     setFieldFilters({});
   }, [dropdownSelection]);
 
-  
+
 const handleClearSearch = () => {
   setFieldFilters({});
   // Clear the search field values globally
@@ -137,7 +145,7 @@ useEffect(() => {
   const matched = filterList?.find(
     (item) => dropdownSelection === item.parentFormId
   );
-  const filter = matched ?? null; 
+  const filter = matched ?? null;
 
   dispatch(setSelectedSubmisionFilter(filter));
   dispatch(setDefaultSubmissionFilter(filter?.id));
@@ -152,7 +160,7 @@ useEffect(() => {
       // Filter out system fields
       const filtered = selectedSubmissionFilter.variables
       .filter((item) => !systemFields.includes(item.key))
-      .map((item)=>{ 
+      .map((item)=>{
         const { label,...rest} = item;
         return { ...rest,labelOfComponent:label,altVariable: label}
       });
@@ -161,7 +169,7 @@ useEffect(() => {
       filtered.forEach((v) => {
         obj[v.key] = v;
       });
-      
+
       setSavedFormVariables(obj);
     } else {
       // When there's no selectedSubmissionFilter or no variables, set to empty object
@@ -173,49 +181,52 @@ useEffect (() => {
   if(!selectedSubmissionFilter?.id){
     setSubmissionFields(DEFAULT_SUBMISSION_FIELDS);
   }
-    if(selectedItem === "All Forms") {
-      setDropdownSelection(null);
-      setSelectedSubmisionFilter(null);
-    }
+ 
 },[dropdownSelection])
 
 
 
-  
+
 const handleFieldSearch = (filters: Record<string, string>) => {
   setFieldFilters(filters);
-  dispatch(setAnalyzeSubmissionPage(1)); 
+  dispatch(setAnalyzeSubmissionPage(1));
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
 };
+// Use the current submissionFields state for calculation
+const currentFields = selectedSubmissionFilter?.variables ?? submissionFields;
 
 const initialInputFields = useMemo(() => {
-  // Use the current submissionFields state for calculation
-  const currentFields = selectedSubmissionFilter?.variables ?? submissionFields;
-  
   //these pinned fileds should always come  first in sidebar
   const pinnedOrder = ["id", "created_by", "application_status"];
 
   // Removing  form name & created date since it is always available
   const filteredVars = currentFields.filter(
-    (item) => item.key !== "form_name" && item.key !== "created"
+    (item) => item.key !== "form_name" && item.key !== "created" && item.type !== "selectboxes"
   );
   const sortedVars = [
     ...pinnedOrder
       .map((key) => filteredVars.find((item) => item.key === key))
-      .filter(Boolean), 
+      .filter(Boolean),
     //adding remaining items that are not pinned
     ...filteredVars.filter((item) => !pinnedOrder.includes(item.key)),
 
   ];
 
-  return sortedVars.map((item) => ({
-    id: item.key,
-    name: item.key,
-    type: "text",
-    label: t(item.label),
-    value: searchFieldValues[item.key] || "",
-  }));
+const placeholders: Record<string, string> = {
+datetime: "DD-MM-YYYY",
+day: "DD/MM/YYYY",
+time: "HH:MM",
+};
+
+return sortedVars.map((item) => ({
+id: item.key,
+name: item.key,
+type: "text",
+label: t(item.label),
+value: searchFieldValues[item.key] || "",
+placeholder: placeholders[item.type] || "",
+}));
 }, [selectedSubmissionFilter, submissionFields, searchFieldValues]);
 
   useEffect(() => {
@@ -237,21 +248,26 @@ const initialInputFields = useMemo(() => {
 
 
 useEffect(() => {
+  // persist previously searched fields
+    if (Object.keys(searchFieldValues).length > 0) {
+    handleFieldSearch(searchFieldValues);
+  };
   fetchSubmissionList()
     .then((res) => {
       const { filters = [], defaultSubmissionsFilter } = res.data || {};
 
       dispatch(setSubmissionFilterList(filters));
       dispatch(setDefaultSubmissionFilter(defaultSubmissionsFilter));
-
       const defaultFilter = filters.find((f) => f.id === defaultSubmissionsFilter);
       if (defaultFilter) {
+        const currentForm = formData.find((form) => form.parentFormId === selectedForm);
         dispatch(setSelectedSubmisionFilter(defaultFilter));
-        setDropdownSelection(defaultFilter.parentFormId);
-        setSelectedItem(defaultFilter.name);
-      } else {
-        setDropdownSelection(null);
-        setSelectedItem("All Forms");
+        setDropdownSelection(selectedForm ?? defaultFilter.parentFormId);
+        setSelectedItem(selectedForm ? currentForm.formName : defaultFilter.name);
+       } else {
+        const lastSelectedForm = formData?.find((form) => form?.parentFormId === selectedForm) || null;
+        setDropdownSelection(selectedForm);
+        setSelectedItem(selectedForm?lastSelectedForm.formName : "All Forms");
       }
     })
     .catch((error) => {
@@ -265,7 +281,7 @@ useEffect(() => {
     if (columnWidths[key]) {
       return columnWidths[key];
     }
-   
+
     const widthMap: Record<string, number> = {
       created: 180,
       application_status: 160,
@@ -323,6 +339,7 @@ const selectedFormFields = useMemo(() => {
 const {
   data,
   isLoading: isSubmissionsLoading,
+  isFetching,
   refetch,
 } = useQuery({
   queryKey: [
@@ -333,7 +350,7 @@ const {
     activeSortOrder,
     dateRange,
     dropdownSelection,
-    filtersApplied ? fieldFilters : {}, 
+    filtersApplied ? fieldFilters : {},
     selectedFormFields
   ],
   queryFn: () =>
@@ -348,6 +365,7 @@ const {
       selectedFormFields
     ),
   staleTime: 0,
+  cacheTime:0
 });
 
 
@@ -361,17 +379,21 @@ const {
           console.error(err);
         });
   },[]);
-  
-  //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection 
-  const fetchFormData = useCallback(() => {
+
+  //fetch form by id to render in the variable modal and // Check if we already have the form data for this dropdownSelection
+    const fetchFormData = useCallback(() => {
     if (!dropdownSelection || (lastFetchedFormId === dropdownSelection)) {
       return;
     }
+     const matchedForm = formData?.find(
+    (item) => dropdownSelection === item.parentFormId    
+  );
+  const newId = matchedForm?.formId;
     setIsFormFetched(true);
-    fetchFormById(dropdownSelection)
+    fetchFormById(newId)
     .then((res) => {
       setForm(res.data);
-      setLastFetchedFormId(dropdownSelection); // update the last fetched form ID to avoid duplicate api calls
+      setLastFetchedFormId(newId); // update the last fetched form ID to avoid duplicate api calls
     })
     .catch((err) => {
       console.error(err);
@@ -379,7 +401,7 @@ const {
     .finally(() => {
       setIsFormFetched(false);
     });
-  }, [dropdownSelection, lastFetchedFormId]);
+  }, [dropdownSelection, lastFetchedFormId,formData]);
   // taking data from submission response for mapping to the table
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
@@ -387,11 +409,13 @@ const {
 
   // Sort Handler
 const handleSort = useCallback((key: string) => {
+const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
+
   const currentOrder = sortParams[key]?.sortOrder || "asc";
   const newOrder = currentOrder === "asc" ? "desc" : "asc";
 
   const updatedSort = {
-    ...sortParams,
+    ...resetSortOrders,
     [key]: { sortOrder: newOrder },
     activeKey: key,
   };
@@ -409,10 +433,20 @@ const handleSort = useCallback((key: string) => {
     dispatch(setAnalyzeSubmissionLimit(newLimit));
     dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
   };
- const customTdValue = (value, index, submissionId) => {
-  return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`} 
+ const customTdValue = (value, index, submissionId, fieldKey) => {
+  // Remove tenant name from currentUserRoles when multitenancy is enabled
+  let displayValue = value;
+  if (fieldKey === "currentUserRoles" && MULTITENANCY_ENABLED && typeof value === "string") {
+    // Extract tenant key from localStorage or Redux state
+    const tenantKey = localStorage.getItem("tenantKey") || tenantId;
+    if (tenantKey) {
+      displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
+    }
+  }
+
+  return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`}
               className="custom-td">
-            <div className="text-overflow-ellipsis">{value}</div>
+            <div className="text-overflow-ellipsis">{displayValue}</div>
           </td>
  }
 
@@ -422,14 +456,14 @@ const handleSort = useCallback((key: string) => {
     const resetSortOrders = HelperServices.getResetSortOrders(
       optionSortBy.options
     );
-    const updatedData = {
-      ...resetSortOrders,
-      activeKey: selectedSortOption,
-      [selectedSortOption]: { sortOrder: selectedSortOrder },
-    };
-    dispatch(setAnalyzeSubmissionSort(updatedData));
-    setShowSortModal(false);
+  const updatedData = {
+    ...resetSortOrders,
+    activeKey: selectedSortOption,
+    [selectedSortOption]: { sortOrder: selectedSortOrder },
   };
+  dispatch(setAnalyzeSubmissionSort(updatedData));
+  setShowSortModal(false);
+};
 
   const handlerefresh = () => {
     refetch();
@@ -454,7 +488,7 @@ const handleSort = useCallback((key: string) => {
   const handleColumnResize = useCallback((column: Column, newWidth: number) => {
     // Update Redux column widths
     dispatch(setColumnWidths({ [column.sortKey]: newWidth }));
-   
+
   }, [dispatch]);
 
 
@@ -465,50 +499,68 @@ const renderRow = (submission: Submission) => {
     .filter((field) => field.isChecked)
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
-  return (
-    <tr key={submission.id}>
-      {fieldsToRender.map((field, index) => {
-        const { key } = field;
+return (
+  <tr key={submission.id}>
+    {fieldsToRender.map((field, index) => {
+      const { key } = field;
 
-        // Map form variable keys to backend keys
-        const fieldKeyMap: Record<string, string> = {
-          form_name: "formName",
-          created_by: "createdBy",
-          application_status: "applicationStatus",
-          created: "created",
-        };
+      // Map form variable keys to backend keys
+      const fieldKeyMap: Record<string, string> = {
+        form_name: "formName",
+        created_by: "createdBy",
+        application_status: "applicationStatus",
+        created: "created",
+      };
 
-        const backendKey = fieldKeyMap[key] ?? key;
+      const backendKey = fieldKeyMap[key] ?? key;
 
-        //  fallback to submission.data
-        const rawValue =
-          submission[backendKey as keyof Submission] ??
-          submission.data?.[backendKey];
+      //  fallback to submission.data
+      const rawValue =
+        submission[backendKey as keyof Submission] ??
+        submission.data?.[backendKey];
+      const matchingField = currentFields.find(
+        (col) => col.key === key
+      );
+      const value = (() => {
+        if (backendKey === "created") {
+          return HelperServices?.getLocalDateAndTime(rawValue);
+        }
+        if (matchingField?.type === "datetime") {
+          return HelperServices.getLocalDateAndTime(rawValue);
+        }
+        if(matchingField?.type === "checkbox"){
+          return rawValue ? "true" : "false" ; 
+        }
+        if (matchingField?.type === "selectboxes") {
+          const trueKeys = Object.keys(rawValue).filter((key) => rawValue[key]);
+          const displayValue = trueKeys.length ? trueKeys.join(", ") : "-";
+          return displayValue;
+        }
+        return rawValue;
+      })();
 
-        const value =
-          backendKey === "created" ? formatDate(rawValue) : rawValue;
 
-        return customTdValue(value, index, submission.id);
-      })}
+      return customTdValue(value, index, submission.id, key);
+    })}
 
-      {/* Action column */}
-      <td key={`${submission.id}-action`}>
-        <div className="text-overflow-ellipsis">
-          <CustomButton
-            actionTable
-            label={t("View")}
-            onClick={() =>
-              dispatch(push(`${redirectUrl}submissions/${submission.id}`))
-            }
-            dataTestId={`view-submission-${submission.id}`}
-            ariaLabel={t("View details for submission {{taskName}}", {
-              taskName: submission.formName ?? t("unnamed"),
-            })}
-          />
-        </div>
-      </td>
-    </tr>
-  );
+    {/* Action column */}
+    <td key={`${submission.id}-action`}>
+      <div className="text-overflow-ellipsis">
+        <CustomButton
+          actionTable
+          label={t("View")}
+          onClick={() =>
+            dispatch(push(`${redirectUrl}submissions/${submission.id}`))
+          }
+          dataTestId={`view-submission-${submission.id}`}
+          ariaLabel={t("View details for submission {{taskName}}", {
+            taskName: submission.formName ?? t("unnamed"),
+          })}
+        />
+      </div>
+    </td>
+  </tr>
+);
 };
 
 
@@ -571,8 +623,8 @@ const renderRow = (submission: Submission) => {
     );
   }, [t, sortParams, handleSort]);
 
-  const handleCloseVariableModal = () => { 
-    setShowVariableModal(false) 
+  const handleCloseVariableModal = () => {
+    setShowVariableModal(false)
     handleManageFieldsOpen();
   };
 
@@ -582,7 +634,7 @@ const renderRow = (submission: Submission) => {
      fetchFormData(); // Fetch form data when the button is clicked
     handleManageFieldsClose();
     };
-    
+
   const handleSaveVariables = useCallback(
     (variables) => {
       const prevKeys = Object.keys(savedFormVariables);
@@ -646,7 +698,7 @@ const renderRow = (submission: Submission) => {
       <div className="left-panel">
         <CollapsibleSearch
           isOpen={true}
-          hasActiveFilters={Object.keys(searchFieldValues).length > 0 || dropdownSelection !== null}
+          hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0) || dropdownSelection !==null}
           inactiveLabel="No Filters"
           activeLabel="Filters Active"
           onToggle={() => { }}
@@ -677,7 +729,7 @@ const renderRow = (submission: Submission) => {
               startDateAriaLabel={t("Start date")}
               endDateAriaLabel={t("End date")}
             />
-            
+
           </div>
 
           <div className="actions">
@@ -721,7 +773,7 @@ const renderRow = (submission: Submission) => {
               "No submissions have been found. Try a different filter combination or contact your admin."
             )}
             onColumnResize={handleColumnResize}
-            loading={isSubmissionsLoading}
+            loading={isSubmissionsLoading || isFetching}
             headerClassName="resizable-header"
             scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
             dataTestId="task-resizable-table"
@@ -734,7 +786,7 @@ const renderRow = (submission: Submission) => {
               limit={limit}
               activePage={page}
               totalCount={totalCount}
-              loader={isSubmissionsLoading}
+              loader={isSubmissionsLoading || isFetching}
               handlePageChange={handlePageChange}
               onLimitChange={handleLimitChange}
               pageOptions={[

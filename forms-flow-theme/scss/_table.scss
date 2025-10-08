@@ -322,7 +322,7 @@ $white-color: var(--ff-white);
 
             &:last-child {
               @include columnLastBorder();
-
+              width: 0px;
               position: sticky;
               right: 0;
               z-index: 2;
@@ -627,6 +627,7 @@ $white-color: var(--ff-white);
 }
 
 .text-container-expand {
+  word-break: break-all;
   line-height: 1.2;
   color: var(--ff-black);
   font-size: var(--font-size-xs) !important;
@@ -1038,4 +1039,8 @@ $white-color: var(--ff-white);
   text-overflow: ellipsis;
   white-space: nowrap;
   display: block; 
+}
+//bundle specific
+.bundle-table-body{
+  height: 75vh;
 }

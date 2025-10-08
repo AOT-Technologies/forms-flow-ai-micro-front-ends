@@ -118,6 +118,9 @@ $lineThin: 1px;
         & > * {
           margin: 0;
         }
+        &.bundle-select-form {
+          justify-content: space-between !important;
+        }
       }
 
       .modal-header {
@@ -205,7 +208,13 @@ $lineThin: 1px;
             @include textBase($fontBase);
           }
         }
-
+        &.template-selection{
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          padding: 0px !important;
+          scrollbar-gutter: unset;
+        }
         &.with-sections {
           padding: 0 !important;
 
@@ -486,11 +495,15 @@ $lineThin: 1px;
     overflow-y: scroll;
     -ms-overflow-style: none;
     height: 56vh;
+    scrollbar-gutter: stable;
+
   }
 
   .bpmn-container {
     height: 56vh;
-    overflow: auto;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+
   }
 
   .select-temp-btn {
@@ -502,10 +515,11 @@ $lineThin: 1px;
 
   .form-flow-tabs {
     display: flex;
-    padding: var(--spacer-200) var(--spacer-225);
+    padding: var(--spacer-200) var(--spacer-225) 0px var(--spacer-225);
     align-items: center;
     gap: var(--spacer-150);
     align-self: stretch;
+    margin-left: 0px;
   }
 
   .template-spinner {
@@ -839,6 +853,13 @@ $lineThin: 1px;
     align-items: center;
     justify-content: flex-start;
     padding: 0.625rem;
+
+  }
+  .tab-variable-section{
+    .specs{
+      @include textBase($fontBase, $gray-medium-dark);
+      margin-left: var(--spacer-050);
+    }
   }
 
   .expression-list-group .form-variable:hover {
@@ -924,6 +945,63 @@ $lineThin: 1px;
 
   .variable-tab {
     gap: var(--spacer-150);
+    
+    // Support both old React Bootstrap v1.6.0 and new v2.10.6 structures
+    &.nav-tabs {
+      border-bottom: 1px solid var(--ff-gray-000) !important;
+      
+      // Old structure: direct anchor tags
+      a.nav-link {
+        @include textBaseHightlight($fontBase, $primary-color);
+        @include clickableFeedback1();
+        
+        padding: 0;
+        padding-bottom: $base;
+        margin: 0 !important;
+        margin-bottom: calc(0px - $lineThin) !important;
+        border: none !important;
+        border-bottom: $lineThick solid $transparent !important;
+        background: transparent !important;
+        
+        &:hover {
+          color: $primary-color;
+        }
+        
+        &.active {
+          color: $gray-darkest;
+          border-bottom: $lineThick solid $gray-darkest !important;
+        }
+      }
+      
+      // New structure: list items with button elements
+      li.nav-item {
+        display: flex;
+        
+        button.nav-link {
+          @include textBaseHightlight($fontBase, $primary-color);
+          @include clickableFeedback1();
+          
+          width: 100%;
+          text-align: left;
+          padding: 0;
+          padding-bottom: $base;
+          margin: 0 !important;
+          margin-bottom: calc(0px - $lineThin) !important;
+          border: none !important;
+          border-bottom: $lineThick solid $transparent !important;
+          background: transparent !important;
+          
+          &:hover {
+            color: $primary-color;
+          }
+          
+          &.active {
+            color: $gray-darkest;
+            border-bottom: $lineThick solid $gray-darkest !important;
+          }
+        }
+      }
+    }
   }
   
 
@@ -1021,7 +1099,7 @@ $lineThin: 1px;
     align-items: center;
     width: 100%;
     gap: var(--spacer-050);
-    .badge-pill {
+    .badge.rounded-pill {
     background-color: $primary !important;
     color: var(--ff-white) !important;
   }
@@ -1029,7 +1107,7 @@ $lineThin: 1px;
 
   
   .operator {
-    .badge-pill {
+    .badge.rounded-pill {
       background-color: $primary !important;
       color: var(--ff-white) !important;
   }
@@ -1577,7 +1655,7 @@ $lineThin: 1px;
     flex-direction: column;
     gap: var(--spacer-100);
   }
-  .badge-pill {
+  .badge.rounded-pill {
     border-radius: var(--radius-sm) !important;
     line-height: var(--text-line-height) !important;
     text-align: left !important;
@@ -1618,3 +1696,10 @@ $lineThin: 1px;
   left: 50%;
 }
 }
+
+//bundle specific
+.form-list-modal-header{
+  padding: var(--spacer-200) var(--spacer-250) !important;
+}
+
+

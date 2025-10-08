@@ -1,6 +1,6 @@
 {
   "name": "@formsflow/admin",
-  "version": "7.2.0",
+  "version": "7.3.0-rc",
   "scripts": {
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",
@@ -57,7 +57,7 @@
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
     "i18next-browser-languagedetector": "^7.0.1",
-    "react-bootstrap": "^2.7.0",
+    "react-bootstrap": "^2.10.6",
     "react-bootstrap-table-next": "^4.0.3",
     "react-i18next": "^12.1.4",
     "react-router-dom": "5.1.2",

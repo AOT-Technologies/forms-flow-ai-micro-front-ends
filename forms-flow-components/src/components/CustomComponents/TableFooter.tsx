@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Pagination from "react-js-pagination";
 import { Dropdown } from "react-bootstrap";
@@ -31,20 +31,25 @@ export const TableFooter: React.FC<TableFooterProps> = ({
 }) => {
   const { t } = useTranslation();
   
+  const paginationUUIDs = useMemo(
+    () => Array.from({ length: 5 }, () => crypto.randomUUID()),
+    []
+  );
     if (loader) {
     return (
-      <tr>
-        <td colSpan={9}>
-          <div className="d-flex justify-content-between align-items-center flex-column flex-md-row">
-            <Skeleton height={20} width={200} />
-            <Skeleton height={40} width={40} circle />
-            <Skeleton height={20} width={200} />
+      <td>
+        <div className="d-flex justify-content-between align-items-center flex-md-row p-2">
+          <Skeleton height={20} width={200} />
+          <div className="d-flex flex-row">
+            {paginationUUIDs.map((uuid) => (
+              <Skeleton key={uuid}  height={40} width={40} circle />
+            ))}
           </div>
-        </td>
-      </tr>
+          <Skeleton height={20} width={200} />
+        </div>
+      </td>
     );
   }
-
   return (
     <>
     {/* <tr> */}

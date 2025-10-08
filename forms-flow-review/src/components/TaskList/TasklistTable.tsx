@@ -12,6 +12,7 @@ import { isEqual, cloneDeep } from "lodash";
 import {
   resetTaskListParams,
   setBPMTaskListActivePage,
+  setBPMTaskLoader,
   setFilterListSortParams,
   setTaskListLimit,
 } from "../../actions/taskActions";
@@ -22,8 +23,10 @@ import {
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
-import { createReqPayload } from "../../helper/taskHelper";
+import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
+import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
+
 interface Column {
   name: string;
   width: number;
@@ -44,33 +47,8 @@ interface Task {
   };
 }
 
-const getCellValue = (column: Column, task: Task) => {
-  const { sortKey } = column;
-  const { name: taskName, created, _embedded } = task ?? {};
-  const variables = _embedded?.variable ?? [];
-  const candidateGroups = _embedded?.candidateGroups ?? [];
 
-  if (column.sortKey === "applicationId") {
-    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
-  }
-  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
-  if(!column.isFormVariable){
-    switch (sortKey) {
-      case "name":
-        return taskName ?? "-";
-      case "created":
-        return created ? HelperServices.getLocaldate(created) : "N/A";
-      case "assignee":
-        return <TaskAssigneeManager task={task} />;
-      case "roles": {
-        return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
-      }
-    }
-  }
-  //if the variable is dynamic
-  return variables.find((v) => v.name === sortKey)?.value ?? "-";
 
-};
 
 const TaskListTable = () => {
   const { t } = useTranslation();
@@ -88,10 +66,87 @@ const TaskListTable = () => {
     isAssigned
   } = useSelector((state: any) => state.task);
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData
+?.key || tenantId);
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const taskvariables = selectedFilter?.variables ?? [];
+
+  const getCellValue = (column: Column, task: Task) => {
+  const { sortKey } = column;
+  const { name: taskName, created, _embedded } = task ?? {};
+  const variables = _embedded?.variable ?? [];
+  const candidateGroups = _embedded?.candidateGroups ?? [];
+
+  if (column.sortKey === "applicationId") {
+    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
+  }
+
+  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
+  if (!column.isFormVariable) {
+    switch (sortKey) {
+      case "name":
+        return taskName ?? "-";
+      case "created":
+        return created ? HelperServices.getLocaldate(created) : "N/A";
+      case "assignee":
+        return <TaskAssigneeManager task={task} />;
+      case "roles": {
+        const roleValues = candidateGroups.length > 0
+          ? candidateGroups.map(group => {
+            const groupId = group?.groupId ?? "-";
+            return removeTenantKey(groupId, tenantKey, MULTITENANCY_ENABLED);
+          })
+          : ["-"];
+
+        const allRoles = roleValues.join(",");
+
+        return allRoles;
+      }
+
+
+    }
+  }
+
+  const matchingVar = variables.find((v) => v.name === sortKey);
+  if (!matchingVar) return "-";
+
+  // check if this is a datetime field & date field
+  const dateTimeField = taskvariables.find(
+    (taskVar) => taskVar.key === sortKey && taskVar.type === "datetime"
+  );
+  const dateField = taskvariables.find(
+    (taskVar) => taskVar.key === sortKey && taskVar.type === "day"
+  )
+  const selectBoxes = taskvariables.find(
+    (taskVar) =>  taskVar.key === sortKey && taskVar.type === "selectboxes"
+  )
+  
+  if (dateTimeField) {
+    return matchingVar.value
+      ? HelperServices.getLocalDateAndTime(matchingVar.value)
+      : "-";
+  }
+  if (selectBoxes) {
+    const obj = JSON.parse(matchingVar.value);
+    const trueKeys = Object.keys(obj).filter((key) => obj[key]);
+    const displayValue = trueKeys.length ? trueKeys.join(", ") : "-";
+    return displayValue;
+  }
+  if (dateField) {
+  return matchingVar.value
+    ? new Date(matchingVar.value).toLocaleDateString("en-GB") // format date as dd/mm/yyyy
+        .replace(/\//g, "-") // convert `/` to `-`
+    : "-";
+}
+// return matchingVar.value ?? "-";
+
+if (typeof matchingVar.value === "boolean") {
+  return matchingVar.value ? "True" : "False"; 
+}
+
+return matchingVar.value ?? "-";
+  }
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
@@ -111,7 +166,7 @@ const TaskListTable = () => {
    * checking is column is sortable 
    * passing isFormVariable to avoid sorting of dynamic variables
   **/
-  const isSortableColumn = (columnKey, isFormVariable) => !isFormVariable && SORTABLE_COLUMNS.includes(columnKey);
+
 
 
   const handleColumnResize = (column: Column, newWidth: number) => {
@@ -148,6 +203,7 @@ const TaskListTable = () => {
     return `${columnName}: ${cellValue}`;
   };
 
+
   // Render Functions
   const renderHeaderCell = (
     column,
@@ -156,23 +212,23 @@ const TaskListTable = () => {
     currentResizingColumn,
     handleMouseDown
   ) => {
-    const isSortable = isSortableColumn(column.sortKey, column.isFormVariable);
     const isResizable = column.resizable && index < columnsLength - 1;
     const isResizing = currentResizingColumn?.sortKey === column.sortKey;
+    const isSortableHeader =["actions", "roles"].includes(column.sortKey) || !column.type ||  !sortableKeysSet.has(column.type);
 
     return (
       <>
         {column.name ? (
           <th
             key={`header-${column.sortKey ?? index}`}
-            className={`${isSortable ? "header-sortable" : ''}`}
+            className={!isSortableHeader? "header-sortable" : ""}
             style={{ 'minWidth': column.width, 'maxWidth': column.width }}
             data-testid={`column-header-${column.sortKey ?? "actions"}`}
           aria-label={`${t(column.name)} ${t("column")}${
-            isSortable ? ", " + t("sortable") : ""
+            !isSortableHeader ? ", " + t("sortable") : ""
               }`}
           >
-            {renderHeaderContent(column, isSortable)}
+            {renderHeaderContent(column)}
             {isResizable &&
               renderColumnResizer(column, isResizing, handleMouseDown, index)}
           </th>
@@ -181,10 +237,10 @@ const TaskListTable = () => {
             key={`header-${column.sortKey ?? index}`}
             data-testid={`column-header-${column.sortKey ?? "actions"}`}
           aria-label={`${t(column.name)} ${t("column")}${
-            isSortable ? ", " + t("sortable") : ""
+            !isSortableHeader ? ", " + t("sortable") : ""
               }`}
           >
-            {renderHeaderContent(column, isSortable)}
+            {renderHeaderContent(column)}
           </th>
         )}
 
@@ -192,17 +248,26 @@ const TaskListTable = () => {
       </>
     );
   };
-  const handleSort = (key) => {
+  const handleSort = (column) => {
+      dispatch(setBPMTaskLoader(true));
     const resetSortOrders = HelperServices.getResetSortOrders(
       optionSortBy.options
     );
+    const enabledSort = new Set ([
+      "applicationId",
+      "submitterName",
+      "formName"
+    ])
     const updatedFilterListSortParams = {
       ...resetSortOrders,
-      [key]: {
+      [column.sortKey]: {
         sortOrder:
-          filterListSortParams[key]?.sortOrder === "asc" ? "desc" : "asc",
+          filterListSortParams[column.sortKey]?.sortOrder === "asc" ? "desc" : "asc",
+          ...((column.isFormVariable || enabledSort.has(column.sortKey)) && {
+            type: column.type ,
+          })
       },
-      activeKey: key,
+      activeKey: column.sortKey,
     };
 
     dispatch(setFilterListSortParams(updatedFilterListSortParams));
@@ -211,13 +276,16 @@ const TaskListTable = () => {
       selectedAttributeFilter,
       updatedFilterListSortParams,
       dateRange,
-      isAssigned
+      isAssigned,
+      column.isFormVariable
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
   };
 
-  const renderHeaderContent = (column, isSortable) => {
-    if (!isSortable) {
+  const renderHeaderContent = (column) => {
+    //If the header is for the View button or the variable type is null, then there should be no sorting option for those columns.
+    if (["actions", "roles"].includes(column.sortKey) || !column.type || !sortableKeysSet.has(column.type))
+      {
       return (
         <span className="text">
           {t(column.name)}
@@ -230,7 +298,7 @@ const TaskListTable = () => {
         columnKey={column.sortKey}
         title={t(column.name)}
         currentSort={filterListSortParams}
-        handleSort={() => handleSort(column.sortKey)}
+        handleSort={() => handleSort(column)}
         dataTestId={`sort-header-${column.sortKey}`}
         ariaLabel={t("Sort by {{columnName}}", {
           columnName: t(column.name),

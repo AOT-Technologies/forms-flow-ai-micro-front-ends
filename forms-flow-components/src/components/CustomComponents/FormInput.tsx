@@ -104,7 +104,7 @@ export const FormInput: React.FC<FormInputProps> = ({
           data-testid={dataTestId}
           aria-label={ariaLabel}
           required={required}
-          className={inputClassNames}
+          className={`${inputClassNames} ${type === 'number' ? 'no-spinner' : ''}`}
           onKeyDown={handleKeyDown}
           onClick={onClick}
           ref={inputRef}

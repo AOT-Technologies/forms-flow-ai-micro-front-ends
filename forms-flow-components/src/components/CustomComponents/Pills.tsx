@@ -8,7 +8,7 @@ interface CustomPillProps {
   secondaryLabel: string;
   icon?: React.ReactNode;
   bg: string;
- dataTestId?: string;
+  dataTestId?: string;
   ariaLabel?: string;
   onClick?: () => void; 
   className?: string;
@@ -29,7 +29,7 @@ export const CustomPill: React.FC<CustomPillProps> = ({
     <div>
   <Badge
     pill
-    variant={bg}
+    bg={bg}
     data-testid={dataTestId}
     aria-label={ariaLabel}
   >

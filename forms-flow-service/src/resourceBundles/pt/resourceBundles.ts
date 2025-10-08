@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 // Portuguese
 export const RESOURCE_BUNDLES_PT ={
+  "Unpublish This Form & Flow": "Despublicar este formulário e fluxo",
   "Dismiss": "Dispensar",
   "You Cannot Delete This Form & Flow": "Você não pode excluir este formulário e fluxo.",
   "You cannot delete a form & flow that has submissions associated with it.": "Você não pode excluir um formulário e fluxo que tenham submissões associadas.",
@@ -1229,10 +1230,10 @@ export const RESOURCE_BUNDLES_PT ={
   "Note": "Nota",
   "Stay in the Editor": "Permanecer no editor",
   "Discard Changes and Leave the Page": "Descartar alterações e sair da página",
-  "Confirm Unpublish": "Confirmar despublicação",
+  "By unpublishing this form & flow, you will make it unavailable for new submissions.": "Ao despublicar este formulário e fluxo, você o tornará indisponível para novas submissões.",
   "This form is currently live. To save changes to form edits, you need to unpublish it first. By Unpublishing this form, you will make it unavailable for new submissions to those who currently have access to it. You can republish the form after making your edits.": "Este formulário está atualmente ativo. Para salvar as alterações feitas nas edições do formulário, você precisa despublicá-lo primeiro. Ao despublicar este formulário, ele ficará indisponível para novas submissões para aqueles que atualmente têm acesso a ele. Você pode republicar o formulário após fazer suas edições.",
   "Unpublish and Edit This Form": "Despublicar e editar este formulário",
-  "Cancel, Keep This Form Unpublished": "Cancelar, manter este formulário não publicado",
+  "Cancel, Keep This Form & Flow Published": "Cancelar, manter este formulário e fluxo publicados",
   "Confirm Publish": "Confirmar publicação",
   "Publishing will save any unsaved changes and lock the entire form, including the layout and the flow. To perform any additional changes you will need to unpublish the form again.": "Publicar salvará quaisquer alterações não salvas e bloqueará o formulário inteiro, incluindo o layout e o fluxo. Para realizar alterações adicionais, você precisará despublicar o formulário novamente.",
   "Publish This Form": "Publicar este formulário",
@@ -1594,5 +1595,8 @@ export const RESOURCE_BUNDLES_PT ={
   "Template Description": "Descrição do modelo",
   "All Fields": "Todos os campos",
   "No forms have been found. Create a new form by clicking the \"New Form & Flow\" button in the top right.": "Nenhum formulário encontrado. Crie um novo formulário clicando no botão \"Novo formulário e fluxo\" no canto superior direito.",
-  "Current user": "Usuário atual"
+  "Current user": "Usuário atual",
+  "Field selection is not available for bundles at this time.": "A seleção de campos não está disponível para bundles no momento.",
+  "Owner and specific roles": "Proprietário e funções específicas",
+  "Only owner": "Somente proprietário"
 };
