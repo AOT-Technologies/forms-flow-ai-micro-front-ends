@@ -1,0 +1,22 @@
+.form-edit-setiings {
+    @include vertical-padding();
+    overflow: auto;
+  
+    .grid-section {
+      @include grid-layout();
+      @include vertical-padding();
+      border-top: 1px solid $border-color;
+      margin-top: 17px;
+      margin-bottom: 18px;
+  
+      .settings-header {
+        grid-row: 1;
+        @include section-header();
+      }
+  
+      .settings-contents {
+        grid-row: 2;
+        @include section-content();
+      }
+    }
+  }

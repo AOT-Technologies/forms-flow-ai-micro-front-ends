@@ -7,13 +7,13 @@ $white-100-color: var(--white-100);
 $gray-medium-dark-color: var(--gray-medium-dark);
 $font-weight-medium: var(--font-weight-medium);
 
-.edit-setiings {
+.form-create-cards {
   @include mixins.vertical-padding();
   overflow: auto;
   //height: 80vh;
   
   .create-header {
-    @include mixins.font-style($header-font-size, $header-font-weight, );
+    @include mixins.font-style($header-font-size, $header-font-weight );
   }
 
   .create-from-scratch {

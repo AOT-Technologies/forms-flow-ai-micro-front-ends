@@ -26,8 +26,8 @@ $font-color: var(--secondary-dark);
   border-bottom: none;
   transition: 
     max-height 0.3s ease, 
-    padding 0.3s ease, 
-    border-bottom 0.3s ease;
+    padding 0.5s ease, 
+    border-bottom 0.5s ease;
   &:not(:empty) {
     max-height: $maxHeight;      
     padding: 1rem 0;
@@ -42,19 +42,20 @@ $font-color: var(--secondary-dark);
   width: 100%;
 }
 
+//Align items at the flex center
 @mixin centerAlign {
   display: flex;
   align-items: center;
   justify-content: space-around;
 }
 
+//vertical padding at the top and bottom.
 @mixin vertical-padding {
   padding: var(--spacer-100) 0 ;
 }
 
 
-//Settings Card Mixins
-
+//----- Create form Card Mixins ------->
 @mixin create-grid($gap: 21px, $border-color: #E5E5E5, $padding: 18px 0) {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -80,3 +81,41 @@ $font-color: var(--secondary-dark);
     box-shadow: 0 0.125rem 0.5rem rgba(137, 105, 242, 0.15);
   }
 }
+
+//-------- Edit settings grid structure ----------->
+
+@mixin grid-layout($header-height: 50px, $gap: 1rem) {
+  display: grid;
+  grid-template-rows: $header-height 1fr;
+  gap: $gap;
+  width: 100%;
+}
+
+// Header section 
+@mixin section-header(
+  $border-color: #e5e5e5,
+  $bg-color: #fff,
+  $padding: 13px 0
+) {
+  width: 100%;
+  border-bottom: 1px solid $border-color;
+  background-color: $bg-color;
+  padding: $padding;
+}
+
+// Content area
+@mixin section-content(
+  $height: 300px,
+  $padding: 34px 32px,
+  $bg-color: #fff,
+  $border-color: #e5e5e5,
+  $radius: 5px
+) {
+  width: 100%;
+  height: $height;
+  padding: $padding;
+  background-color: $bg-color;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+}
+
