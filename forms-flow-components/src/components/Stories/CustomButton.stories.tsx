@@ -102,7 +102,7 @@ export const Secondary: Story = {
   },
 };
 
-export const Error: Story = {
+export const ErrorState: Story = {
   args: {
     label: 'Delete',
     variant: 'error',
