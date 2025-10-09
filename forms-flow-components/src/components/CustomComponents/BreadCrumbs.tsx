@@ -4,7 +4,7 @@ import { Breadcrumb } from "react-bootstrap";
 // Represents a single breadcrumb item
 export interface BreadcrumbItem {
   label: string;
-  path?: string;
+  id?: string;
 }
 
 export enum BreadcrumbVariant {
@@ -17,12 +17,14 @@ interface BreadCrumbsProps {
   items: BreadcrumbItem[];
   variant?: BreadcrumbVariant;
   underline?: boolean;
+  onBreadcrumbClick?: (item: BreadcrumbItem) => void;
 }
 
 export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({
   items,
   variant = BreadcrumbVariant.DEFAULT,
   underline = false,
+  onBreadcrumbClick
 }) => {
   return (
     <Breadcrumb
@@ -34,12 +36,28 @@ export const BreadCrumbs: React.FC<BreadCrumbsProps> = ({
     >
       {items.map((item, index) => (
         <Breadcrumb.Item
-          key={`${item.label}-${item.path || "no-path"}`}
-          href={item.path ? item.path : undefined}
-          active={index === items.length - 1}
+          linkAs="button"
+          key={item.label}
+          active={!underline && index === items.length - 1}
+          linkProps={{
+            type: "button",
+            style: {
+              background: "none",
+              border: "none",
+              padding: 0,
+              margin: 0,
+              cursor: "pointer",
+              color: "inherit",
+              textDecoration: "underline",
+            },
+          onClick: () => {
+              if (onBreadcrumbClick) {
+                onBreadcrumbClick(item);
+              }
+            },
+          }}
           data-testid={`breadcrumb-item-${index}`}
-          aria-label={`breadcrumb-${item.label}`}
-        >
+          aria-label={`breadcrumb-${item.label}`}>
           {item.label}
         </Breadcrumb.Item>
       ))}
