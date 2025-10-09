@@ -75,10 +75,16 @@ $color-primary-light: #b8abff;
 .custom-checkbox {
   margin: var(--spacer-050) 0;
 
+  &--inline {
+    .form-check {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 2rem;
+    }
+  }
+
   .form-check {
     padding-left: 0;
-    display: flex;
-    align-items: center;
 
     .form-check-label {
       margin-left: var(--spacer-050);
@@ -160,6 +166,7 @@ $color-primary-light: #b8abff;
   .v8-form-check .form-check-input[type='checkbox'],
   .form-check .form-check-input[type='checkbox'] {
     @extend %checkbox-input;
+    margin-top: 0 !important;
   }
 
   // Variant: Primary (default styles already applied above)
