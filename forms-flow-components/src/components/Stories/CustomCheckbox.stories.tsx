@@ -11,7 +11,7 @@ const meta: Meta<typeof CustomCheckbox> = {
     docs: {
       description: {
         component:
-          'Accessible checkbox group with fieldset/legend, i18n labels, inline layout, per-option/group disabled, and controlled multi-selection support.',
+          'Accessible single checkbox component with i18n labels, size variants, and controlled state support.',
       },
     },
   },
@@ -22,53 +22,46 @@ const meta: Meta<typeof CustomCheckbox> = {
       options: ['primary', 'secondary'],
       description: 'Visual style variant',
     },
-    items: {
-      control: 'object',
-      description: 'Array of checkbox options { label, value, disabled?, onClick? }',
-    },
-    name: {
-      control: 'text',
-      description: 'Shared name for the checkbox group',
-    },
-    legend: {
-      control: 'text',
-      description: 'Visible group label rendered as <legend>',
+    size: {
+      control: 'select',
+      options: ['default', 'small'],
+      description: 'Size variant: default (33px) or small (16px)',
     },
     label: {
       control: 'text',
-      description: 'Alias for legend (backward compatibility)',
+      description: 'Text label or translation key for the checkbox',
     },
-    ariaLabel: {
+    name: {
       control: 'text',
-      description: 'Accessible label when no legend is provided',
+      description: 'Checkbox name attribute',
     },
-    selectedValues: {
-      control: 'object',
-      description: 'Currently selected values array (controlled)',
-    },
-    inline: {
+    checked: {
       control: 'boolean',
-      description: 'Display checkboxes inline (horizontal)',
+      description: 'Checked state (controlled)',
     },
     disabled: {
       control: 'boolean',
-      description: 'Disable the entire group',
+      description: 'Disable the checkbox',
     },
     required: {
       control: 'boolean',
-      description: 'Mark the group as required',
+      description: 'Mark the checkbox as required',
     },
-    optionClassName: {
+    value: {
       control: 'text',
-      description: 'Additional class for each option wrapper',
+      description: 'Value attribute for the checkbox',
+    },
+    wrapperClassName: {
+      control: 'text',
+      description: 'Additional class for the checkbox wrapper',
     },
     dataTestId: {
       control: 'text',
-      description: 'Test ID prefix for automated testing',
+      description: 'Test ID for automated testing',
     },
     onChange: {
       action: 'changed',
-      description: 'Called with (values, event) when selection changes',
+      description: 'Called with (checked, event) when checkbox state changes',
     },
   },
 };
@@ -77,35 +70,27 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const sampleItems = [
-  { label: 'Option 1', value: 'option1' },
-  { label: 'Option 2', value: 'option2' },
-  { label: 'Option 3', value: 'option3' },
-];
-
 // Template to keep the component controlled for interactive stories
 const ControlledTemplate = (args: any) => {
-  const [selectedValues, setSelectedValues] = React.useState(args.selectedValues || []);
+  const [checked, setChecked] = React.useState(args.checked || false);
   return (
-    <div style={{ width: '400px', minHeight: '200px' }}>
+    <div style={{ width: '400px', minHeight: '150px' }}>
       <CustomCheckbox
         {...args}
-        selectedValues={selectedValues}
-        onChange={(values: any[], event: React.ChangeEvent<HTMLInputElement>) => {
-          setSelectedValues(values);
+        checked={checked}
+        onChange={(newChecked: boolean, event: React.ChangeEvent<HTMLInputElement>) => {
+          setChecked(newChecked);
           // Forward to provided action handler if any
           if (typeof args.onChange === 'function') {
-            args.onChange(values, event);
+            args.onChange(newChecked, event);
           } else {
-            action('changed')(values, event);
+            action('changed')(newChecked, event);
           }
         }}
       />
-      {selectedValues.length > 0 && (
-        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-          <strong>Selected:</strong> {selectedValues.join(', ')}
-        </div>
-      )}
+      <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+        <strong>Checked:</strong> {checked ? 'Yes' : 'No'}
+      </div>
     </div>
   );
 };
@@ -113,64 +98,45 @@ const ControlledTemplate = (args: any) => {
 export const Basic: Story = {
   args: {
     name: 'demo-checkbox',
-    legend: 'Choose options',
-    items: sampleItems,
-    selectedValues: ['option1'],
+    label: 'I agree to the terms and conditions',
+    checked: true,
     variant: 'primary',
     dataTestId: 'checkbox-basic',
   },
   render: ControlledTemplate,
 };
 
-export const MultipleSelection: Story = {
+export const Unchecked: Story = {
   args: {
-    name: 'demo-checkbox-multiple',
-    legend: 'Select multiple options',
-    items: sampleItems,
-    selectedValues: ['option1', 'option3'],
+    name: 'demo-checkbox-unchecked',
+    label: 'Subscribe to newsletter',
+    checked: false,
     variant: 'primary',
-    dataTestId: 'checkbox-multiple',
+    dataTestId: 'checkbox-unchecked',
   },
   render: ControlledTemplate,
 };
 
-export const Inline: Story = {
-  args: {
-    name: 'demo-checkbox-inline',
-    legend: 'Inline options',
-    items: sampleItems,
-    selectedValues: ['option2'],
-    inline: true,
-    variant: 'primary',
-    dataTestId: 'checkbox-inline',
-  },
-  render: ControlledTemplate,
-};
-
-export const DisabledGroup: Story = {
+export const Disabled: Story = {
   args: {
     name: 'demo-checkbox-disabled',
-    legend: 'Disabled group',
-    items: sampleItems,
-    selectedValues: ['option1'],
+    label: 'This option is disabled',
+    checked: false,
     disabled: true,
     variant: 'primary',
-    dataTestId: 'checkbox-disabled-group',
+    dataTestId: 'checkbox-disabled',
   },
   render: ControlledTemplate,
 };
 
-export const WithDisabledOption: Story = {
+export const DisabledChecked: Story = {
   args: {
-    name: 'demo-checkbox-option-disabled',
-    legend: 'One option disabled',
-    items: [
-      { label: 'Option 1', value: 'option1' },
-      { label: 'Option 2 (disabled)', value: 'option2', disabled: true },
-      { label: 'Option 3', value: 'option3' },
-    ],
-    selectedValues: ['option1', 'option3'],
-    dataTestId: 'checkbox-option-disabled',
+    name: 'demo-checkbox-disabled-checked',
+    label: 'This option is disabled and checked',
+    checked: true,
+    disabled: true,
+    variant: 'primary',
+    dataTestId: 'checkbox-disabled-checked',
   },
   render: ControlledTemplate,
 };
@@ -178,46 +144,10 @@ export const WithDisabledOption: Story = {
 export const Required: Story = {
   args: {
     name: 'demo-checkbox-required',
-    legend: 'Required selection',
-    items: sampleItems,
+    label: 'I accept the terms (required)',
     required: true,
+    checked: false,
     dataTestId: 'checkbox-required',
-  },
-  render: ControlledTemplate,
-};
-
-export const WithoutLegendWithAria: Story = {
-  args: {
-    name: 'demo-checkbox-aria',
-    ariaLabel: 'Options',
-    legend: 'Options',
-    items: sampleItems,
-    selectedValues: ['option1'],
-    dataTestId: 'checkbox-aria',
-  },
-  render: ControlledTemplate,
-};
-
-export const AllSelected: Story = {
-  args: {
-    name: 'demo-checkbox-all',
-    legend: 'All options selected',
-    items: sampleItems,
-    selectedValues: ['option1', 'option2', 'option3'],
-    variant: 'primary',
-    dataTestId: 'checkbox-all',
-  },
-  render: ControlledTemplate,
-};
-
-export const NoneSelected: Story = {
-  args: {
-    name: 'demo-checkbox-none',
-    legend: 'No options selected',
-    items: sampleItems,
-    selectedValues: [],
-    variant: 'primary',
-    dataTestId: 'checkbox-none',
   },
   render: ControlledTemplate,
 };
@@ -225,62 +155,203 @@ export const NoneSelected: Story = {
 export const SecondaryVariant: Story = {
   args: {
     name: 'demo-checkbox-secondary',
-    legend: 'Secondary variant',
-    items: sampleItems,
-    selectedValues: ['option2'],
+    label: 'Secondary style checkbox',
+    checked: true,
     variant: 'secondary',
     dataTestId: 'checkbox-secondary',
   },
   render: ControlledTemplate,
 };
 
-export const LongLabels: Story = {
+export const LongLabel: Story = {
   args: {
     name: 'demo-checkbox-long',
-    legend: 'Long option labels',
-    items: [
-      { label: 'This is a very long option label that might wrap to multiple lines', value: 'long1' },
-      { label: 'Another extremely long option with lots of descriptive text', value: 'long2' },
-      { label: 'Short option', value: 'short' },
-    ],
-    selectedValues: ['long1'],
-    inline: false,
+    label: 'This is a very long checkbox label that might wrap to multiple lines in order to demonstrate how the component handles lengthy text content',
+    checked: true,
     dataTestId: 'checkbox-long',
   },
   render: ControlledTemplate,
 };
 
-export const ManyOptions: Story = {
+export const SmallSize: Story = {
   args: {
-    name: 'demo-checkbox-many',
-    legend: 'Many options',
-    items: [
-      { label: 'Option 1', value: 'option1' },
-      { label: 'Option 2', value: 'option2' },
-      { label: 'Option 3', value: 'option3' },
-      { label: 'Option 4', value: 'option4' },
-      { label: 'Option 5', value: 'option5' },
-      { label: 'Option 6', value: 'option6' },
-      { label: 'Option 7', value: 'option7' },
-      { label: 'Option 8', value: 'option8' },
-    ],
-    selectedValues: ['option1', 'option3', 'option5'],
-    inline: false,
-    dataTestId: 'checkbox-many',
+    name: 'demo-checkbox-small',
+    label: 'Small size checkbox',
+    checked: true,
+    size: 'small',
+    variant: 'primary',
+    dataTestId: 'checkbox-small',
   },
   render: ControlledTemplate,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Compact 16px checkbox variant for dense UIs or inline forms.',
+      },
+    },
+  },
+};
+
+export const SmallSecondary: Story = {
+  args: {
+    name: 'demo-checkbox-small-secondary',
+    label: 'Small secondary variant',
+    checked: true,
+    size: 'small',
+    variant: 'secondary',
+    dataTestId: 'checkbox-small-secondary',
+  },
+  render: ControlledTemplate,
+};
+
+export const SmallDisabled: Story = {
+  args: {
+    name: 'demo-checkbox-small-disabled',
+    label: 'Small disabled checkbox',
+    checked: true,
+    size: 'small',
+    disabled: true,
+    dataTestId: 'checkbox-small-disabled',
+  },
+  render: ControlledTemplate,
+};
+
+export const WithValue: Story = {
+  args: {
+    name: 'preferences',
+    label: 'Enable notifications',
+    value: 'notifications',
+    checked: true,
+    dataTestId: 'checkbox-with-value',
+  },
+  render: ControlledTemplate,
+};
+
+export const SizeComparison: Story = {
+  args: {},
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '400px' }}>
+      <div>
+        <h4 style={{ marginBottom: '15px', fontSize: '14px', fontWeight: 600 }}>Default Size (33px)</h4>
+        <CustomCheckbox
+          name="comparison-default"
+          label="Default size checkbox"
+          checked={true}
+          dataTestId="comparison-default"
+        />
+      </div>
+      <div>
+        <h4 style={{ marginBottom: '15px', fontSize: '14px', fontWeight: 600 }}>Small Size (16px)</h4>
+        <CustomCheckbox
+          name="comparison-small"
+          label="Small size checkbox"
+          checked={true}
+          size="small"
+          dataTestId="comparison-small"
+        />
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Side-by-side comparison of default (33px) and small (16px) size variants.',
+      },
+    },
+  },
+};
+
+export const VariantComparison: Story = {
+  args: {},
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '400px' }}>
+      <div>
+        <h4 style={{ marginBottom: '15px', fontSize: '14px', fontWeight: 600 }}>Primary Variant</h4>
+        <CustomCheckbox
+          name="variant-primary"
+          label="Primary style checkbox"
+          checked={true}
+          variant="primary"
+          dataTestId="variant-primary"
+        />
+      </div>
+      <div>
+        <h4 style={{ marginBottom: '15px', fontSize: '14px', fontWeight: 600 }}>Secondary Variant</h4>
+        <CustomCheckbox
+          name="variant-secondary"
+          label="Secondary style checkbox"
+          checked={true}
+          variant="secondary"
+          dataTestId="variant-secondary"
+        />
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Comparison of primary and secondary style variants.',
+      },
+    },
+  },
+};
+
+export const MultipleCheckboxes: Story = {
+  args: {},
+  render: () => {
+    const [permissions, setPermissions] = React.useState({
+      read: true,
+      write: false,
+      delete: false,
+    });
+
+    return (
+      <div style={{ width: '400px' }}>
+        <h4 style={{ marginBottom: '15px', fontSize: '14px', fontWeight: 600 }}>User Permissions</h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <CustomCheckbox
+            name="permission-read"
+            label="Read access"
+            checked={permissions.read}
+            onChange={(checked) => setPermissions({ ...permissions, read: checked })}
+          />
+          <CustomCheckbox
+            name="permission-write"
+            label="Write access"
+            checked={permissions.write}
+            onChange={(checked) => setPermissions({ ...permissions, write: checked })}
+          />
+          <CustomCheckbox
+            name="permission-delete"
+            label="Delete access"
+            checked={permissions.delete}
+            onChange={(checked) => setPermissions({ ...permissions, delete: checked })}
+          />
+        </div>
+        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+          <strong>Selected Permissions:</strong> {Object.entries(permissions).filter(([_, v]) => v).map(([k]) => k).join(', ') || 'None'}
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Example showing multiple independent checkboxes working together.',
+      },
+    },
+  },
 };
 
 export const Playground: Story = {
   args: {
     name: 'demo-checkbox-playground',
-    legend: 'Playground',
-    items: sampleItems,
-    selectedValues: ['option1'],
-    inline: true,
+    label: 'Playground checkbox',
+    checked: true,
     disabled: false,
     required: false,
     variant: 'primary',
+    size: 'default',
     dataTestId: 'checkbox-playground',
     onChange: action('checkbox-changed'),
   },
@@ -288,7 +359,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Use controls to adjust props and observe behavior. onChange logs the selected values array.',
+        story: 'Use controls to adjust props and observe behavior. Toggle size between default (33px) and small (16px). onChange logs the checked state.',
       },
     },
   },
