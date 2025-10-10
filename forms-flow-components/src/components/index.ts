@@ -36,7 +36,7 @@ export * from "./CustomComponents/ResizableTable";
 export * from "./SkeletonLoader/TableSkeletonLoader";
 export * from "./CustomComponents/BpmnDiagramView";
 export * from "./CustomComponents/SubmissionHistoryWithViewButton";
-export * from "./CustomComponents/VariableModal";
+export * from "./CustomComponents/VariableSelection";
 export * from "./CustomComponents/FormComponent";
 export * from "./CustomComponents/StepperComponent";
 export * from "./CustomComponents/CustomButton";  
