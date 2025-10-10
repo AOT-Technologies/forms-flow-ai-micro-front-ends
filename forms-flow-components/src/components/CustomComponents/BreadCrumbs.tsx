@@ -16,8 +16,8 @@ import { Breadcrumb } from "react-bootstrap";
 export interface BreadcrumbItem {
   /** Display text for the breadcrumb */
   label: string;
-  /** Optional navigation path - if omitted, item is not clickable */
-  path?: string;
+  /** Unique identifier used for tracking which breadcrumb item was clicked */
+  id?: string;
 }
 
 /**
@@ -40,6 +40,8 @@ interface BreadCrumbsProps extends Omit<React.ComponentPropsWithoutRef<"nav">, '
   variant?: BreadcrumbVariant;
   /** Whether to show underline on all breadcrumb items */
   underline?: boolean;
+  /** Callback function invoked when a breadcrumb item is clicked — typically used to handle navigation */
+  onBreadcrumbClick?: (item: BreadcrumbItem) => void;
   /** Test ID for automated testing */
   dataTestId?: string;
   /** Additional CSS classes */
@@ -60,7 +62,7 @@ const buildClassNames = (...classes: (string | boolean | undefined)[]): string =
  */
 const generateItemKey = (item: BreadcrumbItem, index: number): string => {
   // Use path if available for better stability, otherwise use label + index
-  return item.path ? `breadcrumb-${item.path}` : `breadcrumb-${item.label}-${index}`;
+  return item.id ? `breadcrumb-${item.id}` : `breadcrumb-${item.label}-${index}`;
 };
 
 /**
@@ -70,6 +72,7 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
   items,
   variant = BreadcrumbVariant.DEFAULT,
   underline = false,
+  onBreadcrumbClick,
   dataTestId = "breadcrumbs",
   className = "",
   ariaLabel = "Breadcrumb navigation",
@@ -103,23 +106,33 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
       aria-label={ariaLabel}
       {...restProps}
     >
-      {items.map((item, index) => {
-        const isLastItem = index === items.length - 1;
-        const isClickable = !isLastItem && Boolean(item.path);
-        
-        return (
-          <Breadcrumb.Item
-            key={generateItemKey(item, index)}
-            href={isClickable ? item.path : undefined}
-            active={isLastItem}
-            data-testid={`${dataTestId}-item-${index}`}
-            aria-label={`Navigate to ${item.label}`}
-            aria-current={isLastItem ? "page" : undefined}
-          >
-            {item.label}
-          </Breadcrumb.Item>
-        );
-      })}
+      {items.map((item, index) => (
+        <Breadcrumb.Item
+          linkAs="button"
+          key={generateItemKey(item, index)}
+          active={!underline && index === items.length - 1}
+          linkProps={{
+            type: "button",
+            style: {
+              background: "none",
+              border: "none",
+              padding: 0,
+              margin: 0,
+              cursor: "pointer",
+              color: "inherit",
+              textDecoration: "underline",
+            },
+          onClick: () => {
+              if (onBreadcrumbClick) {
+                onBreadcrumbClick(item);
+              }
+            },
+          }}
+          data-testid={`breadcrumb-item-${index}`}
+          aria-label={`breadcrumb-${item.label}`}>
+          {item.label}
+        </Breadcrumb.Item>
+      ))}
     </Breadcrumb>
   );
 };
