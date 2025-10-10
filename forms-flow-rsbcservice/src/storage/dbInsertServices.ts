@@ -122,6 +122,10 @@ class OfflineSaveService {
           await rsbcDb.lkiSegment.bulkPut(data);
           console.log("LKI Segment data saved to IndexedDB.");
           break;
+        case "charge_types":
+          await rsbcDb.chargeTypes.clear();
+          await rsbcDb.chargeTypes.bulkPut(data);
+          console.log("Charge types data saved to IndexedDB.");
         default:
           console.log(`No matching table found for resource: ${resourceName}`);
       }
