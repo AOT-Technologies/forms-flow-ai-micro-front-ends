@@ -1,22 +1,53 @@
-.form-edit-setiings {
-    @include vertical-padding();
+$font-size-m: var(--font-size-m);
+$font-weight-medium: var(--font-weight-medium);
+$gray-dark: var(--gray-dark);
+$font-size-xl: var(--font-size-xl);
+
+.form-edit-settings {
+    // @include vertical-padding(); // alreafy body-section had padding of same 
     overflow: auto;
   
     .grid-section {
       @include grid-layout();
-      @include vertical-padding();
-      border-top: 1px solid $border-color;
-      margin-top: 17px;
-      margin-bottom: 18px;
+      // @include vertical-padding(); // alreafy body-section had padding of same 
+      // border-top: 1px solid $border-color;
+      // margin-top: 17px;
+      margin-bottom: 18px; //alrady have vertical padding of body section 16px section header 13 px
   
       .settings-header {
         grid-row: 1;
         @include section-header();
+        .settings-header-text {
+            color: $gray-dark;
+            font-size: $font-size-xl;
+            font-weight: $font-weight-medium;
+            line-height: 120%;
+            /* 24px */
+            text-transform: capitalize;
+          }
       }
   
       .settings-contents {
         grid-row: 2;
         @include section-content();
+        .form-name-container{
+          margin-bottom: 1.875rem;
+        }
+        .description-container{
+          margin-bottom: 1.5rem;
+        }
+        &.permissions-container{
+          display: flex;
+          flex-direction: column;
+          gap: 1.875rem;
+        }
       }
     }
+        .settings-labels {
+          color: $gray-dark;
+          font-size: $font-size-m;
+          font-style: normal;
+          font-weight: $font-weight-medium;
+          margin-bottom:0.75rem;
+        }
   }

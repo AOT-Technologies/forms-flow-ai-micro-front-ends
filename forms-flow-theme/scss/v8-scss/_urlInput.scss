@@ -54,7 +54,7 @@ $color-copy-button-hover-bg: transparent;
 }
 
 @mixin url-input-actions {
-  margin-top: 0.75rem;
+  padding: 0.75rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -150,7 +150,12 @@ $color-copy-button-hover-bg: transparent;
   .title {
     @include url-input-title;
   }
+  .input-actioncontainer{
+    border-radius: $url-input-border-radius;
+    border: $url-input-border-width solid var(--gray-x-light);
+    border: $url-input-border-width solid var(--gray-x-light);
 
+  }
   .actions {
     @include url-input-actions;
 
@@ -171,14 +176,12 @@ $color-copy-button-hover-bg: transparent;
   }
 
   .inputDiv {
-    border: $url-input-border-width solid var(--gray-x-light);
     padding: $url-input-padding;
     display: flex;
     align-items: center;
     gap: $url-input-gap;
     flex-wrap: wrap;
     position: relative;
-    border-radius: $url-input-border-radius;
     transition: border-color $url-input-transition-duration $url-input-transition-timing;
 
     @media (min-width: 768px) {

@@ -8,6 +8,9 @@ interface CustomTextInputProps {
   dataTestId: string;
   disabled?: boolean;
   ariaLabel?: string;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  maxLength?: number;
+  minLength?: number;
 }
 
 export const CustomTextInput: FC<CustomTextInputProps> = ({
@@ -17,8 +20,10 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
   dataTestId,
   disabled = false,
   ariaLabel,
+  onBlur,
+  maxLength,
+  minLength,
 }) => {
-    console.log(value);
   const { t } = useTranslation();
   const inputId = `${dataTestId}-input`; // unique id
 
@@ -34,11 +39,14 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
         className="text-input"
         type="text"
         onChange={(e) => setValue(e.target.value)}
+        onBlur={onBlur}
         placeholder={t(placeholder)}
         data-testid={dataTestId}
         aria-label={ariaLabel || t(placeholder)}
         value={value}
         disabled={disabled}
+        maxLength={maxLength}
+        minLength={minLength}
       />
     </div>
   );
