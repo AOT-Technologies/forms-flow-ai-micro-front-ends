@@ -1,6 +1,6 @@
 {
   "name": "@formsflow/admin",
-  "version": "7.3.0-rc",
+  "version": "7.3.0",
   "scripts": {
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",
