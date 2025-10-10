@@ -31,7 +31,7 @@ export const CustomInfo: FC<CustomInfoProps> = ( {
     <div className={`info-panel ${className}`} data-testid={dataTestId}>
       <div className="d-flex align-items-center">
         <NewInfoIcon />
-        <div className="field-label ms-2">{t(heading)}</div>
+        {/* <div className="field-label ms-2">{t(heading)}</div> */}
       </div>
       <div className="info-content">{formattedContent}</div> {/* Render formatted content */}
     </div>
