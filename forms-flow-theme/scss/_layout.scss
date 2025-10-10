@@ -137,7 +137,7 @@ input[type="checkbox"]+label,
   height: 100%;
 
   & ._loading_overlay_wrapper {
-    overflow: hidden;
+    overflow: visible;
     height: 100%;
   }
 }
