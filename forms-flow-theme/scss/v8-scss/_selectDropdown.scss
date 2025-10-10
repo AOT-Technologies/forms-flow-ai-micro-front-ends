@@ -30,13 +30,6 @@ $color-medium-gray: var(--gray-x-light);
 $color-dark-gray: var(--gray-darkest);
 $color-darker-gray: var(--secondary-dark);
 $color-disabled-gray: var(--gray-medium);
-$color-selected-gray: var(--secondary);
-
-$color-primary: var(--vivid-100);
-$color-primary-light: var(--primary-dark);
-$color-primary-lighter: var(--primary-dark);
-$color-primary-border: var(--primary-dark);
-$color-primary-selected: var(--primary);
 
 // Select Dropdown Mixins
 @mixin dropdown-base {
@@ -50,8 +43,7 @@ $color-primary-selected: var(--primary);
 }
 
 @mixin dropdown-selected {
-  border-color: $color-primary-border;
-  background-color: $color-primary-selected;
+  background-color: $color-medium-gray;
   font-weight: $dropdown-font-weight-medium;
   color: $color-dark-gray;
 }
@@ -96,14 +88,14 @@ $color-primary-selected: var(--primary);
 
   // Hover state
   &:hover:not(.disabled) {
-    border-color: $color-primary-light;
+    border-color: $color-dark-gray;
     background-color: $color-white;
   }
 
   // Focus state
   &:focus-visible {
-    border-color: $color-primary;
-    box-shadow: 0 0 0 2px $color-primary-selected;
+    border-color: $color-dark-gray;
+    box-shadow: 0 0 0 2px $color-dark-gray;
   }
 }
 
@@ -206,7 +198,6 @@ $color-primary-selected: var(--primary);
 
   // Hover states
   &:hover:not(.selected) {
-    background-color: $color-selected-gray;
     border-color: $color-medium-gray;
   }
 
