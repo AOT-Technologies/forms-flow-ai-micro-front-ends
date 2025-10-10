@@ -47,6 +47,7 @@ import {
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
 import { SystemVariables } from "../constants/variables";
+import { setApplicationDetail } from "../actions/applicationActions";
 
 interface Column {
   name: string;
@@ -549,8 +550,10 @@ return (
         <CustomButton
           actionTable
           label={t("View")}
-          onClick={() =>
+          onClick={() => {
+            dispatch(setApplicationDetail({}))
             dispatch(push(`${redirectUrl}submissions/${submission.id}`))
+          }
           }
           dataTestId={`view-submission-${submission.id}`}
           ariaLabel={t("View details for submission {{taskName}}", {
