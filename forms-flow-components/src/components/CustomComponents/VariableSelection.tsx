@@ -37,7 +37,8 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
     columns,
     tabKey = "system",
   }) => {
-    const [alternativeLabels, setAlternativeLabels] = useState([]);
+    // const [alternativeLabels, setAlternativeLabels] = useState([]);
+    const [alternativeLabels, setAlternativeLabels] = useState<Record<string, FormVariable>>({});
     const detailsRef = useRef(null);
     const [showElement, setShowElement] = useState(false);
     const { t } = useTranslation();
@@ -61,8 +62,20 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
     ]);
 
     useEffect(() => {
-      if (savedFormVariables) {
-        setAlternativeLabels(savedFormVariables);
+      // if (savedFormVariables) {
+      //   setAlternativeLabels(savedFormVariables);
+      // }
+
+      if (savedFormVariables && Array.isArray(savedFormVariables)) {
+        const byKey = savedFormVariables.reduce((acc, v) => {
+          acc[v.key] = v;
+          return acc;
+        }, {} as Record<string, FormVariable>);
+        setAlternativeLabels(byKey);
+      } else if (savedFormVariables && typeof savedFormVariables === "object") {
+        setAlternativeLabels(savedFormVariables as unknown as Record<string, FormVariable>);
+      } else {
+        setAlternativeLabels({});
       }
     }, [savedFormVariables]);
 
@@ -73,8 +86,6 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           <DataGrid
             columns={columns}
             rows={rowVariables || []}
-            paginationMode="server"
-            sortingMode="server"
             disableColumnMenu
             rowHeight={55}
             disableRowSelectionOnClick

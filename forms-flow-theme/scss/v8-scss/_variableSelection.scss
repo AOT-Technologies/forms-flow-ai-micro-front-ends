@@ -1,3 +1,4 @@
+@import "../_mixins";
 
 .system-content-block {
   .system-content-table {
@@ -27,9 +28,7 @@
     .item-container {
       margin-bottom: 1.5rem;
       .label {
-        color: #9E9E9E;
-        font-size: 1rem;
-        font-weight: 400;
+        @include font-style(1rem, 400, #9E9E9E);
       }
       .value {
         color: var(--secondary-dark);
