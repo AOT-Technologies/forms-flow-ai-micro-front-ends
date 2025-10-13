@@ -919,7 +919,7 @@ export const RESOURCE_BUNDLES_EN = {
   "(less than or equal) Evaluates true if the value on the left is less than or equal to the value on the right": "(less than or equal) Evaluates true if the value on the left is less than or equal to the value on the right",
   "(larger than or equal) Evaluates true if the value on the left is larger than or equal to the value on the right": "(larger than or equal) Evaluates true if the value on the left is larger than or equal to the value on the right",
   "(equals) Evaluates true if the value on the left is equal to the value on the right": "(equals) Evaluates true if the value on the left is equal to the value on the right",
-  "(contains) Evaluates true if text contains some specified text (not case sensitive)": "(contains) Evaluates true if text contains some specified text (not case sensitive",
+  "(contains) Evaluates true if text contains some specified text (not case sensitive)": "(contains) Evaluates true if text contains some specified text (not case sensitive)",
   "True": "True",
   "False": "False",
   "Add your condition": "Add your condition",

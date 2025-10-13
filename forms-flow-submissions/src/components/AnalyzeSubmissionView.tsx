@@ -108,10 +108,10 @@ const ViewApplication = React.memo(() => {
     const submissionId = applicationDetail.submissionId;
   
     Formio.clearCache();
-    dispatch(resetFormData("form"));
+    dispatch(resetFormData("form"));    
+    if (formId) {
     setFormTypeCheckLoading(true);
     setBundleFormData({ formId, submissionId });
-  
     fetchFormVariables(formId)
       .then((res) => {
         const formType = res.data?.formType;
@@ -144,7 +144,7 @@ const ViewApplication = React.memo(() => {
         console.error("Failed to fetch form variables:", err);
         setFormTypeCheckLoading(false);
       });
-  
+  }
     // ✅ Cleanup should always be at top-level
     return () => {
       dispatch(setBundleSelectedForms([]));
