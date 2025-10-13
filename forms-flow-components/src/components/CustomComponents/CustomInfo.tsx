@@ -1,19 +1,27 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { NewInfoIcon } from "../SvgIcons/index";
+import { InfoIcon } from "../SvgIcons/index";
 
+type InfoVariant = "primary" | "secondary" | "error" | "warning";
 
 interface CustomInfoProps {
-    heading: string ;
-    content: string ;
-    className?: string ;
+    content: string;
+    variant?: InfoVariant;
+    className?: string;
     dataTestId?: string;
 }
 
-export const CustomInfo: FC<CustomInfoProps> = ( { 
-    heading ,
-    content ,
-    className ,
+/**
+ * Utility function to build className string
+ */
+const buildClassNames = (...classes: (string | boolean | undefined)[]): string => {
+  return classes.filter(Boolean).join(" ");
+};
+
+export const CustomInfo: FC<CustomInfoProps> = ({ 
+    content,
+    variant = "primary",
+    className,
     dataTestId
 }) => { 
   const { t } = useTranslation();
@@ -26,14 +34,20 @@ export const CustomInfo: FC<CustomInfoProps> = ( {
     </React.Fragment>
   ));
 
+  const panelClassName = buildClassNames(
+    "info-panel",
+    `info-panel--${variant}`,
+    className
+  );
 
   return (
-    <div className={`info-panel ${className}`} data-testid={dataTestId}>
-      <div className="d-flex align-items-center">
-        <NewInfoIcon />
-        {/* <div className="field-label ms-2">{t(heading)}</div> */}
+    <div className={panelClassName} data-testid={dataTestId}>
+      <div className="info-icon">
+        <InfoIcon variant={variant} />
       </div>
-      <div className="info-content">{formattedContent}</div> {/* Render formatted content */}
+      <div className="info-content">{formattedContent}</div>
     </div>
   );
 };
+
+export type { CustomInfoProps, InfoVariant };
