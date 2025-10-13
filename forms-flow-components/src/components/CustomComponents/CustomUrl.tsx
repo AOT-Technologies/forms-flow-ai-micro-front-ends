@@ -16,13 +16,15 @@ type MessageType = "copied" | "saved" | "copy-failed" | null;
 /**
  * Props for the CustomUrl component
  */
-export interface CustomUrlProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children'> {
+export interface CustomUrlProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children' | 'onBlur'> {
   /** Base URL that will be prepended to the custom URL input */
   baseUrl: string;
   /** Initial full URL value (will extract slug from base URL) */
   initialUrl?: string;
   /** Callback when URL is saved */
   onSave?: (fullUrl: string) => void;
+  /** Callback when input loses focus */
+  onBlur?: (currentUrl: string) => void;
   /** Text for the save button */
   saveButtonText?: string;
   /** Test ID for automated testing */
@@ -59,7 +61,8 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
   baseUrl,
   initialUrl = "",
   onSave,
-  saveButtonText = "Save URL",
+  onBlur,
+  saveButtonText = "",
   dataTestId = "custom-url",
   className = "",
   ariaLabel = "Custom URL input",
@@ -94,6 +97,12 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
     if (disabled) return;
     setUrl(e.target.value);
   }, [disabled]);
+
+  // Memoized blur handler
+  const handleInputBlur = useCallback(() => {
+    if (disabled || !onBlur) return;
+    onBlur(url);
+  }, [disabled, onBlur, url]);
 
   // Fallback copy function for older browsers using modern selection API
   const fallbackCopyToClipboard = useCallback((text: string) => {
@@ -188,8 +197,8 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
   // Build className strings
   const containerClassName = buildClassNames(
     "urlInput",
-    "p-4",
-    "border",
+    "py-4",
+    // "border",
     "rounded-lg",
     "w-full",
     "max-w-xl",
@@ -221,6 +230,7 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
       {...restProps}
     >
       <p className="title">Custom URL</p>
+      <div className="input-actioncontainer">
       <div className="inputDiv d-flex">
         <span className="fixedUrl">{baseUrl}</span>
         <input
@@ -229,6 +239,7 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
           name={`${dataTestId}-input`}
           value={url}
           onChange={handleInputChange}
+          onBlur={handleInputBlur}
           className={inputClassName}
           placeholder={placeholder}
           disabled={disabled}
@@ -259,13 +270,14 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
             {getMessageText(message)}
           </output>
         )}
-        <V8CustomButton
+        {saveButtonText && <V8CustomButton
           label={saveButtonText}
           variant="secondary"
           disabled={isSaveDisabled}
           onClick={handleSave}
           dataTestId={`${dataTestId}-save`}
-        />
+        />}
+      </div>
       </div>
     </div>
   );
