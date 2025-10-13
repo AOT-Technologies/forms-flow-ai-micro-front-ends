@@ -17,7 +17,7 @@ const meta: Meta<typeof CustomInfo> = {
   argTypes: {
     content: {
       control: 'text',
-      description: 'The main content text. Use \\n for line breaks'
+      description: String.raw`The main content text. Use \n for line breaks`
     },
     variant: {
       control: 'select',
@@ -87,7 +87,7 @@ export const WithMultilineContent: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Demonstrates multi-line content using \\n line breaks.',
+        story: String.raw`Demonstrates multi-line content using \n line breaks.`,
       },
     },
   },
@@ -256,8 +256,8 @@ export const AllVariants: Story = {
 
     return (
       <div style={{ width: '100%', maxWidth: '600px' }}>
-        {variants.map((info, index) => (
-          <div key={index} style={{ marginBottom: '16px' }}>
+        {variants.map((info) => (
+          <div key={info.variant} style={{ marginBottom: '16px' }}>
             <CustomInfo {...info} dataTestId={`${info.variant}-info`} />
           </div>
         ))}

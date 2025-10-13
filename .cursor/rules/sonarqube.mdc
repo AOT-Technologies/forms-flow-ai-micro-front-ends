@@ -1,0 +1,175 @@
+---
+alwaysApply: false
+---
+
+# SonarQube Rules
+
+This file contains code quality rules from SonarQube that should be followed in this project.
+
+## React: Use Unique Keys in List Components
+
+**Rule ID:** `typescript:S6486` / `javascript:S6479`
+
+**Severity:** Major
+
+### Description
+
+To optimize the rendering of React list components, a unique identifier (UID) is required for each list item. This UID lets React identify the item throughout its lifetime. 
+
+**Do not use array indexes as keys** since the order of the items may change, which will cause keys to not match up between renders, recreating the DOM. This can negatively impact performance and may cause issues with component state.
+
+### Non-Compliant Code
+
+```tsx
+function Blog(props) {
+  return (
+    <ul>
+      {props.posts.map((post, index) =>
+        <li key={index}> {/* ❌ Noncompliant: When 'posts' are reordered, React will need to recreate the list DOM */}
+          {post.title}
+        </li>
+      )}
+    </ul>
+  );
+}
+```
+
+### Compliant Code
+
+Use a string or a number that uniquely identifies the list item. The key must be unique among its siblings, not globally.
+
+If the data comes from a database, database IDs are already unique and are the best option. Otherwise, use a counter or a UUID generator.
+
+```tsx
+function Blog(props) {
+  return (
+    <ul>
+      {props.posts.map((post) =>
+        <li key={post.id}> {/* ✅ Compliant: Use unique identifier */}
+          {post.title}
+        </li>
+      )}
+    </ul>
+  );
+}
+```
+
+### Best Practices
+
+1. **Use database IDs** when available (most reliable)
+2. **Use unique properties** from the data (e.g., `user.email`, `product.sku`)
+3. **Generate stable IDs** if data doesn't have unique identifiers (use UUID library)
+4. **Never use array index** unless:
+   - The list is static (never reordered)
+   - Items have no IDs
+   - The list is never filtered/sorted
+
+### Examples
+
+```tsx
+// ✅ Good: Using unique ID from data
+{users.map(user => (
+  <UserCard key={user.id} user={user} />
+))}
+
+// ✅ Good: Using unique property
+{variants.map(variant => (
+  <div key={variant.name}>
+    <CustomComponent variant={variant} />
+  </div>
+))}
+
+// ✅ Good: Using combination of properties
+{items.map(item => (
+  <Item key={`${item.category}-${item.id}`} item={item} />
+))}
+
+// ❌ Bad: Using array index
+{items.map((item, index) => (
+  <Item key={index} item={item} />
+))}
+```
+
+---
+
+## Prefer String.raw for Strings with Backslashes
+
+**Rule:** `unicorn/prefer-string-raw`
+
+**Severity:** Minor
+
+### Description
+
+String literals with escaped backslashes can be difficult to read and maintain. Each backslash character must be escaped with another backslash, creating sequences like `\\` that are hard to interpret at a glance.
+
+This problem is particularly common when working with:
+- File paths on Windows systems
+- Regular expression patterns
+- LaTeX or other markup that uses backslashes
+- Any string content that naturally contains backslash characters
+
+The `String.raw` template literal provides a cleaner alternative. It treats backslashes literally without requiring escaping, making the code more readable and less error-prone.
+
+### Impact
+
+Using escaped backslashes instead of `String.raw` reduces code readability and increases the likelihood of errors when maintaining string literals. While this doesn't cause runtime issues, it makes the codebase harder to understand and modify correctly.
+
+### Non-Compliant Code
+
+```typescript
+const filePath = "C:\\Users\\Documents\\file.txt"; // ❌ Noncompliant
+
+const description = 'Use \\n for line breaks'; // ❌ Noncompliant
+
+const regex = "\\d+\\.\\d+"; // ❌ Noncompliant
+```
+
+### Compliant Code
+
+```typescript
+const filePath = String.raw`C:\Users\Documents\file.txt`; // ✅ Compliant
+
+const description = String.raw`Use \n for line breaks`; // ✅ Compliant
+
+const regex = String.raw`\d+\.\d+`; // ✅ Compliant
+```
+
+### Best Practices
+
+1. Use `String.raw` whenever you have backslashes in string literals
+2. Keep the template literal syntax even for single backslashes for consistency
+3. This is especially important in documentation strings and file paths
+
+### Examples
+
+```typescript
+// ✅ Good: Clear and readable
+const windowsPath = String.raw`C:\Program Files\MyApp\config.json`;
+
+// ✅ Good: Regular expression is clear
+const pattern = String.raw`^\d{4}-\d{2}-\d{2}$`;
+
+// ✅ Good: Documentation with escape sequences
+const helpText = String.raw`Use \n for newlines and \t for tabs`;
+
+// ❌ Bad: Hard to read
+const windowsPath = "C:\\Program Files\\MyApp\\config.json";
+
+// ❌ Bad: Error-prone
+const pattern = "^\\d{4}-\\d{2}-\\d{2}$";
+
+// ❌ Bad: Confusing
+const helpText = 'Use \\n for newlines and \\t for tabs';
+```
+
+### References
+
+- [eslint-plugin-unicorn - Rule prefer-string-raw](https://github.com/sindresorhus/eslint-plugin-unicorn/blob/main/docs/rules/prefer-string-raw.md)
+- [String.raw - MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw)
+- [Template literals - MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals)
+
+---
+
+## Additional SonarQube Rules
+
+### (Add more rules here as needed)
