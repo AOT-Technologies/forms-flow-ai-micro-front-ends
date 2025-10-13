@@ -46,7 +46,26 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   .MuiTablePagination-selectLabel{
     margin-top: 0.625rem !important; // 10px
   }
+
+.MuiDataGrid-root {
+    .MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) {
+      .MuiDataGrid-sortButton {
+        opacity: 1 !important;
+        transition: opacity 0.2s ease-in-out;
+      }
   
+      &:hover {
+        .MuiDataGrid-sortButton {
+          opacity: 1 !important;
+          background-color: transparent !important;
+        }
+      }
+    }
+            
+    .MuiDataGrid-sortButton.MuiIconButton-root:hover {
+        background-color: transparent !important;
+    }
+}
   .MuiInputBase-root{
     display: flex;
   width: 4.375rem; // 70px

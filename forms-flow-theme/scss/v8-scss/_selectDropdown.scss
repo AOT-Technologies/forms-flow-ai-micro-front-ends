@@ -30,13 +30,13 @@ $color-medium-gray: var(--gray-x-light);
 $color-dark-gray: var(--gray-darkest);
 $color-darker-gray: var(--secondary-dark);
 $color-disabled-gray: var(--gray-medium);
-$color-selected-gray: var(--secondary);
 
 $color-primary: var(--vivid-100);
 $color-primary-light: var(--primary-dark);
 $color-primary-lighter: var(--primary-lighter);
 $color-primary-border: var(--primary-dark);
 $color-primary-selected: var(--primary);
+
 
 // Primary variant colors
 $dropdown-primary-border: rgba(184, 171, 255, 0.5); // #b8abff80
@@ -62,8 +62,7 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
 }
 
 @mixin dropdown-selected {
-  border-color: $color-primary-border;
-  background-color: $color-primary-selected;
+  background-color: $color-medium-gray;
   font-weight: $dropdown-font-weight-medium;
   color: $color-dark-gray;
 }
@@ -108,14 +107,14 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
 
   // Hover state
   &:hover:not(.disabled) {
-    border-color: $color-primary-light;
+    border-color: $color-dark-gray;
     background-color: $color-white;
   }
 
   // Focus state
   &:focus-visible {
-    border-color: $color-primary;
-    box-shadow: 0 0 0 2px $color-primary-selected;
+    border-color: $color-dark-gray;
+    box-shadow: 0 0 0 2px $color-dark-gray;
   }
 
   // Primary variant
@@ -252,7 +251,6 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
 
   // Hover states
   &:hover:not(.selected) {
-    background-color: $color-selected-gray;
     border-color: $color-medium-gray;
   }
 
