@@ -18,9 +18,7 @@ $font-size-xl: var(--font-size-xl);
         grid-row: 1;
         @include section-header();
         .settings-header-text {
-            color: $gray-dark;
-            font-size: $font-size-xl;
-            font-weight: $font-weight-medium;
+          @include font-style($font-size-xl, $font-weight-medium, $gray-dark);
             line-height: 120%;
             /* 24px */
             text-transform: capitalize;
@@ -44,10 +42,7 @@ $font-size-xl: var(--font-size-xl);
       }
     }
         .settings-labels {
-          color: $gray-dark;
-          font-size: $font-size-m;
-          font-style: normal;
-          font-weight: $font-weight-medium;
+          @include font-style($font-size-m, $font-weight-medium, $gray-dark);
           margin-bottom:0.75rem;
         }
   }
