@@ -92,17 +92,19 @@ const TaskListTable = () => {
       case "assignee":
         return <TaskAssigneeManager task={task} />;
       case "roles": {
-        const roleValues = candidateGroups.length > 0
-          ? candidateGroups.map(group => {
-            const groupId = group?.groupId ?? "-";
-            return removeTenantKey(groupId, tenantKey, MULTITENANCY_ENABLED);
-          })
-          : ["-"];
+  const validGroups = candidateGroups.filter(group => group?.groupId);
 
-        const allRoles = roleValues.join(",");
+  const roleValues = validGroups.length > 0
+    ? validGroups.map(group =>
+        removeTenantKey(group.groupId, tenantKey, MULTITENANCY_ENABLED)
+      )
+    : ["-"];
 
-        return allRoles;
-      }
+  const allRoles = roleValues.join(",");
+
+  return allRoles;
+}
+
 
 
     }
