@@ -10,7 +10,7 @@ $font-weight-medium: var(--font-weight-medium);
 .form-create-cards {
   @include mixins.vertical-padding();
   overflow: auto;
-  //height: 80vh;
+  height: 80vh;
   
   .create-header {
     @include mixins.font-style($header-font-size, $header-font-weight );
@@ -52,6 +52,12 @@ font-size: $header-font-size;
 font-weight: $header-font-weight;
 line-height: 120%; /* 24px */
 text-transform: capitalize;
+}
+.card-text{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .form-status {
