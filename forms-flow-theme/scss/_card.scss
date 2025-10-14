@@ -54,7 +54,8 @@ $gray-darkest: var(--ff-gray-darkest);
 }
 
 .flow-builder {
-  height: calc(100vh - 15rem) !important;
+  // height: calc(100vh - 15rem) !important;
+  height: 48rem !important; //768px as per figma
   overflow: auto;
 }
 

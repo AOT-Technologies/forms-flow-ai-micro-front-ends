@@ -55,11 +55,17 @@ $gray-darkest: var(--ff-gray-darkest);
 .bpmn-main-container-editor{
     width: 100%;
     display: flex;
-    margin-bottom: 1.25rem;
-    margin-top: 0.625rem;
+    margin-bottom: 1rem;
     height: auto;
     resize: vertical;
     overflow: hidden;
-    max-height: 37.5rem;
+    // max-height: 37.5rem;
     min-height: 28.125rem;
+    border: 1px solid #E5E5E5;
+    border-radius:5px;
+
+}
+
+#js-properties-panel{
+  max-height: 37.5rem;
 }
