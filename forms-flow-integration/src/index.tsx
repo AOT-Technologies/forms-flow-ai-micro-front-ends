@@ -65,7 +65,7 @@ const Integration = React.memo(({ props }: any) => {
   React.useEffect(() => {
     if (!isAuth) return
     const roles = JSON.parse(StorageService.get(StorageService.User.USER_ROLE));
-    if (roles.includes('view_designs')) {
+    if (roles?.includes('manage_integrations')) {
       setIsDesigner(true);
     }
     const locale = localStorage.getItem("i18nextLng")
@@ -107,6 +107,7 @@ const Integration = React.memo(({ props }: any) => {
   if (integrationCheckLoading) {
     return <Loading />
   }
+  
   if (!integrationEnabled || !isDesigner) {
     if(ENABLE_INTEGRATION_PREMIUM && isDesigner) {
       return <PremiumSubscription />
@@ -118,9 +119,9 @@ const Integration = React.memo(({ props }: any) => {
 
   return (
     <>
-        <div className="main-container " tabIndex={0}>
-          <div className="container mt-5">
-            <div className="min-container-height ps-md-3">
+        <div className="main-container" tabIndex={0}>
+          <div className="container">
+            <div className="min-container-height">
                 <Head items={headerList()} page={page} />
               <ToastContainer theme="colored" />
               <Switch>

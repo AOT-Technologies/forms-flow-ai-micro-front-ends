@@ -70,17 +70,16 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
       (selectedOption === defaultSortOption &&
         selectedOrder === defaultSortOrder);
     return (
-      <Modal show={showSortModal} onHide={onClose} size="sm" centered={true}>
+      <Modal show={showSortModal} onHide={onClose} size="sm">
         <Modal.Header>
           <Modal.Title>
-            <b>{t(modalHeader)}</b>
+            <p>{t(modalHeader)}</p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
-            <CloseIcon onClick={onClose} data-testid={closedataTestid} />
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon data-testid={closedataTestid} />
           </div>
         </Modal.Header>
-        <Modal.Body className="sort-settings p-0">
-          <div className="sortbody-settings">
+        <Modal.Body>
             <InputDropdown
               firstItemLabel={t(firstItemLabel)}
               isAllowInput={false}
@@ -98,6 +97,7 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
               ariaLabelforInput={t("Sort By Input")}
               dataTestIdforDropdown="dropdown-sort-by"
               dataTestIdforInput="input-sort-by"
+              id="sort-by"
             />
             <InputDropdown
               firstItemLabel={t(secondItemLabel)}
@@ -116,30 +116,29 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
               ariaLabelforInput={t("Order Input")}
               dataTestIdforDropdown="dropdown-sort-order"
               dataTestIdforInput="input-sort-order"
+              id="in-a"
             />
-          </div>
         </Modal.Body>
 
-        <Modal.Footer className="d-flex justify-content-start">
-          <CustomButton
-            variant="primary"
-            size="md"
-            disabled={isPrimaryButtonDisabled}
-            label={t(primaryBtnLabel)}
-            onClick={handlePrimaryAction}
-            name="applyButton"
-            dataTestId={primaryBtndataTestid}
-            ariaLabel={t(primaryBtnariaLabel)}
-          />
-          <CustomButton
-            variant="secondary"
-            size="md"
-            name="cancelButton"
-            label={t(secondaryBtnLabel)}
-            onClick={secondaryBtnAction}
-            dataTestId={secondaryBtndataTestid}
-            ariaLabel={t(secondaryBtnariaLabel)}
-          />
+        <Modal.Footer>
+          <div className="buttons-row">
+            <CustomButton
+              disabled={isPrimaryButtonDisabled}
+              label={t(primaryBtnLabel)}
+              onClick={handlePrimaryAction}
+              name="applyButton"
+              dataTestId={primaryBtndataTestid}
+              ariaLabel={t(primaryBtnariaLabel)}
+            />
+            <CustomButton
+              name="cancelButton"
+              label={t(secondaryBtnLabel)}
+              onClick={secondaryBtnAction}
+              dataTestId={secondaryBtndataTestid}
+              ariaLabel={t(secondaryBtnariaLabel)}
+              secondary
+            />
+          </div>
         </Modal.Footer>
       </Modal>
     );

@@ -16,7 +16,7 @@ import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
 import { CreateUser } from "../../services/users";
-import { TableFooter, CustomSearch } from "@formsflow/components";
+import { TableFooter, CustomSearch, CloseIcon } from "@formsflow/components";
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -375,11 +375,13 @@ const Users = React.memo((props: any) => {
       <Modal
         show={showSuccessModal}
         onHide={closeSuccessModal}
-        centered
         className="overflow-hidden">
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title></Modal.Title>
-        </Modal.Header>
+          <div className="icon-close" onClick={closeSuccessModal} data-testid="user-add-success-close">
+            <CloseIcon dataTestId="action-success-modal-close" />
+          </div>        
+          </Modal.Header>
         <Modal.Body className="modal-md d-flex align-items-center justify-content-center">
           <div className="p-3 text-center">
             <div className="d-flex flex-column align-items-center">
@@ -447,9 +449,12 @@ const Users = React.memo((props: any) => {
     </Button>
 
     {showInviteModal && (
-      <Modal show={showInviteModal} onHide={closeInviteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t("Add Registered Users")}</Modal.Title>
+      <Modal show={showInviteModal} onHide={closeInviteModal} size="sm">
+        <Modal.Header>
+          <Modal.Title><p>{t("Add Registered Users")}</p></Modal.Title>
+          <div className="icon-close" onClick={closeInviteModal} data-testid="role-modal-close">
+            <CloseIcon dataTestId="action-modal-close"/>
+          </div>
         </Modal.Header>
 
                   <Modal.Body>
@@ -487,12 +492,14 @@ const Users = React.memo((props: any) => {
                   </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary" onClick={closeInviteModal}>
-          {t("Cancel")}
-          </Button>
-          <Button variant="primary" onClick={sendInvites} disabled={!formData.user || selectedRolesModal.length === 0}>
-          {t("Add User")}
-          </Button>
+          <div className="buttons-row">
+            <Button variant="secondary" onClick={closeInviteModal}>
+            {t("Cancel")}
+            </Button>
+            <Button variant="primary" onClick={sendInvites} disabled={!formData.user || selectedRolesModal.length === 0}>
+            {t("Add User")}
+            </Button>
+          </div>
         </Modal.Footer>
       </Modal>
     )}
@@ -521,8 +528,7 @@ const Users = React.memo((props: any) => {
             onTableChange={handleTableChange}
             data-testid="admin-users-table"
           />
-          <table className="table mt-3">
-            <tfoot>
+          <table className="table mt-3 old-design">
               <TableFooter
                   limit={props?.limit?.sizePerPage}
                   activePage={activePage} 
@@ -531,8 +537,6 @@ const Users = React.memo((props: any) => {
                   onLimitChange={handleLimitChange}
                   pageOptions={getPageList()}
                 />
-
-              </tfoot>
             </table>
           </div>
         ) : (

@@ -8,9 +8,10 @@ interface CustomPillProps {
   secondaryLabel: string;
   icon?: React.ReactNode;
   bg: string;
- dataTestId?: string;
+  dataTestId?: string;
   ariaLabel?: string;
   onClick?: () => void; 
+  className?: string;
 }
 
 export const CustomPill: React.FC<CustomPillProps> = ({
@@ -21,20 +22,39 @@ export const CustomPill: React.FC<CustomPillProps> = ({
   ariaLabel = "",
   secondaryLabel="",
   onClick,
+  className = "",
 }) => {
   const { t } = useTranslation();
   return (
     <div>
-      <Badge pill variant={bg} data-testid={dataTestId} aria-label={ariaLabel}>
-        <span className="primary-label">{label}</span> 
-        { secondaryLabel && (<span className="secondary-label" >{secondaryLabel}</span>)}
-        {icon && 
-        <button 
+  <Badge
+    pill
+    bg={bg}
+    data-testid={dataTestId}
+    aria-label={ariaLabel}
+  >
+    <div className={`d-flex justify-content-between align-items-center ${className}`}>
+      <div className="d-flex flex-column">
+        <p className="primary-label mb-0">{label}</p>
+        {secondaryLabel && (
+          <p className="secondary-label mb-0">{secondaryLabel}</p>
+        )}
+      </div>
+      {icon && (
+        <div className="ms-2 d-flex align-items-center">
+          <button 
         className="button-as-div"
         aria-label="click icon" 
         data-testid="click-icon"
-        onClick={onClick}>{icon}</button>}
-      </Badge>{" "}
+         onClick={(e) => {
+                  e.stopPropagation(); 
+                  onClick?.();
+                }}>{icon}</button>
+        </div>
+      )}
     </div>
+  </Badge>
+</div>
+
   );
 };

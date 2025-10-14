@@ -1,113 +1,142 @@
 $gray-medium: var(--ff-gray-medium);
 $primary: var(--ff-primary);
 $white-color: var(--ff-white);
-.modal-70w {
-  width: 66.2% !important;
-  max-width: 66.2% !important;
-  margin: var(--spacer-150) auto !important;
 
-  .history-modal-body {
-    padding: var(--spacer-200) var(--spacer-250) !important;
-    margin-top: var(--spacer-200);
-    position: relative;
-    /* Timeline styles */
-    .timeline {
-      position: absolute;
-      top: -8px;
-      bottom: 0;
-      left: 121px;
-      width: 2px;
-      background-color: $primary !important; 
-      z-index: 0;
+.history-modal-body {
+  $BP1: 46em;
 
-      &::before {
-        content: "";
-        position: absolute;
-        left: -15px;
-        top: 0;
-        width: 32px;
-        height: 32px;
-        background-color: $white-color !important;
-        border: 2px solid $primary !important;
-        border-radius: 50%;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+  @include paddingLvl2();
 
-      &::after {
-        content: "";
-        position: absolute;
-        width: 16px;
-        height: 16px;
-        background-color: $primary !important;
-        border-radius: 50%;
-        top: 8px;
-        left: -7px;
-        z-index: 2;
-      }
-    }
+  $colorMain: $gray-darkest;
+  $colorSecondary: $gray-medium;
+  $detailsWidth: $base*8;
+  $spaceBetweenVersions: $paddingLvl5S;
+  $spaceBetweenElementsInside: $paddingLvl5S;
+  $spaceBetweenElementsInsideBP1: $paddingLvl5TB;
+  $timelineLineLeft: $base*5;
 
-    .history-entry {
-      position: relative;
-      background-color: $white-color !important; 
-      z-index: 2; 
-    }
+  position: relative;
 
-    .version-grid {
-      display: grid;
-      gap: 1rem;
-      align-items: center;
-      margin-bottom: 1rem;
+  container: history-modal-body / inline-size;
 
-      .revert-btn {
-        justify-self: end;
-      }
-    }
-    .version-style{
-        padding: 0.688rem var(--spacer-100);
-        border-radius: var(--radius-lg);
-    }
+  /* Timeline styles */
+  .timeline {
+    position: absolute;
+    bottom: 0;
+    left: $timelineLineLeft;
+    width: $lineThick;
+    height: 100%;
 
-    .major-version-grid {
-      @extend .version-style;
-      @extend .version-grid;
-      @extend .history-entry;
-      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0fr;
-      border: 2px solid $primary !important;
-    }
-    .workflow-major-grid {
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    }
-
-    .minor-version-grid {
-      @extend .version-style;
-      @extend .version-grid;
-      @extend .history-entry;
-      margin-left: 2rem;
-      grid-template-columns: 1.75fr 1fr 1fr 1fr 1fr 0fr;
-      border: 2px solid $gray-medium !important;
-    }
-    .workflow-minor-grid {
-      grid-template-columns: 0.77fr 1fr 1fr 1fr 1fr 1fr;
-    }
+    background-color: $colorMain !important; 
     
-    .text-style{
-        color: var(--default-font-color) !important;
-        font-size: var(--font-size-xs);
-    }
-    .content-headings {
-      @extend .text-style;
-      font-weight: var(--font-weight-xl);
+    z-index: 0;
+  }
+
+  .history-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    gap: $spaceBetweenVersions;
+
+    &:not(.submissions) > div {
+      &:nth-child(2) {
+        background-color: $primary-light;
+
+        border: $lineThin solid $primary-light;
+
+        & button {
+          opacity: 0;
+
+          pointer-events: none;
+        }
+      }
     }
 
-    .normal-text {
-      @extend .text-style;
-      font-weight: var(--font-weight-sm);
+    .version {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      padding: $paddingLvl5TB $paddingLvl5LR;
+      gap: $spaceBetweenElementsInside;
+
+      border: $lineThin solid $gray-medium;
+      border-radius: $borderRadiusHeightM;
+
+      background-color: $white-color; 
+
+      z-index: 2;
+
+      &.minor {
+        margin-left: $paddingLvl1S;
+      }
+
+      &.major {
+        border: $lineThin solid $gray-darkest;
+      }
+
+      .heading {
+        @include textBaseHightlight($fontSmallest);
+
+        display: flex;
+        flex-grow: 0.95;
+      }
+
+      .details {
+        display: flex;
+
+        gap: $paddingLvl5S;
+
+        & > div {
+          display: flex;
+          flex-direction: column;
+          width: $detailsWidth;
+
+          gap: $paddingLvl5S;
+        }
+
+        p {
+          &:nth-child(1) {
+            @include textBaseHightlight($fontSmallest, $gray-dark);
+          }
+
+          &:nth-child(2) {
+            @include textBase($fontSmallest, $gray-dark);
+          }
+        }
+      }
+    }
+  }
+
+  @container history-modal-body (max-width: #{$BP1}) {
+    .history-content {
+      &:not(.submissions) > div {
+        &:nth-child(2) {
+          & button {
+            display: none;
+          }
+        }
+      }
+      .version {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spaceBetweenElementsInsideBP1;
+
+        .details {
+          flex-wrap: wrap;
+          width: 100%;
+
+          & > div {
+            flex: 1;  
+            width: unset;
+          }
+        }
+      }
     }
   }
 }
+
 
 .analyse-submision-history-modal{
   min-height: 80vh;

@@ -11,7 +11,7 @@ import {
   CustomButton,
   FormVariableIcon,
 } from "@formsflow/components";
-import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
+import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import {
   ACCESSIBLE_FOR_ALL_GROUPS,
   MULTITENANCY_ENABLED,
@@ -65,7 +65,6 @@ const TaskFilterModalBody = ({
   } = useSelector((state: RootState) => state.task);
 
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
-  const [accessOption, setAccessOption] = useState("specificRole");
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
@@ -92,7 +91,12 @@ const TaskFilterModalBody = ({
 
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId || state.tenants?.tenantData?.key);
+  const SPECIFIC_ROLE = "specificRole";
+  const SPECIFIC_ASSIGNEE = "specificAssignee";
+  const CURRENT_USER = "currentUser";
+  const [accessOption, setAccessOption] = useState(CURRENT_USER);
+
 
   const changeAcessOption = (option: string) => {
     setAccessOption(option);
@@ -134,14 +138,20 @@ const TaskFilterModalBody = ({
       });
     }
 
-    if (accessOption === "specificRole") {
-      criteria.candidateGroup =
-        MULTITENANCY_ENABLED && accessValue
-          ? tenantKey + "-" + trimFirstSlash(accessValue)
-          : trimFirstSlash(accessValue);
-      delete criteria.assignee;
-    } else {
+    if (accessOption === SPECIFIC_ROLE) {
+   const trimmedAccessValue = trimFirstSlash(accessValue);
+   criteria.candidateGroup = addTenantPrefixIfNeeded(
+     trimmedAccessValue,
+     tenantKey,
+     MULTITENANCY_ENABLED
+   );
+  delete criteria.assignee;
+    } else if(accessOption === SPECIFIC_ASSIGNEE){
       criteria.assignee = accessValue;
+      delete criteria.candidateGroup;
+    }
+    else{
+      delete criteria.assignee;
       delete criteria.candidateGroup;
     }
 
@@ -211,9 +221,27 @@ const TaskFilterModalBody = ({
     if (!filterToEdit) return;
     const { roles, users, criteria, properties } = filterToEdit;
     const { assignee, sorting, candidateGroup } = criteria;
-    setShareFilterForSpecificRole(roles);
-    setAccessOption(assignee ? "specificAssignee" : "specificRole");
-    setAccessValue(assignee ? assignee : candidateGroup);
+    const cleanedRoles = roles.map((role) =>
+      removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED)
+    );
+    setShareFilterForSpecificRole(cleanedRoles);
+    let accessOption;
+    let accessValue;
+
+    if (assignee) {
+      accessOption = SPECIFIC_ASSIGNEE;
+      accessValue = assignee;
+    } else if (candidateGroup) {
+      accessOption = SPECIFIC_ROLE;
+      accessValue = removeTenantKey(candidateGroup,tenantKey,MULTITENANCY_ENABLED);
+    } else {
+      accessOption = CURRENT_USER;
+      accessValue = "";
+    }
+
+    setAccessOption(accessOption);
+    setAccessValue(accessValue);
+
     handleSorting(sorting);
     handleShareFilter(roles, users);
     setDataLineValue(properties?.displayLinesCount ?? 1);
@@ -230,6 +258,7 @@ const TaskFilterModalBody = ({
           formId: matchedForm.formId,
           formName: matchedForm.formName,
         });
+        handleFetchTaskVariables(matchedForm.formId);
       }
     }
   }, [filterToEdit, forms.length]);
@@ -255,18 +284,15 @@ const TaskFilterModalBody = ({
       .catch((error) => console.error("error", error));
   }, []);
 
-  const candidateOptions = useMemo(() => {
-    return candidateGroups.reduce((acc, group) => {
-      if (!group.permissions.includes("view_filters")) return acc;
+const candidateOptions = useMemo(() => {
+  return candidateGroups.reduce((acc, group) => {
+    if (!group.permissions.includes("view_filters")) return acc;
+    const label = removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED)
+    acc.push({ value: group.name, label });
+    return acc;
+  }, []);
+}, [candidateGroups, MULTITENANCY_ENABLED, tenantKey]);
 
-      const name = MULTITENANCY_ENABLED
-        ? removeTenantKey(group.name, tenantKey)
-        : group.name;
-
-      acc.push({ value: name, label: name });
-      return acc;
-    }, []);
-  }, [candidateGroups, MULTITENANCY_ENABLED, tenantKey]);
 
   const createSortByOptions = (labelKey, value) => ({
     label: t(labelKey),
@@ -303,42 +329,108 @@ const TaskFilterModalBody = ({
     return { label: value, value, onClick: () => setDataLineValue(i + 1) };
   });
 
-  const isDuplicateVariable = (taskVar, existingVars) => {
-    return existingVars.some(
-      (existingVar) =>
-        existingVar.key === taskVar.key && existingVar.label === taskVar.label
-    );
-  };
+ const isDuplicateVariable = (taskVar, existingVars) => {
+  return existingVars.some(
+    (existingVar) =>
+      existingVar.key === taskVar.key && existingVar.label === taskVar.label
+  );
+};
 
-  const transformToDynamicVariables = (taskVariables, existingVars) => {
-    return taskVariables
-      .filter(
-        (taskVar) =>
-          taskVar.type !== "hidden" && taskVar.type !== "radio" &&
-          !isDuplicateVariable(taskVar, existingVars)
-      )
-      .map((variable, index) => ({
-        ...variable,
-        name: variable.key,
-        isChecked: true,
-        sortOrder: existingVars.length + index + 1,
-        isFormVariable: true,
-      }));
-  };
+const isValidVariableType = (taskVar) => {
+  return taskVar.type !== "hidden" ;
+};
+
+const createVariableFromTask = (variable, baseIndex, isChecked = true) => ({
+  ...variable,
+  name: variable.key,
+  isChecked,
+  sortOrder: baseIndex + 1,
+  isFormVariable: true,
+});
+
+const findExistingVariable = (variables, targetVar) => {
+  return variables.find(
+    v => v.key === targetVar.key && v.label === targetVar.label
+  );
+};
+
+const removeDuplicateVariables = (variables) => {
+  return variables.filter((variable, index, self) =>
+    index === self.findIndex(v => v.key === variable.key && v.label === variable.label)
+  );
+};
+
+const transformToDynamicVariables = (taskVariables, existingVars) => {
+  return taskVariables
+    .filter(taskVar => 
+      isValidVariableType(taskVar) && 
+      !isDuplicateVariable(taskVar, existingVars)
+    )
+    .map((variable, index) => 
+      createVariableFromTask(variable, existingVars.length + index)
+    );
+};
+
+
+
+const processNewFilterMode = (taskVariables, defaultTaskVariable) => {
+  const dynamicVariables = transformToDynamicVariables(taskVariables, defaultTaskVariable);
+  return [...defaultTaskVariable, ...dynamicVariables];
+};
 
 const handleFetchTaskVariables = (formId) => {
-    fetchTaskVariables(formId)
-      .then((res) => {
-        const taskVariables = res.data?.taskVariables || [];
-        const dynamicVariables = transformToDynamicVariables(
-          taskVariables,
-          defaultTaskVariable
-        );
-        const combinedVars = [...defaultTaskVariable, ...dynamicVariables];
-        setVariableArray(combinedVars);
-      })
-      .catch((err) => console.error(err));
-  };
+  fetchTaskVariables(formId)
+    .then((res) => {
+      const taskVariables = res.data?.taskVariables || [];
+      const isEditingWithSameForm = filterToEdit?.id && filterToEdit?.properties?.formId === formId;
+
+      let combinedVars;
+      
+      if (isEditingWithSameForm) {
+        // Get current task variable keys for comparison
+        const currentTaskVariableKeys = taskVariables
+          .filter(taskVar => isValidVariableType(taskVar))
+          .map(taskVar => taskVar.key);
+        
+        // Filter out deleted form variables from existing filter
+        const existingFormVariables = (filterToEdit?.variables?.filter(v => v.isFormVariable) || [])
+          .filter(existingVar => currentTaskVariableKeys.includes(existingVar.key));
+        
+        // Get default variables with existing values preserved
+        const defaultVars = defaultTaskVariable.map(defaultVar => {
+          const existingVar = findExistingVariable(filterToEdit?.variables || [], defaultVar);
+          return existingVar || defaultVar;
+        });
+        
+        // Process new dynamic variables
+        const newDynamicVariables = taskVariables
+          .filter(taskVar => 
+            isValidVariableType(taskVar) && 
+            !isDuplicateVariable(taskVar, defaultTaskVariable)
+          )
+          .map((variable, index) => {
+            const existingVar = findExistingVariable(existingFormVariables, variable);
+            
+            return createVariableFromTask(
+              variable,
+              existingVar ? existingVar.sortOrder - 1 : defaultTaskVariable.length + existingFormVariables.length + index,
+              existingVar ? existingVar.isChecked : false
+            );
+          });
+
+        // Combine and deduplicate
+        const allFormVariables = [...existingFormVariables, ...newDynamicVariables];
+        const uniqueFormVariables = removeDuplicateVariables(allFormVariables);
+        
+        combinedVars = [...defaultVars, ...uniqueFormVariables];
+      } else {
+        combinedVars = processNewFilterMode(taskVariables, defaultTaskVariable);
+      }
+
+      setVariableArray(combinedVars);
+    })
+    .catch((err) => console.error(err));
+};
 
   // need to check if this function is used anywhere else
   const handleUpdateOrder = (updatedItems) => {
@@ -396,6 +488,7 @@ const handleFetchTaskVariables = (formId) => {
     toggleUpdateModal();
     }
   };
+
   const handleDeleteClick = () => {
     dispatch(setFilterToEdit(getData()));
     toggleDeleteModal();
@@ -408,8 +501,9 @@ const handleFetchTaskVariables = (formId) => {
   const isVariableArrayEmpty = variableArray.every((item) => !item.isChecked);
   const disableFilterButton = isVariableArrayEmpty || isFilterSame;
   const saveFilterButtonDisabled =
-    !filterName ||
-    !accessValue ||
+    !filterName || 
+    ((accessOption !== CURRENT_USER) && !accessValue) ||
+    !accessOption ||
     (filterToEdit?.id ? disableFilterButton : isVariableArrayEmpty);
   /* ------------------------------- tab values ------------------------------- */
   const columnsTab = () => (
@@ -436,6 +530,7 @@ const handleFetchTaskVariables = (formId) => {
 
   const settingsTab = () => (
     <>
+    <div className="input-combination">
       <InputDropdown
         Options={dateSortOptions}
         dropdownLabel={t("Default Sort")}
@@ -446,36 +541,35 @@ const handleFetchTaskVariables = (formId) => {
         dataTestIdforDropdown="date-sort"
         selectedOption={sortValue}
         setNewInput={setSortValue}
+        id="default-sort"
       />
       {sortValue && sortOptions[sortValue] ? (
-        <div className="d-flex filter-dropdown">
-          <div className="L-style"></div>
-          <InputDropdown
-            Options={sortOptions[sortValue]}
-            isAllowInput={false}
-            ariaLabelforDropdown={t("dropdown for sort order")}
-            ariaLabelforInput={t("input for sort order")}
-            data-testid="sort-order-dropdown"
-            dataTestIdforInput="sort-order-input"
-            dataTestIdforDropdown="sort-order-list"
-            selectedOption={sortOrder}
-            setNewInput={setSortOrder}
-          />
-        </div>
-      ) : null}
-      <div className="pt-4">
         <InputDropdown
-          Options={dataLineCount}
-          dropdownLabel={t("How Many Line of Data To Show Per Row?")}
+          Options={sortOptions[sortValue]}
           isAllowInput={false}
-          ariaLabelforDropdown={t("line of data dropdown ")}
-          ariaLabelforInput={t("line of data input")}
-          dataTestIdforInput="data-line-input"
-          dataTestIdforDropdown="data-line"
-          selectedOption={dataLineValue}
-          setNewInput={setDataLineValue}
+          ariaLabelforDropdown={t("dropdown for sort order")}
+          ariaLabelforInput={t("input for sort order")}
+          data-testid="sort-order-dropdown"
+          dataTestIdforInput="sort-order-input"
+          dataTestIdforDropdown="sort-order-list"
+          selectedOption={sortOrder}
+          setNewInput={setSortOrder}
+          id="sort-order"
         />
+      ) : null}
       </div>
+      <InputDropdown
+        Options={dataLineCount}
+        dropdownLabel={t("How Many Lines of Data To Show Per Row")}
+        isAllowInput={false}
+        ariaLabelforDropdown={t("line of data dropdown ")}
+        ariaLabelforInput={t("line of data input")}
+        dataTestIdforInput="data-line-input"
+        dataTestIdforDropdown="data-line"
+        selectedOption={dataLineValue}
+        setNewInput={setDataLineValue}
+        id="how-many-lines-of-data-to-show-per-row"
+      />
     </>
   );
 
@@ -529,8 +623,8 @@ const handleFetchTaskVariables = (formId) => {
 
   return (
     <>
-      <Modal.Body className="modal-body p-0">
-        <div className="filter-tab-container">
+      <Modal.Body className="with-tabs">
+        <div className="tabs">
           <CustomTabs
             defaultActiveKey={
               updateSuccess?.showSuccess || deleteSuccess?.showSuccess
@@ -543,29 +637,28 @@ const handleFetchTaskVariables = (formId) => {
           />
         </div>
       </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-start">
-        <CustomButton
-          variant="primary"
-          size="md"
-          label={t("Filter Results")}
-          dataTestId="task-filter-results"
-          ariaLabel={t("Filter results")}
-          onClick={filterResults}
-          disabled={
-            successState.showSuccess ||
-            updateSuccess?.showSuccess ||
-            deleteSuccess?.showSuccess ||
-            disableFilterButton
-          }
-        />
-        <CustomButton
-          variant="secondary"
-          size="md"
-          label={t("Cancel")}
-          onClick={closeTaskFilterMainModal}
-          dataTestId="cancel-task-filter"
-          ariaLabel={t("Cancel filter")}
-        />
+      <Modal.Footer>
+        <div className="buttons-row">
+          <CustomButton
+            label={t("Filter Results")}
+            dataTestId="task-filter-results"
+            ariaLabel={t("Filter results")}
+            onClick={filterResults}
+            disabled={
+              successState.showSuccess ||
+              updateSuccess?.showSuccess ||
+              deleteSuccess?.showSuccess ||
+              disableFilterButton
+            }
+          />
+          <CustomButton
+            label={t("Cancel")}
+            onClick={closeTaskFilterMainModal}
+            dataTestId="cancel-task-filter"
+            ariaLabel={t("Cancel filter")}
+            secondary
+          />
+        </div>
       </Modal.Footer>
     </>
   );

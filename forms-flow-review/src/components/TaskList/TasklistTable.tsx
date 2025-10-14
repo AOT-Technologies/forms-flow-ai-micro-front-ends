@@ -12,23 +12,28 @@ import { isEqual, cloneDeep } from "lodash";
 import {
   resetTaskListParams,
   setBPMTaskListActivePage,
+  setBPMTaskLoader,
   setFilterListSortParams,
   setTaskListLimit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useHistory, useParams } from "react-router-dom";
 import {
-  fetchServiceTaskList, 
+  fetchServiceTaskList,
 } from "../../api/services/filterServices";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
-import { createReqPayload } from "../../helper/taskHelper";
+import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
+import { removeTenantKey } from "../../helper/helper";
+import Loading from "../Loading/Loading";
+
 interface Column {
   name: string;
   width: number;
   sortKey: string;
   resizable?: boolean;
   newWidth?: number;
+  isFormVariable?:boolean;
 }
 
 interface Task {
@@ -42,32 +47,8 @@ interface Task {
   };
 }
 
-const getCellValue = (column: Column, task: Task) => {
-  const { sortKey } = column;
-  const { name: taskName, created, _embedded } = task ?? {};
-  const variables = _embedded?.variable ?? [];
-  const candidateGroups = _embedded?.candidateGroups ?? [];
-
-  if (column.sortKey === "applicationId") {
-    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
-  }
 
 
-
-  switch (sortKey) {
-    case "name":
-      return taskName ?? "-";
-    case "created":
-      return created ? HelperServices.getLocaldate(created) : "N/A";
-    case "assignee":
-      return <TaskAssigneeManager task={task} />;
-     case "roles": {
-    return candidateGroups.length > 0 ? candidateGroups[0]?.groupId ?? "-" : "-";
-  }
-    default:
-      return variables.find((v) => v.name === sortKey)?.value ?? "-";
-  }
-};
 
 const TaskListTable = () => {
   const { t } = useTranslation();
@@ -85,10 +66,89 @@ const TaskListTable = () => {
     isAssigned
   } = useSelector((state: any) => state.task);
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantKey || tenantId);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData
+?.key || tenantId);
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
-  const taskvariables = selectedFilter?.variables ?? []; 
+  const taskvariables = selectedFilter?.variables ?? [];
+
+  const getCellValue = (column: Column, task: Task) => {
+  const { sortKey } = column;
+  const { name: taskName, created, _embedded } = task ?? {};
+  const variables = _embedded?.variable ?? [];
+  const candidateGroups = _embedded?.candidateGroups ?? [];
+
+  if (column.sortKey === "applicationId") {
+    return variables.find((v) => v.name === "applicationId")?.value ?? "-";
+  }
+
+  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
+  if (!column.isFormVariable) {
+    switch (sortKey) {
+      case "name":
+        return taskName ?? "-";
+      case "created":
+        return created ? HelperServices.getLocaldate(created) : "N/A";
+      case "assignee":
+        return <TaskAssigneeManager task={task} />;
+      case "roles": {
+  const validGroups = candidateGroups.filter(group => group?.groupId);
+
+  const roleValues = validGroups.length > 0
+    ? validGroups.map(group =>
+        removeTenantKey(group.groupId, tenantKey, MULTITENANCY_ENABLED)
+      )
+    : ["-"];
+
+  const allRoles = roleValues.join(",");
+
+  return allRoles;
+}
+
+
+
+    }
+  }
+
+  const matchingVar = variables.find((v) => v.name === sortKey);
+  if (!matchingVar) return "-";
+
+  // check if this is a datetime field & date field
+  const dateTimeField = taskvariables.find(
+    (taskVar) => taskVar.key === sortKey && taskVar.type === "datetime"
+  );
+  const dateField = taskvariables.find(
+    (taskVar) => taskVar.key === sortKey && taskVar.type === "day"
+  )
+  const selectBoxes = taskvariables.find(
+    (taskVar) =>  taskVar.key === sortKey && taskVar.type === "selectboxes"
+  )
+  
+  if (dateTimeField) {
+    return matchingVar.value
+      ? HelperServices.getLocalDateAndTime(matchingVar.value)
+      : "-";
+  }
+  if (selectBoxes) {
+    const obj = JSON.parse(matchingVar.value);
+    const trueKeys = Object.keys(obj).filter((key) => obj[key]);
+    const displayValue = trueKeys.length ? trueKeys.join(", ") : "-";
+    return displayValue;
+  }
+  if (dateField) {
+  return matchingVar.value
+    ? new Date(matchingVar.value).toLocaleDateString("en-GB") // format date as dd/mm/yyyy
+        .replace(/\//g, "-") // convert `/` to `-`
+    : "-";
+}
+// return matchingVar.value ?? "-";
+
+if (typeof matchingVar.value === "boolean") {
+  return matchingVar.value ? "True" : "False"; 
+}
+
+return matchingVar.value ?? "-";
+  }
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
@@ -104,9 +164,12 @@ const TaskListTable = () => {
     { text: "All", value: tasksCount },
   ];
 
-  // checking is column is sortable
-  const isSortableColumn = (columnKey) => SORTABLE_COLUMNS.includes(columnKey);
- 
+  /**
+   * checking is column is sortable 
+   * passing isFormVariable to avoid sorting of dynamic variables
+  **/
+
+
 
   const handleColumnResize = (column: Column, newWidth: number) => {
     /**
@@ -142,6 +205,7 @@ const TaskListTable = () => {
     return `${columnName}: ${cellValue}`;
   };
 
+
   // Render Functions
   const renderHeaderCell = (
     column,
@@ -150,37 +214,62 @@ const TaskListTable = () => {
     currentResizingColumn,
     handleMouseDown
   ) => {
-    const isSortable = isSortableColumn(column.sortKey);
     const isResizable = column.resizable && index < columnsLength - 1;
     const isResizing = currentResizingColumn?.sortKey === column.sortKey;
+    const isSortableHeader =["actions", "roles"].includes(column.sortKey) || !column.type ||  !sortableKeysSet.has(column.type);
 
     return (
-      <th
-        key={`header-${column.sortKey ?? index}`}
-        className={`resizable-column ${column.sortKey==="assignee" ? "customizable_assignee" : ''}`}
-        style={{ width: column.width }}
-        data-testid={`column-header-${column.sortKey ?? "actions"}`}
-        aria-label={`${t(column.name)} ${t("column")}${
-          isSortable ? ", " + t("sortable") : ""
-        }`}
-      >
-        {renderHeaderContent(column, isSortable)}
-        {isResizable &&
-          renderColumnResizer(column, isResizing, handleMouseDown, index)}
-      </th>
+      <>
+        {column.name ? (
+          <th
+            key={`header-${column.sortKey ?? index}`}
+            className={!isSortableHeader? "header-sortable" : ""}
+            style={{ 'minWidth': column.width, 'maxWidth': column.width }}
+            data-testid={`column-header-${column.sortKey ?? "actions"}`}
+          aria-label={`${t(column.name)} ${t("column")}${
+            !isSortableHeader ? ", " + t("sortable") : ""
+              }`}
+          >
+            {renderHeaderContent(column)}
+            {isResizable &&
+              renderColumnResizer(column, isResizing, handleMouseDown, index)}
+          </th>
+        ) : (
+          <th
+            key={`header-${column.sortKey ?? index}`}
+            data-testid={`column-header-${column.sortKey ?? "actions"}`}
+          aria-label={`${t(column.name)} ${t("column")}${
+            !isSortableHeader ? ", " + t("sortable") : ""
+              }`}
+          >
+            {renderHeaderContent(column)}
+          </th>
+        )}
+
+
+      </>
     );
   };
-  const handleSort = (key) => {
+  const handleSort = (column) => {
+      dispatch(setBPMTaskLoader(true));
     const resetSortOrders = HelperServices.getResetSortOrders(
       optionSortBy.options
     );
+    const enabledSort = new Set ([
+      "applicationId",
+      "submitterName",
+      "formName"
+    ])
     const updatedFilterListSortParams = {
       ...resetSortOrders,
-      [key]: {
+      [column.sortKey]: {
         sortOrder:
-          filterListSortParams[key]?.sortOrder === "asc" ? "desc" : "asc",
+          filterListSortParams[column.sortKey]?.sortOrder === "asc" ? "desc" : "asc",
+          ...((column.isFormVariable || enabledSort.has(column.sortKey)) && {
+            type: column.type ,
+          })
       },
-      activeKey: key,
+      activeKey: column.sortKey,
     };
 
     dispatch(setFilterListSortParams(updatedFilterListSortParams));
@@ -189,22 +278,29 @@ const TaskListTable = () => {
       selectedAttributeFilter,
       updatedFilterListSortParams,
       dateRange,
-      isAssigned
+      isAssigned,
+      column.isFormVariable
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
   };
 
-  const renderHeaderContent = (column, isSortable) => {
-    if (!isSortable) {
-      return t(column.name);
+  const renderHeaderContent = (column) => {
+    //If the header is for the View button or the variable type is null, then there should be no sorting option for those columns.
+    if (["actions", "roles"].includes(column.sortKey) || !column.type || !sortableKeysSet.has(column.type))
+      {
+      return (
+        <span className="text">
+          {t(column.name)}
+        </span>
+      )
     }
     return (
       <SortableHeader
+        className="header-sortable"
         columnKey={column.sortKey}
         title={t(column.name)}
         currentSort={filterListSortParams}
-        handleSort={() => handleSort(column.sortKey)}
-        className="w-100 d-flex justify-content-between align-items-center"
+        handleSort={() => handleSort(column)}
         dataTestId={`sort-header-${column.sortKey}`}
         ariaLabel={t("Sort by {{columnName}}", {
           columnName: t(column.name),
@@ -246,8 +342,7 @@ const TaskListTable = () => {
   const renderActionCell = (task, colIndex) => (
     <td key={`action-${task.id}-${colIndex}`}>
       <CustomButton
-        size="table-sm"
-        variant="secondary"
+        actionTableSmall
         label={t("View")}
         onClick={() => history.push(`${redirectUrl.current}task/${task.id}`)}
         dataTestId={`view-task-${task.id}`}
@@ -264,46 +359,37 @@ const TaskListTable = () => {
       data-testid={`task-${task.id}-${column.sortKey}`}
       aria-label={getCellAriaLabel(column, task)}
     >
-      <div
-        className={`${column.sortKey !== "assignee" ? "customizable_td_row" : "customizable_assignee"} `}
-        style={{
-          WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
-        }}
-      >
-        {getCellValue(column, task)}
-      </div>
+      {column.sortKey == "assignee" ? (
+        getCellValue(column, task)
+      ) : (
+        <div className={`content`}
+          style={{
+            WebkitLineClamp: selectedFilter?.properties?.displayLinesCount ?? 1, //here displayLines count is not there we will show 1 lines of content
+          }}
+        >
+          {getCellValue(column, task)}
+        </div>
+      )}
     </td>
   );
 
 
   const renderEmptyTable = () => (
     <div
-      className="container-wrapper"
+      className="custom-table-wrapper-outter"
       data-testid="no-columns-message"
       aria-label={t("No columns message")}
     >
-      <div className="table-outer-container">
-        <div className="table-scroll-wrapper">
-          <table className="resizable-table">
-            <thead className="visually-hidden">
-              <tr className="no-hover">
-                <th scope="col">{t("Message")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td
-                  className="empty-table-message"
-                  data-testid="empty-columns-message"
-                >
-                  {t(
-                    "No tasks have been found. Try a different filter combination or contact your admin."
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div className="custom-table-wrapper-inner resizable">
+        <table>
+          <tbody className="table-empty">
+            <p className="empty-message" data-testid="empty-columns-message">
+              {t(
+                "No tasks have been found. Try a different filter combination or contact your admin."
+              )}
+            </p>
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -321,71 +407,56 @@ const TaskListTable = () => {
 
   /* ----------------------------------- --- ---------------------------------- */
   const renderTableContainer = () => (
-    <div
-      className="container-wrapper"
-      data-testid="table-container-wrapper"
-      aria-label={t("Task table container")}
-    >
-      <div
-        className="table-outer-container"
-        data-testid="table-outer-container"
-        aria-label={t("Table outer container")}
-      >
-        <ReusableResizableTable 
-              columns={columns}
-              data={tasksList}
-              renderRow={renderRow}
-              renderHeaderCell={renderHeaderCell}
-              emptyMessage={t(
-                "No tasks have been found. Try a different filter combination or contact your admin."
-              )}
-              onColumnResize={handleColumnResize}
-              loading={isTaskListLoading}
-              tableClassName="resizable-table"
-              headerClassName="resizable-header"
-              containerClassName="resizable-table-container"
-              scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
-              dataTestId="task-resizable-table"
-              ariaLabel={t("Tasks data table with resizable columns")}
-            />
+    <>
+      <div className="custom-table-wrapper-outter">
+        <ReusableResizableTable
+          columns={columns}
+          data={tasksList}
+          renderRow={renderRow}
+          renderHeaderCell={renderHeaderCell}
+          emptyMessage={t(
+            "No tasks have been found. Try a different filter combination or contact your admin."
+          )}
+          onColumnResize={handleColumnResize}
+          loading={isTaskListLoading}
+          headerClassName="resizable-header"
+          scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+          dataTestId="task-resizable-table"
+          ariaLabel={t("Tasks data table with resizable columns")}
+        />
+
+        {renderTableFooter()}
       </div>
-      {renderTableFooter()}
-    </div>
+    </>
   );
 
   const renderTableFooter = () => (
-    <table
-      className="custom-tables"
-      data-testid="table-footer-container"
-      aria-label={t("Table footer container")}
-    >
-      <tfoot>
-        {tasksCount > 0 && tasksList?.length > 0 && (
-          <TableFooter
-            limit={limit}
-            activePage={activePage}
-            totalCount={tasksCount}
-            handlePageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-            pageOptions={PAGE_SIZE_OPTIONS}
-            dataTestId="task-table-footer"
-            ariaLabel={t("Table pagination controls")}
-            pageSizeDataTestId="task-page-size-selector"
-            pageSizeAriaLabel={t("Select number of tasks per page")}
-            paginationDataTestId="task-pagination-controls"
-            paginationAriaLabel={t("Navigate between task pages")}
-            loader={isTaskListLoading}
-          />
-        )}
-      </tfoot>
-    </table>
+    <>
+      {tasksCount > 0 && tasksList?.length > 0 && (
+        <TableFooter
+          limit={limit}
+          activePage={activePage}
+          totalCount={tasksCount}
+          handlePageChange={handlePageChange}
+          onLimitChange={handleLimitChange}
+          pageOptions={PAGE_SIZE_OPTIONS}
+          dataTestId="task-table-footer"
+          ariaLabel={t("Table pagination controls")}
+          pageSizeDataTestId="task-page-size-selector"
+          pageSizeAriaLabel={t("Select number of tasks per page")}
+          paginationDataTestId="task-pagination-controls"
+          paginationAriaLabel={t("Navigate between task pages")}
+          loader={isTaskListLoading}
+        />
+      )}
+    </>
   );
 
 
 
-  if (columns.length === 0) {
-    return renderEmptyTable();
-  }
+if (!columns?.length) {
+  return isTaskListLoading ? <Loading /> : renderEmptyTable();
+}
 
   return renderTableContainer();
 };

@@ -53,19 +53,18 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         show={show}
         onHide={onClose}
         size="sm"
-        centered={true}
         data-testid="confirm-modal"
         aria-labelledby="confirm-modal-title"
         aria-describedby="confirm-modal-message"
       >
         <Modal.Header>
           <Modal.Title id="confirm-modal-title" data-testid={titleDataTestId}>
-            <b>
+            <p>
               {t(title)}
-            </b>
+            </p>
           </Modal.Title>
-          <div className="d-flex align-items-center">
-              <CloseIcon onClick={onClose} data-testid="confirm-modal-close"/>
+          <div className="icon-close" onClick={onClose}>
+              <CloseIcon data-testid="confirm-modal-close"/>
           </div>
         </Modal.Header>
         <Modal.Body className="build-modal-body">
@@ -78,7 +77,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
               data-testid={ datatestId }
               aria-label="Primary message"
             >
-              {t(message)}
+              {message}
             </div>
             {messageSecondary && (
               <div
@@ -86,32 +85,31 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
                 data-testid="confirm-modal-secondary-message"
                 aria-label="Secondary message"
               >
-                {t(messageSecondary)}
+                {messageSecondary}
               </div>
             )}
           </div>
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-start">
-        {primaryBtnText && <CustomButton
-            variant={"primary"}
-            size="lg"
-            label={primaryBtnText}
-            disabled={primaryBtnDisable}
-            onClick={primaryBtnAction}
-            dataTestId={primaryBtndataTestid}
-            ariaLabel={primaryBtnariaLabel}
-            buttonLoading={buttonLoading}
-          />}
-          {secondaryBtnText && <CustomButton
-            variant="secondary"
-            size="lg"
-            label={secondaryBtnText}
-            onClick={secondaryBtnAction}
-            dataTestId={secondoryBtndataTestid}
-            ariaLabel={secondoryBtnariaLabel}
-            disabled={secondaryBtnDisable}
-            buttonLoading={secondaryBtnLoading}
-          />}
+        <Modal.Footer>
+          <div className="buttons-row">
+            {primaryBtnText && <CustomButton
+              label={primaryBtnText}
+              disabled={primaryBtnDisable}
+              onClick={primaryBtnAction}
+              dataTestId={primaryBtndataTestid}
+              ariaLabel={primaryBtnariaLabel}
+              buttonLoading={buttonLoading}
+            />}
+            {secondaryBtnText && <CustomButton
+              label={secondaryBtnText}
+              onClick={secondaryBtnAction}
+              dataTestId={secondoryBtndataTestid}
+              ariaLabel={secondoryBtnariaLabel}
+              disabled={secondaryBtnDisable}
+              buttonLoading={secondaryBtnLoading}
+              secondary
+            />}
+          </div>
         </Modal.Footer>
       </Modal>
   );

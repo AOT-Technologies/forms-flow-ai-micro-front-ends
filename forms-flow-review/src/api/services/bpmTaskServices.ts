@@ -43,11 +43,13 @@ export const getBPMTaskDetail = (taskId, ...rest) => {
           const variablesDetails = responses[1]?.data;
           if (taskDetails) {
             if (variablesDetails) {
-              let formId = variablesDetails.formId.value
+              let formId = variablesDetails?.formId?.value;
+              let formType = variablesDetails?.formType?.value;
               taskDetails = {
                 ...taskDetailVariableDataFormatter(variablesDetails),
                 ...taskDetails,
                 formId,
+                formType,
               };
             }
             dispatch(setBPMTaskDetail(taskDetails));

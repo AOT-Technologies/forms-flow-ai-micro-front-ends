@@ -1,9 +1,10 @@
-import React, { useEffect, useCallback, useState } from "react";
-import { Card } from "react-bootstrap";
+import { useEffect, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { textTruncate } from "../helper/helper.js";
+import {fetchTaskVariables, executeRule} from "../api/services/filterServices"
+import BundleTaskForm from "../components/BundleTaskForm";
 import {
   getBPMTaskDetail,
   getBPMGroups,
@@ -29,6 +30,9 @@ import {
   setSelectedTaskID,
   setAppHistoryLoading,
   setTaskDetailsLoading,
+  setBundleSelectedForms,
+  setBundleLoading,
+  setBundleErrors,
   } from "../actions/taskActions";
 import { getFormioRoleIds } from "../api/services/userSrvices";
 import {
@@ -49,16 +53,24 @@ const TaskDetails = () => {
   const dispatch = useDispatch();
   const {viewTaskHistory} = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [disabledMode,setDisabledMode] = useState(false);
+  const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
+    formId: "",
+    submissionId: "",
+  });
+  
   // Redux State Selectors
-  const tenantKey = useSelector(
-    (state: any) => state.tenants?.tenantData?.tenantkey
+  const tenantKeyFromState = useSelector(
+    (state: any) => state.tenants?.tenantData?.key
   );
+  // Conditionally select tenantKey from state or localStorage
+  const tenantKey = tenantKeyFromState || localStorage.getItem("tenantKey");
   const task = useSelector((state: any) => state.task.taskDetail);
   const bpmTaskId = useSelector((state: any) => state.task.taskId);
   const taskFormSubmissionReload = useSelector(
     (state: any) => state.task.taskFormSubmissionReload
   );
+  const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
+  const [bundleName, setBundleName] = useState('');
 
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
@@ -66,19 +78,54 @@ const TaskDetails = () => {
   const taskAssignee = useSelector(
     (state: any) => state?.task?.taskAssignee
   );
+  const disabledMode = taskAssignee !== currentUser;
   // Redirection URL
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
-  //disable the form if task not assigned to himself 
-  useEffect(()=>{
-    if(taskAssignee !==currentUser){
-      setDisabledMode(true);
-    }
-    else{
-      setDisabledMode(false);
-    }
-  },[taskAssignee,currentUser])
+  //disable the form if task not assigned to himself
 
+    //test to see task assignee data is captured
+    useEffect(() => {
+      console.log("task test",task);
+    }, [task]);
+
+    useEffect(() => {
+      if (task?.formType === "bundle") {
+        Formio.clearCache();
+        dispatch(resetFormData("form"));
+        setBundleLoading(false);
+    
+        const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
+        setBundleFormData({ formId, submissionId });
+    
+        fetchTaskVariables(task?.formId)
+          .then((res) => {
+            setBundleName(res.data.formName);
+            executeRule(
+              {
+                submissionType: "fetch",
+                formId: formId,
+                submissionId: submissionId,
+              },
+              res.data.id
+            )
+              .then((res: { data: unknown }) => {
+                dispatch(setBundleSelectedForms(res.data));
+              })
+              .catch((err: unknown) => {
+                setBundleErrors(err);
+              })
+              .finally(() => {
+                setBundleLoading(false);
+              });
+          });
+    
+        return () => {
+          dispatch(setBundleSelectedForms([]));
+        };
+      }
+    }, [task?.formType, task?.formId]);
+    
 
   // Set selected task ID on mount
   useEffect(() => {
@@ -144,18 +191,19 @@ const TaskDetails = () => {
   );
 
   useEffect(() => {
-    if (task?.formUrl) {
+    if (task?.formUrl && task?.formType !== "bundle") {
       getFormSubmissionData(task.formUrl);
     }
-  }, [task?.formUrl, getFormSubmissionData]);
-
+  }, [task?.formUrl, task?.formType, getFormSubmissionData]);
+ 
   useEffect(() => {
-    if (task?.formUrl && taskFormSubmissionReload) {
+    if (task?.formUrl && taskFormSubmissionReload && task?.formType !== "bundle") {
       dispatch(setFormSubmissionLoading(false));
       getFormSubmissionData(task.formUrl);
     }
   }, [
     task?.formUrl,
+    task?.formType,
     taskFormSubmissionReload,
     getFormSubmissionData,
     dispatch,
@@ -164,7 +212,6 @@ const TaskDetails = () => {
   // Form submission callback
   const onFormSubmitCallback = (actionType = "") => {
     if (!bpmTaskId || !task?.formUrl) return;
-
     dispatch(setBPMTaskDetailLoader(true));
     const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
     const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
@@ -211,48 +258,56 @@ const TaskDetails = () => {
   };
   // Main Renderor
   return (
-    <div className="task-details-view">
+    <>
       {showHistoryModal && (
         <TaskHistoryModal
           show={showHistoryModal}
           onClose={() => setShowHistoryModal(false)}
+          task={task}
         />
       )}
-      <Card className="editor-header">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-center">
-            {/* Left Section: Back Button + Title */}
-            <div className="d-flex align-items-center">
-              <BackToPrevIcon onClick={handleBack} />
-              <div className="mx-4 editor-header-text">
-                {textTruncate(75, 75, task?.name)}
-              </div>
-            </div>
+      
+      <div className="nav-bar">
+        <div className="icon-back" onClick={handleBack}>
+          <BackToPrevIcon data-testid="back-to-prev"/>
+        </div>
 
-            {/* Right Section: TaskAssigneeManager + History Button */}
-            <div className="d-flex align-items-center ms-auto">
-              <TaskAssigneeManager task={task} isFromTaskDetails={true} />
-              {viewTaskHistory && <CustomButton
-                variant="gray-dark"
-                size="table"
-                label={t("History")}
-                dataTestId="handle-task-details-history-testid"
-                ariaLabel={t("Submission History Button")}
-                onClick={handleHistory}
-                className="ms-3"
-              />}
-            </div>
-          </div>
-        </Card.Body>
-      </Card>
-      <div className ={`scrollable-overview-with-header  ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`} >
-        <TaskForm
-          currentUser={currentUser}
-          onFormSubmit={onFormSubmitCallback}
-          onCustomEvent={onCustomEventCallBack}
-        />
+        <div className="description">
+          <p className="text-main">
+            {textTruncate(75, 75, task?.formType === "bundle" ? bundleName : task?.name)}
+          </p>
+        </div>
+        {/* Right Section: TaskAssigneeManager + History Button */}
+        {/* <TaskAssigneeManager task={task} isFromTaskDetails={true} /> */}
+        <div className="buttons">
+          <TaskAssigneeManager task={task} isFromTaskDetails={true} />
+
+          {viewTaskHistory && <CustomButton
+            label={t("History")}
+            onClick={handleHistory}
+            dataTestId="handle-task-details-history-testid"
+            ariaLabel={t("Submission History Button")}
+            dark
+          />
+          }
+        </div>
       </div>
-    </div>
+
+      {task?.formType === "bundle" && selectedForms?.length ? <BundleTaskForm
+         bundleId={task?.formId}
+         currentUser={currentUser}
+         onFormSubmit={onFormSubmitCallback}
+         bundleFormData={bundleFormData}
+         onCustomEvent={onCustomEventCallBack}
+       /> : 
+      <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
+       <TaskForm
+       currentUser={currentUser}
+       onFormSubmit={onFormSubmitCallback}
+       onCustomEvent={onCustomEventCallBack}
+     /> 
+      </div>}
+    </>
   );
 };
 

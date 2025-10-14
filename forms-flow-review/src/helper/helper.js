@@ -15,18 +15,32 @@ export const trimFirstSlash = (inputString) => {
   return inputString;
 };
 
+export const removeTenantKey = (value, tenantkey, multitenancyEnabled) => {
+  // Match optional leading slash, then tenantkey (case-insensitive), then hyphen
+  const regex = new RegExp(`^/?${tenantkey}-`, 'i');
 
-export const removeTenantKey = (value, tenantkey) => {
-  const tenantKeyCheck = value.match(`${tenantkey}-`);
-  if (
-    tenantKeyCheck &&
-    tenantKeyCheck[0].toLowerCase() === `${tenantkey.toLowerCase()}-`
-  ) {
-    return value.replace(`${tenantkey.toLowerCase()}-`, "");
-  } else {
-    return false;
+  if (multitenancyEnabled && regex.test(value)) {
+    return value.replace(regex, '');
+  } 
+  else{
+    return value;
   }
 };
+
+
+export const addTenantPrefixIfNeeded = (value, tenantKey, multitenancyEnabled) => {
+  if (!value) return value;
+
+  const hasTenantPrefix = value.startsWith(`${tenantKey}-`);
+
+  return multitenancyEnabled
+    ? hasTenantPrefix
+      ? value
+      : `${tenantKey}-${value}`
+    : value;
+};
+
+
 
 export const replaceUrl = (URL, key, value) => {
   return URL.replace(key, value);

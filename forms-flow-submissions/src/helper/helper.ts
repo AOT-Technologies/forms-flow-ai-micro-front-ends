@@ -1,17 +1,21 @@
-export const formatDate = (isoString: string): string => {
-  if (!isoString) return "";
+ export const optionSortBy = {
+  options:[
+  { value: "created", label: "Submission Date" },
+  { value: "form_name", label: "Form Name" },
+  {value:"application_status", label:"Status"},
+  {value:"id", label:"Submission Id"},
+  {value:"created_by", label:"Submitter"},
+],
+  get keys(){
+    return this.options.map(option => option.value);
+  }, 
+};
 
-  const date = new Date(isoString);
-  if (isNaN(date.getTime())) return "";
-
-  const options: Intl.DateTimeFormatOptions = {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  };
-
-  return date.toLocaleString("en-US", options);
+export const textTruncate = (wordLength, targetLength, text) => {
+  return text?.length > wordLength
+    ? text.substring(0, targetLength) + "..."
+    : text;
+};
+export const replaceUrl = (URL, key, value) => {
+  return URL.replace(key, value);
 };

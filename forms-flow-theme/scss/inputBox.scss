@@ -20,10 +20,10 @@ $gray-light: var(--ff-gray-light);
   resize: none;
   padding-left: 18px !important;
 
-  &:active,
-  &:focus {
-    outline: $form-input-focus-outline !important;
-  }
+  // &:active,
+  // &:focus {
+  //   outline: $form-input-focus-outline !important;
+  // }
 
   // &::-webkit-scrollbar {
   //   display: none;
@@ -78,6 +78,7 @@ $gray-light: var(--ff-gray-light);
     align-self: stretch;
     border: 1px solid $primary;
     border-top: none;
+    outline: 1px solid $primary;
     border-radius: 0px 0px var(--radius-sm) var(--radius-sm);
     max-height: 12.5rem;
     overflow-y: scroll;
@@ -128,11 +129,4 @@ $gray-light: var(--ff-gray-light);
     cursor: not-allowed;
     border-color: $gray-light !important;
   }
-}
-
-.selected-dropdown-item{
-  background-color: $gray-medium !important;
-  border-radius:  var(--radius-sm) !important;
-  margin-left: var(--spacer-025);
-  margin-right: var(--spacer-025);
 }

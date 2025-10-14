@@ -38,15 +38,14 @@ export const SortableHeader: React.FC<SortableHeaderProps> = ({
 
   return (
     <button
-      className={`button-as-div ${className}`}
       onClick={() => handleSort(columnKey)}
       onKeyDown={handleKeyDown}
       aria-pressed={isSorted}
       data-testid={`${title}-header-btn`}
       aria-label={`${title}-header-btn`}
     >
-      <span className="mt-1">{t(title)}</span>
-      <span className={sortedOrder === "asc" ? "arrow-up" : "arrow-down"}>
+      <span className="text">{t(title)}</span>
+      <span className={sortedOrder === "desc" ? "arrow-down" : "arrow-up"}>
         <SortIcon color={iconColor} dataTestId="sort" />
       </span>
     </button>

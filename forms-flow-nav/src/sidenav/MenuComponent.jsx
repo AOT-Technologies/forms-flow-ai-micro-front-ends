@@ -114,9 +114,9 @@ const renderMenuIcon = () => {
       if (!noOptionsMenu) {
         return (
           <ChevronIcon
-            width="10"
-            height="5"
-            className="custom-chevron"
+            // width="10"
+            // height="5"
+            className="svgIcon-dark custom-chevron"
             color={iconFillColor}
           />
         );

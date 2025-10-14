@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState } from "react";
+import React, {useCallback, useEffect, useMemo, useState } from "react";
 import { Route, Switch, Redirect, useParams,useHistory } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
@@ -16,9 +16,10 @@ import SocketIOService from "./services/SocketIOService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
 import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
-import { setBPMTaskDetail } from "./actions/taskActions"; 
-
-import { fetchServiceTaskList } from "./api/services/filterServices";
+import { setBPMTaskDetail,setTaskAssignee } from "./actions/taskActions";
+import { StyleServices } from "@formsflow/service";
+import { setTenantData } from "./actions/tenantActions";
+import { fetchServiceTaskList, fetchUserList } from "./api/services/filterServices";
 const authorizedRoles = new Set([
   "view_tasks",
   "manage_all_filters",
@@ -48,6 +49,7 @@ const Task = React.memo((props: any) => {
     lastRequestedPayload,
     activePage,
     limit,
+    userList,
   } = useSelector((state: RootState) => state.task);
 
   useEffect(() => {
@@ -56,6 +58,26 @@ const Task = React.memo((props: any) => {
       i18n.changeLanguage(data);
     });
   }, []);
+
+useEffect(() => {
+  if (MULTITENANCY_ENABLED && tenantId) {
+    // Get tenant data from StorageService
+    const storedTenantData = localStorage.getItem("tenantData");
+
+    if (storedTenantData) {
+      try {
+        const parsedTenantData = JSON.parse(storedTenantData);
+        // Set tenant data in Redux state
+        dispatch(setTenantData(parsedTenantData));
+      } catch (error) {
+        console.error("Error parsing tenant data from storage:", error);
+      }
+    } else {
+      console.log("No tenant data found in storage");
+    }
+  }
+}, [dispatch,tenantId]);
+
 
   useEffect(() => {
     StorageService.save("tenantKey", tenantId ?? "");
@@ -87,6 +109,11 @@ const Task = React.memo((props: any) => {
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
     });
+
+    // Fetch userList if not already present in the state
+    if (!userList?.data || userList.data.length === 0) {
+      dispatch(fetchUserList());
+    }
   }, [isAuth]);
 
   const getTasks = ()=>{
@@ -108,6 +135,8 @@ const Task = React.memo((props: any) => {
   };
 
   const handleTaskUpdate = (refreshedTaskId: string) => {
+    console.log("handleTaskUpdate test",refreshedTaskId,taskId);
+    // taskId & refreshedTaskId will be equal if user is in task details page
   if (taskId === refreshedTaskId) {
     // if a task opened, some changes made against this task we need to recall the details
     getOnlyTaskDetails(refreshedTaskId).then((response) => {
@@ -117,6 +146,9 @@ const Task = React.memo((props: any) => {
           variables: taskDetails?.variables,
         })
       );
+      console.log("handleTaskUpdate inside",response.data.assignee);
+      // Added to update assignee when socket trigger happens when user is in task details page
+      dispatch(setTaskAssignee(response.data.assignee))
     });
   }
   checkTheTaskIdExistThenRefetchTaskList();
@@ -133,26 +165,27 @@ const handleForceReload = (refreshedTaskId: string) => {
   }
 };
 
-const SocketIOCallback = ({
-  refreshedTaskId,
-  forceReload,
-  isUpdateEvent,
-}: SocketUpdateParams) => {
-  if (!refreshedTaskId) return;
-   /**
-     * use of this socket call back , need to update task realtime and 
-     * also tasklist if the task id is exist inthe tasklist
-     */
-  if (isUpdateEvent) { 
-    handleTaskUpdate(refreshedTaskId);
-  } else if (forceReload) {
-    handleForceReload(refreshedTaskId);
-  }else{
-    // here we just need to refetch the task list
-    // this is used when task is created or deleted
-    getTasks();
-  }
-};
+const SocketIOCallback = useCallback(({
+    refreshedTaskId,
+    forceReload,
+    isUpdateEvent,
+  }: SocketUpdateParams) => {
+    if (!refreshedTaskId) return;
+    /**
+       * use of this socket call back , need to update task realtime and 
+       * also tasklist if the task id is exist inthe tasklist
+       */
+      console.log("SocketIOCallback test",isUpdateEvent,refreshedTaskId);
+    if (isUpdateEvent) {
+      handleTaskUpdate(refreshedTaskId);
+    } else if (forceReload) {
+      handleForceReload(refreshedTaskId);
+    }else{
+      // here we just need to refetch the task list
+      // this is used when task is created or deleted
+      getTasks();
+    }
+  },[taskId, taskDetails, lastRequestedPayload, activePage, limit]);
 
  
 
@@ -180,11 +213,15 @@ const SocketIOCallback = ({
     return <Loading />;
   }
   if (!isReviewer) return <p>unauthorized</p>;
+
+  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customTitle = StyleServices?.getCSSVariable("--custom-title");
+  const hasMultitenancyHeader = customLogoPath || customTitle;
+
   return (
     <>
-      <div className="main-container " tabIndex={0}>
-        <div className="container">
-          <div className="min-container-height ps-md-3">
+      <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'main-container' } `}>
+        <div className="page-content">
             <Switch>
               <Route
                 exact
@@ -198,7 +235,6 @@ const SocketIOCallback = ({
               />
               <Redirect from="*" to="/404" />
             </Switch>
-          </div>
         </div>
       </div>
     </>
