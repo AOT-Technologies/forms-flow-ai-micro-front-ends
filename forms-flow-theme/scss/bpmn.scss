@@ -15,12 +15,31 @@ $gray-darkest: var(--ff-gray-darkest);
   height: 100%;
 }
 
+.border-1{
+  border-width: 1px !important;
+}
+.border-dark{
+  --ff-border-opacity: 1;
+    border-color: rgba(var(--ff-dark-rgb), var(--ff-border-opacity)) !important;
+}
+.border{
+  border: var(--ff-border-width) var(--ff-border-style) var(--ff-border-color) !important;
+}
  .grab-cursor {
    cursor: move;
    cursor: grab;
  }
-.highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
-    fill: $primary !important;
+ .highlight {
+  &:not(.djs-connection) {
+    .djs-visual {
+      > :nth-child(1) {
+        fill: $primary !important;
+      }
+    }
+  }
+  .djs-label {
+    fill: $white !important;
+  }
 }
 
 .btn_zoom{
@@ -31,4 +50,15 @@ $gray-darkest: var(--ff-gray-darkest);
 
 .djs-container svg:focus {
   outline: none !important;
+}
+
+.bpmn-main-container-editor{
+    width: 100%;
+    display: flex;
+    margin-bottom: 1.25rem;
+    margin-top: 0.625rem;
+    height: auto;
+    resize: vertical;
+    max-height: 37.5rem;
+    min-height: 28.125rem;
 }

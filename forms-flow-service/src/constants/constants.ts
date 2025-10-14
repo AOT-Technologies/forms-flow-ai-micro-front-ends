@@ -9,3 +9,12 @@ const MULTITENANCY_ENABLED_VARIABLE = (window as any)._env_?.REACT_APP_MULTI_TEN
 export const MULTITENANCY_ENABLED =
   MULTITENANCY_ENABLED_VARIABLE === "true" ||
     MULTITENANCY_ENABLED_VARIABLE === true
+
+export const WEB_BASE_URL =
+  (window as any)._env_?.REACT_APP_WEB_BASE_URL || "";
+
+export const MT_ADMIN_BASE_URL =
+  (window as any)._env_?.REACT_APP_MT_ADMIN_BASE_URL || "";
+
+export const MT_ADMIN_BASE_URL_VERSION =
+  (window as any)._env_?.REACT_APP_MT_ADMIN_BASE_URL_VERSION || "v1";

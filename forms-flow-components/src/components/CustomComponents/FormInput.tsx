@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FocusEvent, KeyboardEvent, useEffect, useRef } from 'react';
-import { Form, InputGroup } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { useTranslation } from "react-i18next";
+import { ClearIcon } from "../SvgIcons/index";
 
 interface FormInputProps {
   type?: string;
@@ -18,9 +19,11 @@ interface FormInputProps {
   ariaLabel?: string;
   className?: string;
   required?: boolean;
+  clear?: boolean;
   icon?: React.ReactNode;
   id?: string;
   onIconClick?: () => void;
+  onClearClick?: () => void;
   onClick?: () => void;
   turnOnLoader?: boolean;
   autoFocusInput?: boolean;
@@ -43,11 +46,13 @@ export const FormInput: React.FC<FormInputProps> = ({
   size,
   dataTestId,
   ariaLabel,
-  className = '',
+  className='',
   required = false,
   icon,
+  clear,
   id,
   onIconClick,
+  onClearClick,
   onClick,
   turnOnLoader = false,
   autoFocusInput = false,
@@ -56,13 +61,13 @@ export const FormInput: React.FC<FormInputProps> = ({
   variant,
 }) => {
   const { t } = useTranslation();
-  let variantInputHeightClass = '';
-  if (variant === 'assign-user-sm') {
-    variantInputHeightClass = 'assign-user-sm-height';
-  } else if (variant === 'assign-user-md') {
-    variantInputHeightClass = 'assign-user-md-height';
-  }
-  const inputClassNames = `form-control-input ${icon ? 'with-icon' : ''} ${variantInputHeightClass} ${className}`;
+  // let variantInputHeightClass = '';
+  // if (variant === 'assign-user-sm') {
+  //   variantInputHeightClass = 'assign-user-sm-height';
+  // } else if (variant === 'assign-user-md') {
+  //   variantInputHeightClass = 'assign-user-md-height';
+  // }
+  const inputClassNames = `${icon ? 'with-icon' : ''}  ${className}`;
   const inputRef = useRef(null);
   useEffect(()=>{ 
     if(autoFocusInput && inputRef.current){
@@ -77,14 +82,16 @@ export const FormInput: React.FC<FormInputProps> = ({
   };
 
   return (
-    <Form.Group controlId={id}>
+    <div className={`input-text ${icon ? "with-icon" : ""} ${isInvalid ? "error" : ""} ${className ? className : ""}`}>
       {label && (
-        <Form.Label className='custom-form-control-label'>
+        <Form.Label htmlFor={id} className='custom-form-control-label'>
           {t(label)}{required && <span className='required-icon'>*</span>}
         </Form.Label>
       )}
-      <InputGroup className="custom-form-input-group">
+      
+      <div className="field">
         <Form.Control
+          id={id} // make the input id UNIQUE
           type={type}
           name={name}
           value={value}
@@ -97,31 +104,44 @@ export const FormInput: React.FC<FormInputProps> = ({
           data-testid={dataTestId}
           aria-label={ariaLabel}
           required={required}
-          className={inputClassNames}
+          className={`${inputClassNames} ${type === 'number' ? 'no-spinner' : ''}`}
           onKeyDown={handleKeyDown}
           onClick={onClick}
           ref={inputRef}
           minLength={minLength}
           maxLength={maxLength}
         />
-        {turnOnLoader && (
-          <div className="input-spinner"></div>
+
+        {icon && !turnOnLoader && (
+          <div
+            className="icon"
+            id="input-icon" 
+            onClick={onIconClick}
+            >
+            {icon}
+          </div>
         )}
-          {icon && !turnOnLoader &&(
-            <InputGroup.Text
-             id="input-icon" 
-             onClick={onIconClick}
-             className={disabled ? 'disabled-icon' : ''}>
-              {icon}
-            </InputGroup.Text>
-          )}
-        </InputGroup>
+
+        {clear && (
+          <div
+            className="clear"
+            onClick={onClearClick}
+            >
+            <ClearIcon
+              data-testid="clear-field"
+              aria-label="clear-field"
+            />
+          </div>
+        )}
+        </div>
+
         {isInvalid && (
-            <Form.Control.Feedback className='custom-feedback' type="invalid">
-              {t(feedback)}
-            </Form.Control.Feedback>
-          )}
-      </Form.Group>
+          <label htmlFor='name-input' className='error-text'>
+            {t(feedback)}
+          </label>
+        )}
+
+      </div>
   );
 };
 

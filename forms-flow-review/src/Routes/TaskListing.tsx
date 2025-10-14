@@ -6,9 +6,7 @@ const TaskListing = () => {
  
 
   return (
-    <div>
-      <TaskList />
-    </div>
+    <TaskList />
   );
 };
 

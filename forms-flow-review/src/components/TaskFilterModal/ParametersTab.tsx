@@ -1,4 +1,4 @@
-import { CloseIcon, InputDropdown, PencilIcon } from "@formsflow/components";
+import { InputDropdown, PencilIcon, FormInput } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { FormSelectionModal } from "../FormSelectionModal";
@@ -26,6 +26,10 @@ const ParametersTab = ({
   }));
 
   const accessOptions = [
+      {
+      label: t("Current user"),
+      value: "currentUser",
+    },
     {
       label: t("Specific role"),
       value: "specificRole",
@@ -33,11 +37,12 @@ const ParametersTab = ({
     {
       label: t("Specific assignee"),
       value: "specificAssignee",
-    },
+    }  
   ];
 
   return (
     <>
+    <div className="input-combination">
       <InputDropdown
         Options={accessOptions}
         dropdownLabel={t("Tasks Accessible To")}
@@ -48,10 +53,9 @@ const ParametersTab = ({
         dataTestIdforDropdown="access-options"
         selectedOption={accessOption}
         setNewInput={changeAcessOption}
+        id="tasks-accessible-to"
       />
       {accessOption === "specificRole" ? (
-        <div className="d-flex filter-dropdown">
-          <div className="L-style"></div>
           <InputDropdown
             key="specificRoleDropdown"
             Options={candidateOptions}
@@ -63,12 +67,9 @@ const ParametersTab = ({
             selectedOption={accessValue}
             setNewInput={setAccessValue}
             required={true}
-
+            id="specific-role"
           />
-        </div>
-      ) : (
-        <div className="d-flex filter-dropdown">
-          <div className="L-style"></div>
+      ): accessOption === "specificAssignee" && (
           <InputDropdown
             key="assigneeDropdown"
             Options={assigneeOptions}
@@ -81,44 +82,36 @@ const ParametersTab = ({
             setNewInput={setAccessValue}
             name="assigneeOptions"
             required={true}
-
+            id="assignee"
           />
-        </div>
       )}
-
-      <div className="pt-4">
-        <label className="mb-2">{t("Form")}</label>
-        <div className="form-selection-input d-flex justify-content-end">
-          <label className="w-100">{selectedForm.formName}</label>
-          {selectedForm.formName && (
-            <div className="form-selection-input-container">
-              <CloseIcon
-                color={baseColor}
-                width="15px"
-                height="15px"
-                className="form-selection-icon"
-                data-testid="clear-formId"
-                aria-label="clear-formId"
-                onClick={handleFormSelectionClear}
-              />
-            </div>
-          )}
-          <div className="form-selection-input-container">
-            <PencilIcon
-              className="form-selection-icon"
-              aria-label="open modal"
-              data-testid="open-modal"
-              onClick={toggleFormSelectionModal}
-            />
-          </div>
-        </div>
-        <FormSelectionModal
-          forms={forms}
-          showModal={showFormSelectionModal}
-          onClose={toggleFormSelectionModal}
-          onSelectForm={handleFormSelection}
-        />
       </div>
+
+      <FormInput
+        name="form"
+        type="text"
+        label={t("Form")}
+        ariaLabel={t("Form")}
+        dataTestId="selected-form"
+        value={selectedForm.formName}
+        // onChange={(e) => handleFilterName(e.target.value)}
+        // isInvalid={!!filterNameError}
+        // onBlur={handleNameError}
+        // feedback={filterNameError}
+        id="selected-form"
+        onIconClick={toggleFormSelectionModal}
+        icon={<PencilIcon/>}
+        className="click-to-edit"
+        clear={selectedForm.formName}
+        onClearClick={handleFormSelectionClear}
+      />
+
+      <FormSelectionModal
+        forms={forms}
+        showModal={showFormSelectionModal}
+        onClose={toggleFormSelectionModal}
+        onSelectForm={handleFormSelection}
+      />
     </>
   );
 };

@@ -4,7 +4,6 @@ import "./roles.scss";
 import { useParams } from "react-router-dom";
 import { Translation, useTranslation } from "react-i18next";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import { fetchUsers } from "../../services/users";
 import {
   CreateRole,
@@ -173,11 +172,6 @@ const Roles = React.memo((props: any) => {
       updatedPermissions = updatedPermissions.filter(
         (permission) => permission !== permissionName
       );
-      dependsOn.forEach((dependency) => {
-        updatedPermissions = updatedPermissions.filter(
-          (permission) => permission !== dependency
-        );
-      });
     }
     setPayload({ ...payload, permissions: updatedPermissions });
   };
@@ -228,7 +222,7 @@ const Roles = React.memo((props: any) => {
       (err) => {
         setError(err);
         setDisabled(false);
-        toast.error(t("Failed to create role!"));
+        toast.error(t(`${err}`));
       }
     );
   };
@@ -315,11 +309,6 @@ const Roles = React.memo((props: any) => {
       updatedPermissions = updatedPermissions.filter(
         (permission) => permission !== permissionName
       );
-      dependsOn.forEach((dependency) => {
-        updatedPermissions = updatedPermissions.filter(
-          (permission) => permission !== dependency
-        );
-      });
     }
     setEditCandidate({ ...editCandidate, permissions: updatedPermissions });
   };
@@ -357,7 +346,7 @@ const Roles = React.memo((props: any) => {
   const closeConfirmation = () => {
      setHandleConfirmation(false);
   }
-
+  
   const tabs = [
     {
       eventKey: "Details",
@@ -386,18 +375,19 @@ const Roles = React.memo((props: any) => {
         minRows={3}
       />
       {showEditRoleModal && (
+        <div className="buttons-row">
           <CustomButton
-          variant={"secondary"}
-          size="lg"
-          label={t("Delete This Role")}
-          onClick={() => {
-            handleCloseEditRoleModal();
-            setHandleConfirmation(true);
-          }}
-          dataTestId="role-delete-button"
-          icon={<DeleteIcon />}
-          ariaLabel="Role delete button"
-        />
+            label={t("Delete This Role")}
+            onClick={() => {
+              handleCloseEditRoleModal();
+              setHandleConfirmation(true);
+            }}
+            dataTestId="role-delete-button"
+            icon={<DeleteIcon />}
+            ariaLabel="Role delete button"
+            iconWithText
+          />
+        </div>
       )}
       </div>
       )
@@ -418,27 +408,28 @@ const Roles = React.memo((props: any) => {
 
     
   const showCreateModal = () => (
+    <div data-testid="create-role-modal">
       <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="sm">
         <Modal.Header>
-          <Modal.Title><b>{t("Create Role")}</b></Modal.Title>
-          <div className="d-flex align-items-center">
-              <CloseIcon onClick={handleCloseRoleModal} data-testid="role-modal-close"/>
+          <Modal.Title><p>{t("Create Role")}</p></Modal.Title>
+          <div className="icon-close" onClick={handleCloseRoleModal} data-testid="role-modal-close">
+            <CloseIcon dataTestId="action-modal-close"/>
           </div>
         </Modal.Header>
-        <Modal.Body className="role-modal-body">
-        <CustomTabs
-          defaultActiveKey={key}
-          onSelect={setKey}
-          tabs={tabs}
-          dataTestId="create-roles-tabs"
-          ariaLabel="Create roles tabs"
-          className="d-flex gap-3"
-        />
+        <Modal.Body className="with-tabs">
+          <div className="tabs">
+            <CustomTabs
+              defaultActiveKey={key}
+              onSelect={setKey}
+              tabs={tabs}
+              dataTestId="create-roles-tabs"
+              ariaLabel="Create roles tabs"
+            />
+          </div>
         </Modal.Body>
         <Modal.Footer>
+          <div className="buttons-row">
           <CustomButton
-            variant={"primary"}
-            size="lg"
             label={t("Save Changes")}
             disabled={disabled}
             onClick={handleCreateRole}
@@ -446,39 +437,45 @@ const Roles = React.memo((props: any) => {
             ariaLabel="Create new role button"
             />
           <CustomButton
-            variant={"secondary"}
-            size="lg"
             label={t("Discard Changes")}
             onClick={handleCloseRoleModal}
             dataTestId="create-new-role-cancel-button"
             ariaLabel="Create new role cancel button"
+            secondary
           />
+          </div>
         </Modal.Footer>
       </Modal>
+    </div>
   );
   const showEditModal = () => (
-
-      <Modal show={showEditRoleModal} onHide={handleCloseEditRoleModal} size="sm">
+    <div data-testid="edit-role-modal">
+      <Modal
+        show={showEditRoleModal}
+        onHide={handleCloseEditRoleModal}
+        size="sm"
+        restoreFocus={false}
+      >
         <Modal.Header>
-          <Modal.Title>{editCandidate.name}</Modal.Title>
-          <div className="d-flex align-items-center">
-              <CloseIcon onClick={handleCloseEditRoleModal} data-testid="role-modal-close"/>
+          <Modal.Title><p>{editCandidate.name}</p></Modal.Title>
+          <div className="icon-close" onClick={handleCloseEditRoleModal} data-testid="role-modal-close">
+            <CloseIcon/>
           </div>
         </Modal.Header>
-        <Modal.Body className="role-modal-body">
-        <CustomTabs
-          defaultActiveKey={key}
-          onSelect={setKey}
-          tabs={tabs}
-          dataTestId="edit-roles-tabs"
-          ariaLabel="Edit roles tabs"
-          className="d-flex gap-3"
-        />
+        <Modal.Body className="with-tabs">
+          <div className="tabs">
+            <CustomTabs
+              defaultActiveKey={key}
+              onSelect={setKey}
+              tabs={tabs}
+              dataTestId="edit-roles-tabs"
+              ariaLabel="Edit roles tabs"
+            />
+          </div>
         </Modal.Body>
         <Modal.Footer>
-        <CustomButton
-            variant={"primary"}
-            size="lg"
+          <div className="buttons-row">
+          <CustomButton
             label={t("Save Changes")}
             disabled={disabled}
             onClick={handleUpdateRole}
@@ -486,15 +483,16 @@ const Roles = React.memo((props: any) => {
             ariaLabel="Edit role button"
             />
           <CustomButton
-            variant={"secondary"}
-            size="lg"
             label={t("Discard Changes")}
             onClick={handleCloseEditRoleModal}
             dataTestId="edit-role-cancel-button"
             ariaLabel="Edit role cancel button"
+            secondary
           />
+          </div>
         </Modal.Footer>
       </Modal>
+      </div>
 
   );
 
@@ -652,15 +650,15 @@ const Roles = React.memo((props: any) => {
               dataTestId="search-role-input"
             />
           </div>
-          <Button
-            variant="primary"
+          <CustomButton
             onClick={handleShowRoleModal}
             data-testid="roles-create-new-role-button"
-          >
-            <i className="fa-solid fa-plus me-2"></i>{" "}
-            <Translation>{(t) => t("Create New Role")}</Translation>
-          </Button>
+            label="New Role"
+            ariaLabel="New Role"
+            action
+          />
         </div>
+
         {!props?.loading ? (
           <div>
           <BootstrapTable
@@ -677,8 +675,7 @@ const Roles = React.memo((props: any) => {
             data-testid="admin-roles-table"
           />
     
-          <table className="table mt-3">
-            <tfoot>
+          <table className="table mt-3 old-design">
             <TableFooter
             limit={sizePerPage}
             activePage={activePage}
@@ -687,7 +684,6 @@ const Roles = React.memo((props: any) => {
             onLimitChange={handleLimitChange}
             pageOptions={getPageList()}
           />
-            </tfoot>
           </table>
         </div>
         ) : (

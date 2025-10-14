@@ -104,14 +104,12 @@ const SaveFilterTab = ({
     if (createdByMe && editRole) {
       return (
         <>
-          <div className="pb-4">
             <CustomInfo
               className="note"
               heading="Note"
               content={t("This filter is created and managed by you")}
               dataTestId="task-self-share-note"
             />
-          </div>
           <CustomInfo
             className="note"
             heading="Note"
@@ -141,21 +139,18 @@ const SaveFilterTab = ({
       return (
         <>
         {filterToEdit.id && (
-           <div className="pb-4">
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={t(
-                "This filter is created and managed by {{createdBy}}",
-                {
-                  createdBy: filterToEdit?.createdBy,
-                }
-              )}
-              dataTestId="task-filter-save-note"
-            />
-          </div>
+          <CustomInfo
+            className="note"
+            heading="Note"
+            content={t(
+              "This filter is created and managed by {{createdBy}}",
+              {
+                createdBy: filterToEdit?.createdBy,
+              }
+            )}
+            dataTestId="task-filter-save-note"
+          />
         )}
-         
           <CustomInfo
             className="note"
             heading="Note"
@@ -175,38 +170,32 @@ const SaveFilterTab = ({
     if (filterToEdit && filterToEdit?.id && filterToEdit.name !== "All Tasks") {
       if (editRole) {
         return (
-          <div className="pt-4 d-flex">
+          <div className="buttons-row">
             <CustomButton
-              className="me-3"
               variant={saveAndUpdateButtonVariant}
-              size="md"
               onClick={handleUpdateFilter}
-              icon={
-                successState?.showSuccess
-                  ? null
-                  : <UpdateIcon color={saveIconColor} />
+              icon={<UpdateIcon />}
+              label={t("Update This Filter")}
+              successMessage={
+                successState?.showSuccess ?  `${t("Updated!")} (${successState.countdown})` : ""
               }
-
-              label={
-              successState?.showSuccess ?  `${t("Updated!")} (${successState.countdown})` : t("Update This Filter")
-            }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
               disabled={deleteSuccess?.showSuccess || createAndUpdateFilterButtonDisabled || filterNameError ||!shareFilter || (shareFilter === SPECIFIC_USER_OR_GROUP && !shareFilterForSpecificRole)  }
+              iconWithText
             />
             <CustomButton
               variant={deleteButtonVariant}
-              size="md"
               onClick={handleDeleteFilter}
-              icon={deleteSuccess?.showSuccess ? "" : <DeleteIcon color={deleteIconColor}/>}
-             
-              label={
-              deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : t("Delete This Filter")
-            }
-             
+              icon={<DeleteIcon/>}
+              label={t("Delete This Filter")}
+              successMessage={
+                deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : ""
+              }
               dataTestId="delete-task-filter"
               ariaLabel={t("Delete This Filter")}
               disabled={successState?.showSuccess}
+              iconWithText
             />
           </div>
         );
@@ -217,14 +206,12 @@ const SaveFilterTab = ({
     if (createFilters) {
       if(filterToEdit?.name !== "All Tasks"){
         return (
-        <div className="pt-4">
           <CustomButton
-            size="md"
             variant={saveAndUpdateButtonVariant}
             onClick={handleSaveCurrentFilter}
             icon={
               successState?.showSuccess ? "" : (
-                <SaveIcon color={saveIconColor} />
+                <SaveIcon />
               )
             }
 
@@ -237,8 +224,8 @@ const SaveFilterTab = ({
             dataTestId="save-task-filter"
             ariaLabel={t("Save Task Filter")}
             disabled={createAndUpdateFilterButtonDisabled || filterNameError}
+            iconWithText
           />
-        </div>
       );
       }
     }
@@ -258,9 +245,10 @@ const SaveFilterTab = ({
         onBlur={handleNameError}
         feedback={filterNameError}
         disabled={filterToEdit && !editRole}
+        id="filter-name"
       />
 
-      <div className="pt-4 pb-4">
+      <div className="input-combination">
         <InputDropdown
           Options={filterShareOptions}
           dropdownLabel={t("Share This Filter With")}
@@ -271,10 +259,9 @@ const SaveFilterTab = ({
           selectedOption={shareFilter}
           setNewInput={setShareFilter}
           disabled={filterToEdit && !editRole}
+          id="share-this-filter-with"
         />
         {shareFilter === SPECIFIC_USER_OR_GROUP && (
-          <div className="d-flex filter-dropdown">
-            <div className="L-style"></div>
             <InputDropdown
               Options={candidateOptions}
               isAllowInput={false}
@@ -286,7 +273,6 @@ const SaveFilterTab = ({
               setNewInput={setShareFilterForSpecificRole}
               disabled={ filterToEdit &&!editRole}
             />
-          </div>
         )}
       </div>
 

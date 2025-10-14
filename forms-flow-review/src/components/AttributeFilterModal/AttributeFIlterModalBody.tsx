@@ -27,7 +27,7 @@ import RenderOwnerShipNotes from "./Notes";
 import { userRoles } from "../../helper/permissions";
 import { cloneDeep } from "lodash";
 import { Filter, FilterCriteria } from "../../types/taskFilter"; 
-import { removeTenantKey, trimFirstSlash } from "../../helper/helper";
+import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import { RootState } from "../../reducers";
 
 const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes }) => {
@@ -57,7 +57,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
   const selectedAttributeFilter = useSelector((state: any) => state.task.selectedAttributeFilter);
   const candidateGroups = useSelector((state: any) => state.task.userGroups);
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId);
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key);
   const userDetails = useSelector((state: any) => state.task.userDetails);
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
   const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
@@ -77,34 +77,96 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const taskVariables = selectedFilter?.variables ?? [];
 
   const exisitngProcessvariables =
-    attributeFilter?.criteria?.processVariables ?? [];
+    selectedAttributeFilter?.criteria?.processVariables ?? [];
+
+  // Create unique identifier for fields with same key but different isFormVariable
+  const getUniqueFieldKey = (item) => {
+    return item.isFormVariable ? `${item.key}_form` : item.key;
+  };
 
   const isCheckedData = taskVariables.reduce((acc, item) => {
-    acc[item.key] = item.isChecked;
+    const uniqueKey = getUniqueFieldKey(item);
+    acc[uniqueKey] = item.isChecked;
     return acc;
   }, {});
+
+  // Helper function to clean value by removing '%' characters
+  const cleanValue = (value, fieldName) => {
+    if (typeof value !== "number" && fieldName !== "created" && typeof value !== "boolean" && fieldName !== "applicationId") {
+      return value?.replace(/%/g, '');
+    }
+    return value;
+  };
+
+  // Helper function to process a single variable and add to existing values
+  const processVariable = (item, existingValues) => {
+    const taskVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable === item.isFormVariable);
+    if (taskVariable) {
+      const resetValue = cleanValue(item.value, item.name);
+      const uniqueKey = getUniqueFieldKey(taskVariable);
+      existingValues[uniqueKey] = resetValue;
+    }
+  };
+
+  // Helper function to process task-level fields from criteria
+  const processTaskFields = (existingValues) => {
+    const taskFields = ['submitterName', 'assignee', 'roles', 'created', 'formName'];
+    taskFields.forEach(fieldName => {
+      const fieldValue = selectedAttributeFilter?.criteria?.[fieldName];
+      if (fieldValue) {
+        const taskVariable = taskVariables.find(tv => tv.name === fieldName && !tv.isFormVariable);
+        if (taskVariable) {
+          const resetValue = cleanValue(fieldValue, fieldName);
+          const uniqueKey = getUniqueFieldKey(taskVariable);
+          existingValues[uniqueKey] = resetValue;
+        }
+      }
+    });
+  };
+
+  // Helper function to process nameLike field
+  const processNameLikeField = (existingValues) => {
+    const nameLikeValue = selectedAttributeFilter?.criteria?.nameLike;
+    if (nameLikeValue) {
+      const taskNameVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
+      if (taskNameVariable) {
+        const resetValue = cleanValue(nameLikeValue, "name");
+        const uniqueKey = getUniqueFieldKey(taskNameVariable);
+        existingValues[uniqueKey] = resetValue;
+      }
+    }
+  };
+
+  // Helper function to process existing process variables
+  const processExistingProcessVariables = (existingValues) => {
+    const variablesWithFormSupport = ['name', 'submitterName', 'assignee', 'roles', 'created', 'formName'];
+    
+    exisitngProcessvariables.forEach((item) => {
+      if (variablesWithFormSupport.includes(item.name)) {
+        processVariable(item, existingValues);
+      } else {
+        // For other variables, find the corresponding task variable
+        const taskVariable = taskVariables.find(tv => tv.name === item.name);
+        if (taskVariable) {
+          const resetValue = cleanValue(item.value, item.name);
+          existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
+        }
+      }
+    });
+  };
+
   //Handle if existing data is there need to set it in attributeData
  const [attributeData, setAttributeData] = useState(() => {
   const initialData = {
-    assignee: attributeFilter?.criteria?.assignee || "",
-    roles: attributeFilter?.criteria?.candidateGroup || ""
+    assignee: selectedAttributeFilter?.criteria?.assignee || "",
+    roles: removeTenantKey(selectedAttributeFilter?.criteria?.candidateGroup, tenantKey, MULTITENANCY_ENABLED) || ""
   };
 
-  const existingValues = (
-    exisitngProcessvariables.reduce((acc, item) => {
-      if (isCheckedData[item.name]) {
-        let resetValue = item.value;
-
-        // Remove '%' from displaying
-        if (typeof resetValue !== "number" || item.name !== "applicationId") {
-          resetValue = resetValue.replace(/%/g, '');
-        }
-
-        acc[item.name] = resetValue;
-      }
-      return acc;
-    }, {}) || {}
-  );
+  const existingValues = {};
+  
+  processNameLikeField(existingValues);
+  processTaskFields(existingValues);
+  processExistingProcessVariables(existingValues);
 
   return { ...initialData, ...existingValues };
 });
@@ -158,10 +220,7 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const candidateOptions = useMemo(() => {
     return candidateGroups.reduce((acc, group) => {
       if (!group.permissions.includes("view_filters")) return acc;
-      const name = MULTITENANCY_ENABLED
-        ? removeTenantKey(group.name, tenantKey)
-        : group.name;
-
+      const name =  removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED);
       acc.push({ value: name, label: name });
       return acc;
     }, []);
@@ -181,14 +240,11 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 const getTaskAccess = () => {
   if (shareAttrFilter === FILTER_SHARE_OPTIONS.PRIVATE) {
     return { users: [userDetails?.preferred_username], roles: [] };
-  } else if (shareAttrFilter === FILTER_SHARE_OPTIONS.SAME_AS_TASKS) {
-    const users = selectedFilter?.users?.length ? [...selectedFilter.users] : [];
-    const roles = selectedFilter?.roles?.length ? [...selectedFilter.roles] : [];
-    return { users, roles };
+  } else {
+    return { users: [], roles: [] };
   }
-
-  return { users: [], roles: [] };
 };
+
 
 
 const createFilterShareOption = (labelKey, value) => ({
@@ -253,11 +309,11 @@ const createFilterShareOption = (labelKey, value) => ({
 
 
 
-    const removeSlashFromValue = (value)=>{
-          return MULTITENANCY_ENABLED && value
-          ? tenantKey + "-" + trimFirstSlash(value)
-          : trimFirstSlash(value);
-    }
+const removeSlashFromValue = (value) => {
+  const trimmedValue = trimFirstSlash(value);
+  return addTenantPrefixIfNeeded(trimmedValue, tenantKey, MULTITENANCY_ENABLED);
+};
+
 
 
    const buildNewProcessVariables = () => {
@@ -279,25 +335,63 @@ const createFilterShareOption = (labelKey, value) => ({
   const ignoredKeys = ["assignee", "roles"];
 
   Object.keys(attributeData).forEach((key) => {
-  if (!ignoredKeys.includes(key) && attributeData[key]) {
-    const isNumberOrAppId = types[key] === "number" || key === "applicationId";
+  if (
+    !ignoredKeys.includes(key) &&
+    attributeData[key] != null &&
+    attributeData[key] !== ""
+  ) {
+    // Find the original task variable to get the correct field name and type
+    const taskVariable = taskVariables.find(tv => getUniqueFieldKey(tv) === key);
+    if (!taskVariable) return;
+
+    const originalKey = taskVariable.key;
+    const isNumberOrAppId = types[originalKey] === "number" ||
+      originalKey === "applicationId" ||
+      types[originalKey] === "checkbox" ||
+      types[originalKey] === "currency";
     const operator = isNumberOrAppId ? "eq" : "like";
 
     let value = attributeData[key];
 
-    if (key === "applicationId") {
+    if (originalKey === "applicationId") {
       value = JSON.parse(attributeData[key]);
-    } else if (key === "roles") {
+    } else if (originalKey === "roles") {
       value = removeSlashFromValue(attributeData[key]);
+      // Add % wrapper for like search after tenant processing
+      if (operator === "like") {
+        value = `%${value}%`;
+      }
+    } else if (types[originalKey] === "number") {
+      // Convert string to number for number type fields
+      value = Number(value);
+    } 
+    else if (types[originalKey] === "currency"){
+      value = Number(value);
+    }
+    else if (types[originalKey] === "day") {
+      //chnaging '/' to '-'
+      const [day, month, year] = value.split("-");
+      value = `%${month}/${day}/${year}%`;
+    } else if (types[originalKey] === "datetime") {
+      //changing date and time to camunda expected format
+      if (value && value.includes(",")) {
+        const [datePart, timePart] = value.split(",").map((s) => s.trim());
+        const [day, month, year] = datePart.split("-");
+
+        const dateObj = new Date(`${year}-${month}-${day} ${timePart}`);
+
+        value = `%${dateObj.toISOString()}%`;
+      }
     } else if (!isNumberOrAppId) {
       // like search
       value = `%${value}%`;
     }
 
     newProcessVariable.push({
-      name: key,
+      name: taskVariable.name, // Use the original name from taskVariable
       operator,
       value,
+      isFormVariable: taskVariable.isFormVariable, // Add metadata to distinguish form variables
     });
   }
 });
@@ -406,7 +500,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
     if (attributeFilter?.id) { 
       if (editRole ) {
         return (
-          <div className="d-flex">
+          <div className="buttons-row">
             <CustomButton
               className="me-3"
               variant={updateButtonVariant}
@@ -420,6 +514,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
               dataTestId="save-attribute-filter"
               ariaLabel={t("Update This Filter")}
               disabled={deleteSuccess.showSuccess || noFieldChanged || !shareAttrFilter}
+              iconWithText
             />
             <CustomButton
               variant={deleteButtonVariant}
@@ -433,6 +528,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
               dataTestId="delete-attribute-filter"
               ariaLabel={t("Delete This Filter")}
               disabled={updateSuccess.showSuccess}
+              iconWithText
             />
           </div>
         );
@@ -455,6 +551,7 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
   dataTestId="save-attribute-filter"
   ariaLabel={t("Save Attribute Filter")}
   disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
+  iconWithText
 />
 
 
@@ -477,21 +574,21 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
         onBlur={handleNameError}
         dataTestId="attribute-filter-name"
         feedback={filterNameError}
+        id="filter-name"
       />
 
-      <div className="pt-4 pb-4">
-        <InputDropdown
-          Options={filterShareOptions}
-          dropdownLabel={t("Share This Filter With")}
-          isAllowInput={false}
-          ariaLabelforDropdown={t("attribute filter sharing dropdown")}
-          selectedOption={shareAttrFilter}
-          setNewInput={setShareAttrFilter}
-          dataTestIdforInput="share-attribute-filter-input"
-          dataTestIdforDropdown="share-attribute-filter-options"
-          required={true}
-        />
-      </div>
+      <InputDropdown
+        Options={filterShareOptions}
+        dropdownLabel={t("Share This Filter With")}
+        isAllowInput={false}
+        ariaLabelforDropdown={t("attribute filter sharing dropdown")}
+        selectedOption={shareAttrFilter}
+        setNewInput={setShareAttrFilter}
+        dataTestIdforInput="share-attribute-filter-input"
+        dataTestIdforDropdown="share-attribute-filter-options"
+        required={true}
+        id="shave-this-filter"
+      />
       <RenderOwnerShipNotes
         attributeFilter={attributeFilter}
         isCreator={createdByMe}
@@ -520,8 +617,8 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
 
    return (
     <>
-      <Modal.Body className="modal-body p-0">
-        <div className="filter-tab-container">
+      <Modal.Body className="with-tabs">
+        <div className="tabs">
           <CustomTabs
             defaultActiveKey={(updateSuccess?.showSuccess || deleteSuccess?.showSuccess) ? "saveFilterTab":"parametersTab"}
             tabs={tabs}
@@ -530,10 +627,9 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
           />
         </div>
       </Modal.Body>
-      <Modal.Footer className="d-flex justify-content-start">
+      <Modal.Footer>
+        <div className="buttons-row">
         <CustomButton
-          variant="primary"
-          size="md"
           label={t("Filter Results")}
           dataTestId="attribute-filter-results"
           ariaLabel={t("Filter results")}
@@ -541,13 +637,13 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
           disabled={(updateSuccess.showSuccess|| deleteSuccess.showSuccess || noFieldChanged)}
         />
         <CustomButton
-          variant="secondary"
-          size="md"
           label={t("Cancel")}
           onClick={onClose}
           dataTestId="cancel-attribute-filter"
           ariaLabel={t("Cancel filter")}
+          secondary
         />
+        </div>
       </Modal.Footer>
 
     </>

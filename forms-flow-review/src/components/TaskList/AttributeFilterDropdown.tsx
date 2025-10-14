@@ -19,6 +19,7 @@ import { cloneDeep } from "lodash";
 import { ReorderAttributeFilterModal } from "../ReorderAttributeFilterModal";
 import { userRoles } from "../../helper/permissions";
 import { UserDetail } from "../../types/taskFilter";
+import { buildDateRangePayload } from "../../helper/tableHelper";
 
 const AttributeFilterDropdown = () => {
   const { t } = useTranslation();
@@ -43,6 +44,9 @@ const AttributeFilterDropdown = () => {
   const selectedFilter = useSelector(
     (state: RootState) => state.task.selectedFilter
   );
+  const dateRange = useSelector(
+    (state: RootState) => state.task.dateRange
+  );
   const handleToggleAttrFilterModal = () => {
     setShowAttributeFilter((prev) => !prev);
   };
@@ -64,30 +68,46 @@ const AttributeFilterDropdown = () => {
     );
   };
 
-  const changeAttributeFilterSelection = (attributeFilter) => {
-    dispatch(setSelectedBpmAttributeFilter(attributeFilter));
-    // need to feth task list based on selected attribute filter
-    // need to reset all params
-    if (!selectedFilter || ( !isUnsavedAttributeFilter && attributeFilter?.id === selectedAttributeFilter?.id))
-      return;
+const changeAttributeFilterSelection = (attributeFilter) => {
+  dispatch(setSelectedBpmAttributeFilter(attributeFilter));
+  // need to feth task list based on selected attribute filter
+  // need to reset all params
+  if (
+    !selectedFilter ||
+    (!isUnsavedAttributeFilter &&
+      attributeFilter?.id === selectedAttributeFilter?.id)
+  )
+    return;
 
-    //this is current selected filter criteria
-    const currentCriteria = cloneDeep(selectedFilter.criteria);
-    // we only need process variables from attribute filter data
-    const processVariables = attributeFilter?.criteria.processVariables?.filter(
-      (item) => item.name !== "formId"
-    );
-    // we need to patch the current criteria with process variables from attribute filter
-    if (processVariables && processVariables.length > 0) {
-      currentCriteria.processVariables = currentCriteria.processVariables || [];
-      currentCriteria.processVariables.push(...processVariables);
-    }
+  const date = buildDateRangePayload(dateRange);
 
-    // changing  assignee if assignee changed in attirbuite filter
-    currentCriteria.assignee = attributeFilter?.criteria.assignee;
-    const data = { ...selectedFilter, criteria: currentCriteria };
-    fetchTaskList(data);
+  //this is current selected filter criteria
+  const currentCriteria = cloneDeep(selectedFilter.criteria);
+  // we only need process variables from attribute filter data
+  const processVariables = attributeFilter?.criteria.processVariables?.filter(
+    (item) => item.name !== "formId"
+  );
+  // we need to patch the current criteria with process variables from attribute filter
+  if (processVariables && processVariables.length > 0) {
+    currentCriteria.processVariables = currentCriteria.processVariables || [];
+    currentCriteria.processVariables.push(...processVariables);
+  }
+
+  // changing  assignee if assignee changed in attirbuite filter
+  currentCriteria.assignee = attributeFilter?.criteria.assignee;
+
+  // append date range to currentCriteria if date is available
+  const updatedCriteria = {
+    ...currentCriteria,
+    ...date,
   };
+
+  const data = { ...selectedFilter, criteria: updatedCriteria };
+  fetchTaskList(data);
+};
+
+
+
   const onSearch = (searchTerm: string) => {
     setFilterSearchTerm(searchTerm);
   };
@@ -103,7 +123,8 @@ const AttributeFilterDropdown = () => {
     const createCustomField = {
       content: (
         <span>
-          <AddIcon className="filter-plus-icon" /> {t("Custom Filter")}
+          <AddIcon />
+          <span>{t("Custom Filter")}</span>
         </span>
       ),
       onClick: handleToggleAttrFilterModal,
@@ -115,8 +136,8 @@ const AttributeFilterDropdown = () => {
     const reOrderAttribute = {
       content: (
         <span>
-          <PencilIcon className="filter-edit-icon" />{" "}
-          {t("Re-order And Hide Filters")}
+          <PencilIcon />
+          <span>{t("Re-order And Hide Filters")}</span>
         </span>
       ),
       onClick: () => setShowReorderAttributeFilterModal(true),
@@ -127,7 +148,7 @@ const AttributeFilterDropdown = () => {
 
     const clearAttributeFilter = {
       className: !selectedAttributeFilter?.id ? "selected-filter-item" : "",
-      content: <>{t("All Fields")}</>,
+      content: <span>{t("All Fields")}</span>,
       onClick: () => changeAttributeFilterSelection(null),
       type: "none",
       dataTestId: "attr-filter-item-none",
@@ -154,7 +175,13 @@ const AttributeFilterDropdown = () => {
             );
 
             let icon = null;
-            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+            if (
+              selectedFilter?.users?.length > 0 &&
+              !filter?.roles?.length &&
+              !filter?.users?.length
+            ) {
+              icon = null;
+            } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
               icon = <SharedWithOthersIcon className="shared-icon" />;
             } else if (isSharedToPublic || isSharedToMe) {
               icon = <SharedWithMeIcon className="shared-icon" />;
@@ -214,17 +241,11 @@ const AttributeFilterDropdown = () => {
   return (
     <>
       <ButtonDropdown
-        label={
-          <span className="filter-large" title={title}>
-            {title}
-          </span>
-        }
-        variant="primary"
-        size="md"
+        label={title}
         dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
         onSearch={onSearch}
         dropdownItems={filterDropdownAttributeItems()}
-        extraActionIcon={<PencilIcon color="white" />}
+        extraActionIcon={<PencilIcon />}
         extraActionOnClick={
           !selectedAttributeFilter
             ? handleToggleAttrFilterModal
@@ -233,6 +254,7 @@ const AttributeFilterDropdown = () => {
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
         extraActionAriaLabel={t("Edit attribute filters")}
+        className="input-filter"
       />
       <AttributeFilterModal
         show={showAttributeFilter}

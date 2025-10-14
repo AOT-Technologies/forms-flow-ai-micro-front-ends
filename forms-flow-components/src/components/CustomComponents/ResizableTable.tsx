@@ -42,11 +42,8 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
   renderHeaderCell,
   emptyMessage = "No data found",
   onColumnResize,
-  tableClassName = "resizable-table",
   headerClassName = "resizable-header",
-  bodyClassName = "",
-  containerClassName = "resizable-table-container",
-  scrollWrapperClassName = "table-scroll-wrapper resizable-scroll",
+  containerClassName = "custom-table-wrapper-inner resizable",
   dataTestId = "resizable-table",
   ariaLabel = "Resizable data table",
   loading = false,
@@ -78,7 +75,7 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
     if (resizingRef.current === null) return;
     const diff = e.pageX - startXRef.current;
     const currentColumn = resizingRef.current;
-    const minWidth = currentColumn.name === "Assignee" ? 200 : 50;
+    const minWidth = currentColumn.name === "Assignee" ? 100 : 50;
     const newWidth = Math.max(minWidth, startWidthRef.current + diff);
 
     if (resizingRef.current) {
@@ -127,20 +124,14 @@ const renderSkeleton = () => (
 );
 
   return (
-    <div
-      className={containerClassName}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-    >
       <div
-        className={scrollWrapperClassName}
-        ref={scrollWrapperRef}
-        style={{ overflow: "scroll" }}
-        data-testid={`${dataTestId}-scroll-wrapper`}
+        className={containerClassName}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
       >
         <table
           ref={tableRef}
-          className={tableClassName}
+          className="table custom-tables"
           data-testid={`${dataTestId}-table`}
         >
           <thead className={headerClassName}>
@@ -165,25 +156,23 @@ const renderSkeleton = () => (
           {loading ? (
             renderSkeleton()
           ) : (
-            <tbody className={bodyClassName}>
+            <>
               {data.length === 0 ? (
-                <tr className="empty-row">
-                  <td
-                    colSpan={columnsState.length}
-                    className="empty-table-message"
-                    data-testid={`${dataTestId}-empty-message`}
-                  >
+                <tbody className="table-empty">
+                  <p className="empty-message" data-testid={`${dataTestId}-empty-message`}>
                     {emptyMessage}
-                  </td>
-                </tr>
+                  </p>
+                </tbody>
               ) : (
-                data.map((item, index) => renderRow(item, columnsState, index))
+                <tbody>
+                  {
+                  data.map((item, index) => renderRow(item, columnsState, index))}
+                </tbody>
               )}
-            </tbody>
+              </>
           )}
         </table>
       </div>
-    </div>
   );
 };
 

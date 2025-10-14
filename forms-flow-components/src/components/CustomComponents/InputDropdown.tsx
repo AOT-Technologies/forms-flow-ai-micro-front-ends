@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { InputGroup } from 'react-bootstrap';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { FormInput } from './FormInput';
-import { CloseIcon , ChevronIcon } from "../SvgIcons/index";
+import { CloseIcon , ChevronIcon, ClearIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
 
@@ -27,13 +27,16 @@ interface InputDropdownProps {
   setNewInput? : (value: string) => void;
   isInvalid?: boolean;
   inputClassName?: string;
+  className?: string;
   onBlurDropDown?: () => void; 
   disabled?: boolean;
   variant?: 'assign-user-sm' | 'assign-user-md'; 
   handleCloseClick?: () => void;
   openByDefault?: boolean;
+  id?: string;
   showCloseIcon?: boolean;
   hideDropDownList?: boolean;
+  useAbsolutePosition?: boolean;
 }
 
 export const InputDropdown: React.FC<InputDropdownProps> = ({
@@ -52,13 +55,16 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   dataTestIdforInput,
   isInvalid,
   inputClassName='',
+  className='',
   onBlurDropDown,
   disabled = false,
   variant,
   handleCloseClick,
   openByDefault = false,
+  id,
   showCloseIcon = true,
   hideDropDownList = false,
+  useAbsolutePosition = false,
 }) => {
   const { t } = useTranslation();
   const primaryColor = StyleServices.getCSSVariable('--ff-primary');
@@ -71,7 +77,7 @@ export const InputDropdown: React.FC<InputDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
-    if(!disabled){
+    if(!disabled) {
      setIsDropdownOpen((prev) => !prev);
     }
   };
@@ -123,7 +129,7 @@ useEffect(() => {
       //filtering out items
       const filtered = Options.filter((item) =>
           item.label.toLowerCase().includes(value.toLowerCase()) || 
-          item.value?.toLowerCase().includes(value.toLowerCase())
+      (typeof item.value === "string" && item.value.toLowerCase().includes(value.toLowerCase()))
       );
       setFilteredItems(filtered);
   };
@@ -164,17 +170,15 @@ useEffect(() => {
   const renderIcon = () => {
     // Only show CloseIcon when variant is present AND inputValue exists
     if (variant && inputValue) {
-    return showCloseIcon && <CloseIcon 
+    return showCloseIcon && <ClearIcon 
             onClick={handleClearInput} 
-            color={disabled ? disabledColor : primaryColor} 
             data-testid="clear-input" 
             aria-label="Clear input"
-            width={9}
-            height={9}/>
+            />;
     } else {
     // Default to ChevronIcon in all other cases
     return <ChevronIcon 
-            color={disabled ? disabledColor : primaryColor} 
+            className={disabled ? "svgIcon-disabled" : "svgIcon-primary"} 
             data-testid="dropdown-input" 
             aria-label="dropdown input"
             />;
@@ -185,71 +189,69 @@ useEffect(() => {
     return item.label === inputValue || item.value === selectedOption;
   };
   return (
-      <div ref={dropdownRef}  className={`input-dropdown ${variantClass || 'w-100'}`}>
-      {textBoxInput ? (
-        <InputGroup>
-          <FormInput
-            autoFocusInput
-            value={inputValue}
-            onChange={handleInputChange}
-            ariaLabel={ariaLabelforInput}
-            dataTestId={dataTestIdforInput}
-            isInvalid={isInvalid}
+      <div className={`input-select w-100 ${className}`} ref={dropdownRef}>
+          {textBoxInput ? (
+              <InputGroup ref={dropdownRef}>
+                  <FormInput
+                      autoFocusInput
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      ariaLabel={ariaLabelforInput}
+                     dataTestId={dataTestIdforInput}
+                      isInvalid={isInvalid}
                       icon={<CloseIcon onClick={handleClose} color={primaryColor} data-testid="close-input" aria-label="Close input "/>} 
-            className="input-with-close"
-            label={t(dropdownLabel)}
-            feedback={t(feedback)}
-            variant={variant}
-          />
-        </InputGroup>
-      ) : (
-        <InputGroup>
-          <FormInput
-            placeholder={t(placeholder)}
-            value={inputValue}
-            onChange={handleInputDropdownChange}
-            onClick={toggleDropdown}
-            ariaLabel={ariaLabelforDropdown}
-            dataTestId={dataTestIdforDropdown}
-            icon={renderIcon()}
-            className={`${inputClassName} ${(isDropdownOpen && !hideDropDownList) && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
-            onIconClick={toggleDropdown}
-            label={t(dropdownLabel)}
-            required={required}
-            onBlur={onBlurDropDown}
-            isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
-            feedback={t(feedback)}
-            variant={variant}
-          />
-        </InputGroup>
-      )}
-
-      {!textBoxInput && isDropdownOpen && !disabled && !hideDropDownList && (
-        <ListGroup className={`${variant ? "assignee-dropdown-border" : ""}`}>
-          {isAllowInput && (
-            <ListGroup.Item
-              onClick={onFirstItemClick}
-              className="list-first-item-btn"
-              data-testid="list-first-item"
-            >
-              {t(firstItemLabel)}
-            </ListGroup.Item>
+                      className="input-with-close"
+                      label={t(dropdownLabel)}
+                      feedback={t(feedback)}
+                      variant={variant}
+                      id={id}
+                  />
+              </InputGroup>
+          ) : (
+            <FormInput
+                placeholder={t(placeholder)}
+                value={inputValue}
+                onChange={handleInputDropdownChange}
+                onClick={!(isDropdownOpen)? toggleDropdown : null}
+                ariaLabel={ariaLabelforDropdown}
+                dataTestId={dataTestIdforDropdown}
+                icon={renderIcon()}
+                className={`${inputClassName} ${isDropdownOpen && 'border-input collapsed'} ${disabled && 'disabled-inpudropdown'}`}
+                onIconClick={toggleDropdown}
+                label={t(dropdownLabel)}
+                required={required}
+                onBlur={onBlurDropDown}
+                isInvalid={!(isDropdownOpen || selectedOption) && isInvalid}
+                feedback={t(feedback)}
+                id={id}
+                variant={variant}
+            />
           )}
+
+          {!textBoxInput && isDropdownOpen && !disabled && !hideDropDownList && (
+              <div className={`select-options ${useAbsolutePosition ? 'template-override' : ''}`}>
+                  {isAllowInput && (
+                      <ListGroup.Item
+                          onClick={onFirstItemClick}
+                          className="list-first-item-btn"
+                          data-testid="list-first-item"
+                      >
+                          {t(firstItemLabel)}
+                      </ListGroup.Item>
+                  )}
                   {(filteredItems.length > 0 ? filteredItems : Options).map((item, index) => (
               <ListGroup.Item
                 key={index}
                 onClick={() => handleSelect(item)}
                 data-testid={`list-${index}-item`}
                 aria-label={`list-${item.label}-item`}
-                          className={`${isItemSelected(item) ? 'selected-dropdown-item' : ''}`}
+                className={`${isItemSelected(item) ? 'chosen' : ''}`}
               >
                 {t(item.label)}
               </ListGroup.Item>
                   ))}
-        </ListGroup>
+        </div>
       )}
     </div>
   );
 };
-
-

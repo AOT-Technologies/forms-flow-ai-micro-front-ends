@@ -13,9 +13,8 @@ interface User {
 
 interface AssignUserProps {
   size?: "sm" | "md";
-  isFromTaskDetails?: boolean;
   users: User[];
-  username: string;
+  currentAssignee: string;
   meOnClick?: () => void;
   optionSelect?: (userName: string) => void;
   handleCloseClick?: () => void;
@@ -23,13 +22,13 @@ interface AssignUserProps {
   dataTestId?: string;
   manageMyTasks?:boolean;
   assignToOthers?:boolean;
+  minimized?:boolean;
 }
 
 export const AssignUser: React.FC<AssignUserProps> = ({
   size = "md",
-  isFromTaskDetails = false,
   users = [],
-  username,
+  currentAssignee,
   meOnClick,
   optionSelect,
   handleCloseClick,
@@ -37,6 +36,7 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   dataTestId = "assign-user",
   assignToOthers = false,
   manageMyTasks = false,
+  minimized = false,
 }) => {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<"Me" | "Others" | null>(null);
@@ -55,37 +55,32 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   };
 
   useEffect(() => {
-    if(username){
+    if(currentAssignee){
       setSelected("Me");
       // if username is not null or empty,set selectedName to its lastname and firstname
-      const matchedUser = users.find((user) => user.username === username);
+      const matchedUser = users.find((user) => user.username === currentAssignee);
       if (matchedUser) {
         setSelectedName(getDisplayName(matchedUser));
       }else{
-        setSelectedName(username);
+        setSelectedName(currentAssignee);
       }
     } else {
       setSelected(null);
       setSelectedName(null);
     }
-  }, [username,users]);
+  }, [currentAssignee,users]);
 
 
   const handleMeClick = () => {
-  const defaultName = userData?.preferred_username;
-  const fullName = userData?.family_name && userData?.given_name
-    ? `${userData.family_name}, ${userData.given_name}`
-    : defaultName;
+const fullName = userData?.family_name && userData?.given_name
+  ? `${userData.family_name}, ${userData.given_name}`
+  : userData?.preferred_username;
 
-  const name = username ?? fullName;
+setSelected("Me");
+setSelectedName(fullName);
 
-  setSelected("Me");
-  setSelectedName(name);
-
-  meOnClick?.();
+  meOnClick?.(); 
 };
-
-
   const handleOthersClick = () => {
     setSelected("Others");
     setOpenDropdown(true);
@@ -135,32 +130,39 @@ const dropdownOptions = useMemo(() => {
     <>
       {showSelector && (manageMyTasks || assignToOthers) && (
         <div
-          className={`assign-user ${size}`}
+          className={"input-select quick-select " + (minimized?'minimized':'')}
           aria-label={`${ariaLabel}-select-user-option`}
           data-testid={`${dataTestId}-select-user-option`}
         >
-          {manageMyTasks && <button
-             className="option-me button-reset"
-            onClick={handleMeClick}
-            aria-label={`${ariaLabel}-me-button`}
-            data-testid={`${dataTestId}-me-button`}
-          >
-            {t("Me")}
-          </button>}
-          {(manageMyTasks && assignToOthers) && <div className="divider"></div>}
-          {assignToOthers && <button
-            className="option-others button-reset"
-            onClick={handleOthersClick}
-            aria-label={`${ariaLabel}-others-button`}
-            data-testid={`${dataTestId}-others-button`}
-          >
-            {t("Others")}
-          </button> }
+
+          <div className="empty">
+            {manageMyTasks &&
+              <button
+                className="option-me button-reset"
+                onClick={handleMeClick}
+                aria-label={`${ariaLabel}-me-button`}
+                data-testid={`${dataTestId}-me-button`}
+              >
+                {t("Me")}
+              </button>
+            }
+
+            {assignToOthers &&
+              <button
+                className="option-others button-reset"
+                onClick={handleOthersClick}
+                aria-label={`${ariaLabel}-others-button`}
+                data-testid={`${dataTestId}-others-button`}
+              >
+                {t("Others")}
+              </button>
+            }
+          </div>
         </div>
       )}
       {/* Show InputDropdown when either Me or Others is selected */}
       {(selected === "Me" || selected === "Others")  && (
-        ( !manageMyTasks && !assignToOthers && !isFromTaskDetails) ? <label className="assigne-label">{selectedOption}</label> :
+        ( !manageMyTasks && !assignToOthers) ? <label className="assigne-label">{selectedOption}</label> :
         <InputDropdown
           showCloseIcon={showCloseIcon}
           hideDropDownList={(assignedToCurrentUser && !assignToOthers) || (!assignedToCurrentUser && !manageMyTasks)}
@@ -181,6 +183,7 @@ const dropdownOptions = useMemo(() => {
               }
             }, 150);
           }}
+          className={"quick-select "  + (minimized?'minimized':'')}
         />
       )}
     </>

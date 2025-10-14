@@ -7,10 +7,12 @@ import { useTranslation } from "react-i18next";
 import { HelperServices } from "@formsflow/service";
 import { getFormUrl } from "../api/services/formatterService";
 import { MULTITENANCY_ENABLED } from "../constants/index";
+import { CustomButton } from "@formsflow/components";
 
 interface TaskHistoryModalProps {
   show: boolean;
   onClose: () => void;
+  task?: any;
 }
 
 interface SubmissionHistory {
@@ -25,7 +27,7 @@ const HistoryField = ({
   fields: {
     id?: number;
     header?: string;
-    value?: string;
+    value?: string | React.ReactNode;
     applicationStatus?: string;
   }[];
 }) => (
@@ -43,7 +45,7 @@ const HistoryField = ({
           <div className="content-headings me-auto">{applicationStatus}</div>
           <div className="text-end">
             <div className="content-headings">{header}</div>
-            {value}
+            <div>{value}</div>
           </div>
         </div>
       ))}
@@ -51,13 +53,13 @@ const HistoryField = ({
 );
 
 export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
-  ({ show, onClose }) => {
+  ({ show, onClose, task }) => {
     const { t } = useTranslation();
     const timelineRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
     const appHistory = useSelector((state: any) => state.task?.appHistory);
     const tenantKey = useSelector(
-      (state: any) => state.tenants?.tenantData?.tenantkey
+      (state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key
     );
     const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
@@ -76,27 +78,19 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
 
     const viewSubmission = (data) => {
       const { formId, submissionId } = data;
-      const url = getFormUrl(formId, submissionId, redirectUrl);
-      return (
-        <button
-          data-testid={`submission-details-button-${data.id}`}
-          className="btn-table btn btn-secondary"
-          onClick={() => window.open(url, "_blank")}
-        >
-          {t("View Submission")}
-        </button>
-      );
+      const formType = task?.formType || "form";
+      const url = getFormUrl(formId, submissionId, redirectUrl, formType);
+      return window.open(url, "_blank")
     };
 
     return (
       <Modal
         show={show}
         onHide={onClose}
-        dialogClassName="form-submission-history-modal"
+        dialogClassName="modal-sm"
         data-testid="form-history-modal"
         aria-labelledby="form-history-modal-title"
         aria-describedby="form-history-modal-message"
-        size="sm"
       >
         <Modal.Header data-testid="form-history-modal-header">
           <Modal.Title
@@ -104,16 +98,15 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
             data-testid="form-history-modal-title"
             aria-label="Form history modal title"
           >
-            <b>{t("History")}</b>
+            <p>{t("History")}</p>
           </Modal.Title>
-          <CloseIcon
-            onClick={onClose}
-            aria-label="Close form-history-modal"
-            data-testid="close-icon"
-          />
+
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon data-testid="close-icon" aria-label="Close form-history-modal" />
+          </div>
         </Modal.Header>
         <Modal.Body
-          className="form-history-modal-body"
+          className="history-modal-body"
           data-testid="form-history-modal-body"
           aria-label="Form history modal body"
         >
@@ -121,24 +114,43 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
             <>
               <div
                 ref={timelineRef}
-                className="form-timeline"
+                className="history-content submissions"
                 data-testid="form-history-timeline"
                 aria-label="Form history timeline"
-              ></div>
-              <div
-                className="history-content"
-                data-testid="form-history-content"
-                aria-label="Form history content"
               >
+                <div ref={timelineRef} className="timeline"></div>
+
                 {appHistory.map((entry, index) => (
                   <div
                     key={entry.id || index}
                     ref={index === appHistory.length - 1 ? lastEntryRef : null}
-                    className="form-version-grid"
+                    className="version major"
                     data-testid={`form-history-entry-${index}`}
                     aria-label={`Form history entry ${index}`}
                   >
-                    <HistoryField
+                    <p className="heading">
+                      {entry.applicationStatus || "N/A"}
+                    </p>
+
+                    <div className="details">
+                      <div>
+                        <p>Submitted By</p>
+                        <p>{entry.submittedBy || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p>Created On</p>
+                        <p>{entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A"}</p>
+                      </div>
+                    </div>
+
+                    <CustomButton
+                      label="View Submission"
+                      onClick={() => viewSubmission(entry)}
+                      ariaLabel="view submission button"
+                      actionTable
+                    />
+
+                    {/* <HistoryField
                       fields={[
                         {
                           id: 1,
@@ -147,7 +159,7 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
                         },
                         {
                           id: 2,
-                          header: "Submitter By",
+                          header: "Submitted By",
                           value: entry.submittedBy || "N/A",
                         },
                         {
@@ -163,9 +175,10 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
                           value: viewSubmission(entry),
                         },
                       ]}
-                    />
+                    /> */}
                   </div>
                 ))}
+
               </div>
             </>
           ) : (

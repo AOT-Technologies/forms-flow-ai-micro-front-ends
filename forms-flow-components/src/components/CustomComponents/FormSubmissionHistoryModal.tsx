@@ -18,32 +18,30 @@ interface SubmissionHistory {
   id?: string;
 }
 
-const HistoryField = ({ fields }: { fields: { id: number; value: string }[] }) => (
+const HistoryField = ({ fields, created }: { fields: { id: number; value: string }[]; created?: string }) => (
+  
   <>
-    {fields.map(({ id, value }) => (
-      <div key={id} className="normal-text" data-testid={`history-field-${id}`} aria-label={`History field ${id}`}>{value}</div>
-    ))}
+    <p className="heading">
+      {fields.map(({ id, value }) => (
+        <React.Fragment key={id}>
+          {value}
+        </React.Fragment>
+      ))}
+    </p>
+
+    <div className="details">
+      <div>
+        <p>Created On</p>
+        <p className="text-nowrap">{created ? HelperServices.getLocalDateAndTime(created) : "N/A"}</p>
+      </div>
+    </div>
   </>
 );
 
 export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProps> = React.memo(
   ({ show, onClose, title, allHistory, historyCount }) => {
     const { t } = useTranslation();
-    const timelineRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const adjustTimelineHeight = () => {
-        if (timelineRef.current && lastEntryRef.current) {
-          const lastEntryHeight = lastEntryRef.current.offsetHeight;
-          timelineRef.current.style.height = `calc(100% - ${lastEntryHeight}px)`;
-        }
-      };
-      
-      adjustTimelineHeight();
-      window.addEventListener("resize", adjustTimelineHeight);
-      return () => window.removeEventListener("resize", adjustTimelineHeight);
-    }, [show, allHistory]);
 
     return (
       <Modal
@@ -57,28 +55,32 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
       >
         <Modal.Header data-testid="form-history-modal-header">
           <Modal.Title id="form-history-modal-title" data-testid="form-history-modal-title" aria-label="Form history modal title">
-            <b>{t(title)}</b>
+            <p>{t(title)}</p>
           </Modal.Title>
-          <CloseIcon onClick={onClose} aria-label="Close form-history-modal" data-testid="close-icon" />
+
+          <div className="icon-close" onClick={onClose}>
+            <CloseIcon aria-label="Close form-history-modal" data-testid="close-icon" />
+          </div>
         </Modal.Header>
-        <Modal.Body className="form-history-modal-body" data-testid="form-history-modal-body" aria-label="Form history modal body">
+        <Modal.Body className="history-modal-body" data-testid="form-history-modal-body" aria-label="Form history modal body">
           {historyCount > 0 ? (
             <>
-              <div ref={timelineRef} className="form-timeline" data-testid="form-history-timeline" aria-label="Form history timeline"></div>
-              <div className="history-content" data-testid="form-history-content" aria-label="Form history content">
+            <div className="history-content" data-testid="form-history-content" aria-label="Form history content">
+              <div className="timeline" data-testid="form-history-timeline" aria-label="Form history timeline"></div>
+              
                 {allHistory.map((entry, index) => (
                   <div
                     key={entry.id || index}
                     ref={index === allHistory.length - 1 ? lastEntryRef : null}
-                    className="form-version-grid"
+                    className="version major"
                     data-testid={`form-history-entry-${index}`}
                     aria-label={`Form history entry ${index}`}
                   >
                     <HistoryField
                       fields={[
                         { id: 1, value: entry.applicationStatus || "N/A" },
-                        { id: 2, value: entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A" },
                       ]}
+                      created={entry.created}
                     />
                   </div>
                 ))}

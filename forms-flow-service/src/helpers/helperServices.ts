@@ -99,6 +99,19 @@ class HelperServices {
       return acc;
     }, {});
   }
+
+  // Method to remove tenant name from role strings when multitenancy is enabled
+  public static removeTenantFromRoles(rolesString: string, tenantKey: string): string {
+    if (!rolesString || !tenantKey || !MULTITENANCY_ENABLED) {
+      return rolesString;
+    }
+    
+    const tenantPrefix = `${tenantKey}-`;
+    return rolesString
+      .split(", ")
+      .map(role => role.startsWith(tenantPrefix) ? role.substring(tenantPrefix.length) : role)
+      .join(", ");
+  }
 }
 
 export default HelperServices

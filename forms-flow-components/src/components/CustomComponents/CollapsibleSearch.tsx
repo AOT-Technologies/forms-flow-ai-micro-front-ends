@@ -1,0 +1,344 @@
+import React, { useEffect, useState } from "react";
+import { AngleRightIcon, AngleLeftIcon, PencilIcon } from "../SvgIcons";
+import { useTranslation } from "react-i18next";
+import { ButtonDropdown, FormInput } from "@formsflow/components";
+import { CustomButton } from "./Button";
+import { CustomInfo } from "./CustomInfo";
+
+interface FormItem {
+  formId: string;
+  formName: string;
+  parentFormId: string;
+  formType: string;
+  status: string;
+}
+interface InputField {
+  id: string;
+  label: string;
+  type: string;
+  value: string;
+  placeholder?: string;
+}
+interface CollapsibleSearchProps {
+  isOpen: boolean;
+  hasActiveFilters: boolean;
+  inactiveLabel: string;
+  activeLabel: string;
+  onToggle: () => void;
+  dataTestId?: string;
+  ariaLabel?: string;
+  manageFieldsAction?: () => void;
+  formData: FormItem[];
+  dropdownSelection: string | null;
+  setDropdownSelection: (value: string | null) => void;
+  selectedItem: string;
+  setSelectedItem: (value: string) => void;
+  initialInputFields: InputField[];
+  onSearch: (filters: Record<string, string>) => void;
+  onClearSearch?: () => void;
+}
+
+
+
+
+export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
+  isOpen,
+  hasActiveFilters,
+  inactiveLabel,
+  activeLabel,
+  onToggle,
+  dataTestId = "collapsible-search",
+  ariaLabel = "Collapsible sidebar",
+  manageFieldsAction,
+  formData,
+  dropdownSelection,
+  setDropdownSelection,
+  selectedItem,
+  setSelectedItem,
+  initialInputFields,
+  onSearch,
+  onClearSearch  
+}) => {
+  const { t } = useTranslation();
+  const [expanded, setExpanded] = useState(false);
+const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields);
+  
+  const handleFieldChange = (index: number, newValue: string) => {
+    setInputFields((prevFields) => {
+      const updated = [...prevFields];
+      updated[index] = { ...updated[index], value: newValue }; 
+      return updated;
+    });
+  };
+
+  useEffect(() => {
+  setInputFields(initialInputFields);
+}, [initialInputFields]);
+
+
+  const toggleExpand = () => {
+    setExpanded(true);
+  };
+
+const handleSelection = (label: string) => setSelectedItem(label);
+
+  const handleCollapse = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation(); // Prevent event from bubbling up
+    setExpanded(false);
+  };
+
+  // Derived value for disabling buttons
+  const hasAnyInputInFields = inputFields?.some((field) => field.value?.trim() !== "");
+  const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
+  
+  // Find the selected form to get its formType
+  const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
+  const selectedFormType = selectedForm?.formType;
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+const DropdownItems = [
+  {
+    type: "all-forms",
+    content: "All Forms",
+    dataTestId: "dropdown-item-all-forms",
+    ariaLabel: "Select all forms",
+    onClick: () => {
+      handleSelection("All Forms");
+      setDropdownSelection(null); 
+    },
+    className: dropdownSelection === null ? "selected-filter-item" : "",
+  },
+  ...formData
+    .filter((form) =>
+      form.formName.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .map((form) => ({
+      type: `form-${form.formId}`,
+      content: form.formName,
+      dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, "-").toLowerCase()}`,
+      ariaLabel: `Select form: ${form.formName}`,
+      onClick: () => {
+        handleSelection(form.formName);
+        setDropdownSelection(form.parentFormId); // Store the selected form ID
+      },
+      className:
+        form.parentFormId === dropdownSelection
+          ? "selected-filter-item"
+          : "",
+    })),
+];
+
+
+    const handleClear = () => {
+    // Reset all input field values
+    setInputFields((prevFields) =>
+      prevFields?.map((field) => ({
+        ...field,
+        value: "",
+      }))
+    );
+
+    // Reset dropdown selection
+    setDropdownSelection(null);
+    setSelectedItem("All Forms");
+    
+    // Call the onClearSearch callback if provided
+    if (onClearSearch) {
+      onClearSearch();
+    }
+  };
+  const handleSearch = () => {
+  const filters = inputFields.reduce((acc, field) => {
+    if (field.value?.trim()) {
+      acc[field.id] = field.value.trim();
+    }
+    return acc;
+  }, {} as Record<string, string>);
+
+  onSearch(filters); 
+};
+  return (
+
+    <div className={`search-collapsible ${expanded ? "expanded" : ""}`}>
+      <div
+        className={`toggle`}
+        onClick={toggleExpand}
+        data-testid={dataTestId}
+        aria-label={ariaLabel}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            toggleExpand();
+          }
+        }}
+      >
+
+        <button
+          className="chevron-icon"
+          onClick={expanded ? handleCollapse : undefined}
+          type="button"
+          data-testid="collapse-toggle-button"
+          aria-label={expanded ? t("Collapse") : undefined}
+        >
+          <AngleRightIcon />
+          <span>{t("Collapse")}</span>
+        </button>
+
+        {!expanded ? (
+          <div className={`collapsed-label ${hasActiveFilters ? "active-filter" : ""}`}>
+            {hasActiveFilters ? t("Some Filters Are Active") : t("No Filters Are Active")}
+          </div>
+        ) : (
+          ""
+        )}
+
+      </div>
+
+      {expanded && (
+        <div className="content">
+        <div className="fields">
+        <label className="form-label panel-label">{t("Form")}</label>
+          <ButtonDropdown
+            label={selectedItem}
+            dropdownItems={DropdownItems}
+            onSearch={(query) => setSearchQuery(query)}
+            dropdownType="DROPDOWN_ONLY"
+            dataTestId="submission-search-filter-dropdown"
+            ariaLabel={t("Select submission filter")}
+            className="input-filter" />
+
+            {inputFields?.map((field, index) => (
+              <div className="panel-width" key={field.id}>
+                <label className="form-label panel-label">{field.label}</label>
+                <FormInput
+                  type={field.type}
+                  value={field.value}
+                  onChange={(e) => handleFieldChange(index, e.target.value)}
+                  aria-label={field.label}
+                  data-testid={`input-${field.id}`} 
+                  onClearClick={() => handleFieldChange(index, "")}
+                  clear={field.value !== ""}
+                  placeholder={
+                    field.placeholder
+                  }                 />
+              </div>
+            ))}
+            {dropdownSelection && selectedFormType === "bundle" ? (
+              <div className="panel-width">
+                <CustomInfo
+                  heading="Note"
+                  content={t("Field selection is not available for bundles at this time.")}
+                  dataTestId="bundle-note-section"
+                />
+              </div>
+            ) : dropdownSelection &&
+            (
+              <div className="panel-width">
+                <CustomButton
+                  secondary
+                  label="Manage fields"
+                  icon={<PencilIcon className="" />}
+                  onClick= {manageFieldsAction}
+                  iconWithText
+                  dataTestId="manage-fields-button"
+                  ariaLabel="Manage fields" 
+                />
+              </div>
+            )
+              
+           }
+          </div>
+          <div className="search-clear">
+
+          {/* <div className="panel-width">
+    <label className="form-label panel-label">{t("Form")}</label>
+    <ButtonDropdown
+      label="test"
+      variant="primary"
+      size="md"
+      dataTestId="business-filter-dropdown"
+      ariaLabel={t("Select business filter")}
+      className="w-100"
+      dropdownItems={DropdownItems}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">
+      {t("Submission ID")}
+    </label>
+    <FormInput
+      name="title"
+      type="text"
+      // placeholder={t(placeholderForForm)}
+      // label={nameLabel}
+      aria-label={t("Name of the form")}
+      // dataTestId={nameInputDataTestid}
+      // onBlur={handleOnBlur}
+      // onChange={(event) => {
+      //   handleInputValueChange(event);
+      //   setNameError("");
+      //   handleChange("title", event);
+      // }}
+      required
+      // value={values.title}
+      // isInvalid={!!nameError}
+      // feedback={nameError}
+      // turnOnLoader={isFormNameValidating}
+      maxLength={200}
+      value={submissionId}
+      onChange={(e) => setSubmissionId(e.target.value)}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">{t("Submitter")}</label>
+    <FormInput
+      name="title"
+      type="text"
+      aria-label={t("Name of the form")}
+      required
+      value={submitter}
+      onChange={(e) => setSubmitter(e.target.value)}
+    />
+  </div>
+  <div className="panel-width">
+    <label className="form-label panel-label">{t("Status")}</label>
+    <FormInput
+      name="title"
+      type="text"
+      aria-label={t("Name of the form")}
+      required
+      value={status}
+      onChange={(e) => setStatus(e.target.value)}
+    />
+  </div> */}
+
+
+          
+        </div>
+        <div className="actions">
+            <div className="buttons-row">
+              <CustomButton
+                label="Search"
+                onClick={handleSearch}
+                dataTestId="search-button"
+                ariaLabel="Search filters"
+              />
+
+              <CustomButton
+                label="Clear"
+                onClick={handleClear}
+                dataTestId="clear-button"
+                ariaLabel="Clear filters" 
+                disabled={
+                  dropdownSelection === null &&
+                  !inputFields.some(field => field.value && field.value.trim() !== "")
+                }
+                secondary />
+            </div>
+        </div>
+        </div>
+      )}
+    </div>
+)};

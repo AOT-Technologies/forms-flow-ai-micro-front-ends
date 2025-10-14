@@ -1,6 +1,6 @@
 {
   "name": "@formsflow/components",
-  "version": "7.1.0",
+  "version": "7.3.0",
   "scripts": {
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",
@@ -42,7 +42,6 @@
     "prettier": "^2.3.2",
     "pretty-quick": "^3.1.1",
     "react": "^17.0.2",
-    "react-bootstrap": "^1.6.0",
     "react-dom": "^17.0.2",
     "react-i18next": "^12.1.4",
     "react-js-pagination": "^3.0.3",
@@ -59,19 +58,22 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@aot-technologies/formio-react": "^1.0.5",
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
     "bpmn-js": "^18.6.2",
     "multiselect-react-dropdown": "^2.0.25",
+    "react-bootstrap": "^2.10.6",
     "react-loading-skeleton": "^3.5.0",
+    "react-toastify": "^9.1.1",
     "single-spa": "^5.9.3",
-    "single-spa-react": "^4.3.1"
+    "single-spa-react": "^4.3.1",
+    "sortablejs": "^1.15.6"
   },
   "peerDependencies": {
     "react": "^17.0.2",
-    "react-bootstrap": "^1.6.0",
     "react-dom": "^17.0.2",
     "react-js-pagination": "^3.0.3"
   },

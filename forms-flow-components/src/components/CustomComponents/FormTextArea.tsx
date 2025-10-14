@@ -79,13 +79,13 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
     
     const iconPositionClass = getIconPositionClass(iconPosition);
     return (
-            <Form.Group controlId={id}>
+            <Form.Group controlId={id} className={`input-textarea ${icon ? 'with-icon' : ''} `}>
                 {label && (
                     <Form.Label className="custom-form-control-label">
                         {t(label)} {required && <span className="required-icon">*</span>}
                     </Form.Label>
                 )}
-                <InputGroup className="custom-form-input-group">
+                <InputGroup className="field">
                     <Form.Control
                         as="textarea"
                         ref={combinedRef}
@@ -100,8 +100,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         data-testid={dataTestId}
                         aria-label={ariaLabel}
                         required={required}
-                        className={`custom-textarea form-control-input ${icon ? 'with-icon' : ''} ${className}`}
-                        style={{ maxHeight: `${maxRows * 1.5}em` }}
+                        // className={` ${icon ? 'with-icon' : ''} `} //custom-textarea form-control-input ${className}
                         onKeyDown={handleKeyDown}
                         minLength={minLength}
                         maxLength={maxLength}
@@ -110,15 +109,15 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>((
                         <InputGroup.Text
                             id="basic-addon1"
                             onClick={onIconClick}
-                            className={`icon-wrapper  ${iconPositionClass} ${disabled ? 'disabled-icon' : ''}`}
+                            className={` ${disabled ? 'disabled' : ''}`}
                         >
                             {icon}
                         </InputGroup.Text>
                     )}
                     {isInvalid && (
-                        <Form.Control.Feedback className="custom-feedback" type="invalid">
+                        <Form.Label className="error-text">
                             {t(feedback)}
-                        </Form.Control.Feedback>
+                        </Form.Label>
                     )}
                 </InputGroup>
             </Form.Group>

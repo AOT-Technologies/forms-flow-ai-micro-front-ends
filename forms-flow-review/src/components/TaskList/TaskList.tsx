@@ -17,7 +17,6 @@ import {
   fetchBPMTaskCount,
   fetchFilterList,
   fetchServiceTaskList,
-  fetchUserList,
   updateDefaultFilter,
 } from "../../api/services/filterServices";
 import { batch, useDispatch, useSelector } from "react-redux";
@@ -25,6 +24,9 @@ import {
   AddIcon,
   DateRangePicker,
   FilterSortActions,
+  ConnectIcon,
+  CheckboxCheckedIcon,
+  CheckboxUncheckedIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskListDropdownItems from "./TaskFilterDropdown";
@@ -32,8 +34,8 @@ import { RootState } from "../../reducers";
 import TaskListTable from "./TasklistTable";
 import { HelperServices } from "@formsflow/service";
 import AttributeFilterDropdown from "./AttributeFilterDropdown";
-import { createReqPayload } from "../../helper/taskHelper";
-import { optionSortBy } from "../../helper/tableHelper";
+import { createReqPayload ,sortableKeysSet} from "../../helper/taskHelper";
+import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
 
@@ -52,14 +54,21 @@ const TaskList = () => {
     lastRequestedPayload: lastReqPayload,
     selectedAttributeFilter,
     isAssigned,
+    isUnsavedFilter,
   } = useSelector((state: RootState) => state.task);  
 
   const { viewTasks,viewFilters } = userRoles()
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
+  const taskvariables = selectedFilter?.variables ?? [];
  
   //inital data loading
   const initialDataLoading = async () => {
+    // If we have an unsaved filter, do not reset filter state
+    if (isUnsavedFilter) {
+      dispatch(setBPMFilterLoader(false));
+      return;
+    }
     dispatch(setBPMFilterLoader(true));
     if(!viewFilters && viewTasks){
       dispatch(setSelectedFilter(allTasksPayload));
@@ -67,29 +76,27 @@ const TaskList = () => {
     }
     else{
       const filterResponse = await fetchFilterList();
-    const filters = filterResponse.data.filters;
-    const updatedfilters = filters.filter((filter) => !filter.hide);
-    const defaultFilterId = filterResponse.data.defaultFilter;
-    if (filters?.length) {
-
-  batch(() => {
-    dispatch(setBPMFilterList(filters));
-    defaultFilterId && dispatch(setDefaultFilter(defaultFilterId));
-    dispatch(fetchBPMTaskCount(updatedfilters));
-  });
-
-      // If no default filter, will select All Tasks filter if its exists, else will select first filter
-  if (defaultFilterId !== filters.find((f) => f.id === defaultFilterId)?.id) {
-    const newFilter = filters.find(f => f.name === "All Tasks") || filters[0];
-    dispatch(setDefaultFilter(newFilter.id));
-    updateDefaultFilter(newFilter.id);
-  }
-}   
-// if no filter is present, the data will be shown as All Tasks response
-else {
-  dispatch(setSelectedFilter(allTasksPayload));
-  dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
-}
+      const filters = filterResponse.data.filters;
+      const updatedfilters = filters.filter((filter) => !filter.hide);
+      const defaultFilterId = filterResponse.data.defaultFilter;
+      if (filters?.length) {
+        batch(() => {
+          dispatch(setBPMFilterList(filters));
+          defaultFilterId && dispatch(setDefaultFilter(defaultFilterId));
+          dispatch(fetchBPMTaskCount(updatedfilters));
+        });
+        // If no default filter, will select All Tasks filter if its exists, else will select first filter
+        if (defaultFilterId !== filters.find((f) => f.id === defaultFilterId)?.id) {
+          const newFilter = filters.find(f => f.name === "All Tasks") || filters[0];
+          dispatch(setDefaultFilter(newFilter.id));
+          updateDefaultFilter(newFilter.id);
+        }
+      }   
+      // if no filter is present, the data will be shown as All Tasks response
+      else {
+        dispatch(setSelectedFilter(allTasksPayload));
+        dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
+      }
     }
     dispatch(setBPMFilterLoader(false));
   };
@@ -106,7 +113,7 @@ else {
   sortData = null,
   newPage = null,
   newLimit = null,
-  newDateRange = null,
+  newDateRange = null
 } = {}) => {
   /**
    * We need to create payload for the task list
@@ -114,9 +121,15 @@ else {
    * If selectedFilter is not null, create payload using selectedFilter
    * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
    */
-
   let payload = null;
-
+  const enabledSort = new Set ([
+    "applicationId",
+    "submitterName",
+    "formName"
+  ])
+  // check if selectedType belongs to sortableList
+  const currentVariable = taskvariables.find((item)=> item.key === filterListSortParams?.activeKey);
+  const isFormVariable =currentVariable?.isFormVariable || enabledSort.has(filterListSortParams?.activeKey) ;
   if (filterCached) {
     payload = lastReqPayload;
     dispatch(resetTaskListParams({ filterCached: false }));
@@ -126,7 +139,8 @@ else {
       selectedAttributeFilter,
       sortData || filterListSortParams,
       newDateRange || dateRange,
-      isAssigned
+      isAssigned,
+      isFormVariable
     );  
   }
 
@@ -149,19 +163,30 @@ else {
   };
 
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
-    // if need to reset the sort orders use this function
-    const resetSortOrders = HelperServices.getResetSortOrders(
-      optionSortBy.options
-    );
+    // reset the sort orders using helper function
+    const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
+  
+    // get the variable info first
+    const selectedVar = taskvariables.find(item => item.key === selectedSortOption);
+    const selectedType = selectedVar?.type;
+  
+    // check if it's a form variable
+    const isFormVariable = sortableKeysSet.has(selectedType);
+  
     const updatedData = {
       ...resetSortOrders,
       activeKey: selectedSortOption,
-      [selectedSortOption]: { sortOrder: selectedSortOrder },
+      [selectedSortOption]: {
+        sortOrder: selectedSortOrder,
+        ...(isFormVariable && { type: selectedType })
+      },
     };
+  
     dispatch(setFilterListSortParams(updatedData));
     setShowSortModal(false);
-    fetchTaskListData({ sortData: updatedData });
+    fetchTaskListData({ sortData: updatedData  });
   };
+  
 
   const handleDateRangeChange = (newDateRange) => {
     /**
@@ -185,9 +210,7 @@ else {
     // no neeed to call this on if filterCached is true
     if (filterCached) return;
     initialDataLoading();
-    dispatch(fetchUserList());
-  }, []);
-
+  }, [isUnsavedFilter]);
   /* this useEffect will work each time default filter changes*/
   useEffect(() => {
     // no neeed to call this on if filterCached is true
@@ -196,7 +219,8 @@ else {
       const currentFilter = filters.find(
         (filter) => filter.id === defaultFilterId
       );
-      if (!currentFilter) return;
+
+      if (!currentFilter || defaultFilterId === selectedFilter?.id) return;
       batch(() => {
         dispatch(setSelectedFilter(currentFilter));
         dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
@@ -206,72 +230,72 @@ else {
         dispatch(fetchServiceTaskList(currentFilter, null, 1, 25));
       });
     }
-  }, [defaultFilterId]);
+  }, [defaultFilterId, selectedFilter]);
 
   useEffect(() => {
     fetchTaskListData();
   }, [isAssigned, activePage, limit]);
+
+  const optionsForSortModal = () => {
+    const existingValues = new Set(optionSortBy.keys);  
+    const dynamicColumns = buildDynamicColumns(taskvariables);
+  
+    const filteredDynamicColumns = dynamicColumns
+      .filter(column =>
+      !existingValues.has(column.sortKey) && // filter out duplicates form sorting list 
+      sortableKeysSet.has(column.type))  // sorting enabled only for sortablelist items and optionSortBy
+      .map(column => ({
+        value: column.sortKey,
+        label: column.name,
+      }));
+  
+    return [...optionSortBy.options, ...filteredDynamicColumns];
+  };
+  
   return (
     <>
-      <div
-        className="container-fluid py-4"
-        data-testid="resizable-table-container"
-        aria-label={t("Resizable tasks table container")}
-      >
-        <div className="row w-100 mb-3 g-2">
+        <div className="table-bar">
           {/* Left Filters - Stack on small, inline on md+ */}
-          { viewFilters &&
-          <div className="col-12 col-md d-flex flex-wrap gap-3 align-items-center">
-            <div className="mb-2">
-              <TaskListDropdownItems />
-            </div>
+          { viewFilters && (
+            <>
+           <div className="filters">
+            <TaskListDropdownItems />
 
-            <span className="text-muted">
-              <AddIcon size="8" />
-            </span>
-            <div className="mb-2">
-              <AttributeFilterDropdown />
-            </div>
-            <span className="text-muted">
-              <AddIcon size="8" />
-            </span>
-            <div className="mb-2">
-              <DateRangePicker
-                value={dateRange}
-                onChange={handleDateRangeChange}
-                placeholder={t("Filter Created Date")}
-                dataTestId="date-range-picker"
-                ariaLabel={t("Select date range for filtering")}
-                startDateAriaLabel={t("Start date")}
-                endDateAriaLabel={t("End date")}
-              />
-            </div>
+            <ConnectIcon />
 
-            <span className="text-muted">
-              <AddIcon size="8" />
-            </span>
-            <div className="mb-2">
-              <button
-                className={`custom-checkbox-container button-as-div ${
-                  isAssigned ? "checked" : ""
-                }`}
+            <AttributeFilterDropdown />
+
+            <ConnectIcon />
+
+            <DateRangePicker
+              value={dateRange}
+              onChange={handleDateRangeChange}
+              placeholder={t("Filter Created Date")}
+              dataTestId="date-range-picker"
+              ariaLabel={t("Select date range for filtering")}
+              startDateAriaLabel={t("Start date")}
+              endDateAriaLabel={t("End date")}
+            />
+
+            <ConnectIcon />
+
+            {/* should probably be created as a separate component "InputFilterSingle" */}
+            <label htmlFor="assigned-to-me" className="input-filter single">
+              <input
+                id="assigned-to-me"
+                type="checkbox"
+                checked={isAssigned}
                 onClick={handleCheckBoxChange}
-              >
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  checked={isAssigned}
-                  onChange={handleCheckBoxChange}
-                  data-testid="assign-to-me-checkbox"
+                data-testid="assign-to-me-checkbox"
                 />
-                <span className="custom-checkbox-label">
-                  {t("Assigned to me")}
-                </span>
-              </button>
-            </div>
+              <span>{t("Assigned to me")}</span>
+              {isAssigned ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
+            </label>
+           </div>
 
-            {/* Right actions - Stack below on small */}
-            <div className="col-12 col-md-auto d-flex justify-content-end button-align">
+              
+
+            <div className="actions">
               <FilterSortActions
                 showSortModal={showSortModal}
                 handleFilterIconClick={toggleFilterModal}
@@ -283,7 +307,7 @@ else {
                   filterListSortParams?.[filterListSortParams?.activeKey]
                     ?.sortOrder ?? "asc"
                 }
-                optionSortBy={optionSortBy.options}
+                optionSortBy={optionsForSortModal()}
                 filterDataTestId="task-list-filter"
                 filterAriaLabel={t("Filter the task list")}
                 refreshDataTestId="task-list-refresh"
@@ -299,12 +323,10 @@ else {
                 cancelLabel={t("Cancel")}
               />
             </div>
-
-          </div>}
-            
+            </>
+          )}
         </div>
          {viewTasks && <TaskListTable />}
-      </div>
     </>
   );
 };

@@ -50,11 +50,12 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
     [permissions]
     );
 
-  const formatCategoryLabel = (category: string): string => {
-    return `Access to ${category.charAt(0).toUpperCase()}${category
-      .slice(1)
-      .toLowerCase()}`;
-  };
+const formatCategoryLabel = (category: string): string => {
+  if (category.toLowerCase() === "admin") {
+    return "Access to Manage";
+  }
+  return `Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`;
+};
 
   const sortPermissionsByOrder = (perms: Permission[]): Permission[] => {
     return [...perms].sort((a, b) => a.order - b.order);
@@ -112,7 +113,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
 
   return (
     <div
-      className="permission-tree custom-scroll"
+      className="permission-tree"
       data-testid="permission-tree"
       aria-label="Permission Tree"
     >

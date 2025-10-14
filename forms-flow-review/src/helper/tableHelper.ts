@@ -8,8 +8,10 @@ export const buildDynamicColumns = (taskvariables) => {
           name: variable.label,
           width:  variable.width ?? 200,
           sortKey: variable.name,
+          isFormVariable:variable.isFormVariable,
           resizable: variable.name,
-          sortOrder: variable.sortOrder
+          sortOrder: variable.sortOrder,
+          type: variable.type ?? null 
         });
       }
       return acc;
@@ -56,4 +58,5 @@ export const buildDateRangePayload = (dateRange) => {
     return this.options.map(option => option.value);
   }, 
 };
+
 

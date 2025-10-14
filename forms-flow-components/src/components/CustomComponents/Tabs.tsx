@@ -7,6 +7,7 @@ interface TabItem {
   eventKey: string;
   title: string;
   content: string | React.ReactNode;
+  className?: string;
 }
 
 interface CustomTabsProps {
@@ -41,13 +42,19 @@ export const CustomTabs: React.FC<CustomTabsProps> = ({
     <Tabs
       id={id}
       activeKey={key}
-      className={`custom-tabs ${className}`}
+      className={className}
       data-testid={dataTestId}
       aria-label={ariaLabel}
       onSelect={handleChange}
     >
       {tabs.map((tab, index) => (
-        <Tab key={index} eventKey={tab.eventKey} title={tab.title} data-testid={`${dataTestId}-tab-${tab.eventKey}`} >
+        <Tab
+          className={tab.className}
+          key={`${tab.eventKey}-${index}`}
+          eventKey={tab.eventKey}
+          title={tab.title}
+          data-testid={`${dataTestId}-tab-${tab.eventKey}`}
+        >
           {tab.content}
         </Tab>
       ))}
