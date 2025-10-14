@@ -13,22 +13,22 @@ $multiselect-label-color: var(--gray-dark);
 $multiselect-disabled-color: var(--gray-x-light);
 $multiselect-gap: var(--spacer-100);
 $multiselect-chip-padding: 11px 18px 11px 16px;
-$multiselect-option-padding: var(--spacer-050);
-$multiselect-margin-top: var(--spacer-050);
+$multiselect-option-padding: 8px;
+$multiselect-margin-top: 8px;
 $multiselect-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 $multiselect-z-index: 9999;
 
-// Primary variant colors - Using theme tokens
-$multiselect-primary-border: var(--primary-dark);
+// Primary variant colors
+$multiselect-primary-border: rgba(184, 171, 255, 0.5); // #b8abff80
 $multiselect-primary-border-hover: var(--primary-dark);
-$multiselect-primary-border-disabled: var(--gray-medium);
+$multiselect-primary-border-disabled: rgba(184, 171, 255, 0.25); //#b8abff40
 
-// Secondary variant colors - Using theme tokens
+// Secondary variant colors
 $multiselect-secondary-border-hover: var(--gray-dark);
-$multiselect-secondary-hover-border: var(--gray-medium-dark);
+$multiselect-secondary-hover-border: rgba(107, 114, 128, 0.3);
 
-// Typography - Using theme tokens
-$font-size-15: var(--font-size-m);
+// Typography
+$font-size-15: var(--font-size-15);
 $font-weight-regular: var(--font-weight-regular);
 $font-weight-medium: var(--font-weight-medium);
 

@@ -1,38 +1,46 @@
-// Checkbox Variables - Using consistent rem/em units for better scalability
-$checkbox-size: 33px;            // 20px at 16px base
-$checkbox-check-size: 0.75rem;       // 12px at 16px base
-$checkbox-border-width: 0.125rem;    // visual border thickness (2px)
-$checkbox-gap-inline: 2rem;          // space between inline checkboxes
+// Checkbox Variables
+$checkbox-size: 33px;
+$checkbox-size-small: 16px;
+$checkbox-border-width: 0.1875rem;
+$checkbox-border-width-small: 0.0625rem;
+$checkbox-border-radius: 0.25rem;
+$checkbox-border-radius-small: 0.1875rem;
 
-// Transition variables
+// Checkmark dimensions
+$checkmark-width: 9px;
+$checkmark-height: 16px;
+$checkmark-border-width: 2.25px;
+$checkmark-width-small: 4px;
+$checkmark-height-small: 8px;
+$checkmark-border-width-small: 1.5px;
+
+// Checkmark transform
+$checkmark-transform: translate(-50%, -70%) rotate(45deg) scale(1);
+
+// Transition
 $checkbox-transition-duration: 0.15s;
 $checkbox-transition-timing: ease-in-out;
 
-// Color Variables
+// Colors
 $color-white: #ffffff;
 $color-light-gray: #fcfcfc;
 $color-medium-gray: #B7B7B8;
 $color-dark-gray: #4a4a4a;
 $color-darker-gray: #525254;
 $color-disabled-gray: #c5c5c5;
-
 $color-primary-selected: #8969f2;
 $color-primary: rgba(184, 171, 255, 1);
 $color-primary-light: #b8abff;
-$color-primary-lighter: #bcb6f5;
-$color-primary-border: rgba(184, 171, 255, 0.5);
 
-// Checkbox Mixins
+// Mixins
 @mixin checkbox-input-base {
-  border-width: 3px!important;
-  border-radius: 5px!important;
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   width: $checkbox-size;
   height: $checkbox-size;
-  border: $checkbox-border-width solid $color-medium-gray;
-  border-radius: 0.25rem; // 4px - slightly rounded corners for checkboxes
+  border: $checkbox-border-width solid $color-medium-gray !important;
+  border-radius: $checkbox-border-radius;
   background: $color-white;
   position: relative;
   cursor: pointer;
@@ -40,33 +48,22 @@ $color-primary-border: rgba(184, 171, 255, 0.5);
     border-color $checkbox-transition-duration $checkbox-transition-timing,
     box-shadow $checkbox-transition-duration $checkbox-transition-timing,
     background-color $checkbox-transition-duration $checkbox-transition-timing;
-
-  // inner checkmark
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    // Center the tick perfectly; slight vertical tweak is handled by balanced width/height
-    transform: translate(-50%, -70%) rotate(45deg) scale(1);
-    width: 9px;
-    height: 16px;
-    border-width: 2.25px !important;
-    border: $checkbox-border-width solid $color-white;
-    border-top: none;
-    border-left: none;
-    opacity: 0;
-    transition:
-      transform $checkbox-transition-duration $checkbox-transition-timing,
-      opacity $checkbox-transition-duration $checkbox-transition-timing,
-      background-color $checkbox-transition-duration $checkbox-transition-timing;
-  }
 }
 
-@mixin checkbox-focus-ring {
-  outline: none;
-  // focus style via border color only (no outer halo)
-  box-shadow: none;
+@mixin checkbox-checkmark {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: $checkmark-transform;
+  width: $checkmark-width;
+  height: $checkmark-height;
+  border-right: $checkmark-border-width solid $color-white;
+  border-bottom: $checkmark-border-width solid $color-white;
+  opacity: 0;
+  transition:
+    transform $checkbox-transition-duration $checkbox-transition-timing,
+    opacity $checkbox-transition-duration $checkbox-transition-timing;
 }
 
 @mixin checkbox-disabled {
@@ -76,75 +73,83 @@ $color-primary-border: rgba(184, 171, 255, 0.5);
 
 // Main Checkbox Component
 .custom-checkbox {
-  // group container spacing
   margin: var(--spacer-050) 0;
 
   &--inline {
     .form-check {
       display: inline-flex;
       align-items: center;
-      margin-right: $checkbox-gap-inline;
+      margin-right: 2rem;
     }
   }
 
   .form-check {
-    padding-left: 0; // we handle spacing on the label
+    padding-left: 0;
 
     .form-check-label {
       margin-left: var(--spacer-050);
-      color: $color-dark-gray; // align with palette used in _button.scss
+      color: $color-dark-gray;
+      cursor: pointer;
     }
   }
 
-  // Base checkbox appearance and states
-  // Increase specificity inside our v8-form-check wrapper to win over global form styles
-  .v8-form-check.form-check .form-check-input[type='checkbox'],
-  .v8-form-check .form-check-input[type='checkbox'],
-  .form-check .form-check-input[type='checkbox'] {
+  .form-check:not(.form-switch) .form-check-label,
+  .checkbox-container .form-check-label {
+    font-size: var(--font-size-m);
+  }
+
+  &.is-disabled .form-check-label {
+    cursor: not-allowed;
+  }
+
+  // Base checkbox input styles
+  %checkbox-input {
     @include checkbox-input-base;
-    background-image: none; // override bootstrap default checkmark
-    box-shadow: none; // remove bootstrap default focus shadow (we add our own)
-    accent-color: initial; // ensure browser accent color does not override
-    border-color: $color-primary-light; // default border
+    background-image: none;
+    box-shadow: none;
+    accent-color: initial;
+    border-color: $color-primary-light;
 
-    // hover / tab state (deselect / hover)
-    &:hover { border-color: $color-primary-selected; }
+    &::after {
+      @include checkbox-checkmark;
+    }
 
-    // focused state ring
-    &:focus-visible { @include checkbox-focus-ring; border-color: $color-primary-selected; }
+    &:hover {
+      border-color: $color-primary-selected;
+    }
 
-    // keyboard tab-visible state on parent wrapper
     &:focus {
-      // keep minimal native focus but avoid extra browser shadows
       outline: none;
     }
 
-    // selected state
+    &:focus-visible {
+      border-color: $color-primary-selected;
+    }
+
     &:checked {
       background-color: $color-white;
-      border-color: $color-primary; // border matches theme
+      border-color: $color-primary;
+      
       &::after {
         opacity: 1;
-        border-color: $color-primary; // primary-colored tick        
-        transform: translate(-50%, -70%) rotate(45deg) scale(1);
-        width: 9px;
-        height: 16px;
-        border-width: 2.25px !important;
+        border-color: $color-primary;
       }
     }
 
-    // ensure keyboard focus wins over selected border color
     &:checked:focus-visible {
       border-color: $color-primary-selected;
       background-color: $color-primary-selected;
-      &::after { border-color: $color-white; }
+      
+      &::after {
+        border-color: $color-white;
+      }
     }
 
-    // disabled states
     &:disabled {
       @include checkbox-disabled;
       border-color: $color-light-gray;
       background-color: $color-light-gray;
+      
       &::after {
         border-color: $color-darker-gray;
         opacity: 0.5;
@@ -157,24 +162,82 @@ $color-primary-border: rgba(184, 171, 255, 0.5);
     }
   }
 
-  // Variant modifiers
-  // Variant modifiers
+  .v8-form-check.form-check .form-check-input[type='checkbox'],
+  .v8-form-check .form-check-input[type='checkbox'],
+  .form-check .form-check-input[type='checkbox'] {
+    @extend %checkbox-input;
+    margin-top: 0 !important;
+  }
+
+  // Variant: Primary (default styles already applied above)
   &.custom-checkbox--primary {
     .form-check .form-check-input[type='checkbox'] {
-      border-color: $color-primary!important;
-      &:hover { border-color: $color-primary-selected!important; &::after { border-color: $color-primary-selected!important; } }
-      &:focus-visible { border-color: $color-primary-selected!important; &::after { border-color: $color-primary-selected!important; } }
-      &:disabled { border-color: $color-primary-disabled!important; &::after { border-color: $color-primary-disabled!important; } }
+      border-color: $color-primary !important;
+      
+      &:hover {
+        border-color: $color-primary-selected !important;
+      }
+      
+      &:focus-visible {
+        border-color: $color-primary-selected !important;
+      }
     }
   }
 
+  // Variant: Secondary
   &.custom-checkbox--secondary {
     .form-check .form-check-input[type='checkbox'] {
-      border-color: $color-medium-gray!important;
-      &:checked { border-color: $color-medium-gray!important; &::after { border-color: $color-darker-gray!important; } }
-      &:hover { border-color: $color-darker-gray!important; &::after { border-color: $color-darker-gray!important; } }
-      &:focus-visible { border-color: $color-darker-gray!important; &::after { border-color: $color-darker-gray!important; } }
-      &:disabled { border-color: $color-disabled-gray!important; background-color: $color-light-gray!important; &::after { border-color: $color-disabled-gray!important; } }
+      border-color: $color-medium-gray !important;
+      
+      &:checked {
+        border-color: $color-medium-gray !important;
+        
+        &::after {
+          border-color: $color-darker-gray !important;
+        }
+      }
+      
+      &:hover {
+        border-color: $color-darker-gray !important;
+      }
+      
+      &:focus-visible {
+        border-color: $color-darker-gray !important;
+      }
+      
+      &:disabled {
+        border-color: $color-disabled-gray !important;
+        background-color: $color-light-gray !important;
+        
+        &::after {
+          border-color: $color-disabled-gray !important;
+        }
+      }
+    }
+  }
+
+  // Variant: Small size
+  &.custom-checkbox--small {
+    .form-check .form-check-label {
+      margin-left: calc(var(--spacer-050) / 2);
+      font-size: 0.875rem;
+    }
+
+    .v8-form-check.form-check .form-check-input[type='checkbox'],
+    .v8-form-check .form-check-input[type='checkbox'],
+    .form-check .form-check-input[type='checkbox'] {
+      width: $checkbox-size-small;
+      height: $checkbox-size-small;
+      border-width: $checkbox-border-width-small;
+      border-radius: $checkbox-border-radius-small;
+
+      &::after {
+        width: $checkmark-width-small;
+        height: $checkmark-height-small;
+        border-top: none;
+        border-left: none;
+        border-width: $checkmark-border-width-small !important;
+      }
     }
   }
 }

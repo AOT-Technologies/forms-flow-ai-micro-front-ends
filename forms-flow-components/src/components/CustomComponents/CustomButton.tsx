@@ -7,10 +7,12 @@ import { useTranslation } from "react-i18next";
  * Usage:
  * <CustomButton variant="primary" label="submit" onClick={...} loading={...} icon={<Icon />} />
  * <CustomButton variant="secondary" label="cancel" onClick={...} />
+ * <CustomButton variant="error" label="delete" onClick={...} />
+ * <CustomButton variant="warning" label="proceed with caution" onClick={...} />
  * <CustomButton icon={<Icon />} iconOnly ariaLabel="Search" />
  */
 
-type ButtonVariant = "primary" | "secondary";
+type ButtonVariant = "primary" | "secondary" | "error" | "warning";
 type ButtonSize = "small" | "medium" | "large"; // Size prop not implemented correctly.CSS missing for this.
 type ButtonType = "button" | "submit" | "reset";
 
