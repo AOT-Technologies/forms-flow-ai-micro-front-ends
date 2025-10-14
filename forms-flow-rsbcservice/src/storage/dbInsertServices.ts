@@ -126,6 +126,7 @@ class OfflineSaveService {
           await rsbcDb.chargeTypes.clear();
           await rsbcDb.chargeTypes.bulkPut(data);
           console.log("Charge types data saved to IndexedDB.");
+          break;
         default:
           console.log(`No matching table found for resource: ${resourceName}`);
       }
