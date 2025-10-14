@@ -1,4 +1,8 @@
 @import "_mixins.scss";
+$font-size-m: var(--font-size-m);
+$font-weight-medium: var(--font-weight-medium);
+$gray-dark: var(--gray-dark);
+$font-size-xl: var(--font-size-xl);
 
 .form-edit-settings {
     // @include vertical-padding(); // alreafy body-section had padding of same 
