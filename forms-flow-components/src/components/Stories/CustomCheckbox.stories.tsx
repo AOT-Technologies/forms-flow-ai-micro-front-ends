@@ -22,6 +22,11 @@ const meta: Meta<typeof CustomCheckbox> = {
       options: ['primary', 'secondary'],
       description: 'Visual style variant',
     },
+    size: {
+      control: 'select',
+      options: ['default', 'small'],
+      description: 'Size variant: default (33px) or small (16px)',
+    },
     items: {
       control: 'object',
       description: 'Array of checkbox options { label, value, disabled?, onClick? }',
@@ -110,6 +115,48 @@ const ControlledTemplate = (args: any) => {
   );
 };
 
+export const SingleCheckbox: Story = {
+  args: {
+    name: 'single-checkbox',
+    legend: 'Accept terms',
+    items: [{ label: 'I agree to the terms and conditions', value: 'agree' }],
+    selectedValues: [],
+    variant: 'primary',
+    dataTestId: 'checkbox-single',
+  },
+  render: ControlledTemplate,
+  parameters: {
+    docs: {
+      description: {
+        story: 'A single checkbox for binary choices like accepting terms or enabling features.',
+      },
+    },
+  },
+};
+
+export const TwoIndividualCheckboxes: Story = {
+  args: {
+    name: 'two-checkboxes',
+    legend: 'Newsletter preferences',
+    items: [
+      { label: 'Send me weekly updates', value: 'weekly' },
+      { label: 'Send me promotional offers', value: 'promo' },
+    ],
+    selectedValues: ['weekly'],
+    variant: 'primary',
+    inline: false,
+    dataTestId: 'checkbox-two',
+  },
+  render: ControlledTemplate,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Two independent checkboxes for related but separate options.',
+      },
+    },
+  },
+};
+
 export const Basic: Story = {
   args: {
     name: 'demo-checkbox',
@@ -190,7 +237,6 @@ export const WithoutLegendWithAria: Story = {
   args: {
     name: 'demo-checkbox-aria',
     ariaLabel: 'Options',
-    legend: 'Options',
     items: sampleItems,
     selectedValues: ['option1'],
     dataTestId: 'checkbox-aria',
@@ -271,6 +317,91 @@ export const ManyOptions: Story = {
   render: ControlledTemplate,
 };
 
+export const SmallSize: Story = {
+  args: {
+    name: 'demo-checkbox-small',
+    legend: 'Small size (16px)',
+    items: sampleItems,
+    selectedValues: ['option1', 'option2'],
+    size: 'small',
+    variant: 'primary',
+    dataTestId: 'checkbox-small',
+  },
+  render: ControlledTemplate,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Compact 16px checkbox variant for dense UIs or inline forms.',
+      },
+    },
+  },
+};
+
+export const SmallInline: Story = {
+  args: {
+    name: 'demo-checkbox-small-inline',
+    legend: 'Small inline checkboxes',
+    items: sampleItems,
+    selectedValues: ['option2'],
+    size: 'small',
+    inline: true,
+    variant: 'primary',
+    dataTestId: 'checkbox-small-inline',
+  },
+  render: ControlledTemplate,
+};
+
+export const SmallSecondary: Story = {
+  args: {
+    name: 'demo-checkbox-small-secondary',
+    legend: 'Small secondary variant',
+    items: sampleItems,
+    selectedValues: ['option1', 'option3'],
+    size: 'small',
+    variant: 'secondary',
+    dataTestId: 'checkbox-small-secondary',
+  },
+  render: ControlledTemplate,
+};
+
+export const SizeComparison: Story = {
+  args: {},
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '40px', width: '500px' }}>
+      <div>
+        <h4 style={{ marginBottom: '10px', fontSize: '14px', fontWeight: 600 }}>Default Size (33px)</h4>
+        <CustomCheckbox
+          name="comparison-default"
+          legend="Default checkbox group"
+          items={sampleItems}
+          selectedValues={['option1', 'option2']}
+          inline={true}
+          dataTestId="comparison-default"
+        />
+      </div>
+      <div>
+        <h4 style={{ marginBottom: '10px', fontSize: '14px', fontWeight: 600 }}>Small Size (16px)</h4>
+        <CustomCheckbox
+          name="comparison-small"
+          legend="Small checkbox group"
+          items={sampleItems}
+          selectedValues={['option1', 'option2']}
+          size="small"
+          inline={true}
+          dataTestId="comparison-small"
+        />
+      </div>
+    </div>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Side-by-side comparison of default (33px) and small (16px) size variants.',
+      },
+    },
+  },
+};
+
 export const Playground: Story = {
   args: {
     name: 'demo-checkbox-playground',
@@ -281,6 +412,7 @@ export const Playground: Story = {
     disabled: false,
     required: false,
     variant: 'primary',
+    size: 'default',
     dataTestId: 'checkbox-playground',
     onChange: action('checkbox-changed'),
   },
@@ -288,7 +420,7 @@ export const Playground: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Use controls to adjust props and observe behavior. onChange logs the selected values array.',
+        story: 'Use controls to adjust props and observe behavior. Toggle size between default (33px) and small (16px). onChange logs the selected values array.',
       },
     },
   },

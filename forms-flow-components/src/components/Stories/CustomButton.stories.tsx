@@ -17,7 +17,7 @@ const meta: Meta<typeof V8CustomButton> = {
   argTypes: {
     variant: { 
       control: 'select', 
-      options: ['primary', 'secondary'],
+      options: ['primary', 'secondary', 'error', 'warning'],
       description: 'Button visual style variant'
     },
     size: { 
@@ -94,13 +94,43 @@ export const Primary: Story = {
   },
 };
 
-// export const Secondary: Story = {
-//   args: {
-//     label: 'Secondary Button',
-//     variant: 'secondary',
-//     onClick: action('secondary-clicked'),
-//   },
-// };
+export const Secondary: Story = {
+  args: {
+    label: 'Secondary Button',
+    variant: 'secondary',
+    onClick: action('secondary-clicked'),
+  },
+};
+
+export const ErrorState: Story = {
+  args: {
+    label: 'Delete',
+    variant: 'error',
+    onClick: action('error-clicked'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Error variant for destructive actions like delete, remove, or cancel operations.',
+      },
+    },
+  },
+};
+
+export const Warning: Story = {
+  args: {
+    label: 'Proceed with Caution',
+    variant: 'warning',
+    onClick: action('warning-clicked'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Warning variant for actions that require user attention or caution before proceeding.',
+      },
+    },
+  },
+};
 
 export const Loading: Story = {
   args: {

@@ -83,6 +83,7 @@ export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
           ariaLabel={`${ariaLabel}-dropdown`}
           dataTestId={`${dataTestId}-dropdown`}
           id={id}
+          variant={variant}
         />
       </div>
             
