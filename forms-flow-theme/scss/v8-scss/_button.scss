@@ -27,6 +27,8 @@ $spinner-border-width: 0.125em;      // Slightly thinner for better visual balan
 // Shadow variables (using rem for consistent scaling)
 $button-shadow-primary: 0 0.125rem 0.5rem rgba(137, 105, 242, 0.15);
 $button-shadow-secondary: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+$button-shadow-error: 0 0.125rem 0.5rem rgba(255, 87, 34, 0.1);
+$button-shadow-warning: 0 0.125rem 0.5rem rgba(255, 152, 0, 0.1);
 
 // Color Variables - Using theme tokens
 $color-white: var(--white-300);
@@ -43,6 +45,18 @@ $color-primary-lighter: var(--primary-dark);
 $color-primary-border: var(--primary-dark);
 $color-primary-selected: var(--primary);
 $color-primary-disabled: var(--gray-medium);
+
+$color-error: var(--orange-100);
+$color-error-light: var(--orange-100);
+$color-error-border: var(--orange-100);
+$color-error-selected: var(--orange-100);
+$color-error-disabled: var(--gray-medium);
+
+$color-warning: var(--red-100);
+$color-warning-light: var(--red-100);
+$color-warning-border: var(--red-100);
+$color-warning-selected: var(--red-100);
+$color-warning-disabled: var(--gray-medium);
 
 // Button Mixins
 @mixin button-base {
@@ -202,6 +216,74 @@ $color-primary-disabled: var(--gray-medium);
 
     .button-spinner {
       @include spinner($color-disabled-gray, $color-darker-gray);
+    }
+  }
+
+  // Error button variant - for destructive actions
+  &.custom-button--error {
+    background-color: $color-light-gray;
+    border-color: $color-error-border;
+    color: $color-dark-gray;
+
+    &:hover:not(.is-disabled):not(.is-loading) {
+      border-color: $color-error-light;
+      background-color: $color-white;
+      box-shadow: $button-shadow-error;
+      color: $color-dark-gray;
+    }
+
+    &:focus-visible {
+      border-color: $color-error;
+    }
+
+    &.is-selected {
+      border-color: $color-error-light;
+      background-color: $color-error-selected;
+      color: $color-white;
+    }
+
+    &.is-disabled {
+      background-color: $color-light-gray;
+      border-color: $color-error-disabled;
+      color: $color-medium-gray;
+    }
+
+    .button-spinner {
+      @include spinner($color-error-light, $color-error);
+    }
+  }
+
+  // Warning button variant - for caution/warning actions
+  &.custom-button--warning {
+    background-color: $color-light-gray;
+    border-color: $color-warning-border;
+    color: $color-dark-gray;
+
+    &:hover:not(.is-disabled):not(.is-loading) {
+      border-color: $color-warning-light;
+      background-color: $color-white;
+      box-shadow: $button-shadow-warning;
+      color: $color-dark-gray;
+    }
+
+    &:focus-visible {
+      border-color: $color-warning;
+    }
+
+    &.is-selected {
+      border-color: $color-warning-light;
+      background-color: $color-warning-selected;
+      color: $color-white;
+    }
+
+    &.is-disabled {
+      background-color: $color-light-gray;
+      border-color: $color-warning-disabled;
+      color: $color-medium-gray;
+    }
+
+    .button-spinner {
+      @include spinner($color-warning-light, $color-warning);
     }
   }
 

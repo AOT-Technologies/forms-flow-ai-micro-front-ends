@@ -13,6 +13,11 @@ export interface OptionType {
 }
 
 /**
+ * Dropdown variant type
+ */
+export type DropdownVariant = "primary" | "secondary";
+
+/**
  * Props for `SelectDropdown` component.
  * Optimized, accessible dropdown component with search functionality.
  */
@@ -30,10 +35,14 @@ export interface SelectDropdownProps
   defaultValue?: string | number;
   /** Whether to render as searchable input field */
   searchDropdown?: boolean;
+  /** HTML id attribute for the dropdown */
+  id?: string;
   /** Test ID for automated testing */
   dataTestId?: string;
   /** Accessible label for screen readers */
   ariaLabel?: string;
+  /** Visual variant of the dropdown ('primary' or 'secondary') */
+  variant?: DropdownVariant;
 }
 
 
@@ -66,9 +75,11 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       disabled = false,
       defaultValue,
       searchDropdown = false,
+      id = "",
       dataTestId = "",
       ariaLabel = "",
       className = "",
+      variant = "primary",
       ...restProps
     },
     ref
@@ -193,7 +204,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
 
     // Memoized search dropdown renderer
     const renderSearchDropdown = useCallback(() => (
-      <div className={buildClassNames("custom-selectdropdown", disabled && "disabled")}>
+      <div className={buildClassNames("custom-selectdropdown", `custom-selectdropdown--${variant}`, disabled && "disabled")}>
         <input
           ref={searchInputRef}
           type="text"
@@ -205,21 +216,23 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           disabled={disabled}
           aria-haspopup="listbox"
           aria-label={ariaLabel}
+          id={id}
           data-testid={dataTestId}
         />
         {renderArrowIcon()}
       </div>
-    ), [searchTerm, selectedOption, handleSearchChange, handleInputFocus, handleInputBlur, disabled, ariaLabel, dataTestId, renderArrowIcon]);
+    ), [searchTerm, selectedOption, handleSearchChange, handleInputFocus, handleInputBlur, disabled, ariaLabel, id, dataTestId, renderArrowIcon, variant]);
 
     // Memoized traditional dropdown renderer
     const renderTraditionalDropdown = useCallback(() => (
       <button
-        className={buildClassNames("custom-selectdropdown", disabled && "disabled")}
+        className={buildClassNames("custom-selectdropdown", `custom-selectdropdown--${variant}`, disabled && "disabled")}
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label={ariaLabel}
+        id={id}
         data-testid={dataTestId}
       >
         <span className="dropdown-text">
@@ -227,20 +240,21 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
         </span>
         {renderArrowIcon()}
       </button>
-    ), [disabled, handleToggle, handleKeyDown, isOpen, ariaLabel, dataTestId, selectedOption, defaultValue, renderArrowIcon]);
+    ), [disabled, handleToggle, handleKeyDown, isOpen, ariaLabel, id, dataTestId, selectedOption, defaultValue, renderArrowIcon, variant]);
 
     // Memoized dropdown options renderer
     const renderDropdownOptions = useCallback(() => {
       if (!isOpen || disabled) return null;
 
       return (
-        <div className="custom-dropdown-options">
+        <div className={buildClassNames("custom-dropdown-options", `custom-dropdown-options--${variant}`)}>
           {filteredOptions.length > 0 ? (
             filteredOptions.map((option, index) => (
               <ListGroup.Item
                 key={option.value}
                 className={buildClassNames(
                   "custom-dropdown-item",
+                  `custom-dropdown-item--${variant}`,
                   option.value === selectedValue && "selected"
                 )}
                 onClick={() => handleOptionClick(option.value)}
@@ -258,17 +272,24 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           )}
         </div>
       );
-    }, [isOpen, disabled, filteredOptions, selectedValue, dataTestId, ariaLabel, handleOptionClick]);
+    }, [isOpen, disabled, filteredOptions, selectedValue, dataTestId, ariaLabel, handleOptionClick, variant]);
 
     // Memoized container className
     const containerClassName = useMemo(
-      () => buildClassNames("selectdropdown-container", className),
-      [className]
+      () => buildClassNames("selectdropdown-container", `selectdropdown-container--${variant}`, className),
+      [className, variant]
     );
 
     return (
       <div
-        ref={ref}
+        ref={(node) => {
+          dropdownRef.current = node;
+          if (typeof ref === 'function') {
+            ref(node);
+          } else if (ref) {
+            ref.current = node;
+          }
+        }}
         className={containerClassName}
         data-testid={dataTestId}
         {...restProps}

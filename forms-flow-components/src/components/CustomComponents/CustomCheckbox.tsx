@@ -27,6 +27,8 @@ export interface CustomCheckboxProps
   items: CheckboxOption[];
   /** Visual style variant */
   variant?: "primary" | "secondary";
+  /** Size variant */
+  size?: "default" | "small";
   /** Group name (shared across all checkbox inputs) */
   name?: string;
   /** Test ID prefix for automated testing */
@@ -75,6 +77,7 @@ let __checkboxGroupInstanceCounter = 0;
  *   items={[{label: 'Read', value: 'read'}, {label: 'Write', value: 'write'}]}
  *   selectedValues={values}
  *   onChange={(vals) => setValues(vals)}
+ *   size="small"  // optional: "default" | "small"
  * />
  */
 const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxProps>(
@@ -89,6 +92,7 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
       label,
       inline = true,
       variant = "primary",
+      size = "default",
       disabled = false,
       required = false,
       optionClassName = "",
@@ -132,6 +136,7 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
     const groupClassName = buildClassNames(
       "custom-checkbox",
       `custom-checkbox--${variant}`,
+      size === "small" && "custom-checkbox--small",
       inline && "custom-checkbox--inline",
       disabled && "is-disabled",
       className
