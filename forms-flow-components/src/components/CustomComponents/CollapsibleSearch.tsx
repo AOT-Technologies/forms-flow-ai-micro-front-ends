@@ -231,7 +231,6 @@ const DropdownItems = [
             {dropdownSelection && selectedFormType === "bundle" ? (
               <div className="panel-width">
                 <CustomInfo
-                  heading="Note"
                   content={t("Field selection is not available for bundles at this time.")}
                   dataTestId="bundle-note-section"
                 />

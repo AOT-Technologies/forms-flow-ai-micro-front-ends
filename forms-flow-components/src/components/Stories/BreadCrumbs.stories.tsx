@@ -16,7 +16,7 @@ const meta: Meta<typeof BreadCrumbs> = {
   argTypes: {
     items: {
       control: 'object',
-      description: 'Array of breadcrumb items with label and optional path',
+      description: 'Array of breadcrumb items with label and optional id',
     },
     variant: {
       control: 'select',
@@ -36,19 +36,19 @@ type Story = StoryObj<typeof meta>;
 
 // Sample breadcrumb data for stories
 const sampleItems: BreadcrumbItem[] = [
-  { label: 'Home', path: '/home' },
-  { label: 'Applications', path: '/applications' },
-  { label: 'Form Details', path: '/applications/form-details' },
+  { label: 'Home', id: 'home' },
+  { label: 'Applications', id: 'applications' },
+  { label: 'Form Details', id: 'form-details' },
   { label: 'Current Step' },
 ];
 
 const longItems: BreadcrumbItem[] = [
-  { label: 'Home', path: '/home' },
-  { label: 'Dashboard', path: '/dashboard' },
-  { label: 'Projects', path: '/projects' },
-  { label: 'Project Alpha', path: '/projects/alpha' },
-  { label: 'Submissions', path: '/projects/alpha/submissions' },
-  { label: 'Form 12345', path: '/projects/alpha/submissions/12345' },
+  { label: 'Home', id: 'home' },
+  { label: 'Dashboard', id: 'dashboard' },
+  { label: 'Projects', id: 'projects' },
+  { label: 'Project Alpha', id: 'project-alpha' },
+  { label: 'Submissions', id: 'submissions' },
+  { label: 'Form 12345', id: 'form-12345' },
   { label: 'Review Step' },
 ];
 
