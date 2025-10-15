@@ -68,12 +68,12 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
 }
   .MuiInputBase-root{
     display: flex;
-  width: 4.375rem; // 70px
-  padding: 0.3125rem 0.75rem; // 5px 12px
-  align-items: center;
-  border-radius: 0.25rem; // 4px
-  border: 1px solid $table-border-color;
-  margin: 0 1rem !important; // 0px 16px
+    width: 4.375rem; // 70px
+    padding: 0.3125rem 0.75rem; // 5px 12px
+    align-items: center;
+    border-radius: 0.25rem; // 4px
+    border: 1px solid $table-border-color;
+    margin: 0 1rem !important; // 0px 16px
   }
   .MuiTablePagination-displayedRows{
     margin-top: 0.625rem !important; // 10px
@@ -100,9 +100,9 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   }
   .MuiTablePagination-root{
     display: flex;
-  padding: var(--spacer-050) 0; // 8px 0
-  justify-content: flex-end;
-  align-items: center;
+    padding: var(--spacer-050) 0; // 8px 0
+    justify-content: flex-end;
+    align-items: center;
   }
   
   
@@ -138,4 +138,12 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     @extend .status-circle;
     background-color: $green-color;
     display: table-cell
+  }
+  .MuiDataGrid-root {
+    .MuiDataGrid-cell{
+      padding: 0.5rem 0.625rem !important;
+    }
+    .MuiDataGrid-cell:nth-last-child(2) {
+      text-align: right !important;
+    }
   }
