@@ -187,7 +187,7 @@ $font-weight-medium: var(--font-weight-medium);
   .optionListContainer {
     @include multiselect-base;
     box-shadow: $multiselect-shadow;
-    position: relative !important;
+    position: absolute !important;
     margin-top: $multiselect-margin-top;
     padding: $multiselect-option-padding;
   }
