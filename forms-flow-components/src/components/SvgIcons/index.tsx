@@ -4,6 +4,7 @@ const grayColor = computedStyle.getPropertyValue("--ff-gray-dark");
 const whiteColor = computedStyle.getPropertyValue("--ff-white")
 const grayDarkestColor = computedStyle.getPropertyValue("--ff-gray-darkest");
 const grayMediumColor = computedStyle.getPropertyValue("--ff-gray-medium-dark");
+const dangerColor = computedStyle.getPropertyValue("--red-100");
 export const ChevronIcon = ({
   color = grayColor,
   className="svgIcon-dark",
@@ -1194,3 +1195,19 @@ export const SearchIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
  
+export const NoteIcon = ({ color = dangerColor, ...props }) => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+<path
+d="M8.00036 0C3.58763 0 0 3.58725 0 8C0 12.4128 3.58834 16 8.00036 16C12.4131 16 16 12.4128 16 8C16 3.58725 12.4129 0 8.00036 0ZM8.00036 0.940976C11.9045 0.940976 15.0592 4.0958 15.0592 8.00013C15.0592 11.9044 11.9045 15.0593 8.00036 15.0593C4.09621 15.0593 0.941524 11.9044 0.941524 8.00013C0.941524 4.0958 4.09621 0.940976 8.00036 0.940976ZM7.9808 4.0595C7.5973 4.06928 7.28575 4.38712 7.28575 4.77275C7.28575 5.16464 7.60709 5.48809 7.99897 5.48809C8.39085 5.48809 8.71288 5.16534 8.71288 4.77275C8.71288 4.38085 8.39085 4.0595 7.99897 4.0595H7.9808ZM8.00036 6.07908C7.87462 6.07838 7.75447 6.12798 7.66575 6.2167C7.57704 6.30542 7.52744 6.42628 7.52744 6.55132V11.4671C7.52744 11.5922 7.57704 11.713 7.66575 11.8018C7.75447 11.8905 7.87463 11.9401 8.00036 11.9394C8.1247 11.9387 8.24415 11.8891 8.33217 11.8004C8.42019 11.7116 8.46908 11.5922 8.46908 11.4671V6.55132C8.46908 6.42697 8.42019 6.30681 8.33217 6.21809C8.24416 6.12937 8.1247 6.07978 8.00036 6.07908Z"
+
+      fill={color}
+      />
+</svg>
+);

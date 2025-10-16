@@ -43,17 +43,13 @@ $text-line-height: 120%;
 // Styles
 // ----------------------------
 .file-upload {
+  background-color: transparent;
+}
+
+.upload-progress-section {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  width: 21.875rem;
-  height: 13.75rem;
-  border: 1px dashed $secondary;
-  border-radius: 5px;
-  background-color: $white-200;
-  cursor: pointer;
-  text-align: center;
-  padding: $spacer-200;
-  align-content: center;
-  transition: border-color 0.2s ease;
 }
 
 .file-upload-progress {
@@ -63,6 +59,8 @@ $text-line-height: 120%;
 .upload-progress-bar {
   margin-top: 1.375rem;
 }
+
+
 
 .file-upload-dragover {
   border-color: $secondary-dark !important;
@@ -157,6 +155,11 @@ $text-line-height: 120%;
 }
 .file-upload-action-btn{
   margin-top: 0.688rem;
+}
+
+.upload-action-row {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .upload-status-success {

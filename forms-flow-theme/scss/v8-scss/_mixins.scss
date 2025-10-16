@@ -105,17 +105,15 @@ $font-color: var(--secondary-dark);
 
 // Content area
 @mixin section-content(
-  $height: 300px,
-  $padding: 34px 32px,
-  $bg-color: #fff,
-  $border-color: #e5e5e5,
-  $radius: 5px
+  $border: solid,
+  $background: var(--white-300)
 ) {
   width: 100%;
-  // height: $height;
-  padding: $padding;
-  background-color: $bg-color;
-  border: 1px solid $border-color;
-  border-radius: $radius;
+  height: 220px;
+  padding: 34px 32px;
+  background-color: $background;
+  border: 1px #{$border} var(--gray-x-light);
+  border-radius: var(--border-radius);
 }
+
 

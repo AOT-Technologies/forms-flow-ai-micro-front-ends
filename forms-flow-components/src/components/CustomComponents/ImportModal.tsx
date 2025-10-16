@@ -461,6 +461,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         <Modal.Body className="p-5">
           <div className="d-flex justify-content-center">
           <FileUploadArea
+            primaryButtonText={primaryButtonText}
             fileType={fileType}
             onFileSelect={setSelectedFile}
             file={selectedFile}
