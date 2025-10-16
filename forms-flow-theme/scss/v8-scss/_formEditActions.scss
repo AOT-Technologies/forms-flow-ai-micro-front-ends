@@ -31,7 +31,6 @@ $borderRadius: var(--border-radius);
       .upload-action-content {
         grid-row: 2;
         @include mixins.section-content(dashed, $importBackground);
-       // border: 1px dashed red !important;
       }
 
       .actions-contents {

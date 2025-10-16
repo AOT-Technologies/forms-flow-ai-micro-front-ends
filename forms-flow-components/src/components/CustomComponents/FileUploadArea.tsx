@@ -175,6 +175,14 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
   ), [fileInputId, handleChange, fileType, t, maxFileSizeMB]);
 
     const renderUploadStatus = useCallback(() => {
+      let statusText = "";
+        if (uploadState.isUploading) {
+          statusText = t(`Importing ${file?.name}`);
+        } else if (uploadState.isError) {
+          statusText = t("There was an error in the upload");
+        } else {
+          statusText = t("Upload Complete!");
+        }
       return (
         <div
           className="upload-progress-section"
@@ -193,13 +201,8 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
               color={uploadState.isError ? "error" : undefined}
             />
           </div>
-
           <p className="upload-status" aria-live="polite">
-            {uploadState.isUploading
-              ? t(`Importing ${file?.name}`)
-              : uploadState.isError
-              ? t("There was an error in the upload")
-              : t("Upload Complete!")}
+            {statusText}
           </p>
         </div>
       );
