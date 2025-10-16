@@ -1,0 +1,95 @@
+@use "mixins";
+
+$headerTextColor: var(--gray-dark);
+$headerTextSize: var(--font-size-xl);
+$headerTextWeight: var(--font-weight-medium);
+$deleteHeader: var(--red-100);
+$deleteTextSize: var(--font-size-m);
+$deleteTextWeight:var(--font-weight-regular);
+$importBackground:var(--white-200);
+$sectionBackground:var(--white-200);
+$deleteBorder: var(--red-200);
+$progressBorder: var(--gray-light);
+$borderRadius: var(--border-radius);
+
+.form-edit-actions {
+    overflow: auto;
+    padding-bottom: 1rem;
+
+    .grid-section {
+      @include mixins.grid-layout();
+      padding-bottom: 1rem;
+      .actions-header {
+        grid-row: 1;
+        @include mixins.section-header();
+        @include mixins.font-style($headerTextSize, $headerTextWeight, $headerTextColor );
+        .delete-header {
+            @include mixins.font-style($headerTextSize, $headerTextWeight, $deleteHeader );
+        }
+      }
+
+      .upload-action-content {
+        grid-row: 2;
+        @include mixins.section-content(dashed, $importBackground);
+       // border: 1px dashed red !important;
+      }
+
+      .actions-contents {
+        grid-row: 2;
+        @include mixins.section-content();
+
+        .delete-section {
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+            height: 100%;
+            justify-content: center;
+            gap: 24px;
+
+            .delete-note {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: var(--spacer-050);
+                padding: 19px 14px;
+                width: 515px;
+                height: 46px;
+                flex-shrink: 0;
+                border-radius: $borderRadius;
+                border: 1px solid $deleteBorder;
+                background: $sectionBackground;
+                .delete-note-text {
+                    @include mixins.font-style($deleteTextSize, $deleteTextWeight, $headerTextColor );
+                }
+            }
+
+        }
+        .export-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: center;
+            gap: 24px;
+        
+        .export-dropdown-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .export-progress-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 56px;
+            border-radius: $borderRadius;
+            border: 1px solid $progressBorder;
+            background: $sectionBackground;
+            padding: 16px 22px;
+        }
+        .export-progress {
+            width: 515px;
+        }
+    }
+      }
+    }
+}

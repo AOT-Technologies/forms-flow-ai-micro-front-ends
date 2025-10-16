@@ -25,6 +25,7 @@ interface FileUploadAreaProps extends Omit<React.ComponentPropsWithoutRef<"div">
   onDone?: () => void;
   /** Currently selected file */
   file: File | null;
+  primaryButtonText: string;
   /** Upload progress (0-100) */
   progress: number;
   /** Error message if upload fails */
@@ -62,6 +63,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
   dataTestId,
   className = "",
   maxFileSizeMB = 20,
+  primaryButtonText = "Done",
   ...restProps
 }, ref) => {
   const { t } = useTranslation();
@@ -172,115 +174,111 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
     </>
   ), [fileInputId, handleChange, fileType, t, maxFileSizeMB]);
 
-  // Memoized upload status component
-  const renderUploadStatus = useCallback(() => {
-    // Map states to config
-    const stateConfig = {
-      uploading: {
-        status: t(`Importing ${file?.name}`),
-        label: t("Cancel"),
-        onClick: () => onCancel?.(),
-      },
-      error: {
-        status: t("There was an error in the upload"),
-        label: t("Try Again"),
-        onClick: () => file && onRetry?.(file),
-      },
-      completed: {
-        status: t("Upload Complete!"),
-        label: t("Done"),
-        onClick: () => onDone?.(),
-      },
-    };
+    const renderUploadStatus = useCallback(() => {
+      return (
+        <div
+          className="upload-progress-section"
+          aria-label={t("File upload progress")}
+          data-testid="file-upload-progress"
+        >
+          <FileUploadIcon aria-hidden="true" />
 
-    // Determine current state
-    const current =
-      uploadState.isUploading
-        ? stateConfig.uploading
-        : uploadState.isError && file
-        ? stateConfig.error
-        : uploadState.isCompleted
-        ? stateConfig.completed
-        : null;
+          <div
+            className="upload-progress-bar"
+            aria-label={t("Upload progress bar")}
+            data-testid="file-upload-progress-bar"
+          >
+            <CustomProgressBar
+              progress={progress}
+              color={uploadState.isError ? "error" : undefined}
+            />
+          </div>
+
+          <p className="upload-status" aria-live="polite">
+            {uploadState.isUploading
+              ? t(`Importing ${file?.name}`)
+              : uploadState.isError
+              ? t("There was an error in the upload")
+              : t("Upload Complete!")}
+          </p>
+        </div>
+      );
+    }, [uploadState, file, progress, t]);
+
+    const containerClassName = useMemo(
+      () =>
+        buildClassNames(
+          "file-upload",
+          uploadState.hasFile && "file-upload-progress",
+          isDragOver && "file-upload-dragover",
+          className
+        ),
+      [uploadState.hasFile, isDragOver, className]
+    );
 
     return (
       <div
-        className="upload-progress"
-        aria-label={t("File upload progress")}
-        data-testid="file-upload-progress"
+        ref={ref}
+        role="button"
+        data-testid={dataTestId || "file-upload-container"}
+        className={containerClassName}
+        tabIndex={0}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onClick={handleAreaClick}
+        onKeyDown={handleKeyDown}
+        aria-label={ariaLabel || t("Upload file area")}
+        {...restProps}
       >
-        <FileUploadIcon aria-hidden="true" />
+        {!uploadState.hasFile ? (
+          renderUploadPrompt()
+        ) : (
+          <div className="upload-status-section">
+            {renderUploadStatus()}
 
-        <div
-          className="upload-progress-bar"
-          aria-label={t("Upload progress bar")}
-          data-testid="file-upload-progress-bar"
-        >
-          <CustomProgressBar 
-            progress={progress} 
-            color={uploadState.isError ? "error" : undefined}
-          />
-        </div>
+            {(uploadState.isUploading ||
+              uploadState.isCompleted ||
+              uploadState.isError) && (
+              <div className="upload-action-row">
 
-        {/* Status text */}
-        {current?.status && (
-          <p
-            className="upload-status"
-            aria-live="polite"
-            data-testid="file-upload-status"
-          >
-            {current.status}
-          </p>
-        )}
-
-        {/* Action button */}
-        {current && (
-          <V8CustomButton
-            className="file-upload-action-btn"
-            label={current.label}
-            onClick={current.onClick}
-            ariaLabel={current.label}
-            dataTestId="file-upload-action-btn"
-            variant="secondary"
-          />
+                {uploadState.isError && file && (
+                  <V8CustomButton
+                    className="file-upload-action-btn"
+                    label={t("Try Again")}
+                    onClick={() => onRetry?.(file)}
+                    ariaLabel={t("Try Again")}
+                    dataTestId="file-upload-retry-btn"
+                    variant="primary"
+                  />
+                )}
+                {uploadState.isCompleted && (
+                  <V8CustomButton
+                    className="file-upload-action-btn"
+                    label={t(primaryButtonText)}
+                    onClick={onDone}
+                    ariaLabel={t(primaryButtonText)}
+                    dataTestId="file-upload-action-btn"
+                    variant="primary"
+                  />
+                )}
+               {(uploadState.isUploading || uploadState.isCompleted) && (<V8CustomButton
+                    className="file-upload-action-btn"
+                    label="Cancel"
+                    onClick={onCancel}
+                    ariaLabel="Cancel File Upload"
+                    dataTestId="file-upload-cancel-btn"
+                    variant="secondary"
+                  />)}
+                </div>
+            )}
+          </div>
         )}
       </div>
     );
-  }, [uploadState, file, progress, t, onCancel, onRetry, onDone]);
+  }
+);
 
-  // Memoized container className
-  const containerClassName = useMemo(() => buildClassNames(
-    "file-upload",
-    uploadState.hasFile && "file-upload-progress",
-    isDragOver && "file-upload-dragover",
-    className
-  ), [uploadState.hasFile, isDragOver, className]);
-
-  return (
-    <div
-      ref={ref}
-      role="button"
-      data-testid={dataTestId || "file-upload-container"}
-      className={containerClassName}
-      tabIndex={0}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      onClick={handleAreaClick}
-      onKeyDown={handleKeyDown}
-      aria-label={ariaLabel || t("Upload file area")}
-      {...restProps}
-    >
-      {!uploadState.hasFile ? renderUploadPrompt() : renderUploadStatus()}
-    </div>
-  );
-});
-
-// Set display name for better debugging
 FileUploadAreaComponent.displayName = "FileUploadArea";
-
-// Export memoized component for performance optimization
 export const FileUploadArea = memo(FileUploadAreaComponent);
-
-// Export types for consumers
 export type { FileUploadAreaProps };
