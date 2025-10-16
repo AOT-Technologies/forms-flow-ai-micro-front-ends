@@ -121,6 +121,13 @@ interface LKISegment {
   length: number;
 }
 
+interface ChargeType {
+  id: number;
+  code: string;
+  statuteCode: string;
+  description: string;
+}
+
 // Database class extending Dexie to manage IndexedDB storage
 class DigitalFormsDB extends Dexie {
   // Declaring tables with their respective interfaces
@@ -141,6 +148,7 @@ class DigitalFormsDB extends Dexie {
   jurisdictionCountry!: Table<JurisdictionCountry>;
   lkiHighway!: Table<LKIHighway>;
   lkiSegment!: Table<LKISegment>;
+  chargeTypes!: Table<ChargeType>;
 
   constructor() {
     super("digitalFormsFF");
@@ -176,6 +184,10 @@ class DigitalFormsDB extends Dexie {
       lkiHighway: "code, description, letter, number",
       lkiSegment: "code, description, direction, hwy_code, length",
     });
+
+    this.version(6).stores({
+      chargeTypes: "id, code, statuteCode, description"
+    })
   }
 }
 
