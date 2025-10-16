@@ -58,9 +58,10 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
     const timelineRef = useRef<HTMLDivElement>(null);
     const lastEntryRef = useRef<HTMLDivElement>(null);
     const appHistory = useSelector((state: any) => state.task?.appHistory);
+    const tenantId = localStorage.getItem("tenantKey");
     const tenantKey = useSelector(
       (state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key
-    );
+    ) || tenantId;
     const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
     useEffect(() => {
