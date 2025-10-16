@@ -1,6 +1,7 @@
 /* ============================
    Color Variables
    ============================ */
+@import "./mixins";
 
 $table-border-color: #DAD9DA; // Light gray border
 $table-bg-light: var(--ff-white-200); // Very light background
@@ -133,7 +134,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
       }
     }
   }
-
+  
   .status-live {
     @extend .status-circle;
     background-color: $green-color;
@@ -145,5 +146,16 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     }
     .MuiDataGrid-cell:nth-last-child(2) {
       text-align: right !important;
+    }
+  }
+
+  .historypage-container{
+    .MuiDataGrid-cell{
+      @include font-style(0.9rem, var(--font-weight-sm), var(--secondary-dark));
+      outline: none !important;
+    }
+    .MuiDataGrid-columnHeaderTitleContainer{
+      @include font-style(0.9rem, var(--font-weight-md), var(--secondary-dark));
+      text-align: center !important;
     }
   }
