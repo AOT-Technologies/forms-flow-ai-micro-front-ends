@@ -77,6 +77,7 @@ declare module "@formsflow/components" {
     SharedWithOthersIcon,
     SharedWithMeIcon,
     AssignUser,
+    UserSelect,
     RefreshIcon,
     DeleteIcon,
     UpdateIcon,
@@ -85,6 +86,9 @@ declare module "@formsflow/components" {
     ReusableResizableTable,
     BackToPrevIcon,
     StepperComponent,
+    PromptModal,
+    CustomUrl,
+    Switch
   }: any;
 }
 

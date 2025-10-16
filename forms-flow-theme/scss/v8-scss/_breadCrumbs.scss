@@ -1,0 +1,113 @@
+// Import theme variables and mixins
+@use "mixins";
+
+// Breadcrumb Variables - Using consistent rem units for better scalability
+$breadcrumb-underline-offset: 0.1875rem;  // 3px at 16px base
+$breadcrumb-gap: 0.5rem;                   // 3.2px at 16px base
+$breadcrumb-divider: ">";
+$breadcrumb-transition-duration: 0.15s;
+$breadcrumb-transition-timing: ease-in-out;
+
+// Color Variables - Using theme tokens
+// Default variant colors
+$color-default-text: var(--secondary-dark);
+
+// Minimized variant colors
+$color-minimized-text: var(--gray-medium-dark);
+
+// Typography Variables - Using theme tokens
+$font-size-default: var(--font-size-xl);
+$font-size-minimized: var(--font-size-s);
+$font-weight-base: var(--font-weight-regular);
+
+// Breadcrumb Mixins
+@mixin breadcrumb-base {
+  color: inherit;
+  transition: all $breadcrumb-transition-duration $breadcrumb-transition-timing;
+}
+
+@mixin breadcrumb-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: $breadcrumb-underline-offset;
+  text-decoration-thickness: 0.1rem;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@mixin breadcrumb-active {
+  text-decoration: none;
+  color: inherit;
+  cursor: default;
+}
+
+@mixin breadcrumb-divider {
+  content: $breadcrumb-divider;
+  color: inherit;
+  padding-right: $breadcrumb-gap;
+  padding-left: $breadcrumb-gap;
+}
+
+// Main Breadcrumb Component
+.breadcrumb-custom {
+  @include breadcrumb-base;
+
+  // Default variant - larger, darker text for primary navigation
+  &.breadcrumb-default {
+    @include mixins.font-style($font-size-default, $font-weight-base, $color-default-text);
+
+    a {
+      &:hover:not(.active) {
+        color: $color-default-text;
+      }
+    }
+  }
+
+  // Minimized variant - smaller, lighter text for secondary navigation
+  &.breadcrumb-minimized {
+    @include mixins.font-style($font-size-minimized, $font-weight-base, $color-minimized-text);
+
+    a {
+      &:hover:not(.active) {
+        color: $color-minimized-text;
+      }
+    }
+  }
+
+  // Underline modifier - adds underline to all items including active
+  &.breadcrumb-underline {
+    a,
+    .breadcrumb-item {
+      text-decoration: underline;
+      text-underline-offset: $breadcrumb-underline-offset;
+    }
+
+    .breadcrumb-item.active {
+      text-decoration: underline;
+    }
+  }
+
+  // Link styles
+  a {
+    @include breadcrumb-link;
+  }
+
+  // Breadcrumb item styles
+  .breadcrumb-item {
+    @include breadcrumb-link;
+    padding: 0;
+
+    // Active/current item
+    &.active {
+      @include breadcrumb-active;
+    }
+
+    // Divider between items
+    &+.breadcrumb-item::before {
+      @include breadcrumb-divider;
+    }
+  }
+}

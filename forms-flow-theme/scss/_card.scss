@@ -53,13 +53,10 @@ $gray-darkest: var(--ff-gray-darkest);
   }
 }
 
-.flow-builder {
-  height: calc(100vh - 15rem) !important;
-  overflow: auto;
-}
+
 
 .form-builder {
-  height: calc(100vh - 16.5rem) !important;
+  // height: calc(100vh - 16.5rem) !important;
   overflow-x: hidden;
 
   .card {
@@ -236,22 +233,6 @@ $gray-darkest: var(--ff-gray-darkest);
   }
   .card-body {
     padding-right: var(--spacer-025);
-  }
-}
-
-.info-panel {
-  display: flex;
-  padding: var(--spacer-100);
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--spacer-050);
-  align-self: stretch;
-  border-radius: var(--radius-sm);
-  background: $gray-light;
-  .field-label{
-    font-weight: 700;
-    font-size:var(--font-size-xs);
-    color: $gray-darkest;
   }
 }
 
@@ -501,9 +482,7 @@ $gray-darkest: var(--ff-gray-darkest);
   }
 }
 
-.list-group-item{
-  padding: var(--spacer-050) !important;
-}
+
 
 .analyze-Submission-bundle-view {
   min-height: 60vh;

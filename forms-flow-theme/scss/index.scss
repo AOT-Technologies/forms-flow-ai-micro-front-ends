@@ -1,25 +1,27 @@
 // import function
-@import "../node_modules/bootstrap/scss/functions";
+@import "bootstrap/scss/functions";
 
 //variable override
 @import "./variables";
 //default
-@import "../node_modules/bootstrap/scss/variables";
-@import "../node_modules/bootstrap/scss/mixins";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 
 //theme override
 @import "./typography";
 @import "./theme";
+@import "./v8-scss/theme";
 @import "./card";
 
 //component override
 @import "./stepper";
-@import "./button";
+// @import "./button";
 @import "./table"; 
 @import "./layout";
 @import "./forms";
 @import "./icon";
-@import "./modal";
+// @import "./modal";
+@import "./v8-scss/modal.scss";
 @import "./fileUpload";
 @import "./inputBox";
 @import "./aiAssistant";
@@ -31,11 +33,30 @@
 @import "./collapsibleSidebar.scss";
 
 @import "./skeletonLoader";
-@import "./bpmn.scss";
+@import "./v8-scss/bpmn.scss";
 // util class
 @import "./utils/index";
 //rest of bootstrap
 @import "./external/formio.scss";
 @import "./external/toastify.scss";
-@import "~bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
 
+@import "./v8-scss/search";
+@import "./v8-scss/button";
+@import "./v8-scss/dateRangePicker";
+@import "./v8-scss/switch";
+@import "./v8-scss/selectDropdown";
+@import "./v8-scss/dropdownButton";
+@import "./v8-scss/textInput";
+@import "./v8-scss/textArea";
+@import "./v8-scss/radio";
+@import "./v8-scss/alert";
+@import "./v8-scss/urlInput";
+@import "./v8-scss/formCreateLayout";
+@import "./v8-scss/dropdownMultiselect";
+@import "./v8-scss/table";
+@import "./v8-scss/checkbox";
+@import "./v8-scss/breadCrumbs";
+@import "./v8-scss/formEditSettings";
+@import "./v8-scss/variableSelection";
+@import "./v8-scss/customInfo";

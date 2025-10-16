@@ -1577,125 +1577,125 @@ $lineThin: 1px;
   stroke: $white-color;
 }
 
-.variable-modal {
-  .modal-dialog .modal-content .modal-body {
-    padding: 0px !important;
-    scrollbar-gutter: initial;
-   overflow: hidden;
-  }
-  .variable-modal-body {
-    .disabled { 
-      pointer-events: none;
-      opacity: 50%;
-    }
-    display: flex;
-    flex-direction: row !important;
-    height: calc(100vh - 11rem);
+// .variable-modal {
+//   .modal-dialog .modal-content .modal-body {
+//     padding: 0px !important;
+//     scrollbar-gutter: initial;
+//    overflow: hidden;
+//   }
+//   .variable-modal-body {
+//     .disabled { 
+//       pointer-events: none;
+//       opacity: 50%;
+//     }
+//     display: flex;
+//     flex-direction: row !important;
+//     height: calc(100vh - 11rem);
 
-    .variable-modal-left-container {
-      width: 80%;
-      float: left;
-      border-right: $lineThin solid $gray-medium;
-    }
-    .variable-modal-right-container {
-      width: 20%;
-      float: right;
-      padding: 0 var(--spacer-125) var(--spacer-150) var(--spacer-125);
-      max-height: calc(100vh - 15.25rem);
-      @extend .custom-scroll;
-      margin-top: var(--spacer-150);
-      overflow-y: auto;
-      scrollbar-gutter: stable;
-      .right-container-header {
-        font-weight: var(--font-weight-xl);
-        font-size: var(--font-size-sm);
-        line-height: var(--text-line-height);
-        position: sticky;
-        top: 0;
-        background-color: white;
-        padding-bottom: var(--spacer-100);
-        margin: 0 !important;
-      }
-      .select-text {
-        color: $gray-medium-dark;
-        font-size: var(--font-size-sm);
-        font-weight: var(--font-weight-sm);
-        line-height: var(--text-line-height);
-      }
-      .text-bold {
-        font-weight: var(--font-weight-xl);
-        font-size: var(--font-size-sm);
-        word-break: break-all;
-      }
-    }
+//     .variable-modal-left-container {
+//       width: 80%;
+//       float: left;
+//       border-right: $lineThin solid $gray-medium;
+//     }
+//     .variable-modal-right-container {
+//       width: 20%;
+//       float: right;
+//       padding: 0 var(--spacer-125) var(--spacer-150) var(--spacer-125);
+//       max-height: calc(100vh - 15.25rem);
+//       @extend .custom-scroll;
+//       margin-top: var(--spacer-150);
+//       overflow-y: auto;
+//       scrollbar-gutter: stable;
+//       .right-container-header {
+//         font-weight: var(--font-weight-xl);
+//         font-size: var(--font-size-sm);
+//         line-height: var(--text-line-height);
+//         position: sticky;
+//         top: 0;
+//         background-color: white;
+//         padding-bottom: var(--spacer-100);
+//         margin: 0 !important;
+//       }
+//       .select-text {
+//         color: $gray-medium-dark;
+//         font-size: var(--font-size-sm);
+//         font-weight: var(--font-weight-sm);
+//         line-height: var(--text-line-height);
+//       }
+//       .text-bold {
+//         font-weight: var(--font-weight-xl);
+//         font-size: var(--font-size-sm);
+//         word-break: break-all;
+//       }
+//     }
 
-        .tabs {
-          margin: 0px !important ;
-          .nav{
-          padding: var(--spacer-200) var(--spacer-225) 0px var(--spacer-225);
-          margin-left: 0px !important;
-          }
-          .tab-content {
-            height: 100%;
-          }
-        }
-  }
-  .form-control {
-    &:disabled {
-      background-color: var(--ff-white) !important;
-    }
-  }
+//         .tabs {
+//           margin: 0px !important ;
+//           .nav{
+//           padding: var(--spacer-200) var(--spacer-225) 0px var(--spacer-225);
+//           margin-left: 0px !important;
+//           }
+//           .tab-content {
+//             height: 100%;
+//           }
+//         }
+//   }
+//   .form-control {
+//     &:disabled {
+//       background-color: var(--ff-white) !important;
+//     }
+//   }
 
-  .form-container {
-      background-color: $gray-medium;
-      min-height: calc(100vh - 15.25rem);
-    }
-  .pill-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacer-100);
-  }
-  .badge.rounded-pill {
-    border-radius: var(--radius-sm) !important;
-    line-height: var(--text-line-height) !important;
-    text-align: left !important;
-    svg path{
-      stroke: $primary;
-    }
-  }
-  .primary-label,
-.secondary-label {
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-.system-tab-container{
-  display: flex;
-  flex-direction: column;
+//   .form-container {
+//       background-color: $gray-medium;
+//       min-height: calc(100vh - 15.25rem);
+//     }
+//   .pill-container {
+//     display: flex;
+//     flex-direction: column;
+//     gap: var(--spacer-100);
+//   }
+//   .badge.rounded-pill {
+//     border-radius: var(--radius-sm) !important;
+//     line-height: var(--text-line-height) !important;
+//     text-align: left !important;
+//     svg path{
+//       stroke: $primary;
+//     }
+//   }
+//   .primary-label,
+// .secondary-label {
+//   white-space: normal;
+//   word-break: break-word;
+//   overflow-wrap: break-word;
+// }
+// .system-tab-container{
+//   display: flex;
+//   flex-direction: column;
 
-  .system-item{
-    display: flex;
-    gap: var(--spacer-050);
-    color: $primary;
-    cursor: pointer;
-    padding: var(--spacer-075) var(--spacer-100);
-    border-radius: var(--radius-sm);
-    &.selected-item{
-      background-color: $primary-light;
+//   .system-item{
+//     display: flex;
+//     gap: var(--spacer-050);
+//     color: $primary;
+//     cursor: pointer;
+//     padding: var(--spacer-075) var(--spacer-100);
+//     border-radius: var(--radius-sm);
+//     &.selected-item{
+//       background-color: $primary-light;
 
-    }
-  }
-}
-.form-spinner {
-  @include spinner-base;
-  width: 0.9rem;
-  height: 0.9rem;
-  font-size: small;
-  position: relative;
-  top: 50%;
-  left: 50%;
-}
-}
+//     }
+//   }
+// }
+// .form-spinner {
+//   @include spinner-base;
+//   width: 0.9rem;
+//   height: 0.9rem;
+//   font-size: small;
+//   position: relative;
+//   top: 50%;
+//   left: 50%;
+// }
+// }
 
 //bundle specific
 .form-list-modal-header{

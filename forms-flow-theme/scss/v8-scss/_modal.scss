@@ -1,0 +1,81 @@
+// Import theme variables and mixins
+@use "mixins";
+
+// Variables - Using theme tokens
+$primary: var(--primary-dark);
+$primary-light: var(--primary);
+$gray-light: var(--gray-light);
+$gray-dark: var(--gray-dark);
+$gray-medium: var(--gray-medium);
+$gray-medium-dark: var(--gray-medium-dark);
+$black-color: var(--gray-darkest);
+
+// Base spacing - static value for SCSS calculations
+$base: 1rem; // Cannot use var() in SCSS arithmetic
+
+// Prompt modal styles
+
+.prompt-modal {
+    .modal-dialog {
+        .modal-content {
+            min-width: 28.5rem;
+            border-radius: 5px;
+            border: 1px solid var(--gray-x-light);
+            background: var(--white-300);
+            box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+            padding: 1.4375rem 0 2.5rem 0; // 40px = 2.5rem
+            height:276px;
+            .prompt-modal-body {
+                margin: 0 auto;
+                .prompt-modal-title-container {
+                    .prompt-icon {
+                        display: flex;
+                        justify-content: center;
+                        width: 100%;
+                    }
+                    .prompt-title {
+                        text-align: center;
+                        font-size: var(--font-size-xl);
+                        font-weight: var(--font-weight-regular);
+                        width: 100%;
+                        margin-top: 1.125rem; // 18px in rem
+                        line-height: var(--line-height-default);
+                    }
+                }
+                .prompt-message {
+                    color: var(--gray-darkest);
+                    text-align: center;
+                    font-size: var(--font-size-m);
+                    margin-top: 1.188rem;
+                    padding: 0 6rem;
+                }
+            }
+            .modal-footer {
+                border-top: none;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+            .buttons-row {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                gap: 0.5rem;
+            }
+        }
+    }
+        &.error-modal{
+            .modal-content{
+                border-color: var(--orange-100);
+                box-shadow: none;
+            }
+        }
+        &.success-modal{
+            .modal-content{
+                border-color: var(--green-100);
+                box-shadow: none;
+            }
+        }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@formsflow/theme",
-  "version": "7.3.0",
+  "version": "8.0.0-alpha",
   "scripts": {
     "start": "webpack serve --mode=development",
     "build": "webpack --mode=production",

@@ -1,0 +1,76 @@
+
+@use "mixins";
+$header-font-size: var(--font-size-xl);
+$header-font-weight: var(--font-weight-regular);
+$secondary-dark-color: var(--secondary-dark);
+$white-100-color: var(--white-100);
+$gray-medium-dark-color: var(--gray-medium-dark);
+$font-weight-medium: var(--font-weight-medium);
+
+.form-create-cards {
+  @include mixins.vertical-padding();
+  overflow: auto;
+  height: 80vh;
+  
+  .create-header {
+    @include mixins.font-style($header-font-size, $header-font-weight );
+  }
+
+  .create-from-scratch {
+    @include mixins.create-grid(); 
+  }
+
+  .create-from-scratch .grid-item {
+    @include mixins.create-grid-item();
+    @include mixins.centerAlign();
+  }
+
+  .create-from-form {
+    @include mixins.create-grid(); 
+  }
+
+  .create-from-form .grid-item {
+    @include mixins.create-grid-item();
+    @include mixins.centerAlign();  
+  }
+
+  .create-from-template {
+    @include mixins.create-grid(); 
+  }
+
+  .create-from-template .grid-item {
+    @include mixins.create-grid-item();
+    @include mixins.centerAlign();  
+  }
+}
+
+// FormEdit.scss - New UI styling for FormEdit component
+// Header styling
+.form-title {
+  color: $secondary-dark-color;
+font-size: $header-font-size;
+font-weight: $header-font-weight;
+line-height: 120%; /* 24px */
+text-transform: capitalize;
+}
+.card-text{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 25px;
+background: $white-100-color;
+padding: 11px 29px 11px 11px;
+  
+  .status-text {
+    font-size: 0.875rem;
+    font-weight: $font-weight-medium;
+    color: $gray-medium-dark-color;
+  }
+}

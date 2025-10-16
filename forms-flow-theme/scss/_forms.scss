@@ -507,33 +507,6 @@ select option:hover {
 
 /* ------------------------- Radio Button Style ------------------------ */
 
-.form-check-input[type="radio"] {
-  border-color: $primary !important;
-  position: relative;
-
-  &:checked {
-    --bs-form-check-bg-image: none !important;
-    background-color: var(--ff-white) !important;
-    border-color: $primary !important;
-
-    &::before {
-      content: "" !important;
-      position: absolute !important;
-      top: 50% !important;
-      /* Center vertically */
-      left: 50% !important;
-      /* Center horizontally */
-      width: 67% !important;
-      height: 70% !important;
-      background-color: $primary !important;
-      border-radius: 50% !important;
-      transform: translate(-50%, -50%) !important;
-    }
-  }
-  &:focus{
-    box-shadow: none !important;
-  }
-}
 
 .form-check-input[type="checkbox"] {
   border-color: $primary !important;
@@ -614,128 +587,9 @@ select option:hover {
   line-height: var(--text-line-height);
 }
 
-.multiselect-container {
-  width: 100%;
 
-  &.disable_ms {
-    .searchWrapper {
-      background: var(--ff-gray-light);
-      border: none;
-      .chip {
-        background: var(--ff-white);
-        color: $gray-medium-dark;
-      }
-    }
-  }
 
-  .searchWrapper {
-    border-radius: var(--radius-sm);
-    border: 1px solid $primary;
-    display: flex;
-    flex-wrap: wrap;
-    gap: $paddingLvl6S;
 
-    padding: $paddingLvl6TB $paddingLvl6LR;
-    
-    .chip {
-      padding: 0;
-      padding-left: $paddingLvl5LR;
-
-      
-
-      align-items: center;
-      border-radius: var(--radius-modal);
-      background: $primary-light; // #e4e3fc
-      color: $gray-darkest;
-      text-align: center;
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-sm);
-      line-height: var(--text-line-height);
-      margin-bottom: 0px !important;
-      margin-right: 0px !important;
-    }
-
-    .custom-close {
-      @include clickableFeedback1();
-
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-
-      padding: $paddingLvl5TB $paddingLvl5LR;
-      padding-left: $paddingLvl5S;
-      
-      svg path {
-        stroke: $primary-color;
-      }
-    }
-  }
-
-  .open-dropdown {
-    .searchWrapper {
-      border-bottom-left-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-
-      outline: $lineThin solid $primary;
-    }
-  }
-
-  .optionListContainer {
-    position: relative !important;
-
-    margin: 0;
-
-    border: $lineThin solid $primary;
-    border-top: none !important;
-    outline: $lineThin solid $primary;
-
-    border-radius: 0;
-    border-bottom-left-radius: $borderRadiusHeightSM;
-    border-bottom-right-radius: $borderRadiusHeightSM;
-  }
-
-  .optionContainer {
-    @include paddingLvl7();
-    
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex: 1 0 0;
-
-    border: none;
-
-    .option {
-      @include textBase($fontBase, $primary-color);
-      @include clickableFeedback2();
-      
-      display: flex;
-      align-items: center;
-      align-self: stretch;
-
-      padding: $paddingLvl6TB $paddingLvl6LR;
-      
-      border-radius: $borderRadiusHeightSM;
-      
-      z-index: 9999 !important;
-    }
-  }
-}
-
-.dropdown-multiselect-component {
-  width: 100%;
-  display: flex;
-    flex-direction: column;
-    gap: var(--spacer-050);
-  .L-style{
-    height: 25px;
-    width: 12px;
-    border-left: 1px solid $primary;
-    border-bottom:  1px solid $primary;
-    margin-right: var(--spacer-075);
-  }
-  
-}
 
 .userform-wrapper{
   display: flex;
