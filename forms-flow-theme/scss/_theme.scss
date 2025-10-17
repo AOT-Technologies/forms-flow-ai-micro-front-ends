@@ -253,7 +253,7 @@ body {
     }
 
     &::-webkit-scrollbar-thumb {
-      width: $scrollBarWidth/2;
+      width: calc($scrollBarWidth / 2);
       min-height: 15.625rem;
       background-color: $primary-light;
       background-clip: padding-box;

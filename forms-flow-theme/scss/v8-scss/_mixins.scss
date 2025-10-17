@@ -109,7 +109,7 @@ $font-color: var(--secondary-dark);
   $background: var(--white-300)
 ) {
   width: 100%;
-  height: 220px;
+  min-height: 220px;
   padding: 34px 32px;
   background-color: $background;
   border: 1px #{$border} var(--gray-x-light);

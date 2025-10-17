@@ -99,7 +99,7 @@ $font-tokens: (
 
    @each $name, $color in $base-colors {
      @each $variant, $alpha in $opacities {
-       --#{$name}-#{$variant}: #{blend-with-white-to-hex($color, $alpha)};
+        --#{"#{$name}"}-#{$variant}: #{blend-with-white-to-hex($color, $alpha)};
      }
    }
     // Brand colors
