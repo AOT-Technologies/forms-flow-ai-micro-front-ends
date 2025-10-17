@@ -57,7 +57,7 @@ input[type="checkbox"]+label,
 .svgIconSmall-primary {
   @include svgIcon();
 
-  width: $base/3*2;
+  width: calc($base / 3 * 2);
 }
 
 @keyframes rotating {
