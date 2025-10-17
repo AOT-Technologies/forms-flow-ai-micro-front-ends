@@ -4,7 +4,7 @@ import API from "../../api/endpoints";
 import { useDownloadFile } from "../../customHooks/useDownloadFile";
 import { useTranslation } from "react-i18next";
 import { withFeature } from "../../api/config";
-import { CustomButton } from "../../components/CustomComponents/Button";
+import { V8CustomButton } from "../../components/CustomComponents/CustomButton";
 import { replaceUrl } from "../../helper/helper";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -101,15 +101,13 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = React.memo(
             id="export-btn"
             style={{ display: "none" }}
           />
-          <CustomButton
-            variant="light"
+          <V8CustomButton
+            variant="secondary"
             label={t("Export PDF")}
             onClick={download}
-            buttonLoading={isLoading}
+            loading={isLoading}
             dataTestId="export-pdf-button"
             ariaLabel="Export PDF Button"
-            size="table"
-            darkPrimary
           />
         </div>
         <ToastContainer

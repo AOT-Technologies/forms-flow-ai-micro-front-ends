@@ -1,0 +1,165 @@
+/* ============================
+   Color Variables
+   ============================ */
+@import "./mixins";
+
+$table-border-color: #DAD9DA; // Light gray border
+$table-bg-light: var(--ff-white-200); // Very light background
+$table-border-light: var(--ff-gray-x-light); // Light border color
+$table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
+
+/* ============================
+   MUI DataGrid Components
+   ============================ */
+
+// DataGrid sort icons always visible
+.MuiDataGrid-columnHeaderDraggableContainer {
+    .MuiDataGrid-iconButtonContainer {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .MuiDataGrid-sortIcon {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    
+    &:hover .MuiDataGrid-iconButtonContainer {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    &:hover .MuiDataGrid-sortIcon {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+  }
+  
+  // Ensure sort icons are always visible for sortable columns
+  .MuiDataGrid-columnHeader[data-field] {
+    .MuiDataGrid-iconButtonContainer {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+  } 
+  
+  // Table Pagination select label
+  .MuiTablePagination-selectLabel{
+    margin-top: 0.625rem !important; // 10px
+  }
+
+.MuiDataGrid-root {
+  .MuiDataGrid-cell{
+    display: flex!important;
+    align-items: center!important;
+  }
+    .MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) {
+      .MuiDataGrid-sortButton {
+        opacity: 1 !important;
+        transition: opacity 0.2s ease-in-out;
+      }
+  
+      &:hover {
+        .MuiDataGrid-sortButton {
+          opacity: 1 !important;
+          background-color: transparent !important;
+        }
+      }
+    }
+            
+    .MuiDataGrid-sortButton.MuiIconButton-root:hover {
+        background-color: transparent !important;
+    }
+}
+  .MuiInputBase-root{
+    display: flex;
+    width: 4.375rem; // 70px
+    padding: 0.3125rem 0.75rem; // 5px 12px
+    align-items: center;
+    border-radius: 0.25rem; // 4px
+    border: 1px solid $table-border-color;
+    margin: 0 1rem !important; // 0px 16px
+  }
+  .MuiTablePagination-displayedRows{
+    margin-top: 0.625rem !important; // 10px
+  }
+  
+  //column seperator
+  .MuiDataGrid-columnSeparator{
+    display: none !important;
+  }
+  
+  //focus within outline
+  .MuiDataGrid-columnHeader:focus-within{
+    outline: none !important;
+    outline-offset: 0px !important;
+  }
+  .last-column ,.MuiDataGrid-columnHeader--last{
+    display: flex !important;
+    justify-content: flex-end !important;
+    overflow: visible !important;
+    align-items: center;
+    .MuiDataGrid-columnHeaderTitleContainer{
+      justify-content: flex-end !important;
+    }
+  }
+  .MuiTablePagination-root{
+    display: flex;
+    padding: var(--spacer-050) 0; // 8px 0
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  
+  .MuiDataGrid-topContainer,.MuiDataGrid-footerContainer{
+    background-color: $table-bg-light !important;
+  } 
+  
+  .MuiMenu-paper {
+    border-radius: 0.3125rem; // 5px
+    border: 1px solid $table-border-light;
+    box-shadow: 0 0.25rem 0.25rem 0 $table-shadow; // 0 4px 4px 0
+    padding: 0.625rem 0.5rem; // 10px 8px
+    .MuiMenu-list{
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-025); // 4px
+      .MuiMenuItem-root {
+        border-radius: 0.3125rem; // 5px
+        border: 1px solid transparent;
+        background: transparent;
+        &:hover {
+          border-color: $table-border-light !important;
+        }
+    
+        &.Mui-selected {
+          background-color: $table-border-light !important;
+        }
+      }
+    }
+  }
+  
+  .status-live {
+    @extend .status-circle;
+    background-color: $green-color;
+    display: table-cell
+  }
+  .MuiDataGrid-root {
+    .MuiDataGrid-cell{
+      padding: 0.5rem 0.625rem !important;
+    }
+    .MuiDataGrid-cell:nth-last-child(2) {
+      text-align: right !important;
+    }
+  }
+
+  .historypage-container{
+    .MuiDataGrid-cell{
+      @include font-style(0.9rem, var(--font-weight-sm), var(--secondary-dark));
+      outline: none !important;
+    }
+    .MuiDataGrid-columnHeaderTitleContainer{
+      @include font-style(0.9rem, var(--font-weight-md), var(--secondary-dark));
+      text-align: center !important;
+    }
+  }

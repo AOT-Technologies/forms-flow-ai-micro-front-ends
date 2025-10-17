@@ -42,7 +42,7 @@ import {
   CollapsibleSearch,
   DateRangePicker,
   FilterSortActions,
-  VariableModal
+  VariableSelection
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -820,7 +820,7 @@ return (
         handleShowVariableModal={handleShowVariableModal}
         dropdownSelection={dropdownSelection}
       />}
-      {showVariableModal && <VariableModal
+      {showVariableModal && <VariableSelection
           form={form}
           show={showVariableModal}
           onClose={handleCloseVariableModal}

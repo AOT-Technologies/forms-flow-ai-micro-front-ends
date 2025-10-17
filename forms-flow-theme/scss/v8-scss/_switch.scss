@@ -1,0 +1,199 @@
+// Import theme variables and mixins
+@use "mixins";
+
+// Switch Variables - Using consistent rem/em units for better scalability
+$switch-width: 2.75rem;              // 44px at 16px base
+$switch-height: 1.5rem;               // 24px at 16px base
+$switch-border-radius: 0.75rem;      // 12px at 16px base
+$switch-slider-size: 1.25rem;        // 20px at 16px base
+$switch-slider-offset: 0.125rem;     // 2px at 16px base
+$switch-slider-translate: 1.375rem;   // 22px at 16px base
+$switch-gap: var(--spacer-050);       // 8px from theme
+$switch-font-size: var(--font-size-m); // 15px from theme
+$switch-transition-duration: 0.2s;
+$switch-transition-timing: ease-in-out;
+
+// Border and fine details (keep in px for precision)
+$switch-border-width: 1px;
+
+// Shadow variables (using rem for consistent scaling)
+$switch-shadow-default: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.2);
+$switch-shadow-hover: 0 0 0 2px;
+$switch-shadow-focus: 0 0 0 1px;
+
+// Color Variables - Using theme tokens
+$color-switch-bg-default: var(--gray-medium);
+$color-switch-bg-on: var(--green-100);
+$color-switch-bg-on-primary: var(--primary-dark);
+$color-switch-bg-off: var(--gray-x-light);
+$color-switch-bg-off-binary: var(--red-100);
+$color-switch-bg-disabled: var(--gray-x-light);
+$color-switch-slider: var(--white-300);
+$color-switch-border-disabled: var(--gray-x-light);
+
+$color-switch-hover-green: var(--green-200);
+$color-switch-hover-primary: var(--vivid-100);
+$color-switch-hover-gray: var(--gray-medium);
+$color-switch-hover-red: var(--red-200);
+
+// Switch Mixins
+@mixin switch-base {
+  position: relative;
+  width: $switch-width;
+  height: $switch-height;
+  background: $color-switch-bg-default;
+  border-radius: $switch-border-radius;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+  box-shadow: none;
+  border: none;
+  transition: 
+    background-color $switch-transition-duration $switch-transition-timing,
+    box-shadow $switch-transition-duration $switch-transition-timing;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+@mixin switch-disabled {
+  cursor: not-allowed;
+  border: $switch-border-width solid $color-switch-border-disabled;
+  background: $color-switch-bg-disabled;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@mixin switch-slider {
+  position: absolute;
+  left: $switch-slider-offset;
+  top: $switch-slider-offset;
+  width: $switch-slider-size;
+  height: $switch-slider-size;
+  background: $color-switch-slider;
+  border-radius: 50%;
+  transition: left $switch-transition-duration $switch-transition-timing;
+  box-shadow: $switch-shadow-default;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin switch-variant($bg-color, $hover-color: none) {
+  background: $bg-color;
+  
+  @if $hover-color != none {
+    &:hover:not(.custom-switch-disabled) {
+      box-shadow: $switch-shadow-hover $hover-color;
+    }
+  }
+}
+
+// Main Switch Component
+.custom-switch-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: $switch-gap;
+}
+
+.custom-switch-label {
+  user-select: none;
+  font-size: $switch-font-size;
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-default);
+  color: var(--secondary-dark);
+  cursor: pointer;
+}
+
+.custom-switch {
+  @include switch-base;
+
+  // Switch variants
+  &-on {
+    @include switch-variant($color-switch-bg-on, $color-switch-hover-green);
+  }
+
+  &-on-primary {
+    @include switch-variant($color-switch-bg-on-primary, $color-switch-hover-primary);
+  }
+
+  &-off {
+    @include switch-variant($color-switch-bg-off, $color-switch-hover-gray);
+  }
+
+  &-off-binary {
+    @include switch-variant($color-switch-bg-off-binary, $color-switch-hover-red);
+  }
+
+  // State modifiers
+  &.custom-switch-disabled {
+    @include switch-disabled;
+  }
+
+  // Focus state
+  &:focus-visible:not(.custom-switch-disabled) {
+    box-shadow: $switch-shadow-focus var(--primary);
+  }
+
+  // Slider positioning for active states
+  &.custom-switch-on,
+  &.custom-switch-on-primary {
+    .custom-switch-slider {
+      left: $switch-slider-translate;
+    }
+  }
+}
+
+.custom-switch-slider {
+  @include switch-slider;
+}
+
+.custom-switch-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+// Responsive behavior
+@media (max-width: 768px) {
+  .custom-switch {
+    width: 2.5rem;
+    height: 1.375rem;
+  }
+  
+  .custom-switch-slider {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  
+  .custom-switch-on,
+  .custom-switch-on-primary {
+    .custom-switch-slider {
+      left: 1.25rem;
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .custom-switch {
+    border: 2px solid currentColor;
+  }
+  
+  .custom-switch-slider {
+    border: 1px solid currentColor;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .custom-switch,
+  .custom-switch-slider {
+    transition: none;
+  }
+}

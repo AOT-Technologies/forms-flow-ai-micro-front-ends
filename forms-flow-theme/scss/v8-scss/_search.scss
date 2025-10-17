@@ -1,0 +1,114 @@
+// Import theme variables
+@use "mixins";
+
+// Search Variables - Using consistent rem/em units for better scalability
+$search-input-height: 2.5rem;           // 40px at 16px base
+$search-input-border-radius: 0.3125rem; // 5px at 16px base
+$search-input-padding: 0.6875rem 0.8125rem; // 11px 13px at 16px base
+$search-input-gap: var(--spacer-100);   // 16px gap from theme
+$search-max-width: 40rem;               // 640px max container width
+
+// Transition variables
+$search-transition-duration: 0.2s;
+$search-transition-timing: ease;
+
+// Color Variables - Using theme tokens
+$color-white: var(--white-300);
+$color-light-gray: var(--white-200);
+$color-medium-gray: var(--gray-x-light);
+$color-dark-gray: var(--gray-darkest);
+$color-darker-gray: var(--secondary-dark);
+$color-disabled-gray: var(--gray-medium);
+$color-placeholder: var(--gray-medium-dark);
+$color-placeholder-disabled: var(--secondary);
+$color-border: var(--secondary);
+
+// Search Mixins
+@mixin search-container-base {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: $search-max-width;
+}
+
+@mixin search-input-base {
+  width: 100%;
+  height: $search-input-height;
+  border-radius: $search-input-border-radius;
+  padding: $search-input-padding;
+  border: 1px solid $color-border;
+  background: $color-light-gray;
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-m); // 15px from theme
+  line-height: var(--line-height-default);
+  letter-spacing: var(--letter-spacing-default);
+  outline: none;
+  transition: 
+    border-color $search-transition-duration $search-transition-timing,
+    box-shadow $search-transition-duration $search-transition-timing;
+  color: $color-dark-gray;
+  margin-right: $search-input-gap;
+
+  &::placeholder {
+    color: $color-placeholder;
+  }
+}
+
+@mixin search-input-focus {
+  border-color: $color-darker-gray;
+  box-shadow: 0 0 0 2px rgba($color-darker-gray, 0.2);
+}
+
+@mixin search-input-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: $color-light-gray;
+  border-color: $color-medium-gray;
+
+  &::placeholder {
+    color: $color-placeholder-disabled;
+  }
+}
+
+@mixin search-container-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+// Screen reader only utility class
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Main Search Component
+.search-input-container {
+  @include search-container-base;
+
+  &.search-disabled {
+    @include search-container-disabled;
+  }
+
+  .search-input {
+    @include search-input-base;
+
+    // Focus state
+    &:focus {
+      @include search-input-focus;
+    }
+
+    // Disabled state
+    &:disabled {
+      @include search-input-disabled;
+    }
+  }
+}
+  

@@ -1,0 +1,330 @@
+// Import theme variables
+@use "mixins";
+
+// Select Dropdown Variables - Using consistent rem/em units for better scalability
+$dropdown-width: 22rem;              // 352px at 16px base
+$dropdown-height: 2.5rem;             // 40px at 16px base
+$dropdown-border-radius: 0.3125rem;   // 5px at 16px base
+$dropdown-padding: var(--spacer-050) var(--spacer-075);    // 8px 12px from theme
+$dropdown-gap: var(--spacer-050);                // 8px from theme
+$dropdown-max-height: 8.75rem;        // 140px at 16px base
+$dropdown-z-index: 1000;
+
+// Font variables - Using theme tokens
+$dropdown-font-size: var(--font-size-m);       // 15px from theme
+$dropdown-font-weight: var(--font-weight-regular);
+$dropdown-font-weight-medium: var(--font-weight-medium);
+$dropdown-line-height: var(--line-height-default);
+
+// Transition variables
+$dropdown-transition-duration: 0.15s;
+$dropdown-transition-timing: ease-in-out;
+
+// Shadow variables
+$dropdown-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+
+// Color Variables - Using theme tokens
+$color-white: var(--white-300);
+$color-light-gray: var(--white-200);
+$color-medium-gray: var(--gray-x-light);
+$color-dark-gray: var(--gray-darkest);
+$color-darker-gray: var(--secondary-dark);
+$color-disabled-gray: var(--gray-medium);
+
+$color-primary: var(--vivid-100);
+$color-primary-light: var(--primary-dark);
+$color-primary-lighter: var(--primary-lighter);
+$color-primary-border: var(--primary-dark);
+$color-primary-selected: var(--primary);
+
+
+// Primary variant colors
+$dropdown-primary-border: rgba(184, 171, 255, 0.5); // #b8abff80
+$dropdown-primary-border-hover: var(--primary-dark);
+$dropdown-primary-selected-bg: var(--primary);
+$dropdown-primary-disabled-border: rgba(184, 171, 255, 0.25); //#b8abff40
+
+// Secondary variant colors
+$dropdown-secondary-border: var(--gray-x-light);
+$dropdown-secondary-border-hover: var(--gray-dark);
+$dropdown-secondary-selected-bg: var(--secondary);
+$dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
+
+// Select Dropdown Mixins
+@mixin dropdown-base {
+  border-radius: $dropdown-border-radius;
+  border: 1px solid $color-medium-gray;
+  background: $color-light-gray;
+  transition: 
+    border-color $dropdown-transition-duration $dropdown-transition-timing,
+    background-color $dropdown-transition-duration $dropdown-transition-timing,
+    box-shadow $dropdown-transition-duration $dropdown-transition-timing;
+}
+
+@mixin dropdown-selected {
+  background-color: $color-medium-gray;
+  font-weight: $dropdown-font-weight-medium;
+  color: $color-dark-gray;
+}
+
+@mixin dropdown-disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.6;
+  color: $color-disabled-gray;
+}
+
+// Main Select Dropdown Component
+.selectdropdown-container {
+  position: relative;
+  display: inline-block;
+  width: $dropdown-width;
+  height: $dropdown-height;
+  flex-shrink: 0;
+  color: $color-dark-gray;
+  font-size: $dropdown-font-size;
+  font-weight: $dropdown-font-weight;
+  line-height: $dropdown-line-height;
+}
+
+.custom-selectdropdown {
+  @include dropdown-base;
+  width: 100%;
+  min-height: $dropdown-height;
+  padding: $dropdown-padding;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+  position: relative;
+
+  // Disabled state
+  &.disabled {
+    @include dropdown-disabled;
+  }
+
+  // Hover state
+  &:hover:not(.disabled) {
+    border-color: $color-dark-gray;
+    background-color: $color-white;
+  }
+
+  // Focus state
+  &:focus-visible {
+    border-color: $color-dark-gray;
+    box-shadow: 0 0 0 2px $color-dark-gray;
+  }
+
+  // Primary variant
+  &--primary {
+    border-color: $dropdown-primary-border;
+
+    &:hover:not(.disabled) {
+      border-color: $dropdown-primary-border-hover;
+      background-color: $color-white;
+    }
+
+    &:focus-visible {
+      border-color: $dropdown-primary-border-hover;
+      box-shadow: 0 0 0 2px $dropdown-primary-selected-bg;
+    }
+
+    &.disabled {
+      border-color: $dropdown-primary-disabled-border;
+    }
+  }
+
+  // Secondary variant
+  &--secondary {
+    border-color: $dropdown-secondary-border;
+
+    &:hover:not(.disabled) {
+      border-color: $dropdown-secondary-border-hover;
+      background-color: $color-white;
+    }
+
+    &:focus-visible {
+      border-color: $dropdown-secondary-border-hover;
+      box-shadow: 0 0 0 2px $dropdown-secondary-selected-bg;
+    }
+  }
+}
+
+.dropdown-text {
+  flex: 1;
+  text-align: left;
+  color: $color-dark-gray;
+  font-size: $dropdown-font-size;
+  font-weight: $dropdown-font-weight;
+  line-height: $dropdown-line-height;
+  transition: color $dropdown-transition-duration $dropdown-transition-timing;
+
+  // Input field styling for search dropdown mode
+  &[type="text"] {
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: text;
+    width: 100%;
+
+    &:disabled {
+      color: $color-disabled-gray;
+      cursor: not-allowed;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: $color-darker-gray;
+      opacity: 0.7;
+    }
+  }
+}
+
+
+.custom-dropdown-options {
+  @include dropdown-base;
+  display: flex;
+  flex-direction: column;
+  gap: $dropdown-gap;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: $dropdown-gap;
+  padding: $dropdown-gap;
+  width: 100%;
+  max-height: $dropdown-max-height;
+  overflow-y: auto;
+  z-index: $dropdown-z-index;
+  box-shadow: $dropdown-shadow;
+  background-color: $color-white;
+
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    width: 0.25rem;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $color-medium-gray;
+    border-radius: 0.125rem;
+    opacity: 0.7;
+    transition: opacity $dropdown-transition-duration $dropdown-transition-timing;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  // Hover state for options container
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      opacity: 1;
+    }
+  }
+}
+
+.custom-dropdown-item {
+  padding: $dropdown-padding;
+  cursor: pointer;
+  color: $color-dark-gray;
+  font-size: $dropdown-font-size;
+  font-weight: $dropdown-font-weight;
+  line-height: $dropdown-line-height;
+  border: 1px solid transparent;
+  border-radius: $dropdown-border-radius;
+  background-color: transparent;
+  transition: 
+    background-color $dropdown-transition-duration $dropdown-transition-timing,
+    border-color $dropdown-transition-duration $dropdown-transition-timing,
+    color $dropdown-transition-duration $dropdown-transition-timing;
+
+  // Selected option state
+  &.selected {
+    @include dropdown-selected;
+  }
+
+  // Hover states
+  &:hover:not(.selected) {
+    border-color: $color-medium-gray;
+  }
+
+  &:hover.selected {
+    @include dropdown-selected;
+  }
+
+  // No results state
+  &.no-results {
+    color: $color-disabled-gray;
+    cursor: default;
+    font-style: italic;
+    text-align: center;
+    padding: $dropdown-padding;
+  }
+
+  // Primary variant
+  &--primary {
+    &.selected {
+      border-color: $dropdown-primary-border-hover;
+      background-color: $dropdown-primary-selected-bg;
+      font-weight: $dropdown-font-weight-medium;
+      color: $color-dark-gray;
+    }
+
+    &:hover:not(.selected) {
+      background-color: $color-white;
+      border-color: $dropdown-primary-border;
+    }
+
+    &:hover.selected {
+      border-color: $dropdown-primary-border-hover;
+      background-color: $dropdown-primary-selected-bg;
+    }
+  }
+
+  // Secondary variant
+  &--secondary {
+    &.selected {
+      border-color: $dropdown-secondary-border-hover;
+      background-color: $dropdown-secondary-selected-bg;
+      font-weight: $dropdown-font-weight-medium;
+      color: $color-dark-gray;
+    }
+
+    &:hover:not(.selected) {
+      background-color: $color-white;
+      border-color: $dropdown-secondary-hover-border;
+    }
+
+    &:hover.selected {
+      border-color: $dropdown-secondary-border-hover;
+      background-color: $dropdown-secondary-selected-bg;
+    }
+  }
+}
+
+.userSelect-container{
+  .selectdropdown-container{
+    .custom-selectdropdown{
+      svg{
+        display: none !important;
+      }
+    }
+  }
+}
+.user-select-text{
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+// Override list-group-item border behavior to match custom-dropdown-item
+.list-group-item + .list-group-item {
+  border-top-width: 1px;
+}

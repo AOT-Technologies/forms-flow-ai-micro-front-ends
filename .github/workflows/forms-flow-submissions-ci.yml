@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - release/*
+      - v8-develop
     paths:
       - "forms-flow-submissions/**"
       - "VERSION"
@@ -14,6 +15,7 @@ on:
       - main
       - develop
       - release/*
+      - v8-develop
     paths:
       - "forms-flow-submissions/**"
       - "VERSION"

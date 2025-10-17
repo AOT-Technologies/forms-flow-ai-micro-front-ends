@@ -109,10 +109,10 @@ const ViewApplication = React.memo(() => {
     const submissionId = applicationDetail.submissionId;
   
     Formio.clearCache();
-    dispatch(resetFormData("form"));
+    dispatch(resetFormData("form"));    
+    if (formId) {
     setFormTypeCheckLoading(true);
     setBundleFormData({ formId, submissionId });
-    if (formId) {
     fetchFormVariables(formId)
       .then((res) => {
         const formType = res.data?.formType;

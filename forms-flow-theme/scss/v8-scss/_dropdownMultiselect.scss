@@ -1,0 +1,222 @@
+// Import theme variables
+@use "mixins";
+
+// Variables for consistent styling
+$multiselect-width: 100%;
+$multiselect-border-radius: 5px;
+$multiselect-chip-border-radius: 25px;
+$multiselect-border-color: var(--gray-x-light);
+$multiselect-bg-color: var(--white-200);
+$multiselect-white-bg: var(--white-300);
+$multiselect-text-color: var(--gray-darkest);
+$multiselect-label-color: var(--gray-dark);
+$multiselect-disabled-color: var(--gray-x-light);
+$multiselect-gap: var(--spacer-100);
+$multiselect-chip-padding: 11px 18px 11px 16px;
+$multiselect-option-padding: 8px;
+$multiselect-margin-top: 8px;
+$multiselect-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+$multiselect-z-index: 9999;
+
+// Primary variant colors
+$multiselect-primary-border: rgba(184, 171, 255, 0.5); // #b8abff80
+$multiselect-primary-border-hover: var(--primary-dark);
+$multiselect-primary-border-disabled: rgba(184, 171, 255, 0.25); //#b8abff40
+
+// Secondary variant colors
+$multiselect-secondary-border-hover: var(--gray-dark);
+$multiselect-secondary-hover-border: rgba(107, 114, 128, 0.3);
+
+// Typography
+$font-size-15: var(--font-size-15);
+$font-weight-regular: var(--font-weight-regular);
+$font-weight-medium: var(--font-weight-medium);
+
+// Mixins for common patterns
+@mixin multiselect-base {
+  border-radius: $multiselect-border-radius;
+  border: 1px solid $multiselect-border-color;
+  background: $multiselect-bg-color;
+}
+
+@mixin chip-base {
+  padding: $multiselect-chip-padding;
+  border-radius: $multiselect-chip-border-radius;
+  background: $multiselect-bg-color;
+  align-items: center;
+  color: $multiselect-text-color;
+  font-size: $font-size-15;
+  font-weight: $font-weight-regular;
+  line-height: normal;
+  margin-bottom: 0px !important;
+  margin-right: 0px !important;
+}
+
+@mixin chip-disabled {
+  color: $multiselect-disabled-color;
+  opacity: 1;
+}
+
+@mixin chip-primary {
+  border: 1px solid $multiselect-primary-border;
+  
+  &:hover {
+    border: 1px solid $multiselect-primary-border-hover;
+  }
+}
+
+@mixin chip-secondary {
+  border: 1px solid $multiselect-border-color;
+  
+  &:hover {
+    border: 1px solid $multiselect-secondary-border-hover;
+  }
+}
+
+// Main dropdown multiselect component
+.dropdown-multiselect-component {
+  width: $multiselect-width;
+  display: flex;
+  flex-direction: column;
+  gap: $multiselect-gap;
+  
+  .L-style {
+    height: 25px;
+    width: 12px;
+    border-left: 1px solid $primary;
+    border-bottom: 1px solid $primary;
+    margin-right: var(--spacer-075);
+  }
+  
+  .dropdown-label {
+    font-size: $font-size-15;
+    font-weight: $font-weight-medium;
+    line-height: normal;
+    color: $multiselect-label-color;
+  }
+  .vertical-line-icon {
+    margin-left: var(--spacer-075);
+    margin-top:-8px
+  }
+}
+
+// Multi-select container
+.multiselect-container {
+  width: $multiselect-width;
+
+  // Primary variant (default)
+  &.primary-variant {
+    .searchWrapper {
+      .chip {
+        @include chip-base;
+        @include chip-primary;
+      }
+    }
+
+    &.disable_ms {
+      .searchWrapper {
+        .chip {
+          @include chip-base;
+          @include chip-disabled;
+          border: 1px solid $multiselect-primary-border-disabled;
+        }
+      }
+    }
+  }
+
+  // Secondary variant
+  &.secondary-variant {
+    .searchWrapper {
+      .chip {
+        @include chip-base;
+        @include chip-secondary;
+      }
+
+      &:hover {
+        border-color: $multiselect-secondary-hover-border;
+      }
+    }
+
+    &.disable_ms {
+      .searchWrapper {
+        .chip {
+          @include chip-base;
+          @include chip-disabled;
+          border: 1px solid $multiselect-border-color;
+        }
+      }
+    }
+  }
+
+  // Global disabled state
+  &.disable_ms {
+    .searchWrapper {
+      .chip {
+        @include chip-base;
+        @include chip-disabled;
+        border: 1px solid $multiselect-primary-border-disabled;
+      }
+    }
+  }
+
+  // Search wrapper (input container)
+  .searchWrapper {
+    @include multiselect-base;
+    background: $multiselect-white-bg;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $paddingLvl6S;
+    padding: $paddingLvl6TB $paddingLvl6LR;
+
+    .chip {
+      @include chip-base;
+      @include chip-primary;
+    }
+
+    .custom-close {
+      @include clickableFeedback1();
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding-left: $paddingLvl5S;
+    }
+  }
+
+  // Options list container (dropdown)
+  .optionListContainer {
+    @include multiselect-base;
+    box-shadow: $multiselect-shadow;
+    position: absolute !important;
+    margin-top: $multiselect-margin-top;
+    padding: $multiselect-option-padding;
+  }
+
+  // Options container
+  .optionContainer {
+    @include paddingLvl7();
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1 0 0;
+    border: none;
+
+    .option {
+      color: $multiselect-text-color;
+      font-size: $font-size-15;
+      font-weight: $font-weight-regular;
+      line-height: normal;
+      display: flex;
+      align-items: center;
+      align-self: stretch;
+      border-radius: $multiselect-border-radius;
+      border: 1px solid transparent;
+      z-index: $multiselect-z-index !important;
+      
+      &:hover {
+        border-color: $multiselect-border-color !important;
+        background-color: transparent !important;
+      }
+    }
+  }
+}

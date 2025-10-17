@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import ProgressBar from "react-bootstrap/ProgressBar";
 import Dropdown from "react-bootstrap/Dropdown";
 import {
   CloseIcon,
-  UploadIcon,
   SuccessIcon,
   FailedIcon,
   IButton,
@@ -12,6 +10,7 @@ import {
 } from "../SvgIcons";
 import { CustomButton } from "../CustomComponents/Button";
 import { useTranslation } from "react-i18next";
+import { FileUploadArea } from "../CustomComponents/FileUploadArea";
 
 // Define the types for props
 interface FileItem {
@@ -23,6 +22,11 @@ interface FileItem {
     majorVersion: number;
     minorVersion: number;
   };
+}
+
+interface CustomProgressBarProps {
+  progress: number;
+  color: string;
 }
 
 interface ProcessVersion {
@@ -53,6 +57,7 @@ interface ImportModalProps {
   primaryButtonText: string;
   headerText: string;
   processVersion: ProcessVersion | null;
+  CustomProgressBarProps: CustomProgressBarProps | null;
 }
 
 export const ImportModal: React.FC<ImportModalProps> = React.memo(
@@ -185,33 +190,41 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       }
     }, [showModal]);
 
-    useEffect(() => {
-      let isMounted = true;
-
-      if (selectedFile) {
+    // Retry with same file
+    const handleRetry = () => {
         handleImport(
           selectedFile,
           uploadActionType.VALIDATE,
           selectedLayoutVersion?.value ?? null,
           selectedFlowVersion?.value ?? null
         );
+    };
+    useEffect(() => {
+      let isMounted = true;
+
+      if (selectedFile) {
+        handleRetry();
 
         let start: number | null = null;
         const duration = 2000;
+        // set max target based on error flag
+        const maxProgress = importError ? 50 : 100;
+        
 
         const animateProgress = (timestamp: number) => {
+          //  exit immediately if not mounted
+          if (!isMounted) return;
+
           if (!start) start = timestamp;
           const progress = Math.min(
-            ((timestamp - start) / duration) * 100,
-            100
+            ((timestamp - start) / duration) * maxProgress,
+            maxProgress
           );
 
-          if (isMounted) {
             setUploadProgress(progress);
-            setInprogress(progress < 100);
-          }
+            setInprogress(progress < maxProgress);
 
-          if (progress < 100) {
+          if (progress < maxProgress) {
             requestAnimationFrame(animateProgress);
           }
         };
@@ -223,7 +236,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
           cancelAnimationFrame(animation);
         };
       }
-    }, [selectedFile]);
+    }, [selectedFile, importError]);
 
     const renderUploadDetails = () => {
       return (
@@ -429,61 +442,6 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       );
     }
 
-    // Function to render the file upload area when no file is selected
-    const renderFileUploadArea = () => {
-      return (
-        <div
-          role="button"
-          data-testid="import-modal-file-upload-area"
-          className="file-upload"
-          tabIndex={0}
-          onDragOver={(e) => {
-            e.preventDefault(); // Prevent the browser's default drag behavior
-            e.stopPropagation(); 
-          }}
-
-          onDrop={(e) => {
-            e.preventDefault();
-            e.stopPropagation(); 
-            const file = e.dataTransfer.files[0];
-            if (file) {
-              setSelectedFile(file); // Handle the dropped files
-            }
-          }}
-
-          onClick={() => document.getElementById("file-input")?.click()}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              document.getElementById("file-input")?.click(); 
-            }
-          }}
-          aria-label="Upload file"
-        >
-          <input
-            id="file-input"
-            data-testid="import-modal-file-input"
-            type="file"
-            style={{ display: "none" }}
-            onChange={onUpload}
-            accept={fileType}
-          />
-          <div className="upload-area">
-            <UploadIcon />
-            <p className="upload-text">
-              {t(
-                `Click or drag a file to this area to import${
-                  fileType === ".json, .bpmn" ? " (form, layout or bpmn)" : ""
-                }`
-              )}
-            </p>
-            <p className="upload-size-text">
-              {t(`Support for a single ${fileType} file upload. Maximum file
-              size 20MB.`)}
-            </p>
-          </div>
-        </div>
-      );
-    };
 
     return (
       <Modal show={showModal} onHide={closeModal} size="sm">
@@ -501,38 +459,20 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
           </div>
         </Modal.Header>
         <Modal.Body className="p-5">
-          {selectedFile ? (
-            <>
-              <ProgressBar now={uploadProgress} />
-              {renderUploadDetails()}
-              {renderFileItems()}
-            </>
-          ) : (
-            renderFileUploadArea()
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="buttons-row">
-            <CustomButton
-              disabled={ primaryButtonDisabled }
-              dataTestId="import-modal-primary-button"
-              label={primaryButtonText}
-              onClick={() => {
-                primaryButtonText === "Try Again" ? closeModal() : onImport();
-              }}
-              buttonLoading={!importError && importLoader}
-            />
-            <CustomButton
-              dataTestId="import-modal-close-button"
-              label="Cancel"
-              onClick={() => {
-                resetState();
-                closeModal();
-              }}
-              secondary
-            />
+          <div className="d-flex justify-content-center">
+          <FileUploadArea
+            primaryButtonText={primaryButtonText}
+            fileType={fileType}
+            onFileSelect={setSelectedFile}
+            file={selectedFile}
+            progress={uploadProgress}
+            error={importError}
+            onRetry={handleRetry}
+            onCancel={() => {resetState();}}
+            onDone={() => {closeModal();}}
+          />
           </div>
-        </Modal.Footer>
+        </Modal.Body>
       </Modal>
     );
   }

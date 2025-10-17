@@ -141,7 +141,8 @@ $animSpeed: 300ms;
   --lg-btn-border-radius: var(--radius-lg);
   --default-font-size: 1rem; 
   --default-font-color: #{$gray-dark};
-  --navbar-width: 192px;
+  // --navbar-width: 192px;
+  --navbar-width:10rem;
   --custom-logo-height: 1.5rem;
 
   //no-code colors
@@ -151,8 +152,7 @@ $animSpeed: 300ms;
 
   //font-style
   --default-font-family-url:" ";
-  --default-font-family: "Roboto", sans-serif;
-  --primary-font: var(--default-font-family);
+  --primary-font: var(--font-family-base);
   //font-size
   --font-size-xs: 0.875rem; // 14px
   --font-size-sm: var(--default-font-size); 
@@ -253,7 +253,7 @@ body {
     }
 
     &::-webkit-scrollbar-thumb {
-      width: $scrollBarWidth/2;
+      width: calc($scrollBarWidth / 2);
       min-height: 15.625rem;
       background-color: $primary-light;
       background-clip: padding-box;

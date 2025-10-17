@@ -1,6 +1,7 @@
 
 $primary: var(--ff-primary);
 $gray-darkest: var(--ff-gray-darkest);
+$gray-x-light: var(--gray-x-light);
 .bpm-container{
   height:100%;
   position: absolute;
@@ -9,22 +10,11 @@ $gray-darkest: var(--ff-gray-darkest);
 }
 .bpmn-viewer-container{ 
   position:relative; 
-  min-height: 45vh; 
-  min-width: 60vw; 
+  min-height: 45vh;
   width: 100%;
-  height: 100%;
 }
 
-.border-1{
-  border-width: 1px !important;
-}
-.border-dark{
-  --ff-border-opacity: 1;
-    border-color: rgba(var(--ff-dark-rgb), var(--ff-border-opacity)) !important;
-}
-.border{
-  border: var(--ff-border-width) var(--ff-border-style) var(--ff-border-color) !important;
-}
+
  .grab-cursor {
    cursor: move;
    cursor: grab;
@@ -55,10 +45,22 @@ $gray-darkest: var(--ff-gray-darkest);
 .bpmn-main-container-editor{
     width: 100%;
     display: flex;
-    margin-bottom: 1.25rem;
-    margin-top: 0.625rem;
+    margin-bottom: 1rem;
     height: auto;
     resize: vertical;
-    max-height: 37.5rem;
+    overflow: hidden;
+    // max-height: 37.5rem;
     min-height: 28.125rem;
+    border: 1px solid $gray-x-light;
+    border-radius:5px;
+
+}
+
+#js-properties-panel{
+  max-height: 37.5rem;
+}
+.flow-builder {
+  // height: calc(100vh - 15rem) !important;
+  height: 48rem !important; //768px as per figma
+  overflow: auto;
 }
