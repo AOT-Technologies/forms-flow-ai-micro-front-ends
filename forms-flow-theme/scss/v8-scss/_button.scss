@@ -118,7 +118,7 @@ $color-warning-disabled: var(--gray-medium);
 }
 
 @mixin spinner($border-color: $color-disabled-gray, $active-color: $color-darker-gray) {
-  display: none;
+  // display: none;
   width: $spinner-size;
   height: $spinner-size;
   border: $spinner-border-width solid $border-color;
