@@ -49,6 +49,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   }
 
 .MuiDataGrid-root {
+  .MuiDataGrid-cell{
+    display: flex!important;
+    align-items: center!important;
+  }
     .MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) {
       .MuiDataGrid-sortButton {
         opacity: 1 !important;

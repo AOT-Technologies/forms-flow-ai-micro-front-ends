@@ -277,6 +277,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
           ),
           flex: 1,
           sortable: false,
+          align: 'right',
           renderCell: (params) => {
             if(params.row.index === 0) {
               return null;
