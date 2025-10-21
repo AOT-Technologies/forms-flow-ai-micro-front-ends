@@ -299,7 +299,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
               disableAllRevertButton ||
               params.row[disabledData.key] == disabledData.value;
 
-            return <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', py: 0.5 }}>
+            return <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', py: 0.5, justifyContent: 'flex-end' }}>
               <V8CustomButton
                 label={revertBtnText}
                 variant="secondary"
