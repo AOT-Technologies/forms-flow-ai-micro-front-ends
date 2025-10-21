@@ -141,10 +141,6 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
       // onClose();
     };
 
-    useEffect(() => {
-      console.log("allHistory on page load:", allHistory);
-    }, []);
-
     // const handleClose = () => {
     //   // onClose();
     //   setHasLoadedMoreForm(false);
