@@ -66,5 +66,8 @@
     "single-spa": "^5.9.3",
     "single-spa-react": "^4.3.1"
   },
+  "overrides": {
+    "underscore": ">=1.12.1"
+  },
   "types": "dist/formsflow-admin.d.ts"
 }
