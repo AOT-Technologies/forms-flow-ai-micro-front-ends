@@ -63,6 +63,8 @@ interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, '
   datatestId?: string;
   /** Modal type affecting icon and styling */
   type?: ModalType;
+  /** Modal size */
+  size?: "sm" | "lg" | "xl";
   /** Additional CSS classes */
   className?: string;
   /** Accessible label for screen readers */
@@ -118,6 +120,7 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
   secondaryBtnLoading = false,
   datatestId,
   type,
+  size = 'sm',
   btnText,
   btnDisable = false,
   btndataTestid = 'ok-button',
@@ -158,7 +161,7 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
       ref={ref}
       show={show}
       onHide={onClose}
-      size="sm"
+      size={size}
       data-testid={dataTestId || "prompt-modal"}
       aria-labelledby="prompt-modal-title"
       aria-describedby="prompt-modal-message"
