@@ -5,7 +5,7 @@ import { ConfirmModal } from "./ConfirmModal";
 import { useTranslation } from "react-i18next";
 import { HelperServices, StorageService, StyleServices } from "@formsflow/service";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import { V8CustomButton, } from "./CustomButton";
 import { RefreshIcon } from "../SvgIcons/index";
 
@@ -50,45 +50,45 @@ interface AllHistory {
   id?: string;
 }
 
-const HistoryField = ({ fields }) => {
-  return (
-    <div className="details">
-      {fields.map(({ id, heading, value }) => (
-        <>
-          {heading ? (
-            <div key={id}>
-              <p>{heading}</p>
-              <p>{value}</p>
-            </div>
-          ) : (
-            ""
-          )}
-        </>
-      ))}
-    </div>
-  );
-};
+// const HistoryField = ({ fields }) => {
+//   return (
+//     <div className="details">
+//       {fields.map(({ id, heading, value }) => (
+//         <>
+//           {heading ? (
+//             <div key={id}>
+//               <p>{heading}</p>
+//               <p>{value}</p>
+//             </div>
+//           ) : (
+//             ""
+//           )}
+//         </>
+//       ))}
+//     </div>
+//   );
+// };
 
-const RevertField = ({
-  variant,
-  size,
-  label,
-  onClick,
-  dataTestId,
-  ariaLabel,
-  disabled = false,
-}) => {
-  return (
-    <CustomButton
-      disabled={disabled}
-      label={label}
-      onClick={onClick}
-      dataTestId={dataTestId}
-      ariaLabel={ariaLabel}
-      actionTable
-    />
-  );
-};
+// const RevertField = ({
+//   variant,
+//   size,
+//   label,
+//   onClick,
+//   dataTestId,
+//   ariaLabel,
+//   disabled = false,
+// }) => {
+//   return (
+//     <CustomButton
+//       disabled={disabled}
+//       label={label}
+//       onClick={onClick}
+//       dataTestId={dataTestId}
+//       ariaLabel={ariaLabel}
+//       actionTable
+//     />
+//   );
+// };
 
 export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
   ({
@@ -125,16 +125,25 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
     const currentCategoryLabel = categoryType === "FORM" ? "Layout" : "Flow";
 
     const handleRevertClick = (
-      version: string,
-      cloned_form_id: string,
-      process_id: string
+      params: any
     ) => {
-      setSelectedVersion(version);
-      setClonedFormId(cloned_form_id);
-      setProcessId(process_id);
       setShowConfirmModal(true);
+      if (params.processType === "BPMN") {
+        const version = `${params.majorVersion}.${params.minorVersion}`;
+        setSelectedVersion(version);
+        setProcessId(params.id);
+        revertBtnAction;
+      } else {
+        setSelectedVersion(params.version);
+        setClonedFormId(params.cloned_form_id);
+        setProcessId(params.process_id);
+      }
       // onClose();
     };
+
+    useEffect(() => {
+      console.log("allHistory on page load:", allHistory);
+    }, []);
 
     // const handleClose = () => {
     //   // onClose();
@@ -290,14 +299,16 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
               disableAllRevertButton ||
               params.row[disabledData.key] == disabledData.value;
 
-            return <V8CustomButton
-              label={revertBtnText}
-              variant="secondary"
-              disabled={revertButtonDisabled}
-              onClick={() => handleRevertClick(params.row.version, cloned_form_id, process_id)}
-              dataTestId={`revert-button-${params.row.id}`}
-              ariaLabel={t("Revert Button")}
-            />
+            return <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', py: 0.5 }}>
+              <V8CustomButton
+                label={revertBtnText}
+                variant="secondary"
+                disabled={revertButtonDisabled}
+                onClick={() => handleRevertClick(params.row)}
+                dataTestId={revertBtndataTestid}
+                ariaLabel={t(revertBtnariaLabel)}
+                />
+              </Box>
           }
         },
       ];
@@ -437,6 +448,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
           <DataGrid
             rows={generateRows(allHistory)}
             columns={generateColumns()}
+            paginationMode="server"
             paginationModel={paginationModel}
             pageSizeOptions={[10, 25, 50, 100]}
             hideFooterSelectedRowCount
@@ -444,9 +456,9 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
             rowHeight={55}
             disableColumnMenu
             disableRowSelectionOnClick
-            rowCount={historyCount}
             loading={loading}
             onPaginationModelChange={handlePaginationModelChange}
+            rowCount={historyCount}
             slotProps={{
               loadingOverlay: {
                 variant: 'skeleton',
