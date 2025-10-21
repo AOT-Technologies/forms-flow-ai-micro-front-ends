@@ -53,3 +53,4 @@ export { default as CustomUrl } from "./CustomComponents/CustomUrl";
 export * from "./CustomComponents/CustomUrl";
 export * from "./CustomComponents/BreadCrumbs";
 export { default as FileUploadPanel } from "./CustomComponents/FileUploadPanel";
+export * from "./CustomComponents/ReusableTable";
