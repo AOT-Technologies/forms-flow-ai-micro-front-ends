@@ -127,13 +127,13 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
     const handleRevertClick = (
       params: any
     ) => {
-      setShowConfirmModal(true);
       if (params.processType === "BPMN") {
         const version = `${params.majorVersion}.${params.minorVersion}`;
         setSelectedVersion(version);
         setProcessId(params.id);
-        revertBtnAction;
+        revertBtnAction(params.id);
       } else {
+        setShowConfirmModal(true);
         setSelectedVersion(params.version);
         setClonedFormId(params.cloned_form_id);
         setProcessId(params.process_id);
