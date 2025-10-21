@@ -65,7 +65,7 @@
 
 @mixin upload-status-styles($color) {
   color: $color;
-  text-align: right;
+  text-align: left;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-sm);
   line-height: var(--text-line-height);

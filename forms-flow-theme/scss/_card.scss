@@ -71,6 +71,11 @@ $gray-darkest: var(--ff-gray-darkest);
     h5 {
       width: 100%;
     }
+    //overriding formio panel style
+        &:first-child {
+          border-radius: calc(0.375rem - 1px) calc(0.375rem - 1px) 0 0 !important;
+    
+        }
   }
 }
 
@@ -472,6 +477,9 @@ $gray-darkest: var(--ff-gray-darkest);
 .workflow-edit-container {
   max-height: calc(100vh - 16.25rem);
   overflow: auto;
+  ._loading_overlay_wrapper{
+    overflow: visible !important;
+  }
 }
 
 

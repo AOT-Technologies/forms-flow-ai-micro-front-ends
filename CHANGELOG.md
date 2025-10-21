@@ -2,7 +2,36 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
-## 7.2.0 - date to be added
+## 7.3.0 - date to be added
+
+`Added`
+
+**forms-flow-submissions**
+
+* Added bundle forms to the analyze-submissions filter list
+
+`Modified`
+
+**forms-flow-review**
+* Bundle review functionality moved to forms-flow-review from open source
+  
+**forms-flow-service**
+* Form.io token fetching logic has been moved to forms-flow-service
+  
+`Fixed`
+
+**forms-flow-review**
+* Minor issues fixed in the reviewer page
+
+**forms-flow-submissions**
+* Minor issues fixed in the analyze-submissions page
+
+`Known Issues`
+
+* Field-level search is not supported for bundle forms from the collapsible sidebar in analyze-submissions
+* Reviewer page does not support creating filters for bundle forms.
+
+## 7.2.0 - 2025-08-14
 
 `Added`
 

@@ -57,10 +57,13 @@ const TaskDetails = () => {
     formId: "",
     submissionId: "",
   });
+  
   // Redux State Selectors
-  const tenantKey = useSelector(
+  const tenantKeyFromState = useSelector(
     (state: any) => state.tenants?.tenantData?.key
   );
+  // Conditionally select tenantKey from state or localStorage
+  const tenantKey = tenantKeyFromState || localStorage.getItem("tenantKey");
   const task = useSelector((state: any) => state.task.taskDetail);
   const bpmTaskId = useSelector((state: any) => state.task.taskId);
   const taskFormSubmissionReload = useSelector(
@@ -209,7 +212,6 @@ const TaskDetails = () => {
   // Form submission callback
   const onFormSubmitCallback = (actionType = "") => {
     if (!bpmTaskId || !task?.formUrl) return;
-
     dispatch(setBPMTaskDetailLoader(true));
     const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
     const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
@@ -296,6 +298,7 @@ const TaskDetails = () => {
          currentUser={currentUser}
          onFormSubmit={onFormSubmitCallback}
          bundleFormData={bundleFormData}
+         onCustomEvent={onCustomEventCallBack}
        /> : 
       <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
        <TaskForm

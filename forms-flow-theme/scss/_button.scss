@@ -1787,3 +1787,13 @@ $danger-color: var(--ff-danger);
 
 
 }
+
+/* Class to remove number form input spinners */
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+

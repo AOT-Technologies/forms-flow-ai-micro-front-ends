@@ -23,6 +23,7 @@ interface TaskFormProps extends PropsFromRedux {
   bundleFormData: { formId: string; submissionId: string };
   onChange?: (event: any) => void;
   onFormSubmit?: (submission: any) => void;
+  onCustomEvent?: (event: any) => void;
 }
 
 const BundleTaskForm: React.FC<TaskFormProps> = ({
@@ -31,6 +32,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
   bundleFormData,
   onChange,
   onFormSubmit,
+  onCustomEvent,
 }) => {
   const dispatch = useDispatch();
   const formRef = useRef<any>();
@@ -109,6 +111,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
     }
   };
 
+
   useEffect(() => {
     getFormAndSubmission();
     document.getElementById("main")?.scrollTo({ top: 0, behavior: "smooth" });
@@ -175,6 +178,7 @@ const onLabelClick = (step) => {
               data: { ..._.cloneDeep(bundleSubmission?.data), ..._.cloneDeep(submission?.data) }
             });
           }}
+        onCustomEvent={onCustomEvent} 
         formReady={(e) => (formRef.current = e)}
         onChange={(e) => {
           if (!e.changed && !submission) setSubmission({ data: e.data });
