@@ -88,7 +88,10 @@ declare module "@formsflow/components" {
     StepperComponent,
     PromptModal,
     CustomUrl,
-    Switch
+    Switch,
+    SelectDropdown,
+    V8CustomButton,
+    ReusableTable
   }: any;
 }
 
