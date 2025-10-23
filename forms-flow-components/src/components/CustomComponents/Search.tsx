@@ -18,6 +18,8 @@ export interface CustomSearchProps {
   dataTestId: string;
   /** Disables the search input and button */
   disabled?: boolean;
+  /** Optional width for the search input (CSS value) */
+  width?: string;
 }
 
 /**
@@ -31,6 +33,7 @@ export interface CustomSearchProps {
  *   placeholder="Search items..."
  *   dataTestId="main-search"
  *   disabled={false}
+ *   width="300px"
  * />
  */
 export const CustomSearch: FC<CustomSearchProps> = ({
@@ -40,11 +43,15 @@ export const CustomSearch: FC<CustomSearchProps> = ({
   placeholder = "Search",
   dataTestId,
   disabled = false,
+  width,
 }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="search-input-container">
+    <div
+      className="search-input-container"
+      {...(width ? { style: { width } } : {})}
+    >
       <input
         className="search-input"
         onChange={(e) => setSearch(e.target.value)}
