@@ -194,7 +194,7 @@ export const ConnectIcon = ({ ...props }) => (
     onClick={props.onClick}
     {...props}
   >
-    <path d="M0.5 0.5H12.5" stroke="#E5E5E5" stroke-linecap="round" />
+    <path d="M0.5 0.5H12.5" stroke="#E5E5E5" strokeLinecap="round" />
   </svg>
 );
 
@@ -1221,8 +1221,8 @@ export const AddIcon = ({ color, ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M10.2785 4.77849H6.22151V0.721511C6.22151 0.32289 5.89862 0 5.5 0C5.10138 0 4.77849 0.32289 4.77849 0.721511V4.77849H0.721511C0.32289 4.77849 0 5.10138 0 5.5C0 5.89862 0.32289 6.22151 0.721511 6.22151H4.77849V10.2785C4.77849 10.6771 5.10138 11 5.5 11C5.89862 11 6.22151 10.6771 6.22151 10.2785V6.22151H10.2785C10.6771 6.22151 11 5.89862 11 5.5C11 5.10138 10.6771 4.77849 10.2785 4.77849Z"
       fill="#7C7D7F"
     />

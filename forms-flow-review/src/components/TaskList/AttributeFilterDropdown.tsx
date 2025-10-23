@@ -181,22 +181,14 @@ const changeAttributeFilterSelection = (attributeFilter) => {
             let icon = null;
             let category: "my" | "shared" = "my";
 
-            if (
-              selectedFilter?.users?.length > 0 &&
-              !filter?.roles?.length &&
-              !filter?.users?.length
-            ) {
-              icon = null;
-              category = "my";
-            } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
               icon = <SharedWithOthersIcon className="shared-icon" />;
               category = "my";
             } else if (isSharedToPublic || isSharedToMe) {
               icon = <SharedWithMeIcon className="shared-icon" />;
               category = "shared";
-            } else {
-              category = "my";
             }
+            // category remains "my" for all other cases (default)
 
             return {
               className:

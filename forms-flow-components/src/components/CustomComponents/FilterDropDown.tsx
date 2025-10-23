@@ -142,29 +142,32 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
       [disabled]
     );
 
+    // both fucntions will be used later if needed
+    // TODO: remove this later if not needed
+
     // Memoized keyboard event handler for extra action
-    const handleExtraActionKeyDown = useCallback(
-      (event: React.KeyboardEvent): void => {
-        if (disabled || !extraActionOnClick) return;
+    // const handleExtraActionKeyDown = useCallback(
+    //   (event: React.KeyboardEvent): void => {
+    //     if (disabled || !extraActionOnClick) return;
 
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          event.stopPropagation();
-          extraActionOnClick();
-        }
-      },
-      [disabled, extraActionOnClick]
-    );
+    //     if (event.key === "Enter" || event.key === " ") {
+    //       event.preventDefault();
+    //       event.stopPropagation();
+    //       extraActionOnClick();
+    //     }
+    //   },
+    //   [disabled, extraActionOnClick]
+    // );
 
-    // Memoized extra action click handler
-    const handleExtraActionClick = useCallback(
-      (event: React.MouseEvent): void => {
-        event.preventDefault();
-        event.stopPropagation();
-        extraActionOnClick?.();
-      },
-      [extraActionOnClick]
-    );
+    // // Memoized extra action click handler
+    // const handleExtraActionClick = useCallback(
+    //   (event: React.MouseEvent): void => {
+    //     event.preventDefault();
+    //     event.stopPropagation();
+    //     extraActionOnClick?.();
+    //   },
+    //   [extraActionOnClick]
+    // );
 
     // Categorize items for Task Filter
     const categorizedItems = useMemo(() => {
@@ -175,7 +178,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
       const actionItems: FilterItemType[] = [];
       const noneItems: FilterItemType[] = [];
 
-      items.forEach((item) => {
+      for (const item of items) {
         switch (item.category) {
           case "my":
             myFilters.push(item);
@@ -193,7 +196,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             // If no category specified, treat as regular item
             myFilters.push(item);
         }
-      });
+      }
 
       return { myFilters, sharedFilters, actionItems, noneItems };
     }, [items, categorize]);
@@ -229,7 +232,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             <>
               {noneItems.map((item, index) => (
                 <Dropdown.Item
-                  key={`none-${index}`}
+                  key={`none-${item.dataTestId}-${index}`}
                   onClick={(e) => {
                     e.preventDefault();
                     item.onClick(item.type);

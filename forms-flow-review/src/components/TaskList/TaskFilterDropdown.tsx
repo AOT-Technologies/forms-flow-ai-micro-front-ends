@@ -150,16 +150,15 @@ const TaskListDropdownItems = memo(() => {
           // Determine category
           if (filterDetails?.createdBy === "system") {
             icon = null;
-            category = "my";
+            // category remains "my" (default)
           } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
             icon = <SharedWithOthersIcon className="shared-icon" />;
             category = "my";
           } else if (isSharedToPublic || isSharedToMe) {
             icon = <SharedWithMeIcon />;
             category = "shared";
-          } else {
-            category = "my";
           }
+          // category remains "my" for all other cases (default)
 
           return {
             className:
