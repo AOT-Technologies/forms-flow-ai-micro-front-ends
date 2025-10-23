@@ -14,6 +14,8 @@ interface DownloadPDFButtonProps {
   form_id: string;
   submission_id: string;
   title: string;
+  isBundle?: boolean;
+  bundleId?: string;
 }
 
 interface DownloadFileParams {
@@ -36,7 +38,7 @@ interface UseDownloadFileReturn {
 }
 
 const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = React.memo(
-  ({ form_id, submission_id, title }) => {
+  ({ form_id, submission_id, title, isBundle, bundleId }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { t } = useTranslation();
 
@@ -68,6 +70,12 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = React.memo(
         "<submission_id>",
         submission_id
       );
+      
+      // Add bundle parameters if this is a bundle export
+      if (isBundle && bundleId) {
+        apiUrlExportPdf += `?mapperId=${bundleId}&isBundle=${isBundle}`;
+      }
+      
       return apiUrlExportPdf;
     };
 
