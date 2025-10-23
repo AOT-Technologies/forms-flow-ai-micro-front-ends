@@ -88,7 +88,9 @@ declare module "@formsflow/components" {
     StepperComponent,
     PromptModal,
     CustomUrl,
-    Switch
+    Switch,
+    ReorderIcon,
+    FilterDropDown
   }: any;
 }
 

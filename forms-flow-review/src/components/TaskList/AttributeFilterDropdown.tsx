@@ -1,14 +1,14 @@
 import {
   AddIcon,
-  ButtonDropdown,
-  PencilIcon,
+  FilterDropDown,
+  ReorderIcon,
   SharedWithMeIcon,
   SharedWithOthersIcon,
 } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   setAttributeFilterToEdit,
   setSelectedBpmAttributeFilter,
@@ -18,8 +18,9 @@ import { fetchServiceTaskList } from "../../api/services/filterServices";
 import { cloneDeep } from "lodash";
 import { ReorderAttributeFilterModal } from "../ReorderAttributeFilterModal";
 import { userRoles } from "../../helper/permissions";
-import { UserDetail } from "../../types/taskFilter";
+import { FilterItemType, UserDetail } from "../../types/taskFilter";
 import { buildDateRangePayload } from "../../helper/tableHelper";
+
 
 const AttributeFilterDropdown = () => {
   const { t } = useTranslation();
@@ -117,42 +118,45 @@ const changeAttributeFilterSelection = (attributeFilter) => {
     dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
   };
 
-  const filterDropdownAttributeItems = () => {
-    const attributeDropdownItemsArray = [];
+  const filterDropdownAttributeItems = useMemo(() => {
+    const attributeDropdownItemsArray: FilterItemType[] = [];
 
-    const createCustomField = {
+    const createCustomField: FilterItemType = {
       content: (
-        <span>
-          <AddIcon />
+        <div className="d-flex align-items-center justify-content-between">
           <span>{t("Custom Filter")}</span>
-        </span>
+          <AddIcon />
+        </div>
       ),
       onClick: handleToggleAttrFilterModal,
       type: "custom",
       dataTestId: "attr-filter-item-custom",
       ariaLabel: t("Custom Attribute Filter"),
+      category: "action",
     };
 
-    const reOrderAttribute = {
+    const reOrderAttribute: FilterItemType = {
       content: (
-        <span>
-          <PencilIcon />
+        <div className="d-flex align-items-center justify-content-between">
           <span>{t("Re-order And Hide Filters")}</span>
-        </span>
+          <ReorderIcon />
+        </div>
       ),
       onClick: () => setShowReorderAttributeFilterModal(true),
       type: "reorder",
       dataTestId: "attr-filter-item-reorder",
       ariaLabel: t("Re-order And Hide Filters"),
+      category: "action",
     };
 
-    const clearAttributeFilter = {
+    const clearAttributeFilter: FilterItemType = {
       className: !selectedAttributeFilter?.id ? "selected-filter-item" : "",
       content: <span>{t("All Fields")}</span>,
       onClick: () => changeAttributeFilterSelection(null),
       type: "none",
       dataTestId: "attr-filter-item-none",
       ariaLabel: t("All Fields"),
+      category: "none",
     };
 
     const filteredItems = Array.isArray(attributeFilterList)
@@ -175,16 +179,23 @@ const changeAttributeFilterSelection = (attributeFilter) => {
             );
 
             let icon = null;
+            let category: "my" | "shared" = "my";
+
             if (
               selectedFilter?.users?.length > 0 &&
               !filter?.roles?.length &&
               !filter?.users?.length
             ) {
               icon = null;
+              category = "my";
             } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
               icon = <SharedWithOthersIcon className="shared-icon" />;
+              category = "my";
             } else if (isSharedToPublic || isSharedToMe) {
               icon = <SharedWithMeIcon className="shared-icon" />;
+              category = "shared";
+            } else {
+              category = "my";
             }
 
             return {
@@ -204,11 +215,21 @@ const changeAttributeFilterSelection = (attributeFilter) => {
               ariaLabel: t("Select attribute filter {{filterName}}", {
                 filterName: t(filter.name),
               }),
+              category,
             };
           })
       : [];
 
     const isSearching = filterSearchTerm?.trim().length > 0;
+
+    // Add "Create" and "Reorder" at the top if feature is enabled
+    if (createFilters) {
+      attributeDropdownItemsArray.push(createCustomField);
+
+      if (filteredItems.length > 0) {
+        attributeDropdownItemsArray.push(reOrderAttribute);
+      }
+    }
 
     // Only show "All Fields" when not searching
     if (!isSearching || filteredItems.length === 0) {
@@ -218,17 +239,15 @@ const changeAttributeFilterSelection = (attributeFilter) => {
     // Add dynamic filtered items
     attributeDropdownItemsArray.push(...filteredItems);
 
-    // Add "Create" and "Reorder" only if feature is enabled
-    if (createFilters) {
-      attributeDropdownItemsArray.push(createCustomField);
-
-      if (filteredItems.length > 0) {
-        attributeDropdownItemsArray.push(reOrderAttribute);
-      }
-    }
-
     return attributeDropdownItemsArray;
-  };
+  }, [
+    attributeFilterList,
+    filterSearchTerm,
+    selectedAttributeFilter,
+    userDetails,
+    selectedFilter,
+    createFilters,
+  ]);
 
   const title = selectedAttributeFilter
     ? `${
@@ -240,21 +259,24 @@ const changeAttributeFilterSelection = (attributeFilter) => {
 
   return (
     <>
-      <ButtonDropdown
+      <FilterDropDown
         label={title}
-        dropdownType="DROPDOWN_WITH_EXTRA_ACTION"
+        items={filterDropdownAttributeItems}
+        searchable={false}
+        searchPlaceholder={t("Search")}
         onSearch={onSearch}
-        dropdownItems={filterDropdownAttributeItems()}
-        extraActionIcon={<PencilIcon />}
-        extraActionOnClick={
-          !selectedAttributeFilter
-            ? handleToggleAttrFilterModal
-            : handleEditAttrFilter
-        }
+        // extraActionIcon={<PencilIcon />}
+        // extraActionOnClick={
+        //   !selectedAttributeFilter
+        //     ? handleToggleAttrFilterModal
+        //     : handleEditAttrFilter
+        // }
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
-        extraActionAriaLabel={t("Edit attribute filters")}
+        // extraActionAriaLabel={t("Edit attribute filters")}
         className="input-filter"
+        variant="field"
+        categorize={true}
       />
       <AttributeFilterModal
         show={showAttributeFilter}
