@@ -181,11 +181,24 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       padding: 1rem 1.5rem;
       background-color: var(--white);
       display: flex;
-      justify-content: space-between;
       gap: 0.5rem;
       border-top: none;
       width: 100%;
       align-items: center;
+      
+      // Default: single button aligned to the right
+      justify-content: flex-end;
+      
+      // When multiple elements are present, space them between
+      // Modern browsers with :has() support
+      &:has(> *:nth-child(2)) {
+        justify-content: space-between;
+      }
+      
+      // Fallback for older browsers - use data attribute
+      &[data-multiple-buttons="true"] {
+        justify-content: space-between;
+      }
     }
   }
 }
