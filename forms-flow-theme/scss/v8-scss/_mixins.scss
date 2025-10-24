@@ -116,4 +116,76 @@ $font-color: var(--secondary-dark);
   border-radius: var(--border-radius);
 }
 
+$width: 75vw;
+$height: 75vh;
+$border-radius: var(--border-radius);
+$box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 
+// Mixin for large modal popover with enhanced styling
+@mixin large-modal-popover() {
+  &.modal-dialog {
+    width: $width;
+    max-width: $width;
+    margin: 1.75rem auto;
+  }
+  
+  .modal-content {
+    width: 100%;
+    height: $height;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: none;
+    overflow: hidden;
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      background-color: var(--white);
+      border-bottom: none;
+      
+      .modal-header-content {
+        width: 100%;
+        
+        .modal-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--secondary-dark);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 1.5rem;
+        }
+        
+        .modal-subtitle {
+          border-top: 1px solid var(--gray-x-light);
+          padding: 1.75rem 1.19rem;
+          padding-bottom: 0.75rem;
+          font: 0.9375rem;
+        }
+      }
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      max-height: calc(#{$height} - 120px);
+      margin: 0 1.5rem;
+      border-top: 1px solid var(--gray-x-light);
+      border-bottom: 1px solid var(--gray-x-light);
+    }
+    
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      background-color: var(--white);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      border-top: none;
+      width: 100%;
+      align-items: center;
+    }
+  }
+}
