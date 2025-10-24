@@ -293,6 +293,7 @@ $font-tokens: (
           grid-row: 6;
           padding: 1rem 0;
           max-height: var(--body-section-height); // need to be updated after while implementing inner contets. 
+          overflow-y: auto;
           &.formedit-layout {
               overflow-y: auto;
               overflow-x: hidden;
