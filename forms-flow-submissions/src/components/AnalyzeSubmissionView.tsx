@@ -250,11 +250,20 @@ const ViewApplication = React.memo(() => {
                 />
               )}
               {applicationDetail?.formId && applicationDetail?.submissionId && (
-                <DownloadPDFButton
+                formType === "bundle" ? (
+                  <DownloadPDFButton
+                    form_id={applicationDetail.formId}
+                    submission_id={applicationDetail.submissionId}
+                    title={applicationDetail?.applicationName}
+                    isBundle={true}
+                    bundleId={applicationDetail?.formProcessMapperId}
+                  />
+                ) : (<DownloadPDFButton
                   form_id={applicationDetail.formId}
                   submission_id={applicationDetail.submissionId}
                   title={applicationDetail?.applicationName}
-                />
+                />  
+                )
               )}
             </div>
           </div>
