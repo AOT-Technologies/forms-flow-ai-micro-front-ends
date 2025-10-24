@@ -186,17 +186,17 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       width: 100%;
       align-items: center;
       
-      // Default: single button aligned to the right
+      // Default: single or two buttons aligned to the right
       justify-content: flex-end;
       
-      // When multiple elements are present, space them between
+      // Only when exactly 3 elements are present, space them between
       // Modern browsers with :has() support
-      &:has(> *:nth-child(2)) {
+      &:has(> *:nth-child(3):last-child) {
         justify-content: space-between;
       }
       
       // Fallback for older browsers - use data attribute
-      &[data-multiple-buttons="true"] {
+      &[data-three-buttons="true"] {
         justify-content: space-between;
       }
     }
