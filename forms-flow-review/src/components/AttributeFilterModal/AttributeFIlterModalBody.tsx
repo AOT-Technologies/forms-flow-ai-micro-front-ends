@@ -90,50 +90,88 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
     return acc;
   }, {});
 
-  // Helper function to clean value by removing '%' characters and convert datetime/day format
-  const cleanValue = (value, fieldName, fieldType) => {
-    if (typeof value !== "number" && fieldName !== "created" && typeof value !== "boolean" && fieldName !== "applicationId") {
-      let cleanedValue = value?.replace(/%/g, '');
-      
-      // For datetime fields, convert ISO format back to user-friendly format
-      if (fieldType === "datetime" && cleanedValue && cleanedValue.includes('T') && cleanedValue.includes('Z')) {
-        try {
-          const dateObj = new Date(cleanedValue);
-          if (!isNaN(dateObj.getTime())) {
-            const day = String(dateObj.getDate()).padStart(2, '0');
-            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const year = dateObj.getFullYear();
-            const hours24 = dateObj.getHours();
-            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-            const seconds = String(dateObj.getSeconds()).padStart(2, '0');
-            
-            // Convert to 12-hour format with AM/PM
-            const hours12 = hours24 === 0 ? 12 : hours24 > 12 ? hours24 - 12 : hours24;
-            const ampm = hours24 >= 12 ? 'PM' : 'AM';
-            const hours = String(hours12).padStart(2, '0');
-            
-            cleanedValue = `${day}-${month}-${year}, ${hours}:${minutes}:${seconds} ${ampm}`;
-          }
-        } catch (error) {
-          console.warn('Error converting datetime value:', error);
-        }
+  // Helper function to convert 24-hour format to 12-hour format with AM/PM
+  const convertTo12HourFormat = (hours24) => {
+    if (hours24 === 0) return 12;
+    if (hours24 > 12) return hours24 - 12;
+    return hours24;
+  };
+
+  // Helper function to format datetime value
+  const formatDateTimeValue = (cleanedValue) => {
+    try {
+      const dateObj = new Date(cleanedValue);
+      if (Number.isNaN(dateObj.getTime())) {
+        return cleanedValue;
       }
+
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const year = dateObj.getFullYear();
+      const hours24 = dateObj.getHours();
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+      const seconds = String(dateObj.getSeconds()).padStart(2, '0');
       
-      // For day fields, convert from MM/DD/YYYY format back to DD-MM-YYYY format
-      if (fieldType === "day" && cleanedValue && cleanedValue.includes('/')) {
-        try {
-          const [month, day, year] = cleanedValue.split('/');
-          if (month && day && year && !isNaN(month) && !isNaN(day) && !isNaN(year)) {
-            cleanedValue = `${day}-${month}-${year}`;
-          }
-        } catch (error) {
-          console.warn('Error converting day value:', error);
-        }
-      }
+      const hours12 = convertTo12HourFormat(hours24);
+      const ampm = hours24 >= 12 ? 'PM' : 'AM';
+      const hours = String(hours12).padStart(2, '0');
       
+      return `${day}-${month}-${year}, ${hours}:${minutes}:${seconds} ${ampm}`;
+    } catch (error) {
+      console.warn('Error converting datetime value:', error);
       return cleanedValue;
     }
-    return value;
+  };
+
+  // Helper function to format day value
+  const formatDayValue = (cleanedValue) => {
+    try {
+      const [month, day, year] = cleanedValue.split('/');
+      const isValidDay = month && day && year && 
+        !Number.isNaN(Number(month)) && 
+        !Number.isNaN(Number(day)) && 
+        !Number.isNaN(Number(year));
+      
+      if (isValidDay) {
+        return `${day}-${month}-${year}`;
+      }
+      return cleanedValue;
+    } catch (error) {
+      console.warn('Error converting day value:', error);
+      return cleanedValue;
+    }
+  };
+
+  // Helper function to clean value by removing '%' characters and convert datetime/day format
+  const cleanValue = (value, fieldName, fieldType) => {
+    const shouldProcessValue = typeof value !== "number" && 
+      fieldName !== "created" && 
+      typeof value !== "boolean" && 
+      fieldName !== "applicationId";
+    
+    if (!shouldProcessValue) {
+      return value;
+    }
+
+    let cleanedValue = value?.replace(/%/g, '');
+    
+    // For datetime fields, convert ISO format back to user-friendly format
+    const isDateTimeField = fieldType === "datetime" && 
+      cleanedValue?.includes('T') && 
+      cleanedValue?.includes('Z');
+    
+    if (isDateTimeField) {
+      cleanedValue = formatDateTimeValue(cleanedValue);
+    }
+    
+    // For day fields, convert from MM/DD/YYYY format back to DD-MM-YYYY format
+    const isDayField = fieldType === "day" && cleanedValue?.includes('/');
+    
+    if (isDayField) {
+      cleanedValue = formatDayValue(cleanedValue);
+    }
+    
+    return cleanedValue;
   };
 
   // Helper function to process a single variable and add to existing values
