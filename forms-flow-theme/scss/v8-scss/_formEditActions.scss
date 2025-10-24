@@ -12,7 +12,7 @@ $deleteBorder: var(--red-200);
 $progressBorder: var(--gray-light);
 $borderRadius: var(--border-radius);
 
-.form-edit-actions {
+.form-edit-actions ,.process-actions-tab{
     overflow: auto;
     padding-bottom: 1rem;
 
@@ -91,4 +91,8 @@ $borderRadius: var(--border-radius);
     }
       }
     }
+} 
+
+.process-actions-tab {
+    max-height: calc(100vh - 200px) !important;
 }
