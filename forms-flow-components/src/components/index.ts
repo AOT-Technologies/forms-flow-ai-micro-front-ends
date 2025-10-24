@@ -52,4 +52,5 @@ export * from "./CustomComponents/Alert";
 export * from "./CustomComponents/CustomUrl";
 export * from "./CustomComponents/BreadCrumbs";
 export { default as FileUploadPanel } from "./CustomComponents/FileUploadPanel";
+export { CustomCheckbox } from "./CustomComponents/CustomCheckbox";
 export * from "./CustomComponents/ReusableTable";
