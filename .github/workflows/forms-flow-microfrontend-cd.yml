@@ -6,6 +6,7 @@ on:
     branches:
       - rsbc/7.0.0
       - rsbc/7.0.0-subpath
+      - rsbc/7.0.0-dependabot-fixes
 
 defaults:
   run:
