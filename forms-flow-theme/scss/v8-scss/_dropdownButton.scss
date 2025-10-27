@@ -4,13 +4,13 @@
 // Dropdown Button Variables - Using consistent rem/em units for better scalability
 $dropdown-border-radius: 1.5625rem;        // 25px at 16px base
 $dropdown-menu-radius: 0.3125rem;        // 5px at 16px base
-$dropdown-item-radius: 0.1875rem;        // 3px at 16px base
+$dropdown-item-radius: 0.313rem;        // 5px at 16px base
 $dropdown-border-width: 0.0625rem;       // 1px at 16px base
 $dropdown-divider-width: 0.0625rem;      // 1px at 16px base
 $dropdown-transition: 0.2s ease;
 
 // Spacing variables
-$dropdown-label-padding: 10px 13px;  // 10px 13px
+$dropdown-label-padding: 5px;  // 5px
 $dropdown-icon-padding: 0.875rem 0.875rem 0.6875rem 0.8125rem;    // 14px 14px 11px 13px
 $dropdown-menu-padding: 0.875rem 0.375rem;                        // 14px 6px
 $dropdown-item-padding: 0.3125rem 0.5rem 0.5625rem 0.625rem;     // 5px 8px 9px 10px
@@ -55,6 +55,9 @@ $color-secondary-active: var(--secondary);
   max-height: 8rem;
   overflow: scroll;
   transform: translateX(0);
+  gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
 }
 
 // Main Component
@@ -188,7 +191,7 @@ $color-secondary-active: var(--secondary);
       color: $color-dark-gray;
       font-size: 1rem;
       font-weight: 400;
-      padding: $dropdown-item-padding;
+      padding: 0px 0px 0px 7px !important;
       text-wrap: auto;
       transition: background-color $dropdown-transition;
 
@@ -205,6 +208,16 @@ $color-secondary-active: var(--secondary);
       }
 
       &.selected { border: 1px solid $color-medium-gray; }
+      // Delete item styling
+      &.delete-dropdown-item {
+          border: 1px solid var(--red-100);
+          color: var(--red-100);
+          background-color: rgba(229, 115, 115, 0.10);
+          &:hover {
+            background-color: transparent;
+            color: var(--red-100);
+          }
+        }
     }
   }
 
