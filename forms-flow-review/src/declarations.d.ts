@@ -91,7 +91,9 @@ declare module "@formsflow/components" {
     Switch,
     SelectDropdown,
     V8CustomButton,
-    ReusableTable
+    ReusableTable,
+    ReorderIcon,
+    FilterDropDown
   }: any;
 }
 

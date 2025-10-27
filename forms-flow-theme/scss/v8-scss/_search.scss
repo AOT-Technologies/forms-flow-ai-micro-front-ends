@@ -48,7 +48,7 @@ $color-border: var(--secondary);
     border-color $search-transition-duration $search-transition-timing,
     box-shadow $search-transition-duration $search-transition-timing;
   color: $color-dark-gray;
-  margin-right: $search-input-gap;
+  // margin-right: $search-input-gap;
 
   &::placeholder {
     color: $color-placeholder;

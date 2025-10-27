@@ -274,7 +274,6 @@ const TaskList = () => {
             // searchLoading={}
             title={t("Search Tasks")}
             dataTestId="task-search-input"
-            size="medium"
           />
             </div></div>   
             <div className="header-section-3 overflow-visible">

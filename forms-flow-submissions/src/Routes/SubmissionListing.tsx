@@ -533,6 +533,9 @@ return (
           return rawValue ? "true" : "false" ; 
         }
         if (matchingField?.type === "selectboxes") {
+          if (!rawValue || typeof rawValue !== 'object') {
+            return "-";
+          }
           const trueKeys = Object.keys(rawValue).filter((key) => rawValue[key]);
           const displayValue = trueKeys.length ? trueKeys.join(", ") : "-";
           return displayValue;
@@ -657,7 +660,6 @@ return (
           type
         })
       );
-
       setSavedFormVariables(variables);
 
 

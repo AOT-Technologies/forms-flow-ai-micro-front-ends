@@ -1,9 +1,10 @@
-// import {
-//   AddIcon,
-//   PencilIcon,
-//   SharedWithMeIcon,
-//   SharedWithOthersIcon,
-// } from "@formsflow/components";
+import {
+  AddIcon,
+  FilterDropDown,
+  ReorderIcon,
+  SharedWithMeIcon,
+  SharedWithOthersIcon,
+} from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { useTranslation } from "react-i18next";
@@ -17,9 +18,10 @@ import { fetchServiceTaskList } from "../../api/services/filterServices";
 import { cloneDeep } from "lodash";
 import { ReorderAttributeFilterModal } from "../ReorderAttributeFilterModal";
 import { userRoles } from "../../helper/permissions";
-import { UserDetail } from "../../types/taskFilter";
+import { FilterItemType, UserDetail } from "../../types/taskFilter";
 import { buildDateRangePayload } from "../../helper/tableHelper";
 import { SelectDropdown } from "@formsflow/components"; // ✅ Use reusable dropdown
+
 
 const AttributeFilterDropdown = () => {
   const { t } = useTranslation();
@@ -115,57 +117,128 @@ const AttributeFilterDropdown = () => {
     dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
   };
 
-  //  Convert filters into SelectDropdown-compatible options
-  const dropdownOptions = useMemo(() => {
-    const filteredItems = attributeFilterList
-      .filter((filter) => {
-        const nameMatch = filter.name
-          .toLowerCase()
-          .includes(filterSearchTerm.toLowerCase());
-        const notHidden = !filter?.hide;
-        return nameMatch && notHidden;
-      })
-      .map((filter) => {
-        const createdByMe =
-          userDetails?.preferred_username === filter?.createdBy;
-        const isSharedToPublic =
-          !filter?.roles?.length && !filter?.users?.length;
-        const isSharedToRoles = filter?.roles?.length > 0;
-        const isSharedToMe = filter?.roles?.some((role) =>
-          userDetails?.groups?.includes(role)
-        );
+  const filterDropdownAttributeItems = useMemo(() => {
+    const attributeDropdownItemsArray: FilterItemType[] = [];
 
-        let icon = "";
-        if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
-          icon = "👥"; // You can replace this with <SharedWithOthersIcon /> inside a custom label if needed
-        } else if (isSharedToPublic || isSharedToMe) {
-          icon = "🔗";
-        }
-
-        return {
-          label: `${t(filter.name)} ${icon}`,
-          value: filter.id,
-        };
-      });
-
-    // Include “All Fields” at top
-    const allFields = {
-      label: t("All Fields"),
-      value: "none",
+    const createCustomField: FilterItemType = {
+      content: (
+        <div className="d-flex align-items-center justify-content-between">
+          <span>{t("Custom Filter")}</span>
+          <AddIcon />
+        </div>
+      ),
+      onClick: handleToggleAttrFilterModal,
+      type: "custom",
+      dataTestId: "attr-filter-item-custom",
+      ariaLabel: t("Custom Attribute Filter"),
+      category: "action",
     };
 
-    return [allFields, ...filteredItems];
-  }, [attributeFilterList, filterSearchTerm, userDetails, t]);
+    const reOrderAttribute: FilterItemType = {
+      content: (
+        <div className="d-flex align-items-center justify-content-between">
+          <span>{t("Re-order And Hide Filters")}</span>
+          <ReorderIcon />
+        </div>
+      ),
+      onClick: () => setShowReorderAttributeFilterModal(true),
+      type: "reorder",
+      dataTestId: "attr-filter-item-reorder",
+      ariaLabel: t("Re-order And Hide Filters"),
+      category: "action",
+    };
 
-  //  Handle dropdown selection
-  const handleDropdownChange = (value: string | number) => {
-    if (value === "none") {
-      changeAttributeFilterSelection(null);
-      return;
+    const clearAttributeFilter: FilterItemType = {
+      className: !selectedAttributeFilter?.id ? "selected-filter-item" : "",
+      content: <span>{t("All Fields")}</span>,
+      onClick: () => changeAttributeFilterSelection(null),
+      type: "none",
+      dataTestId: "attr-filter-item-none",
+      ariaLabel: t("All Fields"),
+      category: "none",
+    };
+
+    const filteredItems = Array.isArray(attributeFilterList)
+      ? attributeFilterList
+          .filter((filter) => {
+            const nameMatch = filter.name
+              .toLowerCase()
+              .includes(filterSearchTerm?.toLowerCase() || "");
+            const notHidden = !filter?.hide;
+            return nameMatch && notHidden;
+          })
+          .map((filter) => {
+            const createdByMe =
+              userDetails?.preferred_username === filter?.createdBy;
+            const isSharedToPublic =
+              !filter?.roles?.length && !filter?.users?.length;
+            const isSharedToRoles = filter?.roles?.length > 0;
+            const isSharedToMe = filter?.roles?.some((role) =>
+              userDetails?.groups?.includes(role)
+            );
+
+            let icon = null;
+            let category: "my" | "shared" = "my";
+
+            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+              icon = <SharedWithOthersIcon className="shared-icon" />;
+              category = "my";
+            } else if (isSharedToPublic || isSharedToMe) {
+              icon = <SharedWithMeIcon className="shared-icon" />;
+              category = "shared";
+            }
+            // category remains "my" for all other cases (default)
+
+            return {
+              className:
+                filter?.id === selectedAttributeFilter?.id
+                  ? "selected-filter-item"
+                  : "",
+              content: (
+                <span className="d-flex justify-content-between align-items-center">
+                  {t(filter.name)}
+                  {icon && <span>{icon}</span>}
+                </span>
+              ),
+              onClick: () => changeAttributeFilterSelection(filter),
+              type: String(filter.id),
+              dataTestId: `attr-filter-item-${filter.id}`,
+              ariaLabel: t("Select attribute filter {{filterName}}", {
+                filterName: t(filter.name),
+              }),
+              category,
+            };
+          })
+      : [];
+
+    const isSearching = filterSearchTerm?.trim().length > 0;
+
+    // Add "Create" and "Reorder" at the top if feature is enabled
+    if (createFilters) {
+      attributeDropdownItemsArray.push(createCustomField);
+
+      if (filteredItems.length > 0) {
+        attributeDropdownItemsArray.push(reOrderAttribute);
+      }
     }
-    const selected = attributeFilterList.find((f) => f.id === value);
-    if (selected) changeAttributeFilterSelection(selected);
-  };
+
+    // Only show "All Fields" when not searching
+    if (!isSearching || filteredItems.length === 0) {
+      attributeDropdownItemsArray.push(clearAttributeFilter);
+    }
+
+    // Add dynamic filtered items
+    attributeDropdownItemsArray.push(...filteredItems);
+
+    return attributeDropdownItemsArray;
+  }, [
+    attributeFilterList,
+    filterSearchTerm,
+    selectedAttributeFilter,
+    userDetails,
+    selectedFilter,
+    createFilters,
+  ]);
 
   //  Dynamic title
   const title = selectedAttributeFilter
@@ -178,33 +251,25 @@ const AttributeFilterDropdown = () => {
 
   return (
     <>
-      <div className="d-flex align-items-center gap-2">
-        <SelectDropdown
-          options={dropdownOptions}
-          value={selectedAttributeFilter?.id || "none"}
-          onChange={handleDropdownChange}
-          searchDropdown
-          ariaLabel={t("Select attribute filter")}
-          dataTestId="attribute-filter-dropdown"
-          defaultValue={title}
-          variant="secondary"
-        />
-
-        {/* Separate Edit / Add button */}
-        {/* <button
-          type="button"
-          className="btn btn-outline-secondary"
-          onClick={
-            !selectedAttributeFilter
-              ? handleToggleAttrFilterModal
-              : handleEditAttrFilter
-          }
-          aria-label={t("Edit attribute filters")}
-        >
-          <PencilIcon />
-        </button> */}
-      </div>
-
+      <FilterDropDown
+        label={title}
+        items={filterDropdownAttributeItems}
+        searchable={false}
+        searchPlaceholder={t("Search")}
+        onSearch={onSearch}
+        // extraActionIcon={<PencilIcon />}
+        // extraActionOnClick={
+        //   !selectedAttributeFilter
+        //     ? handleToggleAttrFilterModal
+        //     : handleEditAttrFilter
+        // }
+        dataTestId="attribute-filter-dropdown"
+        ariaLabel={t("Select attribute filter")}
+        // extraActionAriaLabel={t("Edit attribute filters")}
+        className="input-filter"
+        variant="field"
+        categorize={true}
+      />
       <AttributeFilterModal
         show={showAttributeFilter}
         toggleModal={handleToggleAttrFilterModal}
