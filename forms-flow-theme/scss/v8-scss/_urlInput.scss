@@ -154,6 +154,46 @@ $color-copy-button-hover-bg: transparent;
   .input-actioncontainer{
     border-radius: $url-input-border-radius;
     border: $url-input-border-width solid var(--gray-x-light);
+    padding-bottom: $url-input-padding;
+
+    .info-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.8rem;
+      margin: 0 0.75rem;
+      background-color: var(--primary-light);
+      border: 1px solid rgba(184, 171, 255, 0.5);
+      border-radius: 0.3125rem;
+      margin-top: 2rem;
+      width: max-content;
+      padding-right: 1.5rem;
+      
+      .info-icon {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.25rem;
+        height: 1.25rem;
+        background-color: var(--primary);
+        border-radius: 50%;
+        
+        svg {
+          width: 0.875rem;
+          height: 0.875rem;
+          color: white;
+        }
+      }
+      
+      .info-text {
+        flex: 1;
+        margin: 0;
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        color: var(--gray-darkest);
+      }
+    }
 
   }
   .actions {
