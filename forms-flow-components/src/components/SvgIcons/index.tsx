@@ -1249,7 +1249,7 @@ export const ReorderIcon = ({ ...props}) => (
 ); 
 
 
-export const EditIcon = ({ color = "#7C7D7F", ...props }) => (
+export const EditIconforFilter = ({ color , ...props }) => (
   <svg
     width="11"
     height="11"

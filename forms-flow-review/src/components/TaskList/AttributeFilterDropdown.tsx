@@ -118,6 +118,8 @@ const changeAttributeFilterSelection = (attributeFilter) => {
     dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
   };
 
+
+  //To be updated later 
   const handleEditAttributeFromItem = (item) => {
     if (!item?.type) {
       // allow creating when clicking edit on 'All Fields' (none) -> open create

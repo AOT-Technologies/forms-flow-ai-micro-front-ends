@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
 import { Dropdown } from "react-bootstrap";
 import { DownArrowIcon, EditIconforFilter, UpArrowIcon } from "../SvgIcons";
+import { StyleServices } from "@formsflow/service";
 import { CustomSearch } from "./Search";
 
 /**
@@ -173,6 +174,8 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
       [onEdit]
     );
 
+    // Single CSS variable for edit icon color across variants
+    const editIconColor = StyleServices.getCSSVariable("--gray-dark");
     // Categorize items for Task Filter
     const categorizedItems = useMemo(() => {
       if (!categorize) return { uncategorized: items };
@@ -300,6 +303,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                     </span>
                     {onEdit && (
                       <EditIconforFilter
+                        color={editIconColor}
                         aria-label={
                           item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
                         }
@@ -345,7 +349,8 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                     </span>
                     {onEdit && (
                       <EditIconforFilter
-                       data-testid={`${item.dataTestId}-edit`}
+                        color={editIconColor}
+                        data-testid={`${item.dataTestId}-edit`}
                         aria-label={
                           item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
                         }
