@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo, forwardRef, memo } from "react";
-import { URLCopyIcon, InfoIcon } from '../SvgIcons';
+import { URLCopyIcon } from '../SvgIcons';
 import { V8CustomButton } from "./CustomButton";
+import { CustomInfo } from "./CustomInfo";
 
 /**
  * CustomUrl is a reusable URL input component with copy functionality and save capabilities for forms-flow apps.
@@ -284,12 +285,9 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
           dataTestId={`${dataTestId}-save`}
         />}
       </div>
-      {showInfoSection && (
+        {showInfoSection && (
         <div className="info-section">
-          <div className="info-icon">
-            <InfoIcon />
-          </div>
-          <p className="info-text">{infoText}</p>
+          <CustomInfo content={infoText} variant="primary"  dataTestId="short-info"/>
         </div>
       )}
       </div>
