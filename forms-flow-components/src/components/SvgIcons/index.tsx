@@ -117,17 +117,17 @@ export const SwitchIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const AddIcon = ({ color = baseColor,className, size = 16, ...props }) => (
-  <svg
-    className="svgIcon-primary"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 16 16"
-    {...props}
-  >
-    <path d="M8 1V15" />
-    <path d="M1 8L15 8"/>
-  </svg>
-);
+// export const AddIcon = ({ color = baseColor,className, size = 16, ...props }) => (
+//   <svg
+//     className="svgIcon-primary"
+//     xmlns="http://www.w3.org/2000/svg"
+//     viewBox="0 0 16 16"
+//     {...props}
+//   >
+//     <path d="M8 1V15" />
+//     <path d="M1 8L15 8"/>
+//   </svg>
+// );
 
 
 export const DuplicateIcon = ({ color = baseColor, ...props }) => (
@@ -184,18 +184,17 @@ export const ClearIcon = ({
   </svg>
 );
 
-export const ConnectIcon = ({
-  ...props
-}) => (
+export const ConnectIcon = ({ ...props }) => (
   <svg
+    width="13"
+    height="1"
+    viewBox="0 0 13 1"
+    fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 10 10"
-    className="svgIconSmall-primary"
     onClick={props.onClick}
     {...props}
   >
-    <path d="M5 1.5L5 9.5"/>
-    <path d="M1 5.5L9 5.5"/>
+    <path d="M0.5 0.5H12.5" stroke="#E5E5E5" strokeLinecap="round" />
   </svg>
 );
 
@@ -365,9 +364,9 @@ export const DownArrowIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const PencilIcon = ({ ...props }) => (
+export const PencilIcon = ({...props }) => (
   <svg
-    className={props.className || "svgIcon-primary"}
+    className={props.className || ""}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 18 18"
     onClick={props.onClick}
@@ -1210,4 +1209,41 @@ d="M8.00036 0C3.58763 0 0 3.58725 0 8C0 12.4128 3.58834 16 8.00036 16C12.4131 16
       fill={color}
       />
 </svg>
+);
+
+
+export const AddIcon = ({ color, ...props }) => (
+  <svg
+    width="11"
+    height="11"
+    viewBox="0 0 11 11"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M10.2785 4.77849H6.22151V0.721511C6.22151 0.32289 5.89862 0 5.5 0C5.10138 0 4.77849 0.32289 4.77849 0.721511V4.77849H0.721511C0.32289 4.77849 0 5.10138 0 5.5C0 5.89862 0.32289 6.22151 0.721511 6.22151H4.77849V10.2785C4.77849 10.6771 5.10138 11 5.5 11C5.89862 11 6.22151 10.6771 6.22151 10.2785V6.22151H10.2785C10.6771 6.22151 11 5.89862 11 5.5C11 5.10138 10.6771 4.77849 10.2785 4.77849Z"
+      fill="#7C7D7F"
+    />
+  </svg>
+); 
+
+export const ReorderIcon = ({ ...props}) => (
+  <svg
+    width="12"
+    height="11"
+    viewBox="0 0 12 11"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M2.33807 0.268888C2.47781 0.10579 2.68528 0.00244141 2.9169 0.00244141C3.14851 0.00244141 3.35599 0.10579 3.49572 0.268888L5.61064 2.3838C5.90818 2.68134 5.90818 3.16375 5.61064 3.4613C5.3131 3.75884 4.83068 3.75884 4.53314 3.4613L3.6788 2.60696V9.9072C3.6788 10.328 3.33769 10.6691 2.9169 10.6691C2.49611 10.6691 2.15499 10.328 2.15499 9.9072V2.60696L1.30065 3.4613C1.00311 3.75884 0.520699 3.75884 0.223157 3.4613C-0.0743856 3.16375 -0.0743856 2.68134 0.223157 2.3838L2.33807 0.268888Z"
+      fill="#7C7D7F"
+    />
+    <path
+      d="M9.31818 10.4001C9.17844 10.5632 8.97097 10.6665 8.73935 10.6665C8.50774 10.6665 8.30026 10.5632 8.16053 10.4001L6.04561 8.28514C5.74807 7.9876 5.74807 7.50519 6.04561 7.20765C6.34316 6.91011 6.82557 6.91011 7.12311 7.20765L7.97745 8.06199L7.97745 0.761741C7.97745 0.340953 8.31857 -0.00016337 8.73935 -0.000163333C9.16014 -0.000163297 9.50126 0.340953 9.50126 0.761741L9.50126 8.06199L10.3556 7.20765C10.6531 6.91011 11.1356 6.91011 11.4331 7.20765C11.7306 7.50519 11.7306 7.9876 11.4331 8.28514L9.31818 10.4001Z"
+      fill="#7C7D7F"
+    />
+  </svg>
 );
