@@ -17,6 +17,8 @@ export interface DropdownItemConfig {
   dataTestId?: string;
   /** Accessible label for screen readers */
   ariaLabel?: string;
+  /** Custom class for this item */
+  className?: string;
 }
 
 /**
@@ -209,7 +211,8 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
               onClick={() => handleItemClick(item)}
               className={buildClassNames(
                 "v8-dropdown-item",
-                isSelected && "selected"
+                isSelected && "selected",
+                item.className
               )}
               role="option"
               aria-selected={isSelected}
