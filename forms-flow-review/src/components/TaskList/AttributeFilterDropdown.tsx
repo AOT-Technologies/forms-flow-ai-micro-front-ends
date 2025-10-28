@@ -118,6 +118,21 @@ const changeAttributeFilterSelection = (attributeFilter) => {
     dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
   };
 
+
+  //To be updated later 
+  const handleEditAttributeFromItem = (item) => {
+    if (!item?.type) {
+      // allow creating when clicking edit on 'All Fields' (none) -> open create
+      setShowAttributeFilter(true);
+      dispatch(setAttributeFilterToEdit(null));
+      return;
+    }
+    const id = Number(item.type);
+    const found = attributeFilterList.find((f) => f.id === id);
+    setShowAttributeFilter(true);
+    dispatch(setAttributeFilterToEdit(found ? cloneDeep(found) : null));
+  };
+
   const filterDropdownAttributeItems = useMemo(() => {
     const attributeDropdownItemsArray: FilterItemType[] = [];
 
@@ -257,15 +272,9 @@ const changeAttributeFilterSelection = (attributeFilter) => {
         searchable={false}
         searchPlaceholder={t("Search")}
         onSearch={onSearch}
-        // extraActionIcon={<PencilIcon />}
-        // extraActionOnClick={
-        //   !selectedAttributeFilter
-        //     ? handleToggleAttrFilterModal
-        //     : handleEditAttrFilter
-        // }
+        onEdit={handleEditAttributeFromItem}
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
-        // extraActionAriaLabel={t("Edit attribute filters")}
         className="input-filter"
         variant="field"
         categorize={true}
