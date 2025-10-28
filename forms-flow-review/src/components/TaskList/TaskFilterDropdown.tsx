@@ -66,6 +66,15 @@ const TaskListDropdownItems = memo(() => {
     dispatch(setFilterToEdit(null));
   };
 
+  const handleEditFilterFromItem = (item) => {
+    if (!item?.type) return;
+    const id = Number(item.type);
+    const found = filterList.find((f) => f.id === id);
+    if (!found) return;
+    dispatch(setFilterToEdit(found));
+    setShowTaskFilterModal(true);
+  };
+
   const handleToggleFilterModal = () => {
     setShowTaskFilterModal((prev) => !prev);
   };
@@ -224,11 +233,9 @@ const TaskListDropdownItems = memo(() => {
         searchable={true}
         searchPlaceholder={t("Search")}
         onSearch={onSearch}
-        // extraActionIcon={<PencilIcon />}
-        // extraActionOnClick={handleEditTaskFilter}
+        onEdit={handleEditFilterFromItem}
         dataTestId="business-filter-dropdown"
         ariaLabel={t("Select task filter")}
-        // extraActionAriaLabel={t("Edit task filter")}
         className="input-filter"
         variant="task"
         categorize={true}
