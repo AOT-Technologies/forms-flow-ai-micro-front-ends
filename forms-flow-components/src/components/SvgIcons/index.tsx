@@ -1239,7 +1239,6 @@ export const ReorderIcon = ({ ...props}) => (
   </svg>
 );
 
-
 export const EditIconforFilter = ({ color , ...props }) => (
   <svg
     width="11"
@@ -1281,4 +1280,4 @@ export const DraggableIcon = ({ color , ...props }) => (
       strokeLinecap="round"
     />
   </svg>
-); 
+);
