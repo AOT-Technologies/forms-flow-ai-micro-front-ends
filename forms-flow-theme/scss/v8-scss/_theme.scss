@@ -295,6 +295,7 @@ $font-tokens: (
           padding: 1rem 0;
           max-height: var(--body-section-height); // need to be updated after while implementing inner contets. 
           overflow-y: auto;
+          padding-bottom: 5rem;
           &.formedit-layout {
               overflow-y: auto;
               overflow-x: hidden;
