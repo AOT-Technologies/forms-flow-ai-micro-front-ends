@@ -1,0 +1,77 @@
+@import "./mixins";
+$gray-light: var(--gray-light);
+.drag-drop-container{
+    @include large-modal-popover();
+    .modal-body{
+        padding: 27px 14px !important;
+    }
+   .drag-drop-list-container {
+     display: flex;
+     flex-direction: column;
+     padding: 28px 25px ;
+     border:1px solid #E5E5E5;
+     margin: 0;
+     height: fit-content;
+     overflow: scroll;
+   
+     ul {
+       display: flex ;
+       flex-direction: column;
+   
+       padding-left: 0;
+       margin-bottom: 0;
+   
+    //    margin-top: calc( 0px - $paddingLvl6TB/2 );
+    //    margin-bottom: calc( 0px - $paddingLvl6TB/2 );
+     }
+   
+     .draggable-item {
+       position: relative; 
+       display: flex;
+       flex-direction: row;
+       align-items: center;
+   
+       padding: $paddingLvl6TB 0;
+   
+       border-radius: $borderRadiusHeightESM;
+   
+       // transition: all $animSpeed; currently commented for smooth transition
+   
+       &:active {
+         cursor: grabbing; 
+       }
+   
+       
+       &.dragging {
+         opacity: 1;
+         z-index: 1000;
+         background-color: $gray-light;
+         & .dotted-line {
+           border-bottom: $lineThick dashed $primary;
+         }
+   
+         & .draggable-icon {
+           background-color: $gray-light;
+           border-radius: $borderRadiusHeightESM;
+         }
+       }
+   
+       .draggable-icon {
+         display: flex;
+         align-self: center;
+         padding-right: 2rem;
+         margin: 0;
+         background: none;
+         border: none;
+         
+         cursor: grab;
+   
+         transition: opacity $animSpeed;
+   
+         &:hover {
+           opacity: 0.8;
+         }
+       }
+     }
+   }
+   }

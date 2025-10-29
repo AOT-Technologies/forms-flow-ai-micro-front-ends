@@ -90,7 +90,8 @@ declare module "@formsflow/components" {
     CustomUrl,
     Switch,
     ReorderIcon,
-    FilterDropDown
+    FilterDropDown,
+    V8CustomButton
   }: any;
 }
 
