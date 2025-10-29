@@ -1,7 +1,6 @@
 import {
   RefreshIcon,
   ReusableTable,
-
   V8CustomButton,
 } from "@formsflow/components";
 import { HelperServices, StyleServices } from "@formsflow/service";
@@ -231,32 +230,37 @@ const TaskListTable = () => {
   const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
 
   return [
-    ...filteredColumns.map((col) => ({
+    ...filteredColumns.map((col, idx) => ({
       field: col.sortKey,
       headerName: t(col.name),
       flex: 1,
       sortable: true,
-      minWidth: col.width || 150,
+      minWidth: col.width,
+      headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
       renderCell: (params: any) => getCellValue(col, params.row),
     })),
     {
       field: "actions",
        renderHeader: () => (
         <V8CustomButton
-          // label="new button"
           variant="secondary"
           icon={<RefreshIcon color={iconColor} />}
           iconOnly
           onClick={handleRefresh}
+          dataTestId="task-refresh-button"
         />
       ),
       headerName: "",
       sortable: false,
       filterable: false,
-      width: 100,
+      headerClassName: "sticky-column-header",
+      cellClassName: "sticky-column-cell",
+
+       width: 100,
       renderCell: (params: any) => (
         <V8CustomButton
           label={t("View")}
+          dataTestId="task-view-button"
           variant="secondary"
           onClick={() => {
             history.push(`/task/${params.row.id}`);
@@ -285,6 +289,7 @@ const TaskListTable = () => {
     <>
       <ReusableTable
         columns={muiColumns}
+        disableColumnResize={false}
         rows={memoizedRows}
         rowCount={tasksCount}
         loading={isTaskListLoading}
@@ -305,27 +310,10 @@ const TaskListTable = () => {
         disableColumnMenu
         disableRowSelectionOnClick
         dataGridProps={{
-          getRowId: (row: any) => row.id,
+          getRowId: (row: any) => row.id
         }}
+        enableStickyActions={true}
       />
-      {/* {tasksCount > 0 && tasksList?.length > 0 && (
-        <TableFooter
-          limit={limit}
-          activePage={activePage}
-          totalCount={tasksCount}
-          handlePageChange={(p) => dispatch(setBPMTaskListActivePage(p))}
-          onLimitChange={(l) => dispatch(setTaskListLimit(l))}
-          pageOptions={[
-            { text: "5", value: 5 },
-            { text: "25", value: 25 },
-            { text: "50", value: 50 },
-            { text: "100", value: 100 },
-            { text: "All", value: tasksCount },
-          ]}
-          dataTestId="task-table-footer"
-          ariaLabel={t("Table pagination controls")}
-        />
-      )} */}
     </>
   );
 };

@@ -65,7 +65,7 @@ const TaskListDropdownItems = memo(() => {
   const handleCloseFilterModal = () => {
     setShowTaskFilterModal(false);
     dispatch(setFilterToEdit(null));
-  };;
+  };
 
   const handleToggleFilterModal = () => {
     setShowTaskFilterModal((prev) => !prev);
