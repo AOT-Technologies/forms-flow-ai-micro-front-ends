@@ -1,15 +1,19 @@
 @import "./mixins";
 $gray-light: var(--gray-light);
+$gray-x-light: var(--gray-x-light);
+$animSpeed: 300ms; 
+
 .drag-drop-container{
     @include large-modal-popover();
     .modal-body{
-        padding: 27px 14px !important;
+        padding: 1.6875rem 0.875rem !important; /* 27px 14px */
     }
    .drag-drop-list-container {
      display: flex;
      flex-direction: column;
-     padding: 28px 25px ;
-     border:1px solid #E5E5E5;
+     padding: 1.75rem 1.5625rem; /* 28px 25px */
+     border: 0.0625rem solid $gray-x-light; /* 1px */
+     border-radius: 0.3125rem; /* 5px */
      margin: 0;
      height: fit-content;
      overflow: scroll;
@@ -21,8 +25,8 @@ $gray-light: var(--gray-light);
        padding-left: 0;
        margin-bottom: 0;
    
-    //    margin-top: calc( 0px - $paddingLvl6TB/2 );
-    //    margin-bottom: calc( 0px - $paddingLvl6TB/2 );
+    //    margin-top: calc( 0rem - $paddingLvl6TB/2 ); /* 0px */
+    //    margin-bottom: calc( 0rem - $paddingLvl6TB/2 ); /* 0px */
      }
    
      .draggable-item {
@@ -31,9 +35,9 @@ $gray-light: var(--gray-light);
        flex-direction: row;
        align-items: center;
    
-       padding: $paddingLvl6TB 0;
+       padding: 0.5rem 0; /* 8px 0 */
    
-       border-radius: $borderRadiusHeightESM;
+       border-radius: 0.3125rem; /* 5px */
    
        // transition: all $animSpeed; currently commented for smooth transition
    
@@ -52,14 +56,14 @@ $gray-light: var(--gray-light);
    
          & .draggable-icon {
            background-color: $gray-light;
-           border-radius: $borderRadiusHeightESM;
+           border-radius: 0.3125rem; /* 5px */
          }
        }
    
        .draggable-icon {
          display: flex;
          align-self: center;
-         padding-right: 2rem;
+         padding-right: 2rem; /* 32px */
          margin: 0;
          background: none;
          border: none;
