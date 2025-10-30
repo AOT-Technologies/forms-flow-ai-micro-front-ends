@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useMemo, useEffect, useState } from "react";
-import { useDispatch, useSelector, batch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { push } from "connected-react-router";
@@ -35,11 +35,13 @@ import {
 
 // UI Components
 import {
-  ReusableTable,
-  V8CustomButton,
+  ReusableResizableTable,
+  TableFooter,
+  CustomButton,
   SortableHeader,
   CollapsibleSearch,
   DateRangePicker,
+  FilterSortActions,
   VariableSelection
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
@@ -422,19 +424,32 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
   dispatch(setAnalyzeSubmissionSort(updatedSort));
 }, [dispatch, sortParams]);
 
-  // Pagination Model for ReusableTable
-  const paginationModel = useMemo(
-    () => ({ page: page - 1, pageSize: limit }),
-    [page, limit]
-  );
-
-  // Handle Pagination Model Change for ReusableTable
-  const handlePaginationModelChange = useCallback(({ page, pageSize }: any) => {
-    batch(() => {
-      dispatch(setAnalyzeSubmissionPage(page + 1));
-      dispatch(setAnalyzeSubmissionLimit(pageSize));
-    });
+  // Page Change Handler
+  const handlePageChange = useCallback((pageNum: number) => {
+    dispatch(setAnalyzeSubmissionPage(pageNum));
   }, [dispatch]);
+
+  // Limit Change Handler
+  const handleLimitChange = (newLimit: number) => {
+    dispatch(setAnalyzeSubmissionLimit(newLimit));
+    dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
+  };
+ const customTdValue = (value, index, submissionId, fieldKey) => {
+  // Remove tenant name from currentUserRoles when multitenancy is enabled
+  let displayValue = value;
+  if (fieldKey === "currentUserRoles" && MULTITENANCY_ENABLED && typeof value === "string") {
+    // Extract tenant key from localStorage or Redux state
+    const tenantKey = localStorage.getItem("tenantKey") || tenantId;
+    if (tenantKey) {
+      displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
+    }
+  }
+
+  return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`}
+              className="custom-td">
+            <div className="text-overflow-ellipsis">{displayValue}</div>
+          </td>
+ }
 
   // sortmodal actions
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
@@ -470,51 +485,24 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
   dispatch(setAnalyzeSubmissionPage(1));
  };
 
-  // Column resize handler for ReusableTable
+  // Column resize handler for ReusableResizableTable
   const handleColumnResize = useCallback((column: Column, newWidth: number) => {
     // Update Redux column widths
     dispatch(setColumnWidths({ [column.sortKey]: newWidth }));
-  }, [dispatch]);
 
-  // Handle column width change from DataGrid
-  const handleColumnWidthChange = useCallback((params: any) => {
-    const column = columns.find((col) => col.sortKey === params.field);
-    if (column && handleColumnResize) {
-      handleColumnResize(column, params.width);
-    }
-  }, [columns, handleColumnResize]);
+  }, [dispatch]);
 
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
-
-  // Get cell value function for ReusableTable (extracted from renderRow logic)
-  const getCellValue = useCallback((column: Column, submission: Submission) => {
-    const { sortKey } = column;
-
-    if (sortKey === "actions") {
-      return (
-        <V8CustomButton
-          actionTable
-          label={t("View")}
-          onClick={() => {
-            dispatch(setApplicationDetail({}));
-            dispatch(push(`${redirectUrl}submissions/${submission.id}`));
-          }}
-          dataTestId={`view-submission-${submission.id}`}
-          ariaLabel={t("View details for submission {{taskName}}", {
-            taskName: submission.formName ?? t("unnamed"),
-          })}
-        />
-      );
-    }
-
+  // Row Renderer
+const renderRow = (submission: Submission) => {
   const fieldsToRender = (selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS)
     .filter((field) => field.isChecked)
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
-    const field = fieldsToRender.find((f) => f.key === sortKey);
-    if (!field) return "-";
-
+return (
+  <tr key={submission.id}>
+    {fieldsToRender.map((field, index) => {
       const { key } = field;
 
       // Map form variable keys to backend keys
@@ -527,101 +515,119 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
 
       const backendKey = fieldKeyMap[key] ?? key;
 
-    // fallback to submission.data
+      //  fallback to submission.data
       const rawValue =
         submission[backendKey as keyof Submission] ??
         submission.data?.[backendKey];
-    const matchingField = currentFields.find((col) => col.key === key);
-
-    let value: any;
+      const matchingField = currentFields.find(
+        (col) => col.key === key
+      );
+      const value = (() => {
         if (backendKey === "created") {
-      value = HelperServices?.getLocalDateAndTime(rawValue);
-    } else if (matchingField?.type === "datetime") {
-      value = HelperServices.getLocalDateAndTime(rawValue);
-    } else if (matchingField?.type === "checkbox") {
-      value = rawValue ? "true" : "false";
-    } else if (matchingField?.type === "selectboxes") {
-      if (!rawValue || typeof rawValue !== "object") {
-        value = "-";
-      } else {
-        const trueKeys = Object.keys(rawValue).filter((key) => rawValue[key]);
-        value = trueKeys.length ? trueKeys.join(", ") : "-";
-      }
-    } else {
-      value = rawValue;
-    }
-
-    // Handle tenant name removal for currentUserRoles
-    let displayValue = value;
-    if (key === "currentUserRoles" && MULTITENANCY_ENABLED && typeof value === "string") {
-      const tenantKey = localStorage.getItem("tenantKey") || tenantId;
-      if (tenantKey) {
-        displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
-      }
-    }
-
-    return <div className="text-overflow-ellipsis">{displayValue ?? "-"}</div>;
-  }, [selectedSubmissionFilter, currentFields, t, dispatch, push, redirectUrl, DEFAULT_SUBMISSION_FIELDS, tenantId]);
+          return HelperServices?.getLocalDateAndTime(rawValue);
+        }
+        if (matchingField?.type === "datetime") {
+          return HelperServices.getLocalDateAndTime(rawValue);
+        }
+        if(matchingField?.type === "checkbox"){
+          return rawValue ? "true" : "false" ; 
+        }
+        if (matchingField?.type === "selectboxes") {
+          if (!rawValue || typeof rawValue !== 'object') {
+            return "-";
+          }
+          const trueKeys = Object.keys(rawValue).filter((key) => rawValue[key]);
+          const displayValue = trueKeys.length ? trueKeys.join(", ") : "-";
+          return displayValue;
+        }
+        return rawValue;
+      })();
 
 
+      return customTdValue(value, index, submission.id, key);
+    })}
 
-  // Handle sort model change for ReusableTable
-  const handleSortModelChange = useCallback((model: any) => {
-    const field = model?.[0]?.field;
-    if (!field) return;
-    
-    // Map to existing handleSort logic
-    const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
-    const currentOrder = sortParams[field]?.sortOrder || "asc";
-    const newOrder = model[0]?.sort || (currentOrder === "asc" ? "desc" : "asc");
+    {/* Action column */}
+    <td key={`${submission.id}-action`}>
+      <div className="text-overflow-ellipsis">
+        <CustomButton
+          actionTable
+          label={t("View")}
+          onClick={() => {
+            dispatch(setApplicationDetail({}))
+            dispatch(push(`${redirectUrl}submissions/${submission.id}`))
+          }
+          }
+          dataTestId={`view-submission-${submission.id}`}
+          ariaLabel={t("View details for submission {{taskName}}", {
+            taskName: submission.formName ?? t("unnamed"),
+          })}
+        />
+      </div>
+    </td>
+  </tr>
+);
+};
 
-    const updatedSort = {
-      ...resetSortOrders,
-      [field]: { sortOrder: newOrder },
-      activeKey: field,
-    };
 
-    dispatch(setAnalyzeSubmissionSort(updatedSort));
-  }, [sortParams, dispatch, optionSortBy]);
 
-  // Convert columns to MUI DataGrid format
-  const muiColumns = useMemo(() => {
-    // Filter out actions column from regular columns
-    const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
+  // Header Renderer
+  const renderHeaderCell = useCallback(
+    (
+      column: Column,
+      index: number,
+      columnsLength: number,
+      currentResizingColumn: any,
+      handleMouseDown: (index: number, column: any, e: React.MouseEvent) => void
+    ) => {
+      const isSortable = column.sortKey !== "actions";
+      const isResizable = column.resizable && index < columnsLength - 1;
+      const isResizing = currentResizingColumn?.sortkey === column.sortKey;
+      const headerKey = column.sortKey || `col-${index}`;
 
-    return [
-      ...filteredColumns.map((col, idx) => ({
-        field: col.sortKey,
-        headerName: t(col.name),
-        flex: 1,
-        sortable: true,
-        minWidth: col.width,
-        headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
-        renderCell: (params: any) => getCellValue(col, params.row),
-      })),
-      {
-        field: "actions",
-        headerName: "",
-        sortable: false,
-        filterable: false,
-        headerClassName: "sticky-column-header",
-        cellClassName: "sticky-column-cell",
-        width: 100,
-        renderCell: (params: any) => getCellValue(
-          { ...columns.find(c => c.sortKey === "actions")!, sortKey: "actions" },
-          params.row
-        ),
-      },
-    ];
-  }, [columns, t, getCellValue]);
-
-  // Memoized rows with proper IDs
-  const memoizedRows = useMemo(() => {
-    return (submissions || []).map((item, index) => ({
-      ...item,
-      id: item.id || (item as any)._id || `row-${index}`,
-    }));
-  }, [submissions]);
+    return (
+      <th
+        key={`header-${headerKey}`}
+        className={`${isSortable ? "header-sortable" : ''}`}
+        style={{
+          minWidth: `${column.width}px`,
+          maxWidth: `${column.width}px`,
+          width: `${column.width}px`
+        }}
+        data-testid={`column-header-${column.sortKey || "actions"}`}
+        aria-label={`${t(column.name)} ${t("column")} ${isSortable ? "," + t("sortable") : ""}`}
+      >
+        {isSortable ? (
+          <SortableHeader
+            columnKey={column.sortKey}
+            title={t(column.name)}
+            currentSort={sortParams}
+            handleSort={handleSort}
+            className="w-100 d-flex justify-content-between align-items-center"
+            dataTestId={`sort-header-${column.sortKey}`}
+            ariaLabel={t("Sort by {{columnName}}", { columnName: t(column.name) })}
+          />
+        ) : (
+          <span className="text">
+           {t(column.name)}
+          </span>
+        )}
+        {isResizable && (
+          <div
+            className={`column-resizer ${isResizing ? "resizing" : ""}`}
+            onMouseDown={(e) => handleMouseDown(index, column, e)}
+            tabIndex={0}
+            role="separator"
+            aria-orientation="horizontal"
+            data-testid={`column-resizer-${column.sortKey}`}
+            aria-label={t("Resize {{columnName}} column", {
+              columnName: t(column.name),
+            })}
+          />
+        )}
+      </th>
+    );
+  }, [t, sortParams, handleSort]);
 
   const handleCloseVariableModal = () => {
     setShowVariableModal(false)
@@ -730,50 +736,79 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
             />
 
           </div>
+
+          <div className="actions">
+            <FilterSortActions
+              showSortModal={showSortModal}
+              handleFilterIconClick={toggleFilterModal}
+              handleRefresh={handlerefresh}
+              handleSortModalClose={toggleFilterModal}
+              handleSortApply={handleSortApply}
+              defaultSortOption={sortParams?.activeKey}
+              defaultSortOrder={sortParams?.[sortParams.activeKey]?.sortOrder}
+              optionSortBy={optionSortBy.options}
+              filterDataTestId="submissiom-list-filter"
+              filterAriaLabel={t("Filter the submission list")}
+              refreshDataTestId="submission-list-refresh"
+              refreshAriaLabel={t("Refresh the submission list")}
+              sortModalTitle={t("Sort Tasks")}
+              sortModalDataTestId="submission-sort-modal"
+              sortModalAriaLabel={t("Modal for sorting tasks")}
+              sortByLabel={t("Sort by")}
+              sortOrderLabel={t("Sort order")}
+              ascendingLabel={t("Ascending")}
+              descendingLabel={t("Descending")}
+              applyLabel={t("Apply")}
+              cancelLabel={t("Cancel")}
+            />
+          </div>
         </div>
 
         {/* Table Container */}
         <div
-          className="custom-table-wrapper-outter-submissions"
+          className="custom-table-wrapper-outter"
           data-testid="table-container-wrapper"
         >
-          {!columns?.length ? (
-            <div className="custom-table-wrapper-outter-submissions">
-              <p className="empty-message" data-testid="empty-columns-message">
-                {t("No submissions have been found. Try a different filter combination or contact your admin.")}
-              </p>
-            </div>
-          ) : (
-            <ReusableTable
-              columns={muiColumns}
-              rows={memoizedRows}
-              rowCount={totalCount}
-              loading={isSubmissionsLoading || isFetching}
-              disableColumnResize={false}
-              paginationMode="server"
-              sortingMode="server"
-              sortModel={[
-                sortParams.activeKey
-                  ? {
-                      field: sortParams.activeKey,
-                      sort: sortParams[sortParams.activeKey]?.sortOrder || "asc",
-                    }
-                  : {},
+          <ReusableResizableTable
+            columns={columns}
+            data={submissions}
+            renderRow={renderRow}
+            renderHeaderCell={renderHeaderCell}
+            emptyMessage={t(
+              "No submissions have been found. Try a different filter combination or contact your admin."
+            )}
+            onColumnResize={handleColumnResize}
+            loading={isSubmissionsLoading || isFetching}
+            headerClassName="resizable-header"
+            scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+            dataTestId="task-resizable-table"
+            ariaLabel={t("submissions data table with resizable columns")}
+          />
+
+          {/* Table Footer */}
+          {submissions.length > 0 && (
+            <TableFooter
+              limit={limit}
+              activePage={page}
+              totalCount={totalCount}
+              loader={isSubmissionsLoading || isFetching}
+              handlePageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              pageOptions={[
+                { text: "10", value: 10 },
+                { text: "25", value: 25 },
+                { text: "50", value: 50 },
+                { text: "100", value: 100 },
+                { text: "All", value: totalCount },
               ]}
-              onSortModelChange={handleSortModelChange}
-              noRowsLabel={t(
-                "No submissions have been found. Try a different filter combination or contact your admin."
+              dataTestId="submission-table-footer"
+              ariaLabel={t("Table pagination controls")}
+              pageSizeDataTestId="submission-page-size-selector"
+              pageSizeAriaLabel={t(
+                "Select number of submissions per page"
               )}
-              disableColumnMenu
-              disableRowSelectionOnClick
-              paginationModel={paginationModel}
-              onPaginationModelChange={handlePaginationModelChange}
-              pageSizeOptions={[10, 25, 50, 100]}
-              dataGridProps={{
-                getRowId: (row: any) => row.id || (row as any)._id,
-                onColumnWidthChange: handleColumnWidthChange,
-              }}
-              enableStickyActions={true}
+              paginationDataTestId="submission-pagination-controls"
+              paginationAriaLabel={t("Navigate between submission pages")}
             />
           )}
         </div>

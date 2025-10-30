@@ -47,6 +47,8 @@ declare module "@formsflow/components" {
     ReusableResizableTable,
     TableFooter,
     CustomButton,
+    V8CustomButton,
+    ReusableTable,
     SortableHeader,
     CollapsibleSearch,
     DateRangePicker,
