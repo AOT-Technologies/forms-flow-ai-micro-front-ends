@@ -63,6 +63,7 @@ $font-weight-base: var(--font-weight-regular);
       &:hover:not(.active) {
         color: $color-default-text;
       }
+      
     }
   }
 
@@ -74,6 +75,10 @@ $font-weight-base: var(--font-weight-regular);
       &:hover:not(.active) {
         color: $color-minimized-text;
       }
+
+    }
+    .breadcrumb-item.active {
+      text-decoration: underline;
     }
   }
 
