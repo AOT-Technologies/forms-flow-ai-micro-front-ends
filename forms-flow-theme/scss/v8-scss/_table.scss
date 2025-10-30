@@ -135,10 +135,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
         &.Mui-selected {
           background-color: $table-border-light !important;
         }
-      }
     }
   }
-  
+}
+ 
   .status-live {
     @extend .status-circle;
     background-color: $green-color;
@@ -146,7 +146,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   }
   .MuiDataGrid-root {
     .MuiDataGrid-cell{
-      padding: 0.5rem 0.625rem !important;
+      padding: 1rem 1.4rem !important;
+    }
+    .MuiDataGrid-columnHeader{
+      padding: 1rem 1.4rem !important;
     }
   }
 
@@ -157,6 +160,13 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     }
     .MuiDataGrid-columnHeaderTitleContainer{
       @include font-style(0.9rem, var(--font-weight-md), var(--secondary-dark));
-      text-align: center !important;
+      text-align: left !important;
+      justify-content: flex-start !important;
     }
+    
+    .MuiDataGrid-columnHeader[data-field="actions"]{
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
   }
