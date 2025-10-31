@@ -198,4 +198,9 @@ $color-primary-border: var(--primary-dark);
     }
   }
 }
-
+.form-edit-checkbox{
+  .form-check-label {
+    font-size: 0.9375rem !important;
+    margin-left: 0.5rem !important;
+  }
+}
