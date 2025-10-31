@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo, forwardRef, memo } from "react";
 import { URLCopyIcon } from '../SvgIcons';
 import { V8CustomButton } from "./CustomButton";
+import { CustomInfo } from "./CustomInfo";
 
 /**
  * CustomUrl is a reusable URL input component with copy functionality and save capabilities for forms-flow apps.
@@ -37,6 +38,10 @@ export interface CustomUrlProps extends Omit<React.ComponentPropsWithoutRef<"div
   placeholder?: string;
   /** Whether the component is disabled */
   disabled?: boolean;
+  /** Whether to show the info section */
+  showInfoSection?: boolean;
+  /** Custom info text (default: "Changing this link will make the previous link inaccessible") */
+  infoText?: string;
 }
 
 /**
@@ -68,6 +73,8 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
   ariaLabel = "Custom URL input",
   placeholder = "Enter URL",
   disabled = false,
+  showInfoSection = false,
+  infoText,
   ...restProps
 }, ref) => {
   
@@ -278,6 +285,11 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
           dataTestId={`${dataTestId}-save`}
         />}
       </div>
+        {showInfoSection && (
+        <div className="info-section">
+          <CustomInfo content={infoText} variant="primary"  dataTestId="short-info"/>
+        </div>
+      )}
       </div>
     </div>
   );
