@@ -15,7 +15,7 @@ interface CustomTextAreaProps {
 export const CustomTextArea: FC<CustomTextAreaProps> = ({
   value,
   setValue,
-  placeholder = "Enter text",
+  placeholder,
   dataTestId,
   disabled = false,
   ariaLabel,

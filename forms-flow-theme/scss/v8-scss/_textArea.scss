@@ -3,8 +3,8 @@
 
 // Local tokens sourced from :root variables in _theme.scss
 $ta-color-text: var(--gray-darkest);
-$ta-color-placeholder: var(--gray-darkest);
-$ta-color-placeholder-disabled: var(--secondary);
+$ta-color-placeholder: var(--gray-xx-light);
+$ta-color-placeholder-disabled: var(--gray-xx-light);
 $ta-color-border: var(--gray-x-light);
 $ta-color-border-hover: var(--secondary-dark);
 $ta-color-border-focus: var(--gray-dark);
@@ -41,7 +41,7 @@ $ta-font-weight: var(--font-weight-regular);
         resize: none;
 
         &::placeholder {
-            color: var(--gray-medium-dark);
+            color: $ta-color-placeholder;
             font-size: var(--font-size-m);
             font-style: normal;
             font-weight: var(--font-weight-regular);
@@ -51,7 +51,7 @@ $ta-font-weight: var(--font-weight-regular);
         // Style for disabled state
         &:disabled {
             &::placeholder {
-                color: var(--gray-medium-dark);
+                color: $ta-color-placeholder-disabled;
                 font-size: var(--font-size-m);
                 font-style: normal;
                 font-weight: var(--font-weight-regular);

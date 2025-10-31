@@ -1155,91 +1155,91 @@ $lineThin: 1px;
 
 
 
-.list-action.rearrangable.checkbox {
-  display: flex;
-  flex-direction: column;
+// .list-action.rearrangable.checkbox {
+//   display: flex;
+//   flex-direction: column;
 
-  margin: 0;
+//   margin: 0;
 
-  ul {
-    display: flex ;
-    flex-direction: column;
+//   ul {
+//     display: flex ;
+//     flex-direction: column;
 
-    padding-left: 0;
-    margin-bottom: 0;
+//     padding-left: 0;
+//     margin-bottom: 0;
 
-    margin-top: calc( 0px - $paddingLvl6TB/2 );
-    margin-bottom: calc( 0px - $paddingLvl6TB/2 );
-  }
+//     margin-top: calc( 0px - $paddingLvl6TB/2 );
+//     margin-bottom: calc( 0px - $paddingLvl6TB/2 );
+//   }
 
-  .draggable-item {
-    position: relative; 
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+//   .draggable-item {
+//     position: relative; 
+//     display: flex;
+//     flex-direction: row;
+//     align-items: center;
 
-    padding: $paddingLvl6TB 0;
+//     padding: $paddingLvl6TB 0;
 
-    border-radius: $borderRadiusHeightESM;
+//     border-radius: $borderRadiusHeightESM;
 
-    // transition: all $animSpeed; currently commented for smooth transition
+//     // transition: all $animSpeed; currently commented for smooth transition
 
-    &:active {
-      cursor: grabbing; 
-    }
+//     &:active {
+//       cursor: grabbing; 
+//     }
 
     
-    &.dragging {
-      opacity: 1;
-      z-index: 1000;
-      background-color: $primary-light;
-      & .dotted-line {
-        border-bottom: $lineThick dashed $primary;
-      }
+//     &.dragging {
+//       opacity: 1;
+//       z-index: 1000;
+//       background-color: $primary-light;
+//       & .dotted-line {
+//         border-bottom: $lineThick dashed $primary;
+//       }
 
-      & .draggable-icon {
-        background-color: $primary-light;
-        border-radius: $borderRadiusHeightESM;
-      }
-    }
+//       & .draggable-icon {
+//         background-color: $primary-light;
+//         border-radius: $borderRadiusHeightESM;
+//       }
+//     }
 
-    .draggable-icon {
-      display: flex;
-      align-self: center;
-      padding: $paddingLvl5S;
-      margin: 0;
-      background: none;
-      border: none;
+//     .draggable-icon {
+//       display: flex;
+//       align-self: center;
+//       padding: $paddingLvl5S;
+//       margin: 0;
+//       background: none;
+//       border: none;
       
-      cursor: grab;
+//       cursor: grab;
 
-      transition: opacity $animSpeed;
+//       transition: opacity $animSpeed;
 
-      &:hover {
-        opacity: 0.8;
-      }
-    }
+//       &:hover {
+//         opacity: 0.8;
+//       }
+//     }
 
-    .dotted-line {
-      flex-grow: 1;
-      border-bottom: $lineThin dashed $gray-medium;
+//     .dotted-line {
+//       flex-grow: 1;
+//       border-bottom: $lineThin dashed $gray-medium;
     
-      margin-left: $paddingLvl5S;
+//       margin-left: $paddingLvl5S;
 
-      & + svg {
-        margin-left: calc($paddingLvl5S*2);
-      }
-    }
+//       & + svg {
+//         margin-left: calc($paddingLvl5S*2);
+//       }
+//     }
 
-    .label { 
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      text-align: left;
-    }
-  }
-}
+//     .label { 
+//       background: none;
+//       border: none;
+//       cursor: pointer;
+//       padding: 0;
+//       text-align: left;
+//     }
+//   }
+// }
 
 .form-selection-modal{
   

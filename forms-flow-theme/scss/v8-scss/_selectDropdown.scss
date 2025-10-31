@@ -328,3 +328,10 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
 .list-group-item + .list-group-item {
   border-top-width: 1px;
 }
+
+  //assignee dropdown width in tasktable
+  .MuiDataGrid-cell[data-field="assignee"] {
+    overflow: visible !important;
+   .selectdropdown-container{
+    width:11.063rem;
+   }}
