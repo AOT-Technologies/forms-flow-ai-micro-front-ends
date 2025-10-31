@@ -36,7 +36,7 @@ const UserProfile = ({ userDetail, initials, handleProfileModal, logout, t, coll
       {!collapsed && (
         <div className="user-info">
           <div>
-            <p className="user-name" data-testid="user-name">{userDetail?.name}sss</p>
+            <p className="user-name" data-testid="user-name">{userDetail?.name}</p>
           </div>
           {/* <div>
           <p className="user-email" data-testid="user-email">
