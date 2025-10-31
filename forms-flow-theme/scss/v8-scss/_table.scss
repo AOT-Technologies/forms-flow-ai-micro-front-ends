@@ -144,20 +144,20 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     background-color: $green-color;
     display: table-cell
   }
-  .MuiDataGrid-root {
-    .MuiDataGrid-cell{
-      padding: 1rem 1.4rem !important;
-      &[data-field="selected"] {
-        justify-content: flex-end !important;
-        display: flex;
+  
+  .historypage-container{
+    .MuiDataGrid-root {
+      .MuiDataGrid-cell{
+        padding: 1rem 1.4rem !important;
+        &[data-field="selected"] {
+          justify-content: flex-end !important;
+          display: flex;
+        }
+      }
+      .MuiDataGrid-columnHeader{
+        padding: 1rem 1.4rem !important;
       }
     }
-    .MuiDataGrid-columnHeader{
-      padding: 1rem 1.4rem !important;
-    }
-  }
-
-  .historypage-container{
     .MuiDataGrid-cell{
       @include font-style(0.9rem, var(--font-weight-sm), var(--secondary-dark));
       outline: none !important;
