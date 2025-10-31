@@ -89,6 +89,9 @@ declare module "@formsflow/components" {
     PromptModal,
     CustomUrl,
     Switch,
+    SelectDropdown,
+    V8CustomButton,
+    ReusableTable,
     ReorderIcon,
     FilterDropDown,
     V8CustomButton

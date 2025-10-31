@@ -220,8 +220,8 @@ const SocketIOCallback = useCallback(({
 
   return (
     <>
-      <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'main-container' } `}>
-        <div className="page-content">
+      <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'page-container false' } `}>
+        <div className="page-layout">
             <Switch>
               <Route
                 exact
