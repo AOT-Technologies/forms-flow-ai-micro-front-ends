@@ -132,10 +132,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
         &.Mui-selected {
           background-color: $table-border-light !important;
         }
-      }
     }
   }
-  
+}
+
   .status-live {
     @extend .status-circle;
     background-color: $green-color;
@@ -143,7 +143,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   }
   .MuiDataGrid-root {
     .MuiDataGrid-cell{
-      padding: 0.5rem 0.625rem !important;
+      padding: 1rem 1.4rem !important;
+    }
+    .MuiDataGrid-columnHeader{
+      padding: 1rem 1.4rem !important;
     }
   }
 
@@ -154,38 +157,15 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     }
     .MuiDataGrid-columnHeaderTitleContainer{
       @include font-style(0.9rem, var(--font-weight-md), var(--secondary-dark));
-      text-align: center !important;
-    }
-  }
-  
-
-  
-  /* To make the actions column sticky in reusable table*/
-  .action-column-sticky {
-    .MuiDataGrid-columnHeader.sticky-column-header {
-      position: sticky;
-      right: 0;
-      background-color: $table-bg-light;
-      z-index: 1;
-      border-left: 1px solid $table-border-light;
+      text-align: left !important;
+      justify-content: flex-start !important;
     }
 
-    .MuiDataGrid-cell.sticky-column-cell {
-      position: sticky;
-      right: 0;
-      background-color: $table-bg-light;
-      border-left: 1px solid $table-border-light;
-      z-index: 1;
+    .MuiDataGrid-columnHeader[data-field="actions"]{
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
     }
 
-    .MuiDataGrid-columnHeader[data-field="actions"] .MuiDataGrid-columnSeparator {
-      display: none !important;
-    }
-
-    /* Hide separator for the column immediately before the last (actions) */
-    .MuiDataGrid-columnHeader.no-right-separator .MuiDataGrid-columnSeparator {
-      display: none !important;
-    }
   }
 
   //for submissions page temporarily used className
