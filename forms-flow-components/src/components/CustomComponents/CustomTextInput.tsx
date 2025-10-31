@@ -16,7 +16,7 @@ interface CustomTextInputProps {
 export const CustomTextInput: FC<CustomTextInputProps> = ({
   value,
   setValue,
-  placeholder = "Enter text",
+  placeholder,
   dataTestId,
   disabled = false,
   ariaLabel,

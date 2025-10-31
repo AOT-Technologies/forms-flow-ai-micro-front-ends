@@ -93,7 +93,8 @@ declare module "@formsflow/components" {
     V8CustomButton,
     ReusableTable,
     ReorderIcon,
-    FilterDropDown
+    FilterDropDown,
+    V8CustomButton
   }: any;
 }
 

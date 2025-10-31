@@ -1,6 +1,8 @@
 import React, { useState, useEffect ,useRef} from "react";
-import { DraggableIcon, CheckboxCheckedIcon, CheckboxUncheckedIcon } from "../SvgIcons/index";
+import { DraggableIcon } from "../SvgIcons/index";
+import { CustomCheckbox } from "./CustomCheckbox";
 import Sortable from "sortablejs";
+import { StyleServices } from "@formsflow/service";
 
 interface FilterItem {
   id:  number;
@@ -28,7 +30,7 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
   const [filterItems, setFilterItems] = useState<FilterItem[]>(items);
-
+  const grayMediumDarkColor = StyleServices.getCSSVariable("--gray-medium-dark");
   useEffect(() => {
     const needsUpdate = filterItems?.some((item) => item.sortOrder == null);
     if (needsUpdate) {
@@ -104,42 +106,31 @@ useEffect(() => {
     );
   };
 
-  const onLabelClick = (index: number) => {
-    onCheckboxChange(index);
-  };
+  // No separate label click handler needed when using CustomCheckbox
 
   return (
-    <div className="drag-drop-container list-action rearrangable checkbox" ref={containerRef}>
+    <div className="drag-drop-list-container" ref={containerRef}>
       <ul  ref={listRef}>
         {filterItems?.map((item, index) => (
           <li key={item.id ?? `${item.name}-${index}`}
             className="draggable-item"
           >
-
-            <button
-              className="draggable-icon"
-              draggable
-            >
-              <DraggableIcon />
+            <button className="draggable-icon" draggable>
+              <DraggableIcon color={grayMediumDarkColor} />
             </button>
-
-            <label htmlFor={`${item.id ?? item.name}-checkbox-id`} className="input-checkbox">
-              <input
-                id={`${item.id ?? item.name}-checkbox-id`}
-                type="checkbox"
-                checked={item.isChecked}
-                onChange={() => onCheckboxChange(index)}
-                disabled={preventLastCheck && item.isChecked && filterItems.filter(i => i.isChecked).length === 1}
-                data-testid={`${item.name}-checkbox`}
-                />
-              <span>{item.label ?? item.name}</span>
-              {item.isChecked ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
-            </label>
-            
-            <div className="dotted-line"></div>
-
-            {item.isFormVariable && icon}
-            {item.icon}
+            <CustomCheckbox
+              items={[{
+                label: item.label ?? item.name, 
+                value: item.id ?? item.name,
+                disabled: preventLastCheck && !!item.isChecked && filterItems.filter((i) => i.isChecked).length === 1,
+              }]}
+              selectedValues={item.isChecked ? [item.id ?? item.name] : []}
+              onChange={() => onCheckboxChange(index)}
+              inline
+              size="small"
+              variant="secondary"
+              dataTestId={`${item.name}`}
+            />
           </li>
         ))}
       </ul>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
 import { Dropdown } from "react-bootstrap";
-import { DownArrowIcon, UpArrowIcon } from "../SvgIcons";
+import { DownArrowIcon, EditIconforFilter, UpArrowIcon } from "../SvgIcons";
+import { StyleServices } from "@formsflow/service";
 import { CustomSearch } from "./Search";
 
 /**
@@ -54,14 +55,10 @@ export interface FilterDropDownProps
   ariaLabel?: string;
   /** Visual variant of the dropdown ('task' or 'field') */
   variant?: FilterDropdownVariant;
-  /** Extra action icon (e.g., edit/pencil icon) */
-  extraActionIcon?: React.ReactNode;
-  /** Callback for extra action click */
-  extraActionOnClick?: () => void;
-  /** Accessible label for extra action */
-  extraActionAriaLabel?: string;
   /** Whether to categorize items (for task filter) */
   categorize?: boolean;
+  /** Called when edit icon is clicked for an item (my/shared) */
+  onEdit?: (item: FilterItemType) => void;
 }
 
 /**
@@ -99,10 +96,8 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
       ariaLabel = "",
       className = "",
       variant = "task",
-      extraActionIcon,
-      extraActionOnClick,
-      extraActionAriaLabel = "",
       categorize = false,
+      onEdit,
       ...restProps
     },
     ref
@@ -169,6 +164,18 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
     //   [extraActionOnClick]
     // );
 
+    // Edit click handler
+    const handleEditClick = useCallback(
+      (event: React.MouseEvent, item: FilterItemType) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onEdit?.(item);
+      },
+      [onEdit]
+    );
+
+    // Single CSS variable for edit icon color across variants
+    const editIconColor = StyleServices.getCSSVariable("--gray-dark");
     // Categorize items for Task Filter
     const categorizedItems = useMemo(() => {
       if (!categorize) return { uncategorized: items };
@@ -219,9 +226,16 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                   }}
                   data-testid={item.dataTestId}
                   aria-label={item.ariaLabel}
-                  className={buildClassNames("filter-dropdown-item", item.className)}
+                  className={buildClassNames(
+                    "filter-dropdown-item",
+                    item.className
+                  )}
                 >
-                  {item.content}
+                  <div className="filter-dropdown-item-content">
+                    <span className="filter-dropdown-item-label">
+                      {item.content}
+                    </span>
+                  </div>
                 </Dropdown.Item>
               ))}
             </>
@@ -239,25 +253,36 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                   }}
                   data-testid={item.dataTestId}
                   aria-label={item.ariaLabel}
-                  className={buildClassNames("filter-dropdown-item", item.className)}
+                  className={buildClassNames(
+                    "filter-dropdown-item",
+                    item.className
+                  )}
                   disabled={item.type === "none"}
                 >
-                  {item.content}
+                  <div className="filter-dropdown-item-content">
+                    <span className="filter-dropdown-item-label">
+                      {item.content}
+                    </span>
+                  </div>
                 </Dropdown.Item>
               ))}
             </>
           )}
 
           {/* Divider after action items and none items */}
-          {(actionItems && actionItems.length > 0 || noneItems && noneItems.length > 0) && 
-            ((myFilters && myFilters.length > 0) || (sharedFilters && sharedFilters.length > 0)) && (
-            <Dropdown.Divider />
-          )}
+          {((actionItems && actionItems.length > 0) ||
+            (noneItems && noneItems.length > 0)) &&
+            ((myFilters && myFilters.length > 0) ||
+              (sharedFilters && sharedFilters.length > 0)) && (
+              <Dropdown.Divider />
+            )}
 
           {/* My Filters section */}
           {myFilters && myFilters.length > 0 && (
             <>
-              <div className="filter-dropdown-section-header">My filters (unique to me)</div>
+              <div className="filter-dropdown-section-header">
+                My filters (unique to me)
+              </div>
               {myFilters.map((item, index) => (
                 <Dropdown.Item
                   key={`my-${item.type}-${index}`}
@@ -267,23 +292,43 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                   }}
                   data-testid={item.dataTestId}
                   aria-label={item.ariaLabel}
-                  className={buildClassNames("filter-dropdown-item", item.className)}
+                  className={buildClassNames(
+                    "filter-dropdown-item",
+                    item.className
+                  )}
                 >
-                  {item.content}
+                  <div className="d-flex align-items-center justify-content-between ">
+                    <span className="filter-dropdown-item-label">
+                      {item.content}
+                    </span>
+                    {onEdit && (
+                      <EditIconforFilter
+                        color={editIconColor}
+                        aria-label={
+                          item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
+                        }
+                        onClick={(e) => handleEditClick(e, item)}
+                        data-testid={`${item.dataTestId}-edit`}
+                      />
+                    )}
+                  </div>
                 </Dropdown.Item>
               ))}
             </>
           )}
 
           {/* Divider between My Filters and Shared Filters */}
-          {myFilters && myFilters.length > 0 && sharedFilters && sharedFilters.length > 0 && (
-            <Dropdown.Divider />
-          )}
+          {myFilters &&
+            myFilters.length > 0 &&
+            sharedFilters &&
+            sharedFilters.length > 0 && <Dropdown.Divider />}
 
           {/* Shared Filters section */}
           {sharedFilters && sharedFilters.length > 0 && (
             <>
-              <div className="filter-dropdown-section-header">Shared filters</div>
+              <div className="filter-dropdown-section-header">
+                Shared filters
+              </div>
               {sharedFilters.map((item, index) => (
                 <Dropdown.Item
                   key={`shared-${item.type}-${index}`}
@@ -293,16 +338,33 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                   }}
                   data-testid={item.dataTestId}
                   aria-label={item.ariaLabel}
-                  className={buildClassNames("filter-dropdown-item", item.className)}
+                  className={buildClassNames(
+                    "filter-dropdown-item",
+                    item.className
+                  )}
                 >
-                  {item.content}
+                  <div className="d-flex align-items-center justify-content-between">
+                    <span className="filter-dropdown-item-label">
+                      {item.content}
+                    </span>
+                    {onEdit && (
+                      <EditIconforFilter
+                        color={editIconColor}
+                        data-testid={`${item.dataTestId}-edit`}
+                        aria-label={
+                          item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
+                        }
+                        onClick={(e) => handleEditClick(e, item)}
+                      />
+                    )}
+                  </div>
                 </Dropdown.Item>
               ))}
             </>
           )}
         </>
       );
-    }, [categorizedItems]);
+    }, [categorizedItems, onEdit, handleEditClick, variant]);
 
     // Render uncategorized items
     const renderUncategorizedItems = useCallback(() => {
@@ -323,7 +385,9 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
               aria-label={item.ariaLabel}
               className={buildClassNames("filter-dropdown-item", item.className)}
             >
-              {item.content}
+              <div className="filter-dropdown-item-content">
+                <span className="filter-dropdown-item-label">{item.content}</span>
+              </div>
             </Dropdown.Item>
           ))}
         </>
