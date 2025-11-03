@@ -171,7 +171,33 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     }
 
   }
+  .action-column-sticky {
+    .MuiDataGrid-columnHeader.sticky-column-header {
+      position: sticky;
+      right: 0;
+      background-color: $table-bg-light;
+      z-index: 1;
+      border-left: 1px solid $table-border-light;
+    }
 
+    .MuiDataGrid-cell.sticky-column-cell {
+      position: sticky;
+      right: 0;
+      background-color: $table-bg-light;
+      border-left: 1px solid $table-border-light;
+      z-index: 1;
+    }
+
+    .MuiDataGrid-columnHeader[data-field="actions"] .MuiDataGrid-columnSeparator {
+      display: none !important;
+    }
+
+    /* Hide separator for the column immediately before the last (actions) */
+    .MuiDataGrid-columnHeader.no-right-separator .MuiDataGrid-columnSeparator {
+      display: none !important;
+    }
+  }
+  
   //for submissions page temporarily used className
   .custom-table-wrapper-outter-submissions{
     container: tableSize / inline-size;

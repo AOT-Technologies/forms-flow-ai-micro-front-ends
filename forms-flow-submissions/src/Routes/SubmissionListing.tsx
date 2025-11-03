@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo, useEffect, useState } from "react";
+import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector, batch } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -37,7 +37,6 @@ import {
 import {
   ReusableTable,
   V8CustomButton,
-  SortableHeader,
   CollapsibleSearch,
   DateRangePicker,
   VariableSelection
@@ -72,7 +71,6 @@ interface SubmissionField {
 const AnalyzeSubmissionList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState([]);
 
   // Redux State
@@ -93,7 +91,6 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
    const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
   const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
-  const [showSortModal, setShowSortModal] = useState(false);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
   const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
@@ -319,8 +316,22 @@ const columns: Column[] = useMemo(() => {
 }, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth]);
 
 
-  const activeSortKey = sortParams.activeKey;
+  // Ensure default sort is form_name if no activeKey is set
+  const activeSortKey = sortParams.activeKey || "form_name";
   const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
+
+  // Memoize sortModel to prevent unnecessary re-renders and ensure it updates correctly
+  const sortModel = useMemo(() => {
+    if (activeSortKey) {
+      return [
+        {
+          field: activeSortKey,
+          sort: activeSortOrder,
+        },
+      ];
+    }
+    return [];
+  }, [activeSortKey, activeSortOrder]);
 
   // Fetch Submissions
 const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
@@ -405,23 +416,6 @@ const {
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
 
-
-  // Sort Handler
-const handleSort = useCallback((key: string) => {
-const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
-
-  const currentOrder = sortParams[key]?.sortOrder || "asc";
-  const newOrder = currentOrder === "asc" ? "desc" : "asc";
-
-  const updatedSort = {
-    ...resetSortOrders,
-    [key]: { sortOrder: newOrder },
-    activeKey: key,
-  };
-
-  dispatch(setAnalyzeSubmissionSort(updatedSort));
-}, [dispatch, sortParams]);
-
   // Pagination Model for ReusableTable
   const paginationModel = useMemo(
     () => ({ page: page - 1, pageSize: limit }),
@@ -435,21 +429,6 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
       dispatch(setAnalyzeSubmissionLimit(pageSize));
     });
   }, [dispatch]);
-
-  // sortmodal actions
-  const handleSortApply = (selectedSortOption, selectedSortOrder) => {
-    // if need to reset the sort orders use this function
-    const resetSortOrders = HelperServices.getResetSortOrders(
-      optionSortBy.options
-    );
-  const updatedData = {
-    ...resetSortOrders,
-    activeKey: selectedSortOption,
-    [selectedSortOption]: { sortOrder: selectedSortOrder },
-  };
-  dispatch(setAnalyzeSubmissionSort(updatedData));
-  setShowSortModal(false);
-};
 
   const handlerefresh = () => {
     refetch();
@@ -483,9 +462,6 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
       handleColumnResize(column, params.width);
     }
   }, [columns, handleColumnResize]);
-
-
-  const toggleFilterModal = () => setShowSortModal(!showSortModal);
 
   // Get cell value function for ReusableTable (extracted from renderRow logic)
   const getCellValue = useCallback((column: Column, submission: Submission) => {
@@ -567,22 +543,37 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
 
   // Handle sort model change for ReusableTable
   const handleSortModelChange = useCallback((model: any) => {
-    const field = model?.[0]?.field;
-    if (!field) return;
+    // If model is empty, reset to default form_name sort
+    if (!model || model.length === 0 || !model[0]?.field) {
+      const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
+      const updatedSort = {
+        ...resetSortOrders,
+        form_name: { sortOrder: "asc" },
+        activeKey: "form_name",
+      };
+      dispatch(setAnalyzeSubmissionSort(updatedSort));
+      return;
+    }
+
+    const field = model[0].field;
+    // Always use DataGrid's sort order directly - DataGrid handles toggling automatically
+    // DataGrid sends "asc" for first click, "desc" for second click on the same column
+    const dataGridSort = model[0]?.sort || "asc";
     
-    // Map to existing handleSort logic
+    // Reset all sort keys to "asc" and set only the active field to DataGrid's sort order
+    // This ensures only one sort is active at a time, and all others are reset to "asc"
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
-    const currentOrder = sortParams[field]?.sortOrder || "asc";
-    const newOrder = model[0]?.sort || (currentOrder === "asc" ? "desc" : "asc");
 
     const updatedSort = {
-      ...resetSortOrders,
-      [field]: { sortOrder: newOrder },
+      ...resetSortOrders, // All keys reset to {sortOrder: "asc"}
+      [field]: { sortOrder: dataGridSort }, // Active field uses DataGrid's sort order
       activeKey: field,
     };
 
+    // Dispatch the update - this will trigger a re-render and the sortModel will update
+    // Since sortModel is memoized based on activeSortKey and activeSortOrder, it will update immediately
     dispatch(setAnalyzeSubmissionSort(updatedSort));
-  }, [sortParams, dispatch, optionSortBy]);
+  }, [dispatch, optionSortBy]);
 
   // Convert columns to MUI DataGrid format
   const muiColumns = useMemo(() => {
@@ -752,14 +743,7 @@ const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
               disableColumnResize={false}
               paginationMode="server"
               sortingMode="server"
-              sortModel={[
-                sortParams.activeKey
-                  ? {
-                      field: sortParams.activeKey,
-                      sort: sortParams[sortParams.activeKey]?.sortOrder || "asc",
-                    }
-                  : {},
-              ]}
+              sortModel={sortModel}
               onSortModelChange={handleSortModelChange}
               noRowsLabel={t(
                 "No submissions have been found. Try a different filter combination or contact your admin."
