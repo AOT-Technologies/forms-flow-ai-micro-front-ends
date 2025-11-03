@@ -1,6 +1,6 @@
 // Import theme variables and mixins
 @use "mixins";
-
+@import "mixins";
 // Variables - Using theme tokens
 $primary: var(--primary-dark);
 $primary-light: var(--primary);
@@ -9,6 +9,8 @@ $gray-dark: var(--gray-dark);
 $gray-medium: var(--gray-medium);
 $gray-medium-dark: var(--gray-medium-dark);
 $black-color: var(--gray-darkest);
+$font-size-m: var(--font-size-m);
+$font-weight-regular: var(--font-weight-regular);
 
 // Base spacing - static value for SCSS calculations
 $base: 1rem; // Cannot use var() in SCSS arithmetic
@@ -78,4 +80,37 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                 box-shadow: none;
             }
         }
+}
+
+.attribute-filter-modal {
+    @include large-modal-popover();
+
+
+    .footer-text {
+        flex-grow: 1;
+        text-align: center;
+        color: $gray-medium-dark;
+        font-size: $font-size-m;
+        font-weight: $font-weight-regular;
+        line-height: normal;
+    }
+
+    .custom-input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem; // 12px
+        align-items: baseline;
+
+        .text-input,
+        .selectdropdown-container {
+            width: 20rem !important; // 320px
+        }
+    }
+
+    .parameters-tab-container ,.save-filter-tab-container{
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem; // 24px
+        align-items: start;
+    }
 }

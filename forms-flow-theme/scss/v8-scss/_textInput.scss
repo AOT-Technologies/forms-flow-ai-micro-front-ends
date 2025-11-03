@@ -14,7 +14,7 @@ $ti-font-weight: var(--font-weight-regular);
     display: flex;
     align-items: center;
     width: 100%;
-    max-width: 20rem;
+    // max-width: 20rem;
 
     &.text-input-disabled {
         opacity: 0.6;

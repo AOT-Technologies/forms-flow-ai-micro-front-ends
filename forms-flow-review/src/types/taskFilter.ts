@@ -80,4 +80,5 @@ export interface FilterItemType {
   ariaLabel?: string;
   className?: string;
   category?: "my" | "shared" | "action" | "none";
+  onEdit?: () => void;
 }

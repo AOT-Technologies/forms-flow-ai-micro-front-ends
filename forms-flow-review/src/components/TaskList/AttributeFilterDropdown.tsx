@@ -2,8 +2,6 @@ import {
   AddIcon,
   FilterDropDown,
   ReorderIcon,
-  SharedWithMeIcon,
-  SharedWithOthersIcon,
 } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -119,18 +117,10 @@ const changeAttributeFilterSelection = (attributeFilter) => {
   };
 
 
-  //To be updated later 
-  const handleEditAttributeFromItem = (item) => {
-    if (!item?.type) {
-      // allow creating when clicking edit on 'All Fields' (none) -> open create
-      setShowAttributeFilter(true);
-      dispatch(setAttributeFilterToEdit(null));
-      return;
-    }
-    const id = Number(item.type);
-    const found = attributeFilterList.find((f) => f.id === id);
+  const handleEditAttributeFromItem = (filter) => {
+    if (!filter) return;
     setShowAttributeFilter(true);
-    dispatch(setAttributeFilterToEdit(found ? cloneDeep(found) : null));
+    dispatch(setAttributeFilterToEdit(cloneDeep(filter)));
   };
 
   const filterDropdownAttributeItems = useMemo(() => {
@@ -171,7 +161,7 @@ const changeAttributeFilterSelection = (attributeFilter) => {
       type: "none",
       dataTestId: "attr-filter-item-none",
       ariaLabel: t("All Fields"),
-      category: "none",
+      category: "action",
     };
 
     const filteredItems = Array.isArray(attributeFilterList)
@@ -193,14 +183,11 @@ const changeAttributeFilterSelection = (attributeFilter) => {
               userDetails?.groups?.includes(role)
             );
 
-            let icon = null;
             let category: "my" | "shared" = "my";
 
             if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
-              icon = <SharedWithOthersIcon className="shared-icon" />;
               category = "my";
             } else if (isSharedToPublic || isSharedToMe) {
-              icon = <SharedWithMeIcon className="shared-icon" />;
               category = "shared";
             }
             // category remains "my" for all other cases (default)
@@ -213,7 +200,6 @@ const changeAttributeFilterSelection = (attributeFilter) => {
               content: (
                 <span className="d-flex justify-content-between align-items-center">
                   {t(filter.name)}
-                  {icon && <span>{icon}</span>}
                 </span>
               ),
               onClick: () => changeAttributeFilterSelection(filter),
@@ -223,6 +209,7 @@ const changeAttributeFilterSelection = (attributeFilter) => {
                 filterName: t(filter.name),
               }),
               category,
+              onEdit: () => handleEditAttributeFromItem(filter),
             };
           })
       : [];
@@ -272,7 +259,6 @@ const changeAttributeFilterSelection = (attributeFilter) => {
         searchable={false}
         searchPlaceholder={t("Search")}
         onSearch={onSearch}
-        onEdit={handleEditAttributeFromItem}
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
         className="input-filter"

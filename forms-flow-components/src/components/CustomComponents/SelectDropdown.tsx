@@ -189,7 +189,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
 
     // Memoized selected option
     const selectedOption = useMemo(() => {
-      return options.find(opt => opt.value === selectedValue);
+      return options?.find(opt => opt.value === selectedValue);
     }, [options, selectedValue]);
 
     // Memoized arrow icon renderer

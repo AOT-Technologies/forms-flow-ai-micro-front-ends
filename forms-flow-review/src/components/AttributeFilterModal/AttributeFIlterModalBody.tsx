@@ -1,12 +1,12 @@
 import {
-  CustomButton,
-  CustomTabs,
+  V8CustomButton,
   DeleteIcon,
-  FormInput,
-  InputDropdown,
+  SelectDropdown,
   SaveIcon,
   UpdateIcon,
   useSuccessCountdown,
+  CustomTextInput,
+  Alert,
 } from "@formsflow/components";
 import { useEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
@@ -30,7 +30,7 @@ import { Filter, FilterCriteria } from "../../types/taskFilter";
 import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import { RootState } from "../../reducers";
 
-const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes }) => {
+const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
@@ -228,14 +228,99 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 
 
 
+  // Reset form state when switching from edit to create mode or when switching between different filters to edit
   useEffect(() => {
-    if(attributeFilter &&(selectedAttributeFilter?.roles.length > 0 || (selectedAttributeFilter?.users.length == 0 && selectedAttributeFilter.roles.length == 0))){ 
-      setShareAttrFilter(FILTER_SHARE_OPTIONS.SAME_AS_TASKS);
+    if (!attributeFilter?.id) {
+      // Reset filter name
+      setFilterName("");
+      setFilterNameError("");
+      
+      // Reset attribute data to initial state (only selectedFilter criteria, not attribute filter data)
+      const initialData = {
+        assignee: selectedFilter?.criteria?.assignee || "",
+        roles: removeTenantKey(selectedFilter?.criteria?.candidateGroup, tenantKey, MULTITENANCY_ENABLED) || ""
+      };
+      setAttributeData(initialData);
+      
+      // Reset share filter option
+      setShareAttrFilter(FILTER_SHARE_OPTIONS.PRIVATE);
+      
+      // Reset to first page
+      setCurrentPage(1);
+    } else {
+      // When editing, populate form with the filter being edited (attributeFilter), not the currently selected one
+      setFilterName(attributeFilter?.name || "");
+      setFilterNameError("");
+      
+      // Use attributeFilter criteria instead of selectedAttributeFilter
+      const initialData = {
+        assignee: attributeFilter?.criteria?.assignee || "",
+        roles: removeTenantKey(attributeFilter?.criteria?.candidateGroup, tenantKey, MULTITENANCY_ENABLED) || ""
+      };
+
+      // Process attributeFilter's processVariables to populate form fields
+      const attributeFilterProcessVars = attributeFilter?.criteria?.processVariables || [];
+      const existingValues = {};
+      
+      // Process nameLike field from attributeFilter
+      const nameLikeValue = attributeFilter?.criteria?.nameLike;
+      if (nameLikeValue) {
+        const taskNameVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
+        if (taskNameVariable) {
+          const resetValue = cleanValue(nameLikeValue, "name");
+          const uniqueKey = getUniqueFieldKey(taskNameVariable);
+          existingValues[uniqueKey] = resetValue;
+        }
+      }
+      
+      // Process task-level fields from attributeFilter
+      const taskFields = ['submitterName', 'assignee', 'roles', 'created', 'formName'];
+      taskFields.forEach(fieldName => {
+        const fieldValue = attributeFilter?.criteria?.[fieldName];
+        if (fieldValue) {
+          const taskVariable = taskVariables.find(tv => tv.name === fieldName && !tv.isFormVariable);
+          if (taskVariable) {
+            const resetValue = cleanValue(fieldValue, fieldName);
+            const uniqueKey = getUniqueFieldKey(taskVariable);
+            existingValues[uniqueKey] = resetValue;
+          }
+        }
+      });
+      
+      // Process process variables from attributeFilter
+      const variablesWithFormSupport = ['name', 'submitterName', 'assignee', 'roles', 'created', 'formName'];
+      attributeFilterProcessVars.forEach((item) => {
+        if (variablesWithFormSupport.includes(item.name)) {
+          const taskVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable === item.isFormVariable);
+          if (taskVariable) {
+            const resetValue = cleanValue(item.value, item.name);
+            const uniqueKey = getUniqueFieldKey(taskVariable);
+            existingValues[uniqueKey] = resetValue;
+          }
+        } else {
+          // For other variables, find the corresponding task variable
+          const taskVariable = taskVariables.find(tv => tv.name === item.name);
+          if (taskVariable) {
+            const resetValue = cleanValue(item.value, item.name);
+            existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
+          }
+        }
+      });
+      
+      setAttributeData({ ...initialData, ...existingValues });
+      
+      // Set share filter based on attributeFilter being edited
+      if(attributeFilter?.roles?.length > 0 || (attributeFilter?.users?.length === 0 && attributeFilter?.roles?.length === 0)){ 
+        setShareAttrFilter(FILTER_SHARE_OPTIONS.SAME_AS_TASKS);
+      } else {
+        setShareAttrFilter(FILTER_SHARE_OPTIONS.PRIVATE);
+      }
+      
+      // Reset to first page when switching filters
+      setCurrentPage(1);
     }
-    getTaskAccess();
+  }, [attributeFilter, selectedFilter, tenantKey, taskVariables]);
 
-
-}, [attributeFilter]);
 
 const getTaskAccess = () => {
   if (shareAttrFilter === FILTER_SHARE_OPTIONS.PRIVATE) {
@@ -477,7 +562,7 @@ const removeSlashFromValue = (value) => {
   }
 };
 
-const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
+// const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
 
 
     const handleUpdateModalClick =()=>{
@@ -496,153 +581,168 @@ const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
 
       toggleDeleteModal();
     }
-  const renderActionButtons = () => {
-    if (attributeFilter?.id) { 
-      if (editRole ) {
-        return (
-          <div className="buttons-row">
-            <CustomButton
-              className="me-3"
-              variant={updateButtonVariant}
-              size="md"
-              label={
-              updateSuccess.showSuccess ?   `${t("Updated!")} (${updateSuccess.countdown})` : t("Update This Filter")
-            }
-                onClick={handleUpdateModalClick}
-              icon={ updateSuccess?.showSuccess ? 
-                null: <UpdateIcon color={saveIconColor} />}
-              dataTestId="save-attribute-filter"
-              ariaLabel={t("Update This Filter")}
-              disabled={deleteSuccess.showSuccess || noFieldChanged || !shareAttrFilter}
-              iconWithText
-            />
-            <CustomButton
-              variant={deleteButtonVariant}
-              size="md"
-               label={
-              deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : t("Delete This Filter")
-            }
-              onClick={handleDeleteClick}
-              icon={deleteSuccess?.showSuccess ? 
-                null :<DeleteIcon color={deleteIconColor} />}
-              dataTestId="delete-attribute-filter"
-              ariaLabel={t("Delete This Filter")}
-              disabled={updateSuccess.showSuccess}
-              iconWithText
-            />
-          </div>
-        );
-      }
-      return null;
-    }
+  // const renderActionButtons = () => {
+  //   if (attributeFilter?.id) { 
+  //     if (editRole ) {
+  //       return (
+  //         <>
+  //           <V8CustomButton
+  //             className="me-3"
+  //             variant={updateButtonVariant}
+  //             label={
+  //             updateSuccess.showSuccess ?   `${t("Updated!")} (${updateSuccess.countdown})` : t("Update This Filter")
+  //           }
+  //               onClick={handleUpdateModalClick}
+  //             icon={ updateSuccess?.showSuccess ? 
+  //               null: <UpdateIcon color={saveIconColor} />}
+  //             dataTestId="save-attribute-filter"
+  //             ariaLabel={t("Update This Filter")}
+  //             disabled={deleteSuccess.showSuccess || noFieldChanged || !shareAttrFilter}
+  //           />
+  //           <V8CustomButton
+  //             variant={deleteButtonVariant}
+  //              label={
+  //             deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : t("Delete This Filter")
+  //           }
+  //             onClick={handleDeleteClick}
+  //             icon={deleteSuccess?.showSuccess ? 
+  //               null :<DeleteIcon color={deleteIconColor} />}
+  //             dataTestId="delete-attribute-filter"
+  //             ariaLabel={t("Delete This Filter")}
+  //             disabled={updateSuccess.showSuccess}
+  //           />
+  //         </>
+  //       );
+  //     }
+  //     return null;
+  //   }
 
-    if (createFilters ) {
-      return (
-          <CustomButton
-  variant={saveButtonVariant}
-  size="md"
-  label={
-    saveSuccess.showSuccess
-      ? `${t("Saved!")} (${saveSuccess.countdown})`
-      : t("Save This Filter")
-  }
-  onClick={saveFilterAttributes}
-  icon={saveSuccess.showSuccess ? null : <SaveIcon color={saveIconColor} />}
-  dataTestId="save-attribute-filter"
-  ariaLabel={t("Save Attribute Filter")}
-  disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
-  iconWithText
-/>
+  //    if (createFilters) {
+  //     return (
+  //       <V8CustomButton
+  //         variant={saveButtonVariant}
+  //          label={
+  //            saveSuccess.showSuccess
+  //              ? `${t("Saved!")} (${saveSuccess.countdown})`
+  //              : t("Save and apply")
+  //          }
+  //         onClick={saveFilterAttributes}
+  //         icon={
+  //           saveSuccess.showSuccess ? null : <SaveIcon color={saveIconColor} />
+  //         }
+  //         dataTestId="save-attribute-filter"
+  //         ariaLabel={t("Save Attribute Filter")}
+  //         disabled={
+  //           isUnsavedFilter || filterNameError || noFieldChanged || !filterName
+  //         }
+  //       />
+  //     );
+  //   }
 
-
-      );
-    }
-
-    return null;
-  };
+  //   return null;
+  // };
 
   const saveFilterTab = () => (
-    <>
-      <FormInput
-        name="filterName"
-        type="text"
-        label={t("Filter Name")}
-        ariaLabel={t("Filter Name")}
+    <div className="save-filter-tab-container">
+    <Alert
+      message={t("You can easily edit or delete custom filters at any time after they are saved.")}
+      variant="passive"
+      dataTestId="save-note-container"
+      isShowing={true}
+    />
+    <div className="custom-input-container">
+      <label htmlFor="attribute-filter-name">{t("Filter Name")}</label>
+      <CustomTextInput
         value={filterName}
-        onChange={attrFilterName}
-        isInvalid={!!filterNameError}
-        onBlur={handleNameError}
+        setValue={(val) => setFilterName(val)}
+        placeholder={"Untitled Field Filter"}
         dataTestId="attribute-filter-name"
-        feedback={filterNameError}
-        id="filter-name"
+        disabled={false}
+        ariaLabel={t("Filter Name")}
+        onBlur={handleNameError}
+        maxLength={filterNameLength}
       />
-
-      <InputDropdown
-        Options={filterShareOptions}
-        dropdownLabel={t("Share This Filter With")}
-        isAllowInput={false}
-        ariaLabelforDropdown={t("attribute filter sharing dropdown")}
-        selectedOption={shareAttrFilter}
-        setNewInput={setShareAttrFilter}
-        dataTestIdforInput="share-attribute-filter-input"
-        dataTestIdforDropdown="share-attribute-filter-options"
-        required={true}
-        id="shave-this-filter"
-      />
-      <RenderOwnerShipNotes
+      </div>
+      <div className="custom-input-container">
+        <label htmlFor="share-this-filter">{t("Share This Filter With")}</label>
+        <SelectDropdown
+          options={filterShareOptions.map(({ label, value }) => ({ label, value }))}
+          value={shareAttrFilter}
+          onChange={setShareAttrFilter}
+          ariaLabel={t("attribute filter sharing dropdown")}
+          dataTestId="share-attribute-filter-options"
+          id="share-this-filter"
+          variant="secondary"
+        />
+      </div>
+      {/* <RenderOwnerShipNotes
         attributeFilter={attributeFilter}
         isCreator={createdByMe}
-      />
-      {renderActionButtons()}
-    </>
+      /> */}
+      {/* {renderActionButtons()} */}
+    </div>
   );
-
-  const tabs = [
-    {
-      eventKey: "parametersTab",
-      title: t("Parameters"),
-      content: (
-        <ParametersTab
-          taskVariables={taskVariables}
-          attributeData={attributeData}
-          handleSelectChange={handleSelectChange}
-          assigneeOptions={assigneeOptions}
-          candidateOptions={candidateOptions}
-        />
-      ),
-    },
-    { eventKey: "saveFilterTab", title: t("Save"), content: saveFilterTab() },
-  ];
  
-
    return (
     <>
-      <Modal.Body className="with-tabs">
-        <div className="tabs">
-          <CustomTabs
-            defaultActiveKey={(updateSuccess?.showSuccess || deleteSuccess?.showSuccess) ? "saveFilterTab":"parametersTab"}
-            tabs={tabs}
-            dataTestId="attribute-filter-tabs"
-            ariaLabel={t("Filter Tabs")}
+      <Modal.Body >
+        {currentPage === 1 ? (
+          <ParametersTab
+            taskVariables={taskVariables}
+            attributeData={attributeData}
+            handleSelectChange={handleSelectChange}
+            assigneeOptions={assigneeOptions}
+            candidateOptions={candidateOptions}
           />
-        </div>
+        ) : (
+          saveFilterTab()
+        )}
       </Modal.Body>
       <Modal.Footer>
-        <div className="buttons-row">
-        <CustomButton
-          label={t("Filter Results")}
-          dataTestId="attribute-filter-results"
-          ariaLabel={t("Filter results")}
-          onClick={searchFilterAttributes}
-          disabled={(updateSuccess.showSuccess|| deleteSuccess.showSuccess || noFieldChanged)}
-        />
-        <CustomButton
-          label={t("Cancel")}
-          onClick={onClose}
-          dataTestId="cancel-attribute-filter"
-          ariaLabel={t("Cancel filter")}
-          secondary
-        />
+        <div className="w-100 d-flex align-items-center">
+          <div className="me-auto">
+            {currentPage === 2 && (
+              <V8CustomButton
+                label={t("Back")}
+                dataTestId="attribute-filter-back"
+                ariaLabel={t("Back")}
+                onClick={() => setCurrentPage(1)}
+                variant="secondary"
+              />
+            )}
+          </div>
+          <div className=" footer-text flex-grow-1 text-center">
+            {currentPage === 1 ? t("1 of 2") : t("2 of 2")}
+          </div>
+          <div className="ms-auto">
+            {currentPage === 1 && (
+              <V8CustomButton
+                label={t("Next")}
+                dataTestId="attribute-filter-next"
+                ariaLabel={t("Next")}
+                onClick={() => setCurrentPage(2)}
+              />
+            )}
+            {currentPage === 2 && createFilters && !attributeFilter?.id && (
+              <V8CustomButton
+                variant="primary"
+                label={
+                  saveSuccess.showSuccess
+                    ? `${t("Saved!")} (${saveSuccess.countdown})`
+                    : t("Save and apply")
+                }
+                onClick={saveFilterAttributes}
+                icon={
+                  saveSuccess.showSuccess ? null : <SaveIcon color={saveIconColor} />
+                }
+                dataTestId="save-attribute-filter"
+                ariaLabel={t("Save Attribute Filter")}
+                disabled={
+                  isUnsavedFilter || filterNameError || noFieldChanged || !filterName
+                }
+              />
+            )}
+          </div>
         </div>
       </Modal.Footer>
 
