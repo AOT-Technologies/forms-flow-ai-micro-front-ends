@@ -3,9 +3,13 @@ import {
   ReusableResizableTable,
   SortableHeader,
   TableFooter,
+  ReusableLargeModal,
+  V8CustomButton,
+  ReusableTable,
+  FormStatusIcon
 } from "@formsflow/components";
 import { HelperServices } from "@formsflow/service";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { isEqual, cloneDeep } from "lodash";
@@ -15,17 +19,53 @@ import {
   setBPMTaskLoader,
   setFilterListSortParams,
   setTaskListLimit,
+  setSelectedTaskID,
+  setBPMTaskDetailLoader,
+  setTaskDetailsLoading,
+  setFormSubmissionLoading,
+  resetFormData,
+  setBundleSelectedForms,
+  setBundleLoading,
+  setAppHistoryLoading,
+  setTaskAssignee,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useHistory, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList,
+  fetchTaskVariables,
+  executeRule,
 } from "../../api/services/filterServices";
+import {
+  getBPMTaskDetail,
+  getBPMGroups,
+  onBPMTaskFormSubmit,
+  getApplicationHistory,
+  getCustomSubmission,
+} from "../../api/services/bpmTaskServices";
+import {
+  getForm,
+  getSubmission,
+  Formio,
+  resetSubmission,
+} from "@aot-technologies/formio-react";
+import {
+  getFormIdSubmissionIdFromURL,
+  getFormUrlWithFormIdSubmissionId,
+} from "../../api/services/formatterService";
+import { getFormioRoleIds } from "../../api/services/userSrvices";
+import {
+  CUSTOM_SUBMISSION_URL,
+  CUSTOM_SUBMISSION_ENABLE,
+  CUSTOM_EVENT_TYPE,
+} from "../../constants/index";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
+import TaskForm from "../TaskForm";
+import BundleTaskForm from "../BundleTaskForm";
 
 interface Column {
   name: string;
@@ -47,9 +87,6 @@ interface Task {
   };
 }
 
-
-
-
 const TaskListTable = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -69,6 +106,73 @@ const TaskListTable = () => {
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData
 ?.key || tenantId);
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [modalViewType, setModalViewType] = useState<"submission" | "history">("submission");
+  const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
+    formId: "",
+    submissionId: "",
+  });
+  const [bundleName, setBundleName] = useState("");
+  const [historyPaginationModel, setHistoryPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+
+  // Redux selectors for task details
+  const task = useSelector((state: any) => state.task.taskDetail);
+  const taskDetailsLoading = useSelector((state: any) => state.task.taskDetailsLoading);
+  const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
+  const appHistory = useSelector((state: any) => state.task?.appHistory || []);
+  const isAppHistoryLoading = useSelector((state: any) => state.task?.isAppHistoryLoading || false);
+  const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
+
+  const currentUser = JSON.parse(
+    localStorage.getItem("UserDetails") || "{}"
+  )?.preferred_username;
+  const disabledMode = taskAssignee !== currentUser;
+
+  const handleOpenModal = (task: Task) => {
+    setSelectedTask(task);
+    setModalViewType("submission");
+    setShowModal(true);
+    // Set task ID and load task details
+    if (task.id) {
+      dispatch(setSelectedTaskID(task.id));
+      dispatch(setBPMTaskDetailLoader(true));
+      dispatch(setTaskDetailsLoading(true));
+      dispatch(getBPMTaskDetail(task.id));
+      dispatch(getBPMGroups(task.id));
+      
+      // Also load history data upfront to avoid lag when switching views
+      const applicationId = task._embedded?.variable?.find(
+        (v: { name: string; value: any }) => v.name === "applicationId"
+      )?.value;
+      if (applicationId) {
+        dispatch(setAppHistoryLoading(true));
+        dispatch(getApplicationHistory(applicationId));
+      }
+    }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedTask(null);
+    setShowModal(false);
+    setModalViewType("submission");
+    Formio.clearCache();
+    dispatch(setSelectedTaskID(null));
+    dispatch(resetSubmission("submission"));
+    dispatch(setBundleSelectedForms([]));
+  };
+
+  const handleSubmissionClick = () => {
+    setModalViewType("submission");
+  };
+
+  const handleHistoryClick = () => {
+    setModalViewType("history");
+  };
 
   const taskvariables = selectedFilter?.variables ?? [];
 
@@ -152,6 +256,186 @@ return matchingVar.value ?? "-";
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
+
+  // Load form and submission for task details
+  const handleFormRetry = (fetchForm: () => void) => (retryErr: any) => {
+    if (!retryErr) {
+      fetchForm();
+    } else {
+      dispatch(setFormSubmissionLoading(false));
+    }
+  };
+
+  const handleSuccessfulFormFetch = (formId: string, submissionId: string) => {
+    if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
+      dispatch(getCustomSubmission(submissionId, formId));
+    } else {
+      dispatch(getSubmission("submission", submissionId, formId));
+    }
+    dispatch(setFormSubmissionLoading(false));
+  };
+
+  const getFormSubmissionData = useCallback(
+    (formUrl: string) => {
+      const { formId, submissionId } = getFormIdSubmissionIdFromURL(formUrl);
+      Formio.clearCache();
+      dispatch(resetFormData("form"));
+
+      const fetchForm = () => {
+        dispatch(
+          getForm("form", formId, ((err: any) => {
+            if (!err) {
+              handleSuccessfulFormFetch(formId, submissionId);
+            } else if (err === "Bad Token" || err === "Token Expired") {
+              dispatch(resetFormData("form"));
+              dispatch(getFormioRoleIds(handleFormRetry(fetchForm)) as any);
+            } else {
+              dispatch(setFormSubmissionLoading(false));
+            }
+          }) as any)
+        );
+      };
+
+      fetchForm();
+    },
+    [dispatch]
+  );
+
+  // Load form and submission when task details are loaded
+  useEffect(() => {
+    if (task?.formUrl && task?.formType !== "bundle" && modalViewType === "submission") {
+      getFormSubmissionData(task.formUrl);
+    }
+  }, [task?.formUrl, task?.formType, modalViewType, getFormSubmissionData]);
+
+  // Handle bundle form setup
+  useEffect(() => {
+    if (task?.formType === "bundle" && modalViewType === "submission") {
+      Formio.clearCache();
+      dispatch(resetFormData("form"));
+      dispatch(setBundleLoading(false));
+
+      const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
+      setBundleFormData({ formId, submissionId });
+
+      fetchTaskVariables(task?.formId)
+        .then((res) => {
+          setBundleName(res.data.formName);
+          executeRule(
+            {
+              submissionType: "fetch",
+              formId: formId,
+              submissionId: submissionId,
+            },
+            res.data.id
+          )
+            .then((res: { data: unknown }) => {
+              dispatch(setBundleSelectedForms(res.data));
+            })
+            .catch((err: unknown) => {
+              console.error("Bundle error:", err);
+            })
+            .finally(() => {
+              dispatch(setBundleLoading(false));
+            });
+        })
+        .catch((err) => {
+          console.error("Error fetching bundle:", err);
+          dispatch(setBundleLoading(false));
+        });
+
+      return () => {
+        dispatch(setBundleSelectedForms([]));
+      };
+    }
+  }, [task?.formType, task?.formId, task?.formUrl, modalViewType, dispatch]);
+
+  // Form submission callback
+  const onFormSubmitCallback = (actionType = "") => {
+    if (!selectedTask?.id || !task?.formUrl) return;
+    dispatch(setBPMTaskDetailLoader(true));
+    const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
+    const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
+    const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
+    const payload = {
+      variables: {
+        formUrl: { value: formUrl },
+        applicationId: { value: task.applicationId },
+        webFormUrl: { value: webFormUrl },
+        action: { value: actionType },
+      },
+    };
+    dispatch(
+      onBPMTaskFormSubmit(
+        selectedTask.id,
+        payload,
+        () => dispatch(setBPMTaskDetailLoader(false))
+      )
+    );
+    handleCloseModal();
+  };
+
+  // Custom event handler for form
+  const onCustomEventCallBack = (customEvent: {
+    type: string;
+    actionType: string;
+  }) => {
+    if (customEvent.type === CUSTOM_EVENT_TYPE.ACTION_COMPLETE) {
+      onFormSubmitCallback(customEvent.actionType);
+    }
+  };
+
+  // Prepare history table data
+  const historyColumns = useMemo(
+    () => [
+      {
+        field: "created",
+        headerName: t("Created On"),
+        flex: 2,
+        renderCell: (params: any) => HelperServices.getLocaldate(params.value), 
+        sortable: false 
+      },
+      {
+        field: "submittedBy",
+        headerName: t("User"),
+        flex: 2,
+        sortable: false
+      },
+      {
+        field: "action",
+        headerName: t("Action"),
+        flex: 2,
+        sortable: false,
+        cellClassName: 'action-cell-stretch',
+        renderCell: (params: any) => {
+          const entry = params.row;
+          return (
+            <div
+              className="task-status"
+              data-testid={`form-status-${entry.submissionId || "new"}`}
+            >
+              <FormStatusIcon color={entry.applicationStatus === "New" ? "#F7DF82" : "#00C49A"} />
+              <span className="status-text">
+                {entry.applicationStatus || "N/A"}
+              </span>
+            </div>
+          );
+        },
+      },
+    ],
+    [t]
+  );
+
+  const historyRows = useMemo(() => {
+    return (appHistory || []).map((entry: any, index: number) => ({
+      id: entry.submissionId || index,
+      created: entry.created || "",
+      submittedBy: entry.submittedBy || "N/A",
+      applicationStatus: entry.applicationStatus || "N/A",
+      formId: entry.formId,
+      submissionId: entry.submissionId,
+    }));
+  }, [appHistory]);
   const [columns, setColumns] = useState([]);
   // Constants
   const SORTABLE_COLUMNS = optionSortBy.keys;
@@ -205,6 +489,114 @@ return matchingVar.value ?? "-";
     return `${columnName}: ${cellValue}`;
   };
 
+
+  const renderReusableModal = () => {
+    if (!selectedTask) return null;
+
+    const taskName = task?.formType === "bundle" ? bundleName : task?.name || selectedTask.name || selectedTask.id;
+
+    const renderContent = () => {
+      if (modalViewType === "history") {
+        return (
+              <ReusableTable
+                columns={historyColumns}
+                rows={historyRows}
+                loading={isAppHistoryLoading}
+                noRowsLabel={t("No submission history found")}
+                paginationModel={historyPaginationModel}
+                onPaginationModelChange={setHistoryPaginationModel}
+                paginationMode="client"
+                sortingMode="client"
+                pageSizeOptions={[5, 10, 25, 50]}
+                rowHeight={60}
+                sx={{ 
+                  height: 500, 
+                  width: "100%",
+                  '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer': {
+                    justifyContent: 'flex-start !important',
+                  },
+                  '& .MuiDataGrid-cell.action-cell-stretch': {
+                    alignItems: 'stretch !important',
+                  },
+                }}
+                disableColumnResize={true}
+                disableColumnMenu={true}
+              />
+        );
+      } else {
+        // Submission view
+        const isLoading = taskDetailsLoading || (!task?.formUrl && !task?.formType);
+        
+        if (isLoading) {
+          return <Loading />;
+        }
+
+        if (task?.formType === "bundle" && selectedForms?.length) {
+          return (
+            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode" : "bg-white"}`}>
+              <BundleTaskForm
+                bundleId={task?.formId}
+                currentUser={currentUser || ""}
+                onFormSubmit={onFormSubmitCallback}
+                bundleFormData={bundleFormData}
+                onCustomEvent={onCustomEventCallBack}
+              />
+            </div>
+          );
+        } else {
+          return (
+            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode" : "bg-white"}`}>
+              <TaskForm
+                currentUser={currentUser || ""}
+                onFormSubmit={onFormSubmitCallback}
+                onCustomEvent={onCustomEventCallBack}
+              />
+            </div>
+          );
+        }
+      }
+    };
+
+    return (
+      <ReusableLargeModal
+        show={showModal}
+        onClose={handleCloseModal}
+        title={task?.applicationId}
+        subtitle={
+          <div className="d-flex justify-content-between">
+            <div className="d-flex gap-2">
+            <V8CustomButton
+              label={t("Submission")}
+              onClick={handleSubmissionClick}
+              className="mr-2"
+              dataTestId="modal-submission-button"
+              selected={modalViewType === "submission"}
+            />
+            <V8CustomButton
+              label={t("History")}
+              onClick={handleHistoryClick}
+              dataTestId="modal-history-button"
+              selected={modalViewType === "history"}
+            />
+            </div>
+            <div className="d-flex gap-2">
+              <div
+                className="form-status"
+                data-testid={`form-status-${task?._id || "new"}`}
+              >
+                <FormStatusIcon color={taskAssignee ? "#00C49A" : "#F7DF82"} />
+                <span className="status-text">
+                  {taskAssignee ? "Assigned" : "Pending"}
+                </span>
+              </div>
+            <TaskAssigneeManager task={task} />
+            </div>
+          </div>
+        }
+        content={renderContent()}
+      />
+    );
+  };
 
   // Render Functions
   const renderHeaderCell = (
@@ -344,7 +736,7 @@ return matchingVar.value ?? "-";
       <CustomButton
         actionTableSmall
         label={t("View")}
-        onClick={() => history.push(`${redirectUrl.current}task/${task.id}`)}
+        onClick={() => handleOpenModal(task)}
         dataTestId={`view-task-${task.id}`}
         ariaLabel={t("View details for task {{taskName}}", {
           taskName: task.name ?? t("unnamed"),
@@ -458,7 +850,12 @@ if (!columns?.length) {
   return isTaskListLoading ? <Loading /> : renderEmptyTable();
 }
 
-  return renderTableContainer();
+  return (
+    <>
+      {renderTableContainer()}
+      {showModal && renderReusableModal()}
+    </>
+  );
 };
 
 export default TaskListTable;

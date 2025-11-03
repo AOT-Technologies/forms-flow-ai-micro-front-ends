@@ -55,3 +55,5 @@ export { default as FileUploadPanel } from "./CustomComponents/FileUploadPanel";
 export * from "./CustomComponents/FilterDropDown";
 export { CustomCheckbox } from "./CustomComponents/CustomCheckbox";
 export * from "./CustomComponents/ReusableTable";
+export * from "./CustomComponents/ReusableLargeModal";
+
