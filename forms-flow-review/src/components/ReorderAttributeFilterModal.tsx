@@ -3,8 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import { UserDetail } from "../types/taskFilter.js";
 import {
   CloseIcon,
-  CustomButton,
-  CustomInfo,
+  V8CustomButton,
   DragandDropSort,
   SharedWithMeIcon,
   SharedWithOthersIcon,
@@ -20,6 +19,7 @@ import {
   setSelectedBpmAttributeFilter,
 } from "../actions/taskActions";
 import { RootState } from "../reducers/index.js";
+import { StyleServices } from "@formsflow/service";
 
 interface ReorderAttributeFilterModalProps {
   showAttributeModal?: boolean;
@@ -38,10 +38,10 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
     }) => {
       const { t } = useTranslation();
       const dispatch = useDispatch();
+      const darkColor = StyleServices.getCSSVariable("--secondary-dark");
       const userDetails: UserDetail = useSelector(
         (state: RootState) => state.task.userDetails
       );
-
       const selectedFilter = useSelector(
         (state: any) => state.task.selectedFilter
       );
@@ -65,24 +65,24 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
               userDetails?.groups?.includes(role)
             );
 
-            let icon = null;
-            if (
-              selectedFilter?.users?.length > 0 &&
-              !item?.roles?.length &&
-              !item?.users?.length
-            ) {
-              icon = null;
-            } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
-              icon = <SharedWithOthersIcon />;
-            } else if (isSharedToPublic || isSharedToMe) {
-              icon = <SharedWithMeIcon />;
-            }
+            // let icon = null;
+            // if (
+            //   selectedFilter?.users?.length > 0 &&
+            //   !item?.roles?.length &&
+            //   !item?.users?.length
+            // ) {
+            //   icon = null;
+            // } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+            //   icon = <SharedWithOthersIcon />;
+            // } else if (isSharedToPublic || isSharedToMe) {
+            //   icon = <SharedWithMeIcon />;
+            // }
             return {
               id: item.id,
               name: item.name,
               isChecked: !item.hide,
               sortOrder: item.sortOrder,
-              icon: icon,
+              // icon: icon,
             };
           }) || []
         );
@@ -166,19 +166,24 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
         <Modal
           show={showAttributeModal}
           centered
-          size="sm"
+          size="lg"
+          dialogClassName="drag-drop-container"
         >
           <Modal.Header>
-            <Modal.Title> {t("Re-order And Hide Filters")} </Modal.Title>
-            <div className="icon-close" onClick={onClose} >
-              <CloseIcon/>
+            <div className="modal-header-content">
+              <Modal.Title>
+                {" "}
+                {t("Re-order And Hide Filters")}
+                <div onClick={onClose}>
+                  <CloseIcon color={darkColor} />
+                </div>
+              </Modal.Title>
+              <div className="modal-subtitle">
+                Toggle the visibility of filters and order them
+              </div>
             </div>
           </Modal.Header>
-          <Modal.Body className="reorder-task-filter-modal-body">
-            <CustomInfo
-              heading="Note"
-              content="Toggle the visibility of filters and re-arrange them."
-            />
+          <Modal.Body>
             <DragandDropSort
               items={updateAttributeFilterList}
               onUpdate={onUpdateFilterOrder}
@@ -186,22 +191,22 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
             />
           </Modal.Body>
           <Modal.Footer>
-            <div className="buttons-row">
-            <CustomButton
-              label={t("Save Changes")}
-              dataTestId="save-changes"
-              ariaLabel={t("Save Changes")}
-              onClick={handleSaveChanges}
-              disabled={isSaveBtnDisabled}
-            />
-            <CustomButton
-              label={t("Discard Changes")}
-              onClick={handleDiscardChanges}
-              dataTestId="discard-changes"
-              ariaLabel={t("Discard Changes")}
-              secondary
-            />
-            </div>
+              <V8CustomButton
+                label={t("Discard changes")}
+                onClick={handleDiscardChanges}
+                dataTestId="discard-changes"
+                ariaLabel={t("Discard changes")}
+                variant="secondary"
+                disabled={isSaveBtnDisabled}
+              />
+              <V8CustomButton
+                label={t("Save and apply")}
+                dataTestId="save-and-apply"
+                ariaLabel={t("Save and apply")}
+                onClick={handleSaveChanges}
+                disabled={isSaveBtnDisabled}
+                variant="primary"
+              />
           </Modal.Footer>
         </Modal>
       );
