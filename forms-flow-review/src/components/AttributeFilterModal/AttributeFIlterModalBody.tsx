@@ -1,10 +1,6 @@
 import {
   V8CustomButton,
-  DeleteIcon,
   SelectDropdown,
-  SaveIcon,
-  UpdateIcon,
-  useSuccessCountdown,
   CustomTextInput,
   Alert,
 } from "@formsflow/components";
@@ -21,38 +17,18 @@ import isEqual from "lodash/isEqual";
 
 import { setAttributeFilterList, setAttributeFilterToEdit, setBPMTaskListActivePage, setBPMTaskLoader, setIsUnsavedAttributeFilter, setSelectedBpmAttributeFilter, setUserGroups } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED, PRIVATE_ONLY_YOU } from "../../constants"; 
-import { StyleServices } from "@formsflow/service";
 import ParametersTab from "./ParametersTab";
-import RenderOwnerShipNotes from "./Notes";
 import { userRoles } from "../../helper/permissions";
 import { cloneDeep } from "lodash";
 import { Filter, FilterCriteria } from "../../types/taskFilter"; 
 import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import { RootState } from "../../reducers";
 
-const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
+const AttributeFilterModalBody = ({ onClose, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
   const { manageAllFilters,createFilters } = userRoles();
-  
-  const baseColor = StyleServices.getCSSVariable("--ff-primary");
-  const whiteColor = StyleServices.getCSSVariable("--ff-white");
- let updateButtonVariant = "secondary"; // Default value
-  if (updateSuccess.showSuccess) {
-    updateButtonVariant = "success";
-  }
- let deleteButtonVariant = "secondary"; // Default value
-  if (deleteSuccess.showSuccess) {
-    deleteButtonVariant = "success";
-  }
-
-  const {
-  successState: saveSuccess,
-  startSuccessCountdown: setSaveSuccess,
-} = useSuccessCountdown();
-
- 
   const limit = useSelector((state: any) => state.task.limit);
   const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
   const selectedAttributeFilter = useSelector((state: any) => state.task.selectedAttributeFilter);
@@ -61,13 +37,11 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const userDetails = useSelector((state: any) => state.task.userDetails);
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
   const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
-  const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
   const [filterNameError, setFilterNameError] = useState("");
     const attributeFilter = useSelector(
     (state: any) => state.task.attributeFilterToEdit
   );
   const [filterName, setFilterName] = useState(attributeFilter?.name || "");
-  const deleteIconColor = getIconColor(updateSuccess?.showSuccess);
   const { data: userList } = useSelector(
     (state: any) => state.task.userList
   ) ?? {
@@ -177,14 +151,13 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 };
   
   const [shareAttrFilter, setShareAttrFilter] = useState(FILTER_SHARE_OPTIONS.PRIVATE); 
-   const saveIconColor = getIconColor(isUnsavedFilter || !filterName || filterNameError|| !shareAttrFilter || deleteSuccess?.showSuccess);
 
 
   /* ---------------------------- access management --------------------------- */
 
-  const createdByMe =
-    attributeFilter?.createdBy === userDetails?.preferred_username;
-  const editRole = manageAllFilters || (createdByMe && createFilters);
+  // const createdByMe =
+  //   attributeFilter?.createdBy === userDetails?.preferred_username;
+  // const editRole = manageAllFilters || (createdByMe && createFilters);
 
   /* ---------------------------- get users groups ---------------------------- */
   useEffect(() => {
@@ -349,11 +322,6 @@ const createFilterShareOption = (labelKey, value) => ({
 ];
 
 
-
-
-  const attrFilterName = (e) => {
-    setFilterName(e.target.value);
-  };
     const getAssignee = () => {
       return  attributeData["assignee"] ||selectedFilter?.criteria?.assignee;
     };
@@ -489,21 +457,21 @@ const removeSlashFromValue = (value) => {
 
 
       
-
-    const searchFilterAttributes = () => {
+// function to search filter attributes(filter results button) not used now
+    // const searchFilterAttributes = () => {
      
-      const newProcessVariables = buildNewProcessVariables(); 
-      const newFilterData = getFilterData(newProcessVariables);
-      batch(()=>{
-      dispatch(setBPMTaskLoader(true));
-      dispatch(setSelectedBpmAttributeFilter(newFilterData));
-      dispatch(setIsUnsavedAttributeFilter(true));
-      dispatch(setBPMTaskListActivePage(1))
-      dispatch(fetchServiceTaskList(newFilterData, null, 1, limit));
-      })
+    //   const newProcessVariables = buildNewProcessVariables(); 
+    //   const newFilterData = getFilterData(newProcessVariables);
+    //   batch(()=>{
+    //   dispatch(setBPMTaskLoader(true));
+    //   dispatch(setSelectedBpmAttributeFilter(newFilterData));
+    //   dispatch(setIsUnsavedAttributeFilter(true));
+    //   dispatch(setBPMTaskListActivePage(1))
+    //   dispatch(fetchServiceTaskList(newFilterData, null, 1, limit));
+    //   })
 
-      onClose();
-    };
+    //   onClose();
+    // };
 
 
 
@@ -548,10 +516,6 @@ const removeSlashFromValue = (value) => {
     const filterToSave = createAttributeFilterPayload();
     const response = await createFilter(filterToSave);
 
-    setSaveSuccess(() => {
-      onClose();  
-    }, 2);
-
     // need to update selected attribute filter in redux
     dispatch(setSelectedBpmAttributeFilter(response.data));
     const newAttributeFilterList = [...attributeFilterList, response.data];
@@ -559,97 +523,36 @@ const removeSlashFromValue = (value) => {
     dispatch(fetchServiceTaskList(filterToSave, null, 1, limit));
   } catch (error) {
     console.error("Failed to save filter attributes:", error);
+  } finally {
+    onClose();
   }
 };
-
-// const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
-
-
-    const handleUpdateModalClick =()=>{
-       const isPrivate = attributeFilter?.users?.length!==0;
-    const data = createAttributeFilterPayload();
-    if(isPrivate){
-     handleSaveFilterAttributes(isPrivate,data);
-    }else{
-        dispatch(setAttributeFilterToEdit(data))
-      toggleUpdateModal();
-    }
+  
+    // const handleUpdateModalClick =()=>{
+    //    const isPrivate = attributeFilter?.users?.length!==0;
+    // const data = createAttributeFilterPayload();
+    // if(isPrivate){
+    //  handleSaveFilterAttributes(isPrivate,data);
+    // }else{
+    //     dispatch(setAttributeFilterToEdit(data))
+    //   toggleUpdateModal();
+    // }
     
-     }
-    const handleDeleteClick = ()=>{
-            dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
+    //  }
+    // const handleDeleteClick = ()=>{
+    //         dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
 
-      toggleDeleteModal();
-    }
-  // const renderActionButtons = () => {
-  //   if (attributeFilter?.id) { 
-  //     if (editRole ) {
-  //       return (
-  //         <>
-  //           <V8CustomButton
-  //             className="me-3"
-  //             variant={updateButtonVariant}
-  //             label={
-  //             updateSuccess.showSuccess ?   `${t("Updated!")} (${updateSuccess.countdown})` : t("Update This Filter")
-  //           }
-  //               onClick={handleUpdateModalClick}
-  //             icon={ updateSuccess?.showSuccess ? 
-  //               null: <UpdateIcon color={saveIconColor} />}
-  //             dataTestId="save-attribute-filter"
-  //             ariaLabel={t("Update This Filter")}
-  //             disabled={deleteSuccess.showSuccess || noFieldChanged || !shareAttrFilter}
-  //           />
-  //           <V8CustomButton
-  //             variant={deleteButtonVariant}
-  //              label={
-  //             deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : t("Delete This Filter")
-  //           }
-  //             onClick={handleDeleteClick}
-  //             icon={deleteSuccess?.showSuccess ? 
-  //               null :<DeleteIcon color={deleteIconColor} />}
-  //             dataTestId="delete-attribute-filter"
-  //             ariaLabel={t("Delete This Filter")}
-  //             disabled={updateSuccess.showSuccess}
-  //           />
-  //         </>
-  //       );
-  //     }
-  //     return null;
-  //   }
-
-  //    if (createFilters) {
-  //     return (
-  //       <V8CustomButton
-  //         variant={saveButtonVariant}
-  //          label={
-  //            saveSuccess.showSuccess
-  //              ? `${t("Saved!")} (${saveSuccess.countdown})`
-  //              : t("Save and apply")
-  //          }
-  //         onClick={saveFilterAttributes}
-  //         icon={
-  //           saveSuccess.showSuccess ? null : <SaveIcon color={saveIconColor} />
-  //         }
-  //         dataTestId="save-attribute-filter"
-  //         ariaLabel={t("Save Attribute Filter")}
-  //         disabled={
-  //           isUnsavedFilter || filterNameError || noFieldChanged || !filterName
-  //         }
-  //       />
-  //     );
-  //   }
-
-  //   return null;
-  // };
+    //   toggleDeleteModal();
+    // }
 
   const saveFilterTab = () => (
     <div className="save-filter-tab-container">
-    <Alert
+    { !attributeFilter?.id  && <Alert
       message={t("You can easily edit or delete custom filters at any time after they are saved.")}
       variant="passive"
       dataTestId="save-note-container"
       isShowing={true}
-    />
+    />}
     <div className="custom-input-container">
       <label htmlFor="attribute-filter-name">{t("Filter Name")}</label>
       <CustomTextInput
@@ -657,7 +560,6 @@ const removeSlashFromValue = (value) => {
         setValue={(val) => setFilterName(val)}
         placeholder={"Untitled Field Filter"}
         dataTestId="attribute-filter-name"
-        disabled={false}
         ariaLabel={t("Filter Name")}
         onBlur={handleNameError}
         maxLength={filterNameLength}
@@ -723,23 +625,14 @@ const removeSlashFromValue = (value) => {
                 onClick={() => setCurrentPage(2)}
               />
             )}
-            {currentPage === 2 && createFilters && !attributeFilter?.id && (
+            {currentPage === 2 && createFilters  && (
               <V8CustomButton
                 variant="primary"
-                label={
-                  saveSuccess.showSuccess
-                    ? `${t("Saved!")} (${saveSuccess.countdown})`
-                    : t("Save and apply")
-                }
+                label={t("Save and apply")}
                 onClick={saveFilterAttributes}
-                icon={
-                  saveSuccess.showSuccess ? null : <SaveIcon color={saveIconColor} />
-                }
                 dataTestId="save-attribute-filter"
                 ariaLabel={t("Save Attribute Filter")}
-                disabled={
-                  isUnsavedFilter || filterNameError || noFieldChanged || !filterName
-                }
+                disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
               />
             )}
           </div>

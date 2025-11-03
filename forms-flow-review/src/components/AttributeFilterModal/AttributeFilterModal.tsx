@@ -34,7 +34,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   const title = useMemo(() => (
     isEditing ? t("Edit custom field filter") : t("Create custom field filter")
   ), [isEditing, t]);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  // const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { successState:updateSuccess, startSuccessCountdown:setUpdateSuccess } = useSuccessCountdown();
   const { successState:deleteSuccess, startSuccessCountdown:setDeleteSuccess} = useSuccessCountdown();
@@ -55,15 +55,15 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
       setCurrentPage(1);
     }
   }, [show]);
-  
+
    interface handleSaveFilterAttributes {
     isPrivate?: boolean;
     data?: any;
   }
-  const toggleUpdateModal = useCallback(() => {
-    toggleModal();
-    setShowUpdateModal((prev) => !prev);
-  }, [toggleModal]);
+  // const toggleUpdateModal = useCallback(() => {
+  //   toggleModal(); // toggle attribute filter modal
+  //   setShowUpdateModal((prev) => !prev);
+  // }, [toggleModal]);
 
 
     
@@ -73,7 +73,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   }, [toggleModal]);
 
   const handleSaveFilterAttributes = async (isPrivate?: boolean, data?: any) => {  
-    if(!isPrivate)toggleUpdateModal();
+    // if(!isPrivate)toggleUpdateModal();
     const payload = data ?? attributeFilterToEdit;
     const response = await updateFilter(
       payload,
@@ -139,14 +139,14 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
           onClose={onClose}
           updateSuccess={updateSuccess}
           deleteSuccess={deleteSuccess}
-          toggleUpdateModal={toggleUpdateModal}
+          // toggleUpdateModal={toggleUpdateModal}
           toggleDeleteModal={toggleDeleteModal}
           handleSaveFilterAttributes={handleSaveFilterAttributes}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
       </Modal>
-      {showUpdateModal && (
+      {/* {showUpdateModal && (
         <ConfirmModal
           show={showUpdateModal}
           title={t("Update This Filter?")}
@@ -169,7 +169,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
           }}
           secondoryBtndataTestid="confirm-attribute-revert-button"
         />
-      )}
+      )} */}
       {showDeleteModal && (
         <PromptModal
           type="warning"
