@@ -26,10 +26,11 @@ import { TableFooter,
    CustomTabs, 
    FormInput, 
    FormTextArea,
-   CustomButton,
    DeleteIcon,
    CustomInfo, 
-   ConfirmModal } 
+  ConfirmModal,
+  V8CustomButton,
+} 
 from "@formsflow/components";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
@@ -376,7 +377,7 @@ const Roles = React.memo((props: any) => {
       />
       {showEditRoleModal && (
         <div className="buttons-row">
-          <CustomButton
+          <V8CustomButton
             label={t("Delete This Role")}
             onClick={() => {
               handleCloseEditRoleModal();
@@ -409,7 +410,7 @@ const Roles = React.memo((props: any) => {
     
   const showCreateModal = () => (
     <div data-testid="create-role-modal">
-      <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="sm">
+      <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="lg">
         <Modal.Header>
           <Modal.Title><p>{t("Create Role")}</p></Modal.Title>
           <div className="icon-close" onClick={handleCloseRoleModal} data-testid="role-modal-close">
@@ -429,14 +430,14 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-          <CustomButton
+          <V8CustomButton
             label={t("Save Changes")}
             disabled={disabled}
             onClick={handleCreateRole}
             dataTestId="create-new-role-button"
             ariaLabel="Create new role button"
             />
-          <CustomButton
+          <V8CustomButton
             label={t("Discard Changes")}
             onClick={handleCloseRoleModal}
             dataTestId="create-new-role-cancel-button"
@@ -453,7 +454,7 @@ const Roles = React.memo((props: any) => {
       <Modal
         show={showEditRoleModal}
         onHide={handleCloseEditRoleModal}
-        size="sm"
+        size="lg"
         restoreFocus={false}
       >
         <Modal.Header>
@@ -475,14 +476,14 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-          <CustomButton
+          <V8CustomButton
             label={t("Save Changes")}
             disabled={disabled}
             onClick={handleUpdateRole}
             dataTestId="edit-role-button"
             ariaLabel="Edit role button"
             />
-          <CustomButton
+          <V8CustomButton
             label={t("Discard Changes")}
             onClick={handleCloseEditRoleModal}
             dataTestId="edit-role-cancel-button"
@@ -650,7 +651,7 @@ const Roles = React.memo((props: any) => {
               dataTestId="search-role-input"
             />
           </div>
-          <CustomButton
+          <V8CustomButton
             onClick={handleShowRoleModal}
             data-testid="roles-create-new-role-button"
             label="New Role"

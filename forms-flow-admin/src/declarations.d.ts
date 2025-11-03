@@ -62,5 +62,6 @@ declare module "@formsflow/components" {
     PromptModal,
     CustomUrl,
     Switch,
+    V8CustomButton,
   }: any;
 }
