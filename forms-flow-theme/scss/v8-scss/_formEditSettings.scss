@@ -7,6 +7,7 @@ $font-size-xl: var(--font-size-xl);
 .form-edit-settings {
     // @include vertical-padding(); // alreafy body-section had padding of same 
     overflow: auto;
+
   
     .grid-section {
       @include grid-layout();
@@ -47,3 +48,14 @@ $font-size-xl: var(--font-size-xl);
           margin-bottom:0.75rem;
         }
   }
+
+  .bpmn-main-container-editor  {
+    height: 100% !important;
+  }
+
+  .published-settings-container {
+    height: calc(100vh - 340px) !important;
+  }
+  .unpublished-settings-container {
+    height: calc(100vh - 260px) !important;
+  };
