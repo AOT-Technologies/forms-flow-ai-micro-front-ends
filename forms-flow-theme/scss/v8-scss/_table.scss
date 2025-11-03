@@ -52,24 +52,57 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   .MuiDataGrid-cell{
     display: flex!important;
     align-items: center!important;
+    padding: 0.5rem 0.625rem !important;
   }
-    .MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) {
+  
+  .MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) {
+    .MuiDataGrid-sortButton {
+      opacity: 1 !important;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    &:hover {
       .MuiDataGrid-sortButton {
         opacity: 1 !important;
-        transition: opacity 0.2s ease-in-out;
-      }
-  
-      &:hover {
-        .MuiDataGrid-sortButton {
-          opacity: 1 !important;
-          background-color: transparent !important;
-        }
-      }
-    }
-            
-    .MuiDataGrid-sortButton.MuiIconButton-root:hover {
         background-color: transparent !important;
+      }
     }
+  }
+        
+  .MuiDataGrid-sortButton.MuiIconButton-root:hover {
+      background-color: transparent !important;
+  }
+  
+  // Cell overflow ellipsis for non-action columns (applies to all tables)
+  .MuiDataGrid-cell:not(.last-column) {
+    overflow: hidden;
+    min-width: 0;
+    
+    // Target all spans directly or nested
+    span {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      max-width: 100%;
+      min-width: 0;
+      display: block;
+    }
+    
+    // For nested flex containers (e.g., d-flex with spans)
+    .d-flex,
+    [class*="flex"] {
+      min-width: 0;
+      
+      > span {
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        max-width: 100%;
+        min-width: 0;
+        flex-shrink: 1;
+      }
+    }
+  }
 }
   .MuiInputBase-root{
     display: flex;
@@ -149,32 +182,6 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     background-color: $green-color;
     display: table-cell
   }
-  .MuiDataGrid-root {
-    .MuiDataGrid-cell{
-      padding: 0.5rem 0.625rem !important;
-    }
-    
-    // Cell overflow ellipsis for non-action columns
-    .MuiDataGrid-cell:not(.last-column) {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      min-width: 0;
-      
-      .MuiDataGrid-cellContent {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        
-        > * {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          max-width: 100%;
-        }
-      }
-    }
-  }
 
   .historypage-container{
     .MuiDataGrid-cell{
@@ -185,13 +192,4 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
       @include font-style(0.9rem, var(--font-weight-md), var(--secondary-dark));
       text-align: center !important;
     }
-  }
-
-  // Table cell ellipsis for overflow text
-  .table-cell-ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
-    display: block;
   }
