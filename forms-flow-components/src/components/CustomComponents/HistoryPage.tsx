@@ -146,53 +146,60 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
         {
           field: 'version',
           headerName: t('Version'),
-          width: 100,
-          sortable: true,
+          flex: 0.6,
+          sortable: false,
+          headerAlign: 'left',
+          align: 'left',
           valueGetter: (value, row) => `${row.majorVersion}.${row.minorVersion}`,
         },
         {
           field: 'publishedOn',
-          headerName: t('Published On'),
-          width: 200,
+          headerName: t('Published on'),
+          flex: 1,
           sortable: false,
+          headerAlign: 'left',
+          align: 'left',
           valueGetter: (value, row) => 
             row.publishedOn ? HelperServices?.getLocalDateAndTime(row.publishedOn) : '-',
         },
         {
           field: 'created',
-          headerName: t('Last Saved'),
-          width: 200,
+          headerName: t('Last saved'),
+          flex: 1,
           sortable: false,
+          headerAlign: 'left',
+          align: 'left',
           valueGetter: (value, row) => HelperServices?.getLocalDateAndTime(row.created),
         },
         {
           field: 'createdBy',
-          headerName: t('Saved By'),
-          width: 250,
+          headerName: t('Saved by'),
+          flex: 1.2,
           sortable: false,
+          headerAlign: 'left',
+          align: 'left',
         },
         {
           field: "actions",
           renderHeader: () => (
-            <V8CustomButton
-              variant="secondary"
-              icon={<RefreshIcon color={iconColor} />}
-              iconOnly
-              onClick={refreshBtnAction}
-              dataTestId="refresh-button"
-              ariaLabel={t("Refresh Button")}
-            />
+              <V8CustomButton
+                variant="secondary"
+                icon={<RefreshIcon color={iconColor} />}
+                iconOnly
+                onClick={refreshBtnAction}
+                dataTestId="refresh-button"
+                ariaLabel={t("Refresh Button")}
+              />
           ),
-          flex: 1,
+          flex: 0.9,
           sortable: false,
+          headerAlign: 'right',
+          headerClassName: 'last-column',
           align: 'right',
           renderCell: (params) => {
-            if(params.row.index === 0) {
+            if(params.row.index === 0){
               return null;
             }
-            const cloned_form_id =
-              categoryType === "FORM" ? params.row.changeLog.cloned_form_id : null;
-            const process_id = categoryType === "WORKFLOW" ? params.row.id : null;
             const userRoles = JSON.parse(
               StorageService.get(StorageService.User.USER_ROLE)
             );
@@ -235,6 +242,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
             hideFooterSelectedRowCount
             disableColumnResize
             rowHeight={55}
+            columnHeaderHeight={55}
             disableColumnMenu
             disableRowSelectionOnClick
             loading={loading}

@@ -3,17 +3,16 @@ import Modal from "react-bootstrap/Modal";
 import { UserDetail } from "../types/taskFilter.js";
 import {
   CloseIcon,
-  CustomButton,
-  CustomInfo,
   DragandDropSort,
-  SharedWithMeIcon,
-  SharedWithOthersIcon,
+  V8CustomButton
+
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { fetchBPMTaskCount,fetchFilterList, saveFilterPreference, updateDefaultFilter } from "../api/services/filterServices";
 import { useSelector,useDispatch } from "react-redux";
 import { RootState } from "../reducers/index.js";
 import { setBPMFilterList, setDefaultFilter, setSelectedFilter } from "../actions/taskActions";
+import { StyleServices } from "@formsflow/service";
 
 
 interface ReorderTaskFilterModalProps {
@@ -36,28 +35,29 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         filtersList,
       ]);
 
+      const darkColor = StyleServices.getCSSVariable("--secondary-dark");
       //  need to  update the filterList with only key of Id,name,isChcked ,sortOrder,Icon in order to pass to drag and drop
       const updateFilterList = useMemo(() => {
         return filtersList.map((item) => {
-          const createdByMe = userDetails.preferred_username === item.createdBy;
-          const isSharedToPublic = !item.roles?.length && !item.users?.length;
-          const isSharedToRoles = item.roles.length
-          const isShareToMe = item.roles?.some((role) =>
-            userDetails.groups?.includes(role)
-          );
-          let icon = null;
-          // icon for filters except private and All tasks 
-          if (createdByMe&& (isSharedToPublic || isSharedToRoles)) {
-            icon = <SharedWithOthersIcon />;
-          } else if (isSharedToPublic || isShareToMe) {
-            icon = <SharedWithMeIcon />;
-          }
+          // const createdByMe = userDetails.preferred_username === item.createdBy;
+          // const isSharedToPublic = !item.roles?.length && !item.users?.length;
+          // const isSharedToRoles = item.roles.length
+          // const isShareToMe = item.roles?.some((role) =>
+          //   userDetails.groups?.includes(role)
+          // );
+          // let icon = null;
+          // // icon for filters except private and All tasks 
+          // if (createdByMe&& (isSharedToPublic || isSharedToRoles)) {
+          //   icon = <SharedWithOthersIcon />;
+          // } else if (isSharedToPublic || isShareToMe) {
+          //   icon = <SharedWithMeIcon />;
+          // }
           return {
             id: item.id,
             name: item.name,
             isChecked: !item.hide,
             sortOrder: item.sortOrder,
-            icon: icon,
+            // icon: icon,
           };
         });
       }, [filtersList]);
@@ -131,19 +131,24 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         <Modal
           show={showModal}
           centered
-          size="sm"
+          size="lg"
+          dialogClassName="drag-drop-container"
         >
           <Modal.Header>
-            <Modal.Title> {t("Re-order And Hide Filters")} </Modal.Title>
-            <div className="icon-close" onClick={onClose} >
-              <CloseIcon/>
+           <div className="modal-header-content">
+           <Modal.Title> {t("Re-order And Hide Filters")}
+            <div onClick={onClose} >
+              <CloseIcon color={darkColor}/>
             </div>
+               </Modal.Title>
+            
+            <div className="modal-subtitle">
+            Toggle the visibility of filters and order them 
+            </div>
+           </div>
           </Modal.Header>
           <Modal.Body>
-            <CustomInfo
-              heading="Note"
-              content="Toggle the visibility of filters and re-arrange them."
-            />
+            
             <DragandDropSort
               items={updateFilterList}
               onUpdate={onUpdateFilterOrder}
@@ -151,22 +156,23 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
             />
           </Modal.Body>
           <Modal.Footer>
-            <div className="buttons-row">
-              <CustomButton
-                label={t("Save Changes")}
-                dataTestId="save-changes"
-                ariaLabel={t("Save Changes")}
-                onClick={handleSaveChanges}
+              <V8CustomButton
+                label={t("Discard changes")}
+                variant="secondary"
+                  dataTestId="discard-changes"
+                  ariaLabel={t("Discard Changes")}
+                onClick={handleDiscardChanges}
                 disabled={isSaveBtnDisabled}
               />
-              <CustomButton
-                label={t("Discard Changes")}
-                onClick={handleDiscardChanges}
-                dataTestId="discard-changes"
-                ariaLabel={t("Discard Changes")}
-                secondary
+              <V8CustomButton
+                label={t("Save and apply")}
+                onClick={handleSaveChanges}
+                dataTestId="save-and-apply"
+                ariaLabel={t("Save and apply")}
+                variant="primary"
+                disabled={isSaveBtnDisabled}
               />
-            </div>
+
           </Modal.Footer>
         </Modal>
       );

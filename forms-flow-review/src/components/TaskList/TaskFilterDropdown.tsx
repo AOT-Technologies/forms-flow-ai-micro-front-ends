@@ -1,4 +1,3 @@
-
 import { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { userRoles } from "../../helper/permissions";
@@ -60,6 +59,8 @@ const TaskListDropdownItems = memo(() => {
     dispatch(setFilterToEdit(selectedFilter));
     setShowTaskFilterModal(true);
   };
+
+
 
   const handleCloseFilterModal = () => {
     setShowTaskFilterModal(false);
@@ -132,7 +133,7 @@ const TaskListDropdownItems = memo(() => {
       ariaLabel: t("Re-order And Hide Filters"),
       category: "action",
     };
-    const mappedItems = filtersAndCount
+    const mappedItems = (filtersAndCount || [])
       .filter((filter) => {
         const details = filterList.find((item) => item.id === filter.id);
         const filterName = t(filter.name).toLowerCase();
@@ -189,33 +190,31 @@ const TaskListDropdownItems = memo(() => {
             category,
           };
         }
-      });
+      }).filter(Boolean) as FilterItemType[];
 
-    if (filtersAndCount.length === 0) {
-      filterDropdownItemsArray.push(noFilter);
-    }
-    // Adding mapped Items
-    filterDropdownItemsArray.push(...mappedItems);
-    // Adding create filter and reorder filter
     if (createFilters) {
-      filterDropdownItemsArray.push(createFilter);
-      if (filtersAndCount.length > 0) {
-        filterDropdownItemsArray.push(reOrderFilter);
-      }
+      filterDropdownItemsArray.push(createFilter, reOrderFilter);
+    }
+
+    if (mappedItems.length) {
+      filterDropdownItemsArray.push(...mappedItems);
+    } else {
+      filterDropdownItemsArray.push(noFilter);
     }
 
     return filterDropdownItemsArray;
   }, [
     filtersAndCount,
-    defaultFilter,
     filterList,
+    selectedFilter,
+    createFilters,
     userDetails,
     filterSearchTerm,
+    t,
   ]);
 
   // filter title based on unsaved filter, empty list or selected filter
   let title;
-
   if (selectedFilter) {
     if (isUnsavedFilter) {
       title = t("Unsaved Filter");

@@ -5,6 +5,9 @@ $secondary-dark-color: var(--secondary-dark);
 $white-100-color: var(--white-100);
 $gray-medium-dark-color: var(--gray-medium-dark);
 $font-weight-medium: var(--font-weight-medium);
+$font-size-m: var(--font-size-m);
+$font-weight-regular: var(--font-weight-regular);
+$gray-darkest: var(--ff-gray-darkest);
 
 .process-create-cards {
   @include mixins.vertical-padding();
@@ -64,12 +67,13 @@ text-transform: capitalize;
   align-items: center;
   gap: 0.5rem;
   border-radius: 25px;
-background: $white-100-color;
-padding: 11px 29px 11px 11px;
+  background: $white-100-color;
+  padding: 11px;
+  width: 135px;
   
   .status-text {
-    font-size: 0.875rem;
-    font-weight: $font-weight-medium;
-    color: $gray-medium-dark-color;
+    color: $gray-darkest;
+    font-size: $font-size-m;
+    font-weight: $font-weight-regular;
   }
 }

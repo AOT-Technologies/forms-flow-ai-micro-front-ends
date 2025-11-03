@@ -166,7 +166,7 @@ $color-primary-light: #b8abff;
   .v8-form-check .form-check-input[type='checkbox'],
   .form-check .form-check-input[type='checkbox'] {
     @extend %checkbox-input;
-    margin-top: 0 !important;
+    // margin-top: 0 !important;
   }
 
   // Variant: Primary (default styles already applied above)
