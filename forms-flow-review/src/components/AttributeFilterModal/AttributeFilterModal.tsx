@@ -1,5 +1,9 @@
 import Modal from "react-bootstrap/Modal";
-import { CloseIcon, ConfirmModal, CustomInfo, PromptModal, useSuccessCountdown, V8CustomButton } from "@formsflow/components";
+import {
+  CloseIcon,
+  PromptModal,
+  V8CustomButton,
+} from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { batch, useDispatch, useSelector } from "react-redux";
@@ -36,8 +40,6 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   ), [isEditing, t]);
   // const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const { successState:updateSuccess, startSuccessCountdown:setUpdateSuccess } = useSuccessCountdown();
-  const { successState:deleteSuccess, startSuccessCountdown:setDeleteSuccess} = useSuccessCountdown();
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
   const selectedTaskFilter = useSelector((state:RootState)=>state.task.selectedFilter );
   const darkColor = StyleServices.getCSSVariable("--secondary-dark");
@@ -79,7 +81,6 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
       payload,
       payload?.id
     );
-    setUpdateSuccess(onClose, 2);
     const filterList = attributeFilterList.filter((item) => item.id !== response.data.id);
     dispatch(setSelectedBpmAttributeFilter(response.data));
     const newAttributeFilterList = [response.data, ...filterList];
@@ -91,7 +92,6 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     toggleDeleteModal();
     await deleteFilter(attributeFilterToEdit?.id);
     const newFilters = attributeFilterList.filter(i=>i.id !== attributeFilterToEdit?.id);
-    setDeleteSuccess(onClose,2);
     batch(()=>{
     dispatch(setAttributeFilterList(newFilters));
     dispatch(setSelectedBpmAttributeFilter(null));
@@ -137,8 +137,6 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
         </Modal.Header>
         <AttributeFilterModalBody
           onClose={onClose}
-          updateSuccess={updateSuccess}
-          deleteSuccess={deleteSuccess}
           // toggleUpdateModal={toggleUpdateModal}
           toggleDeleteModal={toggleDeleteModal}
           handleSaveFilterAttributes={handleSaveFilterAttributes}

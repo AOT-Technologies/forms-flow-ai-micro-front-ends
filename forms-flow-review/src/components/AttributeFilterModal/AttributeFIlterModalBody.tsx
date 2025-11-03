@@ -24,7 +24,10 @@ import { Filter, FilterCriteria } from "../../types/taskFilter";
 import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import { RootState } from "../../reducers";
 
-const AttributeFilterModalBody = ({ onClose, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
+// Constants for variables that support form-level filtering
+const VARIABLES_WITH_FORM_SUPPORT = new Set(['name', 'submitterName', 'assignee', 'roles', 'created', 'formName']);
+
+const AttributeFilterModalBody = ({ onClose, toggleDeleteModal, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
@@ -113,10 +116,8 @@ const AttributeFilterModalBody = ({ onClose, updateSuccess, toggleDeleteModal,de
 
   // Helper function to process existing process variables
   const processExistingProcessVariables = (existingValues) => {
-    const variablesWithFormSupport = ['name', 'submitterName', 'assignee', 'roles', 'created', 'formName'];
-    
     exisitngProcessvariables.forEach((item) => {
-      if (variablesWithFormSupport.includes(item.name)) {
+      if (VARIABLES_WITH_FORM_SUPPORT.has(item.name)) {
         processVariable(item, existingValues);
       } else {
         // For other variables, find the corresponding task variable
@@ -261,9 +262,8 @@ const AttributeFilterModalBody = ({ onClose, updateSuccess, toggleDeleteModal,de
       });
       
       // Process process variables from attributeFilter
-      const variablesWithFormSupport = ['name', 'submitterName', 'assignee', 'roles', 'created', 'formName'];
       attributeFilterProcessVars.forEach((item) => {
-        if (variablesWithFormSupport.includes(item.name)) {
+        if (VARIABLES_WITH_FORM_SUPPORT.has(item.name)) {
           const taskVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable === item.isFormVariable);
           if (taskVariable) {
             const resetValue = cleanValue(item.value, item.name);
