@@ -18,6 +18,7 @@ import { ReorderAttributeFilterModal } from "../ReorderAttributeFilterModal";
 import { userRoles } from "../../helper/permissions";
 import { FilterItemType, UserDetail } from "../../types/taskFilter";
 import { buildDateRangePayload } from "../../helper/tableHelper";
+import { SelectDropdown } from "@formsflow/components"; // ✅ Use reusable dropdown
 
 
 const AttributeFilterDropdown = () => {
@@ -61,22 +62,20 @@ const AttributeFilterDropdown = () => {
       fetchServiceTaskList(data, null, 1, 15, (error) => {
         if (error) {
           console.error("Error fetching tasks:", error);
-          return;
         }
       })
     );
   };
 
-const changeAttributeFilterSelection = (attributeFilter) => {
-  dispatch(setSelectedBpmAttributeFilter(attributeFilter));
-  // need to feth task list based on selected attribute filter
-  // need to reset all params
-  if (
-    !selectedFilter ||
-    (!isUnsavedAttributeFilter &&
-      attributeFilter?.id === selectedAttributeFilter?.id)
-  )
-    return;
+  const changeAttributeFilterSelection = (attributeFilter) => {
+    dispatch(setSelectedBpmAttributeFilter(attributeFilter));
+
+    if (
+      !selectedFilter ||
+      (!isUnsavedAttributeFilter &&
+        attributeFilter?.id === selectedAttributeFilter?.id)
+    )
+      return;
 
   const date = buildDateRangePayload(dateRange);
 
@@ -243,6 +242,7 @@ const changeAttributeFilterSelection = (attributeFilter) => {
     createFilters,
   ]);
 
+  //  Dynamic title
   const title = selectedAttributeFilter
     ? `${
         isUnsavedAttributeFilter

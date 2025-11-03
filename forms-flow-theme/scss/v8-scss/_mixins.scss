@@ -3,6 +3,8 @@ $font-family-base: var(--font-family-base);
 $line-height-default: var(--line-height-default);
 $letter-spacing-default: var(--letter-spacing-default);
 $font-color: var(--secondary-dark);
+$font-weight-regular: var(--font-weight-regular);
+$font-size-xl: var(--font-size-xl);
 
 // Mixin for Typography
 @mixin font-style($size, $weight, $color: $font-color) {
@@ -117,21 +119,21 @@ $font-color: var(--secondary-dark);
 }
 
 $width: 75vw;
-$height: 75vh;
+$height: 776px;
 $border-radius: var(--border-radius);
 $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 
 // Mixin for large modal popover with enhanced styling
 @mixin large-modal-popover() {
   &.modal-dialog {
-    width: $width;
+    width: $width !important;
     max-width: $width;
     margin: 1.75rem auto;
   }
   
   .modal-content {
     width: 100%;
-    height: $height;
+    max-height: $height;
     border-radius: $border-radius;
     box-shadow: $box-shadow;
     border: none;
@@ -150,9 +152,9 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         width: 100%;
         
         .modal-title {
-          font-size: 1.25rem;
-          font-weight: 600;
-          color: var(--secondary-dark);
+          font-size: $font-size-xl;
+          font-weight: $font-weight-regular;
+          color: var(--gray-darkest);
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -175,7 +177,7 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       margin: 0 1.5rem;
       border-top: 1px solid var(--gray-x-light);
       border-bottom: 1px solid var(--gray-x-light);
-    }
+      }
     
     .modal-footer {
       padding: 1rem 1.5rem;

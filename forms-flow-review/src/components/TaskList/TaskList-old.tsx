@@ -21,14 +21,12 @@ import {
 } from "../../api/services/filterServices";
 import { batch, useDispatch, useSelector } from "react-redux";
 import {
-  // AddIcon,
+  AddIcon,
   DateRangePicker,
-  // FilterSortActions,
-  // ConnectIcon,
-  // CheckboxCheckedIcon,
-  // CheckboxUncheckedIcon,
-  CustomSearch,
-  V8CustomButton,
+  FilterSortActions,
+  ConnectIcon,
+  CheckboxCheckedIcon,
+  CheckboxUncheckedIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskListDropdownItems from "./TaskFilterDropdown";
@@ -103,9 +101,9 @@ const TaskList = () => {
     dispatch(setBPMFilterLoader(false));
   };
 
-  const handleAssigneTabClick = (assigned: boolean) => {
-  dispatch(setIsAssigned(assigned));
-};
+  const handleCheckBoxChange = () => {
+    dispatch(setIsAssigned(!isAssigned));
+  };
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
 
@@ -256,31 +254,19 @@ const TaskList = () => {
   
   return (
     <>
-        <div className="Toastify"></div>
-        <div className="toast-section">{}</div>
-        <div className="header-section-1">
-        <div className="section-seperation-left">
-          <h4> Tasks </h4>
-        </div> 
-        </div>
-        <div className="header-section-2">
-          <div className="section-seperation-left">
-          <CustomSearch
-            // search={}
-            // setSearch={}
-            // handleSearch={}
+        <div className="table-bar">
+          {/* Left Filters - Stack on small, inline on md+ */}
+          { viewFilters && (
+            <>
+           <div className="filters">
+            <TaskListDropdownItems />
 
-            placeholder={t("Search")}
-            // searchLoading={}
-            title={t("Search Tasks")}
-            dataTestId="task-search-input"
-          />
-            </div></div>   
-            <div className="header-section-3 overflow-visible">
-              <div className="section-seperation-left">
-              <TaskListDropdownItems/>
-              <AttributeFilterDropdown/>
-              
+            <ConnectIcon />
+
+            <AttributeFilterDropdown />
+
+            <ConnectIcon />
+
             <DateRangePicker
               value={dateRange}
               onChange={handleDateRangeChange}
@@ -290,27 +276,57 @@ const TaskList = () => {
               startDateAriaLabel={t("Start date")}
               endDateAriaLabel={t("End date")}
             />
-              </div>
+
+            <ConnectIcon />
+
+            {/* should probably be created as a separate component "InputFilterSingle" */}
+            <label htmlFor="assigned-to-me" className="input-filter single">
+              <input
+                id="assigned-to-me"
+                type="checkbox"
+                checked={isAssigned}
+                onClick={handleCheckBoxChange}
+                data-testid="assign-to-me-checkbox"
+                />
+              <span>{t("Assigned to me")}</span>
+              {isAssigned ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
+            </label>
+           </div>
+
               
-              </div>   
-              <div className="header-section-4">
-                <div className="section-seperation-left">
-                <V8CustomButton
-  variant={!isAssigned ? "primary" : "secondary"}
-      onClick={() => handleAssigneTabClick(false)}
-      label={t("All")}
-      selected={!isAssigned}
-    />
-    <V8CustomButton
-  variant={isAssigned ? "primary" : "secondary"}
-      onClick={() => handleAssigneTabClick(true)}
-      label={t("Assigned to me")}
-      selected={isAssigned}
-    />
-                </div>
-             
-              </div>
-         {viewTasks && <div className="body-section"><TaskListTable /></div>}
+
+            <div className="actions">
+              <FilterSortActions
+                showSortModal={showSortModal}
+                handleFilterIconClick={toggleFilterModal}
+                handleRefresh={handleRefresh}
+                handleSortModalClose={toggleFilterModal}
+                handleSortApply={handleSortApply}
+                defaultSortOption={filterListSortParams?.activeKey}
+                defaultSortOrder={
+                  filterListSortParams?.[filterListSortParams?.activeKey]
+                    ?.sortOrder ?? "asc"
+                }
+                optionSortBy={optionsForSortModal()}
+                filterDataTestId="task-list-filter"
+                filterAriaLabel={t("Filter the task list")}
+                refreshDataTestId="task-list-refresh"
+                refreshAriaLabel={t("Refresh the task list")}
+                sortModalTitle={t("Sort Tasks")}
+                sortModalDataTestId="task-sort-modal"
+                sortModalAriaLabel={t("Modal for sorting tasks")}
+                sortByLabel={t("Sort by")}
+                sortOrderLabel={t("Sort order")}
+                ascendingLabel={t("Ascending")}
+                descendingLabel={t("Descending")}
+                applyLabel={t("Apply")}
+                cancelLabel={t("Cancel")}
+              />
+            </div>
+            </>
+          )}
+        </div>
+         {viewTasks && <TaskListTable />}
     </>
   );
 };
