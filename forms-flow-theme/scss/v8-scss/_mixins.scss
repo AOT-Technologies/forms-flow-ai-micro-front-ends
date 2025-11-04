@@ -133,7 +133,7 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   
   .modal-content {
     width: 100%;
-    max-height: $height;
+    height: $height;
     border-radius: $border-radius;
     box-shadow: $box-shadow;
     border: none;

@@ -77,7 +77,7 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
         </div>
       </Modal.Header>
 
-      {content && <Modal.Body>{content}</Modal.Body>}
+      {content && <Modal.Body className="custom-scroll">{content}</Modal.Body>}
 
       {/* <Modal.Footer>
         {secondaryBtnText && (

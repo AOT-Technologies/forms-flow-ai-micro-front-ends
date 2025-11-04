@@ -28,7 +28,6 @@ import {
   setBundleSelectedForms,
   setBundleLoading,
   setAppHistoryLoading,
-  setTaskAssignee,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useHistory, useParams } from "react-router-dom";
@@ -423,15 +422,9 @@ const TaskListTable = () => {
         renderCell: (params: any) => {
           const entry = params.row;
           return (
-            <div
-              className="task-status"
-              data-testid={`form-status-${entry.submissionId || "new"}`}
-            >
-              <FormStatusIcon color={"#F7DF82"} />
               <span className="status-text">
                 {entry.applicationStatus || "N/A"}
               </span>
-            </div>
           );
         },
       },
@@ -489,7 +482,6 @@ const TaskListTable = () => {
   const renderReusableModal = () => {
     if (!selectedTask) return null;
 
-    const taskName = task?.formType === "bundle" ? bundleName : task?.name || selectedTask.name || selectedTask.id;
 
     const renderContent = () => {
       if (modalViewType === "history") {
@@ -541,7 +533,7 @@ const TaskListTable = () => {
           );
         } else {
           return (
-            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode" : "bg-white"}`}>
+            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border pb-0 ${disabledMode ? "disabled-mode" : "bg-white"}`}>
               <TaskForm
                 currentUser={currentUser || ""}
                 onFormSubmit={onFormSubmitCallback}
@@ -580,12 +572,16 @@ const TaskListTable = () => {
                 className="form-status"
                 data-testid={`form-status-${task?._id || "new"}`}
               >
-                <FormStatusIcon color={taskAssignee ? "#00C49A" : "#F7DF82"} />
+                <FormStatusIcon 
+                 color={!taskAssignee || taskAssignee === "unassigned" ? "#F7DF82" : "#00C49A"} 
+                 />
                 <span className="status-text">
-                  {taskAssignee ? "Assigned" : "Pending"}
+                  {!taskAssignee || taskAssignee === "unassigned" ? "Pending" : "Assigned"}
                 </span>
               </div>
-            <TaskAssigneeManager task={selectedTask} />
+              <div className="task-assignee-wrapper">
+                <TaskAssigneeManager task={selectedTask} />
+              </div>
             </div>
           </div>
         }
