@@ -304,6 +304,14 @@ $font-tokens: (
               max-height: calc(100vh - 200px);
               width: 1088px;
             }
+            &.processedit-layout {
+              overflow-y: auto;
+              overflow-x: hidden;
+              max-width: 100%;
+              box-sizing: border-box;
+              max-height: calc(100vh - 200px);
+              width: 1088px;
+            }
         }
   
         .section-seperation-left {
