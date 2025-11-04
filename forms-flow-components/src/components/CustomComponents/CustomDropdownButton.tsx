@@ -156,10 +156,6 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
         <div 
           className="label-div" 
           onClick={handleLabelClick}
-          onMouseDown={(e) => {
-            // Prevent mouse click from focusing the element (avoids showing default focus outline/border)
-            e.preventDefault();
-          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
