@@ -113,7 +113,7 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
   return (
     <>
       {isAnalyzeManager ? (
-        <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'main-container' } `}>
+        <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'page-container false' } `}>
           <Switch>
             <Route
               exact
