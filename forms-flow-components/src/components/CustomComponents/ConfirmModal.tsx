@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
-import {CustomButton} from "./Button";
+import {V8CustomButton} from "./CustomButton";
 import { CloseIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 
@@ -92,22 +92,25 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-            {primaryBtnText && <CustomButton
+          {primaryBtnText &&
+            <V8CustomButton
               label={primaryBtnText}
               disabled={primaryBtnDisable}
               onClick={primaryBtnAction}
               dataTestId={primaryBtndataTestid}
               ariaLabel={primaryBtnariaLabel}
-              buttonLoading={buttonLoading}
+              loading={buttonLoading}
+              variant="primary" 
             />}
-            {secondaryBtnText && <CustomButton
+          {secondaryBtnText &&
+            <V8CustomButton
               label={secondaryBtnText}
               onClick={secondaryBtnAction}
               dataTestId={secondoryBtndataTestid}
               ariaLabel={secondoryBtnariaLabel}
               disabled={secondaryBtnDisable}
-              buttonLoading={secondaryBtnLoading}
-              secondary
+              loading={secondaryBtnLoading}
+              variant="secondary"
             />}
           </div>
         </Modal.Footer>
