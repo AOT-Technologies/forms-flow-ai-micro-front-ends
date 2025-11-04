@@ -85,7 +85,7 @@ const buildClassNames = (
 const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
   (
     {
-      items,
+      items = [],
       label,
       disabled = false,
       searchable = false,

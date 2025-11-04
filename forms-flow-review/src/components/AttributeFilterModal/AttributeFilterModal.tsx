@@ -28,11 +28,6 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   const isUnsavedAttributeFilter = useSelector(
     (state: RootState) => state.task.isUnsavedAttributeFilter
   );
-  // const title = `${t("Fields")}: ${
-  //   attributeFilterToEdit && !isUnsavedAttributeFilter
-  //     ? attributeFilterToEdit.name //need to check if it is unsaved or not
-  //     : t("Unsaved Filter")
-  // }`;
 
   const isEditing = !!attributeFilterToEdit && !isUnsavedAttributeFilter;
   const title = useMemo(() => (
@@ -58,10 +53,6 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     }
   }, [show]);
 
-   interface handleSaveFilterAttributes {
-    isPrivate?: boolean;
-    data?: any;
-  }
   // const toggleUpdateModal = useCallback(() => {
   //   toggleModal(); // toggle attribute filter modal
   //   setShowUpdateModal((prev) => !prev);
@@ -74,7 +65,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     setShowDeleteModal((prev) => !prev);
   }, [toggleModal]);
 
-  const handleSaveFilterAttributes = async (isPrivate?: boolean, data?: any) => {  
+  const handleSaveFilterAttributes = async ( data?: any) => {  
     // if(!isPrivate)toggleUpdateModal();
     const payload = data ?? attributeFilterToEdit;
     const response = await updateFilter(
@@ -138,12 +129,14 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
         <AttributeFilterModalBody
           onClose={onClose}
           // toggleUpdateModal={toggleUpdateModal}
-          toggleDeleteModal={toggleDeleteModal}
           handleSaveFilterAttributes={handleSaveFilterAttributes}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
       </Modal>
+
+      {/* This is modal to let the user know that the filter is shared with others and they need to update it for everybody and might affect their workflow.
+      This need to discussed later */}
       {/* {showUpdateModal && (
         <ConfirmModal
           show={showUpdateModal}

@@ -27,7 +27,7 @@ import { RootState } from "../../reducers";
 // Constants for variables that support form-level filtering
 const VARIABLES_WITH_FORM_SUPPORT = new Set(['name', 'submitterName', 'assignee', 'roles', 'created', 'formName']);
 
-const AttributeFilterModalBody = ({ onClose, toggleDeleteModal, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
+const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
@@ -152,13 +152,6 @@ const AttributeFilterModalBody = ({ onClose, toggleDeleteModal, handleSaveFilter
 };
   
   const [shareAttrFilter, setShareAttrFilter] = useState(FILTER_SHARE_OPTIONS.PRIVATE); 
-
-
-  /* ---------------------------- access management --------------------------- */
-
-  // const createdByMe =
-  //   attributeFilter?.createdBy === userDetails?.preferred_username;
-  // const editRole = manageAllFilters || (createdByMe && createFilters);
 
   /* ---------------------------- get users groups ---------------------------- */
   useEffect(() => {
@@ -310,8 +303,6 @@ const createFilterShareOption = (labelKey, value) => ({
   value,
   onClick: () => setShareAttrFilter(value),
 });
-
-
 
   const filterShareOptions = [
   createFilterShareOption("Nobody (Keep it private)", FILTER_SHARE_OPTIONS.PRIVATE),
@@ -527,7 +518,7 @@ const removeSlashFromValue = (value) => {
     onClose();
   }
 };
-  
+   //update modal not used now, will discuss later and remove this code
     // const handleUpdateModalClick =()=>{
     //    const isPrivate = attributeFilter?.users?.length!==0;
     // const data = createAttributeFilterPayload();
@@ -539,11 +530,6 @@ const removeSlashFromValue = (value) => {
     // }
     
     //  }
-    // const handleDeleteClick = ()=>{
-    //         dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
-
-    //   toggleDeleteModal();
-    // }
 
   const saveFilterTab = () => (
     <div className="save-filter-tab-container">
@@ -577,11 +563,6 @@ const removeSlashFromValue = (value) => {
           variant="secondary"
         />
       </div>
-      {/* <RenderOwnerShipNotes
-        attributeFilter={attributeFilter}
-        isCreator={createdByMe}
-      /> */}
-      {/* {renderActionButtons()} */}
     </div>
   );
  
