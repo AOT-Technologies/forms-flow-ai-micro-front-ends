@@ -427,7 +427,7 @@ const TaskListTable = () => {
               className="task-status"
               data-testid={`form-status-${entry.submissionId || "new"}`}
             >
-              <FormStatusIcon color={entry.applicationStatus === "New" ? "#F7DF82" : "#00C49A"} />
+              <FormStatusIcon color={"#F7DF82"} />
               <span className="status-text">
                 {entry.applicationStatus || "N/A"}
               </span>
@@ -529,7 +529,7 @@ const TaskListTable = () => {
 
         if (task?.formType === "bundle" && selectedForms?.length) {
           return (
-            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode" : "bg-white"}`}>
+            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border pb-0 ${disabledMode ? "disabled-mode" : "bg-white"}`}>
               <BundleTaskForm
                 bundleId={task?.formId}
                 currentUser={currentUser || ""}
@@ -585,7 +585,7 @@ const TaskListTable = () => {
                   {taskAssignee ? "Assigned" : "Pending"}
                 </span>
               </div>
-            <TaskAssigneeManager task={task} />
+            <TaskAssigneeManager task={selectedTask} />
             </div>
           </div>
         }

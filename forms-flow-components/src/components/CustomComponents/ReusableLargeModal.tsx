@@ -79,7 +79,7 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
 
       {content && <Modal.Body>{content}</Modal.Body>}
 
-      <Modal.Footer>
+      {/* <Modal.Footer>
         {secondaryBtnText && (
           <V8CustomButton
             label={t(secondaryBtnText)}
@@ -102,7 +102,7 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
             variant="primary"
           />
         )}
-      </Modal.Footer>
+      </Modal.Footer> */}
     </Modal>
   );
 };
