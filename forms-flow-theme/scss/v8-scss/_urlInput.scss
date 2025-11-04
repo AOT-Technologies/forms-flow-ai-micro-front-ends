@@ -10,6 +10,7 @@ $url-input-font-size: 0.9375rem;         // 15px at 16px base
 $url-input-font-weight: 500;
 $url-input-transition-duration: 0.15s;
 $url-input-transition-timing: ease-in-out;
+$url-input-placeholder: var(--gray-xx-light);
 
 // Border and fine details (keep in px for precision)
 $url-input-border-width: 1px;
@@ -153,6 +154,13 @@ $color-copy-button-hover-bg: transparent;
   .input-actioncontainer{
     border-radius: $url-input-border-radius;
     border: $url-input-border-width solid var(--gray-x-light);
+    padding-bottom: $url-input-padding;
+
+    .info-section {
+      padding: 0.8rem;
+      margin: 0 0.75rem;
+      width: max-content;
+    }
 
   }
   .actions {
@@ -198,6 +206,9 @@ $color-copy-button-hover-bg: transparent;
 
     .urlInputField {
       @include url-input-field;
+      &::placeholder {
+        color: $url-input-placeholder;
+      }
     }
 
     .copyBtn {

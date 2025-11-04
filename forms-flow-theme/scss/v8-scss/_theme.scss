@@ -32,6 +32,7 @@ $neutral-colors: (
  gray-medium:       #D1D2D3,
  gray-light:        #D9D9D9,
  gray-x-light:      #E5E5E5,
+ gray-xx-light:     #DAD9DA,
  white-100:         #F6F6F6,
  white-200:         #FCFCFC,
  white-300:         #FFFFFF
@@ -294,6 +295,7 @@ $font-tokens: (
           padding: 1rem 0;
           max-height: var(--body-section-height); // need to be updated after while implementing inner contets. 
           overflow-y: auto;
+          padding-bottom: 5rem;
           &.formedit-layout {
               overflow-y: auto;
               overflow-x: hidden;
@@ -316,4 +318,9 @@ $font-tokens: (
       }
     }
   }
+
+  .gap-0 {
+    gap: 0 !important;
+  };
+
   

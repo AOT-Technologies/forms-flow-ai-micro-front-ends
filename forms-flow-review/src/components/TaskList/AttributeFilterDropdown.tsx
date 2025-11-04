@@ -20,6 +20,7 @@ import { ReorderAttributeFilterModal } from "../ReorderAttributeFilterModal";
 import { userRoles } from "../../helper/permissions";
 import { FilterItemType, UserDetail } from "../../types/taskFilter";
 import { buildDateRangePayload } from "../../helper/tableHelper";
+import { SelectDropdown } from "@formsflow/components"; // ✅ Use reusable dropdown
 
 
 const AttributeFilterDropdown = () => {
@@ -63,22 +64,20 @@ const AttributeFilterDropdown = () => {
       fetchServiceTaskList(data, null, 1, 15, (error) => {
         if (error) {
           console.error("Error fetching tasks:", error);
-          return;
         }
       })
     );
   };
 
-const changeAttributeFilterSelection = (attributeFilter) => {
-  dispatch(setSelectedBpmAttributeFilter(attributeFilter));
-  // need to feth task list based on selected attribute filter
-  // need to reset all params
-  if (
-    !selectedFilter ||
-    (!isUnsavedAttributeFilter &&
-      attributeFilter?.id === selectedAttributeFilter?.id)
-  )
-    return;
+  const changeAttributeFilterSelection = (attributeFilter) => {
+    dispatch(setSelectedBpmAttributeFilter(attributeFilter));
+
+    if (
+      !selectedFilter ||
+      (!isUnsavedAttributeFilter &&
+        attributeFilter?.id === selectedAttributeFilter?.id)
+    )
+      return;
 
   const date = buildDateRangePayload(dateRange);
 
@@ -116,6 +115,21 @@ const changeAttributeFilterSelection = (attributeFilter) => {
     if (!selectedAttributeFilter) return;
     setShowAttributeFilter(true);
     dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
+  };
+
+
+  //To be updated later 
+  const handleEditAttributeFromItem = (item) => {
+    if (!item?.type) {
+      // allow creating when clicking edit on 'All Fields' (none) -> open create
+      setShowAttributeFilter(true);
+      dispatch(setAttributeFilterToEdit(null));
+      return;
+    }
+    const id = Number(item.type);
+    const found = attributeFilterList.find((f) => f.id === id);
+    setShowAttributeFilter(true);
+    dispatch(setAttributeFilterToEdit(found ? cloneDeep(found) : null));
   };
 
   const filterDropdownAttributeItems = useMemo(() => {
@@ -241,6 +255,7 @@ const changeAttributeFilterSelection = (attributeFilter) => {
     createFilters,
   ]);
 
+  //  Dynamic title
   const title = selectedAttributeFilter
     ? `${
         isUnsavedAttributeFilter
@@ -257,15 +272,9 @@ const changeAttributeFilterSelection = (attributeFilter) => {
         searchable={false}
         searchPlaceholder={t("Search")}
         onSearch={onSearch}
-        // extraActionIcon={<PencilIcon />}
-        // extraActionOnClick={
-        //   !selectedAttributeFilter
-        //     ? handleToggleAttrFilterModal
-        //     : handleEditAttrFilter
-        // }
+        onEdit={handleEditAttributeFromItem}
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
-        // extraActionAriaLabel={t("Edit attribute filters")}
         className="input-filter"
         variant="field"
         categorize={true}

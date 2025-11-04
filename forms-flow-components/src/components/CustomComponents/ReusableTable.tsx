@@ -28,6 +28,7 @@ interface ReusableTableProps {
   customSlots?: object;
   customSlotProps?: object;
   customLocaleText?: object;
+  enableStickyActions?: boolean;
 }
 
 export const ReusableTable: React.FC<ReusableTableProps> = ({
@@ -53,6 +54,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   customSlots = {},
   customSlotProps = {},
   customLocaleText = {},
+  enableStickyActions = false,
 }) => {
   const { t } = useTranslation();
   const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
@@ -119,6 +121,16 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
           ...defaultSlotProps,
         }}
         localeText={defaultLocaleText}
+        className={enableStickyActions ? 'action-column-sticky' : ''} //to avoid resizing of actions column
+
+        sx={{
+          ...(disableColumnResize && {
+            '& .MuiDataGrid-columnSeparator': {
+              display: 'none !important',
+            },
+          }),
+          ...sx, 
+        }}
         {...dataGridProps}
       />
     </Paper>
