@@ -414,8 +414,8 @@ const TaskListTable = () => {
         sortable: false
       },
       {
-        field: "action",
-        headerName: t("Action"),
+        field: "Status",
+        headerName: t("Status"),
         flex: 2,
         sortable: false,
         cellClassName: 'action-cell-stretch',
@@ -502,9 +502,6 @@ const TaskListTable = () => {
                   width: "100%",
                   '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer': {
                     justifyContent: 'flex-start !important',
-                  },
-                  '& .MuiDataGrid-cell.action-cell-stretch': {
-                    alignItems: 'stretch !important',
                   },
                 }}
                 disableColumnResize={true}
