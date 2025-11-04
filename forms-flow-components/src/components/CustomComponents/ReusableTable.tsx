@@ -132,6 +132,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
           ...sx, 
         }}
         {...dataGridProps}
+        sortingOrder={['asc', 'desc']}
       />
     </Paper>
   );

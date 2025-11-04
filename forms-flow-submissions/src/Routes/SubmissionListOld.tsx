@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useEffect, useState } from "react";
-import { useDispatch, useSelector, batch } from "react-redux";
+import React, { useRef, useCallback, useMemo, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { push } from "connected-react-router";
@@ -35,10 +35,13 @@ import {
 
 // UI Components
 import {
-  ReusableTable,
-  V8CustomButton,
+  ReusableResizableTable,
+  TableFooter,
+  CustomButton,
+  SortableHeader,
   CollapsibleSearch,
   DateRangePicker,
+  FilterSortActions,
   VariableSelection
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
@@ -71,6 +74,7 @@ interface SubmissionField {
 const AnalyzeSubmissionList: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState([]);
 
   // Redux State
@@ -91,6 +95,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
    const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
   const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
+  const [showSortModal, setShowSortModal] = useState(false);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
   const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
@@ -316,22 +321,8 @@ const columns: Column[] = useMemo(() => {
 }, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth]);
 
 
-  // Ensure default sort is form_name if no activeKey is set
-  const activeSortKey = sortParams.activeKey || "form_name";
+  const activeSortKey = sortParams.activeKey;
   const activeSortOrder = sortParams?.[activeSortKey]?.sortOrder ?? "asc";
-
-  // Memoize sortModel to prevent unnecessary re-renders and ensure it updates correctly
-  const sortModel = useMemo(() => {
-    if (activeSortKey) {
-      return [
-        {
-          field: activeSortKey,
-          sort: activeSortOrder,
-        },
-      ];
-    }
-    return [];
-  }, [activeSortKey, activeSortOrder]);
 
   // Fetch Submissions
 const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
@@ -416,19 +407,64 @@ const {
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
 
-  // Pagination Model for ReusableTable
-  const paginationModel = useMemo(
-    () => ({ page: page - 1, pageSize: limit }),
-    [page, limit]
-  );
 
-  // Handle Pagination Model Change for ReusableTable
-  const handlePaginationModelChange = useCallback(({ page, pageSize }: any) => {
-    batch(() => {
-      dispatch(setAnalyzeSubmissionPage(page + 1));
-      dispatch(setAnalyzeSubmissionLimit(pageSize));
-    });
+  // Sort Handler
+const handleSort = useCallback((key: string) => {
+const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
+
+  const currentOrder = sortParams[key]?.sortOrder || "asc";
+  const newOrder = currentOrder === "asc" ? "desc" : "asc";
+
+  const updatedSort = {
+    ...resetSortOrders,
+    [key]: { sortOrder: newOrder },
+    activeKey: key,
+  };
+
+  dispatch(setAnalyzeSubmissionSort(updatedSort));
+}, [dispatch, sortParams]);
+
+  // Page Change Handler
+  const handlePageChange = useCallback((pageNum: number) => {
+    dispatch(setAnalyzeSubmissionPage(pageNum));
   }, [dispatch]);
+
+  // Limit Change Handler
+  const handleLimitChange = (newLimit: number) => {
+    dispatch(setAnalyzeSubmissionLimit(newLimit));
+    dispatch(setAnalyzeSubmissionPage(1)); // reset page to 1
+  };
+ const customTdValue = (value, index, submissionId, fieldKey) => {
+  // Remove tenant name from currentUserRoles when multitenancy is enabled
+  let displayValue = value;
+  if (fieldKey === "currentUserRoles" && MULTITENANCY_ENABLED && typeof value === "string") {
+    // Extract tenant key from localStorage or Redux state
+    const tenantKey = localStorage.getItem("tenantKey") || tenantId;
+    if (tenantKey) {
+      displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
+    }
+  }
+
+  return  <td key={`${submissionId ?? 'no-id'}-${index}-${value ?? 'empty'}`}
+              className="custom-td">
+            <div className="text-overflow-ellipsis">{displayValue}</div>
+          </td>
+ }
+
+  // sortmodal actions
+  const handleSortApply = (selectedSortOption, selectedSortOrder) => {
+    // if need to reset the sort orders use this function
+    const resetSortOrders = HelperServices.getResetSortOrders(
+      optionSortBy.options
+    );
+  const updatedData = {
+    ...resetSortOrders,
+    activeKey: selectedSortOption,
+    [selectedSortOption]: { sortOrder: selectedSortOrder },
+  };
+  dispatch(setAnalyzeSubmissionSort(updatedData));
+  setShowSortModal(false);
+};
 
   const handlerefresh = () => {
     refetch();
@@ -449,48 +485,24 @@ const {
   dispatch(setAnalyzeSubmissionPage(1));
  };
 
-  // Column resize handler for ReusableTable
+  // Column resize handler for ReusableResizableTable
   const handleColumnResize = useCallback((column: Column, newWidth: number) => {
     // Update Redux column widths
     dispatch(setColumnWidths({ [column.sortKey]: newWidth }));
+
   }, [dispatch]);
 
-  // Handle column width change from DataGrid
-  const handleColumnWidthChange = useCallback((params: any) => {
-    const column = columns.find((col) => col.sortKey === params.field);
-    if (column && handleColumnResize) {
-      handleColumnResize(column, params.width);
-    }
-  }, [columns, handleColumnResize]);
 
-  // Get cell value function for ReusableTable (extracted from renderRow logic)
-  const getCellValue = useCallback((column: Column, submission: Submission) => {
-    const { sortKey } = column;
-
-    if (sortKey === "actions") {
-      return (
-        <V8CustomButton
-          actionTable
-          label={t("View")}
-          onClick={() => {
-            dispatch(setApplicationDetail({}));
-            dispatch(push(`${redirectUrl}submissions/${submission.id}`));
-          }}
-          dataTestId={`view-submission-${submission.id}`}
-          ariaLabel={t("View details for submission {{taskName}}", {
-            taskName: submission.formName ?? t("unnamed"),
-          })}
-        />
-      );
-    }
-
+  const toggleFilterModal = () => setShowSortModal(!showSortModal);
+  // Row Renderer
+const renderRow = (submission: Submission) => {
   const fieldsToRender = (selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS)
     .filter((field) => field.isChecked)
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
-    const field = fieldsToRender.find((f) => f.key === sortKey);
-    if (!field) return "-";
-
+return (
+  <tr key={submission.id}>
+    {fieldsToRender.map((field, index) => {
       const { key } = field;
 
       // Map form variable keys to backend keys
@@ -503,116 +515,119 @@ const {
 
       const backendKey = fieldKeyMap[key] ?? key;
 
-    // fallback to submission.data
+      //  fallback to submission.data
       const rawValue =
         submission[backendKey as keyof Submission] ??
         submission.data?.[backendKey];
-    const matchingField = currentFields.find((col) => col.key === key);
-
-    let value: any;
+      const matchingField = currentFields.find(
+        (col) => col.key === key
+      );
+      const value = (() => {
         if (backendKey === "created") {
-      value = HelperServices?.getLocalDateAndTime(rawValue);
-    } else if (matchingField?.type === "datetime") {
-      value = HelperServices.getLocalDateAndTime(rawValue);
-    } else if (matchingField?.type === "checkbox") {
-      value = rawValue ? "true" : "false";
-    } else if (matchingField?.type === "selectboxes") {
-      if (!rawValue || typeof rawValue !== "object") {
-        value = "-";
-      } else {
-        const trueKeys = Object.keys(rawValue).filter((key) => rawValue[key]);
-        value = trueKeys.length ? trueKeys.join(", ") : "-";
-      }
-    } else {
-      value = rawValue;
-    }
-
-    // Handle tenant name removal for currentUserRoles
-    let displayValue = value;
-    if (key === "currentUserRoles" && MULTITENANCY_ENABLED && typeof value === "string") {
-      const tenantKey = localStorage.getItem("tenantKey") || tenantId;
-      if (tenantKey) {
-        displayValue = HelperServices.removeTenantFromRoles(value, tenantKey);
-      }
-    }
-
-    return <div className="text-overflow-ellipsis">{displayValue ?? "-"}</div>;
-  }, [selectedSubmissionFilter, currentFields, t, dispatch, push, redirectUrl, DEFAULT_SUBMISSION_FIELDS, tenantId]);
+          return HelperServices?.getLocalDateAndTime(rawValue);
+        }
+        if (matchingField?.type === "datetime") {
+          return HelperServices.getLocalDateAndTime(rawValue);
+        }
+        if(matchingField?.type === "checkbox"){
+          return rawValue ? "true" : "false" ; 
+        }
+        if (matchingField?.type === "selectboxes") {
+          if (!rawValue || typeof rawValue !== 'object') {
+            return "-";
+          }
+          const trueKeys = Object.keys(rawValue).filter((key) => rawValue[key]);
+          const displayValue = trueKeys.length ? trueKeys.join(", ") : "-";
+          return displayValue;
+        }
+        return rawValue;
+      })();
 
 
+      return customTdValue(value, index, submission.id, key);
+    })}
 
-  // Handle sort model change for ReusableTable
-  const handleSortModelChange = useCallback((model: any) => {
-    // If model is empty, reset to default form_name sort
-    if (!model || model.length === 0 || !model[0]?.field) {
-      const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
-      const updatedSort = {
-        ...resetSortOrders,
-        form_name: { sortOrder: "asc" },
-        activeKey: "form_name",
-      };
-      dispatch(setAnalyzeSubmissionSort(updatedSort));
-      return;
-    }
+    {/* Action column */}
+    <td key={`${submission.id}-action`}>
+      <div className="text-overflow-ellipsis">
+        <CustomButton
+          actionTable
+          label={t("View")}
+          onClick={() => {
+            dispatch(setApplicationDetail({}))
+            dispatch(push(`${redirectUrl}submissions/${submission.id}`))
+          }
+          }
+          dataTestId={`view-submission-${submission.id}`}
+          ariaLabel={t("View details for submission {{taskName}}", {
+            taskName: submission.formName ?? t("unnamed"),
+          })}
+        />
+      </div>
+    </td>
+  </tr>
+);
+};
 
-    const field = model[0].field;
-    // Always use DataGrid's sort order directly - DataGrid handles toggling automatically
-    // DataGrid sends "asc" for first click, "desc" for second click on the same column
-    const dataGridSort = model[0]?.sort || "asc";
-    
-    // Reset all sort keys to "asc" and set only the active field to DataGrid's sort order
-    // This ensures only one sort is active at a time, and all others are reset to "asc"
-    const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
 
-    const updatedSort = {
-      ...resetSortOrders, // All keys reset to {sortOrder: "asc"}
-      [field]: { sortOrder: dataGridSort }, // Active field uses DataGrid's sort order
-      activeKey: field,
-    };
 
-    // Dispatch the update - this will trigger a re-render and the sortModel will update
-    // Since sortModel is memoized based on activeSortKey and activeSortOrder, it will update immediately
-    dispatch(setAnalyzeSubmissionSort(updatedSort));
-  }, [dispatch, optionSortBy]);
+  // Header Renderer
+  const renderHeaderCell = useCallback(
+    (
+      column: Column,
+      index: number,
+      columnsLength: number,
+      currentResizingColumn: any,
+      handleMouseDown: (index: number, column: any, e: React.MouseEvent) => void
+    ) => {
+      const isSortable = column.sortKey !== "actions";
+      const isResizable = column.resizable && index < columnsLength - 1;
+      const isResizing = currentResizingColumn?.sortkey === column.sortKey;
+      const headerKey = column.sortKey || `col-${index}`;
 
-  // Convert columns to MUI DataGrid format
-  const muiColumns = useMemo(() => {
-    // Filter out actions column from regular columns
-    const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
-
-    return [
-      ...filteredColumns.map((col, idx) => ({
-        field: col.sortKey,
-        headerName: t(col.name),
-        flex: 1,
-        sortable: true,
-        minWidth: col.width,
-        headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
-        renderCell: (params: any) => getCellValue(col, params.row),
-      })),
-      {
-        field: "actions",
-        headerName: "",
-        sortable: false,
-        filterable: false,
-        headerClassName: "sticky-column-header",
-        cellClassName: "sticky-column-cell",
-        width: 100,
-        renderCell: (params: any) => getCellValue(
-          { ...columns.find(c => c.sortKey === "actions")!, sortKey: "actions" },
-          params.row
-        ),
-      },
-    ];
-  }, [columns, t, getCellValue]);
-
-  // Memoized rows with proper IDs
-  const memoizedRows = useMemo(() => {
-    return (submissions || []).map((item, index) => ({
-      ...item,
-      id: item.id || (item as any)._id || `row-${index}`,
-    }));
-  }, [submissions]);
+    return (
+      <th
+        key={`header-${headerKey}`}
+        className={`${isSortable ? "header-sortable" : ''}`}
+        style={{
+          minWidth: `${column.width}px`,
+          maxWidth: `${column.width}px`,
+          width: `${column.width}px`
+        }}
+        data-testid={`column-header-${column.sortKey || "actions"}`}
+        aria-label={`${t(column.name)} ${t("column")} ${isSortable ? "," + t("sortable") : ""}`}
+      >
+        {isSortable ? (
+          <SortableHeader
+            columnKey={column.sortKey}
+            title={t(column.name)}
+            currentSort={sortParams}
+            handleSort={handleSort}
+            className="w-100 d-flex justify-content-between align-items-center"
+            dataTestId={`sort-header-${column.sortKey}`}
+            ariaLabel={t("Sort by {{columnName}}", { columnName: t(column.name) })}
+          />
+        ) : (
+          <span className="text">
+           {t(column.name)}
+          </span>
+        )}
+        {isResizable && (
+          <div
+            className={`column-resizer ${isResizing ? "resizing" : ""}`}
+            onMouseDown={(e) => handleMouseDown(index, column, e)}
+            tabIndex={0}
+            role="separator"
+            aria-orientation="horizontal"
+            data-testid={`column-resizer-${column.sortKey}`}
+            aria-label={t("Resize {{columnName}} column", {
+              columnName: t(column.name),
+            })}
+          />
+        )}
+      </th>
+    );
+  }, [t, sortParams, handleSort]);
 
   const handleCloseVariableModal = () => {
     setShowVariableModal(false)
@@ -721,43 +736,79 @@ const {
             />
 
           </div>
+
+          <div className="actions">
+            <FilterSortActions
+              showSortModal={showSortModal}
+              handleFilterIconClick={toggleFilterModal}
+              handleRefresh={handlerefresh}
+              handleSortModalClose={toggleFilterModal}
+              handleSortApply={handleSortApply}
+              defaultSortOption={sortParams?.activeKey}
+              defaultSortOrder={sortParams?.[sortParams.activeKey]?.sortOrder}
+              optionSortBy={optionSortBy.options}
+              filterDataTestId="submissiom-list-filter"
+              filterAriaLabel={t("Filter the submission list")}
+              refreshDataTestId="submission-list-refresh"
+              refreshAriaLabel={t("Refresh the submission list")}
+              sortModalTitle={t("Sort Tasks")}
+              sortModalDataTestId="submission-sort-modal"
+              sortModalAriaLabel={t("Modal for sorting tasks")}
+              sortByLabel={t("Sort by")}
+              sortOrderLabel={t("Sort order")}
+              ascendingLabel={t("Ascending")}
+              descendingLabel={t("Descending")}
+              applyLabel={t("Apply")}
+              cancelLabel={t("Cancel")}
+            />
+          </div>
         </div>
 
         {/* Table Container */}
         <div
-          className="custom-table-wrapper-outter-submissions"
+          className="custom-table-wrapper-outter"
           data-testid="table-container-wrapper"
         >
-          {!columns?.length ? (
-            <div className="custom-table-wrapper-outter-submissions">
-              <p className="empty-message" data-testid="empty-columns-message">
-                {t("No submissions have been found. Try a different filter combination or contact your admin.")}
-              </p>
-            </div>
-          ) : (
-            <ReusableTable
-              columns={muiColumns}
-              rows={memoizedRows}
-              rowCount={totalCount}
-              loading={isSubmissionsLoading || isFetching}
-              disableColumnResize={false}
-              paginationMode="server"
-              sortingMode="server"
-              sortModel={sortModel}
-              onSortModelChange={handleSortModelChange}
-              noRowsLabel={t(
-                "No submissions have been found. Try a different filter combination or contact your admin."
+          <ReusableResizableTable
+            columns={columns}
+            data={submissions}
+            renderRow={renderRow}
+            renderHeaderCell={renderHeaderCell}
+            emptyMessage={t(
+              "No submissions have been found. Try a different filter combination or contact your admin."
+            )}
+            onColumnResize={handleColumnResize}
+            loading={isSubmissionsLoading || isFetching}
+            headerClassName="resizable-header"
+            scrollWrapperClassName="table-scroll-wrapper resizable-scroll"
+            dataTestId="task-resizable-table"
+            ariaLabel={t("submissions data table with resizable columns")}
+          />
+
+          {/* Table Footer */}
+          {submissions.length > 0 && (
+            <TableFooter
+              limit={limit}
+              activePage={page}
+              totalCount={totalCount}
+              loader={isSubmissionsLoading || isFetching}
+              handlePageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              pageOptions={[
+                { text: "10", value: 10 },
+                { text: "25", value: 25 },
+                { text: "50", value: 50 },
+                { text: "100", value: 100 },
+                { text: "All", value: totalCount },
+              ]}
+              dataTestId="submission-table-footer"
+              ariaLabel={t("Table pagination controls")}
+              pageSizeDataTestId="submission-page-size-selector"
+              pageSizeAriaLabel={t(
+                "Select number of submissions per page"
               )}
-              disableColumnMenu
-              disableRowSelectionOnClick
-              paginationModel={paginationModel}
-              onPaginationModelChange={handlePaginationModelChange}
-              pageSizeOptions={[10, 25, 50, 100]}
-              dataGridProps={{
-                getRowId: (row: any) => row.id || (row as any)._id,
-                onColumnWidthChange: handleColumnWidthChange,
-              }}
-              enableStickyActions={true}
+              paginationDataTestId="submission-pagination-controls"
+              paginationAriaLabel={t("Navigate between submission pages")}
             />
           )}
         </div>

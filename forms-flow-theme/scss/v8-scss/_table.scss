@@ -129,6 +129,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     outline: none !important;
     outline-offset: 0px !important;
   }
+  .MuiDataGrid-cell:focus-within{
+    outline: none !important;
+    outline-offset: 0px !important;
+  }
   .last-column ,.MuiDataGrid-columnHeader--last{
     display: flex !important;
     justify-content: flex-end !important;
@@ -173,7 +177,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     }
   }
 }
- 
+
   .status-live {
     @extend .status-circle;
     background-color: $green-color;
@@ -202,10 +206,41 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
       text-align: left !important;
       justify-content: flex-start !important;
     }
-    
+
     .MuiDataGrid-columnHeader[data-field="actions"]{
       padding-top: 0 !important;
       padding-bottom: 0 !important;
     }
 
+  }
+  .action-column-sticky {
+    .MuiDataGrid-columnHeader.sticky-column-header {
+      position: sticky;
+      right: 0;
+      background-color: $table-bg-light;
+      z-index: 1;
+      border-left: 1px solid $table-border-light;
+    }
+
+    .MuiDataGrid-cell.sticky-column-cell {
+      position: sticky;
+      right: 0;
+      background-color: $table-bg-light;
+      border-left: 1px solid $table-border-light;
+      z-index: 1;
+    }
+
+    .MuiDataGrid-columnHeader[data-field="actions"] .MuiDataGrid-columnSeparator {
+      display: none !important;
+    }
+
+    /* Hide separator for the column immediately before the last (actions) */
+    .MuiDataGrid-columnHeader.no-right-separator .MuiDataGrid-columnSeparator {
+      display: none !important;
+    }
+  }
+  
+  //for submissions page temporarily used className
+  .custom-table-wrapper-outter-submissions{
+    container: tableSize / inline-size;
   }

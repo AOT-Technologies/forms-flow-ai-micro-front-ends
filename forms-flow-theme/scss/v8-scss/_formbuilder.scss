@@ -1,0 +1,96 @@
+// Form Builder Variables
+$gray-medium: var(--gray-medium);
+$white: var(--white-300);
+$form-builder-breakpoint: 1299px;
+$form-builder-border-radius: 2px;
+$form-builder-border-radius-round: 50%;
+$form-builder-border-width: 1px;
+$form-builder-border-width-thick: 2px;
+$form-builder-spacing-sm: 5px;
+$form-builder-spacing-md: 16px;
+$form-builder-spacing-lg: 80px;
+$form-builder-gap: 1rem;
+$form-builder-color-text: #535353;
+$form-builder-color-bg-transparent: transparent;
+$form-builder-color-bg-black: black;
+$form-builder-shadow-color: rgb(182 182 182 / 20%);
+$form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
+
+.form-builder {
+    // Responsive Sidebar Buttons
+    @media (max-width: $form-builder-breakpoint) {
+        .builder-sidebar .btn {
+            display: block !important;
+            min-height: fit-content !important;
+        }
+    }
+
+    // Sidebar Button Styles
+    .builder-sidebar .btn {
+        white-space: normal;
+        display: grid;
+        min-height: $form-builder-spacing-lg;
+        text-align: center;
+        padding: $form-builder-spacing-md;
+        gap: $form-builder-gap;
+        background: $form-builder-color-bg-transparent;
+        color: $form-builder-color-text;
+        border: $form-builder-border-width solid $form-builder-color-text;
+        border-radius: $form-builder-border-radius;
+    }
+
+    // Checkbox Styles
+    .form-check:not(.form-switch) .form-check-input[type=checkbox],
+    .checkbox-container .form-check-input[type=checkbox] {
+        border: $form-builder-border-width-thick solid $gray-medium !important;
+        border-radius: $form-builder-border-radius !important;
+    }
+
+    // Builder Component Styles
+    .builder-component {
+        // Common form element styles
+        input,
+        textarea,
+        button,
+        .selection.dropdown {
+            border: $form-builder-border-width solid $gray-medium !important;
+            border-radius: $form-builder-border-radius !important;
+        }
+
+        // Radio button specific styles
+        input[type=radio] {
+            border-radius: $form-builder-border-radius-round !important;
+            border: $form-builder-border-width solid $gray-medium !important;
+        }
+
+        // Checked form inputs
+        .form-check-input:checked {
+            border: $form-builder-border-width solid $gray-medium !important;
+        }
+
+        // Button styles
+        button {
+            background-color: $form-builder-color-bg-black !important;
+            color: $white !important;
+            width: fit-content !important;
+        }
+    }
+
+    // Group Button Styles
+    .builder-group-button {
+        min-height: fit-content !important;
+        padding: $form-builder-spacing-sm 0 !important;
+        border: none !important;
+    }
+
+    // Sidebar Search Styles
+    .builder-sidebar_search {
+        border: $form-builder-border-width solid $gray-medium !important;
+        border-radius: $form-builder-border-radius !important;
+    }
+
+    // Component Settings Button Shadow
+    .component-btn-group .component-settings-button {
+        box-shadow: $form-builder-shadow;
+    }
+}
