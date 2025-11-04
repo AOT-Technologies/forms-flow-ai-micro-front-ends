@@ -59,7 +59,5 @@ $gray-x-light: var(--gray-x-light);
   max-height: 37.5rem;
 }
 .flow-builder {
-  // height: calc(100vh - 15rem) !important;
-  height: 48rem !important; //768px as per figma
   overflow: auto;
 }
