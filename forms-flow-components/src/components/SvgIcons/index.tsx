@@ -6,6 +6,7 @@ const grayDarkestColor = computedStyle.getPropertyValue("--ff-gray-darkest");
 const grayMediumColor = computedStyle.getPropertyValue("--ff-gray-medium-dark");
 const secondaryDarkColor = computedStyle.getPropertyValue("--secondary-dark");
 const dangerColor = computedStyle.getPropertyValue("--red-100");
+const secondaryDarkColor = computedStyle.getPropertyValue("--secondary-dark");
 export const ChevronIcon = ({
   color = grayColor,
   className="svgIcon-dark",
