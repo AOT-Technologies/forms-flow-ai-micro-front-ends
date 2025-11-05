@@ -53,6 +53,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     display: flex!important;
     align-items: center!important;
     padding: 0.5rem 0.625rem !important;
+    &[data-field="selected"] {
+      justify-content: flex-end !important;
+      display: flex;
+    }
   }
   
   .MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) {
