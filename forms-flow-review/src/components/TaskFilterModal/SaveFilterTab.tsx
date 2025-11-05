@@ -245,6 +245,7 @@ const SaveFilterTab = ({
       feedback={filterNameError}
       disabled={filterToEdit && !editRole}
       id="filter-name"
+      m
     /></div>
     
      
@@ -260,6 +261,7 @@ const SaveFilterTab = ({
   onChange={(v) => setShareFilter(v)}
   onSecondChange={(v) => setShareFilterForSpecificRole(v)}
 />
+</div>
 
     </>
   );

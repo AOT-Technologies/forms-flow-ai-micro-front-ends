@@ -94,7 +94,6 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             justify-content: space-between;
             padding: 0.688rem 0.688rem;
             flex-shrink: 0;
-            //  border-radius: 5px;
             border: 1px solid var(--gray-x-light);
         }
 

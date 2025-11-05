@@ -593,10 +593,8 @@ const handleFetchTaskVariables = (formId) => {
       content: (
         <ParametersTab
           forms={forms}
-          // handleFormSelectionClear={handleFormSelectionClear}
           selectedForm={selectedForm}
           toggleFormSelectionModal={toggleFormSelectionModal}
-          // showFormSelectionModal={showFormSelectionModal}
           handleFormSelection={handleFormSelection}
         />
       ),

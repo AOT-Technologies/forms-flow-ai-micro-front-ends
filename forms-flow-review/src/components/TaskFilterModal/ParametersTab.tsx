@@ -10,15 +10,13 @@ const ParametersTab = ({
   const { t } = useTranslation();
 
   return (
-    <>
-     <FormSelectionModal
+         <FormSelectionModal
         forms={forms}
         showModal={true}
         onClose={toggleFormSelectionModal}
         onSelectForm={handleFormSelection}
         selectedForm={selectedForm}
       />
-    </>
   );
 };
 

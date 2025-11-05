@@ -273,7 +273,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
     const hasSecondary = secondDropdown && (secondaryOptions.length > 0);
     const { style: incomingStyle, ...restDivProps } = restProps as { style?: React.CSSProperties } & Record<string, any>;
     const containerStyle: React.CSSProperties | undefined = secondDropdown
-      ? { ...(incomingStyle || {}), marginBottom: hasSecondary ? "5rem" : "3rem" }
+      ? { ...(incomingStyle || {}), marginBottom: hasSecondary ? "5rem" : "2rem" }
       : incomingStyle;
 
     return (

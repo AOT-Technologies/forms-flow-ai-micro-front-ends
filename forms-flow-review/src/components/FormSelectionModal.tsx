@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CloseIcon, CustomSearch, CustomButton, CustomCheckbox, VerticalLineIcon } from "@formsflow/components";
+import { CustomSearch, CustomCheckbox } from "@formsflow/components";
 import { Form } from "@aot-technologies/formio-react";
 import {  fetchFormById } from "../api/services/filterServices";
 interface FormSelectionModalProps {
@@ -12,7 +12,7 @@ interface FormSelectionModalProps {
 }
 
 export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
-  ({ showModal, onClose, onSelectForm, forms, selectedForm: selectedFormProp }) => {
+  ({ onSelectForm, forms, selectedForm: selectedFormProp }) => {
 
     const { t } = useTranslation();
     const [searchFormName, setSearchFormName] = useState<string>("");
@@ -141,8 +141,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     }
     
     return (
-      <>
-       
+             
         <div className="filter-form-selection-page">
           <div className="left-form-list-container">
             <CustomSearch
@@ -179,7 +178,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             </div>
           </div>
         </div>
-        </>
+        
     );
   }
 );
