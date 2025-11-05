@@ -1,6 +1,6 @@
 // Import theme variables and mixins
 @use "mixins";
-
+@import "mixins";
 // Variables - Using theme tokens
 $primary: var(--primary-dark);
 $primary-light: var(--primary);
@@ -9,6 +9,8 @@ $gray-dark: var(--gray-dark);
 $gray-medium: var(--gray-medium);
 $gray-medium-dark: var(--gray-medium-dark);
 $black-color: var(--gray-darkest);
+$font-size-m: var(--font-size-m);
+$font-weight-regular: var(--font-weight-regular);
 
 // Base spacing - static value for SCSS calculations
 $base: 1rem; // Cannot use var() in SCSS arithmetic
@@ -90,7 +92,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             display: flex !important;
             align-items: center;
             justify-content: space-between;
-            padding: 11px 11px;
+            padding: 0.688rem 0.688rem;
             flex-shrink: 0;
             //  border-radius: 5px;
             border: 1px solid var(--gray-x-light);
@@ -142,7 +144,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 
         .lines-count-container {
             .dropdown-wrapper {
-                width: 108px;
+                width: 6.813rem;
             }
         }
     }
@@ -161,7 +163,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     .secondary-dropdown-container {
         display: flex;
         align-items: flex-start;
-        margin-top: 9px;
+        margin-top: 0.563rem;
         /* vertical gap between first and second dropdown */
         position: relative;
     }
@@ -170,7 +172,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     .vertical-line-icon {
         margin-left: 1.66rem;
         margin-right: 0.625rem;
-        margin-top: 0.375;
+        margin-top: 0.375rem;
         flex-shrink: 0;
     }
 
@@ -242,5 +244,37 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 
     .wizard-page-indicator {
         color: var(--gray-medium-darker);
+    }
+}
+.attribute-filter-modal {
+    @include large-modal-popover();
+
+
+    .footer-text {
+        flex-grow: 1;
+        text-align: center;
+        color: $gray-medium-dark;
+        font-size: $font-size-m;
+        font-weight: $font-weight-regular;
+        line-height: normal;
+    }
+
+    .custom-input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem; // 12px
+        align-items: baseline;
+
+        .text-input,
+        .selectdropdown-container {
+            width: 20rem !important; // 320px
+        }
+    }
+
+    .parameters-tab-container ,.save-filter-tab-container{
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem; // 24px
+        align-items: start;
     }
 }

@@ -215,7 +215,8 @@ const TaskFilterModalBody = ({
   /* -------------------- set values for editing the filter ------------------- */
   useEffect(() => {
     if (!filterToEdit) return;
-    const { roles, users, criteria, properties } = filterToEdit;
+    //TBD updated later
+    const { roles = [], users = [], criteria = {}, properties = {} } = filterToEdit;
     const { assignee, sorting, candidateGroup } = criteria;
     const cleanedRoles = roles.map((role) =>
       removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED)

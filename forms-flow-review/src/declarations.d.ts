@@ -96,7 +96,10 @@ declare module "@formsflow/components" {
     FilterDropDown,
     CustomCheckbox,
     CustomTextInput,
-    VerticalLineIcon
-}
+    VerticalLineIcon,
+    ReusableLargeModal,
+    FormStatusIcon,
+    Alert
+  }: any;
 }
 

@@ -178,11 +178,10 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
         : options;
     }, [options, searchDropdown, searchTerm]);
 
-    /** Selected option objects */
-    const selectedOption = useMemo(
-      () => options.find((o) => o.value === selectedValue),
-      [options, selectedValue]
-    );
+    // Memoized selected option
+    const selectedOption = useMemo(() => {
+      return options?.find(opt => opt.value === selectedValue);
+    }, [options, selectedValue]);
 
     const secondaryOptions = useMemo(() => {
       if (!secondDropdown || !selectedValue) return [];
