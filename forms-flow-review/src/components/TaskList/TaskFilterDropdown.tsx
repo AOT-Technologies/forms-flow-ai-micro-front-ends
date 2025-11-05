@@ -19,10 +19,9 @@ import { FilterItemType, UserDetail } from "../../types/taskFilter";
 import {
   AddIcon,
   FilterDropDown,
-  SharedWithMeIcon,
-  SharedWithOthersIcon,
   ReorderIcon
 } from "@formsflow/components";
+import { cloneDeep } from "lodash";
 
 
 
@@ -52,11 +51,11 @@ const TaskListDropdownItems = memo(() => {
   const [showReorderFilterModal, setShowReorderFilterModal] = useState(false);
   const [filterSearchTerm, setFilterSearchTerm] = useState("");
 
-  const handleEditTaskFilter = () => {
+  const handleEditFilterFromItem = (filter) => {
     // Prevent editing if the active filter is the initial "All Tasks".
     if (!selectedFilter || (!isUnsavedFilter && filterList.length === 0))
       return;
-    dispatch(setFilterToEdit(selectedFilter));
+    dispatch(setFilterToEdit(cloneDeep(filter)));
     setShowTaskFilterModal(true);
   };
 
@@ -67,15 +66,7 @@ const TaskListDropdownItems = memo(() => {
     dispatch(setFilterToEdit(null));
   };
 
-  //To be updated later 
-  const handleEditFilterFromItem = (item) => {
-    if (!item?.type) return;
-    const id = Number(item.type);
-    const found = filterList.find((f) => f.id === id);
-    if (!found) return;
-    dispatch(setFilterToEdit(found));
-    setShowTaskFilterModal(true);
-  };
+
 
   const handleToggleFilterModal = () => {
     setShowTaskFilterModal((prev) => !prev);
@@ -158,25 +149,18 @@ const TaskListDropdownItems = memo(() => {
             userDetails?.groups?.includes(role)
           );
 
-          // Determine category
-          if (filterDetails?.createdBy === "system") {
-            icon = null;
-            // category remains "my" (default)
-          } else if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
-            icon = <SharedWithOthersIcon className="shared-icon" />;
+           if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
             category = "my";
           } else if (isSharedToPublic || isSharedToMe) {
-            icon = <SharedWithMeIcon />;
             category = "shared";
           }
           // category remains "my" for all other cases (default)
-
           return {
             className:
               filter.id === selectedFilter?.id ? "selected-filter-item" : "",
             content: (
               <span className="d-flex justify-content-between align-items-center">
-                {t(filter.name)} ({filter.count}){icon && <span>{icon}</span>}
+                {t(filter.name)} ({filter.count}) {icon && <span>{icon}</span>}
               </span>
             ),
             type: String(filter.id),
@@ -188,6 +172,7 @@ const TaskListDropdownItems = memo(() => {
               filterName: t(filter.name),
             }),
             category,
+            onEdit: () => handleEditFilterFromItem(filter),
           };
         }
       }).filter(Boolean) as FilterItemType[];
@@ -233,7 +218,6 @@ const TaskListDropdownItems = memo(() => {
         searchable={true}
         searchPlaceholder={t("Search")}
         onSearch={onSearch}
-        onEdit={handleEditFilterFromItem}
         dataTestId="business-filter-dropdown"
         ariaLabel={t("Select task filter")}
         className="input-filter"

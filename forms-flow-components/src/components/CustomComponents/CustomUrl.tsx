@@ -27,7 +27,7 @@ export interface CustomUrlProps extends Omit<React.ComponentPropsWithoutRef<"div
   /** Callback when input loses focus */
   onBlur?: (currentUrl: string) => void;
   /** Text for the save button */
-  saveButtonText?: string;
+  // saveButtonText?: string;
   /** Test ID for automated testing */
   dataTestId?: string;
   /** Additional CSS classes */
@@ -67,7 +67,7 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
   initialUrl = "",
   onSave,
   onBlur,
-  saveButtonText = "",
+  // saveButtonText = "",
   dataTestId = "custom-url",
   className = "",
   ariaLabel = "Custom URL input",
@@ -182,15 +182,15 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
     }
   }, [fullUrl, disabled, fallbackCopyToClipboard]);
 
-  // Memoized save handler
-  const handleSave = useCallback(() => {
-    if (isSaveDisabled) return;
+  // // Memoized save handler
+  // const handleSave = useCallback(() => {
+  //   if (isSaveDisabled) return;
     
-    onSave?.(fullUrl);
-    setSavedUrl(url);
-    setMessage("saved");
-    setTimeout(() => setMessage(null), 2500);
-  }, [onSave, fullUrl, url, isSaveDisabled]);
+  //   onSave?.(fullUrl);
+  //   setSavedUrl(url);
+  //   setMessage("saved");
+  //   setTimeout(() => setMessage(null), 2500);
+  // }, [onSave, fullUrl, url, isSaveDisabled]);
 
   // Memoized keyboard handler for copy button
   const handleCopyKeyDown = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -277,13 +277,13 @@ const CustomUrlComponent = forwardRef<HTMLDivElement, CustomUrlProps>(({
             {getMessageText(message)}
           </output>
         )}
-        {saveButtonText && <V8CustomButton
+        {/* {saveButtonText && <V8CustomButton
           label={saveButtonText}
           variant="secondary"
           disabled={isSaveDisabled}
           onClick={handleSave}
           dataTestId={`${dataTestId}-save`}
-        />}
+        />} */}
       </div>
         {showInfoSection && (
         <div className="info-section">

@@ -96,6 +96,8 @@ declare module "@formsflow/components" {
     FilterDropDown,
     ReusableLargeModal,
     FormStatusIcon,
+    CustomTextInput,
+    Alert
   }: any;
 }
 
