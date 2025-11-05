@@ -261,8 +261,6 @@ const SaveFilterTab = ({
   onChange={(v) => setShareFilter(v)}
   onSecondChange={(v) => setShareFilterForSpecificRole(v)}
 />
-</div>
-
     </>
   );
 };
