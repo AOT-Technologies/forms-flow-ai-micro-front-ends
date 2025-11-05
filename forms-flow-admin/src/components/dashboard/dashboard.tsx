@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
@@ -14,7 +13,7 @@ import {
   fetchdashboards,
 } from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
-import { TableFooter } from "@formsflow/components";  
+import { TableFooter, V8CustomButton } from "@formsflow/components";  
 
 const InsightDashboard = React.memo((props: any) => {
   const { dashboards, groups, setCount, authReceived, loading: parentLoading } = props;
@@ -195,15 +194,14 @@ const InsightDashboard = React.memo((props: any) => {
               </Popover>
             }
           >
-            <Button
-              data-testid={rowIdx}
+            <V8CustomButton
+              label={t("Add")}
               onClick={(e) => handleClick(e, rowData)}
-              className="btn btn-primary"
+              variant="primary"
+              data-testid={rowIdx}
               disabled={!isGroupUpdated}
-            >
-              <i className="fa-solid fa-plus me-2"></i>
-              <Translation>{(t) => t("Add")}</Translation>
-            </Button>
+              icon={<i className="fa-solid fa-plus me-2"></i>}
+            />
           </OverlayTrigger>
         );
       },

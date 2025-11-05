@@ -49,7 +49,6 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                     text-align: center;
                     font-size: var(--font-size-m);
                     margin-top: 1.188rem;
-                    padding: 0 6rem;
                 }
             }
             .modal-footer {

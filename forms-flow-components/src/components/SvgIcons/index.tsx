@@ -4,7 +4,9 @@ const grayColor = computedStyle.getPropertyValue("--ff-gray-dark");
 const whiteColor = computedStyle.getPropertyValue("--ff-white")
 const grayDarkestColor = computedStyle.getPropertyValue("--ff-gray-darkest");
 const grayMediumColor = computedStyle.getPropertyValue("--ff-gray-medium-dark");
+const secondaryDarkColor = computedStyle.getPropertyValue("--secondary-dark");
 const dangerColor = computedStyle.getPropertyValue("--red-100");
+const secondaryDarkColor = computedStyle.getPropertyValue("--secondary-dark");
 export const ChevronIcon = ({
   color = grayColor,
   className="svgIcon-dark",
@@ -1121,7 +1123,7 @@ export const FormStatusIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const EditPencilIcon = ({ color = baseColor, ...props }) => (
+export const EditPencilIcon = ({ color = secondaryDarkColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
