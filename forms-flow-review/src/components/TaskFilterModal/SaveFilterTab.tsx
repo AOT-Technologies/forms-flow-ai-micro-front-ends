@@ -1,10 +1,10 @@
 import {
   CustomButton,
   CustomInfo,
+  CustomTextInput,
   DeleteIcon,
-  FormInput,
-  InputDropdown,
   SaveIcon,
+  SelectDropdown,
   UpdateIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,6 @@ import {
   PRIVATE_ONLY_YOU,
   SPECIFIC_USER_OR_GROUP,
 } from "../../constants";
-import { StorageService } from "@formsflow/service";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -233,51 +232,35 @@ const SaveFilterTab = ({
   };
   return (
     <>
-      <FormInput
-        name="filter-name"
-        type="text"
-        label={t("Filter Name")}
-        ariaLabel={t("TaskFilter Name")}
-        dataTestId="task-filter-name"
-        value={filterName}
-        onChange={(e) => handleFilterName(e.target.value)}
-        isInvalid={!!filterNameError}
-        onBlur={handleNameError}
-        feedback={filterNameError}
-        disabled={filterToEdit && !editRole}
-        id="filter-name"
-      />
+    <div className=" filter-name-container mb-4"><p className="dropdown-label-text">{t("Filter Name")}</p>
+    <CustomTextInput
+      name="filter-name"
+      type="text"
+      ariaLabel={t("TaskFilter Name")}
+      dataTestId="task-filter-name"
+      value={filterName}
+      setValue={handleFilterName}
+      isInvalid={!!filterNameError}
+      onBlur={handleNameError}
+      feedback={filterNameError}
+      disabled={filterToEdit && !editRole}
+      id="filter-name"
+    /></div>
+    
+     
+        <p className="dropdown-label-text">{t("Share This Filter With")}</p>
+        <SelectDropdown
+  options={filterShareOptions}
+  dependentOptions={{
+    [SPECIFIC_USER_OR_GROUP]: candidateOptions, // key = primary value
+  }}
+  secondDropdown={true}
+  defaultValue={shareFilter}
+  secondDefaultValue={shareFilterForSpecificRole}
+  onChange={(v) => setShareFilter(v)}
+  onSecondChange={(v) => setShareFilterForSpecificRole(v)}
+/>
 
-      <div className="input-combination">
-        <InputDropdown
-          Options={filterShareOptions}
-          dropdownLabel={t("Share This Filter With")}
-          isAllowInput={false}
-          ariaLabelforDropdown={t("filter sharing dropdown")}
-          dataTestIdforInput="share-filter-input"
-          dataTestIdforDropdown="share-filter-options"
-          selectedOption={shareFilter}
-          setNewInput={setShareFilter}
-          disabled={filterToEdit && !editRole}
-          id="share-this-filter-with"
-        />
-        {shareFilter === SPECIFIC_USER_OR_GROUP && (
-            <InputDropdown
-              Options={candidateOptions}
-              isAllowInput={false}
-              ariaLabelforDropdown={t("candidate dropdown")}
-              ariaLabelforInput={t("candidate input")}
-              dataTestIdforInput="candidate-options-input"
-              dataTestIdforDropdown="candidate-options"
-              selectedOption={shareFilterForSpecificRole}
-              setNewInput={setShareFilterForSpecificRole}
-              disabled={ filterToEdit &&!editRole}
-            />
-        )}
-      </div>
-
-      {renderOwnershipNote()}
-      {renderActionButtons()}
     </>
   );
 };
