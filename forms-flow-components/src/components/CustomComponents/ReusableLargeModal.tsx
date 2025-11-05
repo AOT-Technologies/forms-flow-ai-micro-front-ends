@@ -50,7 +50,7 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
   secondoryBtnariaLabel,
 }) => {
   const { t } = useTranslation();
-  const darkColor = StyleServices.getCSSVariable("--ff-gray-darkest");
+  const darkColor = StyleServices.getCSSVariable("--secondary-dark");
 
   return (
     <Modal

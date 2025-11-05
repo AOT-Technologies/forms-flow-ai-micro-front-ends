@@ -129,6 +129,9 @@ const TaskListTable = () => {
   const isAppHistoryLoading = useSelector((state: any) => state.task?.isAppHistoryLoading || false);
   const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
 
+  const greenColor = StyleServices.getCSSVariable("--green-100");
+  const yellowColor = StyleServices.getCSSVariable("--yellow-200");
+
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
   )?.preferred_username;
@@ -570,7 +573,7 @@ const TaskListTable = () => {
                 data-testid={`form-status-${task?._id || "new"}`}
               >
                 <FormStatusIcon 
-                 color={!taskAssignee || taskAssignee === "unassigned" ? "#F7DF82" : "#00C49A"} 
+                 color={!taskAssignee || taskAssignee === "unassigned" ? yellowColor : greenColor} 
                  />
                 <span className="status-text">
                   {!taskAssignee || taskAssignee === "unassigned" ? "Pending" : "Assigned"}
