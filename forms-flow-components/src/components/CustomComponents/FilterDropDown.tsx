@@ -210,7 +210,6 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
 
     // Render categorized items
     const renderCategorizedItems = useCallback(() => {
-      console.log("categorizedItems", categorizedItems);
       const { myFilters, sharedFilters, actionItems, noneItems } = categorizedItems;
 
       return (
