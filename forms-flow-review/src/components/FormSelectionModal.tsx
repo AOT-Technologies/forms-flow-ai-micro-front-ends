@@ -154,7 +154,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             />
             <div aria-hidden="true" className="border-top my-3" />
           
-            <div className="items form items-list">
+            <div className="form-items-list">
             {renderFormList()}
             </div>
           </div>
