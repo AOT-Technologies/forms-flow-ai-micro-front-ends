@@ -210,6 +210,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
 
     // Render categorized items
     const renderCategorizedItems = useCallback(() => {
+      console.log("categorizedItems", categorizedItems);
       const { myFilters, sharedFilters, actionItems, noneItems } = categorizedItems;
 
       return (
@@ -275,6 +276,21 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             ((myFilters && myFilters.length > 0) ||
               (sharedFilters && sharedFilters.length > 0)) && (
               <Dropdown.Divider />
+            )}
+          
+          {/* Search section if only my filters or shared filters are present */}
+          
+          {searchable && ((myFilters && myFilters.length > 0) ||
+              (sharedFilters && sharedFilters.length > 0)) && (
+              <div className="filter-dropdown-search">
+                <CustomSearch
+                  search={searchTerm}
+                  setSearch={handleSearchChange}
+                  handleSearch={() => {}}
+                  placeholder={searchPlaceholder}
+                  dataTestId={`${dataTestId}-search`}
+                />
+              </div>
             )}
 
           {/* My Filters section */}
@@ -492,18 +508,6 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
               `filter-dropdown-menu--${variant}`
             )}
           >
-            {searchable && (
-              <div className="filter-dropdown-search">
-                <CustomSearch
-                  search={searchTerm}
-                  setSearch={handleSearchChange}
-                  handleSearch={() => {}}
-                  placeholder={searchPlaceholder}
-                  dataTestId={`${dataTestId}-search`}
-                />
-              </div>
-            )}
-
             <div className="filter-dropdown-items">
               {categorize ? renderCategorizedItems() : renderUncategorizedItems()}
             </div>

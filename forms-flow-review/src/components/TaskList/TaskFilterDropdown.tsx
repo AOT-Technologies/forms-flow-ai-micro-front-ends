@@ -231,7 +231,7 @@ const TaskListDropdownItems = memo(() => {
         label={title}
         items={filterDropdownItems}
         searchable={true}
-        searchPlaceholder={t("Search")}
+        searchPlaceholder={t("Search all filters")}
         onSearch={onSearch}
         onEdit={handleEditFilterFromItem}
         dataTestId="business-filter-dropdown"
