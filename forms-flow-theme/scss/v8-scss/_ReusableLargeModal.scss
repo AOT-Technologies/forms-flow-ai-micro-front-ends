@@ -1,0 +1,18 @@
+@import "_mixins.scss";
+$gray-medium-dark-color: var(--gray-darkest);
+$font-weight-medium: var(--font-weight-medium);
+
+.reusable-large-modal {
+  @include large-modal-popover();
+}
+.task-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .status-text {
+    font-size: 0.875rem;
+    font-weight: $font-weight-medium;
+    color: $gray-medium-dark-color;
+  }
+}

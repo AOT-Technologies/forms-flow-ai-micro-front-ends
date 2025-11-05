@@ -94,6 +94,8 @@ declare module "@formsflow/components" {
     ReusableTable,
     ReorderIcon,
     FilterDropDown,
+    ReusableLargeModal,
+    FormStatusIcon,
     CustomTextInput,
     Alert
   }: any;
