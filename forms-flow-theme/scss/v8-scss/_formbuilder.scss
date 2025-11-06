@@ -69,10 +69,11 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
         }
 
         // Button styles
-        button {
+        button.btn {
             background-color: $form-builder-color-bg-black !important;
             color: $white !important;
             width: fit-content !important;
+
         }
     }
 
@@ -101,7 +102,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
 
 // Override: btn-primary hover/focus/active styles from user-styles.css
 // Ensures table action buttons maintain their intended styling
-.btn{
+.formio-dialog-content .btn, .formio.builder .btn {
     background-color: var(--white-300) !important;
     color: var(--secondary-dark) !important;
     border-color: var(--secondary-dark) !important;
