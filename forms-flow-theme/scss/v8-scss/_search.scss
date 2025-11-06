@@ -109,6 +109,9 @@ $color-border: var(--secondary);
     &:disabled {
       @include search-input-disabled;
     }
+    &::placeholder {
+      color: var(--gray-dark);
+    }
   }
 }
   
