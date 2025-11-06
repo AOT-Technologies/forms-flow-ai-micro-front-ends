@@ -148,13 +148,8 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
         // Reset dependent dropdown when parent changes
         // Do NOT auto-select the first secondary option; require user action
         if (secondDropdown) {
-          const newOptions = dependentOptions[optionValue];
-          // If options exist, clear current selection and wait for manual pick
-          if (Array.isArray(newOptions)) {
-            setSecondSelectedValue('');
-          } else {
-            setSecondSelectedValue('');
-          }
+          // Clear secondary selection and wait for manual pick
+          setSecondSelectedValue('');
         }
       },
       [onChange, secondDropdown, dependentOptions, onSecondChange]

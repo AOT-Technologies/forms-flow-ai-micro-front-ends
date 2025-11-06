@@ -60,6 +60,7 @@ const TaskFilterModalBody = ({
     filterList,
     userDetails = {} as UserDetail,
   } = useSelector((state: RootState) => state.task);
+  const selectedFilter = useSelector((state: RootState) => (state as any).task.selectedFilter);
 
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=> i?.id === filterToEdit?.id);
@@ -177,7 +178,10 @@ const TaskFilterModalBody = ({
     tenant: filterToEdit?.tenant,
     name: filterName,
     criteria: getCriteria(),
-    variables: variableArray,
+    variables: variableArray.map((v:any) => {
+      const match = selectedFilter?.variables?.find((sv:any) => sv?.key === v?.key);
+      return match?.width ? { ...v, width: match.width } : v;
+    }),
     properties: {
       displayLinesCount: dataLineValue,
       formId: selectedForm.formId,

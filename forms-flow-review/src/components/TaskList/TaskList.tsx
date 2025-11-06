@@ -325,6 +325,7 @@ const TaskList = () => {
             variant="secondary"
             onClick={handleClearAllFilters}
             label={t("Clear")}
+            dataTestId="clear-all-review-filters-button"
           />
         </div>
               

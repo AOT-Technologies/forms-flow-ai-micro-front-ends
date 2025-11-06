@@ -28,13 +28,14 @@ import {
   setBundleSelectedForms,
   setBundleLoading,
   setAppHistoryLoading,
+  setSelectedFilter,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useHistory, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList,
   fetchTaskVariables,
-  executeRule,
+  executeRule
 } from "../../api/services/filterServices";
 import {
   getBPMTaskDetail,
@@ -610,7 +611,8 @@ const TaskListTable = () => {
     ...filteredColumns.map((col, idx) => ({
       field: col.sortKey,
       headerName: t(col.name),
-      flex: 1,
+      // If a saved width exists, honor it and disable flex; otherwise allow flex
+      ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
       sortable: true,
       minWidth: col.width,
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
@@ -744,7 +746,23 @@ const TaskListTable = () => {
         disableRowSelectionOnClick
         dataGridProps={{
           getRowId: (row: any) => row.id,
-          getRowHeight: getRowHeight as any
+          getRowHeight: getRowHeight as any,
+          onColumnWidthChange: (params: any) => {
+            try {
+              const field = params?.colDef?.field || params?.field;
+              const width = params?.width;
+              if (!field || !width || !selectedFilter?.id) return;
+              const updatedVariables = (selectedFilter?.variables || []).map((v: any) =>
+                v.key === field ? { ...v, width } : v
+              );
+              const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
+              // Update locally so future saves carry widths
+              dispatch(setSelectedFilter(updatedFilter));
+              // Do not persist here; widths are saved when the user saves the filter
+            } catch (e) {
+              // no-op
+            }
+          }
         }}
         enableStickyActions={true}
       />
