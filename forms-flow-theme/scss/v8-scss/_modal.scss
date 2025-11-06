@@ -238,7 +238,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 
     .form-preview-inner-container {
         height: 100%;
-        background-color: var(--gray-x-light);
+        padding: var(--spacer-050);
     }
 
     .wizard-page-indicator {
