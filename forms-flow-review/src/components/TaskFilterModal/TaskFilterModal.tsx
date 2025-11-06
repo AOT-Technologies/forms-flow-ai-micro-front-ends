@@ -8,7 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 import TaskFilterModalBody from "./TaskFilterModalBody";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   deleteFilter,
   fetchBPMTaskCount,
@@ -112,6 +112,14 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
       resetDefaultFilter(response.data.id);
     }
   };
+
+  // Always start at step 1 when opening or switching to edit a filter
+  useEffect(() => {
+    if (show || filterToEdit?.id) {
+      setCurrentStep(1);
+    }
+  }, [show, filterToEdit?.id]);
+  
 
   return (
     <>

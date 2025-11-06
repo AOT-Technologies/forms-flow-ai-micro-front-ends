@@ -146,14 +146,10 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
         onChange?.(optionValue);
 
         // Reset dependent dropdown when parent changes
+        // Do NOT auto-select the first secondary option; require user action
         if (secondDropdown) {
-          const newOptions = dependentOptions[optionValue];
-          if (newOptions && newOptions.length > 0) {
-            setSecondSelectedValue(newOptions[0].value);
-            onSecondChange?.(newOptions[0].value);
-          } else {
-            setSecondSelectedValue(undefined);
-          }
+          // Clear secondary selection and wait for manual pick
+          setSecondSelectedValue('');
         }
       },
       [onChange, secondDropdown, dependentOptions, onSecondChange]
@@ -221,10 +217,15 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           aria-haspopup="listbox"
           disabled={disabled}
         >
+            {/* if defaultsvalue is provided, show its label */}
           <span className="dropdown-text">
-            {opts.find((o) => o.value === selValue)?.label ||
-              defaultVal ||
-              "Select"}
+           {(() => {
+              const selected = opts.find((o) => o.value === selValue);
+              if (selected) return selected.label;
+              const defaultMatch = opts.find((o) => o.value === defaultVal);
+              if (defaultMatch) return defaultMatch.label;
+              return defaultVal ?? "";
+            })()}
           </span>
           {renderArrowIcon(isOpenState)}
         </button>

@@ -256,8 +256,8 @@ const AttributeFilterDropdown = () => {
       <FilterDropDown
         label={title}
         items={filterDropdownAttributeItems}
-        searchable={false}
-        searchPlaceholder={t("Search")}
+        searchable={true}
+        searchPlaceholder={t("Search all filters")}
         onSearch={onSearch}
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}

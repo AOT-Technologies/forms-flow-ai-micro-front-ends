@@ -60,11 +60,12 @@ const TaskFilterModalBody = ({
     filterList,
     userDetails = {} as UserDetail,
   } = useSelector((state: RootState) => state.task);
+  const selectedFilter = useSelector((state: RootState) => (state as any).task.selectedFilter);
 
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=> i?.id === filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
-    filterToEdit?.variables || defaultTaskVariable
+    selectedFilterExistingData?.variables || defaultTaskVariable
   );
   const { successState, startSuccessCountdown } = useSuccessCountdown();
 
@@ -177,7 +178,10 @@ const TaskFilterModalBody = ({
     tenant: filterToEdit?.tenant,
     name: filterName,
     criteria: getCriteria(),
-    variables: variableArray,
+    variables: variableArray.map((v:any) => {
+      const match = selectedFilter?.variables?.find((sv:any) => sv?.key === v?.key);
+      return match?.width ? { ...v, width: match.width } : v;
+    }),
     properties: {
       displayLinesCount: dataLineValue,
       formId: selectedForm.formId,
@@ -216,7 +220,7 @@ const TaskFilterModalBody = ({
   useEffect(() => {
     if (!filterToEdit) return;
     //TBD updated later
-    const { roles = [], users = [], criteria = {}, properties = {} } = filterToEdit;
+    const { roles = [], users = [], criteria = {}, properties = {} } = selectedFilterExistingData;
     const { assignee, sorting, candidateGroup } = criteria;
     const cleanedRoles = roles.map((role) =>
       removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED)
@@ -325,7 +329,6 @@ const candidateOptions = useMemo(() => {
 
   const sortOptions = {
     created: createSortOrderOptions("Oldest to Newest", "Newest to Oldest"),
-    dueDate: createSortOrderOptions("Oldest to Newest", "Newest to Oldest"),
     assignee: createSortOrderOptions("A to Z", "Z to A"),
     name: createSortOrderOptions("A to Z", "Z to A"),
     formName: createSortOrderOptions("A to Z", "Z to A"),

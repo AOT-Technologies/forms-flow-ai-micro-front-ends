@@ -304,52 +304,49 @@ const TaskList = () => {
             title={t("Search Tasks")}
             dataTestId="task-search-input"
           />
-        </div>
-      </div>
-      <div className="header-section-3 overflow-visible">
-        <div className="section-seperation-left">
-          <TaskListDropdownItems />
-          <AttributeFilterDropdown />
-
-          <DateRangePicker
-            value={dateRange}
-            onChange={handleDateRangeChange}
-            placeholder={t("Filter Created Date")}
-            dataTestId="date-range-picker"
-            ariaLabel={t("Select date range for filtering")}
-            startDateAriaLabel={t("Start date")}
-            endDateAriaLabel={t("End date")}
-          />
-        </div>
-      </div>
-      <div className="header-section-4">
-        <div className="section-seperation-left">
-          <V8CustomButton
-            variant={!isAssigned ? "primary" : "secondary"}
-            onClick={() => handleAssigneTabClick(false)}
-            label={t("All")}
-            selected={!isAssigned}
-          />
-          <V8CustomButton
-            variant={isAssigned ? "primary" : "secondary"}
-            onClick={() => handleAssigneTabClick(true)}
-            label={t("Assigned to me")}
-            selected={isAssigned}
-          />
-        </div>
-        <div className="section-seperation-right">
+            </div></div>   
+            <div className="header-section-3 overflow-visible">
+              <div className="section-seperation-left">
+              <TaskListDropdownItems/>
+              <AttributeFilterDropdown/>
+              
+            <DateRangePicker
+              value={dateRange}
+              onChange={handleDateRangeChange}
+              placeholder={t("Filter Created Date")}
+              dataTestId="date-range-picker"
+              ariaLabel={t("Select date range for filtering")}
+              startDateAriaLabel={t("Start date")}
+              endDateAriaLabel={t("End date")}
+            />
+              </div>
+        <div className="d-flex justify-content-end flex-fill">
           <V8CustomButton
             variant="secondary"
             onClick={handleClearAllFilters}
             label={t("Clear")}
+            dataTestId="clear-all-review-filters-button"
           />
         </div>
-      </div>
-      {viewTasks && (
-        <div className="body-section task-list-body-section">
-          <TaskListTable />
-        </div>
-      )}
+              
+              </div>   
+              <div className="header-section-4">
+                <div className="section-seperation-left">
+                <V8CustomButton
+  variant={!isAssigned ? "primary" : "secondary"}
+      onClick={() => handleAssigneTabClick(false)}
+      label={t("All")}
+      selected={!isAssigned}
+    />
+    <V8CustomButton
+  variant={isAssigned ? "primary" : "secondary"}
+      onClick={() => handleAssigneTabClick(true)}
+      label={t("Assigned to me")}
+      selected={isAssigned}
+    />
+                </div>
+              </div>
+         {viewTasks && <div className="body-section"><TaskListTable /></div>}
     </>
   );
 };
