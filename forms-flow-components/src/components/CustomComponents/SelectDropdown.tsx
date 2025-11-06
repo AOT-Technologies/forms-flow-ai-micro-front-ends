@@ -245,6 +245,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   )}
                   onClick={() => selectFn(option.value)}
                   aria-selected={option.value === selValue}
+                  data-testid={`${dataTestId}-${option.value}`}
                 >
                   {option.label}
                 </ListGroup.Item>
