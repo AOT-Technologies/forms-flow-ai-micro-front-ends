@@ -109,11 +109,11 @@ const AttributeFilterDropdown = () => {
   const onSearch = (searchTerm: string) => {
     setFilterSearchTerm(searchTerm);
   };
-  const handleEditAttrFilter = () => {
-    if (!selectedAttributeFilter) return;
-    setShowAttributeFilter(true);
-    dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
-  };
+  // const handleEditAttrFilter = () => {
+  //   if (!selectedAttributeFilter) return;
+  //   setShowAttributeFilter(true);
+  //   dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
+  // };
 
 
   const handleEditAttributeFromItem = (filter) => {
