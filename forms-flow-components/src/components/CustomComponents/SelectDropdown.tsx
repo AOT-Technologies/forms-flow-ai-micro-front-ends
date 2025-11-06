@@ -146,13 +146,14 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
         onChange?.(optionValue);
 
         // Reset dependent dropdown when parent changes
+        // Do NOT auto-select the first secondary option; require user action
         if (secondDropdown) {
           const newOptions = dependentOptions[optionValue];
-          if (newOptions && newOptions.length > 0) {
-            setSecondSelectedValue(newOptions[0].value);
-            onSecondChange?.(newOptions[0].value);
+          // If options exist, clear current selection and wait for manual pick
+          if (Array.isArray(newOptions)) {
+            setSecondSelectedValue('');
           } else {
-            setSecondSelectedValue(undefined);
+            setSecondSelectedValue('');
           }
         }
       },
@@ -224,7 +225,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           <span className="dropdown-text">
             {opts.find((o) => o.value === selValue)?.label ||
               defaultVal ||
-              "Select"}
+              ""}
           </span>
           {renderArrowIcon(isOpenState)}
         </button>
