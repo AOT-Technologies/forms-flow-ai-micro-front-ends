@@ -1,11 +1,11 @@
 .access-denied-text {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--primary-font);
     font-size: 2rem;
     color: var(--ff-black);
     opacity: 1;
   }
   .access-denied{
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--primary-font);
     font-size: 1rem;
     color: var(--ff-black);
     opacity: 1;
