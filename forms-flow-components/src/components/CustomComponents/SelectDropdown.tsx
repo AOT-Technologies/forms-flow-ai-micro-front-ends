@@ -217,10 +217,15 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           aria-haspopup="listbox"
           disabled={disabled}
         >
+            {/* if defaultsvalue is provided, show its label */}
           <span className="dropdown-text">
-            {opts.find((o) => o.value === selValue)?.label ||
-              defaultVal ||
-              ""}
+           {(() => {
+              const selected = opts.find((o) => o.value === selValue);
+              if (selected) return selected.label;
+              const defaultMatch = opts.find((o) => o.value === defaultVal);
+              if (defaultMatch) return defaultMatch.label;
+              return defaultVal ?? "";
+            })()}
           </span>
           {renderArrowIcon(isOpenState)}
         </button>
