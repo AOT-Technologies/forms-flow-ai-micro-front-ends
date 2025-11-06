@@ -320,6 +320,13 @@ const TaskList = () => {
               endDateAriaLabel={t("End date")}
             />
               </div>
+        <div className="d-flex justify-content-end flex-fill">
+          <V8CustomButton
+            variant="secondary"
+            onClick={handleClearAllFilters}
+            label={t("Clear")}
+          />
+        </div>
               
               </div>   
               <div className="header-section-4">
@@ -337,13 +344,6 @@ const TaskList = () => {
       selected={isAssigned}
     />
                 </div>
-                <div className="section-seperation-right">
-          <V8CustomButton
-            variant="secondary"
-            onClick={handleClearAllFilters}
-            label={t("Clear")}
-          />
-              </div>
               </div>
          {viewTasks && <div className="body-section"><TaskListTable /></div>}
     </>
