@@ -8,6 +8,7 @@ import {
   setDateRangeFilter,
   setDefaultFilter,
   setFilterListSortParams,
+  setSelectedBpmAttributeFilter,
   setIsAssigned,
   setSelectedFilter,
   setTaskListLimit,
@@ -164,6 +165,34 @@ const TaskList = () => {
     fetchTaskListData();
   };
 
+  // Clear task filter, attribute filter, and date range to defaults
+  const handleClearAllFilters = () => {
+    // Determine the base filter to reset to
+    let baseFilter = null as any;
+    if (defaultFilterId) {
+      baseFilter = filters.find((f) => f.id === defaultFilterId);
+    }
+    if (!baseFilter) {
+      baseFilter = allTasksPayload; // fallback to All Tasks
+    }
+
+    batch(() => {
+      // Reset core selections
+      dispatch(setSelectedFilter(baseFilter));
+      dispatch(setSelectedBpmAttributeFilter(null as any));
+      dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
+      // Reset pagination defaults
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(setTaskListLimit(25));
+      // Refresh attribute filter list for the base filter, if applicable
+      if (baseFilter?.id) {
+        dispatch(fetchAttributeFilterList(baseFilter.id) as any);
+      }
+      // Fetch tasks for the base filter
+      dispatch(fetchServiceTaskList(baseFilter, null, 1, 25) as any);
+    });
+  };
+
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
     // reset the sort orders using helper function
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
@@ -308,7 +337,13 @@ const TaskList = () => {
       selected={isAssigned}
     />
                 </div>
-             
+                <div className="section-seperation-right">
+          <V8CustomButton
+            variant="secondary"
+            onClick={handleClearAllFilters}
+            label={t("Clear")}
+          />
+              </div>
               </div>
          {viewTasks && <div className="body-section"><TaskListTable /></div>}
     </>

@@ -1,9 +1,9 @@
 import Modal from "react-bootstrap/Modal";
 import {
   CloseIcon,
-  ConfirmModal,
-  CustomInfo,
+  PromptModal,
   useSuccessCountdown,
+  V8CustomButton,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskFilterModalBody from "./TaskFilterModalBody";
@@ -29,9 +29,7 @@ import {
 const TaskFilterModal = ({ show, onClose, toggleModal }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const isUnsavedFilter = useSelector(
-    (state: any) => state.task.isUnsavedFilter
-  );
+
   const filterToEdit = useSelector((state: any) => state.task.filterToEdit);
   const filterList = useSelector((state: RootState) => state.task.filterList);
   const filterListAndCount =  useSelector((state:RootState)=>state.task.filtersAndCount);
@@ -39,6 +37,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     (state: RootState) => state.task.defaultFilter
   );
   const limit = useSelector((state: RootState) => state.task.limit);
+  const [currentStep, setCurrentStep] = useState(1);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const {
@@ -59,6 +58,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     toggleModal();
     setShowUpdateModal((prev) => !prev);
   };
+  const deleteMessage = (t("Deleting a filter is permanent and cannot be undone."));
 
   const toggleDeleteModal = () => {
     toggleModal();
@@ -115,85 +115,78 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
 
   return (
     <>
-      <Modal
-        show={show}
-        onHide={onClose}
-        size="sm"
-        data-testid="create-filter-modal"
-        aria-labelledby={t("create filter modal title")}
-        aria-describedby="create-filter-modal"
-      >
-        <Modal.Header>
-          <Modal.Title id="create-filter-title">
-            <p>{`${t("Tasks")}: ${
-              filterToEdit && !isUnsavedFilter
-                ? filterToEdit.name //need to check if it is unsaved or not
-                : "Unsaved Filter"
-            }`}</p>
-          </Modal.Title>
-          <div className="icon-close" onClick={onClose}>
-            <CloseIcon />
-          </div>
-        </Modal.Header>
+     <Modal
+  show={show}
+  onHide={onClose}
+  size="lg"
+  centered
+  dialogClassName="task-filter-modal-popover"
+  data-testid="create-filter-modal"
+  aria-labelledby={t("create filter modal title")}
+  aria-describedby="create-filter-modal"
+>
+    <Modal.Header>
+    <div className="modal-header-content">
+    <div className="modal-title">
+        {filterToEdit?.id  ? t(`Edit Custom Filter > ${filterToEdit.name}`)  : t("Create Custom Filter")} 
+        <CloseIcon color="var(--gray-darkest)" onClick={onClose}/>
+        </div>
 
-        <TaskFilterModalBody
-          toggleDeleteModal={toggleDeleteModal}
-          toggleUpdateModal={toggleUpdateModal}
-          deleteSuccess={deleteSuccess}
-          updateSuccess={updateSuccess}
-          showTaskFilterMainModal={show}
-          closeTaskFilterMainModal={onClose}
-          filterToEdit={filterToEdit}
-          handleFilterUpdate={handleFilterUpdate}
-        />
-      </Modal>
+        <div className="d-flex justify-content-between align-items-center modal-subtitle" >
+          <div className="subtitle-text">
+            {currentStep === 1 &&
+            t("Select a form or multiple forms you want your custom filter to apply to")}
+            {currentStep === 2 &&
+            t(
+              "Select and order the columns you would like to see in your custom filter and choose how the results are sorted"
+            )}
+            {currentStep === 3 &&
+            t("Name your custom filter and choose who you can see it")}
+          </div>
+          {filterToEdit?.id && filterToEdit?.name !== "All Tasks" && (
+            <V8CustomButton
+              secondary
+              label={t("Delete filter")}
+              onClick={toggleDeleteModal}
+              dataTestId="header-delete-filter"
+              ariaLabel={t("Delete filter")}
+              variant="error"
+            />
+          )}
+        </div>
+    </div>
+  </Modal.Header>
+
+  <TaskFilterModalBody
+    toggleDeleteModal={toggleDeleteModal}
+    toggleUpdateModal={toggleUpdateModal}
+    deleteSuccess={deleteSuccess}
+    updateSuccess={updateSuccess}
+    showTaskFilterMainModal={show}
+    closeTaskFilterMainModal={onClose}
+    filterToEdit={filterToEdit}
+    handleFilterUpdate={handleFilterUpdate}
+    currentStep={currentStep}
+    onStepChange={setCurrentStep}
+  />
+</Modal>
+
 
       {showDeleteModal && (
-        <ConfirmModal
+        <PromptModal
           show={showDeleteModal}
-          title={t("Delete This Filter?")}
-          message={
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={(filterToEdit.users.length>0) ? t("This action cannot be undone."): 
-                t(
-                "This filter is shared with others. Deleting this filter will delete it for everybody and might affect their workflow."
-              )}
-              dataTestId="task-filter-delete-note"
-            />
-          }
-          primaryBtnAction={toggleDeleteModal}
           onClose={toggleDeleteModal}
-          primaryBtnText={t("No, Keep This Filter")}
-          secondaryBtnText={(filterToEdit.users.length>0) ? t("Yes, Delete This Filter"): t("Yes, Delete This Filter For Everybody")  }
-          secondaryBtnAction={handleFilterDelete}
-          secondoryBtndataTestid="confirm-revert-button"
-        />
+          title={t("Delete Filter")}
+          message={deleteMessage}
+          type="warning"
+          primaryBtnText={t("Delete")}
+          primaryBtnAction={handleFilterDelete}
+          secondaryBtnText={t("Cancel")}
+          secondaryBtnAction={toggleDeleteModal}
+        />        
       )}
 
-      {showUpdateModal && (
-        <ConfirmModal
-          show={showUpdateModal}
-          title={t("Update This Filter?")}
-          message={
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={t(
-                "This filter is shared with others. Updating this filter will update it for everybody and might affect their workflow. Proceed with caution."
-              )}
-              dataTestId="task-filter-update-note"
-            />
-          }
-          primaryBtnAction={toggleUpdateModal}
-          onClose={toggleUpdateModal}
-          primaryBtnText={t("No, Cancel Changes")}
-          secondaryBtnText={t("Yes, Update This Filter For Everybody")}
-          secondaryBtnAction={()=>{handleFilterUpdate();}}
-          secondoryBtndataTestid="confirm-revert-button"
-        />
-      )}
+     
     </>
   );
 };

@@ -650,6 +650,63 @@ const TaskListTable = () => {
 
   const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
 
+  // Row height scales with selected filter's dataLineValue/displayLinesCount
+  const computedRowHeight = useMemo(() => {
+    const lines = Number(
+      selectedFilter?.properties?.dataLineValue ??
+      selectedFilter?.properties?.displayLinesCount ??
+      1
+    );
+    const base = 55; // default row height in ReusableTable
+    const clampedLines = isNaN(lines) ? 1 : Math.max(1, Math.min(4, lines));
+    return base * clampedLines;
+  }, [selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
+
+  // Heuristic: if a row's visible text values all fit in one line, keep base height
+  const getRowHeight = useCallback((params: any) => {
+    const base = 55;
+    const maxLines = Number(
+      selectedFilter?.properties?.dataLineValue ??
+      selectedFilter?.properties?.displayLinesCount ??
+      1
+    );
+    if (maxLines <= 1) return base;
+
+    const row: any = params?.model || params?.row || {};
+
+    // visible column keys excluding actions/assignee
+    const visibleKeys = (columns || [])
+      .filter((c) => c.sortKey !== 'actions' && c.sortKey !== 'assignee')
+      .map((c) => c.sortKey);
+
+    const getTextValue = (key: string): string => {
+      if (key === 'created') {
+        return row.created ? HelperServices.getLocaldate(row.created) : '';
+      }
+      // direct field
+      if (row[key] != null) return String(row[key]);
+      // process variables
+      const vars = row?._embedded?.variable || [];
+      const match = vars.find((v: any) => v?.name === key);
+      if (!match) return '';
+      let v = match.value;
+      // if looks like JSON of selectboxes, attempt to join true keys
+      try {
+        if (typeof v === 'string' && v.startsWith('{') && v.endsWith('}')) {
+          const obj = JSON.parse(v);
+          const trues = Object.keys(obj).filter((k) => obj[k]);
+          v = trues.join(', ');
+        }
+      } catch {}
+      return v != null ? String(v) : '';
+    };
+
+    // If any value is long enough to likely wrap, increase height
+    const threshold = 28; // approx chars that fit in one line for typical column width
+    const needsMore = visibleKeys.some((k) => getTextValue(k).length > threshold);
+    return needsMore ? base * Math.max(1, Math.min(4, Number(maxLines))) : base;
+  }, [columns, selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
+
   if (!columns?.length) {
     return isTaskListLoading ? <Loading /> : (
       <div className="custom-table-wrapper-outter">
@@ -668,6 +725,7 @@ const TaskListTable = () => {
         rows={memoizedRows}
         rowCount={tasksCount}
         loading={isTaskListLoading}
+        rowHeight={computedRowHeight}
         paginationMode="server"
         sortingMode="server"
         paginationModel={paginationModel}
@@ -685,7 +743,8 @@ const TaskListTable = () => {
         disableColumnMenu
         disableRowSelectionOnClick
         dataGridProps={{
-          getRowId: (row: any) => row.id
+          getRowId: (row: any) => row.id,
+          getRowHeight: getRowHeight as any
         }}
         enableStickyActions={true}
       />
