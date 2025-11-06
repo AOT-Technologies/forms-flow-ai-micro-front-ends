@@ -115,7 +115,7 @@ const TaskListDropdownItems = memo(() => {
     const reOrderFilter: FilterItemType = {
       content: (
         <div className="d-flex align-items-center justify-content-between">
-          <span>{t("Re-order And Hide Filters")}</span> <ReorderIcon />
+          <span>{t("Re-order / Hide Filters")}</span> <ReorderIcon />
         </div>
       ),
       type: "reorder",

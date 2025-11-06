@@ -150,7 +150,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
               onClick={toggleDeleteModal}
               dataTestId="header-delete-filter"
               ariaLabel={t("Delete filter")}
-              variant="error"
+              variant="warning"
             />
           )}
         </div>

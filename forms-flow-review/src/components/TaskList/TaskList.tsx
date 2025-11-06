@@ -285,15 +285,15 @@ const TaskList = () => {
   
   return (
     <>
-        <div className="Toastify"></div>
-        <div className="toast-section">{}</div>
-        <div className="header-section-1">
+      <div className="Toastify"></div>
+      <div className="toast-section">{}</div>
+      <div className="header-section-1">
         <div className="section-seperation-left">
           <h4> Tasks </h4>
-        </div> 
         </div>
-        <div className="header-section-2">
-          <div className="section-seperation-left">
+      </div>
+      <div className="header-section-2">
+        <div className="section-seperation-left">
           <CustomSearch
             // search={}
             // setSearch={}
@@ -304,48 +304,52 @@ const TaskList = () => {
             title={t("Search Tasks")}
             dataTestId="task-search-input"
           />
-            </div></div>   
-            <div className="header-section-3 overflow-visible">
-              <div className="section-seperation-left">
-              <TaskListDropdownItems/>
-              <AttributeFilterDropdown/>
-              
-            <DateRangePicker
-              value={dateRange}
-              onChange={handleDateRangeChange}
-              placeholder={t("Filter Created Date")}
-              dataTestId="date-range-picker"
-              ariaLabel={t("Select date range for filtering")}
-              startDateAriaLabel={t("Start date")}
-              endDateAriaLabel={t("End date")}
-            />
-              </div>
-              
-              </div>   
-              <div className="header-section-4">
-                <div className="section-seperation-left">
-                <V8CustomButton
-  variant={!isAssigned ? "primary" : "secondary"}
-      onClick={() => handleAssigneTabClick(false)}
-      label={t("All")}
-      selected={!isAssigned}
-    />
-    <V8CustomButton
-  variant={isAssigned ? "primary" : "secondary"}
-      onClick={() => handleAssigneTabClick(true)}
-      label={t("Assigned to me")}
-      selected={isAssigned}
-    />
-                </div>
-                <div className="section-seperation-right">
+        </div>
+      </div>
+      <div className="header-section-3 overflow-visible">
+        <div className="section-seperation-left">
+          <TaskListDropdownItems />
+          <AttributeFilterDropdown />
+
+          <DateRangePicker
+            value={dateRange}
+            onChange={handleDateRangeChange}
+            placeholder={t("Filter Created Date")}
+            dataTestId="date-range-picker"
+            ariaLabel={t("Select date range for filtering")}
+            startDateAriaLabel={t("Start date")}
+            endDateAriaLabel={t("End date")}
+          />
+        </div>
+      </div>
+      <div className="header-section-4">
+        <div className="section-seperation-left">
+          <V8CustomButton
+            variant={!isAssigned ? "primary" : "secondary"}
+            onClick={() => handleAssigneTabClick(false)}
+            label={t("All")}
+            selected={!isAssigned}
+          />
+          <V8CustomButton
+            variant={isAssigned ? "primary" : "secondary"}
+            onClick={() => handleAssigneTabClick(true)}
+            label={t("Assigned to me")}
+            selected={isAssigned}
+          />
+        </div>
+        <div className="section-seperation-right">
           <V8CustomButton
             variant="secondary"
             onClick={handleClearAllFilters}
             label={t("Clear")}
           />
-              </div>
-              </div>
-         {viewTasks && <div className="body-section"><TaskListTable /></div>}
+        </div>
+      </div>
+      {viewTasks && (
+        <div className="body-section task-list-body-section">
+          <TaskListTable />
+        </div>
+      )}
     </>
   );
 };

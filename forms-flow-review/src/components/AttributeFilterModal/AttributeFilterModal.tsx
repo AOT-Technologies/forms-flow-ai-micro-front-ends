@@ -80,7 +80,6 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   };
 
   const handleDeleteAttributeFilter = async()=>{
-    toggleDeleteModal();
     await deleteFilter(attributeFilterToEdit?.id);
     const newFilters = attributeFilterList.filter(i=>i.id !== attributeFilterToEdit?.id);
     batch(()=>{
@@ -88,6 +87,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     dispatch(setSelectedBpmAttributeFilter(null));
     dispatch(fetchServiceTaskList(selectedTaskFilter,null,1,limit))
     })
+    setShowDeleteModal(false);
   }
 
   return (

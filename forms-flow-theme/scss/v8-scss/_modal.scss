@@ -117,8 +117,11 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             margin: 0;
         }
 
-
-
+        .filter-name-container,.selectdropdown-container{
+            .text-input,.custom-selectdropdown {
+            width: 20rem !important; // 320px
+        }
+        }
 
         .form-option:hover {
             background-color: var(--gray-x-light) !important;
@@ -212,7 +215,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     .filter-form-selection-page {
         display: flex;
         gap: var(--spacer-150);
-        height: 60vh;
+        height: 55vh; // chaged form selection was not fuly visible 
         overflow: hidden;
     }
 
