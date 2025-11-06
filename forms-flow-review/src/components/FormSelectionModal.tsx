@@ -107,10 +107,12 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     
       const formOptions = getFormOptions();
       if (formOptions.length > 0) {
-        const items = formOptions.map((item) => ({ label: item.formName, value: item.formId }));
-        const selectedValues = selectedForm.formId ? [selectedForm.formId] : [];
+        // Normalize to strings so CustomCheckbox strict-equality matches
+        const items = formOptions.map((item) => ({ label: item.formName, value: String(item.formId) }));
+        const selectedValues = selectedForm.formId ? [String(selectedForm.formId)] : [];
         return (
           <CustomCheckbox
+            key={`form-list-${String(selectedForm.formId)}-${items.length}`}
           size="small"
           variant="secondary"
             items={items}
@@ -118,15 +120,15 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             optionClassName="form-option"
             selectedValues={selectedValues}
             onChange={(_values, event) => {
-              const clickedId = event?.currentTarget?.value ?? event?.target?.value;
+              const clickedId = String(event?.currentTarget?.value ?? event?.target?.value);
               if (!clickedId) return;
-              if (String(selectedForm.formId) === String(clickedId)) {
+              if (String(selectedForm.formId) === clickedId) {
                 setSelectedForm({ formId: "", formName: "" });
                 return;
               }
-              const matched = formOptions.find((i) => String(i.formId) === String(clickedId));
+              const matched = formOptions.find((i) => String(i.formId) === clickedId);
               if (matched) {
-                const newSel = { formId: matched.formId, formName: matched.formName };
+                const newSel = { formId: String(matched.formId), formName: matched.formName };
                 setSelectedForm(newSel);
                 onSelectForm(newSel);
               }

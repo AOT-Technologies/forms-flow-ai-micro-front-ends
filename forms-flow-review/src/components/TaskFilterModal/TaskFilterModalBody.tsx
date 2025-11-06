@@ -62,7 +62,7 @@ const TaskFilterModalBody = ({
   } = useSelector((state: RootState) => state.task);
 
   const [accessValue, setAccessValue] = useState("");
-  const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
+  const selectedFilterExistingData = filterList.find((i)=> i?.id === filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
     filterToEdit?.variables || defaultTaskVariable
   );
@@ -246,19 +246,33 @@ const TaskFilterModalBody = ({
 
   /* -------- handling already selected forms when after forms fetching ------- */
   useEffect(() => {
-    if (filterToEdit && forms.length) {
-      const matchedForm = forms.find(
-        (form) => form.formId === filterToEdit?.properties?.formId
-      );
-      if (matchedForm) {
-        setSelectedForm({
-          formId: matchedForm.formId,
-          formName: matchedForm.formName,
-        });
-        handleFetchTaskVariables(matchedForm.formId);
+    const savedId = filterToEdit?.properties?.formId || selectedFilterExistingData?.properties?.formId;
+    if (!savedId) return;
+
+    // Seed selection early so child modal can show preselection
+    if (!forms.length) {
+      if (String(selectedForm.formId || "") !== String(savedId)) {
+        setSelectedForm({ formId: savedId, formName: "" });
       }
+      return;
     }
-  }, [filterToEdit, forms.length]);
+
+    // Resolve proper form object and name from the list
+    const idStr = String(savedId);
+    const matchedForm = forms.find((form:any) =>
+      [form?.formId, form?.parentFormId, form?._id, form?.id]
+        .filter((v:any) => v !== undefined && v !== null)
+        .map((v:any) => String(v))
+        .includes(idStr)
+    );
+
+    if (matchedForm) {
+      const resolvedId = matchedForm.formId ?? matchedForm.parentFormId ?? matchedForm._id ?? matchedForm.id;
+      const resolvedName = matchedForm.formName || matchedForm.name || "";
+      setSelectedForm({ formId: resolvedId, formName: resolvedName });
+      handleFetchTaskVariables(resolvedId);
+    }
+  }, [filterToEdit, selectedFilterExistingData, forms.length]);
 
   /* ------------------- fetching all form from webapi side ------------------- */
   useEffect(() => {
@@ -321,7 +335,7 @@ const candidateOptions = useMemo(() => {
     ),
   };
 
-  const dataLineCount = Array.from({ length: 4 }, (_, i) => {
+  const dataLineCount = Array.from({ length: 5 }, (_, i) => {
     const value = (i + 1).toString();
     return { label: value, value, onClick: () => setDataLineValue(i + 1) };
   });
@@ -541,7 +555,7 @@ const handleFetchTaskVariables = (formId) => {
       <div className="lines-count-container">
       <SelectDropdown
         options={dataLineCount.map(({ label, value }) => ({ label, value }))}
-        value={String(dataLineValue)}
+        value={String(selectedFilterExistingData?.properties?.dataLineValue || dataLineValue)}
         onChange={(v) => setDataLineValue(Number(v))}
         ariaLabel={t("How Many Lines of Data To Show Per Row")}
         dataTestId="data-line"
