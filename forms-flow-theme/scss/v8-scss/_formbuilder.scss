@@ -192,6 +192,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
     --ff-primary: var(--primary-dark) !important;
     --ff-border-radius: var(--border-radius) !important;
     --ff-nav-link-color: var(--secondary-dark) !important;
+    --ff-nav-link-hover-color: var(--gray-darkest) !important;
     --ff-link-color-rgb: var(--ff-primary) !important;
     font-family: var(--font-family-base) !important;
   }
@@ -226,4 +227,9 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
     &.preview-panel{
       margin-top: 16px;
     }
+  }
+
+  .formio-form .form-group.formio-hidden, .formio-builder-form .form-group.formio-hidden{
+    padding: 0 !important;
+    margin: 0 !important;
   }
