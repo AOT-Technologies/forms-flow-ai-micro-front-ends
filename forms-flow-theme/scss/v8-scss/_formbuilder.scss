@@ -1,7 +1,7 @@
 // Form Builder Variables
 $gray-medium: var(--gray-medium);
 $white: var(--white-300);
-$form-builder-breakpoint: 1299px;
+$form-builder-breakpoint: 1550px;
 $form-builder-border-radius: 2px;
 $form-builder-border-radius-round: 50%;
 $form-builder-border-width: 1px;
@@ -94,3 +94,135 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
         box-shadow: $form-builder-shadow;
     }
 }
+
+/* ============================
+   Overrides for user-styles.css
+   ============================ */
+
+// Override: btn-primary hover/focus/active styles from user-styles.css
+// Ensures table action buttons maintain their intended styling
+.btn{
+    background-color: var(--white-300) !important;
+    color: var(--secondary-dark) !important;
+    border-color: var(--secondary-dark) !important;
+    border-radius: var(--border-radius) !important;
+  
+    &:hover {
+      background-color: var(--white-300) !important;
+      color: var(--secondary-dark) !important;
+      border-color: var(--secondary-dark) !important;
+    }
+    &:active {
+      background-color: var(--white-300) !important;
+      color: var(--secondary-dark) !important;
+      border-color: var(--secondary-dark) !important;
+    }
+  
+    &.btn-success{
+      border-color: var(--primary-dark) !important;
+    }
+    &.btn-danger{
+      border-color: var(--red-100) !important;
+    }
+  }
+    .btn-primary.hover,
+    .btn-primary:hover,
+    .btn-primary.disabled:hover,
+    .btn-primary[disabled]:hover,
+    fieldset[disabled] .btn-primary:hover,
+    .btn-primary.disabled.hover,
+    .btn-primary[disabled].hover,
+    fieldset[disabled] .btn-primary.hover,
+    .btn-primary.focus,
+    .btn-primary:focus,
+    .btn-primary.disabled:focus,
+    .btn-primary[disabled]:focus,
+    fieldset[disabled] .btn-primary:focus,
+    .btn-primary.disabled.focus,
+    .btn-primary[disabled].focus,
+    fieldset[disabled] .btn-primary.focus {
+      // Override: user-styles.css sets background-color: #003366
+      // Table buttons should use their default theme colors
+      background-color: var(--white-300) !important;
+      border-color: var(--primary-dark) !important;
+    }
+  
+    .btn-primary:active:not(:hover),
+    .btn-primary.active:not(.hover),
+    .btn-primary.disabled:active:not(:hover),
+    .btn-primary[disabled]:active:not(:hover),
+    fieldset[disabled] .btn-primary:active:not(:hover),
+    .btn-primary.disabled.active:not(.hover),
+    .btn-primary[disabled].active:not(.hover),
+    fieldset[disabled] .btn-primary.active:not(.hover),
+    .btn-primary:active:hover,
+    .btn-primary.active.hover,
+    .btn-primary.disabled:active:hover,
+    .btn-primary[disabled]:active:hover,
+    fieldset[disabled] .btn-primary:active:hover,
+    .btn-primary.disabled.active.hover,
+    .btn-primary[disabled].active.hover,
+    fieldset[disabled] .btn-primary.active.hover,
+    .btn-primary:active,
+    .btn-primary.active,
+    .btn-primary.disabled:active,
+    .btn-primary[disabled]:active,
+    fieldset[disabled] .btn-primary:active,
+    .btn-primary.disabled.active,
+    .btn-primary[disabled].active,
+    fieldset[disabled] .btn-primary.active {
+      // Override: user-styles.css sets background-color: #002142
+      // Table buttons should use their default theme colors
+      background-color: var(--white-300) !important;
+      border-color: var(--primary-dark) !important;
+    }
+  
+  // Override: alert-danger styles from user-styles.css
+  // Ensures alerts within tables maintain consistent styling
+    .alert-danger {
+      // Override: user-styles.css sets color: #355992, background-color: #b1cbf6, border-color: #99befa
+      // Table alerts should use standard alert styling
+      color: var(--secondary-dark) !important;
+      background-color: var(--red-300) !important;
+      border-color: var(--red-200) !important;
+    }
+  
+  :root, [data-bs-theme=light], .ff-theme, .nav {
+    --ff-primary: var(--primary-dark) !important;
+    --ff-border-radius: var(--border-radius) !important;
+    --ff-nav-link-color: var(--secondary-dark) !important;
+    --ff-link-color-rgb: var(--ff-primary) !important;
+    font-family: var(--font-family-base) !important;
+  }
+  
+  .formio-dialog-content {
+    font-family: var(--font-family-base) !important;
+  }
+  
+  .form-control {
+    border-color: var(--secondary-dark) !important;
+  }
+  .form-check:not(.form-switch) .form-check-input[type=checkbox], .checkbox-container .form-check-input[type=checkbox]{
+    border-color: var(--secondary-dark) !important;
+    border-radius: var(--border-radius) !important;
+    &::after  {
+      border-color: var(--secondary-dark) !important;
+    }
+  }
+  .form-check:not(.form-switch) .form-check-input[type=checkbox]:checked, .checkbox-container .form-check-input[type=checkbox]:checked{
+    border-color: var(--secondary-dark) !important;
+    border-radius: var(--border-radius) !important;
+    &::after  {
+      border-color: var(--secondary-dark) !important;
+    }
+  }
+  .component-edit-container{
+    .btn{
+      border-radius:25px !important;
+    }
+  }
+  .formio-dialog-content .panel{
+    &.preview-panel{
+      margin-top: 16px;
+    }
+  }
