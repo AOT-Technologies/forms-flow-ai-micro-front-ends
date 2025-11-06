@@ -139,17 +139,6 @@ const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
       ...(dataGridProps && dataGridProps.slotProps ? dataGridProps.slotProps : {}),
     }), [dataGridProps]);
 
-    // Default paginationModel to first option in pageSizeOptions if not provided
-    const defaultPaginationModel = useMemo(() => {
-      if (paginationModel) {
-        return paginationModel;
-      }
-      const defaultPageSize = pageSizeOptions && pageSizeOptions.length > 0 
-        ? pageSizeOptions[0] 
-        : 10;
-      return { page: 0, pageSize: defaultPageSize };
-    }, [paginationModel, pageSizeOptions]);
-
     return (
       <Paper sx={sx}>
         <DataGrid
@@ -163,7 +152,7 @@ const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
           paginationMode={paginationMode}
           sortModel={sortModel}
           onSortModelChange={onSortModelChange}
-          paginationModel={defaultPaginationModel}
+          paginationModel={paginationModel}
           onPaginationModelChange={onPaginationModelChange}
           getRowId={getRowId}
           pageSizeOptions={pageSizeOptions}

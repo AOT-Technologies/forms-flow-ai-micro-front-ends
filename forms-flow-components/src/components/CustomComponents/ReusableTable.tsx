@@ -93,6 +93,12 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
     }));
   }, [rows, getRowId]);
 
+  // Extract pagination props from dataGridProps to ensure they don't override explicit props
+  const { paginationModel: dataGridPaginationModel, onPaginationModelChange: dataGridOnPaginationModelChange, ...restDataGridProps } = (dataGridProps as any) || {};
+
+  // Pass-through pagination change handler; duplication should be handled by callers
+  const handlePaginationModelChange = onPaginationModelChange;
+
   return (
     <Paper sx={sx}>
       <DataGrid
@@ -102,13 +108,13 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
         rowCount={rowCount}
         loading={loading}
         paginationMode={paginationMode}
+        paginationModel={paginationModel}
+        onPaginationModelChange={handlePaginationModelChange}
         sortingMode={sortingMode}
         disableColumnMenu={disableColumnMenu}
         sortModel={sortModel}
         onSortModelChange={onSortModelChange}
-        paginationModel={paginationModel}
         getRowId={getRowId}
-        onPaginationModelChange={onPaginationModelChange}
         pageSizeOptions={pageSizeOptions}
         rowHeight={rowHeight}
         disableRowSelectionOnClick={disableRowSelectionOnClick}
@@ -122,7 +128,6 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
         }}
         localeText={defaultLocaleText}
         className={enableStickyActions ? 'action-column-sticky' : ''} //to avoid resizing of actions column
-
         sx={{
           ...(disableColumnResize && {
             '& .MuiDataGrid-columnSeparator': {
