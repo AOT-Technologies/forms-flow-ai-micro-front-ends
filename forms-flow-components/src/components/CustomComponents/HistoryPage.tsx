@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { ConfirmModal } from "./ConfirmModal";
 import { useTranslation } from "react-i18next";
 import { HelperServices, StorageService, StyleServices } from "@formsflow/service";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Box, Paper } from "@mui/material";
+import { GridColDef } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
 import { V8CustomButton, } from "./CustomButton";
 import { RefreshIcon } from "../SvgIcons/index";
+import WrappedTable from "./WrappedTable";
 
 const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
 
@@ -228,34 +229,38 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
 
     return (
       <>
-        <Paper sx={{ height: { sm: 400, md: 510, lg: 510 }, width: "100%" }}
+        <div
           className="historypage-container"
           data-testid="history-page"
           aria-labelledby={t("history-page-table")}
           aria-describedby="history-page-table">
-          <DataGrid
+          <WrappedTable
             rows={generateRows(allHistory)}
             columns={generateColumns()}
             paginationMode="server"
             paginationModel={paginationModel}
             pageSizeOptions={[10, 25, 50, 100]}
-            hideFooterSelectedRowCount
             disableColumnResize
             rowHeight={55}
-            columnHeaderHeight={55}
             disableColumnMenu
             disableRowSelectionOnClick
             loading={loading}
             onPaginationModelChange={handlePaginationModelChange}
             rowCount={historyCount}
-            slotProps={{
-              loadingOverlay: {
-                variant: 'skeleton',
-                noRowsVariant: 'skeleton',
+            onRefresh={refreshBtnAction}
+            sx={{ height: { sm: 400, md: 510, lg: 510 }, width: "100%" }}
+            dataGridProps={{
+              hideFooterSelectedRowCount: true,
+              columnHeaderHeight: 55,
+              slotProps: {
+                loadingOverlay: {
+                  variant: 'skeleton',
+                  noRowsVariant: 'skeleton',
+                },
               },
             }}
           />
-        </Paper>
+        </div>
 
         {/* Confirmation Modal */}
         {selectedVersion && (
