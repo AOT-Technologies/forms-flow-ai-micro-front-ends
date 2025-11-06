@@ -88,6 +88,11 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     .modal-body {
         overflow: hidden;
 
+        .drag-drop-list-container{
+            overflow: scroll;
+            max-height: 30rem;
+        }   
+
         .form-option {
             display: flex !important;
             align-items: center;
@@ -218,14 +223,12 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         height: 100%;
         border-right: 1px solid var(--gray-x-light);
         padding-right: 1rem;
-        overflow: auto;
+        overflow: hidden;
     }
 
 
     .form-items-list {
-        overflow: auto;
-        flex: 1;
-        min-height: 0;
+        overflow: scroll;
     }
 
     .right-form-preview-container {
