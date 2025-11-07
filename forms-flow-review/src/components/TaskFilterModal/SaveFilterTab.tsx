@@ -232,35 +232,37 @@ const SaveFilterTab = ({
   };
   return (
     <>
-    <div className=" filter-name-container mb-4"><p className="dropdown-label-text">{t("Filter Name")}</p>
-    <CustomTextInput
-      name="filter-name"
-      type="text"
-      ariaLabel={t("TaskFilter Name")}
-      dataTestId="task-filter-name"
-      value={filterName}
-      setValue={handleFilterName}
-      isInvalid={!!filterNameError}
-      onBlur={handleNameError}
-      feedback={filterNameError}
-      disabled={filterToEdit && !editRole}
-      id="filter-name"
-      m
-    /></div>
-    
-     
-        <p className="dropdown-label-text">{t("Share This Filter With")}</p>
-        <SelectDropdown
-  options={filterShareOptions}
-  dependentOptions={{
-    [SPECIFIC_USER_OR_GROUP]: candidateOptions, // key = primary value
-  }}
-  secondDropdown={true}
-  defaultValue={shareFilter}
-  secondDefaultValue={shareFilterForSpecificRole}
-  onChange={(v) => setShareFilter(v)}
-  onSecondChange={(v) => setShareFilterForSpecificRole(v)}
-/>
+      <div className=" filter-name-container mb-4">
+        <p className="dropdown-label-text">{t("Filter Name")}</p>
+        <CustomTextInput
+          name="filter-name"
+          type="text"
+          ariaLabel={t("TaskFilter Name")}
+          dataTestId="task-filter-name"
+          value={filterName}
+          setValue={handleFilterName}
+          isInvalid={!!filterNameError}
+          onBlur={handleNameError}
+          feedback={filterNameError}
+          disabled={filterToEdit && !editRole}
+          id="filter-name"
+          m
+        />
+      </div>
+
+      <p className="dropdown-label-text">{t("Share This Filter With")}</p>
+      <SelectDropdown
+        options={filterShareOptions}
+        dependentOptions={{
+          [SPECIFIC_USER_OR_GROUP]: candidateOptions, // key = primary value
+        }}
+        secondDropdown={true}
+        defaultValue={shareFilter}
+        secondDefaultValue={shareFilterForSpecificRole}
+        onChange={(v) => setShareFilter(v)}
+        onSecondChange={(v) => setShareFilterForSpecificRole(v)}
+        variant="secondary"
+      />
     </>
   );
 };

@@ -36,7 +36,7 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
   );
 
   // Helper function to create SelectDropdown component
-  const createInputDropdown = (item, uniqueKey, options) => (
+  const createSelectDropdown = (item, uniqueKey, options) => (
     <div className="custom-input-container">
       <label htmlFor={uniqueKey}>{t(item.label)}</label>
       <SelectDropdown
@@ -50,7 +50,6 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
       />
     </div>
   );
-
   // Helper function to create checkbox dropdown
   const createCheckboxDropdown = (item) => {
     const uniqueKey = getUniqueFieldKey(item);
@@ -97,13 +96,13 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
     if (item?.key === "assignee") { 
       return item.isFormVariable 
         ? createFormInput(item, uniqueKey)
-        : createInputDropdown(item, uniqueKey, assigneeOptions);
+        : createSelectDropdown(item, uniqueKey, assigneeOptions);
     }
     
     if (item.key === "roles") {
       return item.isFormVariable 
         ? createFormInput(item, uniqueKey)
-        : createInputDropdown(item, uniqueKey, candidateOptions);
+        : createSelectDropdown(item, uniqueKey, candidateOptions);
     }
     
     return item.type === "checkbox" 

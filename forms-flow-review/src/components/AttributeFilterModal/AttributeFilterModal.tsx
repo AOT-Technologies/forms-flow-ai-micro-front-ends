@@ -31,7 +31,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
 
   const isEditing = !!attributeFilterToEdit && !isUnsavedAttributeFilter;
   const title = useMemo(() => (
-    isEditing ? t("Edit custom field filter") : t("Create custom field filter")
+    isEditing ? t("Edit Custom Field Filter") : t("Create Custom Field Filter")
   ), [isEditing, t]);
   // const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -80,7 +80,6 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   };
 
   const handleDeleteAttributeFilter = async()=>{
-    toggleDeleteModal();
     await deleteFilter(attributeFilterToEdit?.id);
     const newFilters = attributeFilterList.filter(i=>i.id !== attributeFilterToEdit?.id);
     batch(()=>{
@@ -88,6 +87,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     dispatch(setSelectedBpmAttributeFilter(null));
     dispatch(fetchServiceTaskList(selectedTaskFilter,null,1,limit))
     })
+    setShowDeleteModal(false);
   }
 
   return (

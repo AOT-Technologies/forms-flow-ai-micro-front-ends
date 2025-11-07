@@ -1,8 +1,4 @@
 import {
-  CustomButton,
-  ReusableResizableTable,
-  SortableHeader,
-  TableFooter,
   ReusableLargeModal,
   V8CustomButton,
   ReusableTable,
@@ -13,7 +9,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { HelperServices, StyleServices } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { isEqual, cloneDeep } from "lodash";
+import { isEqual } from "lodash";
 import {
   resetTaskListParams,
   setBPMTaskListActivePage,
@@ -632,7 +628,8 @@ const TaskListTable = () => {
       headerName: "",
       sortable: false,
       filterable: false,
-      headerClassName: "sticky-column-header",
+
+      headerClassName: "sticky-column-header last-column",
       cellClassName: "sticky-column-cell",
 
       width: 100,
@@ -765,6 +762,7 @@ const TaskListTable = () => {
           }
         }}
         enableStickyActions={true}
+        disableVirtualization
       />
       {showModal && renderReusableModal()}
     </>

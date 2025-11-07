@@ -297,22 +297,21 @@ $font-tokens: (
           max-height: var(--body-section-height); // need to be updated after while implementing inner contets. 
           overflow-y: auto;
           padding-bottom: 5rem;
-          &.formedit-layout {
-              overflow-y: auto;
-              overflow-x: hidden;
-              max-width: 100%;
-              box-sizing: border-box;
-              max-height: calc(100vh - 200px);
-              width: 1088px;
-            }
-            &.processedit-layout {
-              overflow-y: auto;
-              overflow-x: hidden;
-              max-width: 100%;
-              box-sizing: border-box;
-              max-height: calc(100vh - 200px);
-              width: 1088px;
-            }
+          
+          &.formedit-layout,
+          &.processedit-layout,
+          &.task-list-body-section {
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-width: 100%;
+            box-sizing: border-box;
+            max-height: calc(100vh - 200px);
+            width: 1088px;
+          }
+          
+          &.task-list-body-section {
+            max-height: calc(100vh - 250px) !important;
+          }
         }
   
         .section-seperation-left {

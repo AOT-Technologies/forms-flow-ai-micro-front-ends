@@ -109,11 +109,11 @@ const AttributeFilterDropdown = () => {
   const onSearch = (searchTerm: string) => {
     setFilterSearchTerm(searchTerm);
   };
-  const handleEditAttrFilter = () => {
-    if (!selectedAttributeFilter) return;
-    setShowAttributeFilter(true);
-    dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
-  };
+  // const handleEditAttrFilter = () => {
+  //   if (!selectedAttributeFilter) return;
+  //   setShowAttributeFilter(true);
+  //   dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
+  // };
 
 
   const handleEditAttributeFromItem = (filter) => {
@@ -142,7 +142,7 @@ const AttributeFilterDropdown = () => {
     const reOrderAttribute: FilterItemType = {
       content: (
         <div className="d-flex align-items-center justify-content-between">
-          <span>{t("Re-order And Hide Filters")}</span>
+          <span>{t("Re-order / Hide Filters")}</span>
           <ReorderIcon />
         </div>
       ),
@@ -219,7 +219,7 @@ const AttributeFilterDropdown = () => {
     if (createFilters) {
       attributeDropdownItemsArray.push(createCustomField);
 
-      if (filteredItems.length > 0) {
+      if (filteredItems.length > 1) {
         attributeDropdownItemsArray.push(reOrderAttribute);
       }
     }

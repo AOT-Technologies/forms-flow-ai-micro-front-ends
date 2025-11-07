@@ -285,15 +285,15 @@ const TaskList = () => {
   
   return (
     <>
-        <div className="Toastify"></div>
-        <div className="toast-section">{}</div>
-        <div className="header-section-1">
+      <div className="Toastify"></div>
+      <div className="toast-section">{}</div>
+      <div className="header-section-1">
         <div className="section-seperation-left">
           <h4> Tasks </h4>
-        </div> 
         </div>
-        <div className="header-section-2">
-          <div className="section-seperation-left">
+      </div>
+      <div className="header-section-2">
+        <div className="section-seperation-left">
           <CustomSearch
             // search={}
             // setSearch={}
