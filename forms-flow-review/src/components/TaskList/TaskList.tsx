@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import {
   resetTaskListParams,
   setBPMFilterList,
@@ -64,8 +64,7 @@ const TaskList = () => {
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
   
-  // Memoize taskvariables to prevent unnecessary recreations
-  const taskvariables = useMemo(() => selectedFilter?.variables ?? [], [selectedFilter?.variables]);
+  const taskvariables = selectedFilter?.variables ?? [];
  
   //inital data loading
   const initialDataLoading = async () => {
@@ -114,10 +113,6 @@ const TaskList = () => {
 
 
 
-  // Track last and queued fetch params to prevent races
-  const lastFetchParamsRef = useRef<string>('');
-  const queuedFetchKeyRef = useRef<string>('');
-  
   // Data fetching - useCallback pattern matching List.js
   // Calculate taskvariables inside to avoid dependency issues that cause race conditions
   const fetchTaskListData = useCallback(() => {
@@ -127,28 +122,6 @@ const TaskList = () => {
      * If selectedFilter is not null, create payload using selectedFilter
      * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
      */
-    
-    // Create a stable key from the current params to prevent duplicate fetches
-    const fetchKey = JSON.stringify({
-      filterId: selectedFilter?.id,
-      activeKey: filterListSortParams?.activeKey,
-      sortOrder: filterListSortParams?.[filterListSortParams?.activeKey]?.sortOrder,
-      dateRangeStart: dateRange?.startDate,
-      dateRangeEnd: dateRange?.endDate,
-      isAssigned,
-      activePage,
-      limit,
-      filterCached
-    });
-    
-    // If a fetch is in-flight, queue the latest params and exit
-    if (isFetchingRef.current) {
-      queuedFetchKeyRef.current = fetchKey;
-      return;
-    }
-    
-    // Mark current params as last dispatched
-    lastFetchParamsRef.current = fetchKey;
     
     let payload = null;
     const enabledSort = new Set([
@@ -176,34 +149,15 @@ const TaskList = () => {
       );
     }
 
-    if (!payload) {
-      isFetchingRef.current = false;
-      return;
-    }
+    if (!payload) return;
 
-    // Mark as fetching and dispatch
-    isFetchingRef.current = true;
     dispatch(setBPMTaskLoader(true));
     dispatch(
       fetchServiceTaskList(
         payload,
         null,
         activePage,
-        limit,
-        (err: any) => {
-          // Mark fetch as completed
-          isFetchingRef.current = false;
-          // If a newer request was queued with different params, run it now
-          if (queuedFetchKeyRef.current && queuedFetchKeyRef.current !== lastFetchParamsRef.current) {
-            const queuedKey = queuedFetchKeyRef.current;
-            queuedFetchKeyRef.current = '';
-            // Trigger next fetch
-            fetchTaskListData();
-            lastFetchParamsRef.current = queuedKey;
-          } else {
-            queuedFetchKeyRef.current = '';
-          }
-        }
+        limit
       )
     );
   }, [
@@ -288,27 +242,10 @@ const TaskList = () => {
   }, [defaultFilterId, selectedFilter?.id, filters, filterCached, dispatch]);
 
   // Watch for changes and fetch data - matching List.js pattern
-  // Use a ref to prevent duplicate calls during rapid state updates
-  const isFetchingRef = useRef(false);
-  
-  // Kick initial fetch and on dependency changes with debounce to coalesce rapid state updates
-  const fetchDebounceTimeoutRef = useRef<number | null>(null);
+  // Kick initial fetch and on dependency changes
   useEffect(() => {
-    if (fetchDebounceTimeoutRef.current) {
-      clearTimeout(fetchDebounceTimeoutRef.current);
-    }
-    fetchDebounceTimeoutRef.current = window.setTimeout(() => {
-      fetchTaskListData();
-    }, 60);
-    return () => {
-      if (fetchDebounceTimeoutRef.current) {
-        clearTimeout(fetchDebounceTimeoutRef.current);
-        fetchDebounceTimeoutRef.current = null;
-      }
-    };
+    fetchTaskListData();
   }, [fetchTaskListData]);
-
-  // No separate loading watcher; completion handled via thunk callback
 
   const optionsForSortModal = () => {
     const existingValues = new Set(optionSortBy.keys);  
