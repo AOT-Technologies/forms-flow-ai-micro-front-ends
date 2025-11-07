@@ -42,6 +42,7 @@ export interface WrappedTableProps {
   paginationMode?: "server" | "client";
   noRowsLabel?: string;
   dataGridProps?: Partial<DataGridProps>;
+  enableStickyActions?: boolean;
 }
 
 const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
@@ -67,6 +68,7 @@ const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
       paginationMode = "server",
       noRowsLabel,
       dataGridProps = {},
+      enableStickyActions = false,
     },
     ref
   ) {
@@ -164,6 +166,7 @@ const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
           slotProps={finalSlotProps}
           localeText={noRowsLabel ? { noRowsLabel } : undefined}
           sx={mergedDataGridSx}
+          className={enableStickyActions ? 'action-column-sticky' : ''}
         />
       </Paper>
     );
@@ -172,5 +175,7 @@ const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
 
 WrappedTable.displayName = "WrappedTable";
 
-export default memo(WrappedTable);
+const MemoizedWrappedTable = memo(WrappedTable);
 
+export { MemoizedWrappedTable as WrappedTable };
+export default MemoizedWrappedTable;

@@ -7,10 +7,11 @@ import {
   setDefaultFilter,
   setFilterToEdit,
   setSelectedFilter,
+  setBPMTaskListActivePage,
+  setTaskListLimit,
 } from "../../actions/taskActions";
 import {
   fetchAttributeFilterList,
-  fetchServiceTaskList,
   updateDefaultFilter,
 } from "../../api/services/filterServices";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
@@ -83,7 +84,9 @@ const TaskListDropdownItems = memo(() => {
     updateDefaultFilter(upcomingFilter.id);
     dispatch(setSelectedFilter(upcomingFilter));
     dispatch(fetchAttributeFilterList(upcomingFilter.id));
-    dispatch(fetchServiceTaskList(upcomingFilter, null, 1, 25));
+    // Let TaskList effect trigger the fetch; set pagination to first page and default limit
+    dispatch(setBPMTaskListActivePage(1));
+    dispatch(setTaskListLimit(25));
   };
 
   const onSearch = (searchTerm: string) => {

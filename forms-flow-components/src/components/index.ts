@@ -56,5 +56,4 @@ export * from "./CustomComponents/FilterDropDown";
 export { CustomCheckbox } from "./CustomComponents/CustomCheckbox";
 export * from "./CustomComponents/ReusableTable";
 export * from "./CustomComponents/ReusableLargeModal";
-export { default as WrappedTable } from "./CustomComponents/WrappedTable";
-
+export * from "./CustomComponents/WrappedTable";

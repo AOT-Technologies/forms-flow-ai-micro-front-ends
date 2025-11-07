@@ -1,23 +1,16 @@
 import {
-  CustomButton,
-  ReusableResizableTable,
-  SortableHeader,
-  TableFooter,
   ReusableLargeModal,
   V8CustomButton,
-  ReusableTable,
+  WrappedTable,
   FormStatusIcon,
-  RefreshIcon
 } from "@formsflow/components";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { HelperServices, StyleServices } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { isEqual, cloneDeep } from "lodash";
+import { isEqual } from "lodash";
 import {
-  resetTaskListParams,
   setBPMTaskListActivePage,
-  setBPMTaskLoader,
   setFilterListSortParams,
   setTaskListLimit,
   setSelectedTaskID,
@@ -30,9 +23,8 @@ import {
   setAppHistoryLoading,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
-  fetchServiceTaskList,
   fetchTaskVariables,
   executeRule,
 } from "../../api/services/filterServices";
@@ -61,7 +53,6 @@ import {
 } from "../../constants/index";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
-import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
 import TaskForm from "../TaskForm";
@@ -88,10 +79,13 @@ interface Task {
   };
 }
 
-const TaskListTable = () => {
+interface TaskListTableProps {
+  onRefresh?: () => void;
+}
+
+const TaskListTable = ({ onRefresh }: TaskListTableProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const history = useHistory();
   const {
     tasksCount,
     selectedFilter,
@@ -184,7 +178,6 @@ const TaskListTable = () => {
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
   const [columns, setColumns] = useState<Column[]>([]);
-      const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
 
   const getCellValue = (column: Column, task: Task) => {
     const { sortKey } = column;
@@ -258,18 +251,6 @@ const TaskListTable = () => {
       return matchingVar.value ? "True" : "False";
     }
     return matchingVar.value ?? "-";
-  };
-  const handleRefresh = () => {
-    dispatch(setBPMTaskLoader(true));
-    const payload = createReqPayload(
-      selectedFilter,
-      selectedAttributeFilter,
-      filterListSortParams,
-      dateRange,
-      isAssigned,
-      false
-    );
-    dispatch(fetchServiceTaskList(payload, null, activePage, limit));
   };
 
   // Load form and submission for task details
@@ -451,36 +432,63 @@ const TaskListTable = () => {
     setColumns((prev) => (!isEqual(prev, dynamicColumns) ? dynamicColumns : prev));
   }, [taskvariables]);
 
-  const handleSortModelChange = (model: any) => {
-    const column = columns.find((col) => col.sortKey === model?.[0]?.field);
+  // Field to sort key mapping (matching List.js pattern)
+  const gridFieldToSortKey = useMemo(() => {
+    const mapping: Record<string, string> = {};
+    columns.forEach((col) => {
+      mapping[col.sortKey] = col.sortKey;
+    });
+    return mapping;
+  }, [columns]);
+
+  const sortKeyToGridField = useMemo(() => {
+    const mapping: Record<string, string> = {};
+    columns.forEach((col) => {
+      mapping[col.sortKey] = col.sortKey;
+    });
+    return mapping;
+  }, [columns]);
+
+  // Sort handler - only updates Redux state (matching List.js pattern)
+  const handleSortModelChange = useCallback((modelArray: any) => {
+    const model = Array.isArray(modelArray) ? modelArray[0] : modelArray;
+    if (!model?.field || !model?.sort) {
+      const resetSort = Object.keys(filterListSortParams || {}).reduce((acc, key) => {
+        acc[key] = { sortOrder: "asc" };
+        return acc;
+      }, {} as Record<string, { sortOrder: string }>);
+      dispatch(setFilterListSortParams({ ...resetSort, activeKey: "name" }));
+      return;
+    }
+    
+    const column = columns.find((col) => col.sortKey === model.field);
     if (!column) return;
-    dispatch(setBPMTaskLoader(true));
     
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
     const enabledSort = new Set(["applicationId", "submitterName", "formName"]);
+    const incomingField = model.field;
+    const incomingOrder = model.sort;
+    const mappedKey = gridFieldToSortKey[incomingField] || incomingField;
+    
+    const updatedSort = Object.keys(filterListSortParams || {}).reduce((acc, columnKey) => {
+      acc[columnKey] = { sortOrder: columnKey === mappedKey ? incomingOrder : "asc" };
+      return acc;
+    }, {} as Record<string, { sortOrder: string }>);
     
     const updatedFilterListSortParams = {
       ...resetSortOrders,
-      [column.sortKey]: {
-        sortOrder: model?.[0]?.sort,
-        ...((column.isFormVariable || enabledSort.has(column.sortKey)) && {
+      ...updatedSort,
+      [mappedKey]: {
+        sortOrder: incomingOrder,
+        ...((column.isFormVariable || enabledSort.has(mappedKey)) && {
           type: column.type,
         }),
       },
-      activeKey: column.sortKey,
+      activeKey: mappedKey,
     };
 
     dispatch(setFilterListSortParams(updatedFilterListSortParams));
-    const payload = createReqPayload(
-      selectedFilter,
-      selectedAttributeFilter,
-      updatedFilterListSortParams,
-      dateRange,
-      isAssigned,
-      column.isFormVariable
-    );
-    dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-  };
+  }, [dispatch, columns, filterListSortParams, gridFieldToSortKey]);
 
   const renderReusableModal = () => {
     if (!selectedTask) return null;
@@ -489,9 +497,10 @@ const TaskListTable = () => {
     const renderContent = () => {
       if (modalViewType === "history") {
         return (
-              <ReusableTable
+              <WrappedTable
                 columns={historyColumns}
                 rows={historyRows}
+                rowCount={historyRows.length}
                 loading={isAppHistoryLoading}
                 noRowsLabel={t("No submission history found")}
                 paginationModel={historyPaginationModel}
@@ -590,65 +599,75 @@ const TaskListTable = () => {
     );
   };
 
+  // Pagination model
   const paginationModel = useMemo(
     () => ({ page: activePage - 1, pageSize: limit }),
     [activePage, limit]
   );
 
-  const handlePaginationModelChange = ({ page, pageSize }: any) => {
+  // Pagination handler - only updates Redux state (matching List.js pattern)
+  const handlePaginationModelChange = useCallback(({ page, pageSize }: { page: number; pageSize: number }) => {
+    const requestedPage = typeof page === "number" ? page + 1 : activePage;
+    const requestedLimit = typeof pageSize === "number" ? pageSize : limit;
+    if (requestedPage === activePage && requestedLimit === limit) return;
+    
     batch(() => {
-      dispatch(setBPMTaskListActivePage(page + 1));
-      dispatch(setTaskListLimit(pageSize));
+      if (requestedLimit !== limit) {
+        dispatch(setTaskListLimit(requestedLimit));
+        dispatch(setBPMTaskListActivePage(1));
+      } else if (requestedPage !== activePage) {
+        dispatch(setBPMTaskListActivePage(requestedPage));
+      }
     });
-  };
+  }, [dispatch, activePage, limit]);
 
+  // Column definitions
   const muiColumns = useMemo(() => {
-  // Filter out any existing "actions" column that might come from dynamic columns
-  const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
+    // Filter out any existing "actions" column that might come from dynamic columns
+    const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
 
-  return [
-    ...filteredColumns.map((col, idx) => ({
-      field: col.sortKey,
-      headerName: t(col.name),
-      flex: 1,
-      sortable: true,
-      minWidth: col.width,
-      headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
-      renderCell: (params: any) => getCellValue(col, params.row),
-    })),
-    {
-      field: "actions",
-       renderHeader: () => (
-        <V8CustomButton
-          variant="secondary"
-          icon={<RefreshIcon color={iconColor} />}
-          iconOnly
-          onClick={handleRefresh}
-          dataTestId="task-refresh-button"
-        />
-      ),
-      headerName: "",
-      sortable: false,
-      filterable: false,
-      headerClassName: "sticky-column-header",
-      cellClassName: "sticky-column-cell",
+    return [
+      ...filteredColumns.map((col, idx) => ({
+        field: col.sortKey,
+        headerName: t(col.name),
+        flex: 1,
+        sortable: true,
+        minWidth: col.width,
+        headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
+        renderCell: (params: any) => getCellValue(col, params.row),
+      })),
+      {
+        field: "actions",
+        headerName: "",
+        sortable: false,
+        filterable: false,
+        headerClassName: "sticky-column-header",
+        cellClassName: "sticky-column-cell",
+        width: 100,
+        renderCell: (params: any) => (
+          <V8CustomButton
+            label={t("View")}
+            dataTestId="task-view-button"
+            variant="secondary"
+            onClick={() => handleOpenModal(params.row)}
+          />
+        ),
+      },
+    ];
+  }, [columns, t, handleOpenModal]);
+  // Rows mapping
+  const memoizedRows = useMemo(() => {
+    return (tasksList || []).map((task: any) => ({ id: task.id, ...task }));
+  }, [tasksList]);
 
-      width: 100,
-      renderCell: (params: any) => (
-        <V8CustomButton
-          label={t("View")}
-          dataTestId="task-view-button"
-          variant="secondary"
-          onClick={() => handleOpenModal(params.row)}
-        />
-      ),
-    },
-  ];
-}, [columns, t, iconColor, handleRefresh, handleOpenModal]);
-
-
-
-  const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
+  // Sort model - matches List.js pattern
+  const activeKey = filterListSortParams?.activeKey || "name";
+  const activeField = sortKeyToGridField[activeKey] || activeKey;
+  const activeOrder = filterListSortParams?.[activeKey]?.sortOrder || "asc";
+  const sortModel = useMemo(
+    () => [{ field: activeField, sort: activeOrder }],
+    [activeField, activeOrder]
+  );
 
   if (!columns?.length) {
     return isTaskListLoading ? <Loading /> : (
@@ -662,7 +681,7 @@ const TaskListTable = () => {
 
   return (
     <>
-      <ReusableTable
+      <WrappedTable
         columns={muiColumns}
         disableColumnResize={false}
         rows={memoizedRows}
@@ -672,22 +691,14 @@ const TaskListTable = () => {
         sortingMode="server"
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
-        sortModel={[
-          filterListSortParams.activeKey
-            ? {
-                field: filterListSortParams.activeKey,
-                sort: filterListSortParams[filterListSortParams.activeKey]?.sortOrder || "asc",
-              }
-            : {},
-        ]}
+        sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
+        getRowId={(row) => row.id}
+        onRefresh={onRefresh}
+        enableStickyActions={true}
         noRowsLabel={t("No tasks found")}
         disableColumnMenu
         disableRowSelectionOnClick
-        dataGridProps={{
-          getRowId: (row: any) => row.id
-        }}
-        enableStickyActions={true}
       />
       {showModal && renderReusableModal()}
     </>

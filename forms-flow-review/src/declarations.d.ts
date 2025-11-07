@@ -97,7 +97,8 @@ declare module "@formsflow/components" {
     ReusableLargeModal,
     FormStatusIcon,
     CustomTextInput,
-    Alert
+    Alert,
+    WrappedTable,
   }: any;
 }
 

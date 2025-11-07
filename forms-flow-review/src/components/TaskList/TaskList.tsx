@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import {
   resetTaskListParams,
   setBPMFilterList,
@@ -57,12 +57,15 @@ const TaskList = () => {
     selectedAttributeFilter,
     isAssigned,
     isUnsavedFilter,
+    isTaskListLoading,
   } = useSelector((state: RootState) => state.task);  
 
   const { viewTasks,viewFilters } = userRoles()
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
-  const taskvariables = selectedFilter?.variables ?? [];
+  
+  // Memoize taskvariables to prevent unnecessary recreations
+  const taskvariables = useMemo(() => selectedFilter?.variables ?? [], [selectedFilter?.variables]);
  
   //inital data loading
   const initialDataLoading = async () => {
@@ -74,7 +77,7 @@ const TaskList = () => {
     dispatch(setBPMFilterLoader(true));
     if(!viewFilters && viewTasks){
       dispatch(setSelectedFilter(allTasksPayload));
-      dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit))
+      dispatch(setBPMTaskListActivePage(1));
     }
     else{
       const filterResponse = await fetchFilterList();
@@ -97,7 +100,7 @@ const TaskList = () => {
       // if no filter is present, the data will be shown as All Tasks response
       else {
         dispatch(setSelectedFilter(allTasksPayload));
-        dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
+        dispatch(setBPMTaskListActivePage(1));
       }
     }
     dispatch(setBPMFilterLoader(false));
@@ -111,58 +114,111 @@ const TaskList = () => {
 
 
 
-  const fetchTaskListData = ({
-  sortData = null,
-  newPage = null,
-  newLimit = null,
-  newDateRange = null
-} = {}) => {
-  /**
-   * We need to create payload for the task list
-   * If filterCached is true, use lastReqPayload (for persist)
-   * If selectedFilter is not null, create payload using selectedFilter
-   * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
-   */
-  let payload = null;
-  const enabledSort = new Set ([
-    "applicationId",
-    "submitterName",
-    "formName"
-  ])
-  // check if selectedType belongs to sortableList
-  const currentVariable = taskvariables.find((item)=> item.key === filterListSortParams?.activeKey);
-  const isFormVariable =currentVariable?.isFormVariable || enabledSort.has(filterListSortParams?.activeKey) ;
-  if (filterCached) {
-    payload = lastReqPayload;
-    dispatch(resetTaskListParams({ filterCached: false }));
-  } else if (selectedFilter) {
-    payload = createReqPayload(
-      selectedFilter,
-      selectedAttributeFilter,
-      sortData || filterListSortParams,
-      newDateRange || dateRange,
+  // Track last and queued fetch params to prevent races
+  const lastFetchParamsRef = useRef<string>('');
+  const queuedFetchKeyRef = useRef<string>('');
+  
+  // Data fetching - useCallback pattern matching List.js
+  // Calculate taskvariables inside to avoid dependency issues that cause race conditions
+  const fetchTaskListData = useCallback(() => {
+    /**
+     * We need to create payload for the task list
+     * If filterCached is true, use lastReqPayload (for persist)
+     * If selectedFilter is not null, create payload using selectedFilter
+     * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
+     */
+    
+    // Create a stable key from the current params to prevent duplicate fetches
+    const fetchKey = JSON.stringify({
+      filterId: selectedFilter?.id,
+      activeKey: filterListSortParams?.activeKey,
+      sortOrder: filterListSortParams?.[filterListSortParams?.activeKey]?.sortOrder,
+      dateRangeStart: dateRange?.startDate,
+      dateRangeEnd: dateRange?.endDate,
       isAssigned,
-      isFormVariable
-    );  
-  }
+      activePage,
+      limit,
+      filterCached
+    });
+    
+    // If a fetch is in-flight, queue the latest params and exit
+    if (isFetchingRef.current) {
+      queuedFetchKeyRef.current = fetchKey;
+      return;
+    }
+    
+    // Mark current params as last dispatched
+    lastFetchParamsRef.current = fetchKey;
+    
+    let payload = null;
+    const enabledSort = new Set([
+      "applicationId",
+      "submitterName",
+      "formName"
+    ]);
+    // Calculate taskvariables inside the function to avoid dependency issues
+    const currentTaskVariables = selectedFilter?.variables ?? [];
+    // check if selectedType belongs to sortableList
+    const currentVariable = currentTaskVariables.find((item) => item.key === filterListSortParams?.activeKey);
+    const isFormVariable = currentVariable?.isFormVariable || enabledSort.has(filterListSortParams?.activeKey);
+    
+    if (filterCached) {
+      payload = lastReqPayload;
+      dispatch(resetTaskListParams({ filterCached: false }));
+    } else if (selectedFilter) {
+      payload = createReqPayload(
+        selectedFilter,
+        selectedAttributeFilter,
+        filterListSortParams,
+        dateRange,
+        isAssigned,
+        isFormVariable
+      );
+    }
 
-  if (!payload) return;
+    if (!payload) {
+      isFetchingRef.current = false;
+      return;
+    }
 
-  dispatch(setBPMTaskLoader(true));
-  dispatch(
-    fetchServiceTaskList(
-      payload,
-      null,
-      newPage || activePage,
-      newLimit || limit
-    )
-  );
-};
-
-
-  const handleRefresh = () => {
-    fetchTaskListData();
-  };
+    // Mark as fetching and dispatch
+    isFetchingRef.current = true;
+    dispatch(setBPMTaskLoader(true));
+    dispatch(
+      fetchServiceTaskList(
+        payload,
+        null,
+        activePage,
+        limit,
+        (err: any) => {
+          // Mark fetch as completed
+          isFetchingRef.current = false;
+          // If a newer request was queued with different params, run it now
+          if (queuedFetchKeyRef.current && queuedFetchKeyRef.current !== lastFetchParamsRef.current) {
+            const queuedKey = queuedFetchKeyRef.current;
+            queuedFetchKeyRef.current = '';
+            // Trigger next fetch
+            fetchTaskListData();
+            lastFetchParamsRef.current = queuedKey;
+          } else {
+            queuedFetchKeyRef.current = '';
+          }
+        }
+      )
+    );
+  }, [
+    dispatch,
+    selectedFilter?.id, // Only track ID, not the entire object or variables array
+    selectedAttributeFilter,
+    filterListSortParams?.activeKey,
+    filterListSortParams?.[filterListSortParams?.activeKey]?.sortOrder,
+    dateRange?.startDate,
+    dateRange?.endDate,
+    isAssigned,
+    activePage,
+    limit,
+    filterCached
+  ]);
 
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
     // reset the sort orders using helper function
@@ -186,7 +242,7 @@ const TaskList = () => {
   
     dispatch(setFilterListSortParams(updatedData));
     setShowSortModal(false);
-    fetchTaskListData({ sortData: updatedData  });
+    // fetchTaskListData will be triggered automatically by useEffect watching it
   };
   
 
@@ -199,13 +255,9 @@ const TaskList = () => {
     const values = Object.values(newDateRange);
     dispatch(setDateRangeFilter(newDateRange));
     if (values.length == 1) return;
-    // Reset active page and limit when date range changes
+    // Reset active page when date range changes
     dispatch(setBPMTaskListActivePage(1));
-    // Fetch task list with new date range
-    fetchTaskListData({
-      newPage: 1,
-      newDateRange: values.length ? newDateRange : null,
-    });
+    // fetchTaskListData will be triggered automatically by useEffect watching it
   };
 
   useEffect(() => {
@@ -229,14 +281,34 @@ const TaskList = () => {
         dispatch(fetchAttributeFilterList(currentFilter.id));
         dispatch(setBPMTaskListActivePage(1));
         dispatch(setTaskListLimit(25));
-        dispatch(fetchServiceTaskList(currentFilter, null, 1, 25));
+        // Don't call fetchServiceTaskList directly - let fetchTaskListData handle it
+        // This prevents race conditions with the fetchTaskListData useEffect
       });
     }
-  }, [defaultFilterId, selectedFilter]);
+  }, [defaultFilterId, selectedFilter?.id, filters, filterCached, dispatch]);
 
+  // Watch for changes and fetch data - matching List.js pattern
+  // Use a ref to prevent duplicate calls during rapid state updates
+  const isFetchingRef = useRef(false);
+  
+  // Kick initial fetch and on dependency changes with debounce to coalesce rapid state updates
+  const fetchDebounceTimeoutRef = useRef<number | null>(null);
   useEffect(() => {
-    fetchTaskListData();
-  }, [isAssigned, activePage, limit]);
+    if (fetchDebounceTimeoutRef.current) {
+      clearTimeout(fetchDebounceTimeoutRef.current);
+    }
+    fetchDebounceTimeoutRef.current = window.setTimeout(() => {
+      fetchTaskListData();
+    }, 60);
+    return () => {
+      if (fetchDebounceTimeoutRef.current) {
+        clearTimeout(fetchDebounceTimeoutRef.current);
+        fetchDebounceTimeoutRef.current = null;
+      }
+    };
+  }, [fetchTaskListData]);
+
+  // No separate loading watcher; completion handled via thunk callback
 
   const optionsForSortModal = () => {
     const existingValues = new Set(optionSortBy.keys);  
