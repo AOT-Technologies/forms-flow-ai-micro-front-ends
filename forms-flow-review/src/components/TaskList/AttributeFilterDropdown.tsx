@@ -173,20 +173,19 @@ const AttributeFilterDropdown = () => {
             return nameMatch && notHidden;
           })
           .map((filter) => {
-            const createdByMe =
-              userDetails?.preferred_username === filter?.createdBy;
-            const isSharedToPublic =
-              !filter?.roles?.length && !filter?.users?.length;
-            const isSharedToRoles = filter?.roles?.length > 0;
-            const isSharedToMe = filter?.roles?.some((role) =>
-              userDetails?.groups?.includes(role)
-            );
-
+            // const createdByMe =
+            //   userDetails?.preferred_username === filter?.createdBy;
+            // const isSharedToUsersofTakFilter =
+            //   !filter?.roles?.length && !filter?.users?.length;
+            // const isSharedToRoles = filter?.roles?.length > 0;
+            // const isSharedToMe = filter?.roles?.some((role) =>
+            //   userDetails?.groups?.includes(role)
+            // );
             let category: "my" | "shared" = "my";
 
-            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+          if ((selectedFilter?.users?.length > 0) ||(filter?.users?.length > 0))  {
               category = "my";
-            } else if (isSharedToPublic || isSharedToMe) {
+            } else {
               category = "shared";
             }
             // category remains "my" for all other cases (default)
