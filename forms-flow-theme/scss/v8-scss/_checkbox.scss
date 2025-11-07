@@ -1,18 +1,18 @@
 // Checkbox Variables
 $checkbox-size: 33px;
 $checkbox-size-small: 16px;
-$checkbox-border-width: 0.1875rem;
-$checkbox-border-width-small: 0.0625rem;
+$checkbox-border-width: 2px;
+$checkbox-border-width-small: 2px;
 $checkbox-border-radius: 0.25rem;
 $checkbox-border-radius-small: 0.1875rem;
 
 // Checkmark dimensions
 $checkmark-width: 9px;
 $checkmark-height: 16px;
-$checkmark-border-width: 2.25px;
-$checkmark-width-small: 4px;
+$checkmark-border-width: 2px;
+$checkmark-width-small: 5px;
 $checkmark-height-small: 8px;
-$checkmark-border-width-small: 1.5px;
+$checkmark-border-width-small: 2px;
 
 // Checkmark transform
 $checkmark-transform: translate(-50%, -70%) rotate(45deg) scale(1);
