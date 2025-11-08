@@ -81,9 +81,7 @@ $gray-darkest: var(--ff-gray-darkest);
 .published-builder{
   height: calc(100vh - 21rem) !important;
 }
-.unpublished-builder{
-  height: calc(100vh - 16.5rem) !important;
-}
+
 .no-drop {
   border-top: 1px solid $gray-medium;
 }
