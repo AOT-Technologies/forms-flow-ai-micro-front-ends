@@ -610,7 +610,8 @@ const TaskListTable = () => {
       // If a saved width exists, honor it and disable flex; otherwise allow flex
       ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
       sortable: true,
-      minWidth: col.width,
+      // Do not lock minWidth to the last saved width; allow shrinking after expand
+      minWidth: 90,
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
       renderCell: (params: any) => getCellValue(col, params.row),
     })),
