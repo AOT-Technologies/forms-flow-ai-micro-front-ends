@@ -183,7 +183,7 @@ const TaskList = () => {
       dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
       // Reset pagination defaults
       dispatch(setBPMTaskListActivePage(1));
-      dispatch(setTaskListLimit(25));
+      dispatch(setTaskListLimit(10));
       // Refresh attribute filter list for the base filter, if applicable
       if (baseFilter?.id) {
         dispatch(fetchAttributeFilterList(baseFilter.id) as any);
@@ -257,7 +257,7 @@ const TaskList = () => {
         dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
         dispatch(fetchAttributeFilterList(currentFilter.id));
         dispatch(setBPMTaskListActivePage(1));
-        dispatch(setTaskListLimit(25));
+        dispatch(setTaskListLimit(10));
         dispatch(fetchServiceTaskList(currentFilter, null, 1, 25));
       });
     }
