@@ -18,7 +18,8 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 // Prompt modal styles
 
 .prompt-modal {
-    .modal-dialog {
+    .modal-dialog.modal-sm {
+        min-width: 28.5rem;
         .modal-content {
             min-width: 28.5rem;
             border-radius: 5px;

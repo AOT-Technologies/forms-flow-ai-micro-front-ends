@@ -52,14 +52,13 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
     <Modal
         show={show}
         onHide={onClose}
-        size="sm"
         data-testid="confirm-modal"
         aria-labelledby="confirm-modal-title"
         aria-describedby="confirm-modal-message"
       >
-        <Modal.Header>
+        <Modal.Header className="d-flex justify-content-between align-items-center">
           <Modal.Title id="confirm-modal-title" data-testid={titleDataTestId}>
-            <p>
+            <p className="m-0">
               {t(title)}
             </p>
           </Modal.Title>
