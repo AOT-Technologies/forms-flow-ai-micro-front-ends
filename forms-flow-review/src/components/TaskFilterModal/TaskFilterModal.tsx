@@ -143,7 +143,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
         <div className="d-flex justify-content-between align-items-center modal-subtitle" >
           <div className="subtitle-text">
             {currentStep === 1 &&
-            t("Select a form or multiple forms you want your custom filter to apply to")}
+            t("Select a form you want your custom filter to apply to")}
             {currentStep === 2 &&
             t(
               "Select and order the columns you would like to see in your custom filter and choose how the results are sorted"
