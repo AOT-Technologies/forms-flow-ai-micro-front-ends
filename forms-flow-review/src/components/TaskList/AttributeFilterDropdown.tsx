@@ -233,16 +233,20 @@ const AttributeFilterDropdown = () => {
     }
 
     // Only show "All Fields" when not searching
-    if (filteredItems.length === 0) {
+    if (!isSearching) {
       attributeDropdownItemsArray.push(clearAttributeFilter);
     }
 
-       // Add dynamic filtered items
-       if (filteredItems.length > 0) {
-        attributeDropdownItemsArray.push(...filteredItems);
-        } else {
-          attributeDropdownItemsArray.push(noFilter);
-        }
+    // Add dynamic filtered items
+    if (filteredItems.length > 0) {
+      attributeDropdownItemsArray.push(...filteredItems);
+    } else {
+      // Show "No filters found" only when:
+      // 1. Searching and no matches found
+      if (isSearching ) {
+        attributeDropdownItemsArray.push(noFilter);
+      }
+    }
 
     return attributeDropdownItemsArray;
   }, [
