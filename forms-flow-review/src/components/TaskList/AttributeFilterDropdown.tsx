@@ -125,6 +125,15 @@ const AttributeFilterDropdown = () => {
   const filterDropdownAttributeItems = useMemo(() => {
     const attributeDropdownItemsArray: FilterItemType[] = [];
 
+    const noFilter: FilterItemType = {
+      content: <em>{t("No filters found")}</em>,
+      onClick: () => {},
+      type: "none",
+      dataTestId: "no-filters",
+      ariaLabel: t("No attribute filters available"),
+      category: "none",
+    };
+
     const createCustomField: FilterItemType = {
       content: (
         <div className="d-flex align-items-center justify-content-between">
@@ -220,16 +229,24 @@ const AttributeFilterDropdown = () => {
 
       if (filteredItems.length > 1) {
         attributeDropdownItemsArray.push(reOrderAttribute);
-      }
+      }      
     }
 
     // Only show "All Fields" when not searching
-    if (!isSearching || filteredItems.length === 0) {
+    if (!isSearching) {
       attributeDropdownItemsArray.push(clearAttributeFilter);
     }
 
     // Add dynamic filtered items
-    attributeDropdownItemsArray.push(...filteredItems);
+    if (filteredItems.length > 0) {
+      attributeDropdownItemsArray.push(...filteredItems);
+    } else {
+      // Show "No filters found" only when:
+      // 1. Searching and no matches found
+      if (isSearching ) {
+        attributeDropdownItemsArray.push(noFilter);
+      }
+    }
 
     return attributeDropdownItemsArray;
   }, [

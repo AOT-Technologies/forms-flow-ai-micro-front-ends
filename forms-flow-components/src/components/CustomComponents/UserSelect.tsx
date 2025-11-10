@@ -109,8 +109,9 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   }, [selectAndFocusInput]);
 
   const handleValueChange = useCallback((newValue: string | number) => {
-    // Only call onChange if the value actually changed
-    if (newValue !== value) {
+    // Always propagate for special options 'me' and 'unassigned' to allow re-triggering claim/unclaim
+    const isSpecial = newValue === 'me' || newValue === 'unassigned';
+    if (newValue !== value || isSpecial) {
       setIsFocused(false);
       setIsClicked(false);
       setIsHovered(false);
