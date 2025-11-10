@@ -56,4 +56,5 @@ export * from "./CustomComponents/FilterDropDown";
 export { CustomCheckbox } from "./CustomComponents/CustomCheckbox";
 export * from "./CustomComponents/ReusableTable";
 export * from "./CustomComponents/ReusableLargeModal";
+export * from "./CustomComponents/ReusableStandardModal";
 

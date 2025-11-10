@@ -73,8 +73,8 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
     const currentCategoryLabel = categoryType === "FORM" ? "Layout" : "Flow";
 
     const handleRevertClick = (params: any) => {
-      // For WORKFLOW category (BPMN and DMN), handle them the same way
-      if (categoryType === "WORKFLOW" && (params.processType === "BPMN" || params.processType === "DMN")) {
+      // For WORKFLOW category (BPMN, DMN, and LOWCODE), handle them the same way
+      if (categoryType === "WORKFLOW" && (params.processType === "BPMN" || params.processType === "DMN" || params.processType === "LOWCODE")) {
         const version = `${params.majorVersion}.${params.minorVersion}`;
         setSelectedVersion(version);
         setProcessId(params.id);

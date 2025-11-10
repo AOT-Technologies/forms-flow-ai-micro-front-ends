@@ -283,3 +283,100 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         align-items: start;
     }
 }
+
+/* Approval Task Modal styles */
+.approval-task-modal {
+    @include mixins.approval-task-modal-popover();
+
+    .modal-body {
+        .dropdown-label-text {
+            font-size: var(--font-size-m);
+            font-weight: var(--font-weight-regular);
+            color: var(--gray-dark);
+            margin-bottom: var(--spacer-075);
+        }
+
+        .action-name-input-wrapper {
+            margin-top: var(--spacer-050);
+        }
+    }
+}
+
+/* Reusable Standard Modal styles */
+.reusable-standard-modal {
+    @include mixins.reusable-standard-modal-popover();
+
+    .reusable-standard-modal-content-wrapper {
+        padding: 5rem;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .reusable-standard-modal-question {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-regular);
+        color: var(--gray-darkest);
+        margin-bottom: 1.5rem;
+        line-height: var(--line-height-default);
+    }
+
+    .reusable-standard-modal-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .reusable-standard-modal-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        border: 1px solid var(--gray-x-light);
+        background: transparent;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+
+        &:hover {
+            border-color: var(--gray-light);
+        }
+
+        &.selected {
+            background-color: rgba(184, 171, 255, 0.10);
+            border-color: var(--primary-dark);
+        }
+
+        .reusable-standard-modal-option-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+        }
+
+        .reusable-standard-modal-option-heading {
+            margin: 0;
+            font-size: var(--font-size-m);
+            font-weight: var(--font-weight-regular);
+            color: var(--gray-darkest);
+        }
+
+        .reusable-standard-modal-option-body {
+            margin: 0;
+            font-size: var(--font-size-sm);
+            color: var(--gray-dark);
+            font-weight: var(--font-weight-sm);
+        }
+
+        .reusable-standard-modal-radio {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #8B5CF6;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+    }
+}
