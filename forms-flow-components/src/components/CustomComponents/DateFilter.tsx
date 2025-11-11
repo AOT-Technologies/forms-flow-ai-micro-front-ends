@@ -5,6 +5,7 @@ import {
   UpArrowIcon,
   CalenderLeftIcon,
   CalenderRightIcon,
+  CloseIcon,
 } from "../SvgIcons";
 import { V8CustomButton } from "./CustomButton";
 
@@ -432,6 +433,16 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
       });
     }, [createFilterDateRange, onChange]);
 
+    // Memoized reset button handler
+    const handleResetClick = useCallback((): void => {
+      const emptyDateRange = {
+        startDate: null,
+        endDate: null,
+      };
+      setDateRange(emptyDateRange);
+      onChange(emptyDateRange);
+    }, [onChange]);
+
     // Memoized keyboard navigation handler
     const handleNavKeyDown = useCallback((
       event: React.KeyboardEvent<HTMLButtonElement>,
@@ -551,7 +562,7 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
       >
       <div className="drp-input-container">
         <input
-        onClick={toggleCalendar}
+          onClick={toggleCalendar}
           type="text"
           className="drp-date-input"
           value={formatDateValue(dateRange.startDate)}
@@ -582,6 +593,24 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
             <DownArrowIcon color="#4A4A4A" />
           )}
         </span>
+        {(dateRange.startDate || dateRange.endDate) && (
+          <span
+            className="date-range-close-icon cursor-pointer"
+            data-testid="date-range-close-icon"
+            aria-label="Clear date range"
+            onClick={handleCloseCalendar}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleCloseCalendar();
+              }
+            }}
+          >
+            <CloseIcon color="#4A4A4A" />
+          </span>
+        )}
       </div>
 
       {isOpen && (
@@ -716,6 +745,13 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
             onClick={handleTodayClick}
             ariaLabel="Today"
             dataTestId="calendar-today-btn"
+            variant="secondary"
+            />
+            <V8CustomButton 
+            label="Reset"
+            onClick={handleResetClick}
+            ariaLabel="Reset"
+            dataTestId="calendar-reset-btn"
             variant="secondary"
             />
           </div>
