@@ -209,6 +209,8 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         .task-filter-page2-container-right {
             flex: 1;
             min-width: 0;
+            max-height: 41rem;
+            overflow-y: auto;
         }
 
     }

@@ -179,7 +179,12 @@ const TaskFilterModalBody = ({
     name: filterName,
     criteria: getCriteria(),
     variables: variableArray.map((v:any) => {
-      const match = selectedFilter?.variables?.find((sv:any) => sv?.key === v?.key);
+      // Preserve variables from the filter being edited (not the globally selected filter)
+      const sourceVars =
+        selectedFilterExistingData?.variables ||
+        filterToEdit?.variables ||
+        [];
+      const match = sourceVars.find((sv:any) => sv?.key === v?.key);
       return match?.width ? { ...v, width: match.width } : v;
     }),
     properties: {

@@ -16,6 +16,7 @@ export interface UserSelectProps
   users: UserOption[];
   includeEmailInLabel?: boolean;
   showAsText?: boolean;
+  shortMeLabel?: boolean;
 }
 
 const getDisplayName = (user: UserOption): string => {
@@ -34,6 +35,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   dataTestId = "user-select",
   includeEmailInLabel = false,
   showAsText = false,
+  shortMeLabel = false,
   className,
   ...rest
 }) => {
@@ -53,11 +55,15 @@ export const UserSelect: React.FC<UserSelectProps> = ({
       .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }));
   }, [users, includeEmailInLabel]);
 
-  const options = useMemo<SelectDropdownOptionType[]>(() => [
-    { label: t("Assign to me"), value: "me" },
-    { label: t("Unassigned"), value: "unassigned" },
-    ...sortedUserOptions
-  ], [sortedUserOptions, t]);
+  const options = useMemo<SelectDropdownOptionType[]>(() => {
+    //For task details page, we need to show "Assigned to me" and in table view we need to show "Me"
+    const meLabel = shortMeLabel ? t("Me") : t("Assigned to me");
+    return [
+      { label: meLabel, value: "me" },
+      { label: t("Unassigned"), value: "unassigned" },
+      ...sortedUserOptions
+    ];
+  }, [sortedUserOptions, t, shortMeLabel]);
 
   const selectedOption = useMemo(
     () => options.find(opt => opt.value === value),
