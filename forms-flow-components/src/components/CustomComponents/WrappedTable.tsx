@@ -13,6 +13,7 @@ import { StyleServices } from "@formsflow/service";
  * - Automatically injects refresh button in actions column header when onRefresh is provided
  * - Custom sort icons with consistent styling
  * - Skeleton loading overlay for better UX
+ * - Sticky actions column support via enableStickyActions prop (prevents resizing of actions column)
  * - Extensible via dataGridProps for additional DataGrid customization
  * 
  * This component accepts all data and handlers as props to remain page-agnostic,
@@ -43,6 +44,7 @@ export interface WrappedTableProps {
   noRowsLabel?: string;
   dataGridProps?: Partial<DataGridProps>;
   enableStickyActions?: boolean;
+  disableVirtualization?: boolean;
 }
 
 const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
@@ -69,6 +71,7 @@ const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
       noRowsLabel,
       dataGridProps = {},
       enableStickyActions = false,
+      disableVirtualization = false,
     },
     ref
   ) {
@@ -166,7 +169,8 @@ const WrappedTable = forwardRef<HTMLDivElement, WrappedTableProps>(
           slotProps={finalSlotProps}
           localeText={noRowsLabel ? { noRowsLabel } : undefined}
           sx={mergedDataGridSx}
-          className={enableStickyActions ? 'action-column-sticky' : ''}
+          className={enableStickyActions ? 'action-column-sticky' : ''} //to avoid resizing of actions column
+          disableVirtualization={disableVirtualization}
         />
       </Paper>
     );

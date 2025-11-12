@@ -35,7 +35,7 @@ import {
 
 // UI Components
 import {
-  ReusableTable,
+  WrappedTable,
   V8CustomButton,
   CollapsibleSearch,
   DateRangePicker,
@@ -735,7 +735,7 @@ const {
               </p>
             </div>
           ) : (
-            <ReusableTable
+            <WrappedTable
               columns={muiColumns}
               rows={memoizedRows}
               rowCount={totalCount}
