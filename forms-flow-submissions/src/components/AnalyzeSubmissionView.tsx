@@ -112,14 +112,13 @@ const ViewApplication = React.memo(() => {
   const handlePreDownload = useCallback(() => {
     setShowExportAlert(true);
     reset();
-
     start();
-  }, []);
+  }, [reset, start, setShowExportAlert]);
 
   const handlePostDownload = useCallback(() => {
     complete();
     setShowExportAlert(false);
-  }, [complete]);
+  }, [complete, setShowExportAlert]);
 
 
   useEffect(() => {
@@ -242,7 +241,7 @@ const ViewApplication = React.memo(() => {
   const historyColumns = useMemo(
     () => [
       {
-        field: "Status",
+        field: "status",
         headerName: t("Status"),
         flex: 2,
         sortable: false,
@@ -303,6 +302,7 @@ const ViewApplication = React.memo(() => {
 
   const historyRows = useMemo(() => {
     return (appHistory || []).map((entry: any, index: number) => ({
+      id: entry.submissionId ?? `row-${index}`, // Unique and stable id for data grid
       status: entry.submissionId || index,
       submittedBy: entry.submittedBy || "N/A",
       created: entry.created || "",
@@ -433,7 +433,7 @@ const ViewApplication = React.memo(() => {
                   selected={selectedTab?.id === tab.id}
                   onClick={() => setSelectedTab(tab)}
                   disabled={
-                    ((tab.id === "flow" || tab.id === "history") && !analyze_process_view)
+                    ((tab.id === "flow" && !analyze_process_view) || (tab.id === "history" && !analyze_submissions_view_history))
                   }
                 />
               ))}
