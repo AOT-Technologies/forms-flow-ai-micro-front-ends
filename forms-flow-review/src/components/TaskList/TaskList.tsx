@@ -30,6 +30,7 @@ import {
   // CheckboxUncheckedIcon,
   CustomSearch,
   V8CustomButton,
+  BreadCrumbs,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskListDropdownItems from "./TaskFilterDropdown";
@@ -41,10 +42,16 @@ import { createReqPayload ,sortableKeysSet} from "../../helper/taskHelper";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
+import { useHistory, useParams } from "react-router-dom";
+import { MULTITENANCY_ENABLED } from "../../constants";
 
 const TaskList = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const history = useHistory();
+  const { tenantId } = useParams();
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId);
+  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const {
     limit,
     dateRange,
@@ -64,6 +71,17 @@ const TaskList = () => {
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
   const taskvariables = selectedFilter?.variables ?? [];
+
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Tasks"), id: "tasks" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "tasks") {
+      history.push(`${redirectUrl}task`);
+    }
+  };
  
   //inital data loading
   const initialDataLoading = async () => {
@@ -289,7 +307,12 @@ const TaskList = () => {
       <div className="toast-section">{}</div>
       <div className="header-section-1">
         <div className="section-seperation-left">
-          <h4> Tasks </h4>
+          <BreadCrumbs
+            items={breadcrumbItems}
+            variant="default"
+            onBreadcrumbClick={handleBreadcrumbClick}
+            dataTestId="tasks-breadcrumbs"
+          />
         </div>
       </div>
       <div className="header-section-2">

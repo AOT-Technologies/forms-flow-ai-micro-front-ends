@@ -13,7 +13,8 @@ import {
   fetchdashboards,
 } from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
-import { TableFooter, V8CustomButton } from "@formsflow/components";  
+import { TableFooter, V8CustomButton, BreadCrumbs } from "@formsflow/components";
+import { useHistory } from "react-router-dom";  
 
 const InsightDashboard = React.memo((props: any) => {
   const { dashboards, groups, setCount, authReceived, loading: parentLoading } = props;
@@ -24,6 +25,8 @@ const InsightDashboard = React.memo((props: any) => {
 
   const { t } = useTranslation();
   const { tenantId } = useParams();
+  const history = useHistory();
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [remainingGroups, setRemainingGroups] = React.useState([]);
 
   const [activeRow, setActiveRow] = React.useState(null);
@@ -234,8 +237,28 @@ const InsightDashboard = React.memo((props: any) => {
     return list;
   };
 
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Manage"), id: "manage" },
+    { label: t("Dashboards"), id: "dashboards" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "manage" || item.id === "dashboards") {
+      history.push(`${baseUrl}admin/dashboard`);
+    }
+  };
+
   return (
     <>
+      <div style={{ marginBottom: "15px" }}>
+        <BreadCrumbs
+          items={breadcrumbItems}
+          variant="default"
+          onBreadcrumbClick={handleBreadcrumbClick}
+          dataTestId="admin-dashboard-breadcrumbs"
+        />
+      </div>
       <div className="" role="definition">
         <br />
         <div>

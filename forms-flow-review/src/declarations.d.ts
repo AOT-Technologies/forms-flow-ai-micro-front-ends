@@ -99,7 +99,8 @@ declare module "@formsflow/components" {
     VerticalLineIcon,
     ReusableLargeModal,
     FormStatusIcon,
-    Alert
+    Alert,
+    BreadCrumbs
   }: any;
 }
 

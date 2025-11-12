@@ -20,6 +20,7 @@ import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
 import {removingTenantId} from "../../utils/utils.js";
+import { MULTITENANCY_ENABLED } from "../../constants";
 import { TableFooter,
    CustomSearch, 
    CloseIcon, 
@@ -30,11 +31,15 @@ import { TableFooter,
    CustomInfo, 
   ConfirmModal,
   V8CustomButton,
+  BreadCrumbs,
 } 
 from "@formsflow/components";
+import { useHistory } from "react-router-dom";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
+  const history = useHistory();
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
@@ -636,8 +641,28 @@ const Roles = React.memo((props: any) => {
       },
     },
   ];
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Manage"), id: "manage" },
+    { label: t("Roles"), id: "roles" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "manage" || item.id === "roles") {
+      history.push(`${baseUrl}admin/roles`);
+    }
+  };
+
   return (
     <>
+      <div style={{ marginBottom: "15px" }}>
+        <BreadCrumbs
+          items={breadcrumbItems}
+          variant="default"
+          onBreadcrumbClick={handleBreadcrumbClick}
+          dataTestId="admin-roles-breadcrumbs"
+        />
+      </div>
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
