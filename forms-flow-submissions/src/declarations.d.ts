@@ -72,5 +72,6 @@ declare module "@formsflow/components" {
     AlertVariant,
     CustomProgressBar,
     useProgressBar,
+    FormViewModal,
   }: any;
 }
