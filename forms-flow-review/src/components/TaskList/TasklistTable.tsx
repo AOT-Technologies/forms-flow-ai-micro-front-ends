@@ -3,6 +3,7 @@ import {
   V8CustomButton,
   WrappedTable,
   FormStatusIcon,
+  RefreshIcon,
 } from "@formsflow/components";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { HelperServices, StyleServices } from "@formsflow/service";
@@ -21,12 +22,13 @@ import {
   setBundleSelectedForms,
   setBundleLoading,
   setAppHistoryLoading,
+  setSelectedFilter,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useParams } from "react-router-dom";
 import {
   fetchTaskVariables,
-  executeRule,
+  executeRule
 } from "../../api/services/filterServices";
 import {
   getBPMTaskDetail,
@@ -125,6 +127,7 @@ const TaskListTable = ({ onRefresh }: TaskListTableProps) => {
 
   const greenColor = StyleServices.getCSSVariable("--green-100");
   const yellowColor = StyleServices.getCSSVariable("--yellow-200");
+  const iconColor = StyleServices.getCSSVariable("--secondary-dark");
 
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
@@ -630,18 +633,29 @@ const TaskListTable = ({ onRefresh }: TaskListTableProps) => {
       ...filteredColumns.map((col, idx) => ({
         field: col.sortKey,
         headerName: t(col.name),
-        flex: 1,
+        // If a saved width exists, honor it and disable flex; otherwise allow flex
+        ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
         sortable: true,
-        minWidth: col.width,
+        // Do not lock minWidth to the last saved width; allow shrinking after expand
+        minWidth: 90,
         headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
         renderCell: (params: any) => getCellValue(col, params.row),
       })),
       {
         field: "actions",
+        renderHeader: () => (
+          <V8CustomButton
+            variant="secondary"
+            icon={<RefreshIcon color={iconColor} />}
+            iconOnly
+            onClick={onRefresh}
+            dataTestId="task-refresh-button"
+          />
+        ),
         headerName: "",
         sortable: false,
         filterable: false,
-        headerClassName: "sticky-column-header",
+        headerClassName: "sticky-column-header last-column",
         cellClassName: "sticky-column-cell",
         width: 100,
         renderCell: (params: any) => (
@@ -654,7 +668,7 @@ const TaskListTable = ({ onRefresh }: TaskListTableProps) => {
         ),
       },
     ];
-  }, [columns, t, handleOpenModal]);
+  }, [columns, t, handleOpenModal, onRefresh, iconColor]);
   // Rows mapping
   const memoizedRows = useMemo(() => {
     return (tasksList || []).map((task: any) => ({ id: task.id, ...task }));
@@ -668,6 +682,63 @@ const TaskListTable = ({ onRefresh }: TaskListTableProps) => {
     () => [{ field: activeField, sort: activeOrder }],
     [activeField, activeOrder]
   );
+
+  // Row height scales with selected filter's dataLineValue/displayLinesCount
+  const computedRowHeight = useMemo(() => {
+    const lines = Number(
+      selectedFilter?.properties?.dataLineValue ??
+      selectedFilter?.properties?.displayLinesCount ??
+      1
+    );
+    const base = 55; // default row height in ReusableTable
+    const clampedLines = isNaN(lines) ? 1 : Math.max(1, Math.min(4, lines));
+    return base * clampedLines;
+  }, [selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
+
+  // Heuristic: if a row's visible text values all fit in one line, keep base height
+  const getRowHeight = useCallback((params: any) => {
+    const base = 55;
+    const maxLines = Number(
+      selectedFilter?.properties?.dataLineValue ??
+      selectedFilter?.properties?.displayLinesCount ??
+      1
+    );
+    if (maxLines <= 1) return base;
+
+    const row: any = params?.model || params?.row || {};
+
+    // visible column keys excluding actions/assignee
+    const visibleKeys = (columns || [])
+      .filter((c) => c.sortKey !== 'actions' && c.sortKey !== 'assignee')
+      .map((c) => c.sortKey);
+
+    const getTextValue = (key: string): string => {
+      if (key === 'created') {
+        return row.created ? HelperServices.getLocaldate(row.created) : '';
+      }
+      // direct field
+      if (row[key] != null) return String(row[key]);
+      // process variables
+      const vars = row?._embedded?.variable || [];
+      const match = vars.find((v: any) => v?.name === key);
+      if (!match) return '';
+      let v = match.value;
+      // if looks like JSON of selectboxes, attempt to join true keys
+      try {
+        if (typeof v === 'string' && v.startsWith('{') && v.endsWith('}')) {
+          const obj = JSON.parse(v);
+          const trues = Object.keys(obj).filter((k) => obj[k]);
+          v = trues.join(', ');
+        }
+      } catch {}
+      return v != null ? String(v) : '';
+    };
+
+    // If any value is long enough to likely wrap, increase height
+    const threshold = 28; // approx chars that fit in one line for typical column width
+    const needsMore = visibleKeys.some((k) => getTextValue(k).length > threshold);
+    return needsMore ? base * Math.max(1, Math.min(4, Number(maxLines))) : base;
+  }, [columns, selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
 
   if (!columns?.length) {
     return isTaskListLoading ? <Loading /> : (
@@ -687,6 +758,7 @@ const TaskListTable = ({ onRefresh }: TaskListTableProps) => {
         rows={memoizedRows}
         rowCount={tasksCount}
         loading={isTaskListLoading}
+        rowHeight={computedRowHeight}
         paginationMode="server"
         sortingMode="server"
         paginationModel={paginationModel}
@@ -699,6 +771,27 @@ const TaskListTable = ({ onRefresh }: TaskListTableProps) => {
         noRowsLabel={t("No tasks found")}
         disableColumnMenu
         disableRowSelectionOnClick
+        dataGridProps={{
+          getRowId: (row: any) => row.id,
+          getRowHeight: getRowHeight as any,
+          onColumnWidthChange: (params: any) => {
+            try {
+              const field = params?.colDef?.field || params?.field;
+              const width = params?.width;
+              if (!field || !width || !selectedFilter?.id) return;
+              const updatedVariables = (selectedFilter?.variables || []).map((v: any) =>
+                v.key === field ? { ...v, width } : v
+              );
+              const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
+              // Update locally so future saves carry widths
+              dispatch(setSelectedFilter(updatedFilter));
+              // Do not persist here; widths are saved when the user saves the filter
+            } catch (e) {
+              // no-op
+            }
+          }
+        }}
+        disableVirtualization
       />
       {showModal && renderReusableModal()}
     </>

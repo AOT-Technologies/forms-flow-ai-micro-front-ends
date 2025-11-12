@@ -29,6 +29,7 @@ interface ReusableTableProps {
   customSlotProps?: object;
   customLocaleText?: object;
   enableStickyActions?: boolean;
+  disableVirtualization?: boolean;
 }
 
 export const ReusableTable: React.FC<ReusableTableProps> = ({
@@ -55,6 +56,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   customSlotProps = {},
   customLocaleText = {},
   enableStickyActions = false,
+  disableVirtualization = false,
 }) => {
   const { t } = useTranslation();
   const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
@@ -119,6 +121,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
         rowHeight={rowHeight}
         disableRowSelectionOnClick={disableRowSelectionOnClick}
         slots={defaultSlots}
+        disableVirtualization ={disableVirtualization}
         slotProps={{
           loadingOverlay: {
             variant: 'skeleton',

@@ -12,6 +12,7 @@ import {  setTaskDetailsLoading } from "../../actions/taskActions";
 import { getBPMTaskDetail } from "../../api/services/bpmTaskServices";
 import SocketIOService from "../../services/SocketIOService";
 import { userRoles } from "../../helper/permissions";
+import { useEffect, useState } from "react";
 
 
 
@@ -27,6 +28,8 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
   } = useSelector((state: any) => state.task);
 
   const { manageMyTasks,AssignTaskToOthers } = userRoles();
+  // Optimistic value to immediately reflect selection in UI
+  const [overrideValue, setOverrideValue] = useState<string | null>(null);
   const fetchTaskList = () => {
     dispatch(fetchServiceTaskList(lastReqPayload, null, activePage, limit));
   };
@@ -70,21 +73,70 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
   };
 
   const handleChangeClaim = (newuser: string) => {
-    if (newuser && newuser !== task.assignee) {
-      dispatch(
-        updateAssigneeBPMTask(task?.id, newuser, () => {
-           //the check with size added to identify the source of component mounted.
-          if (isFromTaskDetails) {
-            dispatch(setTaskDetailsLoading(true));
-            dispatch(getBPMTaskDetail(task?.id));
-          } else {
-            fetchTaskList();
-          }
-          if(!SocketIOService.isConnected){
-          fetchTaskList();
-        }
-        })
-      );
+    // Optimistically update the UI label
+    setOverrideValue(newuser);
+    const currentValue = !task?.assignee
+      ? 'unassigned'
+      : task.assignee === userDetails?.preferred_username
+      ? 'me'
+      : task.assignee;
+
+    const refreshAfter = () => {
+      if (isFromTaskDetails) {
+        dispatch(setTaskDetailsLoading(true));
+        dispatch(getBPMTaskDetail(task?.id));
+      } else {
+        fetchTaskList();
+        callTaskListcountApi();
+      }
+      if (!SocketIOService.isConnected) {
+        fetchTaskList();
+      }
+    };
+
+    // Targeting 'me'
+    if (newuser === 'me') {
+      if (currentValue === 'unassigned') {
+        // unassigned -> claim self
+        dispatch(claimBPMTask(taskId, userDetails?.preferred_username, refreshAfter));
+      } else {
+        // if current is 'me' or any other user -> unclaim first then claim self
+        dispatch(
+          unClaimBPMTask(taskId, () => {
+            dispatch(claimBPMTask(taskId, userDetails?.preferred_username, refreshAfter));
+          })
+        );
+      }
+      return;
+    }
+
+    // Targeting 'unassigned'
+    if (newuser === 'unassigned') {
+      // Always attempt unclaim to ensure backend state matches the selection
+      dispatch(unClaimBPMTask(taskId, refreshAfter));
+      return;
+    }
+
+    // Targeting specific other user
+    if (newuser) {
+      if (currentValue === 'me') {
+        // me -> other user: unclaim then assign to new user
+        dispatch(
+          unClaimBPMTask(taskId, () => {
+            dispatch(
+              updateAssigneeBPMTask(task?.id, newuser, refreshAfter)
+            );
+          })
+        );
+        return;
+      }
+      if (currentValue === 'unassigned') {
+        // unassigned -> assign directly to new user
+        dispatch(updateAssigneeBPMTask(task?.id, newuser, refreshAfter));
+        return;
+      }
+      // other user -> even if selecting the same user, force update to ensure backend state aligns
+      dispatch(updateAssigneeBPMTask(task?.id, newuser, refreshAfter));
     }
   };
 
@@ -95,6 +147,13 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
       : task.assignee;
 
   const userList = useSelector((state: any) => state.task?.userList);
+  const displayedValue = overrideValue ?? currentValue;
+  // Clear override once the store reflects the chosen value
+  useEffect(() => {
+    if (overrideValue && overrideValue === currentValue) {
+      setOverrideValue(null);
+    }
+  }, [currentValue, overrideValue]);
   if (!task?.id) {
     return null;
   }
@@ -105,7 +164,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
       return(
         <UserSelect
           users={userList?.data ?? []}
-          value={currentValue}
+          value={displayedValue}
           onChange={handleChangeClaim}
           ariaLabel="task-assignee-select"
           dataTestId="task-assignee-select"

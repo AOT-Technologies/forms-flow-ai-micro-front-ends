@@ -231,6 +231,31 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             </>
           )}
 
+          {/* Divider after action items and none items */}
+          {
+            ((myFilters && myFilters.length > 0) ||
+            (sharedFilters && sharedFilters.length > 0) ||
+            (noneItems && noneItems.length > 0)) && (
+              <Dropdown.Divider />
+            )}
+
+          {/* Search section if only my filters or shared filters are present */}
+
+          {searchable &&
+            ((myFilters && myFilters.length > 0) ||
+              (sharedFilters && sharedFilters.length > 0) ||
+              (noneItems && noneItems.length > 0)) && (
+              <div className="filter-dropdown-search">
+                <CustomSearch
+                  search={searchTerm}
+                  setSearch={handleSearchChange}
+                  handleSearch={() => {}}
+                  placeholder={searchPlaceholder}
+                  dataTestId={`${dataTestId}-search`}
+                />
+              </div>
+            )}
+
           {noneItems && noneItems.length > 0 && (
             <>
               {noneItems.map((item, index) => (
@@ -258,14 +283,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             </>
           )}
 
-          {/* Divider after action items and none items */}
-          {((actionItems && actionItems.length > 0) ||
-            (noneItems && noneItems.length > 0)) &&
-            ((myFilters && myFilters.length > 0) ||
-              (sharedFilters && sharedFilters.length > 0)) && (
-              <Dropdown.Divider />
-            )}
-
+          
           {/* My Filters section */}
           {myFilters && myFilters.length > 0 && (
             <>
@@ -489,18 +507,6 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
               `filter-dropdown-menu--${variant}`
             )}
           >
-            {searchable && (
-              <div className="filter-dropdown-search">
-                <CustomSearch
-                  search={searchTerm}
-                  setSearch={handleSearchChange}
-                  handleSearch={() => {}}
-                  placeholder={searchPlaceholder}
-                  dataTestId={`${dataTestId}-search`}
-                />
-              </div>
-            )}
-
             <div className="filter-dropdown-items">
               {categorize ? renderCategorizedItems() : renderUncategorizedItems()}
             </div>

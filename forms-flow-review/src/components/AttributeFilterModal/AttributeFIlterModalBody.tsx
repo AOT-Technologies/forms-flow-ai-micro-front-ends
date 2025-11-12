@@ -86,8 +86,9 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
   };
 
   // Helper function to process task-level fields from criteria
+  // Note: 'roles' is excluded here as it's handled separately from candidateGroup in initialData
   const processTaskFields = (existingValues) => {
-    const taskFields = ['submitterName', 'assignee', 'roles', 'created', 'formName'];
+    const taskFields = ['submitterName', 'assignee', 'created', 'formName'];
     taskFields.forEach(fieldName => {
       const fieldValue = selectedAttributeFilter?.criteria?.[fieldName];
       if (fieldValue) {
@@ -117,6 +118,11 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
   // Helper function to process existing process variables
   const processExistingProcessVariables = (existingValues) => {
     exisitngProcessvariables.forEach((item) => {
+      // Skip roles from processVariables - it should come from candidateGroup in initialData
+      if (item.name === "roles" && !item.isFormVariable) {
+        return;
+      }
+      
       if (VARIABLES_WITH_FORM_SUPPORT.has(item.name)) {
         processVariable(item, existingValues);
       } else {
@@ -145,7 +151,6 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
 
   return { ...initialData, ...existingValues };
 });
-
   const FILTER_SHARE_OPTIONS = {
   PRIVATE: 'PRIVATE_ONLY_YOU',
   SAME_AS_TASKS: 'SAME_AS_TASK_FILTER',
@@ -185,13 +190,17 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
   );
 
   const candidateOptions = useMemo(() => {
-    return candidateGroups.reduce((acc, group) => {
+    const options = candidateGroups.reduce((acc, group) => {
       if (!group.permissions.includes("view_filters")) return acc;
-      const name =  removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED);
-      acc.push({ value: name, label: name });
+      const name = removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED);
+      // Remove leading slash to match the format in attributeData.roles
+      const normalizedName = trimFirstSlash(name);
+      acc.push({ value: normalizedName, label: normalizedName });
       return acc;
     }, []);
-  }, [candidateGroups, tenantKey]);
+
+    return options;
+  }, [candidateGroups, tenantKey, attributeData?.roles]);
 
 
 
@@ -241,7 +250,8 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
       }
       
       // Process task-level fields from attributeFilter
-      const taskFields = ['submitterName', 'assignee', 'roles', 'created', 'formName'];
+      // Note: 'roles' is excluded here as it's handled separately from candidateGroup in initialData
+      const taskFields = ['submitterName', 'assignee', 'created', 'formName'];
       taskFields.forEach(fieldName => {
         const fieldValue = attributeFilter?.criteria?.[fieldName];
         if (fieldValue) {
@@ -256,6 +266,11 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
       
       // Process process variables from attributeFilter
       attributeFilterProcessVars.forEach((item) => {
+        // Skip roles from processVariables - it should come from candidateGroup in initialData
+        if (item.name === "roles" && !item.isFormVariable) {
+          return;
+        }
+        
         if (VARIABLES_WITH_FORM_SUPPORT.has(item.name)) {
           const taskVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable === item.isFormVariable);
           if (taskVariable) {
@@ -505,13 +520,21 @@ const removeSlashFromValue = (value) => {
     const saveFilterAttributes = async () => {
   try {
     const filterToSave = createAttributeFilterPayload();
-    const response = await createFilter(filterToSave);
+    
+    // Check if we're editing an existing filter (PUT) or creating a new one (POST)
+    if (attributeFilter?.id) {
+      // Edit mode: Use PUT via handleSaveFilterAttributes
+      await handleSaveFilterAttributes(filterToSave);
+    } else {
+      // Create mode: Use POST via createFilter
+      const response = await createFilter(filterToSave);
 
-    // need to update selected attribute filter in redux
-    dispatch(setSelectedBpmAttributeFilter(response.data));
-    const newAttributeFilterList = [...attributeFilterList, response.data];
-    dispatch(setAttributeFilterList(newAttributeFilterList));
-    dispatch(fetchServiceTaskList(filterToSave, null, 1, limit));
+      // need to update selected attribute filter in redux
+      dispatch(setSelectedBpmAttributeFilter(response.data));
+      const newAttributeFilterList = [...attributeFilterList, response.data];
+      dispatch(setAttributeFilterList(newAttributeFilterList));
+      dispatch(fetchServiceTaskList(filterToSave, null, 1, limit));
+    }
   } catch (error) {
     console.error("Failed to save filter attributes:", error);
   } finally {

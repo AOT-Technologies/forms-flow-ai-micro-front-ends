@@ -109,11 +109,11 @@ const AttributeFilterDropdown = () => {
   const onSearch = (searchTerm: string) => {
     setFilterSearchTerm(searchTerm);
   };
-  const handleEditAttrFilter = () => {
-    if (!selectedAttributeFilter) return;
-    setShowAttributeFilter(true);
-    dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
-  };
+  // const handleEditAttrFilter = () => {
+  //   if (!selectedAttributeFilter) return;
+  //   setShowAttributeFilter(true);
+  //   dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
+  // };
 
 
   const handleEditAttributeFromItem = (filter) => {
@@ -124,6 +124,15 @@ const AttributeFilterDropdown = () => {
 
   const filterDropdownAttributeItems = useMemo(() => {
     const attributeDropdownItemsArray: FilterItemType[] = [];
+
+    const noFilter: FilterItemType = {
+      content: <em>{t("No filters found")}</em>,
+      onClick: () => {},
+      type: "none",
+      dataTestId: "no-filters",
+      ariaLabel: t("No attribute filters available"),
+      category: "none",
+    };
 
     const createCustomField: FilterItemType = {
       content: (
@@ -142,7 +151,7 @@ const AttributeFilterDropdown = () => {
     const reOrderAttribute: FilterItemType = {
       content: (
         <div className="d-flex align-items-center justify-content-between">
-          <span>{t("Re-order And Hide Filters")}</span>
+          <span>{t("Re-order / Hide Filters")}</span>
           <ReorderIcon />
         </div>
       ),
@@ -173,20 +182,19 @@ const AttributeFilterDropdown = () => {
             return nameMatch && notHidden;
           })
           .map((filter) => {
-            const createdByMe =
-              userDetails?.preferred_username === filter?.createdBy;
-            const isSharedToPublic =
-              !filter?.roles?.length && !filter?.users?.length;
-            const isSharedToRoles = filter?.roles?.length > 0;
-            const isSharedToMe = filter?.roles?.some((role) =>
-              userDetails?.groups?.includes(role)
-            );
-
+            // const createdByMe =
+            //   userDetails?.preferred_username === filter?.createdBy;
+            // const isSharedToUsersofTakFilter =
+            //   !filter?.roles?.length && !filter?.users?.length;
+            // const isSharedToRoles = filter?.roles?.length > 0;
+            // const isSharedToMe = filter?.roles?.some((role) =>
+            //   userDetails?.groups?.includes(role)
+            // );
             let category: "my" | "shared" = "my";
 
-            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+          if ((selectedFilter?.users?.length > 0) ||(filter?.users?.length > 0))  {
               category = "my";
-            } else if (isSharedToPublic || isSharedToMe) {
+            } else {
               category = "shared";
             }
             // category remains "my" for all other cases (default)
@@ -219,18 +227,26 @@ const AttributeFilterDropdown = () => {
     if (createFilters) {
       attributeDropdownItemsArray.push(createCustomField);
 
-      if (filteredItems.length > 0) {
+      if (filteredItems.length > 1) {
         attributeDropdownItemsArray.push(reOrderAttribute);
-      }
+      }      
     }
 
     // Only show "All Fields" when not searching
-    if (!isSearching || filteredItems.length === 0) {
+    if (!isSearching) {
       attributeDropdownItemsArray.push(clearAttributeFilter);
     }
 
     // Add dynamic filtered items
-    attributeDropdownItemsArray.push(...filteredItems);
+    if (filteredItems.length > 0) {
+      attributeDropdownItemsArray.push(...filteredItems);
+    } else {
+      // Show "No filters found" only when:
+      // 1. Searching and no matches found
+      if (isSearching ) {
+        attributeDropdownItemsArray.push(noFilter);
+      }
+    }
 
     return attributeDropdownItemsArray;
   }, [
@@ -256,8 +272,8 @@ const AttributeFilterDropdown = () => {
       <FilterDropDown
         label={title}
         items={filterDropdownAttributeItems}
-        searchable={false}
-        searchPlaceholder={t("Search")}
+        searchable={true}
+        searchPlaceholder={t("Search all filters")}
         onSearch={onSearch}
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}

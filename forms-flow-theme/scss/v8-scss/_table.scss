@@ -4,8 +4,8 @@
 @import "./mixins";
 
 $table-border-color: #DAD9DA; // Light gray border
-$table-bg-light: var(--ff-white-200); // Very light background
-$table-border-light: var(--ff-gray-x-light); // Light border color
+$table-bg-light: var( --white-300); // Very light background
+$table-border-light: var(--gray-x-light); // Light border color
 $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
 
 /* ============================
@@ -57,6 +57,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     &:focus-within {
       outline: none !important;
       border: none !important;
+    }
+    
+    &[data-field="selected"] {
+      justify-content: flex-end !important;
     }
   }
   
@@ -146,6 +150,9 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     .MuiDataGrid-columnHeaderTitleContainer{
       justify-content: flex-end !important;
     }
+    .MuiDataGrid-columnSeparator--resizable{
+      display: none !important;
+    }
   }
   .MuiTablePagination-root{
     display: flex;
@@ -217,6 +224,13 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
       padding-bottom: 0 !important;
     }
 
+   
+  }
+  .sticky-column-header,.sticky-column-cell{
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 2 !important;
+    background-color: $table-bg-light !important;
   }
   .action-column-sticky {
     .MuiDataGrid-columnHeader.sticky-column-header {

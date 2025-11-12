@@ -118,7 +118,7 @@ const TaskListDropdownItems = memo(() => {
     const reOrderFilter: FilterItemType = {
       content: (
         <div className="d-flex align-items-center justify-content-between">
-          <span>{t("Re-order And Hide Filters")}</span> <ReorderIcon />
+          <span>{t("Re-order / Hide Filters")}</span> <ReorderIcon />
         </div>
       ),
       type: "reorder",
@@ -219,7 +219,7 @@ const TaskListDropdownItems = memo(() => {
         label={title}
         items={filterDropdownItems}
         searchable={true}
-        searchPlaceholder={t("Search")}
+        searchPlaceholder={t("Search all filters")}
         onSearch={onSearch}
         dataTestId="business-filter-dropdown"
         ariaLabel={t("Select task filter")}

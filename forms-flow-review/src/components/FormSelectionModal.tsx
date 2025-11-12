@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Modal from "react-bootstrap/Modal";
 import { useTranslation } from "react-i18next";
-import { CloseIcon, CustomSearch, CustomButton } from "@formsflow/components";
+import { CustomSearch, CustomCheckbox } from "@formsflow/components";
 import { Form } from "@aot-technologies/formio-react";
 import {  fetchFormById } from "../api/services/filterServices";
 interface FormSelectionModalProps {
@@ -9,15 +8,16 @@ interface FormSelectionModalProps {
   onClose: () => void;
   onSelectForm: ({formId,formName}) => void;
   forms: any[];
+  selectedForm?: { formId: string; formName: string };
 }
 
 export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
-  ({ showModal, onClose, onSelectForm, forms }) => {
+  ({ onSelectForm, forms, selectedForm: selectedFormProp }) => {
 
     const { t } = useTranslation();
     const [searchFormName, setSearchFormName] = useState<string>("");
     const [loadingForm, setLoadingForm] = useState<boolean>(false);
-    const [selectedForm, setSelectedForm] = useState({ formId: "", formName: "" });
+    const [selectedForm, setSelectedForm] = useState({ formId: selectedFormProp?.formId || "", formName: selectedFormProp?.formName || "" });
     const [loading, setLoading] = useState(false);
     const [form, setForm] = useState<any>(null);
     const [formNames, setFormNames] = useState({ data: [], isLoading: true });
@@ -45,11 +45,14 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     }, [forms.length, forms]);
     
 
-    useEffect (()=>{
-      if(formNames.data.length > 0) {
-        setSelectedForm( ({ formId: formNames.data[0].formId, formName: formNames.data[0].formName }));
+    // Sync local selection with parent-provided selection (edit mode)
+    useEffect(() => {
+      if (selectedFormProp?.formId && selectedFormProp.formId !== selectedForm.formId) {
+        setSelectedForm({ formId: selectedFormProp.formId, formName: selectedFormProp.formName });
       }
-    },[formNames.data])
+    }, [selectedFormProp?.formId, selectedFormProp?.formName]);
+
+    
     const handleFormNameSearch = () => {
       setLoadingForm(true);
       if (searchFormName?.trim()) {
@@ -83,25 +86,18 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     useEffect(() => {
       if (selectedForm.formId) {
         setLoading(true);
-        // Fetch form data by ID
+        setForm(null); // reset previous preview
         fetchFormById(selectedForm.formId)
           .then((res) => {
-            if (res.data) {
-              const { data } = res;
-              setForm(data);
-            }
+            if (res.data) setForm(res.data);
           })
-          .catch((err) => {
-            console.error(
-              "Error fetching form data:",
-              err.response?.data ?? err.message
-            );
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+          .catch((err) => console.error("Error fetching form data:", err))
+          .finally(() => setLoading(false));
+      } else {
+        setForm(null);
       }
-    }, [selectedForm]); 
+    }, [selectedForm.formId]);
+    
 
 
     function renderFormList() {
@@ -111,76 +107,80 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
     
       const formOptions = getFormOptions();
       if (formOptions.length > 0) {
-        return formOptions.map((item) => (
-          <button
-            className={`${
-              selectedForm.formId === item.formId ? "active" : ""
-            }`}
-            onClick={() => setSelectedForm({ formId: item.formId, formName: item.formName })}
-            key={item.formId}
-            data-testid="form-selection-modal-form-item"
-          >
-            {item.formName}
-          </button>
-        ));
+        // Normalize to strings so CustomCheckbox strict-equality matches
+        const items = formOptions.map((item) => ({ label: item.formName, value: String(item.formId) }));
+        const selectedValues = selectedForm.formId ? [String(selectedForm.formId)] : [];
+        return (
+          <CustomCheckbox
+            key={`form-list-${String(selectedForm.formId)}-${items.length}`}
+          size="small"
+          variant="secondary"
+            items={items}
+            inline={false}
+            optionClassName="form-option"
+            selectedValues={selectedValues}
+            onChange={(_values, event) => {
+              const clickedId = String(event?.currentTarget?.value ?? event?.target?.value);
+              if (!clickedId) return;
+              if (String(selectedForm.formId) === clickedId) {
+                setSelectedForm({ formId: "", formName: "" });
+                return;
+              }
+              const matched = formOptions.find((i) => String(i.formId) === clickedId);
+              if (matched) {
+                const newSel = { formId: String(matched.formId), formName: matched.formName };
+                setSelectedForm(newSel);
+                onSelectForm(newSel);
+              }
+            }}
+            dataTestId="form-selection-modal-form-item"
+            ariaLabel={t("Select a form")}
+          />
+        );
       }
     
       return <span className="nothing-found-text">{t("Nothing is found. Please try again.")}</span>;
     }
     
     return (
-      <Modal 
-      show={showModal} 
-      size="lg">
-        <Modal.Header>
-          <Modal.Title> <p> {t("Select a Form")} </p></Modal.Title>
-          <div className="icon-close" onClick={onClose}>
-            <CloseIcon data-testid="form-selection-modal-close-icon" />
-          </div>
-        </Modal.Header>
-        <Modal.Body className="side-by-side">
-          <div className="left scroll-list">
+             
+        <div className="filter-form-selection-page">
+          <div className="left-form-list-container">
             <CustomSearch
-              placeholder={t("Search")}
+              placeholder={t("Search for a form")}
               search={searchFormName}
               setSearch={setSearchFormName}
               handleClearSearch={handleClearSearch}
               handleSearch={handleFormNameSearch}
               dataTestId="form-custom-search"
             />
-            <div className="items">
+            <div aria-hidden="true" className="border-top my-3" />
+          
+            <div className="form-items-list">
             {renderFormList()}
             </div>
           </div>
-          <div className="right">
-            <div className="preview">
+          <div className="right-form-preview-container">
+            <div className="form-preview-inner-container" >
               {loading ? (
                 <div className="form-selection-spinner"></div>
               ) : (
-                <Form
+                form ? (
+                  <Form
+                  key={selectedForm.formId}
                   form={form}
                   options={{
                     noAlerts: true,
-                    viewAsHtml: true,
                     readOnly: true,
-                    showHiddenFields:true
-                  } as any}
-                  
-                />
+                    showHiddenFields: true
+                    } as any}
+                  />
+                ) : null
               )}
             </div>
-            <div className="actions">
-              <CustomButton
-               onClick={() => {
-                 onSelectForm(selectedForm);
-                }}
-                label={t("Select This Form")}
-                dataTestid="select-form-btn"
-              />
-            </div>
           </div>
-        </Modal.Body>
-      </Modal>
+        </div>
+        
     );
   }
 );

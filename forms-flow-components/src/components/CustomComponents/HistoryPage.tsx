@@ -77,15 +77,15 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
       // For WORKFLOW category (BPMN and DMN), handle them the same way
       if (categoryType === "WORKFLOW" && (params.processType === "BPMN" || params.processType === "DMN")) {
         const version = `${params.majorVersion}.${params.minorVersion}`;
+        setShowConfirmModal(true);
         setSelectedVersion(version);
         setProcessId(params.id);
-        revertBtnAction(params.id);
       } else {
         // For FORM category, show confirmation modal
         setShowConfirmModal(true);
         setSelectedVersion(params.version);
-        setClonedFormId(params.cloned_form_id);
-        setProcessId(params.process_id);
+        setClonedFormId(params.changeLog?.cloned_form_id);
+        setProcessId(params.id);
       }
     };
 

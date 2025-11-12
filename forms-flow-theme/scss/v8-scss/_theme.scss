@@ -28,6 +28,7 @@ $base-colors: (
 $neutral-colors: (
  gray-darkest:      #4A4A4A,
  gray-dark:         #7C7D7F,
+ gray-medium-darker:#9E9E9E,
  gray-medium-dark:  #B7B7B8,
  gray-medium:       #D1D2D3,
  gray-light:        #D9D9D9,
@@ -256,6 +257,7 @@ $font-tokens: (
       width: 100%;
       min-height: 100vh;
       margin: 0;
+      position: fixed;
   
       .page-layout {
         /* Inner page layout wrapper */
@@ -296,22 +298,21 @@ $font-tokens: (
           max-height: var(--body-section-height); // need to be updated after while implementing inner contets. 
           overflow-y: auto;
           padding-bottom: 5rem;
-          &.formedit-layout {
-              overflow-y: auto;
-              overflow-x: hidden;
-              max-width: 100%;
-              box-sizing: border-box;
-              max-height: calc(100vh - 200px);
-              width: 1088px;
-            }
-            &.processedit-layout {
-              overflow-y: auto;
-              overflow-x: hidden;
-              max-width: 100%;
-              box-sizing: border-box;
-              max-height: calc(100vh - 200px);
-              width: 1088px;
-            }
+          
+          &.formedit-layout,
+          &.processedit-layout,
+          &.task-list-body-section {
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-width: 100%;
+            box-sizing: border-box;
+            max-height: calc(100vh - 200px);
+            width: 1088px;
+          }
+          
+          &.task-list-body-section {
+            max-height: calc(100vh - 250px) !important;
+          }
         }
   
         .section-seperation-left {
