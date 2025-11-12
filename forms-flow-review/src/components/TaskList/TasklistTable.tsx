@@ -542,11 +542,18 @@ const TaskListTable = () => {
       }
     };
 
+    // Keep submission id visible even when task is unassigning
+    const selectedAppId =
+      selectedTask?._embedded?.variable?.find(
+        (v: { name: string; value: any }) => v.name === "applicationId"
+      )?.value;
+    const modalTitle = task?.applicationId ?? selectedAppId ?? "";
+
     return (
       <ReusableLargeModal
         show={showModal}
         onClose={handleCloseModal}
-        title={task?.applicationId}
+        title={modalTitle}
         subtitle={
           <div className="d-flex justify-content-between">
             <div className="d-flex gap-2">
@@ -577,7 +584,7 @@ const TaskListTable = () => {
                 </span>
               </div>
               <div className="task-assignee-wrapper">
-                <TaskAssigneeManager task={selectedTask} />
+                <TaskAssigneeManager task={selectedTask} isFromTaskDetails={true} />
               </div>
             </div>
           </div>
@@ -606,10 +613,10 @@ const TaskListTable = () => {
   return [
     ...filteredColumns.map((col, idx) => ({
       field: col.sortKey,
-      headerName: t(col.name),
+      headerName: t(col.sortKey === 'assignee' ? 'Assigned to' : col.name),
       // If a saved width exists, honor it and disable flex; otherwise allow flex
       ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
-      sortable: true,
+      sortable: col.sortKey !== 'roles' ? true : false,
       // Do not lock minWidth to the last saved width; allow shrinking after expand
       minWidth: 90,
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
