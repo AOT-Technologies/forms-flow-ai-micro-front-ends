@@ -16,7 +16,7 @@ import {
   fetchFormById,
 } from "../api/queryServices/analyzeSubmissionServices";
 import { optionSortBy } from "../helper/helper";
-import { HelperServices } from "@formsflow/service";
+import { HelperServices, StyleServices } from "@formsflow/service";
 
 // Redux Actions
 import {
@@ -37,9 +37,11 @@ import {
 import {
   ReusableTable,
   V8CustomButton,
-  CollapsibleSearch,
   DateRangePicker,
-  VariableSelection
+  VariableSelection,
+  SelectDropdown,
+  CustomSearch,
+  RefreshIcon
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -100,6 +102,8 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
   const [isFormFetched,setIsFormFetched] =useState(false);
+  const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
+
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
     { key: "id", name: "Submission ID", label: "Submission ID", isChecked: true, isFormVariable: false, type: "hidden",sortOrder:0 },
@@ -449,6 +453,13 @@ const {
   dispatch(setAnalyzeSubmissionPage(1));
  };
 
+ // Reset to default: set form to "All Forms" and clear date range
+ const handleResetToDefault = useCallback(() => {
+   handleDropdownSelectionChange(null);
+   dispatch(setAnalyzeSubmissionDateRange({ startDate: null, endDate: null }));
+   dispatch(setAnalyzeSubmissionPage(1));
+ }, [dispatch, handleDropdownSelectionChange]);
+
   // Column resize handler for ReusableTable
   const handleColumnResize = useCallback((column: Column, newWidth: number) => {
     // Update Redux column widths
@@ -585,19 +596,47 @@ const {
         field: col.sortKey,
         headerName: t(col.name),
         flex: 1,
-        sortable: true,
+        sortable: col.sortKey !== "currentUserRoles" ? true : false,
         minWidth: col.width,
         headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
         renderCell: (params: any) => getCellValue(col, params.row),
       })),
+      // Spacer column to keep the actions column pinned to the far right
       {
-        field: "actions",
+        field: "__filler__",
         headerName: "",
         sortable: false,
         filterable: false,
-        headerClassName: "sticky-column-header",
+        disableColumnMenu: true,
+        flex: 1,
+        minWidth: 0,
+        headerClassName: "",
+        cellClassName: "",
+        renderCell: () => null,
+        valueGetter: () => null,
+      },
+      {
+        field: "actions",
+        renderHeader: () => (
+          <V8CustomButton
+            variant="secondary"
+            icon={<RefreshIcon color={iconColor} />}
+            iconOnly
+            onClick={handlerefresh}
+            dataTestId="task-refresh-button"
+          />
+        ),
+        headerName: "",
+        sortable: false,
+        filterable: false,
+        disableReorder: true,
+        resizable: false,
+        headerClassName: "sticky-column-header last-column",
         cellClassName: "sticky-column-cell",
         width: 100,
+        minWidth: 100,
+        maxWidth: 100,
+        flex: 0,
         renderCell: (params: any) => getCellValue(
           { ...columns.find(c => c.sortKey === "actions")!, sortKey: "actions" },
           params.row
@@ -684,58 +723,128 @@ const {
 
   return (
    <>
-      {/* Left Panel - Collapsible Search Form */}
-      <div className="left-panel">
-        <CollapsibleSearch
-          isOpen={true}
-          hasActiveFilters={selectedSubmissionFilter  || (dropdownSelection === null && Object.keys(searchFieldValues).length >0) || dropdownSelection !==null}
-          inactiveLabel="No Filters"
-          activeLabel="Filters Active"
-          onToggle={() => { }}
-          manageFieldsAction={handleManageFieldsOpen}
-          formData={formData}
-          dropdownSelection={dropdownSelection}
-          setDropdownSelection={handleDropdownSelectionChange}
-          selectedItem={selectedItem}
-          setSelectedItem={setSelectedItem}
-          initialInputFields={initialInputFields}
-          onSearch={handleFieldSearch}
-          onClearSearch={handleClearSearch}
-        />
-
+   <div className="analyze-submissions-page">
+      <div className="Toastify"></div>
+      <div className="toast-section">{}</div>
+      <div className="header-section-1">
+        <div className="section-seperation-left">
+          <h4> Submissions </h4>
+        </div>  
       </div>
-      
-      <div className="page-content">
-      {/* Right Panel - Table Container */}
-        {/* Top Controls Row - Date Range Picker and Filter/Sort Actions */}
-        <div className="table-bar">
-          <div className="filters">
-            <DateRangePicker
-              value={dateRange}
-              onChange={handleDateRangeChange}
-              placeholder={t("Filter by Submission Date")}
-              dataTestId="date-range-picker"
-              ariaLabel={t("Select date range for filtering")}
-              startDateAriaLabel={t("Start date")}
-              endDateAriaLabel={t("End date")}
-            />
-
-          </div>
+      <div className="header-section-2 overflow-visible">
+        <div className="section-seperation-left">
+          {(() => {
+            const formOptions = [
+              { label: t("All Forms"), value: "" },
+              ...(formData || []).map((f: any) => ({
+                label: f?.formName ?? "",
+                value: f?.parentFormId ?? "",
+              })),
+            ];
+            const currentValue = dropdownSelection ?? "";
+            const onDropdownChange = (val: string | number) => {
+              const v = String(val);
+              handleDropdownSelectionChange(v === "" ? null : v);
+            };
+            return (
+              <>
+                <SelectDropdown
+                  options={formOptions}
+                  value={currentValue}
+                  defaultValue=""
+                  onChange={onDropdownChange}
+                  ariaLabel={t("Select a form")}
+                  dataTestId="submission-form-select"
+                  id="submission-form-select"
+                  variant="secondary"
+                />
+                <div className="medium-search-container">
+                <CustomSearch
+                  value={searchFieldValues.search}
+                  placeholder={t("Search")}
+                  dataTestId="submission-search-input"
+                  id="submission-search-input"
+                  variant="secondary"
+                />
+                </div>
+                
+              </>
+            );
+          })()}
         </div>
+      </div>
+      <div className="header-section-3 overflow-visible">
+        <div className="section-seperation-left">
+          <DateRangePicker
+            value={dateRange}
+            onChange={handleDateRangeChange}
+            placeholder={t("Filter by Submission Date")}
+            dataTestId="date-range-picker"
+            ariaLabel={t("Select date range for filtering")}
+            startDateAriaLabel={t("Start date")}
+            endDateAriaLabel={t("End date")}
+          />
+        </div>
+        <div className="section-seperation-right">
+        <V8CustomButton
+                label={t("Manage Fields")}
+                onClick={handleManageFieldsOpen}
+                dataTestId="manage-fields-button"
+                ariaLabel={t("Open manage fields")}
+                secondary
+              />
+              <V8CustomButton
+              label={t("Reset to default")}
+              onClick={handleResetToDefault}
+              dataTestId="reset-to-default-button"
+              ariaLabel={t("Reset to default")}
+              secondary
+              />
+        </div>
+      </div>
+  
+      {/* Left Panel - Collapsible Search Form */}
+      {/* <div className="left-panel">
+        {(() => {
+          const formOptions = [
+            { label: t("All Forms"), value: "" },
+            ...(formData || []).map((f: any) => ({
+              label: f?.formName ?? "",
+              value: f?.parentFormId ?? "",
+            })),
+          ];
+          const currentValue = dropdownSelection ?? "";
+          const onDropdownChange = (val: string | number) => {
+            const v = String(val);
+            handleDropdownSelectionChange(v === "" ? null : v);
+          };
+          return (
+            <div className="d-flex flex-column gap-2">
 
-        {/* Table Container */}
-        <div
-          className="custom-table-wrapper-outter-submissions"
-          data-testid="table-container-wrapper"
-        >
-          {!columns?.length ? (
-            <div className="custom-table-wrapper-outter-submissions">
-              <p className="empty-message" data-testid="empty-columns-message">
-                {t("No submissions have been found. Try a different filter combination or contact your admin.")}
-              </p>
+              <SelectDropdown
+                options={formOptions}
+                value={currentValue}
+                onChange={onDropdownChange}
+                ariaLabel={t("Select a form")}
+                dataTestId="submission-form-select"
+                id="submission-form-select"
+                variant="secondary"
+              />
+              <V8CustomButton
+                label={t("Manage Fields")}
+                onClick={handleManageFieldsOpen}
+                dataTestId="manage-fields-button"
+                ariaLabel={t("Open manage fields")}
+                secondary
+              />
             </div>
-          ) : (
-            <ReusableTable
+          );
+        })()}
+
+      </div> */}
+      
+       <div className="body-section">
+      <ReusableTable
               columns={muiColumns}
               rows={memoizedRows}
               rowCount={totalCount}
@@ -758,10 +867,11 @@ const {
                 onColumnWidthChange: handleColumnWidthChange,
               }}
               enableStickyActions={true}
+              disableVirtualization
+
             />
-          )}
-        </div>
-      </div>
+       </div>
+       </div>
       {isManageFieldsModalOpen && <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
         onClose={handleManageFieldsClose}

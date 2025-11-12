@@ -119,7 +119,7 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
               exact
               path={`${BASE_ROUTE}submissions`}
               render={() => (
-                <div className="page-with-side">
+                <div className="page-layout">
                   <SubmissionsList />
                 </div>
               )}
