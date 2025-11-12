@@ -335,3 +335,16 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
    .selectdropdown-container{
     width:11.063rem;
    }}
+
+
+   .task-assignee-wrapper{
+    width: 352px !important;
+    flex:1 !important;
+    .userSelect-container{
+      .selectdropdown-container{
+        .custom-selectdropdown{
+          width: 352px !important;
+        }
+      }
+    }
+   }

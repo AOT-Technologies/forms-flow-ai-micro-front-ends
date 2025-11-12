@@ -615,6 +615,20 @@ const TaskListTable = () => {
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
       renderCell: (params: any) => getCellValue(col, params.row),
     })),
+    // Filler column to absorb extra width and keep resizable columns intact
+    {
+      field: "__filler__",
+      headerName: "",
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      flex: 1,
+      minWidth: 0,
+      headerClassName: "",
+      cellClassName: "",
+      renderCell: () => null,
+      valueGetter: () => null,
+    },
     {
       field: "actions",
        renderHeader: () => (
@@ -629,11 +643,15 @@ const TaskListTable = () => {
       headerName: "",
       sortable: false,
       filterable: false,
+      resizable: false,
 
       headerClassName: "sticky-column-header last-column",
       cellClassName: "sticky-column-cell",
 
       width: 100,
+      minWidth: 100,
+      maxWidth: 100,
+      flex: 0,
       renderCell: (params: any) => (
         <V8CustomButton
           label={t("View")}
