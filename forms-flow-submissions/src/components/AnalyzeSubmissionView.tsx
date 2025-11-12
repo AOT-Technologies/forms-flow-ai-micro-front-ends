@@ -403,8 +403,7 @@ const ViewApplication = React.memo(() => {
   };
 
   return (
-    <>
-      <div>
+    <div>
       <div className="toast-section">
               <Alert
                 message="Exporting PDF"
@@ -456,7 +455,6 @@ const ViewApplication = React.memo(() => {
           {renderTabContent()}
         </div>
     </div>
-  </>
   );
 });
 
