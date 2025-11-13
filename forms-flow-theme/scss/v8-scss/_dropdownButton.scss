@@ -69,7 +69,8 @@ $color-secondary-active: var(--secondary);
     @include dropdown-toggle-base;
 
     .label-div {
-      padding: $dropdown-label-padding;
+      // padding: $dropdown-label-padding;
+      padding: 0.69rem 0.87rem 0.69rem 0.81rem;
       box-shadow: none;
       border-radius: $dropdown-border-radius 0 0 $dropdown-border-radius;
       transition: background-color $dropdown-transition;
