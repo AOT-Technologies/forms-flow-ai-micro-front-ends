@@ -30,7 +30,6 @@ export const FormViewModal: React.FC<FormViewModalProps> = React.memo(({
   closeOnBackdrop = true,
 }) => {
   const { t } = useTranslation();
-  const darkColor = StyleServices.getCSSVariable("--secondary-dark");
 
   const handleClose = () => {
     if (closeOnBackdrop) {
@@ -55,7 +54,7 @@ export const FormViewModal: React.FC<FormViewModalProps> = React.memo(({
             {t(title)}
           </p>
         </Modal.Title>
-        <div className="icon-close" onClick={onClose} data-testid="form-view-modal-close" role="button">
+        <div className="icon-close" onClick={onClose} data-testid="form-view-modal-close">
             <CloseIcon dataTestId="form-view-modal-close"/>
           </div>
       </Modal.Header>
