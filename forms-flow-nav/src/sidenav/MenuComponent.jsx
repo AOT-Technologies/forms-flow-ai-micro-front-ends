@@ -54,8 +54,22 @@ const MenuComponent = ({
       );
     }
     return location.pathname.includes(menu.path);
-  }, [location.pathname]);  
+  }, [location.pathname]);
 
+  /**
+   * Checks if a menu item is currently active
+   */
+  const isActive = useCallback((menu) => setActiveTab(menu), [setActiveTab]);
+
+  /**
+   * Determine if main menu or any of its submenu is active.
+   * If submenu is active, keep the main menu icon active (according to prompt).
+   */
+  const isMainMenuOrSubmenuActive = useCallback(() => {
+    // Here, active means if any submenu is active, the main should be considered active for icon color.
+    return subMenu?.some(menu => isActive(menu));
+  }, [subMenu, isActive]);
+  
   /**
    * Handles header click for menu items without sub-options
    * Navigates to the first submenu item if available
@@ -67,25 +81,7 @@ const MenuComponent = ({
   }, [noOptionsMenu, subMenu, baseUrl, history]);
 
   /**
-   * Checks if a menu item is currently active
-   * @param menu - The menu item to check
-   * @returns boolean indicating if the menu is active
-   */
-  const isActive = useCallback((menu) => setActiveTab(menu), [setActiveTab]);
-
-  /**
-   * Determines if the main menu should be highlighted as active
-   * Only applies to menus without sub-options
-   * @returns boolean indicating if main menu is active
-   */
-  const isMainMenuActive = useCallback(() => {
-    return noOptionsMenu ? subMenu?.some(menu => isActive(menu)) : false;
-  }, [noOptionsMenu, subMenu, isActive]);
-
-  /**
-   * Gets the appropriate icon color based on menu active state
-   * @param menu - The menu item to get color for
-   * @returns CSS color value
+   * Gets the appropriate icon color based on (main menu or submenu) active state
    */
   const getIconColor = useCallback((menu) => {
     const root = document.documentElement;
@@ -112,10 +108,9 @@ const MenuComponent = ({
   const lowerMainMenu = useMemo(() => (mainMenu || "").toLowerCase(), [mainMenu]);
 
   /**
-   * Determines if the main menu is currently active
-   * Memoized to prevent unnecessary recalculations
+   * If main menu or any of its submenus is active, main menu icon should be active
    */
-  const mainMenuActive = useMemo(() => isMainMenuActive(), [isMainMenuActive]);
+  const mainMenuOrSubmenuActive = useMemo(() => isMainMenuOrSubmenuActive(), [isMainMenuOrSubmenuActive]);
 
   /**
    * Computed icon colors based on active state
@@ -123,11 +118,11 @@ const MenuComponent = ({
    */
   const iconColors = useMemo(() => {
     const root = document.documentElement;
-    const activeColor = getComputedStyle(root).getPropertyValue("--navbar-menu-font-color")?.trim();
+    const activeColor = getComputedStyle(root).getPropertyValue("--navbar-menu-font-color-active")?.trim();
     const inactiveColor = getComputedStyle(root).getPropertyValue("--navbar-submenu-font-color")?.trim();
-    const color = mainMenuActive ? activeColor : inactiveColor;
+    const color = mainMenuOrSubmenuActive ? activeColor : inactiveColor;
     return { iconFillColor: color, strokeColor: color };
-  }, [mainMenuActive]);
+  }, [mainMenuOrSubmenuActive]);
 
   /**
    * Icon component for the current menu type
@@ -149,7 +144,7 @@ const MenuComponent = ({
         />
       );
     }
-    
+
     // For collapsed state or menus without sub-options, show specific icons
     if (IconComponent) {
       return (
@@ -159,7 +154,7 @@ const MenuComponent = ({
         />
       );
     }
-    
+
     // Fallback for menus without sub-options
     if (!noOptionsMenu) {
       return (
@@ -169,7 +164,7 @@ const MenuComponent = ({
         />
       );
     }
-    
+
     return null;
   }, [IconComponent, iconColors, noOptionsMenu, collapsed]);
 
@@ -220,9 +215,9 @@ const MenuComponent = ({
   const buildHeaderClassName = useCallback(() => {
     const classes = [];
     if (noOptionsMenu) classes.push("no-arrow");
-    if (isMainMenuActive()) classes.push("active-header");
+    if (mainMenuOrSubmenuActive) classes.push("active-header");
     return classes.join(" ");
-  }, [noOptionsMenu, isMainMenuActive]);
+  }, [noOptionsMenu, mainMenuOrSubmenuActive]);
 
   /**
    * Builds CSS class names for submenu links
@@ -278,7 +273,7 @@ const MenuComponent = ({
               <span className="menu-item-text">
                 {t(menu.name)}
               </span>
-              
+
               {/* Premium feature indicator */}
               {menu.isPremium && (
                 <ShowPremiumIcons 

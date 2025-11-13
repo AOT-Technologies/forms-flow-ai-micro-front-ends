@@ -11,7 +11,8 @@ $brand-colors: (
  primary:        #F1EEFF,
  primary-dark:   #B8ABFF,
  secondary:      #EDEDED,
- secondary-dark: #525254
+ secondary-dark: #525254,
+ vivid:          #7C80FE
 );
 
 $base-colors: (
@@ -96,6 +97,7 @@ $font-tokens: (
   --nav-bg-color: var(--white-100);
   --navbar-menu-font-color: var(--secondary-dark);
   --navbar-submenu-font-color: var(--gray-dark);
+  --navbar-menu-font-color-active: var(--vivid);
 
 /*══════════════════ ⬥ COLOUR UTILITIES | VERSION 8 ⬥ ══════════════════*/
 
