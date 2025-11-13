@@ -55,9 +55,9 @@ export const FormViewModal: React.FC<FormViewModalProps> = React.memo(({
             {t(title)}
           </p>
         </Modal.Title>
-        <div className="icon-close" onClick={onClose}>
-          <CloseIcon data-testid="form-view-modal-close" color={darkColor} />
-        </div>
+        <div className="icon-close" onClick={onClose} data-testid="form-view-modal-close" role="button">
+            <CloseIcon dataTestId="form-view-modal-close"/>
+          </div>
       </Modal.Header>
 
       <Modal.Body className="form-view-modal-body custom-scroll">
