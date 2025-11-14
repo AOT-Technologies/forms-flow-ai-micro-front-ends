@@ -99,7 +99,9 @@ declare module "@formsflow/components" {
     VerticalLineIcon,
     ReusableLargeModal,
     FormStatusIcon,
-    Alert
+    Alert,
+    DropdownMultiSelect,
+    CustomTextArea
   }: any;
 }
 

@@ -161,6 +161,12 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   line-height: $dropdown-line-height;
   transition: color $dropdown-transition-duration $dropdown-transition-timing;
 
+  .dropdown-text-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   // Input field styling for search dropdown mode
   &[type="text"] {
     border: none;
@@ -227,6 +233,17 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
       opacity: 1;
     }
   }
+}
+
+.dropdown-option-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropdown-icon {
+  display: inline-flex;
+  align-items: center;
 }
 
 .custom-dropdown-item {

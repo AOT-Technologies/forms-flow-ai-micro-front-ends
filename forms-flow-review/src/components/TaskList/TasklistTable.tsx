@@ -1,8 +1,6 @@
 import {
-  ReusableLargeModal,
   V8CustomButton,
   ReusableTable,
-  FormStatusIcon,
   RefreshIcon
 } from "@formsflow/components";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
@@ -10,6 +8,7 @@ import { HelperServices, StyleServices } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { isEqual } from "lodash";
+import TaskDetailsModal from "./TaskDetailsModal";
 import {
   resetTaskListParams,
   setBPMTaskListActivePage,
@@ -61,8 +60,19 @@ import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
-import TaskForm from "../TaskForm";
 import BundleTaskForm from "../BundleTaskForm";
+import TaskForm from "../TaskForm";
+
+export interface Task {
+  id: string;
+  name?: string;
+  created?: string;
+  assignee?: string;
+  _embedded?: {
+    variable?: Array<{ name: string; value: any }>;
+    candidateGroups?: Array<{ groupId: string }>;
+  };
+}
 
 interface Column {
   name: string;
@@ -72,17 +82,6 @@ interface Column {
   newWidth?: number;
   isFormVariable?: boolean;
   type?: string;
-}
-
-interface Task {
-  id: string;
-  name?: string;
-  created?: string;
-  assignee?: string;
-  _embedded?: {
-    variable?: Array<{ name: string; value: any }>;
-    candidateGroups?: Array<{ groupId: string }>;
-  };
 }
 
 const TaskListTable = () => {
@@ -107,7 +106,7 @@ const TaskListTable = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [modalViewType, setModalViewType] = useState<"submission" | "history">("submission");
+  const [modalViewType, setModalViewType] = useState<"submission" | "history" | "notes">("submission");
   const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
     formId: "",
     submissionId: "",
@@ -125,9 +124,6 @@ const TaskListTable = () => {
   const appHistory = useSelector((state: any) => state.task?.appHistory || []);
   const isAppHistoryLoading = useSelector((state: any) => state.task?.isAppHistoryLoading || false);
   const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
-
-  const greenColor = StyleServices.getCSSVariable("--green-100");
-  const yellowColor = StyleServices.getCSSVariable("--yellow-200");
 
   const currentUser = JSON.parse(
     localStorage.getItem("UserDetails") || "{}"
@@ -173,6 +169,10 @@ const TaskListTable = () => {
 
   const handleHistoryClick = () => {
     setModalViewType("history");
+  };
+
+  const handleNotesClick = () => {
+    setModalViewType("notes");
   };
 
   const taskvariables = selectedFilter?.variables ?? [];
@@ -398,51 +398,6 @@ const TaskListTable = () => {
   };
 
   // Prepare history table data
-  const historyColumns = useMemo(
-    () => [
-      {
-        field: "created",
-        headerName: t("Created On"),
-        flex: 2,
-        renderCell: (params: any) => HelperServices.getLocaldate(params.value), 
-        sortable: false 
-      },
-      {
-        field: "submittedBy",
-        headerName: t("User"),
-        flex: 2,
-        sortable: false
-      },
-      {
-        field: "Status",
-        headerName: t("Status"),
-        flex: 2,
-        sortable: false,
-        cellClassName: 'action-cell-stretch',
-        renderCell: (params: any) => {
-          const entry = params.row;
-          return (
-              <span className="status-text">
-                {entry.applicationStatus || "N/A"}
-              </span>
-          );
-        },
-      },
-    ],
-    [t]
-  );
-
-  const historyRows = useMemo(() => {
-    return (appHistory || []).map((entry: any, index: number) => ({
-      id: entry.submissionId || index,
-      created: entry.created || "",
-      submittedBy: entry.submittedBy || "N/A",
-      applicationStatus: entry.applicationStatus || "N/A",
-      formId: entry.formId,
-      submissionId: entry.submissionId,
-    }));
-  }, [appHistory]);
-
   useEffect(() => {
     const dynamicColumns = buildDynamicColumns(taskvariables);
     setColumns((prev) => (!isEqual(prev, dynamicColumns) ? dynamicColumns : prev));
@@ -477,114 +432,6 @@ const TaskListTable = () => {
       column.isFormVariable
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-  };
-
-  const renderReusableModal = () => {
-    if (!selectedTask) return null;
-
-
-    const renderContent = () => {
-      if (modalViewType === "history") {
-        return (
-              <ReusableTable
-                columns={historyColumns}
-                rows={historyRows}
-                loading={isAppHistoryLoading}
-                noRowsLabel={t("No submission history found")}
-                paginationModel={historyPaginationModel}
-                onPaginationModelChange={setHistoryPaginationModel}
-                paginationMode="client"
-                sortingMode="client"
-                pageSizeOptions={[5, 10, 25, 50]}
-                rowHeight={60}
-                sx={{ 
-                  height: 500, 
-                  width: "100%",
-                  '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer': {
-                    justifyContent: 'flex-start !important',
-                  },
-                }}
-                disableColumnResize={true}
-                disableColumnMenu={true}
-              />
-        );
-      } else {
-        // Submission view
-        const isLoading = taskDetailsLoading || (!task?.formUrl && !task?.formType);
-        
-        if (isLoading) {
-          return <Loading />;
-        }
-
-        if (task?.formType === "bundle" && selectedForms?.length) {
-          return (
-            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border pb-0 ${disabledMode ? "disabled-mode" : "bg-white"}`}>
-              <BundleTaskForm
-                bundleId={task?.formId}
-                currentUser={currentUser || ""}
-                onFormSubmit={onFormSubmitCallback}
-                bundleFormData={bundleFormData}
-                onCustomEvent={onCustomEventCallBack}
-              />
-            </div>
-          );
-        } else {
-          return (
-            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border pb-0 ${disabledMode ? "disabled-mode" : "bg-white"}`}>
-              <TaskForm
-                currentUser={currentUser || ""}
-                onFormSubmit={onFormSubmitCallback}
-                onCustomEvent={onCustomEventCallBack}
-              />
-            </div>
-          );
-        }
-      }
-    };
-
-    return (
-      <ReusableLargeModal
-        show={showModal}
-        onClose={handleCloseModal}
-        title={task?.applicationId}
-        subtitle={
-          <div className="d-flex justify-content-between">
-            <div className="d-flex gap-2">
-            <V8CustomButton
-              label={t("Submission")}
-              onClick={handleSubmissionClick}
-              className="mr-2"
-              dataTestId="modal-submission-button"
-              selected={modalViewType === "submission"}
-            />
-            <V8CustomButton
-              label={t("History")}
-              onClick={handleHistoryClick}
-              dataTestId="modal-history-button"
-              selected={modalViewType === "history"}
-            />
-            </div>
-            <div className="d-flex gap-2">
-              <div
-                className="form-status"
-                data-testid={`form-status-${task?._id || "new"}`}
-              >
-                <FormStatusIcon 
-                 color={!taskAssignee || taskAssignee === "unassigned" ? yellowColor : greenColor} 
-                 />
-                <span className="status-text">
-                  {!taskAssignee || taskAssignee === "unassigned" ? "Pending" : "Assigned"}
-                </span>
-              </div>
-              <div className="task-assignee-wrapper">
-                <TaskAssigneeManager task={selectedTask} />
-              </div>
-            </div>
-          </div>
-        }
-        content={renderContent()}
-      />
-    );
   };
 
   const paginationModel = useMemo(
@@ -765,7 +612,31 @@ const TaskListTable = () => {
         enableStickyActions={true}
         disableVirtualization
       />
-      {showModal && renderReusableModal()}
+      {showModal && (
+        <TaskDetailsModal
+          show={showModal}
+          onClose={handleCloseModal}
+          selectedTask={selectedTask}
+          taskDetail={task}
+          taskAssignee={taskAssignee}
+          modalViewType={modalViewType}
+          onSubmissionClick={handleSubmissionClick}
+          onNotesClick={handleNotesClick}
+          onHistoryClick={handleHistoryClick}
+          onFormSubmitCallback={onFormSubmitCallback}
+          onCustomEventCallBack={onCustomEventCallBack}
+          currentUser={currentUser || ""}
+          disabledMode={disabledMode}
+          bundleFormData={bundleFormData}
+          selectedForms={selectedForms}
+          isTaskDetailsLoading={taskDetailsLoading}
+          isAppHistoryLoading={isAppHistoryLoading}
+          historyPaginationModel={historyPaginationModel}
+          onHistoryPaginationModelChange={(model) => setHistoryPaginationModel(model)}
+          appHistory={appHistory}
+          statusValue={task?.applicationStatus || "Pending"}
+        />
+      )}
     </>
   );
 };

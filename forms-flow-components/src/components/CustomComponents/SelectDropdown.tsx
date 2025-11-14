@@ -10,6 +10,8 @@ export interface OptionType {
   label: string;
   /** Value associated with the option */
   value: string | number;
+  /** Optional icon rendered alongside the label */
+  icon?: React.ReactNode;
 }
 
 /**
@@ -45,6 +47,8 @@ export interface SelectDropdownProps
   /** Visual variant of the dropdown ('primary' or 'secondary') */
   variant?: DropdownVariant;
   className?: string;
+  dropdownWrapperClassName?: string;
+  dropdownItemClassName?: string;
 
   /** --- New props for dependent dropdown --- */
   secondDropdown?: boolean;
@@ -74,6 +78,8 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       ariaLabel = "",
       className = "",
       variant = "primary",
+      dropdownWrapperClassName,
+      dropdownItemClassName,
 
       // Secondary dropdown support
       secondDropdown = false,
@@ -202,9 +208,11 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       toggleFn: () => void,
       selectFn: (value: string | number) => void,
       variantType: DropdownVariant,
-      defaultVal?: string | number
+      defaultVal?: string | number,
+      wrapperClass?: string,
+      itemClass?: string
     ) => (
-      <div className="dropdown-wrapper">
+      <div className={buildClassNames("dropdown-wrapper", wrapperClass)}>
         <button
           type="button"
           className={buildClassNames(
@@ -217,13 +225,30 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           aria-haspopup="listbox"
           disabled={disabled}
         >
-            {/* if defaultsvalue is provided, show its label */}
           <span className="dropdown-text">
-           {(() => {
+            {(() => {
               const selected = opts.find((o) => o.value === selValue);
-              if (selected) return selected.label;
+              if (selected) {
+                return (
+                  <span className="dropdown-text-content">
+                    {selected.icon && (
+                      <span className="dropdown-icon">{selected.icon}</span>
+                    )}
+                    <span>{selected.label}</span>
+                  </span>
+                );
+              }
               const defaultMatch = opts.find((o) => o.value === defaultVal);
-              if (defaultMatch) return defaultMatch.label;
+              if (defaultMatch) {
+                return (
+                  <span className="dropdown-text-content">
+                    {defaultMatch.icon && (
+                      <span className="dropdown-icon">{defaultMatch.icon}</span>
+                    )}
+                    <span>{defaultMatch.label}</span>
+                  </span>
+                );
+              }
               return defaultVal ?? "";
             })()}
           </span>
@@ -242,13 +267,19 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   key={option.value}
                   className={buildClassNames(
                     "custom-dropdown-item",
+                    itemClass,
                     option.value === selValue && "selected"
                   )}
                   onClick={() => selectFn(option.value)}
                   aria-selected={option.value === selValue}
                   data-testid={`${dataTestId}-${option.value}`}
                 >
-                  {option.label}
+                  <span className="dropdown-option-content">
+                    {option.icon && (
+                      <span className="dropdown-icon">{option.icon}</span>
+                    )}
+                    <span>{option.label}</span>
+                  </span>
                 </ListGroup.Item>
               ))
             ) : (
@@ -298,7 +329,9 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           handleToggle,
           handleOptionClick,
           variant,
-          defaultValue
+          defaultValue,
+          dropdownWrapperClassName,
+          dropdownItemClassName
         )}
 
         {/* --- SECONDARY DROPDOWN (Indented) --- */}
@@ -316,7 +349,9 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                 handleSecondToggle,
                 handleSecondSelect,
                 "secondary",
-                secondDefaultValue
+                secondDefaultValue,
+                dropdownWrapperClassName,
+                dropdownItemClassName
               )}
             </div>
           </div>
