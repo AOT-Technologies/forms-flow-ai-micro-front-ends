@@ -128,11 +128,10 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
               exact
               path={`${BASE_ROUTE}submissions/:id`}
               render={() => (
-                <div className="container mt-5">
-                  <div className="min-container-height ps-md-3">
+                <div className="page-layout">
                     <ViewApplication />
-                  </div>
-                </div>)}
+                </div>
+        )}
             />
             <Redirect from="*" to="/404" />
           </Switch>

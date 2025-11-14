@@ -67,6 +67,13 @@ declare module "@formsflow/components" {
     StepperComponent,
     Switch,
     CustomSearch,
-    RefreshIcon
+    RefreshIcon,
+    BreadCrumbs,
+    BreadcrumbVariant,
+    ProcessDiagram,
+    Alert,
+    AlertVariant,
+    CustomProgressBar,
+    useProgressBar,
   }: any;
 }
