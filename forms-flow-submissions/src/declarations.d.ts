@@ -64,6 +64,13 @@ declare module "@formsflow/components" {
     SubmissionHistoryWithViewButton,
     VariableSelection, 
     StepperComponent,
-    Switch
+    Switch,
+    BreadCrumbs,
+    BreadcrumbVariant,
+    ProcessDiagram,
+    Alert,
+    AlertVariant,
+    CustomProgressBar,
+    useProgressBar,
   }: any;
 }
