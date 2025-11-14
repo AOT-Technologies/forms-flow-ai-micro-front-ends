@@ -78,10 +78,12 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
   };
 
   const handleFilterDelete = async () => {
-    toggleDeleteModal();
+    // Close only the confirm dialog; keep the main modal hidden to avoid flash
+    setShowDeleteModal(false);
     await deleteFilter(filterToEdit?.id);
     const newFilters = filterList.filter((i) => i.id !== filterToEdit?.id);
-    setDeleteSuccess(onClose, 2);
+    // Close immediately to prevent the Task Filter modal from displaying briefly
+    onClose?.();
     const newFilterAndCount = filterListAndCount.filter(i=>i.id !==filterToEdit?.id);
     dispatch(setBPMFiltersAndCount(newFilterAndCount));
     dispatch(setBPMFilterList(newFilters));

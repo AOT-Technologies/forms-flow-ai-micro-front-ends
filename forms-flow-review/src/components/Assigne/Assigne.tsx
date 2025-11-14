@@ -166,6 +166,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
           users={userList?.data ?? []}
           value={displayedValue}
           onChange={handleChangeClaim}
+          shortMeLabel={!isFromTaskDetails}
           ariaLabel="task-assignee-select"
           dataTestId="task-assignee-select"
           showAsText={true}

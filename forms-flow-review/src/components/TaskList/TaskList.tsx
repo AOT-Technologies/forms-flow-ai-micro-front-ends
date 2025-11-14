@@ -292,8 +292,10 @@ const TaskList = () => {
           <h4> Tasks </h4>
         </div>
       </div>
-      <div className="header-section-2">
+      {/* Commenting out since global search is out of scope for this module */}
+      {/* <div className="header-section-2">
         <div className="section-seperation-left">
+          <div className="medium-search-container">
           <CustomSearch
             // search={}
             // setSearch={}
@@ -304,8 +306,9 @@ const TaskList = () => {
             title={t("Search Tasks")}
             dataTestId="task-search-input"
           />
-            </div></div>   
-            <div className="header-section-3 overflow-visible">
+          </div>       
+            </div></div>    */}
+            <div className="header-section-2 overflow-visible">
               <div className="section-seperation-left">
               <TaskListDropdownItems/>
               <AttributeFilterDropdown/>
@@ -330,7 +333,7 @@ const TaskList = () => {
         </div>
               
               </div>   
-              <div className="header-section-4">
+              <div className="header-section-3">
                 <div className="section-seperation-left">
                 <V8CustomButton
   variant={!isAssigned ? "primary" : "secondary"}

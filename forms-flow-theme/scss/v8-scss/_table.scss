@@ -136,6 +136,9 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     outline: none !important;
     outline-offset: 0px !important;
   }
+  .MuiDataGrid-columnSeparator{
+    opacity: 1 !important;
+  }
   .last-column ,.MuiDataGrid-columnHeader--last{
     display: flex !important;
     justify-content: flex-end !important;
@@ -228,19 +231,19 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   }
   .action-column-sticky {
     .MuiDataGrid-columnHeader.sticky-column-header {
-      position: sticky;
-      right: 0;
-      background-color: $table-bg-light;
-      z-index: 1;
-      border-left: 1px solid $table-border-light;
+      position: sticky !important;
+      right: 0 !important;
+      background-color: $table-bg-light !important;
+      z-index: 3 !important;
+      border-left: 1px solid $table-border-light !important;
     }
 
     .MuiDataGrid-cell.sticky-column-cell {
-      position: sticky;
-      right: 0;
-      background-color: $table-bg-light;
-      border-left: 1px solid $table-border-light;
-      z-index: 1;
+      position: sticky !important;
+      right: 0 !important;
+      background-color: $table-bg-light !important;
+      border-left: 1px solid $table-border-light !important;
+      z-index: 2 !important;
     }
 
     .MuiDataGrid-columnHeader[data-field="actions"] .MuiDataGrid-columnSeparator {
@@ -250,6 +253,19 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     /* Hide separator for the column immediately before the last (actions) */
     .MuiDataGrid-columnHeader.no-right-separator .MuiDataGrid-columnSeparator {
       display: none !important;
+    }
+
+    /* Make filler column visually neutral and non-interactive, but keep it occupying width */
+    .MuiDataGrid-columnHeader[data-field="__filler__"] {
+      pointer-events: none !important;
+      .MuiDataGrid-columnSeparator {
+        display: none !important;
+      }
+    }
+    .MuiDataGrid-cell[data-field="__filler__"] {
+      pointer-events: none !important;
+      border-left: none !important;
+      border-right: none !important;
     }
   }
   

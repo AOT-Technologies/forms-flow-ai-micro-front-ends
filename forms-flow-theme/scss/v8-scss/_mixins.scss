@@ -204,3 +204,169 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
   }
 }
+
+// Mixin for approval task modal with specific dimensions
+@mixin approval-task-modal-popover() {
+  &.modal-dialog {
+    width: 67.9375rem !important; // 1087px
+    max-width: 67.9375rem;
+    margin: 1.75rem auto;
+  }
+  
+  .modal-content {
+    width: 100%;
+    height: 48.875rem; // 782px
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: none;
+    overflow: hidden;
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      background-color: var(--white);
+      border-bottom: none;
+      
+      .modal-header-content {
+        width: 100%;
+        
+        .modal-title {
+          font-size: $font-size-xl;
+          font-weight: $font-weight-regular;
+          color: var(--gray-darkest);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 1.5rem;
+        }
+        
+        .modal-subtitle {
+          border-top: 1px solid var(--gray-x-light);
+          padding: 1.75rem 1.19rem;
+          padding-bottom: 0.75rem;
+          font: 0.9375rem;
+        }
+      }
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      max-height: calc(48.875rem - 120px);
+      margin: 0 1.5rem;
+      border-top: 1px solid var(--gray-x-light);
+      border-bottom: 1px solid var(--gray-x-light);
+    }
+    
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      background-color: var(--white);
+      display: flex;
+      gap: 0.5rem;
+      border-top: none;
+      width: 100%;
+      align-items: center;
+      
+      // Default: single or two buttons aligned to the right
+      justify-content: flex-end;
+      
+      // Only when exactly 3 elements are present, space them between
+      // Modern browsers with :has() support
+      &:has(> *:nth-child(3):last-child) {
+        justify-content: space-between;
+      }
+      
+      // Fallback for older browsers - use data attribute
+      &[data-three-buttons="true"] {
+        justify-content: space-between;
+      }
+    }
+  }
+}
+
+// Mixin for reusable standard modal with fixed dimensions
+@mixin reusable-standard-modal-popover() {
+  &.modal-dialog {
+    width: 45rem !important; // 720px
+    max-width: 45rem;
+    margin: 1.75rem auto;
+  }
+  
+  .modal-content {
+    width: 100%;
+    height: 48.875rem; // 782px
+    flex-shrink: 0;
+    box-sizing: border-box; // Ensure padding is included in width/height
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: none;
+    overflow: hidden;
+    padding: 1.5rem; // Padding inside the modal content
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0;
+      background-color: transparent;
+      border-bottom: none;
+      
+      .modal-header-content {
+        width: 100%;
+        
+        .modal-title {
+          font-size: $font-size-xl;
+          font-weight: $font-weight-regular;
+          color: var(--gray-darkest);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 1.5rem;
+        }
+        
+        .modal-subtitle {
+          border-top: 1px solid var(--gray-x-light);
+          padding: 1.75rem 0;
+          font: 0.9375rem;
+        }
+      }
+    }
+    
+    .modal-body {
+      padding: 0;
+      overflow-y: auto;
+      max-height: calc(48.875rem - 200px);
+      margin: 0;
+      border-top: 1px solid var(--gray-x-light);
+      border-bottom: 1px solid var(--gray-x-light);
+    }
+    
+    .modal-footer {
+      padding: 1rem 0;
+      background-color: transparent;
+      display: flex;
+      gap: 0.5rem;
+      border-top: none;
+      width: 100%;
+      align-items: center;
+      
+      // Default: single or two buttons aligned to the right
+      justify-content: flex-end;
+      
+      // Only when exactly 3 elements are present, space them between
+      // Modern browsers with :has() support
+      &:has(> *:nth-child(3):last-child) {
+        justify-content: space-between;
+      }
+      
+      // Fallback for older browsers - use data attribute
+      &[data-three-buttons="true"] {
+        justify-content: space-between;
+      }
+    }
+  }
+}

@@ -14,6 +14,9 @@ interface DownloadPDFButtonProps {
   form_id: string;
   submission_id: string;
   title: string;
+  onPreDownload?: () => void;
+  onPostDownload?: () => void;
+  disabled?: boolean;
 }
 
 interface DownloadFileParams {
@@ -36,13 +39,19 @@ interface UseDownloadFileReturn {
 }
 
 const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = React.memo(
-  ({ form_id, submission_id, title }) => {
+  ({ form_id, submission_id, title, onPreDownload, onPostDownload, disabled = false }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { t } = useTranslation();
 
-    const preDownloading = (): void => setIsLoading(true);
+    const preDownloading = (): void => {
+      setIsLoading(true);
+      onPreDownload?.();
+    };
 
-    const postDownloading = (): void => setIsLoading(false);
+    const postDownloading = (): void => {
+      setIsLoading(false);
+      onPostDownload?.();
+    };
 
     const onErrorDownloadFile = (): void => {
       setIsLoading(false);
@@ -108,6 +117,7 @@ const DownloadPDFButton: React.FC<DownloadPDFButtonProps> = React.memo(
             loading={isLoading}
             dataTestId="export-pdf-button"
             ariaLabel="Export PDF Button"
+            disabled={disabled}
           />
         </div>
         <ToastContainer

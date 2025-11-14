@@ -453,15 +453,29 @@ const TaskListTable = () => {
   return [
     ...filteredColumns.map((col, idx) => ({
       field: col.sortKey,
-      headerName: t(col.name),
+      headerName: t(col.sortKey === 'assignee' ? 'Assigned to' : col.name),
       // If a saved width exists, honor it and disable flex; otherwise allow flex
       ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
-      sortable: true,
+      sortable: col.sortKey !== 'roles' ? true : false,
       // Do not lock minWidth to the last saved width; allow shrinking after expand
       minWidth: 90,
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
       renderCell: (params: any) => getCellValue(col, params.row),
     })),
+    // Filler column to absorb extra width and keep resizable columns intact
+    {
+      field: "__filler__",
+      headerName: "",
+      sortable: false,
+      filterable: false,
+      disableColumnMenu: true,
+      flex: 1,
+      minWidth: 0,
+      headerClassName: "",
+      cellClassName: "",
+      renderCell: () => null,
+      valueGetter: () => null,
+    },
     {
       field: "actions",
        renderHeader: () => (
@@ -476,11 +490,15 @@ const TaskListTable = () => {
       headerName: "",
       sortable: false,
       filterable: false,
+      resizable: false,
 
       headerClassName: "sticky-column-header last-column",
       cellClassName: "sticky-column-cell",
 
       width: 100,
+      minWidth: 100,
+      maxWidth: 100,
+      flex: 0,
       renderCell: (params: any) => (
         <V8CustomButton
           label={t("View")}

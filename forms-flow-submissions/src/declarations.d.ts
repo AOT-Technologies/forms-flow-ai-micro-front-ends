@@ -51,6 +51,7 @@ declare module "@formsflow/components" {
     ReusableTable,
     SortableHeader,
     CollapsibleSearch,
+    SelectDropdown,
     DateRangePicker,
     FilterSortActions,
     CloseIcon,
@@ -64,6 +65,15 @@ declare module "@formsflow/components" {
     SubmissionHistoryWithViewButton,
     VariableSelection, 
     StepperComponent,
-    Switch
+    Switch,
+    CustomSearch,
+    RefreshIcon,
+    BreadCrumbs,
+    BreadcrumbVariant,
+    ProcessDiagram,
+    Alert,
+    AlertVariant,
+    CustomProgressBar,
+    useProgressBar,
   }: any;
 }
