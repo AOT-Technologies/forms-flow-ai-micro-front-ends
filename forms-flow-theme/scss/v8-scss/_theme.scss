@@ -331,5 +331,16 @@ $font-tokens: (
   .gap-0 {
     gap: 0 !important;
   };
-
+ //search container used in review & analyse module
+  .medium-search-container {
+    width: 22rem;
+  }
   
+  //Analyse submissions page
+  .analyze-submissions-page {
+  .selectdropdown-container, 
+  .drp-input-container, 
+  .calendar-container {
+    width: 15.25rem;
+  }
+}

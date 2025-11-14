@@ -295,6 +295,7 @@ const TaskList = () => {
       {/* Commenting out since global search is out of scope for this module */}
       {/* <div className="header-section-2">
         <div className="section-seperation-left">
+          <div className="medium-search-container">
           <CustomSearch
             // search={}
             // setSearch={}
