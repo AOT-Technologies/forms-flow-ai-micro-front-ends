@@ -59,15 +59,23 @@ const MenuComponent = ({
   /**
    * Checks if a menu item is currently active
    */
-  const isActive = useCallback((menu) => setActiveTab(menu), [setActiveTab]);
+  const isActive = useCallback((menu) => {
+    // Pure predicate for active state – no side effects, just a check
+    if (menu.supportedSubRoutes?.length) {
+      return menu.supportedSubRoutes.some(
+        (route) =>
+          location.pathname.includes(route) &&
+          !(menu.unsupportedSubRoutes?.some((excluded) => location.pathname.includes(excluded)))
+      );
+    }
+    return location.pathname.includes(menu.path);
+  }, [location.pathname]);
 
-  /**
-   * Determine if main menu or any of its submenu is active.
-   * If submenu is active, keep the main menu icon active (according to prompt).
-   */
   const isMainMenuOrSubmenuActive = useCallback(() => {
-    // Here, active means if any submenu is active, the main should be considered active for icon color.
-    return subMenu?.some(menu => isActive(menu));
+    if (!Array.isArray(subMenu) || subMenu.length === 0) {
+      return false;
+    }
+    return subMenu.some(menu => isActive(menu));
   }, [subMenu, isActive]);
   
   /**
