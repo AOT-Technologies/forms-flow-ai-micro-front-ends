@@ -1,9 +1,13 @@
-@import "../_mixins";
+@import "mixins";
+
 
 .system-content-block {
   .system-content-table {
     height: -webkit-fill-available;
     width: 100%;
+    .MuiDataGrid-columnSeparator{
+      display: none;
+    }
   }
 }
 
@@ -12,40 +16,54 @@
   height: 38.125rem;
   padding: 1rem;
   border-radius: 0.5rem;
+  overflow-y: auto;
 }
 
 .variable-right-container {
   flex-basis: 28%;
   flex-grow: 0;
   flex-shrink: 0;
+  .form-variables-title{
+    @include font-style(15px, 400, #4A4A4A);
+  }
+  .RHS-header{
+    border-bottom: 1px solid var(--gray-x-light);
+    padding-bottom: 1.25rem;
+    .back-button{
+      @include font-style(15px, 400, #4A4A4A);
+      align-items: center;
+      display: flex;
+      gap: 10px;
+      cursor: pointer;
+    }
+  }
   .variable-right-content {
     border: 1px solid var(--gray-x-light);
-    height: 38.125rem;
-    padding: 2rem 1.5rem;
+    height: 100%;
+    padding: 1.5rem;
     border-radius: 0.5rem;
+    // overflow-y: auto;
   }
   .scroll-vertical {
     .item-container {
-      margin-bottom: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--gray-x-light);
+      gap: 0.5rem ;
       .label {
-        @include font-style(1rem, 400, #9E9E9E);
+        @include font-style(14px, 400, #9E9E9E);
       }
       .value {
-        color: var(--secondary-dark);
-        font-weight: 500;
-        font-size: 1.1rem;
-        margin-bottom: 0.25rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid var(--gray-x-light);
+        @include font-style(14px, 500, var(--secondary-dark));
       }
     }
     .alternative-label-container {
-      margin-bottom: 2rem;
+      padding: 1.25rem 0;
       width: 100%;
       .label {
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
         display: block;
         color: var(--secondary-dark);
+        @include font-style(14px, 400, #525254);
       }
     }
     .button-container {
@@ -54,27 +72,59 @@
       justify-content: flex-start;
     }
   }
+  .pill-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    overflow-y: auto;
+    height: 31.17rem;
+    .variable-card {
+      position: relative;
+      padding: 1rem;
+      border-radius: 5px;
+      border: 1px solid #E5E5E5;
+      cursor: pointer;
+
+      .variable-card-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 1rem;
+        cursor: pointer;
+      }
+
+      .variable-title {
+        @include font-style(15px, 500, #4A4A4A);
+        margin-bottom: 0.25rem;
+        text-overflow: ellipsis;
+        word-break: break-word;
+        margin-right: 1rem;
+      }
+
+      .variable-subtitle {
+        @include font-style(15px, 400, #9E9E9E);
+        text-overflow: ellipsis;
+        word-break: break-word;
+      }
+    }
+  }
 }
 
 .variable-page-container {
   .variable-page-body {
-    .variable-left-container {
+    .system-variables-container {
         width: 100%;
       flex: 1;
-    }
-    .variable-right-container {
-      flex-basis: 28%;
-      flex-grow: 0;
-      flex-shrink: 0;
     }
     .variable-page-body-form {
       display: flex;
       width: 100%;
       .variable-left-container {
-        flex-basis: 70%;
-        flex-grow: 0;
-        flex-shrink: 0;
+        width: 70%;
         margin-right: 1rem;
+      }
+      .variable-right-container {
+        width: 28%;
       }
     }
   }

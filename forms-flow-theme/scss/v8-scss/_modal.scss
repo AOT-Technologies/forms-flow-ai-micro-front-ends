@@ -255,7 +255,6 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 .attribute-filter-modal {
     @include large-modal-popover();
 
-
     .footer-text {
         flex-grow: 1;
         text-align: center;
