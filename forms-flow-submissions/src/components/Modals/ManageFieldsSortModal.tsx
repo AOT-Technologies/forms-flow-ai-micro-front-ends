@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal } from "react-bootstrap";
-import { CustomButton, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, AddIcon } from "@formsflow/components"; 
+import { CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, V8CustomButton } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
 import { createOrUpdateSubmissionFilter, updateDefaultSubmissionFilter } from "../../api/queryServices/analyzeSubmissionServices";
@@ -58,7 +58,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
- 
+  const [activeTab, setActiveTab] = useState("fields");
  const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
 
  const [sortFields, setSortFields] = useState(selectedSubmissionFilter?.variables || submissionFields)
@@ -85,32 +85,62 @@ const handleSaveSubmissionFields = () => {
     onClose();
   });
 };
+
   
   return (
     <Modal
         show={show}
         onHide={onClose}
-        size="sm"
+        size="lg"
         centered
+        dialogClassName="manage-fields-sort-modal"
         data-testid="manage-fields-sort-modal"
         aria-describedby="manage-fields-sort-modal"
+        aria-labelledby="manage-fields-sort-title"
         backdrop="static"
       >
-        <Modal.Header>      
-          <Modal.Title id="manage-fields-sort-title">         
-            <p className="text-break">{t(`Manage Fields for ${selectedItem}`)}</p>   
-          </Modal.Title>
-           <div className="icon-close" onClick={onClose}>
-            <CloseIcon />
+        <Modal.Header>
+    <div className="modal-header-content">
+          <div className="modal-title">
+            {selectedItem ? t(`${selectedItem} > Manage Fields`) : t(`All Forms > Manage Fields`)}
+            <CloseIcon color="var(--gray-darkest)" onClick={onClose} />
           </div>
-        </Modal.Header>
+
+        <div>
+          <div className="manage-fields-tabs section-seperation-left">
+            <V8CustomButton
+            label={t("Fields")}
+            variant="secondary"
+            onClick={() => setActiveTab("fields")}
+            dataTestId="manage-fields-fields-tab"
+            ariaLabel={t("Manage fields fields tab")}
+            selected={activeTab === "fields"}
+          />
+          <V8CustomButton
+            label={t("Form")}
+            variant="secondary"
+            onClick={() => setActiveTab("form")}
+            dataTestId="manage-fields-form-tab"
+            ariaLabel={t("Manage fields form tab")}
+            selected={activeTab === "form"}
+          />
+          <V8CustomButton
+            label={t("System")}
+            variant="secondary"
+            onClick={() => setActiveTab("system")}
+            dataTestId="manage-fields-system-tab"
+            ariaLabel={t("Manage fields system tab")}
+            selected={activeTab === "system"}
+          />
+          </div>
+          
+        </div>
+    </div>
+  </Modal.Header>
+      
+        
           <Modal.Body>
-        <FormFieldsNote
-          content={t(
-            "Re-arrange fields shown for the results table and the filter. Toggle their visibility in the results table with the provided checkbox. Form and Submission Date filters will always be persistent and can only be hidden or re-arranged for the results table.\n\n The selected fields and their order are saved for each user for each form. Feel free to customize it for your needs; add or remove fields, show or quickly hide fields."
-          )}
-          ariaLabel={t("Manage fields note")}
-        />
+        
         <DragandDropSort
           key={sortFields?.length}
           items={sortFields}
@@ -120,27 +150,18 @@ const handleSaveSubmissionFields = () => {
           preventLastCheck={true}
         />
         <div>
-          <CustomButton
-            label={t("More System and Form Fields")}
-            secondary
-            icon={<AddIcon />}
-            dataTestId="manage-fields-add"
-            ariaLabel={t("Manage fields add")}
-            iconWithText
-            onClick={handleShowVariableModal}
-          />
         </div>
           
 
         </Modal.Body>
         
-        <Modal.Footer>
-                  <div className="buttons-row">
+      <Modal.Footer>
+        <div className="buttons-row">
+          <V8CustomButton secondary label={t("Cancel")} onClick={onClose} dataTestId="manage-fields-cancel" ariaLabel={t("Manage fields cancel")} />
 
-          <CustomButton  label={t("Save Changes")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")} onClick={handleSaveSubmissionFields}/>
-          <CustomButton secondary label={t("Cancel")} onClick={onClose} dataTestId="manage-fields-cancel" ariaLabel={t("Manage fields cancel")}/>
+          <V8CustomButton label={t("Save and apply")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")} onClick={handleSaveSubmissionFields} />
         </div>
-        </Modal.Footer>
+      </Modal.Footer>
 
         
       </Modal>

@@ -425,3 +425,14 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         }
     }
 }
+
+/* Manage fields sort modal */
+.manage-fields-sort-modal {
+    @include large-modal-popover();
+    .manage-fields-tabs {
+        display: flex;
+        gap: 0.563rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--gray-x-light);
+    }
+}
