@@ -27,7 +27,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             background: var(--white-300);
             box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
             padding: 1.4375rem 0 2.5rem 0; // 40px = 2.5rem
-            height: 300px;
+            min-height: 17.25rem;
             .prompt-modal-body {
                 margin: 0 auto;
                 .prompt-modal-title-container {
@@ -80,6 +80,17 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                 box-shadow: none;
             }
         }
+}
+
+.discard-changes-modal{
+    &.prompt-modal{
+        .modal-content{
+            .modal-body{
+                padding: 1rem 6.62rem;
+                padding-bottom: 0;
+            }
+        }
+    }
 }
 
 /* Task filter modal styles */
