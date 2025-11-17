@@ -8,6 +8,7 @@ import {
   setDateRangeFilter,
   setDefaultFilter,
   setFilterListSortParams,
+  setSelectedBpmAttributeFilter,
   setIsAssigned,
   setSelectedFilter,
   setTaskListLimit,
@@ -164,6 +165,34 @@ const TaskList = () => {
     fetchTaskListData();
   };
 
+  // Clear task filter, attribute filter, and date range to defaults
+  const handleClearAllFilters = () => {
+    // Determine the base filter to reset to
+    let baseFilter = null as any;
+    if (defaultFilterId) {
+      baseFilter = filters.find((f) => f.id === defaultFilterId);
+    }
+    if (!baseFilter) {
+      baseFilter = allTasksPayload; // fallback to All Tasks
+    }
+
+    batch(() => {
+      // Reset core selections
+      dispatch(setSelectedFilter(baseFilter));
+      dispatch(setSelectedBpmAttributeFilter(null as any));
+      dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
+      // Reset pagination defaults
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(setTaskListLimit(10));
+      // Refresh attribute filter list for the base filter, if applicable
+      if (baseFilter?.id) {
+        dispatch(fetchAttributeFilterList(baseFilter.id) as any);
+      }
+      // Fetch tasks for the base filter
+      dispatch(fetchServiceTaskList(baseFilter, null, 1, 25) as any);
+    });
+  };
+
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
     // reset the sort orders using helper function
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
@@ -228,7 +257,7 @@ const TaskList = () => {
         dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
         dispatch(fetchAttributeFilterList(currentFilter.id));
         dispatch(setBPMTaskListActivePage(1));
-        dispatch(setTaskListLimit(25));
+        dispatch(setTaskListLimit(10));
         dispatch(fetchServiceTaskList(currentFilter, null, 1, 25));
       });
     }
@@ -256,15 +285,15 @@ const TaskList = () => {
   
   return (
     <>
-        <div className="Toastify"></div>
-        <div className="toast-section">{}</div>
-        <div className="header-section-1">
+      <div className="Toastify"></div>
+      <div className="toast-section">{}</div>
+      <div className="header-section-1">
         <div className="section-seperation-left">
           <h4> Tasks </h4>
-        </div> 
         </div>
-        <div className="header-section-2">
-          <div className="section-seperation-left">
+      </div>
+      <div className="header-section-2">
+        <div className="section-seperation-left">
           <CustomSearch
             // search={}
             // setSearch={}
@@ -291,6 +320,14 @@ const TaskList = () => {
               endDateAriaLabel={t("End date")}
             />
               </div>
+        <div className="d-flex justify-content-end flex-fill">
+          <V8CustomButton
+            variant="secondary"
+            onClick={handleClearAllFilters}
+            label={t("Clear")}
+            dataTestId="clear-all-review-filters-button"
+          />
+        </div>
               
               </div>   
               <div className="header-section-4">
@@ -308,7 +345,6 @@ const TaskList = () => {
       selected={isAssigned}
     />
                 </div>
-             
               </div>
          {viewTasks && <div className="body-section"><TaskListTable /></div>}
     </>

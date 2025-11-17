@@ -32,7 +32,8 @@ $font-size-m: var(--font-size-m);
 // Main Button
 .filter-dropdown-button {
   padding: 0.6875rem 0.625rem; // 11px 10px
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
   @include centerAlign;
   background-color: $white-200;
   cursor: pointer;
@@ -134,6 +135,18 @@ $font-size-m: var(--font-size-m);
   background-color: $white-200;
   border: 0.0625rem solid transparent; // 1px
   transition: background-color 0.15s ease, color 0.15s ease;
+
+  .filter-dropdown-item-label{
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    flex: 1 1 0;
+    min-width: 0;
+    display: block;
+    line-height: 1.4;
+  }
 
   &:hover {
     border-radius: 0.3125rem; // 5px

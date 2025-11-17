@@ -55,6 +55,10 @@ font-size: $header-font-size;
 font-weight: $header-font-weight;
 line-height: 120%; /* 24px */
 text-transform: capitalize;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+max-width: 42rem;
 }
 .card-text{
   display: flex;
@@ -66,11 +70,12 @@ text-transform: capitalize;
 .form-status {
   display: flex;
   align-items: center;
+  justify-content: space-around;
   gap: 0.5rem;
   border-radius: 25px;
   background: $white-100-color;
   padding: 11px;
-  width: 135px;
+  width: auto;
   
   .status-text {
     color: $gray-darkest;

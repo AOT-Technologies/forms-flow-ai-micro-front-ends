@@ -1,30 +1,68 @@
 import {
-  RefreshIcon,
-  ReusableTable,
+  ReusableLargeModal,
   V8CustomButton,
+  ReusableTable,
+  FormStatusIcon,
+  RefreshIcon
 } from "@formsflow/components";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { HelperServices, StyleServices } from "@formsflow/service";
-import { useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { isEqual, cloneDeep } from "lodash";
+import { isEqual } from "lodash";
 import {
   resetTaskListParams,
   setBPMTaskListActivePage,
   setBPMTaskLoader,
   setFilterListSortParams,
   setTaskListLimit,
+  setSelectedTaskID,
+  setBPMTaskDetailLoader,
+  setTaskDetailsLoading,
+  setFormSubmissionLoading,
+  resetFormData,
+  setBundleSelectedForms,
+  setBundleLoading,
+  setAppHistoryLoading,
+  setSelectedFilter,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useHistory, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList,
+  fetchTaskVariables,
+  executeRule
 } from "../../api/services/filterServices";
+import {
+  getBPMTaskDetail,
+  getBPMGroups,
+  onBPMTaskFormSubmit,
+  getApplicationHistory,
+  getCustomSubmission,
+} from "../../api/services/bpmTaskServices";
+import {
+  getForm,
+  getSubmission,
+  Formio,
+  resetSubmission,
+} from "@aot-technologies/formio-react";
+import {
+  getFormIdSubmissionIdFromURL,
+  getFormUrlWithFormIdSubmissionId,
+} from "../../api/services/formatterService";
+import { getFormioRoleIds } from "../../api/services/userSrvices";
+import {
+  CUSTOM_SUBMISSION_URL,
+  CUSTOM_SUBMISSION_ENABLE,
+  CUSTOM_EVENT_TYPE,
+} from "../../constants/index";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
+import TaskForm from "../TaskForm";
+import BundleTaskForm from "../BundleTaskForm";
 
 interface Column {
   name: string;
@@ -47,9 +85,6 @@ interface Task {
   };
 }
 
-
-
-
 const TaskListTable = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -69,6 +104,76 @@ const TaskListTable = () => {
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData
 ?.key || tenantId);
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [modalViewType, setModalViewType] = useState<"submission" | "history">("submission");
+  const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
+    formId: "",
+    submissionId: "",
+  });
+  const [bundleName, setBundleName] = useState("");
+  const [historyPaginationModel, setHistoryPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+
+  // Redux selectors for task details
+  const task = useSelector((state: any) => state.task.taskDetail);
+  const taskDetailsLoading = useSelector((state: any) => state.task.taskDetailsLoading);
+  const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
+  const appHistory = useSelector((state: any) => state.task?.appHistory || []);
+  const isAppHistoryLoading = useSelector((state: any) => state.task?.isAppHistoryLoading || false);
+  const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
+
+  const greenColor = StyleServices.getCSSVariable("--green-100");
+  const yellowColor = StyleServices.getCSSVariable("--yellow-200");
+
+  const currentUser = JSON.parse(
+    localStorage.getItem("UserDetails") || "{}"
+  )?.preferred_username;
+  const disabledMode = taskAssignee !== currentUser;
+
+  const handleOpenModal = (task: Task) => {
+    setSelectedTask(task);
+    setModalViewType("submission");
+    setShowModal(true);
+    // Set task ID and load task details
+    if (task.id) {
+      dispatch(setSelectedTaskID(task.id));
+      dispatch(setBPMTaskDetailLoader(true));
+      dispatch(setTaskDetailsLoading(true));
+      dispatch(getBPMTaskDetail(task.id));
+      dispatch(getBPMGroups(task.id));
+      
+      // Also load history data upfront to avoid lag when switching views
+      const applicationId = task._embedded?.variable?.find(
+        (v: { name: string; value: any }) => v.name === "applicationId"
+      )?.value;
+      if (applicationId) {
+        dispatch(setAppHistoryLoading(true));
+        dispatch(getApplicationHistory(applicationId));
+      }
+    }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedTask(null);
+    setShowModal(false);
+    setModalViewType("submission");
+    Formio.clearCache();
+    dispatch(setSelectedTaskID(null));
+    dispatch(resetSubmission("submission"));
+    dispatch(setBundleSelectedForms([]));
+  };
+
+  const handleSubmissionClick = () => {
+    setModalViewType("submission");
+  };
+
+  const handleHistoryClick = () => {
+    setModalViewType("history");
+  };
 
   const taskvariables = selectedFilter?.variables ?? [];
 
@@ -152,31 +257,191 @@ const TaskListTable = () => {
     return matchingVar.value ?? "-";
   };
   const handleRefresh = () => {
-  dispatch(setBPMTaskLoader(true)); // optional: show loader on refresh
+    dispatch(setBPMTaskLoader(true));
+    const payload = createReqPayload(
+      selectedFilter,
+      selectedAttributeFilter,
+      filterListSortParams,
+      dateRange,
+      isAssigned,
+      false
+    );
+    dispatch(fetchServiceTaskList(payload, null, activePage, limit));
+  };
 
-  // Create the payload same as your sort change handler
-  const payload = createReqPayload(
-    selectedFilter,
-    selectedAttributeFilter,
-    filterListSortParams,
-    dateRange,
-    isAssigned,
-    false // or true if your filter needs it
+  // Load form and submission for task details
+  const handleFormRetry = (fetchForm: () => void) => (retryErr: any) => {
+    if (!retryErr) {
+      fetchForm();
+    } else {
+      dispatch(setFormSubmissionLoading(false));
+    }
+  };
+
+  const handleSuccessfulFormFetch = (formId: string, submissionId: string) => {
+    if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
+      dispatch(getCustomSubmission(submissionId, formId));
+    } else {
+      dispatch(getSubmission("submission", submissionId, formId));
+    }
+    dispatch(setFormSubmissionLoading(false));
+  };
+
+  const getFormSubmissionData = useCallback(
+    (formUrl: string) => {
+      const { formId, submissionId } = getFormIdSubmissionIdFromURL(formUrl);
+      Formio.clearCache();
+      dispatch(resetFormData("form"));
+
+      const fetchForm = () => {
+        dispatch(
+          getForm("form", formId, ((err: any) => {
+            if (!err) {
+              handleSuccessfulFormFetch(formId, submissionId);
+            } else if (err === "Bad Token" || err === "Token Expired") {
+              dispatch(resetFormData("form"));
+              dispatch(getFormioRoleIds(handleFormRetry(fetchForm)) as any);
+            } else {
+              dispatch(setFormSubmissionLoading(false));
+            }
+          }) as any)
+        );
+      };
+
+      fetchForm();
+    },
+    [dispatch]
   );
 
-  dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-};
+  // Load form and submission when task details are loaded
+  useEffect(() => {
+    if (task?.formUrl && task?.formType !== "bundle" && modalViewType === "submission") {
+      getFormSubmissionData(task.formUrl);
+    }
+  }, [task?.formUrl, task?.formType, modalViewType, getFormSubmissionData]);
 
+  // Handle bundle form setup
+  useEffect(() => {
+    if (task?.formType === "bundle" && modalViewType === "submission") {
+      Formio.clearCache();
+      dispatch(resetFormData("form"));
+      dispatch(setBundleLoading(false));
 
-  // const handleColumnResize = (column: Column, newWidth: number) => {
-  //   const updatedData = cloneDeep(selectedFilter);
-  //   const variables = updatedData.variables.map((variable: any) =>
-  //     variable.name === column.sortKey
-  //       ? { ...variable, width: newWidth }
-  //       : variable
-  //   );
-  //   dispatch(resetTaskListParams({ selectedFilter: { ...updatedData, variables } }));
-  // };
+      const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
+      setBundleFormData({ formId, submissionId });
+
+      fetchTaskVariables(task?.formId)
+        .then((res) => {
+          setBundleName(res.data.formName);
+          executeRule(
+            {
+              submissionType: "fetch",
+              formId: formId,
+              submissionId: submissionId,
+            },
+            res.data.id
+          )
+            .then((res: { data: unknown }) => {
+              dispatch(setBundleSelectedForms(res.data));
+            })
+            .catch((err: unknown) => {
+              console.error("Bundle error:", err);
+            })
+            .finally(() => {
+              dispatch(setBundleLoading(false));
+            });
+        })
+        .catch((err) => {
+          console.error("Error fetching bundle:", err);
+          dispatch(setBundleLoading(false));
+        });
+
+      return () => {
+        dispatch(setBundleSelectedForms([]));
+      };
+    }
+  }, [task?.formType, task?.formId, task?.formUrl, modalViewType, dispatch]);
+
+  // Form submission callback
+  const onFormSubmitCallback = (actionType = "") => {
+    if (!selectedTask?.id || !task?.formUrl) return;
+    dispatch(setBPMTaskDetailLoader(true));
+    const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
+    const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
+    const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
+    const payload = {
+      variables: {
+        formUrl: { value: formUrl },
+        applicationId: { value: task.applicationId },
+        webFormUrl: { value: webFormUrl },
+        action: { value: actionType },
+      },
+    };
+    dispatch(
+      onBPMTaskFormSubmit(
+        selectedTask.id,
+        payload,
+        () => dispatch(setBPMTaskDetailLoader(false))
+      )
+    );
+    handleCloseModal();
+  };
+
+  // Custom event handler for form
+  const onCustomEventCallBack = (customEvent: {
+    type: string;
+    actionType: string;
+  }) => {
+    if (customEvent.type === CUSTOM_EVENT_TYPE.ACTION_COMPLETE) {
+      onFormSubmitCallback(customEvent.actionType);
+    }
+  };
+
+  // Prepare history table data
+  const historyColumns = useMemo(
+    () => [
+      {
+        field: "created",
+        headerName: t("Created On"),
+        flex: 2,
+        renderCell: (params: any) => HelperServices.getLocaldate(params.value), 
+        sortable: false 
+      },
+      {
+        field: "submittedBy",
+        headerName: t("User"),
+        flex: 2,
+        sortable: false
+      },
+      {
+        field: "Status",
+        headerName: t("Status"),
+        flex: 2,
+        sortable: false,
+        cellClassName: 'action-cell-stretch',
+        renderCell: (params: any) => {
+          const entry = params.row;
+          return (
+              <span className="status-text">
+                {entry.applicationStatus || "N/A"}
+              </span>
+          );
+        },
+      },
+    ],
+    [t]
+  );
+
+  const historyRows = useMemo(() => {
+    return (appHistory || []).map((entry: any, index: number) => ({
+      id: entry.submissionId || index,
+      created: entry.created || "",
+      submittedBy: entry.submittedBy || "N/A",
+      applicationStatus: entry.applicationStatus || "N/A",
+      formId: entry.formId,
+      submissionId: entry.submissionId,
+    }));
+  }, [appHistory]);
 
   useEffect(() => {
     const dynamicColumns = buildDynamicColumns(taskvariables);
@@ -187,9 +452,10 @@ const TaskListTable = () => {
     const column = columns.find((col) => col.sortKey === model?.[0]?.field);
     if (!column) return;
     dispatch(setBPMTaskLoader(true));
-
+    
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
     const enabledSort = new Set(["applicationId", "submitterName", "formName"]);
+    
     const updatedFilterListSortParams = {
       ...resetSortOrders,
       [column.sortKey]: {
@@ -213,6 +479,114 @@ const TaskListTable = () => {
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
   };
 
+  const renderReusableModal = () => {
+    if (!selectedTask) return null;
+
+
+    const renderContent = () => {
+      if (modalViewType === "history") {
+        return (
+              <ReusableTable
+                columns={historyColumns}
+                rows={historyRows}
+                loading={isAppHistoryLoading}
+                noRowsLabel={t("No submission history found")}
+                paginationModel={historyPaginationModel}
+                onPaginationModelChange={setHistoryPaginationModel}
+                paginationMode="client"
+                sortingMode="client"
+                pageSizeOptions={[5, 10, 25, 50]}
+                rowHeight={60}
+                sx={{ 
+                  height: 500, 
+                  width: "100%",
+                  '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer': {
+                    justifyContent: 'flex-start !important',
+                  },
+                }}
+                disableColumnResize={true}
+                disableColumnMenu={true}
+              />
+        );
+      } else {
+        // Submission view
+        const isLoading = taskDetailsLoading || (!task?.formUrl && !task?.formType);
+        
+        if (isLoading) {
+          return <Loading />;
+        }
+
+        if (task?.formType === "bundle" && selectedForms?.length) {
+          return (
+            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border pb-0 ${disabledMode ? "disabled-mode" : "bg-white"}`}>
+              <BundleTaskForm
+                bundleId={task?.formId}
+                currentUser={currentUser || ""}
+                onFormSubmit={onFormSubmitCallback}
+                bundleFormData={bundleFormData}
+                onCustomEvent={onCustomEventCallBack}
+              />
+            </div>
+          );
+        } else {
+          return (
+            <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border pb-0 ${disabledMode ? "disabled-mode" : "bg-white"}`}>
+              <TaskForm
+                currentUser={currentUser || ""}
+                onFormSubmit={onFormSubmitCallback}
+                onCustomEvent={onCustomEventCallBack}
+              />
+            </div>
+          );
+        }
+      }
+    };
+
+    return (
+      <ReusableLargeModal
+        show={showModal}
+        onClose={handleCloseModal}
+        title={task?.applicationId}
+        subtitle={
+          <div className="d-flex justify-content-between">
+            <div className="d-flex gap-2">
+            <V8CustomButton
+              label={t("Submission")}
+              onClick={handleSubmissionClick}
+              className="mr-2"
+              dataTestId="modal-submission-button"
+              selected={modalViewType === "submission"}
+            />
+            <V8CustomButton
+              label={t("History")}
+              onClick={handleHistoryClick}
+              dataTestId="modal-history-button"
+              selected={modalViewType === "history"}
+            />
+            </div>
+            <div className="d-flex gap-2">
+              <div
+                className="form-status"
+                data-testid={`form-status-${task?._id || "new"}`}
+              >
+                <FormStatusIcon 
+                 color={!taskAssignee || taskAssignee === "unassigned" ? yellowColor : greenColor} 
+                 />
+                <span className="status-text">
+                  {!taskAssignee || taskAssignee === "unassigned" ? "Pending" : "Assigned"}
+                </span>
+              </div>
+              <div className="task-assignee-wrapper">
+                <TaskAssigneeManager task={selectedTask} />
+              </div>
+            </div>
+          </div>
+        }
+        content={renderContent()}
+      />
+    );
+  };
+
   const paginationModel = useMemo(
     () => ({ page: activePage - 1, pageSize: limit }),
     [activePage, limit]
@@ -233,9 +607,11 @@ const TaskListTable = () => {
     ...filteredColumns.map((col, idx) => ({
       field: col.sortKey,
       headerName: t(col.name),
-      flex: 1,
+      // If a saved width exists, honor it and disable flex; otherwise allow flex
+      ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
       sortable: true,
-      minWidth: col.width,
+      // Do not lock minWidth to the last saved width; allow shrinking after expand
+      minWidth: 90,
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
       renderCell: (params: any) => getCellValue(col, params.row),
     })),
@@ -253,27 +629,83 @@ const TaskListTable = () => {
       headerName: "",
       sortable: false,
       filterable: false,
-      headerClassName: "sticky-column-header",
+
+      headerClassName: "sticky-column-header last-column",
       cellClassName: "sticky-column-cell",
 
-       width: 100,
+      width: 100,
       renderCell: (params: any) => (
         <V8CustomButton
           label={t("View")}
           dataTestId="task-view-button"
           variant="secondary"
-          onClick={() => {
-            history.push(`/task/${params.row.id}`);
-          }}
+          onClick={() => handleOpenModal(params.row)}
         />
       ),
     },
   ];
-}, [columns, t, taskvariables, history]);
+}, [columns, t, iconColor, handleRefresh, handleOpenModal]);
 
 
 
   const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
+
+  // Row height scales with selected filter's dataLineValue/displayLinesCount
+  const computedRowHeight = useMemo(() => {
+    const lines = Number(
+      selectedFilter?.properties?.dataLineValue ??
+      selectedFilter?.properties?.displayLinesCount ??
+      1
+    );
+    const base = 55; // default row height in ReusableTable
+    const clampedLines = isNaN(lines) ? 1 : Math.max(1, Math.min(4, lines));
+    return base * clampedLines;
+  }, [selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
+
+  // Heuristic: if a row's visible text values all fit in one line, keep base height
+  const getRowHeight = useCallback((params: any) => {
+    const base = 55;
+    const maxLines = Number(
+      selectedFilter?.properties?.dataLineValue ??
+      selectedFilter?.properties?.displayLinesCount ??
+      1
+    );
+    if (maxLines <= 1) return base;
+
+    const row: any = params?.model || params?.row || {};
+
+    // visible column keys excluding actions/assignee
+    const visibleKeys = (columns || [])
+      .filter((c) => c.sortKey !== 'actions' && c.sortKey !== 'assignee')
+      .map((c) => c.sortKey);
+
+    const getTextValue = (key: string): string => {
+      if (key === 'created') {
+        return row.created ? HelperServices.getLocaldate(row.created) : '';
+      }
+      // direct field
+      if (row[key] != null) return String(row[key]);
+      // process variables
+      const vars = row?._embedded?.variable || [];
+      const match = vars.find((v: any) => v?.name === key);
+      if (!match) return '';
+      let v = match.value;
+      // if looks like JSON of selectboxes, attempt to join true keys
+      try {
+        if (typeof v === 'string' && v.startsWith('{') && v.endsWith('}')) {
+          const obj = JSON.parse(v);
+          const trues = Object.keys(obj).filter((k) => obj[k]);
+          v = trues.join(', ');
+        }
+      } catch {}
+      return v != null ? String(v) : '';
+    };
+
+    // If any value is long enough to likely wrap, increase height
+    const threshold = 28; // approx chars that fit in one line for typical column width
+    const needsMore = visibleKeys.some((k) => getTextValue(k).length > threshold);
+    return needsMore ? base * Math.max(1, Math.min(4, Number(maxLines))) : base;
+  }, [columns, selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
 
   if (!columns?.length) {
     return isTaskListLoading ? <Loading /> : (
@@ -293,6 +725,7 @@ const TaskListTable = () => {
         rows={memoizedRows}
         rowCount={tasksCount}
         loading={isTaskListLoading}
+        rowHeight={computedRowHeight}
         paginationMode="server"
         sortingMode="server"
         paginationModel={paginationModel}
@@ -310,10 +743,29 @@ const TaskListTable = () => {
         disableColumnMenu
         disableRowSelectionOnClick
         dataGridProps={{
-          getRowId: (row: any) => row.id
+          getRowId: (row: any) => row.id,
+          getRowHeight: getRowHeight as any,
+          onColumnWidthChange: (params: any) => {
+            try {
+              const field = params?.colDef?.field || params?.field;
+              const width = params?.width;
+              if (!field || !width || !selectedFilter?.id) return;
+              const updatedVariables = (selectedFilter?.variables || []).map((v: any) =>
+                v.key === field ? { ...v, width } : v
+              );
+              const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
+              // Update locally so future saves carry widths
+              dispatch(setSelectedFilter(updatedFilter));
+              // Do not persist here; widths are saved when the user saves the filter
+            } catch (e) {
+              // no-op
+            }
+          }
         }}
         enableStickyActions={true}
+        disableVirtualization
       />
+      {showModal && renderReusableModal()}
     </>
   );
 };

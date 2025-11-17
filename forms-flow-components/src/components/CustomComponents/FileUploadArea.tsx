@@ -181,7 +181,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
         } else if (uploadState.isError) {
           statusText = t("There was an error in the upload");
         } else {
-          statusText = t("Upload Complete!");
+          statusText = t("Import successful!");
         }
       return (
         <div

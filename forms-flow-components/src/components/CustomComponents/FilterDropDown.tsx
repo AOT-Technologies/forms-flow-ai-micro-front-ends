@@ -22,6 +22,8 @@ export interface FilterItemType {
   className?: string;
   /** Category for grouping (used in Task Filter) */
   category?: "my" | "shared" | "action" | "none";
+  /** Called when edit icon is clicked for an item (my/shared) */
+  onEdit?: () => void;
 }
 
 /**
@@ -57,8 +59,6 @@ export interface FilterDropDownProps
   variant?: FilterDropdownVariant;
   /** Whether to categorize items (for task filter) */
   categorize?: boolean;
-  /** Called when edit icon is clicked for an item (my/shared) */
-  onEdit?: (item: FilterItemType) => void;
 }
 
 /**
@@ -85,7 +85,7 @@ const buildClassNames = (
 const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
   (
     {
-      items,
+      items = [],
       label,
       disabled = false,
       searchable = false,
@@ -97,7 +97,6 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
       className = "",
       variant = "task",
       categorize = false,
-      onEdit,
       ...restProps
     },
     ref
@@ -164,15 +163,6 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
     //   [extraActionOnClick]
     // );
 
-    // Edit click handler
-    const handleEditClick = useCallback(
-      (event: React.MouseEvent, item: FilterItemType) => {
-        event.preventDefault();
-        event.stopPropagation();
-        onEdit?.(item);
-      },
-      [onEdit]
-    );
 
     // Single CSS variable for edit icon color across variants
     const editIconColor = StyleServices.getCSSVariable("--gray-dark");
@@ -241,7 +231,31 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             </>
           )}
 
-          {/* None category items (like "All Fields") - after actions */}
+          {/* Divider after action items and none items */}
+          {
+            ((myFilters && myFilters.length > 0) ||
+            (sharedFilters && sharedFilters.length > 0) ||
+            (noneItems && noneItems.length > 0)) && (
+              <Dropdown.Divider />
+            )}
+
+          {/* Search section if only my filters or shared filters are present */}
+
+          {searchable &&
+            ((myFilters && myFilters.length > 0) ||
+              (sharedFilters && sharedFilters.length > 0) ||
+              (noneItems && noneItems.length > 0)) && (
+              <div className="filter-dropdown-search">
+                <CustomSearch
+                  search={searchTerm}
+                  setSearch={handleSearchChange}
+                  handleSearch={() => {}}
+                  placeholder={searchPlaceholder}
+                  dataTestId={`${dataTestId}-search`}
+                />
+              </div>
+            )}
+
           {noneItems && noneItems.length > 0 && (
             <>
               {noneItems.map((item, index) => (
@@ -269,14 +283,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             </>
           )}
 
-          {/* Divider after action items and none items */}
-          {((actionItems && actionItems.length > 0) ||
-            (noneItems && noneItems.length > 0)) &&
-            ((myFilters && myFilters.length > 0) ||
-              (sharedFilters && sharedFilters.length > 0)) && (
-              <Dropdown.Divider />
-            )}
-
+          
           {/* My Filters section */}
           {myFilters && myFilters.length > 0 && (
             <>
@@ -301,13 +308,17 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                     <span className="filter-dropdown-item-label">
                       {item.content}
                     </span>
-                    {onEdit && (
+                    {item.onEdit && (
                       <EditIconforFilter
                         color={editIconColor}
                         aria-label={
                           item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
                         }
-                        onClick={(e) => handleEditClick(e, item)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          item.onEdit?.();
+                        }}
                         data-testid={`${item.dataTestId}-edit`}
                       />
                     )}
@@ -347,14 +358,18 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                     <span className="filter-dropdown-item-label">
                       {item.content}
                     </span>
-                    {onEdit && (
+                    {item.onEdit && (
                       <EditIconforFilter
                         color={editIconColor}
                         data-testid={`${item.dataTestId}-edit`}
                         aria-label={
                           item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
                         }
-                        onClick={(e) => handleEditClick(e, item)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          item.onEdit?.();
+                        }}
                       />
                     )}
                   </div>
@@ -364,7 +379,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
           )}
         </>
       );
-    }, [categorizedItems, onEdit, handleEditClick, variant]);
+    }, [categorizedItems, variant]);
 
     // Render uncategorized items
     const renderUncategorizedItems = useCallback(() => {
@@ -492,18 +507,6 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
               `filter-dropdown-menu--${variant}`
             )}
           >
-            {searchable && (
-              <div className="filter-dropdown-search">
-                <CustomSearch
-                  search={searchTerm}
-                  setSearch={handleSearchChange}
-                  handleSearch={() => {}}
-                  placeholder={searchPlaceholder}
-                  dataTestId={`${dataTestId}-search`}
-                />
-              </div>
-            )}
-
             <div className="filter-dropdown-items">
               {categorize ? renderCategorizedItems() : renderUncategorizedItems()}
             </div>

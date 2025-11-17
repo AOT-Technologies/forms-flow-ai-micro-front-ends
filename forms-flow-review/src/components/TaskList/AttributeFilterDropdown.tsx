@@ -2,8 +2,6 @@ import {
   AddIcon,
   FilterDropDown,
   ReorderIcon,
-  SharedWithMeIcon,
-  SharedWithOthersIcon,
 } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
@@ -111,29 +109,30 @@ const AttributeFilterDropdown = () => {
   const onSearch = (searchTerm: string) => {
     setFilterSearchTerm(searchTerm);
   };
-  const handleEditAttrFilter = () => {
-    if (!selectedAttributeFilter) return;
-    setShowAttributeFilter(true);
-    dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
-  };
+  // const handleEditAttrFilter = () => {
+  //   if (!selectedAttributeFilter) return;
+  //   setShowAttributeFilter(true);
+  //   dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
+  // };
 
 
-  //To be updated later 
-  const handleEditAttributeFromItem = (item) => {
-    if (!item?.type) {
-      // allow creating when clicking edit on 'All Fields' (none) -> open create
-      setShowAttributeFilter(true);
-      dispatch(setAttributeFilterToEdit(null));
-      return;
-    }
-    const id = Number(item.type);
-    const found = attributeFilterList.find((f) => f.id === id);
+  const handleEditAttributeFromItem = (filter) => {
+    if (!filter) return;
     setShowAttributeFilter(true);
-    dispatch(setAttributeFilterToEdit(found ? cloneDeep(found) : null));
+    dispatch(setAttributeFilterToEdit(cloneDeep(filter)));
   };
 
   const filterDropdownAttributeItems = useMemo(() => {
     const attributeDropdownItemsArray: FilterItemType[] = [];
+
+    const noFilter: FilterItemType = {
+      content: <em>{t("No filters found")}</em>,
+      onClick: () => {},
+      type: "none",
+      dataTestId: "no-filters",
+      ariaLabel: t("No attribute filters available"),
+      category: "none",
+    };
 
     const createCustomField: FilterItemType = {
       content: (
@@ -152,7 +151,7 @@ const AttributeFilterDropdown = () => {
     const reOrderAttribute: FilterItemType = {
       content: (
         <div className="d-flex align-items-center justify-content-between">
-          <span>{t("Re-order And Hide Filters")}</span>
+          <span>{t("Re-order / Hide Filters")}</span>
           <ReorderIcon />
         </div>
       ),
@@ -170,7 +169,7 @@ const AttributeFilterDropdown = () => {
       type: "none",
       dataTestId: "attr-filter-item-none",
       ariaLabel: t("All Fields"),
-      category: "none",
+      category: "action",
     };
 
     const filteredItems = Array.isArray(attributeFilterList)
@@ -183,23 +182,19 @@ const AttributeFilterDropdown = () => {
             return nameMatch && notHidden;
           })
           .map((filter) => {
-            const createdByMe =
-              userDetails?.preferred_username === filter?.createdBy;
-            const isSharedToPublic =
-              !filter?.roles?.length && !filter?.users?.length;
-            const isSharedToRoles = filter?.roles?.length > 0;
-            const isSharedToMe = filter?.roles?.some((role) =>
-              userDetails?.groups?.includes(role)
-            );
-
-            let icon = null;
+            // const createdByMe =
+            //   userDetails?.preferred_username === filter?.createdBy;
+            // const isSharedToUsersofTakFilter =
+            //   !filter?.roles?.length && !filter?.users?.length;
+            // const isSharedToRoles = filter?.roles?.length > 0;
+            // const isSharedToMe = filter?.roles?.some((role) =>
+            //   userDetails?.groups?.includes(role)
+            // );
             let category: "my" | "shared" = "my";
 
-            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
-              icon = <SharedWithOthersIcon className="shared-icon" />;
+          if ((selectedFilter?.users?.length > 0) ||(filter?.users?.length > 0))  {
               category = "my";
-            } else if (isSharedToPublic || isSharedToMe) {
-              icon = <SharedWithMeIcon className="shared-icon" />;
+            } else {
               category = "shared";
             }
             // category remains "my" for all other cases (default)
@@ -212,7 +207,6 @@ const AttributeFilterDropdown = () => {
               content: (
                 <span className="d-flex justify-content-between align-items-center">
                   {t(filter.name)}
-                  {icon && <span>{icon}</span>}
                 </span>
               ),
               onClick: () => changeAttributeFilterSelection(filter),
@@ -222,6 +216,7 @@ const AttributeFilterDropdown = () => {
                 filterName: t(filter.name),
               }),
               category,
+              onEdit: () => handleEditAttributeFromItem(filter),
             };
           })
       : [];
@@ -232,18 +227,26 @@ const AttributeFilterDropdown = () => {
     if (createFilters) {
       attributeDropdownItemsArray.push(createCustomField);
 
-      if (filteredItems.length > 0) {
+      if (filteredItems.length > 1) {
         attributeDropdownItemsArray.push(reOrderAttribute);
-      }
+      }      
     }
 
     // Only show "All Fields" when not searching
-    if (!isSearching || filteredItems.length === 0) {
+    if (!isSearching) {
       attributeDropdownItemsArray.push(clearAttributeFilter);
     }
 
     // Add dynamic filtered items
-    attributeDropdownItemsArray.push(...filteredItems);
+    if (filteredItems.length > 0) {
+      attributeDropdownItemsArray.push(...filteredItems);
+    } else {
+      // Show "No filters found" only when:
+      // 1. Searching and no matches found
+      if (isSearching ) {
+        attributeDropdownItemsArray.push(noFilter);
+      }
+    }
 
     return attributeDropdownItemsArray;
   }, [
@@ -269,10 +272,9 @@ const AttributeFilterDropdown = () => {
       <FilterDropDown
         label={title}
         items={filterDropdownAttributeItems}
-        searchable={false}
-        searchPlaceholder={t("Search")}
+        searchable={true}
+        searchPlaceholder={t("Search all filters")}
         onSearch={onSearch}
-        onEdit={handleEditAttributeFromItem}
         dataTestId="attribute-filter-dropdown"
         ariaLabel={t("Select attribute filter")}
         className="input-filter"

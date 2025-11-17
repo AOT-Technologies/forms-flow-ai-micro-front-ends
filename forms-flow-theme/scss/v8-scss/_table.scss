@@ -4,8 +4,8 @@
 @import "./mixins";
 
 $table-border-color: #DAD9DA; // Light gray border
-$table-bg-light: var(--ff-white-200); // Very light background
-$table-border-light: var(--ff-gray-x-light); // Light border color
+$table-bg-light: var( --white-300); // Very light background
+$table-border-light: var(--gray-x-light); // Light border color
 $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
 
 /* ============================
@@ -53,6 +53,9 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     display: flex!important;
     align-items: center!important;
     padding: 0.5rem 0.625rem !important;
+    &[data-field="selected"] {
+      justify-content: flex-end !important;
+    }
   }
   
   .MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) {
@@ -129,6 +132,10 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     outline: none !important;
     outline-offset: 0px !important;
   }
+  .MuiDataGrid-cell:focus-within{
+    outline: none !important;
+    outline-offset: 0px !important;
+  }
   .last-column ,.MuiDataGrid-columnHeader--last{
     display: flex !important;
     justify-content: flex-end !important;
@@ -136,6 +143,9 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     align-items: center;
     .MuiDataGrid-columnHeaderTitleContainer{
       justify-content: flex-end !important;
+    }
+    .MuiDataGrid-columnSeparator--resizable{
+      display: none !important;
     }
   }
   .MuiTablePagination-root{
@@ -173,7 +183,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     }
   }
 }
- 
+
   .status-live {
     @extend .status-circle;
     background-color: $green-color;
@@ -202,10 +212,48 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
       text-align: left !important;
       justify-content: flex-start !important;
     }
-    
+
     .MuiDataGrid-columnHeader[data-field="actions"]{
       padding-top: 0 !important;
       padding-bottom: 0 !important;
     }
 
+   
+  }
+  .sticky-column-header,.sticky-column-cell{
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 2 !important;
+    background-color: $table-bg-light !important;
+  }
+  .action-column-sticky {
+    .MuiDataGrid-columnHeader.sticky-column-header {
+      position: sticky;
+      right: 0;
+      background-color: $table-bg-light;
+      z-index: 1;
+      border-left: 1px solid $table-border-light;
+    }
+
+    .MuiDataGrid-cell.sticky-column-cell {
+      position: sticky;
+      right: 0;
+      background-color: $table-bg-light;
+      border-left: 1px solid $table-border-light;
+      z-index: 1;
+    }
+
+    .MuiDataGrid-columnHeader[data-field="actions"] .MuiDataGrid-columnSeparator {
+      display: none !important;
+    }
+
+    /* Hide separator for the column immediately before the last (actions) */
+    .MuiDataGrid-columnHeader.no-right-separator .MuiDataGrid-columnSeparator {
+      display: none !important;
+    }
+  }
+  
+  //for submissions page temporarily used className
+  .custom-table-wrapper-outter-submissions{
+    container: tableSize / inline-size;
   }

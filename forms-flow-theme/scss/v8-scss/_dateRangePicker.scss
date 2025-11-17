@@ -5,7 +5,7 @@
 $drp-container-width: 18.75rem;        // 300px at 16px base
 $drp-container-height: 2.5rem;         // 40px at 16px base
 $drp-container-padding: 0.25rem 0.75rem; // 4px 12px - keep static for calculations
-$drp-container-radius: 0.5rem;         // 8px at 16px base
+$drp-container-radius: .3125rem;  //5px       // 8px at 16px base
 $drp-input-padding: 0.3125rem 0.375rem; // 5px 6px at 16px base
 $drp-separator-margin: 0 0.25rem;      // 0 4px - keep static for calculations
 $drp-calendar-width: 18.75rem;         // 300px at 16px base
@@ -51,7 +51,7 @@ $drp-shadow-calendar: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   width: $drp-container-width;
-  height: $drp-container-height;
+  // height: $drp-container-height;
   padding: $drp-container-padding;
   border: 1px solid var(--gray-x-light);
   background: var(--white-200);

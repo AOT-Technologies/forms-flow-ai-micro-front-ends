@@ -176,7 +176,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
               ...state,
               isActive: false,
               isInvalid: true,
-              errors: action?.payload.error
+              errors: action?.payload?.error || ''
             };
     default:
       return state;
