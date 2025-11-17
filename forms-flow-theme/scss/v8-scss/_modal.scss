@@ -27,7 +27,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             background: var(--white-300);
             box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
             padding: 1.4375rem 0 2.5rem 0; // 40px = 2.5rem
-            height: 300px;
+            min-height: 17.25rem;
             .prompt-modal-body {
                 margin: 0 auto;
                 .prompt-modal-title-container {
@@ -80,6 +80,17 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                 box-shadow: none;
             }
         }
+}
+
+.discard-changes-modal{
+    &.prompt-modal{
+        .modal-content{
+            .modal-body{
+                padding: 1rem 6.62rem;
+                padding-bottom: 0;
+            }
+        }
+    }
 }
 
 /* Task filter modal styles */
@@ -287,6 +298,27 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     }
 }
 
+.form-view-modal {
+    width: 45rem;
+    max-width: 90%;
+    .modal-content {
+        height: 45rem;
+        .modal-header {
+            border-bottom: 1px solid var(--gray-x-light);
+            margin: 1rem;
+            margin-bottom: 0;
+            padding: 0;
+            padding-bottom: 1rem;
+            .modal-title {
+                @include font-style(var(--font-size-xl), var(--font-weight-regular), var(--secondary-dark));
+            }
+        }
+        .modal-body {
+            padding: 0 1rem;
+            overflow-y: auto;
+        }
+    }
+}
 /* Approval Task Modal styles */
 .approval-task-modal {
     @include mixins.approval-task-modal-popover();
@@ -391,5 +423,16 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             flex-shrink: 0;
             margin-left: 1rem;
         }
+    }
+}
+
+/* Manage fields sort modal */
+.manage-fields-sort-modal {
+    @include large-modal-popover();
+    .manage-fields-tabs {
+        display: flex;
+        gap: 0.563rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--gray-x-light);
     }
 }

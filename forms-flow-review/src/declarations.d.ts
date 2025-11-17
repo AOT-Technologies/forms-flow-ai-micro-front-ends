@@ -101,7 +101,8 @@ declare module "@formsflow/components" {
     FormStatusIcon,
     Alert,
     DropdownMultiSelect,
-    CustomTextArea
+    CustomTextArea,
+    BreadCrumbs
   }: any;
 }
 
