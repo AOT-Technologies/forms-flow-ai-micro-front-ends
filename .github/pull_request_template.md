@@ -4,7 +4,7 @@
 <!-- Briefly describe the purpose of this PR and the problem it solves. -->
 
 **Related Jira Ticket:**  
-https://aottech.atlassian.net/browse/FWF-5524
+<!-- Jira ticket in this format : https://aottech.atlassian.net/browse/FWF-5524 -->
 
 **Type of Change:**
 - [ ] ✨ Feature
