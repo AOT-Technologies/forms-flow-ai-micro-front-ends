@@ -1,7 +1,13 @@
-import React, { useState, useCallback, useMemo, forwardRef, memo } from "react";
+import React, { useState, useCallback, useMemo, forwardRef, memo, useEffect, useRef } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { ChevronIcon } from "../SvgIcons/index";
+
+/**
+ * Module-level registry to track the currently open dropdown's close function.
+ * Only one dropdown should be open at a time across all instances.
+ */
+let currentOpenDropdown: (() => void) | null = null;
 
 /**
  * Dropdown item descriptor for `V8CustomDropdownButton`.
@@ -86,6 +92,33 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
 
   // Memoized dropdown items to prevent unnecessary re-renders
   const memoizedDropdownItems = useMemo(() => dropdownItems, [dropdownItems]);
+  
+  // Stable close function stored in ref (created once, reused)
+  const closeRef = useRef<() => void>(() => setOpen(false));
+  
+  // Ensure only one dropdown is open at a time
+  useEffect(() => {
+    if (open) {
+      // Close any previously open dropdown
+      if (currentOpenDropdown && currentOpenDropdown !== closeRef.current) {
+        currentOpenDropdown();
+      }
+      // Register this dropdown as the currently open one
+      currentOpenDropdown = closeRef.current;
+    } else {
+      // Unregister if this was the open dropdown
+      if (currentOpenDropdown === closeRef.current) {
+        currentOpenDropdown = null;
+      }
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      if (currentOpenDropdown === closeRef.current) {
+        currentOpenDropdown = null;
+      }
+    };
+  }, [open]);
 
   // Memoized click handlers for better performance
   const handleItemClick = useCallback((item: DropdownItemConfig) => {
@@ -111,6 +144,7 @@ const V8CustomDropdownButtonComponent = forwardRef<HTMLDivElement, V8CustomDropd
   }, [disabled, open]);
 
   // Memoized dropdown toggle handler
+  // React Bootstrap handles click-outside closing automatically
   const handleDropdownToggle = useCallback((isOpen: boolean) => {
     if (!disabled) {
       setOpen(isOpen);
