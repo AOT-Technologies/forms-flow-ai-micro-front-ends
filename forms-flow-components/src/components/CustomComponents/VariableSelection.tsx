@@ -4,10 +4,9 @@ import {
   FormComponent,
   V8CustomButton,
   CustomTextInput,
-  CloseIcon,
   Switch
 } from "../../formsflow-components";
-import { BackIcon } from "../SvgIcons";
+import { BackIcon, CloseIcon } from "../SvgIcons";
 import { DataGrid } from '@mui/x-data-grid';
 import { StyleServices } from "@formsflow/service";
 
@@ -51,6 +50,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
     const [alternativeLabels, setAlternativeLabels] = useState<Record<string, FormVariable>>({});
     const detailsRef = useRef(null);
     const isInternalUpdateRef = useRef(false);
+    const BackIconColor = StyleServices.getCSSVariable('--gray-medium-darker');
     // Store temporary input values for variables that aren't selected yet
     const tempInputValuesRef = useRef<Record<string, string>>({});
     const [tempInputValues, setTempInputValues] = useState<Record<string, string>>({});
@@ -132,33 +132,40 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
       }
     }, [savedFormVariables, SystemVariables]);
 
-    // System Variable Handlers
-    const handleSystemAltVariableInputChange = useCallback((variableKey: string, systemVariable: SystemVariable) => {
-      return (newVal: string) => {
-        setAlternativeLabels((prev) => {
-          const existing = prev[variableKey];
-          if (existing) {
-            // Variable is selected (switch is on), update it in alternativeLabels
-            isInternalUpdateRef.current = true;
-            return {
-              ...prev,
-              [variableKey]: {
-                ...existing,
-                altVariable: newVal,
-              },
-            };
-          }
-          // Variable is not selected (switch is off), store value temporarily
-          // Don't add to alternativeLabels to prevent switch from turning on
-          tempInputValuesRef.current[variableKey] = newVal;
-          setTempInputValues((prev) => ({
-            ...prev,
-            [variableKey]: newVal,
-          }));
-          return prev; // Return previous state unchanged
-        });
-      };
-    }, []);
+    const updateAlternativeLabels = (
+      prev: Record<string, any>,
+      variableKey: string,
+      newVal: string
+    ) => {
+      const existing = prev[variableKey];
+      if (existing) {
+        isInternalUpdateRef.current = true;
+        return {
+          ...prev,
+          [variableKey]: {
+            ...existing,
+            altVariable: newVal,
+          },
+        };
+      }
+      // Variable is not selected, store value temporarily
+      tempInputValuesRef.current[variableKey] = newVal;
+      setTempInputValues((tempPrev: Record<string, any>) => ({
+        ...tempPrev,
+        [variableKey]: newVal,
+      }));
+      return prev;
+    };
+    
+    const handleSystemAltVariableInputChange = useCallback(
+      (variableKey: string, systemVariable: SystemVariable) => {
+        return (newVal: string) => {
+          setAlternativeLabels((prev) =>
+            updateAlternativeLabels(prev, variableKey, newVal)
+          );
+        };
+      },
+      []);
 
     const handleSystemVariableToggle = useCallback((variableKey: string, systemVariable: SystemVariable, isChecked: boolean) => {
       isInternalUpdateRef.current = true;
@@ -375,7 +382,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
               <div className="head">
                 <div className="RHS-header">
                   <span className="back-button" onClick={() => setShowElement(false)}>
-                    <BackIcon color="#9E9E9E" /> {t("Back")}
+                    <BackIcon color={BackIconColor} /> {t("Back")}
                   </span>
                 </div>
               </div>
@@ -442,7 +449,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
                         key={key}
                         className="variable-card"
                       >
-                        {!disabled && <div
+                        {disabled ? null : <div
                           className="variable-card-close"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -450,7 +457,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
                           }}
                         >
                           <CloseIcon
-                            color="#9E9E9E"
+                            color={BackIconColor}
                             dataTestId={`pill-remove-icon-${key}`}
                           />
                         </div>}

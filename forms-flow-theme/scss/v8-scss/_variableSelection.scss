@@ -1,5 +1,11 @@
 @import "mixins";
-
+$gray-darkest:var(--gray-darkest);
+$font-size-m:var(--font-size-m);
+$font-weight-regular:var(--font-weight-regular);
+$gray-medium-darker:var(--gray-medium-darker);
+$gray-x-light:var(--gray-x-light);
+$font-weight-medium:var(--font-weight-medium);
+$secondary-dark:var(--secondary-dark);
 
 .system-content-block {
   .system-content-table {
@@ -24,13 +30,13 @@
   flex-grow: 0;
   flex-shrink: 0;
   .form-variables-title{
-    @include font-style(15px, 400, #4A4A4A);
+    @include font-style($font-size-m, $font-weight-regular, $gray-darkest);
   }
   .RHS-header{
     border-bottom: 1px solid var(--gray-x-light);
     padding-bottom: 1.25rem;
     .back-button{
-      @include font-style(15px, 400, #4A4A4A);
+      @include font-style($font-size-m, $font-weight-regular, $gray-darkest);
       align-items: center;
       display: flex;
       gap: 10px;
@@ -42,7 +48,6 @@
     height: 100%;
     padding: 1.5rem;
     border-radius: 0.5rem;
-    // overflow-y: auto;
   }
   .scroll-vertical {
     .item-container {
@@ -50,10 +55,10 @@
       border-bottom: 1px solid var(--gray-x-light);
       gap: 0.5rem ;
       .label {
-        @include font-style(14px, 400, #9E9E9E);
+        @include font-style(14px, $font-weight-regular, $gray-medium-darker);
       }
       .value {
-        @include font-style(14px, 500, var(--secondary-dark));
+        @include font-style(14px, $font-weight-medium, var(--secondary-dark));
       }
     }
     .alternative-label-container {
@@ -63,7 +68,7 @@
         margin-bottom: 0.5rem;
         display: block;
         color: var(--secondary-dark);
-        @include font-style(14px, 400, #525254);
+        @include font-style(14px, $font-weight-regular, $secondary-dark);
       }
     }
     .button-container {
@@ -83,7 +88,7 @@
       position: relative;
       padding: 1rem;
       border-radius: 5px;
-      border: 1px solid #E5E5E5;
+      border: 1px solid $gray-x-light;
       cursor: pointer;
 
       .variable-card-close {
@@ -94,7 +99,7 @@
       }
 
       .variable-title {
-        @include font-style(15px, 500, #4A4A4A);
+        @include font-style($font-size-m, $font-weight-medium, $gray-darkest);
         margin-bottom: 0.25rem;
         text-overflow: ellipsis;
         word-break: break-word;
@@ -102,7 +107,7 @@
       }
 
       .variable-subtitle {
-        @include font-style(15px, 400, #9E9E9E);
+        @include font-style($font-size-m, $font-weight-regular, $gray-medium-darker);
         text-overflow: ellipsis;
         word-break: break-word;
       }
