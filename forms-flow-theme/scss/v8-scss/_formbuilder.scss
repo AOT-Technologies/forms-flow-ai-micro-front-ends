@@ -2,7 +2,7 @@
 $gray-medium: var(--gray-medium);
 $white: var(--white-300);
 $form-builder-breakpoint: 1550px;
-$form-builder-border-radius: 2px;
+$form-builder-border-radius: 4px;
 $form-builder-border-radius-round: 50%;
 $form-builder-border-width: 1px;
 $form-builder-border-width-thick: 2px;
@@ -87,6 +87,25 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
     .component-btn-group .component-settings-button {
         box-shadow: $form-builder-shadow;
     }
+
+    .form-check .form-check-input  {
+        margin-top: 8px !important;
+    }
+
+    .input-group-append .input-group-text {
+      height: 100%;
+      border: 1px solid var(--ff-primary);
+      border-radius: inherit;
+    }
+
+    .choices__inner input {
+      border: 1px solid var(--gray-medium);
+      border-radius: var(--border-radius);
+    }
+    
+    .formio-component-button button.btn {
+      border-radius: var(--border-radius)!important;
+    }
 }
 
 /* ============================
@@ -119,6 +138,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
       border-color: var(--red-100) !important;
     }
   }
+  .gu-unselectable {
     .btn-primary.hover,
     .btn-primary:hover,
     .btn-primary.disabled:hover,
@@ -139,6 +159,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
       // Table buttons should use their default theme colors
       background-color: var(--white-300) !important;
       border-color: var(--primary-dark) !important;
+      color: var(--primary-dark) !important;
     }
   
     .btn-primary:active:not(:hover),
@@ -170,6 +191,8 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
       background-color: var(--white-300) !important;
       border-color: var(--primary-dark) !important;
     }
+
+  }
   
   // Override: alert-danger styles from user-styles.css
   // Ensures alerts within tables maintain consistent styling
