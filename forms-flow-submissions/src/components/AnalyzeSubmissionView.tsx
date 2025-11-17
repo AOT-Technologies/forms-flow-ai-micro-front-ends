@@ -11,7 +11,8 @@ import {
   Alert,
   AlertVariant,
   CustomProgressBar,
-  useProgressBar
+  useProgressBar,
+  FormViewModal
 } from "@formsflow/components";
 import Loading from "./Loading";
 import {
@@ -99,6 +100,8 @@ const ViewApplication = React.memo(() => {
   const [formType, setFormType] = useState('');
   const [selectedTab, setSelectedTab] = useState({ id: "form", label: t("Form") });
   const [showExportAlert, setShowExportAlert] = useState(false);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [selectedSubmissionData, setSelectedSubmissionData] = useState<any>(null);
 
   const { progress: publishProgress, start, complete, reset } = useProgressBar({
     increment: 10,
@@ -232,10 +235,21 @@ const ViewApplication = React.memo(() => {
   // Define viewSubmission before useMemo hooks (must be before early return)
   const viewSubmission = useCallback((data: any) => {
     const { formId, submissionId } = data;
-    const basePath = formType === "bundle" ? "bundle" : "form";
-    const url = `${window.location.origin}${redirectUrl}${basePath}/${formId}/submission/${submissionId}`;
-    window.open(url, "_blank");
-  }, [formType, redirectUrl]);
+    setSelectedSubmissionData(data);
+    setShowFormModal(true);
+    
+    // Load form and submission data
+    if (formId && submissionId) {
+      Formio.clearCache();
+      dispatch(resetFormData("form"));
+      dispatch(getForm("form", formId));
+      if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
+        dispatch(getCustomSubmission(submissionId, formId));
+      } else {
+        dispatch(getSubmission("submission", submissionId, formId));
+      }
+    }
+  }, [dispatch]);
 
   // Prepare history table data - must be before early return (Rules of Hooks)
   const historyColumns = useMemo(
@@ -454,6 +468,20 @@ const ViewApplication = React.memo(() => {
         <div className="body-section">
           {renderTabContent()}
         </div>
+        
+        {/* Form View Modal */}
+        <FormViewModal
+          show={showFormModal}
+          onClose={() => {
+            setShowFormModal(false);
+            setSelectedSubmissionData(null);
+          }}
+          title={selectedSubmissionData?.created ? HelperServices.getLocaldate(selectedSubmissionData.created) : ""}
+        >
+        {selectedSubmissionData && (
+            <View page="application-detail" />
+          )}
+        </FormViewModal>
     </div>
   );
 });

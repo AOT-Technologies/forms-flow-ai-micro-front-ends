@@ -287,6 +287,27 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     }
 }
 
+.form-view-modal {
+    width: 45rem;
+    max-width: 90%;
+    .modal-content {
+        height: 45rem;
+        .modal-header {
+            border-bottom: 1px solid var(--gray-x-light);
+            margin: 1rem;
+            margin-bottom: 0;
+            padding: 0;
+            padding-bottom: 1rem;
+            .modal-title {
+                @include font-style(var(--font-size-xl), var(--font-weight-regular), var(--secondary-dark));
+            }
+        }
+        .modal-body {
+            padding: 0 1rem;
+            overflow-y: auto;
+        }
+    }
+}
 /* Approval Task Modal styles */
 .approval-task-modal {
     @include mixins.approval-task-modal-popover();

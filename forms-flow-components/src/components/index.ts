@@ -34,7 +34,7 @@ export * from "../customHooks/useSuccessCountdown";
 export * from "./CustomComponents/CollapsibleSearch";
 export * from "./CustomComponents/ResizableTable";
 export * from "./SkeletonLoader/TableSkeletonLoader";
-export * from "./CustomComponents/BpmnDiagramView";
+export { default as ProcessDiagram } from "./CustomComponents/BpmnDiagramView";
 export * from "./CustomComponents/SubmissionHistoryWithViewButton";
 export * from "./CustomComponents/VariableSelection";
 export * from "./CustomComponents/FormComponent";
@@ -56,5 +56,6 @@ export * from "./CustomComponents/FilterDropDown";
 export { CustomCheckbox } from "./CustomComponents/CustomCheckbox";
 export * from "./CustomComponents/ReusableTable";
 export * from "./CustomComponents/ReusableLargeModal";
+export * from "./CustomComponents/FormViewModal";
 export * from "./CustomComponents/ReusableStandardModal";
 
