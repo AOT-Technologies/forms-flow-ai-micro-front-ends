@@ -137,7 +137,6 @@ const TaskListTable = () => {
     // Set task ID and load task details
     if (task.id) {
       dispatch(setSelectedTaskID(task.id));
-      dispatch(setBPMTaskDetailLoader(true));
       dispatch(setTaskDetailsLoading(true));
       dispatch(getBPMTaskDetail(task.id));
       dispatch(getBPMGroups(task.id));
@@ -653,6 +652,7 @@ const TaskListTable = () => {
           onHistoryPaginationModelChange={(model) => setHistoryPaginationModel(model)}
           appHistory={appHistory}
           statusValue={task?.applicationStatus || "Pending"}
+          onRefresh={handleRefresh}
         />
       )}
     </>

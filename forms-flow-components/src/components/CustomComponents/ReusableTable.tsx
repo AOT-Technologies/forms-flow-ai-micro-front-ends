@@ -101,7 +101,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
             if (params.row.__isExpansionRow__) {
               return (
                 <div className="notes-wrapper">
-                  <label className="notes-label">Notes:</label>
+                  <span className="notes-label">Notes:</span>
 
                   <div className="notes-box">
                     {params.row.__notes__ || "No notes available"}
@@ -226,9 +226,8 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
           },
           '& .expansion-row .MuiDataGrid-cell': {
             border: 'none',
-            padding: '0 8px !important',
+            padding: '16px !important',
             overflow: 'visible !important',
-            marginBottom: '1rem !important',
           },
           // Hide other columns in expansion rows (they already return null from renderCell)
           '& .expansion-row .MuiDataGrid-cell:not(:first-of-type)': {

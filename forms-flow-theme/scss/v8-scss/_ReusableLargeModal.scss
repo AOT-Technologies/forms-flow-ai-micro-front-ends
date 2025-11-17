@@ -4,11 +4,6 @@ $font-weight-medium: var(--font-weight-medium);
 
 .reusable-large-modal {
     @include large-modal-popover();
-    
-        &.modal-dialog {
-            width: 45rem !important;
-            max-width: 45rem !important;
-        }
         .modal-header-top {
           display: flex;
           justify-content: space-between;

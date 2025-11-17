@@ -24,6 +24,10 @@ $ta-font-weight: var(--font-weight-regular);
         pointer-events: none;
     }
 
+    &.text-area-full-width {
+        max-width: 100%;
+    }
+
     .text-area {
         width: 100%;
         min-height: 5rem;

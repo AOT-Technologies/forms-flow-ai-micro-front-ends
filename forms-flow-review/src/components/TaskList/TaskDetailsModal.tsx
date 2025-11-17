@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   ReusableLargeModal,
@@ -15,6 +16,9 @@ import BundleTaskForm from "../BundleTaskForm";
 import TaskForm from "../TaskForm";
 import Loading from "../Loading/Loading";
 import type { Task } from "./TasklistTable";
+import { getFormIdSubmissionIdFromURL, getFormUrlWithFormIdSubmissionId } from "../../api/services/formatterService";
+import { onBPMTaskFormUpdate } from "../../api/services/bpmTaskServices";
+import { setBPMTaskDetailLoader } from "../../actions/taskActions";
 
 interface HistoryPaginationModel {
   page: number;
@@ -55,6 +59,7 @@ interface TaskDetailsModalProps {
   isUpdateLoading?: boolean;
   isCancelDisabled?: boolean;
   isCancelLoading?: boolean;
+  onRefresh?: () => void;
 }
 
 const TaskDetailsModal = ({
@@ -86,11 +91,15 @@ const TaskDetailsModal = ({
   isUpdateLoading,
   isCancelDisabled,
   isCancelLoading,
+  onRefresh,
 }: TaskDetailsModalProps) => {
   const { t } = useTranslation();
   const [notesText, setNotesText] = useState("");
   const [currentStatusValue, setCurrentStatusValue] = useState<string>("Pending");
-  console.log("taskDetail",taskDetail);
+  const task = useSelector((state: any) => state.task.taskDetail);
+  const submission = useSelector((state: any) => state.submission);
+  const isBPMTaskDetailLoading = useSelector((state: any) => state.task.isBPMTaskDetailLoading);
+  const dispatch = useDispatch();
 
   // Sync local state with prop when it changes
   useEffect(() => {
@@ -139,7 +148,7 @@ const TaskDetailsModal = ({
         applicationStatus: entry.applicationStatus || "N/A",
         formId: entry.formId,
         submissionId: entry.submissionId,
-        notes: entry.notes || "sample notes lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+        notes: entry.privateNotes,
       })),
     [appHistory]
   );
@@ -178,11 +187,80 @@ const TaskDetailsModal = ({
     onStatusChange?.(value);
   };
 
+  // task update callback
+  const onTaskUpdate = (actionType = "") => {
+    if (!selectedTask?.id || !task?.formUrl) return;
+    dispatch(setBPMTaskDetailLoader(true));
+    const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
+    const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
+    const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
+    
+    // Extract formId and data from submission Redux state
+    const submissionFormId = submission?.formId || formId;
+    const submissionData = submission?.submission?.data || {};
+
+    // Map SelectDropdown value to applicationStatus
+    const statusMapping: Record<string, string> = {
+      "Approve": "Approved",
+      "Decline": "Rejected",
+      "Pending": "Pending",
+    };
+    const selectedStatus = resolvedStatusValue || statusValue || "Pending";
+    const applicationStatus = statusMapping[selectedStatus] || selectedStatus;
+    
+    // Get submittedBy from submission owner or currentUser
+    const submittedBy = submission?.owner || currentUser || "";
+    
+    const payload = {
+      formData: {
+        formId: submissionFormId,
+        data: submissionData,
+      },
+      bpmnData: {
+        variables: {
+          formUrl: { value: formUrl },
+          applicationId: { value: task.applicationId },
+          webFormUrl: { value: webFormUrl },
+          action: { value: applicationStatus },
+        },
+      },
+      applicationData: {
+        applicationId: task.applicationId,
+        applicationStatus: applicationStatus,
+        formUrl: formUrl,
+        submittedBy: submittedBy,
+        privateNotes: notesText || null,
+      },
+    };
+    dispatch(
+      onBPMTaskFormUpdate(
+        selectedTask.id,
+        payload,
+        (error: any) => {
+          dispatch(setBPMTaskDetailLoader(false));
+          if (!error) {
+            // Success: Close modal and refresh task list
+            onClose();
+            onRefresh?.();
+          }
+        }
+      )
+    );
+  };
+
+  const handleUpdateClick = () => {
+    onTaskUpdate();
+  };
+
+  const isApprovalTask =
+    taskDetail?.taskDefinitionKey?.startsWith("ApprovalTask-") ?? false;
+
   const headerStatusControl = (
     <SelectDropdown
       options={statusOptions}
       value={resolvedStatusValue}
       defaultValue="Pending"
+      disabled={disabledMode}
       onChange={handleStatusChange}
       dataTestId="modal-status-dropdown"
       ariaLabel="status"
@@ -205,8 +283,8 @@ const TaskDetailsModal = ({
       sortingMode="client"
       pageSizeOptions={[5, 10, 25, 50]}
       rowHeight={60}
-      enableRowExpansion={true}  // ✅ Add this line
-      notesField="notes"          // ✅ Add this line (if your field name is different, change it)
+      enableRowExpansion={true}
+      notesField="notes"
       sx={{
         height: 500,
         width: "100%",
@@ -223,9 +301,10 @@ const TaskDetailsModal = ({
   );
 
   const renderNotesContent = () => (
-    <div className="ps-3 pe-3 m-0 pb-3">
-      <h5 className="mb-4">{taskDetail?.taskDefinitionKey && `${taskDetail.taskDefinitionKey} Approval`}</h5>
+    <div className="p-3">
+      <h5 className="mb-4">{taskDetail && `${taskDetail.name} Approval`}</h5>
       <div className="mb-3">
+        <div className="notes-label mb-2">Notes</div>
         <CustomTextArea
           value={notesText}
           setValue={setNotesText}
@@ -233,6 +312,7 @@ const TaskDetailsModal = ({
           disabled={disabledMode}
           ariaLabel="Task notes"
           rows={6}
+          className="text-area-full-width"
         />
       </div>
       <CustomInfo
@@ -286,12 +366,12 @@ const TaskDetailsModal = ({
       show={show}
       onClose={onClose}
       title={taskDetail?.applicationId}
-      headerControl={taskDetail?.taskDefinitionKey ? headerStatusControl : undefined}
-      primaryBtnText="Update"
-      primaryBtnAction={handleUpdate}
+      headerControl={isApprovalTask ? headerStatusControl : undefined}      
+      primaryBtnText={isApprovalTask ? "Update" : undefined}      
+      primaryBtnAction={handleUpdateClick}
       primaryBtnDisable={isUpdateButtonDisabled}
-      buttonLoading={isUpdateLoading}
-      secondaryBtnText="Cancel"
+      buttonLoading={isBPMTaskDetailLoading}
+      secondaryBtnText={isApprovalTask ? "Cancel" : undefined}      
       secondaryBtnAction={handleCancel}
       secondaryBtnDisable={isCancelDisabled}
       secondaryBtnLoading={isCancelLoading}
@@ -305,13 +385,13 @@ const TaskDetailsModal = ({
               dataTestId="modal-submission-button"
               selected={modalViewType === "submission"}
             />
-            <V8CustomButton
+            {isApprovalTask && <V8CustomButton
               label={t("Notes")}
               onClick={onNotesClick}
               className="mr-2"
               dataTestId="modal-notes-button"
               selected={modalViewType === "notes"}
-            />
+            />}
             <V8CustomButton
               label={t("History")}
               onClick={onHistoryClick}
