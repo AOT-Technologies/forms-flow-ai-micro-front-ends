@@ -333,12 +333,13 @@ const ViewApplication = React.memo(() => {
   };
 
   const breadcrumbItems = [
-    { id: "submit", label: t("Submit") },
-    { id: "application-title", label: applicationDetail?.applicationName },
+    { id: "analyze", label: t("Analyze") },
+    { id: "submissions", label: t("Submissions") },
+    { id: "submission", label: t("Submission") },
   ];
 
   const handleBreadcrumbClick = (item: any) => {
-    if (item.id === "submit") {
+    if (item.id === "analyze" || item.id === "submissions") {
       backToSubmissionList();
     }
   };
@@ -431,7 +432,7 @@ const ViewApplication = React.memo(() => {
           <div className="section-seperation-left d-block">
               <BreadCrumbs 
                 items={breadcrumbItems}
-                variant={BreadcrumbVariant.DEFAULT}
+                variant={BreadcrumbVariant.MINIMIZED}
                 underline
                 onBreadcrumbClick={handleBreadcrumbClick} 
               /> 
