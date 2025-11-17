@@ -302,7 +302,7 @@ const columns: Column[] = useMemo(() => {
   .map((item) => ({
     name: item.label,
     sortKey: item.key,
-    width: getColumnWidth(item.key),
+    width: columnWidths[item.key] ? columnWidths[item.key] : 0,
     resizable: true,
     isFormVariable: item.isFormVariable ?? false,
   }));
@@ -785,12 +785,13 @@ const {
             endDateAriaLabel={t("End date")}
           />
         </div>
-        <div className="section-seperation-right">
+        <div className="section-seperation-right">          
         <V8CustomButton
                 label={t("Manage Fields")}
                 onClick={handleManageFieldsOpen}
                 dataTestId="manage-fields-button"
                 ariaLabel={t("Open manage fields")}
+                disabled={!dropdownSelection}
                 secondary
               />
               <V8CustomButton
@@ -843,8 +844,12 @@ const {
 
       </div> */}
       
-       <div className="body-section">
-      <ReusableTable
+        <div className="body-section">
+        <div
+          className="custom-table-wrapper-outter-submissions"
+          data-testid="table-container-wrapper"
+        >
+        <ReusableTable
               columns={muiColumns}
               rows={memoizedRows}
               rowCount={totalCount}
@@ -870,6 +875,7 @@ const {
               disableVirtualization
 
             />
+        </div>
        </div>
        </div>
       {isManageFieldsModalOpen && <ManageFieldsSortModal
