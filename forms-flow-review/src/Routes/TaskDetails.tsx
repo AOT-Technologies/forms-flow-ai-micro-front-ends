@@ -18,7 +18,7 @@ import {
   Formio,
   resetSubmission,
 } from "@aot-technologies/formio-react";
-import { BackToPrevIcon, CustomButton } from "@formsflow/components";
+import { BackToPrevIcon, CustomButton, BreadCrumbs } from "@formsflow/components";
 import {
   getFormIdSubmissionIdFromURL,
   getFormUrlWithFormIdSubmissionId,
@@ -256,6 +256,18 @@ const TaskDetails = () => {
     dispatch(getApplicationHistory(task?.applicationId));
     setShowHistoryModal(true);
   };
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Tasks"), id: "tasks" },
+    { label: t("Submission"), id: "submission" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "tasks") {
+      handleBack();
+    }
+  };
+
   // Main Renderor
   return (
     <>
@@ -268,6 +280,14 @@ const TaskDetails = () => {
       )}
       
       <div className="nav-bar">
+        <div style={{ marginBottom: "10px" }}>
+          <BreadCrumbs
+            items={breadcrumbItems}
+            variant="default"
+            onBreadcrumbClick={handleBreadcrumbClick}
+            dataTestId="task-details-breadcrumbs"
+          />
+        </div>
         <div className="icon-back" onClick={handleBack}>
           <BackToPrevIcon data-testid="back-to-prev"/>
         </div>
