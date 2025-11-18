@@ -88,8 +88,13 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
         box-shadow: $form-builder-shadow;
     }
 
-    .form-check .form-check-input  {
-        margin-top: 8px !important;
+    .form-check .form-check-input {
+        &[type="checkbox"] {
+          margin-top: 5px !important;
+        }
+        &[type="radio"] {
+          margin-top: 8px !important;
+        }
     }
 
     .input-group-append .input-group-text {
@@ -249,7 +254,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
     padding: 0 !important;
     margin: 0 !important;
   }
-  .form-group {
+  .form-, .form-preview-tab, .formio-form {
     span {
       font-size: 14px !important;
     }
@@ -261,6 +266,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
       color: $white !important;
       width: fit-content !important;
       border:none !important;
+      margin-right: 10px;
 
       &:hover{
         background-color: $white !important;
@@ -268,6 +274,23 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
         border:1px solid $form-builder-color-bg-black !important;
       }
     }
+
+    button.page-link {
+      border: 1px solid $form-builder-color-bg-black !important;
+      background-color: var(--white-300) !important;
+      color: $form-builder-color-bg-black !important;
+      &:hover {
+        background-color: $form-builder-color-bg-black !important;
+        color: var(--white-300) !important;
+      }
+      
+    }
+
+    li.active .page-link {
+      background-color: $form-builder-color-bg-black !important;
+      color: $white !important;
+    }
+
     .formio-button-remove-row{
       border: none !important;
     }
