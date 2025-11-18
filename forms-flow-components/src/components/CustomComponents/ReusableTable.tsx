@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { useTranslation } from "react-i18next";
 import { NewSortDownIcon } from "../SvgIcons";
@@ -30,6 +30,8 @@ interface ReusableTableProps {
   customLocaleText?: object;
   enableStickyActions?: boolean;
   disableVirtualization?: boolean;
+  enableRowExpansion?: boolean;
+  notesField?: string;
 }
 
 export const ReusableTable: React.FC<ReusableTableProps> = ({
@@ -57,11 +59,12 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   customLocaleText = {},
   enableStickyActions = false,
   disableVirtualization = false,
+  enableRowExpansion = false,
+  notesField = 'notes',
 }) => {
   const { t } = useTranslation();
   const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
 
-  // Default sort icons
   const defaultSlots = useMemo(() => ({
     columnSortedDescendingIcon: () => (
       <div>
@@ -76,30 +79,112 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
     ...customSlots,
   }), [iconColor, customSlots]);
 
-  // Default slot props
   const defaultSlotProps = useMemo(() => ({
     ...customSlotProps,
   }), [customSlotProps]);
 
-  // Default locale text
   const defaultLocaleText = useMemo(() => ({
     noRowsLabel: noRowsLabel || t("No data available"),
     ...customLocaleText,
   }), [noRowsLabel, customLocaleText, t]);
 
-  // Memoized rows to ensure proper ID assignment
+  // Enhanced columns - modify first column to render expansion content
+  const enhancedColumns: GridColDef[] = useMemo(() => {
+    if (!enableRowExpansion) return columns;
+
+    const modifiedColumns = columns.map((col, index) => {
+      if (index === 0) {
+        return {
+          ...col,
+          renderCell: (params: any) => {
+            // Check if this is an expansion row
+            if (params.row.__isExpansionRow__) {
+              return (
+                <div className="notes-wrapper">
+                  <span className="notes-label">Notes:</span>
+
+                  <div className="notes-box">
+                    {params.row.__notes__ || "No notes available"}
+                  </div>
+                </div>
+              );
+            }
+
+            // Original cell renderer for regular rows
+            return col.renderCell ? col.renderCell(params) : params.value;
+          },
+        };
+      }
+
+      // Hide other columns for expansion rows
+      return {
+        ...col,
+        renderCell: (params: any) => {
+          if (params.row.__isExpansionRow__) return null;
+          return col.renderCell ? col.renderCell(params) : params.value;
+        },
+      };
+    });
+
+    return modifiedColumns;
+  }, [columns, enableRowExpansion]);
+
+  // Transform rows to include expansion rows automatically
   const memoizedRows = useMemo(() => {
-    return (rows || []).map((row, index) => ({
-      ...row,
-      id: getRowId(row) || `row-${index}`,
-    }));
-  }, [rows, getRowId]);
+    if (!enableRowExpansion) {
+      return (rows || []).map((row, index) => ({
+        ...row,
+        id: getRowId(row) || `row-${index}`,
+      }));
+    }
+
+    const transformedRows: any[] = [];
+
+    (rows || []).forEach((row, index) => {
+      const rowId = getRowId(row) || `row-${index}`;
+      const hasNotes = row[notesField] && row[notesField].trim();
+
+      // Add main row
+      transformedRows.push({
+        ...row,
+        id: rowId,
+        __isExpansionRow__: false,
+      });
+
+      // Auto-expand: Add expansion row if notes exist (always visible)
+      if (hasNotes) {
+        transformedRows.push({
+          id: `${rowId}-expansion`,
+          __isExpansionRow__: true,
+          __parentId__: rowId,
+          __notes__: row[notesField],
+        });
+      }
+    });
+
+    return transformedRows;
+  }, [rows, getRowId, enableRowExpansion, notesField]);
+
+  const getRowClassName = (params: any) => {
+    if (params.row.__isExpansionRow__) {
+      return 'expansion-row';
+    }
+    return '';
+  };
+
+  const getRowHeight = (params: any) => {
+    if (params.model.__isExpansionRow__) {
+      // Auto-expand: always show expansion rows with auto height
+      return 'auto';
+    }
+    return rowHeight;
+  };
 
   return (
     <Paper sx={sx}>
       <DataGrid
         disableColumnResize={disableColumnResize}
-        columns={columns}
+        columns={enhancedColumns}
         rows={memoizedRows}
         rowCount={rowCount}
         loading={loading}
@@ -109,13 +194,14 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
         sortModel={sortModel}
         onSortModelChange={onSortModelChange}
         paginationModel={paginationModel}
-        getRowId={getRowId}
+        getRowId={(row) => row.id}
         onPaginationModelChange={onPaginationModelChange}
         pageSizeOptions={pageSizeOptions}
-        rowHeight={rowHeight}
+        getRowHeight={getRowHeight}
+        getRowClassName={getRowClassName}
         disableRowSelectionOnClick={disableRowSelectionOnClick}
         slots={defaultSlots}
-        disableVirtualization ={disableVirtualization}
+        disableVirtualization={enableRowExpansion ? true : disableVirtualization}
         slotProps={{
           loadingOverlay: {
             variant: 'skeleton',
@@ -124,15 +210,41 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
           ...defaultSlotProps,
         }}
         localeText={defaultLocaleText}
-        className={enableStickyActions ? 'action-column-sticky' : ''} //to avoid resizing of actions column
-
+        className={enableStickyActions ? 'action-column-sticky' : ''}
         sx={{
           ...(disableColumnResize && {
             '& .MuiDataGrid-columnSeparator': {
               display: 'none !important',
             },
           }),
-          ...sx, 
+          // Expansion row styling
+          '& .expansion-row': {
+            backgroundColor: 'transparent',
+            '&:hover': {
+              backgroundColor: 'transparent !important',
+            },
+          },
+          '& .expansion-row .MuiDataGrid-cell': {
+            border: 'none',
+            padding: '16px !important',
+            overflow: 'visible !important',
+          },
+          // Hide other columns in expansion rows (they already return null from renderCell)
+          '& .expansion-row .MuiDataGrid-cell:not(:first-of-type)': {
+            width: '100% !important',
+            // padding: '0 !important',
+          },
+          // Make first cell of expansion row span full width
+          '& .expansion-row .MuiDataGrid-cell:first-of-type': {
+            gridColumn: '1 / -1 !important',
+            width: '100% !important',
+            maxWidth: 'none !important',
+            minWidth: '100% !important',
+            left: '0 !important',
+            padding: '0 8px !important',
+            overflow: 'visible !important',
+          },
+          ...sx,
         }}
         {...dataGridProps}
         sortingOrder={['asc', 'desc']}

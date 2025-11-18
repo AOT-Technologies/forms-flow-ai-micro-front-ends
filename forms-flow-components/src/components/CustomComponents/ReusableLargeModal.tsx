@@ -10,6 +10,7 @@ interface ReusableLargeModalProps {
   onClose: () => void;
   title: string;
   subtitle?: React.ReactNode;
+  headerControl?: React.ReactNode;
   content?: React.ReactNode;
 
   // Footer button props
@@ -33,6 +34,7 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
   onClose,
   title,
   subtitle,
+  headerControl,
   content,
 
   primaryBtnText,
@@ -62,24 +64,31 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
     >
       <Modal.Header>
         <div className="modal-header-content">
-          <Modal.Title id="reusable-modal-title">
-            {t(title)}
-            <div onClick={onClose}>
+          <div className="modal-header-top">
+            <Modal.Title id="reusable-modal-title" className="modal-title-text">
+              {t(title)}
+            </Modal.Title>
+            {headerControl && (
+              <div className="modal-header-control">
+                {headerControl}
+              </div>
+            )}
+            <button type="button" className="modal-close-btn" onClick={onClose} aria-label={t("Close")}>
               <CloseIcon color={darkColor} />
-            </div>
-          </Modal.Title>
+            </button>
+          </div>
 
           {subtitle && (
-          <div className="modal-subtitle">
-            {subtitle}
-          </div>
+            <div className="modal-subtitle">
+              {subtitle}
+            </div>
           )}
         </div>
       </Modal.Header>
 
       {content && <Modal.Body className="custom-scroll">{content}</Modal.Body>}
 
-      {/* <Modal.Footer>
+      <Modal.Footer>
         {secondaryBtnText && (
           <V8CustomButton
             label={t(secondaryBtnText)}
@@ -102,7 +111,7 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
             variant="primary"
           />
         )}
-      </Modal.Footer> */}
+      </Modal.Footer>
     </Modal>
   );
 };

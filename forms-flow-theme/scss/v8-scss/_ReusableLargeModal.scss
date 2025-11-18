@@ -3,7 +3,22 @@ $gray-medium-dark-color: var(--gray-darkest);
 $font-weight-medium: var(--font-weight-medium);
 
 .reusable-large-modal {
-  @include large-modal-popover();
+    @include large-modal-popover();
+        .modal-header-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 1rem;
+        }
+        .modal-title-text {
+          padding: 0 !important;
+        }
+        .modal-close-btn {
+          background: none;
+          border: none;
+          align-items: center;
+          cursor: pointer;
+        }
 }
 .task-status {
   display: flex;

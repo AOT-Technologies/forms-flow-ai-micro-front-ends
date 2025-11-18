@@ -36,6 +36,7 @@ const initialState = {
   isHistoryListLoading: true,
   appHistory: [],
   isTaskDetailUpdating: false,
+  isBPMTaskDetailLoading: false,
   error : null,
   isUnsavedFilter: false,
   isUnsavedAttributeFilter: false,
@@ -147,6 +148,8 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, taskFormSubmissionReload: action.payload };
     case ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING:
         return { ...state, isTaskDetailUpdating: action.payload };
+    case ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_LOADING:
+        return { ...state, isBPMTaskDetailLoading: action.payload };
     case ACTION_CONSTANTS.ERROR:
       return { ...state, error: action.payload };   
     case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:

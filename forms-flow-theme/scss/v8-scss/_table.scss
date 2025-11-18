@@ -276,3 +276,26 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   .custom-table-wrapper-outter-submissions{
     container: tableSize / inline-size;
   }
+
+.notes-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+
+  .notes-label {
+    margin-bottom: .5rem;
+    @include font-style(var(--font-size-m), var(--font-weight-medium));
+  }
+
+  .notes-box {
+    display: flex;
+    padding: 0.75rem 0.5rem;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: 0.25rem;
+    border: 1px solid var(--gray-medium-dark);
+    white-space: pre-wrap;
+    @include font-style(var(--font-size-m), var(--font-weight-regular));
+  }
+}

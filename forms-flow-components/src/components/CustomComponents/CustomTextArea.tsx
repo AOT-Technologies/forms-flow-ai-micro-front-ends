@@ -10,6 +10,7 @@ interface CustomTextAreaProps {
   ariaLabel?: string;
   rows?: number;
   maxLength?: number;
+  className?: string;
 }
 
 export const CustomTextArea: FC<CustomTextAreaProps> = ({
@@ -21,10 +22,11 @@ export const CustomTextArea: FC<CustomTextAreaProps> = ({
   ariaLabel,
   rows = 4,
   maxLength,
+  className = "",
 }) => {
   const { t } = useTranslation();
   const inputId = `${dataTestId}-textarea`; // unique id per instance
-  const containerClass = `text-area-container${disabled ? " text-area-disabled" : ""}`;
+  const containerClass = `text-area-container${disabled ? " text-area-disabled" : ""}${className ? ` ${className}` : ""}`;
 
   return (
     <div className={containerClass}>

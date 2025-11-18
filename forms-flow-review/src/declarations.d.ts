@@ -100,6 +100,8 @@ declare module "@formsflow/components" {
     ReusableLargeModal,
     FormStatusIcon,
     Alert,
+    DropdownMultiSelect,
+    CustomTextArea,
     BreadCrumbs
   }: any;
 }
