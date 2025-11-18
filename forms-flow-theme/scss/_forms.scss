@@ -594,37 +594,7 @@ select option:hover {
 .userform-wrapper{
   display: flex;
   flex-direction: column;
-  background-color: $gray-light;
-
-  .user-form-header{
-    .icon-title-container{
-      display: flex;
-      align-items: center;
-      gap: var(--spacer-200);
-
-    }
-    .card-body{
-      padding: 0px !important;
-    }
-    gap: var(--spacer-150);
-    padding: var(--spacer-100) var(--spacer-200);
-    border-radius: var(--radius-md) !important;
-    background-color: var(--navbar-active-submenu-bg-color) !important;
-    font-size: var(--font-size-sm);
-
-    
-  .user-form-header-text{
-    color: $white;
-    font-weight: var(--font-weight-xl);
-  }
-  .form-modified-date{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-weight: var(--font-weight-sm) !important;
-    color: $white;
-  }
- }
+  
   .user-form-container-with-wizard,
   .user-form-container{
     overflow-y: auto;
@@ -636,10 +606,10 @@ select option:hover {
     min-width: 75vw;
   }
   .user-form-container {
-    height: calc(100vh - 7.5625rem - var(--client-nav));
+    height: calc(100vh - var(--client-nav));
   }
   .user-form-container-with-wizard {
-    height: calc(100vh - 8.5625rem - var(--client-nav));
+    height: calc(100vh - var(--client-nav));
   }
 
 }
