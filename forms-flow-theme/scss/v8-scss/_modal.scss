@@ -18,38 +18,43 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 // Prompt modal styles
 
 .prompt-modal {
-    .modal-dialog.modal-sm {
-        min-width: 28.5rem;
+    .modal-dialog {
         .modal-content {
-            min-width: 28.5rem;
             border-radius: 5px;
             border: 1px solid var(--gray-x-light);
             background: var(--white-300);
             box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-            padding: 1.4375rem 0 2.5rem 0; // 40px = 2.5rem
-            min-height: 17.25rem;
+            padding: 1.5rem 1rem;
+            min-height: 16.5rem;
             .prompt-modal-body {
-                margin: 0 auto;
+                margin: 0;
+                padding: 0;
                 .prompt-modal-title-container {
-                    .prompt-icon {
-                        display: flex;
-                        justify-content: center;
-                        width: 100%;
-                    }
+                    text-align: left;
+                    border-bottom: 1px solid var(--gray-x-light);
+                    padding-bottom: 1.19rem;
+                    padding-left: 0.5rem;
+                    // .prompt-icon {
+                    //     display: flex;
+                    //     justify-content: center;
+                    //     width: 100%;
+                    // }
                     .prompt-title {
-                        text-align: center;
-                        font-size: var(--font-size-xl);
+                        text-align: left;
+                        font-size: var(--font-size-lg);
                         font-weight: var(--font-weight-regular);
                         width: 100%;
-                        margin-top: 1.125rem; // 18px in rem
+                        color: var(--secondary-dark);
+                        // margin-top: 1.125rem; // 18px in rem
                         line-height: var(--line-height-default);
                     }
                 }
                 .prompt-message {
                     color: var(--gray-darkest);
-                    text-align: center;
+                    text-align: left;
                     font-size: var(--font-size-m);
-                    margin-top: 1.188rem;
+                    margin-top: 1.31rem;
+                    padding-left: 0.5rem;
                 }
             }
             .modal-footer {
@@ -61,23 +66,40 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             }
             .buttons-row {
                 display: flex;
-                justify-content: center;
+                justify-content: flex-end;
                 align-items: center;
                 width: 100%;
-                gap: 0.5rem;
+                gap: 0.44rem;
             }
+        }
+    }
+    .modal-sm{
+        min-width: 22rem;
+        .modal-content {
+            min-width: 22rem;
+            min-height: 16.5rem;
         }
     }
         &.error-modal{
             .modal-content{
-                border-color: var(--orange-100);
-                box-shadow: none;
+               .modal-footer{
+                .buttons-row{
+                    .custom-button--primary{
+                        border-color: var(--red-100);
+                    }
+                }
+               }
             }
         }
-        &.success-modal{
+        &.info-modal{
             .modal-content{
-                border-color: var(--green-100);
-                box-shadow: none;
+                .modal-footer{
+                    .buttons-row{
+                        .custom-button--primary{
+                            border-color: var(--primary-dark);
+                        }
+                    }
+                }
             }
         }
 }
