@@ -76,5 +76,6 @@ declare module "@formsflow/components" {
     CustomProgressBar,
     useProgressBar,
     FormViewModal,
+    FilterDropDown
   }: any;
 }

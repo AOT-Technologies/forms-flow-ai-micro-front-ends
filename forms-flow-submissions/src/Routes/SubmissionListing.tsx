@@ -40,7 +40,9 @@ import {
   DateRangePicker,
   SelectDropdown,
   CustomSearch,
-  RefreshIcon
+  RefreshIcon,
+  FilterDropDown,
+  AddIcon
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -100,6 +102,9 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
   const [isFormFetched,setIsFormFetched] =useState(false);
+  const [selectedSearchFieldKey, setSelectedSearchFieldKey] = useState<string>("id");
+  const [searchFieldFilterTerm, setSearchFieldFilterTerm] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
   const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
 
   // Default submission fields constant
@@ -456,7 +461,9 @@ const {
    handleDropdownSelectionChange(null);
    dispatch(setAnalyzeSubmissionDateRange({ startDate: null, endDate: null }));
    dispatch(setAnalyzeSubmissionPage(1));
- }, [dispatch, handleDropdownSelectionChange]);
+   setSearchText("");
+   setSelectedSearchFieldKey("id");
+ }, [dispatch, handleDropdownSelectionChange, setSearchText]);
 
   // Column resize handler for ReusableTable
   const handleColumnResize = useCallback((column: Column, newWidth: number) => {
@@ -713,7 +720,69 @@ const {
     },
     [dispatch, dropdownSelection, DEFAULT_SUBMISSION_FIELDS]
   );
+  // Build categorized search field dropdown items (action + system fields + form specific)
+  const searchFieldDropdownItems = useMemo(() => {
+    const items: any[] = [];
 
+    // Action: Add additional fields +
+    items.push({
+      content: (
+        <div className="d-flex align-items-center justify-content-between">
+          <span>{t("Add additional fields")}</span> <AddIcon />
+        </div>
+      ),
+      onClick: () => {
+        handleManageFieldsOpen();
+      },
+      type: "add-fields",
+      dataTestId: "add-additional-fields",
+      ariaLabel: t("Add additional fields"),
+      category: "action",
+    });
+
+    const available = (selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS) as any[];
+    const labelByKey: Record<string, string> = {};
+    (available || []).forEach((f) => {
+      labelByKey[f.key] = f.label || f.name || f.key;
+    });
+
+    const term = (searchFieldFilterTerm || "").toLowerCase();
+
+    const sysItems = (available || [])
+      .filter((f) => f?.isFormVariable !== true) // system fields
+      .filter((f) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
+      .map((f) => ({
+        className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
+        content: <span>{t(labelByKey[f.key])}</span>,
+        type: String(f.key),
+        onClick: () => setSelectedSearchFieldKey(f.key),
+        dataTestId: `field-item-${f.key}`,
+        ariaLabel: t("Select field {{fieldName}}", { fieldName: t(labelByKey[f.key]) }),
+        category: "system",
+      }));
+
+    const formItems = (available || [])
+      .filter((f) => f?.isFormVariable === true) // form specific fields
+      .filter((f) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
+      .map((f) => ({
+        className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
+        content: <span>{t(labelByKey[f.key])}</span>,
+        type: String(f.key),
+        onClick: () => setSelectedSearchFieldKey(f.key),
+        dataTestId: `field-item-${f.key}`,
+        ariaLabel: t("Select field {{fieldName}}", { fieldName: t(labelByKey[f.key]) }),
+        category: "form",
+      }));
+
+    items.push(...sysItems, ...formItems);
+    return items;
+  }, [
+    t,
+    selectedSubmissionFilter,
+    DEFAULT_SUBMISSION_FIELDS,
+    selectedSearchFieldKey,
+    searchFieldFilterTerm,
+  ]);
   return (
    <>
    <div className="analyze-submissions-page">
@@ -750,14 +819,32 @@ const {
                   dataTestId="submission-form-select"
                   id="submission-form-select"
                   variant="secondary"
+                  searchDropdown
+                  searchable
+                  customSearchPlaceholder={t("Search all forms")}
+                />
+                <FilterDropDown
+                  label={t(((selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS)?.find((f: any) => f.key === selectedSearchFieldKey)?.label) || "Submission ID")}
+                  items={searchFieldDropdownItems}
+                  searchable={true}
+                  searchPlaceholder={t("Search fields")}
+                  onSearch={(term: string) => setSearchFieldFilterTerm(term)}
+                  dataTestId="analyze-search-filter-dropdown"
+                  ariaLabel={t("Select field to search")}
+                  className="input-filter"
+                  variant="task"
+                  categorize={true}
+                  categoryLabels={{ system: t("System fields"), form: t("Form specific fields") }}
+                  categoryOrder={["action", "system", "form"]}
+                  stickyActions={true}
                 />
                 <div className="medium-search-container">
                 <CustomSearch
-                  value={searchFieldValues.search}
+                  search={searchText}
+                  setSearch={setSearchText}
+                  handleSearch={() => handleFieldSearch({ [selectedSearchFieldKey]: searchText })}
                   placeholder={t("Search")}
                   dataTestId="submission-search-input"
-                  id="submission-search-input"
-                  variant="secondary"
                 />
                 </div>
                 
@@ -779,14 +866,14 @@ const {
           />
         </div>
         <div className="section-seperation-right">          
-        <V8CustomButton
+        {/* <V8CustomButton
                 label={t("Manage Fields")}
                 onClick={handleManageFieldsOpen}
                 dataTestId="manage-fields-button"
                 ariaLabel={t("Open manage fields")}
                 disabled={!dropdownSelection}
                 secondary
-              />
+              /> */}
               <V8CustomButton
               label={t("Reset to default")}
               onClick={handleResetToDefault}
