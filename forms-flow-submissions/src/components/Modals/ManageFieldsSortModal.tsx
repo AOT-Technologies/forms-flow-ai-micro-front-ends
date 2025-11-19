@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal } from "react-bootstrap";
-import { CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, V8CustomButton } from "@formsflow/components"; 
+import { CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, V8CustomButton, VariableSelection } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
 import { createOrUpdateSubmissionFilter, updateDefaultSubmissionFilter } from "../../api/queryServices/analyzeSubmissionServices";
 import { setDefaultSubmissionFilter, setSelectedSubmisionFilter } from "../../actions/analyzeSubmissionActions";
+import { SystemVariables } from "../../constants/variables";
 
 
 interface ManageFieldsModalProps {
@@ -15,7 +16,10 @@ interface ManageFieldsModalProps {
   submissionFields: any[]
   setSubmissionFields: ([]) => void
   dropdownSelection: string
-  handleShowVariableModal:()=>void;
+  form: any;
+  savedFormVariables: Record<string, any>;
+  setSavedFormVariables: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  isFormFetched: boolean;
 }
 interface SubmissionField {
   sortOrder: string;
@@ -54,7 +58,10 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
   dropdownSelection, 
   submissionFields, 
   selectedItem,
-  handleShowVariableModal }) => {
+  form,
+  savedFormVariables,
+  setSavedFormVariables,
+  isFormFetched }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
@@ -62,9 +69,67 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
  const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
 
  const [sortFields, setSortFields] = useState(selectedSubmissionFilter?.variables || submissionFields)
+ const [localSavedFormVariables, setLocalSavedFormVariables] = useState<Record<string, any>>(savedFormVariables || {});
 useEffect (() => {
   setSortFields(selectedSubmissionFilter?.variables || submissionFields);
-},[selectedSubmissionFilter]);
+  setLocalSavedFormVariables(savedFormVariables || {});
+},[selectedSubmissionFilter, show]);
+
+// Keys for fixed system fields that are always present
+const fixedSystemFieldKeys = useMemo(() => (["id", "form_name", "created_by", "created", "application_status"]), []);
+
+// Lookup map for default system field labels (fallbacks)
+const defaultSystemLabelByKey = useMemo(() => {
+  const map: Record<string, string> = {};
+  (submissionFields || []).forEach((f: any) => {
+    if (fixedSystemFieldKeys.includes(f.key)) {
+      map[f.key] = f.label || f.name || f.key;
+    }
+  });
+  return map;
+}, [submissionFields, fixedSystemFieldKeys]);
+
+// Keep sortFields in sync when variable selection changes
+useEffect(() => {
+  if (!localSavedFormVariables) return;
+
+  const newKeys = Object.keys(localSavedFormVariables || {});
+
+  // Preserve fixed system fields and carry forward isChecked/sortOrder for existing kept fields
+  const preservedFixed = (selectedSubmissionFilter?.variables || submissionFields || [])
+    .filter((f: any) => fixedSystemFieldKeys.includes(f.key))
+    .map((f: any) => ({
+      ...f,
+      label: f.label || defaultSystemLabelByKey[f.key] || f.key,
+      name: f.name || defaultSystemLabelByKey[f.key] || f.key,
+    }));
+
+  // Build new fields from variable selection; preserve existing state where applicable
+  const existingByKey: Record<string, any> = {};
+  (sortFields || []).forEach((f: any) => {
+    existingByKey[f.key] = f;
+  });
+
+  const newVariableFields = newKeys.map((key, idx) => {
+    const v = localSavedFormVariables[key];
+    const existing = existingByKey[key];
+    return {
+      key,
+      name: v.altVariable || v.labelOfComponent || key,
+      label: v.altVariable || v.labelOfComponent || key,
+      isChecked: existing?.isChecked ?? true,
+      isFormVariable: v.isFormVariable,
+      sortOrder: existing?.sortOrder ?? ((preservedFixed.length + idx + 1) as any),
+      type: v.type
+    };
+  });
+
+  // Combine and set
+  setSortFields([
+    ...preservedFixed,
+    ...newVariableFields
+  ]);
+}, [localSavedFormVariables]);
 
 
  const handleUpdateOrder = (updatedFieldOrder) => {
@@ -82,6 +147,8 @@ const handleSaveSubmissionFields = () => {
     updateDefaultSubmissionFilter({ defaultSubmissionsFilter: res.data.id });
     dispatch(setDefaultSubmissionFilter(res.data.id));
     dispatch(setSelectedSubmisionFilter(res.data));
+    // Persist variable selections to parent only after successful save
+    setSavedFormVariables(localSavedFormVariables);
     onClose();
   });
 };
@@ -140,17 +207,46 @@ const handleSaveSubmissionFields = () => {
       
         
           <Modal.Body>
-        
-        <DragandDropSort
-          key={sortFields?.length}
-          items={sortFields}
-          onUpdate={handleUpdateOrder}
-          icon={<FormVariableIcon color={darkColor} />}
-          data-testid="columns-sort"
-          preventLastCheck={true}
-        />
-        <div>
-        </div>
+        {activeTab === "fields" && (
+          <>
+            <DragandDropSort
+              key={sortFields?.length}
+              items={sortFields}
+              onUpdate={handleUpdateOrder}
+              icon={<FormVariableIcon color={darkColor} />}
+              data-testid="columns-sort"
+              preventLastCheck={true}
+            />
+          </>
+        )}
+        {activeTab === "form" && (
+          <VariableSelection
+            show={true}
+            onClose={() => {}}
+            form={form}
+            savedFormVariables={localSavedFormVariables as any}
+            fieldLabel="Field"
+            isLoading={isFormFetched}
+            tabKey="form"
+            SystemVariables={SystemVariables as any}
+            onChange={setLocalSavedFormVariables as any}
+            disabled={false}
+          />
+        )}
+        {activeTab === "system" && (
+          <VariableSelection
+            show={true}
+            onClose={() => {}}
+            form={form}
+            savedFormVariables={localSavedFormVariables as any}
+            fieldLabel="Variable"
+            isLoading={isFormFetched}
+            tabKey="system"
+            SystemVariables={SystemVariables as any}
+            onChange={setLocalSavedFormVariables as any}
+            disabled={false}
+          />
+        )}
           
 
         </Modal.Body>

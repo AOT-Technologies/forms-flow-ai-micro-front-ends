@@ -38,7 +38,6 @@ import {
   ReusableTable,
   V8CustomButton,
   DateRangePicker,
-  VariableSelection,
   SelectDropdown,
   CustomSearch,
   RefreshIcon
@@ -94,7 +93,6 @@ const AnalyzeSubmissionList: React.FC = () => {
    const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
   const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
-  const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
   const [filtersApplied, setFiltersApplied] = useState(false);
@@ -302,7 +300,7 @@ const columns: Column[] = useMemo(() => {
   .map((item) => ({
     name: item.label,
     sortKey: item.key,
-    width: columnWidths[item.key] ? columnWidths[item.key] : 0,
+    width: getColumnWidth(item.key),
     resizable: true,
     isFormVariable: item.isFormVariable ?? false,
   }));
@@ -317,7 +315,7 @@ const columns: Column[] = useMemo(() => {
       isFormVariable: false,
     },
   ];
-}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth]);
+}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth, columnWidths]);
 
 
   // Ensure default sort is form_name if no activeKey is set
@@ -597,7 +595,7 @@ const {
         headerName: t(col.name),
         flex: 1,
         sortable: col.sortKey !== "currentUserRoles" ? true : false,
-        minWidth: col.width,
+        minWidth: col.width || getColumnWidth(col.sortKey),
         headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
         renderCell: (params: any) => getCellValue(col, params.row),
       })),
@@ -653,17 +651,12 @@ const {
     }));
   }, [submissions]);
 
-  const handleCloseVariableModal = () => {
-    setShowVariableModal(false)
-    handleManageFieldsOpen();
-  };
-
-  //will wait for the form data to be fetched before opening the modal
-  const handleShowVariableModal = () => {
-    setShowVariableModal(true);
-     fetchFormData(); // Fetch form data when the button is clicked
-    handleManageFieldsClose();
-    };
+  // Ensure form data is available while manage fields modal is open
+  useEffect(() => {
+    if (isManageFieldsModalOpen) {
+      fetchFormData();
+    }
+  }, [isManageFieldsModalOpen, fetchFormData]);
 
   const handleSaveVariables = useCallback(
     (variables) => {
@@ -884,19 +877,12 @@ const {
         selectedItem={selectedItem}
         setSubmissionFields={setSubmissionFields}
         submissionFields={DEFAULT_SUBMISSION_FIELDS}
-        handleShowVariableModal={handleShowVariableModal}
         dropdownSelection={dropdownSelection}
+        form={form}
+        savedFormVariables={savedFormVariables}
+        setSavedFormVariables={setSavedFormVariables}
+        isFormFetched={isFormFetched}
       />}
-      {showVariableModal && <VariableSelection
-          form={form}
-          show={showVariableModal}
-          onClose={handleCloseVariableModal}
-          primaryBtnAction={handleSaveVariables}
-          savedFormVariables={savedFormVariables}
-          fieldLabel="Field"
-          systemVariables={SystemVariables}
-          isLoading={isFormFetched}
-        />}
 
     </>
   );
