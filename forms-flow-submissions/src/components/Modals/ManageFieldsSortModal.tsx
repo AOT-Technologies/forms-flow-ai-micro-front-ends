@@ -100,7 +100,6 @@ useEffect(() => {
     .filter((f: any) => fixedSystemFieldKeys.includes(f.key))
     .map((f: any) => ({
       ...f,
-      // Ensure labels are user-friendly; fallback to defaults if missing
       label: f.label || defaultSystemLabelByKey[f.key] || f.key,
       name: f.name || defaultSystemLabelByKey[f.key] || f.key,
     }));
