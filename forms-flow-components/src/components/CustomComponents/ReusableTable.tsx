@@ -180,6 +180,33 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
     return rowHeight;
   };
 
+  // Log incoming controlled models to trace changes
+  React.useEffect(() => {
+    if (paginationModel) {
+      // eslint-disable-next-line no-console
+      console.log("[ReusableTable] props.paginationModel ->", paginationModel);
+    }
+  }, [paginationModel]);
+
+  React.useEffect(() => {
+    if (sortModel) {
+      // eslint-disable-next-line no-console
+      console.log("[ReusableTable] props.sortModel ->", sortModel);
+    }
+  }, [sortModel]);
+
+  const handleSortModelChange = React.useCallback((model: any) => {
+    // eslint-disable-next-line no-console
+    console.log("[ReusableTable] onSortModelChange ->", model);
+    if (onSortModelChange) onSortModelChange(model);
+  }, [onSortModelChange]);
+
+  const handlePaginationModelChange = React.useCallback((model: any) => {
+    // eslint-disable-next-line no-console
+    console.log("[ReusableTable] onPaginationModelChange ->", model);
+    if (onPaginationModelChange) onPaginationModelChange(model);
+  }, [onPaginationModelChange]);
+
   return (
     <Paper sx={sx}>
       <DataGrid
@@ -192,10 +219,10 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
         sortingMode={sortingMode}
         disableColumnMenu={disableColumnMenu}
         sortModel={sortModel}
-        onSortModelChange={onSortModelChange}
+        onSortModelChange={handleSortModelChange}
         paginationModel={paginationModel}
         getRowId={(row) => row.id}
-        onPaginationModelChange={onPaginationModelChange}
+        onPaginationModelChange={handlePaginationModelChange}
         pageSizeOptions={pageSizeOptions}
         getRowHeight={getRowHeight}
         getRowClassName={getRowClassName}
