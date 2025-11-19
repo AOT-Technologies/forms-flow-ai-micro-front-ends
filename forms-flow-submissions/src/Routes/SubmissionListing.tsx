@@ -866,14 +866,7 @@ const {
           />
         </div>
         <div className="section-seperation-right">          
-        {/* <V8CustomButton
-                label={t("Manage Fields")}
-                onClick={handleManageFieldsOpen}
-                dataTestId="manage-fields-button"
-                ariaLabel={t("Open manage fields")}
-                disabled={!dropdownSelection}
-                secondary
-              /> */}
+       
               <V8CustomButton
               label={t("Reset to default")}
               onClick={handleResetToDefault}
@@ -884,45 +877,7 @@ const {
         </div>
       </div>
   
-      {/* Left Panel - Collapsible Search Form */}
-      {/* <div className="left-panel">
-        {(() => {
-          const formOptions = [
-            { label: t("All Forms"), value: "" },
-            ...(formData || []).map((f: any) => ({
-              label: f?.formName ?? "",
-              value: f?.parentFormId ?? "",
-            })),
-          ];
-          const currentValue = dropdownSelection ?? "";
-          const onDropdownChange = (val: string | number) => {
-            const v = String(val);
-            handleDropdownSelectionChange(v === "" ? null : v);
-          };
-          return (
-            <div className="d-flex flex-column gap-2">
-
-              <SelectDropdown
-                options={formOptions}
-                value={currentValue}
-                onChange={onDropdownChange}
-                ariaLabel={t("Select a form")}
-                dataTestId="submission-form-select"
-                id="submission-form-select"
-                variant="secondary"
-              />
-              <V8CustomButton
-                label={t("Manage Fields")}
-                onClick={handleManageFieldsOpen}
-                dataTestId="manage-fields-button"
-                ariaLabel={t("Open manage fields")}
-                secondary
-              />
-            </div>
-          );
-        })()}
-
-      </div> */}
+     
       
         <div className="body-section">
         <div
