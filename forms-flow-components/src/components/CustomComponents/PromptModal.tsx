@@ -2,7 +2,6 @@ import React, { memo, useCallback, useMemo, forwardRef } from "react";
 import Modal from "react-bootstrap/Modal";
 import { V8CustomButton } from "./CustomButton";
 import { useTranslation } from "react-i18next";
-// import { PromptInfoIcon, WarningIcon, TickIcon, PromptErrorIcon } from "../SvgIcons";
 
 /**
  * PromptModal is a reusable, accessible modal component for forms-flow apps.

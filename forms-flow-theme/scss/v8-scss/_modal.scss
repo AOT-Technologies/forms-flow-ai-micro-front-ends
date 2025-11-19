@@ -34,18 +34,12 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                     border-bottom: 1px solid var(--gray-x-light);
                     padding-bottom: 1.19rem;
                     padding-left: 0.5rem;
-                    // .prompt-icon {
-                    //     display: flex;
-                    //     justify-content: center;
-                    //     width: 100%;
-                    // }
                     .prompt-title {
                         text-align: left;
                         font-size: var(--font-size-lg);
                         font-weight: var(--font-weight-regular);
                         width: 100%;
                         color: var(--secondary-dark);
-                        // margin-top: 1.125rem; // 18px in rem
                         line-height: var(--line-height-default);
                     }
                 }
@@ -80,7 +74,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             min-height: 16.5rem;
         }
     }
-        &.error-modal{
+        &.danger-modal{
             .modal-content{
                .modal-footer{
                 .buttons-row{
