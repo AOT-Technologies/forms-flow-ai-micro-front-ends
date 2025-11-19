@@ -479,6 +479,14 @@ const {
     }
   }, [columns, handleColumnResize]);
 
+  // Disable reset if already at defaults
+  const isResetDisabled = useMemo(() => {
+    const noFormSelected = !dropdownSelection;
+    const isDefaultField = selectedSearchFieldKey === "id";
+    const noSearch = !searchText || searchText.trim() === "";
+    const noDateRange = !dateRange?.startDate && !dateRange?.endDate;
+    return noFormSelected && isDefaultField && noSearch && noDateRange;
+  }, [dropdownSelection, selectedSearchFieldKey, searchText, dateRange]);
   // Get cell value function for ReusableTable (extracted from renderRow logic)
   const getCellValue = useCallback((column: Column, submission: Submission) => {
     const { sortKey } = column;
@@ -872,6 +880,7 @@ const {
               onClick={handleResetToDefault}
               dataTestId="reset-to-default-button"
               ariaLabel={t("Reset to default")}
+              disabled={isResetDisabled}
               secondary
               />
         </div>
