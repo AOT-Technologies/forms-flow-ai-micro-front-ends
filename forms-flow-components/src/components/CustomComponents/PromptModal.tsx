@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
  * <PromptModal show={true} type="error" title="Error" message="Something went wrong" primaryBtnText="Retry" secondaryBtnText="Cancel" />
  */
 
-type ModalType = "info" | "warning" | "success" | "error";
+type ModalType = "info" | "warning" | "success" | "danger";
 
 interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children'> {
   /** Controls modal visibility */
@@ -24,7 +24,7 @@ interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, '
   /** Modal title (translation key) */
   title: string;
   /** Modal message content (translation key) */
-  message: string;
+  message: any;
   /** Called when primary button is clicked */
   primaryBtnAction: () => void;
   /** Primary button text (translation key) */
@@ -81,7 +81,7 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
   onClose,
   secondaryBtnAction,
   title,
-  message = '',
+  message,
   primaryBtnAction,
   primaryBtnText,
   primaryBtnDisable = false,
@@ -111,7 +111,6 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
 
   // Memoized translated content
   const translatedTitle = useMemo(() => t(title), [t, title]);
-  const translatedMessage = useMemo(() => t(message), [t, message]);
   
   return (
     <Modal
@@ -145,7 +144,7 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
             data-testid="prompt-modal-message"
             aria-label="Prompt message"
           >
-            {translatedMessage}
+            {message}
           </div>
         )}
       </Modal.Body>

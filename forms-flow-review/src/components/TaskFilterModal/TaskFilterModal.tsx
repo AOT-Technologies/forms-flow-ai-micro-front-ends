@@ -188,7 +188,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           onClose={toggleDeleteModal}
           title={t("Delete Filter")}
           message={deleteMessage}
-          type="error"
+          type="danger"
           primaryBtnText={t("Delete")}
           primaryBtnAction={handleFilterDelete}
           secondaryBtnText={t("Cancel")}
