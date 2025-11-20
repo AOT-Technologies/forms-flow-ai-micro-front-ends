@@ -130,7 +130,7 @@ const TaskListTable = () => {
   )?.preferred_username;
   const disabledMode = taskAssignee !== currentUser;
 
-  const handleOpenModal = (task: Task) => {
+  const handleOpenModal = useCallback((task: Task) => {
     setSelectedTask(task);
     setModalViewType("submission");
     setShowModal(true);
@@ -150,9 +150,9 @@ const TaskListTable = () => {
         dispatch(getApplicationHistory(applicationId));
       }
     }
-  };
+  }, [dispatch]);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setSelectedTask(null);
     setShowModal(false);
     setModalViewType("submission");
@@ -160,19 +160,19 @@ const TaskListTable = () => {
     dispatch(setSelectedTaskID(null));
     dispatch(resetSubmission("submission"));
     dispatch(setBundleSelectedForms([]));
-  };
+  }, [dispatch]);
 
-  const handleSubmissionClick = () => {
+  const handleSubmissionClick = useCallback(() => {
     setModalViewType("submission");
-  };
+  }, []);
 
-  const handleHistoryClick = () => {
+  const handleHistoryClick = useCallback(() => {
     setModalViewType("history");
-  };
+  }, []);
 
-  const handleNotesClick = () => {
+  const handleNotesClick = useCallback(() => {
     setModalViewType("notes");
-  };
+  }, []);
 
   const taskvariables = selectedFilter?.variables ?? [];
 
@@ -255,7 +255,7 @@ const TaskListTable = () => {
     }
     return matchingVar.value ?? "-";
   };
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     dispatch(setBPMTaskLoader(true));
     const payload = createReqPayload(
       selectedFilter,
@@ -266,7 +266,7 @@ const TaskListTable = () => {
       false
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-  };
+  }, [dispatch, selectedFilter, selectedAttributeFilter, filterListSortParams, dateRange, isAssigned, activePage, limit]);
 
   // Load form and submission for task details
   const handleFormRetry = (fetchForm: () => void) => (retryErr: any) => {
@@ -362,7 +362,7 @@ const TaskListTable = () => {
   }, [task?.formType, task?.formId, task?.formUrl, modalViewType, dispatch]);
 
   // Form submission callback
-  const onFormSubmitCallback = (actionType = "") => {
+  const onFormSubmitCallback = useCallback((actionType = "") => {
     if (!selectedTask?.id || !task?.formUrl) return;
     dispatch(setBPMTaskDetailLoader(true));
     const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
@@ -384,17 +384,17 @@ const TaskListTable = () => {
       )
     );
     handleCloseModal();
-  };
+  }, [selectedTask?.id, task?.formUrl, task?.applicationId, dispatch, handleCloseModal]);
 
   // Custom event handler for form
-  const onCustomEventCallBack = (customEvent: {
+  const onCustomEventCallBack = useCallback((customEvent: {
     type: string;
     actionType: string;
   }) => {
     if (customEvent.type === CUSTOM_EVENT_TYPE.ACTION_COMPLETE) {
       onFormSubmitCallback(customEvent.actionType);
     }
-  };
+  }, [onFormSubmitCallback]);
 
   // Prepare history table data
   useEffect(() => {
@@ -402,7 +402,7 @@ const TaskListTable = () => {
     setColumns((prev) => (!isEqual(prev, dynamicColumns) ? dynamicColumns : prev));
   }, [taskvariables]);
 
-  const handleSortModelChange = (model: any) => {
+  const handleSortModelChange = useCallback((model: any) => {
     const column = columns.find((col) => col.sortKey === model?.[0]?.field);
     if (!column) return;
     dispatch(setBPMTaskLoader(true));
@@ -431,19 +431,31 @@ const TaskListTable = () => {
       column.isFormVariable
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-  };
+  }, [columns, dispatch, selectedFilter, selectedAttributeFilter, dateRange, isAssigned, activePage, limit]);
 
   const paginationModel = useMemo(
     () => ({ page: activePage - 1, pageSize: limit }),
     [activePage, limit]
   );
 
-  const handlePaginationModelChange = ({ page, pageSize }: any) => {
+  const handlePaginationModelChange = useCallback(({ page, pageSize }: any) => {
     batch(() => {
       dispatch(setBPMTaskListActivePage(page + 1));
       dispatch(setTaskListLimit(pageSize));
     });
-  };
+  }, [dispatch]);
+
+  const sortModel = useMemo(
+    () => [
+      filterListSortParams.activeKey
+        ? {
+            field: filterListSortParams.activeKey,
+            sort: filterListSortParams[filterListSortParams.activeKey]?.sortOrder || "asc",
+          }
+        : {},
+    ],
+    [filterListSortParams]
+  );
 
   const muiColumns = useMemo(() => {
   // Filter out any existing "actions" column that might come from dynamic columns
@@ -594,14 +606,7 @@ const TaskListTable = () => {
         sortingMode="server"
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
-        sortModel={[
-          filterListSortParams.activeKey
-            ? {
-                field: filterListSortParams.activeKey,
-                sort: filterListSortParams[filterListSortParams.activeKey]?.sortOrder || "asc",
-              }
-            : {},
-        ]}
+        sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
         noRowsLabel={t("No tasks found")}
         disableColumnMenu
