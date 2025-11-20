@@ -813,7 +813,7 @@ return (
           )}
         </div>
       </div>
-      {isManageFieldsModalOpen && <ManageFieldsSortModal
+      {/* {isManageFieldsModalOpen && <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
         onClose={handleManageFieldsClose}
         selectedItem={selectedItem}
@@ -821,7 +821,7 @@ return (
         submissionFields={DEFAULT_SUBMISSION_FIELDS}
         handleShowVariableModal={handleShowVariableModal}
         dropdownSelection={dropdownSelection}
-      />}
+      />} */}
       {showVariableModal && <VariableSelection
           form={form}
           show={showVariableModal}

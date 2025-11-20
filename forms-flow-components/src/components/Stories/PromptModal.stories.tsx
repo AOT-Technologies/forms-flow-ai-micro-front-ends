@@ -167,8 +167,8 @@ export const SuccessModal: Story = {
 export const ErrorModal: Story = {
   args: {
     show: false,
-    type: 'error',
-    title: 'Error',
+    type: 'danger',
+    title: 'Danger',
     message: 'Something went wrong. Please try again.',
     primaryBtnText: 'Retry',
     secondaryBtnText: 'Cancel',

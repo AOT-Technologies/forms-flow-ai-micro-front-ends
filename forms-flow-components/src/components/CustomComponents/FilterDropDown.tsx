@@ -20,8 +20,8 @@ export interface FilterItemType {
   ariaLabel?: string;
   /** Additional CSS class names */
   className?: string;
-  /** Category for grouping (used in Task Filter) */
-  category?: "my" | "shared" | "action" | "none";
+  /** Category key for grouping */
+  category?: string;
   /** Called when edit icon is clicked for an item (my/shared) */
   onEdit?: () => void;
 }
@@ -59,6 +59,12 @@ export interface FilterDropDownProps
   variant?: FilterDropdownVariant;
   /** Whether to categorize items (for task filter) */
   categorize?: boolean;
+  /** Optional mapping from category key to display label */
+  categoryLabels?: Record<string, string>;
+  /** Optional ordering of categories (excluding "action" and "none") */
+  categoryOrder?: string[];
+  /** Make action items (e.g., Add additional fields) sticky at the top */
+  stickyActions?: boolean;
 }
 
 /**
@@ -97,6 +103,9 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
       className = "",
       variant = "task",
       categorize = false,
+      categoryLabels,
+      categoryOrder,
+      stickyActions = false,
       ...restProps
     },
     ref
@@ -166,47 +175,52 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
 
     // Single CSS variable for edit icon color across variants
     const editIconColor = StyleServices.getCSSVariable("--gray-dark");
-    // Categorize items for Task Filter
+    // Categorize items
     const categorizedItems = useMemo(() => {
       if (!categorize) return { uncategorized: items };
 
-      const myFilters: FilterItemType[] = [];
-      const sharedFilters: FilterItemType[] = [];
       const actionItems: FilterItemType[] = [];
       const noneItems: FilterItemType[] = [];
+      const byCategory: Record<string, FilterItemType[]> = {};
 
       for (const item of items) {
-        switch (item.category) {
-          case "my":
-            myFilters.push(item);
-            break;
-          case "shared":
-            sharedFilters.push(item);
-            break;
-          case "action":
-            actionItems.push(item);
-            break;
-          case "none":
-            noneItems.push(item);
-            break;
-          default:
-            // If no category specified, treat as regular item
-            myFilters.push(item);
+        const cat = item.category || "none";
+        if (cat === "action") {
+          actionItems.push(item);
+          continue;
         }
+        if (cat === "none") {
+          noneItems.push(item);
+          continue;
+        }
+        if (!byCategory[cat]) byCategory[cat] = [];
+        byCategory[cat].push(item);
       }
 
-      return { myFilters, sharedFilters, actionItems, noneItems };
+      return { byCategory, actionItems, noneItems };
     }, [items, categorize]);
 
     // Render categorized items
     const renderCategorizedItems = useCallback(() => {
-      const { myFilters, sharedFilters, actionItems, noneItems } = categorizedItems;
+      const { byCategory, actionItems, noneItems } = categorizedItems as {
+        byCategory: Record<string, FilterItemType[]>;
+        actionItems: FilterItemType[];
+        noneItems: FilterItemType[];
+      };
 
-      return (
+      const hasContentBelow =
+        (Object.keys(byCategory || {}).length > 0) ||
+        (noneItems && noneItems.length > 0);
+
+      const header = (
         <>
-          {/* Action items (Create, Reorder, etc.) - at the top */}
           {actionItems && actionItems.length > 0 && (
-            <>
+            <div
+              className={buildClassNames(
+                "filter-dropdown-actions",
+                stickyActions && "sticky-actions"
+              )}
+            >
               {actionItems.map((item, index) => (
                 <Dropdown.Item
                   key={`action-${item.type}-${index}`}
@@ -228,33 +242,26 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                   </div>
                 </Dropdown.Item>
               ))}
-            </>
+              {hasContentBelow && <Dropdown.Divider />}
+            </div>
           )}
+        </>
+      );
 
-          {/* Divider after action items and none items */}
-          {
-            ((myFilters && myFilters.length > 0) ||
-            (sharedFilters && sharedFilters.length > 0) ||
-            (noneItems && noneItems.length > 0)) && (
-              <Dropdown.Divider />
-            )}
-
-          {/* Search section if only my filters or shared filters are present */}
-
-          {searchable &&
-            ((myFilters && myFilters.length > 0) ||
-              (sharedFilters && sharedFilters.length > 0) ||
-              (noneItems && noneItems.length > 0)) && (
-              <div className="filter-dropdown-search">
-                <CustomSearch
-                  search={searchTerm}
-                  setSearch={handleSearchChange}
-                  handleSearch={() => {}}
-                  placeholder={searchPlaceholder}
-                  dataTestId={`${dataTestId}-search`}
-                />
-              </div>
-            )}
+      const body = (
+        <>
+          {/* Search section when there are grouped or none items */}
+          {searchable && hasContentBelow && (
+            <div className="filter-dropdown-search">
+              <CustomSearch
+                search={searchTerm}
+                setSearch={handleSearchChange}
+                handleSearch={() => {}}
+                placeholder={searchPlaceholder}
+                dataTestId={`${dataTestId}-search`}
+              />
+            </div>
+          )}
 
           {noneItems && noneItems.length > 0 && (
             <>
@@ -283,103 +290,92 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             </>
           )}
 
-          
-          {/* My Filters section */}
-          {myFilters && myFilters.length > 0 && (
-            <>
-              <div className="filter-dropdown-section-header">
-                My filters (unique to me)
-              </div>
-              {myFilters.map((item, index) => (
-                <Dropdown.Item
-                  key={`my-${item.type}-${index}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    item.onClick(item.type);
-                  }}
-                  data-testid={item.dataTestId}
-                  aria-label={item.ariaLabel}
-                  className={buildClassNames(
-                    "filter-dropdown-item",
-                    item.className
-                  )}
-                >
-                  <div className="d-flex align-items-center justify-content-between ">
-                    <span className="filter-dropdown-item-label">
-                      {item.content}
-                    </span>
-                    {item.onEdit && (
-                      <EditIconforFilter
-                        color={editIconColor}
-                        aria-label={
-                          item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
-                        }
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          item.onEdit?.();
-                        }}
-                        data-testid={`${item.dataTestId}-edit`}
-                      />
-                    )}
-                  </div>
-                </Dropdown.Item>
-              ))}
-            </>
-          )}
+          {/* Render dynamic category sections */}
+          {(() => {
+            const categoryKeys = Object.keys(byCategory || {});
+            if (categoryKeys.length === 0) return null;
 
-          {/* Divider between My Filters and Shared Filters */}
-          {myFilters &&
-            myFilters.length > 0 &&
-            sharedFilters &&
-            sharedFilters.length > 0 && <Dropdown.Divider />}
+            // Determine iteration order
+            const orderedKeys = categoryOrder && categoryOrder.length
+              ? categoryOrder.filter((k) => categoryKeys.includes(k)).concat(
+                  categoryKeys.filter((k) => !categoryOrder.includes(k))
+                )
+              : categoryKeys;
 
-          {/* Shared Filters section */}
-          {sharedFilters && sharedFilters.length > 0 && (
-            <>
-              <div className="filter-dropdown-section-header">
-                Shared filters
-              </div>
-              {sharedFilters.map((item, index) => (
-                <Dropdown.Item
-                  key={`shared-${item.type}-${index}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    item.onClick(item.type);
-                  }}
-                  data-testid={item.dataTestId}
-                  aria-label={item.ariaLabel}
-                  className={buildClassNames(
-                    "filter-dropdown-item",
-                    item.className
-                  )}
-                >
-                  <div className="d-flex align-items-center justify-content-between">
-                    <span className="filter-dropdown-item-label">
-                      {item.content}
-                    </span>
-                    {item.onEdit && (
-                      <EditIconforFilter
-                        color={editIconColor}
-                        data-testid={`${item.dataTestId}-edit`}
-                        aria-label={
-                          item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
-                        }
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          item.onEdit?.();
-                        }}
-                      />
-                    )}
-                  </div>
-                </Dropdown.Item>
-              ))}
-            </>
-          )}
+            return (
+              <>
+                {orderedKeys.map((catKey, idx) => {
+                  const list = byCategory[catKey] || [];
+                  if (!list.length) return null;
+                  const header = categoryLabels?.[catKey] ?? catKey;
+                  return (
+                    <React.Fragment key={`cat-${catKey}`}>
+                      <div className="filter-dropdown-section-header">
+                        {header}
+                      </div>
+                      {list.map((item, index) => (
+                        <Dropdown.Item
+                          key={`${catKey}-${item.type}-${index}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            item.onClick(item.type);
+                          }}
+                          data-testid={item.dataTestId}
+                          aria-label={item.ariaLabel}
+                          className={buildClassNames(
+                            "filter-dropdown-item",
+                            item.className
+                          )}
+                        >
+                          <div className="d-flex align-items-center justify-content-between ">
+                            <span className="filter-dropdown-item-label">
+                              {item.content}
+                            </span>
+                            {item.onEdit && (
+                              <EditIconforFilter
+                                color={editIconColor}
+                                aria-label={
+                                  item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
+                                }
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  item.onEdit?.();
+                                }}
+                                data-testid={`${item.dataTestId}-edit`}
+                              />
+                            )}
+                          </div>
+                        </Dropdown.Item>
+                      ))}
+                      {idx < orderedKeys.length - 1 && <Dropdown.Divider />}
+                    </React.Fragment>
+                  );
+                })}
+              </>
+            );
+          })()}
         </>
       );
-    }, [categorizedItems, variant]);
+
+      if (!stickyActions) {
+        return (
+          <>
+            {header}
+            {body}
+          </>
+        );
+      }
+
+      return (
+        <>
+          {header}
+          <div className="filter-dropdown-scroll">
+            {body}
+          </div>
+        </>
+      );
+    }, [categorizedItems, variant, categoryLabels, categoryOrder, searchable, searchTerm, handleSearchChange, searchPlaceholder, dataTestId, editIconColor]);
 
     // Render uncategorized items
     const renderUncategorizedItems = useCallback(() => {

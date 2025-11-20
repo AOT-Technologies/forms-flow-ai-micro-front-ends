@@ -223,6 +223,8 @@ const TaskListDropdownItems = memo(() => {
         className="input-filter"
         variant="task"
         categorize={true}
+        categoryLabels={{ my: t("My filters (unique to me)"), shared: t("Shared filters") }}
+        categoryOrder={["my", "shared"]}
       />
       <TaskFilterModal
         toggleModal={handleToggleFilterModal}

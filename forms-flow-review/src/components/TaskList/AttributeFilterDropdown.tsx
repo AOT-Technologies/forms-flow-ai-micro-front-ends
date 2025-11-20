@@ -280,6 +280,8 @@ const AttributeFilterDropdown = () => {
         className="input-filter"
         variant="field"
         categorize={true}
+        categoryLabels={{ my: t("My filters (unique to me)"), shared: t("Shared filters") }}
+        categoryOrder={["my", "shared"]}
       />
       <AttributeFilterModal
         show={showAttributeFilter}

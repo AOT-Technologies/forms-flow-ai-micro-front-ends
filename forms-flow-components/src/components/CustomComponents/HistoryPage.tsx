@@ -5,6 +5,7 @@ import { HelperServices, StorageService } from "@formsflow/service";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Box, Paper } from "@mui/material";
 import { V8CustomButton, } from "./CustomButton";
+import { PromptModal } from "./PromptModal";
 
 
 interface HistoryPageProps {
@@ -256,21 +257,37 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
 
         {/* Confirmation Modal */}
         {selectedVersion && (
-          <ConfirmModal
-            show={showConfirmModal}
-            title={t(
-              `Use ${currentCategoryLabel} from Version ${selectedVersion}`
-            )}
-            message={t(
-              `This will copy the ${currentCategoryLabel.toLowerCase()} from Version ${selectedVersion} overwriting your existing ${currentCategoryLabel.toLowerCase()}.`
-            )}
-            primaryBtnAction={handleKeepLayout}
-            onClose={() => setShowConfirmModal(false)}
-            primaryBtnText={t(`Keep Current ${currentCategoryLabel}`)}
-            secondaryBtnText={t(`Replace Current ${currentCategoryLabel}`)}
-            secondaryBtnAction={handleReplaceLayout}
-            secondoryBtndataTestid="confirm-revert-button"
-          />
+          // <ConfirmModal
+          //   show={showConfirmModal}
+          //   title={t(
+          //     `Use ${currentCategoryLabel} from Version ${selectedVersion}`
+          //   )}
+          //   message={t(
+          //     `This will copy the ${currentCategoryLabel.toLowerCase()} from Version ${selectedVersion} overwriting your existing ${currentCategoryLabel.toLowerCase()}.`
+          //   )}
+          //   primaryBtnAction={handleKeepLayout}
+          //   onClose={() => setShowConfirmModal(false)}
+          //   primaryBtnText={t(`Keep Current ${currentCategoryLabel}`)}
+          //   secondaryBtnText={t(`Replace Current ${currentCategoryLabel}`)}
+          //   secondaryBtnAction={handleReplaceLayout}
+          //   secondoryBtndataTestid="confirm-revert-button"
+          // />
+
+        <PromptModal
+          show={showConfirmModal}
+          title={t(`Use ${currentCategoryLabel} from Version ${selectedVersion}`)}
+          message={t(
+            `This will copy the ${currentCategoryLabel.toLowerCase()} from Version ${selectedVersion} overwriting your existing ${currentCategoryLabel.toLowerCase()}.`
+          )}
+          primaryBtnAction={handleKeepLayout}
+          onClose={() => setShowConfirmModal(false)}
+          primaryBtnText={t(`Keep Current ${currentCategoryLabel}`)}
+          secondaryBtnText={t(`Replace Current ${currentCategoryLabel}`)}
+          secondaryBtnAction={handleReplaceLayout}
+          secondoryBtndataTestid="confirm-revert-button"
+          size="sm"
+          type="info"
+        />
         )}
       </>
     );
