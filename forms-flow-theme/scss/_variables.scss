@@ -271,9 +271,9 @@ hr {
  opacity: 0.9;
 }
 
-.form-border{
-  border-radius: var(--radius-md) !important ;
-}
+// .form-border{
+//   border-radius: var(--radius-md) !important ;
+// }
 @mixin generate-overflow($axis, $value) {
   .overflow-#{$axis}-#{$value} {
     overflow-#{$axis}: #{$value} !important;
