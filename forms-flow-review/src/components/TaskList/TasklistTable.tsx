@@ -1,16 +1,14 @@
 import {
   V8CustomButton,
-  ReusableTable,
-  RefreshIcon
+  ReusableTable
 } from "@formsflow/components";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { HelperServices, StyleServices } from "@formsflow/service";
+import { HelperServices } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { isEqual } from "lodash";
 import TaskDetailsModal from "./TaskDetailsModal";
 import {
-  resetTaskListParams,
   setBPMTaskListActivePage,
   setBPMTaskLoader,
   setFilterListSortParams,
@@ -60,8 +58,6 @@ import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
-import BundleTaskForm from "../BundleTaskForm";
-import TaskForm from "../TaskForm";
 
 export interface Task {
   id: string;
@@ -176,7 +172,7 @@ const TaskListTable = () => {
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
   const [columns, setColumns] = useState<Column[]>([]);
-      const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
+  
 
   const getCellValue = (column: Column, task: Task) => {
     const { sortKey } = column;
@@ -488,8 +484,7 @@ const TaskListTable = () => {
        renderHeader: () => (
         <V8CustomButton
           variant="secondary"
-          icon={<RefreshIcon color={iconColor} />}
-          iconOnly
+          label={t("Refresh")}
           onClick={handleRefresh}
           dataTestId="task-refresh-button"
         />
@@ -516,7 +511,7 @@ const TaskListTable = () => {
       ),
     },
   ];
-}, [columns, t, iconColor, handleRefresh, handleOpenModal]);
+}, [columns, t, handleRefresh, handleOpenModal]);
 
 
 

@@ -16,7 +16,7 @@ import {
   fetchFormById,
 } from "../api/queryServices/analyzeSubmissionServices";
 import { optionSortBy } from "../helper/helper";
-import { HelperServices, StyleServices } from "@formsflow/service";
+import { HelperServices } from "@formsflow/service";
 
 // Redux Actions
 import {
@@ -40,8 +40,7 @@ import {
   DateRangePicker,
   VariableSelection,
   SelectDropdown,
-  CustomSearch,
-  RefreshIcon
+  CustomSearch
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -102,7 +101,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
   const [isFormFetched,setIsFormFetched] =useState(false);
-  const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
+
 
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
@@ -620,8 +619,7 @@ const {
         renderHeader: () => (
           <V8CustomButton
             variant="secondary"
-            icon={<RefreshIcon color={iconColor} />}
-            iconOnly
+            label={t("Refresh")}
             onClick={handlerefresh}
             dataTestId="task-refresh-button"
           />

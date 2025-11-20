@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ConfirmModal } from "./ConfirmModal";
 import { useTranslation } from "react-i18next";
-import { HelperServices, StorageService, StyleServices } from "@formsflow/service";
+import { HelperServices, StorageService } from "@formsflow/service";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Box, Paper } from "@mui/material";
 import { V8CustomButton, } from "./CustomButton";
-import { RefreshIcon } from "../SvgIcons/index";
 
-const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
 
 interface HistoryPageProps {
   revertBtnAction: (cloneId: string | null) => void;
@@ -184,8 +182,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
           renderHeader: () => (
               <V8CustomButton
                 variant="secondary"
-                icon={<RefreshIcon color={iconColor} />}
-                iconOnly
+                label={t("Refresh")}
                 onClick={refreshBtnAction}
                 dataTestId="refresh-button"
                 ariaLabel={t("Refresh Button")}
