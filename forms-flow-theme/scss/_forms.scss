@@ -703,3 +703,67 @@ span.text-danger,
     align-items: center;
   }
 }
+
+/* ------------------------- ReusableTable Styles ------------------------ */
+
+.reusable-table {
+  // Expansion row styling
+  .expansion-row {
+    background-color: transparent;
+    
+    &:hover {
+      background-color: transparent !important;
+    }
+    
+    .MuiDataGrid-cell {
+      border: none;
+      padding: 16px !important;
+      overflow: visible !important;
+    }
+    
+    // Hide other columns in expansion rows
+    .MuiDataGrid-cell:not(:first-of-type) {
+      width: 100% !important;
+    }
+    
+    // Make first cell of expansion row span full width
+    .MuiDataGrid-cell:first-of-type {
+      grid-column: 1 / -1 !important;
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 100% !important;
+      left: 0 !important;
+      padding: 0 8px !important;
+      overflow: visible !important;
+    }
+  }
+  
+  // Column separator (when disableColumnResize is true)
+  &.disable-column-resize .MuiDataGrid-columnSeparator {
+    display: none !important;
+  }
+  
+  // AutoHeight styles
+  &.auto-height {
+    height: auto !important;
+    
+    .MuiDataGrid-root {
+      height: auto !important;
+      min-height: auto !important;
+    }
+    
+    .MuiDataGrid-virtualScroller {
+      height: auto !important;
+      min-height: auto !important;
+      overflow: visible !important;
+    }
+    
+    .MuiDataGrid-virtualScrollerContent {
+      height: auto !important;
+    }
+    
+    .MuiDataGrid-main {
+      height: auto !important;
+    }
+  }
+}

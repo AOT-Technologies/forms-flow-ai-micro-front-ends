@@ -871,7 +871,7 @@ const {
               }}
               enableStickyActions={true}
               disableVirtualization
-
+              autoHeight={true}
             />
         </div>
        </div>

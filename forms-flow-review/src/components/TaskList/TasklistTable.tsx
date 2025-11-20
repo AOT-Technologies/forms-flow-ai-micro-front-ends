@@ -624,6 +624,7 @@ const TaskListTable = () => {
         }}
         enableStickyActions={true}
         disableVirtualization
+        autoHeight={true}
       />
       {showModal && (
         <TaskDetailsModal

@@ -335,6 +335,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
         <div className="system-content-block">
           <div className="system-content-table">
             <DataGrid
+              sx={{ height: "100%", width: "100%" }}
               columns={columns}
               rows={rowVariables || []}
               getRowId={(row) => row.variable}
