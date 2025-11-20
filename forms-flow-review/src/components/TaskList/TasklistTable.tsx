@@ -461,7 +461,7 @@ const TaskListTable = () => {
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
       renderCell: (params: any) => getCellValue(col, params.row),
     })),
-    // Filler column to absorb extra width and keep resizable columns intact
+    // Filler column to push actions column to the right when there are fewer columns
     {
       field: "__filler__",
       headerName: "",
@@ -470,8 +470,8 @@ const TaskListTable = () => {
       disableColumnMenu: true,
       flex: 1,
       minWidth: 0,
-      headerClassName: "",
-      cellClassName: "",
+      headerClassName: "filler-column",
+      cellClassName: "filler-column",
       renderCell: () => null,
       valueGetter: () => null,
     },
