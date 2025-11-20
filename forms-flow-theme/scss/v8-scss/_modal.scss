@@ -60,7 +60,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             }
             .buttons-row {
                 display: flex;
-                justify-content: flex-end;
+                justify-content: center;
                 align-items: center;
                 width: 100%;
                 gap: 0.44rem;
