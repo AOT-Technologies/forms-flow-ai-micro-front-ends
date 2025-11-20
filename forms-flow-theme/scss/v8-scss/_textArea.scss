@@ -24,6 +24,12 @@ $ta-font-weight: var(--font-weight-regular);
         pointer-events: none;
     }
 
+    &.text-area-with-icon {
+        .text-area {
+            padding-right: 2.75rem;
+        }
+    }
+
     &.text-area-full-width {
         max-width: 100%;
     }
@@ -72,6 +78,26 @@ $ta-font-weight: var(--font-weight-regular);
         &:not(:disabled):focus,
         &:not(:disabled):active {
             border-color: $ta-color-border-focus;
+        }
+    }
+
+    .text-area-icon {
+        position: absolute;
+        right: 0.75rem;
+        top: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: auto;
+        opacity: 0.6;
+
+        &.text-area-icon-clickable {
+            cursor: pointer;
+            transition: opacity 0.2s;
+
+            &:hover {
+                opacity: 1;
+            }
         }
     }
 }
