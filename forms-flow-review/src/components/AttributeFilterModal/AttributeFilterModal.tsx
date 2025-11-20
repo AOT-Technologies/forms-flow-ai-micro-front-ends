@@ -15,7 +15,7 @@ import {
   fetchServiceTaskList,
   updateFilter,
 } from "../../api/services/filterServices";
-import { setAttributeFilterList, setSelectedBpmAttributeFilter } from "../../actions/taskActions";
+import { setAttributeFilterList, setAttributeFilterToEdit, setSelectedBpmAttributeFilter } from "../../actions/taskActions";
 import { StyleServices } from "@formsflow/service";
 
 export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
@@ -85,7 +85,8 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     batch(()=>{
     dispatch(setAttributeFilterList(newFilters));
     dispatch(setSelectedBpmAttributeFilter(null));
-    dispatch(fetchServiceTaskList(selectedTaskFilter,null,1,limit))
+    dispatch(setAttributeFilterToEdit(null)); // Clear the filter being edited
+    dispatch(fetchServiceTaskList(selectedTaskFilter,null,1,limit));
     })
     setShowDeleteModal(false);
   }

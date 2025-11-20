@@ -13,7 +13,17 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
   const handleValueChange = (name, value) => {
     const variableDef = taskVariables?.find((variable) => getUniqueFieldKey(variable) === name);
     let processedValue = value;
-    if (variableDef?.type === "checkbox") {
+    
+    // Validate applicationId - must be a valid number
+    if (variableDef?.key === "applicationId" && value !== "") {
+      const numValue = Number(value);
+      if (isNaN(numValue)) {
+        // Invalid number, don't update the value
+        console.warn(`Invalid applicationId value: ${value}. Expected a number.`);
+        return;
+      }
+      processedValue = String(numValue); // Store as string for consistency
+    } else if (variableDef?.type === "checkbox") {
       const normalized = String(value).trim().toLowerCase();
       if (normalized === "true") processedValue = true;
       else if (normalized === "false") processedValue = false;
