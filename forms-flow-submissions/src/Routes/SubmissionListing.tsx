@@ -815,6 +815,9 @@ const {
             const onDropdownChange = (val: string | number) => {
               const v = String(val);
               handleDropdownSelectionChange(v === "" ? null : v);
+              // Reset search field picker to default when form selection changes
+              setSelectedSearchFieldKey("id");
+              setSearchText("");
             };
             return (
               <>
