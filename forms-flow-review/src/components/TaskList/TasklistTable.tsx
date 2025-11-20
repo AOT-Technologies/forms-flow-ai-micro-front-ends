@@ -112,10 +112,6 @@ const TaskListTable = () => {
     submissionId: "",
   });
   const [bundleName, setBundleName] = useState("");
-  const [historyPaginationModel, setHistoryPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
 
   // Redux selectors for task details
   const task = useSelector((state: any) => state.task.taskDetail);
@@ -653,8 +649,6 @@ const TaskListTable = () => {
           selectedForms={selectedForms}
           isTaskDetailsLoading={taskDetailsLoading}
           isAppHistoryLoading={isAppHistoryLoading}
-          historyPaginationModel={historyPaginationModel}
-          onHistoryPaginationModelChange={(model) => setHistoryPaginationModel(model)}
           appHistory={appHistory}
           statusValue={task?.applicationStatus || "Pending"}
           onRefresh={handleRefresh}

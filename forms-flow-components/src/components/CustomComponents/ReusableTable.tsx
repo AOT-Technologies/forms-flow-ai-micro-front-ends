@@ -32,6 +32,7 @@ interface ReusableTableProps {
   disableVirtualization?: boolean;
   enableRowExpansion?: boolean;
   notesField?: string;
+  hideFooter?: boolean;
 }
 
 export const ReusableTable: React.FC<ReusableTableProps> = ({
@@ -61,6 +62,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   disableVirtualization = false,
   enableRowExpansion = false,
   notesField = 'notes',
+  hideFooter = false,
 }) => {
   const { t } = useTranslation();
   const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
@@ -202,6 +204,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
         disableRowSelectionOnClick={disableRowSelectionOnClick}
         slots={defaultSlots}
         disableVirtualization={enableRowExpansion ? true : disableVirtualization}
+        hideFooter={hideFooter}
         slotProps={{
           loadingOverlay: {
             variant: 'skeleton',
