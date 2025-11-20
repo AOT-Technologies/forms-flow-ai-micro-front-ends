@@ -341,6 +341,15 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   transition: background-color 0.2s;
 }
 
+//Assigned to user style in task-details page
+.selected-assignee-label{
+  display: inline-block;
+  max-width: 16rem;
+  vertical-align: bottom;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 // Override list-group-item border behavior to match custom-dropdown-item
 .list-group-item + .list-group-item {
   border-top-width: 1px;
