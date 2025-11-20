@@ -227,7 +227,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
         >
           <span className="dropdown-text">
             {(() => {
-              const selected = opts.find((o) => o.value === selValue);
+              const selected = opts?.find((o) => o.value === selValue);
               if (selected) {
                 return (
                   <span className="dropdown-text-content">
@@ -238,7 +238,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   </span>
                 );
               }
-              const defaultMatch = opts.find((o) => o.value === defaultVal);
+              const defaultMatch = opts?.find((o) => o.value === defaultVal);
               if (defaultMatch) {
                 return (
                   <span className="dropdown-text-content">
