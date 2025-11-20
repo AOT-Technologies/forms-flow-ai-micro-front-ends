@@ -163,15 +163,15 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
       )} */}
       {showDeleteModal && (
         <PromptModal
-          type="warning"
+          type="error"
           show={showDeleteModal}
           title={t("Delete Filter")}
           message="Deleting a filter is permanent and cannot be undone."
-          primaryBtnAction={toggleDeleteModal}
           onClose={toggleDeleteModal}
-          primaryBtnText={t("Cancel")}
-          secondaryBtnText={t("Delete")}
-          secondaryBtnAction={handleDeleteAttributeFilter}
+          primaryBtnText={t("Delete")}
+          primaryBtnAction={handleDeleteAttributeFilter}
+          secondaryBtnText={t("Cancel")}
+          secondaryBtnAction={toggleDeleteModal}
           secondoryBtndataTestid="delete-button"
           primaryBtndataTestid="cancel-button"
           primaryBtnariaLabel="Cancel"

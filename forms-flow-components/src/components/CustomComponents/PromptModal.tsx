@@ -2,7 +2,6 @@ import React, { memo, useCallback, useMemo, forwardRef } from "react";
 import Modal from "react-bootstrap/Modal";
 import { V8CustomButton } from "./CustomButton";
 import { useTranslation } from "react-i18next";
-import { PromptInfoIcon, WarningIcon, TickIcon, PromptErrorIcon } from "../SvgIcons";
 
 /**
  * PromptModal is a reusable, accessible modal component for forms-flow apps.
@@ -12,7 +11,7 @@ import { PromptInfoIcon, WarningIcon, TickIcon, PromptErrorIcon } from "../SvgIc
  * <PromptModal show={true} type="error" title="Error" message="Something went wrong" primaryBtnText="Retry" secondaryBtnText="Cancel" />
  */
 
-type ModalType = "info" | "warning" | "success" | "error";
+type ModalType = "info" | "warning" | "success" | "danger";
 
 interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children'> {
   /** Controls modal visibility */
@@ -24,7 +23,7 @@ interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, '
   /** Modal title (translation key) */
   title: string;
   /** Modal message content (translation key) */
-  message: string;
+  message: any;
   /** Called when primary button is clicked */
   primaryBtnAction: () => void;
   /** Primary button text (translation key) */
@@ -48,7 +47,7 @@ interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, '
   /** Shows loading state on secondary button */
   secondaryBtnLoading?: boolean;
   /** Third button text (translation key) */
-  btnText: string;
+  btnText?: string;
   /** Disables third button */
   btnDisable?: boolean;
   /** Test ID for third button */
@@ -58,7 +57,7 @@ interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, '
   /** Shows loading state on third button */
   btnLoading?: boolean;
   /** Called when third button is clicked */
-  btnAction: () => void;
+  btnAction?: () => void;
   /** Test ID for modal title */
   datatestId?: string;
   /** Modal type affecting icon and styling */
@@ -74,31 +73,6 @@ interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, '
 }
 
 /**
- * Utility function to build className string
- */
-const buildClassNames = (...classes: (string | boolean | undefined)[]): string => {
-  return classes.filter(Boolean).join(" ");
-};
-
-/**
- * Renders the appropriate icon based on modal type
- */
-const renderModalIcon = (type?: string) => {
-  switch (type?.toLowerCase()) {
-    case "warning":
-      return <WarningIcon />;
-    case "info":
-      return <PromptInfoIcon />;
-    case "success":
-      return <TickIcon color="#00C49A" />;
-    case "error":
-      return <PromptErrorIcon />;
-    default:
-      return null;
-  }
-};
-
-/**
  * Enhanced PromptModal component with improved accessibility, performance, and maintainability
  */
 const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
@@ -106,7 +80,7 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
   onClose,
   secondaryBtnAction,
   title,
-  message = '',
+  message,
   primaryBtnAction,
   primaryBtnText,
   primaryBtnDisable = false,
@@ -134,27 +108,8 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
 }, ref) => {
   const { t } = useTranslation();
 
-  // Memoized modal className calculation
-  const modalClassName = useMemo(() => buildClassNames(
-    'prompt-modal',
-    type === "error" && "error-modal",
-    type === "success" && "success-modal",
-    className
-  ), [type, className]);
-
-  // Memoized title color based on type
-  const titleColor = useMemo(() => ({
-    color: type === 'warning' 
-      ? 'var(--red-100)' 
-      : 'var(--gray-dark)',
-  }), [type]);
-
-  // Memoized modal icon
-  const modalIcon = useMemo(() => renderModalIcon(type), [type]);
-
   // Memoized translated content
   const translatedTitle = useMemo(() => t(title), [t, title]);
-  const translatedMessage = useMemo(() => t(message), [t, message]);
   
   return (
     <Modal
@@ -165,7 +120,7 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
       data-testid={dataTestId || "prompt-modal"}
       aria-labelledby="prompt-modal-title"
       aria-describedby="prompt-modal-message"
-      className={modalClassName}
+      className={`prompt-modal ${type ? type + '-modal' : ''}`}
       centered
       {...restProps}
     >
@@ -174,15 +129,10 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
           className="prompt-modal-title-container d-flex flex-column"
           id="prompt-modal-title"
         >
-          <div className="prompt-icon">
-            {modalIcon}
-          </div>
-
           <div
             className="prompt-title"
             data-testid={datatestId}
             aria-label={ariaLabel || "Prompt title"}
-            style={titleColor}
           >
             {translatedTitle}
           </div>
@@ -193,23 +143,12 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
             data-testid="prompt-modal-message"
             aria-label="Prompt message"
           >
-            {translatedMessage}
+            {message}
           </div>
         )}
       </Modal.Body>
       <Modal.Footer>
         <div className="buttons-row">
-          {primaryBtnText && (
-            <V8CustomButton
-              label={primaryBtnText}
-              disabled={primaryBtnDisable}
-              onClick={primaryBtnAction}
-              dataTestId={primaryBtndataTestid}
-              ariaLabel={primaryBtnariaLabel}
-              loading={buttonLoading}
-              variant="primary"
-            />
-          )}
           {secondaryBtnText && (
             <V8CustomButton
               label={secondaryBtnText}
@@ -219,6 +158,17 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
               disabled={secondaryBtnDisable}
               loading={secondaryBtnLoading}
               variant="secondary"
+            />
+          )}
+          {primaryBtnText && (
+            <V8CustomButton
+              label={primaryBtnText}
+              disabled={primaryBtnDisable}
+              onClick={primaryBtnAction}
+              dataTestId={primaryBtndataTestid}
+              ariaLabel={primaryBtnariaLabel}
+              loading={buttonLoading}
+              variant="primary"
             />
           )}
           {btnText && (
