@@ -300,7 +300,6 @@ const columns: Column[] = useMemo(() => {
 
 
  const dynamicColumns: Column[] = sourceFields
-  .filter((item) => item.isChecked)
   .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
   .map((item) => ({
     name: item.label,
@@ -322,6 +321,21 @@ const columns: Column[] = useMemo(() => {
   ];
 }, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth, columnWidths]);
 
+// Keep sorting functionality intact while hiding unchecked columns from the table
+const columnVisibilityModel = useMemo(() => {
+  const sourceFields = selectedSubmissionFilter?.variables?.length
+    ? selectedSubmissionFilter.variables
+    : DEFAULT_SUBMISSION_FIELDS;
+
+  const model: Record<string, boolean> = {};
+  (sourceFields || []).forEach((item: any) => {
+    // visible when checked (default to true if undefined)
+    model[item.key] = item.isChecked !== false;
+  });
+  // Always keep actions column visible
+  model["actions"] = true;
+  return model;
+}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS]);
 
   // Ensure default sort is form_name if no activeKey is set
   const activeSortKey = sortParams.activeKey || "form_name";
@@ -732,21 +746,23 @@ const {
   const searchFieldDropdownItems = useMemo(() => {
     const items: any[] = [];
 
-    // Action: Add additional fields +
-    items.push({
-      content: (
-        <div className="d-flex align-items-center justify-content-between">
-          <span>{t("Add additional fields")}</span> <AddIcon />
-        </div>
-      ),
-      onClick: () => {
-        handleManageFieldsOpen();
-      },
-      type: "add-fields",
-      dataTestId: "add-additional-fields",
-      ariaLabel: t("Add additional fields"),
-      category: "action",
-    });
+    // Action: Add additional fields + (only when a form is selected)
+    if (dropdownSelection) {
+      items.push({
+        content: (
+          <div className="d-flex align-items-center justify-content-between">
+            <span>{t("Add additional fields")}</span> <AddIcon />
+          </div>
+        ),
+        onClick: () => {
+          handleManageFieldsOpen();
+        },
+        type: "add-fields",
+        dataTestId: "add-additional-fields",
+        ariaLabel: t("Add additional fields"),
+        category: "action",
+      });
+    }
 
     const available = (selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS) as any[];
     const labelByKey: Record<string, string> = {};
@@ -756,10 +772,14 @@ const {
 
     const term = (searchFieldFilterTerm || "").toLowerCase();
 
-    const sysItems = (available || [])
-      .filter((f) => f?.isFormVariable !== true) // system fields
-      .filter((f) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
-      .map((f) => ({
+    // System fields: use fixed display order; no reordering within category
+    const systemOrder = ["id", "created_by", "application_status"];
+    const sysItems = systemOrder
+      .map((key) => (available || []).find((f) => f.key === key && f?.isFormVariable !== true))
+      .filter(Boolean)
+      // Exclude fields not needed in the picker (form_name, created already excluded by order list)
+      .filter((f: any) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
+      .map((f: any) => ({
         className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
         content: <span>{t(labelByKey[f.key])}</span>,
         type: String(f.key),
@@ -790,6 +810,7 @@ const {
     DEFAULT_SUBMISSION_FIELDS,
     selectedSearchFieldKey,
     searchFieldFilterTerm,
+    dropdownSelection,
   ]);
   return (
    <>
@@ -914,6 +935,7 @@ const {
               dataGridProps={{
                 getRowId: (row: any) => row.id || (row as any)._id,
                 onColumnWidthChange: handleColumnWidthChange,
+                columnVisibilityModel: columnVisibilityModel,
               }}
               enableStickyActions={true}
               disableVirtualization
