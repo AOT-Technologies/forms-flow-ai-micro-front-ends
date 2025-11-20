@@ -346,3 +346,30 @@ $font-tokens: (
     width: 15.25rem;
   }
 }
+
+//custom-height for the selected dropdowns
+.task-list-page, .analyze-submissions-page{
+  .filter-dropdown-items{
+    max-height: 50vh;
+  }
+}
+
+.analyze-submissions-page{
+  .custom-dropdown-options{
+    max-height: 50vh;
+  }
+  // Make header sticky and only the content area scrollable in submissions field picker
+  .filter-dropdown-actions.sticky-actions{
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .filter-dropdown-items{
+    max-height: none;
+  }
+  .filter-dropdown-scroll{
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+}
