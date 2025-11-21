@@ -11,6 +11,8 @@ interface CustomTextInputProps {
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   maxLength?: number;
   minLength?: number;
+  icon?: React.ReactNode;
+  onIconClick?: () => void;
 }
 
 export const CustomTextInput: FC<CustomTextInputProps> = ({
@@ -23,12 +25,14 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
   onBlur,
   maxLength,
   minLength,
+  icon,
+  onIconClick,
 }) => {
   const { t } = useTranslation();
   const inputId = `${dataTestId}-input`; // unique id
 
   return (
-    <div className="text-input-container">
+    <div className={`text-input-container ${icon ? "text-input-with-icon" : ""}`}>
       {/* Hidden label for accessibility */}
       {/* <label htmlFor={inputId} className="sr-only">
         {ariaLabel || t(placeholder)}
@@ -48,6 +52,23 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
         maxLength={maxLength}
         minLength={minLength}
       />
+      {icon && (
+        <div
+          className={`text-input-icon ${onIconClick ? "text-input-icon-clickable" : ""}`}
+          onClick={onIconClick}
+          role={onIconClick ? "button" : undefined}
+          tabIndex={onIconClick ? 0 : undefined}
+          onKeyDown={onIconClick ? (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onIconClick();
+            }
+          } : undefined}
+          aria-label={onIconClick ? "Icon button" : undefined}
+        >
+          {icon}
+        </div>
+      )}
     </div>
   );
 };

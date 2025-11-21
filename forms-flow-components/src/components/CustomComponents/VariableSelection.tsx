@@ -10,14 +10,14 @@ import { BackIcon, CloseIcon } from "../SvgIcons";
 import { DataGrid } from '@mui/x-data-grid';
 import { StyleServices } from "@formsflow/service";
 
-interface FormVariable {
+export interface FormVariable {
   key: string;
   altVariable: string;
   labelOfComponent: string;
   type: string;
   isFormVariable?: boolean;
 }
-interface SystemVariable {
+export interface SystemVariable {
   altVariable: string;
   labelOfComponent: string;
   type: string;
