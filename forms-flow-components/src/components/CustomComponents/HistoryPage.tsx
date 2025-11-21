@@ -26,6 +26,7 @@ interface HistoryPageProps {
   refreshBtnAction: () => void;
   handlePaginationModelChange:()=>void,
   paginationModel:any,
+  hideRevertForNoCode?: boolean;
 }
 
 interface AllHistory {
@@ -60,6 +61,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
     refreshBtnAction,
     handlePaginationModelChange,
     paginationModel,
+    hideRevertForNoCode = false,
   }) => {
     const { t } = useTranslation();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -141,91 +143,112 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
       }));
     };
 
-    const generateColumns = (): GridColDef[] => {
+const generateColumns = (): GridColDef[] => {
+  const columns: GridColDef[] = [
+    {
+      field: 'version',
+      headerName: t('Version'),
+      flex: 0.6,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+      valueGetter: (value, row) => `${row.majorVersion}.${row.minorVersion}`,
+    },
+    {
+      field: 'publishedOn',
+      headerName: t('Published on'),
+      flex: 1,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+      valueGetter: (value, row) => 
+        row.publishedOn ? HelperServices?.getLocalDateAndTime(row.publishedOn) : '-',
+    },
+    {
+      field: 'created',
+      headerName: t('Last saved'),
+      flex: 1,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+      valueGetter: (value, row) => HelperServices?.getLocalDateAndTime(row.created),
+    },
+    {
+      field: 'createdBy',
+      headerName: t('Saved by'),
+      flex: 1.2,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+    },
+  ];
 
-      return [
-        {
-          field: 'version',
-          headerName: t('Version'),
-          flex: 0.6,
-          sortable: false,
-          headerAlign: 'left',
-          align: 'left',
-          valueGetter: (value, row) => `${row.majorVersion}.${row.minorVersion}`,
-        },
-        {
-          field: 'publishedOn',
-          headerName: t('Published on'),
-          flex: 1,
-          sortable: false,
-          headerAlign: 'left',
-          align: 'left',
-          valueGetter: (value, row) => 
-            row.publishedOn ? HelperServices?.getLocalDateAndTime(row.publishedOn) : '-',
-        },
-        {
-          field: 'created',
-          headerName: t('Last saved'),
-          flex: 1,
-          sortable: false,
-          headerAlign: 'left',
-          align: 'left',
-          valueGetter: (value, row) => HelperServices?.getLocalDateAndTime(row.created),
-        },
-        {
-          field: 'createdBy',
-          headerName: t('Saved by'),
-          flex: 1.2,
-          sortable: false,
-          headerAlign: 'left',
-          align: 'left',
-        },
-        {
-          field: "actions",
-          renderHeader: () => (
-              <V8CustomButton
-                variant="secondary"
-                icon={<RefreshIcon color={iconColor} />}
-                iconOnly
-                onClick={refreshBtnAction}
-                dataTestId="refresh-button"
-                ariaLabel={t("Refresh Button")}
-              />
-          ),
-          flex: 0.9,
-          sortable: false,
-          headerAlign: 'right',
-          headerClassName: 'last-column',
-          align: 'right',
-          renderCell: (params) => {
-            if(params.row.index === 0){
-              return null;
-            }
-            const userRoles = JSON.parse(
-              StorageService.get(StorageService.User.USER_ROLE)
-            );
-            const isCreateDesigns = userRoles?.includes("create_designs");
-            const isViewDesigns = userRoles?.includes("view_designs");
-            const isReadOnly = isViewDesigns && !isCreateDesigns;
-            const revertButtonDisabled =
-              isReadOnly ||
-              disableAllRevertButton ||
-              params.row[disabledData.key] == disabledData.value;
+  // Add TYPE column only for WORKFLOW category (after Saved by)
+  if (categoryType === "WORKFLOW") {
+    columns.push({
+      field: 'processType',
+      headerName: t('Type'),
+      flex: 0.8,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+      valueGetter: (value, row) => row.processType || '-',
+    });
+  }
 
-            return <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', py: 0.5, justifyContent: 'flex-end' }}>
-              <V8CustomButton
-                label={revertBtnText}
-                variant="secondary"
-                disabled={revertButtonDisabled}
-                onClick={() => handleRevertClick(params.row)}
-                dataTestId={revertBtndataTestid}
-                ariaLabel={t(revertBtnariaLabel)}
-                />
-              </Box>
-          }
-        },
-      ];
-    };
+  // Add actions column
+  columns.push({
+    field: "actions",
+    renderHeader: () => (
+        <V8CustomButton
+          variant="secondary"
+          icon={<RefreshIcon color={iconColor} />}
+          iconOnly
+          onClick={refreshBtnAction}
+          dataTestId="refresh-button"
+          ariaLabel={t("Refresh Button")}
+        />
+    ),
+    flex: 0.9,
+    sortable: false,
+    headerAlign: 'right',
+    headerClassName: 'last-column',
+    align: 'right',
+   renderCell: (params) => {
+  if(params.row.index === 0){
+    return null;
+  }
+
+  // Hide revert button for No Code entries when user switched from No-Code to BPMN
+  if (hideRevertForNoCode && params.row.processType === "LOWCODE") {
+    return null;
+  }
+
+  const userRoles = JSON.parse(
+    StorageService.get(StorageService.User.USER_ROLE)
+  );
+  const isCreateDesigns = userRoles?.includes("create_designs");
+  const isViewDesigns = userRoles?.includes("view_designs");
+  const isReadOnly = isViewDesigns && !isCreateDesigns;
+  const revertButtonDisabled =
+    isReadOnly ||
+    disableAllRevertButton ||
+    params.row[disabledData.key] == disabledData.value;
+  return <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', py: 0.5, justifyContent: 'flex-end' }}>
+    <V8CustomButton
+      label={revertBtnText}
+      variant="secondary"
+      disabled={revertButtonDisabled}
+      onClick={() => handleRevertClick(params.row)}
+      dataTestId={revertBtndataTestid}
+      ariaLabel={t(revertBtnariaLabel)}
+      />
+    </Box>
+}
+  });
+
+  return columns;
+};
 
     return (
       <>
