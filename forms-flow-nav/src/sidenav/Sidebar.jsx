@@ -23,7 +23,7 @@ import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
-import { ApplicationLogo, LogoutIcon, MenuToggleIcon } from "@formsflow/components";
+import { ApplicationLogo, LogoutIcon } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from 'prop-types';
 
@@ -139,25 +139,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [activeKey, setActiveKey] = useState(0);
   const hideLogo = StyleServices?.getCSSVariable("--hide-formsflow-logo")?.toLowerCase();
 
-  const getInitialCollapsedState = () => {
-    return window.innerWidth <= 1200;
-  };
-  const [persistentCollapsed, setPersistentCollapsed] = useState(getInitialCollapsedState);
-  const [hoverToggled, setHoverToggled] = useState(false);
-  const collapsed = persistentCollapsed !== hoverToggled;
+  // Collapsible sidebar state
+  const [collapsed, setCollapsed] = useState(true);
   const sidebarRef = useRef(null);
 
-  const handleToggleClick = () => {
-    setPersistentCollapsed(!persistentCollapsed);
-    setHoverToggled(false);
-  };
-
-  const handleMouseEnter = () => {
-    setHoverToggled(true);
-  };
-  const handleMouseLeave = () => {
-    setHoverToggled(false);
-  };
+  // Expand on hover handlers
+  const handleMouseEnter = () => setCollapsed(false);
+  const handleMouseLeave = () => setCollapsed(true);
 
   const getInitials = (name) => {
     if (!name) return "";
@@ -360,6 +348,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
      return options;
   }
 
+  // Collapsible sidebar class
   const sidebarClass = `sidenav${collapsed ? " collapsed" : ""}`;
 
   useEffect(() => {
@@ -368,25 +357,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       collapsed ? "3rem" : "10rem"
     );
   }, [collapsed]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 1200) {
-        setPersistentCollapsed(false);
-      } else {
-        setPersistentCollapsed(true);
-      }
-      setHoverToggled(false);
-    };
-
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   return (
     <div
@@ -398,9 +368,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       onMouseLeave={handleMouseLeave}
       role="button"
     >
-      <div className={`menu-toggle-icon${collapsed ? "" : " open"}`} onClick={handleToggleClick} role="button">
-        <MenuToggleIcon />
-      </div>
       {renderLogo(hideLogo, collapsed)}
       <div className={`options-container${collapsed ? " collapsed" : ""}`} data-testid="options-container">
         <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>

@@ -79,21 +79,6 @@ $animSpeed: 300ms;
     width: var(--navbar-width); // expanded width
   }
 
-  .menu-toggle-icon {
-    padding: 0.87rem 0.75rem;
-    padding-bottom: 0;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-
-    svg {
-      transition: transform 0.3s ease;
-    }
-
-    &.open svg {
-      transform: rotate(180deg);
-    }
-  }
-
   .logo-container {
     display: flex;
     align-items: center;
@@ -106,7 +91,7 @@ $animSpeed: 300ms;
     text-align: center;
     // flex-grow: 1;
     overflow-y: auto;
-    margin-bottom: auto;
+    margin-bottom: 5rem;
   }
 
   .accordion {
