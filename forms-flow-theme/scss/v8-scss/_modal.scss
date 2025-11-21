@@ -453,6 +453,18 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     }
 }
 
+.modal-content .modal-body {
+    overflow-y: auto; /* allows scroll */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+  
+  /* Chrome, Brave, Safari, Opera */
+.modal-content .modal-body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
 
 .single-variable-list {
     margin: 1rem 0.5rem;
