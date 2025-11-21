@@ -398,7 +398,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       onMouseLeave={handleMouseLeave}
       role="button"
     >
-      <div className={`menu-toggle-icon${!collapsed ? " open" : ""}`} onClick={handleToggleClick}>
+      <div className={`menu-toggle-icon${collapsed ? "" : " open"}`} onClick={handleToggleClick} role="button">
         <MenuToggleIcon />
       </div>
       {renderLogo(hideLogo, collapsed)}
