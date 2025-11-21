@@ -316,7 +316,7 @@ const ViewApplication = React.memo(() => {
 
   const historyRows = useMemo(() => {
     return (appHistory || []).map((entry: any, index: number) => ({
-      id: entry.submissionId ?? `row-${index}`, // Unique and stable id for data grid
+      id: entry.created ?? `row-${index}`, // Unique and stable id for data grid
       status: entry.submissionId || index,
       submittedBy: entry.submittedBy || "N/A",
       created: entry.created || "",
