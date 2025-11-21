@@ -275,35 +275,6 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
         )
       },
       {
-        field: 'altVariable',
-        headerName: 'Alternative Field',
-        flex: 3.2,
-        width: 250,
-        sortable: false,
-        renderCell: (params) => {
-          const variableKey = params.row.variable;
-          const systemVariable = SystemVariables.find(v => v.key === variableKey);
-          const isSelected = !!alternativeLabels[variableKey];
-          
-          // If switch is ON: show value from alternativeLabels (with fallback to default)
-          // If switch is OFF: only show tempInputValues if user typed something, otherwise empty
-          const inputValue = isSelected
-            ? (alternativeLabels[variableKey]?.altVariable || systemVariable?.altVariable || "")
-            : (tempInputValues[variableKey] || "");
-          
-          return (
-            <CustomTextInput
-              value={inputValue}
-              dataTestId={`alt-variable-input-${variableKey}`}
-              ariaLabel="System variable alternative field"
-              placeholder=""
-              setValue={handleSystemAltVariableInputChange(variableKey, systemVariable)}
-              disabled={disabled}
-            />
-          );
-        },
-      },
-      {
         field: "selected",
         headerName: "Selected",
         width: 130,
