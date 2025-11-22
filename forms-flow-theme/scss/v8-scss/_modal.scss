@@ -191,15 +191,13 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             }
         }
 
-        .form-items-list{
-            .custom-checkbox--inline .form-check {
-                align-items: end;
-            }
-    
-            .custom-checkbox--secondary .form-check .form-check-input {
-                margin-top: 4px!important;
-                margin-bottom: 4px!important;
-            }
+        .drag-drop-list-container .custom-checkbox--inline .form-check {
+            align-items: end;
+        }
+        .form-items-list .custom-checkbox--secondary .form-check .form-check-input {
+            margin-top: 4px!important;
+            margin-bottom: 4px!important;
+        
         }
     }
 
