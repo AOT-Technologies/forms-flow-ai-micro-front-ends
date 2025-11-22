@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ConfirmModal } from "./ConfirmModal";
 import { useTranslation } from "react-i18next";
-import { HelperServices, StorageService, StyleServices } from "@formsflow/service";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Box, Paper } from "@mui/material";
-import { V8CustomButton, } from "./CustomButton";
-import { RefreshIcon } from "../SvgIcons/index";
+import { HelperServices, StorageService } from "@formsflow/service";
+import { GridColDef } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
+import { V8CustomButton } from "./CustomButton";
+import { ReusableTable } from "./ReusableTable";
 import { PromptModal } from "./PromptModal";
 
-const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
 
 interface HistoryPageProps {
   revertBtnAction: (cloneId: string | null) => void;
@@ -18,14 +17,12 @@ interface HistoryPageProps {
   revertBtnariaLabel?: string;
   allHistory: AllHistory[];
   categoryType: string;
-  historyCount: number;
   currentVersionId?: number | string;
   disabledData: { key: string; value: any };
   disableAllRevertButton?: boolean;
   loading?: boolean;
   refreshBtnAction: () => void;
-  handlePaginationModelChange:()=>void,
-  paginationModel:any,
+  autoHeight?: boolean;
 }
 
 interface AllHistory {
@@ -53,13 +50,11 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
     revertBtnariaLabel = "Revert Button",
     allHistory,
     categoryType,
-    historyCount,
     disableAllRevertButton = false,
     disabledData = { key: "", value: "" }, // we can pass the key and its value based on that we can disable revert button eg: key:"processKey",value:"bpmn" if the data[key] == value it will disable
     loading = false,
     refreshBtnAction,
-    handlePaginationModelChange,
-    paginationModel,
+    autoHeight = false,
   }) => {
     const { t } = useTranslation();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -185,8 +180,7 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
           renderHeader: () => (
               <V8CustomButton
                 variant="secondary"
-                icon={<RefreshIcon color={iconColor} />}
-                iconOnly
+                label={t("Refresh")}
                 onClick={refreshBtnAction}
                 dataTestId="refresh-button"
                 ariaLabel={t("Refresh Button")}
@@ -229,34 +223,27 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
 
     return (
       <>
-        <Paper sx={{ height: { sm: 400, md: 510, lg: 510 }, width: "100%" }}
+        <div
           className="historypage-container"
           data-testid="history-page"
           aria-labelledby={t("history-page-table")}
           aria-describedby="history-page-table">
-          <DataGrid
+          <ReusableTable
             rows={generateRows(allHistory)}
             columns={generateColumns()}
-            paginationMode="server"
-            paginationModel={paginationModel}
-            pageSizeOptions={[10, 25, 50, 100]}
-            hideFooterSelectedRowCount
+            paginationMode="client"
+            sortingMode="client"
+            hideFooter
             disableColumnResize
             rowHeight={55}
-            columnHeaderHeight={55}
             disableColumnMenu
             disableRowSelectionOnClick
             loading={loading}
-            onPaginationModelChange={handlePaginationModelChange}
-            rowCount={historyCount}
-            slotProps={{
-              loadingOverlay: {
-                variant: 'skeleton',
-                noRowsVariant: 'skeleton',
-              },
-            }}
+            noRowsLabel={t("No history found")}
+            autoHeight={autoHeight}
+            sx={{ height: "auto", width: "100%" }}
           />
-        </Paper>
+        </div>
 
         {/* Confirmation Modal */}
         {selectedVersion && (
