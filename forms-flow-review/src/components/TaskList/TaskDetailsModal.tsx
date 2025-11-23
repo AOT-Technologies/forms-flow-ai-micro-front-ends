@@ -291,7 +291,7 @@ const TaskDetailsModal = ({
 
   const renderNotesContent = () => (
     <div className="p-3">
-      <h5 className="mb-4">{taskDetail && `${taskDetail.name} Approval`}</h5>
+      <h5 className="mb-4">{taskDetail && `${taskDetail.name}`}</h5>
       <div className="mb-3">
         <div className="notes-label mb-2">Notes</div>
         <CustomTextArea
