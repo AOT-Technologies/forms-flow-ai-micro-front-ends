@@ -68,10 +68,17 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             }
         }
     }
+    $modal-width-min: 400px;
+    $modal-width-max: 550px;
+    $modal-width: 40vw;
     .modal-sm{
-        min-width: 22rem;
+        min-width: $modal-width-min;
+        max-width: $modal-width-max;
+        width: $modal-width;
         .modal-content {
-            min-width: 22rem;
+            width: $modal-width;
+            min-width: $modal-width-min;
+            max-width: $modal-width-max;
             min-height: 16.5rem;
         }
     }
@@ -183,6 +190,15 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                 width: 6.813rem;
             }
         }
+
+        .drag-drop-list-container .custom-checkbox--inline .form-check {
+            align-items: end;
+        }
+        .form-items-list .custom-checkbox--secondary .form-check .form-check-input {
+            margin-top: 4px!important;
+            margin-bottom: 4px!important;
+        
+        }
     }
 
     /* Indented secondary dropdown */
@@ -263,6 +279,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 
     .form-items-list {
         overflow: scroll;
+        padding-bottom: 60px;
     }
 
     .right-form-preview-container {

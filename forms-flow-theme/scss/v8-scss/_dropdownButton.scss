@@ -223,15 +223,23 @@ $color-secondary-active: var(--secondary);
   // Menu Alignment
   &.menu-left.show .v8-dropdown-menu,
   &.menu-left .v8-dropdown-menu.show {
-    left: calc(100% - 43px) !important;
+    left: calc(100% - 100px) !important;
     right: auto;
     transform: translateX(0);
+
+    a {
+      line-height: 40px;
+    }
   }
 
   &.menu-right.show .v8-dropdown-menu,
   &.menu-right .v8-dropdown-menu.show {
     left: auto;
-    right: calc(100% - 43px) !important;
+    right: calc(100% - 100px) !important;
     transform: translateX(0);
+
+    a {
+      line-height: 40px;
+    }
   }
 }
