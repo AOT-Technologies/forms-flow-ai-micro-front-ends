@@ -122,7 +122,7 @@ $color-secondary-active: var(--secondary);
 
     &:active {
       border-color: $color-primary;
-      .label-div { background: $color-primary-active; }
+      .label-div { background: none; }
       .v8-dropdown-divider { background: $color-darker-gray; }
     }
 
@@ -139,7 +139,7 @@ $color-secondary-active: var(--secondary);
       &:hover { border-color: $color-secondary-hover; }
       &:active {
         border-color: $color-secondary-hover;
-        .label-div { background: $color-secondary-active; }
+        .label-div { background: none; }
         .v8-dropdown-divider { background: $color-darker-gray; }
       }
       &.open {

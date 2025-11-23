@@ -32,6 +32,8 @@ interface ReusableTableProps {
   disableVirtualization?: boolean;
   enableRowExpansion?: boolean;
   notesField?: string;
+  hideFooter?: boolean;
+  autoHeight?: boolean;
 }
 
 export const ReusableTable: React.FC<ReusableTableProps> = ({
@@ -46,7 +48,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   getRowId = (row) => row.id || row._id,
   pageSizeOptions = [10, 25, 50, 100],
   rowHeight = 55,
-  sx = { height: { sm: 400, md: 510, lg: 665 }, width: "100%" },
+  sx = { height: "100%", width: "100%" },
   dataGridProps = {},
   noRowsLabel,
   disableColumnResize = true,
@@ -61,6 +63,8 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   disableVirtualization = false,
   enableRowExpansion = false,
   notesField = 'notes',
+  hideFooter = false,
+  autoHeight = false,
 }) => {
   const { t } = useTranslation();
   const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
@@ -180,8 +184,24 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
     return rowHeight;
   };
 
+  const paperSx = autoHeight 
+    ? { ...sx, height: 'auto', minHeight: 'auto' }
+    : sx;
+
+  // Build className for DataGrid based on conditions
+  const dataGridClassName = [
+    'reusable-table',
+    disableColumnResize && 'disable-column-resize',
+    autoHeight && 'auto-height',
+    enableStickyActions && 'action-column-sticky',
+  ].filter(Boolean).join(' ');
+
+  const dataGridSx = {
+    ...sx,
+  };
+
   return (
-    <Paper sx={sx}>
+    <Paper sx={paperSx}>
       <DataGrid
         disableColumnResize={disableColumnResize}
         columns={enhancedColumns}
@@ -202,6 +222,8 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
         disableRowSelectionOnClick={disableRowSelectionOnClick}
         slots={defaultSlots}
         disableVirtualization={enableRowExpansion ? true : disableVirtualization}
+        hideFooter={hideFooter}
+        autoHeight={autoHeight}
         slotProps={{
           loadingOverlay: {
             variant: 'skeleton',
@@ -210,42 +232,8 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
           ...defaultSlotProps,
         }}
         localeText={defaultLocaleText}
-        className={enableStickyActions ? 'action-column-sticky' : ''}
-        sx={{
-          ...(disableColumnResize && {
-            '& .MuiDataGrid-columnSeparator': {
-              display: 'none !important',
-            },
-          }),
-          // Expansion row styling
-          '& .expansion-row': {
-            backgroundColor: 'transparent',
-            '&:hover': {
-              backgroundColor: 'transparent !important',
-            },
-          },
-          '& .expansion-row .MuiDataGrid-cell': {
-            border: 'none',
-            padding: '16px !important',
-            overflow: 'visible !important',
-          },
-          // Hide other columns in expansion rows (they already return null from renderCell)
-          '& .expansion-row .MuiDataGrid-cell:not(:first-of-type)': {
-            width: '100% !important',
-            // padding: '0 !important',
-          },
-          // Make first cell of expansion row span full width
-          '& .expansion-row .MuiDataGrid-cell:first-of-type': {
-            gridColumn: '1 / -1 !important',
-            width: '100% !important',
-            maxWidth: 'none !important',
-            minWidth: '100% !important',
-            left: '0 !important',
-            padding: '0 8px !important',
-            overflow: 'visible !important',
-          },
-          ...sx,
-        }}
+        className={dataGridClassName}
+        sx={dataGridSx}
         {...dataGridProps}
         sortingOrder={['asc', 'desc']}
       />

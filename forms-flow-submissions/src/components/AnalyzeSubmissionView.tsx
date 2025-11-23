@@ -87,10 +87,6 @@ const ViewApplication = React.memo(() => {
       []
     )
   );
-  const [historyPaginationModel, setHistoryPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
 
   const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
     formId: "",
@@ -316,7 +312,7 @@ const ViewApplication = React.memo(() => {
 
   const historyRows = useMemo(() => {
     return (appHistory || []).map((entry: any, index: number) => ({
-      id: entry.submissionId ?? `row-${index}`, // Unique and stable id for data grid
+      id: entry.created ?? `row-${index}`, // Unique and stable id for data grid
       status: entry.submissionId || index,
       submittedBy: entry.submittedBy || "N/A",
       created: entry.created || "",
@@ -360,12 +356,6 @@ const ViewApplication = React.memo(() => {
   ];
 
 
-  const handlePaginationModelChange = ({ page, pageSize }: any) => {
-    setHistoryPaginationModel({ page, pageSize });
-    dispatch(fetchApplicationAuditHistoryList(applicationId, page, pageSize));
-  };
-
-
   const renderTabContent = () => {
     if (selectedTab?.id === "form") {
       return (!formTypeCheckLoading &&
@@ -395,11 +385,9 @@ const ViewApplication = React.memo(() => {
             rows={historyRows}
             loading={isHistoryListLoading}
             noRowsLabel={t("No submission history found")}
-            paginationModel={historyPaginationModel}
-            onPaginationModelChange={handlePaginationModelChange}
             paginationMode="client"
             sortingMode="client"
-            pageSizeOptions={[5, 10, 25, 50]}
+            hideFooter
             rowHeight={60}
             sx={{ 
               height: 500, 
