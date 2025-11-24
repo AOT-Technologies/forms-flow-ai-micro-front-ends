@@ -12,7 +12,7 @@ export interface ContentItem {
   onClick?: () => void;
 }
 
-interface ReusableStandardModalProps {
+export interface ReusableStandardModalProps {
   show: boolean;
   onClose: () => void;
   title: string;
