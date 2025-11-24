@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect, useState } from "react";
+import React, { useCallback, useMemo, useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector, batch } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -91,8 +91,8 @@ const AnalyzeSubmissionList: React.FC = () => {
   const columnWidths = useSelector((state: any) => state?.analyzeSubmission?.columnWidths ?? {});
   //local state
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
-   const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
-  const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
+   const handleManageFieldsOpen = useCallback(() => setIsManageFieldsModalOpen(true), []);
+  const handleManageFieldsClose = useCallback(() => setIsManageFieldsModalOpen(false), []);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
   const [form, setForm] = React.useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
@@ -134,11 +134,11 @@ const AnalyzeSubmissionList: React.FC = () => {
   }, [dropdownSelection]);
 
 
-const handleClearSearch = () => {
+const handleClearSearch = useCallback(() => {
   setFieldFilters({});
   // Clear the search field values globally
   dispatch(clearSearchFieldValues());
-};
+}, [dispatch]);
 
 
 
@@ -188,14 +188,17 @@ useEffect (() => {
 
 
 
-const handleFieldSearch = (filters: Record<string, string>) => {
+const handleFieldSearch = useCallback((filters: Record<string, string>) => {
   setFieldFilters(filters);
   dispatch(setAnalyzeSubmissionPage(1));
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
-};
+}, [dispatch]);
 // Use the current submissionFields state for calculation
-const currentFields = selectedSubmissionFilter?.variables ?? submissionFields;
+const currentFields = useMemo(() => 
+  selectedSubmissionFilter?.variables ?? submissionFields,
+  [selectedSubmissionFilter?.variables, submissionFields]
+);
 
 const initialInputFields = useMemo(() => {
   //these pinned fileds should always come  first in sidebar
@@ -274,6 +277,7 @@ useEffect(() => {
     .catch((error) => {
       console.error("Error fetching submission list:", error);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
   // Column width helper function
@@ -327,27 +331,37 @@ const columns: Column[] = useMemo(() => {
 
   // Memoize sortModel to prevent unnecessary re-renders and ensure it updates correctly
   const sortModel = useMemo(() => {
-    if (activeSortKey) {
-      return [
-        {
-          field: activeSortKey,
-          sort: activeSortOrder,
-        },
-      ];
-    }
-    return [];
+    const model = activeSortKey
+      ? [{ field: activeSortKey, sort: activeSortOrder }]
+      : [];
+    console.log('[SubmissionListing][SORT_MODEL_MEMO]', model);
+    return model;
   }, [activeSortKey, activeSortOrder]);
 
   // Fetch Submissions
-const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
+const systemFields = useMemo(() => ["id", "form_name", "created_by", "created", "application_status"], []);
 
 
 const selectedFormFields = useMemo(() => {
   return (selectedSubmissionFilter?.variables ?? [])
     .map((v) => v.key)
     .filter((key) => !systemFields.includes(key));
-}, [selectedSubmissionFilter]);
+}, [selectedSubmissionFilter, systemFields]);
 
+// Stable keys to avoid duplicate refetches due to object identity changes
+const filtersKey = useMemo(
+  () => (filtersApplied ? JSON.stringify(fieldFilters) : ""),
+  [filtersApplied, fieldFilters]
+);
+const dateRangeKey = useMemo(() => {
+  const start = dateRange?.startDate ?? "";
+  const end = dateRange?.endDate ?? "";
+  return `${start}|${end}`;
+}, [dateRange?.startDate, dateRange?.endDate]);
+const selectedFormFieldsKey = useMemo(
+  () => JSON.stringify(selectedFormFields),
+  [selectedFormFields]
+);
 
 
 //data for searching data in filter table
@@ -363,13 +377,23 @@ const {
     limit,
     activeSortKey,
     activeSortOrder,
-    dateRange,
+    dateRangeKey,
     dropdownSelection,
-    filtersApplied ? fieldFilters : {},
-    selectedFormFields
+    filtersKey,
+    selectedFormFieldsKey
   ],
-  queryFn: () =>
-    getSubmissionList(
+  queryFn: () => {
+    console.log('[SubmissionListing][USEQUERY_FETCH]', {
+      page,
+      limit,
+      activeSortKey,
+      activeSortOrder,
+      dateRangeKey,
+      dropdownSelection,
+      filtersKey,
+      selectedFormFieldsKey
+    });
+    return getSubmissionList(
       limit,
       page,
       activeSortOrder,
@@ -378,7 +402,8 @@ const {
       dropdownSelection,
       filtersApplied ? fieldFilters : {},
       selectedFormFields
-    ),
+    );
+  },
   staleTime: 0,
   cacheTime:0
 });
@@ -421,25 +446,70 @@ const {
   const submissions: Submission[] = data?.submissions ?? [];
   const totalCount: number = data?.totalCount ?? 0;
 
+  // Use a ref to track if we're in the middle of a pagination change to prevent echo bounces
+  const isUpdatingRef = useRef(false);
+
   // Pagination Model for ReusableTable
-  const paginationModel = useMemo(
-    () => ({ page: page - 1, pageSize: limit }),
-    [page, limit]
-  );
+  const paginationModel = useMemo(() => {
+    const model = { page: page - 1, pageSize: limit };
+    console.log('[SubmissionListing][PAGINATION_MODEL_MEMO]', model, 'reduxPage:', page, 'reduxLimit:', limit);
+    return model;
+  }, [page, limit]);
+
+  // Reset the updating flag after Redux state settles
+  useEffect(() => {
+    if (isUpdatingRef.current) {
+      console.log('[SubmissionListing][RESET_UPDATING_FLAG]');
+      // Use setTimeout to ensure DataGrid has processed the prop change
+      const timer = setTimeout(() => {
+        isUpdatingRef.current = false;
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [page, limit]);
 
   // Handle Pagination Model Change for ReusableTable
-  const handlePaginationModelChange = useCallback(({ page, pageSize }: any) => {
-    batch(() => {
-      dispatch(setAnalyzeSubmissionPage(page + 1));
-      dispatch(setAnalyzeSubmissionLimit(pageSize));
+  const handlePaginationModelChange = useCallback(({ page: dataGridPage, pageSize }: any) => {
+    const nextPage = (dataGridPage ?? 0) + 1;
+    
+    console.log('[SubmissionListing][PAGINATION_CHANGE]', {
+      dataGridPage,
+      pageSize,
+      nextPage,
+      currentPage: page,
+      currentLimit: limit,
+      isUpdating: isUpdatingRef.current,
+      willDispatchLimit: limit !== pageSize,
+      willDispatchPage: page !== nextPage
     });
-  }, [dispatch]);
 
-  const handlerefresh = () => {
+    // Ignore events while we're updating (echo events)
+    if (isUpdatingRef.current) {
+      console.log('[SubmissionListing][PAGINATION_IGNORED]', 'Update in progress, ignoring echo event');
+      return;
+    }
+
+    if (limit !== pageSize) {
+      console.log('[SubmissionListing][LIMIT_CHANGE]', { oldLimit: limit, newLimit: pageSize, resetToPage: 1 });
+      isUpdatingRef.current = true;
+      batch(() => {
+        dispatch(setAnalyzeSubmissionLimit(pageSize));
+        dispatch(setAnalyzeSubmissionPage(1));
+      });
+    } else if (page !== nextPage) {
+      console.log('[SubmissionListing][PAGE_CHANGE]', { oldPage: page, newPage: nextPage });
+      isUpdatingRef.current = true;
+      dispatch(setAnalyzeSubmissionPage(nextPage));
+    } else {
+      console.log('[SubmissionListing][PAGINATION_NO_CHANGE]', 'Event matches current Redux state, ignoring');
+    }
+  }, [dispatch, limit, page]);
+
+  const handlerefresh = useCallback(() => {
     refetch();
-  };
+  }, [refetch]);
 
- const handleDateRangeChange = (newDateRange) => {
+ const handleDateRangeChange = useCallback((newDateRange) => {
   const { startDate, endDate } = newDateRange;
 
   // Update state if:
@@ -450,9 +520,11 @@ const {
 
   if (!(bothSelected || bothCleared)) return;
 
-  dispatch(setAnalyzeSubmissionDateRange(newDateRange));
-  dispatch(setAnalyzeSubmissionPage(1));
- };
+  batch(() => {
+    dispatch(setAnalyzeSubmissionDateRange(newDateRange));
+    dispatch(setAnalyzeSubmissionPage(1));
+  });
+ }, [dispatch]);
 
  // Reset to default: set form to "All Forms" and clear date range
  const handleResetToDefault = useCallback(() => {
@@ -565,15 +637,22 @@ const {
 
   // Handle sort model change for ReusableTable
   const handleSortModelChange = useCallback((model: any) => {
+    console.log('[SubmissionListing][SORT_CHANGE]', { model, currentActiveSortKey: activeSortKey, currentActiveSortOrder: activeSortOrder });
+    
     // If model is empty, reset to default form_name sort
     if (!model || model.length === 0 || !model[0]?.field) {
+      console.log('[SubmissionListing][SORT_RESET]', 'Resetting to form_name:asc');
       const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
       const updatedSort = {
         ...resetSortOrders,
         form_name: { sortOrder: "asc" },
         activeKey: "form_name",
       };
-      dispatch(setAnalyzeSubmissionSort(updatedSort));
+      // Reset page to 1 when sort is reset
+      batch(() => {
+        dispatch(setAnalyzeSubmissionSort(updatedSort));
+        dispatch(setAnalyzeSubmissionPage(1));
+      });
       return;
     }
 
@@ -581,6 +660,8 @@ const {
     // Always use DataGrid's sort order directly - DataGrid handles toggling automatically
     // DataGrid sends "asc" for first click, "desc" for second click on the same column
     const dataGridSort = model[0]?.sort || "asc";
+    
+    console.log('[SubmissionListing][SORT_UPDATE]', { field, dataGridSort });
     
     // Reset all sort keys to "asc" and set only the active field to DataGrid's sort order
     // This ensures only one sort is active at a time, and all others are reset to "asc"
@@ -595,7 +676,7 @@ const {
     // Dispatch the update - this will trigger a re-render and the sortModel will update
     // Since sortModel is memoized based on activeSortKey and activeSortOrder, it will update immediately
     dispatch(setAnalyzeSubmissionSort(updatedSort));
-  }, [dispatch, optionSortBy]);
+  }, [dispatch, optionSortBy, activeSortKey, activeSortOrder]);
 
   // Convert columns to MUI DataGrid format
   const muiColumns = useMemo(() => {
@@ -790,7 +871,6 @@ const {
   ]);
   return (
    <>
-   <div className="analyze-submissions-page">
       <div className="Toastify"></div>
       <div className="toast-section">{}</div>
       <div className="header-section-1">
@@ -917,7 +997,6 @@ const {
               autoHeight={true}
             />
         </div>
-       </div>
        </div>
       {isManageFieldsModalOpen && <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
