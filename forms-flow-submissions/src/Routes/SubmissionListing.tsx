@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo, useEffect, useState } from "react";
+import * as React from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector, batch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { push } from "connected-react-router";
@@ -93,7 +94,7 @@ const AnalyzeSubmissionList: React.FC = () => {
    const handleManageFieldsOpen = useCallback(() => setIsManageFieldsModalOpen(true), []);
   const handleManageFieldsClose = useCallback(() => setIsManageFieldsModalOpen(false), []);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
-  const [form, setForm] = React.useState([]);
+  const [form, setForm] = useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
