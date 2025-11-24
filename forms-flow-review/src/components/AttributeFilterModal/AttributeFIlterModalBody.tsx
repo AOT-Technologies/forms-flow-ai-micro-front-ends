@@ -114,10 +114,25 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
       }
     }
   };
+  const normalizeDayValue = (value) => {
+    // Remove % from both sides
+    const cleaned = value.replace(/^%|%$/g, "");
+  
+    // cleaned is "mm/dd/yyyy"
+    const [month, day, year] = cleaned.split("/");
+  
+    // return "dd-mm-yyyy" so UI behaves correctly
+    return `${day}-${month}-${year}`;
+  };
 
   // Helper function to process existing process variables
   const processExistingProcessVariables = (existingValues) => {
     exisitngProcessvariables.forEach((item) => {
+      if (item?.type === "day") {
+        const resetValue = normalizeDayValue(item.value);
+        existingValues[getUniqueFieldKey(item)] = resetValue;
+        return;
+      }
       // Skip roles from processVariables - it should come from candidateGroup in initialData
       if (item.name === "roles" && !item.isFormVariable) {
         return;
@@ -128,6 +143,12 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
       } else {
         // For other variables, find the corresponding task variable
         const taskVariable = taskVariables.find(tv => tv.name === item.name);
+        if (taskVariable && taskVariable.type === "day") {
+          const resetValue = normalizeDayValue(item.value);
+          existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
+          return;
+      }
+      
         if (taskVariable) {
           const resetValue = cleanValue(item.value, item.name);
           existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
@@ -266,6 +287,11 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
       
       // Process process variables from attributeFilter
       attributeFilterProcessVars.forEach((item) => {
+        if (item.type === "day") {
+          const resetValue = normalizeDayValue(item.value);
+          existingValues[getUniqueFieldKey(item)] = resetValue;
+          return;
+      }
         // Skip roles from processVariables - it should come from candidateGroup in initialData
         if (item.name === "roles" && !item.isFormVariable) {
           return;
@@ -428,10 +454,18 @@ const removeSlashFromValue = (value) => {
       value = Number(value);
     }
     else if (types[originalKey] === "day") {
-      //chnaging '/' to '-'
+      // When editing, the value shown in UI is in MM/DD/YYYY format (coming from backend %MM/DD/YYYY%)
+      // Convert MM/DD/YYYY → DD-MM-YYYY
+      if (value.includes("/")) {
+        const [month, day, year] = value.split("/");
+        value = `${day}-${month}-${year}`;
+      }
+    
+      // Now convert DD-MM-YYYY → %MM/DD/YYYY% for Camunda
       const [day, month, year] = value.split("-");
       value = `%${month}/${day}/${year}%`;
-    } else if (types[originalKey] === "datetime") {
+    }
+     else if (types[originalKey] === "datetime") {
       //changing date and time to camunda expected format
       if (value && value.includes(",")) {
         const [datePart, timePart] = value.split(",").map((s) => s.trim());
