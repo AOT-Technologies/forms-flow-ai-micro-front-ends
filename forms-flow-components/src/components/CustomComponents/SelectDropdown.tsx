@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
 import { DownArrowIcon, UpArrowIcon, VerticalLineIcon } from "../SvgIcons";
 import { ListGroup } from "react-bootstrap";
+import { CustomSearch } from "./Search";
 
 /**
  * Dropdown option interface for SelectDropdown component
@@ -49,6 +50,10 @@ export interface SelectDropdownProps
   className?: string;
   dropdownWrapperClassName?: string;
   dropdownItemClassName?: string;
+  /** Show a CustomSearch input at the top of the options list */
+  searchable?: boolean;
+  /** Placeholder for the CustomSearch input */
+  customSearchPlaceholder?: string;
 
   /** --- New props for dependent dropdown --- */
   secondDropdown?: boolean;
@@ -80,6 +85,10 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       variant = "primary",
       dropdownWrapperClassName,
       dropdownItemClassName,
+
+      // Top-of-list CustomSearch
+      searchable = false,
+      customSearchPlaceholder = "Search all forms",
 
       // Secondary dropdown support
       secondDropdown = false,
@@ -227,7 +236,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
         >
           <span className="dropdown-text">
             {(() => {
-              const selected = opts.find((o) => o.value === selValue);
+              const selected = opts?.find((o) => o.value === selValue);
               if (selected) {
                 return (
                   <span className="dropdown-text-content">
@@ -238,7 +247,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   </span>
                 );
               }
-              const defaultMatch = opts.find((o) => o.value === defaultVal);
+              const defaultMatch = opts?.find((o) => o.value === defaultVal);
               if (defaultMatch) {
                 return (
                   <span className="dropdown-text-content">
@@ -261,6 +270,17 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
               `custom-dropdown-options--${variantType}`
             )}
           >
+            {searchable && (
+              <div className="custom-dropdown-search">
+                <CustomSearch
+                  search={searchTerm}
+                  setSearch={setSearchTerm}
+                  handleSearch={() => {}}
+                  placeholder={customSearchPlaceholder}
+                  dataTestId={`${dataTestId}-dropdown-search`}
+                />
+              </div>
+            )}
             {opts.length > 0 ? (
               opts.map((option) => (
                 <ListGroup.Item
@@ -278,7 +298,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                     {option.icon && (
                       <span className="dropdown-icon">{option.icon}</span>
                     )}
-                    <span>{option.label}</span>
+                    <span className="text-break">{option.label}</span>
                   </span>
                 </ListGroup.Item>
               ))

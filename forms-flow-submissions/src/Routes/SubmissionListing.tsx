@@ -16,7 +16,7 @@ import {
   fetchFormById,
 } from "../api/queryServices/analyzeSubmissionServices";
 import { optionSortBy } from "../helper/helper";
-import { HelperServices, StyleServices } from "@formsflow/service";
+import { HelperServices } from "@formsflow/service";
 
 // Redux Actions
 import {
@@ -38,10 +38,10 @@ import {
   ReusableTable,
   V8CustomButton,
   DateRangePicker,
-  VariableSelection,
   SelectDropdown,
   CustomSearch,
-  RefreshIcon
+  FilterDropDown,
+  AddIcon
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -94,7 +94,6 @@ const AnalyzeSubmissionList: React.FC = () => {
    const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
   const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
-  const [showVariableModal, setShowVariableModal] = React.useState(false);
   const [form, setForm] = React.useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
   const [filtersApplied, setFiltersApplied] = useState(false);
@@ -102,7 +101,9 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState("");
   const [fieldFilters, setFieldFilters] = useState<Record<string, string>>({});
   const [isFormFetched,setIsFormFetched] =useState(false);
-  const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
+  const [selectedSearchFieldKey, setSelectedSearchFieldKey] = useState<string>("id");
+  const [searchFieldFilterTerm, setSearchFieldFilterTerm] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>("");
 
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
@@ -297,12 +298,11 @@ const columns: Column[] = useMemo(() => {
 
 
  const dynamicColumns: Column[] = sourceFields
-  .filter((item) => item.isChecked)
   .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
   .map((item) => ({
     name: item.label,
     sortKey: item.key,
-    width: columnWidths[item.key] ? columnWidths[item.key] : 0,
+    width: getColumnWidth(item.key),
     resizable: true,
     isFormVariable: item.isFormVariable ?? false,
   }));
@@ -317,8 +317,23 @@ const columns: Column[] = useMemo(() => {
       isFormVariable: false,
     },
   ];
-}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth]);
+}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS, getColumnWidth, columnWidths]);
 
+// Keep sorting functionality intact while hiding unchecked columns from the table
+const columnVisibilityModel = useMemo(() => {
+  const sourceFields = selectedSubmissionFilter?.variables?.length
+    ? selectedSubmissionFilter.variables
+    : DEFAULT_SUBMISSION_FIELDS;
+
+  const model: Record<string, boolean> = {};
+  (sourceFields || []).forEach((item: any) => {
+    // visible when checked (default to true if undefined)
+    model[item.key] = item.isChecked !== false;
+  });
+  // Always keep actions column visible
+  model["actions"] = true;
+  return model;
+}, [selectedSubmissionFilter, DEFAULT_SUBMISSION_FIELDS]);
 
   // Ensure default sort is form_name if no activeKey is set
   const activeSortKey = sortParams.activeKey || "form_name";
@@ -458,7 +473,9 @@ const {
    handleDropdownSelectionChange(null);
    dispatch(setAnalyzeSubmissionDateRange({ startDate: null, endDate: null }));
    dispatch(setAnalyzeSubmissionPage(1));
- }, [dispatch, handleDropdownSelectionChange]);
+   setSearchText("");
+   setSelectedSearchFieldKey("id");
+ }, [dispatch, handleDropdownSelectionChange, setSearchText]);
 
   // Column resize handler for ReusableTable
   const handleColumnResize = useCallback((column: Column, newWidth: number) => {
@@ -474,6 +491,14 @@ const {
     }
   }, [columns, handleColumnResize]);
 
+  // Disable reset if already at defaults
+  const isResetDisabled = useMemo(() => {
+    const noFormSelected = !dropdownSelection;
+    const isDefaultField = selectedSearchFieldKey === "id";
+    const noSearch = !searchText || searchText.trim() === "";
+    const noDateRange = !dateRange?.startDate && !dateRange?.endDate;
+    return noFormSelected && isDefaultField && noSearch && noDateRange;
+  }, [dropdownSelection, selectedSearchFieldKey, searchText, dateRange]);
   // Get cell value function for ReusableTable (extracted from renderRow logic)
   const getCellValue = useCallback((column: Column, submission: Submission) => {
     const { sortKey } = column;
@@ -597,7 +622,7 @@ const {
         headerName: t(col.name),
         flex: 1,
         sortable: col.sortKey !== "currentUserRoles" ? true : false,
-        minWidth: col.width,
+        minWidth: col.width || getColumnWidth(col.sortKey),
         headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
         renderCell: (params: any) => getCellValue(col, params.row),
       })),
@@ -620,8 +645,7 @@ const {
         renderHeader: () => (
           <V8CustomButton
             variant="secondary"
-            icon={<RefreshIcon color={iconColor} />}
-            iconOnly
+            label={t("Refresh")}
             onClick={handlerefresh}
             dataTestId="task-refresh-button"
           />
@@ -653,17 +677,12 @@ const {
     }));
   }, [submissions]);
 
-  const handleCloseVariableModal = () => {
-    setShowVariableModal(false)
-    handleManageFieldsOpen();
-  };
-
-  //will wait for the form data to be fetched before opening the modal
-  const handleShowVariableModal = () => {
-    setShowVariableModal(true);
-     fetchFormData(); // Fetch form data when the button is clicked
-    handleManageFieldsClose();
-    };
+  // Ensure form data is available while manage fields modal is open
+  useEffect(() => {
+    if (isManageFieldsModalOpen) {
+      fetchFormData();
+    }
+  }, [isManageFieldsModalOpen, fetchFormData]);
 
   const handleSaveVariables = useCallback(
     (variables) => {
@@ -720,7 +739,76 @@ const {
     },
     [dispatch, dropdownSelection, DEFAULT_SUBMISSION_FIELDS]
   );
+  // Build categorized search field dropdown items (action + system fields + form specific)
+  const searchFieldDropdownItems = useMemo(() => {
+    const items: any[] = [];
 
+    // Action: Add additional fields + (only when a form is selected)
+    if (dropdownSelection) {
+      items.push({
+        content: (
+          <div className="d-flex align-items-center justify-content-between">
+            <span>{t("Add additional fields")}</span> <AddIcon />
+          </div>
+        ),
+        onClick: () => {
+          handleManageFieldsOpen();
+        },
+        type: "add-fields",
+        dataTestId: "add-additional-fields",
+        ariaLabel: t("Add additional fields"),
+        category: "action",
+      });
+    }
+
+    const available = (selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS) as any[];
+    const labelByKey: Record<string, string> = {};
+    (available || []).forEach((f) => {
+      labelByKey[f.key] = f.label || f.name || f.key;
+    });
+
+    const term = (searchFieldFilterTerm || "").toLowerCase();
+
+    // System fields: use fixed display order; no reordering within category
+    const systemOrder = ["id", "created_by", "application_status"];
+    const sysItems = systemOrder
+      .map((key) => (available || []).find((f) => f.key === key && f?.isFormVariable !== true))
+      .filter(Boolean)
+      // Exclude fields not needed in the picker (form_name, created already excluded by order list)
+      .filter((f: any) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
+      .map((f: any) => ({
+        className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
+        content: <span>{t(labelByKey[f.key])}</span>,
+        type: String(f.key),
+        onClick: () => setSelectedSearchFieldKey(f.key),
+        dataTestId: `field-item-${f.key}`,
+        ariaLabel: t("Select field {{fieldName}}", { fieldName: t(labelByKey[f.key]) }),
+        category: "system",
+      }));
+
+    const formItems = (available || [])
+      .filter((f) => f?.isFormVariable === true) // form specific fields
+      .filter((f) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
+      .map((f) => ({
+        className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
+        content: <span>{t(labelByKey[f.key])}</span>,
+        type: String(f.key),
+        onClick: () => setSelectedSearchFieldKey(f.key),
+        dataTestId: `field-item-${f.key}`,
+        ariaLabel: t("Select field {{fieldName}}", { fieldName: t(labelByKey[f.key]) }),
+        category: "form",
+      }));
+
+    items.push(...sysItems, ...formItems);
+    return items;
+  }, [
+    t,
+    selectedSubmissionFilter,
+    DEFAULT_SUBMISSION_FIELDS,
+    selectedSearchFieldKey,
+    searchFieldFilterTerm,
+    dropdownSelection,
+  ]);
   return (
    <>
    <div className="analyze-submissions-page">
@@ -745,6 +833,9 @@ const {
             const onDropdownChange = (val: string | number) => {
               const v = String(val);
               handleDropdownSelectionChange(v === "" ? null : v);
+              // Reset search field picker to default when form selection changes
+              setSelectedSearchFieldKey("id");
+              setSearchText("");
             };
             return (
               <>
@@ -757,14 +848,32 @@ const {
                   dataTestId="submission-form-select"
                   id="submission-form-select"
                   variant="secondary"
+                  searchDropdown
+                  searchable
+                  customSearchPlaceholder={t("Search all forms")}
+                />
+                <FilterDropDown
+                  label={t(((selectedSubmissionFilter?.variables ?? DEFAULT_SUBMISSION_FIELDS)?.find((f: any) => f.key === selectedSearchFieldKey)?.label) || "Submission ID")}
+                  items={searchFieldDropdownItems}
+                  searchable={true}
+                  searchPlaceholder={t("Search fields")}
+                  onSearch={(term: string) => setSearchFieldFilterTerm(term)}
+                  dataTestId="analyze-search-filter-dropdown"
+                  ariaLabel={t("Select field to search")}
+                  className="input-filter"
+                  variant="task"
+                  categorize={true}
+                  categoryLabels={{ system: t("System fields"), form: t("Form specific fields") }}
+                  categoryOrder={["action", "system", "form"]}
+                  stickyActions={true}
                 />
                 <div className="medium-search-container">
                 <CustomSearch
-                  value={searchFieldValues.search}
+                  search={searchText}
+                  setSearch={setSearchText}
+                  handleSearch={() => handleFieldSearch({ [selectedSearchFieldKey]: searchText })}
                   placeholder={t("Search")}
                   dataTestId="submission-search-input"
-                  id="submission-search-input"
-                  variant="secondary"
                 />
                 </div>
                 
@@ -786,63 +895,19 @@ const {
           />
         </div>
         <div className="section-seperation-right">          
-        <V8CustomButton
-                label={t("Manage Fields")}
-                onClick={handleManageFieldsOpen}
-                dataTestId="manage-fields-button"
-                ariaLabel={t("Open manage fields")}
-                disabled={!dropdownSelection}
-                secondary
-              />
+       
               <V8CustomButton
               label={t("Reset to default")}
               onClick={handleResetToDefault}
               dataTestId="reset-to-default-button"
               ariaLabel={t("Reset to default")}
+              disabled={isResetDisabled}
               secondary
               />
         </div>
       </div>
   
-      {/* Left Panel - Collapsible Search Form */}
-      {/* <div className="left-panel">
-        {(() => {
-          const formOptions = [
-            { label: t("All Forms"), value: "" },
-            ...(formData || []).map((f: any) => ({
-              label: f?.formName ?? "",
-              value: f?.parentFormId ?? "",
-            })),
-          ];
-          const currentValue = dropdownSelection ?? "";
-          const onDropdownChange = (val: string | number) => {
-            const v = String(val);
-            handleDropdownSelectionChange(v === "" ? null : v);
-          };
-          return (
-            <div className="d-flex flex-column gap-2">
-
-              <SelectDropdown
-                options={formOptions}
-                value={currentValue}
-                onChange={onDropdownChange}
-                ariaLabel={t("Select a form")}
-                dataTestId="submission-form-select"
-                id="submission-form-select"
-                variant="secondary"
-              />
-              <V8CustomButton
-                label={t("Manage Fields")}
-                onClick={handleManageFieldsOpen}
-                dataTestId="manage-fields-button"
-                ariaLabel={t("Open manage fields")}
-                secondary
-              />
-            </div>
-          );
-        })()}
-
-      </div> */}
+     
       
         <div className="body-section">
         <div
@@ -870,10 +935,11 @@ const {
               dataGridProps={{
                 getRowId: (row: any) => row.id || (row as any)._id,
                 onColumnWidthChange: handleColumnWidthChange,
+                columnVisibilityModel: columnVisibilityModel,
               }}
               enableStickyActions={true}
               disableVirtualization
-
+              autoHeight={true}
             />
         </div>
        </div>
@@ -884,19 +950,12 @@ const {
         selectedItem={selectedItem}
         setSubmissionFields={setSubmissionFields}
         submissionFields={DEFAULT_SUBMISSION_FIELDS}
-        handleShowVariableModal={handleShowVariableModal}
         dropdownSelection={dropdownSelection}
+        form={form}
+        savedFormVariables={savedFormVariables}
+        setSavedFormVariables={setSavedFormVariables}
+        isFormFetched={isFormFetched}
       />}
-      {showVariableModal && <VariableSelection
-          form={form}
-          show={showVariableModal}
-          onClose={handleCloseVariableModal}
-          primaryBtnAction={handleSaveVariables}
-          savedFormVariables={savedFormVariables}
-          fieldLabel="Field"
-          systemVariables={SystemVariables}
-          isLoading={isFormFetched}
-        />}
 
     </>
   );

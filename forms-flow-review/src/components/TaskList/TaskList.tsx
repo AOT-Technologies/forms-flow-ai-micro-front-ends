@@ -331,7 +331,7 @@ const TaskList = () => {
           />
           </div>       
             </div></div>    */}
-            <div className="header-section-2 overflow-visible">
+            <div className="header-section-2 overflow-visible task-list-page">
               <div className="section-seperation-left">
               <TaskListDropdownItems/>
               <AttributeFilterDropdown/>

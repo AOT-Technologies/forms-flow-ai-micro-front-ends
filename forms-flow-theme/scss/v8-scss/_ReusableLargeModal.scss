@@ -2,6 +2,12 @@
 $gray-medium-dark-color: var(--gray-darkest);
 $font-weight-medium: var(--font-weight-medium);
 
+.modal {
+  display: flex!important;
+  justify-content: center;
+  align-items: center;
+}
+
 .reusable-large-modal {
     @include large-modal-popover();
         .modal-header-top {

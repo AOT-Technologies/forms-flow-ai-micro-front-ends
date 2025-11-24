@@ -11,6 +11,7 @@ $gray-medium-dark: var(--gray-medium-dark);
 $black-color: var(--gray-darkest);
 $font-size-m: var(--font-size-m);
 $font-weight-regular: var(--font-weight-regular);
+$border-radius: var(--border-radius);
 
 // Base spacing - static value for SCSS calculations
 $base: 1rem; // Cannot use var() in SCSS arithmetic
@@ -18,38 +19,37 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 // Prompt modal styles
 
 .prompt-modal {
-    .modal-dialog.modal-sm {
-        min-width: 28.5rem;
+    .modal-dialog {
         .modal-content {
-            min-width: 28.5rem;
             border-radius: 5px;
             border: 1px solid var(--gray-x-light);
             background: var(--white-300);
             box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
-            padding: 1.4375rem 0 2.5rem 0; // 40px = 2.5rem
-            min-height: 17.25rem;
+            padding: 1.5rem 1rem;
+            min-height: 16.5rem;
             .prompt-modal-body {
-                margin: 0 auto;
+                margin: 0;
+                padding: 0;
                 .prompt-modal-title-container {
-                    .prompt-icon {
-                        display: flex;
-                        justify-content: center;
-                        width: 100%;
-                    }
+                    text-align: left;
+                    border-bottom: 1px solid var(--gray-x-light);
+                    padding-bottom: 1.19rem;
+                    padding-left: 0.5rem;
                     .prompt-title {
-                        text-align: center;
-                        font-size: var(--font-size-xl);
+                        text-align: left;
+                        font-size: var(--font-size-lg);
                         font-weight: var(--font-weight-regular);
                         width: 100%;
-                        margin-top: 1.125rem; // 18px in rem
+                        color: var(--secondary-dark);
                         line-height: var(--line-height-default);
                     }
                 }
                 .prompt-message {
                     color: var(--gray-darkest);
-                    text-align: center;
+                    text-align: left;
                     font-size: var(--font-size-m);
-                    margin-top: 1.188rem;
+                    margin-top: 1.31rem;
+                    padding-left: 0.5rem;
                 }
             }
             .modal-footer {
@@ -64,20 +64,44 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                 justify-content: center;
                 align-items: center;
                 width: 100%;
-                gap: 0.5rem;
+                gap: 0.44rem;
             }
         }
     }
-        &.error-modal{
+    $modal-width-min: 400px;
+    $modal-width-max: 550px;
+    $modal-width: 40vw;
+    .modal-sm{
+        min-width: $modal-width-min;
+        max-width: $modal-width-max;
+        width: $modal-width;
+        .modal-content {
+            width: $modal-width;
+            min-width: $modal-width-min;
+            max-width: $modal-width-max;
+            min-height: 16.5rem;
+        }
+    }
+        &.danger-modal{
             .modal-content{
-                border-color: var(--orange-100);
-                box-shadow: none;
+               .modal-footer{
+                .buttons-row{
+                    .custom-button--primary{
+                        border-color: var(--red-100);
+                    }
+                }
+               }
             }
         }
-        &.success-modal{
+        &.info-modal{
             .modal-content{
-                border-color: var(--green-100);
-                box-shadow: none;
+                .modal-footer{
+                    .buttons-row{
+                        .custom-button--primary{
+                            border-color: var(--primary-dark);
+                        }
+                    }
+                }
             }
         }
 }
@@ -166,6 +190,15 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                 width: 6.813rem;
             }
         }
+
+        .drag-drop-list-container .custom-checkbox--inline .form-check {
+            align-items: end;
+        }
+        .form-items-list .custom-checkbox--secondary .form-check .form-check-input {
+            margin-top: 4px!important;
+            margin-bottom: 4px!important;
+        
+        }
     }
 
     /* Indented secondary dropdown */
@@ -246,6 +279,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 
     .form-items-list {
         overflow: scroll;
+        padding-bottom: 60px;
     }
 
     .right-form-preview-container {
@@ -434,4 +468,75 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         padding-top: 1rem;
         border-top: 1px solid var(--gray-x-light);
     }
+}
+
+.modal-content .modal-body {
+    overflow-y: auto; /* allows scroll */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+  
+  /* Chrome, Brave, Safari, Opera */
+.modal-content .modal-body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.single-variable-list {
+    margin: 1rem 0.5rem;
+    border: 1px solid var(--gray-x-light);
+    border-radius: $border-radius;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--ff-white);
+}
+
+.single-variable-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: var(--font-size-sm);
+    color: var(--gray-darkest);
+    cursor: pointer;
+    padding: 0.25rem 0;
+}
+
+.single-variable-option-radio {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--vivid-100);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.single-variable-option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.single-variable-option-label {
+    font-weight: var(--font-weight-regular);
+    color: var(--gray-darkest);
+}
+
+.single-variable-option-description {
+    font-size: var(--font-size-xs);
+    color: var(--gray-dark);
+}
+
+.text-input-wrapper {
+    margin-top: var(--spacer-050);
+    width: 22rem;
+}
+
+.input-label-text {
+    font-size: var(--font-size-m);
+    font-weight: var(--font-weight-regular);
+    color: var(--gray-dark);
+    margin-bottom: var(--spacer-075);
 }

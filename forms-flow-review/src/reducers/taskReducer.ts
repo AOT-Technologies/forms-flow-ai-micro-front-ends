@@ -101,15 +101,20 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
           case ACTION_CONSTANTS.SET_ATTRIBUTE_FILTER_TO_EDIT:
       return { ...state, attributeFilterToEdit: action.payload };
     case ACTION_CONSTANTS.SET_SELECTED_FILTER:
+      // If the filter ID hasn't changed, preserve dateRange and selectedAttributeFilter
+      // This prevents clearing filters when only updating column widths or other filter properties
+      const isSameFilter = state.selectedFilter?.id === action.payload?.id;
       return {
         ...state,
         isUnsavedFilter:false,
         isUnsavedAttributeFilter: false,
         selectedFilter: action.payload,
-        dateRange: { startDate: null, endDate: null },
-        activePage: 1,
-        isAssigned:false,
-        selectedAttributeFilter: null,
+        // Only reset dateRange and selectedAttributeFilter if switching to a different filter
+        dateRange: isSameFilter ? state.dateRange : { startDate: null, endDate: null },
+        selectedAttributeFilter: isSameFilter ? state.selectedAttributeFilter : null,
+        // Only reset activePage and isAssigned if switching to a different filter
+        activePage: isSameFilter ? state.activePage : 1,
+        isAssigned: isSameFilter ? state.isAssigned : false,
       };
     case ACTION_CONSTANTS.BPM_SELECTED_ATTRIBUTE_FILTER:
         return {

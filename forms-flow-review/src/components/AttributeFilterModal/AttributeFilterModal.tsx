@@ -15,7 +15,7 @@ import {
   fetchServiceTaskList,
   updateFilter,
 } from "../../api/services/filterServices";
-import { setAttributeFilterList, setSelectedBpmAttributeFilter } from "../../actions/taskActions";
+import { setAttributeFilterList, setAttributeFilterToEdit, setSelectedBpmAttributeFilter } from "../../actions/taskActions";
 import { StyleServices } from "@formsflow/service";
 
 export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
@@ -85,7 +85,8 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     batch(()=>{
     dispatch(setAttributeFilterList(newFilters));
     dispatch(setSelectedBpmAttributeFilter(null));
-    dispatch(fetchServiceTaskList(selectedTaskFilter,null,1,limit))
+    dispatch(setAttributeFilterToEdit(null)); // Clear the filter being edited
+    dispatch(fetchServiceTaskList(selectedTaskFilter,null,1,limit));
     })
     setShowDeleteModal(false);
   }
@@ -163,15 +164,15 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
       )} */}
       {showDeleteModal && (
         <PromptModal
-          type="warning"
+          type="error"
           show={showDeleteModal}
           title={t("Delete Filter")}
           message="Deleting a filter is permanent and cannot be undone."
-          primaryBtnAction={toggleDeleteModal}
           onClose={toggleDeleteModal}
-          primaryBtnText={t("Cancel")}
-          secondaryBtnText={t("Delete")}
-          secondaryBtnAction={handleDeleteAttributeFilter}
+          primaryBtnText={t("Delete")}
+          primaryBtnAction={handleDeleteAttributeFilter}
+          secondaryBtnText={t("Cancel")}
+          secondaryBtnAction={toggleDeleteModal}
           secondoryBtndataTestid="delete-button"
           primaryBtndataTestid="cancel-button"
           primaryBtnariaLabel="Cancel"
