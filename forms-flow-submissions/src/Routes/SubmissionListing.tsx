@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo, useEffect, useState, useRef } from "react";
+import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector, batch } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { push } from "connected-react-router";
 
@@ -104,6 +103,11 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [selectedSearchFieldKey, setSelectedSearchFieldKey] = useState<string>("id");
   const [searchFieldFilterTerm, setSearchFieldFilterTerm] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
+  const [submissionsData, setSubmissionsData] = useState<{ submissions: Submission[]; totalCount: number }>({
+    submissions: [],
+    totalCount: 0,
+  });
+  const [isSubmissionsLoading, setIsSubmissionsLoading] = useState(false);
 
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
@@ -331,11 +335,9 @@ const columns: Column[] = useMemo(() => {
 
   // Memoize sortModel to prevent unnecessary re-renders and ensure it updates correctly
   const sortModel = useMemo(() => {
-    const model = activeSortKey
+    return activeSortKey
       ? [{ field: activeSortKey, sort: activeSortOrder }]
       : [];
-    console.log('[SubmissionListing][SORT_MODEL_MEMO]', model);
-    return model;
   }, [activeSortKey, activeSortOrder]);
 
   // Fetch Submissions
@@ -348,65 +350,49 @@ const selectedFormFields = useMemo(() => {
     .filter((key) => !systemFields.includes(key));
 }, [selectedSubmissionFilter, systemFields]);
 
-// Stable keys to avoid duplicate refetches due to object identity changes
-const filtersKey = useMemo(
-  () => (filtersApplied ? JSON.stringify(fieldFilters) : ""),
+const appliedFieldFilters = useMemo(
+  () => (filtersApplied ? fieldFilters : {}),
   [filtersApplied, fieldFilters]
 );
-const dateRangeKey = useMemo(() => {
-  const start = dateRange?.startDate ?? "";
-  const end = dateRange?.endDate ?? "";
-  return `${start}|${end}`;
-}, [dateRange?.startDate, dateRange?.endDate]);
-const selectedFormFieldsKey = useMemo(
-  () => JSON.stringify(selectedFormFields),
-  [selectedFormFields]
-);
 
 
-//data for searching data in filter table
-const {
-  data,
-  isLoading: isSubmissionsLoading,
-  isFetching,
-  refetch,
-} = useQuery({
-  queryKey: [
-    "submissions",
-    page,
-    limit,
-    activeSortKey,
-    activeSortOrder,
-    dateRangeKey,
-    dropdownSelection,
-    filtersKey,
-    selectedFormFieldsKey
-  ],
-  queryFn: () => {
-    console.log('[SubmissionListing][USEQUERY_FETCH]', {
-      page,
-      limit,
-      activeSortKey,
-      activeSortOrder,
-      dateRangeKey,
-      dropdownSelection,
-      filtersKey,
-      selectedFormFieldsKey
-    });
-    return getSubmissionList(
+const fetchSubmissions = useCallback(async () => {
+  setIsSubmissionsLoading(true);
+  try {
+    const response = await getSubmissionList(
       limit,
       page,
       activeSortOrder,
       activeSortKey,
       dateRange,
       dropdownSelection,
-      filtersApplied ? fieldFilters : {},
+      appliedFieldFilters,
       selectedFormFields
     );
-  },
-  staleTime: 0,
-  cacheTime:0
-});
+    setSubmissionsData({
+      submissions: response?.submissions ?? [],
+      totalCount: response?.totalCount ?? 0,
+    });
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    setSubmissionsData({
+      submissions: [],
+      totalCount: 0,
+    });
+  } finally {
+    setIsSubmissionsLoading(false);
+  }
+}, [
+  limit,
+  page,
+  activeSortOrder,
+  activeSortKey,
+  dateRange?.startDate,
+  dateRange?.endDate,
+  dropdownSelection,
+  appliedFieldFilters,
+  selectedFormFields,
+]);
 
 
   useEffect(()=>{
@@ -442,72 +428,41 @@ const {
       setIsFormFetched(false);
     });
   }, [dropdownSelection, lastFetchedFormId,formData]);
-  // taking data from submission response for mapping to the table
-  const submissions: Submission[] = data?.submissions ?? [];
-  const totalCount: number = data?.totalCount ?? 0;
+  useEffect(() => {
+    fetchSubmissions();
+  }, [fetchSubmissions]);
 
-  // Use a ref to track if we're in the middle of a pagination change to prevent echo bounces
-  const isUpdatingRef = useRef(false);
+  // taking data from submission response for mapping to the table
+  const submissions: Submission[] = submissionsData.submissions;
+  const totalCount: number = submissionsData.totalCount;
 
   // Pagination Model for ReusableTable
   const paginationModel = useMemo(() => {
-    const model = { page: page - 1, pageSize: limit };
-    console.log('[SubmissionListing][PAGINATION_MODEL_MEMO]', model, 'reduxPage:', page, 'reduxLimit:', limit);
-    return model;
+    return { page: page - 1, pageSize: limit };
   }, [page, limit]);
 
-  // Reset the updating flag after Redux state settles
-  useEffect(() => {
-    if (isUpdatingRef.current) {
-      console.log('[SubmissionListing][RESET_UPDATING_FLAG]');
-      // Use setTimeout to ensure DataGrid has processed the prop change
-      const timer = setTimeout(() => {
-        isUpdatingRef.current = false;
-      }, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [page, limit]);
-
-  // Handle Pagination Model Change for ReusableTable
+  // Handle Pagination Model Change for ReusableTable  
   const handlePaginationModelChange = useCallback(({ page: dataGridPage, pageSize }: any) => {
-    const nextPage = (dataGridPage ?? 0) + 1;
-    
-    console.log('[SubmissionListing][PAGINATION_CHANGE]', {
-      dataGridPage,
-      pageSize,
-      nextPage,
-      currentPage: page,
-      currentLimit: limit,
-      isUpdating: isUpdatingRef.current,
-      willDispatchLimit: limit !== pageSize,
-      willDispatchPage: page !== nextPage
-    });
+    const requestedPage = (dataGridPage ?? 0) + 1;
+    const expectedDataGridPage = page - 1;
 
-    // Ignore events while we're updating (echo events)
-    if (isUpdatingRef.current) {
-      console.log('[SubmissionListing][PAGINATION_IGNORED]', 'Update in progress, ignoring echo event');
+    if (dataGridPage === expectedDataGridPage && pageSize === limit) {
       return;
     }
 
     if (limit !== pageSize) {
-      console.log('[SubmissionListing][LIMIT_CHANGE]', { oldLimit: limit, newLimit: pageSize, resetToPage: 1 });
-      isUpdatingRef.current = true;
       batch(() => {
         dispatch(setAnalyzeSubmissionLimit(pageSize));
         dispatch(setAnalyzeSubmissionPage(1));
       });
-    } else if (page !== nextPage) {
-      console.log('[SubmissionListing][PAGE_CHANGE]', { oldPage: page, newPage: nextPage });
-      isUpdatingRef.current = true;
-      dispatch(setAnalyzeSubmissionPage(nextPage));
-    } else {
-      console.log('[SubmissionListing][PAGINATION_NO_CHANGE]', 'Event matches current Redux state, ignoring');
+    } else if (page !== requestedPage) {
+      dispatch(setAnalyzeSubmissionPage(requestedPage));
     }
   }, [dispatch, limit, page]);
 
   const handlerefresh = useCallback(() => {
-    refetch();
-  }, [refetch]);
+    fetchSubmissions();
+  }, [fetchSubmissions]);
 
  const handleDateRangeChange = useCallback((newDateRange) => {
   const { startDate, endDate } = newDateRange;
@@ -637,11 +592,8 @@ const {
 
   // Handle sort model change for ReusableTable
   const handleSortModelChange = useCallback((model: any) => {
-    console.log('[SubmissionListing][SORT_CHANGE]', { model, currentActiveSortKey: activeSortKey, currentActiveSortOrder: activeSortOrder });
-    
     // If model is empty, reset to default form_name sort
     if (!model || model.length === 0 || !model[0]?.field) {
-      console.log('[SubmissionListing][SORT_RESET]', 'Resetting to form_name:asc');
       const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
       const updatedSort = {
         ...resetSortOrders,
@@ -657,26 +609,17 @@ const {
     }
 
     const field = model[0].field;
-    // Always use DataGrid's sort order directly - DataGrid handles toggling automatically
-    // DataGrid sends "asc" for first click, "desc" for second click on the same column
     const dataGridSort = model[0]?.sort || "asc";
-    
-    console.log('[SubmissionListing][SORT_UPDATE]', { field, dataGridSort });
-    
-    // Reset all sort keys to "asc" and set only the active field to DataGrid's sort order
-    // This ensures only one sort is active at a time, and all others are reset to "asc"
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
 
     const updatedSort = {
-      ...resetSortOrders, // All keys reset to {sortOrder: "asc"}
-      [field]: { sortOrder: dataGridSort }, // Active field uses DataGrid's sort order
+      ...resetSortOrders,
+      [field]: { sortOrder: dataGridSort },
       activeKey: field,
     };
 
-    // Dispatch the update - this will trigger a re-render and the sortModel will update
-    // Since sortModel is memoized based on activeSortKey and activeSortOrder, it will update immediately
     dispatch(setAnalyzeSubmissionSort(updatedSort));
-  }, [dispatch, optionSortBy, activeSortKey, activeSortOrder]);
+  }, [dispatch, optionSortBy]);
 
   // Convert columns to MUI DataGrid format
   const muiColumns = useMemo(() => {
@@ -974,7 +917,7 @@ const {
               columns={muiColumns}
               rows={memoizedRows}
               rowCount={totalCount}
-              loading={isSubmissionsLoading || isFetching}
+             loading={isSubmissionsLoading}
               disableColumnResize={false}
               paginationMode="server"
               sortingMode="server"
