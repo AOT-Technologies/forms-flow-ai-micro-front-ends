@@ -11,6 +11,8 @@ interface CustomTextAreaProps {
   rows?: number;
   maxLength?: number;
   className?: string;
+  icon?: React.ReactNode;
+  onIconClick?: () => void;
 }
 
 export const CustomTextArea: FC<CustomTextAreaProps> = ({
@@ -23,10 +25,19 @@ export const CustomTextArea: FC<CustomTextAreaProps> = ({
   rows = 4,
   maxLength,
   className = "",
+  icon,
+  onIconClick,
 }) => {
   const { t } = useTranslation();
   const inputId = `${dataTestId}-textarea`; // unique id per instance
-  const containerClass = `text-area-container${disabled ? " text-area-disabled" : ""}${className ? ` ${className}` : ""}`;
+  const containerClass = [
+    "text-area-container",
+    disabled ? "text-area-disabled" : "",
+    icon ? "text-area-with-icon" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={containerClass}>
@@ -50,6 +61,27 @@ export const CustomTextArea: FC<CustomTextAreaProps> = ({
         rows={rows}
         {...(maxLength ? { maxLength } : {})}
       />
+      {icon && (
+        <div
+          className={`text-area-icon ${onIconClick ? "text-area-icon-clickable" : ""}`}
+          onClick={onIconClick}
+          role={onIconClick ? "button" : undefined}
+          tabIndex={onIconClick ? 0 : undefined}
+          onKeyDown={
+            onIconClick
+              ? (e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onIconClick();
+                  }
+                }
+              : undefined
+          }
+          aria-label={onIconClick ? "Icon button" : undefined}
+        >
+          {icon}
+        </div>
+      )}
     </div>
   );
 };

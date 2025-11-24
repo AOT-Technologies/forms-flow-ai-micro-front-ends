@@ -39,6 +39,7 @@ const SaveFilterTab = ({
 }) => {
   const { t } = useTranslation();
   const computedStyle = getComputedStyle(document.documentElement);
+  const filterNameLength = 50;
   const baseColor = computedStyle.getPropertyValue("--ff-primary");
   const whiteColor = computedStyle.getPropertyValue("--ff-white");
   const [filterNameError, setFilterNameError] = useState("");
@@ -246,7 +247,7 @@ const SaveFilterTab = ({
           feedback={filterNameError}
           disabled={filterToEdit && !editRole}
           id="filter-name"
-          m
+          maxLength={filterNameLength}
         />
       </div>
 

@@ -56,14 +56,24 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   }, [users, includeEmailInLabel]);
 
   const options = useMemo<SelectDropdownOptionType[]>(() => {
-    //For task details page, we need to show "Assigned to me" and in table view we need to show "Me"
-    const meLabel = shortMeLabel ? t("Me") : t("Assigned to me");
+    // Default option labels shown in the dropdown list before selection
+    let meOptionLabel = t("Assign to me");
+    let unassignOptionLabel = t("Unassign");
+
+    // When selected, override labels for  display 
+    if (value === "me") {
+      meOptionLabel = shortMeLabel ? t("Me") : t("Assigned to me");
+    }
+    if (value === "unassigned") {
+      unassignOptionLabel = t("Unassigned");
+    }
+
     return [
-      { label: meLabel, value: "me" },
-      { label: t("Unassigned"), value: "unassigned" },
+      { label: meOptionLabel, value: "me" },
+      { label: unassignOptionLabel, value: "unassigned" },
       ...sortedUserOptions
     ];
-  }, [sortedUserOptions, t, shortMeLabel]);
+  }, [sortedUserOptions, t, shortMeLabel, value]);
 
   const selectedOption = useMemo(
     () => options.find(opt => opt.value === value),
@@ -126,6 +136,19 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   }, [onChange, value]);
 
   if (showAsText && !showDropdown) {
+    const isUserSelection = value !== "me" && value !== "unassigned" && !!displayText;
+    const textNode = (shortMeLabel === false && isUserSelection)
+      ? (
+        <span>
+          {t("Assigned to")}{" "}
+          <span
+            title={displayText}
+            className="selected-assignee-label"
+          >
+            {displayText}
+          </span>
+        </span>
+      ) : displayText;
     return (
       <div
         ref={containerRef}
@@ -159,7 +182,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
           cursor: disabled ? 'default' : 'pointer',
         }}
       >
-        {displayText}
+        {textNode}
       </div>
     );
   }

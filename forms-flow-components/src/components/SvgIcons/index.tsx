@@ -376,9 +376,11 @@ export const PencilIcon = ({...props }) => (
   </svg>
 );
 
-export const CurlyBracketsIcon = ({ color = baseColor, ...props }) => (
+export const CurlyBracketsIcon = ({ color = "red", ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="18"
     viewBox="0 0 16 18"
     className="svgIcon-primary"
   >
@@ -386,6 +388,9 @@ export const CurlyBracketsIcon = ({ color = baseColor, ...props }) => (
     <path d="M10 16.0215L11 16.0215C11.5523 16.0215 12 15.5738 12 15.0215L12 11.4753C12 11.1357 12.1724 10.8193 12.4577 10.6351L15 8.99414L12.4453 7.29101C12.1671 7.10554 12 6.79331 12 6.45896L12 3.02148C12 2.4692 11.5523 2.02148 11 2.02148L10 2.02148"/>
   </svg>
 );
+
+
+
 
 export const AngleRightIcon = ({ color = baseColor, ...props }) => (
   <svg

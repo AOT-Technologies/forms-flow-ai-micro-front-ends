@@ -237,7 +237,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
       position: sticky !important;
       right: 0 !important;
       background-color: $table-bg-light !important;
-      z-index: 3 !important;
+      z-index: 31 !important;
       border-left: 1px solid $table-border-light !important;
     }
 
@@ -247,6 +247,12 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
       background-color: $table-bg-light !important;
       border-left: 1px solid $table-border-light !important;
       z-index: 2 !important;
+    }
+
+    /* Ensure proper alignment of sticky header and cells */
+    .MuiDataGrid-columnHeader.sticky-column-header,
+    .MuiDataGrid-cell.sticky-column-cell {
+      box-sizing: border-box !important;
     }
 
     .MuiDataGrid-columnHeader[data-field="actions"] .MuiDataGrid-columnSeparator {
@@ -259,16 +265,43 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     }
 
     /* Make filler column visually neutral and non-interactive, but keep it occupying width */
-    .MuiDataGrid-columnHeader[data-field="__filler__"] {
+    .MuiDataGrid-columnHeader[data-field="__filler__"],
+    .MuiDataGrid-columnHeader.filler-column {
       pointer-events: none !important;
+      padding: 0 !important;
       .MuiDataGrid-columnSeparator {
         display: none !important;
       }
     }
-    .MuiDataGrid-cell[data-field="__filler__"] {
+    .MuiDataGrid-cell[data-field="__filler__"],
+    .MuiDataGrid-cell.filler-column {
       pointer-events: none !important;
       border-left: none !important;
       border-right: none !important;
+      padding: 0 !important; 
+    }
+
+    /* Prevent filler column from creating extra scrollable space during horizontal scroll */
+    /* The filler should shrink when content overflows, but expand when there's space to push actions to right */
+    .MuiDataGrid-columnHeader[data-field="__filler__"],
+    .MuiDataGrid-columnHeader.filler-column {
+      // flex: 1 1 0% !important;
+      flex-shrink: 1 !important;
+      min-width: 0 !important;
+    }
+    .MuiDataGrid-cell[data-field="__filler__"],
+    .MuiDataGrid-cell.filler-column {
+      // flex: 1 1 0% !important;
+      flex-shrink: 1 !important;
+      min-width: 0 !important;
+    }
+
+    /* Ensure sticky actions column maintains proper alignment */
+    /* When filler shrinks during scroll, actions column should stay aligned */
+    .MuiDataGrid-columnHeader.sticky-column-header,
+    .MuiDataGrid-cell.sticky-column-cell {
+      /* Ensure consistent width calculation */
+      box-sizing: border-box !important;
     }
   }
   
@@ -298,4 +331,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     white-space: pre-wrap;
     @include font-style(var(--font-size-m), var(--font-weight-regular));
   }
+}
+.MuiDataGrid-cell.MuiDataGrid-cellEmpty {
+  display: none !important;
 }

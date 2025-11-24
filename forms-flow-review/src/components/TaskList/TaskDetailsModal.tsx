@@ -20,11 +20,6 @@ import { getFormIdSubmissionIdFromURL, getFormUrlWithFormIdSubmissionId } from "
 import { onBPMTaskFormUpdate } from "../../api/services/bpmTaskServices";
 import { setBPMTaskDetailLoader } from "../../actions/taskActions";
 
-interface HistoryPaginationModel {
-  page: number;
-  pageSize: number;
-}
-
 interface BundleFormData {
   formId: string;
   submissionId: string;
@@ -48,8 +43,6 @@ interface TaskDetailsModalProps {
   selectedForms: any[];
   isTaskDetailsLoading: boolean;
   isAppHistoryLoading: boolean;
-  historyPaginationModel: HistoryPaginationModel;
-  onHistoryPaginationModelChange: (model: HistoryPaginationModel) => void;
   appHistory: any[];
   statusValue?: string;
   onStatusChange?: (value: string | number) => void;
@@ -80,8 +73,6 @@ const TaskDetailsModal = ({
   selectedForms,
   isTaskDetailsLoading,
   isAppHistoryLoading,
-  historyPaginationModel,
-  onHistoryPaginationModelChange,
   appHistory,
   statusValue,
   onStatusChange,
@@ -277,11 +268,9 @@ const TaskDetailsModal = ({
       rows={historyRows}
       loading={isAppHistoryLoading}
       noRowsLabel={t("No submission history found")}
-      paginationModel={historyPaginationModel}
-      onPaginationModelChange={onHistoryPaginationModelChange}
       paginationMode="client"
       sortingMode="client"
-      pageSizeOptions={[5, 10, 25, 50]}
+      hideFooter
       rowHeight={60}
       enableRowExpansion={true}
       notesField="notes"
@@ -302,7 +291,7 @@ const TaskDetailsModal = ({
 
   const renderNotesContent = () => (
     <div className="p-3">
-      <h5 className="mb-4">{taskDetail && `${taskDetail.name} Approval`}</h5>
+      <h5 className="mb-4">{taskDetail && `${taskDetail.name}`}</h5>
       <div className="mb-3">
         <div className="notes-label mb-2">Notes</div>
         <CustomTextArea

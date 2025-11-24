@@ -1,16 +1,14 @@
 import {
   V8CustomButton,
-  ReusableTable,
-  RefreshIcon
+  ReusableTable
 } from "@formsflow/components";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { HelperServices, StyleServices } from "@formsflow/service";
+import { HelperServices } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { isEqual } from "lodash";
 import TaskDetailsModal from "./TaskDetailsModal";
 import {
-  resetTaskListParams,
   setBPMTaskListActivePage,
   setBPMTaskLoader,
   setFilterListSortParams,
@@ -60,8 +58,6 @@ import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
-import BundleTaskForm from "../BundleTaskForm";
-import TaskForm from "../TaskForm";
 
 export interface Task {
   id: string;
@@ -112,10 +108,6 @@ const TaskListTable = () => {
     submissionId: "",
   });
   const [bundleName, setBundleName] = useState("");
-  const [historyPaginationModel, setHistoryPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
 
   // Redux selectors for task details
   const task = useSelector((state: any) => state.task.taskDetail);
@@ -130,7 +122,7 @@ const TaskListTable = () => {
   )?.preferred_username;
   const disabledMode = taskAssignee !== currentUser;
 
-  const handleOpenModal = (task: Task) => {
+  const handleOpenModal = useCallback((task: Task) => {
     setSelectedTask(task);
     setModalViewType("submission");
     setShowModal(true);
@@ -150,9 +142,9 @@ const TaskListTable = () => {
         dispatch(getApplicationHistory(applicationId));
       }
     }
-  };
+  }, [dispatch]);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setSelectedTask(null);
     setShowModal(false);
     setModalViewType("submission");
@@ -160,19 +152,19 @@ const TaskListTable = () => {
     dispatch(setSelectedTaskID(null));
     dispatch(resetSubmission("submission"));
     dispatch(setBundleSelectedForms([]));
-  };
+  }, [dispatch]);
 
-  const handleSubmissionClick = () => {
+  const handleSubmissionClick = useCallback(() => {
     setModalViewType("submission");
-  };
+  }, []);
 
-  const handleHistoryClick = () => {
+  const handleHistoryClick = useCallback(() => {
     setModalViewType("history");
-  };
+  }, []);
 
-  const handleNotesClick = () => {
+  const handleNotesClick = useCallback(() => {
     setModalViewType("notes");
-  };
+  }, []);
 
   const taskvariables = selectedFilter?.variables ?? [];
 
@@ -180,7 +172,7 @@ const TaskListTable = () => {
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
   const [columns, setColumns] = useState<Column[]>([]);
-      const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
+  
 
   const getCellValue = (column: Column, task: Task) => {
     const { sortKey } = column;
@@ -255,7 +247,7 @@ const TaskListTable = () => {
     }
     return matchingVar.value ?? "-";
   };
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     dispatch(setBPMTaskLoader(true));
     const payload = createReqPayload(
       selectedFilter,
@@ -266,7 +258,7 @@ const TaskListTable = () => {
       false
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-  };
+  }, [dispatch, selectedFilter, selectedAttributeFilter, filterListSortParams, dateRange, isAssigned, activePage, limit]);
 
   // Load form and submission for task details
   const handleFormRetry = (fetchForm: () => void) => (retryErr: any) => {
@@ -362,7 +354,7 @@ const TaskListTable = () => {
   }, [task?.formType, task?.formId, task?.formUrl, modalViewType, dispatch]);
 
   // Form submission callback
-  const onFormSubmitCallback = (actionType = "") => {
+  const onFormSubmitCallback = useCallback((actionType = "") => {
     if (!selectedTask?.id || !task?.formUrl) return;
     dispatch(setBPMTaskDetailLoader(true));
     const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
@@ -384,17 +376,17 @@ const TaskListTable = () => {
       )
     );
     handleCloseModal();
-  };
+  }, [selectedTask?.id, task?.formUrl, task?.applicationId, dispatch, handleCloseModal]);
 
   // Custom event handler for form
-  const onCustomEventCallBack = (customEvent: {
+  const onCustomEventCallBack = useCallback((customEvent: {
     type: string;
     actionType: string;
   }) => {
     if (customEvent.type === CUSTOM_EVENT_TYPE.ACTION_COMPLETE) {
       onFormSubmitCallback(customEvent.actionType);
     }
-  };
+  }, [onFormSubmitCallback]);
 
   // Prepare history table data
   useEffect(() => {
@@ -402,7 +394,7 @@ const TaskListTable = () => {
     setColumns((prev) => (!isEqual(prev, dynamicColumns) ? dynamicColumns : prev));
   }, [taskvariables]);
 
-  const handleSortModelChange = (model: any) => {
+  const handleSortModelChange = useCallback((model: any) => {
     const column = columns.find((col) => col.sortKey === model?.[0]?.field);
     if (!column) return;
     dispatch(setBPMTaskLoader(true));
@@ -431,19 +423,31 @@ const TaskListTable = () => {
       column.isFormVariable
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-  };
+  }, [columns, dispatch, selectedFilter, selectedAttributeFilter, dateRange, isAssigned, activePage, limit]);
 
   const paginationModel = useMemo(
     () => ({ page: activePage - 1, pageSize: limit }),
     [activePage, limit]
   );
 
-  const handlePaginationModelChange = ({ page, pageSize }: any) => {
+  const handlePaginationModelChange = useCallback(({ page, pageSize }: any) => {
     batch(() => {
       dispatch(setBPMTaskListActivePage(page + 1));
       dispatch(setTaskListLimit(pageSize));
     });
-  };
+  }, [dispatch]);
+
+  const sortModel = useMemo(
+    () => [
+      filterListSortParams.activeKey
+        ? {
+            field: filterListSortParams.activeKey,
+            sort: filterListSortParams[filterListSortParams.activeKey]?.sortOrder || "asc",
+          }
+        : {},
+    ],
+    [filterListSortParams]
+  );
 
   const muiColumns = useMemo(() => {
   // Filter out any existing "actions" column that might come from dynamic columns
@@ -461,7 +465,7 @@ const TaskListTable = () => {
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
       renderCell: (params: any) => getCellValue(col, params.row),
     })),
-    // Filler column to absorb extra width and keep resizable columns intact
+    // Filler column to push actions column to the right when there are fewer columns
     {
       field: "__filler__",
       headerName: "",
@@ -470,8 +474,8 @@ const TaskListTable = () => {
       disableColumnMenu: true,
       flex: 1,
       minWidth: 0,
-      headerClassName: "",
-      cellClassName: "",
+      headerClassName: "filler-column",
+      cellClassName: "filler-column",
       renderCell: () => null,
       valueGetter: () => null,
     },
@@ -480,8 +484,7 @@ const TaskListTable = () => {
        renderHeader: () => (
         <V8CustomButton
           variant="secondary"
-          icon={<RefreshIcon color={iconColor} />}
-          iconOnly
+          label={t("Refresh")}
           onClick={handleRefresh}
           dataTestId="task-refresh-button"
         />
@@ -508,7 +511,7 @@ const TaskListTable = () => {
       ),
     },
   ];
-}, [columns, t, iconColor, handleRefresh, handleOpenModal]);
+}, [columns, t, handleRefresh, handleOpenModal]);
 
 
 
@@ -594,14 +597,7 @@ const TaskListTable = () => {
         sortingMode="server"
         paginationModel={paginationModel}
         onPaginationModelChange={handlePaginationModelChange}
-        sortModel={[
-          filterListSortParams.activeKey
-            ? {
-                field: filterListSortParams.activeKey,
-                sort: filterListSortParams[filterListSortParams.activeKey]?.sortOrder || "asc",
-              }
-            : {},
-        ]}
+        sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
         noRowsLabel={t("No tasks found")}
         disableColumnMenu
@@ -628,6 +624,7 @@ const TaskListTable = () => {
         }}
         enableStickyActions={true}
         disableVirtualization
+        autoHeight={true}
       />
       {showModal && (
         <TaskDetailsModal
@@ -648,8 +645,6 @@ const TaskListTable = () => {
           selectedForms={selectedForms}
           isTaskDetailsLoading={taskDetailsLoading}
           isAppHistoryLoading={isAppHistoryLoading}
-          historyPaginationModel={historyPaginationModel}
-          onHistoryPaginationModelChange={(model) => setHistoryPaginationModel(model)}
           appHistory={appHistory}
           statusValue={task?.applicationStatus || "Pending"}
           onRefresh={handleRefresh}
