@@ -12,7 +12,7 @@ import {  setTaskDetailsLoading } from "../../actions/taskActions";
 import { getBPMTaskDetail } from "../../api/services/bpmTaskServices";
 import SocketIOService from "../../services/SocketIOService";
 import { userRoles } from "../../helper/permissions";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 
 
@@ -30,6 +30,8 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
   const { manageMyTasks,AssignTaskToOthers } = userRoles();
   // Optimistic value to immediately reflect selection in UI
   const [overrideValue, setOverrideValue] = useState<string | null>(null);
+  // Track the last assigned user to handle stale Redux state (use ref to avoid overwriting)
+  const lastAssignedUserRef = useRef<string | null>(null);
   const fetchTaskList = () => {
     dispatch(fetchServiceTaskList(lastReqPayload, null, activePage, limit));
   };
@@ -96,14 +98,25 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
 
     // Targeting 'me'
     if (newuser === 'me') {
-      if (currentValue === 'unassigned') {
-        // unassigned -> claim self
+      // Check both Redux state and last assigned user to handle stale state
+      // This handles the case where Redux state might be stale after assigning to someone else
+      const hasAssigneeInState = task?.assignee && task.assignee !== userDetails?.preferred_username;
+      const wasJustAssignedToOther = lastAssignedUserRef.current && 
+        lastAssignedUserRef.current !== userDetails?.preferred_username && 
+        lastAssignedUserRef.current !== 'me' && 
+        lastAssignedUserRef.current !== 'unassigned';
+      const needsUnclaim = hasAssigneeInState || wasJustAssignedToOther;
+      
+      if (!needsUnclaim) {
+        // unassigned or already assigned to me -> claim self directly
         dispatch(claimBPMTask(taskId, userDetails?.preferred_username, refreshAfter));
+        lastAssignedUserRef.current = 'me';
       } else {
-        // if current is 'me' or any other user -> unclaim first then claim self
+        // Task is assigned to someone else -> unclaim first then claim self
         dispatch(
           unClaimBPMTask(taskId, () => {
             dispatch(claimBPMTask(taskId, userDetails?.preferred_username, refreshAfter));
+            lastAssignedUserRef.current = 'me';
           })
         );
       }
@@ -114,11 +127,15 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
     if (newuser === 'unassigned') {
       // Always attempt unclaim to ensure backend state matches the selection
       dispatch(unClaimBPMTask(taskId, refreshAfter));
+      lastAssignedUserRef.current = 'unassigned';
       return;
     }
 
     // Targeting specific other user
     if (newuser) {
+      // Track that we're assigning to this user (optimistically, before Redux updates)
+      lastAssignedUserRef.current = newuser;
+      
       if (currentValue === 'me') {
         // me -> other user: unclaim then assign to new user
         dispatch(
@@ -154,6 +171,18 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
       setOverrideValue(null);
     }
   }, [currentValue, overrideValue]);
+
+  // Sync lastAssignedUserRef with Redux state when it updates (after API calls complete)
+  // This ensures our ref stays in sync with the actual state
+  useEffect(() => {
+    if (task?.assignee) {
+      const assigneeValue = task.assignee === userDetails?.preferred_username ? 'me' : task.assignee;
+      lastAssignedUserRef.current = assigneeValue;
+    } else {
+      // Task is unassigned
+      lastAssignedUserRef.current = 'unassigned';
+    }
+  }, [task?.assignee, userDetails?.preferred_username]);
   if (!task?.id) {
     return null;
   }
