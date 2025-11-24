@@ -1,14 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ConfirmModal } from "./ConfirmModal";
 import { useTranslation } from "react-i18next";
-import { HelperServices, StorageService, StyleServices } from "@formsflow/service";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Box, Paper } from "@mui/material";
-import { V8CustomButton, } from "./CustomButton";
-import { RefreshIcon } from "../SvgIcons/index";
+import { HelperServices, StorageService } from "@formsflow/service";
+import { GridColDef } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
+import { V8CustomButton } from "./CustomButton";
+import { ReusableTable } from "./ReusableTable";
 import { PromptModal } from "./PromptModal";
 
-const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
 
 interface HistoryPageProps {
   revertBtnAction: (cloneId: string | null) => void;
@@ -18,14 +17,15 @@ interface HistoryPageProps {
   revertBtnariaLabel?: string;
   allHistory: AllHistory[];
   categoryType: string;
-  historyCount: number;
   currentVersionId?: number | string;
   disabledData: { key: string; value: any };
   disableAllRevertButton?: boolean;
   loading?: boolean;
   refreshBtnAction: () => void;
-  handlePaginationModelChange:()=>void,
-  paginationModel:any,
+  handlePaginationModelChange:()=>void;
+  paginationModel:any;
+  hideRevertForNoCode?: boolean;
+  autoHeight?: boolean;
 }
 
 interface AllHistory {
@@ -53,13 +53,14 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
     revertBtnariaLabel = "Revert Button",
     allHistory,
     categoryType,
-    historyCount,
     disableAllRevertButton = false,
     disabledData = { key: "", value: "" }, // we can pass the key and its value based on that we can disable revert button eg: key:"processKey",value:"bpmn" if the data[key] == value it will disable
     loading = false,
     refreshBtnAction,
     handlePaginationModelChange,
     paginationModel,
+    hideRevertForNoCode = false,
+    autoHeight = false,
   }) => {
     const { t } = useTranslation();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -141,122 +142,135 @@ export const HistoryPage: React.FC<HistoryPageProps> = React.memo(
       }));
     };
 
-    const generateColumns = (): GridColDef[] => {
+const generateColumns = (): GridColDef[] => {
+  const columns: GridColDef[] = [
+    {
+      field: 'version',
+      headerName: t('Version'),
+      flex: 0.6,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+      valueGetter: (value, row) => `${row.majorVersion}.${row.minorVersion}`,
+    },
+    {
+      field: 'publishedOn',
+      headerName: t('Published on'),
+      flex: 1,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+      valueGetter: (value, row) => 
+        row.publishedOn ? HelperServices?.getLocalDateAndTime(row.publishedOn) : '-',
+    },
+    {
+      field: 'created',
+      headerName: t('Last saved'),
+      flex: 1,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+      valueGetter: (value, row) => HelperServices?.getLocalDateAndTime(row.created),
+    },
+    {
+      field: 'createdBy',
+      headerName: t('Saved by'),
+      flex: 1.2,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+    },
+  ];
 
-      return [
-        {
-          field: 'version',
-          headerName: t('Version'),
-          flex: 0.6,
-          sortable: false,
-          headerAlign: 'left',
-          align: 'left',
-          valueGetter: (value, row) => `${row.majorVersion}.${row.minorVersion}`,
-        },
-        {
-          field: 'publishedOn',
-          headerName: t('Published on'),
-          flex: 1,
-          sortable: false,
-          headerAlign: 'left',
-          align: 'left',
-          valueGetter: (value, row) => 
-            row.publishedOn ? HelperServices?.getLocalDateAndTime(row.publishedOn) : '-',
-        },
-        {
-          field: 'created',
-          headerName: t('Last saved'),
-          flex: 1,
-          sortable: false,
-          headerAlign: 'left',
-          align: 'left',
-          valueGetter: (value, row) => HelperServices?.getLocalDateAndTime(row.created),
-        },
-        {
-          field: 'createdBy',
-          headerName: t('Saved by'),
-          flex: 1.2,
-          sortable: false,
-          headerAlign: 'left',
-          align: 'left',
-        },
-        {
-          field: "actions",
-          renderHeader: () => (
-              <V8CustomButton
-                variant="secondary"
-                icon={<RefreshIcon color={iconColor} />}
-                iconOnly
-                onClick={refreshBtnAction}
-                dataTestId="refresh-button"
-                ariaLabel={t("Refresh Button")}
-              />
-          ),
-          flex: 0.9,
-          sortable: false,
-          headerAlign: 'right',
-          headerClassName: 'last-column',
-          align: 'right',
-          renderCell: (params) => {
-            if(params.row.index === 0){
-              return null;
-            }
-            const userRoles = JSON.parse(
-              StorageService.get(StorageService.User.USER_ROLE)
-            );
-            const isCreateDesigns = userRoles?.includes("create_designs");
-            const isViewDesigns = userRoles?.includes("view_designs");
-            const isReadOnly = isViewDesigns && !isCreateDesigns;
-            const revertButtonDisabled =
-              isReadOnly ||
-              disableAllRevertButton ||
-              params.row[disabledData.key] == disabledData.value;
+  // Add TYPE column only for WORKFLOW category (after Saved by)
+  if (categoryType === "WORKFLOW") {
+    columns.push({
+      field: 'processType',
+      headerName: t('Type'),
+      flex: 0.8,
+      sortable: false,
+      headerAlign: 'left',
+      align: 'left',
+      valueGetter: (value, row) => row.processType || '-',
+    });
+  }
 
-            return <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', py: 0.5, justifyContent: 'flex-end' }}>
-              <V8CustomButton
-                label={revertBtnText}
-                variant="secondary"
-                disabled={revertButtonDisabled}
-                onClick={() => handleRevertClick(params.row)}
-                dataTestId={revertBtndataTestid}
-                ariaLabel={t(revertBtnariaLabel)}
-                />
-              </Box>
-          }
-        },
-      ];
-    };
+  // Add actions column
+  columns.push({
+    field: "actions",
+    renderHeader: () => (
+        <V8CustomButton
+          variant="secondary"
+          label={t("Refresh")}
+          onClick={refreshBtnAction}
+          dataTestId="refresh-button"
+          ariaLabel={t("Refresh Button")}
+        />
+    ),
+    flex: 0.9,
+    sortable: false,
+    headerAlign: 'right',
+    headerClassName: 'last-column',
+    align: 'right',
+   renderCell: (params) => {
+  if(params.row.index === 0){
+    return null;
+  }
+
+  // Hide revert button for No Code entries when user switched from No-Code to BPMN
+  if (hideRevertForNoCode && params.row.processType === "LOWCODE") {
+    return null;
+  }
+
+  const userRoles = JSON.parse(
+    StorageService.get(StorageService.User.USER_ROLE)
+  );
+  const isCreateDesigns = userRoles?.includes("create_designs");
+  const isViewDesigns = userRoles?.includes("view_designs");
+  const isReadOnly = isViewDesigns && !isCreateDesigns;
+  const revertButtonDisabled =
+    isReadOnly ||
+    disableAllRevertButton ||
+    params.row[disabledData.key] == disabledData.value;
+  return <Box sx={{ display: 'flex', alignItems: 'center', height: '100%', py: 0.5, justifyContent: 'flex-end' }}>
+    <V8CustomButton
+      label={revertBtnText}
+      variant="secondary"
+      disabled={revertButtonDisabled}
+      onClick={() => handleRevertClick(params.row)}
+      dataTestId={revertBtndataTestid}
+      ariaLabel={t(revertBtnariaLabel)}
+      />
+    </Box>
+}
+  });
+
+  return columns;
+};
 
     return (
       <>
-        <Paper sx={{ height: { sm: 400, md: 510, lg: 510 }, width: "100%" }}
+        <div
           className="historypage-container"
           data-testid="history-page"
           aria-labelledby={t("history-page-table")}
           aria-describedby="history-page-table">
-          <DataGrid
+          <ReusableTable
             rows={generateRows(allHistory)}
             columns={generateColumns()}
-            paginationMode="server"
-            paginationModel={paginationModel}
-            pageSizeOptions={[10, 25, 50, 100]}
-            hideFooterSelectedRowCount
+            paginationMode="client"
+            sortingMode="client"
+            hideFooter
             disableColumnResize
             rowHeight={55}
-            columnHeaderHeight={55}
             disableColumnMenu
             disableRowSelectionOnClick
             loading={loading}
-            onPaginationModelChange={handlePaginationModelChange}
-            rowCount={historyCount}
-            slotProps={{
-              loadingOverlay: {
-                variant: 'skeleton',
-                noRowsVariant: 'skeleton',
-              },
-            }}
+            noRowsLabel={t("No history found")}
+            autoHeight={autoHeight}
+            sx={{ height: "auto", width: "100%" }}
           />
-        </Paper>
+        </div>
 
         {/* Confirmation Modal */}
         {selectedVersion && (

@@ -301,7 +301,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                     {option.icon && (
                       <span className="dropdown-icon">{option.icon}</span>
                     )}
-                    <span>{option.label}</span>
+                    <span className="text-break">{option.label}</span>
                   </span>
                 </ListGroup.Item>
               ))

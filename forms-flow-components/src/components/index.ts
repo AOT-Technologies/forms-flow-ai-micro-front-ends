@@ -59,4 +59,5 @@ export * from "./CustomComponents/ReusableLargeModal";
 export * from "./CustomComponents/FormViewModal";
 export * from "./CustomComponents/ReusableStandardModal";
 export * from "./CustomComponents/SelectWithCustomValue";
+export * from "./CustomComponents/SingleVariableSelectionModal";
 

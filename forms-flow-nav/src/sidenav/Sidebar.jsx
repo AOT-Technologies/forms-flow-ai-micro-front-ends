@@ -424,49 +424,55 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 mainMenu={t("Build")}
                 subMenu={
                   // If only isManageIntegrations is true → show only Integrations
-                  isManageIntegrations && !isCreateDesigns && !isViewDesigns
-                    ? [
-                        {
-                          name: "Integrations",
-                          path: "integration/recipes",
-                          supportedSubRoutes: [
-                            "integration/recipes",
-                            "integration/connected-apps",
-                            "integration/library",
-                          ],
-                          isPremium: true,
-                        },
-                      ]
+                  // Hide because v8 out of scope - will be restored later
+                  // isManageIntegrations && !isCreateDesigns && !isViewDesigns
+                  //   ? [
+                  //       {
+                  //         name: "Integrations",
+                  //         path: "integration/recipes",
+                  //         supportedSubRoutes: [
+                  //           "integration/recipes",
+                  //           "integration/connected-apps",
+                  //           "integration/library",
+                  //         ],
+                  //         isPremium: true,
+                  //       },
+                  //     ]
+                  //   : [
+                  false
+                    ? []
                     : [
                         {
                           name: "Forms",
                           path: "formflow",
                         },
-                        ...(IS_ENTERPRISE && isManageBundles
-                          ? [
-                              {
-                                name: "Bundles",
-                                path: "bundleflow",
-                                isPremium: true,
-                              },
-                            ]
-                          : []),
-                        ...(IS_ENTERPRISE &&
-                        isManageIntegrations &&
-                        (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
-                          ? [
-                              {
-                                name: "Integrations",
-                                path: "integration/recipes",
-                                supportedSubRoutes: [
-                                  "integration/recipes",
-                                  "integration/connected-apps",
-                                  "integration/library",
-                                ],
-                                isPremium: true,
-                              },
-                            ]
-                          : []),
+                        // Hide because v8 out of scope - will be restored later
+                        // ...(IS_ENTERPRISE && isManageBundles
+                        //   ? [
+                        //       {
+                        //         name: "Bundles",
+                        //         path: "bundleflow",
+                        //         isPremium: true,
+                        //       },
+                        //     ]
+                        //   : []),
+                        // Hide because v8 out of scope - will be restored later
+                        // ...(IS_ENTERPRISE &&
+                        // isManageIntegrations &&
+                        // (integrationEnabled || ENABLE_INTEGRATION_PREMIUM)
+                        //   ? [
+                        //       {
+                        //         name: "Integrations",
+                        //         path: "integration/recipes",
+                        //         supportedSubRoutes: [
+                        //           "integration/recipes",
+                        //           "integration/connected-apps",
+                        //           "integration/library",
+                        //         ],
+                        //         isPremium: true,
+                        //       },
+                        //     ]
+                        //   : []),
                         //             ...(IS_ENTERPRISE &&
                         // isManageTemplates
                         //   ? [

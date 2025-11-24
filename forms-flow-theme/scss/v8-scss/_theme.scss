@@ -258,9 +258,10 @@ $font-tokens: (
       justify-content: center;  // center inner page-layout horizontally
       align-items: flex-start;  // vertical alignment at top
       width: 100%;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
       position: fixed;
+      overflow: hidden;
   
       .page-layout {
         /* Inner page layout wrapper */
@@ -268,10 +269,11 @@ $font-tokens: (
         flex-shrink: 0;         
         flex-grow: 0;
         display: grid;          // allows toast/header/body grid
-        grid-template-rows: 6fr; // toast + headers + body
+        grid-template-rows: auto auto auto auto auto 1fr; // toast + headers + body
         grid-template-columns: 1fr;
         padding: 0;
         box-sizing: border-box;
+        height: 100%;
   
         .toast-section {
           @include mixins.rowLayout(72px, center, 1);
@@ -298,9 +300,12 @@ $font-tokens: (
           @include mixins.vertical-padding();
           grid-row: 6;
           padding: 1rem 0;
-          max-height: var(--body-section-height); // need to be updated after while implementing inner contets. 
           overflow-y: auto;
+          overflow-x: hidden;
           padding-bottom: 5rem;
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
           
           &.formedit-layout,
           &.processedit-layout,
@@ -339,14 +344,6 @@ $font-tokens: (
     width: 22rem;
   }
   
-  //Analyse submissions page
-  .analyze-submissions-page {
-  .selectdropdown-container, 
-  .drp-input-container, 
-  .calendar-container {
-    width: 15.25rem;
-  }
-}
 
 //custom-height for the selected dropdowns
 .task-list-page, .analyze-submissions-page{

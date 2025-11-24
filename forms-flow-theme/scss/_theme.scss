@@ -256,7 +256,7 @@ body {
     &::-webkit-scrollbar-thumb {
       width: calc($scrollBarWidth / 2);
       min-height: 15.625rem;
-      background-color: $primary-light;
+      background-color: var(--gray-medium-dark);
       background-clip: padding-box;
       
       border-radius: 5rem; // should be just big enough to round corners off completely
