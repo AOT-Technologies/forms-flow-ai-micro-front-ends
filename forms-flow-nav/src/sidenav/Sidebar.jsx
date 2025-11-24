@@ -146,6 +146,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [hoverToggled, setHoverToggled] = useState(false);
   const collapsed = persistentCollapsed !== hoverToggled;
   const sidebarRef = useRef(null);
+  const hoverTimeout = useRef(null);
 
   const handleToggleClick = () => {
     setPersistentCollapsed(!persistentCollapsed);
@@ -153,10 +154,15 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   };
 
   const handleMouseEnter = () => {
+    if (hoverTimeout.current) {
+      clearTimeout(hoverTimeout.current);
+    }
     setHoverToggled(true);
   };
   const handleMouseLeave = () => {
-    setHoverToggled(false);
+    hoverTimeout.current = setTimeout(() => {
+      setHoverToggled(false);
+    }, 120);
   };
 
   const getInitials = (name) => {
@@ -363,13 +369,6 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const sidebarClass = `sidenav${collapsed ? " collapsed" : ""}`;
 
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--navbar-width",
-      collapsed ? "3rem" : "10rem"
-    );
-  }, [collapsed]);
-
-  useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 1200) {
         setPersistentCollapsed(false);
@@ -391,7 +390,10 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   return (
     <div
       className={sidebarClass}
-      style={{ height: sidenavHeight }}
+      style={{ 
+        height: sidenavHeight,
+        "--navbar-width": collapsed ? "3rem" : "10rem"
+      }}
       data-testid="sidenav"
       ref={sidebarRef}
       onMouseEnter={handleMouseEnter}
