@@ -742,6 +742,14 @@ const {
   // Build categorized search field dropdown items (action + system fields + form specific)
   const searchFieldDropdownItems = useMemo(() => {
     const items: any[] = [];
+    const noFilter = {
+      content: <em>{t("No Results found")}</em>,
+      onClick: () => {},
+      type: "none",
+      dataTestId: "no-variables-found",
+      ariaLabel: t("No Results available"),
+      category: "none",
+    };
 
     // Action: Add additional fields + (only when a form is selected)
     if (dropdownSelection) {
@@ -800,6 +808,12 @@ const {
       }));
 
     items.push(...sysItems, ...formItems);
+
+    // Show "No filters found" when no search results found
+    const isSearching = term.trim().length > 0;
+    if (isSearching && sysItems.length + formItems.length === 0) {
+      items.push(noFilter);
+    }
     return items;
   }, [
     t,
