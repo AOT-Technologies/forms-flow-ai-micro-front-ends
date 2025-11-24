@@ -54,6 +54,8 @@ export interface SelectDropdownProps
   searchable?: boolean;
   /** Placeholder for the CustomSearch input */
   customSearchPlaceholder?: string;
+  /** Custom width for the dropdown (e.g., '300px', '20rem', '100%') */
+  width?: string | number;
 
   /** --- New props for dependent dropdown --- */
   secondDropdown?: boolean;
@@ -85,6 +87,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       variant = "primary",
       dropdownWrapperClassName,
       dropdownItemClassName,
+      width,
 
       // Top-of-list CustomSearch
       searchable = false,
@@ -325,9 +328,11 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
     // Compute automatic block spacing based on whether a secondary dropdown will render
     const hasSecondary = secondDropdown && (secondaryOptions.length > 0);
     const { style: incomingStyle, ...restDivProps } = restProps as { style?: React.CSSProperties } & Record<string, any>;
-    const containerStyle: React.CSSProperties | undefined = secondDropdown
-      ? { ...(incomingStyle || {}), marginBottom: hasSecondary ? "5rem" : "2rem" }
-      : incomingStyle;
+    const containerStyle: React.CSSProperties | undefined = {
+      ...(incomingStyle || {}),
+      ...(width && { width: typeof width === 'number' ? `${width}px` : width }),
+      ...(secondDropdown && { marginBottom: hasSecondary ? "5rem" : "2rem" })
+    };
 
     return (
       <div
