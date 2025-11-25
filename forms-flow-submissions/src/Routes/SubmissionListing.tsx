@@ -199,6 +199,17 @@ const handleFieldSearch = useCallback((filters: Record<string, string>) => {
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
 }, [dispatch]);
+
+// When user clears the searched input, clear the applied filters and refresh the table.
+useEffect(() => {
+  const isSearchCleared = (searchText || "").trim() === "";
+  if (isSearchCleared && filtersApplied) {
+    setFieldFilters({});
+    dispatch(clearSearchFieldValues());
+    dispatch(setAnalyzeSubmissionPage(1));
+    setFiltersApplied(false);
+  }
+}, [selectedSearchFieldKey, searchText, filtersApplied]);
 // Use the current submissionFields state for calculation
 const currentFields = useMemo(() => 
   selectedSubmissionFilter?.variables ?? submissionFields,
