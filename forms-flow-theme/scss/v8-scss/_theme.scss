@@ -222,7 +222,7 @@ $font-tokens: (
 
  --border-radius: 0.3125rem; //5px
  --navbar-width:3rem;
- --body-section-height: 80vh; //update dynamically for the pages.
+ --body-section-height: 100vh; //update dynamically for the pages.
 
 
 
@@ -306,6 +306,7 @@ $font-tokens: (
           display: flex;
           flex-direction: column;
           min-height: 0;
+          max-height: var(--body-section-height);
           
           &.formedit-layout,
           &.processedit-layout,
