@@ -174,11 +174,11 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     .modal-body {
       padding: 1.5rem;
       overflow-y: auto;
-      max-height: calc(#{$modal-height} - 120px);
+      height: calc(#{$modal-height} - 120px);
       margin: 0 1.5rem;
       border-top: 1px solid var(--gray-x-light);
       border-bottom: 1px solid var(--gray-x-light);
-      }
+    }
     
     .modal-footer {
       padding: 1rem 1.5rem;
