@@ -35,6 +35,7 @@ export interface ReusableStandardModalProps {
   secondaryBtnLoading?: boolean;
   secondoryBtndataTestid?: string;
   secondoryBtnariaLabel?: string;
+  allignButtons?: boolean;
 }
 
 const buildModalContent = (
@@ -113,6 +114,7 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
   secondaryBtnLoading,
   secondoryBtndataTestid,
   secondoryBtnariaLabel,
+  allignButtons,
 }) => {
   const { t } = useTranslation();
   const darkColor = StyleServices.getCSSVariable("--secondary-dark");
@@ -190,7 +192,7 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
       )}
 
       {(primaryBtnText || secondaryBtnText) && (
-        <Modal.Footer>
+        <Modal.Footer className={`mt-3 ${allignButtons ? "justify-content-between" : ""}`}>
           {secondaryBtnText && (
             <V8CustomButton
               label={t(secondaryBtnText)}
