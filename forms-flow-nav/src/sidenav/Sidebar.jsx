@@ -144,7 +144,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     return window.innerWidth <= 1200;
   };
 
-  const [persistentCollapsed, setPersistentCollapsed] = useState(getInitialCollapsedState);
+  const [persistentCollapsed, setPersistentCollapsed] = useState(getInitialCollapsedState());
   const [hoverToggled, setHoverToggled] = useState(false);
   const collapsed = persistentCollapsed !== hoverToggled;
   const sidebarRef = useRef(null);
@@ -171,6 +171,14 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       }, 120);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout.current) {
+        clearTimeout(hoverTimeout.current);
+      }
+    };
+  }, []);
 
   const getInitials = (name) => {
     if (!name) return "";
