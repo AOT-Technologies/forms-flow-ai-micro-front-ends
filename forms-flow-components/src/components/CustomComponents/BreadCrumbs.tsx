@@ -130,7 +130,9 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
           }}
           data-testid={`breadcrumb-item-${index}`}
           aria-label={`breadcrumb-${item.label}`}>
-          {item.label}
+          <span className="breadcrumb-item-label" title={item.label}>
+            {item.label}
+          </span>
         </Breadcrumb.Item>
       ))}
     </Breadcrumb>

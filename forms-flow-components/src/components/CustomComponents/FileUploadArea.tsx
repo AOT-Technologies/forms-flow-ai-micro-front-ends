@@ -201,7 +201,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
               color={uploadState.isError ? "error" : undefined}
             />
           </div>
-          <p className="upload-status" aria-live="polite">
+          <p className="upload-status" aria-live="polite" title={statusText}>
             {statusText}
           </p>
         </div>

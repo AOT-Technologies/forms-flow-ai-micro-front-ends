@@ -271,7 +271,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
       { field: 'type', headerName: 'Type', flex: 2.8, sortable: false,width: 140 },
       { field: 'variable', headerName: 'Variable', flex: 1.5, sortable: false, width: 250,
         renderCell: (params) => (
-          <span style={{ color: StyleServices.getCSSVariable('--ff-gray-dark') }}>{params.value}</span>
+          <span style={{ color: StyleServices.getCSSVariable('--ff-gray-darkest') }}>{params.value}</span>
         )
       },
       {
