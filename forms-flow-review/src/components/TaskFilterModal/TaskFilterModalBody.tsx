@@ -93,6 +93,7 @@ const TaskFilterModalBody = ({
   const SPECIFIC_ASSIGNEE = "specificAssignee";
   const CURRENT_USER = "currentUser";
   const [accessOption, setAccessOption] = useState(CURRENT_USER);
+  const [isTaskFilterSaving, setIsTaskFilterSaving] = useState(false);
 
 
   const changeAcessOption = (option: string) => {
@@ -486,17 +487,22 @@ const handleFetchTaskVariables = (formId) => {
   };
 
   /* -------------------- handling create or update filter -------------------- */
-  const handleSaveFilter = () => {
-    createFilter(getData())
-      .then((res) => {
-        const updatedFilterList = [...filterList, res.data];
-        dispatch(setBPMFilterList(updatedFilterList));
-        startSuccessCountdown(closeTaskFilterMainModal, 2);
-        dispatch(fetchBPMTaskCount(updatedFilterList));
-        dispatch(setDefaultFilter(res.data.id));
-        updateDefaultFilter(res.data.id);
-      })
-      .catch((error) => console.error("Error saving filter:", error));
+  const handleSaveFilter = async () => {
+    try {
+      setIsTaskFilterSaving(true);
+      const res = await createFilter(getData());
+      const updatedFilterList = [...filterList, res.data];
+      dispatch(setBPMFilterList(updatedFilterList));
+      startSuccessCountdown(closeTaskFilterMainModal, 2);
+      dispatch(fetchBPMTaskCount(updatedFilterList));
+      dispatch(setDefaultFilter(res.data.id));
+      updateDefaultFilter(res.data.id);
+    } catch (error) {
+      console.error("Error saving filter:", error);
+    } finally {
+      setIsTaskFilterSaving(false);
+      closeTaskFilterMainModal();
+    }
   };
 
   const handleFormSelection = (selectedFormObj) => {
@@ -505,14 +511,22 @@ const handleFetchTaskVariables = (formId) => {
     toggleFormSelectionModal();
   };
 
-  const handleUpdateModalClick = () => {
+  const handleUpdateModalClick = async () => {
     const isPrivate = filterToEdit?.users?.length!==0;
     const data = getData();
-    if(isPrivate){
-     handleFilterUpdate(isPrivate,data);
-    }else{
-      dispatch(setFilterToEdit(data));
-    toggleUpdateModal();
+    try {
+      setIsTaskFilterSaving(true);
+      if(isPrivate){
+        await handleFilterUpdate(isPrivate,data);
+      }else{
+        dispatch(setFilterToEdit(data));
+        toggleUpdateModal();
+      }
+    } catch (error) {
+      console.error("Error updating filter:", error);
+    } finally {
+      setIsTaskFilterSaving(false);
+      closeTaskFilterMainModal();
     }
   };
 
@@ -691,6 +705,18 @@ const handleFetchTaskVariables = (formId) => {
 
   const isLastStep = activeStep === stepKeys.length - 1;
 
+  const handleWizardPrimaryClick = () => {
+    if (isLastStep) {
+      if (filterToEdit?.id) {
+        handleUpdateModalClick();
+      } else {
+        handleSaveFilter();
+      }
+    } else {
+      goNext();
+    }
+  };
+
   useEffect(() => {
     if (updateSuccess?.showSuccess || deleteSuccess?.showSuccess) {
       onStepChange?.(stepKeys.length);
@@ -726,11 +752,7 @@ const handleFetchTaskVariables = (formId) => {
                 ? (t("Save and Apply"))
                 : t("Next")
             }
-            onClick={
-              isLastStep
-                ? (filterToEdit?.id ? handleUpdateModalClick : handleSaveFilter)
-                : goNext
-            }
+            onClick={handleWizardPrimaryClick}
             dataTestId="wizard-next"
             ariaLabel={
               isLastStep
@@ -739,9 +761,10 @@ const handleFetchTaskVariables = (formId) => {
             }
             disabled={
               isLastStep
-                ? saveFilterButtonDisabled
+                ? (saveFilterButtonDisabled || isTaskFilterSaving)
                 : false
             }
+            loading={isLastStep && isTaskFilterSaving}
           />
         </div>
       </Modal.Footer>
