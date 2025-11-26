@@ -64,7 +64,6 @@ const TaskFilterModalBody = ({
 
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=> i?.id === filterToEdit?.id);
-  console.log(selectedFilterExistingData,"selectedFilterExistingData")
   const [variableArray, setVariableArray] = useState(
     selectedFilterExistingData?.variables || defaultTaskVariable
   );
@@ -405,7 +404,6 @@ const handleFetchTaskVariables = (formId) => {
       const isEditingWithSameForm = filterToEdit?.id && filterToEdit?.properties?.formId === formId;
       // Always prefer latest saved filter state for existing variables (preserve isChecked)
       const sourceVars = (selectedFilterExistingData?.variables || filterToEdit?.variables || []);
- console.log(sourceVars,"sourceVars")
       let combinedVars;
       
       if (isEditingWithSameForm) {
