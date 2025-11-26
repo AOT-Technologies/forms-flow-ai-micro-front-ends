@@ -335,3 +335,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
 .MuiDataGrid-cell.MuiDataGrid-cellEmpty {
   display: none !important;
 }
+
+.MuiDataGrid-main {
+  overflow-x: scroll!important;
+}

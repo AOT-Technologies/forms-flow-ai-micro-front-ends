@@ -402,7 +402,8 @@ const handleFetchTaskVariables = (formId) => {
     .then((res) => {
       const taskVariables = res.data?.taskVariables || [];
       const isEditingWithSameForm = filterToEdit?.id && filterToEdit?.properties?.formId === formId;
-
+      // Always prefer latest saved filter state for existing variables (preserve isChecked)
+      const sourceVars = (selectedFilterExistingData?.variables || filterToEdit?.variables || []);
       let combinedVars;
       
       if (isEditingWithSameForm) {
@@ -412,12 +413,12 @@ const handleFetchTaskVariables = (formId) => {
           .map(taskVar => taskVar.key);
         
         // Filter out deleted form variables from existing filter
-        const existingFormVariables = (filterToEdit?.variables?.filter(v => v.isFormVariable) || [])
+        const existingFormVariables = (sourceVars?.filter(v => v.isFormVariable) || [])
           .filter(existingVar => currentTaskVariableKeys.includes(existingVar.key));
         
         // Get default variables with existing values preserved
         const defaultVars = defaultTaskVariable.map(defaultVar => {
-          const existingVar = findExistingVariable(filterToEdit?.variables || [], defaultVar);
+          const existingVar = findExistingVariable(sourceVars || [], defaultVar);
           return existingVar || defaultVar;
         });
         
@@ -443,7 +444,14 @@ const handleFetchTaskVariables = (formId) => {
         
         combinedVars = [...defaultVars, ...uniqueFormVariables];
       } else {
-        combinedVars = processNewFilterMode(taskVariables, defaultTaskVariable);
+        // Preserve default/system variables' saved state even when not the same form
+        const preservedDefaultVars = defaultTaskVariable.map(defaultVar => {
+          const existingVar = findExistingVariable(sourceVars || [], defaultVar);
+          return existingVar || defaultVar;
+        });
+
+        const dynamicVariables = transformToDynamicVariables(taskVariables, preservedDefaultVars);
+        combinedVars = [...preservedDefaultVars, ...dynamicVariables];
       }
 
       setVariableArray(combinedVars);
@@ -691,7 +699,7 @@ const handleFetchTaskVariables = (formId) => {
 
   return (
     <>
-      <Modal.Body className="overflow-hidden">
+      <Modal.Body >
         <div className="wizard-step-content">
           {wizardSteps[activeStep]?.content}
         </div>

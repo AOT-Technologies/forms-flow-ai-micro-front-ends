@@ -1,0 +1,41 @@
+// Import theme variables
+@use "mixins";
+
+// Select With Custom Value Variables
+$select-custom-value-max-height: 14.75rem;
+$select-custom-value-border-color: #E5E5E5;
+$select-custom-value-placeholder-color: #999;
+$select-custom-value-special-item-padding: 24px;
+
+// Select With Custom Value Component Styles
+// Target the dropdown options container specifically for SelectWithCustomValue
+.selectdropdown-container--custom-value {
+  .custom-dropdown-options {
+    max-height: $select-custom-value-max-height;
+
+    // Style for the first two special items (Enter custom value and Select additional variables)
+    .custom-dropdown-item-special {
+      padding-top: $select-custom-value-special-item-padding;
+      padding-bottom: $select-custom-value-special-item-padding;
+      border-bottom: 1px solid $select-custom-value-border-color;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-radius: 0;
+
+      // On hover: keep bottom border, remove top and side borders
+      &:hover {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-bottom: 1px solid $select-custom-value-border-color;
+      }
+    }
+  }
+
+  // Placeholder text styling
+  .dropdown-text-placeholder {
+    color: $select-custom-value-placeholder-color;
+  }
+}
+

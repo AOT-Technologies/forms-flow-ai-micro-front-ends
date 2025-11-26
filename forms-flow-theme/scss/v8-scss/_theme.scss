@@ -171,6 +171,7 @@ $font-tokens: (
 
     --progress-bar-bg-color : var(--primary-dark);
     --main-bg: var(--white-300);
+    --pill-bg-color: var(--gray-x-light);
 
 
 /*══════════════════ ⬥ FONT UTILITIES | VERSION 8 ⬥ ══════════════════*/
@@ -221,7 +222,7 @@ $font-tokens: (
 
  --border-radius: 0.3125rem; //5px
  --navbar-width:3rem;
- --body-section-height: 80vh; //update dynamically for the pages.
+ --body-section-height: 100vh; //update dynamically for the pages.
 
 
 
@@ -305,6 +306,7 @@ $font-tokens: (
           display: flex;
           flex-direction: column;
           min-height: 0;
+          max-height: var(--body-section-height);
           
           &.formedit-layout,
           &.processedit-layout,
@@ -347,13 +349,13 @@ $font-tokens: (
 //custom-height for the selected dropdowns
 .task-list-page, .analyze-submissions-page{
   .filter-dropdown-items{
-    max-height: 50vh;
+    max-height: 50vh !important;
   }
 }
 
 .analyze-submissions-page{
   .custom-dropdown-options{
-    max-height: 50vh;
+    max-height: 50vh !important;
   }
   // Make header sticky and only the content area scrollable in submissions field picker
   .filter-dropdown-actions.sticky-actions{
@@ -368,5 +370,13 @@ $font-tokens: (
   .filter-dropdown-scroll{
     max-height: 50vh;
     overflow-y: auto;
+  }
+}
+.system-variables-container{
+  .custom-switch-wrapper{
+    padding-right: 0.775rem !important;
+  }
+  .last-column{
+    padding-right: 1.4rem !important;
   }
 }

@@ -136,7 +136,7 @@ const TaskListDropdownItems = memo(() => {
       })
       .map((filter) => {
         const filterDetails = filterList.find((item) => item.id === filter.id);
-        let icon = null;
+
         let category: "my" | "shared" = "my";
 
         if (filterDetails) {
@@ -148,6 +148,7 @@ const TaskListDropdownItems = memo(() => {
           const isSharedToMe = filterDetails?.roles?.some((role) =>
             userDetails?.groups?.includes(role)
           );
+          const isSystemFilter = filterDetails?.createdBy === "system";
 
            if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
             category = "my";
@@ -160,7 +161,7 @@ const TaskListDropdownItems = memo(() => {
               filter.id === selectedFilter?.id ? "selected-filter-item" : "",
             content: (
               <span className="d-flex justify-content-between align-items-center">
-                {t(filter.name)} ({filter.count}) {icon && <span>{icon}</span>}
+                {t(filter.name)} ({filter.count}) 
               </span>
             ),
             type: String(filter.id),
@@ -172,7 +173,8 @@ const TaskListDropdownItems = memo(() => {
               filterName: t(filter.name),
             }),
             category,
-            onEdit: () => handleEditFilterFromItem(filter),
+            // Only allow editing if it's not a system filter
+            ...(isSystemFilter ? {} : { onEdit: () => handleEditFilterFromItem(filter) }),
           };
         }
       }).filter(Boolean) as FilterItemType[];

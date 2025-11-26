@@ -50,6 +50,9 @@ $text-line-height: 120%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .file-upload-progress {
@@ -58,6 +61,8 @@ $text-line-height: 120%;
 
 .upload-progress-bar {
   margin-top: 1.375rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 
@@ -151,7 +156,13 @@ $text-line-height: 120%;
   margin-top: 0.625rem;
   margin-bottom: 0rem;
   text-align: center;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
   @include mixins.font-style($font-size-12, $font-weight-medium, $gray-medium-dark);
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .file-upload-action-btn{
   margin-top: 0.688rem;
@@ -214,6 +225,7 @@ $text-line-height: 120%;
     align-items: center;
     align-self: stretch;
     border-bottom: 1px solid $gray-medium;
+    min-width: 0;
 
     .import-layout-text,
     .import-workflow-text {

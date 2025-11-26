@@ -30,6 +30,7 @@ $color-medium-gray: var(--gray-x-light);
 $color-dark-gray: var(--gray-darkest);
 $color-darker-gray: var(--secondary-dark);
 $color-disabled-gray: var(--gray-medium);
+$color-placeholder-gray: var(--gray-dark);
 
 $color-primary: var(--vivid-100);
 $color-primary-light: var(--primary-dark);
@@ -79,12 +80,18 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   position: relative;
   display: inline-block;
   width: $dropdown-width;
+  min-width: $dropdown-width; // Ensure minimum width
   height: $dropdown-height;
   flex-shrink: 0;
   color: $color-dark-gray;
   font-size: $dropdown-font-size;
   font-weight: $dropdown-font-weight;
   line-height: $dropdown-line-height;
+
+  // Allow custom width to override default
+  &[style*="width"] {
+    min-width: unset;
+  }
 }
 
 .custom-selectdropdown {
@@ -183,6 +190,11 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+  }
+
+  // Placeholder text styling
+  .dropdown-text-placeholder {
+    color: $color-placeholder-gray;
   }
 
   // Input field styling for search dropdown mode
