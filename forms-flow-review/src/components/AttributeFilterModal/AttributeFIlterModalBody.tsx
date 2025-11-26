@@ -42,6 +42,7 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
   const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
   const [filterNameError, setFilterNameError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
     const attributeFilter = useSelector(
     (state: any) => state.task.attributeFilterToEdit
   );
@@ -575,7 +576,8 @@ const removeSlashFromValue = (value) => {
     }
     const noFieldChanged =  isUnsavedFilter ? false :  isEqual(selectedAttributeFilter, createAttributeFilterPayload());
     const saveFilterAttributes = async () => {
-  try {
+    try {
+    setIsSaving(true);
     const filterToSave = createAttributeFilterPayload();
     
     // Check if we're editing an existing filter (PUT) or creating a new one (POST)
@@ -595,6 +597,7 @@ const removeSlashFromValue = (value) => {
   } catch (error) {
     console.error("Failed to save filter attributes:", error);
   } finally {
+    setIsSaving(false);
     onClose();
   }
 };
@@ -693,7 +696,8 @@ const removeSlashFromValue = (value) => {
                 onClick={saveFilterAttributes}
                 dataTestId="save-attribute-filter"
                 ariaLabel={t("Save Attribute Filter")}
-                disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
+                disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName || isSaving}
+                loading={isSaving}
               />
             )}
           </div>
