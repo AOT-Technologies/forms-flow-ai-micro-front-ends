@@ -2,6 +2,20 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.0.0 - 2-25-11-28
+
+`Modified`
+
+**forms-flow-admin**
+
+* Role-based permissions have been simplified to high-level access only, with no separate sub-level permissions for individual categories
+
+**forms-flow-components**
+* Modified custom components
+
+`Geneic Changes`
+* UI design modified for forms-flow-review and forms-flow-submissions modules
+
 ## 7.3.0 - 2025-10-14
 
 `Added`
