@@ -54,6 +54,8 @@ export interface SelectDropdownProps
   searchable?: boolean;
   /** Placeholder for the CustomSearch input */
   customSearchPlaceholder?: string;
+  /** Placeholder text for the dropdown button */
+  placeholder?: string;
   /** Custom width for the dropdown (e.g., '300px', '20rem', '100%') */
   width?: string | number;
 
@@ -92,6 +94,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       // Top-of-list CustomSearch
       searchable = false,
       customSearchPlaceholder = "Search all forms",
+      placeholder,
 
       // Secondary dropdown support
       secondDropdown = false,
@@ -222,7 +225,8 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       variantType: DropdownVariant,
       defaultVal?: string | number,
       wrapperClass?: string,
-      itemClass?: string
+      itemClass?: string,
+      placeholderText?: string
     ) => (
       <div className={buildClassNames("dropdown-wrapper", wrapperClass)}>
         <button
@@ -260,6 +264,10 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                     <span>{defaultMatch.label}</span>
                   </span>
                 );
+              }
+              // Show placeholder if no value is selected
+              if (!selValue && !defaultVal && placeholderText) {
+                return <span className="dropdown-text-placeholder">{placeholderText}</span>;
               }
               return defaultVal ?? "";
             })()}
@@ -356,7 +364,8 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           variant,
           defaultValue,
           dropdownWrapperClassName,
-          dropdownItemClassName
+          dropdownItemClassName,
+          placeholder
         )}
 
         {/* --- SECONDARY DROPDOWN (Indented) --- */}
