@@ -699,7 +699,7 @@ const handleFetchTaskVariables = (formId) => {
 
   return (
     <>
-      <Modal.Body className="overflow-hidden">
+      <Modal.Body >
         <div className="wizard-step-content">
           {wizardSteps[activeStep]?.content}
         </div>
