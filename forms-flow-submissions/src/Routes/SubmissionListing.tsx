@@ -873,6 +873,7 @@ const fetchSubmissions = useCallback(async () => {
   ]);
   return (
    <>
+      <div className="analyze-submissions-page">
       <div className="Toastify"></div>
       <div className="toast-section">{}</div>
       <div className="header-section-1">
@@ -1003,6 +1004,7 @@ const fetchSubmissions = useCallback(async () => {
               autoHeight={true}
             />
         </div>
+       </div>
        </div>
       {isManageFieldsModalOpen && <ManageFieldsSortModal
         show={isManageFieldsModalOpen}
