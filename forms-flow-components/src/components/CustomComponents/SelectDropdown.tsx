@@ -1,4 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  forwardRef,
+  memo,
+} from "react";
+import { createPortal } from "react-dom";
 import { DownArrowIcon, UpArrowIcon, VerticalLineIcon } from "../SvgIcons";
 import { ListGroup } from "react-bootstrap";
 import { CustomSearch } from "./Search";
@@ -65,6 +74,12 @@ export interface SelectDropdownProps
   onSecondChange?: (value: string | number) => void;
 }
 
+type DropdownPosition = {
+  top: number;
+  left: number;
+  width: number;
+};
+
 /** Utility: build className string */
 const buildClassNames = (
   ...classes: (string | false | null | undefined)[]
@@ -117,6 +132,13 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
     >(secondValue || secondDefaultValue);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const primaryWrapperRef = useRef<HTMLDivElement>(null);
+    const secondaryWrapperRef = useRef<HTMLDivElement>(null);
+    const primaryMenuRef = useRef<HTMLDivElement | null>(null);
+    const secondaryMenuRef = useRef<HTMLDivElement | null>(null);
+    const [primaryPosition, setPrimaryPosition] = useState<DropdownPosition | null>(null);
+    const [secondaryPosition, setSecondaryPosition] = useState<DropdownPosition | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
 
     // Update values if props change
     useEffect(() => {
@@ -127,12 +149,60 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       setSecondSelectedValue(secondValue || secondDefaultValue);
     }, [secondValue, secondDefaultValue]);
 
+    useEffect(() => {
+      setIsMounted(typeof document !== "undefined");
+    }, []);
+
+    const updatePosition = useCallback(
+      (
+        wrapper: React.RefObject<HTMLDivElement>,
+        setter: React.Dispatch<React.SetStateAction<DropdownPosition | null>>
+      ) => {
+        if (!wrapper.current) return;
+        const rect = wrapper.current.getBoundingClientRect();
+        setter({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+        });
+      },
+      []
+    );
+
+    useEffect(() => {
+      if (!isOpen) return;
+      const handleUpdate = () => updatePosition(primaryWrapperRef, setPrimaryPosition);
+      handleUpdate();
+      window.addEventListener("scroll", handleUpdate, true);
+      window.addEventListener("resize", handleUpdate);
+      return () => {
+        window.removeEventListener("scroll", handleUpdate, true);
+        window.removeEventListener("resize", handleUpdate);
+      };
+    }, [isOpen, updatePosition]);
+
+    useEffect(() => {
+      if (!secondIsOpen) return;
+      const handleUpdate = () => updatePosition(secondaryWrapperRef, setSecondaryPosition);
+      handleUpdate();
+      window.addEventListener("scroll", handleUpdate, true);
+      window.addEventListener("resize", handleUpdate);
+      return () => {
+        window.removeEventListener("scroll", handleUpdate, true);
+        window.removeEventListener("resize", handleUpdate);
+      };
+    }, [secondIsOpen, updatePosition]);
+
     // Handle click outside
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent): void => {
         if (
           dropdownRef.current &&
-          !dropdownRef.current.contains(event.target as Node)
+          !dropdownRef.current.contains(event.target as Node) &&
+          (!primaryMenuRef.current ||
+            !primaryMenuRef.current.contains(event.target as Node)) &&
+          (!secondaryMenuRef.current ||
+            !secondaryMenuRef.current.contains(event.target as Node))
         ) {
           setIsOpen(false);
           setSecondIsOpen(false);
@@ -222,9 +292,81 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       variantType: DropdownVariant,
       defaultVal?: string | number,
       wrapperClass?: string,
-      itemClass?: string
-    ) => (
-      <div className={buildClassNames("dropdown-wrapper", wrapperClass)}>
+      itemClass?: string,
+      wrapperRef?: React.RefObject<HTMLDivElement>,
+      menuRef?: React.MutableRefObject<HTMLDivElement | null>,
+      position?: DropdownPosition | null
+    ) => {
+      const shouldPortal =
+        isMounted && position && typeof document !== "undefined";
+      const dropdownContent = (
+        <div
+          ref={(node) => {
+            if (menuRef) {
+              menuRef.current = node;
+            }
+          }}
+          className={buildClassNames(
+            "custom-dropdown-options",
+            `custom-dropdown-options--${variantType}`
+          )}
+          style={
+            shouldPortal && position
+              ? {
+                  position: "absolute",
+                  top: position.top,
+                  left: position.left,
+                  width: position.width,
+                  zIndex: 2000,
+                }
+              : undefined
+          }
+        >
+          {searchable && (
+            <div className="custom-dropdown-search">
+              <CustomSearch
+                search={searchTerm}
+                setSearch={setSearchTerm}
+                handleSearch={() => {}}
+                placeholder={customSearchPlaceholder}
+                dataTestId={`${dataTestId}-dropdown-search`}
+              />
+            </div>
+          )}
+          {opts.length > 0 ? (
+            opts.map((option) => (
+              <ListGroup.Item
+                key={option.value}
+                className={buildClassNames(
+                  "custom-dropdown-item",
+                  itemClass,
+                  option.value === selValue && "selected"
+                )}
+                onClick={() => selectFn(option.value)}
+                aria-selected={option.value === selValue}
+                data-testid={`${dataTestId}-${option.value}`}
+              >
+                <span className="dropdown-option-content">
+                  {option.icon && (
+                    <span className="dropdown-icon">{option.icon}</span>
+                  )}
+                  <span className="text-break">{option.label}</span>
+                </span>
+              </ListGroup.Item>
+            ))
+          ) : (
+            <ListGroup.Item className="custom-dropdown-item no-results">
+              No Matching Results
+            </ListGroup.Item>
+          )}
+        </div>
+      );
+
+      return (
+        <div
+          ref={wrapperRef}
+          className={buildClassNames("dropdown-wrapper", wrapperClass)}
+        >
         <button
           type="button"
           className={buildClassNames(
@@ -266,54 +408,14 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           </span>
           {renderArrowIcon(isOpenState)}
         </button>
-        {isOpenState && !disabled && (
-          <div
-            className={buildClassNames(
-              "custom-dropdown-options",
-              `custom-dropdown-options--${variantType}`
-            )}
-          >
-            {searchable && (
-              <div className="custom-dropdown-search">
-                <CustomSearch
-                  search={searchTerm}
-                  setSearch={setSearchTerm}
-                  handleSearch={() => {}}
-                  placeholder={customSearchPlaceholder}
-                  dataTestId={`${dataTestId}-dropdown-search`}
-                />
-              </div>
-            )}
-            {opts.length > 0 ? (
-              opts.map((option) => (
-                <ListGroup.Item
-                  key={option.value}
-                  className={buildClassNames(
-                    "custom-dropdown-item",
-                    itemClass,
-                    option.value === selValue && "selected"
-                  )}
-                  onClick={() => selectFn(option.value)}
-                  aria-selected={option.value === selValue}
-                  data-testid={`${dataTestId}-${option.value}`}
-                >
-                  <span className="dropdown-option-content">
-                    {option.icon && (
-                      <span className="dropdown-icon">{option.icon}</span>
-                    )}
-                    <span className="text-break">{option.label}</span>
-                  </span>
-                </ListGroup.Item>
-              ))
-            ) : (
-              <ListGroup.Item className="custom-dropdown-item no-results">
-                No Matching Results
-              </ListGroup.Item>
-            )}
-          </div>
-        )}
+        {isOpenState &&
+          !disabled &&
+          (shouldPortal
+            ? createPortal(dropdownContent, document.body)
+            : dropdownContent)}
       </div>
-    );
+      );
+    };
 
     const containerClassName = useMemo(
       () =>
@@ -356,7 +458,10 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           variant,
           defaultValue,
           dropdownWrapperClassName,
-          dropdownItemClassName
+          dropdownItemClassName,
+          primaryWrapperRef,
+          primaryMenuRef,
+          primaryPosition
         )}
 
         {/* --- SECONDARY DROPDOWN (Indented) --- */}
@@ -376,7 +481,10 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                 "secondary",
                 secondDefaultValue,
                 dropdownWrapperClassName,
-                dropdownItemClassName
+                dropdownItemClassName,
+                secondaryWrapperRef,
+                secondaryMenuRef,
+                secondaryPosition
               )}
             </div>
           </div>

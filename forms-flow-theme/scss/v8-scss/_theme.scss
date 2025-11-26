@@ -317,6 +317,7 @@ $font-tokens: (
             box-sizing: border-box;
             max-height: calc(100vh - 200px);
             width: 1088px;
+            padding-bottom: 120px;
           }
           
           &.task-list-body-section {

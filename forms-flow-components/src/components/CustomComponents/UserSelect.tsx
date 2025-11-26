@@ -84,10 +84,18 @@ export const UserSelect: React.FC<UserSelectProps> = ({
 
   const showDropdown = showAsText && (isHovered || isFocused || isClicked);
 
+  const isPortalMenuTarget = useCallback((target: EventTarget | null) => {
+    return target instanceof HTMLElement && !!target.closest(".custom-dropdown-options");
+  }, []);
+
   // Handle click outside to close dropdown
   useEffect(() => {
     if (!(isFocused || isClicked || isHovered)) return;
     const handleClickOutside = (event: MouseEvent): void => {
+      const target = event.target as HTMLElement | null;
+      if (isPortalMenuTarget(target)) {
+        return;
+      }
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
@@ -99,7 +107,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isFocused, isClicked, isHovered]);
+  }, [isFocused, isClicked, isHovered, isPortalMenuTarget]);
 
   // Select and focus input utility
   const selectAndFocusInput = useCallback(() => {
@@ -154,7 +162,10 @@ export const UserSelect: React.FC<UserSelectProps> = ({
         ref={containerRef}
         className={`user-select-text${className ? ` ${className}` : ""}`}
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseLeave={(event) => {
+          if (isPortalMenuTarget(event.relatedTarget)) return;
+          setIsHovered(false);
+        }}
         onFocus={e => {
           setIsFocused(true);
           // Ensure focus is visible when tabbing
@@ -163,6 +174,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
           }
         }}
         onBlur={e => {
+          if (isPortalMenuTarget(e.relatedTarget)) return;
           setIsFocused(false);
           e.currentTarget.style.outline = "none";
         }}
@@ -191,12 +203,18 @@ export const UserSelect: React.FC<UserSelectProps> = ({
     <div
       ref={containerRef}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={(event) => {
+        if (isPortalMenuTarget(event.relatedTarget)) return;
+        setIsHovered(false);
+      }}
       onFocus={() => {
         setIsFocused(true);
         handleDropdownOpen();
       }}
-      onBlur={() => setIsFocused(false)}
+      onBlur={(event) => {
+        if (isPortalMenuTarget(event.relatedTarget)) return;
+        setIsFocused(false);
+      }}
       className="userSelect-container"
     >
       <SelectDropdown
