@@ -7,7 +7,9 @@ $font-size-xl: var(--font-size-xl);
 .form-edit-settings {
     // @include vertical-padding(); // alreafy body-section had padding of same 
     overflow: auto;
-
+    .form-check-label{
+      margin-top: 0.313rem;
+    }
   
     .grid-section {
       @include grid-layout();

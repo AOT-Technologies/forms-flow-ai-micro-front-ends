@@ -104,6 +104,7 @@ $font-weight-base: var(--font-weight-regular);
   .breadcrumb-item {
     @include breadcrumb-link;
     padding: 0;
+    min-width: 0;
 
     // Active/current item
     &.active {
@@ -113,6 +114,16 @@ $font-weight-base: var(--font-weight-regular);
     // Divider between items
     &+.breadcrumb-item::before {
       @include breadcrumb-divider;
+    }
+
+    // Label: single-line with ellipsis
+    .breadcrumb-item-label {
+      display: inline-block;
+      max-width: 450px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: bottom;
     }
   }
 }

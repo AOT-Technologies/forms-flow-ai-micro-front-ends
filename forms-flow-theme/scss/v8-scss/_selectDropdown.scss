@@ -79,12 +79,18 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   position: relative;
   display: inline-block;
   width: $dropdown-width;
+  min-width: $dropdown-width; // Ensure minimum width
   height: $dropdown-height;
   flex-shrink: 0;
   color: $color-dark-gray;
   font-size: $dropdown-font-size;
   font-weight: $dropdown-font-weight;
   line-height: $dropdown-line-height;
+
+  // Allow custom width to override default
+  &[style*="width"] {
+    min-width: unset;
+  }
 }
 
 .custom-selectdropdown {
