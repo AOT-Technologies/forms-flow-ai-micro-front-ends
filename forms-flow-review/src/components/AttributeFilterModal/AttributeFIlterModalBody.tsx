@@ -14,6 +14,7 @@ import {
   getUserRoles,
 } from "../../api/services/filterServices";
 import isEqual from "lodash/isEqual";
+import { HelperServices } from "@formsflow/service";
 
 import { setAttributeFilterList, setAttributeFilterToEdit, setBPMTaskListActivePage, setBPMTaskLoader, setIsUnsavedAttributeFilter, setSelectedBpmAttributeFilter, setUserGroups } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED, PRIVATE_ONLY_YOU } from "../../constants"; 
@@ -125,14 +126,36 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
     return `${day}-${month}-${year}`;
   };
 
+  // Reusable formatter for existing process variables (day and datetime)
+  const formatExistingVariableForUI = (item) => {
+    const taskVariable = taskVariables.find(
+      (tv) => tv.name === item.name && tv.isFormVariable === item.isFormVariable
+    );
+    const effectiveType = taskVariable?.type || item?.type;
+    const uniqueKey = taskVariable
+      ? getUniqueFieldKey(taskVariable)
+      : (item?.isFormVariable ? `${item?.name}_form` : item?.name);
+
+    if (effectiveType === "day") {
+      return { key: uniqueKey, value: normalizeDayValue(item.value) };
+    }
+    if (effectiveType === "datetime") {
+      const cleaned = (item.value || "").replace(/^%|%$/g, "");
+      const formatted = HelperServices.getLocalDateAndTime(cleaned) || "";
+      return { key: uniqueKey, value: formatted };
+    }
+    return null;
+  };
+
   // Helper function to process existing process variables
   const processExistingProcessVariables = (existingValues) => {
     exisitngProcessvariables.forEach((item) => {
-      if (item?.type === "day") {
-        const resetValue = normalizeDayValue(item.value);
-        existingValues[getUniqueFieldKey(item)] = resetValue;
+      const formatted = formatExistingVariableForUI(item);
+      if (formatted) {
+        existingValues[formatted.key] = formatted.value;
         return;
       }
+
       // Skip roles from processVariables - it should come from candidateGroup in initialData
       if (item.name === "roles" && !item.isFormVariable) {
         return;
@@ -287,11 +310,11 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
       
       // Process process variables from attributeFilter
       attributeFilterProcessVars.forEach((item) => {
-        if (item.type === "day") {
-          const resetValue = normalizeDayValue(item.value);
-          existingValues[getUniqueFieldKey(item)] = resetValue;
+        const formatted = formatExistingVariableForUI(item);
+        if (formatted) {
+          existingValues[formatted.key] = formatted.value;
           return;
-      }
+        }
         // Skip roles from processVariables - it should come from candidateGroup in initialData
         if (item.name === "roles" && !item.isFormVariable) {
           return;
