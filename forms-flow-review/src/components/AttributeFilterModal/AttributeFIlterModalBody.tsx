@@ -126,27 +126,36 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
     return `${day}-${month}-${year}`;
   };
 
+  // Reusable formatter for existing process variables (day and datetime)
+  const formatExistingVariableForUI = (item) => {
+    const taskVariable = taskVariables.find(
+      (tv) => tv.name === item.name && tv.isFormVariable === item.isFormVariable
+    );
+    const effectiveType = taskVariable?.type || item?.type;
+    const uniqueKey = taskVariable
+      ? getUniqueFieldKey(taskVariable)
+      : (item?.isFormVariable ? `${item?.name}_form` : item?.name);
+
+    if (effectiveType === "day") {
+      return { key: uniqueKey, value: normalizeDayValue(item.value) };
+    }
+    if (effectiveType === "datetime") {
+      const cleaned = (item.value || "").replace(/^%|%$/g, "");
+      const formatted = HelperServices.getLocalDateAndTime(cleaned) || "";
+      return { key: uniqueKey, value: formatted };
+    }
+    return null;
+  };
+
   // Helper function to process existing process variables
   const processExistingProcessVariables = (existingValues) => {
     exisitngProcessvariables.forEach((item) => {
-      const taskVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable === item.isFormVariable);
-      const effectiveType = taskVariable?.type || item?.type;
-      const uniqueKey = taskVariable
-        ? getUniqueFieldKey(taskVariable)
-        : (item?.isFormVariable ? `${item?.name}_form` : item?.name);
-
-      if (effectiveType === "day") {
-        const resetValue = normalizeDayValue(item.value);
-        existingValues[uniqueKey] = resetValue;
+      const formatted = formatExistingVariableForUI(item);
+      if (formatted) {
+        existingValues[formatted.key] = formatted.value;
         return;
       }
 
-      if (effectiveType === "datetime") {
-        const cleaned = (item.value || "").replace(/^%|%$/g, "");
-        const formatted = HelperServices.getLocalDateAndTime(cleaned) || "";
-        existingValues[uniqueKey] = formatted;
-        return;
-      }
       // Skip roles from processVariables - it should come from candidateGroup in initialData
       if (item.name === "roles" && !item.isFormVariable) {
         return;
@@ -301,21 +310,9 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
       
       // Process process variables from attributeFilter
       attributeFilterProcessVars.forEach((item) => {
-        const taskVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable === item.isFormVariable);
-        const effectiveType = taskVariable?.type || item?.type;
-        const uniqueKey = taskVariable
-          ? getUniqueFieldKey(taskVariable)
-          : (item?.isFormVariable ? `${item?.name}_form` : item?.name);
-
-        if (effectiveType === "day") {
-          const resetValue = normalizeDayValue(item.value);
-          existingValues[uniqueKey] = resetValue;
-          return;
-        }
-        if (effectiveType === "datetime") {
-          const cleaned = (item.value || "").replace(/^%|%$/g, "");
-          const formatted = HelperServices.getLocalDateAndTime(cleaned) || "";
-          existingValues[uniqueKey] = formatted;
+        const formatted = formatExistingVariableForUI(item);
+        if (formatted) {
+          existingValues[formatted.key] = formatted.value;
           return;
         }
         // Skip roles from processVariables - it should come from candidateGroup in initialData
