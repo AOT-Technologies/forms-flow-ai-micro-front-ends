@@ -63,6 +63,8 @@ export interface SelectDropdownProps
   searchable?: boolean;
   /** Placeholder for the CustomSearch input */
   customSearchPlaceholder?: string;
+  /** Placeholder text for the dropdown button */
+  placeholder?: string;
   /** Custom width for the dropdown (e.g., '300px', '20rem', '100%') */
   width?: string | number;
 
@@ -107,6 +109,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       // Top-of-list CustomSearch
       searchable = false,
       customSearchPlaceholder = "Search all forms",
+      placeholder,
 
       // Secondary dropdown support
       secondDropdown = false,
@@ -295,7 +298,8 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       itemClass?: string,
       wrapperRef?: React.RefObject<HTMLDivElement>,
       menuRef?: React.MutableRefObject<HTMLDivElement | null>,
-      position?: DropdownPosition | null
+      position?: DropdownPosition | null,
+      placeholderText?: string
     ) => {
       const shouldPortal =
         isMounted && position && typeof document !== "undefined";
@@ -403,6 +407,10 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   </span>
                 );
               }
+              // Show placeholder if no value is selected
+              if (!selValue && !defaultVal && placeholderText) {
+                return <span className="dropdown-text-placeholder">{placeholderText}</span>;
+              }
               return defaultVal ?? "";
             })()}
           </span>
@@ -461,7 +469,8 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           dropdownItemClassName,
           primaryWrapperRef,
           primaryMenuRef,
-          primaryPosition
+          primaryPosition,
+          placeholder
         )}
 
         {/* --- SECONDARY DROPDOWN (Indented) --- */}
@@ -484,7 +493,8 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                 dropdownItemClassName,
                 secondaryWrapperRef,
                 secondaryMenuRef,
-                secondaryPosition
+                secondaryPosition,
+                undefined
               )}
             </div>
           </div>

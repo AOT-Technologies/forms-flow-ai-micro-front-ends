@@ -118,7 +118,6 @@ $font-weight-base: var(--font-weight-regular);
 
     // Label: single-line with ellipsis
     .breadcrumb-item-label {
-      display: inline-block;
       max-width: 450px;
       overflow: hidden;
       text-overflow: ellipsis;

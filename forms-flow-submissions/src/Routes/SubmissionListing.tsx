@@ -199,6 +199,17 @@ const handleFieldSearch = useCallback((filters: Record<string, string>) => {
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
 }, [dispatch]);
+
+// When user clears the searched input, clear the applied filters and refresh the table.
+useEffect(() => {
+  const isSearchCleared = (searchText || "").trim() === "";
+  if (isSearchCleared && filtersApplied) {
+    setFieldFilters({});
+    dispatch(clearSearchFieldValues());
+    dispatch(setAnalyzeSubmissionPage(1));
+    setFiltersApplied(false);
+  }
+}, [selectedSearchFieldKey, searchText, filtersApplied]);
 // Use the current submissionFields state for calculation
 const currentFields = useMemo(() => 
   selectedSubmissionFilter?.variables ?? submissionFields,
@@ -284,6 +295,18 @@ useEffect(() => {
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
+
+// Keep search field and value with persisted values
+useEffect(() => {
+  if (searchFieldValues && Object.keys(searchFieldValues).length > 0) {
+    const keys = Object.keys(searchFieldValues);
+    const firstKey = keys.find((k) => (searchFieldValues as any)[k]) || keys[0];
+    if (firstKey) {
+      setSelectedSearchFieldKey(firstKey);
+      setSearchText(String((searchFieldValues as any)[firstKey] ?? ""));
+    }
+  }
+}, [searchFieldValues]);
 
   // Column width helper function
   const getColumnWidth = useCallback((key: string): number => {
@@ -850,6 +873,7 @@ const fetchSubmissions = useCallback(async () => {
   ]);
   return (
    <>
+      <div className="analyze-submissions-page">
       <div className="Toastify"></div>
       <div className="toast-section">{}</div>
       <div className="header-section-1">
@@ -980,6 +1004,7 @@ const fetchSubmissions = useCallback(async () => {
               autoHeight={true}
             />
         </div>
+       </div>
        </div>
       {isManageFieldsModalOpen && <ManageFieldsSortModal
         show={isManageFieldsModalOpen}

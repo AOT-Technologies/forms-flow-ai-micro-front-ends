@@ -46,6 +46,7 @@ interface FileUploadPanelProps {
   headerText: string;
   processVersion: ProcessVersion | null;
   CustomProgressBarProps?: CustomProgressBarProps | null;
+  cancelUpload: () => void;
 }
 
 const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
@@ -56,6 +57,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
     fileItems,
     fileType,
     primaryButtonText,
+    cancelUpload,
   }) => {
     const { t } = useTranslation();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -74,6 +76,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
     const resetState = () => {
       setSelectedFile(null);
       setUploadProgress(0);
+      cancelUpload();
     };
 
     const onImport = () => {
@@ -103,13 +106,13 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
       if (selectedFile) {
         handleRetry();
         let start: number | null = null;
-        const duration = 2000;
-        const maxProgress = importError ? 50 : 100;
+        const duration = importError ? 0 : 2000;
+        const maxProgress = 100;
 
         const animateProgress = (timestamp: number) => {
           if (!isMounted) return;
           if (!start) start = timestamp;
-          const progress = Math.min(
+          const progress =importError ? 100 : Math.min(
             ((timestamp - start) / duration) * maxProgress,
             maxProgress
           );
