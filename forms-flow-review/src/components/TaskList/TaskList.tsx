@@ -199,6 +199,7 @@ const TaskList = () => {
       dispatch(setSelectedFilter(baseFilter));
       dispatch(setSelectedBpmAttributeFilter(null as any));
       dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
+      dispatch(setIsAssigned(false));
       // Reset pagination defaults
       dispatch(setBPMTaskListActivePage(1));
       dispatch(setTaskListLimit(10));
