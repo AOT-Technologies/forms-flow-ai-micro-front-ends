@@ -130,7 +130,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
   const USER_ROUTE = isUserManager ? "admin/users" : null;
   // const LINK_ROUTE = isLinkManager ? "admin/links" : null;
-  const METRICS_ROUTE = isAnalyzeMetricsView ? "metrics" : null;
+  //const METRICS_ROUTE = isAnalyzeMetricsView ? "metrics" : null;
   const SUBMISSION_ROUTE = isAnalyzeSubmissionView ? "submissions" : null;
   const VIEW_DASHBOARD_ROUTE = isViewDashboard ? "dashboards" : null;
 
@@ -285,7 +285,8 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     },
     ANALYZE: {
       value: "analyze",
-      supportedRoutes: ["metrics", "dashboards", "submissions"],
+      // supportedRoutes: ["metrics", "dashboards", "submissions"],
+      supportedRoutes: [ "dashboards","submissions"],
     },  
     MANAGE: {
       value: "manage",
@@ -359,12 +360,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const manageAnalyseOptions = () => {
     const options = [];
     
-    if (isAnalyzeMetricsView) {
-      options.push({
-        name: "Metrics",
-        path: METRICS_ROUTE,
-      });
-    }
+    // if (isAnalyzeMetricsView) {
+    //   options.push({
+    //     name: "Metrics",
+    //     path: METRICS_ROUTE,
+    //   });
+    // }
     if (isViewDashboard) {
       options.push({
         name: "Dashboards",
