@@ -72,7 +72,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           <SelectDropdown
             options={selectLanguages.map((lang) => ({
               label: lang.value,
-              value: lang.value,
+              value: lang.name,
             }))}
             defaultValue={selectedLangLabel}
             dataTestId="settings-language-dropdown"
