@@ -227,19 +227,30 @@ const TaskListTable = () => {
     );
 
     if (dateTimeField) {
-      const value = matchingVar.value
-        ? HelperServices.getLocalDateAndTime(matchingVar.value)
+      const value = matchingVar?.value
+        ? HelperServices.getLocalDateAndTime(matchingVar?.value)
         : "-";
       return <div className="text-overflow-ellipsis">{value}</div>;
     }
     if (selectBoxes) {
-      const obj = JSON.parse(matchingVar.value);
-      const trueKeys = Object.keys(obj).filter((key) => obj[key]);
-      const value = trueKeys.length ? trueKeys.join(", ") : "-";
-      return <div className="text-overflow-ellipsis">{value}</div>;
+      let obj: Record<string, any> | null = null;
+      if (typeof matchingVar?.value === "string") {
+        try {
+          obj = JSON.parse(matchingVar.value);
+        } catch (e) {
+          obj = null;
+        }
+      }
+      if (obj && typeof obj === "object") {
+        const trueKeys = Object.keys(obj).filter((key) => obj[key]);
+        const value = trueKeys.length ? trueKeys.join(", ") : "-";
+        return <div className="text-overflow-ellipsis">{value}</div>;
+      } else {
+        return <div className="text-overflow-ellipsis">-</div>;
+      }
     }
     if (dateField) {
-      const value = matchingVar.value
+      const value = matchingVar?.value
         ? new Date(matchingVar.value)
             .toLocaleDateString("en-GB")
             .replace(/\//g, "-")
@@ -247,9 +258,9 @@ const TaskListTable = () => {
       return <div className="text-overflow-ellipsis">{value}</div>;
     }
     if (typeof matchingVar.value === "boolean") {
-      return <div className="text-overflow-ellipsis">{matchingVar.value ? "True" : "False"}</div>;
+      return <div className="text-overflow-ellipsis">{matchingVar?.value ? "True" : "False"}</div>;
     }
-    return <div className="text-overflow-ellipsis">{matchingVar.value ?? "-"}</div>;
+    return <div className="text-overflow-ellipsis">{matchingVar?.value ?? "-"}</div>;
   };
   const handleRefresh = useCallback(() => {
     dispatch(setBPMTaskLoader(true));

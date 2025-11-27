@@ -660,7 +660,7 @@ const fetchSubmissions = useCallback(async () => {
       ...filteredColumns.map((col, idx) => ({
         field: col.sortKey,
         headerName: t(col.name),
-        ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
+        ...(col.width ? { width: col.width, flex: 0, minWidth: col.width } : { flex: 1 }),
         sortable: col.sortKey !== "currentUserRoles" ? true : false,
         minWidth: 90,
         headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
@@ -998,7 +998,7 @@ const fetchSubmissions = useCallback(async () => {
                     handleColumnResize(column, width);
                   }
                 } catch (e) {
-                  // no-op
+                  console.error("Error adjusting column width:", e);
                 }
               },
               columnVisibilityModel: columnVisibilityModel,
