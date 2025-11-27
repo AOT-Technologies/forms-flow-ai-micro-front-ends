@@ -121,13 +121,14 @@ const Roles = React.memo((props: any) => {
   React.useEffect(() => {
     fetchPermissions(
       (data) => {
-        // Filter out manage_bundles, manage_integrations, and manage_templates permissions
+        // Filter out manage_bundles, manage_integrations, and manage_templates  and analyze_metrics_view permissions
         // Hide because v8 out of scope - will be restored later
         const filteredData = data.filter(
           (permission) =>
             permission.name !== "manage_bundles" &&
             permission.name !== "manage_integrations" &&
-            permission.name !== "manage_templates"
+            permission.name !== "manage_templates" &&
+            permission.name !== "analyze_metrics_view"
         );
         setPermissionData(filteredData);
       },
