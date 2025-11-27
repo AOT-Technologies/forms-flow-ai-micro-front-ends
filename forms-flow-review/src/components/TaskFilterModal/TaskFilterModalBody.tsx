@@ -402,11 +402,20 @@ const handleFetchTaskVariables = (formId) => {
   fetchTaskVariables(formId)
     .then((res) => {
       const taskVariables = res.data?.taskVariables || [];
-      const isEditingWithSameForm = filterToEdit?.id && filterToEdit?.properties?.formId === formId;
-      // Always prefer latest saved filter state for existing variables (preserve isChecked)
-      const sourceVars = (selectedFilterExistingData?.variables || filterToEdit?.variables || []);
+      // Determine if we are editing an existing filter with the same form
+      const savedFormId =
+        filterToEdit?.properties?.formId ||
+        selectedFilterExistingData?.properties?.formId;
+      const isEditingWithSameForm =
+        !!filterToEdit?.id &&
+        savedFormId  &&
+        String(savedFormId) === String(formId);
+
+      // Always prefer latest saved filter state for existing variables (preserve isChecked and sortOrder)
+      const sourceVars =
+        selectedFilterExistingData?.variables || filterToEdit?.variables || [];
       let combinedVars;
-      
+
       if (isEditingWithSameForm) {
         // Get current task variable keys for comparison
         const currentTaskVariableKeys = taskVariables
@@ -455,7 +464,12 @@ const handleFetchTaskVariables = (formId) => {
         combinedVars = [...preservedDefaultVars, ...dynamicVariables];
       }
 
-      setVariableArray(combinedVars);
+      // Ensure UI reflects persisted ordering
+      const sortedVars = [...combinedVars].sort(
+        (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
+      );
+
+      setVariableArray(sortedVars);
     })
     .catch((err) => console.error(err));
 };
