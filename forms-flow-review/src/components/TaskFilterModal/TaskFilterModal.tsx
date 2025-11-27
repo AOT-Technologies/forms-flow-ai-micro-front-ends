@@ -36,6 +36,9 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
   const defaultFilter = useSelector(
     (state: RootState) => state.task.defaultFilter
   );
+  const selectedFilter = useSelector(
+    (state: RootState) => state.task.selectedFilter
+  );
   const limit = useSelector((state: RootState) => state.task.limit);
   const [currentStep, setCurrentStep] = useState(1);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -107,7 +110,8 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     dispatch(setBPMFilterList(updatedFilterList));
     dispatch(fetchBPMTaskCount(updatedFilterList));
     const isDefaultFilter = response.data.id === defaultFilter;
-    if (isDefaultFilter) {
+    const isCurrentlySelected = response.data.id === selectedFilter?.id;
+    if (isDefaultFilter || isCurrentlySelected) {
       dispatch(setSelectedFilter(response.data));
       dispatch(fetchServiceTaskList(response.data, null, 1, limit));
     } else {
