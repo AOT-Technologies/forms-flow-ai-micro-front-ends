@@ -294,6 +294,7 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     width: 45rem !important; // 720px
     max-width: 45rem;
     margin: 1.75rem auto;
+    max-height: 95vh;
   }
   
   .modal-content {
@@ -306,6 +307,7 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     border: none;
     overflow: hidden;
     padding: 1.5rem; // Padding inside the modal content
+    max-height: 95vh;
     
     .modal-header {
       display: flex;

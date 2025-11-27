@@ -246,7 +246,7 @@ hr {
 .scrollable-overview-with-header,
 .scrollable-overview-with-wizard,
 .scrollable-overview-with-custom-header-and-wizard {
- overflow: hidden;
+ overflow: scroll;
  padding-bottom: 5rem;
 }
 

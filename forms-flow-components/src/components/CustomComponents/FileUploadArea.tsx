@@ -1,16 +1,9 @@
-import { useState, useCallback, useMemo, forwardRef, memo } from "react";
+import { useState, useCallback, useMemo, forwardRef, memo, useRef, useEffect } from "react";
 import { FileUploadIcon } from "../SvgIcons";
 import { useTranslation } from "react-i18next";
 import { CustomProgressBar } from "../CustomComponents/ProgressBar";
 import { V8CustomButton } from "../CustomComponents/CustomButton";
 
-/**
- * FileUploadArea is a reusable, accessible file upload component for forms-flow apps.
- * 
- * Usage:
- * <FileUploadArea fileType=".json" onFileSelect={handleFile} file={file} progress={50} />
- * <FileUploadArea fileType=".pdf" onFileSelect={handleFile} file={null} progress={0} error="Upload failed" />
- */
 
 interface FileUploadAreaProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children'> {
   /** Accepted file types (e.g., ".json", ".bpmn", ".pdf") */
@@ -68,6 +61,9 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
 }, ref) => {
   const { t } = useTranslation();
   const [isDragOver, setIsDragOver] = useState(false);
+  const isProcessingRef = useRef(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const lastSelectedFileRef = useRef<File | null>(null);
 
   // Memoized file input ID to avoid re-renders
   const fileInputId = useMemo(() => {
@@ -93,18 +89,35 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
 
   // Memoized file selection handler
   const handleFileSelection = useCallback((selectedFile: File) => {
+    // Prevent processing the same file twice
+    if (isProcessingRef.current || lastSelectedFileRef.current === selectedFile) {
+      return;
+    }
     if (!validateFileSize(selectedFile)) {
       // Could emit an error here or show a toast
       console.warn(`File size exceeds ${maxFileSizeMB}MB limit`);
       return;
     }
+    isProcessingRef.current = true;
+    lastSelectedFileRef.current = selectedFile;
     onFileSelect(selectedFile);
   }, [onFileSelect, validateFileSize, maxFileSizeMB]);
 
   // Memoized manual file selection handler
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
-    if (selected) handleFileSelection(selected);
+    if (selected) {
+      // Stop event propagation to prevent any parent handlers
+      e.stopPropagation();
+      handleFileSelection(selected);
+      // Reset the input immediately after processing to prevent re-triggering
+      // But use a small delay to ensure the selection is processed
+      setTimeout(() => {
+        if (fileInputRef.current && e.target) {
+          (e.target as HTMLInputElement).value = "";
+        }
+      }, 0);
+    }
   }, [handleFileSelection]);
 
   // Memoized drag event handlers
@@ -128,25 +141,76 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
     if (selected) handleFileSelection(selected);
   }, [handleFileSelection]);
 
-  // Memoized click handler for upload area
-  const handleAreaClick = useCallback(() => {
-    if (!uploadState.hasFile) {
-      document.getElementById(fileInputId)?.click();
+  // Reset file input when file prop is set (to allow selecting the same file again)
+  useEffect(() => {
+    if (file && fileInputRef.current) {
+      // File has been set by parent, now safe to reset the input and processing flag
+      const timer = setTimeout(() => {
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        isProcessingRef.current = false;
+        // Clear the last selected file ref after a delay to allow same file selection again
+        setTimeout(() => {
+          lastSelectedFileRef.current = null;
+        }, 500);
+      }, 200);
+      return () => clearTimeout(timer);
+    } else if (!file) {
+      // If file is cleared, reset processing flag and last selected file
+      isProcessingRef.current = false;
+      lastSelectedFileRef.current = null;
     }
-  }, [uploadState.hasFile, fileInputId]);
+  }, [file]);
+
+  // Memoized click handler for upload area
+  const handleAreaClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    // Prevent clicking if we're clicking on a button or input
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('input[type="file"]')) {
+      return;
+    }
+    // Prevent clicking if we're processing or if a file is already selected
+    if (isProcessingRef.current || file) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    // Only open file picker if no file is selected and not currently processing
+    if (fileInputRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      // Reset the input value before opening to ensure onChange fires even for same file
+      fileInputRef.current.value = "";
+      // Use requestAnimationFrame to ensure this happens after any pending state updates
+      requestAnimationFrame(() => {
+        if (fileInputRef.current && !isProcessingRef.current && !file) {
+          fileInputRef.current.click();
+        }
+      });
+    }
+  }, [file]);
 
   // Memoized keyboard handler
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!uploadState.hasFile && (e.key === "Enter" || e.key === " ")) {
-      e.preventDefault();
-      document.getElementById(fileInputId)?.click();
+    // Prevent keyboard activation if processing or file is already selected
+    if (isProcessingRef.current || file) {
+      return;
     }
-  }, [uploadState.hasFile, fileInputId]);
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+        fileInputRef.current.click();
+      }
+    }
+  }, [file]);
 
   // Memoized upload prompt component
   const renderUploadPrompt = useCallback(() => (
     <>
       <input
+        ref={fileInputRef}
         id={fileInputId}
         data-testid="file-upload-input"
         type="file"
@@ -183,7 +247,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
         } else {
           statusText = t("Import successful!");
         }
-      return (
+  return (
         <div
           className="upload-progress-section"
           aria-label={t("File upload progress")}
@@ -219,6 +283,9 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
       [uploadState.hasFile, isDragOver, className]
     );
 
+    const primaryButtonLabel = t(primaryButtonText);
+    const isPrimaryButtonTryAgain = primaryButtonLabel === t("Try Again");
+
     return (
       <div
         ref={ref}
@@ -249,7 +316,20 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
                   <V8CustomButton
                     className="file-upload-action-btn"
                     label={t("Try Again")}
-                    onClick={() => onRetry?.(file)}
+                    onClick={() => {
+                      // Check if primaryButtonText is "Try Again" to reset the component
+                      const isTryAgain = primaryButtonText === "Try Again" || t(primaryButtonText) === t("Try Again");
+                      if (isTryAgain) {
+                        // Reset file input and call onCancel to reset parent state
+                        isProcessingRef.current = false;
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = "";
+                        }
+                        onCancel?.();
+                      } else {
+                        onRetry?.(file);
+                      }
+                    }}
                     ariaLabel={t("Try Again")}
                     dataTestId="file-upload-retry-btn"
                     variant="primary"
@@ -258,9 +338,15 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
                 {uploadState.isCompleted && (
                   <V8CustomButton
                     className="file-upload-action-btn"
-                    label={t(primaryButtonText)}
-                    onClick={onDone}
-                    ariaLabel={t(primaryButtonText)}
+                    label={primaryButtonLabel}
+                    onClick={() => {
+                      if (isPrimaryButtonTryAgain) {
+                        onCancel?.();
+                      } else {
+                        onDone?.();
+                      }
+                    }}
+                    ariaLabel={primaryButtonLabel}
                     dataTestId="file-upload-action-btn"
                     variant="primary"
                   />
