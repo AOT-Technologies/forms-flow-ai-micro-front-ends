@@ -474,6 +474,11 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     overflow-y: auto; /* allows scroll */
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;     /* Firefox */
+
+    &.with-tabs {
+        height: 70vh;
+        min-height: 400px;
+    }
 }
   
   /* Chrome, Brave, Safari, Opera */
