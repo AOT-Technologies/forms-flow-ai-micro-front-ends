@@ -133,7 +133,7 @@ const TaskDetailsModal = ({
   const historyRows = useMemo(
     () =>
       (appHistory || []).map((entry: any, index: number) => ({
-        id: entry.submissionId || index,
+        id: entry.created || index,
         created: entry.created || "",
         submittedBy: entry.submittedBy || "N/A",
         applicationStatus: entry.applicationStatus || "N/A",
