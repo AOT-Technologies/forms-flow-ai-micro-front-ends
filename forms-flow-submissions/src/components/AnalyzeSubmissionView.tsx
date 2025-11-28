@@ -94,6 +94,7 @@ const ViewApplication = React.memo(() => {
   });
 
   const [formType, setFormType] = useState('');
+  const [processType, setProcessType] = useState<string | undefined>(undefined);
   const [selectedTab, setSelectedTab] = useState({ id: "form", label: t("Form") });
   const [showExportAlert, setShowExportAlert] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -216,6 +217,8 @@ const ViewApplication = React.memo(() => {
             processKey,
             tenant_key: tenantKey,
           });
+          const processType = res?.data?.processType;
+          setProcessType(processType);
           setDiagramXML(res?.data?.processData || "");
         } catch (error) {
           console.error("Error fetching process details:", error);
@@ -320,6 +323,32 @@ const ViewApplication = React.memo(() => {
     }));
   }, [appHistory]);
 
+  // Prepare tab config - must be before early return (Rules of Hooks)
+  const tabConfig = useMemo(() => {
+    const tabs = [
+      {
+        label: t("Form"),
+        id: "form",
+      },
+      {
+        label: t("Flow"),
+        id: "flow",
+      },
+      {
+        label: t("History"),
+        id: "history",
+      }
+    ];
+    
+    // Filter out Flow tab if processType is not BPMN
+    return tabs.filter(tab => {
+      if (tab.id === "flow") {
+        return processType !== "LOWCODE";
+      }
+      return true;
+    });
+  }, [t, processType]);
+
   if (isApplicationDetailLoading) {
     return <Loading />;
   }
@@ -339,21 +368,6 @@ const ViewApplication = React.memo(() => {
       backToSubmissionList();
     }
   };
-
-  const tabConfig = [
-    {
-      label: t("Form"),
-      id: "form",
-    },
-    {
-      label: t("Flow"),
-      id: "flow",
-    },
-    {
-      label: t("History"),
-      id: "history",
-    }
-  ];
 
 
   const renderTabContent = () => {
