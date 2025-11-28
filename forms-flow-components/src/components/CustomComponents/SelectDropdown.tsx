@@ -67,7 +67,7 @@ export interface SelectDropdownProps
   placeholder?: string;
   /** Custom width for the dropdown (e.g., '300px', '20rem', '100%') */
   width?: string | number;
-  /** Max height for the dropdown menu (e.g., '50vh', 300). Adds vertical scroll when content exceeds this. */
+  /** Max height for the dropdown menu */
   dropdownMaxHeight?: string | number;
 
   /** --- New props for dependent dropdown --- */
