@@ -181,16 +181,17 @@ const TaskListTable = () => {
     const candidateGroups = _embedded?.candidateGroups ?? [];
 
     if (sortKey === "applicationId") {
-      return variables.find((v) => v.name === "applicationId")?.value ?? "-";
+      const value = variables.find((v) => v.name === "applicationId")?.value ?? "-";
+      return <div className="text-overflow-ellipsis">{value}</div>;
     }
 
   //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
   if (!column.isFormVariable) {
     switch (sortKey) {
       case "name":
-        return taskName ?? "-";
+        return <div className="text-overflow-ellipsis">{taskName ?? "-"}</div>;
       case "created":
-        return created ? HelperServices.getLocaldate(created) : "N/A";
+        return <div className="text-overflow-ellipsis">{created ? HelperServices.getLocaldate(created) : "N/A"}</div>;
       case "assignee":
         return <TaskAssigneeManager task={task} />;
       case "roles": {
@@ -204,7 +205,7 @@ const TaskListTable = () => {
 
   const allRoles = roleValues.join(",");
 
-  return allRoles;
+  return <div className="text-overflow-ellipsis">{allRoles}</div>;
 }
 
 
@@ -226,26 +227,40 @@ const TaskListTable = () => {
     );
 
     if (dateTimeField) {
-      return matchingVar.value
-        ? HelperServices.getLocalDateAndTime(matchingVar.value)
+      const value = matchingVar?.value
+        ? HelperServices.getLocalDateAndTime(matchingVar?.value)
         : "-";
+      return <div className="text-overflow-ellipsis">{value}</div>;
     }
     if (selectBoxes) {
-      const obj = JSON.parse(matchingVar.value);
-      const trueKeys = Object.keys(obj).filter((key) => obj[key]);
-      return trueKeys.length ? trueKeys.join(", ") : "-";
+      let obj: Record<string, any> | null = null;
+      if (typeof matchingVar?.value === "string") {
+        try {
+          obj = JSON.parse(matchingVar.value);
+        } catch (e) {
+          obj = null;
+        }
+      }
+      if (obj && typeof obj === "object") {
+        const trueKeys = Object.keys(obj).filter((key) => obj[key]);
+        const value = trueKeys.length ? trueKeys.join(", ") : "-";
+        return <div className="text-overflow-ellipsis">{value}</div>;
+      } else {
+        return <div className="text-overflow-ellipsis">-</div>;
+      }
     }
     if (dateField) {
-      return matchingVar.value
+      const value = matchingVar?.value
         ? new Date(matchingVar.value)
             .toLocaleDateString("en-GB")
             .replace(/\//g, "-")
         : "-";
+      return <div className="text-overflow-ellipsis">{value}</div>;
     }
     if (typeof matchingVar.value === "boolean") {
-      return matchingVar.value ? "True" : "False";
+      return <div className="text-overflow-ellipsis">{matchingVar?.value ? "True" : "False"}</div>;
     }
-    return matchingVar.value ?? "-";
+    return <div className="text-overflow-ellipsis">{matchingVar?.value ?? "-"}</div>;
   };
   const handleRefresh = useCallback(() => {
     dispatch(setBPMTaskLoader(true));

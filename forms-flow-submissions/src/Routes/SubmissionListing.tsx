@@ -534,14 +534,6 @@ const fetchSubmissions = useCallback(async () => {
     dispatch(setColumnWidths({ [column.sortKey]: newWidth }));
   }, [dispatch]);
 
-  // Handle column width change from DataGrid
-  const handleColumnWidthChange = useCallback((params: any) => {
-    const column = columns.find((col) => col.sortKey === params.field);
-    if (column && handleColumnResize) {
-      handleColumnResize(column, params.width);
-    }
-  }, [columns, handleColumnResize]);
-
   // Disable reset if already at defaults
   const isResetDisabled = useMemo(() => {
     const noFormSelected = !dropdownSelection;
@@ -668,9 +660,9 @@ const fetchSubmissions = useCallback(async () => {
       ...filteredColumns.map((col, idx) => ({
         field: col.sortKey,
         headerName: t(col.name),
-        flex: 1,
+        ...(col.width ? { width: col.width, flex: 0, minWidth: col.width } : { flex: 1 }),
         sortable: col.sortKey !== "currentUserRoles" ? true : false,
-        minWidth: col.width || getColumnWidth(col.sortKey),
+        minWidth: 90,
         headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
         renderCell: (params: any) => getCellValue(col, params.row),
       })),
@@ -976,33 +968,45 @@ const fetchSubmissions = useCallback(async () => {
           className="custom-table-wrapper-outter-submissions"
           data-testid="table-container-wrapper"
         >
-        <ReusableTable
-              columns={muiColumns}
-              rows={memoizedRows}
-              rowCount={totalCount}
-             loading={isSubmissionsLoading}
-              disableColumnResize={false}
-              paginationMode="server"
-              sortingMode="server"
-              sortModel={sortModel}
-              onSortModelChange={handleSortModelChange}
-              noRowsLabel={t(
+          <ReusableTable
+            columns={muiColumns}
+            rows={memoizedRows}
+            rowCount={totalCount}
+            loading={isSubmissionsLoading}
+            disableColumnResize={false}
+            paginationMode="server"
+            sortingMode="server"
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            noRowsLabel={t(
                 "No submissions have been found. Try a different filter combination or contact your admin."
               )}
-              disableColumnMenu
-              disableRowSelectionOnClick
-              paginationModel={paginationModel}
-              onPaginationModelChange={handlePaginationModelChange}
-              pageSizeOptions={[10, 25, 50, 100]}
-              dataGridProps={{
-                getRowId: (row: any) => row.id || (row as any)._id,
-                onColumnWidthChange: handleColumnWidthChange,
-                columnVisibilityModel: columnVisibilityModel,
-              }}
-              enableStickyActions={true}
-              disableVirtualization
-              autoHeight={true}
-            />
+            disableColumnMenu
+            disableRowSelectionOnClick
+            paginationModel={paginationModel}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={[10, 25, 50, 100]}
+            dataGridProps={{
+              getRowId: (row: any) => row.id || (row as any)._id,
+              onColumnWidthChange: (params: any) => {
+                try {
+                  const field = params?.colDef?.field || params?.field;
+                  const width = params?.width;
+                  if (!field || !width) return;
+                  const column = columns.find((col) => col.sortKey === field);
+                  if (column && handleColumnResize) {
+                    handleColumnResize(column, width);
+                  }
+                } catch (e) {
+                  console.error("Error adjusting column width:", e);
+                }
+              },
+              columnVisibilityModel: columnVisibilityModel,
+            }}
+            enableStickyActions={true}
+            disableVirtualization
+            autoHeight={true}
+          />
         </div>
        </div>
        </div>
