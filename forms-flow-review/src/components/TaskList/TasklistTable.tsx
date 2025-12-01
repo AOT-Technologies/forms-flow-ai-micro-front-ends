@@ -598,10 +598,20 @@ const TaskListTable = () => {
       </div>
     );
   }
+  const enableWrap = Number(
+    selectedFilter?.properties?.dataLineValue ??
+    selectedFilter?.properties?.displayLinesCount ??
+    1
+  ) > 1;
+  
 
   return (
     <>
       <ReusableTable
+      className={enableWrap ? "multi-line-grid" : ""}
+      sx={{
+        "--ff-max-lines": selectedFilter?.properties?.dataLineValue || 1,
+      }}
         columns={muiColumns}
         disableColumnResize={false}
         rows={memoizedRows}
@@ -626,7 +636,7 @@ const TaskListTable = () => {
               const width = params?.width;
               if (!field || !width || !selectedFilter?.id) return;
               const updatedVariables = (selectedFilter?.variables || []).map((v: any) =>
-                v.key === field ? { ...v, width } : v
+                (v.key === field || v.name === field) ? { ...v, width } : v
               );
               const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
               // Update locally so future saves carry widths
