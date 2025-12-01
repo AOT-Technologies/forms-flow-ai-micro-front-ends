@@ -898,6 +898,7 @@ const fetchSubmissions = useCallback(async () => {
                   value={currentValue}
                   defaultValue=""
                   onChange={onDropdownChange}
+                  dropdownMaxHeight="50vh"
                   ariaLabel={t("Select a form")}
                   dataTestId="submission-form-select"
                   id="submission-form-select"
