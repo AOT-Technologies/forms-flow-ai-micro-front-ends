@@ -132,14 +132,16 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(({
         "custom-switch",
         type === 'primary' && "custom-switch-on-primary",
         type !== 'primary' && "custom-switch-on",
-        disabled && "custom-switch-disabled"
+        disabled && "custom-switch-disabled",
+        disabled && "custom-switch-on-disabled"
       );
     } else {
       return buildClassNames(
         "custom-switch",
         type === 'binary' && "custom-switch-off-binary",
         type !== 'binary' && "custom-switch-off",
-        disabled && "custom-switch-disabled"
+        disabled && "custom-switch-disabled",
+        disabled && "custom-switch-off-disabled"
       );
     }
   }, [isChecked, type, disabled]);
