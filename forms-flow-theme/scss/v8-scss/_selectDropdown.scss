@@ -404,3 +404,11 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
       }
     }
    }
+
+   .userSelect-container{
+    .selectdropdown-container{
+    &.text-overflow-ellipsis{
+        overflow: visible !important;
+      }
+    }
+   }

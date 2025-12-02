@@ -199,6 +199,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
           ariaLabel="task-assignee-select"
           dataTestId="task-assignee-select"
           showAsText={true}
+          className="text-overflow-ellipsis"
         />
       )
     })()}
