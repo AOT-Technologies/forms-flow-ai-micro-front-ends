@@ -8,6 +8,7 @@ on:
       - release/*
       - rsbc/7.0.0
       - rsbc/7.0.0-subpath
+      - rsbc/7.0.0-dependabot-fixes
     paths:
       - "forms-flow-admin/**"
       - "VERSION"

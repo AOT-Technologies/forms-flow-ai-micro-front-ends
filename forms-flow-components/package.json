@@ -16,13 +16,13 @@
     "build:types": "tsc"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/eslint-parser": "^7.15.0",
-    "@babel/plugin-transform-runtime": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
-    "@babel/preset-react": "^7.14.5",
-    "@babel/preset-typescript": "^7.15.0",
-    "@babel/runtime": "^7.15.3",
+    "@babel/core": "^7.26.10",
+    "@babel/eslint-parser": "^7.26.10",
+    "@babel/plugin-transform-runtime": "^7.26.10",
+    "@babel/preset-env": "^7.26.10",
+    "@babel/preset-react": "^7.26.10",
+    "@babel/preset-typescript": "^7.26.10",
+    "@babel/runtime": "^7.26.10",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@types/jest": "^29.5.0",
@@ -55,7 +55,7 @@
     "react-dom": "^17.0.2",
     "i18next-browser-languagedetector": "^7.0.1",
     "react-i18next": "^12.1.4",
-    "react-js-pagination": "^3.0.3"
+    "react-js-pagination": "3.0.2"
   },
   "dependencies": {
     "@types/react": "^17.0.19",
@@ -69,7 +69,7 @@
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.0",
     "react-dom": "^17.0.2",
-    "react-js-pagination": "^3.0.3"
+    "react-js-pagination": "3.0.2"
   },
   "types": "dist/formsflow-components.d.ts"
 }
