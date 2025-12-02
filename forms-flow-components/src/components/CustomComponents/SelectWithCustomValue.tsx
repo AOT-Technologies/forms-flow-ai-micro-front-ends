@@ -403,32 +403,37 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                         {/* Special action items - always shown at top */}
                         {showSpecialItems && (
                             <>
-                                <ListGroup.Item
-                                    className={buildClassNames(
-                                        "custom-dropdown-item",
-                                        "custom-dropdown-item-special",
-                                        itemClass
-                                    )}
-                                    onClick={handleCustomValueClick}
-                                    data-testid={`${dataTestId}-enter-custom-value`}
-                                >
-                                    <span className="dropdown-option-content">
-                                        <span>{customValueLabel}</span>
-                                    </span>
-                                </ListGroup.Item>
-                                <ListGroup.Item
-                                    className={buildClassNames(
-                                        "custom-dropdown-item",
-                                        "custom-dropdown-item-special",
-                                        itemClass
-                                    )}
-                                    onClick={handleAdditionalVariablesClick}
-                                    data-testid={`${dataTestId}-select-additional-variables`}
-                                >
-                                    <span className="dropdown-option-content">
-                                        <span>{additionalVariablesLabel}</span>
-                                    </span>
-                                </ListGroup.Item>
+                                {(
+                                    <ListGroup.Item
+                                        className={buildClassNames(
+                                            "custom-dropdown-item",
+                                            "custom-dropdown-item-special",
+                                            itemClass
+                                        )}
+                                        onClick={handleCustomValueClick}
+                                        data-testid={`${dataTestId}-enter-custom-value`}
+                                    >
+                                        <span className="dropdown-option-content">
+                                            <span>{customValueLabel}</span>
+                                        </span>
+                                    </ListGroup.Item>
+                                )}
+
+                                {onSelectAdditionalVariables && (
+                                    <ListGroup.Item
+                                        className={buildClassNames(
+                                            "custom-dropdown-item",
+                                            "custom-dropdown-item-special",
+                                            itemClass
+                                        )}
+                                        onClick={handleAdditionalVariablesClick}
+                                        data-testid={`${dataTestId}-select-additional-variables`}
+                                    >
+                                        <span className="dropdown-option-content">
+                                            <span>{additionalVariablesLabel}</span>
+                                        </span>
+                                    </ListGroup.Item>
+                                )}
                             </>
                         )}
                         {/* Regular options */}
