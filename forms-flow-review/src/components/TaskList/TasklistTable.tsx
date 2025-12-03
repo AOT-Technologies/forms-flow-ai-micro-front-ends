@@ -476,7 +476,7 @@ const TaskListTable = () => {
       ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
       sortable: col.sortKey !== 'roles' ? true : false,
       // Do not lock minWidth to the last saved width; allow shrinking after expand
-      minWidth: 90,
+      minWidth: col.sortKey === 'assignee' ? 190 : 90,
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
       renderCell: (params: any) => getCellValue(col, params.row),
     })),
