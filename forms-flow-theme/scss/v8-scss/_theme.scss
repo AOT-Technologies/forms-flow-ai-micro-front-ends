@@ -47,6 +47,8 @@ $opacities: (
  300: 0.25  // 25%
 );
 
+$scrollBarWidth: 0.5rem;
+
 // Helper: Blend with a white background [ To achieve exact variants of figma ] 
 @function blend-with-white-to-hex($color, $opacity) {
  $white: #fff;
@@ -379,5 +381,42 @@ $font-tokens: (
   }
   .last-column{
     padding-right: 1.4rem !important;
+  }
+}
+
+.custom-scroll {
+  &::-webkit-scrollbar {
+    display: block;
+    width: $scrollBarWidth;
+    
+    background-color: transparent;
+    
+    opacity: 0;
+    
+    cursor: pointer;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      opacity: 1;
+      width: calc($scrollBarWidth);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      width: calc($scrollBarWidth / 2);
+      min-height: 15.625rem;
+      background-color: var(--gray-medium-dark);
+      background-clip: padding-box;
+      border-radius: 5rem; // should be just big enough to round corners off completely
+      border: var(--spacer-025) solid transparent;
+      opacity: 1;
+      cursor: pointer;
+    }
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    border: none;
+    box-shadow: none;
+    outline: none;
   }
 }
