@@ -355,6 +355,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
               </>
             );
           })()}
+          <div className="pb-2" />
         </>
       );
 
