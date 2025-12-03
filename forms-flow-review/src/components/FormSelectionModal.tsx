@@ -14,7 +14,7 @@ interface FormSelectionModalProps {
 }
 
 export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
-  ({ onSelectForm, forms, selectedForm: selectedFormProp, isFormRendering = false }) => {
+  ({ onSelectForm, forms, selectedForm: selectedFormProp }) => {
 
     const { t } = useTranslation();
     const [searchFormName, setSearchFormName] = useState<string>("");
