@@ -463,7 +463,7 @@ const TaskListTable = () => {
     ],
     [filterListSortParams]
   );
-
+  const nonSortableKeys = ['roles']
   const muiColumns = useMemo(() => {
   // Filter out any existing "actions" column that might come from dynamic columns
   const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
@@ -474,7 +474,7 @@ const TaskListTable = () => {
       headerName: t(col.sortKey === 'assignee' ? 'Assigned to' : col.name),
       // If a saved width exists, honor it and disable flex; otherwise allow flex
       ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
-      sortable: col.sortKey !== 'roles' ? true : false,
+      sortable: col.sortKey && !nonSortableKeys.includes(col.sortKey) ? true : false,
       // Do not lock minWidth to the last saved width; allow shrinking after expand
       minWidth: 90,
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
