@@ -319,6 +319,14 @@ $font-tokens: (
             width: 1088px;
             padding-bottom: 120px;
           }
+
+          &.formedit-layout {
+            max-height: calc(100vh - 240px);
+            padding-bottom: 0px;
+            &.bpmn-container .bpmn-main-container-editor{
+              max-height: fit-content!important;
+            }
+          }
           
           &.task-list-body-section {
             max-height: calc(100vh - 250px) !important;
