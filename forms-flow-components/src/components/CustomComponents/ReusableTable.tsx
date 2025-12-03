@@ -176,13 +176,16 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
     return '';
   };
 
-  const getRowHeight = (params: any) => {
+  const defaultGetRowHeight = (params: any) => {
     if (params.model.__isExpansionRow__) {
       // Auto-expand: always show expansion rows with auto height
       return 'auto';
     }
     return rowHeight;
   };
+
+  // Use custom getRowHeight from dataGridProps if provided, otherwise use default
+  const getRowHeight = (dataGridProps as any)?.getRowHeight || defaultGetRowHeight;
 
   const paperSx = autoHeight 
     ? { ...sx, height: 'auto', minHeight: 'auto' }
