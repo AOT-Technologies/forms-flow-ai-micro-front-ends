@@ -10,7 +10,6 @@ interface FormSelectionModalProps {
   onSelectForm: ({formId,formName}) => void;
   forms: any[];
   selectedForm?: { formId: string; formName: string };
-  isFormRendering?: boolean;
 }
 
 export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
