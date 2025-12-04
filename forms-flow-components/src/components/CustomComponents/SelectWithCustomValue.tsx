@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, m
 import { DownArrowIcon, UpArrowIcon, VerticalLineIcon } from "../SvgIcons";
 import { ListGroup } from "react-bootstrap";
 import { CustomSearch } from "./Search";
-import { FormInput } from "./FormInput";
+import { CustomTextInput } from "./CustomTextInput";
 
 /**
  * Dropdown option interface for SelectWithCustomValue component
@@ -129,6 +129,7 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
         const [searchTerm, setSearchTerm] = useState<string>("");
         const [isCustomValueMode, setIsCustomValueMode] = useState<boolean>(false);
         const [customInputValue, setCustomInputValue] = useState<string>("");
+        const [shouldAutoFocus, setShouldAutoFocus] = useState<boolean>(false);
 
         // ---------- SECONDARY DROPDOWN ----------
         const [secondIsOpen, setSecondIsOpen] = useState<boolean>(false);
@@ -145,6 +146,7 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
             if (value && !options.find(opt => opt.value === value)) {
                 setIsCustomValueMode(true);
                 setCustomInputValue(String(value));
+                setShouldAutoFocus(false); // Don't autoFocus when value is set externally
             }
         }, [value, defaultValue, options]);
 
@@ -172,8 +174,19 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
 
         /** Handle primary toggle */
         const handleToggle = useCallback(() => {
-            if (!disabled) setIsOpen((prev) => !prev);
-        }, [disabled]);
+            if (!disabled) {
+                // If current value is a custom value (not in options), enter edit mode
+                if (selectedValue && !options.find(opt => opt.value === selectedValue)) {
+                    setIsCustomValueMode(true);
+                    setCustomInputValue(String(selectedValue));
+                    setShouldAutoFocus(true); // Enable autoFocus when entering edit mode
+                    setIsOpen(false);
+                    setSearchTerm("");
+                } else {
+                    setIsOpen((prev) => !prev);
+                }
+            }
+        }, [disabled, selectedValue, options]);
 
         /** Handle secondary toggle */
         const handleSecondToggle = useCallback(() => {
@@ -187,6 +200,7 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                 setIsOpen(false);
                 setSearchTerm("");
                 setIsCustomValueMode(false); // Exit custom value mode when selecting an option
+                setShouldAutoFocus(false); // Reset autoFocus when selecting an option
                 onChange?.(optionValue);
 
                 // Reset dependent dropdown when parent changes
@@ -244,6 +258,7 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
             setIsOpen(false);
             setSearchTerm("");
             setIsCustomValueMode(true);
+            setShouldAutoFocus(true); // Enable autoFocus when entering custom value mode
             // Set initial input value to current selected value if it's a string
             if (selectedValue && typeof selectedValue === 'string') {
                 setCustomInputValue(selectedValue);
@@ -257,38 +272,73 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
             setIsOpen(false);
             setSearchTerm("");
             setIsCustomValueMode(false); // Exit custom value mode if active
+            setShouldAutoFocus(false); // Reset autoFocus when selecting additional variables
             onSelectAdditionalVariables?.();
         }, [onSelectAdditionalVariables]);
 
-        /** Handle custom input value change */
-        const handleCustomInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-            setCustomInputValue(e.target.value);
-        }, []);
+        /** Handle custom input value change for CustomTextInput (uses setValue callback) */
+        const handleCustomInputSetValue = useCallback((newValue: string) => {
+            setCustomInputValue(newValue);
+            
+            // If input is cleared, exit custom value mode and show dropdown
+            if (newValue.trim() === "" && isCustomValueMode) {
+                setIsCustomValueMode(false);
+                setCustomInputValue("");
+                setSelectedValue(undefined);
+                setIsOpen(true);
+                setSearchTerm("");
+                setShouldAutoFocus(false); // Reset autoFocus when input is cleared
+                // Don't call onChange with undefined - let user select a new value
+            }
+        }, [isCustomValueMode]);
 
         /** Handle Enter key press in custom input */
         const handleCustomInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
             if (e.key === "Enter") {
                 e.preventDefault();
+                setShouldAutoFocus(false); // Disable autoFocus after Enter is pressed
                 const trimmedValue = customInputValue.trim();
                 if (trimmedValue) {
                     setSelectedValue(trimmedValue);
                     setIsCustomValueMode(false);
                     onChange?.(trimmedValue);
+                } else {
+                    // If Enter is pressed with empty input, show dropdown
+                    setIsCustomValueMode(false);
+                    setCustomInputValue("");
+                    setSelectedValue(undefined);
+                    setIsOpen(true);
+                    setSearchTerm("");
+                    // Don't call onChange with undefined - let user select a new value
                 }
             } else if (e.key === "Escape") {
+                // Exit custom value mode and show dropdown
+                setShouldAutoFocus(false); // Disable autoFocus after Escape is pressed
                 setIsCustomValueMode(false);
                 setCustomInputValue("");
+                setSelectedValue(undefined);
+                setIsOpen(true);
+                setSearchTerm("");
+                // Don't call onChange with undefined - let user select a new value
             }
         }, [customInputValue, onChange]);
 
         /** Handle blur on custom input */
         const handleCustomInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+            setShouldAutoFocus(false); // Disable autoFocus after blur
             const trimmedValue = customInputValue.trim();
             if (trimmedValue) {
                 setSelectedValue(trimmedValue);
+                setIsCustomValueMode(false);
                 onChange?.(trimmedValue);
             } else {
+                // If input is empty, exit custom value mode and show dropdown
                 setIsCustomValueMode(false);
+                setCustomInputValue("");
+                setSelectedValue(undefined);
+                setIsOpen(true);
+                setSearchTerm("");
+                // Don't call onChange with undefined - let user select a new value
             }
         }, [customInputValue, onChange]);
 
@@ -312,21 +362,15 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                         className={buildClassNames("dropdown-wrapper", wrapperClass)}
                         onKeyDown={handleCustomInputKeyDown}
                     >
-                        <FormInput
-                            type="text"
-                            value={customInputValue}
-                            onChange={handleCustomInputChange}
-                            onBlur={handleCustomInputBlur}
-                            disabled={disabled}
-                            placeholder={placeholder}
-                            autoFocusInput={true}
-                            dataTestId={`${dataTestId}-custom-input`}
-                            className={buildClassNames(
-                                "custom-selectdropdown-input",
-                                `custom-selectdropdown--${variantType}`,
-                                disabled && "disabled"
-                            )}
-                        />
+                            <CustomTextInput
+                                value={customInputValue}
+                                setValue={handleCustomInputSetValue}
+                                onBlur={handleCustomInputBlur}
+                                disabled={disabled}
+                                placeholder={placeholder}
+                                dataTestId={`${dataTestId}-custom-input`}
+                                autoFocus={shouldAutoFocus}
+                            />
                     </div>
                 );
             }
