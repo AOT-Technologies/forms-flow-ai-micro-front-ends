@@ -182,11 +182,16 @@ const TaskFilterModalBody = ({
     variables: variableArray.map((v:any) => {
       // Preserve variables from the filter being edited (not the globally selected filter)
       const sourceVars =
+      selectedFilter ?.variables ||
         selectedFilterExistingData?.variables ||
         filterToEdit?.variables ||
         [];
-      const match = sourceVars.find((sv:any) => sv?.key === v?.key);
-      return match?.width ? { ...v, width: match.width } : v;
+        const match = sourceVars.find(
+          (sv:any) =>
+            sv?.key === v?.key &&
+            sv?.isFormVariable === v?.isFormVariable
+        );
+        return typeof match?.width === "number" ? { ...v, width: match.width } : v;
     }),
     properties: {
       displayLinesCount: dataLineValue,
