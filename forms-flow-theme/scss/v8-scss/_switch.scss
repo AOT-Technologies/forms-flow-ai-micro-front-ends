@@ -133,6 +133,15 @@ $color-switch-hover-red: var(--red-200);
     @include switch-disabled;
   }
 
+  // Disabled state specific to ON/OFF for finer UI control
+  &.custom-switch-on-disabled {
+    background: #B8ABFF40;
+  }
+
+  &.custom-switch-off-disabled {
+    @include switch-disabled;
+  }
+
   // Focus state
   &:focus-visible:not(.custom-switch-disabled) {
     box-shadow: $switch-shadow-focus var(--primary);
