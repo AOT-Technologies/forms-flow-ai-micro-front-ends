@@ -87,42 +87,25 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
     // Sync from savedFormVariables prop when it changes externally
     useEffect(() => {
       if (savedFormVariables && Array.isArray(savedFormVariables)) {
-        const byKey = savedFormVariables.reduce((acc, v) => {
-          // Find the matching system variable to check defaults
-          const systemVariable = SystemVariables.find(sv => sv.key === v.key);
-          const defaultAltVariable = systemVariable?.altVariable || "";
-          const labelOfComponent = systemVariable?.labelOfComponent || v.labelOfComponent || "";
-          
-          // If altVariable equals labelOfComponent or default, clear it (means it wasn't user-typed)
-          const shouldClearAltVariable = 
-            v.altVariable === labelOfComponent || 
-            v.altVariable === defaultAltVariable;
-          
-          acc[v.key] = {
-            ...v,
-            altVariable: shouldClearAltVariable ? "" : v.altVariable,
-          };
-          return acc;
-        }, {} as Record<string, FormVariable>);
+        // Always preserve altVariable exactly as it was saved
+        const byKey = savedFormVariables.reduce(
+          (acc, v) => {
+            acc[v.key] = { ...v };
+            return acc;
+          },
+          {} as Record<string, FormVariable>
+        );
         isInternalUpdateRef.current = false; // Mark as external update
         setAlternativeLabels(byKey);
       } else if (savedFormVariables && typeof savedFormVariables === "object") {
-        // Sanitize object format as well
-        const sanitized = Object.entries(savedFormVariables).reduce((acc, [key, v]) => {
-          const systemVariable = SystemVariables.find(sv => sv.key === key);
-          const defaultAltVariable = systemVariable?.altVariable || "";
-          const labelOfComponent = systemVariable?.labelOfComponent || v.labelOfComponent || "";
-          
-          const shouldClearAltVariable = 
-            v.altVariable === labelOfComponent || 
-            v.altVariable === defaultAltVariable;
-          
-          acc[key] = {
-            ...v,
-            altVariable: shouldClearAltVariable ? "" : v.altVariable,
-          };
-          return acc;
-        }, {} as Record<string, FormVariable>);
+        // Object format: preserve altVariable as-is per key
+        const sanitized = Object.entries(savedFormVariables).reduce(
+          (acc, [key, v]) => {
+            acc[key] = { ...(v as FormVariable) };
+            return acc;
+          },
+          {} as Record<string, FormVariable>
+        );
         
         isInternalUpdateRef.current = false; // Mark as external update
         setAlternativeLabels(sanitized);
@@ -130,42 +113,8 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
         isInternalUpdateRef.current = false; // Mark as external update
         setAlternativeLabels({});
       }
-    }, [savedFormVariables, SystemVariables]);
+    }, [savedFormVariables]);
 
-    const updateAlternativeLabels = (
-      prev: Record<string, any>,
-      variableKey: string,
-      newVal: string
-    ) => {
-      const existing = prev[variableKey];
-      if (existing) {
-        isInternalUpdateRef.current = true;
-        return {
-          ...prev,
-          [variableKey]: {
-            ...existing,
-            altVariable: newVal,
-          },
-        };
-      }
-      // Variable is not selected, store value temporarily
-      tempInputValuesRef.current[variableKey] = newVal;
-      setTempInputValues((tempPrev: Record<string, any>) => ({
-        ...tempPrev,
-        [variableKey]: newVal,
-      }));
-      return prev;
-    };
-    
-    const handleSystemAltVariableInputChange = useCallback(
-      (variableKey: string, systemVariable: SystemVariable) => {
-        return (newVal: string) => {
-          setAlternativeLabels((prev) =>
-            updateAlternativeLabels(prev, variableKey, newVal)
-          );
-        };
-      },
-      []);
 
     const handleSystemVariableToggle = useCallback((variableKey: string, systemVariable: SystemVariable, isChecked: boolean) => {
       isInternalUpdateRef.current = true;
