@@ -41,7 +41,8 @@ import {
   SelectDropdown,
   CustomSearch,
   FilterDropDown,
-  AddIcon
+  AddIcon,
+  BreadCrumbs
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -869,9 +870,16 @@ const fetchSubmissions = useCallback(async () => {
       <div className="Toastify"></div>
       <div className="toast-section">{}</div>
       <div className="header-section-1">
-        <div className="section-seperation-left">
-          <h4> Submissions </h4>
-        </div>  
+        <BreadCrumbs
+            items={[
+              { id: "analyze", label:t("Analyze")},
+              { id: "submissions", label:t("Submissions")},
+            ]}
+            variant="default"
+            underlined={false}
+            dataTestId="listForm-breadcrumb"
+            ariaLabel={ t("Submissions list Breadcrumb")}
+          />
       </div>
       <div className="header-section-2 overflow-visible">
         <div className="section-seperation-left">
