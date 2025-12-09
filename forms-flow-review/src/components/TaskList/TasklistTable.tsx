@@ -584,7 +584,9 @@ const TaskListTable = () => {
               );
               const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
               dispatch(setSelectedFilter(updatedFilter));
-            } catch (e) {}
+            } catch (e) {
+              console.error("Error updating column width:", e);
+            }
           }
         }}
         enableStickyActions={true}
