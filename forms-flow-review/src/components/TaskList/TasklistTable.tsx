@@ -55,7 +55,7 @@ import {
 } from "../../constants/index";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
-import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
+import { createReqPayload, sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
 
@@ -84,6 +84,7 @@ const TaskListTable = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+
   const {
     tasksCount,
     selectedFilter,
@@ -96,8 +97,11 @@ const TaskListTable = () => {
     isAssigned
   } = useSelector((state: any) => state.task);
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData
-?.key || tenantId);
+  const tenantKey = useSelector((state: any) =>
+    state.tenants?.tenantId ||
+    state.tenants?.tenantData?.key ||
+    tenantId
+  );
   const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
 
   const [showModal, setShowModal] = useState(false);
@@ -132,7 +136,7 @@ const TaskListTable = () => {
       dispatch(setTaskDetailsLoading(true));
       dispatch(getBPMTaskDetail(task.id));
       dispatch(getBPMGroups(task.id));
-      
+
       // Also load history data upfront to avoid lag when switching views
       const applicationId = task._embedded?.variable?.find(
         (v: { name: string; value: any }) => v.name === "applicationId"
@@ -167,12 +171,10 @@ const TaskListTable = () => {
   }, []);
 
   const taskvariables = selectedFilter?.variables ?? [];
-
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
   const [columns, setColumns] = useState<Column[]>([]);
-  
 
   const getCellValue = (column: Column, task: Task) => {
     const { sortKey } = column;
@@ -185,36 +187,33 @@ const TaskListTable = () => {
       return <div className="text-overflow-ellipsis">{value}</div>;
     }
 
-  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
-  if (!column.isFormVariable) {
-    switch (sortKey) {
-      case "name":
-        return <div className="text-overflow-ellipsis">{taskName ?? "-"}</div>;
-      case "created":
-        return <div className="text-overflow-ellipsis">{created ? HelperServices.getLocaldate(created) : "N/A"}</div>;
-      case "assignee":
-        return <TaskAssigneeManager task={task} resizeable={true}/>;
-      case "roles": {
-  const validGroups = candidateGroups.filter(group => group?.groupId);
+    //checking isFormVariable to avoid the inappropriate value setting when static and dynamic variables are same
+    if (!column.isFormVariable) {
+      switch (sortKey) {
+        case "name":
+          return <div className="text-overflow-ellipsis">{taskName ?? "-"}</div>;
+        case "created":
+          return <div className="text-overflow-ellipsis">{created ? HelperServices.getLocaldate(created) : "N/A"}</div>;
+        case "assignee":
+          return <TaskAssigneeManager task={task} resizeable={true}/>;
+        case "roles": {
+          const validGroups = candidateGroups.filter(group => group?.groupId);
 
-  const roleValues = validGroups.length > 0
-    ? validGroups.map(group =>
-        removeTenantKey(group.groupId, tenantKey, MULTITENANCY_ENABLED)
-      )
-    : ["-"];
+          const roleValues = validGroups.length > 0
+            ? validGroups.map(group =>
+                removeTenantKey(group.groupId, tenantKey, MULTITENANCY_ENABLED)
+              )
+            : ["-"];
 
-  const allRoles = roleValues.join(",");
+          const allRoles = roleValues.join(",");
 
-  return <div className="text-overflow-ellipsis">{allRoles}</div>;
-}
-
-
-
+          return <div className="text-overflow-ellipsis">{allRoles}</div>;
+        }
+      }
     }
-  }
 
-  const matchingVar = variables.find((v) => v.name === sortKey);
-  if (!matchingVar) return "-";
+    const matchingVar = variables.find((v) => v.name === sortKey);
+    if (!matchingVar) return "-";
 
     const dateTimeField = taskvariables.find(
       (v) => v.key === sortKey && v.type === "datetime"
@@ -262,6 +261,7 @@ const TaskListTable = () => {
     }
     return <div className="text-overflow-ellipsis">{matchingVar?.value ?? "-"}</div>;
   };
+
   const handleRefresh = useCallback(() => {
     dispatch(setBPMTaskLoader(true));
     const payload = createReqPayload(
@@ -413,10 +413,10 @@ const TaskListTable = () => {
     const column = columns.find((col) => col.sortKey === model?.[0]?.field);
     if (!column) return;
     dispatch(setBPMTaskLoader(true));
-    
+
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
     const enabledSort = new Set(["applicationId", "submitterName", "formName"]);
-    
+
     const updatedFilterListSortParams = {
       ...resetSortOrders,
       [column.sortKey]: {
@@ -465,80 +465,73 @@ const TaskListTable = () => {
   );
 
   const muiColumns = useMemo(() => {
-  // Filter out any existing "actions" column that might come from dynamic columns
-  const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
+    const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
 
-  return [
-    ...filteredColumns.map((col, idx) => ({
-      field: col.sortKey,
-      headerName: t(col.sortKey === 'assignee' ? 'Assigned to' : col.name),
-      // If a saved width exists, honor it and disable flex; otherwise allow flex
-      ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
-      sortable: col.sortKey !== 'roles' ? true : false,
-      // Do not lock minWidth to the last saved width; allow shrinking after expand
-      minWidth: 90,
-      headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
-      renderCell: (params: any) => getCellValue(col, params.row),
-    })),
-    // Filler column to push actions column to the right when there are fewer columns
-    {
-      field: "__filler__",
-      headerName: "",
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
-      flex: 1,
-      minWidth: 0,
-      headerClassName: "filler-column",
-      cellClassName: "filler-column",
-      renderCell: () => null,
-      valueGetter: () => null,
-    },
-    {
-      field: "actions",
-       renderHeader: () => (
-        <V8CustomButton
-          variant="secondary"
-          label={t("Refresh")}
-          onClick={handleRefresh}
-          dataTestId="task-refresh-button"
-        />
-      ),
-      headerName: "",
-      sortable: false,
-      filterable: false,
-      resizable: false,
-
-      headerClassName: "sticky-column-header last-column",
-      cellClassName: "sticky-column-cell",
-
-      width: 100,
-      minWidth: 100,
-      maxWidth: 100,
-      flex: 0,
-      renderCell: (params: any) => (
-        <V8CustomButton
-          label={t("View")}
-          dataTestId="task-view-button"
-          variant="secondary"
-          onClick={() => handleOpenModal(params.row)}
-        />
-      ),
-    },
-  ];
-}, [columns, t, handleRefresh, handleOpenModal]);
-
-
+    return [
+      ...filteredColumns.map((col, idx) => ({
+        field: col.sortKey,
+        headerName: t(col.sortKey === 'assignee' ? 'Assigned to' : col.name),
+        ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
+        sortable: col.sortKey !== 'roles' ? true : false,
+        minWidth: 90,
+        headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
+        renderCell: (params: any) => getCellValue(col, params.row),
+      })),
+      {
+        field: "__filler__",
+        headerName: "",
+        sortable: false,
+        filterable: false,
+        disableColumnMenu: true,
+        flex: 1,
+        minWidth: 0,
+        headerClassName: "filler-column",
+        cellClassName: "filler-column",
+        renderCell: () => null,
+        valueGetter: () => null,
+      },
+      {
+        field: "actions",
+        renderHeader: () => (
+          <V8CustomButton
+            variant="secondary"
+            label={t("Refresh")}
+            onClick={handleRefresh}
+            dataTestId="task-refresh-button"
+          />
+        ),
+        headerName: "",
+        sortable: false,
+        filterable: false,
+        resizable: false,
+        headerClassName: "sticky-column-header last-column",
+        cellClassName: "sticky-column-cell",
+        width: 100,
+        minWidth: 100,
+        maxWidth: 100,
+        flex: 0,
+        renderCell: (params: any) => (
+          <V8CustomButton
+            label={t("View")}
+            dataTestId="task-view-button"
+            variant="secondary"
+            onClick={() => handleOpenModal(params.row)}
+          />
+        ),
+      },
+    ];
+  }, [columns, t, handleRefresh, handleOpenModal]);
 
   const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
 
   // Row height scales with selected filter's dataLineValue/displayLinesCount
   const computedRowHeight = useMemo(() => {
-    const lines = Number(
-      selectedFilter?.properties?.dataLineValue ??
-      selectedFilter?.properties?.displayLinesCount ??
-      1
-    );
+    const lines =
+      Number(
+        selectedFilter?.properties?.dataLineValue ??
+        selectedFilter?.properties?.displayLinesCount ??
+        1
+      );
     const base = 55; // default row height in ReusableTable
     const clampedLines = isNaN(lines) ? 1 : Math.max(1, Math.min(4, lines));
     return base * clampedLines;
@@ -565,14 +558,11 @@ const TaskListTable = () => {
       if (key === 'created') {
         return row.created ? HelperServices.getLocaldate(row.created) : '';
       }
-      // direct field
       if (row[key] != null) return String(row[key]);
-      // process variables
       const vars = row?._embedded?.variable || [];
       const match = vars.find((v: any) => v?.name === key);
       if (!match) return '';
       let v = match.value;
-      // if looks like JSON of selectboxes, attempt to join true keys
       try {
         if (typeof v === 'string' && v.startsWith('{') && v.endsWith('}')) {
           const obj = JSON.parse(v);
@@ -583,8 +573,7 @@ const TaskListTable = () => {
       return v != null ? String(v) : '';
     };
 
-    // If any value is long enough to likely wrap, increase height
-    const threshold = 28; // approx chars that fit in one line for typical column width
+    const threshold = 28;
     const needsMore = visibleKeys.some((k) => getTextValue(k).length > threshold);
     return needsMore ? base * Math.max(1, Math.min(4, Number(maxLines))) : base;
   }, [columns, selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
@@ -629,9 +618,7 @@ const TaskListTable = () => {
                 v.key === field ? { ...v, width } : v
               );
               const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
-              // Update locally so future saves carry widths
               dispatch(setSelectedFilter(updatedFilter));
-              // Do not persist here; widths are saved when the user saves the filter
             } catch (e) {
               // no-op
             }
