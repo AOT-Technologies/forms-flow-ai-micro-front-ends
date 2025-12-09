@@ -87,10 +87,10 @@ const Admin = React.memo(({ props }: any) => {
   return (
     <>
       {isAdmin ? (
-        <div className="main-container " tabIndex={0}>
-        <div className="container mt-5">
+        <div className="page-container" tabIndex={0}>
+        <div className="page-layout mt-3">
         {!isAccessRestricted ?(
-          <div className="min-container-height ps-md-3">
+          <div className="min-container-height">
           <ToastContainer theme="colored" />
           <Switch>
             { isDashboardManager && (
@@ -152,8 +152,8 @@ const Admin = React.memo(({ props }: any) => {
             </div> }
           </div>
         </div>
-      ):<div className="main-container ">
-         <div className="container mt-5">
+      ):<div className="page-container ">
+         <div className="page-layout mt-5">
          <div className="min-container-height ps-md-3" >
           <Accessdenied userRoles={userRoles} />
           </div>

@@ -184,8 +184,7 @@ const TaskDetailsModal = ({
     dispatch(setBPMTaskDetailLoader(true));
     const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
     const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
-    const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
-    
+    const webFormUrl = `${globalThis.location.origin}/form/${formId}/submission/${submissionId}`;
     // Extract formId and data from submission Redux state
     const submissionFormId = submission?.formId || formId;
     const submissionData = submission?.submission?.data || {};
@@ -260,7 +259,6 @@ const TaskDetailsModal = ({
   );
 
   const handleCancel = onCancel ?? onClose;
-  const handleUpdate = onUpdate ?? (() => {});
 
   const renderHistoryContent = () => (
     <ReusableTable
@@ -350,17 +348,27 @@ const TaskDetailsModal = ({
     );
   };
 
+  const renderModalContent = () => {
+    if (modalViewType === "history") {
+      return renderHistoryContent();
+    }
+    if (modalViewType === "notes") {
+      return renderNotesContent();
+    }
+    return renderSubmissionContent();
+  };
+
   return (
     <ReusableLargeModal
       show={show}
       onClose={onClose}
       title={taskDetail?.applicationId}
-      headerControl={isApprovalTask ? headerStatusControl : undefined}      
-      primaryBtnText={isApprovalTask ? "Update" : undefined}      
+      headerControl={isApprovalTask && headerStatusControl}      
+      primaryBtnText={isApprovalTask && "Update"}      
       primaryBtnAction={handleUpdateClick}
       primaryBtnDisable={isUpdateButtonDisabled}
       buttonLoading={isBPMTaskDetailLoading}
-      secondaryBtnText={isApprovalTask ? "Cancel" : undefined}      
+      secondaryBtnText={isApprovalTask && "Cancel"}      
       secondaryBtnAction={handleCancel}
       secondaryBtnDisable={isCancelDisabled}
       secondaryBtnLoading={isCancelLoading}
@@ -395,13 +403,7 @@ const TaskDetailsModal = ({
           </div>
         </div>
       }
-      content={
-        modalViewType === "history"
-          ? renderHistoryContent()
-          : modalViewType === "notes"
-          ? renderNotesContent()
-          : renderSubmissionContent()
-      }
+      content={renderModalContent()}
     />
   );
 };

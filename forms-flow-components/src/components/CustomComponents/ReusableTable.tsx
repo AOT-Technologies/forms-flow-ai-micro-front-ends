@@ -146,7 +146,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
 
     (rows || []).forEach((row, index) => {
       const rowId = getRowId(row) || `row-${index}`;
-      const hasNotes = row[notesField] && row[notesField].trim();
+      const hasNotes = row[notesField]?.trim();
 
       // Add main row
       transformedRows.push({
