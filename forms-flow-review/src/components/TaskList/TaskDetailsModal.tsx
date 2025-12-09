@@ -343,6 +343,7 @@ const TaskDetailsModal = ({
           currentUser={currentUser}
           onFormSubmit={onFormSubmitCallback}
           onCustomEvent={onCustomEventCallBack}
+          isApprovalTask={isApprovalTask}
         />
       </div>
     );
