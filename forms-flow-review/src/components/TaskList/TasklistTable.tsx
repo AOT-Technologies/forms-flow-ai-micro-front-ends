@@ -55,7 +55,7 @@ import {
 } from "../../constants/index";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
-import { createReqPayload, sortableKeysSet } from "../../helper/taskHelper";
+import { createReqPayload } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
 
@@ -113,7 +113,6 @@ const TaskListTable = () => {
   });
   const [bundleName, setBundleName] = useState("");
 
-  // Redux selectors for task details
   const task = useSelector((state: any) => state.task.taskDetail);
   const taskDetailsLoading = useSelector((state: any) => state.task.taskDetailsLoading);
   const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
@@ -130,14 +129,11 @@ const TaskListTable = () => {
     setSelectedTask(task);
     setModalViewType("submission");
     setShowModal(true);
-    // Set task ID and load task details
     if (task.id) {
       dispatch(setSelectedTaskID(task.id));
       dispatch(setTaskDetailsLoading(true));
       dispatch(getBPMTaskDetail(task.id));
       dispatch(getBPMGroups(task.id));
-
-      // Also load history data upfront to avoid lag when switching views
       const applicationId = task._embedded?.variable?.find(
         (v: { name: string; value: any }) => v.name === "applicationId"
       )?.value;
@@ -181,13 +177,10 @@ const TaskListTable = () => {
     const { name: taskName, created, _embedded } = task ?? {};
     const variables = _embedded?.variable ?? [];
     const candidateGroups = _embedded?.candidateGroups ?? [];
-
     if (sortKey === "applicationId") {
       const value = variables.find((v) => v.name === "applicationId")?.value ?? "-";
       return <div className="text-overflow-ellipsis">{value}</div>;
     }
-
-    //checking isFormVariable to avoid the inappropriate value setting when static and dynamic variables are same
     if (!column.isFormVariable) {
       switch (sortKey) {
         case "name":
@@ -195,26 +188,21 @@ const TaskListTable = () => {
         case "created":
           return <div className="text-overflow-ellipsis">{created ? HelperServices.getLocaldate(created) : "N/A"}</div>;
         case "assignee":
-          return <TaskAssigneeManager task={task} resizeable={true}/>;
+          return <TaskAssigneeManager task={task} resizable={true}/>;
         case "roles": {
           const validGroups = candidateGroups.filter(group => group?.groupId);
-
           const roleValues = validGroups.length > 0
             ? validGroups.map(group =>
                 removeTenantKey(group.groupId, tenantKey, MULTITENANCY_ENABLED)
               )
             : ["-"];
-
           const allRoles = roleValues.join(",");
-
           return <div className="text-overflow-ellipsis">{allRoles}</div>;
         }
       }
     }
-
     const matchingVar = variables.find((v) => v.name === sortKey);
     if (!matchingVar) return "-";
-
     const dateTimeField = taskvariables.find(
       (v) => v.key === sortKey && v.type === "datetime"
     );
@@ -224,7 +212,6 @@ const TaskListTable = () => {
     const selectBoxes = taskvariables.find(
       (v) => v.key === sortKey && v.type === "selectboxes"
     );
-
     if (dateTimeField) {
       const value = matchingVar?.value
         ? HelperServices.getLocalDateAndTime(matchingVar?.value)
@@ -275,7 +262,6 @@ const TaskListTable = () => {
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
   }, [dispatch, selectedFilter, selectedAttributeFilter, filterListSortParams, dateRange, isAssigned, activePage, limit]);
 
-  // Load form and submission for task details
   const handleFormRetry = (fetchForm: () => void) => (retryErr: any) => {
     if (!retryErr) {
       fetchForm();
@@ -298,7 +284,6 @@ const TaskListTable = () => {
       const { formId, submissionId } = getFormIdSubmissionIdFromURL(formUrl);
       Formio.clearCache();
       dispatch(resetFormData("form"));
-
       const fetchForm = () => {
         dispatch(
           getForm("form", formId, ((err: any) => {
@@ -313,29 +298,24 @@ const TaskListTable = () => {
           }) as any)
         );
       };
-
       fetchForm();
     },
     [dispatch]
   );
 
-  // Load form and submission when task details are loaded
   useEffect(() => {
     if (task?.formUrl && task?.formType !== "bundle" && modalViewType === "submission") {
       getFormSubmissionData(task.formUrl);
     }
   }, [task?.formUrl, task?.formType, modalViewType, getFormSubmissionData]);
 
-  // Handle bundle form setup
   useEffect(() => {
     if (task?.formType === "bundle" && modalViewType === "submission") {
       Formio.clearCache();
       dispatch(resetFormData("form"));
       dispatch(setBundleLoading(false));
-
       const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
       setBundleFormData({ formId, submissionId });
-
       fetchTaskVariables(task?.formId)
         .then((res) => {
           setBundleName(res.data.formName);
@@ -361,14 +341,12 @@ const TaskListTable = () => {
           console.error("Error fetching bundle:", err);
           dispatch(setBundleLoading(false));
         });
-
       return () => {
         dispatch(setBundleSelectedForms([]));
       };
     }
   }, [task?.formType, task?.formId, task?.formUrl, modalViewType, dispatch]);
 
-  // Form submission callback
   const onFormSubmitCallback = useCallback((actionType = "") => {
     if (!selectedTask?.id || !task?.formUrl) return;
     dispatch(setBPMTaskDetailLoader(true));
@@ -393,7 +371,6 @@ const TaskListTable = () => {
     handleCloseModal();
   }, [selectedTask?.id, task?.formUrl, task?.applicationId, dispatch, handleCloseModal]);
 
-  // Custom event handler for form
   const onCustomEventCallBack = useCallback((customEvent: {
     type: string;
     actionType: string;
@@ -403,7 +380,6 @@ const TaskListTable = () => {
     }
   }, [onFormSubmitCallback]);
 
-  // Prepare history table data
   useEffect(() => {
     const dynamicColumns = buildDynamicColumns(taskvariables);
     setColumns((prev) => (!isEqual(prev, dynamicColumns) ? dynamicColumns : prev));
@@ -413,10 +389,8 @@ const TaskListTable = () => {
     const column = columns.find((col) => col.sortKey === model?.[0]?.field);
     if (!column) return;
     dispatch(setBPMTaskLoader(true));
-
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
     const enabledSort = new Set(["applicationId", "submitterName", "formName"]);
-
     const updatedFilterListSortParams = {
       ...resetSortOrders,
       [column.sortKey]: {
@@ -427,7 +401,6 @@ const TaskListTable = () => {
       },
       activeKey: column.sortKey,
     };
-
     dispatch(setFilterListSortParams(updatedFilterListSortParams));
     const payload = createReqPayload(
       selectedFilter,
@@ -466,7 +439,6 @@ const TaskListTable = () => {
 
   const muiColumns = useMemo(() => {
     const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
-
     return [
       ...filteredColumns.map((col, idx) => ({
         field: col.sortKey,
@@ -524,7 +496,6 @@ const TaskListTable = () => {
 
   const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
 
-  // Row height scales with selected filter's dataLineValue/displayLinesCount
   const computedRowHeight = useMemo(() => {
     const lines =
       Number(
@@ -532,12 +503,11 @@ const TaskListTable = () => {
         selectedFilter?.properties?.displayLinesCount ??
         1
       );
-    const base = 55; // default row height in ReusableTable
+    const base = 55;
     const clampedLines = isNaN(lines) ? 1 : Math.max(1, Math.min(4, lines));
     return base * clampedLines;
   }, [selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
 
-  // Heuristic: if a row's visible text values all fit in one line, keep base height
   const getRowHeight = useCallback((params: any) => {
     const base = 55;
     const maxLines = Number(
@@ -546,14 +516,10 @@ const TaskListTable = () => {
       1
     );
     if (maxLines <= 1) return base;
-
     const row: any = params?.model || params?.row || {};
-
-    // visible column keys excluding actions/assignee
     const visibleKeys = (columns || [])
       .filter((c) => c.sortKey !== 'actions' && c.sortKey !== 'assignee')
       .map((c) => c.sortKey);
-
     const getTextValue = (key: string): string => {
       if (key === 'created') {
         return row.created ? HelperServices.getLocaldate(row.created) : '';
@@ -572,7 +538,6 @@ const TaskListTable = () => {
       } catch {}
       return v != null ? String(v) : '';
     };
-
     const threshold = 28;
     const needsMore = visibleKeys.some((k) => getTextValue(k).length > threshold);
     return needsMore ? base * Math.max(1, Math.min(4, Number(maxLines))) : base;
@@ -619,9 +584,7 @@ const TaskListTable = () => {
               );
               const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
               dispatch(setSelectedFilter(updatedFilter));
-            } catch (e) {
-              // no-op
-            }
+            } catch (e) {}
           }
         }}
         enableStickyActions={true}
