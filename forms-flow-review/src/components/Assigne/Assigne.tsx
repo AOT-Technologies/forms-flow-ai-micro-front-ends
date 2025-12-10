@@ -16,7 +16,7 @@ import { useEffect, useState, useRef } from "react";
 
 
 
-const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false }) => {
+const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, resizable=false }) => {
   const dispatch = useDispatch();
   const taskId = task?.id;
   const {
@@ -200,6 +200,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false })
           dataTestId="task-assignee-select"
           showAsText={true}
           className="text-overflow-ellipsis"
+          resizable={resizable}
         />
       )
     })()}

@@ -76,6 +76,7 @@ export interface SelectDropdownProps
   secondDefaultValue?: string | number;
   secondValue?: string | number;
   onSecondChange?: (value: string | number) => void;
+  resizable?: boolean;
 }
 
 type DropdownPosition = {
@@ -120,6 +121,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       secondDefaultValue,
       secondValue,
       onSecondChange,
+      resizable = false,
       ...restProps
     },
     ref
@@ -335,7 +337,9 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   position: "absolute",
                   top: position.top,
                   left: position.left,
-                  width: position.width,
+                  ...(resizable
+                    ? { width: "max-content", maxWidth: "15.25rem" }
+                    : { width: position.width }),
                   zIndex: 2000,
                   ...dropdownStyle,
                 }
