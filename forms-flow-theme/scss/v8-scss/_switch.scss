@@ -166,6 +166,17 @@ $color-switch-hover-red: var(--red-200);
   justify-content: center;
   width: 100%;
   height: 100%;
+  position: relative;
+  z-index: 1;
+  
+  svg {
+    display: block;
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 24%;
+    right: 19%;
+  }
 }
 
 // Responsive behavior
