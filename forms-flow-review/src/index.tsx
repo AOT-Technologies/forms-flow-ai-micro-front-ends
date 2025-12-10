@@ -15,8 +15,8 @@ import TaskDetails from "./Routes/TaskDetails";
 import SocketIOService from "./services/SocketIOService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./reducers";
-import { getOnlyTaskDetails } from "./api/services/bpmTaskServices";
-import { setBPMTaskDetail,setTaskAssignee } from "./actions/taskActions";
+import { getBPMTaskDetail } from "./api/services/bpmTaskServices";
+import { setTaskAssignee } from "./actions/taskActions";
 import { StyleServices } from "@formsflow/service";
 import { setTenantData } from "./actions/tenantActions";
 import { fetchServiceTaskList, fetchUserList } from "./api/services/filterServices";
@@ -138,18 +138,17 @@ useEffect(() => {
     console.log("handleTaskUpdate test",refreshedTaskId,taskId);
     // taskId & refreshedTaskId will be equal if user is in task details page
   if (taskId === refreshedTaskId) {
-    // if a task opened, some changes made against this task we need to recall the details
-    getOnlyTaskDetails(refreshedTaskId).then((response) => {
-      dispatch(
-        setBPMTaskDetail({
-          ...response.data,
-          variables: taskDetails?.variables,
-        })
-      );
-      console.log("handleTaskUpdate inside",response.data.assignee);
-      // Added to update assignee when socket trigger happens when user is in task details page
-      dispatch(setTaskAssignee(response.data.assignee))
-    });
+    // Use getBPMTaskDetail instead of getOnlyTaskDetails to get full task details
+    // including variables (formId/formType) which are needed for form reload
+    dispatch(getBPMTaskDetail(refreshedTaskId, (err, taskDetails) => {
+      if (!err && taskDetails) {
+        console.log("handleTaskUpdate inside", taskDetails.assignee);
+        // getBPMTaskDetail already handles:
+        // - setBPMTaskDetail (with formId/formType from variables)
+        // - setTaskAssignee
+        // - setTaskDetailsLoading(false)
+      }
+    }));
   }
   checkTheTaskIdExistThenRefetchTaskList();
 };
