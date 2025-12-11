@@ -232,7 +232,7 @@ const TaskListTable = () => {
           </div>
         );
       case "assignee":
-        return <TaskAssigneeManager task={task} resizeable={true}/>;
+        return <TaskAssigneeManager task={task} resizable={true}/>;
       case "roles": {
   const validGroups = candidateGroups.filter(group => group?.groupId);
 
