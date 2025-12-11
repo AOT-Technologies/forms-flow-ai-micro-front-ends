@@ -221,6 +221,7 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     box-shadow: $box-shadow;
     border: none;
     overflow: hidden;
+    max-height: 95vh;
     
     .modal-header {
       display: flex;
