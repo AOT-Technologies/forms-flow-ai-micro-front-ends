@@ -203,6 +203,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
           value={displayedValue}
           onChange={handleChangeClaim}
           shortMeLabel={!isFromTaskDetails}
+          isFromTaskDetails={isFromTaskDetails}
           ariaLabel="task-assignee-select"
           dataTestId="task-assignee-select"
           showAsText={true}
