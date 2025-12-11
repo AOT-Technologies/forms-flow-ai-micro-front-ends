@@ -395,7 +395,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
                   )}
                 </div>
               ) : (
-                <div className="d-flex flex-column h-100 justify-content-center align-items-center">
+                <div className="d-flex flex-column h-100 pt-4 align-items-center">
                   <span className="label">{t("Choose a form field to create a variable")}</span>
                 </div>
               )}

@@ -25,6 +25,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
     lastRequestedPayload: lastReqPayload,
     activePage,
     limit,
+    taskDetail, // Add taskDetail from Redux for real-time updates
   } = useSelector((state: any) => state.task);
 
   const { manageMyTasks,AssignTaskToOthers } = userRoles();
@@ -74,14 +75,19 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
     );
   };
 
+  // When on task details page, use Redux taskDetail as source of truth for real-time updates
+  // Otherwise, use the task prop (for list view)
+  const effectiveTask = isFromTaskDetails && taskDetail?.id === taskId ? taskDetail : task;
+
   const handleChangeClaim = (newuser: string) => {
     // Optimistically update the UI label
     setOverrideValue(newuser);
-    const currentValue = !task?.assignee
+    // Use effectiveTask instead of task to get real-time updates
+    const currentValue = !effectiveTask?.assignee
       ? 'unassigned'
-      : task.assignee === userDetails?.preferred_username
+      : effectiveTask.assignee === userDetails?.preferred_username
       ? 'me'
-      : task.assignee;
+      : effectiveTask.assignee;
 
     const refreshAfter = () => {
       if (isFromTaskDetails) {
@@ -100,7 +106,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
     if (newuser === 'me') {
       // Check both Redux state and last assigned user to handle stale state
       // This handles the case where Redux state might be stale after assigning to someone else
-      const hasAssigneeInState = task?.assignee && task.assignee !== userDetails?.preferred_username;
+      const hasAssigneeInState = effectiveTask?.assignee && effectiveTask.assignee !== userDetails?.preferred_username;
       const wasJustAssignedToOther = lastAssignedUserRef.current && 
         lastAssignedUserRef.current !== userDetails?.preferred_username && 
         lastAssignedUserRef.current !== 'me' && 
@@ -157,11 +163,12 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
     }
   };
 
-    const currentValue = !task?.assignee
-      ? "unassigned"
-      : task.assignee === userDetails?.preferred_username
-      ? "me"
-      : task.assignee;
+  // Use effectiveTask for currentValue calculation
+  const currentValue = !effectiveTask?.assignee
+    ? "unassigned"
+    : effectiveTask.assignee === userDetails?.preferred_username
+    ? "me"
+    : effectiveTask.assignee;
 
   const userList = useSelector((state: any) => state.task?.userList);
   const displayedValue = overrideValue ?? currentValue;
@@ -175,14 +182,14 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
   // Sync lastAssignedUserRef with Redux state when it updates (after API calls complete)
   // This ensures our ref stays in sync with the actual state
   useEffect(() => {
-    if (task?.assignee) {
-      const assigneeValue = task.assignee === userDetails?.preferred_username ? 'me' : task.assignee;
+    if (effectiveTask?.assignee) {
+      const assigneeValue = effectiveTask.assignee === userDetails?.preferred_username ? 'me' : effectiveTask.assignee;
       lastAssignedUserRef.current = assigneeValue;
     } else {
       // Task is unassigned
       lastAssignedUserRef.current = 'unassigned';
     }
-  }, [task?.assignee, userDetails?.preferred_username]);
+  }, [effectiveTask?.assignee, userDetails?.preferred_username]);
   if (!task?.id) {
     return null;
   }
