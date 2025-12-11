@@ -1,6 +1,6 @@
 // Local tokens sourced from :root variables in _theme.scss
 $ti-color-text: var(--gray-darkest);
-$ti-color-placeholder: var(--gray-xx-light);
+$ti-color-placeholder: var(--gray-dark);
 $ti-color-placeholder-disabled: var(--gray-xx-light);
 $ti-color-border: var(--gray-x-light);
 $ti-color-border-hover: var(--secondary-dark);
@@ -88,4 +88,7 @@ $ti-font-weight: var(--font-weight-regular);
 
         }
     }
+}
+.wrapper-custom-width{
+    width: 100% !important;
 }

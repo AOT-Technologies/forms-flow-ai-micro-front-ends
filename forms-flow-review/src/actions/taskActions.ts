@@ -285,6 +285,11 @@ export const setTaskDetailsLoading = (data) =>({
   payload: data,
 })
 
+export const setTaskFormSubmissionReload = (data) =>({
+  type: ACTION_CONSTANTS.RELOAD_TASK_FORM_SUBMISSION,
+  payload: data,
+})
+
 //===== Bundle Actions  ==>
 
 export const setBundleSelectedForms = (data) => (dispatch) => {

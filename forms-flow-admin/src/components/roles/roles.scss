@@ -129,6 +129,12 @@
     .form-check.fw-bold {
       font-weight: var(--font-weight-lg);
     }
+    .form-check-input{
+        margin-right: 0.313rem;
+      }
+    .form-check-label{
+        margin-top: 0.375rem;
+    }
   
     .tree-branch {
       position: relative;
@@ -146,6 +152,7 @@
         width: 0.031rem;
         background: var(--ff-primary);
       }
+     
     }
   
     .tree-node {

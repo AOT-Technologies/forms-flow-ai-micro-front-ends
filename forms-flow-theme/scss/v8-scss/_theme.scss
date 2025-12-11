@@ -47,6 +47,8 @@ $opacities: (
  300: 0.25  // 25%
 );
 
+$scrollBarWidth: 0.5rem;
+
 // Helper: Blend with a white background [ To achieve exact variants of figma ] 
 @function blend-with-white-to-hex($color, $opacity) {
  $white: #fff;
@@ -171,6 +173,7 @@ $font-tokens: (
 
     --progress-bar-bg-color : var(--primary-dark);
     --main-bg: var(--white-300);
+    --pill-bg-color: var(--gray-x-light);
 
 
 /*══════════════════ ⬥ FONT UTILITIES | VERSION 8 ⬥ ══════════════════*/
@@ -221,7 +224,7 @@ $font-tokens: (
 
  --border-radius: 0.3125rem; //5px
  --navbar-width:3rem;
- --body-section-height: 80vh; //update dynamically for the pages.
+ --body-section-height: 100vh; //update dynamically for the pages.
 
 
 
@@ -305,6 +308,7 @@ $font-tokens: (
           display: flex;
           flex-direction: column;
           min-height: 0;
+          max-height: var(--body-section-height);
           
           &.formedit-layout,
           &.processedit-layout,
@@ -315,6 +319,18 @@ $font-tokens: (
             box-sizing: border-box;
             max-height: calc(100vh - 200px);
             width: 1088px;
+            padding-bottom: 120px;
+          }
+
+          &.formedit-layout {
+            max-height: calc(100vh - 240px);
+            &.variables-tab{
+              max-height: calc(100vh - 315px) !important;
+            }
+            padding-bottom: 0px;
+            &.bpmn-container .bpmn-main-container-editor{
+              max-height: fit-content!important;
+            }
           }
           
           &.task-list-body-section {
@@ -347,13 +363,13 @@ $font-tokens: (
 //custom-height for the selected dropdowns
 .task-list-page, .analyze-submissions-page{
   .filter-dropdown-items{
-    max-height: 50vh;
+    max-height: 50vh !important;
   }
 }
 
 .analyze-submissions-page{
   .custom-dropdown-options{
-    max-height: 50vh;
+    max-height: 50vh !important;
   }
   // Make header sticky and only the content area scrollable in submissions field picker
   .filter-dropdown-actions.sticky-actions{
@@ -368,5 +384,55 @@ $font-tokens: (
   .filter-dropdown-scroll{
     max-height: 50vh;
     overflow-y: auto;
+  }
+}
+.system-variables-container{
+  .custom-switch-wrapper{
+    padding-right: 0.775rem !important;
+  }
+  .last-column{
+    padding-right: 1.4rem !important;
+  }
+}
+.submission-history-container{
+  .body-section{
+    max-height: 90vh !important;
+  }
+}
+
+.custom-scroll {
+  &::-webkit-scrollbar {
+    display: block;
+    width: $scrollBarWidth;
+    
+    background-color: transparent;
+    
+    opacity: 0;
+    
+    cursor: pointer;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar {
+      opacity: 1;
+      width: calc($scrollBarWidth);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      width: calc($scrollBarWidth / 2);
+      min-height: 15.625rem;
+      background-color: var(--gray-medium-dark);
+      background-clip: padding-box;
+      border-radius: 5rem; // should be just big enough to round corners off completely
+      border: var(--spacer-025) solid transparent;
+      opacity: 1;
+      cursor: pointer;
+    }
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    border: none;
+    box-shadow: none;
+    outline: none;
   }
 }

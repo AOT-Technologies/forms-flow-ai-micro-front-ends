@@ -1,4 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  forwardRef,
+  memo,
+} from "react";
+import { createPortal } from "react-dom";
 import { DownArrowIcon, UpArrowIcon, VerticalLineIcon } from "../SvgIcons";
 import { ListGroup } from "react-bootstrap";
 import { CustomSearch } from "./Search";
@@ -54,6 +63,12 @@ export interface SelectDropdownProps
   searchable?: boolean;
   /** Placeholder for the CustomSearch input */
   customSearchPlaceholder?: string;
+  /** Placeholder text for the dropdown button */
+  placeholder?: string;
+  /** Custom width for the dropdown (e.g., '300px', '20rem', '100%') */
+  width?: string | number;
+  /** Max height for the dropdown menu */
+  dropdownMaxHeight?: string | number;
 
   /** --- New props for dependent dropdown --- */
   secondDropdown?: boolean;
@@ -61,7 +76,14 @@ export interface SelectDropdownProps
   secondDefaultValue?: string | number;
   secondValue?: string | number;
   onSecondChange?: (value: string | number) => void;
+  resizable?: boolean;
 }
+
+type DropdownPosition = {
+  top: number;
+  left: number;
+  width: number;
+};
 
 /** Utility: build className string */
 const buildClassNames = (
@@ -85,10 +107,13 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       variant = "primary",
       dropdownWrapperClassName,
       dropdownItemClassName,
+      width,
+      dropdownMaxHeight,
 
       // Top-of-list CustomSearch
       searchable = false,
       customSearchPlaceholder = "Search all forms",
+      placeholder,
 
       // Secondary dropdown support
       secondDropdown = false,
@@ -96,6 +121,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       secondDefaultValue,
       secondValue,
       onSecondChange,
+      resizable = false,
       ...restProps
     },
     ref
@@ -114,6 +140,13 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
     >(secondValue || secondDefaultValue);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const primaryWrapperRef = useRef<HTMLDivElement>(null);
+    const secondaryWrapperRef = useRef<HTMLDivElement>(null);
+    const primaryMenuRef = useRef<HTMLDivElement | null>(null);
+    const secondaryMenuRef = useRef<HTMLDivElement | null>(null);
+    const [primaryPosition, setPrimaryPosition] = useState<DropdownPosition | null>(null);
+    const [secondaryPosition, setSecondaryPosition] = useState<DropdownPosition | null>(null);
+    const [isMounted, setIsMounted] = useState(false);
 
     // Update values if props change
     useEffect(() => {
@@ -124,12 +157,60 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       setSecondSelectedValue(secondValue || secondDefaultValue);
     }, [secondValue, secondDefaultValue]);
 
+    useEffect(() => {
+      setIsMounted(typeof document !== "undefined");
+    }, []);
+
+    const updatePosition = useCallback(
+      (
+        wrapper: React.RefObject<HTMLDivElement>,
+        setter: React.Dispatch<React.SetStateAction<DropdownPosition | null>>
+      ) => {
+        if (!wrapper.current) return;
+        const rect = wrapper.current.getBoundingClientRect();
+        setter({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+        });
+      },
+      []
+    );
+
+    useEffect(() => {
+      if (!isOpen) return;
+      const handleUpdate = () => updatePosition(primaryWrapperRef, setPrimaryPosition);
+      handleUpdate();
+      window.addEventListener("scroll", handleUpdate, true);
+      window.addEventListener("resize", handleUpdate);
+      return () => {
+        window.removeEventListener("scroll", handleUpdate, true);
+        window.removeEventListener("resize", handleUpdate);
+      };
+    }, [isOpen, updatePosition]);
+
+    useEffect(() => {
+      if (!secondIsOpen) return;
+      const handleUpdate = () => updatePosition(secondaryWrapperRef, setSecondaryPosition);
+      handleUpdate();
+      window.addEventListener("scroll", handleUpdate, true);
+      window.addEventListener("resize", handleUpdate);
+      return () => {
+        window.removeEventListener("scroll", handleUpdate, true);
+        window.removeEventListener("resize", handleUpdate);
+      };
+    }, [secondIsOpen, updatePosition]);
+
     // Handle click outside
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent): void => {
         if (
           dropdownRef.current &&
-          !dropdownRef.current.contains(event.target as Node)
+          !dropdownRef.current.contains(event.target as Node) &&
+          (!primaryMenuRef.current ||
+            !primaryMenuRef.current.contains(event.target as Node)) &&
+          (!secondaryMenuRef.current ||
+            !secondaryMenuRef.current.contains(event.target as Node))
         ) {
           setIsOpen(false);
           setSecondIsOpen(false);
@@ -199,6 +280,18 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       return dependentOptions[selectedValue] || [];
     }, [dependentOptions, secondDropdown, selectedValue]);
 
+    // Shared style for dropdown menus
+    const dropdownStyle: React.CSSProperties = useMemo(() => {
+      if (!dropdownMaxHeight) return {};
+      return {
+        maxHeight:
+          typeof dropdownMaxHeight === "number"
+            ? `${dropdownMaxHeight}px`
+            : dropdownMaxHeight,
+        overflowY: "auto",
+      };
+    }, [dropdownMaxHeight]);
+
     /** Arrow icon */
     const renderArrowIcon = (open: boolean) => {
       const iconColor = disabled ? "#c5c5c5" : "#4a4a4a";
@@ -219,9 +312,87 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       variantType: DropdownVariant,
       defaultVal?: string | number,
       wrapperClass?: string,
-      itemClass?: string
-    ) => (
-      <div className={buildClassNames("dropdown-wrapper", wrapperClass)}>
+      itemClass?: string,
+      wrapperRef?: React.RefObject<HTMLDivElement>,
+      menuRef?: React.MutableRefObject<HTMLDivElement | null>,
+      position?: DropdownPosition | null,
+      placeholderText?: string
+    ) => {
+      const shouldPortal =
+        isMounted && position && typeof document !== "undefined";
+      const dropdownContent = (
+        <div
+          ref={(node) => {
+            if (menuRef) {
+              menuRef.current = node;
+            }
+          }}
+          className={buildClassNames(
+            "custom-dropdown-options",
+            `custom-dropdown-options--${variantType}`
+          )}
+          style={
+            shouldPortal && position
+              ? {
+                  position: "absolute",
+                  top: position.top,
+                  left: position.left,
+                  ...(resizable
+                    ? { width: "max-content", maxWidth: "15.25rem" }
+                    : { width: position.width }),
+                  zIndex: 2000,
+                  ...dropdownStyle,
+                }
+              : Object.keys(dropdownStyle).length
+              ? dropdownStyle
+              : undefined
+          }
+        >
+          {searchable && (
+            <div className="custom-dropdown-search">
+              <CustomSearch
+                search={searchTerm}
+                setSearch={setSearchTerm}
+                handleSearch={() => {}}
+                placeholder={customSearchPlaceholder}
+                dataTestId={`${dataTestId}-dropdown-search`}
+              />
+            </div>
+          )}
+          {opts.length > 0 ? (
+            opts.map((option) => (
+              <ListGroup.Item
+                key={option.value}
+                className={buildClassNames(
+                  "custom-dropdown-item",
+                  itemClass,
+                  option.value === selValue && "selected"
+                )}
+                onClick={() => selectFn(option.value)}
+                aria-selected={option.value === selValue}
+                data-testid={`${dataTestId}-${option.value}`}
+              >
+                <span className="dropdown-option-content">
+                  {option.icon && (
+                    <span className="dropdown-icon">{option.icon}</span>
+                  )}
+                  <span className="text-break">{option.label}</span>
+                </span>
+              </ListGroup.Item>
+            ))
+          ) : (
+            <ListGroup.Item className="custom-dropdown-item no-results">
+              No Matching Results
+            </ListGroup.Item>
+          )}
+        </div>
+      );
+
+      return (
+        <div
+          ref={wrapperRef}
+          className={buildClassNames("dropdown-wrapper", wrapperClass)}
+        >
         <button
           type="button"
           className={buildClassNames(
@@ -258,59 +429,23 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   </span>
                 );
               }
+              // Show placeholder if no value is selected
+              if (!selValue && !defaultVal && placeholderText) {
+                return <span className="dropdown-text-placeholder">{placeholderText}</span>;
+              }
               return defaultVal ?? "";
             })()}
           </span>
           {renderArrowIcon(isOpenState)}
         </button>
-        {isOpenState && !disabled && (
-          <div
-            className={buildClassNames(
-              "custom-dropdown-options",
-              `custom-dropdown-options--${variantType}`
-            )}
-          >
-            {searchable && (
-              <div className="custom-dropdown-search">
-                <CustomSearch
-                  search={searchTerm}
-                  setSearch={setSearchTerm}
-                  handleSearch={() => {}}
-                  placeholder={customSearchPlaceholder}
-                  dataTestId={`${dataTestId}-dropdown-search`}
-                />
-              </div>
-            )}
-            {opts.length > 0 ? (
-              opts.map((option) => (
-                <ListGroup.Item
-                  key={option.value}
-                  className={buildClassNames(
-                    "custom-dropdown-item",
-                    itemClass,
-                    option.value === selValue && "selected"
-                  )}
-                  onClick={() => selectFn(option.value)}
-                  aria-selected={option.value === selValue}
-                  data-testid={`${dataTestId}-${option.value}`}
-                >
-                  <span className="dropdown-option-content">
-                    {option.icon && (
-                      <span className="dropdown-icon">{option.icon}</span>
-                    )}
-                    <span className="text-break">{option.label}</span>
-                  </span>
-                </ListGroup.Item>
-              ))
-            ) : (
-              <ListGroup.Item className="custom-dropdown-item no-results">
-                No Matching Results
-              </ListGroup.Item>
-            )}
-          </div>
-        )}
+        {isOpenState &&
+          !disabled &&
+          (shouldPortal
+            ? createPortal(dropdownContent, document.body)
+            : dropdownContent)}
       </div>
-    );
+      );
+    };
 
     const containerClassName = useMemo(
       () =>
@@ -325,9 +460,11 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
     // Compute automatic block spacing based on whether a secondary dropdown will render
     const hasSecondary = secondDropdown && (secondaryOptions.length > 0);
     const { style: incomingStyle, ...restDivProps } = restProps as { style?: React.CSSProperties } & Record<string, any>;
-    const containerStyle: React.CSSProperties | undefined = secondDropdown
-      ? { ...(incomingStyle || {}), marginBottom: hasSecondary ? "5rem" : "2rem" }
-      : incomingStyle;
+    const containerStyle: React.CSSProperties | undefined = {
+      ...(incomingStyle || {}),
+      ...(width && { width: typeof width === 'number' ? `${width}px` : width }),
+      ...(secondDropdown && { marginBottom: hasSecondary ? "5rem" : "2rem" })
+    };
 
     return (
       <div
@@ -351,7 +488,11 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           variant,
           defaultValue,
           dropdownWrapperClassName,
-          dropdownItemClassName
+          dropdownItemClassName,
+          primaryWrapperRef,
+          primaryMenuRef,
+          primaryPosition,
+          placeholder
         )}
 
         {/* --- SECONDARY DROPDOWN (Indented) --- */}
@@ -371,7 +512,11 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                 "secondary",
                 secondDefaultValue,
                 dropdownWrapperClassName,
-                dropdownItemClassName
+                dropdownItemClassName,
+                secondaryWrapperRef,
+                secondaryMenuRef,
+                secondaryPosition,
+                undefined
               )}
             </div>
           </div>

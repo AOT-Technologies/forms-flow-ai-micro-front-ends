@@ -84,8 +84,8 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     overflow: hidden;
     min-width: 0;
     
-    // Target all spans directly or nested
-    span {
+    // Target all spans directly or nested (but NOT multi-line ellipsis elements)
+    span:not(.text-multiline-ellipsis) {
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
@@ -99,7 +99,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
     [class*="flex"] {
       min-width: 0;
       
-      > span {
+      > span:not(.text-multiline-ellipsis) {
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
@@ -108,7 +108,59 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
         flex-shrink: 1;
       }
     }
+
+    // Multi-line ellipsis support: allow text to wrap across multiple lines
+    // Works with both div and span elements
+    .text-multiline-ellipsis,
+    div.text-multiline-ellipsis,
+    span.text-multiline-ellipsis {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      display: -webkit-box !important;
+      -webkit-box-orient: vertical !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+      line-height: 1.4 !important;
+      max-width: 100%;
+      min-width: 0;
+      width: 100%;
+    }
   }
+}
+
+// Multi-line mode for task table - when displayLinesCount > 1
+.task-table-multiline {
+  .MuiDataGrid-root {
+    .MuiDataGrid-cell {
+      align-items: flex-start !important;
+      padding-top: 0.625rem !important;
+      padding-bottom: 0.625rem !important;
+      min-height: 55px; // Minimum row height
+      
+      // Ensure content wrapper allows proper sizing
+      .text-multiline-ellipsis {
+        line-height: 1.5 !important;
+      }
+    }
+    
+    // Ensure rows can grow with auto height
+    .MuiDataGrid-row {
+      min-height: 3.375rem !important;
+      max-height: none !important;
+    }
+  }
+}
+
+// Global multi-line ellipsis support (outside of MuiDataGrid context)
+.text-multiline-ellipsis {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height:var(--text-line-height)!important;
+  max-width: 100%;
 }
   .MuiInputBase-root{
     display: flex;
@@ -308,6 +360,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
   //for submissions page temporarily used className
   .custom-table-wrapper-outter-submissions{
     container: tableSize / inline-size;
+    padding-bottom: 200px;
   }
 
 .notes-wrapper {
@@ -334,4 +387,8 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
 }
 .MuiDataGrid-cell.MuiDataGrid-cellEmpty {
   display: none !important;
+}
+
+.MuiDataGrid-main {
+  overflow-x: scroll!important;
 }

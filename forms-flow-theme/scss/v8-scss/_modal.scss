@@ -279,7 +279,6 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 
     .form-items-list {
         overflow: scroll;
-        padding-bottom: 60px;
     }
 
     .right-form-preview-container {
@@ -320,6 +319,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         .text-input,
         .selectdropdown-container {
             width: 20rem !important; // 320px
+            min-width: 0px !important;
         }
     }
 
@@ -474,6 +474,11 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     overflow-y: auto; /* allows scroll */
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;     /* Firefox */
+
+    &.with-tabs {
+        height: 70vh;
+        min-height: 400px;
+    }
 }
   
   /* Chrome, Brave, Safari, Opera */
@@ -530,7 +535,6 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 }
 
 .text-input-wrapper {
-    margin-top: var(--spacer-050);
     width: 22rem;
 }
 

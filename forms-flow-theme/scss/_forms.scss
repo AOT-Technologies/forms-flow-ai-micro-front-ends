@@ -7,6 +7,7 @@ $gray-medium: var(--ff-gray-medium);
 $gray-medium-dark: var(--ff-gray-medium-dark);
 $danger-color: var(--ff-danger);
 $white-color: var(--ff-white);
+$pill-bg-color: var(--pill-bg-color);
 
 .forms-text {
   vertical-align: bottom;
@@ -371,7 +372,7 @@ select option:hover {
   padding-inline: var(--spacer-100) !important;
   color: var(--default-font-color) !important;
   gap: var(--spacer-050) !important;
-  background-color: $primary-light !important;
+  background-color: $pill-bg-color !important;
   border: none !important;
   align-items: center !important;
   font-size: var(--font-size-sm) !important;
@@ -754,7 +755,7 @@ span.text-danger,
     
     .MuiDataGrid-virtualScroller {
       height: auto !important;
-      min-height: auto !important;
+      min-height: 450px !important;
       overflow: visible !important;
     }
     

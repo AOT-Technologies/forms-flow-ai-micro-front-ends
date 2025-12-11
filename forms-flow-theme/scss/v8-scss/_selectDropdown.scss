@@ -30,6 +30,7 @@ $color-medium-gray: var(--gray-x-light);
 $color-dark-gray: var(--gray-darkest);
 $color-darker-gray: var(--secondary-dark);
 $color-disabled-gray: var(--gray-medium);
+$color-placeholder-gray: var(--gray-dark);
 
 $color-primary: var(--vivid-100);
 $color-primary-light: var(--primary-dark);
@@ -79,12 +80,18 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   position: relative;
   display: inline-block;
   width: $dropdown-width;
+  // min-width: $dropdown-width; // Ensure minimum width
   height: $dropdown-height;
   flex-shrink: 0;
   color: $color-dark-gray;
   font-size: $dropdown-font-size;
   font-weight: $dropdown-font-weight;
   line-height: $dropdown-line-height;
+
+  // Allow custom width to override default
+  &[style*="width"] {
+    min-width: unset;
+  }
 }
 
 .custom-selectdropdown {
@@ -183,6 +190,11 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+  }
+
+  // Placeholder text styling
+  .dropdown-text-placeholder {
+    color: $color-placeholder-gray;
   }
 
   // Input field styling for search dropdown mode
@@ -343,12 +355,16 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   }
 }
 
-.userSelect-container{
-  .selectdropdown-container{
-    .custom-selectdropdown{
-      svg{
+.userSelect-container {
+  .selectdropdown-container {
+    .custom-selectdropdown {
+      svg {
         display: none !important;
       }
+    }
+    // Move .text-overflow-ellipsis override here to avoid duplicate top-level selector
+    &.text-overflow-ellipsis {
+      overflow: visible !important;
     }
   }
 }
@@ -373,22 +389,33 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   border-top-width: 1px;
 }
 
-  //assignee dropdown width in tasktable
-  .MuiDataGrid-cell[data-field="assignee"] {
-    overflow: visible !important;
-   .selectdropdown-container{
-    width:11.063rem;
-   }}
+//assignee dropdown width in tasktable
+.MuiDataGrid-cell[data-field="assignee"] {
+  overflow: visible !important;
 
+  .userSelect-container,
+  .dropdown-wrapper,
+  .selectdropdown-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
 
-   .task-assignee-wrapper{
-    width: 352px !important;
-    flex:1 !important;
-    .userSelect-container{
-      .selectdropdown-container{
-        .custom-selectdropdown{
-          width: 352px !important;
-        }
+  .custom-selectdropdown {
+    width: 100% ;
+    max-width: 11.25rem;
+    min-width: 0;
+  }
+}
+
+.task-assignee-wrapper{
+  width: 352px !important;
+  flex: 1 !important;
+  .userSelect-container {
+    .selectdropdown-container {
+      .custom-selectdropdown {
+        width: 352px !important;
       }
     }
-   }
+  }
+}

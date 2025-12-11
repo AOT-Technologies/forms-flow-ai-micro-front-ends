@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useEffect, useState } from "react";
+import * as React from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector, batch } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { push } from "connected-react-router";
 
@@ -41,7 +41,8 @@ import {
   SelectDropdown,
   CustomSearch,
   FilterDropDown,
-  AddIcon
+  AddIcon,
+  BreadCrumbs
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../constants";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -91,10 +92,10 @@ const AnalyzeSubmissionList: React.FC = () => {
   const columnWidths = useSelector((state: any) => state?.analyzeSubmission?.columnWidths ?? {});
   //local state
   const [isManageFieldsModalOpen, setIsManageFieldsModalOpen] = useState(false);
-   const handleManageFieldsOpen = () => setIsManageFieldsModalOpen(true);
-  const handleManageFieldsClose = () => setIsManageFieldsModalOpen(false);
+   const handleManageFieldsOpen = useCallback(() => setIsManageFieldsModalOpen(true), []);
+  const handleManageFieldsClose = useCallback(() => setIsManageFieldsModalOpen(false), []);
   const [dropdownSelection, setDropdownSelection] = useState<string | null>(null);
-  const [form, setForm] = React.useState([]);
+  const [form, setForm] = useState([]);
   const [savedFormVariables, setSavedFormVariables] = useState({});
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [lastFetchedFormId, setLastFetchedFormId] = useState<string | null>(null);
@@ -104,6 +105,11 @@ const AnalyzeSubmissionList: React.FC = () => {
   const [selectedSearchFieldKey, setSelectedSearchFieldKey] = useState<string>("id");
   const [searchFieldFilterTerm, setSearchFieldFilterTerm] = useState<string>("");
   const [searchText, setSearchText] = useState<string>("");
+  const [submissionsData, setSubmissionsData] = useState<{ submissions: Submission[]; totalCount: number }>({
+    submissions: [],
+    totalCount: 0,
+  });
+  const [isSubmissionsLoading, setIsSubmissionsLoading] = useState(false);
 
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
@@ -134,11 +140,11 @@ const AnalyzeSubmissionList: React.FC = () => {
   }, [dropdownSelection]);
 
 
-const handleClearSearch = () => {
+const handleClearSearch = useCallback(() => {
   setFieldFilters({});
   // Clear the search field values globally
   dispatch(clearSearchFieldValues());
-};
+}, [dispatch]);
 
 
 
@@ -188,14 +194,28 @@ useEffect (() => {
 
 
 
-const handleFieldSearch = (filters: Record<string, string>) => {
+const handleFieldSearch = useCallback((filters: Record<string, string>) => {
   setFieldFilters(filters);
   dispatch(setAnalyzeSubmissionPage(1));
   setFiltersApplied(true);
   dispatch(setSearchFieldValues(filters));
-};
+}, [dispatch]);
+
+// When user clears the searched input, clear the applied filters and refresh the table.
+useEffect(() => {
+  const isSearchCleared = (searchText || "").trim() === "";
+  if (isSearchCleared && filtersApplied) {
+    setFieldFilters({});
+    dispatch(clearSearchFieldValues());
+    dispatch(setAnalyzeSubmissionPage(1));
+    setFiltersApplied(false);
+  }
+}, [selectedSearchFieldKey, searchText, filtersApplied]);
 // Use the current submissionFields state for calculation
-const currentFields = selectedSubmissionFilter?.variables ?? submissionFields;
+const currentFields = useMemo(() => 
+  selectedSubmissionFilter?.variables ?? submissionFields,
+  [selectedSubmissionFilter?.variables, submissionFields]
+);
 
 const initialInputFields = useMemo(() => {
   //these pinned fileds should always come  first in sidebar
@@ -274,7 +294,20 @@ useEffect(() => {
     .catch((error) => {
       console.error("Error fetching submission list:", error);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
+
+// Keep search field and value with persisted values
+useEffect(() => {
+  if (searchFieldValues && Object.keys(searchFieldValues).length > 0) {
+    const keys = Object.keys(searchFieldValues);
+    const firstKey = keys.find((k) => (searchFieldValues as any)[k]) || keys[0];
+    if (firstKey) {
+      setSelectedSearchFieldKey(firstKey);
+      setSearchText(String((searchFieldValues as any)[firstKey] ?? ""));
+    }
+  }
+}, [searchFieldValues]);
 
   // Column width helper function
   const getColumnWidth = useCallback((key: string): number => {
@@ -341,61 +374,64 @@ const columnVisibilityModel = useMemo(() => {
 
   // Memoize sortModel to prevent unnecessary re-renders and ensure it updates correctly
   const sortModel = useMemo(() => {
-    if (activeSortKey) {
-      return [
-        {
-          field: activeSortKey,
-          sort: activeSortOrder,
-        },
-      ];
-    }
-    return [];
+    return activeSortKey
+      ? [{ field: activeSortKey, sort: activeSortOrder }]
+      : [];
   }, [activeSortKey, activeSortOrder]);
 
   // Fetch Submissions
-const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
+const systemFields = useMemo(() => ["id", "form_name", "created_by", "created", "application_status"], []);
 
 
 const selectedFormFields = useMemo(() => {
   return (selectedSubmissionFilter?.variables ?? [])
     .map((v) => v.key)
     .filter((key) => !systemFields.includes(key));
-}, [selectedSubmissionFilter]);
+}, [selectedSubmissionFilter, systemFields]);
+
+const appliedFieldFilters = useMemo(
+  () => (filtersApplied ? fieldFilters : {}),
+  [filtersApplied, fieldFilters]
+);
 
 
-
-//data for searching data in filter table
-const {
-  data,
-  isLoading: isSubmissionsLoading,
-  isFetching,
-  refetch,
-} = useQuery({
-  queryKey: [
-    "submissions",
-    page,
-    limit,
-    activeSortKey,
-    activeSortOrder,
-    dateRange,
-    dropdownSelection,
-    filtersApplied ? fieldFilters : {},
-    selectedFormFields
-  ],
-  queryFn: () =>
-    getSubmissionList(
+const fetchSubmissions = useCallback(async () => {
+  setIsSubmissionsLoading(true);
+  try {
+    const response = await getSubmissionList(
       limit,
       page,
       activeSortOrder,
       activeSortKey,
       dateRange,
       dropdownSelection,
-      filtersApplied ? fieldFilters : {},
+      appliedFieldFilters,
       selectedFormFields
-    ),
-  staleTime: 0,
-  cacheTime:0
-});
+    );
+    setSubmissionsData({
+      submissions: response?.submissions ?? [],
+      totalCount: response?.totalCount ?? 0,
+    });
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    setSubmissionsData({
+      submissions: [],
+      totalCount: 0,
+    });
+  } finally {
+    setIsSubmissionsLoading(false);
+  }
+}, [
+  limit,
+  page,
+  activeSortOrder,
+  activeSortKey,
+  dateRange?.startDate,
+  dateRange?.endDate,
+  dropdownSelection,
+  appliedFieldFilters,
+  selectedFormFields,
+]);
 
 
   useEffect(()=>{
@@ -431,29 +467,43 @@ const {
       setIsFormFetched(false);
     });
   }, [dropdownSelection, lastFetchedFormId,formData]);
+  useEffect(() => {
+    fetchSubmissions();
+  }, [fetchSubmissions]);
+
   // taking data from submission response for mapping to the table
-  const submissions: Submission[] = data?.submissions ?? [];
-  const totalCount: number = data?.totalCount ?? 0;
+  const submissions: Submission[] = submissionsData.submissions;
+  const totalCount: number = submissionsData.totalCount;
 
   // Pagination Model for ReusableTable
-  const paginationModel = useMemo(
-    () => ({ page: page - 1, pageSize: limit }),
-    [page, limit]
-  );
+  const paginationModel = useMemo(() => {
+    return { page: page - 1, pageSize: limit };
+  }, [page, limit]);
 
-  // Handle Pagination Model Change for ReusableTable
-  const handlePaginationModelChange = useCallback(({ page, pageSize }: any) => {
-    batch(() => {
-      dispatch(setAnalyzeSubmissionPage(page + 1));
-      dispatch(setAnalyzeSubmissionLimit(pageSize));
-    });
-  }, [dispatch]);
+  // Handle Pagination Model Change for ReusableTable  
+  const handlePaginationModelChange = useCallback(({ page: dataGridPage, pageSize }: any) => {
+    const requestedPage = (dataGridPage ?? 0) + 1;
+    const expectedDataGridPage = page - 1;
 
-  const handlerefresh = () => {
-    refetch();
-  };
+    if (dataGridPage === expectedDataGridPage && pageSize === limit) {
+      return;
+    }
 
- const handleDateRangeChange = (newDateRange) => {
+    if (limit !== pageSize) {
+      batch(() => {
+        dispatch(setAnalyzeSubmissionLimit(pageSize));
+        dispatch(setAnalyzeSubmissionPage(1));
+      });
+    } else if (page !== requestedPage) {
+      dispatch(setAnalyzeSubmissionPage(requestedPage));
+    }
+  }, [dispatch, limit, page]);
+
+  const handlerefresh = useCallback(() => {
+    fetchSubmissions();
+  }, [fetchSubmissions]);
+
+ const handleDateRangeChange = useCallback((newDateRange) => {
   const { startDate, endDate } = newDateRange;
 
   // Update state if:
@@ -464,9 +514,11 @@ const {
 
   if (!(bothSelected || bothCleared)) return;
 
-  dispatch(setAnalyzeSubmissionDateRange(newDateRange));
-  dispatch(setAnalyzeSubmissionPage(1));
- };
+  batch(() => {
+    dispatch(setAnalyzeSubmissionDateRange(newDateRange));
+    dispatch(setAnalyzeSubmissionPage(1));
+  });
+ }, [dispatch]);
 
  // Reset to default: set form to "All Forms" and clear date range
  const handleResetToDefault = useCallback(() => {
@@ -482,14 +534,6 @@ const {
     // Update Redux column widths
     dispatch(setColumnWidths({ [column.sortKey]: newWidth }));
   }, [dispatch]);
-
-  // Handle column width change from DataGrid
-  const handleColumnWidthChange = useCallback((params: any) => {
-    const column = columns.find((col) => col.sortKey === params.field);
-    if (column && handleColumnResize) {
-      handleColumnResize(column, params.width);
-    }
-  }, [columns, handleColumnResize]);
 
   // Disable reset if already at defaults
   const isResetDisabled = useMemo(() => {
@@ -587,27 +631,24 @@ const {
         form_name: { sortOrder: "asc" },
         activeKey: "form_name",
       };
-      dispatch(setAnalyzeSubmissionSort(updatedSort));
+      // Reset page to 1 when sort is reset
+      batch(() => {
+        dispatch(setAnalyzeSubmissionSort(updatedSort));
+        dispatch(setAnalyzeSubmissionPage(1));
+      });
       return;
     }
 
     const field = model[0].field;
-    // Always use DataGrid's sort order directly - DataGrid handles toggling automatically
-    // DataGrid sends "asc" for first click, "desc" for second click on the same column
     const dataGridSort = model[0]?.sort || "asc";
-    
-    // Reset all sort keys to "asc" and set only the active field to DataGrid's sort order
-    // This ensures only one sort is active at a time, and all others are reset to "asc"
     const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
 
     const updatedSort = {
-      ...resetSortOrders, // All keys reset to {sortOrder: "asc"}
-      [field]: { sortOrder: dataGridSort }, // Active field uses DataGrid's sort order
+      ...resetSortOrders,
+      [field]: { sortOrder: dataGridSort },
       activeKey: field,
     };
 
-    // Dispatch the update - this will trigger a re-render and the sortModel will update
-    // Since sortModel is memoized based on activeSortKey and activeSortOrder, it will update immediately
     dispatch(setAnalyzeSubmissionSort(updatedSort));
   }, [dispatch, optionSortBy]);
 
@@ -620,9 +661,9 @@ const {
       ...filteredColumns.map((col, idx) => ({
         field: col.sortKey,
         headerName: t(col.name),
-        flex: 1,
+        ...(col.width ? { width: col.width, flex: 0, minWidth: col.width } : { flex: 1 }),
         sortable: col.sortKey !== "currentUserRoles" ? true : false,
-        minWidth: col.width || getColumnWidth(col.sortKey),
+        minWidth: 90,
         headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
         renderCell: (params: any) => getCellValue(col, params.row),
       })),
@@ -742,6 +783,14 @@ const {
   // Build categorized search field dropdown items (action + system fields + form specific)
   const searchFieldDropdownItems = useMemo(() => {
     const items: any[] = [];
+    const noFilter = {
+      content: <em>{t("No Results found")}</em>,
+      onClick: () => {},
+      type: "none",
+      dataTestId: "no-variables-found",
+      ariaLabel: t("No Results available"),
+      category: "none",
+    };
 
     // Action: Add additional fields + (only when a form is selected)
     if (dropdownSelection) {
@@ -800,6 +849,12 @@ const {
       }));
 
     items.push(...sysItems, ...formItems);
+
+    // Show "No filters found" when no search results found
+    const isSearching = term.trim().length > 0;
+    if (isSearching && sysItems.length + formItems.length === 0) {
+      items.push(noFilter);
+    }
     return items;
   }, [
     t,
@@ -811,13 +866,20 @@ const {
   ]);
   return (
    <>
-   <div className="analyze-submissions-page">
+      <div className="analyze-submissions-page">
       <div className="Toastify"></div>
       <div className="toast-section">{}</div>
       <div className="header-section-1">
-        <div className="section-seperation-left">
-          <h4> Submissions </h4>
-        </div>  
+        <BreadCrumbs
+            items={[
+              { id: "analyze", label:t("Analyze")},
+              { id: "submissions", label:t("Submissions")},
+            ]}
+            variant="default"
+            underlined={false}
+            dataTestId="listForm-breadcrumb"
+            ariaLabel={ t("Submissions list Breadcrumb")}
+          />
       </div>
       <div className="header-section-2 overflow-visible">
         <div className="section-seperation-left">
@@ -844,6 +906,7 @@ const {
                   value={currentValue}
                   defaultValue=""
                   onChange={onDropdownChange}
+                  dropdownMaxHeight="50vh"
                   ariaLabel={t("Select a form")}
                   dataTestId="submission-form-select"
                   id="submission-form-select"
@@ -914,33 +977,45 @@ const {
           className="custom-table-wrapper-outter-submissions"
           data-testid="table-container-wrapper"
         >
-        <ReusableTable
-              columns={muiColumns}
-              rows={memoizedRows}
-              rowCount={totalCount}
-              loading={isSubmissionsLoading || isFetching}
-              disableColumnResize={false}
-              paginationMode="server"
-              sortingMode="server"
-              sortModel={sortModel}
-              onSortModelChange={handleSortModelChange}
-              noRowsLabel={t(
+          <ReusableTable
+            columns={muiColumns}
+            rows={memoizedRows}
+            rowCount={totalCount}
+            loading={isSubmissionsLoading}
+            disableColumnResize={false}
+            paginationMode="server"
+            sortingMode="server"
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            noRowsLabel={t(
                 "No submissions have been found. Try a different filter combination or contact your admin."
               )}
-              disableColumnMenu
-              disableRowSelectionOnClick
-              paginationModel={paginationModel}
-              onPaginationModelChange={handlePaginationModelChange}
-              pageSizeOptions={[10, 25, 50, 100]}
-              dataGridProps={{
-                getRowId: (row: any) => row.id || (row as any)._id,
-                onColumnWidthChange: handleColumnWidthChange,
-                columnVisibilityModel: columnVisibilityModel,
-              }}
-              enableStickyActions={true}
-              disableVirtualization
-              autoHeight={true}
-            />
+            disableColumnMenu
+            disableRowSelectionOnClick
+            paginationModel={paginationModel}
+            onPaginationModelChange={handlePaginationModelChange}
+            pageSizeOptions={[10, 25, 50, 100]}
+            dataGridProps={{
+              getRowId: (row: any) => row.id || (row as any)._id,
+              onColumnWidthChange: (params: any) => {
+                try {
+                  const field = params?.colDef?.field || params?.field;
+                  const width = params?.width;
+                  if (!field || !width) return;
+                  const column = columns.find((col) => col.sortKey === field);
+                  if (column && handleColumnResize) {
+                    handleColumnResize(column, width);
+                  }
+                } catch (e) {
+                  console.error("Error adjusting column width:", e);
+                }
+              },
+              columnVisibilityModel: columnVisibilityModel,
+            }}
+            enableStickyActions={true}
+            disableVirtualization
+            autoHeight={true}
+          />
         </div>
        </div>
        </div>

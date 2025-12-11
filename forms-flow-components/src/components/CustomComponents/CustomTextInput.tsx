@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 interface CustomTextInputProps {
@@ -13,6 +13,7 @@ interface CustomTextInputProps {
   minLength?: number;
   icon?: React.ReactNode;
   onIconClick?: () => void;
+  autoFocus?: boolean;
 }
 
 export const CustomTextInput: FC<CustomTextInputProps> = ({
@@ -27,9 +28,17 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
   minLength,
   icon,
   onIconClick,
+  autoFocus = false,
 }) => {
   const { t } = useTranslation();
   const inputId = `${dataTestId}-input`; // unique id
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current && !disabled) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus, disabled]);
 
   return (
     <div className={`text-input-container ${icon ? "text-input-with-icon" : ""}`}>
@@ -39,6 +48,7 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
       </label> */}
 
       <input
+        ref={inputRef}
         id={inputId}
         className="text-input"
         type="text"
