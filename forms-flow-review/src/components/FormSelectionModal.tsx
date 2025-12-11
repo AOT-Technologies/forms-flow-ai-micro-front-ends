@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { CustomSearch, CustomCheckbox } from "@formsflow/components";
 import { Form } from "@aot-technologies/formio-react";
 import {  fetchFormById } from "../api/services/filterServices";
+import Loading from "./Loading/Loading";
 interface FormSelectionModalProps {
   showModal: boolean;
   onClose: () => void;
@@ -163,7 +164,9 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
           <div className="right-form-preview-container">
             <div className="form-preview-inner-container" >
               {loading ? (
-                <div className="form-selection-spinner"></div>
+                <div className="form-selection-spinner">
+                  <Loading />
+                </div>
               ) : (
                 form ? (
                   <Form

@@ -4,6 +4,7 @@ import {
   selectRoot,
   selectError,
   Form,
+  Utils,
 } from "@aot-technologies/formio-react";
 import Loading from "./Loading";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
@@ -16,6 +17,7 @@ interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
   onFormSubmit?: (submission: any) => void;
   onCustomEvent?: (event: any) => void;
+  isApprovalTask?: boolean;
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({
@@ -26,6 +28,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
   options,
   onFormSubmit,
   onCustomEvent = () => {},
+  isApprovalTask = false,
 }) => {
   const taskAssignee = useSelector(
     (state: any) => state?.task?.taskAssignee
@@ -48,6 +51,25 @@ const TaskForm: React.FC<TaskFormProps> = ({
   const safeSubmission = useMemo(() => {
     return rawSubmission ? JSON.parse(JSON.stringify(rawSubmission)) : null;
   }, [rawSubmission]);
+
+  // Modify form to hide custom submit buttons when it's an approval task
+  const modifiedForm = useMemo(() => {
+    if (!form || !isApprovalTask) {
+      return form;
+    }
+    const clonedForm = JSON.parse(JSON.stringify(form));
+    Utils.eachComponent(
+      clonedForm.components,
+      (component: any) => {
+        // Hide button components with action "submit"
+        if (component.type === "button" && component.action === "submit") {
+          component.hidden = true;
+        }
+      },
+      true
+    );
+    return clonedForm;
+  }, [form, isApprovalTask]);
 
 const isLoading =
   isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data || taskDetailsLoading;
@@ -78,7 +100,7 @@ const isLoading =
         {/* The key is added to remount the form on change */}
         <Form
           key={isReadOnly ? "readonly" : "editable"}
-          form={form}
+          form={modifiedForm}
           submission={safeSubmission}
           url={reduxSubmission?.url}
           options={{

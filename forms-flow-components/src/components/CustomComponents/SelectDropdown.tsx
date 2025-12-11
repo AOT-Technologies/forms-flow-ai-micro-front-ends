@@ -67,6 +67,8 @@ export interface SelectDropdownProps
   placeholder?: string;
   /** Custom width for the dropdown (e.g., '300px', '20rem', '100%') */
   width?: string | number;
+  /** Max height for the dropdown menu */
+  dropdownMaxHeight?: string | number;
 
   /** --- New props for dependent dropdown --- */
   secondDropdown?: boolean;
@@ -74,6 +76,7 @@ export interface SelectDropdownProps
   secondDefaultValue?: string | number;
   secondValue?: string | number;
   onSecondChange?: (value: string | number) => void;
+  resizable?: boolean;
 }
 
 type DropdownPosition = {
@@ -105,6 +108,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       dropdownWrapperClassName,
       dropdownItemClassName,
       width,
+      dropdownMaxHeight,
 
       // Top-of-list CustomSearch
       searchable = false,
@@ -117,6 +121,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       secondDefaultValue,
       secondValue,
       onSecondChange,
+      resizable = false,
       ...restProps
     },
     ref
@@ -275,6 +280,18 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
       return dependentOptions[selectedValue] || [];
     }, [dependentOptions, secondDropdown, selectedValue]);
 
+    // Shared style for dropdown menus
+    const dropdownStyle: React.CSSProperties = useMemo(() => {
+      if (!dropdownMaxHeight) return {};
+      return {
+        maxHeight:
+          typeof dropdownMaxHeight === "number"
+            ? `${dropdownMaxHeight}px`
+            : dropdownMaxHeight,
+        overflowY: "auto",
+      };
+    }, [dropdownMaxHeight]);
+
     /** Arrow icon */
     const renderArrowIcon = (open: boolean) => {
       const iconColor = disabled ? "#c5c5c5" : "#4a4a4a";
@@ -320,9 +337,14 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   position: "absolute",
                   top: position.top,
                   left: position.left,
-                  width: position.width,
+                  ...(resizable
+                    ? { width: "max-content", maxWidth: "15.25rem" }
+                    : { width: position.width }),
                   zIndex: 2000,
+                  ...dropdownStyle,
                 }
+              : Object.keys(dropdownStyle).length
+              ? dropdownStyle
               : undefined
           }
         >

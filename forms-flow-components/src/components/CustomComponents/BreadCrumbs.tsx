@@ -120,7 +120,6 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
               margin: 0,
               cursor: "pointer",
               color: "inherit",
-              textDecoration: "underline",
             },
           onClick: () => {
               if (onBreadcrumbClick) {

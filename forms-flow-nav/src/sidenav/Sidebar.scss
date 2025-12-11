@@ -59,7 +59,6 @@ $animSpeed: 300ms;
 
 .sidenav {  
   height: 100%;
-  // width: 12rem;
   width: var(--navbar-width);
   position: fixed;
   z-index: 1050;
@@ -67,9 +66,8 @@ $animSpeed: 300ms;
   background-color: var(--nav-bg-color);
   display: flex;
   flex-direction: column;
-  // justify-content: space-between;
-  // box-shadow: var(--shadow-nav);
-   transition: width 0.1s ease-in; // expand takes 3s
+   transition: width 0.1s ease-in;
+   cursor: default;
 
   &:not(:hover) {
     transition: width 0.6s ease-out; // collapse takes 6s
@@ -82,10 +80,11 @@ $animSpeed: 300ms;
   .menu-toggle-icon {
     padding: 0.87rem 0.75rem;
     padding-bottom: 0;
-    cursor: pointer;
     transition: transform 0.3s ease;
-
+    cursor: default;
+    
     svg {
+      cursor: pointer;
       transition: transform 0.3s ease;
     }
 
