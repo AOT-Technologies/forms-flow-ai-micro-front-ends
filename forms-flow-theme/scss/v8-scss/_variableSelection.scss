@@ -115,6 +115,11 @@ $secondary-dark:var(--secondary-dark);
   }
 }
 
+.published-form-layout {
+  .variable-page-container {
+    padding-bottom: 4rem;
+  }
+}
 .variable-page-container {
   .variable-page-body {
     .system-variables-container {

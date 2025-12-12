@@ -1029,16 +1029,31 @@ export const CalenderRightIcon = ({ color = baseColor, ...props }) => (
   </svg>
 );
 
-export const SwitchTickIcon = ({fillColor = baseColor, ...props}) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="9" viewBox="0 0 11 9" fill="none">
-    <path d="M3.8 8.01667L0 4.21667L0.95 3.26667L3.8 6.11667L9.91667 0L10.8667 0.95L3.8 8.01667Z" fill={fillColor}/>
+export const SwitchTickIcon = ({ fillColor = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 11 9"
+    fill="none"
+    {...props}
+  >
+    <path
+      d="M3.8 8.01667L0 4.21667L0.95 3.26667L3.8 6.11667L9.91667 0L10.8667 0.95L3.8 8.01667Z"
+      fill={fillColor}
+    />
   </svg>
 );
 
-export const SwitchCrossIcon = ({fillColor = baseColor, ...props}) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
-      <path d="M0.933333 9.33333L0 8.4L3.73333 4.66667L0 0.933333L0.933333 0L4.66667 3.73333L8.4 0L9.33333 0.933333L5.6 4.66667L9.33333 8.4L8.4 9.33333L4.66667 5.6L0.933333 9.33333Z" 
-      fill={fillColor}/>
+export const SwitchCrossIcon = ({ fillColor = baseColor, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 10 10"
+    fill="none"
+    {...props}
+  >
+    <path
+      d="M0.933333 9.33333L0 8.4L3.73333 4.66667L0 0.933333L0.933333 0L4.66667 3.73333L8.4 0L9.33333 0.933333L5.6 4.66667L9.33333 8.4L8.4 9.33333L4.66667 5.6L0.933333 9.33333Z"
+      fill={fillColor}
+    />
   </svg>
 );
 

@@ -454,7 +454,8 @@ select option:hover {
     a,
     a.nav-link,
     button.nav-link {
-      @include textBaseHightlight($fontBase, $primary-color);
+      $override-font-base: 1rem; // fontBase was 1rem and now it is 0.5rem. override it to 1rem to match the old style. The change as made as part of the ticket bugfix/fwf-5810
+      @include textBaseHightlight($override-font-base, $primary-color);
       @include clickableFeedback1();
 
       padding: 0;

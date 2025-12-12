@@ -84,7 +84,7 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   height: $dropdown-height;
   flex-shrink: 0;
   color: $color-dark-gray;
-  font-size: $dropdown-font-size;
+  font-size: 14px;
   font-weight: $dropdown-font-weight;
   line-height: $dropdown-line-height;
 
@@ -126,10 +126,10 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
 
   // Primary variant
   &--primary {
-    border-color: $dropdown-primary-border;
+    border-color: var(--secondary-dark);
 
     &:hover:not(.disabled) {
-      border-color: $dropdown-primary-border-hover;
+      border-color: $color-medium-gray;
       background-color: $color-white;
     }
 
@@ -367,12 +367,29 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
       overflow: visible !important;
     }
   }
+
+  // Show chevron icon when isFromTaskDetails is true
+  &--task-details {
+    .selectdropdown-container {
+      .custom-selectdropdown {
+        svg {
+          display: block !important;
+          color: var(--gray-medium-darker);
+          
+          path {
+            stroke: var(--gray-medium-darker);
+          }
+        }
+      }
+    }
+  }
 }
 .user-select-text{
   outline: none;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   transition: background-color 0.2s;
+
 }
 
 //Assigned to user style in task-details page
@@ -387,6 +404,11 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
 // Override list-group-item border behavior to match custom-dropdown-item
 .list-group-item + .list-group-item {
   border-top-width: 1px;
+}
+
+// Style for "Assign to me" option in dropdown
+.custom-dropdown-item[data-testid$="-me"] {
+  font-weight: 500;
 }
 
 //assignee dropdown width in tasktable

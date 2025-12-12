@@ -167,12 +167,23 @@ const TaskListTable = () => {
   }, []);
 
   const taskvariables = selectedFilter?.variables ?? [];
-
   const redirectUrl = useRef(
     MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
   );
   const [columns, setColumns] = useState<Column[]>([]);
-  
+
+  // Max number of text lines to display in a cell before truncating
+  const maxTextLines = useMemo(() => {
+    const lines = Number(
+      selectedFilter?.properties?.displayLinesCount ??
+      1
+    );
+    if (isNaN(lines)) return 1;
+    // Clamp between 1 and 5 lines to avoid excessive row heights
+    return Math.max(1, Math.min(5, lines));
+  }, [selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
+
+  const isMultiLineEnabled = maxTextLines > 1;
 
   const getCellValue = (column: Column, task: Task) => {
     const { sortKey } = column;
@@ -180,18 +191,46 @@ const TaskListTable = () => {
     const variables = _embedded?.variable ?? [];
     const candidateGroups = _embedded?.candidateGroups ?? [];
 
+    const textClassName = isMultiLineEnabled
+      ? "text-multiline-ellipsis"
+      : "text-overflow-ellipsis";
+    // Apply all multi-line ellipsis styles inline to ensure they override any CSS
+    const textStyle: React.CSSProperties | undefined = isMultiLineEnabled
+      ? {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          display: '-webkit-box',
+          WebkitBoxOrient: 'vertical' as const,
+          WebkitLineClamp: maxTextLines,
+          whiteSpace: 'normal',
+          wordBreak: 'break-word',
+        }
+      : undefined;
+
     if (sortKey === "applicationId") {
       const value = variables.find((v) => v.name === "applicationId")?.value ?? "-";
-      return <div className="text-overflow-ellipsis">{value}</div>;
+      return (
+        <div className={textClassName} style={textStyle}>
+          {value}
+        </div>
+      );
     }
 
   //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
   if (!column.isFormVariable) {
     switch (sortKey) {
       case "name":
-        return <div className="text-overflow-ellipsis">{taskName ?? "-"}</div>;
+        return (
+          <div className={textClassName} style={textStyle}>
+            {taskName ?? "-"}
+          </div>
+        );
       case "created":
-        return <div className="text-overflow-ellipsis">{created ? HelperServices.getLocaldate(created) : "N/A"}</div>;
+        return (
+          <div className={textClassName} style={textStyle}>
+            {created ? HelperServices.getLocaldate(created) : "N/A"}
+          </div>
+        );
       case "assignee":
         return <TaskAssigneeManager task={task} resizable={true}/>;
       case "roles": {
@@ -205,7 +244,11 @@ const TaskListTable = () => {
 
   const allRoles = roleValues.join(",");
 
-  return <div className="text-overflow-ellipsis">{allRoles}</div>;
+  return (
+    <div className={textClassName} style={textStyle}>
+      {allRoles}
+    </div>
+  );
 }
 
 
@@ -230,7 +273,11 @@ const TaskListTable = () => {
       const value = matchingVar?.value
         ? HelperServices.getLocalDateAndTime(matchingVar?.value)
         : "-";
-      return <div className="text-overflow-ellipsis">{value}</div>;
+      return (
+        <div className={textClassName} style={textStyle}>
+          {value}
+        </div>
+      );
     }
     if (selectBoxes) {
       let obj: Record<string, any> | null = null;
@@ -244,9 +291,17 @@ const TaskListTable = () => {
       if (obj && typeof obj === "object") {
         const trueKeys = Object.keys(obj).filter((key) => obj[key]);
         const value = trueKeys.length ? trueKeys.join(", ") : "-";
-        return <div className="text-overflow-ellipsis">{value}</div>;
+        return (
+          <div className={textClassName} style={textStyle}>
+            {value}
+          </div>
+        );
       } else {
-        return <div className="text-overflow-ellipsis">-</div>;
+        return (
+          <div className={textClassName} style={textStyle}>
+            -
+          </div>
+        );
       }
     }
     if (dateField) {
@@ -255,12 +310,24 @@ const TaskListTable = () => {
             .toLocaleDateString("en-GB")
             .replace(/\//g, "-")
         : "-";
-      return <div className="text-overflow-ellipsis">{value}</div>;
+      return (
+        <div className={textClassName} style={textStyle}>
+          {value}
+        </div>
+      );
     }
     if (typeof matchingVar.value === "boolean") {
-      return <div className="text-overflow-ellipsis">{matchingVar?.value ? "True" : "False"}</div>;
+      return (
+        <div className={textClassName} style={textStyle}>
+          {matchingVar?.value ? "True" : "False"}
+        </div>
+      );
     }
-    return <div className="text-overflow-ellipsis">{matchingVar?.value ?? "-"}</div>;
+    return (
+      <div className={textClassName} style={textStyle}>
+        {matchingVar?.value ?? "-"}
+      </div>
+    );
   };
   const handleRefresh = useCallback(() => {
     dispatch(setBPMTaskLoader(true));
@@ -463,7 +530,7 @@ const TaskListTable = () => {
     ],
     [filterListSortParams]
   );
-
+  const nonSortableKeys = ['roles']
   const muiColumns = useMemo(() => {
   // Filter out any existing "actions" column that might come from dynamic columns
   const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
@@ -474,7 +541,7 @@ const TaskListTable = () => {
       headerName: t(col.sortKey === 'assignee' ? 'Assigned to' : col.name),
       // If a saved width exists, honor it and disable flex; otherwise allow flex
       ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
-      sortable: col.sortKey !== 'roles' ? true : false,
+      sortable: col.sortKey && !nonSortableKeys.includes(col.sortKey) ? true : false,
       // Do not lock minWidth to the last saved width; allow shrinking after expand
       minWidth: 90,
       headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
@@ -532,62 +599,16 @@ const TaskListTable = () => {
 
   const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
 
-  // Row height scales with selected filter's dataLineValue/displayLinesCount
-  const computedRowHeight = useMemo(() => {
-    const lines = Number(
-      selectedFilter?.properties?.dataLineValue ??
-      selectedFilter?.properties?.displayLinesCount ??
-      1
-    );
-    const base = 55; // default row height in ReusableTable
-    const clampedLines = isNaN(lines) ? 1 : Math.max(1, Math.min(4, lines));
-    return base * clampedLines;
-  }, [selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
+  // Base row height
+  const baseRowHeight = 55;
 
-  // Heuristic: if a row's visible text values all fit in one line, keep base height
-  const getRowHeight = useCallback((params: any) => {
-    const base = 55;
-    const maxLines = Number(
-      selectedFilter?.properties?.dataLineValue ??
-      selectedFilter?.properties?.displayLinesCount ??
-      1
-    );
-    if (maxLines <= 1) return base;
-
-    const row: any = params?.model || params?.row || {};
-
-    // visible column keys excluding actions/assignee
-    const visibleKeys = (columns || [])
-      .filter((c) => c.sortKey !== 'actions' && c.sortKey !== 'assignee')
-      .map((c) => c.sortKey);
-
-    const getTextValue = (key: string): string => {
-      if (key === 'created') {
-        return row.created ? HelperServices.getLocaldate(row.created) : '';
-      }
-      // direct field
-      if (row[key] != null) return String(row[key]);
-      // process variables
-      const vars = row?._embedded?.variable || [];
-      const match = vars.find((v: any) => v?.name === key);
-      if (!match) return '';
-      let v = match.value;
-      // if looks like JSON of selectboxes, attempt to join true keys
-      try {
-        if (typeof v === 'string' && v.startsWith('{') && v.endsWith('}')) {
-          const obj = JSON.parse(v);
-          const trues = Object.keys(obj).filter((k) => obj[k]);
-          v = trues.join(', ');
-        }
-      } catch {}
-      return v != null ? String(v) : '';
-    };
-
-    // If any value is long enough to likely wrap, increase height
-    const threshold = 28; // approx chars that fit in one line for typical column width
-    const needsMore = visibleKeys.some((k) => getTextValue(k).length > threshold);
-    return needsMore ? base * Math.max(1, Math.min(4, Number(maxLines))) : base;
-  }, [columns, selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
+  // When multi-line is enabled, use 'auto' height so rows adjust to content
+  // The CSS will handle the max height constraint via -webkit-line-clamp
+  const getRowHeight = useCallback(() => {
+    if (!isMultiLineEnabled) return baseRowHeight;
+    // Return 'auto' to let row height adjust based on content
+    return 'auto';
+  }, [isMultiLineEnabled]);
 
   if (!columns?.length) {
     return isTaskListLoading ? <Loading /> : (
@@ -599,48 +620,53 @@ const TaskListTable = () => {
     );
   }
 
+  // Wrapper class to enable multi-line cell styles via CSS
+  const tableWrapperClass = isMultiLineEnabled ? 'task-table-multiline' : '';
+
   return (
     <>
-      <ReusableTable
-        columns={muiColumns}
-        disableColumnResize={false}
-        rows={memoizedRows}
-        rowCount={tasksCount}
-        loading={isTaskListLoading}
-        rowHeight={computedRowHeight}
-        paginationMode="server"
-        sortingMode="server"
-        paginationModel={paginationModel}
-        onPaginationModelChange={handlePaginationModelChange}
-        sortModel={sortModel}
-        onSortModelChange={handleSortModelChange}
-        noRowsLabel={t("No tasks found")}
-        disableColumnMenu
-        disableRowSelectionOnClick
-        dataGridProps={{
-          getRowId: (row: any) => row.id,
-          getRowHeight: getRowHeight as any,
-          onColumnWidthChange: (params: any) => {
-            try {
-              const field = params?.colDef?.field || params?.field;
-              const width = params?.width;
-              if (!field || !width || !selectedFilter?.id) return;
-              const updatedVariables = (selectedFilter?.variables || []).map((v: any) =>
-                v.key === field ? { ...v, width } : v
-              );
-              const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
-              // Update locally so future saves carry widths
-              dispatch(setSelectedFilter(updatedFilter));
-              // Do not persist here; widths are saved when the user saves the filter
-            } catch (e) {
-              // no-op
+      <div className={tableWrapperClass}>
+        <ReusableTable
+          columns={muiColumns}
+          disableColumnResize={false}
+          rows={memoizedRows}
+          rowCount={tasksCount}
+          loading={isTaskListLoading}
+          rowHeight={baseRowHeight}
+          paginationMode="server"
+          sortingMode="server"
+          paginationModel={paginationModel}
+          onPaginationModelChange={handlePaginationModelChange}
+          sortModel={sortModel}
+          onSortModelChange={handleSortModelChange}
+          noRowsLabel={t("No tasks found")}
+          disableColumnMenu
+          disableRowSelectionOnClick
+          dataGridProps={{
+            getRowId: (row: any) => row.id,
+            getRowHeight: getRowHeight as any,
+            onColumnWidthChange: (params: any) => {
+              try {
+                const field = params?.colDef?.field || params?.field;
+                const width = params?.width;
+                if (!field || !width || !selectedFilter?.id) return;
+                const updatedVariables = (selectedFilter?.variables || []).map((v: any) =>
+                  (v.key === field || v.name === field) ? { ...v, width } : v               
+               );
+                const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
+                // Update locally so future saves carry widths
+                dispatch(setSelectedFilter(updatedFilter));
+                // Do not persist here; widths are saved when the user saves the filter
+              } catch (e) {
+                // no-op
+              }
             }
-          }
-        }}
-        enableStickyActions={true}
-        disableVirtualization
-        autoHeight={true}
-      />
+          }}
+          enableStickyActions={true}
+          disableVirtualization
+          autoHeight={true}
+        />
+      </div>
       {showModal && (
         <TaskDetailsModal
           show={showModal}

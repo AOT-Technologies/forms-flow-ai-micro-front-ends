@@ -90,7 +90,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
 
     .form-check .form-check-input {
         &[type="checkbox"] {
-          margin-top: 5px !important;
+          margin-top: 4px !important;
         }
         &[type="radio"] {
           margin-top: 8px !important;
@@ -305,4 +305,21 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
     tbody .field-required:after{
       top:4px;
     }
+  }
+
+  .choices__list--multiple .choices__item {
+    background-color: $white !important;
+    border: 1px solid $primary !important;
+    color: $gray-darkest !important;
+    border-radius: $border-radius !important;
+
+    button {
+      background-color: $gray-darkest !important;
+      border-left: none !important;
+      border-radius: $border-radius !important;
+    }
+  }
+
+  .choices__input {
+    border: none !important;
   }
