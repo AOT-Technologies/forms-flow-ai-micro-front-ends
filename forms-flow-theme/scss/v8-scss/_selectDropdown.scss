@@ -406,6 +406,19 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
     max-width: 11.25rem;
     min-width: 0;
   }
+
+  .user-select-text {
+    border-radius: $dropdown-border-radius;
+    border: 1px solid $color-darker-gray;
+    width: 100%;
+    max-width: 11.25rem;
+    min-height: 2.5rem;
+    padding: 0 var(--spacer-075);
+    line-height: 2.5;
+  }
+  .dropdown-text {
+    font-size: 14px;
+  }
 }
 
 .task-assignee-wrapper{
