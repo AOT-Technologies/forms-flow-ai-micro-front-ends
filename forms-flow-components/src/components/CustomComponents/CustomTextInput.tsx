@@ -32,13 +32,16 @@ export const CustomTextInput = React.forwardRef<HTMLInputElement, CustomTextInpu
 }, ref) => {
   const { t } = useTranslation();
   const inputId = `${dataTestId}-input`; // unique id
-  const inputRef = ref as React.RefObject<HTMLInputElement>;
+
+  // Create internal ref if no external ref is provided
+  const internalRef = useRef<HTMLInputElement>(null);
+  const inputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
 
   useEffect(() => {
-    if (autoFocus && inputRef.current && !disabled) {
+    if (autoFocus && inputRef?.current && !disabled) {
       inputRef.current.focus();
     }
-  }, [autoFocus, disabled]);
+  }, [autoFocus, disabled, inputRef]);
 
   return (
     <div className={`text-input-container ${icon ? "text-input-with-icon" : ""}`}>
