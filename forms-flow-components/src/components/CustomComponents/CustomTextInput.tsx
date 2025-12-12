@@ -16,7 +16,7 @@ interface CustomTextInputProps {
   autoFocus?: boolean;
 }
 
-export const CustomTextInput: FC<CustomTextInputProps> = ({
+export const CustomTextInput = React.forwardRef<HTMLInputElement, CustomTextInputProps>(({
   value,
   setValue,
   placeholder,
@@ -29,10 +29,10 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
   icon,
   onIconClick,
   autoFocus = false,
-}) => {
+}, ref) => {
   const { t } = useTranslation();
   const inputId = `${dataTestId}-input`; // unique id
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = ref as React.RefObject<HTMLInputElement>;
 
   useEffect(() => {
     if (autoFocus && inputRef.current && !disabled) {
@@ -81,4 +81,4 @@ export const CustomTextInput: FC<CustomTextInputProps> = ({
       )}
     </div>
   );
-};
+});

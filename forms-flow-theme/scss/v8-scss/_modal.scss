@@ -470,6 +470,22 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     }
 }
 
+//Style for inline form naming
+.name-form-modal{
+.modal-dialog{
+   
+    width: 25vw;
+    min-width: 22rem !important;
+} 
+.modal-content{
+    padding: 0rem 1rem !important;
+}
+.form-name-container{
+    margin-top: 0.5rem !important;
+    margin-bottom: 1.125rem !important;
+}
+}
+
 .modal-content .modal-body {
     overflow-y: auto; /* allows scroll */
     -ms-overflow-style: none;  /* IE and Edge */

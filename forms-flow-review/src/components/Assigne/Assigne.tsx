@@ -77,7 +77,14 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
 
   // When on task details page, use Redux taskDetail as source of truth for real-time updates
   // Otherwise, use the task prop (for list view)
-  const effectiveTask = isFromTaskDetails && taskDetail?.id === taskId ? taskDetail : task;
+  // FIX: Always prefer taskDetail from Redux when on details page and it matches the taskId
+  // This ensures SocketIO updates are immediately reflected without requiring navigation
+  // Note: taskDetail is the authoritative source that gets updated by SocketIO events via handleTaskUpdate
+  // When SocketIO receives an update event, it calls getBPMTaskDetail which updates taskDetail in Redux
+  // This component will re-render when taskDetail changes (via useSelector), and effectiveTask will use the updated taskDetail
+  const effectiveTask = isFromTaskDetails 
+    ? (taskDetail && taskDetail.id === taskId ? taskDetail : task)
+    : task;
 
   const handleChangeClaim = (newuser: string) => {
     // Optimistically update the UI label
@@ -203,6 +210,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
           value={displayedValue}
           onChange={handleChangeClaim}
           shortMeLabel={!isFromTaskDetails}
+          isFromTaskDetails={isFromTaskDetails}
           ariaLabel="task-assignee-select"
           dataTestId="task-assignee-select"
           showAsText={true}

@@ -319,3 +319,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
       border-radius: $border-radius !important;
     }
   }
+
+  .choices__input {
+    border: none !important;
+  }

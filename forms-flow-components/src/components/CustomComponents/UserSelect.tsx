@@ -17,6 +17,7 @@ export interface UserSelectProps
   includeEmailInLabel?: boolean;
   showAsText?: boolean;
   shortMeLabel?: boolean;
+  isFromTaskDetails?: boolean;
 }
 
 const getDisplayName = (user: UserOption): string => {
@@ -36,6 +37,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   includeEmailInLabel = false,
   showAsText = false,
   shortMeLabel = false,
+  isFromTaskDetails = false,
   className,
   ...rest
 }) => {
@@ -215,7 +217,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
         if (isPortalMenuTarget(event.relatedTarget)) return;
         setIsFocused(false);
       }}
-      className="userSelect-container"
+      className={`userSelect-container${isFromTaskDetails ? ' userSelect-container--task-details' : ''}`}
     >
       <SelectDropdown
         options={options}
