@@ -323,9 +323,9 @@ $font-tokens: (
           }
 
           &.formedit-layout {
-            max-height: calc(100vh - 240px);
+            max-height: calc(100vh - 280px);
             &.variables-tab{
-              max-height: calc(100vh - 315px) !important;
+              max-height: calc(100vh - 355px) !important;
             }
             padding-bottom: 0px;
             &.bpmn-container .bpmn-main-container-editor{
