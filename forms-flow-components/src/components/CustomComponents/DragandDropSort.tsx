@@ -1,5 +1,5 @@
 import React, { useState, useEffect ,useRef} from "react";
-import { DraggableIcon } from "../SvgIcons/index";
+import { DraggableIcon, FormVariableIcon } from "../SvgIcons/index";
 import { CustomCheckbox } from "./CustomCheckbox";
 import Sortable from "sortablejs";
 import { StyleServices } from "@formsflow/service";
@@ -131,6 +131,11 @@ useEffect(() => {
               variant="secondary"
               dataTestId={`${item.name}`}
             />
+            {item.isFormVariable && (
+              <span className="form-variable-icon">
+                <FormVariableIcon color={grayMediumDarkColor} />
+              </span>
+            )}
           </li>
         ))}
       </ul>
