@@ -61,6 +61,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
 }, ref) => {
   const { t } = useTranslation();
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isDoneLoading, setIsDoneLoading] = useState(false);
   const isProcessingRef = useRef(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const lastSelectedFileRef = useRef<File | null>(null);
@@ -160,8 +161,18 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
       // If file is cleared, reset processing flag and last selected file
       isProcessingRef.current = false;
       lastSelectedFileRef.current = null;
+      // Reset done loading state when file is cleared
+      setIsDoneLoading(false);
     }
   }, [file]);
+
+  // Reset done loading state only when file is cleared or error occurs
+  // Don't reset when uploadState.isCompleted changes to prevent resetting during import process
+  useEffect(() => {
+    if (!file || uploadState.isError) {
+      setIsDoneLoading(false);
+    }
+  }, [file, uploadState.isError]);
 
   // Memoized click handler for upload area
   const handleAreaClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -244,6 +255,8 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
           statusText = t(`Importing ${file?.name}`);
         } else if (uploadState.isError) {
           statusText = t("There was an error in the upload");
+        } else if (isDoneLoading) {
+          statusText = t(`Importing ${file?.name}`);
         } else {
           statusText = t("Import successful!");
         }
@@ -261,7 +274,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
             data-testid="file-upload-progress-bar"
           >
             <CustomProgressBar
-              progress={progress}
+              progress={isDoneLoading ? 100 : progress}
               color={uploadState.isError ? "error" : undefined}
             />
           </div>
@@ -270,7 +283,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
           </p>
         </div>
       );
-    }, [uploadState, file, progress, t]);
+    }, [uploadState, file, progress, isDoneLoading, t]);
 
     const containerClassName = useMemo(
       () =>
@@ -309,7 +322,8 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
 
             {(uploadState.isUploading ||
               uploadState.isCompleted ||
-              uploadState.isError) && (
+              uploadState.isError ||
+              isDoneLoading) && (
               <div className="upload-action-row">
 
                 {uploadState.isError && file && (
@@ -335,14 +349,20 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
                     variant="primary"
                   />
                 )}
-                {uploadState.isCompleted && (
+                {(uploadState.isCompleted || isDoneLoading) && (
                   <V8CustomButton
                     className="file-upload-action-btn"
                     label={primaryButtonLabel}
+                    loading={isDoneLoading}
                     onClick={() => {
                       if (isPrimaryButtonTryAgain) {
                         onCancel?.();
                       } else {
+                        // Set loading state if button label is "Done"
+                        // Set state synchronously to prevent flicker
+                        if (primaryButtonLabel === t("Done")) {
+                          setIsDoneLoading(true);
+                        }
                         onDone?.();
                       }
                     }}
@@ -351,14 +371,16 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
                     variant="primary"
                   />
                 )}
-               {(uploadState.isUploading || uploadState.isCompleted) && (<V8CustomButton
+               {!isDoneLoading && (uploadState.isUploading || uploadState.isCompleted) && (
+                  <V8CustomButton
                     className="file-upload-action-btn"
                     label="Cancel"
                     onClick={onCancel}
                     ariaLabel="Cancel File Upload"
-                    dataTestId="file-upload-cancel-btn"
+                    dataTestId="file-upload-cancel-btn" 
                     variant="secondary"
-                  />)}
+                  />
+                )}
                 </div>
             )}
           </div>
