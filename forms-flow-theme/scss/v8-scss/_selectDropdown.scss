@@ -435,7 +435,8 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
     width: 100%;
     max-width: 11.25rem;
     min-height: 2.5rem;
-    padding: var(--spacer-050) var(--spacer-075);
+    padding: 0 var(--spacer-075);
+    line-height: 2.5;
   }
   .dropdown-text {
     font-size: 14px;
