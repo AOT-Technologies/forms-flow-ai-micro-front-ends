@@ -88,11 +88,14 @@ max-width: 42rem;
     padding: 3rem 0 !important;
   }
   .form-title-edit{
-   width: 7.938rem !important;
-   max-width: 100% !important;
+   display: inline-flex;
+   min-width: 7.938rem;
+   max-width: 42rem;  
    .text-input{
+    field-sizing: content;
     white-space: nowrap;
     text-overflow: ellipsis;
+    overflow: hidden;
    }
   }
   .form-edit-pencil-icon{
