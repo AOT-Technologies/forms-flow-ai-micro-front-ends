@@ -84,7 +84,7 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   height: $dropdown-height;
   flex-shrink: 0;
   color: $color-dark-gray;
-  font-size: $dropdown-font-size;
+  font-size: 14px;
   font-weight: $dropdown-font-weight;
   line-height: $dropdown-line-height;
 
@@ -126,10 +126,10 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
 
   // Primary variant
   &--primary {
-    border-color: $dropdown-primary-border;
+    border-color: var(--secondary-dark);
 
     &:hover:not(.disabled) {
-      border-color: $dropdown-primary-border-hover;
+      border-color: $color-medium-gray;
       background-color: $color-white;
     }
 
@@ -355,11 +355,31 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   }
 }
 
-.userSelect-container{
-  .selectdropdown-container{
-    .custom-selectdropdown{
-      svg{
+.userSelect-container {
+  .selectdropdown-container {
+    .custom-selectdropdown {
+      svg {
         display: none !important;
+      }
+    }
+    // Move .text-overflow-ellipsis override here to avoid duplicate top-level selector
+    &.text-overflow-ellipsis {
+      overflow: visible !important;
+    }
+  }
+
+  // Show chevron icon when isFromTaskDetails is true
+  &--task-details {
+    .selectdropdown-container {
+      .custom-selectdropdown {
+        svg {
+          display: block !important;
+          color: var(--gray-medium-darker);
+          
+          path {
+            stroke: var(--gray-medium-darker);
+          }
+        }
       }
     }
   }
@@ -369,6 +389,7 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   transition: background-color 0.2s;
+
 }
 
 //Assigned to user style in task-details page
@@ -385,22 +406,51 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   border-top-width: 1px;
 }
 
-  //assignee dropdown width in tasktable
-  .MuiDataGrid-cell[data-field="assignee"] {
-    overflow: visible !important;
-   .selectdropdown-container{
-    width:11.063rem;
-   }}
+// Style for "Assign to me" option in dropdown
+.custom-dropdown-item[data-testid$="-me"] {
+  font-weight: 500;
+}
 
+//assignee dropdown width in tasktable
+.MuiDataGrid-cell[data-field="assignee"] {
+  overflow: visible !important;
 
-   .task-assignee-wrapper{
-    width: 352px !important;
-    flex:1 !important;
-    .userSelect-container{
-      .selectdropdown-container{
-        .custom-selectdropdown{
-          width: 352px !important;
-        }
+  .userSelect-container,
+  .dropdown-wrapper,
+  .selectdropdown-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .custom-selectdropdown {
+    width: 100% ;
+    max-width: 11.25rem;
+    min-width: 0;
+  }
+
+  .user-select-text {
+    border-radius: $dropdown-border-radius;
+    border: 1px solid $color-darker-gray;
+    width: 100%;
+    max-width: 11.25rem;
+    min-height: 2.5rem;
+    padding: 0 var(--spacer-075);
+    line-height: 2.5;
+  }
+  .dropdown-text {
+    font-size: 14px;
+  }
+}
+
+.task-assignee-wrapper{
+  width: 352px !important;
+  flex: 1 !important;
+  .userSelect-container {
+    .selectdropdown-container {
+      .custom-selectdropdown {
+        width: 352px !important;
       }
     }
-   }
+  }
+}

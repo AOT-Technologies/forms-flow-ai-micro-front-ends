@@ -83,3 +83,23 @@ max-width: 42rem;
     font-weight: $font-weight-regular;
   }
 }
+.form-create-edit-layout{
+  .header-section-1{
+    padding: 3rem 0 !important;
+  }
+  .form-title-edit{
+   display: inline-flex;
+   min-width: 7.938rem;
+   max-width: 42rem;  
+   .text-input{
+    field-sizing: content;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+   }
+  }
+  .form-edit-pencil-icon{
+    margin-left:0.563rem;
+  }
+}
+

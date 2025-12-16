@@ -133,6 +133,15 @@ $color-switch-hover-red: var(--red-200);
     @include switch-disabled;
   }
 
+  // Disabled state specific to ON/OFF for finer UI control
+  &.custom-switch-on-disabled {
+    background: #B8ABFF40;
+  }
+
+  &.custom-switch-off-disabled {
+    @include switch-disabled;
+  }
+
   // Focus state
   &:focus-visible:not(.custom-switch-disabled) {
     box-shadow: $switch-shadow-focus var(--primary);
@@ -157,6 +166,17 @@ $color-switch-hover-red: var(--red-200);
   justify-content: center;
   width: 100%;
   height: 100%;
+  position: relative;
+  z-index: 1;
+  
+  svg {
+    display: block;
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 24%;
+    right: 19%;
+  }
 }
 
 // Responsive behavior

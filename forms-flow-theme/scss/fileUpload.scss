@@ -172,6 +172,8 @@ $text-line-height: 120%;
   display: flex;
   gap: 0.5rem;
   justify-content: center;
+  min-height: 2.5rem; // Prevent layout shift when buttons appear/disappear
+  align-items: center;
 }
 
 .upload-status-success {

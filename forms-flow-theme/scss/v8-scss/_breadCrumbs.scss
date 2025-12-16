@@ -1,6 +1,11 @@
 // Import theme variables and mixins
 @use "mixins";
 
+// Color variable definitions
+$gray-dark: var(--gray-dark);
+$gray-medium-dark: var(--gray-medium-dark);
+$gray-darker: #424243;
+
 // Breadcrumb Variables - Using consistent rem units for better scalability
 $breadcrumb-underline-offset: 0.1875rem;  // 3px at 16px base
 $breadcrumb-gap: 0.5rem;                   // 3.2px at 16px base
@@ -16,8 +21,8 @@ $color-default-text: var(--secondary-dark);
 $color-minimized-text: var(--gray-medium-dark);
 
 // Typography Variables - Using theme tokens
-$font-size-default: var(--font-size-xl);
-$font-size-minimized: var(--font-size-s);
+$font-size-default: 1.5rem;
+$font-size-minimized: 0.75rem;
 $font-weight-base: var(--font-weight-regular);
 
 // Breadcrumb Mixins
@@ -51,6 +56,12 @@ $font-weight-base: var(--font-weight-regular);
   padding-left: $breadcrumb-gap;
 }
 
+
+.submission-breadcrumb .breadcrumb {
+  width: 53.125rem;
+  margin-bottom: 0 !important;
+}
+
 // Main Breadcrumb Component
 .breadcrumb-custom {
   @include breadcrumb-base;
@@ -78,7 +89,18 @@ $font-weight-base: var(--font-weight-regular);
 
     }
     .breadcrumb-item.active {
-      text-decoration: underline;
+      // text-decoration: underline;
+      color: $gray-dark;
+    }
+    
+    // Divider before active item
+    .breadcrumb-item + .breadcrumb-item.active::before {
+      color: $gray-medium-dark;
+    }
+    .breadcrumb-item + .breadcrumb-item.active {
+      .breadcrumb-item-label{
+        color: $gray-darker;
+      }
     }
   }
 
