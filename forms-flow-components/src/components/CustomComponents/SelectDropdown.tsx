@@ -338,7 +338,10 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                   top: position.top,
                   left: position.left,
                   ...(resizable
-                    ? { width: "max-content", maxWidth: "15.25rem" }
+                    ? (position.width >= 180
+                        ? { width: "11.25rem" }
+                        : { width: "max-content", maxWidth: "11.25rem" }
+                      )
                     : { width: position.width }),
                   zIndex: 2000,
                   ...dropdownStyle,
