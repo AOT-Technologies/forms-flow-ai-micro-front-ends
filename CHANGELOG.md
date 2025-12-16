@@ -14,7 +14,7 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
 * Updated breadcrumb design
 
 `Generic Changes`
-* Fixed UI issues and enhaced overall interface
+* Fixed UI issues and enhanced overall interface
 
 ## 8.0.0 - 2025-11-28
 
