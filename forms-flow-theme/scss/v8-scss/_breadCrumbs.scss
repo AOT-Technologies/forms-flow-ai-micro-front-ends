@@ -56,6 +56,12 @@ $font-weight-base: var(--font-weight-regular);
   padding-left: $breadcrumb-gap;
 }
 
+
+.submission-breadcrumb .breadcrumb {
+  width: 53.125rem;
+  margin-bottom: 0 !important;
+}
+
 // Main Breadcrumb Component
 .breadcrumb-custom {
   @include breadcrumb-base;
