@@ -30,7 +30,6 @@ $color-selected-bg: var(--primary);
     border: 1px solid transparent;
     background: transparent;
     width: 100%;
-    max-width: 11.25rem;
     min-height: 2.5rem;
     padding: 0 var(--spacer-075);
     line-height: 1.5;
@@ -77,7 +76,6 @@ $color-selected-bg: var(--primary);
     margin-top: 0.25rem;
     padding: var(--spacer-050);
     width: 100%;
-    max-width: 11.25rem;
     max-height: 18.75rem;
     overflow-y: auto;
     overflow-x: hidden;
@@ -145,5 +143,25 @@ $color-selected-bg: var(--primary);
     &:hover {
       background-color: transparent;
     }
+  }
+}
+
+.task-assignee-wrapper{
+  width: 352px !important;
+  flex: 1 !important;
+  .filterable-dropdown-container {
+    .filterable-dropdown-input {
+      width: 352px !important;
+    }
+    .filterable-dropdown-menu {
+      width: 352px !important;
+    }
+  }
+}
+
+.MuiDataGrid-cell[data-field="assignee"] .filterable-dropdown-container {
+  .filterable-dropdown-input,
+  .filterable-dropdown-menu {
+    max-width: 11.25rem !important;
   }
 }
