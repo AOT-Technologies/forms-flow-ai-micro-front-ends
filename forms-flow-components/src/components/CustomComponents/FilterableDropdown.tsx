@@ -161,18 +161,6 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
     [onChange]
   );
 
-  // Handle clear
-  const handleClear = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation();
-      setInputValue("");
-      setIsOpen(false);
-      setHighlightedIndex(-1);
-      onChange?.(undefined as any, undefined);
-    },
-    [onChange]
-  );
-
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
