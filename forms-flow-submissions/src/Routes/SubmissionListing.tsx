@@ -839,30 +839,35 @@ const fetchSubmissions = useCallback(async () => {
     // Combine pinned + additional system fields
     const allSystemFields = [...pinnedSysFields, ...additionalSysFields];
     
-    const sysItems = allSystemFields
-      .filter((f: any) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
-      .map((f: any) => ({
+    // Helper to create field item 
+    const createFieldItem = (f: any, category: string) => {
+      const label = labelByKey[f.key];
+      const translatedLabel = t(label);
+      return {
         className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
-        content: <span>{t(labelByKey[f.key])}</span>,
+        content: <span>{translatedLabel}</span>,
         type: String(f.key),
-        onClick: () => setSelectedSearchFieldKey(f.key),
+        onClick: () => { setSelectedSearchFieldKey(f.key); setSearchText(""); },
         dataTestId: `field-item-${f.key}`,
-        ariaLabel: t("Select field {{fieldName}}", { fieldName: t(labelByKey[f.key]) }),
-        category: "system",
-      }));
+        ariaLabel: t("Select field {{fieldName}}", { fieldName: translatedLabel }),
+        category,
+      };
+    };
 
-    const formItems = (available || [])
-      .filter((f) => f?.isFormVariable === true) // form specific fields
-      .filter((f) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
-      .map((f) => ({
-        className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
-        content: <span>{t(labelByKey[f.key])}</span>,
-        type: String(f.key),
-        onClick: () => setSelectedSearchFieldKey(f.key),
-        dataTestId: `field-item-${f.key}`,
-        ariaLabel: t("Select field {{fieldName}}", { fieldName: t(labelByKey[f.key]) }),
-        category: "form",
-      }));
+    // Single-pass filter+map using reduce
+    const sysItems = allSystemFields.reduce<any[]>((acc, f: any) => {
+      if ((labelByKey[f.key] || f.key).toLowerCase().includes(term)) {
+        acc.push(createFieldItem(f, "system"));
+      }
+      return acc;
+    }, []);
+
+    const formItems = (available || []).reduce<any[]>((acc, f: any) => {
+      if (f?.isFormVariable === true && (labelByKey[f.key] || f.key).toLowerCase().includes(term)) {
+        acc.push(createFieldItem(f, "form"));
+      }
+      return acc;
+    }, []);
 
     items.push(...sysItems, ...formItems);
 
@@ -914,6 +919,7 @@ const fetchSubmissions = useCallback(async () => {
               // Reset search field picker to default when form selection changes
               setSelectedSearchFieldKey("id");
               setSearchText("");
+              setSearchFieldFilterTerm("");
             };
             return (
               <>

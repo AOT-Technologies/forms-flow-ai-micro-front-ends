@@ -177,11 +177,14 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
     const editIconColor = StyleServices.getCSSVariable("--gray-dark");
     // Categorize items
     const categorizedItems = useMemo(() => {
-      if (!categorize) return { uncategorized: items };
-
       const actionItems: FilterItemType[] = [];
       const noneItems: FilterItemType[] = [];
       const byCategory: Record<string, FilterItemType[]> = {};
+      const uncategorized: FilterItemType[] = [];
+
+      if (!categorize) {
+        return { uncategorized: items, byCategory, actionItems, noneItems };
+      }
 
       for (const item of items) {
         const cat = item.category || "none";
@@ -197,16 +200,12 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
         byCategory[cat].push(item);
       }
 
-      return { byCategory, actionItems, noneItems };
+      return { byCategory, actionItems, noneItems, uncategorized };
     }, [items, categorize]);
 
     // Render categorized items
     const renderCategorizedItems = useCallback(() => {
-      const { byCategory, actionItems, noneItems } = categorizedItems as {
-        byCategory: Record<string, FilterItemType[]>;
-        actionItems: FilterItemType[];
-        noneItems: FilterItemType[];
-      };
+      const { byCategory, actionItems, noneItems } = categorizedItems;
 
       const hasContentBelow =
         (Object.keys(byCategory || {}).length > 0) ||
