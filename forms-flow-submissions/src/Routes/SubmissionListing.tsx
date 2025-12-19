@@ -818,12 +818,28 @@ const fetchSubmissions = useCallback(async () => {
 
     const term = (searchFieldFilterTerm || "").toLowerCase();
 
-    // System fields: use fixed display order; no reordering within category
-    const systemOrder = ["id", "created_by", "application_status"];
-    const sysItems = systemOrder
+    // System fields: use fixed display order, then additional system fields from ManageFieldsModal
+    const pinnedSystemOrder = ["id", "created_by", "application_status"];
+    // Fields to exclude from system dropdown (form_name, created are always showing in ui)
+    const excludedFromPicker = ["form_name", "created"];
+    
+    // Get pinned system fields first
+    const pinnedSysFields = pinnedSystemOrder
       .map((key) => (available || []).find((f) => f.key === key && f?.isFormVariable !== true))
-      .filter(Boolean)
-      // Exclude fields not needed in the picker (form_name, created already excluded by order list)
+      .filter(Boolean);
+    
+    // Get additional system fields (isFormVariable !== true) that are neither pinned nor excluded
+    const additionalSysFields = (available || [])
+      .filter((f) => 
+        f?.isFormVariable !== true && 
+        !pinnedSystemOrder.includes(f.key) && 
+        !excludedFromPicker.includes(f.key)
+      );
+    
+    // Combine pinned + additional system fields
+    const allSystemFields = [...pinnedSysFields, ...additionalSysFields];
+    
+    const sysItems = allSystemFields
       .filter((f: any) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
       .map((f: any) => ({
         className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
