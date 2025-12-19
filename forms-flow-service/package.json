@@ -1,6 +1,6 @@
 {
   "name": "@formsflow/services",
-  "version": "8.0.1-rc",
+  "version": "8.0.1",
   "scripts": {
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",
