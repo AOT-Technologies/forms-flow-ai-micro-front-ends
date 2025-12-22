@@ -166,7 +166,12 @@ $gray-dark: var(--ff-gray-dark);
   }
   .formio-component-hidden{
     padding-top: 0 !important;
-   }
+  }
+  .formio-component-hidden-default {
+    border: 1px solid #f6f6f6 !important;
+    background-color: #f6f6f6 !important;
+    color: #7C7D7F !important;
+  }
 }
 
 .ace_scrollbar-h {
