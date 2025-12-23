@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { SelectDropdown, SelectDropdownOptionType } from "./SelectDropdown";
-import type { SelectDropdownPropsType } from "./SelectDropdown";
+import { FilterableDropdown, FilterableOption } from "./FilterableDropdown";
+import type { FilterableDropdownProps } from "./FilterableDropdown";
 
 export interface UserOption {
   id: string;
@@ -12,7 +12,7 @@ export interface UserOption {
 }
 
 export interface UserSelectProps
-  extends Omit<SelectDropdownPropsType, "options" | "searchDropdown"> {
+  extends Omit<FilterableDropdownProps, "options"> {
   users: UserOption[];
   includeEmailInLabel?: boolean;
   showAsText?: boolean;
@@ -47,7 +47,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   const [isClicked, setIsClicked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const sortedUserOptions = useMemo<SelectDropdownOptionType[]>(() => {
+  const sortedUserOptions = useMemo<FilterableOption[]>(() => {
     return (users || [])
       .map(user => {
         const name = getDisplayName(user);
@@ -57,7 +57,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
       .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }));
   }, [users, includeEmailInLabel]);
 
-  const options = useMemo<SelectDropdownOptionType[]>(() => {
+  const options = useMemo<FilterableOption[]>(() => {
     // Default option labels shown in the dropdown list before selection
     let meOptionLabel = t("Assign to me");
     let unassignOptionLabel = t("Unassign");
@@ -87,7 +87,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   const showDropdown = showAsText && (isHovered || isFocused || isClicked);
 
   const isPortalMenuTarget = useCallback((target: EventTarget | null) => {
-    return target instanceof HTMLElement && !!target.closest(".custom-dropdown-options");
+    return target instanceof HTMLElement && !!target.closest(".filterable-dropdown-menu");
   }, []);
 
   // Handle click outside to close dropdown
@@ -219,15 +219,16 @@ export const UserSelect: React.FC<UserSelectProps> = ({
       }}
       className={`userSelect-container${isFromTaskDetails ? ' userSelect-container--task-details' : ''}`}
     >
-      <SelectDropdown
+      <FilterableDropdown
         options={options}
         value={value}
-        onChange={handleValueChange}
+        onChange={(newValue) => handleValueChange(newValue)}
         disabled={disabled}
-        searchDropdown={true}
         ariaLabel={ariaLabel}
         dataTestId={dataTestId}
         className={className}
+        showArrow={false}
+        resizable={true}
         {...rest}
       />
     </div>
