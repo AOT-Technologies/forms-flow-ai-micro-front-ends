@@ -157,7 +157,6 @@ const formatCategoryLabel = (category: string): string => {
                     className="small"
                     data-testid={`checkbox-child-${perm.name}`}
                     aria-label={`Toggle permission: ${perm.description}`}
-                    disabled
                   />
                 </div>
               ))}
