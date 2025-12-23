@@ -19,5 +19,9 @@ module.exports = (webpackConfigEnv, argv) => {
     output:{
       filename:"forms-flow-service.js"
     },
+    externals: [
+      "react",
+      "react-dom",
+    ],
   });
 };

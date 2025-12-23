@@ -6,7 +6,8 @@ import {
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
 } from "./api/config";
-import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
+import { BASE_ROUTE } from "./constants";
+import { navigateToTaskListingFromReviewWithHistory, getRedirectUrl, MULTITENANCY_ENABLED } from "@formsflow/service";
 import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/Loading";
@@ -41,7 +42,7 @@ const Task = React.memo((props: any) => {
   const instance = useMemo(() => props.getKcInstance(), []);
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
   const [isReviewer, setIsReviewer] = useState(false);
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
+  const baseUrl = getRedirectUrl(tenantId);
   const {
     taskId,
     taskDetails,
@@ -158,7 +159,7 @@ const handleForceReload = (refreshedTaskId: string) => {
   //  if it push back to task route it will automatically call the tasklist api again
   // else we need to fetch again task list
   if(taskId == refreshedTaskId){
-   history.push(`${baseUrl}task`)
+   navigateToTaskListingFromReviewWithHistory(history, tenantId);
   }else{
     checkTheTaskIdExistThenRefetchTaskList();
   }

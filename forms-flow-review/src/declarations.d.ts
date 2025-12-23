@@ -48,7 +48,27 @@ declare module "@formsflow/service" {
     HelperServices,
     formioResourceBundle,
     RESOURCE_BUNDLES_DATA,  
-    fetchAndStoreFormioRoles
+    fetchAndStoreFormioRoles,
+    getRoute,
+    MAIN_ROUTE,
+    MULTITENANCY_ENABLED,
+    getRedirectUrl,
+    getOrigin,
+    getFullUrl,
+    getLinkTo,
+    navigateToTaskListingFromReview,
+    navigateToTaskListingFromReviewWithHistory,
+    navigateToSubmissionsListing,
+    navigateToSubmissionDetail,
+    navigateToAdminRoles,
+    navigateToAdminUsers,
+    navigateToAdminDashboard,
+    navigateToIntegrationRecipes,
+    navigateToIntegrationConnectedApps,
+    navigateToIntegrationLibrary,
+    navigateToBaseUrl,
+    navigateWithHistory,
+    syncRouterPath
   }: any;
 }
 
