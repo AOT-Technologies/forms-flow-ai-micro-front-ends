@@ -20,20 +20,26 @@ import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
 import {removingTenantId} from "../../utils/utils.js";
+import { MULTITENANCY_ENABLED } from "../../constants";
 import { TableFooter,
    CustomSearch, 
    CloseIcon, 
    CustomTabs, 
    FormInput, 
    FormTextArea,
-   CustomButton,
    DeleteIcon,
    CustomInfo, 
-   ConfirmModal } 
+  ConfirmModal,
+  V8CustomButton,
+  BreadCrumbs,
+} 
 from "@formsflow/components";
+import { useHistory } from "react-router-dom";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
+  const history = useHistory();
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
@@ -115,7 +121,16 @@ const Roles = React.memo((props: any) => {
   React.useEffect(() => {
     fetchPermissions(
       (data) => {
-        setPermissionData(data);
+        // Filter out manage_bundles, manage_integrations, and manage_templates  and analyze_metrics_view permissions
+        // Hide because v8 out of scope - will be restored later
+        const filteredData = data.filter(
+          (permission) =>
+            permission.name !== "manage_bundles" &&
+            permission.name !== "manage_integrations" &&
+            permission.name !== "manage_templates" &&
+            permission.name !== "analyze_metrics_view"
+        );
+        setPermissionData(filteredData);
       },
       (err) => {
         setError(err);
@@ -376,7 +391,7 @@ const Roles = React.memo((props: any) => {
       />
       {showEditRoleModal && (
         <div className="buttons-row">
-          <CustomButton
+          <V8CustomButton
             label={t("Delete This Role")}
             onClick={() => {
               handleCloseEditRoleModal();
@@ -409,7 +424,7 @@ const Roles = React.memo((props: any) => {
     
   const showCreateModal = () => (
     <div data-testid="create-role-modal">
-      <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="sm">
+      <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="lg">
         <Modal.Header>
           <Modal.Title><p>{t("Create Role")}</p></Modal.Title>
           <div className="icon-close" onClick={handleCloseRoleModal} data-testid="role-modal-close">
@@ -429,14 +444,14 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-          <CustomButton
+          <V8CustomButton
             label={t("Save Changes")}
             disabled={disabled}
             onClick={handleCreateRole}
             dataTestId="create-new-role-button"
             ariaLabel="Create new role button"
             />
-          <CustomButton
+          <V8CustomButton
             label={t("Discard Changes")}
             onClick={handleCloseRoleModal}
             dataTestId="create-new-role-cancel-button"
@@ -453,7 +468,7 @@ const Roles = React.memo((props: any) => {
       <Modal
         show={showEditRoleModal}
         onHide={handleCloseEditRoleModal}
-        size="sm"
+        size="lg"
         restoreFocus={false}
       >
         <Modal.Header>
@@ -475,14 +490,14 @@ const Roles = React.memo((props: any) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="buttons-row">
-          <CustomButton
+          <V8CustomButton
             label={t("Save Changes")}
             disabled={disabled}
             onClick={handleUpdateRole}
             dataTestId="edit-role-button"
             ariaLabel="Edit role button"
             />
-          <CustomButton
+          <V8CustomButton
             label={t("Discard Changes")}
             onClick={handleCloseEditRoleModal}
             dataTestId="edit-role-cancel-button"
@@ -635,8 +650,28 @@ const Roles = React.memo((props: any) => {
       },
     },
   ];
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Manage"), id: "manage" },
+    { label: t("Roles"), id: "roles" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "manage" || item.id === "roles") {
+      history.push(`${baseUrl}admin/roles`);
+    }
+  };
+
   return (
     <>
+      <div style={{ marginBottom: "15px" }}>
+        <BreadCrumbs
+          items={breadcrumbItems}
+          variant="default"
+          onBreadcrumbClick={handleBreadcrumbClick}
+          dataTestId="admin-roles-breadcrumbs"
+        />
+      </div>
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
@@ -650,7 +685,7 @@ const Roles = React.memo((props: any) => {
               dataTestId="search-role-input"
             />
           </div>
-          <CustomButton
+          <V8CustomButton
             onClick={handleShowRoleModal}
             data-testid="roles-create-new-role-button"
             label="New Role"

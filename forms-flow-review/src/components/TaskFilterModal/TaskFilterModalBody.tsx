@@ -2,14 +2,10 @@ import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import isEqual from "lodash/isEqual";
 import {
-  CustomTabs,
-  InputDropdown,
-  CustomInfo,
   DragandDropSort,
-  ConfirmModal,
   useSuccessCountdown,
-  CustomButton,
-  FormVariableIcon,
+  V8CustomButton,
+  SelectDropdown
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import {
@@ -41,7 +37,6 @@ import { defaultTaskVariable } from "../../constants/defaultTaskVariable";
 import ParametersTab from "./ParametersTab";
 import SaveFilterTab from "./SaveFilterTab";
 import { Modal } from "react-bootstrap";
-import { StyleServices } from "@formsflow/service";
 import { RootState } from "../../reducers";
 import { useParams } from "react-router-dom";
 const TaskFilterModalBody = ({
@@ -52,7 +47,9 @@ const TaskFilterModalBody = ({
   filterToEdit,
   deleteSuccess,
   updateSuccess,
-  handleFilterUpdate
+  handleFilterUpdate,
+  currentStep,
+  onStepChange,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -63,12 +60,12 @@ const TaskFilterModalBody = ({
     filterList,
     userDetails = {} as UserDetail,
   } = useSelector((state: RootState) => state.task);
+  const selectedFilter = useSelector((state: RootState) => (state as any).task.selectedFilter);
 
-  const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
   const [accessValue, setAccessValue] = useState("");
-  const selectedFilterExistingData = filterList.find((i)=>filterToEdit?.id);
+  const selectedFilterExistingData = filterList.find((i)=> i?.id === filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
-    filterToEdit?.variables || defaultTaskVariable
+    selectedFilterExistingData?.variables || defaultTaskVariable
   );
   const { successState, startSuccessCountdown } = useSuccessCountdown();
 
@@ -96,6 +93,7 @@ const TaskFilterModalBody = ({
   const SPECIFIC_ASSIGNEE = "specificAssignee";
   const CURRENT_USER = "currentUser";
   const [accessOption, setAccessOption] = useState(CURRENT_USER);
+  const [isTaskFilterSaving, setIsTaskFilterSaving] = useState(false);
 
 
   const changeAcessOption = (option: string) => {
@@ -181,7 +179,20 @@ const TaskFilterModalBody = ({
     tenant: filterToEdit?.tenant,
     name: filterName,
     criteria: getCriteria(),
-    variables: variableArray,
+    variables: variableArray.map((v:any) => {
+      // Preserve variables from the filter being edited (not the globally selected filter)
+      const sourceVars =
+      selectedFilter ?.variables ||
+        selectedFilterExistingData?.variables ||
+        filterToEdit?.variables ||
+        [];
+        const match = sourceVars.find(
+          (sv:any) =>
+            sv?.key === v?.key &&
+            sv?.isFormVariable === v?.isFormVariable
+        );
+        return typeof match?.width === "number" ? { ...v, width: match.width } : v;
+    }),
     properties: {
       displayLinesCount: dataLineValue,
       formId: selectedForm.formId,
@@ -219,7 +230,8 @@ const TaskFilterModalBody = ({
   /* -------------------- set values for editing the filter ------------------- */
   useEffect(() => {
     if (!filterToEdit) return;
-    const { roles, users, criteria, properties } = filterToEdit;
+    //TBD updated later
+    const { roles = [], users = [], criteria = {}, properties = {} } = selectedFilterExistingData;
     const { assignee, sorting, candidateGroup } = criteria;
     const cleanedRoles = roles.map((role) =>
       removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED)
@@ -249,19 +261,33 @@ const TaskFilterModalBody = ({
 
   /* -------- handling already selected forms when after forms fetching ------- */
   useEffect(() => {
-    if (filterToEdit && forms.length) {
-      const matchedForm = forms.find(
-        (form) => form.formId === filterToEdit?.properties?.formId
-      );
-      if (matchedForm) {
-        setSelectedForm({
-          formId: matchedForm.formId,
-          formName: matchedForm.formName,
-        });
-        handleFetchTaskVariables(matchedForm.formId);
+    const savedId = filterToEdit?.properties?.formId || selectedFilterExistingData?.properties?.formId;
+    if (!savedId) return;
+
+    // Seed selection early so child modal can show preselection
+    if (!forms.length) {
+      if (String(selectedForm.formId || "") !== String(savedId)) {
+        setSelectedForm({ formId: savedId, formName: "" });
       }
+      return;
     }
-  }, [filterToEdit, forms.length]);
+
+    // Resolve proper form object and name from the list
+    const idStr = String(savedId);
+    const matchedForm = forms.find((form:any) =>
+      [form?.formId, form?.parentFormId, form?._id, form?.id]
+        .filter((v:any) => v !== undefined && v !== null)
+        .map((v:any) => String(v))
+        .includes(idStr)
+    );
+
+    if (matchedForm) {
+      const resolvedId = matchedForm.formId ?? matchedForm.parentFormId ?? matchedForm._id ?? matchedForm.id;
+      const resolvedName = matchedForm.formName || matchedForm.name || "";
+      setSelectedForm({ formId: resolvedId, formName: resolvedName });
+      handleFetchTaskVariables(resolvedId);
+    }
+  }, [filterToEdit, selectedFilterExistingData, forms.length]);
 
   /* ------------------- fetching all form from webapi side ------------------- */
   useEffect(() => {
@@ -314,7 +340,6 @@ const candidateOptions = useMemo(() => {
 
   const sortOptions = {
     created: createSortOrderOptions("Oldest to Newest", "Newest to Oldest"),
-    dueDate: createSortOrderOptions("Oldest to Newest", "Newest to Oldest"),
     assignee: createSortOrderOptions("A to Z", "Z to A"),
     name: createSortOrderOptions("A to Z", "Z to A"),
     formName: createSortOrderOptions("A to Z", "Z to A"),
@@ -324,7 +349,7 @@ const candidateOptions = useMemo(() => {
     ),
   };
 
-  const dataLineCount = Array.from({ length: 4 }, (_, i) => {
+  const dataLineCount = Array.from({ length: 5 }, (_, i) => {
     const value = (i + 1).toString();
     return { label: value, value, onClick: () => setDataLineValue(i + 1) };
   });
@@ -382,10 +407,20 @@ const handleFetchTaskVariables = (formId) => {
   fetchTaskVariables(formId)
     .then((res) => {
       const taskVariables = res.data?.taskVariables || [];
-      const isEditingWithSameForm = filterToEdit?.id && filterToEdit?.properties?.formId === formId;
+      // Determine if we are editing an existing filter with the same form
+      const savedFormId =
+        filterToEdit?.properties?.formId ||
+        selectedFilterExistingData?.properties?.formId;
+      const isEditingWithSameForm =
+        !!filterToEdit?.id &&
+        savedFormId  &&
+        String(savedFormId) === String(formId);
 
+      // Always prefer latest saved filter state for existing variables (preserve isChecked and sortOrder)
+      const sourceVars =
+        selectedFilterExistingData?.variables || filterToEdit?.variables || [];
       let combinedVars;
-      
+
       if (isEditingWithSameForm) {
         // Get current task variable keys for comparison
         const currentTaskVariableKeys = taskVariables
@@ -393,12 +428,12 @@ const handleFetchTaskVariables = (formId) => {
           .map(taskVar => taskVar.key);
         
         // Filter out deleted form variables from existing filter
-        const existingFormVariables = (filterToEdit?.variables?.filter(v => v.isFormVariable) || [])
+        const existingFormVariables = (sourceVars?.filter(v => v.isFormVariable) || [])
           .filter(existingVar => currentTaskVariableKeys.includes(existingVar.key));
         
         // Get default variables with existing values preserved
         const defaultVars = defaultTaskVariable.map(defaultVar => {
-          const existingVar = findExistingVariable(filterToEdit?.variables || [], defaultVar);
+          const existingVar = findExistingVariable(sourceVars || [], defaultVar);
           return existingVar || defaultVar;
         });
         
@@ -424,10 +459,22 @@ const handleFetchTaskVariables = (formId) => {
         
         combinedVars = [...defaultVars, ...uniqueFormVariables];
       } else {
-        combinedVars = processNewFilterMode(taskVariables, defaultTaskVariable);
+        // Preserve default/system variables' saved state even when not the same form
+        const preservedDefaultVars = defaultTaskVariable.map(defaultVar => {
+          const existingVar = findExistingVariable(sourceVars || [], defaultVar);
+          return existingVar || defaultVar;
+        });
+
+        const dynamicVariables = transformToDynamicVariables(taskVariables, preservedDefaultVars);
+        combinedVars = [...preservedDefaultVars, ...dynamicVariables];
       }
 
-      setVariableArray(combinedVars);
+      // Ensure UI reflects persisted ordering
+      const sortedVars = [...combinedVars].sort(
+        (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
+      );
+
+      setVariableArray(sortedVars);
     })
     .catch((err) => console.error(err));
 };
@@ -459,17 +506,22 @@ const handleFetchTaskVariables = (formId) => {
   };
 
   /* -------------------- handling create or update filter -------------------- */
-  const handleSaveFilter = () => {
-    createFilter(getData())
-      .then((res) => {
-        const updatedFilterList = [...filterList, res.data];
-        dispatch(setBPMFilterList(updatedFilterList));
-        startSuccessCountdown(closeTaskFilterMainModal, 2);
-        dispatch(fetchBPMTaskCount(updatedFilterList));
-        dispatch(setDefaultFilter(res.data.id));
-        updateDefaultFilter(res.data.id);
-      })
-      .catch((error) => console.error("Error saving filter:", error));
+  const handleSaveFilter = async () => {
+    try {
+      setIsTaskFilterSaving(true);
+      const res = await createFilter(getData());
+      const updatedFilterList = [...filterList, res.data];
+      dispatch(setBPMFilterList(updatedFilterList));
+      startSuccessCountdown(closeTaskFilterMainModal, 2);
+      dispatch(fetchBPMTaskCount(updatedFilterList));
+      dispatch(setDefaultFilter(res.data.id));
+      updateDefaultFilter(res.data.id);
+    } catch (error) {
+      console.error("Error saving filter:", error);
+    } finally {
+      setIsTaskFilterSaving(false);
+      closeTaskFilterMainModal();
+    }
   };
 
   const handleFormSelection = (selectedFormObj) => {
@@ -478,14 +530,22 @@ const handleFetchTaskVariables = (formId) => {
     toggleFormSelectionModal();
   };
 
-  const handleUpdateModalClick = () => {
+  const handleUpdateModalClick = async () => {
     const isPrivate = filterToEdit?.users?.length!==0;
     const data = getData();
-    if(isPrivate){
-     handleFilterUpdate(isPrivate,data);
-    }else{
-      dispatch(setFilterToEdit(data));
-    toggleUpdateModal();
+    try {
+      setIsTaskFilterSaving(true);
+      if(isPrivate){
+        await handleFilterUpdate(isPrivate,data);
+      }else{
+        dispatch(setFilterToEdit(data));
+        toggleUpdateModal();
+      }
+    } catch (error) {
+      console.error("Error updating filter:", error);
+    } finally {
+      setIsTaskFilterSaving(false);
+      closeTaskFilterMainModal();
     }
   };
 
@@ -508,68 +568,84 @@ const handleFetchTaskVariables = (formId) => {
   /* ------------------------------- tab values ------------------------------- */
   const columnsTab = () => (
     <>
-      <CustomInfo
-        className="note"
-        heading="Note"
-        content={t(
-          "Toggle the visibility of columns and re-order them if needed."
-        )}
-        dataTestId="task-filter-columns-note"
-      />
+      
       {variableArray.length !== 0 && (
-        <DragandDropSort
+        <div >
+           <DragandDropSort
           key={variableArray.length}
           items={variableArray}
           onUpdate={handleUpdateOrder}
-          icon = { <FormVariableIcon color = {darkColor} /> }
           data-testid="columns-sort"
         />
+        </div>
+       
       )}
     </>
   );
 
   const settingsTab = () => (
     <>
-    <div className="input-combination">
-      <InputDropdown
-        Options={dateSortOptions}
-        dropdownLabel={t("Default Sort")}
-        isAllowInput={false}
-        ariaLabelforDropdown={t("dropdown for sort options")}
-        ariaLabelforInput={t("input for typing option")}
-        dataTestIdforInput="date-sort-input"
-        dataTestIdforDropdown="date-sort"
-        selectedOption={sortValue}
-        setNewInput={setSortValue}
+      <p className="dropdown-label-text">{t("Choose a default sort")}</p>
+      <SelectDropdown
+        options={dateSortOptions}
+        dependentOptions={sortOptions}
+        secondDropdown={true}
+        defaultValue={sortValue}
+        secondDefaultValue={sortOrder}
+        onChange={(v) => setSortValue(String(v))}
+        onSecondChange={(v) => setSortOrder(String(v))}
+        ariaLabel={t("Default Sort")}
+        dataTestId="date-sort"
         id="default-sort"
+        variant="secondary"
       />
-      {sortValue && sortOptions[sortValue] ? (
-        <InputDropdown
-          Options={sortOptions[sortValue]}
-          isAllowInput={false}
-          ariaLabelforDropdown={t("dropdown for sort order")}
-          ariaLabelforInput={t("input for sort order")}
-          data-testid="sort-order-dropdown"
-          dataTestIdforInput="sort-order-input"
-          dataTestIdforDropdown="sort-order-list"
-          selectedOption={sortOrder}
-          setNewInput={setSortOrder}
-          id="sort-order"
-        />
-      ) : null}
-      </div>
-      <InputDropdown
-        Options={dataLineCount}
-        dropdownLabel={t("How Many Lines of Data To Show Per Row")}
-        isAllowInput={false}
-        ariaLabelforDropdown={t("line of data dropdown ")}
-        ariaLabelforInput={t("line of data input")}
-        dataTestIdforInput="data-line-input"
-        dataTestIdforDropdown="data-line"
-        selectedOption={dataLineValue}
-        setNewInput={setDataLineValue}
+      
+      <p className="dropdown-label-text">{t("How Many Lines of Data To Show Per Row")}</p>
+      <div className="lines-count-container">
+      <SelectDropdown
+        options={dataLineCount.map(({ label, value }) => ({ label, value }))}
+        value={String(selectedFilterExistingData?.properties?.dataLineValue || dataLineValue)}
+        onChange={(v) => setDataLineValue(Number(v))}
+        ariaLabel={t("How Many Lines of Data To Show Per Row")}
+        dataTestId="data-line"
         id="how-many-lines-of-data-to-show-per-row"
+        variant="secondary"
       />
+      </div>
+      
+    </>
+  );
+
+  // Build access controls UI for step 2 
+  const taskUserList = useSelector((state: any) => state.task.userList);
+  const userListData = taskUserList?.data ?? [];
+  const assigneeOptions = userListData.map((user) => ({ value: user.username, label: user.username }));
+
+  const renderAccessControls = () => (
+    <>
+    <div>
+    <p className="dropdown-label-text">Tasks Accessible To</p> 
+      <SelectDropdown
+      options={[
+        { label: t("Current user"), value: "currentUser" },
+        { label: t("Specific role"), value: "specificRole" },
+        { label: t("Specific assignee"), value: "specificAssignee" },
+      ]}
+      dependentOptions={{
+        specificRole: candidateOptions,
+        specificAssignee: assigneeOptions,
+      }}      
+      secondDropdown={true}
+      defaultValue={accessOption}
+      secondDefaultValue={accessValue}
+      onChange={(v) => changeAcessOption(String(v))}
+      onSecondChange={(v) => setAccessValue(String(v))}
+      ariaLabel={t("Tasks Accessible To")}
+      dataTestId="access-options"
+      id="tasks-accessible-to"
+      variant="secondary"
+    />
+    </div>     
     </>
   );
 
@@ -580,15 +656,8 @@ const handleFetchTaskVariables = (formId) => {
       content: (
         <ParametersTab
           forms={forms}
-          accessOption={accessOption}
-          changeAcessOption={changeAcessOption}
-          accessValue={accessValue}
-          setAccessValue={setAccessValue}
-          handleFormSelectionClear={handleFormSelectionClear}
-          candidateOptions={candidateOptions}
           selectedForm={selectedForm}
           toggleFormSelectionModal={toggleFormSelectionModal}
-          showFormSelectionModal={showFormSelectionModal}
           handleFormSelection={handleFormSelection}
         />
       ),
@@ -621,42 +690,100 @@ const handleFetchTaskVariables = (formId) => {
     },
   ];
 
+  const wizardSteps = [
+    { key: "step1", content: tabs[0]?.content },
+    {
+      key: "step2",
+      content: (
+        <div className="task-filter-page2-container">
+          <div className="task-filter-page2-container-left">
+            {tabs[1]?.content}
+          </div>
+          <div className="task-filter-page2-container-right">
+            {renderAccessControls()}
+            {settingsTab()}
+          </div>
+        </div>
+      )
+    },
+    { key: "step3", content: tabs[3]?.content },
+  ];
+
+  const stepKeys = wizardSteps.map((s) => s.key);
+  const activeStep = Math.min(Math.max((currentStep || 1) - 1, 0), stepKeys.length - 1);
+
+  const goNext = () => {
+    const next = Math.min(activeStep + 2, stepKeys.length);
+    onStepChange?.(next);
+  };
+
+  const goBack = () => {
+    const prev = Math.max(activeStep, 1);
+    onStepChange?.(prev);
+  };
+
+  const isLastStep = activeStep === stepKeys.length - 1;
+
+  const handleWizardPrimaryClick = () => {
+    if (isLastStep) {
+      if (filterToEdit?.id) {
+        handleUpdateModalClick();
+      } else {
+        handleSaveFilter();
+      }
+    } else {
+      goNext();
+    }
+  };
+
+  useEffect(() => {
+    if (updateSuccess?.showSuccess || deleteSuccess?.showSuccess) {
+      onStepChange?.(stepKeys.length);
+    }
+  }, [updateSuccess?.showSuccess, deleteSuccess?.showSuccess]);
+
   return (
     <>
-      <Modal.Body className="with-tabs">
-        <div className="tabs">
-          <CustomTabs
-            defaultActiveKey={
-              updateSuccess?.showSuccess || deleteSuccess?.showSuccess
-                ? "saveFilterTab"
-                : "parametersTab"
-            }
-            tabs={tabs}
-            ariaLabel={t("Filter Tabs")}
-            dataTestId="create-filter-tabs"
-          />
+      <Modal.Body >
+        <div className="wizard-step-content">
+          {wizardSteps[activeStep]?.content}
         </div>
       </Modal.Body>
-      <Modal.Footer>
-        <div className="buttons-row">
-          <CustomButton
-            label={t("Filter Results")}
-            dataTestId="task-filter-results"
-            ariaLabel={t("Filter results")}
-            onClick={filterResults}
-            disabled={
-              successState.showSuccess ||
-              updateSuccess?.showSuccess ||
-              deleteSuccess?.showSuccess ||
-              disableFilterButton
-            }
-          />
-          <CustomButton
-            label={t("Cancel")}
-            onClick={closeTaskFilterMainModal}
-            dataTestId="cancel-task-filter"
-            ariaLabel={t("Cancel filter")}
+      <Modal.Footer data-three-buttons="true">
+        <div className="buttons-row flex-fill" >
+          <V8CustomButton
+            label={t("Back")}
+            onClick={goBack}
+            dataTestId="wizard-back"
+            ariaLabel={t("Go to previous step")}
             secondary
+            disabled={activeStep === 0}
+          />
+        </div>
+        <div className="wizard-page-indicator" aria-live="polite">
+          {t("{{current}} of {{total}}", { current: activeStep + 1, total: stepKeys.length })}
+        </div>
+        <div className="buttons-row justify-content-end flex-fill">
+          <V8CustomButton
+          variant="primary"
+            label={
+              isLastStep
+                ? (t("Save and Apply"))
+                : t("Next")
+            }
+            onClick={handleWizardPrimaryClick}
+            dataTestId="wizard-next"
+            ariaLabel={
+              isLastStep
+                ? (filterToEdit?.id ? t("Update this filter") : t("Create this filter"))
+                : t("Go to next step")
+            }
+            disabled={
+              isLastStep
+                ? (saveFilterButtonDisabled || isTaskFilterSaving)
+                : false
+            }
+            loading={isLastStep && isTaskFilterSaving}
           />
         </div>
       </Modal.Footer>

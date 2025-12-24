@@ -1,0 +1,377 @@
+
+$font-family-base: var(--font-family-base);
+$line-height-default: var(--line-height-default);
+$letter-spacing-default: var(--letter-spacing-default);
+$font-color: var(--secondary-dark);
+$font-weight-regular: var(--font-weight-regular);
+$font-size-xl: var(--font-size-xl);
+
+// Mixin for Typography
+@mixin font-style($size, $weight, $color: $font-color) {
+  font-family: $font-family-base;
+  font-size: $size;
+  font-weight:$weight;
+  line-height: $line-height-default;
+  letter-spacing: $letter-spacing-default;
+  color: $color;
+}
+
+// Mixin for consistent row alignment
+@mixin rowLayout($maxHeight: 72px, $justify: space-between, $gridRow) {
+  grid-row: $gridRow;
+  display: flex;
+  align-items: center;     // vertical centering
+  justify-content: $justify;
+  max-height: 0;           
+  overflow: hidden;        
+  padding: 0;
+  border-bottom: none;
+  transition: 
+    max-height 0.3s ease, 
+    padding 0.5s ease, 
+    border-bottom 0.5s ease;
+  &:not(:empty) {
+    max-height: $maxHeight;      
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--gray-x-light);
+  }
+}
+
+//mixin for fixed gap between. 
+@mixin componetAlign {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+//Align items at the flex center
+@mixin centerAlign {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+//vertical padding at the top and bottom.
+@mixin vertical-padding {
+  padding: var(--spacer-100) 0 ;
+}
+
+
+//----- Create form Card Mixins ------->
+@mixin create-grid($gap: 21px, $border-color: #E5E5E5, $padding: 18px 0) {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $gap;
+  border-top: 1px solid $border-color;
+  padding: $padding;
+  margin-top: 17px;
+  margin-bottom: 18px;
+}
+
+// Grid item mixin
+@mixin create-grid-item($height: 220px, $width: 350px, $border-radius: 5px, $border-color: #EDEDED, $bg-color: #FCFCFC, $hover-border: #B8ABFF) {
+  height: $height;
+  width: $width;
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  background: $bg-color;
+  text-align: center;
+  transition: border 0.3s ease;
+
+  &:hover {
+    border: 1px solid $hover-border;
+    box-shadow: 0 0.125rem 0.5rem rgba(137, 105, 242, 0.15);
+  }
+}
+
+//-------- Edit settings grid structure ----------->
+
+@mixin grid-layout($header-height: 50px, $gap: 1rem) {
+  display: grid;
+  grid-template-rows: $header-height 1fr;
+  gap: $gap;
+  width: 100%;
+}
+
+// Header section 
+@mixin section-header(
+  $border-color: #e5e5e5,
+  $bg-color: #fff,
+  $padding: 13px 0
+) {
+  width: 100%;
+  border-bottom: 1px solid $border-color;
+  background-color: $bg-color;
+  padding: $padding;
+}
+
+// Content area
+@mixin section-content(
+  $border: solid,
+  $background: var(--white-300)
+) {
+  width: 100%;
+  min-height: 220px;
+  padding: 34px 32px;
+  background-color: $background;
+  border: 1px #{$border} var(--gray-x-light);
+  border-radius: var(--border-radius);
+}
+
+$width: 75vw;
+$height: 776px;
+$modal-height: 80vh;
+$border-radius: var(--border-radius);
+$box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+// Mixin for large modal popover with enhanced styling
+@mixin large-modal-popover() {
+  &.modal-dialog {
+    width: $width !important;
+    max-width: $width;
+    margin: 1.75rem auto;
+  }
+  
+  .modal-content {
+    width: 100%;
+    max-height: $modal-height;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: none;
+    overflow: hidden;
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      background-color: var(--white);
+      border-bottom: none;
+      
+      .modal-header-content {
+        width: 100%;
+        
+        .modal-title {
+          font-size: $font-size-xl;
+          font-weight: $font-weight-regular;
+          color: var(--gray-darkest);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 1.5rem;
+        }
+        
+        .modal-subtitle {
+          border-top: 1px solid var(--gray-x-light);
+          padding: 1.75rem 1.19rem;
+          padding-bottom: 0.75rem;
+          font: 0.9375rem;
+        }
+      }
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      height: calc(#{$modal-height} - 120px);
+      margin: 0 1.5rem;
+      border-top: 1px solid var(--gray-x-light);
+      border-bottom: 1px solid var(--gray-x-light);
+    }
+    
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      background-color: var(--white);
+      display: flex;
+      gap: 0.5rem;
+      border-top: none;
+      width: 100%;
+      align-items: center;
+      
+      // Default: single or two buttons aligned to the right
+      justify-content: flex-end;
+      
+      // Only when exactly 3 elements are present, space them between
+      // Modern browsers with :has() support
+      &:has(> *:nth-child(3):last-child) {
+        justify-content: space-between;
+      }
+      
+      // Fallback for older browsers - use data attribute
+      &[data-three-buttons="true"] {
+        justify-content: space-between;
+      }
+    }
+  }
+}
+
+// Mixin for approval task modal with specific dimensions
+@mixin approval-task-modal-popover() {
+  &.modal-dialog {
+    width: 67.9375rem !important; // 1087px
+    max-width: 67.9375rem;
+    margin: 1.75rem auto;
+  }
+  
+  .modal-content {
+    width: 100%;
+    height: 48.875rem; // 782px
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: none;
+    overflow: hidden;
+    max-height: 95vh;
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      background-color: var(--white);
+      border-bottom: none;
+      
+      .modal-header-content {
+        width: 100%;
+        
+        .modal-title {
+          font-size: $font-size-xl;
+          font-weight: $font-weight-regular;
+          color: var(--gray-darkest);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 1.5rem;
+        }
+        
+        .modal-subtitle {
+          border-top: 1px solid var(--gray-x-light);
+          padding: 1.75rem 1.19rem;
+          padding-bottom: 0.75rem;
+          font: 0.9375rem;
+        }
+      }
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      max-height: calc(48.875rem - 120px);
+      margin: 0 1.5rem;
+      border-top: 1px solid var(--gray-x-light);
+      border-bottom: 1px solid var(--gray-x-light);
+    }
+    
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      background-color: var(--white);
+      display: flex;
+      gap: 0.5rem;
+      border-top: none;
+      width: 100%;
+      align-items: center;
+      
+      // Default: single or two buttons aligned to the right
+      justify-content: flex-end;
+      
+      // Only when exactly 3 elements are present, space them between
+      // Modern browsers with :has() support
+      &:has(> *:nth-child(3):last-child) {
+        justify-content: space-between;
+      }
+      
+      // Fallback for older browsers - use data attribute
+      &[data-three-buttons="true"] {
+        justify-content: space-between;
+      }
+    }
+  }
+}
+
+// Mixin for reusable standard modal with fixed dimensions
+@mixin reusable-standard-modal-popover() {
+  &.modal-dialog {
+    width: 45rem !important; // 720px
+    max-width: 45rem;
+    margin: 1.75rem auto;
+    max-height: 95vh;
+  }
+  
+  .modal-content {
+    width: 100%;
+    height: 48.875rem; // 782px
+    flex-shrink: 0;
+    box-sizing: border-box; // Ensure padding is included in width/height
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: none;
+    overflow: hidden;
+    padding: 1.5rem; // Padding inside the modal content
+    max-height: 95vh;
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0;
+      background-color: transparent;
+      border-bottom: none;
+      
+      .modal-header-content {
+        width: 100%;
+        
+        .modal-title {
+          font-size: $font-size-xl;
+          font-weight: $font-weight-regular;
+          color: var(--gray-darkest);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 1.5rem;
+        }
+        
+        .modal-subtitle {
+          border-top: 1px solid var(--gray-x-light);
+          padding: 1.75rem 0;
+          font: 0.9375rem;
+        }
+      }
+    }
+    
+    .modal-body {
+      padding: 0;
+      overflow-y: auto;
+      max-height: calc(48.875rem - 200px);
+      margin: 0;
+      border-top: 1px solid var(--gray-x-light);
+      border-bottom: 1px solid var(--gray-x-light);
+    }
+    
+    
+  }
+  .modal-footer {
+    padding-top: 1rem;
+    background-color: transparent;
+    display: flex;
+    gap: 0.5rem;
+    border-top: none;
+    width: 100%;
+    align-items: center;
+    
+    // Default: single or two buttons aligned to the right
+    justify-content: flex-end;
+    
+    // Only when exactly 3 elements are present, space them between
+    // Modern browsers with :has() support
+    &:has(> *:nth-child(3):last-child) {
+      justify-content: space-between;
+    }
+    
+    // Fallback for older browsers - use data attribute
+    &[data-three-buttons="true"] {
+      justify-content: space-between;
+    }
+  }
+}

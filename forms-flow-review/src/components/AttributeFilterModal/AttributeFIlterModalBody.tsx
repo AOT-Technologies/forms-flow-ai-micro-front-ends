@@ -1,12 +1,8 @@
 import {
-  CustomButton,
-  CustomTabs,
-  DeleteIcon,
-  FormInput,
-  InputDropdown,
-  SaveIcon,
-  UpdateIcon,
-  useSuccessCountdown,
+  V8CustomButton,
+  SelectDropdown,
+  CustomTextInput,
+  Alert,
 } from "@formsflow/components";
 import { useEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
@@ -18,41 +14,25 @@ import {
   getUserRoles,
 } from "../../api/services/filterServices";
 import isEqual from "lodash/isEqual";
+import { HelperServices } from "@formsflow/service";
 
 import { setAttributeFilterList, setAttributeFilterToEdit, setBPMTaskListActivePage, setBPMTaskLoader, setIsUnsavedAttributeFilter, setSelectedBpmAttributeFilter, setUserGroups } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED, PRIVATE_ONLY_YOU } from "../../constants"; 
-import { StyleServices } from "@formsflow/service";
 import ParametersTab from "./ParametersTab";
-import RenderOwnerShipNotes from "./Notes";
 import { userRoles } from "../../helper/permissions";
 import { cloneDeep } from "lodash";
 import { Filter, FilterCriteria } from "../../types/taskFilter"; 
 import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import { RootState } from "../../reducers";
 
-const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, toggleDeleteModal,deleteSuccess, handleSaveFilterAttributes }) => {
+// Constants for variables that support form-level filtering
+const VARIABLES_WITH_FORM_SUPPORT = new Set(['name', 'submitterName', 'assignee', 'roles', 'created', 'formName']);
+
+const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const filterNameLength = 50;
   const { manageAllFilters,createFilters } = userRoles();
-  
-  const baseColor = StyleServices.getCSSVariable("--ff-primary");
-  const whiteColor = StyleServices.getCSSVariable("--ff-white");
- let updateButtonVariant = "secondary"; // Default value
-  if (updateSuccess.showSuccess) {
-    updateButtonVariant = "success";
-  }
- let deleteButtonVariant = "secondary"; // Default value
-  if (deleteSuccess.showSuccess) {
-    deleteButtonVariant = "success";
-  }
-
-  const {
-  successState: saveSuccess,
-  startSuccessCountdown: setSaveSuccess,
-} = useSuccessCountdown();
-
- 
   const limit = useSelector((state: any) => state.task.limit);
   const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
   const selectedAttributeFilter = useSelector((state: any) => state.task.selectedAttributeFilter);
@@ -61,13 +41,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   const userDetails = useSelector((state: any) => state.task.userDetails);
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
   const isUnsavedFilter = useSelector((state:RootState)=>state.task.isUnsavedFilter);
-  const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
   const [filterNameError, setFilterNameError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
     const attributeFilter = useSelector(
     (state: any) => state.task.attributeFilterToEdit
   );
   const [filterName, setFilterName] = useState(attributeFilter?.name || "");
-  const deleteIconColor = getIconColor(updateSuccess?.showSuccess);
   const { data: userList } = useSelector(
     (state: any) => state.task.userList
   ) ?? {
@@ -185,8 +164,9 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   };
 
   // Helper function to process task-level fields from criteria
+  // Note: 'roles' is excluded here as it's handled separately from candidateGroup in initialData
   const processTaskFields = (existingValues) => {
-    const taskFields = ['submitterName', 'assignee', 'roles', 'created', 'formName'];
+    const taskFields = ['submitterName', 'assignee', 'created', 'formName'];
     taskFields.forEach(fieldName => {
       const fieldValue = selectedAttributeFilter?.criteria?.[fieldName];
       if (fieldValue) {
@@ -212,17 +192,63 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
       }
     }
   };
+  const normalizeDayValue = (value) => {
+    // Remove % from both sides
+    const cleaned = value.replace(/^%|%$/g, "");
+  
+    // cleaned is "mm/dd/yyyy"
+    const [month, day, year] = cleaned.split("/");
+  
+    // return "dd-mm-yyyy" so UI behaves correctly
+    return `${day}-${month}-${year}`;
+  };
+
+  // Reusable formatter for existing process variables (day and datetime)
+  const formatExistingVariableForUI = (item) => {
+    const taskVariable = taskVariables.find(
+      (tv) => tv.name === item.name && tv.isFormVariable === item.isFormVariable
+    );
+    const effectiveType = taskVariable?.type || item?.type;
+    const uniqueKey = taskVariable
+      ? getUniqueFieldKey(taskVariable)
+      : (item?.isFormVariable ? `${item?.name}_form` : item?.name);
+
+    if (effectiveType === "day") {
+      return { key: uniqueKey, value: normalizeDayValue(item.value) };
+    }
+    if (effectiveType === "datetime") {
+      const cleaned = (item.value || "").replace(/^%|%$/g, "");
+      const formatted = HelperServices.getLocalDateAndTime(cleaned) || "";
+      return { key: uniqueKey, value: formatted };
+    }
+    return null;
+  };
 
   // Helper function to process existing process variables
   const processExistingProcessVariables = (existingValues) => {
-    const variablesWithFormSupport = ['name', 'submitterName', 'assignee', 'roles', 'created', 'formName'];
-    
     exisitngProcessvariables.forEach((item) => {
-      if (variablesWithFormSupport.includes(item.name)) {
+      const formatted = formatExistingVariableForUI(item);
+      if (formatted) {
+        existingValues[formatted.key] = formatted.value;
+        return;
+      }
+
+      // Skip roles from processVariables - it should come from candidateGroup in initialData
+      if (item.name === "roles" && !item.isFormVariable) {
+        return;
+      }
+      
+      if (VARIABLES_WITH_FORM_SUPPORT.has(item.name)) {
         processVariable(item, existingValues);
       } else {
         // For other variables, find the corresponding task variable
         const taskVariable = taskVariables.find(tv => tv.name === item.name);
+        if (taskVariable && taskVariable.type === "day") {
+          const resetValue = normalizeDayValue(item.value);
+          existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
+          return;
+      }
+      
         if (taskVariable) {
           const resetValue = cleanValue(item.value, item.name, taskVariable.type);
           existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
@@ -246,21 +272,12 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
 
   return { ...initialData, ...existingValues };
 });
-
   const FILTER_SHARE_OPTIONS = {
   PRIVATE: 'PRIVATE_ONLY_YOU',
   SAME_AS_TASKS: 'SAME_AS_TASK_FILTER',
 };
   
   const [shareAttrFilter, setShareAttrFilter] = useState(FILTER_SHARE_OPTIONS.PRIVATE); 
-   const saveIconColor = getIconColor(isUnsavedFilter || !filterName || filterNameError|| !shareAttrFilter || deleteSuccess?.showSuccess);
-
-
-  /* ---------------------------- access management --------------------------- */
-
-  const createdByMe =
-    attributeFilter?.createdBy === userDetails?.preferred_username;
-  const editRole = manageAllFilters || (createdByMe && createFilters);
 
   /* ---------------------------- get users groups ---------------------------- */
   useEffect(() => {
@@ -294,24 +311,123 @@ const AttributeFilterModalBody = ({ onClose, toggleUpdateModal, updateSuccess, t
   );
 
   const candidateOptions = useMemo(() => {
-    return candidateGroups.reduce((acc, group) => {
+    const options = candidateGroups.reduce((acc, group) => {
       if (!group.permissions.includes("view_filters")) return acc;
-      const name =  removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED);
-      acc.push({ value: name, label: name });
+      const name = removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED);
+      // Remove leading slash to match the format in attributeData.roles
+      const normalizedName = trimFirstSlash(name);
+      acc.push({ value: normalizedName, label: normalizedName });
       return acc;
     }, []);
-  }, [candidateGroups, tenantKey]);
+
+    return options;
+  }, [candidateGroups, tenantKey, attributeData?.roles]);
 
 
 
+  // Reset form state when switching from edit to create mode or when switching between different filters to edit
   useEffect(() => {
-    if(attributeFilter &&(selectedAttributeFilter?.roles.length > 0 || (selectedAttributeFilter?.users.length == 0 && selectedAttributeFilter.roles.length == 0))){ 
-      setShareAttrFilter(FILTER_SHARE_OPTIONS.SAME_AS_TASKS);
+    if (!attributeFilter?.id) {
+      // Reset filter name
+      setFilterName("");
+      setFilterNameError("");
+      
+      // Reset attribute data to initial state (only selectedFilter criteria, not attribute filter data)
+      const initialData = {
+        assignee: selectedFilter?.criteria?.assignee || "",
+        roles: removeTenantKey(selectedFilter?.criteria?.candidateGroup, tenantKey, MULTITENANCY_ENABLED) || ""
+      };
+      setAttributeData(initialData);
+      
+      // Reset share filter option
+      setShareAttrFilter(FILTER_SHARE_OPTIONS.PRIVATE);
+      
+      // Reset to first page
+      setCurrentPage(1);
+    } else {
+      // When editing, populate form with the filter being edited (attributeFilter), not the currently selected one
+      setFilterName(attributeFilter?.name || "");
+      setFilterNameError("");
+      
+      // Use attributeFilter criteria instead of selectedAttributeFilter
+      const initialData = {
+        assignee: attributeFilter?.criteria?.assignee || "",
+        roles: removeTenantKey(attributeFilter?.criteria?.candidateGroup, tenantKey, MULTITENANCY_ENABLED) || ""
+      };
+
+      // Process attributeFilter's processVariables to populate form fields
+      const attributeFilterProcessVars = attributeFilter?.criteria?.processVariables || [];
+      const existingValues = {};
+      
+      // Process nameLike field from attributeFilter
+      const nameLikeValue = attributeFilter?.criteria?.nameLike;
+      if (nameLikeValue) {
+        const taskNameVariable = taskVariables.find(tv => tv.name === "name" && !tv.isFormVariable);
+        if (taskNameVariable) {
+          const resetValue = cleanValue(nameLikeValue, "name");
+          const uniqueKey = getUniqueFieldKey(taskNameVariable);
+          existingValues[uniqueKey] = resetValue;
+        }
+      }
+      
+      // Process task-level fields from attributeFilter
+      // Note: 'roles' is excluded here as it's handled separately from candidateGroup in initialData
+      const taskFields = ['submitterName', 'assignee', 'created', 'formName'];
+      taskFields.forEach(fieldName => {
+        const fieldValue = attributeFilter?.criteria?.[fieldName];
+        if (fieldValue) {
+          const taskVariable = taskVariables.find(tv => tv.name === fieldName && !tv.isFormVariable);
+          if (taskVariable) {
+            const resetValue = cleanValue(fieldValue, fieldName);
+            const uniqueKey = getUniqueFieldKey(taskVariable);
+            existingValues[uniqueKey] = resetValue;
+          }
+        }
+      });
+      
+      // Process process variables from attributeFilter
+      attributeFilterProcessVars.forEach((item) => {
+        const formatted = formatExistingVariableForUI(item);
+        if (formatted) {
+          existingValues[formatted.key] = formatted.value;
+          return;
+        }
+        // Skip roles from processVariables - it should come from candidateGroup in initialData
+        if (item.name === "roles" && !item.isFormVariable) {
+          return;
+        }
+        
+        if (VARIABLES_WITH_FORM_SUPPORT.has(item.name)) {
+          const taskVariable = taskVariables.find(tv => tv.name === item.name && tv.isFormVariable === item.isFormVariable);
+          if (taskVariable) {
+            const resetValue = cleanValue(item.value, item.name);
+            const uniqueKey = getUniqueFieldKey(taskVariable);
+            existingValues[uniqueKey] = resetValue;
+          }
+        } else {
+          // For other variables, find the corresponding task variable
+          const taskVariable = taskVariables.find(tv => tv.name === item.name);
+          if (taskVariable) {
+            const resetValue = cleanValue(item.value, item.name);
+            existingValues[getUniqueFieldKey(taskVariable)] = resetValue;
+          }
+        }
+      });
+      
+      setAttributeData({ ...initialData, ...existingValues });
+      
+      // Set share filter based on attributeFilter being edited
+      if(attributeFilter?.roles?.length > 0 || (attributeFilter?.users?.length === 0 && attributeFilter?.roles?.length === 0)){ 
+        setShareAttrFilter(FILTER_SHARE_OPTIONS.SAME_AS_TASKS);
+      } else {
+        setShareAttrFilter(FILTER_SHARE_OPTIONS.PRIVATE);
+      }
+      
+      // Reset to first page when switching filters
+      setCurrentPage(1);
     }
-    getTaskAccess();
+  }, [attributeFilter, selectedFilter, tenantKey, taskVariables]);
 
-
-}, [attributeFilter]);
 
 const getTaskAccess = () => {
   if (shareAttrFilter === FILTER_SHARE_OPTIONS.PRIVATE) {
@@ -329,8 +445,6 @@ const createFilterShareOption = (labelKey, value) => ({
   onClick: () => setShareAttrFilter(value),
 });
 
-
-
   const filterShareOptions = [
   createFilterShareOption("Nobody (Keep it private)", FILTER_SHARE_OPTIONS.PRIVATE),
   createFilterShareOption(
@@ -340,11 +454,6 @@ const createFilterShareOption = (labelKey, value) => ({
 ];
 
 
-
-
-  const attrFilterName = (e) => {
-    setFilterName(e.target.value);
-  };
     const getAssignee = () => {
       return  attributeData["assignee"] ||selectedFilter?.criteria?.assignee;
     };
@@ -445,10 +554,18 @@ const removeSlashFromValue = (value) => {
       value = Number(value);
     }
     else if (types[originalKey] === "day") {
-      //chnaging '/' to '-'
+      // When editing, the value shown in UI is in MM/DD/YYYY format (coming from backend %MM/DD/YYYY%)
+      // Convert MM/DD/YYYY → DD-MM-YYYY
+      if (value.includes("/")) {
+        const [month, day, year] = value.split("/");
+        value = `${day}-${month}-${year}`;
+      }
+    
+      // Now convert DD-MM-YYYY → %MM/DD/YYYY% for Camunda
       const [day, month, year] = value.split("-");
       value = `%${month}/${day}/${year}%`;
-    } else if (types[originalKey] === "datetime") {
+    }
+     else if (types[originalKey] === "datetime") {
       //changing date and time to camunda expected format
       if (value && value.includes(",")) {
         const [datePart, timePart] = value.split(",").map((s) => s.trim());
@@ -480,21 +597,21 @@ const removeSlashFromValue = (value) => {
 
 
       
-
-    const searchFilterAttributes = () => {
+// function to search filter attributes(filter results button) not used now
+    // const searchFilterAttributes = () => {
      
-      const newProcessVariables = buildNewProcessVariables(); 
-      const newFilterData = getFilterData(newProcessVariables);
-      batch(()=>{
-      dispatch(setBPMTaskLoader(true));
-      dispatch(setSelectedBpmAttributeFilter(newFilterData));
-      dispatch(setIsUnsavedAttributeFilter(true));
-      dispatch(setBPMTaskListActivePage(1))
-      dispatch(fetchServiceTaskList(newFilterData, null, 1, limit));
-      })
+    //   const newProcessVariables = buildNewProcessVariables(); 
+    //   const newFilterData = getFilterData(newProcessVariables);
+    //   batch(()=>{
+    //   dispatch(setBPMTaskLoader(true));
+    //   dispatch(setSelectedBpmAttributeFilter(newFilterData));
+    //   dispatch(setIsUnsavedAttributeFilter(true));
+    //   dispatch(setBPMTaskListActivePage(1))
+    //   dispatch(fetchServiceTaskList(newFilterData, null, 1, limit));
+    //   })
 
-      onClose();
-    };
+    //   onClose();
+    // };
 
 
 
@@ -535,190 +652,131 @@ const removeSlashFromValue = (value) => {
     }
     const noFieldChanged =  isUnsavedFilter ? false :  isEqual(selectedAttributeFilter, createAttributeFilterPayload());
     const saveFilterAttributes = async () => {
-  try {
+    try {
+    setIsSaving(true);
     const filterToSave = createAttributeFilterPayload();
-    const response = await createFilter(filterToSave);
+    
+    // Check if we're editing an existing filter (PUT) or creating a new one (POST)
+    if (attributeFilter?.id) {
+      // Edit mode: Use PUT via handleSaveFilterAttributes
+      await handleSaveFilterAttributes(filterToSave);
+    } else {
+      // Create mode: Use POST via createFilter
+      const response = await createFilter(filterToSave);
 
-    setSaveSuccess(() => {
-      onClose();  
-    }, 2);
-
-    // need to update selected attribute filter in redux
-    dispatch(setSelectedBpmAttributeFilter(response.data));
-    const newAttributeFilterList = [...attributeFilterList, response.data];
-    dispatch(setAttributeFilterList(newAttributeFilterList));
-    dispatch(fetchServiceTaskList(filterToSave, null, 1, limit));
+      // need to update selected attribute filter in redux
+      dispatch(setSelectedBpmAttributeFilter(response.data));
+      const newAttributeFilterList = [...attributeFilterList, response.data];
+      dispatch(setAttributeFilterList(newAttributeFilterList));
+      dispatch(fetchServiceTaskList(filterToSave, null, 1, limit));
+    }
   } catch (error) {
     console.error("Failed to save filter attributes:", error);
+  } finally {
+    setIsSaving(false);
+    onClose();
   }
 };
-
-const saveButtonVariant = saveSuccess.showSuccess ? "success" : "secondary";
-
-
-    const handleUpdateModalClick =()=>{
-       const isPrivate = attributeFilter?.users?.length!==0;
-    const data = createAttributeFilterPayload();
-    if(isPrivate){
-     handleSaveFilterAttributes(isPrivate,data);
-    }else{
-        dispatch(setAttributeFilterToEdit(data))
-      toggleUpdateModal();
-    }
+   //update modal not used now, will discuss later and remove this code
+    // const handleUpdateModalClick =()=>{
+    //    const isPrivate = attributeFilter?.users?.length!==0;
+    // const data = createAttributeFilterPayload();
+    // if(isPrivate){
+    //  handleSaveFilterAttributes(isPrivate,data);
+    // }else{
+    //     dispatch(setAttributeFilterToEdit(data))
+    //   toggleUpdateModal();
+    // }
     
-     }
-    const handleDeleteClick = ()=>{
-            dispatch(setAttributeFilterToEdit(createAttributeFilterPayload()))
-
-      toggleDeleteModal();
-    }
-  const renderActionButtons = () => {
-    if (attributeFilter?.id) { 
-      if (editRole ) {
-        return (
-          <div className="buttons-row">
-            <CustomButton
-              className="me-3"
-              variant={updateButtonVariant}
-              size="md"
-              label={
-              updateSuccess.showSuccess ?   `${t("Updated!")} (${updateSuccess.countdown})` : t("Update This Filter")
-            }
-                onClick={handleUpdateModalClick}
-              icon={ updateSuccess?.showSuccess ? 
-                null: <UpdateIcon color={saveIconColor} />}
-              dataTestId="save-attribute-filter"
-              ariaLabel={t("Update This Filter")}
-              disabled={deleteSuccess.showSuccess || noFieldChanged || !shareAttrFilter}
-              iconWithText
-            />
-            <CustomButton
-              variant={deleteButtonVariant}
-              size="md"
-               label={
-              deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : t("Delete This Filter")
-            }
-              onClick={handleDeleteClick}
-              icon={deleteSuccess?.showSuccess ? 
-                null :<DeleteIcon color={deleteIconColor} />}
-              dataTestId="delete-attribute-filter"
-              ariaLabel={t("Delete This Filter")}
-              disabled={updateSuccess.showSuccess}
-              iconWithText
-            />
-          </div>
-        );
-      }
-      return null;
-    }
-
-    if (createFilters ) {
-      return (
-          <CustomButton
-  variant={saveButtonVariant}
-  size="md"
-  label={
-    saveSuccess.showSuccess
-      ? `${t("Saved!")} (${saveSuccess.countdown})`
-      : t("Save This Filter")
-  }
-  onClick={saveFilterAttributes}
-  icon={saveSuccess.showSuccess ? null : <SaveIcon color={saveIconColor} />}
-  dataTestId="save-attribute-filter"
-  ariaLabel={t("Save Attribute Filter")}
-  disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName}
-  iconWithText
-/>
-
-
-      );
-    }
-
-    return null;
-  };
+    //  }
 
   const saveFilterTab = () => (
-    <>
-      <FormInput
-        name="filterName"
-        type="text"
-        label={t("Filter Name")}
-        ariaLabel={t("Filter Name")}
+    <div className="save-filter-tab-container">
+    { !attributeFilter?.id  && <Alert
+      message={t("You can easily edit or delete custom filters at any time after they are saved.")}
+      variant="passive"
+      dataTestId="save-note-container"
+      isShowing={true}
+    />}
+    <div className="custom-input-container">
+      <label htmlFor="attribute-filter-name">{t("Filter Name")}</label>
+      <CustomTextInput
         value={filterName}
-        onChange={attrFilterName}
-        isInvalid={!!filterNameError}
-        onBlur={handleNameError}
+        setValue={(val) => setFilterName(val)}
+        placeholder={"Untitled Field Filter"}
         dataTestId="attribute-filter-name"
-        feedback={filterNameError}
-        id="filter-name"
+        ariaLabel={t("Filter Name")}
+        onBlur={handleNameError}
+        maxLength={filterNameLength}
       />
-
-      <InputDropdown
-        Options={filterShareOptions}
-        dropdownLabel={t("Share This Filter With")}
-        isAllowInput={false}
-        ariaLabelforDropdown={t("attribute filter sharing dropdown")}
-        selectedOption={shareAttrFilter}
-        setNewInput={setShareAttrFilter}
-        dataTestIdforInput="share-attribute-filter-input"
-        dataTestIdforDropdown="share-attribute-filter-options"
-        required={true}
-        id="shave-this-filter"
-      />
-      <RenderOwnerShipNotes
-        attributeFilter={attributeFilter}
-        isCreator={createdByMe}
-      />
-      {renderActionButtons()}
-    </>
-  );
-
-  const tabs = [
-    {
-      eventKey: "parametersTab",
-      title: t("Parameters"),
-      content: (
-        <ParametersTab
-          taskVariables={taskVariables}
-          attributeData={attributeData}
-          handleSelectChange={handleSelectChange}
-          assigneeOptions={assigneeOptions}
-          candidateOptions={candidateOptions}
+      </div>
+      <div className="custom-input-container">
+        <label htmlFor="share-this-filter">{t("Share This Filter With")}</label>
+        <SelectDropdown
+          options={filterShareOptions.map(({ label, value }) => ({ label, value }))}
+          value={shareAttrFilter}
+          onChange={setShareAttrFilter}
+          ariaLabel={t("attribute filter sharing dropdown")}
+          dataTestId="share-attribute-filter-options"
+          id="share-this-filter"
+          variant="secondary"
         />
-      ),
-    },
-    { eventKey: "saveFilterTab", title: t("Save"), content: saveFilterTab() },
-  ];
+      </div>
+    </div>
+  );
  
-
    return (
     <>
-      <Modal.Body className="with-tabs">
-        <div className="tabs">
-          <CustomTabs
-            defaultActiveKey={(updateSuccess?.showSuccess || deleteSuccess?.showSuccess) ? "saveFilterTab":"parametersTab"}
-            tabs={tabs}
-            dataTestId="attribute-filter-tabs"
-            ariaLabel={t("Filter Tabs")}
+      <Modal.Body >
+        {currentPage === 1 ? (
+          <ParametersTab
+            taskVariables={taskVariables}
+            attributeData={attributeData}
+            handleSelectChange={handleSelectChange}
+            assigneeOptions={assigneeOptions}
+            candidateOptions={candidateOptions}
           />
-        </div>
+        ) : (
+          saveFilterTab()
+        )}
       </Modal.Body>
       <Modal.Footer>
-        <div className="buttons-row">
-        <CustomButton
-          label={t("Filter Results")}
-          dataTestId="attribute-filter-results"
-          ariaLabel={t("Filter results")}
-          onClick={searchFilterAttributes}
-          disabled={(updateSuccess.showSuccess|| deleteSuccess.showSuccess || noFieldChanged)}
-        />
-        <CustomButton
-          label={t("Cancel")}
-          onClick={onClose}
-          dataTestId="cancel-attribute-filter"
-          ariaLabel={t("Cancel filter")}
-          secondary
-        />
+        <div className="w-100 d-flex align-items-center">
+          <div className="me-auto">
+            {currentPage === 2 && (
+              <V8CustomButton
+                label={t("Back")}
+                dataTestId="attribute-filter-back"
+                ariaLabel={t("Back")}
+                onClick={() => setCurrentPage(1)}
+                variant="secondary"
+              />
+            )}
+          </div>
+          <div className=" footer-text flex-grow-1 text-center">
+            {currentPage === 1 ? t("1 of 2") : t("2 of 2")}
+          </div>
+          <div className="ms-auto">
+            {currentPage === 1 && (
+              <V8CustomButton
+                label={t("Next")}
+                dataTestId="attribute-filter-next"
+                ariaLabel={t("Next")}
+                onClick={() => setCurrentPage(2)}
+              />
+            )}
+            {currentPage === 2 && createFilters  && (
+              <V8CustomButton
+                variant="primary"
+                label={t("Save and apply")}
+                onClick={saveFilterAttributes}
+                dataTestId="save-attribute-filter"
+                ariaLabel={t("Save Attribute Filter")}
+                disabled={isUnsavedFilter || filterNameError || noFieldChanged || !filterName || isSaving}
+                loading={isSaving}
+              />
+            )}
+          </div>
         </div>
       </Modal.Footer>
 

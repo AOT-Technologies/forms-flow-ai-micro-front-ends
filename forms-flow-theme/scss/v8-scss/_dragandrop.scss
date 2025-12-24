@@ -1,0 +1,81 @@
+@import "./mixins";
+$gray-light: var(--gray-light);
+$gray-x-light: var(--gray-x-light);
+$animSpeed: 300ms; 
+
+.drag-drop-container{
+    @include large-modal-popover();
+    .modal-body{
+        padding: 1.6875rem 0.875rem !important; /* 27px 14px */
+    }
+   }
+   .drag-drop-list-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 1.5625rem; /* 28px 25px */
+    border: 0.0625rem solid $gray-x-light; /* 1px */
+    border-radius: 0.3125rem; /* 5px */
+    margin: 0;
+    height: fit-content;
+    overflow: scroll;
+  
+    ul {
+      display: flex ;
+      flex-direction: column;
+  
+      padding-left: 0;
+      margin-bottom: 0;
+  
+   //    margin-top: calc( 0rem - $paddingLvl6TB/2 ); /* 0px */
+   //    margin-bottom: calc( 0rem - $paddingLvl6TB/2 ); /* 0px */
+    }
+  
+    .draggable-item {
+      position: relative; 
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+  
+      padding: 0.5rem 0; /* 8px 0 */
+  
+      border-radius: 0.3125rem; /* 5px */
+  
+      // transition: all $animSpeed; currently commented for smooth transition
+  
+      &:active {
+        cursor: grabbing; 
+      }
+  
+      
+      &.dragging {
+        opacity: 1;
+        z-index: 1000;
+        background-color: $gray-light;
+        & .dotted-line {
+          border-bottom: $lineThick dashed $primary;
+        }
+  
+        & .draggable-icon {
+          background-color: $gray-light;
+          border-radius: 0.3125rem; /* 5px */
+        }
+      }
+  
+      .draggable-icon {
+        display: flex;
+        align-self: center;
+        padding-right: 2rem; /* 32px */
+        margin: 0;
+        background: none;
+        border: none;
+        
+        cursor: grab;
+  
+        transition: opacity $animSpeed;
+  
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }

@@ -12,6 +12,7 @@ $primary-light: #E2E1FC;
 $gray-darkest: #303436;
 $gray-dark: #4C4C4C;
 $gray-medium-dark: #AFB4B6;
+$gray-medium-darker: #9E9E9E;
 $gray-medium: #E4E6E7;
 $gray-light: #F2F2F3;
 $transparent: #f2f2f300;
@@ -64,7 +65,7 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 // VARIABLES ADDED BY MAX
 
 //base
-$base: 1rem;
+$base: 0.5rem;
 $lineThin: 1px;
 $lineThick: $lineThin*2;
 $iconWidth: $base;
@@ -141,7 +142,8 @@ $animSpeed: 300ms;
   --lg-btn-border-radius: var(--radius-lg);
   --default-font-size: 1rem; 
   --default-font-color: #{$gray-dark};
-  --navbar-width: 192px;
+  // --navbar-width: 192px;
+  --navbar-width:10rem;
   --custom-logo-height: 1.5rem;
 
   //no-code colors
@@ -151,8 +153,7 @@ $animSpeed: 300ms;
 
   //font-style
   --default-font-family-url:" ";
-  --default-font-family: "Roboto", sans-serif;
-  --primary-font: var(--default-font-family);
+  --primary-font: var(--font-family-base);
   //font-size
   --font-size-xs: 0.875rem; // 14px
   --font-size-sm: var(--default-font-size); 
@@ -233,45 +234,4 @@ body {
   border: $primary;
   color: var(--ff-white) !important;
 }
-
-/* Custom Scrollbar Styles */
-.custom-scroll {
-  &::-webkit-scrollbar {
-    display: block;
-    width: $scrollBarWidth;
-    
-    background-color: transparent;
-    
-    opacity: 0;
-    
-    cursor: pointer;
-  }
-
-  &:hover {
-    &::-webkit-scrollbar {
-      opacity: 1;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      width: $scrollBarWidth/2;
-      min-height: 15.625rem;
-      background-color: $primary-light;
-      background-clip: padding-box;
-      
-      border-radius: 5rem; // should be just big enough to round corners off completely
-      border: var(--spacer-025) solid transparent;
-      
-      opacity: 1;
-
-      cursor: pointer;
-    }
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    box-shadow: inset 0 0 0 $lineThin $primary;
-  }
-}
-
-
-
 

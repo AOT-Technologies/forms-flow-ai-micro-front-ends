@@ -1,0 +1,562 @@
+// Import theme variables and mixins
+@use "mixins";
+@import "mixins";
+// Variables - Using theme tokens
+$primary: var(--primary-dark);
+$primary-light: var(--primary);
+$gray-light: var(--gray-light);
+$gray-dark: var(--gray-dark);
+$gray-medium: var(--gray-medium);
+$gray-medium-dark: var(--gray-medium-dark);
+$black-color: var(--gray-darkest);
+$font-size-m: var(--font-size-m);
+$font-weight-regular: var(--font-weight-regular);
+$border-radius: var(--border-radius);
+
+// Base spacing - static value for SCSS calculations
+$base: 1rem; // Cannot use var() in SCSS arithmetic
+
+// Prompt modal styles
+
+.prompt-modal {
+    .modal-dialog {
+        .modal-content {
+            border-radius: 5px;
+            border: 1px solid var(--gray-x-light);
+            background: var(--white-300);
+            box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+            padding: 1.5rem 1rem;
+            min-height: 16.5rem;
+            .prompt-modal-body {
+                margin: 0;
+                padding: 0;
+                .prompt-modal-title-container {
+                    text-align: left;
+                    border-bottom: 1px solid var(--gray-x-light);
+                    padding-bottom: 1.19rem;
+                    padding-left: 0.5rem;
+                    .prompt-title {
+                        text-align: left;
+                        font-size: var(--font-size-lg);
+                        font-weight: var(--font-weight-regular);
+                        width: 100%;
+                        color: var(--secondary-dark);
+                        line-height: var(--line-height-default);
+                    }
+                }
+                .prompt-message {
+                    color: var(--gray-darkest);
+                    text-align: left;
+                    font-size: var(--font-size-m);
+                    margin-top: 1.31rem;
+                    padding-left: 0.5rem;
+                }
+            }
+            .modal-footer {
+                border-top: none;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+            .buttons-row {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                gap: 0.44rem;
+            }
+        }
+    }
+    $modal-width-min: 400px;
+    $modal-width-max: 550px;
+    $modal-width: 40vw;
+    .modal-sm{
+        min-width: $modal-width-min;
+        max-width: $modal-width-max;
+        width: $modal-width;
+        .modal-content {
+            width: $modal-width;
+            min-width: $modal-width-min;
+            max-width: $modal-width-max;
+            min-height: 16.5rem;
+        }
+    }
+        &.danger-modal{
+            .modal-content{
+               .modal-footer{
+                .buttons-row{
+                    .custom-button--primary{
+                        border-color: var(--red-100);
+                    }
+                }
+               }
+            }
+        }
+        &.info-modal{
+            .modal-content{
+                .modal-footer{
+                    .buttons-row{
+                        .custom-button--primary{
+                            border-color: var(--primary-dark);
+                        }
+                    }
+                }
+            }
+        }
+}
+
+.discard-changes-modal{
+    &.prompt-modal{
+        .modal-content{
+            .modal-body{
+                padding: 1rem 6.62rem;
+                padding-bottom: 0;
+            }
+        }
+    }
+}
+
+/* Task filter modal styles */
+.task-filter-modal-popover {
+    @include mixins.large-modal-popover();
+
+    .modal-body {
+        overflow: hidden;
+
+        .drag-drop-list-container{
+            overflow: scroll;
+            max-height: 30rem;
+        }   
+
+        .form-option {
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.688rem 0.688rem;
+            flex-shrink: 0;
+            border: 1px solid var(--gray-x-light);
+        }
+
+        .form-option .form-check-input {
+            order: 2;
+            margin-left: var(--spacer-050);
+        }
+
+        .form-option .form-check-label {
+            order: 1;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin: 0;
+        }
+
+        .filter-name-container,.selectdropdown-container{
+            .text-input,.custom-selectdropdown {
+            width: 20rem !important; // 320px
+        }
+        }
+
+        .form-option:hover {
+            background-color: var(--gray-x-light) !important;
+        }
+
+        .form-option:not(:last-child) {
+            margin-bottom: var(--spacer-025);
+        }
+
+        .search-input-container {
+            margin: 0;
+        }
+
+        .dropdown-label-text {
+            font-size: var(--font-size-m);
+            font-weight: var(--font-weight-regular);
+            color: var(--gray-dark);
+            margin-bottom: var(--spacer-075);
+        }
+
+        /* Secondary dropdown styling */
+        .secondary-dropdown-container {
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .lines-count-container {
+            .dropdown-wrapper {
+                width: 6.813rem;
+            }
+        }
+
+        .drag-drop-list-container .custom-checkbox--inline .form-check {
+            align-items: end;
+        }
+        .form-items-list .custom-checkbox--secondary .form-check .form-check-input {
+            margin-top: 4px!important;
+            margin-bottom: 4px!important;
+        
+        }
+    }
+
+    /* Indented secondary dropdown */
+    .secondary-dropdown-inner {
+        flex: 1;
+    }
+
+    .selectdropdown-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Space between dropdowns */
+    .secondary-dropdown-container {
+        display: flex;
+        align-items: flex-start;
+        margin-top: 0.563rem;
+        /* vertical gap between first and second dropdown */
+        position: relative;
+    }
+
+    /* The vertical line icon on the left */
+    .vertical-line-icon {
+        margin-left: 1.66rem;
+        margin-right: 0.625rem;
+        margin-top: 0.375rem;
+        flex-shrink: 0;
+    }
+
+    /* The secondary dropdown wrapper */
+    .secondary-dropdown-inner {
+        flex: 1;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    /* The actual secondary dropdown box */
+    .secondary-dropdown-inner .custom-selectdropdown {
+        width: 196px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .task-filter-page2-container {
+        display: flex;
+        gap: 3.313rem;
+
+        .task-filter-page2-container-left {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .task-filter-page2-container-right {
+            flex: 1;
+            min-width: 0;
+            max-height: 41rem;
+            overflow-y: auto;
+        }
+
+    }
+
+    .filter-form-selection-page {
+        display: flex;
+        gap: var(--spacer-150);
+        height: 60vh; 
+        overflow: hidden;
+    }
+
+    .left-form-list-container {
+        display: flex;
+        flex-direction: column;
+        width: 20.688rem;
+        height: 100%;
+        border-right: 1px solid var(--gray-x-light);
+        padding-right: 1rem;
+        overflow: hidden;
+    }
+
+
+    .form-items-list {
+        overflow: scroll;
+    }
+
+    .right-form-preview-container {
+        flex: 1;
+        width: 44.063rem;
+        min-width: 0;
+        height: 100%;
+        overflow: auto;
+    }
+
+    .form-preview-inner-container {
+        height: 100%;
+        padding: var(--spacer-050);
+    }
+
+    .wizard-page-indicator {
+        color: var(--gray-medium-darker);
+    }
+}
+.attribute-filter-modal {
+    @include large-modal-popover();
+
+    .footer-text {
+        flex-grow: 1;
+        text-align: center;
+        color: $gray-medium-dark;
+        font-size: $font-size-m;
+        font-weight: $font-weight-regular;
+        line-height: normal;
+    }
+
+    .custom-input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem; // 12px
+        align-items: baseline;
+
+        .text-input,
+        .selectdropdown-container {
+            width: 20rem !important; // 320px
+            min-width: 0px !important;
+        }
+    }
+
+    .parameters-tab-container ,.save-filter-tab-container{
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem; // 24px
+        align-items: start;
+    }
+}
+
+.form-view-modal {
+    width: 45rem;
+    max-width: 90%;
+    .modal-content {
+        height: 45rem;
+        .modal-header {
+            border-bottom: 1px solid var(--gray-x-light);
+            margin: 1rem;
+            margin-bottom: 0;
+            padding: 0;
+            padding-bottom: 1rem;
+            .modal-title {
+                @include font-style(var(--font-size-xl), var(--font-weight-regular), var(--secondary-dark));
+            }
+        }
+        .modal-body {
+            padding: 0 1rem;
+            overflow-y: auto;
+        }
+    }
+}
+/* Approval Task Modal styles */
+.approval-task-modal {
+    @include mixins.approval-task-modal-popover();
+
+    .modal-body {
+        .dropdown-label-text {
+            font-size: var(--font-size-m);
+            font-weight: var(--font-weight-regular);
+            color: var(--gray-dark);
+            margin-bottom: var(--spacer-075);
+        }
+
+        .action-name-input-wrapper {
+            margin-top: var(--spacer-050);
+            width: 18.75rem;
+        }
+        .dropdown-multiselect-component {
+            .selectdropdown-container {
+                width: 18.75rem; // 300px
+                
+                .custom-selectdropdown {
+                    width: 18.75rem !important; // 300px
+                }
+            }
+        }
+    }
+}
+
+/* Reusable Standard Modal styles */
+.reusable-standard-modal {
+    @include mixins.reusable-standard-modal-popover();
+
+    .reusable-standard-modal-content-wrapper {
+        padding: 5rem;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .reusable-standard-modal-question {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-regular);
+        color: var(--gray-darkest);
+        margin-bottom: 1.5rem;
+        line-height: var(--line-height-default);
+    }
+
+    .reusable-standard-modal-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .reusable-standard-modal-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        border: 1px solid var(--gray-x-light);
+        background: transparent;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+
+        &:hover {
+            border-color: var(--gray-light);
+        }
+
+        &.selected {
+            background-color: rgba(184, 171, 255, 0.10);
+            border-color: var(--primary-dark);
+        }
+
+        .reusable-standard-modal-option-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+        }
+
+        .reusable-standard-modal-option-heading {
+            margin: 0;
+            font-size: var(--font-size-m);
+            font-weight: var(--font-weight-regular);
+            color: var(--gray-darkest);
+        }
+
+        .reusable-standard-modal-option-body {
+            margin: 0;
+            font-size: var(--font-size-sm);
+            color: var(--gray-dark);
+            font-weight: var(--font-weight-sm);
+        }
+
+        .reusable-standard-modal-radio {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #8B5CF6;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+    }
+}
+
+/* Manage fields sort modal */
+.manage-fields-sort-modal {
+    @include large-modal-popover();
+    .manage-fields-tabs {
+        display: flex;
+        gap: 0.563rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--gray-x-light);
+    }
+}
+
+//Style for inline form naming
+.name-form-modal{
+.modal-dialog{
+   
+    width: 25vw;
+    min-width: 22rem !important;
+} 
+.modal-content{
+    padding: 0rem 1rem !important;
+}
+.form-name-container{
+    margin-top: 0.5rem !important;
+    margin-bottom: 1.125rem !important;
+}
+}
+
+.modal-content .modal-body {
+    overflow-y: auto; /* allows scroll */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+
+    &.with-tabs {
+        height: 70vh;
+        min-height: 400px;
+    }
+}
+  
+  /* Chrome, Brave, Safari, Opera */
+.modal-content .modal-body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.single-variable-list {
+    margin: 1rem 0.5rem;
+    border: 1px solid var(--gray-x-light);
+    border-radius: $border-radius;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background-color: var(--ff-white);
+}
+
+.single-variable-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: var(--font-size-sm);
+    color: var(--gray-darkest);
+    cursor: pointer;
+    padding: 0.25rem 0;
+}
+
+.single-variable-option-radio {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--vivid-100);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.single-variable-option-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.single-variable-option-label {
+    font-weight: var(--font-weight-regular);
+    color: var(--gray-darkest);
+}
+
+.single-variable-option-description {
+    font-size: var(--font-size-xs);
+    color: var(--gray-dark);
+}
+
+.text-input-wrapper {
+    width: 22rem;
+}
+
+.input-label-text {
+    font-size: var(--font-size-m);
+    font-weight: var(--font-weight-regular);
+    color: var(--gray-dark);
+    margin-bottom: var(--spacer-075);
+}

@@ -1,14 +1,18 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import startCase from "lodash/startCase";
-import { Card } from "react-bootstrap";
 import {
-  CustomButton,
-  BackToPrevIcon,
-  // FormSubmissionHistoryModal,
-  SubmissionHistoryWithViewButton,
   DownloadPDFButton,
+  BreadCrumbs,
+  BreadcrumbVariant,
+  V8CustomButton,
+  ProcessDiagram,
+  ReusableTable,
+  Alert,
+  AlertVariant,
+  CustomProgressBar,
+  useProgressBar,
+  FormViewModal
 } from "@formsflow/components";
 import Loading from "./Loading";
 import {
@@ -74,7 +78,6 @@ const ViewApplication = React.memo(() => {
   );
 
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
   const { appHistory, isHistoryListLoading } = useSelector(
     useMemo(
       () => (state: any) => ({
@@ -91,6 +94,31 @@ const ViewApplication = React.memo(() => {
   });
 
   const [formType, setFormType] = useState('');
+  const [processType, setProcessType] = useState<string | undefined>(undefined);
+  const [selectedTab, setSelectedTab] = useState({ id: "form", label: t("Form") });
+  const [showExportAlert, setShowExportAlert] = useState(false);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [selectedSubmissionData, setSelectedSubmissionData] = useState<any>(null);
+
+  const { progress: publishProgress, start, complete, reset } = useProgressBar({
+    increment: 10,
+    interval: 150,
+    useCap: true,
+    capProgress: 90,
+  });
+
+
+  // Callbacks for DownloadPDFButton
+  const handlePreDownload = useCallback(() => {
+    setShowExportAlert(true);
+    reset();
+    start();
+  }, [reset, start, setShowExportAlert]);
+
+  const handlePostDownload = useCallback(() => {
+    complete();
+    setShowExportAlert(false);
+  }, [complete, setShowExportAlert]);
 
 
   useEffect(() => {
@@ -189,6 +217,8 @@ const ViewApplication = React.memo(() => {
             processKey,
             tenant_key: tenantKey,
           });
+          const processType = res?.data?.processType;
+          setProcessType(processType);
           setDiagramXML(res?.data?.processData || "");
         } catch (error) {
           console.error("Error fetching process details:", error);
@@ -201,6 +231,124 @@ const ViewApplication = React.memo(() => {
     fetchProcessDetails();
   }, [applicationDetail, tenantKey, analyze_process_view]);
 
+  // Define viewSubmission before useMemo hooks (must be before early return)
+  const viewSubmission = useCallback((data: any) => {
+    const { formId, submissionId } = data;
+    setSelectedSubmissionData(data);
+    setShowFormModal(true);
+    
+    // Load form and submission data
+    if (formId && submissionId) {
+      Formio.clearCache();
+      dispatch(resetFormData("form"));
+      dispatch(getForm("form", formId));
+      if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
+        dispatch(getCustomSubmission(submissionId, formId));
+      } else {
+        dispatch(getSubmission("submission", submissionId, formId));
+      }
+    }
+  }, [dispatch]);
+
+  // Prepare history table data - must be before early return (Rules of Hooks)
+  const historyColumns = useMemo(
+    () => [
+      {
+        field: "status",
+        headerName: t("Status"),
+        flex: 2,
+        sortable: false,
+        cellClassName: 'action-cell-stretch',
+        renderCell: (params: any) => {
+          const entry = params.row;
+          return (
+              <span className="status-text">
+                {entry.applicationStatus || "N/A"}
+              </span>
+          );
+        },
+      },
+      {
+        field: "submittedBy",
+        headerName: t("Submitted By"),
+        flex: 2,
+        sortable: false
+      },
+      {
+        field: "created",
+        headerName: t("Created On"),
+        flex: 2,
+        renderCell: (params: any) => HelperServices.getLocaldate(params.value), 
+        sortable: false 
+      },
+      {
+        field: "actions",
+         renderHeader: () => (
+          <V8CustomButton
+            variant="secondary"
+            onClick={() => dispatch(fetchApplicationAuditHistoryList(applicationId))}
+            dataTestId="submission-history-refresh-button"
+            label={t("Refresh")}
+            ariaLabel={t("Refresh History Table")}
+          />
+        ),
+        headerName: "",
+        sortable: false,
+        filterable: false,
+  
+        headerClassName: "sticky-column-header last-column",
+        cellClassName: "sticky-column-cell",
+  
+        width: 100,
+        renderCell: (params: any) => (
+          <V8CustomButton
+            label={t("View")}
+            dataTestId="task-view-button"
+            variant="secondary"
+            onClick={() => viewSubmission(params.row)}
+          />
+        ),
+      },
+    ],
+    [t, viewSubmission, dispatch, applicationId]
+  );
+
+  const historyRows = useMemo(() => {
+    return (appHistory || []).map((entry: any, index: number) => ({
+      id: entry.created ?? `row-${index}`, // Unique and stable id for data grid
+      status: entry.submissionId || index,
+      submittedBy: entry.submittedBy || "N/A",
+      created: entry.created || "",
+      ...entry,
+    }));
+  }, [appHistory]);
+
+  // Prepare tab config - must be before early return (Rules of Hooks)
+  const tabConfig = useMemo(() => {
+    const tabs = [
+      {
+        label: t("Form"),
+        id: "form",
+      },
+      {
+        label: t("Flow"),
+        id: "flow",
+      },
+      {
+        label: t("History"),
+        id: "history",
+      }
+    ];
+    
+    // Filter out Flow tab if processType is not BPMN
+    return tabs.filter(tab => {
+      if (tab.id === "flow") {
+        return processType !== "LOWCODE";
+      }
+      return true;
+    });
+  }, [t, processType]);
+
   if (isApplicationDetailLoading) {
     return <Loading />;
   }
@@ -209,92 +357,134 @@ const ViewApplication = React.memo(() => {
     dispatch(push(`${redirectUrl}submissions`));
   };
 
-  return (
-    <div>
-      {/* Header Section */}
-      <Card className="editor-header">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-center">
-            {/* Left: Back Icon & Application Name */}
-            <div className="d-flex align-items-center">
-              <BackToPrevIcon onClick={backToSubmissionList} />
-              <div className="ms-4 editor-header-text">
-                {startCase(applicationDetail?.applicationName)}
-              </div>
-            </div>
+  const breadcrumbItems = [
+    { id: "analyze", label: t("Analyze") },
+    { id: "submissions", label: t("Submissions") },
+    { id: "submission", label: t("Submission") },
+  ];
 
-            {/* Center: Submitted On Date - Right Aligned */}
-            <div
-              data-testid="submissions-details"
-              className="d-flex align-items-center white-text ms-auto me-4"
-            >
-              <span className="status-live"></span>
-              {t("Submitted On")}:{" "}
-              <span data-testid="submissions-date">
-                {HelperServices?.getLocalDateAndTime(
-                  applicationDetail?.created
-                )}
-              </span>
-            </div>
+  const handleBreadcrumbClick = (item: any) => {
+    if (item.id === "analyze" || item.id === "submissions") {
+      backToSubmissionList();
+    }
+  };
 
-            {/* Right: Buttons */}
-            <div className="form-submission-button">
-              { analyze_submissions_view_history && (
-                <CustomButton
-                  dark
-                  size="table"
-                  label={t("History")}
-                  dataTestId="handle-submission-history-testid"
-                  ariaLabel={t("Submission History Button")}
-                  onClick={() => setShowHistoryModal(true)}
-                />
-              )}
-              {applicationDetail?.formId && applicationDetail?.submissionId && (
-                formType === "bundle" ? (
-                  <DownloadPDFButton
-                    form_id={applicationDetail.formId}
-                    submission_id={applicationDetail.submissionId}
-                    title={applicationDetail?.applicationName}
-                    isBundle={true}
-                    bundleId={applicationDetail?.formProcessMapperId}
-                  />
-                ) : (<DownloadPDFButton
-                  form_id={applicationDetail.formId}
-                  submission_id={applicationDetail.submissionId}
-                  title={applicationDetail?.applicationName}
-                />  
-                )
-              )}
-            </div>
-          </div>
-        </Card.Body>
-      </Card>
 
-      {/* View Application Details */}
-      {!formTypeCheckLoading && (
-        formType === "bundle" ? (
+  const renderTabContent = () => {
+    if (selectedTab?.id === "form") {
+      return (!formTypeCheckLoading &&
+        formType === "bundle") ? (
           <BundleSubmissionView bundleFormData={bundleFormData} />
         ) : (
           <View page="application-detail" />
-        )
-      )}
+        );
+    }
+    if (selectedTab?.id === "flow" && analyze_submissions_view_history) {
+      return (
+        <div>
+          <ProcessDiagram
+            diagramXML={diagramXML ?? ""}
+            activityId={markers?.[0]?.activityId ?? ""}
+            showDiagramTools={false}
+            isProcessDiagramLoading={isDiagramLoading}
+          />
+        </div>
+      );
+    }
+    if (selectedTab?.id === "history" && analyze_submissions_view_history) {
+      return (
+        <div>
+          <ReusableTable
+            columns={historyColumns}
+            rows={historyRows}
+            loading={isHistoryListLoading}
+            noRowsLabel={t("No submission history found")}
+            paginationMode="client"
+            sortingMode="client"
+            hideFooter
+            rowHeight={60}
+            sx={{ 
+              height: 500, 
+              width: "100%",
+              '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer': {
+                justifyContent: 'flex-start !important',
+              },
+            }}
+            disableColumnResize={true}
+            disableColumnMenu={true}
+          />
+        </div>
+      );
+    }
+    return null;
+  };
 
-      {analyze_submissions_view_history && (
-        <SubmissionHistoryWithViewButton
-          show={showHistoryModal}
-          onClose={() => setShowHistoryModal(false)}
-          redirectUrl={redirectUrl}
-          histories={appHistory}
-          isHistoryListLoading={isHistoryListLoading}
-          title={t("History")}
-          showBpmnDiagram={analyze_process_view}
-          diagramXML={diagramXML}
-          activityId={markers?.[0]?.activityId ?? ""}
-          isProcessDiagramLoading={isDiagramLoading}
-          darkPrimary
-          formType={formType}
-        />
-      )}
+  return (
+    <div>
+      <div className="toast-section">
+              <Alert
+                message="Exporting PDF"
+                variant={AlertVariant.DEFAULT}
+                isShowing={showExportAlert}
+                rightContent={<CustomProgressBar progress={publishProgress} color="default"/>}
+              />
+            </div>
+      {/* Header Section */}
+        <div className="header-section-1">
+          <div className="section-seperation-left d-block">
+              <BreadCrumbs 
+                items={breadcrumbItems}
+                variant={BreadcrumbVariant.MINIMIZED}
+                underline
+                onBreadcrumbClick={handleBreadcrumbClick} 
+              /> 
+              {/* <h4>{applicationId}</h4> */}
+          </div>
+      </div>
+      <div className="header-section-2">
+          <div className="section-seperation-left">
+              {tabConfig.map((tab) => (
+                <V8CustomButton
+                  key={tab.id}
+                  label={tab.label}
+                  selected={selectedTab?.id === tab.id}
+                  onClick={() => setSelectedTab(tab)}
+                  disabled={
+                    ((tab.id === "flow" && !analyze_process_view) || (tab.id === "history" && !analyze_submissions_view_history))
+                  }
+                />
+              ))}
+          </div>
+          {(applicationDetail?.formId && applicationDetail?.submissionId && selectedTab?.id != "history") && (
+          <div className="section-seperation-right">
+            <DownloadPDFButton
+              form_id={applicationDetail?.formId}
+              submission_id={applicationDetail?.submissionId}
+              title={applicationDetail?.applicationName}
+              onPreDownload={handlePreDownload}
+              onPostDownload={handlePostDownload}
+              disabled={selectedTab?.id === "flow"}
+            />
+          </div>
+            )}
+        </div>
+        <div className="body-section">
+          {renderTabContent()}
+        </div>
+        
+        {/* Form View Modal */}
+        <FormViewModal
+          show={showFormModal}
+          onClose={() => {
+            setShowFormModal(false);
+            setSelectedSubmissionData(null);
+          }}
+          title={selectedSubmissionData?.created ? HelperServices.getLocaldate(selectedSubmissionData.created) : ""}
+        >
+        {selectedSubmissionData && (
+            <View page="application-detail" />
+          )}
+        </FormViewModal>
     </div>
   );
 });

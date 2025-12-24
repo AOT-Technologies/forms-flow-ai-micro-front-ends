@@ -2,6 +2,34 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.0.1 - 2025-12-17
+
+`Fixed`
+**forms-flow-review**
+* Fixed multiple application status issue in task history.
+* Fixed task table resize saving issue.
+
+`Modified`
+**forms-flow-components**
+* Updated breadcrumb design
+
+`Generic Changes`
+* Fixed UI issues and enhanced overall interface
+
+## 8.0.0 - 2025-11-28
+
+`Modified`
+
+**forms-flow-admin**
+
+* Role-based permissions have been simplified to high-level access only, with no separate sub-level permissions for individual categories
+
+**forms-flow-components**
+* Modified custom components
+
+`Geneic Changes`
+* UI design modified for forms-flow-review and forms-flow-submissions modules
+
 ## 7.3.0 - 2025-10-14
 
 `Added`

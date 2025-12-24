@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'; 
 import Modal from 'react-bootstrap/Modal';
-import { CloseIcon, CustomButton, InputDropdown, CustomInfo } from "@formsflow/components";
+import { CloseIcon, V8CustomButton, CustomInfo, SelectDropdown } from "@formsflow/components";
 import { fetchSelectLanguages, updateUserlang } from '../services/language';
 import { useTranslation } from "react-i18next";
 import i18n from '../resourceBundles/i18n';
@@ -59,7 +59,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       aria-describedby="profile-settings-modal"
       backdrop="static"
     >
-      <Modal.Header>
+      <Modal.Header className="justify-content-between">
         <Modal.Title id="profile-modal-title">
           <p>{t("Settings")}</p>
         </Modal.Title>
@@ -69,19 +69,18 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       </Modal.Header>
 
       <Modal.Body>
-          <InputDropdown
-            isAllowInput={false}
-            Options={selectLanguages.map((lang) => ({
+          <SelectDropdown
+            options={selectLanguages.map((lang) => ({
               label: lang.value,
-              onClick: () => handleLanguageChange(lang.name),
+              value: lang.name,
             }))}
-            dropdownLabel={t("System Language")}
-            selectedOption={selectedLangLabel}  
-            isInvalid={false}
-            ariaLabelforDropdown={t("Language Dropdown")}
-            ariaLabelforInput={t("Language Input")}
-            dataTestIdforDropdown="dropdown-language"
-            dataTestIdforInput="input-language"
+            defaultValue={selectedLangLabel}
+            dataTestId="settings-language-dropdown"
+            ariaLabel={t("Language Dropdown")}
+            value={selectedLangLabel}
+            variant="primary"
+            className="mb-3 w-100"
+            onChange={handleLanguageChange}
           />
           <CustomInfo className="note" heading="Note" 
             content={`You are running version ${version.version} of Formsflow`} />
@@ -89,19 +88,20 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
 
       <Modal.Footer>
         <div className="buttons-row">
-          <CustomButton
+          <V8CustomButton
             label={t("Save Changes")}
             onClick={handleConfirmProfile}
-          dataTestId="save-profile-settings"
+            dataTestId="save-profile-settings"
             ariaLabel={t("Save Profile Settings")}
             disabled={isSaveDisabled}
+            variant="primary"
           />
-          <CustomButton
+          <V8CustomButton
             label={t("Cancel")}
             onClick={onClose}
-          dataTestId="cancel-profile-settings"
+            dataTestId="cancel-profile-settings"
             ariaLabel={t("Cancel profile settings")}
-            secondary
+            variant="secondary"
           />
         </div>
       </Modal.Footer>

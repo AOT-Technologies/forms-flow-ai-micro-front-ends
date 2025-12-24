@@ -23,3 +23,8 @@ bottom: 0;
 .checkout-btn{
     padding: 8px 48px !important;
 }
+
+// Constrain TaskAssigneeManager dropdown width in modal header
+.task-assignee-wrapper {
+   align-content: center;
+}

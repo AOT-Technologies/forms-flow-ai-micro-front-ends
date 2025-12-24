@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
@@ -14,7 +13,8 @@ import {
   fetchdashboards,
 } from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
-import { TableFooter } from "@formsflow/components";  
+import { TableFooter, V8CustomButton, BreadCrumbs } from "@formsflow/components";
+import { useHistory } from "react-router-dom";  
 
 const InsightDashboard = React.memo((props: any) => {
   const { dashboards, groups, setCount, authReceived, loading: parentLoading } = props;
@@ -25,6 +25,8 @@ const InsightDashboard = React.memo((props: any) => {
 
   const { t } = useTranslation();
   const { tenantId } = useParams();
+  const history = useHistory();
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [remainingGroups, setRemainingGroups] = React.useState([]);
 
   const [activeRow, setActiveRow] = React.useState(null);
@@ -195,15 +197,14 @@ const InsightDashboard = React.memo((props: any) => {
               </Popover>
             }
           >
-            <Button
-              data-testid={rowIdx}
+            <V8CustomButton
+              label={t("Add")}
               onClick={(e) => handleClick(e, rowData)}
-              className="btn btn-primary"
+              variant="primary"
+              data-testid={rowIdx}
               disabled={!isGroupUpdated}
-            >
-              <i className="fa-solid fa-plus me-2"></i>
-              <Translation>{(t) => t("Add")}</Translation>
-            </Button>
+              icon={<i className="fa-solid fa-plus me-2"></i>}
+            />
           </OverlayTrigger>
         );
       },
@@ -236,8 +237,28 @@ const InsightDashboard = React.memo((props: any) => {
     return list;
   };
 
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Manage"), id: "manage" },
+    { label: t("Dashboards"), id: "dashboards" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "manage" || item.id === "dashboards") {
+      history.push(`${baseUrl}admin/dashboard`);
+    }
+  };
+
   return (
     <>
+      <div style={{ marginBottom: "15px" }}>
+        <BreadCrumbs
+          items={breadcrumbItems}
+          variant="default"
+          onBreadcrumbClick={handleBreadcrumbClick}
+          dataTestId="admin-dashboard-breadcrumbs"
+        />
+      </div>
       <div className="" role="definition">
         <br />
         <div>

@@ -16,7 +16,8 @@ import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
 import { CreateUser } from "../../services/users";
-import { TableFooter, CustomSearch, CloseIcon } from "@formsflow/components";
+import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, BreadCrumbs } from "@formsflow/components";
+import { useHistory, useParams } from "react-router-dom";
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -30,6 +31,9 @@ const Users = React.memo((props: any) => {
   const [searchKey, setSearchKey] = React.useState("");
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
   const { t } = useTranslation();
+  const { tenantId } = useParams();
+  const history = useHistory();
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [selectedRolesModal, setSelectedRolesModal] = React.useState([]);
   const [formData, setFormData] = React.useState({ user: "" });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
@@ -305,26 +309,26 @@ const Users = React.memo((props: any) => {
                   <hr />
                   <div className="done-button">
                     {roles.length > 0 && (
-                      <Button
+                      <V8CustomButton
+                        label={t("Done")}
                         onClick={addUserPermission}
                         data-testid="add-role-popover-done-button"
-                      >
-                        <Translation>{(t) => t("Done")}</Translation>
-                      </Button>
+                        variant="primary"
+                        size="small"
+                      />
                     )}
                   </div>
                 </Popover.Body>
               </Popover>
             }
           >
-            <Button
-              variant="primary btn-small"
+            <V8CustomButton
+              label={t("Add Role")}
               onClick={() => addRole(rowData)}
               data-testid="users-add-role-button"
-            >
-              <i className="fa-solid fa-plus me-2"></i>{" "}
-              <Translation>{(t) => t("Add Role")}</Translation>
-            </Button>
+              variant="primary"
+              size="small"
+            />
           </OverlayTrigger>
         );
       },
@@ -370,8 +374,28 @@ const Users = React.memo((props: any) => {
     { text: 'All', value: roles.length },
   ];
 
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Manage"), id: "manage" },
+    { label: t("Users"), id: "users" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "manage" || item.id === "users") {
+      history.push(`${baseUrl}admin/users`);
+    }
+  };
+
   return (
     <>
+      <div style={{ marginBottom: "15px" }}>
+        <BreadCrumbs
+          items={breadcrumbItems}
+          variant="default"
+          onBreadcrumbClick={handleBreadcrumbClick}
+          dataTestId="admin-users-breadcrumbs"
+        />
+      </div>
       <Modal
         show={showSuccessModal}
         onHide={closeSuccessModal}
@@ -444,9 +468,13 @@ const Users = React.memo((props: any) => {
 
           {MULTITENANCY_ENABLED && (
   <>
-    <Button variant="primary" onClick={openInviteModal}>
-    {t("Add Registered Users")}
-    </Button>
+  <V8CustomButton
+    label={t("Add Registered Users")}
+    onClick={openInviteModal}
+    data-testid="add-registered-users-button"
+    variant="primary"
+    size="small"
+  />
 
     {showInviteModal && (
       <Modal show={showInviteModal} onHide={closeInviteModal} size="sm">
@@ -493,12 +521,22 @@ const Users = React.memo((props: any) => {
 
         <Modal.Footer>
           <div className="buttons-row">
-            <Button variant="secondary" onClick={closeInviteModal}>
-            {t("Cancel")}
-            </Button>
-            <Button variant="primary" onClick={sendInvites} disabled={!formData.user || selectedRolesModal.length === 0}>
-            {t("Add User")}
-            </Button>
+            <V8CustomButton
+              label={t("Cancel")}
+              onClick={closeInviteModal}
+              data-testid="cancel-button"
+              variant="secondary"
+              size="small"
+            />
+          
+            <V8CustomButton
+              label={t("Add User")}
+              onClick={sendInvites}
+              data-testid="add-user-button"
+              variant="primary"
+              size="small"
+              disabled={!formData.user || selectedRolesModal.length === 0}
+            />
           </div>
         </Modal.Footer>
       </Modal>

@@ -5,6 +5,8 @@ on:
     types: [opened, synchronize, closed]
     branches:
       - develop
+      - release/**
+      - main
 
 jobs:
   notify:

@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -18,7 +18,7 @@ import {
   Formio,
   resetSubmission,
 } from "@aot-technologies/formio-react";
-import { BackToPrevIcon, CustomButton } from "@formsflow/components";
+import { BackToPrevIcon, CustomButton, BreadCrumbs } from "@formsflow/components";
 import {
   getFormIdSubmissionIdFromURL,
   getFormUrlWithFormIdSubmissionId,
@@ -33,6 +33,7 @@ import {
   setBundleSelectedForms,
   setBundleLoading,
   setBundleErrors,
+  setTaskFormSubmissionReload,
   } from "../actions/taskActions";
 import { getFormioRoleIds } from "../api/services/userSrvices";
 import {
@@ -81,6 +82,32 @@ const TaskDetails = () => {
   const disabledMode = taskAssignee !== currentUser;
   // Redirection URL
   const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+
+  // Track previous assignee to detect changes
+  const previousAssignee = useRef<string | undefined>(taskAssignee);
+
+  // Watch for assignee changes and trigger form reload when assignee changes
+  useEffect(() => {
+    // Only reload form if assignee actually changed and we have a form URL
+    if (
+      previousAssignee.current !== taskAssignee &&
+      taskAssignee !== undefined &&
+      previousAssignee.current !== undefined &&
+      task?.formUrl &&
+      task?.formType !== "bundle"
+    ) {
+      previousAssignee.current = taskAssignee;
+      // Trigger form reload by dispatching the reload action
+      dispatch(setTaskFormSubmissionReload(true));
+      // Reset the flag after a short delay to allow the effect to trigger again if needed
+      setTimeout(() => {
+        dispatch(setTaskFormSubmissionReload(false));
+      }, 100);
+    } else if (taskAssignee !== undefined) {
+      // Update ref even if we don't reload (for initial load)
+      previousAssignee.current = taskAssignee;
+    }
+  }, [taskAssignee, task?.formUrl, task?.formType, dispatch]);
 
   //disable the form if task not assigned to himself
 
@@ -198,7 +225,7 @@ const TaskDetails = () => {
  
   useEffect(() => {
     if (task?.formUrl && taskFormSubmissionReload && task?.formType !== "bundle") {
-      dispatch(setFormSubmissionLoading(false));
+      dispatch(setFormSubmissionLoading(true));
       getFormSubmissionData(task.formUrl);
     }
   }, [
@@ -256,6 +283,18 @@ const TaskDetails = () => {
     dispatch(getApplicationHistory(task?.applicationId));
     setShowHistoryModal(true);
   };
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Tasks"), id: "tasks" },
+    { label: t("Submission"), id: "submission" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "tasks") {
+      handleBack();
+    }
+  };
+
   // Main Renderor
   return (
     <>
@@ -268,6 +307,14 @@ const TaskDetails = () => {
       )}
       
       <div className="nav-bar">
+        <div style={{ marginBottom: "10px" }}>
+          <BreadCrumbs
+            items={breadcrumbItems}
+            variant="default"
+            onBreadcrumbClick={handleBreadcrumbClick}
+            dataTestId="task-details-breadcrumbs"
+          />
+        </div>
         <div className="icon-back" onClick={handleBack}>
           <BackToPrevIcon data-testid="back-to-prev"/>
         </div>
