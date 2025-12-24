@@ -3,5 +3,22 @@ export const  HelperServices = {
 }
 
 export const StyleServices = {
-    "getCSSVariable": ()=>{},
+    "getCSSVariable": (variableName) => {
+        // Get CSS variable from document root
+        if (typeof globalThis.window !== 'undefined' && typeof document !== 'undefined') {
+            return getComputedStyle(document.documentElement)
+                .getPropertyValue(variableName)
+                .trim();
+        }
+        return '';
+    },
+}
+
+export const StorageService = {
+    get: (key) => null,
+    save: (key, value) => {},
+    User: {
+        USER_ROLE: 'UserRoles',
+        USER_DETAILS: 'UserDetails',
+    }
 }

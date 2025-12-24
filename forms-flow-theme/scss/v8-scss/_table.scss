@@ -1,0 +1,394 @@
+/* ============================
+   Color Variables
+   ============================ */
+@import "./mixins";
+
+$table-border-color: #DAD9DA; // Light gray border
+$table-bg-light: var( --white-300); // Very light background
+$table-border-light: var(--gray-x-light); // Light border color
+$table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
+
+/* ============================
+   MUI DataGrid Components
+   ============================ */
+
+// DataGrid sort icons always visible
+.MuiDataGrid-columnHeaderDraggableContainer {
+    .MuiDataGrid-iconButtonContainer {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .MuiDataGrid-sortIcon {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    
+    &:hover .MuiDataGrid-iconButtonContainer {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    &:hover .MuiDataGrid-sortIcon {
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+  }
+  
+  // Ensure sort icons are always visible for sortable columns
+  .MuiDataGrid-columnHeader[data-field] {
+    .MuiDataGrid-iconButtonContainer {
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+  } 
+  
+  // Table Pagination select label
+  .MuiTablePagination-selectLabel{
+    margin-top: 0.625rem !important; // 10px
+  }
+
+.MuiDataGrid-root {
+  .MuiDataGrid-mainContent{
+    font-family: var(--font-family-base) !important;
+  }
+  .MuiDataGrid-cell{
+    display: flex!important;
+    align-items: center!important;
+    padding: 0.5rem 0.625rem !important;
+    &[data-field="selected"] {
+      justify-content: flex-end !important;
+    }
+  }
+  
+  .MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) {
+    .MuiDataGrid-sortButton {
+      opacity: 1 !important;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    &:hover {
+      .MuiDataGrid-sortButton {
+        opacity: 1 !important;
+        background-color: transparent !important;
+      }
+    }
+  }
+        
+  .MuiDataGrid-sortButton.MuiIconButton-root:hover {
+      background-color: transparent !important;
+  }
+  
+  // Cell overflow ellipsis for non-action columns (applies to all tables)
+  .MuiDataGrid-cell:not(.last-column) {
+    overflow: hidden;
+    min-width: 0;
+    
+    // Target all spans directly or nested (but NOT multi-line ellipsis elements)
+    span:not(.text-multiline-ellipsis) {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      max-width: 100%;
+      min-width: 0;
+      display: block;
+    }
+    
+    // For nested flex containers (e.g., d-flex with spans)
+    .d-flex,
+    [class*="flex"] {
+      min-width: 0;
+      
+      > span:not(.text-multiline-ellipsis) {
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        max-width: 100%;
+        min-width: 0;
+        flex-shrink: 1;
+      }
+    }
+
+    // Multi-line ellipsis support: allow text to wrap across multiple lines
+    // Works with both div and span elements
+    .text-multiline-ellipsis,
+    div.text-multiline-ellipsis,
+    span.text-multiline-ellipsis {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      display: -webkit-box !important;
+      -webkit-box-orient: vertical !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+      line-height: 1.4 !important;
+      max-width: 100%;
+      min-width: 0;
+      width: 100%;
+    }
+  }
+}
+
+// Multi-line mode for task table - when displayLinesCount > 1
+.task-table-multiline {
+  .MuiDataGrid-root {
+    .MuiDataGrid-cell {
+      align-items: flex-start !important;
+      padding-top: 0.625rem !important;
+      padding-bottom: 0.625rem !important;
+      min-height: 55px; // Minimum row height
+      
+      // Ensure content wrapper allows proper sizing
+      .text-multiline-ellipsis {
+        line-height: 1.5 !important;
+      }
+    }
+    
+    // Ensure rows can grow with auto height
+    .MuiDataGrid-row {
+      min-height: 3.375rem !important;
+      max-height: none !important;
+    }
+  }
+}
+
+// Global multi-line ellipsis support (outside of MuiDataGrid context)
+.text-multiline-ellipsis {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height:var(--text-line-height)!important;
+  max-width: 100%;
+}
+  .MuiInputBase-root{
+    display: flex;
+    width: 4.375rem; // 70px
+    padding: 0.3125rem 0.75rem; // 5px 12px
+    align-items: center;
+    border-radius: 0.25rem; // 4px
+    border: 1px solid $table-border-color;
+    margin: 0 1rem !important; // 0px 16px
+  }
+  
+  .MuiInputBase-input {
+    min-width: 24px !important;
+    display: inline-flex !important;
+  }
+  .MuiTablePagination-displayedRows{
+    margin-top: 0.625rem !important; // 10px
+  }
+  
+  
+  
+  //focus within outline
+  .MuiDataGrid-columnHeader:focus-within{
+    outline: none !important;
+    outline-offset: 0px !important;
+  }
+  .MuiDataGrid-cell:focus-within{
+    outline: none !important;
+    outline-offset: 0px !important;
+  }
+  .MuiDataGrid-columnSeparator{
+    opacity: 1 !important;
+  }
+  .last-column ,.MuiDataGrid-columnHeader--last{
+    display: flex !important;
+    justify-content: flex-end !important;
+    overflow: visible !important;
+    align-items: center;
+    .MuiDataGrid-columnHeaderTitleContainer{
+      justify-content: flex-end !important;
+    }
+    .MuiDataGrid-columnSeparator--resizable{
+      display: none !important;
+    }
+  }
+  .MuiTablePagination-root{
+    display: flex;
+    padding: var(--spacer-050) 0; // 8px 0
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  
+  .MuiDataGrid-topContainer,.MuiDataGrid-footerContainer{
+    background-color: $table-bg-light !important;
+  } 
+  
+  .MuiMenu-paper {
+    border-radius: 0.3125rem; // 5px
+    border: 1px solid $table-border-light;
+    box-shadow: 0 0.25rem 0.25rem 0 $table-shadow; // 0 4px 4px 0
+    padding: 0.625rem 0.5rem; // 10px 8px
+    .MuiMenu-list{
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-025); // 4px
+      .MuiMenuItem-root {
+        border-radius: 0.3125rem; // 5px
+        border: 1px solid transparent;
+        background: transparent;
+        &:hover {
+          border-color: $table-border-light !important;
+        }
+    
+        &.Mui-selected {
+          background-color: $table-border-light !important;
+        }
+    }
+  }
+}
+
+  .status-live {
+    @extend .status-circle;
+    background-color: $green-color;
+    display: table-cell
+  }
+
+  .historypage-container{
+    .MuiDataGrid-root {
+      .MuiDataGrid-cell{
+        padding: 1rem 1.4rem !important;
+        &[data-field="selected"] {
+          justify-content: flex-end !important;
+          display: flex;
+        }
+      }
+      .MuiDataGrid-columnHeader{
+        padding: 1rem 1.4rem !important;
+      }
+    }
+    .MuiDataGrid-cell{
+      @include font-style(0.9rem, var(--font-weight-sm), var(--secondary-dark));
+      outline: none !important;
+    }
+    .MuiDataGrid-columnHeaderTitleContainer{
+      @include font-style(0.9rem, var(--font-weight-md), var(--secondary-dark));
+      text-align: left !important;
+      justify-content: flex-start !important;
+    }
+
+    .MuiDataGrid-columnHeader[data-field="actions"]{
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+
+   
+  }
+  .sticky-column-header,.sticky-column-cell{
+    position: sticky !important;
+    right: 0 !important;
+    z-index: 2 !important;
+    background-color: $table-bg-light !important;
+  }
+  .action-column-sticky {
+    .MuiDataGrid-columnHeader.sticky-column-header {
+      position: sticky !important;
+      right: 0 !important;
+      background-color: $table-bg-light !important;
+      z-index: 31 !important;
+      border-left: 1px solid $table-border-light !important;
+    }
+
+    .MuiDataGrid-cell.sticky-column-cell {
+      position: sticky !important;
+      right: 0 !important;
+      background-color: $table-bg-light !important;
+      border-left: 1px solid $table-border-light !important;
+      z-index: 2 !important;
+    }
+
+    /* Ensure proper alignment of sticky header and cells */
+    .MuiDataGrid-columnHeader.sticky-column-header,
+    .MuiDataGrid-cell.sticky-column-cell {
+      box-sizing: border-box !important;
+    }
+
+    .MuiDataGrid-columnHeader[data-field="actions"] .MuiDataGrid-columnSeparator {
+      display: none !important;
+    }
+
+    /* Hide separator for the column immediately before the last (actions) */
+    .MuiDataGrid-columnHeader.no-right-separator .MuiDataGrid-columnSeparator {
+      display: none !important;
+    }
+
+    /* Make filler column visually neutral and non-interactive, but keep it occupying width */
+    .MuiDataGrid-columnHeader[data-field="__filler__"],
+    .MuiDataGrid-columnHeader.filler-column {
+      pointer-events: none !important;
+      padding: 0 !important;
+      .MuiDataGrid-columnSeparator {
+        display: none !important;
+      }
+    }
+    .MuiDataGrid-cell[data-field="__filler__"],
+    .MuiDataGrid-cell.filler-column {
+      pointer-events: none !important;
+      border-left: none !important;
+      border-right: none !important;
+      padding: 0 !important; 
+    }
+
+    /* Prevent filler column from creating extra scrollable space during horizontal scroll */
+    /* The filler should shrink when content overflows, but expand when there's space to push actions to right */
+    .MuiDataGrid-columnHeader[data-field="__filler__"],
+    .MuiDataGrid-columnHeader.filler-column {
+      // flex: 1 1 0% !important;
+      flex-shrink: 1 !important;
+      min-width: 0 !important;
+    }
+    .MuiDataGrid-cell[data-field="__filler__"],
+    .MuiDataGrid-cell.filler-column {
+      // flex: 1 1 0% !important;
+      flex-shrink: 1 !important;
+      min-width: 0 !important;
+    }
+
+    /* Ensure sticky actions column maintains proper alignment */
+    /* When filler shrinks during scroll, actions column should stay aligned */
+    .MuiDataGrid-columnHeader.sticky-column-header,
+    .MuiDataGrid-cell.sticky-column-cell {
+      /* Ensure consistent width calculation */
+      box-sizing: border-box !important;
+    }
+  }
+  
+  //for submissions page temporarily used className
+  .custom-table-wrapper-outter-submissions{
+    container: tableSize / inline-size;
+    padding-bottom: 200px;
+  }
+
+.notes-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+
+  .notes-label {
+    margin-bottom: .5rem;
+    @include font-style(var(--font-size-m), var(--font-weight-medium));
+  }
+
+  .notes-box {
+    display: flex;
+    padding: 0.75rem 0.5rem;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: 0.25rem;
+    border: 1px solid var(--gray-medium-dark);
+    white-space: pre-wrap;
+    @include font-style(var(--font-size-m), var(--font-weight-regular));
+  }
+}
+.MuiDataGrid-cell.MuiDataGrid-cellEmpty {
+  display: none !important;
+}
+
+.MuiDataGrid-main {
+  overflow-x: scroll!important;
+}

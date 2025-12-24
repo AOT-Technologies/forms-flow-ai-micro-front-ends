@@ -8,6 +8,7 @@ import {
   setDateRangeFilter,
   setDefaultFilter,
   setFilterListSortParams,
+  setSelectedBpmAttributeFilter,
   setIsAssigned,
   setSelectedFilter,
   setTaskListLimit,
@@ -21,12 +22,15 @@ import {
 } from "../../api/services/filterServices";
 import { batch, useDispatch, useSelector } from "react-redux";
 import {
-  AddIcon,
+  // AddIcon,
   DateRangePicker,
-  FilterSortActions,
-  ConnectIcon,
-  CheckboxCheckedIcon,
-  CheckboxUncheckedIcon,
+  // FilterSortActions,
+  // ConnectIcon,
+  // CheckboxCheckedIcon,
+  // CheckboxUncheckedIcon,
+  CustomSearch,
+  V8CustomButton,
+  BreadCrumbs,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import TaskListDropdownItems from "./TaskFilterDropdown";
@@ -38,10 +42,16 @@ import { createReqPayload ,sortableKeysSet} from "../../helper/taskHelper";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
+import { useHistory, useParams } from "react-router-dom";
+import { MULTITENANCY_ENABLED } from "../../constants";
 
 const TaskList = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const history = useHistory();
+  const { tenantId } = useParams();
+  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId);
+  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
   const {
     limit,
     dateRange,
@@ -61,6 +71,17 @@ const TaskList = () => {
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
   const taskvariables = selectedFilter?.variables ?? [];
+
+  // Breadcrumb configuration
+  const breadcrumbItems = [
+    { label: t("Tasks"), id: "tasks" }
+  ];
+
+  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
+    if (item.id === "tasks") {
+      history.push(`${redirectUrl}task`);
+    }
+  };
  
   //inital data loading
   const initialDataLoading = async () => {
@@ -101,9 +122,9 @@ const TaskList = () => {
     dispatch(setBPMFilterLoader(false));
   };
 
-  const handleCheckBoxChange = () => {
-    dispatch(setIsAssigned(!isAssigned));
-  };
+  const handleAssigneTabClick = (assigned: boolean) => {
+  dispatch(setIsAssigned(assigned));
+};
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
 
@@ -160,6 +181,35 @@ const TaskList = () => {
 
   const handleRefresh = () => {
     fetchTaskListData();
+  };
+
+  // Clear task filter, attribute filter, and date range to defaults
+  const handleClearAllFilters = () => {
+    // Determine the base filter to reset to
+    let baseFilter = null as any;
+    if (defaultFilterId) {
+      baseFilter = filters.find((f) => f.id === defaultFilterId);
+    }
+    if (!baseFilter) {
+      baseFilter = allTasksPayload; // fallback to All Tasks
+    }
+
+    batch(() => {
+      // Reset core selections
+      dispatch(setSelectedFilter(baseFilter));
+      dispatch(setSelectedBpmAttributeFilter(null as any));
+      dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
+      dispatch(setIsAssigned(false));
+      // Reset pagination defaults
+      dispatch(setBPMTaskListActivePage(1));
+      dispatch(setTaskListLimit(10));
+      // Refresh attribute filter list for the base filter, if applicable
+      if (baseFilter?.id) {
+        dispatch(fetchAttributeFilterList(baseFilter.id) as any);
+      }
+      // Fetch tasks for the base filter
+      dispatch(fetchServiceTaskList(baseFilter, null, 1, 25) as any);
+    });
   };
 
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
@@ -226,7 +276,7 @@ const TaskList = () => {
         dispatch(setDateRangeFilter({ startDate: null, endDate: null }));
         dispatch(fetchAttributeFilterList(currentFilter.id));
         dispatch(setBPMTaskListActivePage(1));
-        dispatch(setTaskListLimit(25));
+        dispatch(setTaskListLimit(10));
         dispatch(fetchServiceTaskList(currentFilter, null, 1, 25));
       });
     }
@@ -254,19 +304,39 @@ const TaskList = () => {
   
   return (
     <>
-        <div className="table-bar">
-          {/* Left Filters - Stack on small, inline on md+ */}
-          { viewFilters && (
-            <>
-           <div className="filters">
-            <TaskListDropdownItems />
+      <div className="Toastify"></div>
+      <div className="toast-section">{}</div>
+      <div className="header-section-1">
+        <div className="section-seperation-left">
+          <BreadCrumbs
+            items={breadcrumbItems}
+            variant="default"
+            onBreadcrumbClick={handleBreadcrumbClick}
+            dataTestId="tasks-breadcrumbs"
+          />
+        </div>
+      </div>
+      {/* Commenting out since global search is out of scope for this module */}
+      {/* <div className="header-section-2">
+        <div className="section-seperation-left">
+          <div className="medium-search-container">
+          <CustomSearch
+            // search={}
+            // setSearch={}
+            // handleSearch={}
 
-            <ConnectIcon />
-
-            <AttributeFilterDropdown />
-
-            <ConnectIcon />
-
+            placeholder={t("Search")}
+            // searchLoading={}
+            title={t("Search Tasks")}
+            dataTestId="task-search-input"
+          />
+          </div>       
+            </div></div>    */}
+            <div className="header-section-2 overflow-visible task-list-page">
+              <div className="section-seperation-left">
+              <TaskListDropdownItems/>
+              <AttributeFilterDropdown/>
+              
             <DateRangePicker
               value={dateRange}
               onChange={handleDateRangeChange}
@@ -276,57 +346,34 @@ const TaskList = () => {
               startDateAriaLabel={t("Start date")}
               endDateAriaLabel={t("End date")}
             />
-
-            <ConnectIcon />
-
-            {/* should probably be created as a separate component "InputFilterSingle" */}
-            <label htmlFor="assigned-to-me" className="input-filter single">
-              <input
-                id="assigned-to-me"
-                type="checkbox"
-                checked={isAssigned}
-                onClick={handleCheckBoxChange}
-                data-testid="assign-to-me-checkbox"
-                />
-              <span>{t("Assigned to me")}</span>
-              {isAssigned ? <CheckboxCheckedIcon /> : <CheckboxUncheckedIcon /> }
-            </label>
-           </div>
-
-              
-
-            <div className="actions">
-              <FilterSortActions
-                showSortModal={showSortModal}
-                handleFilterIconClick={toggleFilterModal}
-                handleRefresh={handleRefresh}
-                handleSortModalClose={toggleFilterModal}
-                handleSortApply={handleSortApply}
-                defaultSortOption={filterListSortParams?.activeKey}
-                defaultSortOrder={
-                  filterListSortParams?.[filterListSortParams?.activeKey]
-                    ?.sortOrder ?? "asc"
-                }
-                optionSortBy={optionsForSortModal()}
-                filterDataTestId="task-list-filter"
-                filterAriaLabel={t("Filter the task list")}
-                refreshDataTestId="task-list-refresh"
-                refreshAriaLabel={t("Refresh the task list")}
-                sortModalTitle={t("Sort Tasks")}
-                sortModalDataTestId="task-sort-modal"
-                sortModalAriaLabel={t("Modal for sorting tasks")}
-                sortByLabel={t("Sort by")}
-                sortOrderLabel={t("Sort order")}
-                ascendingLabel={t("Ascending")}
-                descendingLabel={t("Descending")}
-                applyLabel={t("Apply")}
-                cancelLabel={t("Cancel")}
-              />
-            </div>
-            </>
-          )}
+              </div>
+        <div className="d-flex justify-content-end flex-fill">
+          <V8CustomButton
+            variant="secondary"
+            onClick={handleClearAllFilters}
+            label={t("Clear")}
+            dataTestId="clear-all-review-filters-button"
+          />
         </div>
-         {viewTasks && <TaskListTable />}
+              
+              </div>   
+              <div className="header-section-3">
+                <div className="section-seperation-left">
+                <V8CustomButton
+  variant={!isAssigned ? "primary" : "secondary"}
+      onClick={() => handleAssigneTabClick(false)}
+      label={t("All")}
+      selected={!isAssigned}
+    />
+    <V8CustomButton
+  variant={isAssigned ? "primary" : "secondary"}
+      onClick={() => handleAssigneTabClick(true)}
+      label={t("Assigned to me")}
+      selected={isAssigned}
+    />
+                </div>
+              </div>
+         {viewTasks && <div className="body-section"><TaskListTable /></div>}
     </>
   );
 };

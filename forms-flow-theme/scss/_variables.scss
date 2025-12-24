@@ -199,7 +199,6 @@ hr {
 .main-container {
   overflow: hidden !important;
   background: $gray-light;
-  margin-left: var(--navbar-width);
   margin-top: 0;
   height: 100vh !important;
  }
@@ -247,7 +246,7 @@ hr {
 .scrollable-overview-with-header,
 .scrollable-overview-with-wizard,
 .scrollable-overview-with-custom-header-and-wizard {
- overflow-y: auto;
+ overflow: scroll;
  padding-bottom: 5rem;
 }
 
@@ -272,9 +271,9 @@ hr {
  opacity: 0.9;
 }
 
-.form-border{
-  border-radius: var(--radius-md) !important ;
-}
+// .form-border{
+//   border-radius: var(--radius-md) !important ;
+// }
 @mixin generate-overflow($axis, $value) {
   .overflow-#{$axis}-#{$value} {
     overflow-#{$axis}: #{$value} !important;

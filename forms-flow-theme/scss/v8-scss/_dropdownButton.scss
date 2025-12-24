@@ -1,0 +1,245 @@
+// Import theme variables
+@use "mixins";
+
+// Dropdown Button Variables - Using consistent rem/em units for better scalability
+$dropdown-border-radius: 1.5625rem;        // 25px at 16px base
+$dropdown-menu-radius: 0.3125rem;        // 5px at 16px base
+$dropdown-item-radius: 0.313rem;        // 5px at 16px base
+$dropdown-border-width: 0.0625rem;       // 1px at 16px base
+$dropdown-divider-width: 0.0625rem;      // 1px at 16px base
+$dropdown-transition: 0.2s ease;
+
+// Spacing variables
+$dropdown-label-padding: 5px;  // 5px
+$dropdown-icon-padding: 0.875rem 0.875rem 0.6875rem 0.8125rem;    // 14px 14px 11px 13px
+$dropdown-menu-padding: 0.875rem 0.375rem;                        // 14px 6px
+$dropdown-item-padding: 0.3125rem 0.5rem 0.5625rem 0.625rem;     // 5px 8px 9px 10px
+
+// Colors - Using theme tokens
+$color-white: var(--white-300);
+$color-light-gray: var(--white-200);
+$color-medium-gray: var(--gray-x-light);
+$color-dark-gray: var(--gray-darkest);
+$color-darker-gray: var(--gray-light);
+$color-primary: var(--primary-dark);
+$color-primary-light: var(--primary-dark);
+$color-primary-active: var(--primary);
+$color-secondary-border: var(--gray-x-light);
+$color-secondary-hover: var(--gray-darkest);
+$color-secondary-active: var(--secondary);
+
+// Base Mixins
+@mixin dropdown-toggle-base {
+  display: inline-flex;
+  align-items: center;
+  border: $dropdown-border-width solid $color-primary-light;
+  background: $color-light-gray;
+  padding: 0;
+  border-radius: $dropdown-border-radius;
+  transition: border-color $dropdown-transition;
+
+  &::after { display: none; } // Hide Bootstrap caret
+}
+
+@mixin dropdown-menu-base {
+  margin-top: 0.1rem;
+  padding: $dropdown-label-padding;
+  border-radius: $dropdown-menu-radius;
+  box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.25);
+  background-color: $color-light-gray;
+  max-width: 12.5rem;
+  position: absolute;
+  top: 100%;
+  z-index: 1000;
+  max-height: 8rem;
+  overflow: scroll;
+  transform: translateX(0);
+  gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+// Main Component
+.v8-custom-dropdown.dropdown.btn-group {
+  position: relative;
+
+  // Toggle Button
+  .v8-dropdown-toggle {
+    height: 40px;
+    @include dropdown-toggle-base;
+
+    .label-div {
+      padding: 0.69rem 0.87rem 0.69rem 0.81rem;
+      box-shadow: none;
+      border-radius: $dropdown-border-radius 0 0 $dropdown-border-radius;
+      transition: background-color $dropdown-transition;
+      line-height: normal;
+
+      &:focus,
+      &:focus-visible {
+        outline: 2px solid $color-primary!important;
+        box-shadow: none !important;
+        color: $color-dark-gray;
+      }
+    }
+
+    .dropdown-icon {
+      padding: $dropdown-icon-padding;
+      border-radius: 0 $dropdown-border-radius $dropdown-border-radius 0;
+      height: 100%;
+      position: relative;
+      transition: background-color $dropdown-transition;
+
+      &:focus,
+      &:focus-visible {
+        outline: 2px solid $color-primary!important;
+        box-shadow: none !important;
+        color: $color-dark-gray;
+      }
+    }
+
+    .dropdown-label {
+      color: $color-dark-gray;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .v8-dropdown-divider {
+      width: $dropdown-divider-width;
+      align-self: stretch;
+      background: $color-medium-gray;
+      transition: background-color $dropdown-transition;
+    }
+
+    .chevron-icon {
+      display: grid;
+      transition: transform $dropdown-transition;
+      transform: rotate(90deg);
+    }
+
+    // States
+    &:hover { border-color: $color-primary; }
+
+    &:active {
+      border-color: $color-primary;
+      .label-div { background: none; }
+      .v8-dropdown-divider { background: $color-darker-gray; }
+    }
+
+    &.open {
+      border-color: $color-primary;
+      .dropdown-icon { background: $color-primary-active; }
+      .v8-dropdown-divider { background: $color-darker-gray; }
+      .chevron-icon { transform: rotate(270deg); }
+    }
+
+    // Secondary variant
+    &.btn-secondary {
+      border-color: $color-secondary-border;
+      &:hover { border-color: $color-secondary-hover; }
+      &:active {
+        border-color: $color-secondary-hover;
+        .label-div { background: none; }
+        .v8-dropdown-divider { background: $color-darker-gray; }
+      }
+      &.open {
+        border-color: $color-secondary-hover;
+        .dropdown-icon { background: $color-secondary-active; }
+        .v8-dropdown-divider { background: $color-darker-gray; }
+      }
+
+      // Secondary focus styles
+      .label-div {
+        &:focus,
+        &:focus-visible {
+          outline: none !important;
+          box-shadow: none !important;
+          color: $color-dark-gray;
+        }
+      }
+
+      .dropdown-icon {
+        &:focus,
+        &:focus-visible {
+          outline: none !important;
+          box-shadow: none !important;
+          color: $color-dark-gray;
+        }
+      }
+    }
+
+    // Override Bootstrap
+    &.btn-primary:active,
+    &.btn-primary.active { background-color: transparent; }
+    
+    // Override global focus outline
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  }
+
+  // Dropdown Menu
+  &.show .v8-dropdown-menu,
+  .v8-dropdown-menu.show {
+    @include dropdown-menu-base;
+
+    .v8-dropdown-item {
+      border-radius: $dropdown-item-radius;
+      color: $color-dark-gray;
+      font-size: 1rem;
+      font-weight: 400;
+      padding: 0px 0px 0px 7px !important;
+      text-wrap: auto;
+      transition: background-color $dropdown-transition;
+
+      &:hover {
+        background: $color-secondary-active;
+        color: $color-dark-gray;
+      }
+
+      &:focus,
+      &:focus-visible {
+        outline: 2px solid $color-primary!important;
+        box-shadow: none !important;
+        color: $color-dark-gray;
+      }
+
+      &.selected { border: 1px solid $color-medium-gray; }
+      // Delete item styling
+      &.delete-dropdown-item {
+          border: 1px solid var(--red-100);
+          color: var(--red-100);
+          background-color: rgba(229, 115, 115, 0.10);
+          &:hover {
+            background-color: transparent;
+            color: var(--red-100);
+          }
+        }
+    }
+  }
+
+  // Menu Alignment
+  &.menu-left.show .v8-dropdown-menu,
+  &.menu-left .v8-dropdown-menu.show {
+    left: calc(100% - 100px) !important;
+    right: auto;
+    transform: translateX(0);
+
+    a {
+      line-height: 40px;
+    }
+  }
+
+  &.menu-right.show .v8-dropdown-menu,
+  &.menu-right .v8-dropdown-menu.show {
+    left: auto;
+    right: calc(100% - 100px) !important;
+    transform: translateX(0);
+
+    a {
+      line-height: 40px;
+    }
+  }
+}

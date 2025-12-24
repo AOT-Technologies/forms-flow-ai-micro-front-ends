@@ -88,7 +88,7 @@ export const getBPMGroups = (taskId, ...rest) => {
   };
 };
 
-export const onBPMTaskFormSubmit = (taskId, formReq, ...rest) => {
+export const onBPMTaskFormSubmit = (taskId, formReq, ...rest) => { 
   const done = rest.length ? rest[0] : () => { };
   const apiUrlOnFormSubmit = replaceUrl(
     API.BPM_FORM_SUBMIT,
@@ -97,6 +97,27 @@ export const onBPMTaskFormSubmit = (taskId, formReq, ...rest) => {
   );
   return (dispatch) => {
     RequestService.httpPOSTRequest(apiUrlOnFormSubmit, formReq)
+      .then((res) => {
+        done(null, res.data);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        dispatch(serviceActionError(error));
+        done(error);
+      });
+  };
+};
+
+export const onBPMTaskFormUpdate = (taskId, formReq, ...rest) => {
+  const done = rest.length ? rest[0] : () => { };
+  const apiUrlOnTaskUpdate = replaceUrl(
+    API.BPM_TASK_UPDATE,
+    "<task_id>",
+    taskId
+  );
+  
+  return (dispatch) => {
+    RequestService.httpPOSTRequest(apiUrlOnTaskUpdate, formReq)
       .then((res) => {
         done(null, res.data);
       })

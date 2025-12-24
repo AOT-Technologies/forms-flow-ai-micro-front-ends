@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { AngleRightIcon, AngleLeftIcon, PencilIcon } from "../SvgIcons";
 import { useTranslation } from "react-i18next";
-import { ButtonDropdown, FormInput } from "@formsflow/components";
+import { ButtonDropdown } from "./ButtonDropdown";
+import { FormInput } from "./FormInput";
 import { CustomButton } from "./Button";
 import { CustomInfo } from "./CustomInfo";
 
@@ -201,6 +202,8 @@ const DropdownItems = [
         <div className="fields">
         <label className="form-label panel-label">{t("Form")}</label>
           <ButtonDropdown
+            variant="primary"
+            defaultLabel="All Forms"
             label={selectedItem}
             dropdownItems={DropdownItems}
             onSearch={(query) => setSearchQuery(query)}
@@ -228,7 +231,6 @@ const DropdownItems = [
             {dropdownSelection && selectedFormType === "bundle" ? (
               <div className="panel-width">
                 <CustomInfo
-                  heading="Note"
                   content={t("Field selection is not available for bundles at this time.")}
                   dataTestId="bundle-note-section"
                 />

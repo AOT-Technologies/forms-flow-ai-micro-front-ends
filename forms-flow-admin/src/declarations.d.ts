@@ -58,6 +58,11 @@ declare module "@formsflow/components" {
     CustomButton,
     DeleteIcon,
     ConfirmModal,
-    CustomInfo
+    CustomInfo,
+    PromptModal,
+    CustomUrl,
+    Switch,
+    V8CustomButton,
+    BreadCrumbs
   }: any;
 }

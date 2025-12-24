@@ -1,0 +1,325 @@
+// Form Builder Variables
+$gray-medium: var(--gray-medium);
+$white: var(--white-300);
+$form-builder-breakpoint: 1550px;
+$form-builder-border-radius: 4px;
+$form-builder-border-radius-round: 50%;
+$form-builder-border-width: 1px;
+$form-builder-border-width-thick: 2px;
+$form-builder-spacing-sm: 5px;
+$form-builder-spacing-md: 16px;
+$form-builder-spacing-lg: 80px;
+$form-builder-gap: 1rem;
+$form-builder-color-text: #535353;
+$form-builder-color-bg-transparent: transparent;
+$form-builder-color-bg-black: black;
+$form-builder-shadow-color: rgb(182 182 182 / 20%);
+$form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
+
+.form-builder, .formio-component {
+    // Responsive Sidebar Buttons
+    @media (max-width: $form-builder-breakpoint) {
+        .builder-sidebar .btn {
+            display: block !important;
+            min-height: fit-content !important;
+        }
+    }
+
+    // Sidebar Button Styles
+    .builder-sidebar .btn {
+        white-space: normal;
+        display: grid;
+        min-height: $form-builder-spacing-lg;
+        text-align: center;
+        padding: $form-builder-spacing-md;
+        gap: $form-builder-gap;
+        background: $form-builder-color-bg-transparent;
+        color: $form-builder-color-text;
+        border: $form-builder-border-width solid $form-builder-color-text;
+        border-radius: $form-builder-border-radius;
+    }
+
+    // Checkbox Styles
+    .form-check:not(.form-switch) .form-check-input[type=checkbox],
+    .checkbox-container .form-check-input[type=checkbox] {
+        border: $form-builder-border-width-thick solid $gray-medium !important;
+        border-radius: $form-builder-border-radius !important;
+    }
+
+    // Builder Component Styles
+    .builder-component {
+        // Common form element styles
+        input,
+        textarea,
+        button,
+        .selection.dropdown {
+            border: $form-builder-border-width solid $gray-medium !important;
+            border-radius: $form-builder-border-radius !important;
+        }
+
+        // Radio button specific styles
+        input[type=radio] {
+            border-radius: $form-builder-border-radius-round !important;
+            border: $form-builder-border-width solid $gray-medium !important;
+        }
+
+        // Checked form inputs
+        .form-check-input:checked {
+            border: $form-builder-border-width solid $gray-medium !important;
+        }
+
+    }
+
+    // Group Button Styles
+    .builder-group-button {
+        min-height: fit-content !important;
+        padding: $form-builder-spacing-sm 0 !important;
+        border: none !important;
+    }
+
+    // Sidebar Search Styles
+    .builder-sidebar_search {
+        border: $form-builder-border-width solid $gray-medium !important;
+        border-radius: $form-builder-border-radius !important;
+    }
+
+    // Component Settings Button Shadow
+    .component-btn-group .component-settings-button {
+        box-shadow: $form-builder-shadow;
+    }
+
+    .form-check .form-check-input {
+        &[type="checkbox"] {
+          margin-top: 4px !important;
+        }
+        &[type="radio"] {
+          margin-top: 8px !important;
+        }
+    }
+
+    .input-group-append .input-group-text {
+      height: 100%;
+      border: 1px solid var(--ff-primary);
+      border-radius: inherit;
+    }
+
+    .choices__inner input {
+      border: 1px solid var(--gray-medium);
+      border-radius: var(--border-radius);
+    }
+    
+    .formio-component-button button.btn {
+      border-radius: var(--border-radius)!important;
+    }
+}
+
+/* ============================
+   Overrides for user-styles.css
+   ============================ */
+
+// Override: btn-primary hover/focus/active styles from user-styles.css
+// Ensures table action buttons maintain their intended styling
+.formio-dialog-content .btn, .formio.builder .btn {
+    background-color: var(--white-300) !important;
+    color: var(--secondary-dark) !important;
+    border-color: var(--secondary-dark) !important;
+    border-radius: var(--border-radius) !important;
+  
+    &:hover {
+      background-color: var(--white-300) !important;
+      color: var(--secondary-dark) !important;
+      border-color: var(--secondary-dark) !important;
+    }
+    &:active {
+      background-color: var(--white-300) !important;
+      color: var(--secondary-dark) !important;
+      border-color: var(--secondary-dark) !important;
+    }
+  
+    &.btn-success{
+      border-color: var(--primary-dark) !important;
+    }
+    &.btn-danger{
+      border-color: var(--red-100) !important;
+    }
+  }
+  .gu-unselectable {
+    .btn-primary.hover,
+    .btn-primary:hover,
+    .btn-primary.disabled:hover,
+    .btn-primary[disabled]:hover,
+    fieldset[disabled] .btn-primary:hover,
+    .btn-primary.disabled.hover,
+    .btn-primary[disabled].hover,
+    fieldset[disabled] .btn-primary.hover,
+    .btn-primary.focus,
+    .btn-primary:focus,
+    .btn-primary.disabled:focus,
+    .btn-primary[disabled]:focus,
+    fieldset[disabled] .btn-primary:focus,
+    .btn-primary.disabled.focus,
+    .btn-primary[disabled].focus,
+    fieldset[disabled] .btn-primary.focus {
+      // Override: user-styles.css sets background-color: #003366
+      // Table buttons should use their default theme colors
+      background-color: var(--white-300) !important;
+      border-color: var(--primary-dark) !important;
+      color: var(--primary-dark) !important;
+    }
+  
+    .btn-primary:active:not(:hover),
+    .btn-primary.active:not(.hover),
+    .btn-primary.disabled:active:not(:hover),
+    .btn-primary[disabled]:active:not(:hover),
+    fieldset[disabled] .btn-primary:active:not(:hover),
+    .btn-primary.disabled.active:not(.hover),
+    .btn-primary[disabled].active:not(.hover),
+    fieldset[disabled] .btn-primary.active:not(.hover),
+    .btn-primary:active:hover,
+    .btn-primary.active.hover,
+    .btn-primary.disabled:active:hover,
+    .btn-primary[disabled]:active:hover,
+    fieldset[disabled] .btn-primary:active:hover,
+    .btn-primary.disabled.active.hover,
+    .btn-primary[disabled].active.hover,
+    fieldset[disabled] .btn-primary.active.hover,
+    .btn-primary:active,
+    .btn-primary.active,
+    .btn-primary.disabled:active,
+    .btn-primary[disabled]:active,
+    fieldset[disabled] .btn-primary:active,
+    .btn-primary.disabled.active,
+    .btn-primary[disabled].active,
+    fieldset[disabled] .btn-primary.active {
+      // Override: user-styles.css sets background-color: #002142
+      // Table buttons should use their default theme colors
+      background-color: var(--white-300) !important;
+      border-color: var(--primary-dark) !important;
+    }
+
+  }
+  
+  // Override: alert-danger styles from user-styles.css
+  // Ensures alerts within tables maintain consistent styling
+    .alert-danger {
+      // Override: user-styles.css sets color: #355992, background-color: #b1cbf6, border-color: #99befa
+      // Table alerts should use standard alert styling
+      color: var(--secondary-dark) !important;
+      background-color: var(--red-300) !important;
+      border-color: var(--red-200) !important;
+    }
+  
+  :root, [data-bs-theme=light], .ff-theme, .nav {
+    --ff-primary: var(--gray-darkest) !important;
+    --ff-border-radius: var(--border-radius) !important;
+    --ff-nav-link-color: var(--secondary-dark) !important;
+    --ff-nav-link-hover-color: var(--gray-darkest) !important;
+    --ff-link-color-rgb: var(--ff-primary) !important;
+    font-family: var(--font-family-base) !important;
+  }
+  
+  .formio-dialog-content {
+    font-family: var(--font-family-base) !important;
+  }
+  
+  .form-control {
+    border-color: var(--secondary-dark) !important;
+  }
+  .form-check:not(.form-switch) .form-check-input[type=checkbox], .checkbox-container .form-check-input[type=checkbox]{
+    border-color: var(--secondary-dark) !important;
+    border-radius: var(--border-radius) !important;
+    &::after  {
+      border-color: var(--secondary-dark) !important;
+    }
+  }
+  .form-check:not(.form-switch) .form-check-input[type=checkbox]:checked, .checkbox-container .form-check-input[type=checkbox]:checked{
+    border-color: var(--secondary-dark) !important;
+    border-radius: var(--border-radius) !important;
+    &::after  {
+      border-color: var(--secondary-dark) !important;
+    }
+  }
+  .component-edit-container{
+    .btn{
+      border-radius:25px !important;
+    }
+  }
+  .formio-dialog-content .panel{
+    &.preview-panel{
+      margin-top: 16px;
+    }
+  }
+
+  .formio-form .form-group.formio-hidden, .formio-builder-form .form-group.formio-hidden{
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .form-, .form-preview-tab, .formio-form {
+    span {
+      font-size: 14px !important;
+    }
+    label {
+      color: var(--gray-darkest) !important;
+    }
+    button.btn.btn-primary{
+      background-color: $form-builder-color-bg-black !important;
+      color: $white !important;
+      width: fit-content !important;
+      border:none !important;
+      margin-right: 10px;
+
+      &:hover{
+        background-color: $white !important;
+        color: $form-builder-color-bg-black !important;
+        border:1px solid $form-builder-color-bg-black !important;
+      }
+    }
+
+    button.page-link {
+      border: 1px solid $form-builder-color-bg-black !important;
+      background-color: var(--white-300) !important;
+      color: $form-builder-color-bg-black !important;
+      &:hover {
+        background-color: $form-builder-color-bg-black !important;
+        color: var(--white-300) !important;
+      }
+      
+    }
+
+    li.active .page-link {
+      background-color: $form-builder-color-bg-black !important;
+      color: $white !important;
+    }
+
+    .formio-button-remove-row{
+      border: none !important;
+    }
+  }
+  .formio-component .bg-default {
+    background-color: var(--gray-light) !important;
+  }
+  .datagrid-table {
+    tr {
+      vertical-align: middle !important;
+    }
+    tbody .field-required:after{
+      top:4px;
+    }
+  }
+
+  .choices__list--multiple .choices__item {
+    background-color: $white !important;
+    border: 1px solid $primary !important;
+    color: $gray-darkest !important;
+    border-radius: $border-radius !important;
+
+    button {
+      background-color: $gray-darkest !important;
+      border-left: none !important;
+      border-radius: $border-radius !important;
+    }
+  }
+
+  .choices__input {
+    border: none !important;
+  }

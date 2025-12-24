@@ -1,0 +1,142 @@
+@import "mixins";
+$gray-darkest:var(--gray-darkest);
+$font-size-m:var(--font-size-m);
+$font-weight-regular:var(--font-weight-regular);
+$gray-medium-darker:var(--gray-medium-darker);
+$gray-x-light:var(--gray-x-light);
+$font-weight-medium:var(--font-weight-medium);
+$secondary-dark:var(--secondary-dark);
+
+.system-content-block {
+  .system-content-table {
+    height: -webkit-fill-available;
+    width: 100%;
+    .MuiDataGrid-columnSeparator{
+      display: none;
+    }
+  }
+}
+
+.form-content-block {
+  border: 1px solid var(--gray-x-light);
+  height: 38.125rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-y: auto;
+}
+
+.variable-right-container {
+  flex-basis: 28%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  .form-variables-title{
+    @include font-style($font-size-m, $font-weight-regular, $gray-darkest);
+  }
+  .RHS-header{
+    border-bottom: 1px solid var(--gray-x-light);
+    padding-bottom: 1.25rem;
+    .back-button{
+      @include font-style($font-size-m, $font-weight-regular, $gray-darkest);
+      align-items: center;
+      display: flex;
+      gap: 10px;
+      cursor: pointer;
+    }
+  }
+  .variable-right-content {
+    border: 1px solid var(--gray-x-light);
+    height: 100%;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+  }
+  .scroll-vertical {
+    .item-container {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--gray-x-light);
+      gap: 0.5rem ;
+      .label {
+        @include font-style(14px, $font-weight-regular, $gray-medium-darker);
+      }
+      .value {
+        @include font-style(14px, $font-weight-medium, var(--secondary-dark));
+      }
+    }
+    .alternative-label-container {
+      padding: 1.25rem 0;
+      width: 100%;
+      .label {
+        margin-bottom: 0.5rem;
+        display: block;
+        color: var(--secondary-dark);
+        @include font-style(14px, $font-weight-regular, $secondary-dark);
+      }
+    }
+    .button-container {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+    }
+  }
+  .pill-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    overflow-y: auto;
+    height: 31.17rem;
+    .variable-card {
+      position: relative;
+      padding: 1rem;
+      border-radius: 5px;
+      border: 1px solid $gray-x-light;
+      cursor: pointer;
+
+      .variable-card-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 1rem;
+        cursor: pointer;
+      }
+
+      .variable-title {
+        @include font-style($font-size-m, $font-weight-medium, $gray-darkest);
+        margin-bottom: 0.25rem;
+        text-overflow: ellipsis;
+        word-break: break-word;
+        margin-right: 1rem;
+      }
+
+      .variable-subtitle {
+        @include font-style($font-size-m, $font-weight-regular, $gray-medium-darker);
+        text-overflow: ellipsis;
+        word-break: break-word;
+      }
+    }
+  }
+}
+
+.published-form-layout {
+  .variable-page-container {
+    padding-bottom: 4rem;
+  }
+}
+.variable-page-container {
+  .variable-page-body {
+    .system-variables-container {
+        width: 100%;
+      flex: 1;
+    }
+    .variable-page-body-form {
+      display: flex;
+      width: 100%;
+      margin-bottom: 2.5rem;
+      .variable-left-container {
+        width: 70%;
+        margin-right: 1rem;
+      }
+      .variable-right-container {
+        width: 28%;
+      }
+    }
+  }
+}

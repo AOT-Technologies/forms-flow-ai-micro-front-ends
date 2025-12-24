@@ -1,69 +1,68 @@
-import React, { FC } from 'react';
-import { InputGroup, FormControl } from 'react-bootstrap';
-import { ClearIcon } from "../SvgIcons/index";
+import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 
-
-interface CustomSearchProps {
-    searchLoading?: boolean;
-    handleClearSearch: () => void;
-    search: string;
-    setSearch: (value: string) => void;
-    handleSearch: () => void;
-    placeholder?: string;
-    title?: string;
-    dataTestId: string;
+/**
+ * Props for `CustomSearch` component.
+ * Simple, accessible search input with integrated search button.
+ */
+export interface CustomSearchProps {
+  /** Current search input value */
+  search: string;
+  /** Callback to update the search value */
+  setSearch: (value: string) => void;
+  /** Callback triggered on search submission (e.g., Enter key or button click) */
+  handleSearch: () => void;
+  /** Placeholder text for the search input */
+  placeholder?: string;
+  /** Test ID for automated testing */
+  dataTestId: string;
+  /** Disables the search input and button */
+  disabled?: boolean;
+  /** Optional width for the search input (CSS value) */
+  width?: string;
 }
 
+/**
+ * CustomSearch: Simple, accessible search input with integrated search functionality.
+ *
+ * Usage:
+ * <CustomSearch
+ *   search={searchValue}
+ *   setSearch={setSearchValue}
+ *   handleSearch={performSearch}
+ *   placeholder="Search items..."
+ *   dataTestId="main-search"
+ *   disabled={false}
+ *   width="300px"
+ * />
+ */
 export const CustomSearch: FC<CustomSearchProps> = ({
-    searchLoading,
-    handleClearSearch,
-    search,
-    setSearch,
-    handleSearch,
-    placeholder = "Search...",
-    title = "Search",
-    dataTestId
+  search,
+  setSearch,
+  handleSearch,
+  placeholder = "Search",
+  dataTestId,
+  disabled = false,
+  width,
 }) => {
-    const { t } = useTranslation();
-    const inputClassNames = ` ${searchLoading ? 'is-searching' : search ? 'has-value' : ''
-        }`;
+  const { t } = useTranslation();
 
-    return (
-        // <InputGroup className="d-flex align-items-center p-0 search-box input-group">
-        <div className="input-search">
-            {/* <div className="form-control-with-icon w-25"> */}
-                <input
-                    className={inputClassNames}
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onKeyDown={(e) => (e.key === 'Enter' && handleSearch())}
-                    placeholder={t(placeholder)}
-                    title={t(title)}
-                    data-testid={dataTestId}
-                    aria-label={placeholder}
-                />
-                {search && (
-                    // <span className={`d-flex search-box-icon ${searchLoading ? 'loading' : ''}`} >
-                    <>
-                        {!searchLoading ? (
-                            <button className="icon" onClick={handleClearSearch}>
-                                <ClearIcon
-                                    // width={16}
-                                    // height={16}
-                                    // onClick={handleClearSearch}
-                                    data-testid="form-search-clear-button"
-                                />
-                            </button>
-                        ) : (
-                            <div className="search-spinner" data-testid="search-spinner"></div>
-                        )}
-
-                    </>
-                )}
-            {/* </div> */}
-        </div>
-        // </InputGroup>
-    );
+  return (
+    <div
+      className="search-input-container"
+      {...(width ? { style: { width } } : {})}
+    >
+      <input
+        className="search-input"
+        onChange={(e) => setSearch(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+        placeholder={t(placeholder)}
+        data-testid={dataTestId}
+        aria-label={placeholder}
+        value={search}
+        role="searchbox"
+        disabled={disabled}
+      />
+    </div>
+  );
 };
-

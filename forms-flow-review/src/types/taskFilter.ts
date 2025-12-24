@@ -70,4 +70,15 @@ export interface FilterCriteria {
   export interface DateRange {
   startDate: Date | null;
   endDate: Date | null;
+} 
+
+export interface FilterItemType {
+  content: React.ReactNode;
+  onClick: (type?: string) => void;
+  type?: string;
+  dataTestId?: string;
+  ariaLabel?: string;
+  className?: string;
+  category?: "my" | "shared" | "action" | "none";
+  onEdit?: () => void;
 }
