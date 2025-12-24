@@ -2,6 +2,7 @@ import "./Sidebar.scss";
 import Accordion from "react-bootstrap/Accordion";
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import { navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import {
   APPLICATION_NAME,
@@ -96,7 +97,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const currentLocation = useLocation();
 
   // const [activeLink, setActiveLink] = useState("");
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey || userDetail?.tenantKey}/` : "/";
+  const baseUrl = getRedirectUrl(tenantKey || userDetail?.tenantKey);
   // const defaultLogoPath =
   //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
   //   "/logo.svg";
@@ -321,7 +322,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const handleProfileClose = () => setShowProfile(false);
 
   const logout = () => {
-    history.push(baseUrl);
+    navigateToBaseUrl(history, tenantKey || userDetail?.tenantKey);
     instance.userLogout();
   };
 

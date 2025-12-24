@@ -18,6 +18,7 @@ import Select from "react-select";
 import { CreateUser } from "../../services/users";
 import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, BreadCrumbs } from "@formsflow/components";
 import { useHistory, useParams } from "react-router-dom";
+import { navigateToAdminUsers, getRedirectUrl } from "@formsflow/service";
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -33,7 +34,7 @@ const Users = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
   const history = useHistory();
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
+  const baseUrl = getRedirectUrl(tenantId);
   const [selectedRolesModal, setSelectedRolesModal] = React.useState([]);
   const [formData, setFormData] = React.useState({ user: "" });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
@@ -382,7 +383,7 @@ const Users = React.memo((props: any) => {
 
   const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
     if (item.id === "manage" || item.id === "users") {
-      history.push(`${baseUrl}admin/users`);
+      navigateToAdminUsers(history, tenantId);
     }
   };
 

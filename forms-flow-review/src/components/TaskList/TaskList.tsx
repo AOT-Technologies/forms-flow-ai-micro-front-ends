@@ -43,7 +43,7 @@ import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
 import { useHistory, useParams } from "react-router-dom";
-import { MULTITENANCY_ENABLED } from "../../constants";
+import { navigateToTaskListingFromReviewWithHistory, getRedirectUrl } from "@formsflow/service";
 
 const TaskList = () => {
   const dispatch = useDispatch();
@@ -51,7 +51,7 @@ const TaskList = () => {
   const history = useHistory();
   const { tenantId } = useParams();
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId);
-  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const redirectUrl = getRedirectUrl(tenantKey);
   const {
     limit,
     dateRange,
@@ -79,7 +79,7 @@ const TaskList = () => {
 
   const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
     if (item.id === "tasks") {
-      history.push(`${redirectUrl}task`);
+      navigateToTaskListingFromReviewWithHistory(history, tenantKey);
     }
   };
  

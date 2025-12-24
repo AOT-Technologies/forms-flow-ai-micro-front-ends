@@ -19,7 +19,7 @@ import {
   ENABLE_INTEGRATION_PREMIUM
 } from "./constants/constants";
 import "./Navbar.scss";
-import { StorageService } from "@formsflow/service";
+import { StorageService, navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
 import { fetchTenantDetails } from "./services/tenant";
@@ -104,7 +104,7 @@ const NavBar = React.memo(({ props }) => {
   const showApplications = setShowApplications(userDetail?.groups);
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const baseUrl = getRedirectUrl(tenantKey);
   const navbarRef = useRef(null);
 const isCreateSubmissions = userRoles?.includes("create_submissions");
 const isViewSubmissions = userRoles?.includes("view_submissions");
@@ -241,7 +241,7 @@ const isUserManager = userRoles?.includes("manage_users");
   }, [isAuthenticated]);
 
   const logout = () => {
-    history.push(baseUrl);
+    navigateToBaseUrl(history, tenantKey);
     instance.userLogout();
   };
   return (

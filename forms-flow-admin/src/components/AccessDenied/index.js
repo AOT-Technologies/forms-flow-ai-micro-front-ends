@@ -2,13 +2,14 @@ import React from "react";
 import AccessDeniedIcon  from "./AccessDenied.js";
 import './accessDenied.scss';
 import { useTranslation } from "react-i18next";
-import { BASE_ROUTE } from "../../constants/index";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+import { navigateToBaseUrl } from "@formsflow/service";
 
 
 const AccessDenied = ({ userRoles }) => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { tenantId } = useParams();
 
   const handleLogout = () => {
     const kcInstance = kcServiceInstance(); 
@@ -16,7 +17,7 @@ const AccessDenied = ({ userRoles }) => {
   };
 
   const handleReturn = () => {
-    history.push(BASE_ROUTE);
+    navigateToBaseUrl(history, tenantId);
   };
 
   const showReturnToLogin = userRoles?.length === 0;

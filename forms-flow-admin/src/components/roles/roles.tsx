@@ -35,6 +35,7 @@ import { TableFooter,
 } 
 from "@formsflow/components";
 import { useHistory } from "react-router-dom";
+import { navigateToAdminRoles } from "@formsflow/service";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -658,7 +659,7 @@ const Roles = React.memo((props: any) => {
 
   const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
     if (item.id === "manage" || item.id === "roles") {
-      history.push(`${baseUrl}admin/roles`);
+      navigateToAdminRoles(history, tenantId);
     }
   };
 

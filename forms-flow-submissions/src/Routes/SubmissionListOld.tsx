@@ -2,7 +2,7 @@ import React, { useRef, useCallback, useMemo, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { push } from "connected-react-router";
+import { navigateToSubmissionDetail, getRedirectUrl } from "@formsflow/service";
 
 // Types and Services
 import { Submission } from "../types/submissions";
@@ -85,7 +85,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.key || tenantId);
   const defaultSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.defaultFilter);
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
-  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const redirectUrl = getRedirectUrl(tenantKey);
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
   const selectedForm = useSelector((state: any) => state?.analyzeSubmission?.selectedForm);
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
@@ -555,7 +555,7 @@ return (
           label={t("View")}
           onClick={() => {
             dispatch(setApplicationDetail({}))
-            dispatch(push(`${redirectUrl}submissions/${submission.id}`))
+            navigateToSubmissionDetail(dispatch, tenantKey, submission.id)
           }
           }
           dataTestId={`view-submission-${submission.id}`}

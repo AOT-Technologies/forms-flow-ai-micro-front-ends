@@ -2,7 +2,7 @@ import * as React from "react";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector, batch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { push } from "connected-react-router";
+import { navigateToSubmissionDetail, getRedirectUrl } from "@formsflow/service";
 
 // Types and Services
 import { Submission } from "../types/submissions";
@@ -44,7 +44,7 @@ import {
   AddIcon,
   BreadCrumbs
 } from "@formsflow/components";
-import { MULTITENANCY_ENABLED } from "../constants";
+import { MULTITENANCY_ENABLED } from "@formsflow/service";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
 import { SystemVariables } from "../constants/variables";
 import { setApplicationDetail } from "../actions/applicationActions";
@@ -84,7 +84,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.key || tenantId);
   const defaultSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.defaultFilter);
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
-  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const redirectUrl = getRedirectUrl(tenantKey);
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
   const selectedForm = useSelector((state: any) => state?.analyzeSubmission?.selectedForm);
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
@@ -554,7 +554,7 @@ const fetchSubmissions = useCallback(async () => {
           label={t("View")}
           onClick={() => {
             dispatch(setApplicationDetail({}));
-            dispatch(push(`${redirectUrl}submissions/${submission.id}`));
+            navigateToSubmissionDetail(dispatch, tenantKey, submission.id);
           }}
           dataTestId={`view-submission-${submission.id}`}
           ariaLabel={t("View details for submission {{taskName}}", {
@@ -617,7 +617,7 @@ const fetchSubmissions = useCallback(async () => {
     }
 
     return <div className="text-overflow-ellipsis">{displayValue ?? "-"}</div>;
-  }, [selectedSubmissionFilter, currentFields, t, dispatch, push, redirectUrl, DEFAULT_SUBMISSION_FIELDS, tenantId]);
+  }, [selectedSubmissionFilter, currentFields, t, dispatch, redirectUrl, DEFAULT_SUBMISSION_FIELDS, tenantId]);
 
 
 

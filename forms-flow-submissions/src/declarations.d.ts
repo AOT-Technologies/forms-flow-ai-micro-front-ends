@@ -39,7 +39,26 @@ declare module "*.svg" {
 }
 
 declare module "@formsflow/service" {
-	export const {KeycloakService, RequestService, StorageService,i18nService,HelperServices, StyleServices}: any;
+	export const {
+    KeycloakService, 
+    RequestService, 
+    StorageService,
+    i18nService,
+    HelperServices, 
+    StyleServices,
+    getRoute,
+    MAIN_ROUTE,
+    MULTITENANCY_ENABLED,
+    getRedirectUrl,
+    getOrigin,
+    getFullUrl,
+    getLinkTo,
+    navigateToSubmissionsListing,
+    navigateToSubmissionDetail,
+    navigateToBaseUrl,
+    navigateWithHistory,
+    syncRouterPath
+  }: any;
 }
 
 declare module "@formsflow/components" {
