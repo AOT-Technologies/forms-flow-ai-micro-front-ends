@@ -7,13 +7,14 @@ import { useTranslation } from "react-i18next";
 import i18n from '../resourceBundles/i18n';
 import { StorageService } from "@formsflow/service";
 import { LANGUAGE, MULTITENANCY_ENABLED, USER_LANGUAGE_LIST } from '../constants/constants';
-import version from "../../package.json";
 
 export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [selectLanguages, setSelectLanguages] = useState([]);
   const prevSelectedLang = localStorage.getItem('i18nextLng');
   const [selectedLang, setSelectedLang] = useState(prevSelectedLang || LANGUAGE );
+  const [daysDifference, setDaysDifference] = useState(null);
   const { t } = useTranslation(); 
+  
   useEffect(() => { 
 
     fetchSelectLanguages((languages) => {
@@ -24,8 +25,31 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : languages);
     });
 
+    // Calculate remaining days from expiry_dt 
+    try {
+      const tenantDataStr = StorageService.get("TENANT_DATA");
+      const expiry_dt = tenantDataStr 
+        ? JSON.parse(tenantDataStr)?.expiry_dt 
+        : tenant?.tenantData?.expiry_dt;
+      
+      if (expiry_dt) {
+        const expiry = new Date(expiry_dt);
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        expiry.setHours(0, 0, 0, 0);
+        const timeDifference = expiry.getTime() - currentDate.getTime();
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+        setDaysDifference(days);
+      } else {
+        setDaysDifference(null);
+      }
+    } catch (error) {
+      console.error("Error calculating days difference:", error);
+      setDaysDifference(null);
+    }
+
   }, [tenant]);
- 
+
 
   const handleLanguageChange = (newLang) => {
     setSelectedLang(newLang);
@@ -48,6 +72,9 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const isSaveDisabled = selectedLang === prevSelectedLang;
 
   const selectedLangLabel = selectLanguages.find(lang => lang.name === selectedLang)?.value || selectedLang;
+
+  // Get tenantId from tenant prop or StorageService
+  const tenantId = tenant?.tenantId || StorageService.get("tenantKey");
 
   return (
     <Modal
@@ -82,8 +109,15 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             className="mb-3 w-100"
             onChange={handleLanguageChange}
           />
-          <CustomInfo className="note" heading="Note" 
-            content={`You are running version ${version.version} of Formsflow`} />
+          {tenantId && daysDifference !== null ? (
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={
+                `You are currently using a test instance. The trial period ends in ${daysDifference} days.`
+              }
+            />
+          ) : null}
       </Modal.Body>
 
       <Modal.Footer>
@@ -113,6 +147,7 @@ ProfileSettingsModal.propTypes = {
   show: PropTypes.bool.isRequired,  
   onClose: PropTypes.func.isRequired,  
   tenant: PropTypes.shape({  
+    tenantId: PropTypes.string,
     tenantData: PropTypes.shape({
       details: PropTypes.shape({
         locale: PropTypes.string,
