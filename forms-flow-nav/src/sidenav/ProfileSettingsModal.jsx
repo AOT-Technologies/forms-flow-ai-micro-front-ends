@@ -149,6 +149,7 @@ ProfileSettingsModal.propTypes = {
   tenant: PropTypes.shape({  
     tenantId: PropTypes.string,
     tenantData: PropTypes.shape({
+      expiry_dt: PropTypes.string,
       details: PropTypes.shape({
         locale: PropTypes.string,
         langList: PropTypes.oneOfType([
