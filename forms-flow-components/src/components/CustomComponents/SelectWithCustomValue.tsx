@@ -201,12 +201,11 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
         // Handle click outside
         useEffect(() => {
             const handleClickOutside = (event: MouseEvent): void => {
-                if (
-                    dropdownRef.current &&
-                    !dropdownRef.current.contains(event.target as Node) &&
-                    (!primaryMenuRef.current ||
-                        !primaryMenuRef.current.contains(event.target as Node))
-                ) {
+                const target = event.target as Node;
+                const inDropdown = dropdownRef.current?.contains(target);
+                const inMenu = primaryMenuRef.current?.contains(target);
+                const inWrapper = primaryWrapperRef.current?.contains(target);
+                if (!inDropdown && !inMenu && !inWrapper) {
                     setIsOpen(false);
                     setSecondIsOpen(false);
                     setSearchTerm("");
