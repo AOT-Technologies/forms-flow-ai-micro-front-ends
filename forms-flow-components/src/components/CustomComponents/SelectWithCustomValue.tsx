@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
+import { createPortal } from "react-dom";
 import { DownArrowIcon, UpArrowIcon, VerticalLineIcon } from "../SvgIcons";
 import { ListGroup } from "react-bootstrap";
 import { CustomSearch } from "./Search";
@@ -81,6 +82,13 @@ const buildClassNames = (
     ...classes: (string | false | null | undefined)[]
 ): string => classes.filter(Boolean).join(" ");
 
+/** Dropdown position interface */
+interface DropdownPosition {
+    top: number;
+    left: number;
+    width: number;
+}
+
 /** SelectWithCustomValue Component */
 const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCustomValueProps>(
     (
@@ -138,6 +146,10 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
         >(secondValue || secondDefaultValue);
 
         const dropdownRef = useRef<HTMLDivElement>(null);
+        const primaryWrapperRef = useRef<HTMLDivElement>(null);
+        const primaryMenuRef = useRef<HTMLDivElement | null>(null);
+        const [primaryPosition, setPrimaryPosition] = useState<DropdownPosition | null>(null);
+        const [isMounted, setIsMounted] = useState(false);
 
         // Update values if props change
         useEffect(() => {
@@ -154,12 +166,46 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
             setSecondSelectedValue(secondValue || secondDefaultValue);
         }, [secondValue, secondDefaultValue]);
 
+        useEffect(() => {
+            setIsMounted(typeof document !== "undefined");
+        }, []);
+
+        const updatePosition = useCallback(
+            (
+                wrapper: React.RefObject<HTMLDivElement>,
+                setter: React.Dispatch<React.SetStateAction<DropdownPosition | null>>
+            ) => {
+                if (!wrapper.current) return;
+                const rect = wrapper.current.getBoundingClientRect();
+                setter({
+                    top: rect.bottom + window.scrollY,
+                    left: rect.left + window.scrollX,
+                    width: rect.width,
+                });
+            },
+            []
+        );
+
+        useEffect(() => {
+            if (!isOpen) return;
+            const handleUpdate = () => updatePosition(primaryWrapperRef, setPrimaryPosition);
+            handleUpdate();
+            window.addEventListener("scroll", handleUpdate, true);
+            window.addEventListener("resize", handleUpdate);
+            return () => {
+                window.removeEventListener("scroll", handleUpdate, true);
+                window.removeEventListener("resize", handleUpdate);
+            };
+        }, [isOpen, updatePosition]);
+
         // Handle click outside
         useEffect(() => {
             const handleClickOutside = (event: MouseEvent): void => {
                 if (
                     dropdownRef.current &&
-                    !dropdownRef.current.contains(event.target as Node)
+                    !dropdownRef.current.contains(event.target as Node) &&
+                    (!primaryMenuRef.current ||
+                        !primaryMenuRef.current.contains(event.target as Node))
                 ) {
                     setIsOpen(false);
                     setSecondIsOpen(false);
@@ -342,12 +388,16 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
             defaultVal?: string | number,
             wrapperClass?: string,
             itemClass?: string,
-            showSpecialItems: boolean = false
+            showSpecialItems: boolean = false,
+            wrapperRef?: React.RefObject<HTMLDivElement>,
+            menuRef?: React.MutableRefObject<HTMLDivElement | null>,
+            position?: DropdownPosition | null
         ) => {
             // Render custom input mode for primary dropdown only
             if (showSpecialItems && isCustomValueMode) {
                 return (
                     <div 
+                        ref={wrapperRef}
                         className={buildClassNames("dropdown-wrapper", wrapperClass)}
                         onKeyDown={handleCustomInputKeyDown}
                     >
@@ -364,64 +414,33 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                 );
             }
 
-            return (
-                <div className={buildClassNames("dropdown-wrapper", wrapperClass)}>
-                    <button
-                        type="button"
-                        className={buildClassNames(
-                            "custom-selectdropdown",
-                            `custom-selectdropdown--${variantType}`,
-                            disabled && "disabled"
-                        )}
-                        onClick={toggleFn}
-                        aria-expanded={isOpenState}
-                        aria-haspopup="listbox"
-                        disabled={disabled}
-                    >
-                        <span className="dropdown-text">
-                            {(() => {
-                                const selected = opts?.find((o) => o.value === selValue);
-                                if (selected) {
-                                    return (
-                                        <span className="dropdown-text-content">
-                                            {selected.icon && (
-                                                <span className="dropdown-icon">{selected.icon}</span>
-                                            )}
-                                            <span>{selected.label}</span>
-                                        </span>
-                                    );
-                                }
-                                const defaultMatch = opts?.find((o) => o.value === defaultVal);
-                                if (defaultMatch) {
-                                    return (
-                                        <span className="dropdown-text-content">
-                                            {defaultMatch.icon && (
-                                                <span className="dropdown-icon">{defaultMatch.icon}</span>
-                                            )}
-                                            <span>{defaultMatch.label}</span>
-                                        </span>
-                                    );
-                                }
-                                // Show custom value if it exists and is not in options
-                                if (selValue && !opts?.some((o) => o.value === selValue)) {
-                                    return String(selValue);
-                                }
-                                // Show placeholder if no value is selected
-                                if (!selValue && !defaultVal) {
-                                    return <span className="dropdown-text-placeholder">{placeholder}</span>;
-                                }
-                                return defaultVal ?? "";
-                            })()}
-                        </span>
-                        {renderArrowIcon(isOpenState)}
-                    </button>
-                {isOpenState && !disabled && (
-                    <div
-                        className={buildClassNames(
-                            "custom-dropdown-options",
-                            `custom-dropdown-options--${variantType}`
-                        )}
-                    >
+            const shouldPortal =
+                isMounted && position && typeof document !== "undefined";
+            
+            const dropdownContent = (
+                <div
+                    ref={(node) => {
+                        if (menuRef) {
+                            menuRef.current = node;
+                        }
+                    }}
+                    className={buildClassNames(
+                        "custom-dropdown-options",
+                        `custom-dropdown-options--${variantType}`
+                    )}
+                    style={
+                        shouldPortal && position
+                            ? {
+                                position: "absolute",
+                                top: position.top,
+                                left: position.left,
+                                width: position.width,
+                                zIndex: 2000,
+                                maxHeight: "10.75rem",
+                            }
+                            : undefined
+                    }
+                >
                         {searchable && (
                             <div className="custom-dropdown-search">
                                 <CustomSearch
@@ -499,8 +518,68 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                             )
                         )}
                     </div>
-                )}
-            </div>
+                );
+
+            return (
+                <div 
+                    ref={wrapperRef}
+                    className={buildClassNames("dropdown-wrapper", wrapperClass)}
+                >
+                    <button
+                        type="button"
+                        className={buildClassNames(
+                            "custom-selectdropdown",
+                            `custom-selectdropdown--${variantType}`,
+                            disabled && "disabled"
+                        )}
+                        onClick={toggleFn}
+                        aria-expanded={isOpenState}
+                        aria-haspopup="listbox"
+                        disabled={disabled}
+                    >
+                        <span className="dropdown-text">
+                            {(() => {
+                                const selected = opts?.find((o) => o.value === selValue);
+                                if (selected) {
+                                    return (
+                                        <span className="dropdown-text-content">
+                                            {selected.icon && (
+                                                <span className="dropdown-icon">{selected.icon}</span>
+                                            )}
+                                            <span>{selected.label}</span>
+                                        </span>
+                                    );
+                                }
+                                const defaultMatch = opts?.find((o) => o.value === defaultVal);
+                                if (defaultMatch) {
+                                    return (
+                                        <span className="dropdown-text-content">
+                                            {defaultMatch.icon && (
+                                                <span className="dropdown-icon">{defaultMatch.icon}</span>
+                                            )}
+                                            <span>{defaultMatch.label}</span>
+                                        </span>
+                                    );
+                                }
+                                // Show custom value if it exists and is not in options
+                                if (selValue && !opts?.some((o) => o.value === selValue)) {
+                                    return String(selValue);
+                                }
+                                // Show placeholder if no value is selected
+                                if (!selValue && !defaultVal) {
+                                    return <span className="dropdown-text-placeholder">{placeholder}</span>;
+                                }
+                                return defaultVal ?? "";
+                            })()}
+                        </span>
+                        {renderArrowIcon(isOpenState)}
+                    </button>
+                    {isOpenState &&
+                        !disabled &&
+                        (shouldPortal
+                            ? createPortal(dropdownContent, document.body)
+                            : dropdownContent)}
+                </div>
             );
         };
 
@@ -547,7 +626,10 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                     defaultValue,
                     dropdownWrapperClassName,
                     dropdownItemClassName,
-                    true // Show special items for primary dropdown
+                    true, // Show special items for primary dropdown
+                    primaryWrapperRef,
+                    primaryMenuRef,
+                    primaryPosition
                 )}
 
                 {/* --- SECONDARY DROPDOWN (Indented) --- */}
@@ -567,7 +649,8 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                                 "secondary",
                                 secondDefaultValue,
                                 dropdownWrapperClassName,
-                                dropdownItemClassName
+                                dropdownItemClassName,
+                                false, // Show special items for secondary dropdown
                             )}
                         </div>
                     </div>
