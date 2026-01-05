@@ -1,10 +1,20 @@
 // Pill Tabs Mixin - Reusable styles for pill-shaped tab navigation
+$White-300:var(--white-300);
+$White-200:var(--white-200);
+$Gray-x-light:var(--gray-x-light);
+$Gray-darkest:var(--gray-darkest);
+$Secondary:var(--secondary);
+$border-radius:2.063rem; //33px 
+$font-size-15:var(--font-size-m); //15px
+$font-weight-medium:var(--font-weight-medium);
+$font-weight-regular:var(--font-weight-regular);
+
 
 @mixin pill-tabs-container {
-    background-color: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 33px;
-    padding: 4px;
+    background-color: $White-300;
+    border: 1px solid $Gray-x-light;
+    border-radius: $border-radius;
+    padding: 0.25rem;
     display: inline-flex;
     width: fit-content;
   }
@@ -42,32 +52,32 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 8px 16px;
-      border-radius: 33px;
+      padding: 0.5rem 1rem;
+      border-radius: $border-radius;
       border: 1px solid transparent !important;
       background-color: transparent;
-      color: #4a4a4a;
-      font-size: 15px;
-      font-weight: 400;
+      color: $Gray-darkest;
+      font-size: $font-size-15;
+      font-weight: $font-weight-regular;
       line-height: normal;
       transition: background-color 0.2s ease;
       margin: 0;
   
       &:hover:not(:disabled) {
         background-color: transparent !important;
-        color: #4a4a4a !important;
+        color: $Gray-darkest !important;
         border-bottom: none !important;
-        border-radius: 33px;
-        border: 1px solid #4A4A4A !important;
-        background: #FCFCFC !important;
+        border-radius: $border-radius;
+        border: 1px solid $Gray-darkest !important;
+        background: $White-200 !important;
       }
   
       &.active {
-        background-color: #ededed !important;
-        color: #4a4a4a !important;
-        font-weight: 500;
-        border-radius: 33px;
-        border: 1px solid #4A4A4A !important;
+        background-color: $Secondary !important;
+        color: $Gray-darkest !important;
+        font-weight: $font-weight-medium;
+        border-radius: $border-radius;
+        border: 1px solid $Gray-darkest !important;
       }
   
       &:focus {
