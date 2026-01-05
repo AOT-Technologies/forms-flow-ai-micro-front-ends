@@ -1,0 +1,107 @@
+// Pill Tabs Mixin - Reusable styles for pill-shaped tab navigation
+
+@mixin pill-tabs-container {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 33px;
+    padding: 4px;
+    display: inline-flex;
+    width: fit-content;
+  }
+  
+  @mixin pill-tabs {
+    border-bottom: none !important;
+    width: 100%;
+    cursor: not-allowed;
+    gap: 2px;
+  
+    .nav {
+      border: none;
+      border-bottom: none !important;
+      gap: 2px;
+      background-color: transparent;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+  
+    .nav-tabs {
+      border-bottom: none !important;
+      width: 100%;
+      gap: 2px;
+    }
+  
+    .nav-item {
+      margin: 0;
+      flex: 0 0 auto;
+    }
+  
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 33px;
+      border: 1px solid transparent !important;
+      background-color: transparent;
+      color: #4a4a4a;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: normal;
+      transition: background-color 0.2s ease;
+      margin: 0;
+  
+      &:hover:not(:disabled) {
+        background-color: transparent !important;
+        color: #4a4a4a !important;
+        border-bottom: none !important;
+        border-radius: 33px;
+        border: 1px solid #4A4A4A !important;
+        background: #FCFCFC !important;
+      }
+  
+      &.active {
+        background-color: #ededed !important;
+        color: #4a4a4a !important;
+        font-weight: 500;
+        border-radius: 33px;
+        border: 1px solid #4A4A4A !important;
+      }
+  
+      &:focus {
+        box-shadow: none;
+        outline: none;
+      }
+  
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        border-bottom: none !important;
+      }
+    }
+  
+    .tab-content {
+      display: none;
+    }
+  }
+  
+  .pill-tabs-container {
+    @include pill-tabs-container;
+  }
+  
+  .pill-tabs {
+    @include pill-tabs;
+  }
+  
+  .pill-tabs-disabled {
+    @include pill-tabs;
+  
+    .nav-link {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+  
+  
