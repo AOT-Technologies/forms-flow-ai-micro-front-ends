@@ -1,0 +1,116 @@
+// Pill Tabs Mixin - Reusable styles for pill-shaped tab navigation
+$White-300:var(--white-300);
+$White-200:var(--white-200);
+$Gray-x-light:var(--gray-x-light);
+$Gray-darkest:var(--gray-darkest);
+$Secondary:var(--secondary);
+$border-radius:2.063rem; //33px 
+$font-size-15:var(--font-size-m); //15px
+$font-weight-medium:var(--font-weight-medium);
+$font-weight-regular:var(--font-weight-regular);
+
+
+@mixin pill-tabs-container {
+    background-color: $White-300;
+    border: 1px solid $Gray-x-light;
+    border-radius: $border-radius;
+    padding: 0.25rem;
+    display: inline-flex;
+    width: fit-content;
+  }
+  
+  @mixin pill-tabs {
+    border-bottom: none !important;
+    width: 100%;
+    cursor: not-allowed;
+    gap: 2px;
+  
+    .nav {
+      border: none;
+      border-bottom: none !important;
+      gap: 2px;
+      background-color: transparent;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+  
+    .nav-tabs {
+      border-bottom: none !important;
+      width: 100%;
+      gap: 2px;
+    }
+  
+    .nav-item {
+      margin: 0;
+      flex: 0 0 auto;
+    }
+  
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      border-radius: $border-radius;
+      border: 1px solid transparent !important;
+      background-color: transparent;
+      color: $Gray-darkest;
+      font-size: $font-size-15;
+      font-weight: $font-weight-regular;
+      line-height: normal;
+      transition: background-color 0.2s ease;
+      margin: 0;
+  
+      &:hover:not(:disabled) {
+        background-color: transparent !important;
+        color: $Gray-darkest !important;
+        border-bottom: none !important;
+        border-radius: $border-radius;
+        border: 1px solid $Gray-darkest !important;
+      }
+  
+      &.active {
+        background-color: $Secondary !important;
+        color: $Gray-darkest !important;
+        font-weight: $font-weight-medium;
+        border-radius: $border-radius;
+        border: 1px solid $Gray-darkest !important;
+      }
+  
+      &:focus {
+        box-shadow: none;
+        outline: none;
+      }
+  
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        border-bottom: none !important;
+      }
+    }
+  
+    .tab-content {
+      display: none;
+    }
+  }
+  
+  .pill-tabs-container {
+    @include pill-tabs-container;
+  }
+  
+  .pill-tabs {
+    @include pill-tabs;
+  }
+  
+  .pill-tabs-disabled {
+    @include pill-tabs;
+  
+    .nav-link {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+  
+  
