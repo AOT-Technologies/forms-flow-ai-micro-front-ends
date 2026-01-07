@@ -195,37 +195,45 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
         const [primaryPosition, setPrimaryPosition] = useState<DropdownPosition | null>(null);
         const [isMounted, setIsMounted] = useState(false);
 
+        // --- Common state transition helpers ---
+        const closeDropdownAndClearSearch = useCallback(() => {
+            setIsOpen(false);
+            setSearchTerm("");
+        }, []);
+
+        const exitCustomMode = useCallback(() => {
+            setIsCustomValueMode(false);
+            setShouldAutoFocus(false);
+        }, []);
+
         // --- Custom value mode helpers ---
         const enterCustomMode = useCallback(
             (initialValue: string = "") => {
                 setIsCustomValueMode(true);
                 setCustomInputValue(initialValue);
                 setShouldAutoFocus(true);
-                setIsOpen(false);
-                setSearchTerm("");
+                closeDropdownAndClearSearch();
             },
-            []
+            [closeDropdownAndClearSearch]
         );
 
         const commitCustomValue = useCallback(
             (trimmedValue: string) => {
                 setSelectedValue(trimmedValue);
-                setIsCustomValueMode(false);
-                setShouldAutoFocus(false);
+                exitCustomMode();
                 onChange?.(trimmedValue);
             },
-            [onChange]
+            [onChange, exitCustomMode]
         );
 
         const cancelCustomModeAndShowDropdown = useCallback(() => {
-            setShouldAutoFocus(false);
-            setIsCustomValueMode(false);
+            exitCustomMode();
             setCustomInputValue("");
             setSelectedValue(undefined);
             setIsOpen(true);
             setSearchTerm("");
             // Don't call onChange with undefined - let user select a new value
-        }, []);
+        }, [exitCustomMode]);
 
         // Update values if props change
         useEffect(() => {
@@ -282,16 +290,15 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                 const inMenu = primaryMenuRef.current?.contains(target);
                 const inWrapper = primaryWrapperRef.current?.contains(target);
                 if (!inDropdown && !inMenu && !inWrapper) {
-                    setIsOpen(false);
+                    closeDropdownAndClearSearch();
                     setSecondIsOpen(false);
-                    setSearchTerm("");
                 }
             };
             document.addEventListener("mousedown", handleClickOutside);
             return () => {
                 document.removeEventListener("mousedown", handleClickOutside);
             };
-        }, []);
+        }, [closeDropdownAndClearSearch]);
 
         /** Handle primary toggle */
         const handleToggle = useCallback(() => {
@@ -314,10 +321,8 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
         const handleOptionClick = useCallback(
             (optionValue: string | number): void => {
                 setSelectedValue(optionValue);
-                setIsOpen(false);
-                setSearchTerm("");
-                setIsCustomValueMode(false); // Exit custom value mode when selecting an option
-                setShouldAutoFocus(false); // Reset autoFocus when selecting an option
+                closeDropdownAndClearSearch();
+                exitCustomMode();
                 onChange?.(optionValue);
 
                 // Reset dependent dropdown when parent changes
@@ -327,7 +332,7 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                     setSecondSelectedValue('');
                 }
             },
-            [onChange, secondDropdown, dependentOptions, onSecondChange]
+            [onChange, secondDropdown, dependentOptions, onSecondChange, closeDropdownAndClearSearch, exitCustomMode]
         );
 
         /** Handle secondary select */
@@ -372,8 +377,6 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
 
         /** Handle special action items */
         const handleCustomValueClick = useCallback(() => {
-            setIsOpen(false);
-            setSearchTerm("");
             // Set initial input value to current selected value if it's a string
             if (selectedValue && typeof selectedValue === "string") {
                 enterCustomMode(selectedValue);
@@ -384,12 +387,10 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
         }, [enterCustomMode, onEnterCustomValue, selectedValue]);
 
         const handleAdditionalVariablesClick = useCallback(() => {
-            setIsOpen(false);
-            setSearchTerm("");
-            setIsCustomValueMode(false); // Exit custom value mode if active
-            setShouldAutoFocus(false); // Reset autoFocus when selecting additional variables
+            closeDropdownAndClearSearch();
+            exitCustomMode();
             onSelectAdditionalVariables?.();
-        }, [onSelectAdditionalVariables]);
+        }, [onSelectAdditionalVariables, closeDropdownAndClearSearch, exitCustomMode]);
 
         /** Handle custom input value change for CustomTextInput (uses setValue callback) */
         const handleCustomInputSetValue = useCallback((newValue: string) => {
