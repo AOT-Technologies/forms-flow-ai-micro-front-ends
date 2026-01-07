@@ -549,6 +549,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 }
                 subscribe={props.subscribe}
                 collapsed={collapsed}
+                isExpanded={activeKey === SectionKeys.BUILD.value}
               />
             )}
 
@@ -573,6 +574,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 ]}
                 subscribe={props.subscribe}
                 collapsed={collapsed}
+                isExpanded={activeKey === SectionKeys.BUILD.value}
               />
             )}
           {isAnalyzeManager && ENABLE_DASHBOARDS_MODULE && (
@@ -584,6 +586,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               subMenu={manageAnalyseOptions()}
               subscribe={props.subscribe}
               collapsed={collapsed}
+              isExpanded={activeKey === SectionKeys.ANALYZE.value}
             />
           )}
           {isAdmin && (
@@ -595,6 +598,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               subMenu={manageOptions()}
               subscribe={props.subscribe}
               collapsed={collapsed}
+              isExpanded={activeKey === SectionKeys.MANAGE.value}
             />
           )}
         </Accordion>

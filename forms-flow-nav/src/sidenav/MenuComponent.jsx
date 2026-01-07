@@ -33,12 +33,14 @@ const MenuComponent = ({
   subMenu,
   optionsCount,
   baseUrl,
-  collapsed
+  collapsed,
+  isExpanded = false,
 }) => {
   const location = useLocation();
   const history = useHistory();
   const { t } = useTranslation();
   const noOptionsMenu = optionsCount === "0";
+  const [isHovered, setIsHovered] = useState(false);
 
   /**
    * Determines if a menu item is currently active based on the current route
@@ -143,8 +145,27 @@ const MenuComponent = ({
    * Builds the appropriate icon based on menu type, options, and collapsed state
    */
   const intendedIconElement = useMemo(() => {
-    // For menus with sub-options, show ChevronIcon when expanded
-    if (!noOptionsMenu && !collapsed) {
+    // For menus with sub-menu (has options)
+    if (!noOptionsMenu) {
+      // When not collapsed and (expanded or hovered), show chevron
+      if (!collapsed && (isExpanded || isHovered)) {
+        return (
+          <ChevronIcon
+            className="custom-chevron"
+            color={iconColors.iconFillColor}
+          />
+        );
+      }
+      // When collapsed or not expanded/hovered, show specific icon if available
+      if (IconComponent) {
+        return (
+          <IconComponent
+            fillColor={iconColors.iconFillColor}
+            strokeColor={iconColors.strokeColor}
+          />
+        );
+      }
+      // Fallback chevron if no specific icon
       return (
         <ChevronIcon
           className="custom-chevron"
@@ -153,7 +174,7 @@ const MenuComponent = ({
       );
     }
 
-    // For collapsed state or menus without sub-options, show specific icons
+    // For menus without sub-options, show specific icons
     if (IconComponent) {
       return (
         <IconComponent
@@ -163,18 +184,8 @@ const MenuComponent = ({
       );
     }
 
-    // Fallback for menus without sub-options
-    if (!noOptionsMenu) {
-      return (
-        <ChevronIcon
-          className="custom-chevron"
-          color={iconColors.iconFillColor}
-        />
-      );
-    }
-
     return null;
-  }, [IconComponent, iconColors, noOptionsMenu, collapsed]);
+  }, [IconComponent, iconColors, noOptionsMenu, collapsed, isExpanded, isHovered]);
 
   /**
    * Icon visibility state management
@@ -239,13 +250,17 @@ const MenuComponent = ({
   }, [isActive]);
 
   return (
-    <Accordion.Item eventKey={eventKey}>
-      <Accordion.Header
-        data-testid={`accordion-header-${eventKey}`}
-        aria-label={`Accordion header for ${mainMenu}`}
-        className={buildHeaderClassName()}
-        onClick={noOptionsMenu ? handleHeaderClick : undefined}
-      >
+    <div
+      onMouseEnter={() => !collapsed && setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Accordion.Item eventKey={eventKey}>
+        <Accordion.Header
+          data-testid={`accordion-header-${eventKey}`}
+          aria-label={`Accordion header for ${mainMenu}`}
+          className={buildHeaderClassName()}
+          onClick={noOptionsMenu ? handleHeaderClick : undefined}
+        >
         {/* Icon with fade transition */}
         {renderIcon && (
           <span
@@ -293,7 +308,8 @@ const MenuComponent = ({
           ))}
         </Accordion.Body>
       )}
-    </Accordion.Item>
+      </Accordion.Item>
+    </div>
   );
 };
 
@@ -326,7 +342,9 @@ MenuComponent.propTypes = {
   /** Base URL for navigation */
   baseUrl: PropTypes.string.isRequired,
   /** Whether the sidebar is collapsed */
-  collapsed: PropTypes.bool.isRequired
+  collapsed: PropTypes.bool.isRequired,
+  /** Whether the accordion item is expanded */
+  isExpanded: PropTypes.bool
 };
 
 // Set display name for better debugging
