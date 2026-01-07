@@ -385,7 +385,7 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   }
 }
 .user-select-text{
-  outline: none;
+  outline: none !important;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   transition: background-color 0.2s;
