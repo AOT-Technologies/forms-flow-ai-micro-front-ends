@@ -331,6 +331,9 @@ $font-tokens: (
             &.bpmn-container .bpmn-main-container-editor{
               max-height: fit-content!important;
             }
+            &.published-form-layout{
+              max-height: calc(100vh - 350px) !important;
+            }
           }
           
           &.task-list-body-section {
