@@ -5,7 +5,8 @@ import {
   DragandDropSort,
   useSuccessCountdown,
   V8CustomButton,
-  SelectDropdown
+  SelectDropdown,
+  AddIcon
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import {
@@ -53,6 +54,51 @@ const TaskFilterModalBody = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const isQuickFilterEdit = !!filterToEdit?.isQuickFilter;
+  const isCreating = !filterToEdit?.id && !isQuickFilterEdit;
+  const [introTypeSelection, setIntroTypeSelection] = useState<string>("quickFilter");
+  const [introAccessSelection, setIntroAccessSelection] = useState<string>("privateFilter");
+
+  const isQuickFilterMode = isCreating && introTypeSelection === "quickFilter";
+  const isQuickFilterFlow = isQuickFilterMode || isQuickFilterEdit;
+
+  // When creating a filter, use the intro page
+  useEffect(() => {
+    if (!isCreating) return;
+    if (introAccessSelection === "sharedFilter") {
+      // "For myself and others" → preselect "Specific role"
+      setShareFilter(SPECIFIC_USER_OR_GROUP);
+    } else if (introAccessSelection === "privateFilter") {
+      // "For me" → keep it private by default
+      setShareFilter(PRIVATE_ONLY_YOU);
+      setShareFilterForSpecificRole("");
+    }
+  }, [isCreating, introAccessSelection]);
+
+  const handleIntroTypeSelect = (next: string) => {
+    setIntroTypeSelection(next);
+    // If "Find something now" is selected, the shared access option is not allowed.
+    if (next === "quickFilter" && introAccessSelection === "sharedFilter") {
+      setIntroAccessSelection("privateFilter");
+    }
+  };
+
+  const renderIntroDescription = (value: string, description: string) => {
+
+    if (value === "quickFilter") {
+      const match = description.match(/^(Apply a quick, temporary)\s+(.*)$/);
+      if (match) {
+        return (
+          <>
+            {match[1]}
+            <br />
+            {match[2]}
+          </>
+        );
+      }
+    }
+    return description;
+  };
 
   const {
     userGroups: candidateGroups = { data: [] },
@@ -65,7 +111,7 @@ const TaskFilterModalBody = ({
   const [accessValue, setAccessValue] = useState("");
   const selectedFilterExistingData = filterList.find((i)=> i?.id === filterToEdit?.id);
   const [variableArray, setVariableArray] = useState(
-    selectedFilterExistingData?.variables || defaultTaskVariable
+    selectedFilterExistingData?.variables || filterToEdit?.variables || defaultTaskVariable
   );
   const { successState, startSuccessCountdown } = useSuccessCountdown();
 
@@ -230,8 +276,13 @@ const TaskFilterModalBody = ({
   /* -------------------- set values for editing the filter ------------------- */
   useEffect(() => {
     if (!filterToEdit) return;
-    //TBD updated later
-    const { roles = [], users = [], criteria = {}, properties = {} } = selectedFilterExistingData;
+
+    // For normal edit, prefer the persisted filter from list (it has sharing fields like roles/users).
+    // For "Edit Quick Filter", there is no persisted filter; use `filterToEdit` directly.
+    const source = filterToEdit?.isQuickFilter ? filterToEdit : selectedFilterExistingData;
+    if (!source) return;
+
+    const { roles = [], users = [], criteria = {}, properties = {} } = source;
     const { assignee, sorting, candidateGroup } = criteria;
     const cleanedRoles = roles.map((role) =>
       removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED)
@@ -560,10 +611,18 @@ const handleFetchTaskVariables = (formId) => {
     : isEqual(getData(), selectedFilterExistingData);
   const isVariableArrayEmpty = variableArray.every((item) => !item.isChecked);
   const disableFilterButton = isVariableArrayEmpty || isFilterSame;
+
+  const hasSelectedSpecificRole =
+    shareFilter === SPECIFIC_USER_OR_GROUP &&
+    (Array.isArray(shareFilterForSpecificRole)
+      ? shareFilterForSpecificRole.length > 0
+      : !!shareFilterForSpecificRole);
+
   const saveFilterButtonDisabled =
     !filterName || 
     ((accessOption !== CURRENT_USER) && !accessValue) ||
     !accessOption ||
+    (shareFilter === SPECIFIC_USER_OR_GROUP && !hasSelectedSpecificRole) ||
     (filterToEdit?.id ? disableFilterButton : isVariableArrayEmpty);
   /* ------------------------------- tab values ------------------------------- */
   const columnsTab = () => (
@@ -690,7 +749,164 @@ const handleFetchTaskVariables = (formId) => {
     },
   ];
 
-  const wizardSteps = [
+  const introOptions = [
+    {
+      value: "quickFilter",
+      title: t("Find something now"),
+      description: t(
+        "Apply a quick, temporary filter for a one-time search"
+      ),
+      section: "filterType",
+    },
+    {
+      value: "newFilter",
+      title: t("Build and save an editable filter"),
+      description: t(
+        "Create a filter you intend to re-use and come back to"
+      ),
+      section: "filterType",
+    },
+    {
+      value: "privateFilter",
+      title: t("For me"),
+      description: t(
+        "Create a personal view to focus on tasks"
+      ),
+      section: "filterAccess",
+    },
+    {
+      value: "sharedFilter",
+      title: t("For myself and others"),
+      description: t("Create a shared view to standardize workflows"),
+      section: "filterAccess",
+    },
+  ];
+
+  const introStep = {
+    key: "intro",
+    content: (
+      <div
+        role="radiogroup"
+        aria-label={t("Choose how to start")}
+        className="d-flex justify-content-center"
+      >
+        <div className="task-filter-intro-container">
+          <div className="task-filter-intro-section-title">
+            {t("What are you trying to do?")}
+          </div>
+          <div className="row g-3 justify-content-center">
+            {introOptions
+              .filter((o) => o.section === "filterType")
+              .map((opt) => {
+                const isSelected = introTypeSelection === opt.value;
+                return (
+                  <div key={opt.value} className="col-12 col-md-6">
+                    <div
+                      role="radio"
+                      aria-checked={isSelected}
+                      tabIndex={0}
+                      onClick={() => handleIntroTypeSelect(opt.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleIntroTypeSelect(opt.value);
+                        }
+                      }}
+                      className={[
+                        "task-filter-intro-card",
+                        "h-100 rounded p-3 d-flex align-items-center justify-content-between",
+                        isSelected ? "task-filter-intro-card--selected" : "",
+                      ].join(" ")}
+                    >
+                      <div className="task-filter-intro-card__text">
+                        <div className="task-filter-intro-card__title">
+                          {opt.title}
+                        </div>
+                        <div
+                          className="task-filter-intro-card__description"
+                        >
+                          {renderIntroDescription(opt.value, opt.description)}
+                        </div>
+                      </div>
+                      <input
+                        type="radio"
+                        name="task-filter-intro-type"
+                        checked={isSelected}
+                        onChange={() => handleIntroTypeSelect(opt.value)}
+                        aria-label={opt.title}
+                        className="m-0"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+
+          <div className="task-filter-intro-section-title task-filter-intro-section-title--spaced">
+            {t("Who is this filter for?")}
+          </div>
+          <div className="row g-3 justify-content-center">
+            {introOptions
+              .filter((o) => o.section === "filterAccess")
+              .map((opt) => {
+                const isSelected = introAccessSelection === opt.value;
+                const isDisabled = introTypeSelection === "quickFilter" && opt.value === "sharedFilter";
+                return (
+                  <div key={opt.value} className="col-12 col-md-6">
+                    <div
+                      role="radio"
+                      aria-checked={isSelected}
+                      aria-disabled={isDisabled}
+                      tabIndex={isDisabled ? -1 : 0}
+                      onClick={() => {
+                        if (!isDisabled) setIntroAccessSelection(opt.value);
+                      }}
+                      onKeyDown={(e) => {
+                        if (isDisabled) return;
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setIntroAccessSelection(opt.value);
+                        }
+                      }}
+                      className={[
+                        "task-filter-intro-card",
+                        "h-100 rounded p-3 d-flex align-items-center justify-content-between",
+                        isDisabled ? "task-filter-intro-card--disabled" : "",
+                        isSelected ? "task-filter-intro-card--selected" : "",
+                      ].join(" ")}
+                    >
+                      <div className="task-filter-intro-card__text">
+                        <div className="task-filter-intro-card__title">
+                          {opt.title}
+                        </div>
+                        <div
+                          className="task-filter-intro-card__description"
+                        >
+                          {renderIntroDescription(opt.value, opt.description)}
+                        </div>
+                      </div>
+                      <input
+                        type="radio"
+                        name="task-filter-intro-access"
+                        checked={isSelected}
+                        disabled={isDisabled}
+                        onChange={() => {
+                          if (!isDisabled) setIntroAccessSelection(opt.value);
+                        }}
+                        aria-label={opt.title}
+                        className="m-0"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      </div>
+    ),
+  };
+
+  const baseWizardSteps = [
     { key: "step1", content: tabs[0]?.content },
     {
       key: "step2",
@@ -704,13 +920,22 @@ const handleFetchTaskVariables = (formId) => {
             {settingsTab()}
           </div>
         </div>
-      )
+      ),
     },
     { key: "step3", content: tabs[3]?.content },
   ];
 
+  const wizardBase = isQuickFilterFlow
+    ? baseWizardSteps.filter((s) => s.key !== "step3")
+    : baseWizardSteps;
+
+  const wizardSteps = isCreating ? [introStep, ...wizardBase] : wizardBase;
+
   const stepKeys = wizardSteps.map((s) => s.key);
   const activeStep = Math.min(Math.max((currentStep || 1) - 1, 0), stepKeys.length - 1);
+  const displayTotalSteps = isCreating ? Math.max(stepKeys.length - 1, 1) : stepKeys.length;
+  const displayCurrentStep = isCreating ? activeStep : activeStep + 1;
+  const isIntroStep = isCreating && activeStep === 0;
 
   const goNext = () => {
     const next = Math.min(activeStep + 2, stepKeys.length);
@@ -726,7 +951,9 @@ const handleFetchTaskVariables = (formId) => {
 
   const handleWizardPrimaryClick = () => {
     if (isLastStep) {
-      if (filterToEdit?.id) {
+      if (isQuickFilterFlow) {
+        filterResults();
+      } else if (filterToEdit?.id) {
         handleUpdateModalClick();
       } else {
         handleSaveFilter();
@@ -761,26 +988,36 @@ const handleFetchTaskVariables = (formId) => {
           />
         </div>
         <div className="wizard-page-indicator" aria-live="polite">
-          {t("{{current}} of {{total}}", { current: activeStep + 1, total: stepKeys.length })}
+          {!isIntroStep
+            ? t("{{current}} of {{total}}", {
+                current: displayCurrentStep,
+                total: displayTotalSteps,
+              })
+            : null}
         </div>
         <div className="buttons-row justify-content-end flex-fill">
           <V8CustomButton
-          variant="primary"
+            variant="primary"
             label={
               isLastStep
-                ? (t("Save and Apply"))
+                ? (isQuickFilterFlow ? `${t("Apply Quick Filter")}` : t("Save and Apply"))
                 : t("Next")
             }
+            icon={isLastStep && isQuickFilterFlow ? <AddIcon color="#7C80FE"/> : null}
             onClick={handleWizardPrimaryClick}
             dataTestId="wizard-next"
             ariaLabel={
               isLastStep
-                ? (filterToEdit?.id ? t("Update this filter") : t("Create this filter"))
+                ? (isQuickFilterFlow
+                    ? t("Apply quick filter")
+                    : (filterToEdit?.id ? t("Update this filter") : t("Create this filter")))
                 : t("Go to next step")
             }
             disabled={
               isLastStep
-                ? (saveFilterButtonDisabled || isTaskFilterSaving)
+                ? (isQuickFilterFlow
+                    ? (disableFilterButton || isTaskFilterSaving)
+                    : (saveFilterButtonDisabled || isTaskFilterSaving))
                 : false
             }
             loading={isLastStep && isTaskFilterSaving}
