@@ -299,16 +299,17 @@ $font-tokens: (
 
         // for the tables and other main contents
         .body-section {
-          @include mixins.vertical-padding();
+          // @include mixins.vertical-padding();
           grid-row: 6;
-          padding: 1rem 0;
+          // padding: 1rem 0;
           overflow-y: auto;
           overflow-x: hidden;
-          padding-bottom: 5rem;
+          padding-bottom: 0;
           display: flex;
           flex-direction: column;
           min-height: 0;
           max-height: var(--body-section-height);
+          margin-top: 1rem;
           
           &.formedit-layout,
           &.processedit-layout,
@@ -400,39 +401,22 @@ $font-tokens: (
   }
 }
 
+// Default custom-scroll class using the mixin
 .custom-scroll {
-  &::-webkit-scrollbar {
-    display: block;
-    width: $scrollBarWidth;
-    
-    background-color: transparent;
-    
-    opacity: 0;
-    
-    cursor: pointer;
-  }
+  @include mixins.custom-scroll($width: $scrollBarWidth);
+}
 
-  &:hover {
-    &::-webkit-scrollbar {
-      opacity: 1;
-      width: calc($scrollBarWidth);
-    }
+// Dropdown custom scroll with customizable width and height
+.dropdown-custom-scroll {
+  @include mixins.custom-scroll($width: 1px, $thumb-height: 13px);
+}
 
-    &::-webkit-scrollbar-thumb {
-      width: calc($scrollBarWidth / 2);
-      min-height: 15.625rem;
-      background-color: var(--gray-medium-dark);
-      background-clip: padding-box;
-      border-radius: 5rem; // should be just big enough to round corners off completely
-      border: var(--spacer-025) solid transparent;
-      opacity: 1;
-      cursor: pointer;
-    }
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    border: none;
-    box-shadow: none;
-    outline: none;
+// Add gap between task list table and scrollbar
+.body-section.custom-scroll {
+    padding-right: 9px !important;
+}
+.form-items-list{
+  .custom-checkbox{
+   margin: 0 !important;
   }
 }

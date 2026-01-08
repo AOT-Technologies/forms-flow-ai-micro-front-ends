@@ -329,7 +329,8 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
           }}
           className={buildClassNames(
             "custom-dropdown-options",
-            `custom-dropdown-options--${variantType}`
+            `custom-dropdown-options--${variantType}`,
+            "dropdown-custom-scroll"
           )}
           style={
             shouldPortal && position

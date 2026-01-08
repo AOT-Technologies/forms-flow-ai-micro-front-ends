@@ -972,7 +972,7 @@ const fetchSubmissions = useCallback(async () => {
   
      
       
-        <div className="body-section">
+        <div className="body-section custom-scroll">
         <div
           className="custom-table-wrapper-outter-submissions"
           data-testid="table-container-wrapper"
