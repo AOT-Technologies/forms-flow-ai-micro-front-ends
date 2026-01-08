@@ -128,8 +128,8 @@ const Roles = React.memo((props: any) => {
           (permission) =>
             permission.name !== "manage_bundles" &&
             permission.name !== "manage_integrations" &&
-            permission.name !== "manage_templates" &&
-            permission.name !== "analyze_metrics_view"
+            permission.name !== "manage_templates" 
+            // permission.name !== "analyze_metrics_view"
         );
         setPermissionData(filteredData);
       },
