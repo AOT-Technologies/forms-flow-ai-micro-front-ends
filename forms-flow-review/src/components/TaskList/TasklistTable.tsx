@@ -306,9 +306,7 @@ const TaskListTable = () => {
     }
     if (dateField) {
       const value = matchingVar?.value
-        ? new Date(matchingVar.value)
-            .toLocaleDateString("en-GB")
-            .replace(/\//g, "-")
+        ? HelperServices.getLocaldate(matchingVar.value)
         : "-";
       return (
         <div className={textClassName} style={textStyle}>
