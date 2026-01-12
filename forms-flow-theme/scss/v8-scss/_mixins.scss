@@ -375,3 +375,19 @@ $box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
   }
 }
+
+// Mixin for custom scrollbar styling
+@mixin custom-scroll($width: 0.5rem, $thumb-height: 6.75rem) {
+  &::-webkit-scrollbar {
+    display: block;
+    width: $width;
+    background-color: transparent;
+    opacity: 1;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--gray-medium-dark);
+    border-radius: 5rem; // should be just big enough to round corners off completely
+    cursor: pointer;
+    min-height: $thumb-height !important;
+  }
+}

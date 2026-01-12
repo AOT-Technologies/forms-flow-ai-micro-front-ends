@@ -500,7 +500,8 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
           <Dropdown.Menu
             className={buildClassNames(
               "filter-dropdown-menu",
-              `filter-dropdown-menu--${variant}`
+              `filter-dropdown-menu--${variant}`,
+              "dropdown-custom-scroll"
             )}
           >
             <div className="filter-dropdown-items">

@@ -373,7 +373,7 @@ const TaskList = () => {
     />
                 </div>
               </div>
-         {viewTasks && <div className="body-section"><TaskListTable /></div>}
+         {viewTasks && <div className="body-section custom-scroll"><TaskListTable /></div>}
     </>
   );
 };
