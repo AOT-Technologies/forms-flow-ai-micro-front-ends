@@ -41,13 +41,13 @@ bottom: 0;
   gap: var(--spacer-075);
   padding: var(--spacer-100);
   border-radius: var(--radius-sm);
-}
 
-.intro-card-radio .form-check-input {
-  margin: 0;
-}
+  .form-check-input {
+    margin: 0;
+  }
 
-.intro-card-radio .form-check-label {
-  margin: 0;
-  flex: 1;
+  .form-check-label {
+    margin: 0;
+    flex: 1;
+  }
 }

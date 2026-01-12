@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import isEqual from "lodash/isEqual";
 import {
@@ -83,21 +83,23 @@ const TaskFilterModalBody = ({
     }
   };
 
-  const renderIntroDescription = (value: string, description: string) => {
-
-    if (value === "quickFilter") {
-      const match = description.match(/^(Apply a quick, temporary)\s+(.*)$/);
-      if (match) {
-        return (
-          <>
-            {match[1]}
-            <br />
-            {match[2]}
-          </>
-        );
-      }
+  const renderIntroDescription = (opt: {
+    description?: string;
+    descriptionLines?: string[];
+  }) => {
+    if (opt.descriptionLines?.length) {
+      return (
+        <>
+          {opt.descriptionLines.map((line, idx) => (
+            <Fragment key={`${idx}-${line}`}>
+              {line}
+              {idx < opt.descriptionLines!.length - 1 ? <br /> : null}
+            </Fragment>
+          ))}
+        </>
+      );
     }
-    return description;
+    return opt.description ?? "";
   };
 
   const {
@@ -753,9 +755,11 @@ const handleFetchTaskVariables = (formId) => {
     {
       value: "quickFilter",
       title: t("Find something now"),
-      description: t(
-        "Apply a quick, temporary filter for a one-time search"
-      ),
+      // Don't parse UI copy to decide formatting; keep formatting intent as data.
+      descriptionLines: [
+        t("Apply a quick, temporary"),
+        t("filter for a one-time search"),
+      ],
       section: "filterType",
     },
     {
@@ -825,7 +829,7 @@ const handleFetchTaskVariables = (formId) => {
                         <div
                           className="task-filter-intro-card__description"
                         >
-                          {renderIntroDescription(opt.value, opt.description)}
+                          {renderIntroDescription(opt)}
                         </div>
                       </div>
                       <input
@@ -882,7 +886,7 @@ const handleFetchTaskVariables = (formId) => {
                         <div
                           className="task-filter-intro-card__description"
                         >
-                          {renderIntroDescription(opt.value, opt.description)}
+                          {renderIntroDescription(opt)}
                         </div>
                       </div>
                       <input
