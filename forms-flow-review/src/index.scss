@@ -28,3 +28,26 @@ bottom: 0;
 .task-assignee-wrapper {
    align-content: center;
 }
+
+// Intro step card radios (Task filter modal)
+.intro-card-radio {
+  border: 1px solid var(--gray-x-light);
+  background: var(--white-300);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row-reverse; 
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacer-075);
+  padding: var(--spacer-100);
+  border-radius: var(--radius-sm);
+}
+
+.intro-card-radio .form-check-input {
+  margin: 0;
+}
+
+.intro-card-radio .form-check-label {
+  margin: 0;
+  flex: 1;
+}

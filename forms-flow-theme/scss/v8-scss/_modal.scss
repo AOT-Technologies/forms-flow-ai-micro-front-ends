@@ -121,8 +121,68 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 .task-filter-modal-popover {
     @include mixins.large-modal-popover();
 
+    .task-filter-modal-intro-title {
+        font-size: var(--font-size-xl);
+    }
+
+    .task-filter-modal-intro-subtitle {
+        font-size: var(--font-size-m);
+    }
+
     .modal-body {
         overflow: hidden;
+
+    
+        .task-filter-intro-card {
+            min-height: 5.938rem;
+            cursor: pointer;
+            border: 1px solid var(--gray-x-light);
+            background: $white;
+        }
+
+        .task-filter-intro-card--disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .task-filter-intro-card--selected {
+            border: 2px solid var(--primary-dark);
+            background: #B8ABFF1A;
+        }
+
+        .task-filter-intro-container {
+            width: 100%;
+            max-width: 47.5rem;
+        }
+
+        .task-filter-intro-section-title {
+            font-size: 16px;
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: 1.313rem;
+        }
+
+        .task-filter-intro-section-title--spaced {
+            margin-top: 3.188rem;
+        }
+
+        .task-filter-intro-card__text {
+            padding-right: var(--spacer-075);
+            flex: 1;
+        }
+
+        .task-filter-intro-card__description {
+            width: 12.875rem;
+            max-width: 12.875rem;
+            font-size: var(--font-size-m);
+            color: var(--gray-dark);
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .task-filter-intro-card__title {
+            font-size: var(--font-size-m);
+            font-weight: var(--font-weight-semibold);
+        }
 
         .drag-drop-list-container{
             overflow: scroll;

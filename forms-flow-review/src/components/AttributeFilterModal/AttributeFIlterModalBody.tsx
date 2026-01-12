@@ -122,7 +122,7 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
   };
 
   // Helper function to clean value by removing '%' characters and convert datetime/day format
-  const cleanValue = (value, fieldName, fieldType) => {
+  const cleanValue = (value, fieldName, fieldType?: string) => {
     const shouldProcessValue = typeof value !== "number" && 
       fieldName !== "created" && 
       typeof value !== "boolean" && 
