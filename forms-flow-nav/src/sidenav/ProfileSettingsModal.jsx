@@ -32,7 +32,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
         ? JSON.parse(tenantDataStr)?.expiry_dt 
         : tenant?.tenantData?.expiry_dt;
       
-      if (expiry_dt) {
+      if (expiry_dt && !isNaN(Date.parse(expiry_dt))) {
         const expiry = new Date(expiry_dt);
         const currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
