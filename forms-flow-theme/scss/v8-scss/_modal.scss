@@ -156,7 +156,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         }
 
         .task-filter-intro-section-title {
-            font-size: 16px;
+            font-size: var(--font-size-m);
             font-weight: var(--font-weight-semibold);
             margin-bottom: 1.313rem;
         }
