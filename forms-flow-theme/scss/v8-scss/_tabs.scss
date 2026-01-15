@@ -37,7 +37,7 @@ $font-weight-regular:var(--font-weight-regular);
     }
   
     .nav-tabs {
-      color: var(--gray-darkest);
+      color: $Gray-darkest;
       border: none;
       width: 100%;
       gap: 2px;
