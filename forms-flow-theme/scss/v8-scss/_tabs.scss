@@ -22,7 +22,6 @@ $font-weight-regular:var(--font-weight-regular);
   @mixin pill-tabs {
     border-bottom: none !important;
     width: 100%;
-    cursor: not-allowed;
     gap: 2px;
   
     .nav {
@@ -38,7 +37,8 @@ $font-weight-regular:var(--font-weight-regular);
     }
   
     .nav-tabs {
-      border-bottom: none !important;
+      color: var(--gray-darkest);
+      border: none;
       width: 100%;
       gap: 2px;
     }
@@ -53,8 +53,6 @@ $font-weight-regular:var(--font-weight-regular);
       align-items: center;
       justify-content: center;
       padding: 0.5rem 1rem;
-      border-radius: $border-radius;
-      border: 1px solid transparent !important;
       background-color: transparent;
       color: $Gray-darkest;
       font-size: $font-size-15;
@@ -72,11 +70,10 @@ $font-weight-regular:var(--font-weight-regular);
       }
   
       &.active {
-        background-color: $Secondary !important;
-        color: $Gray-darkest !important;
+        background: $Secondary !important;
         font-weight: $font-weight-medium;
         border-radius: $border-radius;
-        border: 1px solid $Gray-darkest !important;
+        color: $Gray-darkest !important;
       }
   
       &:focus {
@@ -84,10 +81,10 @@ $font-weight-regular:var(--font-weight-regular);
         outline: none;
       }
   
-      &:disabled {
-        cursor: not-allowed;
-        opacity: 0.6;
-        border-bottom: none !important;
+      &:disabled, &.disabled {
+        color: var(--gray-medium);
+        cursor: default;
+        pointer-events: none;
       }
     }
   
@@ -106,11 +103,6 @@ $font-weight-regular:var(--font-weight-regular);
   
   .pill-tabs-disabled {
     @include pill-tabs;
-  
-    .nav-link {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
   }
   
   
