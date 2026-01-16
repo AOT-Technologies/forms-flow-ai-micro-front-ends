@@ -620,3 +620,48 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     color: var(--gray-dark);
     margin-bottom: var(--spacer-075);
 }
+
+.profile-settings-modal {
+    @include large-modal-popover();
+    .modal-body {
+        padding: 1.5rem;
+    }
+    .modal-subtitle{
+        padding: 1.188rem 0.75rem
+    }
+
+    .profile-settings-details-box {
+        width: 48.438rem; 
+        height: 21.563rem; 
+        max-width: 100%;
+        overflow: auto;
+    }
+
+    .profile-settings-note-panel {
+        width: 46rem; 
+        height: 3.688rem; 
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .profile-settings-note-panel.info-panel {
+        padding-top: 0;
+        padding-bottom: 0;
+
+        .info-icon {
+            width: 1.188rem; 
+            height: 1.499rem;
+            flex: 0 0 auto;
+        }
+        .info-icon svg {
+            width: 1.188rem; 
+            height: 1.499rem; 
+            display: block;
+        }
+        .info-content {
+            display: flex;
+            align-items: center;
+        }
+    }
+}
