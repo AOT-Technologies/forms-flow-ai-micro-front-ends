@@ -15,6 +15,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [selectedLang, setSelectedLang] = useState(prevSelectedLang || LANGUAGE );
   const [daysDifference, setDaysDifference] = useState(null);
   const [activeTab, setActiveTab] = useState("Profile");
+  const isSSO = false;
   const [profileFields, setProfileFields] = useState({
     firstName: "",
     lastName: "",
@@ -199,6 +200,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                     placeholder="First Name"
                     dataTestId="profile-first-name"
                     ariaLabel={t("First Name")}
+                    disabled={isSSO}
                   />
                 </div>
                 <div className="col-12 col-md-6">
@@ -209,6 +211,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                     placeholder="Last Name"
                     dataTestId="profile-last-name"
                     ariaLabel={t("Last Name")}
+                    disabled={isSSO}
                   />
                 </div>
                 <div className="col-12 col-md-6">
@@ -219,6 +222,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                     placeholder="Email"
                     dataTestId="profile-email"
                     ariaLabel={t("Email")}
+                    disabled={isSSO}
                   />
                 </div>
                 <div className="col-12 col-md-6">
@@ -229,6 +233,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                     placeholder="Username"
                     dataTestId="profile-username"
                     ariaLabel={t("Username")}
+                    disabled={isSSO}
                   />
                 </div>
                 <div className="col-12">
