@@ -1,4 +1,4 @@
-import React, { forwardRef, memo } from "react";
+import React, { forwardRef, memo, useState, useEffect } from "react";
 
 /**
  * Alert is a reusable, accessible alert component for forms-flow apps.
@@ -31,6 +31,10 @@ interface AlertProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'childr
   rightContent?: React.ReactNode;
   /** Controls whether the alert is visible */
   isShowing?: boolean;
+  /** Automatically close the alert after timeout */
+  autoClose?: boolean;
+  /** Timeout in milliseconds for auto-close (default: 5000ms) */
+  displayTime?: number;
 }
 
 /**
@@ -49,20 +53,44 @@ const AlertComponent = forwardRef<HTMLDivElement, AlertProps>(({
   dataTestId = "app-alert",
   rightContent,
   isShowing = false,
+  autoClose = false,
+  displayTime = 5000,
   className = "",
   ...restProps
 }, ref) => {
-  
-  
+  // Internal state to manage visibility when autoClose is enabled
+  const [isVisible, setIsVisible] = useState(isShowing);
+
+  // Handle auto-close functionality
+  useEffect(() => {
+    if (autoClose && isShowing) {
+      // Reset visibility when isShowing becomes true
+      setIsVisible(true);
+      
+      // Set timeout to hide the alert
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, displayTime);
+
+      // Cleanup timer on unmount or when dependencies change
+      return () => {
+        clearTimeout(timer);
+      };
+    } else {
+      // If autoClose is false, sync with isShowing prop
+      setIsVisible(isShowing);
+    }
+  }, [autoClose, isShowing, displayTime]);
+
   // If alert is not showing, render nothing
-  if (!isShowing) return null;
+  if (!isVisible) return null;
   
   // Build className string
   const alertClassName = buildClassNames(
     "custom-alert",
     `custom-alert-${variant}`,
-    isShowing && "entering",
-    !isShowing && "leaving",
+    isVisible && "entering",
+    !isVisible && "leaving",
     className
   );
   
