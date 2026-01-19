@@ -31,8 +31,7 @@ import { TableFooter,
    CustomInfo, 
   ConfirmModal,
   V8CustomButton,
-  BreadCrumbs,
-} 
+}
 from "@formsflow/components";
 import { useHistory } from "react-router-dom";
 import { navigateToAdminRoles } from "@formsflow/service";
@@ -651,28 +650,8 @@ const Roles = React.memo((props: any) => {
       },
     },
   ];
-  // Breadcrumb configuration
-  const breadcrumbItems = [
-    { label: t("Manage"), id: "manage" },
-    { label: t("Roles"), id: "roles" }
-  ];
-
-  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
-    if (item.id === "manage" || item.id === "roles") {
-      navigateToAdminRoles(history, tenantId);
-    }
-  };
-
   return (
     <>
-      <div style={{ marginBottom: "15px" }}>
-        <BreadCrumbs
-          items={breadcrumbItems}
-          variant="default"
-          onBreadcrumbClick={handleBreadcrumbClick}
-          dataTestId="admin-roles-breadcrumbs"
-        />
-      </div>
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">

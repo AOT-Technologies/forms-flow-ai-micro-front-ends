@@ -16,7 +16,7 @@ import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
 import { CreateUser } from "../../services/users";
-import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, BreadCrumbs } from "@formsflow/components";
+import { TableFooter, CustomSearch, CloseIcon, V8CustomButton } from "@formsflow/components";
 import { useHistory, useParams } from "react-router-dom";
 import { navigateToAdminUsers, getRedirectUrl } from "@formsflow/service";
 
@@ -375,28 +375,8 @@ const Users = React.memo((props: any) => {
     { text: 'All', value: roles.length },
   ];
 
-  // Breadcrumb configuration
-  const breadcrumbItems = [
-    { label: t("Manage"), id: "manage" },
-    { label: t("Users"), id: "users" }
-  ];
-
-  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
-    if (item.id === "manage" || item.id === "users") {
-      navigateToAdminUsers(history, tenantId);
-    }
-  };
-
   return (
     <>
-      <div style={{ marginBottom: "15px" }}>
-        <BreadCrumbs
-          items={breadcrumbItems}
-          variant="default"
-          onBreadcrumbClick={handleBreadcrumbClick}
-          dataTestId="admin-users-breadcrumbs"
-        />
-      </div>
       <Modal
         show={showSuccessModal}
         onHide={closeSuccessModal}

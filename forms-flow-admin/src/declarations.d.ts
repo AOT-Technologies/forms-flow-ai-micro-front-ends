@@ -76,6 +76,8 @@ declare module "@formsflow/components" {
     CustomUrl,
     Switch,
     V8CustomButton,
-    BreadCrumbs
+    BreadCrumbs,
+    DownArrowIcon,
+    UpArrowIcon,
   }: any;
 }
