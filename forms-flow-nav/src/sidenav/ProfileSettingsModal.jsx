@@ -18,7 +18,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   useEffect(() => { 
 
     fetchSelectLanguages((languages) => {
-      const tenantData = JSON.parse(StorageService.get("TENANT_DATA"));
+      const tenantData = JSON.parse(StorageService.get("tenantData"));
       const userLanguageList = (MULTITENANCY_ENABLED && tenantData?.details?.langList) || USER_LANGUAGE_LIST;
       const userLanguagesArray = typeof userLanguageList === 'object' ? Object.values(userLanguageList) : userLanguageList.split(',');
       const supportedLanguages = languages.filter(item => userLanguagesArray.includes(item.name));
@@ -27,7 +27,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
 
     // Calculate remaining days from expiry_dt 
     try {
-      const tenantDataStr = StorageService.get("TENANT_DATA");
+      const tenantDataStr = StorageService.get("tenantData");
       const expiry_dt = tenantDataStr 
         ? JSON.parse(tenantDataStr)?.expiry_dt 
         : tenant?.tenantData?.expiry_dt;
