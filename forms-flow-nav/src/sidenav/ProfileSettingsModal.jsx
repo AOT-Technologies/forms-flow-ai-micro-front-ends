@@ -8,12 +8,13 @@ import { useTranslation } from "react-i18next";
 import i18n from '../resourceBundles/i18n';
 import { StorageService } from "@formsflow/service";
 import { KEYCLOAK_AUTH_URL, KEYCLOAK_REALM, LANGUAGE, MULTITENANCY_ENABLED, USER_LANGUAGE_LIST } from '../constants/constants';
+import { fetchPermissions } from '../services/permissions';
+import { getUserPermissionsByCategory } from '../helper/helper';
 
 export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [selectLanguages, setSelectLanguages] = useState([]);
   const prevSelectedLang = localStorage.getItem('i18nextLng');
   const [selectedLang, setSelectedLang] = useState(prevSelectedLang || LANGUAGE );
-  const [daysDifference, setDaysDifference] = useState(null);
   const [activeTab, setActiveTab] = useState("Profile");
   const isSSO = false;
   const [profileFields, setProfileFields] = useState({
@@ -23,6 +24,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     username: "",
   });
   const [initialProfileFields, setInitialProfileFields] = useState(null);
+  const [userPermissions, setUserPermissions] = useState({});
   const { t } = useTranslation(); 
   
   useEffect(() => {
@@ -57,31 +59,41 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : languages);
     });
 
-    // Calculate remaining days from expiry_dt 
-    try {
-      const tenantDataStr = StorageService.get("TENANT_DATA");
-      const expiry_dt = tenantDataStr 
-        ? JSON.parse(tenantDataStr)?.expiry_dt 
-        : tenant?.tenantData?.expiry_dt;
-      
-      if (expiry_dt && !Number.isNaN(Date.parse(expiry_dt))) {
-        const expiry = new Date(expiry_dt);
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        expiry.setHours(0, 0, 0, 0);
-        const timeDifference = expiry.getTime() - currentDate.getTime();
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        setDaysDifference(days);
-      } else {
-        setDaysDifference(null);
-      }
-    } catch (error) {
-      console.error("Error calculating days difference:", error);
-      setDaysDifference(null);
+  }, []);
+
+
+  // Fetch user permissions when Permissions tab is active
+  useEffect(() => {
+    if (activeTab === "Permissions" && show) {
+      // Get user roles from storage
+      const userRoles = JSON.parse(
+        StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
+      );
+      console.log('userRoles', userRoles);
+
+      // Fetch all permissions from API
+      fetchPermissions(
+        (data) => {
+          console.log('data', data);
+          // Filter out manage_bundles, manage_integrations, and manage_templates permissions
+          const filteredData = data.filter(
+            (permission) =>
+              permission.name !== "manage_bundles" &&
+              permission.name !== "manage_integrations" &&
+              permission.name !== "manage_templates"
+          );
+          
+          // Use helper function to group user permissions by category
+          const grouped = getUserPermissionsByCategory(userRoles, filteredData);
+          setUserPermissions(grouped);
+        },
+        (err) => {
+          console.error("Error fetching permissions:", err);
+          setUserPermissions({});
+        }
+      );
     }
-
-  }, [tenant]);
-
+  }, [activeTab, show]);
 
   const handleLanguageChange = (newLang) => {
     setSelectedLang(newLang);
@@ -276,21 +288,53 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             />
           </>
         ) : (
-          <div></div>
+            <>
+              <div className='permissions-container'>
+                {Object.keys(userPermissions).length === 0 ? (
+                  <div className="text-center p-4 border rounded">
+                    <p>{t("No permissions found")}</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="permissions-list p-3 border rounded">
+                      {Object.entries(userPermissions).map(([category, permissions]) => (
+                        <div key={category} className="permission-category mb-4">
+                          <div className="permission-category-title fw-bold mb-2" style={{ color: '#333', fontSize: '1rem' }}>
+                            {category === "Admin" 
+                              ? t("Access to Manage")
+                              : category === "Billing"
+                              ? t("Access to billing")
+                              : category === "Users"
+                              ? t("Manage users")
+                              : t(`Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`)}
+                          </div>
+                          <div className="permission-items" style={{ paddingLeft: '1.5rem' }}>
+                            {permissions.map((permission) => (
+                              <div 
+                                key={permission.name} 
+                                className="permission-item mb-2"
+                                style={{ color: '#333', fontSize: '0.9375rem', lineHeight: '1.5' }}
+                                data-testid={`permission-${permission.name}`}
+                              >
+                                {t(permission.description || permission.name)}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                <div className='info-section'>
+                  {t("Contact an administrator to request any changes to your permissions")}
+                </div>
+              </div>
+            </>
         )}
-          {tenantId && daysDifference !== null ? (
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={
-                `You are currently using a test instance. The trial period ends in ${daysDifference} days.`
-              }
-            />
-          ) : null}
       </Modal.Body>
 
       <Modal.Footer>
-        <div className="buttons-row">
+        <div className="buttons-row d-flex justify-content-end">
           <V8CustomButton
             label={t("Update")}
             onClick={handleConfirmProfile}
@@ -299,7 +343,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             disabled={activeTab !== "Profile" || !isAnythingChanged}
             variant="primary"
           />
-         
         </div>
       </Modal.Footer>
     </Modal>

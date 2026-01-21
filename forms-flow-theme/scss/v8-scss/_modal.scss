@@ -664,4 +664,14 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             align-items: center;
         }
     }
+
+    .permissions-container{
+        .info-section {
+            border-radius: 0.3125rem;
+            border: 1px solid var(--vivid);
+            background: rgba(124, 128, 254, 0.10);
+            padding: 1rem;
+            margin-top: 0.87rem;
+        }
+    }
 }
