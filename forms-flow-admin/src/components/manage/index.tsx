@@ -7,7 +7,6 @@ import UserManagement from "../users";
 import Organization from "../organization";
 import { StorageService } from "@formsflow/service";
 import { BreadCrumbs, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
-import "./manage.scss";
 
 interface ManageProps {
   props: any;
@@ -100,9 +99,9 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
             }}
           >
             {tabContentExpanded ? (
-              <UpArrowIcon color="#9E9E9E" />
+              <UpArrowIcon className="svgIcon-medium-dark" />
             ) : (
-              <DownArrowIcon color="#9E9E9E" />
+              <DownArrowIcon className="svgIcon-medium-dark" />
             )}
           </div>
         </div>

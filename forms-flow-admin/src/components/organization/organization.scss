@@ -1,59 +1,51 @@
+@import "../../variables.scss";
+
 .organization-container {
-  color: #7C7D7F;
+  color: $gray-dark;
   margin-top: 2.44rem;
 
   .organization-section {
     margin-bottom: 3.38rem;
 
-    .organization-section-header {
+    &-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding-bottom: 0.81rem;
       cursor: pointer;
-      border-bottom: 1px solid #E5E5E5;
+      border-bottom: 1px solid $gray-medium;
 
       .organization-section-title {
         font-size: 1.25rem;
         font-weight: 500;
-        color: #7C7D7F;
+        color: inherit;
         margin: 0;
       }
-
-      .organization-chevron {
-        color: #9E9E9E;
-        font-size: 1.25rem;
-        transition: transform 0.2s ease;
-      }
-    }
-
-    .organization-accordion-content {
-      padding-top: 1rem;
     }
   }
 
   .subscription-card {
-    background-color: #ffffff;
-    border-radius: 8px;
+    background-color: $white;
+    border: 1px solid $gray-medium;
+    border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 24px;
-    margin-top: 16px;
-    border: 1px solid #e0e0e0;
+    padding: 1.5rem;
+    margin-top: 1rem;
 
     .subscription-status {
-      margin-bottom: 12px;
+      margin-bottom: 0.75rem;
 
       .status-text {
         font-size: 3rem;
         font-weight: 400;
-        color: #4A4A4A;
+        color: $gray-darkest;
         line-height: 1.2;
       }
     }
 
     .subscription-description {
       font-size: 0.9375rem;
-      color: #4A4A4A;
+      color: $gray-darkest;
       margin-bottom: 2rem;
     }
   }

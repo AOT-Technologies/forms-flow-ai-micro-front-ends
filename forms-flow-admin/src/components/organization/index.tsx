@@ -30,7 +30,7 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ title, isOpen, onTo
         onKeyDown={handleKeyDown}
       >
         <h3 className="organization-section-title">{title}</h3>
-        {isOpen ? <UpArrowIcon color="#9E9E9E"/> : <DownArrowIcon color="#9E9E9E"/>}
+        {isOpen ? <UpArrowIcon className="svgIcon-medium-dark"/> : <DownArrowIcon className="svgIcon-medium-dark"/>}
       </div>
       <Collapse in={isOpen}>
         <div>{children}</div>
