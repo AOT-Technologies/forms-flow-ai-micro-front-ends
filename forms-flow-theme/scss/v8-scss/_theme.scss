@@ -340,6 +340,9 @@ $font-tokens: (
           &.task-list-body-section {
             max-height: calc(100vh - 250px) !important;
           }
+          &.user-form-body-section {
+            padding-bottom:4rem !important; 
+          }
         }
   
         .section-seperation-left {
