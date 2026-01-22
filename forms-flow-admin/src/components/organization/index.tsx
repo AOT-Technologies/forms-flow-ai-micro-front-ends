@@ -72,6 +72,23 @@ const Organization: React.FC<any> = (props) => {
 
 
   const isTrial = daysDifference !== null && daysDifference > 0;
+  const subscriptionBtnLabel = isTrial ? t("Upgrade") : t("Contact Sales");
+
+  const renderExternalButtons = (label: string) => {
+    const key = label.toLowerCase()
+      .replace(/view our /g, '')
+      .split(' ')[0]; // Extract first word after "view our"
+    const dataTestId = `view-${key}-button`;
+    
+    return (
+      <V8CustomButton
+        label={t(label)}
+        variant="secondary"
+        dataTestId={dataTestId}
+        icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
+      />
+    );
+  };
 
   return (
     <div className="organization-container">
@@ -90,21 +107,7 @@ const Organization: React.FC<any> = (props) => {
                 ? t(`You have ${daysDifference} days left of your free trial.`)
                 : t("You are currently using a paid version of FormsFlow.")}
             </p>
-            {isTrial ? (
-              <V8CustomButton
-                label={t("Upgrade")}
-                variant="secondary"
-                dataTestId="upgrade-button"
-                icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
-              />
-            ) : (
-              <V8CustomButton
-                label={t("Contact Sales")}
-                variant="secondary"
-                dataTestId="contact-sales-button"
-                icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
-              />
-            )}
+            {renderExternalButtons(subscriptionBtnLabel)}
           </div>
         </AccordionSection>
 
@@ -114,18 +117,8 @@ const Organization: React.FC<any> = (props) => {
           onToggle={() => setTermsOpen(!termsOpen)}
         >
           <div className="terms-actions">
-            <V8CustomButton
-              label={t("View our Terms and Conditions")}
-              variant="secondary"
-              dataTestId="view-terms-button"
-              icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
-            />
-            <V8CustomButton
-              label={t("View our Privacy Policy")}
-              variant="secondary"
-              dataTestId="view-privacy-button"
-              icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
-            />
+            {renderExternalButtons('View our Terms and Conditions')}
+            {renderExternalButtons('View our Privacy Policy')}
           </div>
         </AccordionSection>
       </div>
