@@ -299,41 +299,37 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             />
           </>
         ) : (
-            <>
-              <div className='permissions-container'>
-                {Object.keys(userPermissions).length === 0 ? (
-                  <div className="text-center p-4 border rounded">
-                    <p>{t("No permissions found")}</p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="permissions-list p-3 border rounded">
-                      {Object.entries(userPermissions).map(([category, permissions]) => (
-                        <div key={category} className="permission-category mb-4">
-                          <div className="permission-category-title fw-bold mb-2">
-                            {getCategoryLabel(category)}
-                          </div>
-                          <div className="permission-items ps-4">
-                            {permissions.map((permission) => (
-                              <div 
-                                key={permission.name} 
-                                className="permission-item mb-2"
-                                data-testid={`permission-${permission.name}`}
-                              >
-                                {t(permission.description || permission.name)}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-                <div className='info-section'>
-                  {t("Contact an administrator to request any changes to your permissions")}
+            <div className='permissions-container'>
+              {Object.keys(userPermissions).length === 0 ? (
+                <div className="text-center p-4 border rounded">
+                  <p>{t("No permissions found")}</p>
                 </div>
+              ) : (
+                <div className="permissions-list p-3 border rounded">
+                  {Object.entries(userPermissions).map(([category, permissions]) => (
+                    <div key={category} className="permission-category mb-4">
+                      <div className="permission-category-title fw-bold mb-2">
+                        {getCategoryLabel(category)}
+                      </div>
+                      <div className="permission-items ps-4">
+                        {permissions.map((permission) => (
+                          <div 
+                            key={permission.name} 
+                            className="permission-item mb-2"
+                            data-testid={`permission-${permission.name}`}
+                          >
+                            {t(permission.description || permission.name)}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className='info-section'>
+                {t("Contact an administrator to request any changes to your permissions")}
               </div>
-            </>
+            </div>
         )}
       </Modal.Body>
 
