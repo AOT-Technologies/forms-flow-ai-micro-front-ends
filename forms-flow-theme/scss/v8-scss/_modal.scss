@@ -666,6 +666,17 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     }
 
     .permissions-container{
+        .permissions-list{
+            .permission-category{
+                .permission-items{
+                    .permission-item{
+                        font-size: 0.9375rem; 
+                        line-height: 1.5; 
+                    }
+                }
+            }
+        }
+
         .info-section {
             border-radius: 0.3125rem;
             border: 1px solid var(--vivid);

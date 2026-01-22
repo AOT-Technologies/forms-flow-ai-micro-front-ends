@@ -69,12 +69,10 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       const userRoles = JSON.parse(
         StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
       );
-      console.log('userRoles', userRoles);
 
       // Fetch all permissions from API
       fetchPermissions(
         (data) => {
-          console.log('data', data);
           // Filter out manage_bundles, manage_integrations, and manage_templates permissions
           const filteredData = data.filter(
             (permission) =>
@@ -136,6 +134,19 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const isAnythingChanged = isProfileChanged || !isSaveDisabled;
 
   const selectedLangLabel = selectLanguages.find(lang => lang.name === selectedLang)?.value || selectedLang;
+
+  const getCategoryLabel = (category) => {
+    if (category === "Admin") {
+      return t("Access to Manage");
+    }
+    if (category === "Billing") {
+      return t("Access to billing");
+    }
+    if (category === "Users") {
+      return t("Manage users");
+    }
+    return t(`Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`);
+  };
 
   const tabs = [
     { key: "Profile", label: t("Profile") },
@@ -299,21 +310,14 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                     <div className="permissions-list p-3 border rounded">
                       {Object.entries(userPermissions).map(([category, permissions]) => (
                         <div key={category} className="permission-category mb-4">
-                          <div className="permission-category-title fw-bold mb-2" style={{ color: '#333', fontSize: '1rem' }}>
-                            {category === "Admin" 
-                              ? t("Access to Manage")
-                              : category === "Billing"
-                              ? t("Access to billing")
-                              : category === "Users"
-                              ? t("Manage users")
-                              : t(`Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`)}
+                          <div className="permission-category-title fw-bold mb-2">
+                            {getCategoryLabel(category)}
                           </div>
-                          <div className="permission-items" style={{ paddingLeft: '1.5rem' }}>
+                          <div className="permission-items ps-4">
                             {permissions.map((permission) => (
                               <div 
                                 key={permission.name} 
                                 className="permission-item mb-2"
-                                style={{ color: '#333', fontSize: '0.9375rem', lineHeight: '1.5' }}
                                 data-testid={`permission-${permission.name}`}
                               >
                                 {t(permission.description || permission.name)}
