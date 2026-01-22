@@ -62,9 +62,9 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   }, []);
 
 
-  // Fetch user permissions when Permissions tab is active
+  // Fetch user permissions when modal opens
   useEffect(() => {
-    if (activeTab === "Permissions" && show) {
+    if (show) {
       // Get user roles from storage
       const userRoles = JSON.parse(
         StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
@@ -93,7 +93,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
         }
       );
     }
-  }, [activeTab, show]);
+  }, [show]);
 
   const handleLanguageChange = (newLang) => {
     setSelectedLang(newLang);
