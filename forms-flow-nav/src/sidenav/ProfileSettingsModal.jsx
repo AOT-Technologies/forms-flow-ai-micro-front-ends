@@ -339,7 +339,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                 </div>
                 <div className="col-12">
                   <V8CustomButton
-                    label="Reset Password"
+                    label={resetPasswordLoading ? "Resetting password" : "Reset Password"}
                     variant="secondary"
                     dataTestId="profile-reset-password"
                     ariaLabel="Reset Password"
