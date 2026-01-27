@@ -193,7 +193,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
               (isCreating && currentStep === 4)) &&
               t("Name your custom filter and choose who you can see it")}
           </div>
-          {((filterToEdit?.id && filterToEdit?.name !== "All Tasks") || isQuickFilterEdit) && (
+          {((filterToEdit?.id && filterToEdit?.name !== "All Tasks")) && (
             <V8CustomButton
               secondary
               label={t("Delete filter")}
