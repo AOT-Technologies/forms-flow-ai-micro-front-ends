@@ -665,3 +665,12 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         }
     }
 }
+
+.single-variable-selection-modal{
+    @include large-modal-popover();
+}
+
+.modal--inactive {
+    opacity: 0;
+    pointer-events: none;
+}
