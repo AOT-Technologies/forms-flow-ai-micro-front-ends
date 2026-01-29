@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Modal from 'react-bootstrap/Modal';
 import { Tabs, Tab } from 'react-bootstrap';
 import { CloseIcon, V8CustomButton, CustomInfo, SelectDropdown, CustomTextInput, ApplicationLogo } from "@formsflow/components";
-import { fetchSelectLanguages, updateUserlang } from '../services/language';
+import { fetchSelectLanguages } from '../services/language';
 import { updateUserProfile } from '../services/user';
 import { useTranslation } from "react-i18next";
 import i18n from '../resourceBundles/i18n';
@@ -125,59 +125,68 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       }
     }
 
-    const hasProfileChanges = Object.keys(profileData).length > 0;
     const hasLanguageChange = selectedLang !== prevSelectedLang;
 
+    // If language changed, add locale to attributes and always include username
+    if (hasLanguageChange) {
+      profileData.attributes = { locale: [selectedLang] };
+      // Always include username when updating locale (required by backend)
+      if (!profileData.username) {
+        profileData.username = username;
+      }
+    }
+
+    const hasChanges = Object.keys(profileData).length > 0;
+
     // If no changes at all, just close the modal
-    if (!hasProfileChanges && !hasLanguageChange) {
+    if (!hasChanges) {
       onClose();
       return;
     }
 
     try {
-      let responseData = {};
-
-      // Only call profile update API if there are profile field changes
-      if (hasProfileChanges) {
-        const response = await updateUserProfile(userId, profileData);
-        responseData = response?.data || {};
-        
-        // Update the stored user details with the response data from API
-        const userDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
-        const updatedUserDetail = {
-          ...userDetail,
-          // Use response data if available, otherwise fall back to sent data
-          ...(responseData.firstName && { given_name: responseData.firstName }),
-          ...(responseData.lastName && { family_name: responseData.lastName }),
-          ...(responseData.email && { email: responseData.email }),
-          ...(responseData.username && { preferred_username: responseData.username }),
-          // Fallback to profileData if response doesn't include the fields
-          ...(!responseData.firstName && profileData.firstName && { given_name: profileData.firstName }),
-          ...(!responseData.lastName && profileData.lastName && { family_name: profileData.lastName }),
-          ...(!responseData.email && profileData.email && { email: profileData.email }),
-          ...(!responseData.username && profileData.username && { preferred_username: profileData.username }),
-        };
-        
-        // Update the name field using response data
-        const newFirstName = responseData.firstName || profileData.firstName || userDetail.given_name || "";
-        const newLastName = responseData.lastName || profileData.lastName || userDetail.family_name || "";
-        if (profileData.firstName || profileData.lastName) {
-          updatedUserDetail.name = `${newFirstName} ${newLastName}`.trim();
-        }
-        
-        StorageService.save(StorageService.User.USER_DETAILS, JSON.stringify(updatedUserDetail));
-
-        // Publish event to notify other components (like Sidebar) of the profile update
-        if (publish) {
-          publish("profileUpdated", { ...responseData, userId });
-        }
+      const response = await updateUserProfile(userId, profileData);
+      const responseData = response?.data || {};
+      
+      // Update the stored user details with the response data from API
+      const userDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+      const updatedUserDetail = {
+        ...userDetail,
+        // Use response data if available, otherwise fall back to sent data
+        ...(responseData.firstName && { given_name: responseData.firstName }),
+        ...(responseData.lastName && { family_name: responseData.lastName }),
+        ...(responseData.email && { email: responseData.email }),
+        ...(responseData.username && { preferred_username: responseData.username }),
+        // Fallback to profileData if response doesn't include the fields
+        ...(!responseData.firstName && profileData.firstName && { given_name: profileData.firstName }),
+        ...(!responseData.lastName && profileData.lastName && { family_name: profileData.lastName }),
+        ...(!responseData.email && profileData.email && { email: profileData.email }),
+        ...(!responseData.username && profileData.username && { preferred_username: profileData.username }),
+      };
+      
+      // Update the name field using response data
+      const newFirstName = responseData.firstName || profileData.firstName || userDetail.given_name || "";
+      const newLastName = responseData.lastName || profileData.lastName || userDetail.family_name || "";
+      if (profileData.firstName || profileData.lastName) {
+        updatedUserDetail.name = `${newFirstName} ${newLastName}`.trim();
       }
 
-      // Update language using the existing locale API (separate from profile update)
+      // Update locale in stored user details if changed
+      if (hasLanguageChange) {
+        updatedUserDetail.locale = selectedLang;
+      }
+      
+      StorageService.save(StorageService.User.USER_DETAILS, JSON.stringify(updatedUserDetail));
+
+      // Update language in i18n and localStorage if changed
       if (hasLanguageChange) {
         i18n.changeLanguage(selectedLang);
         localStorage.setItem("i18nextLng", selectedLang);
-        updateUserlang(selectedLang);
+      }
+
+      // Publish event to notify other components (like Sidebar) of the profile update
+      if (publish) {
+        publish("profileUpdated", { ...responseData, userId });
       }
 
       onClose();
