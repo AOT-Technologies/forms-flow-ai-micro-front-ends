@@ -113,50 +113,69 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     setSelectedLang(newLang);
   };
 
-  const isValidEmail = (email) => {
-    // Simple, practical email validation (good UX, not overly strict)
-    const value = String(email || "").trim();
-    if (!value) return true; // allow empty if your system permits it
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  };
-  const emailIsInvalid = emailTouched && !isValidEmail(profileFields.email);
+  // Helper: Build profile payload with only changed fields
+  const buildProfilePayload = (currentFields, initialFields, currentLang, prevLang) => {
+    const payload = {};
+    const trimmedFields = {
+      firstName: (currentFields.firstName || "").trim(),
+      lastName: (currentFields.lastName || "").trim(),
+      username: (currentFields.username || "").trim(),
+      email: (currentFields.email || "").trim(),
+    };
 
-  const isValidUsername = (username) => {
-    const value = String(username || "");
-    if (!value) return true; // allow empty if your system permits it
-    return /^\S+$/.test(value); // no whitespace
-  };
-  const usernameIsInvalid =
-    usernameTouched && !isValidUsername(profileFields.username);
-
-  useEffect(() => {
-    setResetPasswordState("default");
-  }, [profileFields.email]);
-
-  const handleResetPassword = async () => {
-    setEmailTouched(true);
-    if (!profileFields.email || emailIsInvalid) return;
-
-    setResetPasswordLoading(true);
-    try {
-      await requestResetPassword();
-      setResetPasswordState("success");
-      setLastResetPasswordError(null);
-    } catch (e) {
-      setResetPasswordState("error");
-      const status = e?.response?.status;
-      const message = e?.response?.data?.message || e?.message;
-      const details = { status, message, data: e?.response?.data };
-      setLastResetPasswordError(details);
-      try {
-        StorageService.save("PROFILE_RESET_PASSWORD_LAST_ERROR", JSON.stringify(details));
-      } catch (_) {
-      }
-     
-      console.error("Reset password failed:", details);
-    } finally {
-      setResetPasswordLoading(false);
+    if (initialFields) {
+      const fieldKeys = ["firstName", "lastName", "username", "email"];
+      fieldKeys.forEach((key) => {
+        if (trimmedFields[key] !== initialFields[key]) {
+          payload[key] = trimmedFields[key];
+        }
+      });
     }
+
+    // If language changed, add locale and ensure username is included
+    if (currentLang !== prevLang) {
+      payload.attributes = { locale: [currentLang] };
+      payload.username = payload.username || trimmedFields.username;
+    }
+
+    return payload;
+  };
+
+  // Helper: Build updated user detail object from API response
+  const buildUpdatedUserDetail = (userDetail, responseData, profileData, newLang, hasLangChange) => {
+    const updated = {
+      ...userDetail,
+      // Use response data if available
+      ...(responseData.firstName && { given_name: responseData.firstName }),
+      ...(responseData.lastName && { family_name: responseData.lastName }),
+      ...(responseData.email && { email: responseData.email }),
+      ...(responseData.username && { preferred_username: responseData.username }),
+      // Fallback to profileData if response doesn't include the fields
+      ...(!responseData.firstName && profileData.firstName && { given_name: profileData.firstName }),
+      ...(!responseData.lastName && profileData.lastName && { family_name: profileData.lastName }),
+      ...(!responseData.email && profileData.email && { email: profileData.email }),
+      ...(!responseData.username && profileData.username && { preferred_username: profileData.username }),
+    };
+
+    // Update the name field if first or last name changed
+    if (profileData.firstName || profileData.lastName) {
+      const newFirst = responseData.firstName || profileData.firstName || userDetail.given_name || "";
+      const newLast = responseData.lastName || profileData.lastName || userDetail.family_name || "";
+      updated.name = `${newFirst} ${newLast}`.trim();
+    }
+
+    // Update locale if language changed
+    if (hasLangChange) {
+      updated.locale = newLang;
+    }
+
+    return updated;
+  };
+
+  // Helper: Apply language change to i18n and localStorage
+  const applyLanguageChange = (newLang) => {
+    i18n.changeLanguage(newLang);
+    localStorage.setItem("i18nextLng", newLang);
   };
 
   const handleConfirmProfile = async () => { 
@@ -165,91 +184,32 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
-
-    // Build payload with only changed fields
-    const profileData = {};
-    const firstName = (profileFields.firstName || "").trim();
-    const lastName = (profileFields.lastName || "").trim();
-    const username = (profileFields.username || "").trim();
-    const email = (profileFields.email || "").trim();
-
-    if (initialProfileFields) {
-      if (firstName !== initialProfileFields.firstName) {
-        profileData.firstName = firstName;
-      }
-      if (lastName !== initialProfileFields.lastName) {
-        profileData.lastName = lastName;
-      }
-      if (username !== initialProfileFields.username) {
-        profileData.username = username;
-      }
-      if (email !== initialProfileFields.email) {
-        profileData.email = email;
-      }
-    }
-
     const hasLanguageChange = selectedLang !== prevSelectedLang;
+    const profileData = buildProfilePayload(profileFields, initialProfileFields, selectedLang, prevSelectedLang);
 
-    // If language changed, add locale to attributes and always include username
-    if (hasLanguageChange) {
-      profileData.attributes = { locale: [selectedLang] };
-      // Always include username when updating locale (required by backend)
-      if (!profileData.username) {
-        profileData.username = username;
-      }
-    }
-
-    const hasChanges = Object.keys(profileData).length > 0;
-
-    // If no changes at all, just close the modal
-    if (!hasChanges) {
+    if (Object.keys(profileData).length === 0) {
       onClose();
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+
     try {
       const response = await updateUserProfile(userId, profileData);
       const responseData = response?.data || {};
-      
-      // Update the stored user details with the response data from API
       const userDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
-      const updatedUserDetail = {
-        ...userDetail,
-        // Use response data if available, otherwise fall back to sent data
-        ...(responseData.firstName && { given_name: responseData.firstName }),
-        ...(responseData.lastName && { family_name: responseData.lastName }),
-        ...(responseData.email && { email: responseData.email }),
-        ...(responseData.username && { preferred_username: responseData.username }),
-        // Fallback to profileData if response doesn't include the fields
-        ...(!responseData.firstName && profileData.firstName && { given_name: profileData.firstName }),
-        ...(!responseData.lastName && profileData.lastName && { family_name: profileData.lastName }),
-        ...(!responseData.email && profileData.email && { email: profileData.email }),
-        ...(!responseData.username && profileData.username && { preferred_username: profileData.username }),
-      };
       
-      // Update the name field using response data
-      const newFirstName = responseData.firstName || profileData.firstName || userDetail.given_name || "";
-      const newLastName = responseData.lastName || profileData.lastName || userDetail.family_name || "";
-      if (profileData.firstName || profileData.lastName) {
-        updatedUserDetail.name = `${newFirstName} ${newLastName}`.trim();
-      }
-
-      // Update locale in stored user details if changed
-      if (hasLanguageChange) {
-        updatedUserDetail.locale = selectedLang;
-      }
+      const updatedUserDetail = buildUpdatedUserDetail(
+        userDetail, responseData, profileData, selectedLang, hasLanguageChange
+      );
       
       StorageService.save(StorageService.User.USER_DETAILS, JSON.stringify(updatedUserDetail));
 
-      // Update language in i18n and localStorage if changed
       if (hasLanguageChange) {
-        i18n.changeLanguage(selectedLang);
-        localStorage.setItem("i18nextLng", selectedLang);
+        applyLanguageChange(selectedLang);
       }
 
-      // Publish event to notify other components (like Sidebar) of the profile update
       if (publish) {
         publish("profileUpdated", { ...responseData, userId });
       }
