@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import Modal from 'react-bootstrap/Modal';
 import { Tabs, Tab } from 'react-bootstrap';
 import { CloseIcon, V8CustomButton, CustomInfo, SelectDropdown, CustomTextInput, ApplicationLogo, PromptModal } from "@formsflow/components";
-import { fetchSelectLanguages } from '../services/language';
-import { requestResetPassword } from "../services/user";
+import { fetchSelectLanguages, updateUserlang } from '../services/language';
+import { requestResetPassword, updateUserProfile } from "../services/user";
 import { useTranslation } from "react-i18next";
 import i18n from '../resourceBundles/i18n';
 import { StorageService } from "@formsflow/service";
@@ -31,10 +31,14 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [resetPasswordState, setResetPasswordState] = useState("default"); // default | success | error
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [lastResetPasswordError, setLastResetPasswordError] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { t } = useTranslation(); 
   
   useEffect(() => {
     if (!show) return;
+    setError(null);
     try {
       // Reset language selection to current app language when modal opens
       const currentLang = localStorage.getItem("i18nextLng") || LANGUAGE;
@@ -59,11 +63,13 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setResetPasswordState("default");
       setResetPasswordLoading(false);
       setLastResetPasswordError(null);
+      setUserId(userDetail?.sub || userDetail?.id || null);
     } catch (e) {
       setProfileFields({ firstName: "", lastName: "", email: "", username: "" });
       setInitialProfileFields({ firstName: "", lastName: "", email: "", username: "" });
       setSelectedLang(prevSelectedLang || LANGUAGE);
       setInitialSelectedLang(prevSelectedLang || LANGUAGE);
+      setUserId(null);
     }
   }, [show]);
 
@@ -153,30 +159,97 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     }
   };
 
-  const handleConfirmProfile = () => { 
-    // Keep a copy for later integration; for now just save it locally and close the modal.
-    const firstName = (profileFields.firstName || "").trim();
-    const lastName = (profileFields.lastName || "").trim();
-
-    const userCopy = {
-      user: {
-        firstName,
-        lastName,
-        userName: (profileFields.username || "").trim(),
-        email: (profileFields.email || "").trim(),
-        attributes: {
-          locale: [selectedLang],
-        },
-      },
-    };
-
-    try {
-      StorageService.save("PROFILE_SETTINGS_USER_COPY", JSON.stringify(userCopy));
-    } catch (e) {
-      // ignore
+  const handleConfirmProfile = async () => { 
+    if (!userId) {
+      setError(t("User ID not found. Please try again."));
+      return;
     }
 
-    onClose();
+    setIsLoading(true);
+    setError(null);
+
+    // Build payload with only changed fields
+    const profileData = {};
+    const firstName = (profileFields.firstName || "").trim();
+    const lastName = (profileFields.lastName || "").trim();
+    const username = (profileFields.username || "").trim();
+    const email = (profileFields.email || "").trim();
+
+    if (initialProfileFields) {
+      if (firstName !== initialProfileFields.firstName) {
+        profileData.firstName = firstName;
+      }
+      if (lastName !== initialProfileFields.lastName) {
+        profileData.lastName = lastName;
+      }
+      if (username !== initialProfileFields.username) {
+        profileData.username = username;
+      }
+      if (email !== initialProfileFields.email) {
+        profileData.email = email;
+      }
+    }
+
+    // Add locale if language changed
+    if (selectedLang !== prevSelectedLang) {
+      profileData.attributes = { locale: [selectedLang] };
+    }
+
+    // If no changes, just close the modal
+    if (Object.keys(profileData).length === 0) {
+      onClose();
+      return;
+    }
+
+    try {
+      const response = await updateUserProfile(userId, profileData);
+      const responseData = response?.data || {};
+      
+      // Update the stored user details with the response data from API
+      const userDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+      const updatedUserDetail = {
+        ...userDetail,
+        // Use response data if available, otherwise fall back to sent data
+        ...(responseData.firstName && { given_name: responseData.firstName }),
+        ...(responseData.lastName && { family_name: responseData.lastName }),
+        ...(responseData.email && { email: responseData.email }),
+        ...(responseData.username && { preferred_username: responseData.username }),
+        // Fallback to profileData if response doesn't include the fields
+        ...(!responseData.firstName && profileData.firstName && { given_name: profileData.firstName }),
+        ...(!responseData.lastName && profileData.lastName && { family_name: profileData.lastName }),
+        ...(!responseData.email && profileData.email && { email: profileData.email }),
+        ...(!responseData.username && profileData.username && { preferred_username: profileData.username }),
+      };
+      
+      // Update the name field using response data
+      const newFirstName = responseData.firstName || profileData.firstName || userDetail.given_name || "";
+      const newLastName = responseData.lastName || profileData.lastName || userDetail.family_name || "";
+      if (profileData.firstName || profileData.lastName) {
+        updatedUserDetail.name = `${newFirstName} ${newLastName}`.trim();
+      }
+      
+      StorageService.save(StorageService.User.USER_DETAILS, JSON.stringify(updatedUserDetail));
+
+      // Update language in i18n and localStorage if changed
+      if (selectedLang !== prevSelectedLang) {
+        i18n.changeLanguage(selectedLang);
+        localStorage.setItem("i18nextLng", selectedLang);
+        updateUserlang(selectedLang);
+      }
+
+      // Publish event to notify other components (like Sidebar) of the profile update
+      if (publish) {
+        publish("profileUpdated", { ...responseData, userId });
+      }
+
+      onClose();
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      const errorMessage = err?.response?.data?.message || err?.message || t("Failed to update profile. Please try again.");
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
  
@@ -407,13 +480,18 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       </Modal.Body>
 
       <Modal.Footer>
+        {error && (
+          <div className="profile-error-message text-danger mb-2 w-100">
+            {error}
+          </div>
+        )}
         <div className="buttons-row">
           <V8CustomButton
-            label={t("Update")}
+            label={isLoading ? t("Updating...") : t("Update")}
             onClick={handleConfirmProfile}
             dataTestId="save-profile-settings"
             ariaLabel={t("Save Profile Settings")}
-             disabled={activeTab !== "Profile" || !isAnythingChanged || emailIsInvalid || usernameIsInvalid}
+            disabled={activeTab !== "Profile" || !isAnythingChanged || emailIsInvalid || usernameIsInvalid || isLoading}
             variant="primary"
           />
          

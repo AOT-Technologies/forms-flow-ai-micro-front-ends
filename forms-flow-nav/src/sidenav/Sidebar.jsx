@@ -227,8 +227,8 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
-        if (!JSON.parse(StorageService.get("tenantData"))?.name) {
-          StorageService.save("tenantData", JSON.stringify(data.tenantData));
+        if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
+          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
         }
       }
     });
@@ -241,6 +241,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       if (data) {
         setForm(data);
       }
+    });
+
+    // Subscribe to profile updates to refresh user details in navbar
+    props.subscribe("profileUpdated", () => {
+      const updatedUserDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+      setUserDetail(updatedUserDetail);
     });
   }, []);
 
@@ -262,7 +268,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     }, [userDetail]);
 
   React.useEffect(() => {
-    const data = JSON.parse(StorageService.get("tenantData"));
+    const data = JSON.parse(StorageService.get("TENANT_DATA"));
     if (MULTITENANCY_ENABLED && data?.details) {
       setTenantName(data?.details?.applicationTitle);
       const logo = data?.details?.customLogo?.logo;
@@ -377,7 +383,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       options.push({
         name: "Submissions",
         path: SUBMISSION_ROUTE,
-      });
+      }); 
     }
    
      return options;
