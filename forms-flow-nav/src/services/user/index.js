@@ -21,7 +21,6 @@ const extractUserIdFromToken = (token) => {
   };
  export const fetchUserLoginDetails = () => {
     const userId = extractUserIdFromToken(StorageService.get(StorageService.User.AUTH_TOKEN));
-    console.log("userId", userId);
     if (!userId) return;
     const apiUserLoginDetails = API.USER_LOGIN_DETAILS(userId);
     RequestService.httpGETRequest(apiUserLoginDetails, null, StorageService.get(StorageService.User.AUTH_TOKEN))
