@@ -113,5 +113,15 @@ $color-border: var(--secondary);
       color: var(--gray-dark);
     }
   }
+
+  // Clear button styles
+  .search-clear-button {
+    background: none;
+    border: none;
+    position: absolute;
+    right: 0.5rem; // 8px
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
   
