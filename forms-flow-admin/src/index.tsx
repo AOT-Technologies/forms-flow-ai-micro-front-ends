@@ -100,6 +100,18 @@ const Admin = React.memo(({ props }: any) => {
                 />
               )}
             />
+            <Route 
+              path={`${baseUrl}admin/:tab`}
+              render={() => (
+                <Manage
+                  props={props}
+                  setTab={setPage}
+                  setDashboardCount={setDashboardCount}
+                  setRoleCount={setRoleCount}
+                  setUserCount={setUserCount}
+                />
+              )}
+            />
           </Switch>
           </div>):
           <div className="min-container-height ps-md-3" >

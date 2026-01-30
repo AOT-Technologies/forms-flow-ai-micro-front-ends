@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Tabs, Tab, Collapse } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 import AdminDashboard from "../dashboard";
 import RoleManagement from "../roles";
 import UserManagement from "../users";
 import Organization from "../organization";
 import { StorageService } from "@formsflow/service";
 import { BreadCrumbs, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
+import { MULTITENANCY_ENABLED } from "../../constants";
 
 interface ManageProps {
   props: any;
@@ -18,7 +20,9 @@ interface ManageProps {
 
 const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRoleCount, setUserCount }) => {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<string>("organization");
+  const history = useHistory();
+  const { tenantId, tab: urlTab } = useParams<{ tenantId?: string; tab?: string }>();
+  const location = useLocation();
   const [tabContentExpanded, setTabContentExpanded] = useState<boolean>(true);
   
   const userRoles = JSON.parse(
@@ -29,14 +33,37 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
 
-  // Determine initial tab based on permissions - default to organization
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
+  
+  // Get active tab from URL or default to organization
+  const activeTab = useMemo((): string => {
+    if (urlTab) {
+      // Validate that the tab from URL is valid
+      const validTabs = ["organization", "dashboard", "users", "roles"];
+      if (validTabs.includes(urlTab)) {
+        // Check permissions for restricted tabs
+        if (urlTab === "dashboard" && !isDashboardManager) return "organization";
+        if (urlTab === "users" && !isUserManager) return "organization";
+        if (urlTab === "roles" && !isRoleManager) return "organization";
+        return urlTab;
+      }
+    }
+    // If no tab in URL or invalid tab, check if we're at /admin (without tab)
+    if (location.pathname === `${baseUrl}admin` || location.pathname === `${baseUrl}admin/`) {
+      return "organization";
+    }
+    return "organization";
+  }, [urlTab, location.pathname, baseUrl, isDashboardManager, isUserManager, isRoleManager]);
+
+  // Redirect to default tab if on /admin without a tab
   useEffect(() => {
-    setActiveTab("organization");
-  }, []);
+    if (location.pathname === `${baseUrl}admin` || location.pathname === `${baseUrl}admin/`) {
+      history.replace(`${baseUrl}admin/organization`);
+    }
+  }, [location.pathname, baseUrl, history]);
 
   const handleTabChange = (key: string | null) => {
     if (key) {
-      setActiveTab(key);
       const tabNameMap: { [key: string]: string } = {
         "organization": "Organization",
         "dashboard": "Dashboard",
@@ -44,6 +71,8 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
         "roles": "Roles"
       };
       setTab(tabNameMap[key] || "Organization");
+      // Navigate to the tab route - this will update the URL and activeTab will update via useMemo
+      history.push(`${baseUrl}admin/${key}`);
     }
   };
 
