@@ -1,8 +1,8 @@
 @import "../../variables.scss";
 
 .organization-container {
-  color: $gray-dark;
-  margin-top: 2.44rem;
+  color: var(--ff-gray-dark);
+  margin-top: var(--spacer-250);
 
   .organization-section {
     margin-bottom: 3.38rem;
@@ -13,11 +13,11 @@
       align-items: center;
       padding-bottom: 0.81rem;
       cursor: pointer;
-      border-bottom: 1px solid $gray-medium;
+      border-bottom: 1px solid var(--ff-gray-medium);
 
       .organization-section-title {
-        font-size: 1.25rem;
-        font-weight: 500;
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-medium);
         color: inherit;
         margin: 0;
       }
@@ -25,36 +25,36 @@
   }
 
   .subscription-card {
-    background-color: $white;
-    border: 1px solid $gray-medium;
-    border-radius: 0.5rem;
+    background-color: var(--ff-white);
+    border: 1px solid var(--ff-gray-medium);
+    border-radius: var(--spacer-050);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    margin-top: 1rem;
+    padding: var(--spacer-150);
+    margin-top: var(--spacer-100);
 
     .subscription-status {
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--spacer-075);
 
       .status-text {
         font-size: 3rem;
-        font-weight: 400;
-        color: $gray-darkest;
+        font-weight: var(--font-weight-sm);
+        color: var(--ff-gray-darkest);
         line-height: 1.2;
       }
     }
 
     .subscription-description {
-      font-size: 0.9375rem;
-      color: $gray-darkest;
-      margin-bottom: 2rem;
+      font-size: var(--font-size-m);
+      color: var(--ff-gray-darkest);
+      margin-bottom: var(--spacer-200);
     }
   }
 
   .terms-actions {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1.75rem;
+    gap: var(--spacer-075);
+    margin-top: var(--spacer-175);
 
     button {
       width: fit-content;
