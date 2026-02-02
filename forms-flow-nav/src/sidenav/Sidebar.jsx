@@ -593,12 +593,17 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             <MenuComponent
               baseUrl={baseUrl}
               eventKey={SectionKeys.MANAGE.value}
-              optionsCount="3"
+              optionsCount="0"
               mainMenu="Manage"
-              subMenu={manageOptions()}
+              subMenu={[
+                {
+                  name: "Manage",
+                  path: "admin",
+                  supportedSubRoutes: ["admin"],
+                },
+              ]}
               subscribe={props.subscribe}
               collapsed={collapsed}
-              isExpanded={activeKey === SectionKeys.MANAGE.value}
             />
           )}
         </Accordion>
