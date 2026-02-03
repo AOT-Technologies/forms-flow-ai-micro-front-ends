@@ -78,29 +78,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       const supportedLanguages = languages.filter(item => userLanguagesArray.includes(item.name));
       setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : languages);
     });
-    
-    // Calculate remaining days from expiry_dt 
-    try {
-      const tenantDataStr = StorageService.get("tenantData");
-      const expiry_dt = tenantDataStr 
-        ? JSON.parse(tenantDataStr)?.expiry_dt 
-        : tenant?.tenantData?.expiry_dt;
-      
-      if (expiry_dt && !Number.isNaN(Date.parse(expiry_dt))) {
-        const expiry = new Date(expiry_dt);
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        expiry.setHours(0, 0, 0, 0);
-        const timeDifference = expiry.getTime() - currentDate.getTime();
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        setDaysDifference(days);
-      } else {
-        setDaysDifference(null);
-      }
-    } catch (error) {
-      console.error("Error calculating days difference:", error);
-      setDaysDifference(null);
-    }
   }, []);
 
   // Fetch user permissions when modal opens
