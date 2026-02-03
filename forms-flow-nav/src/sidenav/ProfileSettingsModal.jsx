@@ -113,6 +113,52 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     setSelectedLang(newLang);
   };
 
+  const isValidEmail = (email) => {
+    // Simple, practical email validation (good UX, not overly strict)
+    const value = String(email || "").trim();
+    if (!value) return true; // allow empty if your system permits it
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  };
+  const emailIsInvalid = emailTouched && !isValidEmail(profileFields.email);
+
+  const isValidUsername = (username) => {
+    const value = String(username || "");
+    if (!value) return true; // allow empty if your system permits it
+    return /^\S+$/.test(value); // no whitespace
+  };
+  const usernameIsInvalid =
+    usernameTouched && !isValidUsername(profileFields.username);
+
+  useEffect(() => {
+    setResetPasswordState("default");
+  }, [profileFields.email]);
+
+  const handleResetPassword = async () => {
+    setEmailTouched(true);
+    if (!profileFields.email || emailIsInvalid) return;
+
+    setResetPasswordLoading(true);
+    try {
+      await requestResetPassword();
+      setResetPasswordState("success");
+      setLastResetPasswordError(null);
+    } catch (e) {
+      setResetPasswordState("error");
+      const status = e?.response?.status;
+      const message = e?.response?.data?.message || e?.message;
+      const details = { status, message, data: e?.response?.data };
+      setLastResetPasswordError(details);
+      try {
+        StorageService.save("PROFILE_RESET_PASSWORD_LAST_ERROR", JSON.stringify(details));
+      } catch (_) {
+      }
+
+      console.error("Reset password failed:", details);
+    } finally {
+      setResetPasswordLoading(false);
+    }
+  };
+
   // Helper: Build profile payload with only changed fields
   const buildProfilePayload = (currentFields, initialFields, currentLang, prevLang) => {
     const payload = {};
