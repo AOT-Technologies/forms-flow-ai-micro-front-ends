@@ -97,15 +97,6 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
     return options.find((opt) => opt.value === value || opt.value === defaultValue);
   }, [options, value, defaultValue]);
 
-  // Console options on load
-  useEffect(() => {
-    console.log("FilterableDropdown options on load:", options);
-  }, [options]);
-
-  // Console dropdown state
-  useEffect(() => {
-    console.log("FilterableDropdown isOpen:", isOpen);
-  }, [isOpen]);
 
   // Initialize input value with selected option label only when dropdown is closed and user is not typing
   useEffect(() => {

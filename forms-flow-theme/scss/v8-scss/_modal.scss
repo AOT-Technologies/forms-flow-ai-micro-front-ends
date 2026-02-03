@@ -671,6 +671,26 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         }
     }
 
+    .permissions-container{
+        .permissions-list{
+            .permission-category{
+                .permission-items{
+                    .permission-item{
+                        font-size: 0.9375rem; 
+                        line-height: 1.5; 
+                    }
+                }
+            }
+        }
+
+        .info-section {
+            border-radius: 0.3125rem;
+            border: 1px solid var(--vivid);
+            background: rgba(124, 128, 254, 0.10);
+            padding: 1rem;
+            margin-top: 0.87rem;
+        }
+    }
     .profile-settings-note-panel--danger-text {
         .info-content {
             color: var(--default-danger-color);

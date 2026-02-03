@@ -32,4 +32,46 @@ const checkAndAddTenantKey = (value, tenankey) => {
   }
 };
 
-export { replaceUrl, addTenankey, removeTenantKey, checkAndAddTenantKey };
+const getUserPermissionsByCategory = (userRoles, allPermissions) => {
+  if (!Array.isArray(userRoles) || !Array.isArray(allPermissions)) {
+    return {};
+  }
+
+  const seenPermissions = new Set();
+  const grouped = {};
+  const userRolesSet = new Set(userRoles);
+
+  for (const permission of allPermissions) {
+    const permissionName = permission?.name;
+    
+    if (!permissionName || !userRolesSet.has(permissionName)) {
+      continue;
+    }
+
+    if (seenPermissions.has(permissionName)) {
+      continue;
+    }
+
+    seenPermissions.add(permissionName);
+    const category = permission?.category || "Other";
+
+    if (!grouped[category]) {
+      grouped[category] = [];
+    }
+
+    grouped[category].push(permission);
+  }
+
+  // Sort permissions within each category by order
+  for (const category in grouped) {
+    grouped[category].sort((a, b) => {
+      const orderA = a?.order ?? 0;
+      const orderB = b?.order ?? 0;
+      return orderA - orderB;
+    });
+  }
+
+  return grouped;
+};
+
+export { replaceUrl, addTenankey, removeTenantKey, checkAndAddTenantKey, getUserPermissionsByCategory };

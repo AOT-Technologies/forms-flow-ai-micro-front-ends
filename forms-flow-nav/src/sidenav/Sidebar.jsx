@@ -22,6 +22,7 @@ import { fetchTenantDetails } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
+import { fetchUserLoginDetails } from "../services/user";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo, LogoutIcon, MenuToggleIcon } from "@formsflow/components";
@@ -227,8 +228,8 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
-        if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
-          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
+        if (!JSON.parse(StorageService.get("tenantData"))?.name) {
+          StorageService.save("tenantData", JSON.stringify(data.tenantData));
         }
       }
     });
@@ -250,8 +251,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     });
   }, []);
 
+  // On successful authentication, load federated login details and integration config
   useEffect(() => {
     if (isAuthenticated) {
+      // Fetch federated login details (saves into localStorage)]
+      fetchUserLoginDetails();
+      
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);
@@ -268,7 +273,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     }, [userDetail]);
 
   React.useEffect(() => {
-    const data = JSON.parse(StorageService.get("TENANT_DATA"));
+    const data = JSON.parse(StorageService.get("tenantData"));
     if (MULTITENANCY_ENABLED && data?.details) {
       setTenantName(data?.details?.applicationTitle);
       const logo = data?.details?.customLogo?.logo;
