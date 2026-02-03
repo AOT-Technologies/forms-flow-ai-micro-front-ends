@@ -4,11 +4,11 @@ import Modal from 'react-bootstrap/Modal';
 import { Tabs, Tab } from 'react-bootstrap';
 import { CloseIcon, V8CustomButton, CustomInfo, SelectDropdown, CustomTextInput, ApplicationLogo, PromptModal } from "@formsflow/components";
 import { fetchSelectLanguages } from '../services/language';
-import { requestResetPassword } from "../services/user";
+import { updateUserProfile, requestResetPassword } from '../services/user';
 import { useTranslation } from "react-i18next";
 import i18n from '../resourceBundles/i18n';
 import { StorageService } from "@formsflow/service";
-import { KEYCLOAK_AUTH_URL, KEYCLOAK_REALM, LANGUAGE, MULTITENANCY_ENABLED, USER_LANGUAGE_LIST } from '../constants/constants';
+import { LANGUAGE, MULTITENANCY_ENABLED, USER_LANGUAGE_LIST } from '../constants/constants';
 import { fetchPermissions } from '../services/permissions';
 import { getUserPermissionsByCategory } from '../helper/helper';
 
@@ -17,7 +17,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const prevSelectedLang = localStorage.getItem('i18nextLng');
   const [selectedLang, setSelectedLang] = useState(prevSelectedLang || LANGUAGE );
   const [activeTab, setActiveTab] = useState("Profile");
-  const isSSO = false;
+  const [isSSO, setIsSSO] = useState(false);
   const [showUnsavedChangesPrompt, setShowUnsavedChangesPrompt] = useState(false);
   const [profileFields, setProfileFields] = useState({
     firstName: "",
@@ -33,10 +33,14 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [resetPasswordState, setResetPasswordState] = useState("default"); // default | success | error
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [lastResetPasswordError, setLastResetPasswordError] = useState(null);
+  const [userId, setUserId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { t } = useTranslation(); 
   
   useEffect(() => {
     if (!show) return;
+    setError(null);
     try {
       // Reset language selection to current app language when modal opens
       const currentLang = localStorage.getItem("i18nextLng") || LANGUAGE;
@@ -47,6 +51,26 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       const fullName = userDetail?.name || "";
       const [firstFromName = "", ...rest] = String(fullName).trim().split(/\s+/);
       const lastFromName = rest.join(" ");
+
+      // Check if user is logged in via federated identity provider from USER_LOGIN_DETAILS
+      // loginType can be "internal" (Keycloak) or "external" (external IDP like Google/Microsoft)
+      // If loginType is "external", disable profile editing fields
+      let federatedLogin = false;
+      try {
+        const userLoginDetailsStr = localStorage.getItem("USER_LOGIN_DETAILS");
+        if (userLoginDetailsStr) {
+          const userLoginDetails = JSON.parse(userLoginDetailsStr);
+          // Check loginType: "external" means SSO/external IDP, "internal" means Keycloak
+          if (userLoginDetails?.loginType !== undefined) {
+            const loginType = String(userLoginDetails.loginType).trim().toLowerCase();
+            federatedLogin = loginType === "external";
+          } 
+        }
+      } catch (e) {
+        // Fallback to checking userDetail if USER_LOGIN_DETAILS is not available
+        federatedLogin = !!(userDetail?.identityProvider || userDetail?.identity_provider);
+      }
+      setIsSSO(federatedLogin);
 
       const nextFields = {
         firstName: userDetail?.given_name || firstFromName || "",
@@ -61,11 +85,14 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setResetPasswordState("default");
       setResetPasswordLoading(false);
       setLastResetPasswordError(null);
+      setUserId(userDetail?.sub || userDetail?.id || "");
     } catch (e) {
       setProfileFields({ firstName: "", lastName: "", email: "", username: "" });
       setInitialProfileFields({ firstName: "", lastName: "", email: "", username: "" });
       setSelectedLang(prevSelectedLang || LANGUAGE);
       setInitialSelectedLang(prevSelectedLang || LANGUAGE);
+      setUserId("");
+      setIsSSO(false);
     }
   }, [show]);
 
@@ -78,29 +105,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       const supportedLanguages = languages.filter(item => userLanguagesArray.includes(item.name));
       setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : languages);
     });
-    
-    // Calculate remaining days from expiry_dt 
-    try {
-      const tenantDataStr = StorageService.get("tenantData");
-      const expiry_dt = tenantDataStr 
-        ? JSON.parse(tenantDataStr)?.expiry_dt 
-        : tenant?.tenantData?.expiry_dt;
-      
-      if (expiry_dt && !Number.isNaN(Date.parse(expiry_dt))) {
-        const expiry = new Date(expiry_dt);
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        expiry.setHours(0, 0, 0, 0);
-        const timeDifference = expiry.getTime() - currentDate.getTime();
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        setDaysDifference(days);
-      } else {
-        setDaysDifference(null);
-      }
-    } catch (error) {
-      console.error("Error calculating days difference:", error);
-      setDaysDifference(null);
-    }
   }, []);
 
   // Fetch user permissions when modal opens
@@ -177,37 +181,128 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
         StorageService.save("PROFILE_RESET_PASSWORD_LAST_ERROR", JSON.stringify(details));
       } catch (_) {
       }
-     
+
       console.error("Reset password failed:", details);
     } finally {
       setResetPasswordLoading(false);
     }
   };
 
-  const handleConfirmProfile = () => { 
-    // Keep a copy for later integration; for now just save it locally and close the modal.
-    const firstName = (profileFields.firstName || "").trim();
-    const lastName = (profileFields.lastName || "").trim();
-
-    const userCopy = {
-      user: {
-        firstName,
-        lastName,
-        userName: (profileFields.username || "").trim(),
-        email: (profileFields.email || "").trim(),
-        attributes: {
-          locale: [selectedLang],
-        },
-      },
+  // Helper: Build profile payload with only changed fields
+  const buildProfilePayload = (currentFields, initialFields, currentLang, prevLang) => {
+    const payload = {};
+    const trimmedFields = {
+      firstName: (currentFields.firstName || "").trim(),
+      lastName: (currentFields.lastName || "").trim(),
+      username: (currentFields.username || "").trim(),
+      email: (currentFields.email || "").trim(),
     };
 
-    try {
-      StorageService.save("PROFILE_SETTINGS_USER_COPY", JSON.stringify(userCopy));
-    } catch (e) {
-      // ignore
+    if (initialFields) {
+      const fieldKeys = ["firstName", "lastName", "username", "email"];
+      fieldKeys.forEach((key) => {
+        if (trimmedFields[key] !== initialFields[key]) {
+          payload[key] = trimmedFields[key];
+        }
+      });
     }
 
-    onClose();
+    // If language changed, add locale and ensure username is included
+    if (currentLang !== prevLang) {
+      payload.attributes = { locale: [currentLang] };
+      payload.username = payload.username || trimmedFields.username;
+    }
+
+    return payload;
+  };
+
+  // Helper: Build updated user detail object from API response
+  const buildUpdatedUserDetail = (userDetail, responseData, profileData, newLang, hasLangChange) => {
+    const updated = {
+      ...userDetail,
+      // Use response data if available
+      ...(responseData.firstName && { given_name: responseData.firstName }),
+      ...(responseData.lastName && { family_name: responseData.lastName }),
+      ...(responseData.email && { email: responseData.email }),
+      ...(responseData.username && { preferred_username: responseData.username }),
+      // Fallback to profileData if response doesn't include the fields
+      ...(!responseData.firstName && profileData.firstName && { given_name: profileData.firstName }),
+      ...(!responseData.lastName && profileData.lastName && { family_name: profileData.lastName }),
+      ...(!responseData.email && profileData.email && { email: profileData.email }),
+      ...(!responseData.username && profileData.username && { preferred_username: profileData.username }),
+    };
+
+    // Update the name field if first or last name changed
+    if (profileData.firstName || profileData.lastName) {
+      const newFirst = responseData.firstName || profileData.firstName || userDetail.given_name || "";
+      const newLast = responseData.lastName || profileData.lastName || userDetail.family_name || "";
+      updated.name = `${newFirst} ${newLast}`.trim();
+    }
+
+    // Update locale if language changed
+    if (hasLangChange) {
+      updated.locale = newLang;
+    }
+
+    return updated;
+  };
+
+  // Helper: Apply language change to i18n and localStorage
+  const applyLanguageChange = (newLang) => {
+    i18n.changeLanguage(newLang);
+    localStorage.setItem("i18nextLng", newLang);
+  };
+
+  const handleConfirmProfile = async () => { 
+    // Prevent profile updates for SSO/federated users
+    if (isSSO) {
+      setError(t("Profile editing is disabled for federated login users."));
+      return;
+    }
+
+    if (!userId) {
+      setError(t("User ID not found. Please try again."));
+      return;
+    }
+
+    const hasLanguageChange = selectedLang !== prevSelectedLang;
+    const profileData = buildProfilePayload(profileFields, initialProfileFields, selectedLang, prevSelectedLang);
+
+    if (Object.keys(profileData).length === 0) {
+      onClose();
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await updateUserProfile(userId, profileData);
+      const responseData = response?.data || {};
+      const userDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+      
+      const updatedUserDetail = buildUpdatedUserDetail(
+        userDetail, responseData, profileData, selectedLang, hasLanguageChange
+      );
+      
+      StorageService.save(StorageService.User.USER_DETAILS, JSON.stringify(updatedUserDetail));
+
+      if (hasLanguageChange) {
+        applyLanguageChange(selectedLang);
+      }
+
+      if (publish) {
+        publish("profileUpdated", { ...responseData, userId });
+      }
+
+      onClose();
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      const errorMessage = err?.response?.data?.message || err?.message || t("Failed to update profile. Please try again.");
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
  
@@ -321,6 +416,14 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       <Modal.Body>
         {activeTab === "Profile" ? (
           <>
+            {isSSO && (
+              <CustomInfo
+                className="mb-3"
+                variant="secondary"
+                icon={<ApplicationLogo width="1.1875rem" height="1.4993rem" />}
+                content={t("Your profile is managed by your identity provider. Profile editing is disabled for federated login users.")}
+              />
+            )}
             <div className="profile-settings-details-box p-3 mb-3 border rounded">
               <div className="row g-3">
                 <div className="col-12 col-md-6">
@@ -434,6 +537,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
               variant="primary"
               className="mb-3"
               onChange={handleLanguageChange}
+              disabled={isSSO}
             />
           </>
         ) : (
@@ -472,13 +576,18 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       </Modal.Body>
 
       <Modal.Footer>
+        {error && (
+          <div className="profile-error-message text-danger mb-2 w-100">
+            {error}
+          </div>
+        )}
         <div className="buttons-row d-flex justify-content-end">
           <V8CustomButton
-            label={t("Update")}
+            label={isLoading ? t("Updating...") : t("Update")}
             onClick={handleConfirmProfile}
             dataTestId="save-profile-settings"
             ariaLabel={t("Save Profile Settings")}
-             disabled={activeTab !== "Profile" || !isAnythingChanged || emailIsInvalid || usernameIsInvalid}
+            disabled={activeTab !== "Profile" || !isAnythingChanged || emailIsInvalid || usernameIsInvalid || isLoading || isSSO}
             variant="primary"
           />
         </div>
