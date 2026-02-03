@@ -9,7 +9,7 @@ export const fetchTenantDetails = (callback) => {
         tenantData: res.data
       }
       callback(tenant);
-      StorageService.save("TENANT_DATA", JSON.stringify(res.data))
+      StorageService.save("tenantData", JSON.stringify(res.data))
     })
     .catch((err) => console.log(err));
 };

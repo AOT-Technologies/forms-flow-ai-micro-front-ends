@@ -49,7 +49,7 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
   useEffect(() => {
     if (MULTITENANCY_ENABLED && tenantId) {
       // Get tenant data from StorageService
-      const storedTenantData = localStorage.getItem("TENANT_DATA");
+      const storedTenantData = localStorage.getItem("tenantData");
   
       if (storedTenantData) {
         try {

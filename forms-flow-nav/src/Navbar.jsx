@@ -55,8 +55,8 @@ const NavBar = React.memo(({ props }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
-        if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
-          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
+        if (!JSON.parse(StorageService.get("tenantData"))?.name) {
+          StorageService.save("tenantData", JSON.stringify(data.tenantData));
         }
       }
     });
@@ -79,7 +79,7 @@ const NavBar = React.memo(({ props }) => {
   }, [instance]);
 
   React.useEffect(() => {
-    const data = JSON.parse(StorageService.get("TENANT_DATA"));
+    const data = JSON.parse(StorageService.get("tenantData"));
     if (MULTITENANCY_ENABLED && data?.details) {
       setApplicationTitle(data?.details?.applicationTitle);
       const logo = data?.details?.customLogo?.logo || "/logo.svg";
@@ -181,7 +181,7 @@ const isUserManager = userRoles?.includes("manage_users");
 
   useEffect(() => {
     fetchSelectLanguages((data) => {
-      const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
+      const tenantdata = JSON.parse(StorageService.get("tenantData"));
       const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details?.langList) || USER_LANGUAGE_LIST;
       let userLanguagesArray = [];
       if (typeof userLanguageList === 'object') {
