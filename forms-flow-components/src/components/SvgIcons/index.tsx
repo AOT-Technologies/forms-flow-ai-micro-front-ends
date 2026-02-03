@@ -302,6 +302,7 @@ export const DownArrowIcon = ({ color = baseColor, ...props }) => (
     height="10"
     viewBox="0 0 16 10"
     fill="none"
+    {...props}
   >
     <path
       d="M1.49969 1.74976L8.00028 8.25034L14.5003 1.75034"

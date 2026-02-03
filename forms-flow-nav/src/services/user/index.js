@@ -1,6 +1,6 @@
 import { RequestService,StorageService } from "@formsflow/service";
 import API from "../../endpoints/index";
-
+import { WEB_BASE_CUSTOM_URL } from "../../constants/constants";
 
 const extractUserIdFromToken = (token) => {
     if (!token) return "";
@@ -31,3 +31,28 @@ const extractUserIdFromToken = (token) => {
       console.error(error);
     });
 };
+
+/**
+ * Trigger a reset password email/link for the current user.
+ */
+
+export const requestResetPassword = () => {
+  const token = StorageService.get(StorageService.User.AUTH_TOKEN);
+  const userId = extractUserIdFromToken(token);
+  if (!userId) {
+    return Promise.reject(new Error("User id not found in token"));
+  }
+  const redirectUri =
+    (WEB_BASE_CUSTOM_URL && String(WEB_BASE_CUSTOM_URL).trim()) ||
+    (typeof window !== "undefined" ? window.location.origin : "");
+  const urlWithRedirect = `${API.RESET_PASSWORD(userId)}?redirect_uri=${encodeURIComponent(
+    redirectUri
+  )}`;
+  return RequestService.httpPUTRequest(
+    urlWithRedirect,
+    {},
+    token
+  );
+};
+
+

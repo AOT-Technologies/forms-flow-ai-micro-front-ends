@@ -105,4 +105,47 @@ $font-weight-regular:var(--font-weight-regular);
     @include pill-tabs;
   }
   
+  .manage-container{
+    .manage-tabs-wrapper {
+        .manage-tabs-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid var(--gray-x-light);
+            padding-bottom: 0.81rem;
+            margin-bottom: 0;
+
+            .pill-tabs{
+                width: fit-content;
+                border-radius: 2.0625rem;
+                border: 1px solid var(--gray-x-light) !important;
+                margin: 1rem 0;
+                padding: 0.15rem;
+                cursor: default !important;
+                .nav-item{
+                    cursor: pointer;
+                    .nav-link{
+                        &.active{
+                            border: none !important;
+                        }
+                    }
+                }
+            }
+
+            .manage-tabs-chevron {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                padding: 0.25rem;
+                transition: opacity 0.2s ease;
+
+            }
+        }
+
+        .tab-content{
+            border-top: 1px solid var(--gray-x-light);
+        }
+    }
+}
   
