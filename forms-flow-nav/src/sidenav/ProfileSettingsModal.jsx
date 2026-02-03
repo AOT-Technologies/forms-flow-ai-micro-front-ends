@@ -8,13 +8,14 @@ import { requestResetPassword } from "../services/user";
 import { useTranslation } from "react-i18next";
 import i18n from '../resourceBundles/i18n';
 import { StorageService } from "@formsflow/service";
-import { LANGUAGE, MULTITENANCY_ENABLED, USER_LANGUAGE_LIST } from '../constants/constants';
+import { KEYCLOAK_AUTH_URL, KEYCLOAK_REALM, LANGUAGE, MULTITENANCY_ENABLED, USER_LANGUAGE_LIST } from '../constants/constants';
+import { fetchPermissions } from '../services/permissions';
+import { getUserPermissionsByCategory } from '../helper/helper';
 
 export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [selectLanguages, setSelectLanguages] = useState([]);
   const prevSelectedLang = localStorage.getItem('i18nextLng');
   const [selectedLang, setSelectedLang] = useState(prevSelectedLang || LANGUAGE );
-  const [daysDifference, setDaysDifference] = useState(null);
   const [activeTab, setActiveTab] = useState("Profile");
   const isSSO = false;
   const [showUnsavedChangesPrompt, setShowUnsavedChangesPrompt] = useState(false);
@@ -25,6 +26,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     username: "",
   });
   const [initialProfileFields, setInitialProfileFields] = useState(null);
+  const [userPermissions, setUserPermissions] = useState({});
   const [initialSelectedLang, setInitialSelectedLang] = useState(prevSelectedLang || LANGUAGE);
   const [emailTouched, setEmailTouched] = useState(false);
   const [usernameTouched, setUsernameTouched] = useState(false);
@@ -76,7 +78,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       const supportedLanguages = languages.filter(item => userLanguagesArray.includes(item.name));
       setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : languages);
     });
-
+    
     // Calculate remaining days from expiry_dt 
     try {
       const tenantDataStr = StorageService.get("tenantData");
@@ -99,9 +101,38 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       console.error("Error calculating days difference:", error);
       setDaysDifference(null);
     }
+  }, []);
 
-  }, [tenant]);
+  // Fetch user permissions when modal opens
+  useEffect(() => {
+    if (show) {
+      // Get user roles from storage
+      const userRoles = JSON.parse(
+        StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
+      );
 
+      // Fetch all permissions from API
+      fetchPermissions(
+        (data) => {
+          // Filter out manage_bundles, manage_integrations, and manage_templates permissions
+          const filteredData = data.filter(
+            (permission) =>
+              permission.name !== "manage_bundles" &&
+              permission.name !== "manage_integrations" &&
+              permission.name !== "manage_templates"
+          );
+          
+          // Use helper function to group user permissions by category
+          const grouped = getUserPermissionsByCategory(userRoles, filteredData);
+          setUserPermissions(grouped);
+        },
+        (err) => {
+          console.error("Error fetching permissions:", err);
+          setUserPermissions({});
+        }
+      );
+    }
+  }, [show]);
 
   const handleLanguageChange = (newLang) => {
     setSelectedLang(newLang);
@@ -215,6 +246,19 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   };
 
   const selectedLangLabel = selectLanguages.find(lang => lang.name === selectedLang)?.value || selectedLang;
+
+  const getCategoryLabel = (category) => {
+    if (category === "Admin") {
+      return t("Access to Manage");
+    }
+    if (category === "Billing") {
+      return t("Access to billing");
+    }
+    if (category === "Users") {
+      return t("Manage users");
+    }
+    return t(`Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`);
+  };
 
   const tabs = [
     { key: "Profile", label: t("Profile") },
@@ -393,21 +437,42 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             />
           </>
         ) : (
-          <div></div>
+            <div className='permissions-container'>
+              {Object.keys(userPermissions).length === 0 ? (
+                <div className="text-center p-4 border rounded">
+                  <p>{t("No permissions found")}</p>
+                </div>
+              ) : (
+                <div className="permissions-list p-3 border rounded">
+                  {Object.entries(userPermissions).map(([category, permissions]) => (
+                    <div key={category} className="permission-category mb-4">
+                      <div className="permission-category-title fw-bold mb-2">
+                        {getCategoryLabel(category)}
+                      </div>
+                      <div className="permission-items ps-4">
+                        {permissions.map((permission) => (
+                          <div 
+                            key={permission.name} 
+                            className="permission-item mb-2"
+                            data-testid={`permission-${permission.name}`}
+                          >
+                            {t(permission.description || permission.name)}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className='info-section'>
+                {t("Contact an administrator to request any changes to your permissions")}
+              </div>
+            </div>
         )}
-          {tenantId && daysDifference !== null ? (
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={
-                `You are currently using a test instance. The trial period ends in ${daysDifference} days.`
-              }
-            />
-          ) : null}
       </Modal.Body>
 
       <Modal.Footer>
-        <div className="buttons-row">
+        <div className="buttons-row d-flex justify-content-end">
           <V8CustomButton
             label={t("Update")}
             onClick={handleConfirmProfile}
@@ -416,7 +481,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
              disabled={activeTab !== "Profile" || !isAnythingChanged || emailIsInvalid || usernameIsInvalid}
             variant="primary"
           />
-         
         </div>
       </Modal.Footer>
     </Modal>
