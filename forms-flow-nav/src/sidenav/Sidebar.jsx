@@ -243,6 +243,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
         setForm(data);
       }
     });
+
+    // Subscribe to profile updates to refresh user details in navbar
+    props.subscribe("profileUpdated", () => {
+      const updatedUserDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+      setUserDetail(updatedUserDetail);
+    });
   }, []);
 
   // On successful authentication, load federated login details and integration config
@@ -382,7 +388,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       options.push({
         name: "Submissions",
         path: SUBMISSION_ROUTE,
-      });
+      }); 
     }
    
      return options;
