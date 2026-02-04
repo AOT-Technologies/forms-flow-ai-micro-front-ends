@@ -202,10 +202,6 @@ const TaskDetailsModal = ({
     const submittedBy = submission?.owner || currentUser || "";
     
     const payload = {
-      formData: {
-        formId: submissionFormId,
-        data: submissionData,
-      },
       bpmnData: {
         variables: {
           formUrl: { value: formUrl },

@@ -1,5 +1,7 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { CloseIcon } from "../SvgIcons";
+import { StyleServices } from "@formsflow/service";
 
 /**
  * Props for `CustomSearch` component.
@@ -46,6 +48,15 @@ export const CustomSearch: FC<CustomSearchProps> = ({
   width,
 }) => {
   const { t } = useTranslation();
+  const darkColor = useMemo(
+    () => StyleServices.getCSSVariable("--secondary-dark"),
+    []
+  );
+
+  const handleClear = () => {
+    setSearch("");
+    handleSearch();
+  };
 
   return (
     <div
@@ -63,6 +74,21 @@ export const CustomSearch: FC<CustomSearchProps> = ({
         role="searchbox"
         disabled={disabled}
       />
+      {search && (
+        <button
+          type="button"
+          onClick={handleClear}
+          className="search-clear-button"
+          aria-label="Clear search"
+          data-testid={`${dataTestId}-clear`}
+          disabled={disabled}
+        >
+          <CloseIcon
+            dataTestId={`${dataTestId}-close-icon`}
+            color={darkColor}
+          />
+        </button>
+      )}
     </div>
   );
 };
