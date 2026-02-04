@@ -22,6 +22,7 @@ import { fetchTenantDetails } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
+import { fetchUserLoginDetails } from "../services/user";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo, LogoutIcon, MenuToggleIcon } from "@formsflow/components";
@@ -244,8 +245,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     });
   }, []);
 
+  // On successful authentication, load federated login details and integration config
   useEffect(() => {
     if (isAuthenticated) {
+      // Fetch federated login details (saves into localStorage)]
+      fetchUserLoginDetails();
+      
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);
@@ -593,12 +598,17 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
             <MenuComponent
               baseUrl={baseUrl}
               eventKey={SectionKeys.MANAGE.value}
-              optionsCount="3"
+              optionsCount="0"
               mainMenu="Manage"
-              subMenu={manageOptions()}
+              subMenu={[
+                {
+                  name: "Manage",
+                  path: "admin",
+                  supportedSubRoutes: ["admin"],
+                },
+              ]}
               subscribe={props.subscribe}
               collapsed={collapsed}
-              isExpanded={activeKey === SectionKeys.MANAGE.value}
             />
           )}
         </Accordion>

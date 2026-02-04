@@ -637,12 +637,18 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
         overflow: auto;
     }
 
+    .profile-settings-field-error {
+        width: 100%;
+        min-height: 1.25rem;
+        overflow-wrap: anywhere;
+    }
+
     .profile-settings-note-panel {
-        width: 46rem; 
-        height: 3.688rem; 
-        max-width: 100%;
+        width: 100%;
+        max-width: 46rem;
+        min-height: 3.688rem;
         box-sizing: border-box;
-        overflow: hidden;
+        overflow: visible;
     }
 
     .profile-settings-note-panel.info-panel {
@@ -664,6 +670,41 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             align-items: center;
         }
     }
+
+    .permissions-container{
+        .permissions-list{
+            .permission-category{
+                .permission-items{
+                    .permission-item{
+                        font-size: 0.9375rem; 
+                        line-height: 1.5; 
+                    }
+                }
+            }
+        }
+
+        .info-section {
+            border-radius: 0.3125rem;
+            border: 1px solid var(--vivid);
+            background: rgba(124, 128, 254, 0.10);
+            padding: 1rem;
+            margin-top: 0.87rem;
+        }
+    }
+    .profile-settings-note-panel--danger-text {
+        .info-content {
+            color: var(--default-danger-color);
+        }
+    }
+}
+
+.single-variable-selection-modal{
+    @include large-modal-popover();
+}
+
+.modal--inactive {
+    opacity: 0;
+    pointer-events: none;
 }
 
 
