@@ -18,7 +18,9 @@ import Accessdenied from "./components/AccessDenied";
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
   const history = useHistory();
-  const  {tenantId}  = useParams();
+  const  {tenantId: urlTenantId}  = useParams();
+  // Fallback to storage if tenantId is not in URL params
+  const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [isAuth, setIsAuth] = React.useState(instance?.isAuthenticated());
   const [page, setPage] = React.useState("Dashboard");
@@ -40,12 +42,40 @@ const Admin = React.memo(({ props }: any) => {
     publish("ES_ROUTE", { pathname: `${baseUrl}admin` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
-    })
+    });
+    // Subscribe to tenant data updates
+    subscribe("ES_TENANT", (msg, data) => {
+      if (data?.tenantData) {
+        StorageService.save("tenantData", JSON.stringify(data.tenantData));
+        // Also update tenantKey if tenantId changes
+        if (data.tenantId) {
+          StorageService.save("tenantKey", data.tenantId);
+        }
+      }
+    });
   }, []);
 
   React.useEffect(()=>{
     StorageService.save("tenantKey", tenantId || '')
   },[tenantId])
+
+  // Verify tenantData is stored in localStorage
+  React.useEffect(() => {
+    if (MULTITENANCY_ENABLED && tenantId) {
+      const tenantDataStr = StorageService.get("tenantData");
+      if (tenantDataStr) {
+        try {
+          const tenantData = JSON.parse(tenantDataStr);
+          // Verify tenantData has expected structure
+          if (!tenantData || (!tenantData.key && !tenantData.name)) {
+            console.warn("tenantData in localStorage may be incomplete:", tenantData);
+          }
+        } catch (error) {
+          console.error("Error parsing tenantData from localStorage:", error);
+        }
+      } 
+    }
+  }, [tenantId]);
 
   React.useEffect(() => {
     if (!isAuth) {

@@ -48,18 +48,18 @@ const Organization: React.FC<any> = (props) => {
   useEffect(() => { 
     // Calculate remaining days from expiry_dt 
     try {
-      const tenantDataStr = StorageService.get("TENANT_DATA");
+      const tenantDataStr = StorageService.get("tenantData");
       const expiry_dt = tenantDataStr 
         ? JSON.parse(tenantDataStr)?.expiry_dt 
-        : null;
-      
-      if (expiry_dt && !Number.isNaN(Date.parse(expiry_dt))) {
-        const expiry = new Date(expiry_dt);
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        expiry.setHours(0, 0, 0, 0);
-        const timeDifference = expiry.getTime() - currentDate.getTime();
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+          : null;
+        
+        if (expiry_dt && !Number.isNaN(Date.parse(expiry_dt))) {
+          const expiry = new Date(expiry_dt);
+          const currentDate = new Date();
+          currentDate.setHours(0, 0, 0, 0);
+          expiry.setHours(0, 0, 0, 0);
+          const timeDifference = expiry.getTime() - currentDate.getTime();
+          const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
         setDaysDifference(days);
       } else {
         setDaysDifference(null);

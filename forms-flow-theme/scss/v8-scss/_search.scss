@@ -37,6 +37,7 @@ $color-border: var(--secondary);
   height: $search-input-height;
   border-radius: $search-input-border-radius;
   padding: $search-input-padding;
+  padding-right: 2rem;
   border: 1px solid $color-border;
   background: $color-light-gray;
   font-weight: var(--font-weight-regular);
