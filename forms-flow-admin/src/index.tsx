@@ -74,8 +74,12 @@ const Admin = React.memo(({ props }: any) => {
     if(locale) i18n.changeLanguage(locale);
   },[isAuth])
   
-  React.useEffect(()=>{
-    const restricted = !(isDashboardManager || isRoleManager || isUserManager);
+  React.useEffect(() => {
+    const restricted = 
+    (location === '/admin/dashboard' && !isDashboardManager) ||
+    (location === '/admin/roles' && !isRoleManager) ||
+    (location === '/admin/users' && !isUserManager) ||
+    (!(isDashboardManager ||isRoleManager ||isUserManager));
     setIsAccessRestricted(restricted);
   },[location,userRoles]);
   return (
