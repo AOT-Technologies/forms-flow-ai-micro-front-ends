@@ -64,7 +64,7 @@ export const CustomSearch: FC<CustomSearchProps> = ({
       {...(width ? { style: { width } } : {})}
     >
       <input
-        className="search-input"
+        className="search-input "
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSearch()}
         placeholder={t(placeholder)}

@@ -21,7 +21,9 @@ interface ManageProps {
 const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRoleCount, setUserCount }) => {
   const { t } = useTranslation();
   const history = useHistory();
-  const { tenantId, tab: urlTab } = useParams<{ tenantId?: string; tab?: string }>();
+  const { tenantId: urlTenantId, tab: urlTab } = useParams<{ tenantId?: string; tab?: string }>();
+  // Fallback to storage if tenantId is not in URL params
+  const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
   const location = useLocation();
   const [tabContentExpanded, setTabContentExpanded] = useState<boolean>(true);
   

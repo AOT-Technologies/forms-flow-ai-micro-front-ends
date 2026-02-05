@@ -145,6 +145,14 @@ $font-weight-regular:var(--font-weight-regular);
 
         .tab-content{
             border-top: 1px solid var(--gray-x-light);
+            padding-right: 0.5rem;
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            @extend .custom-scroll;
+            
+            .manage-content {
+                padding: 1.5rem 0;
+            }
         }
     }
 }

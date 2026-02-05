@@ -625,7 +625,20 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     @include large-modal-popover();
     .modal-body {
         padding: 1.5rem;
+        
+        &.custom-scroll {
+            /* Override the general modal-body scrollbar hiding rules */
+            -ms-overflow-style: auto !important;  /* IE and Edge - show scrollbar */
+            scrollbar-width: thin !important;      /* Firefox - show scrollbar */
+            
+            &::-webkit-scrollbar {
+                display: block !important;
+                width: 0.5rem;
+                height: auto;
+            }
+        }
     }
+    
     .modal-subtitle{
         padding: 1.188rem 0.75rem
     }

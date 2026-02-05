@@ -27,6 +27,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   });
   const [initialProfileFields, setInitialProfileFields] = useState(null);
   const [userPermissions, setUserPermissions] = useState({});
+  const [userRoles, setUserRoles] = useState([]);
   const [initialSelectedLang, setInitialSelectedLang] = useState(prevSelectedLang || LANGUAGE);
   const [emailTouched, setEmailTouched] = useState(false);
   const [usernameTouched, setUsernameTouched] = useState(false);
@@ -111,9 +112,10 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   useEffect(() => {
     if (show) {
       // Get user roles from storage
-      const userRoles = JSON.parse(
+      const roles = JSON.parse(
         StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
       );
+      setUserRoles(roles);
 
       // Fetch all permissions from API
       fetchPermissions(
@@ -127,7 +129,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           );
           
           // Use helper function to group user permissions by category
-          const grouped = getUserPermissionsByCategory(userRoles, filteredData);
+          const grouped = getUserPermissionsByCategory(roles, filteredData);
           setUserPermissions(grouped);
         },
         (err) => {
@@ -355,6 +357,12 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     return t(`Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`);
   };
 
+  // Check if user has admin permissions
+  const hasAdminPermissions = () => {
+    const adminCategory = userPermissions?.ADMIN || userPermissions?.Admin;
+    return adminCategory && adminCategory.length > 0;
+  };
+
   const tabs = [
     { key: "Profile", label: t("Profile") },
     { key: "Permissions", label: t("Permissions") },
@@ -413,7 +421,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       
       </Modal.Header>
 
-      <Modal.Body>
+      <Modal.Body className="custom-scroll">
         {activeTab === "Profile" ? (
           <>
             {isSSO && (
@@ -501,7 +509,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                   />
                 </div>
                 <div className="col-12">
-                  <CustomInfo
+                  {!isSSO && <CustomInfo
                     className={[
                       "profile-settings-note-panel",
                       resetPasswordState === "error"
@@ -519,12 +527,13 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                               email: profileFields.email || "",
                             })
                     }
-                  />
+                  />}
                 </div>
               </div>
             </div>
 
-            <SelectDropdown
+            {/* TODO: Uncomment this when the language updations are implemented */}
+            {/* <SelectDropdown
               options={selectLanguages.map((lang) => ({
                 label: lang.value,
                 value: lang.name,
@@ -538,7 +547,8 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
               className="mb-3"
               onChange={handleLanguageChange}
               disabled={isSSO}
-            />
+            /> */}
+
           </>
         ) : (
             <div className='permissions-container'>
@@ -568,9 +578,12 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                   ))}
                 </div>
               )}
-              <div className='info-section'>
-                {t("Contact an administrator to request any changes to your permissions")}
-              </div>
+              
+              {!hasAdminPermissions() && (
+                <div className='info-section'>
+                  {t("Contact an administrator to request any changes to your permissions")}
+                </div>
+              )}
             </div>
         )}
       </Modal.Body>

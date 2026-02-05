@@ -228,8 +228,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     props.subscribe("ES_TENANT", (msg, data) => {
       if (data) {
         setTenant(data);
-        if (!JSON.parse(StorageService.get("tenantData"))?.name) {
+        // Always update tenantData with the latest data from the API response
+        if (data.tenantData) {
           StorageService.save("tenantData", JSON.stringify(data.tenantData));
+        }
+        // Also update tenantKey if tenantId is provided
+        if (data.tenantId) {
+          StorageService.save("tenantKey", data.tenantId);
         }
       }
     });
