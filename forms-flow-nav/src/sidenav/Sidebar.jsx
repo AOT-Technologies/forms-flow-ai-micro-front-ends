@@ -18,7 +18,7 @@ import {
 } from "../constants/constants";
 import { StorageService, StyleServices } from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
-import { fetchTenantDetails } from "../services/tenant";
+import { fetchTenantDetails, handleTenantSubscription } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
@@ -226,17 +226,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     });
 
     props.subscribe("ES_TENANT", (msg, data) => {
-      if (data) {
-        setTenant(data);
-        // Always update tenantData with the latest data from the API response
-        if (data.tenantData) {
-          StorageService.save("tenantData", JSON.stringify(data.tenantData));
-        }
-        // Also update tenantKey if tenantId is provided
-        if (data.tenantId) {
-          StorageService.save("tenantKey", data.tenantId);
-        }
-      }
+      handleTenantSubscription(data, setTenant);
     });
     props.subscribe("ES_ROUTE", (msg, data) => {
       if (data) {

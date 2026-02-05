@@ -1,6 +1,26 @@
 import { RequestService, StorageService } from "@formsflow/service";
 import API from "../../endpoints/index";
 
+/**
+ * Handles ES_TENANT event subscription logic
+ * Updates tenant state and saves tenantData/tenantKey to localStorage
+ * @param {Object} data - Event data containing tenantData and/or tenantId
+ * @param {Function} setTenant - State setter function for tenant
+ */
+export const handleTenantSubscription = (data, setTenant) => {
+  if (data) {
+    setTenant(data);
+    // Always update tenantData with the latest data from the API response
+    if (data.tenantData) {
+      StorageService.save("tenantData", JSON.stringify(data.tenantData));
+    }
+    // Also update tenantKey if tenantId is provided
+    if (data.tenantId) {
+      StorageService.save("tenantKey", data.tenantId);
+    }
+  }
+};
+
 export const fetchTenantDetails = (callback) => {
   RequestService.httpGETRequest(API.GET_TENANT_DATA)
     .then((res) => {

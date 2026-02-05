@@ -22,7 +22,7 @@ import "./Navbar.scss";
 import { StorageService, navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
-import { fetchTenantDetails } from "./services/tenant";
+import { fetchTenantDetails, handleTenantSubscription } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
 import { LANGUAGE,USER_LANGUAGE_LIST } from "./constants/constants";
 import { Helmet } from "react-helmet";
@@ -53,17 +53,7 @@ const NavBar = React.memo(({ props }) => {
     });
 
     props.subscribe("ES_TENANT", (msg, data) => {
-      if (data) {
-        setTenant(data);
-        // Always update tenantData with the latest data from the API response
-        if (data.tenantData) {
-          StorageService.save("tenantData", JSON.stringify(data.tenantData));
-        }
-        // Also update tenantKey if tenantId is provided
-        if (data.tenantId) {
-          StorageService.save("tenantKey", data.tenantId);
-        }
-      }
+      handleTenantSubscription(data, setTenant);
     });
     props.subscribe("ES_ROUTE", (msg, data) => {
       if (data) {
