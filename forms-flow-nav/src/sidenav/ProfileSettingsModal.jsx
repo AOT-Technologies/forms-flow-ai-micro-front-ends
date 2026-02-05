@@ -27,7 +27,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   });
   const [initialProfileFields, setInitialProfileFields] = useState(null);
   const [userPermissions, setUserPermissions] = useState({});
-  const [userRoles, setUserRoles] = useState([]);
   const [initialSelectedLang, setInitialSelectedLang] = useState(prevSelectedLang || LANGUAGE);
   const [emailTouched, setEmailTouched] = useState(false);
   const [usernameTouched, setUsernameTouched] = useState(false);
@@ -115,7 +114,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       const roles = JSON.parse(
         StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
       );
-      setUserRoles(roles);
 
       // Fetch all permissions from API
       fetchPermissions(
