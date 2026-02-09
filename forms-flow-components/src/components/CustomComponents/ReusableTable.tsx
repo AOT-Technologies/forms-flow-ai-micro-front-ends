@@ -4,6 +4,7 @@ import Paper from "@mui/material/Paper";
 import { useTranslation } from "react-i18next";
 import { NewSortDownIcon } from "../SvgIcons";
 import { StyleServices } from "@formsflow/service";
+import { EmptyState, EmptyStateAction } from "./EmptyState";
 
 interface ReusableTableProps {
   columns: any[];
@@ -20,6 +21,8 @@ interface ReusableTableProps {
   sx?: object;
   dataGridProps?: object;
   noRowsLabel?: string;
+  emptyStateMessage?: string;
+  emptyStateAction?: EmptyStateAction;
   disableColumnResize?: boolean;
   disableColumnMenu?: boolean;
   disableRowSelectionOnClick?: boolean;
@@ -51,6 +54,8 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   sx = { height: "100%", width: "100%" },
   dataGridProps = {},
   noRowsLabel,
+  emptyStateMessage,
+  emptyStateAction,
   disableColumnResize = true,
   disableColumnMenu = true,
   disableRowSelectionOnClick = true,
@@ -69,28 +74,56 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   const { t } = useTranslation();
   const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
 
-  const defaultSlots = useMemo(() => ({
-    columnSortedDescendingIcon: () => (
-      <div>
-        <NewSortDownIcon color={iconColor} />
-      </div>
-    ),
-    columnSortedAscendingIcon: () => (
-      <div style={{ transform: "rotate(180deg)" }}>
-        <NewSortDownIcon color={iconColor} />
-      </div>
-    ),
-    ...customSlots,
-  }), [iconColor, customSlots]);
+  // Create empty state overlay slot if emptyStateMessage or emptyStateAction is provided
+  const emptyStateOverlay = useMemo(() => {
+    if (emptyStateMessage || emptyStateAction) {
+      return () => (
+        <EmptyState
+          message={emptyStateMessage || noRowsLabel || "No data available"}
+          action={emptyStateAction}
+          dataTestId="reusable-table-empty-state"
+        />
+      );
+    }
+    return undefined;
+  }, [emptyStateMessage, emptyStateAction, noRowsLabel]);
+
+  const defaultSlots = useMemo(() => {
+    const slots: any = {
+      columnSortedDescendingIcon: () => (
+        <div>
+          <NewSortDownIcon color={iconColor} />
+        </div>
+      ),
+      columnSortedAscendingIcon: () => (
+        <div style={{ transform: "rotate(180deg)" }}>
+          <NewSortDownIcon color={iconColor} />
+        </div>
+      ),
+    };
+
+    // Add empty state overlay if provided and not already in customSlots
+    if (emptyStateOverlay && !(customSlots as any)?.noRowsOverlay) {
+      slots.noRowsOverlay = emptyStateOverlay;
+    }
+
+    // Merge with custom slots (custom slots take precedence)
+    return {
+      ...slots,
+      ...customSlots,
+    };
+  }, [iconColor, customSlots, emptyStateOverlay]);
 
   const defaultSlotProps = useMemo(() => ({
     ...customSlotProps,
   }), [customSlotProps]);
 
-  const defaultLocaleText = useMemo(() => ({
-    noRowsLabel: noRowsLabel || t("No data available"),
-    ...customLocaleText,
-  }), [noRowsLabel, customLocaleText, t]);
+  const defaultLocaleText = useMemo(() => {
+    return {
+      noRowsLabel: noRowsLabel || t("No data available"),
+      ...customLocaleText,
+    };
+  }, [noRowsLabel, customLocaleText, t]);
 
   // Enhanced columns - modify first column to render expansion content
   const enhancedColumns: GridColDef[] = useMemo(() => {

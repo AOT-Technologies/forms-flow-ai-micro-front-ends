@@ -392,3 +392,17 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
 .MuiDataGrid-main {
   overflow-x: scroll!important;
 }
+
+.MuiDataGrid-overlayWrapper {
+  .MuiDataGrid-overlayWrapperInner{
+    height: max-content !important;
+    width: 70vw !important;
+    padding: 2rem;
+    .reusable-table-empty-state{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+  }
+}
