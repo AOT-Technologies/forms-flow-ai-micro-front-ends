@@ -574,10 +574,12 @@ const Roles = React.memo((props: any) => {
     {
       dataField: "name",
       text: <Translation>{(t) => t("Role Name")}</Translation>,
+      classes: "text-break",
     },
     {
       dataField: "description",
       text: <Translation>{(t) => t("Description")}</Translation>,
+      classes: "text-break",
     },
     {
       dataField: "",
