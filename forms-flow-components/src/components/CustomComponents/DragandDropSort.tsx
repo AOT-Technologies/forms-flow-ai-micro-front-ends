@@ -19,6 +19,8 @@ interface DragAndDropFilterProps {
   onUpdate?: (updatedItems: FilterItem[]) => void;
   icon?: React.ReactNode;
   preventLastCheck?: boolean;
+  heading?: string;
+  subHeading?: string;
 }
 
 export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({
@@ -26,6 +28,8 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({
   onUpdate,
   icon,
   preventLastCheck = false,
+  heading,
+  subHeading,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
@@ -110,7 +114,9 @@ useEffect(() => {
 
   return (
     <div className="drag-drop-list-container" ref={containerRef}>
-      <ul  ref={listRef}>
+      {heading && <h5 className="filter-heading">{heading}</h5>}
+      {subHeading && <p className="filter-sub-heading">{subHeading}</p>}
+      <ul ref={listRef}>
         {filterItems?.map((item, index) => (
           <li key={item.id ?? `${item.name}-${index}`}
             className="draggable-item"
