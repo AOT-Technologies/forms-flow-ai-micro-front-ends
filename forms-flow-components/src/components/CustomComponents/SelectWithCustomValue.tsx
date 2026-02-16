@@ -329,7 +329,7 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                 // Do NOT auto-select the first secondary option; require user action
                 if (secondDropdown) {
                     // Clear secondary selection and wait for manual pick
-                    setSecondSelectedValue('');
+                    setSecondSelectedValue(undefined);
                 }
             },
             [onChange, secondDropdown, dependentOptions, onSecondChange, closeDropdownAndClearSearch, exitCustomMode]

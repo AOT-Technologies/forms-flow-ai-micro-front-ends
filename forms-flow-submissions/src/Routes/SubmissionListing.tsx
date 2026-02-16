@@ -1009,9 +1009,14 @@ const fetchSubmissions = useCallback(async () => {
             sortingMode="server"
             sortModel={sortModel}
             onSortModelChange={handleSortModelChange}
-            noRowsLabel={t(
-                "No submissions have been found. Try a different filter combination or contact your admin."
-              )}
+            emptyStateMessage="No submissions found"
+            emptyStateAction={{
+              label: t("Clear filters"),
+              onClick: handleResetToDefault,
+              variant: "primary",
+              size: "medium",
+              dataTestId: "clear-filters-button"
+            }}
             disableColumnMenu
             disableRowSelectionOnClick
             paginationModel={paginationModel}

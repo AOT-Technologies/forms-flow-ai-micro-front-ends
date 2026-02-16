@@ -22,6 +22,7 @@ import {
   setBundleLoading,
   setAppHistoryLoading,
   setSelectedFilter,
+  setFilterToEdit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { useHistory, useParams } from "react-router-dom";
@@ -58,6 +59,7 @@ import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
+import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 
 export interface Task {
   id: string;
@@ -108,6 +110,7 @@ const TaskListTable = () => {
     submissionId: "",
   });
   const [bundleName, setBundleName] = useState("");
+  const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
 
   // Redux selectors for task details
   const task = useSelector((state: any) => state.task.taskDetail);
@@ -621,6 +624,15 @@ const TaskListTable = () => {
   // Wrapper class to enable multi-line cell styles via CSS
   const tableWrapperClass = isMultiLineEnabled ? 'task-table-multiline' : '';
 
+  const handleCloseFilterModal = () => {
+    setShowTaskFilterModal(false);
+    dispatch(setFilterToEdit(null));
+  };
+
+  const handleToggleFilterModal = () => {
+    setShowTaskFilterModal((prev) => !prev);
+  };
+
   return (
     <>
       <div className={tableWrapperClass}>
@@ -637,7 +649,14 @@ const TaskListTable = () => {
           onPaginationModelChange={handlePaginationModelChange}
           sortModel={sortModel}
           onSortModelChange={handleSortModelChange}
-          noRowsLabel={t("No tasks found")}
+          emptyStateMessage="No tasks found"
+          emptyStateAction={{
+            label: t("Create custom Filter"),
+            onClick: handleToggleFilterModal,
+            variant: "primary",
+            size: "medium",
+            dataTestId: "create-custom-filter-button"
+          }}
           disableColumnMenu
           disableRowSelectionOnClick
           dataGridProps={{
@@ -689,6 +708,11 @@ const TaskListTable = () => {
           onRefresh={handleRefresh}
         />
       )}
+      <TaskFilterModal
+        toggleModal={handleToggleFilterModal}
+        show={showTaskFilterModal}
+        onClose={handleCloseFilterModal}
+      />
     </>
   );
 };
