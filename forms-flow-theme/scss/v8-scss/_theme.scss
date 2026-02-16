@@ -392,6 +392,9 @@ $font-tokens: (
     max-height: 50vh;
     overflow-y: auto;
   }
+  .body-section{
+    max-height: 90vh !important;
+  }
 }
 .system-variables-container{
   .custom-switch-wrapper{
