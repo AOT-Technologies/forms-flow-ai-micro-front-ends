@@ -23,6 +23,7 @@ $font-size-s:var(--font-size-s);
   padding: 1rem;
   border-radius: 0.5rem;
   overflow-y: auto;
+  @extend .custom-scroll;
 }
 
 .variable-right-container {
@@ -149,18 +150,24 @@ $font-size-s:var(--font-size-s);
   .variable-box-container{
     border: 1px solid $gray-x-light;
     border-radius: 5px;
-    padding: 1rem 1.25rem;
-    overflow-y: auto;
-    max-height: 50%;
+    hr{
+      margin: 1rem 1.25rem !important;
+    }
     .variable-box-title{
       @include font-style($font-size-m, $font-weight-medium, $gray-darkest);
     }
     .variable-box-description{
       @include font-style($font-size-s, $font-weight-regular, $gray-medium-darker);
     }
+    .variable-box-content{
+      overflow-y: auto;
+      @extend .custom-scroll;
+      max-height: 13.625rem;
+      padding: 0 1.25rem 1rem 1.25rem;
+    }
     .variable-list {
       .variable-list-item {
-        padding: 8px 0;
+        padding: 0.5rem 0;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -180,5 +187,6 @@ $font-size-s:var(--font-size-s);
     display: flex;
     flex-direction: column;
     gap: 2px;
+    padding: 1rem 1.25rem 0 1rem;
   }
 }

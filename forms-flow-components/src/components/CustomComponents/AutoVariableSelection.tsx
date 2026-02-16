@@ -32,6 +32,7 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
     const prevPropSelectedVariableRef = useRef<FormVariable | null | undefined>(propSelectedVariable);
     const [showElement, setShowElement] = useState(false);
     const { t } = useTranslation();
+    
     const [selectedComponent, setSelectedComponent] = useState({
       key: null,
       type: "",
@@ -51,78 +52,109 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
       "allAvailableRoles",
     ]);
 
-    // Extract all form components automatically
-    const extractFormVariables = useCallback((formData: any): FormVariable[] => {
-      console.log('formData', formData);
-      if (!formData || !formData.components) return [];
-
-      // Layout/wrapper types: recurse into children but do not add as variables
-      const layoutOnlyTypes = new Set([
-        "button",
-        "columns",
+    // Layout types: recurse into these but do not add as variables
+    const isLayoutComponent = useCallback((component: any, parentType?: string): boolean => {
+      const layoutTypes = [
         "panel",
+        "columns",
+        "fieldset",
+        "tabs",
         "well",
         "container",
+        "button",
         "htmlelement",
-        "tabs",
         "survey",
+        "table",
         "signature",
         "password",
         "file",
-        "address"
-      ]);
-
-      const variables: FormVariable[] = [];
-
-      // Process components manually to have full control over key construction
-      const processComponent = (component: any, parentPath: string[] = []) => {
-        if (!component) return;
-
-        // Skip components that are in the ignore list (e.g. applicationId, applicationStatus)
-        if (component.key && ignoreKeywords.has(component.key)) {
-          return;
-        }
-
-        const isLayoutOnly = layoutOnlyTypes.has(component.type);
-
-        // Add variable only for input components (not layout-only wrappers)
-        if (component.key && !isLayoutOnly) {
-          const componentKey = typeof component.key === 'string' ? component.key : String(component.key);
-          const fullKey = parentPath.length > 0
-            ? [...parentPath, componentKey].join(".")
-            : componentKey;
-
-          variables.push({
-            key: fullKey,
-            altVariable: component.label || componentKey,
-            labelOfComponent: component.label || componentKey,
-            type: component.type || "textfield",
-            isFormVariable: true,
-          });
-        }
-
-        // Always recurse into nested components (panel, container, columns, etc.)
-        if (component.components && Array.isArray(component.components)) {
-          const componentKey = component.key && (typeof component.key === 'string' ? component.key : String(component.key));
-          const newParentPath = (component.type === "container" || component.type === "survey") && componentKey
-            ? [...parentPath, componentKey]
+        "address",
+      ];
+      return (
+        (component?.type && layoutTypes.includes(component.type)) || parentType === "tabs"
+      );
+    }, []); 
+    // Returns all nested component arrays and the path to use for their children (Form.io columns/table use different shapes)
+    const getNestedComponentArrays = useCallback(
+      (component: any, parentPath: string[]): { components: any[]; path: string[] }[] => {
+        const key = component?.key ? String(component.key) : "";
+        const pathBuildingTypes = ["container", "survey", "columns", "table"];
+        const path =
+          key && component?.type && pathBuildingTypes.includes(component.type)
+            ? [...parentPath, key]
             : parentPath;
+        const out: { components: any[]; path: string[] }[] = [];
 
-          component.components.forEach((child: any) => {
-            processComponent(child, newParentPath);
+        if (component?.components && Array.isArray(component.components)) {
+          out.push({ components: component.components, path });
+        }
+        if (component?.type === "columns" && component.columns && Array.isArray(component.columns)) {
+          component.columns.forEach((col: any) => {
+            if (col?.components && Array.isArray(col.components)) {
+              out.push({ components: col.components, path });
+            }
           });
         }
-      };
+        if (component?.type === "table" && component.rows && Array.isArray(component.rows)) {
+          component.rows.forEach((row: any[]) => {
+            if (Array.isArray(row)) {
+              row.forEach((cell: any) => {
+                if (cell?.components && Array.isArray(cell.components)) {
+                  out.push({ components: cell.components, path });
+                }
+              });
+            }
+          });
+        }
+        return out;
+      },
+      []
+    );
 
-      // Process components manually instead of using Utils.eachComponent to avoid path issues
-      if (formData.components && Array.isArray(formData.components)) {
-        formData.components.forEach((component: any) => {
-          processComponent(component, []);
-        });
-      }
+    // Extract all form components automatically
+    const extractFormVariables = useCallback(
+      (formData: any): FormVariable[] => {
+        if (!formData?.components) return [];
 
-      return variables;
-    }, [ignoreKeywords]);
+        const variables: FormVariable[] = [];
+
+        const extractInputComponents = (
+          components: any[],
+          parentPath: string[] = [],
+          parentType?: string
+        ) => {
+          components.forEach((component: any) => {
+            if (!component) return;
+            if (component.key && ignoreKeywords.has(component.key)) return;
+
+            const isLayout = isLayoutComponent(component, parentType);
+
+            if (component.key && !isLayout) {
+              const componentKey =
+                typeof component.key === "string" ? component.key : String(component.key);
+              variables.push({
+                key: componentKey,
+                altVariable: component.label || componentKey,
+                labelOfComponent: component.label || componentKey,
+                type: component.type || "textfield",
+                isFormVariable: true,
+              });
+            }
+
+            const nested = getNestedComponentArrays(component, parentPath);
+            nested.forEach(({ components: childList, path }) => {
+              extractInputComponents(childList, path, component.type);
+            });
+          });
+        };
+
+        if (Array.isArray(formData.components)) {
+          extractInputComponents(formData.components, []);
+        }
+        return variables;
+      },
+      [ignoreKeywords, isLayoutComponent, getNestedComponentArrays]
+    );
 
     // Auto-extract and store all form variables for display
     useEffect(() => {
@@ -140,7 +172,6 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
     useEffect(() => {
       if (isInternalUpdateRef.current && onChange) {
         isInternalUpdateRef.current = false;
-        console.log('Returned selected variable (from useEffect):', selectedVariable);
         onChange(selectedVariable);
       }
     }, [selectedVariable, onChange]);
@@ -173,7 +204,6 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
       
       // Immediately call onChange to return the selected variable
       if (onChange) {
-        console.log('Returned selected variable (from handleVariableSelect):', variable);
         onChange(variable);
       }
 
@@ -268,7 +298,6 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
         
         // Immediately call onChange to return the selected variable
         if (onChange) {
-          console.log('Returned selected variable (from handleFormComponentClick):', updatedVariable);
           onChange(updatedVariable);
         }
       }
@@ -279,7 +308,7 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
 
     // Form variables custom form
     const renderFormContent = () => (
-      <div className="form-content-block">
+      <div className="form-content-block custom-scroll">
         {
           isLoading
             ? <div className="form-spinner"></div>
@@ -320,7 +349,7 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
                 </div>
               </div>
               <hr />
-              <div className="variable-box-content">
+              <div className="variable-box-content custom-scroll">
                 {formVariables.length > 0 && (
                   <div className="variable-list">
                     {formVariables.map((variable) => (
@@ -358,7 +387,7 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
                 </div>
               </div>
               <hr />
-              <div className="variable-box-content">
+              <div className="variable-box-content custom-scroll">
                 {systemVariables.length > 0 && (
                   <div className="variable-list">
                     {systemVariables.map((sysVar) => {
@@ -401,7 +430,7 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
       <div className="variable-page-container">
         <div className="variable-page-body d-flex">
           <div className="variable-page-body-form">
-            <div className="variable-left-container">
+            <div className="variable-left-container custom-scroll">
               {renderFormContent()}
             </div>
             <div
