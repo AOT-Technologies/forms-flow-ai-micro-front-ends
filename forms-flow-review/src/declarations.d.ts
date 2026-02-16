@@ -122,7 +122,8 @@ declare module "@formsflow/components" {
     Alert,
     DropdownMultiSelect,
     CustomTextArea,
-    BreadCrumbs
+    BreadCrumbs,
+    QuickFilterIcon
   }: any;
 }
 

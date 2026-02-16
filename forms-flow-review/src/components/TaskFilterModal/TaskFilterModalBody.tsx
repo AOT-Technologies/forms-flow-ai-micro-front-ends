@@ -6,7 +6,7 @@ import {
   useSuccessCountdown,
   V8CustomButton,
   SelectDropdown,
-  AddIcon
+  QuickFilterIcon
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import {
@@ -1007,7 +1007,7 @@ const handleFetchTaskVariables = (formId) => {
                 ? (isQuickFilterFlow ? `${t("Apply Quick Filter")}` : t("Save and Apply"))
                 : t("Next")
             }
-            icon={isLastStep && isQuickFilterFlow ? <AddIcon color="#7C80FE"/> : null}
+            icon={isLastStep && isQuickFilterFlow ? <QuickFilterIcon/> : null}
             onClick={handleWizardPrimaryClick}
             dataTestId="wizard-next"
             ariaLabel={
