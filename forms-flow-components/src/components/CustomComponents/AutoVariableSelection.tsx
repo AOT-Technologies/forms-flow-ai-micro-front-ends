@@ -3,9 +3,6 @@ import { useTranslation } from "react-i18next";
 import {
   FormComponent,
 } from "../../formsflow-components";
-import { StyleServices } from "@formsflow/service";
-import { Utils } from "@aot-technologies/formio-react";
-import _ from "lodash";
 import type { FormVariable, SystemVariable } from "./VariableSelection";
 interface AutoVariableSelectionProps {
   form: any;
@@ -158,7 +155,7 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
 
     // Auto-extract and store all form variables for display
     useEffect(() => {
-      if (form && form.components) {
+      if (form?.components) {
         const extractedVars = extractFormVariables(form);
         const varsByKey: Record<string, FormVariable> = {};
         extractedVars.forEach((varItem) => {
@@ -231,11 +228,8 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
         let component = null;
 
         // First, try to find by the last part of the key (most common case)
-        // Use querySelector with escaped selector for safety
         try {
-          // Escape any special characters in the key part
-          const escapedKey = lastKeyPart.replace(/([\.#\[\]\(\)\{\}:;,>+~|^$*?!])/g, '\\$1');
-          component = document.querySelector(`.formio-component-${escapedKey}`);
+          component = document.querySelector(`.formio-component-${lastKeyPart}`);
         } catch (e) {
           // If selector fails, fall back to manual search
         }
@@ -357,12 +351,22 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
                         key={variable.key}
                         className="variable-list-item"
                         onClick={() => handleVariableSelect(variable)}
+                        data-testid={`variable-selection-form-variable-item-${variable.key}`}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleVariableSelect(variable);
+                          }
+                        }}
                       >
                         <input
                           type="radio"
                           name="form-variables"
                           checked={selectedVariable?.key === variable.key}
                           onChange={() => handleVariableSelect(variable)}
+                          data-testid={`variable-selection-form-variable-radio-${variable.key}`}
                         />
                         <span className="variable-list-item-text">
                           {variable.altVariable || variable.labelOfComponent || variable.key}
@@ -403,12 +407,22 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
                           key={sysVar.key}
                           className="variable-list-item"
                           onClick={() => handleVariableSelect(variable)}
+                          data-testid={`variable-selection-system-variable-item-${sysVar.key}`}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleVariableSelect(variable);
+                            }
+                          }}
                         >
                           <input
                             type="radio"
                             name="system-variables"
                             checked={selectedVariable?.key === sysVar.key}
                             onChange={() => handleVariableSelect(variable)}
+                            data-testid={`variable-selection-system-variable-radio-${sysVar.key}`}
                           />
                           <span className="variable-list-item-text">
                             {variable?.altVariable || sysVar.labelOfComponent}
