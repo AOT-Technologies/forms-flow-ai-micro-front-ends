@@ -82,7 +82,16 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
             : parentPath;
         const out: { components: any[]; path: string[] }[] = [];
 
-        if (component?.components && Array.isArray(component.components)) {
+        // IMPORTANT:
+        // - For most composite components (container, survey, table, columns),
+        //   we recurse into their children.
+        // - For 'address', we treat the parent as the variable (key = 'address')
+        //   and do NOT recurse into its internal child fields (address1, city, etc.).
+        if (
+          component?.type !== "address" &&
+          component?.components &&
+          Array.isArray(component.components)
+        ) {
           out.push({ components: component.components, path });
         }
         if (component?.type === "columns" && component.columns && Array.isArray(component.columns)) {
