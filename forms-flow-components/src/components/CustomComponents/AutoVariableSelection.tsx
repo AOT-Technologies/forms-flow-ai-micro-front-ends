@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FormComponent,
@@ -212,9 +212,14 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
         isFormVariable: variable.isFormVariable ?? true,
       });
 
-      // Only highlight form components if this is a form variable (not a system variable)
-      if (variable.isFormVariable !== false) {
-        // Highlight the corresponding form component
+      // System variables: remove any existing highlights (not in the form)
+      if (variable.isFormVariable === false) {
+        const existing = document.querySelector(".formio-hilighted");
+        if (existing) {
+          existing.classList.remove("formio-hilighted");
+        }
+      } else {
+        // Form variable: highlight the corresponding form component
         const existing = document.querySelector(".formio-hilighted");
         if (existing) {
           existing.classList.remove("formio-hilighted");
@@ -230,8 +235,8 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
         // First, try to find by the last part of the key (most common case)
         try {
           component = document.querySelector(`.formio-component-${lastKeyPart}`);
-        } catch (e) {
-          // If selector fails, fall back to manual search
+        } catch {
+          component = null; // Invalid selector (e.g. special chars in key); fall back to manual search
         }
 
         // If not found, search through all components manually
@@ -256,12 +261,6 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> = React
         if (component) {
           component.classList.add("formio-hilighted");
           component.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      } else {
-        // For system variables, remove any existing highlights since they're not in the form
-        const existing = document.querySelector(".formio-hilighted");
-        if (existing) {
-          existing.classList.remove("formio-hilighted");
         }
       }
     }, []);

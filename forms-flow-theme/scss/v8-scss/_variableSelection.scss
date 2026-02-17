@@ -23,7 +23,7 @@ $font-size-s:var(--font-size-s);
   padding: 1rem;
   border-radius: 0.5rem;
   overflow-y: auto;
-  @extend .custom-scroll;
+  @include custom-scroll($width: 0.3rem);
 }
 
 .variable-right-container {
@@ -146,12 +146,12 @@ $font-size-s:var(--font-size-s);
   display: flex;
   flex-direction: column;
   height: 100%;
-  gap: 1rem;
+  gap: var(--spacer-100);
   .variable-box-container{
     border: 1px solid $gray-x-light;
     border-radius: 5px;
     hr{
-      margin: 1rem 1.25rem !important;
+      margin: var(--spacer-100) var(--spacer-125) !important;
     }
     .variable-box-title{
       @include font-style($font-size-m, $font-weight-medium, $gray-darkest);
@@ -161,19 +161,19 @@ $font-size-s:var(--font-size-s);
     }
     .variable-box-content{
       overflow-y: auto;
-      @extend .custom-scroll;
+      @include custom-scroll($width: 0.3rem);
       max-height: 13.625rem;
-      padding: 0 1.25rem 1rem 1.25rem;
+      padding: 0 var(--spacer-125) var(--spacer-100) var(--spacer-125);
     }
     .variable-list {
       .variable-list-item {
-        padding: 0.5rem 0;
+        padding: var(--spacer-050) 0;
         cursor: pointer;
         display: flex;
         align-items: center;
         .variable-list-item-text{
           @include font-style($font-size-m, $font-weight-regular,$secondary-dark);
-          margin-left: 1rem;
+          margin-left: var(--spacer-100);
         }
         &:disabled,
         &[disabled] {
@@ -187,6 +187,6 @@ $font-size-s:var(--font-size-s);
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 1rem 1.25rem 0 1rem;
+    padding: var(--spacer-100) var(--spacer-125) 0 var(--spacer-100);
   }
 }
