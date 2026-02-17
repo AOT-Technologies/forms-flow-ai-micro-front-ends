@@ -3,6 +3,13 @@ $gray-light: var(--gray-light);
 $gray-x-light: var(--gray-x-light);
 $animSpeed: 300ms; 
 
+$heading-size: var(--font-size-m);
+$heading-weight: var(--font-weight-medium);
+$heading-color: var(--gray-darkest);
+$subheading-size: var(--font-size-s);
+$subheading-weight: var(--font-weight-regular);
+$subheading-color: var(--gray-medium-darker); 
+
 .drag-drop-container{
     @include large-modal-popover();
     .modal-body{
@@ -83,5 +90,13 @@ $animSpeed: 300ms;
         display: flex;
         align-items: center;
       }
+    }
+    
+    .filter-heading {
+        @include font-style($heading-size, $heading-weight, $heading-color);
+    }
+
+    .filter-sub-heading {
+        @include font-style($subheading-size, $subheading-weight, $subheading-color);
     }
   }

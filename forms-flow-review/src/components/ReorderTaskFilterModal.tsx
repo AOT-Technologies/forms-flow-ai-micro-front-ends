@@ -31,61 +31,70 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       const { t } = useTranslation();
       const dispatch = useDispatch();
       const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
-      const [sortedFilterList, setSortedFilterList] = useState<any[]>([
-        filtersList,
-      ]);
+
+      const [myFilterList, setMyFilterList] = useState<any[]>([]);
+      const [sharedFilterList, setSharedFilterList] = useState<any[]>([]);
 
       const darkColor = StyleServices.getCSSVariable("--secondary-dark");
       //  need to  update the filterList with only key of Id,name,isChcked ,sortOrder,Icon in order to pass to drag and drop
       const updateFilterList = useMemo(() => {
         return filtersList.map((item) => {
-          // const createdByMe = userDetails.preferred_username === item.createdBy;
-          // const isSharedToPublic = !item.roles?.length && !item.users?.length;
-          // const isSharedToRoles = item.roles.length
-          // const isShareToMe = item.roles?.some((role) =>
-          //   userDetails.groups?.includes(role)
-          // );
-          // let icon = null;
-          // // icon for filters except private and All tasks 
-          // if (createdByMe&& (isSharedToPublic || isSharedToRoles)) {
-          //   icon = <SharedWithOthersIcon />;
-          // } else if (isSharedToPublic || isShareToMe) {
-          //   icon = <SharedWithMeIcon />;
-          // }
+          const createdByMe = userDetails?.preferred_username === item?.createdBy;
+          const isSharedToPublic = !item?.roles?.length && !item?.users?.length;
+          const isSharedToRoles = item?.roles?.length;
+          const isSharedToMe = item?.roles?.some((role) =>
+            userDetails?.groups?.includes(role)
+          );
+
+          let category = "my";
+          if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+            category = "my";
+          } else if (isSharedToPublic || isSharedToMe) {
+            category = "shared";
+          }
+
           return {
             id: item.id,
             name: item.name,
             isChecked: !item.hide,
             sortOrder: item.sortOrder,
-            // icon: icon,
+            category,
           };
         });
-      }, [filtersList]);
+      }, [filtersList, userDetails]);
 
       // set the updated filterList to  sortedfilterLis state ,to compare the updated filterList with the original filterList initially
       useEffect(() => {
-        setSortedFilterList(updateFilterList);
+        const myFilters = updateFilterList.filter(f => f.category === "my");
+        const sharedFilters = updateFilterList.filter(f => f.category === "shared");
+        setMyFilterList(myFilters);
+        setSharedFilterList(sharedFilters);
       }, [updateFilterList]);
 
-      //callback function to update the filterList after drag and drop
-      const onUpdateFilterOrder = (dragedFilterList) => {
-        setSortedFilterList(dragedFilterList);
+      const onUpdateMyFilters = (updatedList) => {
+        setMyFilterList(updatedList);
+      };
+
+      const onUpdateSharedFilters = (updatedList) => {
+        setSharedFilterList(updatedList);
       };
 
       const handleDiscardChanges = () => {
         onClose();
       };
       const handleSaveChanges = async () => {
-        // saveFilterPreference  payload only contains the id and sortOrder ,hide
-        const updatedFiltersPreference = sortedFilterList.map(
-          ({ id, isChecked, sortOrder }) => ({
+        // Combine lists for saving
+        const combinedList = [...myFilterList, ...sharedFilterList];
+
+        const updatedFiltersPreference = combinedList.map(
+          ({ id, isChecked }, index) => ({
             filterId: id,
             hide: !isChecked,
-            sortOrder,
+            sortOrder: index, // Update sort order based on new position
           })
         );
-        // check if the selected filter is hidden or not
-        const selectedFilterHide = sortedFilterList.some(
+
+        const selectedFilterHide = combinedList.some(
           ({ id, isChecked }) => id === selectedFilter.id && !isChecked
         );
 
@@ -110,22 +119,23 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       };
 
       const isSaveBtnDisabled = useMemo(() => {
-        const original = JSON.stringify(
-          updateFilterList.map(({ id, isChecked, sortOrder }) => ({
-            id,
-            isChecked,
-            sortOrder,
-          }))
-        );
-        const current = JSON.stringify(
-          sortedFilterList.map(({ id, isChecked, sortOrder }) => ({
-            id,
-            isChecked,
-            sortOrder,
-          }))
-        );
-        return original === current;
-      }, [sortedFilterList, updateFilterList]);
+        const myFiltersChecked = myFilterList.some(f => f.isChecked);
+        const sharedFiltersChecked = sharedFilterList.some(f => f.isChecked);
+
+        if (!myFiltersChecked && !sharedFiltersChecked) {
+          return true;
+        }
+
+        const originalMy = updateFilterList.filter(f => f.category === "my");
+        const originalShared = updateFilterList.filter(f => f.category === "shared");
+
+        const formatForCompare = (list) => list.map(({ id, isChecked }) => ({ id, isChecked }));
+
+        const myChanged = JSON.stringify(formatForCompare(originalMy)) !== JSON.stringify(formatForCompare(myFilterList));
+        const sharedChanged = JSON.stringify(formatForCompare(originalShared)) !== JSON.stringify(formatForCompare(sharedFilterList));
+
+        return !myChanged && !sharedChanged;
+      }, [myFilterList, sharedFilterList, updateFilterList]);
 
       return (
         <Modal
@@ -148,12 +158,24 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
            </div>
           </Modal.Header>
           <Modal.Body>
-            
-            <DragandDropSort
-              items={updateFilterList}
-              onUpdate={onUpdateFilterOrder}
-              preventLastCheck={true}
-            />
+            <div className="filter-section mb-3">
+              <DragandDropSort
+                items={myFilterList}
+                onUpdate={onUpdateMyFilters}
+                preventLastCheck={true}
+                heading={t("Personal Filters")}
+                subHeading={t("Only you can see these")}
+              />
+            </div>
+            <div className="filter-section">
+              <DragandDropSort
+                items={sharedFilterList}
+                onUpdate={onUpdateSharedFilters}
+                preventLastCheck={false}
+                heading={t("Shared Filters")}
+                subHeading={t("Both you and others can see these")}
+              />
+            </div>
           </Modal.Body>
           <Modal.Footer>
               <V8CustomButton
