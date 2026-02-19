@@ -377,14 +377,11 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
 
         /** Handle special action items */
         const handleCustomValueClick = useCallback(() => {
-            // Set initial input value to current selected value if it's a string
-            if (selectedValue && typeof selectedValue === "string") {
-                enterCustomMode(selectedValue);
-            } else {
-                enterCustomMode("");
-            }
+            // Always start with empty input when entering custom value from dropdown
+            // so user can type a fresh custom value without clearing the previous selection
+            enterCustomMode("");
             onEnterCustomValue?.();
-        }, [enterCustomMode, onEnterCustomValue, selectedValue]);
+        }, [enterCustomMode, onEnterCustomValue]);
 
         const handleAdditionalVariablesClick = useCallback(() => {
             closeDropdownAndClearSearch();
