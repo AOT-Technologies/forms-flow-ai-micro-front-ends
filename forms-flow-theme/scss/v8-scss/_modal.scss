@@ -728,7 +728,7 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     .modal-content{
         width: 45rem;
         height: 31.875rem !important;
-        border-radius: 12px;
+        border-radius: 5px;
         border: none;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         display: flex;
@@ -742,11 +742,27 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                 margin: 0;
                 margin-left: 0.33rem;
             }
+            .application-name{
+              color: #000000;
+              font-size: var(--font-size-m);
+              font-weight: var(--font-weight-medium);
+            }
         }
         .modal-body{
             border-top: none !important;
             margin: 0;
             padding: 4.75rem 5rem 4.75rem 3rem;
+            border-bottom: none !important;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 1rem;
+                right: 1rem;
+                border-bottom: 1px solid var(--gray-x-light);
+            }
 
             .onboarding-content {
                 display: flex;
@@ -774,6 +790,13 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
                     line-height: var(--spacer-125);
                   }
                 }
+        }
+        .modal-footer{
+            padding: 1rem !important;
+            margin: 0 !important;
+            > * {
+                margin: 0;
+            }
         }
     }
 }
