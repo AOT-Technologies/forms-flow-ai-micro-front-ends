@@ -396,7 +396,7 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
 .MuiDataGrid-overlayWrapper {
   .MuiDataGrid-overlayWrapperInner{
     height: max-content !important;
-    width: 70vw !important;
+    // width: 70vw !important;
     padding: 2rem;
     .reusable-table-empty-state{
       display: flex;
