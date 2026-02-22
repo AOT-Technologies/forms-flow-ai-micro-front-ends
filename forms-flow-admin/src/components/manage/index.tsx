@@ -168,6 +168,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
                     {...props}
                     setTab={setTab}
                     setCount={setRoleCount}
+                    tenantId={tenantId}
                   />
                 </div>
               )}
