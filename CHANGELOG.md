@@ -2,6 +2,36 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.1.0 - date to be added
+`Added`
+**form-flow-components**
+* Added new auto variable selection modal.
+* Added new icons.
+
+**forms-flow-admin**
+* Added external links for upgrade, terms and conditions, privacy poliy, sales contact in organization tab for premium instance.
+
+`Fixed`
+**forms-flow-theme**
+* Fixed scroll and other UI issues.
+
+`Modified`
+**forms-flow-review**
+* Modified re-order and hide filters to independent sections based on shared or private.
+
+**forms-flow-admin**
+* Re-designed admin module with four tabbed navigations:
+  * Organization
+  * Users
+  * Roles
+  * Dashboards
+
+**forms-flow-nav**
+* Redesigned profile settings with all essential user details, rest password functionality and permission details.
+
+ `Generic changes`
+ * Implemented external IDP login feature to the application
+
 ## 8.0.1 - 2025-12-17
 
 `Fixed`
