@@ -11,6 +11,10 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
 **forms-flow-admin**
 * Added external links for upgrade, terms and conditions, privacy poliy, sales contact in organization tab for premium instance.
 
+
+**forms-flow-idm**
+* Added tenant registration page for tenant owner.
+
 `Fixed`
 **forms-flow-theme**
 * Fixed scroll and other UI issues.
@@ -28,6 +32,10 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
 
 **forms-flow-nav**
 * Redesigned profile settings with all essential user details, rest password functionality and permission details.
+
+ `Removed`
+ **forms-flow-admin**
+ * Removed user registration button from admin page.
 
  `Generic changes`
  * Implemented external IDP login feature to the application
