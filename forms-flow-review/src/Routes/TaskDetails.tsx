@@ -40,11 +40,10 @@ import {
   CUSTOM_SUBMISSION_URL,
   CUSTOM_SUBMISSION_ENABLE,
   CUSTOM_EVENT_TYPE,
-  MULTITENANCY_ENABLED,
 } from "../constants/index";
 import TaskForm from "../components/TaskForm";
 import { TaskHistoryModal } from "../components/TaskHistory";
-import { push } from "connected-react-router";
+import { navigateToTaskListingFromReview, getRedirectUrl } from "@formsflow/service";
 import { userRoles } from "../helper/permissions";
 import TaskAssigneeManager from "../components/Assigne/Assigne";
 
@@ -81,7 +80,7 @@ const TaskDetails = () => {
   );
   const disabledMode = taskAssignee !== currentUser;
   // Redirection URL
-  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const redirectUrl = getRedirectUrl(tenantKey);
 
   // Track previous assignee to detect changes
   const previousAssignee = useRef<string | undefined>(taskAssignee);
@@ -274,7 +273,7 @@ const TaskDetails = () => {
     Formio.clearCache();
     dispatch(setSelectedTaskID(null));
     dispatch(resetSubmission("submission"));
-    dispatch(push(`${redirectUrl}task`));
+    navigateToTaskListingFromReview(dispatch, tenantKey);
   };
 
   //Application History

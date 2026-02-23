@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch,useHistory, useParams,useLocation,Redirect } from "react-router-dom";
+import { Route, Switch, useHistory, useParams, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { KeycloakService, StorageService } from "@formsflow/service";
@@ -10,9 +10,7 @@ import {
 } from "./endpoints/config";
 import Footer from "./components/footer";
 import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
-import AdminDashboard from "./components/dashboard";
-import RoleManagement from "./components/roles";
-import UserManagement from "./components/users";
+import Manage from "./components/manage";
 import i18n from "./resourceBundles/i18n";
 import "./index.scss";
 import Accessdenied from "./components/AccessDenied";
@@ -20,13 +18,15 @@ import Accessdenied from "./components/AccessDenied";
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
   const history = useHistory();
-  const  {tenantId}  = useParams();
+  const  {tenantId: urlTenantId}  = useParams();
+  // Fallback to storage if tenantId is not in URL params
+  const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [isAuth, setIsAuth] = React.useState(instance?.isAuthenticated());
   const [page, setPage] = React.useState("Dashboard");
-  const [dashboardCount, setDashboardCount] = React.useState();
-  const [roleCount, setRoleCount] = React.useState();
-  const [userCount, setUserCount] = React.useState();
+  const [dashboardCount, setDashboardCount] = React.useState<number | undefined>();
+  const [roleCount, setRoleCount] = React.useState<number | undefined>();
+  const [userCount, setUserCount] = React.useState<number | undefined>();
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
@@ -42,12 +42,40 @@ const Admin = React.memo(({ props }: any) => {
     publish("ES_ROUTE", { pathname: `${baseUrl}admin` });
     subscribe("ES_CHANGE_LANGUAGE", (msg, data) => {
       i18n.changeLanguage(data);
-    })
+    });
+    // Subscribe to tenant data updates
+    subscribe("ES_TENANT", (msg, data) => {
+      if (data?.tenantData) {
+        StorageService.save("tenantData", JSON.stringify(data.tenantData));
+        // Also update tenantKey if tenantId changes
+        if (data.tenantId) {
+          StorageService.save("tenantKey", data.tenantId);
+        }
+      }
+    });
   }, []);
 
   React.useEffect(()=>{
     StorageService.save("tenantKey", tenantId || '')
   },[tenantId])
+
+  // Verify tenantData is stored in localStorage
+  React.useEffect(() => {
+    if (MULTITENANCY_ENABLED && tenantId) {
+      const tenantDataStr = StorageService.get("tenantData");
+      if (tenantDataStr) {
+        try {
+          const tenantData = JSON.parse(tenantDataStr);
+          // Verify tenantData has expected structure
+          if (!tenantData || (!tenantData.key && !tenantData.name)) {
+            console.warn("tenantData in localStorage may be incomplete:", tenantData);
+          }
+        } catch (error) {
+          console.error("Error parsing tenantData from localStorage:", error);
+        }
+      } 
+    }
+  }, [tenantId]);
 
   React.useEffect(() => {
     if (!isAuth) {
@@ -76,7 +104,7 @@ const Admin = React.memo(({ props }: any) => {
     if(locale) i18n.changeLanguage(locale);
   },[isAuth])
   
-  React.useEffect(()=>{
+  React.useEffect(() => {
     const restricted = 
     (location === '/admin/dashboard' && !isDashboardManager) ||
     (location === '/admin/roles' && !isRoleManager) ||
@@ -93,58 +121,31 @@ const Admin = React.memo(({ props }: any) => {
           <div className="min-container-height">
           <ToastContainer theme="colored" />
           <Switch>
-            { isDashboardManager && (
-              <Route
-              exact
-              path={`${BASE_ROUTE}admin/dashboard`}
-              render={() => (
-                <AdminDashboard
-                  {...props}
-                  setTab={setPage}
-                  setCount={setDashboardCount}
-                />
-              )}
-            />)}
-            {isRoleManager && 
-              (<Route
-                exact
-                path={`${BASE_ROUTE}admin/roles`}
-                render={() => (
-                  <RoleManagement
-                    {...props}
-                    setTab={setPage}
-                    setCount={setRoleCount}
-                  />
-                )}
-              />)}
-            { isUserManager && (
-              <Route
-              exact
-              path={`${BASE_ROUTE}admin/users`}
-              render={() => (
-                <UserManagement
-                  {...props}
-                  setTab={setPage}
-                  setCount={setUserCount}
-                />
-              )}
-            />)}
             <Route 
-            exact
-            path={`${baseUrl}admin`}
-             >
-              {
-                userRoles.length && (
-                  <Redirect 
-                    to ={
-                      isDashboardManager ? `${baseUrl}admin/dashboard` 
-                      :isRoleManager ? `${baseUrl}admin/roles`
-                      : `${baseUrl}admin/users`
-                    }
-                  />  
-                )
-              }
-             </Route>
+              exact
+              path={`${baseUrl}admin`}
+              render={() => (
+                <Manage
+                  props={props}
+                  setTab={setPage}
+                  setDashboardCount={setDashboardCount}
+                  setRoleCount={setRoleCount}
+                  setUserCount={setUserCount}
+                />
+              )}
+            />
+            <Route 
+              path={`${baseUrl}admin/:tab`}
+              render={() => (
+                <Manage
+                  props={props}
+                  setTab={setPage}
+                  setDashboardCount={setDashboardCount}
+                  setRoleCount={setRoleCount}
+                  setUserCount={setUserCount}
+                />
+              )}
+            />
           </Switch>
           </div>):
           <div className="min-container-height ps-md-3" >

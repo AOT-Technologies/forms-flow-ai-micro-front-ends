@@ -44,6 +44,19 @@ declare module "@formsflow/service" {
     RequestService,
     StorageService,
     i18nService,
+    getRoute,
+    MAIN_ROUTE,
+    MULTITENANCY_ENABLED,
+    getRedirectUrl,
+    getOrigin,
+    getFullUrl,
+    getLinkTo,
+    navigateToAdminRoles,
+    navigateToAdminUsers,
+    navigateToAdminDashboard,
+    navigateToBaseUrl,
+    navigateWithHistory,
+    syncRouterPath
   }: any;
 }
 
@@ -63,6 +76,8 @@ declare module "@formsflow/components" {
     CustomUrl,
     Switch,
     V8CustomButton,
-    BreadCrumbs
+    BreadCrumbs,
+    DownArrowIcon,
+    UpArrowIcon,
   }: any;
 }

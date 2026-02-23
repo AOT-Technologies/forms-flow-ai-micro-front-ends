@@ -7,6 +7,7 @@ import {
   setDefaultFilter,
   setFilterToEdit,
   setSelectedFilter,
+  setIsUnsavedFilter,
 } from "../../actions/taskActions";
 import {
   fetchAttributeFilterList,
@@ -124,6 +125,39 @@ const TaskListDropdownItems = memo(() => {
       ariaLabel: t("Re-order And Hide Filters"),
       category: "action",
     };
+
+    const quickFilterItem: FilterItemType | null =
+      isUnsavedFilter && selectedFilter
+        ? {
+            className: "selected-filter-item",
+            content: (
+              <span className="d-flex justify-content-between align-items-center">
+                {t("Quick Filter Applied")} ({tasksCount ?? 0})
+              </span>
+            ),
+            type: "quick-filter",
+            onClick: () => {
+              // Re-apply the quick filter .
+              dispatch(setDefaultFilter(null));
+              dispatch(setSelectedFilter(selectedFilter));
+              dispatch(setIsUnsavedFilter(true));
+              dispatch(fetchServiceTaskList(selectedFilter, null, 1, 25));
+            },
+            onEdit: () => {
+              // Open the modal in "Edit Quick Filter" mode (no intro, no save page).
+              dispatch(
+                setFilterToEdit({
+                  ...cloneDeep(selectedFilter),
+                  isQuickFilter: true,
+                })
+              );
+              setShowTaskFilterModal(true);
+            },
+            dataTestId: "filter-item-quick-filter",
+            ariaLabel: t("Select quick filter"),
+            category: "my",
+          }
+        : null;
     const mappedItems = (filtersAndCount || [])
       .filter((filter) => {
         const details = filterList.find((item) => item.id === filter.id);
@@ -183,6 +217,11 @@ const TaskListDropdownItems = memo(() => {
       filterDropdownItemsArray.push(createFilter, reOrderFilter);
     }
 
+    if (quickFilterItem) {
+      // Keep it under "My" so users can re-select the applied quick filter.
+      filterDropdownItemsArray.push(quickFilterItem);
+    }
+
     if (mappedItems.length) {
       filterDropdownItemsArray.push(...mappedItems);
     } else {
@@ -197,6 +236,8 @@ const TaskListDropdownItems = memo(() => {
     createFilters,
     userDetails,
     filterSearchTerm,
+    isUnsavedFilter,
+    tasksCount,
     t,
   ]);
 
@@ -204,7 +245,7 @@ const TaskListDropdownItems = memo(() => {
   let title;
   if (selectedFilter) {
     if (isUnsavedFilter) {
-      title = t("Unsaved Filter");
+      title = t("Quick Filter Applied");
     } else if (filterList.length === 0) {
       title = t("All Tasks");
     } else {

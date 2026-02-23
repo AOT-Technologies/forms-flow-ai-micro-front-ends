@@ -121,8 +121,68 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 .task-filter-modal-popover {
     @include mixins.large-modal-popover();
 
+    .task-filter-modal-intro-title {
+        font-size: var(--font-size-xl);
+    }
+
+    .task-filter-modal-intro-subtitle {
+        font-size: var(--font-size-m);
+    }
+
     .modal-body {
         overflow: hidden;
+
+    
+        .task-filter-intro-card {
+            min-height: 5.938rem;
+            cursor: pointer;
+            border: 1px solid var(--gray-x-light);
+            background: $white;
+        }
+
+        .task-filter-intro-card--disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .task-filter-intro-card--selected {
+            border: 2px solid var(--primary-dark);
+            background: #B8ABFF1A;
+        }
+
+        .task-filter-intro-container {
+            width: 100%;
+            max-width: 47.5rem;
+        }
+
+        .task-filter-intro-section-title {
+            font-size: var(--font-size-m);
+            font-weight: var(--font-weight-semibold);
+            margin-bottom: 1.313rem;
+        }
+
+        .task-filter-intro-section-title--spaced {
+            margin-top: 3.188rem;
+        }
+
+        .task-filter-intro-card__text {
+            padding-right: var(--spacer-075);
+            flex: 1;
+        }
+
+        .task-filter-intro-card__description {
+            width: 12.875rem;
+            max-width: 12.875rem;
+            font-size: var(--font-size-m);
+            color: var(--gray-dark);
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .task-filter-intro-card__title {
+            font-size: var(--font-size-m);
+            font-weight: var(--font-weight-semibold);
+        }
 
         .drag-drop-list-container{
             overflow: scroll;
@@ -559,4 +619,184 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
     font-weight: var(--font-weight-regular);
     color: var(--gray-dark);
     margin-bottom: var(--spacer-075);
+}
+
+.profile-settings-modal {
+    @include large-modal-popover();
+    .modal-body {
+        padding: 1.5rem;
+        
+        &.custom-scroll {
+            /* Override the general modal-body scrollbar hiding rules */
+            -ms-overflow-style: auto !important;  /* IE and Edge - show scrollbar */
+            scrollbar-width: thin !important;      /* Firefox - show scrollbar */
+            
+            &::-webkit-scrollbar {
+                display: block !important;
+                width: 0.5rem;
+                height: auto;
+            }
+        }
+    }
+    
+    .modal-subtitle{
+        padding: 1.188rem 0.75rem
+    }
+
+    .profile-settings-details-box {
+        width: 48.438rem; 
+        height: 21.563rem; 
+        max-width: 100%;
+        overflow: auto;
+    }
+
+    .profile-settings-field-error {
+        width: 100%;
+        min-height: 1.25rem;
+        overflow-wrap: anywhere;
+    }
+
+    .profile-settings-note-panel {
+        width: 100%;
+        max-width: 46rem;
+        min-height: 3.688rem;
+        box-sizing: border-box;
+        overflow: visible;
+    }
+
+    .profile-settings-note-panel.info-panel {
+        padding-top: 0;
+        padding-bottom: 0;
+
+        .info-icon {
+            width: 1.188rem; 
+            height: 1.499rem;
+            flex: 0 0 auto;
+        }
+        .info-icon svg {
+            width: 1.188rem; 
+            height: 1.499rem; 
+            display: block;
+        }
+        .info-content {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .permissions-container{
+        .permissions-list{
+            .permission-category{
+                .permission-items{
+                    .permission-item{
+                        font-size: 0.9375rem; 
+                        line-height: 1.5; 
+                    }
+                }
+            }
+        }
+
+        .info-section {
+            border-radius: 0.3125rem;
+            border: 1px solid var(--vivid);
+            background: rgba(124, 128, 254, 0.10);
+            padding: 1rem;
+            margin-top: 0.87rem;
+        }
+    }
+    .profile-settings-note-panel--danger-text {
+        .info-content {
+            color: var(--default-danger-color);
+        }
+    }
+}
+
+.single-variable-selection-modal{
+    @include large-modal-popover();
+}
+
+.modal--inactive {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+.onboarding-modal{
+    @include large-modal-popover();
+    width: 60vw !important;
+    max-width:60vw !important;
+    .modal-content{
+        width: 45rem;
+        height: 31.875rem !important;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        .modal-title{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            .modal-header{
+                margin: 0;
+                margin-left: 0.33rem;
+            }
+            .application-name{
+              color: #000000;
+              font-size: var(--font-size-m);
+              font-weight: var(--font-weight-medium);
+            }
+        }
+        .modal-body{
+            border-top: none !important;
+            margin: 0;
+            padding: 4.75rem 5rem 4.75rem 3rem;
+            border-bottom: none !important;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 1rem;
+                right: 1rem;
+                border-bottom: 1px solid var(--gray-x-light);
+            }
+
+            .onboarding-content {
+                display: flex;
+                gap: 3rem;
+                align-items: center;
+                height: 100%;
+
+                .onboarding-left-panel {
+                    align-items: center;
+                    justify-content: center;
+                    min-height: 300px;
+                  }
+                  
+                    .onboarding-title {
+                      color: rgba(0, 0, 0, 0.60);
+                      font-size: var(--font-size-xl);
+                      font-weight: var(--font-weight-regular);
+                      margin-bottom: var(--spacer-150);
+                      line-height: 1.3;
+                    }
+                    .onboarding-description {
+                    color: #00000099;
+                    font-size: var(--font-size-m);
+                    font-weight: var(--font-weight-regular);
+                    line-height: var(--spacer-125);
+                  }
+                }
+        }
+        .modal-footer{
+            padding: 1rem !important;
+            margin: 0 !important;
+            > * {
+                margin: 0;
+            }
+        }
+    }
 }

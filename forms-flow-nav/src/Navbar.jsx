@@ -19,10 +19,10 @@ import {
   ENABLE_INTEGRATION_PREMIUM
 } from "./constants/constants";
 import "./Navbar.scss";
-import { StorageService } from "@formsflow/service";
+import { StorageService, navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { fetchSelectLanguages, updateUserlang } from "./services/language";
 import i18n from "./resourceBundles/i18n";
-import { fetchTenantDetails } from "./services/tenant";
+import { fetchTenantDetails, handleTenantSubscription } from "./services/tenant";
 import { setShowApplications } from "./constants/userContants";
 import { LANGUAGE,USER_LANGUAGE_LIST } from "./constants/constants";
 import { Helmet } from "react-helmet";
@@ -53,12 +53,7 @@ const NavBar = React.memo(({ props }) => {
     });
 
     props.subscribe("ES_TENANT", (msg, data) => {
-      if (data) {
-        setTenant(data);
-        if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
-          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
-        }
-      }
+      handleTenantSubscription(data, setTenant);
     });
     props.subscribe("ES_ROUTE", (msg, data) => {
       if (data) {
@@ -79,7 +74,7 @@ const NavBar = React.memo(({ props }) => {
   }, [instance]);
 
   React.useEffect(() => {
-    const data = JSON.parse(StorageService.get("TENANT_DATA"));
+    const data = JSON.parse(StorageService.get("tenantData"));
     if (MULTITENANCY_ENABLED && data?.details) {
       setApplicationTitle(data?.details?.applicationTitle);
       const logo = data?.details?.customLogo?.logo || "/logo.svg";
@@ -104,7 +99,7 @@ const NavBar = React.memo(({ props }) => {
   const showApplications = setShowApplications(userDetail?.groups);
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const baseUrl = getRedirectUrl(tenantKey);
   const navbarRef = useRef(null);
 const isCreateSubmissions = userRoles?.includes("create_submissions");
 const isViewSubmissions = userRoles?.includes("view_submissions");
@@ -181,7 +176,7 @@ const isUserManager = userRoles?.includes("manage_users");
 
   useEffect(() => {
     fetchSelectLanguages((data) => {
-      const tenantdata = JSON.parse(StorageService.get("TENANT_DATA"));
+      const tenantdata = JSON.parse(StorageService.get("tenantData"));
       const userLanguageList = (MULTITENANCY_ENABLED && tenantdata?.details?.langList) || USER_LANGUAGE_LIST;
       let userLanguagesArray = [];
       if (typeof userLanguageList === 'object') {
@@ -241,7 +236,7 @@ const isUserManager = userRoles?.includes("manage_users");
   }, [isAuthenticated]);
 
   const logout = () => {
-    history.push(baseUrl);
+    navigateToBaseUrl(history, tenantKey);
     instance.userLogout();
   };
   return (

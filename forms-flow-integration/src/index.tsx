@@ -9,7 +9,8 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/Footer";
-import { BASE_ROUTE, MULTITENANCY_ENABLED, ENABLE_INTEGRATION_PREMIUM } from "./constants";
+import { BASE_ROUTE, ENABLE_INTEGRATION_PREMIUM } from "./constants";
+import { navigateToIntegrationRecipes, navigateToIntegrationConnectedApps, navigateToIntegrationLibrary, getRedirectUrl, MULTITENANCY_ENABLED } from "@formsflow/service";
 import Recipes from "./components/Recipes";
 import ConnectedApps from "./components/ConnectedApps";
 import PremiumSubscription from "./components/PremiumSubscription";
@@ -32,7 +33,7 @@ const Integration = React.memo(({ props }: any) => {
   const [isDesigner, setIsDesigner] = React.useState(false);
   const [integrationCheckLoading, setIntegrationCheckLoading] = useState(true);
 
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
+  const baseUrl = getRedirectUrl(tenantId);
 
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}integration` });
@@ -91,15 +92,15 @@ const Integration = React.memo(({ props }: any) => {
     return [
       {
         name: "Recipes",
-        onClick: () => history.push(`${baseUrl}integration/recipes`),
+        onClick: () => navigateToIntegrationRecipes(history, tenantId),
       },
       {
         name: "Connected Apps",
-        onClick: () => history.push(`${baseUrl}integration/connected-apps`),
+        onClick: () => navigateToIntegrationConnectedApps(history, tenantId),
       },
       {
         name: "Library",
-        onClick: () => history.push(`${baseUrl}integration/library`),
+        onClick: () => navigateToIntegrationLibrary(history, tenantId),
       },
     ];
   };

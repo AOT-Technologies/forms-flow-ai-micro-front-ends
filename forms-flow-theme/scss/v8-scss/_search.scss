@@ -37,6 +37,7 @@ $color-border: var(--secondary);
   height: $search-input-height;
   border-radius: $search-input-border-radius;
   padding: $search-input-padding;
+  padding-right: 2rem;
   border: 1px solid $color-border;
   background: $color-light-gray;
   font-weight: var(--font-weight-regular);
@@ -112,6 +113,16 @@ $color-border: var(--secondary);
     &::placeholder {
       color: var(--gray-dark);
     }
+  }
+
+  // Clear button styles
+  .search-clear-button {
+    background: none;
+    border: none;
+    position: absolute;
+    right: 0.5rem; // 8px
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
   

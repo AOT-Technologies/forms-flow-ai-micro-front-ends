@@ -2,7 +2,7 @@ import * as React from "react";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector, batch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { push } from "connected-react-router";
+import { navigateToSubmissionDetail, getRedirectUrl } from "@formsflow/service";
 
 // Types and Services
 import { Submission } from "../types/submissions";
@@ -44,7 +44,7 @@ import {
   AddIcon,
   BreadCrumbs
 } from "@formsflow/components";
-import { MULTITENANCY_ENABLED } from "../constants";
+import { MULTITENANCY_ENABLED } from "@formsflow/service";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
 import { SystemVariables } from "../constants/variables";
 import { setApplicationDetail } from "../actions/applicationActions";
@@ -84,7 +84,7 @@ const AnalyzeSubmissionList: React.FC = () => {
   const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.key || tenantId);
   const defaultSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.defaultFilter);
   const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
-  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const redirectUrl = getRedirectUrl(tenantKey);
  const filterList = useSelector((state: any) => state?.analyzeSubmission?.submissionFilterList);
   const selectedForm = useSelector((state: any) => state?.analyzeSubmission?.selectedForm);
   const dateRange = useSelector( (state: any) => state?.analyzeSubmission.dateRange );
@@ -554,7 +554,7 @@ const fetchSubmissions = useCallback(async () => {
           label={t("View")}
           onClick={() => {
             dispatch(setApplicationDetail({}));
-            dispatch(push(`${redirectUrl}submissions/${submission.id}`));
+            navigateToSubmissionDetail(dispatch, tenantKey, submission.id);
           }}
           dataTestId={`view-submission-${submission.id}`}
           ariaLabel={t("View details for submission {{taskName}}", {
@@ -617,7 +617,7 @@ const fetchSubmissions = useCallback(async () => {
     }
 
     return <div className="text-overflow-ellipsis">{displayValue ?? "-"}</div>;
-  }, [selectedSubmissionFilter, currentFields, t, dispatch, push, redirectUrl, DEFAULT_SUBMISSION_FIELDS, tenantId]);
+  }, [selectedSubmissionFilter, currentFields, t, dispatch, redirectUrl, DEFAULT_SUBMISSION_FIELDS, tenantId]);
 
 
 
@@ -818,35 +818,56 @@ const fetchSubmissions = useCallback(async () => {
 
     const term = (searchFieldFilterTerm || "").toLowerCase();
 
-    // System fields: use fixed display order; no reordering within category
-    const systemOrder = ["id", "created_by", "application_status"];
-    const sysItems = systemOrder
+    // System fields: use fixed display order, then additional system fields from ManageFieldsModal
+    const pinnedSystemOrder = ["id", "created_by", "application_status"];
+    // Fields to exclude from system dropdown (form_name, created are always showing in ui)
+    const excludedFromPicker = ["form_name", "created"];
+    
+    // Get pinned system fields first
+    const pinnedSysFields = pinnedSystemOrder
       .map((key) => (available || []).find((f) => f.key === key && f?.isFormVariable !== true))
-      .filter(Boolean)
-      // Exclude fields not needed in the picker (form_name, created already excluded by order list)
-      .filter((f: any) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
-      .map((f: any) => ({
+      .filter(Boolean);
+    
+    // Get additional system fields (isFormVariable !== true) that are neither pinned nor excluded
+    const additionalSysFields = (available || [])
+      .filter((f) => 
+        f?.isFormVariable !== true && 
+        !pinnedSystemOrder.includes(f.key) && 
+        !excludedFromPicker.includes(f.key)
+      );
+    
+    // Combine pinned + additional system fields
+    const allSystemFields = [...pinnedSysFields, ...additionalSysFields];
+    
+    // Helper to create field item 
+    const createFieldItem = (f: any, category: string) => {
+      const label = labelByKey[f.key];
+      const translatedLabel = t(label);
+      return {
         className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
-        content: <span>{t(labelByKey[f.key])}</span>,
+        content: <span>{translatedLabel}</span>,
         type: String(f.key),
-        onClick: () => setSelectedSearchFieldKey(f.key),
+        onClick: () => { setSelectedSearchFieldKey(f.key); setSearchText(""); },
         dataTestId: `field-item-${f.key}`,
-        ariaLabel: t("Select field {{fieldName}}", { fieldName: t(labelByKey[f.key]) }),
-        category: "system",
-      }));
+        ariaLabel: t("Select field {{fieldName}}", { fieldName: translatedLabel }),
+        category,
+      };
+    };
 
-    const formItems = (available || [])
-      .filter((f) => f?.isFormVariable === true) // form specific fields
-      .filter((f) => (labelByKey[f.key] || f.key).toLowerCase().includes(term))
-      .map((f) => ({
-        className: f.key === selectedSearchFieldKey ? "selected-filter-item" : "",
-        content: <span>{t(labelByKey[f.key])}</span>,
-        type: String(f.key),
-        onClick: () => setSelectedSearchFieldKey(f.key),
-        dataTestId: `field-item-${f.key}`,
-        ariaLabel: t("Select field {{fieldName}}", { fieldName: t(labelByKey[f.key]) }),
-        category: "form",
-      }));
+    // Single-pass filter+map using reduce
+    const sysItems = allSystemFields.reduce<any[]>((acc, f: any) => {
+      if ((labelByKey[f.key] || f.key).toLowerCase().includes(term)) {
+        acc.push(createFieldItem(f, "system"));
+      }
+      return acc;
+    }, []);
+
+    const formItems = (available || []).reduce<any[]>((acc, f: any) => {
+      if (f?.isFormVariable === true && (labelByKey[f.key] || f.key).toLowerCase().includes(term)) {
+        acc.push(createFieldItem(f, "form"));
+      }
+      return acc;
+    }, []);
 
     items.push(...sysItems, ...formItems);
 
@@ -898,6 +919,7 @@ const fetchSubmissions = useCallback(async () => {
               // Reset search field picker to default when form selection changes
               setSelectedSearchFieldKey("id");
               setSearchText("");
+              setSearchFieldFilterTerm("");
             };
             return (
               <>
@@ -972,7 +994,7 @@ const fetchSubmissions = useCallback(async () => {
   
      
       
-        <div className="body-section">
+        <div className="body-section custom-scroll">
         <div
           className="custom-table-wrapper-outter-submissions"
           data-testid="table-container-wrapper"
@@ -987,9 +1009,14 @@ const fetchSubmissions = useCallback(async () => {
             sortingMode="server"
             sortModel={sortModel}
             onSortModelChange={handleSortModelChange}
-            noRowsLabel={t(
-                "No submissions have been found. Try a different filter combination or contact your admin."
-              )}
+            emptyStateMessage="No submissions found"
+            emptyStateAction={{
+              label: t("Clear filters"),
+              onClick: handleResetToDefault,
+              variant: "primary",
+              size: "medium",
+              dataTestId: "clear-filters-button"
+            }}
             disableColumnMenu
             disableRowSelectionOnClick
             paginationModel={paginationModel}
