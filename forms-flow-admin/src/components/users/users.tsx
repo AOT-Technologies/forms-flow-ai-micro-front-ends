@@ -449,6 +449,7 @@ const Users = React.memo((props: any) => {
 
           {MULTITENANCY_ENABLED && (
   <>
+  {false && (
   <V8CustomButton
     label={t("Add Registered Users")}
     onClick={openInviteModal}
@@ -456,6 +457,7 @@ const Users = React.memo((props: any) => {
     variant="primary"
     size="small"
   />
+  )}
 
     {showInviteModal && (
       <Modal show={showInviteModal} onHide={closeInviteModal} size="sm">

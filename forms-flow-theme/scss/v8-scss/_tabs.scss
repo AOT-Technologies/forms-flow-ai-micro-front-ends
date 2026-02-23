@@ -61,7 +61,7 @@ $font-weight-regular:var(--font-weight-regular);
       transition: background-color 0.2s ease;
       margin: 0;
   
-      &:hover:not(:disabled) {
+      &:hover:not(:disabled):not(.active) {
         background-color: transparent !important;
         color: $Gray-darkest !important;
         border-bottom: none !important;

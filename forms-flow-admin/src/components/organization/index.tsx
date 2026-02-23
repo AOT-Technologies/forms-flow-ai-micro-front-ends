@@ -4,6 +4,7 @@ import { Collapse } from "react-bootstrap";
 import { V8CustomButton, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
 import "./organization.scss";
 import { StorageService } from "@formsflow/service";
+import { URL_UPGRADE, URL_CONTACT_SALES, URL_TERMS_AND_CONDITIONS, URL_PRIVACY_POLICY } from "../../constants";
 
 interface AccordionSectionProps {
   title: string;
@@ -79,13 +80,23 @@ const Organization: React.FC<any> = (props) => {
       .replace(/view our /g, '')
       .split(' ')[0]; // Extract first word after "view our"
     const dataTestId = `view-${key}-button`;
-    
+  
+    const urlMap: Record<string, string> = {
+      "Upgrade": URL_UPGRADE,
+      "Contact Sales": URL_CONTACT_SALES,
+      "View our Terms and Conditions": URL_TERMS_AND_CONDITIONS,
+      "View our Privacy Policy": URL_PRIVACY_POLICY,
+    };
+  
+    const url = urlMap[label];
+  
     return (
       <V8CustomButton
         label={t(label)}
         variant="secondary"
         dataTestId={dataTestId}
         icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
+        onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
       />
     );
   };

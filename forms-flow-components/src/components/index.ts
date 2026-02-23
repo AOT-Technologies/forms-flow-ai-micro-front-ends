@@ -38,6 +38,7 @@ export { default as ProcessDiagram } from "./CustomComponents/BpmnDiagramView";
 export * from "./CustomComponents/SubmissionHistoryWithViewButton";
 export * from "./CustomComponents/VariableSelection";
 export * from "./CustomComponents/FormComponent";
+export { AutoVariableSelection } from "./CustomComponents/AutoVariableSelection";
 export * from "./CustomComponents/StepperComponent";
 export * from "./CustomComponents/CustomButton";  
 export * from "./CustomComponents/Switch";
