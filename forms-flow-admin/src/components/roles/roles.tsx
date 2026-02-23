@@ -37,7 +37,8 @@ import { useHistory } from "react-router-dom";
 import { navigateToAdminRoles } from "@formsflow/service";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
-  const { tenantId } = useParams();
+  const { tenantId: tenantIdFromParams } = useParams();
+  const tenantId = props.tenantId ?? tenantIdFromParams;
   const history = useHistory();
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [roles, setRoles] = React.useState([]);
@@ -105,18 +106,16 @@ const Roles = React.memo((props: any) => {
   }, [editCandidate]);
 
   React.useEffect(() => {
-    let updatedRoles = props.roles;
+    let updatedRoles = props.roles ?? [];
 
     if (search) {
       updatedRoles = filterList(search, updatedRoles);
     }
 
-    if (updatedRoles.length > 0) {
-      updatedRoles = removingTenantId(updatedRoles,tenantId);
-    }
+    updatedRoles = removingTenantId(updatedRoles, tenantId);
 
     setRoles(updatedRoles);
-  }, [props.roles, search]);
+  }, [props.roles, search, tenantId]);
 
   React.useEffect(() => {
     fetchPermissions(
