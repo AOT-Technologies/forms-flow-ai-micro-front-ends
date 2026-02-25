@@ -3,6 +3,7 @@ import {
   SelectDropdown,
   CustomTextInput,
   Alert,
+  QuickFilterIcon,
 } from "@formsflow/components";
 import { useEffect, useMemo, useState } from "react";
 import { Modal } from "react-bootstrap";
@@ -35,6 +36,7 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
   const { manageAllFilters,createFilters } = userRoles();
   const limit = useSelector((state: any) => state.task.limit);
   const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
+  const defaultTaskFilterId = useSelector((state: any) => state.task.defaultFilter);
   const selectedAttributeFilter = useSelector((state: any) => state.task.selectedAttributeFilter);
   const candidateGroups = useSelector((state: any) => state.task.userGroups);
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key);
@@ -47,6 +49,11 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
     (state: any) => state.task.attributeFilterToEdit
   );
   const [filterName, setFilterName] = useState(attributeFilter?.name || "");
+  const isQuickAttributeFilter = !attributeFilter?.id;
+  const isQuickTaskFilterContext =
+    isUnsavedFilter ||
+    (defaultTaskFilterId === null && !!selectedFilter);
+  const skipSaveStep = isQuickAttributeFilter && isQuickTaskFilterContext;
   const { data: userList } = useSelector(
     (state: any) => state.task.userList
   ) ?? {
@@ -428,6 +435,12 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
     }
   }, [attributeFilter, selectedFilter, tenantKey, taskVariables]);
 
+  useEffect(() => {
+    if (skipSaveStep && currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [skipSaveStep, currentPage, setCurrentPage]);
+
 
 const getTaskAccess = () => {
   if (shareAttrFilter === FILTER_SHARE_OPTIONS.PRIVATE) {
@@ -651,6 +664,20 @@ const removeSlashFromValue = (value) => {
         return filterToSave;
     }
     const noFieldChanged =  isUnsavedFilter ? false :  isEqual(selectedAttributeFilter, createAttributeFilterPayload());
+    const applyQuickFilter = () => {
+      const newProcessVariables = buildNewProcessVariables();
+      const quickFilterData = getFilterData(newProcessVariables);
+
+      batch(() => {
+        dispatch(setBPMTaskLoader(true));
+        dispatch(setSelectedBpmAttributeFilter(quickFilterData));
+        dispatch(setIsUnsavedAttributeFilter(true));
+        dispatch(setBPMTaskListActivePage(1));
+        dispatch(fetchServiceTaskList(quickFilterData, null, 1, limit));
+      });
+      onClose();
+    };
+
     const saveFilterAttributes = async () => {
     try {
     setIsSaving(true);
@@ -754,16 +781,43 @@ const removeSlashFromValue = (value) => {
             )}
           </div>
           <div className=" footer-text flex-grow-1 text-center">
-            {currentPage === 1 ? t("1 of 2") : t("2 of 2")}
+            {skipSaveStep
+              ? t("1 of 1")
+              : currentPage === 1
+                ? t("1 of 2")
+                : t("2 of 2")}
           </div>
           <div className="ms-auto">
             {currentPage === 1 && (
-              <V8CustomButton
-                label={t("Next")}
-                dataTestId="attribute-filter-next"
-                ariaLabel={t("Next")}
-                onClick={() => setCurrentPage(2)}
-              />
+              <div className="d-flex align-items-center gap-2">
+                {!skipSaveStep && isQuickAttributeFilter && (
+                  <V8CustomButton
+                    variant="secondary"
+                    label={t("Apply Quick Filter")}
+                    icon={<QuickFilterIcon />}
+                    dataTestId="apply-attribute-quick-filter"
+                    ariaLabel={t("Apply Quick Filter")}
+                    onClick={applyQuickFilter}
+                  />
+                )}
+                {skipSaveStep && isQuickAttributeFilter ? (
+                  <V8CustomButton
+                    variant="primary"
+                    label={t("Apply Quick Filter")}
+                    icon={<QuickFilterIcon />}
+                    dataTestId="apply-attribute-quick-filter"
+                    ariaLabel={t("Apply Quick Filter")}
+                    onClick={applyQuickFilter}
+                  />
+                ) : (
+                  <V8CustomButton
+                    label={t("Next")}
+                    dataTestId="attribute-filter-next"
+                    ariaLabel={t("Next")}
+                    onClick={() => setCurrentPage(2)}
+                  />
+                )}
+              </div>
             )}
             {currentPage === 2 && createFilters  && (
               <V8CustomButton
