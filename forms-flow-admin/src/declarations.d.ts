@@ -65,6 +65,7 @@ declare module "@formsflow/components" {
     TableFooter,
     CustomSearch,
     CloseIcon,
+    CustomTextInput,
     CustomTabs,
     FormInput,
     FormTextArea,

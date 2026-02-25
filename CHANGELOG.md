@@ -2,6 +2,46 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.1.0 - 26-02-2026
+
+`Added`
+
+**forms-flow-components**
+* Added a new auto variable selection modal for improved form variable management.
+* Added new icons to the component library.
+
+**forms-flow-admin**
+* Added external URL links in the Organization tab for premium instances:
+  * Upgrade link for license upgrade
+  * Terms and Conditions
+  * Privacy Policy
+  * Sales Contact
+
+`Modified`
+
+**forms-flow-review**
+* Reordering and hiding filters are now independent sections, separated by scope — shared filters and private filters are managed individually.
+
+**forms-flow-admin**
+* Redesigned the Admin module with a tabbed navigation structure consisting of four tabs:
+  * **Organization** — manage organization-level settings and external links
+  * **Users** — manage users within the tenant
+  * **Roles** — manage roles and permissions
+  * **Dashboards** — manage dashboard access and visibility
+
+**forms-flow-nav**
+* Redesigned the Profile Settings panel to include all essential user details, a reset password option, and a read-only view of the user's assigned permissions.
+
+`Fixed`
+
+**forms-flow-theme**
+* Fixed scrolling issues and various minor UI inconsistencies across the application.
+
+`Removed`
+
+**forms-flow-admin**
+* Removed the manual user registration button from the Admin page, as user onboarding is now handled through the invite flow and replaced with Add new users button which will invite user to application through email
+
 ## 8.0.1 - 2025-12-17
 
 `Fixed`
