@@ -15,10 +15,10 @@ import Modal from "react-bootstrap/Modal"; // Import Modal from react-bootstrap
 import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import Select from "react-select";
-import { CreateUser } from "../../services/users";
-import { TableFooter, CustomSearch, CloseIcon, V8CustomButton } from "@formsflow/components";
+import { InviteUser } from "../../services/users";
+import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput } from "@formsflow/components";
 import { useHistory, useParams } from "react-router-dom";
-import { navigateToAdminUsers, getRedirectUrl } from "@formsflow/service";
+import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -39,6 +39,9 @@ const Users = React.memo((props: any) => {
   const [formData, setFormData] = React.useState({ user: "" });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [validationError, setValidationError] = React.useState('');
+  const [inviteSuccessEmail, setInviteSuccessEmail] = React.useState<string | null>(null);
+  const [inviteLoading, setInviteLoading] = React.useState(false);
+  const emailInputRef = React.useRef<HTMLInputElement>(null);
 
   const openSuccessModal = () => {
     setShowSuccessModal(true);
@@ -342,27 +345,47 @@ const Users = React.memo((props: any) => {
   };
 
   const openInviteModal = () => {      
-    setValidationError(null);
+    setValidationError("");
+    setInviteSuccessEmail(null);
     setShowInviteModal(true);
   }
   const closeInviteModal = () => {
+    setInviteLoading(false);
     clearForm();
+    setInviteSuccessEmail(null);
     setShowInviteModal(false);
   }
+  const isValidEmail = (value: string): boolean => {
+    const trimmed = value?.trim() || "";
+    // RFC 5321 max length - prevents ReDoS from long input
+    if (trimmed.length === 0 || trimmed.length > 254) return false;
+    // Use safe regex without backtracking-vulnerable patterns
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(trimmed);
+  };
+
   const sendInvites = () => {
-    const selectedRolesIds = selectedRolesModal.map(role => ({ roleId: role.value, name: role.label }));
-    const payload = {
-      roles: selectedRolesIds,
-      user: formData.user,
-    };
-    CreateUser(
-      payload,
+    setValidationError("");
+    const emailFromInput = emailInputRef.current?.value?.trim() ?? formData.user?.trim() ?? "";
+    if (!isValidEmail(emailFromInput)) {
+      setValidationError(t("Invalid email"));
+      return;
+    }
+    setInviteLoading(true);
+    const tenantKey = tenantId || StorageService.get("tenantKey") || "default";
+    InviteUser(
+      tenantKey,
+      emailFromInput,
       (data) => {
-        openSuccessModal();
-        
+        setInviteLoading(false);
+        setValidationError("");
+        setInviteSuccessEmail(emailFromInput);
+        setFormData({ user: "" });
+        props.setInvalidated(true);
       },
       (err) => {
-        setValidationError(t("User doesn't exist!"));
+        setInviteLoading(false);
+        setValidationError(err || t("Failed to send invitation!"));
       }
     );
   };
@@ -449,78 +472,78 @@ const Users = React.memo((props: any) => {
 
           {MULTITENANCY_ENABLED && (
   <>
-  {false && (
+
   <V8CustomButton
-    label={t("Add Registered Users")}
+    label={t("Add New Users")}
     onClick={openInviteModal}
     data-testid="add-registered-users-button"
     variant="primary"
     size="small"
   />
-  )}
 
     {showInviteModal && (
-      <Modal show={showInviteModal} onHide={closeInviteModal} size="sm">
-        <Modal.Header>
-          <Modal.Title><p>{t("Add Registered Users")}</p></Modal.Title>
-          <div className="icon-close" onClick={closeInviteModal} data-testid="role-modal-close">
-            <CloseIcon dataTestId="action-modal-close"/>
-          </div>
+      <Modal show={showInviteModal} onHide={closeInviteModal} dialogClassName="add-user-modal" centered>
+        <Modal.Header className="add-user-modal__header">
+          <Modal.Title className="add-user-modal__title">
+            {t("Add New Users")}
+          </Modal.Title>
+          <button
+            type="button"
+            className="add-user-modal__close"
+            onClick={closeInviteModal}
+            data-testid="role-modal-close"
+            aria-label={t("Close")}
+          >
+            <CloseIcon color="var(--gray-darkest)" dataTestId="action-modal-close" />
+          </button>
         </Modal.Header>
 
-                  <Modal.Body>
-                    <Form>
-                      <Form.Group>
-                        <Form.Label>{t("Username or Email")}</Form.Label>
-                        <Form.Control
-                          type="text"
-                          value={formData.user}
-                          onChange={(e) => setFormData({ ...formData, user: e.target.value })}
-                        />
-                        {validationError && (
-                          <p className="text-danger mt-2 ms-1 small">
-                            <i className="fa fa-times-circle-o text-danger"></i> {validationError}
-                          </p>
-                        )}
-
-                      </Form.Group>
-
-                      <hr />
-                      <Form.Group>
-                        <Form.Label>{t("Add Role")}</Form.Label>
-                        <br />
-                        <Select
-                          options={roles.map((role) => ({
-                            value: role.id,
-                            label: role.name,
-                          }))}
-                          isMulti
-                          value={selectedRolesModal}
-                          onChange={handleRoleSelectChange}
-                        />
-                      </Form.Group>
-                    </Form>
-                  </Modal.Body>
-
-        <Modal.Footer>
-          <div className="buttons-row">
-            <V8CustomButton
-              label={t("Cancel")}
-              onClick={closeInviteModal}
-              data-testid="cancel-button"
-              variant="secondary"
-              size="small"
-            />
-          
-            <V8CustomButton
-              label={t("Add User")}
-              onClick={sendInvites}
-              data-testid="add-user-button"
-              variant="primary"
-              size="small"
-              disabled={!formData.user || selectedRolesModal.length === 0}
-            />
+        <Modal.Body className="add-user-modal__body">
+          <div className="add-user-modal__field">
+            <label htmlFor="add-user-username-input" className="add-user-modal__label">
+              {t("Email")}
+            </label>
+            <div className="add-user-modal__input-wrapper">
+              <CustomTextInput
+                ref={emailInputRef}
+                value={formData.user}
+                setValue={(value) => {
+                  setFormData({ ...formData, user: value });
+                  if (validationError) setValidationError("");
+                }}
+                dataTestId="add-user-username"
+                ariaLabel={t("Username or Email")}
+              />
+            </div>
+            <div className="add-user-modal__error-slot">
+              {validationError && (
+                <p className="add-user-modal__email-error" role="alert">
+                  {validationError}
+                </p>
+              )}
+            </div>
+            <p className="add-user-modal__hint">
+              {t("Added users will receive an email invite to join your organization.")}
+            </p>
+            {inviteSuccessEmail && (
+              <div className="add-user-modal__success-note">
+                {t("Invitation sent to {{email}}", {
+                  email: inviteSuccessEmail.length > 30 ? `${inviteSuccessEmail.substring(0, 30)}...` : inviteSuccessEmail,
+                })}
+              </div>
+            )}
           </div>
+        </Modal.Body>
+
+        <Modal.Footer className="add-user-modal__footer">
+          <V8CustomButton
+            label={t("Invite")}
+            onClick={sendInvites}
+            data-testid="add-user-button"
+            variant="secondary"
+            size="small"
+            loading={inviteLoading}
+          />
         </Modal.Footer>
       </Modal>
     )}
