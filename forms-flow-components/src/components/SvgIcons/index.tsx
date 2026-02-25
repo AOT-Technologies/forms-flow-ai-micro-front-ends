@@ -1257,7 +1257,7 @@ export const GoogleIcon = ({ color, ...props }) => (
 
 export const MicrosoftIcon = ({ color, ...props }) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none">
-  <g clip-path="url(#clip0_17750_1498)">
+  <g clipPath="url(#clip0_17750_1498)">
     <path d="M0 0H23V23H0V0Z" fill="#F3F3F3"/>
     <path d="M1 1H11V11H1V1Z" fill="#F35325"/>
     <path d="M12 1H22V11H12V1Z" fill="#81BC06"/>
