@@ -355,9 +355,13 @@ const Users = React.memo((props: any) => {
     setInviteSuccessEmail(null);
     setShowInviteModal(false);
   }
-  const isValidEmail = (value: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value?.trim() || "");
+  const isValidEmail = (value: string): boolean => {
+    const trimmed = value?.trim() || "";
+    // RFC 5321 max length - prevents ReDoS from long input
+    if (trimmed.length === 0 || trimmed.length > 254) return false;
+    // Use safe regex without backtracking-vulnerable patterns
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(trimmed);
   };
 
   const sendInvites = () => {
@@ -468,7 +472,7 @@ const Users = React.memo((props: any) => {
 
           {MULTITENANCY_ENABLED && (
   <>
-  {false && (
+
   <V8CustomButton
     label={t("Add New Users")}
     onClick={openInviteModal}
@@ -476,7 +480,6 @@ const Users = React.memo((props: any) => {
     variant="primary"
     size="small"
   />
-  )}
 
     {showInviteModal && (
       <Modal show={showInviteModal} onHide={closeInviteModal} dialogClassName="add-user-modal" centered>
