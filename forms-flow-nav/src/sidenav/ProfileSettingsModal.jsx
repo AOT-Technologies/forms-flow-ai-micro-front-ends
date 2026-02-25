@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'; 
 import Modal from 'react-bootstrap/Modal';
 import { Tabs, Tab } from 'react-bootstrap';
-import { CloseIcon, V8CustomButton, CustomInfo, SelectDropdown, CustomTextInput, ApplicationLogo, PromptModal } from "@formsflow/components";
+import { CloseIcon, V8CustomButton, CustomInfo, CustomTextInput, ApplicationLogo, GoogleIcon, MicrosoftIcon, PromptModal } from "@formsflow/components";
 import { fetchSelectLanguages } from '../services/language';
 import { updateUserProfile, requestResetPassword } from '../services/user';
 import { useTranslation } from "react-i18next";
@@ -34,6 +34,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
   const [lastResetPasswordError, setLastResetPasswordError] = useState(null);
   const [userId, setUserId] = useState("");
+  const [identityProvider, setIdentityProvider] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const { t } = useTranslation(); 
@@ -56,6 +57,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       // loginType can be "internal" (Keycloak) or "external" (external IDP like Google/Microsoft)
       // If loginType is "external", disable profile editing fields
       let federatedLogin = false;
+      let provider = "";
       try {
         const userLoginDetailsStr = localStorage.getItem("USER_LOGIN_DETAILS");
         if (userLoginDetailsStr) {
@@ -65,12 +67,15 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             const loginType = String(userLoginDetails.loginType).trim().toLowerCase();
             federatedLogin = loginType === "external";
           } 
+          provider = String(userLoginDetails?.identityProvider || "").trim().toLowerCase();
         }
       } catch (e) {
         // Fallback to checking userDetail if USER_LOGIN_DETAILS is not available
         federatedLogin = !!(userDetail?.identityProvider || userDetail?.identity_provider);
+        provider = String(userDetail?.identityProvider || userDetail?.identity_provider || "").trim().toLowerCase();
       }
       setIsSSO(federatedLogin);
+      setIdentityProvider(provider);
 
       const nextFields = {
         firstName: userDetail?.given_name || firstFromName || "",
@@ -93,6 +98,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setInitialSelectedLang(prevSelectedLang || LANGUAGE);
       setUserId("");
       setIsSSO(false);
+      setIdentityProvider("");
     }
   }, [show]);
 
@@ -422,14 +428,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       <Modal.Body className="custom-scroll">
         {activeTab === "Profile" ? (
           <>
-            {isSSO && (
-              <CustomInfo
-                className="mb-3"
-                variant="secondary"
-                icon={<ApplicationLogo width="1.1875rem" height="1.4993rem" />}
-                content={t("Your profile is managed by your identity provider. Profile editing is disabled for federated login users.")}
-              />
-            )}
             <div className="profile-settings-details-box p-3 mb-3 border rounded">
               <div className="row g-3">
                 <div className="col-12 col-md-6">
@@ -507,7 +505,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                   />
                 </div>
                 <div className="col-12">
-                  {!isSSO && <CustomInfo
+                  <CustomInfo
                     className={[
                       "profile-settings-note-panel",
                       resetPasswordState === "error"
@@ -515,9 +513,19 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                         : "",
                     ].join(" ")}
                     variant="secondary"
-                    icon={<ApplicationLogo width="1.1875rem" height="1.4993rem" />}
+                    icon={
+                      isSSO && identityProvider === "google"
+                        ? <GoogleIcon />
+                        : isSSO && identityProvider === "microsoft"
+                          ? <MicrosoftIcon />
+                          : <ApplicationLogo width="1.1875rem" height="1.4993rem" />
+                    }
                     content={
-                      resetPasswordState === "success"
+                      isSSO && identityProvider === "google"
+                        ? t("You are signed in using Google Workspace. To make a change to your email address or reset your password, you will need to contact your Google Workspace Administrator.")
+                        : isSSO && identityProvider === "microsoft"
+                          ? t("You are signed in using Microsoft. To make a change to your email address or reset your password, you will need to contact your Microsoft Administrator.")
+                          : resetPasswordState === "success"
                         ? t("Success! Check your email inbox for next steps.")
                         : resetPasswordState === "error"
                           ? t("Uh-oh! Something went wrong. Please try again.")
@@ -525,7 +533,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                               email: profileFields.email || "",
                             })
                     }
-                  />}
+                  />
                 </div>
               </div>
             </div>

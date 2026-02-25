@@ -1245,3 +1245,29 @@ export const VerticalArrowDownIcon = ({ color = grayDarkestColor, ...props }) =>
     />
   </svg>
 );
+
+export const GoogleIcon = ({ color, ...props }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.66 15.63 16.88 16.79 15.71 17.57V20.34H19.28C21.36 18.42 22.56 15.6 22.56 12.25Z" fill="#4285F4"/>
+  <path d="M11.9997 23C14.9697 23 17.4597 22.02 19.2797 20.34L15.7097 17.57C14.7297 18.23 13.4797 18.63 11.9997 18.63C9.13969 18.63 6.70969 16.7 5.83969 14.1H2.17969V16.94C3.98969 20.53 7.69969 23 11.9997 23Z" fill="#34A853"/>
+  <path d="M5.84 14.0899C5.62 13.4299 5.49 12.7299 5.49 11.9999C5.49 11.2699 5.62 10.5699 5.84 9.90995V7.06995H2.18C1.43 8.54995 1 10.2199 1 11.9999C1 13.7799 1.43 15.4499 2.18 16.9299L5.03 14.7099L5.84 14.0899Z" fill="#FBBC05"/>
+  <path d="M11.9997 5.38C13.6197 5.38 15.0597 5.94 16.2097 7.02L19.3597 3.87C17.4497 2.09 14.9697 1 11.9997 1C7.69969 1 3.98969 3.47 2.17969 7.07L5.83969 9.91C6.70969 7.31 9.13969 5.38 11.9997 5.38Z" fill="#EA4335"/>
+</svg>
+)
+
+export const MicrosoftIcon = ({ color, ...props }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none">
+  <g clip-path="url(#clip0_17750_1498)">
+    <path d="M0 0H23V23H0V0Z" fill="#F3F3F3"/>
+    <path d="M1 1H11V11H1V1Z" fill="#F35325"/>
+    <path d="M12 1H22V11H12V1Z" fill="#81BC06"/>
+    <path d="M1 12H11V22H1V12Z" fill="#05A6F0"/>
+    <path d="M12 12H22V22H12V12Z" fill="#FFBA08"/>
+  </g>
+  <defs>
+    <clipPath id="clip0_17750_1498">
+      <rect width="23" height="23" fill="white"/>
+    </clipPath>
+  </defs>
+</svg>
+)
