@@ -543,6 +543,8 @@ const Users = React.memo((props: any) => {
             variant="secondary"
             size="small"
             loading={inviteLoading}
+            loadingText="Inviting"
+            disabled={!formData.user?.trim()}
           />
         </Modal.Footer>
       </Modal>
