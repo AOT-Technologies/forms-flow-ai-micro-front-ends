@@ -625,6 +625,7 @@ export const RESOURCE_BUNDLES_EN = {
   "Username or Email": "Username or Email",
   "Added users will receive an email invite to join your organization.": "Added users will receive an email invite to join your organization.",
   "Invite": "Invite",
+  "Inviting": "Inviting",
   "Select roles...": "Select roles...",
   "Add User": "Add User",
   "User doesn't exist!": "User doesn't exist!",
