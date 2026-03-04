@@ -81,23 +81,6 @@ $white-300: var(--white-300);
       overflow-y: auto;
       overflow-x: hidden;
   
-      
-      // -ms-overflow-style: auto !important;
-      // scrollbar-width: thin !important;
-  
-      // &::-webkit-scrollbar {
-      //   display: block !important;
-      //   width: 0.5rem;
-      //   height: auto;
-      // }
-  
-      // &::-webkit-scrollbar-thumb {
-      //   background-color: var(--gray-medium-dark);
-      //   border-radius: 5rem;
-      //   cursor: pointer;
-      //   min-height: 6.75rem !important;
-      // }
-  
     }
   
     &__guide-title {
