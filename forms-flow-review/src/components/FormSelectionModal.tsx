@@ -157,11 +157,11 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
             />
             <div aria-hidden="true" className="border-top my-3" />
           
-            <div className="form-items-list">
+            <div className="form-items-list custom-scroll">
             {renderFormList()}
             </div>
           </div>
-          <div className="right-form-preview-container">
+          <div className="right-form-preview-container custom-scroll">
             <div className="form-preview-inner-container" >
               {loading ? (
                 <div className="form-selection-spinner">

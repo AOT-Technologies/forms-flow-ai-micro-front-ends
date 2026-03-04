@@ -1,0 +1,159 @@
+// Pill Tabs Mixin - Reusable styles for pill-shaped tab navigation
+$White-300:var(--white-300);
+$White-200:var(--white-200);
+$Gray-x-light:var(--gray-x-light);
+$Gray-darkest:var(--gray-darkest);
+$Secondary:var(--secondary);
+$border-radius:2.063rem; //33px 
+$font-size-15:var(--font-size-m); //15px
+$font-weight-medium:var(--font-weight-medium);
+$font-weight-regular:var(--font-weight-regular);
+
+
+@mixin pill-tabs-container {
+    background-color: $White-300;
+    border: 1px solid $Gray-x-light;
+    border-radius: $border-radius;
+    padding: 0.25rem;
+    display: inline-flex;
+    width: fit-content;
+  }
+  
+  @mixin pill-tabs {
+    border-bottom: none !important;
+    width: 100%;
+    gap: 2px;
+  
+    .nav {
+      border: none;
+      border-bottom: none !important;
+      gap: 2px;
+      background-color: transparent;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+  
+    .nav-tabs {
+      color: $Gray-darkest;
+      border: none;
+      width: 100%;
+      gap: 2px;
+    }
+  
+    .nav-item {
+      margin: 0;
+      flex: 0 0 auto;
+    }
+  
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      background-color: transparent;
+      color: $Gray-darkest;
+      font-size: $font-size-15;
+      font-weight: $font-weight-regular;
+      line-height: normal;
+      transition: background-color 0.2s ease;
+      margin: 0;
+  
+      &:hover:not(:disabled):not(.active) {
+        background-color: transparent !important;
+        color: $Gray-darkest !important;
+        border-bottom: none !important;
+        border-radius: $border-radius;
+        border: 1px solid $Gray-darkest !important;
+      }
+  
+      &.active {
+        background: $Secondary !important;
+        font-weight: $font-weight-medium;
+        border-radius: $border-radius;
+        color: $Gray-darkest !important;
+      }
+  
+      &:focus {
+        box-shadow: none;
+        outline: none;
+      }
+  
+      &:disabled, &.disabled {
+        color: var(--gray-medium);
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+  
+    .tab-content {
+      display: none;
+    }
+  }
+  
+  .pill-tabs-container {
+    @include pill-tabs-container;
+  }
+  
+  .pill-tabs {
+    @include pill-tabs;
+  }
+  
+  .pill-tabs-disabled {
+    @include pill-tabs;
+  }
+  
+  .manage-container{
+    .manage-tabs-wrapper {
+        .manage-tabs-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid var(--gray-x-light);
+            padding-bottom: 0.81rem;
+            margin-bottom: 0;
+
+            .pill-tabs{
+                width: fit-content;
+                border-radius: 2.0625rem;
+                border: 1px solid var(--gray-x-light) !important;
+                margin: 1rem 0;
+                padding: 0.15rem;
+                cursor: default !important;
+                .nav-item{
+                    cursor: pointer;
+                    .nav-link{
+                        &.active{
+                            border: none !important;
+                        }
+                    }
+                }
+            }
+
+            .manage-tabs-chevron {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                padding: 0.25rem;
+                transition: opacity 0.2s ease;
+
+            }
+        }
+
+        .tab-content{
+            border-top: 1px solid var(--gray-x-light);
+            padding-right: 0.5rem;
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            @extend .custom-scroll;
+            
+            .manage-content {
+                padding: 1.5rem 0;
+            }
+        }
+    }
+}
+  

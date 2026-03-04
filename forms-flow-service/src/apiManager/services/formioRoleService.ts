@@ -42,7 +42,6 @@ export const fetchAndStoreFormioRoles = async (): Promise<FetchResult> => {
       StorageService.get(StorageService.User.AUTH_TOKEN),
       true
     ) as ApiResponse;
-    console.log("response",response);
     const token = response?.headers?.["x-jwt-token"];
     const form = response?.data?.form;
 

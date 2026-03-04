@@ -45,6 +45,11 @@ $gray-dark: var(--ff-gray-dark);
     .formbuilder .formarea .breadcrumb li .badge-info{
     background-color: $gray-dark !important;
   }
+    .formbuilder .formio-component-hidden {
+    border: 1px solid #f6f6f6 !important;
+    background-color: #f6f6f6 !important;
+    color: #7C7D7F !important;
+  }
 
   // Settings button on hovering formio component
   .component-settings-button {
@@ -166,7 +171,7 @@ $gray-dark: var(--ff-gray-dark);
   }
   .formio-component-hidden{
     padding-top: 0 !important;
-   }
+  }
 }
 
 .ace_scrollbar-h {

@@ -29,6 +29,8 @@ $borderRadius: var(--border-radius);
       }
 
       .upload-action-content {
+        display: flex;
+        justify-content: center;
         grid-row: 2;
         @include mixins.section-content(dashed, $importBackground);
       }

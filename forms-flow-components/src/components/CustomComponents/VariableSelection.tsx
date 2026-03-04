@@ -106,7 +106,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           },
           {} as Record<string, FormVariable>
         );
-        
+
         isInternalUpdateRef.current = false; // Mark as external update
         setAlternativeLabels(sanitized);
       } else if (!savedFormVariables) {
@@ -139,7 +139,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           delete updated[variableKey];
           return updated;
         });
-        
+
       } else {
         // Remove variable from alternativeLabels when switch is turned off
         // Only save to temp storage if user actually typed a value (different from default and labelOfComponent)
@@ -147,14 +147,14 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           const existing = prev[variableKey];
           const defaultAltVariable = systemVariable?.altVariable || "";
           const labelOfComponent = systemVariable?.labelOfComponent || "";
-          
+
           // Only save if there's a value AND it's different from both the default and labelOfComponent
           // (meaning user actually typed something custom)
-          const hasCustomValue = existing?.altVariable && 
-            existing.altVariable !== defaultAltVariable && 
+          const hasCustomValue = existing?.altVariable &&
+            existing.altVariable !== defaultAltVariable &&
             existing.altVariable !== labelOfComponent &&
             existing.altVariable.trim() !== "";
-          
+
           if (hasCustomValue) {
             tempInputValuesRef.current[variableKey] = existing.altVariable;
             setTempInputValues((tempPrev) => ({
@@ -175,7 +175,39 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           return updated;
         });
       }
-    }, []); 
+    }, []);
+    // Handle back button click
+    const handleBack = useCallback(() => {
+      const highlightedElement = document.querySelector(".formio-hilighted");
+      if (highlightedElement) {
+        highlightedElement.classList.remove("formio-hilighted");
+      }
+      setShowElement(false);
+    }, []);
+
+    // Handle pill click
+    const handlePillClick = useCallback((variable) => {
+      setSelectedComponent({
+        key: variable.key,
+        type: variable.type,
+        label: variable.labelOfComponent,
+        altVariable: variable.altVariable,
+        isFormVariable: variable.isFormVariable ?? true,
+      });
+      setShowElement(true);
+
+      const existing = document.querySelector(".formio-hilighted");
+      if (existing) {
+        existing.classList.remove("formio-hilighted");
+      }
+
+      const component = document.querySelector(`.formio-component-${variable.key}`);
+      if (component) {
+        component.classList.add("formio-hilighted");
+        component.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, []);
+
     // Form Variable Handlers
     const handleAddAlternative = useCallback(() => {
       if (selectedComponent.key) {
@@ -217,8 +249,9 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
       altVariable: alternativeLabels[variable.key]?.altVariable || variable.altVariable || "",
     }));
     const columns = [
-      { field: 'type', headerName: 'Type', flex: 2.8, sortable: false,width: 140 },
-      { field: 'variable', headerName: 'Variable', flex: 1.5, sortable: false, width: 250,
+      { field: 'type', headerName: 'Type', flex: 2.8, sortable: false, width: 140 },
+      {
+        field: 'variable', headerName: 'Variable', flex: 1.5, sortable: false, width: 250,
         renderCell: (params) => (
           <span style={{ color: StyleServices.getCSSVariable('--ff-gray-darkest') }}>{params.value}</span>
         )
@@ -234,7 +267,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           const variableKey = params.row.variable;
           const isChecked = !!alternativeLabels[variableKey];
           const systemVariable = SystemVariables.find(v => v.key === variableKey);
-          
+
           return (
             <Switch
               type="primary"
@@ -279,13 +312,13 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           isLoading
             ? <div className="form-spinner"></div>
             : <FormComponent
-                form={form}
-                setShowElement={setShowElement}
-                detailsRef={detailsRef}
-                alternativeLabels={alternativeLabels}
-                setSelectedComponent={setSelectedComponent}
-                ignoreKeywords={ignoreKeywords}
-              />
+              form={form}
+              setShowElement={setShowElement}
+              detailsRef={detailsRef}
+              alternativeLabels={alternativeLabels}
+              setSelectedComponent={setSelectedComponent}
+              ignoreKeywords={ignoreKeywords}
+            />
         }
       </div>
     );
@@ -302,7 +335,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
             <div className="slideout-variable-selected show">
               <div className="head">
                 <div className="RHS-header">
-                  <span className="back-button" onClick={() => setShowElement(false)}>
+                  <span className="back-button" onClick={handleBack}>
                     <BackIcon color={BackIconColor} /> {t("Back")}
                   </span>
                 </div>
@@ -320,21 +353,21 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
                     <span className="value">{selectedComponent.key}</span>
                   </div>
                   <div className="alternative-label-container">
-                      <span className="label">
-                        {t("Add alternative label")}
-                      </span>
-                  <CustomTextInput
-                    ariaLabel="Add alternative label input"
-                    dataTestId="Add-alternative-input"
-                    value={selectedComponent.altVariable}
-                    setValue={(value) =>
-                      setSelectedComponent((prev) => ({
-                        ...prev,
-                        altVariable: value,
-                      }))
-                    }
-                    disabled={disabled}
-                  />
+                    <span className="label">
+                      {t("Add alternative label")}
+                    </span>
+                    <CustomTextInput
+                      ariaLabel="Add alternative label input"
+                      dataTestId="Add-alternative-input"
+                      value={selectedComponent.altVariable}
+                      setValue={(value) =>
+                        setSelectedComponent((prev) => ({
+                          ...prev,
+                          altVariable: value,
+                        }))
+                      }
+                      disabled={disabled}
+                    />
                   </div>
                   <V8CustomButton
                     dataTestId="Add-alternative-btn"
@@ -359,40 +392,43 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           {/* Pills or empty state - only shown when panel is hidden */}
           {!showElement && (
             <div className="h-100">
-            <div className="RHS-header">
-            <span className="form-variables-title">Form Variables</span>
-            </div>
+              <div className="RHS-header">
+                <span className="form-variables-title">Form Variables</span>
+              </div>
               {filteredVariablePills.length > 0 ? (
                 <div className="pill-container">
                   {filteredVariablePills.map(
-                    ({ key, altVariable, labelOfComponent }: any) => (
-                      <div
-                        key={key}
-                        className="variable-card"
-                      >
-                        {disabled ? null : <div
-                          className="variable-card-close"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeSelectedVariable(key);
-                          }}
+                    (variable: any) => {
+                      const { key, altVariable, labelOfComponent } = variable;
+                      return (
+                        <div
+                          key={key}
+                          className="variable-card"
+                          onClick={() => handlePillClick(variable)}
                         >
-                          <CloseIcon
-                            color={BackIconColor}
-                            dataTestId={`pill-remove-icon-${key}`}
-                          />
-                        </div>}
-                        <div className="d-flex flex-column">
-                          <span className="variable-title">
-                            {altVariable || labelOfComponent}
-                          </span>
-                          <span className="variable-subtitle">
-                            {key}
-                          </span>
+                          {disabled ? null : <div
+                            className="variable-card-close"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeSelectedVariable(key);
+                            }}
+                          >
+                            <CloseIcon
+                              color={BackIconColor}
+                              dataTestId={`pill-remove-icon-${key}`}
+                            />
+                          </div>}
+                          <div className="d-flex flex-column">
+                            <span className="variable-title">
+                              {altVariable || labelOfComponent}
+                            </span>
+                            <span className="variable-subtitle">
+                              {key}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    )
-                  )}
+                      );
+                    })}
                 </div>
               ) : (
                 <div className="d-flex flex-column h-100 pt-4 align-items-center">
@@ -422,7 +458,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
           {tabKey === "form" &&
             <div className="variable-page-body-form">
               <div className="variable-left-container">
-                { renderFormContent()}
+                {renderFormContent()}
               </div>
               <div
                 className="variable-right-container"

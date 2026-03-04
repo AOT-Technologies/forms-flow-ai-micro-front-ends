@@ -2,6 +2,7 @@ import "./Sidebar.scss";
 import Accordion from "react-bootstrap/Accordion";
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import { navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import {
   APPLICATION_NAME,
@@ -17,10 +18,11 @@ import {
 } from "../constants/constants";
 import { StorageService, StyleServices } from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
-import { fetchTenantDetails } from "../services/tenant";
+import { fetchTenantDetails, handleTenantSubscription } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
+import { fetchUserLoginDetails } from "../services/user";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo, LogoutIcon, MenuToggleIcon } from "@formsflow/components";
@@ -96,7 +98,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const currentLocation = useLocation();
 
   // const [activeLink, setActiveLink] = useState("");
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey || userDetail?.tenantKey}/` : "/";
+  const baseUrl = getRedirectUrl(tenantKey || userDetail?.tenantKey);
   // const defaultLogoPath =
   //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
   //   "/logo.svg";
@@ -130,13 +132,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
   const USER_ROUTE = isUserManager ? "admin/users" : null;
   // const LINK_ROUTE = isLinkManager ? "admin/links" : null;
-  //const METRICS_ROUTE = isAnalyzeMetricsView ? "metrics" : null;
+  const METRICS_ROUTE = isAnalyzeMetricsView ? "metrics" : null;
   const SUBMISSION_ROUTE = isAnalyzeSubmissionView ? "submissions" : null;
   const VIEW_DASHBOARD_ROUTE = isViewDashboard ? "dashboards" : null;
 
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
-  const [activeKey, setActiveKey] = useState(0);
+  const [activeKey, setActiveKey] = useState(null);
   const hideLogo = StyleServices?.getCSSVariable("--hide-formsflow-logo")?.toLowerCase();
 
   // Collapsible sidebar state
@@ -224,12 +226,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     });
 
     props.subscribe("ES_TENANT", (msg, data) => {
-      if (data) {
-        setTenant(data);
-        if (!JSON.parse(StorageService.get("TENANT_DATA"))?.name) {
-          StorageService.save("TENANT_DATA", JSON.stringify(data.tenantData));
-        }
-      }
+      handleTenantSubscription(data, setTenant);
     });
     props.subscribe("ES_ROUTE", (msg, data) => {
       if (data) {
@@ -241,10 +238,20 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
         setForm(data);
       }
     });
+
+    // Subscribe to profile updates to refresh user details in navbar
+    props.subscribe("profileUpdated", () => {
+      const updatedUserDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+      setUserDetail(updatedUserDetail);
+    });
   }, []);
 
+  // On successful authentication, load federated login details and integration config
   useEffect(() => {
     if (isAuthenticated) {
+      // Fetch federated login details (saves into localStorage)]
+      fetchUserLoginDetails();
+      
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);
@@ -261,7 +268,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     }, [userDetail]);
 
   React.useEffect(() => {
-    const data = JSON.parse(StorageService.get("TENANT_DATA"));
+    const data = JSON.parse(StorageService.get("tenantData"));
     if (MULTITENANCY_ENABLED && data?.details) {
       setTenantName(data?.details?.applicationTitle);
       const logo = data?.details?.customLogo?.logo;
@@ -285,8 +292,8 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     },
     ANALYZE: {
       value: "analyze",
-      // supportedRoutes: ["metrics", "dashboards", "submissions"],
-      supportedRoutes: [ "dashboards","submissions"],
+      supportedRoutes: ["metrics", "dashboards", "submissions"],
+      // supportedRoutes: [ "dashboards","submissions"],
     },  
     MANAGE: {
       value: "manage",
@@ -321,7 +328,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const handleProfileClose = () => setShowProfile(false);
 
   const logout = () => {
-    history.push(baseUrl);
+    navigateToBaseUrl(history, tenantKey || userDetail?.tenantKey);
     instance.userLogout();
   };
 
@@ -360,12 +367,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const manageAnalyseOptions = () => {
     const options = [];
     
-    // if (isAnalyzeMetricsView) {
-    //   options.push({
-    //     name: "Metrics",
-    //     path: METRICS_ROUTE,
-    //   });
-    // }
+    if (isAnalyzeMetricsView) {
+      options.push({
+        name: "Metrics",
+        path: METRICS_ROUTE,
+      });
+    }
     if (isViewDashboard) {
       options.push({
         name: "Dashboards",
@@ -376,7 +383,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       options.push({
         name: "Submissions",
         path: SUBMISSION_ROUTE,
-      });
+      }); 
     }
    
      return options;
@@ -548,6 +555,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 }
                 subscribe={props.subscribe}
                 collapsed={collapsed}
+                isExpanded={activeKey === SectionKeys.BUILD.value}
               />
             )}
 
@@ -572,6 +580,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                 ]}
                 subscribe={props.subscribe}
                 collapsed={collapsed}
+                isExpanded={activeKey === SectionKeys.BUILD.value}
               />
             )}
           {isAnalyzeManager && ENABLE_DASHBOARDS_MODULE && (
@@ -583,15 +592,22 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
               subMenu={manageAnalyseOptions()}
               subscribe={props.subscribe}
               collapsed={collapsed}
+              isExpanded={activeKey === SectionKeys.ANALYZE.value}
             />
           )}
           {isAdmin && (
             <MenuComponent
               baseUrl={baseUrl}
               eventKey={SectionKeys.MANAGE.value}
-              optionsCount="3"
+              optionsCount="0"
               mainMenu="Manage"
-              subMenu={manageOptions()}
+              subMenu={[
+                {
+                  name: "Manage",
+                  path: "admin",
+                  supportedSubRoutes: ["admin"],
+                },
+              ]}
               subscribe={props.subscribe}
               collapsed={collapsed}
             />

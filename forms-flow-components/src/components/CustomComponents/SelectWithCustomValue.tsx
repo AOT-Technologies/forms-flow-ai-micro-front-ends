@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
+import { createPortal } from "react-dom";
 import { DownArrowIcon, UpArrowIcon, VerticalLineIcon } from "../SvgIcons";
 import { ListGroup } from "react-bootstrap";
 import { CustomSearch } from "./Search";
@@ -81,6 +82,57 @@ const buildClassNames = (
     ...classes: (string | false | null | undefined)[]
 ): string => classes.filter(Boolean).join(" ");
 
+type DisplayLabelParams = {
+    opts: SelectWithCustomValueOptionType[];
+    selValue: string | number | undefined;
+    defaultVal?: string | number;
+    placeholder?: string;
+};
+
+const getDisplayLabel = ({
+    opts,
+    selValue,
+    defaultVal,
+    placeholder = "",
+}: DisplayLabelParams): React.ReactNode => {
+    const selected = opts?.find((o) => o.value === selValue);
+    if (selected) {
+        return (
+            <span className="dropdown-text-content">
+                {selected.icon && <span className="dropdown-icon">{selected.icon}</span>}
+                <span>{selected.label}</span>
+            </span>
+        );
+    }
+
+    const defaultMatch = opts?.find((o) => o.value === defaultVal);
+    if (defaultMatch) {
+        return (
+            <span className="dropdown-text-content">
+                {defaultMatch.icon && <span className="dropdown-icon">{defaultMatch.icon}</span>}
+                <span>{defaultMatch.label}</span>
+            </span>
+        );
+    }
+
+    if (selValue && !opts?.some((o) => o.value === selValue)) {
+        return String(selValue);
+    }
+
+    if (!selValue && !defaultVal) {
+        return <span className="dropdown-text-placeholder">{placeholder}</span>;
+    }
+
+    return defaultVal ?? "";
+};
+
+/** Dropdown position interface */
+interface DropdownPosition {
+    top: number;
+    left: number;
+    width: number;
+}
+
 /** SelectWithCustomValue Component */
 const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCustomValueProps>(
     (
@@ -138,6 +190,50 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
         >(secondValue || secondDefaultValue);
 
         const dropdownRef = useRef<HTMLDivElement>(null);
+        const primaryWrapperRef = useRef<HTMLDivElement>(null);
+        const primaryMenuRef = useRef<HTMLDivElement | null>(null);
+        const [primaryPosition, setPrimaryPosition] = useState<DropdownPosition | null>(null);
+        const [isMounted, setIsMounted] = useState(false);
+
+        // --- Common state transition helpers ---
+        const closeDropdownAndClearSearch = useCallback(() => {
+            setIsOpen(false);
+            setSearchTerm("");
+        }, []);
+
+        const exitCustomMode = useCallback(() => {
+            setIsCustomValueMode(false);
+            setShouldAutoFocus(false);
+        }, []);
+
+        // --- Custom value mode helpers ---
+        const enterCustomMode = useCallback(
+            (initialValue: string = "") => {
+                setIsCustomValueMode(true);
+                setCustomInputValue(initialValue);
+                setShouldAutoFocus(true);
+                closeDropdownAndClearSearch();
+            },
+            [closeDropdownAndClearSearch]
+        );
+
+        const commitCustomValue = useCallback(
+            (trimmedValue: string) => {
+                setSelectedValue(trimmedValue);
+                exitCustomMode();
+                onChange?.(trimmedValue);
+            },
+            [onChange, exitCustomMode]
+        );
+
+        const cancelCustomModeAndShowDropdown = useCallback(() => {
+            exitCustomMode();
+            setCustomInputValue("");
+            setSelectedValue(undefined);
+            setIsOpen(true);
+            setSearchTerm("");
+            // Don't call onChange with undefined - let user select a new value
+        }, [exitCustomMode]);
 
         // Update values if props change
         useEffect(() => {
@@ -154,39 +250,67 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
             setSecondSelectedValue(secondValue || secondDefaultValue);
         }, [secondValue, secondDefaultValue]);
 
+        useEffect(() => {
+            setIsMounted(typeof document !== "undefined");
+        }, []);
+
+        const updatePosition = useCallback(
+            (
+                wrapper: React.RefObject<HTMLDivElement>,
+                setter: React.Dispatch<React.SetStateAction<DropdownPosition | null>>
+            ) => {
+                if (!wrapper.current) return;
+                const rect = wrapper.current.getBoundingClientRect();
+                setter({
+                    top: rect.bottom + window.scrollY,
+                    left: rect.left + window.scrollX,
+                    width: rect.width,
+                });
+            },
+            []
+        );
+
+        useEffect(() => {
+            if (!isOpen) return;
+            const handleUpdate = () => updatePosition(primaryWrapperRef, setPrimaryPosition);
+            handleUpdate();
+            window.addEventListener("scroll", handleUpdate, true);
+            window.addEventListener("resize", handleUpdate);
+            return () => {
+                window.removeEventListener("scroll", handleUpdate, true);
+                window.removeEventListener("resize", handleUpdate);
+            };
+        }, [isOpen, updatePosition]);
+
         // Handle click outside
         useEffect(() => {
             const handleClickOutside = (event: MouseEvent): void => {
-                if (
-                    dropdownRef.current &&
-                    !dropdownRef.current.contains(event.target as Node)
-                ) {
-                    setIsOpen(false);
+                const target = event.target as Node;
+                const inDropdown = dropdownRef.current?.contains(target);
+                const inMenu = primaryMenuRef.current?.contains(target);
+                const inWrapper = primaryWrapperRef.current?.contains(target);
+                if (!inDropdown && !inMenu && !inWrapper) {
+                    closeDropdownAndClearSearch();
                     setSecondIsOpen(false);
-                    setSearchTerm("");
                 }
             };
             document.addEventListener("mousedown", handleClickOutside);
             return () => {
                 document.removeEventListener("mousedown", handleClickOutside);
             };
-        }, []);
+        }, [closeDropdownAndClearSearch]);
 
         /** Handle primary toggle */
         const handleToggle = useCallback(() => {
             if (!disabled) {
                 // If current value is a custom value (not in options), enter edit mode
                 if (selectedValue && !options.some(opt => opt.value === selectedValue)) {
-                    setIsCustomValueMode(true);
-                    setCustomInputValue(String(selectedValue));
-                    setShouldAutoFocus(true); // Enable autoFocus when entering edit mode
-                    setIsOpen(false);
-                    setSearchTerm("");
+                    enterCustomMode(String(selectedValue));
                 } else {
                     setIsOpen((prev) => !prev);
                 }
             }
-        }, [disabled, selectedValue, options]);
+        }, [disabled, selectedValue, options, enterCustomMode]);
 
         /** Handle secondary toggle */
         const handleSecondToggle = useCallback(() => {
@@ -197,20 +321,18 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
         const handleOptionClick = useCallback(
             (optionValue: string | number): void => {
                 setSelectedValue(optionValue);
-                setIsOpen(false);
-                setSearchTerm("");
-                setIsCustomValueMode(false); // Exit custom value mode when selecting an option
-                setShouldAutoFocus(false); // Reset autoFocus when selecting an option
+                closeDropdownAndClearSearch();
+                exitCustomMode();
                 onChange?.(optionValue);
 
                 // Reset dependent dropdown when parent changes
                 // Do NOT auto-select the first secondary option; require user action
                 if (secondDropdown) {
                     // Clear secondary selection and wait for manual pick
-                    setSecondSelectedValue('');
+                    setSecondSelectedValue(undefined);
                 }
             },
-            [onChange, secondDropdown, dependentOptions, onSecondChange]
+            [onChange, secondDropdown, dependentOptions, onSecondChange, closeDropdownAndClearSearch, exitCustomMode]
         );
 
         /** Handle secondary select */
@@ -255,37 +377,17 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
 
         /** Handle special action items */
         const handleCustomValueClick = useCallback(() => {
-            setIsOpen(false);
-            setSearchTerm("");
-            setIsCustomValueMode(true);
-            setShouldAutoFocus(true); // Enable autoFocus when entering custom value mode
-            // Set initial input value to current selected value if it's a string
-            if (selectedValue && typeof selectedValue === 'string') {
-                setCustomInputValue(selectedValue);
-            } else {
-                setCustomInputValue("");
-            }
+            // Always start with empty input when entering custom value from dropdown
+            // so user can type a fresh custom value without clearing the previous selection
+            enterCustomMode("");
             onEnterCustomValue?.();
-        }, [onEnterCustomValue, selectedValue]);
+        }, [enterCustomMode, onEnterCustomValue]);
 
         const handleAdditionalVariablesClick = useCallback(() => {
-            setIsOpen(false);
-            setSearchTerm("");
-            setIsCustomValueMode(false); // Exit custom value mode if active
-            setShouldAutoFocus(false); // Reset autoFocus when selecting additional variables
+            closeDropdownAndClearSearch();
+            exitCustomMode();
             onSelectAdditionalVariables?.();
-        }, [onSelectAdditionalVariables]);
-
-        /** Reset custom value mode and show dropdown */
-        const resetCustomValueModeAndShowDropdown = useCallback(() => {
-            setShouldAutoFocus(false);
-            setIsCustomValueMode(false);
-            setCustomInputValue("");
-            setSelectedValue(undefined);
-            setIsOpen(true);
-            setSearchTerm("");
-            // Don't call onChange with undefined - let user select a new value
-        }, []);
+        }, [onSelectAdditionalVariables, closeDropdownAndClearSearch, exitCustomMode]);
 
         /** Handle custom input value change for CustomTextInput (uses setValue callback) */
         const handleCustomInputSetValue = useCallback((newValue: string) => {
@@ -293,43 +395,194 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
             
             // If input is cleared, exit custom value mode and show dropdown
             if (newValue.trim() === "" && isCustomValueMode) {
-                resetCustomValueModeAndShowDropdown();
+                cancelCustomModeAndShowDropdown();
             }
-        }, [isCustomValueMode, resetCustomValueModeAndShowDropdown]);
+        }, [isCustomValueMode, cancelCustomModeAndShowDropdown]);
 
         /** Handle Enter key press in custom input */
         const handleCustomInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                setShouldAutoFocus(false); // Disable autoFocus after Enter is pressed
                 const trimmedValue = customInputValue.trim();
                 if (trimmedValue) {
-                    setSelectedValue(trimmedValue);
-                    setIsCustomValueMode(false);
-                    onChange?.(trimmedValue);
+                    commitCustomValue(trimmedValue);
                 } else {
                     // If Enter is pressed with empty input, show dropdown
-                    resetCustomValueModeAndShowDropdown();
+                    cancelCustomModeAndShowDropdown();
                 }
             } else if (e.key === "Escape") {
                 // Exit custom value mode and show dropdown
-                resetCustomValueModeAndShowDropdown();
+                cancelCustomModeAndShowDropdown();
             }
-        }, [customInputValue, onChange, resetCustomValueModeAndShowDropdown]);
+        }, [commitCustomValue, customInputValue, cancelCustomModeAndShowDropdown]);
 
         /** Handle blur on custom input */
         const handleCustomInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-            setShouldAutoFocus(false); // Disable autoFocus after blur
             const trimmedValue = customInputValue.trim();
             if (trimmedValue) {
-                setSelectedValue(trimmedValue);
-                setIsCustomValueMode(false);
-                onChange?.(trimmedValue);
+                commitCustomValue(trimmedValue);
             } else {
                 // If input is empty, exit custom value mode and show dropdown
-                resetCustomValueModeAndShowDropdown();
+                cancelCustomModeAndShowDropdown();
             }
-        }, [customInputValue, onChange, resetCustomValueModeAndShowDropdown]);
+        }, [commitCustomValue, customInputValue, cancelCustomModeAndShowDropdown]);
+
+        const renderSpecialItems = (
+            itemClass: string | undefined,
+            showSpecialItems: boolean
+        ) => {
+            if (!showSpecialItems) return null;
+
+            return (
+                <>
+                    <ListGroup.Item
+                        className={buildClassNames(
+                            "custom-dropdown-item",
+                            "custom-dropdown-item-special",
+                            itemClass
+                        )}
+                        onClick={handleCustomValueClick}
+                        data-testid={`${dataTestId}-enter-custom-value`}
+                    >
+                        <span className="dropdown-option-content">
+                            <span>{customValueLabel}</span>
+                        </span>
+                    </ListGroup.Item>
+
+                    {onSelectAdditionalVariables && (
+                        <ListGroup.Item
+                            className={buildClassNames(
+                                "custom-dropdown-item",
+                                "custom-dropdown-item-special",
+                                itemClass
+                            )}
+                            onClick={handleAdditionalVariablesClick}
+                            data-testid={`${dataTestId}-select-additional-variables`}
+                        >
+                            <span className="dropdown-option-content">
+                                <span>{additionalVariablesLabel}</span>
+                            </span>
+                        </ListGroup.Item>
+                    )}
+                </>
+            );
+        };
+
+        const renderMenu = (
+            opts: SelectWithCustomValueOptionType[],
+            selValue: string | number | undefined,
+            selectFn: (value: string | number) => void,
+            variantType: SelectWithCustomValueVariant,
+            itemClass: string | undefined,
+            showSpecialItems: boolean,
+            menuRef?: React.MutableRefObject<HTMLDivElement | null>,
+            position?: DropdownPosition | null
+        ) => {
+            const shouldPortal = isMounted && position && typeof document !== "undefined";
+
+            const content = (
+                <div
+                    ref={(node) => {
+                        if (menuRef) {
+                            menuRef.current = node;
+                        }
+                    }}
+                    className={buildClassNames(
+                        "custom-dropdown-options",
+                        `custom-dropdown-options--${variantType}`
+                    )}
+                    style={
+                        shouldPortal && position
+                            ? {
+                                  position: "absolute",
+                                  top: position.top,
+                                  left: position.left,
+                                  width: position.width,
+                                  zIndex: 2000,
+                                  maxHeight: "10.75rem",
+                              }
+                            : undefined
+                    }
+                >
+                    {searchable && (
+                        <div className="custom-dropdown-search">
+                            <CustomSearch
+                                search={searchTerm}
+                                setSearch={setSearchTerm}
+                                handleSearch={() => {}}
+                                placeholder={customSearchPlaceholder}
+                                dataTestId={`${dataTestId}-dropdown-search`}
+                            />
+                        </div>
+                    )}
+
+                    {renderSpecialItems(itemClass, showSpecialItems)}
+
+                    {opts.length > 0 ? (
+                        opts.map((option) => (
+                            <ListGroup.Item
+                                key={option.value}
+                                className={buildClassNames(
+                                    "custom-dropdown-item",
+                                    itemClass,
+                                    option.value === selValue && "selected"
+                                )}
+                                onClick={() => selectFn(option.value)}
+                                aria-selected={option.value === selValue}
+                                data-testid={`${dataTestId}-${option.value}`}
+                            >
+                                <span className="dropdown-option-content">
+                                    {option.icon && (
+                                        <span className="dropdown-icon">{option.icon}</span>
+                                    )}
+                                    <span>{option.label}</span>
+                                </span>
+                            </ListGroup.Item>
+                        ))
+                    ) : (
+                        !showSpecialItems && (
+                            <ListGroup.Item className="custom-dropdown-item no-results">
+                                No Matching Results
+                            </ListGroup.Item>
+                        )
+                    )}
+                </div>
+            );
+
+            return { content, shouldPortal };
+        };
+
+        const renderButton = (
+            opts: SelectWithCustomValueOptionType[],
+            selValue: string | number | undefined,
+            isOpenState: boolean,
+            toggleFn: () => void,
+            variantType: SelectWithCustomValueVariant,
+            defaultVal?: string | number
+        ) => (
+            <button
+                type="button"
+                className={buildClassNames(
+                    "custom-selectdropdown",
+                    `custom-selectdropdown--${variantType}`,
+                    disabled && "disabled"
+                )}
+                onClick={toggleFn}
+                aria-expanded={isOpenState}
+                aria-haspopup="listbox"
+                disabled={disabled}
+            >
+                <span className="dropdown-text">
+                    {getDisplayLabel({
+                        opts,
+                        selValue,
+                        defaultVal,
+                        placeholder,
+                    })}
+                </span>
+                {renderArrowIcon(isOpenState)}
+            </button>
+        );
 
         /** Generic dropdown renderer (used for both primary and secondary) */
         const renderDropdown = (
@@ -342,165 +595,59 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
             defaultVal?: string | number,
             wrapperClass?: string,
             itemClass?: string,
-            showSpecialItems: boolean = false
+            showSpecialItems: boolean = false,
+            wrapperRef?: React.RefObject<HTMLDivElement>,
+            menuRef?: React.MutableRefObject<HTMLDivElement | null>,
+            position?: DropdownPosition | null
         ) => {
-            // Render custom input mode for primary dropdown only
             if (showSpecialItems && isCustomValueMode) {
                 return (
-                    <div 
+                    <div
+                        ref={wrapperRef}
                         className={buildClassNames("dropdown-wrapper", wrapperClass)}
                         onKeyDown={handleCustomInputKeyDown}
                     >
-                            <CustomTextInput
-                                value={customInputValue}
-                                setValue={handleCustomInputSetValue}
-                                onBlur={handleCustomInputBlur}
-                                disabled={disabled}
-                                placeholder={placeholder}
-                                dataTestId={`${dataTestId}-custom-input`}
-                                autoFocus={shouldAutoFocus}
-                            />
+                        <CustomTextInput
+                            value={customInputValue}
+                            setValue={handleCustomInputSetValue}
+                            onBlur={handleCustomInputBlur}
+                            disabled={disabled}
+                            placeholder={placeholder}
+                            dataTestId={`${dataTestId}-custom-input`}
+                            autoFocus={shouldAutoFocus}
+                        />
                     </div>
                 );
             }
 
-            return (
-                <div className={buildClassNames("dropdown-wrapper", wrapperClass)}>
-                    <button
-                        type="button"
-                        className={buildClassNames(
-                            "custom-selectdropdown",
-                            `custom-selectdropdown--${variantType}`,
-                            disabled && "disabled"
-                        )}
-                        onClick={toggleFn}
-                        aria-expanded={isOpenState}
-                        aria-haspopup="listbox"
-                        disabled={disabled}
-                    >
-                        <span className="dropdown-text">
-                            {(() => {
-                                const selected = opts?.find((o) => o.value === selValue);
-                                if (selected) {
-                                    return (
-                                        <span className="dropdown-text-content">
-                                            {selected.icon && (
-                                                <span className="dropdown-icon">{selected.icon}</span>
-                                            )}
-                                            <span>{selected.label}</span>
-                                        </span>
-                                    );
-                                }
-                                const defaultMatch = opts?.find((o) => o.value === defaultVal);
-                                if (defaultMatch) {
-                                    return (
-                                        <span className="dropdown-text-content">
-                                            {defaultMatch.icon && (
-                                                <span className="dropdown-icon">{defaultMatch.icon}</span>
-                                            )}
-                                            <span>{defaultMatch.label}</span>
-                                        </span>
-                                    );
-                                }
-                                // Show custom value if it exists and is not in options
-                                if (selValue && !opts?.some((o) => o.value === selValue)) {
-                                    return String(selValue);
-                                }
-                                // Show placeholder if no value is selected
-                                if (!selValue && !defaultVal) {
-                                    return <span className="dropdown-text-placeholder">{placeholder}</span>;
-                                }
-                                return defaultVal ?? "";
-                            })()}
-                        </span>
-                        {renderArrowIcon(isOpenState)}
-                    </button>
-                {isOpenState && !disabled && (
-                    <div
-                        className={buildClassNames(
-                            "custom-dropdown-options",
-                            `custom-dropdown-options--${variantType}`
-                        )}
-                    >
-                        {searchable && (
-                            <div className="custom-dropdown-search">
-                                <CustomSearch
-                                    search={searchTerm}
-                                    setSearch={setSearchTerm}
-                                    handleSearch={() => { }}
-                                    placeholder={customSearchPlaceholder}
-                                    dataTestId={`${dataTestId}-dropdown-search`}
-                                />
-                            </div>
-                        )}
-                        {/* Special action items - always shown at top */}
-                        {showSpecialItems && (
-                            <>
-                                {(
-                                    <ListGroup.Item
-                                        className={buildClassNames(
-                                            "custom-dropdown-item",
-                                            "custom-dropdown-item-special",
-                                            itemClass
-                                        )}
-                                        onClick={handleCustomValueClick}
-                                        data-testid={`${dataTestId}-enter-custom-value`}
-                                    >
-                                        <span className="dropdown-option-content">
-                                            <span>{customValueLabel}</span>
-                                        </span>
-                                    </ListGroup.Item>
-                                )}
+            const { content, shouldPortal } = renderMenu(
+                opts,
+                selValue,
+                selectFn,
+                variantType,
+                itemClass,
+                showSpecialItems,
+                menuRef,
+                position
+            );
 
-                                {onSelectAdditionalVariables && (
-                                    <ListGroup.Item
-                                        className={buildClassNames(
-                                            "custom-dropdown-item",
-                                            "custom-dropdown-item-special",
-                                            itemClass
-                                        )}
-                                        onClick={handleAdditionalVariablesClick}
-                                        data-testid={`${dataTestId}-select-additional-variables`}
-                                    >
-                                        <span className="dropdown-option-content">
-                                            <span>{additionalVariablesLabel}</span>
-                                        </span>
-                                    </ListGroup.Item>
-                                )}
-                            </>
-                        )}
-                        {/* Regular options */}
-                        {opts.length > 0 ? (
-                            opts.map((option) => (
-                                <ListGroup.Item
-                                    key={option.value}
-                                    className={buildClassNames(
-                                        "custom-dropdown-item",
-                                        itemClass,
-                                        option.value === selValue && "selected"
-                                    )}
-                                    onClick={() => selectFn(option.value)}
-                                    aria-selected={option.value === selValue}
-                                    data-testid={`${dataTestId}-${option.value}`}
-                                >
-                                    <span className="dropdown-option-content">
-                                        {option.icon && (
-                                            <span className="dropdown-icon">{option.icon}</span>
-                                        )}
-                                        <span>{option.label}</span>
-                                    </span>
-                                </ListGroup.Item>
-                            ))
-                        ) : (
-                            !showSpecialItems && (
-                                <ListGroup.Item className="custom-dropdown-item no-results">
-                                    No Matching Results
-                                </ListGroup.Item>
-                            )
-                        )}
-                    </div>
-                )}
-            </div>
+            return (
+                <div
+                    ref={wrapperRef}
+                    className={buildClassNames("dropdown-wrapper", wrapperClass)}
+                >
+                    {renderButton(
+                        opts,
+                        selValue,
+                        isOpenState,
+                        toggleFn,
+                        variantType,
+                        defaultVal
+                    )}
+                    {isOpenState &&
+                        !disabled &&
+                        (shouldPortal ? createPortal(content, document.body) : content)}
+                </div>
             );
         };
 
@@ -547,7 +694,10 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                     defaultValue,
                     dropdownWrapperClassName,
                     dropdownItemClassName,
-                    true // Show special items for primary dropdown
+                    true, // Show special items for primary dropdown
+                    primaryWrapperRef,
+                    primaryMenuRef,
+                    primaryPosition
                 )}
 
                 {/* --- SECONDARY DROPDOWN (Indented) --- */}
@@ -567,7 +717,8 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                                 "secondary",
                                 secondDefaultValue,
                                 dropdownWrapperClassName,
-                                dropdownItemClassName
+                                dropdownItemClassName,
+                                false, // Show special items for secondary dropdown
                             )}
                         </div>
                     </div>

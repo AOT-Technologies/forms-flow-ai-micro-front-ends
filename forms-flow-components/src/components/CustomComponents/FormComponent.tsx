@@ -14,7 +14,7 @@ interface FormComponentProps {
   form: any;
   alternativeLabels: any;
   setSelectedComponent: (value: SelectedComponent) => void;
-  setShowElement: (value: boolean) => void;
+  setShowElement?: (value: boolean) => void;
   detailsRef: React.RefObject<HTMLInputElement>;
   ignoreKeywords: Set<string>;
 }

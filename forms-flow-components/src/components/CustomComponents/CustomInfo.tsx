@@ -9,6 +9,8 @@ interface CustomInfoProps {
     variant?: InfoVariant;
     className?: string;
     dataTestId?: string;
+    /** Optional icon override (replaces the default InfoIcon). */
+    icon?: React.ReactNode;
 }
 
 /**
@@ -22,15 +24,17 @@ export const CustomInfo: FC<CustomInfoProps> = ({
     content,
     variant = "primary",
     className,
-    dataTestId
+    dataTestId,
+    icon
 }) => { 
   const { t } = useTranslation();
   
-   // Replace `\n` with <br /> tags and use the line itself as a key
-   const formattedContent = content.split("\n").map((line) => (
-    <React.Fragment key={line.trim().replace(/\s+/g, "-")}>
+  // Replace `\n` with <br /> tags (no trailing <br />)
+  const contentLines = content.split("\n");
+  const formattedContent = contentLines.map((line, idx) => (
+    <React.Fragment key={`${idx}-${line.trim().replace(/\s+/g, "-")}`}>
       {t(line)}
-      <br />
+      {idx < contentLines.length - 1 ? <br /> : null}
     </React.Fragment>
   ));
 
@@ -43,7 +47,7 @@ export const CustomInfo: FC<CustomInfoProps> = ({
   return (
     <div className={panelClassName} data-testid={dataTestId}>
       <div className="info-icon">
-        <InfoIcon variant={variant} />
+        {icon ?? <InfoIcon variant={variant} />}
       </div>
       <div className="info-content">{formattedContent}</div>
     </div>

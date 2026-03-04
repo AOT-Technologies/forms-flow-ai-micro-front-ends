@@ -31,13 +31,14 @@ import { TableFooter,
    CustomInfo, 
   ConfirmModal,
   V8CustomButton,
-  BreadCrumbs,
-} 
+}
 from "@formsflow/components";
 import { useHistory } from "react-router-dom";
+import { navigateToAdminRoles } from "@formsflow/service";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
-  const { tenantId } = useParams();
+  const { tenantId: tenantIdFromParams } = useParams();
+  const tenantId = props.tenantId ?? tenantIdFromParams;
   const history = useHistory();
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [roles, setRoles] = React.useState([]);
@@ -105,18 +106,16 @@ const Roles = React.memo((props: any) => {
   }, [editCandidate]);
 
   React.useEffect(() => {
-    let updatedRoles = props.roles;
+    let updatedRoles = props.roles ?? [];
 
     if (search) {
       updatedRoles = filterList(search, updatedRoles);
     }
 
-    if (updatedRoles.length > 0) {
-      updatedRoles = removingTenantId(updatedRoles,tenantId);
-    }
+    updatedRoles = removingTenantId(updatedRoles, tenantId);
 
     setRoles(updatedRoles);
-  }, [props.roles, search]);
+  }, [props.roles, search, tenantId]);
 
   React.useEffect(() => {
     fetchPermissions(
@@ -127,8 +126,8 @@ const Roles = React.memo((props: any) => {
           (permission) =>
             permission.name !== "manage_bundles" &&
             permission.name !== "manage_integrations" &&
-            permission.name !== "manage_templates" &&
-            permission.name !== "analyze_metrics_view"
+            permission.name !== "manage_templates" 
+            // permission.name !== "analyze_metrics_view"
         );
         setPermissionData(filteredData);
       },
@@ -574,10 +573,12 @@ const Roles = React.memo((props: any) => {
     {
       dataField: "name",
       text: <Translation>{(t) => t("Role Name")}</Translation>,
+      classes: "text-break",
     },
     {
       dataField: "description",
       text: <Translation>{(t) => t("Description")}</Translation>,
+      classes: "text-break",
     },
     {
       dataField: "",
@@ -650,28 +651,8 @@ const Roles = React.memo((props: any) => {
       },
     },
   ];
-  // Breadcrumb configuration
-  const breadcrumbItems = [
-    { label: t("Manage"), id: "manage" },
-    { label: t("Roles"), id: "roles" }
-  ];
-
-  const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
-    if (item.id === "manage" || item.id === "roles") {
-      history.push(`${baseUrl}admin/roles`);
-    }
-  };
-
   return (
     <>
-      <div style={{ marginBottom: "15px" }}>
-        <BreadCrumbs
-          items={breadcrumbItems}
-          variant="default"
-          onBreadcrumbClick={handleBreadcrumbClick}
-          dataTestId="admin-roles-breadcrumbs"
-        />
-      </div>
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">

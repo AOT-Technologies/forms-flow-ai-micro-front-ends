@@ -1,19 +1,31 @@
 import { MULTITENANCY_ENABLED } from "../constants";
 
+/** Strip only /<tenant_key>- from start of value (case-insensitive). */
+function stripTenantPrefix(value, tenantId) {
+  if (!value || !tenantId) return value;
+  const escaped = String(tenantId).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`^/${escaped}-`, "i");
+  return String(value).replace(re, "");
+}
+
 export const removingTenantId = (roles=[], tenantId, tenantIdInPath = false) => {
   if (MULTITENANCY_ENABLED && tenantId) {
+    const escaped = String(tenantId).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const reWithSlash = new RegExp(`^/${escaped}-`, "i");
     const updatedRoles = roles.map((role) => {
-      if (role[tenantIdInPath ? "path" : "name"].startsWith(`/${tenantId}-`)) {
+      const nameOrPath = role[tenantIdInPath ? "path" : "name"];
+      const str = String(nameOrPath ?? "");
+      if (reWithSlash.test(str)) {
         if (tenantIdInPath) {
           return {
             ...role,
-            name: role.name.replace(`${tenantId}-`, ""),
-            path: role.path.replace(`/${tenantId}-`, "/"),
+            name: stripTenantPrefix(role.name, tenantId),
+            path: role.path.replace(reWithSlash, "/"),
           };
         }
         return {
           ...role,
-          name: role.name.replace(`/${tenantId}-`, "/"),
+          name: stripTenantPrefix(role.name, tenantId),
         };
       }
       return role;

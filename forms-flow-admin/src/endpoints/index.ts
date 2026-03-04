@@ -1,4 +1,4 @@
-import { WEB_BASE_URL } from "./config";
+import { WEB_BASE_URL, MT_ADMIN_BASE_URL, MT_ADMIN_BASE_URL_VERSION } from "./config";
 
 const API = {
     GET_DASHBOARDS: `${WEB_BASE_URL}/dashboards`,
@@ -8,6 +8,7 @@ const API = {
     DASHBOARD_AUTHORIZATION: `${WEB_BASE_URL}/authorizations/dashboard`,
     USER_ROLE_GROUP_PERMISSION: `${WEB_BASE_URL}/user/<user_id>/permission/groups/<group_id>`,
     ADD_USER: `${WEB_BASE_URL}/user/add-user`,
+    INVITE_USER: `${MT_ADMIN_BASE_URL}/${MT_ADMIN_BASE_URL_VERSION}/tenants/<tenant_key>/invite-user`,
     GET_PERMISSIONS:`${WEB_BASE_URL}/roles/permissions`,
 }
 

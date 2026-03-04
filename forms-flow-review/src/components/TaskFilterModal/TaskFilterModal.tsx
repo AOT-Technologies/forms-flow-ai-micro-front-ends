@@ -25,6 +25,7 @@ import {
   setIsUnsavedFilter,
   setSelectedFilter,
 } from "../../actions/taskActions";
+import useAllTasksPayload from "../../constants/allTasksPayload";
 
 const TaskFilterModal = ({ show, onClose, toggleModal }) => {
   const { t } = useTranslation();
@@ -40,6 +41,9 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     (state: RootState) => state.task.selectedFilter
   );
   const limit = useSelector((state: RootState) => state.task.limit);
+  const allTasksPayload = useAllTasksPayload();
+  const isQuickFilterEdit = !!filterToEdit?.isQuickFilter;
+  const isCreating = !filterToEdit?.id && !isQuickFilterEdit;
   const [currentStep, setCurrentStep] = useState(1);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -119,12 +123,21 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     }
   };
 
+  const handleClearQuickFilter = () => {
+    // Clear the unsaved quick filter and fall back to All Tasks.
+    setShowDeleteModal(false);
+    dispatch(setIsUnsavedFilter(false));
+    dispatch(setSelectedFilter(allTasksPayload));
+    dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
+    onClose?.();
+  };
+
   // Always start at step 1 when opening or switching to edit a filter
   useEffect(() => {
-    if (show || filterToEdit?.id) {
+    if (show || filterToEdit?.id || filterToEdit?.isQuickFilter) {
       setCurrentStep(1);
     }
-  }, [show, filterToEdit?.id]);
+  }, [show, filterToEdit?.id, filterToEdit?.isQuickFilter]);
   
 
   return (
@@ -142,22 +155,45 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     <Modal.Header>
     <div className="modal-header-content">
     <div className="modal-title">
-        {filterToEdit?.id  ? t(`Edit Custom Filter > ${filterToEdit.name}`)  : t("Create Custom Filter")} 
+        {isQuickFilterEdit
+          ? t("Edit Quick Filter")
+          : (filterToEdit?.id ? t(`Edit Custom Filter > ${filterToEdit.name}`) : t("Create Custom Filter"))}
         <CloseIcon color="var(--gray-darkest)" onClick={onClose}/>
         </div>
 
-        <div className="d-flex justify-content-between align-items-center modal-subtitle" >
+        <div
+          className={`d-flex justify-content-between ${
+            isCreating && currentStep === 1
+              ? "align-items-start"
+              : "align-items-center"
+          } modal-subtitle`}
+        >
           <div className="subtitle-text">
-            {currentStep === 1 &&
-            t("Select a form you want your custom filter to apply to")}
-            {currentStep === 2 &&
-            t(
-              "Select and order the columns you would like to see in your custom filter and choose how the results are sorted"
+            {isCreating && currentStep === 1 && (
+              <div>
+                <div className="task-filter-modal-intro-title">
+                  {t("Find exactly what you need, instantly")}
+                </div>
+                <div className="task-filter-modal-intro-subtitle">
+                  {t(
+                    "Use conditions or custom form fields to build views tailored to specific workflows"
+                  )}
+                </div>
+              </div>
             )}
-            {currentStep === 3 &&
-            t("Name your custom filter and choose who you can see it")}
+            {((!isCreating && currentStep === 1) ||
+              (isCreating && currentStep === 2)) &&
+              t("Select a form you want your custom filter to apply to")}
+            {((!isCreating && currentStep === 2) ||
+              (isCreating && currentStep === 3)) &&
+              t(
+                "Select and order the columns you would like to see in your custom filter and choose how the results are sorted"
+              )}
+            {((!isCreating && currentStep === 3) ||
+              (isCreating && currentStep === 4)) &&
+              t("Name your custom filter and choose who you can see it")}
           </div>
-          {filterToEdit?.id && filterToEdit?.name !== "All Tasks" && (
+          {((filterToEdit?.id && filterToEdit?.name !== "All Tasks")) && (
             <V8CustomButton
               secondary
               label={t("Delete filter")}

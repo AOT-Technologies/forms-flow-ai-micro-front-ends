@@ -31,7 +31,6 @@ import { useTranslation } from "react-i18next";
 import {
   CUSTOM_SUBMISSION_URL,
   CUSTOM_SUBMISSION_ENABLE,
-  MULTITENANCY_ENABLED,
 } from "../constants/constants";
 import {
   getCustomSubmission,
@@ -49,7 +48,7 @@ import {
   getProcessActivities,
   getProcessDetails,
 } from "../services/processServices";
-import { push } from "connected-react-router";
+import { navigateToSubmissionsListing, getRedirectUrl } from "@formsflow/service";
 import BundleSubmissionView from "../components/BundleSubmissionView";
 
 
@@ -77,7 +76,7 @@ const ViewApplication = React.memo(() => {
     (state: any) => state.process?.processActivityList
   );
 
-  const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  const redirectUrl = getRedirectUrl(tenantKey);
   const { appHistory, isHistoryListLoading } = useSelector(
     useMemo(
       () => (state: any) => ({
@@ -354,7 +353,7 @@ const ViewApplication = React.memo(() => {
   }
 
   const backToSubmissionList = () => {
-    dispatch(push(`${redirectUrl}submissions`));
+    navigateToSubmissionsListing(dispatch, tenantKey);
   };
 
   const breadcrumbItems = [

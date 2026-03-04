@@ -16,11 +16,10 @@ class HelperServices {
     // Parse the input date string as a moment.js object
     const momentDate = moment.utc(date?.replace(' ', 'T'));
 
-    // Convert localizedDateTime to a Moment.js object and format it with the same format
+    // Convert localizedDateTime to a Moment.js object and format it as DD-MMM-YYYY, h:mm a
     const localizedDateTime = moment(momentDate?.toDate())
-      .format(`${DATE_FORMAT}, ${TIME_FORMAT}`)
-      .toLocaleString()
-    return localizedDateTime
+      .format(`${DATE_FORMAT}, ${TIME_FORMAT}`);
+    return localizedDateTime;
   }
 
   public static getLocaldate(date: string): any {
@@ -29,9 +28,9 @@ class HelperServices {
     }
     const momentDate = moment.utc(date?.replace(' ', 'T'));
 
+    // Format as DD-MMM-YYYY (e.g., 07-Feb-2025)
     const localizedDate = moment(momentDate?.toDate())
-      .format(DATE_FORMAT)
-      .toLocaleString();
+      .format(DATE_FORMAT);
     return localizedDate;
   }
 
@@ -41,9 +40,9 @@ class HelperServices {
     }
 
     const momentDate = moment.utc(date?.replace(' ', 'T')); 
+    // Format as h:mm a (e.g., 3:45 PM)
     const localizedTime = moment(momentDate?.toDate())
-      .format(TIME_FORMAT)
-      .toLocaleString();
+      .format(TIME_FORMAT);
     return localizedTime;
   }
 
@@ -83,7 +82,7 @@ class HelperServices {
   // Method to check if the current route matches the routes where sidebar shouldnt be shown
   public static hideSideBarRoute(location: string): boolean {
     const previewRouteParts = ["formflow","view-edit"]; // Route parts which is part of designer preview page
-    const exactRouteMatches = ["/","/tenant"]; // Exact Routes where sidebar is not required
+    const exactRouteMatches = ["/","/tenant","/onboarding"]; // Exact Routes where sidebar is not required
     const partOfRouteMatches = ["/public/"]; // Parts of Routes where sidebar is not required . 
 
     return (
