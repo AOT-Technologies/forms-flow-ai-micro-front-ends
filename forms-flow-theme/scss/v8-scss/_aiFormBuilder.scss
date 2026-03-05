@@ -304,9 +304,7 @@ $white-300: var(--white-300);
     &__attachment-filename {
       white-space: nowrap;
       color: $secondary-dark; /* #525254 */
-      font-family: Figtree;
       font-size: 0.8125rem; /* 13px */
-      font-style: normal;
       font-weight: $font-weight-regular; /* 400 */
       line-height: 1.5rem; /* 24px */ /* 184.615% */
     }

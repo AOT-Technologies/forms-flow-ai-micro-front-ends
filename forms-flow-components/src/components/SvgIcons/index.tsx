@@ -1551,8 +1551,8 @@ export const GoogleFormsIcon = ({ color, ...props }) => (
         gradientUnits="userSpaceOnUse"
         gradientTransform="translate(35.837 30.7416) scale(1824.04 1824.05)"
       >
-        <stop stop-color="white" stop-opacity="0.1" />
-        <stop offset="1" stop-color="white" stop-opacity="0" />
+        <stop stopColor="white" stopOpacity="0.1" />
+        <stop offset="1" stopColor="white" stopOpacity="0" />
       </radialGradient>
     </defs>
   </svg>
@@ -1622,9 +1622,9 @@ export const MicrosoftFormsIcon = ({ color, ...props }) => (
         y2="12.5559"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#058F92" />
-        <stop offset="0.5" stop-color="#038489" />
-        <stop offset="1" stop-color="#026D71" />
+        <stop stopColor="#058F92" />
+        <stop offset="0.5" stopColor="#038489" />
+        <stop offset="1" stopColor="#026D71" />
       </linearGradient>
     </defs>
   </svg>
@@ -1733,8 +1733,8 @@ export const SparkIcon = ({ color, ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M3.18865 0.0211712C3.56778 0.107066 3.83623 0.437493 3.83623 0.81825V3.03753H5.16377C5.45231 3.03753 5.72047 3.18307 5.87322 3.42259C6.02597 3.6621 6.04172 3.96174 5.91488 4.21532L3.75112 8.54138C3.58007 8.88338 3.19048 9.06472 2.81135 8.97883C2.43222 8.89293 2.16377 8.56251 2.16377 8.18175V5.96247H0.836235C0.547686 5.96247 0.279528 5.81693 0.126776 5.57741C-0.0259652 5.3379 -0.0417204 5.03826 0.0851175 4.78468L2.24888 0.45862C2.41993 0.11662 2.80952 -0.0647238 3.18865 0.0211712Z"
       fill="#B8ABFF"
     />
