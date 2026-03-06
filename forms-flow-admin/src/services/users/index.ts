@@ -79,7 +79,7 @@ export const InviteUser = (
 ) => {
   const redirectUri =
     (WEB_BASE_CUSTOM_URL && String(WEB_BASE_CUSTOM_URL).trim()) ||
-    (typeof window !== "undefined" ? window.location.origin : "");
+    ((globalThis as unknown as Window).location?.origin ?? "");
   const uri = encodeURIComponent(redirectUri);
   const url = API.INVITE_USER.replace("<tenant_key>", tenantKey || "default")
     + (uri ? `?uri=${uri}` : "");
