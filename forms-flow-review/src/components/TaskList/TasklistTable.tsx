@@ -25,7 +25,7 @@ import {
   setFilterToEdit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList,
   fetchTaskVariables,
@@ -86,6 +86,7 @@ const TaskListTable = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const {
     tasksCount,
     selectedFilter,
@@ -111,6 +112,7 @@ const TaskListTable = () => {
   });
   const [bundleName, setBundleName] = useState("");
   const [showTaskFilterModal, setShowTaskFilterModal] = useState(false);
+  const hasAutoOpenedTaskFromQuery = useRef(false);
 
   // Redux selectors for task details
   const task = useSelector((state: any) => state.task.taskDetail);
@@ -599,6 +601,25 @@ const TaskListTable = () => {
 
 
   const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
+
+  useEffect(() => {
+    if (hasAutoOpenedTaskFromQuery.current) return;
+    const queryParams = new URLSearchParams(location.search);
+    const taskIdFromQuery = queryParams.get("taskId");
+
+    if (!taskIdFromQuery || !memoizedRows?.length) return;
+
+    const matchedTask = memoizedRows.find((task: Task) => task?.id === taskIdFromQuery);
+    if (!matchedTask) return;
+
+    hasAutoOpenedTaskFromQuery.current = true;
+    handleOpenModal(matchedTask);
+
+    queryParams.delete("taskId");
+    queryParams.delete("assignedToMe");
+    const nextSearch = queryParams.toString();
+    history.replace(`${location.pathname}${nextSearch ? `?${nextSearch}` : ""}`);
+  }, [location.search, location.pathname, memoizedRows, handleOpenModal, history]);
 
   // Base row height
   const baseRowHeight = 55;

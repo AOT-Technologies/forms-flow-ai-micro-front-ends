@@ -429,3 +429,185 @@ $font-tokens: (
    margin: 0 !important;
   }
 }
+
+// Home page layout classes
+.home-layout {
+  .ff-home-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4.5rem;
+    padding: 1rem 0;
+    border-bottom: 0.0625rem solid var(--gray-x-light);
+    margin-bottom: 1.25rem;
+  }
+
+  .ff-home-header-title {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .ff-home-body-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(100vh - 8.125rem) !important;
+  }
+
+  .ff-home-content-wrap {
+    margin-left: 6.75rem;
+    max-width: 58.5625rem;
+  }
+
+  .ff-home-subscription-banner {
+    height: 3.5rem;
+    width: 100%;
+    margin-top: 4.3125rem;
+    margin-bottom: 3.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0.0625rem solid var(--ff-primary-light, #B8ABFF);
+    border-radius: 0.3125rem;
+    padding: 0 1rem;
+    background: var(--ff-white, #fff);
+  }
+
+  .ff-home-subscription-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .ff-home-subscription-banner-message {
+    font-size: 0.9375rem;
+  }
+
+  .ff-home-quick-actions-title {
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .ff-home-quick-actions-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.3125rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ff-home-secondary-tabs-wrap {
+    margin-bottom: 0.75rem;
+  }
+
+  .ff-home-single-tab-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ff-gray-dark, #333);
+  }
+
+  .ff-home-empty-state-task-card {
+    min-height: 24.375rem;
+    border-radius: 0.3125rem;
+    border: 0.0625rem solid var(--gray-x-light);
+    background: var(--white-200 );
+    position: relative;
+  }
+
+  .ff-home-empty-state-refresh {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .ff-home-empty-state-task-content {
+    height: 100%;
+    min-height: 24.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ff-home-empty-state-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ff-home-empty-state-text-muted {
+    margin-top: 0.875rem;
+    color: #9E9E9E;
+  }
+
+  .ff-home-empty-state-generic-wrap {
+    min-height: 24.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ff-home-empty-state-cta {
+    margin-top: 0.875rem;
+  }
+
+  .ff-home-data-card {
+    border: 0.0625rem solid #E6E8EE;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .ff-home-data-table {
+    height: 24.375rem;
+    width: 100%;
+  }
+
+  .ff-home-get-started-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .ff-home-get-started-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .ff-home-get-started-carousel {
+    height: 17.6875rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    padding-bottom: 0.6875rem;
+    border-radius: 0.3125rem;
+    border: 0.0625rem solid #E5E5E5;
+  }
+
+  .ff-home-get-started-item {
+    max-width: 17.5625rem;
+    height: 15.5rem;
+    border: 0.0625rem solid var(--gray-x-light);
+    border-radius: 0.3125rem;
+    background: var(--white-200);
+    flex-shrink: 0;
+    overflow: hidden;
+    margin-top: 0.5625rem;
+  }
+
+  .ff-home-get-started-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  .ff-home-table-action-center {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
