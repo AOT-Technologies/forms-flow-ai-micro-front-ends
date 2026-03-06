@@ -444,7 +444,7 @@ $font-tokens: (
 
   .ff-home-header-title {
     margin: 0;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
   }
 
   .ff-home-body-scroll {
@@ -468,8 +468,8 @@ $font-tokens: (
     justify-content: space-between;
     border: 0.0625rem solid var(--ff-primary-light, #B8ABFF);
     border-radius: 0.3125rem;
-    padding: 0 1rem;
-    background: var(--ff-white, #fff);
+    padding: 0 var(--spacer-100);
+    background: var(--ff-white);
   }
 
   .ff-home-subscription-banner-content {
@@ -485,7 +485,7 @@ $font-tokens: (
   .ff-home-quick-actions-title {
     margin-bottom: 0;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
 
   .ff-home-quick-actions-list {
@@ -493,17 +493,17 @@ $font-tokens: (
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 1.3125rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--spacer-150);
   }
 
   .ff-home-secondary-tabs-wrap {
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--spacer-075);
   }
 
   .ff-home-single-tab-label {
     font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--ff-gray-dark, #333);
+    font-weight: var(--font-weight-semibold);
+    color: var(--ff-gray-dark);
   }
 
   .ff-home-empty-state-task-card {
@@ -516,8 +516,8 @@ $font-tokens: (
 
   .ff-home-empty-state-refresh {
     position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
+    top: var(--spacer-075);
+    right: var(--spacer-075);
   }
 
   .ff-home-empty-state-task-content {
@@ -536,7 +536,7 @@ $font-tokens: (
 
   .ff-home-empty-state-text-muted {
     margin-top: 0.875rem;
-    color: #9E9E9E;
+    color: var(--gray-medium-dark);
   }
 
   .ff-home-empty-state-generic-wrap {
@@ -566,13 +566,13 @@ $font-tokens: (
   .ff-home-get-started-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--spacer-075);
     font-size: 0.85rem;
   }
 
   .ff-home-get-started-title {
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
   }
 
   .ff-home-get-started-carousel {
@@ -584,7 +584,7 @@ $font-tokens: (
     overflow-y: hidden;
     padding-bottom: 0.6875rem;
     border-radius: 0.3125rem;
-    border: 0.0625rem solid #E5E5E5;
+    border: 0.0625rem solid var(--gray-x-light);
   }
 
   .ff-home-get-started-item {
