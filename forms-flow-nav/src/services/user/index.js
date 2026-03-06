@@ -31,17 +31,14 @@ export const fetchUserLoginDetails = () => {
     });
 };
 export const getOnBoardingUserRole = () => {
-  const url = API.USER_INFO_UPDATE;
+  const url = API.ONBOARDING_USER_ROLE;
   return RequestService.httpGETRequest(url)
   .then((res)=>{
       if(res.data){
           localStorage.setItem("ONBOARDINGUSERROLE", res.data.role);
       }
   }).catch((err)=>{
-      // the api is not ready yet, so we are setting the default role to operations
-      // will replace with actual catch block once the api is ready
-      localStorage.setItem("ONBOARDINGUSERROLE", "finance");
-      console.error("getOnBoardingUserRole error:", err);
+      console.error(" Error in getting on boarding user role:", err);
   });
 };
 
