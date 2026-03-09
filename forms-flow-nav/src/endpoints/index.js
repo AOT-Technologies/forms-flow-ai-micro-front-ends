@@ -8,6 +8,7 @@ const API = {
     USER_PROFILE_UPDATE: `${WEB_BASE_URL}/user/<user_id>/profile`,
     GET_PERMISSIONS: `${WEB_BASE_URL}/roles/permissions`,
     USER_LOGIN_DETAILS: (userId) => `${WEB_BASE_URL}/user/${userId}/login-details`,
+    ONBOARDING_USER_ROLE: `${WEB_BASE_URL}/user/info`,
 }
 
 export default API;

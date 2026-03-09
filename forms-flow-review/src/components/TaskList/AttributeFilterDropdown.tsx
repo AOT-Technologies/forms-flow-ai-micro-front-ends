@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import {
   setAttributeFilterToEdit,
+  setIsUnsavedAttributeFilter,
   setSelectedBpmAttributeFilter,
 } from "../../actions/taskActions";
 import AttributeFilterModal from "../AttributeFilterModal/AttributeFilterModal";
@@ -172,6 +173,35 @@ const AttributeFilterDropdown = () => {
       category: "action",
     };
 
+    const quickFilterItem: FilterItemType | null =
+      isUnsavedAttributeFilter && selectedAttributeFilter
+        ? {
+            className: "selected-filter-item",
+            content: (
+              <span className="d-flex justify-content-between align-items-center">
+                {t("Quick Filter Applied")}
+              </span>
+            ),
+            type: "quick-attribute-filter",
+            onClick: () => {
+              changeAttributeFilterSelection(selectedAttributeFilter);
+              dispatch(setIsUnsavedAttributeFilter(true));
+            },
+            onEdit: () => {
+              dispatch(
+                setAttributeFilterToEdit({
+                  ...cloneDeep(selectedAttributeFilter),
+                  isQuickFilter: true,
+                })
+              );
+              setShowAttributeFilter(true);
+            },
+            dataTestId: "attr-filter-item-quick-filter",
+            ariaLabel: t("Select quick attribute filter"),
+            category: "my",
+          }
+        : null;
+
     const filteredItems = Array.isArray(attributeFilterList)
       ? attributeFilterList
           .filter((filter) => {
@@ -238,6 +268,10 @@ const AttributeFilterDropdown = () => {
     }
 
     // Add dynamic filtered items
+    if (quickFilterItem) {
+      attributeDropdownItemsArray.push(quickFilterItem);
+    }
+
     if (filteredItems.length > 0) {
       attributeDropdownItemsArray.push(...filteredItems);
     } else {
@@ -253,6 +287,7 @@ const AttributeFilterDropdown = () => {
     attributeFilterList,
     filterSearchTerm,
     selectedAttributeFilter,
+    isUnsavedAttributeFilter,
     userDetails,
     selectedFilter,
     createFilters,
@@ -262,7 +297,7 @@ const AttributeFilterDropdown = () => {
   const title = selectedAttributeFilter
     ? `${
         isUnsavedAttributeFilter
-          ? t("Unsaved Filter")
+          ? t("Quick Filter Applied")
           : t(selectedAttributeFilter.name)
       }`
     : t("All Fields");

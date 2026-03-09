@@ -1,27 +1,47 @@
 @import "../../variables.scss";
 
-/* Add Registered Users modal - redesigned */
+/* Add Registered Users modal - variables (use theme vars where applicable) */
+$add-user-modal-width: 352px;
+$add-user-modal-height: 432px;
+$add-user-modal-success-note-height: 56px;
+$add-user-modal-content-border-radius: 0.5rem;
+$add-user-modal-select-border-radius: 0.375rem;
+$add-user-modal-error-font-size: 13px;
+$add-user-modal-error-line-height: 20px;
+$add-user-modal-box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+$add-user-modal-divider-height: 1px;
+$add-user-modal-letter-spacing: 0.25px;
+$add-user-modal-hint-margin-top: 0.125rem;
+
+/* Role list & user table */
+$role-list-max-height: 20rem;
+$role-item-height: 2.3125rem;
+$role-item-padding-x: 0.5625rem;
+$user-table-border-radius: 0.5rem;
+$user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
+
+/* Add Registered Users modal */
 .add-user-modal {
   .modal-dialog {
-    width: 352px;
-    max-width: 352px;
-    margin: 1.75rem auto;
-    border-radius: 5px;
+    width: $add-user-modal-width;
+    max-width: $add-user-modal-width;
+    margin: var(--spacer-175) auto;
+    border-radius: var(--border-radius);
   }
 
   .modal-content {
-    width: 352px;
-    height: 432px;
+    width: $add-user-modal-width;
+    height: $add-user-modal-height;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    border-radius: 8px;
+    border-radius: $add-user-modal-content-border-radius;
     border: 1px solid var(--gray-x-light);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    box-shadow: $add-user-modal-box-shadow;
   }
 
   .modal-header {
-    padding: 1.5rem;
+    padding: var(--spacer-150);
     border-bottom: none;
     align-items: center;
     justify-content: space-between;
@@ -32,33 +52,33 @@
       content: '';
       position: absolute;
       bottom: 0;
-      left: 1rem;
-      right: 1rem;
-      height: 1px;
+      left: var(--spacer-100);
+      right: var(--spacer-100);
+      height: $add-user-modal-divider-height;
       background: var(--gray-x-light);
     }
   }
 
   .add-user-modal__title {
-    font-size: 20px;
-    font-weight: 400;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-regular);
     color: var(--gray-darkest);
   }
 
   .add-user-modal__close {
     background: none;
     border: none;
-    padding: 0.25rem;
+    padding: var(--spacer-025);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    border-radius: var(--spacer-050);
     color: var(--gray-dark);
   }
 
   .modal-body.add-user-modal__body {
-    padding: 1.5rem;
+    padding: var(--spacer-150);
     border-bottom: none;
     overflow-y: auto;
     flex: 1;
@@ -66,7 +86,7 @@
   }
 
   .add-user-modal__field {
-    margin-bottom: 1.25rem;
+    margin-bottom: var(--spacer-125);
 
     &:last-of-type {
       margin-bottom: 0;
@@ -75,11 +95,11 @@
 
   .add-user-modal__label {
     display: block;
-    letter-spacing: 0.25px;
-    font-size: 15px;
-    font-weight: 400;
+    letter-spacing: $add-user-modal-letter-spacing;
+    font-size: var(--font-size-m);
+    font-weight: var(--font-weight-regular);
     color: var(--gray-darkest);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacer-050);
   }
 
   .add-user-modal__input-wrapper {
@@ -87,43 +107,43 @@
   }
 
   .add-user-modal__error-slot {
-    min-height: 1.75rem;
-    margin-top: 0.5rem;
+    min-height: var(--spacer-175);
+    margin-top: var(--spacer-050);
   }
 
   .add-user-modal__hint {
-    font-size: 15px;
-    margin-top: 0.125rem;
+    font-size: var(--font-size-m);
+    margin-top: $add-user-modal-hint-margin-top;
     color: var(--gray-darkest);
-    font-weight: 400;
+    font-weight: var(--font-weight-regular);
   }
 
   .add-user-modal__success-note {
     display: flex;
     align-items: center;
-    padding: 0 1rem;
-    border-radius: 5px;
-    border: 1px solid var(--ff-color-green-100, #00C49A);
-    background: #FCFCFC;
-    height: 56px;
+    padding: 0 var(--spacer-100);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--green-100);
+    background: var(--white-200);
+    height: $add-user-modal-success-note-height;
     font-size: var(--font-size-m);
     color: var(--gray-darkest);
   }
 
   .add-user-modal__email-error {
-    color: #E57373;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 20px;
-    letter-spacing: 0.25px;
+    color: var(--red-100);
+    font-size: $add-user-modal-error-font-size;
+    font-weight: var(--font-weight-regular);
+    line-height: $add-user-modal-error-line-height;
+    letter-spacing: $add-user-modal-letter-spacing;
     margin: 0;
   }
 
   .add-user-modal__select {
     .add-user-select__control {
-      min-height: 2.5rem;
+      min-height: var(--spacer-250);
       border: 1px solid var(--gray-x-light);
-      border-radius: 6px;
+      border-radius: $add-user-modal-select-border-radius;
 
       &:hover {
         border-color: var(--gray-light);
@@ -137,18 +157,18 @@
   }
 
   .modal-footer.add-user-modal__footer {
-    padding: 1rem;
+    padding: var(--spacer-100);
     border-top: none;
     position: relative;
-    gap: 0.75rem;
+    gap: var(--spacer-075);
 
     &::before {
       content: '';
       position: absolute;
       top: 0;
-      left: 1rem;
-      right: 1rem;
-      height: 1px;
+      left: var(--spacer-100);
+      right: var(--spacer-100);
+      height: $add-user-modal-divider-height;
       background: var(--gray-x-light);
     }
   }
@@ -156,39 +176,37 @@
 
 .role-list {
     overflow-y: auto;
-    max-height: 20rem;
+    max-height: $role-list-max-height;
     max-width: max-content;
 }
 
 .role {
-    padding-left: 9px;
-    padding-right: 9px;
-    height: 37px;
+    padding-left: $role-item-padding-x;
+    padding-right: $role-item-padding-x;
+    height: $role-item-height;
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: var(--border-radius);
     cursor: pointer;
     justify-content: space-between;
 }
 
 .role-highlighted {
-    background-color: $gray-medium;
-    border-radius: 5px;
-
+    background-color: var(--gray-medium);
+    border-radius: var(--border-radius);
 }
 
 .done-button {
     direction: rtl;
-    margin-right: 10px;
-    margin-top: 10px;
+    margin-right: var(--spacer-100);
+    margin-top: var(--spacer-100);
 }
 
 
 .user-table-container {
-
-    background: $white;
-    box-shadow: 0px 2px 8px rgba(66, 66, 66, 0.07);
-    border-radius: 8px;
+    background: var(--white-300);
+    box-shadow: $user-table-box-shadow;
+    border-radius: $user-table-border-radius;
 }
 
 

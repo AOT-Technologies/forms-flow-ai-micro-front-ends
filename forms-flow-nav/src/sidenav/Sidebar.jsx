@@ -22,7 +22,7 @@ import { fetchTenantDetails, handleTenantSubscription } from "../services/tenant
 import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
-import { fetchUserLoginDetails } from "../services/user";
+import { fetchUserLoginDetails,getOnBoardingUserRole } from "../services/user";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo, LogoutIcon, MenuToggleIcon } from "@formsflow/components";
@@ -251,7 +251,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     if (isAuthenticated) {
       // Fetch federated login details (saves into localStorage)]
       fetchUserLoginDetails();
-      
+      getOnBoardingUserRole();
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);
