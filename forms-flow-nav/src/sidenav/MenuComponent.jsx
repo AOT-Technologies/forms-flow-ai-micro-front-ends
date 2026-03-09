@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState, useRef, useEffect } from "react"
 import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
 import { Link, useLocation, useHistory } from "react-router-dom";
-import { ChevronIcon, ShowPremiumIcons, NavbarTaskIcon, NavbarSubmitIcon, NavbarBuildIcon, NavbarAnalyzeIcon, NavbarManageIcon } from "@formsflow/components";
+import { ChevronIcon, ShowPremiumIcons, NavbarHomeIcon, NavbarTaskIcon, NavbarSubmitIcon, NavbarBuildIcon, NavbarAnalyzeIcon, NavbarManageIcon } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 
@@ -105,6 +105,7 @@ const MenuComponent = ({
    * Maps menu names to their corresponding icon components
    */
   const ICON_MAP = useMemo(() => ({
+    home: NavbarHomeIcon,
     tasks: NavbarTaskIcon,
     submit: NavbarSubmitIcon,
     build: NavbarBuildIcon,
