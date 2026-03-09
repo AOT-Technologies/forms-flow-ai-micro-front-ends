@@ -618,7 +618,7 @@ const TaskListTable = () => {
     queryParams.delete("taskId");
     queryParams.delete("assignedToMe");
     const nextSearch = queryParams.toString();
-    history.replace(`${location.pathname}${nextSearch ? `?${nextSearch}` : ""}`);
+    history.replace(location.pathname + (nextSearch ? "?" + nextSearch : ""));
   }, [location.search, location.pathname, memoizedRows, handleOpenModal, history]);
 
   // Base row height
