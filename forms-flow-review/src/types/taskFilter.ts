@@ -4,12 +4,14 @@ export interface FilterCriteria {
     includeAssignedTasks?: boolean;
     candidateGroup?: string;
     assignee?: string; 
+    assigneeExpression?: string;
     processVariables?: Array<{ 
       name: string;
       operator: string;
       value: string;
     }>;
-    candidateGroupsExpression: string;
+    candidateGroupsExpression?: string;
+    orQueries?: Array<Record<string, any>>;
     sorting: Array<{
   }>;
     createdAfter?: string;
