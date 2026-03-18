@@ -82,29 +82,10 @@ export const createReqPayload = (
       };
 
   const date = buildDateRangePayload(dateRange);
-
-  const criteria = clonedFilter?.criteria || {};
-
-  // Transform old-format filters (without orQueries) to use orQueries
-  // so that tasks directly assigned to the user are also returned.
-  if (!criteria.orQueries && criteria.candidateGroupsExpression) {
-    criteria.orQueries = [
-      {
-        candidateGroupsExpression: criteria.candidateGroupsExpression,
-        includeAssignedTasks: true,
-      },
-      {
-        assigneeExpression: "${ currentUser() }",
-      },
-    ];
-    delete criteria.candidateGroupsExpression;
-    delete criteria.includeAssignedTasks;
-  }
-
   const updatedFilter = {
     ...clonedFilter,
     criteria: {
-      ...criteria,
+      ...clonedFilter?.criteria,
       ...(processVariables.processVariables?.length && processVariables),
       ...(assignee.assignee && assignee),
       ...date,

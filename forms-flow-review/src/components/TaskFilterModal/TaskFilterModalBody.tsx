@@ -162,15 +162,9 @@ const TaskFilterModalBody = ({
 
   const getCriteria = () => {
     const criteria: FilterCriteria = {
-      orQueries: [
-        {
-          candidateGroupsExpression: "${currentUserGroups()}",
-          includeAssignedTasks: true,
-        },
-        {
-          assigneeExpression: "${currentUser()}",
-        },
-      ],
+      includeAssignedTasks: true,
+      candidateGroupsExpression: "${currentUserGroups()}",
+      // If sorting is based on submission id or form name, that should be passed as process variable in sorting
       sorting: sortValue === "applicationId" || sortValue === "formName" ?
         ([{
           sortBy: "processVariable", sortOrder: sortOrder,
@@ -178,6 +172,8 @@ const TaskFilterModalBody = ({
         }]) :
         [{ sortBy: sortValue, sortOrder: sortOrder }],
     };
+
+    
 
     if (selectedForm?.formId) {
       criteria.processVariables = [];
@@ -189,24 +185,20 @@ const TaskFilterModalBody = ({
     }
 
     if (accessOption === SPECIFIC_ROLE) {
-      const trimmedAccessValue = trimFirstSlash(accessValue);
-      const candidateGroup = addTenantPrefixIfNeeded(
-        trimmedAccessValue,
-        tenantKey,
-        MULTITENANCY_ENABLED
-      );
-      criteria.orQueries = [
-        {
-          candidateGroup: candidateGroup,
-          includeAssignedTasks: true,
-        },
-        {
-          assigneeExpression: "${currentUser()}",
-        },
-      ];
-    } else if (accessOption === SPECIFIC_ASSIGNEE) {
-      delete criteria.orQueries;
+   const trimmedAccessValue = trimFirstSlash(accessValue);
+   criteria.candidateGroup = addTenantPrefixIfNeeded(
+     trimmedAccessValue,
+     tenantKey,
+     MULTITENANCY_ENABLED
+   );
+  delete criteria.assignee;
+    } else if(accessOption === SPECIFIC_ASSIGNEE){
       criteria.assignee = accessValue;
+      delete criteria.candidateGroup;
+    }
+    else{
+      delete criteria.assignee;
+      delete criteria.candidateGroup;
     }
 
     return criteria;
