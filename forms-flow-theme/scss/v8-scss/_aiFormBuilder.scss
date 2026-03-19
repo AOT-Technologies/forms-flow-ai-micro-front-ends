@@ -12,6 +12,7 @@ $font-size-m: var(--font-size-m);
 $font-size-l: var(--font-size-l);
 $font-size-xl: var(--font-size-xl);
 $font-weight-regular: var(--font-weight-regular);
+$font-weight-medium: var(--font-weight-medium);
 $gray-darkest: var(--gray-darkest);
 $white-300: var(--white-300);
 $border-radius: var(--border-radius);
@@ -56,6 +57,9 @@ $white-300: var(--white-300);
       border-radius: $border-radius; /* 5px */
       padding: $spacer-125 $spacer-100 0.875rem; /* 14px */ /* 20px 16px 14px */
       min-height: 18.25rem; /* 292px */ // to add some space for the guide panel
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
     }
   
     &__guide-panel-loader {
@@ -154,23 +158,99 @@ $white-300: var(--white-300);
       padding: 0.875rem 0.75rem 1rem; /* 14px, 12px, 16px */
     }
   
+    &__textarea-wrap {
+      position: relative;
+    }
+
     &__textarea {
       width: 100%;
       min-height: 6.375rem; /* 102px */
       border: 0;
       padding: 0;
+      padding-right: 3.5rem; /* 56px - space for quota circle (40px + 12px margin) */
       font-size: $font-size-m; /* 15px */
       line-height: 1.5rem; /* 24px */
       color: $gray-darkest; /* #4a4a4a */
       resize: none; //resize the textarea to none
       background: transparent;
-  
+
       &:focus {
         outline: none;
         box-shadow: none;
       }
     }
-  
+
+    &__quota-circle {
+      position: absolute;
+      top: $spacer-075; /* 12px */
+      right: $spacer-075; /* 12px */
+      width: $spacer-250; /* 40px */
+      height: $spacer-250; /* 40px */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    &__quota-circle-svg {
+      position: absolute;
+      inset: 0;
+    }
+
+    &__quota-circle-count {
+      position: relative;
+      z-index: 1;
+      font-size: 0.875rem; /* 14px */
+      font-weight: 600;
+      color: $gray-darkest; /* #333 */
+    }
+
+    &__limit-alert {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &__limit-alert-text {
+      color: #ec6a5e;
+      text-align: center;
+      font-size: $font-size-m; /* 15px */
+      font-weight: $font-weight-medium; /* 500 */
+      line-height: 1.5rem; /* 24px */
+      margin-left: 0.625rem; /* 10px */
+    }
+
+    &__limit-alert-timer {
+      color: rgba(74, 74, 74, 0.9);
+      text-align: center;
+      font-size: 0.875rem; /* 14px */
+      font-weight: $font-weight-regular; /* 400 */
+      line-height: 1.5rem; /* 24px */
+      white-space: nowrap;
+    }
+
+    &__limit-reached-line {
+      color: rgba(74, 74, 74, 0.9);
+      text-align: center;
+      font-family: var(--font-family-base);
+      font-size: $font-size-m; /* 15px */
+      font-style: normal;
+      font-weight: $font-weight-medium; /* 500 */
+      line-height: 1.5rem; /* 24px */
+      margin-bottom: 0;
+    }
+
+    &__limit-reached-subline {
+      display: flex;
+      justify-content: center;
+      color: rgba(74, 74, 74, 0.9);
+      font-family: var(--font-family-base);
+      font-size: $font-size-m; /* 15px */
+      font-style: normal;
+      font-weight: $font-weight-regular; /* 400 */
+      line-height: 1.5rem; /* 24px */
+      margin-bottom: 0.8125rem; /* 13px */
+    }
+
     &__prompt-chips {
       display: flex;
       flex-wrap: wrap;
