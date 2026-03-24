@@ -14,11 +14,10 @@ $font-size-xl: var(--font-size-xl);
 $font-weight-regular: var(--font-weight-regular);
 $font-weight-medium: var(--font-weight-medium);
 $gray-darkest: var(--gray-darkest);
-$white-300: var(--white-300);
+$gray-darkest-90: rgba(74, 74, 74, 0.9);
 $border-radius: var(--border-radius);
 $gray-x-light: var(--gray-x-light);
 $white-200: var(--white-200);
-$white-300: var(--white-300);
 
 .ai-form-builder-modal {
     @include large-modal-popover();
@@ -402,6 +401,43 @@ $white-300: var(--white-300);
       align-items: center;
       justify-content: center;
     }
-  
+
+    &__guide-panel-url-error {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &__url-error-line {
+      color: $gray-darkest-90;
+      font-size: $font-size-m;
+      font-weight: $font-weight-medium;
+      line-height: 1.5rem;
+    }
+
+    &__url-error-subline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $gray-darkest-90;
+      font-size: $font-size-m;
+      font-weight: $font-weight-regular;
+      line-height: 1.5rem;
+    }
+
+    &__api-error-line {
+      color: $gray-darkest-90;
+      text-align: center;
+      font-size: $font-size-m;
+      font-weight: $font-weight-medium;
+      line-height: 1.5rem; /* 160% */
+    }
+
+    &__api-error-subline {
+      color: $gray-darkest-90;
+      font-size: $font-size-m;
+      font-weight: $font-weight-regular;
+      line-height: 1.5rem;
+    }
   }
-  
