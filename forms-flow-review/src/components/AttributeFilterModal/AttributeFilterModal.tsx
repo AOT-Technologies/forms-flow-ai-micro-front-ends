@@ -29,10 +29,14 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     (state: RootState) => state.task.isUnsavedAttributeFilter
   );
 
+  const isQuickFilterEdit = !!attributeFilterToEdit?.isQuickFilter;
   const isEditing = !!attributeFilterToEdit && !isUnsavedAttributeFilter;
-  const title = useMemo(() => (
-    isEditing ? t("Edit Custom Field Filter") : t("Create Custom Field Filter")
-  ), [isEditing, t]);
+  const title = useMemo(() => {
+    if (isQuickFilterEdit) {
+      return t("Edit Quick Filter");
+    }
+    return isEditing ? t("Edit Custom Field Filter") : t("Create Custom Field Filter");
+  }, [isEditing, isQuickFilterEdit, t]);
   // const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
