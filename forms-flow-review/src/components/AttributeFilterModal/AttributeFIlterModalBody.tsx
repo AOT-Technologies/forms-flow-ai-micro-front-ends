@@ -334,7 +334,7 @@ const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, current
 
   // Reset form state when switching from edit to create mode or when switching between different filters to edit
   useEffect(() => {
-    if (!attributeFilter?.id) {
+    if (!attributeFilter) {
       // Reset filter name
       setFilterName("");
       setFilterNameError("");
