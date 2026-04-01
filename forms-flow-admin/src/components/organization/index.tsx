@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 import { V8CustomButton, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
 import "./organization.scss";
 import { StorageService } from "@formsflow/service";
-import { URL_UPGRADE, URL_CONTACT_SALES, URL_TERMS_AND_CONDITIONS, URL_PRIVACY_POLICY } from "../../constants";
+import { URL_CONTACT_SALES, URL_TERMS_AND_CONDITIONS, URL_PRIVACY_POLICY } from "../../constants";
+import { MULTITENANCY_ENABLED } from "../../constants";
 
 interface AccordionSectionProps {
   title: string;
@@ -42,6 +44,7 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ title, isOpen, onTo
 
 const Organization: React.FC<any> = (props) => {
   const { t } = useTranslation();
+  const history = useHistory();
   const [subscriptionOpen, setSubscriptionOpen] = useState(true);
   const [termsOpen, setTermsOpen] = useState(true);
   const [daysDifference, setDaysDifference] = useState<number | null>(null);
@@ -51,7 +54,7 @@ const Organization: React.FC<any> = (props) => {
     try {
       const tenantDataStr = StorageService.get("tenantData");
       const expiry_dt = tenantDataStr 
-        ? JSON.parse(tenantDataStr)?.expiry_dt 
+        ? JSON.parse(tenantDataStr)?.subscription_expiry_dt 
           : null;
         
         if (expiry_dt && !Number.isNaN(Date.parse(expiry_dt))) {
@@ -71,9 +74,17 @@ const Organization: React.FC<any> = (props) => {
     }
   }, []);
 
-
   const isTrial = daysDifference !== null && daysDifference > 0;
   const subscriptionBtnLabel = isTrial ? t("Upgrade") : t("Contact Sales");
+  const tenantKey = StorageService.get("tenantKey") || "";
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+
+  const openUpgrade = async () => {
+    if (!tenantKey) {
+      return;
+    }
+    history.push(`${baseUrl}admin/plans`);
+  };
 
   const renderExternalButtons = (label: string) => {
     const key = label.toLowerCase()
@@ -82,7 +93,6 @@ const Organization: React.FC<any> = (props) => {
     const dataTestId = `view-${key}-button`;
   
     const urlMap: Record<string, string> = {
-      "Upgrade": URL_UPGRADE,
       "Contact Sales": URL_CONTACT_SALES,
       "View our Terms and Conditions": URL_TERMS_AND_CONDITIONS,
       "View our Privacy Policy": URL_PRIVACY_POLICY,
@@ -118,7 +128,17 @@ const Organization: React.FC<any> = (props) => {
                 ? t(`You have ${daysDifference} days left of your free trial.`)
                 : t("You are currently using a paid version of FormsFlow.")}
             </p>
-            {renderExternalButtons(subscriptionBtnLabel)}
+            
+              <V8CustomButton
+                label={t("Upgrade")}
+                variant="secondary"
+                dataTestId="subscription-upgrade-button"
+                icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
+                onClick={openUpgrade}
+              />
+           
+              {renderExternalButtons(subscriptionBtnLabel)}
+            
           </div>
         </AccordionSection>
 

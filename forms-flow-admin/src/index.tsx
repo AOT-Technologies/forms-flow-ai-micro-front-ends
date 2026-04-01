@@ -14,6 +14,8 @@ import Manage from "./components/manage";
 import i18n from "./resourceBundles/i18n";
 import "./index.scss";
 import Accessdenied from "./components/AccessDenied";
+import Plans from "./components/plans";
+import BillingManage from "./components/billing-manage";
 
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
@@ -121,6 +123,16 @@ const Admin = React.memo(({ props }: any) => {
           <div className="min-container-height">
           <ToastContainer theme="colored" />
           <Switch>
+            <Route
+              exact
+              path={`${baseUrl}admin/billing/manage`}
+              render={() => <BillingManage />}
+            />
+            <Route
+              exact
+              path={`${baseUrl}admin/plans`}
+              render={() => <Plans />}
+            />
             <Route 
               exact
               path={`${baseUrl}admin`}
