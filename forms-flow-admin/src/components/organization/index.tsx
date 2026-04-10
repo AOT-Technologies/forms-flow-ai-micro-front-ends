@@ -42,39 +42,72 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ title, isOpen, onTo
   );
 };
 
+/** Parse tenant API datetimes (e.g. "2026-05-10 11:01:50.557276") with full time resolution. */
+function parseTenantDateTime(value: unknown): Date | null {
+  if (value == null || value === "") return null;
+  const s = String(value).trim();
+  const withT = /\d{4}-\d{2}-\d{2}\s+\d/.test(s)
+    ? s.replace(/^(\d{4}-\d{2}-\d{2})\s+/, "$1T")
+    : s;
+  const msPrecision = withT.replace(/(\.\d{3})\d+/, "$1");
+  const d = new Date(msPrecision);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
 const Organization: React.FC<any> = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [subscriptionOpen, setSubscriptionOpen] = useState(true);
   const [termsOpen, setTermsOpen] = useState(true);
   const [daysDifference, setDaysDifference] = useState<number | null>(null);
+  const [isTrial, setIsTrial] = useState(false);
 
-  useEffect(() => { 
-    // Calculate remaining days from expiry_dt 
+  useEffect(() => {
+    // Days note: always from expiry_dt. Active iff expiry_dt > trial_expiry_dt; otherwise Trial (including equal timestamps).
     try {
       const tenantDataStr = StorageService.get("tenantData");
-      const expiry_dt = tenantDataStr 
-        ? JSON.parse(tenantDataStr)?.subscription_expiry_dt 
-          : null;
-        
-        if (expiry_dt && !Number.isNaN(Date.parse(expiry_dt))) {
-          const expiry = new Date(expiry_dt);
-          const currentDate = new Date();
-          currentDate.setHours(0, 0, 0, 0);
-          expiry.setHours(0, 0, 0, 0);
-          const timeDifference = expiry.getTime() - currentDate.getTime();
-          const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        setDaysDifference(days);
-      } else {
+      if (!tenantDataStr) {
         setDaysDifference(null);
+        setIsTrial(false);
+        return;
       }
+
+      const tenant = JSON.parse(tenantDataStr);
+      const expiry_dt = tenant?.expiry_dt;
+      const trial_expiry_dt = tenant?.trial_expiry_dt;
+
+      const expiry = parseTenantDateTime(expiry_dt);
+      const trialExpiry = parseTenantDateTime(trial_expiry_dt);
+
+      let days: number | null = null;
+      if (expiry) {
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        const end = new Date(expiry);
+        end.setHours(0, 0, 0, 0);
+        days = Math.floor(
+          (end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+      }
+
+      let trial: boolean;
+      if (expiry && trialExpiry) {
+        const isActive = expiry.getTime() > trialExpiry.getTime();
+        trial = !isActive;
+      } else if (expiry) {
+        trial = days !== null && days > 0;
+      } else {
+        trial = false;
+      }
+
+      setDaysDifference(days);
+      setIsTrial(trial);
     } catch (error) {
-      console.error("Error calculating days difference:", error);
+      console.error("Error calculating subscription state:", error);
       setDaysDifference(null);
+      setIsTrial(false);
     }
   }, []);
-
-  const isTrial = daysDifference !== null && daysDifference > 0;
   const subscriptionBtnLabel = isTrial ? t("Upgrade") : t("Contact Sales");
   const tenantKey = StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -124,9 +157,9 @@ const Organization: React.FC<any> = (props) => {
               <span className="status-text">{isTrial ? t("Trial") : t("Active")}</span>
             </div>
             <p className="subscription-description">
-              {isTrial
+              { daysDifference !== null && daysDifference > 0
                 ? t(`You have ${daysDifference} days left of your free trial.`)
-                : t("You are currently using a paid version of FormsFlow.")}
+                  : t("You are currently using a paid version of FormsFlow.")}
             </p>
             
               <V8CustomButton
