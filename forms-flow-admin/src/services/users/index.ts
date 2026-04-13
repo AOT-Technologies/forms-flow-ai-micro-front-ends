@@ -1,7 +1,8 @@
-import { RequestService } from "@formsflow/service";
+import { RequestService, StorageService } from "@formsflow/service";
 
 import API from "../../endpoints/index";
 import { WEB_BASE_CUSTOM_URL } from "../../endpoints/config";
+import { MULTITENANCY_ENABLED } from "../../constants";
 
 export const fetchUsers = (
   group: string | null,
@@ -14,7 +15,19 @@ export const fetchUsers = (
   count = true
 ) => {
   let url = `${API.GET_USERS}?role=${role}&count=${count}`;
-  if (group) url += `&memberOfGroup=${group}`;
+  if (group) {
+    let memberOfGroup = group;
+    const tenantKey = StorageService.get("tenantKey");
+    const hasTenantPrefix =
+      tenantKey &&
+      String(group).toLowerCase().startsWith(`${String(tenantKey).toLowerCase()}-`);
+
+    if (MULTITENANCY_ENABLED && tenantKey && !hasTenantPrefix) {
+      memberOfGroup = `${tenantKey}-${group}`;
+    }
+
+    url += `&memberOfGroup=${memberOfGroup}`;
+  }
   if (pageNo) url += `&pageNo=${pageNo}`;
   if(sizePerPage) url += `&limit=${sizePerPage}`;
   if (search) url += `&search=${search}`;
