@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import { getRoute, getRedirectUrl } from "../routerServices/routerConstants";
+import { getRoute, getRedirectUrl, getOrigin } from "../routerServices/routerConstants";
 
 const navigateTo = (dispatch, baseUrl) => {
   dispatch(push(baseUrl));
@@ -359,6 +359,30 @@ const navigateToAdminDashboard = (history, tenantId) => {
   navigateWithHistory(history, `${getRoute(tenantId).ADMIN}/dashboard`);
 };
 
+/**
+ * Navigate to admin organization (subscription) settings
+ * Replaces: history.push(`${baseUrl}admin/organization`)
+ */
+const navigateToAdminOrganization = (history, tenantId) => {
+  navigateWithHistory(history, `${getRoute(tenantId).ADMIN}/organization`);
+};
+
+/**
+ * Navigate to admin billing plans
+ * Replaces: history.push(`${baseUrl}admin/plans`)
+ */
+const navigateToAdminPlans = (history, tenantId) => {
+  navigateWithHistory(history, `${getRoute(tenantId).ADMIN}/plans`);
+};
+
+/**
+ * Absolute URL to admin organization (subscription) — e.g. Stripe Billing Portal return_url.
+ * Matches the path used by navigateToAdminOrganization; respects multitenant vs single-tenant base.
+ */
+const getAdminOrganizationReturnUrl = (tenantId) => {
+  return `${getOrigin()}${getRoute(tenantId).ADMIN}/organization`;
+};
+
 /* ---------------------------  Integration Routes --------------------------- */
 
 /**
@@ -478,7 +502,10 @@ export {
   navigateToAdminRoles,
   navigateToAdminUsers,
   navigateToAdminDashboard,
-  
+  navigateToAdminOrganization,
+  navigateToAdminPlans,
+  getAdminOrganizationReturnUrl,
+
   // Integration Routes
   navigateToIntegrationRecipes,
   navigateToIntegrationConnectedApps,

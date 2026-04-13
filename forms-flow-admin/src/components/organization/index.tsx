@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { V8CustomButton, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
 import "./organization.scss";
 import { StorageService } from "@formsflow/service";
-import { URL_CONTACT_SALES, URL_TERMS_AND_CONDITIONS, URL_PRIVACY_POLICY } from "../../constants";
-import { MULTITENANCY_ENABLED } from "../../constants";
+import {
+  MULTITENANCY_ENABLED,
+  URL_CONTACT_SALES,
+  URL_TERMS_AND_CONDITIONS,
+  URL_PRIVACY_POLICY,
+} from "../../constants";
 
 interface AccordionSectionProps {
   title: string;
@@ -45,18 +49,34 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ title, isOpen, onTo
 /** Parse tenant API datetimes (e.g. "2026-05-10 11:01:50.557276") with full time resolution. */
 function parseTenantDateTime(value: unknown): Date | null {
   if (value == null || value === "") return null;
-  const s = String(value).trim();
-  const withT = /\d{4}-\d{2}-\d{2}\s+\d/.test(s)
-    ? s.replace(/^(\d{4}-\d{2}-\d{2})\s+/, "$1T")
-    : s;
-  const msPrecision = withT.replace(/(\.\d{3})\d+/, "$1");
-  const d = new Date(msPrecision);
-  return Number.isNaN(d.getTime()) ? null : d;
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+
+  if (typeof value === "string") {
+    const s = value.trim();
+    if (!s) return null;
+    const withT = /\d{4}-\d{2}-\d{2}\s+\d/.test(s)
+      ? s.replace(/^(\d{4}-\d{2}-\d{2})\s+/, "$1T")
+      : s;
+    const msPrecision = withT.replace(/(\.\d{3})\d+/, "$1");
+    const d = new Date(msPrecision);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  return null;
 }
 
 const Organization: React.FC<any> = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const [subscriptionOpen, setSubscriptionOpen] = useState(true);
   const [termsOpen, setTermsOpen] = useState(true);
   const [daysDifference, setDaysDifference] = useState<number | null>(null);
@@ -109,13 +129,15 @@ const Organization: React.FC<any> = (props) => {
     }
   }, []);
   const subscriptionBtnLabel = isTrial ? t("Upgrade") : t("Contact Sales");
-  const tenantKey = StorageService.get("tenantKey") || "";
+  const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
-  const openUpgrade = async () => {
+  const openUpgrade = () => {
     if (!tenantKey) {
       return;
     }
+    // Use admin app MULTITENANCY_ENABLED (same as index.tsx routes), not @formsflow/service getRoute(),
+    // so the path always matches the registered <Route> for plans.
     history.push(`${baseUrl}admin/plans`);
   };
 

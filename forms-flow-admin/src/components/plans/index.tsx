@@ -61,7 +61,7 @@ const Plans: React.FC = () => {
   }, [tenantId, t]);
 
   return (
-    <div className="page-container" tabIndex={0}>
+    <div className="page-container position-relative">
       <div className="page-layout mt-3">
         <div className="min-container-height ps-md-3">
           <div className="mb-3">
@@ -69,7 +69,9 @@ const Plans: React.FC = () => {
               label={t("Back")}
               variant="secondary"
               dataTestId="plans-back-button"
-              onClick={() => history.push(`${baseUrl}admin/organization`)}
+              onClick={() =>
+                history.push(`${baseUrl}admin/organization`)
+              }
             />
           </div>
           {error ? <p role="alert">{error}</p> : null}

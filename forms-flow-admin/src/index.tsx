@@ -117,7 +117,7 @@ const Admin = React.memo(({ props }: any) => {
   return (
     <>
       {isAdmin ? (
-        <div className="page-container" tabIndex={0}>
+        <div className="page-container">
         <div className="page-layout mt-3">
         {!isAccessRestricted ?(
           <div className="min-container-height">

@@ -1,5 +1,9 @@
 import React from "react";
-import { RequestService, StorageService } from "@formsflow/service";
+import {
+  RequestService,
+  StorageService,
+  getAdminOrganizationReturnUrl,
+} from "@formsflow/service";
 import { useParams } from "react-router-dom";
 import API from "../../endpoints";
 
@@ -10,9 +14,11 @@ const BillingManage: React.FC = () => {
   React.useEffect(() => {
     const run = async () => {
       try {
-        const query = new URLSearchParams(window.location.search);
-        const tenantFromQuery =
-          query.get("tenant") || query.get("tenant_key") || query.get("tenantId");
+        const query = new URLSearchParams(
+          globalThis.location?.search ?? ""
+        );
+        // Align with route param name :tenantId — use ?tenantId=<key> on redirects (e.g. /billing/manage?tenantId=…).
+        const tenantFromQuery = query.get("tenantId");
         let tenantKey =
           tenantFromPath || tenantFromQuery || StorageService.get("tenantKey") || "";
         const customerId = query.get("customer") || query.get("customer_id");
@@ -37,7 +43,7 @@ const BillingManage: React.FC = () => {
         }
 
         const endpoint = API.BILLING_PORTAL_SESSION.replace("<tenant_key>", tenantKey);
-        const returnUrl = `${window.location.origin}/tenant/${tenantKey}/admin/organization`;
+        const returnUrl = getAdminOrganizationReturnUrl(tenantKey);
         const response = await RequestService.httpPOSTRequest(
           endpoint,
           { returnUrl },
@@ -49,7 +55,7 @@ const BillingManage: React.FC = () => {
           throw new Error("Portal URL missing");
         }
 
-        window.location.replace(portalUrl);
+        globalThis.location?.replace(portalUrl);
       } catch (err) {
         setMessage(
           err instanceof Error
