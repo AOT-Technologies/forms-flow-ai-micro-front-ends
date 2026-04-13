@@ -25,9 +25,9 @@ const InsightDashboard = React.memo((props: any) => {
   const [isLoading, setIsLoading] = React.useState(true);
 
   const { t } = useTranslation();
-  const { tenantId } = useParams();
+  // const { tenantId } = useParams();
   const history = useHistory();
-  const baseUrl = getRedirectUrl(tenantId);
+  // const baseUrl = getRedirectUrl(tenantId);
   const [remainingGroups, setRemainingGroups] = React.useState([]);
 
   const [activeRow, setActiveRow] = React.useState(null);

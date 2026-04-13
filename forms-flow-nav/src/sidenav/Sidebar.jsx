@@ -22,7 +22,7 @@ import { fetchTenantDetails, handleTenantSubscription } from "../services/tenant
 import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
-import { fetchUserLoginDetails } from "../services/user";
+import { fetchUserLoginDetails,getOnBoardingUserRole } from "../services/user";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo, LogoutIcon, MenuToggleIcon } from "@formsflow/components";
@@ -251,7 +251,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     if (isAuthenticated) {
       // Fetch federated login details (saves into localStorage)]
       fetchUserLoginDetails();
-      
+      getOnBoardingUserRole();
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);
@@ -278,6 +278,10 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
 
   const SectionKeys = { 
+    HOME: {
+      value: "home",
+      supportedRoutes: ["home"],
+    },
     BUILD: {
       value: "build",
       supportedRoutes: ["formflow", "bundleflow", "subflow", "decision-table","integration/recipes","integration/connected-apps","integration/library"],
@@ -303,6 +307,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   
   useEffect((()=>{
     const sections = [
+      { key: SectionKeys.HOME.value, supportedRoutes: SectionKeys.HOME.supportedRoutes },
       { key: SectionKeys.BUILD.value, supportedRoutes: SectionKeys.BUILD.supportedRoutes },
       { key: SectionKeys.SUBMIT.value, supportedRoutes: SectionKeys.SUBMIT.supportedRoutes },
       { key: SectionKeys.TASK.value, supportedRoutes: SectionKeys.TASK.supportedRoutes },
@@ -426,6 +431,23 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       {renderLogo(hideLogo, collapsed)}
       <div className={`options-container${collapsed ? " collapsed" : ""}`} data-testid="options-container">
         <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
+          {isAuthenticated && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.HOME.value}
+              optionsCount="0"
+              mainMenu="Home"
+              subMenu={[
+                {
+                  name: "Home",
+                  path: "home",
+                  supportedSubRoutes: ["home"],
+                },
+              ]}
+              subscribe={props.subscribe}
+              collapsed={collapsed}
+            />
+          )}
           {(isViewTask || isManageTask) && ENABLE_TASKS_MODULE && (
             <MenuComponent
               baseUrl={baseUrl}
