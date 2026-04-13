@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import Loading from "../loading";
 import { useParams } from "react-router-dom";
 import { removeTenantKey } from "../../utils/utils.js";
-import { MULTITENANCY_ENABLED } from "../../constants";
+// import { MULTITENANCY_ENABLED } from "../../constants";
 
 import {
   updateAuthorization,
@@ -25,9 +25,9 @@ const InsightDashboard = React.memo((props: any) => {
   const [isLoading, setIsLoading] = React.useState(true);
 
   const { t } = useTranslation();
-  const { tenantId } = useParams();
+  // const { tenantId } = useParams();
   const history = useHistory();
-  const baseUrl = getRedirectUrl(tenantId);
+  // const baseUrl = getRedirectUrl(tenantId);
   const [remainingGroups, setRemainingGroups] = React.useState([]);
 
   const [activeRow, setActiveRow] = React.useState(null);
@@ -148,7 +148,8 @@ const InsightDashboard = React.memo((props: any) => {
                 style={{ background: "#EAEFFF" }}
                 data-testid={`dashboard-access-group-${i}`}>
                 <span className="">
-                  {MULTITENANCY_ENABLED ? removeTenantKey(label,tenantId) : label}
+                  {/* {MULTITENANCY_ENABLED ? removeTenantKey(label,tenantId) : label} */}
+                  {label}
                   <i
                     className="fa-solid fa-xmark chip-close ms-2"
                     onClick={() => removeDashboardAuth(rowData, label)}
@@ -185,7 +186,8 @@ const InsightDashboard = React.memo((props: any) => {
                           onClick={() => addDashboardAuth(item)}
                           data-testid={`dashboard-remaining-group-${key}`}
                         >
-                          {MULTITENANCY_ENABLED ? removeTenantKey(item.path, tenantId) : item.path}
+                          {/* {MULTITENANCY_ENABLED ? removeTenantKey(item.path, tenantId) : item.path} */}
+                          {item.path}
                         </div>
                       ))
                     ) : (
