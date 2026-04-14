@@ -54,6 +54,9 @@ declare module "@formsflow/service" {
     navigateToAdminRoles,
     navigateToAdminUsers,
     navigateToAdminDashboard,
+    navigateToAdminOrganization,
+    navigateToAdminPlans,
+    getAdminOrganizationReturnUrl,
     navigateToBaseUrl,
     navigateWithHistory,
     syncRouterPath

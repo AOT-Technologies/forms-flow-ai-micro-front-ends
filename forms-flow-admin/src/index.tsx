@@ -14,6 +14,8 @@ import Manage from "./components/manage";
 import i18n from "./resourceBundles/i18n";
 import "./index.scss";
 import Accessdenied from "./components/AccessDenied";
+import Plans from "./components/plans";
+import BillingManage from "./components/billing-manage";
 
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
@@ -115,12 +117,22 @@ const Admin = React.memo(({ props }: any) => {
   return (
     <>
       {isAdmin ? (
-        <div className="page-container" tabIndex={0}>
+        <div className="page-container">
         <div className="page-layout mt-3">
         {!isAccessRestricted ?(
           <div className="min-container-height">
           <ToastContainer theme="colored" />
           <Switch>
+            <Route
+              exact
+              path={`${baseUrl}admin/billing/manage`}
+              render={() => <BillingManage />}
+            />
+            <Route
+              exact
+              path={`${baseUrl}admin/plans`}
+              render={() => <Plans />}
+            />
             <Route 
               exact
               path={`${baseUrl}admin`}
