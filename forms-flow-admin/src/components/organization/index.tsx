@@ -112,7 +112,8 @@ const Organization: React.FC<any> = (props) => {
 
       let trial: boolean;
       if (expiry && trialExpiry) {
-        const isActive = expiry.getTime() > trialExpiry.getTime();
+        const isActive =
+          tenant?.subscription_status === "active";
         trial = !isActive;
       } else if (expiry) {
         trial = days !== null && days > 0;
@@ -128,7 +129,6 @@ const Organization: React.FC<any> = (props) => {
       setIsTrial(false);
     }
   }, []);
-  const subscriptionBtnLabel = isTrial ? t("Upgrade") : t("Contact Sales");
   const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
@@ -179,11 +179,12 @@ const Organization: React.FC<any> = (props) => {
               <span className="status-text">{isTrial ? t("Trial") : t("Active")}</span>
             </div>
             <p className="subscription-description">
-              { daysDifference !== null && daysDifference > 0
+              {isTrial
                 ? t(`You have ${daysDifference} days left of your free trial.`)
-                  : t("You are currently using a paid version of FormsFlow.")}
+                : t("You are currently using a paid version of FormsFlow.")}
             </p>
-            
+
+            <div className="subscription-card-actions">
               <V8CustomButton
                 label={t("Upgrade")}
                 variant="secondary"
@@ -191,9 +192,8 @@ const Organization: React.FC<any> = (props) => {
                 icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
                 onClick={openUpgrade}
               />
-           
-              {renderExternalButtons(subscriptionBtnLabel)}
-            
+              {renderExternalButtons("Contact Sales")}
+            </div>
           </div>
         </AccordionSection>
 
