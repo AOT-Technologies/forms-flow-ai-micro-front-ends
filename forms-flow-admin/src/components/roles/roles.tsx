@@ -106,20 +106,20 @@ const Roles = React.memo((props: any) => {
     );
   }, [editCandidate]);
 
-  /** Full role path/name for Camunda candidate groups (from API before display stripping). */
+  /**
+   * Full candidate-group string for copy / Camunda from API `name`.
+   * Resolves by id on props.roles (unmodified list) so copy stays correct when
+   * removingTenantId strips the table row’s display name.
+   */
   const resolveFullCandidateGroup = React.useCallback(
     (displayRow: { id?: string; name?: string }) => {
       const raw = (props.roles ?? []).find((r: { id?: string }) => r.id === displayRow.id);
       if (!raw) return String(displayRow.name ?? "").trim();
-      const pathVal =
-        raw.path != null && String(raw.path).trim() !== ""
-          ? String(raw.path).trim()
-          : "";
       const nameVal =
         raw.name != null && String(raw.name).trim() !== ""
           ? String(raw.name).trim()
           : "";
-      return pathVal || nameVal || String(displayRow.name ?? "").trim();
+      return nameVal || String(displayRow.name ?? "").trim();
     },
     [props.roles]
   );
