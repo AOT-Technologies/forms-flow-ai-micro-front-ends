@@ -77,7 +77,6 @@ const Plans: React.FC = () => {
           {error ? <p role="alert">{error}</p> : null}
           <div ref={pricingTableRef} className="mt-4"></div>
         </div>
-        <Footer />
       </div>
     </div>
   );
