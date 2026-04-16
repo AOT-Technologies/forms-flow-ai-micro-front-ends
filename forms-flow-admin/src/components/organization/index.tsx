@@ -207,7 +207,6 @@ const Organization: React.FC<any> = (props) => {
       };
     }
 
-    // (url, data, token, isBearer) — third arg is the JWT, not `true`. Use null so the default token from storage is used.
     const tenantUrl = `${API.GET_TENANT_DATA}${API.GET_TENANT_DATA.includes("?") ? "&" : "?"}_t=${Date.now()}`;
     RequestService.httpGETRequest(tenantUrl, null, null)
       .then((res) => {
