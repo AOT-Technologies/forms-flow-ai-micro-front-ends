@@ -289,7 +289,6 @@ const Organization: React.FC<any> = (props) => {
                 label={t("Upgrade")}
                 variant="secondary"
                 dataTestId="subscription-upgrade-button"
-                icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
                 onClick={openUpgrade}
               />
               {renderExternalButtons("Contact Sales")}
