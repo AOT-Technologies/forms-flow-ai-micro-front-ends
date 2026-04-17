@@ -95,6 +95,9 @@ function resolveSubscriptionUiKind(
   if (status === "active") {
     return "active";
   }
+  if(!status) {
+    return "expired";
+  }
 
   const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
   const expiry = parseTenantDateTime(tenant?.expiry_dt);
