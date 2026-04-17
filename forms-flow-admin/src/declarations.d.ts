@@ -74,6 +74,7 @@ declare module "@formsflow/components" {
     FormTextArea,
     CustomButton,
     DeleteIcon,
+    CopyIcon,
     ConfirmModal,
     CustomInfo,
     PromptModal,
