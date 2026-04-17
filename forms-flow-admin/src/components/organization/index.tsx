@@ -74,13 +74,17 @@ function parseTenantDateTime(value: unknown): Date | null {
   return null;
 }
 
+function subscriptionStatusFromApi(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 type SubscriptionUiKind = "active" | "trial" | "expired" | "cancelled";
 
 function resolveSubscriptionUiKind(
   tenant: Record<string, unknown>,
   daysDifference: number | null
 ): SubscriptionUiKind {
-  const status = String(tenant?.subscription_status ?? "").toLowerCase();
+  const status = subscriptionStatusFromApi(tenant?.subscription_status);
 
   if (status === "canceled") {
     return "cancelled";
@@ -91,7 +95,6 @@ function resolveSubscriptionUiKind(
   if (status === "active") {
     return "active";
   }
-  
 
   const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
   const expiry = parseTenantDateTime(tenant?.expiry_dt);
