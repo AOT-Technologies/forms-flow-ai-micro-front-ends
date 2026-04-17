@@ -5,8 +5,8 @@ import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import Loading from "../loading";
 import { useParams } from "react-router-dom";
-import { removeTenantKey } from "../../utils/utils.js";
-// import { MULTITENANCY_ENABLED } from "../../constants";
+import { formatRoleDisplayName } from "../../utils/utils.js";
+import { MULTITENANCY_ENABLED } from "../../constants";
 
 import {
   updateAuthorization,
@@ -14,8 +14,7 @@ import {
 } from "../../services/dashboard";
 import { Translation, useTranslation } from "react-i18next";
 import { TableFooter, V8CustomButton } from "@formsflow/components";
-import { useHistory } from "react-router-dom";
-import { navigateToAdminDashboard, getRedirectUrl } from "@formsflow/service";  
+import { StorageService } from "@formsflow/service";
 
 const InsightDashboard = React.memo((props: any) => {
   const { dashboards, groups, setCount, authReceived, loading: parentLoading } = props;
@@ -25,9 +24,11 @@ const InsightDashboard = React.memo((props: any) => {
   const [isLoading, setIsLoading] = React.useState(true);
 
   const { t } = useTranslation();
-  // const { tenantId } = useParams();
-  const history = useHistory();
-  // const baseUrl = getRedirectUrl(tenantId);
+  const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
+  const tenantKeyForRoleDisplay =
+    MULTITENANCY_ENABLED && (urlTenantId || StorageService.get("tenantKey"))
+      ? String(urlTenantId || StorageService.get("tenantKey"))
+      : "";
   const [remainingGroups, setRemainingGroups] = React.useState([]);
 
   const [activeRow, setActiveRow] = React.useState(null);
@@ -148,8 +149,7 @@ const InsightDashboard = React.memo((props: any) => {
                 style={{ background: "#EAEFFF" }}
                 data-testid={`dashboard-access-group-${i}`}>
                 <span className="">
-                  {/* {MULTITENANCY_ENABLED ? removeTenantKey(label,tenantId) : label} */}
-                  {label}
+                  {formatRoleDisplayName(label, tenantKeyForRoleDisplay)}
                   <i
                     className="fa-solid fa-xmark chip-close ms-2"
                     onClick={() => removeDashboardAuth(rowData, label)}
@@ -186,8 +186,7 @@ const InsightDashboard = React.memo((props: any) => {
                           onClick={() => addDashboardAuth(item)}
                           data-testid={`dashboard-remaining-group-${key}`}
                         >
-                          {/* {MULTITENANCY_ENABLED ? removeTenantKey(item.path, tenantId) : item.path} */}
-                          {item.path}
+                          {formatRoleDisplayName(item.path, tenantKeyForRoleDisplay)}
                         </div>
                       ))
                     ) : (
