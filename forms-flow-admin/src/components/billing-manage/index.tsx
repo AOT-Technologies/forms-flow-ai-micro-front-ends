@@ -1,11 +1,15 @@
 import React from "react";
-import {
-  RequestService,
-  StorageService,
-  getAdminOrganizationReturnUrl,
-} from "@formsflow/service";
+import { RequestService, StorageService } from "@formsflow/service";
 import { useParams } from "react-router-dom";
 import API from "../../endpoints";
+import { MULTITENANCY_ENABLED } from "../../constants";
+
+/** Portal return */
+function buildBillingPortalReturnUrl(tenantKey: string): string {
+  const origin = globalThis.location?.origin ?? "";
+  const base = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+  return `${origin}${base}admin/organization`;
+}
 
 const BillingManage: React.FC = () => {
   const { tenantId: tenantFromPath } = useParams<{ tenantId?: string }>();
@@ -34,7 +38,7 @@ const BillingManage: React.FC = () => {
             params.set("customer_name", customerName);
           }
           const resolveEndpoint = `${resolveBase}?${params.toString()}`;
-          const resolveRes = await RequestService.httpGETRequest(resolveEndpoint, null, true);
+          const resolveRes = await RequestService.httpGETRequest(resolveEndpoint, null, null);
           tenantKey = resolveRes?.data?.tenantKey || "";
         }
 
@@ -43,10 +47,10 @@ const BillingManage: React.FC = () => {
         }
 
         const endpoint = API.BILLING_PORTAL_SESSION.replace("<tenant_key>", tenantKey);
-        const returnUrl = getAdminOrganizationReturnUrl(tenantKey);
+        const returnUrl = buildBillingPortalReturnUrl(tenantKey);
         const response = await RequestService.httpPOSTRequest(
           endpoint,
-          { returnUrl },
+          { returnUrl, return_url: returnUrl },
           null,
           true
         );

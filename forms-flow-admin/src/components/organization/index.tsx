@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, useLocation } from "react-router-dom";
 import { V8CustomButton, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
 import "./organization.scss";
-import { StorageService } from "@formsflow/service";
+import { RequestService, StorageService } from "@formsflow/service";
+import API from "../../endpoints";
 import {
   MULTITENANCY_ENABLED,
   URL_CONTACT_SALES,
@@ -73,31 +74,94 @@ function parseTenantDateTime(value: unknown): Date | null {
   return null;
 }
 
+function subscriptionStatusFromApi(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+type SubscriptionUiKind = "active" | "trial" | "expired" | "cancelled";
+
+function resolveSubscriptionUiKind(
+  tenant: Record<string, unknown>,
+  daysDifference: number | null
+): SubscriptionUiKind {
+  const status = subscriptionStatusFromApi(tenant?.subscription_status);
+
+  if (status === "canceled") {
+    return "cancelled";
+  }
+  if (status === "expired") {
+    return "expired";
+  }
+  if (status === "active") {
+    return "active";
+  }
+
+  const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
+  const expiry = parseTenantDateTime(tenant?.expiry_dt);
+
+  if (expiry && trialExpiry) {
+    if (daysDifference !== null && daysDifference > 0) {
+      return "trial";
+    }
+    if (daysDifference !== null && daysDifference <= 0) {
+      return "expired";
+    }
+  }
+  if (expiry && daysDifference !== null && daysDifference > 0) {
+    return "trial";
+  }
+  if (daysDifference !== null && daysDifference > 0) {
+    return "trial";
+  }
+  return "active";
+}
+
+function getSubscriptionPresentation(
+  kind: SubscriptionUiKind,
+  daysDifference: number | null,
+  t: (key: string, opts?: Record<string, unknown>) => string
+): { title: string; description: string } {
+  switch (kind) {
+    case "active":
+      return {
+        title: t("Active"),
+        description: t("You are currently using a paid version of FormsFlow."),
+      };
+    case "trial":
+      return {
+        title: t("Trial"),
+        description: `You have ${daysDifference ?? 0} days left of your free trial.`,
+      };
+    case "expired":
+      return {
+        title: t("Expired"),
+        description: "",
+      };
+    case "cancelled":
+      return {
+        title: t("Cancelled"),
+        description: "",
+      };
+    default:
+      return { title: "", description: "" };
+  }
+}
+
 const Organization: React.FC<any> = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
+  const location = useLocation();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const [subscriptionOpen, setSubscriptionOpen] = useState(true);
   const [termsOpen, setTermsOpen] = useState(true);
   const [daysDifference, setDaysDifference] = useState<number | null>(null);
-  const [isTrial, setIsTrial] = useState(false);
+  const [subscriptionKind, setSubscriptionKind] =
+    useState<SubscriptionUiKind>("active");
 
-  useEffect(() => {
-    // Days note: always from expiry_dt. Active iff expiry_dt > trial_expiry_dt; otherwise Trial (including equal timestamps).
+  const applyTenantSubscriptionState = useCallback((tenant: Record<string, unknown>) => {
     try {
-      const tenantDataStr = StorageService.get("tenantData");
-      if (!tenantDataStr) {
-        setDaysDifference(null);
-        setIsTrial(false);
-        return;
-      }
-
-      const tenant = JSON.parse(tenantDataStr);
       const expiry_dt = tenant?.expiry_dt;
-      const trial_expiry_dt = tenant?.trial_expiry_dt;
-
       const expiry = parseTenantDateTime(expiry_dt);
-      const trialExpiry = parseTenantDateTime(trial_expiry_dt);
 
       let days: number | null = null;
       if (expiry) {
@@ -110,25 +174,60 @@ const Organization: React.FC<any> = (props) => {
         );
       }
 
-      let trial: boolean;
-      if (expiry && trialExpiry) {
-        const isActive =
-          tenant?.subscription_status === "active";
-        trial = !isActive;
-      } else if (expiry) {
-        trial = days !== null && days > 0;
-      } else {
-        trial = false;
-      }
-
       setDaysDifference(days);
-      setIsTrial(trial);
+      setSubscriptionKind(resolveSubscriptionUiKind(tenant, days));
     } catch (error) {
       console.error("Error calculating subscription state:", error);
       setDaysDifference(null);
-      setIsTrial(false);
+      setSubscriptionKind("active");
     }
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const readFromStorage = () => {
+      const tenantDataStr = StorageService.get("tenantData");
+      if (!tenantDataStr) {
+        setDaysDifference(null);
+        setSubscriptionKind("active");
+        return;
+      }
+      try {
+        applyTenantSubscriptionState(JSON.parse(tenantDataStr));
+      } catch (error) {
+        console.error("Error parsing tenantData:", error);
+        setDaysDifference(null);
+        setSubscriptionKind("active");
+      }
+    };
+
+    readFromStorage();
+
+    if (!MULTITENANCY_ENABLED) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const tenantUrl = `${API.GET_TENANT_DATA}${API.GET_TENANT_DATA.includes("?") ? "&" : "?"}_t=${Date.now()}`;
+    RequestService.httpGETRequest(tenantUrl, null, null)
+      .then((res) => {
+        if (cancelled || !res?.data) return;
+        StorageService.save("tenantData", JSON.stringify(res.data));
+        if (res.data.key) {
+          StorageService.save("tenantKey", res.data.key);
+        }
+        applyTenantSubscriptionState(res.data as Record<string, unknown>);
+      })
+      .catch((err) => {
+        console.error("Failed to refresh tenant for Organization:", err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applyTenantSubscriptionState, location.pathname]);
   const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
@@ -140,6 +239,9 @@ const Organization: React.FC<any> = (props) => {
     // so the path always matches the registered <Route> for plans.
     history.push(`${baseUrl}admin/plans`);
   };
+
+  const { title: subscriptionTitle, description: subscriptionDescription } =
+    getSubscriptionPresentation(subscriptionKind, daysDifference, t);
 
   const renderExternalButtons = (label: string) => {
     const key = label.toLowerCase()
@@ -176,20 +278,17 @@ const Organization: React.FC<any> = (props) => {
         >
           <div className="subscription-card">
             <div className="subscription-status">
-              <span className="status-text">{isTrial ? t("Trial") : t("Active")}</span>
+              <span className="status-text">{subscriptionTitle}</span>
             </div>
-            <p className="subscription-description">
-              {isTrial
-                ? t(`You have ${daysDifference} days left of your free trial.`)
-                : t("You are currently using a paid version of FormsFlow.")}
-            </p>
+            {subscriptionDescription ? (
+              <p className="subscription-description">{subscriptionDescription}</p>
+            ) : null}
 
             <div className="subscription-card-actions">
               <V8CustomButton
                 label={t("Upgrade")}
                 variant="secondary"
                 dataTestId="subscription-upgrade-button"
-                icon={<i className="fa fa-external-link me-2" aria-hidden="true"></i>}
                 onClick={openUpgrade}
               />
               {renderExternalButtons("Contact Sales")}
