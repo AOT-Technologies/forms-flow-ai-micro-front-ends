@@ -24,6 +24,7 @@ import { MULTITENANCY_ENABLED } from "../../constants";
 import { TableFooter,
    CustomSearch, 
    CloseIcon, 
+   CopyIcon,
    CustomTabs, 
    FormInput, 
    FormTextArea,
@@ -105,6 +106,43 @@ const Roles = React.memo((props: any) => {
     );
   }, [editCandidate]);
 
+  /**
+   * Full candidate-group string for copy / Camunda from API `name`.
+   * Resolves by id on props.roles (unmodified list) so copy stays correct when
+   * removingTenantId strips the table row’s display name.
+   */
+  const resolveFullCandidateGroup = React.useCallback(
+    (displayRow: { id?: string; name?: string }) => {
+      const raw = (props.roles ?? []).find((r: { id?: string }) => r.id === displayRow.id);
+      if (!raw) return String(displayRow.name ?? "").trim();
+      const nameVal =
+        raw.name != null && String(raw.name).trim() !== ""
+          ? String(raw.name).trim()
+          : "";
+      return nameVal || String(displayRow.name ?? "").trim();
+    },
+    [props.roles]
+  );
+
+  const handleCopyCandidateGroup = React.useCallback(
+    async (text: string) => {
+      const value = text.trim();
+      if (!value) return;
+      const clip = globalThis.navigator?.clipboard;
+      if (!clip?.writeText) {
+        toast.error(t("Could not copy"));
+        return;
+      }
+      try {
+        await clip.writeText(value);
+        toast.success(t("Copied to clipboard"));
+      } catch {
+        toast.error(t("Could not copy"));
+      }
+    },
+    [t]
+  );
+
   React.useEffect(() => {
     let updatedRoles = props.roles ?? [];
 
@@ -114,8 +152,13 @@ const Roles = React.memo((props: any) => {
 
     updatedRoles = removingTenantId(updatedRoles, tenantId);
 
+    updatedRoles = updatedRoles.map((role) => ({
+      ...role,
+      candidateGroupFull: resolveFullCandidateGroup(role),
+    }));
+
     setRoles(updatedRoles);
-  }, [props.roles, search, tenantId]);
+  }, [props.roles, search, tenantId, resolveFullCandidateGroup]);
 
   React.useEffect(() => {
     fetchPermissions(
@@ -576,6 +619,33 @@ const Roles = React.memo((props: any) => {
       classes: "text-break",
     },
     {
+      dataField: "candidateGroupFull",
+      text: <Translation>{(t) => t("Candidate Groups")}</Translation>,
+      headerClasses: "roles-candidate-group-header",
+      classes: "text-break roles-candidate-group-cell",
+      formatter: (cell: string, row: { id?: string }) => {
+        const value = cell ?? "";
+        const displayValue = value.replace(/\//g, "");
+        return (
+          <span className="roles-candidate-group-inner">
+            <span className="roles-candidate-group-text">{displayValue}</span><button
+              type="button"
+              className="btn btn-link roles-candidate-group-copy"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCopyCandidateGroup(value);
+              }}
+              aria-label={t("Copy candidate group")}
+              title={t("Copy candidate group")}
+              data-testid={`admin-roles-copy-candidate-group-${row.id}`}
+            >
+              <CopyIcon />
+            </button>
+          </span>
+        );
+      },
+    },
+    {
       dataField: "description",
       text: <Translation>{(t) => t("Description")}</Translation>,
       classes: "text-break",
@@ -636,10 +706,11 @@ const Roles = React.memo((props: any) => {
               className="fa fa-pencil"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
+                const { candidateGroupFull: _omitCg, ...roleForModal } = rowData;
                 setSelectedRoleIdentifier(rowData.id);
-                setEditCandidate(rowData);
+                setEditCandidate(roleForModal);
                 handleShowEditRoleModal();
-                setDeleteCandidate(rowData);
+                setDeleteCandidate(roleForModal);
                 // setSelectedRoleIdentifier(
                 //   KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id
                 // );

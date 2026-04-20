@@ -1,3 +1,31 @@
+// Candidate Groups: copy icon inline immediately after the value (end of text in reading order).
+.roles-candidate-group-header,
+.roles-candidate-group-cell {
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+.roles-candidate-group-inner {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: top;
+}
+
+.roles-candidate-group-text {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.roles-candidate-group-copy {
+  display: inline;
+  align-items: center;
+  vertical-align: middle;
+  margin-left: 0.25rem;
+  padding: 0;
+  border: 0;
+  line-height: 1;
+}
+
 .table-container{
     
     background: #FFFFFF;

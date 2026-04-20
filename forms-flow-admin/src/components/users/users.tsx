@@ -14,6 +14,7 @@ import { Tooltip } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal"; // Import Modal from react-bootstrap
 import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
+import { formatRoleDisplayName } from "../../utils/utils.js";
 import Select from "react-select";
 import { InviteUser } from "../../services/users";
 import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput } from "@formsflow/components";
@@ -35,6 +36,10 @@ const Users = React.memo((props: any) => {
   const { tenantId } = useParams();
   const history = useHistory();
   const baseUrl = getRedirectUrl(tenantId);
+  const tenantKeyForRoleDisplay =
+    MULTITENANCY_ENABLED && (tenantId || StorageService.get("tenantKey"))
+      ? String(tenantId || StorageService.get("tenantKey"))
+      : "";
   const [selectedRolesModal, setSelectedRolesModal] = React.useState([]);
   const [formData, setFormData] = React.useState({ user: "" });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
@@ -209,7 +214,7 @@ const Users = React.memo((props: any) => {
                   }
                 >
                   <span className="">
-                    {item?.name}
+                    {formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay)}
                     <i
                       className="fa-solid fa-xmark chip-close ms-2"
                       onClick={() => removePermission(rowData, item)}
@@ -260,7 +265,7 @@ const Users = React.memo((props: any) => {
               ].toString()}
               onClick={() => !shouldHighLight && updateSelectedRoles(role)}
             >
-              {role.name}
+              {formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)}
               {isSelected && <i className="fa fa-check"></i>}
             </div>
           );
@@ -464,7 +469,7 @@ const Users = React.memo((props: any) => {
                   value={role.name}
                   data-testid={`users-roles-filter-option-${i}`}
                 >
-                  {role.name}
+                  {formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)}
                 </option>
               ))}
             </Form.Select>
