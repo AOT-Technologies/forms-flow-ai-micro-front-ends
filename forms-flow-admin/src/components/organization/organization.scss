@@ -48,6 +48,13 @@
       color: var(--ff-gray-darkest);
       margin-bottom: var(--spacer-200);
     }
+
+    .subscription-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--spacer-100);
+    }
   }
 
   .terms-actions {

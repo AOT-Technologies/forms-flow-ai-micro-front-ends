@@ -42,13 +42,14 @@ import { createReqPayload ,sortableKeysSet} from "../../helper/taskHelper";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 import { navigateToTaskListingFromReviewWithHistory, getRedirectUrl } from "@formsflow/service";
 
 const TaskList = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
+  const location = useLocation();
   const { tenantId } = useParams();
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId);
   const redirectUrl = getRedirectUrl(tenantKey);
@@ -285,6 +286,16 @@ const TaskList = () => {
   useEffect(() => {
     fetchTaskListData();
   }, [isAssigned, activePage, limit]);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const shouldSelectAssignedToMe = queryParams.get("assignedToMe") === "true";
+
+    if (shouldSelectAssignedToMe && !isAssigned) {
+      dispatch(setIsAssigned(true));
+      dispatch(setBPMTaskListActivePage(1));
+    }
+  }, [location.search, isAssigned, dispatch]);
 
   const optionsForSortModal = () => {
     const existingValues = new Set(optionSortBy.keys);  
