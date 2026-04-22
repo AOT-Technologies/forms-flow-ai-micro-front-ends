@@ -422,8 +422,14 @@ $font-tokens: (
 
 // Add gap between task list table and scrollbar
 .body-section.custom-scroll {
-    padding-right: 9px !important;
+  padding-right: 9px !important;
 }
+
+.ff-home-body-scroll {
+  padding-right: 8px !important;
+  @include mixins.custom-scroll($width: 5px);
+}
+
 .form-items-list{
   .custom-checkbox{
    margin: 0 !important;
