@@ -60,8 +60,6 @@ declare module "@formsflow/service" {
     navigateToBaseUrl,
     navigateWithHistory,
     syncRouterPath,
-    getStoredChecklistItems,
-    storeChecklistItems,
     completeChecklistByRouteKey
   }: any;
 }

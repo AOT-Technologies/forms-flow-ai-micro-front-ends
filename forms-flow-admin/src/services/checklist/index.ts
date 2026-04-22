@@ -1,12 +1,8 @@
 import {
   completeChecklistByRouteKey as _completeChecklistByRouteKey,
-  getStoredChecklistItems,
-  storeChecklistItems,
+  RequestService 
 } from "@formsflow/service";
-import { RequestService } from "@formsflow/service";
 import API from "../../endpoints/index";
-
-export { getStoredChecklistItems, storeChecklistItems };
 
 export const INVITE_USER_ROUTE_KEY = "invite-user";
 

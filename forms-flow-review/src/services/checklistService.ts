@@ -1,12 +1,8 @@
 import {
   completeChecklistByRouteKey as _completeChecklistByRouteKey,
-  getStoredChecklistItems,
-  storeChecklistItems,
+  RequestService
 } from "@formsflow/service";
-import { RequestService } from "@formsflow/service";
 import API from "../api/endpoints";
-
-export { getStoredChecklistItems, storeChecklistItems };
 
 export const TASK_ASSIGN_ROUTE_KEY = "assign-task";
 
