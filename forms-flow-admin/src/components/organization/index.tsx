@@ -200,7 +200,7 @@ const Organization: React.FC<any> = (props) => {
       const tenantDataStr = StorageService.get("tenantData");
       if (!tenantDataStr) {
         setDaysDifference(null);
-        setSubscriptionKind("none");
+        setSubscriptionKind("expired");
         return;
       }
       try {
