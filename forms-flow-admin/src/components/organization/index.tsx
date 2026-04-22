@@ -129,7 +129,7 @@ function getSubscriptionPresentation(
     case "active":
       return {
         title: t("Active"),
-        description: t("You are currently using a paid version of FormsFlow."),
+        description: t("You are currently using a paid version of formsflow."),
       };
     case "trial":
       return {
