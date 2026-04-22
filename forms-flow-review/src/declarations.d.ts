@@ -71,7 +71,10 @@ declare module "@formsflow/service" {
     navigateToIntegrationLibrary,
     navigateToBaseUrl,
     navigateWithHistory,
-    syncRouterPath
+    syncRouterPath,
+    getStoredChecklistItems,
+    storeChecklistItems,
+    completeChecklistByRouteKey
   }: any;
 }
 

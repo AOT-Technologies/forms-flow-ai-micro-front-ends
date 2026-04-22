@@ -15,6 +15,7 @@ const API = {
     BILLING_RETURN: `${MT_ADMIN_BASE_URL}/${MT_ADMIN_BASE_URL_VERSION}/tenants/billing/return`,
     GET_TENANT_DATA: `${MT_ADMIN_BASE_URL}/${MT_ADMIN_BASE_URL_VERSION}/tenant`,
     GET_PERMISSIONS:`${WEB_BASE_URL}/roles/permissions`,
+    CHECKLIST: `${WEB_BASE_URL}/user/checklist`,
 }
 
 export default API;

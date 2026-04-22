@@ -17,6 +17,9 @@ import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constant
 import { formatRoleDisplayName } from "../../utils/utils.js";
 import Select from "react-select";
 import { InviteUser } from "../../services/users";
+import {
+  completeChecklistByRouteKey
+} from "../../services/checklist";
 import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput } from "@formsflow/components";
 import { useHistory, useParams } from "react-router-dom";
 import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
@@ -387,6 +390,7 @@ const Users = React.memo((props: any) => {
         setInviteSuccessEmail(emailFromInput);
         setFormData({ user: "" });
         props.setInvalidated(true);
+        completeChecklistByRouteKey("invite_user")();
       },
       (err) => {
         setInviteLoading(false);

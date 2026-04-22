@@ -12,7 +12,7 @@ const API = {
       SUBMISSION_FILTER: `${WEB_BASE_URL}/submissions-filter`,
       UPDATE_DEFAULT_FILTER: `${WEB_BASE_URL}/user/default-filter`,
       BUNDLE_EXECUTE_RULE:`${WEB_BASE_URL}/form/<mapper_id>/bundles/execute-rules`,
-
+      CHECKLIST: `${WEB_BASE_URL}/user/checklist`,
  }
 
 export default API;

@@ -59,7 +59,10 @@ declare module "@formsflow/service" {
     getAdminOrganizationReturnUrl,
     navigateToBaseUrl,
     navigateWithHistory,
-    syncRouterPath
+    syncRouterPath,
+    getStoredChecklistItems,
+    storeChecklistItems,
+    completeChecklistByRouteKey
   }: any;
 }
 
