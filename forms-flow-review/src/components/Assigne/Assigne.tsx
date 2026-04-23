@@ -13,6 +13,9 @@ import { getBPMTaskDetail } from "../../api/services/bpmTaskServices";
 import SocketIOService from "../../services/SocketIOService";
 import { userRoles } from "../../helper/permissions";
 import { useEffect, useState, useRef } from "react";
+import {
+  completeChecklistByRouteKey
+} from "../../services/checklistService";
 
 
 
@@ -107,6 +110,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
       if (!SocketIOService.isConnected) {
         fetchTaskList();
       }
+      completeChecklistByRouteKey("review_task")();
     };
 
     // Targeting 'me'

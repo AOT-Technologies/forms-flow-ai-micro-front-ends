@@ -57,7 +57,8 @@ declare module "@formsflow/service" {
     navigateToSubmissionDetail,
     navigateToBaseUrl,
     navigateWithHistory,
-    syncRouterPath
+    syncRouterPath,
+    completeChecklistByRouteKey
   }: any;
 }
 
