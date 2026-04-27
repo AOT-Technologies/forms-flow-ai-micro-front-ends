@@ -194,6 +194,10 @@ $white-300: var(--white-300);
       resize: none; //resize the textarea to none
       background: transparent;
 
+      &::placeholder {
+        color: #9E9E9E;
+      }
+
       &:focus {
         outline: none;
         box-shadow: none;
@@ -431,10 +435,12 @@ $white-300: var(--white-300);
     }
 
     &__url-error-line {
-      color: $gray-darkest-90;
+      color: #09F;
       font-size: $font-size-m;
       font-weight: $font-weight-medium;
       line-height: 1.5rem;
+      text-decoration: underline solid;
+      text-underline-position: from-font;
     }
 
     &__url-error-subline {
