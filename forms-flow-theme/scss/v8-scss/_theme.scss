@@ -582,15 +582,31 @@ $font-tokens: (
   }
 
   .ff-home-get-started-carousel {
-    height: 17.6875rem;
+    max-height: 17.6875rem;
     display: flex;
     align-items: flex-start;
     gap: 0.875rem;
     overflow-x: scroll;
     overflow-y: hidden;
-    padding-bottom: 0.6875rem;
     border-radius: 0.3125rem;
     border: 0.0625rem solid var(--gray-x-light);
+    padding-inline: 0.875rem;
+
+
+    &::-webkit-scrollbar {
+      display: block;
+      height: 1.938rem;
+    }
+
+
+
+    &::-webkit-scrollbar-thumb {
+      background:#E5E5E5;
+      cursor: pointer;
+      border-top: 1rem solid transparent;
+      border-bottom: 0.625rem solid transparent;
+      background-clip: padding-box;
+    }
   }
 
   .ff-home-get-started-item {
@@ -609,6 +625,73 @@ $font-tokens: (
     height: 100%;
     border: none;
     display: block;
+  }
+
+  .ff-home-get-started-card {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    flex-shrink: 0;
+    max-width: 13.938rem;
+    border: 0.0625rem solid var(--gray-x-light);
+    border-radius: 0.3125rem;
+    background: var(--white-200);
+    overflow: hidden;
+    margin-top: 0.5625rem;
+    text-decoration: none;
+    color: inherit;
+
+  }
+
+  .ff-home-get-started-card-preview {
+    display: flex;
+    min-height: 9rem;
+    padding: 0.625rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    align-self: stretch;
+
+    &--article { background: #EAF3F8; }
+    &--tour    { background: #EAF8F2; }
+    &--video   { background: #FDEDF0; }
+  }
+
+  .ff-home-get-started-card-body {
+    display: flex;
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    align-self: stretch;
+  }
+
+  .ff-home-get-started-card-type {
+    font-size: var(--font-size-s);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    &--article { color: #0087D9; }
+    &--tour    { color: #00C49A; }
+    &--video   { color: #E57373; }
+  }
+
+  .ff-home-get-started-card-title {
+    font-size: 1rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--gray-darkest);
+  }
+
+  .ff-home-get-started-card-description {
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--gray-dark);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .ff-home-table-action-center {
