@@ -79,6 +79,12 @@ export {
   navigateToSubmissionViewDirect
 } from "./routerServices/routerHelper";
 
+export {
+  getStoredChecklistItems,
+  storeChecklistItems,
+  completeChecklistByRouteKey,
+} from "./helpers/checklistService";
+
 export { 
   KeycloakService, 
   StorageService, 

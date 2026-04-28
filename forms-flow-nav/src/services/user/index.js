@@ -33,15 +33,23 @@ export const fetchUserLoginDetails = () => {
 export const getOnBoardingUserRole = () => {
   const url = API.ONBOARDING_USER_ROLE;
   return RequestService.httpGETRequest(url)
-  .then((res)=>{
-      if(res.data){
-          localStorage.setItem("ONBOARDINGUSERROLE", res.data.role);
+    .then((res) => {
+      const data = res?.data;
+      if (data?.role) {
+        localStorage.setItem("ONBOARDINGUSERROLE", data.role);
       }
-  }).catch((err)=>{
+      return data ?? null;
+    })
+    .catch((err) => {
       console.error(" Error in getting on boarding user role:", err);
   });
 };
 
+
+export const fetchChecklist = () => {
+  const url = API.CHECKLIST;
+  return RequestService.httpGETRequest(url);
+};
 /**
  * Trigger a reset password email/link for the current user.
  */

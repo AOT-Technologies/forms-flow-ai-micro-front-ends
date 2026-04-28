@@ -16,13 +16,13 @@ import {
   IS_ENTERPRISE,
   USER_NAME_DISPLAY_CLAIM
 } from "../constants/constants";
-import { StorageService, StyleServices } from "@formsflow/service";
+import { StorageService, StyleServices, storeChecklistItems } from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
 import { fetchTenantDetails, handleTenantSubscription } from "../services/tenant";
 import { setShowApplications } from "../constants/userContants";
 import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
-import { fetchUserLoginDetails,getOnBoardingUserRole } from "../services/user";
+import { fetchUserLoginDetails,getOnBoardingUserRole,fetchChecklist } from "../services/user";
 import MenuComponent from "./MenuComponent";
 // import Appname from "./formsflow.svg";
 import { ApplicationLogo, LogoutIcon, MenuToggleIcon } from "@formsflow/components";
@@ -251,7 +251,21 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     if (isAuthenticated) {
       // Fetch federated login details (saves into localStorage)]
       fetchUserLoginDetails();
-      getOnBoardingUserRole();
+      getOnBoardingUserRole()
+        .then((onboarding) => {
+          if (onboarding?.checklistSkipped) {
+            return;
+          }
+          return fetchChecklist()
+            .then((res) => {
+              const data = res.data || res;
+              const next = Array.isArray(data) ? data : [];
+              storeChecklistItems(next);
+            })
+            .catch(() => {
+              storeChecklistItems(null);
+            });
+        });
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);

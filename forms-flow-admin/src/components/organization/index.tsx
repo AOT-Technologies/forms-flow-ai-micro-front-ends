@@ -63,6 +63,7 @@ function parseTenantDateTime(value: unknown): Date | null {
   if (typeof value === "string") {
     const s = value.trim();
     if (!s) return null;
+    if (s.toLowerCase() === "none") return null;
     const withT = /\d{4}-\d{2}-\d{2}\s+\d/.test(s)
       ? s.replace(/^(\d{4}-\d{2}-\d{2})\s+/, "$1T")
       : s;
@@ -78,7 +79,7 @@ function subscriptionStatusFromApi(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-type SubscriptionUiKind = "active" | "trial" | "expired" | "cancelled";
+type SubscriptionUiKind = "active" | "trial" | "expired" | "cancelled" | "none";
 
 function resolveSubscriptionUiKind(
   tenant: Record<string, unknown>,
@@ -94,6 +95,9 @@ function resolveSubscriptionUiKind(
   }
   if (status === "active") {
     return "active";
+  }
+  if(!status) {
+    return "expired";
   }
 
   const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
@@ -113,7 +117,7 @@ function resolveSubscriptionUiKind(
   if (daysDifference !== null && daysDifference > 0) {
     return "trial";
   }
-  return "active";
+  return "none";
 }
 
 function getSubscriptionPresentation(
@@ -125,7 +129,7 @@ function getSubscriptionPresentation(
     case "active":
       return {
         title: t("Active"),
-        description: t("You are currently using a paid version of FormsFlow."),
+        description: t("You are currently using a paid version of formsflow."),
       };
     case "trial":
       return {
@@ -142,6 +146,11 @@ function getSubscriptionPresentation(
         title: t("Cancelled"),
         description: "",
       };
+    case "none":
+      return {
+        title: "",
+        description: "",
+      };
     default:
       return { title: "", description: "" };
   }
@@ -156,18 +165,19 @@ const Organization: React.FC<any> = (props) => {
   const [termsOpen, setTermsOpen] = useState(true);
   const [daysDifference, setDaysDifference] = useState<number | null>(null);
   const [subscriptionKind, setSubscriptionKind] =
-    useState<SubscriptionUiKind>("active");
+    useState<SubscriptionUiKind>("none");
 
   const applyTenantSubscriptionState = useCallback((tenant: Record<string, unknown>) => {
     try {
-      const expiry_dt = tenant?.expiry_dt;
-      const expiry = parseTenantDateTime(expiry_dt);
+      const expiry = parseTenantDateTime(tenant?.expiry_dt);
+      const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
+      const endDate = expiry ?? trialExpiry;
 
       let days: number | null = null;
-      if (expiry) {
+      if (endDate) {
         const currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
-        const end = new Date(expiry);
+        const end = new Date(endDate);
         end.setHours(0, 0, 0, 0);
         days = Math.floor(
           (end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
@@ -179,7 +189,7 @@ const Organization: React.FC<any> = (props) => {
     } catch (error) {
       console.error("Error calculating subscription state:", error);
       setDaysDifference(null);
-      setSubscriptionKind("active");
+      setSubscriptionKind("none");
     }
   }, []);
 
@@ -190,7 +200,7 @@ const Organization: React.FC<any> = (props) => {
       const tenantDataStr = StorageService.get("tenantData");
       if (!tenantDataStr) {
         setDaysDifference(null);
-        setSubscriptionKind("active");
+        setSubscriptionKind("expired");
         return;
       }
       try {
@@ -198,7 +208,7 @@ const Organization: React.FC<any> = (props) => {
       } catch (error) {
         console.error("Error parsing tenantData:", error);
         setDaysDifference(null);
-        setSubscriptionKind("active");
+        setSubscriptionKind("none");
       }
     };
 
