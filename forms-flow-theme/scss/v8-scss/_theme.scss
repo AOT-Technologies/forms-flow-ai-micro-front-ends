@@ -582,7 +582,7 @@ $font-tokens: (
   }
 
   .ff-home-get-started-carousel {
-    max-height: 17.6875rem;
+    max-height: 24.188rem;
     display: flex;
     align-items: flex-start;
     gap: 0.875rem;
@@ -632,12 +632,11 @@ $font-tokens: (
     flex-direction: column;
     align-self: stretch;
     flex-shrink: 0;
-    max-width: 13.938rem;
     border: 0.0625rem solid var(--gray-x-light);
     border-radius: 0.3125rem;
     background: var(--white-200);
     overflow: hidden;
-    margin-top: 0.5625rem;
+    margin-top: 0.813rem;
     text-decoration: none;
     color: inherit;
 
@@ -645,7 +644,8 @@ $font-tokens: (
 
   .ff-home-get-started-card-preview {
     display: flex;
-    min-height: 9rem;
+    min-height: 7.75rem;
+    min-width: 15.5rem;
     padding: 0.625rem;
     flex-direction: column;
     justify-content: center;
@@ -661,6 +661,7 @@ $font-tokens: (
   .ff-home-get-started-card-body {
     display: flex;
     padding: 1rem;
+    max-width: 16.25rem;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
