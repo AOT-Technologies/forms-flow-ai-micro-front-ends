@@ -19,6 +19,7 @@ $border-radius: var(--border-radius);
 $gray-x-light: var(--gray-x-light);
 $white-200: var(--white-200);
 $white-300: var(--white-300);
+$gray-medium-darker:var(--gray-medium-darker);
 .ai-form-builder-modal {
     @include large-modal-popover();
 
@@ -193,6 +194,10 @@ $white-300: var(--white-300);
       color: $gray-darkest; /* #4a4a4a */
       resize: none; //resize the textarea to none
       background: transparent;
+
+      &::placeholder {
+        color:$gray-medium-darker;
+      }
 
       &:focus {
         outline: none;
@@ -431,10 +436,12 @@ $white-300: var(--white-300);
     }
 
     &__url-error-line {
-      color: $gray-darkest-90;
+      color: #09F;
       font-size: $font-size-m;
       font-weight: $font-weight-medium;
       line-height: 1.5rem;
+      text-decoration: underline solid;
+      text-underline-position: from-font;
     }
 
     &__url-error-subline {
