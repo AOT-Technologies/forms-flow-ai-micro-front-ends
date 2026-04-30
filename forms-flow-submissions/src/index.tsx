@@ -16,6 +16,9 @@ import ViewApplication from "./components/AnalyzeSubmissionView"
 import { StyleServices } from "@formsflow/service";
 import { useDispatch } from "react-redux";
 import { setTenantData } from "./actions/tenantActions";
+import {
+  completeChecklistByRouteKey
+} from "./services/checklist";
 interface SubmissionsProps {
   publish?: (event: string, data?: any) => void;
   subscribe?: (
@@ -100,6 +103,8 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
     subscribe("ES_CHANGE_LANGUAGE", (_msg, data) => {
       i18n.changeLanguage(data);
     });
+
+    completeChecklistByRouteKey("explore_analytics")();
   }, [isAuth]);
 
   if (!isAuth) {

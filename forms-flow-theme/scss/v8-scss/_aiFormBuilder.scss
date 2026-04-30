@@ -461,5 +461,9 @@ $white-300: var(--white-300);
       font-weight: $font-weight-regular;
       line-height: 1.5rem;
     }
-  }
+
+.form-control.input {
+  margin-left: 0 !important;
+}
+}
   
