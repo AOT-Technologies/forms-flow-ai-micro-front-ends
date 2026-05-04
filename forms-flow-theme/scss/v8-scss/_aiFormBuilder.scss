@@ -19,6 +19,7 @@ $border-radius: var(--border-radius);
 $gray-x-light: var(--gray-x-light);
 $white-200: var(--white-200);
 $white-300: var(--white-300);
+$gray-medium-darker:var(--gray-medium-darker);
 .ai-form-builder-modal {
     @include large-modal-popover();
 
@@ -194,6 +195,10 @@ $white-300: var(--white-300);
       resize: none; //resize the textarea to none
       background: transparent;
 
+      &::placeholder {
+        color:$gray-medium-darker;
+      }
+
       &:focus {
         outline: none;
         box-shadow: none;
@@ -201,28 +206,30 @@ $white-300: var(--white-300);
     }
 
     &__quota-circle {
-      position: absolute;
-      top: $spacer-075; /* 12px */
-      right: $spacer-075; /* 12px */
-      width: $spacer-250; /* 40px */
-      height: $spacer-250; /* 40px */
-      display: flex;
+      position: relative;
+      display: inline-flex;
+      padding: 0.25rem 0.625rem 0.25rem 2.25rem; 
+      justify-content: flex-end;
       align-items: center;
-      justify-content: center;
-      pointer-events: none;
+      border-radius: $border-radius; 
+      border: 0.0625rem solid $gray-x-light; 
+      background: var(--ff-white);
     }
 
     &__quota-circle-svg {
       position: absolute;
-      inset: 0;
+      left: 0.5rem; 
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     &__quota-circle-count {
-      position: relative;
-      z-index: 1;
-      font-size: 0.875rem; /* 14px */
-      font-weight: 600;
-      color: $gray-darkest; /* #333 */
+      color: $secondary-dark;
+      font-family: var(--font-family-base);
+      font-size: 0.75rem; 
+      font-style: normal;
+      font-weight: $font-weight-regular; 
+      line-height: 1.5rem; 
     }
 
     &__limit-alert {
@@ -431,10 +438,12 @@ $white-300: var(--white-300);
     }
 
     &__url-error-line {
-      color: $gray-darkest-90;
+      color: #09F;
       font-size: $font-size-m;
       font-weight: $font-weight-medium;
       line-height: 1.5rem;
+      text-decoration: underline solid;
+      text-underline-position: from-font;
     }
 
     &__url-error-subline {
