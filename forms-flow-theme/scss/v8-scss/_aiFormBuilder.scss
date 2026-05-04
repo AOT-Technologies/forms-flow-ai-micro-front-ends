@@ -301,10 +301,18 @@ $white-300: var(--white-300);
     }
   
     &__actions {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-top: 0.625rem; /* 10px */
+    }
+
+    &__quota-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
     }
     &__actions-left {
       display: flex;
