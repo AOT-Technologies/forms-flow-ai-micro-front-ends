@@ -18,7 +18,7 @@ const Plans: React.FC = () => {
   const hasRetriedRef = useRef(false);
 
   useEffect(() => {
-    let isMounted = true; // prevents state updates after unmount
+    let isMounted = true; 
 
     const loadPricingTable = async () => {
       if (!tenantId) {
@@ -59,7 +59,7 @@ const Plans: React.FC = () => {
 
         if (!hasRetriedRef.current) {
           hasRetriedRef.current = true;
-          loadPricingTable(); // retry once
+          loadPricingTable();
         } else {
           if (isMounted) {
             setError(t("Unable to load plans. Please try again later."));
