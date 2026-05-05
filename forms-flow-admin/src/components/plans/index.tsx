@@ -15,11 +15,14 @@ const Plans: React.FC = () => {
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [error, setError] = useState<string | null>(null);
   const pricingTableRef = useRef<HTMLDivElement | null>(null);
+  const hasRetriedRef = useRef(false);
 
   useEffect(() => {
+    let isMounted = true; 
+
     const loadPricingTable = async () => {
       if (!tenantId) {
-        setError(t("Tenant not found in session."));
+        if (isMounted) setError(t("Tenant not found in session."));
         return;
       }
 
@@ -53,17 +56,29 @@ const Plans: React.FC = () => {
         }
       } catch (err) {
         console.error("Failed to load Stripe pricing table:", err);
-        setError(t("Unable to load plans. Please try again later."));
+
+        if (!hasRetriedRef.current) {
+          hasRetriedRef.current = true;
+          loadPricingTable();
+        } else {
+          if (isMounted) {
+            setError(t("Unable to load plans. Please try again later."));
+          }
+        }
       }
     };
 
     loadPricingTable();
+
+    return () => {
+      isMounted = false;
+    };
   }, [tenantId, t]);
 
   return (
     <div className="page-container position-relative">
       <div className="page-layout mt-3">
-        <div className="min-container-height ps-md-3">
+        <div className="min-container-height custom-scroll overflow-y-auto ps-md-3 pb-5">
           <div className="mb-3">
             <V8CustomButton
               label={t("Back")}
