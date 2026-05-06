@@ -36,8 +36,9 @@ const Admin = React.memo(({ props }: any) => {
   const isDashboardManager = userRoles?.includes("manage_dashboard_authorizations");
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
+  const isOrganizationManager = userRoles?.includes("manage_organization");
   // const isLinkManager = userRoles.includes("manage_links");
-  const isAdmin =  isDashboardManager || isRoleManager || isUserManager;
+  const isAdmin = isDashboardManager || isRoleManager || isUserManager || isOrganizationManager;
   const location =useLocation().pathname;
   const [isAccessRestricted, setIsAccessRestricted] = React.useState(false);
   React.useEffect(() => {
@@ -107,13 +108,14 @@ const Admin = React.memo(({ props }: any) => {
   },[isAuth])
   
   React.useEffect(() => {
-    const restricted = 
-    (location === '/admin/dashboard' && !isDashboardManager) ||
-    (location === '/admin/roles' && !isRoleManager) ||
-    (location === '/admin/users' && !isUserManager) ||
-    (!(isDashboardManager ||isRoleManager ||isUserManager));
+    const restricted =
+      (location === '/admin/organization' && !isOrganizationManager) ||
+      (location === '/admin/dashboard' && !isDashboardManager) ||
+      (location === '/admin/roles' && !isRoleManager) ||
+      (location === '/admin/users' && !isUserManager) ||
+      (!(isOrganizationManager || isDashboardManager || isRoleManager || isUserManager));
     setIsAccessRestricted(restricted);
-  },[location,userRoles]);
+  }, [location, userRoles]);
   return (
     <>
       {isAdmin ? (
