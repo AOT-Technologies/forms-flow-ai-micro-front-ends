@@ -17,7 +17,7 @@ import {
   completeChecklistByRouteKey
 } from "../../services/checklistService";
 import {
-  mapMemberOfGroupUsersToSelectOptions,
+  mergeMemberOfGroupResponsesToSelectOptions,
   resolveTaskCandidateGroupIds,
   type MemberOfGroupSelectOption,
 } from "../../helper/assigneeCandidateGroups";
@@ -109,19 +109,8 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
     const ids = resolveTaskCandidateGroupIds(effectiveTask, task);
     if (ids.length === 0) return;
     void Promise.all(ids.map((g) => fetchUsersByMemberOfGroup(g)))
-      .then((responses) => {
-        const merged = new Map<string, MemberOfGroupSelectOption>();
-        responses.forEach((res) => {
-          if (res?.data) {
-            mapMemberOfGroupUsersToSelectOptions(res.data).forEach((opt) => {
-              if (!merged.has(opt.value)) merged.set(opt.value, opt);
-            });
-          }
-        });
-        const sorted = Array.from(merged.values()).sort((a, b) =>
-          a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
-        );
-        console.log("[memberOfGroup users]", sorted.map((o) => o.label));
+      .then((responses) => mergeMemberOfGroupResponsesToSelectOptions(responses))
+      .then((sorted) => {
         setMemberGroupOptions(sorted);
       })
       .catch(() => undefined);

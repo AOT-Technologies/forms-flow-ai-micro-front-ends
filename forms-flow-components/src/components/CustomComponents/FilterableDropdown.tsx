@@ -289,6 +289,78 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
     [disabled, isOpen, onOpen]
   );
 
+  const openMenu = useMemo(() => {
+    const renderOptionRows = (opts: FilterableOption[]) =>
+      opts.map((option, index) => (
+        <div
+          key={`${option.value}-${index}`}
+          className={`filterable-dropdown-item ${
+            highlightedIndex === index ? "highlighted" : ""
+          } ${option.value === value ? "selected" : ""} ${itemClassName}`}
+          onClick={() => handleSelectOption(option)}
+          onMouseEnter={() => setHighlightedIndex(index)}
+          role="option"
+          aria-selected={option.value === value}
+          data-testid={`${dataTestId}-option-${option.value}`}
+        >
+          <span className="filterable-dropdown-item-label">{option.label}</span>
+        </div>
+      ));
+
+    if (menuOptions.length > 0) {
+      return (
+        <div
+          ref={dropdownRef}
+          className="filterable-dropdown-menu"
+          style={dropdownStyle}
+          role="listbox"
+          data-testid={`${dataTestId}-menu`}
+        >
+          {renderOptionRows(menuOptions)}
+        </div>
+      );
+    }
+
+    if (isUserTyping && inputValue.trim()) {
+      return (
+        <div
+          className="filterable-dropdown-menu filterable-dropdown-no-results"
+          style={dropdownStyle}
+          role="listbox"
+          data-testid={`${dataTestId}-no-results`}
+        >
+          <div className="filterable-dropdown-item filterable-dropdown-empty">
+            {t("No results found")}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        ref={dropdownRef}
+        className="filterable-dropdown-menu"
+        style={dropdownStyle}
+        role="listbox"
+        data-testid={`${dataTestId}-menu`}
+      >
+        {renderOptionRows(options)}
+      </div>
+    );
+  }, [
+    menuOptions,
+    isUserTyping,
+    inputValue,
+    dropdownStyle,
+    dataTestId,
+    value,
+    itemClassName,
+    highlightedIndex,
+    handleSelectOption,
+    options,
+    t,
+  ]);
+
   return (
     <div
       ref={containerRef}
@@ -353,70 +425,7 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
         )}
       </div>
 
-      {isOpen && !disabled && (
-        <>
-          {menuOptions.length > 0 ? (
-            <div
-              ref={dropdownRef}
-              className="filterable-dropdown-menu"
-              style={dropdownStyle}
-              role="listbox"
-              data-testid={`${dataTestId}-menu`}
-            >
-              {menuOptions.map((option, index) => (
-                <div
-                  key={`${option.value}-${index}`}
-                  className={`filterable-dropdown-item ${
-                    highlightedIndex === index ? "highlighted" : ""
-                  } ${option.value === value ? "selected" : ""} ${itemClassName}`}
-                  onClick={() => handleSelectOption(option)}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                  role="option"
-                  aria-selected={option.value === value}
-                  data-testid={`${dataTestId}-option-${option.value}`}
-                >
-                  <span className="filterable-dropdown-item-label">{option.label}</span>
-                </div>
-              ))}
-            </div>
-          ) : isUserTyping && inputValue.trim() ? (
-            <div
-              className="filterable-dropdown-menu filterable-dropdown-no-results"
-              style={dropdownStyle}
-              role="listbox"
-              data-testid={`${dataTestId}-no-results`}
-            >
-              <div className="filterable-dropdown-item filterable-dropdown-empty">
-                {t("No results found")}
-              </div>
-            </div>
-          ) : (
-            <div
-              ref={dropdownRef}
-              className="filterable-dropdown-menu"
-              style={dropdownStyle}
-              role="listbox"
-              data-testid={`${dataTestId}-menu`}
-            >
-              {options.map((option, index) => (
-                <div
-                  key={`${option.value}-${index}`}
-                  className={`filterable-dropdown-item ${
-                    highlightedIndex === index ? "highlighted" : ""
-                  } ${option.value === value ? "selected" : ""} ${itemClassName}`}
-                  onClick={() => handleSelectOption(option)}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                  role="option"
-                  aria-selected={option.value === value}
-                  data-testid={`${dataTestId}-option-${option.value}`}
-                >
-                  <span className="filterable-dropdown-item-label">{option.label}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+      {isOpen && !disabled && openMenu}
     </div>
   );
 };

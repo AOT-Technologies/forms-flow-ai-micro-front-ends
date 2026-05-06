@@ -72,12 +72,33 @@ export function mapMemberOfGroupUsersToSelectOptions(
   const opts = rows
     .map((r) => {
       const username = r.username != null ? String(r.username).trim() : "";
-      if (!username) return null;
-      const firstName = r.firstName != null ? String(r.firstName).trim() : "";
-      const lastName = r.lastName != null ? String(r.lastName).trim() : "";
-      return { label: formatLastCommaFirst(firstName, lastName), value: username };
+      if (username) {
+        const firstName = r.firstName != null ? String(r.firstName).trim() : "";
+        const lastName = r.lastName != null ? String(r.lastName).trim() : "";
+        return { label: formatLastCommaFirst(firstName, lastName), value: username };
+      }
+      return null;
     })
     .filter((x): x is MemberOfGroupSelectOption => x != null)
     .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }));
   return opts;
+}
+ 
+export function mergeMemberOfGroupResponsesToSelectOptions(
+  responses: Array<{ data?: MemberOfGroupUsersApiBody }>
+): MemberOfGroupSelectOption[] {
+  const merged = new Map<string, MemberOfGroupSelectOption>();
+  for (const res of responses) {
+    const body = res?.data;
+    if (body == null) continue;
+    const opts = mapMemberOfGroupUsersToSelectOptions(body);
+    for (const opt of opts) {
+      if (!merged.has(opt.value)) {
+        merged.set(opt.value, opt);
+      }
+    }
+  }
+  return Array.from(merged.values()).sort((a, b) =>
+    a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+  );
 }
