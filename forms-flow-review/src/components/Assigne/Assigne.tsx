@@ -7,15 +7,21 @@ import {
   fetchServiceTaskList,
   unClaimBPMTask,
   updateAssigneeBPMTask,
+  fetchUsersByMemberOfGroup,
 } from "../../api/services/filterServices";
 import {  setTaskDetailsLoading } from "../../actions/taskActions";
 import { getBPMTaskDetail } from "../../api/services/bpmTaskServices";
 import SocketIOService from "../../services/SocketIOService";
 import { userRoles } from "../../helper/permissions";
-import { useEffect, useState, useRef } from "react";
 import {
   completeChecklistByRouteKey
 } from "../../services/checklistService";
+import {
+  mapMemberOfGroupUsersToSelectOptions,
+  resolveTaskCandidateGroupIds,
+  type MemberOfGroupSelectOption,
+} from "../../helper/assigneeCandidateGroups";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 
 
 
@@ -36,6 +42,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
   const [overrideValue, setOverrideValue] = useState<string | null>(null);
   // Track the last assigned user to handle stale Redux state (use ref to avoid overwriting)
   const lastAssignedUserRef = useRef<string | null>(null);
+  const [memberGroupOptions, setMemberGroupOptions] = useState<MemberOfGroupSelectOption[]>([]);
   const fetchTaskList = () => {
     dispatch(fetchServiceTaskList(lastReqPayload, null, activePage, limit));
   };
@@ -89,6 +96,37 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
     ? (taskDetail && taskDetail.id === taskId ? taskDetail : task)
     : task;
 
+  const candidateGroupKey = useMemo(
+    () => resolveTaskCandidateGroupIds(effectiveTask, task).join("|"),
+    [effectiveTask, task]
+  );
+
+  useEffect(() => {
+    setMemberGroupOptions([]);
+  }, [taskId, candidateGroupKey]);
+
+  const handleAssigneeOpen = useCallback(() => {
+    const ids = resolveTaskCandidateGroupIds(effectiveTask, task);
+    if (ids.length === 0) return;
+    void Promise.all(ids.map((g) => fetchUsersByMemberOfGroup(g)))
+      .then((responses) => {
+        const merged = new Map<string, MemberOfGroupSelectOption>();
+        responses.forEach((res) => {
+          if (res?.data) {
+            mapMemberOfGroupUsersToSelectOptions(res.data).forEach((opt) => {
+              if (!merged.has(opt.value)) merged.set(opt.value, opt);
+            });
+          }
+        });
+        const sorted = Array.from(merged.values()).sort((a, b) =>
+          a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+        );
+        console.log("[memberOfGroup users]", sorted.map((o) => o.label));
+        setMemberGroupOptions(sorted);
+      })
+      .catch(() => undefined);
+  }, [effectiveTask, task]);
+  
   const handleChangeClaim = (newuser: string) => {
     // Optimistically update the UI label
     setOverrideValue(newuser);
@@ -211,8 +249,11 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
       return(
         <UserSelect
           users={userList?.data ?? []}
+          useMemberGroupOptions
+          memberGroupOptions={memberGroupOptions}
           value={displayedValue}
           onChange={handleChangeClaim}
+          onOpen={handleAssigneeOpen}
           shortMeLabel={!isFromTaskDetails}
           isFromTaskDetails={isFromTaskDetails}
           ariaLabel="task-assignee-select"
