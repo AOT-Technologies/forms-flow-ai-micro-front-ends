@@ -39,11 +39,11 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   
   const defaultTab = (): string => {
-    if (isOrganizationManager) return "organization";
-    if (isDashboardManager) return "dashboard";
-    if (isUserManager) return "users";
     if (isRoleManager) return "roles";
-    return "organization";
+    if (isUserManager) return "users";
+    if (isDashboardManager) return "dashboard";
+    if (isOrganizationManager) return "organization";
+    return "roles";
   };
 
   // Get active tab from URL or default to first accessible tab
