@@ -5,7 +5,7 @@ import { RequestService, StorageService } from "@formsflow/service";
 import { V8CustomButton } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import API from "../../endpoints";
-import Footer from "../footer";
+import Loading from "../loading/Loading";
 
 const Plans: React.FC = () => {
   const { t } = useTranslation();
@@ -14,15 +14,19 @@ const Plans: React.FC = () => {
   const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const pricingTableRef = useRef<HTMLDivElement | null>(null);
   const hasRetriedRef = useRef(false);
 
   useEffect(() => {
-    let isMounted = true; 
+    let isMounted = true;
+    hasRetriedRef.current = false;
 
     const loadPricingTable = async () => {
+      if (pricingTableRef.current?.innerHTML.trim()) return;
       if (!tenantId) {
-        if (isMounted) setError(t("Tenant not found in session."));
+        if (isMounted) { setLoading(false); 
+          setError(t("Tenant not found in session.")); }
         return;
       }
 
@@ -54,6 +58,7 @@ const Plans: React.FC = () => {
             </stripe-pricing-table>
           `;
         }
+        if (isMounted) setLoading(false);
       } catch (err) {
         console.error("Failed to load Stripe pricing table:", err);
 
@@ -62,7 +67,7 @@ const Plans: React.FC = () => {
           loadPricingTable();
         } else {
           if (isMounted) {
-            setError(t("Unable to load plans. Please try again later."));
+            setLoading(false);
           }
         }
       }
@@ -89,6 +94,7 @@ const Plans: React.FC = () => {
               }
             />
           </div>
+          {loading ? <Loading /> : null}
           {error ? <p role="alert">{error}</p> : null}
           <div ref={pricingTableRef} className="mt-4"></div>
         </div>
