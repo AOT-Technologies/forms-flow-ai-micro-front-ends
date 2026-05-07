@@ -51,12 +51,21 @@ function FilterableDropdownOptionRow({
     onHighlight(index);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLLIElement>): void => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
     <li
       className={rowClassName}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       onMouseEnter={handleMouseEnter}
       role="option"
+      tabIndex={-1}
       aria-selected={isSelected}
       data-testid={`${dataTestId}-option-${option.value}`}
     >
