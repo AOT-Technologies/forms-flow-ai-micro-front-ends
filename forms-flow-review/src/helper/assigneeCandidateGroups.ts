@@ -71,10 +71,10 @@ export function mapMemberOfGroupUsersToSelectOptions(
   const rows = apiResponse?.data ?? [];
   const opts = rows
     .map((r) => {
-      const username = r.username != null ? String(r.username).trim() : "";
+      const username = r.username == null ? "" : String(r.username).trim();
       if (username) {
-        const firstName = r.firstName != null ? String(r.firstName).trim() : "";
-        const lastName = r.lastName != null ? String(r.lastName).trim() : "";
+        const firstName = r.firstName == null ? "" : String(r.firstName).trim();
+        const lastName = r.lastName == null ? "" : String(r.lastName).trim();
         return { label: formatLastCommaFirst(firstName, lastName), value: username };
       }
       return null;

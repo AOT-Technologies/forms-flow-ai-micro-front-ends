@@ -13,6 +13,82 @@ export interface FilterableOption {
   value: string | number;
 }
 
+type FilterableDropdownOptionRowProps = {
+  option: FilterableOption;
+  index: number;
+  isHighlighted: boolean;
+  isSelected: boolean;
+  itemClassName: string;
+  dataTestId: string;
+  onSelect: (option: FilterableOption) => void;
+  onHighlight: (index: number) => void;
+};
+
+function FilterableDropdownOptionRow({
+  option,
+  index,
+  isHighlighted,
+  isSelected,
+  itemClassName,
+  dataTestId,
+  onSelect,
+  onHighlight,
+}: FilterableDropdownOptionRowProps): React.ReactElement {
+  const rowClassName = [
+    "filterable-dropdown-item",
+    isHighlighted ? "highlighted" : "",
+    isSelected ? "selected" : "",
+    itemClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const handleClick = (): void => {
+    onSelect(option);
+  };
+
+  const handleMouseEnter = (): void => {
+    onHighlight(index);
+  };
+
+  return (
+    <li
+      className={rowClassName}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      role="option"
+      aria-selected={isSelected}
+      data-testid={`${dataTestId}-option-${option.value}`}
+    >
+      <span className="filterable-dropdown-item-label">{option.label}</span>
+    </li>
+  );
+}
+
+function mapOptionsToListItems(
+  opts: FilterableOption[],
+  highlightedIndex: number,
+  currentValue: string | number | undefined,
+  itemClassName: string,
+  dataTestIdPrefix: string,
+  onSelect: (option: FilterableOption) => void,
+  onHighlight: (index: number) => void
+): React.ReactNode[] {
+  return opts.map((option, index) => (
+    <FilterableDropdownOptionRow
+      key={`${option.value}-${index}`}
+      option={option}
+      index={index}
+      isHighlighted={highlightedIndex === index}
+      isSelected={option.value === currentValue}
+      itemClassName={itemClassName}
+      dataTestId={dataTestIdPrefix}
+      onSelect={onSelect}
+      onHighlight={onHighlight}
+    />
+  ));
+}
+
 /**
  * Props for `FilterableDropdown` component.
  * A searchable dropdown with input field that filters options as you type.
@@ -93,7 +169,7 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLUListElement>(null);
 
   // Get selected option
   const selectedOption = useMemo(() => {
@@ -290,62 +366,64 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
   );
 
   const openMenu = useMemo(() => {
-    const renderOptionRows = (opts: FilterableOption[]) =>
-      opts.map((option, index) => (
-        <div
-          key={`${option.value}-${index}`}
-          className={`filterable-dropdown-item ${
-            highlightedIndex === index ? "highlighted" : ""
-          } ${option.value === value ? "selected" : ""} ${itemClassName}`}
-          onClick={() => handleSelectOption(option)}
-          onMouseEnter={() => setHighlightedIndex(index)}
-          role="option"
-          aria-selected={option.value === value}
-          data-testid={`${dataTestId}-option-${option.value}`}
-        >
-          <span className="filterable-dropdown-item-label">{option.label}</span>
-        </div>
-      ));
-
     if (menuOptions.length > 0) {
       return (
-        <div
+        <ul
           ref={dropdownRef}
           className="filterable-dropdown-menu"
           style={dropdownStyle}
           role="listbox"
           data-testid={`${dataTestId}-menu`}
         >
-          {renderOptionRows(menuOptions)}
-        </div>
+          {mapOptionsToListItems(
+            menuOptions,
+            highlightedIndex,
+            value,
+            itemClassName,
+            dataTestId,
+            handleSelectOption,
+            setHighlightedIndex
+          )}
+        </ul>
       );
     }
 
     if (isUserTyping && inputValue.trim()) {
       return (
-        <div
+        <ul
           className="filterable-dropdown-menu filterable-dropdown-no-results"
           style={dropdownStyle}
           role="listbox"
           data-testid={`${dataTestId}-no-results`}
         >
-          <div className="filterable-dropdown-item filterable-dropdown-empty">
+          <li
+            className="filterable-dropdown-item filterable-dropdown-empty"
+            role="presentation"
+          >
             {t("No results found")}
-          </div>
-        </div>
+          </li>
+        </ul>
       );
     }
 
     return (
-      <div
+      <ul
         ref={dropdownRef}
         className="filterable-dropdown-menu"
         style={dropdownStyle}
         role="listbox"
         data-testid={`${dataTestId}-menu`}
       >
-        {renderOptionRows(options)}
-      </div>
+        {mapOptionsToListItems(
+          options,
+          highlightedIndex,
+          value,
+          itemClassName,
+          dataTestId,
+          handleSelectOption,
+          setHighlightedIndex
+        )}
+      </ul>
     );
   }, [
     menuOptions,
