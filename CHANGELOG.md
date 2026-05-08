@@ -2,7 +2,7 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
-## 8.2.0 - 28-04-2026
+## 8.2.0 - 05-05-2026
 
 `Added`
 **forms-flow-admin**
