@@ -54,9 +54,13 @@ declare module "@formsflow/service" {
     navigateToAdminRoles,
     navigateToAdminUsers,
     navigateToAdminDashboard,
+    navigateToAdminOrganization,
+    navigateToAdminPlans,
+    getAdminOrganizationReturnUrl,
     navigateToBaseUrl,
     navigateWithHistory,
-    syncRouterPath
+    syncRouterPath,
+    completeChecklistByRouteKey
   }: any;
 }
 
@@ -71,6 +75,7 @@ declare module "@formsflow/components" {
     FormTextArea,
     CustomButton,
     DeleteIcon,
+    CopyIcon,
     ConfirmModal,
     CustomInfo,
     PromptModal,

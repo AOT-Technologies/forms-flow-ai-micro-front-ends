@@ -13,6 +13,7 @@ declare global {
     MULTITENANCY_ENABLED_VARIABLE === "true" || MULTITENANCY_ENABLED_VARIABLE === true;
   
   export const MAIN_ROUTE = {
+    HOME: "home",
     DRAFT: "draft",
     FORM: "form",
     FORM_ENTRIES: "form/:formId/entries",
@@ -39,6 +40,7 @@ declare global {
   };
   
   export const getRoute = (tenantId) => ({
+    HOME: getBaseRoute(tenantId) + MAIN_ROUTE.HOME,
     DRAFT: getBaseRoute(tenantId) + MAIN_ROUTE.DRAFT,
     FORM: getBaseRoute(tenantId) + MAIN_ROUTE.FORM,
     FORMFLOW: getBaseRoute(tenantId) + MAIN_ROUTE.FORMFLOW,

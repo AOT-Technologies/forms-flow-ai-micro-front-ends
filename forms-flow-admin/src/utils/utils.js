@@ -47,3 +47,26 @@ export const removeTenantKey = (value, tenantkey) => {
     return false;
   }
 };
+
+/**
+ * Role label for UI: last `/` segment, then strip leading `{tenantKey}-` when multitenant
+ * (e.g. `lukvv-client` → `client`).
+ */
+export const formatRoleDisplayName = (name, tenantKey) => {
+  if (name == null || name === "") return "";
+  let s = String(name).trim();
+  const slash = s.lastIndexOf("/");
+  if (slash >= 0) {
+    s = s.slice(slash + 1).trim();
+  }
+  if (MULTITENANCY_ENABLED && tenantKey) {
+    const prefix = `${String(tenantKey)}-`;
+    if (
+      s.length >= prefix.length &&
+      s.slice(0, prefix.length).toLowerCase() === prefix.toLowerCase()
+    ) {
+      s = s.slice(prefix.length);
+    }
+  }
+  return s;
+};

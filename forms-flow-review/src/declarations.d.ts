@@ -63,12 +63,16 @@ declare module "@formsflow/service" {
     navigateToAdminRoles,
     navigateToAdminUsers,
     navigateToAdminDashboard,
+    navigateToAdminOrganization,
+    navigateToAdminPlans,
+    getAdminOrganizationReturnUrl,
     navigateToIntegrationRecipes,
     navigateToIntegrationConnectedApps,
     navigateToIntegrationLibrary,
     navigateToBaseUrl,
     navigateWithHistory,
-    syncRouterPath
+    syncRouterPath,
+    completeChecklistByRouteKey
   }: any;
 }
 

@@ -66,6 +66,9 @@ export {
   navigateToAdminRoles,
   navigateToAdminUsers,
   navigateToAdminDashboard,
+  navigateToAdminOrganization,
+  navigateToAdminPlans,
+  getAdminOrganizationReturnUrl,
   navigateToIntegrationRecipes,
   navigateToIntegrationConnectedApps,
   navigateToIntegrationLibrary,
@@ -75,6 +78,12 @@ export {
   navigateToTemplatePreview,
   navigateToSubmissionViewDirect
 } from "./routerServices/routerHelper";
+
+export {
+  getStoredChecklistItems,
+  storeChecklistItems,
+  completeChecklistByRouteKey,
+} from "./helpers/checklistService";
 
 export { 
   KeycloakService, 

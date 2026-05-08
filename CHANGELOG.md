@@ -2,6 +2,25 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.2.0 - 05-05-2026
+
+`Added`
+**forms-flow-admin**
+* Added candidate groups column to roles table
+* Added five default stabdardized roles and description to roles table
+
+**forms-flow-components**
+* Added new icons to the component library
+
+**forms-flow-review**
+* Added Quick filter feature to field filter
+
+`Modified`
+**forms-flow-admin**
+* Changed Upgrade button click to open subscription plans 
+
+`Fixed`
+* Fixed minor UI issues
 
 ## 8.1.1- 31-03-2026
 
