@@ -34,33 +34,40 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
   const isDashboardManager = userRoles?.includes("manage_dashboard_authorizations");
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
+  const isOrganizationManager = userRoles?.includes("manage_organization");
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   
-  // Get active tab from URL or default to organization
+  const defaultTab = (): string => {
+    if (isRoleManager) return "roles";
+    if (isUserManager) return "users";
+    if (isDashboardManager) return "dashboard";
+    if (isOrganizationManager) return "organization";
+    return "roles";
+  };
+
+  // Get active tab from URL or default to first accessible tab
   const activeTab = useMemo((): string => {
     if (urlTab) {
-      // Validate that the tab from URL is valid
       const validTabs = ["organization", "dashboard", "users", "roles"];
       if (validTabs.includes(urlTab)) {
-        // Check permissions for restricted tabs
-        if (urlTab === "dashboard" && !isDashboardManager) return "organization";
-        if (urlTab === "users" && !isUserManager) return "organization";
-        if (urlTab === "roles" && !isRoleManager) return "organization";
+        if (urlTab === "organization" && !isOrganizationManager) return defaultTab();
+        if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
+        if (urlTab === "users" && !isUserManager) return defaultTab();
+        if (urlTab === "roles" && !isRoleManager) return defaultTab();
         return urlTab;
       }
     }
-    // If no tab in URL or invalid tab, check if we're at /admin (without tab)
     if (location.pathname === `${baseUrl}admin` || location.pathname === `${baseUrl}admin/`) {
-      return "organization";
+      return defaultTab();
     }
-    return "organization";
-  }, [urlTab, location.pathname, baseUrl, isDashboardManager, isUserManager, isRoleManager]);
+    return defaultTab();
+  }, [urlTab, location.pathname, baseUrl, isOrganizationManager, isDashboardManager, isUserManager, isRoleManager]);
 
   // Redirect to default tab if on /admin without a tab
   useEffect(() => {
     if (location.pathname === `${baseUrl}admin` || location.pathname === `${baseUrl}admin/`) {
-      history.replace(`${baseUrl}admin/organization`);
+      history.replace(`${baseUrl}admin/${defaultTab()}`);
     }
   }, [location.pathname, baseUrl, history]);
 
@@ -106,7 +113,9 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
             id="manage-tabs"
             className="pill-tabs"
           >
-            <Tab eventKey="organization" title={t("Organization")} />
+            {isOrganizationManager && (
+              <Tab eventKey="organization" title={t("Organization")} />
+            )}
             {isDashboardManager && (
               <Tab eventKey="dashboard" title={t("Dashboards")} />
             )}
@@ -139,7 +148,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
         <Collapse in={tabContentExpanded}>
           <div>
             <div className="tab-content">
-              {activeTab === "organization" && (
+              {activeTab === "organization" && isOrganizationManager && (
                 <div className="manage-content">
                   <Organization {...props} />
                 </div>
