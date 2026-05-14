@@ -48,7 +48,7 @@
     "sass-loader": "^13.2.0",
     "ts-config-single-spa": "^3.0.0",
     "typescript": "^4.9.4",
-    "webpack": "^5.75.0",
+    "webpack": "^5.106.2",
     "webpack-cli": "^4.8.0",
     "webpack-config-single-spa-react": "^4.0.0",
     "webpack-config-single-spa-react-ts": "^4.0.0",
