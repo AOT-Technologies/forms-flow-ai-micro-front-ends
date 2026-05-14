@@ -559,10 +559,13 @@ $font-tokens: (
   }
 
   .ff-home-data-card {
-    border: 0.0625rem solid #E6E8EE;
-    border-radius: 0.5rem;
+    border: 0.0625rem solid #E5E5E5;
+    border-radius: 0.313rem;
     overflow: hidden;
     margin-bottom: 2rem;
+    .css-15lx25q-MuiDataGrid-footerContainer{
+      border-top: none;
+    }
   }
 
   .ff-home-data-table {

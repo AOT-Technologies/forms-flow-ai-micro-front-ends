@@ -445,7 +445,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       {renderLogo(hideLogo, collapsed)}
       <div className={`options-container${collapsed ? " collapsed" : ""}`} data-testid="options-container">
         <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
-          {isAuthenticated && (
+          {userRoles !== null && (
             <MenuComponent
               baseUrl={baseUrl}
               eventKey={SectionKeys.HOME.value}
