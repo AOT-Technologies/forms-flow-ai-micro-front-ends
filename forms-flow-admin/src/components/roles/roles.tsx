@@ -11,7 +11,6 @@ import {
   UpdateRole,
   fetchPermissions,
 } from "../../services/roles";
-import { AppModal } from "@formsflow/components";
 import Loading from "../loading";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -21,15 +20,16 @@ import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
 import {removingTenantId} from "../../utils/utils.js";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { TableFooter,
-   CustomSearch, 
-   CloseIcon, 
+import { AppModal,
+   TableFooter,
+   CustomSearch,
+   CloseIcon,
    CopyIcon,
-   CustomTabs, 
-   FormInput, 
+   CustomTabs,
+   FormInput,
    FormTextArea,
    DeleteIcon,
-   CustomInfo, 
+   CustomInfo,
   ConfirmModal,
   V8CustomButton,
 }

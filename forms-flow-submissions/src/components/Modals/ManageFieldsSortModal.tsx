@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AppModal } from "@formsflow/components";
-import { CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, V8CustomButton, VariableSelection } from "@formsflow/components"; 
+import { AppModal, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, V8CustomButton, VariableSelection } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
 import { createOrUpdateSubmissionFilter, updateDefaultSubmissionFilter } from "../../api/queryServices/analyzeSubmissionServices";

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { AppModal } from "@formsflow/components";
 import { UserDetail } from "../types/taskFilter.js";
 import {
+  AppModal,
   CloseIcon,
   V8CustomButton,
   DragandDropSort,

@@ -11,7 +11,6 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
-import { AppModal } from "@formsflow/components";
 import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import { formatRoleDisplayName } from "../../utils/utils.js";
@@ -20,7 +19,7 @@ import { InviteUser } from "../../services/users";
 import {
   completeChecklistByRouteKey
 } from "../../services/checklist";
-import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput } from "@formsflow/components";
+import { AppModal, TableFooter, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput } from "@formsflow/components";
 import { useHistory, useParams } from "react-router-dom";
 import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
 

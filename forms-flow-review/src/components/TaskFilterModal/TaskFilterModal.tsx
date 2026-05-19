@@ -1,5 +1,5 @@
-import { AppModal } from "@formsflow/components";
 import {
+  AppModal,
   CloseIcon,
   PromptModal,
   useSuccessCountdown,

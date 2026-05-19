@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'; 
-import { AppModal } from "@formsflow/components";
 import { Tabs, Tab } from 'react-bootstrap';
-import { CloseIcon, V8CustomButton, CustomInfo, CustomTextInput, ApplicationLogo, GoogleIcon, MicrosoftIcon, PromptModal } from "@formsflow/components";
+import { AppModal, CloseIcon, V8CustomButton, CustomInfo, CustomTextInput, ApplicationLogo, GoogleIcon, MicrosoftIcon, PromptModal } from "@formsflow/components";
 import { fetchSelectLanguages } from '../services/language';
 import { updateUserProfile, requestResetPassword } from '../services/user';
 import { useTranslation } from "react-i18next";
