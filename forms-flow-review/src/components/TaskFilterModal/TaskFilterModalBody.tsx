@@ -37,7 +37,7 @@ import { Filter, FilterCriteria, UserDetail } from "../../types/taskFilter";
 import { defaultTaskVariable } from "../../constants/defaultTaskVariable";
 import ParametersTab from "./ParametersTab";
 import SaveFilterTab from "./SaveFilterTab";
-import { Modal } from "react-bootstrap";
+import { AppModal } from "@formsflow/components";
 import { RootState } from "../../reducers";
 import { useParams } from "react-router-dom";
 const TaskFilterModalBody = ({
@@ -975,12 +975,12 @@ const handleFetchTaskVariables = (formId) => {
 
   return (
     <>
-      <Modal.Body >
+      <AppModal.Body >
         <div className="wizard-step-content">
           {wizardSteps[activeStep]?.content}
         </div>
-      </Modal.Body>
-      <Modal.Footer data-three-buttons="true">
+      </AppModal.Body>
+      <AppModal.Footer data-three-buttons="true">
         <div className="buttons-row flex-fill" >
           <V8CustomButton
             label={t("Back")}
@@ -1027,7 +1027,7 @@ const handleFetchTaskVariables = (formId) => {
             loading={isLastStep && isTaskFilterSaving}
           />
         </div>
-      </Modal.Footer>
+      </AppModal.Footer>
     </>
   );
 };

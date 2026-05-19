@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { CustomButton } from "./Button";
 import { FormTextArea } from "./FormTextArea";
 import { CloseIcon } from "../SvgIcons/index";
@@ -131,17 +131,17 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     },[showBuildForm])
 
     return (
-      <Modal show={showBuildForm} onHide={onClose} size="sm">
-        <Modal.Header>
-          <Modal.Title>
+      <AppModal show={showBuildForm} onHide={onClose} size="sm">
+        <AppModal.Header>
+          <AppModal.Title>
             <p>{t(modalHeader)}</p>
-          </Modal.Title>
+          </AppModal.Title>
 
           <div className="icon-close" onClick={onClose} data-testid="close-duplicate-modal">
             <CloseIcon />
           </div>
-        </Modal.Header>
-        <Modal.Body>
+        </AppModal.Header>
+        <AppModal.Body>
           <FormInput
             name="title"
             type="text"
@@ -197,8 +197,8 @@ Further clarification on this is to be determined for EE. */}
    </>
    }
 */}
-        </Modal.Body>
-        <Modal.Footer>
+        </AppModal.Body>
+        <AppModal.Footer>
           <div className="buttons-row">
             <CustomButton
               variant={buttonVariant} // Set color based on success or error
@@ -229,8 +229,8 @@ Further clarification on this is to be determined for EE. */}
               secondary
             />
           </div>
-        </Modal.Footer>
-      </Modal>
+        </AppModal.Footer>
+      </AppModal>
     );
   }
 );

@@ -11,7 +11,7 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
-import Modal from "react-bootstrap/Modal"; // Import Modal from react-bootstrap
+import { AppModal } from "@formsflow/components";
 import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import { formatRoleDisplayName } from "../../utils/utils.js";
@@ -409,17 +409,17 @@ const Users = React.memo((props: any) => {
 
   return (
     <>
-      <Modal
+      <AppModal
         show={showSuccessModal}
         onHide={closeSuccessModal}
         className="overflow-hidden">
-        <Modal.Header>
-          <Modal.Title></Modal.Title>
+        <AppModal.Header>
+          <AppModal.Title></AppModal.Title>
           <div className="icon-close" onClick={closeSuccessModal} data-testid="user-add-success-close">
             <CloseIcon dataTestId="action-success-modal-close" />
           </div>        
-          </Modal.Header>
-        <Modal.Body className="modal-md d-flex align-items-center justify-content-center">
+          </AppModal.Header>
+        <AppModal.Body className="modal-md d-flex align-items-center justify-content-center">
           <div className="p-3 text-center">
             <div className="d-flex flex-column align-items-center">
               <div className="mb-2">
@@ -432,8 +432,8 @@ const Users = React.memo((props: any) => {
               <p>{t("User added")}</p>
             </div>
           </div>
-        </Modal.Body>
-      </Modal>
+        </AppModal.Body>
+      </AppModal>
 
 
       <div className="container-admin">
@@ -491,11 +491,11 @@ const Users = React.memo((props: any) => {
   />
 
     {showInviteModal && (
-      <Modal show={showInviteModal} onHide={closeInviteModal} dialogClassName="add-user-modal" centered>
-        <Modal.Header className="add-user-modal__header">
-          <Modal.Title className="add-user-modal__title">
+      <AppModal show={showInviteModal} onHide={closeInviteModal} dialogClassName="add-user-modal" centered>
+        <AppModal.Header className="add-user-modal__header">
+          <AppModal.Title className="add-user-modal__title">
             {t("Add New Users")}
-          </Modal.Title>
+          </AppModal.Title>
           <button
             type="button"
             className="add-user-modal__close"
@@ -505,9 +505,9 @@ const Users = React.memo((props: any) => {
           >
             <CloseIcon color="var(--gray-darkest)" dataTestId="action-modal-close" />
           </button>
-        </Modal.Header>
+        </AppModal.Header>
 
-        <Modal.Body className="add-user-modal__body">
+        <AppModal.Body className="add-user-modal__body">
           <div className="add-user-modal__field">
             <label htmlFor="add-user-username-input" className="add-user-modal__label">
               {t("Email")}
@@ -542,9 +542,9 @@ const Users = React.memo((props: any) => {
               </div>
             )}
           </div>
-        </Modal.Body>
+        </AppModal.Body>
 
-        <Modal.Footer className="add-user-modal__footer">
+        <AppModal.Footer className="add-user-modal__footer">
           <V8CustomButton
             label={t("Invite")}
             onClick={sendInvites}
@@ -555,8 +555,8 @@ const Users = React.memo((props: any) => {
             loadingText="Inviting"
             disabled={!formData.user?.trim()}
           />
-        </Modal.Footer>
-      </Modal>
+        </AppModal.Footer>
+      </AppModal>
     )}
   </>
 )}

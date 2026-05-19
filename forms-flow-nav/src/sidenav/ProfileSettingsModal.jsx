@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types'; 
-import Modal from 'react-bootstrap/Modal';
+import { AppModal } from "@formsflow/components";
 import { Tabs, Tab } from 'react-bootstrap';
 import { CloseIcon, V8CustomButton, CustomInfo, CustomTextInput, ApplicationLogo, GoogleIcon, MicrosoftIcon, PromptModal } from "@formsflow/components";
 import { fetchSelectLanguages } from '../services/language';
@@ -377,7 +377,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
 
   return (
     <>
-    <Modal
+    <AppModal
       show={show}
       onHide={handleRequestClose}
       size="lg"
@@ -387,7 +387,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       aria-describedby="profile-settings-modal"
       backdrop="static"
     >
-      <Modal.Header>
+      <AppModal.Header>
         <div className="modal-header-content">
           <div className="modal-title pb-0">
             <p>{t("Personal Settings")}</p>        
@@ -423,9 +423,9 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           </div>
         </div>
       
-      </Modal.Header>
+      </AppModal.Header>
 
-      <Modal.Body className="custom-scroll">
+      <AppModal.Body className="custom-scroll">
         {activeTab === "Profile" ? (
           <>
             <div className="profile-settings-details-box p-3 mb-3 border rounded">
@@ -592,9 +592,9 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
               )}
             </div>
         )}
-      </Modal.Body>
+      </AppModal.Body>
 
-      <Modal.Footer>
+      <AppModal.Footer>
         {error && (
           <div className="profile-error-message text-danger mb-2 w-100">
             {error}
@@ -610,8 +610,8 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             variant="primary"
           />
         </div>
-      </Modal.Footer>
-    </Modal>
+      </AppModal.Footer>
+    </AppModal>
 
     <PromptModal
       show={showUnsavedChangesPrompt}

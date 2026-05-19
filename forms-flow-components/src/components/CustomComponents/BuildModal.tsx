@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { CloseIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 
@@ -52,7 +52,7 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
   ({ show, onClose, title, contents }) => {
     const { t } = useTranslation();
     return (
-      <Modal
+      <AppModal
         show={show}
         onHide={onClose}
         data-testid="build-modal"
@@ -60,18 +60,18 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
         aria-describedby="build-modal-message"
         size="sm"
       >
-        <Modal.Header>
-          <Modal.Title id="build-modal-title">
+        <AppModal.Header>
+          <AppModal.Title id="build-modal-title">
             <p>{t(title)}</p>
-          </Modal.Title>
+          </AppModal.Title>
           <div className="icon-close" onClick={onClose} data-testId="modal-close">
             <CloseIcon />
           </div>
-        </Modal.Header>
-        <Modal.Body className="choice">
+        </AppModal.Header>
+        <AppModal.Body className="choice">
         {buildModalContent(contents, t)}
-        </Modal.Body>
-      </Modal>
+        </AppModal.Body>
+      </AppModal>
     );
   }
 );

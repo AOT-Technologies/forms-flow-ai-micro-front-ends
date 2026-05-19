@@ -1,4 +1,4 @@
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "@formsflow/components";
 import {
   CloseIcon,
   PromptModal,
@@ -97,7 +97,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
 
   return (
     <>
-      <Modal
+      <AppModal
         show={show}
         onHide={onClose}
         size="lg"
@@ -106,14 +106,14 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
         aria-describedby="create-filter-modal"
         dialogClassName="attribute-filter-modal"
       >
-        <Modal.Header>
+        <AppModal.Header>
           <div className="modal-header-content">
-            <Modal.Title id="create-filter-title">
+            <AppModal.Title id="create-filter-title">
               {title}
               <div onClick={onClose}>
                 <CloseIcon color={darkColor} data-testid="close-icon" />
               </div>
-            </Modal.Title>
+            </AppModal.Title>
 
             {subtitle && (
               <div className="modal-subtitle d-flex align-items-center justify-content-between">
@@ -130,7 +130,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
               </div>
             )}
           </div>
-        </Modal.Header>
+        </AppModal.Header>
         <AttributeFilterModalBody
           onClose={onClose}
           // toggleUpdateModal={toggleUpdateModal}
@@ -138,7 +138,7 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
-      </Modal>
+      </AppModal>
 
       {/* This is modal to let the user know that the filter is shared with others and they need to update it for everybody and might affect their workflow.
       This need to discussed later */}
