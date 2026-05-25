@@ -167,7 +167,6 @@ const Roles = React.memo((props: any) => {
         // Hide because v8 out of scope - will be restored later
         const filteredData = data.filter(
           (permission) =>
-            permission.name !== "manage_bundles" &&
             permission.name !== "manage_integrations" &&
             permission.name !== "manage_templates" 
             // permission.name !== "analyze_metrics_view"
