@@ -538,15 +538,15 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                           path: "formflow",
                         },
                         // Hide because v8 out of scope - will be restored later
-                        // ...(IS_ENTERPRISE && isManageBundles
-                        //   ? [
-                        //       {
-                        //         name: "Bundles",
-                        //         path: "bundleflow",
-                        //         isPremium: true,
-                        //       },
-                        //     ]
-                        //   : []),
+                        ...(IS_ENTERPRISE && isManageBundles
+                          ? [
+                              {
+                                name: "Bundles",
+                                path: "bundleflow",
+                                isPremium: true,
+                              },
+                            ]
+                          : []),
                         // Hide because v8 out of scope - will be restored later
                         // ...(IS_ENTERPRISE &&
                         // isManageIntegrations &&
