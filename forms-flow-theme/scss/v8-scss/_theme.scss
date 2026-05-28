@@ -417,12 +417,23 @@ $font-tokens: (
   .formedit-builder-flow {
     overflow: visible !important;
   }
+  // Keep Formio builder hover toolbar below the sticky header
+  .builder-component {
+    .component-btn-group,
+    .component-settings-button,
+    [ref="removeComponent"],
+    [ref="copyComponent"],
+    [ref="editComponent"],
+    [ref="moveComponent"] {
+      z-index: 999;
+    }
+  }
 }
 
 .formedit-header-primary {
   position: sticky;
   top: 0;
-  z-index: 15;
+  z-index: 1000;
   background: var(--ff-white) !important;
 }
 
