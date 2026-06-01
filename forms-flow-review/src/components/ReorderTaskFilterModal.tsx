@@ -10,6 +10,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { fetchBPMTaskCount,fetchFilterList, saveFilterPreference, updateDefaultFilter } from "../api/services/filterServices";
 import { useSelector,useDispatch } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import { RootState } from "../reducers/index.js";
 import { setBPMFilterList, setDefaultFilter, setSelectedFilter } from "../actions/taskActions";
 import { StyleServices } from "@formsflow/service";
@@ -29,7 +30,7 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         (state: RootState) => state.task.userDetails
       );
       const { t } = useTranslation();
-      const dispatch = useDispatch();
+      const dispatch = useAppDispatch();
       const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
 
       const [myFilterList, setMyFilterList] = useState<any[]>([]);

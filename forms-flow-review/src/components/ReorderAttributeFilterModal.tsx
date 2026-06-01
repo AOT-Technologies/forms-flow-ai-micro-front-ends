@@ -14,6 +14,7 @@ import {
   saveFilterPreference,
 } from "../api/services/filterServices";
 import { useSelector, useDispatch } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import {
   setAttributeFilterList,
   setSelectedBpmAttributeFilter,
@@ -37,7 +38,7 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
       setShowReorderAttributeFilterModal,
     }) => {
       const { t } = useTranslation();
-      const dispatch = useDispatch();
+      const dispatch = useAppDispatch();
       const darkColor = StyleServices.getCSSVariable("--secondary-dark");
       const userDetails: UserDetail = useSelector(
         (state: RootState) => state.task.userDetails

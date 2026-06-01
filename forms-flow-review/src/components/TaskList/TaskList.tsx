@@ -21,6 +21,7 @@ import {
   updateDefaultFilter,
 } from "../../api/services/filterServices";
 import { batch, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import {
   // AddIcon,
   DateRangePicker,
@@ -42,13 +43,13 @@ import { createReqPayload ,sortableKeysSet} from "../../helper/taskHelper";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
 import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { navigateToTaskListingFromReviewWithHistory, getRedirectUrl } from "@formsflow/service";
 
 const TaskList = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const { tenantId } = useParams();
   const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId);
@@ -80,7 +81,7 @@ const TaskList = () => {
 
   const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
     if (item.id === "tasks") {
-      navigateToTaskListingFromReviewWithHistory(history, tenantKey);
+      navigateToTaskListingFromReviewWithHistory(navigate, tenantKey);
     }
   };
  

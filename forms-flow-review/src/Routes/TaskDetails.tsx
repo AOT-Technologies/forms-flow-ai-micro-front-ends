@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useAppDispatch } from "../hooks";
+import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { textTruncate } from "../helper/helper.js";
 import {fetchTaskVariables, executeRule} from "../api/services/filterServices"
@@ -50,7 +51,8 @@ import TaskAssigneeManager from "../components/Assigne/Assigne";
 const TaskDetails = () => {
   const { t } = useTranslation();
   const { taskId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const {viewTaskHistory} = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
@@ -273,7 +275,7 @@ const TaskDetails = () => {
     Formio.clearCache();
     dispatch(setSelectedTaskID(null));
     dispatch(resetSubmission("submission"));
-    navigateToTaskListingFromReview(dispatch, tenantKey);
+    navigateToTaskListingFromReview(navigate, tenantKey);
   };
 
   //Application History

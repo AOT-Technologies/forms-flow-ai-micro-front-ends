@@ -20,6 +20,7 @@ import {
   updateDefaultFilter,
 } from "../../api/services/filterServices";
 import { batch, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import {
   AddIcon,
   DateRangePicker,
@@ -40,7 +41,7 @@ import  useAllTasksPayload  from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
 
 const TaskList = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const {
     limit,

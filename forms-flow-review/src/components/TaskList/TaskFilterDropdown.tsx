@@ -2,6 +2,7 @@ import { memo, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { userRoles } from "../../helper/permissions";
 import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import { RootState } from "../../reducers";
 import {
   setDefaultFilter,
@@ -28,7 +29,7 @@ import { cloneDeep } from "lodash";
 
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { createFilters } = userRoles();
   const selectedFilter = useSelector(
     (state: RootState) => state.task.selectedFilter

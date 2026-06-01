@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Tabs, Tab, Collapse } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import AdminDashboard from "../dashboard";
 import RoleManagement from "../roles";
 import UserManagement from "../users";
@@ -20,7 +20,7 @@ interface ManageProps {
 
 const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRoleCount, setUserCount }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { tenantId: urlTenantId, tab: urlTab } = useParams<{ tenantId?: string; tab?: string }>();
   // Fallback to storage if tenantId is not in URL params
   const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
@@ -67,7 +67,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
   // Redirect to default tab if on /admin without a tab
   useEffect(() => {
     if (location.pathname === `${baseUrl}admin` || location.pathname === `${baseUrl}admin/`) {
-      history.replace(`${baseUrl}admin/${defaultTab()}`);
+      navigate(`${baseUrl}admin/${defaultTab()}`, { replace: true });
     }
   }, [location.pathname, baseUrl, history]);
 
@@ -81,7 +81,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
       };
       setTab(tabNameMap[key] || "Organization");
       // Navigate to the tab route - this will update the URL and activeTab will update via useMemo
-      history.push(`${baseUrl}admin/${key}`);
+      navigate(`${baseUrl}admin/${key}`);
     }
   };
 

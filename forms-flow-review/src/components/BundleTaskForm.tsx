@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
 import { StepperComponent } from "@formsflow/components";
 import { textTruncate } from "../helper/helper"
@@ -20,6 +21,7 @@ import Loading from "./Loading";
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
+  bundleId?: string;
   bundleFormData: { formId: string; submissionId: string };
   onChange?: (event: any) => void;
   onFormSubmit?: (submission: any) => void;
@@ -34,7 +36,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
   onFormSubmit,
   onCustomEvent,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const formRef = useRef<any>();
   
   const [formStep, setFormStep] = useState(0);

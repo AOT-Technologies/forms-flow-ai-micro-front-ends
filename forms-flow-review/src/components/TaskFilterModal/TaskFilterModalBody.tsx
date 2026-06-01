@@ -16,6 +16,7 @@ import {
   SPECIFIC_USER_OR_GROUP,
 } from "../../constants/index";
 import { useSelector, useDispatch } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import {
   fetchAllForms,
   fetchBPMTaskCount,
@@ -53,7 +54,7 @@ const TaskFilterModalBody = ({
   onStepChange,
 }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isQuickFilterEdit = !!filterToEdit?.isQuickFilter;
   const isCreating = !filterToEdit?.id && !isQuickFilterEdit;
   const [introTypeSelection, setIntroTypeSelection] = useState<string>("quickFilter");

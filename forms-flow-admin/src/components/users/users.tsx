@@ -21,7 +21,7 @@ import {
   completeChecklistByRouteKey
 } from "../../services/checklist";
 import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput } from "@formsflow/components";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
 
 const Users = React.memo((props: any) => {
@@ -37,7 +37,6 @@ const Users = React.memo((props: any) => {
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
   const { t } = useTranslation();
   const { tenantId } = useParams();
-  const history = useHistory();
   const baseUrl = getRedirectUrl(tenantId);
   const tenantKeyForRoleDisplay =
     MULTITENANCY_ENABLED && (tenantId || StorageService.get("tenantKey"))

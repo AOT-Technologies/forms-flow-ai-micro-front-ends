@@ -7,6 +7,7 @@ import {
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { batch, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import { RootState } from "../../reducers";
 import AttributeFilterModalBody from "./AttributeFIlterModalBody";
 import { useState, useMemo, useCallback, useEffect } from "react";
@@ -20,7 +21,7 @@ import { StyleServices } from "@formsflow/service";
 
 export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const attributeFilterToEdit = useSelector(
     (state: RootState) => state.task.attributeFilterToEdit
   );

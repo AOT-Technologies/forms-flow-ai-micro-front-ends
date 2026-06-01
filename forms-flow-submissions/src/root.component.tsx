@@ -1,5 +1,5 @@
 import Submissions from ".";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BASE_ROUTE } from "./constants";
 import { Provider } from "react-redux";
 import StoreService from "./services/StoreServices";
@@ -13,9 +13,9 @@ export default function Root(props) {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <Switch>
-            <Route path={BASE_ROUTE} render={() => <Submissions {...props} />} />
-          </Switch>
+          <Routes>
+            <Route path={`${BASE_ROUTE}*`} element={<Submissions {...props} />} />
+          </Routes>
         </BrowserRouter>
       </QueryClientProvider>
     </Provider>

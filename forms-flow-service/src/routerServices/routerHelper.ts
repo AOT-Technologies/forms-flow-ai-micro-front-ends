@@ -1,274 +1,280 @@
-import { push } from "connected-react-router";
-import { getRoute, getRedirectUrl, getOrigin } from "../routerServices/routerConstants";
+import {
+  getRoute,
+  getRedirectUrl,
+  getOrigin,
+} from "../routerServices/routerConstants";
 
-const navigateTo = (dispatch, baseUrl) => {
-  dispatch(push(baseUrl));
-};  
-
-// ========== NEW FUNCTION TO ADD ==========
-
-/**
- * Navigate using history.push (for react-router-dom)
- * Replaces: history.push(url)
- */
- const navigateWithHistory = (history, url) => {
-  history.push(url);
+const navigateTo = (navigate: (path: string) => void, baseUrl: string) => {
+  navigate(baseUrl);
 };
 
-/**
- * Sync router path (for BaseRouting.jsx)
- * Replaces: dispatch(push(window.location.pathname))
- */
- const syncRouterPath = (dispatch, pathname) => {
-  navigateTo(dispatch, pathname);
+const navigateWithHistory = (navigate: (path: string) => void, url: string) => {
+  navigate(url);
+};
+
+const syncRouterPath = (navigate: (path: string) => void, pathname: string) => {
+  navigate(pathname);
 };
 
 /* ---------------------------  Designer Routes --------------------------- */
 
-const navigateToDesignFormsListing = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).FORMFLOW);
+const navigateToDesignFormsListing = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).FORMFLOW);
 };
 
-const navigateToDesignFormCreate = (dispatch, tenantId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORMFLOW}/create`);
+const navigateToDesignFormCreate = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).FORMFLOW}/create`);
 };
 
-const navigateToDesignFormBuild = (dispatch, tenantId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORMFLOW}/build`);
+const navigateToDesignFormBuild = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).FORMFLOW}/build`);
 };
 
-const navigateToDesignFormEdit = (dispatch, tenantId, formId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORMFLOW}/${formId}/edit`);
+const navigateToDesignFormEdit = (navigate: (path: string) => void, tenantId: string, formId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).FORMFLOW}/${formId}/edit`);
 };
 
-const navigateToDesignFormEditWithParams = (dispatch, tenantId, formId, queryParams = {}) => {
+const navigateToDesignFormEditWithParams = (
+  navigate: (path: string) => void,
+  tenantId: string,
+  formId: string,
+  queryParams = {}
+) => {
   const params = new URLSearchParams(queryParams).toString();
-  const url = params 
+  const url = params
     ? `${getRoute(tenantId).FORMFLOW}/${formId}/edit?${params}`
     : `${getRoute(tenantId).FORMFLOW}/${formId}/edit`;
-  navigateTo(dispatch, url);
+  navigateTo(navigate, url);
 };
 
-const navigateToDesignFormPath = (dispatch, tenantId, formId, path) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORMFLOW}/${formId}/${path}`);
+const navigateToDesignFormPath = (navigate: (path: string) => void, tenantId: string, formId: string, path: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).FORMFLOW}/${formId}/${path}`);
 };
 
 /* ---------------------------  Client Submission Routes --------------------------- */
 
-const navigateToSubmitFormsApplication = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).APPLICATION);
+const navigateToSubmitFormsApplication = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).APPLICATION);
 };
 
-const navigateToSubmitFormsDraft = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).DRAFT);
+const navigateToSubmitFormsDraft = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).DRAFT);
 };
 
-const navigateToSubmitFormsListing = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).FORM);
+const navigateToSubmitFormsListing = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).FORM);
 };
 
 // new navigations for client journey
-const navigateToFormEntries = (dispatch, tenantId, formId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORM}/${formId}/entries`);
+const navigateToFormEntries = (navigate: (path: string) => void, tenantId: string, formId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).FORM}/${formId}/entries`);
 };
 
-const navigateToNewSubmission = (dispatch, tenantId, formId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORM}/${formId}`);
+const navigateToNewSubmission = (navigate: (path: string) => void, tenantId: string, formId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).FORM}/${formId}`);
 };
 
-const navigateToDraftEdit = (dispatch, tenantId, formId, applicationId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORM}/${formId}/draft/${applicationId}/edit`);
-};
-
-const navigateToViewSubmission = (
-  dispatch,
-  tenantId,
-  formId,
-  applicationId
-) => {
-  dispatch(
-    push(`${getRoute(tenantId).APPLICATION}/${applicationId}?from=formEntries`)
+const navigateToDraftEdit = (navigate: (path: string) => void, tenantId: string, formId: string, applicationId: string) => {
+  navigateTo(
+    navigate,
+    `${getRoute(tenantId).FORM}/${formId}/draft/${applicationId}/edit`
   );
 };
 
-const navigateToResubmit = (dispatch, tenantId, formId, submissionId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORM}/${formId}/submissions/${submissionId}/resubmit`);
+const navigateToViewSubmission = (
+  navigate: (path: string) => void,
+  tenantId: string,
+  formId: string,
+  applicationId: string
+) => {
+  navigate(
+    `${getRoute(tenantId).APPLICATION}/${applicationId}?from=formEntries`
+  );
 };
 
-const navigateToSubmissionView = (dispatch, tenantId, formId, submissionId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORM}/${formId}/submission/${submissionId}`);
+const navigateToResubmit = (navigate: (path: string) => void, tenantId: string, formId: string, submissionId: string) => {
+  navigateTo(
+    navigate,
+    `${getRoute(tenantId).FORM}/${formId}/submissions/${submissionId}/resubmit`
+  );
+};
+
+const navigateToSubmissionView = (navigate: (path: string) => void, tenantId: string, formId: string, submissionId: string) => {
+  navigateTo(
+    navigate,
+    `${getRoute(tenantId).FORM}/${formId}/submission/${submissionId}`
+  );
 };
 
 /* ---------------------------  Application Routes --------------------------- */
 
-const navigateToApplicationDetail = (dispatch, tenantId, applicationId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).APPLICATION}/${applicationId}`);
+const navigateToApplicationDetail = (navigate: (path: string) => void, tenantId: string, applicationId) => {
+  navigateTo(navigate, `${getRoute(tenantId).APPLICATION}/${applicationId}`);
 };
 
 /* ---------------------------  Draft Routes --------------------------- */
 
-const navigateToDraftDetail = (dispatch, tenantId, draftId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).DRAFT}/${draftId}`);
+const navigateToDraftDetail = (navigate: (path: string) => void, tenantId: string, draftId) => {
+  navigateTo(navigate, `${getRoute(tenantId).DRAFT}/${draftId}`);
 };
 
 /* ---------------------------  Task Routes --------------------------- */
 
-const navigateToTaskListing = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).TASK);
+const navigateToTaskListing = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).TASK);
 };
 
-const navigateToTaskDetail = (dispatch, tenantId, taskId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).TASK}/${taskId}`);
+const navigateToTaskDetail = (navigate: (path: string) => void, tenantId: string, taskId) => {
+  navigateTo(navigate, `${getRoute(tenantId).TASK}/${taskId}`);
 };
 
-const navigateToTaskOldListing = (dispatch, tenantId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).TASK_OLD}/`);
+const navigateToTaskOldListing = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).TASK_OLD}/`);
 };
 
-const navigateToTaskOldDetail = (dispatch, tenantId, taskId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).TASK_OLD}/${taskId}`);
+const navigateToTaskOldDetail = (navigate: (path: string) => void, tenantId: string, taskId) => {
+  navigateTo(navigate, `${getRoute(tenantId).TASK_OLD}/${taskId}`);
 };
 
 /* ---------------------------  Process Creation Routes --------------------------- */
 
-const navigateToSubflowBuild = (dispatch, tenantId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).SUBFLOW}/build`);
+const navigateToSubflowBuild = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).SUBFLOW}/build`);
 };
 
-const navigateToDecisionTableBuild = (dispatch, tenantId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).DECISIONTABLE}/build`);
+const navigateToDecisionTableBuild = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).DECISIONTABLE}/build`);
 };
 
-const navigateToSubflowCreate = (dispatch, tenantId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).SUBFLOW}/create`);
+const navigateToSubflowCreate = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).SUBFLOW}/create`);
 };
 
-const navigateToDecisionTableCreate = (dispatch, tenantId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).DECISIONTABLE}/create`);
+const navigateToDecisionTableCreate = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).DECISIONTABLE}/create`);
 };
 
-const navigateToSubflowEdit = (dispatch, tenantId, processKey) => {
-  navigateTo(dispatch, `${getRoute(tenantId).SUBFLOW}/edit/${processKey}`);
+const navigateToSubflowEdit = (navigate: (path: string) => void, tenantId: string, processKey) => {
+  navigateTo(navigate, `${getRoute(tenantId).SUBFLOW}/edit/${processKey}`);
 };
 
-const navigateToDecisionTableEdit = (dispatch, tenantId, processKey) => {
-  navigateTo(dispatch, `${getRoute(tenantId).DECISIONTABLE}/edit/${processKey}`);
+const navigateToDecisionTableEdit = (navigate: (path: string) => void, tenantId: string, processKey) => {
+  navigateTo(
+    navigate,
+    `${getRoute(tenantId).DECISIONTABLE}/edit/${processKey}`
+  );
 };
 
-const navigateToSubflowListing = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).SUBFLOW);
+const navigateToSubflowListing = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).SUBFLOW);
 };
 
-const navigateToDecisionTableListing = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).DECISIONTABLE);
+const navigateToDecisionTableListing = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).DECISIONTABLE);
 };
 
-const navigateToProcessListing = (dispatch, tenantId, isBPMN) => {
+const navigateToProcessListing = (navigate: (path: string) => void, tenantId: string, isBPMN) => {
   if (isBPMN) {
-    navigateToSubflowListing(dispatch, tenantId);
+    navigateToSubflowListing(navigate, tenantId);
   } else {
-    navigateToDecisionTableListing(dispatch, tenantId);
+    navigateToDecisionTableListing(navigate, tenantId);
   }
 };
 
-const navigateToProcessCreate = (dispatch, tenantId, processRoute) => {
-  navigateTo(dispatch, `${getRoute(tenantId).FORMFLOW.replace('/formflow', '')}${processRoute}/create`);
+const navigateToProcessCreate = (navigate: (path: string) => void, tenantId: string, processRoute) => {
+  navigateTo(
+    navigate,
+    `${getRoute(tenantId).FORMFLOW.replace(
+      "/formflow",
+      ""
+    )}${processRoute}/create`
+  );
 };
 
 const navigateToProcessEditWithParams = (
-  dispatch, tenantId, processRoute, processKey, queryParams = {}
+  navigate: (path: string) => void,
+  tenantId: string,
+  processRoute: string,
+  processKey: string,
+  queryParams = {}
 ) => {
   const params = new URLSearchParams(queryParams).toString();
-  const baseRoute = getRoute(tenantId).FORMFLOW.replace('/formflow', '');
-  const url = params 
+  const baseRoute = getRoute(tenantId).FORMFLOW.replace("/formflow", "");
+  const url = params
     ? `${baseRoute}${processRoute}/edit/${processKey}?${params}`
     : `${baseRoute}${processRoute}/edit/${processKey}`;
-  navigateTo(dispatch, url);
+  navigateTo(navigate, url);
 };
 
-const navigateToProcessRoute = (dispatch, tenantId, processRoute) => {
-  const baseRoute = getRoute(tenantId).FORMFLOW.replace('/formflow', '');
-  navigateTo(dispatch, `${baseRoute}${processRoute}`);
+const navigateToProcessRoute = (navigate: (path: string) => void, tenantId: string, processRoute) => {
+  const baseRoute = getRoute(tenantId).FORMFLOW.replace("/formflow", "");
+  navigateTo(navigate, `${baseRoute}${processRoute}`);
 };
 
-const navigateToImportedProcess = (dispatch, tenantId, baseUrl, processKey) => {
-  const baseRoute = getRoute(tenantId).FORMFLOW.replace('/formflow', '');
-  navigateTo(dispatch, `${baseRoute}${baseUrl}${processKey}`);
+const navigateToImportedProcess = (navigate: (path: string) => void, tenantId: string, baseUrl, processKey) => {
+  const baseRoute = getRoute(tenantId).FORMFLOW.replace("/formflow", "");
+  navigateTo(navigate, `${baseRoute}${baseUrl}${processKey}`);
 };
 
-// ========== NEW FUNCTIONS TO ADD ==========
-
-/**
- * Navigate to process edit page
- * Replaces: dispatch(push(`${redirectUrl}${viewType}/edit/${data.processKey}`))
- * Used in: ProcessTable.js
- */
-const navigateToProcessEdit = (dispatch, tenantId, viewType, processKey) => {
+const navigateToProcessEdit = (navigate: (path: string) => void, tenantId: string, viewType, processKey) => {
   const redirectUrl = getRedirectUrl(tenantId);
-  navigateTo(dispatch, `${redirectUrl}${viewType}/edit/${processKey}`);
+  navigateTo(navigate, `${redirectUrl}${viewType}/edit/${processKey}`);
 };
 
-/**
- * Navigate to template preview/edit page
- * Replaces: dispatch(push(`${redirectUrl}formflow/${mapperData.formId}/view-edit/`))
- * Used in: Preview.js
- */
-const navigateToTemplatePreview = (dispatch, tenantId, formId) => {
+const navigateToTemplatePreview = (navigate: (path: string) => void, tenantId: string, formId: string) => {
   const redirectUrl = getRedirectUrl(tenantId);
-  navigateTo(dispatch, `${redirectUrl}formflow/${formId}/view-edit/`);
+  navigateTo(navigate, `${redirectUrl}formflow/${formId}/view-edit/`);
 };
 
-/**
- * Navigate to submission view (direct path without tenant)
- * Replaces: dispatch(push(`/form/${formId}/submission/${submissionId}`))
- * Used in: View.js (Submission/Item)
- */
-const navigateToSubmissionViewDirect = (dispatch, formId, submissionId) => {
-  navigateTo(dispatch, `/form/${formId}/submission/${submissionId}`);
+const navigateToSubmissionViewDirect = (navigate: (path: string) => void, formId, submissionId) => {
+  navigateTo(navigate, `/form/${formId}/submission/${submissionId}`);
 };
 
 /* ---------------------------  Error Routes --------------------------- */
 
-const navigateToNotFound = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).NOTFOUND);
+const navigateToNotFound = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).NOTFOUND);
 };
 
-const navigateToNotFoundAbsolute = (dispatch) => {
-  navigateTo(dispatch, '/404');
+const navigateToNotFoundAbsolute = (navigate: (path: string) => void) => {
+  navigateTo(navigate, "/404");
 };
 
 /* ---------------------------  EE Specific Routes --------------------------- */
 
-const navigateToDesignBundleCreate = (dispatch, tenantId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).BUNDLEFLOW}/create`);
+const navigateToDesignBundleCreate = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, `${getRoute(tenantId).BUNDLEFLOW}/create`);
 };
 
-const navigateToDesignBundleListing = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).BUNDLEFLOW);
+const navigateToDesignBundleListing = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).BUNDLEFLOW);
 };
 
-const navigateToDesignBundleEdit = (dispatch, tenantId, bundleId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).BUNDLEFLOW}/${bundleId}/edit`);
+const navigateToDesignBundleEdit = (navigate: (path: string) => void, tenantId: string, bundleId) => {
+  navigateTo(navigate, `${getRoute(tenantId).BUNDLEFLOW}/${bundleId}/edit`);
 };
 
-const navigateToDesignBundleViewEdit = (dispatch, tenantId, bundleId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).BUNDLEFLOW}/${bundleId}/view-edit`);
+const navigateToDesignBundleViewEdit = (navigate: (path: string) => void, tenantId: string, bundleId) => {
+  navigateTo(
+    navigate,
+    `${getRoute(tenantId).BUNDLEFLOW}/${bundleId}/view-edit`
+  );
 };
 
-const navigateToDesignBundlePath = (dispatch, tenantId, bundleId, path) => {
-  navigateTo(dispatch, `${getRoute(tenantId).BUNDLEFLOW}/${bundleId}/${path}`);
+const navigateToDesignBundlePath = (navigate: (path: string) => void, tenantId: string, bundleId, path) => {
+  navigateTo(navigate, `${getRoute(tenantId).BUNDLEFLOW}/${bundleId}/${path}`);
 };
 
-const navigateToBundleEntries = (dispatch, tenantId, bundleId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).BUNDLE}/${bundleId}/entries`);
+const navigateToBundleEntries = (navigate: (path: string) => void, tenantId: string, bundleId) => {
+  navigateTo(navigate, `${getRoute(tenantId).BUNDLE}/${bundleId}/entries`);
 };
 
-const navigateToNewBundleSubmission = (dispatch, tenantId, bundleId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).BUNDLE}/${bundleId}`);
+const navigateToNewBundleSubmission = (navigate: (path: string) => void, tenantId: string, bundleId) => {
+  navigateTo(navigate, `${getRoute(tenantId).BUNDLE}/${bundleId}`);
 };
 
 const navigateToViewBundleSubmission = (
-  dispatch,
+  navigate: (path: string) => void,
   tenantId,
   bundleId,
   submissionId,
@@ -278,59 +284,54 @@ const navigateToViewBundleSubmission = (
     getRoute(tenantId).BUNDLE
   }/${bundleId}/submission/${submissionId}`;
   const url = fromBundleEntries ? `${baseUrl}?from=bundleEntries` : baseUrl;
-  navigateTo(dispatch, url);
+  navigateTo(navigate, url);
 };
 
-const navigateToViewBundleReSubmission = (dispatch, tenantId, bundleId, submissionId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).BUNDLE}/${bundleId}/submission/${submissionId}/edit`);
+const navigateToViewBundleReSubmission = (
+  navigate: (path: string) => void,
+  tenantId,
+  bundleId,
+  submissionId
+) => {
+  navigateTo(
+    navigate,
+    `${getRoute(tenantId).BUNDLE}/${bundleId}/submission/${submissionId}/edit`
+  );
 };
 
 /* ---------------------------  Multi-tenant Routes --------------------------- */
 
-const navigateToTenant = (dispatch, username) => {
-  navigateTo(dispatch, `/tenant/${username}`);
+const navigateToTenant = (navigate: (path: string) => void, username) => {
+  navigateTo(navigate, `/tenant/${username}`);
 };
 
 /* ---------------------------  Generic/Custom Route --------------------------- */
 
-const navigateToPath = (dispatch, path) => {
-  navigateTo(dispatch, path);
+const navigateToPath = (navigate: (path: string) => void, path) => {
+  navigateTo(navigate, path);
 };
 
 /* ---------------------------  Review/Task Routes --------------------------- */
 
-/**
- * Navigate to task listing (for review microfrontend)
- * Replaces: dispatch(push(`${redirectUrl}task`)) or history.push(`${redirectUrl}task`)
- */
-const navigateToTaskListingFromReview = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).TASK);
+const navigateToTaskListingFromReview = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).TASK);
 };
 
-/**
- * Navigate to task listing using history (for review microfrontend)
- * Replaces: history.push(`${redirectUrl}task`)
- */
-const navigateToTaskListingFromReviewWithHistory = (history, tenantId) => {
-  navigateWithHistory(history, getRoute(tenantId).TASK);
+const navigateToTaskListingFromReviewWithHistory = (navigate: (path: string) => void, tenantId: string) => {
+  navigateWithHistory(navigate, getRoute(tenantId).TASK);
 };
 
 /* ---------------------------  Submissions Routes --------------------------- */
 
-/**
- * Navigate to submissions listing
- * Replaces: dispatch(push(`${redirectUrl}submissions`))
- */
-const navigateToSubmissionsListing = (dispatch, tenantId) => {
-  navigateTo(dispatch, getRoute(tenantId).ANALYZESUBMISSIONS);
+const navigateToSubmissionsListing = (navigate: (path: string) => void, tenantId: string) => {
+  navigateTo(navigate, getRoute(tenantId).ANALYZESUBMISSIONS);
 };
 
-/**
- * Navigate to submission detail view
- * Replaces: dispatch(push(`${redirectUrl}submissions/${submissionId}`))
- */
-const navigateToSubmissionDetail = (dispatch, tenantId, submissionId) => {
-  navigateTo(dispatch, `${getRoute(tenantId).ANALYZESUBMISSIONS}/${submissionId}`);
+const navigateToSubmissionDetail = (navigate: (path: string) => void, tenantId: string, submissionId) => {
+  navigateTo(
+    navigate,
+    `${getRoute(tenantId).ANALYZESUBMISSIONS}/${submissionId}`
+  );
 };
 
 /* ---------------------------  Admin Routes --------------------------- */
@@ -398,7 +399,10 @@ const navigateToIntegrationRecipes = (history, tenantId) => {
  * Replaces: history.push(`${baseUrl}integration/connected-apps`)
  */
 const navigateToIntegrationConnectedApps = (history, tenantId) => {
-  navigateWithHistory(history, `${getRoute(tenantId).INTEGRETIONS.replace('/recipes', '/connected-apps')}`);
+  navigateWithHistory(
+    history,
+    `${getRoute(tenantId).INTEGRETIONS.replace("/recipes", "/connected-apps")}`
+  );
 };
 
 /**
@@ -406,7 +410,10 @@ const navigateToIntegrationConnectedApps = (history, tenantId) => {
  * Replaces: history.push(`${baseUrl}integration/library`)
  */
 const navigateToIntegrationLibrary = (history, tenantId) => {
-  navigateWithHistory(history, `${getRoute(tenantId).INTEGRETIONS.replace('/recipes', '/library')}`);
+  navigateWithHistory(
+    history,
+    `${getRoute(tenantId).INTEGRETIONS.replace("/recipes", "/library")}`
+  );
 };
 
 /* ---------------------------  Navigation Routes --------------------------- */
@@ -429,7 +436,7 @@ export {
   navigateToDesignFormEdit,
   navigateToDesignFormEditWithParams,
   navigateToDesignFormPath,
-  
+
   // Client Submission Routes
   navigateToSubmitFormsApplication,
   navigateToSubmitFormsDraft,
@@ -440,19 +447,19 @@ export {
   navigateToViewSubmission,
   navigateToResubmit,
   navigateToSubmissionView,
-  
+
   // Application Routes
   navigateToApplicationDetail,
-  
+
   // Draft Routes
   navigateToDraftDetail,
-  
+
   // Task Routes
   navigateToTaskListing,
   navigateToTaskDetail,
   navigateToTaskOldListing,
   navigateToTaskOldDetail,
-  
+
   // Process Routes
   navigateToSubflowBuild,
   navigateToDecisionTableBuild,
@@ -468,11 +475,11 @@ export {
   navigateToProcessRoute,
   navigateToImportedProcess,
   navigateToProcessEdit, // NEW
-  
+
   // Error Routes
   navigateToNotFound,
   navigateToNotFoundAbsolute,
-  
+
   // EE Specific Routes
   navigateToDesignBundleCreate,
   navigateToDesignBundleListing,
@@ -483,21 +490,21 @@ export {
   navigateToBundleEntries,
   navigateToViewBundleSubmission,
   navigateToViewBundleReSubmission,
-  
+
   // Multi-tenant Routes
   navigateToTenant,
-  
+
   // Generic
   navigateToPath,
-  
+
   // Review/Task Routes
   navigateToTaskListingFromReview,
   navigateToTaskListingFromReviewWithHistory,
-  
+
   // Submissions Routes
   navigateToSubmissionsListing,
   navigateToSubmissionDetail,
-  
+
   // Admin Routes
   navigateToAdminRoles,
   navigateToAdminUsers,
@@ -510,10 +517,10 @@ export {
   navigateToIntegrationRecipes,
   navigateToIntegrationConnectedApps,
   navigateToIntegrationLibrary,
-  
+
   // Navigation Routes
   navigateToBaseUrl,
-  
+
   // NEW EXPORTS
   navigateWithHistory,
   syncRouterPath,

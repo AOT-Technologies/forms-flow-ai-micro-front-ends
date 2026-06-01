@@ -21,10 +21,6 @@ module.exports = (webpackConfigEnv, argv) => {
     },  
     externals: ["@formsflow/*", "react", "react-dom"],
     resolve: {
-      alias: {
-        // Fix MUI / React 17 JSX runtime
-        "react/jsx-runtime": require.resolve("react/jsx-runtime.js"),
-      },
       extensions: [".tsx", ".ts", ".js", ".jsx"],
     }
   });

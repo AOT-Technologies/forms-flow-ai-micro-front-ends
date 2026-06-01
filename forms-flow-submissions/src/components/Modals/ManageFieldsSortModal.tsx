@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import { Modal } from "react-bootstrap";
 import { CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, V8CustomButton, VariableSelection } from "@formsflow/components"; 
 import { useTranslation } from "react-i18next";
@@ -63,7 +64,7 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
   setSavedFormVariables,
   isFormFetched }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const darkColor = StyleServices.getCSSVariable('--ff-gray-darkest');
   const [activeTab, setActiveTab] = useState("fields");
  const selectedSubmissionFilter = useSelector((state: any) => state?.analyzeSubmission?.selectedFilter);
