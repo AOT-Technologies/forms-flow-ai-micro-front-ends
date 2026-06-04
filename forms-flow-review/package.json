@@ -72,8 +72,8 @@
     "lodash": "^4.17.21",
     "react-bootstrap": "^2.10.6",
     "redux-logger": "^3.0.6",
-    "single-spa": "^5.9.3",
-    "single-spa-react": "^5.1.4",
+    "single-spa": "^6.0.3",
+    "single-spa-react": "^6.0.2",
     "sockjs-client": "^1.6.1"
   },
   "peerDependencies": {

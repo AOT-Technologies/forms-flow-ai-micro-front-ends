@@ -52,7 +52,7 @@
     "i18next": "^23.2.11",
     "keycloak-js": "^26.2.1",
     "moment": "^2.29.4",
-    "single-spa": "^5.9.3"
+    "single-spa": "^6.0.3"
   },
   "types": "dist/formsflow-services.d.ts"
 }

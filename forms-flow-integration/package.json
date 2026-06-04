@@ -63,8 +63,8 @@
     "react-i18next": "^12.1.4",
     "react-router-dom": "^6.28.0",
     "react-toastify": "^9.1.1",
-    "single-spa": "^5.9.3",
-    "single-spa-react": "^5.1.4"
+    "single-spa": "^6.0.3",
+    "single-spa-react": "^6.0.2"
   },
   "types": "dist/formsflow-integration.d.ts"
 }
