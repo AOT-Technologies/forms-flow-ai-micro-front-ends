@@ -78,11 +78,13 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   const emptyStateOverlay = useMemo(() => {
     if (emptyStateMessage || emptyStateAction) {
       return () => (
+      <div className="d-flex align-items-center justify-content-center h-100">
         <EmptyState
           message={emptyStateMessage || noRowsLabel || "No data available"}
           action={emptyStateAction}
           dataTestId="reusable-table-empty-state"
         />
+      </div>
       );
     }
     return undefined;
