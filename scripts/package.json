@@ -10,7 +10,7 @@
   "author": "sreehari ps",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.256.0",
+    "@aws-sdk/client-s3": "^3.1062.0",
     "dotenv": "^16.0.3",
     "@root/walk": "^1.1.0"
   }

@@ -35,8 +35,8 @@
     "eslint-config-ts-react-important-stuff": "^3.0.0",
     "eslint-plugin-prettier": "^3.4.1",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^27.0.6",
-    "jest-cli": "^27.0.6",
+    "jest": "^30.4.2",
+    "jest-cli": "^30.4.2",
     "prettier": "^2.3.2",
     "pretty-quick": "^3.1.1",
     "react": "^17.0.2",
@@ -53,7 +53,7 @@
     "webpack-config-single-spa-react": "^4.0.0",
     "webpack-config-single-spa-react-ts": "^4.0.0",
     "webpack-config-single-spa-ts": "^4.0.0",
-    "webpack-dev-server": "^4.0.0",
+    "webpack-dev-server": "^5.2.4",
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
@@ -64,7 +64,7 @@
     "@types/react-dom": "^17.0.9",
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
-    "axios": "^1.8.4",
+    "axios": "^1.16.0",
     "connected-react-router": "^6.9.3",
     "crypto-js": "^4.2.0",
     "history": "^4.7.2",
