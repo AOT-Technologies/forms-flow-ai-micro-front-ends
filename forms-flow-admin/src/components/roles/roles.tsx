@@ -11,7 +11,6 @@ import {
   UpdateRole,
   fetchPermissions,
 } from "../../services/roles";
-import Modal from "react-bootstrap/Modal";
 import Loading from "../loading";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -21,15 +20,16 @@ import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
 import {removingTenantId} from "../../utils/utils.js";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { TableFooter,
-   CustomSearch, 
-   CloseIcon, 
+import { AppModal,
+   TableFooter,
+   CustomSearch,
+   CloseIcon,
    CopyIcon,
-   CustomTabs, 
-   FormInput, 
+   CustomTabs,
+   FormInput,
    FormTextArea,
    DeleteIcon,
-   CustomInfo, 
+   CustomInfo,
   ConfirmModal,
   V8CustomButton,
 }
@@ -465,14 +465,14 @@ const Roles = React.memo((props: any) => {
     
   const showCreateModal = () => (
     <div data-testid="create-role-modal">
-      <Modal show={showRoleModal} onHide={handleCloseRoleModal} size="lg">
-        <Modal.Header>
-          <Modal.Title><p>{t("Create Role")}</p></Modal.Title>
+      <AppModal show={showRoleModal} onHide={handleCloseRoleModal} size="lg">
+        <AppModal.Header>
+          <AppModal.Title><p>{t("Create Role")}</p></AppModal.Title>
           <div className="icon-close" onClick={handleCloseRoleModal} data-testid="role-modal-close">
             <CloseIcon dataTestId="action-modal-close"/>
           </div>
-        </Modal.Header>
-        <Modal.Body className="with-tabs">
+        </AppModal.Header>
+        <AppModal.Body className="with-tabs">
           <div className="tabs">
             <CustomTabs
               defaultActiveKey={key}
@@ -482,8 +482,8 @@ const Roles = React.memo((props: any) => {
               ariaLabel="Create roles tabs"
             />
           </div>
-        </Modal.Body>
-        <Modal.Footer>
+        </AppModal.Body>
+        <AppModal.Footer>
           <div className="buttons-row">
           <V8CustomButton
             label={t("Save Changes")}
@@ -500,25 +500,25 @@ const Roles = React.memo((props: any) => {
             secondary
           />
           </div>
-        </Modal.Footer>
-      </Modal>
+        </AppModal.Footer>
+      </AppModal>
     </div>
   );
   const showEditModal = () => (
     <div data-testid="edit-role-modal">
-      <Modal
+      <AppModal
         show={showEditRoleModal}
         onHide={handleCloseEditRoleModal}
         size="lg"
         restoreFocus={false}
       >
-        <Modal.Header>
-          <Modal.Title><p>{editCandidate.name}</p></Modal.Title>
+        <AppModal.Header>
+          <AppModal.Title><p>{editCandidate.name}</p></AppModal.Title>
           <div className="icon-close" onClick={handleCloseEditRoleModal} data-testid="role-modal-close">
             <CloseIcon/>
           </div>
-        </Modal.Header>
-        <Modal.Body className="with-tabs">
+        </AppModal.Header>
+        <AppModal.Body className="with-tabs">
           <div className="tabs">
             <CustomTabs
               defaultActiveKey={key}
@@ -528,8 +528,8 @@ const Roles = React.memo((props: any) => {
               ariaLabel="Edit roles tabs"
             />
           </div>
-        </Modal.Body>
-        <Modal.Footer>
+        </AppModal.Body>
+        <AppModal.Footer>
           <div className="buttons-row">
           <V8CustomButton
             label={t("Save Changes")}
@@ -546,8 +546,8 @@ const Roles = React.memo((props: any) => {
             secondary
           />
           </div>
-        </Modal.Footer>
-      </Modal>
+        </AppModal.Footer>
+      </AppModal>
       </div>
 
   );

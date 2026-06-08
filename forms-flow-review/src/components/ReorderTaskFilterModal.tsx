@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Modal from "react-bootstrap/Modal";
 import { UserDetail } from "../types/taskFilter.js";
 import {
+  AppModal,
   CloseIcon,
   DragandDropSort,
-  V8CustomButton
-
+  V8CustomButton,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { fetchBPMTaskCount,fetchFilterList, saveFilterPreference, updateDefaultFilter } from "../api/services/filterServices";
@@ -138,26 +137,26 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       }, [myFilterList, sharedFilterList, updateFilterList]);
 
       return (
-        <Modal
+        <AppModal
           show={showModal}
           centered
           size="lg"
           dialogClassName="drag-drop-container"
         >
-          <Modal.Header>
+          <AppModal.Header>
            <div className="modal-header-content">
-           <Modal.Title> {t("Re-order And Hide Filters")}
+           <AppModal.Title> {t("Re-order And Hide Filters")}
             <div onClick={onClose} >
               <CloseIcon color={darkColor}/>
             </div>
-               </Modal.Title>
+               </AppModal.Title>
             
             <div className="modal-subtitle">
             Toggle the visibility of filters and order them 
             </div>
            </div>
-          </Modal.Header>
-          <Modal.Body>
+          </AppModal.Header>
+          <AppModal.Body>
             <div className="filter-section mb-3">
               <DragandDropSort
                 items={myFilterList}
@@ -176,8 +175,8 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
                 subHeading={t("Both you and others can see these")}
               />
             </div>
-          </Modal.Body>
-          <Modal.Footer>
+          </AppModal.Body>
+          <AppModal.Footer>
               <V8CustomButton
                 label={t("Discard changes")}
                 variant="secondary"
@@ -195,8 +194,8 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
                 disabled={isSaveBtnDisabled}
               />
 
-          </Modal.Footer>
-        </Modal>
+          </AppModal.Footer>
+        </AppModal>
       );
     }
   );

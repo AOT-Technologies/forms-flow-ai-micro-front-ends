@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Modal from "react-bootstrap/Modal";
 import { UserDetail } from "../types/taskFilter.js";
 import {
+  AppModal,
   CloseIcon,
   V8CustomButton,
   DragandDropSort,
@@ -163,34 +163,34 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
       }, [sortedAttributeFilterList, updateAttributeFilterList]);
 
       return (
-        <Modal
+        <AppModal
           show={showAttributeModal}
           centered
           size="lg"
           dialogClassName="drag-drop-container"
         >
-          <Modal.Header>
+          <AppModal.Header>
             <div className="modal-header-content">
-              <Modal.Title>
+              <AppModal.Title>
                 {" "}
                 {t("Re-order And Hide Filters")}
                 <div onClick={onClose}>
                   <CloseIcon color={darkColor} />
                 </div>
-              </Modal.Title>
+              </AppModal.Title>
               <div className="modal-subtitle">
                 Toggle the visibility of filters and order them
               </div>
             </div>
-          </Modal.Header>
-          <Modal.Body>
+          </AppModal.Header>
+          <AppModal.Body>
             <DragandDropSort
               items={updateAttributeFilterList}
               onUpdate={onUpdateFilterOrder}
               preventLastCheck={true}
             />
-          </Modal.Body>
-          <Modal.Footer>
+          </AppModal.Body>
+          <AppModal.Footer>
               <V8CustomButton
                 label={t("Discard changes")}
                 onClick={handleDiscardChanges}
@@ -207,8 +207,8 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
                 disabled={isSaveBtnDisabled}
                 variant="primary"
               />
-          </Modal.Footer>
-        </Modal>
+          </AppModal.Footer>
+        </AppModal>
       );
     }
   );

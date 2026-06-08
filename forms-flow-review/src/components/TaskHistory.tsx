@@ -1,13 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 
-import Modal from "react-bootstrap/Modal";
-import { CloseIcon } from "@formsflow/components";
+import { AppModal, CloseIcon, CustomButton } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { HelperServices } from "@formsflow/service";
 import { getFormUrl } from "../api/services/formatterService";
 import { MULTITENANCY_ENABLED } from "../constants/index";
-import { CustomButton } from "@formsflow/components";
 
 interface TaskHistoryModalProps {
   show: boolean;
@@ -85,7 +83,7 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
     };
 
     return (
-      <Modal
+      <AppModal
         show={show}
         onHide={onClose}
         dialogClassName="modal-sm"
@@ -93,20 +91,20 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
         aria-labelledby="form-history-modal-title"
         aria-describedby="form-history-modal-message"
       >
-        <Modal.Header data-testid="form-history-modal-header">
-          <Modal.Title
+        <AppModal.Header data-testid="form-history-modal-header">
+          <AppModal.Title
             id="form-history-modal-title"
             data-testid="form-history-modal-title"
             aria-label="Form history modal title"
           >
             <p>{t("History")}</p>
-          </Modal.Title>
+          </AppModal.Title>
 
           <div className="icon-close" onClick={onClose}>
             <CloseIcon data-testid="close-icon" aria-label="Close form-history-modal" />
           </div>
-        </Modal.Header>
-        <Modal.Body
+        </AppModal.Header>
+        <AppModal.Body
           className="history-modal-body"
           data-testid="form-history-modal-body"
           aria-label="Form history modal body"
@@ -191,8 +189,8 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
               {t("No submission history found")}
             </div>
           )}
-        </Modal.Body>
-      </Modal>
+        </AppModal.Body>
+      </AppModal>
     );
   }
 );
