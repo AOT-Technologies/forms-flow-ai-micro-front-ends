@@ -35,6 +35,17 @@ export const fetchUserList = (...rest) => {
   };
 };
 
+export const fetchUsersByMemberOfGroup = (memberOfGroup: string) => {
+  const params = new URLSearchParams({
+    role: "false",
+    count: "false",
+    memberOfGroup,
+  });
+  return RequestService.httpGETRequest(
+    `${API.GET_API_USER_LIST}?${params.toString()}`
+  );
+};
+
 export const getUserRoles = () => {
   const url = API.USER_ROLES;
   return RequestService.httpGETRequest(url);

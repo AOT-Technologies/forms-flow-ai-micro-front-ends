@@ -85,5 +85,6 @@ declare module "@formsflow/components" {
     BreadCrumbs,
     DownArrowIcon,
     UpArrowIcon,
+    AppModal
   }: any;
 }

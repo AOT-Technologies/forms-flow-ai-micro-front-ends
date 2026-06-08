@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useMemo, forwardRef } from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { V8CustomButton } from "./CustomButton";
 import { useTranslation } from "react-i18next";
 
@@ -112,7 +112,7 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
   const translatedTitle = useMemo(() => t(title), [t, title]);
   
   return (
-    <Modal
+    <AppModal
       ref={ref}
       show={show}
       onHide={onClose}
@@ -124,7 +124,7 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
       centered
       {...restProps}
     >
-      <Modal.Body className="prompt-modal-body">
+      <AppModal.Body className="prompt-modal-body">
         <div
           className="prompt-modal-title-container d-flex flex-column"
           id="prompt-modal-title"
@@ -146,8 +146,8 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
             {message}
           </div>
         )}
-      </Modal.Body>
-      <Modal.Footer>
+      </AppModal.Body>
+      <AppModal.Footer>
         <div className="buttons-row">
           {secondaryBtnText && (
             <V8CustomButton
@@ -183,8 +183,8 @@ const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
             />
           )}
         </div>
-      </Modal.Footer>
-    </Modal>
+      </AppModal.Footer>
+    </AppModal>
   );
 });
 
