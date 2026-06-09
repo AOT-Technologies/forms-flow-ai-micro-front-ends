@@ -1,0 +1,92 @@
+$stepper-circle-size: 1.5rem;
+$stepper-circle-top-offset: 0.25rem;
+$stepper-track-height: 0.5rem;
+$stepper-track-radius: 0.25rem;
+$stepper-track-top: 0.75rem;
+$stepper-label-margin-top: 0.8125rem;
+
+$stepper-label-font-size: 0.8125rem;
+$stepper-label-font-weight: var(--font-weight-medium);
+
+$stepper-active-color: #5467fc;
+$stepper-active-track-color: #8d9afd;
+$stepper-inactive-circle-color: var(--gray-medium);
+$stepper-bg-track-color: var(--gray-xx-light);
+$stepper-active-label-color: var(--gray-darkest);
+$stepper-inactive-label-color: #636365;
+
+
+.bundle-stepper {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+
+  .bundle-stepper__track {
+    position: absolute;
+    top: $stepper-track-top;
+    height: $stepper-track-height;
+    border-radius: $stepper-track-radius;
+
+    &--bg {
+      left: var(--stepper-track-edge);
+      right: var(--stepper-track-edge);
+      background: $stepper-bg-track-color;
+    }
+
+    &--active {
+      left: var(--stepper-track-edge);
+      width: var(--stepper-active-width);
+      background: $stepper-active-track-color;
+    }
+  }
+
+  .bundle-stepper__step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+  }
+
+  .bundle-stepper__circle {
+    width: $stepper-circle-size;
+    height: $stepper-circle-size;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: $stepper-inactive-circle-color;
+    border: 2px solid $stepper-inactive-circle-color;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: $stepper-circle-top-offset;
+  }
+
+  .bundle-stepper__step--done .bundle-stepper__circle {
+    background: $stepper-active-color;
+    border-color: $stepper-active-color;
+  }
+
+  .bundle-stepper__check {
+    display: block;
+  }
+
+  .bundle-stepper__label {
+    font-size: $stepper-label-font-size;
+    font-weight: $stepper-label-font-weight;
+    margin-top: $stepper-label-margin-top;
+    white-space: nowrap;
+    color: $stepper-inactive-label-color;
+  }
+
+  .bundle-stepper__step--done .bundle-stepper__label {
+    color: $stepper-active-label-color;
+  }
+}
+
+.bundle-progress-stepper {
+  padding-top: 36px;
+  padding-bottom: 20px;
+  background-color: #FCFCFC;
+  margin-top: 10px;
+}
