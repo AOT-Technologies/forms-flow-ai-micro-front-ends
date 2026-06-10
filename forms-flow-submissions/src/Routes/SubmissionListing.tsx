@@ -14,6 +14,7 @@ import {
   createOrUpdateSubmissionFilter,
   updateDefaultSubmissionFilter,
   fetchFormById,
+  fetchFormVariables,
 } from "../api/queryServices/analyzeSubmissionServices";
 import { optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
@@ -42,7 +43,8 @@ import {
   CustomSearch,
   FilterDropDown,
   AddIcon,
-  BreadCrumbs
+  BreadCrumbs,
+  bundleIcon as BundleIcon,
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "@formsflow/service";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -110,6 +112,14 @@ const AnalyzeSubmissionList: React.FC = () => {
     totalCount: 0,
   });
   const [isSubmissionsLoading, setIsSubmissionsLoading] = useState(false);
+  const [selectedFormType, setSelectedFormType] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!dropdownSelection) { setSelectedFormType(null); return; }
+    fetchFormVariables(dropdownSelection)
+      .then((res: any) => setSelectedFormType(res.data?.formType ?? null))
+      .catch(() => setSelectedFormType(null));
+  }, [dropdownSelection]);
 
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
@@ -710,13 +720,22 @@ const fetchSubmissions = useCallback(async () => {
     ];
   }, [columns, t, getCellValue]);
 
+  const formTypeByName = useMemo(() => {
+    const map: Record<string, string> = {};
+    (formData as any[]).forEach((f: any) => {
+      if (f.formName && f.formType) map[f.formName] = f.formType;
+    });
+    return map;
+  }, [formData]);
+
   // Memoized rows with proper IDs
   const memoizedRows = useMemo(() => {
     return (submissions || []).map((item, index) => ({
       ...item,
       id: item.id || (item as any)._id || `row-${index}`,
+      formType: selectedFormType ?? formTypeByName[item.formName] ?? undefined,
     }));
-  }, [submissions]);
+  }, [submissions, selectedFormType, formTypeByName]);
 
   // Ensure form data is available while manage fields modal is open
   useEffect(() => {
@@ -794,8 +813,7 @@ const fetchSubmissions = useCallback(async () => {
 
     // Action: Add additional fields + (only when a form is selected, disabled for bundle forms)
     if (dropdownSelection) {
-      const selectedFormObj = (formData as any[])?.find((f: any) => f.parentFormId === dropdownSelection);
-      const isBundle = selectedFormObj?.formType === "bundle";
+      const isBundle = selectedFormType === "bundle";
       items.push({
         content: (
           <div className="d-flex align-items-center justify-content-between">
@@ -914,6 +932,7 @@ const fetchSubmissions = useCallback(async () => {
               ...(formData || []).map((f: any) => ({
                 label: f?.formName ?? "",
                 value: f?.parentFormId ?? "",
+                ...(f?.formType === "bundle" && { listIcon: <BundleIcon /> }),
               })),
             ];
             const currentValue = dropdownSelection ?? "";
@@ -1008,6 +1027,8 @@ const fetchSubmissions = useCallback(async () => {
             rows={memoizedRows}
             rowCount={totalCount}
             loading={isSubmissionsLoading}
+            showBundleIcon={true}
+            formNameField="form_name"
             disableColumnResize={false}
             paginationMode="server"
             sortingMode="server"

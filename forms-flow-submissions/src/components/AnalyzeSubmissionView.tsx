@@ -326,7 +326,7 @@ const ViewApplication = React.memo(() => {
   const tabConfig = useMemo(() => {
     const tabs = [
       {
-        label: t("Form"),
+        label: t(formType === "bundle" ? "Bundle" : "Form"),
         id: "form",
       },
       {
@@ -338,7 +338,7 @@ const ViewApplication = React.memo(() => {
         id: "history",
       }
     ];
-    
+
     // Filter out Flow tab if processType is not BPMN
     return tabs.filter(tab => {
       if (tab.id === "flow") {
@@ -346,7 +346,7 @@ const ViewApplication = React.memo(() => {
       }
       return true;
     });
-  }, [t, processType]);
+  }, [t, processType, formType]);
 
   if (isApplicationDetailLoading) {
     return <Loading />;
