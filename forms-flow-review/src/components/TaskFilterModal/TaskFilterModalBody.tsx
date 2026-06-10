@@ -347,7 +347,10 @@ const TaskFilterModalBody = ({
     if (showTaskFilterMainModal) {
       fetchAllForms()
         .then((res) => {
-          const data = res.data?.forms ?? [];
+          const allForms = res.data?.forms ?? [];
+          const data = selectedFilter?.name === "All Tasks"
+            ? allForms
+            : allForms.filter((f: any) => f.formType === "form");
           setForms(data);
         })
         .catch((err) => {

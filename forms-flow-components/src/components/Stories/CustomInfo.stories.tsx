@@ -21,7 +21,7 @@ const meta: Meta<typeof CustomInfo> = {
     },
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'error', 'warning'],
+      options: ['primary', 'secondary', 'error', 'warning', 'plain'],
       description: 'Visual variant of the info panel'
     },
     className: {

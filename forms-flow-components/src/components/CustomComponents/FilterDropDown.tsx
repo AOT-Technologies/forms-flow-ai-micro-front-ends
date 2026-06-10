@@ -24,6 +24,8 @@ export interface FilterItemType {
   category?: string;
   /** Called when edit icon is clicked for an item (my/shared) */
   onEdit?: () => void;
+  /** Whether this item is disabled */
+  disabled?: boolean;
 }
 
 /**
@@ -229,6 +231,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                   }}
                   data-testid={item.dataTestId}
                   aria-label={item.ariaLabel}
+                  disabled={item.disabled}
                   className={buildClassNames(
                     "filter-dropdown-item",
                     item.className

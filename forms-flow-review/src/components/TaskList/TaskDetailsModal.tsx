@@ -86,6 +86,7 @@ const TaskDetailsModal = ({
 }: TaskDetailsModalProps) => {
   const { t } = useTranslation();
   const [notesText, setNotesText] = useState("");
+  const [publicNotesText, setPublicNotesText] = useState("");
   const [currentStatusValue, setCurrentStatusValue] = useState<string>("Pending");
   const task = useSelector((state: any) => state.task.taskDetail);
   const submission = useSelector((state: any) => state.submission);
@@ -107,7 +108,7 @@ const TaskDetailsModal = ({
         field: "created",
         headerName: t("Created On"),
         flex: 2,
-        renderCell: (params: any) => HelperServices.getLocaldate(params.value),
+        renderCell: (params: any) => <span>{HelperServices.getShortDateAndTime(params.value)}</span>,
         sortable: false,
       },
       {
@@ -216,6 +217,7 @@ const TaskDetailsModal = ({
         formUrl: formUrl,
         submittedBy: submittedBy,
         privateNotes: notesText || null,
+        publicNotes: publicNotesText || null,
       },
     };
     dispatch(
@@ -284,25 +286,42 @@ const TaskDetailsModal = ({
   );
 
   const renderNotesContent = () => (
-    <div className="p-3">
-      <h5 className="mb-4">{taskDetail && `${taskDetail.name}`}</h5>
-      <div className="mb-3">
-        <div className="notes-label mb-2">Notes</div>
+    <div className="d-flex flex-column gap-3 p-3">
+      <h5 className="task-details-title">{taskDetail?.name}</h5>
+      <div className="d-flex flex-column gap-2">
+        <div className="task-notes-label">{t("Public Notes")}</div>
+        <CustomTextArea
+          value={publicNotesText}
+          setValue={setPublicNotesText}
+          dataTestId="task-public-notes-textarea"
+          disabled={disabledMode}
+          ariaLabel="Public notes"
+          rows={5}
+          className="text-area-full-width"
+        />
+        <CustomInfo
+          content={t("Notes will be visible to all users with access to the workflow including the applicant.")}
+          variant="plain"
+          dataTestId="public-notes-info-message"
+        />
+      </div>
+      <div className="d-flex flex-column gap-2">
+        <div className="task-notes-label">{t("Internal Notes")}</div>
         <CustomTextArea
           value={notesText}
           setValue={setNotesText}
           dataTestId="task-notes-textarea"
           disabled={disabledMode}
-          ariaLabel="Task notes"
-          rows={6}
+          ariaLabel="Internal notes"
+          rows={5}
           className="text-area-full-width"
         />
+        <CustomInfo
+          content={t("These notes will be visible to internal users only.")}
+          variant="plain"
+          dataTestId="notes-info-message"
+        />
       </div>
-      <CustomInfo
-        content="These notes will be visible to internal users only."
-        variant="secondary"
-        dataTestId="notes-info-message"
-      />
     </div>
   );
 

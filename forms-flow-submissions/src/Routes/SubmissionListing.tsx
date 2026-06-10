@@ -792,8 +792,10 @@ const fetchSubmissions = useCallback(async () => {
       category: "none",
     };
 
-    // Action: Add additional fields + (only when a form is selected)
+    // Action: Add additional fields + (only when a form is selected, disabled for bundle forms)
     if (dropdownSelection) {
+      const selectedFormObj = (formData as any[])?.find((f: any) => f.parentFormId === dropdownSelection);
+      const isBundle = selectedFormObj?.formType === "bundle";
       items.push({
         content: (
           <div className="d-flex align-items-center justify-content-between">
@@ -801,12 +803,13 @@ const fetchSubmissions = useCallback(async () => {
           </div>
         ),
         onClick: () => {
-          handleManageFieldsOpen();
+          if (!isBundle) handleManageFieldsOpen();
         },
         type: "add-fields",
         dataTestId: "add-additional-fields",
         ariaLabel: t("Add additional fields"),
         category: "action",
+        disabled: isBundle,
       });
     }
 
@@ -884,6 +887,7 @@ const fetchSubmissions = useCallback(async () => {
     selectedSearchFieldKey,
     searchFieldFilterTerm,
     dropdownSelection,
+    formData,
   ]);
   return (
    <>
