@@ -88,7 +88,7 @@ const MenuComponent = ({
     if (noOptionsMenu && subMenu?.length > 0) {
       navigate(`${baseUrl}${subMenu[0].path}`);
     }
-  }, [noOptionsMenu, subMenu, baseUrl, history]);
+  }, [noOptionsMenu, subMenu, baseUrl, navigate]);
 
   /**
    * Gets the appropriate icon color based on (main menu or submenu) active state

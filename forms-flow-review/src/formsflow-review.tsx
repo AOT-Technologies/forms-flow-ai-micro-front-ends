@@ -9,7 +9,7 @@ Formio.setProjectUrl(AppConfig.projectUrl);
 Formio.setBaseUrl(AppConfig.apiUrl);
 const lifecycles = singleSpaReact({
   React,
-  ReactDOM: ReactDOM as any,
+  ReactDOMClient: ReactDOM,
   rootComponent: Root,
   errorBoundary(err, info, props) {
     // Customize the root error boundary for your microfrontend here.

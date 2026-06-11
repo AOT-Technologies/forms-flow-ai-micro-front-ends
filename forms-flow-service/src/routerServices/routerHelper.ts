@@ -8,6 +8,7 @@ const navigateTo = (navigate: (path: string) => void, baseUrl: string) => {
   navigate(baseUrl);
 };
 
+/** @param navigate - React Router v6 navigate function from useNavigate(), NOT a v5 history object */
 const navigateWithHistory = (navigate: (path: string) => void, url: string) => {
   navigate(url);
 };
@@ -336,44 +337,24 @@ const navigateToSubmissionDetail = (navigate: (path: string) => void, tenantId: 
 
 /* ---------------------------  Admin Routes --------------------------- */
 
-/**
- * Navigate to admin roles listing
- * Replaces: history.push(`${baseUrl}admin/roles`)
- */
-const navigateToAdminRoles = (history, tenantId) => {
-  navigateWithHistory(history, `${getRoute(tenantId).ADMIN}/roles`);
+const navigateToAdminRoles = (navigate: (path: string) => void, tenantId: string) => {
+  navigateWithHistory(navigate, `${getRoute(tenantId).ADMIN}/roles`);
 };
 
-/**
- * Navigate to admin users listing
- * Replaces: history.push(`${baseUrl}admin/users`)
- */
-const navigateToAdminUsers = (history, tenantId) => {
-  navigateWithHistory(history, `${getRoute(tenantId).ADMIN}/users`);
+const navigateToAdminUsers = (navigate: (path: string) => void, tenantId: string) => {
+  navigateWithHistory(navigate, `${getRoute(tenantId).ADMIN}/users`);
 };
 
-/**
- * Navigate to admin dashboard
- * Replaces: history.push(`${baseUrl}admin/dashboard`)
- */
-const navigateToAdminDashboard = (history, tenantId) => {
-  navigateWithHistory(history, `${getRoute(tenantId).ADMIN}/dashboard`);
+const navigateToAdminDashboard = (navigate: (path: string) => void, tenantId: string) => {
+  navigateWithHistory(navigate, `${getRoute(tenantId).ADMIN}/dashboard`);
 };
 
-/**
- * Navigate to admin organization (subscription) settings
- * Replaces: history.push(`${baseUrl}admin/organization`)
- */
-const navigateToAdminOrganization = (history, tenantId) => {
-  navigateWithHistory(history, `${getRoute(tenantId).ADMIN}/organization`);
+const navigateToAdminOrganization = (navigate: (path: string) => void, tenantId: string) => {
+  navigateWithHistory(navigate, `${getRoute(tenantId).ADMIN}/organization`);
 };
 
-/**
- * Navigate to admin billing plans
- * Replaces: history.push(`${baseUrl}admin/plans`)
- */
-const navigateToAdminPlans = (history, tenantId) => {
-  navigateWithHistory(history, `${getRoute(tenantId).ADMIN}/plans`);
+const navigateToAdminPlans = (navigate: (path: string) => void, tenantId: string) => {
+  navigateWithHistory(navigate, `${getRoute(tenantId).ADMIN}/plans`);
 };
 
 /**
@@ -386,44 +367,28 @@ const getAdminOrganizationReturnUrl = (tenantId) => {
 
 /* ---------------------------  Integration Routes --------------------------- */
 
-/**
- * Navigate to integration recipes
- * Replaces: history.push(`${baseUrl}integration/recipes`)
- */
-const navigateToIntegrationRecipes = (history, tenantId) => {
-  navigateWithHistory(history, `${getRoute(tenantId).INTEGRETIONS}`);
+const navigateToIntegrationRecipes = (navigate: (path: string) => void, tenantId: string) => {
+  navigateWithHistory(navigate, `${getRoute(tenantId).INTEGRETIONS}`);
 };
 
-/**
- * Navigate to integration connected apps
- * Replaces: history.push(`${baseUrl}integration/connected-apps`)
- */
-const navigateToIntegrationConnectedApps = (history, tenantId) => {
+const navigateToIntegrationConnectedApps = (navigate: (path: string) => void, tenantId: string) => {
   navigateWithHistory(
-    history,
+    navigate,
     `${getRoute(tenantId).INTEGRETIONS.replace("/recipes", "/connected-apps")}`
   );
 };
 
-/**
- * Navigate to integration library
- * Replaces: history.push(`${baseUrl}integration/library`)
- */
-const navigateToIntegrationLibrary = (history, tenantId) => {
+const navigateToIntegrationLibrary = (navigate: (path: string) => void, tenantId: string) => {
   navigateWithHistory(
-    history,
+    navigate,
     `${getRoute(tenantId).INTEGRETIONS.replace("/recipes", "/library")}`
   );
 };
 
 /* ---------------------------  Navigation Routes --------------------------- */
 
-/**
- * Navigate to base URL (for logout/navigation)
- * Replaces: history.push(baseUrl)
- */
-const navigateToBaseUrl = (history, tenantId) => {
-  navigateWithHistory(history, getRedirectUrl(tenantId));
+const navigateToBaseUrl = (navigate: (path: string) => void, tenantId: string) => {
+  navigateWithHistory(navigate, getRedirectUrl(tenantId));
 };
 
 /* ---------------------------  EE Specific Routes end --------------------------- */
