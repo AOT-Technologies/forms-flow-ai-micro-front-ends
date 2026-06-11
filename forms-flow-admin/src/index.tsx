@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, useNavigate, useParams, useLocation } from "react-router-dom";
+import { Route, Routes,useParams, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { KeycloakService, StorageService } from "@formsflow/service";
@@ -19,7 +19,6 @@ import BillingManage from "./components/billing-manage";
 
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
-  const navigate = useNavigate();
   const  {tenantId: urlTenantId}  = useParams();
   // Fallback to storage if tenantId is not in URL params
   const tenantId = urlTenantId || StorageService.get("tenantKey") || "";

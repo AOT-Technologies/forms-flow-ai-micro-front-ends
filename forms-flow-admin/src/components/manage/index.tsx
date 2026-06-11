@@ -69,7 +69,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
     if (location.pathname === `${baseUrl}admin` || location.pathname === `${baseUrl}admin/`) {
       navigate(`${baseUrl}admin/${defaultTab()}`, { replace: true });
     }
-  }, [location.pathname, baseUrl, history]);
+  }, [location.pathname, baseUrl, navigate]);
 
   const handleTabChange = (key: string | null) => {
     if (key) {
