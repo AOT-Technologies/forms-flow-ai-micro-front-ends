@@ -324,7 +324,7 @@ $font-tokens: (
           }
 
           &.formedit-layout {
-            max-height: calc(100vh - 270px);
+            max-height: calc(100vh - 275px) !important;
             &.variables-tab{
               max-height: calc(100vh - 355px) !important;
             }
@@ -408,6 +408,33 @@ $font-tokens: (
   .body-section{
     max-height: 90vh !important;
   }
+}
+
+.formedit-page {
+  overflow-x: hidden;
+
+  .body-section.formedit-layout,
+  .formedit-builder-flow {
+    overflow: visible !important;
+  }
+  // Keep Formio builder hover toolbar below the sticky header
+  .builder-component {
+    .component-btn-group,
+    .component-settings-button,
+    [ref="removeComponent"],
+    [ref="copyComponent"],
+    [ref="editComponent"],
+    [ref="moveComponent"] {
+      z-index: 999;
+    }
+  }
+}
+
+.formedit-header-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--ff-white) !important;
 }
 
 // Default custom-scroll class using the mixin
@@ -559,10 +586,13 @@ $font-tokens: (
   }
 
   .ff-home-data-card {
-    border: 0.0625rem solid #E6E8EE;
-    border-radius: 0.5rem;
+    border: 0.0625rem solid #E5E5E5;
+    border-radius: 0.313rem;
     overflow: hidden;
     margin-bottom: 2rem;
+    .css-15lx25q-MuiDataGrid-footerContainer{
+      border-top: none;
+    }
   }
 
   .ff-home-data-table {

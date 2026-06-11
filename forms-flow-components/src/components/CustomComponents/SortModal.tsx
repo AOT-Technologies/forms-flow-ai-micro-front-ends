@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { CustomButton } from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
@@ -70,16 +70,16 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
       (selectedOption === defaultSortOption &&
         selectedOrder === defaultSortOrder);
     return (
-      <Modal show={showSortModal} onHide={onClose} size="sm">
-        <Modal.Header>
-          <Modal.Title>
+      <AppModal show={showSortModal} onHide={onClose} size="sm">
+        <AppModal.Header>
+          <AppModal.Title>
             <p>{t(modalHeader)}</p>
-          </Modal.Title>
+          </AppModal.Title>
           <div className="icon-close" onClick={onClose}>
             <CloseIcon data-testid={closedataTestid} />
           </div>
-        </Modal.Header>
-        <Modal.Body>
+        </AppModal.Header>
+        <AppModal.Body>
             <InputDropdown
               firstItemLabel={t(firstItemLabel)}
               isAllowInput={false}
@@ -118,9 +118,9 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
               dataTestIdforInput="input-sort-order"
               id="in-a"
             />
-        </Modal.Body>
+        </AppModal.Body>
 
-        <Modal.Footer>
+        <AppModal.Footer>
           <div className="buttons-row">
             <CustomButton
               disabled={isPrimaryButtonDisabled}
@@ -139,8 +139,8 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
               secondary
             />
           </div>
-        </Modal.Footer>
-      </Modal>
+        </AppModal.Footer>
+      </AppModal>
     );
   }
 );

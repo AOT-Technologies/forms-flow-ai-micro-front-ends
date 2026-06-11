@@ -1,11 +1,9 @@
 import { StorageService } from "@formsflow/service";
 
-export const userRolesData = JSON.parse(
-    StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
-  );
-
-
   export const userRoles = () => {
+    const userRolesData = JSON.parse(
+      StorageService.get(StorageService.User.USER_ROLE) ?? "[]"
+    );
     const role = (role) =>userRolesData.includes(role)
     return {
       viewTasks : role('view_tasks'), // can see task list and task details 

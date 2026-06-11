@@ -16,6 +16,14 @@ $border-radius: var(--border-radius);
 // Base spacing - static value for SCSS calculations
 $base: 1rem; // Cannot use var() in SCSS arithmetic
 
+// Modal width variables
+$modalWidthMedium: 50vw;
+
+// Medium size modal (app-modal-md)
+.app-modal-md {
+    max-width: $modalWidthMedium;
+}
+
 // Prompt modal styles
 
 .prompt-modal {

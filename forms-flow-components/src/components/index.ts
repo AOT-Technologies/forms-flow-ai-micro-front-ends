@@ -62,4 +62,5 @@ export * from "./CustomComponents/FormViewModal";
 export * from "./CustomComponents/ReusableStandardModal";
 export * from "./CustomComponents/SelectWithCustomValue";
 export * from "./CustomComponents/FilterableDropdown";
+export * from "./CustomComponents/AppModal";
 

@@ -1,5 +1,5 @@
-import Modal from "react-bootstrap/Modal";
 import {
+  AppModal,
   CloseIcon,
   PromptModal,
   useSuccessCountdown,
@@ -143,7 +143,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
 
   return (
     <>
-     <Modal
+     <AppModal
   show={show}
   onHide={onClose}
   size="lg"
@@ -153,7 +153,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
   aria-labelledby={t("create filter modal title")}
   aria-describedby="create-filter-modal"
 >
-    <Modal.Header>
+    <AppModal.Header>
     <div className="modal-header-content">
     <div className="modal-title">
         {isQuickFilterEdit
@@ -206,7 +206,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           )}
         </div>
     </div>
-  </Modal.Header>
+  </AppModal.Header>
 
   <TaskFilterModalBody
     toggleDeleteModal={toggleDeleteModal}
@@ -220,7 +220,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     currentStep={currentStep}
     onStepChange={setCurrentStep}
   />
-</Modal>
+</AppModal>
 
 
       {showDeleteModal && (

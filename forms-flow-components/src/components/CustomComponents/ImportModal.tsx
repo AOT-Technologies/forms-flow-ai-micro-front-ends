@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import Dropdown from "react-bootstrap/Dropdown";
 import {
   CloseIcon,
@@ -444,11 +444,11 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
 
     return (
-      <Modal show={showModal} onHide={closeModal} size="sm">
-        <Modal.Header>
-          <Modal.Title>
+      <AppModal show={showModal} onHide={closeModal} size="sm">
+        <AppModal.Header>
+          <AppModal.Title>
             <p>{t(headerText)}</p>
-          </Modal.Title>
+          </AppModal.Title>
           <div className="icon-close"
           data-testid="import-modal-close-icon"
           onClick={() => {
@@ -457,8 +457,8 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
           }}>
             <CloseIcon />
           </div>
-        </Modal.Header>
-        <Modal.Body className="p-5">
+        </AppModal.Header>
+        <AppModal.Body className="p-5">
           <div className="d-flex justify-content-center">
           <FileUploadArea
             primaryButtonText={primaryButtonText}
@@ -472,8 +472,8 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             onDone={() => {closeModal();}}
           />
           </div>
-        </Modal.Body>
-      </Modal>
+        </AppModal.Body>
+      </AppModal>
     );
   }
 );

@@ -1,4 +1,5 @@
 import {
+  AppModal,
   V8CustomButton,
   SelectDropdown,
   CustomTextInput,
@@ -6,7 +7,6 @@ import {
   QuickFilterIcon,
 } from "@formsflow/components";
 import { useEffect, useMemo, useState } from "react";
-import { Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks";
@@ -755,7 +755,7 @@ const removeSlashFromValue = (value) => {
  
    return (
     <>
-      <Modal.Body >
+      <AppModal.Body >
         {currentPage === 1 ? (
           <ParametersTab
             taskVariables={taskVariables}
@@ -767,8 +767,8 @@ const removeSlashFromValue = (value) => {
         ) : (
           saveFilterTab()
         )}
-      </Modal.Body>
-      <Modal.Footer>
+      </AppModal.Body>
+      <AppModal.Footer>
         <div className="w-100 d-flex align-items-center">
           <div className="me-auto">
             {currentPage === 2 && (
@@ -833,7 +833,7 @@ const removeSlashFromValue = (value) => {
             )}
           </div>
         </div>
-      </Modal.Footer>
+      </AppModal.Footer>
 
     </>
   );
