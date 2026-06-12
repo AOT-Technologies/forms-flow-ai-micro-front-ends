@@ -159,9 +159,32 @@ $color-selected-bg: var(--primary);
   }
 }
 
-.MuiDataGrid-cell[data-field="assignee"] .filterable-dropdown-container {
-  .filterable-dropdown-input,
-  .filterable-dropdown-menu {
+
+.MuiDataGrid-cell[data-field="assignee"] {
+  // Scope the anchor name to each dropdown's own subtree so a row only ever
+  // anchors to its own field, never another row's.
+  .filterable-dropdown-container {
+    anchor-scope: --ff-assignee;
+  }
+
+  .filterable-dropdown-input-wrapper {
+    anchor-name: --ff-assignee;
+  }
+
+  .filterable-dropdown-input {
     max-width: 11.25rem !important;
+  }
+
+  .filterable-dropdown-menu {
+    position: fixed;
+    position-anchor: --ff-assignee;
+    top: anchor(bottom);
+    bottom: auto;
+    left: anchor(left);
+    width: anchor-size(width) !important;
+    max-width: 11.25rem;
+    margin-block: 0.25rem;
+    margin-inline: 0;
+    position-try-fallbacks: flip-block;
   }
 }
