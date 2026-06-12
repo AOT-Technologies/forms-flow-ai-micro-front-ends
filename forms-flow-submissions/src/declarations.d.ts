@@ -98,6 +98,7 @@ declare module "@formsflow/components" {
     FormViewModal,
     FilterDropDown,
     bundleIcon,
-    SelectDropdownOptionType
+    SelectDropdownOptionType,
+    AppModal
   }: any;
 }
