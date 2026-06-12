@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import {V8CustomButton} from "./CustomButton";
 import { CloseIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
@@ -49,24 +49,24 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
 }) => {
   const { t } = useTranslation();
   return (
-    <Modal
+    <AppModal
         show={show}
         onHide={onClose}
         data-testid="confirm-modal"
         aria-labelledby="confirm-modal-title"
         aria-describedby="confirm-modal-message"
       >
-        <Modal.Header className="d-flex justify-content-between align-items-center">
-          <Modal.Title id="confirm-modal-title" data-testid={titleDataTestId}>
+        <AppModal.Header className="d-flex justify-content-between align-items-center">
+          <AppModal.Title id="confirm-modal-title" data-testid={titleDataTestId}>
             <p className="m-0">
               {t(title)}
             </p>
-          </Modal.Title>
+          </AppModal.Title>
           <div className="icon-close" onClick={onClose}>
               <CloseIcon data-testid="confirm-modal-close"/>
           </div>
-        </Modal.Header>
-        <Modal.Body className="build-modal-body">
+        </AppModal.Header>
+        <AppModal.Body className="build-modal-body">
           <div
             className="d-flex flex-column"
             id="confirm-modal-message"
@@ -88,8 +88,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
               </div>
             )}
           </div>
-        </Modal.Body>
-        <Modal.Footer>
+        </AppModal.Body>
+        <AppModal.Footer>
           <div className="buttons-row">
           {primaryBtnText &&
             <V8CustomButton
@@ -112,7 +112,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
               variant="secondary"
             />}
           </div>
-        </Modal.Footer>
-      </Modal>
+        </AppModal.Footer>
+      </AppModal>
   );
 });

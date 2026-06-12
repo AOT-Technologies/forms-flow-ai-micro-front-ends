@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Modal } from "react-bootstrap";
-import { CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, V8CustomButton, VariableSelection } from "@formsflow/components"; 
+import { AppModal, CloseIcon, CustomInfo, DragandDropSort, FormVariableIcon, V8CustomButton, VariableSelection } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import { StyleServices } from "@formsflow/service";
 import { createOrUpdateSubmissionFilter, updateDefaultSubmissionFilter } from "../../api/queryServices/analyzeSubmissionServices";
@@ -155,7 +154,7 @@ const handleSaveSubmissionFields = () => {
 
   
   return (
-    <Modal
+    <AppModal
         show={show}
         onHide={onClose}
         size="lg"
@@ -166,7 +165,7 @@ const handleSaveSubmissionFields = () => {
         aria-labelledby="manage-fields-sort-title"
         backdrop="static"
       >
-        <Modal.Header>
+        <AppModal.Header>
     <div className="modal-header-content">
           <div className="modal-title">
             {selectedItem ? t(`${selectedItem} > Manage Fields`) : t(`All Forms > Manage Fields`)}
@@ -203,10 +202,10 @@ const handleSaveSubmissionFields = () => {
           
         </div>
     </div>
-  </Modal.Header>
+  </AppModal.Header>
       
         
-          <Modal.Body>
+          <AppModal.Body>
         {activeTab === "fields" && (
           <>
             <DragandDropSort
@@ -249,18 +248,18 @@ const handleSaveSubmissionFields = () => {
         )}
           
 
-        </Modal.Body>
+        </AppModal.Body>
         
-      <Modal.Footer>
+      <AppModal.Footer>
         <div className="buttons-row">
           <V8CustomButton secondary label={t("Cancel")} onClick={onClose} dataTestId="manage-fields-cancel" ariaLabel={t("Manage fields cancel")} />
 
           <V8CustomButton label={t("Save and apply")} dataTestId="manage-fields-save" ariaLabel={t("Manage fields save")} onClick={handleSaveSubmissionFields} />
         </div>
-      </Modal.Footer>
+      </AppModal.Footer>
 
         
-      </Modal>
+      </AppModal>
   );
 }
 

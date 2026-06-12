@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { CloseIcon } from "..//SvgIcons/index";
 import { useTranslation } from "react-i18next";
 import { HelperServices } from "@formsflow/service";
@@ -87,7 +87,7 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
       };
 
       return (
-        <Modal
+        <AppModal
           show={show}
           onHide={onClose}
           dialogClassName="form-submission-history-modal"
@@ -96,21 +96,21 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
           aria-describedby="form-history-modal-message"
           size={showBpmnDiagram ? "lg" : "sm"}
         >
-          <Modal.Header data-testid="form-history-modal-header">
-            <Modal.Title
+          <AppModal.Header data-testid="form-history-modal-header">
+            <AppModal.Title
               id="form-history-modal-title"
               data-testid="form-history-modal-title"
               aria-label="Form history modal title"
             >
               <p>{t("History")}</p>
-            </Modal.Title>
+            </AppModal.Title>
 
             <div className="icon-close" onClick={onClose}>
               <CloseIcon aria-label="Close form-history-modal" data-testid="close-icon" />
             </div>
             
-          </Modal.Header>
-          <Modal.Body
+          </AppModal.Header>
+          <AppModal.Body
           className="side-by-side-process-history"
             data-testid="form-history-modal-body"
             aria-label="Form history modal body"
@@ -191,8 +191,8 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
                 </>
              
             )}
-          </Modal.Body>
-        </Modal>
+          </AppModal.Body>
+        </AppModal>
       );
     }
   );

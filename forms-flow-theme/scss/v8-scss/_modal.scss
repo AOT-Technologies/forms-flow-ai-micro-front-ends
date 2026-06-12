@@ -16,6 +16,14 @@ $border-radius: var(--border-radius);
 // Base spacing - static value for SCSS calculations
 $base: 1rem; // Cannot use var() in SCSS arithmetic
 
+// Modal width variables
+$modalWidthMedium: 50vw;
+
+// Medium size modal (app-modal-md)
+.app-modal-md {
+    max-width: $modalWidthMedium;
+}
+
 // Prompt modal styles
 
 .prompt-modal {
@@ -799,4 +807,20 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
             }
         }
     }
+}
+.form-select-modal-dialog {
+  @include approval-task-modal-popover();
+}
+.rule-modal{
+  @include large-modal-popover();
+    &.modal-dialog {
+      width: 45rem !important;
+      max-width: 45rem;
+    }
+     .modal-content{
+       height: 27rem !important;
+     }
+}
+.bundle-form-preview-modal{
+    @include approval-task-modal-popover();
 }

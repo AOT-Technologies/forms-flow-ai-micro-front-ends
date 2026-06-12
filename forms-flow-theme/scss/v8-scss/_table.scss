@@ -394,15 +394,27 @@ $table-shadow: rgba(0, 0, 0, 0.25); // Shadow color
 }
 
 .MuiDataGrid-overlayWrapper {
+  min-height: 16rem; // Ensures overlay has height so flex centering works when there are no rows
   .MuiDataGrid-overlayWrapperInner{
-    height: max-content !important;
-    // width: 70vw !important;
-    padding: 2rem;
+    height: 100% !important;
     .reusable-table-empty-state{
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
     }
+  }
+}
+
+.left-header .MuiDataGrid-columnHeaderTitleContainer {
+  justify-content: flex-start !important;
+}
+
+.left-header .MuiDataGrid-columnHeaderTitle {
+  text-align: left !important;
+}
+.form-select-modal-dialog {
+  .MuiDataGrid-columnHeaderTitleContainerContent {
+    overflow: visible !important;
   }
 }
