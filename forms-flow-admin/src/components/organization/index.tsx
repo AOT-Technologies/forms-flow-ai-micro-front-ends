@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
-import { useHistory, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { V8CustomButton, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
 import "./organization.scss";
 import { RequestService, StorageService } from "@formsflow/service";
@@ -158,7 +158,7 @@ function getSubscriptionPresentation(
 
 const Organization: React.FC<any> = (props) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const [subscriptionOpen, setSubscriptionOpen] = useState(true);
@@ -247,7 +247,7 @@ const Organization: React.FC<any> = (props) => {
     }
     // Use admin app MULTITENANCY_ENABLED (same as index.tsx routes), not @formsflow/service getRoute(),
     // so the path always matches the registered <Route> for plans.
-    history.push(`${baseUrl}admin/plans`);
+    navigate(`${baseUrl}admin/plans`);
   };
 
   const { title: subscriptionTitle, description: subscriptionDescription } =

@@ -1,18 +1,18 @@
 import Admin from ".";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BASE_ROUTE } from "./constants";
 import BillingReturn from "./components/billing-return";
 import BillingManage from "./components/billing-manage";
 
-export default function Root(props) {
+export default function Root(props: any) {
   return (
     <BrowserRouter>
-      <Switch>
-        <Route exact path="/billing/return" render={() => <BillingReturn />} />
-        <Route exact path="/billing/manage" render={() => <BillingManage />} />
-        <Route exact path="/tenant/:tenantId/billing/manage" render={() => <BillingManage />} />
-        <Route path={BASE_ROUTE} render={() => <Admin props={props} />}></Route>
-      </Switch>
+      <Routes>
+        <Route path="/billing/return" element={<BillingReturn />} />
+        <Route path="/billing/manage" element={<BillingManage />} />
+        <Route path="/tenant/:tenantId/billing/manage" element={<BillingManage />} />
+        <Route path={`${BASE_ROUTE.replace(/\/$/, '')}/admin/*`} element={<Admin props={props} />} />
+      </Routes>
     </BrowserRouter>
   );
 }

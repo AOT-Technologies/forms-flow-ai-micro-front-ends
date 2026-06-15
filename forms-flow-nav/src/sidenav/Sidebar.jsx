@@ -1,7 +1,7 @@
 import "./Sidebar.scss";
 import Accordion from "react-bootstrap/Accordion";
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import {
@@ -90,7 +90,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [location, setLocation] = React.useState({ pathname: "/" });
   const [integrationEnabled, setIntegrationEnabled] = React.useState(false);
   const [form, setForm] = React.useState({});
-  const history = useHistory();
+  const navigate = useNavigate();
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const [showProfile, setShowProfile] = useState(false);
@@ -347,7 +347,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const handleProfileClose = () => setShowProfile(false);
 
   const logout = () => {
-    navigateToBaseUrl(history, tenantKey || userDetail?.tenantKey);
+    navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey);
     instance.userLogout();
   };
 

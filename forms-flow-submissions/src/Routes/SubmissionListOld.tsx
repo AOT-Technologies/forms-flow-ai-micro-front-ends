@@ -1,5 +1,7 @@
 import React, { useRef, useCallback, useMemo, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { navigateToSubmissionDetail, getRedirectUrl } from "@formsflow/service";
@@ -73,7 +75,8 @@ interface SubmissionField {
 
 const AnalyzeSubmissionList: React.FC = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const scrollWrapperRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState([]);
 
@@ -555,7 +558,7 @@ return (
           label={t("View")}
           onClick={() => {
             dispatch(setApplicationDetail({}))
-            navigateToSubmissionDetail(dispatch, tenantKey, submission.id)
+            navigateToSubmissionDetail(navigate, tenantKey, submission.id)
           }
           }
           dataTestId={`view-submission-${submission.id}`}

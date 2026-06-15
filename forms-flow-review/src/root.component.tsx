@@ -1,16 +1,14 @@
 import Task from ".";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BASE_ROUTE } from "./constants";
 import { Provider } from "react-redux";
 import StoreService from "./services/StoreService";
-import { ConnectedRouter } from "connected-react-router";
 import { useEffect } from "react";
 import { StorageService} from "@formsflow/service";
- import { resetTaskListParams } from "./actions/taskActions";
+import { resetTaskListParams } from "./actions/taskActions";
 export default function Root(props: any) {
   const TASK_APP_KEY = "TASK_APP_DATA";
   const store = StoreService.configureStore();
-  const history = StoreService.history;
 
   useEffect(()=>{
     /**
@@ -33,16 +31,14 @@ export default function Root(props: any) {
 
   return (
     <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <BrowserRouter>
-          <Switch>
-            <Route
-              path={BASE_ROUTE}
-              render={() => <Task {...props} />}
-            ></Route>
-          </Switch>
-        </BrowserRouter>
-      </ConnectedRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path={`${BASE_ROUTE}*`}
+            element={<Task {...props} />}
+          />
+        </Routes>
+      </BrowserRouter>
     </Provider>
   );
 }

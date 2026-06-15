@@ -8,6 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 import TaskFilterModalBody from "./TaskFilterModalBody";
 import { batch, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import { useEffect, useState } from "react";
 import {
   deleteFilter,
@@ -29,7 +30,7 @@ import useAllTasksPayload from "../../constants/allTasksPayload";
 
 const TaskFilterModal = ({ show, onClose, toggleModal }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const filterToEdit = useSelector((state: any) => state.task.filterToEdit);
   const filterList = useSelector((state: RootState) => state.task.filterList);

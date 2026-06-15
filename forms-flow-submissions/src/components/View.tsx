@@ -8,11 +8,10 @@ import {
   MULTITENANCY_ENABLED,
 } from "../constants/constants";
 import { RootState } from "../reducers/index";
-import { RouteComponentProps } from "react-router-dom";
 import Loading from "./Loading";
 import { HelperServices } from "@formsflow/service";
 
-interface OwnProps extends RouteComponentProps<{ formId: string }> {
+interface OwnProps {
   page?: string;
 }
 

@@ -34,13 +34,11 @@ import { AppModal,
   V8CustomButton,
 }
 from "@formsflow/components";
-import { useHistory } from "react-router-dom";
 import { navigateToAdminRoles } from "@formsflow/service";
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId: tenantIdFromParams } = useParams();
   const tenantId = props.tenantId ?? tenantIdFromParams;
-  const history = useHistory();
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
