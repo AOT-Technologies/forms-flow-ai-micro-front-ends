@@ -1956,6 +1956,12 @@ export const ArticleIcon = ({ color="#2F8AB7", ...props }) => (
   </svg>
 );
 
+export const StepperCheckIcon = ({ ...props }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" {...props}>
+    <path d="M10.3333 3L3.91667 9.41667L1 6.5" stroke="white" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 export const VideoIcon = ({ color="#E01E5A", ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

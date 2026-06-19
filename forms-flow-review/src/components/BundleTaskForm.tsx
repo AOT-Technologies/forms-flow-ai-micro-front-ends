@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
 import { useAppDispatch } from "../hooks";
 import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
-import { StepperComponent } from "@formsflow/components";
+import { BreadCrumbs } from "@formsflow/components";
 import { textTruncate } from "../helper/helper"
 import _ from "lodash";
 import {
@@ -146,12 +146,11 @@ const onLabelClick = (step) => {
   
   return (
     <>
-      <StepperComponent
-        steps={stepLabels}
-        activeStep={formStep}
-        onClick={(index) => {
-          onLabelClick(index);
-        }}
+      <BreadCrumbs
+        items={stepLabels.map((label: string, i: number) => ({ label, id: String(i) }))}
+        variant="medium"
+        activeIndex={formStep}
+        onBreadcrumbClick={(item: { id?: string; label: string }) => onLabelClick(Number(item.id))}
       />
     
     <div className="scrollable-overview-with-header bg-white m-0 form-border p-5">

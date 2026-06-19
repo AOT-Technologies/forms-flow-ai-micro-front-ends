@@ -20,9 +20,14 @@ $color-default-text: var(--secondary-dark);
 // Minimized variant colors
 $color-minimized-text: var(--gray-medium-dark);
 
+// Medium variant colors
+$color-medium-text: var(--gray-medium-darker);   // #9E9E9E — closest token to Figma gray/500 (#979899)
+$color-medium-active-text: var(--gray-darkest);  // #4A4A4A
+
 // Typography Variables - Using theme tokens
 $font-size-default: 1.5rem;
 $font-size-minimized: 0.75rem;
+$font-size-medium: 1rem;                         // 16px
 $font-weight-base: var(--font-weight-regular);
 
 // Breadcrumb Mixins
@@ -100,6 +105,36 @@ $font-weight-base: var(--font-weight-regular);
     .breadcrumb-item + .breadcrumb-item.active {
       .breadcrumb-item-label{
         color: $gray-darker;
+      }
+    }
+  }
+
+  // Medium variant - 16px muted text, underline always on, active item in dark color
+  &.breadcrumb-medium {
+    @include mixins.font-style($font-size-medium, $font-weight-base, $color-medium-text);
+
+    a,
+    .breadcrumb-item {
+      text-decoration: underline;
+      text-underline-offset: $breadcrumb-underline-offset;
+    }
+
+    a {
+      &:hover:not(.active) {
+        color: $color-medium-text;
+      }
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+      color: $color-medium-text;
+    }
+
+    .breadcrumb-item.active {
+      text-decoration: underline;
+      text-underline-offset: $breadcrumb-underline-offset;
+
+      .breadcrumb-item-label {
+        color: $color-medium-active-text;
       }
     }
   }

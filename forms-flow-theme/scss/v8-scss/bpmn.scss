@@ -10,7 +10,10 @@ $gray-x-light: var(--gray-x-light);
 }
 .bpmn-viewer-container{ 
   position:relative; 
-  min-height: 65vh;
+  min-height: 60vh;
+  border: 1px solid #D1D2D3;
+  border-radius: 0.313rem;
+  margin-top: 1.688rem;
   width: 100%;
 }
 
@@ -34,8 +37,8 @@ $gray-x-light: var(--gray-x-light);
 
 .btn_zoom{
   position: absolute;
-  bottom: 10em;
-  right:5%;
+  bottom: 5em;
+  right:30%;
 }
 
 .djs-container svg:focus {
