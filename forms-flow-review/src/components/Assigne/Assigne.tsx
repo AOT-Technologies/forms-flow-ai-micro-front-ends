@@ -1,6 +1,7 @@
 // import { AssignUser } from "@formsflow/components";
 import { UserSelect } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import {
   claimBPMTask,
   fetchBPMTaskCount,
@@ -26,7 +27,7 @@ import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 
 
 const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, resizable=false }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const taskId = task?.id;
   const {
     filterList,

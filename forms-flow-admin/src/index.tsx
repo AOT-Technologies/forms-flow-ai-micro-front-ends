@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch, useHistory, useParams, useLocation } from "react-router-dom";
+import { Route, Routes,useParams, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { KeycloakService, StorageService } from "@formsflow/service";
@@ -19,7 +19,6 @@ import BillingManage from "./components/billing-manage";
 
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
-  const history = useHistory();
   const  {tenantId: urlTenantId}  = useParams();
   // Fallback to storage if tenantId is not in URL params
   const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
@@ -124,21 +123,18 @@ const Admin = React.memo(({ props }: any) => {
         {!isAccessRestricted ?(
           <div className="min-container-height">
           <ToastContainer theme="colored" />
-          <Switch>
+          <Routes>
             <Route
-              exact
-              path={`${baseUrl}admin/billing/manage`}
-              render={() => <BillingManage />}
+              path="billing/manage"
+              element={<BillingManage />}
             />
             <Route
-              exact
-              path={`${baseUrl}admin/plans`}
-              render={() => <Plans />}
+              path="plans"
+              element={<Plans />}
             />
-            <Route 
-              exact
-              path={`${baseUrl}admin`}
-              render={() => (
+            <Route
+              index
+              element={
                 <Manage
                   props={props}
                   setTab={setPage}
@@ -146,11 +142,11 @@ const Admin = React.memo(({ props }: any) => {
                   setRoleCount={setRoleCount}
                   setUserCount={setUserCount}
                 />
-              )}
+              }
             />
-            <Route 
-              path={`${baseUrl}admin/:tab`}
-              render={() => (
+            <Route
+              path=":tab"
+              element={
                 <Manage
                   props={props}
                   setTab={setPage}
@@ -158,9 +154,9 @@ const Admin = React.memo(({ props }: any) => {
                   setRoleCount={setRoleCount}
                   setUserCount={setUserCount}
                 />
-              )}
+              }
             />
-          </Switch>
+          </Routes>
           </div>):
           <div className="min-container-height ps-md-3" >
             <Accessdenied userRoles={userRoles} />

@@ -9,6 +9,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import {
   createFilter,
   fetchServiceTaskList,
@@ -31,7 +32,7 @@ const VARIABLES_WITH_FORM_SUPPORT = new Set(['name', 'submitterName', 'assignee'
 
 const AttributeFilterModalBody = ({ onClose, handleSaveFilterAttributes, currentPage, setCurrentPage }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const filterNameLength = 50;
   const { manageAllFilters,createFilters } = userRoles();
   const limit = useSelector((state: any) => state.task.limit);

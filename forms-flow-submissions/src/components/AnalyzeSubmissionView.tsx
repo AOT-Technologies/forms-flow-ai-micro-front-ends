@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import {
   DownloadPDFButton,
   BreadCrumbs,
@@ -55,7 +56,8 @@ import BundleSubmissionView from "../components/BundleSubmissionView";
 const ViewApplication = React.memo(() => {
   const { t } = useTranslation();
   const { id: applicationId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [formTypeCheckLoading, setFormTypeCheckLoading] = useState(true);
   const {
     viewSubmissionHistory,
@@ -353,7 +355,7 @@ const ViewApplication = React.memo(() => {
   }
 
   const backToSubmissionList = () => {
-    navigateToSubmissionsListing(dispatch, tenantKey);
+    navigateToSubmissionsListing(navigate, tenantKey);
   };
 
   const breadcrumbItems = [

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Navbar, Container, Nav, NavDropdown } from "react-bootstrap";
-import { Link, BrowserRouter, useHistory } from "react-router-dom";
+import { Link, BrowserRouter, useNavigate } from "react-router-dom";
 import { getUserRoleName, getUserRolePermission } from "./helper/user";
 import createURLPathMatchExp from "./helper/regExp/pathMatch";
 import { useTranslation } from "react-i18next";
@@ -28,7 +28,7 @@ import { LANGUAGE,USER_LANGUAGE_LIST } from "./constants/constants";
 import { Helmet } from "react-helmet";
 import { checkIntegrationEnabled } from "./services/integration";
 const NavBar = React.memo(({ props }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [tenant, setTenant] = React.useState({});
   const [location, setLocation] = React.useState({ pathname: "/" });
@@ -236,7 +236,7 @@ const isUserManager = userRoles?.includes("manage_users");
   }, [isAuthenticated]);
 
   const logout = () => {
-    navigateToBaseUrl(history, tenantKey);
+    navigateToBaseUrl(navigate, tenantKey);
     instance.userLogout();
   };
   return (

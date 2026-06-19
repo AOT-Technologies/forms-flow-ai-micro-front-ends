@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
+import { connect, ConnectedProps, useSelector } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
 import _ from "lodash";
 
@@ -30,7 +31,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   bundleFormData,
   submission,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const formRef = useRef<any>(null);
 
   const [formStep, setFormStep] = useState(0);

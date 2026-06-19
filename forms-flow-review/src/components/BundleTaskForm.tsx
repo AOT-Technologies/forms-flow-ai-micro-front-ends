@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
 import { BreadCrumbs } from "@formsflow/components";
 import { textTruncate } from "../helper/helper"
@@ -34,7 +35,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
   onFormSubmit,
   onCustomEvent,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const formRef = useRef<any>();
   
   const [formStep, setFormStep] = useState(0);

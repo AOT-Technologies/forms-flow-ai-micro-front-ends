@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import { useTranslation } from "react-i18next";
 import {
   ReusableLargeModal,
@@ -91,7 +92,7 @@ const TaskDetailsModal = ({
   const task = useSelector((state: any) => state.task.taskDetail);
   const submission = useSelector((state: any) => state.submission);
   const isBPMTaskDetailLoading = useSelector((state: any) => state.task.isBPMTaskDetailLoading);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   // Sync local state with prop when it changes
   useEffect(() => {
