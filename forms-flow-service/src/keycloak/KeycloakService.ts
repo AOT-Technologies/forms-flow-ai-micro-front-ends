@@ -21,12 +21,11 @@ class KeycloakService {
     url: string,
     realm: string,
     clientId: string,
-    tenantId?: string
   ) {
     this._keycloakConfig = {
       url: url,
       realm: realm,
-      clientId: tenantId ? `${tenantId}-${clientId}` : clientId,
+      clientId: clientId, // tenantId ? `${tenantId}-${clientId}` : clientId,
     };
     this.kc = new Keycloak(this._keycloakConfig);
   }
@@ -125,11 +124,10 @@ class KeycloakService {
     url: string,
     realm: string,
     clientId: string,
-    tenantId?: string
   ): KeycloakService {
     return this.instance
       ? this.instance
-      : (this.instance = new KeycloakService(url, realm, clientId, tenantId));
+      : (this.instance = new KeycloakService(url, realm, clientId));
   }
 
   /**
@@ -138,6 +136,7 @@ class KeycloakService {
    * @param callback - Optional - callback function to excecute after succeessful authentication
    */
   public initKeycloak(callback: (authenticated) => void = () => {}): void {
+
     this.kc
       ?.init(this.keycloakInitConfig)
       .then((authenticated) => {
@@ -169,6 +168,7 @@ class KeycloakService {
             }
  
           } else {
+            console.log("Token not parsed!!!!@!")
             this.logout();
           }
         } else {
