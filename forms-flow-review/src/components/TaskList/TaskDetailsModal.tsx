@@ -258,30 +258,31 @@ const TaskDetailsModal = ({
   const handleCancel = onCancel ?? onClose;
 
   const renderHistoryContent = () => (
-    <ReusableTable
-      columns={historyColumns}
-      rows={historyRows}
-      loading={isAppHistoryLoading}
-      noRowsLabel={t("No submission history found")}
-      paginationMode="client"
-      sortingMode="client"
-      hideFooter
-      rowHeight={60}
-      enableRowExpansion={true}
-      notesField="notes"
-      sx={{
-        height: 500,
-        width: "100%",
-        "& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer": {
-          justifyContent: "flex-start !important",
-        },
-        "& .MuiDataGrid-cell.action-cell-stretch": {
-          alignItems: "stretch !important",
-        },
-      }}
-      disableColumnResize
-      disableColumnMenu
-    />
+    <div className="task-history-table-container custom-scroll">
+      <ReusableTable
+        columns={historyColumns}
+        rows={historyRows}
+        loading={isAppHistoryLoading}
+        noRowsLabel={t("No submission history found")}
+        paginationMode="client"
+        sortingMode="client"
+        hideFooter
+        rowHeight={60}
+        enableRowExpansion={true}
+        notesField="notes"
+        sx={{
+          width: "100%",
+          "& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer": {
+            justifyContent: "flex-start !important",
+          },
+          "& .MuiDataGrid-cell.action-cell-stretch": {
+            alignItems: "stretch !important",
+          },
+        }}
+        disableColumnResize
+        disableColumnMenu
+      />
+    </div>
   );
 
   const renderNotesContent = () => (

@@ -489,7 +489,8 @@ const SelectWithCustomValueComponent = forwardRef<HTMLDivElement, SelectWithCust
                     }}
                     className={buildClassNames(
                         "custom-dropdown-options",
-                        `custom-dropdown-options--${variantType}`
+                        `custom-dropdown-options--${variantType}`,
+                        "dropdown-custom-scroll"
                     )}
                     style={
                         shouldPortal && position

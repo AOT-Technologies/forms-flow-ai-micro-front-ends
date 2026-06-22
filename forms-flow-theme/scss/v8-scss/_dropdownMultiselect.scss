@@ -201,6 +201,10 @@ $font-weight-medium: var(--font-weight-medium);
     flex: 1 0 0;
     border: none;
 
+  
+    overflow-y: auto;
+    @include mixins.custom-scroll($width: 4px, $thumb-height: 13px);
+
     .option {
       color: $multiselect-text-color;
       font-size: $font-size-15;

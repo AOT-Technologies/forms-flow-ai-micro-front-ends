@@ -444,7 +444,7 @@ $font-tokens: (
 
 // Dropdown custom scroll with customizable width and height
 .dropdown-custom-scroll {
-  @include mixins.custom-scroll($width: 1px, $thumb-height: 13px);
+  @include mixins.custom-scroll($width: 4px, $thumb-height: 13px);
 }
 
 // Add gap between task list table and scrollbar
