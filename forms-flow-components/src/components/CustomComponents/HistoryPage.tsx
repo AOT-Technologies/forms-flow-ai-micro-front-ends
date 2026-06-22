@@ -251,7 +251,7 @@ const generateColumns = (): GridColDef[] => {
     return (
       <>
         <div
-          className="historypage-container"
+          className="historypage-container custom-scroll"
           data-testid="history-page"
           aria-labelledby={t("history-page-table")}
           aria-describedby="history-page-table">
