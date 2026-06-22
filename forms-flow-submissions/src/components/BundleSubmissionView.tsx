@@ -12,7 +12,7 @@ import {
 
 import { textTruncate } from "../helper/helper";
 
-import { StepperComponent } from '@formsflow/components';
+import { BreadCrumbs } from '@formsflow/components';
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
 import {
   clearFormError,
@@ -123,12 +123,11 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
 
   return (
     <>
-      <StepperComponent
-        steps={stepLabels}
-        activeStep={formStep}
-        onClick={(index) => {
-          onLabelClick(index);
-        }}
+      <BreadCrumbs
+        items={stepLabels.map((label: string, i: number) => ({ label, id: String(i) }))}
+        variant="medium"
+        activeIndex={formStep}
+        onBreadcrumbClick={(item: { id?: string; label: string }) => onLabelClick(Number(item.id))}
       />
   
       <div className="p-3 analyze-Submission-bundle-view ">

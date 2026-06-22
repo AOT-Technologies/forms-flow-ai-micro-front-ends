@@ -97,6 +97,8 @@ declare module "@formsflow/components" {
     useProgressBar,
     FormViewModal,
     FilterDropDown,
-    AppModal,
+    bundleIcon,
+    SelectDropdownOptionType,
+    AppModal
   }: any;
 }

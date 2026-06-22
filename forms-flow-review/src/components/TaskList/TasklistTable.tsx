@@ -265,7 +265,7 @@ const TaskListTable = () => {
   const matchingVar = variables.find((v) => v.name === sortKey);
   if (!matchingVar) return "-";
 
-    const dateTimeField = taskvariables.find(
+  const dateTimeField = taskvariables.find(
       (v) => v.key === sortKey && v.type === "datetime"
     );
     const dateField = taskvariables.find(
@@ -601,7 +601,13 @@ const TaskListTable = () => {
 
 
 
-  const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
+  const memoizedRows = useMemo(() =>
+    (tasksList || []).map((task: Task) => {
+      const vars = task?._embedded?.variable ?? [];
+      const formType = vars.find((v) => v.name === "formType")?.value;
+      return { ...task, formType };
+    }),
+  [tasksList]);
 
   useEffect(() => {
     if (hasAutoOpenedTaskFromQuery.current) return;
@@ -660,6 +666,8 @@ const TaskListTable = () => {
       <div className={tableWrapperClass}>
         <ReusableTable
           columns={muiColumns}
+          showBundleIcon={true}
+          formNameField="formName"
           disableColumnResize={false}
           rows={memoizedRows}
           rowCount={tasksCount}

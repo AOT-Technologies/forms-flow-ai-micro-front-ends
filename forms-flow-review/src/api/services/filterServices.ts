@@ -103,6 +103,10 @@ export const fetchServiceTaskList = (
     // [TBD: need to fix properly ]if name is available in reqData, we need to set it to the name property of reqData
     // this will cause an issue like if the name will come may be two times one form task name and one form form component key
     const clonedReqData = cloneDeep(reqData);
+    // Always embed formType so bundle detection works regardless of filter column config
+    if (!clonedReqData.variables?.some((v) => v.name === "formType")) {
+      clonedReqData.variables = [...(clonedReqData.variables || []), { name: "formType" }];
+    }
     let criteria = clonedReqData?.criteria ?? {};
     let taskName = null;
     const updatedVariables = criteria.processVariables?.filter(

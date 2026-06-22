@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import { useTranslation } from "react-i18next";
-import { NewSortDownIcon } from "../SvgIcons";
+import { NewSortDownIcon, bundleIcon as BundleIcon } from "../SvgIcons";
 import { StyleServices } from "@formsflow/service";
 import { EmptyState, EmptyStateAction } from "./EmptyState";
 
@@ -37,6 +37,9 @@ interface ReusableTableProps {
   notesField?: string;
   hideFooter?: boolean;
   autoHeight?: boolean;
+  showBundleIcon?: boolean;
+  formNameField?: string;
+  formTypeField?: string;
 }
 
 export const ReusableTable: React.FC<ReusableTableProps> = ({
@@ -70,6 +73,9 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
   notesField = 'notes',
   hideFooter = false,
   autoHeight = false,
+  showBundleIcon = false,
+  formNameField = 'formName',
+  formTypeField = 'formType',
 }) => {
   const { t } = useTranslation();
   const iconColor = StyleServices.getCSSVariable('--ff-gray-medium-dark');
@@ -129,9 +135,33 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
 
   // Enhanced columns - modify first column to render expansion content
   const enhancedColumns: GridColDef[] = useMemo(() => {
-    if (!enableRowExpansion) return columns;
+    const baseColumns = showBundleIcon
+      ? columns.map((col) => {
+          if (col.field !== formNameField) return col;
+          return {
+            ...col,
+            renderCell: (params: any) => {
+              const isBundle = params.row[formTypeField] === "bundle";
+              const original = col.renderCell ? col.renderCell(params) : params.value;
+              if (!isBundle) return original;
+              return (
+                <div style={{ display: "flex", alignItems: "center", overflow: "hidden", maxWidth: "100%" }}>
+                  <div style={{ flex: "0 1 auto", minWidth: 0, overflow: "hidden" }}>
+                    {original}
+                  </div>
+                  <span style={{ marginLeft: "8px", display: "flex", alignItems: "center", flexShrink: 0 }}>
+                    <BundleIcon />
+                  </span>
+                </div>
+              );
+            },
+          };
+        })
+      : columns;
 
-    const modifiedColumns = columns.map((col, index) => {
+    if (!enableRowExpansion) return baseColumns;
+
+    const modifiedColumns = baseColumns.map((col, index) => {
       if (index === 0) {
         return {
           ...col,
@@ -166,7 +196,7 @@ export const ReusableTable: React.FC<ReusableTableProps> = ({
     });
 
     return modifiedColumns;
-  }, [columns, enableRowExpansion]);
+  }, [columns, enableRowExpansion, showBundleIcon, formNameField, formTypeField]);
 
   // Transform rows to include expansion rows automatically
   const memoizedRows = useMemo(() => {

@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { InfoIcon } from "../SvgIcons/index";
 
-type InfoVariant = "primary" | "secondary" | "error" | "warning";
+type InfoVariant = "primary" | "secondary" | "error" | "warning" | "plain";
 
 interface CustomInfoProps {
     content: string;

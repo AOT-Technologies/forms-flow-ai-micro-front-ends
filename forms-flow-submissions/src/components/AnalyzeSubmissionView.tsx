@@ -279,8 +279,8 @@ const ViewApplication = React.memo(() => {
         field: "created",
         headerName: t("Created On"),
         flex: 2,
-        renderCell: (params: any) => HelperServices.getLocaldate(params.value), 
-        sortable: false 
+        renderCell: (params: any) => <span>{HelperServices.getShortDateAndTime(params.value)}</span>,
+        sortable: false
       },
       {
         field: "actions",
@@ -328,7 +328,7 @@ const ViewApplication = React.memo(() => {
   const tabConfig = useMemo(() => {
     const tabs = [
       {
-        label: t("Form"),
+        label: t(formType === "bundle" ? "Bundle" : "Form"),
         id: "form",
       },
       {
@@ -340,7 +340,7 @@ const ViewApplication = React.memo(() => {
         id: "history",
       }
     ];
-    
+
     // Filter out Flow tab if processType is not BPMN
     return tabs.filter(tab => {
       if (tab.id === "flow") {
@@ -348,7 +348,7 @@ const ViewApplication = React.memo(() => {
       }
       return true;
     });
-  }, [t, processType]);
+  }, [t, processType, formType]);
 
   if (isApplicationDetailLoading) {
     return <Loading />;
@@ -373,16 +373,19 @@ const ViewApplication = React.memo(() => {
 
   const renderTabContent = () => {
     if (selectedTab?.id === "form") {
-      return (!formTypeCheckLoading &&
-        formType === "bundle") ? (
-          <BundleSubmissionView bundleFormData={bundleFormData} />
-        ) : (
-          <View page="application-detail" />
-        );
+      return (
+        <div className="submission-tab-content-container">
+          {(!formTypeCheckLoading && formType === "bundle") ? (
+            <BundleSubmissionView bundleFormData={bundleFormData} />
+          ) : (
+            <View page="application-detail" />
+          )}
+        </div>
+      );
     }
     if (selectedTab?.id === "flow" && analyze_submissions_view_history) {
       return (
-        <div>
+        <div className="submission-tab-content-container">
           <ProcessDiagram
             diagramXML={diagramXML ?? ""}
             activityId={markers?.[0]?.activityId ?? ""}
