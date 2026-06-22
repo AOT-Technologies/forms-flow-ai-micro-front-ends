@@ -1,8 +1,7 @@
 import React from "react";
-import BootstrapTable from "react-bootstrap-table-next";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { Translation, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import Loading from "../loading";
 import { AddUserRole, RemoveUserRole } from "../../services/users";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -19,7 +18,7 @@ import { InviteUser } from "../../services/users";
 import {
   completeChecklistByRouteKey
 } from "../../services/checklist";
-import { AppModal, TableFooter, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput } from "@formsflow/components";
+import { AppModal, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput, ReusableTable } from "@formsflow/components";
 import { useParams } from "react-router-dom";
 import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
 
@@ -148,8 +147,6 @@ const Users = React.memo((props: any) => {
   };
 
 
-  const handleTableChange = () => {};
-
   const handleSelectFilter = (e) => {
     if (e.target.value === "ALL") {
       return setSelectedFilter(null);
@@ -157,22 +154,15 @@ const Users = React.memo((props: any) => {
     setSelectedFilter(e.target.value);
   };
 
-  const noData = () => (
-    <div>
-      <h3 className="text-center">
-        <Translation>{(t) => t(props.error || "No data Found")}</Translation>
-      </h3>
-    </div>
-  );
-
   const columns = [
     {
-      dataField: "username",
-      text: <Translation>{(t) => t("Users")}</Translation>,
-      headerStyle: () => {
-        return { width: "10%" };
-      },
-      formatter: (cell, rowData) => {
+      field: "username",
+      headerName: t("Users"),
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      renderCell: (params) => {
+        const rowData = params.row;
         return (
           <div>
             {rowData?.firstName && (
@@ -186,16 +176,22 @@ const Users = React.memo((props: any) => {
       },
     },
     {
-      dataField: "email",
-      text: <Translation>{(t) => t("Email")}</Translation>,
-      headerStyle: () => {
-        return { width: "20%" };
-      },
+      field: "email",
+      headerName: t("Email"),
+      flex: 2,
+      minWidth: 200,
+      sortable: false,
+      renderCell: (params) => params.row?.email,
     },
     {
-      dataField: "role",
-      text: <Translation>{(t) => t("Role")}</Translation>,
-      formatter: (cell, rowData) => {
+      field: "role",
+      headerName: t("Role"),
+      flex: 5,
+      minWidth: 280,
+      sortable: false,
+      renderCell: (params) => {
+        const rowData = params.row;
+        const cell = rowData?.role;
         return (
           <div className="d-flex flex-wrap col-12">
             {cell?.map((item, i) => (
@@ -206,6 +202,7 @@ const Users = React.memo((props: any) => {
               >
                 <OverlayTrigger
                   placement="bottom"
+                  container={document.body}
                   overlay={
                     !KEYCLOAK_ENABLE_CLIENT_AUTH ? (
                       <Tooltip id="tooltip">{item?.path}</Tooltip>
@@ -230,14 +227,16 @@ const Users = React.memo((props: any) => {
     },
 
     {
-      dataField: "id",
-      text: <Translation>{(t) => t("Actions")}</Translation>,
-      headerStyle: () => {
-        return { width: "10%" };
-      },
-      formatExtraData: { roles, selectedRoles },
-      formatter: (cell, rowData, rowIdx, formatExtraData) => {
-        let { roles, selectedRoles } = formatExtraData;
+      field: "id",
+      headerName: t("Actions"),
+      width: 130,
+      minWidth: 130,
+      flex: 0,
+      sortable: false,
+      headerAlign: "right",
+      align: "right",
+      renderCell: (params) => {
+        const rowData = params.row;
         const updateSelectedRoles = (role) => {
           if (selectedRoles.includes(role.id)) {
             setSelectedRoles([
@@ -298,9 +297,10 @@ const Users = React.memo((props: any) => {
         return (
           <OverlayTrigger
             trigger="click"
-            key={rowIdx}
+            key={params.id}
             placement="left"
             rootClose={true}
+            container={document.body}
             overlay={
               <Popover
                 id={`popover-positioned-bottom`}
@@ -397,14 +397,6 @@ const Users = React.memo((props: any) => {
     );
   };
   
-  const getPageList = () => [
-    { text: '5', value: 5 },
-    { text: '25', value: 25 },
-    { text: '50', value: 50 },
-    { text: '100', value: 100 },
-    { text: 'All', value: roles.length },
-  ];
-
   return (
     <>
       <AppModal
@@ -563,34 +555,32 @@ const Users = React.memo((props: any) => {
 
         {!loading ? (
           <div>
-          <BootstrapTable
-            remote={{
-              pagination: true,
-            }}
-            keyField="id"
-            data={props?.users}
-            loading={loading}
-            columns={columns}
-            bordered={false}
-            wrapperClasses="user-table-container px-4"
-            rowStyle={{
-              color: "#09174A",
-              fontWeight: 400,
-            }}
-            noDataIndication={noData}
-            onTableChange={handleTableChange}
-            data-testid="admin-users-table"
-          />
-          <table className="table mt-3 old-design">
-              <TableFooter
-                  limit={props?.limit?.sizePerPage}
-                  activePage={activePage} 
-                  totalCount={props.total}
-                  handlePageChange={handlePageChange}
-                  onLimitChange={handleLimitChange}
-                  pageOptions={getPageList()}
-                />
-            </table>
+          <div className="user-table-container px-4" data-testid="admin-users-table">
+            <ReusableTable
+              columns={columns}
+              rows={props?.users || []}
+              rowCount={props.total}
+              loading={loading}
+              getRowId={(row) => row.id}
+              paginationMode="server"
+              sortingMode="client"
+              disableColumnMenu
+              disableRowSelectionOnClick
+              emptyStateMessage={props.error || "No data Found"}
+              paginationModel={{ page: activePage - 1, pageSize: props?.limit?.sizePerPage || 5 }}
+              onPaginationModelChange={({ page, pageSize }) => {
+                if (pageSize !== props?.limit?.sizePerPage) {
+                  handleLimitChange(pageSize);
+                } else {
+                  handlePageChange(page + 1);
+                }
+              }}
+              pageSizeOptions={[5, 25, 50, 100]}
+              disableVirtualization
+              
+              dataGridProps={{ getRowHeight: () => "auto" }}
+            />
+          </div>
           </div>
         ) : (
           <Loading />

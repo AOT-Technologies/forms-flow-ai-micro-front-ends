@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import BootstrapTable from "react-bootstrap-table-next";
 import "./roles.scss";
 import { useParams } from "react-router-dom";
 import { Translation, useTranslation } from "react-i18next";
@@ -21,7 +20,6 @@ import PermissionTree from "./permissionTree";
 import {removingTenantId} from "../../utils/utils.js";
 import { MULTITENANCY_ENABLED } from "../../constants";
 import { AppModal,
-   TableFooter,
    CustomSearch,
    CloseIcon,
    CopyIcon,
@@ -32,6 +30,7 @@ import { AppModal,
    CustomInfo,
   ConfirmModal,
   V8CustomButton,
+  ReusableTable,
 }
 from "@formsflow/components";
 import { navigateToAdminRoles } from "@formsflow/service";
@@ -550,14 +549,6 @@ const Roles = React.memo((props: any) => {
 
   );
 
-  const noData = () => (
-    <div data-testid="roles-no-data-msg">
-      <h3 className="text-center">
-        <Translation>{(t) => t(props.error || "No data Found")}</Translation>
-      </h3>
-    </div>
-  );
-
   const customTotal = (from, to, size) => (
     <span className="ms-2" role="main">
       <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
@@ -566,18 +557,6 @@ const Roles = React.memo((props: any) => {
       <Translation>{(t) => t("results")}</Translation>
     </span>
   );
-  const getPageList = () => [
-    { text: '5', value: 5 },
-    { text: '25', value: 25 },
-    { text: '50', value: 50 },
-    { text: '100', value: 100 },
-    { text: 'All', value: roles.length },
-  ];
-  const paginatedRoles = roles.slice(
-    (activePage - 1) * sizePerPage, 
-    activePage * sizePerPage 
-  );
-
   const handlePageChange = (page: number) => {
     setActivePage(page);
   };
@@ -611,17 +590,25 @@ const Roles = React.memo((props: any) => {
 
   const columns = [
     {
-      dataField: "name",
-      text: <Translation>{(t) => t("Role Name")}</Translation>,
-      classes: "text-break",
+      field: "name",
+      headerName: t("Role Name"),
+      flex: 2,
+      minWidth: 160,
+      sortable: false,
+      cellClassName: "text-break",
+      renderCell: (params) => params.row?.name,
     },
     {
-      dataField: "candidateGroupFull",
-      text: <Translation>{(t) => t("Candidate Groups")}</Translation>,
-      headerClasses: "roles-candidate-group-header",
-      classes: "text-break roles-candidate-group-cell",
-      formatter: (cell: string, row: { id?: string }) => {
-        const value = cell ?? "";
+      field: "candidateGroupFull",
+      headerName: t("Candidate Groups"),
+      flex: 2,
+      minWidth: 180,
+      sortable: false,
+      headerClassName: "roles-candidate-group-header",
+      cellClassName: "text-break roles-candidate-group-cell",
+      renderCell: (params) => {
+        const row = params.row as { id?: string };
+        const value = (params.row?.candidateGroupFull as string) ?? "";
         const displayValue = value.replace(/\//g, "");
         return (
           <span className="roles-candidate-group-inner">
@@ -643,22 +630,30 @@ const Roles = React.memo((props: any) => {
       },
     },
     {
-      dataField: "description",
-      text: <Translation>{(t) => t("Description")}</Translation>,
-      classes: "text-break",
+      field: "description",
+      headerName: t("Description"),
+      flex: 2,
+      minWidth: 160,
+      sortable: false,
+      cellClassName: "text-break",
+      renderCell: (params) => params.row?.description,
     },
     {
-      dataField: "",
-      text: <Translation>{(t) => t("Users")}</Translation>,
-      formatExtraData: { show, users, loading },
-      formatter: (cell, rowData, rowIdx, formatExtraData) => {
-        const { show, users, loading } = formatExtraData;
+      field: "users",
+      headerName: t("Users"),
+      width: 110,
+      minWidth: 110,
+      flex: 0,
+      sortable: false,
+      renderCell: (params) => {
+        const rowData = params.row;
         return (
           <OverlayTrigger
             trigger="click"
-            key={rowIdx}
+            key={params.id}
             placement="left"
             rootClose={true}
+            container={document.body}
             overlay={
               <Popover id={`popover-positioned-bottom`}>
                 <Popover.Body>
@@ -684,9 +679,7 @@ const Roles = React.memo((props: any) => {
               onClick={(e) => handleClick(e, rowData)}
               data-testid="user-list-view-dropdown"
             >
-              <p>
-                <Translation>{(t) => t("View")}</Translation>
-              </p>
+              <p>{t("View")}</p>
               <i className="fa fa-caret-down ms-2" />
             </div>
           </OverlayTrigger>
@@ -694,9 +687,15 @@ const Roles = React.memo((props: any) => {
       },
     },
     {
-      dataField: "id",
-      text: <Translation>{(t) => t("Actions")}</Translation>,
-      formatter: (cell, rowData, rowIdx, formatExtraData) => {
+      field: "id",
+      headerName: t("Actions"),
+      width: 100,
+      minWidth: 100,
+      flex: 0,
+      sortable: false,
+      headerAlign: "right",
+      renderCell: (params) => {
+        const rowData = params.row;
         return (
           <div className="ms-3">
             <i
@@ -745,30 +744,31 @@ const Roles = React.memo((props: any) => {
 
         {!props?.loading ? (
           <div>
-          <BootstrapTable
-            keyField="id"
-            data={paginatedRoles}
-            columns={columns}
-            bordered={false}
-            wrapperClasses="table-container px-4"
-            rowStyle={{
-              color: "#09174A",
-              fontWeight: 400,
-            }}
-            noDataIndication={noData}
-            data-testid="admin-roles-table"
-          />
-    
-          <table className="table mt-3 old-design">
-            <TableFooter
-            limit={sizePerPage}
-            activePage={activePage}
-            totalCount={roles.length}
-            handlePageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-            pageOptions={getPageList()}
-          />
-          </table>
+          <div className="px-4" data-testid="admin-roles-table">
+            <ReusableTable
+              columns={columns}
+              rows={roles}
+              loading={props?.loading}
+              getRowId={(row) => row.id}
+              paginationMode="client"
+              sortingMode="client"
+              disableColumnMenu
+              disableRowSelectionOnClick
+              emptyStateMessage={props.error || "No data Found"}
+              paginationModel={{ page: activePage - 1, pageSize: sizePerPage }}
+              onPaginationModelChange={({ page, pageSize }) => {
+                if (pageSize !== sizePerPage) {
+                  handleLimitChange(pageSize);
+                } else {
+                  handlePageChange(page + 1);
+                }
+              }}
+              pageSizeOptions={[5, 25, 50, 100]}
+              disableVirtualization
+              
+              dataGridProps={{ getRowHeight: () => "auto" }}
+            />
+          </div>
         </div>
         ) : (
           <Loading />

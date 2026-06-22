@@ -1,5 +1,4 @@
 import React from "react";
-import BootstrapTable from "react-bootstrap-table-next";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
@@ -12,8 +11,8 @@ import {
   updateAuthorization,
   fetchdashboards,
 } from "../../services/dashboard";
-import { Translation, useTranslation } from "react-i18next";
-import { TableFooter, V8CustomButton } from "@formsflow/components";
+import { useTranslation } from "react-i18next";
+import { V8CustomButton, ReusableTable } from "@formsflow/components";
 import { StorageService } from "@formsflow/service";
 
 const InsightDashboard = React.memo((props: any) => {
@@ -115,33 +114,29 @@ const InsightDashboard = React.memo((props: any) => {
     );
   };
 
-  const paginatedDashboard = dashboardList.slice(
-    (activePage - 1) * limit, 
-    activePage * limit 
-  );
-
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
-    setActivePage(1); 
+    setActivePage(1);
   };
-
-  const noData = () => (
-    <div data-testid="dashboard-no-data-msg">
-      <h3 className="text-center">
-        <Translation>{(t) => t(props.error || "No data Found")}</Translation>
-      </h3>
-    </div>
-  );
 
   const columns = [
     {
-      dataField: "resourceDetails.name",
-      text: <Translation>{(t) => t("Dashboard")}</Translation>,
+      field: "dashboardName",
+      headerName: t("Dashboard"),
+      flex: 2,
+      minWidth: 140,
+      sortable: false,
+      renderCell: (params) => params.row?.resourceDetails?.name,
     },
     {
-      dataField: "roles",
-      text: <Translation>{(t) => t("Access Roles")}</Translation>,
-      formatter: (cell, rowData) => {
+      field: "roles",
+      headerName: t("Access Roles"),
+      flex: 6,
+      minWidth: 300,
+      sortable: false,
+      renderCell: (params) => {
+        const rowData = params.row;
+        const cell = rowData?.roles;
         return (
           <div className="d-flex flex-wrap col-12">
             {cell?.map((label, i) => (
@@ -163,17 +158,23 @@ const InsightDashboard = React.memo((props: any) => {
       },
     },
     {
-      dataField: "resourceId",
-      text: <Translation>{(t) => t("Action")}</Translation>,
-      formatExtraData: { show, remainingGroups, isGroupUpdated },
-      formatter: (cell, rowData, rowIdx, formatExtraData) => {
-        let { show, remainingGroups, isGroupUpdated } = formatExtraData;
+      field: "resourceId",
+      headerName: t("Action"),
+      width: 140,
+      minWidth: 140,
+      flex: 0,
+      sortable: false,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => {
+        const rowData = params.row;
         return (
           <OverlayTrigger
             trigger="click"
-            key={rowIdx}
+            key={params.id}
             placement="left"
             rootClose={true}
+            container={document.body}
             overlay={
               <Popover id={`popover-positioned-bottom`}>
                 <Popover.Body>
@@ -203,7 +204,7 @@ const InsightDashboard = React.memo((props: any) => {
               label={t("Add")}
               onClick={(e) => handleClick(e, rowData)}
               variant="primary"
-              data-testid={rowIdx}
+              data-testid={params.id}
               disabled={!isGroupUpdated}
               icon={<i className="fa-solid fa-plus me-2"></i>}
             />
@@ -213,32 +214,6 @@ const InsightDashboard = React.memo((props: any) => {
     },
   ];
 
-  const getpageList = () => {
-    const list = [
-      {
-        text: "5",
-        value: 5,
-      },
-      {
-        text: "25",
-        value: 25,
-      },
-      {
-        text: "50",
-        value: 50,
-      },
-      {
-        text: "100",
-        value: 100,
-      },
-      {
-        text: t("All"),
-        value: dashboardList.length
-      },
-    ];
-    return list;
-  };
-
   return (
     <>
       <div className="" role="definition">
@@ -246,29 +221,31 @@ const InsightDashboard = React.memo((props: any) => {
         <div>
           {!isLoading ? (
             <div>
-            <BootstrapTable
-              keyField="resourceId"
-              data={paginatedDashboard}
-              columns={columns}
-              bordered={false}
-              wrapperClasses="table-container-admin mb-3 px-4"
-              rowStyle={{
-                color: "#09174A",
-                fontWeight: 400,
-              }}
-              noDataIndication={noData}
-              data-testid="admin-dashboard-table"
-            />
-            <table className="table old-design">
-              <TableFooter
-              limit={limit}
-              activePage={activePage}
-              totalCount={dashboardList.length}
-              handlePageChange={(page: number) => setActivePage(page)}
-              onLimitChange={handleLimitChange}
-              pageOptions={getpageList()}
-            />
-          </table>
+            <div className="table-container-admin mb-3 px-4" data-testid="admin-dashboard-table">
+              <ReusableTable
+                columns={columns}
+                rows={dashboardList}
+                loading={isLoading}
+                getRowId={(row) => row.resourceId}
+                paginationMode="client"
+                sortingMode="client"
+                disableColumnMenu
+                disableRowSelectionOnClick
+                emptyStateMessage={props.error || "No data Found"}
+                paginationModel={{ page: activePage - 1, pageSize: limit }}
+                onPaginationModelChange={({ page, pageSize }) => {
+                  if (pageSize !== limit) {
+                    handleLimitChange(pageSize);
+                  } else {
+                    setActivePage(page + 1);
+                  }
+                }}
+                pageSizeOptions={[5, 25, 50, 100]}
+                disableVirtualization
+                
+                dataGridProps={{ getRowHeight: () => "auto" }}
+              />
+            </div>
           </div>
           ) : (
             <Loading />
