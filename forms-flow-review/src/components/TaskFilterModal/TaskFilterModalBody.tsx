@@ -197,6 +197,7 @@ const TaskFilterModalBody = ({
         tenantKey,
         MULTITENANCY_ENABLED
       );
+      criteria.includeAssignedTasks = true;
       delete criteria.assignee;
       delete criteria.orQueries;
     } else if(accessOption === SPECIFIC_ASSIGNEE){
