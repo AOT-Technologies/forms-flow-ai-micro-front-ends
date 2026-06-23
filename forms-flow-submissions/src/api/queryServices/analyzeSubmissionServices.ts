@@ -138,8 +138,7 @@ const normalizeValue = (value: any): any => {
 
 
 export const fetchAllForms = () => {
-  //activeForms means published forms only : status = Active
-  return RequestService.httpGETRequest(`${API.FORM}?allForms=true`);
+  return RequestService.httpGETRequest(`${API.FORM}?viewSubmissions=true`);
 };
 
 export const fetchFormVariables = (formId) => {
