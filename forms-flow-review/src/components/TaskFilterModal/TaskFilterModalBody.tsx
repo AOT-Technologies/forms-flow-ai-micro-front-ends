@@ -212,9 +212,13 @@ const TaskFilterModalBody = ({
   if (shareFilter === PRIVATE_ONLY_YOU) {
     users.push(userDetails?.preferred_username);
   } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
-    roles = Array.isArray(shareFilterForSpecificRole)
+    const rawRoles = Array.isArray(shareFilterForSpecificRole)
       ? shareFilterForSpecificRole
       : [shareFilterForSpecificRole];
+    roles = rawRoles.map((role) => {
+      const cleaned = removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED);
+      return MULTITENANCY_ENABLED ? `/${tenantKey}-${cleaned}` : role;
+    });
   }
 
   return { users, roles };
