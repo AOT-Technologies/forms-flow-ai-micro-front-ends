@@ -260,6 +260,7 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
     }
     label {
       color: var(--gray-darkest) !important;
+      word-break: break-all;
     }
     button.btn.btn-primary{
       background-color: $form-builder-color-bg-black !important;
