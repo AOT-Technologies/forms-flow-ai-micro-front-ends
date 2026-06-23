@@ -163,8 +163,13 @@ const TaskFilterModalBody = ({
 
   const getCriteria = () => {
     const criteria: FilterCriteria = {
-      includeAssignedTasks: true,
-      candidateGroupsExpression: "${currentUserGroups()}",
+      "orQueries": [
+        {
+          "assigneeExpression": "${currentUser()}",
+          "candidateGroupsExpression": "${currentUserGroups()}",
+          "includeAssignedTasks": true
+        }
+      ],
       // If sorting is based on submission id or form name, that should be passed as process variable in sorting
       sorting: sortValue === "applicationId" || sortValue === "formName" ?
         ([{
@@ -186,16 +191,19 @@ const TaskFilterModalBody = ({
     }
 
     if (accessOption === SPECIFIC_ROLE) {
-   const trimmedAccessValue = trimFirstSlash(accessValue);
-   criteria.candidateGroup = addTenantPrefixIfNeeded(
-     trimmedAccessValue,
-     tenantKey,
-     MULTITENANCY_ENABLED
-   );
-  delete criteria.assignee;
+      const trimmedAccessValue = trimFirstSlash(accessValue);
+      criteria.candidateGroup = addTenantPrefixIfNeeded(
+        trimmedAccessValue,
+        tenantKey,
+        MULTITENANCY_ENABLED
+      );
+      criteria.includeAssignedTasks = true;
+      delete criteria.assignee;
+      delete criteria.orQueries;
     } else if(accessOption === SPECIFIC_ASSIGNEE){
       criteria.assignee = accessValue;
       delete criteria.candidateGroup;
+      delete criteria.orQueries;
     }
     else{
       delete criteria.assignee;
