@@ -60,6 +60,7 @@ $font-size-s:var(--font-size-s);
       }
       .value {
         @include font-style(14px, $font-weight-medium, var(--secondary-dark));
+        word-break: break-all;
       }
     }
     .alternative-label-container {
