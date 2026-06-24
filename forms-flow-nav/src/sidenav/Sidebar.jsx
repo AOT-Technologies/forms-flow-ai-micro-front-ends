@@ -99,9 +99,9 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
   // const [activeLink, setActiveLink] = useState("");
   const baseUrl = getRedirectUrl(tenantKey || userDetail?.tenantKey);
-  // const defaultLogoPath =
-  //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
-  //   "/logo.svg";
+  const defaultLogoPath =
+    document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
+    "/logo.svg";
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE));
   const isCreateSubmissions = userRoles?.includes("create_submissions");

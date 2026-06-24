@@ -1,6 +1,6 @@
 # forms-flow-ai-micro-front-ends
 
-![React](https://img.shields.io/badge/React-17.0.2-blue)
+![React](https://img.shields.io/badge/React-18.3.1-blue)
 
 [![forms-flow-nav-CD](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-nav.cd.yml/badge.svg)](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-nav.cd.yml)
 [![forms-flow-admin-CD](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-admin-cd.yml/badge.svg)](https://github.com/AOT-Technologies/forms-flow-ai-micro-front-ends/actions/workflows/forms-flow-admin-cd.yml)
