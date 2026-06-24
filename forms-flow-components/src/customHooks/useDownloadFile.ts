@@ -30,12 +30,20 @@ export const useDownloadFile = ({
     try {
       preDownloading();
       const { data } = await apiDefinition();
-      const url = URL.createObjectURL(new Blob([data]));
-      setUrl(url);
-      setName(getFileName());
-      ref.current?.click();
+      const objectUrl = URL.createObjectURL(new Blob([data]));
+      const fileName = getFileName();
+      setUrl(objectUrl);
+      setName(fileName);
+      // Directly set href/download on the DOM element so the click doesn't race
+      // against the async React state update
+      if (ref.current) {
+        ref.current.href = objectUrl;
+        ref.current.download = fileName;
+        ref.current.click();
+      }
       postDownloading();
-      URL.revokeObjectURL(url);
+      // Delay revocation to give the browser time to start the download
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 150);
     } catch (error) {
       onError(error);
     }
