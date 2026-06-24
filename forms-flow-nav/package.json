@@ -37,7 +37,7 @@
     "pretty-quick": "^3.1.1",
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
-    "webpack": "^5.75.0",
+    "webpack": "^5.106.2",
     "webpack-cli": "^4.8.0",
     "webpack-config-single-spa-react": "^4.0.0",
     "webpack-dev-server": "^4.0.0",
