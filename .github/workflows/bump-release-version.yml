@@ -98,12 +98,26 @@ jobs:
           ref:        ${{ inputs.target_ref || github.ref }}
           fetch-depth: 0
 
-      # ── 2. Resolve versions ────────────────────────────────────────────────
+      # ── 2. Validate target_repository ─────────────────────────────────────
+      - name: Validate target_repository
+        env:
+          INPUT_TARGET_REPO: ${{ inputs.target_repository }}
+        run: |
+          if [[ -n "$INPUT_TARGET_REPO" && "$INPUT_TARGET_REPO" != "${{ github.repository }}" ]]; then
+            echo "::error::target_repository must be empty or match the current repo (${{ github.repository }})."
+            echo "::error::Got: ${INPUT_TARGET_REPO}"
+            exit 1
+          fi
+
+      # ── 3. Resolve versions ────────────────────────────────────────────────
       - name: Resolve versions
         id: versions
+        env:
+          INPUT_PREV: ${{ inputs.prev_version }}
+          INPUT_NEW: ${{ inputs.new_version }}
         run: |
-          if [[ -n "${{ inputs.prev_version }}" ]]; then
-            CURRENT="${{ inputs.prev_version }}"
+          if [[ -n "$INPUT_PREV" ]]; then
+            CURRENT="$INPUT_PREV"
           elif [[ -f VERSION ]]; then
             CURRENT="$(tr -d '[:space:]' < VERSION | sed 's/^v//')"
           else
@@ -111,7 +125,7 @@ jobs:
             exit 1
           fi
 
-          NEW="${{ inputs.new_version }}"
+          NEW="$INPUT_NEW"
           NEW="${NEW//[[:space:]]/}"
 
           if ! [[ "$NEW" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
@@ -131,7 +145,7 @@ jobs:
           echo "Current : $CURRENT  (base: $BASE_CUR)"
           echo "New     : $NEW      (base: $BASE_NEW)"
 
-      # ── 3. Global replacement files ────────────────────────────────────────
+      # ── 4. Global replacement files ────────────────────────────────────────
       #    Every occurrence replaced throughout the entire file.
       - name: Update global files
         env:
@@ -165,7 +179,7 @@ jobs:
             exit 1
           fi
 
-      # ── 4. README badge URL ────────────────────────────────────────────────
+      # ── 5. README badge URL ────────────────────────────────────────────────
       #    Pattern: release-vX.Y.Z-<color>  — only base version matched,
       #    so -rc / -alpha suffixes don't interfere with the badge colour token.
       - name: Update README badge
@@ -188,7 +202,7 @@ jobs:
             exit 1
           fi
 
-      # ── 5. package.json / package-lock.json ───────────────────────────────
+      # ── 6. package.json / package-lock.json ───────────────────────────────
       #    Only the root "version" field within the first 15 lines.
       #    npm dependency versions that coincidentally match are left alone.
       - name: Update package JSON files
@@ -240,25 +254,30 @@ jobs:
             exit 1
           fi
 
-      # ── 6. Verify something actually changed ──────────────────────────────
+      # ── 7. Verify something actually changed ──────────────────────────────
       - name: Verify changes
+        env:
+          VER_CUR: ${{ steps.versions.outputs.current }}
         run: |
           if git diff --quiet; then
             echo "::error::Version bump had no effect — no files were modified."
-            echo "::error::Current version in repo files does not match prev_version (${{ steps.versions.outputs.current }})."
+            echo "::error::Current version in repo files does not match prev_version (${VER_CUR})."
             echo "::error::Check that prev_version is exactly what appears in VERSION and the other tracked files."
             exit 1
           fi
           echo "Modified files:"
           git diff --name-only | sed 's/^/  • /'
 
-      # ── 7. Commit and push ────────────────────────────────────────────────
+      # ── 8. Commit and push ────────────────────────────────────────────────
       - name: Commit and push
+        env:
+          VER_CUR: ${{ steps.versions.outputs.current }}
+          VER_NEW: ${{ steps.versions.outputs.new }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "[Version]: bump version ${{ steps.versions.outputs.current }} → ${{ steps.versions.outputs.new }}"
+          git commit -m "[Version]: bump version ${VER_CUR} → ${VER_NEW}"
 
           CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 
@@ -271,16 +290,19 @@ jobs:
 
           git push origin "$CURRENT_BRANCH"
 
-      # ── 8. Open PR (optional) ────────────────────────────────────────────
+      # ── 9. Open PR (optional) ────────────────────────────────────────────
       #    Only runs when open_pr=true AND pr_base_branch is provided.
       - name: Open pull request
         if: ${{ inputs.open_pr == true && inputs.pr_base_branch != '' }}
         env:
           GH_TOKEN: ${{ secrets.RELEASE_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          VER_CUR: ${{ steps.versions.outputs.current }}
+          VER_NEW: ${{ steps.versions.outputs.new }}
+          INPUT_BASE: ${{ inputs.pr_base_branch }}
         run: |
-          CURRENT="${{ steps.versions.outputs.current }}"
-          NEW="${{ steps.versions.outputs.new }}"
-          BASE="${{ inputs.pr_base_branch }}"
+          CURRENT="$VER_CUR"
+          NEW="$VER_NEW"
+          BASE="$INPUT_BASE"
           HEAD="$(git rev-parse --abbrev-ref HEAD)"
 
           CHANGED_FILES="$(git diff HEAD~1 --name-only | sed 's/^/- /')"
