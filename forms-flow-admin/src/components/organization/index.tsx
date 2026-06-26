@@ -97,7 +97,7 @@ function resolveSubscriptionUiKind(
     return "active";
   }
   if(!status) {
-    return "expired";
+    return "trial";
   }
 
   const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
@@ -133,18 +133,18 @@ function getSubscriptionPresentation(
       };
     case "trial":
       return {
-        title: t("Trial"),
-        description: `You have ${daysDifference ?? 0} days left of your free trial.`,
+        title: t("Go"),
+        description: "You are currently using a free version of formsflow.",
       };
     case "expired":
       return {
-        title: t("Expired"),
-        description: "",
+        title: t("Go"),
+        description: "You are currently using a free version of formsflow.",
       };
     case "cancelled":
       return {
-        title: t("Cancelled"),
-        description: "",
+        title: t("Go"),
+        description: "You are currently using a free version of formsflow.",
       };
     case "none":
       return {
@@ -200,7 +200,7 @@ const Organization: React.FC<any> = (props) => {
       const tenantDataStr = StorageService.get("tenantData");
       if (!tenantDataStr) {
         setDaysDifference(null);
-        setSubscriptionKind("expired");
+        setSubscriptionKind("trial");
         return;
       }
       try {
