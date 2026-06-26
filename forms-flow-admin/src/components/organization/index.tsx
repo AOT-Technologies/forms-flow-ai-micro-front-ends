@@ -132,24 +132,11 @@ function getSubscriptionPresentation(
         description: t("You are currently using a paid version of formsflow."),
       };
     case "trial":
-      return {
-        title: t("Go"),
-        description: "You are currently using a free version of formsflow.",
-      };
     case "expired":
-      return {
-        title: t("Go"),
-        description: "You are currently using a free version of formsflow.",
-      };
     case "cancelled":
       return {
         title: t("Go"),
         description: "You are currently using a free version of formsflow.",
-      };
-    case "none":
-      return {
-        title: "",
-        description: "",
       };
     default:
       return { title: "", description: "" };
