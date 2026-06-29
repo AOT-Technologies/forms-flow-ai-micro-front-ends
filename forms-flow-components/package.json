@@ -18,7 +18,12 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@aot-technologies/formio-react": "^1.0.5",
+    "@aot-technologies/formio-react": "^2.0.0",
+    "@aot-technologies/formiojs": "^2.0.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@formio/core": "^2.4.0",
+    "i18next": "^21.6.16",
     "@mui/material": "^7.3.2",
     "@mui/x-data-grid": "^8.12.1",
     "@popperjs/core": "^2.11.8",

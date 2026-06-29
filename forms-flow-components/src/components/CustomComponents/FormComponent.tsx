@@ -228,7 +228,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           className="flex-grow-1 form-container form-hilighter"
         >
           <Form
-            form={updatedForm}
+            src={updatedForm}
             options={{
               viewAsHtml: true,
               readOnly: true,

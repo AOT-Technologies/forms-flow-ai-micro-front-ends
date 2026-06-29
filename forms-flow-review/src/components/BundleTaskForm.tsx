@@ -21,6 +21,7 @@ import Loading from "./Loading";
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
+  bundleId?: string;
   bundleFormData: { formId: string; submissionId: string };
   onChange?: (event: any) => void;
   onFormSubmit?: (submission: any) => void;
@@ -161,7 +162,7 @@ const onLabelClick = (step) => {
          <Errors errors={error} />
         <Form
         key={isReadOnly ? "readonly" : "editable"}
-        form={form}
+        src={form}
         submission={{ data: { ..._.cloneDeep(bundleSubmission?.data), ...submission?.data } }}
         options={{
             buttonSettings: {
