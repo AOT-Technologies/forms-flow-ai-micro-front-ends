@@ -39,6 +39,9 @@ module.exports = (webpackConfigEnv, argv) => {
     },
     resolve: {
       alias: {
+        'choices.js': require.resolve('@formio/choices.js'),
+        '@aot-technologies/formiojs/lib': path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib'),
+        '@aot-technologies/formiojs': path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib'),
         '@formio/core/sdk': path.resolve(__dirname, 'node_modules/@formio/core/lib/sdk/index.js'),
         '@formio/core/process': path.resolve(__dirname, 'node_modules/@formio/core/lib/process/index.js'),
         '@formio/core/experimental': path.resolve(__dirname, 'node_modules/@formio/core/lib/experimental/index.js'),
@@ -48,7 +51,7 @@ module.exports = (webpackConfigEnv, argv) => {
     plugins: [
       new webpack.ProvidePlugin({
         lodashOperators: [
-          path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib/cjs/utils/jsonlogic/operators.js'),
+          path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib/utils/jsonlogic/operators.js'),
           'lodashOperators'
         ]
       })

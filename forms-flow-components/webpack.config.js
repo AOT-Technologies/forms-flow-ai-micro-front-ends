@@ -28,6 +28,11 @@ module.exports = (webpackConfigEnv, argv) => {
         // Fix MUI / React 17 JSX runtime
         "react/jsx-runtime": require.resolve("react/jsx-runtime"),
         'choices.js': require.resolve('@formio/choices.js'),
+        // @aot-technologies/formiojs v2.0.0 ships CJS files at lib/ (not lib/cjs/).
+        // The package exports field incorrectly references lib/cjs/index.js.
+        // More-specific /lib alias must come before the bare package alias.
+        '@aot-technologies/formiojs/lib': path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib'),
+        '@aot-technologies/formiojs': path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib'),
         // Force single @formio/core instance. @aot-technologies/formiojs ships a nested
         // @formio/core@2.1.0-dev that only exports BaseEvaluator, but the JS
         // code was compiled expecting DefaultEvaluator from core@2.7.x.
@@ -50,7 +55,7 @@ module.exports = (webpackConfigEnv, argv) => {
       // a missing import in the custom build. ProvidePlugin auto-injects it.
       new webpack.ProvidePlugin({
         lodashOperators: [
-          path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib/cjs/utils/jsonlogic/operators.js'),
+          path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib/utils/jsonlogic/operators.js'),
           'lodashOperators'
         ]
       })

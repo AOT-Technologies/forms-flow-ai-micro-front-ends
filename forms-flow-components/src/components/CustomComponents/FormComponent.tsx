@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Form, Utils } from "@aot-technologies/formio-react";
+import { Form } from "@aot-technologies/formio-react";
+import { Utils } from "@aot-technologies/formiojs";
 import _ from "lodash";
 
 interface SelectedComponent {
@@ -228,7 +229,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           className="flex-grow-1 form-container form-hilighter"
         >
           <Form
-            src={updatedForm}
+            form={updatedForm}
             options={{
               viewAsHtml: true,
               readOnly: true,

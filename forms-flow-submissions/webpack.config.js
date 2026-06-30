@@ -40,6 +40,8 @@ module.exports = (webpackConfigEnv, argv) => {
     resolve: {
       alias: {
         'choices.js': require.resolve('@formio/choices.js'),
+        '@aot-technologies/formiojs/lib': path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib'),
+        '@aot-technologies/formiojs': path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib'),
         // Force single @formio/core instance. @aot-technologies/formiojs ships a nested
         // @formio/core@2.1.0-dev that only exports BaseEvaluator, but the JS
         // code was compiled expecting DefaultEvaluator from core@2.7.x.
@@ -54,7 +56,7 @@ module.exports = (webpackConfigEnv, argv) => {
       // @aot-technologies/formiojs uses `lodashOperators` in utils.js without importing it.
       new webpack.ProvidePlugin({
         lodashOperators: [
-          path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib/cjs/utils/jsonlogic/operators.js'),
+          path.resolve(__dirname, 'node_modules/@aot-technologies/formiojs/lib/utils/jsonlogic/operators.js'),
           'lodashOperators'
         ]
       })
