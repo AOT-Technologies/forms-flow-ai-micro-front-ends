@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Form, Utils } from "@aot-technologies/formio-react";
+import { Form } from "@aot-technologies/formio-react";
+import { Utils } from "@aot-technologies/formiojs";
 import _ from "lodash";
 
 interface SelectedComponent {

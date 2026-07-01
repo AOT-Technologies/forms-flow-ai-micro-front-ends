@@ -1,5 +1,7 @@
 const { merge } = require("webpack-merge");
 const singleSpaDefaults = require("webpack-config-single-spa-react-ts");
+const webpack = require("webpack");
+const { getFormioAliases, getFormioPlugins, sassRule } = require("../webpack.formio");
 
 module.exports = (webpackConfigEnv, argv) => {
   const defaultConfig = singleSpaDefaults({
@@ -11,29 +13,13 @@ module.exports = (webpackConfigEnv, argv) => {
 
   return merge(defaultConfig, {
     devServer: {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      port: 3012
+      headers: { "Access-Control-Allow-Origin": "*" },
+      port: 3012,
     },
-    output:{
-      filename:"forms-flow-submissions.js"
-    },
-    module: {
-      rules: [
-        {
-          test: /\.s[ac]ss$/i,
-          use: [
-            // Creates `style` nodes from JS strings
-            "style-loader",
-            // Translates CSS into CommonJS
-            "css-loader",
-            // Compiles Sass to CSS
-            "sass-loader",
-          ],
-        },
-      ],
-    },
-    externals: ["@formsflow/*","react","react-dom"]
+    output: { filename: "forms-flow-submissions.js" },
+    module: { rules: [sassRule] },
+    externals: ["@formsflow/*", "react", "react-dom"],
+    resolve: { alias: getFormioAliases(__dirname) },
+    plugins: getFormioPlugins(webpack, __dirname),
   });
 };

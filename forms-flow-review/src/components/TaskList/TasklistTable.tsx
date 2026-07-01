@@ -42,9 +42,9 @@ import {
 import {
   getForm,
   getSubmission,
-  Formio,
   resetSubmission,
 } from "@aot-technologies/formio-react";
+import { Formio } from "@aot-technologies/formiojs";
 import {
   getFormIdSubmissionIdFromURL,
   getFormUrlWithFormIdSubmissionId,

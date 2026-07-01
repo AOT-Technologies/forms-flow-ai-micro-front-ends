@@ -161,7 +161,7 @@ const onLabelClick = (step) => {
          <Errors errors={error} />
         <Form
         key={isReadOnly ? "readonly" : "editable"}
-        form={form}
+        src={form}
         submission={{ data: { ..._.cloneDeep(bundleSubmission?.data), ...submission?.data } }}
         options={{
             buttonSettings: {

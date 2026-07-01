@@ -45,6 +45,8 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
+    "@aot-technologies/formio-react": "^2.0.0",
+    "@aot-technologies/formiojs": "^2.0.0",
     "@types/jest": "^29.5.0",
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",

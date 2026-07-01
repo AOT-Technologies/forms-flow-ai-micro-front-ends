@@ -7,7 +7,12 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@aot-technologies/formiojs": ["node_modules/@aot-technologies/formiojs/lib/index.d.ts"],
+      "@aot-technologies/formiojs/*": ["node_modules/@aot-technologies/formiojs/lib/*"]
+    }
   },
   "files": ["src/formsflow-components.ts"],
   "include": ["src/**/*"],
