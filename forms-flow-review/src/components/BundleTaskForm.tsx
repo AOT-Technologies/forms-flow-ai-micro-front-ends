@@ -21,7 +21,6 @@ import Loading from "./Loading";
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
-  bundleId?: string;
   bundleFormData: { formId: string; submissionId: string };
   onChange?: (event: any) => void;
   onFormSubmit?: (submission: any) => void;

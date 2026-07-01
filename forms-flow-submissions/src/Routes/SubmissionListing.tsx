@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, batch } from "react-redux";
 import { useAppDispatch } from "../hooks";
 import { useTranslation } from "react-i18next";
-import { getRoute, getRedirectUrl, navigateToSubmissionDetail } from "@formsflow/service";
+import { getRedirectUrl, navigateToSubmissionDetail } from "@formsflow/service";
 
 // Types and Services
 import { Submission } from "../types/submissions";

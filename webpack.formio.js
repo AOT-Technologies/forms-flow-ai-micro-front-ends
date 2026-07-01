@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require("node:path");
 
 const getFormioAliases = (dirname) => ({
   "choices.js": require.resolve("@formio/choices.js", { paths: [dirname] }),

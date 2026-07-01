@@ -45,12 +45,11 @@ import {
   fetchFormVariables,
   executeRule,
 } from "../api/queryServices/analyzeSubmissionServices"
-import { HelperServices } from "@formsflow/service";
+import { HelperServices, getRedirectUrl, navigateToSubmissionsListing } from "@formsflow/service";
 import {
   getProcessActivities,
   getProcessDetails,
 } from "../services/processServices";
-import { getRoute, getRedirectUrl, navigateToSubmissionsListing } from "@formsflow/service";
 import BundleSubmissionView from "../components/BundleSubmissionView";
 
 
