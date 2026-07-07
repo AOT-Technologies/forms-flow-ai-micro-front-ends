@@ -22,6 +22,8 @@ import { AppModal, ConfirmModal, CustomSearch, CloseIcon, V8CustomButton, Custom
 import { useParams } from "react-router-dom";
 import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
 
+const DEFAULT_SORT_MODEL: any[] = [];
+
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedRoles, setSelectedRoles] = React.useState([]);
@@ -591,6 +593,7 @@ const Users = React.memo((props: any) => {
               rowCount={props.total}
               loading={loading}
               getRowId={(row) => row.id}
+              sortModel={DEFAULT_SORT_MODEL}
               paginationMode="server"
               sortingMode="client"
               disableColumnMenu
