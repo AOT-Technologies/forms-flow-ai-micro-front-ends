@@ -72,10 +72,13 @@ export function mapMemberOfGroupUsersToSelectOptions(
   const opts = rows
     .map((r) => {
       const username = r.username == null ? "" : String(r.username).trim();
-      if (username) {
+      // Keycloak service accounts (e.g. "service-account-devtest-form...") aren't real assignees.
+      if (username && !username.startsWith("service-account-")) {
         const firstName = r.firstName == null ? "" : String(r.firstName).trim();
         const lastName = r.lastName == null ? "" : String(r.lastName).trim();
-        return { label: formatLastCommaFirst(firstName, lastName), value: username };
+        // Fall back to username so users with no name on file don't render as a blank row.
+        const label = formatLastCommaFirst(firstName, lastName) || username;
+        return { label, value: username };
       }
       return null;
     })
