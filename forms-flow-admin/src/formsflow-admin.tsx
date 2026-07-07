@@ -5,7 +5,7 @@ import Root from "./root.component";
 
 const lifecycles = singleSpaReact({
   React,
-  ReactDOM,
+  ReactDOMClient: ReactDOM,
   rootComponent: Root,
   errorBoundary(err, info, props) {
     // Customize the root error boundary for your microfrontend here.

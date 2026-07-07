@@ -18,7 +18,7 @@ import { InviteUser } from "../../services/users";
 import {
   completeChecklistByRouteKey
 } from "../../services/checklist";
-import { AppModal, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput, ReusableTable } from "@formsflow/components";
+import { AppModal, ConfirmModal, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput, ReusableTable } from "@formsflow/components";
 import { useParams } from "react-router-dom";
 import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
 
@@ -46,6 +46,10 @@ const Users = React.memo((props: any) => {
   const [validationError, setValidationError] = React.useState('');
   const [inviteSuccessEmail, setInviteSuccessEmail] = React.useState<string | null>(null);
   const [inviteLoading, setInviteLoading] = React.useState(false);
+  const [roleRemoveCandidate, setRoleRemoveCandidate] = React.useState<{
+    rowData: any;
+    item: any;
+  } | null>(null);
   const emailInputRef = React.useRef<HTMLInputElement>(null);
 
   const openSuccessModal = () => {
@@ -122,6 +126,26 @@ const Users = React.memo((props: any) => {
         toast.error(t("Failed to update permission!"));
       }
     );
+  };
+
+  const closeRoleRemoveConfirmation = () => setRoleRemoveCandidate(null);
+
+  const confirmRoleRemove = () => {
+    if (!roleRemoveCandidate) return;
+    removePermission(roleRemoveCandidate.rowData, roleRemoveCandidate.item);
+    closeRoleRemoveConfirmation();
+  };
+
+  const isProtectedOwnerRole = (rowData, item) =>
+    rowData?.isPrimaryOwner &&
+    formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay).toLowerCase() ===
+      "owner";
+
+  const canRemoveRole = (rowData, item) => {
+    // Minimum role enforcement: the last remaining role can't be removed
+    if ((rowData?.role?.length || 0) <= 1) return false;
+    // The tenant creator's OWNER role is protected
+    return !isProtectedOwnerRole(rowData, item);
   };
 
   const handleLimitChange = (newLimit: number) => {
@@ -213,10 +237,15 @@ const Users = React.memo((props: any) => {
                 >
                   <span className="">
                     {formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay)}
-                    <i
-                      className="fa-solid fa-xmark chip-close ms-2"
-                      onClick={() => removePermission(rowData, item)}
-                    ></i>
+                    {canRemoveRole(rowData, item) && (
+                      <i
+                        className="fa-solid fa-xmark chip-close ms-2"
+                        data-testid="user-role-remove-icon"
+                        onClick={() =>
+                          setRoleRemoveCandidate({ rowData, item })
+                        }
+                      ></i>
+                    )}
                   </span>
                 </OverlayTrigger>
               </div>
@@ -586,6 +615,22 @@ const Users = React.memo((props: any) => {
           <Loading />
         )}
       </div>
+      {roleRemoveCandidate && (
+        <ConfirmModal
+          show={!!roleRemoveCandidate}
+          title={t("Remove Role?")}
+          message={t(
+            "Are you sure you want to remove this role from the user? This action will revoke the permissions associated with this role."
+          )}
+          primaryBtnAction={closeRoleRemoveConfirmation}
+          onClose={closeRoleRemoveConfirmation}
+          primaryBtnText={t("No, Keep This Role")}
+          secondaryBtnText={t("Yes, Delete This Role")}
+          secondaryBtnAction={confirmRoleRemove}
+          primaryBtndataTestid="keep-user-role-button"
+          secondoryBtndataTestid="confirm-remove-user-role-button"
+        />
+      )}
     </>
   );
 });
