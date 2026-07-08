@@ -104,6 +104,20 @@ $bundle-workflow-input-max-width: 25rem;
 /* ============================
    Bundle Create / Edit
    ============================ */
+.bundle-details-parent {
+  height: 60vh;
+  // overflow-y: auto;
+  @extend .custom-scroll;
+}
+.preview-parent{
+   height: 60vh;
+   @extend .custom-scroll;
+}
+.workflow-parent{
+   height: 62vh;
+   @extend .custom-scroll;
+}
+
 .bundle-details {
   padding-bottom: var(--spacer-075);
   margin-top: 1.9375rem;
@@ -318,6 +332,8 @@ $bundle-workflow-input-max-width: 25rem;
 .workflow-selector {
   padding-left: var(--spacer-300);
   margin-top: var(--spacer-100);
+  // height: 70vh;
+  // @extend .custom-scroll;
 }
 
 .workflow-input-group {

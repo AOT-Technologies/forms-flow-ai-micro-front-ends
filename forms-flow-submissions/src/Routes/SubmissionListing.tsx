@@ -814,23 +814,19 @@ const fetchSubmissions = useCallback(async () => {
       category: "none",
     };
 
-    // Action: Add additional fields + (only when a form is selected, disabled for bundle forms)
-    if (dropdownSelection) {
-      const isBundle = selectedFormType === "bundle";
+    // Action: Add additional fields + (only when a form is selected, hidden for bundle forms)
+    if (dropdownSelection && selectedFormType !== "bundle") {
       items.push({
         content: (
           <div className="d-flex align-items-center justify-content-between">
             <span>{t("Add additional fields")}</span> <AddIcon />
           </div>
         ),
-        onClick: () => {
-          if (!isBundle) handleManageFieldsOpen();
-        },
+        onClick: handleManageFieldsOpen,
         type: "add-fields",
         dataTestId: "add-additional-fields",
         ariaLabel: t("Add additional fields"),
         category: "action",
-        disabled: isBundle,
       });
     }
 

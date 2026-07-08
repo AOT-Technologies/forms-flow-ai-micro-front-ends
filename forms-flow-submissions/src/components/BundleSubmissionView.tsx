@@ -12,7 +12,7 @@ import {
 
 import { textTruncate } from "../helper/helper";
 
-import { BreadCrumbs } from '@formsflow/components';
+import { BreadCrumbs, V8CustomButton } from '@formsflow/components';
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
 import {
   clearFormError,
@@ -160,21 +160,24 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   
             <div className="d-flex justify-content-end">
               {formStep > 0 && (
-                <button
+                <V8CustomButton
+                  label="Previous Form"
+                  variant="secondary"
                   onClick={() => setFormStep((prev) => prev - 1)}
-                  className="btn btn-secondary me-2"
-                >
-                  Previous Form
-                </button>
+                  dataTestId="bundle-previous-form"
+                  ariaLabel="Previous Form"
+                  className="me-2"
+                />
               )}
               {formStep < selectedForms.length - 1 && (
-                <button
+                <V8CustomButton
+                  label="Next Form"
+                  variant="primary"
                   onClick={() => setFormStep((prev) => prev + 1)}
                   disabled={bundleLoading}
-                  className="btn btn-primary"
-                >
-                  Next Form
-                </button>
+                  dataTestId="bundle-next-form"
+                  ariaLabel="Next Form"
+                />
               )}
             </div>
           </>

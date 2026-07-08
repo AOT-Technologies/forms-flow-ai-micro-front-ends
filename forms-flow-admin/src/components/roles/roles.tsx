@@ -165,10 +165,13 @@ const Roles = React.memo((props: any) => {
         const filteredData = data.filter(
           (permission) =>
             permission.name !== "manage_integrations" &&
-            permission.name !== "manage_templates" 
-            // permission.name !== "analyze_metrics_view"
+            permission.name !== "manage_templates" &&
+            // permission.name !== "analyze_metrics_view" &&
+            permission.name !== "view_dashboards" &&
+            permission.name !== "manage_dashboard_authorizations"
         );
         setPermissionData(filteredData);
+        console.log("filteredData", filteredData);
       },
       (err) => {
         setError(err);

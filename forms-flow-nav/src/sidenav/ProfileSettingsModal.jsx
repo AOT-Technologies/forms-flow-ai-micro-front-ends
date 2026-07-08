@@ -128,7 +128,9 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
             (permission) =>
               permission.name !== "manage_bundles" &&
               permission.name !== "manage_integrations" &&
-              permission.name !== "manage_templates"
+              permission.name !== "manage_templates" &&
+              permission.name !== "view_dashboards" &&
+              permission.name !== "manage_dashboard_authorizations"
           );
           
           // Use helper function to group user permissions by category

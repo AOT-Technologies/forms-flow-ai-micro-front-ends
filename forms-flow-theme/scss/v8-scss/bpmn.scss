@@ -36,9 +36,9 @@ $gray-x-light: var(--gray-x-light);
 }
 
 .btn_zoom{
-  position: absolute;
-  bottom: 5em;
-  right:30%;
+  position: relative;
+  bottom: 10em;
+  right: 2em !important;
 }
 
 .djs-container svg:focus {
