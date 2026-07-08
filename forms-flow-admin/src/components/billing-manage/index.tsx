@@ -28,6 +28,20 @@ const BillingManage: React.FC = () => {
         const customerId = query.get("customer") || query.get("customer_id");
         const customerName = query.get("customer_name");
 
+        // Fetch the authoritative tenant key from the API to avoid using stale
+        // or placeholder values (e.g. "default") that may be in storage or the URL.
+        if (MULTITENANCY_ENABLED) {
+          try {
+            const tenantRes = await RequestService.httpGETRequest(API.GET_TENANT_DATA, null, null);
+            if (tenantRes?.data?.key) {
+              tenantKey = tenantRes.data.key;
+              StorageService.save("tenantKey", tenantKey);
+            }
+          } catch {
+            // keep existing tenantKey and let the downstream error surface if it's wrong
+          }
+        }
+
         if (!tenantKey && (customerId || customerName)) {
           const resolveBase = API.BILLING_RESOLVE_CUSTOMER;
           const params = new URLSearchParams();

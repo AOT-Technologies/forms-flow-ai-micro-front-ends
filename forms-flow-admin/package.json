@@ -52,6 +52,9 @@
     "webpack-dev-server": "^4.0.0",
     "webpack-merge": "^5.8.0"
   },
+  "overrides": {
+    "fork-ts-checker-webpack-plugin": "6.5.3"
+  },
   "dependencies": {
     "@aot-technologies/formio-react": "^2.0.0",
     "@aot-technologies/formiojs": "^2.0.0",

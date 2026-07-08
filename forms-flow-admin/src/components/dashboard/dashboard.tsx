@@ -15,6 +15,8 @@ import { useTranslation } from "react-i18next";
 import { V8CustomButton, ReusableTable } from "@formsflow/components";
 import { StorageService } from "@formsflow/service";
 
+const DEFAULT_SORT_MODEL: any[] = [];
+
 const InsightDashboard = React.memo((props: any) => {
   const { dashboards, groups, setCount, authReceived, loading: parentLoading } = props;
 
@@ -227,6 +229,7 @@ const InsightDashboard = React.memo((props: any) => {
                 rows={dashboardList}
                 loading={isLoading}
                 getRowId={(row) => row.resourceId}
+                sortModel={DEFAULT_SORT_MODEL}
                 paginationMode="client"
                 sortingMode="client"
                 disableColumnMenu

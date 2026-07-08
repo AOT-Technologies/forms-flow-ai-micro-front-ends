@@ -34,6 +34,9 @@ import { AppModal,
 }
 from "@formsflow/components";
 import { navigateToAdminRoles } from "@formsflow/service";
+
+const DEFAULT_SORT_MODEL: any[] = [];
+
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId: tenantIdFromParams } = useParams();
@@ -750,6 +753,7 @@ const Roles = React.memo((props: any) => {
               rows={roles}
               loading={props?.loading}
               getRowId={(row) => row.id}
+              sortModel={DEFAULT_SORT_MODEL}
               paginationMode="client"
               sortingMode="client"
               disableColumnMenu
