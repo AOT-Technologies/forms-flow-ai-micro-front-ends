@@ -18,8 +18,8 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@aot-technologies/formio-react": "^2.0.0",
-    "@aot-technologies/formiojs": "^2.0.0",
+    "@aot-technologies/formio-react": "^2.0.1",
+    "@aot-technologies/formiojs": "^2.0.1",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@formio/bootstrap3": "^2.12.3",
