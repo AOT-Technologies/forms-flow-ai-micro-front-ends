@@ -109,7 +109,7 @@ const Admin = React.memo(({ props }: any) => {
   React.useEffect(() => {
     const restricted =
       (location === '/admin/organization' && !isOrganizationManager) ||
-      (location === '/admin/dashboard' && !isDashboardManager) ||
+      // (location === '/admin/dashboard' && !isDashboardManager) ||
       (location === '/admin/roles' && !isRoleManager) ||
       (location === '/admin/users' && !isUserManager) ||
       (!(isOrganizationManager || isDashboardManager || isRoleManager || isUserManager));
