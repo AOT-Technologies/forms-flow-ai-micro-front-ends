@@ -95,7 +95,7 @@
     "webpack-config-single-spa-react": "^4.0.0",
     "webpack-config-single-spa-react-ts": "^4.0.0",
     "webpack-config-single-spa-ts": "^4.0.0",
-    "webpack-dev-server": "^4.0.0",
+    "webpack-dev-server": "^5.2.6",
     "webpack-merge": "^5.8.0"
   },
   "peerDependencies": {
@@ -104,7 +104,10 @@
     "react-js-pagination": "^3.0.3"
   },
   "overrides": {
-    "react-is": "18.3.1"
+    "react-is": "18.3.1",
+    "tar": "^7.5.16",
+    "uuid": "^11.1.1",
+    "esbuild": "^0.25.0"
   },
   "types": "dist/formsflow-components.d.ts",
   "eslintConfig": {
