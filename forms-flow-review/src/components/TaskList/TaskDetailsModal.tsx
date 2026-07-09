@@ -41,6 +41,7 @@ interface TaskDetailsModalProps {
   currentUser: string;
   disabledMode: boolean;
   bundleFormData: BundleFormData;
+  bundleName?: string;
   selectedForms: any[];
   isTaskDetailsLoading: boolean;
   isAppHistoryLoading: boolean;
@@ -71,6 +72,7 @@ const TaskDetailsModal = ({
   currentUser,
   disabledMode,
   bundleFormData,
+  bundleName,
   selectedForms,
   isTaskDetailsLoading,
   isAppHistoryLoading,
@@ -380,7 +382,7 @@ const TaskDetailsModal = ({
     <ReusableLargeModal
       show={show}
       onClose={onClose}
-      title={taskDetail?.applicationId}
+      title={taskDetail?.formType === "bundle" ? bundleName : taskDetail?.applicationId}
       headerControl={isApprovalTask && headerStatusControl}      
       primaryBtnText={isApprovalTask && "Update"}      
       primaryBtnAction={handleUpdateClick}

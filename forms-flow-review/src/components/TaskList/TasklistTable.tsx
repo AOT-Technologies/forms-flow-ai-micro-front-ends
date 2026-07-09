@@ -730,6 +730,7 @@ const TaskListTable = () => {
           currentUser={currentUser || ""}
           disabledMode={disabledMode}
           bundleFormData={bundleFormData}
+          bundleName={bundleName}
           selectedForms={selectedForms}
           isTaskDetailsLoading={taskDetailsLoading}
           isAppHistoryLoading={isAppHistoryLoading}

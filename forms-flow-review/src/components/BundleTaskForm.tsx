@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
 import { useAppDispatch } from "../hooks";
 import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
-import { BreadCrumbs } from "@formsflow/components";
+import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
 import { textTruncate } from "../helper/helper"
 import _ from "lodash";
 import {
@@ -188,14 +188,26 @@ const onLabelClick = (step) => {
         }}
       />
       <div className="d-flex justify-content-end">
-        {formStep > 0 && <button onClick={handleBackForm} className="btn btn-secondary me-2">Previous Form</button>}
-        { selectedForms.length - 1 !== formStep && <button
-          onClick={ handleNextForm }
-          disabled={bundleLoading}
-          className="btn btn-primary"
-        >
-          {"Next Form"}
-        </button>}
+        {formStep > 0 && (
+          <V8CustomButton
+            label="Previous Form"
+            variant="secondary"
+            onClick={handleBackForm}
+            dataTestId="bundle-previous-form"
+            ariaLabel="Previous Form"
+            className="me-2"
+          />
+        )}
+        {selectedForms.length - 1 !== formStep && (
+          <V8CustomButton
+            label="Next Form"
+            variant="primary"
+            onClick={handleNextForm}
+            disabled={bundleLoading}
+            dataTestId="bundle-next-form"
+            ariaLabel="Next Form"
+          />
+        )}
       </div> 
       </>) }
     </div>
