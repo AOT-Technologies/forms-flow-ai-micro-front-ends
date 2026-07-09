@@ -27,7 +27,8 @@ import {
   resetFormData,
 } from "../actions/bundleSubmissionActions";
 import View from "./View";
-import { getForm, getSubmission, Formio } from "@aot-technologies/formio-react";
+import { getForm, getSubmission } from "@aot-technologies/formio-react";
+import { Formio } from "@aot-technologies/formiojs";
 import { useTranslation } from "react-i18next";
 import {
   CUSTOM_SUBMISSION_URL,
@@ -44,12 +45,11 @@ import {
   fetchFormVariables,
   executeRule,
 } from "../api/queryServices/analyzeSubmissionServices"
-import { HelperServices } from "@formsflow/service";
+import { HelperServices, getRedirectUrl, navigateToSubmissionsListing } from "@formsflow/service";
 import {
   getProcessActivities,
   getProcessDetails,
 } from "../services/processServices";
-import { navigateToSubmissionsListing, getRedirectUrl } from "@formsflow/service";
 import BundleSubmissionView from "../components/BundleSubmissionView";
 
 

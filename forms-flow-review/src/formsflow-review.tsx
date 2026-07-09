@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import singleSpaReact from "single-spa-react";
 import Root from "./root.component";
-import { Formio } from "@aot-technologies/formio-react";
+import { Formio } from "@aot-technologies/formiojs";
 import { AppConfig } from "./api/config";
 
 Formio.setProjectUrl(AppConfig.projectUrl);

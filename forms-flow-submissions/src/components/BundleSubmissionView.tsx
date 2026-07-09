@@ -141,7 +141,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   
             <Form
               key={isReadOnly ? "readonly" : "editable"}
-              form={form}
+              src={form}
               submission={{
                 data: {
                   ..._.cloneDeep(bundleSubmission?.data),
