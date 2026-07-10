@@ -33,7 +33,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
     const formHilighterRef = useRef<HTMLDivElement>(null); // Add ref for the form container
     
     /* ------------- manipulate the hidden variable to show in form ------------- */
-    const [updatedForm, setUpdatedForm] = useState(null);
+    const [updatedForm, setUpdatedForm] = useState<any>(null);
     const [manipulatedKeys, setManipulatedKeys] = useState(new Set());
     const [nestedDataKeys, setNestedDataKeys] = useState({});
 
@@ -61,7 +61,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       const manipulatedKeys = [];
       Utils.eachComponent(
         data.components,
-        (component) => {
+        (component: any) => {
           // remove display (show/hide) conditions for showing the component in taskvariable modal
           component.conditional = {};
           component.customConditional = "";
@@ -229,7 +229,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           className="flex-grow-1 form-container form-hilighter"
         >
           <Form
-            form={updatedForm}
+            src={updatedForm}
             options={{
               viewAsHtml: true,
               readOnly: true,

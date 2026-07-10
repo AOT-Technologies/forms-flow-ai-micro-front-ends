@@ -10,8 +10,8 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@aot-technologies/formiojs": ["node_modules/@aot-technologies/formiojs/lib/index.d.ts"],
-      "@aot-technologies/formiojs/*": ["node_modules/@aot-technologies/formiojs/lib/*"]
+      "@aot-technologies/formiojs": ["node_modules/@aot-technologies/formiojs/lib/cjs/index.d.ts"],
+      "@aot-technologies/formiojs/*": ["node_modules/@aot-technologies/formiojs/lib/cjs/*"]
     }
   },
   "files": ["src/formsflow-components.ts"],

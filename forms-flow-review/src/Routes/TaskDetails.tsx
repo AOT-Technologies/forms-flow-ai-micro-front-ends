@@ -342,7 +342,6 @@ const TaskDetails = () => {
       </div>
 
       {task?.formType === "bundle" && selectedForms?.length ? <BundleTaskForm
-         bundleId={task?.formId}
          currentUser={currentUser}
          onFormSubmit={onFormSubmitCallback}
          bundleFormData={bundleFormData}
