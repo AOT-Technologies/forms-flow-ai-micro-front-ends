@@ -342,7 +342,6 @@ const TaskDetailsModal = ({
           }`}
         >
           <BundleTaskForm
-            bundleId={taskDetail?.formId}
             currentUser={currentUser}
             onFormSubmit={onFormSubmitCallback}
             bundleFormData={bundleFormData}
