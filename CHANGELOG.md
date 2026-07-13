@@ -6,16 +6,33 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
 
 `Added`
 **forms-flow-components**
-* Redesigned breadcrumbs
+* Redesigned breadcrumbs and added a new medium variant.
+* Added centralized `AppModal` wrapper and bundle progress stepper components.
 
 **forms-flow-review**
 * Redesigned reviewer module for bundle re-introduction.
+* Added assignee candidate groups support.
 
 **forms-flow-submissions**
-* Redesigned analyze-submissions for bundle reintroduction.
+* Redesigned analyze-submissions for bundle re-introduction with access-based form listing.
+
+**forms-flow-admin**
+* Added role removal confirmation modal.
+* Replaced the legacy react-bootstrap table with `ReusableTable`.
 
 **forms-flow-themes**
-* Added new css to support redesigned pages.
+* Added new css to support redesigned breadcrumbs, bundle, and stepper pages.
+
+**scripts**
+* Added release version-bump CLI scripts for Windows and macOS.
+
+`Modified`
+* Upgraded React to 18.3.1, single-spa, and formio packages across all micro-frontends.
+* Hid the Dashboards navigation for admin users.
+
+`Fixed`
+* Fixed bundle, task assignee dropdown, shared-filter, and admin table pagination issues.
+* Fixed export PDF failure, anonymous form navbar rendering, and various UI issues (scrollbars, tab borders, variable tab).
 
 ## 8.2.0 - 05-05-2026
 
