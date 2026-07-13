@@ -2,6 +2,21 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.2.5 - 13-07-2026
+
+`Added`
+**forms-flow-components**
+* Redesigned breadcrumbs
+
+**forms-flow-review**
+* Redesigned reviewer module for bundle re-introduction.
+
+**forms-flow-submissions**
+* Redesigned analyze-submissions for bundle reintroduction.
+
+**forms-flow-themes**
+* Added new css to support redesigned pages.
+
 ## 8.2.0 - 05-05-2026
 
 `Added`
