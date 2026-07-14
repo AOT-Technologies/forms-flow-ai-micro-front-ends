@@ -9,8 +9,13 @@ const useAllTasksPayload = () => {
   return {
     name: "All Tasks",
     criteria: {
-      includeAssignedTasks: true,
-      candidateGroupsExpression: "${currentUserGroups()}",
+      "orQueries": [
+        {
+          "assigneeExpression": "${currentUser()}",
+          "candidateGroupsExpression": "${currentUserGroups()}",
+          "includeAssignedTasks": true
+        }
+      ],
       sorting: [
         {
           sortBy: "created",

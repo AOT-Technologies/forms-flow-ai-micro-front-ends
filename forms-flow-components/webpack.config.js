@@ -1,5 +1,7 @@
 const { merge } = require("webpack-merge");
 const singleSpaDefaults = require("webpack-config-single-spa-ts");
+const webpack = require("webpack");
+const { getFormioAliases, getFormioPlugins } = require("../webpack.formio");
 
 module.exports = (webpackConfigEnv, argv) => {
   const defaultConfig = singleSpaDefaults({
@@ -11,21 +13,18 @@ module.exports = (webpackConfigEnv, argv) => {
 
   return merge(defaultConfig, {
     devServer: {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-      },
-      port: 3010
+      headers: { "Access-Control-Allow-Origin": "*" },
+      port: 3010,
     },
-    output:{
-      filename:"forms-flow-components.js"
-    },  
+    output: { filename: "forms-flow-components.js" },
     externals: ["@formsflow/*", "react", "react-dom"],
     resolve: {
       alias: {
-        // Fix MUI / React 17 JSX runtime
-        "react/jsx-runtime": require.resolve("react/jsx-runtime.js"),
+        "react/jsx-runtime": require.resolve("react/jsx-runtime"),
+        ...getFormioAliases(__dirname),
       },
       extensions: [".tsx", ".ts", ".js", ".jsx"],
-    }
+    },
+    plugins: getFormioPlugins(webpack, __dirname),
   });
 };

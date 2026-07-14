@@ -4,6 +4,7 @@ import {
   ReorderIcon,
 } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import { RootState } from "../../reducers";
 import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
@@ -24,7 +25,7 @@ import { SelectDropdown } from "@formsflow/components"; // ✅ Use reusable drop
 
 const AttributeFilterDropdown = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { createFilters } = userRoles();
   const userDetails: UserDetail = useSelector(
     (state: RootState) => state.task.userDetails

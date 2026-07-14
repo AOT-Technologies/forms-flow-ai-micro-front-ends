@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { HelperServices } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import { isEqual } from "lodash";
 import TaskDetailsModal from "./TaskDetailsModal";
 import {
@@ -25,7 +26,7 @@ import {
   setFilterToEdit,
 } from "../../actions/taskActions";
 import { MULTITENANCY_ENABLED } from "../../constants";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList,
   fetchTaskVariables,
@@ -41,9 +42,9 @@ import {
 import {
   getForm,
   getSubmission,
-  Formio,
   resetSubmission,
 } from "@aot-technologies/formio-react";
+import { Formio } from "@aot-technologies/formiojs";
 import {
   getFormIdSubmissionIdFromURL,
   getFormUrlWithFormIdSubmissionId,
@@ -84,8 +85,8 @@ interface Column {
 
 const TaskListTable = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const history = useHistory();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const {
     tasksCount,
@@ -264,7 +265,7 @@ const TaskListTable = () => {
   const matchingVar = variables.find((v) => v.name === sortKey);
   if (!matchingVar) return "-";
 
-    const dateTimeField = taskvariables.find(
+  const dateTimeField = taskvariables.find(
       (v) => v.key === sortKey && v.type === "datetime"
     );
     const dateField = taskvariables.find(
@@ -600,7 +601,13 @@ const TaskListTable = () => {
 
 
 
-  const memoizedRows = useMemo(() => tasksList || [], [tasksList]);
+  const memoizedRows = useMemo(() =>
+    (tasksList || []).map((task: Task) => {
+      const vars = task?._embedded?.variable ?? [];
+      const formType = vars.find((v) => v.name === "formType")?.value;
+      return { ...task, formType };
+    }),
+  [tasksList]);
 
   useEffect(() => {
     if (hasAutoOpenedTaskFromQuery.current) return;
@@ -618,8 +625,8 @@ const TaskListTable = () => {
     queryParams.delete("taskId");
     queryParams.delete("assignedToMe");
     const nextSearch = queryParams.toString();
-    history.replace(location.pathname + (nextSearch ? "?" + nextSearch : ""));
-  }, [location.search, location.pathname, memoizedRows, handleOpenModal, history]);
+    navigate(location.pathname + (nextSearch ? "?" + nextSearch : ""), { replace: true });
+  }, [location.search, location.pathname, memoizedRows, handleOpenModal, navigate]);
 
   // Base row height
   const baseRowHeight = 55;
@@ -659,6 +666,8 @@ const TaskListTable = () => {
       <div className={tableWrapperClass}>
         <ReusableTable
           columns={muiColumns}
+          showBundleIcon={true}
+          formNameField="formName"
           disableColumnResize={false}
           rows={memoizedRows}
           rowCount={tasksCount}
@@ -721,6 +730,7 @@ const TaskListTable = () => {
           currentUser={currentUser || ""}
           disabledMode={disabledMode}
           bundleFormData={bundleFormData}
+          bundleName={bundleName}
           selectedForms={selectedForms}
           isTaskDetailsLoading={taskDetailsLoading}
           isAppHistoryLoading={isAppHistoryLoading}

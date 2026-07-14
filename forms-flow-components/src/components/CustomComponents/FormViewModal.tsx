@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { useTranslation } from "react-i18next";
 import { CloseIcon } from "../SvgIcons/index";
 
@@ -37,7 +37,7 @@ export const FormViewModal: React.FC<FormViewModalProps> = React.memo(({
   };
 
   return (
-    <Modal
+    <AppModal
       show={show}
       onHide={handleClose}
       dialogClassName={`form-view-modal ${className}`}
@@ -47,21 +47,21 @@ export const FormViewModal: React.FC<FormViewModalProps> = React.memo(({
       keyboard={closeOnBackdrop}
       centered
     >
-      <Modal.Header className="d-flex justify-content-between align-items-center">
-        <Modal.Title id="form-view-modal-title" data-testid={titleDataTestId}>
+      <AppModal.Header className="d-flex justify-content-between align-items-center">
+        <AppModal.Title id="form-view-modal-title" data-testid={titleDataTestId}>
           <p className="m-0">
             {t(title)}
           </p>
-        </Modal.Title>
+        </AppModal.Title>
         <div className="icon-close" onClick={onClose} data-testid="form-view-modal-close">
             <CloseIcon dataTestId="form-view-modal-close"/>
           </div>
-      </Modal.Header>
+      </AppModal.Header>
 
-      <Modal.Body className="form-view-modal-body custom-scroll">
+      <AppModal.Body className="form-view-modal-body custom-scroll">
         {formContent || children}
-      </Modal.Body>
-    </Modal>
+      </AppModal.Body>
+    </AppModal>
   );
 });
 

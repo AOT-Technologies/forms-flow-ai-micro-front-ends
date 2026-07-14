@@ -1,16 +1,13 @@
-import { createBrowserHistory } from "history";
-import { routerMiddleware } from "connected-react-router";
 import logger from "redux-logger";
 import { configureStore as configureStoreApp, Middleware } from "@reduxjs/toolkit";
 import createRootReducer from "../reducers";
-const history = createBrowserHistory();
 
 interface PreloadedState {
-  [key: string]: any; // Define a proper state type if possible
+  [key: string]: any;
 }
 
 function configureStore(preloadedState?: PreloadedState) {
-  const enhancers: Middleware[] = [routerMiddleware(history)];
+  const enhancers: Middleware[] = [];
 
   const node_env =
     window._env_?.NODE_ENV || process.env?.NODE_ENV;
@@ -19,7 +16,7 @@ function configureStore(preloadedState?: PreloadedState) {
   }
 
   return configureStoreApp({
-    reducer: createRootReducer(history),
+    reducer: createRootReducer(),
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({ serializableCheck: false }).concat(enhancers),
     preloadedState,
@@ -27,7 +24,6 @@ function configureStore(preloadedState?: PreloadedState) {
 }
 
 const StoreService = {
-  history,
   configureStore,
 };
 

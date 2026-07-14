@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { CloseIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 import { HelperServices } from "@formsflow/service";
@@ -44,7 +44,7 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
     const lastEntryRef = useRef<HTMLDivElement>(null);
 
     return (
-      <Modal
+      <AppModal
         show={show}
         onHide={onClose}
         dialogClassName="form-submission-history-modal"
@@ -53,16 +53,16 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
         aria-describedby="form-history-modal-message"
         size="sm"
       >
-        <Modal.Header data-testid="form-history-modal-header">
-          <Modal.Title id="form-history-modal-title" data-testid="form-history-modal-title" aria-label="Form history modal title">
+        <AppModal.Header data-testid="form-history-modal-header">
+          <AppModal.Title id="form-history-modal-title" data-testid="form-history-modal-title" aria-label="Form history modal title">
             <p>{t(title)}</p>
-          </Modal.Title>
+          </AppModal.Title>
 
           <div className="icon-close" onClick={onClose}>
             <CloseIcon aria-label="Close form-history-modal" data-testid="close-icon" />
           </div>
-        </Modal.Header>
-        <Modal.Body className="history-modal-body" data-testid="form-history-modal-body" aria-label="Form history modal body">
+        </AppModal.Header>
+        <AppModal.Body className="history-modal-body" data-testid="form-history-modal-body" aria-label="Form history modal body">
           {historyCount > 0 ? (
             <>
             <div className="history-content" data-testid="form-history-content" aria-label="Form history content">
@@ -89,8 +89,8 @@ export const FormSubmissionHistoryModal: React.FC<FormSubmissionHistoryModalProp
           ) : (
             <div className="text-center" data-testid="form-history-no-entry" aria-label="No submission history found">{t("No submission history found")}</div>
           )}
-        </Modal.Body>
-      </Modal>
+        </AppModal.Body>
+      </AppModal>
     );
   }
 );

@@ -129,7 +129,8 @@ declare module "@formsflow/components" {
     BreadCrumbs,
     QuickFilterIcon,
     GoogleIcon,
-    MicrosoftIcon
+    MicrosoftIcon,
+    AppModal
   }: any;
 }
 

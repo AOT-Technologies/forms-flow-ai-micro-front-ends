@@ -74,6 +74,7 @@ $font-weight-regular:var(--font-weight-regular);
         font-weight: $font-weight-medium;
         border-radius: $border-radius;
         color: $Gray-darkest !important;
+        border-color: $Gray-x-light !important;
       }
   
       &:focus {
@@ -151,7 +152,7 @@ $font-weight-regular:var(--font-weight-regular);
             @extend .custom-scroll;
             
             .manage-content {
-                padding: 1.5rem 0;
+                padding: 1rem 0;
             }
         }
     }

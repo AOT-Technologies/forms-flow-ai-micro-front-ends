@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { useTranslation } from "react-i18next";
 import { V8CustomButton } from "./CustomButton";
 import { CloseIcon } from "../SvgIcons/index";
@@ -162,20 +162,20 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
   };
 
   return (
-    <Modal
+    <AppModal
       show={show}
       onHide={onClose}
       dialogClassName="reusable-standard-modal"
       aria-labelledby="reusable-standard-modal-title"
     >
-      <Modal.Header>
+      <AppModal.Header>
         <div className="modal-header-content">
-          <Modal.Title id="reusable-standard-modal-title">
+          <AppModal.Title id="reusable-standard-modal-title">
             {t(title)}
             <div onClick={onClose}>
               <CloseIcon color={darkColor} />
             </div>
-          </Modal.Title>
+          </AppModal.Title>
 
           {subtitle && (
             <div className="modal-subtitle">
@@ -183,16 +183,16 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
             </div>
           )}
         </div>
-      </Modal.Header>
+      </AppModal.Header>
 
       {(renderContent() || contents) && (
-        <Modal.Body className="custom-scroll">
+        <AppModal.Body className="custom-scroll">
           {renderContent()}
-        </Modal.Body>
+        </AppModal.Body>
       )}
 
       {(primaryBtnText || secondaryBtnText) && (
-        <Modal.Footer className={`mt-3 ${allignButtons ? "justify-content-between" : ""}`}>
+        <AppModal.Footer className={`mt-3 ${allignButtons ? "justify-content-between" : ""}`}>
           {secondaryBtnText && (
             <V8CustomButton
               label={t(secondaryBtnText)}
@@ -215,8 +215,8 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
               variant="primary"
             />
           )}
-        </Modal.Footer>
+        </AppModal.Footer>
       )}
-    </Modal>
+    </AppModal>
   );
 };

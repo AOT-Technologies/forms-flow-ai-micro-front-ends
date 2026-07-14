@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Route, Switch, Redirect, useHistory, useParams } from "react-router-dom";
+import { Route, Routes, Navigate, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { KeycloakService, StorageService } from "@formsflow/service";
@@ -9,7 +9,7 @@ import {
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
 import Footer from "./components/Footer";
-import { BASE_ROUTE, ENABLE_INTEGRATION_PREMIUM } from "./constants";
+import { ENABLE_INTEGRATION_PREMIUM } from "./constants";
 import { navigateToIntegrationRecipes, navigateToIntegrationConnectedApps, navigateToIntegrationLibrary, getRedirectUrl, MULTITENANCY_ENABLED } from "@formsflow/service";
 import Recipes from "./components/Recipes";
 import ConnectedApps from "./components/ConnectedApps";
@@ -24,7 +24,7 @@ import Alert from "./containers/Alert";
 
 const Integration = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
-  const history = useHistory();
+  const navigate = useNavigate();
   const { tenantId } = useParams();
   const [instance, setInstance] = React.useState(props.getKcInstance());
   const [isAuth, setIsAuth] = React.useState(instance?.isAuthenticated());
@@ -92,15 +92,15 @@ const Integration = React.memo(({ props }: any) => {
     return [
       {
         name: "Recipes",
-        onClick: () => navigateToIntegrationRecipes(history, tenantId),
+        onClick: () => navigateToIntegrationRecipes(navigate, tenantId),
       },
       {
         name: "Connected Apps",
-        onClick: () => navigateToIntegrationConnectedApps(history, tenantId),
+        onClick: () => navigateToIntegrationConnectedApps(navigate, tenantId),
       },
       {
         name: "Library",
-        onClick: () => navigateToIntegrationLibrary(history, tenantId),
+        onClick: () => navigateToIntegrationLibrary(navigate, tenantId),
       },
     ];
   };
@@ -125,43 +125,39 @@ const Integration = React.memo(({ props }: any) => {
             <div className="min-container-height">
                 <Head items={headerList()} page={page} />
               <ToastContainer theme="colored" />
-              <Switch>
+              <Routes>
                 <Route
-                  exact
-                  path={`${BASE_ROUTE}integration/recipes`}
-                  render={() => (
+                  path="integration/recipes"
+                  element={
                     <Recipes
                       {...props}
                       setTab={setPage}
                     />
-                  )}
+                  }
                 />
 
                 <Route
-                  exact
-                  path={`${BASE_ROUTE}integration/connected-apps`}
-                  render={() => (
+                  path="integration/connected-apps"
+                  element={
                     <ConnectedApps
                       {...props}
                       setTab={setPage}
                     />
-                  )}
+                  }
                 />
 
                 <Route
-                  exact
-                  path={`${BASE_ROUTE}integration/library`}
-                  render={() => (
+                  path="integration/library"
+                  element={
                     <Library
                       {...props}
                       setTab={setPage}
                     />
-                  )}
+                  }
                 />
 
-
-                <Redirect from="*" to="/404" />
-              </Switch>
+                <Route path="*" element={<Navigate to="/404" replace />} />
+              </Routes>
             </div>
             <Footer />
           </div>
