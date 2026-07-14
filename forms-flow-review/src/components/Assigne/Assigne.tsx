@@ -1,26 +1,36 @@
 // import { AssignUser } from "@formsflow/components";
 import { UserSelect } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import {
   claimBPMTask,
   fetchBPMTaskCount,
   fetchServiceTaskList,
   unClaimBPMTask,
   updateAssigneeBPMTask,
+  fetchUsersByMemberOfGroup,
+  fetchUserList,
 } from "../../api/services/filterServices";
 import {  setTaskDetailsLoading } from "../../actions/taskActions";
 import { getBPMTaskDetail } from "../../api/services/bpmTaskServices";
 import SocketIOService from "../../services/SocketIOService";
 import { userRoles } from "../../helper/permissions";
-import { useEffect, useState, useRef } from "react";
 import {
   completeChecklistByRouteKey
 } from "../../services/checklistService";
+import {
+  mergeMemberOfGroupResponsesToSelectOptions,
+  resolveTaskCandidateGroupIds,
+  type MemberOfGroupSelectOption,
+} from "../../helper/assigneeCandidateGroups";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 
 
+
+const ROLE_VIEW_TASKS = "ROLE_view_tasks";
 
 const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, resizable=false }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const taskId = task?.id;
   const {
     filterList,
@@ -36,6 +46,7 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
   const [overrideValue, setOverrideValue] = useState<string | null>(null);
   // Track the last assigned user to handle stale Redux state (use ref to avoid overwriting)
   const lastAssignedUserRef = useRef<string | null>(null);
+  const [memberGroupOptions, setMemberGroupOptions] = useState<MemberOfGroupSelectOption[]>([]);
   const fetchTaskList = () => {
     dispatch(fetchServiceTaskList(lastReqPayload, null, activePage, limit));
   };
@@ -89,6 +100,48 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
     ? (taskDetail && taskDetail.id === taskId ? taskDetail : task)
     : task;
 
+  const candidateGroupKey = useMemo(
+    () => resolveTaskCandidateGroupIds(effectiveTask, task).join("|"),
+    [effectiveTask, task]
+  );
+
+  useEffect(() => {
+    setMemberGroupOptions([]);
+  }, [taskId, candidateGroupKey]);
+
+  // ROLE_view_tasks isn't a real member-of-group in Keycloak, so fetchUsersByMemberOfGroup
+  // would return no results for it. Reuse fetchUserList (permission=manage_tasks) instead,
+  // wrapping its (dispatch, callback) thunk shape into a promise that matches
+  // fetchUsersByMemberOfGroup's response shape so both can feed mergeMemberOfGroupResponsesToSelectOptions.
+  const fetchUsersForRoleViewTasks = useCallback(
+    () =>
+      new Promise<{ data: any }>((resolve, reject) => {
+        dispatch(
+          fetchUserList((err: any, data: any) => {
+            if (err) reject(err);
+            else resolve({ data });
+          })
+        );
+      }),
+    [dispatch]
+  );
+
+  const handleAssigneeOpen = useCallback(() => {
+    const ids = resolveTaskCandidateGroupIds(effectiveTask, task);
+    if (ids.length === 0) return;
+    void Promise.all(
+      ids.map((g) =>
+        // ROLE_view_tasks uses a different lookup; all other candidate groups are unchanged.
+        g === ROLE_VIEW_TASKS ? fetchUsersForRoleViewTasks() : fetchUsersByMemberOfGroup(g)
+      )
+    )
+      .then((responses) => mergeMemberOfGroupResponsesToSelectOptions(responses))
+      .then((sorted) => {
+        setMemberGroupOptions(sorted);
+      })
+      .catch(() => undefined);
+  }, [effectiveTask, task, fetchUsersForRoleViewTasks]);
+  
   const handleChangeClaim = (newuser: string) => {
     // Optimistically update the UI label
     setOverrideValue(newuser);
@@ -211,8 +264,11 @@ const TaskAssigneeManager = ({ task, isFromTaskDetails=false, minimized=false, r
       return(
         <UserSelect
           users={userList?.data ?? []}
+          useMemberGroupOptions
+          memberGroupOptions={memberGroupOptions}
           value={displayedValue}
           onChange={handleChangeClaim}
+          onOpen={handleAssigneeOpen}
           shortMeLabel={!isFromTaskDetails}
           isFromTaskDetails={isFromTaskDetails}
           ariaLabel="task-assignee-select"

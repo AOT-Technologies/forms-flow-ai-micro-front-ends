@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import { useTranslation } from "react-i18next";
 import { V8CustomButton } from "./CustomButton";
 import { CloseIcon } from "../SvgIcons/index";
@@ -55,19 +55,19 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
   const darkColor = StyleServices.getCSSVariable("--secondary-dark");
 
   return (
-    <Modal
+    <AppModal
       show={show}
       onHide={onClose}
       size="lg"
       dialogClassName="reusable-large-modal"
       aria-labelledby="reusable-modal-title"
     >
-      <Modal.Header>
+      <AppModal.Header>
         <div className="modal-header-content">
           <div className="modal-header-top">
-            <Modal.Title id="reusable-modal-title" className="modal-title-text">
+            <AppModal.Title id="reusable-modal-title" className="modal-title-text">
               {t(title)}
-            </Modal.Title>
+            </AppModal.Title>
             {headerControl && (
               <div className="modal-header-control">
                 {headerControl}
@@ -84,11 +84,11 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
             </div>
           )}
         </div>
-      </Modal.Header>
+      </AppModal.Header>
 
-      {content && <Modal.Body className="custom-scroll">{content}</Modal.Body>}
+      {content && <AppModal.Body className="custom-scroll">{content}</AppModal.Body>}
 
-      <Modal.Footer>
+      <AppModal.Footer>
         {secondaryBtnText && (
           <V8CustomButton
             label={t(secondaryBtnText)}
@@ -111,7 +111,7 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
             variant="primary"
           />
         )}
-      </Modal.Footer>
-    </Modal>
+      </AppModal.Footer>
+    </AppModal>
   );
 };

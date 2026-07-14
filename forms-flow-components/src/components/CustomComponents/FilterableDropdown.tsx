@@ -13,6 +13,91 @@ export interface FilterableOption {
   value: string | number;
 }
 
+type FilterableDropdownOptionRowProps = {
+  option: FilterableOption;
+  index: number;
+  isHighlighted: boolean;
+  isSelected: boolean;
+  itemClassName: string;
+  dataTestId: string;
+  onSelect: (option: FilterableOption) => void;
+  onHighlight: (index: number) => void;
+};
+
+function FilterableDropdownOptionRow({
+  option,
+  index,
+  isHighlighted,
+  isSelected,
+  itemClassName,
+  dataTestId,
+  onSelect,
+  onHighlight,
+}: FilterableDropdownOptionRowProps): React.ReactElement {
+  const rowClassName = [
+    "filterable-dropdown-item",
+    isHighlighted ? "highlighted" : "",
+    isSelected ? "selected" : "",
+    itemClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const handleClick = (): void => {
+    onSelect(option);
+  };
+
+  const handleMouseEnter = (): void => {
+    onHighlight(index);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLLIElement>): void => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
+  return (
+    <li
+      className={rowClassName}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={handleMouseEnter}
+      role="option"
+      tabIndex={-1}
+      aria-selected={isSelected}
+      data-testid={`${dataTestId}-option-${option.value}`}
+    >
+      <span className="filterable-dropdown-item-label">{option.label}</span>
+    </li>
+  );
+}
+
+function mapOptionsToListItems(
+  opts: FilterableOption[],
+  highlightedIndex: number,
+  currentValue: string | number | undefined,
+  itemClassName: string,
+  dataTestIdPrefix: string,
+  onSelect: (option: FilterableOption) => void,
+  onHighlight: (index: number) => void
+): React.ReactNode[] {
+  return opts.map((option, index) => (
+    <FilterableDropdownOptionRow
+      key={`${option.value}-${index}`}
+      option={option}
+      index={index}
+      isHighlighted={highlightedIndex === index}
+      isSelected={option.value === currentValue}
+      itemClassName={itemClassName}
+      dataTestId={dataTestIdPrefix}
+      onSelect={onSelect}
+      onHighlight={onHighlight}
+    />
+  ));
+}
+
 /**
  * Props for `FilterableDropdown` component.
  * A searchable dropdown with input field that filters options as you type.
@@ -50,6 +135,8 @@ export interface FilterableDropdownProps {
   onInputChange?: (value: string) => void;
   /** Custom filter function */
   filterFunction?: (option: FilterableOption, searchTerm: string) => boolean;
+  /** showAsText / parent: called when the menu opens from a primary pointer click (see UserSelect). */
+  onOpen?: () => void;
 }
 
 /**
@@ -81,6 +168,7 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
   onInputChange,
   filterFunction,
   resizable = false,
+  onOpen,
 }) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -90,7 +178,7 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLUListElement>(null);
 
   // Get selected option
   const selectedOption = useMemo(() => {
@@ -127,6 +215,12 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
     );
   }, [options, inputValue, filterFunction]);
 
+  /** Full list when opening / not filtering yet; filtered list while user types */
+  const menuOptions = useMemo(() => {
+    if (isUserTyping) return filteredOptions;
+    return options;
+  }, [isUserTyping, filteredOptions, options]);
+
   // Handle input change
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,7 +256,7 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
           e.preventDefault();
           setIsOpen(true);
           setHighlightedIndex((prev) =>
-            prev < filteredOptions.length - 1 ? prev + 1 : prev
+            prev < menuOptions.length - 1 ? prev + 1 : prev
           );
           break;
         case "ArrowUp":
@@ -171,13 +265,14 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
           break;
         case "Enter":
           e.preventDefault();
-          if (highlightedIndex >= 0 && filteredOptions[highlightedIndex]) {
-            handleSelectOption(filteredOptions[highlightedIndex]);
+          if (highlightedIndex >= 0 && menuOptions[highlightedIndex]) {
+            handleSelectOption(menuOptions[highlightedIndex]);
           }
           break;
         case "Escape":
           e.preventDefault();
           setIsOpen(false);
+          setIsUserTyping(false);
           setHighlightedIndex(-1);
           if (selectedOption) {
             setInputValue(selectedOption.label);
@@ -185,10 +280,11 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
           break;
         case "Tab":
           setIsOpen(false);
+          setIsUserTyping(false);
           break;
       }
     },
-    [disabled, filteredOptions, highlightedIndex, handleSelectOption, selectedOption]
+    [disabled, menuOptions, highlightedIndex, handleSelectOption, selectedOption]
   );
 
   // Handle click outside
@@ -270,6 +366,88 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
       : dropdownWidth ? { width: `${dropdownWidth}px` } : {}),
   };
 
+  const notifyOpenFromPointer = useCallback(
+    (e: React.PointerEvent) => {
+      if (disabled || e.button !== 0 || isOpen) return;
+      onOpen?.();
+    },
+    [disabled, isOpen, onOpen]
+  );
+
+  const openMenu = useMemo(() => {
+    if (menuOptions.length > 0) {
+      return (
+        <ul
+          ref={dropdownRef}
+          className="filterable-dropdown-menu"
+          style={dropdownStyle}
+          role="listbox"
+          data-testid={`${dataTestId}-menu`}
+        >
+          {mapOptionsToListItems(
+            menuOptions,
+            highlightedIndex,
+            value,
+            itemClassName,
+            dataTestId,
+            handleSelectOption,
+            setHighlightedIndex
+          )}
+        </ul>
+      );
+    }
+
+    if (isUserTyping && inputValue.trim()) {
+      return (
+        <ul
+          className="filterable-dropdown-menu filterable-dropdown-no-results"
+          style={dropdownStyle}
+          role="listbox"
+          data-testid={`${dataTestId}-no-results`}
+        >
+          <li
+            className="filterable-dropdown-item filterable-dropdown-empty"
+            role="presentation"
+          >
+            {t("No results found")}
+          </li>
+        </ul>
+      );
+    }
+
+    return (
+      <ul
+        ref={dropdownRef}
+        className="filterable-dropdown-menu"
+        style={dropdownStyle}
+        role="listbox"
+        data-testid={`${dataTestId}-menu`}
+      >
+        {mapOptionsToListItems(
+          options,
+          highlightedIndex,
+          value,
+          itemClassName,
+          dataTestId,
+          handleSelectOption,
+          setHighlightedIndex
+        )}
+      </ul>
+    );
+  }, [
+    menuOptions,
+    isUserTyping,
+    inputValue,
+    dropdownStyle,
+    dataTestId,
+    value,
+    itemClassName,
+    highlightedIndex,
+    handleSelectOption,
+    options,
+    t,
+  ]);
+
   return (
     <div
       ref={containerRef}
@@ -280,7 +458,8 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
     >
       <div 
         className="filterable-dropdown-input-wrapper"
-        onClick={() => !disabled && !isOpen && setIsOpen(true)}
+        onPointerDownCapture={notifyOpenFromPointer}
+        onClick={() => !disabled && setIsOpen(true)}
       >
         <input
           ref={inputRef}
@@ -289,10 +468,16 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => !disabled && setIsOpen(true)}
+          onFocus={() => {
+            if (!disabled) {
+              setIsUserTyping(false);
+              setIsOpen(true);
+            }
+          }}
           onClick={(e) => {
             e.stopPropagation();
             if (!disabled) {
+              setIsUserTyping(false);
               setIsOpen(true);
             }
           }}
@@ -327,70 +512,7 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
         )}
       </div>
 
-      {isOpen && !disabled && (
-        <>
-          {filteredOptions.length > 0 ? (
-            <div
-              ref={dropdownRef}
-              className="filterable-dropdown-menu"
-              style={dropdownStyle}
-              role="listbox"
-              data-testid={`${dataTestId}-menu`}
-            >
-              {filteredOptions.map((option, index) => (
-                <div
-                  key={`${option.value}-${index}`}
-                  className={`filterable-dropdown-item ${
-                    highlightedIndex === index ? "highlighted" : ""
-                  } ${option.value === value ? "selected" : ""} ${itemClassName}`}
-                  onClick={() => handleSelectOption(option)}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                  role="option"
-                  aria-selected={option.value === value}
-                  data-testid={`${dataTestId}-option-${option.value}`}
-                >
-                  <span className="filterable-dropdown-item-label">{option.label}</span>
-                </div>
-              ))}
-            </div>
-          ) : inputValue.trim() ? (
-            <div
-              className="filterable-dropdown-menu filterable-dropdown-no-results"
-              style={dropdownStyle}
-              role="listbox"
-              data-testid={`${dataTestId}-no-results`}
-            >
-              <div className="filterable-dropdown-item filterable-dropdown-empty">
-                {t("No results found")}
-              </div>
-            </div>
-          ) : (
-            <div
-              ref={dropdownRef}
-              className="filterable-dropdown-menu"
-              style={dropdownStyle}
-              role="listbox"
-              data-testid={`${dataTestId}-menu`}
-            >
-              {options.map((option, index) => (
-                <div
-                  key={`${option.value}-${index}`}
-                  className={`filterable-dropdown-item ${
-                    highlightedIndex === index ? "highlighted" : ""
-                  } ${option.value === value ? "selected" : ""} ${itemClassName}`}
-                  onClick={() => handleSelectOption(option)}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                  role="option"
-                  aria-selected={option.value === value}
-                  data-testid={`${dataTestId}-option-${option.value}`}
-                >
-                  <span className="filterable-dropdown-item-label">{option.label}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+      {isOpen && !disabled && openMenu}
     </div>
   );
 };

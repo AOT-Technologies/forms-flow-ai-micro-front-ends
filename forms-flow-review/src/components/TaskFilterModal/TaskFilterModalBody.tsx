@@ -2,11 +2,12 @@ import { useState, useMemo, useEffect, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import isEqual from "lodash/isEqual";
 import {
+  AppModal,
   DragandDropSort,
   useSuccessCountdown,
   V8CustomButton,
   SelectDropdown,
-  QuickFilterIcon
+  QuickFilterIcon,
 } from "@formsflow/components";
 import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
 import {
@@ -16,6 +17,7 @@ import {
   SPECIFIC_USER_OR_GROUP,
 } from "../../constants/index";
 import { useSelector, useDispatch } from "react-redux";
+import { useAppDispatch } from "../../hooks";
 import {
   fetchAllForms,
   fetchBPMTaskCount,
@@ -37,7 +39,6 @@ import { Filter, FilterCriteria, UserDetail } from "../../types/taskFilter";
 import { defaultTaskVariable } from "../../constants/defaultTaskVariable";
 import ParametersTab from "./ParametersTab";
 import SaveFilterTab from "./SaveFilterTab";
-import { Modal } from "react-bootstrap";
 import { RootState } from "../../reducers";
 import { useParams } from "react-router-dom";
 const TaskFilterModalBody = ({
@@ -53,7 +54,7 @@ const TaskFilterModalBody = ({
   onStepChange,
 }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isQuickFilterEdit = !!filterToEdit?.isQuickFilter;
   const isCreating = !filterToEdit?.id && !isQuickFilterEdit;
   const [introTypeSelection, setIntroTypeSelection] = useState<string>("quickFilter");
@@ -162,8 +163,13 @@ const TaskFilterModalBody = ({
 
   const getCriteria = () => {
     const criteria: FilterCriteria = {
-      includeAssignedTasks: true,
-      candidateGroupsExpression: "${currentUserGroups()}",
+      "orQueries": [
+        {
+          "assigneeExpression": "${currentUser()}",
+          "candidateGroupsExpression": "${currentUserGroups()}",
+          "includeAssignedTasks": true
+        }
+      ],
       // If sorting is based on submission id or form name, that should be passed as process variable in sorting
       sorting: sortValue === "applicationId" || sortValue === "formName" ?
         ([{
@@ -185,16 +191,19 @@ const TaskFilterModalBody = ({
     }
 
     if (accessOption === SPECIFIC_ROLE) {
-   const trimmedAccessValue = trimFirstSlash(accessValue);
-   criteria.candidateGroup = addTenantPrefixIfNeeded(
-     trimmedAccessValue,
-     tenantKey,
-     MULTITENANCY_ENABLED
-   );
-  delete criteria.assignee;
+      const trimmedAccessValue = trimFirstSlash(accessValue);
+      criteria.candidateGroup = addTenantPrefixIfNeeded(
+        trimmedAccessValue,
+        tenantKey,
+        MULTITENANCY_ENABLED
+      );
+      criteria.includeAssignedTasks = true;
+      delete criteria.assignee;
+      delete criteria.orQueries;
     } else if(accessOption === SPECIFIC_ASSIGNEE){
       criteria.assignee = accessValue;
       delete criteria.candidateGroup;
+      delete criteria.orQueries;
     }
     else{
       delete criteria.assignee;
@@ -211,9 +220,13 @@ const TaskFilterModalBody = ({
   if (shareFilter === PRIVATE_ONLY_YOU) {
     users.push(userDetails?.preferred_username);
   } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
-    roles = Array.isArray(shareFilterForSpecificRole)
+    const rawRoles = Array.isArray(shareFilterForSpecificRole)
       ? shareFilterForSpecificRole
       : [shareFilterForSpecificRole];
+    roles = rawRoles.map((role) => {
+      const cleaned = removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED);
+      return MULTITENANCY_ENABLED ? `/${tenantKey}-${cleaned}` : role;
+    });
   }
 
   return { users, roles };
@@ -347,7 +360,10 @@ const TaskFilterModalBody = ({
     if (showTaskFilterMainModal) {
       fetchAllForms()
         .then((res) => {
-          const data = res.data?.forms ?? [];
+          const allForms = res.data?.forms ?? [];
+          const data = selectedFilter?.name === "All Tasks"
+            ? allForms
+            : allForms.filter((f: any) => f.formType === "form");
           setForms(data);
         })
         .catch((err) => {
@@ -975,12 +991,12 @@ const handleFetchTaskVariables = (formId) => {
 
   return (
     <>
-      <Modal.Body >
+      <AppModal.Body >
         <div className="wizard-step-content">
           {wizardSteps[activeStep]?.content}
         </div>
-      </Modal.Body>
-      <Modal.Footer data-three-buttons="true">
+      </AppModal.Body>
+      <AppModal.Footer data-three-buttons="true">
         <div className="buttons-row flex-fill" >
           <V8CustomButton
             label={t("Back")}
@@ -1027,7 +1043,7 @@ const handleFetchTaskVariables = (formId) => {
             loading={isLastStep && isTaskFilterSaving}
           />
         </div>
-      </Modal.Footer>
+      </AppModal.Footer>
     </>
   );
 };

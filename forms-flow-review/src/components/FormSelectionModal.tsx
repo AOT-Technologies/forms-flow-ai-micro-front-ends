@@ -171,7 +171,7 @@ export const FormSelectionModal: React.FC<FormSelectionModalProps> = React.memo(
                 form ? (
                   <Form
                   key={selectedForm.formId}
-                  form={form}
+                  src={form}
                   options={{
                     noAlerts: true,
                     readOnly: true,

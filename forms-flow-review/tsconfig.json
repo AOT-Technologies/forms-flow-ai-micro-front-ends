@@ -4,7 +4,8 @@
     "jsx": "react-jsx",
     "declarationDir": "dist",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "target": "es5"
+    "target": "es5",
+    "skipLibCheck": true
   },
   "files": ["src/formsflow-review.tsx"],
   "include": ["src/**/*"],

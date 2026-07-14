@@ -1,7 +1,7 @@
 import "./Sidebar.scss";
 import Accordion from "react-bootstrap/Accordion";
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import { useHistory, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import {
@@ -90,7 +90,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const [location, setLocation] = React.useState({ pathname: "/" });
   const [integrationEnabled, setIntegrationEnabled] = React.useState(false);
   const [form, setForm] = React.useState({});
-  const history = useHistory();
+  const navigate = useNavigate();
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const [showProfile, setShowProfile] = useState(false);
@@ -99,9 +99,9 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
   // const [activeLink, setActiveLink] = useState("");
   const baseUrl = getRedirectUrl(tenantKey || userDetail?.tenantKey);
-  // const defaultLogoPath =
-  //   document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
-  //   "/logo.svg";
+  const defaultLogoPath =
+    document.documentElement.style.getPropertyValue("--navbar-logo-path") ||
+    "/logo.svg";
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE));
   const isCreateSubmissions = userRoles?.includes("create_submissions");
@@ -114,7 +114,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const isManageIntegrations = userRoles?.includes("manage_integrations");
   const isViewTask = userRoles?.includes("view_tasks");
   const isManageTask = userRoles?.includes("manage_tasks");
-  const isViewDashboard = userRoles?.includes("view_dashboards");
+  // const isViewDashboard = userRoles?.includes("view_dashboards");
   const isDashboardManager = userRoles?.includes(
     "manage_dashboard_authorizations"
   );
@@ -124,17 +124,18 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   // const isLinkManager = userRoles?.includes("manage_links");
-  const isAdmin = isDashboardManager || isRoleManager || isUserManager; 
-  const isAnalyzeManager = isAnalyzeMetricsView || isViewDashboard || isAnalyzeSubmissionView;
- 
-  const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
+  const isAdmin = isDashboardManager || isRoleManager || isUserManager;
+  // const isAnalyzeManager = isAnalyzeMetricsView || isViewDashboard || isAnalyzeSubmissionView;
+  const isAnalyzeManager = isAnalyzeMetricsView || isAnalyzeSubmissionView;
+
+  // const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
 
   const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
   const USER_ROUTE = isUserManager ? "admin/users" : null;
   // const LINK_ROUTE = isLinkManager ? "admin/links" : null;
   const METRICS_ROUTE = isAnalyzeMetricsView ? "metrics" : null;
   const SUBMISSION_ROUTE = isAnalyzeSubmissionView ? "submissions" : null;
-  const VIEW_DASHBOARD_ROUTE = isViewDashboard ? "dashboards" : null;
+  // const VIEW_DASHBOARD_ROUTE = isViewDashboard ? "dashboards" : null;
 
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
@@ -310,12 +311,13 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     },
     ANALYZE: {
       value: "analyze",
-      supportedRoutes: ["metrics", "dashboards", "submissions"],
-      // supportedRoutes: [ "dashboards","submissions"],
-    },  
+      // supportedRoutes: ["metrics", "dashboards", "submissions"],
+      supportedRoutes: ["metrics", "submissions"],
+    },
     MANAGE: {
       value: "manage",
-      supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users"],
+      // supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users"],
+      supportedRoutes: ["admin/roles", "admin/users"],
     },
   };  
   
@@ -347,20 +349,20 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const handleProfileClose = () => setShowProfile(false);
 
   const logout = () => {
-    navigateToBaseUrl(history, tenantKey || userDetail?.tenantKey);
+    navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey);
     instance.userLogout();
   };
 
   const manageOptions = () => {
     const options = [];
-    
-    if (isDashboardManager) {
-      options.push({
-        name: "Dashboards",
-        path: DASHBOARD_ROUTE,
-      });
-    }
-  
+
+    // if (isDashboardManager) {
+    //   options.push({
+    //     name: "Dashboards",
+    //     path: DASHBOARD_ROUTE,
+    //   });
+    // }
+
     if (isRoleManager) {
       options.push({
         name: "Roles",
@@ -392,12 +394,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
         path: METRICS_ROUTE,
       });
     }
-    if (isViewDashboard) {
-      options.push({
-        name: "Dashboards",
-        path: VIEW_DASHBOARD_ROUTE,
-      });
-    }
+    // if (isViewDashboard) {
+    //   options.push({
+    //     name: "Dashboards",
+    //     path: VIEW_DASHBOARD_ROUTE,
+    //   });
+    // }
     if (isAnalyzeSubmissionView) {
       options.push({
         name: "Submissions",
@@ -445,7 +447,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
       {renderLogo(hideLogo, collapsed)}
       <div className={`options-container${collapsed ? " collapsed" : ""}`} data-testid="options-container">
         <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
-          {isAuthenticated && (
+          {userRoles !== null && (
             <MenuComponent
               baseUrl={baseUrl}
               eventKey={SectionKeys.HOME.value}
@@ -538,15 +540,15 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
                           path: "formflow",
                         },
                         // Hide because v8 out of scope - will be restored later
-                        // ...(IS_ENTERPRISE && isManageBundles
-                        //   ? [
-                        //       {
-                        //         name: "Bundles",
-                        //         path: "bundleflow",
-                        //         isPremium: true,
-                        //       },
-                        //     ]
-                        //   : []),
+                        ...(IS_ENTERPRISE && isManageBundles
+                          ? [
+                              {
+                                name: "Bundles",
+                                path: "bundleflow",
+                                isPremium: true,
+                              },
+                            ]
+                          : []),
                         // Hide because v8 out of scope - will be restored later
                         // ...(IS_ENTERPRISE &&
                         // isManageIntegrations &&

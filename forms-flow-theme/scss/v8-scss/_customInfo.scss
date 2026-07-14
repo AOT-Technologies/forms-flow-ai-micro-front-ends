@@ -48,4 +48,20 @@
         background-color: var(--white-200);
         border-color: var(--red-100);
     }
+
+    // Plain variant — no border or background, inline feel
+    &--plain {
+        background-color: transparent;
+        border-color: transparent;
+        padding: 0;
+
+        .info-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .info-content {
+            font-size: var(--font-size-s);
+        }
+    }
 }

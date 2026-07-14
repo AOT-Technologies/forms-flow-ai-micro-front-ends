@@ -2,13 +2,13 @@ import React from "react";
 import AccessDeniedIcon  from "./AccessDenied.js";
 import './accessDenied.scss';
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { navigateToBaseUrl } from "@formsflow/service";
 
 
 const AccessDenied = ({ userRoles }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { tenantId } = useParams();
 
   const handleLogout = () => {
@@ -17,7 +17,7 @@ const AccessDenied = ({ userRoles }) => {
   };
 
   const handleReturn = () => {
-    navigateToBaseUrl(history, tenantId);
+    navigateToBaseUrl(navigate, tenantId);
   };
 
   const showReturnToLogin = userRoles?.length === 0;

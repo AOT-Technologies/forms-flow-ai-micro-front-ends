@@ -9,11 +9,12 @@ export interface FilterCriteria {
       operator: string;
       value: string;
     }>;
-    candidateGroupsExpression: string;
+    candidateGroupsExpression?: string;
     sorting: Array<{
   }>;
     createdAfter?: string;
     createdBefore?: string;
+    orQueries?: Array<Record<string, any>>;
   }
   
   export interface FilterVariable {

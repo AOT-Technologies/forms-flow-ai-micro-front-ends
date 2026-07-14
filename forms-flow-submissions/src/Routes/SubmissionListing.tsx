@@ -1,8 +1,10 @@
 import * as React from "react";
 import { useCallback, useMemo, useEffect, useState } from "react";
-import { useDispatch, useSelector, batch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSelector, batch } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import { useTranslation } from "react-i18next";
-import { navigateToSubmissionDetail, getRedirectUrl } from "@formsflow/service";
+import { getRedirectUrl, navigateToSubmissionDetail } from "@formsflow/service";
 
 // Types and Services
 import { Submission } from "../types/submissions";
@@ -14,6 +16,7 @@ import {
   createOrUpdateSubmissionFilter,
   updateDefaultSubmissionFilter,
   fetchFormById,
+  fetchFormVariables,
 } from "../api/queryServices/analyzeSubmissionServices";
 import { optionSortBy } from "../helper/helper";
 import { HelperServices } from "@formsflow/service";
@@ -42,7 +45,8 @@ import {
   CustomSearch,
   FilterDropDown,
   AddIcon,
-  BreadCrumbs
+  BreadCrumbs,
+  bundleIcon as BundleIcon,
 } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "@formsflow/service";
 import ManageFieldsSortModal from "../components/Modals/ManageFieldsSortModal";
@@ -73,7 +77,8 @@ interface SubmissionField {
 
 const AnalyzeSubmissionList: React.FC = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState([]);
 
   // Redux State
@@ -110,6 +115,14 @@ const AnalyzeSubmissionList: React.FC = () => {
     totalCount: 0,
   });
   const [isSubmissionsLoading, setIsSubmissionsLoading] = useState(false);
+  const [selectedFormType, setSelectedFormType] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!dropdownSelection) { setSelectedFormType(null); return; }
+    fetchFormVariables(dropdownSelection)
+      .then((res: any) => setSelectedFormType(res.data?.formType ?? null))
+      .catch(() => setSelectedFormType(null));
+  }, [dropdownSelection]);
 
   // Default submission fields constant
   const DEFAULT_SUBMISSION_FIELDS = [
@@ -554,7 +567,7 @@ const fetchSubmissions = useCallback(async () => {
           label={t("View")}
           onClick={() => {
             dispatch(setApplicationDetail({}));
-            navigateToSubmissionDetail(dispatch, tenantKey, submission.id);
+            navigateToSubmissionDetail(navigate, tenantKey, submission.id);
           }}
           dataTestId={`view-submission-${submission.id}`}
           ariaLabel={t("View details for submission {{taskName}}", {
@@ -710,13 +723,22 @@ const fetchSubmissions = useCallback(async () => {
     ];
   }, [columns, t, getCellValue]);
 
+  const formTypeByName = useMemo(() => {
+    const map: Record<string, string> = {};
+    (formData as any[]).forEach((f: any) => {
+      if (f.formName && f.formType) map[f.formName] = f.formType;
+    });
+    return map;
+  }, [formData]);
+
   // Memoized rows with proper IDs
   const memoizedRows = useMemo(() => {
     return (submissions || []).map((item, index) => ({
       ...item,
       id: item.id || (item as any)._id || `row-${index}`,
+      formType: selectedFormType ?? formTypeByName[item.formName] ?? undefined,
     }));
-  }, [submissions]);
+  }, [submissions, selectedFormType, formTypeByName]);
 
   // Ensure form data is available while manage fields modal is open
   useEffect(() => {
@@ -792,17 +814,15 @@ const fetchSubmissions = useCallback(async () => {
       category: "none",
     };
 
-    // Action: Add additional fields + (only when a form is selected)
-    if (dropdownSelection) {
+    // Action: Add additional fields + (only when a form is selected, hidden for bundle forms)
+    if (dropdownSelection && selectedFormType !== "bundle") {
       items.push({
         content: (
           <div className="d-flex align-items-center justify-content-between">
             <span>{t("Add additional fields")}</span> <AddIcon />
           </div>
         ),
-        onClick: () => {
-          handleManageFieldsOpen();
-        },
+        onClick: handleManageFieldsOpen,
         type: "add-fields",
         dataTestId: "add-additional-fields",
         ariaLabel: t("Add additional fields"),
@@ -884,6 +904,7 @@ const fetchSubmissions = useCallback(async () => {
     selectedSearchFieldKey,
     searchFieldFilterTerm,
     dropdownSelection,
+    formData,
   ]);
   return (
    <>
@@ -910,6 +931,7 @@ const fetchSubmissions = useCallback(async () => {
               ...(formData || []).map((f: any) => ({
                 label: f?.formName ?? "",
                 value: f?.parentFormId ?? "",
+                ...(f?.formType === "bundle" && { listIcon: <BundleIcon /> }),
               })),
             ];
             const currentValue = dropdownSelection ?? "";
@@ -1004,6 +1026,8 @@ const fetchSubmissions = useCallback(async () => {
             rows={memoizedRows}
             rowCount={totalCount}
             loading={isSubmissionsLoading}
+            showBundleIcon={true}
+            formNameField="form_name"
             disableColumnResize={false}
             paginationMode="server"
             sortingMode="server"

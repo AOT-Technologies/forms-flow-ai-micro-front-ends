@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "react-bootstrap/Modal";
+import { AppModal } from "./AppModal";
 import {CustomButton} from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
@@ -28,7 +28,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
 }) => {
   const { t } = useTranslation();
   return (
-      <Modal
+      <AppModal
         show={show}
         onHide={onClose}
         size="sm"
@@ -36,17 +36,17 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
         aria-labelledby="error-modal-title"
         aria-describedby="error-modal-message"
       >
-        <Modal.Header>
-          <Modal.Title id="error-modal-title" className="text-danger">
+        <AppModal.Header>
+          <AppModal.Title id="error-modal-title" className="text-danger">
             <p>
               {t(title)}
             </p>
-          </Modal.Title>
+          </AppModal.Title>
           <div className="icon-close" onClick={onClose}>
               <CloseIcon />
           </div>
-        </Modal.Header>
-        <Modal.Body className="build-modal-body">
+        </AppModal.Header>
+        <AppModal.Body className="build-modal-body">
           <div
             className="d-flex flex-column"
             id="error-modal-message"
@@ -59,8 +59,8 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
               {t(message)}
             </div>
           </div>
-        </Modal.Body>
-        <Modal.Footer>
+        </AppModal.Body>
+        <AppModal.Footer>
           <div className="buttons-row">
             <CustomButton
               label={primaryBtnText}
@@ -70,7 +70,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
               secondary
             />
           </div>
-        </Modal.Footer>
-      </Modal>
+        </AppModal.Footer>
+      </AppModal>
   );
 });

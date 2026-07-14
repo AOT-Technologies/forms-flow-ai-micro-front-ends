@@ -6,9 +6,9 @@
 }
 
 .roles-candidate-group-inner {
-  display: inline-block;
+  display: inline-flex !important;
+  align-items: center;
   max-width: 100%;
-  vertical-align: top;
 }
 
 .roles-candidate-group-text {
@@ -17,9 +17,9 @@
 }
 
 .roles-candidate-group-copy {
-  display: inline;
+  display: inline-flex;
   align-items: center;
-  vertical-align: middle;
+  flex-shrink: 0;
   margin-left: 0.25rem;
   padding: 0;
   border: 0;
@@ -107,10 +107,6 @@
 }
 .paginator-active{
     background-color: #F0F0F0;
-}
-
-.react-bootstrap-table{
-    width: auto !important;
 }
 
 .user-table-container{

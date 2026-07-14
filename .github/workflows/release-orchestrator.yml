@@ -107,6 +107,12 @@ jobs:
 
       - name: Read VERSION file + derive variables
         id: vars
+        env:
+          INPUT_NEW_VERSION:   ${{ inputs.new_version }}
+          INPUT_IMAGE_STAGE:   ${{ inputs.image_stage }}
+          INPUT_MERGE_SOURCE:  ${{ inputs.merge_source_branch }}
+          INPUT_SKIP_MERGE:    ${{ inputs.skip_merge }}
+          INPUT_DRY_RUN:       ${{ inputs.dry_run }}
         run: |
           if [[ ! -f VERSION ]]; then
             echo "::error::VERSION file not found on branch ${{ github.ref_name }}."
@@ -118,14 +124,14 @@ jobs:
             exit 1
           fi
 
-          NEW="${{ inputs.new_version }}"
+          NEW="$INPUT_NEW_VERSION"
           NEW="${NEW//[[:space:]]/}"
           if ! [[ "$NEW" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::new_version must be X.Y.Z with no suffix (e.g. 8.2.5). Got: $NEW"
             exit 1
           fi
 
-          STAGE="${{ inputs.image_stage }}"
+          STAGE="$INPUT_IMAGE_STAGE"
           case "$STAGE" in
             alpha) VERSIONED="${NEW}-alpha"; IMAGE_TAG="${NEW}-alpha" ;;
             rc)    VERSIONED="${NEW}-rc";    IMAGE_TAG="${NEW}-rc"    ;;
@@ -165,9 +171,9 @@ jobs:
           echo "  Image stage    : $STAGE"
           echo "  Release branch : $RELEASE_BRANCH  (fork)"
           echo "  Setup branch   : $SETUP_BRANCH    (fork)"
-          echo "  Merge source   : ${{ inputs.merge_source_branch }}"
-          echo "  Skip merge     : ${{ inputs.skip_merge }}"
-          echo "  Dry run        : ${{ inputs.dry_run }}"
+          echo "  Merge source   : $INPUT_MERGE_SOURCE"
+          echo "  Skip merge     : $INPUT_SKIP_MERGE"
+          echo "  Dry run        : $INPUT_DRY_RUN"
           echo "════════════════════════════════════════════"
 
   # ============================================================================
@@ -201,13 +207,15 @@ jobs:
         run: git fetch origin
 
       - name: Create or checkout setup branch
+        env:
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
         run: |
           if git ls-remote --exit-code origin "$SETUP_BRANCH" &>/dev/null; then
             echo "::notice::${SETUP_BRANCH} already exists — checking it out (re-run mode)."
             git checkout "$SETUP_BRANCH"
           else
             git checkout -b "$SETUP_BRANCH"
-            if [[ "${{ inputs.dry_run }}" == "false" ]]; then
+            if [[ "$INPUT_DRY_RUN" == "false" ]]; then
               git push -u origin "$SETUP_BRANCH"
               echo "✓  Created ${SETUP_BRANCH} from ${BASE_BRANCH} on fork"
             else
@@ -215,14 +223,17 @@ jobs:
             fi
           fi
 
-      - name: "Merge ${{ inputs.merge_source_branch }} into setup branch"
+      - name: "Merge source branch into setup branch"
         id: merge
         if: inputs.skip_merge == false
+        env:
+          INPUT_MERGE_SOURCE: ${{ inputs.merge_source_branch }}
+          INPUT_DRY_RUN:      ${{ inputs.dry_run }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          RAW="${{ inputs.merge_source_branch }}"
+          RAW="$INPUT_MERGE_SOURCE"
           RAW="${RAW#origin/}"
 
           if [[ ! "$RAW" =~ ^[a-zA-Z0-9_./+-]+$ ]]; then
@@ -241,7 +252,7 @@ jobs:
                -m "[Release]: merge ${MERGE_SOURCE} into $SETUP_BRANCH"; then
             echo "had_conflicts=false" >> "$GITHUB_OUTPUT"
             echo "✓  Merged ${MERGE_SOURCE} cleanly"
-            if [[ "${{ inputs.dry_run }}" == "false" ]]; then
+            if [[ "$INPUT_DRY_RUN" == "false" ]]; then
               git push origin "$SETUP_BRANCH"
             else
               echo "[DRY RUN] Would push merged branch to fork"
@@ -254,7 +265,9 @@ jobs:
 
       - name: Skip merge (flag set)
         if: inputs.skip_merge == true
-        run: echo "ℹ️  skip_merge=true — skipping merge of ${{ inputs.merge_source_branch }}."
+        env:
+          INPUT_MERGE_SOURCE: ${{ inputs.merge_source_branch }}
+        run: echo "ℹ️  skip_merge=true — skipping merge of ${INPUT_MERGE_SOURCE}."
 
   # ============================================================================
   # JOB 3 — Halt on merge conflict + post resolution instructions
@@ -267,11 +280,13 @@ jobs:
 
     steps:
       - name: Post conflict resolution instructions and fail
+        env:
+          INPUT_MERGE_SOURCE: ${{ inputs.merge_source_branch }}
         run: |
           SETUP="${{ needs.prepare.outputs.setup_branch }}"
           BASE="${{ needs.prepare.outputs.base_branch }}"
           FORK="${{ github.repository }}"
-          MERGE_SOURCE="${{ inputs.merge_source_branch }}"
+          MERGE_SOURCE="$INPUT_MERGE_SOURCE"
           BRANCH="${MERGE_SOURCE#origin/}"
 
           cat <<EOF
@@ -381,6 +396,8 @@ jobs:
       - name: Open pull request
         id: open-pr
         if: steps.pr-check.outputs.exists == 'false'
+        env:
+          INPUT_MERGE_SOURCE: ${{ inputs.merge_source_branch }}
         run: |
           NEW="${{ needs.prepare.outputs.new_version }}"
           VERSIONED="${{ needs.prepare.outputs.versioned }}"
@@ -421,7 +438,7 @@ jobs:
 
           ### What this PR contains
           - Version bump to \`${VERSIONED}\` across all tracked files
-          - Merged \`${{ inputs.merge_source_branch }}\` into setup branch (unless skipped)
+          - Merged \`${INPUT_MERGE_SOURCE}\` into setup branch (unless skipped)
 
           ### Stage notes
           ${STAGE_NOTE}
@@ -447,6 +464,8 @@ jobs:
 
       - name: Update existing PR title and description
         if: steps.pr-check.outputs.exists == 'true'
+        env:
+          INPUT_MERGE_SOURCE: ${{ inputs.merge_source_branch }}
         run: |
           NEW="${{ needs.prepare.outputs.new_version }}"
           VERSIONED="${{ needs.prepare.outputs.versioned }}"
@@ -488,7 +507,7 @@ jobs:
 
           ### What this PR contains
           - Version bump to \`${VERSIONED}\` across all tracked files
-          - Merged \`${{ inputs.merge_source_branch }}\` into setup branch (unless skipped)
+          - Merged \`${INPUT_MERGE_SOURCE}\` into setup branch (unless skipped)
 
           ### Stage notes
           ${STAGE_NOTE}
@@ -568,6 +587,8 @@ jobs:
       - name: Open upstream pull request
         id: open-pr
         if: steps.pr-check.outputs.exists == 'false'
+        env:
+          INPUT_MERGE_SOURCE: ${{ inputs.merge_source_branch }}
         run: |
           NEW="${{ needs.prepare.outputs.new_version }}"
           VERSIONED="${{ needs.prepare.outputs.versioned }}"
@@ -609,7 +630,7 @@ jobs:
 
           ### What this PR contains
           - Version bump to \`${VERSIONED}\` across all tracked files
-          - Merged \`${{ inputs.merge_source_branch }}\` into setup branch (unless skipped)
+          - Merged \`${INPUT_MERGE_SOURCE}\` into setup branch (unless skipped)
 
           ### Stage notes
           ${STAGE_NOTE}
@@ -634,6 +655,8 @@ jobs:
 
       - name: Update existing upstream PR title and description
         if: steps.pr-check.outputs.exists == 'true'
+        env:
+          INPUT_MERGE_SOURCE: ${{ inputs.merge_source_branch }}
         run: |
           NEW="${{ needs.prepare.outputs.new_version }}"
           VERSIONED="${{ needs.prepare.outputs.versioned }}"
@@ -676,7 +699,7 @@ jobs:
 
           ### What this PR contains
           - Version bump to \`${VERSIONED}\` across all tracked files
-          - Merged \`${{ inputs.merge_source_branch }}\` into setup branch (unless skipped)
+          - Merged \`${INPUT_MERGE_SOURCE}\` into setup branch (unless skipped)
 
           ### Stage notes
           ${STAGE_NOTE}
@@ -716,6 +739,10 @@ jobs:
 
     steps:
       - name: Write job summary
+        env:
+          INPUT_MERGE_SOURCE: ${{ inputs.merge_source_branch }}
+          INPUT_SKIP_MERGE:   ${{ inputs.skip_merge }}
+          INPUT_DRY_RUN:      ${{ inputs.dry_run }}
         run: |
           NEW="${{ needs.prepare.outputs.new_version }}"
           VERSIONED="${{ needs.prepare.outputs.versioned }}"
@@ -727,7 +754,7 @@ jobs:
           SETUP="${{ needs.prepare.outputs.setup_branch }}"
           PR_URL="${{ needs.open-pr.outputs.pr_url }}"
           UPSTREAM_PR_URL="${{ needs.open-upstream-pr.outputs.pr_url }}"
-          DRY="${{ inputs.dry_run }}"
+          DRY="$INPUT_DRY_RUN"
 
           icon() {
             case "$1" in
@@ -751,8 +778,8 @@ jobs:
           | Stage | \`${STAGE}\` |
           | Release branch | \`${RELEASE}\` |
           | Setup branch (fork) | \`${SETUP}\` |
-          | Merge source | \`${{ inputs.merge_source_branch }}\` |
-          | Source merge skipped | ${{ inputs.skip_merge && 'yes' || 'no' }} |
+          | Merge source | \`${INPUT_MERGE_SOURCE}\` |
+          | Source merge skipped | $( [[ "$INPUT_SKIP_MERGE" == "true" ]] && echo "yes" || echo "no" ) |
 
           ### Step results
           | Step | Result |
