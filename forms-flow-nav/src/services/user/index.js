@@ -12,6 +12,20 @@ const getUserId = () => {
   }
 };
 
+// Consolidated onboarding details, written to localStorage by forms-flow-web
+// (PrivateRoute) at login and shared across microfrontends. The nav only reads
+// them (e.g. checklistSkipped) — it no longer makes its own /user/info call.
+// Key/shape must match forms-flow-web.
+const ONBOARDING_DETAILS_KEY = "ONBOARDING_USER_DETAILS";
+
+export const getOnboardingDetails = () => {
+  try {
+    return JSON.parse(localStorage.getItem(ONBOARDING_DETAILS_KEY)) || {};
+  } catch {
+    return {};
+  }
+};
+
 export const fetchUserLoginDetails = () => {
   const userId = getUserId();
   if (!userId) return;
@@ -29,20 +43,6 @@ export const fetchUserLoginDetails = () => {
     .catch((error) => {
       console.error(error);
     });
-};
-export const getOnBoardingUserRole = () => {
-  const url = API.ONBOARDING_USER_ROLE;
-  return RequestService.httpGETRequest(url)
-    .then((res) => {
-      const data = res?.data;
-      if (data?.role) {
-        localStorage.setItem("ONBOARDINGUSERROLE", data.role);
-      }
-      return data ?? null;
-    })
-    .catch((err) => {
-      console.error(" Error in getting on boarding user role:", err);
-  });
 };
 
 
