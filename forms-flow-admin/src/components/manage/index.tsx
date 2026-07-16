@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Tabs, Tab, Collapse } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-// import AdminDashboard from "../dashboard";
+import AdminDashboard from "../dashboard";
 import RoleManagement from "../roles";
 import UserManagement from "../users";
 import Organization from "../organization";
@@ -39,21 +39,20 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   
   const defaultTab = (): string => {
-    if (isUserManager) return "users";
     if (isRoleManager) return "roles";
-    // if (isDashboardManager) return "dashboard";
+    if (isUserManager) return "users";
+    if (isDashboardManager) return "dashboard";
     if (isOrganizationManager) return "organization";
-    return "users";
+    return "roles";
   };
 
   // Get active tab from URL or default to first accessible tab
   const activeTab = useMemo((): string => {
     if (urlTab) {
-      // const validTabs = ["organization", "dashboard", "users", "roles"];
-      const validTabs = ["organization", "users", "roles"];
+      const validTabs = ["organization", "dashboard", "users", "roles"];
       if (validTabs.includes(urlTab)) {
         if (urlTab === "organization" && !isOrganizationManager) return defaultTab();
-        // if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
+        if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
         return urlTab;
@@ -72,18 +71,11 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
     }
   }, [location.pathname, baseUrl, navigate]);
 
-  //To handle the manual routing to admin route 
-  useEffect(() => {
-    if (urlTab === "dashboard") {
-      navigate(`${baseUrl}admin/${defaultTab()}`, { replace: true });
-    }
-  }, [urlTab, baseUrl, navigate]);
-
   const handleTabChange = (key: string | null) => {
     if (key) {
       const tabNameMap: { [key: string]: string } = {
         "organization": "Organization",
-        // "dashboard": "Dashboard",
+        "dashboard": "Dashboard",
         "users": "Users",
         "roles": "Roles"
       };
@@ -124,9 +116,9 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
             {isOrganizationManager && (
               <Tab eventKey="organization" title={t("Organization")} />
             )}
-            {/* {isDashboardManager && (
+            {isDashboardManager && (
               <Tab eventKey="dashboard" title={t("Dashboards")} />
-            )} */}
+            )}
             {isUserManager && (
               <Tab eventKey="users" title={t("Users")} />
             )}
@@ -161,7 +153,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
                   <Organization {...props} />
                 </div>
               )}
-              {/* {activeTab === "dashboard" && isDashboardManager && (
+              {activeTab === "dashboard" && isDashboardManager && (
                 <div className="manage-content">
                   <AdminDashboard
                     {...props}
@@ -169,7 +161,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
                     setCount={setDashboardCount}
                   />
                 </div>
-              )} */}
+              )}
               {activeTab === "users" && isUserManager && (
                 <div className="manage-content">
                   <UserManagement
