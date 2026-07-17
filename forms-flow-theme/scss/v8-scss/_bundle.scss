@@ -32,6 +32,7 @@ $bundle-form-search-max-width: 21.25rem;
 $bundle-permissions-max-width: 26.25rem;
 $bundle-comments-max-width: 45rem;
 $bundle-workflow-input-max-width: 25rem;
+$bundle-stepper-header-height: 17rem; // header (~9rem) + progress stepper (~8rem)
 
 
 .empty-bundle {
@@ -105,17 +106,16 @@ $bundle-workflow-input-max-width: 25rem;
    Bundle Create / Edit
    ============================ */
 .bundle-details-parent {
-  height: 60vh;
-  // overflow-y: auto;
+  height: calc(100vh - #{$bundle-stepper-header-height});
   @extend .custom-scroll;
 }
-.preview-parent{
-   height: 60vh;
-   @extend .custom-scroll;
+.preview-parent {
+  height: calc(100vh - #{$bundle-stepper-header-height});
+  @extend .custom-scroll;
 }
-.workflow-parent{
-   height: 62vh;
-   @extend .custom-scroll;
+.workflow-parent {
+  height: calc(100vh - #{$bundle-stepper-header-height});
+  @extend .custom-scroll;
 }
 
 .bundle-details {
@@ -345,4 +345,7 @@ $bundle-workflow-input-max-width: 25rem;
   font-weight: var(--font-weight-medium);
   margin-bottom: var(--spacer-050);
   display: block;
+}
+.bundle-submissions-height {
+  max-height: calc(100vh - 12rem) !important;
 }

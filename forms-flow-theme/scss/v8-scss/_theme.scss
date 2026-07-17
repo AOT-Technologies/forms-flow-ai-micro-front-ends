@@ -406,6 +406,11 @@ $font-tokens: (
 }
 .submission-history-container{
   .body-section{
+    max-height: calc(100vh - 11rem) !important;
+  }
+}
+.submission-history-container-form{
+  .body-section{
     max-height: 90vh !important;
   }
 }

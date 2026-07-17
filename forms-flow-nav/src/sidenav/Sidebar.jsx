@@ -114,7 +114,7 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const isManageIntegrations = userRoles?.includes("manage_integrations");
   const isViewTask = userRoles?.includes("view_tasks");
   const isManageTask = userRoles?.includes("manage_tasks");
-  // const isViewDashboard = userRoles?.includes("view_dashboards");
+  const isViewDashboard = userRoles?.includes("view_dashboards");
   const isDashboardManager = userRoles?.includes(
     "manage_dashboard_authorizations"
   );
@@ -124,18 +124,17 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   // const isLinkManager = userRoles?.includes("manage_links");
-  const isAdmin = isDashboardManager || isRoleManager || isUserManager;
-  // const isAnalyzeManager = isAnalyzeMetricsView || isViewDashboard || isAnalyzeSubmissionView;
-  const isAnalyzeManager = isAnalyzeMetricsView || isAnalyzeSubmissionView;
-
-  // const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
+  const isAdmin = isDashboardManager || isRoleManager || isUserManager; 
+  const isAnalyzeManager = isAnalyzeMetricsView || isViewDashboard || isAnalyzeSubmissionView;
+ 
+  const DASHBOARD_ROUTE = isDashboardManager ? "admin/dashboard" : null;
 
   const ROLE_ROUTE = isRoleManager ? "admin/roles" : null;
   const USER_ROUTE = isUserManager ? "admin/users" : null;
   // const LINK_ROUTE = isLinkManager ? "admin/links" : null;
   const METRICS_ROUTE = isAnalyzeMetricsView ? "metrics" : null;
   const SUBMISSION_ROUTE = isAnalyzeSubmissionView ? "submissions" : null;
-  // const VIEW_DASHBOARD_ROUTE = isViewDashboard ? "dashboards" : null;
+  const VIEW_DASHBOARD_ROUTE = isViewDashboard ? "dashboards" : null;
 
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
@@ -311,13 +310,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
     },
     ANALYZE: {
       value: "analyze",
-      // supportedRoutes: ["metrics", "dashboards", "submissions"],
-      supportedRoutes: ["metrics", "submissions"],
-    },
+      supportedRoutes: ["metrics", "dashboards", "submissions"],
+      // supportedRoutes: [ "dashboards","submissions"],
+    },  
     MANAGE: {
       value: "manage",
-      // supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users"],
-      supportedRoutes: ["admin/roles", "admin/users"],
+      supportedRoutes: ["admin/dashboard", "admin/roles", "admin/users"],
     },
   };  
   
@@ -355,14 +353,14 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
 
   const manageOptions = () => {
     const options = [];
-
-    // if (isDashboardManager) {
-    //   options.push({
-    //     name: "Dashboards",
-    //     path: DASHBOARD_ROUTE,
-    //   });
-    // }
-
+    
+    if (isDashboardManager) {
+      options.push({
+        name: "Dashboards",
+        path: DASHBOARD_ROUTE,
+      });
+    }
+  
     if (isRoleManager) {
       options.push({
         name: "Roles",
@@ -394,12 +392,12 @@ const Sidebar = React.memo(({ props, sidenavHeight="100%" }) => {
         path: METRICS_ROUTE,
       });
     }
-    // if (isViewDashboard) {
-    //   options.push({
-    //     name: "Dashboards",
-    //     path: VIEW_DASHBOARD_ROUTE,
-    //   });
-    // }
+    if (isViewDashboard) {
+      options.push({
+        name: "Dashboards",
+        path: VIEW_DASHBOARD_ROUTE,
+      });
+    }
     if (isAnalyzeSubmissionView) {
       options.push({
         name: "Submissions",
