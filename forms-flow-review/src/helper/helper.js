@@ -1,15 +1,18 @@
 function getEnv(env_string) {
   let ENV_BOOLEAN =
-      (window._env_ && window._env_["REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK"]) ||
-      false;
+    (window._env_ &&
+      window._env_["REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK"]) ||
+    false;
 
-      return ENV_BOOLEAN === "true" || ENV_BOOLEAN === true;
+  return ENV_BOOLEAN === "true" || ENV_BOOLEAN === true;
 }
 
-let userAccessGroupCheckforApplications =getEnv('REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK');
+let userAccessGroupCheckforApplications = getEnv(
+  "REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK"
+);
 
 export const trimFirstSlash = (inputString) => {
-  if (inputString?.startsWith('/')) {
+  if (inputString?.startsWith("/")) {
     return inputString.substring(1);
   }
   return inputString;
@@ -17,18 +20,20 @@ export const trimFirstSlash = (inputString) => {
 
 export const removeTenantKey = (value, tenantkey, multitenancyEnabled) => {
   // Match optional leading slash, then tenantkey (case-insensitive), then hyphen
-  const regex = new RegExp(`^/?${tenantkey}-`, 'i');
+  const regex = new RegExp(`^/?${tenantkey}-`, "i");
 
   if (multitenancyEnabled && regex.test(value)) {
-    return value.replace(regex, '');
-  } 
-  else{
+    return value.replace(regex, "");
+  } else {
     return value;
   }
 };
 
-
-export const addTenantPrefixIfNeeded = (value, tenantKey, multitenancyEnabled) => {
+export const addTenantPrefixIfNeeded = (
+  value,
+  tenantKey,
+  multitenancyEnabled
+) => {
   if (!value) return value;
 
   const hasTenantPrefix = value.startsWith(`${tenantKey}-`);
@@ -39,8 +44,6 @@ export const addTenantPrefixIfNeeded = (value, tenantKey, multitenancyEnabled) =
       : `${tenantKey}-${value}`
     : value;
 };
-
-
 
 export const replaceUrl = (URL, key, value) => {
   return URL.replace(key, value);
@@ -64,4 +67,3 @@ export const textTruncate = (wordLength, targetLength, text) => {
     ? text.substring(0, targetLength) + "..."
     : text;
 };
-

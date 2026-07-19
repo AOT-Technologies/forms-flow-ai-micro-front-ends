@@ -1,32 +1,31 @@
- 
-.loader-container{
-display: flex;
-height: 50vh !important;
-justify-content: center;
-align-items: center;
+.loader-container {
+  display: flex;
+  height: 50vh !important;
+  justify-content: center;
+  align-items: center;
 }
 .loader {
-position: absolute;
-margin: auto;
-left: 0;
-right: 0;
-top: 0;
-bottom: 0;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
 // .page-item .page-link {
 //     color: #0072ed !important;
 // }
-.premium{
-    font-size: 36px;
-    color: rgb(255,193,7);
+.premium {
+  font-size: 36px;
+  color: rgb(255, 193, 7);
 }
-.checkout-btn{
-    padding: 8px 48px !important;
+.checkout-btn {
+  padding: 8px 48px !important;
 }
 
 // Constrain TaskAssigneeManager dropdown width in modal header
 .task-assignee-wrapper {
-   align-content: center;
+  align-content: center;
 }
 
 // Intro step card radios (Task filter modal)
@@ -35,7 +34,7 @@ bottom: 0;
   background: var(--white-300);
   cursor: pointer;
   display: flex;
-  flex-direction: row-reverse; 
+  flex-direction: row-reverse;
   justify-content: space-between;
   align-items: center;
   gap: var(--spacer-075);

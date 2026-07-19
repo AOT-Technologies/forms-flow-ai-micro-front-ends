@@ -1,17 +1,17 @@
 import { HelperServices } from "@formsflow/service";
 
 export const buildDynamicColumns = (taskvariables) => {
-    return taskvariables
+  return taskvariables
     .reduce((acc, variable) => {
       if (variable.isChecked) {
         acc.push({
           name: variable.label,
-          width:  variable.width ?? 200,
+          width: variable.width ?? 200,
           sortKey: variable.name,
-          isFormVariable:variable.isFormVariable,
+          isFormVariable: variable.isFormVariable,
           resizable: variable.name,
           sortOrder: variable.sortOrder,
-          type: variable.type ?? null 
+          type: variable.type ?? null,
         });
       }
       return acc;
@@ -20,7 +20,7 @@ export const buildDynamicColumns = (taskvariables) => {
     .map(({ sortOrder, ...column }) => column) // Remove sortOrder from final result
     .reduce((finalColumns, column, index, array) => {
       finalColumns.push(column);
-      
+
       // Add actions column after the last item
       if (index === array.length - 1 && array.length > 0) {
         finalColumns.push({
@@ -30,12 +30,10 @@ export const buildDynamicColumns = (taskvariables) => {
           resizable: false,
         });
       }
-      
+
       return finalColumns;
     }, []);
 };
-
-
 
 export const buildDateRangePayload = (dateRange) => {
   const date = { createdAfter: null, createdBefore: null };
@@ -46,17 +44,13 @@ export const buildDateRangePayload = (dateRange) => {
   return date.createdAfter ? date : {};
 };
 
- 
-
- export const optionSortBy = {
-  options:[
-  { value: "name", label: "Task" },
-  { value: "created", label: "Created Date" },
-  { value: "assignee", label: "Assigned To" },
-],
-  get keys(){
-    return this.options.map(option => option.value);
-  }, 
+export const optionSortBy = {
+  options: [
+    { value: "name", label: "Task" },
+    { value: "created", label: "Created Date" },
+    { value: "assignee", label: "Assigned To" },
+  ],
+  get keys() {
+    return this.options.map((option) => option.value);
+  },
 };
-
-

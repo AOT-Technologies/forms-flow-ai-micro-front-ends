@@ -34,7 +34,9 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
 
   const filterToEdit = useSelector((state: any) => state.task.filterToEdit);
   const filterList = useSelector((state: RootState) => state.task.filterList);
-  const filterListAndCount =  useSelector((state:RootState)=>state.task.filtersAndCount);
+  const filterListAndCount = useSelector(
+    (state: RootState) => state.task.filtersAndCount
+  );
   const defaultFilter = useSelector(
     (state: RootState) => state.task.defaultFilter
   );
@@ -57,7 +59,7 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     startSuccessCountdown: setDeleteSuccess,
   } = useSuccessCountdown();
 
-    interface handleFilterUpdate {
+  interface handleFilterUpdate {
     isPrivate?: boolean;
     data?: any;
   }
@@ -66,7 +68,9 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     toggleModal();
     setShowUpdateModal((prev) => !prev);
   };
-  const deleteMessage = (t("Deleting a filter is permanent and cannot be undone."));
+  const deleteMessage = t(
+    "Deleting a filter is permanent and cannot be undone."
+  );
 
   const toggleDeleteModal = () => {
     toggleModal();
@@ -92,7 +96,9 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     const newFilters = filterList.filter((i) => i.id !== filterToEdit?.id);
     // Close immediately to prevent the Task Filter modal from displaying briefly
     onClose?.();
-    const newFilterAndCount = filterListAndCount.filter(i=>i.id !==filterToEdit?.id);
+    const newFilterAndCount = filterListAndCount.filter(
+      (i) => i.id !== filterToEdit?.id
+    );
     dispatch(setBPMFiltersAndCount(newFilterAndCount));
     dispatch(setBPMFilterList(newFilters));
     if (newFilters.length) {
@@ -102,8 +108,8 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
     }
   };
 
-  const handleFilterUpdate = async (isPrivate?: boolean, data?: any) => { 
-    if(!isPrivate)toggleUpdateModal();
+  const handleFilterUpdate = async (isPrivate?: boolean, data?: any) => {
+    if (!isPrivate) toggleUpdateModal();
     const payload = data ?? filterToEdit;
     const response = await updateFilter(payload, payload?.id);
     setUpdateSuccess(onClose, 2);
@@ -139,89 +145,89 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
       setCurrentStep(1);
     }
   }, [show, filterToEdit?.id, filterToEdit?.isQuickFilter]);
-  
 
   return (
     <>
-     <AppModal
-  show={show}
-  onHide={onClose}
-  size="lg"
-  centered
-  dialogClassName="task-filter-modal-popover"
-  data-testid="create-filter-modal"
-  aria-labelledby={t("create filter modal title")}
-  aria-describedby="create-filter-modal"
->
-    <AppModal.Header>
-    <div className="modal-header-content">
-    <div className="modal-title">
-        {isQuickFilterEdit
-          ? t("Edit Quick Filter")
-          : (filterToEdit?.id ? t(`Edit Custom Filter > ${filterToEdit.name}`) : t("Create Custom Filter"))}
-        <CloseIcon color="var(--gray-darkest)" onClick={onClose}/>
-        </div>
+      <AppModal
+        show={show}
+        onHide={onClose}
+        size="lg"
+        centered
+        dialogClassName="task-filter-modal-popover"
+        data-testid="create-filter-modal"
+        aria-labelledby={t("create filter modal title")}
+        aria-describedby="create-filter-modal"
+      >
+        <AppModal.Header>
+          <div className="modal-header-content">
+            <div className="modal-title">
+              {isQuickFilterEdit
+                ? t("Edit Quick Filter")
+                : filterToEdit?.id
+                ? t(`Edit Custom Filter > ${filterToEdit.name}`)
+                : t("Create Custom Filter")}
+              <CloseIcon color="var(--gray-darkest)" onClick={onClose} />
+            </div>
 
-        <div
-          className={`d-flex justify-content-between ${
-            isCreating && currentStep === 1
-              ? "align-items-start"
-              : "align-items-center"
-          } modal-subtitle`}
-        >
-          <div className="subtitle-text">
-            {isCreating && currentStep === 1 && (
-              <div>
-                <div className="task-filter-modal-intro-title">
-                  {t("Find exactly what you need, instantly")}
-                </div>
-                <div className="task-filter-modal-intro-subtitle">
-                  {t(
-                    "Use conditions or custom form fields to build views tailored to specific workflows"
+            <div
+              className={`d-flex justify-content-between ${
+                isCreating && currentStep === 1
+                  ? "align-items-start"
+                  : "align-items-center"
+              } modal-subtitle`}
+            >
+              <div className="subtitle-text">
+                {isCreating && currentStep === 1 && (
+                  <div>
+                    <div className="task-filter-modal-intro-title">
+                      {t("Find exactly what you need, instantly")}
+                    </div>
+                    <div className="task-filter-modal-intro-subtitle">
+                      {t(
+                        "Use conditions or custom form fields to build views tailored to specific workflows"
+                      )}
+                    </div>
+                  </div>
+                )}
+                {((!isCreating && currentStep === 1) ||
+                  (isCreating && currentStep === 2)) &&
+                  t("Select a form you want your custom filter to apply to")}
+                {((!isCreating && currentStep === 2) ||
+                  (isCreating && currentStep === 3)) &&
+                  t(
+                    "Select and order the columns you would like to see in your custom filter and choose how the results are sorted"
                   )}
-                </div>
+                {((!isCreating && currentStep === 3) ||
+                  (isCreating && currentStep === 4)) &&
+                  t("Name your custom filter and choose who you can see it")}
               </div>
-            )}
-            {((!isCreating && currentStep === 1) ||
-              (isCreating && currentStep === 2)) &&
-              t("Select a form you want your custom filter to apply to")}
-            {((!isCreating && currentStep === 2) ||
-              (isCreating && currentStep === 3)) &&
-              t(
-                "Select and order the columns you would like to see in your custom filter and choose how the results are sorted"
+              {filterToEdit?.id && filterToEdit?.name !== "All Tasks" && (
+                <V8CustomButton
+                  secondary
+                  label={t("Delete filter")}
+                  onClick={toggleDeleteModal}
+                  dataTestId="header-delete-filter"
+                  ariaLabel={t("Delete filter")}
+                  variant="warning"
+                />
               )}
-            {((!isCreating && currentStep === 3) ||
-              (isCreating && currentStep === 4)) &&
-              t("Name your custom filter and choose who you can see it")}
+            </div>
           </div>
-          {((filterToEdit?.id && filterToEdit?.name !== "All Tasks")) && (
-            <V8CustomButton
-              secondary
-              label={t("Delete filter")}
-              onClick={toggleDeleteModal}
-              dataTestId="header-delete-filter"
-              ariaLabel={t("Delete filter")}
-              variant="warning"
-            />
-          )}
-        </div>
-    </div>
-  </AppModal.Header>
+        </AppModal.Header>
 
-  <TaskFilterModalBody
-    toggleDeleteModal={toggleDeleteModal}
-    toggleUpdateModal={toggleUpdateModal}
-    deleteSuccess={deleteSuccess}
-    updateSuccess={updateSuccess}
-    showTaskFilterMainModal={show}
-    closeTaskFilterMainModal={onClose}
-    filterToEdit={filterToEdit}
-    handleFilterUpdate={handleFilterUpdate}
-    currentStep={currentStep}
-    onStepChange={setCurrentStep}
-  />
-</AppModal>
-
+        <TaskFilterModalBody
+          toggleDeleteModal={toggleDeleteModal}
+          toggleUpdateModal={toggleUpdateModal}
+          deleteSuccess={deleteSuccess}
+          updateSuccess={updateSuccess}
+          showTaskFilterMainModal={show}
+          closeTaskFilterMainModal={onClose}
+          filterToEdit={filterToEdit}
+          handleFilterUpdate={handleFilterUpdate}
+          currentStep={currentStep}
+          onStepChange={setCurrentStep}
+        />
+      </AppModal>
 
       {showDeleteModal && (
         <PromptModal
@@ -234,10 +240,8 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           primaryBtnAction={handleFilterDelete}
           secondaryBtnText={t("Cancel")}
           secondaryBtnAction={toggleDeleteModal}
-        />        
+        />
       )}
-
-     
     </>
   );
 };

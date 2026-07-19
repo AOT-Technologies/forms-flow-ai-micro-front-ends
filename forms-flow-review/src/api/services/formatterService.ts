@@ -22,15 +22,19 @@ export const getFormUrlWithFormIdSubmissionId = (formId, submissionId) => {
   return `${AppConfig.projectUrl}/form/${formId}/submission/${submissionId}`;
 };
 
-export const getFormUrl = (formId, submissionId, redirectUrl, formType = "form") => {
+export const getFormUrl = (
+  formId,
+  submissionId,
+  redirectUrl,
+  formType = "form"
+) => {
   const basePath = formType === "bundle" ? "bundle" : "form";
   return `${window.location.origin}${redirectUrl}${basePath}/${formId}/submission/${submissionId}`;
 };
 export const taskDetailVariableDataFormatter = (taskVariableData) => {
-    const res = {};
-    for (let variable in taskVariableData) {
-      res[variable] = taskVariableData[variable].value;
-    }
-    return res;
-  };
-
+  const res = {};
+  for (let variable in taskVariableData) {
+    res[variable] = taskVariableData[variable].value;
+  }
+  return res;
+};

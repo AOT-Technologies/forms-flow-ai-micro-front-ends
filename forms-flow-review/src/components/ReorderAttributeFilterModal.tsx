@@ -120,7 +120,11 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
 
         try {
           // Save preferences
-         await saveFilterPreference(updatedFiltersPreference, "ATTRIBUTE", selectedFilter?.id);
+          await saveFilterPreference(
+            updatedFiltersPreference,
+            "ATTRIBUTE",
+            selectedFilter?.id
+          );
           // Fetch new filters list
           const actionResult = await dispatch(
             fetchAttributeFilterList(selectedFilter?.id) as any
@@ -192,22 +196,22 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
             />
           </AppModal.Body>
           <AppModal.Footer>
-              <V8CustomButton
-                label={t("Discard changes")}
-                onClick={handleDiscardChanges}
-                dataTestId="discard-changes"
-                ariaLabel={t("Discard changes")}
-                variant="secondary"
-                disabled={isSaveBtnDisabled}
-              />
-              <V8CustomButton
-                label={t("Save and apply")}
-                dataTestId="save-and-apply"
-                ariaLabel={t("Save and apply")}
-                onClick={handleSaveChanges}
-                disabled={isSaveBtnDisabled}
-                variant="primary"
-              />
+            <V8CustomButton
+              label={t("Discard changes")}
+              onClick={handleDiscardChanges}
+              dataTestId="discard-changes"
+              ariaLabel={t("Discard changes")}
+              variant="secondary"
+              disabled={isSaveBtnDisabled}
+            />
+            <V8CustomButton
+              label={t("Save and apply")}
+              dataTestId="save-and-apply"
+              ariaLabel={t("Save and apply")}
+              onClick={handleSaveChanges}
+              disabled={isSaveBtnDisabled}
+              variant="primary"
+            />
           </AppModal.Footer>
         </AppModal>
       );
