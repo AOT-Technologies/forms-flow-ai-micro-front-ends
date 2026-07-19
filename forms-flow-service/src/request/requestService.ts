@@ -5,7 +5,9 @@ import axios, {
   AxiosRequestConfig,
 } from "axios";
 import StorageService from "../storage/storageService";
-import { KeycloakService } from "../formsflow-services";
+// Import the module directly, not via "../formsflow-services": the barrel also
+// imports this file, so going through it creates a module cycle (S.11).
+import KeycloakService from "../keycloak/KeycloakService";
 
 class RequestService {
   /**
@@ -35,12 +37,10 @@ class RequestService {
         if (isUnauthorized && hasNoJwtHeader && notAlreadyRetried) {
           originalRequest._retry = true;
           try {
-            const newToken = await new Promise<string>((resolve, reject) => {
-              KeycloakService.updateToken()
-                .then(resolve)
-                .catch(() => {
-                  reject(new Error("Failed to refresh token"));
-                });
+            const newToken = await KeycloakService.updateToken().catch(() => {
+              // Same rejection value as before: callers see this Error, not the
+              // raw keycloak failure.
+              throw new Error("Failed to refresh token");
             });
 
             originalRequest.headers = {
