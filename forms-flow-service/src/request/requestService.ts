@@ -23,7 +23,7 @@ class RequestService {
       (response: AxiosResponse) => {
         return response;
       },
-      async (error: AxiosError) => { 
+      async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfig & {
           _retry?: boolean;
         };
@@ -138,7 +138,9 @@ class RequestService {
       headers: {
         ...headers,
         Authorization: isBearer
-          ? `Bearer ${token || StorageService.get(StorageService.User.AUTH_TOKEN)}`
+          ? `Bearer ${
+              token || StorageService.get(StorageService.User.AUTH_TOKEN)
+            }`
           : token,
         "Content-Type": "multipart/form-data",
       },
@@ -180,7 +182,7 @@ class RequestService {
     data: object,
     token: string | null,
     isBearer: boolean = true,
-    signal?: AbortSignal 
+    signal?: AbortSignal
   ): any {
     return this.axiosInstance.post(url, data, {
       headers: {
@@ -191,7 +193,7 @@ class RequestService {
           : token,
         Accept: "application/hal+json",
       },
-      signal
+      signal,
     });
   }
   public static httpPUTRequest(

@@ -121,6 +121,6 @@ declare module "@formsflow/service" {
     navigateWithHistory,
     syncRouterPath,
     navigateToTemplatePreview,
-    navigateToSubmissionViewDirect
+    navigateToSubmissionViewDirect,
   }: any;
 }

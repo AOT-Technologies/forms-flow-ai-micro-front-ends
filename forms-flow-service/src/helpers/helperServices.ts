@@ -1,5 +1,9 @@
-import moment from 'moment'
-import { DATE_FORMAT ,MULTITENANCY_ENABLED ,TIME_FORMAT} from '../constants/constants';
+import moment from "moment";
+import {
+  DATE_FORMAT,
+  MULTITENANCY_ENABLED,
+  TIME_FORMAT,
+} from "../constants/constants";
 
 class HelperServices {
   public static getISODateTime(date: any): string | null {
@@ -8,17 +12,18 @@ class HelperServices {
     }
     return null;
   }
-  
+
   public static getLocalDateAndTime(date: string): any {
     if (!date) {
       return null;
     }
     // Parse the input date string as a moment.js object
-    const momentDate = moment.utc(date?.replace(' ', 'T'));
+    const momentDate = moment.utc(date?.replace(" ", "T"));
 
     // Convert localizedDateTime to a Moment.js object and format it as DD-MMM-YYYY, h:mm a
-    const localizedDateTime = moment(momentDate?.toDate())
-      .format(`${DATE_FORMAT}, ${TIME_FORMAT}`);
+    const localizedDateTime = moment(momentDate?.toDate()).format(
+      `${DATE_FORMAT}, ${TIME_FORMAT}`
+    );
     return localizedDateTime;
   }
 
@@ -26,19 +31,18 @@ class HelperServices {
     if (!date) {
       return null;
     }
-    const momentDate = moment.utc(date?.replace(' ', 'T'));
+    const momentDate = moment.utc(date?.replace(" ", "T"));
 
     // Format as DD-MMM-YYYY (e.g., 07-Feb-2025)
-    const localizedDate = moment(momentDate?.toDate())
-      .format(DATE_FORMAT);
+    const localizedDate = moment(momentDate?.toDate()).format(DATE_FORMAT);
     return localizedDate;
   }
 
   public static getShortDateAndTime(date: string): string | null {
     if (!date) return null;
-    const d = moment.utc(date.replace(' ', 'T')).toDate();
-    const dd = String(d.getDate()).padStart(2, '0');
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const d = moment.utc(date.replace(" ", "T")).toDate();
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
     const yy = String(d.getFullYear()).slice(-2);
     const time = moment(d).format(TIME_FORMAT);
     return `${dd}/${mm}/${yy} ${time}`;
@@ -49,17 +53,16 @@ class HelperServices {
       return null;
     }
 
-    const momentDate = moment.utc(date?.replace(' ', 'T')); 
+    const momentDate = moment.utc(date?.replace(" ", "T"));
     // Format as h:mm a (e.g., 3:45 PM)
-    const localizedTime = moment(momentDate?.toDate())
-      .format(TIME_FORMAT);
+    const localizedTime = moment(momentDate?.toDate()).format(TIME_FORMAT);
     return localizedTime;
   }
 
   public static getMoment(date: any): any {
     return moment(date);
   }
-  
+
   //  method to remove tenant key
   public static removeTenantKeyFromData(
     value: string,
@@ -69,7 +72,7 @@ class HelperServices {
       return value;
     }
 
-    const tenantKeyCheck = new RegExp(`${tenantKey}-`).exec(value)?.[0]
+    const tenantKeyCheck = new RegExp(`${tenantKey}-`).exec(value)?.[0];
     const startWithSlash = value.startsWith("/");
 
     if (
@@ -85,42 +88,52 @@ class HelperServices {
     return value;
   }
 
-  public static isViewOnlyRoute(location: string, routes: Set<string>): boolean {
+  public static isViewOnlyRoute(
+    location: string,
+    routes: Set<string>
+  ): boolean {
     return Array.from(routes).some((route) => location.includes(route));
   }
 
   // Method to check if the current route matches the routes where sidebar shouldnt be shown
   public static hideSideBarRoute(location: string): boolean {
-    const previewRouteParts = ["formflow","view-edit"]; // Route parts which is part of designer preview page
-    const exactRouteMatches = ["/","/tenant","/onboarding"]; // Exact Routes where sidebar is not required
-    const partOfRouteMatches = ["/public/"]; // Parts of Routes where sidebar is not required . 
+    const previewRouteParts = ["formflow", "view-edit"]; // Route parts which is part of designer preview page
+    const exactRouteMatches = ["/", "/tenant", "/onboarding"]; // Exact Routes where sidebar is not required
+    const partOfRouteMatches = ["/public/"]; // Parts of Routes where sidebar is not required .
 
     return (
-      previewRouteParts.every((route) => location.includes(route)) || 
-      exactRouteMatches.some((route) => location == route) || 
+      previewRouteParts.every((route) => location.includes(route)) ||
+      exactRouteMatches.some((route) => location == route) ||
       partOfRouteMatches.some((route) => location.includes(route))
     );
-  } 
+  }
 
-  public static getResetSortOrders(options){
+  public static getResetSortOrders(options) {
     return options.reduce((acc, option) => {
-      acc[option.value] = {sortOrder:"asc"} // Reset all to ascending
+      acc[option.value] = { sortOrder: "asc" }; // Reset all to ascending
       return acc;
     }, {});
   }
 
   // Method to remove tenant name from role strings when multitenancy is enabled
-  public static removeTenantFromRoles(rolesString: string, tenantKey: string): string {
+  public static removeTenantFromRoles(
+    rolesString: string,
+    tenantKey: string
+  ): string {
     if (!rolesString || !tenantKey || !MULTITENANCY_ENABLED) {
       return rolesString;
     }
-    
+
     const tenantPrefix = `${tenantKey}-`;
     return rolesString
       .split(", ")
-      .map(role => role.startsWith(tenantPrefix) ? role.substring(tenantPrefix.length) : role)
+      .map((role) =>
+        role.startsWith(tenantPrefix)
+          ? role.substring(tenantPrefix.length)
+          : role
+      )
       .join(", ");
   }
 }
 
-export default HelperServices
+export default HelperServices;
