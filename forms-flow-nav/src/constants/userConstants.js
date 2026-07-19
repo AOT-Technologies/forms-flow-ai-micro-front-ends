@@ -12,17 +12,18 @@ export const REVIEWER_GROUP = "formsflow/formsflow-reviewer";
  * "/formsflow/formsflow-client/access-allow-applications"]
  *  ****/
 //TODO Make this function Common
+// N.7.3: getEnv previously ignored its argument and read a hardcoded key.
+// Its single caller passes exactly that key, so using the parameter is
+// behavior-identical.
 function getEnv(env_string) {
-  let ENV_BOOLEAN =
-      (window._env_ && window._env_["REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK"]) ||
-      false;
+  let ENV_BOOLEAN = (window._env_ && window._env_[env_string]) || false;
 
-  return ENV_BOOLEAN === "true" || ENV_BOOLEAN === true
-      ? true
-      : false;
+  return ENV_BOOLEAN === "true" || ENV_BOOLEAN === true ? true : false;
 }
 
-let userAccessGroupCheckforApplications =getEnv('REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK');
+let userAccessGroupCheckforApplications = getEnv(
+  "REACT_APP_ENABLE_APPLICATION_ACCESS_PERMISSION_CHECK"
+);
 
 export const setShowApplications = (userGroups) => {
   if (!userAccessGroupCheckforApplications) {
