@@ -3,9 +3,8 @@ import { useSelector } from "react-redux";
 
 import { AppModal, CloseIcon, CustomButton } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
-import { HelperServices } from "@formsflow/service";
+import { HelperServices, getRedirectUrl } from "@formsflow/service";
 import { getFormUrl } from "../api/services/formatterService";
-import { MULTITENANCY_ENABLED } from "../constants/index";
 
 interface TaskHistoryModalProps {
   show: boolean;
@@ -19,37 +18,6 @@ interface SubmissionHistory {
   id?: string;
 }
 
-const HistoryField = ({
-  fields,
-}: {
-  fields: {
-    id?: number;
-    header?: string;
-    value?: string | React.ReactNode;
-    applicationStatus?: string;
-  }[];
-}) => (
-  <>
-    {fields?.length > 0 &&
-      fields.map(({ id, value, header, applicationStatus }) => (
-        <div
-          key={id}
-          className={`normal-text d-flex justify-content-between ${
-            id === 1 ? "w-30" : ""
-          }`}
-          data-testid={`history-field-${id}`}
-          aria-label={`History field ${id}`}
-        >
-          <div className="content-headings me-auto">{applicationStatus}</div>
-          <div className="text-end">
-            <div className="content-headings">{header}</div>
-            <div>{value}</div>
-          </div>
-        </div>
-      ))}
-  </>
-);
-
 export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
   ({ show, onClose, task }) => {
     const { t } = useTranslation();
@@ -57,10 +25,12 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
     const lastEntryRef = useRef<HTMLDivElement>(null);
     const appHistory = useSelector((state: any) => state.task?.appHistory);
     const tenantId = localStorage.getItem("tenantKey");
-    const tenantKey = useSelector(
-      (state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key
-    ) || tenantId;
-    const redirectUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+    const tenantKey =
+      useSelector(
+        (state: any) =>
+          state.tenants?.tenantId || state.tenants?.tenantData?.key
+      ) || tenantId;
+    const redirectUrl = getRedirectUrl(tenantKey);
 
     useEffect(() => {
       const adjustTimelineHeight = () => {
@@ -79,7 +49,7 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
       const { formId, submissionId } = data;
       const formType = task?.formType || "form";
       const url = getFormUrl(formId, submissionId, redirectUrl, formType);
-      return window.open(url, "_blank")
+      return window.open(url, "_blank");
     };
 
     return (
@@ -101,7 +71,10 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
           </AppModal.Title>
 
           <div className="icon-close" onClick={onClose}>
-            <CloseIcon data-testid="close-icon" aria-label="Close form-history-modal" />
+            <CloseIcon
+              data-testid="close-icon"
+              aria-label="Close form-history-modal"
+            />
           </div>
         </AppModal.Header>
         <AppModal.Body
@@ -138,7 +111,11 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
                       </div>
                       <div>
                         <p>Created On</p>
-                        <p>{entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A"}</p>
+                        <p>
+                          {entry.created
+                            ? HelperServices.getLocalDateAndTime(entry.created)
+                            : "N/A"}
+                        </p>
                       </div>
                     </div>
 
@@ -148,36 +125,8 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
                       ariaLabel="view submission button"
                       actionTable
                     />
-
-                    {/* <HistoryField
-                      fields={[
-                        {
-                          id: 1,
-                          header: "",
-                          applicationStatus: entry.applicationStatus || "N/A",
-                        },
-                        {
-                          id: 2,
-                          header: "Submitted By",
-                          value: entry.submittedBy || "N/A",
-                        },
-                        {
-                          id: 3,
-                          header: "Created On",
-                          value: entry.created
-                            ? HelperServices.getLocalDateAndTime(entry.created)
-                            : "N/A",
-                        },
-                        {
-                          id: 4,
-                          header: "",
-                          value: viewSubmission(entry),
-                        },
-                      ]}
-                    /> */}
                   </div>
                 ))}
-
               </div>
             </>
           ) : (

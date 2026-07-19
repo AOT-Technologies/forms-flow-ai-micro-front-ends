@@ -9,14 +9,18 @@ import PropTypes from "prop-types";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks";
 import { RootState } from "../../reducers";
-import AttributeFilterModalBody from "./AttributeFIlterModalBody";
+import AttributeFilterModalBody from "./AttributeFilterModalBody";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {
   deleteFilter,
   fetchServiceTaskList,
   updateFilter,
 } from "../../api/services/filterServices";
-import { setAttributeFilterList, setAttributeFilterToEdit, setSelectedBpmAttributeFilter } from "../../actions/taskActions";
+import {
+  setAttributeFilterList,
+  setAttributeFilterToEdit,
+  setSelectedBpmAttributeFilter,
+} from "../../actions/taskActions";
 import { StyleServices } from "@formsflow/service";
 
 export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
@@ -36,19 +40,25 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
     if (isQuickFilterEdit) {
       return t("Edit Quick Filter");
     }
-    return isEditing ? t("Edit Custom Field Filter") : t("Create Custom Field Filter");
+    return isEditing
+      ? t("Edit Custom Field Filter")
+      : t("Create Custom Field Filter");
   }, [isEditing, isQuickFilterEdit, t]);
   // const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const attributeFilterList = useSelector((state:RootState)=>state.task.attributeFilterList);
-  const selectedTaskFilter = useSelector((state:RootState)=>state.task.selectedFilter );
+  const attributeFilterList = useSelector(
+    (state: RootState) => state.task.attributeFilterList
+  );
+  const selectedTaskFilter = useSelector(
+    (state: RootState) => state.task.selectedFilter
+  );
   const darkColor = StyleServices.getCSSVariable("--secondary-dark");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSubtitles = {
     1: t("Choose the parameters of your custom field filter"),
     2: t("Name your custom field filter and choose who can see it"),
   };
-  
+
   const subtitle = pageSubtitles[currentPage];
 
   // Reset to first page when modal opens
@@ -63,38 +73,37 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
   //   setShowUpdateModal((prev) => !prev);
   // }, [toggleModal]);
 
-
-    
   const toggleDeleteModal = useCallback(() => {
     toggleModal();
     setShowDeleteModal((prev) => !prev);
   }, [toggleModal]);
 
-  const handleSaveFilterAttributes = async ( data?: any) => {  
+  const handleSaveFilterAttributes = async (data?: any) => {
     // if(!isPrivate)toggleUpdateModal();
     const payload = data ?? attributeFilterToEdit;
-    const response = await updateFilter(
-      payload,
-      payload?.id
+    const response = await updateFilter(payload, payload?.id);
+    const filterList = attributeFilterList.filter(
+      (item) => item.id !== response.data.id
     );
-    const filterList = attributeFilterList.filter((item) => item.id !== response.data.id);
     dispatch(setSelectedBpmAttributeFilter(response.data));
     const newAttributeFilterList = [response.data, ...filterList];
     dispatch(setAttributeFilterList(newAttributeFilterList));
     dispatch(fetchServiceTaskList(response.data, null, 1, limit));
   };
 
-  const handleDeleteAttributeFilter = async()=>{
+  const handleDeleteAttributeFilter = async () => {
     await deleteFilter(attributeFilterToEdit?.id);
-    const newFilters = attributeFilterList.filter(i=>i.id !== attributeFilterToEdit?.id);
-    batch(()=>{
-    dispatch(setAttributeFilterList(newFilters));
-    dispatch(setSelectedBpmAttributeFilter(null));
-    dispatch(setAttributeFilterToEdit(null)); // Clear the filter being edited
-    dispatch(fetchServiceTaskList(selectedTaskFilter,null,1,limit));
-    })
+    const newFilters = attributeFilterList.filter(
+      (i) => i.id !== attributeFilterToEdit?.id
+    );
+    batch(() => {
+      dispatch(setAttributeFilterList(newFilters));
+      dispatch(setSelectedBpmAttributeFilter(null));
+      dispatch(setAttributeFilterToEdit(null)); // Clear the filter being edited
+      dispatch(fetchServiceTaskList(selectedTaskFilter, null, 1, limit));
+    });
     setShowDeleteModal(false);
-  }
+  };
 
   return (
     <>
