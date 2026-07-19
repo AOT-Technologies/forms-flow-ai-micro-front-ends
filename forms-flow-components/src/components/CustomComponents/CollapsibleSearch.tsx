@@ -39,9 +39,6 @@ interface CollapsibleSearchProps {
   onClearSearch?: () => void;
 }
 
-
-
-
 export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   isOpen,
   hasActiveFilters,
@@ -58,30 +55,30 @@ export const CollapsibleSearch: React.FC<CollapsibleSearchProps> = ({
   setSelectedItem,
   initialInputFields,
   onSearch,
-  onClearSearch  
+  onClearSearch,
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
-const [inputFields, setInputFields] = useState<InputField[]>(initialInputFields);
-  
+  const [inputFields, setInputFields] =
+    useState<InputField[]>(initialInputFields);
+
   const handleFieldChange = (index: number, newValue: string) => {
     setInputFields((prevFields) => {
       const updated = [...prevFields];
-      updated[index] = { ...updated[index], value: newValue }; 
+      updated[index] = { ...updated[index], value: newValue };
       return updated;
     });
   };
 
   useEffect(() => {
-  setInputFields(initialInputFields);
-}, [initialInputFields]);
-
+    setInputFields(initialInputFields);
+  }, [initialInputFields]);
 
   const toggleExpand = () => {
     setExpanded(true);
   };
 
-const handleSelection = (label: string) => setSelectedItem(label);
+  const handleSelection = (label: string) => setSelectedItem(label);
 
   const handleCollapse = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation(); // Prevent event from bubbling up
@@ -89,49 +86,52 @@ const handleSelection = (label: string) => setSelectedItem(label);
   };
 
   // Derived value for disabling buttons
-  const hasAnyInputInFields = inputFields?.some((field) => field.value?.trim() !== "");
+  const hasAnyInputInFields = inputFields?.some(
+    (field) => field.value?.trim() !== ""
+  );
   const isActionDisabled = !(dropdownSelection || hasAnyInputInFields);
-  
+
   // Find the selected form to get its formType
-  const selectedForm = formData.find((form) => form.parentFormId === dropdownSelection);
+  const selectedForm = formData.find(
+    (form) => form.parentFormId === dropdownSelection
+  );
   const selectedFormType = selectedForm?.formType;
 
   const [searchQuery, setSearchQuery] = useState("");
 
-const DropdownItems = [
-  {
-    type: "all-forms",
-    content: "All Forms",
-    dataTestId: "dropdown-item-all-forms",
-    ariaLabel: "Select all forms",
-    onClick: () => {
-      handleSelection("All Forms");
-      setDropdownSelection(null); 
-    },
-    className: dropdownSelection === null ? "selected-filter-item" : "",
-  },
-  ...formData
-    .filter((form) =>
-      form.formName.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .map((form) => ({
-      type: `form-${form.formId}`,
-      content: form.formName,
-      dataTestId: `dropdown-item-${form.formName.replace(/\s+/g, "-").toLowerCase()}`,
-      ariaLabel: `Select form: ${form.formName}`,
+  const DropdownItems = [
+    {
+      type: "all-forms",
+      content: "All Forms",
+      dataTestId: "dropdown-item-all-forms",
+      ariaLabel: "Select all forms",
       onClick: () => {
-        handleSelection(form.formName);
-        setDropdownSelection(form.parentFormId); // Store the selected form ID
+        handleSelection("All Forms");
+        setDropdownSelection(null);
       },
-      className:
-        form.parentFormId === dropdownSelection
-          ? "selected-filter-item"
-          : "",
-    })),
-];
+      className: dropdownSelection === null ? "selected-filter-item" : "",
+    },
+    ...formData
+      .filter((form) =>
+        form.formName.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .map((form) => ({
+        type: `form-${form.formId}`,
+        content: form.formName,
+        dataTestId: `dropdown-item-${form.formName
+          .replace(/\s+/g, "-")
+          .toLowerCase()}`,
+        ariaLabel: `Select form: ${form.formName}`,
+        onClick: () => {
+          handleSelection(form.formName);
+          setDropdownSelection(form.parentFormId); // Store the selected form ID
+        },
+        className:
+          form.parentFormId === dropdownSelection ? "selected-filter-item" : "",
+      })),
+  ];
 
-
-    const handleClear = () => {
+  const handleClear = () => {
     // Reset all input field values
     setInputFields((prevFields) =>
       prevFields?.map((field) => ({
@@ -143,24 +143,23 @@ const DropdownItems = [
     // Reset dropdown selection
     setDropdownSelection(null);
     setSelectedItem("All Forms");
-    
+
     // Call the onClearSearch callback if provided
     if (onClearSearch) {
       onClearSearch();
     }
   };
   const handleSearch = () => {
-  const filters = inputFields.reduce((acc, field) => {
-    if (field.value?.trim()) {
-      acc[field.id] = field.value.trim();
-    }
-    return acc;
-  }, {} as Record<string, string>);
+    const filters = inputFields.reduce((acc, field) => {
+      if (field.value?.trim()) {
+        acc[field.id] = field.value.trim();
+      }
+      return acc;
+    }, {} as Record<string, string>);
 
-  onSearch(filters); 
-};
+    onSearch(filters);
+  };
   return (
-
     <div className={`search-collapsible ${expanded ? "expanded" : ""}`}>
       <div
         className={`toggle`}
@@ -175,7 +174,6 @@ const DropdownItems = [
           }
         }}
       >
-
         <button
           className="chevron-icon"
           onClick={expanded ? handleCollapse : undefined}
@@ -188,29 +186,35 @@ const DropdownItems = [
         </button>
 
         {!expanded ? (
-          <div className={`collapsed-label ${hasActiveFilters ? "active-filter" : ""}`}>
-            {hasActiveFilters ? t("Some Filters Are Active") : t("No Filters Are Active")}
+          <div
+            className={`collapsed-label ${
+              hasActiveFilters ? "active-filter" : ""
+            }`}
+          >
+            {hasActiveFilters
+              ? t("Some Filters Are Active")
+              : t("No Filters Are Active")}
           </div>
         ) : (
           ""
         )}
-
       </div>
 
       {expanded && (
         <div className="content">
-        <div className="fields">
-        <label className="form-label panel-label">{t("Form")}</label>
-          <ButtonDropdown
-            variant="primary"
-            defaultLabel="All Forms"
-            label={selectedItem}
-            dropdownItems={DropdownItems}
-            onSearch={(query) => setSearchQuery(query)}
-            dropdownType="DROPDOWN_ONLY"
-            dataTestId="submission-search-filter-dropdown"
-            ariaLabel={t("Select submission filter")}
-            className="input-filter" />
+          <div className="fields">
+            <label className="form-label panel-label">{t("Form")}</label>
+            <ButtonDropdown
+              variant="primary"
+              defaultLabel="All Forms"
+              label={selectedItem}
+              dropdownItems={DropdownItems}
+              onSearch={(query) => setSearchQuery(query)}
+              dropdownType="DROPDOWN_ONLY"
+              dataTestId="submission-search-filter-dropdown"
+              ariaLabel={t("Select submission filter")}
+              className="input-filter"
+            />
 
             {inputFields?.map((field, index) => (
               <div className="panel-width" key={field.id}>
@@ -220,41 +224,40 @@ const DropdownItems = [
                   value={field.value}
                   onChange={(e) => handleFieldChange(index, e.target.value)}
                   aria-label={field.label}
-                  data-testid={`input-${field.id}`} 
+                  data-testid={`input-${field.id}`}
                   onClearClick={() => handleFieldChange(index, "")}
                   clear={field.value !== ""}
-                  placeholder={
-                    field.placeholder
-                  }                 />
+                  placeholder={field.placeholder}
+                />
               </div>
             ))}
             {dropdownSelection && selectedFormType === "bundle" ? (
               <div className="panel-width">
                 <CustomInfo
-                  content={t("Field selection is not available for bundles at this time.")}
+                  content={t(
+                    "Field selection is not available for bundles at this time."
+                  )}
                   dataTestId="bundle-note-section"
                 />
               </div>
-            ) : dropdownSelection &&
-            (
-              <div className="panel-width">
-                <CustomButton
-                  secondary
-                  label="Manage fields"
-                  icon={<PencilIcon className="" />}
-                  onClick= {manageFieldsAction}
-                  iconWithText
-                  dataTestId="manage-fields-button"
-                  ariaLabel="Manage fields" 
-                />
-              </div>
-            )
-              
-           }
+            ) : (
+              dropdownSelection && (
+                <div className="panel-width">
+                  <CustomButton
+                    secondary
+                    label="Manage fields"
+                    icon={<PencilIcon className="" />}
+                    onClick={manageFieldsAction}
+                    iconWithText
+                    dataTestId="manage-fields-button"
+                    ariaLabel="Manage fields"
+                  />
+                </div>
+              )
+            )}
           </div>
           <div className="search-clear">
-
-          {/* <div className="panel-width">
+            {/* <div className="panel-width">
     <label className="form-label panel-label">{t("Form")}</label>
     <ButtonDropdown
       label="test"
@@ -315,11 +318,8 @@ const DropdownItems = [
       onChange={(e) => setStatus(e.target.value)}
     />
   </div> */}
-
-
-          
-        </div>
-        <div className="actions">
+          </div>
+          <div className="actions">
             <div className="buttons-row">
               <CustomButton
                 label="Search"
@@ -332,15 +332,19 @@ const DropdownItems = [
                 label="Clear"
                 onClick={handleClear}
                 dataTestId="clear-button"
-                ariaLabel="Clear filters" 
+                ariaLabel="Clear filters"
                 disabled={
                   dropdownSelection === null &&
-                  !inputFields.some(field => field.value && field.value.trim() !== "")
+                  !inputFields.some(
+                    (field) => field.value && field.value.trim() !== ""
+                  )
                 }
-                secondary />
+                secondary
+              />
             </div>
-        </div>
+          </div>
         </div>
       )}
     </div>
-)};
+  );
+};

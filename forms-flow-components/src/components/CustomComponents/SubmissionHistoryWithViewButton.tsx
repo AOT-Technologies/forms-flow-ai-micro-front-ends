@@ -15,7 +15,7 @@ interface SubmissionHistoryWithViewButtonProps {
   activityId: string;
   isProcessDiagramLoading: boolean;
   isHistoryListLoading: boolean;
-  showDiagramTools?:boolean;
+  showDiagramTools?: boolean;
   formType?: string;
 }
 
@@ -41,7 +41,7 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
       isProcessDiagramLoading,
       isHistoryListLoading,
       showDiagramTools = false,
-      formType = "form"
+      formType = "form",
     }) => {
       const { t } = useTranslation();
       const timelineRef = useRef<HTMLDivElement>(null);
@@ -57,7 +57,7 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
             timelineRef.current.style.height = `${contentHeight}px`;
           }
         };
-     
+
         if (lastEntryRef.current) {
           adjustTimelineHeight();
           window.addEventListener("resize", adjustTimelineHeight);
@@ -106,90 +106,88 @@ export const SubmissionHistoryWithViewButton: React.FC<SubmissionHistoryWithView
             </AppModal.Title>
 
             <div className="icon-close" onClick={onClose}>
-              <CloseIcon aria-label="Close form-history-modal" data-testid="close-icon" />
+              <CloseIcon
+                aria-label="Close form-history-modal"
+                data-testid="close-icon"
+              />
             </div>
-            
           </AppModal.Header>
           <AppModal.Body
-          className="side-by-side-process-history"
+            className="side-by-side-process-history"
             data-testid="form-history-modal-body"
             aria-label="Form history modal body"
           >
             {isHistoryListLoading ? (
               <>loading</>
             ) : (
-         
-                <>
-                  {showBpmnDiagram && (
-                    <div>
-                      <ProcessDiagram
-                        diagramXML={diagramXML ?? ""}
-                        activityId={activityId ?? ""}
-                        showDiagramTools={showDiagramTools}
-                        isProcessDiagramLoading={isProcessDiagramLoading}
-                      />
-                    </div>
-                  )}
-                  
-                  {histories?.length ? (
-                    <div className="history-modal-body">
-                      <div
-                        className="history-content submissions"
-                        data-testid="form-history-content"
-                        aria-label="Form history content"
-                        ref={historyContentRef}
-                      >
-                        <div className="timeline" data-testid="form-history-timeline" aria-label="Form history timeline"></div>
-                        {histories.map((entry, index) => (
-                          <div
-                            key={entry.id ?? index}
-                            ref={
-                              index === histories.length - 1
-                                ? lastEntryRef
-                                : null
-                            }
-                            className="version major"
-                            data-testid={`form-history-entry-${index}`}
-                            aria-label={`Form history entry ${index}`}
-                          >
-                            <p className="heading">
-                              {entry.applicationStatus}
-                            </p>
-                            <div className="details">
-                              <div>
-                                <p>
-                                  {t("Submitter By")}
-                                </p>
-                                <p>
-                                  {entry.submittedBy}
-                                </p>
-                              </div>
-                              <div>
-                                <p>
-                                  {t("Created On")}
-                                </p>
-                                <p>
-                                  {entry.created ? HelperServices.getLocalDateAndTime(entry.created) : "N/A"}
-                                </p>
-                              </div>
-                            </div>
+              <>
+                {showBpmnDiagram && (
+                  <div>
+                    <ProcessDiagram
+                      diagramXML={diagramXML ?? ""}
+                      activityId={activityId ?? ""}
+                      showDiagramTools={showDiagramTools}
+                      isProcessDiagramLoading={isProcessDiagramLoading}
+                    />
+                  </div>
+                )}
 
-                            {viewSubmission(entry)}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
+                {histories?.length ? (
+                  <div className="history-modal-body">
                     <div
-                      className="history-modal-body"
-                      data-testid="form-history-no-entry"
-                      aria-label="No submission history found"
+                      className="history-content submissions"
+                      data-testid="form-history-content"
+                      aria-label="Form history content"
+                      ref={historyContentRef}
                     >
-                      {t("No submission history found.")}
+                      <div
+                        className="timeline"
+                        data-testid="form-history-timeline"
+                        aria-label="Form history timeline"
+                      ></div>
+                      {histories.map((entry, index) => (
+                        <div
+                          key={entry.id ?? index}
+                          ref={
+                            index === histories.length - 1 ? lastEntryRef : null
+                          }
+                          className="version major"
+                          data-testid={`form-history-entry-${index}`}
+                          aria-label={`Form history entry ${index}`}
+                        >
+                          <p className="heading">{entry.applicationStatus}</p>
+                          <div className="details">
+                            <div>
+                              <p>{t("Submitter By")}</p>
+                              <p>{entry.submittedBy}</p>
+                            </div>
+                            <div>
+                              <p>{t("Created On")}</p>
+                              <p>
+                                {entry.created
+                                  ? HelperServices.getLocalDateAndTime(
+                                      entry.created
+                                    )
+                                  : "N/A"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {viewSubmission(entry)}
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </>
-             
+                  </div>
+                ) : (
+                  <div
+                    className="history-modal-body"
+                    data-testid="form-history-no-entry"
+                    aria-label="No submission history found"
+                  >
+                    {t("No submission history found.")}
+                  </div>
+                )}
+              </>
             )}
           </AppModal.Body>
         </AppModal>

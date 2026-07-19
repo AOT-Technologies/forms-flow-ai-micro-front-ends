@@ -1,7 +1,7 @@
-import React from 'react';
-import { SelectDropdown } from './SelectDropdown';
-import { MultipleSelect } from './MultiSelect';
-import { VerticalLineIcon } from '../SvgIcons';
+import React from "react";
+import { SelectDropdown } from "./SelectDropdown";
+import { MultipleSelect } from "./MultiSelect";
+import { VerticalLineIcon } from "../SvgIcons";
 
 /**
  * Interface defining the props for the DropdownMultiSelect component
@@ -9,41 +9,41 @@ import { VerticalLineIcon } from '../SvgIcons';
  */
 interface DropdownMultiselectProps {
   /** Label text for the dropdown component */
-  dropdownLabel: string; 
+  dropdownLabel: string;
   /** Callback function triggered when the dropdown selection changes */
-  onDropdownChange?: (value: string | number) => void; 
+  onDropdownChange?: (value: string | number) => void;
   /** Callback function triggered when multi-select values change */
-  onMultiSelectionChange?: (values: any[]) => void; 
+  onMultiSelectionChange?: (values: any[]) => void;
   /** Additional CSS class name for multi-select pills */
   multiSelectPillClassName?: string;
   /** Whether the component is disabled */
   disabled?: boolean;
   /** Whether to enable the multi-select functionality */
-  enableMultiSelect?:boolean;
+  enableMultiSelect?: boolean;
   /** Currently selected value for the dropdown */
-  value?: string | number; 
+  value?: string | number;
   /** Default value for the dropdown */
-  defaultValue?: string | number; 
+  defaultValue?: string | number;
   /** Array of options for the multi-select component */
   multiSelectOptions?: Array<any>;
   /** Array of currently selected values in the multi-select */
   multiSelectedValues?: Array<any>;
   /** Array of options for the dropdown */
-  options?: Array<any>; 
+  options?: Array<any>;
   /** Property name to display from the option objects */
-  displayValue?:string;
+  displayValue?: string;
   /** Accessibility label for screen readers */
-  ariaLabel?:string;
+  ariaLabel?: string;
   /** Data test ID for testing purposes */
-  dataTestId?:string;
+  dataTestId?: string;
   /** Placeholder text for the multi-select */
-  placeholder?:string;
+  placeholder?: string;
   /** Additional CSS class names */
-  className?:string;
+  className?: string;
   /** Unique identifier for the component */
-  id?:string;
+  id?: string;
   /** Visual variant of the component ('primary' or 'secondary') */
-  variant?: 'primary' | 'secondary'; 
+  variant?: "primary" | "secondary";
 }
 
 export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
@@ -53,9 +53,9 @@ export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
   value,
   defaultValue,
   multiSelectedValues = [],
-  onDropdownChange = ()=>{},
+  onDropdownChange = () => {},
   onMultiSelectionChange,
-  multiSelectPillClassName="",
+  multiSelectPillClassName = "",
   disabled = false,
   enableMultiSelect,
   displayValue,
@@ -64,14 +64,16 @@ export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
   placeholder,
   id,
   className,
-  variant = 'primary'
-}) => { 
+  variant = "primary",
+}) => {
   return (
     <div className={`dropdown-multiselect-component ${className}`}>
       {/* Conditionally rendered label */}
-      {dropdownLabel && <label className="dropdown-label">{dropdownLabel}</label>}
+      {dropdownLabel && (
+        <label className="dropdown-label">{dropdownLabel}</label>
+      )}
       {/* Single-select dropdown section */}
-      <div className='dropdown-input' >
+      <div className="dropdown-input">
         <SelectDropdown
           options={options}
           value={value}
@@ -86,13 +88,13 @@ export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
           variant={variant}
         />
       </div>
-            
+
       {/* Conditionally rendered multi-select section */}
       {enableMultiSelect && (
-        <div className='d-flex'>
+        <div className="d-flex">
           {/* Visual separator between dropdown and multi-select */}
-          <VerticalLineIcon className='vertical-line-icon' />
-          
+          <VerticalLineIcon className="vertical-line-icon" />
+
           {/* Multi-select component */}
           <MultipleSelect
             options={multiSelectOptions}
@@ -102,7 +104,7 @@ export const DropdownMultiSelect: React.FC<DropdownMultiselectProps> = ({
             avoidHighlightFirstOption={true}
             disabled={disabled}
             className={`dropdown-multi ms-3 ${multiSelectPillClassName}`}
-            displayValue = {displayValue}
+            displayValue={displayValue}
             placeholder={placeholder}
             variant={variant}
           />

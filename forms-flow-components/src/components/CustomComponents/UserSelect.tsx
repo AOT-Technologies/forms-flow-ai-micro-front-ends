@@ -1,4 +1,10 @@
-import React, { useMemo, useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useMemo,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { FilterableDropdown, FilterableOption } from "./FilterableDropdown";
 import type { FilterableDropdownProps } from "./FilterableDropdown";
@@ -26,7 +32,8 @@ export interface UserSelectProps
 }
 
 const getDisplayName = (user: UserOption): string => {
-  if (user.firstName && user.lastName) return `${user.lastName}, ${user.firstName}`;
+  if (user.firstName && user.lastName)
+    return `${user.lastName}, ${user.firstName}`;
   if (user.lastName) return user.lastName;
   if (user.firstName) return user.firstName;
   return user.username;
@@ -57,12 +64,15 @@ export const UserSelect: React.FC<UserSelectProps> = ({
 
   const sortedUserOptions = useMemo<FilterableOption[]>(() => {
     return (users || [])
-      .map(user => {
+      .map((user) => {
         const name = getDisplayName(user);
-        const label = includeEmailInLabel && user.email ? `${name} (${user.email})` : name;
+        const label =
+          includeEmailInLabel && user.email ? `${name} (${user.email})` : name;
         return { label, value: user.username };
       })
-      .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }));
+      .sort((a, b) =>
+        a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+      );
   }, [users, includeEmailInLabel]);
 
   const options = useMemo<FilterableOption[]>(() => {
@@ -70,7 +80,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
     let meOptionLabel = t("Assign to me");
     let unassignOptionLabel = t("Unassign");
 
-    // When selected, override labels for  display 
+    // When selected, override labels for  display
     if (value === "me") {
       meOptionLabel = shortMeLabel ? t("Me") : t("Assigned to me");
     }
@@ -78,7 +88,9 @@ export const UserSelect: React.FC<UserSelectProps> = ({
       unassignOptionLabel = t("Unassigned");
     }
 
-    const tailOptions = useMemberGroupOptions ? memberGroupOptions : sortedUserOptions;
+    const tailOptions = useMemberGroupOptions
+      ? memberGroupOptions
+      : sortedUserOptions;
     let tail = tailOptions;
     if (
       useMemberGroupOptions &&
@@ -93,12 +105,19 @@ export const UserSelect: React.FC<UserSelectProps> = ({
     return [
       { label: meOptionLabel, value: "me" },
       { label: unassignOptionLabel, value: "unassigned" },
-      ...tail
+      ...tail,
     ];
-  }, [sortedUserOptions, memberGroupOptions, useMemberGroupOptions, t, shortMeLabel, value]);
+  }, [
+    sortedUserOptions,
+    memberGroupOptions,
+    useMemberGroupOptions,
+    t,
+    shortMeLabel,
+    value,
+  ]);
 
   const selectedOption = useMemo(
-    () => options.find(opt => opt.value === value),
+    () => options.find((opt) => opt.value === value),
     [options, value]
   );
 
@@ -107,7 +126,10 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   const showDropdown = showAsText && (isHovered || isFocused || isClicked);
 
   const isPortalMenuTarget = useCallback((target: EventTarget | null) => {
-    return target instanceof HTMLElement && !!target.closest(".filterable-dropdown-menu");
+    return (
+      target instanceof HTMLElement &&
+      !!target.closest(".filterable-dropdown-menu")
+    );
   }, []);
 
   // Handle click outside to close dropdown
@@ -134,7 +156,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   // Select and focus input utility
   const selectAndFocusInput = useCallback(() => {
     setTimeout(() => {
-      const input = containerRef.current?.querySelector('input');
+      const input = containerRef.current?.querySelector("input");
       if (input) {
         (input as HTMLInputElement).select();
         (input as HTMLInputElement).focus();
@@ -157,31 +179,34 @@ export const UserSelect: React.FC<UserSelectProps> = ({
     selectAndFocusInput();
   }, [selectAndFocusInput]);
 
-  const handleValueChange = useCallback((newValue: string | number) => {
-    // Always propagate for special options 'me' and 'unassigned' to allow re-triggering claim/unclaim
-    const isSpecial = newValue === 'me' || newValue === 'unassigned';
-    if (newValue !== value || isSpecial) {
-      setIsFocused(false);
-      setIsClicked(false);
-      setIsHovered(false);
-      onChange?.(newValue);
-    }
-  }, [onChange, value]);
+  const handleValueChange = useCallback(
+    (newValue: string | number) => {
+      // Always propagate for special options 'me' and 'unassigned' to allow re-triggering claim/unclaim
+      const isSpecial = newValue === "me" || newValue === "unassigned";
+      if (newValue !== value || isSpecial) {
+        setIsFocused(false);
+        setIsClicked(false);
+        setIsHovered(false);
+        onChange?.(newValue);
+      }
+    },
+    [onChange, value]
+  );
 
   if (showAsText && !showDropdown) {
-    const isUserSelection = value !== "me" && value !== "unassigned" && !!displayText;
-    const textNode = (shortMeLabel === false && isUserSelection)
-      ? (
+    const isUserSelection =
+      value !== "me" && value !== "unassigned" && !!displayText;
+    const textNode =
+      shortMeLabel === false && isUserSelection ? (
         <span>
           {t("Assigned to")}{" "}
-          <span
-            title={displayText}
-            className="selected-assignee-label"
-          >
+          <span title={displayText} className="selected-assignee-label">
             {displayText}
           </span>
         </span>
-      ) : displayText;
+      ) : (
+        displayText
+      );
     return (
       <div
         ref={containerRef}
@@ -191,20 +216,23 @@ export const UserSelect: React.FC<UserSelectProps> = ({
           if (isPortalMenuTarget(event.relatedTarget)) return;
           setIsHovered(false);
         }}
-        onFocus={e => {
+        onFocus={(e) => {
           setIsFocused(true);
           // Ensure focus is visible when tabbing
-          if (e.type === "focus" && e.currentTarget === document.activeElement) {
+          if (
+            e.type === "focus" &&
+            e.currentTarget === document.activeElement
+          ) {
             e.currentTarget.style.outline = "2px solid #2684FF";
           }
         }}
-        onBlur={e => {
+        onBlur={(e) => {
           if (isPortalMenuTarget(e.relatedTarget)) return;
           setIsFocused(false);
           e.currentTarget.style.outline = "none";
         }}
         onClick={handleTextClick}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
           if (disabled) return;
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -215,8 +243,8 @@ export const UserSelect: React.FC<UserSelectProps> = ({
         role="button"
         aria-label={ariaLabel}
         data-testid={dataTestId}
-        style={{ 
-          cursor: disabled ? 'default' : 'pointer',
+        style={{
+          cursor: disabled ? "default" : "pointer",
         }}
       >
         {textNode}
@@ -240,7 +268,9 @@ export const UserSelect: React.FC<UserSelectProps> = ({
         if (isPortalMenuTarget(event.relatedTarget)) return;
         setIsFocused(false);
       }}
-      className={`userSelect-container${isFromTaskDetails ? ' userSelect-container--task-details' : ''}`}
+      className={`userSelect-container${
+        isFromTaskDetails ? " userSelect-container--task-details" : ""
+      }`}
     >
       <FilterableDropdown
         options={options}

@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
- 
+
 import { ErrorModal } from "../components/CustomComponents/ErrorModal";
- 
+
 describe("ErrorModal Component", () => {
   const mockOnClose = jest.fn();
   const mockPrimaryAction = jest.fn();
@@ -13,14 +13,14 @@ describe("ErrorModal Component", () => {
     message: "Error Message",
     primaryBtnAction: mockPrimaryAction,
     primaryBtnText: "Dismiss",
-    primaryBtndataTestid:"dismiss-button"
+    primaryBtndataTestid: "dismiss-button",
   };
 
-  const renderModalComponent = (props)=>  render(<ErrorModal {...props} />);
+  const renderModalComponent = (props) => render(<ErrorModal {...props} />);
 
   test("renders ErrorModal with correct content", () => {
     renderModalComponent(modalProps);
-    expect(screen.getByTestId("error-modal")).toBeInTheDocument(); 
+    expect(screen.getByTestId("error-modal")).toBeInTheDocument();
     expect(screen.getByTestId("dismiss-button")).toBeInTheDocument();
   });
 

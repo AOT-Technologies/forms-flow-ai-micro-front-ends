@@ -81,7 +81,8 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
     const redColor = computedStyle.getPropertyValue("--ff-danger");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const hasVersion = (item) => item?.majorVersion != null || item?.minorVersion != null;
+    const hasVersion = (item) =>
+      item?.majorVersion != null || item?.minorVersion != null;
     const skipImport = t("Skip, do not import");
     const [selectedLayoutVersion, setSelectedLayoutVersion] = useState<{
       value: any;
@@ -104,25 +105,31 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       { value: true, label: t("Skip, do not import") },
       {
         value: "major",
-        label: t(`import as version ${
-          fileItems?.form?.majorVersion + 1
-        }.0 (only impacts new submissions)`),
+        label: t(
+          `import as version ${
+            fileItems?.form?.majorVersion + 1
+          }.0 (only impacts new submissions)`
+        ),
       },
       {
         value: "minor",
-        label: t(`import as version ${fileItems?.form?.majorVersion}.${
-          fileItems?.form?.minorVersion + 1
-        }  (impacts previous and new submissions)`),
+        label: t(
+          `import as version ${fileItems?.form?.majorVersion}.${
+            fileItems?.form?.minorVersion + 1
+          }  (impacts previous and new submissions)`
+        ),
       },
     ];
 
     const flowOptions = [
-      { value: true, label:  t("Skip, do not import") },
+      { value: true, label: t("Skip, do not import") },
       {
         value: "major",
-        label: t(`import as version ${fileItems?.workflow?.majorVersion ?? 1}.${
-          fileItems?.workflow?.minorVersion ?? 0
-        } (only impacts new submissions)`),
+        label: t(
+          `import as version ${fileItems?.workflow?.majorVersion ?? 1}.${
+            fileItems?.workflow?.minorVersion ?? 0
+          } (only impacts new submissions)`
+        ),
       },
     ];
 
@@ -164,25 +171,26 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
       }
     };
 
-
     const primaryButtonDisabled =
       !selectedFile ||
       inprogress ||
       importLoader ||
-      (importError && primaryButtonText !== "Try Again") || 
-      (showFileItems && fileItems &&
-        selectedFlowVersion?.label === skipImport && 
+      (importError && primaryButtonText !== "Try Again") ||
+      (showFileItems &&
+        fileItems &&
+        selectedFlowVersion?.label === skipImport &&
         selectedLayoutVersion?.label === skipImport);
-       
-      useEffect(() => {
-        const fileItemsHasVersion = fileItems && Object.values(fileItems).some(hasVersion);
-        const processVersionHasVersion = hasVersion(processVersion);
-        if (fileItemsHasVersion || processVersionHasVersion) {
-          setShowFileItems(true);
-         } else {
-          setShowFileItems(false);
-        }
-      }, [importError, fileItems, processVersion]);
+
+    useEffect(() => {
+      const fileItemsHasVersion =
+        fileItems && Object.values(fileItems).some(hasVersion);
+      const processVersionHasVersion = hasVersion(processVersion);
+      if (fileItemsHasVersion || processVersionHasVersion) {
+        setShowFileItems(true);
+      } else {
+        setShowFileItems(false);
+      }
+    }, [importError, fileItems, processVersion]);
 
     useEffect(() => {
       if (!showModal) {
@@ -192,12 +200,12 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
     // Retry with same file
     const handleRetry = () => {
-        handleImport(
-          selectedFile,
-          uploadActionType.VALIDATE,
-          selectedLayoutVersion?.value ?? null,
-          selectedFlowVersion?.value ?? null
-        );
+      handleImport(
+        selectedFile,
+        uploadActionType.VALIDATE,
+        selectedLayoutVersion?.value ?? null,
+        selectedFlowVersion?.value ?? null
+      );
     };
     useEffect(() => {
       let isMounted = true;
@@ -209,7 +217,6 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
         const duration = 2000;
         // set max target based on error flag
         const maxProgress = importError ? 50 : 100;
-        
 
         const animateProgress = (timestamp: number) => {
           //  exit immediately if not mounted
@@ -221,8 +228,8 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             maxProgress
           );
 
-            setUploadProgress(progress);
-            setInprogress(progress < maxProgress);
+          setUploadProgress(progress);
+          setInprogress(progress < maxProgress);
 
           if (progress < maxProgress) {
             requestAnimationFrame(animateProgress);
@@ -374,7 +381,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                         ? selectedLayoutVersion.label
                         : t("Skip, do not import")}
                     </div>
-                    <DropdownIcon dataTestId="import-dropdown-layout"/>
+                    <DropdownIcon dataTestId="import-dropdown-layout" />
                   </div>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
@@ -431,17 +438,18 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
 
     const renderProcessOption = () => {
       return (
-         processVersion?.majorVersion && (
+        processVersion?.majorVersion && (
           <div className="file-item-content">
             <div className="import-workflow-text">{processVersion.type}</div>
             <div className="flex-grow-1">
-             {t(`Import as Version ${processVersion?.majorVersion}.${processVersion?.minorVersion} (only impacts new submissions)`)}
+              {t(
+                `Import as Version ${processVersion?.majorVersion}.${processVersion?.minorVersion} (only impacts new submissions)`
+              )}
             </div>
           </div>
         )
       );
-    }
-
+    };
 
     return (
       <AppModal show={showModal} onHide={closeModal} size="sm">
@@ -449,28 +457,34 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
           <AppModal.Title>
             <p>{t(headerText)}</p>
           </AppModal.Title>
-          <div className="icon-close"
-          data-testid="import-modal-close-icon"
-          onClick={() => {
-            resetState();
-            closeModal();
-          }}>
+          <div
+            className="icon-close"
+            data-testid="import-modal-close-icon"
+            onClick={() => {
+              resetState();
+              closeModal();
+            }}
+          >
             <CloseIcon />
           </div>
         </AppModal.Header>
         <AppModal.Body className="p-5">
           <div className="d-flex justify-content-center">
-          <FileUploadArea
-            primaryButtonText={primaryButtonText}
-            fileType={fileType}
-            onFileSelect={setSelectedFile}
-            file={selectedFile}
-            progress={uploadProgress}
-            error={importError}
-            onRetry={handleRetry}
-            onCancel={() => {resetState();}}
-            onDone={() => {closeModal();}}
-          />
+            <FileUploadArea
+              primaryButtonText={primaryButtonText}
+              fileType={fileType}
+              onFileSelect={setSelectedFile}
+              file={selectedFile}
+              progress={uploadProgress}
+              error={importError}
+              onRetry={handleRetry}
+              onCancel={() => {
+                resetState();
+              }}
+              onDone={() => {
+                closeModal();
+              }}
+            />
           </div>
         </AppModal.Body>
       </AppModal>

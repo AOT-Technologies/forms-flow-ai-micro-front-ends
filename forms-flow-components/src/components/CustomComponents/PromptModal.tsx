@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 /**
  * PromptModal is a reusable, accessible modal component for forms-flow apps.
- * 
+ *
  * Usage:
  * <PromptModal show={true} onClose={handleClose} title="Warning" message="Are you sure?" primaryBtnText="OK" primaryBtnAction={handleOk} />
  * <PromptModal show={true} type="error" title="Error" message="Something went wrong" primaryBtnText="Retry" secondaryBtnText="Cancel" />
@@ -13,7 +13,8 @@ import { useTranslation } from "react-i18next";
 
 type ModalType = "info" | "warning" | "success" | "danger";
 
-interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, 'children'> {
+interface PromptModalProps
+  extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
   /** Controls modal visibility */
   show: boolean;
   /** Called when modal should be closed */
@@ -75,118 +76,123 @@ interface PromptModalProps extends Omit<React.ComponentPropsWithoutRef<"div">, '
 /**
  * Enhanced PromptModal component with improved accessibility, performance, and maintainability
  */
-const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(({
-  show,
-  onClose,
-  secondaryBtnAction,
-  title,
-  message,
-  primaryBtnAction,
-  primaryBtnText,
-  primaryBtnDisable = false,
-  primaryBtndataTestid = 'prompt-button',
-  primaryBtnariaLabel = 'Prompt Button',
-  buttonLoading = false,
-  secondaryBtnText,
-  secondaryBtnDisable = false,
-  secondoryBtndataTestid = 'cancel-button',
-  secondoryBtnariaLabel = 'Cancel Button',
-  secondaryBtnLoading = false,
-  datatestId,
-  type,
-  size = 'sm',
-  btnText,
-  btnDisable = false,
-  btndataTestid = 'ok-button',
-  btnariaLabel = 'Ok Button',
-  btnLoading = false,
-  btnAction,
-  className = '',
-  ariaLabel,
-  dataTestId,
-  ...restProps
-}, ref) => {
-  const { t } = useTranslation();
+const PromptModalComponent = forwardRef<HTMLDivElement, PromptModalProps>(
+  (
+    {
+      show,
+      onClose,
+      secondaryBtnAction,
+      title,
+      message,
+      primaryBtnAction,
+      primaryBtnText,
+      primaryBtnDisable = false,
+      primaryBtndataTestid = "prompt-button",
+      primaryBtnariaLabel = "Prompt Button",
+      buttonLoading = false,
+      secondaryBtnText,
+      secondaryBtnDisable = false,
+      secondoryBtndataTestid = "cancel-button",
+      secondoryBtnariaLabel = "Cancel Button",
+      secondaryBtnLoading = false,
+      datatestId,
+      type,
+      size = "sm",
+      btnText,
+      btnDisable = false,
+      btndataTestid = "ok-button",
+      btnariaLabel = "Ok Button",
+      btnLoading = false,
+      btnAction,
+      className = "",
+      ariaLabel,
+      dataTestId,
+      ...restProps
+    },
+    ref
+  ) => {
+    const { t } = useTranslation();
 
-  // Memoized translated content
-  const translatedTitle = useMemo(() => t(title), [t, title]);
-  
-  return (
-    <AppModal
-      ref={ref}
-      show={show}
-      onHide={onClose}
-      size={size}
-      data-testid={dataTestId || "prompt-modal"}
-      aria-labelledby="prompt-modal-title"
-      aria-describedby="prompt-modal-message"
-      className={`prompt-modal ${type ? type + '-modal' : ''}`}
-      centered
-      {...restProps}
-    >
-      <AppModal.Body className="prompt-modal-body">
-        <div
-          className="prompt-modal-title-container d-flex flex-column"
-          id="prompt-modal-title"
-        >
+    // Memoized translated content
+    const translatedTitle = useMemo(() => t(title), [t, title]);
+
+    return (
+      <AppModal
+        ref={ref}
+        show={show}
+        onHide={onClose}
+        size={size}
+        data-testid={dataTestId || "prompt-modal"}
+        aria-labelledby="prompt-modal-title"
+        aria-describedby="prompt-modal-message"
+        className={`prompt-modal ${type ? type + "-modal" : ""}`}
+        centered
+        {...restProps}
+      >
+        <AppModal.Body className="prompt-modal-body">
           <div
-            className="prompt-title"
-            data-testid={datatestId}
-            aria-label={ariaLabel || "Prompt title"}
+            className="prompt-modal-title-container d-flex flex-column"
+            id="prompt-modal-title"
           >
-            {translatedTitle}
+            <div
+              className="prompt-title"
+              data-testid={datatestId}
+              aria-label={ariaLabel || "Prompt title"}
+            >
+              {translatedTitle}
+            </div>
           </div>
-        </div>
-        {message && (
-          <div
-            className="prompt-message"
-            data-testid="prompt-modal-message"
-            aria-label="Prompt message"
-          >
-            {message}
+          {message && (
+            <div
+              className="prompt-message"
+              data-testid="prompt-modal-message"
+              aria-label="Prompt message"
+            >
+              {message}
+            </div>
+          )}
+        </AppModal.Body>
+        <AppModal.Footer>
+          <div className="buttons-row">
+            {secondaryBtnText && (
+              <V8CustomButton
+                label={secondaryBtnText}
+                onClick={secondaryBtnAction}
+                dataTestId={secondoryBtndataTestid}
+                ariaLabel={secondoryBtnariaLabel}
+                disabled={secondaryBtnDisable}
+                loading={secondaryBtnLoading}
+                variant="secondary"
+              />
+            )}
+            {primaryBtnText && (
+              <V8CustomButton
+                label={primaryBtnText}
+                disabled={primaryBtnDisable}
+                onClick={primaryBtnAction}
+                dataTestId={primaryBtndataTestid}
+                ariaLabel={primaryBtnariaLabel}
+                loading={buttonLoading}
+                variant="primary"
+              />
+            )}
+            {btnText && (
+              <V8CustomButton
+                label={btnText}
+                onClick={btnAction}
+                dataTestId={btndataTestid}
+                ariaLabel={btnariaLabel}
+                disabled={btnDisable}
+                loading={btnLoading}
+                variant="primary"
+              />
+            )}
           </div>
-        )}
-      </AppModal.Body>
-      <AppModal.Footer>
-        <div className="buttons-row">
-          {secondaryBtnText && (
-            <V8CustomButton
-              label={secondaryBtnText}
-              onClick={secondaryBtnAction}
-              dataTestId={secondoryBtndataTestid}
-              ariaLabel={secondoryBtnariaLabel}
-              disabled={secondaryBtnDisable}
-              loading={secondaryBtnLoading}
-              variant="secondary"
-            />
-          )}
-          {primaryBtnText && (
-            <V8CustomButton
-              label={primaryBtnText}
-              disabled={primaryBtnDisable}
-              onClick={primaryBtnAction}
-              dataTestId={primaryBtndataTestid}
-              ariaLabel={primaryBtnariaLabel}
-              loading={buttonLoading}
-              variant="primary"
-            />
-          )}
-          {btnText && (
-            <V8CustomButton
-              label={btnText}
-              onClick={btnAction}
-              dataTestId={btndataTestid}
-              ariaLabel={btnariaLabel}
-              disabled={btnDisable}
-              loading={btnLoading}
-              variant="primary"
-            />
-          )}
-        </div>
-      </AppModal.Footer>
-    </AppModal>
-  );
-});
+        </AppModal.Footer>
+      </AppModal>
+    );
+  }
+);
 
 // Set display name for better debugging
 PromptModalComponent.displayName = "PromptModal";

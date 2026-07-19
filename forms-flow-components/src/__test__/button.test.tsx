@@ -2,7 +2,6 @@ import React from "react";
 import { CustomButton } from "../components/CustomComponents/Button";
 import { render, fireEvent } from "@testing-library/react";
 
-
 describe("CustomButton component", () => {
   it("renders basic button with label", () => {
     const { getByText } = render(
@@ -38,7 +37,7 @@ describe("CustomButton component", () => {
   it("renders dropdown button with items", () => {
     const dropdownItems = [
       { label: "Item 1", onClick: jest.fn() },
-      { label: "Item 2", onClick: jest.fn() }
+      { label: "Item 2", onClick: jest.fn() },
     ];
     const { getByText, getAllByRole } = render(
       <CustomButton
@@ -48,7 +47,7 @@ describe("CustomButton component", () => {
         dropdownItems={dropdownItems}
       />
     );
-    
+
     fireEvent.click(getByText("Dropdown"));
     const menuItems = getAllByRole("button");
     expect(menuItems).toHaveLength(2);
@@ -70,7 +69,11 @@ describe("CustomButton component", () => {
 
   it("handles custom className", () => {
     const { getByRole } = render(
-      <CustomButton variant="primary" label="Custom Class" className="test-class" />
+      <CustomButton
+        variant="primary"
+        label="Custom Class"
+        className="test-class"
+      />
     );
     expect(getByRole("button")).toHaveClass("test-class");
   });

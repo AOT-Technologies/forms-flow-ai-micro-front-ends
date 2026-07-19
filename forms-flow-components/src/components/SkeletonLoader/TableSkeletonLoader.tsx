@@ -14,7 +14,7 @@ export const TableSkeleton: FC<TableSkeletonProps> = memo(
       () => ({
         columns: Array.from({ length: columns }, () => crypto.randomUUID()),
         rows: Array.from({ length: rows }, () => crypto.randomUUID()),
-        pagination: Array.from({ length: 7 }, () => crypto.randomUUID())
+        pagination: Array.from({ length: 7 }, () => crypto.randomUUID()),
       }),
       [columns, rows]
     );
@@ -45,7 +45,11 @@ export const TableSkeleton: FC<TableSkeletonProps> = memo(
     );
 
     return (
-      <div className="custom-table-wrapper-inner" role="status" aria-label="Loading table data">
+      <div
+        className="custom-table-wrapper-inner"
+        role="status"
+        aria-label="Loading table data"
+      >
         <table className="table table-skeleton">
           <thead>
             <tr>
@@ -73,4 +77,3 @@ export const TableSkeleton: FC<TableSkeletonProps> = memo(
     );
   }
 );
-
