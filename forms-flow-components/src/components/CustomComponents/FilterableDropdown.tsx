@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { DownArrowIcon, UpArrowIcon } from "../SvgIcons";
 import { StyleServices } from "@formsflow/service";
@@ -182,9 +188,10 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
 
   // Get selected option
   const selectedOption = useMemo(() => {
-    return options.find((opt) => opt.value === value || opt.value === defaultValue);
+    return options.find(
+      (opt) => opt.value === value || opt.value === defaultValue
+    );
   }, [options, value, defaultValue]);
-
 
   // Initialize input value with selected option label only when dropdown is closed and user is not typing
   useEffect(() => {
@@ -284,7 +291,13 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
           break;
       }
     },
-    [disabled, menuOptions, highlightedIndex, handleSelectOption, selectedOption]
+    [
+      disabled,
+      menuOptions,
+      highlightedIndex,
+      handleSelectOption,
+      selectedOption,
+    ]
   );
 
   // Handle click outside
@@ -324,7 +337,9 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
   // Scroll highlighted item into view
   useEffect(() => {
     if (highlightedIndex >= 0 && dropdownRef.current) {
-      const items = dropdownRef.current.querySelectorAll(".filterable-dropdown-item");
+      const items = dropdownRef.current.querySelectorAll(
+        ".filterable-dropdown-item"
+      );
       if (items[highlightedIndex]) {
         items[highlightedIndex].scrollIntoView({
           block: "nearest",
@@ -334,16 +349,26 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
     }
   }, [highlightedIndex]);
 
-  const iconColor = disabled
-    ? StyleServices.getCSSVariable("--gray-medium-dark")
-    : StyleServices.getCSSVariable("--secondary-dark");
+  // Memoized CSS variable reads (getComputedStyle forces a style recalc) — same
+  // pattern as Search.tsx; the ternary still picks per render.
+  const grayMediumDarkColor = useMemo(
+    () => StyleServices.getCSSVariable("--gray-medium-dark"),
+    []
+  );
+  const secondaryDarkColor = useMemo(
+    () => StyleServices.getCSSVariable("--secondary-dark"),
+    []
+  );
+  const iconColor = disabled ? grayMediumDarkColor : secondaryDarkColor;
 
   const containerStyle: React.CSSProperties = width
     ? { width: typeof width === "number" ? `${width}px` : width }
     : {};
 
   // Calculate dropdown width to match input
-  const [dropdownWidth, setDropdownWidth] = useState<number | undefined>(undefined);
+  const [dropdownWidth, setDropdownWidth] = useState<number | undefined>(
+    undefined
+  );
   const [isEllipsis, setIsEllipsis] = useState<boolean>(false);
 
   useEffect(() => {
@@ -351,7 +376,9 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
       const inputWidth = inputRef.current.offsetWidth;
       setDropdownWidth(inputWidth);
       // Check if content is overflowing (ellipsis)
-      setIsEllipsis(inputRef.current.scrollWidth > inputRef.current.clientWidth);
+      setIsEllipsis(
+        inputRef.current.scrollWidth > inputRef.current.clientWidth
+      );
     }
   }, [isOpen, inputValue]);
 
@@ -363,7 +390,9 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
     overflowY: "auto",
     ...(isEllipsis
       ? { width: "max-content", maxWidth: "11.25rem" }
-      : dropdownWidth ? { width: `${dropdownWidth}px` } : {}),
+      : dropdownWidth
+      ? { width: `${dropdownWidth}px` }
+      : {}),
   };
 
   const notifyOpenFromPointer = useCallback(
@@ -456,7 +485,7 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
       id={id}
       data-testid={dataTestId}
     >
-      <div 
+      <div
         className="filterable-dropdown-input-wrapper"
         onPointerDownCapture={notifyOpenFromPointer}
         onClick={() => !disabled && setIsOpen(true)}
@@ -489,14 +518,17 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
           data-testid={`${dataTestId}-input`}
         />
         {showArrow && (
-          <div 
+          <div
             className="filterable-dropdown-arrow"
             onClick={() => !disabled && setIsOpen(!isOpen)}
-            style={{ cursor: disabled ? 'default' : 'pointer', pointerEvents: 'all' }}
+            style={{
+              cursor: disabled ? "default" : "pointer",
+              pointerEvents: "all",
+            }}
             role="button"
             tabIndex={disabled ? -1 : 0}
             onKeyDown={(e) => {
-              if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+              if (!disabled && (e.key === "Enter" || e.key === " ")) {
                 e.preventDefault();
                 setIsOpen(!isOpen);
               }
@@ -516,4 +548,3 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
     </div>
   );
 };
-

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { AppModal } from "./AppModal";
 import { useTranslation } from "react-i18next";
 import { V8CustomButton } from "./CustomButton";
@@ -69,7 +69,9 @@ const buildModalContent = (
               onKeyDown={(event) => handleKeyDown(event, onClick)}
               aria-label={`Button for ${heading}`}
               data-testid={`button-${id}`}
-              className={`reusable-standard-modal-option ${isSelected ? "selected" : ""}`}
+              className={`reusable-standard-modal-option ${
+                isSelected ? "selected" : ""
+              }`}
             >
               <div className="reusable-standard-modal-option-content">
                 <h3 className="reusable-standard-modal-option-heading">
@@ -117,7 +119,12 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
   allignButtons,
 }) => {
   const { t } = useTranslation();
-  const darkColor = StyleServices.getCSSVariable("--secondary-dark");
+  // Memoized CSS variable read (getComputedStyle forces a style recalc) — same
+  // pattern as Search.tsx.
+  const darkColor = useMemo(
+    () => StyleServices.getCSSVariable("--secondary-dark"),
+    []
+  );
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   // Reset selection when modal closes
@@ -156,7 +163,13 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
   // Render content based on props
   const renderContent = () => {
     if (contents && contents.length > 0) {
-      return buildModalContent(contents, selectedId, handleSelect, questionText, t);
+      return buildModalContent(
+        contents,
+        selectedId,
+        handleSelect,
+        questionText,
+        t
+      );
     }
     return content;
   };
@@ -177,11 +190,7 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
             </div>
           </AppModal.Title>
 
-          {subtitle && (
-            <div className="modal-subtitle">
-              {subtitle}
-            </div>
-          )}
+          {subtitle && <div className="modal-subtitle">{subtitle}</div>}
         </div>
       </AppModal.Header>
 
@@ -192,7 +201,9 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
       )}
 
       {(primaryBtnText || secondaryBtnText) && (
-        <AppModal.Footer className={`mt-3 ${allignButtons ? "justify-content-between" : ""}`}>
+        <AppModal.Footer
+          className={`mt-3 ${allignButtons ? "justify-content-between" : ""}`}
+        >
           {secondaryBtnText && (
             <V8CustomButton
               label={t(secondaryBtnText)}
