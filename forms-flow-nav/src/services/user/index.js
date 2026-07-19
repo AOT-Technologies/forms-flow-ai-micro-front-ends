@@ -1,4 +1,4 @@
-import { RequestService,StorageService } from "@formsflow/service";
+import { RequestService, StorageService } from "@formsflow/service";
 import API from "../../endpoints/index";
 import { WEB_BASE_CUSTOM_URL } from "../../constants/constants";
 
@@ -42,9 +42,8 @@ export const getOnBoardingUserRole = () => {
     })
     .catch((err) => {
       console.error(" Error in getting on boarding user role:", err);
-  });
+    });
 };
-
 
 export const fetchChecklist = () => {
   const url = API.CHECKLIST;
@@ -61,28 +60,27 @@ export const requestResetPassword = () => {
   if (!userId) {
     return Promise.reject(new Error("User id not found in user details"));
   }
-  
 
   const redirectUri =
     (WEB_BASE_CUSTOM_URL && String(WEB_BASE_CUSTOM_URL).trim()) ||
     (typeof window !== "undefined" ? window.location.origin : "");
 
-  const urlWithRedirect =
-    `${API.RESET_PASSWORD(userId)}?redirect_uri=${encodeURIComponent(redirectUri)}`;
+  const urlWithRedirect = `${API.RESET_PASSWORD(
+    userId
+  )}?redirect_uri=${encodeURIComponent(redirectUri)}`;
 
   return RequestService.httpPUTRequest(urlWithRedirect, {}, token);
 };
 
-
 /**
- * @param {string} userId 
+ * @param {string} userId
  * @param {Object} profileData
- * @param {string} [profileData.firstName] 
+ * @param {string} [profileData.firstName]
  * @param {string} [profileData.lastName]
  * @param {string} [profileData.username]
- * @param {string} [profileData.email] 
- * @param {Object} [profileData.attributes] 
- * @returns {Promise} 
+ * @param {string} [profileData.email]
+ * @param {Object} [profileData.attributes]
+ * @returns {Promise}
  */
 export const updateUserProfile = (userId, profileData) => {
   const url = API.USER_PROFILE_UPDATE.replace("<user_id>", userId);

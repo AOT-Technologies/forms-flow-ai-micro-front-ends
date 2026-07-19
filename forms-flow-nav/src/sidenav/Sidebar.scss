@@ -1,63 +1,60 @@
-@import '../../../forms-flow-theme/scss/v8-scss/mixins';
+@import "../../../forms-flow-theme/scss/v8-scss/mixins";
 
 //New Colors
 $black: #000000;
 $white: #ffffff;
-$green: #57C20A;
+$green: #57c20a;
 $green-dark: #006621;
 
 //primary shades
-$primary: #253DF4;
-$primary-light: #E2E1FC;
+$primary: #253df4;
+$primary-light: #e2e1fc;
 
 //gray shades
 // $gray-darkest: #303436;
-$gray-darkest: #7C7D7F;
-$gray-dark: #4C4C4C;
-$gray-medium-dark: #AFB4B6;
-$gray-medium: #E4E6E7;
-$gray-light: #F2F2F3;
-
-
+$gray-darkest: #7c7d7f;
+$gray-dark: #4c4c4c;
+$gray-medium-dark: #afb4b6;
+$gray-medium: #e4e6e7;
+$gray-light: #f2f2f3;
 
 // VARIABLES ADDED BY MAX
 
 //base
 $base: 1rem;
 $lineThin: 1px;
-$lineThick: $lineThin*2;
+$lineThick: $lineThin * 2;
 
 // fonts
 $fontBase: $base;
-$fontSmallest: $fontBase*0.875;
+$fontSmallest: $fontBase * 0.875;
 $fontLineHeight: 1.2;
 
-$fontModalTitle: $fontBase*1.5;
+$fontModalTitle: $fontBase * 1.5;
 
 // borders
-$borderRadiusHeightESM: $base*0.78; // 12.5px
-$borderRadiusHeightSM: $base*1.094; // 17.5px
-$borderRadiusHeightM: $base*1.344;  // 21.5px
-$borderRadiusHeightL: $base*1.594; // 25.5px
-$borderRadiusModal: $base*1.5; // 24px
+$borderRadiusHeightESM: $base * 0.78; // 12.5px
+$borderRadiusHeightSM: $base * 1.094; // 17.5px
+$borderRadiusHeightM: $base * 1.344; // 21.5px
+$borderRadiusHeightL: $base * 1.594; // 25.5px
+$borderRadiusModal: $base * 1.5; // 24px
 
 // color globals
 $colorDivider: $gray-medium;
 $colorDividerDark: $gray-medium-dark;
 
 // modals
-$modalWidthSmall: $base*60;
-$modalWidthLarge: $base*75;
+$modalWidthSmall: $base * 60;
+$modalWidthLarge: $base * 75;
 
 // nav
 $navPadding: $base;
 $navSpacing: $base;
 
 // transitions
-$animSpeed: 300ms; 
+$animSpeed: 300ms;
 
-
-.sidenav {  
+.sidenav {
   height: 100%;
   width: var(--navbar-width);
   position: fixed;
@@ -66,8 +63,8 @@ $animSpeed: 300ms;
   background-color: var(--nav-bg-color);
   display: flex;
   flex-direction: column;
-   transition: width 0.1s ease-in;
-   cursor: default;
+  transition: width 0.1s ease-in;
+  cursor: default;
 
   &:not(:hover) {
     transition: width 0.6s ease-out; // collapse takes 6s
@@ -82,7 +79,7 @@ $animSpeed: 300ms;
     padding-bottom: 0;
     transition: transform 0.3s ease;
     cursor: default;
-    
+
     svg {
       cursor: pointer;
       transition: transform 0.3s ease;
@@ -124,7 +121,7 @@ $animSpeed: 300ms;
     font-size: $fontSmallest;
     padding-left: 0;
     // font-weight: 700;
-    
+
     background-color: var(--nav-bg-color);
     box-shadow: none;
 
@@ -147,16 +144,15 @@ $animSpeed: 300ms;
 
     &:not(.collapsed) {
       // background-color: var(--navbar-main-menu-active-bg-color);
-      
+
       // & > svg {
-        //   transform: rotate(180deg);
-        // }
-        @include font-style(0.938rem,500,var(--navbar-menu-font-color));
-      
+      //   transform: rotate(180deg);
+      // }
+      @include font-style(0.938rem, 500, var(--navbar-menu-font-color));
+
       background-color: var(--nav-bg-color);
       box-shadow: none;
     }
-
   }
 
   .accordion-body {
@@ -170,7 +166,7 @@ $animSpeed: 300ms;
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-sm);
     line-height: var(--text-line-height);
-    border-bottom: 1px solid #E5E5E5;
+    border-bottom: 1px solid #e5e5e5;
     margin: 0 1rem;
 
     &:first-of-type > .accordion-header .accordion-button {
@@ -181,19 +177,19 @@ $animSpeed: 300ms;
       border-bottom-left-radius: 0 !important;
       border-bottom-right-radius: 0 !important;
     }
-    &:last-of-type{
+    &:last-of-type {
       border-bottom: none;
     }
   }
 
-  .accordion-item:last-of-type{
+  .accordion-item:last-of-type {
     border-radius: 0;
   }
 
   .accordion-link {
     display: block;
     width: 100%;
-    
+
     padding: $navPadding 0;
     // padding-left: calc($navPadding + $navSpacing + $base);
     padding-left: 1.44rem;
@@ -222,8 +218,8 @@ $animSpeed: 300ms;
 
     &.active {
       // color: #525254;
-      
-      @include font-style( 0.875rem,500,var(--navbar-menu-font-color));
+
+      @include font-style(0.875rem, 500, var(--navbar-menu-font-color));
       line-height: 1.05rem;
       // background-color: var(--navbar-active-submenu-bg-color);
       // color: var(--navbar-active-submenu-font-color);
@@ -233,7 +229,7 @@ $animSpeed: 300ms;
   }
 
   .user-container {
-    color : var(--navbar-main-menu-active-font-color);
+    color: var(--navbar-main-menu-active-font-color);
 
     // border-top: $lineThin solid $colorDivider;
 
@@ -254,7 +250,7 @@ $animSpeed: 300ms;
       &:hover {
         background-color: var(--navbar-hover-submenu-bg-color);
       }
-      &:first-of-type{
+      &:first-of-type {
         border-bottom: $lineThin solid $colorDivider;
       }
     }
@@ -276,7 +272,11 @@ $animSpeed: 300ms;
         & > p {
           overflow: hidden;
 
-          @include font-style($fontSmallest,400,var(--navbar-menu-font-color));
+          @include font-style(
+            $fontSmallest,
+            400,
+            var(--navbar-menu-font-color)
+          );
           flex-grow: 1;
           width: 2rem;
           line-height: $fontLineHeight;
@@ -291,7 +291,6 @@ $animSpeed: 300ms;
     }
 
     .sign-out-button {
-
       p {
         width: 100%;
 
@@ -317,11 +316,11 @@ $animSpeed: 300ms;
 
       width: 1rem;
       height: 1rem;
-      
+
       font-weight: 400;
       // font-size: $fontSmallest;
       font-size: 0.5rem;
-      
+
       border-radius: 50%;
       background-color: $gray-medium;
       // font-size: 14px;
@@ -368,17 +367,16 @@ $animSpeed: 300ms;
       display: none;
     }
 
-
     // &.active-header .accordion-button {
-      // background-color: var(--navbar-active-submenu-bg-color);
-      // color: var(--navbar-active-submenu-font-color);
+    // background-color: var(--navbar-active-submenu-bg-color);
+    // color: var(--navbar-active-submenu-font-color);
 
     // }
   }
 }
 
-.collapsed{
-   .accordion-button{
+.collapsed {
+  .accordion-button {
     padding: 16px 0 16px 0 !important;
   }
 }
@@ -390,8 +388,6 @@ $animSpeed: 300ms;
     // transform: rotate(180deg);
     transform: rotate(90deg);
   }
-
-
 }
 
 .multitenancy-header {
@@ -409,7 +405,11 @@ $animSpeed: 300ms;
 }
 
 .multitenancy-app-name {
-  @include font-style(var(--font-size-md),var(--font-weight-lg),var(--navbar-main-menu-active-font-color));
+  @include font-style(
+    var(--font-size-md),
+    var(--font-weight-lg),
+    var(--navbar-main-menu-active-font-color)
+  );
 }
 
 .active-header .accordion-button {
@@ -418,9 +418,8 @@ $animSpeed: 300ms;
   color: var(--navbar-menu-font-color);
   font-size: 0.938rem;
   font-weight: 500;
-  @include font-style(0.938rem,500,var(--navbar-main-menu-font-color));
+  @include font-style(0.938rem, 500, var(--navbar-main-menu-font-color));
 }
-
 
 @media (max-width: 768px) {
   .sidenav .logo-container {
