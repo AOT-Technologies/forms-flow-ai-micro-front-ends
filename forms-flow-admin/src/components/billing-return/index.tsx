@@ -1,15 +1,17 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import API from "../../endpoints";
 
 const BillingReturn: React.FC = () => {
-  const [message, setMessage] = React.useState("Completing payment...");
+  const { t } = useTranslation();
+  const [message, setMessage] = React.useState(t("Completing payment..."));
 
   React.useEffect(() => {
     const sessionId = new URLSearchParams(
       globalThis.location?.search ?? ""
     ).get("session_id");
     if (!sessionId) {
-      setMessage("Missing session id. Redirecting...");
+      setMessage(t("Missing session id. Redirecting..."));
       globalThis.location?.replace("/");
       return;
     }
@@ -18,16 +20,20 @@ const BillingReturn: React.FC = () => {
       try {
         const returnEndpoint = API.BILLING_RETURN.includes("/api/")
           ? API.BILLING_RETURN
-          : API.BILLING_RETURN.replace(/^(https?:\/\/[^/]+)(\/.*)?$/i, "$1/api$2");
+          : API.BILLING_RETURN.replace(
+              /^(https?:\/\/[^/]+)(\/.*)?$/i,
+              "$1/api$2"
+            );
         globalThis.location?.replace(
           `${returnEndpoint}?session_id=${encodeURIComponent(sessionId)}`
         );
       } catch (err) {
         // Keep UX simple and visible if redirect URL building fails.
+        // The static prefix is translated; the error detail stays raw.
         setMessage(
           err instanceof Error
-            ? `Payment completed, but redirect failed: ${err.message}`
-            : "Payment completed, but redirect failed."
+            ? `${t("Payment completed, but redirect failed:")} ${err.message}`
+            : t("Payment completed, but redirect failed.")
         );
       }
     };

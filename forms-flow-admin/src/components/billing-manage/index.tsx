@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { RequestService, StorageService } from "@formsflow/service";
 import { useParams } from "react-router-dom";
 import API from "../../endpoints";
@@ -12,19 +13,23 @@ function buildBillingPortalReturnUrl(tenantKey: string): string {
 }
 
 const BillingManage: React.FC = () => {
+  const { t } = useTranslation();
   const { tenantId: tenantFromPath } = useParams<{ tenantId?: string }>();
-  const [message, setMessage] = React.useState("Opening subscription management...");
+  const [message, setMessage] = React.useState(
+    t("Opening subscription management...")
+  );
 
   React.useEffect(() => {
     const run = async () => {
       try {
-        const query = new URLSearchParams(
-          globalThis.location?.search ?? ""
-        );
+        const query = new URLSearchParams(globalThis.location?.search ?? "");
         // Align with route param name :tenantId — use ?tenantId=<key> on redirects (e.g. /billing/manage?tenantId=…).
         const tenantFromQuery = query.get("tenantId");
         let tenantKey =
-          tenantFromPath || tenantFromQuery || StorageService.get("tenantKey") || "";
+          tenantFromPath ||
+          tenantFromQuery ||
+          StorageService.get("tenantKey") ||
+          "";
         const customerId = query.get("customer") || query.get("customer_id");
         const customerName = query.get("customer_name");
 
@@ -32,7 +37,11 @@ const BillingManage: React.FC = () => {
         // or placeholder values (e.g. "default") that may be in storage or the URL.
         if (MULTITENANCY_ENABLED) {
           try {
-            const tenantRes = await RequestService.httpGETRequest(API.GET_TENANT_DATA, null, null);
+            const tenantRes = await RequestService.httpGETRequest(
+              API.GET_TENANT_DATA,
+              null,
+              null
+            );
             if (tenantRes?.data?.key) {
               tenantKey = tenantRes.data.key;
               StorageService.save("tenantKey", tenantKey);
@@ -52,7 +61,11 @@ const BillingManage: React.FC = () => {
             params.set("customer_name", customerName);
           }
           const resolveEndpoint = `${resolveBase}?${params.toString()}`;
-          const resolveRes = await RequestService.httpGETRequest(resolveEndpoint, null, null);
+          const resolveRes = await RequestService.httpGETRequest(
+            resolveEndpoint,
+            null,
+            null
+          );
           tenantKey = resolveRes?.data?.tenantKey || "";
         }
 
@@ -60,7 +73,10 @@ const BillingManage: React.FC = () => {
           throw new Error("Tenant key not found. Please login and try again.");
         }
 
-        const endpoint = API.BILLING_PORTAL_SESSION.replace("<tenant_key>", tenantKey);
+        const endpoint = API.BILLING_PORTAL_SESSION.replace(
+          "<tenant_key>",
+          tenantKey
+        );
         const returnUrl = buildBillingPortalReturnUrl(tenantKey);
         const response = await RequestService.httpPOSTRequest(
           endpoint,
@@ -75,10 +91,11 @@ const BillingManage: React.FC = () => {
 
         globalThis.location?.replace(portalUrl);
       } catch (err) {
+        // The static prefix is translated; the error detail stays raw.
         setMessage(
           err instanceof Error
-            ? `Unable to open subscription management: ${err.message}`
-            : "Unable to open subscription management."
+            ? `${t("Unable to open subscription management:")} ${err.message}`
+            : t("Unable to open subscription management.")
         );
       }
     };
