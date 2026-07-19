@@ -25,14 +25,17 @@ const RoleManagement = React.memo((props: any) => {
   React.useEffect(() => {
     setTab("Roles");
     setLoading(true);
-    fetchRoles((data) => {
-      setRoles(data);
-      setCount(data.length);
-      setLoading(false);
-    }, (err)=>{
-      setError(err);
-      setLoading(false);
-    });
+    fetchRoles(
+      (data) => {
+        setRoles(data);
+        setCount(data.length);
+        setLoading(false);
+      },
+      (err) => {
+        setError(err);
+        setLoading(false);
+      }
+    );
   }, []);
 
   return (
