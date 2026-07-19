@@ -2,6 +2,7 @@
 // adding dependencies is out of scope; tests shim `window` themselves where needed.
 module.exports = {
   testEnvironment: "node",
+  setupFiles: ["<rootDir>/jest.setup.js"],
   transform: {
     "^.+\\.(j|t)sx?$": "babel-jest",
   },

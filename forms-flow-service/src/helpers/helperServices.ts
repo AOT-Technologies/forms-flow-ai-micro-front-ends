@@ -6,6 +6,13 @@ import {
 } from "../constants/constants";
 
 class HelperServices {
+  // Parse a "YYYY-MM-DD HH:mm:ss" / ISO string as UTC and convert to local
+  // time in ONE moment instance (S.19). Output is identical to the previous
+  // moment(moment.utc(x).toDate()) double-instance pattern.
+  private static toLocalMoment(date: string) {
+    return moment.utc(date.replace(" ", "T")).local();
+  }
+
   public static getISODateTime(date: any): string | null {
     if (date) {
       return moment(date).format("YYYY-MM-DDTHH:mm:ss.SSSZZ"); // strict ISO with colon
@@ -17,46 +24,32 @@ class HelperServices {
     if (!date) {
       return null;
     }
-    // Parse the input date string as a moment.js object
-    const momentDate = moment.utc(date?.replace(" ", "T"));
-
-    // Convert localizedDateTime to a Moment.js object and format it as DD-MMM-YYYY, h:mm a
-    const localizedDateTime = moment(momentDate?.toDate()).format(
+    // Format as DD-MMM-YYYY, h:mm a
+    return HelperServices.toLocalMoment(date).format(
       `${DATE_FORMAT}, ${TIME_FORMAT}`
     );
-    return localizedDateTime;
   }
 
   public static getLocaldate(date: string): any {
     if (!date) {
       return null;
     }
-    const momentDate = moment.utc(date?.replace(" ", "T"));
-
     // Format as DD-MMM-YYYY (e.g., 07-Feb-2025)
-    const localizedDate = moment(momentDate?.toDate()).format(DATE_FORMAT);
-    return localizedDate;
+    return HelperServices.toLocalMoment(date).format(DATE_FORMAT);
   }
 
   public static getShortDateAndTime(date: string): string | null {
     if (!date) return null;
-    const d = moment.utc(date.replace(" ", "T")).toDate();
-    const dd = String(d.getDate()).padStart(2, "0");
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const yy = String(d.getFullYear()).slice(-2);
-    const time = moment(d).format(TIME_FORMAT);
-    return `${dd}/${mm}/${yy} ${time}`;
+    const m = HelperServices.toLocalMoment(date);
+    return `${m.format("DD/MM/YY")} ${m.format(TIME_FORMAT)}`;
   }
 
   public static getLocalTime(date: string): any {
     if (!date) {
       return null;
     }
-
-    const momentDate = moment.utc(date?.replace(" ", "T"));
     // Format as h:mm a (e.g., 3:45 PM)
-    const localizedTime = moment(momentDate?.toDate()).format(TIME_FORMAT);
-    return localizedTime;
+    return HelperServices.toLocalMoment(date).format(TIME_FORMAT);
   }
 
   public static getMoment(date: any): any {
