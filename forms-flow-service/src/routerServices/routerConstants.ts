@@ -40,7 +40,7 @@ const getBaseRoute = (tenantId) => {
   return MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : `/`;
 };
 
-export const getRoute = (tenantId) => ({
+const buildRoute = (tenantId) => ({
   HOME: getBaseRoute(tenantId) + MAIN_ROUTE.HOME,
   DRAFT: getBaseRoute(tenantId) + MAIN_ROUTE.DRAFT,
   FORM: getBaseRoute(tenantId) + MAIN_ROUTE.FORM,
@@ -62,6 +62,20 @@ export const getRoute = (tenantId) => ({
   INTEGRETIONS: getBaseRoute(tenantId) + MAIN_ROUTE.INTEGRETIONS,
   FORM_CREATE: getBaseRoute(tenantId) + MAIN_ROUTE.FORM_CREATE,
 });
+
+// Single-entry memo (S.29): every navigateTo* helper calls getRoute() to read
+// one key, and the map depends only on tenantId (MULTITENANCY_ENABLED is
+// fixed at module load). Consumers only read from the returned object.
+let cachedTenantId;
+let cachedRoute;
+
+export const getRoute = (tenantId) => {
+  if (!cachedRoute || cachedTenantId !== tenantId) {
+    cachedTenantId = tenantId;
+    cachedRoute = buildRoute(tenantId);
+  }
+  return cachedRoute;
+};
 
 /**
  * Get redirectUrl (base route with tenant)

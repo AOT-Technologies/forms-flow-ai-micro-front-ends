@@ -10,12 +10,18 @@ const navigateTo = (navigate: (path: string) => void, baseUrl: string) => {
 
 /** @param navigate - React Router v6 navigate function from useNavigate(), NOT a v5 history object */
 const navigateWithHistory = (navigate: (path: string) => void, url: string) => {
-  navigate(url);
+  navigateTo(navigate, url);
 };
 
 const syncRouterPath = (navigate: (path: string) => void, pathname: string) => {
-  navigate(pathname);
+  navigateTo(navigate, pathname);
 };
+
+// Tenant base path WITHOUT trailing slash (e.g. "/tenant/x" or "") — distinct
+// from getRedirectUrl, which keeps the trailing slash. Used by the process
+// helpers below whose route fragments carry their own leading slash (S.28).
+const getTenantBasePath = (tenantId: string) =>
+  getRoute(tenantId).FORMFLOW.replace("/formflow", "");
 
 /* ---------------------------  Designer Routes --------------------------- */
 
@@ -289,13 +295,7 @@ const navigateToProcessCreate = (
   tenantId: string,
   processRoute
 ) => {
-  navigateTo(
-    navigate,
-    `${getRoute(tenantId).FORMFLOW.replace(
-      "/formflow",
-      ""
-    )}${processRoute}/create`
-  );
+  navigateTo(navigate, `${getTenantBasePath(tenantId)}${processRoute}/create`);
 };
 
 const navigateToProcessEditWithParams = (
@@ -306,7 +306,7 @@ const navigateToProcessEditWithParams = (
   queryParams = {}
 ) => {
   const params = new URLSearchParams(queryParams).toString();
-  const baseRoute = getRoute(tenantId).FORMFLOW.replace("/formflow", "");
+  const baseRoute = getTenantBasePath(tenantId);
   const url = params
     ? `${baseRoute}${processRoute}/edit/${processKey}?${params}`
     : `${baseRoute}${processRoute}/edit/${processKey}`;
@@ -318,7 +318,7 @@ const navigateToProcessRoute = (
   tenantId: string,
   processRoute
 ) => {
-  const baseRoute = getRoute(tenantId).FORMFLOW.replace("/formflow", "");
+  const baseRoute = getTenantBasePath(tenantId);
   navigateTo(navigate, `${baseRoute}${processRoute}`);
 };
 
@@ -328,7 +328,7 @@ const navigateToImportedProcess = (
   baseUrl,
   processKey
 ) => {
-  const baseRoute = getRoute(tenantId).FORMFLOW.replace("/formflow", "");
+  const baseRoute = getTenantBasePath(tenantId);
   navigateTo(navigate, `${baseRoute}${baseUrl}${processKey}`);
 };
 
@@ -476,7 +476,7 @@ const navigateToTaskListingFromReview = (
   navigate: (path: string) => void,
   tenantId: string
 ) => {
-  navigateTo(navigate, getRoute(tenantId).TASK);
+  navigateToTaskListing(navigate, tenantId);
 };
 
 const navigateToTaskListingFromReviewWithHistory = (
