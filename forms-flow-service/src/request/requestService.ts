@@ -62,6 +62,28 @@ class RequestService {
     return instance;
   }
 
+  // Shared Authorization-header builders (S.9). Semantics are identical to the
+  // ternaries previously copy-pasted into every request method: bearer mode
+  // falls back to the stored auth token; custom `headers` win when provided.
+  private static authorizationValue(
+    token: string | null,
+    isBearer: boolean
+  ): string | null {
+    return isBearer
+      ? `Bearer ${token || StorageService.get(StorageService.User.AUTH_TOKEN)}`
+      : token;
+  }
+
+  private static authHeaders(
+    token: string | null,
+    isBearer: boolean,
+    headers: object | null = null
+  ): object {
+    return !headers
+      ? { Authorization: this.authorizationValue(token, isBearer) }
+      : headers;
+  }
+
   public static httpGETRequest(
     url: string,
     data: object | null,
@@ -71,15 +93,7 @@ class RequestService {
   ): any {
     return this.axiosInstance.get(url, {
       params: data,
-      headers: !headers
-        ? {
-            Authorization: isBearer
-              ? `Bearer ${
-                  token || StorageService.get(StorageService.User.AUTH_TOKEN)
-                }`
-              : token,
-          }
-        : headers,
+      headers: this.authHeaders(token, isBearer, headers),
     });
   }
   public static httpGETBlobRequest(
@@ -92,15 +106,7 @@ class RequestService {
     return this.axiosInstance.get(url, {
       params: data,
       responseType: "blob",
-      headers: !headers
-        ? {
-            Authorization: isBearer
-              ? `Bearer ${
-                  token || StorageService.get(StorageService.User.AUTH_TOKEN)
-                }`
-              : token,
-          }
-        : headers,
+      headers: this.authHeaders(token, isBearer, headers),
     });
   }
   public static httpPOSTRequest(
@@ -111,15 +117,7 @@ class RequestService {
     headers: object | null = null
   ): any {
     return this.axiosInstance.post(url, data, {
-      headers: !headers
-        ? {
-            Authorization: isBearer
-              ? `Bearer ${
-                  token || StorageService.get(StorageService.User.AUTH_TOKEN)
-                }`
-              : token,
-          }
-        : headers,
+      headers: this.authHeaders(token, isBearer, headers),
     });
   }
 
@@ -137,11 +135,7 @@ class RequestService {
     return this.axiosInstance.post(url, formData, {
       headers: {
         ...headers,
-        Authorization: isBearer
-          ? `Bearer ${
-              token || StorageService.get(StorageService.User.AUTH_TOKEN)
-            }`
-          : token,
+        Authorization: this.authorizationValue(token, isBearer),
         "Content-Type": "multipart/form-data",
       },
     });
@@ -158,15 +152,7 @@ class RequestService {
     return this.axiosInstance.post(url, data, {
       params: params,
       responseType: "blob",
-      headers: !headers
-        ? {
-            Authorization: isBearer
-              ? `Bearer ${
-                  token || StorageService.get(StorageService.User.AUTH_TOKEN)
-                }`
-              : token,
-          }
-        : headers,
+      headers: this.authHeaders(token, isBearer, headers),
     });
   }
   public static httpPOSTRequestWithoutToken(url: string, data: object): any {
@@ -186,11 +172,7 @@ class RequestService {
   ): any {
     return this.axiosInstance.post(url, data, {
       headers: {
-        Authorization: isBearer
-          ? `Bearer ${
-              token || StorageService.get(StorageService.User.AUTH_TOKEN)
-            }`
-          : token,
+        Authorization: this.authorizationValue(token, isBearer),
         Accept: "application/hal+json",
       },
       signal,
@@ -203,13 +185,7 @@ class RequestService {
     isBearer: boolean = true
   ): any {
     return this.axiosInstance.put(url, data, {
-      headers: {
-        Authorization: isBearer
-          ? `Bearer ${
-              token || StorageService.get(StorageService.User.AUTH_TOKEN)
-            }`
-          : token,
-      },
+      headers: this.authHeaders(token, isBearer),
     });
   }
   public static httpDELETERequest(
@@ -219,13 +195,7 @@ class RequestService {
     isBearer: boolean = true
   ): any {
     return this.axiosInstance.delete(url, {
-      headers: {
-        Authorization: isBearer
-          ? `Bearer ${
-              token || StorageService.get(StorageService.User.AUTH_TOKEN)
-            }`
-          : token,
-      },
+      headers: this.authHeaders(token, isBearer),
       data: data,
     });
   }
