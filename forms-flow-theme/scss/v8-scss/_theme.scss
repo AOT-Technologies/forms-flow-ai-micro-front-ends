@@ -435,6 +435,21 @@ $font-tokens: (
   }
 }
 
+.formedit-page:has(> .formedit-tab-region) {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+}
+
+.formedit-tab-region {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
 .formedit-header-primary {
   position: sticky;
   top: 0;
