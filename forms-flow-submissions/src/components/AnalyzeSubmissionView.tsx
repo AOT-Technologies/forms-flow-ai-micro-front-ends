@@ -301,7 +301,8 @@ const ViewApplication = React.memo(() => {
         cellClassName: "sticky-column-cell",
   
         width: 100,
-        renderCell: (params: any) => (
+        renderCell: (params: any) => 
+          formType === "bundle" ? null : (
           <V8CustomButton
             label={t("View")}
             dataTestId="task-view-button"
@@ -311,7 +312,7 @@ const ViewApplication = React.memo(() => {
         ),
       },
     ],
-    [t, viewSubmission, dispatch, applicationId]
+    [t, viewSubmission, dispatch, applicationId, formType]
   );
 
   const historyRows = useMemo(() => {
@@ -331,10 +332,10 @@ const ViewApplication = React.memo(() => {
         label: t(formType === "bundle" ? "Bundle" : "Form"),
         id: "form",
       },
-      {
-        label: t("Flow"),
-        id: "flow",
-      },
+      // {
+      //   label: t("Flow"),
+      //   id: "flow",
+      // },
       {
         label: t("History"),
         id: "history",
@@ -342,13 +343,13 @@ const ViewApplication = React.memo(() => {
     ];
 
     // Filter out Flow tab if processType is not BPMN
-    return tabs.filter(tab => {
-      if (tab.id === "flow") {
-        return processType !== "LOWCODE";
-      }
-      return true;
-    });
-  }, [t, processType, formType]);
+    // return tabs.filter(tab => {
+    //   if (tab.id === "flow") {
+    //     return processType !== "LOWCODE";
+    //   }
+    //   return true;
+    // });
+  }, [t, formType]);
 
   if (isApplicationDetailLoading) {
     return <Loading />;
