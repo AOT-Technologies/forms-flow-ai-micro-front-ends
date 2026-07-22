@@ -349,6 +349,7 @@ const ViewApplication = React.memo(() => {
     //   }
     //   return true;
     // });
+    return tabs;
   }, [t, formType]);
 
   if (isApplicationDetailLoading) {
