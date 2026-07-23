@@ -237,7 +237,10 @@ const ViewApplication = React.memo(() => {
     const { formId, submissionId } = data;
     setSelectedSubmissionData(data);
     setShowFormModal(true);
-    
+    if(!formId || !submissionId) return;
+  
+    if (formType === "bundle") return;
+
     // Load form and submission data
     if (formId && submissionId) {
       Formio.clearCache();
@@ -249,7 +252,7 @@ const ViewApplication = React.memo(() => {
         dispatch(getSubmission("submission", submissionId, formId));
       }
     }
-  }, [dispatch]);
+  }, [dispatch, formType]);
 
   // Prepare history table data - must be before early return (Rules of Hooks)
   const historyColumns = useMemo(
@@ -313,6 +316,16 @@ const ViewApplication = React.memo(() => {
       },
     ],
     [t, viewSubmission, dispatch, applicationId, formType]
+  );
+
+  // Stable object for the modal's BundleSubmissionView. BundleSubmissionView's
+  // data-fetch effect depends on this by reference, so passing a fresh object
+  const modalBundleFormData = useMemo(
+    () => ({
+      formId: selectedSubmissionData?.formId ?? "",
+      submissionId: selectedSubmissionData?.submissionId ?? "",
+    }),
+    [selectedSubmissionData?.formId, selectedSubmissionData?.submissionId]
   );
 
   const historyRows = useMemo(() => {
@@ -488,7 +501,14 @@ const ViewApplication = React.memo(() => {
           title={selectedSubmissionData?.created ? HelperServices.getLocaldate(selectedSubmissionData.created) : ""}
         >
         {selectedSubmissionData && (
-            <View page="application-detail" />
+            formType === "bundle" ? (
+              <BundleSubmissionView
+                key={selectedSubmissionData.submissionId}
+                bundleFormData={modalBundleFormData}
+              />
+            ) : (
+              <View page="application-detail" />
+            )
           )}
         </FormViewModal>
     </div>
