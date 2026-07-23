@@ -141,3 +141,9 @@ $white-color: var(--ff-white);
 .analyse-submision-history-modal{
   min-height: 80vh;
 }
+
+.form-view-modal-body {
+  .bundle-view-breadcumbs {
+    padding-top: 1rem !important;
+  }
+}

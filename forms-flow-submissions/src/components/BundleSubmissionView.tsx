@@ -128,6 +128,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
         variant="medium"
         activeIndex={formStep}
         onBreadcrumbClick={(item: { id?: string; label: string }) => onLabelClick(Number(item.id))}
+        className="bundle-view-breadcumbs"
       />
   
       <div className="p-3 analyze-Submission-bundle-view ">
