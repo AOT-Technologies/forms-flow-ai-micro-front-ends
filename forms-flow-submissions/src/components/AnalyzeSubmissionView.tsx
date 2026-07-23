@@ -357,7 +357,12 @@ const ViewApplication = React.memo(() => {
     // Filter out Flow tab if processType is not BPMN
     return tabs.filter(tab => {
       if (tab.id === "flow") {
-        return processType !== "LOWCODE";
+        // Quickfix
+        // Only show the Flow tab when the attached workflow is BPMN.
+        // Non-BPMN workflows (LOWCODE/nocode or defaultworkflow) including bundles
+        // whose process type is unset — have no diagram, so the tab must be
+        // hidden entirely instead of rendered as an empty/broken tab.
+        return processType === "BPMN";
       }
       return true;
     });
