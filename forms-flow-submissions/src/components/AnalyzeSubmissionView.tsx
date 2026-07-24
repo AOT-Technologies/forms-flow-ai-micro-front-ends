@@ -95,6 +95,7 @@ const ViewApplication = React.memo(() => {
   });
 
   const [formType, setFormType] = useState('');
+  const [bundleMapperId, setBundleMapperId] = useState('');
   const [processType, setProcessType] = useState<string | undefined>(undefined);
   const [selectedTab, setSelectedTab] = useState({ id: "form", label: t("Form") });
   const [showExportAlert, setShowExportAlert] = useState(false);
@@ -150,7 +151,7 @@ const ViewApplication = React.memo(() => {
   
         if (formType === "bundle") {
           setBundleLoading(true);
-  
+          setBundleMapperId(res.data.id);
           executeRule(
             {
               submissionType: "fetch",
@@ -486,6 +487,9 @@ const ViewApplication = React.memo(() => {
               onPreDownload={handlePreDownload}
               onPostDownload={handlePostDownload}
               disabled={selectedTab?.id === "flow"}
+              {...(formType === "bundle"
+                ? { isBundle: true, bundleId: bundleMapperId }
+                : {})}
             />
           </div>
             )}
