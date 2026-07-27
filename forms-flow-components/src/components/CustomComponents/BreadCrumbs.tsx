@@ -28,6 +28,8 @@ export enum BreadcrumbVariant {
   DEFAULT = "default",
   /** Minimized variant - smaller, lighter text for secondary navigation */
   MINIMIZED = "minimized",
+  /** Medium variant - 16px muted text with underline and dark active state */
+  MEDIUM = "medium",
 }
 
 /**
@@ -48,6 +50,8 @@ interface BreadCrumbsProps extends Omit<React.ComponentPropsWithoutRef<"nav">, '
   className?: string;
   /** Accessible label for the navigation landmark */
   ariaLabel?: string;
+  /** Explicitly set which item index is active — overrides the default "last item is active" behaviour */
+  activeIndex?: number;
 }
 
 /**
@@ -76,6 +80,7 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
   dataTestId = "breadcrumbs",
   className = "",
   ariaLabel = "Breadcrumb navigation",
+  activeIndex,
   ...restProps
 }) => {
   
@@ -110,7 +115,7 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
         <Breadcrumb.Item
           linkAs="button"
           key={generateItemKey(item, index)}
-          active={!underline && index === items.length - 1}
+          active={activeIndex !== undefined ? index === activeIndex : !underline && index === items.length - 1}
           linkProps={{
             type: "button",
             style: {

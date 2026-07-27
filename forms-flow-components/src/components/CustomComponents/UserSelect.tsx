@@ -18,6 +18,11 @@ export interface UserSelectProps
   showAsText?: boolean;
   shortMeLabel?: boolean;
   isFromTaskDetails?: boolean;
+  /** showAsText: called when the dropdown is opened via click or keyboard (Enter/Space), not hover. */
+  onOpen?: () => void;
+  /** When true, list options after me/unassign use `memberGroupOptions` only (not `users`). */
+  useMemberGroupOptions?: boolean;
+  memberGroupOptions?: FilterableOption[];
 }
 
 const getDisplayName = (user: UserOption): string => {
@@ -38,6 +43,9 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   showAsText = false,
   shortMeLabel = false,
   isFromTaskDetails = false,
+  onOpen,
+  useMemberGroupOptions = false,
+  memberGroupOptions = [],
   className,
   ...rest
 }) => {
@@ -70,12 +78,24 @@ export const UserSelect: React.FC<UserSelectProps> = ({
       unassignOptionLabel = t("Unassigned");
     }
 
+    const tailOptions = useMemberGroupOptions ? memberGroupOptions : sortedUserOptions;
+    let tail = tailOptions;
+    if (
+      useMemberGroupOptions &&
+      typeof value === "string" &&
+      value !== "me" &&
+      value !== "unassigned" &&
+      !tail.some((o) => o.value === value)
+    ) {
+      tail = [...tail, { label: value, value }];
+    }
+
     return [
       { label: meOptionLabel, value: "me" },
       { label: unassignOptionLabel, value: "unassigned" },
-      ...sortedUserOptions
+      ...tail
     ];
-  }, [sortedUserOptions, t, shortMeLabel, value]);
+  }, [sortedUserOptions, memberGroupOptions, useMemberGroupOptions, t, shortMeLabel, value]);
 
   const selectedOption = useMemo(
     () => options.find(opt => opt.value === value),
@@ -125,10 +145,13 @@ export const UserSelect: React.FC<UserSelectProps> = ({
   // Handlers
   const handleTextClick = useCallback(() => {
     if (!disabled) {
-      setIsClicked(prev => !prev);
+      setIsClicked((prev) => {
+        if (!prev) onOpen?.();
+        return !prev;
+      });
       if (!isClicked) selectAndFocusInput();
     }
-  }, [disabled, isClicked, selectAndFocusInput]);
+  }, [disabled, isClicked, onOpen, selectAndFocusInput]);
 
   const handleDropdownOpen = useCallback(() => {
     selectAndFocusInput();
@@ -229,6 +252,7 @@ export const UserSelect: React.FC<UserSelectProps> = ({
         className={className}
         showArrow={false}
         resizable={true}
+        onOpen={onOpen}
         {...rest}
       />
     </div>

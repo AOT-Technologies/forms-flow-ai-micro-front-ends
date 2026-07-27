@@ -34,6 +34,16 @@ class HelperServices {
     return localizedDate;
   }
 
+  public static getShortDateAndTime(date: string): string | null {
+    if (!date) return null;
+    const d = moment.utc(date.replace(' ', 'T')).toDate();
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = String(d.getFullYear()).slice(-2);
+    const time = moment(d).format(TIME_FORMAT);
+    return `${dd}/${mm}/${yy} ${time}`;
+  }
+
   public static getLocalTime(date: string): any {
     if (!date) {
       return null;

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { RequestService, StorageService } from "@formsflow/service";
 import { V8CustomButton } from "@formsflow/components";
@@ -9,7 +9,7 @@ import Loading from "../loading/Loading";
 
 const Plans: React.FC = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
@@ -90,7 +90,7 @@ const Plans: React.FC = () => {
               variant="secondary"
               dataTestId="plans-back-button"
               onClick={() =>
-                history.push(`${baseUrl}admin/organization`)
+                navigate(`${baseUrl}admin/organization`)
               }
             />
           </div>

@@ -1,8 +1,7 @@
 import React from "react";
-import BootstrapTable from "react-bootstrap-table-next";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { Translation, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import Loading from "../loading";
 import { AddUserRole, RemoveUserRole } from "../../services/users";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -11,7 +10,6 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
-import Modal from "react-bootstrap/Modal"; // Import Modal from react-bootstrap
 import "./users.scss";
 import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
 import { formatRoleDisplayName } from "../../utils/utils.js";
@@ -20,9 +18,11 @@ import { InviteUser } from "../../services/users";
 import {
   completeChecklistByRouteKey
 } from "../../services/checklist";
-import { TableFooter, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput } from "@formsflow/components";
-import { useHistory, useParams } from "react-router-dom";
+import { AppModal, ConfirmModal, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput, ReusableTable } from "@formsflow/components";
+import { useParams } from "react-router-dom";
 import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
+
+const DEFAULT_SORT_MODEL: any[] = [];
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -37,7 +37,6 @@ const Users = React.memo((props: any) => {
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
   const { t } = useTranslation();
   const { tenantId } = useParams();
-  const history = useHistory();
   const baseUrl = getRedirectUrl(tenantId);
   const tenantKeyForRoleDisplay =
     MULTITENANCY_ENABLED && (tenantId || StorageService.get("tenantKey"))
@@ -49,6 +48,10 @@ const Users = React.memo((props: any) => {
   const [validationError, setValidationError] = React.useState('');
   const [inviteSuccessEmail, setInviteSuccessEmail] = React.useState<string | null>(null);
   const [inviteLoading, setInviteLoading] = React.useState(false);
+  const [roleRemoveCandidate, setRoleRemoveCandidate] = React.useState<{
+    rowData: any;
+    item: any;
+  } | null>(null);
   const emailInputRef = React.useRef<HTMLInputElement>(null);
 
   const openSuccessModal = () => {
@@ -127,6 +130,26 @@ const Users = React.memo((props: any) => {
     );
   };
 
+  const closeRoleRemoveConfirmation = () => setRoleRemoveCandidate(null);
+
+  const confirmRoleRemove = () => {
+    if (!roleRemoveCandidate) return;
+    removePermission(roleRemoveCandidate.rowData, roleRemoveCandidate.item);
+    closeRoleRemoveConfirmation();
+  };
+
+  const isProtectedOwnerRole = (rowData, item) =>
+    rowData?.isPrimaryOwner &&
+    formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay).toLowerCase() ===
+      "owner";
+
+  const canRemoveRole = (rowData, item) => {
+    // Minimum role enforcement: the last remaining role can't be removed
+    if ((rowData?.role?.length || 0) <= 1) return false;
+    // The tenant creator's OWNER role is protected
+    return !isProtectedOwnerRole(rowData, item);
+  };
+
   const handleLimitChange = (newLimit: number) => {
     props.limit?.setSizePerPage(newLimit);
     props.page.setPageNo(1);
@@ -150,8 +173,6 @@ const Users = React.memo((props: any) => {
   };
 
 
-  const handleTableChange = () => {};
-
   const handleSelectFilter = (e) => {
     if (e.target.value === "ALL") {
       return setSelectedFilter(null);
@@ -159,22 +180,15 @@ const Users = React.memo((props: any) => {
     setSelectedFilter(e.target.value);
   };
 
-  const noData = () => (
-    <div>
-      <h3 className="text-center">
-        <Translation>{(t) => t(props.error || "No data Found")}</Translation>
-      </h3>
-    </div>
-  );
-
   const columns = [
     {
-      dataField: "username",
-      text: <Translation>{(t) => t("Users")}</Translation>,
-      headerStyle: () => {
-        return { width: "10%" };
-      },
-      formatter: (cell, rowData) => {
+      field: "username",
+      headerName: t("Users"),
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      renderCell: (params) => {
+        const rowData = params.row;
         return (
           <div>
             {rowData?.firstName && (
@@ -188,16 +202,22 @@ const Users = React.memo((props: any) => {
       },
     },
     {
-      dataField: "email",
-      text: <Translation>{(t) => t("Email")}</Translation>,
-      headerStyle: () => {
-        return { width: "20%" };
-      },
+      field: "email",
+      headerName: t("Email"),
+      flex: 2,
+      minWidth: 200,
+      sortable: false,
+      renderCell: (params) => params.row?.email,
     },
     {
-      dataField: "role",
-      text: <Translation>{(t) => t("Role")}</Translation>,
-      formatter: (cell, rowData) => {
+      field: "role",
+      headerName: t("Role"),
+      flex: 5,
+      minWidth: 280,
+      sortable: false,
+      renderCell: (params) => {
+        const rowData = params.row;
+        const cell = rowData?.role;
         return (
           <div className="d-flex flex-wrap col-12">
             {cell?.map((item, i) => (
@@ -208,6 +228,7 @@ const Users = React.memo((props: any) => {
               >
                 <OverlayTrigger
                   placement="bottom"
+                  container={document.body}
                   overlay={
                     !KEYCLOAK_ENABLE_CLIENT_AUTH ? (
                       <Tooltip id="tooltip">{item?.path}</Tooltip>
@@ -218,10 +239,15 @@ const Users = React.memo((props: any) => {
                 >
                   <span className="">
                     {formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay)}
-                    <i
-                      className="fa-solid fa-xmark chip-close ms-2"
-                      onClick={() => removePermission(rowData, item)}
-                    ></i>
+                    {canRemoveRole(rowData, item) && (
+                      <i
+                        className="fa-solid fa-xmark chip-close ms-2"
+                        data-testid="user-role-remove-icon"
+                        onClick={() =>
+                          setRoleRemoveCandidate({ rowData, item })
+                        }
+                      ></i>
+                    )}
                   </span>
                 </OverlayTrigger>
               </div>
@@ -232,14 +258,16 @@ const Users = React.memo((props: any) => {
     },
 
     {
-      dataField: "id",
-      text: <Translation>{(t) => t("Actions")}</Translation>,
-      headerStyle: () => {
-        return { width: "10%" };
-      },
-      formatExtraData: { roles, selectedRoles },
-      formatter: (cell, rowData, rowIdx, formatExtraData) => {
-        let { roles, selectedRoles } = formatExtraData;
+      field: "id",
+      headerName: t("Actions"),
+      width: 130,
+      minWidth: 130,
+      flex: 0,
+      sortable: false,
+      headerAlign: "right",
+      align: "right",
+      renderCell: (params) => {
+        const rowData = params.row;
         const updateSelectedRoles = (role) => {
           if (selectedRoles.includes(role.id)) {
             setSelectedRoles([
@@ -300,9 +328,10 @@ const Users = React.memo((props: any) => {
         return (
           <OverlayTrigger
             trigger="click"
-            key={rowIdx}
+            key={params.id}
             placement="left"
             rootClose={true}
+            container={document.body}
             overlay={
               <Popover
                 id={`popover-positioned-bottom`}
@@ -399,27 +428,19 @@ const Users = React.memo((props: any) => {
     );
   };
   
-  const getPageList = () => [
-    { text: '5', value: 5 },
-    { text: '25', value: 25 },
-    { text: '50', value: 50 },
-    { text: '100', value: 100 },
-    { text: 'All', value: roles.length },
-  ];
-
   return (
     <>
-      <Modal
+      <AppModal
         show={showSuccessModal}
         onHide={closeSuccessModal}
         className="overflow-hidden">
-        <Modal.Header>
-          <Modal.Title></Modal.Title>
+        <AppModal.Header>
+          <AppModal.Title></AppModal.Title>
           <div className="icon-close" onClick={closeSuccessModal} data-testid="user-add-success-close">
             <CloseIcon dataTestId="action-success-modal-close" />
           </div>        
-          </Modal.Header>
-        <Modal.Body className="modal-md d-flex align-items-center justify-content-center">
+          </AppModal.Header>
+        <AppModal.Body className="modal-md d-flex align-items-center justify-content-center">
           <div className="p-3 text-center">
             <div className="d-flex flex-column align-items-center">
               <div className="mb-2">
@@ -432,8 +453,8 @@ const Users = React.memo((props: any) => {
               <p>{t("User added")}</p>
             </div>
           </div>
-        </Modal.Body>
-      </Modal>
+        </AppModal.Body>
+      </AppModal>
 
 
       <div className="container-admin">
@@ -491,11 +512,11 @@ const Users = React.memo((props: any) => {
   />
 
     {showInviteModal && (
-      <Modal show={showInviteModal} onHide={closeInviteModal} dialogClassName="add-user-modal" centered>
-        <Modal.Header className="add-user-modal__header">
-          <Modal.Title className="add-user-modal__title">
+      <AppModal show={showInviteModal} onHide={closeInviteModal} dialogClassName="add-user-modal" centered>
+        <AppModal.Header className="add-user-modal__header">
+          <AppModal.Title className="add-user-modal__title">
             {t("Add New Users")}
-          </Modal.Title>
+          </AppModal.Title>
           <button
             type="button"
             className="add-user-modal__close"
@@ -505,9 +526,9 @@ const Users = React.memo((props: any) => {
           >
             <CloseIcon color="var(--gray-darkest)" dataTestId="action-modal-close" />
           </button>
-        </Modal.Header>
+        </AppModal.Header>
 
-        <Modal.Body className="add-user-modal__body">
+        <AppModal.Body className="add-user-modal__body">
           <div className="add-user-modal__field">
             <label htmlFor="add-user-username-input" className="add-user-modal__label">
               {t("Email")}
@@ -542,9 +563,9 @@ const Users = React.memo((props: any) => {
               </div>
             )}
           </div>
-        </Modal.Body>
+        </AppModal.Body>
 
-        <Modal.Footer className="add-user-modal__footer">
+        <AppModal.Footer className="add-user-modal__footer">
           <V8CustomButton
             label={t("Invite")}
             onClick={sendInvites}
@@ -555,8 +576,8 @@ const Users = React.memo((props: any) => {
             loadingText="Inviting"
             disabled={!formData.user?.trim()}
           />
-        </Modal.Footer>
-      </Modal>
+        </AppModal.Footer>
+      </AppModal>
     )}
   </>
 )}
@@ -565,39 +586,54 @@ const Users = React.memo((props: any) => {
 
         {!loading ? (
           <div>
-          <BootstrapTable
-            remote={{
-              pagination: true,
-            }}
-            keyField="id"
-            data={props?.users}
-            loading={loading}
-            columns={columns}
-            bordered={false}
-            wrapperClasses="user-table-container px-4"
-            rowStyle={{
-              color: "#09174A",
-              fontWeight: 400,
-            }}
-            noDataIndication={noData}
-            onTableChange={handleTableChange}
-            data-testid="admin-users-table"
-          />
-          <table className="table mt-3 old-design">
-              <TableFooter
-                  limit={props?.limit?.sizePerPage}
-                  activePage={activePage} 
-                  totalCount={props.total}
-                  handlePageChange={handlePageChange}
-                  onLimitChange={handleLimitChange}
-                  pageOptions={getPageList()}
-                />
-            </table>
+          <div className="user-table-container px-4" data-testid="admin-users-table">
+            <ReusableTable
+              columns={columns}
+              rows={props?.users || []}
+              rowCount={props.total}
+              loading={loading}
+              getRowId={(row) => row.id}
+              sortModel={DEFAULT_SORT_MODEL}
+              paginationMode="server"
+              sortingMode="client"
+              disableColumnMenu
+              disableRowSelectionOnClick
+              emptyStateMessage={props.error || "No data Found"}
+              paginationModel={{ page: activePage - 1, pageSize: props?.limit?.sizePerPage || 5 }}
+              onPaginationModelChange={({ page, pageSize }) => {
+                if (pageSize !== props?.limit?.sizePerPage) {
+                  handleLimitChange(pageSize);
+                } else {
+                  handlePageChange(page + 1);
+                }
+              }}
+              pageSizeOptions={[5, 25, 50, 100]}
+              disableVirtualization
+              
+              dataGridProps={{ getRowHeight: () => "auto" }}
+            />
+          </div>
           </div>
         ) : (
           <Loading />
         )}
       </div>
+      {roleRemoveCandidate && (
+        <ConfirmModal
+          show={!!roleRemoveCandidate}
+          title={t("Remove Role?")}
+          message={t(
+            "Are you sure you want to remove this role from the user? This action will revoke the permissions associated with this role."
+          )}
+          primaryBtnAction={closeRoleRemoveConfirmation}
+          onClose={closeRoleRemoveConfirmation}
+          primaryBtnText={t("No, Keep This Role")}
+          secondaryBtnText={t("Yes, Delete This Role")}
+          secondaryBtnAction={confirmRoleRemove}
+          primaryBtndataTestid="keep-user-role-button"
+          secondoryBtndataTestid="confirm-remove-user-role-button"
+        />
+      )}
     </>
   );
 });

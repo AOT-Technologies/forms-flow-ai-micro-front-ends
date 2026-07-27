@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
+import { connect, ConnectedProps, useSelector } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
 import _ from "lodash";
 
@@ -11,7 +12,7 @@ import {
 
 import { textTruncate } from "../helper/helper";
 
-import { StepperComponent } from '@formsflow/components';
+import { BreadCrumbs, V8CustomButton } from '@formsflow/components';
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
 import {
   clearFormError,
@@ -30,7 +31,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   bundleFormData,
   submission,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const formRef = useRef<any>(null);
 
   const [formStep, setFormStep] = useState(0);
@@ -122,12 +123,12 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
 
   return (
     <>
-      <StepperComponent
-        steps={stepLabels}
-        activeStep={formStep}
-        onClick={(index) => {
-          onLabelClick(index);
-        }}
+      <BreadCrumbs
+        items={stepLabels.map((label: string, i: number) => ({ label, id: String(i) }))}
+        variant="medium"
+        activeIndex={formStep}
+        onBreadcrumbClick={(item: { id?: string; label: string }) => onLabelClick(Number(item.id))}
+        className="bundle-view-breadcumbs"
       />
   
       <div className="p-3 analyze-Submission-bundle-view ">
@@ -141,7 +142,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   
             <Form
               key={isReadOnly ? "readonly" : "editable"}
-              form={form}
+              src={form}
               submission={{
                 data: {
                   ..._.cloneDeep(bundleSubmission?.data),
@@ -160,21 +161,24 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   
             <div className="d-flex justify-content-end">
               {formStep > 0 && (
-                <button
+                <V8CustomButton
+                  label="Previous Form"
+                  variant="secondary"
                   onClick={() => setFormStep((prev) => prev - 1)}
-                  className="btn btn-secondary me-2"
-                >
-                  Previous Form
-                </button>
+                  dataTestId="bundle-previous-form"
+                  ariaLabel="Previous Form"
+                  className="me-2"
+                />
               )}
               {formStep < selectedForms.length - 1 && (
-                <button
+                <V8CustomButton
+                  label="Next Form"
+                  variant="primary"
                   onClick={() => setFormStep((prev) => prev + 1)}
                   disabled={bundleLoading}
-                  className="btn btn-primary"
-                >
-                  Next Form
-                </button>
+                  dataTestId="bundle-next-form"
+                  ariaLabel="Next Form"
+                />
               )}
             </div>
           </>

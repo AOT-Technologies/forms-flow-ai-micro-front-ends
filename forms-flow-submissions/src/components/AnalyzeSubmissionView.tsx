@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../hooks";
 import {
   DownloadPDFButton,
   BreadCrumbs,
@@ -26,7 +27,8 @@ import {
   resetFormData,
 } from "../actions/bundleSubmissionActions";
 import View from "./View";
-import { getForm, getSubmission, Formio } from "@aot-technologies/formio-react";
+import { getForm, getSubmission } from "@aot-technologies/formio-react";
+import { Formio } from "@aot-technologies/formiojs";
 import { useTranslation } from "react-i18next";
 import {
   CUSTOM_SUBMISSION_URL,
@@ -43,19 +45,19 @@ import {
   fetchFormVariables,
   executeRule,
 } from "../api/queryServices/analyzeSubmissionServices"
-import { HelperServices } from "@formsflow/service";
+import { HelperServices, getRedirectUrl, navigateToSubmissionsListing } from "@formsflow/service";
 import {
   getProcessActivities,
   getProcessDetails,
 } from "../services/processServices";
-import { navigateToSubmissionsListing, getRedirectUrl } from "@formsflow/service";
 import BundleSubmissionView from "../components/BundleSubmissionView";
 
 
 const ViewApplication = React.memo(() => {
   const { t } = useTranslation();
   const { id: applicationId } = useParams();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [formTypeCheckLoading, setFormTypeCheckLoading] = useState(true);
   const {
     viewSubmissionHistory,
@@ -93,6 +95,7 @@ const ViewApplication = React.memo(() => {
   });
 
   const [formType, setFormType] = useState('');
+  const [bundleMapperId, setBundleMapperId] = useState('');
   const [processType, setProcessType] = useState<string | undefined>(undefined);
   const [selectedTab, setSelectedTab] = useState({ id: "form", label: t("Form") });
   const [showExportAlert, setShowExportAlert] = useState(false);
@@ -148,7 +151,7 @@ const ViewApplication = React.memo(() => {
   
         if (formType === "bundle") {
           setBundleLoading(true);
-  
+          setBundleMapperId(res.data.id);
           executeRule(
             {
               submissionType: "fetch",
@@ -235,7 +238,10 @@ const ViewApplication = React.memo(() => {
     const { formId, submissionId } = data;
     setSelectedSubmissionData(data);
     setShowFormModal(true);
-    
+    if(!formId || !submissionId) return;
+  
+    if (formType === "bundle") return;
+
     // Load form and submission data
     if (formId && submissionId) {
       Formio.clearCache();
@@ -247,7 +253,7 @@ const ViewApplication = React.memo(() => {
         dispatch(getSubmission("submission", submissionId, formId));
       }
     }
-  }, [dispatch]);
+  }, [dispatch, formType]);
 
   // Prepare history table data - must be before early return (Rules of Hooks)
   const historyColumns = useMemo(
@@ -277,8 +283,8 @@ const ViewApplication = React.memo(() => {
         field: "created",
         headerName: t("Created On"),
         flex: 2,
-        renderCell: (params: any) => HelperServices.getLocaldate(params.value), 
-        sortable: false 
+        renderCell: (params: any) => <span>{HelperServices.getShortDateAndTime(params.value)}</span>,
+        sortable: false
       },
       {
         field: "actions",
@@ -312,6 +318,16 @@ const ViewApplication = React.memo(() => {
     [t, viewSubmission, dispatch, applicationId]
   );
 
+  // Stable object for the modal's BundleSubmissionView. BundleSubmissionView's
+  // data-fetch effect depends on this by reference, so passing a fresh object
+  const modalBundleFormData = useMemo(
+    () => ({
+      formId: selectedSubmissionData?.formId ?? "",
+      submissionId: selectedSubmissionData?.submissionId ?? "",
+    }),
+    [selectedSubmissionData?.formId, selectedSubmissionData?.submissionId]
+  );
+
   const historyRows = useMemo(() => {
     return (appHistory || []).map((entry: any, index: number) => ({
       id: entry.created ?? `row-${index}`, // Unique and stable id for data grid
@@ -326,7 +342,7 @@ const ViewApplication = React.memo(() => {
   const tabConfig = useMemo(() => {
     const tabs = [
       {
-        label: t("Form"),
+        label: t(formType === "bundle" ? "Bundle" : "Form"),
         id: "form",
       },
       {
@@ -338,22 +354,27 @@ const ViewApplication = React.memo(() => {
         id: "history",
       }
     ];
-    
+
     // Filter out Flow tab if processType is not BPMN
     return tabs.filter(tab => {
       if (tab.id === "flow") {
-        return processType !== "LOWCODE";
+        // Quickfix
+        // Only show the Flow tab when the attached workflow is BPMN.
+        // Non-BPMN workflows (LOWCODE/nocode or defaultworkflow) including bundles
+        // whose process type is unset — have no diagram, so the tab must be
+        // hidden entirely instead of rendered as an empty/broken tab.
+        return processType === "BPMN";
       }
       return true;
     });
-  }, [t, processType]);
+  }, [t, processType, formType]);
 
   if (isApplicationDetailLoading) {
     return <Loading />;
   }
 
   const backToSubmissionList = () => {
-    navigateToSubmissionsListing(dispatch, tenantKey);
+    navigateToSubmissionsListing(navigate, tenantKey);
   };
 
   const breadcrumbItems = [
@@ -371,16 +392,19 @@ const ViewApplication = React.memo(() => {
 
   const renderTabContent = () => {
     if (selectedTab?.id === "form") {
-      return (!formTypeCheckLoading &&
-        formType === "bundle") ? (
-          <BundleSubmissionView bundleFormData={bundleFormData} />
-        ) : (
-          <View page="application-detail" />
-        );
+      return (
+        <div className="submission-tab-content-container">
+          {(!formTypeCheckLoading && formType === "bundle") ? (
+            <BundleSubmissionView bundleFormData={bundleFormData} />
+          ) : (
+            <View page="application-detail" />
+          )}
+        </div>
+      );
     }
     if (selectedTab?.id === "flow" && analyze_submissions_view_history) {
       return (
-        <div>
+        <div className="submission-tab-content-container">
           <ProcessDiagram
             diagramXML={diagramXML ?? ""}
             activityId={markers?.[0]?.activityId ?? ""}
@@ -463,6 +487,9 @@ const ViewApplication = React.memo(() => {
               onPreDownload={handlePreDownload}
               onPostDownload={handlePostDownload}
               disabled={selectedTab?.id === "flow"}
+              {...(formType === "bundle"
+                ? { isBundle: true, bundleId: bundleMapperId }
+                : {})}
             />
           </div>
             )}
@@ -481,7 +508,14 @@ const ViewApplication = React.memo(() => {
           title={selectedSubmissionData?.created ? HelperServices.getLocaldate(selectedSubmissionData.created) : ""}
         >
         {selectedSubmissionData && (
-            <View page="application-detail" />
+            formType === "bundle" ? (
+              <BundleSubmissionView
+                key={selectedSubmissionData.submissionId}
+                bundleFormData={modalBundleFormData}
+              />
+            ) : (
+              <View page="application-detail" />
+            )
           )}
         </FormViewModal>
     </div>

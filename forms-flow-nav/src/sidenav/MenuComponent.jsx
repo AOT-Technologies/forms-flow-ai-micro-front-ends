@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState, useRef, useEffect } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import "./Sidebar.scss";
-import { Link, useLocation, useHistory } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ChevronIcon, ShowPremiumIcons, NavbarHomeIcon, NavbarTaskIcon, NavbarSubmitIcon, NavbarBuildIcon, NavbarAnalyzeIcon, NavbarManageIcon } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
@@ -37,7 +37,7 @@ const MenuComponent = ({
   isExpanded = false,
 }) => {
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const noOptionsMenu = optionsCount === "0";
   const [isHovered, setIsHovered] = useState(false);
@@ -86,9 +86,9 @@ const MenuComponent = ({
    */
   const handleHeaderClick = useCallback(() => {
     if (noOptionsMenu && subMenu?.length > 0) {
-      history.push(`${baseUrl}${subMenu[0].path}`);
+      navigate(`${baseUrl}${subMenu[0].path}`);
     }
-  }, [noOptionsMenu, subMenu, baseUrl, history]);
+  }, [noOptionsMenu, subMenu, baseUrl, navigate]);
 
   /**
    * Gets the appropriate icon color based on (main menu or submenu) active state

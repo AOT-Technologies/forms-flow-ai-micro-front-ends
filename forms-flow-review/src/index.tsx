@@ -1,12 +1,11 @@
 import React, {useCallback, useEffect, useMemo, useState } from "react";
-import { Route, Switch, Redirect, useParams,useHistory } from "react-router-dom";
+import { Route, Routes, Navigate, useParams, useNavigate } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
 } from "./api/config";
-import { BASE_ROUTE } from "./constants";
 import { navigateToTaskListingFromReviewWithHistory, getRedirectUrl, MULTITENANCY_ENABLED } from "@formsflow/service";
 import i18n from "./config/i18n";
 import "./index.scss";
@@ -15,6 +14,7 @@ import TaskList from "./Routes/TaskListing";
 import TaskDetails from "./Routes/TaskDetails";
 import SocketIOService from "./services/SocketIOService";
 import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch } from "./hooks";
 import { RootState } from "./reducers";
 import { getBPMTaskDetail } from "./api/services/bpmTaskServices";
 import { setTaskAssignee } from "./actions/taskActions";
@@ -37,8 +37,8 @@ interface SocketUpdateParams {
 const Task = React.memo((props: any) => {
   const { publish, subscribe } = props;
   const { tenantId } = useParams();
-    const history = useHistory();
-  const dispatch = useDispatch();
+    const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const instance = useMemo(() => props.getKcInstance(), []);
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
   const [isReviewer, setIsReviewer] = useState(false);
@@ -159,7 +159,7 @@ const handleForceReload = (refreshedTaskId: string) => {
   //  if it push back to task route it will automatically call the tasklist api again
   // else we need to fetch again task list
   if(taskId == refreshedTaskId){
-   navigateToTaskListingFromReviewWithHistory(history, tenantId);
+   navigateToTaskListingFromReviewWithHistory(navigate, tenantId);
   }else{
     checkTheTaskIdExistThenRefetchTaskList();
   }
@@ -222,19 +222,17 @@ const SocketIOCallback = useCallback(({
     <>
       <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'page-container false' } `}>
         <div className="page-layout">
-            <Switch>
+            <Routes>
               <Route
-                exact
-                path={`${BASE_ROUTE}task`}
-                render={() => <TaskList {...props} />}
+                path="task"
+                element={<TaskList {...props} />}
               />
               <Route
-                exact
-                path={`${BASE_ROUTE}task/:taskId`}
-                render={() => <TaskDetails {...props} />}
+                path="task/:taskId"
+                element={<TaskDetails {...props} />}
               />
-              <Redirect from="*" to="/404" />
-            </Switch>
+              <Route path="*" element={<Navigate to="/404" replace />} />
+            </Routes>
         </div>
       </div>
     </>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Route, Switch, Redirect, useParams } from "react-router-dom";
+import { Route, Routes, Navigate, useParams } from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
 } from "./api/config";
-import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
+import { MULTITENANCY_ENABLED } from "./constants";
 import i18n from "./config/i18n";
 import "./index.scss";
 import AccessDenied from "./components/AccessDenied";
@@ -14,7 +14,7 @@ import Loading from "./components/Loading";
 import SubmissionsList from "./Routes/SubmissionListing";
 import ViewApplication from "./components/AnalyzeSubmissionView"
 import { StyleServices } from "@formsflow/service";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "./hooks";
 import { setTenantData } from "./actions/tenantActions";
 import {
   completeChecklistByRouteKey
@@ -31,7 +31,7 @@ interface SubmissionsProps {
 const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
   const { publish = () => { }, subscribe = () => { } } = props;
   const { tenantId } = useParams<{ tenantId?: string }>();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const instance = useMemo(() => props.getKcInstance(), []);
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
   const userRoles = JSON.parse(
@@ -119,27 +119,25 @@ const Submissions: React.FC<SubmissionsProps> = React.memo((props) => {
     <>
       {isAnalyzeManager ? (
         <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'page-container false' } `}>
-          <Switch>
+          <Routes>
             <Route
-              exact
-              path={`${BASE_ROUTE}submissions`}
-              render={() => (
+              path="submissions"
+              element={
                 <div className="page-layout">
                   <SubmissionsList />
                 </div>
-              )}
+              }
             />
             <Route
-              exact
-              path={`${BASE_ROUTE}submissions/:id`}
-              render={() => (
+              path="submissions/:id"
+              element={
                 <div className="page-layout">
-                    <ViewApplication />
+                  <ViewApplication />
                 </div>
-        )}
+              }
             />
-            <Redirect from="*" to="/404" />
-          </Switch>
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
         </div>
       ) : (
         <div className="main-container">

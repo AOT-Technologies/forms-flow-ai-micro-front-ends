@@ -8,11 +8,10 @@ import {
   MULTITENANCY_ENABLED,
 } from "../constants/constants";
 import { RootState } from "../reducers/index";
-import { RouteComponentProps } from "react-router-dom";
 import Loading from "./Loading";
 import { HelperServices } from "@formsflow/service";
 
-interface OwnProps extends RouteComponentProps<{ formId: string }> {
+interface OwnProps {
   page?: string;
 }
 
@@ -93,7 +92,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
     <div className={`${scrollableOverview} bg-white ps-3 pe-3 m-0 form-border`}>
       <div className="sub-container wizard-tab">
         <Form
-          form={form}
+          src={form}
           submission={safeSubmission}
           options={{
             ...options,

@@ -20,8 +20,10 @@ export interface OptionType {
   label: string;
   /** Value associated with the option */
   value: string | number;
-  /** Optional icon rendered alongside the label */
+  /** Optional icon rendered before the label (also shown in selected state) */
   icon?: React.ReactNode;
+  /** Optional icon rendered after the label in the list only (never shown in selected state) */
+  listIcon?: React.ReactNode;
 }
 
 /**
@@ -381,6 +383,9 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
                     <span className="dropdown-icon">{option.icon}</span>
                   )}
                   <span className="text-break">{option.label}</span>
+                  {option.listIcon && (
+                    <span className="dropdown-list-icon">{option.listIcon}</span>
+                  )}
                 </span>
               </ListGroup.Item>
             ))

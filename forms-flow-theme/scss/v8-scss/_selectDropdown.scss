@@ -276,6 +276,13 @@ $dropdown-secondary-hover-border: rgba(107, 114, 128, 0.3);
   align-items: center;
 }
 
+.dropdown-list-icon {
+  margin-left: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .custom-dropdown-item {
   padding: $dropdown-padding;
   cursor: pointer;
