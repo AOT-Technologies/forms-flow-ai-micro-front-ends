@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks";
 import { RootState } from "../../reducers";
-import AttributeFilterModalBody from "./AttributeFilterModalBody";
+import AttributeFilterModalBody from "./AttributeFIlterModalBody";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {
   deleteFilter,

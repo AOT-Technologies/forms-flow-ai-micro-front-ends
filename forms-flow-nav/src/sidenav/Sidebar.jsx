@@ -33,6 +33,7 @@ import {
   fetchUserLoginDetails,
   getOnBoardingUserRole,
   fetchChecklist,
+  getOnboardingDetails
 } from "../services/user";
 import MenuComponent from "./MenuComponent";
 import {
@@ -342,6 +343,27 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
 
   const initials = getInitials(userName);
 
+  // checklistSkipped is hydrated into shared localStorage by forms-flow-web
+  // (PrivateRoute) at login, so we read it here instead of making a duplicate
+  // /user/info call. Fetch the checklist items only when it hasn't been skipped.
+  const loadChecklistFromOnboarding = () => {
+    const { checklistSkipped } = getOnboardingDetails();
+    if (checklistSkipped) {
+      // Clear any items fetched optimistically before the skipped flag arrived.
+      storeChecklistItems(null);
+      return;
+    }
+    fetchChecklist()
+      .then((res) => {
+        const data = res.data || res;
+        const next = Array.isArray(data) ? data : [];
+        storeChecklistItems(next);
+      })
+      .catch(() => {
+        storeChecklistItems(null);
+      });
+  };
+
   React.useEffect(() => {
     setUserDetail(
       JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {}
@@ -381,6 +403,13 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
         JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
       setUserDetail(updatedUserDetail);
     });
+
+    // forms-flow-web publishes this after it writes onboarding details to
+    // localStorage. Covers the case where web writes them after we mount, so
+    // we can re-evaluate the checklist without our own /user/info call.
+    props.subscribe("FF_ONBOARDING_DETAILS", () => {
+      loadChecklistFromOnboarding();
+    });
   }, []);
 
   // On successful authentication, load federated login details and integration config
@@ -402,6 +431,7 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
             storeChecklistItems(null);
           });
       });
+      loadChecklistFromOnboarding();
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);

@@ -75,7 +75,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
     ? getBundleCustomSubmissionData
     : fetchBundleSubmissionData;
 
-  const stepLabels = selectedForms?.map((form) => {
+  const stepLabels = selectedForms?.map((form: any) => {
     let stplabal = form.formName.includes(" ")
       ? form.formName
       : textTruncate(30, 20, form.formName);
@@ -83,7 +83,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   });
 
   /* ----------------------- handle stepper label click ----------------------- */
-  const onLabelClick = (step) => {
+  const onLabelClick = (step: number) => {
     if (step === formStep) {
       return;
     } else {
@@ -203,6 +203,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
         onBreadcrumbClick={(item: { id?: string; label: string }) =>
           onLabelClick(Number(item.id))
         }
+        className="bundle-view-breadcumbs"
       />
 
       <div className="p-3 analyze-Submission-bundle-view ">

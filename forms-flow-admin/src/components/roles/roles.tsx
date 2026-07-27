@@ -41,7 +41,9 @@ const Roles = React.memo((props: any) => {
   const [sizePerPage, setSizePerPage] = React.useState(5);
   const [error, setError] = useState({});
   const [handleConfirmation, setHandleConfirmation] = React.useState(false);
-  const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState<any[]>([]);
+  // Toggle for user list popover
+  const [show, setShow] = React.useState(false);
   // Toggle for create/edit role
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showEditRoleModal, setShowEditRoleModal] = useState(false);
@@ -68,13 +70,13 @@ const Roles = React.memo((props: any) => {
   const [permissionData, setPermissionData] = React.useState([]);
   const [key, setKey] = useState("Details");
 
-  const filterList = (filterTerm, List) => {
+  const filterList = (filterTerm: string, List: any) => {
     let roleList = removingTenantId(List, tenantId);
 
     // Escape backslashes and square brackets in filterTerm for safe regex use
     const escapedFilterTerm = filterTerm.replace(/([\\[])/g, "\\$1");
 
-    let newRoleList = roleList.filter((role) => {
+    let newRoleList = roleList.filter((role: { name: string; }) => {
       return (
         role.name.toLowerCase().search(escapedFilterTerm.toLowerCase()) !== -1
       );
@@ -628,6 +630,13 @@ const Roles = React.memo((props: any) => {
       sortable: false,
       renderCell: (params) => {
         const rowData = params.row;
+        // Keycloak service accounts (e.g. "service-account-devtest-form...") aren't real users.
+        const assignableUsers = users.filter(
+          (item) =>
+            !String(item.username ?? "")
+              .trim()
+              .startsWith("service-account-")
+        );
         return (
           <OverlayTrigger
             trigger="click"
@@ -640,14 +649,9 @@ const Roles = React.memo((props: any) => {
                 <Popover.Body>
                   <div className="role-list">
                     {!loading ? (
-                      users.length > 0 ? (
-                        users?.map((item) => (
-                          <div
-                            key={item.id ?? item.username}
-                            className="role-user"
-                          >
-                            {item.username}
-                          </div>
+                      assignableUsers.length > 0 ? (
+                        assignableUsers?.map((item, key) => (
+                          <div className="role-user">{item.username}</div>
                         ))
                       ) : (
                         <div>{`${t("No results found")}`}</div>

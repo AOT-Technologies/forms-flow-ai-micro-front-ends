@@ -102,6 +102,7 @@ const ViewApplication = React.memo(() => {
   });
 
   const [formType, setFormType] = useState("");
+  const [bundleMapperId, setBundleMapperId] = useState("");
   const [processType, setProcessType] = useState<string | undefined>(undefined);
   const [selectedTab, setSelectedTab] = useState({
     id: "form",
@@ -153,41 +154,41 @@ const ViewApplication = React.memo(() => {
     Formio.clearCache();
     dispatch(resetFormData("form"));
     if (formId) {
-      setFormTypeCheckLoading(true);
-      setBundleFormData({ formId, submissionId });
-      fetchFormVariables(formId)
-        .then((res) => {
-          const formType = res.data?.formType;
-          setFormType(formType);
-          setFormTypeCheckLoading(false);
-
-          if (formType === "bundle") {
-            setBundleLoading(true);
-
-            executeRule(
-              {
-                submissionType: "fetch",
-                formId,
-                submissionId,
-              },
-              res.data.id
-            )
-              .then((res: { data: unknown }) => {
-                dispatch(setBundleSelectedForms(res.data));
-              })
-              .catch((err: unknown) => {
-                dispatch(setSubmissionBundleErrors(err));
-              })
-              .finally(() => {
-                setBundleLoading(false);
-              });
-          }
-        })
-        .catch((err) => {
-          console.error("Failed to fetch form variables:", err);
-          setFormTypeCheckLoading(false);
-        });
-    }
+    setFormTypeCheckLoading(true);
+    setBundleFormData({ formId, submissionId });
+    fetchFormVariables(formId)
+      .then((res : { data: any }) => {
+        const formType = res.data?.formType;
+        setFormType(formType);
+        setFormTypeCheckLoading(false);
+  
+        if (formType === "bundle") {
+          setBundleLoading(true);
+          setBundleMapperId(res.data.id);
+          executeRule(
+            {
+              submissionType: "fetch",
+              formId,
+              submissionId,
+            },
+            res.data.id
+          )
+            .then((res: { data: unknown }) => {
+              dispatch(setBundleSelectedForms(res.data));
+            })
+            .catch((err: unknown) => {
+              dispatch(setSubmissionBundleErrors(err));
+            })
+            .finally(() => {
+              setBundleLoading(false);
+            });
+        }
+      })
+      .catch((err : any) => {
+        console.error("Failed to fetch form variables:", err);
+        setFormTypeCheckLoading(false);
+      });
+  }
     // ✅ Cleanup should always be at top-level
     return () => {
       dispatch(setBundleSelectedForms([]));
@@ -245,26 +246,26 @@ const ViewApplication = React.memo(() => {
   }, [applicationDetail, tenantKey, analyze_process_view]);
 
   // Define viewSubmission before useMemo hooks (must be before early return)
-  const viewSubmission = useCallback(
-    (data: any) => {
-      const { formId, submissionId } = data;
-      setSelectedSubmissionData(data);
-      setShowFormModal(true);
+  const viewSubmission = useCallback((data: any) => {
+    const { formId, submissionId } = data;
+    setSelectedSubmissionData(data);
+    setShowFormModal(true);
+    if(!formId || !submissionId) return;
+  
+    if (formType === "bundle") return;
 
-      // Load form and submission data
-      if (formId && submissionId) {
-        Formio.clearCache();
-        dispatch(resetFormData("form"));
-        dispatch(getForm("form", formId));
-        if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
-          dispatch(getCustomSubmission(submissionId, formId));
-        } else {
-          dispatch(getSubmission("submission", submissionId, formId));
-        }
+    // Load form and submission data
+    if (formId && submissionId) {
+      Formio.clearCache();
+      dispatch(resetFormData("form"));
+      dispatch(getForm("form", formId));
+      if (CUSTOM_SUBMISSION_URL && CUSTOM_SUBMISSION_ENABLE) {
+        dispatch(getCustomSubmission(submissionId, formId));
+      } else {
+        dispatch(getSubmission("submission", submissionId, formId));
       }
-    },
-    [dispatch]
-  );
+    }
+  }, [dispatch, formType]);
 
   // Prepare history table data - must be before early return (Rules of Hooks)
   const historyColumns = useMemo(
@@ -333,6 +334,16 @@ const ViewApplication = React.memo(() => {
     [t, viewSubmission, dispatch, applicationId]
   );
 
+  // Stable object for the modal's BundleSubmissionView. BundleSubmissionView's
+  // data-fetch effect depends on this by reference, so passing a fresh object
+  const modalBundleFormData = useMemo(
+    () => ({
+      formId: selectedSubmissionData?.formId ?? "",
+      submissionId: selectedSubmissionData?.submissionId ?? "",
+    }),
+    [selectedSubmissionData?.formId, selectedSubmissionData?.submissionId]
+  );
+
   const historyRows = useMemo(() => {
     return (appHistory || []).map((entry: any, index: number) => ({
       id: entry.created ?? `row-${index}`, // Unique and stable id for data grid
@@ -363,7 +374,12 @@ const ViewApplication = React.memo(() => {
     // Filter out Flow tab if processType is not BPMN
     return tabs.filter((tab) => {
       if (tab.id === "flow") {
-        return processType !== "LOWCODE";
+        // Quickfix
+        // Only show the Flow tab when the attached workflow is BPMN.
+        // Non-BPMN workflows (LOWCODE/nocode or defaultworkflow) including bundles
+        // whose process type is unset — have no diagram, so the tab must be
+        // hidden entirely instead of rendered as an empty/broken tab.
+        return processType === "BPMN";
       }
       return true;
     });
@@ -467,51 +483,58 @@ const ViewApplication = React.memo(() => {
         </div>
       </div>
       <div className="header-section-2">
-        <div className="section-seperation-left">
-          {tabConfig.map((tab) => (
-            <V8CustomButton
-              key={tab.id}
-              label={tab.label}
-              selected={selectedTab?.id === tab.id}
-              onClick={() => setSelectedTab(tab)}
-              disabled={
-                (tab.id === "flow" && !analyze_process_view) ||
-                (tab.id === "history" && !analyze_submissions_view_history)
-              }
+          <div className="section-seperation-left">
+              {tabConfig.map((tab) => (
+                <V8CustomButton
+                  key={tab.id}
+                  label={tab.label}
+                  selected={selectedTab?.id === tab.id}
+                  onClick={() => setSelectedTab(tab)}
+                  disabled={
+                    ((tab.id === "flow" && !analyze_process_view) || (tab.id === "history" && !analyze_submissions_view_history))
+                  }
+                />
+              ))}
+          </div>
+          {(applicationDetail?.formId && applicationDetail?.submissionId && selectedTab?.id != "history") && (
+          <div className="section-seperation-right">
+            <DownloadPDFButton
+              form_id={applicationDetail?.formId}
+              submission_id={applicationDetail?.submissionId}
+              title={applicationDetail?.applicationName}
+              onPreDownload={handlePreDownload}
+              onPostDownload={handlePostDownload}
+              disabled={selectedTab?.id === "flow"}
+              {...(formType === "bundle"
+                ? { isBundle: true, bundleId: bundleMapperId }
+                : {})}
             />
-          ))}
-        </div>
-        {applicationDetail?.formId &&
-          applicationDetail?.submissionId &&
-          selectedTab?.id != "history" && (
-            <div className="section-seperation-right">
-              <DownloadPDFButton
-                form_id={applicationDetail?.formId}
-                submission_id={applicationDetail?.submissionId}
-                title={applicationDetail?.applicationName}
-                onPreDownload={handlePreDownload}
-                onPostDownload={handlePostDownload}
-                disabled={selectedTab?.id === "flow"}
-              />
             </div>
           )}
-      </div>
-      <div className="body-section">{renderTabContent()}</div>
-
-      {/* Form View Modal */}
-      <FormViewModal
-        show={showFormModal}
-        onClose={() => {
-          setShowFormModal(false);
-          setSelectedSubmissionData(null);
-        }}
-        title={
-          selectedSubmissionData?.created
-            ? HelperServices.getLocaldate(selectedSubmissionData.created)
-            : ""
-        }
-      >
-        {selectedSubmissionData && <View page="application-detail" />}
+        </div>
+        <div className="body-section">
+          {renderTabContent()}
+        </div>
+        
+        {/* Form View Modal */}
+        <FormViewModal
+          show={showFormModal}
+          onClose={() => {
+            setShowFormModal(false);
+            setSelectedSubmissionData(null);
+          }}
+          title={selectedSubmissionData?.created ? HelperServices.getLocaldate(selectedSubmissionData.created) : ""}
+        >
+        {selectedSubmissionData && (
+            formType === "bundle" ? (
+              <BundleSubmissionView
+                key={selectedSubmissionData.submissionId}
+                bundleFormData={modalBundleFormData}
+              />
+            ) : (
+              <View page="application-detail" />
+            )
+          )}
       </FormViewModal>
     </div>
   );
