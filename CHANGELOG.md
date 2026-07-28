@@ -2,7 +2,7 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
-## 8.2.5 - 13-07-2026
+## 8.2.5 - 22-07-2026
 
 `Added`
 **forms-flow-components**
@@ -28,7 +28,6 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
 
 `Modified`
 * Upgraded React to 18.3.1, single-spa, and formio packages across all micro-frontends.
-* Hid the Dashboards navigation for admin users.
 
 `Fixed`
 * Fixed bundle, task assignee dropdown, shared-filter, and admin table pagination issues.
