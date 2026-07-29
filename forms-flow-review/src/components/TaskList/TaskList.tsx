@@ -39,12 +39,15 @@ import { RootState } from "../../reducers";
 import TaskListTable from "./TasklistTable";
 import { HelperServices } from "@formsflow/service";
 import AttributeFilterDropdown from "./AttributeFilterDropdown";
-import { createReqPayload ,sortableKeysSet} from "../../helper/taskHelper";
+import { createReqPayload, sortableKeysSet } from "../../helper/taskHelper";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
-import  useAllTasksPayload  from "../../constants/allTasksPayload";
+import useAllTasksPayload from "../../constants/allTasksPayload";
 import { userRoles } from "../../helper/permissions";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { navigateToTaskListingFromReviewWithHistory, getRedirectUrl } from "@formsflow/service";
+import {
+  navigateToTaskListingFromReviewWithHistory,
+  getRedirectUrl,
+} from "@formsflow/service";
 
 const TaskList = () => {
   const dispatch = useAppDispatch();
@@ -52,7 +55,10 @@ const TaskList = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId);
+  const tenantKey = useSelector(
+    (state: any) =>
+      state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId
+  );
   const redirectUrl = getRedirectUrl(tenantKey);
   const {
     limit,
@@ -67,24 +73,22 @@ const TaskList = () => {
     selectedAttributeFilter,
     isAssigned,
     isUnsavedFilter,
-  } = useSelector((state: RootState) => state.task);  
+  } = useSelector((state: RootState) => state.task);
 
-  const { viewTasks,viewFilters } = userRoles()
+  const { viewTasks, viewFilters } = userRoles();
   const allTasksPayload = useAllTasksPayload();
   const [showSortModal, setShowSortModal] = useState(false);
   const taskvariables = selectedFilter?.variables ?? [];
 
   // Breadcrumb configuration
-  const breadcrumbItems = [
-    { label: t("Tasks"), id: "tasks" }
-  ];
+  const breadcrumbItems = [{ label: t("Tasks"), id: "tasks" }];
 
   const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
     if (item.id === "tasks") {
       navigateToTaskListingFromReviewWithHistory(navigate, tenantKey);
     }
   };
- 
+
   //inital data loading
   const initialDataLoading = async () => {
     // If we have an unsaved filter, do not reset filter state
@@ -93,11 +97,10 @@ const TaskList = () => {
       return;
     }
     dispatch(setBPMFilterLoader(true));
-    if(!viewFilters && viewTasks){
+    if (!viewFilters && viewTasks) {
       dispatch(setSelectedFilter(allTasksPayload));
-      dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit))
-    }
-    else{
+      dispatch(fetchServiceTaskList(allTasksPayload, null, 1, limit));
+    } else {
       const filterResponse = await fetchFilterList();
       const filters = filterResponse.data.filters;
       const updatedfilters = filters.filter((filter) => !filter.hide);
@@ -109,12 +112,15 @@ const TaskList = () => {
           dispatch(fetchBPMTaskCount(updatedfilters));
         });
         // If no default filter, will select All Tasks filter if its exists, else will select first filter
-        if (defaultFilterId !== filters.find((f) => f.id === defaultFilterId)?.id) {
-          const newFilter = filters.find(f => f.name === "All Tasks") || filters[0];
+        if (
+          defaultFilterId !== filters.find((f) => f.id === defaultFilterId)?.id
+        ) {
+          const newFilter =
+            filters.find((f) => f.name === "All Tasks") || filters[0];
           dispatch(setDefaultFilter(newFilter.id));
           updateDefaultFilter(newFilter.id);
         }
-      }   
+      }
       // if no filter is present, the data will be shown as All Tasks response
       else {
         dispatch(setSelectedFilter(allTasksPayload));
@@ -125,61 +131,58 @@ const TaskList = () => {
   };
 
   const handleAssigneTabClick = (assigned: boolean) => {
-  dispatch(setIsAssigned(assigned));
-};
+    dispatch(setIsAssigned(assigned));
+  };
 
   const toggleFilterModal = () => setShowSortModal(!showSortModal);
 
-
-
   const fetchTaskListData = ({
-  sortData = null,
-  newPage = null,
-  newLimit = null,
-  newDateRange = null
-} = {}) => {
-  /**
-   * We need to create payload for the task list
-   * If filterCached is true, use lastReqPayload (for persist)
-   * If selectedFilter is not null, create payload using selectedFilter
-   * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
-   */
-  let payload = null;
-  const enabledSort = new Set ([
-    "applicationId",
-    "submitterName",
-    "formName"
-  ])
-  // check if selectedType belongs to sortableList
-  const currentVariable = taskvariables.find((item)=> item.key === filterListSortParams?.activeKey);
-  const isFormVariable =currentVariable?.isFormVariable || enabledSort.has(filterListSortParams?.activeKey) ;
-  if (filterCached) {
-    payload = lastReqPayload;
-    dispatch(resetTaskListParams({ filterCached: false }));
-  } else if (selectedFilter) {
-    payload = createReqPayload(
-      selectedFilter,
-      selectedAttributeFilter,
-      sortData || filterListSortParams,
-      newDateRange || dateRange,
-      isAssigned,
-      isFormVariable
-    );  
-  }
+    sortData = null,
+    newPage = null,
+    newLimit = null,
+    newDateRange = null,
+  } = {}) => {
+    /**
+     * We need to create payload for the task list
+     * If filterCached is true, use lastReqPayload (for persist)
+     * If selectedFilter is not null, create payload using selectedFilter
+     * If not, set the default filter manually and use it immediately (do not rely on updated Redux state)
+     */
+    let payload = null;
+    const enabledSort = new Set(["applicationId", "submitterName", "formName"]);
+    // check if selectedType belongs to sortableList
+    const currentVariable = taskvariables.find(
+      (item) => item.key === filterListSortParams?.activeKey
+    );
+    const isFormVariable =
+      currentVariable?.isFormVariable ||
+      enabledSort.has(filterListSortParams?.activeKey);
+    if (filterCached) {
+      payload = lastReqPayload;
+      dispatch(resetTaskListParams({ filterCached: false }));
+    } else if (selectedFilter) {
+      payload = createReqPayload(
+        selectedFilter,
+        selectedAttributeFilter,
+        sortData || filterListSortParams,
+        newDateRange || dateRange,
+        isAssigned,
+        isFormVariable
+      );
+    }
 
-  if (!payload) return;
+    if (!payload) return;
 
-  dispatch(setBPMTaskLoader(true));
-  dispatch(
-    fetchServiceTaskList(
-      payload,
-      null,
-      newPage || activePage,
-      newLimit || limit
-    )
-  );
-};
-
+    dispatch(setBPMTaskLoader(true));
+    dispatch(
+      fetchServiceTaskList(
+        payload,
+        null,
+        newPage || activePage,
+        newLimit || limit
+      )
+    );
+  };
 
   const handleRefresh = () => {
     fetchTaskListData();
@@ -216,29 +219,32 @@ const TaskList = () => {
 
   const handleSortApply = (selectedSortOption, selectedSortOrder) => {
     // reset the sort orders using helper function
-    const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
-  
+    const resetSortOrders = HelperServices.getResetSortOrders(
+      optionSortBy.options
+    );
+
     // get the variable info first
-    const selectedVar = taskvariables.find(item => item.key === selectedSortOption);
+    const selectedVar = taskvariables.find(
+      (item) => item.key === selectedSortOption
+    );
     const selectedType = selectedVar?.type;
-  
+
     // check if it's a form variable
     const isFormVariable = sortableKeysSet.has(selectedType);
-  
+
     const updatedData = {
       ...resetSortOrders,
       activeKey: selectedSortOption,
       [selectedSortOption]: {
         sortOrder: selectedSortOrder,
-        ...(isFormVariable && { type: selectedType })
+        ...(isFormVariable && { type: selectedType }),
       },
     };
-  
+
     dispatch(setFilterListSortParams(updatedData));
     setShowSortModal(false);
-    fetchTaskListData({ sortData: updatedData  });
+    fetchTaskListData({ sortData: updatedData });
   };
-  
 
   const handleDateRangeChange = (newDateRange) => {
     /**
@@ -299,21 +305,23 @@ const TaskList = () => {
   }, [location.search, isAssigned, dispatch]);
 
   const optionsForSortModal = () => {
-    const existingValues = new Set(optionSortBy.keys);  
+    const existingValues = new Set(optionSortBy.keys);
     const dynamicColumns = buildDynamicColumns(taskvariables);
-  
+
     const filteredDynamicColumns = dynamicColumns
-      .filter(column =>
-      !existingValues.has(column.sortKey) && // filter out duplicates form sorting list 
-      sortableKeysSet.has(column.type))  // sorting enabled only for sortablelist items and optionSortBy
-      .map(column => ({
+      .filter(
+        (column) =>
+          !existingValues.has(column.sortKey) && // filter out duplicates form sorting list
+          sortableKeysSet.has(column.type)
+      ) // sorting enabled only for sortablelist items and optionSortBy
+      .map((column) => ({
         value: column.sortKey,
         label: column.name,
       }));
-  
+
     return [...optionSortBy.options, ...filteredDynamicColumns];
   };
-  
+
   return (
     <>
       <div className="Toastify"></div>
@@ -328,37 +336,21 @@ const TaskList = () => {
           />
         </div>
       </div>
-      {/* Commenting out since global search is out of scope for this module */}
-      {/* <div className="header-section-2">
+      <div className="header-section-2 overflow-visible task-list-page">
         <div className="section-seperation-left">
-          <div className="medium-search-container">
-          <CustomSearch
-            // search={}
-            // setSearch={}
-            // handleSearch={}
+          <TaskListDropdownItems />
+          <AttributeFilterDropdown />
 
-            placeholder={t("Search")}
-            // searchLoading={}
-            title={t("Search Tasks")}
-            dataTestId="task-search-input"
+          <DateRangePicker
+            value={dateRange}
+            onChange={handleDateRangeChange}
+            placeholder={t("Filter Created Date")}
+            dataTestId="date-range-picker"
+            ariaLabel={t("Select date range for filtering")}
+            startDateAriaLabel={t("Start date")}
+            endDateAriaLabel={t("End date")}
           />
-          </div>       
-            </div></div>    */}
-            <div className="header-section-2 overflow-visible task-list-page">
-              <div className="section-seperation-left">
-              <TaskListDropdownItems/>
-              <AttributeFilterDropdown/>
-              
-            <DateRangePicker
-              value={dateRange}
-              onChange={handleDateRangeChange}
-              placeholder={t("Filter Created Date")}
-              dataTestId="date-range-picker"
-              ariaLabel={t("Select date range for filtering")}
-              startDateAriaLabel={t("Start date")}
-              endDateAriaLabel={t("End date")}
-            />
-              </div>
+        </div>
         <div className="d-flex justify-content-end flex-fill">
           <V8CustomButton
             variant="secondary"
@@ -367,25 +359,28 @@ const TaskList = () => {
             dataTestId="clear-all-review-filters-button"
           />
         </div>
-              
-              </div>   
-              <div className="header-section-3">
-                <div className="section-seperation-left">
-                <V8CustomButton
-  variant={!isAssigned ? "primary" : "secondary"}
-      onClick={() => handleAssigneTabClick(false)}
-      label={t("All")}
-      selected={!isAssigned}
-    />
-    <V8CustomButton
-  variant={isAssigned ? "primary" : "secondary"}
-      onClick={() => handleAssigneTabClick(true)}
-      label={t("Assigned to me")}
-      selected={isAssigned}
-    />
-                </div>
-              </div>
-         {viewTasks && <div className="body-section custom-scroll"><TaskListTable /></div>}
+      </div>
+      <div className="header-section-3">
+        <div className="section-seperation-left">
+          <V8CustomButton
+            variant={!isAssigned ? "primary" : "secondary"}
+            onClick={() => handleAssigneTabClick(false)}
+            label={t("All")}
+            selected={!isAssigned}
+          />
+          <V8CustomButton
+            variant={isAssigned ? "primary" : "secondary"}
+            onClick={() => handleAssigneTabClick(true)}
+            label={t("Assigned to me")}
+            selected={isAssigned}
+          />
+        </div>
+      </div>
+      {viewTasks && (
+        <div className="body-section custom-scroll">
+          <TaskListTable />
+        </div>
+      )}
     </>
   );
 };

@@ -1,35 +1,33 @@
- 
-.loader-container{
-display: flex;
-height: 50vh !important;
-justify-content: center;
-align-items: center;
+.loader-container {
+  display: flex;
+  height: 50vh !important;
+  justify-content: center;
+  align-items: center;
 }
 .loader {
-position: absolute;
-margin: auto;
-left: 0;
-right: 0;
-top: 0;
-bottom: 0;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
 
-.page-item 
-{
-    &.active{
-        .page-link{
-            color:var(--ff-white) !important;
-        }
-    }
+.page-item {
+  &.active {
     .page-link {
-        color: var(--ff-primary) !important;
+      color: var(--ff-white) !important;
     }
+  }
+  .page-link {
+    color: var(--ff-primary) !important;
+  }
 }
 
-.premium{
-    font-size: 36px;
-    color: rgb(255,193,7);
+.premium {
+  font-size: 36px;
+  color: rgb(255, 193, 7);
 }
-.checkout-btn{
-    padding: 8px 48px !important;
+.checkout-btn {
+  padding: 8px 48px !important;
 }

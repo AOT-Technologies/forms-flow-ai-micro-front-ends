@@ -12,7 +12,11 @@ interface TaskUpdate {
   tenantId?: string;
 }
 
-type ReloadCallback = (taskId: string, forceReload: boolean, isUpdateEvent: boolean) => void;
+type ReloadCallback = (
+  taskId: string,
+  forceReload: boolean,
+  isUpdateEvent: boolean
+) => void;
 
 let tenantData: string | null = localStorage.getItem("tenantData");
 let tenantKey: string = "";
@@ -27,7 +31,6 @@ if (tenantData) {
 }
 
 let stompClient: Client | null = null;
-let reconnectTimeOut: NodeJS.Timeout | null = null;
 
 const connect = (reloadCallback: ReloadCallback): void => {
   const authToken = StorageService.get(StorageService.User.AUTH_TOKEN);
@@ -35,7 +38,7 @@ const connect = (reloadCallback: ReloadCallback): void => {
     console.error("Auth token not found");
     return;
   }
-  
+
   const accessToken = AES.encrypt(authToken, WEBSOCKET_ENCRYPT_KEY).toString();
   const socketUrl = `${API.BPM_BASE_URL_SOCKET_IO}?accesstoken=${accessToken}`;
 
@@ -77,9 +80,6 @@ const isConnected = (): boolean => stompClient?.connected || false;
 const disconnect = (): void => {
   if (stompClient) {
     stompClient.deactivate();
-    if (reconnectTimeOut) {
-      clearTimeout(reconnectTimeOut);
-    }
   }
 };
 

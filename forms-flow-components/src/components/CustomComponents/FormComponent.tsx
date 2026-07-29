@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Form } from "@aot-technologies/formio-react";
 import { Utils } from "@aot-technologies/formiojs";
-import _ from "lodash";
+// Deep import: only cloneDeep is used, so avoid pulling the whole lodash package
+// into the shared bundle (lodash is only a transitive dependency via formiojs).
+import cloneDeep from "lodash/cloneDeep";
 
 interface SelectedComponent {
   key: string | null;
@@ -27,11 +29,11 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
     setSelectedComponent,
     setShowElement,
     detailsRef,
-    ignoreKeywords
+    ignoreKeywords,
   }) => {
     const formRef = useRef(null);
     const formHilighterRef = useRef<HTMLDivElement>(null); // Add ref for the form container
-    
+
     /* ------------- manipulate the hidden variable to show in form ------------- */
     const [updatedForm, setUpdatedForm] = useState<any>(null);
     const [manipulatedKeys, setManipulatedKeys] = useState(new Set());
@@ -57,7 +59,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
 
     // initially we had a problem with the hidden variable not showing in the form so we have to manipulate the hidden variable to show in form
     useEffect(() => {
-      const data = _.cloneDeep(form);
+      const data = cloneDeep(form);
       const manipulatedKeys = [];
       Utils.eachComponent(
         data.components,
@@ -105,7 +107,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
       "signature",
       "password",
       "file",
-      "address"
+      "address",
     ]);
     const ignoredKeys = new Set(["hidden"]);
 
@@ -127,7 +129,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
           );
           const keyClass = classes[classes.length - 1];
           const typeClass = classes[classes.length - 2];
-          
+
           const componentKey = (keyClass as string)?.split("-").pop();
           const componentType = typeClass
             ? (typeClass as string).split("-").pop()
@@ -196,7 +198,7 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
     // FIXED: Use ref instead of querySelector and add proper cleanup
     useEffect(() => {
       const formHilighter = formHilighterRef.current; // Use ref instead of querySelector
-      
+
       if (!formHilighter) return; // Early return if element doesn't exist
 
       const handleOutsideClick = (event) => {
@@ -205,7 +207,8 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
 
         if (!clickedInsideForm && !clickedInsideDetails) {
           setShowElement(false);
-          const highlightedElement = document.querySelector(".formio-hilighted");
+          const highlightedElement =
+            document.querySelector(".formio-hilighted");
           if (highlightedElement) {
             highlightedElement.classList.remove("formio-hilighted");
           }
@@ -224,16 +227,18 @@ export const FormComponent: React.FC<FormComponentProps> = React.memo(
 
     return (
       <div className="flex">
-        <div 
+        <div
           ref={formHilighterRef} // Add ref to the form container
           className="flex-grow-1 form-container form-hilighter"
         >
           <Form
             src={updatedForm}
-            options={{
-              viewAsHtml: true,
-              readOnly: true,
-            } as any}
+            options={
+              {
+                viewAsHtml: true,
+                readOnly: true,
+              } as any
+            }
             formReady={(e) => {
               formRef.current = e;
             }}

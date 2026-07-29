@@ -1,8 +1,11 @@
 import API from "../../api/endpoints";
-import { StorageService, RequestService, HelperServices } from "@formsflow/service";
+import {
+  StorageService,
+  RequestService,
+  HelperServices,
+} from "@formsflow/service";
 import { SubmissionListResponse } from "../../types/submissions";
-import { replaceUrl} from "../../helper/helper"
-
+import { replaceUrl } from "../../helper/helper";
 
 export const getSubmissionList = (
   limit = 10,
@@ -14,55 +17,61 @@ export const getSubmissionList = (
   filters: Record<string, any> = {},
   selectedFormFields: string[] = []
 ): Promise<SubmissionListResponse> => {
-  const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
-const formatValue = (value: any): string => {
-  if (typeof value === "number" || typeof value === "boolean") {
-    return `${value}`;
-  }
-  if (value === null) {
-    return "null";
-  }
-  if (Array.isArray(value)) {
-    return `[${value.map(formatValue).join(", ")}]`;
-  }
-  if (typeof value === "object") {
-    return `{ ${Object.entries(value)
-      .map(([k, v]) => `${k}: ${formatValue(v)}`)
-      .join(", ")} }`;
-  }
-  return `"${value}"`; // string by default
-};
+  const systemFields = [
+    "id",
+    "form_name",
+    "created_by",
+    "created",
+    "application_status",
+  ];
+  const formatValue = (value: any): string => {
+    if (typeof value === "number" || typeof value === "boolean") {
+      return `${value}`;
+    }
+    if (value === null) {
+      return "null";
+    }
+    if (Array.isArray(value)) {
+      return `[${value.map(formatValue).join(", ")}]`;
+    }
+    if (typeof value === "object") {
+      return `{ ${Object.entries(value)
+        .map(([k, v]) => `${k}: ${formatValue(v)}`)
+        .join(", ")} }`;
+    }
+    return `"${value}"`; // string by default
+  };
 
-const normalizeValue = (value: any): any => {
-  if (typeof value !== "string") return value;
+  const normalizeValue = (value: any): any => {
+    if (typeof value !== "string") return value;
 
-  // number check
-  if (!isNaN(value as any) && value.trim() !== "") {
-    return Number(value);
-  }
+    // number check
+    if (!isNaN(value as any) && value.trim() !== "") {
+      return Number(value);
+    }
 
-  // boolean check
-  if (value.toLowerCase() === "true") return true;
-  if (value.toLowerCase() === "false") return false;
+    // boolean check
+    if (value.toLowerCase() === "true") return true;
+    if (value.toLowerCase() === "false") return false;
 
-  // null/undefined
-  if (value.toLowerCase() === "null") return null;
+    // null/undefined
+    if (value.toLowerCase() === "null") return null;
 
-  return value; // keep as string
-};
+    return value; // keep as string
+  };
 
-
- const filtersString = Object.entries(filters)
-  .filter(([key, value]) =>
-    value !== undefined &&
-    value !== "" &&
-    (systemFields.includes(key) || selectedFormFields.includes(key))
-  )
-  .map(([key, value]) => {
-    const normalized = normalizeValue(value);
-    return `${key}: ${formatValue(normalized)}`;
-  })
-  .join(", ");
+  const filtersString = Object.entries(filters)
+    .filter(
+      ([key, value]) =>
+        value !== undefined &&
+        value !== "" &&
+        (systemFields.includes(key) || selectedFormFields.includes(key))
+    )
+    .map(([key, value]) => {
+      const normalized = normalizeValue(value);
+      return `${key}: ${formatValue(normalized)}`;
+    })
+    .join(", ");
 
   const createdAfter = dateRange.startDate
     ? `createdAfter: "${HelperServices.getISODateTime(dateRange.startDate)}"`
@@ -75,13 +84,12 @@ const normalizeValue = (value: any): any => {
   const parentFormIdStr = parentFormId ? `parentFormId: "${parentFormId}"` : "";
 
   const selectedFieldsStr = (() => {
-  if (!selectedFormFields.length) return "";
+    if (!selectedFormFields.length) return "";
 
-  const fieldsArray = selectedFormFields.map((f) => `"${f}"`);
-  const fieldsJoined = fieldsArray.join(", ");
-  return "selectedFormFields: [" + fieldsJoined + "]";
-})();
-
+    const fieldsArray = selectedFormFields.map((f) => `"${f}"`);
+    const fieldsJoined = fieldsArray.join(", ");
+    return "selectedFormFields: [" + fieldsJoined + "]";
+  })();
 
   const filtersStr = filtersString ? `filters: { ${filtersString} }` : "";
 
@@ -93,7 +101,7 @@ const normalizeValue = (value: any): any => {
     createdAfter,
     createdBefore,
     parentFormIdStr,
-        filtersStr,
+    filtersStr,
 
     selectedFieldsStr,
   ]
@@ -135,8 +143,6 @@ const normalizeValue = (value: any): any => {
   });
 };
 
-
-
 export const fetchAllForms = () => {
   return RequestService.httpGETRequest(`${API.FORM}?viewSubmissions=true`);
 };
@@ -144,27 +150,42 @@ export const fetchAllForms = () => {
 export const fetchFormVariables = (formId) => {
   let url = `${API.FORM_PROCESSES}/${formId}`;
   return RequestService.httpGETRequest(url);
-}; 
+};
 
 //for bundling
-export const executeRule = (submissionData, mapperId) => { 
-  const url = replaceUrl(API.BUNDLE_EXECUTE_RULE,"<mapper_id>", mapperId);
+export const executeRule = (submissionData, mapperId) => {
+  const url = replaceUrl(API.BUNDLE_EXECUTE_RULE, "<mapper_id>", mapperId);
   return RequestService.httpPOSTRequest(url, submissionData);
 };
 
-export const getBundleCustomSubmissionData = (bundleId, submissionId, selectedFormId) =>{
-  const submissionUrl = replaceUrl(API.CUSTOM_SUBMISSION, "<form_id>", bundleId);
-  return  RequestService.
-  httpGETRequest(`${submissionUrl}/${submissionId}?formId=${selectedFormId}`, {});
+export const getBundleCustomSubmissionData = (
+  bundleId,
+  submissionId,
+  selectedFormId
+) => {
+  const submissionUrl = replaceUrl(
+    API.CUSTOM_SUBMISSION,
+    "<form_id>",
+    bundleId
+  );
+  return RequestService.httpGETRequest(
+    `${submissionUrl}/${submissionId}?formId=${selectedFormId}`,
+    {}
+  );
 };
 
-export const fetchBundleSubmissionData = (bundleId,submissionId,formId) => {
+export const fetchBundleSubmissionData = (bundleId, submissionId, formId) => {
   let formioToken = sessionStorage.getItem("formioToken");
   let token = formioToken ? { "x-jwt-token": formioToken } : {};
-  return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${bundleId}/submission/${submissionId}?formId=${formId}`, {}, "", false, {
-    ...token
-  });
-
+  return RequestService.httpGETRequest(
+    `${API.GET_FORM_BY_ID}/${bundleId}/submission/${submissionId}?formId=${formId}`,
+    {},
+    "",
+    false,
+    {
+      ...token,
+    }
+  );
 };
 
 export const fetchFormById = (id) => {
@@ -183,15 +204,13 @@ export const fetchFormById = (id) => {
 
 export const fetchSubmissionList = () => {
   return RequestService.httpGETRequest(`${API.SUBMISSION_FILTER}`);
-}
+};
 export const createOrUpdateSubmissionFilter = (data) => {
   let url = `${API.SUBMISSION_FILTER}`;
   return RequestService.httpPOSTRequest(url, data);
-}
+};
 
 export const updateDefaultSubmissionFilter = (data) => {
   let url = `${API.UPDATE_DEFAULT_FILTER}`;
   return RequestService.httpPOSTRequest(url, data);
-}
-
-
+};

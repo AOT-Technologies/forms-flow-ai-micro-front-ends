@@ -1,10 +1,15 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
 import { useAppDispatch } from "../hooks";
-import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
+import {
+  Form,
+  Errors,
+  selectRoot,
+  selectError,
+} from "@aot-technologies/formio-react";
 import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
-import { textTruncate } from "../helper/helper"
-import _ from "lodash";
+import { textTruncate } from "../helper/helper";
+import cloneDeep from "lodash/cloneDeep";
 import {
   fetchFormById,
   getBundleCustomSubmissionData,
@@ -37,7 +42,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const formRef = useRef<any>();
-  
+
   const [formStep, setFormStep] = useState(0);
   const [getFormLoading, setGetFormLoading] = useState(false);
   const [form, setForm] = useState<any>({});
@@ -45,29 +50,52 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
   const [formCache, setFormCache] = useState<any>({});
   const [submission, setSubmission] = useState<any>(null);
   const bundleLoading = useSelector((state: any) => state.task.bundleLoading);
-  const bundleSubmission = useSelector((state: any) => state.task?.bundleSubmission);
+  const bundleSubmission = useSelector(
+    (state: any) => state.task?.bundleSubmission
+  );
   const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
-  const taskDetailsLoading = useSelector((state: any) => state?.task?.taskDetailsLoading);
-  const selectedForms = useSelector((state: any) => state?.task?.selectedForms || []);
+  const taskDetailsLoading = useSelector(
+    (state: any) => state?.task?.taskDetailsLoading
+  );
+  const selectedForms = useSelector(
+    (state: any) => state?.task?.selectedForms || []
+  );
   const { error } = useSelector((state: any) => state?.form);
 
-  const isReadOnly = useMemo(() => taskAssignee !== currentUser, [taskAssignee, currentUser]);
-  console.log(isReadOnly, taskAssignee, currentUser,"=====task assignee current user");
- 
+  const isReadOnly = useMemo(
+    () => taskAssignee !== currentUser,
+    [taskAssignee, currentUser]
+  );
+  console.log(
+    isReadOnly,
+    taskAssignee,
+    currentUser,
+    "=====task assignee current user"
+  );
 
   useEffect(() => {
-    setSubmission(bundleSubmission?.data ? _.cloneDeep(bundleSubmission) : { data: {} });
+    setSubmission(
+      bundleSubmission?.data ? cloneDeep(bundleSubmission) : { data: {} }
+    );
   }, [bundleSubmission]);
 
   const fetchSubmissionFn = useMemo(
-    () => (CUSTOM_SUBMISSION_ENABLE ? getBundleCustomSubmissionData : fetchBundleSubmissionData),
+    () =>
+      CUSTOM_SUBMISSION_ENABLE
+        ? getBundleCustomSubmissionData
+        : fetchBundleSubmissionData,
     []
   );
 
   const handleSubmisionData = () => {
-    dispatch(setBundleSubmissionData({
-      data: { ..._.cloneDeep(bundleSubmission?.data), ..._.cloneDeep(submission?.data) },
-    }));
+    dispatch(
+      setBundleSubmissionData({
+        data: {
+          ...cloneDeep(bundleSubmission?.data),
+          ...cloneDeep(submission?.data),
+        },
+      })
+    );
   };
 
   const getFormAndSubmission = async () => {
@@ -78,13 +106,20 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
 
     const { formId } = selectedForms[formStep];
     const cachedData = cacheSubmissions[formId];
-    const readOnlyOrHasSubmissionId = isReadOnly || bundleFormData?.submissionId;
+    const readOnlyOrHasSubmissionId =
+      isReadOnly || bundleFormData?.submissionId;
 
     try {
       const promises = [fetchFormById(formId)];
 
       if (!cachedData && readOnlyOrHasSubmissionId) {
-        promises.push(fetchSubmissionFn(bundleFormData?.formId, bundleFormData?.submissionId, formId));
+        promises.push(
+          fetchSubmissionFn(
+            bundleFormData?.formId,
+            bundleFormData?.submissionId,
+            formId
+          )
+        );
       }
 
       const result = await Promise.all(promises);
@@ -92,11 +127,19 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
 
       if (readOnlyOrHasSubmissionId) {
         const submissionData = cachedData || result[1]?.data?.data;
-        dispatch(setBundleSubmissionData({
-          data: { ..._.cloneDeep(bundleSubmission?.data), ..._.cloneDeep(submissionData) },
-        }));
+        dispatch(
+          setBundleSubmissionData({
+            data: {
+              ...cloneDeep(bundleSubmission?.data),
+              ...cloneDeep(submissionData),
+            },
+          })
+        );
         if (!cachedData) {
-          setCacheSubmissions(prev => ({ ...prev, [formId]: submissionData }));
+          setCacheSubmissions((prev) => ({
+            ...prev,
+            [formId]: submissionData,
+          }));
         }
       }
 
@@ -104,113 +147,129 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
       setGetFormLoading(false);
 
       if (!isReadOnly && !formCache[formData._id]) {
-        setFormCache(prev => ({ ...prev, [formData._id]: formData }));
+        setFormCache((prev) => ({ ...prev, [formData._id]: formData }));
       }
     } catch (err: any) {
       setGetFormLoading(false);
-      dispatch(setFormFailureErrorData("form", err?.response?.data || err?.message));
+      dispatch(
+        setFormFailureErrorData("form", err?.response?.data || err?.message)
+      );
     }
   };
-
 
   useEffect(() => {
     getFormAndSubmission();
     document.getElementById("main")?.scrollTo({ top: 0, behavior: "smooth" });
   }, [formStep]);
 
-
   const handleNextForm = () => {
     if (!isReadOnly) handleSubmisionData();
-    setFormStep(prev => prev + 1);
+    setFormStep((prev) => prev + 1);
   };
 
   const handleBackForm = () => {
-    setFormStep(prev => prev - 1);
+    setFormStep((prev) => prev - 1);
     if (!isReadOnly) handleSubmisionData();
   };
 
   const stepLabels = selectedForms?.map((form) => {
-    let stplabal = form.formName.includes(" ") ? form.formName : textTruncate(30, 20, form.formName);
+    let stplabal = form.formName.includes(" ")
+      ? form.formName
+      : textTruncate(30, 20, form.formName);
     return stplabal;
-    }
-  );
+  });
 
-const onLabelClick = (step) => {
-  if (step === formStep) {
-    return;
-  }
-  else {
+  const onLabelClick = (step) => {
+    if (step === formStep) {
+      return;
+    } else {
       setFormStep(step);
-  }
-};
-  
+    }
+  };
+
   return (
     <>
       <BreadCrumbs
-        items={stepLabels.map((label: string, i: number) => ({ label, id: String(i) }))}
+        items={stepLabels.map((label: string, i: number) => ({
+          label,
+          id: String(i),
+        }))}
         variant="medium"
         activeIndex={formStep}
-        onBreadcrumbClick={(item: { id?: string; label: string }) => onLabelClick(Number(item.id))}
+        onBreadcrumbClick={(item: { id?: string; label: string }) =>
+          onLabelClick(Number(item.id))
+        }
       />
-    
-    <div className="scrollable-overview-with-header bg-white m-0 form-border p-5">
-         { taskDetailsLoading || getFormLoading ? 
-         <div className="container">
-        <Loading />
-      </div> : (<>
-         <Errors errors={error} />
-        <Form
-        key={isReadOnly ? "readonly" : "editable"}
-        src={form}
-        submission={{ data: { ..._.cloneDeep(bundleSubmission?.data), ...submission?.data } }}
-        options={{
-            buttonSettings: {
-              showSubmit: false
-            },
-            ...options,
-            noAlerts: false,
-            i18n: RESOURCE_BUNDLES_DATA,
-            readOnly: isReadOnly,
-          }}
-          onSubmit={() => {
-            if (!isReadOnly) handleSubmisionData();
-            onFormSubmit?.({ 
-              data: { ..._.cloneDeep(bundleSubmission?.data), ..._.cloneDeep(submission?.data) }
-            });
-          }}
-        onCustomEvent={onCustomEvent} 
-        formReady={(e) => (formRef.current = e)}
-        onChange={(e) => {
-          if (!e.changed && !submission) setSubmission({ data: e.data });
-          if (!e.changed) return;
-          setSubmission({ data: e.data });
-          onChange?.({ data: e.data });
-        }}
-      />
-      <div className="d-flex justify-content-end">
-        {formStep > 0 && (
-          <V8CustomButton
-            label="Previous Form"
-            variant="secondary"
-            onClick={handleBackForm}
-            dataTestId="bundle-previous-form"
-            ariaLabel="Previous Form"
-            className="me-2"
-          />
+
+      <div className="scrollable-overview-with-header bg-white m-0 form-border p-5">
+        {taskDetailsLoading || getFormLoading ? (
+          <div className="container">
+            <Loading />
+          </div>
+        ) : (
+          <>
+            <Errors errors={error} />
+            <Form
+              key={isReadOnly ? "readonly" : "editable"}
+              src={form}
+              submission={{
+                data: {
+                  ...cloneDeep(bundleSubmission?.data),
+                  ...submission?.data,
+                },
+              }}
+              options={{
+                buttonSettings: {
+                  showSubmit: false,
+                },
+                ...options,
+                noAlerts: false,
+                i18n: RESOURCE_BUNDLES_DATA,
+                readOnly: isReadOnly,
+              }}
+              onSubmit={() => {
+                if (!isReadOnly) handleSubmisionData();
+                onFormSubmit?.({
+                  data: {
+                    ...cloneDeep(bundleSubmission?.data),
+                    ...cloneDeep(submission?.data),
+                  },
+                });
+              }}
+              onCustomEvent={onCustomEvent}
+              formReady={(e) => (formRef.current = e)}
+              onChange={(e) => {
+                if (!e.changed && !submission) setSubmission({ data: e.data });
+                if (!e.changed) return;
+                setSubmission({ data: e.data });
+                onChange?.({ data: e.data });
+              }}
+            />
+            <div className="d-flex justify-content-end">
+              {formStep > 0 && (
+                <V8CustomButton
+                  label="Previous Form"
+                  variant="secondary"
+                  onClick={handleBackForm}
+                  dataTestId="bundle-previous-form"
+                  ariaLabel="Previous Form"
+                  className="me-2"
+                />
+              )}
+              {selectedForms.length - 1 !== formStep && (
+                <V8CustomButton
+                  label="Next Form"
+                  variant="primary"
+                  onClick={handleNextForm}
+                  disabled={bundleLoading}
+                  dataTestId="bundle-next-form"
+                  ariaLabel="Next Form"
+                />
+              )}
+            </div>
+          </>
         )}
-        {selectedForms.length - 1 !== formStep && (
-          <V8CustomButton
-            label="Next Form"
-            variant="primary"
-            onClick={handleNextForm}
-            disabled={bundleLoading}
-            dataTestId="bundle-next-form"
-            ariaLabel="Next Form"
-          />
-        )}
-      </div> 
-      </>) }
-    </div>
+      </div>
     </>
   );
 };

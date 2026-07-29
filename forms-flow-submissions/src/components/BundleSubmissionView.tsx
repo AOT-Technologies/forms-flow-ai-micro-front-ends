@@ -1,7 +1,19 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
+import { createSelector } from "@reduxjs/toolkit";
 import { useAppDispatch } from "../hooks";
-import { Form, Errors, selectRoot, selectError } from "@aot-technologies/formio-react";
+import {
+  Form,
+  Errors,
+  selectRoot,
+  selectError,
+} from "@aot-technologies/formio-react";
 import _ from "lodash";
 
 import {
@@ -12,7 +24,7 @@ import {
 
 import { textTruncate } from "../helper/helper";
 
-import { BreadCrumbs, V8CustomButton } from '@formsflow/components';
+import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
 import {
   clearFormError,
@@ -37,13 +49,23 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   const [formStep, setFormStep] = useState(0);
   const [loadingForm, setLoadingForm] = useState(false);
   const [form, setForm] = useState<any>({});
-  const [cacheSubmissions, setCacheSubmissions] = useState<Record<string, any>>({});
+  const [cacheSubmissions, setCacheSubmissions] = useState<Record<string, any>>(
+    {}
+  );
   const [formCache, setFormCache] = useState<Record<string, any>>({});
 
-  const bundleLoading = useSelector((state: any) => state.submissionBundle.bundleLoading);
-  const bundleSubmission = useSelector((state: any) => state.submissionBundle?.bundleSubmission);
-  const taskDetailsLoading = useSelector((state: any) => state.submissionBundle?.submissionBundleLoading);
-  const selectedForms = useSelector((state: any) => state.submissionBundle?.submissionBundleForms || []);
+  const bundleLoading = useSelector(
+    (state: any) => state.submissionBundle.bundleLoading
+  );
+  const bundleSubmission = useSelector(
+    (state: any) => state.submissionBundle?.bundleSubmission
+  );
+  const taskDetailsLoading = useSelector(
+    (state: any) => state.submissionBundle?.submissionBundleLoading
+  );
+  const selectedForms = useSelector(
+    (state: any) => state.submissionBundle?.submissionBundleForms || []
+  );
   const { error } = useSelector((state: any) => state?.form);
 
   const isReadOnly = true;
@@ -53,24 +75,21 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
     ? getBundleCustomSubmissionData
     : fetchBundleSubmissionData;
 
-  const stepLabels = selectedForms?.map((form) => {
-        let stplabal = form.formName.includes(" ") ? form.formName : textTruncate(30, 20, form.formName);
-        return stplabal;
-      }
-  );
+  const stepLabels = selectedForms?.map((form: any) => {
+    let stplabal = form.formName.includes(" ")
+      ? form.formName
+      : textTruncate(30, 20, form.formName);
+    return stplabal;
+  });
 
   /* ----------------------- handle stepper label click ----------------------- */
-  const onLabelClick = (step) => {
+  const onLabelClick = (step: number) => {
     if (step === formStep) {
       return;
+    } else {
+      setFormStep(step);
     }
-    else {
-        setFormStep(step);
-    }
-
-  
   };
-
 
   const getFormAndSubmission = useCallback(async () => {
     if (!selectedForms?.length) return;
@@ -80,57 +99,113 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
 
     const { formId } = selectedForms[formStep];
     const cachedSubmission = cacheSubmissions[formId];
-    const readOnlyOrHasSubmissionId = isReadOnly || bundleFormData?.submissionId;
+    const readOnlyOrHasSubmissionId =
+      isReadOnly || bundleFormData?.submissionId;
 
     try {
       const promises: Promise<any>[] = [fetchFormById(formId)];
 
       if (!cachedSubmission && readOnlyOrHasSubmissionId) {
-        promises.push(fetchSubmissionFn(bundleFormData?.formId, bundleFormData?.submissionId, formId));
+        promises.push(
+          fetchSubmissionFn(
+            bundleFormData?.formId,
+            bundleFormData?.submissionId,
+            formId
+          )
+        );
       }
 
       const [formRes, submissionRes] = await Promise.all(promises);
       const formData = formRes.data;
 
       if (readOnlyOrHasSubmissionId) {
-        const submissionData = cachedSubmission || submissionRes?.data?.data || {};
-        dispatch(setBundleSubmissionData({
-          data: { ..._.cloneDeep(bundleSubmission?.data), ..._.cloneDeep(submissionData) },
-        }));
+        const submissionData =
+          cachedSubmission || submissionRes?.data?.data || {};
+        dispatch(
+          setBundleSubmissionData({
+            data: {
+              ..._.cloneDeep(bundleSubmission?.data),
+              ..._.cloneDeep(submissionData),
+            },
+          })
+        );
 
         if (!cachedSubmission) {
-          setCacheSubmissions(prev => ({ ...prev, [formId]: submissionData }));
+          setCacheSubmissions((prev) => ({
+            ...prev,
+            [formId]: submissionData,
+          }));
         }
       }
 
       setForm(formData);
 
       if (!isReadOnly && !formCache[formData._id]) {
-        setFormCache(prev => ({ ...prev, [formData._id]: formData }));
+        setFormCache((prev) => ({ ...prev, [formData._id]: formData }));
       }
     } catch (err: any) {
-      dispatch(setFormFailureErrorData("form", err?.response?.data || err?.message));
+      dispatch(
+        setFormFailureErrorData("form", err?.response?.data || err?.message)
+      );
     } finally {
       setLoadingForm(false);
     }
-  }, [formStep, selectedForms, bundleFormData, cacheSubmissions, isReadOnly, dispatch, formCache, fetchSubmissionFn]);
+  }, [
+    formStep,
+    selectedForms,
+    bundleFormData,
+    cacheSubmissions,
+    isReadOnly,
+    dispatch,
+    formCache,
+    fetchSubmissionFn,
+  ]);
 
   useEffect(() => {
     getFormAndSubmission();
     document.getElementById("main")?.scrollTo({ top: 0, behavior: "smooth" });
   }, [formStep, getFormAndSubmission]);
 
+  // Deep-cloning the (potentially large) submission data inline produced a new
+  // object identity on every render, forcing formio-react's deep isEquals walk
+  // each time — clone once per data change instead.
+  const mergedSubmission = useMemo(
+    () => ({
+      data: {
+        ..._.cloneDeep(bundleSubmission?.data),
+        ..._.cloneDeep(submission?.data),
+      },
+    }),
+    [bundleSubmission?.data, submission?.data]
+  );
+
+  // formio compares options by reference — keep a stable memoized instance.
+  const formOptions = useMemo(
+    () => ({
+      buttonSettings: { showSubmit: false },
+      ...options,
+      noAlerts: false,
+      i18n: RESOURCE_BUNDLES_DATA,
+      readOnly: isReadOnly,
+    }),
+    [options, isReadOnly]
+  );
 
   return (
     <>
       <BreadCrumbs
-        items={stepLabels.map((label: string, i: number) => ({ label, id: String(i) }))}
+        items={stepLabels.map((label: string, i: number) => ({
+          label,
+          id: String(i),
+        }))}
         variant="medium"
         activeIndex={formStep}
-        onBreadcrumbClick={(item: { id?: string; label: string }) => onLabelClick(Number(item.id))}
+        onBreadcrumbClick={(item: { id?: string; label: string }) =>
+          onLabelClick(Number(item.id))
+        }
         className="bundle-view-breadcumbs"
       />
-  
+
       <div className="p-3 analyze-Submission-bundle-view ">
         {taskDetailsLoading || loadingForm || !selectedForms?.length ? (
           <div className="container">
@@ -139,26 +214,15 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
         ) : (
           <>
             <Errors errors={error} />
-  
+
             <Form
               key={isReadOnly ? "readonly" : "editable"}
               src={form}
-              submission={{
-                data: {
-                  ..._.cloneDeep(bundleSubmission?.data),
-                  ..._.cloneDeep(submission?.data),
-                },
-              }}
-              options={{
-                buttonSettings: { showSubmit: false },
-                ...options,
-                noAlerts: false,
-                i18n: RESOURCE_BUNDLES_DATA,
-                readOnly: isReadOnly,
-              }}
+              submission={mergedSubmission}
+              options={formOptions}
               formReady={(instance: any) => (formRef.current = instance)}
             />
-  
+
             <div className="d-flex justify-content-end">
               {formStep > 0 && (
                 <V8CustomButton
@@ -185,14 +249,27 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
         )}
       </div>
     </>
-  );  
+  );
 };
+
+// Stable references for mapStateToProps: fresh object/array literals per store
+// notification defeated connect's shallow compare, re-rendering the formio
+// <Form> wrapper on every dispatch.
+const BUNDLE_FORM_OPTIONS = { noAlerts: false };
+
+const selectFormErrors = createSelector(
+  [
+    (state: any) => selectError("submission", state),
+    (state: any) => selectError("form", state),
+  ],
+  (submissionError, formError) => [submissionError, formError]
+);
 
 const mapStateToProps = (state: any) => ({
   form: selectRoot("form", state),
   submission: selectRoot("submission", state),
-  options: { noAlerts: false },
-  errors: [selectError("submission", state), selectError("form", state)],
+  options: BUNDLE_FORM_OPTIONS,
+  errors: selectFormErrors(state),
 });
 
 const connector = connect(mapStateToProps);

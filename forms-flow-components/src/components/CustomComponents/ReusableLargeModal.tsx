@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AppModal } from "./AppModal";
 import { useTranslation } from "react-i18next";
 import { V8CustomButton } from "./CustomButton";
@@ -52,7 +52,12 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
   secondoryBtnariaLabel,
 }) => {
   const { t } = useTranslation();
-  const darkColor = StyleServices.getCSSVariable("--secondary-dark");
+  // Memoized CSS variable read (getComputedStyle forces a style recalc) — same
+  // pattern as Search.tsx.
+  const darkColor = useMemo(
+    () => StyleServices.getCSSVariable("--secondary-dark"),
+    []
+  );
 
   return (
     <AppModal
@@ -65,28 +70,32 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
       <AppModal.Header>
         <div className="modal-header-content">
           <div className="modal-header-top">
-            <AppModal.Title id="reusable-modal-title" className="modal-title-text">
+            <AppModal.Title
+              id="reusable-modal-title"
+              className="modal-title-text"
+            >
               {t(title)}
             </AppModal.Title>
             {headerControl && (
-              <div className="modal-header-control">
-                {headerControl}
-              </div>
+              <div className="modal-header-control">{headerControl}</div>
             )}
-            <button type="button" className="modal-close-btn" onClick={onClose} aria-label={t("Close")}>
+            <button
+              type="button"
+              className="modal-close-btn"
+              onClick={onClose}
+              aria-label={t("Close")}
+            >
               <CloseIcon color={darkColor} />
             </button>
           </div>
 
-          {subtitle && (
-            <div className="modal-subtitle">
-              {subtitle}
-            </div>
-          )}
+          {subtitle && <div className="modal-subtitle">{subtitle}</div>}
         </div>
       </AppModal.Header>
 
-      {content && <AppModal.Body className="custom-scroll">{content}</AppModal.Body>}
+      {content && (
+        <AppModal.Body className="custom-scroll">{content}</AppModal.Body>
+      )}
 
       <AppModal.Footer>
         {secondaryBtnText && (

@@ -27,18 +27,18 @@ export const fetchTenantDetails = (callback) => {
       // Ensure we have the response data
       if (res && res.data) {
         let tenant = {
-          tenantId : res.data.key,
-          tenantData: res.data
-        }
-        
+          tenantId: res.data.key,
+          tenantData: res.data,
+        };
+
         // Save tenantData to localStorage with the complete API response structure
         StorageService.save("tenantData", JSON.stringify(res.data));
-        
+
         // Also save tenantKey for easy access
         if (res.data.key) {
           StorageService.save("tenantKey", res.data.key);
         }
-        
+
         callback(tenant);
       } else {
         console.error("Invalid tenant data response:", res);

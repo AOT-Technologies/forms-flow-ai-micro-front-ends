@@ -16,72 +16,88 @@ interface CustomTextInputProps {
   autoFocus?: boolean;
 }
 
-export const CustomTextInput = React.forwardRef<HTMLInputElement, CustomTextInputProps>(({
-  value,
-  setValue,
-  placeholder,
-  dataTestId,
-  disabled = false,
-  ariaLabel,
-  onBlur,
-  maxLength,
-  minLength,
-  icon,
-  onIconClick,
-  autoFocus = false,
-}, ref) => {
-  const { t } = useTranslation();
-  const inputId = `${dataTestId}-input`; // unique id
+export const CustomTextInput = React.forwardRef<
+  HTMLInputElement,
+  CustomTextInputProps
+>(
+  (
+    {
+      value,
+      setValue,
+      placeholder,
+      dataTestId,
+      disabled = false,
+      ariaLabel,
+      onBlur,
+      maxLength,
+      minLength,
+      icon,
+      onIconClick,
+      autoFocus = false,
+    },
+    ref
+  ) => {
+    const { t } = useTranslation();
+    const inputId = `${dataTestId}-input`; // unique id
 
-  // Create internal ref if no external ref is provided
-  const internalRef = useRef<HTMLInputElement>(null);
-  const inputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
+    // Create internal ref if no external ref is provided
+    const internalRef = useRef<HTMLInputElement>(null);
+    const inputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
 
-  useEffect(() => {
-    if (autoFocus && inputRef?.current && !disabled) {
-      inputRef.current.focus();
-    }
-  }, [autoFocus, disabled, inputRef]);
+    useEffect(() => {
+      if (autoFocus && inputRef?.current && !disabled) {
+        inputRef.current.focus();
+      }
+    }, [autoFocus, disabled, inputRef]);
 
-  return (
-    <div className={`text-input-container ${icon ? "text-input-with-icon" : ""}`}>
-      {/* Hidden label for accessibility */}
-      {/* <label htmlFor={inputId} className="sr-only">
+    return (
+      <div
+        className={`text-input-container ${icon ? "text-input-with-icon" : ""}`}
+      >
+        {/* Hidden label for accessibility */}
+        {/* <label htmlFor={inputId} className="sr-only">
         {ariaLabel || t(placeholder)}
       </label> */}
 
-      <input
-        ref={inputRef}
-        id={inputId}
-        className="text-input"
-        type="text"
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={onBlur}
-        placeholder={t(placeholder)}
-        data-testid={dataTestId}
-        aria-label={ariaLabel || t(placeholder)}
-        value={value}
-        disabled={disabled}
-        maxLength={maxLength}
-        minLength={minLength}
-      />
-      {icon && (
-        <div
-          className={`text-input-icon ${onIconClick ? "text-input-icon-clickable" : ""}`}
-          onClick={onIconClick}
-          role={onIconClick ? "button" : undefined}
-          tabIndex={onIconClick ? 0 : undefined}
-          onKeyDown={onIconClick ? (e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              onIconClick();
+        <input
+          ref={inputRef}
+          id={inputId}
+          className="text-input"
+          type="text"
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={onBlur}
+          placeholder={t(placeholder)}
+          data-testid={dataTestId}
+          aria-label={ariaLabel || t(placeholder)}
+          value={value}
+          disabled={disabled}
+          maxLength={maxLength}
+          minLength={minLength}
+        />
+        {icon && (
+          <div
+            className={`text-input-icon ${
+              onIconClick ? "text-input-icon-clickable" : ""
+            }`}
+            onClick={onIconClick}
+            role={onIconClick ? "button" : undefined}
+            tabIndex={onIconClick ? 0 : undefined}
+            onKeyDown={
+              onIconClick
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onIconClick();
+                    }
+                  }
+                : undefined
             }
-          } : undefined}
-          aria-label={onIconClick ? "Icon button" : undefined}
-        >
-          {icon}
-        </div>
-      )}
-    </div>
-  );
-});
+            aria-label={onIconClick ? "Icon button" : undefined}
+          >
+            {icon}
+          </div>
+        )}
+      </div>
+    );
+  }
+);

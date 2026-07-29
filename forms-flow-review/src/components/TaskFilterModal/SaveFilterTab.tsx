@@ -17,12 +17,12 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import { UserDetail } from "../../types/taskFilter";
-import { userRoles  } from "../../helper/permissions";
+import { userRoles } from "../../helper/permissions";
 
 const filterNameLength = 50;
 
 const SaveFilterTab = ({
-  filterToEdit, 
+  filterToEdit,
   handleUpdateFilter,
   handleDeleteFilter,
   handleSaveCurrentFilter,
@@ -45,14 +45,20 @@ const SaveFilterTab = ({
   const [filterNameError, setFilterNameError] = useState("");
   const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
   const saveIconColor = getIconColor(
-    createAndUpdateFilterButtonDisabled || filterNameError || deleteSuccess?.showSuccess || !shareFilter|| (shareFilter === SPECIFIC_USER_OR_GROUP && !shareFilterForSpecificRole)
+    createAndUpdateFilterButtonDisabled ||
+      filterNameError ||
+      deleteSuccess?.showSuccess ||
+      !shareFilter ||
+      (shareFilter === SPECIFIC_USER_OR_GROUP && !shareFilterForSpecificRole)
   );
-  const { createFilters,manageAllFilters } = userRoles();
+  const { createFilters, manageAllFilters } = userRoles();
   const deleteIconColor = getIconColor(successState?.showSuccess);
-  const userDetails: UserDetail = useSelector((state:RootState)=> state.task.userDetails);
-  const createdByMe = filterToEdit?.createdBy === userDetails?.preferred_username;
+  const userDetails: UserDetail = useSelector(
+    (state: RootState) => state.task.userDetails
+  );
+  const createdByMe =
+    filterToEdit?.createdBy === userDetails?.preferred_username;
   const editRole = manageAllFilters || (createdByMe && createFilters);
-
 
   let saveAndUpdateButtonVariant = "secondary"; // Default value
   if (successState.showSuccess) {
@@ -104,12 +110,12 @@ const SaveFilterTab = ({
     if (createdByMe && editRole) {
       return (
         <>
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={t("This filter is created and managed by you")}
-              dataTestId="task-self-share-note"
-            />
+          <CustomInfo
+            className="note"
+            heading="Note"
+            content={t("This filter is created and managed by you")}
+            dataTestId="task-self-share-note"
+          />
           <CustomInfo
             className="note"
             heading="Note"
@@ -138,19 +144,19 @@ const SaveFilterTab = ({
     if (manageAllFilters && !createdByMe) {
       return (
         <>
-        {filterToEdit.id && (
-          <CustomInfo
-            className="note"
-            heading="Note"
-            content={t(
-              "This filter is created and managed by {{createdBy}}",
-              {
-                createdBy: filterToEdit?.createdBy,
-              }
-            )}
-            dataTestId="task-filter-save-note"
-          />
-        )}
+          {filterToEdit.id && (
+            <CustomInfo
+              className="note"
+              heading="Note"
+              content={t(
+                "This filter is created and managed by {{createdBy}}",
+                {
+                  createdBy: filterToEdit?.createdBy,
+                }
+              )}
+              dataTestId="task-filter-save-note"
+            />
+          )}
           <CustomInfo
             className="note"
             heading="Note"
@@ -177,20 +183,31 @@ const SaveFilterTab = ({
               icon={<UpdateIcon />}
               label={t("Update This Filter")}
               successMessage={
-                successState?.showSuccess ?  `${t("Updated!")} (${successState.countdown})` : ""
+                successState?.showSuccess
+                  ? `${t("Updated!")} (${successState.countdown})`
+                  : ""
               }
               dataTestId="save-task-filter"
               ariaLabel={t("Update This Filter")}
-              disabled={deleteSuccess?.showSuccess || createAndUpdateFilterButtonDisabled || filterNameError ||!shareFilter || (shareFilter === SPECIFIC_USER_OR_GROUP && !shareFilterForSpecificRole)  }
+              disabled={
+                deleteSuccess?.showSuccess ||
+                createAndUpdateFilterButtonDisabled ||
+                filterNameError ||
+                !shareFilter ||
+                (shareFilter === SPECIFIC_USER_OR_GROUP &&
+                  !shareFilterForSpecificRole)
+              }
               iconWithText
             />
             <CustomButton
               variant={deleteButtonVariant}
               onClick={handleDeleteFilter}
-              icon={<DeleteIcon/>}
+              icon={<DeleteIcon />}
               label={t("Delete This Filter")}
               successMessage={
-                deleteSuccess?.showSuccess ?  `${t("Deleted!")} (${deleteSuccess.countdown})` : ""
+                deleteSuccess?.showSuccess
+                  ? `${t("Deleted!")} (${deleteSuccess.countdown})`
+                  : ""
               }
               dataTestId="delete-task-filter"
               ariaLabel={t("Delete This Filter")}
@@ -200,33 +217,27 @@ const SaveFilterTab = ({
           </div>
         );
       }
-      return null; 
+      return null;
     }
 
     if (createFilters) {
-      if(filterToEdit?.name !== "All Tasks"){
+      if (filterToEdit?.name !== "All Tasks") {
         return (
           <CustomButton
             variant={saveAndUpdateButtonVariant}
             onClick={handleSaveCurrentFilter}
-            icon={
-              successState?.showSuccess ? "" : (
-                <SaveIcon />
-              )
-            }
-
+            icon={successState?.showSuccess ? "" : <SaveIcon />}
             label={
               successState?.showSuccess
                 ? `${t("Saved!")} (${successState.countdown})`
                 : t("Save This Filter")
             }
-
             dataTestId="save-task-filter"
             ariaLabel={t("Save Task Filter")}
             disabled={createAndUpdateFilterButtonDisabled || filterNameError}
             iconWithText
           />
-      );
+        );
       }
     }
     return null;

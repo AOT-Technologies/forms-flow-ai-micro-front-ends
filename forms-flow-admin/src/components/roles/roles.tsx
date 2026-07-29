@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import "./roles.scss";
 import { useParams } from "react-router-dom";
-import { Translation, useTranslation } from "react-i18next";
-import Form from "react-bootstrap/Form";
+import { useTranslation } from "react-i18next";
 import { fetchUsers } from "../../services/users";
 import {
   CreateRole,
@@ -11,29 +10,25 @@ import {
   fetchPermissions,
 } from "../../services/roles";
 import Loading from "../loading";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
-import {removingTenantId} from "../../utils/utils.js";
-import { MULTITENANCY_ENABLED } from "../../constants";
-import { AppModal,
-   CustomSearch,
-   CloseIcon,
-   CopyIcon,
-   CustomTabs,
-   FormInput,
-   FormTextArea,
-   DeleteIcon,
-   CustomInfo,
+import { removingTenantId } from "../../utils/utils.js";
+import {
+  AppModal,
+  CustomSearch,
+  CloseIcon,
+  CopyIcon,
+  CustomTabs,
+  FormInput,
+  FormTextArea,
+  DeleteIcon,
+  CustomInfo,
   ConfirmModal,
   V8CustomButton,
   ReusableTable,
-}
-from "@formsflow/components";
-import { navigateToAdminRoles } from "@formsflow/service";
+} from "@formsflow/components";
 
 const DEFAULT_SORT_MODEL: any[] = [];
 
@@ -41,7 +36,6 @@ const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId: tenantIdFromParams } = useParams();
   const tenantId = props.tenantId ?? tenantIdFromParams;
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
@@ -74,35 +68,29 @@ const Roles = React.memo((props: any) => {
   const [disabled, setDisabled] = React.useState(true);
   const [search, setSearch] = React.useState("");
   const [permissionData, setPermissionData] = React.useState([]);
-  const  [key,setKey] = useState("Details");
+  const [key, setKey] = useState("Details");
 
-  const filterList = (filterTerm, List) => {
+  const filterList = (filterTerm: string, List: any) => {
     let roleList = removingTenantId(List, tenantId);
-  
+
     // Escape backslashes and square brackets in filterTerm for safe regex use
-    const escapedFilterTerm = filterTerm.replace(/([\\[])/g, '\\$1');
-  
-    let newRoleList = roleList.filter((role) => {
-      return role.name.toLowerCase().search(escapedFilterTerm.toLowerCase()) !== -1;
+    const escapedFilterTerm = filterTerm.replace(/([\\[])/g, "\\$1");
+
+    let newRoleList = roleList.filter((role: { name: string; }) => {
+      return (
+        role.name.toLowerCase().search(escapedFilterTerm.toLowerCase()) !== -1
+      );
     });
     return newRoleList;
   };
 
   React.useEffect(() => {
-    setDisabled(
-      !(
-        payload.name?.trim() &&
-        payload.permissions.length !== 0
-      )
-    );
+    setDisabled(!(payload.name?.trim() && payload.permissions.length !== 0));
   }, [payload]);
 
   React.useEffect(() => {
     setDisabled(
-      !(
-        editCandidate.name?.trim() &&
-        editCandidate.permissions.length !== 0
-      )
+      !(editCandidate.name?.trim() && editCandidate.permissions.length !== 0)
     );
   }, [editCandidate]);
 
@@ -113,7 +101,9 @@ const Roles = React.memo((props: any) => {
    */
   const resolveFullCandidateGroup = React.useCallback(
     (displayRow: { id?: string; name?: string }) => {
-      const raw = (props.roles ?? []).find((r: { id?: string }) => r.id === displayRow.id);
+      const raw = (props.roles ?? []).find(
+        (r: { id?: string }) => r.id === displayRow.id
+      );
       if (!raw) return String(displayRow.name ?? "").trim();
       const nameVal =
         raw.name != null && String(raw.name).trim() !== ""
@@ -182,11 +172,10 @@ const Roles = React.memo((props: any) => {
   }, []);
 
   const handlFilter = (e) => {
-    if (e && e.key === 'Enter') {
+    if (e && e.key === "Enter") {
       setSearch(e.target.value);
       setRoles(filterList(e.target.value, props.roles));
-
-    }    
+    }
   };
 
   const deleteRole = (rowData) => {
@@ -235,10 +224,7 @@ const Roles = React.memo((props: any) => {
   };
 
   const validateRolePayload = (payload) => {
-    return !(
-      payload.name === "" ||
-      payload.permissions.length === 0
-    );
+    return !(payload.name === "" || payload.permissions.length === 0);
   };
   //check regex exept _ -
   const hasSpecialCharacters = (text) => {
@@ -321,7 +307,6 @@ const Roles = React.memo((props: any) => {
   };
   // handlers for user list popover
   const handleClick = (event, rowData) => {
-    setShow(!show);
     setLoading(true);
     fetchUsers(
       rowData.name,
@@ -379,7 +364,7 @@ const Roles = React.memo((props: any) => {
   const handleShowRoleModal = () => {
     setKey("Details");
     setShowRoleModal(true);
-  }
+  };
   const handleCloseEditRoleModal = () => {
     setShowEditRoleModal(false);
     setEditCandidate(initialRoleType);
@@ -388,7 +373,7 @@ const Roles = React.memo((props: any) => {
   const handleShowEditRoleModal = () => {
     setKey("Details");
     setShowEditRoleModal(true);
-  }
+  };
   const handleCloseDeleteModal = () => {
     setShowConfirmDelete(false);
     setDeleteCandidate(initialRoleType);
@@ -397,81 +382,98 @@ const Roles = React.memo((props: any) => {
 
   const handleClearSearch = () => {
     setSearch("");
-    let updatedRoleName = removingTenantId(props.roles,tenantId);
+    let updatedRoleName = removingTenantId(props.roles, tenantId);
     setRoles(updatedRoleName);
   };
 
   const closeConfirmation = () => {
-     setHandleConfirmation(false);
-  }
-  
+    setHandleConfirmation(false);
+  };
+
   const tabs = [
     {
       eventKey: "Details",
       title: "Details",
       content: (
         <div className="role-details">
-        <FormInput
-        required
-        value={showEditRoleModal ? editCandidate.name : payload.name}
-        label={t("Name")}
-        onChange={showEditRoleModal ? handleEditName : handleChangeName}
-        dataTestId="role-name"
-        name="role-name"
-        ariaLabel={t("Role Name")}
-        maxLength={200} 
-        />
-        <FormTextArea
-        dataTestId="role-description"
-        label={t("Description")}
-        name="description"
-        value={showEditRoleModal ? editCandidate.description : payload.description}
-        onChange={showEditRoleModal ? handleEditDescription : handleChangeDescription}
-        aria-label={t("Description of role")}
-        data-testid="role-description"
-        maxRows={3}
-        minRows={3}
-      />
-      {showEditRoleModal && (
-        <div className="buttons-row">
-          <V8CustomButton
-            label={t("Delete This Role")}
-            onClick={() => {
-              handleCloseEditRoleModal();
-              setHandleConfirmation(true);
-            }}
-            dataTestId="role-delete-button"
-            icon={<DeleteIcon />}
-            ariaLabel="Role delete button"
-            iconWithText
+          <FormInput
+            required
+            value={showEditRoleModal ? editCandidate.name : payload.name}
+            label={t("Name")}
+            onChange={showEditRoleModal ? handleEditName : handleChangeName}
+            dataTestId="role-name"
+            name="role-name"
+            ariaLabel={t("Role Name")}
+            maxLength={200}
           />
+          <FormTextArea
+            dataTestId="role-description"
+            label={t("Description")}
+            name="description"
+            value={
+              showEditRoleModal
+                ? editCandidate.description
+                : payload.description
+            }
+            onChange={
+              showEditRoleModal
+                ? handleEditDescription
+                : handleChangeDescription
+            }
+            aria-label={t("Description of role")}
+            data-testid="role-description"
+            maxRows={3}
+            minRows={3}
+          />
+          {showEditRoleModal && (
+            <div className="buttons-row">
+              <V8CustomButton
+                label={t("Delete This Role")}
+                onClick={() => {
+                  handleCloseEditRoleModal();
+                  setHandleConfirmation(true);
+                }}
+                dataTestId="role-delete-button"
+                icon={<DeleteIcon />}
+                ariaLabel="Role delete button"
+                iconWithText
+              />
+            </div>
+          )}
         </div>
-      )}
-      </div>
-      )
+      ),
     },
     {
       eventKey: "Permissions",
       title: "Permissions",
       content: (
         <PermissionTree
-        permissions={permissionData}
-        payload={showEditRoleModal ? editCandidate : payload}
-        handlePermissionCheck={showEditRoleModal ? handleEditPermissionCheck : handlePermissionCheck}
-        setPayload={showEditRoleModal ? setEditCandidate : setPayload}
-      />
+          permissions={permissionData}
+          payload={showEditRoleModal ? editCandidate : payload}
+          handlePermissionCheck={
+            showEditRoleModal
+              ? handleEditPermissionCheck
+              : handlePermissionCheck
+          }
+          setPayload={showEditRoleModal ? setEditCandidate : setPayload}
+        />
+      ),
+    },
+  ];
 
-      )
-    }]
-
-    
   const showCreateModal = () => (
     <div data-testid="create-role-modal">
       <AppModal show={showRoleModal} onHide={handleCloseRoleModal} size="lg">
         <AppModal.Header>
-          <AppModal.Title><p>{t("Create Role")}</p></AppModal.Title>
-          <div className="icon-close" onClick={handleCloseRoleModal} data-testid="role-modal-close">
-            <CloseIcon dataTestId="action-modal-close"/>
+          <AppModal.Title>
+            <p>{t("Create Role")}</p>
+          </AppModal.Title>
+          <div
+            className="icon-close"
+            onClick={handleCloseRoleModal}
+            data-testid="role-modal-close"
+          >
+            <CloseIcon dataTestId="action-modal-close" />
           </div>
         </AppModal.Header>
         <AppModal.Body className="with-tabs">
@@ -487,20 +489,20 @@ const Roles = React.memo((props: any) => {
         </AppModal.Body>
         <AppModal.Footer>
           <div className="buttons-row">
-          <V8CustomButton
-            label={t("Save Changes")}
-            disabled={disabled}
-            onClick={handleCreateRole}
-            dataTestId="create-new-role-button"
-            ariaLabel="Create new role button"
+            <V8CustomButton
+              label={t("Save Changes")}
+              disabled={disabled}
+              onClick={handleCreateRole}
+              dataTestId="create-new-role-button"
+              ariaLabel="Create new role button"
             />
-          <V8CustomButton
-            label={t("Discard Changes")}
-            onClick={handleCloseRoleModal}
-            dataTestId="create-new-role-cancel-button"
-            ariaLabel="Create new role cancel button"
-            secondary
-          />
+            <V8CustomButton
+              label={t("Discard Changes")}
+              onClick={handleCloseRoleModal}
+              dataTestId="create-new-role-cancel-button"
+              ariaLabel="Create new role cancel button"
+              secondary
+            />
           </div>
         </AppModal.Footer>
       </AppModal>
@@ -515,9 +517,15 @@ const Roles = React.memo((props: any) => {
         restoreFocus={false}
       >
         <AppModal.Header>
-          <AppModal.Title><p>{editCandidate.name}</p></AppModal.Title>
-          <div className="icon-close" onClick={handleCloseEditRoleModal} data-testid="role-modal-close">
-            <CloseIcon/>
+          <AppModal.Title>
+            <p>{editCandidate.name}</p>
+          </AppModal.Title>
+          <div
+            className="icon-close"
+            onClick={handleCloseEditRoleModal}
+            data-testid="role-modal-close"
+          >
+            <CloseIcon />
           </div>
         </AppModal.Header>
         <AppModal.Body className="with-tabs">
@@ -533,64 +541,33 @@ const Roles = React.memo((props: any) => {
         </AppModal.Body>
         <AppModal.Footer>
           <div className="buttons-row">
-          <V8CustomButton
-            label={t("Save Changes")}
-            disabled={disabled}
-            onClick={handleUpdateRole}
-            dataTestId="edit-role-button"
-            ariaLabel="Edit role button"
+            <V8CustomButton
+              label={t("Save Changes")}
+              disabled={disabled}
+              onClick={handleUpdateRole}
+              dataTestId="edit-role-button"
+              ariaLabel="Edit role button"
             />
-          <V8CustomButton
-            label={t("Discard Changes")}
-            onClick={handleCloseEditRoleModal}
-            dataTestId="edit-role-cancel-button"
-            ariaLabel="Edit role cancel button"
-            secondary
-          />
+            <V8CustomButton
+              label={t("Discard Changes")}
+              onClick={handleCloseEditRoleModal}
+              dataTestId="edit-role-cancel-button"
+              ariaLabel="Edit role cancel button"
+              secondary
+            />
           </div>
         </AppModal.Footer>
       </AppModal>
-      </div>
-
+    </div>
   );
 
-  const customTotal = (from, to, size) => (
-    <span className="ms-2" role="main">
-      <Translation>{(t) => t("Showing")}</Translation> {from}{" "}
-      <Translation>{(t) => t("to")}</Translation> {to}{" "}
-      <Translation>{(t) => t("of")}</Translation> {size}{" "}
-      <Translation>{(t) => t("results")}</Translation>
-    </span>
-  );
   const handlePageChange = (page: number) => {
     setActivePage(page);
   };
 
-
-  const customDropUp = ({ options, currSizePerPage, onSizePerPageChange }) => {
-    return (
-      <DropdownButton
-        drop="up"
-        variant="secondary"
-        title={currSizePerPage}
-        style={{ display: "inline" }}
-      >
-        {options.map((option) => (
-          <Dropdown.Item
-            key={option.text}
-            type="button"
-            onClick={() => onSizePerPageChange(option.page)}
-          >
-            {option.text}
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
-    );
-  };
-
   const handleLimitChange = (newLimit: number) => {
     setSizePerPage(newLimit);
-    setActivePage(1); 
+    setActivePage(1);
   };
 
   const columns = [
@@ -617,7 +594,8 @@ const Roles = React.memo((props: any) => {
         const displayValue = value.replace(/\//g, "");
         return (
           <span className="roles-candidate-group-inner">
-            <span className="roles-candidate-group-text">{displayValue}</span><button
+            <span className="roles-candidate-group-text">{displayValue}</span>
+            <button
               type="button"
               className="btn btn-link roles-candidate-group-copy"
               onClick={(e) => {
@@ -714,7 +692,8 @@ const Roles = React.memo((props: any) => {
               className="fa fa-pencil"
               style={{ color: "#7E7E7F", cursor: "pointer" }}
               onClick={() => {
-                const { candidateGroupFull: _omitCg, ...roleForModal } = rowData;
+                const { candidateGroupFull: _omitCg, ...roleForModal } =
+                  rowData;
                 setSelectedRoleIdentifier(rowData.id);
                 setEditCandidate(roleForModal);
                 handleShowEditRoleModal();
@@ -735,20 +714,20 @@ const Roles = React.memo((props: any) => {
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between">
           <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
-             <CustomSearch
+            <CustomSearch
               handleClearSearch={handleClearSearch}
               search={search}
               setSearch={setSearch}
               handleSearch={handlFilter}
-              placeholder="Search by role name"
-              title="Search"
+              placeholder={t("Search by role name")}
+              title={t("Search")}
               dataTestId="search-role-input"
             />
           </div>
           <V8CustomButton
             onClick={handleShowRoleModal}
             data-testid="roles-create-new-role-button"
-            label="New Role"
+            label={t("New Role")}
             ariaLabel="New Role"
             action
           />
@@ -756,33 +735,35 @@ const Roles = React.memo((props: any) => {
 
         {!props?.loading ? (
           <div>
-          <div className="px-4" data-testid="admin-roles-table">
-            <ReusableTable
-              columns={columns}
-              rows={roles}
-              loading={props?.loading}
-              getRowId={(row) => row.id}
-              sortModel={DEFAULT_SORT_MODEL}
-              paginationMode="client"
-              sortingMode="client"
-              disableColumnMenu
-              disableRowSelectionOnClick
-              emptyStateMessage={props.error || "No data Found"}
-              paginationModel={{ page: activePage - 1, pageSize: sizePerPage }}
-              onPaginationModelChange={({ page, pageSize }) => {
-                if (pageSize !== sizePerPage) {
-                  handleLimitChange(pageSize);
-                } else {
-                  handlePageChange(page + 1);
-                }
-              }}
-              pageSizeOptions={[5, 25, 50, 100]}
-              disableVirtualization
-              
-              dataGridProps={{ getRowHeight: () => "auto" }}
-            />
+            <div className="px-4" data-testid="admin-roles-table">
+              <ReusableTable
+                columns={columns}
+                rows={roles}
+                loading={props?.loading}
+                getRowId={(row) => row.id}
+                sortModel={DEFAULT_SORT_MODEL}
+                paginationMode="client"
+                sortingMode="client"
+                disableColumnMenu
+                disableRowSelectionOnClick
+                emptyStateMessage={props.error || t("No data Found")}
+                paginationModel={{
+                  page: activePage - 1,
+                  pageSize: sizePerPage,
+                }}
+                onPaginationModelChange={({ page, pageSize }) => {
+                  if (pageSize !== sizePerPage) {
+                    handleLimitChange(pageSize);
+                  } else {
+                    handlePageChange(page + 1);
+                  }
+                }}
+                pageSizeOptions={[5, 25, 50, 100]}
+                disableVirtualization
+                dataGridProps={{ getRowHeight: () => "auto" }}
+              />
+            </div>
           </div>
-        </div>
         ) : (
           <Loading />
         )}
@@ -807,11 +788,10 @@ const Roles = React.memo((props: any) => {
           onClose={closeConfirmation}
           primaryBtnText={t("No, Keep This Role")}
           secondaryBtnText={t("Yes, Delete This Role")}
-          secondaryBtnAction={() => 
-            {
-             deleteRole(deleteCandidate);
-             closeConfirmation();
-            }}
+          secondaryBtnAction={() => {
+            deleteRole(deleteCandidate);
+            closeConfirmation();
+          }}
           secondoryBtndataTestid="confirm-delete-role-button"
         />
       )}

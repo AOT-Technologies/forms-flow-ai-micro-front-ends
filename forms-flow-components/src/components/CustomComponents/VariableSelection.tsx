@@ -1,13 +1,19 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
-import {
-  FormComponent,
-  V8CustomButton,
-  CustomTextInput,
-  Switch
-} from "../../formsflow-components";
+// Direct sibling imports instead of the package's own root barrel, which
+// created a require cycle (barrel -> component -> barrel).
+import { FormComponent } from "./FormComponent";
+import { V8CustomButton } from "./CustomButton";
+import { CustomTextInput } from "./CustomTextInput";
+import { Switch } from "./Switch";
 import { BackIcon, CloseIcon } from "../SvgIcons";
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid } from "@mui/x-data-grid";
 import { StyleServices } from "@formsflow/service";
 
 export interface FormVariable {
@@ -47,13 +53,22 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
     onChange,
     disabled = false,
   }) => {
-    const [alternativeLabels, setAlternativeLabels] = useState<Record<string, FormVariable>>({});
+    const [alternativeLabels, setAlternativeLabels] = useState<
+      Record<string, FormVariable>
+    >({});
     const detailsRef = useRef(null);
     const isInternalUpdateRef = useRef(false);
-    const BackIconColor = StyleServices.getCSSVariable('--gray-medium-darker');
+    // Memoized CSS variable read (getComputedStyle forces a style recalc) — same
+    // pattern as Search.tsx.
+    const BackIconColor = useMemo(
+      () => StyleServices.getCSSVariable("--gray-medium-darker"),
+      []
+    );
     // Store temporary input values for variables that aren't selected yet
     const tempInputValuesRef = useRef<Record<string, string>>({});
-    const [tempInputValues, setTempInputValues] = useState<Record<string, string>>({});
+    const [tempInputValues, setTempInputValues] = useState<
+      Record<string, string>
+    >({});
     const [showElement, setShowElement] = useState(false);
     const { t } = useTranslation();
     const [selectedComponent, setSelectedComponent] = useState({
@@ -75,7 +90,6 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
       "allAvailableRoles",
     ]);
 
-
     // Sync alternativeLabels to parent when it changes internally
     useEffect(() => {
       if (isInternalUpdateRef.current && onChange) {
@@ -88,13 +102,10 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
     useEffect(() => {
       if (savedFormVariables && Array.isArray(savedFormVariables)) {
         // Always preserve altVariable exactly as it was saved
-        const byKey = savedFormVariables.reduce(
-          (acc, v) => {
-            acc[v.key] = { ...v };
-            return acc;
-          },
-          {} as Record<string, FormVariable>
-        );
+        const byKey = savedFormVariables.reduce((acc, v) => {
+          acc[v.key] = { ...v };
+          return acc;
+        }, {} as Record<string, FormVariable>);
         isInternalUpdateRef.current = false; // Mark as external update
         setAlternativeLabels(byKey);
       } else if (savedFormVariables && typeof savedFormVariables === "object") {
@@ -115,67 +126,77 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
       }
     }, [savedFormVariables]);
 
+    const handleSystemVariableToggle = useCallback(
+      (
+        variableKey: string,
+        systemVariable: SystemVariable,
+        isChecked: boolean
+      ) => {
+        isInternalUpdateRef.current = true;
+        if (isChecked) {
+          // Add variable to alternativeLabels when switch is turned on
+          // Use temp input value if user typed before turning on the switch
+          const tempValue = tempInputValuesRef.current[variableKey];
+          setAlternativeLabels((prev) => ({
+            ...prev,
+            [variableKey]: {
+              key: variableKey,
+              altVariable:
+                tempValue ||
+                prev[variableKey]?.altVariable ||
+                systemVariable?.altVariable ||
+                "",
+              labelOfComponent: systemVariable?.labelOfComponent || "",
+              type: systemVariable?.type || "hidden",
+              isFormVariable: false,
+            },
+          }));
+          // Clear temp value after using it
+          delete tempInputValuesRef.current[variableKey];
+          setTempInputValues((prev) => {
+            const updated = { ...prev };
+            delete updated[variableKey];
+            return updated;
+          });
+        } else {
+          // Remove variable from alternativeLabels when switch is turned off
+          // Only save to temp storage if user actually typed a value (different from default and labelOfComponent)
+          setAlternativeLabels((prev) => {
+            const existing = prev[variableKey];
+            const defaultAltVariable = systemVariable?.altVariable || "";
+            const labelOfComponent = systemVariable?.labelOfComponent || "";
 
-    const handleSystemVariableToggle = useCallback((variableKey: string, systemVariable: SystemVariable, isChecked: boolean) => {
-      isInternalUpdateRef.current = true;
-      if (isChecked) {
-        // Add variable to alternativeLabels when switch is turned on
-        // Use temp input value if user typed before turning on the switch
-        const tempValue = tempInputValuesRef.current[variableKey];
-        setAlternativeLabels((prev) => ({
-          ...prev,
-          [variableKey]: {
-            key: variableKey,
-            altVariable: tempValue || prev[variableKey]?.altVariable || systemVariable?.altVariable || "",
-            labelOfComponent: systemVariable?.labelOfComponent || "",
-            type: systemVariable?.type || "hidden",
-            isFormVariable: false,
-          },
-        }));
-        // Clear temp value after using it
-        delete tempInputValuesRef.current[variableKey];
-        setTempInputValues((prev) => {
-          const updated = { ...prev };
-          delete updated[variableKey];
-          return updated;
-        });
+            // Only save if there's a value AND it's different from both the default and labelOfComponent
+            // (meaning user actually typed something custom)
+            const hasCustomValue =
+              existing?.altVariable &&
+              existing.altVariable !== defaultAltVariable &&
+              existing.altVariable !== labelOfComponent &&
+              existing.altVariable.trim() !== "";
 
-      } else {
-        // Remove variable from alternativeLabels when switch is turned off
-        // Only save to temp storage if user actually typed a value (different from default and labelOfComponent)
-        setAlternativeLabels((prev) => {
-          const existing = prev[variableKey];
-          const defaultAltVariable = systemVariable?.altVariable || "";
-          const labelOfComponent = systemVariable?.labelOfComponent || "";
-
-          // Only save if there's a value AND it's different from both the default and labelOfComponent
-          // (meaning user actually typed something custom)
-          const hasCustomValue = existing?.altVariable &&
-            existing.altVariable !== defaultAltVariable &&
-            existing.altVariable !== labelOfComponent &&
-            existing.altVariable.trim() !== "";
-
-          if (hasCustomValue) {
-            tempInputValuesRef.current[variableKey] = existing.altVariable;
-            setTempInputValues((tempPrev) => ({
-              ...tempPrev,
-              [variableKey]: existing.altVariable,
-            }));
-          } else {
-            // Clear temp value if it's just the default, labelOfComponent, or empty
-            delete tempInputValuesRef.current[variableKey];
-            setTempInputValues((tempPrev) => {
-              const updated = { ...tempPrev };
-              delete updated[variableKey];
-              return updated;
-            });
-          }
-          const updated = { ...prev };
-          delete updated[variableKey];
-          return updated;
-        });
-      }
-    }, []);
+            if (hasCustomValue) {
+              tempInputValuesRef.current[variableKey] = existing.altVariable;
+              setTempInputValues((tempPrev) => ({
+                ...tempPrev,
+                [variableKey]: existing.altVariable,
+              }));
+            } else {
+              // Clear temp value if it's just the default, labelOfComponent, or empty
+              delete tempInputValuesRef.current[variableKey];
+              setTempInputValues((tempPrev) => {
+                const updated = { ...tempPrev };
+                delete updated[variableKey];
+                return updated;
+              });
+            }
+            const updated = { ...prev };
+            delete updated[variableKey];
+            return updated;
+          });
+        }
+      },
+      []
+    );
     // Handle back button click
     const handleBack = useCallback(() => {
       const highlightedElement = document.querySelector(".formio-hilighted");
@@ -201,10 +222,12 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
         existing.classList.remove("formio-hilighted");
       }
 
-      const component = document.querySelector(`.formio-component-${variable.key}`);
+      const component = document.querySelector(
+        `.formio-component-${variable.key}`
+      );
       if (component) {
         component.classList.add("formio-hilighted");
-        component.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        component.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }, []);
 
@@ -246,15 +269,32 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
       id: idx + 1,
       type: variable.labelOfComponent,
       variable: variable.key,
-      altVariable: alternativeLabels[variable.key]?.altVariable || variable.altVariable || "",
+      altVariable:
+        alternativeLabels[variable.key]?.altVariable ||
+        variable.altVariable ||
+        "",
     }));
     const columns = [
-      { field: 'type', headerName: 'Type', flex: 2.8, sortable: false, width: 140 },
       {
-        field: 'variable', headerName: 'Variable', flex: 1.5, sortable: false, width: 250,
+        field: "type",
+        headerName: "Type",
+        flex: 2.8,
+        sortable: false,
+        width: 140,
+      },
+      {
+        field: "variable",
+        headerName: "Variable",
+        flex: 1.5,
+        sortable: false,
+        width: 250,
         renderCell: (params) => (
-          <span style={{ color: StyleServices.getCSSVariable('--ff-gray-darkest') }}>{params.value}</span>
-        )
+          <span
+            style={{ color: StyleServices.getCSSVariable("--ff-gray-darkest") }}
+          >
+            {params.value}
+          </span>
+        ),
       },
       {
         field: "selected",
@@ -262,18 +302,22 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
         width: 130,
         flex: 1.3,
         sortable: false,
-        headerClassName: 'last-column',
+        headerClassName: "last-column",
         renderCell: (params) => {
           const variableKey = params.row.variable;
           const isChecked = !!alternativeLabels[variableKey];
-          const systemVariable = SystemVariables.find(v => v.key === variableKey);
+          const systemVariable = SystemVariables.find(
+            (v) => v.key === variableKey
+          );
 
           return (
             <Switch
               type="primary"
               withIcon={true}
               checked={isChecked}
-              onChange={(checked) => handleSystemVariableToggle(variableKey, systemVariable, checked)}
+              onChange={(checked) =>
+                handleSystemVariableToggle(variableKey, systemVariable, checked)
+              }
               aria-label={t("System variable selection")}
               data-testid={`system-variable-switch-${variableKey}`}
               disabled={disabled}
@@ -308,18 +352,18 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
     // Form variables custom form
     const renderFormContent = () => (
       <div className="form-content-block">
-        {
-          isLoading
-            ? <div className="form-spinner"></div>
-            : <FormComponent
-              form={form}
-              setShowElement={setShowElement}
-              detailsRef={detailsRef}
-              alternativeLabels={alternativeLabels}
-              setSelectedComponent={setSelectedComponent}
-              ignoreKeywords={ignoreKeywords}
-            />
-        }
+        {isLoading ? (
+          <div className="form-spinner"></div>
+        ) : (
+          <FormComponent
+            form={form}
+            setShowElement={setShowElement}
+            detailsRef={detailsRef}
+            alternativeLabels={alternativeLabels}
+            setSelectedComponent={setSelectedComponent}
+            ignoreKeywords={ignoreKeywords}
+          />
+        )}
       </div>
     );
 
@@ -348,14 +392,12 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
                     <span className="value">{selectedComponent.type}</span>
                   </div>
 
-                  <div className="d-flex flex-column item-container" >
+                  <div className="d-flex flex-column item-container">
                     <span className="label">{fieldLabel}</span>
                     <span className="value">{selectedComponent.key}</span>
                   </div>
                   <div className="alternative-label-container">
-                    <span className="label">
-                      {t("Add alternative label")}
-                    </span>
+                    <span className="label">{t("Add alternative label")}</span>
                     <CustomTextInput
                       ariaLabel="Add alternative label input"
                       dataTestId="Add-alternative-input"
@@ -381,7 +423,7 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
                     disabled={
                       disabled ||
                       selectedComponent.altVariable ===
-                      alternativeLabels[selectedComponent.key]?.altVariable
+                        alternativeLabels[selectedComponent.key]?.altVariable
                     }
                   />
                 </div>
@@ -397,16 +439,16 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
               </div>
               {filteredVariablePills.length > 0 ? (
                 <div className="pill-container">
-                  {filteredVariablePills.map(
-                    (variable: any) => {
-                      const { key, altVariable, labelOfComponent } = variable;
-                      return (
-                        <div
-                          key={key}
-                          className="variable-card"
-                          onClick={() => handlePillClick(variable)}
-                        >
-                          {disabled ? null : <div
+                  {filteredVariablePills.map((variable: any) => {
+                    const { key, altVariable, labelOfComponent } = variable;
+                    return (
+                      <div
+                        key={key}
+                        className="variable-card"
+                        onClick={() => handlePillClick(variable)}
+                      >
+                        {disabled ? null : (
+                          <div
                             className="variable-card-close"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -417,22 +459,23 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
                               color={BackIconColor}
                               dataTestId={`pill-remove-icon-${key}`}
                             />
-                          </div>}
-                          <div className="d-flex flex-column">
-                            <span className="variable-title">
-                              {altVariable || labelOfComponent}
-                            </span>
-                            <span className="variable-subtitle">
-                              {key}
-                            </span>
                           </div>
+                        )}
+                        <div className="d-flex flex-column">
+                          <span className="variable-title">
+                            {altVariable || labelOfComponent}
+                          </span>
+                          <span className="variable-subtitle">{key}</span>
                         </div>
-                      );
-                    })}
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="d-flex flex-column h-100 pt-4 align-items-center">
-                  <span className="label">{t("Choose a form field to create a variable")}</span>
+                  <span className="label">
+                    {t("Choose a form field to create a variable")}
+                  </span>
                 </div>
               )}
             </div>
@@ -450,24 +493,21 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
     return (
       <div className="variable-page-container">
         <div className="variable-page-body d-flex">
-          {tabKey === "system" &&
+          {tabKey === "system" && (
             <div className="system-variables-container">
               {renderSystemContent()}
             </div>
-          }
-          {tabKey === "form" &&
+          )}
+          {tabKey === "form" && (
             <div className="variable-page-body-form">
               <div className="variable-left-container">
                 {renderFormContent()}
               </div>
-              <div
-                className="variable-right-container"
-                ref={detailsRef}
-              >
+              <div className="variable-right-container" ref={detailsRef}>
                 {renderRightContainer()}
               </div>
             </div>
-          }
+          )}
         </div>
       </div>
     );

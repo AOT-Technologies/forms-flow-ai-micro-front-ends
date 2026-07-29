@@ -1,17 +1,15 @@
-.flex-container{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
- 
-.table-container-admin{
-    background: #FFFFFF;
-    overflow-y: auto !important;
-    max-height: calc(100vh - 14rem);
-    .MuiDataGrid-columnHeader--last,.MuiDataGrid-columnHeaderTitleContainer {
-            justify-content: center !important;
-        }
+.table-container-admin {
+  background: #ffffff;
+  overflow-y: auto !important;
+  max-height: calc(100vh - 14rem);
+  .MuiDataGrid-columnHeader--last,
+  .MuiDataGrid-columnHeaderTitleContainer {
+    justify-content: center !important;
+  }
 }
- 
-

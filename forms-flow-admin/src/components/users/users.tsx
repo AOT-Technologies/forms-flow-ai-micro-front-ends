@@ -1,26 +1,30 @@
 import React from "react";
-import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useTranslation } from "react-i18next";
 import Loading from "../loading";
-import { AddUserRole, RemoveUserRole } from "../../services/users";
+import { AddUserRole, RemoveUserRole, InviteUser } from "../../services/users";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
 import "./users.scss";
-import { KEYCLOAK_ENABLE_CLIENT_AUTH,MULTITENANCY_ENABLED } from "../../constants";
-import { formatRoleDisplayName } from "../../utils/utils.js";
-import Select from "react-select";
-import { InviteUser } from "../../services/users";
 import {
-  completeChecklistByRouteKey
-} from "../../services/checklist";
-import { AppModal, ConfirmModal, CustomSearch, CloseIcon, V8CustomButton, CustomTextInput, ReusableTable } from "@formsflow/components";
+  KEYCLOAK_ENABLE_CLIENT_AUTH,
+  MULTITENANCY_ENABLED,
+} from "../../constants";
+import { formatRoleDisplayName } from "../../utils/utils.js";
+import { completeChecklistByRouteKey } from "../../services/checklist";
+import {
+  AppModal,
+  ConfirmModal,
+  CustomSearch,
+  CloseIcon,
+  V8CustomButton,
+  CustomTextInput,
+  ReusableTable,
+} from "@formsflow/components";
 import { useParams } from "react-router-dom";
-import { navigateToAdminUsers, getRedirectUrl, StorageService } from "@formsflow/service";
+import { getRedirectUrl, StorageService } from "@formsflow/service";
 
 const DEFAULT_SORT_MODEL: any[] = [];
 
@@ -42,11 +46,12 @@ const Users = React.memo((props: any) => {
     MULTITENANCY_ENABLED && (tenantId || StorageService.get("tenantKey"))
       ? String(tenantId || StorageService.get("tenantKey"))
       : "";
-  const [selectedRolesModal, setSelectedRolesModal] = React.useState([]);
   const [formData, setFormData] = React.useState({ user: "" });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
-  const [validationError, setValidationError] = React.useState('');
-  const [inviteSuccessEmail, setInviteSuccessEmail] = React.useState<string | null>(null);
+  const [validationError, setValidationError] = React.useState("");
+  const [inviteSuccessEmail, setInviteSuccessEmail] = React.useState<
+    string | null
+  >(null);
   const [inviteLoading, setInviteLoading] = React.useState(false);
   const [roleRemoveCandidate, setRoleRemoveCandidate] = React.useState<{
     rowData: any;
@@ -63,8 +68,8 @@ const Users = React.memo((props: any) => {
     setShowSuccessModal(false);
     clearForm();
     props.setInvalidated(true);
-  }; 
-  
+  };
+
   React.useEffect(() => {
     props?.setFilter(selectedFilter);
     props?.setSearch(searchKey);
@@ -96,11 +101,8 @@ const Users = React.memo((props: any) => {
     setSelectedRow(row);
     setSelectedRoles([]);
   };
-  const handleRoleSelectChange = (selectedOptions) => {
-    setSelectedRolesModal(selectedOptions);
-  };
   const handleSearch = (e) => {
-    if (e && e.key === 'Enter') {
+    if (e && e.key === "Enter") {
       setSearchKey(e.target.value);
     }
   };
@@ -153,7 +155,7 @@ const Users = React.memo((props: any) => {
   const handleLimitChange = (newLimit: number) => {
     props.limit?.setSizePerPage(newLimit);
     props.page.setPageNo(1);
-    setActivePage(1); 
+    setActivePage(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -161,17 +163,6 @@ const Users = React.memo((props: any) => {
     props.page.setPageNo(page);
     props.setInvalidated(true);
   };
-
-  const getpageList = () => {
-    const list = [
-      {
-        text: "5",
-        value: 5,
-      },
-    ];
-    return list;
-  };
-
 
   const handleSelectFilter = (e) => {
     if (e.target.value === "ALL") {
@@ -321,7 +312,8 @@ const Users = React.memo((props: any) => {
             })
             .catch((err) => {
               toast.error(t("Failed to update permission!"));
-              console.log(err);
+              // The toast is generic; keep the raw error visible for support.
+              console.error(err);
             });
         };
 
@@ -378,20 +370,19 @@ const Users = React.memo((props: any) => {
 
   const clearForm = () => {
     setFormData({ user: "" });
-    setSelectedRolesModal([]);
   };
 
-  const openInviteModal = () => {      
+  const openInviteModal = () => {
     setValidationError("");
     setInviteSuccessEmail(null);
     setShowInviteModal(true);
-  }
+  };
   const closeInviteModal = () => {
     setInviteLoading(false);
     clearForm();
     setInviteSuccessEmail(null);
     setShowInviteModal(false);
-  }
+  };
   const isValidEmail = (value: string): boolean => {
     const trimmed = value?.trim() || "";
     // RFC 5321 max length - prevents ReDoS from long input
@@ -403,7 +394,8 @@ const Users = React.memo((props: any) => {
 
   const sendInvites = () => {
     setValidationError("");
-    const emailFromInput = emailInputRef.current?.value?.trim() ?? formData.user?.trim() ?? "";
+    const emailFromInput =
+      emailInputRef.current?.value?.trim() ?? formData.user?.trim() ?? "";
     if (!isValidEmail(emailFromInput)) {
       setValidationError(t("Invalid email"));
       return;
@@ -427,40 +419,40 @@ const Users = React.memo((props: any) => {
       }
     );
   };
-  
+
   return (
     <>
       <AppModal
         show={showSuccessModal}
         onHide={closeSuccessModal}
-        className="overflow-hidden">
+        className="overflow-hidden"
+      >
         <AppModal.Header>
           <AppModal.Title></AppModal.Title>
-          <div className="icon-close" onClick={closeSuccessModal} data-testid="user-add-success-close">
+          <div
+            className="icon-close"
+            onClick={closeSuccessModal}
+            data-testid="user-add-success-close"
+          >
             <CloseIcon dataTestId="action-success-modal-close" />
-          </div>        
-          </AppModal.Header>
+          </div>
+        </AppModal.Header>
         <AppModal.Body className="modal-md d-flex align-items-center justify-content-center">
           <div className="p-3 text-center">
             <div className="d-flex flex-column align-items-center">
               <div className="mb-2">
                 <i className="fa fa-check-circle fa-3x success"></i>
-
               </div>
-              <div className="mb-2 fw-bold">
-                {t("Success")}
-              </div>
+              <div className="mb-2 fw-bold">{t("Success")}</div>
               <p>{t("User added")}</p>
             </div>
           </div>
         </AppModal.Body>
       </AppModal>
 
-
       <div className="container-admin">
         <div className="d-flex align-items-center justify-content-between flex-wrap">
           <div className="search-role col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 px-0">
-
             <CustomSearch
               search={searchKey}
               setSearch={setSearchKey}
@@ -484,7 +476,7 @@ const Users = React.memo((props: any) => {
               <option
                 value="ALL"
                 selected={!props.filter}
-                data-testid="users-roles-filter-option-all" 
+                data-testid="users-roles-filter-option-all"
               >
                 {t("All roles")}
               </option>
@@ -501,118 +493,140 @@ const Users = React.memo((props: any) => {
           </div>
 
           {MULTITENANCY_ENABLED && (
-  <>
-
-  <V8CustomButton
-    label={t("Add New Users")}
-    onClick={openInviteModal}
-    data-testid="add-registered-users-button"
-    variant="primary"
-    size="small"
-  />
-
-    {showInviteModal && (
-      <AppModal show={showInviteModal} onHide={closeInviteModal} dialogClassName="add-user-modal" centered>
-        <AppModal.Header className="add-user-modal__header">
-          <AppModal.Title className="add-user-modal__title">
-            {t("Add New Users")}
-          </AppModal.Title>
-          <button
-            type="button"
-            className="add-user-modal__close"
-            onClick={closeInviteModal}
-            data-testid="role-modal-close"
-            aria-label={t("Close")}
-          >
-            <CloseIcon color="var(--gray-darkest)" dataTestId="action-modal-close" />
-          </button>
-        </AppModal.Header>
-
-        <AppModal.Body className="add-user-modal__body">
-          <div className="add-user-modal__field">
-            <label htmlFor="add-user-username-input" className="add-user-modal__label">
-              {t("Email")}
-            </label>
-            <div className="add-user-modal__input-wrapper">
-              <CustomTextInput
-                ref={emailInputRef}
-                value={formData.user}
-                setValue={(value) => {
-                  setFormData({ ...formData, user: value });
-                  if (validationError) setValidationError("");
-                }}
-                dataTestId="add-user-username"
-                ariaLabel={t("Username or Email")}
+            <>
+              <V8CustomButton
+                label={t("Add New Users")}
+                onClick={openInviteModal}
+                data-testid="add-registered-users-button"
+                variant="primary"
+                size="small"
               />
-            </div>
-            <div className="add-user-modal__error-slot">
-              {validationError && (
-                <p className="add-user-modal__email-error" role="alert">
-                  {validationError}
-                </p>
+
+              {showInviteModal && (
+                <AppModal
+                  show={showInviteModal}
+                  onHide={closeInviteModal}
+                  dialogClassName="add-user-modal"
+                  centered
+                >
+                  <AppModal.Header className="add-user-modal__header">
+                    <AppModal.Title className="add-user-modal__title">
+                      {t("Add New Users")}
+                    </AppModal.Title>
+                    <button
+                      type="button"
+                      className="add-user-modal__close"
+                      onClick={closeInviteModal}
+                      data-testid="role-modal-close"
+                      aria-label={t("Close")}
+                    >
+                      <CloseIcon
+                        color="var(--gray-darkest)"
+                        dataTestId="action-modal-close"
+                      />
+                    </button>
+                  </AppModal.Header>
+
+                  <AppModal.Body className="add-user-modal__body">
+                    <div className="add-user-modal__field">
+                      <label
+                        htmlFor="add-user-username-input"
+                        className="add-user-modal__label"
+                      >
+                        {t("Email")}
+                      </label>
+                      <div className="add-user-modal__input-wrapper">
+                        <CustomTextInput
+                          ref={emailInputRef}
+                          value={formData.user}
+                          setValue={(value) => {
+                            setFormData({ ...formData, user: value });
+                            if (validationError) setValidationError("");
+                          }}
+                          dataTestId="add-user-username"
+                          ariaLabel={t("Username or Email")}
+                        />
+                      </div>
+                      <div className="add-user-modal__error-slot">
+                        {validationError && (
+                          <p
+                            className="add-user-modal__email-error"
+                            role="alert"
+                          >
+                            {validationError}
+                          </p>
+                        )}
+                      </div>
+                      <p className="add-user-modal__hint">
+                        {t(
+                          "Added users will receive an email invite to join your organization."
+                        )}
+                      </p>
+                      {inviteSuccessEmail && (
+                        <div className="add-user-modal__success-note">
+                          {t("Invitation sent to {{email}}", {
+                            email:
+                              inviteSuccessEmail.length > 30
+                                ? `${inviteSuccessEmail.substring(0, 30)}...`
+                                : inviteSuccessEmail,
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </AppModal.Body>
+
+                  <AppModal.Footer className="add-user-modal__footer">
+                    <V8CustomButton
+                      label={t("Invite")}
+                      onClick={sendInvites}
+                      data-testid="add-user-button"
+                      variant="secondary"
+                      size="small"
+                      loading={inviteLoading}
+                      loadingText={t("Inviting")}
+                      disabled={!formData.user?.trim()}
+                    />
+                  </AppModal.Footer>
+                </AppModal>
               )}
-            </div>
-            <p className="add-user-modal__hint">
-              {t("Added users will receive an email invite to join your organization.")}
-            </p>
-            {inviteSuccessEmail && (
-              <div className="add-user-modal__success-note">
-                {t("Invitation sent to {{email}}", {
-                  email: inviteSuccessEmail.length > 30 ? `${inviteSuccessEmail.substring(0, 30)}...` : inviteSuccessEmail,
-                })}
-              </div>
-            )}
-          </div>
-        </AppModal.Body>
-
-        <AppModal.Footer className="add-user-modal__footer">
-          <V8CustomButton
-            label={t("Invite")}
-            onClick={sendInvites}
-            data-testid="add-user-button"
-            variant="secondary"
-            size="small"
-            loading={inviteLoading}
-            loadingText="Inviting"
-            disabled={!formData.user?.trim()}
-          />
-        </AppModal.Footer>
-      </AppModal>
-    )}
-  </>
-)}
-
+            </>
+          )}
         </div>
 
         {!loading ? (
           <div>
-          <div className="user-table-container px-4" data-testid="admin-users-table">
-            <ReusableTable
-              columns={columns}
-              rows={props?.users || []}
-              rowCount={props.total}
-              loading={loading}
-              getRowId={(row) => row.id}
-              sortModel={DEFAULT_SORT_MODEL}
-              paginationMode="server"
-              sortingMode="client"
-              disableColumnMenu
-              disableRowSelectionOnClick
-              emptyStateMessage={props.error || "No data Found"}
-              paginationModel={{ page: activePage - 1, pageSize: props?.limit?.sizePerPage || 5 }}
-              onPaginationModelChange={({ page, pageSize }) => {
-                if (pageSize !== props?.limit?.sizePerPage) {
-                  handleLimitChange(pageSize);
-                } else {
-                  handlePageChange(page + 1);
-                }
-              }}
-              pageSizeOptions={[5, 25, 50, 100]}
-              disableVirtualization
-              
-              dataGridProps={{ getRowHeight: () => "auto" }}
-            />
-          </div>
+            <div
+              className="user-table-container px-4"
+              data-testid="admin-users-table"
+            >
+              <ReusableTable
+                columns={columns}
+                rows={props?.users || []}
+                rowCount={props.total}
+                loading={loading}
+                getRowId={(row) => row.id}
+                sortModel={DEFAULT_SORT_MODEL}
+                paginationMode="server"
+                sortingMode="client"
+                disableColumnMenu
+                disableRowSelectionOnClick
+                emptyStateMessage={props.error || t("No data Found")}
+                paginationModel={{
+                  page: activePage - 1,
+                  pageSize: props?.limit?.sizePerPage || 5,
+                }}
+                onPaginationModelChange={({ page, pageSize }) => {
+                  if (pageSize !== props?.limit?.sizePerPage) {
+                    handleLimitChange(pageSize);
+                  } else {
+                    handlePageChange(page + 1);
+                  }
+                }}
+                pageSizeOptions={[5, 25, 50, 100]}
+                disableVirtualization
+                dataGridProps={{ getRowHeight: () => "auto" }}
+              />
+            </div>
           </div>
         ) : (
           <Loading />

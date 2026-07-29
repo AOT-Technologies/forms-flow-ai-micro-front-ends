@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -18,25 +18,25 @@ interface DropdownItem {
 
 interface ButtonDropdownProps {
   variant: string;
-  size?: "sm" | "md" | "lg" ;
+  size?: "sm" | "md" | "lg";
   defaultLabel: string;
   label: string;
-  name?: string,
+  name?: string;
   className?: string;
   dropdownType: "DROPDOWN_ONLY" | "DROPDOWN_WITH_EXTRA_ACTION";
   dropdownItems?: DropdownItem[];
   onSearch?: (searchTerm: string) => void;
   extraActionIcon?: React.ReactNode;
-  extraActionOnClick?:() => void; 
+  extraActionOnClick?: () => void;
   dataTestId?: string;
-  ariaLabel?: string; 
- }
+  ariaLabel?: string;
+}
 
 export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   dropdownType,
   variant,
   size,
-  defaultLabel, 
+  defaultLabel,
   label,
   dropdownItems = [],
   onSearch,
@@ -45,39 +45,46 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
   className = "",
   dataTestId = "",
   ariaLabel = "",
-  name =  "",
+  name = "",
 }) => {
-
   const buttonRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const { t } = useTranslation();
-  const primaryBtnBgColor = StyleServices.getCSSVariable('--primary-btn-bg-color');
-  const secondaryBtnBgColor = StyleServices.getCSSVariable('--secondary-btn-bg-color'); 
+  // Memoized CSS variable reads (getComputedStyle forces a style recalc) — same
+  // pattern as Search.tsx.
+  const primaryBtnBgColor = useMemo(
+    () => StyleServices.getCSSVariable("--primary-btn-bg-color"),
+    []
+  );
+  const secondaryBtnBgColor = useMemo(
+    () => StyleServices.getCSSVariable("--secondary-btn-bg-color"),
+    []
+  );
   const [search, setSearch] = useState("");
 
   const handleClearSearch = () => {
     setSearch("");
     onSearch?.("");
-  }
+  };
 
   const handleSearch = () => {
     onSearch?.(search);
   };
 
-  useEffect(()=>{
-      if (onSearch) {
-    onSearch(search);
-  }
-  },[search]);
-    // Check if we should use the default label
+  useEffect(() => {
+    if (onSearch) {
+      onSearch(search);
+    }
+  }, [search]);
+  // Check if we should use the default label
   const isUsingDefaultLabel = !label || label === "";
   // Display label if provided, otherwise use defaultLabel
   const displayLabel = isUsingDefaultLabel ? defaultLabel : label;
   // Define the label style as a separate variable
-  const labelStyle: React.CSSProperties = isUsingDefaultLabel 
-    ? { fontStyle: 'italic' } 
+  const labelStyle: React.CSSProperties = isUsingDefaultLabel
+    ? { fontStyle: "italic" }
     : {};
   const updateMenuStyle = () => {
     if (buttonRef.current && toggleRef.current) {
@@ -107,79 +114,76 @@ export const ButtonDropdown: React.FC<ButtonDropdownProps> = ({
       primary: primaryBtnBgColor,
       secondary: secondaryBtnBgColor,
     };
-  
+
     return {
       extraActionClass: "extra-action-icon",
       backgroundColor: backgroundColors[variant] || undefined,
     };
   };
-  
-const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
 
-   return (
-      <Dropdown
-        as={ButtonGroup}
-        className={`${className}`}
-        onToggle={(isOpen) => setDropdownOpen(isOpen)} 
-        data-testid={`${dataTestId}-container`}
-        >
-        <div ref={buttonRef} className="extra-action">
+  const { extraActionClass, backgroundColor } = getExtraActionStyles(variant);
+
+  return (
+    <Dropdown
+      as={ButtonGroup}
+      className={`${className}`}
+      onToggle={(isOpen) => setDropdownOpen(isOpen)}
+      data-testid={`${dataTestId}-container`}
+    >
+      <div ref={buttonRef} className="extra-action">
+        <Button data-testid={dataTestId} aria-label={ariaLabel} name={name}>
+          <span title={t(displayLabel)}>{t(displayLabel)}</span>
+        </Button>
+
+        {dropdownType === "DROPDOWN_WITH_EXTRA_ACTION" && extraActionIcon && (
           <Button
-            data-testid={dataTestId}
-            aria-label={ariaLabel}
-            name={name}
+            onClick={extraActionOnClick}
+            data-testid={`${dataTestId}-extra-action`}
+            aria-label={`${t(displayLabel)} extra action`}
           >
-            <span title={t(displayLabel)}>
-              {t(displayLabel)}
-            </span>
+            {extraActionIcon}
           </Button>
+        )}
+      </div>
 
-          {dropdownType === "DROPDOWN_WITH_EXTRA_ACTION" && extraActionIcon && (
-            <Button
-              onClick={extraActionOnClick}
-              data-testid={`${dataTestId}-extra-action`}
-              aria-label={`${t(displayLabel)} extra action`}
-            >
-              {extraActionIcon}
-            </Button>
-          )}
-        </div>
+      <Dropdown.Toggle
+        ref={toggleRef}
+        split
+        variant={variant}
+        id="dropdown-split-basic"
+        className="toggle"
+        data-testid={`${dataTestId}-toggle`}
+        aria-label={`${t(displayLabel)} dropdown toggle`}
+      >
+        <ChevronIcon />
+      </Dropdown.Toggle>
 
-        <Dropdown.Toggle
-          ref={toggleRef}
-          split
-          variant={variant}
-          id="dropdown-split-basic"
-          className="toggle"
-          data-testid={`${dataTestId}-toggle`}
-          aria-label={`${t(displayLabel)} dropdown toggle`}
-        >
-          <ChevronIcon />
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu className={(dropdownType === "DROPDOWN_ONLY") && 'dropdown-only'}>
-        {onSearch && (<CustomSearch
-          // handleClearSearch={handleClearSearch}
-          search={search}
-          setSearch={setSearch}
-          handleSearch={handleSearch}
-          placeholder={t("Search")}
-          // title={t("Search")}
-          dataTestId="search-filter"
-        />)}
-          {dropdownItems.map((item) => (
-            <Dropdown.Item
-              key={item.type}
-              onClick={() => item.onClick(item.type)}
-              data-testid={item.dataTestId}
-              aria-label={item.ariaLabel}
-              className={item.className}
-            >
-              {item.content}
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown>
-    );
-  }
-
+      <Dropdown.Menu
+        className={dropdownType === "DROPDOWN_ONLY" && "dropdown-only"}
+      >
+        {onSearch && (
+          <CustomSearch
+            // handleClearSearch={handleClearSearch}
+            search={search}
+            setSearch={setSearch}
+            handleSearch={handleSearch}
+            placeholder={t("Search")}
+            // title={t("Search")}
+            dataTestId="search-filter"
+          />
+        )}
+        {dropdownItems.map((item) => (
+          <Dropdown.Item
+            key={item.type}
+            onClick={() => item.onClick(item.type)}
+            data-testid={item.dataTestId}
+            aria-label={item.ariaLabel}
+            className={item.className}
+          >
+            {item.content}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};

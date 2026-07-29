@@ -9,12 +9,10 @@ interface AppModalProps extends Omit<ModalProps, "size"> {
 
 const AppModalBase = forwardRef<HTMLDivElement, AppModalProps>(
   ({ size, dialogClassName, ...props }, ref) => {
-    const combinedDialogClassName = [
-      dialogClassName,
-      size === "md" ? "app-modal-md" : null,
-    ]
-      .filter(Boolean)
-      .join(" ") || undefined;
+    const combinedDialogClassName =
+      [dialogClassName, size === "md" ? "app-modal-md" : null]
+        .filter(Boolean)
+        .join(" ") || undefined;
 
     return (
       <Modal

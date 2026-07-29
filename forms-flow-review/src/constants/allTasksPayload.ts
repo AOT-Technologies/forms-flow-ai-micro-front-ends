@@ -4,17 +4,19 @@ import { defaultTaskVariable } from "./defaultTaskVariable";
 import { RootState } from "../reducers";
 
 const useAllTasksPayload = () => {
-  const userDetails: UserDetail = useSelector((state: RootState) => state.task.userDetails);
+  const userDetails: UserDetail = useSelector(
+    (state: RootState) => state.task.userDetails
+  );
 
   return {
     name: "All Tasks",
     criteria: {
-      "orQueries": [
+      orQueries: [
         {
-          "assigneeExpression": "${currentUser()}",
-          "candidateGroupsExpression": "${currentUserGroups()}",
-          "includeAssignedTasks": true
-        }
+          assigneeExpression: "${currentUser()}",
+          candidateGroupsExpression: "${currentUserGroups()}",
+          includeAssignedTasks: true,
+        },
       ],
       sorting: [
         {

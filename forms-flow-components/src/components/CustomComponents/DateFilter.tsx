@@ -1,4 +1,12 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  forwardRef,
+  memo,
+} from "react";
 import { useTranslation } from "react-i18next";
 import {
   DownArrowIcon,
@@ -68,7 +76,10 @@ const buildClassNames = (
  *   dateFormat="MM/DD/YYYY"
  * />
  */
-const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps>(
+const DateRangePickerComponent = forwardRef<
+  HTMLDivElement,
+  DateRangePickerProps
+>(
   (
     {
       onChange,
@@ -107,16 +118,22 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
     }, []);
 
     // Memoized default date range
-    const defaultDateRange = useMemo((): DateRange => ({
-      startDate: null,
-      endDate: null,
-    }), []);
+    const defaultDateRange = useMemo(
+      (): DateRange => ({
+        startDate: null,
+        endDate: null,
+      }),
+      []
+    );
 
     // Memoized parsed initial range
-    const parsedInitialRange = useMemo((): DateRange => ({
-      startDate: value?.startDate ? parseDate(value.startDate) : null,
-      endDate: value?.endDate ? parseDate(value.endDate) : null,
-    }), [value, parseDate]);
+    const parsedInitialRange = useMemo(
+      (): DateRange => ({
+        startDate: value?.startDate ? parseDate(value.startDate) : null,
+        endDate: value?.endDate ? parseDate(value.endDate) : null,
+      }),
+      [value, parseDate]
+    );
 
     // State management
     const [dateRange, setDateRange] = useState<DateRange>(parsedInitialRange);
@@ -153,24 +170,24 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
     }, [value, parseDate, defaultDateRange]);
 
     // Memoized date formatting utility
-    const formatDateValue = useCallback((
-      date: Date | string | null,
-      format: string = dateFormat
-    ): string => {
-      if (!date) return "";
+    const formatDateValue = useCallback(
+      (date: Date | string | null, format: string = dateFormat): string => {
+        if (!date) return "";
 
-      const dateObj = date instanceof Date ? date : parseDate(date);
-      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-      const day = String(dateObj.getDate()).padStart(2, "0");
-      const year = dateObj.getFullYear();
+        const dateObj = date instanceof Date ? date : parseDate(date);
+        const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+        const day = String(dateObj.getDate()).padStart(2, "0");
+        const year = dateObj.getFullYear();
 
-      let formattedDate = format;
-      formattedDate = formattedDate.replace(/M+/g, month);
-      formattedDate = formattedDate.replace(/D+/g, day);
-      formattedDate = formattedDate.replace(/Y+/g, year.toString());
+        let formattedDate = format;
+        formattedDate = formattedDate.replace(/M+/g, month);
+        formattedDate = formattedDate.replace(/D+/g, day);
+        formattedDate = formattedDate.replace(/Y+/g, year.toString());
 
-      return formattedDate;
-    }, [dateFormat, parseDate]);
+        return formattedDate;
+      },
+      [dateFormat, parseDate]
+    );
 
     // Memoized date range formatting
     const formatDateRange = useMemo((): string => {
@@ -260,129 +277,159 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
     }, [currentMonth]);
 
     // Memoized date normalization utility
-    const normalizeDate = useCallback((date: Date | string | null): Date | null => {
-      if (!date) return null;
+    const normalizeDate = useCallback(
+      (date: Date | string | null): Date | null => {
+        if (!date) return null;
 
-      if (date instanceof Date) {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      }
+        if (date instanceof Date) {
+          return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        }
 
-      const parsedDate = parseDate(date);
-      return new Date(
-        parsedDate.getFullYear(),
-        parsedDate.getMonth(),
-        parsedDate.getDate()
-      );
-    }, [parseDate]);
+        const parsedDate = parseDate(date);
+        return new Date(
+          parsedDate.getFullYear(),
+          parsedDate.getMonth(),
+          parsedDate.getDate()
+        );
+      },
+      [parseDate]
+    );
 
     // Memoized date range checking utilities
-    const isInRange = useCallback((date: Date): boolean => {
-      const startDate = normalizeDate(dateRange?.startDate);
-      const endDate = normalizeDate(dateRange?.endDate);
-      const targetDate = normalizeDate(date);
+    const isInRange = useCallback(
+      (date: Date): boolean => {
+        const startDate = normalizeDate(dateRange?.startDate);
+        const endDate = normalizeDate(dateRange?.endDate);
+        const targetDate = normalizeDate(date);
 
-      return !!(
-        targetDate &&
-        startDate &&
-        endDate &&
-        targetDate >= startDate &&
-        targetDate <= endDate
-      );
-    }, [dateRange, normalizeDate]);
+        return !!(
+          targetDate &&
+          startDate &&
+          endDate &&
+          targetDate >= startDate &&
+          targetDate <= endDate
+        );
+      },
+      [dateRange, normalizeDate]
+    );
 
-    const isStartDate = useCallback((date: Date): boolean => {
-      const startDate = normalizeDate(dateRange?.startDate);
-      const targetDate = normalizeDate(date);
+    const isStartDate = useCallback(
+      (date: Date): boolean => {
+        const startDate = normalizeDate(dateRange?.startDate);
+        const targetDate = normalizeDate(date);
 
-      return !!(
-        targetDate &&
-        startDate &&
-        targetDate.getTime() === startDate.getTime()
-      );
-    }, [dateRange, normalizeDate]);
+        return !!(
+          targetDate &&
+          startDate &&
+          targetDate.getTime() === startDate.getTime()
+        );
+      },
+      [dateRange, normalizeDate]
+    );
 
-    const isEndDate = useCallback((date: Date): boolean => {
-      const endDate = normalizeDate(dateRange?.endDate);
-      const targetDate = normalizeDate(date);
+    const isEndDate = useCallback(
+      (date: Date): boolean => {
+        const endDate = normalizeDate(dateRange?.endDate);
+        const targetDate = normalizeDate(date);
 
-      return !!(
-        targetDate &&
-        endDate &&
-        targetDate.getTime() === endDate.getTime()
-      );
-    }, [dateRange, normalizeDate]);
+        return !!(
+          targetDate &&
+          endDate &&
+          targetDate.getTime() === endDate.getTime()
+        );
+      },
+      [dateRange, normalizeDate]
+    );
 
     // Memoized filter date range creation
-    const createFilterDateRange = useCallback((startDate: Date, endDate: Date): DateRange => {
-      const filterStartDate = new Date(
-        startDate.getFullYear(),
-        startDate.getMonth(),
-        startDate.getDate(),
-        0, 0, 0, 0
-      );
-      const filterEndDate = new Date(
-        endDate.getFullYear(),
-        endDate.getMonth(),
-        endDate.getDate(),
-        23, 59, 59, 999
-      );
+    const createFilterDateRange = useCallback(
+      (startDate: Date, endDate: Date): DateRange => {
+        const filterStartDate = new Date(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          startDate.getDate(),
+          0,
+          0,
+          0,
+          0
+        );
+        const filterEndDate = new Date(
+          endDate.getFullYear(),
+          endDate.getMonth(),
+          endDate.getDate(),
+          23,
+          59,
+          59,
+          999
+        );
 
-      return {
-        startDate: filterStartDate,
-        endDate: filterEndDate,
-      };
-    }, []);
+        return {
+          startDate: filterStartDate,
+          endDate: filterEndDate,
+        };
+      },
+      []
+    );
 
     // Memoized date selection handler
-    const handleDateSelect = useCallback((date: Date): void => {
-      if (!date) return;
+    const handleDateSelect = useCallback(
+      (date: Date): void => {
+        if (!date) return;
 
-      const selectedDate = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate()
-      );
+        const selectedDate = new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate()
+        );
 
-      if (!dateRange.startDate || (dateRange.startDate && dateRange.endDate)) {
-        const newRange = {
-          startDate: selectedDate,
-          endDate: null,
-        };
-        setDateRange(newRange);
-        onChange(newRange);
-      } else {
-        const currentStartDate = dateRange.startDate instanceof Date
-          ? new Date(
-              dateRange.startDate.getFullYear(),
-              dateRange.startDate.getMonth(),
-              dateRange.startDate.getDate()
-            )
-          : parseDate(dateRange.startDate);
+        if (
+          !dateRange.startDate ||
+          (dateRange.startDate && dateRange.endDate)
+        ) {
+          const newRange = {
+            startDate: selectedDate,
+            endDate: null,
+          };
+          setDateRange(newRange);
+          onChange(newRange);
+        } else {
+          const currentStartDate =
+            dateRange.startDate instanceof Date
+              ? new Date(
+                  dateRange.startDate.getFullYear(),
+                  dateRange.startDate.getMonth(),
+                  dateRange.startDate.getDate()
+                )
+              : parseDate(dateRange.startDate);
 
-        const newStartDate = selectedDate < currentStartDate ? selectedDate : currentStartDate;
-        const newEndDate = selectedDate < currentStartDate ? currentStartDate : selectedDate;
+          const newStartDate =
+            selectedDate < currentStartDate ? selectedDate : currentStartDate;
+          const newEndDate =
+            selectedDate < currentStartDate ? currentStartDate : selectedDate;
 
-        const filterRange = createFilterDateRange(newStartDate, newEndDate);
-        const newRange = {
-          startDate: filterRange.startDate,
-          endDate: filterRange.endDate,
-        };
+          const filterRange = createFilterDateRange(newStartDate, newEndDate);
+          const newRange = {
+            startDate: filterRange.startDate,
+            endDate: filterRange.endDate,
+          };
 
-        setDateRange(newRange);
-        onChange(newRange);
-      }
-    }, [dateRange, parseDate, createFilterDateRange, onChange]);
+          setDateRange(newRange);
+          onChange(newRange);
+        }
+      },
+      [dateRange, parseDate, createFilterDateRange, onChange]
+    );
 
     // Memoized keyboard event handler for date selection
-    const handleDateKeyDown = useCallback((
-      event: React.KeyboardEvent<HTMLButtonElement>,
-      date: Date
-    ): void => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        handleDateSelect(date);
-      }
-    }, [handleDateSelect]);
+    const handleDateKeyDown = useCallback(
+      (event: React.KeyboardEvent<HTMLButtonElement>, date: Date): void => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handleDateSelect(date);
+        }
+      },
+      [handleDateSelect]
+    );
 
     // Memoized navigation methods
     const goToPrevMonth = useCallback((): void => {
@@ -421,7 +468,10 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
         today.getMonth(),
         today.getDate()
       );
-      const filterRange = createFilterDateRange(normalizedToday, normalizedToday);
+      const filterRange = createFilterDateRange(
+        normalizedToday,
+        normalizedToday
+      );
       setDateRange({
         startDate: filterRange.startDate,
         endDate: filterRange.endDate,
@@ -444,15 +494,18 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
     }, [onChange]);
 
     // Memoized keyboard navigation handler
-    const handleNavKeyDown = useCallback((
-      event: React.KeyboardEvent<HTMLButtonElement>,
-      action: () => void
-    ): void => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        action();
-      }
-    }, []);
+    const handleNavKeyDown = useCallback(
+      (
+        event: React.KeyboardEvent<HTMLButtonElement>,
+        action: () => void
+      ): void => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          action();
+        }
+      },
+      []
+    );
 
     // Memoized calendar toggle handler
     const toggleCalendar = useCallback((): void => {
@@ -465,45 +518,45 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
       [className]
     );
 
-  // Handle close calendar (X button)
-  const handleCloseCalendar = (event?: React.MouseEvent): void => {
-    if (event) {
-      event.stopPropagation();
-    }
-    setIsOpen(false);
+    // Handle close calendar (X button)
+    const handleCloseCalendar = (event?: React.MouseEvent): void => {
+      if (event) {
+        event.stopPropagation();
+      }
+      setIsOpen(false);
 
-    // Reset both dates to null when closing with the X button
-    const emptyDateRange = {
-      startDate: null,
-      endDate: null,
+      // Reset both dates to null when closing with the X button
+      const emptyDateRange = {
+        startDate: null,
+        endDate: null,
+      };
+
+      setDateRange(emptyDateRange);
+
+      // Notify parent component of the reset
+      onChange(emptyDateRange);
     };
 
-    setDateRange(emptyDateRange);
+    // Format month and year for display
+    const formatMonthYear = (): string => {
+      if (!currentMonth) return "";
 
-    // Notify parent component of the reset
-    onChange(emptyDateRange);
-  };
-
-  // Format month and year for display
-  const formatMonthYear = (): string => {
-    if (!currentMonth) return "";
-
-    const months = [
-      t("January"),
-      t("February"),
-      t("March"),
-      t("April"),
-      t("May"),
-      t("June"),
-      t("July"),
-      t("August"),
-      t("September"),
-      t("October"),
-      t("November"),
-      t("December"),
-    ];
-    return `${months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
-  };
+      const months = [
+        t("January"),
+        t("February"),
+        t("March"),
+        t("April"),
+        t("May"),
+        t("June"),
+        t("July"),
+        t("August"),
+        t("September"),
+        t("October"),
+        t("November"),
+        t("December"),
+      ];
+      return `${months[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
+    };
 
     // Close calendar when clicking outside
     useEffect(() => {
@@ -543,16 +596,16 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
       }
     }, [isOpen, dateRange, parseDate, createFilterDateRange, onChange]);
 
-  // Reset current month when opening calendar
-  useEffect(() => {
-    if (isOpen && dateRange?.startDate) {
-      setCurrentMonth(
-        dateRange.startDate instanceof Date
-          ? new Date(dateRange.startDate)
-          : parseDate(dateRange.startDate)
-      );
-    }
-  }, [isOpen, dateRange?.startDate]);
+    // Reset current month when opening calendar
+    useEffect(() => {
+      if (isOpen && dateRange?.startDate) {
+        setCurrentMonth(
+          dateRange.startDate instanceof Date
+            ? new Date(dateRange.startDate)
+            : parseDate(dateRange.startDate)
+        );
+      }
+    }, [isOpen, dateRange?.startDate]);
 
     return (
       <div
@@ -560,207 +613,208 @@ const DateRangePickerComponent = forwardRef<HTMLDivElement, DateRangePickerProps
         className={containerClassName}
         data-testid="date-range-picker"
       >
-      <div className="drp-input-container">
-        <input
-          onClick={toggleCalendar}
-          type="text"
-          className="drp-date-input"
-          value={formatDateValue(dateRange.startDate)}
-          readOnly
-          aria-label="Start date"
-          placeholder="Start date"
-        />
-        <span className="drp-separator">to</span>
-        <input
-        onClick={toggleCalendar}
-          type="text"
-          className="drp-date-input"
-          value={formatDateValue(dateRange.endDate)}
-          readOnly
-          aria-label="End date"
-          placeholder="End date"
-        />
+        <div className="drp-input-container">
+          <input
+            onClick={toggleCalendar}
+            type="text"
+            className="drp-date-input"
+            value={formatDateValue(dateRange.startDate)}
+            readOnly
+            aria-label="Start date"
+            placeholder="Start date"
+          />
+          <span className="drp-separator">to</span>
+          <input
+            onClick={toggleCalendar}
+            type="text"
+            className="drp-date-input"
+            value={formatDateValue(dateRange.endDate)}
+            readOnly
+            aria-label="End date"
+            placeholder="End date"
+          />
 
-        <span
-          className={`date-range-toggle-icon cursor-pointer ${isOpen ? "open" : ""}`}
-          data-testid="date-range-toggle-icon"
-          aria-hidden="true"
-          onClick={toggleCalendar}
-        >
-          {isOpen ? (
-            <UpArrowIcon color="#4A4A4A" />
-          ) : (
-            <DownArrowIcon color="#4A4A4A" />
-          )}
-        </span>
-        {(dateRange.startDate || dateRange.endDate) && (
           <span
-            className="date-range-close-icon cursor-pointer"
-            data-testid="date-range-close-icon"
-            aria-label="Clear date range"
-            onClick={handleCloseCalendar}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                handleCloseCalendar();
-              }
-            }}
+            className={`date-range-toggle-icon cursor-pointer ${
+              isOpen ? "open" : ""
+            }`}
+            data-testid="date-range-toggle-icon"
+            aria-hidden="true"
+            onClick={toggleCalendar}
           >
-            <CloseIcon color="#4A4A4A" />
+            {isOpen ? (
+              <UpArrowIcon color="#4A4A4A" />
+            ) : (
+              <DownArrowIcon color="#4A4A4A" />
+            )}
           </span>
-        )}
-      </div>
-
-      {isOpen && (
-        <div
-          ref={calendarRef}
-          className="calendar-container"
-          data-testid="calendar-container"
-          aria-label={t("Date picker")}
-        >
-          <div className="calendar-header" data-testid="calendar-header">
-            <div className="calendar-nav-buttons">
-              <button
-                className="calendar-prev-year-btn button-as-div"
-                onClick={goToPrevYear}
-                onKeyDown={(e) => handleNavKeyDown(e, goToPrevYear)}
-                data-testid="calendar-prev-year"
-                aria-label={t("Previous year")}
-                type="button"
-              >
-                <CalenderLeftIcon color="#212529" />
-                <CalenderLeftIcon color="#212529" />
-              </button>
-              <button
-                className="calendar-prev-month-btn button-as-div"
-                onKeyDown={(e) => handleNavKeyDown(e, goToPrevMonth)}
-                data-testid="calendar-prev-month"
-                aria-label={t("Previous month")}
-                type="button"
-                onClick={goToPrevMonth}
-              >
-                <CalenderLeftIcon color="#212529" />
-              </button>
-            </div>
+          {(dateRange.startDate || dateRange.endDate) && (
             <span
-              className="calendar-month-year"
-              data-testid="calendar-month-year"
+              className="date-range-close-icon cursor-pointer"
+              data-testid="date-range-close-icon"
+              aria-label="Clear date range"
+              onClick={handleCloseCalendar}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCloseCalendar();
+                }
+              }}
             >
-              {formatMonthYear()}
+              <CloseIcon color="#4A4A4A" />
             </span>
-            <div className="calendar-nav-buttons">
-              <button
-                className="calendar-next-month-btn button-as-div"
-                onKeyDown={(e) => handleNavKeyDown(e, goToNextMonth)}
-                data-testid="calendar-next-month"
-                aria-label={t("Next month")}
-                type="button"
-                onClick={goToNextMonth}
-              >
-                <CalenderRightIcon color="#212529" />
-              </button>
-              <button
-                className="calendar-next-year-btn button-as-div"
-                onClick={goToNextYear}
-                onKeyDown={(e) => handleNavKeyDown(e, goToNextYear)}
-                data-testid="calendar-next-year"
-                aria-label={t("Next year")}
-                type="button"
-              >
-                <CalenderRightIcon color="#212529" />
-                <CalenderRightIcon color="#212529" />
+          )}
+        </div>
 
-
-              </button>
-            </div>
-          </div>
-
-          <div className="calender-week-days-container">
+        {isOpen && (
           <div
-            className="calendar-days-header"
-            data-testid="calendar-days-header"
+            ref={calendarRef}
+            className="calendar-container"
+            data-testid="calendar-container"
+            aria-label={t("Date picker")}
           >
-            {[
-              t("Mon"),
-              t("Tue"),
-              t("Wed"),
-              t("Thu"),
-              t("Fri"),
-              t("Sat"),
-              t("Sun"),
-            ].map((day) => (
-              <div
-                key={day}
-                className="calendar-weekday"
-                aria-label={`${t("Day of week")}: ${day}`}
-              >
-                {day}
-              </div>
-            ))}
-          </div>
-
-          <div className="calendar-days" data-testid="calendar-days">
-            {generateDays.map((dayObj) => {
-              const date = dayObj?.date;
-              if (!date) return null;
-
-              const selected = isInRange(date);
-              const isStart = isStartDate(date);
-              const isEnd = isEndDate(date);
-              const dayNumber = date.getDate();
-
-              const dayClasses = [
-                "calendar-day",
-                "button-as-div",
-                dayObj?.isCurrentMonth ? "current-month" : "other-month",
-                selected ? "selected" : "",
-                isStart ? "start-date" : "",
-                isEnd ? "end-date" : "",
-              ]
-                .filter(Boolean)
-                .join(" ");
-
-              return (
+            <div className="calendar-header" data-testid="calendar-header">
+              <div className="calendar-nav-buttons">
                 <button
-                  key={date.toISOString()} // Unique key using ISO string
-                  onClick={() => handleDateSelect(date)}
-                  onKeyDown={(e) => handleDateKeyDown(e, date)}
-                  className={dayClasses}
-                  data-testid={`calendar-day-${dayNumber}`}
-                  aria-label={`${date.toLocaleDateString()}, ${
-                    selected ? t("selected") : t("not selected")
-                  }`}
+                  className="calendar-prev-year-btn button-as-div"
+                  onClick={goToPrevYear}
+                  onKeyDown={(e) => handleNavKeyDown(e, goToPrevYear)}
+                  data-testid="calendar-prev-year"
+                  aria-label={t("Previous year")}
                   type="button"
                 >
-                  {dayNumber}
+                  <CalenderLeftIcon color="#212529" />
+                  <CalenderLeftIcon color="#212529" />
                 </button>
-              );
-            })}
+                <button
+                  className="calendar-prev-month-btn button-as-div"
+                  onKeyDown={(e) => handleNavKeyDown(e, goToPrevMonth)}
+                  data-testid="calendar-prev-month"
+                  aria-label={t("Previous month")}
+                  type="button"
+                  onClick={goToPrevMonth}
+                >
+                  <CalenderLeftIcon color="#212529" />
+                </button>
+              </div>
+              <span
+                className="calendar-month-year"
+                data-testid="calendar-month-year"
+              >
+                {formatMonthYear()}
+              </span>
+              <div className="calendar-nav-buttons">
+                <button
+                  className="calendar-next-month-btn button-as-div"
+                  onKeyDown={(e) => handleNavKeyDown(e, goToNextMonth)}
+                  data-testid="calendar-next-month"
+                  aria-label={t("Next month")}
+                  type="button"
+                  onClick={goToNextMonth}
+                >
+                  <CalenderRightIcon color="#212529" />
+                </button>
+                <button
+                  className="calendar-next-year-btn button-as-div"
+                  onClick={goToNextYear}
+                  onKeyDown={(e) => handleNavKeyDown(e, goToNextYear)}
+                  data-testid="calendar-next-year"
+                  aria-label={t("Next year")}
+                  type="button"
+                >
+                  <CalenderRightIcon color="#212529" />
+                  <CalenderRightIcon color="#212529" />
+                </button>
+              </div>
+            </div>
+
+            <div className="calender-week-days-container">
+              <div
+                className="calendar-days-header"
+                data-testid="calendar-days-header"
+              >
+                {[
+                  t("Mon"),
+                  t("Tue"),
+                  t("Wed"),
+                  t("Thu"),
+                  t("Fri"),
+                  t("Sat"),
+                  t("Sun"),
+                ].map((day) => (
+                  <div
+                    key={day}
+                    className="calendar-weekday"
+                    aria-label={`${t("Day of week")}: ${day}`}
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              <div className="calendar-days" data-testid="calendar-days">
+                {generateDays.map((dayObj) => {
+                  const date = dayObj?.date;
+                  if (!date) return null;
+
+                  const selected = isInRange(date);
+                  const isStart = isStartDate(date);
+                  const isEnd = isEndDate(date);
+                  const dayNumber = date.getDate();
+
+                  const dayClasses = [
+                    "calendar-day",
+                    "button-as-div",
+                    dayObj?.isCurrentMonth ? "current-month" : "other-month",
+                    selected ? "selected" : "",
+                    isStart ? "start-date" : "",
+                    isEnd ? "end-date" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
+
+                  return (
+                    <button
+                      key={date.toISOString()} // Unique key using ISO string
+                      onClick={() => handleDateSelect(date)}
+                      onKeyDown={(e) => handleDateKeyDown(e, date)}
+                      className={dayClasses}
+                      data-testid={`calendar-day-${dayNumber}`}
+                      aria-label={`${date.toLocaleDateString()}, ${
+                        selected ? t("selected") : t("not selected")
+                      }`}
+                      type="button"
+                    >
+                      {dayNumber}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="calendar-today-container">
+                <V8CustomButton
+                  label="Today"
+                  onClick={handleTodayClick}
+                  ariaLabel="Today"
+                  dataTestId="calendar-today-btn"
+                  variant="secondary"
+                />
+                <V8CustomButton
+                  label="Reset"
+                  onClick={handleResetClick}
+                  ariaLabel="Reset"
+                  dataTestId="calendar-reset-btn"
+                  variant="secondary"
+                />
+              </div>
+            </div>
           </div>
-          <div className="calendar-today-container">
-            <V8CustomButton 
-            label="Today"
-            onClick={handleTodayClick}
-            ariaLabel="Today"
-            dataTestId="calendar-today-btn"
-            variant="secondary"
-            />
-            <V8CustomButton 
-            label="Reset"
-            onClick={handleResetClick}
-            ariaLabel="Reset"
-            dataTestId="calendar-reset-btn"
-            variant="secondary"
-            />
-          </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-});
+        )}
+      </div>
+    );
+  }
+);
 
 // Set display name for better debugging
 DateRangePickerComponent.displayName = "DateRangePicker";

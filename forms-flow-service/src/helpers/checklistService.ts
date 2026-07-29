@@ -27,8 +27,7 @@ export const storeChecklistItems = (items: any[] | null) => {
  * @param completer - Package-level function that calls the completion API.
  */
 export const completeChecklistByRouteKey =
-  (routeKey: string, completer: (id: number) => Promise<any>) =>
-  async () => {
+  (routeKey: string, completer: (id: number) => Promise<any>) => async () => {
     const items = getStoredChecklistItems();
     if (!items) {
       return;
@@ -42,8 +41,7 @@ export const completeChecklistByRouteKey =
       const data = res?.data ?? res;
       const isCompleted =
         typeof data?.isCompleted === "boolean" ? data.isCompleted : true;
-      const idFromApi =
-        typeof data?.id === "number" ? data.id : match.id;
+      const idFromApi = typeof data?.id === "number" ? data.id : match.id;
       storeChecklistItems(
         items.map((item) =>
           item.id === idFromApi ? { ...item, isCompleted } : item

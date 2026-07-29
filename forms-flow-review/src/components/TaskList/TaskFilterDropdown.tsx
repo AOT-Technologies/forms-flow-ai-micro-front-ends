@@ -18,14 +18,8 @@ import {
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
 import { ReorderTaskFilterModal } from "../ReorderTaskFilterModal";
 import { FilterItemType, UserDetail } from "../../types/taskFilter";
-import {
-  AddIcon,
-  FilterDropDown,
-  ReorderIcon
-} from "@formsflow/components";
+import { AddIcon, FilterDropDown, ReorderIcon } from "@formsflow/components";
 import { cloneDeep } from "lodash";
-
-
 
 const TaskListDropdownItems = memo(() => {
   const { t } = useTranslation();
@@ -61,14 +55,10 @@ const TaskListDropdownItems = memo(() => {
     setShowTaskFilterModal(true);
   };
 
-
-
   const handleCloseFilterModal = () => {
     setShowTaskFilterModal(false);
     dispatch(setFilterToEdit(null));
   };
-
-
 
   const handleToggleFilterModal = () => {
     setShowTaskFilterModal((prev) => !prev);
@@ -105,7 +95,7 @@ const TaskListDropdownItems = memo(() => {
     const createFilter: FilterItemType = {
       content: (
         <div className="d-flex align-items-center justify-content-between">
-        <span>{t("Create custom filter")}</span> <AddIcon />
+          <span>{t("Create custom filter")}</span> <AddIcon />
         </div>
       ),
       onClick: handleToggleFilterModal,
@@ -185,7 +175,7 @@ const TaskListDropdownItems = memo(() => {
           );
           const isSystemFilter = filterDetails?.createdBy === "system";
 
-           if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
+          if (createdByMe && (isSharedToPublic || isSharedToRoles)) {
             category = "my";
           } else if (isSharedToPublic || isSharedToMe) {
             category = "shared";
@@ -196,7 +186,7 @@ const TaskListDropdownItems = memo(() => {
               filter.id === selectedFilter?.id ? "selected-filter-item" : "",
             content: (
               <span className="d-flex justify-content-between align-items-center">
-                {t(filter.name)} ({filter.count}) 
+                {t(filter.name)} ({filter.count})
               </span>
             ),
             type: String(filter.id),
@@ -209,10 +199,13 @@ const TaskListDropdownItems = memo(() => {
             }),
             category,
             // Only allow editing if it's not a system filter
-            ...(isSystemFilter ? {} : { onEdit: () => handleEditFilterFromItem(filter) }),
+            ...(isSystemFilter
+              ? {}
+              : { onEdit: () => handleEditFilterFromItem(filter) }),
           };
         }
-      }).filter(Boolean) as FilterItemType[];
+      })
+      .filter(Boolean) as FilterItemType[];
 
     if (createFilters) {
       filterDropdownItemsArray.push(createFilter, reOrderFilter);
@@ -267,7 +260,10 @@ const TaskListDropdownItems = memo(() => {
         className="input-filter"
         variant="task"
         categorize={true}
-        categoryLabels={{ my: t("My filters (unique to me)"), shared: t("Shared filters") }}
+        categoryLabels={{
+          my: t("My filters (unique to me)"),
+          shared: t("Shared filters"),
+        }}
         categoryOrder={["my", "shared"]}
       />
       <TaskFilterModal

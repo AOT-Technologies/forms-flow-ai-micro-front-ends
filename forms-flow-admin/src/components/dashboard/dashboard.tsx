@@ -7,10 +7,7 @@ import { useParams } from "react-router-dom";
 import { formatRoleDisplayName } from "../../utils/utils.js";
 import { MULTITENANCY_ENABLED } from "../../constants";
 
-import {
-  updateAuthorization,
-  fetchdashboards,
-} from "../../services/dashboard";
+import { updateAuthorization, fetchdashboards } from "../../services/dashboard";
 import { useTranslation } from "react-i18next";
 import { V8CustomButton, ReusableTable } from "@formsflow/components";
 import { StorageService } from "@formsflow/service";
@@ -18,7 +15,7 @@ import { StorageService } from "@formsflow/service";
 const DEFAULT_SORT_MODEL: any[] = [];
 
 const InsightDashboard = React.memo((props: any) => {
-  const { dashboards, groups, setCount, authReceived, loading: parentLoading } = props;
+  const { dashboards, groups, setCount, loading: parentLoading } = props;
 
   const isGroupUpdated = groups.length > 0;
   const [dashboardList, setDashboardList] = React.useState([]);
@@ -33,10 +30,9 @@ const InsightDashboard = React.memo((props: any) => {
   const [remainingGroups, setRemainingGroups] = React.useState([]);
 
   const [activeRow, setActiveRow] = React.useState(null);
-  const [show, setShow] = React.useState(false);
   const [activePage, setActivePage] = React.useState(1);
   const [err, setErr] = React.useState({});
-  const [limit, setLimit] = React.useState(5); 
+  const [limit, setLimit] = React.useState(5);
 
   // Use the authorizations data passed from parent
   React.useEffect(() => {
@@ -62,10 +58,7 @@ const InsightDashboard = React.memo((props: any) => {
     );
     setActiveRow(rowData);
     setRemainingGroups(listGroup);
-    setShow(!show);
   };
-
-  const id = show ? "simple-popover" : undefined;
 
   const removeDashboardAuth = (rowData, groupPath) => {
     let dashboard = {
@@ -79,15 +72,18 @@ const InsightDashboard = React.memo((props: any) => {
     updateAuthorization(
       dashboard,
       () => {
-        fetchdashboards((data) => {
-          setDashboardList(data);
-          setCount(data.length);
-          setIsLoading(false);
-          toast.success(t("Update success!"))
-        }, (err) => {
-          setErr(err);
-          toast.error(t("Update failed!"))
-        });
+        fetchdashboards(
+          (data) => {
+            setDashboardList(data);
+            setCount(data.length);
+            setIsLoading(false);
+            toast.success(t("Update success!"));
+          },
+          (err) => {
+            setErr(err);
+            toast.error(t("Update failed!"));
+          }
+        );
       },
       setErr
     );
@@ -97,20 +93,22 @@ const InsightDashboard = React.memo((props: any) => {
     let currentRow = { ...activeRow };
     currentRow.roles = [...activeRow.roles, data.path];
     setActiveRow(currentRow);
-    setShow(!show);
     setIsLoading(true);
     updateAuthorization(
       currentRow,
       () => {
-        fetchdashboards((data) => {
-          setDashboardList(data);
-          setCount(data.length);
-          setIsLoading(false);
-          toast.success(t("Update success!"))
-        }, (err) => {
-          setErr(err);
-          toast.error(t("Update failed!"))
-        });
+        fetchdashboards(
+          (data) => {
+            setDashboardList(data);
+            setCount(data.length);
+            setIsLoading(false);
+            toast.success(t("Update success!"));
+          },
+          (err) => {
+            setErr(err);
+            toast.error(t("Update failed!"));
+          }
+        );
       },
       setErr
     );
@@ -142,9 +140,12 @@ const InsightDashboard = React.memo((props: any) => {
         return (
           <div className="d-flex flex-wrap col-12">
             {cell?.map((label, i) => (
-              <div key={i} className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 small m-2"
+              <div
+                key={i}
+                className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 small m-2"
                 style={{ background: "#EAEFFF" }}
-                data-testid={`dashboard-access-group-${i}`}>
+                data-testid={`dashboard-access-group-${i}`}
+              >
                 <span className="">
                   {formatRoleDisplayName(label, tenantKeyForRoleDisplay)}
                   <i
@@ -189,7 +190,10 @@ const InsightDashboard = React.memo((props: any) => {
                           onClick={() => addDashboardAuth(item)}
                           data-testid={`dashboard-remaining-group-${key}`}
                         >
-                          {formatRoleDisplayName(item.path, tenantKeyForRoleDisplay)}
+                          {formatRoleDisplayName(
+                            item.path,
+                            tenantKeyForRoleDisplay
+                          )}
                         </div>
                       ))
                     ) : (
@@ -223,33 +227,35 @@ const InsightDashboard = React.memo((props: any) => {
         <div>
           {!isLoading ? (
             <div>
-            <div className="table-container-admin mb-3 px-4" data-testid="admin-dashboard-table">
-              <ReusableTable
-                columns={columns}
-                rows={dashboardList}
-                loading={isLoading}
-                getRowId={(row) => row.resourceId}
-                sortModel={DEFAULT_SORT_MODEL}
-                paginationMode="client"
-                sortingMode="client"
-                disableColumnMenu
-                disableRowSelectionOnClick
-                emptyStateMessage={props.error || "No data Found"}
-                paginationModel={{ page: activePage - 1, pageSize: limit }}
-                onPaginationModelChange={({ page, pageSize }) => {
-                  if (pageSize !== limit) {
-                    handleLimitChange(pageSize);
-                  } else {
-                    setActivePage(page + 1);
-                  }
-                }}
-                pageSizeOptions={[5, 25, 50, 100]}
-                disableVirtualization
-                
-                dataGridProps={{ getRowHeight: () => "auto" }}
-              />
+              <div
+                className="table-container-admin mb-3 px-4"
+                data-testid="admin-dashboard-table"
+              >
+                <ReusableTable
+                  columns={columns}
+                  rows={dashboardList}
+                  loading={isLoading}
+                  getRowId={(row) => row.resourceId}
+                  sortModel={DEFAULT_SORT_MODEL}
+                  paginationMode="client"
+                  sortingMode="client"
+                  disableColumnMenu
+                  disableRowSelectionOnClick
+                  emptyStateMessage={props.error || t("No data Found")}
+                  paginationModel={{ page: activePage - 1, pageSize: limit }}
+                  onPaginationModelChange={({ page, pageSize }) => {
+                    if (pageSize !== limit) {
+                      handleLimitChange(pageSize);
+                    } else {
+                      setActivePage(page + 1);
+                    }
+                  }}
+                  pageSizeOptions={[5, 25, 50, 100]}
+                  disableVirtualization
+                  dataGridProps={{ getRowHeight: () => "auto" }}
+                />
+              </div>
             </div>
-          </div>
           ) : (
             <Loading />
           )}

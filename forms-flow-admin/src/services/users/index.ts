@@ -8,7 +8,7 @@ export const fetchUsers = (
   group: string | null,
   pageNo: number | null,
   search: string | null,
-  sizePerPage : number | null ,
+  sizePerPage: number | null,
   callback: any,
   errorHandler: any,
   role = true,
@@ -20,7 +20,9 @@ export const fetchUsers = (
     const tenantKey = StorageService.get("tenantKey");
     const hasTenantPrefix =
       tenantKey &&
-      String(group).toLowerCase().startsWith(`${String(tenantKey).toLowerCase()}-`);
+      String(group)
+        .toLowerCase()
+        .startsWith(`${String(tenantKey).toLowerCase()}-`);
 
     if (MULTITENANCY_ENABLED && tenantKey && !hasTenantPrefix) {
       memberOfGroup = `${tenantKey}-${group}`;
@@ -29,7 +31,7 @@ export const fetchUsers = (
     url += `&memberOfGroup=${memberOfGroup}`;
   }
   if (pageNo) url += `&pageNo=${pageNo}`;
-  if(sizePerPage) url += `&limit=${sizePerPage}`;
+  if (sizePerPage) url += `&limit=${sizePerPage}`;
   if (search) url += `&search=${search}`;
 
   RequestService.httpGETRequest(url)
@@ -94,8 +96,9 @@ export const InviteUser = (
     (WEB_BASE_CUSTOM_URL && String(WEB_BASE_CUSTOM_URL).trim()) ||
     ((globalThis as unknown as Window).location?.origin ?? "");
   const uri = encodeURIComponent(redirectUri);
-  const url = API.INVITE_USER.replace("<tenant_key>", tenantKey || "default")
-    + (uri ? `?uri=${uri}` : "");
+  const url =
+    API.INVITE_USER.replace("<tenant_key>", tenantKey || "default") +
+    (uri ? `?uri=${uri}` : "");
   RequestService.httpPOSTRequest(url, { email })
     .then((res) => {
       if (res.data) {
@@ -106,27 +109,11 @@ export const InviteUser = (
     })
     .catch((error) => {
       if (error?.response?.data) {
-        errorHandler(error.response.data?.message || "Failed to send invitation!");
+        errorHandler(
+          error.response.data?.message || "Failed to send invitation!"
+        );
       } else {
         errorHandler("Failed to send invitation!");
-      }
-    });
-};
-
-export const CreateUser = (payload, callback, errorHandler) => {
-  RequestService.httpPOSTRequest(API.ADD_USER, payload)
-    .then((res) => {
-      if (res.data) {
-        callback(res.data)
-      } else {
-        errorHandler("Failed to post data!");
-      }
-    })
-    .catch((error) => {
-      if (error?.response?.data) {
-        errorHandler(error.response.data?.message);
-      } else {
-        errorHandler("Faied to post data!");
       }
     });
 };

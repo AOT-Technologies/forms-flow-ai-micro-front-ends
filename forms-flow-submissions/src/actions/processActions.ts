@@ -1,4 +1,4 @@
-import ACTION_CONSTANTS from "./actionConstants"
+import ACTION_CONSTANTS from "./actionConstants";
 
 export const setProcessActivityData = (data) => (dispatch) => {
   dispatch({

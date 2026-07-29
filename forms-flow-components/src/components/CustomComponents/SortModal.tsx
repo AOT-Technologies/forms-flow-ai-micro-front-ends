@@ -80,44 +80,44 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
           </div>
         </AppModal.Header>
         <AppModal.Body>
-            <InputDropdown
-              firstItemLabel={t(firstItemLabel)}
-              isAllowInput={false}
-              Options={optionSortBy.map((option) => ({
-                label: t(option.label),
-                onClick: () => setSelectedOption(option.value),
-              }))}
-              dropdownLabel={t(firstItemLabel)}
-              selectedOption={t(
-                optionSortBy.find((option) => option.value === selectedOption)
-                  ?.label || ""
-              )}
-              isInvalid={false}
-              ariaLabelforDropdown={t("Sort By Dropdown")}
-              ariaLabelforInput={t("Sort By Input")}
-              dataTestIdforDropdown="dropdown-sort-by"
-              dataTestIdforInput="input-sort-by"
-              id="sort-by"
-            />
-            <InputDropdown
-              firstItemLabel={t(secondItemLabel)}
-              isAllowInput={false}
-              Options={optionSortOrder.map((option) => ({
-                label: t(option.label),
-                onClick: () => setSelectedOrder(option.value),
-              }))}
-              dropdownLabel={t(secondItemLabel)}
-              selectedOption={t(
-                optionSortOrder.find((option) => option.value === selectedOrder)
-                  ?.label || ""
-              )}
-              isInvalid={false}
-              ariaLabelforDropdown={t("Order Dropdown")}
-              ariaLabelforInput={t("Order Input")}
-              dataTestIdforDropdown="dropdown-sort-order"
-              dataTestIdforInput="input-sort-order"
-              id="in-a"
-            />
+          <InputDropdown
+            firstItemLabel={t(firstItemLabel)}
+            isAllowInput={false}
+            Options={optionSortBy.map((option) => ({
+              label: t(option.label),
+              onClick: () => setSelectedOption(option.value),
+            }))}
+            dropdownLabel={t(firstItemLabel)}
+            selectedOption={t(
+              optionSortBy.find((option) => option.value === selectedOption)
+                ?.label || ""
+            )}
+            isInvalid={false}
+            ariaLabelforDropdown={t("Sort By Dropdown")}
+            ariaLabelforInput={t("Sort By Input")}
+            dataTestIdforDropdown="dropdown-sort-by"
+            dataTestIdforInput="input-sort-by"
+            id="sort-by"
+          />
+          <InputDropdown
+            firstItemLabel={t(secondItemLabel)}
+            isAllowInput={false}
+            Options={optionSortOrder.map((option) => ({
+              label: t(option.label),
+              onClick: () => setSelectedOrder(option.value),
+            }))}
+            dropdownLabel={t(secondItemLabel)}
+            selectedOption={t(
+              optionSortOrder.find((option) => option.value === selectedOrder)
+                ?.label || ""
+            )}
+            isInvalid={false}
+            ariaLabelforDropdown={t("Order Dropdown")}
+            ariaLabelforInput={t("Order Input")}
+            dataTestIdforDropdown="dropdown-sort-order"
+            dataTestIdforInput="input-sort-order"
+            id="in-a"
+          />
         </AppModal.Body>
 
         <AppModal.Footer>

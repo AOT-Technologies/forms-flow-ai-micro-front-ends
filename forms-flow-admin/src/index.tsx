@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes,useParams, useLocation } from "react-router-dom";
+import { Route, Routes, useParams, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { KeycloakService, StorageService } from "@formsflow/service";
@@ -8,8 +8,7 @@ import {
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
 } from "./endpoints/config";
-import Footer from "./components/footer";
-import { BASE_ROUTE, MULTITENANCY_ENABLED } from "./constants";
+import { MULTITENANCY_ENABLED } from "./constants";
 import Manage from "./components/manage";
 import i18n from "./resourceBundles/i18n";
 import "./index.scss";
@@ -19,26 +18,34 @@ import BillingManage from "./components/billing-manage";
 
 const Admin = React.memo(({ props }: any) => {
   const { publish, subscribe } = props;
-  const  {tenantId: urlTenantId}  = useParams();
+  const { tenantId: urlTenantId } = useParams();
   // Fallback to storage if tenantId is not in URL params
   const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
-  const [instance, setInstance] = React.useState(props.getKcInstance());
+  const [instance] = React.useState(props.getKcInstance());
   const [isAuth, setIsAuth] = React.useState(instance?.isAuthenticated());
   const [page, setPage] = React.useState("Dashboard");
-  const [dashboardCount, setDashboardCount] = React.useState<number | undefined>();
+  const [dashboardCount, setDashboardCount] = React.useState<
+    number | undefined
+  >();
   const [roleCount, setRoleCount] = React.useState<number | undefined>();
   const [userCount, setUserCount] = React.useState<number | undefined>();
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE)
   );
-  const isDashboardManager = userRoles?.includes("manage_dashboard_authorizations");
+  const isDashboardManager = userRoles?.includes(
+    "manage_dashboard_authorizations"
+  );
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
   // const isLinkManager = userRoles.includes("manage_links");
-  const isAdmin = isDashboardManager || isRoleManager || isUserManager || isOrganizationManager;
-  const location =useLocation().pathname;
+  const isAdmin =
+    isDashboardManager ||
+    isRoleManager ||
+    isUserManager ||
+    isOrganizationManager;
+  const location = useLocation().pathname;
   const [isAccessRestricted, setIsAccessRestricted] = React.useState(false);
   React.useEffect(() => {
     publish("ES_ROUTE", { pathname: `${baseUrl}admin` });
@@ -57,9 +64,9 @@ const Admin = React.memo(({ props }: any) => {
     });
   }, []);
 
-  React.useEffect(()=>{
-    StorageService.save("tenantKey", tenantId || '')
-  },[tenantId])
+  React.useEffect(() => {
+    StorageService.save("tenantKey", tenantId || "");
+  }, [tenantId]);
 
   // Verify tenantData is stored in localStorage
   React.useEffect(() => {
@@ -70,12 +77,15 @@ const Admin = React.memo(({ props }: any) => {
           const tenantData = JSON.parse(tenantDataStr);
           // Verify tenantData has expected structure
           if (!tenantData || (!tenantData.key && !tenantData.name)) {
-            console.warn("tenantData in localStorage may be incomplete:", tenantData);
+            console.warn(
+              "tenantData in localStorage may be incomplete:",
+              tenantData
+            );
           }
         } catch (error) {
           console.error("Error parsing tenantData from localStorage:", error);
         }
-      } 
+      }
     }
   }, [tenantId]);
 
@@ -94,82 +104,85 @@ const Admin = React.memo(({ props }: any) => {
     }
   }, []);
 
-  React.useEffect(()=>{
-    if(instance){
+  React.useEffect(() => {
+    if (instance) {
       publish("FF_AUTH", instance);
     }
-  },[instance])
+  }, [instance]);
 
-  React.useEffect(()=>{
-    if(!isAuth) return
-    const locale = localStorage.getItem("i18nextLng")
-    if(locale) i18n.changeLanguage(locale);
-  },[isAuth])
-  
+  React.useEffect(() => {
+    if (!isAuth) return;
+    const locale = localStorage.getItem("i18nextLng");
+    if (locale) i18n.changeLanguage(locale);
+  }, [isAuth]);
+
   React.useEffect(() => {
     const restricted =
-      (location === '/admin/organization' && !isOrganizationManager) ||
-      (location === '/admin/dashboard' && !isDashboardManager) ||
-      (location === '/admin/roles' && !isRoleManager) ||
-      (location === '/admin/users' && !isUserManager) ||
-      (!(isOrganizationManager || isDashboardManager || isRoleManager || isUserManager));
+      (location === "/admin/organization" && !isOrganizationManager) ||
+      (location === "/admin/dashboard" && !isDashboardManager) ||
+      (location === "/admin/roles" && !isRoleManager) ||
+      (location === "/admin/users" && !isUserManager) ||
+      !(
+        isOrganizationManager ||
+        isDashboardManager ||
+        isRoleManager ||
+        isUserManager
+      );
     setIsAccessRestricted(restricted);
   }, [location, userRoles]);
   return (
     <>
       {isAdmin ? (
         <div className="page-container">
-        <div className="page-layout mt-3">
-        {!isAccessRestricted ?(
-          <div className="min-container-height">
-          <ToastContainer theme="colored" />
-          <Routes>
-            <Route
-              path="billing/manage"
-              element={<BillingManage />}
-            />
-            <Route
-              path="plans"
-              element={<Plans />}
-            />
-            <Route
-              index
-              element={
-                <Manage
-                  props={props}
-                  setTab={setPage}
-                  setDashboardCount={setDashboardCount}
-                  setRoleCount={setRoleCount}
-                  setUserCount={setUserCount}
-                />
-              }
-            />
-            <Route
-              path=":tab"
-              element={
-                <Manage
-                  props={props}
-                  setTab={setPage}
-                  setDashboardCount={setDashboardCount}
-                  setRoleCount={setRoleCount}
-                  setUserCount={setUserCount}
-                />
-              }
-            />
-          </Routes>
-          </div>):
-          <div className="min-container-height ps-md-3" >
-            <Accessdenied userRoles={userRoles} />
-            </div> }
+          <div className="page-layout mt-3">
+            {!isAccessRestricted ? (
+              <div className="min-container-height">
+                <ToastContainer theme="colored" />
+                <Routes>
+                  <Route path="billing/manage" element={<BillingManage />} />
+                  <Route path="plans" element={<Plans />} />
+                  <Route
+                    index
+                    element={
+                      <Manage
+                        props={props}
+                        setTab={setPage}
+                        setDashboardCount={setDashboardCount}
+                        setRoleCount={setRoleCount}
+                        setUserCount={setUserCount}
+                      />
+                    }
+                  />
+                  <Route
+                    path=":tab"
+                    element={
+                      <Manage
+                        props={props}
+                        setTab={setPage}
+                        setDashboardCount={setDashboardCount}
+                        setRoleCount={setRoleCount}
+                        setUserCount={setUserCount}
+                      />
+                    }
+                  />
+                </Routes>
+              </div>
+            ) : (
+              <div className="min-container-height ps-md-3">
+                <Accessdenied userRoles={userRoles} />
+              </div>
+            )}
           </div>
         </div>
-      ):<div className="page-container ">
-         <div className="page-layout mt-5">
-         <div className="min-container-height ps-md-3" >
-          <Accessdenied userRoles={userRoles} />
+      ) : (
+        <div className="page-container ">
+          <div className="page-layout mt-5">
+            <div className="min-container-height ps-md-3">
+              <Accessdenied userRoles={userRoles} />
+            </div>
           </div>
-          </div> 
-        </div>}
+        </div>
+      )}
     </>
   );
 });

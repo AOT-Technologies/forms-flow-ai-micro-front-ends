@@ -26,7 +26,7 @@ const buildModalContent = (
 ) => {
   const handleKeyDown = (event, onClick) => {
     if (event.key === "Enter" || event.key === " ") {
-        onClick?.();
+      onClick?.();
     }
   };
   return (
@@ -37,7 +37,7 @@ const buildModalContent = (
           onClick={onClick}
           tabIndex={0}
           onKeyDown={(event) => handleKeyDown(event, onClick)}
-          aria-label={`Button for ${heading}`} 
+          aria-label={`Button for ${heading}`}
           data-testid={`button-${id}`}
         >
           <h3>{t(heading)}</h3>
@@ -64,12 +64,16 @@ export const BuildModal: React.FC<BuildModalProps> = React.memo(
           <AppModal.Title id="build-modal-title">
             <p>{t(title)}</p>
           </AppModal.Title>
-          <div className="icon-close" onClick={onClose} data-testId="modal-close">
+          <div
+            className="icon-close"
+            onClick={onClose}
+            data-testId="modal-close"
+          >
             <CloseIcon />
           </div>
         </AppModal.Header>
         <AppModal.Body className="choice">
-        {buildModalContent(contents, t)}
+          {buildModalContent(contents, t)}
         </AppModal.Body>
       </AppModal>
     );

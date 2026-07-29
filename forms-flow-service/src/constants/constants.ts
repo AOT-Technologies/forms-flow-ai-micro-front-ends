@@ -1,17 +1,19 @@
 export const DATE_FORMAT =
-  (window as any)._env_ && (window as any)._env_.REACT_APP_DATE_FORMAT || "DD-MMM-YYYY";
+  ((window as any)._env_ && (window as any)._env_.REACT_APP_DATE_FORMAT) ||
+  "DD-MMM-YYYY";
 
 export const TIME_FORMAT =
-(window as any)._env_ && (window as any)._env_.REACT_APP_TIME_FORMAT || "h:mm a";
+  ((window as any)._env_ && (window as any)._env_.REACT_APP_TIME_FORMAT) ||
+  "h:mm a";
 
-const MULTITENANCY_ENABLED_VARIABLE = (window as any)._env_?.REACT_APP_MULTI_TENANCY_ENABLED || false;
+const MULTITENANCY_ENABLED_VARIABLE =
+  (window as any)._env_?.REACT_APP_MULTI_TENANCY_ENABLED || false;
 
 export const MULTITENANCY_ENABLED =
   MULTITENANCY_ENABLED_VARIABLE === "true" ||
-    MULTITENANCY_ENABLED_VARIABLE === true
+  MULTITENANCY_ENABLED_VARIABLE === true;
 
-export const WEB_BASE_URL =
-  (window as any)._env_?.REACT_APP_WEB_BASE_URL || "";
+export const WEB_BASE_URL = (window as any)._env_?.REACT_APP_WEB_BASE_URL || "";
 
 export const MT_ADMIN_BASE_URL =
   (window as any)._env_?.REACT_APP_MT_ADMIN_BASE_URL || "";
