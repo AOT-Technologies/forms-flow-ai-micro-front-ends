@@ -1,6 +1,6 @@
 {
   "name": "@formsflow/components",
-  "version": "8.3.0-test",
+  "version": "8.3.0.dev0",
   "scripts": {
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",
