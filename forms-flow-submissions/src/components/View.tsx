@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
+import { useFormTheme, THEMED_FORM_CLASS } from "../hooks/useFormTheme";
 import { Form, selectRoot, selectError } from "@aot-technologies/formio-react";
 import { createSelector } from "@reduxjs/toolkit";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n.js";
@@ -44,6 +45,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
     form: { form },
     submission: reduxSubmission,
   } = props;
+  const { themeClass } = useFormTheme(form?._id);
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
   );
@@ -109,7 +111,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
 
   return (
     <div className={`${scrollableOverview} bg-white ps-3 pe-3 m-0 form-border`}>
-      <div className="sub-container wizard-tab">
+      <div className={`sub-container wizard-tab ${themeClass}`}>
         <Form
           src={form}
           submission={safeSubmission}

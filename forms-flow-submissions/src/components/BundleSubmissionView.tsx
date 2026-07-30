@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
+import { useFormTheme } from "../hooks/useFormTheme";
 import { useAppDispatch } from "../hooks";
 import {
   Form,
@@ -69,6 +70,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   const { error } = useSelector((state: any) => state?.form);
 
   const isReadOnly = true;
+  const { themeClass } = useFormTheme(form?._id);
 
   // pick correct fetch function once
   const fetchSubmissionFn = CUSTOM_SUBMISSION_ENABLE
@@ -208,7 +210,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
         ariaLabel="Bundle forms navigation"
       />
 
-      <div className="p-3 analyze-Submission-bundle-view ">
+      <div className={`p-3 analyze-Submission-bundle-view ${themeClass}`}>
         {taskDetailsLoading || loadingForm || !selectedForms?.length ? (
           <div className="container">
             <Loading />

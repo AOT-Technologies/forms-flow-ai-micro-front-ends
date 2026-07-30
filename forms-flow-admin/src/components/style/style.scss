@@ -1,0 +1,789 @@
+// ─── Style Feature SCSS (admin) ───────────────────────────────────────────────
+// Covers: ColorPicker, FontPicker, ButtonShapeToggle, StyleEditor (from
+//         @formsflow/components), StyleTab layout, TemplatesList, StylePreview.
+// Typography + tab tokens come from the formsflow theme (Figtree, CSS vars).
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Tokens (Figma-sourced) ────────────────────────────────────────────────────
+$figma-text-title:      #525254;   // "Manage" page title
+$figma-text-muted:      #7C7D7F;   // templates heading, template names
+$figma-text-dark:       #4A4A4A;   // active edit button text, tab text
+$figma-border:          #DAD9DA;   // button/card borders (Figma #dad9da)
+$figma-border-light:    #E5E5E5;   // tab container border, dividers
+$figma-bg-card:         #FCFCFC;   // Edit/Add New button background
+$figma-bg-selected:     rgba(0, 0, 0, 0.04); // selected template row tint
+
+$se-border:             #E5E7EB;   // style editor internal borders
+$se-label:              #6B7280;
+$se-bg-hover:           #F3F4F6;
+$se-text:               #111827;
+$se-radius-sm:          4px;
+$se-radius-md:          8px;
+$se-shadow:             0 4px 16px rgba(0, 0, 0, 0.10);
+$se-selected-ring:      2px solid #111827;
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// StyleTab — outer two-column layout
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-style-tab {
+  display: flex;
+  min-height: 600px;
+  height: 100%;
+
+  &__left {
+    width: 380px;
+    min-width: 300px;
+    flex-shrink: 0;
+    border-right: 1px solid $figma-border-light;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #fff;
+  }
+
+  &__right {
+    flex: 1;
+    overflow-y: auto;
+    background: #F9FAFB;
+    padding: 24px;
+  }
+
+  // Shared button styles (used by both list and editor panels)
+  &__btn {
+    padding: 8px 20px;
+    border-radius: 20px;   // fully rounded to match Figma pill buttons
+    font-size: 14px;
+    font-family: "Figtree", sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    border: 1px solid $figma-border;
+    transition: background 0.15s, opacity 0.15s;
+    white-space: nowrap;
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    &--primary {
+      background: var(--ff-primary, #0087D9);
+      color: #fff;
+      border-color: var(--ff-primary, #0087D9);
+
+      &:hover:not(:disabled) {
+        opacity: 0.88;
+      }
+    }
+
+    &--secondary {
+      background: $figma-bg-card;
+      color: $figma-text-dark;
+      border-color: $figma-border;
+
+      &:hover:not(:disabled) {
+        background: $se-bg-hover;
+      }
+    }
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TemplatesList — left panel: list view
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-style-templates {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 12px 20px;
+  }
+
+  &__heading {
+    font-family: "Figtree", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: $figma-text-muted;
+    text-transform: capitalize;
+    line-height: 1.2;
+  }
+
+  &__add-btn {
+    height: 40px;
+    min-width: 96px;
+    padding: 0 18px;
+    background: var(--ff-primary, #0087D9);
+    border: 1px solid var(--ff-primary, #0087D9);
+    border-radius: 20px;
+    font-family: "Figtree", sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+
+    &:hover {
+      opacity: 0.88;
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  &__status {
+    padding: 16px 20px;
+    font-size: 13px;
+    color: #6B7280;
+    font-family: "Figtree", sans-serif;
+    margin: 0;
+  }
+
+  &__row-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #059669;
+    background: #D1FAE5;
+    border-radius: 10px;
+    padding: 2px 8px;
+  }
+
+  &__action-btn {
+    background: none;
+    border: 1px solid $figma-border;
+    border-radius: 20px;
+    font-family: "Figtree", sans-serif;
+    font-size: 13px;
+    color: $figma-text-muted;
+    cursor: pointer;
+    padding: 4px 10px;
+    white-space: nowrap;
+    transition: background 0.15s;
+
+    &:hover { background: $se-bg-hover; }
+  }
+
+  &__delete-btn {
+    background: none;
+    border: none;
+    color: #DC2626;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background 0.15s;
+
+    &:hover { background: #FEE2E2; }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid $figma-border-light;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 73px;
+    border-bottom: 1px solid $figma-border-light;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+      background: $figma-bg-selected;
+    }
+
+    &--selected {
+      background: $figma-bg-selected;
+    }
+  }
+
+  &__name {
+    font-family: "Figtree", sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: $figma-text-muted;
+    text-transform: capitalize;
+    line-height: 1.2;
+    flex: 1;
+
+    .ff-style-templates__row--selected & {
+      font-weight: 600;
+    }
+  }
+
+  &__row-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  &__edit-btn {
+    height: 40px;
+    width: 67px;
+    background: $figma-bg-card;
+    border: 1px solid $figma-border;
+    border-radius: 20px;
+    font-family: "Figtree", sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    // Disabled / inactive state (matches Figma's gray text)
+    color: $figma-border-light;
+
+    &--active {
+      color: $figma-text-dark;
+
+      &:hover {
+        background: $se-bg-hover;
+      }
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// StyleEditorPanel — left panel: edit view
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-style-editor-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid $figma-border-light;
+  }
+
+  &__title {
+    font-family: "Figtree", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: $figma-text-dark;
+  }
+
+  &__fields {
+    padding: 16px 20px 0;
+    border-bottom: 1px solid $figma-border-light;
+  }
+
+  &__field {
+    margin-bottom: 12px;
+  }
+
+  &__label {
+    display: block;
+    font-size: 13px;
+    font-family: "Figtree", sans-serif;
+    color: $figma-text-dark;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  &__input {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid $figma-border;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: "Figtree", sans-serif;
+    color: $figma-text-dark;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:focus { border-color: var(--ff-primary, #0087D9); }
+  }
+
+  &__default-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-family: "Figtree", sans-serif;
+    color: $figma-text-dark;
+    cursor: pointer;
+  }
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: "Figtree", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: $figma-text-muted;
+    text-transform: capitalize;
+    transition: color 0.15s;
+
+    &:hover {
+      color: $figma-text-dark;
+    }
+
+    svg {
+      color: $figma-text-muted;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid $figma-border-light;
+    background: #fff;
+    flex-shrink: 0;
+    gap: 8px;
+  }
+
+  &__footer-actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ColorPicker (shared component from @formsflow/components)
+// Original design: 7-col × 3-row palette (21 swatches), min-width 220px dropdown
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-color-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  &:last-child { margin-bottom: 0; }
+
+  // Inline field label: "Background", "Accent", "Buttons"
+  &__label {
+    display: inline-block;
+    font-size: 14px;
+    font-family: "Figtree", sans-serif;
+    color: $se-text;
+    flex-shrink: 0;
+    min-width: 80px;
+    cursor: default;
+  }
+
+  // Trigger button (swatch + hex text + chevron)
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px 6px 6px;
+    border: 1px solid $se-border;
+    border-radius: $se-radius-sm;
+    background: #fff;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+    transition: border-color 0.15s;
+
+    &:hover, &:focus-visible { border-color: #9CA3AF; outline: none; }
+    &:focus-visible { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); }
+  }
+
+  // Colour swatch in trigger (20×20)
+  &__swatch {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    flex-shrink: 0;
+  }
+
+  // Hex display inside trigger
+  &__hex {
+    font-size: 13px;
+    font-family: "Courier New", monospace;
+    color: $se-text;
+    letter-spacing: 0.02em;
+    flex: 1;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  &__chevron {
+    color: #9CA3AF;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+
+    &--up { transform: rotate(180deg); }
+  }
+
+  // ── Dropdown ──────────────────────────────────────────────────────────────
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 1000;
+    background: #fff;
+    border: 1px solid $se-border;
+    border-radius: $se-radius-md;
+    padding: 12px;
+    box-shadow: $se-shadow;
+    min-width: 220px;
+  }
+
+  // 7-column × 3-row colour grid (21 swatches)
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 24px);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  // Individual palette swatch cell
+  &__cell {
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.1s, box-shadow 0.1s;
+
+    &:hover { transform: scale(1.15); box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15); }
+    &:focus-visible { outline: $se-selected-ring; outline-offset: 1px; }
+    &--selected { box-shadow: 0 0 0 2px #111827, 0 0 0 4px rgba(17, 24, 39, 0.15); transform: scale(1.05); }
+  }
+
+  // ── Custom colour row ──────────────────────────────────────────────────────
+  &__custom-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid $se-border;
+    padding-top: 10px;
+  }
+
+  &__custom-label {
+    font-size: 12px;
+    font-family: "Figtree", sans-serif;
+    color: $se-label;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  // Bordered container housing the swatch preview + hex input
+  &__custom-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid $se-border;
+    border-radius: $se-radius-sm;
+    padding: 4px 8px;
+    flex: 1;
+    background: #fff;
+    transition: border-color 0.15s;
+
+    &:focus-within { border-color: #9CA3AF; }
+    &--error { border-color: #EF4444; }
+  }
+
+  // Small colour preview swatch in the custom row (16×16)
+  &__custom-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+  }
+
+  &__custom-input {
+    border: none;
+    outline: none;
+    font-size: 12px;
+    font-family: "Courier New", monospace;
+    color: $se-text;
+    width: 60px;
+    background: transparent;
+    text-transform: uppercase;
+
+    &::placeholder { color: #D1D5DB; }
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FontPicker
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-font-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  &:last-child { margin-bottom: 0; }
+
+  // Inline label: "Headers", "Body"
+  &__label {
+    display: inline-block;
+    font-size: 14px;
+    font-family: "Figtree", sans-serif;
+    color: $se-text;
+    flex-shrink: 0;
+    min-width: 80px;
+    cursor: default;
+  }
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid $se-border;
+    border-radius: $se-radius-sm;
+    background: #fff;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    color: $se-text;
+    transition: border-color 0.15s;
+
+    &:hover, &:focus-visible { border-color: #9CA3AF; outline: none; }
+    &:focus-visible { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4); }
+  }
+
+  &__chevron {
+    color: #9CA3AF;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 80px;
+    right: 0;
+    z-index: 1000;
+    background: #fff;
+    border: 1px solid $se-border;
+    border-radius: $se-radius-md;
+    padding: 4px 0;
+    box-shadow: $se-shadow;
+    list-style: none;
+    margin: 0;
+    min-width: 120px;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-size: 15px;
+    color: $se-text;
+    cursor: pointer;
+    transition: background 0.1s;
+
+    &:hover { background: $se-bg-hover; }
+    &:focus-visible { outline: none; background: $se-bg-hover; }
+    &--selected { font-weight: 600; }
+  }
+
+  // Checkmark icon for selected option — component class: ff-font-picker__checkmark
+  &__checkmark { color: $se-text; flex-shrink: 0; }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ButtonShapeToggle
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-btn-shape-toggle {
+  display: flex;
+  gap: 12px;
+
+  &__option {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 14px;
+    color: $se-text;
+    background: #fff;
+    border: 1px solid $se-border;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: center;
+    font-family: "Figtree", sans-serif;
+
+    &:hover { border-color: #9CA3AF; background: $se-bg-hover; }
+    &:focus-visible { outline: $se-selected-ring; outline-offset: 2px; }
+    &--selected { border-color: $se-text; border-width: 2px; background: #fff; font-weight: 500; }
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// StyleEditor (sections: Colours, Type, Buttons)
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-style-editor {
+  display: flex;
+  flex-direction: column;
+
+  &__section {
+    padding: 20px;
+    border-bottom: 1px solid $se-border;
+    &:last-child { border-bottom: none; }
+
+    // Ensure pickers fill the section width
+    .ff-color-picker,
+    .ff-font-picker {
+      width: 100%;
+    }
+
+    .ff-btn-shape-toggle {
+      width: 100%;
+    }
+  }
+
+  &__section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: $se-label;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 16px;
+    font-family: "Figtree", sans-serif;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// StylePreview — right panel (CSS-only static form mockup)
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-admin-style-preview {
+  background-color: var(--preview-bg, #fff);
+  font-family: var(--preview-body-font, "Figtree", sans-serif);
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  padding: 28px 32px;
+  max-width: 720px;
+  margin: 0 auto;
+  pointer-events: none;
+  user-select: none;
+
+  &__title {
+    font-family: var(--preview-header-font, "Figtree", sans-serif);
+    color: var(--preview-accent, #4A4A4A);
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  &__subtitle {
+    color: var(--preview-accent, #4A4A4A);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 16px;
+    opacity: 0.75;
+  }
+
+  &__divider { border: none; border-top: 1px solid #E5E7EB; margin: 16px 0; }
+
+  &__section-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6B7280;
+    background: #F3F4F6;
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+
+  &__row {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 14px;
+    &--3col { grid-template-columns: 1fr 1fr 1fr; }
+    &--2col { grid-template-columns: 1fr 1fr; }
+  }
+
+  &__field-label {
+    display: block;
+    font-size: 13px;
+    color: var(--preview-accent, #4A4A4A);
+    margin-bottom: 4px;
+    font-family: var(--preview-body-font, inherit);
+  }
+
+  &__required { color: #EF4444; }
+
+  &__input {
+    height: 34px;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    background: #fff;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #9CA3AF;
+    font-family: var(--preview-body-font, inherit);
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+
+  &__submit-btn {
+    background-color: var(--preview-btn, #0087D9);
+    color: #fff;
+    border: none;
+    border-radius: var(--preview-btn-radius, 4px);
+    padding: 10px 24px;
+    font-size: 14px;
+    font-family: var(--preview-body-font, inherit);
+    cursor: not-allowed;
+    opacity: 0.9;
+  }
+}

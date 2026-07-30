@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useDispatch, connect, ConnectedProps, useSelector } from "react-redux";
+import { useFormTheme } from "../hooks/useFormTheme";
 import { useAppDispatch } from "../hooks";
 import {
   Form,
@@ -66,6 +67,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
     () => taskAssignee !== currentUser,
     [taskAssignee, currentUser]
   );
+  const { themeClass } = useFormTheme(form?._id);
   console.log(
     isReadOnly,
     taskAssignee,
@@ -202,7 +204,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
         dataTestId="bundle-form-breadcrumbs"
       />
 
-      <div className="scrollable-overview-with-header bg-white m-0 form-border p-5">
+      <div className={`scrollable-overview-with-header bg-white m-0 form-border p-5 ${themeClass}`}>
         {taskDetailsLoading || getFormLoading ? (
           <div className="container">
             <Loading />

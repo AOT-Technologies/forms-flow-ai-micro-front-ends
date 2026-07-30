@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
+import { useFormTheme } from "../hooks/useFormTheme";
 import {
   selectRoot,
   selectError,
@@ -32,6 +33,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
     (state: any) => state?.task?.taskDetailsLoading
   );
   const [isReadOnly, setIsReadOnly] = useState(true);
+  const { themeClass } = useFormTheme(form?._id);
 
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
@@ -94,7 +96,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
       <div className="main-header">
         <h3 className="task-head text-truncate form-title">{form?.title}</h3>
       </div>
-      <div className="ms-4 mb-5 me-4 wizard-tab service-task-details">
+      <div className={`ms-4 mb-5 me-4 wizard-tab service-task-details ${themeClass}`}>
         {/* The key is added to remount the form on change */}
         <Form
           key={isReadOnly ? "readonly" : "editable"}

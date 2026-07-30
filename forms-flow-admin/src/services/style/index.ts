@@ -1,0 +1,101 @@
+/* istanbul ignore file */
+import { RequestService } from "@formsflow/service";
+import { WEB_BASE_URL } from "../../endpoints/config";
+import { StyleConfig } from "@formsflow/components";
+
+const STYLE_ENDPOINT = `${WEB_BASE_URL}/style`;
+const TEMPLATES_ENDPOINT = `${WEB_BASE_URL}/style-templates`;
+const templateUrl = (id: number) => `${TEMPLATES_ENDPOINT}/${id}`;
+const defaultUrl = (id: number) => `${TEMPLATES_ENDPOINT}/${id}/default`;
+
+export interface StyleTemplate {
+  id: number;
+  name: string;
+  tenant: string | null;
+  isDefault: boolean;
+  styleData: StyleConfig;
+  createdBy: string;
+  created: string;
+  modified: string | null;
+}
+
+// ── Global style (legacy single-style endpoint) ───────────────────────────────
+
+export const fetchTenantStyle = (): Promise<StyleConfig | null> =>
+  RequestService.httpGETRequest(STYLE_ENDPOINT)
+    .then((res: any) => res?.data?.styleData ?? null)
+    .catch(() => null);
+
+export const saveTenantStyle = (style: StyleConfig): Promise<void> =>
+  RequestService.httpPUTRequest(STYLE_ENDPOINT, { styleData: style })
+    .then(() => undefined);
+
+// ── Named style templates ─────────────────────────────────────────────────────
+
+// Backend expects API format: backgroundColor/accentColor/buttonColor
+// StyleConfig uses frontend format: background/accent/buttons
+const toApiStyle = (config: StyleConfig) => ({
+  backgroundColor: config.background,
+  accentColor:     config.accent,
+  buttonColor:     config.buttons,
+  buttonShape:     config.buttonShape,
+  headerFont:      config.headerFont,
+  bodyFont:        config.bodyFont,
+});
+
+// API response uses backgroundColor etc; convert back to StyleConfig for the UI
+const fromApiStyle = (data: any): StyleConfig => ({
+  background:  data.backgroundColor ?? data.background  ?? "",
+  accent:      data.accentColor     ?? data.accent      ?? "",
+  buttons:     data.buttonColor     ?? data.buttons     ?? "",
+  buttonShape: data.buttonShape     ?? "square",
+  headerFont:  data.headerFont      ?? "sans",
+  bodyFont:    data.bodyFont        ?? "sans",
+});
+
+const normalizeTemplate = (t: any): StyleTemplate => ({
+  id:        t.id,
+  name:      t.name,
+  tenant:    t.tenant ?? null,
+  isDefault: t.isDefault || false,
+  styleData: fromApiStyle(t.styleData || {}),
+  createdBy: t.createdBy,
+  created:   t.created,
+  modified:  t.modified,
+});
+
+export const fetchStyleTemplates = (): Promise<StyleTemplate[]> =>
+  RequestService.httpGETRequest(TEMPLATES_ENDPOINT)
+    .then((res: any) => (res?.data ?? []).map(normalizeTemplate))
+    .catch(() => []);
+
+export const createStyleTemplate = (
+  name: string,
+  styleData: StyleConfig,
+  isDefault: boolean
+): Promise<StyleTemplate> =>
+  RequestService.httpPOSTRequest(TEMPLATES_ENDPOINT, {
+    name,
+    styleData: toApiStyle(styleData),
+    isDefault,
+  }).then((res: any) => normalizeTemplate(res.data));
+
+export const updateStyleTemplate = (
+  id: number,
+  name: string,
+  styleData: StyleConfig,
+  isDefault: boolean
+): Promise<StyleTemplate> =>
+  RequestService.httpPUTRequest(templateUrl(id), {
+    name,
+    styleData: toApiStyle(styleData),
+    isDefault,
+  }).then((res: any) => normalizeTemplate(res.data));
+
+export const deleteStyleTemplate = (id: number): Promise<void> =>
+  RequestService.httpDELETERequest(templateUrl(id))
+    .then(() => undefined);
+
+export const setStyleTemplateAsDefault = (id: number): Promise<StyleTemplate> =>
+  RequestService.httpPUTRequest(defaultUrl(id), {})
+    .then((res: any) => normalizeTemplate(res.data));
