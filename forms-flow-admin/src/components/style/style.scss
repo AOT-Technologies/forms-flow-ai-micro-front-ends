@@ -164,6 +164,7 @@ $se-selected-ring:      2px solid #111827;
     background: #D1FAE5;
     border-radius: 10px;
     padding: 2px 8px;
+    margin-right: 1rem;
   }
 
   &__action-btn {
@@ -455,11 +456,15 @@ $se-selected-ring:      2px solid #111827;
   }
 
   // ── Dropdown ──────────────────────────────────────────────────────────────
-  &__dropdown {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    z-index: 1000;
+  // Portaled to <body> (see ColorPicker.tsx in @formsflow/components) so a
+  // scrollable/overflow ancestor — e.g. .ff-style-editor-panel__body, which
+  // scrolls — can't clip it. Position is computed in JS from the trigger's
+  // getBoundingClientRect() (viewport-relative) and passed as inline
+  // top/left, hence position: fixed here rather than absolute (which would
+  // need scrollY/scrollX added instead).
+  &__dropdown--portal {
+    position: fixed;
+    z-index: 2000;
     background: #fff;
     border: 1px solid $se-border;
     border-radius: $se-radius-md;
@@ -524,14 +529,36 @@ $se-selected-ring:      2px solid #111827;
     &--error { border-color: #EF4444; }
   }
 
-  // Small colour preview swatch in the custom row (16×16)
+  // Small colour preview swatch in the custom row (16×16) — a <label>
+  // wrapping the native colour <input> below, so clicking anywhere on it
+  // opens the OS colour picker via normal label→control activation.
   &__custom-swatch {
+    position: relative;
     display: inline-block;
     width: 16px;
     height: 16px;
     border-radius: 2px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     flex-shrink: 0;
+    cursor: pointer;
+    overflow: hidden;
+
+    &:hover { box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15); }
+    &:focus-within { outline: $se-selected-ring; outline-offset: 1px; }
+  }
+
+  // Native <input type="color"> — fills the label so the whole swatch is
+  // clickable; visually invisible but not display:none/visibility:hidden,
+  // which some browsers treat as unclickable.
+  &__native-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    opacity: 0;
+    cursor: pointer;
   }
 
   &__custom-input {
@@ -730,7 +757,7 @@ $se-selected-ring:      2px solid #111827;
   &__section-header {
     font-size: 13px;
     font-weight: 600;
-    color: #6B7280;
+    color: var(--preview-accent, #6B7280);
     background: #F3F4F6;
     padding: 6px 12px;
     border-radius: 4px;

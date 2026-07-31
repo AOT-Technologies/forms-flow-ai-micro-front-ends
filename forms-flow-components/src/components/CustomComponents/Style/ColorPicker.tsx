@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 // Two distinct palettes — 21 colours each, rendered as 7 columns × 3 rows
 const NEUTRAL_PALETTE: string[] = [
@@ -20,12 +21,29 @@ const VIVID_PALETTE: string[] = [
 ];
 
 const HEX_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
+const FULL_HEX_REGEX = /^#[0-9A-Fa-f]{6}$/;
+
+// Expands a 3-digit hex ("#f0c") to 6-digit ("#ff00cc"); returns null if not valid hex.
+const toFullHex = (raw: string): string | null => {
+  const normalised = raw.startsWith("#") ? raw : `#${raw}`;
+  if (FULL_HEX_REGEX.test(normalised)) return normalised;
+  if (/^#[0-9A-Fa-f]{3}$/.test(normalised)) {
+    return `#${normalised[1]}${normalised[1]}${normalised[2]}${normalised[2]}${normalised[3]}${normalised[3]}`;
+  }
+  return null;
+};
 
 interface ColorPickerProps {
   value: string;
   onChange: (hex: string) => void;
   palette?: "neutral" | "vivid";
   label?: string;
+}
+
+interface Position {
+  top: number;
+  left: number;
+  minWidth: number;
 }
 
 const ColorPicker: React.FC<ColorPickerProps> = ({
@@ -37,7 +55,10 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   const [open, setOpen] = useState<boolean>(false);
   const [customInput, setCustomInput] = useState<string>(value || "");
   const [inputError, setInputError] = useState<boolean>(false);
+  const [position, setPosition] = useState<Position | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const swatches = palette === "neutral" ? NEUTRAL_PALETTE : VIVID_PALETTE;
 
@@ -45,19 +66,45 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     setCustomInput(value || "");
   }, [value]);
 
+  // The dropdown is portaled to <body> so a scrollable/overflow ancestor
+  // (e.g. the Manage-templates edit panel, which scrolls) can't clip it.
+  // Position is computed from the trigger's viewport rect and kept in sync
+  // with position: fixed, so no scroll-offset math is needed.
   useEffect(() => {
-    if (!open) return;
+    if (!open) return undefined;
+
+    const updatePosition = () => {
+      if (!triggerRef.current) return;
+      const rect = triggerRef.current.getBoundingClientRect();
+      setPosition({ top: rect.bottom + 6, left: rect.left, minWidth: rect.width });
+    };
+
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [open]);
+
+  // Close on outside click — checks both the trigger container AND the
+  // portaled dropdown, since the dropdown no longer lives inside
+  // containerRef's DOM subtree.
+  useEffect(() => {
+    if (!open) return undefined;
     const handleClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      const target = e.target as Node;
+      const inTrigger = containerRef.current && containerRef.current.contains(target);
+      const inDropdown = dropdownRef.current && dropdownRef.current.contains(target);
+      if (!inTrigger && !inDropdown) setOpen(false);
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) return undefined;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
@@ -92,11 +139,14 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     if (!HEX_REGEX.test(normalised)) setInputError(true);
   };
 
+  const handleNativeColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const hex = e.target.value;
+    setCustomInput(hex);
+    setInputError(false);
+    onChange(hex);
+  };
+
   const displayValue = value ? value.replace("#", "").toUpperCase() : "------";
-  const previewHex = (() => {
-    const n = customInput.startsWith("#") ? customInput : `#${customInput}`;
-    return HEX_REGEX.test(n) ? n : "#FFFFFF";
-  })();
 
   return (
     <div className="ff-color-picker" ref={containerRef}>
@@ -108,6 +158,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
 
       <button
         type="button"
+        ref={triggerRef}
         className="ff-color-picker__trigger"
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="dialog"
@@ -138,9 +189,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
         </svg>
       </button>
 
-      {open && (
+      {open && position && createPortal(
         <div
-          className="ff-color-picker__dropdown"
+          ref={dropdownRef}
+          className="ff-color-picker__dropdown ff-color-picker__dropdown--portal"
+          style={{ top: position.top, left: position.left, minWidth: position.minWidth }}
           role="dialog"
           aria-label="Colour picker"
           aria-modal="false"
@@ -165,11 +218,20 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             <div
               className={`ff-color-picker__custom-input-wrap${inputError ? " ff-color-picker__custom-input-wrap--error" : ""}`}
             >
-              <span
+              <label
                 className="ff-color-picker__custom-swatch"
-                style={{ backgroundColor: previewHex }}
-                aria-hidden="true"
-              />
+                style={{ backgroundColor: toFullHex(customInput) || "#FFFFFF" }}
+                aria-label="Open colour picker"
+              >
+                <input
+                  type="color"
+                  className="ff-color-picker__native-input"
+                  value={toFullHex(customInput) || "#FFFFFF"}
+                  onChange={handleNativeColorChange}
+                  tabIndex={-1}
+                  aria-hidden="true"
+                />
+              </label>
               <input
                 type="text"
                 className="ff-color-picker__custom-input"
@@ -183,7 +245,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
               />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

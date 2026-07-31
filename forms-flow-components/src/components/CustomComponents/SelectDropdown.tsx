@@ -134,7 +134,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<
       string | number | undefined
-    >(value || defaultValue);
+    >(value ?? defaultValue);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
     // ---------- SECONDARY DROPDOWN ----------
@@ -150,9 +150,11 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
     const secondaryMenuRef = useRef<HTMLDivElement | null>(null);
     const [isMounted, setIsMounted] = useState(false);
 
-    // Update values if props change
+    // Update values if props change. Nullish coalescing (not ||) so a
+    // legitimately falsy value like "" or 0 isn't discarded in favor of
+    // defaultValue — only null/undefined should fall through.
     useEffect(() => {
-      setSelectedValue(value || defaultValue);
+      setSelectedValue(value ?? defaultValue);
     }, [value, defaultValue]);
 
     useEffect(() => {

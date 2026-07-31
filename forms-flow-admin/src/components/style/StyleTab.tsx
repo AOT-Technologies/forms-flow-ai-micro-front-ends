@@ -63,7 +63,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
         <span className="ff-style-templates__heading">{t("Templates")}</span>
         <button
           type="button"
-          className="ff-style-templates__add-btn"
+          className="ff-style-templates__action-btn"
           onClick={onAddNew}
           aria-label={t("Add New template")}
         >
