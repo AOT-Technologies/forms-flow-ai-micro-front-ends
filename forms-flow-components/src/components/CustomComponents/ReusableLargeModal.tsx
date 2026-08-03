@@ -84,6 +84,7 @@ export const ReusableLargeModal: React.FC<ReusableLargeModalProps> = ({
               className="modal-close-btn"
               onClick={onClose}
               aria-label={t("Close")}
+              data-testid="large-modal-close-btn"
             >
               <CloseIcon color={darkColor} />
             </button>

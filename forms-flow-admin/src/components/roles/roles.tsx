@@ -472,6 +472,7 @@ const Roles = React.memo((props: any) => {
             className="icon-close"
             onClick={handleCloseRoleModal}
             data-testid="role-modal-close"
+            aria-label={t("Close")}
           >
             <CloseIcon dataTestId="action-modal-close" />
           </div>
@@ -524,6 +525,7 @@ const Roles = React.memo((props: any) => {
             className="icon-close"
             onClick={handleCloseEditRoleModal}
             data-testid="role-modal-close"
+            aria-label={t("Close")}
           >
             <CloseIcon />
           </div>
@@ -702,6 +704,7 @@ const Roles = React.memo((props: any) => {
                 //   KEYCLOAK_ENABLE_CLIENT_AUTH ? rowData.name : rowData.id
                 // );
               }}
+              aria-label={t("Edit role")}
               data-testid="admin-roles-edit-icon"
             />
           </div>

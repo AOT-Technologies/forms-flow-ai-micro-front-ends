@@ -576,6 +576,7 @@ const SelectWithCustomValueComponent = forwardRef<
         aria-expanded={isOpenState}
         aria-haspopup="listbox"
         disabled={disabled}
+        data-testid={`${dataTestId}-${variantType}-toggle`}
       >
         <span className="dropdown-text">
           {getDisplayLabel({

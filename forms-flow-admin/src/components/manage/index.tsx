@@ -151,6 +151,8 @@ const Manage: React.FC<ManageProps> = ({
             onClick={handleTabContentToggle}
             role="button"
             tabIndex={0}
+            aria-label={t("Toggle tab content")}
+            data-testid="manage-tab-content-toggle"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();

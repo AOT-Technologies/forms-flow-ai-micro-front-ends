@@ -43,7 +43,7 @@ const SaveFilterTab = ({
   const baseColor = computedStyle.getPropertyValue("--ff-primary");
   const whiteColor = computedStyle.getPropertyValue("--ff-white");
   const [filterNameError, setFilterNameError] = useState("");
-  const getIconColor = (disabled) => (disabled ? whiteColor : baseColor);
+  const getIconColor = (disabled: any) => (disabled ? whiteColor : baseColor);
   const saveIconColor = getIconColor(
     createAndUpdateFilterButtonDisabled ||
       filterNameError ||
@@ -271,8 +271,10 @@ const SaveFilterTab = ({
         secondDropdown={true}
         defaultValue={shareFilter}
         secondDefaultValue={shareFilterForSpecificRole}
-        onChange={(v) => setShareFilter(v)}
-        onSecondChange={(v) => setShareFilterForSpecificRole(v)}
+        onChange={(v: any) => setShareFilter(v)}
+        onSecondChange={(v: any) => setShareFilterForSpecificRole(v)}
+        ariaLabel={t("Share This Filter With")}
+        dataTestId="share-task-filter-options"
         variant="secondary"
       />
     </>

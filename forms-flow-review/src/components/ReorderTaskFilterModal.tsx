@@ -172,7 +172,11 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
                 {" "}
                 {t("Re-order And Hide Filters")}
                 <div onClick={onClose}>
-                  <CloseIcon color={darkColor} />
+                  <CloseIcon
+                    color={darkColor}
+                    data-testid="reorder-task-filter-close-icon"
+                    aria-label={t("Close")}
+                  />
                 </div>
               </AppModal.Title>
 

@@ -534,6 +534,7 @@ export const FilterableDropdown: React.FC<FilterableDropdownProps> = ({
               }
             }}
             aria-label="Toggle dropdown"
+            data-testid={`${dataTestId}-arrow`}
           >
             {isOpen ? (
               <UpArrowIcon color={iconColor} />

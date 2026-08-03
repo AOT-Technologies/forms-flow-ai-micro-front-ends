@@ -166,7 +166,12 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
                 : filterToEdit?.id
                 ? t(`Edit Custom Filter > ${filterToEdit.name}`)
                 : t("Create Custom Filter")}
-              <CloseIcon color="var(--gray-darkest)" onClick={onClose} />
+              <CloseIcon
+                color="var(--gray-darkest)"
+                onClick={onClose}
+                data-testid="task-filter-modal-close-icon"
+                aria-label={t("Close")}
+              />
             </div>
 
             <div
@@ -238,8 +243,12 @@ const TaskFilterModal = ({ show, onClose, toggleModal }) => {
           type="danger"
           primaryBtnText={t("Delete filter")}
           primaryBtnAction={handleFilterDelete}
+          primaryBtndataTestid="task-filter-delete-confirm-button"
+          primaryBtnariaLabel={t("Delete filter")}
           secondaryBtnText={t("Cancel")}
           secondaryBtnAction={toggleDeleteModal}
+          secondoryBtndataTestid="task-filter-delete-cancel-button"
+          secondoryBtnariaLabel={t("Cancel")}
         />
       )}
     </>

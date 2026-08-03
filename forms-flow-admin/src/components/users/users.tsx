@@ -233,6 +233,7 @@ const Users = React.memo((props: any) => {
                     {canRemoveRole(rowData, item) && (
                       <i
                         className="fa-solid fa-xmark chip-close ms-2"
+                        aria-label={t("Remove role")}
                         data-testid="user-role-remove-icon"
                         onClick={() =>
                           setRoleRemoveCandidate({ rowData, item })
@@ -433,6 +434,7 @@ const Users = React.memo((props: any) => {
             className="icon-close"
             onClick={closeSuccessModal}
             data-testid="user-add-success-close"
+            aria-label={t("Close")}
           >
             <CloseIcon dataTestId="action-success-modal-close" />
           </div>

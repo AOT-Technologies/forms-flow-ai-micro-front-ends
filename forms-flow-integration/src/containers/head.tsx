@@ -14,7 +14,11 @@ const Head = React.memo((props: any) => {
             }`}
             data-testid={`head-item-${key}`}
           >
-            <h3 onClick={item?.onClick} className="application-head">
+            <h3
+              onClick={item?.onClick}
+              className="application-head"
+              data-testid={`head-item-button-${key}`}
+            >
               <i
                 className={`fa fa-${item?.icon}`}
                 style={{ marginTop: "5px" }}

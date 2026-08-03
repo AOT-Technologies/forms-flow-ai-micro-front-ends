@@ -126,7 +126,12 @@ export const FormInput: React.FC<FormInputProps> = ({
         />
 
         {icon && !turnOnLoader && (
-          <div className="icon" id="input-icon" onClick={onIconClick}>
+          <div
+            className="icon"
+            id="input-icon"
+            onClick={onIconClick}
+            data-testid={dataTestId ? `${dataTestId}-icon` : undefined}
+          >
             {icon}
           </div>
         )}

@@ -42,7 +42,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(
             <p>{t(title)}</p>
           </AppModal.Title>
           <div className="icon-close" onClick={onClose}>
-            <CloseIcon />
+            <CloseIcon data-testid="error-modal-close" />
           </div>
         </AppModal.Header>
         <AppModal.Body className="build-modal-body">

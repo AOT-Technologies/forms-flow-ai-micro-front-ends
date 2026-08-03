@@ -478,6 +478,8 @@ const ViewApplication = React.memo(() => {
             variant={BreadcrumbVariant.MINIMIZED}
             underline
             onBreadcrumbClick={handleBreadcrumbClick}
+            dataTestId="submission-detail-breadcrumb"
+            ariaLabel={t("Submission details breadcrumb")}
           />
           {/* <h4>{applicationId}</h4> */}
         </div>
@@ -490,6 +492,7 @@ const ViewApplication = React.memo(() => {
                   label={tab.label}
                   selected={selectedTab?.id === tab.id}
                   onClick={() => setSelectedTab(tab)}
+              dataTestId={`submission-detail-tab-${tab.id}`}
                   disabled={
                     ((tab.id === "flow" && !analyze_process_view) || (tab.id === "history" && !analyze_submissions_view_history))
                   }

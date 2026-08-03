@@ -151,6 +151,7 @@ const InsightDashboard = React.memo((props: any) => {
                   <i
                     className="fa-solid fa-xmark chip-close ms-2"
                     onClick={() => removeDashboardAuth(rowData, label)}
+                    aria-label={t("Remove role access")}
                     data-testid={`dashboard-remove-auth-btn-${i}`}
                   ></i>
                 </span>

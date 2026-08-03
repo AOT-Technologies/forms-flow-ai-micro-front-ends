@@ -368,6 +368,7 @@ const SelectDropdownComponent = forwardRef<HTMLDivElement, SelectDropdownProps>(
             aria-expanded={isOpenState}
             aria-haspopup="listbox"
             disabled={disabled}
+            data-testid={`${dataTestId}-toggle`}
           >
             <span className="dropdown-text">
               {(() => {
