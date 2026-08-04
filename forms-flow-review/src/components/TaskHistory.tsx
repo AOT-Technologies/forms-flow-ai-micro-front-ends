@@ -123,6 +123,9 @@ export const TaskHistoryModal: React.FC<TaskHistoryModalProps> = React.memo(
                       label="View Submission"
                       onClick={() => viewSubmission(entry)}
                       ariaLabel="view submission button"
+                      dataTestId={`form-history-view-submission-${
+                        entry.id || index
+                      }`}
                       actionTable
                     />
                   </div>

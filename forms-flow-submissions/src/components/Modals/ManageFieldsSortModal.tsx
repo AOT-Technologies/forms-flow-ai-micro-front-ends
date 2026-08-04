@@ -208,7 +208,12 @@ const ManageFieldsSortModal: React.FC<ManageFieldsModalProps> = ({
             {selectedItem
               ? t(`${selectedItem} > Manage Fields`)
               : t(`All Forms > Manage Fields`)}
-            <CloseIcon color="var(--gray-darkest)" onClick={onClose} />
+            <CloseIcon
+              color="var(--gray-darkest)"
+              onClick={onClose}
+              data-testid="manage-fields-modal-close"
+              aria-label={t("Close manage fields modal")}
+            />
           </div>
 
           <div>

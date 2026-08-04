@@ -136,7 +136,11 @@ const UserProfile = ({
   collapsed,
 }) => (
   <div className={`user-container${collapsed ? " collapsed" : ""}`}>
-    <button onClick={handleProfileModal}>
+    <button
+      onClick={handleProfileModal}
+      data-testid="sidenav-user-profile-btn"
+      aria-label={t("Profile settings")}
+    >
       <div className="user-icon cursor-pointer" data-testid="user-icon">
         {initials}
       </div>
@@ -154,6 +158,7 @@ const UserProfile = ({
       className="sign-out-button"
       onClick={logout}
       data-testid="sign-out-button"
+      aria-label={t("Logout")}
     >
       <LogoutIcon />
       {!collapsed && <p className="m-0">{t("Logout")}</p>}
@@ -644,8 +649,9 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
       <div
         className={`menu-toggle-icon${collapsed ? "" : " open"}`}
         role="button"
+        aria-label={t("Toggle sidebar")}
       >
-        <span onClick={handleToggleClick}>
+        <span onClick={handleToggleClick} data-testid="sidenav-toggle-btn">
           <MenuToggleIcon />
         </span>
       </div>

@@ -204,6 +204,8 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
           onLabelClick(Number(item.id))
         }
         className="bundle-view-breadcumbs"
+        dataTestId="bundle-submission-breadcrumb"
+        ariaLabel="Bundle forms navigation"
       />
 
       <div className="p-3 analyze-Submission-bundle-view ">

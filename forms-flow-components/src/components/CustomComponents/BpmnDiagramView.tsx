@@ -105,13 +105,29 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
         {showDiagramTools && (
           <div className="d-flex justify-content-end">
             <div className="d-flex flex-column">
-              <button className="mb-3" title="Reset Zoom" onClick={zoomReset}>
+              <button
+                className="mb-3"
+                title="Reset Zoom"
+                onClick={zoomReset}
+                aria-label={t("Reset Zoom")}
+                data-testid="diagram-zoom-reset-btn"
+              >
                 <i className="fa fa-retweet" aria-hidden="true" />
               </button>
-              <button title="Zoom In" onClick={zoom}>
+              <button
+                title="Zoom In"
+                onClick={zoom}
+                aria-label={t("Zoom In")}
+                data-testid="diagram-zoom-in-btn"
+              >
                 <i className="fa fa-search-plus" aria-hidden="true" />
               </button>
-              <button title="Zoom Out" onClick={zoomOut}>
+              <button
+                title="Zoom Out"
+                onClick={zoomOut}
+                aria-label={t("Zoom Out")}
+                data-testid="diagram-zoom-out-btn"
+              >
                 <i className="fa fa-search-minus" aria-hidden="true" />
               </button>
             </div>

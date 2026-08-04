@@ -121,7 +121,11 @@ export const AttributeFilterModal = ({ show, onClose, toggleModal }) => {
             <AppModal.Title id="create-filter-title">
               {title}
               <div onClick={onClose}>
-                <CloseIcon color={darkColor} data-testid="close-icon" />
+                <CloseIcon
+                  color={darkColor}
+                  data-testid="close-icon"
+                  aria-label={t("Close")}
+                />
               </div>
             </AppModal.Title>
 

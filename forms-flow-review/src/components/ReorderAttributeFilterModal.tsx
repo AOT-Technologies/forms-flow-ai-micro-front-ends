@@ -180,7 +180,11 @@ export const ReorderAttributeFilterModal: React.FC<ReorderAttributeFilterModalPr
                 {" "}
                 {t("Re-order And Hide Filters")}
                 <div onClick={onClose}>
-                  <CloseIcon color={darkColor} />
+                  <CloseIcon
+                    color={darkColor}
+                    data-testid="reorder-attribute-filter-close-icon"
+                    aria-label={t("Close")}
+                  />
                 </div>
               </AppModal.Title>
               <div className="modal-subtitle">

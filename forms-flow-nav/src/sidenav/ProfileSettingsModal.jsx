@@ -461,6 +461,8 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
               <CloseIcon
                 color="var(--gray-darkest)"
                 onClick={handleRequestClose}
+                data-testid="profile-settings-close-btn"
+                aria-label={t("Close")}
               />
             </div>
             <div className="modal-subtitle pb-0">

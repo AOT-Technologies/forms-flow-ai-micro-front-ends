@@ -186,7 +186,7 @@ export const ReusableStandardModal: React.FC<ReusableStandardModalProps> = ({
           <AppModal.Title id="reusable-standard-modal-title">
             {t(title)}
             <div onClick={onClose}>
-              <CloseIcon color={darkColor} />
+              <CloseIcon color={darkColor} data-testid="standard-modal-close" />
             </div>
           </AppModal.Title>
 

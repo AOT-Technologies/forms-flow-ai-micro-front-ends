@@ -41,6 +41,8 @@ interface SwitchProps
   label?: string;
   /** Switch visual style variant */
   type?: SwitchVariant;
+  /** data-testid applied to the toggle button */
+  dataTestId?: string;
 }
 
 /**
@@ -66,6 +68,7 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(
       className = "",
       label,
       type = "default",
+      dataTestId = "switch-toggle",
       ...restProps
     },
     ref
@@ -221,6 +224,7 @@ const SwitchComponent = forwardRef<HTMLDivElement, SwitchProps>(
           onFocus={handleFocus}
           onBlur={handleBlur}
           disabled={isInteractionDisabled}
+          data-testid={dataTestId}
         >
           <span className="custom-switch-slider">{renderIcon()}</span>
         </button>

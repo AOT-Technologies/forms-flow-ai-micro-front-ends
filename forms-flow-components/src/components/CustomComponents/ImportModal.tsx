@@ -374,7 +374,11 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             <div className="import-layout-text">{t("Layout")}</div>
             <div className="flex-grow-1">
               <Dropdown className="dropdown-main">
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                <Dropdown.Toggle
+                  variant="success"
+                  id="dropdown-basic"
+                  data-testid="import-layout-version-toggle"
+                >
                   <div className="d-flex justify-content-between align-items-center w-100">
                     <div className="text-truncate">
                       {selectedLayoutVersion
@@ -388,6 +392,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                   {layoutOptions.map((option) => (
                     <Dropdown.Item
                       key={option.value.toString()}
+                      data-testid={`import-layout-option-${option.value}`}
                       onClick={() => handleLayoutChange(option)}
                     >
                       {option.label}
@@ -409,7 +414,11 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
             <div className="import-workflow-text">Flow</div>
             <div className="flex-grow-1">
               <Dropdown className="dropdown-main">
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                <Dropdown.Toggle
+                  variant="success"
+                  id="dropdown-basic"
+                  data-testid="import-flow-version-toggle"
+                >
                   <div className="d-flex justify-content-between align-items-center w-100">
                     <div className="text-truncate">
                       {selectedFlowVersion
@@ -423,6 +432,7 @@ export const ImportModal: React.FC<ImportModalProps> = React.memo(
                   {flowOptions.map((option) => (
                     <Dropdown.Item
                       key={option.value.toString()}
+                      data-testid={`import-flow-option-${option.value}`}
                       onClick={() => handFlowChange(option)}
                     >
                       {option.label}

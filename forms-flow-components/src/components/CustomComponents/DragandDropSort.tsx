@@ -127,7 +127,12 @@ export const DragandDropSort: React.FC<DragAndDropFilterProps> = ({
             key={item.id ?? `${item.name}-${index}`}
             className="draggable-item"
           >
-            <button className="draggable-icon" draggable>
+            <button
+              className="draggable-icon"
+              draggable
+              aria-label={`Reorder ${item.label ?? item.name}`}
+              data-testid={`drag-handle-${item.name}`}
+            >
               <DraggableIcon color={grayMediumDarkColor} />
             </button>
             <CustomCheckbox

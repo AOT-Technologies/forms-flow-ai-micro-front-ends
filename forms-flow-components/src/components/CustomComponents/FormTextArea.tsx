@@ -125,6 +125,7 @@ export const FormTextArea = forwardRef<HTMLTextAreaElement, FormTextAreaProps>(
               id="basic-addon1"
               onClick={onIconClick}
               className={` ${disabled ? "disabled" : ""}`}
+              data-testid={dataTestId ? `${dataTestId}-icon` : undefined}
             >
               {icon}
             </InputGroup.Text>

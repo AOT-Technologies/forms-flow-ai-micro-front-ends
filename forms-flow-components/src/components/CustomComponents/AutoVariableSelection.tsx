@@ -403,6 +403,11 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> =
                             checked={selectedVariable?.key === variable.key}
                             onChange={() => handleVariableSelect(variable)}
                             data-testid={`variable-selection-form-variable-radio-${variable.key}`}
+                            aria-label={
+                              variable.altVariable ||
+                              variable.labelOfComponent ||
+                              variable.key
+                            }
                           />
                           <span className="variable-list-item-text">
                             {variable.altVariable ||
@@ -462,6 +467,9 @@ export const AutoVariableSelection: React.FC<AutoVariableSelectionProps> =
                               checked={selectedVariable?.key === sysVar.key}
                               onChange={() => handleVariableSelect(variable)}
                               data-testid={`variable-selection-system-variable-radio-${sysVar.key}`}
+                              aria-label={
+                                variable?.altVariable || sysVar.labelOfComponent
+                              }
                             />
                             <span className="variable-list-item-text">
                               {variable?.altVariable || sysVar.labelOfComponent}

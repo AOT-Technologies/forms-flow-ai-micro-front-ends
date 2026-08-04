@@ -26,7 +26,7 @@ const ConnectedApps = React.memo((props: any) => {
       return <Loading />
    }
    if (error) {
-      <Alert variant="danger" message={error} />
+      <Alert variant="danger" message={error} dataTestId="integration-connected-apps-error-alert" />
    }
 
    return (
@@ -34,8 +34,9 @@ const ConnectedApps = React.memo((props: any) => {
          {connectedApps ? <iframe width="100%"
             height="700"
             src={connectedApps}
-            title="connected apps" >
-         </iframe> : <Alert message="No urls found"/> }
+            title="connected apps"
+            data-testid="integration-connected-apps-iframe" >
+         </iframe> : <Alert message="No urls found" dataTestId="integration-connected-apps-no-url-alert"/> }
       </>
    );
 });

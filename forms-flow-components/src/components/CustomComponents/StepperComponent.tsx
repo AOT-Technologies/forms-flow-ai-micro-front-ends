@@ -19,6 +19,7 @@ export const StepperComponent: React.FC<StepperProps> = ({
         {steps.map((label, index) => (
           <li
             key={label}
+            data-testid={`stepper-step-${index + 1}`}
             role={onClick ? "button" : undefined}
             className={`ff-step ${activeStep > index ? "active " : ""} ${
               onClick ? "cursor-pointer " : "cursor-default "

@@ -622,6 +622,7 @@ const DateRangePickerComponent = forwardRef<
             readOnly
             aria-label="Start date"
             placeholder="Start date"
+            data-testid="date-range-start-input"
           />
           <span className="drp-separator">to</span>
           <input
@@ -632,6 +633,7 @@ const DateRangePickerComponent = forwardRef<
             readOnly
             aria-label="End date"
             placeholder="End date"
+            data-testid="date-range-end-input"
           />
 
           <span

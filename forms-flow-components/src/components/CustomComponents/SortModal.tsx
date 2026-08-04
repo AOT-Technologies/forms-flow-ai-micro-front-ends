@@ -70,7 +70,12 @@ export const SortModal: React.FC<SortModalProps> = React.memo(
       (selectedOption === defaultSortOption &&
         selectedOrder === defaultSortOrder);
     return (
-      <AppModal show={showSortModal} onHide={onClose} size="sm">
+      <AppModal
+        show={showSortModal}
+        onHide={onClose}
+        size="sm"
+        data-testid="sort-modal"
+      >
         <AppModal.Header>
           <AppModal.Title>
             <p>{t(modalHeader)}</p>

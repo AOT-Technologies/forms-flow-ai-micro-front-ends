@@ -93,6 +93,7 @@ export const CustomTextInput = React.forwardRef<
                 : undefined
             }
             aria-label={onIconClick ? "Icon button" : undefined}
+            data-testid={`${dataTestId}-icon`}
           >
             {icon}
           </div>

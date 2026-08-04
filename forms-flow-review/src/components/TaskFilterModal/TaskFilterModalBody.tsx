@@ -926,6 +926,7 @@ const TaskFilterModalBody = ({
                         onChange={() => handleIntroTypeSelect(opt.value)}
                         aria-label={opt.title}
                         className="m-0"
+                        data-testid={`task-filter-intro-type-${opt.value}`}
                       />
                     </div>
                   </div>
@@ -986,6 +987,7 @@ const TaskFilterModalBody = ({
                         }}
                         aria-label={opt.title}
                         className="m-0"
+                        data-testid={`task-filter-intro-access-${opt.value}`}
                       />
                     </div>
                   </div>

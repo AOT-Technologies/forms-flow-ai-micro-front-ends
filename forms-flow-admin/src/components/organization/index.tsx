@@ -22,6 +22,7 @@ interface AccordionSectionProps {
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
+  dataTestId?: string;
 }
 
 const AccordionSection: React.FC<AccordionSectionProps> = ({
@@ -29,6 +30,7 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({
   isOpen,
   onToggle,
   children,
+  dataTestId,
 }) => {
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -48,6 +50,7 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({
         role="button"
         tabIndex={0}
         onKeyDown={handleKeyDown}
+        data-testid={dataTestId}
       >
         <h3 className="organization-section-title">{title}</h3>
         {isOpen ? (
@@ -294,6 +297,7 @@ const Organization: React.FC<any> = (props) => {
           title={t("Subscription")}
           isOpen={subscriptionOpen}
           onToggle={() => setSubscriptionOpen(!subscriptionOpen)}
+          dataTestId="organization-subscription-toggle"
         >
           <div className="subscription-card">
             <div className="subscription-status">
@@ -321,6 +325,7 @@ const Organization: React.FC<any> = (props) => {
           title={t("Terms & Conditions")}
           isOpen={termsOpen}
           onToggle={() => setTermsOpen(!termsOpen)}
+          dataTestId="organization-terms-toggle"
         >
           <div className="terms-actions">
             {renderExternalButtons("View our Terms and Conditions")}

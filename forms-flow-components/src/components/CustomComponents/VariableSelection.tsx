@@ -379,7 +379,11 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
             <div className="slideout-variable-selected show">
               <div className="head">
                 <div className="RHS-header">
-                  <span className="back-button" onClick={handleBack}>
+                  <span
+                    className="back-button"
+                    onClick={handleBack}
+                    data-testid="variable-selection-back-btn"
+                  >
                     <BackIcon color={BackIconColor} /> {t("Back")}
                   </span>
                 </div>
@@ -446,10 +450,12 @@ export const VariableSelection: React.FC<VariableSelectionProps> = React.memo(
                         key={key}
                         className="variable-card"
                         onClick={() => handlePillClick(variable)}
+                        data-testid={`variable-card-${key}`}
                       >
                         {disabled ? null : (
                           <div
                             className="variable-card-close"
+                            data-testid={`variable-card-close-${key}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               removeSelectedVariable(key);

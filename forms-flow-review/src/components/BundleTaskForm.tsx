@@ -199,6 +199,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
         onBreadcrumbClick={(item: { id?: string; label: string }) =>
           onLabelClick(Number(item.id))
         }
+        dataTestId="bundle-form-breadcrumbs"
       />
 
       <div className="scrollable-overview-with-header bg-white m-0 form-border p-5">

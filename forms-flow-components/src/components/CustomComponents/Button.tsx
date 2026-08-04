@@ -136,6 +136,8 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           variant={variant}
           id="dropdown-split-basic"
           className={`default-arrow ${dropdownOpen ? "collapsed" : ""}`}
+          aria-label={t("Toggle dropdown")}
+          data-testid={dataTestId ? `${dataTestId}-split-toggle` : undefined}
         >
           <ChevronIcon className="svgIcon-onDark" />
         </Dropdown.Toggle>

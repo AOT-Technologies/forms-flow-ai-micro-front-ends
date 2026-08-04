@@ -367,12 +367,14 @@ const TaskList = () => {
             onClick={() => handleAssigneTabClick(false)}
             label={t("All")}
             selected={!isAssigned}
+            dataTestId="task-list-all-tasks-button"
           />
           <V8CustomButton
             variant={isAssigned ? "primary" : "secondary"}
             onClick={() => handleAssigneTabClick(true)}
             label={t("Assigned to me")}
             selected={isAssigned}
+            dataTestId="task-list-assigned-to-me-button"
           />
         </div>
       </div>
