@@ -25,14 +25,24 @@ const Plans: React.FC = () => {
     const loadPricingTable = async () => {
       if (pricingTableRef.current?.innerHTML.trim()) return;
       if (!tenantId) {
-        if (isMounted) { setLoading(false); 
-          setError(t("Tenant not found in session.")); }
+        if (isMounted) {
+          setLoading(false);
+          setError(t("Tenant not found in session."));
+        }
         return;
       }
 
       try {
-        const endpoint = API.BILLING_PRICING_SESSION.replace("<tenant_key>", tenantId);
-        const response = await RequestService.httpPOSTRequest(endpoint, {}, null, true);
+        const endpoint = API.BILLING_PRICING_SESSION.replace(
+          "<tenant_key>",
+          tenantId
+        );
+        const response = await RequestService.httpPOSTRequest(
+          endpoint,
+          {},
+          null,
+          true
+        );
         const data = response?.data;
         if (
           !data?.publishableKey ||
@@ -42,7 +52,11 @@ const Plans: React.FC = () => {
           throw new Error("No Stripe pricing session data returned");
         }
 
-        if (!document.querySelector('script[src="https://js.stripe.com/v3/pricing-table.js"]')) {
+        if (
+          !document.querySelector(
+            'script[src="https://js.stripe.com/v3/pricing-table.js"]'
+          )
+        ) {
           const script = document.createElement("script");
           script.src = "https://js.stripe.com/v3/pricing-table.js";
           script.async = true;
@@ -89,9 +103,7 @@ const Plans: React.FC = () => {
               label={t("Back")}
               variant="secondary"
               dataTestId="plans-back-button"
-              onClick={() =>
-                navigate(`${baseUrl}admin/organization`)
-              }
+              onClick={() => navigate(`${baseUrl}admin/organization`)}
             />
           </div>
           {loading ? <Loading /> : null}

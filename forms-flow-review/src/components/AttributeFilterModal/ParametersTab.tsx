@@ -1,25 +1,35 @@
 import { Fragment } from "react";
-import { SelectDropdown,CustomTextInput } from "@formsflow/components";
+import { SelectDropdown, CustomTextInput } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 
-const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assigneeOptions, candidateOptions}) => {
-    const {t} = useTranslation();
-    
+const ParametersTab = ({
+  taskVariables,
+  attributeData,
+  handleSelectChange,
+  assigneeOptions,
+  candidateOptions,
+}) => {
+  const { t } = useTranslation();
+
   // Create unique identifier for fields with same key but different isFormVariable
   const getUniqueFieldKey = (item) => {
     return item.isFormVariable ? `${item.key}_form` : item.key;
   };
 
   const handleValueChange = (name, value) => {
-    const variableDef = taskVariables?.find((variable) => getUniqueFieldKey(variable) === name);
+    const variableDef = taskVariables?.find(
+      (variable) => getUniqueFieldKey(variable) === name
+    );
     let processedValue = value;
-    
+
     // Validate applicationId - must be a valid number
     if (variableDef?.key === "applicationId" && value !== "") {
       const numValue = Number(value);
       if (isNaN(numValue)) {
         // Invalid number, don't update the value
-        console.warn(`Invalid applicationId value: ${value}. Expected a number.`);
+        console.warn(
+          `Invalid applicationId value: ${value}. Expected a number.`
+        );
         return;
       }
       processedValue = String(numValue); // Store as string for consistency
@@ -103,19 +113,19 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
   // Helper function to render field component based on item type
   const renderFieldComponent = (item) => {
     const uniqueKey = getUniqueFieldKey(item);
-    if (item?.key === "assignee") { 
-      return item.isFormVariable 
+    if (item?.key === "assignee") {
+      return item.isFormVariable
         ? createFormInput(item, uniqueKey)
         : createSelectDropdown(item, uniqueKey, assigneeOptions);
     }
-    
+
     if (item.key === "roles") {
-      return item.isFormVariable 
+      return item.isFormVariable
         ? createFormInput(item, uniqueKey)
         : createSelectDropdown(item, uniqueKey, candidateOptions);
     }
-    
-    return item.type === "checkbox" 
+
+    return item.type === "checkbox"
       ? createCheckboxDropdown(item)
       : createTextNumberInput(item, uniqueKey);
   };
@@ -123,13 +133,19 @@ const ParametersTab = ({taskVariables, attributeData ,handleSelectChange, assign
   return (
     <div className="parameters-tab-container">
       {taskVariables.map((item) => {
-        if (item.isChecked && item.name !== "created" && item.type !== "selectboxes") {
+        if (
+          item.isChecked &&
+          item.name !== "created" &&
+          item.type !== "selectboxes"
+        ) {
           const uniqueKey = getUniqueFieldKey(item);
-          return <Fragment key={uniqueKey}>{renderFieldComponent(item)}</Fragment>;
+          return (
+            <Fragment key={uniqueKey}>{renderFieldComponent(item)}</Fragment>
+          );
         }
         return null;
       })}
     </div>
   );
-}
+};
 export default ParametersTab;

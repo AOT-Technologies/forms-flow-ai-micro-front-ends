@@ -49,7 +49,7 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
     position: relative;
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       bottom: 0;
       left: var(--spacer-100);
@@ -163,7 +163,7 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
     gap: var(--spacer-075);
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       left: var(--spacer-100);
@@ -175,50 +175,47 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
 }
 
 .role-list {
-    overflow-y: auto;
-    max-height: $role-list-max-height;
-    max-width: max-content;
+  overflow-y: auto;
+  max-height: $role-list-max-height;
+  max-width: max-content;
 }
 
 .role {
-    padding-left: $role-item-padding-x;
-    padding-right: $role-item-padding-x;
-    height: $role-item-height;
-    display: flex;
-    align-items: center;
-    margin-bottom: var(--border-radius);
-    cursor: pointer;
-    justify-content: space-between;
+  padding-left: $role-item-padding-x;
+  padding-right: $role-item-padding-x;
+  height: $role-item-height;
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--border-radius);
+  cursor: pointer;
+  justify-content: space-between;
 }
 
 .role-highlighted {
-    background-color: var(--gray-medium);
-    border-radius: var(--border-radius);
+  background-color: var(--gray-medium);
+  border-radius: var(--border-radius);
 }
 
 .done-button {
-    direction: rtl;
-    margin-right: var(--spacer-100);
-    margin-top: var(--spacer-100);
+  direction: rtl;
+  margin-right: var(--spacer-100);
+  margin-top: var(--spacer-100);
 }
-
 
 .user-table-container {
-    background: var(--white-300);
-    box-shadow: $user-table-box-shadow;
-    border-radius: $user-table-border-radius;
+  background: var(--white-300);
+  box-shadow: $user-table-box-shadow;
+  border-radius: $user-table-border-radius;
 }
 
-
-
-.user-filter-container>select {
-    border: none;
-    width: 50%;
-} 
+.user-filter-container > select {
+  border: none;
+  width: 50%;
+}
 
 .success {
-    color: var(--color-success);
+  color: var(--color-success);
 }
-.popover{
-    font-family: var(--primary-font) !important;
+.popover {
+  font-family: var(--primary-font) !important;
 }

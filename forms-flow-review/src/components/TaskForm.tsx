@@ -8,10 +8,7 @@ import {
 } from "@aot-technologies/formio-react";
 import Loading from "./Loading";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
-import {
-  CUSTOM_SUBMISSION_ENABLE,
-  CUSTOM_SUBMISSION_URL,
-} from "../constants";
+import { CUSTOM_SUBMISSION_ENABLE, CUSTOM_SUBMISSION_URL } from "../constants";
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
@@ -30,9 +27,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onCustomEvent = () => {},
   isApprovalTask = false,
 }) => {
-  const taskAssignee = useSelector(
-    (state: any) => state?.task?.taskAssignee
-  );
+  const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
   const taskDetailsLoading = useSelector(
     (state: any) => state?.task?.taskDetailsLoading
   );
@@ -71,18 +66,21 @@ const TaskForm: React.FC<TaskFormProps> = ({
     return clonedForm;
   }, [form, isApprovalTask]);
 
-const isLoading =
-  isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data || taskDetailsLoading;
+  const isLoading =
+    isFormActive ||
+    reduxSubmission?.isActive ||
+    !form ||
+    !safeSubmission?.data ||
+    taskDetailsLoading;
   // Show loading UI if loading
- useEffect(() => {
-   setIsReadOnly( taskAssignee !== currentUser);
- }, [taskAssignee, currentUser]);
+  useEffect(() => {
+    setIsReadOnly(taskAssignee !== currentUser);
+  }, [taskAssignee, currentUser]);
   if (isLoading) {
     return (
       <div className="container">
         <div className="main-header">
-          <h3 className="task-head text-truncate form-title">
-          </h3>
+          <h3 className="task-head text-truncate form-title"></h3>
         </div>
         <Loading />
       </div>

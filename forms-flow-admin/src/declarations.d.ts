@@ -60,7 +60,7 @@ declare module "@formsflow/service" {
     navigateToBaseUrl,
     navigateWithHistory,
     syncRouterPath,
-    completeChecklistByRouteKey
+    completeChecklistByRouteKey,
   }: any;
 }
 
@@ -86,6 +86,6 @@ declare module "@formsflow/components" {
     DownArrowIcon,
     UpArrowIcon,
     AppModal,
-    ReusableTable
+    ReusableTable,
   }: any;
 }

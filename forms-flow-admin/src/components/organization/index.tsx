@@ -2,7 +2,11 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { V8CustomButton, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
+import {
+  V8CustomButton,
+  UpArrowIcon,
+  DownArrowIcon,
+} from "@formsflow/components";
 import "./organization.scss";
 import { RequestService, StorageService } from "@formsflow/service";
 import API from "../../endpoints";
@@ -18,27 +22,42 @@ interface AccordionSectionProps {
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
+  dataTestId?: string;
 }
 
-const AccordionSection: React.FC<AccordionSectionProps> = ({ title, isOpen, onToggle, children }) => {
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onToggle();
-    }
-  }, [onToggle]);
+const AccordionSection: React.FC<AccordionSectionProps> = ({
+  title,
+  isOpen,
+  onToggle,
+  children,
+  dataTestId,
+}) => {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onToggle();
+      }
+    },
+    [onToggle]
+  );
 
   return (
     <div className="organization-section">
-      <div 
+      <div
         className="organization-section-header"
         onClick={onToggle}
         role="button"
         tabIndex={0}
         onKeyDown={handleKeyDown}
+        data-testid={dataTestId}
       >
         <h3 className="organization-section-title">{title}</h3>
-        {isOpen ? <UpArrowIcon className="svgIcon-medium-dark"/> : <DownArrowIcon className="svgIcon-medium-dark"/>}
+        {isOpen ? (
+          <UpArrowIcon className="svgIcon-medium-dark" />
+        ) : (
+          <DownArrowIcon className="svgIcon-medium-dark" />
+        )}
       </div>
       <Collapse in={isOpen}>
         <div>{children}</div>
@@ -96,7 +115,7 @@ function resolveSubscriptionUiKind(
   if (status === "active") {
     return "active";
   }
-  if(!status) {
+  if (!status) {
     return "trial";
   }
 
@@ -136,7 +155,7 @@ function getSubscriptionPresentation(
     case "cancelled":
       return {
         title: t("Go"),
-        description: "You are currently using a free version of formsflow.",
+        description: t("You are currently using a free version of formsflow."),
       };
     default:
       return { title: "", description: "" };
@@ -154,31 +173,34 @@ const Organization: React.FC<any> = (props) => {
   const [subscriptionKind, setSubscriptionKind] =
     useState<SubscriptionUiKind>("none");
 
-  const applyTenantSubscriptionState = useCallback((tenant: Record<string, unknown>) => {
-    try {
-      const expiry = parseTenantDateTime(tenant?.expiry_dt);
-      const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
-      const endDate = expiry ?? trialExpiry;
+  const applyTenantSubscriptionState = useCallback(
+    (tenant: Record<string, unknown>) => {
+      try {
+        const expiry = parseTenantDateTime(tenant?.expiry_dt);
+        const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
+        const endDate = expiry ?? trialExpiry;
 
-      let days: number | null = null;
-      if (endDate) {
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        const end = new Date(endDate);
-        end.setHours(0, 0, 0, 0);
-        days = Math.floor(
-          (end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
-        );
+        let days: number | null = null;
+        if (endDate) {
+          const currentDate = new Date();
+          currentDate.setHours(0, 0, 0, 0);
+          const end = new Date(endDate);
+          end.setHours(0, 0, 0, 0);
+          days = Math.floor(
+            (end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
+          );
+        }
+
+        setDaysDifference(days);
+        setSubscriptionKind(resolveSubscriptionUiKind(tenant, days));
+      } catch (error) {
+        console.error("Error calculating subscription state:", error);
+        setDaysDifference(null);
+        setSubscriptionKind("none");
       }
-
-      setDaysDifference(days);
-      setSubscriptionKind(resolveSubscriptionUiKind(tenant, days));
-    } catch (error) {
-      console.error("Error calculating subscription state:", error);
-      setDaysDifference(null);
-      setSubscriptionKind("none");
-    }
-  }, []);
+    },
+    []
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -207,7 +229,9 @@ const Organization: React.FC<any> = (props) => {
       };
     }
 
-    const tenantUrl = `${API.GET_TENANT_DATA}${API.GET_TENANT_DATA.includes("?") ? "&" : "?"}_t=${Date.now()}`;
+    const tenantUrl = `${API.GET_TENANT_DATA}${
+      API.GET_TENANT_DATA.includes("?") ? "&" : "?"
+    }_t=${Date.now()}`;
     RequestService.httpGETRequest(tenantUrl, null, null)
       .then((res) => {
         if (cancelled || !res?.data) return;
@@ -241,19 +265,20 @@ const Organization: React.FC<any> = (props) => {
     getSubscriptionPresentation(subscriptionKind, daysDifference, t);
 
   const renderExternalButtons = (label: string) => {
-    const key = label.toLowerCase()
-      .replace(/view our /g, '')
-      .split(' ')[0]; // Extract first word after "view our"
+    const key = label
+      .toLowerCase()
+      .replace(/view our /g, "")
+      .split(" ")[0]; // Extract first word after "view our"
     const dataTestId = `view-${key}-button`;
-  
+
     const urlMap: Record<string, string> = {
       "Contact Sales": URL_CONTACT_SALES,
       "View our Terms and Conditions": URL_TERMS_AND_CONDITIONS,
       "View our Privacy Policy": URL_PRIVACY_POLICY,
     };
-  
+
     const url = urlMap[label];
-  
+
     return (
       <V8CustomButton
         label={t(label)}
@@ -272,13 +297,16 @@ const Organization: React.FC<any> = (props) => {
           title={t("Subscription")}
           isOpen={subscriptionOpen}
           onToggle={() => setSubscriptionOpen(!subscriptionOpen)}
+          dataTestId="organization-subscription-toggle"
         >
           <div className="subscription-card">
             <div className="subscription-status">
               <span className="status-text">{subscriptionTitle}</span>
             </div>
             {subscriptionDescription ? (
-              <p className="subscription-description">{subscriptionDescription}</p>
+              <p className="subscription-description">
+                {subscriptionDescription}
+              </p>
             ) : null}
 
             <div className="subscription-card-actions">
@@ -297,10 +325,11 @@ const Organization: React.FC<any> = (props) => {
           title={t("Terms & Conditions")}
           isOpen={termsOpen}
           onToggle={() => setTermsOpen(!termsOpen)}
+          dataTestId="organization-terms-toggle"
         >
           <div className="terms-actions">
-            {renderExternalButtons('View our Terms and Conditions')}
-            {renderExternalButtons('View our Privacy Policy')}
+            {renderExternalButtons("View our Terms and Conditions")}
+            {renderExternalButtons("View our Privacy Policy")}
           </div>
         </AccordionSection>
       </div>

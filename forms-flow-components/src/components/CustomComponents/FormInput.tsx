@@ -1,12 +1,18 @@
-import React, { ChangeEvent, FocusEvent, KeyboardEvent, useEffect, useRef } from 'react';
-import { Form } from 'react-bootstrap';
+import React, {
+  ChangeEvent,
+  FocusEvent,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+} from "react";
+import { Form } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { ClearIcon } from "../SvgIcons/index";
 
 interface FormInputProps {
   type?: string;
   label?: string;
-  name? : string;
+  name?: string;
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
@@ -14,7 +20,7 @@ interface FormInputProps {
   isInvalid?: boolean;
   feedback?: string;
   disabled?: boolean;
-  size?: 'sm' | 'lg';
+  size?: "sm" | "lg";
   dataTestId?: string;
   ariaLabel?: string;
   className?: string;
@@ -28,7 +34,7 @@ interface FormInputProps {
   turnOnLoader?: boolean;
   autoFocusInput?: boolean;
   minLength?: number;
-  maxLength?: number; 
+  maxLength?: number;
   variant?: string;
 }
 
@@ -36,7 +42,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   type = "text",
   name,
   label,
-  value ,
+  value,
   onChange,
   onBlur,
   placeholder = "",
@@ -46,7 +52,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   size,
   dataTestId,
   ariaLabel,
-  className='',
+  className = "",
   required = false,
   icon,
   clear,
@@ -57,7 +63,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   turnOnLoader = false,
   autoFocusInput = false,
   minLength,
-  maxLength, 
+  maxLength,
   variant,
 }) => {
   const { t } = useTranslation();
@@ -67,28 +73,33 @@ export const FormInput: React.FC<FormInputProps> = ({
   // } else if (variant === 'assign-user-md') {
   //   variantInputHeightClass = 'assign-user-md-height';
   // }
-  const inputClassNames = `${icon ? 'with-icon' : ''}  ${className}`;
+  const inputClassNames = `${icon ? "with-icon" : ""}  ${className}`;
   const inputRef = useRef(null);
-  useEffect(()=>{ 
-    if(autoFocusInput && inputRef.current){
+  useEffect(() => {
+    if (autoFocusInput && inputRef.current) {
       inputRef.current.focus();
     }
-  },[autoFocusInput])
+  }, [autoFocusInput]);
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     // Check if Enter key is pressed and onIconClick is provided
-    if (e.key === 'Enter' && onIconClick) {
+    if (e.key === "Enter" && onIconClick) {
       onIconClick();
     }
   };
 
   return (
-    <div className={`input-text ${icon ? "with-icon" : ""} ${isInvalid ? "error" : ""} ${className ? className : ""}`}>
+    <div
+      className={`input-text ${icon ? "with-icon" : ""} ${
+        isInvalid ? "error" : ""
+      } ${className ? className : ""}`}
+    >
       {label && (
-        <Form.Label htmlFor={id} className='custom-form-control-label'>
-          {t(label)}{required && <span className='required-icon'>*</span>}
+        <Form.Label htmlFor={id} className="custom-form-control-label">
+          {t(label)}
+          {required && <span className="required-icon">*</span>}
         </Form.Label>
       )}
-      
+
       <div className="field">
         <Form.Control
           id={id} // make the input id UNIQUE
@@ -104,7 +115,9 @@ export const FormInput: React.FC<FormInputProps> = ({
           data-testid={dataTestId}
           aria-label={ariaLabel}
           required={required}
-          className={`${inputClassNames} ${type === 'number' ? 'no-spinner' : ''}`}
+          className={`${inputClassNames} ${
+            type === "number" ? "no-spinner" : ""
+          }`}
           onKeyDown={handleKeyDown}
           onClick={onClick}
           ref={inputRef}
@@ -115,33 +128,26 @@ export const FormInput: React.FC<FormInputProps> = ({
         {icon && !turnOnLoader && (
           <div
             className="icon"
-            id="input-icon" 
+            id="input-icon"
             onClick={onIconClick}
-            >
+            data-testid={dataTestId ? `${dataTestId}-icon` : undefined}
+          >
             {icon}
           </div>
         )}
 
         {clear && (
-          <div
-            className="clear"
-            onClick={onClearClick}
-            >
-            <ClearIcon
-              data-testid="clear-field"
-              aria-label="clear-field"
-            />
+          <div className="clear" onClick={onClearClick}>
+            <ClearIcon data-testid="clear-field" aria-label="clear-field" />
           </div>
         )}
-        </div>
-
-        {isInvalid && (
-          <label htmlFor='name-input' className='error-text'>
-            {t(feedback)}
-          </label>
-        )}
-
       </div>
+
+      {isInvalid && (
+        <label htmlFor="name-input" className="error-text">
+          {t(feedback)}
+        </label>
+      )}
+    </div>
   );
 };
-

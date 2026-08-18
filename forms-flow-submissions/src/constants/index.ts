@@ -16,5 +16,3 @@ export const KEYCLOAK_ENABLE_CLIENT_AUTH =
     : false;
 
 export const BASE_ROUTE = MULTITENANCY_ENABLED ? "/tenant/:tenantId/" : "/";
-
-

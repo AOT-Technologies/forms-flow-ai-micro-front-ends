@@ -6,10 +6,12 @@ i18nService?.use(LanguageDetector).use(initReactI18next).init({
 });
 
 const resources = (i18nService && i18nService.options.resources) || {};
-export const RESOURCE_BUNDLES_DATA = Object.entries(resources)
-.reduce((data, [lang, { translation }]) => {
-  data[lang] = {...translation,...formioResourceBundle[lang]};
-  return data;
-}, {});
+export const RESOURCE_BUNDLES_DATA = Object.entries(resources).reduce(
+  (data, [lang, { translation }]) => {
+    data[lang] = { ...translation, ...formioResourceBundle[lang] };
+    return data;
+  },
+  {}
+);
 
 export default i18nService;

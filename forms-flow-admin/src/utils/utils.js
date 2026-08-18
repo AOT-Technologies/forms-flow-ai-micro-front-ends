@@ -8,7 +8,11 @@ function stripTenantPrefix(value, tenantId) {
   return String(value).replace(re, "");
 }
 
-export const removingTenantId = (roles=[], tenantId, tenantIdInPath = false) => {
+export const removingTenantId = (
+  roles = [],
+  tenantId,
+  tenantIdInPath = false
+) => {
   if (MULTITENANCY_ENABLED && tenantId) {
     const escaped = String(tenantId).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const reWithSlash = new RegExp(`^/${escaped}-`, "i");
@@ -34,7 +38,6 @@ export const removingTenantId = (roles=[], tenantId, tenantIdInPath = false) => 
   }
   return roles;
 };
-
 
 export const removeTenantKey = (value, tenantkey) => {
   const tenantKeyCheck = value.match(`${tenantkey}-`);

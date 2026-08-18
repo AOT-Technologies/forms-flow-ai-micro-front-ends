@@ -1,12 +1,12 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import analyzeSubmission from "./analizeSubmissionReducer";
 import { submission, form } from "@aot-technologies/formio-react";
-import applications from './applicationReducer';
-import customSubmission from './customSubmissionReducer';
-import taskAppHistory from './taskAppHistoryReducer';
-import process from './processReducer';
-import submissionBundle from './bundleReducer';
-import tenants from './tenantReducer';
+import applications from "./applicationReducer";
+import customSubmission from "./customSubmissionReducer";
+import taskAppHistory from "./taskAppHistoryReducer";
+import process from "./processReducer";
+import submissionBundle from "./bundleReducer";
+import tenants from "./tenantReducer";
 
 const createRootReducer = () =>
   combineReducers({

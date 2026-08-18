@@ -1,6 +1,6 @@
 import { RequestService, StorageService } from "@formsflow/service";
 import { MULTITENANCY_ENABLED } from "../../constants/constants";
-import API from "../endPoints/index"
+import API from "../endPoints/index";
 
 export interface RoleMapping {
   roleId: string;
@@ -36,12 +36,12 @@ export const fetchAndStoreFormioRoles = async (): Promise<FetchResult> => {
   const url = MULTITENANCY_ENABLED ? API.GET_TENANT_DATA : API.FORMIO_ROLES;
 
   try {
-    const response = await RequestService.httpGETRequest(
+    const response = (await RequestService.httpGETRequest(
       url,
       {},
       StorageService.get(StorageService.User.AUTH_TOKEN),
       true
-    ) as ApiResponse;
+    )) as ApiResponse;
     const token = response?.headers?.["x-jwt-token"];
     const form = response?.data?.form;
 

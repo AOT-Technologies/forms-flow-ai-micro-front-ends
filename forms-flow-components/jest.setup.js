@@ -1,5 +1,3 @@
-
-
 import "@testing-library/jest-dom";
 
 // Mock `react-i18next` to avoid repetitive mocking in every test

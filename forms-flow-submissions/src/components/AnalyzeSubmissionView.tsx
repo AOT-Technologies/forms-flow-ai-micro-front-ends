@@ -13,7 +13,7 @@ import {
   AlertVariant,
   CustomProgressBar,
   useProgressBar,
-  FormViewModal
+  FormViewModal,
 } from "@formsflow/components";
 import Loading from "./Loading";
 import {
@@ -30,28 +30,29 @@ import View from "./View";
 import { getForm, getSubmission } from "@aot-technologies/formio-react";
 import { Formio } from "@aot-technologies/formiojs";
 import { useTranslation } from "react-i18next";
-import {
-  CUSTOM_SUBMISSION_URL,
-  CUSTOM_SUBMISSION_ENABLE,
-} from "../constants/constants";
+import { CUSTOM_SUBMISSION_ENABLE } from "../constants/constants";
+import { CUSTOM_SUBMISSION_URL } from "../api/config";
 import {
   getCustomSubmission,
   getRoles,
   getApplicationById,
-  fetchApplicationAuditHistoryList
+  fetchApplicationAuditHistoryList,
 } from "../services/applicationServices";
 
 import {
   fetchFormVariables,
   executeRule,
-} from "../api/queryServices/analyzeSubmissionServices"
-import { HelperServices, getRedirectUrl, navigateToSubmissionsListing } from "@formsflow/service";
+} from "../api/queryServices/analyzeSubmissionServices";
+import {
+  HelperServices,
+  getRedirectUrl,
+  navigateToSubmissionsListing,
+} from "@formsflow/service";
 import {
   getProcessActivities,
   getProcessDetails,
 } from "../services/processServices";
 import BundleSubmissionView from "../components/BundleSubmissionView";
-
 
 const ViewApplication = React.memo(() => {
   const { t } = useTranslation();
@@ -71,7 +72,10 @@ const ViewApplication = React.memo(() => {
     (state: any) => state?.applications.isApplicationDetailLoading
   );
   const tenantId = localStorage.getItem("tenantKey");
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key) || tenantId;
+  const tenantKey =
+    useSelector(
+      (state: any) => state.tenants?.tenantId || state.tenants?.tenantData?.key
+    ) || tenantId;
   const [isDiagramLoading, setIsDiagramLoading] = useState(false);
   const [diagramXML, setDiagramXML] = useState("");
   const markers = useSelector(
@@ -79,36 +83,47 @@ const ViewApplication = React.memo(() => {
   );
 
   const redirectUrl = getRedirectUrl(tenantKey);
-  const { appHistory, isHistoryListLoading } = useSelector(
-    useMemo(
-      () => (state: any) => ({
-        appHistory: state.taskAppHistory.appHistory,
-        isHistoryListLoading: state.taskAppHistory.isHistoryListLoading,
-      }),
-      []
-    )
+  // Two scalar subscriptions instead of an object-literal selector: the object
+  // form returned a fresh reference per store notification, re-rendering this
+  // component on every dispatch.
+  const appHistory = useSelector(
+    (state: any) => state.taskAppHistory.appHistory
+  );
+  const isHistoryListLoading = useSelector(
+    (state: any) => state.taskAppHistory.isHistoryListLoading
   );
 
-  const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
+  const [bundleFormData, setBundleFormData] = useState<{
+    formId: string;
+    submissionId: string;
+  }>({
     formId: "",
     submissionId: "",
   });
 
-  const [formType, setFormType] = useState('');
-  const [bundleMapperId, setBundleMapperId] = useState('');
+  const [formType, setFormType] = useState("");
+  const [bundleMapperId, setBundleMapperId] = useState("");
   const [processType, setProcessType] = useState<string | undefined>(undefined);
-  const [selectedTab, setSelectedTab] = useState({ id: "form", label: t("Form") });
+  const [selectedTab, setSelectedTab] = useState({
+    id: "form",
+    label: t("Form"),
+  });
   const [showExportAlert, setShowExportAlert] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
-  const [selectedSubmissionData, setSelectedSubmissionData] = useState<any>(null);
+  const [selectedSubmissionData, setSelectedSubmissionData] =
+    useState<any>(null);
 
-  const { progress: publishProgress, start, complete, reset } = useProgressBar({
+  const {
+    progress: publishProgress,
+    start,
+    complete,
+    reset,
+  } = useProgressBar({
     increment: 10,
     interval: 150,
     useCap: true,
     capProgress: 90,
   });
-
 
   // Callbacks for DownloadPDFButton
   const handlePreDownload = useCallback(() => {
@@ -122,7 +137,6 @@ const ViewApplication = React.memo(() => {
     setShowExportAlert(false);
   }, [complete, setShowExportAlert]);
 
-
   useEffect(() => {
     if (applicationId) {
       dispatch(setApplicationDetailLoading(true));
@@ -131,20 +145,19 @@ const ViewApplication = React.memo(() => {
     }
   }, [dispatch]);
 
-
   useEffect(() => {
     if (!applicationDetail) return;
-  
+
     const formId = applicationDetail.formId;
     const submissionId = applicationDetail.submissionId;
-  
+
     Formio.clearCache();
-    dispatch(resetFormData("form"));    
+    dispatch(resetFormData("form"));
     if (formId) {
     setFormTypeCheckLoading(true);
     setBundleFormData({ formId, submissionId });
     fetchFormVariables(formId)
-      .then((res) => {
+      .then((res : { data: any }) => {
         const formType = res.data?.formType;
         setFormType(formType);
         setFormTypeCheckLoading(false);
@@ -171,7 +184,7 @@ const ViewApplication = React.memo(() => {
             });
         }
       })
-      .catch((err) => {
+      .catch((err : any) => {
         console.error("Failed to fetch form variables:", err);
         setFormTypeCheckLoading(false);
       });
@@ -181,8 +194,7 @@ const ViewApplication = React.memo(() => {
       dispatch(setBundleSelectedForms([]));
     };
   }, [applicationDetail, dispatch]);
-  
-  
+
   useEffect(() => {
     if (formType === "bundle") return;
     const formId = applicationDetail?.formId;
@@ -263,13 +275,13 @@ const ViewApplication = React.memo(() => {
         headerName: t("Status"),
         flex: 2,
         sortable: false,
-        cellClassName: 'action-cell-stretch',
+        cellClassName: "action-cell-stretch",
         renderCell: (params: any) => {
           const entry = params.row;
           return (
-              <span className="status-text">
-                {entry.applicationStatus || "N/A"}
-              </span>
+            <span className="status-text">
+              {entry.applicationStatus || "N/A"}
+            </span>
           );
         },
       },
@@ -277,21 +289,25 @@ const ViewApplication = React.memo(() => {
         field: "submittedBy",
         headerName: t("Submitted By"),
         flex: 2,
-        sortable: false
+        sortable: false,
       },
       {
         field: "created",
         headerName: t("Created On"),
         flex: 2,
-        renderCell: (params: any) => <span>{HelperServices.getShortDateAndTime(params.value)}</span>,
-        sortable: false
+        renderCell: (params: any) => (
+          <span>{HelperServices.getShortDateAndTime(params.value)}</span>
+        ),
+        sortable: false,
       },
       {
         field: "actions",
-         renderHeader: () => (
+        renderHeader: () => (
           <V8CustomButton
             variant="secondary"
-            onClick={() => dispatch(fetchApplicationAuditHistoryList(applicationId))}
+            onClick={() =>
+              dispatch(fetchApplicationAuditHistoryList(applicationId))
+            }
             dataTestId="submission-history-refresh-button"
             label={t("Refresh")}
             ariaLabel={t("Refresh History Table")}
@@ -300,10 +316,10 @@ const ViewApplication = React.memo(() => {
         headerName: "",
         sortable: false,
         filterable: false,
-  
+
         headerClassName: "sticky-column-header last-column",
         cellClassName: "sticky-column-cell",
-  
+
         width: 100,
         renderCell: (params: any) => (
           <V8CustomButton
@@ -352,11 +368,11 @@ const ViewApplication = React.memo(() => {
       {
         label: t("History"),
         id: "history",
-      }
+      },
     ];
 
     // Filter out Flow tab if processType is not BPMN
-    return tabs.filter(tab => {
+    return tabs.filter((tab) => {
       if (tab.id === "flow") {
         // Quickfix
         // Only show the Flow tab when the attached workflow is BPMN.
@@ -389,12 +405,11 @@ const ViewApplication = React.memo(() => {
     }
   };
 
-
   const renderTabContent = () => {
     if (selectedTab?.id === "form") {
       return (
         <div className="submission-tab-content-container">
-          {(!formTypeCheckLoading && formType === "bundle") ? (
+          {!formTypeCheckLoading && formType === "bundle" ? (
             <BundleSubmissionView bundleFormData={bundleFormData} />
           ) : (
             <View page="application-detail" />
@@ -426,12 +441,13 @@ const ViewApplication = React.memo(() => {
             sortingMode="client"
             hideFooter
             rowHeight={60}
-            sx={{ 
-              height: 500, 
+            sx={{
+              height: 500,
               width: "100%",
-              '& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer': {
-                justifyContent: 'flex-start !important',
-              },
+              "& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer":
+                {
+                  justifyContent: "flex-start !important",
+                },
             }}
             disableColumnResize={true}
             disableColumnMenu={true}
@@ -445,24 +461,28 @@ const ViewApplication = React.memo(() => {
   return (
     <div>
       <div className="toast-section">
-              <Alert
-                message="Exporting PDF"
-                variant={AlertVariant.DEFAULT}
-                isShowing={showExportAlert}
-                rightContent={<CustomProgressBar progress={publishProgress} color="default"/>}
-              />
-            </div>
+        <Alert
+          message="Exporting PDF"
+          variant={AlertVariant.DEFAULT}
+          isShowing={showExportAlert}
+          rightContent={
+            <CustomProgressBar progress={publishProgress} color="default" />
+          }
+        />
+      </div>
       {/* Header Section */}
-        <div className="header-section-1">
-          <div className="section-seperation-left d-block">
-              <BreadCrumbs 
-                items={breadcrumbItems}
-                variant={BreadcrumbVariant.MINIMIZED}
-                underline
-                onBreadcrumbClick={handleBreadcrumbClick} 
-              /> 
-              {/* <h4>{applicationId}</h4> */}
-          </div>
+      <div className="header-section-1">
+        <div className="section-seperation-left d-block">
+          <BreadCrumbs
+            items={breadcrumbItems}
+            variant={BreadcrumbVariant.MINIMIZED}
+            underline
+            onBreadcrumbClick={handleBreadcrumbClick}
+            dataTestId="submission-detail-breadcrumb"
+            ariaLabel={t("Submission details breadcrumb")}
+          />
+          {/* <h4>{applicationId}</h4> */}
+        </div>
       </div>
       <div className="header-section-2">
           <div className="section-seperation-left">
@@ -472,6 +492,7 @@ const ViewApplication = React.memo(() => {
                   label={tab.label}
                   selected={selectedTab?.id === tab.id}
                   onClick={() => setSelectedTab(tab)}
+              dataTestId={`submission-detail-tab-${tab.id}`}
                   disabled={
                     ((tab.id === "flow" && !analyze_process_view) || (tab.id === "history" && !analyze_submissions_view_history))
                   }
@@ -491,8 +512,8 @@ const ViewApplication = React.memo(() => {
                 ? { isBundle: true, bundleId: bundleMapperId }
                 : {})}
             />
-          </div>
-            )}
+            </div>
+          )}
         </div>
         <div className="body-section">
           {renderTabContent()}
@@ -517,7 +538,7 @@ const ViewApplication = React.memo(() => {
               <View page="application-detail" />
             )
           )}
-        </FormViewModal>
+      </FormViewModal>
     </div>
   );
 });

@@ -47,7 +47,7 @@ declare module "@formsflow/service" {
     StyleServices,
     HelperServices,
     formioResourceBundle,
-    RESOURCE_BUNDLES_DATA,  
+    RESOURCE_BUNDLES_DATA,
     fetchAndStoreFormioRoles,
     getRoute,
     MAIN_ROUTE,
@@ -72,7 +72,7 @@ declare module "@formsflow/service" {
     navigateToBaseUrl,
     navigateWithHistory,
     syncRouterPath,
-    completeChecklistByRouteKey
+    completeChecklistByRouteKey,
   }: any;
 }
 
@@ -130,7 +130,6 @@ declare module "@formsflow/components" {
     QuickFilterIcon,
     GoogleIcon,
     MicrosoftIcon,
-    AppModal
+    AppModal,
   }: any;
 }
-

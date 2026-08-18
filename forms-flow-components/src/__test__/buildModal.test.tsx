@@ -1,10 +1,9 @@
 import React from "react";
-import { render, screen, fireEvent} from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { BuildModal } from "../components/CustomComponents/BuildModal"; // Adjust the import path as needed
- 
 
 // Mock the CloseIcon component
-jest.mock( "../components/SvgIcons/index", () => ({
+jest.mock("../components/SvgIcons/index", () => ({
   CloseIcon: ({ onClick }) => <button onClick={onClick}>CloseIcon</button>,
 }));
 
@@ -67,6 +66,4 @@ describe("BuildModal", () => {
     fireEvent.click(screen.getByTestId("button-1")); // Click the first button
     expect(mockOnClick).toHaveBeenCalled();
   });
-
-  
 });
