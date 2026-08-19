@@ -91,6 +91,7 @@ declare module "@formsflow/components" {
     DEFAULT_STYLE,
     FONT_MAP,
     BUTTON_RADIUS_MAP,
+    FORMSFLOW_LOGO_ICON_SVG,
   }: any;
 
   export type StyleConfig = {
@@ -100,5 +101,6 @@ declare module "@formsflow/components" {
     buttonShape: "square" | "rounded";
     headerFont: "serif" | "sans" | "heavy-sans" | "mono" | "slab";
     bodyFont: "serif" | "sans" | "heavy-sans" | "mono" | "slab";
+    brandingLogo: "none" | "formsflow";
   };
 }

@@ -4,6 +4,7 @@ import { StyleConfig, DEFAULT_STYLE } from "./themeConstants";
 import ColorPicker from "./ColorPicker";
 import FontPicker from "./FontPicker";
 import ButtonShapeToggle from "./ButtonShapeToggle";
+import BrandingToggle from "./BrandingToggle";
 
 interface StyleEditorProps {
   styleConfig: Partial<StyleConfig>;
@@ -61,6 +62,14 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ styleConfig, onChange }) => {
         <ButtonShapeToggle
           value={merged.buttonShape}
           onChange={(key) => handleChange("buttonShape", key)}
+        />
+      </section>
+
+      <section className="ff-style-editor__section">
+        <h4 className="ff-style-editor__section-title">{t("Branding")}</h4>
+        <BrandingToggle
+          value={merged.brandingLogo}
+          onChange={(key) => handleChange("brandingLogo", key)}
         />
       </section>
     </div>

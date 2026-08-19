@@ -35,7 +35,7 @@ $se-selected-ring:      2px solid #111827;
     width: 380px;
     min-width: 300px;
     flex-shrink: 0;
-    border-right: 1px solid $figma-border-light;
+    border-right: 1px solid $figma-border;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -66,13 +66,15 @@ $se-selected-ring:      2px solid #111827;
       cursor: not-allowed;
     }
 
+    // Matches the "+ Add New" button (.ff-style-templates__action-btn) so the
+    // template editor's primary action reads consistently with the list view.
     &--primary {
-      background: var(--ff-primary, #0087D9);
-      color: #fff;
-      border-color: var(--ff-primary, #0087D9);
+      background: none;
+      color: $figma-text-muted;
+      border-color: $figma-border;
 
       &:hover:not(:disabled) {
-        opacity: 0.88;
+        background: $se-bg-hover;
       }
     }
 
@@ -102,6 +104,8 @@ $se-selected-ring:      2px solid #111827;
     align-items: center;
     justify-content: space-between;
     padding: 20px 20px 12px 20px;
+    border-bottom: 1px solid #DAD9DA;
+    margin-right: 1rem;
   }
 
   &__heading {
@@ -154,19 +158,6 @@ $se-selected-ring:      2px solid #111827;
     min-width: 0;
   }
 
-  &__badge {
-    flex-shrink: 0;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #059669;
-    background: #D1FAE5;
-    border-radius: 10px;
-    padding: 2px 8px;
-    margin-right: 1rem;
-  }
-
   &__action-btn {
     background: none;
     border: 1px solid $figma-border;
@@ -182,42 +173,37 @@ $se-selected-ring:      2px solid #111827;
     &:hover { background: $se-bg-hover; }
   }
 
-  &__delete-btn {
-    background: none;
-    border: none;
-    color: #DC2626;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 4px 6px;
-    border-radius: 4px;
-    transition: background 0.15s;
-
-    &:hover { background: #FEE2E2; }
-  }
-
   &__list {
     display: flex;
     flex-direction: column;
-    border-top: 1px solid $figma-border-light;
   }
 
+  // The row itself only ever draws the divider line (full row width/height) —
+  // the hover/selected fill lives on &__row-inner instead, so the tint never
+  // touches the divider lines above/below the row.
   &__row {
+    margin-right: 1rem;
+    display: flex;
+    align-items: stretch;
+    height: 75px;
+    border-bottom: 1px solid #DAD9DA;
+    cursor: pointer;
+  }
+
+  &__row-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
-    height: 73px;
-    border-bottom: 1px solid $figma-border-light;
-    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+    margin: 5px 0;
+    padding: 0px 10px;
     transition: background 0.15s;
+  }
 
-    &:hover {
-      background: $figma-bg-selected;
-    }
-
-    &--selected {
-      background: $figma-bg-selected;
-    }
+  &__row:hover &__row-inner,
+  &__row--selected &__row-inner {
+    background: $figma-bg-selected;
   }
 
   &__name {
@@ -251,21 +237,30 @@ $se-selected-ring:      2px solid #111827;
     font-size: 15px;
     font-weight: 400;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s, color 0.15s;
 
-    // Disabled / inactive state (matches Figma's gray text)
+    // Disabled-looking by default -- not clickable unless this is the
+    // globally-applied theme (&--active, set permanently) or its row is
+    // currently hovered (enabled temporarily, see &__row:hover below).
     color: $figma-border-light;
+    pointer-events: none;
 
     &--active {
       color: $figma-text-dark;
+      pointer-events: auto;
 
       &:hover {
         background: $se-bg-hover;
       }
     }
+  }
 
-    &:disabled {
-      cursor: not-allowed;
+  &__row:hover &__edit-btn {
+    color: $figma-text-dark;
+    pointer-events: auto;
+
+    &:hover {
+      background: $se-bg-hover;
     }
   }
 }
@@ -304,13 +299,19 @@ $se-selected-ring:      2px solid #111827;
     margin-bottom: 12px;
   }
 
+  // Matches .ff-style-editor__section-title so "Name" reads as the same kind
+  // of section heading as "Colours" / "Type" / "Buttons" below it.
   &__label {
     display: block;
-    font-size: 13px;
+    color: #B7B7B8;
     font-family: "Figtree", sans-serif;
-    color: $figma-text-dark;
-    margin-bottom: 4px;
-    font-weight: 500;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 23px;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid $se-border;
   }
 
   &__input {
@@ -326,17 +327,6 @@ $se-selected-ring:      2px solid #111827;
     transition: border-color 0.15s;
 
     &:focus { border-color: var(--ff-primary, #0087D9); }
-  }
-
-  &__default-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-    font-size: 13px;
-    font-family: "Figtree", sans-serif;
-    color: $figma-text-dark;
-    cursor: pointer;
   }
 
   &__back {
@@ -382,6 +372,32 @@ $se-selected-ring:      2px solid #111827;
   &__footer-actions {
     display: flex;
     gap: 8px;
+  }
+
+  &__footer-left-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    // Scoped to just this Delete button (not the shared .custom-button--error
+    // variant used app-wide) via its dataTestId -- forms-flow-theme's
+    // .custom-button--error rule ships in a separately-loaded package whose
+    // cascade order relative to this file isn't guaranteed, so !important
+    // ensures this override wins regardless.
+    [data-testid="delete-style-template-btn"] {
+      border-radius: 25px !important;
+      border: 1px solid #E57373 !important;
+      background-color: #fff !important;
+
+      .button-text {
+        color: #E57373 !important;
+        font-family: "Figtree", sans-serif !important;
+        font-size: 15px !important;
+        font-style: normal !important;
+        font-weight: 400 !important;
+        line-height: normal !important;
+      }
+    }
   }
 }
 
@@ -686,6 +702,51 @@ $se-selected-ring:      2px solid #111827;
 
 
 // ─────────────────────────────────────────────────────────────────────────────
+// BrandingToggle — "None" / "formsflow.ai" logo choice
+// ─────────────────────────────────────────────────────────────────────────────
+.ff-branding-toggle {
+  display: flex;
+  gap: 12px;
+
+  &__option {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    padding: 0 20px;
+    font-size: 14px;
+    color: $se-text;
+    background: #fff;
+    border: 1px solid $se-border;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: "Figtree", sans-serif;
+
+    &:hover { border-color: #9CA3AF; background: $se-bg-hover; }
+    &:focus-visible { outline: $se-selected-ring; outline-offset: 2px; }
+    &--selected { border-color: $se-text; border-width: 2px; font-weight: 500; }
+  }
+
+  &__icon {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+
+    svg { width: 100%; height: 100%; }
+  }
+
+  &__label em {
+    font-style: normal;
+    color: #1529C4;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
 // StyleEditor (sections: Colours, Type, Buttons)
 // ─────────────────────────────────────────────────────────────────────────────
 .ff-style-editor {
@@ -709,13 +770,15 @@ $se-selected-ring:      2px solid #111827;
   }
 
   &__section-title {
-    font-size: 12px;
-    font-weight: 600;
-    color: $se-label;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin: 0 0 16px;
+    color: #B7B7B8;
     font-family: "Figtree", sans-serif;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 23px;
+    padding-bottom: 12px;
+    margin: 0 0 16px;
+    border-bottom: 1px solid $se-border;
   }
 }
 
@@ -737,7 +800,7 @@ $se-selected-ring:      2px solid #111827;
 
   &__title {
     font-family: var(--preview-header-font, "Figtree", sans-serif);
-    color: var(--preview-accent, #4A4A4A);
+    color: #4A4A4A;
     font-size: 20px;
     font-weight: 600;
     text-align: center;
@@ -745,7 +808,7 @@ $se-selected-ring:      2px solid #111827;
   }
 
   &__subtitle {
-    color: var(--preview-accent, #4A4A4A);
+    color: #6B7280;
     font-size: 13px;
     text-align: center;
     margin-bottom: 16px;
@@ -754,14 +817,29 @@ $se-selected-ring:      2px solid #111827;
 
   &__divider { border: none; border-top: 1px solid #E5E7EB; margin: 16px 0; }
 
+  // Encloses the panel header + all fields belonging to it in one bordered
+  // box, matching a real Formio Panel component. overflow: hidden clips the
+  // header's square top corners to the box's rounded ones.
+  &__panel {
+    border: 2px solid #E5E7EB;
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 0 12px 14px;
+    margin-bottom: 16px;
+  }
+
+  // Represents the Formio Panel component's header bar -- this is "the
+  // panel" that takes the accent colour (as its background, not its text).
+  // Negative left/right margin cancels &__panel's padding so the coloured
+  // bar spans the full width of the box; its own padding keeps the text
+  // inset to line up with the fields below.
   &__section-header {
     font-size: 13px;
     font-weight: 600;
-    color: var(--preview-accent, #6B7280);
-    background: #F3F4F6;
+    color: #fff;
+    background: var(--preview-accent, #6B7280);
     padding: 6px 12px;
-    border-radius: 4px;
-    margin-bottom: 16px;
+    margin: 0 -12px 14px;
   }
 
   &__row {
@@ -775,7 +853,7 @@ $se-selected-ring:      2px solid #111827;
   &__field-label {
     display: block;
     font-size: 13px;
-    color: var(--preview-accent, #4A4A4A);
+    color: #374151;
     margin-bottom: 4px;
     font-family: var(--preview-body-font, inherit);
   }
@@ -812,5 +890,92 @@ $se-selected-ring:      2px solid #111827;
     font-family: var(--preview-body-font, inherit);
     cursor: not-allowed;
     opacity: 0.9;
+  }
+
+  // "formsflow.ai" branding badge — shown when Branding is set to "formsflow"
+  &__branding {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+    width: max-content;
+    min-width: 183px;
+    height: 30px;
+    margin: 16px auto 0;
+    padding: 0 14px;
+    border-radius: 18px;
+    border: 1px solid var(--ff-color-gray-medium, #D1D2D3);
+    background: #FFF;
+    box-sizing: border-box;
+  }
+
+  &__branding-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+
+    svg { width: 100%; height: 100%; }
+  }
+
+  &__branding-label {
+    white-space: nowrap;
+    flex-shrink: 0;
+    color: var(--ff-color-secondary-dark, #525254);
+    text-align: center;
+    font-family: "Figtree", sans-serif;
+    font-size: 13.125px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18.75px;
+  }
+
+  &__branding-brand {
+    white-space: nowrap;
+    flex-shrink: 0;
+    color: var(--color-bootstrap-primary, #3248F4);
+    text-align: center;
+    font-family: "Figtree", sans-serif;
+    font-size: 13.125px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18.75px;
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// "You Have Unsaved Changes" modal (PromptModal instance, delete-with-
+// unsaved-edits flow -- same component NavigateBlocker.jsx uses when leaving
+// the form editor with unsaved changes, so no header close icon and no
+// footer divider come for free; only size/typography need scoping here).
+// Scoped via dialogClassName so these overrides only apply to this one
+// PromptModal usage, not every modal built on the shared component.
+// ─────────────────────────────────────────────────────────────────────────────
+.modal-dialog.ff-unsaved-changes-modal {
+  max-width: 352px;
+
+  .modal-content {
+    width: 352px;
+    height: 264px;
+  }
+
+  .prompt-title {
+    color: #4A4A4A;
+    font-family: "Figtree", sans-serif;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+
+  .prompt-message p {
+    margin: 0 0 1em;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
