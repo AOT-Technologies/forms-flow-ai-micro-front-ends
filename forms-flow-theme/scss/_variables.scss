@@ -1,3 +1,5 @@
+@use "./v8-scss/breakpoints" as bp;
+
 $prefix: "ff-";
 $gray-darkest: var(--ff-gray-darkest);
 $gray-medium: var(--ff-gray-medium);
@@ -86,7 +88,7 @@ $white-color: var(--ff-white);
   max-width: 6.5rem;
 }
 
-@media (max-width: 768px) {
+@include bp.respond-below(tablet) {
   .main-header {
     height: 4.375rem;
     flex-direction: row;
@@ -280,7 +282,7 @@ hr {
   }
 }
 
-@media (max-width: 768px) {
+@include bp.respond-below(tablet) {
   .main-container {
     margin-left: 0;
     height: calc(100vh - var(--client-nav)) !important;

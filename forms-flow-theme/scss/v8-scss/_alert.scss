@@ -1,5 +1,6 @@
 // Import theme variables and mixins
 @use "mixins";
+@use "breakpoints" as bp;
 
 // Alert Variables - Using consistent rem/em units for better scalability
 $alert-border-radius: 0.313rem;        // 5px at 16px base
@@ -139,7 +140,7 @@ $color-alert-warning: var(--red-100);
   }
 
   // Responsive behavior
-  @media (max-width: 768px) {
+  @include bp.respond-below(tablet) {
     padding: 0.875rem 1rem;
     min-height: 3rem;
     font-size: 0.875rem;
