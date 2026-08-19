@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
 import { createSelector } from "@reduxjs/toolkit";
-import { useFormTheme } from "../hooks/useFormTheme";
 import { useAppDispatch } from "../hooks";
 import {
   Form,
@@ -25,7 +24,13 @@ import {
 
 import { textTruncate } from "../helper/helper";
 
-import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
+import {
+  BreadCrumbs,
+  V8CustomButton,
+  useFormTheme,
+} from "@formsflow/components";
+import { RequestService } from "@formsflow/service";
+import { WEB_BASE_URL } from "../api/config";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
 import {
   clearFormError,
@@ -33,6 +38,9 @@ import {
   setFormFailureErrorData,
 } from "../actions/bundleSubmissionActions";
 import Loading from "./Loading";
+
+// Module-scope (not per-render) so useFormTheme's effect deps stay stable.
+const httpGetRequest = (url: string) => RequestService.httpGETRequest(url);
 import { CUSTOM_SUBMISSION_ENABLE } from "../constants/constants";
 
 interface TaskFormProps extends PropsFromRedux {
@@ -70,7 +78,7 @@ const BundleSubmissionForm: React.FC<TaskFormProps> = ({
   const { error } = useSelector((state: any) => state?.form);
 
   const isReadOnly = true;
-  const { themeClass } = useFormTheme(form?._id);
+  const { themeClass } = useFormTheme(form?._id, httpGetRequest, WEB_BASE_URL);
 
   // pick correct fetch function once
   const fetchSubmissionFn = CUSTOM_SUBMISSION_ENABLE

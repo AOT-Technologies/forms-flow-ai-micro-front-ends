@@ -117,31 +117,6 @@ $se-selected-ring:      2px solid #111827;
     line-height: 1.2;
   }
 
-  &__add-btn {
-    height: 40px;
-    min-width: 96px;
-    padding: 0 18px;
-    background: var(--ff-primary, #0087D9);
-    border: 1px solid var(--ff-primary, #0087D9);
-    border-radius: 20px;
-    font-family: "Figtree", sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    color: #fff;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: opacity 0.15s;
-
-    &:hover {
-      opacity: 0.88;
-    }
-
-    &:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-  }
-
   &__status {
     padding: 16px 20px;
     font-size: 13px;
@@ -870,7 +845,11 @@ $se-selected-ring:      2px solid #111827;
     align-items: center;
     justify-content: space-between;
     font-size: 13px;
-    color: #9CA3AF;
+    // #6B7280 (not the lighter #9CA3AF used elsewhere for this muted tone) --
+    // the lighter value fails WCAG AA contrast (2.5:1) against this box's
+    // white background; #6B7280 is the same gray already used for &__status
+    // above and clears 4.5:1.
+    color: #6B7280;
     font-family: var(--preview-body-font, inherit);
   }
 

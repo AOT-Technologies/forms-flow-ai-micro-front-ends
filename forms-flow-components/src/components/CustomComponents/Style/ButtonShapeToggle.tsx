@@ -22,7 +22,7 @@ const ButtonShapeToggle: React.FC<ButtonShapeToggleProps> = ({
   onChange,
 }) => {
   return (
-    <div className="ff-btn-shape-toggle" role="group">
+    <div className="ff-btn-shape-toggle" role="radiogroup">
       {SHAPES.map((shape) => {
         const isSelected = value === shape.key;
         return (

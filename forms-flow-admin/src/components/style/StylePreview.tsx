@@ -6,6 +6,31 @@ interface StylePreviewProps {
   styleConfig: StyleConfig;
 }
 
+// A single "label + input box" pair in the mock form below -- factored out
+// since the panels otherwise repeat this same label/required-asterisk/input
+// markup for every field, which read as duplicated blocks.
+interface PreviewFieldProps {
+  label: string;
+  required?: boolean;
+  children?: React.ReactNode;
+}
+
+const PreviewField: React.FC<PreviewFieldProps> = ({
+  label,
+  required,
+  children,
+}) => (
+  <div>
+    <span className="ff-admin-style-preview__field-label">
+      {label}
+      {required && (
+        <span className="ff-admin-style-preview__required">*</span>
+      )}
+    </span>
+    <div className="ff-admin-style-preview__input">{children}</div>
+  </div>
+);
+
 const StylePreview: React.FC<StylePreviewProps> = ({ styleConfig }) => {
   const { t } = useTranslation();
 
@@ -32,85 +57,32 @@ const StylePreview: React.FC<StylePreviewProps> = ({ styleConfig }) => {
         </div>
 
         <div className="ff-admin-style-preview__row ff-admin-style-preview__row--3col">
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("First Name")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
-          <div>
-            <span className="ff-admin-style-preview__field-label">{t("Middle Name")}</span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("Last Name")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
+          <PreviewField label={t("First Name")} required />
+          <PreviewField label={t("Middle Name")} />
+          <PreviewField label={t("Last Name")} required />
         </div>
 
         <div className="ff-admin-style-preview__row ff-admin-style-preview__row--2col">
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("Social Insurance Number (SIN)")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("Date of Birth")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
+          <PreviewField label={t("Social Insurance Number (SIN)")} required />
+          <PreviewField label={t("Date of Birth")} required />
         </div>
 
         <div className="ff-admin-style-preview__row">
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("Mailing Address (Street, Apt)")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
+          <PreviewField label={t("Mailing Address (Street, Apt)")} required />
         </div>
 
         <div className="ff-admin-style-preview__row ff-admin-style-preview__row--3col">
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("City")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("Province")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("Postal Code")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
+          <PreviewField label={t("City")} required />
+          <PreviewField label={t("Province")} required />
+          <PreviewField label={t("Postal Code")} required />
         </div>
 
         <div className="ff-admin-style-preview__row ff-admin-style-preview__row--2col">
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("Primary Phone Number")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input" />
-          </div>
-          <div>
-            <span className="ff-admin-style-preview__field-label">
-              {t("Marital Status")}<span className="ff-admin-style-preview__required">*</span>
-            </span>
-            <div className="ff-admin-style-preview__input">
-              <span style={{ color: "#9CA3AF", fontSize: 13 }}></span>
-              <span style={{ color: "#9CA3AF" }}>&#8964;</span>
-            </div>
-          </div>
+          <PreviewField label={t("Primary Phone Number")} required />
+          <PreviewField label={t("Marital Status")} required>
+            <span style={{ color: "#9CA3AF", fontSize: 13 }}></span>
+            <span style={{ color: "#9CA3AF" }}>&#8964;</span>
+          </PreviewField>
         </div>
       </div>
 

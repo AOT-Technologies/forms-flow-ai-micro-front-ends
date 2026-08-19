@@ -1,6 +1,8 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
-import { useFormTheme } from "../hooks/useFormTheme";
+import { useFormTheme } from "@formsflow/components";
+import { RequestService } from "@formsflow/service";
+import { WEB_BASE_URL } from "../api/config";
 import {
   selectRoot,
   selectError,
@@ -10,6 +12,9 @@ import {
 import Loading from "./Loading";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
 import { CUSTOM_SUBMISSION_ENABLE, CUSTOM_SUBMISSION_URL } from "../constants";
+
+// Module-scope (not per-render) so useFormTheme's effect deps stay stable.
+const httpGetRequest = (url: string) => RequestService.httpGETRequest(url);
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
@@ -33,7 +38,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
     (state: any) => state?.task?.taskDetailsLoading
   );
   const [isReadOnly, setIsReadOnly] = useState(true);
-  const { themeClass } = useFormTheme(form?._id);
+  const { themeClass } = useFormTheme(form?._id, httpGetRequest, WEB_BASE_URL);
 
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}

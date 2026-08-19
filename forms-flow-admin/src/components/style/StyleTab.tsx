@@ -164,6 +164,7 @@ const StyleEditorPanel: React.FC<EditorPanelProps> = ({
   onBack, onSave, onDelete, isDirty, isSaving,
 }) => {
   const { t } = useTranslation();
+  const saveOrUpdateLabel = editForm.id ? t("Update") : t("Save");
 
   return (
     <div className="ff-style-editor-panel">
@@ -223,7 +224,7 @@ const StyleEditorPanel: React.FC<EditorPanelProps> = ({
             onClick={onSave}
             disabled={isSaving || !isDirty}
           >
-            {isSaving ? t("Saving...") : editForm.id ? t("Update") : t("Save")}
+            {isSaving ? t("Saving...") : saveOrUpdateLabel}
           </button>
         </div>
       </div>

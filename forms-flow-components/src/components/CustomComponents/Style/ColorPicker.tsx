@@ -95,8 +95,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     if (!open) return undefined;
     const handleClick = (e: MouseEvent) => {
       const target = e.target as Node;
-      const inTrigger = containerRef.current && containerRef.current.contains(target);
-      const inDropdown = dropdownRef.current && dropdownRef.current.contains(target);
+      const inTrigger = containerRef.current?.contains(target);
+      const inDropdown = dropdownRef.current?.contains(target);
       if (!inTrigger && !inDropdown) setOpen(false);
     };
     document.addEventListener("mousedown", handleClick);

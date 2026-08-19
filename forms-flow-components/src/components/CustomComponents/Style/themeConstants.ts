@@ -50,12 +50,24 @@ export const FORMSFLOW_LOGO_ICON_SVG = `<svg viewBox="0 0 27.44 27.44" fill="non
 
 export const THEMED_FORM_CLASS = "ff-themed-form";
 const STYLE_TAG_ID = "ff-form-theme-overrides";
+export const BRANDING_LOGO_CLASS = "ff-theme-branding-logo";
+export const FORMSFLOW_WEBSITE_URL = "https://formsflow.ai/";
+
+// Colour values on a StyleConfig originate from the style-templates API and
+// are interpolated directly into a raw <style> tag below -- an unvalidated
+// value containing e.g. `;} body{display:none}` would be arbitrary CSS
+// injection. Restrict to what the ColorPicker UI can ever actually produce
+// (3- or 6-digit hex) and fall back to the safe default otherwise.
+const SAFE_COLOR_REGEX = /^#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?$/;
+const sanitizeColor = (value: string | undefined, fallback: string): string =>
+  value && SAFE_COLOR_REGEX.test(value) ? value : fallback;
 
 export const buildScopedCSS = (style: StyleConfig): string => {
-  const bg = style.background || DEFAULT_STYLE.background;
-  const accent = style.accent || DEFAULT_STYLE.accent;
-  const btnBg = style.buttons || DEFAULT_STYLE.buttons;
-  const radius = BUTTON_RADIUS_MAP[style.buttonShape] || BUTTON_RADIUS_MAP.square;
+  const bg = sanitizeColor(style.background, DEFAULT_STYLE.background);
+  const accent = sanitizeColor(style.accent, DEFAULT_STYLE.accent);
+  const btnBg = sanitizeColor(style.buttons, DEFAULT_STYLE.buttons);
+  const radius =
+    BUTTON_RADIUS_MAP[style.buttonShape] || BUTTON_RADIUS_MAP.square;
   const hFont = FONT_MAP[style.headerFont] || FONT_MAP.sans;
   const bFont = FONT_MAP[style.bodyFont] || FONT_MAP.sans;
   const s = `.${THEMED_FORM_CLASS}`;
@@ -89,6 +101,23 @@ ${s} .btn.btn-wizard-nav-back, ${s} .btn.btn-wizard-nav-cancel {
   background-color: ${btnBg} !important; border-color: ${btnBg} !important;
   border-radius: ${radius} !important; font-family: ${bFont} !important;
   color: #fff !important; }
+${s} .${BRANDING_LOGO_CLASS} {
+  display: flex; align-items: center; justify-content: center; flex-wrap: nowrap;
+  gap: 4px; width: max-content; min-width: 183px; height: 30px;
+  margin: 16px auto 0; padding: 0 14px; border-radius: 18px;
+  border: 1px solid var(--ff-color-gray-medium, #D1D2D3); background: #FFF;
+  box-sizing: border-box; text-decoration: none; cursor: pointer; }
+${s} .${BRANDING_LOGO_CLASS} svg { width: 16px; height: 16px; flex-shrink: 0; }
+${s} .${BRANDING_LOGO_CLASS}__label {
+  white-space: nowrap; flex-shrink: 0;
+  color: var(--ff-color-secondary-dark, #525254); text-align: center;
+  font-family: "Figtree", sans-serif; font-size: 13.125px; font-style: normal;
+  font-weight: 400; line-height: 18.75px; }
+${s} .${BRANDING_LOGO_CLASS}__brand {
+  white-space: nowrap; flex-shrink: 0;
+  color: var(--color-bootstrap-primary, #3248F4); text-align: center;
+  font-family: "Figtree", sans-serif; font-size: 13.125px; font-style: normal;
+  font-weight: 500; line-height: 18.75px; }
 `.trim();
 };
 
@@ -104,4 +133,32 @@ export const injectFormThemeStyles = (style: StyleConfig): void => {
 
 export const removeFormThemeStyles = (): void => {
   document.getElementById(STYLE_TAG_ID)?.remove();
+};
+
+// Branding logo footer — appended as an actual DOM node inside `.formio-form`
+// (CSS vars alone can't render a logo). Idempotent: skipped if already
+// present, removed if turned off.
+export const applyBrandingLogo = (
+  style: Pick<StyleConfig, "brandingLogo">
+): void => {
+  document
+    .querySelectorAll(`.${THEMED_FORM_CLASS} .formio-form`)
+    .forEach((formEl) => {
+      const existing = formEl.querySelector(`.${BRANDING_LOGO_CLASS}`);
+      if (style.brandingLogo === "formsflow") {
+        if (existing) return;
+        const badge = document.createElement("a");
+        badge.className = BRANDING_LOGO_CLASS;
+        badge.href = FORMSFLOW_WEBSITE_URL;
+        badge.target = "_blank";
+        badge.rel = "noopener noreferrer";
+        // Inline font-family (with !important) because buildScopedCSS's own
+        // `.ff-themed-form *` rule (same specificity, later in source order)
+        // would otherwise override the Figtree set on __label/__brand above.
+        badge.innerHTML = `${FORMSFLOW_LOGO_ICON_SVG}<span class="${BRANDING_LOGO_CLASS}__label" style="font-family:'Figtree',sans-serif !important;">Created by</span><span class="${BRANDING_LOGO_CLASS}__brand" style="font-family:'Figtree',sans-serif !important;">formsflow.ai</span>`;
+        formEl.appendChild(badge);
+      } else if (existing) {
+        existing.remove();
+      }
+    });
 };

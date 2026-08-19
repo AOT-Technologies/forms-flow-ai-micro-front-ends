@@ -8,7 +8,7 @@ interface BrandingToggleProps {
 
 const BrandingToggle: React.FC<BrandingToggleProps> = ({ value, onChange }) => {
   return (
-    <div className="ff-branding-toggle" role="group">
+    <div className="ff-branding-toggle" role="radiogroup">
       <button
         type="button"
         role="radio"
