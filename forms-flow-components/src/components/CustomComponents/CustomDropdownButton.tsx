@@ -155,15 +155,33 @@ const V8CustomDropdownButtonComponent = forwardRef<
       [disabled, onLabelClick]
     );
 
-    const handleDropdownIconClick = useCallback(
+    const handleDropdownIconHover = useCallback(
       (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         if (!disabled) {
-          setOpen(!open);
+          setOpen(true);
         }
       },
-      [disabled, open]
+      [disabled]
+    );
+
+    const handleDropdownMouseLeave = useCallback(() => {
+      if (!disabled) {
+        setOpen(false);
+      }
+    }, [disabled]);
+
+    const handleDropdownIconKeyDown = useCallback(
+      (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          if (!disabled) {
+            setOpen((prev) => !prev);
+          }
+        }
+      },
+      [disabled]
     );
 
     // Memoized dropdown toggle handler
@@ -202,6 +220,7 @@ const V8CustomDropdownButtonComponent = forwardRef<
         as={ButtonGroup}
         show={open}
         onToggle={handleDropdownToggle}
+        onMouseLeave={handleDropdownMouseLeave}
         className={containerClassName}
         ref={ref}
         {...(dataTestId ? { "data-testid": dataTestId } : {})}
@@ -241,13 +260,8 @@ const V8CustomDropdownButtonComponent = forwardRef<
           {/* Dropdown icon section - toggles menu */}
           <div
             className="dropdown-icon"
-            onClick={handleDropdownIconClick}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                handleDropdownIconClick(e as any);
-              }
-            }}
+            onMouseEnter={handleDropdownIconHover}
+            onKeyDown={handleDropdownIconKeyDown}
             data-testid={`${dataTestId}-icon`}
             role="button"
             tabIndex={disabled ? -1 : 0}

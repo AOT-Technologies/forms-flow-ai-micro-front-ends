@@ -243,3 +243,9 @@ $color-secondary-active: var(--secondary);
     }
   }
 }
+
+.custom-scroll{
+  .v8-custom-dropdown.dropdown.btn-group.menu-right.show .v8-dropdown-menu, .v8-custom-dropdown.dropdown.btn-group.menu-right .v8-dropdown-menu.show {
+    right: 0 !important;
+  }
+}
