@@ -18,9 +18,9 @@ describe("Loading Component", () => {
 
   it("renders SpinnerSVG with correct fill color", () => {
     render(<Loading />);
-    const spinnerElement = screen.getByTestId("loading-component").querySelector("svg");
+    const spinnerElement = screen
+      .getByTestId("loading-component")
+      .querySelector("svg");
     expect(spinnerElement).toHaveAttribute("fill", "#868e96");
   });
-
- 
 });

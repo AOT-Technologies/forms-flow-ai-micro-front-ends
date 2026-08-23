@@ -16,7 +16,7 @@ interface CustomButtonProps {
   variant?: string;
   size?: "sm" | "md" | "lg" | "table" | "table-sm";
   label: string;
-  name?: string,
+  name?: string;
   onClick?: () => void;
   isDropdown?: boolean;
   dropdownItems?: DropdownItem[];
@@ -26,7 +26,7 @@ interface CustomButtonProps {
   dataTestId?: string;
   ariaLabel?: string;
   buttonLoading?: boolean;
-  iconOnly?: boolean;  
+  iconOnly?: boolean;
   actionTable?: boolean;
   actionTableSmall?: boolean;
   action?: boolean;
@@ -37,14 +37,16 @@ interface CustomButtonProps {
   successMessage?: string;
 }
 
-const getButtonClassName = (size: string | undefined, className: string, iconOnly: boolean = false, actionTable: boolean = false, actionTableSmall: boolean = false, action: boolean = false, iconWithText: boolean = false, secondary: boolean = false, dark: boolean = false, darkPrimary: boolean = false, successMessage: string) => {
+// Only size and className are used to build the class string (the previous
+// 11-parameter signature ignored the other 9 arguments).
+const getButtonClassName = (size: string | undefined, className: string) => {
   const sizeClassMap: Record<string, string> = {
     md: "btn-md",
     table: "btn-table",
-    "table-sm": "btn-table-sm"
+    "table-sm": "btn-table-sm",
   };
 
-  return `${size ? sizeClassMap[size] || '' : ''} ${className}`.trim();
+  return `${size ? sizeClassMap[size] || "" : ""} ${className}`.trim();
 };
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -59,20 +61,21 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   className = "",
   dataTestId,
   ariaLabel = "",
-  name =  "",
+  name = "",
   buttonLoading = false,
-  iconOnly = false, 
-  actionTable = false, 
-  actionTableSmall = false, 
-  action = false, 
+  iconOnly = false,
+  actionTable = false,
+  actionTableSmall = false,
+  action = false,
   iconWithText = false,
   secondary = false,
   dark = false,
   darkPrimary = false,
   successMessage = "",
 }) => {
-  const classNameForButton = getButtonClassName(size, className, iconOnly, actionTable, actionTableSmall, action, iconWithText, secondary, dark, darkPrimary, successMessage);
-  const sizeOfButton = size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
+  const classNameForButton = getButtonClassName(size, className);
+  const sizeOfButton =
+    size !== "md" && size !== "table" && size !== "table-sm" ? size : undefined;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -133,6 +136,8 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
           variant={variant}
           id="dropdown-split-basic"
           className={`default-arrow ${dropdownOpen ? "collapsed" : ""}`}
+          aria-label={t("Toggle dropdown")}
+          data-testid={dataTestId ? `${dataTestId}-split-toggle` : undefined}
         >
           <ChevronIcon className="svgIcon-onDark" />
         </Dropdown.Toggle>
@@ -170,142 +175,64 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     );
   }
 
-  // Btn-Action-Table
-  if (actionTable) {
-    return (
-      <button
-      onClick={onClick}
-      disabled={disabled}
-      name={name}
-      className={`button-action-table ${buttonLoading ? "loading" : ""}`}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-    >
-      {t(label)}
-      {buttonLoading && <LoadingIcon />}
-    </button>
-    );
-  }
-
-  // Btn-Action-Table-Small
-  if (actionTableSmall) {
-    return (
-      <button
-      onClick={onClick}
-      disabled={disabled}
-      name={name}
-      className={`button-action-table-small ${buttonLoading ? "loading" : ""}`}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-    >
-      {t(label)}
-      {buttonLoading && <LoadingIcon />}
-    </button>
-    );
-  }
-  
-  // Btn-Action
-  if (action) {
-    return (
-      <button
-      onClick={onClick}
-      disabled={disabled}
-      name={name}
-      className={`button-action ${buttonLoading ? "loading" : ""}`}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-    >
-      {t(label)}
-      {buttonLoading && <LoadingIcon />}
-    </button>
-    );
-  }
-
-  // Btn-Icon
-  if (iconWithText) {
-    return (
-      <button
-      onClick={onClick}
-      disabled={disabled}
-      name={name}
-      className={`button-icon ${buttonLoading ? "loading" : ""} ${successMessage ? "success" : ""}`}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-    >
-      {icon}
-      {t(label)}
-      {buttonLoading && <LoadingIcon />}
-      {successMessage && <p className="success-message">{successMessage}</p>}
-    </button>
-    );
-  }
-
-  // Btn-Secondary
-  if (secondary) {
-    return (
-      <button
-      onClick={onClick}
-      disabled={disabled}
-      name={name}
-      className={`button-secondary ${buttonLoading ? "loading" : ""} ${successMessage ? "success" : ""}`}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-    >
-      {t(label)}
-      {buttonLoading && <LoadingIcon />}
-      {successMessage && <p className="success-message">{successMessage}</p>}
-    </button>
-    );
-  }
-
-  // Btn-Dark
-  if (dark) {
-    return (
-      <button
-      onClick={onClick}
-      disabled={disabled}
-      name={name}
-      className={`button-dark ${buttonLoading ? "loading" : ""}`}
-      data-testid={dataTestId}
-      aria-label={ariaLabel}
-    >
-      {t(label)}
-      {buttonLoading && <LoadingIcon />}
-    </button>
-    );
-  }
-
-  // Btn-Dark-Primary
-  if (darkPrimary) {
-    return (
-      <button
-        onClick={onClick}
-        disabled={disabled}
-        name={name}
-        className={`button-dark-primary ${buttonLoading ? "loading" : ""}`}
-        data-testid={dataTestId}
-        aria-label={ariaLabel}
-      >
-      {t(label)}
-      {buttonLoading && <LoadingIcon />}
-    </button>
-    );
-  }
-
-  // Btn-Primary
-  return (
+  // All remaining variants render the identical <button> skeleton and differ only
+  // in their base class plus (for iconWithText/secondary/primary) a success-message
+  // segment; iconWithText additionally renders a leading icon. The class-string
+  // templates are reproduced exactly per group (including whitespace) so the
+  // rendered DOM stays byte-identical to the previous copy-pasted branches.
+  const renderPlainButton = (
+    baseClass: string,
+    withSuccess: boolean,
+    withIcon: boolean = false
+  ) => (
     <button
       onClick={onClick}
       disabled={disabled}
       name={name}
-      className={`button-primary ${buttonLoading ? "loading" : ""} ${successMessage ? "success" : ""}`}
+      className={
+        withSuccess
+          ? `${baseClass} ${buttonLoading ? "loading" : ""} ${
+              successMessage ? "success" : ""
+            }`
+          : `${baseClass} ${buttonLoading ? "loading" : ""}`
+      }
       data-testid={dataTestId}
       aria-label={ariaLabel}
     >
+      {withIcon && icon}
       {t(label)}
       {buttonLoading && <LoadingIcon />}
-      {successMessage && <p className="success-message">{successMessage}</p>}
+      {withSuccess && successMessage && (
+        <p className="success-message">{successMessage}</p>
+      )}
     </button>
   );
-};
 
+  // Original if-chain precedence preserved: actionTable > actionTableSmall >
+  // action > iconWithText > secondary > dark > darkPrimary > primary (default).
+
+  // Btn-Action-Table
+  if (actionTable) return renderPlainButton("button-action-table", false);
+
+  // Btn-Action-Table-Small
+  if (actionTableSmall)
+    return renderPlainButton("button-action-table-small", false);
+
+  // Btn-Action
+  if (action) return renderPlainButton("button-action", false);
+
+  // Btn-Icon
+  if (iconWithText) return renderPlainButton("button-icon", true, true);
+
+  // Btn-Secondary
+  if (secondary) return renderPlainButton("button-secondary", true);
+
+  // Btn-Dark
+  if (dark) return renderPlainButton("button-dark", false);
+
+  // Btn-Dark-Primary
+  if (darkPrimary) return renderPlainButton("button-dark-primary", false);
+
+  // Btn-Primary
+  return renderPlainButton("button-primary", true);
+};

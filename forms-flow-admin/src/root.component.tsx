@@ -10,8 +10,14 @@ export default function Root(props: any) {
       <Routes>
         <Route path="/billing/return" element={<BillingReturn />} />
         <Route path="/billing/manage" element={<BillingManage />} />
-        <Route path="/tenant/:tenantId/billing/manage" element={<BillingManage />} />
-        <Route path={`${BASE_ROUTE.replace(/\/$/, '')}/admin/*`} element={<Admin props={props} />} />
+        <Route
+          path="/tenant/:tenantId/billing/manage"
+          element={<BillingManage />}
+        />
+        <Route
+          path={`${BASE_ROUTE.replace(/\/$/, "")}/admin/*`}
+          element={<Admin props={props} />}
+        />
       </Routes>
     </BrowserRouter>
   );

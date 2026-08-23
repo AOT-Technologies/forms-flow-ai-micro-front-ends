@@ -3,7 +3,7 @@ import { Breadcrumb } from "react-bootstrap";
 
 /**
  * BreadCrumbs is a flexible navigation component that displays the user's location within the application hierarchy.
- * 
+ *
  * Usage:
  * <BreadCrumbs items={breadcrumbItems} variant={BreadcrumbVariant.DEFAULT} />
  * <BreadCrumbs items={breadcrumbItems} variant={BreadcrumbVariant.MINIMIZED} underline />
@@ -35,7 +35,8 @@ export enum BreadcrumbVariant {
 /**
  * Props for the BreadCrumbs component
  */
-interface BreadCrumbsProps extends Omit<React.ComponentPropsWithoutRef<"nav">, 'children'> {
+interface BreadCrumbsProps
+  extends Omit<React.ComponentPropsWithoutRef<"nav">, "children"> {
   /** Array of breadcrumb items to display in the navigation trail */
   items: BreadcrumbItem[];
   /** Visual style variant for the breadcrumb */
@@ -57,7 +58,9 @@ interface BreadCrumbsProps extends Omit<React.ComponentPropsWithoutRef<"nav">, '
 /**
  * Utility function to build className string
  */
-const buildClassNames = (...classes: (string | boolean | undefined)[]): string => {
+const buildClassNames = (
+  ...classes: (string | boolean | undefined)[]
+): string => {
   return classes.filter(Boolean).join(" ");
 };
 
@@ -66,7 +69,9 @@ const buildClassNames = (...classes: (string | boolean | undefined)[]): string =
  */
 const generateItemKey = (item: BreadcrumbItem, index: number): string => {
   // Use path if available for better stability, otherwise use label + index
-  return item.id ? `breadcrumb-${item.id}` : `breadcrumb-${item.label}-${index}`;
+  return item.id
+    ? `breadcrumb-${item.id}`
+    : `breadcrumb-${item.label}-${index}`;
 };
 
 /**
@@ -83,7 +88,6 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
   activeIndex,
   ...restProps
 }) => {
-  
   // Memoized className to prevent unnecessary recalculations
   const breadcrumbClassName = useMemo(() => {
     return buildClassNames(
@@ -93,17 +97,17 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
       className
     );
   }, [variant, underline, className]);
-  
+
   // Memoized check for valid items
   const hasValidItems = useMemo(() => {
     return items && items.length > 0;
   }, [items]);
-  
+
   // Early return if no items provided
   if (!hasValidItems) {
     return null;
   }
-  
+
   return (
     <Breadcrumb
       className={breadcrumbClassName}
@@ -115,7 +119,11 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
         <Breadcrumb.Item
           linkAs="button"
           key={generateItemKey(item, index)}
-          active={activeIndex !== undefined ? index === activeIndex : !underline && index === items.length - 1}
+          active={
+            activeIndex !== undefined
+              ? index === activeIndex
+              : !underline && index === items.length - 1
+          }
           linkProps={{
             type: "button",
             style: {
@@ -126,14 +134,15 @@ const BreadCrumbsComponent: React.FC<BreadCrumbsProps> = ({
               cursor: "pointer",
               color: "inherit",
             },
-          onClick: () => {
+            onClick: () => {
               if (onBreadcrumbClick) {
                 onBreadcrumbClick(item);
               }
             },
           }}
           data-testid={`breadcrumb-item-${index}`}
-          aria-label={`breadcrumb-${item.label}`}>
+          aria-label={`breadcrumb-${item.label}`}
+        >
           <span className="breadcrumb-item-label" title={item.label}>
             {item.label}
           </span>

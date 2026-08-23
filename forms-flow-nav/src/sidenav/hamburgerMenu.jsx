@@ -1,21 +1,33 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import "./hamburger.scss";
-// import Appname from "./formsflow.svg";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Sidebar from "./Sidebar";
-// import hamburger from "./hamburger.svg";
-// import closebutton from "./closebutton.svg";
-import { HamburgerIcon, CloseIcon, ApplicationLogo } from "@formsflow/components";
+import {
+  HamburgerIcon,
+  CloseIcon,
+  ApplicationLogo,
+} from "@formsflow/components";
 import { StyleServices } from "@formsflow/service";
 function HamburgerMenu({ props }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const hideLogo =  StyleServices?.getCSSVariable("--hide-formsflow-logo")?.toLowerCase();
+  const hideLogo = StyleServices?.getCSSVariable(
+    "--hide-formsflow-logo"
+  )?.toLowerCase();
+  // Theme CSS variable is set at app bootstrap; avoid a synchronous
+  // getComputedStyle() read on every render (N.1.3).
+  const hamburgerIconColor = useMemo(
+    () =>
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--ff-gray-darkest"
+      ),
+    []
+  );
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary custom-navbar">
@@ -27,27 +39,26 @@ function HamburgerMenu({ props }) {
           data-testid="hamburger-button"
           aria-label="Open sidebar"
         >
-          {/* <img src={hamburger} alt="hamburger icon" /> */}
-          <HamburgerIcon data-testid="hamburger-button" aria-label="hamburger button" color={getComputedStyle(document.documentElement).getPropertyValue("--ff-gray-darkest")} />
+          <HamburgerIcon
+            data-testid="hamburger-button"
+            aria-label="hamburger button"
+            color={hamburgerIconColor}
+          />
         </button>
         <Navbar.Brand href="" className="mx-auto">
-          {/* <img className="" src={Appname} alt="applicationName" /> */}
           {hideLogo !== "true" && (
-          <ApplicationLogo data-testid="application-logo" />
+            <ApplicationLogo data-testid="application-logo" />
           )}
         </Navbar.Brand>
         <Navbar.Collapse id="basic-navbar-nav" className="order-2">
           <Nav className="me-auto">
             <Offcanvas show={show} onHide={handleClose} data-testid="offcanvas">
               <Offcanvas.Header className="offcanvas-header">
-                {/* <img
-                  src={closebutton}
-                  alt="close icon"
+                <CloseIcon
                   onClick={handleClose}
                   data-testid="close-button"
                   aria-label="Close sidebar"
-                /> */}
-                <CloseIcon onClick={handleClose} data-testid="close-button" aria-label="Close sidebar" />
+                />
               </Offcanvas.Header>
               <Offcanvas.Body>
                 <div className="child-sidenav" data-testid="child-sidenav">

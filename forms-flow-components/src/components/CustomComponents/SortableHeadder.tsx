@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { SortIcon } from "../SvgIcons";
 import { StyleServices } from "@formsflow/service";
 
 interface SortState {
-    activeKey: string;
-    sortColumns: { [key: string]: { sortOrder: "asc" | "desc" } };
-  }
-  
+  activeKey: string;
+  sortColumns: { [key: string]: { sortOrder: "asc" | "desc" } };
+}
+
 interface SortableHeaderProps {
   columnKey: string;
   title: string;
@@ -26,9 +26,17 @@ export const SortableHeader: React.FC<SortableHeaderProps> = ({
   const { t } = useTranslation();
   const sortedOrder = currentSort[columnKey]?.sortOrder;
   const isSorted = currentSort.activeKey === columnKey;
-  const iconColor = isSorted
-    ? StyleServices.getCSSVariable("--ff-primary")
-    : StyleServices.getCSSVariable("--ff-gray-medium-dark");
+  // Memoized CSS variable reads (getComputedStyle forces a style recalc) — same
+  // pattern as Search.tsx; the ternary still picks per render.
+  const primaryColor = useMemo(
+    () => StyleServices.getCSSVariable("--ff-primary"),
+    []
+  );
+  const grayMediumDarkColor = useMemo(
+    () => StyleServices.getCSSVariable("--ff-gray-medium-dark"),
+    []
+  );
+  const iconColor = isSorted ? primaryColor : grayMediumDarkColor;
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
     if (event.key === "Enter") {

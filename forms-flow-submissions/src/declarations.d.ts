@@ -39,12 +39,12 @@ declare module "*.svg" {
 }
 
 declare module "@formsflow/service" {
-	export const {
-    KeycloakService, 
-    RequestService, 
+  export const {
+    KeycloakService,
+    RequestService,
     StorageService,
     i18nService,
-    HelperServices, 
+    HelperServices,
     StyleServices,
     getRoute,
     MAIN_ROUTE,
@@ -58,7 +58,7 @@ declare module "@formsflow/service" {
     navigateToBaseUrl,
     navigateWithHistory,
     syncRouterPath,
-    completeChecklistByRouteKey
+    completeChecklistByRouteKey,
   }: any;
 }
 
@@ -83,7 +83,7 @@ declare module "@formsflow/components" {
     BackToPrevIcon,
     FormSubmissionHistoryModal,
     SubmissionHistoryWithViewButton,
-    VariableSelection, 
+    VariableSelection,
     StepperComponent,
     Switch,
     CustomSearch,
@@ -99,6 +99,6 @@ declare module "@formsflow/components" {
     FilterDropDown,
     bundleIcon,
     SelectDropdownOptionType,
-    AppModal
+    AppModal,
   }: any;
 }

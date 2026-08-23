@@ -16,9 +16,11 @@ interface PermissionTreeProps {
     permissions: string[];
   };
   handlePermissionCheck: (name: string, depends_on: string[]) => void;
-  setPayload: React.Dispatch<React.SetStateAction<{
-    permissions: string[];
-  }>>;
+  setPayload: React.Dispatch<
+    React.SetStateAction<{
+      permissions: string[];
+    }>
+  >;
 }
 
 const groupByCategory = (
@@ -37,7 +39,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
   permissions,
   payload,
   handlePermissionCheck,
-  setPayload
+  setPayload,
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -48,45 +50,53 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
   const groupedPermissions = useMemo(
     () => groupByCategory(permissions),
     [permissions]
-    );
+  );
 
-const formatCategoryLabel = (category: string): string => {
-  if (category.toLowerCase() === "admin") {
-    return "Access to Manage";
-  }
-  return `Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`;
-};
+  const formatCategoryLabel = (category: string): string => {
+    if (category.toLowerCase() === "admin") {
+      return "Access to Manage";
+    }
+    return `Access to ${category.charAt(0).toUpperCase()}${category
+      .slice(1)
+      .toLowerCase()}`;
+  };
 
   const sortPermissionsByOrder = (perms: Permission[]): Permission[] => {
     return [...perms].sort((a, b) => a.order - b.order);
   };
 
-  const removePermissionAndDeps = (perm: Permission, permissionsSet: Set<string>) => {
+  const removePermissionAndDeps = (
+    perm: Permission,
+    permissionsSet: Set<string>
+  ) => {
     permissionsSet.delete(perm.name);
-    perm.depends_on.forEach(dep => permissionsSet.delete(dep));
+    perm.depends_on.forEach((dep) => permissionsSet.delete(dep));
   };
-  
-  const addPermissionAndDeps = (perm: Permission, permissionsSet: Set<string>) => {
+
+  const addPermissionAndDeps = (
+    perm: Permission,
+    permissionsSet: Set<string>
+  ) => {
     permissionsSet.add(perm.name);
-    perm.depends_on.forEach(dep => permissionsSet.add(dep));
+    perm.depends_on.forEach((dep) => permissionsSet.add(dep));
   };
 
   const handleParentCheck = (category: string, perms: Permission[]) => {
-    setPayload(prev => {
+    setPayload((prev) => {
       const newPermissions = new Set(prev.permissions);
-      const allChecked = perms.every(perm => newPermissions.has(perm.name));
-      
+      const allChecked = perms.every((perm) => newPermissions.has(perm.name));
+
       const updatePermissions = (perm: Permission) => {
-        allChecked 
+        allChecked
           ? removePermissionAndDeps(perm, newPermissions)
           : addPermissionAndDeps(perm, newPermissions);
       };
 
       perms.forEach(updatePermissions);
-      
+
       return {
         ...prev,
-        permissions: Array.from(newPermissions)
+        permissions: Array.from(newPermissions),
       };
     });
   };
@@ -137,7 +147,10 @@ const formatCategoryLabel = (category: string): string => {
               aria-label={`Toggle all permissions in ${category}`}
             />
 
-            <div className="tree-branch" data-testid={`tree-branch-${category}`}>
+            <div
+              className="tree-branch"
+              data-testid={`tree-branch-${category}`}
+            >
               {sortedPerms.map((perm, idx) => (
                 <div
                   key={perm.name}

@@ -1,9 +1,6 @@
-import {
-  V8CustomButton,
-  ReusableTable
-} from "@formsflow/components";
+import { V8CustomButton, ReusableTable } from "@formsflow/components";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { HelperServices } from "@formsflow/service";
+import { HelperServices, getRedirectUrl } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks";
@@ -30,7 +27,7 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import {
   fetchServiceTaskList,
   fetchTaskVariables,
-  executeRule
+  executeRule,
 } from "../../api/services/filterServices";
 import {
   getBPMTaskDetail,
@@ -49,7 +46,7 @@ import {
   getFormIdSubmissionIdFromURL,
   getFormUrlWithFormIdSubmissionId,
 } from "../../api/services/formatterService";
-import { getFormioRoleIds } from "../../api/services/userSrvices";
+import { getFormioRoleIds } from "../../api/services/userServices";
 import {
   CUSTOM_SUBMISSION_URL,
   CUSTOM_SUBMISSION_ENABLE,
@@ -57,7 +54,7 @@ import {
 } from "../../constants/index";
 import TaskAssigneeManager from "../Assigne/Assigne";
 import { buildDynamicColumns, optionSortBy } from "../../helper/tableHelper";
-import { createReqPayload,sortableKeysSet } from "../../helper/taskHelper";
+import { createReqPayload, sortableKeysSet } from "../../helper/taskHelper";
 import { removeTenantKey } from "../../helper/helper";
 import Loading from "../Loading/Loading";
 import TaskFilterModal from "../TaskFilterModal/TaskFilterModal";
@@ -97,17 +94,26 @@ const TaskListTable = () => {
     dateRange,
     selectedAttributeFilter,
     filterListSortParams,
-    isAssigned
+    isAssigned,
   } = useSelector((state: any) => state.task);
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantId || state.tenants?.tenantData
-?.key || tenantId);
-  const isTaskListLoading = useSelector((state: any) => state.task.isTaskListLoading);
+  const tenantKey = useSelector(
+    (state: any) =>
+      state.tenants?.tenantId || state.tenants?.tenantData?.key || tenantId
+  );
+  const isTaskListLoading = useSelector(
+    (state: any) => state.task.isTaskListLoading
+  );
 
   const [showModal, setShowModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [modalViewType, setModalViewType] = useState<"submission" | "history" | "notes">("submission");
-  const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
+  const [modalViewType, setModalViewType] = useState<
+    "submission" | "history" | "notes"
+  >("submission");
+  const [bundleFormData, setBundleFormData] = useState<{
+    formId: string;
+    submissionId: string;
+  }>({
     formId: "",
     submissionId: "",
   });
@@ -117,38 +123,52 @@ const TaskListTable = () => {
 
   // Redux selectors for task details
   const task = useSelector((state: any) => state.task.taskDetail);
-  const taskDetailsLoading = useSelector((state: any) => state.task.taskDetailsLoading);
-  const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
+  const taskDetailsLoading = useSelector(
+    (state: any) => state.task.taskDetailsLoading
+  );
+  const selectedForms = useSelector(
+    (state: any) => state.task.selectedForms || []
+  );
   const appHistory = useSelector((state: any) => state.task?.appHistory || []);
-  const isAppHistoryLoading = useSelector((state: any) => state.task?.isAppHistoryLoading || false);
+  const isAppHistoryLoading = useSelector(
+    (state: any) => state.task?.isAppHistoryLoading || false
+  );
   const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
 
-  const currentUser = JSON.parse(
-    localStorage.getItem("UserDetails") || "{}"
-  )?.preferred_username;
+  // Parse once per mount instead of per render; UserDetails only changes via
+  // auth events, which remount the MFE.
+  const currentUser = useMemo(
+    () =>
+      JSON.parse(localStorage.getItem("UserDetails") || "{}")
+        ?.preferred_username,
+    []
+  );
   const disabledMode = taskAssignee !== currentUser;
 
-  const handleOpenModal = useCallback((task: Task) => {
-    setSelectedTask(task);
-    setModalViewType("submission");
-    setShowModal(true);
-    // Set task ID and load task details
-    if (task.id) {
-      dispatch(setSelectedTaskID(task.id));
-      dispatch(setTaskDetailsLoading(true));
-      dispatch(getBPMTaskDetail(task.id));
-      dispatch(getBPMGroups(task.id));
-      
-      // Also load history data upfront to avoid lag when switching views
-      const applicationId = task._embedded?.variable?.find(
-        (v: { name: string; value: any }) => v.name === "applicationId"
-      )?.value;
-      if (applicationId) {
-        dispatch(setAppHistoryLoading(true));
-        dispatch(getApplicationHistory(applicationId));
+  const handleOpenModal = useCallback(
+    (task: Task) => {
+      setSelectedTask(task);
+      setModalViewType("submission");
+      setShowModal(true);
+      // Set task ID and load task details
+      if (task.id) {
+        dispatch(setSelectedTaskID(task.id));
+        dispatch(setTaskDetailsLoading(true));
+        dispatch(getBPMTaskDetail(task.id));
+        dispatch(getBPMGroups(task.id));
+
+        // Also load history data upfront to avoid lag when switching views
+        const applicationId = task._embedded?.variable?.find(
+          (v: { name: string; value: any }) => v.name === "applicationId"
+        )?.value;
+        if (applicationId) {
+          dispatch(setAppHistoryLoading(true));
+          dispatch(getApplicationHistory(applicationId));
+        }
       }
-    }
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
   const handleCloseModal = useCallback(() => {
     setSelectedTask(null);
@@ -173,21 +193,19 @@ const TaskListTable = () => {
   }, []);
 
   const taskvariables = selectedFilter?.variables ?? [];
-  const redirectUrl = useRef(
-    MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/"
-  );
+  const redirectUrl = useRef(getRedirectUrl(tenantKey));
   const [columns, setColumns] = useState<Column[]>([]);
 
   // Max number of text lines to display in a cell before truncating
   const maxTextLines = useMemo(() => {
-    const lines = Number(
-      selectedFilter?.properties?.displayLinesCount ??
-      1
-    );
+    const lines = Number(selectedFilter?.properties?.displayLinesCount ?? 1);
     if (isNaN(lines)) return 1;
     // Clamp between 1 and 5 lines to avoid excessive row heights
     return Math.max(1, Math.min(5, lines));
-  }, [selectedFilter?.properties?.dataLineValue, selectedFilter?.properties?.displayLinesCount]);
+  }, [
+    selectedFilter?.properties?.dataLineValue,
+    selectedFilter?.properties?.displayLinesCount,
+  ]);
 
   const isMultiLineEnabled = maxTextLines > 1;
 
@@ -203,18 +221,19 @@ const TaskListTable = () => {
     // Apply all multi-line ellipsis styles inline to ensure they override any CSS
     const textStyle: React.CSSProperties | undefined = isMultiLineEnabled
       ? {
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          display: '-webkit-box',
-          WebkitBoxOrient: 'vertical' as const,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          display: "-webkit-box",
+          WebkitBoxOrient: "vertical" as const,
           WebkitLineClamp: maxTextLines,
-          whiteSpace: 'normal',
-          wordBreak: 'break-word',
+          whiteSpace: "normal",
+          wordBreak: "break-word",
         }
       : undefined;
 
     if (sortKey === "applicationId") {
-      const value = variables.find((v) => v.name === "applicationId")?.value ?? "-";
+      const value =
+        variables.find((v) => v.name === "applicationId")?.value ?? "-";
       return (
         <div className={textClassName} style={textStyle}>
           {value}
@@ -222,50 +241,52 @@ const TaskListTable = () => {
       );
     }
 
-  //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
-  if (!column.isFormVariable) {
-    switch (sortKey) {
-      case "name":
-        return (
-          <div className={textClassName} style={textStyle}>
-            {taskName ?? "-"}
-          </div>
-        );
-      case "created":
-        return (
-          <div className={textClassName} style={textStyle}>
-            {created ? HelperServices.getLocaldate(created) : "N/A"}
-          </div>
-        );
-      case "assignee":
-        return <TaskAssigneeManager task={task} resizable={true}/>;
-      case "roles": {
-  const validGroups = candidateGroups.filter(group => group?.groupId);
+    //checking isFormVariable to avoid the inappropriate value setting when static and dynamic varibales are same
+    if (!column.isFormVariable) {
+      switch (sortKey) {
+        case "name":
+          return (
+            <div className={textClassName} style={textStyle}>
+              {taskName ?? "-"}
+            </div>
+          );
+        case "created":
+          return (
+            <div className={textClassName} style={textStyle}>
+              {created ? HelperServices.getLocaldate(created) : "N/A"}
+            </div>
+          );
+        case "assignee":
+          return <TaskAssigneeManager task={task} resizable={true} />;
+        case "roles": {
+          const validGroups = candidateGroups.filter((group) => group?.groupId);
 
-  const roleValues = validGroups.length > 0
-    ? validGroups.map(group =>
-        removeTenantKey(group.groupId, tenantKey, MULTITENANCY_ENABLED)
-      )
-    : ["-"];
+          const roleValues =
+            validGroups.length > 0
+              ? validGroups.map((group) =>
+                  removeTenantKey(
+                    group.groupId,
+                    tenantKey,
+                    MULTITENANCY_ENABLED
+                  )
+                )
+              : ["-"];
 
-  const allRoles = roleValues.join(",");
+          const allRoles = roleValues.join(",");
 
-  return (
-    <div className={textClassName} style={textStyle}>
-      {allRoles}
-    </div>
-  );
-}
-
-
-
+          return (
+            <div className={textClassName} style={textStyle}>
+              {allRoles}
+            </div>
+          );
+        }
+      }
     }
-  }
 
-  const matchingVar = variables.find((v) => v.name === sortKey);
-  if (!matchingVar) return "-";
+    const matchingVar = variables.find((v) => v.name === sortKey);
+    if (!matchingVar) return "-";
 
-  const dateTimeField = taskvariables.find(
+    const dateTimeField = taskvariables.find(
       (v) => v.key === sortKey && v.type === "datetime"
     );
     const dateField = taskvariables.find(
@@ -344,7 +365,16 @@ const TaskListTable = () => {
       false
     );
     dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-  }, [dispatch, selectedFilter, selectedAttributeFilter, filterListSortParams, dateRange, isAssigned, activePage, limit]);
+  }, [
+    dispatch,
+    selectedFilter,
+    selectedAttributeFilter,
+    filterListSortParams,
+    dateRange,
+    isAssigned,
+    activePage,
+    limit,
+  ]);
 
   // Load form and submission for task details
   const handleFormRetry = (fetchForm: () => void) => (retryErr: any) => {
@@ -392,7 +422,11 @@ const TaskListTable = () => {
 
   // Load form and submission when task details are loaded
   useEffect(() => {
-    if (task?.formUrl && task?.formType !== "bundle" && modalViewType === "submission") {
+    if (
+      task?.formUrl &&
+      task?.formType !== "bundle" &&
+      modalViewType === "submission"
+    ) {
       getFormSubmissionData(task.formUrl);
     }
   }, [task?.formUrl, task?.formType, modalViewType, getFormSubmissionData]);
@@ -404,7 +438,9 @@ const TaskListTable = () => {
       dispatch(resetFormData("form"));
       dispatch(setBundleLoading(false));
 
-      const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
+      const { formId, submissionId } = getFormIdSubmissionIdFromURL(
+        task.formUrl
+      );
       setBundleFormData({ formId, submissionId });
 
       fetchTaskVariables(task?.formId)
@@ -440,174 +476,210 @@ const TaskListTable = () => {
   }, [task?.formType, task?.formId, task?.formUrl, modalViewType, dispatch]);
 
   // Form submission callback
-  const onFormSubmitCallback = useCallback((actionType = "") => {
-    if (!selectedTask?.id || !task?.formUrl) return;
-    dispatch(setBPMTaskDetailLoader(true));
-    const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
-    const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
-    const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
-    const payload = {
-      variables: {
-        formUrl: { value: formUrl },
-        applicationId: { value: task.applicationId },
-        webFormUrl: { value: webFormUrl },
-        action: { value: actionType },
-      },
-    };
-    dispatch(
-      onBPMTaskFormSubmit(
-        selectedTask.id,
-        payload,
-        () => dispatch(setBPMTaskDetailLoader(false))
-      )
-    );
-    handleCloseModal();
-  }, [selectedTask?.id, task?.formUrl, task?.applicationId, dispatch, handleCloseModal]);
+  const onFormSubmitCallback = useCallback(
+    (actionType = "") => {
+      if (!selectedTask?.id || !task?.formUrl) return;
+      dispatch(setBPMTaskDetailLoader(true));
+      const { formId, submissionId } = getFormIdSubmissionIdFromURL(
+        task.formUrl
+      );
+      const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
+      const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
+      const payload = {
+        variables: {
+          formUrl: { value: formUrl },
+          applicationId: { value: task.applicationId },
+          webFormUrl: { value: webFormUrl },
+          action: { value: actionType },
+        },
+      };
+      dispatch(
+        onBPMTaskFormSubmit(selectedTask.id, payload, () =>
+          dispatch(setBPMTaskDetailLoader(false))
+        )
+      );
+      handleCloseModal();
+    },
+    [
+      selectedTask?.id,
+      task?.formUrl,
+      task?.applicationId,
+      dispatch,
+      handleCloseModal,
+    ]
+  );
 
   // Custom event handler for form
-  const onCustomEventCallBack = useCallback((customEvent: {
-    type: string;
-    actionType: string;
-  }) => {
-    if (customEvent.type === CUSTOM_EVENT_TYPE.ACTION_COMPLETE) {
-      onFormSubmitCallback(customEvent.actionType);
-    }
-  }, [onFormSubmitCallback]);
+  const onCustomEventCallBack = useCallback(
+    (customEvent: { type: string; actionType: string }) => {
+      if (customEvent.type === CUSTOM_EVENT_TYPE.ACTION_COMPLETE) {
+        onFormSubmitCallback(customEvent.actionType);
+      }
+    },
+    [onFormSubmitCallback]
+  );
 
   // Prepare history table data
   useEffect(() => {
     const dynamicColumns = buildDynamicColumns(taskvariables);
-    setColumns((prev) => (!isEqual(prev, dynamicColumns) ? dynamicColumns : prev));
+    setColumns((prev) =>
+      !isEqual(prev, dynamicColumns) ? dynamicColumns : prev
+    );
   }, [taskvariables]);
 
-  const handleSortModelChange = useCallback((model: any) => {
-    const column = columns.find((col) => col.sortKey === model?.[0]?.field);
-    if (!column) return;
-    dispatch(setBPMTaskLoader(true));
-    
-    const resetSortOrders = HelperServices.getResetSortOrders(optionSortBy.options);
-    const enabledSort = new Set(["applicationId", "submitterName", "formName"]);
-    
-    const updatedFilterListSortParams = {
-      ...resetSortOrders,
-      [column.sortKey]: {
-        sortOrder: model?.[0]?.sort,
-        ...((column.isFormVariable || enabledSort.has(column.sortKey)) && {
-          type: column.type,
-        }),
-      },
-      activeKey: column.sortKey,
-    };
+  const handleSortModelChange = useCallback(
+    (model: any) => {
+      const column = columns.find((col) => col.sortKey === model?.[0]?.field);
+      if (!column) return;
+      dispatch(setBPMTaskLoader(true));
 
-    dispatch(setFilterListSortParams(updatedFilterListSortParams));
-    const payload = createReqPayload(
+      const resetSortOrders = HelperServices.getResetSortOrders(
+        optionSortBy.options
+      );
+      const enabledSort = new Set([
+        "applicationId",
+        "submitterName",
+        "formName",
+      ]);
+
+      const updatedFilterListSortParams = {
+        ...resetSortOrders,
+        [column.sortKey]: {
+          sortOrder: model?.[0]?.sort,
+          ...((column.isFormVariable || enabledSort.has(column.sortKey)) && {
+            type: column.type,
+          }),
+        },
+        activeKey: column.sortKey,
+      };
+
+      dispatch(setFilterListSortParams(updatedFilterListSortParams));
+      const payload = createReqPayload(
+        selectedFilter,
+        selectedAttributeFilter,
+        updatedFilterListSortParams,
+        dateRange,
+        isAssigned,
+        column.isFormVariable
+      );
+      dispatch(fetchServiceTaskList(payload, null, activePage, limit));
+    },
+    [
+      columns,
+      dispatch,
       selectedFilter,
       selectedAttributeFilter,
-      updatedFilterListSortParams,
       dateRange,
       isAssigned,
-      column.isFormVariable
-    );
-    dispatch(fetchServiceTaskList(payload, null, activePage, limit));
-  }, [columns, dispatch, selectedFilter, selectedAttributeFilter, dateRange, isAssigned, activePage, limit]);
+      activePage,
+      limit,
+    ]
+  );
 
   const paginationModel = useMemo(
     () => ({ page: activePage - 1, pageSize: limit }),
     [activePage, limit]
   );
 
-  const handlePaginationModelChange = useCallback(({ page, pageSize }: any) => {
-    batch(() => {
-      dispatch(setBPMTaskListActivePage(page + 1));
-      dispatch(setTaskListLimit(pageSize));
-    });
-  }, [dispatch]);
+  const handlePaginationModelChange = useCallback(
+    ({ page, pageSize }: any) => {
+      batch(() => {
+        dispatch(setBPMTaskListActivePage(page + 1));
+        dispatch(setTaskListLimit(pageSize));
+      });
+    },
+    [dispatch]
+  );
 
   const sortModel = useMemo(
     () => [
       filterListSortParams.activeKey
         ? {
             field: filterListSortParams.activeKey,
-            sort: filterListSortParams[filterListSortParams.activeKey]?.sortOrder || "asc",
+            sort:
+              filterListSortParams[filterListSortParams.activeKey]?.sortOrder ||
+              "asc",
           }
         : {},
     ],
     [filterListSortParams]
   );
-  const nonSortableKeys = ['roles']
+  const nonSortableKeys = ["roles"];
   const muiColumns = useMemo(() => {
-  // Filter out any existing "actions" column that might come from dynamic columns
-  const filteredColumns = columns.filter(col => col.sortKey !== 'actions');
+    // Filter out any existing "actions" column that might come from dynamic columns
+    const filteredColumns = columns.filter((col) => col.sortKey !== "actions");
 
-  return [
-    ...filteredColumns.map((col, idx) => ({
-      field: col.sortKey,
-      headerName: t(col.sortKey === 'assignee' ? 'Assigned to' : col.name),
-      // If a saved width exists, honor it and disable flex; otherwise allow flex
-      ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
-      sortable: col.sortKey && !nonSortableKeys.includes(col.sortKey) ? true : false,
-      // Do not lock minWidth to the last saved width; allow shrinking after expand
-      minWidth: 90,
-      headerClassName: idx === filteredColumns.length - 1 ? 'no-right-separator' : '',
-      renderCell: (params: any) => getCellValue(col, params.row),
-    })),
-    // Filler column to push actions column to the right when there are fewer columns
-    {
-      field: "__filler__",
-      headerName: "",
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
-      flex: 1,
-      minWidth: 0,
-      headerClassName: "filler-column",
-      cellClassName: "filler-column",
-      renderCell: () => null,
-      valueGetter: () => null,
-    },
-    {
-      field: "actions",
-       renderHeader: () => (
-        <V8CustomButton
-          variant="secondary"
-          label={t("Refresh")}
-          onClick={handleRefresh}
-          dataTestId="task-refresh-button"
-        />
-      ),
-      headerName: "",
-      sortable: false,
-      filterable: false,
-      resizable: false,
+    return [
+      ...filteredColumns.map((col, idx) => ({
+        field: col.sortKey,
+        headerName: t(col.sortKey === "assignee" ? "Assigned to" : col.name),
+        // If a saved width exists, honor it and disable flex; otherwise allow flex
+        ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
+        sortable:
+          col.sortKey && !nonSortableKeys.includes(col.sortKey) ? true : false,
+        // Do not lock minWidth to the last saved width; allow shrinking after expand
+        minWidth: 90,
+        headerClassName:
+          idx === filteredColumns.length - 1 ? "no-right-separator" : "",
+        renderCell: (params: any) => getCellValue(col, params.row),
+      })),
+      // Filler column to push actions column to the right when there are fewer columns
+      {
+        field: "__filler__",
+        headerName: "",
+        sortable: false,
+        filterable: false,
+        disableColumnMenu: true,
+        flex: 1,
+        minWidth: 0,
+        headerClassName: "filler-column",
+        cellClassName: "filler-column",
+        renderCell: () => null,
+        valueGetter: () => null,
+      },
+      {
+        field: "actions",
+        renderHeader: () => (
+          <V8CustomButton
+            variant="secondary"
+            label={t("Refresh")}
+            onClick={handleRefresh}
+            dataTestId="task-refresh-button"
+          />
+        ),
+        headerName: "",
+        sortable: false,
+        filterable: false,
+        resizable: false,
 
-      headerClassName: "sticky-column-header last-column",
-      cellClassName: "sticky-column-cell",
+        headerClassName: "sticky-column-header last-column",
+        cellClassName: "sticky-column-cell",
 
-      width: 100,
-      minWidth: 100,
-      maxWidth: 100,
-      flex: 0,
-      renderCell: (params: any) => (
-        <V8CustomButton
-          label={t("View")}
-          dataTestId="task-view-button"
-          variant="secondary"
-          onClick={() => handleOpenModal(params.row)}
-        />
-      ),
-    },
-  ];
-}, [columns, t, handleRefresh, handleOpenModal]);
+        width: 100,
+        minWidth: 100,
+        maxWidth: 100,
+        flex: 0,
+        renderCell: (params: any) => (
+          <V8CustomButton
+            label={t("View")}
+            dataTestId="task-view-button"
+            variant="secondary"
+            onClick={() => handleOpenModal(params.row)}
+          />
+        ),
+      },
+    ];
+  }, [columns, t, handleRefresh, handleOpenModal]);
 
-
-
-  const memoizedRows = useMemo(() =>
-    (tasksList || []).map((task: Task) => {
-      const vars = task?._embedded?.variable ?? [];
-      const formType = vars.find((v) => v.name === "formType")?.value;
-      return { ...task, formType };
-    }),
-  [tasksList]);
+  const memoizedRows = useMemo(
+    () =>
+      (tasksList || []).map((task: Task) => {
+        const vars = task?._embedded?.variable ?? [];
+        const formType = vars.find((v) => v.name === "formType")?.value;
+        return { ...task, formType };
+      }),
+    [tasksList]
+  );
 
   useEffect(() => {
     if (hasAutoOpenedTaskFromQuery.current) return;
@@ -616,7 +688,9 @@ const TaskListTable = () => {
 
     if (!taskIdFromQuery || !memoizedRows?.length) return;
 
-    const matchedTask = memoizedRows.find((task: Task) => task?.id === taskIdFromQuery);
+    const matchedTask = memoizedRows.find(
+      (task: Task) => task?.id === taskIdFromQuery
+    );
     if (!matchedTask) return;
 
     hasAutoOpenedTaskFromQuery.current = true;
@@ -625,8 +699,16 @@ const TaskListTable = () => {
     queryParams.delete("taskId");
     queryParams.delete("assignedToMe");
     const nextSearch = queryParams.toString();
-    navigate(location.pathname + (nextSearch ? "?" + nextSearch : ""), { replace: true });
-  }, [location.search, location.pathname, memoizedRows, handleOpenModal, navigate]);
+    navigate(location.pathname + (nextSearch ? "?" + nextSearch : ""), {
+      replace: true,
+    });
+  }, [
+    location.search,
+    location.pathname,
+    memoizedRows,
+    handleOpenModal,
+    navigate,
+  ]);
 
   // Base row height
   const baseRowHeight = 55;
@@ -636,21 +718,25 @@ const TaskListTable = () => {
   const getRowHeight = useCallback(() => {
     if (!isMultiLineEnabled) return baseRowHeight;
     // Return 'auto' to let row height adjust based on content
-    return 'auto';
+    return "auto";
   }, [isMultiLineEnabled]);
 
   if (!columns?.length) {
-    return isTaskListLoading ? <Loading /> : (
+    return isTaskListLoading ? (
+      <Loading />
+    ) : (
       <div className="custom-table-wrapper-outter">
         <p className="empty-message" data-testid="empty-columns-message">
-          {t("No tasks have been found. Try a different filter combination or contact your admin.")}
+          {t(
+            "No tasks have been found. Try a different filter combination or contact your admin."
+          )}
         </p>
       </div>
     );
   }
 
   // Wrapper class to enable multi-line cell styles via CSS
-  const tableWrapperClass = isMultiLineEnabled ? 'task-table-multiline' : '';
+  const tableWrapperClass = isMultiLineEnabled ? "task-table-multiline" : "";
 
   const handleCloseFilterModal = () => {
     setShowTaskFilterModal(false);
@@ -685,7 +771,7 @@ const TaskListTable = () => {
             onClick: handleToggleFilterModal,
             variant: "primary",
             size: "medium",
-            dataTestId: "create-custom-filter-button"
+            dataTestId: "create-custom-filter-button",
           }}
           disableColumnMenu
           disableRowSelectionOnClick
@@ -697,17 +783,21 @@ const TaskListTable = () => {
                 const field = params?.colDef?.field || params?.field;
                 const width = params?.width;
                 if (!field || !width || !selectedFilter?.id) return;
-                const updatedVariables = (selectedFilter?.variables || []).map((v: any) =>
-                  (v.key === field || v.name === field) ? { ...v, width } : v               
-               );
-                const updatedFilter = { ...selectedFilter, variables: updatedVariables } as any;
+                const updatedVariables = (selectedFilter?.variables || []).map(
+                  (v: any) =>
+                    v.key === field || v.name === field ? { ...v, width } : v
+                );
+                const updatedFilter = {
+                  ...selectedFilter,
+                  variables: updatedVariables,
+                } as any;
                 // Update locally so future saves carry widths
                 dispatch(setSelectedFilter(updatedFilter));
                 // Do not persist here; widths are saved when the user saves the filter
               } catch (e) {
                 // no-op
               }
-            }
+            },
           }}
           enableStickyActions={true}
           disableVirtualization

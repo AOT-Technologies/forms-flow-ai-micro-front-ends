@@ -103,7 +103,6 @@ class KeycloakService {
 
         // Schedule the next refresh
         this.timerId = setTimeout(refreshLoop, this.getTokenExpireTime());
-
       } catch (err) {
         console.error("Keycloak token update failed!", err);
         clearTimeout(this.timerId);
@@ -167,7 +166,6 @@ class KeycloakService {
               });
               this.refreshToken();
             }
- 
           } else {
             this.logout();
           }

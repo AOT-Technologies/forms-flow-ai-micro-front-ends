@@ -9,7 +9,11 @@ import {
   SelectDropdown,
   QuickFilterIcon,
 } from "@formsflow/components";
-import { removeTenantKey, trimFirstSlash, addTenantPrefixIfNeeded } from "../../helper/helper";
+import {
+  removeTenantKey,
+  trimFirstSlash,
+  addTenantPrefixIfNeeded,
+} from "../../helper/helper";
 import {
   ACCESSIBLE_FOR_ALL_GROUPS,
   MULTITENANCY_ENABLED,
@@ -57,8 +61,10 @@ const TaskFilterModalBody = ({
   const dispatch = useAppDispatch();
   const isQuickFilterEdit = !!filterToEdit?.isQuickFilter;
   const isCreating = !filterToEdit?.id && !isQuickFilterEdit;
-  const [introTypeSelection, setIntroTypeSelection] = useState<string>("quickFilter");
-  const [introAccessSelection, setIntroAccessSelection] = useState<string>("privateFilter");
+  const [introTypeSelection, setIntroTypeSelection] =
+    useState<string>("quickFilter");
+  const [introAccessSelection, setIntroAccessSelection] =
+    useState<string>("privateFilter");
 
   const isQuickFilterMode = isCreating && introTypeSelection === "quickFilter";
   const isQuickFilterFlow = isQuickFilterMode || isQuickFilterEdit;
@@ -109,12 +115,18 @@ const TaskFilterModalBody = ({
     filterList,
     userDetails = {} as UserDetail,
   } = useSelector((state: RootState) => state.task);
-  const selectedFilter = useSelector((state: RootState) => (state as any).task.selectedFilter);
+  const selectedFilter = useSelector(
+    (state: RootState) => (state as any).task.selectedFilter
+  );
 
   const [accessValue, setAccessValue] = useState("");
-  const selectedFilterExistingData = filterList.find((i)=> i?.id === filterToEdit?.id);
+  const selectedFilterExistingData = filterList.find(
+    (i) => i?.id === filterToEdit?.id
+  );
   const [variableArray, setVariableArray] = useState(
-    selectedFilterExistingData?.variables || filterToEdit?.variables || defaultTaskVariable
+    selectedFilterExistingData?.variables ||
+      filterToEdit?.variables ||
+      defaultTaskVariable
   );
   const { successState, startSuccessCountdown } = useSuccessCountdown();
 
@@ -137,13 +149,17 @@ const TaskFilterModalBody = ({
 
   const [showFormSelectionModal, setShowFormSelectionModal] = useState(false);
   const { tenantId } = useParams();
-  const tenantKey = useSelector((state: any) => state.tenants?.tenantData?.tenantkey || tenantId || state.tenants?.tenantData?.key);
+  const tenantKey = useSelector(
+    (state: any) =>
+      state.tenants?.tenantData?.tenantkey ||
+      tenantId ||
+      state.tenants?.tenantData?.key
+  );
   const SPECIFIC_ROLE = "specificRole";
   const SPECIFIC_ASSIGNEE = "specificAssignee";
   const CURRENT_USER = "currentUser";
   const [accessOption, setAccessOption] = useState(CURRENT_USER);
   const [isTaskFilterSaving, setIsTaskFilterSaving] = useState(false);
-
 
   const changeAcessOption = (option: string) => {
     setAccessOption(option);
@@ -163,23 +179,28 @@ const TaskFilterModalBody = ({
 
   const getCriteria = () => {
     const criteria: FilterCriteria = {
-      "orQueries": [
+      orQueries: [
         {
-          "assigneeExpression": "${currentUser()}",
-          "candidateGroupsExpression": "${currentUserGroups()}",
-          "includeAssignedTasks": true
-        }
+          assigneeExpression: "${currentUser()}",
+          candidateGroupsExpression: "${currentUserGroups()}",
+          includeAssignedTasks: true,
+        },
       ],
       // If sorting is based on submission id or form name, that should be passed as process variable in sorting
-      sorting: sortValue === "applicationId" || sortValue === "formName" ?
-        ([{
-          sortBy: "processVariable", sortOrder: sortOrder,
-          "parameters": { "variable": sortValue, "type": sortValue === "applicationId" ? "integer" : "string" }
-        }]) :
-        [{ sortBy: sortValue, sortOrder: sortOrder }],
+      sorting:
+        sortValue === "applicationId" || sortValue === "formName"
+          ? [
+              {
+                sortBy: "processVariable",
+                sortOrder: sortOrder,
+                parameters: {
+                  variable: sortValue,
+                  type: sortValue === "applicationId" ? "integer" : "string",
+                },
+              },
+            ]
+          : [{ sortBy: sortValue, sortOrder: sortOrder }],
     };
-
-    
 
     if (selectedForm?.formId) {
       criteria.processVariables = [];
@@ -200,12 +221,11 @@ const TaskFilterModalBody = ({
       criteria.includeAssignedTasks = true;
       delete criteria.assignee;
       delete criteria.orQueries;
-    } else if(accessOption === SPECIFIC_ASSIGNEE){
+    } else if (accessOption === SPECIFIC_ASSIGNEE) {
       criteria.assignee = accessValue;
       delete criteria.candidateGroup;
       delete criteria.orQueries;
-    }
-    else{
+    } else {
       delete criteria.assignee;
       delete criteria.candidateGroup;
     }
@@ -213,25 +233,24 @@ const TaskFilterModalBody = ({
     return criteria;
   };
 
- const handleFilterAccess = () => {
-  let users = [];
-  let roles = [];
+  const handleFilterAccess = () => {
+    let users = [];
+    let roles = [];
 
-  if (shareFilter === PRIVATE_ONLY_YOU) {
-    users.push(userDetails?.preferred_username);
-  } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
-    const rawRoles = Array.isArray(shareFilterForSpecificRole)
-      ? shareFilterForSpecificRole
-      : [shareFilterForSpecificRole];
-    roles = rawRoles.map((role) => {
-      const cleaned = removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED);
-      return MULTITENANCY_ENABLED ? `/${tenantKey}-${cleaned}` : role;
-    });
-  }
+    if (shareFilter === PRIVATE_ONLY_YOU) {
+      users.push(userDetails?.preferred_username);
+    } else if (shareFilter === SPECIFIC_USER_OR_GROUP) {
+      const rawRoles = Array.isArray(shareFilterForSpecificRole)
+        ? shareFilterForSpecificRole
+        : [shareFilterForSpecificRole];
+      roles = rawRoles.map((role) => {
+        const cleaned = removeTenantKey(role, tenantKey, MULTITENANCY_ENABLED);
+        return MULTITENANCY_ENABLED ? `/${tenantKey}-${cleaned}` : role;
+      });
+    }
 
-  return { users, roles };
-};
-
+    return { users, roles };
+  };
 
   const getData = (): Filter => ({
     created: filterToEdit?.created,
@@ -240,19 +259,20 @@ const TaskFilterModalBody = ({
     tenant: filterToEdit?.tenant,
     name: filterName,
     criteria: getCriteria(),
-    variables: variableArray.map((v:any) => {
+    variables: variableArray.map((v: any) => {
       // Preserve variables from the filter being edited (not the globally selected filter)
       const sourceVars =
-      selectedFilter ?.variables ||
+        selectedFilter?.variables ||
         selectedFilterExistingData?.variables ||
         filterToEdit?.variables ||
         [];
-        const match = sourceVars.find(
-          (sv:any) =>
-            sv?.key === v?.key &&
-            sv?.isFormVariable === v?.isFormVariable
-        );
-        return typeof match?.width === "number" ? { ...v, width: match.width } : v;
+      const match = sourceVars.find(
+        (sv: any) =>
+          sv?.key === v?.key && sv?.isFormVariable === v?.isFormVariable
+      );
+      return typeof match?.width === "number"
+        ? { ...v, width: match.width }
+        : v;
     }),
     properties: {
       displayLinesCount: dataLineValue,
@@ -273,8 +293,12 @@ const TaskFilterModalBody = ({
   const handleSorting = (sorting) => {
     if (sorting?.length > 0) {
       const [sort] = sorting;
-      setSortValue(sort.sortBy === "processVariable" ?sort.parameters.variable :sort.sortBy);
-      setSortOrder(sort.sortOrder); 
+      setSortValue(
+        sort.sortBy === "processVariable"
+          ? sort.parameters.variable
+          : sort.sortBy
+      );
+      setSortOrder(sort.sortOrder);
     }
   };
 
@@ -294,7 +318,9 @@ const TaskFilterModalBody = ({
 
     // For normal edit, prefer the persisted filter from list (it has sharing fields like roles/users).
     // For "Edit Quick Filter", there is no persisted filter; use `filterToEdit` directly.
-    const source = filterToEdit?.isQuickFilter ? filterToEdit : selectedFilterExistingData;
+    const source = filterToEdit?.isQuickFilter
+      ? filterToEdit
+      : selectedFilterExistingData;
     if (!source) return;
 
     const { roles = [], users = [], criteria = {}, properties = {} } = source;
@@ -311,7 +337,11 @@ const TaskFilterModalBody = ({
       accessValue = assignee;
     } else if (candidateGroup) {
       accessOption = SPECIFIC_ROLE;
-      accessValue = removeTenantKey(candidateGroup,tenantKey,MULTITENANCY_ENABLED);
+      accessValue = removeTenantKey(
+        candidateGroup,
+        tenantKey,
+        MULTITENANCY_ENABLED
+      );
     } else {
       accessOption = CURRENT_USER;
       accessValue = "";
@@ -327,7 +357,9 @@ const TaskFilterModalBody = ({
 
   /* -------- handling already selected forms when after forms fetching ------- */
   useEffect(() => {
-    const savedId = filterToEdit?.properties?.formId || selectedFilterExistingData?.properties?.formId;
+    const savedId =
+      filterToEdit?.properties?.formId ||
+      selectedFilterExistingData?.properties?.formId;
     if (!savedId) return;
 
     // Seed selection early so child modal can show preselection
@@ -340,15 +372,19 @@ const TaskFilterModalBody = ({
 
     // Resolve proper form object and name from the list
     const idStr = String(savedId);
-    const matchedForm = forms.find((form:any) =>
+    const matchedForm = forms.find((form: any) =>
       [form?.formId, form?.parentFormId, form?._id, form?.id]
-        .filter((v:any) => v !== undefined && v !== null)
-        .map((v:any) => String(v))
+        .filter((v: any) => v !== undefined && v !== null)
+        .map((v: any) => String(v))
         .includes(idStr)
     );
 
     if (matchedForm) {
-      const resolvedId = matchedForm.formId ?? matchedForm.parentFormId ?? matchedForm._id ?? matchedForm.id;
+      const resolvedId =
+        matchedForm.formId ??
+        matchedForm.parentFormId ??
+        matchedForm._id ??
+        matchedForm.id;
       const resolvedName = matchedForm.formName || matchedForm.name || "";
       setSelectedForm({ formId: resolvedId, formName: resolvedName });
       handleFetchTaskVariables(resolvedId);
@@ -361,9 +397,10 @@ const TaskFilterModalBody = ({
       fetchAllForms()
         .then((res) => {
           const allForms = res.data?.forms ?? [];
-          const data = selectedFilter?.name === "All Tasks"
-            ? allForms
-            : allForms.filter((f: any) => f.formType === "form");
+          const data =
+            selectedFilter?.name === "All Tasks"
+              ? allForms
+              : allForms.filter((f: any) => f.formType === "form");
           setForms(data);
         })
         .catch((err) => {
@@ -379,15 +416,18 @@ const TaskFilterModalBody = ({
       .catch((error) => console.error("error", error));
   }, []);
 
-const candidateOptions = useMemo(() => {
-  return candidateGroups.reduce((acc, group) => {
-    if (!group.permissions.includes("view_filters")) return acc;
-    const label = removeTenantKey(group.name, tenantKey, MULTITENANCY_ENABLED)
-    acc.push({ value: group.name, label });
-    return acc;
-  }, []);
-}, [candidateGroups, MULTITENANCY_ENABLED, tenantKey]);
-
+  const candidateOptions = useMemo(() => {
+    return candidateGroups.reduce((acc, group) => {
+      if (!group.permissions.includes("view_filters")) return acc;
+      const label = removeTenantKey(
+        group.name,
+        tenantKey,
+        MULTITENANCY_ENABLED
+      );
+      acc.push({ value: group.name, label });
+      return acc;
+    }, []);
+  }, [candidateGroups, MULTITENANCY_ENABLED, tenantKey]);
 
   const createSortByOptions = (labelKey, value) => ({
     label: t(labelKey),
@@ -423,130 +463,162 @@ const candidateOptions = useMemo(() => {
     return { label: value, value, onClick: () => setDataLineValue(i + 1) };
   });
 
- const isDuplicateVariable = (taskVar, existingVars) => {
-  return existingVars.some(
-    (existingVar) =>
-      existingVar.key === taskVar.key && existingVar.label === taskVar.label
-  );
-};
-
-const isValidVariableType = (taskVar) => {
-  return taskVar.type !== "hidden" ;
-};
-
-const createVariableFromTask = (variable, baseIndex, isChecked = true) => ({
-  ...variable,
-  name: variable.key,
-  isChecked,
-  sortOrder: baseIndex + 1,
-  isFormVariable: true,
-});
-
-const findExistingVariable = (variables, targetVar) => {
-  return variables.find(
-    v => v.key === targetVar.key && v.label === targetVar.label
-  );
-};
-
-const removeDuplicateVariables = (variables) => {
-  return variables.filter((variable, index, self) =>
-    index === self.findIndex(v => v.key === variable.key && v.label === variable.label)
-  );
-};
-
-const transformToDynamicVariables = (taskVariables, existingVars) => {
-  return taskVariables
-    .filter(taskVar => 
-      isValidVariableType(taskVar) && 
-      !isDuplicateVariable(taskVar, existingVars)
-    )
-    .map((variable, index) => 
-      createVariableFromTask(variable, existingVars.length + index)
+  const isDuplicateVariable = (taskVar, existingVars) => {
+    return existingVars.some(
+      (existingVar) =>
+        existingVar.key === taskVar.key && existingVar.label === taskVar.label
     );
-};
+  };
 
+  const isValidVariableType = (taskVar) => {
+    return taskVar.type !== "hidden";
+  };
 
+  const createVariableFromTask = (variable, baseIndex, isChecked = true) => ({
+    ...variable,
+    name: variable.key,
+    isChecked,
+    sortOrder: baseIndex + 1,
+    isFormVariable: true,
+  });
 
-const processNewFilterMode = (taskVariables, defaultTaskVariable) => {
-  const dynamicVariables = transformToDynamicVariables(taskVariables, defaultTaskVariable);
-  return [...defaultTaskVariable, ...dynamicVariables];
-};
+  const findExistingVariable = (variables, targetVar) => {
+    return variables.find(
+      (v) => v.key === targetVar.key && v.label === targetVar.label
+    );
+  };
 
-const handleFetchTaskVariables = (formId) => {
-  fetchTaskVariables(formId)
-    .then((res) => {
-      const taskVariables = res.data?.taskVariables || [];
-      // Determine if we are editing an existing filter with the same form
-      const savedFormId =
-        filterToEdit?.properties?.formId ||
-        selectedFilterExistingData?.properties?.formId;
-      const isEditingWithSameForm =
-        !!filterToEdit?.id &&
-        savedFormId  &&
-        String(savedFormId) === String(formId);
+  const removeDuplicateVariables = (variables) => {
+    return variables.filter(
+      (variable, index, self) =>
+        index ===
+        self.findIndex(
+          (v) => v.key === variable.key && v.label === variable.label
+        )
+    );
+  };
 
-      // Always prefer latest saved filter state for existing variables (preserve isChecked and sortOrder)
-      const sourceVars =
-        selectedFilterExistingData?.variables || filterToEdit?.variables || [];
-      let combinedVars;
+  const transformToDynamicVariables = (taskVariables, existingVars) => {
+    return taskVariables
+      .filter(
+        (taskVar) =>
+          isValidVariableType(taskVar) &&
+          !isDuplicateVariable(taskVar, existingVars)
+      )
+      .map((variable, index) =>
+        createVariableFromTask(variable, existingVars.length + index)
+      );
+  };
 
-      if (isEditingWithSameForm) {
-        // Get current task variable keys for comparison
-        const currentTaskVariableKeys = taskVariables
-          .filter(taskVar => isValidVariableType(taskVar))
-          .map(taskVar => taskVar.key);
-        
-        // Filter out deleted form variables from existing filter
-        const existingFormVariables = (sourceVars?.filter(v => v.isFormVariable) || [])
-          .filter(existingVar => currentTaskVariableKeys.includes(existingVar.key));
-        
-        // Get default variables with existing values preserved
-        const defaultVars = defaultTaskVariable.map(defaultVar => {
-          const existingVar = findExistingVariable(sourceVars || [], defaultVar);
-          return existingVar || defaultVar;
-        });
-        
-        // Process new dynamic variables
-        const newDynamicVariables = taskVariables
-          .filter(taskVar => 
-            isValidVariableType(taskVar) && 
-            !isDuplicateVariable(taskVar, defaultTaskVariable)
-          )
-          .map((variable, index) => {
-            const existingVar = findExistingVariable(existingFormVariables, variable);
-            
-            return createVariableFromTask(
-              variable,
-              existingVar ? existingVar.sortOrder - 1 : defaultTaskVariable.length + existingFormVariables.length + index,
-              existingVar ? existingVar.isChecked : false
+  const processNewFilterMode = (taskVariables, defaultTaskVariable) => {
+    const dynamicVariables = transformToDynamicVariables(
+      taskVariables,
+      defaultTaskVariable
+    );
+    return [...defaultTaskVariable, ...dynamicVariables];
+  };
+
+  const handleFetchTaskVariables = (formId) => {
+    fetchTaskVariables(formId)
+      .then((res) => {
+        const taskVariables = res.data?.taskVariables || [];
+        // Determine if we are editing an existing filter with the same form
+        const savedFormId =
+          filterToEdit?.properties?.formId ||
+          selectedFilterExistingData?.properties?.formId;
+        const isEditingWithSameForm =
+          !!filterToEdit?.id &&
+          savedFormId &&
+          String(savedFormId) === String(formId);
+
+        // Always prefer latest saved filter state for existing variables (preserve isChecked and sortOrder)
+        const sourceVars =
+          selectedFilterExistingData?.variables ||
+          filterToEdit?.variables ||
+          [];
+        let combinedVars;
+
+        if (isEditingWithSameForm) {
+          // Get current task variable keys for comparison
+          const currentTaskVariableKeys = taskVariables
+            .filter((taskVar) => isValidVariableType(taskVar))
+            .map((taskVar) => taskVar.key);
+
+          // Filter out deleted form variables from existing filter
+          const existingFormVariables = (
+            sourceVars?.filter((v) => v.isFormVariable) || []
+          ).filter((existingVar) =>
+            currentTaskVariableKeys.includes(existingVar.key)
+          );
+
+          // Get default variables with existing values preserved
+          const defaultVars = defaultTaskVariable.map((defaultVar) => {
+            const existingVar = findExistingVariable(
+              sourceVars || [],
+              defaultVar
             );
+            return existingVar || defaultVar;
           });
 
-        // Combine and deduplicate
-        const allFormVariables = [...existingFormVariables, ...newDynamicVariables];
-        const uniqueFormVariables = removeDuplicateVariables(allFormVariables);
-        
-        combinedVars = [...defaultVars, ...uniqueFormVariables];
-      } else {
-        // Preserve default/system variables' saved state even when not the same form
-        const preservedDefaultVars = defaultTaskVariable.map(defaultVar => {
-          const existingVar = findExistingVariable(sourceVars || [], defaultVar);
-          return existingVar || defaultVar;
-        });
+          // Process new dynamic variables
+          const newDynamicVariables = taskVariables
+            .filter(
+              (taskVar) =>
+                isValidVariableType(taskVar) &&
+                !isDuplicateVariable(taskVar, defaultTaskVariable)
+            )
+            .map((variable, index) => {
+              const existingVar = findExistingVariable(
+                existingFormVariables,
+                variable
+              );
 
-        const dynamicVariables = transformToDynamicVariables(taskVariables, preservedDefaultVars);
-        combinedVars = [...preservedDefaultVars, ...dynamicVariables];
-      }
+              return createVariableFromTask(
+                variable,
+                existingVar
+                  ? existingVar.sortOrder - 1
+                  : defaultTaskVariable.length +
+                      existingFormVariables.length +
+                      index,
+                existingVar ? existingVar.isChecked : false
+              );
+            });
 
-      // Ensure UI reflects persisted ordering
-      const sortedVars = [...combinedVars].sort(
-        (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
-      );
+          // Combine and deduplicate
+          const allFormVariables = [
+            ...existingFormVariables,
+            ...newDynamicVariables,
+          ];
+          const uniqueFormVariables =
+            removeDuplicateVariables(allFormVariables);
 
-      setVariableArray(sortedVars);
-    })
-    .catch((err) => console.error(err));
-};
+          combinedVars = [...defaultVars, ...uniqueFormVariables];
+        } else {
+          // Preserve default/system variables' saved state even when not the same form
+          const preservedDefaultVars = defaultTaskVariable.map((defaultVar) => {
+            const existingVar = findExistingVariable(
+              sourceVars || [],
+              defaultVar
+            );
+            return existingVar || defaultVar;
+          });
+
+          const dynamicVariables = transformToDynamicVariables(
+            taskVariables,
+            preservedDefaultVars
+          );
+          combinedVars = [...preservedDefaultVars, ...dynamicVariables];
+        }
+
+        // Ensure UI reflects persisted ordering
+        const sortedVars = [...combinedVars].sort(
+          (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
+        );
+
+        setVariableArray(sortedVars);
+      })
+      .catch((err) => console.error(err));
+  };
 
   // need to check if this function is used anywhere else
   const handleUpdateOrder = (updatedItems) => {
@@ -600,13 +672,13 @@ const handleFetchTaskVariables = (formId) => {
   };
 
   const handleUpdateModalClick = async () => {
-    const isPrivate = filterToEdit?.users?.length!==0;
+    const isPrivate = filterToEdit?.users?.length !== 0;
     const data = getData();
     try {
       setIsTaskFilterSaving(true);
-      if(isPrivate){
-        await handleFilterUpdate(isPrivate,data);
-      }else{
+      if (isPrivate) {
+        await handleFilterUpdate(isPrivate, data);
+      } else {
         dispatch(setFilterToEdit(data));
         toggleUpdateModal();
       }
@@ -637,25 +709,23 @@ const handleFetchTaskVariables = (formId) => {
       : !!shareFilterForSpecificRole);
 
   const saveFilterButtonDisabled =
-    !filterName || 
-    ((accessOption !== CURRENT_USER) && !accessValue) ||
+    !filterName ||
+    (accessOption !== CURRENT_USER && !accessValue) ||
     !accessOption ||
     (shareFilter === SPECIFIC_USER_OR_GROUP && !hasSelectedSpecificRole) ||
     (filterToEdit?.id ? disableFilterButton : isVariableArrayEmpty);
   /* ------------------------------- tab values ------------------------------- */
   const columnsTab = () => (
     <>
-      
       {variableArray.length !== 0 && (
-        <div >
-           <DragandDropSort
-          key={variableArray.length}
-          items={variableArray}
-          onUpdate={handleUpdateOrder}
-          data-testid="columns-sort"
-        />
+        <div>
+          <DragandDropSort
+            key={variableArray.length}
+            items={variableArray}
+            onUpdate={handleUpdateOrder}
+            data-testid="columns-sort"
+          />
         </div>
-       
       )}
     </>
   );
@@ -676,53 +746,60 @@ const handleFetchTaskVariables = (formId) => {
         id="default-sort"
         variant="secondary"
       />
-      
-      <p className="dropdown-label-text">{t("How Many Lines of Data To Show Per Row")}</p>
+
+      <p className="dropdown-label-text">
+        {t("How Many Lines of Data To Show Per Row")}
+      </p>
       <div className="lines-count-container">
-      <SelectDropdown
-        options={dataLineCount.map(({ label, value }) => ({ label, value }))}
-        value={String(selectedFilterExistingData?.properties?.dataLineValue || dataLineValue)}
-        onChange={(v) => setDataLineValue(Number(v))}
-        ariaLabel={t("How Many Lines of Data To Show Per Row")}
-        dataTestId="data-line"
-        id="how-many-lines-of-data-to-show-per-row"
-        variant="secondary"
-      />
+        <SelectDropdown
+          options={dataLineCount.map(({ label, value }) => ({ label, value }))}
+          value={String(
+            selectedFilterExistingData?.properties?.dataLineValue ||
+              dataLineValue
+          )}
+          onChange={(v) => setDataLineValue(Number(v))}
+          ariaLabel={t("How Many Lines of Data To Show Per Row")}
+          dataTestId="data-line"
+          id="how-many-lines-of-data-to-show-per-row"
+          variant="secondary"
+        />
       </div>
-      
     </>
   );
 
-  // Build access controls UI for step 2 
+  // Build access controls UI for step 2
   const taskUserList = useSelector((state: any) => state.task.userList);
   const userListData = taskUserList?.data ?? [];
-  const assigneeOptions = userListData.map((user) => ({ value: user.username, label: user.username }));
+  const assigneeOptions = userListData.map((user) => ({
+    value: user.username,
+    label: user.username,
+  }));
 
   const renderAccessControls = () => (
     <>
-    <div>
-    <p className="dropdown-label-text">Tasks Accessible To</p> 
-      <SelectDropdown
-      options={[
-        { label: t("Current user"), value: "currentUser" },
-        { label: t("Specific role"), value: "specificRole" },
-        { label: t("Specific assignee"), value: "specificAssignee" },
-      ]}
-      dependentOptions={{
-        specificRole: candidateOptions,
-        specificAssignee: assigneeOptions,
-      }}      
-      secondDropdown={true}
-      defaultValue={accessOption}
-      secondDefaultValue={accessValue}
-      onChange={(v) => changeAcessOption(String(v))}
-      onSecondChange={(v) => setAccessValue(String(v))}
-      ariaLabel={t("Tasks Accessible To")}
-      dataTestId="access-options"
-      id="tasks-accessible-to"
-      variant="secondary"
-    />
-    </div>     
+      <div>
+        <p className="dropdown-label-text">Tasks Accessible To</p>
+        <SelectDropdown
+          options={[
+            { label: t("Current user"), value: "currentUser" },
+            { label: t("Specific role"), value: "specificRole" },
+            { label: t("Specific assignee"), value: "specificAssignee" },
+          ]}
+          dependentOptions={{
+            specificRole: candidateOptions,
+            specificAssignee: assigneeOptions,
+          }}
+          secondDropdown={true}
+          defaultValue={accessOption}
+          secondDefaultValue={accessValue}
+          onChange={(v) => changeAcessOption(String(v))}
+          onSecondChange={(v) => setAccessValue(String(v))}
+          ariaLabel={t("Tasks Accessible To")}
+          dataTestId="access-options"
+          id="tasks-accessible-to"
+          variant="secondary"
+        />
+      </div>
     </>
   );
 
@@ -781,17 +858,13 @@ const handleFetchTaskVariables = (formId) => {
     {
       value: "newFilter",
       title: t("Build and save an editable filter"),
-      description: t(
-        "Create a filter you intend to re-use and come back to"
-      ),
+      description: t("Create a filter you intend to re-use and come back to"),
       section: "filterType",
     },
     {
       value: "privateFilter",
       title: t("For me"),
-      description: t(
-        "Create a personal view to focus on tasks"
-      ),
+      description: t("Create a personal view to focus on tasks"),
       section: "filterAccess",
     },
     {
@@ -842,9 +915,7 @@ const handleFetchTaskVariables = (formId) => {
                         <div className="task-filter-intro-card__title">
                           {opt.title}
                         </div>
-                        <div
-                          className="task-filter-intro-card__description"
-                        >
+                        <div className="task-filter-intro-card__description">
                           {renderIntroDescription(opt)}
                         </div>
                       </div>
@@ -855,6 +926,7 @@ const handleFetchTaskVariables = (formId) => {
                         onChange={() => handleIntroTypeSelect(opt.value)}
                         aria-label={opt.title}
                         className="m-0"
+                        data-testid={`task-filter-intro-type-${opt.value}`}
                       />
                     </div>
                   </div>
@@ -870,7 +942,9 @@ const handleFetchTaskVariables = (formId) => {
               .filter((o) => o.section === "filterAccess")
               .map((opt) => {
                 const isSelected = introAccessSelection === opt.value;
-                const isDisabled = introTypeSelection === "quickFilter" && opt.value === "sharedFilter";
+                const isDisabled =
+                  introTypeSelection === "quickFilter" &&
+                  opt.value === "sharedFilter";
                 return (
                   <div key={opt.value} className="col-12 col-md-6">
                     <div
@@ -899,9 +973,7 @@ const handleFetchTaskVariables = (formId) => {
                         <div className="task-filter-intro-card__title">
                           {opt.title}
                         </div>
-                        <div
-                          className="task-filter-intro-card__description"
-                        >
+                        <div className="task-filter-intro-card__description">
                           {renderIntroDescription(opt)}
                         </div>
                       </div>
@@ -915,6 +987,7 @@ const handleFetchTaskVariables = (formId) => {
                         }}
                         aria-label={opt.title}
                         className="m-0"
+                        data-testid={`task-filter-intro-access-${opt.value}`}
                       />
                     </div>
                   </div>
@@ -952,8 +1025,13 @@ const handleFetchTaskVariables = (formId) => {
   const wizardSteps = isCreating ? [introStep, ...wizardBase] : wizardBase;
 
   const stepKeys = wizardSteps.map((s) => s.key);
-  const activeStep = Math.min(Math.max((currentStep || 1) - 1, 0), stepKeys.length - 1);
-  const displayTotalSteps = isCreating ? Math.max(stepKeys.length - 1, 1) : stepKeys.length;
+  const activeStep = Math.min(
+    Math.max((currentStep || 1) - 1, 0),
+    stepKeys.length - 1
+  );
+  const displayTotalSteps = isCreating
+    ? Math.max(stepKeys.length - 1, 1)
+    : stepKeys.length;
   const displayCurrentStep = isCreating ? activeStep : activeStep + 1;
   const isIntroStep = isCreating && activeStep === 0;
 
@@ -991,13 +1069,13 @@ const handleFetchTaskVariables = (formId) => {
 
   return (
     <>
-      <AppModal.Body >
+      <AppModal.Body>
         <div className="wizard-step-content">
           {wizardSteps[activeStep]?.content}
         </div>
       </AppModal.Body>
       <AppModal.Footer data-three-buttons="true">
-        <div className="buttons-row flex-fill" >
+        <div className="buttons-row flex-fill">
           <V8CustomButton
             label={t("Back")}
             onClick={goBack}
@@ -1020,24 +1098,28 @@ const handleFetchTaskVariables = (formId) => {
             variant="primary"
             label={
               isLastStep
-                ? (isQuickFilterFlow ? `${t("Apply Quick Filter")}` : t("Save and Apply"))
+                ? isQuickFilterFlow
+                  ? `${t("Apply Quick Filter")}`
+                  : t("Save and Apply")
                 : t("Next")
             }
-            icon={isLastStep && isQuickFilterFlow ? <QuickFilterIcon/> : null}
+            icon={isLastStep && isQuickFilterFlow ? <QuickFilterIcon /> : null}
             onClick={handleWizardPrimaryClick}
             dataTestId="wizard-next"
             ariaLabel={
               isLastStep
-                ? (isQuickFilterFlow
-                    ? t("Apply quick filter")
-                    : (filterToEdit?.id ? t("Update this filter") : t("Create this filter")))
+                ? isQuickFilterFlow
+                  ? t("Apply quick filter")
+                  : filterToEdit?.id
+                  ? t("Update this filter")
+                  : t("Create this filter")
                 : t("Go to next step")
             }
             disabled={
               isLastStep
-                ? (isQuickFilterFlow
-                    ? (disableFilterButton || isTaskFilterSaving)
-                    : (saveFilterButtonDisabled || isTaskFilterSaving))
+                ? isQuickFilterFlow
+                  ? disableFilterButton || isTaskFilterSaving
+                  : saveFilterButtonDisabled || isTaskFilterSaving
                 : false
             }
             loading={isLastStep && isTaskFilterSaving}

@@ -20,9 +20,9 @@ interface AssignUserProps {
   handleCloseClick?: () => void;
   ariaLabel?: string;
   dataTestId?: string;
-  manageMyTasks?:boolean;
-  assignToOthers?:boolean;
-  minimized?:boolean;
+  manageMyTasks?: boolean;
+  assignToOthers?: boolean;
+  minimized?: boolean;
 }
 
 export const AssignUser: React.FC<AssignUserProps> = ({
@@ -55,32 +55,34 @@ export const AssignUser: React.FC<AssignUserProps> = ({
   };
 
   useEffect(() => {
-    if(currentAssignee){
+    if (currentAssignee) {
       setSelected("Me");
       // if username is not null or empty,set selectedName to its lastname and firstname
-      const matchedUser = users.find((user) => user.username === currentAssignee);
+      const matchedUser = users.find(
+        (user) => user.username === currentAssignee
+      );
       if (matchedUser) {
         setSelectedName(getDisplayName(matchedUser));
-      }else{
+      } else {
         setSelectedName(currentAssignee);
       }
     } else {
       setSelected(null);
       setSelectedName(null);
     }
-  }, [currentAssignee,users]);
-
+  }, [currentAssignee, users]);
 
   const handleMeClick = () => {
-const fullName = userData?.family_name && userData?.given_name
-  ? `${userData.family_name}, ${userData.given_name}`
-  : userData?.preferred_username;
+    const fullName =
+      userData?.family_name && userData?.given_name
+        ? `${userData.family_name}, ${userData.given_name}`
+        : userData?.preferred_username;
 
-setSelected("Me");
-setSelectedName(fullName);
+    setSelected("Me");
+    setSelectedName(fullName);
 
-  meOnClick?.(); 
-};
+    meOnClick?.();
+  };
   const handleOthersClick = () => {
     setSelected("Others");
     setOpenDropdown(true);
@@ -93,50 +95,52 @@ setSelectedName(fullName);
     handleCloseClick?.();
   };
 
-const showSelector = selected === null;
+  const showSelector = selected === null;
   const selectedOption = selected === "Me" ? selectedName : undefined;
-    //show close icons based on the user permissions
+  //show close icons based on the user permissions
   const assignedToCurrentUser =
-  selectedOption === userData.preferred_username ||
-  selectedOption === `${userData.family_name}, ${userData.given_name}`;
- 
-  const showCloseIcon = (assignedToCurrentUser && manageMyTasks) ||(!assignedToCurrentUser && assignToOthers); 
+    selectedOption === userData.preferred_username ||
+    selectedOption === `${userData.family_name}, ${userData.given_name}`;
 
+  const showCloseIcon =
+    (assignedToCurrentUser && manageMyTasks) ||
+    (!assignedToCurrentUser && assignToOthers);
 
-const dropdownOptions = useMemo(() => {
-  if (!Array.isArray(users)) return [];
+  const dropdownOptions = useMemo(() => {
+    if (!Array.isArray(users)) return [];
 
-  const filteredUsers = (!assignedToCurrentUser && manageMyTasks &&!assignToOthers)
-    ? users.filter((user) => user.id === userData.sub)
-    : users;
-    
-  return filteredUsers.map((user) => {
-    const fullName = getDisplayName(user);
-    const label = user.email ? `${fullName} (${user.email})` : fullName;
-    return {
-      label,
-      value: user.id,
-      onClick: () => {
-        setSelectedName(fullName);
-        optionSelect?.(user.username);
-        setOpenDropdown(false);
-      },
-    };
-  });
-}, [users, optionSelect, assignedToCurrentUser, userData]);
+    const filteredUsers =
+      !assignedToCurrentUser && manageMyTasks && !assignToOthers
+        ? users.filter((user) => user.id === userData.sub)
+        : users;
 
+    return filteredUsers.map((user) => {
+      const fullName = getDisplayName(user);
+      const label = user.email ? `${fullName} (${user.email})` : fullName;
+      return {
+        label,
+        value: user.id,
+        onClick: () => {
+          setSelectedName(fullName);
+          optionSelect?.(user.username);
+          setOpenDropdown(false);
+        },
+      };
+    });
+  }, [users, optionSelect, assignedToCurrentUser, userData]);
 
   return (
     <>
       {showSelector && (manageMyTasks || assignToOthers) && (
         <div
-          className={"input-select quick-select " + (minimized?'minimized':'')}
+          className={
+            "input-select quick-select " + (minimized ? "minimized" : "")
+          }
           aria-label={`${ariaLabel}-select-user-option`}
           data-testid={`${dataTestId}-select-user-option`}
         >
-
           <div className="empty">
-            {manageMyTasks &&
+            {manageMyTasks && (
               <button
                 className="option-me button-reset"
                 onClick={handleMeClick}
@@ -145,9 +149,9 @@ const dropdownOptions = useMemo(() => {
               >
                 {t("Me")}
               </button>
-            }
+            )}
 
-            {assignToOthers &&
+            {assignToOthers && (
               <button
                 className="option-others button-reset"
                 onClick={handleOthersClick}
@@ -156,36 +160,41 @@ const dropdownOptions = useMemo(() => {
               >
                 {t("Others")}
               </button>
-            }
+            )}
           </div>
         </div>
       )}
       {/* Show InputDropdown when either Me or Others is selected */}
-      {(selected === "Me" || selected === "Others")  && (
-        ( !manageMyTasks && !assignToOthers) ? <label className="assigne-label">{selectedOption}</label> :
-        <InputDropdown
-          showCloseIcon={showCloseIcon}
-          hideDropDownList={(assignedToCurrentUser && !assignToOthers) || (!assignedToCurrentUser && !manageMyTasks)}
-          Options={dropdownOptions}
-          variant={variant}
-          selectedOption={selectedOption}
-          handleCloseClick={handleDropdownClose}
-          openByDefault={openDropdown}
-          ariaLabelforDropdown={`${ariaLabel}-dropdown-label`}
-          ariaLabelforInput={`${ariaLabel}-input-dropdown`}
-          dataTestIdforDropdown={`${dataTestId}-dropdown-component`}
-          dataTestIdforInput={`${dataTestId}-dropdown-input`}
-          onBlurDropDown={() => {
-            setTimeout(() => {
-              if (!selectedName) {
-                setSelected(null);
-                setOpenDropdown(false);
-              }
-            }, 150);
-          }}
-          className={"quick-select "  + (minimized?'minimized':'')}
-        />
-      )}
+      {(selected === "Me" || selected === "Others") &&
+        (!manageMyTasks && !assignToOthers ? (
+          <label className="assigne-label">{selectedOption}</label>
+        ) : (
+          <InputDropdown
+            showCloseIcon={showCloseIcon}
+            hideDropDownList={
+              (assignedToCurrentUser && !assignToOthers) ||
+              (!assignedToCurrentUser && !manageMyTasks)
+            }
+            Options={dropdownOptions}
+            variant={variant}
+            selectedOption={selectedOption}
+            handleCloseClick={handleDropdownClose}
+            openByDefault={openDropdown}
+            ariaLabelforDropdown={`${ariaLabel}-dropdown-label`}
+            ariaLabelforInput={`${ariaLabel}-input-dropdown`}
+            dataTestIdforDropdown={`${dataTestId}-dropdown-component`}
+            dataTestIdforInput={`${dataTestId}-dropdown-input`}
+            onBlurDropDown={() => {
+              setTimeout(() => {
+                if (!selectedName) {
+                  setSelected(null);
+                  setOpenDropdown(false);
+                }
+              }, 150);
+            }}
+            className={"quick-select " + (minimized ? "minimized" : "")}
+          />
+        ))}
     </>
   );
 };

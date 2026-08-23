@@ -4,10 +4,18 @@ import RequestService from "./request/requestService";
 import i18nService from "./resourceBundles/i18n";
 import HelperServices from "./helpers/helperServices";
 import StyleServices from "./helpers/styleService";
-import {applyCompactFormStyles}from "./helpers/compactViewFormService";
+import { applyCompactFormStyles } from "./helpers/compactViewFormService";
 import formioResourceBundle from "./resourceBundles/formioResourceBundle";
 import { fetchAndStoreFormioRoles } from "./apiManager/services/formioRoleService";
-import { getRoute, MAIN_ROUTE, MULTITENANCY_ENABLED, getRedirectUrl, getOrigin, getFullUrl, getLinkTo } from "./routerServices/routerConstants";
+import {
+  getRoute,
+  MAIN_ROUTE,
+  MULTITENANCY_ENABLED,
+  getRedirectUrl,
+  getOrigin,
+  getFullUrl,
+  getLinkTo,
+} from "./routerServices/routerConstants";
 
 // Re-export router helpers
 export {
@@ -76,7 +84,7 @@ export {
   navigateWithHistory,
   syncRouterPath,
   navigateToTemplatePreview,
-  navigateToSubmissionViewDirect
+  navigateToSubmissionViewDirect,
 } from "./routerServices/routerHelper";
 
 export {
@@ -85,15 +93,15 @@ export {
   completeChecklistByRouteKey,
 } from "./helpers/checklistService";
 
-export { 
-  KeycloakService, 
-  StorageService, 
-  RequestService, 
-  i18nService, 
-  HelperServices, 
-  StyleServices, 
-  formioResourceBundle, 
-  applyCompactFormStyles, 
+export {
+  KeycloakService,
+  StorageService,
+  RequestService,
+  i18nService,
+  HelperServices,
+  StyleServices,
+  formioResourceBundle,
+  applyCompactFormStyles,
   fetchAndStoreFormioRoles,
   getRoute,
   MAIN_ROUTE,
@@ -101,5 +109,5 @@ export {
   getRedirectUrl,
   getOrigin,
   getFullUrl,
-  getLinkTo
+  getLinkTo,
 };

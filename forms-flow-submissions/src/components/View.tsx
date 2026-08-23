@@ -1,31 +1,39 @@
 import React, { useMemo } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
 import { Form, selectRoot, selectError } from "@aot-technologies/formio-react";
+import { createSelector } from "@reduxjs/toolkit";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n.js";
-import {
-  CUSTOM_SUBMISSION_URL,
-  CUSTOM_SUBMISSION_ENABLE,
-  MULTITENANCY_ENABLED,
-} from "../constants/constants";
+import { CUSTOM_SUBMISSION_ENABLE } from "../constants/constants";
+import { CUSTOM_SUBMISSION_URL } from "../api/config";
 import { RootState } from "../reducers/index";
 import Loading from "./Loading";
-import { HelperServices } from "@formsflow/service";
+import { HelperServices, MULTITENANCY_ENABLED } from "@formsflow/service";
 
 interface OwnProps {
   page?: string;
 }
 
+// Stable references for mapStateToProps: fresh object/array literals per store
+// notification defeated connect's shallow compare and React.memo, re-rendering
+// the formio <Form> wrapper on every dispatch.
+const VIEW_FORM_OPTIONS = { readOnly: true };
+
+const selectFormErrors = createSelector(
+  [
+    (state: RootState) => selectError("submission", state),
+    (state: RootState) => selectError("form", state),
+  ],
+  (submissionError, formError) => [submissionError, formError]
+);
+
 const mapStateToProps = (state: RootState, props: OwnProps) => {
   return {
     form: selectRoot("form", state),
     submission: selectRoot("submission", state),
-    options: {
-      readOnly: true,
-    },
-    errors: [selectError("submission", state), selectError("form", state)],
+    options: VIEW_FORM_OPTIONS,
+    errors: selectFormErrors(state),
   };
 };
-
 
 const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -36,7 +44,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
     form: { form },
     submission: reduxSubmission,
   } = props;
-    const customSubmission = useSelector(
+  const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
   );
 
@@ -50,38 +58,49 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
   // Deep clone submission to prevent mutation issues and process currentUserRoles
   const safeSubmission = useMemo(() => {
     if (!rawSubmission) return null;
-    
+
     const clonedSubmission = JSON.parse(JSON.stringify(rawSubmission));
-    
+
     // Remove tenant name from currentUserRoles when multitenancy is enabled
     if (MULTITENANCY_ENABLED && clonedSubmission.data?.currentUserRoles) {
       const tenantKey = localStorage.getItem("tenantKey");
       if (tenantKey) {
         const rolesString = clonedSubmission.data.currentUserRoles;
         if (typeof rolesString === "string") {
-          clonedSubmission.data.currentUserRoles = HelperServices.removeTenantFromRoles(rolesString, tenantKey);
+          clonedSubmission.data.currentUserRoles =
+            HelperServices.removeTenantFromRoles(rolesString, tenantKey);
         }
       }
     }
-    
+
     return clonedSubmission;
   }, [rawSubmission]);
 
-  const isLoading =
-   reduxSubmission?.isActive || !form || !safeSubmission?.data;
+  // formio compares options by reference — an inline object per render risks a
+  // form teardown/rebuild, so keep a stable memoized instance.
+  const formOptions = useMemo(
+    () => ({
+      ...options,
+      i18n: RESOURCE_BUNDLES_DATA,
+      viewAsHtml: true,
+      buttonSettings: { showCancel: false },
+    }),
+    [options]
+  );
 
-   let scrollableOverview = "scrollable-overview";
+  const isLoading = reduxSubmission?.isActive || !form || !safeSubmission?.data;
 
-   if (form?.display === "wizard") {
-    scrollableOverview =  "scrollable-overview-with-custom-header-and-wizard"
+  let scrollableOverview = "scrollable-overview";
+
+  if (form?.display === "wizard") {
+    scrollableOverview = "scrollable-overview-with-custom-header-and-wizard";
   }
 
-   if (isLoading) {
+  if (isLoading) {
     return (
       <div className="container">
         <div className="main-header">
-          <h3 className="task-head text-truncate form-title">
-          </h3>
+          <h3 className="task-head text-truncate form-title"></h3>
         </div>
         <Loading />
       </div>
@@ -94,12 +113,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
         <Form
           src={form}
           submission={safeSubmission}
-          options={{
-            ...options,
-            i18n: RESOURCE_BUNDLES_DATA,
-            viewAsHtml: true,
-            buttonSettings: { showCancel: false },
-          } as any}
+          options={formOptions as any}
         />
       </div>
     </div>

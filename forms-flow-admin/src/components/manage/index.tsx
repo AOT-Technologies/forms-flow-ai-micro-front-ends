@@ -18,26 +18,37 @@ interface ManageProps {
   setUserCount?: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRoleCount, setUserCount }) => {
+const Manage: React.FC<ManageProps> = ({
+  props,
+  setTab,
+  setDashboardCount,
+  setRoleCount,
+  setUserCount,
+}) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { tenantId: urlTenantId, tab: urlTab } = useParams<{ tenantId?: string; tab?: string }>();
+  const { tenantId: urlTenantId, tab: urlTab } = useParams<{
+    tenantId?: string;
+    tab?: string;
+  }>();
   // Fallback to storage if tenantId is not in URL params
   const tenantId = urlTenantId || StorageService.get("tenantKey") || "";
   const location = useLocation();
   const [tabContentExpanded, setTabContentExpanded] = useState<boolean>(true);
-  
+
   const userRoles = JSON.parse(
     StorageService.get(StorageService.User.USER_ROLE) || "[]"
   );
-  
-  const isDashboardManager = userRoles?.includes("manage_dashboard_authorizations");
+
+  const isDashboardManager = userRoles?.includes(
+    "manage_dashboard_authorizations"
+  );
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
-  
+
   const defaultTab = (): string => {
     if (isRoleManager) return "roles";
     if (isUserManager) return "users";
@@ -51,22 +62,37 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
     if (urlTab) {
       const validTabs = ["organization", "dashboard", "users", "roles"];
       if (validTabs.includes(urlTab)) {
-        if (urlTab === "organization" && !isOrganizationManager) return defaultTab();
+        if (urlTab === "organization" && !isOrganizationManager)
+          return defaultTab();
         if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
         return urlTab;
       }
     }
-    if (location.pathname === `${baseUrl}admin` || location.pathname === `${baseUrl}admin/`) {
+    if (
+      location.pathname === `${baseUrl}admin` ||
+      location.pathname === `${baseUrl}admin/`
+    ) {
       return defaultTab();
     }
     return defaultTab();
-  }, [urlTab, location.pathname, baseUrl, isOrganizationManager, isDashboardManager, isUserManager, isRoleManager]);
+  }, [
+    urlTab,
+    location.pathname,
+    baseUrl,
+    isOrganizationManager,
+    isDashboardManager,
+    isUserManager,
+    isRoleManager,
+  ]);
 
   // Redirect to default tab if on /admin without a tab
   useEffect(() => {
-    if (location.pathname === `${baseUrl}admin` || location.pathname === `${baseUrl}admin/`) {
+    if (
+      location.pathname === `${baseUrl}admin` ||
+      location.pathname === `${baseUrl}admin/`
+    ) {
       navigate(`${baseUrl}admin/${defaultTab()}`, { replace: true });
     }
   }, [location.pathname, baseUrl, navigate]);
@@ -74,10 +100,10 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
   const handleTabChange = (key: string | null) => {
     if (key) {
       const tabNameMap: { [key: string]: string } = {
-        "organization": "Organization",
-        "dashboard": "Dashboard",
-        "users": "Users",
-        "roles": "Roles"
+        organization: "Organization",
+        dashboard: "Dashboard",
+        users: "Users",
+        roles: "Roles",
       };
       setTab(tabNameMap[key] || "Organization");
       // Navigate to the tab route - this will update the URL and activeTab will update via useMemo
@@ -88,10 +114,8 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
   const handleTabContentToggle = () => {
     setTabContentExpanded(!tabContentExpanded);
   };
-    
-  const breadcrumbItems = [
-    { label: t("Manage"), id: "manage" }
-  ];
+
+  const breadcrumbItems = [{ label: t("Manage"), id: "manage" }];
 
   return (
     <div className="manage-container">
@@ -104,7 +128,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
           />
         </div>
       </div>
-      
+
       <div className="manage-tabs-wrapper">
         <div className="manage-tabs-header">
           <Tabs
@@ -119,18 +143,16 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
             {isDashboardManager && (
               <Tab eventKey="dashboard" title={t("Dashboards")} />
             )}
-            {isUserManager && (
-              <Tab eventKey="users" title={t("Users")} />
-            )}
-            {isRoleManager && (
-              <Tab eventKey="roles" title={t("Roles")} />
-            )}
+            {isUserManager && <Tab eventKey="users" title={t("Users")} />}
+            {isRoleManager && <Tab eventKey="roles" title={t("Roles")} />}
           </Tabs>
-          <div 
+          <div
             className="manage-tabs-chevron"
             onClick={handleTabContentToggle}
             role="button"
             tabIndex={0}
+            aria-label={t("Toggle tab content")}
+            data-testid="manage-tab-content-toggle"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();

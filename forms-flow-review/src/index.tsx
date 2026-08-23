@@ -1,17 +1,30 @@
-import React, {useCallback, useEffect, useMemo, useState } from "react";
-import { Route, Routes, Navigate, useParams, useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Route,
+  Routes,
+  Navigate,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 import { KeycloakService, StorageService } from "@formsflow/service";
 import {
   KEYCLOAK_URL_AUTH,
   KEYCLOAK_URL_REALM,
   KEYCLOAK_CLIENT,
 } from "./api/config";
-import { navigateToTaskListingFromReviewWithHistory, getRedirectUrl, MULTITENANCY_ENABLED } from "@formsflow/service";
+import {
+  navigateToTaskListingFromReviewWithHistory,
+  getRedirectUrl,
+  MULTITENANCY_ENABLED,
+} from "@formsflow/service";
 import i18n from "./config/i18n";
 import "./index.scss";
 import Loading from "./components/Loading";
 import TaskList from "./Routes/TaskListing";
-import TaskDetails from "./Routes/TaskDetails";
+// Lazy-load the task-details route so the landing task list ships in the
+// initial chunk while the details screen (forms, history, bundle viewer)
+// loads on demand.
+const TaskDetails = React.lazy(() => import("./Routes/TaskDetails"));
 import SocketIOService from "./services/SocketIOService";
 import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch } from "./hooks";
@@ -20,7 +33,10 @@ import { getBPMTaskDetail } from "./api/services/bpmTaskServices";
 import { setTaskAssignee } from "./actions/taskActions";
 import { StyleServices } from "@formsflow/service";
 import { setTenantData } from "./actions/tenantActions";
-import { fetchServiceTaskList, fetchUserList } from "./api/services/filterServices";
+import {
+  fetchServiceTaskList,
+  fetchUserList,
+} from "./api/services/filterServices";
 const authorizedRoles = new Set([
   "view_tasks",
   "manage_all_filters",
@@ -37,7 +53,7 @@ interface SocketUpdateParams {
 const Task = React.memo((props: any) => {
   const { publish, subscribe } = props;
   const { tenantId } = useParams();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const instance = useMemo(() => props.getKcInstance(), []);
   const [isAuth, setIsAuth] = useState(instance?.isAuthenticated());
@@ -60,25 +76,24 @@ const Task = React.memo((props: any) => {
     });
   }, []);
 
-useEffect(() => {
-  if (MULTITENANCY_ENABLED && tenantId) {
-    // Get tenant data from StorageService
-    const storedTenantData = localStorage.getItem("tenantData");
+  useEffect(() => {
+    if (MULTITENANCY_ENABLED && tenantId) {
+      // Get tenant data from StorageService
+      const storedTenantData = localStorage.getItem("tenantData");
 
-    if (storedTenantData) {
-      try {
-        const parsedTenantData = JSON.parse(storedTenantData);
-        // Set tenant data in Redux state
-        dispatch(setTenantData(parsedTenantData));
-      } catch (error) {
-        console.error("Error parsing tenant data from storage:", error);
+      if (storedTenantData) {
+        try {
+          const parsedTenantData = JSON.parse(storedTenantData);
+          // Set tenant data in Redux state
+          dispatch(setTenantData(parsedTenantData));
+        } catch (error) {
+          console.error("Error parsing tenant data from storage:", error);
+        }
+      } else {
+        console.log("No tenant data found in storage");
       }
-    } else {
-      console.log("No tenant data found in storage");
     }
-  }
-}, [dispatch,tenantId]);
-
+  }, [dispatch, tenantId]);
 
   useEffect(() => {
     StorageService.save("tenantKey", tenantId ?? "");
@@ -117,10 +132,10 @@ useEffect(() => {
     }
   }, [isAuth]);
 
-  const getTasks = ()=>{
-     dispatch(
-        fetchServiceTaskList(lastRequestedPayload, null, activePage, limit)
-     );
+  const getTasks = () => {
+    dispatch(
+      fetchServiceTaskList(lastRequestedPayload, null, activePage, limit)
+    );
   };
   /* ------------------------ handling socket callback function ------------------------ */
   const checkTheTaskIdExistThenRefetchTaskList = () => {
@@ -136,58 +151,57 @@ useEffect(() => {
   };
 
   const handleTaskUpdate = (refreshedTaskId: string) => {
-    console.log("handleTaskUpdate test",refreshedTaskId,taskId);
+    console.log("handleTaskUpdate test", refreshedTaskId, taskId);
     // taskId & refreshedTaskId will be equal if user is in task details page
-  if (taskId === refreshedTaskId) {
-    // Use getBPMTaskDetail instead of getOnlyTaskDetails to get full task details
-    // including variables (formId/formType) which are needed for form reload
-    dispatch(getBPMTaskDetail(refreshedTaskId, (err, taskDetails) => {
-      if (!err && taskDetails) {
-        console.log("handleTaskUpdate inside", taskDetails.assignee);
-        // getBPMTaskDetail already handles:
-        // - setBPMTaskDetail (with formId/formType from variables)
-        // - setTaskAssignee
-        // - setTaskDetailsLoading(false)
-      }
-    }));
-  }
-  checkTheTaskIdExistThenRefetchTaskList();
-};
-
-const handleForceReload = (refreshedTaskId: string) => {
-  //  if opened task is there we need to push back to task route
-  //  if it push back to task route it will automatically call the tasklist api again
-  // else we need to fetch again task list
-  if(taskId == refreshedTaskId){
-   navigateToTaskListingFromReviewWithHistory(navigate, tenantId);
-  }else{
+    if (taskId === refreshedTaskId) {
+      // getBPMTaskDetail fetches full task details including variables
+      // (formId/formType) which are needed for form reload
+      dispatch(
+        getBPMTaskDetail(refreshedTaskId, (err, taskDetails) => {
+          if (!err && taskDetails) {
+            console.log("handleTaskUpdate inside", taskDetails.assignee);
+            // getBPMTaskDetail already handles:
+            // - setBPMTaskDetail (with formId/formType from variables)
+            // - setTaskAssignee
+            // - setTaskDetailsLoading(false)
+          }
+        })
+      );
+    }
     checkTheTaskIdExistThenRefetchTaskList();
-  }
-};
+  };
 
-const SocketIOCallback = useCallback(({
-    refreshedTaskId,
-    forceReload,
-    isUpdateEvent,
-  }: SocketUpdateParams) => {
-    if (!refreshedTaskId) return;
-    /**
-       * use of this socket call back , need to update task realtime and 
+  const handleForceReload = (refreshedTaskId: string) => {
+    //  if opened task is there we need to push back to task route
+    //  if it push back to task route it will automatically call the tasklist api again
+    // else we need to fetch again task list
+    if (taskId == refreshedTaskId) {
+      navigateToTaskListingFromReviewWithHistory(navigate, tenantId);
+    } else {
+      checkTheTaskIdExistThenRefetchTaskList();
+    }
+  };
+
+  const SocketIOCallback = useCallback(
+    ({ refreshedTaskId, forceReload, isUpdateEvent }: SocketUpdateParams) => {
+      if (!refreshedTaskId) return;
+      /**
+       * use of this socket call back , need to update task realtime and
        * also tasklist if the task id is exist inthe tasklist
        */
-      console.log("SocketIOCallback test",isUpdateEvent,refreshedTaskId);
-    if (isUpdateEvent) {
-      handleTaskUpdate(refreshedTaskId);
-    } else if (forceReload) {
-      handleForceReload(refreshedTaskId);
-    }else{
-      // here we just need to refetch the task list
-      // this is used when task is created or deleted
-      getTasks();
-    }
-  },[taskId, taskDetails, lastRequestedPayload, activePage, limit]);
-
- 
+      console.log("SocketIOCallback test", isUpdateEvent, refreshedTaskId);
+      if (isUpdateEvent) {
+        handleTaskUpdate(refreshedTaskId);
+      } else if (forceReload) {
+        handleForceReload(refreshedTaskId);
+      } else {
+        // here we just need to refetch the task list
+        // this is used when task is created or deleted
+        getTasks();
+      }
+    },
+    [taskId, taskDetails, lastRequestedPayload, activePage, limit]
+  );
 
   useEffect(() => {
     const handleConnection = (
@@ -214,25 +228,32 @@ const SocketIOCallback = useCallback(({
   }
   if (!isReviewer) return <p>unauthorized</p>;
 
-  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customLogoPath = StyleServices?.getCSSVariable("--custom-logo-path");
   const customTitle = StyleServices?.getCSSVariable("--custom-title");
   const hasMultitenancyHeader = customLogoPath || customTitle;
 
   return (
     <>
-      <div className={`${hasMultitenancyHeader ? 'main-container-with-custom-header ' : 'page-container false' } `}>
+      <div
+        className={`${
+          hasMultitenancyHeader
+            ? "main-container-with-custom-header "
+            : "page-container false"
+        } `}
+      >
         <div className="page-layout">
-            <Routes>
-              <Route
-                path="task"
-                element={<TaskList {...props} />}
-              />
-              <Route
-                path="task/:taskId"
-                element={<TaskDetails {...props} />}
-              />
-              <Route path="*" element={<Navigate to="/404" replace />} />
-            </Routes>
+          <Routes>
+            <Route path="task" element={<TaskList {...props} />} />
+            <Route
+              path="task/:taskId"
+              element={
+                <React.Suspense fallback={<Loading />}>
+                  <TaskDetails {...props} />
+                </React.Suspense>
+              }
+            />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
         </div>
       </div>
     </>

@@ -42,7 +42,10 @@ export interface CustomCheckboxProps
   /** Alias for selectedValues for backward compatibility */
   value?: any[];
   /** Called when selection changes; receives the selected values array and event */
-  onChange?: (values: any[], event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (
+    values: any[],
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => void;
   /** Visible group label; rendered as a <legend> */
   legend?: string;
   /** Backward-compat: alias for legend */
@@ -80,7 +83,10 @@ let __checkboxGroupInstanceCounter = 0;
  *   size="small"  // optional: "default" | "small"
  * />
  */
-const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxProps>(
+const CustomCheckboxComponent = forwardRef<
+  HTMLFieldSetElement,
+  CustomCheckboxProps
+>(
   (
     {
       items,
@@ -107,7 +113,8 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
     const { t } = useTranslation();
 
     // Prefer selectedValues; support value as a legacy alias
-    const effectiveSelectedValues = selectedValues !== undefined ? selectedValues : value || [];
+    const effectiveSelectedValues =
+      selectedValues !== undefined ? selectedValues : value || [];
 
     const handleChange = useCallback(
       (optionValue: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +129,7 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
 
         if (isChecked) {
           // Remove from selection
-          const newValues = currentValues.filter(val => val !== optionValue);
+          const newValues = currentValues.filter((val) => val !== optionValue);
           onChange?.(newValues, event);
         } else {
           // Add to selection
@@ -143,7 +150,9 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
     );
 
     // fieldset with legend provides native grouping and accessible name
-    const groupIdRef = useRef<string>(id || name || `checkbox-group-${++__checkboxGroupInstanceCounter}`);
+    const groupIdRef = useRef<string>(
+      id || name || `checkbox-group-${++__checkboxGroupInstanceCounter}`
+    );
     const groupIdBase = groupIdRef.current;
 
     const groupLegend = legend || label;
@@ -160,20 +169,17 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
     );
 
     // Move focus only (do not toggle). Per WCAG/APG for checkboxes, Space toggles.
-    const focusByIndex = useCallback(
-      (targetIndex: number) => {
-        const input = optionRefs.current[targetIndex];
-        if (!input) return;
-        input.focus();
-      },
-      []
-    );
+    const focusByIndex = useCallback((targetIndex: number) => {
+      const input = optionRefs.current[targetIndex];
+      if (!input) return;
+      input.focus();
+    }, []);
 
     const findNextEnabledIndex = useCallback(
       (start: number, delta: number) => {
         if (enabledIndexes.length === 0) return -1;
         let startPos = Math.max(0, start);
-        
+
         for (const _ of items) {
           const nextPos = (startPos + delta + items.length) % items.length;
           if (items[nextPos] && !disabled && !items[nextPos].disabled) {
@@ -187,20 +193,30 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
     );
 
     // Toggle current checkbox on Enter or Space
-    const handleOptionKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
-      const { key } = event;
-      if (key === "Enter" || key === " ") {
-        event.preventDefault();
-        event.stopPropagation();
-        (event.currentTarget as HTMLInputElement).click();
-      }
-    }, []);
+    const handleOptionKeyDown = useCallback(
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
+        const { key } = event;
+        if (key === "Enter" || key === " ") {
+          event.preventDefault();
+          event.stopPropagation();
+          (event.currentTarget as HTMLInputElement).click();
+        }
+      },
+      []
+    );
 
     const handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLFieldSetElement>) => {
         if (disabled) return;
         const { key } = event;
-        const arrowKeys = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Home", "End"] as const;
+        const arrowKeys = [
+          "ArrowRight",
+          "ArrowLeft",
+          "ArrowUp",
+          "ArrowDown",
+          "Home",
+          "End",
+        ] as const;
         if (!arrowKeys.includes(key as any)) return;
 
         event.preventDefault();
@@ -208,7 +224,8 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
 
         const activeEl = document.activeElement as HTMLInputElement | null;
         const currentIndex = optionRefs.current.indexOf(activeEl);
-        const fallbackIndex = enabledIndexes.length > 0 ? enabledIndexes[0] : -1;
+        const fallbackIndex =
+          enabledIndexes.length > 0 ? enabledIndexes[0] : -1;
         const baseIndex = currentIndex === -1 ? fallbackIndex : currentIndex;
 
         if (baseIndex === -1) return;
@@ -218,7 +235,8 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
           return;
         }
         if (key === "End") {
-          const lastEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes.at(-1) : -1;
+          const lastEnabledIndex =
+            enabledIndexes.length > 0 ? enabledIndexes.at(-1) : -1;
           if (lastEnabledIndex !== -1) focusByIndex(lastEnabledIndex);
           return;
         }
@@ -248,7 +266,7 @@ const CustomCheckboxComponent = forwardRef<HTMLFieldSetElement, CustomCheckboxPr
             const isChecked = effectiveSelectedValues.includes(option.value);
             const isOptionDisabled = disabled || !!option.disabled;
             const isTabbable = enabledIndexes.includes(index);
-            
+
             return (
               <Form.Check
                 inline={inline}

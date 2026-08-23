@@ -9,4 +9,3 @@ const API = {
   FORMIO_ROLES: `${WEB_BASE_URL}/formio/roles`,
 };
 export default API;
-

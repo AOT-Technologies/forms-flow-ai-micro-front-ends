@@ -1,9 +1,8 @@
 import React from "react";
- 
+
 import { render, fireEvent } from "@testing-library/react";
 import { CustomPill } from "../components/CustomComponents/Pills";
 
- 
 describe("CustomPill component", () => {
   it("renders basic pill with primary label", () => {
     const { getByText } = render(
@@ -32,7 +31,7 @@ describe("CustomPill component", () => {
         onClick={handleClick}
       />
     );
-    
+
     fireEvent.click(getByTestId("click-icon"));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });

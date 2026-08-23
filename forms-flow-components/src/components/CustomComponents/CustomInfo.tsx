@@ -5,30 +5,32 @@ import { InfoIcon } from "../SvgIcons/index";
 type InfoVariant = "primary" | "secondary" | "error" | "warning" | "plain";
 
 interface CustomInfoProps {
-    content: string;
-    variant?: InfoVariant;
-    className?: string;
-    dataTestId?: string;
-    /** Optional icon override (replaces the default InfoIcon). */
-    icon?: React.ReactNode;
+  content: string;
+  variant?: InfoVariant;
+  className?: string;
+  dataTestId?: string;
+  /** Optional icon override (replaces the default InfoIcon). */
+  icon?: React.ReactNode;
 }
 
 /**
  * Utility function to build className string
  */
-const buildClassNames = (...classes: (string | boolean | undefined)[]): string => {
+const buildClassNames = (
+  ...classes: (string | boolean | undefined)[]
+): string => {
   return classes.filter(Boolean).join(" ");
 };
 
-export const CustomInfo: FC<CustomInfoProps> = ({ 
-    content,
-    variant = "primary",
-    className,
-    dataTestId,
-    icon
-}) => { 
+export const CustomInfo: FC<CustomInfoProps> = ({
+  content,
+  variant = "primary",
+  className,
+  dataTestId,
+  icon,
+}) => {
   const { t } = useTranslation();
-  
+
   // Replace `\n` with <br /> tags (no trailing <br />)
   const contentLines = content.split("\n");
   const formattedContent = contentLines.map((line, idx) => (
@@ -46,9 +48,7 @@ export const CustomInfo: FC<CustomInfoProps> = ({
 
   return (
     <div className={panelClassName} data-testid={dataTestId}>
-      <div className="info-icon">
-        {icon ?? <InfoIcon variant={variant} />}
-      </div>
+      <div className="info-icon">{icon ?? <InfoIcon variant={variant} />}</div>
       <div className="info-content">{formattedContent}</div>
     </div>
   );

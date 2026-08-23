@@ -15,7 +15,7 @@ interface BuildFormModalProps {
     field: string,
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  primaryBtnAction?: (values:any) => void; // Now expects name and description
+  primaryBtnAction?: (values: any) => void; // Now expects name and description
   secondaryBtnAction?: () => void;
   setNameError?: (value: string) => void;
   nameError?: string;
@@ -27,7 +27,7 @@ interface BuildFormModalProps {
   descriptionLabel?: string;
   primaryBtnLabel?: string;
   secondaryBtnLabel?: string;
-  nameValidationOnBlur?: (values:any) => void;
+  nameValidationOnBlur?: (values: any) => void;
   primaryBtndataTestid?: string;
   secondoryBtndataTestid?: string;
   primaryBtnariaLabel?: string;
@@ -38,7 +38,7 @@ interface BuildFormModalProps {
   placeholderForForm?: string;
   placeholderForDescription?: string;
   buildForm?: boolean;
-  checked?: boolean; 
+  checked?: boolean;
   showSuccess?: boolean;
   successCountdown?: number;
 }
@@ -47,7 +47,7 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
   ({
     showBuildForm,
     onClose,
-    handleChange = ()=>{},
+    handleChange = () => {},
     primaryBtnAction,
     secondaryBtnAction = onClose, // Default to onClose if not provided
     setNameError,
@@ -68,20 +68,19 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
     descriptionDataTestid = "form-description",
     placeholderForForm,
     placeholderForDescription,
-    buildForm= false,
-    checked= false,
-    isSaveBtnLoading= false,
-    isFormNameValidating=false,
+    buildForm = false,
+    checked = false,
+    isSaveBtnLoading = false,
+    isFormNameValidating = false,
     showSuccess = false, // New prop
     successCountdown = 0, // New prop
-
   }) => {
     const { t } = useTranslation();
     const [values, setValues] = useState({
-      title:"",
+      title: "",
       description: description || "",
-      display: checked ? "wizard" : "form"
-    })
+      display: checked ? "wizard" : "form",
+    });
     const [cachedTitle, setCachedTitle] = useState("");
     const handlePrimaryAction = () => {
       // Pass name and description to primaryBtnAction
@@ -90,28 +89,28 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       }
     };
 
-    const handleInputValueChange = (e:any)=>{
-      let {name, value} = e.target;
-      if(e.target.type == "checkbox"){
+    const handleInputValueChange = (e: any) => {
+      let { name, value } = e.target;
+      if (e.target.type == "checkbox") {
         value = e.target.checked ? "wizard" : "form";
       }
-      if(name === "title") {
-        value = value.replace(/[#+]/g, '');
+      if (name === "title") {
+        value = value.replace(/[#+]/g, "");
       }
-      setValues(prev => ({...prev,[name]:value}))
+      setValues((prev) => ({ ...prev, [name]: value }));
       setCachedTitle(""); //reseting caching on type
-    }
-    
-    const handleOnBlur = (e)=>{ 
+    };
+
+    const handleOnBlur = (e) => {
       //TBD: need to prevent this function on modal close
       const relatedTargetName = e.relatedTarget?.name;
-      const createButtonClicked =  relatedTargetName == "createButton";
-      const isCancelButton = relatedTargetName == "cancelButton"; 
-      if((!values.title || values.title !== cachedTitle) && !isCancelButton){
+      const createButtonClicked = relatedTargetName == "createButton";
+      const isCancelButton = relatedTargetName == "cancelButton";
+      if ((!values.title || values.title !== cachedTitle) && !isCancelButton) {
         nameValidationOnBlur({ ...values, createButtonClicked });
-        setCachedTitle(values.title); 
-            }
-    }
+        setCachedTitle(values.title);
+      }
+    };
     let buttonVariant = "primary"; // Default value
     if (showSuccess) {
       buttonVariant = "success";
@@ -119,16 +118,20 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
       buttonVariant = "dark";
     }
 
-    useEffect(()=>{
-      if(!showBuildForm){
-        setValues({title:"",description:"", display: checked ? "wizard" : "form" }) 
-        setCachedTitle('');
+    useEffect(() => {
+      if (!showBuildForm) {
+        setValues({
+          title: "",
+          description: "",
+          display: checked ? "wizard" : "form",
+        });
+        setCachedTitle("");
       }
-      if(showBuildForm){
+      if (showBuildForm) {
         //reset the name error on starting
         setNameError("");
       }
-    },[showBuildForm])
+    }, [showBuildForm]);
 
     return (
       <AppModal show={showBuildForm} onHide={onClose} size="sm">
@@ -137,7 +140,11 @@ export const FormBuilderModal: React.FC<BuildFormModalProps> = React.memo(
             <p>{t(modalHeader)}</p>
           </AppModal.Title>
 
-          <div className="icon-close" onClick={onClose} data-testid="close-duplicate-modal">
+          <div
+            className="icon-close"
+            onClick={onClose}
+            data-testid="close-duplicate-modal"
+          >
             <CloseIcon />
           </div>
         </AppModal.Header>

@@ -43,7 +43,7 @@ const getUserPermissionsByCategory = (userRoles, allPermissions) => {
 
   for (const permission of allPermissions) {
     const permissionName = permission?.name;
-    
+
     if (!permissionName || !userRolesSet.has(permissionName)) {
       continue;
     }
@@ -74,4 +74,10 @@ const getUserPermissionsByCategory = (userRoles, allPermissions) => {
   return grouped;
 };
 
-export { replaceUrl, addTenankey, removeTenantKey, checkAndAddTenantKey, getUserPermissionsByCategory };
+export {
+  replaceUrl,
+  addTenankey,
+  removeTenantKey,
+  checkAndAddTenantKey,
+  getUserPermissionsByCategory,
+};
