@@ -49,11 +49,13 @@
     "webpack-config-single-spa-react": "^4.0.0",
     "webpack-config-single-spa-react-ts": "^4.0.0",
     "webpack-config-single-spa-ts": "^4.0.0",
-    "webpack-dev-server": "^4.0.0",
+    "webpack-dev-server": "^4.15.2",
     "webpack-merge": "^5.8.0"
   },
   "overrides": {
-    "fork-ts-checker-webpack-plugin": "6.5.3"
+    "fork-ts-checker-webpack-plugin": "6.5.3",
+    "uuid": "^11.1.1",
+    "semver": "^7.8.5"
   },
   "dependencies": {
     "@aot-technologies/formio-react": "^2.0.1",

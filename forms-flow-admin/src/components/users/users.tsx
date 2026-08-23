@@ -217,7 +217,9 @@ const Users = React.memo((props: any) => {
       sortable: false,
       renderCell: (params) => {
         const rowData = params.row;
-        const cell = rowData?.role;
+        const cell = rowData?.role?.filter(
+          (item) => item?.name !== "camunda-admin"
+        );
         return (
           <div className="d-flex flex-wrap col-12">
             {cell?.map((item, i) => (
@@ -268,6 +270,9 @@ const Users = React.memo((props: any) => {
       align: "right",
       renderCell: (params) => {
         const rowData = params.row;
+        const assignableRoles = roles.filter(
+          (role) => role.name?.replace(/\//g, "") !== "camunda-admin"
+        );
         const updateSelectedRoles = (role) => {
           if (selectedRoles.includes(role.id)) {
             setSelectedRoles([
@@ -339,8 +344,8 @@ const Users = React.memo((props: any) => {
               >
                 <Popover.Body>
                   <div className="role-list">
-                    {roles.length > 0 ? (
-                      roles.map((role, key) =>
+                    {assignableRoles.length > 0 ? (
+                      assignableRoles.map((role, key) =>
                         getRoleRepresentation(role, key, rowData)
                       )
                     ) : (
@@ -349,7 +354,7 @@ const Users = React.memo((props: any) => {
                   </div>
                   <hr />
                   <div className="done-button">
-                    {roles.length > 0 && (
+                    {assignableRoles.length > 0 && (
                       <V8CustomButton
                         label={t("Done")}
                         onClick={addUserPermission}
