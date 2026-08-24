@@ -493,15 +493,19 @@ const Users = React.memo((props: any) => {
               >
                 {t("All roles")}
               </option>
-              {roles?.map((role, i) => (
-                <option
-                  key={i}
-                  value={role.name}
-                  data-testid={`users-roles-filter-option-${i}`}
-                >
-                  {formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)}
-                </option>
-              ))}
+              {roles
+                ?.filter(
+                  (role) => role.name?.replace(/\//g, "") !== "camunda-admin"
+                )
+                .map((role, i) => (
+                  <option
+                    key={i}
+                    value={role.name}
+                    data-testid={`users-roles-filter-option-${i}`}
+                  >
+                    {formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)}
+                  </option>
+                ))}
             </Form.Select>
           </div>
 
