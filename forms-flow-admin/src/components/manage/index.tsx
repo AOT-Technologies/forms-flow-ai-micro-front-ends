@@ -42,7 +42,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
     if (isRoleManager) return "roles";
     if (isUserManager) return "users";
     if (isDashboardManager) return "dashboard";
-    if (isOrganizationManager) return "organization";
+    if (isOrganizationManager && MULTITENANCY_ENABLED) return "organization";
     return "roles";
   };
 
@@ -51,7 +51,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
     if (urlTab) {
       const validTabs = ["organization", "dashboard", "users", "roles"];
       if (validTabs.includes(urlTab)) {
-        if (urlTab === "organization" && !isOrganizationManager) return defaultTab();
+        if (urlTab === "organization" && (!isOrganizationManager || !MULTITENANCY_ENABLED)) return defaultTab();
         if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
@@ -113,7 +113,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
             id="manage-tabs"
             className="pill-tabs"
           >
-            {isOrganizationManager && (
+            {isOrganizationManager && MULTITENANCY_ENABLED && (
               <Tab eventKey="organization" title={t("Organization")} />
             )}
             {isDashboardManager && (
@@ -148,7 +148,7 @@ const Manage: React.FC<ManageProps> = ({ props, setTab, setDashboardCount, setRo
         <Collapse in={tabContentExpanded}>
           <div>
             <div className="tab-content">
-              {activeTab === "organization" && isOrganizationManager && (
+              {activeTab === "organization" && isOrganizationManager && MULTITENANCY_ENABLED && (
                 <div className="manage-content">
                   <Organization {...props} />
                 </div>
