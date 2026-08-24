@@ -50,7 +50,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
     () => {
       const visiblePermissions = MULTITENANCY_ENABLED
         ? permissions
-        : permissions.filter((perm) => perm.description !== "Organization (Billing)");
+        : permissions.filter((perm) => perm.name !== "manage_organization");
       return groupByCategory(visiblePermissions);
     },
     [permissions]
