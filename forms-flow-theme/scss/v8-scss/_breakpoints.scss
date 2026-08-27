@@ -1,0 +1,59 @@
+@use "sass:map";
+
+/*|||*═══════════════════ ⬥ BREAKPOINT TOKENS | VERSION 8.3 RESPONSIVENESS ⬥ ═══════════════════*||||*/
+
+// Breakpoint token tier — anchored to the Figma frame widths (v8.3 UX/UI Refactoring, R2.1).
+// This tier is PARALLEL to Bootstrap's $grid-breakpoints (576/768/992/1200/1400), which stay
+// untouched on purpose: overriding them would change every compiled .col-*/.d-*-* utility.
+// Use these tokens for all theme-authored media queries via respond-from()/respond-below().
+
+$breakpoints: (
+  mobile:      402px,
+  tablet:      744px,
+  desktop-sm:  1024px,
+  desktop-md:  1280px,
+  desktop-lg:  1440px,
+  desktop-xl:  1600px,
+  desktop-2xl: 1920px
+);
+
+// Canvas container widths per tier (R1.4): container = (168px column + 16px gutter) × columns − 16px.
+// Consumed by layout CSS only (max-width steps) — NEVER valid inside respond-from()/respond-below().
+$containers: (
+  mobile:      352px,  // 2 columns
+  tablet:      536px,  // 3 columns
+  desktop-sm:  720px,  // 4 columns
+  desktop-md:  1088px, // 6 columns
+  desktop-lg:  1088px, // 6 columns
+  desktop-xl:  1456px, // 8 columns
+  desktop-2xl: 1456px  // 8 columns — terminal tier; the canvas centres beyond this
+);
+
+@function breakpoint($tier) {
+  @if not map.has-key($breakpoints, $tier) {
+    @error "Unknown breakpoint tier `#{$tier}`. Expected one of: #{map.keys($breakpoints)}";
+  }
+  @return map.get($breakpoints, $tier);
+}
+
+@function container($tier) {
+  @if not map.has-key($containers, $tier) {
+    @error "Unknown container tier `#{$tier}`. Expected one of: #{map.keys($containers)}";
+  }
+  @return map.get($containers, $tier);
+}
+
+// Mobile-first authoring is the committed convention (R2.3): anchor = threshold.
+@mixin respond-from($tier) {
+  @media (min-width: breakpoint($tier)) {
+    @content;
+  }
+}
+
+// Reserved for genuine shrink-down cases. The 0.02px offset keeps respond-below(x) and
+// respond-from(x) mutually exclusive at exactly the threshold (same convention as Bootstrap).
+@mixin respond-below($tier) {
+  @media (max-width: (breakpoint($tier) - 0.02px)) {
+    @content;
+  }
+}

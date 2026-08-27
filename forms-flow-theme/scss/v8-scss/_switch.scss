@@ -1,5 +1,6 @@
 // Import theme variables and mixins
 @use "mixins";
+@use "breakpoints" as bp;
 
 // Switch Variables - Using consistent rem/em units for better scalability
 $switch-width: 2.75rem;              // 44px at 16px base
@@ -180,7 +181,7 @@ $color-switch-hover-red: var(--red-200);
 }
 
 // Responsive behavior
-@media (max-width: 768px) {
+@include bp.respond-below(tablet) {
   .custom-switch {
     width: 2.5rem;
     height: 1.375rem;

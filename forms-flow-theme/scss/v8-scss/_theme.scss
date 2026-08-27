@@ -2,6 +2,7 @@
 
 /*|||*════════════════════════════════════ ⬥ VERSION 8 THEME ⬥ ════════════════════════════════════*||||*/
 @use "mixins";
+@use "breakpoints" as bp;
 
 
 
@@ -227,6 +228,17 @@ $font-tokens: (
  --body-section-height: 100vh; //update dynamically for the pages.
 
 
+/*══════════════════ ⬥ BREAKPOINT & CONTAINER TOKENS | VERSION 8.3 ⬥ ══════════════════*/
+
+  // Informational for runtime consumers (JS reads via getComputedStyle).
+  // CSS custom properties cannot be used inside @media conditions — SCSS authors
+  // must use bp.respond-from()/bp.respond-below() from v8-scss/_breakpoints.scss.
+  @each $name, $value in bp.$breakpoints {
+    --breakpoint-#{$name}: #{$value};
+  }
+  @each $name, $value in bp.$containers {
+    --container-#{$name}: #{$value};
+  }
 
 }
 
@@ -266,9 +278,18 @@ $font-tokens: (
       overflow: hidden;
   
       .page-layout {
-        /* Inner page layout wrapper */
-        width: 1088px;         
-        flex-shrink: 0;         
+        /* Inner page layout wrapper — tiered canvas (v8.3 R1.1):
+           full width below the smallest tier, then max-width steps to the
+           CONTAINER value of each breakpoint tier. desktop-lg/desktop-2xl repeat
+           the previous container (1088/1456) so they need no rule; past 1920px
+           the parent .page-container's justify-content: center centres it. */
+        width: 100%;
+        @include bp.respond-from(mobile)     { max-width: bp.container(mobile); }     // 352px
+        @include bp.respond-from(tablet)     { max-width: bp.container(tablet); }     // 536px
+        @include bp.respond-from(desktop-sm) { max-width: bp.container(desktop-sm); } // 720px
+        @include bp.respond-from(desktop-md) { max-width: bp.container(desktop-md); } // 1088px
+        @include bp.respond-from(desktop-xl) { max-width: bp.container(desktop-xl); } // 1456px
+        flex-shrink: 0;
         flex-grow: 0;
         display: grid;          // allows toast/header/body grid
         grid-template-rows: auto auto auto auto auto 1fr; // toast + headers + body
@@ -319,7 +340,6 @@ $font-tokens: (
             max-width: 100%;
             box-sizing: border-box;
             max-height: calc(100vh - 200px);
-            width: 1088px;
             padding-bottom: 120px;
           }
 
