@@ -181,3 +181,12 @@ $gray-dark: var(--ff-gray-dark);
 .btn.btn-secondary.btn-wizard-nav-cancel {
   display: none !important;
 }
+
+.formio-builder-form {
+  .builder-component:has(
+    > .formio-component-hidden-default
+  ) {
+    display: none;
+    pointer-events: none;
+  }
+}
