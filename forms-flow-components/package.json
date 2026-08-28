@@ -87,7 +87,7 @@
     "pretty-quick": "^3.1.1",
     "sass": "^1.57.1",
     "sass-loader": "^13.2.0",
-    "storybook": "^7.6.20",
+    "storybook": "^10.5.10",
     "ts-config-single-spa": "^3.0.0",
     "typescript": "^5.4.5",
     "webpack": "^5.75.0",
