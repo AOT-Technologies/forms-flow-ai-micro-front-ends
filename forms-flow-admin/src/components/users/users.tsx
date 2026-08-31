@@ -58,6 +58,18 @@ const Users = React.memo((props: any) => {
     item: any;
   } | null>(null);
   const emailInputRef = React.useRef<HTMLInputElement>(null);
+  const lastInviteTriggerRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    const trigger = props.openInviteTrigger ?? 0;
+    if (
+      lastInviteTriggerRef.current !== null &&
+      trigger !== lastInviteTriggerRef.current
+    ) {
+      openInviteModal();
+    }
+    lastInviteTriggerRef.current = trigger;
+  }, [props.openInviteTrigger]);
 
   const openSuccessModal = () => {
     setShowSuccessModal(true);
@@ -496,14 +508,6 @@ const Users = React.memo((props: any) => {
 
           {MULTITENANCY_ENABLED && (
             <>
-              <V8CustomButton
-                label={t("Add New Users")}
-                onClick={openInviteModal}
-                data-testid="add-registered-users-button"
-                variant="primary"
-                size="small"
-              />
-
               {showInviteModal && (
                 <AppModal
                   show={showInviteModal}

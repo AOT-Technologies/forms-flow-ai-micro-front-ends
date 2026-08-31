@@ -69,6 +69,18 @@ const Roles = React.memo((props: any) => {
   const [search, setSearch] = React.useState("");
   const [permissionData, setPermissionData] = React.useState([]);
   const [key, setKey] = useState("Details");
+  const lastCreateTriggerRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    const trigger = props.openCreateRoleTrigger ?? 0;
+    if (
+      lastCreateTriggerRef.current !== null &&
+      trigger !== lastCreateTriggerRef.current
+    ) {
+      handleShowRoleModal();
+    }
+    lastCreateTriggerRef.current = trigger;
+  }, [props.openCreateRoleTrigger]);
 
   const filterList = (filterTerm: string, List: any) => {
     let roleList = removingTenantId(List, tenantId);
@@ -715,24 +727,15 @@ const Roles = React.memo((props: any) => {
   return (
     <>
       <div className="container-admin">
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
-            <CustomSearch
-              handleClearSearch={handleClearSearch}
-              search={search}
-              setSearch={setSearch}
-              handleSearch={handlFilter}
-              placeholder={t("Search by role name")}
-              title={t("Search")}
-              dataTestId="search-role-input"
-            />
-          </div>
-          <V8CustomButton
-            onClick={handleShowRoleModal}
-            data-testid="roles-create-new-role-button"
-            label={t("New Role")}
-            ariaLabel="New Role"
-            action
+        <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
+          <CustomSearch
+            handleClearSearch={handleClearSearch}
+            search={search}
+            setSearch={setSearch}
+            handleSearch={handlFilter}
+            placeholder={t("Search by role name")}
+            title={t("Search")}
+            dataTestId="search-role-input"
           />
         </div>
 
