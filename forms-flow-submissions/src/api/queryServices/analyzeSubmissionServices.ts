@@ -15,6 +15,15 @@ export const getSubmissionList = (
   selectedFormFields: string[] = []
 ): Promise<SubmissionListResponse> => {
   const systemFields = ["id", "form_name", "created_by", "created", "application_status"];
+// Escapes a string for safe use inside a GraphQL string literal (per the GraphQL StringValue grammar),
+// preventing values from breaking out of their quotes and injecting extra query arguments.
+const escapeGraphQLString = (value: string): string =>
+  String(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "\\r")
+    .replace(/\t/g, "\\t");
 const formatValue = (value: any): string => {
   if (typeof value === "number" || typeof value === "boolean") {
     return `${value}`;
@@ -30,7 +39,7 @@ const formatValue = (value: any): string => {
       .map(([k, v]) => `${k}: ${formatValue(v)}`)
       .join(", ")} }`;
   }
-  return `"${value}"`; // string by default
+  return `"${escapeGraphQLString(value)}"`; // string by default
 };
 
 const normalizeValue = (value: any): any => {
@@ -72,12 +81,12 @@ const normalizeValue = (value: any): any => {
     ? `createdBefore: "${HelperServices.getISODateTime(dateRange.endDate)}"`
     : "";
 
-  const parentFormIdStr = parentFormId ? `parentFormId: "${parentFormId}"` : "";
+  const parentFormIdStr = parentFormId ? `parentFormId: "${escapeGraphQLString(parentFormId)}"` : "";
 
   const selectedFieldsStr = (() => {
   if (!selectedFormFields.length) return "";
 
-  const fieldsArray = selectedFormFields.map((f) => `"${f}"`);
+  const fieldsArray = selectedFormFields.map((f) => `"${escapeGraphQLString(f)}"`);
   const fieldsJoined = fieldsArray.join(", ");
   return "selectedFormFields: [" + fieldsJoined + "]";
 })();
@@ -88,8 +97,8 @@ const normalizeValue = (value: any): any => {
   const queryArgs = [
     `limit: ${limit}`,
     `pageNo: ${pageNo}`,
-    `sortOrder: "${sortOrder}"`,
-    `sortBy: "${sortBy}"`,
+    `sortOrder: "${escapeGraphQLString(sortOrder)}"`,
+    `sortBy: "${escapeGraphQLString(sortBy)}"`,
     createdAfter,
     createdBefore,
     parentFormIdStr,
