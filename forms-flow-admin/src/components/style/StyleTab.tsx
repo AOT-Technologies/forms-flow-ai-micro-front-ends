@@ -208,6 +208,7 @@ const StyleEditorPanel: React.FC<EditorPanelProps> = ({
         <div className="ff-style-editor-panel__footer-left-actions">
           {editForm.id && editForm.id !== DEFAULT_ROW_ID && (
             <V8CustomButton
+              id="delete-style-template-btn"
               variant="error"
               onClick={onDelete}
               disabled={isSaving}

@@ -54,7 +54,6 @@ $se-selected-ring:      2px solid #111827;
     padding: 8px 20px;
     border-radius: 20px;   // fully rounded to match Figma pill buttons
     font-size: 14px;
-    font-family: "Figtree", sans-serif;
     font-weight: 400;
     cursor: pointer;
     border: 1px solid $figma-border;
@@ -109,7 +108,6 @@ $se-selected-ring:      2px solid #111827;
   }
 
   &__heading {
-    font-family: "Figtree", sans-serif;
     font-size: 20px;
     font-weight: 400;
     color: $figma-text-muted;
@@ -121,7 +119,6 @@ $se-selected-ring:      2px solid #111827;
     padding: 16px 20px;
     font-size: 13px;
     color: #6B7280;
-    font-family: "Figtree", sans-serif;
     margin: 0;
   }
 
@@ -137,7 +134,6 @@ $se-selected-ring:      2px solid #111827;
     background: none;
     border: 1px solid $figma-border;
     border-radius: 20px;
-    font-family: "Figtree", sans-serif;
     font-size: 13px;
     color: $figma-text-muted;
     cursor: pointer;
@@ -182,7 +178,6 @@ $se-selected-ring:      2px solid #111827;
   }
 
   &__name {
-    font-family: "Figtree", sans-serif;
     font-size: 15px;
     font-weight: 400;
     color: $figma-text-muted;
@@ -208,7 +203,6 @@ $se-selected-ring:      2px solid #111827;
     background: $figma-bg-card;
     border: 1px solid $figma-border;
     border-radius: 20px;
-    font-family: "Figtree", sans-serif;
     font-size: 15px;
     font-weight: 400;
     cursor: pointer;
@@ -259,7 +253,6 @@ $se-selected-ring:      2px solid #111827;
   }
 
   &__title {
-    font-family: "Figtree", sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: $figma-text-dark;
@@ -279,7 +272,6 @@ $se-selected-ring:      2px solid #111827;
   &__label {
     display: block;
     color: #B7B7B8;
-    font-family: "Figtree", sans-serif;
     font-size: 15px;
     font-style: normal;
     font-weight: 400;
@@ -296,7 +288,6 @@ $se-selected-ring:      2px solid #111827;
     border: 1px solid $figma-border;
     border-radius: 6px;
     font-size: 14px;
-    font-family: "Figtree", sans-serif;
     color: $figma-text-dark;
     outline: none;
     transition: border-color 0.15s;
@@ -312,7 +303,6 @@ $se-selected-ring:      2px solid #111827;
     border: none;
     padding: 0;
     cursor: pointer;
-    font-family: "Figtree", sans-serif;
     font-size: 15px;
     font-weight: 600;
     color: $figma-text-muted;
@@ -355,18 +345,17 @@ $se-selected-ring:      2px solid #111827;
     gap: 8px;
 
     // Scoped to just this Delete button (not the shared .custom-button--error
-    // variant used app-wide) via its dataTestId -- forms-flow-theme's
+    // variant used app-wide) via its id -- forms-flow-theme's
     // .custom-button--error rule ships in a separately-loaded package whose
     // cascade order relative to this file isn't guaranteed, so !important
     // ensures this override wins regardless.
-    [data-testid="delete-style-template-btn"] {
+    #delete-style-template-btn {
       border-radius: 25px !important;
       border: 1px solid #E57373 !important;
       background-color: #fff !important;
 
       .button-text {
         color: #E57373 !important;
-        font-family: "Figtree", sans-serif !important;
         font-size: 15px !important;
         font-style: normal !important;
         font-weight: 400 !important;
@@ -392,7 +381,6 @@ $se-selected-ring:      2px solid #111827;
   &__label {
     display: inline-block;
     font-size: 14px;
-    font-family: "Figtree", sans-serif;
     color: $se-text;
     flex-shrink: 0;
     min-width: 80px;
@@ -498,7 +486,6 @@ $se-selected-ring:      2px solid #111827;
 
   &__custom-label {
     font-size: 12px;
-    font-family: "Figtree", sans-serif;
     color: $se-label;
     white-space: nowrap;
     flex-shrink: 0;
@@ -581,7 +568,6 @@ $se-selected-ring:      2px solid #111827;
   &__label {
     display: inline-block;
     font-size: 14px;
-    font-family: "Figtree", sans-serif;
     color: $se-text;
     flex-shrink: 0;
     min-width: 80px;
@@ -667,7 +653,6 @@ $se-selected-ring:      2px solid #111827;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
     text-align: center;
-    font-family: "Figtree", sans-serif;
 
     &:hover { border-color: #9CA3AF; background: $se-bg-hover; }
     &:focus-visible { outline: $se-selected-ring; outline-offset: 2px; }
@@ -698,7 +683,6 @@ $se-selected-ring:      2px solid #111827;
     border-radius: 999px;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
-    font-family: "Figtree", sans-serif;
 
     &:hover { border-color: #9CA3AF; background: $se-bg-hover; }
     &:focus-visible { outline: $se-selected-ring; outline-offset: 2px; }
@@ -746,7 +730,6 @@ $se-selected-ring:      2px solid #111827;
 
   &__section-title {
     color: #B7B7B8;
-    font-family: "Figtree", sans-serif;
     font-size: 15px;
     font-style: normal;
     font-weight: 400;
@@ -903,7 +886,6 @@ $se-selected-ring:      2px solid #111827;
     flex-shrink: 0;
     color: var(--ff-color-secondary-dark, #525254);
     text-align: center;
-    font-family: "Figtree", sans-serif;
     font-size: 13.125px;
     font-style: normal;
     font-weight: 400;
@@ -915,7 +897,6 @@ $se-selected-ring:      2px solid #111827;
     flex-shrink: 0;
     color: var(--color-bootstrap-primary, #3248F4);
     text-align: center;
-    font-family: "Figtree", sans-serif;
     font-size: 13.125px;
     font-style: normal;
     font-weight: 500;
@@ -942,7 +923,6 @@ $se-selected-ring:      2px solid #111827;
 
   .prompt-title {
     color: #4A4A4A;
-    font-family: "Figtree", sans-serif;
     font-size: 20px;
     font-style: normal;
     font-weight: 400;

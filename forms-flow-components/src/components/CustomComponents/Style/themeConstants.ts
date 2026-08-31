@@ -62,14 +62,30 @@ const SAFE_COLOR_REGEX = /^#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?$/;
 const sanitizeColor = (value: string | undefined, fallback: string): string =>
   value && SAFE_COLOR_REGEX.test(value) ? value : fallback;
 
+// FONT_MAP/BUTTON_RADIUS_MAP are plain objects, so a `[key]` lookup with an
+// untrusted key (headerFont/buttonShape come off the style-templates API with
+// no runtime validation) can resolve an inherited Object.prototype member
+// (e.g. "constructor", "toString") instead of `undefined` -- `||` only saves
+// you when the result is falsy, and a resolved function is truthy. That
+// value is then interpolated straight into the stylesheet below, same class
+// of bug sanitizeColor exists to prevent. hasOwnProperty confines the lookup
+// to the map's own declared keys.
+const safeFont = (key: string): string =>
+  Object.prototype.hasOwnProperty.call(FONT_MAP, key)
+    ? FONT_MAP[key as FontKey]
+    : FONT_MAP.sans;
+const safeButtonRadius = (key: string): string =>
+  Object.prototype.hasOwnProperty.call(BUTTON_RADIUS_MAP, key)
+    ? BUTTON_RADIUS_MAP[key as ButtonShape]
+    : BUTTON_RADIUS_MAP.square;
+
 export const buildScopedCSS = (style: StyleConfig): string => {
   const bg = sanitizeColor(style.background, DEFAULT_STYLE.background);
   const accent = sanitizeColor(style.accent, DEFAULT_STYLE.accent);
   const btnBg = sanitizeColor(style.buttons, DEFAULT_STYLE.buttons);
-  const radius =
-    BUTTON_RADIUS_MAP[style.buttonShape] || BUTTON_RADIUS_MAP.square;
-  const hFont = FONT_MAP[style.headerFont] || FONT_MAP.sans;
-  const bFont = FONT_MAP[style.bodyFont] || FONT_MAP.sans;
+  const radius = safeButtonRadius(style.buttonShape);
+  const hFont = safeFont(style.headerFont);
+  const bFont = safeFont(style.bodyFont);
   const s = `.${THEMED_FORM_CLASS}`;
   return `
 ${s} * { font-family: ${bFont}; }

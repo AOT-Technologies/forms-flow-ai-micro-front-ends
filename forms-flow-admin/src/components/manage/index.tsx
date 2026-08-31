@@ -48,7 +48,6 @@ const Manage: React.FC<ManageProps> = ({
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
-  const isStyleManager = userRoles?.includes("manage_organization");
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
@@ -70,7 +69,7 @@ const Manage: React.FC<ManageProps> = ({
         if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
-        if (urlTab === "style" && !isStyleManager) return defaultTab();
+        if (urlTab === "style" && !isOrganizationManager) return defaultTab();
         return urlTab;
       }
     }
@@ -150,7 +149,7 @@ const Manage: React.FC<ManageProps> = ({
             )}
             {isUserManager && <Tab eventKey="users" title={t("Users")} />}
             {isRoleManager && <Tab eventKey="roles" title={t("Roles")} />}
-            {isStyleManager && (
+            {isOrganizationManager && (
               <Tab eventKey="style" title={t("Style")} />
             )}
           </Tabs>
@@ -211,7 +210,7 @@ const Manage: React.FC<ManageProps> = ({
                   />
                 </div>
               )}
-              {activeTab === "style" && isStyleManager && (
+              {activeTab === "style" && isOrganizationManager && (
                 <div className="manage-content">
                   <StyleTab />
                 </div>
