@@ -87,5 +87,7 @@ declare module "@formsflow/components" {
     UpArrowIcon,
     AppModal,
     ReusableTable,
+    UsageSummaryCard,
+    mapTenantDataToUsage
   }: any;
 }

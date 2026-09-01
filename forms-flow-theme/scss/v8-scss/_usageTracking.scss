@@ -1,0 +1,408 @@
+@import "_mixins.scss";
+
+// Usage tracking: shared progress bar, the organization summary card and the home alert strip.
+
+$gray-darkest: var(--gray-darkest);
+$gray-dark: var(--gray-dark);
+$gray-medium: var(--gray-medium);
+$gray-x-light: var(--gray-x-light);
+$white-200: var(--white-200);
+$white-300: var(--white-300);
+$font-weight-medium: var(--font-weight-medium);
+$font-weight-semibold: var(--font-weight-semibold);
+
+$usage-gray-900: #2e2e30;
+$usage-gray-700: #636365;
+$usage-gray-500: #979899;
+$usage-gray-150: #f0f0f0;
+
+$usage-green-700: #62c89e;
+$usage-green-shade: #248e62;
+$usage-orange-700: #ffb840;
+$usage-orange-500: #ffd080;
+$usage-orange-shade: #c77e00;
+$usage-yellow-50: #fefcf7;
+$usage-yellow-500: #f6d896;
+$usage-yellow-shade: #b88b24;
+$usage-red-700: #d45e5e;
+$usage-red-500: #e29494;
+$usage-red-300: #f1c9c9;
+$usage-red-50: #fcf4f4;
+$usage-red-shade: #9a1f1f;
+
+$usage-font-max4: 3rem; // 48px, max4-semibold
+$usage-font-body: 1rem; // 16px, body-regular / body-medium
+$usage-font-body-sml: 0.875rem; // 14px, body-sml-regular
+
+$usage-hairline: 0.0625rem; // 1px
+$usage-bar-height: 0.5rem; // 8px
+$usage-bar-radius: 0.25rem; // 4px
+$usage-card-radius: 0.75rem; // 12px
+$usage-pill-radius: 1.5625rem; // 25px
+$usage-icon-size: 1rem; // 16px
+$usage-icon-size-lg: 1.25rem; // 20px
+
+/* ---------------------------------------------------------------- progress bar */
+
+.ff-usage-bar {
+  width: 100%;
+  height: $usage-bar-height;
+  border-radius: $usage-bar-radius;
+  background-color: $gray-x-light;
+  overflow: hidden;
+
+  .ff-usage-bar__fill {
+    width: var(--ff-usage-fill, 0%);
+    max-width: 100%;
+    height: 100%;
+    border-radius: $usage-bar-radius;
+    transition: width 0.3s ease;
+
+    &--safe {
+      background-color: $usage-green-700;
+    }
+
+    &--warning {
+      background-color: $usage-orange-700;
+    }
+
+    &--critical {
+      background-color: $usage-red-700;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ summary card */
+
+.ff-usage-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; // 20px
+  align-items: flex-start;
+  padding: 1.5rem 1.75rem; // 24px 28px
+  border: $usage-hairline solid $usage-gray-150;
+  border-radius: $usage-card-radius;
+  background-color: $white-200;
+
+  .ff-usage-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem; // 20px
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .ff-usage-card__summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem; // 4px
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  .ff-usage-card__label {
+    @include font-style($usage-font-body, $font-weight-regular, $gray-dark);
+    line-height: normal;
+  }
+
+  .ff-usage-card__count {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem; // 10px
+  }
+
+  .ff-usage-card__count-used {
+    @include font-style($usage-font-max4, $font-weight-semibold, $usage-gray-900);
+    line-height: normal;
+  }
+
+  .ff-usage-card__count-max {
+    @include font-style($font-size-xl, $font-weight-regular, $usage-gray-500);
+    line-height: normal;
+  }
+
+  // Overrides V8CustomButton's default chrome to match the designed pill. The state tint is
+  // held in custom properties so the base rule and the hover rule share one source of truth.
+  .ff-usage-card__cta {
+    --ff-usage-cta-bg: #{$white-300};
+    --ff-usage-cta-border: #{$gray-x-light};
+
+    flex-shrink: 0;
+    gap: 0.5rem; // 8px
+    padding: 0.75rem 1.25rem; // 12px 20px
+    border: $usage-hairline solid var(--ff-usage-cta-border);
+    border-radius: $usage-pill-radius;
+    background-color: var(--ff-usage-cta-bg);
+    @include font-style($usage-font-body, $font-weight-regular, $gray-darkest);
+    line-height: normal;
+    white-space: nowrap;
+
+    &--warning {
+      --ff-usage-cta-bg: #{$usage-yellow-50};
+      --ff-usage-cta-border: #{$usage-orange-500};
+    }
+
+    &--critical {
+      --ff-usage-cta-bg: #{$usage-red-50};
+      --ff-usage-cta-border: #{$usage-red-500};
+    }
+
+    // Over the limit the card itself is tinted, so the pill reverts to white.
+    &--over-limit {
+      --ff-usage-cta-bg: #{$white-300};
+      --ff-usage-cta-border: #{$usage-red-500};
+    }
+
+    // The design specifies no hover state. Hold the state tint so the theme's default
+    // secondary-button hover does not repaint the pill grey.
+    &:hover:not(.is-disabled):not(.is-loading) {
+      border-color: var(--ff-usage-cta-border);
+      background-color: var(--ff-usage-cta-bg);
+    }
+  }
+
+  .ff-usage-card__bar {
+    width: 100%;
+  }
+
+  .ff-usage-card__stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.75rem 3.25rem; // 12px 52px
+    margin: 0;
+  }
+
+  .ff-usage-card__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem; // 2px
+    align-items: flex-start;
+  }
+
+  .ff-usage-card__stat-label {
+    @include font-style($usage-font-body-sml, $font-weight-regular, $usage-gray-500);
+    line-height: normal;
+    margin: 0;
+    font-weight: $font-weight-regular;
+  }
+
+  .ff-usage-card__stat-value {
+    @include font-style($usage-font-body, $font-weight-medium, $usage-gray-900);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; // 8px
+    line-height: normal;
+    margin: 0;
+    white-space: nowrap;
+
+    &--safe {
+      color: $usage-green-shade;
+    }
+
+    &--warning {
+      color: $usage-orange-shade;
+    }
+
+    &--critical {
+      color: $usage-red-shade;
+    }
+  }
+
+  // Drives CircleAlertIcon's stroke, which is set to currentColor.
+  .ff-usage-card__stat-info {
+    display: inline-flex;
+    align-items: center;
+    color: $gray-medium;
+    cursor: help;
+
+    svg {
+      width: $usage-icon-size;
+      height: $usage-icon-size;
+    }
+  }
+
+  .ff-usage-card__notice {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem; // 2px
+    align-items: flex-start;
+    width: 100%;
+    padding: 1rem 1.25rem; // 16px 20px
+    border: $usage-hairline solid $usage-gray-150;
+    border-radius: $border-radius;
+    background-color: $white-300;
+  }
+
+  .ff-usage-card__notice-title {
+    @include font-style($usage-font-body, $font-weight-medium, $gray-darkest);
+    line-height: normal;
+  }
+
+  .ff-usage-card__notice-body {
+    @include font-style($usage-font-body-sml, $font-weight-regular, $usage-gray-700);
+    line-height: 1.4;
+  }
+
+  &--over-limit {
+    border-color: $usage-red-300;
+    background-color: $usage-red-50;
+
+    .ff-usage-card__stat-info {
+      color: $usage-red-300;
+    }
+
+    .ff-usage-card__notice {
+      border-color: $usage-red-300;
+    }
+
+    .ff-usage-card__notice-title {
+      color: $usage-red-shade;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ home banner */
+
+// Home strip. Note the warning palette differs from the card's: the strip uses
+// yellow/500 + yellow/shade where the card uses orange/500 + orange/shade.
+// Nodes 25974:13140 (70%) / 25963:2723 (95%) / 25963:2494 (over limit).
+
+.ff-usage-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem; // 8px
+  height: 3.5rem; // 56px
+  padding: 0 1rem; // 0 16px
+  border: $usage-hairline solid $usage-gray-150;
+  border-radius: $border-radius;
+  background-color: $white-200;
+
+  .ff-usage-banner__content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; // 8px
+    min-width: 0;
+  }
+
+  // Drives CircleAlertIcon's stroke, which is set to currentColor.
+  .ff-usage-banner__icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    svg {
+      width: $usage-icon-size-lg;
+      height: $usage-icon-size-lg;
+    }
+  }
+
+  .ff-usage-banner__message {
+    @include font-style($usage-font-body, $font-weight-regular, $gray-darkest);
+    line-height: normal;
+  }
+
+  .ff-usage-banner__percentage,
+  .ff-usage-banner__headline {
+    font-weight: $font-weight-medium;
+  }
+
+  .ff-usage-banner__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; // 8px
+    flex-shrink: 0;
+  }
+
+  // Overrides V8CustomButton's default chrome to match the designed pill.
+  .ff-usage-banner__cta {
+    --ff-usage-cta-bg: #{$white-300};
+    --ff-usage-cta-border: #{$gray-x-light};
+
+    flex-shrink: 0;
+    gap: 0.5rem; // 8px
+    padding: 0.75rem 1.25rem; // 12px 20px
+    border: $usage-hairline solid var(--ff-usage-cta-border);
+    border-radius: $usage-pill-radius;
+    background-color: var(--ff-usage-cta-bg);
+    @include font-style($usage-font-body, $font-weight-regular, $gray-darkest);
+    line-height: normal;
+    white-space: nowrap;
+
+    &--warning {
+      --ff-usage-cta-bg: #{$usage-yellow-50};
+      --ff-usage-cta-border: #{$usage-yellow-500};
+    }
+
+    &--critical {
+      --ff-usage-cta-bg: #{$usage-red-50};
+      --ff-usage-cta-border: #{$usage-red-500};
+    }
+
+    // Over the limit the strip itself is tinted, so the pill reverts to white.
+    &--over-limit {
+      --ff-usage-cta-bg: #{$white-300};
+      --ff-usage-cta-border: #{$usage-red-500};
+    }
+
+    // The design specifies no hover state. Hold the state tint so the theme's default
+    // secondary-button hover does not repaint the pill grey.
+    &:hover:not(.is-disabled):not(.is-loading) {
+      border-color: var(--ff-usage-cta-border);
+      background-color: var(--ff-usage-cta-bg);
+    }
+  }
+
+  .ff-usage-banner__dismiss {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: $gray-dark;
+    cursor: pointer;
+
+    svg {
+      width: $usage-icon-size-lg;
+      height: $usage-icon-size-lg;
+    }
+  }
+
+  // The icon and the accented text run share the band's shade colour.
+  // Note: the design defines no state below 70%; --safe is our own extension, added because
+  // the strip is shown at all usage levels.
+  &--safe {
+    .ff-usage-banner__icon,
+    .ff-usage-banner__percentage {
+      color: $usage-green-shade;
+    }
+  }
+
+  &--warning {
+    .ff-usage-banner__icon,
+    .ff-usage-banner__percentage {
+      color: $usage-yellow-shade;
+    }
+  }
+
+  &--critical {
+    .ff-usage-banner__icon,
+    .ff-usage-banner__percentage {
+      color: $usage-red-shade;
+    }
+  }
+
+  &--over-limit {
+    border-color: $usage-red-300;
+    background-color: $usage-red-50;
+
+    .ff-usage-banner__icon,
+    .ff-usage-banner__headline {
+      color: $usage-red-shade;
+    }
+  }
+}
