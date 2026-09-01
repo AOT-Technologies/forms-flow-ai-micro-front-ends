@@ -92,6 +92,8 @@ declare module "@formsflow/components" {
     FONT_MAP,
     BUTTON_RADIUS_MAP,
     FORMSFLOW_LOGO_ICON_SVG,
+    UsageSummaryCard,
+    mapTenantDataToUsage
   }: any;
 
   export type StyleConfig = {
