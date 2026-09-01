@@ -99,14 +99,20 @@ const Organization: React.FC<any> = (props) => {
     }
   });
 
-  
   const usage = useMemo(() => mapTenantDataToUsage(tenantData), [tenantData]);
 
-  
-  const userRoles = JSON.parse(
-    StorageService.get(StorageService.User.USER_ROLE) || "[]"
-  );
-  const isOrganizationManager = userRoles?.includes("manage_organization");
+  const userRoles = useMemo<string[]>(() => {
+    try {
+      const parsed = JSON.parse(
+        StorageService.get(StorageService.User.USER_ROLE) || "[]"
+      );
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.error("Error parsing user roles:", error);
+      return [];
+    }
+  }, []);
+  const isOrganizationManager = userRoles.includes("manage_organization");
 
   // Refreshes the cached tenant record. The home page reads the same storage keys, so this
   // effect is kept even though the subscription summary it used to feed has been replaced.
@@ -168,7 +174,7 @@ const Organization: React.FC<any> = (props) => {
   return (
     <div className="organization-container">
       <div className="organization-content">
-        {isOrganizationManager && (
+        {isOrganizationManager && usage && (
           <div className="organization-usage">
             <UsageSummaryCard
               {...usage}

@@ -191,7 +191,7 @@ export const getTimeUntilReset = (
   if (!nextReset) return null;
 
   const remaining = nextReset.getTime() - now.getTime();
-  if (remaining <= 0) return { days: 0, hours: 0 };
+  if (remaining <= 0) return null;
 
   return {
     days: Math.floor(remaining / MS_PER_DAY),
@@ -275,33 +275,56 @@ export const getUsageCtaLabel = (
 const isActiveSubscription = (status?: string): boolean =>
   !isEmptyValue(status) && String(status).trim().toLowerCase() === "active";
 
+/** Values `subscription_plan` uses to mean "no paid plan". */
+const FREE_PLAN_ALIASES = new Set(["free", "trial"]);
+
+export const resolvePlanLabel = (
+  tenant?: TenantRecord | null
+): string | undefined => {
+  const raw = tenant?.subscription_plan;
+  const named = isEmptyValue(raw) ? "" : String(raw).trim().toLowerCase();
+
+  const known = Object.keys(PLAN_SUBMISSION_LIMITS).find(
+    (label) => label.toLowerCase() === named
+  );
+  if (known) return known;
+
+  if (FREE_PLAN_ALIASES.has(named)) return FREE_PLAN_LABEL;
+
+  // No plan named and no active subscription: the free tier is the only safe inference.
+  if (!named && !isActiveSubscription(tenant?.subscription_status)) {
+    return FREE_PLAN_LABEL;
+  }
+
+  return undefined;
+};
+
 /**
- * Derives usage data from the cached `tenantData` record.
- *
- * Pure and separate from the hook so it can be unit tested, and so backend integration
- * touches only this function - neither consuming app changes.
- *
- * `usedSubmissions` has no source in `tenantData`; pass it in once an API provides it.
+ * `usedSubmissions` has no source in `tenantData`, so it falls back to
+ * PLACEHOLDER_USED_SUBMISSIONS until the usage API exists. Pass the real value once it does.
  */
 export const mapTenantDataToUsage = (
   tenant?: TenantRecord | null,
   usedSubmissions: number = PLACEHOLDER_USED_SUBMISSIONS
-): UsageData => {
-  const isPaid = isActiveSubscription(tenant?.subscription_status);
-  const plan = isPaid ? PRO_PLAN_LABEL : FREE_PLAN_LABEL;
+): UsageData | null => {
+  // Still guards an explicitly passed bad value (NaN, negative) once a caller supplies one.
+  if (!Number.isFinite(usedSubmissions) || usedSubmissions < 0) {
+    return null;
+  }
 
-  // The tenant record carries the trial/subscription end date, which is the real reset point.
-  const resetDate =
-    usableDateString(tenant?.expiry_dt) ?? usableDateString(tenant?.trial_expiry_dt);
+  const plan = resolvePlanLabel(tenant);
+  if (!plan) return null;
+
+  const maxSubmissions = PLAN_SUBMISSION_LIMITS[plan];
+  if (!Number.isFinite(maxSubmissions) || maxSubmissions <= 0) return null;
 
   return {
     plan,
     usedSubmissions,
-    maxSubmissions:
-      PLAN_SUBMISSION_LIMITS[plan] ?? PLAN_SUBMISSION_LIMITS[FREE_PLAN_LABEL],
+    maxSubmissions,
     tenantJoinDate: usableDateString(tenant?.created_on),
-    nextResetDate: resetDate,
-    // Trials have an expiry but no invoice, so the column is paid-plans only.
-    nextBillingDate: isPaid ? resetDate : undefined,
+    nextBillingDate: isActiveSubscription(tenant?.subscription_status)
+      ? usableDateString(tenant?.expiry_dt)
+      : undefined,
   };
 };
