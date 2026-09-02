@@ -41,8 +41,7 @@
 // }
 
 .search-role {
-  margin-bottom: 1.75rem;
-  margin-top: 1.875rem;
+  margin-bottom: 1.25rem;
   display: flex;
 }
 
@@ -70,8 +69,9 @@
   opacity: 0.5;
 }
 .modal-title {
-  font-weight: 600;
-  color: #09174a;
+    color: #4A4A4A;
+    font-size: 1.25rem;
+    font-weight: 400;
 }
 .container-admin {
   .row {
@@ -144,6 +144,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacer-150);
+  .input-text {
+    width: 40%;
+  }
+  .input-textarea {
+    width: 50%;
+  }
 }
 
 .permission-tree {
@@ -210,6 +216,59 @@
     margin-top: 2px;
   }
 }
-.modal-header {
-  justify-content: space-between;
+
+.role-modal-dialog{
+  .modal-content{
+    .modal-header {
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .modal-body{
+      height: auto;
+      max-height: 50vh;
+      .role-tab-body{
+        padding: var(--spacer-100) var(--spacer-050);
+        .role-permissions-container{
+          border-radius: var(--border-radius);
+          border: 1px solid var(--gray-x-light);;
+          padding: var(--spacer-100);
+          height: 49vh;
+          overflow: scroll;
+        }
+        .user-table-container{
+          .user-count{
+            padding-top: var(--spacer-050);
+            padding-bottom: var(--spacer-125);
+            font-size: var(--font-size-m);
+          }
+        }
+        &.role-details{
+          .role-delete-container{
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacer-075);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-x-light);
+            padding: var(--spacer-100);
+            font-size: var(--font-size-m);
+            .info-panel--warning{
+              background-color: rgb(249 220 220 / 36%);
+              padding: var(--spacer-075);
+              .info-icon{
+                width: var(--spacer-100);
+                height: var(--spacer-100);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.role-badge{
+  background-color: var(--secondary);
+  color: var(--gray-darkest);
+  padding: var(--spacer-050) var(--spacer-100);
+  border-radius: var(--ff-border-radius-pill);
+  margin-right: var(--spacer-050);
 }

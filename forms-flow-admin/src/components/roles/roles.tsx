@@ -20,7 +20,6 @@ import {
   CustomSearch,
   CloseIcon,
   CopyIcon,
-  CustomTabs,
   FormInput,
   FormTextArea,
   DeleteIcon,
@@ -29,6 +28,7 @@ import {
   V8CustomButton,
   ReusableTable,
 } from "@formsflow/components";
+import { Tabs, Tab } from "react-bootstrap";
 
 const DEFAULT_SORT_MODEL: any[] = [];
 
@@ -402,12 +402,12 @@ const Roles = React.memo((props: any) => {
     setHandleConfirmation(false);
   };
 
-  const tabs = [
+  let tabs = [
     {
       eventKey: "Details",
       title: "Details",
       content: (
-        <div className="role-details">
+        <div className="role-tab-body role-details">
           <FormInput
             required
             value={showEditRoleModal ? editCandidate.name : payload.name}
@@ -438,19 +438,32 @@ const Roles = React.memo((props: any) => {
             minRows={3}
           />
           {showEditRoleModal && (
-            <div className="buttons-row">
-              <V8CustomButton
-                label={t("Delete This Role")}
-                onClick={() => {
-                  handleCloseEditRoleModal();
-                  setHandleConfirmation(true);
-                }}
-                dataTestId="role-delete-button"
-                icon={<DeleteIcon />}
-                ariaLabel="Role delete button"
-                iconWithText
+            <div className="role-delete-container">
+              <div className="buttons-row">
+                <V8CustomButton
+                  label={t("Delete This Role")}
+                  onClick={() => {
+                    handleCloseEditRoleModal();
+                    setHandleConfirmation(true);
+                  }}
+                  dataTestId="role-delete-button"
+                  icon={<DeleteIcon />}
+                  ariaLabel="Role delete button"
+                  // iconWithText
+                  />
+              </div>
+              <CustomInfo
+                className="note"
+                heading="Note"
+                variant="warning"
+                content={t(
+                  "Deleting this role will revoke access for everyone associated with this role. This cannot be undone."
+                )}
+                dataTestId="delete-role-note"
               />
+              <div>7 users currently have this role.</div>
             </div>
+
           )}
         </div>
       ),
@@ -459,121 +472,203 @@ const Roles = React.memo((props: any) => {
       eventKey: "Permissions",
       title: "Permissions",
       content: (
-        <PermissionTree
-          permissions={permissionData}
-          payload={showEditRoleModal ? editCandidate : payload}
-          handlePermissionCheck={
-            showEditRoleModal
-              ? handleEditPermissionCheck
-              : handlePermissionCheck
-          }
-          setPayload={showEditRoleModal ? setEditCandidate : setPayload}
-        />
+        <div className="role-tab-body">
+          <div className="role-permissions-container">
+            <PermissionTree
+              permissions={permissionData}
+              payload={showEditRoleModal ? editCandidate : payload}
+              handlePermissionCheck={
+                showEditRoleModal
+                ? handleEditPermissionCheck
+                : handlePermissionCheck
+              }
+              setPayload={showEditRoleModal ? setEditCandidate : setPayload}
+            />
+          </div>
+        </div>
       ),
     },
   ];
 
-  const showCreateModal = () => (
-    <div data-testid="create-role-modal">
-      <AppModal show={showRoleModal} onHide={handleCloseRoleModal} size="lg">
-        <AppModal.Header>
-          <AppModal.Title>
-            <p>{t("Create Role")}</p>
-          </AppModal.Title>
-          <div
-            className="icon-close"
-            onClick={handleCloseRoleModal}
-            data-testid="role-modal-close"
-            aria-label={t("Close")}
-          >
-            <CloseIcon dataTestId="action-modal-close" />
+  const renderRoleModal = () => {
+    const isEditMode = showEditRoleModal;
+    const modalTitle = isEditMode ? editCandidate.name : t("Add New Role");
+    const modalShow = isEditMode ? showEditRoleModal : showRoleModal;
+    const modalCloseHandler = isEditMode
+      ? handleCloseEditRoleModal
+      : handleCloseRoleModal;
+    const submitLabel = isEditMode ? t("Save Changes") : t("Create");
+    const submitAction = isEditMode ? handleUpdateRole : handleCreateRole;
+    const submitTestId = isEditMode ? "edit-role-button" : "create-new-role-button";
+    const ariaLabel = isEditMode
+      ? "Edit role button"
+      : "Create new role button";
+    
+    if (isEditMode) {
+      const columns = [
+    {
+      field: "username",
+      headerName: t("Users"),
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      renderCell: (params) => {
+        const rowData = params.row;
+        return (
+          <div>
+            {rowData?.firstName && (
+              <div>
+                {rowData.firstName} {rowData.lastName && rowData.lastName}
+              </div>
+            )}
+            <div style={{ color: "#767676" }}>{rowData?.username}</div>
           </div>
-        </AppModal.Header>
-        <AppModal.Body className="with-tabs">
-          <div className="tabs">
-            <CustomTabs
-              defaultActiveKey={key}
-              onSelect={setKey}
-              tabs={tabs}
-              dataTestId="create-roles-tabs"
-              ariaLabel="Create roles tabs"
-            />
+        );
+      },
+    },
+    {
+      field: "email",
+      headerName: t("Email"),
+      flex: 2,
+      minWidth: 200,
+      sortable: false,
+      renderCell: (params:any) => params.row?.email,
+    },
+    {
+      field: "id",
+      headerName: t("Status"),
+      width: 130,
+      minWidth: 130,
+      flex: 0,
+      sortable: false,
+      headerAlign: "right",
+      align: "right",
+      renderCell: (params:any) => params.row?.status ? t("Active") : t("Inactive")
+    },
+  ];
+      const userTab = {
+        eventKey: "Users",
+        title: "Users",
+        content: (
+          <div className="role-tab-body role-users">
+            {!loading ? (
+            <div
+              className="user-table-container"
+              data-testid="role-users-table"
+              >
+              <div className="user-count">{props && props.total ? props.total : '0'} users have this role</div>
+              <ReusableTable
+                columns={columns}
+                rows={props?.users || []}
+                rowCount={props.total ? props.total : 0}
+                loading={loading}
+                getRowId={(row: any) => row.id}
+                sortModel={DEFAULT_SORT_MODEL}
+                paginationMode="server"
+                sortingMode="client"
+                disableColumnMenu
+                disableRowSelectionOnClick
+                emptyStateMessage={props.error || t("No users found")}
+                paginationModel={{
+                  page: activePage - 1,
+                  pageSize: props?.limit?.sizePerPage || 5,
+                }}
+                onPaginationModelChange={({ page, pageSize }) => {
+                  if (pageSize !== props?.limit?.sizePerPage) {
+                    handleLimitChange(pageSize);
+                  } else {
+                    handlePageChange(page + 1);
+                  }
+                }}
+                pageSizeOptions={[5, 25, 50, 100]}
+                disableVirtualization
+                dataGridProps={{ getRowHeight: () => "auto" }}
+              />
+            </div>
+        ) : (
+          <Loading />
+            )}
           </div>
-        </AppModal.Body>
-        <AppModal.Footer>
-          <div className="buttons-row">
-            <V8CustomButton
-              label={t("Save Changes")}
-              disabled={disabled}
-              onClick={handleCreateRole}
-              dataTestId="create-new-role-button"
-              ariaLabel="Create new role button"
-            />
-            <V8CustomButton
-              label={t("Discard Changes")}
-              onClick={handleCloseRoleModal}
-              dataTestId="create-new-role-cancel-button"
-              ariaLabel="Create new role cancel button"
-              secondary
-            />
-          </div>
-        </AppModal.Footer>
-      </AppModal>
-    </div>
-  );
-  const showEditModal = () => (
-    <div data-testid="edit-role-modal">
-      <AppModal
-        show={showEditRoleModal}
-        onHide={handleCloseEditRoleModal}
-        size="lg"
-        restoreFocus={false}
-      >
-        <AppModal.Header>
-          <AppModal.Title>
-            <p>{editCandidate.name}</p>
-          </AppModal.Title>
-          <div
-            className="icon-close"
-            onClick={handleCloseEditRoleModal}
-            data-testid="role-modal-close"
-            aria-label={t("Close")}
-          >
-            <CloseIcon />
-          </div>
-        </AppModal.Header>
-        <AppModal.Body className="with-tabs">
-          <div className="tabs">
-            <CustomTabs
-              defaultActiveKey={key}
-              onSelect={setKey}
-              tabs={tabs}
-              dataTestId="edit-roles-tabs"
-              ariaLabel="Edit roles tabs"
-            />
-          </div>
-        </AppModal.Body>
-        <AppModal.Footer>
-          <div className="buttons-row">
-            <V8CustomButton
-              label={t("Save Changes")}
-              disabled={disabled}
-              onClick={handleUpdateRole}
-              dataTestId="edit-role-button"
-              ariaLabel="Edit role button"
-            />
-            <V8CustomButton
-              label={t("Discard Changes")}
-              onClick={handleCloseEditRoleModal}
-              dataTestId="edit-role-cancel-button"
-              ariaLabel="Edit role cancel button"
-              secondary
-            />
-          </div>
-        </AppModal.Footer>
-      </AppModal>
-    </div>
-  );
+        ),
+      };
+      tabs= [userTab, ...tabs];
+    }
+
+    return (
+      <div data-testid={isEditMode ? "edit-role-modal" : "create-role-modal"}>
+        <AppModal
+          show={modalShow}
+          onHide={modalCloseHandler}
+          size="lg"
+          centered={!isEditMode}
+          restoreFocus={false}
+          dialogClassName="role-modal-dialog"
+        >
+          <AppModal.Header>
+            <AppModal.Title>
+              <p>{modalTitle}</p>
+            </AppModal.Title>
+            <div
+              className="icon-close"
+              onClick={modalCloseHandler}
+              data-testid="role-modal-close"
+              aria-label={t("Close")}
+            >
+              <CloseIcon color="#525254" />
+            </div>
+          </AppModal.Header>
+          <AppModal.Body className="with-tabs">
+            <div className="pill-tabs-container">
+              <Tabs
+                activeKey={key}
+                onSelect={(key) => key && setKey(key)}
+                id="profile-settings-tabs"
+                data-testid="profile-settings-tabs"
+                className="pill-tabs"
+              >
+                {tabs.map((tab) => (
+                  <Tab
+                    key={tab.eventKey}
+                    eventKey={tab.eventKey}
+                    title={
+                      <span data-testid={`profile-settings-${tab.eventKey}-tab`}>
+                        {tab.title}
+                      </span>
+                    }
+                  >
+                    {/* Empty content; this is navigation. Body renders based on activeTab. */}
+                  </Tab>
+                ))}
+              </Tabs>
+            </div>
+            <div className="pill-tabs-content">
+              {tabs.find((tab) => tab.eventKey === key)?.content}
+            </div>
+          </AppModal.Body>
+          <AppModal.Footer>
+            <div className="buttons-row">
+              {isEditMode && (
+                <V8CustomButton
+                  label={t("Discard Changes")}
+                  onClick={handleCloseEditRoleModal}
+                  dataTestId="edit-role-cancel-button"
+                  ariaLabel="Edit role cancel button"
+                  secondary
+                />
+              )}
+              <V8CustomButton
+                label={submitLabel}
+                disabled={disabled}
+                onClick={submitAction}
+                dataTestId={submitTestId}
+                ariaLabel={ariaLabel}
+              />
+            </div>
+          </AppModal.Footer>
+        </AppModal>
+      </div>
+    );
+  };
 
   const handlePageChange = (page: number) => {
     setActivePage(page);
@@ -587,16 +682,26 @@ const Roles = React.memo((props: any) => {
   const columns = [
     {
       field: "name",
-      headerName: t("Role Name"),
-      flex: 2,
-      minWidth: 160,
+      headerName: t("Role"),
+      preset: "primaryName",
+      flex: 2.5,
+      minWidth: 200,
       sortable: false,
       cellClassName: "text-break",
-      renderCell: (params) => params.row?.name,
+      renderCell: (params:any) => {
+        return (
+          <div className="d-flex align-items-center">
+            <div className="role-badge">owner</div>
+            {params.row?.name}
+          </div>
+          
+        );
+      },
     },
     {
       field: "candidateGroupFull",
       headerName: t("Candidate Groups"),
+      preset:"longText",
       flex: 2,
       minWidth: 180,
       sortable: false,
@@ -629,82 +734,38 @@ const Roles = React.memo((props: any) => {
     {
       field: "description",
       headerName: t("Description"),
+      preset:"longText",
       flex: 2,
-      minWidth: 160,
+      minWidth: 180,
       sortable: false,
       cellClassName: "text-break",
-      renderCell: (params) => params.row?.description,
+      renderCell: (params: any) => params.row?.description,
     },
     {
       field: "users",
       headerName: t("Users"),
-      width: 110,
+      preset: "count",
+      // width: 110,
       minWidth: 110,
       flex: 0,
       sortable: false,
-      renderCell: (params) => {
-        const rowData = params.row;
-        // Keycloak service accounts (e.g. "service-account-devtest-form...") aren't real users.
-        const assignableUsers = users.filter(
-          (item) =>
-            !String(item.username ?? "")
-              .trim()
-              .startsWith("service-account-")
-        );
-        return (
-          <OverlayTrigger
-            trigger="click"
-            key={params.id}
-            placement="left"
-            rootClose={true}
-            container={document.body}
-            overlay={
-              <Popover id={`popover-positioned-bottom`}>
-                <Popover.Body>
-                  <div className="role-list">
-                    {!loading ? (
-                      assignableUsers.length > 0 ? (
-                        assignableUsers?.map((item, key) => (
-                          <div className="role-user">{item.username}</div>
-                        ))
-                      ) : (
-                        <div>{`${t("No results found")}`}</div>
-                      )
-                    ) : (
-                      <>{`${t("Loading...")}`}</>
-                    )}
-                  </div>
-                </Popover.Body>
-              </Popover>
-            }
-          >
-            <div
-              className="user-list"
-              onClick={(e) => handleClick(e, rowData)}
-              data-testid="user-list-view-dropdown"
-            >
-              <p>{t("View")}</p>
-              <i className="fa fa-caret-down ms-2" />
-            </div>
-          </OverlayTrigger>
-        );
-      },
+      renderCell: (params:any) => params.row?.userCount || 0,
     },
     {
       field: "id",
-      headerName: t("Actions"),
-      width: 100,
-      minWidth: 100,
+      headerName: t(""),
+      preset:"actions",
+      // width: 100,
+      minWidth: 130,
       flex: 0,
       sortable: false,
       headerAlign: "right",
-      renderCell: (params) => {
+      renderCell: (params:any) => {
         const rowData = params.row;
         return (
           <div className="ms-3">
-            <i
-              className="fa fa-pencil"
-              style={{ color: "#7E7E7F", cursor: "pointer" }}
+            <V8CustomButton
+              label={t("View")}
               onClick={() => {
                 const { candidateGroupFull: _omitCg, ...roleForModal } =
                   rowData;
@@ -719,6 +780,11 @@ const Roles = React.memo((props: any) => {
               aria-label={t("Edit role")}
               data-testid="admin-roles-edit-icon"
             />
+            {/* <i
+              className="fa fa-pencil"
+              style={{ color: "#7E7E7F", cursor: "pointer" }}
+              
+            /> */}
           </div>
         );
       },
@@ -726,7 +792,7 @@ const Roles = React.memo((props: any) => {
   ];
   return (
     <>
-      <div className="container-admin">
+      <div className="container-admin-roles">
         <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
           <CustomSearch
             handleClearSearch={handleClearSearch}
@@ -741,7 +807,7 @@ const Roles = React.memo((props: any) => {
 
         {!props?.loading ? (
           <div>
-            <div className="px-4" data-testid="admin-roles-table">
+            <div data-testid="admin-roles-table">
               <ReusableTable
                 columns={columns}
                 rows={roles}
@@ -773,27 +839,19 @@ const Roles = React.memo((props: any) => {
         ) : (
           <Loading />
         )}
-        {showCreateModal()}
-        {showEditModal()}
+        {renderRoleModal()}
       </div>
       {handleConfirmation && (
         <ConfirmModal
           show={handleConfirmation}
           title={t("Delete This Role?")}
           message={
-            <CustomInfo
-              className="note"
-              heading="Note"
-              content={t(
-                "All users that have this role assigned to them might loose access to certain feature of formsflow. This action cannot be undone."
-              )}
-              dataTestId="delete-role-note"
-            />
+            "Deleting a role is permanent and cannot be undone."
           }
           primaryBtnAction={closeConfirmation}
           onClose={closeConfirmation}
-          primaryBtnText={t("No, Keep This Role")}
-          secondaryBtnText={t("Yes, Delete This Role")}
+          primaryBtnText={t("Cancel")}
+          secondaryBtnText={t("Delete Role")}
           secondaryBtnAction={() => {
             deleteRole(deleteCandidate);
             closeConfirmation();
