@@ -1,8 +1,13 @@
+const path = require("path");
+
 module.exports = {
   rootDir: "src",
   testEnvironment: "jsdom",
   transform: {
-    "^.+\\.(j|t)sx?$": "babel-jest",
+    "^.+\\.(j|t)sx?$": [
+      "babel-jest",
+      { configFile: path.resolve(__dirname, "babel.config.json") },
+    ],
   },
   moduleNameMapper: {
     // scss added: source files import .scss, which previously crashed the
