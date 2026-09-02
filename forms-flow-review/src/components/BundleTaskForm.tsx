@@ -7,7 +7,13 @@ import {
   selectRoot,
   selectError,
 } from "@aot-technologies/formio-react";
-import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
+import {
+  BreadCrumbs,
+  V8CustomButton,
+  useFormTheme,
+} from "@formsflow/components";
+import { RequestService } from "@formsflow/service";
+import { WEB_BASE_URL } from "../api/config";
 import { textTruncate } from "../helper/helper";
 import cloneDeep from "lodash/cloneDeep";
 import {
@@ -23,6 +29,9 @@ import {
 } from "../actions/taskActions";
 import { CUSTOM_SUBMISSION_ENABLE } from "../constants";
 import Loading from "./Loading";
+
+// Module-scope (not per-render) so useFormTheme's effect deps stay stable.
+const httpGetRequest = (url: string) => RequestService.httpGETRequest(url);
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
@@ -66,6 +75,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
     () => taskAssignee !== currentUser,
     [taskAssignee, currentUser]
   );
+  const { themeClass } = useFormTheme(form?._id, httpGetRequest, WEB_BASE_URL);
   console.log(
     isReadOnly,
     taskAssignee,
@@ -202,7 +212,7 @@ const BundleTaskForm: React.FC<TaskFormProps> = ({
         dataTestId="bundle-form-breadcrumbs"
       />
 
-      <div className="scrollable-overview-with-header bg-white m-0 form-border p-5">
+      <div className={`scrollable-overview-with-header bg-white m-0 form-border p-5 ${themeClass}`}>
         {taskDetailsLoading || getFormLoading ? (
           <div className="container">
             <Loading />

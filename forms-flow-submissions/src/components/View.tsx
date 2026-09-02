@@ -1,13 +1,18 @@
 import React, { useMemo } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
+import { useFormTheme } from "@formsflow/components";
 import { Form, selectRoot, selectError } from "@aot-technologies/formio-react";
 import { createSelector } from "@reduxjs/toolkit";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n.js";
 import { CUSTOM_SUBMISSION_ENABLE } from "../constants/constants";
-import { CUSTOM_SUBMISSION_URL } from "../api/config";
+import { CUSTOM_SUBMISSION_URL, WEB_BASE_URL } from "../api/config";
 import { RootState } from "../reducers/index";
 import Loading from "./Loading";
-import { HelperServices, MULTITENANCY_ENABLED } from "@formsflow/service";
+import {
+  HelperServices,
+  MULTITENANCY_ENABLED,
+  RequestService,
+} from "@formsflow/service";
 
 interface OwnProps {
   page?: string;
@@ -17,6 +22,9 @@ interface OwnProps {
 // notification defeated connect's shallow compare and React.memo, re-rendering
 // the formio <Form> wrapper on every dispatch.
 const VIEW_FORM_OPTIONS = { readOnly: true };
+
+// Module-scope (not per-render) so useFormTheme's effect deps stay stable.
+const httpGetRequest = (url: string) => RequestService.httpGETRequest(url);
 
 const selectFormErrors = createSelector(
   [
@@ -44,6 +52,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
     form: { form },
     submission: reduxSubmission,
   } = props;
+  const { themeClass } = useFormTheme(form?._id, httpGetRequest, WEB_BASE_URL);
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
   );
@@ -109,7 +118,7 @@ const View: React.FC<PropsFromRedux> = React.memo((props) => {
 
   return (
     <div className={`${scrollableOverview} bg-white ps-3 pe-3 m-0 form-border`}>
-      <div className="sub-container wizard-tab">
+      <div className={`sub-container wizard-tab ${themeClass}`}>
         <Form
           src={form}
           submission={safeSubmission}
