@@ -16,13 +16,13 @@
     "style-loader": "^4.0.0",
     "webpack": "^5.65.0",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.15.2"
+    "webpack-dev-server": "^6.0.0"
   },
     "overrides": {
     "uuid": "^11.1.1"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
-    "sass": "^1.58.2"
+    "sass": "^1.103.1"
   }
 }
