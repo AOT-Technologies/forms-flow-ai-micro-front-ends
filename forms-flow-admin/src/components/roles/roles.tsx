@@ -142,6 +142,10 @@ const Roles = React.memo((props: any) => {
 
     updatedRoles = removingTenantId(updatedRoles, tenantId);
 
+    updatedRoles = updatedRoles.filter(
+      (role) => role.name?.replace(/\//g, "") !== "camunda-admin"
+    );
+
     updatedRoles = updatedRoles.map((role) => ({
       ...role,
       candidateGroupFull: resolveFullCandidateGroup(role),
