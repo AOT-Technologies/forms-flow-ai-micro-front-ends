@@ -146,6 +146,8 @@ const Users = React.memo((props: any) => {
   const canRemoveRole = (rowData, item) => {
     // Minimum role enforcement: the last remaining role can't be removed
     if ((rowData?.role?.length || 0) <= 1) return false;
+    // The admin role is protected
+    if (item?.path === "/admin") return false;
     // The tenant creator's OWNER role is protected
     return !isProtectedOwnerRole(rowData, item);
   };
