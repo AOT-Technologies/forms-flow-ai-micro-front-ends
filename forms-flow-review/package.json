@@ -44,8 +44,8 @@
     "react-dom": "^18.3.1",
     "react-i18next": "^12.3.1",
     "react-redux": "^8.1.3",
-    "react-router-dom": "^6.28.0",
-    "sass": "^1.57.1",
+    "react-router-dom": "^7.18.3",
+    "sass": "^1.103.1",
     "sass-loader": "^13.2.0",
     "ts-config-single-spa": "^3.0.0",
     "typescript": "^5.4.5",
@@ -86,7 +86,7 @@
     "react-dom": "^18.3.1",
     "react-i18next": "^12.1.4",
     "react-redux": "^8.1.3",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^7.18.3"
   },
   "types": "dist/formsflow-review.d.ts"
 }
