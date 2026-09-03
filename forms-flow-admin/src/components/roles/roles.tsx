@@ -29,6 +29,7 @@ import {
   ReusableTable,
 } from "@formsflow/components";
 import { Tabs, Tab } from "react-bootstrap";
+import { getColumnPresetSizing } from "@formsflow/service";
 
 const DEFAULT_SORT_MODEL: any[] = [];
 
@@ -160,6 +161,7 @@ const Roles = React.memo((props: any) => {
     }));
 
     setRoles(updatedRoles);
+    console.log("preset",getColumnPresetSizing("primaryName"));
   }, [props.roles, search, tenantId, resolveFullCandidateGroup]);
 
   React.useEffect(() => {
@@ -678,14 +680,14 @@ const Roles = React.memo((props: any) => {
     setSizePerPage(newLimit);
     setActivePage(1);
   };
-
+ 
   const columns = [
     {
       field: "name",
       headerName: t("Role"),
       preset: "primaryName",
-      flex: 2.5,
-      minWidth: 200,
+      ...getColumnPresetSizing("primaryName"),
+      flex:2.5,
       sortable: false,
       cellClassName: "text-break",
       renderCell: (params:any) => {
@@ -702,8 +704,7 @@ const Roles = React.memo((props: any) => {
       field: "candidateGroupFull",
       headerName: t("Candidate Groups"),
       preset:"longText",
-      flex: 2,
-      minWidth: 180,
+      ...getColumnPresetSizing("longText"),
       sortable: false,
       headerClassName: "roles-candidate-group-header",
       cellClassName: "text-break roles-candidate-group-cell",
@@ -735,8 +736,7 @@ const Roles = React.memo((props: any) => {
       field: "description",
       headerName: t("Description"),
       preset:"longText",
-      flex: 2,
-      minWidth: 180,
+      ...getColumnPresetSizing("longText"),
       sortable: false,
       cellClassName: "text-break",
       renderCell: (params: any) => params.row?.description,
@@ -745,20 +745,15 @@ const Roles = React.memo((props: any) => {
       field: "users",
       headerName: t("Users"),
       preset: "count",
-      // width: 110,
-      minWidth: 110,
-      flex: 0,
+      ...getColumnPresetSizing("count"),
       sortable: false,
       renderCell: (params:any) => params.row?.userCount || 0,
     },
     {
       field: "id",
       headerName: t(""),
-      preset:"actions",
-      // width: 100,
-      minWidth: 130,
-      flex: 0,
-      sortable: false,
+      preset: "actions",
+      ...getColumnPresetSizing("actions"),
       headerAlign: "right",
       renderCell: (params:any) => {
         const rowData = params.row;
