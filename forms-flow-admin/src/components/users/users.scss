@@ -208,10 +208,10 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
   border-radius: $user-table-border-radius;
 }
 
-.user-filter-container > select {
-  border: none;
-  width: 50%;
-}
+// .user-filter-container > select {
+//   width: 100%;
+//   outline: none;
+// }
 
 .success {
   color: var(--color-success);

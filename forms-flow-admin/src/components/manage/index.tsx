@@ -156,7 +156,7 @@ const Manage: React.FC<ManageProps> = ({
             </div>
           )}
 
-          {activeTab === "users" && isUserManager && MULTITENANCY_ENABLED && (
+          {activeTab === "users" && isUserManager && (
             <div className="manage-tabs-action">
               <V8CustomButton
                 onClick={() => setUserCreateTrigger((prev) => prev + 1)}
