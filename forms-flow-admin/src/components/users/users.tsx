@@ -22,11 +22,18 @@ import {
   V8CustomButton,
   CustomTextInput,
   ReusableTable,
+  AddWithDropdown,
 } from "@formsflow/components";
 import { useParams } from "react-router-dom";
 import { getColumnPresetSizing, getRedirectUrl, StorageService } from "@formsflow/service";
 
 const DEFAULT_SORT_MODEL: any[] = [];
+
+type AddRoleDropdownOption = {
+  id: string;
+  name: string;
+  description?: string;
+};
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -231,7 +238,7 @@ const Users = React.memo((props: any) => {
             name: formatRoleDisplayName(role.name, tenantKeyForRoleDisplay),
           }));
 
-        const addSingleUserRole = (option: { id: string; name: string }) => {
+        const addSingleUserRole = (option: AddRoleDropdownOption) => {
           const user_id = rowData.id;
           const payload = {
             userId: user_id,
@@ -249,13 +256,22 @@ const Users = React.memo((props: any) => {
             });
         };
 
+        const availableRoleDropdownOptions: AddRoleDropdownOption[] =
+          availableRoleOptions.map((role: any) => {
+            const fullRole = roles.find((r: any) => r.id === role.id) as any;
+            return {
+              id: role.id,
+              name: role.name,
+              description: fullRole?.description || "",
+            };
+          });
+
         return (
           <div className="d-flex flex-wrap align-items-center col-12">
             {cell.map((item: any, i: number) => (
               <div
                 key={i}
-                className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 my-1 small m-2"
-                style={{ background: "#EAEFFF" }}
+                className="role-badge user-roles"
               >
                 <OverlayTrigger
                   placement="bottom"
@@ -284,12 +300,15 @@ const Users = React.memo((props: any) => {
                 </OverlayTrigger>
               </div>
             ))}
-            <AddWithDropdown
-              options={availableRoleOptions}
-              onSelect={addSingleUserRole}
-              dataTestId={`user-add-role-${rowData.id}`}
-              ariaLabel={t("Add role")}
-            />
+            {availableRoleDropdownOptions.length > 0 && (
+              <AddWithDropdown
+                options={availableRoleDropdownOptions}
+                onSelect={addSingleUserRole}
+                ariaLabel={t("Add role")}
+                emptyMessage={t("No roles found")}
+                dataTestId={`user-role-add-${rowData.id}`}
+              />
+            )}
           </div>
         );
       },
