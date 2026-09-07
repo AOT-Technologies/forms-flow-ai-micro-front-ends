@@ -63,4 +63,3 @@ export * from "./CustomComponents/ReusableStandardModal";
 export * from "./CustomComponents/SelectWithCustomValue";
 export * from "./CustomComponents/FilterableDropdown";
 export * from "./CustomComponents/AppModal";
-export * from "./CustomComponents/AddWithDropdown";
