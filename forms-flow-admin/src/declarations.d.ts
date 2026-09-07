@@ -88,5 +88,6 @@ declare module "@formsflow/components" {
     UpArrowIcon,
     AppModal,
     ReusableTable,
+    AddWithDropdown,
   }: any;
 }
