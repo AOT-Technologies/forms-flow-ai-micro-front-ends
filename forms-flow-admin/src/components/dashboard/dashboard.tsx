@@ -15,7 +15,14 @@ import { getColumnPresetSizing, StorageService } from "@formsflow/service";
 const DEFAULT_SORT_MODEL: any[] = [];
 
 const InsightDashboard = React.memo((props: any) => {
-  const { dashboards, groups, setCount, loading: parentLoading } = props;
+  const {
+    dashboards,
+    groups,
+    setCount,
+    loading: parentLoading,
+    search,
+    setSearch,
+  } = props;
 
   const isGroupUpdated = groups.length > 0;
   const [dashboardList, setDashboardList] = React.useState([]);
@@ -33,8 +40,8 @@ const InsightDashboard = React.memo((props: any) => {
   const [activePage, setActivePage] = React.useState(1);
   const [err, setErr] = React.useState({});
   const [limit, setLimit] = React.useState(5);
-  const [searchKey, setSearchKey] = React.useState("");
   const [loading, setLoading] = React.useState(false);
+  const [sortModel, setSortModel] = React.useState(DEFAULT_SORT_MODEL);
 
   // Use the authorizations data passed from parent
   React.useEffect(() => {
@@ -49,6 +56,7 @@ const InsightDashboard = React.memo((props: any) => {
     if (dashboards && Array.isArray(dashboards)) {
       setDashboardList(dashboards);
       setCount(dashboards.length);
+      setActivePage(1);
     }
   }, [dashboards, setCount]);
 
@@ -121,17 +129,21 @@ const InsightDashboard = React.memo((props: any) => {
     setActivePage(1);
   };
 
+  const handleSortChange = (newSortModel: any[]) => {
+    setSortModel(newSortModel);
+  };
+
   React.useEffect(() => {
       setLoading(props?.loading);
   }, [props?.loading]);
   
   const handleSearch = (e) => {
     if (e && e.key === "Enter") {
-      setSearchKey(e.target.value);
+      setSearch(e.target.value);
     }
   };
   const handleClearSearch = () => {
-    setSearchKey("");
+    setSearch("");
   };
 
   const columns = [
@@ -141,7 +153,9 @@ const InsightDashboard = React.memo((props: any) => {
       preset: "primaryName",
       ...getColumnPresetSizing("primaryName"),
       textAlign: "left",
-      sortable: false,
+      sortable: true,
+      valueGetter: (value: unknown, row: any) =>
+        row?.resourceDetails?.name ?? "",
       renderCell: (params) => params.row?.resourceDetails?.name,
     },
     {
@@ -256,8 +270,8 @@ const InsightDashboard = React.memo((props: any) => {
             >
               <div className="col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12">
                 <CustomSearch
-                  search={searchKey}
-                  setSearch={setSearchKey}
+                  search={search}
+                  setSearch={setSearch}
                   handleSearch={handleSearch}
                   handleClearSearch={handleClearSearch}
                   searchLoading={loading}
@@ -272,7 +286,8 @@ const InsightDashboard = React.memo((props: any) => {
                 rows={dashboardList}
                 loading={isLoading}
                 getRowId={(row) => row.resourceId}
-                sortModel={DEFAULT_SORT_MODEL}
+                sortModel={sortModel}
+                onSortModelChange={handleSortChange}
                 paginationMode="client"
                 sortingMode="client"
                 disableColumnMenu
