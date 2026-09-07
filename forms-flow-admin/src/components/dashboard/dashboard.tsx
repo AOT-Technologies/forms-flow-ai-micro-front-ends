@@ -9,8 +9,8 @@ import { MULTITENANCY_ENABLED } from "../../constants";
 
 import { updateAuthorization, fetchdashboards } from "../../services/dashboard";
 import { useTranslation } from "react-i18next";
-import { V8CustomButton, ReusableTable } from "@formsflow/components";
-import { StorageService } from "@formsflow/service";
+import { V8CustomButton, ReusableTable, CustomSearch, AddWithDropdown } from "@formsflow/components";
+import { getColumnPresetSizing, StorageService } from "@formsflow/service";
 
 const DEFAULT_SORT_MODEL: any[] = [];
 
@@ -33,6 +33,8 @@ const InsightDashboard = React.memo((props: any) => {
   const [activePage, setActivePage] = React.useState(1);
   const [err, setErr] = React.useState({});
   const [limit, setLimit] = React.useState(5);
+  const [searchKey, setSearchKey] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   // Use the authorizations data passed from parent
   React.useEffect(() => {
@@ -119,20 +121,35 @@ const InsightDashboard = React.memo((props: any) => {
     setActivePage(1);
   };
 
+  React.useEffect(() => {
+      setLoading(props?.loading);
+  }, [props?.loading]);
+  
+  const handleSearch = (e) => {
+    if (e && e.key === "Enter") {
+      setSearchKey(e.target.value);
+    }
+  };
+  const handleClearSearch = () => {
+    setSearchKey("");
+  };
+
   const columns = [
     {
       field: "dashboardName",
       headerName: t("Dashboard"),
-      flex: 2,
-      minWidth: 140,
+      preset: "primaryName",
+      ...getColumnPresetSizing("primaryName"),
+      textAlign: "left",
       sortable: false,
       renderCell: (params) => params.row?.resourceDetails?.name,
     },
     {
       field: "roles",
       headerName: t("Access Roles"),
-      flex: 6,
-      minWidth: 300,
+      preset: "chipSet",
+      ...getColumnPresetSizing("chipSet"),
+      textAlign: "left",
       sortable: false,
       renderCell: (params) => {
         const rowData = params.row;
@@ -142,8 +159,7 @@ const InsightDashboard = React.memo((props: any) => {
             {cell?.map((label, i) => (
               <div
                 key={i}
-                className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 small m-2"
-                style={{ background: "#EAEFFF" }}
+                className="role-badge user-role-badge"
                 data-testid={`dashboard-access-group-${i}`}
               >
                 <span className="">
@@ -157,105 +173,123 @@ const InsightDashboard = React.memo((props: any) => {
                 </span>
               </div>
             ))}
+            <AddWithDropdown
+              id={`dashboard-add-auth-${params.id}`}
+              name="Add Dashboard Auth"
+              options={remainingGroups}
+              onSelect={addDashboardAuth}
+              emptyMessage={t("No groups available")}
+              dataTestId={`dashboard-add-auth-dropdown-${params.id}`}
+            />
           </div>
         );
       },
     },
-    {
-      field: "resourceId",
-      headerName: t("Action"),
-      width: 140,
-      minWidth: 140,
-      flex: 0,
-      sortable: false,
-      headerAlign: "center",
-      align: "center",
-      renderCell: (params) => {
-        const rowData = params.row;
-        return (
-          <OverlayTrigger
-            trigger="click"
-            key={params.id}
-            placement="left"
-            rootClose={true}
-            container={document.body}
-            overlay={
-              <Popover id={`popover-positioned-bottom`}>
-                <Popover.Body>
-                  <div className="role-list">
-                    {remainingGroups.length > 0 ? (
-                      remainingGroups.map((item, key) => (
-                        <div
-                          className="role"
-                          key={key}
-                          onClick={() => addDashboardAuth(item)}
-                          data-testid={`dashboard-remaining-group-${key}`}
-                        >
-                          {formatRoleDisplayName(
-                            item.path,
-                            tenantKeyForRoleDisplay
-                          )}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="role">{`${t(
-                        "All groups have access to the dashboard"
-                      )}`}</div>
-                    )}
-                  </div>
-                </Popover.Body>
-              </Popover>
-            }
-          >
-            <V8CustomButton
-              label={t("Add")}
-              onClick={(e) => handleClick(e, rowData)}
-              variant="primary"
-              data-testid={params.id}
-              disabled={!isGroupUpdated}
-              icon={<i className="fa-solid fa-plus me-2"></i>}
-            />
-          </OverlayTrigger>
-        );
-      },
-    },
+    // {
+    //   field: "resourceId",
+    //   headerName: t("Action"),
+    //   width: 140,
+    //   minWidth: 140,
+    //   flex: 0,
+    //   sortable: false,
+    //   headerAlign: "center",
+    //   align: "center",
+    //   renderCell: (params) => {
+    //     const rowData = params.row;
+    //     return (
+    //       <OverlayTrigger
+    //         trigger="click"
+    //         key={params.id}
+    //         placement="left"
+    //         rootClose={true}
+    //         container={document.body}
+    //         overlay={
+    //           <Popover id={`popover-positioned-bottom`}>
+    //             <Popover.Body>
+    //               <div className="role-list">
+    //                 {remainingGroups.length > 0 ? (
+    //                   remainingGroups.map((item, key) => (
+    //                     <div
+    //                       className="role"
+    //                       key={key}
+    //                       onClick={() => addDashboardAuth(item)}
+    //                       data-testid={`dashboard-remaining-group-${key}`}
+    //                     >
+    //                       {formatRoleDisplayName(
+    //                         item.path,
+    //                         tenantKeyForRoleDisplay
+    //                       )}
+    //                     </div>
+    //                   ))
+    //                 ) : (
+    //                   <div className="role">{`${t(
+    //                     "All groups have access to the dashboard"
+    //                   )}`}</div>
+    //                 )}
+    //               </div>
+    //             </Popover.Body>
+    //           </Popover>
+    //         }
+    //       >
+    //         <V8CustomButton
+    //           label={t("Add")}
+    //           onClick={(e) => handleClick(e, rowData)}
+    //           variant="primary"
+    //           data-testid={params.id}
+    //           disabled={!isGroupUpdated}
+    //           icon={<i className="fa-solid fa-plus me-2"></i>}
+    //         />
+    //       </OverlayTrigger>
+    //     );
+    //   },
+    // },
   ];
 
   return (
     <>
       <div className="" role="definition">
-        <br />
         <div>
           {!isLoading ? (
-            <div>
-              <div
-                className="table-container-admin mb-3 px-4"
-                data-testid="admin-dashboard-table"
-              >
-                <ReusableTable
-                  columns={columns}
-                  rows={dashboardList}
-                  loading={isLoading}
-                  getRowId={(row) => row.resourceId}
-                  sortModel={DEFAULT_SORT_MODEL}
-                  paginationMode="client"
-                  sortingMode="client"
-                  disableColumnMenu
-                  disableRowSelectionOnClick
-                  emptyStateMessage={props.error || t("No data Found")}
-                  paginationModel={{ page: activePage - 1, pageSize: limit }}
-                  onPaginationModelChange={({ page, pageSize }) => {
-                    if (pageSize !== limit) {
-                      handleLimitChange(pageSize);
-                    } else {
-                      setActivePage(page + 1);
-                    }
-                  }}
-                  pageSizeOptions={[5, 25, 50, 100]}
-                  disableVirtualization
-                  dataGridProps={{ getRowHeight: () => "auto" }}
+            <div
+              className="table-container-admin mb-3"
+              data-testid="admin-dashboard-table"
+            >
+              <div className="col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12">
+                <CustomSearch
+                  search={searchKey}
+                  setSearch={setSearchKey}
+                  handleSearch={handleSearch}
+                  handleClearSearch={handleClearSearch}
+                  searchLoading={loading}
+                  placeholder={t("Search by dashboard")}
+                  title={t("Search...")}
+                  dataTestId="search-dashboards-input"
                 />
               </div>
+              <hr/>
+              <ReusableTable
+                columns={columns}
+                rows={dashboardList}
+                loading={isLoading}
+                getRowId={(row) => row.resourceId}
+                sortModel={DEFAULT_SORT_MODEL}
+                paginationMode="client"
+                sortingMode="client"
+                disableColumnMenu
+                disableRowSelectionOnClick
+                emptyStateMessage={props.error || t("No data Found")}
+                paginationModel={{ page: activePage - 1, pageSize: limit }}
+                onPaginationModelChange={({ page, pageSize }) => {
+                  if (pageSize !== limit) {
+                    handleLimitChange(pageSize);
+                  } else {
+                    setActivePage(page + 1);
+                  }
+                }}
+                pageSizeOptions={[5, 25, 50, 100]}
+                disableVirtualization
+                dataGridProps={{ getRowHeight: () => "auto" }}
+              />
             </div>
           ) : (
             <Loading />

@@ -10,6 +10,9 @@
   max-height: calc(100vh - 14rem);
   .MuiDataGrid-columnHeader--last,
   .MuiDataGrid-columnHeaderTitleContainer {
-    justify-content: center !important;
+    justify-content: flex-start !important;
+  }
+  .MuiDataGrid-cell>div {
+    align-items: center;
   }
 }

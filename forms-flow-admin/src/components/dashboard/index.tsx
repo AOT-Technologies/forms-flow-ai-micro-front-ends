@@ -12,6 +12,7 @@ const AdminDashboard = React.memo((props: any) => {
   const [dashboardLoading, setDashboardLoading] = React.useState(true);
   const [groupLoading, setGroupLoading] = React.useState(true);
   const [loading, setLoading] = React.useState(true);
+  const [search, setSearch] = React.useState(undefined);
 
   React.useEffect(() => {
     setTab("Dashboard");
@@ -41,6 +42,29 @@ const AdminDashboard = React.memo((props: any) => {
   }, []);
 
   React.useEffect(() => {
+      if (search === undefined) return;
+      let delay = setTimeout(() => {
+        setLoading(true);
+        // fetchdashboards(
+        //   filter,
+        //   1,
+        //   search,
+        //   sizePerPage,
+        //   (results) => {
+        //     setDashboards(results.data);
+        //     setLoading(false);
+        //   },
+        //   (err) => {
+        //     setError(err);
+        //     setLoading(false);
+        //   }
+        // );
+      }, 1500);
+  
+      return () => clearTimeout(delay);
+    }, [search]);
+
+  React.useEffect(() => {
     if (!dashboardLoading && !groupLoading) {
       setLoading(false);
     }
@@ -54,6 +78,8 @@ const AdminDashboard = React.memo((props: any) => {
       setCount={setCount}
       error={error}
       loading={loading}
+      search={search}
+      setSearch={setSearch}
     />
   );
 });
