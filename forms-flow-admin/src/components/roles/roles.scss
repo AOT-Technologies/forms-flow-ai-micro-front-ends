@@ -272,3 +272,13 @@
   border-radius: var(--ff-border-radius-pill);
   margin-right: var(--spacer-050);
 }
+.default-badge{
+  font-size: var(--font-size-s);
+  margin-left: 0.625rem;
+  padding: var(--spacer-025) var(--spacer-050);
+}
+.info-text{
+  margin-right: auto;
+  font-size: 0.8125rem;
+  color: var(--secondary-dark);
+}
