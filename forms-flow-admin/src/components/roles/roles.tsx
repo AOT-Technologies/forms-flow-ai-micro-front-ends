@@ -14,7 +14,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
-import { removingTenantId } from "../../utils/utils.js";
+import { getStatusDisplay, removingTenantId } from "../../utils/utils.js";
 import {
   AppModal,
   CustomSearch,
@@ -44,37 +44,6 @@ const arePermissionSetsEqual = (a: string[] = [], b: string[] = []) => {
   return sortedA.every((permission, index) => permission === sortedB[index]);
 };
 
-const sortRoles = (roleList: any[]) => {
-  roleList.push(
-    {
-      name: "Owner",
-      description: "Full access to all resources and settings.",
-      isDefault: true,
-      permissions: [],
-    },
-    {
-      name: "Admin",
-      description: "Manage users, roles, and system settings.",
-      isDefault: true,
-      permissions: [],
-    }
-  )
-  return [...roleList].sort((a, b) => {
-    if (a.isDefault && b.isDefault) {
-      const aRank = BUILT_IN_ROLE_ORDER.indexOf(a.name);
-      const bRank = BUILT_IN_ROLE_ORDER.indexOf(b.name);
-      return (
-        (aRank === -1 ? BUILT_IN_ROLE_ORDER.length : aRank) -
-        (bRank === -1 ? BUILT_IN_ROLE_ORDER.length : bRank)
-      );
-    }
-    if (a.isDefault !== b.isDefault) {
-      return a.isDefault ? -1 : 1;
-    }
-    return (a.name ?? "").localeCompare(b.name ?? "");
-  });
-};
-
 const Roles = React.memo((props: any) => {
   const { t } = useTranslation();
   const { tenantId: tenantIdFromParams } = useParams();
@@ -84,7 +53,7 @@ const Roles = React.memo((props: any) => {
   const [sizePerPage, setSizePerPage] = React.useState(5);
   const [error, setError] = useState({});
   const [handleConfirmation, setHandleConfirmation] = React.useState(false);
-  const [users, setUsers] = React.useState<any[]>([]);
+  const [users, setUsers] = React.useState<any>([]);
   // Toggle for user list popover
   const [show, setShow] = React.useState(false);
   // Toggle for create/edit role
@@ -141,6 +110,25 @@ const Roles = React.memo((props: any) => {
       );
     });
     return newRoleList;
+  };
+
+  const sortRoles = (roleList: any[]) => {
+    roleList = removingTenantId(roleList, tenantId)
+    
+    return [...roleList].sort((a, b) => {
+      if (a.isDefault && b.isDefault) {
+        const aRank = BUILT_IN_ROLE_ORDER.indexOf(a.name);
+        const bRank = BUILT_IN_ROLE_ORDER.indexOf(b.name);
+        return (
+          (aRank === -1 ? BUILT_IN_ROLE_ORDER.length : aRank) -
+          (bRank === -1 ? BUILT_IN_ROLE_ORDER.length : bRank)
+        );
+      }
+      if (a.isDefault !== b.isDefault) {
+        return a.isDefault ? -1 : 1;
+      }
+      return (a.name ?? "").localeCompare(b.name ?? "");
+    });
   };
 
   React.useEffect(() => {
@@ -372,27 +360,24 @@ const Roles = React.memo((props: any) => {
       }
     );
   };
-  // handlers for user list popover
-  // const handleClick = (event, rowData) => {
-  //   setLoading(true);
-  //   fetchUsers(
-  //     rowData.name,
-  //     null,
-  //     null,
-  //     null,
-  //     (results) => {
-  //       setUsers(results.data);
-  //       setLoading(false);
-  //     },
-  //     (err) => {
-  //       setUsers([]);
-  //       setError(err);
-  //       setLoading(false);
-  //     },
-  //     false,
-  //     false
-  //   );
-  // };
+  // fetch users based on the role
+  const getUsersbyRole = (rowData:any) => {
+    fetchUsers(
+      rowData.name,
+      null,
+      null,
+      null,
+      (results:any) => {
+        setUsers(results.data);
+      },
+      (err) => {
+        setUsers([]);
+        setError(err);
+      },
+      false,
+      false
+    );
+  };
 
   const handleEditName = (e) => {
     setEditCandidate({ ...editCandidate, name: e.target.value });
@@ -568,45 +553,47 @@ const Roles = React.memo((props: any) => {
     
     if (isEditMode) {
       const columns = [
-    {
-      field: "username",
-      headerName: t("Users"),
-      preset: "primaryName",
-      ...getColumnPresetSizing("primaryName"),
-      sortable: false,
-      renderCell: (params: any) => {
-        const rowData = params.row;
-        return (
-          <div>
-            {rowData?.firstName && (
+        {
+          field: "username",
+          headerName: t("Users"),
+          preset: "primaryName",
+          ...getColumnPresetSizing("primaryName"),
+          sortable: false,
+          renderCell: (params: any) => {
+            const rowData = params.row;
+            return (
               <div>
-                {rowData.firstName} {rowData.lastName && rowData.lastName}
+                {rowData?.firstName && (
+                  <div>
+                    {rowData.firstName} {rowData.lastName && rowData.lastName}
+                  </div>
+                )}
+                <div style={{ color: "#767676" }}>{rowData?.username}</div>
               </div>
-            )}
-            <div style={{ color: "#767676" }}>{rowData?.username}</div>
-          </div>
-        );
-      },
-    },
-    {
-      field: "email",
-      headerName: t("Email"),
-      preset: "longText",
-      ...getColumnPresetSizing("longText"),
-      sortable: false,
-      renderCell: (params:any) => params.row?.email,
-    },
-    {
-      field: "id",
-      headerName: t("Status"),
-      preset: "status",
-      ...getColumnPresetSizing("status"),
-      sortable: false,
-      headerAlign: "right",
-      align: "right",
-      renderCell: (params:any) => params.row?.status ? t("Active") : t("Inactive")
-    },
-  ];
+            );
+          },
+        },
+        {
+          field: "email",
+          headerName: t("Email"),
+          preset: "longText",
+          ...getColumnPresetSizing("longText"),
+          sortable: false,
+          renderCell: (params:any) => params.row?.email,
+        },
+        {
+          field: "id",
+          headerName: t("Status"),
+          preset: "status",
+          ...getColumnPresetSizing("status"),
+          sortable: false,
+          headerAlign: "right",
+          renderCell: (params: any) => {
+            const { label, className } = getStatusDisplay(params.row?.status);
+            return <span className={className}>{t(label)}</span>;
+          },
+        },
+      ];
       const userTab = {
         eventKey: "Users",
         title: "Users",
@@ -617,11 +604,11 @@ const Roles = React.memo((props: any) => {
               className="user-table-container"
               data-testid="role-users-table"
               >
-              <div className="user-count">{props && props.userCount ? props.userCount : '0'} users have this role</div>
+              <div className="user-count">{users && users.count ? users.count : '0'} users have this role</div>
               <ReusableTable
                 columns={columns}
-                rows={props?.users || []}
-                rowCount={props.total ? props.total : 0}
+                rows={users || []}
+                rowCount={users.length ? users.length : 0}
                 loading={loading}
                 getRowId={(row: any) => row.id}
                 sortModel={DEFAULT_SORT_MODEL}
@@ -629,10 +616,10 @@ const Roles = React.memo((props: any) => {
                 sortingMode="client"
                 disableColumnMenu
                 disableRowSelectionOnClick
-                emptyStateMessage={props.error || t("No users found")}
+                emptyStateMessage={t("No users found")}
                 paginationModel={{
                   page: activePage - 1,
-                  pageSize: props?.limit?.sizePerPage || 5,
+                  pageSize: users?.length || 5,
                 }}
                 onPaginationModelChange={({ page, pageSize }) => {
                   if (pageSize !== props?.limit?.sizePerPage) {
@@ -741,6 +728,7 @@ const Roles = React.memo((props: any) => {
 
   const openRoleModal = (roleForModal: any) => {
     setSelectedRoleIdentifier(roleForModal.id);
+    getUsersbyRole(roleForModal);
     setEditCandidate(roleForModal);
     setOriginalEditCandidate(roleForModal);
     handleShowEditRoleModal();
@@ -855,7 +843,7 @@ const Roles = React.memo((props: any) => {
                     className: "delete-dropdown-item",
                   },
                 ]}
-                variant="primary"
+                variant="secondary"
                 menuPosition="right"
                 dataTestId="admin-roles-edit-dropdown"
                 ariaLabel={t("Edit role")}
