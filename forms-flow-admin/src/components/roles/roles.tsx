@@ -10,8 +10,6 @@ import {
   fetchPermissions,
 } from "../../services/roles";
 import Loading from "../loading";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
 import { getStatusDisplay, removingTenantId } from "../../utils/utils.js";
@@ -371,7 +369,7 @@ const Roles = React.memo((props: any) => {
   const getUsersbyRole = (rowData:any) => {
     fetchUsers(
       rowData.name,
-      1,
+      usersActivePage,
       null,
       null,
       (results: any) => {
