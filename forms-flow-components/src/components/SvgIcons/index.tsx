@@ -515,6 +515,36 @@ export const CheckIcon = ({ color = baseColor, className, ...props }) => (
     <path d="M2 7.2L6.5 12L14 4"/>
   </svg>
 );
+
+/**
+ * lucide/circle-alert - the stroked exclamation-in-circle used by the v8 designs.
+ * Distinct from AlertCircleIcon below, which is the filled variant.
+ */
+export const CircleAlertIcon = ({
+  color = "#D1D2D3",
+  className = "",
+  strokeWidth = 1.5,
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path
+      d="M8 5.33333V8M8 10.6667H8.00667M14.6667 8C14.6667 11.6819 11.6819 14.6667 8 14.6667C4.3181 14.6667 1.33333 11.6819 1.33333 8C1.33333 4.3181 4.3181 1.33333 8 1.33333C11.6819 1.33333 14.6667 4.3181 14.6667 8Z"
+      stroke={color}
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const AlertCircleIcon = ({ color = baseColor, className, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
