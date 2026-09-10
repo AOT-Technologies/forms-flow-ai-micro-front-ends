@@ -132,5 +132,6 @@ declare module "@formsflow/components" {
     GoogleIcon,
     MicrosoftIcon,
     AppModal,
+    useFormTheme,
   }: any;
 }

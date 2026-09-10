@@ -6,6 +6,8 @@ import AdminDashboard from "../dashboard";
 import RoleManagement from "../roles";
 import UserManagement from "../users";
 import Organization from "../organization";
+import StyleTab from "../style/StyleTab";
+import "../style/style.scss";
 import { StorageService } from "@formsflow/service";
 import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
 import { MULTITENANCY_ENABLED } from "../../constants";
@@ -61,13 +63,14 @@ const Manage: React.FC<ManageProps> = ({
   // Get active tab from URL or default to first accessible tab
   const activeTab = useMemo((): string => {
     if (urlTab) {
-      const validTabs = ["organization", "dashboard", "users", "roles"];
+      const validTabs = ["organization", "dashboard", "users", "roles", "style"];
       if (validTabs.includes(urlTab)) {
         if (urlTab === "organization" && !isOrganizationManager)
           return defaultTab();
         if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
+        if (urlTab === "style" && !isOrganizationManager) return defaultTab();
         return urlTab;
       }
     }
@@ -105,6 +108,7 @@ const Manage: React.FC<ManageProps> = ({
         dashboard: "Dashboard",
         users: "Users",
         roles: "Roles",
+        style: "Style",
       };
       setTab(tabNameMap[key] || "Organization");
       // Navigate to the tab route - this will update the URL and activeTab will update via useMemo
@@ -142,6 +146,9 @@ const Manage: React.FC<ManageProps> = ({
             )}
             {isUserManager && <Tab eventKey="users" title={t("Users")} />}
             {isRoleManager && <Tab eventKey="roles" title={t("Roles")} />}
+            {isOrganizationManager && (
+              <Tab eventKey="style" title={t("Style")} />
+            )}
           </Tabs>
 
           {activeTab === "roles" && isRoleManager && (
@@ -208,6 +215,50 @@ const Manage: React.FC<ManageProps> = ({
             )}
           </div>
         </div>
+        <Collapse in={tabContentExpanded}>
+          <div>
+            <div className="tab-content">
+              {activeTab === "organization" && isOrganizationManager && (
+                <div className="manage-content">
+                  <Organization {...props} />
+                </div>
+              )}
+              {activeTab === "dashboard" && isDashboardManager && (
+                <div className="manage-content">
+                  <AdminDashboard
+                    {...props}
+                    setTab={setTab}
+                    setCount={setDashboardCount}
+                  />
+                </div>
+              )}
+              {activeTab === "users" && isUserManager && (
+                <div className="manage-content">
+                  <UserManagement
+                    {...props}
+                    setTab={setTab}
+                    setCount={setUserCount}
+                  />
+                </div>
+              )}
+              {activeTab === "roles" && isRoleManager && (
+                <div className="manage-content">
+                  <RoleManagement
+                    {...props}
+                    setTab={setTab}
+                    setCount={setRoleCount}
+                    tenantId={tenantId}
+                  />
+                </div>
+              )}
+              {activeTab === "style" && isOrganizationManager && (
+                <div className="manage-content">
+                  <StyleTab />
+                </div>
+              )}
+            </div>
+          </div>
+        </Collapse>
       </div>
     </div>
   );
