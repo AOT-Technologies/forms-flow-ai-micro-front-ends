@@ -19,7 +19,7 @@ type ColumnPresetName = keyof typeof tableColumnPresets;
  * part of the returned sizing props.
  */
 export const getColumnPresetSizing = (
-  preset: ColumnPresetName | string
+  preset: ColumnPresetName | (string & {})
 ): ColumnPresetSizing => {
   const { description: _description, ...sizing } =
     (tableColumnPresets as Record<string, ColumnPresetSizing & { description?: string }>)[

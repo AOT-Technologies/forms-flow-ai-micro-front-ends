@@ -39,8 +39,8 @@ const BUILT_IN_ROLE_ORDER = ["Owner", "Admin", "Manager", "Creator", "Viewer"];
 
 const arePermissionSetsEqual = (a: string[] = [], b: string[] = []) => {
   if (a.length !== b.length) return false;
-  const sortedA = [...a].sort();
-  const sortedB = [...b].sort();
+  const sortedA = [...a].sort((x, y) => x.localeCompare(y));
+  const sortedB = [...b].sort((x, y) => x.localeCompare(y));
   return sortedA.every((permission, index) => permission === sortedB[index]);
 };
 
@@ -570,7 +570,7 @@ const Roles = React.memo((props: any) => {
               <div>
                 {rowData?.firstName && (
                   <div>
-                    {rowData.firstName} {rowData.lastName && rowData.lastName}
+                    {rowData.firstName} {rowData.lastName}
                   </div>
                 )}
                 <div style={{ color: "#767676" }}>{rowData?.username}</div>
