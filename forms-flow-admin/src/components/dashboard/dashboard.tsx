@@ -169,7 +169,7 @@ const InsightDashboard = React.memo((props: any) => {
         const rowData = params.row;
         const cell = rowData?.roles;
         return (
-          <div className="d-flex flex-wrap col-12">
+          <div className="col-12 access-roles-col">
             {cell?.map((label, i) => (
               <div
                 key={i}
@@ -191,6 +191,7 @@ const InsightDashboard = React.memo((props: any) => {
               id={`dashboard-add-auth-${params.id}`}
               name="Add Dashboard Auth"
               options={remainingGroups}
+              onOpen={() => handleClick(null, rowData)}
               onSelect={addDashboardAuth}
               emptyMessage={t("No groups available")}
               dataTestId={`dashboard-add-auth-dropdown-${params.id}`}
