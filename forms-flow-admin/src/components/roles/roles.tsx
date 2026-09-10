@@ -50,10 +50,12 @@ const Roles = React.memo((props: any) => {
   const tenantId = props.tenantId ?? tenantIdFromParams;
   const [roles, setRoles] = React.useState([]);
   const [activePage, setActivePage] = React.useState(1);
+  const [usersActivePage, setUsersActivePage] = React.useState(1);
   const [sizePerPage, setSizePerPage] = React.useState(5);
   const [error, setError] = useState({});
   const [handleConfirmation, setHandleConfirmation] = React.useState(false);
   const [users, setUsers] = React.useState<any>([]);
+  const [usersCount, setUsersCount] = React.useState(0);
   // Toggle for user list popover
   const [show, setShow] = React.useState(false);
   // Toggle for create/edit role
@@ -87,6 +89,7 @@ const Roles = React.memo((props: any) => {
   const [permissionData, setPermissionData] = React.useState([]);
   const [key, setKey] = useState("Details");
   const lastCreateTriggerRef = React.useRef<number | null>(null);
+  const [usersSizePerPage, setUsersSizePerPage] = React.useState(5);
 
   React.useEffect(() => {
     const trigger = props.openCreateRoleTrigger ?? 0;
@@ -364,18 +367,20 @@ const Roles = React.memo((props: any) => {
   const getUsersbyRole = (rowData:any) => {
     fetchUsers(
       rowData.name,
+      1,
       null,
       null,
-      null,
-      (results:any) => {
+      (results: any) => {
         setUsers(results.data);
+        setUsersCount(results.count)
       },
       (err) => {
         setUsers([]);
         setError(err);
+        setUsersCount(0);
       },
       false,
-      false
+      true
     );
   };
 
@@ -507,7 +512,7 @@ const Roles = React.memo((props: any) => {
                 )}
                 dataTestId="delete-role-note"
               />
-              <div>{editCandidate?.userCount || 0} users currently have this role.</div>
+              <div>{usersCount || 0} users currently have this role.</div>
             </div>
 
           )}
@@ -594,6 +599,7 @@ const Roles = React.memo((props: any) => {
           },
         },
       ];
+      console.log('use',users)
       const userTab = {
         eventKey: "Users",
         title: "Users",
@@ -604,7 +610,7 @@ const Roles = React.memo((props: any) => {
               className="user-table-container"
               data-testid="role-users-table"
               >
-              <div className="user-count">{users && users.count ? users.count : '0'} users have this role</div>
+              <div className="user-count">{usersCount || 0} users have this role</div>
               <ReusableTable
                 columns={columns}
                 rows={users || []}
@@ -612,20 +618,20 @@ const Roles = React.memo((props: any) => {
                 loading={loading}
                 getRowId={(row: any) => row.id}
                 sortModel={DEFAULT_SORT_MODEL}
-                paginationMode="server"
+                paginationMode="client"
                 sortingMode="client"
                 disableColumnMenu
                 disableRowSelectionOnClick
                 emptyStateMessage={t("No users found")}
                 paginationModel={{
-                  page: activePage - 1,
-                  pageSize: users?.length || 5,
+                  page: usersActivePage - 1,
+                  pageSize: usersSizePerPage,
                 }}
                 onPaginationModelChange={({ page, pageSize }) => {
-                  if (pageSize !== props?.limit?.sizePerPage) {
-                    handleLimitChange(pageSize);
+                  if (pageSize !== usersSizePerPage) {
+                    handleLimitChange("users", pageSize);
                   } else {
-                    handlePageChange(page + 1);
+                    handlePageChange("users", page + 1);
                   }
                 }}
                 pageSizeOptions={[5, 25, 50, 100]}
@@ -717,13 +723,19 @@ const Roles = React.memo((props: any) => {
     );
   };
 
-  const handlePageChange = (page: number) => {
-    setActivePage(page);
+  const handlePageChange = (table, page: number) => {
+    table == 'roles'? setActivePage(page): setUsersActivePage(page);
   };
 
-  const handleLimitChange = (newLimit: number) => {
-    setSizePerPage(newLimit);
-    setActivePage(1);
+  const handleLimitChange = (table: string, newLimit: number) => {
+    if (table == "roles") {
+      setSizePerPage(newLimit);
+      setActivePage(1);
+    }
+    if (table == "users") {
+      setUsersSizePerPage(newLimit);
+      setUsersActivePage(1);
+    }
   };
 
   const openRoleModal = (roleForModal: any) => {
@@ -889,9 +901,9 @@ const Roles = React.memo((props: any) => {
                 }}
                 onPaginationModelChange={({ page, pageSize }) => {
                   if (pageSize !== sizePerPage) {
-                    handleLimitChange(pageSize);
+                    handleLimitChange("roles", pageSize);
                   } else {
-                    handlePageChange(page + 1);
+                    handlePageChange("roles", page + 1);
                   }
                 }}
                 pageSizeOptions={[5, 25, 50, 100]}
