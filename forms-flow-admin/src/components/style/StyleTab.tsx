@@ -157,11 +157,12 @@ interface EditorPanelProps {
   onDelete: () => void;
   isDirty: boolean;
   isSaving: boolean;
+  isOwner: boolean;
 }
 
 const StyleEditorPanel: React.FC<EditorPanelProps> = ({
   editForm, onNameChange, onStyleChange,
-  onBack, onSave, onDelete, isDirty, isSaving,
+  onBack, onSave, onDelete, isDirty, isSaving, isOwner,
 }) => {
   const { t } = useTranslation();
   const saveOrUpdateLabel = editForm.id ? t("Update") : t("Save");
@@ -201,7 +202,7 @@ const StyleEditorPanel: React.FC<EditorPanelProps> = ({
             />
           </div>
         </div>
-        <StyleEditor styleConfig={editForm.styleData} onChange={onStyleChange} />
+        <StyleEditor styleConfig={editForm.styleData} onChange={onStyleChange} isOwner={isOwner} />
       </div>
 
       <div className="ff-style-editor-panel__footer">
@@ -234,7 +235,15 @@ const StyleEditorPanel: React.FC<EditorPanelProps> = ({
 };
 
 // ── Main StyleTab ─────────────────────────────────────────────────────────────
-const StyleTab: React.FC = () => {
+interface StyleTabProps {
+  // Owner-only: gates the branding-logo control inside StyleEditor. Passed
+  // down from Manage, which already computes it as the manage_organization
+  // role (see forms-flow-idm migration: manage_organization is granted only
+  // to the tenant's {tenant}-owner group).
+  isOwner?: boolean;
+}
+
+const StyleTab: React.FC<StyleTabProps> = ({ isOwner = false }) => {
   const { t } = useTranslation();
   const [templates, setTemplates] = useState<StyleTemplate[]>([]);
   const [defaultStyle, setDefaultStyle] = useState<StyleConfig>({ ...DEFAULT_STYLE });
@@ -432,6 +441,7 @@ const StyleTab: React.FC = () => {
             onDelete={handleDeleteFromEdit}
             isDirty={isDirty}
             isSaving={isSaving}
+            isOwner={isOwner}
           />
         ) : (
           <TemplatesList
