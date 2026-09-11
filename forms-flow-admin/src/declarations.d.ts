@@ -61,6 +61,7 @@ declare module "@formsflow/service" {
     navigateWithHistory,
     syncRouterPath,
     completeChecklistByRouteKey,
+    getColumnPresetSizing,
   }: any;
 }
 
@@ -82,11 +83,13 @@ declare module "@formsflow/components" {
     CustomUrl,
     Switch,
     V8CustomButton,
+    V8CustomDropdownButton,
     BreadCrumbs,
     DownArrowIcon,
     UpArrowIcon,
     AppModal,
     ReusableTable,
+    AddWithDropdown,
     StyleEditor,
     DEFAULT_STYLE,
     FONT_MAP,

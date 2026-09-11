@@ -18,10 +18,22 @@ $base: 1rem; // Cannot use var() in SCSS arithmetic
 
 // Modal width variables
 $modalWidthMedium: 50vw;
+$modalWidthSmall: 63.5%;
+$modalWidthLarge: 95%;
 
 // Medium size modal (app-modal-md)
 .app-modal-md {
     max-width: $modalWidthMedium;
+}
+
+// for modals with size="sm" . 63.5% given to make it 960px as per figma size
+.modal-sm {
+    width: $modalWidthSmall !important;
+}
+
+// for modals with size="lg" . 95% given to make it 1440px as per figma size
+.modal-lg {
+    width: $modalWidthLarge !important;
 }
 
 // Prompt modal styles

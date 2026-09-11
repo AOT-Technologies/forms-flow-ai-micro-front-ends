@@ -222,9 +222,6 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
     font-family: var(--font-family-base) !important;
   }
   
-  .form-control {
-    border-color: var(--secondary-dark) !important;
-  }
   .form-check:not(.form-switch) .form-check-input[type=checkbox], .checkbox-container .form-check-input[type=checkbox]{
     border-color: var(--secondary-dark) !important;
     border-radius: var(--border-radius) !important;
