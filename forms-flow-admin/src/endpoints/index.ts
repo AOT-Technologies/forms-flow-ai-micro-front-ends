@@ -19,6 +19,7 @@ const API = {
   GET_TENANT_DATA: `${MT_ADMIN_BASE_URL}/${MT_ADMIN_BASE_URL_VERSION}/tenant`,
   GET_PERMISSIONS: `${WEB_BASE_URL}/roles/permissions`,
   CHECKLIST: `${WEB_BASE_URL}/user/checklist`,
+  USER_ACTIVATION: `${WEB_BASE_URL}/users/<user_id>/status`
 };
 
 export default API;

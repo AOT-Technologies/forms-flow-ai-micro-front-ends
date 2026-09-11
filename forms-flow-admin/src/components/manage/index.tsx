@@ -163,7 +163,10 @@ const Manage: React.FC<ManageProps> = ({
                 data-testid="add-registered-users-button"
                 label={t("Add New Users")}
                 ariaLabel={t("Add New Users")}
+                // The invite modal it opens only renders in multitenant mode.
+                disabled={!MULTITENANCY_ENABLED}
                 action
+                variant="primary"
               />
             </div>
           )}
