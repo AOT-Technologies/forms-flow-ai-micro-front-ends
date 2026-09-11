@@ -126,11 +126,12 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
     [className]
   );
   const menuWidth = 256;
-  const menuEndAlignedLeft = position
-    ? position.left + position.width - menuWidth
-    : 0;
   const menuLeft =
-    menuAlign === "end" ? menuEndAlignedLeft : position?.left ?? 0;
+    menuAlign === "end"
+      ? position
+        ? position.left + position.width - menuWidth
+        : 0
+      : position?.left ?? 0;
 
   return (
     <div ref={containerRef} className={containerClassName} data-testid={dataTestId}>

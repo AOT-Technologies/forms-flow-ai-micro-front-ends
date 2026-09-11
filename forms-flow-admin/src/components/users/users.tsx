@@ -2,7 +2,7 @@ import React from "react";
 import Form from "react-bootstrap/Form";
 import { useTranslation } from "react-i18next";
 import Loading from "../loading";
-import { AddUserRole, RemoveUserRole, InviteUser } from "../../services/users";
+import { AddUserRole, RemoveUserRole, InviteUser, UpdateUserStatus } from "../../services/users";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
@@ -12,7 +12,7 @@ import {
   KEYCLOAK_ENABLE_CLIENT_AUTH,
   MULTITENANCY_ENABLED,
 } from "../../constants";
-import { formatRoleDisplayName } from "../../utils/utils.js";
+import { formatRoleDisplayName, getStatusDisplay } from "../../utils/utils.js";
 import { completeChecklistByRouteKey } from "../../services/checklist";
 import {
   AppModal,
@@ -22,16 +22,39 @@ import {
   V8CustomButton,
   CustomTextInput,
   ReusableTable,
+  AddWithDropdown,
 } from "@formsflow/components";
 import { useParams } from "react-router-dom";
-import { getRedirectUrl, StorageService } from "@formsflow/service";
+import { getColumnPresetSizing, getRedirectUrl, StorageService } from "@formsflow/service";
 
 const DEFAULT_SORT_MODEL: any[] = [];
+
+// Fixed pill order: built-in tiers first (Owner ahead of the assignable tiers
+// for the rare static Owner pill), then custom roles, alphabetically.
+const ROLE_TIER_ORDER = ["Owner", "Admin", "Manager", "Creator", "Viewer"];
+
+const roleTierRank = (name: string) => {
+  const rank = ROLE_TIER_ORDER.indexOf(name);
+  return rank === -1 ? ROLE_TIER_ORDER.length : rank;
+};
+
+const isOwnerRoleName = (name: string) =>
+  String(name ?? "").toLowerCase() === "owner";
+
+type AddRoleDropdownOption = {
+  id: string;
+  name: string;
+  description?: string;
+  badge?: string;
+  isDefault?: boolean;
+};
 
 const Users = React.memo((props: any) => {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [selectedRoles, setSelectedRoles] = React.useState([]);
-  const [roleNameMapper, setRoleNameMapper] = React.useState({});
+  const [roleNameMapper, setRoleNameMapper] = React.useState<
+    Record<string, string>
+  >({});
   const [roles, setRoles] = React.useState([]);
   const [error, setError] = React.useState(null); // Initialize error state with null instead of undefined
   const [loading, setLoading] = React.useState(false);
@@ -109,10 +132,34 @@ const Users = React.memo((props: any) => {
     setRoleNameMapper(mapper); // Corrected the function name from setROleNameMapper to setRoleNameMapper
   }, [roles]);
 
-  const addRole = (row) => {
-    setSelectedRow(row);
-    setSelectedRoles([]);
+  // const addRole = (row) => {
+  //   setSelectedRow(row);
+  //   setSelectedRoles([]);
+  // };
+
+  const userStatusUpdate = (rowData: any, enabled: boolean) => {
+    const user_id = rowData.id;
+    const payload = { enabled };
+
+    UpdateUserStatus(user_id, payload)
+      .then(() => {
+        props.setInvalidated(true);
+        toast.success(
+          enabled
+            ? t("User reactivated successfully!")
+            : t("User suspended successfully!")
+        );
+      })
+      .catch((err: any) => {
+        toast.error(
+          enabled
+            ? t("Failed to reactivate user!")
+            : t("Failed to suspend user!")
+        );
+        console.error(err);
+      });
   };
+
   const handleSearch = (e) => {
     if (e && e.key === "Enter") {
       setSearchKey(e.target.value);
@@ -189,8 +236,8 @@ const Users = React.memo((props: any) => {
     {
       field: "username",
       headerName: t("Users"),
-      flex: 1,
-      minWidth: 150,
+      preset: "primaryName",
+      ...getColumnPresetSizing("primaryName"),
       sortable: false,
       renderCell: (params) => {
         const rowData = params.row;
@@ -209,29 +256,82 @@ const Users = React.memo((props: any) => {
     {
       field: "email",
       headerName: t("Email"),
-      flex: 2,
-      minWidth: 200,
+      preset: "longText",
+      ...getColumnPresetSizing("longText"),
       sortable: false,
       renderCell: (params) => params.row?.email,
     },
     {
       field: "role",
       headerName: t("Role"),
-      flex: 5,
-      minWidth: 280,
+      preset: "chipSet",
+      ...getColumnPresetSizing("chipSet"),
       sortable: false,
       renderCell: (params) => {
         const rowData = params.row;
-        const cell = rowData?.role?.filter(
-          (item) => item?.name !== "camunda-admin"
-        );
+        const isOwnerRow = !!rowData?.isPrimaryOwner;
+        const cell: any[] = [...(rowData?.role ?? [])].sort((a, b) => {
+          const nameA = formatRoleDisplayName(a?.name, tenantKeyForRoleDisplay);
+          const nameB = formatRoleDisplayName(b?.name, tenantKeyForRoleDisplay);
+          return (
+            roleTierRank(nameA) - roleTierRank(nameB) ||
+            nameA.localeCompare(nameB)
+          );
+        });
+        const assignedRoleIds = new Set(cell.map((item: any) => item.id));
+        const availableRoleOptions = roles
+          // Owner is granted only via Transfer Ownership, never through the picker.
+          .filter(
+            (role: any) =>
+              !assignedRoleIds.has(role.id) &&
+              !isOwnerRoleName(
+                formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)
+              )
+          )
+          .map((role: any) => ({
+            id: role.id,
+            name: formatRoleDisplayName(role.name, tenantKeyForRoleDisplay),
+          }));
+
+        const addSingleUserRole = (option: AddRoleDropdownOption) => {
+          const user_id = rowData.id;
+          const payload = {
+            userId: user_id,
+            groupId: option.id,
+            name: roleNameMapper[option.id],
+          };
+          AddUserRole(user_id, option.id, payload)
+            .then(() => {
+              props.setInvalidated(true);
+              toast.success(t("Permission updated successfully!"));
+            })
+            .catch((err: any) => {
+              toast.error(t("Failed to update permission!"));
+              console.error(err);
+            });
+        };
+
+        const availableRoleDropdownOptions: AddRoleDropdownOption[] =
+          availableRoleOptions
+            .map((role: any) => {
+              const fullRole = roles.find((r: any) => r.id === role.id) as any;
+              return {
+                id: role.id,
+                name: role.name,
+                description: fullRole?.description || "",
+                badge: fullRole?.isDefault ? undefined : t("Custom"),
+                isDefault: !!fullRole?.isDefault,
+              };
+            })
+            // Built-in roles (isDefault: true) sort to the bottom; custom roles first.
+            .sort((a, b) => Number(a.isDefault) - Number(b.isDefault));
+
         return (
-          <div className="d-flex flex-wrap col-12">
-            {cell?.map((item, i) => (
+          <div className="d-flex flex-wrap align-items-center col-12">
+            {cell.map((item: any, i: number) => (
               <div
                 key={i}
-                className="d-flex align-items-center justify-content-between rounded-pill px-3 py-2 my-1 small m-2"
-                style={{ background: "#EAEFFF" }}
+                className="role-badge user-roles"
               >
                 <OverlayTrigger
                   placement="bottom"
@@ -260,6 +360,32 @@ const Users = React.memo((props: any) => {
                 </OverlayTrigger>
               </div>
             ))}
+            {!isOwnerRow && availableRoleDropdownOptions.length > 0 && (
+              <AddWithDropdown
+                options={availableRoleDropdownOptions}
+                onSelect={addSingleUserRole}
+                ariaLabel={t("Add role")}
+                emptyMessage={t("No roles found")}
+                dataTestId={`user-role-add-${rowData.id}`}
+              />
+            )}
+          </div>
+        );
+      },
+    },
+
+    {
+      field: "status",
+      headerName: t("Status"),
+      preset: "status",
+      ...getColumnPresetSizing("status"),
+      sortable: false,
+      renderCell: (params: any) => {
+        const rowData = params.row;
+        const { label, className } = getStatusDisplay(rowData?.status);
+        return (
+          <div>
+            <span className={className}>{t(label)}</span>
           </div>
         );
       },
@@ -267,122 +393,59 @@ const Users = React.memo((props: any) => {
 
     {
       field: "id",
-      headerName: t("Actions"),
-      width: 130,
-      minWidth: 130,
-      flex: 0,
+      headerName: t(""),
+      preset: "actions",
+      ...getColumnPresetSizing("actions"),
       sortable: false,
       headerAlign: "right",
       align: "right",
       renderCell: (params) => {
         const rowData = params.row;
-        const assignableRoles = roles.filter(
-          (role) => role.name?.replace(/\//g, "") !== "camunda-admin"
-        );
-        const updateSelectedRoles = (role) => {
-          if (selectedRoles.includes(role.id)) {
-            setSelectedRoles([
-              ...selectedRoles.filter((item) => item !== role.id),
-            ]);
-            return;
-          }
-          setSelectedRoles([...selectedRoles, role.id]);
-        };
-        const getRoleRepresentation = (role, key, rowData) => {
-          const userPermissions = rowData.role;
-          let shouldHighLight = userPermissions.find(
-            (element) => element.id === role.id
-          );
-          let isSelected = false;
-          if (selectedRoles.includes(role.id)) {
-            isSelected = true;
-          }
-          return (
-            <div
-              key={key}
-              className={[
-                `role ${shouldHighLight ? "role-highlighted" : ""} ${
-                  isSelected ? "role-selected" : ""
-                }`,
-              ].toString()}
-              onClick={() => !shouldHighLight && updateSelectedRoles(role)}
-            >
-              {formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)}
-              {isSelected && <i className="fa fa-check"></i>}
-            </div>
-          );
-        };
-
-        const addUserPermission = () => {
-          const promises = [];
-          for (let role of selectedRoles) {
-            let user_id = selectedRow.id;
-            let payload = {
-              userId: user_id,
-              groupId: role,
-              name: roleNameMapper[role],
-            };
-            const promise = AddUserRole(user_id, role, payload);
-            promises.push(promise);
-          }
-          Promise.all(promises)
-            .then((res) => {
-              props.setInvalidated(true);
-              toast.success(t("Permission updated successfully!"));
-            })
-            .catch((err) => {
-              toast.error(t("Failed to update permission!"));
-              // The toast is generic; keep the raw error visible for support.
-              console.error(err);
-            });
-        };
+        const isUserSuspended =
+          getStatusDisplay(rowData?.status).label === "Suspended";
+      
+        // const addUserPermission = () => {
+        //   const promises = [];
+        //   for (let role of selectedRoles) {
+        //     let user_id = selectedRow.id;
+        //     let payload = {
+        //       userId: user_id,
+        //       groupId: role,
+        //       name: roleNameMapper[role],
+        //     };
+        //     const promise = AddUserRole(user_id, role, payload);
+        //     promises.push(promise);
+        //   }
+        //   Promise.all(promises)
+        //     .then((res) => {
+        //       props.setInvalidated(true);
+        //       toast.success(t("Permission updated successfully!"));
+        //     })
+        //     .catch((err) => {
+        //       toast.error(t("Failed to update permission!"));
+        //       // The toast is generic; keep the raw error visible for support.
+        //       console.error(err);
+        //     });
+        // };
 
         return (
-          <OverlayTrigger
-            trigger="click"
-            key={params.id}
-            placement="left"
-            rootClose={true}
-            container={document.body}
-            overlay={
-              <Popover
-                id={`popover-positioned-bottom`}
-                data-testid="users-add-role-popover"
-              >
-                <Popover.Body>
-                  <div className="role-list">
-                    {assignableRoles.length > 0 ? (
-                      assignableRoles.map((role, key) =>
-                        getRoleRepresentation(role, key, rowData)
-                      )
-                    ) : (
-                      <>{t("No data Found")}</>
-                    )}
-                  </div>
-                  <hr />
-                  <div className="done-button">
-                    {assignableRoles.length > 0 && (
-                      <V8CustomButton
-                        label={t("Done")}
-                        onClick={addUserPermission}
-                        data-testid="add-role-popover-done-button"
-                        variant="primary"
-                        size="small"
-                      />
-                    )}
-                  </div>
-                </Popover.Body>
-              </Popover>
-            }
-          >
+          isUserSuspended ? (
             <V8CustomButton
-              label={t("Add Role")}
-              onClick={() => addRole(rowData)}
-              data-testid="users-add-role-button"
-              variant="primary"
+              label={t("Reactivate")}
+              onClick={() => userStatusUpdate(rowData, true)}
+              data-testid="reactivate-user-button"
+              variant="secondary"
               size="small"
             />
-          </OverlayTrigger>
+          ) : (
+            <V8CustomButton
+              label={t("Suspend")}
+              onClick={() => userStatusUpdate(rowData, false)}
+              data-testid="suspend-user-button"
+              variant="secondary"
+              size="small"
+            />
+          )
         );
       },
     },
@@ -472,8 +535,7 @@ const Users = React.memo((props: any) => {
       </AppModal>
 
       <div className="container-admin">
-        <div className="d-flex align-items-center justify-content-between flex-wrap">
-          <div className="search-role col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 px-0">
+        <div className="col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 px-0 mb-3">
             <CustomSearch
               search={searchKey}
               setSearch={setSearchKey}
@@ -484,38 +546,8 @@ const Users = React.memo((props: any) => {
               title={t("Search...")}
               dataTestId="search-users-input"
             />
-          </div>
-
-          <div className="user-filter-container  col-lg-4 col-xl-4 col-md-4 col-sm-6 col-12 d-flex justify-content-end gap-2">
-            <span className="my-2">{t("Filter By:")} </span>
-            <Form.Select
-              className="bg-light text-dark w-0"
-              onChange={handleSelectFilter}
-              title={t("Filter here")}
-              data-testid="users-roles-filter-select"
-            >
-              <option
-                value="ALL"
-                selected={!props.filter}
-                data-testid="users-roles-filter-option-all"
-              >
-                {t("All roles")}
-              </option>
-              {roles
-                ?.filter(
-                  (role) => role.name?.replace(/\//g, "") !== "camunda-admin"
-                )
-                .map((role, i) => (
-                  <option
-                    key={i}
-                    value={role.name}
-                    data-testid={`users-roles-filter-option-${i}`}
-                  >
-                    {formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)}
-                  </option>
-                ))}
-            </Form.Select>
-          </div>
+        </div>
+        <hr/>
 
           {MULTITENANCY_ENABLED && (
             <>
@@ -608,12 +640,36 @@ const Users = React.memo((props: any) => {
               )}
             </>
           )}
+        <div className="user-filter-container col-lg-3 col-xl-3 col-md-3 col-sm-6 col-12">
+          <Form.Select
+            className="bg-light text-dark w-0"
+            onChange={handleSelectFilter}
+            title={t("Filter here")}
+            data-testid="users-roles-filter-select"
+          >
+            <option
+              value="ALL"
+              selected={!props.filter}
+              data-testid="users-roles-filter-option-all"
+            >
+              {t("All roles")}
+            </option>
+            {roles?.map((role, i) => (
+              <option
+                key={i}
+                value={role.name}
+                data-testid={`users-roles-filter-option-${i}`}
+              >
+                {formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)}
+              </option>
+            ))}
+          </Form.Select>
         </div>
-
+        <hr/>
         {!loading ? (
           <div>
             <div
-              className="user-table-container px-4"
+              className="user-table-container"
               data-testid="admin-users-table"
             >
               <ReusableTable

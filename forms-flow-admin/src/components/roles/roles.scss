@@ -292,6 +292,23 @@
 .text-invite-sent{
   color: #2EB67D;
 }
+.role-badge{
+  background-color: var(--secondary);
+  color: var(--gray-darkest);
+  padding: var(--spacer-050) var(--spacer-100);
+  border-radius: var(--ff-border-radius-pill);
+  margin-right: var(--spacer-050);
+}
+
+.text-active{
+  color: #2EB67D;
+}
+.text-suspended{
+  color: var(--gray-dark);
+}
+.text-invite-sent{
+  color: #2EB67D;
+}
 .text-invite-expired{
   color: #D45E5E;
 }
