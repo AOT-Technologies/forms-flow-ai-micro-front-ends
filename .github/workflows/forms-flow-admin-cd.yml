@@ -6,6 +6,7 @@ on:
       - main
       - develop
       - release/*
+      - backup/develop-10-9-2026 # TODO: remove before 8.3.0 release
     paths:
       - "forms-flow-admin/**"
       - "VERSION"

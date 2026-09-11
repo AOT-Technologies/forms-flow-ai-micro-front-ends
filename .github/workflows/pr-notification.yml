@@ -7,6 +7,7 @@ on:
       - develop
       - release/**
       - main
+      - backup/develop-10-9-2026 # TODO: remove before 8.3.0 release
 
 jobs:
   notify:
