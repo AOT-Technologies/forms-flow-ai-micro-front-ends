@@ -48,6 +48,16 @@ const Manage: React.FC<ManageProps> = ({
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
+  // Style is a tenant-wide admin feature, not an Organization-only one --
+  // any manage-capable admin can open it (the owner-only branding-logo
+  // control inside it is gated separately, see StyleTab's isOwner prop).
+  const canAccessStyle =
+    isOrganizationManager || isDashboardManager || isUserManager || isRoleManager;
+  // Mirrors the backend's is_current_user_primary_owner: "owner" (via
+  // manage_organization, granted only to the {tenant}-owner group) is a
+  // multi-tenant SaaS concept with no equivalent in single-tenant -- there,
+  // any admin who can reach this screen is treated as the owner.
+  const isOwner = !MULTITENANCY_ENABLED || isOrganizationManager;
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
@@ -69,7 +79,7 @@ const Manage: React.FC<ManageProps> = ({
         if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
-        if (urlTab === "style" && !isOrganizationManager) return defaultTab();
+        if (urlTab === "style" && !canAccessStyle) return defaultTab();
         return urlTab;
       }
     }
@@ -88,6 +98,7 @@ const Manage: React.FC<ManageProps> = ({
     isDashboardManager,
     isUserManager,
     isRoleManager,
+    canAccessStyle,
   ]);
 
   // Redirect to default tab if on /admin without a tab
@@ -149,7 +160,7 @@ const Manage: React.FC<ManageProps> = ({
             )}
             {isUserManager && <Tab eventKey="users" title={t("Users")} />}
             {isRoleManager && <Tab eventKey="roles" title={t("Roles")} />}
-            {isOrganizationManager && (
+            {canAccessStyle && (
               <Tab eventKey="style" title={t("Style")} />
             )}
           </Tabs>
@@ -210,9 +221,9 @@ const Manage: React.FC<ManageProps> = ({
                   />
                 </div>
               )}
-              {activeTab === "style" && isOrganizationManager && (
+              {activeTab === "style" && canAccessStyle && (
                 <div className="manage-content">
-                  <StyleTab />
+                  <StyleTab isOwner={isOwner} />
                 </div>
               )}
             </div>
