@@ -39,8 +39,18 @@ export const getSubmissionList = (
         .map(([k, v]) => `${k}: ${formatValue(v)}`)
         .join(", ")} }`;
     }
-    return `"${value}"`; // string by default
+    return `"${escapeGraphQLString(value)}"`; // string by default
   };
+  
+// Escapes a string for safe use inside a GraphQL string literal (per the GraphQL StringValue grammar),
+// preventing values from breaking out of their quotes and injecting extra query arguments.
+const escapeGraphQLString = (value: string): string =>
+  String(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "\\r")
+    .replace(/\t/g, "\\t");
 
   const normalizeValue = (value: any): any => {
     if (typeof value !== "string") return value;
@@ -81,23 +91,23 @@ export const getSubmissionList = (
     ? `createdBefore: "${HelperServices.getISODateTime(dateRange.endDate)}"`
     : "";
 
-  const parentFormIdStr = parentFormId ? `parentFormId: "${parentFormId}"` : "";
+  const parentFormIdStr = parentFormId ? `parentFormId: "${escapeGraphQLString(parentFormId)}"` : "";
 
   const selectedFieldsStr = (() => {
-    if (!selectedFormFields.length) return "";
+  if (!selectedFormFields.length) return "";
 
-    const fieldsArray = selectedFormFields.map((f) => `"${f}"`);
-    const fieldsJoined = fieldsArray.join(", ");
-    return "selectedFormFields: [" + fieldsJoined + "]";
-  })();
+  const fieldsArray = selectedFormFields.map((f) => `"${escapeGraphQLString(f)}"`);
+  const fieldsJoined = fieldsArray.join(", ");
+  return "selectedFormFields: [" + fieldsJoined + "]";
+})();
 
   const filtersStr = filtersString ? `filters: { ${filtersString} }` : "";
 
   const queryArgs = [
     `limit: ${limit}`,
     `pageNo: ${pageNo}`,
-    `sortOrder: "${sortOrder}"`,
-    `sortBy: "${sortBy}"`,
+    `sortOrder: "${escapeGraphQLString(sortOrder)}"`,
+    `sortBy: "${escapeGraphQLString(sortBy)}"`,
     createdAfter,
     createdBefore,
     parentFormIdStr,
@@ -137,7 +147,7 @@ export const getSubmissionList = (
     payload,
     token,
     true
-  ).then((response) => {
+  ).then((response: any) => {
     const result = response.data?.data?.getSubmission;
     return result;
   });
