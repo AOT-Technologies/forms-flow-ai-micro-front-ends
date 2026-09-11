@@ -61,6 +61,7 @@ declare module "@formsflow/service" {
     navigateWithHistory,
     syncRouterPath,
     completeChecklistByRouteKey,
+    getColumnPresetSizing,
   }: any;
 }
 
@@ -87,6 +88,7 @@ declare module "@formsflow/components" {
     UpArrowIcon,
     AppModal,
     ReusableTable,
+    AddWithDropdown,
     StyleEditor,
     DEFAULT_STYLE,
     FONT_MAP,
