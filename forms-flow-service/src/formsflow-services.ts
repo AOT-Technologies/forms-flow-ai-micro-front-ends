@@ -5,6 +5,7 @@ import i18nService from "./resourceBundles/i18n";
 import HelperServices from "./helpers/helperServices";
 import StyleServices from "./helpers/styleService";
 import { applyCompactFormStyles } from "./helpers/compactViewFormService";
+import { getColumnPresetSizing } from "./helpers/columnPresetService";
 import formioResourceBundle from "./resourceBundles/formioResourceBundle";
 import { fetchAndStoreFormioRoles } from "./apiManager/services/formioRoleService";
 import {
@@ -102,6 +103,7 @@ export {
   StyleServices,
   formioResourceBundle,
   applyCompactFormStyles,
+  getColumnPresetSizing,
   fetchAndStoreFormioRoles,
   getRoute,
   MAIN_ROUTE,

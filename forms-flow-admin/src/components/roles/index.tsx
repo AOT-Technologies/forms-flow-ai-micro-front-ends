@@ -46,6 +46,7 @@ const RoleManagement = React.memo((props: any) => {
         setInvalidated={setInvalidated}
         loading={loading}
         error={error}
+        openCreateRoleTrigger={props.openCreateRoleTrigger}
       />
     </>
   );
