@@ -184,7 +184,14 @@ $gray-dark: var(--ff-gray-dark);
 
 .formio-builder-form {
   .builder-component:has(
-    > .formio-component-hidden-default
+    > .formio-component-hidden-default,
+    > .formio-component-applicationId,
+    > .formio-component-applicationStatus,
+    > .formio-component-currentUser,
+    > .formio-component-submitterEmail,
+    > .formio-component-submitterFirstName,
+    > .formio-component-submitterLastName,
+    > .formio-component-currentUserRoles
   ) {
     display: none;
     pointer-events: none;
