@@ -73,3 +73,26 @@ export const formatRoleDisplayName = (name, tenantKey) => {
   }
   return s;
 };
+const STATUS_DISPLAY = {
+  active: { label: "Active", className: "text-active" },
+  inactive: { label: "Inactive", className: "text-inactive" },
+  invite_sent: { label: "Invite Sent", className: "text-invite-sent" },
+  invite_expired: {
+    label: "Invite Expired",
+    className: "text-invite-expired",
+  },
+  suspended: { label: "Suspended", className: "text-suspended" },
+};
+
+export const getStatusDisplay = (status) => {
+  if (typeof status === "boolean") {
+    return status ? STATUS_DISPLAY.active : STATUS_DISPLAY.inactive;
+  }
+
+  const key = String(status ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_");
+
+  return STATUS_DISPLAY[key] ?? STATUS_DISPLAY.suspended;
+};
