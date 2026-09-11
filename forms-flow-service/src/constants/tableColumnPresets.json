@@ -1,0 +1,45 @@
+{
+  "primaryName": {
+    "flex": 2.5,
+    "minWidth": 200,
+    "description": "form / bundle / process name (assumes user-authored long names)"
+  },
+  "longText": {
+    "flex": 2,
+    "minWidth": 180,
+    "description": "description, email, and identifiers carrying an in-cell control"
+  },
+  "date": {
+    "width": 150,
+    "flex": 0,
+    "description": "created / modified / last edited"
+  },
+  "identifier": {
+    "width": 170,
+    "flex": 0,
+    "description": "submission ID, process key (plain text only, no trailing controls)"
+  },
+  "status": {
+    "width": 130,
+    "flex": 0,
+    "description": "pill + label, visibility"
+  },
+  "count": {
+    "width": 110,
+    "flex": 0,
+    "description": "numeric"
+  },
+  "chipSet": {
+    "flex": 5,
+    "minWidth": 280,
+    "description": "multi-value chips (e.g. user roles): wraps, so rows grow"
+  },
+  "actions": {
+    "width": 130,
+    "flex": 0,
+    "maxWidth": 130,
+    "resizable": false,
+    "sticky": true,
+    "description": "fixed-width, non-resizable, sticky action column"
+  }
+}

@@ -1,6 +1,6 @@
 import { V8CustomButton, ReusableTable } from "@formsflow/components";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { HelperServices, getRedirectUrl } from "@formsflow/service";
+import { HelperServices, getRedirectUrl, getColumnPresetSizing } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import { batch, useDispatch, useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks";
@@ -614,7 +614,11 @@ const TaskListTable = () => {
         field: col.sortKey,
         headerName: t(col.sortKey === "assignee" ? "Assigned to" : col.name),
         // If a saved width exists, honor it and disable flex; otherwise allow flex
-        ...(col.width ? { width: col.width, flex: 0 } : { flex: 1 }),
+        ...(
+          col.width
+            ? { width: col.width, flex: 0 }
+            : getColumnPresetSizing("longText")
+        ),
         sortable:
           col.sortKey && !nonSortableKeys.includes(col.sortKey) ? true : false,
         // Do not lock minWidth to the last saved width; allow shrinking after expand
