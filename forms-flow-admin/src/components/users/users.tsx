@@ -83,6 +83,18 @@ const Users = React.memo((props: any) => {
   const emailInputRef = React.useRef<HTMLInputElement>(null);
   const lastInviteTriggerRef = React.useRef<number | null>(null);
 
+  // Id of the currently logged-in user, used to hide self-suspend controls.
+  const currentUserId = React.useMemo(() => {
+    try {
+      const details = JSON.parse(
+        StorageService.get(StorageService.User.USER_DETAILS) || "{}"
+      );
+      return details?.sub || details?.id || "";
+    } catch {
+      return "";
+    }
+  }, []);
+
   React.useEffect(() => {
     const trigger = props.openInviteTrigger ?? 0;
     if (
@@ -401,7 +413,10 @@ const Users = React.memo((props: any) => {
         const rowData = params.row;
         const isUserSuspended =
           getStatusDisplay(rowData?.status).label === "Suspended";
-      
+        const isLoggedInUserRow =
+          !!currentUserId && rowData?.id === currentUserId;
+        const isOwnerUser = !!rowData?.isOwner;
+
         // const addUserPermission = () => {
         //   const promises = [];
         //   for (let role of selectedRoles) {
@@ -425,6 +440,10 @@ const Users = React.memo((props: any) => {
         //       console.error(err);
         //     });
         // };
+
+        if (isLoggedInUserRow || isOwnerUser) {
+          return null;
+        }
 
         return (
           isUserSuspended ? (
