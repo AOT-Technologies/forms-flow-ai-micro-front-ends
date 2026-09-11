@@ -174,14 +174,17 @@ const Manage: React.FC<ManageProps> = ({
             </div>
           )}
 
-          {activeTab === "users" && isUserManager && MULTITENANCY_ENABLED && (
+          {activeTab === "users" && isUserManager && (
             <div className="manage-tabs-action">
               <V8CustomButton
                 onClick={() => setUserCreateTrigger((prev) => prev + 1)}
                 data-testid="add-registered-users-button"
                 label={t("Add New Users")}
                 ariaLabel={t("Add New Users")}
+                // The invite modal it opens only renders in multitenant mode.
+                disabled={!MULTITENANCY_ENABLED}
                 action
+                variant="primary"
               />
             </div>
           )}

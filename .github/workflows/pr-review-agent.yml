@@ -7,7 +7,6 @@ on:
       - develop
       - main
       - release/**
-      - backup/develop-10-9-2026 # TODO: remove before 8.3.0 release
   issue_comment:
 
 permissions:
