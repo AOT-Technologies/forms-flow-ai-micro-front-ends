@@ -2,15 +2,21 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 import {
   V8CustomButton,
   UpArrowIcon,
   DownArrowIcon,
-  UsageSummaryCard,
-  mapTenantDataToUsage,
 } from "@formsflow/components";
 import "./organization.scss";
-import { RequestService, StorageService } from "@formsflow/service";
+import {
+  RequestService,
+  StorageService,
+  fetchFeatureUsage,
+  mapUsageResponse,
+  SUBMISSION_FEATURE_KEY,
+} from "@formsflow/service";
+import { UsageSummaryCard } from "./UsageSummaryCard";
 import API from "../../endpoints";
 import {
   MULTITENANCY_ENABLED,
@@ -99,7 +105,21 @@ const Organization: React.FC<any> = (props) => {
     }
   });
 
-  const usage = useMemo(() => mapTenantDataToUsage(tenantData), [tenantData]);
+  // Fetched here rather than shared from the home page: this route can be opened directly,
+  // so nothing guarantees the home page ever mounted. The request, the calculations and the
+  // response mapping all come from @formsflow/service, so this card and the home banner
+  // cannot report different numbers.
+  const { data: featureUsage } = useQuery(
+    ["usage", SUBMISSION_FEATURE_KEY],
+    () => fetchFeatureUsage(SUBMISSION_FEATURE_KEY)
+  );
+
+  // Null while loading, on a failed fetch, or when the plan has no metered allowance - the
+  // card is hidden in all three cases rather than showing a misleading number.
+  const usage = useMemo(
+    () => mapUsageResponse(featureUsage, tenantData),
+    [featureUsage, tenantData]
+  );
 
   const userRoles = useMemo<string[]>(() => {
     try {

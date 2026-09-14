@@ -7,6 +7,7 @@ import StyleServices from "./helpers/styleService";
 import { applyCompactFormStyles } from "./helpers/compactViewFormService";
 import formioResourceBundle from "./resourceBundles/formioResourceBundle";
 import { fetchAndStoreFormioRoles } from "./apiManager/services/formioRoleService";
+import { fetchFeatureUsage } from "./apiManager/services/usageService";
 import {
   getRoute,
   MAIN_ROUTE,
@@ -93,6 +94,32 @@ export {
   completeChecklistByRouteKey,
 } from "./helpers/checklistService";
 
+// Usage metering: pure calculation helpers shared by the usage card (forms-flow-admin) and
+// the usage banner (forms-flow-web). The components live in their hosts; only the logic that
+// must not diverge between them lives here.
+export {
+  BILLING_CYCLE_DAYS,
+  USAGE_THRESHOLDS,
+  FREE_PLAN_LABEL,
+  PRO_PLAN_LABEL,
+  NEXT_TIER_SUBMISSIONS,
+  SUBMISSION_FEATURE_KEY,
+  getUsagePercentage,
+  getUsageVariant,
+  isOverLimit,
+  formatResetLabel,
+  formatBillingDate,
+  getUsageCtaLabel,
+  mapUsageResponse,
+} from "./helpers/usageHelpers";
+
+export type {
+  UsageData,
+  TenantRecord,
+  UsageVariant,
+  UsageResponseFields,
+} from "./helpers/usageHelpers";
+
 export {
   KeycloakService,
   StorageService,
@@ -103,6 +130,7 @@ export {
   formioResourceBundle,
   applyCompactFormStyles,
   fetchAndStoreFormioRoles,
+  fetchFeatureUsage,
   getRoute,
   MAIN_ROUTE,
   MULTITENANCY_ENABLED,

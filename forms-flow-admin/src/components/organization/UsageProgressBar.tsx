@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { getUsagePercentage, getUsageVariant } from "../../helper/usageTracking";
+import { getUsagePercentage, getUsageVariant } from "@formsflow/service";
 
 /**
  * UsageProgressBar renders submission consumption as a coloured bar.

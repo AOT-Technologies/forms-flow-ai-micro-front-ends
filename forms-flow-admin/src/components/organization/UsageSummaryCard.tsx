@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { UsageProgressBar } from "./UsageProgressBar";
-import { V8CustomButton } from "./CustomButton";
-import { CircleAlertIcon } from "../SvgIcons";
+import { V8CustomButton, CircleAlertIcon } from "@formsflow/components";
 import {
   BILLING_CYCLE_DAYS,
   formatBillingDate,
@@ -11,13 +9,14 @@ import {
   getUsagePercentage,
   getUsageVariant,
   isOverLimit,
-} from "../../helper/usageTracking";
+} from "@formsflow/service";
+import { UsageProgressBar } from "./UsageProgressBar";
 
 /**
  * UsageSummaryCard is the full submission-usage panel used on the organization page.
  *
  * Usage:
- * <UsageSummaryCard plan="Go" usedSubmissions={720} maxSubmissions={1000} tenantJoinDate="2026-05-18" />
+ * <UsageSummaryCard plan="Go" usedSubmissions={720} maxSubmissions={1000} nextResetDate="2026-09-17" />
  */
 
 export interface UsageSummaryCardProps {
@@ -27,9 +26,7 @@ export interface UsageSummaryCardProps {
   usedSubmissions: number;
   /** Submissions included in the current plan */
   maxSubmissions: number;
-  /** Date the tenant was created - anchors the fallback reset countdown */
-  tenantJoinDate?: string;
-  /** Actual next reset date when known. Preferred over the synthetic cycle. */
+  /** The day the allowance resets, as reported by the API. */
   nextResetDate?: string;
   /** Date of the next invoice. Supplying it adds the "Next billing" column. */
   nextBillingDate?: string;
@@ -52,7 +49,6 @@ export const UsageSummaryCard: React.FC<UsageSummaryCardProps> = ({
   plan,
   usedSubmissions,
   maxSubmissions,
-  tenantJoinDate,
   nextResetDate,
   nextBillingDate,
   onUpgrade,
@@ -64,7 +60,7 @@ export const UsageSummaryCard: React.FC<UsageSummaryCardProps> = ({
   const percentage = getUsagePercentage(usedSubmissions, maxSubmissions);
   const variant = getUsageVariant(percentage);
   const overLimit = isOverLimit(percentage);
-  const resetLabel = formatResetLabel({ tenantJoinDate, nextResetDate }, t);
+  const resetLabel = formatResetLabel({ nextResetDate }, t);
   const billingLabel = formatBillingDate(nextBillingDate);
 
   const notice = useMemo(() => {

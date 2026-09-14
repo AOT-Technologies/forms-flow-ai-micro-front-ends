@@ -61,6 +61,16 @@ declare module "@formsflow/service" {
     navigateWithHistory,
     syncRouterPath,
     completeChecklistByRouteKey,
+    fetchFeatureUsage,
+    SUBMISSION_FEATURE_KEY,
+    mapUsageResponse,
+    BILLING_CYCLE_DAYS,
+    formatBillingDate,
+    formatResetLabel,
+    getUsageCtaLabel,
+    getUsagePercentage,
+    getUsageVariant,
+    isOverLimit,
   }: any;
 }
 
@@ -87,7 +97,6 @@ declare module "@formsflow/components" {
     UpArrowIcon,
     AppModal,
     ReusableTable,
-    UsageSummaryCard,
-    mapTenantDataToUsage
+    CircleAlertIcon
   }: any;
 }
