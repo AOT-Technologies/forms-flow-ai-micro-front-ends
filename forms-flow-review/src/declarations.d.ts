@@ -73,6 +73,7 @@ declare module "@formsflow/service" {
     navigateWithHistory,
     syncRouterPath,
     completeChecklistByRouteKey,
+    getColumnPresetSizing
   }: any;
 }
 
