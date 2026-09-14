@@ -48,6 +48,8 @@ export interface AddWithDropdownProps {
   menuAlign?: "start" | "end";
   /** Additional className for the outer wrapper */
   className?: string;
+  /** Called right before the menu opens (e.g. to refresh `options` for the current row) */
+  onOpen?: () => void;
 }
 
 const buildClassNames = (
@@ -75,6 +77,7 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
   dataTestId = "add-with-dropdown",
   menuAlign = "start",
   className = "",
+  onOpen,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -106,10 +109,13 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
   const handleToggle = useCallback(
     (nextOpen: boolean) => {
       if (!disabled) {
+        if (nextOpen) {
+          onOpen?.();
+        }
         setOpen(nextOpen);
       }
     },
-    [disabled]
+    [disabled, onOpen]
   );
 
   const handleSelect = useCallback(

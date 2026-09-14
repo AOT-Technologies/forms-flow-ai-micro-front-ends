@@ -205,12 +205,11 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
 .user-table-container {
   background: var(--white-300);
   box-shadow: $user-table-box-shadow;
-  border-radius: $user-table-border-radius;
 }
 
 .user-filter-container > select {
-  border: none;
-  width: 50%;
+  width: 100%;
+  outline: none;
 }
 
 .success {
@@ -218,4 +217,13 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
 }
 .popover {
   font-family: var(--primary-font) !important;
+}
+.user-roles{
+  display: flex;
+  margin: 0.25rem 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--gray-darkest);
+  border-radius: 1.5625rem;
+  border: 1px solid var(--gray-x-light);
+  background: var(--white-300);
 }
