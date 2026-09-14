@@ -870,7 +870,7 @@ const Roles = React.memo((props: any) => {
   ];
   return (
     <>
-      <div className="container-admin-roles">
+      <div className="container-admin">
         <div className="search-role col-xl-4 col-lg-4 col-md-6 col-sm-5 px-0">
           <CustomSearch
             handleClearSearch={handleClearSearch}
