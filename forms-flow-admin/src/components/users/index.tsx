@@ -159,6 +159,7 @@ const UserManagement = React.memo((props: any) => {
         total={total}
         error={error}
         limit={{ sizePerPage, setSizePerPage }}
+        openInviteTrigger={props.openInviteTrigger}
       />
     </>
   );

@@ -73,6 +73,7 @@ declare module "@formsflow/service" {
     navigateWithHistory,
     syncRouterPath,
     completeChecklistByRouteKey,
+    getColumnPresetSizing
   }: any;
 }
 
@@ -131,5 +132,6 @@ declare module "@formsflow/components" {
     GoogleIcon,
     MicrosoftIcon,
     AppModal,
+    useFormTheme,
   }: any;
 }

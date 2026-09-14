@@ -100,5 +100,6 @@ declare module "@formsflow/components" {
     bundleIcon,
     SelectDropdownOptionType,
     AppModal,
+    useFormTheme,
   }: any;
 }

@@ -6,6 +6,23 @@
   top: 0;
   bottom: 0;
 }
+
+.manage-tabs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.manage-tabs-header .nav {
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.manage-tabs-action {
+  margin-left: auto;
+}
+
 .page-link {
   color: var(--ff-primary);
 

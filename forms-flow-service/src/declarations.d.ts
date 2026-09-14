@@ -122,5 +122,6 @@ declare module "@formsflow/service" {
     syncRouterPath,
     navigateToTemplatePreview,
     navigateToSubmissionViewDirect,
+    getColumnPresetSizing
   }: any;
 }

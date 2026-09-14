@@ -71,6 +71,7 @@ declare module "@formsflow/service" {
     getUsagePercentage,
     getUsageVariant,
     isOverLimit,
+    getColumnPresetSizing,
   }: any;
 }
 
@@ -92,11 +93,30 @@ declare module "@formsflow/components" {
     CustomUrl,
     Switch,
     V8CustomButton,
+    V8CustomDropdownButton,
     BreadCrumbs,
     DownArrowIcon,
     UpArrowIcon,
     AppModal,
     ReusableTable,
-    CircleAlertIcon
+    CircleAlertIcon,
+    AddWithDropdown,
+    StyleEditor,
+    DEFAULT_STYLE,
+    FONT_MAP,
+    BUTTON_RADIUS_MAP,
+    FORMSFLOW_LOGO_ICON_SVG,
+    UsageSummaryCard,
+    mapTenantDataToUsage
   }: any;
+
+  export type StyleConfig = {
+    background: string;
+    accent: string;
+    buttons: string;
+    buttonShape: "square" | "rounded";
+    headerFont: "serif" | "sans" | "heavy-sans" | "mono" | "slab";
+    bodyFont: "serif" | "sans" | "heavy-sans" | "mono" | "slab";
+    brandingLogo: "none" | "formsflow";
+  };
 }
