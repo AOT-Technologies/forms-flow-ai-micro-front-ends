@@ -274,7 +274,7 @@ $font-tokens: (
       width: 100%;
       height: 100vh;
       margin: 0;
-      position: fixed;
+      // position: fixed;
       overflow: hidden;
   
       .page-layout {
@@ -504,7 +504,7 @@ $font-tokens: (
 }
 
 // Home page layout classes
-.home-layout {
+.page-layout {
   .ff-home-header {
     display: flex;
     align-items: center;
@@ -529,7 +529,7 @@ $font-tokens: (
   .ff-home-content-wrap {
     // margin-left: 6.75rem;
     margin: auto;
-    max-width: 58.5625rem;
+    // max-width: 58.5625rem;
   }
 
   

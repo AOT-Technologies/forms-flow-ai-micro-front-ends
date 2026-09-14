@@ -179,7 +179,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
                     className="small"
                     data-testid={`checkbox-child-${perm.name}`}
                     aria-label={`Toggle permission: ${perm.description}`}
-                    disabled={disabled}
+                    disabled={true}
                   />
                 </div>
               ))}
