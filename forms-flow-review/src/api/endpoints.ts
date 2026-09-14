@@ -8,7 +8,7 @@ import {
   MT_ADMIN_BASE_URL_VERSION,
 } from "./config";
 const API = {
-  BPM_BASE_URL_SOCKET_IO: `${BPM_URL}/forms-flow-bpm-socket`,
+  BPM_BASE_URL_SOCKET_IO: `${BPM_URL}/socket`,
   FORM: `${WEB_BASE_URL}/form`,
   FORM_PROCESSES: `${WEB_BASE_URL}/form/formid`,
   GET_API_USER_LIST: `${WEB_BASE_URL}/user`,
