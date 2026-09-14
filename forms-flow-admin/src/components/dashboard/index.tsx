@@ -12,6 +12,7 @@ const AdminDashboard = React.memo((props: any) => {
   const [dashboardLoading, setDashboardLoading] = React.useState(true);
   const [groupLoading, setGroupLoading] = React.useState(true);
   const [loading, setLoading] = React.useState(true);
+  const [search, setSearch] = React.useState<string | undefined>(undefined);
 
   React.useEffect(() => {
     setTab("Dashboard");
@@ -46,14 +47,24 @@ const AdminDashboard = React.memo((props: any) => {
     }
   }, [dashboardLoading, groupLoading]);
 
+  const filteredDashboards = React.useMemo(() => {
+    if (!search) return dashboards;
+    const searchTerm = search.toLowerCase();
+    return dashboards.filter((dashboard: any) =>
+      dashboard?.resourceDetails?.name?.toLowerCase().includes(searchTerm)
+    );
+  }, [dashboards, search]);
+
   return (
     <InsightDashboard
       {...props}
-      dashboards={dashboards}
+      dashboards={filteredDashboards}
       groups={groups}
       setCount={setCount}
       error={error}
       loading={loading}
+      search={search}
+      setSearch={setSearch}
     />
   );
 });
