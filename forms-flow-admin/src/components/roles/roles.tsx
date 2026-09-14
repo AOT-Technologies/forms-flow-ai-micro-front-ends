@@ -87,7 +87,8 @@ const Roles = React.memo((props: any) => {
   const [permissionData, setPermissionData] = React.useState([]);
   const [key, setKey] = useState("Details");
   const lastCreateTriggerRef = React.useRef<number | null>(null);
-
+  const [usersSizePerPage, setUsersSizePerPage] = React.useState(5);
+  
   React.useEffect(() => {
     const trigger = props.openCreateRoleTrigger ?? 0;
     if (
@@ -600,7 +601,7 @@ const Roles = React.memo((props: any) => {
           },
         },
       ];
-      console.log('use',users)
+      
       const userTab = {
         eventKey: "Users",
         title: "Users",
