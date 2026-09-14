@@ -49,6 +49,16 @@ const Manage: React.FC<ManageProps> = ({
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
+  // Style is a tenant-wide admin feature, not an Organization-only one --
+  // any manage-capable admin can open it (the owner-only branding-logo
+  // control inside it is gated separately, see StyleTab's isOwner prop).
+  const canAccessStyle =
+    isOrganizationManager || isDashboardManager || isUserManager || isRoleManager;
+  // Mirrors the backend's is_current_user_primary_owner: "owner" (via
+  // manage_organization, granted only to the {tenant}-owner group) is a
+  // multi-tenant SaaS concept with no equivalent in single-tenant -- there,
+  // any admin who can reach this screen is treated as the owner.
+  const isOwner = !MULTITENANCY_ENABLED || isOrganizationManager;
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
@@ -70,7 +80,7 @@ const Manage: React.FC<ManageProps> = ({
         if (urlTab === "dashboard" && !isDashboardManager) return defaultTab();
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
-        if (urlTab === "style" && !isOrganizationManager) return defaultTab();
+        if (urlTab === "style" && !canAccessStyle) return defaultTab();
         return urlTab;
       }
     }
@@ -89,6 +99,7 @@ const Manage: React.FC<ManageProps> = ({
     isDashboardManager,
     isUserManager,
     isRoleManager,
+    canAccessStyle,
   ]);
 
   // Redirect to default tab if on /admin without a tab
@@ -146,7 +157,7 @@ const Manage: React.FC<ManageProps> = ({
             )}
             {isUserManager && <Tab eventKey="users" title={t("Users")} />}
             {isRoleManager && <Tab eventKey="roles" title={t("Roles")} />}
-            {isOrganizationManager && (
+            {canAccessStyle && (
               <Tab eventKey="style" title={t("Style")} />
             )}
           </Tabs>
@@ -170,7 +181,10 @@ const Manage: React.FC<ManageProps> = ({
                 data-testid="add-registered-users-button"
                 label={t("Add New Users")}
                 ariaLabel={t("Add New Users")}
+                // The invite modal it opens only renders in multitenant mode.
+                disabled={!MULTITENANCY_ENABLED}
                 action
+                variant="primary"
               />
             </div>
           )}
@@ -215,50 +229,6 @@ const Manage: React.FC<ManageProps> = ({
             )}
           </div>
         </div>
-        <Collapse in={tabContentExpanded}>
-          <div>
-            <div className="tab-content">
-              {activeTab === "organization" && isOrganizationManager && (
-                <div className="manage-content">
-                  <Organization {...props} />
-                </div>
-              )}
-              {activeTab === "dashboard" && isDashboardManager && (
-                <div className="manage-content">
-                  <AdminDashboard
-                    {...props}
-                    setTab={setTab}
-                    setCount={setDashboardCount}
-                  />
-                </div>
-              )}
-              {activeTab === "users" && isUserManager && (
-                <div className="manage-content">
-                  <UserManagement
-                    {...props}
-                    setTab={setTab}
-                    setCount={setUserCount}
-                  />
-                </div>
-              )}
-              {activeTab === "roles" && isRoleManager && (
-                <div className="manage-content">
-                  <RoleManagement
-                    {...props}
-                    setTab={setTab}
-                    setCount={setRoleCount}
-                    tenantId={tenantId}
-                  />
-                </div>
-              )}
-              {activeTab === "style" && isOrganizationManager && (
-                <div className="manage-content">
-                  <StyleTab />
-                </div>
-              )}
-            </div>
-          </div>
-        </Collapse>
       </div>
     </div>
   );

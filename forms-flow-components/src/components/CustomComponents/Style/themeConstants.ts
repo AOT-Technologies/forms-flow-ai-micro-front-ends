@@ -32,7 +32,7 @@ export const DEFAULT_STYLE: StyleConfig = {
   buttonShape: "square",
   headerFont: "sans",
   bodyFont: "sans",
-  brandingLogo: "none",
+  brandingLogo: "formsflow",
 };
 
 /**
@@ -92,7 +92,7 @@ ${s} * { font-family: ${bFont}; }
 ${s} [data-component="form"],
 ${s} .tab-content, ${s} .tab-pane { background-color: transparent !important; }
 ${s} .card, ${s} .card-body, ${s} .card-footer,
-${s} .formio-component-panel > .card { background-color: ${bg} !important; }
+${s} .formio-component-panel > .card { background-color: #fff !important; }
 ${s} h1, ${s} h2, ${s} h3, ${s} h4, ${s} h5, ${s} h6, ${s} legend {
   font-family: ${hFont} !important; }
 ${s} .card-header, ${s} .card-title, ${s} .panel-title {

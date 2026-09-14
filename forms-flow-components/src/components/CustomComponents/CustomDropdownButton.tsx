@@ -113,6 +113,22 @@ const V8CustomDropdownButtonComponent = forwardRef<
     // Stable close function stored in ref (created once, reused)
     const closeRef = useRef<() => void>(() => setOpen(false));
 
+    // Timer used to debounce mouse-leave close so moving the pointer across
+    // the visual gap between the toggle and the absolutely-positioned menu
+    // (which momentarily isn't over any descendant element) doesn't close
+    // the menu before the pointer reaches it.
+    const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const clearCloseTimeout = useCallback(() => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
+    }, []);
+
+    // Clear any pending close timer on unmount
+    useEffect(() => clearCloseTimeout, [clearCloseTimeout]);
+
     // Ensure only one dropdown is open at a time
     useEffect(() => {
       if (open) {
@@ -138,11 +154,15 @@ const V8CustomDropdownButtonComponent = forwardRef<
     }, [open]);
 
     // Memoized click handlers for better performance
-    const handleItemClick = useCallback((item: DropdownItemConfig) => {
-      setSelectedValue(item.value || item.label);
-      item.onClick?.();
-      setOpen(false); // Close dropdown after selection
-    }, []);
+    const handleItemClick = useCallback(
+      (item: DropdownItemConfig) => {
+        clearCloseTimeout();
+        setSelectedValue(item.value || item.label);
+        item.onClick?.();
+        setOpen(false); // Close dropdown after selection
+      },
+      [clearCloseTimeout]
+    );
 
     const handleLabelClick = useCallback(
       (e: React.MouseEvent) => {
@@ -160,17 +180,27 @@ const V8CustomDropdownButtonComponent = forwardRef<
         e.preventDefault();
         e.stopPropagation();
         if (!disabled) {
+          clearCloseTimeout();
           setOpen(true);
         }
       },
-      [disabled]
+      [disabled, clearCloseTimeout]
     );
+
+    // Cancel any pending close when the pointer re-enters the dropdown
+    // (toggle or menu) before the debounce timer fires.
+    const handleDropdownMouseEnter = useCallback(() => {
+      clearCloseTimeout();
+    }, [clearCloseTimeout]);
 
     const handleDropdownMouseLeave = useCallback(() => {
       if (!disabled) {
-        setOpen(false);
+        clearCloseTimeout();
+        closeTimeoutRef.current = setTimeout(() => {
+          setOpen(false);
+        }, 200);
       }
-    }, [disabled]);
+    }, [disabled, clearCloseTimeout]);
 
     const handleDropdownIconKeyDown = useCallback(
       (e: React.KeyboardEvent) => {
@@ -189,10 +219,11 @@ const V8CustomDropdownButtonComponent = forwardRef<
     const handleDropdownToggle = useCallback(
       (isOpen: boolean) => {
         if (!disabled) {
+          clearCloseTimeout();
           setOpen(isOpen);
         }
       },
-      [disabled]
+      [disabled, clearCloseTimeout]
     );
 
     // Memoized container className
@@ -220,6 +251,7 @@ const V8CustomDropdownButtonComponent = forwardRef<
         as={ButtonGroup}
         show={open}
         onToggle={handleDropdownToggle}
+        onMouseEnter={handleDropdownMouseEnter}
         onMouseLeave={handleDropdownMouseLeave}
         className={containerClassName}
         ref={ref}

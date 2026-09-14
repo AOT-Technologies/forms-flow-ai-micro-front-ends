@@ -117,3 +117,8 @@ export const InviteUser = (
       }
     });
 };
+
+export const UpdateUserStatus = (user_id, payload) => {
+ const url = API.USER_ACTIVATION.replace("<user_id>",user_id);
+  return RequestService.httpPUTRequest(url, payload);
+}

@@ -9,9 +9,13 @@ import BrandingToggle from "./BrandingToggle";
 interface StyleEditorProps {
   styleConfig: Partial<StyleConfig>;
   onChange: (updated: StyleConfig) => void;
+  // Branding logo add/remove is reserved for the tenant owner (mirrors the
+  // backend's is_current_user_primary_owner check) -- every other admin who
+  // can reach the Style tab still gets colours/fonts/buttons.
+  isOwner?: boolean;
 }
 
-const StyleEditor: React.FC<StyleEditorProps> = ({ styleConfig, onChange }) => {
+const StyleEditor: React.FC<StyleEditorProps> = ({ styleConfig, onChange, isOwner = false }) => {
   const { t } = useTranslation();
   const merged: StyleConfig = { ...DEFAULT_STYLE, ...styleConfig };
 
@@ -65,13 +69,15 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ styleConfig, onChange }) => {
         />
       </section>
 
-      <section className="ff-style-editor__section">
-        <h4 className="ff-style-editor__section-title">{t("Branding")}</h4>
-        <BrandingToggle
-          value={merged.brandingLogo}
-          onChange={(key) => handleChange("brandingLogo", key)}
-        />
-      </section>
+      {isOwner && (
+        <section className="ff-style-editor__section">
+          <h4 className="ff-style-editor__section-title">{t("Branding")}</h4>
+          <BrandingToggle
+            value={merged.brandingLogo}
+            onChange={(key) => handleChange("brandingLogo", key)}
+          />
+        </section>
+      )}
     </div>
   );
 };

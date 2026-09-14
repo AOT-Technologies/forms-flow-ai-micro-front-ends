@@ -88,6 +88,8 @@ export {
   navigateToSubmissionViewDirect,
 } from "./routerServices/routerHelper";
 
+export { getColumnPresetSizing } from "./helpers/columnPresetService";
+
 export {
   getStoredChecklistItems,
   storeChecklistItems,

@@ -22,6 +22,7 @@ interface PermissionTreeProps {
       permissions: string[];
     }>
   >;
+  disabled?: boolean;
 }
 
 const groupByCategory = (
@@ -41,6 +42,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
   payload,
   handlePermissionCheck,
   setPayload,
+  disabled = false,
 }) => {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -151,6 +153,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
               className="fw-bold"
               data-testid={`checkbox-parent-${category}`}
               aria-label={`Toggle all permissions in ${category}`}
+              disabled={disabled}
             />
 
             <div
@@ -176,7 +179,7 @@ const PermissionTree: React.FC<PermissionTreeProps> = ({
                     className="small"
                     data-testid={`checkbox-child-${perm.name}`}
                     aria-label={`Toggle permission: ${perm.description}`}
-                    disabled
+                    disabled={disabled}
                   />
                 </div>
               ))}
