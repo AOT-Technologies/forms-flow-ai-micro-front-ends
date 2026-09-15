@@ -12,7 +12,11 @@ import {
 import Loading from "../loading";
 import { toast } from "react-toastify";
 import PermissionTree from "./permissionTree";
-import { getStatusDisplay, removingTenantId } from "../../utils/utils.js";
+import {
+  getStatusDisplay,
+  removingTenantId,
+  isInternalAdminRole,
+} from "../../utils/utils.js";
 import {
   AppModal,
   CustomSearch,
@@ -199,7 +203,7 @@ const Roles = React.memo((props: any) => {
     updatedRoles = removingTenantId(updatedRoles, tenantId);
 
     updatedRoles = updatedRoles.filter(
-      (role) => role.name?.replace(/\//g, "") !== "camunda-admin"
+      (role) => !isInternalAdminRole(role.name)
     );
 
     updatedRoles = updatedRoles.map((role) => ({

@@ -52,6 +52,14 @@ export const removeTenantKey = (value, tenantkey) => {
 };
 
 /**
+ * True when a role name is the internal "camunda-admin" role, which is never
+ * shown in the UI. Handles the leading-slash form roles come in as (e.g. "/camunda-admin").
+ */
+export const isInternalAdminRole = (name) =>
+  String(name ?? "")
+    .replace(/\//g, "") === "camunda-admin";
+
+/**
  * Role label for UI: last `/` segment, then strip leading `{tenantKey}-` when multitenant
  * (e.g. `lukvv-client` → `client`).
  */
