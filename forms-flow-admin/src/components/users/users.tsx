@@ -12,7 +12,11 @@ import {
   KEYCLOAK_ENABLE_CLIENT_AUTH,
   MULTITENANCY_ENABLED,
 } from "../../constants";
-import { formatRoleDisplayName, getStatusDisplay } from "../../utils/utils.js";
+import {
+  formatRoleDisplayName,
+  getStatusDisplay,
+  isInternalAdminRole,
+} from "../../utils/utils.js";
 import { completeChecklistByRouteKey } from "../../services/checklist";
 import {
   AppModal,
@@ -133,7 +137,7 @@ const Users = React.memo((props: any) => {
   }, [props?.loading]);
 
   React.useEffect(() => {
-    setRoles(props.roles);
+    setRoles((props.roles ?? []).filter((role: any) => !isInternalAdminRole(role.name)));
   }, [props.roles]);
 
   React.useEffect(() => {
@@ -281,15 +285,18 @@ const Users = React.memo((props: any) => {
       sortable: false,
       renderCell: (params) => {
         const rowData = params.row;
-        const isOwnerRow = !!rowData?.isPrimaryOwner;
-        const cell: any[] = [...(rowData?.role ?? [])].sort((a, b) => {
-          const nameA = formatRoleDisplayName(a?.name, tenantKeyForRoleDisplay);
-          const nameB = formatRoleDisplayName(b?.name, tenantKeyForRoleDisplay);
-          return (
-            roleTierRank(nameA) - roleTierRank(nameB) ||
-            nameA.localeCompare(nameB)
-          );
-        });
+        const isOwnerRow = rowData?.isPrimaryOwner || rowData?.isOwner;
+        const cell: any[] = [...(rowData?.role ?? [])]
+          .filter((item: any) => !isInternalAdminRole(item?.name))
+          .sort((a, b) => {
+            const nameA = formatRoleDisplayName(a?.name, tenantKeyForRoleDisplay);
+            const nameB = formatRoleDisplayName(b?.name, tenantKeyForRoleDisplay);
+            return (
+              roleTierRank(nameA) - roleTierRank(nameB) ||
+              nameA.localeCompare(nameB)
+            );
+          });
+        
         const assignedRoleIds = new Set(cell.map((item: any) => item.id));
         const availableRoleOptions = roles
           // Owner is granted only via Transfer Ownership, never through the picker.
@@ -304,7 +311,7 @@ const Users = React.memo((props: any) => {
             id: role.id,
             name: formatRoleDisplayName(role.name, tenantKeyForRoleDisplay),
           }));
-
+          
         const addSingleUserRole = (option: AddRoleDropdownOption) => {
           const user_id = rowData.id;
           const payload = {
@@ -417,7 +424,7 @@ const Users = React.memo((props: any) => {
           getStatusDisplay(rowData?.status).label === "Suspended";
         const isLoggedInUserRow =
           !!currentUserId && rowData?.id === currentUserId;
-        const isOwnerUser = !!rowData?.isOwner;
+        const isOwnerUser = rowData?.isPrimaryOwner || rowData?.isOwner;
 
         // const addUserPermission = () => {
         //   const promises = [];

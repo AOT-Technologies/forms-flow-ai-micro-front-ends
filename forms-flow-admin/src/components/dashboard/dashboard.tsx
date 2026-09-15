@@ -9,7 +9,7 @@ import { MULTITENANCY_ENABLED } from "../../constants";
 
 import { updateAuthorization, fetchdashboards } from "../../services/dashboard";
 import { useTranslation } from "react-i18next";
-import { V8CustomButton, ReusableTable, CustomSearch, AddWithDropdown } from "@formsflow/components";
+import { ReusableTable, CustomSearch, AddWithDropdown } from "@formsflow/components";
 import { getColumnPresetSizing, StorageService } from "@formsflow/service";
 
 const DEFAULT_SORT_MODEL: any[] = [];
@@ -138,7 +138,7 @@ const InsightDashboard = React.memo((props: any) => {
   }, [props?.loading]);
   
   const handleSearch = (e) => {
-    if (e && e.key === "Enter") {
+    if (e?.key === "Enter") {
       setSearch(e.target.value);
     }
   };
