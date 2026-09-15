@@ -90,18 +90,31 @@ const Admin = React.memo(({ props }: any) => {
   }, [tenantId]);
 
   React.useEffect(() => {
-    if (!isAuth) {
-      let instance = KeycloakService.getInstance(
-        KEYCLOAK_URL_AUTH,
-        KEYCLOAK_URL_REALM,
-        KEYCLOAK_CLIENT,
-        tenantId
-      );
-      instance.initKeycloak(() => {
-        setIsAuth(instance.isAuthenticated());
-        publish("FF_AUTH", instance);
-      });
-    }
+    // Always initialize this microfrontend's own KeycloakService singleton --
+    // `isAuth` reflects props.getKcInstance() (the shell's instance), not
+    // whether THIS bundle's own private copy of @formsflow/service (not
+    // shared/externalized across microfrontends) has ever called
+    // getInstance()/initKeycloak(). Skipping this when the shell instance is
+    // already authenticated left admin's own singleton permanently
+    // uninitialized, so RequestService's 401-retry (which calls
+    // KeycloakService.updateToken() from THIS bundle) always found no
+    // instance and silently retried with "Bearer null" once the access
+    // token actually expired -- surfacing as "Invalid token" errors on
+    // writes, most visibly on the Style tab where a template is composed
+    // over several minutes before saving.
+    // initKeycloak uses onLoad: "check-sso" (a silent iframe check against
+    // the already-active SSO session, not a visible redirect), so this is
+    // safe to run even though the user is already authenticated.
+    let instance = KeycloakService.getInstance(
+      KEYCLOAK_URL_AUTH,
+      KEYCLOAK_URL_REALM,
+      KEYCLOAK_CLIENT,
+      tenantId
+    );
+    instance.initKeycloak(() => {
+      setIsAuth(instance.isAuthenticated());
+      publish("FF_AUTH", instance);
+    });
   }, []);
 
   React.useEffect(() => {
