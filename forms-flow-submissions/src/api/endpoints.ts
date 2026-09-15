@@ -11,7 +11,7 @@ const API = {
   GET_FORM_BY_ID: `${PROJECT_URL}/form`,
   CUSTOM_SUBMISSION: `${CUSTOM_SUBMISSION_URL}/form/<form_id>/submission`,
   GET_APPLICATION_HISTORY_API: `${WEB_BASE_URL}/application/<application_id>/history`,
-  PROCESS_ACTIVITIES: `${BPM_BASE_URL_EXT}/v1/process-instance/<process_instance_id>/activity-instances`,
+  PROCESS_ACTIVITIES: `${BPM_BASE_URL_EXT}/process-instance/<process_instance_id>/activity-instances`,
   GET_PROCESS_XML: `${WEB_BASE_URL}/process/key/<process_key>`,
   FORM: `${WEB_BASE_URL}/form`,
   FORM_PROCESSES: `${WEB_BASE_URL}/form/formid`,

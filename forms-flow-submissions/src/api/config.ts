@@ -24,7 +24,7 @@ export const AppConfig = {
 export const CUSTOM_SUBMISSION_URL =
   window._env_?.REACT_APP_CUSTOM_SUBMISSION_URL;
 
- export const BPM_BASE_URL_EXT = `${
-   (window._env_?.REACT_APP_BPM_URL)
- }/api`;
+export const BPM_API_PREFIX =
+  window._env_?.REACT_APP_BPM_API_PREFIX ?? "/api/v1";
+export const BPM_BASE_URL_EXT = `${window._env_?.REACT_APP_BPM_URL}${BPM_API_PREFIX}`;
   export const API_PROJECT_URL = window._env_?.REACT_APP_API_PROJECT_URL;
