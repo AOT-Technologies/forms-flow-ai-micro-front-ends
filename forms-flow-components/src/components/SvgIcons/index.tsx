@@ -480,11 +480,27 @@ export const ApplicationLogo = ({
   <path fillRule="evenodd" clipRule="evenodd" d="M7.30992 0.241904C6.98738 -0.0806347 6.46444 -0.0806347 6.1419 0.241904C5.81937 0.564443 5.81937 1.08738 6.1419 1.40992L7.1741 2.44212C3.14386 2.85546 0 6.26059 0 10.4C0 13.2954 1.53818 15.8316 3.84197 17.2359C4.27304 17.4987 4.8126 17.2432 4.94327 16.7555C5.04336 16.382 4.86452 15.994 4.53938 15.7846C2.77105 14.6458 1.6 12.6596 1.6 10.4C1.6 7.45211 3.59305 4.96973 6.30516 4.22682L6.1419 4.39008C5.81937 4.71262 5.81937 5.23556 6.1419 5.5581C6.46444 5.88064 6.98738 5.88064 7.30992 5.5581L9.38401 3.48401C9.70655 3.16147 9.70655 2.63853 9.38401 2.31599L7.30992 0.241904ZM8.21601 19.9581C8.53855 20.2806 9.06149 20.2806 9.38402 19.9581C9.70656 19.6356 9.70656 19.1126 9.38402 18.7901L8.93937 18.3454C12.915 17.8804 16 14.5005 16 10.4C16 7.41613 14.3664 4.8138 11.9448 3.4386C11.5152 3.19463 10.9928 3.4512 10.865 3.92841C10.7625 4.31082 10.9532 4.70681 11.2925 4.91077C13.1544 6.02993 14.4 8.0695 14.4 10.4C14.4 13.798 11.7518 16.5775 8.40666 16.7873L9.38402 15.8099C9.70656 15.4874 9.70656 14.9645 9.38402 14.6419C9.06149 14.3194 8.53855 14.3194 8.21601 14.6419L6.14192 16.716C5.81938 17.0385 5.81938 17.5615 6.14192 17.884L8.21601 19.9581ZM11.5259 7.53431C11.2135 7.22189 10.7065 7.22189 10.394 7.53431L7.1997 10.7286L5.80517 9.33412C5.49276 9.02201 4.98664 9.02189 4.67431 9.33412C4.36189 9.64654 4.36189 10.1535 4.67431 10.466L6.6411 12.4318C6.95352 12.7442 7.45954 12.7442 7.77196 12.4318C7.80682 12.3969 7.83766 12.3596 7.86474 12.3204C7.88561 12.3034 7.90582 12.2852 7.92528 12.2658L11.5259 8.66517C11.8379 8.35277 11.838 7.84664 11.5259 7.53431Z" fill={color}/>
 </svg>
 );
-export const MenuToggleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <path d="M4 6C4 5.46957 4.21071 4.96086 4.58579 4.58579C4.96086 4.21071 5.46957 4 6 4H18C18.5304 4 19.0391 4.21071 19.4142 4.58579C19.7893 4.96086 20 5.46957 20 6V18C20 18.5304 19.7893 19.0391 19.4142 19.4142C19.0391 19.7893 18.5304 20 18 20H6C5.46957 20 4.96086 19.7893 4.58579 19.4142C4.21071 19.0391 4 18.5304 4 18V6Z" stroke="#7C7D7F" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M15 4V20" stroke="#7C7D7F" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M9 10L11 12L9 14" stroke="#7C7D7F" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+export const MenuToggleIcon = ({
+  strokeColor = grayColor,
+  className = "",
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 19 19"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path
+      d="M6.5 3V17.25M3.33333 3H14.4167C15.2911 3 16 3.70888 16 4.58333V15.6667C16 16.5411 15.2911 17.25 14.4167 17.25H3.33333C2.45888 17.25 1.75 16.5411 1.75 15.6667V4.58333C1.75 3.70888 2.45888 3 3.33333 3Z"
+      stroke={strokeColor}
+      strokeWidth="1.78125"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 export const CopyIcon = ({ color = baseColor, ...props }) => (
@@ -778,160 +794,224 @@ export const SharedWithMeIcon = ({ color = grayMediumColor,className, ...props }
 );
 
 export const NavbarTaskIcon = ({
-  fillColor = grayColor,
-  strokeColor = whiteColor,
-  className,
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
   ...props
 }) => (
-  // <svg
-  //   xmlns="http://www.w3.org/2000/svg"
-  //   width="24"
-  //   height="25"
-  //   viewBox="0 0 24 25"
-  //   fill="none"
-  // >
-  //   <circle cx="12" cy="12.5" r="12" fill={fillColor} />
-  //   <path
-  //     d="M8 12.6786L10.5 15.3571L15.5 10"
-  //     stroke={strokeColor}
-  //     strokeWidth="2"
-  //     strokeLinecap="round"
-  //     strokeLinejoin="round"
-  //   />
-  // </svg>
-
-  <svg xmlns="http://www.w3.org/2000/svg" 
-    width="16" 
-    height="16" 
-    viewBox="0 0 16 16" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
     fill="none"
+    className={className}
+    {...props}
   >
-    <path 
-      d="M11.138 5.15201L6.802 9.48601L4.862 7.54601C4.612 7.29601 4.204 7.29601 3.954 7.54601C3.704 7.79601 3.704 8.20401 3.954 8.45401L6.348 10.848C6.474 10.974 6.638 11.036 6.802 11.036C6.966 11.036 7.13 10.974 7.256 10.848L12.046 6.06001C12.296 5.81001 12.296 5.40201 12.046 5.15201C11.794 4.90001 11.388 4.90001 11.138 5.15201Z" 
-      // fill={"#7C7D7F"}
-      fill={fillColor}
-    />
-    <path 
-      d="M8 0C3.588 0 0 3.588 0 8C0 12.412 3.588 16 8 16C12.412 16 16 12.412 16 8C16 3.588 12.412 0 8 0ZM8 14.716C4.298 14.716 1.284 11.704 1.284 8C1.284 4.296 4.298 1.284 8 1.284C11.702 1.284 14.716 4.296 14.716 8C14.716 11.704 11.702 14.716 8 14.716Z" 
-      fill={fillColor}
-      // stroke={strokeColor}
+    <path d="M10.0003 18.3346C14.6027 18.3346 18.3337 14.6037 18.3337 10.0013C18.3337 5.39893 14.6027 1.66797 10.0003 1.66797C5.39795 1.66797 1.66699 5.39893 1.66699 10.0013C1.66699 14.6037 5.39795 18.3346 10.0003 18.3346Z" fill={fillColor} />
+    <path
+      d="M7.50033 10.0013L9.16699 11.668L12.5003 8.33463M18.3337 10.0013C18.3337 14.6037 14.6027 18.3346 10.0003 18.3346C5.39795 18.3346 1.66699 14.6037 1.66699 10.0013C1.66699 5.39893 5.39795 1.66797 10.0003 1.66797C14.6027 1.66797 18.3337 5.39893 18.3337 10.0013Z"
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
 
 export const NavbarHomeIcon = ({
-  fillColor = "#7C7D7F",
-  strokeColor = "#E5E5E5",
-  className,
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
   ...props
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
     fill="none"
     className={className}
     {...props}
   >
-    <circle cx="8" cy="8" r="8" fill="white" stroke={strokeColor} />
-    <path
-      d="M3.31721 0.097576C3.24301 0.0401276 3.13934 0.0401276 3.06514 0.097576L0.0798467 2.40877C0.0294814 2.44776 0 2.50787 0 2.57157V6.79412C0 6.90782 0.0921767 7 0.205882 7H1.95588C2.06959 7 2.16176 6.90782 2.16176 6.79412V4.52941C2.16176 4.41571 2.25394 4.32353 2.36765 4.32353H4.01471C4.12841 4.32353 4.22059 4.41571 4.22059 4.52941V6.79412C4.22059 6.90782 4.31277 7 4.42647 7H6.17647C6.29018 7 6.38235 6.90782 6.38235 6.79412V2.57157C6.38235 2.50787 6.35287 2.44776 6.30251 2.40877L3.31721 0.097576Z"
-      fill={fillColor}
-      transform="translate(4.5 4.5)"
-    />
+    <g transform="translate(1.125 1.125)">
+      <path
+        d="M8.875 16.875C13.2933 16.875 16.875 13.2933 16.875 8.875C16.875 4.45672 13.2933 0.875 8.875 0.875C4.45672 0.875 0.875 4.45672 0.875 8.875C0.875 13.2933 4.45672 16.875 8.875 16.875Z"
+        fill={fillColor}
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+    <g transform="translate(5.625 5.125)">
+      <path
+        d="M0.875 3.9863C0.874973 3.87316 0.89963 3.76137 0.947251 3.65874C0.994872 3.55611 1.06431 3.46511 1.15072 3.39208L3.87294 1.05874C4.01333 0.940095 4.19119 0.875 4.375 0.875C4.55881 0.875 4.73667 0.940095 4.87706 1.05874L7.59928 3.39208C7.68569 3.46511 7.75513 3.55611 7.80275 3.65874C7.85037 3.76137 7.87503 3.87316 7.875 3.9863V7.4863C7.875 7.69258 7.79306 7.89041 7.64719 8.03627C7.50133 8.18213 7.3035 8.26408 7.09722 8.26408H1.65278C1.4465 8.26408 1.24867 8.18213 1.10281 8.03627C0.956944 7.89041 0.875 7.69258 0.875 7.4863V3.9863Z"
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
   </svg>
 );
 
 export const NavbarSubmitIcon = ({
-  fillColor = grayColor,
-  strokeColor = whiteColor,
-  className,
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
   ...props
 }) => (
-    // <svg 
-    //   xmlns="http://www.w3.org/2000/svg" 
-    //   width="24" 
-    //   height="25" 
-    //   viewBox="0 0 24 25" 
-    //   fill="none"
-    //   >
-    //   <circle cx="12" cy="12.5" r="12" fill={fillColor}/>
-    //   <path 
-    //   d="M6.41992 10.1029L17.3302 9L10.9199 17.8971L10.835 12.75L6.41992 10.1029Z" 
-    //   stroke={strokeColor} 
-    //   strokeWidth="2" 
-    //   strokeLinecap="round" 
-    //   strokeLinejoin="round"
-    //   />
-    // </svg>
-
-    <svg xmlns="http://www.w3.org/2000/svg" 
-      width="16" 
-      height="16" 
-      viewBox="0 0 16 16" 
-      fill="none"
-    >
-      <path 
-        d="M8.00008 3C7.86767 3.00519 7.71465 3.05969 7.61814 3.15046L4.46999 6.11342C4.28956 6.3142 4.21508 6.6992 4.42369 6.92361C4.62916 7.14465 5.0276 7.13803 5.23388 6.91783L7.44452 4.8345L7.44452 12.4444C7.44452 12.7513 7.69325 13 8.00008 13C8.30691 13 8.55564 12.7513 8.55564 12.4444L8.55564 4.8345L10.7663 6.91783C10.9562 7.10741 11.3687 7.14249 11.5765 6.92361C11.7843 6.70479 11.7179 6.30596 11.5302 6.11342L8.38202 3.15046C8.27428 3.04908 8.14789 2.99967 8.00008 3Z" 
-        // fill="#7C7D7F"
-        fill={fillColor}
-      />
-      <circle cx="8" cy="8" r="7.5" stroke={strokeColor}/>
-    </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path d="M10.0003 18.3327C14.6027 18.3327 18.3337 14.6017 18.3337 9.99935C18.3337 5.39698 14.6027 1.66602 10.0003 1.66602C5.39795 1.66602 1.66699 5.39698 1.66699 9.99935C1.66699 14.6017 5.39795 18.3327 10.0003 18.3327Z" fill={fillColor} />
+    <path
+      d="M6.66699 9.99935L10.0003 6.66602L13.3337 9.99935M10.0003 6.66602V13.3327M18.3337 9.99935C18.3337 14.6017 14.6027 18.3327 10.0003 18.3327C5.39795 18.3327 1.66699 14.6017 1.66699 9.99935C1.66699 5.39698 5.39795 1.66602 10.0003 1.66602C14.6027 1.66602 18.3337 5.39698 18.3337 9.99935Z"
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 );
 
 export const NavbarAnalyzeIcon = ({
-  fillColor = grayDarkestColor,
-  strokeColor = whiteColor,
-  className,
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
   ...props
 }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <path d="M4.5 9.3L6.5 7.3L8.5 9.3L11.5 6.3" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path
+      d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z"
+      fill={fillColor}
       stroke={strokeColor}
-      strokeLinecap="round" 
+      strokeWidth="1.75"
+      strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <circle cx="8" cy="8" r="7.5" stroke={strokeColor}/>
+    <path
+      d="M6.5 11.5L8.5 9.5L10.5 11.5L13.5 8.5"
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 export const NavbarBuildIcon = ({
-  fillColor = grayDarkestColor,
-  strokeColor = whiteColor,
-  className,
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
   ...props
 }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <circle cx="8" cy="8" r="7.5" stroke={strokeColor}/>
-    <path d="M5 6H11" stroke={strokeColor} strokeLinecap="round"/>
-    <path d="M5 8H9" stroke={strokeColor} strokeLinecap="round"/>
-    <path d="M5 10H11" stroke={strokeColor} strokeLinecap="round"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <g transform="translate(1.125 1.125)">
+      <path
+        d="M8.875 16.875C13.2933 16.875 16.875 13.2933 16.875 8.875C16.875 4.45672 13.2933 0.875 8.875 0.875C4.45672 0.875 0.875 4.45672 0.875 8.875C0.875 13.2933 4.45672 16.875 8.875 16.875Z"
+        fill={fillColor}
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5.875 5.875H11.875M5.875 8.875H9.875M5.875 11.875H11.875"
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
   </svg>
 );
 export const NavbarManageIcon = ({
-  fillColor = grayDarkestColor,
-  strokeColor = whiteColor,
-  className,
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
   ...props
 }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <circle cx="8" cy="8" r="7.5" stroke={strokeColor}/>
-    <circle cx="8" cy="6.5" r="1.5" stroke={strokeColor}/>
-    <rect x="5.5" y="7" width="5" height="4" rx="0.5" fill={fillColor} stroke={strokeColor}/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path
+      d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z"
+      fill={fillColor}
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8.22221 9.24V7.8C8.22221 7.32261 8.40951 6.86477 8.74291 6.52721C9.07631 6.18964 9.52849 6 9.99999 6C10.4715 6 10.9237 6.18964 11.2571 6.52721C11.5905 6.86477 11.7778 7.32261 11.7778 7.8V9.24M7.5111 9.24H12.4889C12.8816 9.24 13.2 9.56235 13.2 9.96V12.48C13.2 12.8776 12.8816 13.2 12.4889 13.2H7.5111C7.11836 13.2 6.79999 12.8776 6.79999 12.48V9.96C6.79999 9.56235 7.11836 9.24 7.5111 9.24Z"
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 
-export const LogoutIcon=({color = grayColor, ...props })=>(
-  // <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-  //   <circle cx="8" cy="8" r="7.5" stroke="#7C7D7F"/>
-  // </svg> 
-
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M7 5H5V11H7" stroke={color} strokeLinecap="round" strokeLinejoin="round"/>
-  <path d="M12.0996 7.99902C12.0998 8.10189 12.0674 8.19417 12 8.27148L10.5186 9.97168L10.5156 9.97461C10.4493 10.0445 10.3525 10.0879 10.2559 10.0977C10.1584 10.1075 10.0479 10.084 9.9668 10.001C9.88741 9.91957 9.86018 9.80533 9.86328 9.70508C9.86639 9.60627 9.8994 9.50096 9.96582 9.42773L10.8633 8.39941H7.27734C7.06181 8.39916 6.90039 8.21242 6.90039 7.99902C6.90062 7.78582 7.06197 7.59986 7.27734 7.59961L10.8633 7.59961L9.96582 6.57129V6.57031C9.89245 6.49308 9.85748 6.38793 9.85645 6.28809C9.85548 6.18599 9.88963 6.07652 9.96777 5.99805C10.0502 5.91531 10.1587 5.89178 10.2559 5.90234C10.3278 5.91019 10.3989 5.93656 10.458 5.97656L10.5127 6.02148L10.5186 6.02734L12 7.72754C12.0636 7.80052 12.0964 7.90697 12.0996 7.99609V7.99902Z" fill={color} stroke={color} strokeWidth="0.2"/>
-  <circle cx="8" cy="8" r="7.5" stroke={color}/>
-</svg>
+export const LogoutIcon = ({
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path
+      d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z"
+      fill={fillColor}
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M11.6022 8.18649L13.5003 10.0846L11.6022 11.9828M13.5003 10.0846H8.94477M8.94477 13.5013H7.42625C7.22488 13.5013 7.03176 13.4213 6.88937 13.2789C6.74699 13.1365 6.66699 12.9434 6.66699 12.742V7.42723C6.66699 7.22586 6.74699 7.03274 6.88937 6.89035C7.03176 6.74796 7.22488 6.66797 7.42625 6.66797H8.94477"
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 );
 export const FileUploadIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -2013,3 +2093,203 @@ export const bundleIcon = () => {
     strokeLinejoin="round" />
   </svg>
 }
+
+export const NavbarFormsIcon = ({
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <g transform="translate(1.125 1.125)">
+      <path
+        d="M8.875 16.875C13.2933 16.875 16.875 13.2933 16.875 8.875C16.875 4.45672 13.2933 0.875 8.875 0.875C4.45672 0.875 0.875 4.45672 0.875 8.875C0.875 13.2933 4.45672 16.875 8.875 16.875Z"
+        fill={fillColor}
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M5.875 5.875H11.875M5.875 8.875H9.875M5.875 11.875H11.875"
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+  </svg>
+);
+
+export const NavbarBundlesIcon = ({
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <g transform="translate(1.125 1.125)">
+      <path
+        d="M8.875 16.875C13.2933 16.875 16.875 13.2933 16.875 8.875C16.875 4.45672 13.2933 0.875 8.875 0.875C4.45672 0.875 0.875 4.45672 0.875 8.875C0.875 13.2933 4.45672 16.875 8.875 16.875Z"
+        fill={fillColor}
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9.475 5.875H6.475C6.14363 5.875 5.875 6.14363 5.875 6.475V8.275C5.875 8.60637 6.14363 8.875 6.475 8.875H9.475C9.80637 8.875 10.075 8.60637 10.075 8.275V6.475C10.075 6.14363 9.80637 5.875 9.475 5.875Z"
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M11.275 8.875H8.275C7.94363 8.875 7.675 9.14363 7.675 9.475V11.275C7.675 11.6064 7.94363 11.875 8.275 11.875H11.275C11.6064 11.875 11.875 11.6064 11.875 11.275V9.475C11.875 9.14363 11.6064 8.875 11.275 8.875Z"
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+  </svg>
+);
+
+export const NavbarSubflowsIcon = ({
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <g transform="translate(1.125 1.125)">
+      <path
+        d="M8.875 16.875C13.2933 16.875 16.875 13.2933 16.875 8.875C16.875 4.45672 13.2933 0.875 8.875 0.875C4.45672 0.875 0.875 4.45672 0.875 8.875C0.875 13.2933 4.45672 16.875 8.875 16.875Z"
+        fill={fillColor}
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7.34733 8.54774L5.81955 7.01996L7.34733 5.49219M5.81955 7.01996L11.9307 7.01997M10.4029 9.31163L11.9307 10.8394L10.4029 12.3672M11.9307 10.8394L5.81955 10.8394"
+        stroke={strokeColor}
+        strokeWidth="1.50391"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+  </svg>
+);
+
+export const NavbarDecisionTablesIcon = ({
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <g transform="translate(1.125 1.125)">
+      <path
+        d="M8.875 16.875C13.2933 16.875 16.875 13.2933 16.875 8.875C16.875 4.45672 13.2933 0.875 8.875 0.875C4.45672 0.875 0.875 4.45672 0.875 8.875C0.875 13.2933 4.45672 16.875 8.875 16.875Z"
+        fill={fillColor}
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.875 5.36328V12.3877M11.314 10.4365L12.875 8.87548L11.314 7.3145M6.43598 7.3145L4.875 8.87548L6.43598 10.4365"
+        stroke={strokeColor}
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </g>
+  </svg>
+);
+
+export const NavbarSubmissionsIcon = ({
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path d="M10.0003 18.3327C14.6027 18.3327 18.3337 14.6017 18.3337 9.99935C18.3337 5.39698 14.6027 1.66602 10.0003 1.66602C5.39795 1.66602 1.66699 5.39698 1.66699 9.99935C1.66699 14.6017 5.39795 18.3327 10.0003 18.3327Z" fill={fillColor} />
+    <path d="M7.7075 12.5828L6.5 9.99902L6.5 7.74902C6.5 7.55011 6.57375 7.35935 6.70502 7.21869C6.8363 7.07804 7.01435 6.99902 7.2 6.99902L12.8 6.99903C12.9857 6.99903 13.1637 7.07804 13.295 7.2187C13.4262 7.35935 13.5 7.55011 13.5 7.74903L13.5 9.99903L12.2925 12.5828C12.2345 12.7077 12.1452 12.8129 12.0345 12.8864C11.9239 12.96 11.7962 12.999 11.666 12.999L8.334 12.999C8.20377 12.999 8.07614 12.96 7.96546 12.8864C7.85479 12.8129 7.76545 12.7077 7.7075 12.5828Z" fill={fillColor} />
+    <path
+      d="M13.5 9.99903H11.4L10.7 8.87403L9.3 8.87402L8.6 9.99902H6.5M6.5 9.99902L7.7075 12.5828C7.76545 12.7077 7.85479 12.8129 7.96546 12.8864C8.07614 12.96 8.20377 12.999 8.334 12.999L11.666 12.999C11.7962 12.999 11.9239 12.96 12.0345 12.8864C12.1452 12.8129 12.2345 12.7077 12.2925 12.5828L13.5 9.99903L13.5 7.74903C13.5 7.55011 13.4262 7.35935 13.295 7.2187C13.1637 7.07804 12.9857 6.99903 12.8 6.99903L7.2 6.99902C7.01435 6.99902 6.8363 7.07804 6.70502 7.21869C6.57375 7.35935 6.5 7.55011 6.5 7.74902L6.5 9.99902ZM18.3337 9.99935C18.3337 14.6017 14.6027 18.3327 10.0003 18.3327C5.39795 18.3327 1.66699 14.6017 1.66699 9.99935C1.66699 5.39698 5.39795 1.66602 10.0003 1.66602C14.6027 1.66602 18.3337 5.39698 18.3337 9.99935Z"
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const NavbarUserIcon = ({
+  fillColor = whiteColor,
+  strokeColor = grayColor,
+  className = "",
+  ...props
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    className={className}
+    {...props}
+  >
+    <path d="M10.0003 18.3346C14.6027 18.3346 18.3337 14.6037 18.3337 10.0013C18.3337 5.39893 14.6027 1.66797 10.0003 1.66797C5.39795 1.66797 1.66699 5.39893 1.66699 10.0013C1.66699 14.6037 5.39795 18.3346 10.0003 18.3346Z" fill={fillColor} />
+    <path
+      d="M14.9378 16.7146C14.7508 15.5395 14.1508 14.4696 13.2456 13.6971C12.3405 12.9247 11.1895 12.5004 9.99955 12.5005C8.80961 12.5006 7.65872 12.9251 6.75369 13.6977C5.84866 14.4703 5.24883 15.5403 5.06199 16.7155M13.3337 9.16797C13.3337 11.0089 11.8413 12.5013 10.0003 12.5013C8.15938 12.5013 6.66699 11.0089 6.66699 9.16797C6.66699 7.32702 8.15938 5.83464 10.0003 5.83464C11.8413 5.83464 13.3337 7.32702 13.3337 9.16797ZM18.3337 10.0013C18.3337 14.6037 14.6027 18.3346 10.0003 18.3346C5.39795 18.3346 1.66699 14.6037 1.66699 10.0013C1.66699 5.39893 5.39795 1.66797 10.0003 1.66797C14.6027 1.66797 18.3337 5.39893 18.3337 10.0013Z"
+      stroke={strokeColor}
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

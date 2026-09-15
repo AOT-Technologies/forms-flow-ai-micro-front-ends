@@ -51,6 +51,43 @@ $modalWidthLarge: $base * 75;
 $navPadding: $base;
 $navSpacing: $base;
 
+// stacked on a 34px pitch. The Navbar*Icon glyphs draw their own circle, so the
+// rail scales them up rather than wrapping them in a border.
+$railIconSize: $base * 1.25; // 20px
+$railItemGap: $base * 0.875; // 14px -> 34px pitch with $railIconSize
+
+// Hover flyout on the collapsed rail: panel starts 40px from the row's left
+// edge, so it overlaps the 48px rail by 8px and reads as attached to it.
+$railFlyoutOffset: $base * 2.5; // 40px
+$railFlyoutPaddingY: $base * 0.625; // 10px
+$railFlyoutPaddingX: $base * 0.625; // 10px
+$railFlyoutRadius: $base * 0.3125; // 5px
+// Spec'd literally on the tooltip. The theme's shadow scale is a much subtler
+// rgba(48, 52, 54, 0.08) family with no equivalent, so this one is local; if a
+// second surface ever needs it, promote it to a theme token.
+$railFlyoutShadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+
+// Count badge pill on the expanded row.
+$badgeHeight: $base * 1.1875; // 19px
+$badgeMinWidth: $base * 1.6875; // 27px
+
+// Expanded list metrics, from the same design: rows are inset 13px, the label
+// sits 9px past the 20px icon slot (icon x=13, label x=42), section labels are
+// inset 14px and open a wider gap above themselves.
+$menuInset: $base * 0.8125; // 13px
+$menuLabelGap: $base * 0.5625; // 9px
+$menuSectionInset: $base * 0.875; // 14px
+// Gaps measured off the design, each stated as the EXTRA on top of the 14px
+// list gap: a section label opens 28px below the row before it, and the
+// trailing Manage/Submit pair sits 58px below the last section.
+$menuSectionGap: $base * 0.875; // 14px -> 28px total
+$menuGroupGap: $base * 2.75; // 44px -> 58px total
+$headerInset: $base * 0.75; // 12px, logo x in the design
+$headerPadding: $base * 0.875; // 14px, logo/toggle y in the design
+$badgeDotSize: $base * 0.5625; // 9px
+$badgeDotOffset: $lineThin; // dot sits 1px proud of the 20px glyph box
+$subIconSize: $base; // 16px child glyph inside the 20px slot
+
 // transitions
 $animSpeed: 300ms;
 
@@ -63,22 +100,39 @@ $animSpeed: 300ms;
   background-color: var(--nav-bg-color);
   display: flex;
   flex-direction: column;
-  transition: width 0.1s ease-in;
+  // Width follows --navbar-width, which only the toggle changes. The hover
+  // rules that used to widen the rail (and the slower collapse-on-mouse-leave
+  // transition that paired with them) are gone: hovering a collapsed icon now
+  // shows its tooltip and nothing else.
+  transition: width $animSpeed ease;
   cursor: default;
 
-  &:not(:hover) {
-    transition: width 0.6s ease-out; // collapse takes 6s
-  }
+  // Logo + collapse toggle on a single row: logo at the 12px left inset, the
+  // toggle pinned right (margin-left:auto rather than space-between, so it
+  // stays right-aligned when hideLogo removes the logo entirely).
+  .sidenav-header {
+    display: flex;
+    align-items: center;
+    padding: $headerPadding $menuSectionInset $headerPadding $headerInset;
 
-  &:hover {
-    width: var(--navbar-width); // expanded width
+    .logo-container {
+      min-height: 0;
+      padding: 0;
+    }
   }
 
   .menu-toggle-icon {
-    padding: 0.87rem 0.75rem;
-    padding-bottom: 0;
+    margin-left: auto;
+    padding: 0;
     transition: transform 0.3s ease;
     cursor: default;
+
+    .menu-toggle-btn {
+      display: inline-flex;
+      padding: 0;
+      border: none;
+      background: none;
+    }
 
     svg {
       cursor: pointer;
@@ -307,24 +361,20 @@ $animSpeed: 300ms;
       }
     }
 
+    // Was an initials chip; now holds the NavbarUserIcon glyph, which supplies
+    // its own circle. Sized to the same 20px as the menu glyphs.
     .user-icon {
       display: flex;
       align-items: center;
       justify-content: center;
-      // width: 2rem;
-      // height: 2rem;
 
-      width: 1rem;
-      height: 1rem;
+      width: $railIconSize;
+      height: $railIconSize;
 
-      font-weight: 400;
-      // font-size: $fontSmallest;
-      font-size: 0.5rem;
-
-      border-radius: 50%;
-      background-color: $gray-medium;
-      // font-size: 14px;
-      // font-weight: var(--font-weight-xs);
+      > svg {
+        width: 100%;
+        height: 100%;
+      }
     }
 
     // .user-name {
@@ -377,7 +427,7 @@ $animSpeed: 300ms;
 
 .collapsed {
   .accordion-button {
-    padding: 16px 0 16px 0 !important;
+    padding: 0;
   }
 }
 
@@ -418,7 +468,216 @@ $animSpeed: 300ms;
   color: var(--navbar-menu-font-color);
   font-size: 0.938rem;
   font-weight: 500;
-  @include font-style(0.938rem, 500, var(--navbar-main-menu-font-color));
+  @include font-style(0.938rem, 500, var(--navbar-menu-font-color));
+}
+
+// Flat menu list - Phase 3 "8.3 / Expanded". Build/Analyze render as plain
+// section labels with their children always visible, so there is no accordion
+// and no chevron; every row is a link.
+.menu-list,
+.menu-sublist {
+  display: flex;
+  flex-direction: column;
+  gap: $railItemGap;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  // .options-container centres its text; menu rows and section labels are
+  // left-aligned, so undo it here rather than per element (the old
+  // .accordion-link carried the same reset).
+  text-align: left;
+}
+
+.menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: $railItemGap;
+
+  // Sections sit further from the row above them than rows do from each other.
+  margin-top: $menuSectionGap;
+}
+
+// Rows that trail the last section (Manage, Submit) read as their own group.
+.menu-section + .menu-row {
+  margin-top: $menuGroupGap;
+}
+
+.menu-section-title {
+  margin: 0;
+  padding: 0 $menuSectionInset;
+
+  @include font-style($fontSmallest, 400, var(--navbar-submenu-font-color));
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: $menuLabelGap;
+
+  padding: 0 $menuInset;
+  text-decoration: none;
+
+  &:hover {
+    background-color: var(--navbar-hover-submenu-bg-color);
+  }
+}
+
+.menu-label {
+  @include font-style($fontBase, 400, var(--navbar-menu-font-color));
+}
+
+.menu-link.active .menu-label {
+  font-weight: 500;
+  color: var(--navbar-menu-font-color-active);
+}
+
+// The glyphs already carry their own ring (NavbarHomeIcon draws a <circle>,
+// NavbarTaskIcon a ring path), so a row never adds a second one -- the box only
+// fixes the slot so labels line up. The components hard-code width/height and
+// not all of them spread props, so the size is applied here in CSS, where it
+// wins over the SVG attributes.
+.menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+
+  width: $railIconSize;
+  height: $railIconSize;
+
+  > svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Child rows use a smaller glyph but keep the same slot width, so their labels
+// stay aligned with the top-level ones.
+.menu-sublist .menu-icon > svg {
+  width: $subIconSize;
+  height: $subIconSize;
+}
+
+.menu-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+
+  min-width: $badgeMinWidth;
+  height: $badgeHeight;
+  padding: 0 calc($base / 2);
+  border-radius: $badgeHeight;
+
+  background-color: var(--navbar-menu-font-color-active);
+  @include font-style(0.75rem, 500, $white);
+}
+
+/* ============================================================
+   Collapsed rail - FWF-6593 new navbar design
+   ============================================================ */
+
+.sidenav.collapsed {
+  // The flyout extends past the 48px rail, and `overflow-y: auto` on the scroll
+  // container would clip it (an axis set to `auto` forces the other axis out of
+  // `visible`). Only the collapsed rail opts out of scrolling.
+  .options-container {
+    overflow: visible;
+  }
+
+  // The rail keeps the same group breaks as the expanded list -- the section
+  // label simply stops occupying part of the gap, so the section itself has to
+  // supply the whole 58px.
+  .menu-section {
+    margin-top: $menuGroupGap;
+  }
+
+  // The rail shows only the toggle in its header.
+  .sidenav-header {
+    justify-content: center;
+    padding: $headerPadding 0;
+
+    .logo-container {
+      display: none;
+    }
+  }
+
+  .menu-toggle-icon {
+    margin-left: 0;
+  }
+
+  .menu-link {
+    position: relative;
+    justify-content: center;
+    padding: 0;
+  }
+
+  // The count pill has nowhere to go on a 48px rail, so it becomes a dot on
+  // the glyph's top-right corner (Figma "8.3 / Collapsed Hover").
+  .menu-icon {
+    position: relative;
+  }
+
+  .menu-badge-dot {
+    position: absolute;
+    top: -$badgeDotOffset;
+    right: -$badgeDotOffset;
+
+    width: $badgeDotSize;
+    height: $badgeDotSize;
+    border-radius: 50%;
+
+    background-color: var(--navbar-menu-font-color-active);
+  }
+
+  .menu-flyout {
+    position: absolute;
+    top: 50%;
+    left: $railFlyoutOffset;
+    z-index: 1;
+    transform: translateY(-50%);
+
+    padding: $railFlyoutPaddingY $railFlyoutPaddingX;
+    border: $lineThin solid var(--gray-x-light);
+    border-radius: $railFlyoutRadius;
+    background-color: $white;
+    box-shadow: $railFlyoutShadow;
+
+    white-space: nowrap;
+    @include font-style($fontBase, 500, var(--secondary-dark));
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity $animSpeed;
+  }
+
+  .menu-link:hover .menu-flyout,
+  .menu-link:focus-visible .menu-flyout {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .user-container {
+    & > button {
+      justify-content: center;
+    }
+
+    // The avatar is the NavbarUserIcon glyph, which draws its own circle, so it
+    // is sized exactly like .menu-icon and gets no border of its own.
+    .user-icon {
+      width: $railIconSize;
+      height: $railIconSize;
+
+      background-color: transparent;
+
+      > svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
 }
 
 @media (max-width: 768px) {

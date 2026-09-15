@@ -1,15 +1,7 @@
-import React, {
-  useCallback,
-  useMemo,
-  useState,
-  useRef,
-  useEffect,
-} from "react";
-import Accordion from "react-bootstrap/Accordion";
+import React, { useCallback, useMemo } from "react";
 import "./Sidebar.scss";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  ChevronIcon,
   ShowPremiumIcons,
   NavbarHomeIcon,
   NavbarTaskIcon,
@@ -17,30 +9,60 @@ import {
   NavbarBuildIcon,
   NavbarAnalyzeIcon,
   NavbarManageIcon,
+  NavbarFormsIcon,
+  NavbarBundlesIcon,
+  NavbarSubflowsIcon,
+  NavbarDecisionTablesIcon,
+  NavbarSubmissionsIcon,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 
 /**
- * MenuComponent is a collapsible navigation menu item for the sidebar.
+ * MenuComponent renders one entry of the sidebar navigation.
  *
- * Features:
- * - Unified icon rendering with fade transitions
- * - Active state management for menu items
- * - Collapsible accordion behavior
- * - Premium feature indicators
- * - Accessibility support
+ * Two shapes, chosen by optionsCount (see the Phase 3 "8.3 / Expanded" design):
+ * - a plain row (optionsCount "0") that links straight to its single target;
+ * - a section: a non-interactive label followed by its children as flat rows,
+ *   each with its own icon. Sections are always open — there is no accordion
+ *   and no chevron.
  *
  * Usage:
  * <MenuComponent
- *   eventKey="tasks"
- *   mainMenu="Tasks"
+ *   eventKey="build"
+ *   mainMenu="Build"
  *   subMenu={[...]}
- *   optionsCount="0"
+ *   optionsCount="5"
  *   baseUrl="/"
  *   collapsed={false}
  * />
  */
+
+/**
+ * Icon for a top-level entry, keyed by lowercased menu name.
+ * Module scope: the map is constant, so it is never rebuilt per render.
+ */
+const MAIN_ICONS = {
+  home: NavbarHomeIcon,
+  tasks: NavbarTaskIcon,
+  submit: NavbarSubmitIcon,
+  build: NavbarBuildIcon,
+  analyze: NavbarAnalyzeIcon,
+  manage: NavbarManageIcon,
+};
+
+/**
+ * Icon for a child row, keyed by the submenu item's name. Dashboards has no
+ * glyph in the Phase 3 design and falls back to its section's icon.
+ */
+const SUB_ICONS = {
+  Forms: NavbarFormsIcon,
+  Bundles: NavbarBundlesIcon,
+  Subflows: NavbarSubflowsIcon,
+  "Decision Tables": NavbarDecisionTablesIcon,
+  Metrics: NavbarAnalyzeIcon,
+  Submissions: NavbarSubmissionsIcon,
+};
 
 const MenuComponent = ({
   eventKey,
@@ -49,20 +71,19 @@ const MenuComponent = ({
   optionsCount,
   baseUrl,
   collapsed,
-  isExpanded = false,
+  badgeCount,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const noOptionsMenu = optionsCount === "0";
-  const [isHovered, setIsHovered] = useState(false);
 
   /**
    * Checks if a menu item is currently active
    */
   const isActive = useCallback(
     (menu) => {
-      // Pure predicate for active state – no side effects, just a check
+      // Pure predicate for active state – no side effects, just a check
       if (menu.supportedSubRoutes?.length) {
         return menu.supportedSubRoutes.some(
           (route) =>
@@ -85,262 +106,171 @@ const MenuComponent = ({
   }, [subMenu, isActive]);
 
   /**
-   * Handles header click for menu items without sub-options
-   * Navigates to the first submenu item if available
+   * Handles a plain row click: navigates to the first submenu target.
    */
-  const handleHeaderClick = useCallback(() => {
-    if (noOptionsMenu && subMenu?.length > 0) {
-      navigate(`${baseUrl}${subMenu[0].path}`);
-    }
-  }, [noOptionsMenu, subMenu, baseUrl, navigate]);
-
-  /**
-   * Gets the appropriate icon color based on (main menu or submenu) active state
-   */
-  const getIconColor = useCallback(
-    (menu) => {
-      const root = document.documentElement;
-      return isActive(menu)
-        ? getComputedStyle(root).getPropertyValue("--ff-white")
-        : getComputedStyle(root).getPropertyValue("--ff-primary");
+  const handleRowClick = useCallback(
+    (event) => {
+      if (noOptionsMenu && subMenu?.length > 0) {
+        event.preventDefault();
+        navigate(`${baseUrl}${subMenu[0].path}`);
+      }
     },
-    [isActive]
+    [noOptionsMenu, subMenu, baseUrl, navigate]
   );
 
   /**
-   * Icon mapping for different menu types
-   * Maps menu names to their corresponding icon components
+   * Resolves the stroke/fill pair for a glyph.
+   *
+   * The Phase 3 glyphs are stroke-drawn over a filled disc: the stroke carries
+   * the active/inactive state, the fill is only the backdrop behind it and so
+   * stays neutral regardless of state.
    */
-  const ICON_MAP = useMemo(
-    () => ({
-      home: NavbarHomeIcon,
-      tasks: NavbarTaskIcon,
-      submit: NavbarSubmitIcon,
-      build: NavbarBuildIcon,
-      analyze: NavbarAnalyzeIcon,
-      manage: NavbarManageIcon,
-    }),
-    []
-  );
+  const readColors = useCallback((active) => {
+    const styles = getComputedStyle(document.documentElement);
+    const activeColor = styles
+      .getPropertyValue("--navbar-menu-font-color-active")
+      ?.trim();
+    const inactiveColor = styles
+      .getPropertyValue("--navbar-submenu-font-color")
+      ?.trim();
+    return {
+      fillColor: styles.getPropertyValue("--ff-white")?.trim(),
+      strokeColor: active ? activeColor : inactiveColor,
+    };
+  }, []);
 
-  /**
-   * Normalized menu name for icon lookup
-   */
   const lowerMainMenu = useMemo(
     () => (mainMenu || "").toLowerCase(),
     [mainMenu]
   );
 
-  /**
-   * If main menu or any of its submenus is active, main menu icon should be active
-   */
   const mainMenuOrSubmenuActive = useMemo(
     () => isMainMenuOrSubmenuActive(),
     [isMainMenuOrSubmenuActive]
   );
 
-  /**
-   * Computed icon colors based on active state
-   * Uses CSS custom properties for theming
-   */
-  const iconColors = useMemo(() => {
-    const root = document.documentElement;
-    const activeColor = getComputedStyle(root)
-      .getPropertyValue("--navbar-menu-font-color-active")
-      ?.trim();
-    const inactiveColor = getComputedStyle(root)
-      .getPropertyValue("--navbar-submenu-font-color")
-      ?.trim();
-    const color = mainMenuOrSubmenuActive ? activeColor : inactiveColor;
-    return { iconFillColor: color, strokeColor: color };
-  }, [mainMenuOrSubmenuActive]);
-
-  /**
-   * Icon component for the current menu type
-   * Returns null if no specific icon is available
-   */
-  const IconComponent = useMemo(
-    () => ICON_MAP[lowerMainMenu] || null,
-    [ICON_MAP, lowerMainMenu]
+  const mainColors = useMemo(
+    () => readColors(mainMenuOrSubmenuActive),
+    [readColors, mainMenuOrSubmenuActive]
   );
 
   /**
-   * The intended icon element to render
-   * Builds the appropriate icon based on menu type, options, and collapsed state
+   * Builds one navigable row: icon, label, and the collapsed-rail flyout.
    */
-  const intendedIconElement = useMemo(() => {
-    // For menus with sub-menu (has options)
-    if (!noOptionsMenu) {
-      // When not collapsed and (expanded or hovered), show chevron
-      if (!collapsed && (isExpanded || isHovered)) {
-        return (
-          <ChevronIcon
-            className="custom-chevron"
-            color={iconColors.iconFillColor}
-          />
-        );
-      }
-      // When collapsed or not expanded/hovered, show specific icon if available
-      if (IconComponent) {
-        return (
-          <IconComponent
-            fillColor={iconColors.iconFillColor}
-            strokeColor={iconColors.strokeColor}
-          />
-        );
-      }
-      // Fallback chevron if no specific icon
+  const renderRow = useCallback(
+    ({
+      key,
+      to,
+      label,
+      Icon,
+      colors,
+      active,
+      testId,
+      onClick,
+      isPremium,
+      badge,
+    }) => {
+      const hasBadge = badge !== undefined && badge !== null;
       return (
-        <ChevronIcon
-          className="custom-chevron"
-          color={iconColors.iconFillColor}
-        />
-      );
-    }
+        <li className="menu-row" key={key}>
+          <Link
+            to={to}
+            onClick={onClick}
+            className={`menu-link${active ? " active" : ""}`}
+            data-testid={testId}
+            aria-label={label}
+            aria-current={active ? "page" : undefined}
+          >
+            {Icon && (
+              <span className="menu-icon" aria-hidden="true">
+                <Icon
+                  fillColor={colors.fillColor}
+                  strokeColor={colors.strokeColor}
+                />
+                {/* On the rail the count pill has nowhere to go, so it shows as
+                  a dot on the glyph instead. */}
+                {collapsed && hasBadge && <span className="menu-badge-dot" />}
+              </span>
+            )}
 
-    // For menus without sub-options, show specific icons
-    if (IconComponent) {
-      return (
-        <IconComponent
-          fillColor={iconColors.iconFillColor}
-          strokeColor={iconColors.strokeColor}
-        />
-      );
-    }
-
-    return null;
-  }, [
-    IconComponent,
-    iconColors,
-    noOptionsMenu,
-    collapsed,
-    isExpanded,
-    isHovered,
-  ]);
-
-  /**
-   * Icon visibility state management
-   * Handles fade-in/fade-out transitions to prevent flickering
-   */
-  const hasIcon = intendedIconElement !== null;
-  const [iconVisible, setIconVisible] = useState(hasIcon);
-  const [renderIcon, setRenderIcon] = useState(hasIcon);
-  const fadeTimerRef = useRef(null);
-
-  /**
-   * Effect to handle icon visibility transitions
-   * Provides smooth fade-in/fade-out animations
-   */
-  useEffect(() => {
-    // Clear any existing timers
-    if (fadeTimerRef.current) {
-      clearTimeout(fadeTimerRef.current);
-      fadeTimerRef.current = null;
-    }
-
-    if (hasIcon) {
-      // Ensure icon is rendered, then fade in
-      setRenderIcon(true);
-      // Next tick to allow DOM to attach before transition
-      requestAnimationFrame(() => setIconVisible(true));
-    } else {
-      // Fade out
-      setIconVisible(false);
-      // After transition, unmount icon
-      fadeTimerRef.current = setTimeout(() => setRenderIcon(false), 300);
-    }
-
-    return () => {
-      if (fadeTimerRef.current) {
-        clearTimeout(fadeTimerRef.current);
-      }
-    };
-  }, [hasIcon]);
-
-  /**
-   * Builds CSS class names for the accordion header
-   * @returns string of CSS classes
-   */
-  const buildHeaderClassName = useCallback(() => {
-    const classes = [];
-    if (noOptionsMenu) classes.push("no-arrow");
-    if (mainMenuOrSubmenuActive) classes.push("active-header");
-    return classes.join(" ");
-  }, [noOptionsMenu, mainMenuOrSubmenuActive]);
-
-  /**
-   * Builds CSS class names for submenu links
-   * @param menu - The submenu item
-   * @returns string of CSS classes
-   */
-  const buildLinkClassName = useCallback(
-    (menu) => {
-      const classes = ["accordion-link", "d-flex", "justify-content-between"];
-      if (isActive(menu)) classes.push("active");
-      return classes.join(" ");
-    },
-    [isActive]
-  );
-
-  return (
-    <div
-      onMouseEnter={() => !collapsed && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <Accordion.Item eventKey={eventKey}>
-        <Accordion.Header
-          data-testid={`accordion-header-${eventKey}`}
-          aria-label={`Accordion header for ${mainMenu}`}
-          className={buildHeaderClassName()}
-          onClick={noOptionsMenu ? handleHeaderClick : undefined}
-        >
-          {/* Icon with fade transition */}
-          {renderIcon && (
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                transition: "opacity 300ms",
-                opacity: iconVisible ? 1 : 0,
-              }}
-              aria-hidden="true"
-            >
-              {intendedIconElement}
+            <span className="menu-label" hidden={collapsed}>
+              {label}
             </span>
-          )}
 
-          {/* Menu label - hidden when collapsed */}
-          <span hidden={collapsed}>{t(mainMenu)}</span>
-        </Accordion.Header>
+            {isPremium && (
+              <ShowPremiumIcons
+                color={colors.strokeColor}
+                aria-label={t("Premium feature")}
+              />
+            )}
 
-        {/* Submenu items - only render if menu has options */}
-        {!noOptionsMenu && (
-          <Accordion.Body hidden={collapsed}>
-            {subMenu?.map((menu, index) => (
-              <Link
-                key={`${menu.path}-${index}`}
-                to={`${baseUrl}${menu.path}`}
-                className={buildLinkClassName(menu)}
-                data-testid={`sidenav-${(menu.name || menu.path)
-                  .replace(/\s+/g, "-")
-                  .toLowerCase()}`}
-                aria-label={`Link to ${menu.name}`}
-              >
-                <span className="menu-item-text">{t(menu.name)}</span>
+            {/* Count badge - expanded only, as in the Figma "Tasks" row */}
+            {!collapsed && hasBadge && (
+              <span className="menu-badge" data-testid={`menu-badge-${testId}`}>
+                {badge}
+              </span>
+            )}
 
-                {/* Premium feature indicator */}
-                {menu.isPremium && (
-                  <ShowPremiumIcons
-                    color={getIconColor(menu)}
-                    aria-label="Premium feature"
-                  />
-                )}
-              </Link>
-            ))}
-          </Accordion.Body>
-        )}
-      </Accordion.Item>
-    </div>
+            {/* Collapsed rail flyout. Shown purely on CSS hover/focus, and
+              aria-hidden because the link already carries the same name. */}
+            {collapsed && (
+              <span className="menu-flyout" aria-hidden="true">
+                {label}
+              </span>
+            )}
+          </Link>
+        </li>
+      );
+    },
+    [collapsed, t]
+  );
+
+  // --- plain row -----------------------------------------------------------
+  if (noOptionsMenu) {
+    const label = t(mainMenu);
+    return renderRow({
+      key: eventKey,
+      to: `${baseUrl}${subMenu?.[0]?.path ?? ""}`,
+      label,
+      Icon: MAIN_ICONS[lowerMainMenu] || null,
+      colors: mainColors,
+      active: mainMenuOrSubmenuActive,
+      // Kept from the accordion markup: existing test ids are a contract.
+      testId: `accordion-header-${eventKey}`,
+      onClick: handleRowClick,
+      badge: badgeCount,
+    });
+  }
+
+  // --- section: label + always-visible children ----------------------------
+  const SectionIcon = MAIN_ICONS[lowerMainMenu] || null;
+  return (
+    <li className="menu-section">
+      <p
+        className="menu-section-title"
+        hidden={collapsed}
+        data-testid={`menu-section-${eventKey}`}
+      >
+        {t(mainMenu)}
+      </p>
+      <ul className="menu-sublist" aria-label={t(mainMenu)}>
+        {subMenu?.map((menu, index) => {
+          const active = isActive(menu);
+          return renderRow({
+            key: `${menu.path}-${index}`,
+            to: `${baseUrl}${menu.path}`,
+            label: t(menu.name),
+            Icon: SUB_ICONS[menu.name] || SectionIcon,
+            colors: readColors(active),
+            active,
+            testId: `sidenav-${(menu.name || menu.path)
+              .replace(/\s+/g, "-")
+              .toLowerCase()}`,
+            isPremium: menu.isPremium,
+          });
+        })}
+      </ul>
+    </li>
   );
 };
 
@@ -349,7 +279,7 @@ const MenuComponent = ({
  * Provides type checking and documentation for component props
  */
 MenuComponent.propTypes = {
-  /** Unique identifier for the accordion item */
+  /** Unique identifier for the menu entry */
   eventKey: PropTypes.string.isRequired,
   /** Main menu display name */
   mainMenu: PropTypes.string.isRequired,
@@ -368,14 +298,14 @@ MenuComponent.propTypes = {
       isPremium: PropTypes.bool,
     })
   ).isRequired,
-  /** Number of options (determines if menu has sub-items) */
+  /** Number of options ("0" renders a plain row, otherwise a section) */
   optionsCount: PropTypes.string.isRequired,
   /** Base URL for navigation */
   baseUrl: PropTypes.string.isRequired,
   /** Whether the sidebar is collapsed */
   collapsed: PropTypes.bool.isRequired,
-  /** Whether the accordion item is expanded */
-  isExpanded: PropTypes.bool,
+  /** Optional count rendered as a pill badge on the expanded row */
+  badgeCount: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 // Set display name for better debugging

@@ -1,7 +1,6 @@
 import "./Sidebar.scss";
-import Accordion from "react-bootstrap/Accordion";
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,7 +12,6 @@ import {
   ENABLE_APPLICATIONS_MODULE,
   ENABLE_TASKS_MODULE,
   IS_ENTERPRISE,
-  USER_NAME_DISPLAY_CLAIM,
 } from "../constants/constants";
 import {
   StorageService,
@@ -40,6 +38,7 @@ import {
   ApplicationLogo,
   LogoutIcon,
   MenuToggleIcon,
+  NavbarUserIcon,
 } from "@formsflow/components";
 import { ProfileSettingsModal } from "./ProfileSettingsModal";
 import PropTypes from "prop-types";
@@ -129,7 +128,6 @@ const MANAGE_SUBMENU = [
 
 const UserProfile = ({
   userDetail,
-  initials,
   handleProfileModal,
   logout,
   t,
@@ -141,9 +139,9 @@ const UserProfile = ({
       data-testid="sidenav-user-profile-btn"
       aria-label={t("Profile settings")}
     >
-      <div className="user-icon cursor-pointer" data-testid="user-icon">
-        {initials}
-      </div>
+      <span className="user-icon" data-testid="user-icon" aria-hidden="true">
+        <NavbarUserIcon />
+      </span>
       {!collapsed && (
         <div className="user-info">
           <div>
@@ -160,7 +158,9 @@ const UserProfile = ({
       data-testid="sign-out-button"
       aria-label={t("Logout")}
     >
-      <LogoutIcon />
+      <span className="menu-icon" aria-hidden="true">
+        <LogoutIcon />
+      </span>
       {!collapsed && <p className="m-0">{t("Logout")}</p>}
     </button>
   </div>
@@ -173,7 +173,6 @@ UserProfile.propTypes = {
     preferred_username: PropTypes.string,
   }).isRequired,
 
-  initials: PropTypes.string.isRequired,
   handleProfileModal: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   t: PropTypes.func.isRequired,
@@ -204,7 +203,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
   const formTenant = form?.tenantKey;
   const [showProfile, setShowProfile] = useState(false);
   const { t } = useTranslation();
-  const currentLocation = useLocation();
 
   const baseUrl = getRedirectUrl(tenantKey || userDetail?.tenantKey);
   // Read once per auth change instead of on every render (N.1.3): the value
@@ -275,7 +273,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
 
   const isAuthenticated = instance?.isAuthenticated();
   const showApplications = setShowApplications(userDetail?.groups);
-  const [activeKey, setActiveKey] = useState(null);
   // Theme CSS variable is set at app bootstrap; read it once instead of per
   // render (N.1.3).
   const hideLogo = useMemo(
@@ -291,62 +288,14 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
   const [persistentCollapsed, setPersistentCollapsed] = useState(
     getInitialCollapsedState()
   );
-  const [hoverToggled, setHoverToggled] = useState(false);
-  const collapsed = persistentCollapsed !== hoverToggled;
+  // The rail expands only when the toggle is clicked. Hovering a collapsed icon
+  // shows that row's tooltip instead (see .menu-flyout) and never widens the nav.
+  const collapsed = persistentCollapsed;
   const sidebarRef = useRef(null);
-  const hoverTimeout = useRef(null);
 
   const handleToggleClick = () => {
     setPersistentCollapsed(!persistentCollapsed);
-    setHoverToggled(false);
   };
-
-  const handleMouseEnter = () => {
-    if (persistentCollapsed) {
-      if (hoverTimeout.current) {
-        clearTimeout(hoverTimeout.current);
-      }
-      setHoverToggled(true);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (persistentCollapsed) {
-      hoverTimeout.current = setTimeout(() => {
-        setHoverToggled(false);
-      }, 120);
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimeout.current) {
-        clearTimeout(hoverTimeout.current);
-      }
-    };
-  }, []);
-
-  const getInitials = (name) => {
-    if (!name) return "";
-    const nameParts = name.split(" ");
-    const initials = nameParts.map((part) => part[0]).join("");
-    return initials.substring(0, 2).toUpperCase(); // Get the first two initials
-  };
-
-  // fetch the username form the user details
-  const userName = useMemo(() => {
-    const value =
-      userDetail[USER_NAME_DISPLAY_CLAIM] ||
-      userDetail?.name ||
-      userDetail?.preferred_username ||
-      "";
-    if (Array.isArray(value)) {
-      return value.length > 0 ? value[0] : "";
-    }
-    return value;
-  }, [userDetail]);
-
-  const initials = getInitials(userName);
 
   // checklistSkipped is hydrated into shared localStorage by forms-flow-web
   // (PrivateRoute) at login, so we read it here instead of making a duplicate
@@ -461,43 +410,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
       setTenantLogo(logo);
     }
   }, [tenant]);
-
-  useEffect(() => {
-    const sections = [
-      {
-        key: SectionKeys.HOME.value,
-        supportedRoutes: SectionKeys.HOME.supportedRoutes,
-      },
-      {
-        key: SectionKeys.BUILD.value,
-        supportedRoutes: SectionKeys.BUILD.supportedRoutes,
-      },
-      {
-        key: SectionKeys.SUBMIT.value,
-        supportedRoutes: SectionKeys.SUBMIT.supportedRoutes,
-      },
-      {
-        key: SectionKeys.TASK.value,
-        supportedRoutes: SectionKeys.TASK.supportedRoutes,
-      },
-      {
-        key: SectionKeys.ANALYZE.value,
-        supportedRoutes: SectionKeys.ANALYZE.supportedRoutes,
-      },
-      {
-        key: SectionKeys.MANAGE.value,
-        supportedRoutes: SectionKeys.MANAGE.supportedRoutes,
-      },
-    ];
-
-    const activeSection = sections.find((section) =>
-      section.supportedRoutes.some((exp) =>
-        currentLocation.pathname.includes(exp)
-      )
-    ) || { key: "0" }; // Default to key "0" if no match
-
-    setActiveKey(activeSection.key);
-  }, [currentLocation.pathname]);
 
   useEffect(() => {
     if (!isAuthenticated && formTenant && MULTITENANCY_ENABLED) {
@@ -624,7 +536,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
       } else {
         setPersistentCollapsed(true);
       }
-      setHoverToggled(false);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -638,29 +549,35 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
       className={sidebarClass}
       style={{
         height: sidenavHeight,
-        "--navbar-width": collapsed ? "3rem" : "10rem",
+        "--navbar-width": collapsed ? "3rem" : "11rem",
       }}
       data-testid="sidenav"
       ref={sidebarRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      role="button"
     >
-      <div
-        className={`menu-toggle-icon${collapsed ? "" : " open"}`}
-        role="button"
-        aria-label={t("Toggle sidebar")}
-      >
-        <span onClick={handleToggleClick} data-testid="sidenav-toggle-btn">
-          <MenuToggleIcon />
-        </span>
+      {/* Logo and the collapse toggle share one header row (Figma 8.3): logo
+          at the left inset, toggle pinned right. */}
+      <div className="sidenav-header">
+        {renderLogo(hideLogo, collapsed)}
+        {/* The toggle is now the only way to expand the nav, so it has to be a
+            real button: the span it replaces was not focusable or key-operable. */}
+        <div className={`menu-toggle-icon${collapsed ? "" : " open"}`}>
+          <button
+            type="button"
+            className="menu-toggle-btn"
+            onClick={handleToggleClick}
+            data-testid="sidenav-toggle-btn"
+            aria-label={t("Toggle sidebar")}
+            aria-expanded={!collapsed}
+          >
+            <MenuToggleIcon />
+          </button>
+        </div>
       </div>
-      {renderLogo(hideLogo, collapsed)}
       <div
         className={`options-container${collapsed ? " collapsed" : ""}`}
         data-testid="options-container"
       >
-        <Accordion activeKey={activeKey} onSelect={(key) => setActiveKey(key)}>
+        <ul className="menu-list">
           {userRoles !== null && (
             <MenuComponent
               baseUrl={baseUrl}
@@ -682,20 +599,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
             />
           )}
 
-          {(isCreateSubmissions ||
-            (showApplications &&
-              isViewSubmissions &&
-              ENABLE_APPLICATIONS_MODULE)) && (
-            <MenuComponent
-              baseUrl={baseUrl}
-              eventKey={SectionKeys.SUBMIT.value}
-              optionsCount="0"
-              mainMenu="Submit"
-              subMenu={SUBMIT_SUBMENU}
-              collapsed={collapsed}
-            />
-          )}
-
           {ENABLE_FORMS_MODULE &&
             (isCreateDesigns || isViewDesigns || isManageIntegrations) && (
               <MenuComponent
@@ -705,7 +608,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
                 mainMenu={t("Build")}
                 subMenu={buildSubMenu}
                 collapsed={collapsed}
-                isExpanded={activeKey === SectionKeys.BUILD.value}
               />
             )}
 
@@ -720,7 +622,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
                 mainMenu="Build"
                 subMenu={WORKFLOW_SUBMENU}
                 collapsed={collapsed}
-                isExpanded={activeKey === SectionKeys.BUILD.value}
               />
             )}
           {isAnalyzeManager && ENABLE_DASHBOARDS_MODULE && (
@@ -731,7 +632,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
               mainMenu="Analyze"
               subMenu={analyzeSubMenu}
               collapsed={collapsed}
-              isExpanded={activeKey === SectionKeys.ANALYZE.value}
             />
           )}
           {isAdmin && (
@@ -744,12 +644,25 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
               collapsed={collapsed}
             />
           )}
-        </Accordion>
+
+          {(isCreateSubmissions ||
+            (showApplications &&
+              isViewSubmissions &&
+              ENABLE_APPLICATIONS_MODULE)) && (
+            <MenuComponent
+              baseUrl={baseUrl}
+              eventKey={SectionKeys.SUBMIT.value}
+              optionsCount="0"
+              mainMenu="Submit"
+              subMenu={SUBMIT_SUBMENU}
+              collapsed={collapsed}
+            />
+          )}
+        </ul>
       </div>
       {isAuthenticated && (
         <UserProfile
           userDetail={userDetail}
-          initials={initials}
           handleProfileModal={handleProfileModal}
           logout={logout}
           t={t}
