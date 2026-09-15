@@ -720,6 +720,7 @@ const Roles = React.memo((props: any) => {
                     onClick={submitAction}
                     dataTestId={submitTestId}
                     ariaLabel={ariaLabel}
+                    variant="primary"
                   />
               </div>
             )}

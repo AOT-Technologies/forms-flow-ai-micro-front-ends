@@ -3,8 +3,10 @@ import { RequestService } from "@formsflow/service";
 import API from "../../endpoints/index";
 // import { KEYCLOAK_ENABLE_CLIENT_AUTH } from "../../constants";
 
-export const fetchRoles = (callback, errorHandler) => {
-  RequestService.httpGETRequest(API.GET_ROLES)
+export const fetchRoles = (callback, errorHandler,count?:boolean) => {
+  let url = API.GET_ROLES;
+  if (count) url = url + `?count=${count}`;
+  RequestService.httpGETRequest(url)
     .then((res) => {
       if (res.data) {
         callback(res.data);

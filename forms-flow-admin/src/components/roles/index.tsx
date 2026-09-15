@@ -18,7 +18,7 @@ const RoleManagement = React.memo((props: any) => {
         setCount(data.length);
         setInvalidated(false);
         setLoading(false);
-      }, setError);
+      }, setError,true);
     }
   }, [invalidated]);
 
@@ -34,7 +34,8 @@ const RoleManagement = React.memo((props: any) => {
       (err) => {
         setError(err);
         setLoading(false);
-      }
+      },
+      true
     );
   }, []);
 

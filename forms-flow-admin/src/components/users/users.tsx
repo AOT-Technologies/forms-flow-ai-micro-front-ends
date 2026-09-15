@@ -678,7 +678,7 @@ const Users = React.memo((props: any) => {
               selected={!props.filter}
               data-testid="users-roles-filter-option-all"
             >
-              {t("All roles")}
+              {t("All Roles")}
             </option>
             {roles?.map((role, i) => (
               <option

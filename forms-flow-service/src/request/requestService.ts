@@ -188,6 +188,17 @@ class RequestService {
       headers: this.authHeaders(token, isBearer),
     });
   }
+  public static httpPATCHRequest(
+    url: string,
+    data: object,
+    token: string | null,
+    isBearer: boolean = true,
+    headers: object | null = null
+  ): any {
+    return this.axiosInstance.patch(url, data, {
+      headers: this.authHeaders(token, isBearer, headers),
+    });
+  }
   public static httpDELETERequest(
     url: string,
     data: object,
