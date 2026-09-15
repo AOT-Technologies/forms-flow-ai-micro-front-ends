@@ -50,6 +50,10 @@ $opacities: (
 
 $scrollBarWidth: 0.5rem;
 
+// Navbar color changes
+$navbar-muted-color:  #979899; // ff/color/gray/500
+$navbar-accent-color: #5467FC; // ff/color/indigo/700
+
 // Helper: Blend with a white background [ To achieve exact variants of figma ] 
 @function blend-with-white-to-hex($color, $opacity) {
  $white: #fff;
@@ -97,10 +101,10 @@ $font-tokens: (
 
   // //for navbar
   
-  --nav-bg-color: var(--white-100);
-  --navbar-menu-font-color: var(--secondary-dark);
-  --navbar-submenu-font-color: var(--gray-dark);
-  --navbar-menu-font-color-active: var(--vivid);
+  --nav-bg-color: var(--white-100); // ff/color/gray/100   #F6F6F6
+  --navbar-menu-font-color: var(--gray-darkest); // ff/color/gray/800   #4A4A4A
+  --navbar-submenu-font-color: #{$navbar-muted-color}; // ff/color/gray/500
+  --navbar-menu-font-color-active: #{$navbar-accent-color}; // ff/color/indigo/700
 
 /*══════════════════ ⬥ COLOUR UTILITIES | VERSION 8 ⬥ ══════════════════*/
 
