@@ -95,6 +95,7 @@ declare module "@formsflow/components" {
     FONT_MAP,
     BUTTON_RADIUS_MAP,
     FORMSFLOW_LOGO_ICON_SVG,
+    FORMSFLOW_WEBSITE_URL,
     UsageSummaryCard,
     mapTenantDataToUsage
   }: any;

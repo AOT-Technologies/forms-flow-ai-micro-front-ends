@@ -54,11 +54,12 @@ const Manage: React.FC<ManageProps> = ({
   // control inside it is gated separately, see StyleTab's isOwner prop).
   const canAccessStyle =
     isOrganizationManager || isDashboardManager || isUserManager || isRoleManager;
-  // Mirrors the backend's is_current_user_primary_owner: "owner" (via
-  // manage_organization, granted only to the {tenant}-owner group) is a
-  // multi-tenant SaaS concept with no equivalent in single-tenant -- there,
-  // any admin who can reach this screen is treated as the owner.
-  const isOwner = !MULTITENANCY_ENABLED || isOrganizationManager;
+  // Mirrors the backend's is_current_user_primary_owner: branding-logo
+  // control is reserved for the tenant's actual primary owner (via
+  // manage_organization, granted only to the {tenant}-owner group). In a
+  // single-tenant deployment there is no such owner role, so no admin here
+  // -- however they reached Manage -- may alter the logo; it's shown as-is.
+  const isOwner = MULTITENANCY_ENABLED && isOrganizationManager;
 
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantId}/` : "/";
 
@@ -225,6 +226,11 @@ const Manage: React.FC<ManageProps> = ({
                   tenantId={tenantId}
                   openCreateRoleTrigger={roleCreateTrigger}
                 />
+              </div>
+            )}
+            {activeTab === "style" && canAccessStyle && (
+              <div className="manage-content">
+                <StyleTab isOwner={isOwner} />
               </div>
             )}
           </div>

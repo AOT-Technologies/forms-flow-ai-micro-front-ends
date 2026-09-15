@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StyleConfig, FONT_MAP, BUTTON_RADIUS_MAP, FORMSFLOW_LOGO_ICON_SVG } from "@formsflow/components";
+import { StyleConfig, FONT_MAP, BUTTON_RADIUS_MAP, FORMSFLOW_LOGO_ICON_SVG, FORMSFLOW_WEBSITE_URL } from "@formsflow/components";
 
 interface StylePreviewProps {
   styleConfig: StyleConfig;
@@ -116,14 +116,22 @@ const StylePreview: React.FC<StylePreviewProps> = ({ styleConfig }) => {
       </div>
 
       {styleConfig.brandingLogo === "formsflow" && (
-        <div className="ff-admin-style-preview__branding">
+        // Matches the real badge injected into a live form (see
+        // useFormTheme's applyBrandingLogo) -- an actual link, not just a
+        // representative graphic, so clicking it here behaves the same way.
+        <a
+          className="ff-admin-style-preview__branding"
+          href={FORMSFLOW_WEBSITE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <span
             className="ff-admin-style-preview__branding-icon"
             dangerouslySetInnerHTML={{ __html: FORMSFLOW_LOGO_ICON_SVG }}
           />
           <span className="ff-admin-style-preview__branding-label">Created by</span>
           <span className="ff-admin-style-preview__branding-brand">formsflow.ai</span>
-        </div>
+        </a>
       )}
     </div>
   );
