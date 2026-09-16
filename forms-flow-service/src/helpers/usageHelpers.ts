@@ -1,14 +1,15 @@
 /**
- * Usage tracking: shared configuration and pure calculation helpers.
+ * Usage metering: shared configuration and pure calculation helpers.
  *
- * Everything the usage components need to decide - the percentage, the colour band, the days
- * until the next reset, the CTA wording - lives here, so the progress bar, the summary card
- * and the home banner can never disagree with each other. forms-flow-web and
- * forms-flow-admin are separate repos whose only shared code is this package, which is why
- * the thresholds and plan limits must be defined here rather than per app.
+ * The percentage, the colour band, the reset countdown and the CTA wording live here so the
+ * summary card in forms-flow-admin and the alert banner in forms-flow-web cannot disagree.
+ * The components themselves live in their hosts; only the logic is shared.
  *
- * No date library: forms-flow-components has none, so this uses native Date, matching the
- * existing quota countdown in forms-flow-web's AiFormBuilderModal.
+ * The allowance is not defined here - `used`, `total`, the plan name and the reset date come
+ * from the admin API. What remains is presentation: thresholds, plan labels and CTA copy.
+ *
+ * Free of React and of I/O: `formatResetLabel` and `getUsageCtaLabel` take a translate
+ * function from the caller rather than importing i18n. Native Date, no date library.
  */
 
 /* ------------------------------------------------------------------ configuration */
@@ -20,9 +21,7 @@ export interface UsageData {
   usedSubmissions: number;
   /** Submissions included in the current plan */
   maxSubmissions: number;
-  /** Date the tenant was created - anchors the fallback billing cycle */
-  tenantJoinDate?: string;
-  /** Actual next reset date when known. Preferred over the synthetic cycle. */
+  /** The day the allowance resets, as reported by the API. */
   nextResetDate?: string;
   /** Date of the next invoice. Paid plans only; omit to hide the column. */
   nextBillingDate?: string;
@@ -54,15 +53,18 @@ export const FREE_PLAN_LABEL = "Go";
 /** Paid tier label, as rendered under "Current plan" in the designs. */
 export const PRO_PLAN_LABEL = "Professional";
 
-export const PLAN_SUBMISSION_LIMITS: Record<string, number> = {
-  [FREE_PLAN_LABEL]: 250,
-  [PRO_PLAN_LABEL]: 2500,
-};
+/**
+ * Submission allowance advertised by the upgrade CTA on the free tier.
+ *
+ * Marketing copy, not a limit: the allowance actually enforced arrives as `total` from the
+ * usage API. Kept as a constant only because the CTA has to name a number before the user
+ * has upgraded to the plan that carries it.
+ */
+export const NEXT_TIER_SUBMISSIONS = 2500;
 
-/** Submission allowance advertised by the upgrade CTA on the free tier. */
-export const NEXT_TIER_SUBMISSIONS = PLAN_SUBMISSION_LIMITS[PRO_PLAN_LABEL];
+/** Feature key metered for form submissions; matches `features.key` in the admin database. */
+export const SUBMISSION_FEATURE_KEY = "submission";
 
-export const PLACEHOLDER_USED_SUBMISSIONS = 10;
 
 /* ------------------------------------------------------------------------- parsing */
 
@@ -72,9 +74,9 @@ export type UsageVariant = "safe" | "warning" | "critical";
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
 
 /** Source fields the reset countdown can be derived from. */
-type ResetSource = Pick<UsageData, "tenantJoinDate" | "nextResetDate">;
+type ResetSource = Pick<UsageData, "nextResetDate">;
 
-export interface TimeUntilReset {
+interface TimeUntilReset {
   /** Whole days remaining. Zero once the reset is less than 24 hours away. */
   days: number;
   /** Total whole hours remaining. Only meaningful for display when `days` is 0. */
@@ -123,9 +125,6 @@ const parseDate = (value?: string | Date | null): Date | null => {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 };
 
-const startOfDay = (date: Date): Date =>
-  new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
 /** Returns the value only if it parses to a real date, else undefined. */
 const usableDateString = (value?: string | null): string | undefined =>
   parseDate(value) ? String(value) : undefined;
@@ -162,32 +161,14 @@ export const isOverLimit = (percentage: number): boolean =>
  * also rolls an expired trial date forward instead of showing a stuck "0 days".
  * Uses `setDate` so DST transitions do not drift the result.
  */
-export const getNextResetDate = (
-  source?: ResetSource | null,
-  now: Date = new Date()
-): Date | null => {
-  const explicit = parseDate(source?.nextResetDate);
-  if (explicit && explicit.getTime() > now.getTime()) return explicit;
+const getNextResetDate = (source?: ResetSource | null): Date | null =>
+  parseDate(source?.nextResetDate);
 
-  const cycleStart = parseDate(source?.tenantJoinDate);
-  if (!cycleStart) return explicit;
-
-  const anchor = startOfDay(cycleStart);
-  const elapsedDays = Math.floor(
-    (startOfDay(now).getTime() - anchor.getTime()) / MS_PER_DAY
-  );
-  const cyclesCompleted = elapsedDays > 0 ? Math.floor(elapsedDays / BILLING_CYCLE_DAYS) : 0;
-
-  const nextReset = new Date(anchor);
-  nextReset.setDate(nextReset.getDate() + (cyclesCompleted + 1) * BILLING_CYCLE_DAYS);
-  return nextReset;
-};
-
-export const getTimeUntilReset = (
+const getTimeUntilReset = (
   source?: ResetSource | null,
   now: Date = new Date()
 ): TimeUntilReset | null => {
-  const nextReset = getNextResetDate(source, now);
+  const nextReset = getNextResetDate(source);
   if (!nextReset) return null;
 
   const remaining = nextReset.getTime() - now.getTime();
@@ -275,54 +256,67 @@ export const getUsageCtaLabel = (
 const isActiveSubscription = (status?: string): boolean =>
   !isEmptyValue(status) && String(status).trim().toLowerCase() === "active";
 
-/** Values `subscription_plan` uses to mean "no paid plan". */
-const FREE_PLAN_ALIASES = new Set(["free", "trial"]);
+/* ----------------------------------------------------------------- response adaptation */
 
-export const resolvePlanLabel = (
-  tenant?: TenantRecord | null
-): string | undefined => {
-  const raw = tenant?.subscription_plan;
-  const named = isEmptyValue(raw) ? "" : String(raw).trim().toLowerCase();
+/**
+ * The parts of the admin API's usage response this package reads.
+ *
+ * Declared structurally rather than imported from @formsflow/service, so nothing
+ * presentational depends on the HTTP layer. The authoritative shape is
+ * ``FeatureUsageResponse`` there; this is the subset the card and banner need.
+ */
+export interface UsageResponseFields {
+  used: number;
+  total?: number | null;
+  plan?: string | null;
+  resets_on?: string | null;
+}
 
-  const known = Object.keys(PLAN_SUBMISSION_LIMITS).find(
-    (label) => label.toLowerCase() === named
-  );
-  if (known) return known;
+/**
+ * Normalise a backend plan name to the label the designs use.
+ *
+ * The admin database stores what Stripe reports - "Professional Plan" for the paid tier,
+ * "Go" for the seeded free tier - while the UI writes "Professional". Anything unrecognised
+ * is passed through as-is, so an Enterprise or negotiated plan shows its own name instead of
+ * being mislabelled as the tier below it.
+ */
+const normalisePlanLabel = (plan?: string | null): string => {
+  const named = isEmptyValue(plan) ? "" : String(plan).trim();
+  if (!named) return FREE_PLAN_LABEL;
 
-  if (FREE_PLAN_ALIASES.has(named)) return FREE_PLAN_LABEL;
-
-  // No plan named and no active subscription: the free tier is the only safe inference.
-  if (!named && !isActiveSubscription(tenant?.subscription_status)) {
-    return FREE_PLAN_LABEL;
-  }
-
-  return undefined;
+  const lower = named.toLowerCase();
+  if (lower.startsWith(FREE_PLAN_LABEL.toLowerCase())) return FREE_PLAN_LABEL;
+  if (lower.startsWith(PRO_PLAN_LABEL.toLowerCase())) return PRO_PLAN_LABEL;
+  return named;
 };
 
 /**
- * `usedSubmissions` has no source in `tenantData`, so it falls back to
- * PLACEHOLDER_USED_SUBMISSIONS until the usage API exists. Pass the real value once it does.
+ * Turn a usage response into component props, the one place that conversion happens.
+ *
+ * Returns null - so the caller renders nothing - when there is no usable allowance to draw a
+ * bar against: no response at all, or `total` absent because the feature is unlimited or the
+ * plan has no configured limit. A missing number is better than a misleading one.
+ *
+ * `tenant` supplies only the next invoice date, which is billing information rather than
+ * usage and so still comes from the cached tenant record.
  */
-export const mapTenantDataToUsage = (
-  tenant?: TenantRecord | null,
-  usedSubmissions: number = PLACEHOLDER_USED_SUBMISSIONS
+export const mapUsageResponse = (
+  usage?: UsageResponseFields | null,
+  tenant?: TenantRecord | null
 ): UsageData | null => {
-  // Still guards an explicitly passed bad value (NaN, negative) once a caller supplies one.
-  if (!Number.isFinite(usedSubmissions) || usedSubmissions < 0) {
-    return null;
-  }
+  if (!usage) return null;
 
-  const plan = resolvePlanLabel(tenant);
-  if (!plan) return null;
+  const usedSubmissions = Number(usage.used);
+  if (!Number.isFinite(usedSubmissions) || usedSubmissions < 0) return null;
 
-  const maxSubmissions = PLAN_SUBMISSION_LIMITS[plan];
+  const maxSubmissions = Number(usage.total);
   if (!Number.isFinite(maxSubmissions) || maxSubmissions <= 0) return null;
 
   return {
-    plan,
+    plan: normalisePlanLabel(usage.plan),
     usedSubmissions,
     maxSubmissions,
-    tenantJoinDate: usableDateString(tenant?.created_on),
+    nextResetDate: usableDateString(usage.resets_on),
     nextBillingDate: isActiveSubscription(tenant?.subscription_status)
       ? usableDateString(tenant?.expiry_dt)
       : undefined,
