@@ -56,6 +56,14 @@ const buildClassNames = (
   ...classes: (string | boolean | undefined)[]
 ): string => classes.filter(Boolean).join(" ");
 
+const MENU_WIDTH = 256;
+/** Keep in sync with `.add-with-dropdown-menu` max-height in the theme (20rem). */
+const MENU_PREFERRED_HEIGHT = 320;
+const MENU_POSITION_OPTIONS = {
+  flip: true,
+  preferredHeight: MENU_PREFERRED_HEIGHT,
+};
+
 /**
  * AddWithDropdown: a circular "+" button that opens a menu of options to
  * pick from — e.g. adding a role chip to a user row.
@@ -83,7 +91,11 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
   const [isMounted, setIsMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const position = useDropdownPosition(open, containerRef);
+  const position = useDropdownPosition(
+    open,
+    containerRef,
+    MENU_POSITION_OPTIONS
+  );
 
   useEffect(() => {
     setIsMounted(typeof document !== "undefined");
@@ -131,13 +143,39 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
     () => buildClassNames("add-with-dropdown", className),
     [className]
   );
-  const menuWidth = 256;
   const menuLeft =
     menuAlign === "end"
       ? position
-        ? position.left + position.width - menuWidth
+        ? position.left + position.width - MENU_WIDTH
         : 0
       : position?.left ?? 0;
+
+  // When there is not enough room below the trigger the menu is flipped above
+  // it: the wrapper is anchored to the trigger's top edge and pulled up by its
+  // own height, and the menu is capped to the space that side actually offers
+  // so the whole list stays on screen (it scrolls internally beyond that).
+  const isFlipped = position?.placement === "top";
+  const menuStyle = useMemo(
+    () => ({
+      maxHeight: Math.min(
+        MENU_PREFERRED_HEIGHT,
+        position?.availableHeight ?? MENU_PREFERRED_HEIGHT
+      ),
+    }),
+    [position?.availableHeight]
+  );
+  const portalStyle = useMemo<React.CSSProperties>(
+    () => ({
+      position: "absolute",
+      top: position?.top ?? 0,
+      left: menuLeft,
+      transform: isFlipped ? "translateY(-100%)" : undefined,
+      zIndex: 2000,
+      width: `${MENU_WIDTH}px`,
+      maxWidth: "calc(100vw - 1rem)",
+    }),
+    [position?.top, menuLeft, isFlipped]
+  );
 
   return (
     <div ref={containerRef} className={containerClassName} data-testid={dataTestId}>
@@ -160,21 +198,16 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
         createPortal(
           <div
             className="add-with-dropdown add-with-dropdown-portal"
-            style={{
-              position: "absolute",
-              top: position.top,
-              left: menuLeft,
-              zIndex: 2000,
-              width: `${menuWidth}px`,
-              maxWidth: "calc(100vw - 1rem)",
-            }}
+            style={portalStyle}
           >
             <div
               ref={menuRef}
               className={buildClassNames(
                 "add-with-dropdown-menu",
+                isFlipped && "add-with-dropdown-menu-top",
                 menuAlign === "end" && "dropdown-menu-end"
               )}
+              style={menuStyle}
               role="listbox"
               data-testid={`${dataTestId}-menu`}
             >

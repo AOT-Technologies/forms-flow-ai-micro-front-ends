@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import Loading from "../loading";
 import { AddUserRole, RemoveUserRole, InviteUser, UpdateUserStatus } from "../../services/users";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
 import "./users.scss";
@@ -63,8 +62,8 @@ const Users = React.memo((props: any) => {
   const [error, setError] = React.useState(null); // Initialize error state with null instead of undefined
   const [loading, setLoading] = React.useState(false);
   const [activePage, setActivePage] = React.useState(1);
-  const [selectedFilter, setSelectedFilter] = React.useState(null); // Initialize selectedFilter with null
-  const [searchKey, setSearchKey] = React.useState("");
+  const [selectedFilter, setSelectedFilter] = React.useState(undefined); // Initialize selectedFilter with null
+  const [searchKey, setSearchKey] = React.useState(undefined);
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
   const { t } = useTranslation();
   const { tenantId } = useParams();
@@ -221,8 +220,13 @@ const Users = React.memo((props: any) => {
       "owner";
 
   const canRemoveRole = (rowData, item) => {
-    // Minimum role enforcement: the last remaining role can't be removed
-    if ((rowData?.role?.length || 0) <= 1) return false;
+    // Minimum role enforcement: the last remaining role can't be removed.
+    // Counts only the roles actually shown as chips - the internal
+    // camunda-admin role is never rendered, so it must not pad the count.
+    const visibleRoleCount = (rowData?.role ?? []).filter(
+      (role: any) => !isInternalAdminRole(role?.name)
+    ).length;
+    if (visibleRoleCount <= 1) return false;
     // The admin role is protected
     if (item?.path === "/admin") return false;
     // The tenant creator's OWNER role is protected
@@ -379,7 +383,6 @@ const Users = React.memo((props: any) => {
                 </OverlayTrigger>
               </div>
             ))}
-            {!isOwnerRow && availableRoleDropdownOptions.length > 0 && (
               <AddWithDropdown
                 options={availableRoleDropdownOptions}
                 onSelect={addSingleUserRole}
@@ -387,7 +390,6 @@ const Users = React.memo((props: any) => {
                 emptyMessage={t("No roles found")}
                 dataTestId={`user-role-add-${rowData.id}`}
               />
-            )}
           </div>
         );
       },
@@ -678,7 +680,7 @@ const Users = React.memo((props: any) => {
               selected={!props.filter}
               data-testid="users-roles-filter-option-all"
             >
-              {t("All roles")}
+              {t("All Roles")}
             </option>
             {roles?.map((role, i) => (
               <option

@@ -18,7 +18,9 @@ const UserManagement = React.memo((props: any) => {
   const [invalidated, setInvalidated] = React.useState(false);
   const [pageNo, setPageNo] = React.useState(1);
   const [search, setSearch] = React.useState(undefined);
-  const [filter, setFilter] = React.useState(undefined);
+  const [filter, setFilter] = React.useState<string | null | undefined>(
+    undefined
+  );
   const [total, setTotal] = React.useState(undefined);
   const { t } = useTranslation();
   const [sizePerPage, setSizePerPage] = React.useState(5);
