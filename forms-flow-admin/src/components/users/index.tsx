@@ -18,13 +18,15 @@ const UserManagement = React.memo((props: any) => {
   const [invalidated, setInvalidated] = React.useState(false);
   const [pageNo, setPageNo] = React.useState(1);
   const [search, setSearch] = React.useState(undefined);
-  const [filter, setFilter] = React.useState(undefined);
+  const [filter, setFilter] = React.useState<string | null | undefined>(
+    undefined
+  );
   const [total, setTotal] = React.useState(undefined);
   const { t } = useTranslation();
   const [sizePerPage, setSizePerPage] = React.useState(5);
 
   React.useEffect(() => {
-    if (filter === undefined) return;
+    if (!filter?.trim()) return;
     setLoading(true);
     fetchUsers(
       filter,
@@ -49,7 +51,7 @@ const UserManagement = React.memo((props: any) => {
   }, [filter]);
 
   React.useEffect(() => {
-    if (search === undefined) return;
+    if (search === undefined || search == '') return;
     let delay = setTimeout(() => {
       setLoading(true);
       fetchUsers(

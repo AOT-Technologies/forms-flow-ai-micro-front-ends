@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import Loading from "../loading";
 import { AddUserRole, RemoveUserRole, InviteUser, UpdateUserStatus } from "../../services/users";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
 import { toast } from "react-toastify";
 import { Tooltip } from "react-bootstrap";
 import "./users.scss";
