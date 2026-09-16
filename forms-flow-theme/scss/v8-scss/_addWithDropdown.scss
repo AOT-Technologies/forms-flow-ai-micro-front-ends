@@ -60,6 +60,13 @@ $color-disabled-text: var(--gray-light);
     background-color: var(--white-300);
     border-radius: 0.3125rem;
     border: 1px solid $color-border;
+
+    // Menu flipped above its trigger (not enough room below): the offset from
+    // the trigger moves to the bottom edge.
+    &.add-with-dropdown-menu-top {
+      margin-top: 0;
+      margin-bottom: 0.25rem;
+    }
   }
 
   .add-with-dropdown-item {
