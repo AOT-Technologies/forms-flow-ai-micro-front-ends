@@ -50,6 +50,7 @@ type AddRoleDropdownOption = {
   description?: string;
   badge?: string;
   isDefault?: boolean;
+  disabled?: boolean;
 };
 
 const Users = React.memo((props: any) => {
@@ -302,21 +303,9 @@ const Users = React.memo((props: any) => {
           });
         
         const assignedRoleIds = new Set(cell.map((item: any) => item.id));
-        const availableRoleOptions = roles
-          // Owner is granted only via Transfer Ownership, never through the picker.
-          .filter(
-            (role: any) =>
-              !assignedRoleIds.has(role.id) &&
-              !isOwnerRoleName(
-                formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)
-              )
-          )
-          .map((role: any) => ({
-            id: role.id,
-            name: formatRoleDisplayName(role.name, tenantKeyForRoleDisplay),
-          }));
-          
+                  
         const addSingleUserRole = (option: AddRoleDropdownOption) => {
+          if (option.disabled) return;
           const user_id = rowData.id;
           const payload = {
             userId: user_id,
@@ -335,15 +324,18 @@ const Users = React.memo((props: any) => {
         };
 
         const availableRoleDropdownOptions: AddRoleDropdownOption[] =
-          availableRoleOptions
+          roles
             .map((role: any) => {
               const fullRole = roles.find((r: any) => r.id === role.id) as any;
               return {
                 id: role.id,
-                name: role.name,
+                name: formatRoleDisplayName(role.name, tenantKeyForRoleDisplay),
                 description: fullRole?.description || "",
                 badge: fullRole?.isDefault ? undefined : t("Custom"),
                 isDefault: !!fullRole?.isDefault,
+                // Already assigned to this user: shown down-scaled and
+                // non-clickable rather than removed from the list.
+                disabled: assignedRoleIds.has(role.id),
               };
             })
             // Built-in roles (isDefault: true) sort to the bottom; custom roles first.
@@ -669,6 +661,7 @@ const Users = React.memo((props: any) => {
             </>
           )}
         <div className="user-filter-container col-lg-3 col-xl-3 col-md-3 col-sm-6 col-12">
+          
           <Form.Select
             className="bg-light text-dark w-0"
             onChange={handleSelectFilter}
