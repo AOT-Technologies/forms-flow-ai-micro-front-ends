@@ -26,7 +26,7 @@ const UserManagement = React.memo((props: any) => {
   const [sizePerPage, setSizePerPage] = React.useState(5);
 
   React.useEffect(() => {
-    if (!filter?.trim()) return;
+    if (filter === undefined) return;
     setLoading(true);
     fetchUsers(
       filter,
@@ -51,7 +51,7 @@ const UserManagement = React.memo((props: any) => {
   }, [filter]);
 
   React.useEffect(() => {
-    if (search === undefined || search == '') return;
+    if (search === undefined) return;
     let delay = setTimeout(() => {
       setLoading(true);
       fetchUsers(

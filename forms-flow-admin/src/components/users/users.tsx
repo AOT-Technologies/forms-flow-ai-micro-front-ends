@@ -62,8 +62,8 @@ const Users = React.memo((props: any) => {
   const [error, setError] = React.useState(null); // Initialize error state with null instead of undefined
   const [loading, setLoading] = React.useState(false);
   const [activePage, setActivePage] = React.useState(1);
-  const [selectedFilter, setSelectedFilter] = React.useState(null); // Initialize selectedFilter with null
-  const [searchKey, setSearchKey] = React.useState("");
+  const [selectedFilter, setSelectedFilter] = React.useState(undefined); // Initialize selectedFilter with null
+  const [searchKey, setSearchKey] = React.useState(undefined);
   const [showInviteModal, setShowInviteModal] = React.useState(false); // Add state for managing invite modal
   const { t } = useTranslation();
   const { tenantId } = useParams();

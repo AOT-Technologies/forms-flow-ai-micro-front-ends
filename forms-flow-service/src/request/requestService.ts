@@ -191,7 +191,7 @@ class RequestService {
   public static httpPATCHRequest(
     url: string,
     data: object,
-    token: string | null,
+    token: string | null = null,
     isBearer: boolean = true,
     headers: object | null = null
   ): any {
