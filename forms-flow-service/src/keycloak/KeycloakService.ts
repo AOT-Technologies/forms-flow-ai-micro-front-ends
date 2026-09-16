@@ -144,28 +144,32 @@ class KeycloakService {
           console.log("Authenticated");
           const tokenParsed = this.kc.tokenParsed;
           if (tokenParsed) {
+            // A user who registered directly, without an invite, is authenticated
+            // but not yet linked to an organisation, so Keycloak omits the roles
+            // claim entirely. That is a valid session, not an auth failure - the
+            // host app shows them the "contact your administrator" screen. Default
+            // to an empty list so the session is still established for them.
             const UserRoles =
-              tokenParsed.roles || tokenParsed.role || tokenParsed.client_roles;
-            if (!UserRoles) {
-              callback(false);
-            } else {
+              tokenParsed.roles ||
+              tokenParsed.role ||
+              tokenParsed.client_roles ||
+              [];
+            StorageService.save(
+              StorageService.User.USER_ROLE,
+              JSON.stringify(UserRoles)
+            );
+            this.token = this.kc.token;
+            this._tokenParsed = this.kc.tokenParsed;
+            StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
+            this.kc.loadUserInfo().then((data) => {
+              this.userData = data;
               StorageService.save(
-                StorageService.User.USER_ROLE,
-                JSON.stringify(UserRoles)
+                StorageService.User.USER_DETAILS,
+                JSON.stringify(data)
               );
-              this.token = this.kc.token;
-              this._tokenParsed = this.kc.tokenParsed;
-              StorageService.save(StorageService.User.AUTH_TOKEN, this.token!);
-              this.kc.loadUserInfo().then((data) => {
-                this.userData = data;
-                StorageService.save(
-                  StorageService.User.USER_DETAILS,
-                  JSON.stringify(data)
-                );
-                callback(true);
-              });
-              this.refreshToken();
-            }
+              callback(true);
+            });
+            this.refreshToken();
           } else {
             this.logout();
           }
