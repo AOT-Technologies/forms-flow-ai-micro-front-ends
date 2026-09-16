@@ -221,8 +221,13 @@ const Users = React.memo((props: any) => {
       "owner";
 
   const canRemoveRole = (rowData, item) => {
-    // Minimum role enforcement: the last remaining role can't be removed
-    if ((rowData?.role?.length || 0) <= 1) return false;
+    // Minimum role enforcement: the last remaining role can't be removed.
+    // Counts only the roles actually shown as chips - the internal
+    // camunda-admin role is never rendered, so it must not pad the count.
+    const visibleRoleCount = (rowData?.role ?? []).filter(
+      (role: any) => !isInternalAdminRole(role?.name)
+    ).length;
+    if (visibleRoleCount <= 1) return false;
     // The admin role is protected
     if (item?.path === "/admin") return false;
     // The tenant creator's OWNER role is protected
@@ -379,7 +384,6 @@ const Users = React.memo((props: any) => {
                 </OverlayTrigger>
               </div>
             ))}
-            {!isOwnerRow && availableRoleDropdownOptions.length > 0 && (
               <AddWithDropdown
                 options={availableRoleDropdownOptions}
                 onSelect={addSingleUserRole}
@@ -387,7 +391,6 @@ const Users = React.memo((props: any) => {
                 emptyMessage={t("No roles found")}
                 dataTestId={`user-role-add-${rowData.id}`}
               />
-            )}
           </div>
         );
       },

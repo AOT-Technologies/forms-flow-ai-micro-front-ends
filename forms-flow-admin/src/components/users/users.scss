@@ -226,6 +226,7 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
   border-radius: 1.5625rem;
   border: 1px solid var(--gray-x-light);
   background: var(--white-300);
+  margin-left: 0;
 }
 .manage-container .manage-tabs-wrapper .tab-content {
     max-height: calc(100vh - 225px) !important;
