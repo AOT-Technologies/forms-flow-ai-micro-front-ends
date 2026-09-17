@@ -101,6 +101,7 @@ declare module "@formsflow/components" {
     ReusableTable,
     CircleAlertIcon,
     AddWithDropdown,
+    SelectDropdown,
     StyleEditor,
     DEFAULT_STYLE,
     FONT_MAP,

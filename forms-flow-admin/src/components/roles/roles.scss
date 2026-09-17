@@ -77,6 +77,9 @@
   .row {
     align-items: center;
   }
+  .v8-custom-dropdown.dropdown.btn-group .v8-dropdown-toggle .dropdown-label{
+    font-size: var(--font-size-table);
+  }
 }
 .formsflow-paginator {
   text-align: center;

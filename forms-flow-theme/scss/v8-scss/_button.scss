@@ -300,3 +300,8 @@ $color-warning-disabled: var(--gray-medium);
     transform: rotate(360deg);
   }
 }
+
+.custom-button-table{
+  font-size: var(--font-size-table);
+  padding: .6875rem 1.25rem;
+}
