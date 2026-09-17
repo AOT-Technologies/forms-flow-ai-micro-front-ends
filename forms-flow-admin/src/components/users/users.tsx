@@ -77,7 +77,7 @@ const Users = React.memo((props: any) => {
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [validationError, setValidationError] = React.useState("");
   const [inviteSuccessEmail, setInviteSuccessEmail] = React.useState<
-    string | null
+  string | null
   >(null);
   const [inviteLoading, setInviteLoading] = React.useState(false);
   const [roleRemoveCandidate, setRoleRemoveCandidate] = React.useState<{
@@ -86,6 +86,17 @@ const Users = React.memo((props: any) => {
   } | null>(null);
   const emailInputRef = React.useRef<HTMLInputElement>(null);
   const lastInviteTriggerRef = React.useRef<number | null>(null);
+  const [statusUpdateConfirmation, setStatusUpdateConfirmation] = React.useState(false);
+  const [updateRow, setUpdateRow] = React.useState({
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "id": "",
+    "username": "",
+    "role": [],
+    "status": "",
+    "isPrimaryOwner": false
+  });
 
   // Id of the currently logged-in user, used to hide self-suspend controls.
   const currentUserId = React.useMemo(() => {
@@ -153,8 +164,13 @@ const Users = React.memo((props: any) => {
   //   setSelectedRoles([]);
   // };
 
-  const userStatusUpdate = (rowData: any, enabled: boolean) => {
-    const user_id = rowData.id;
+  const openStatusUpdateModal = (rowData: any) => {
+    setStatusUpdateConfirmation(true);
+    setUpdateRow(rowData);
+  }
+
+  const userStatusUpdate = (enabled: boolean) => {
+    const user_id = updateRow.id;
     const payload = { enabled };
 
     UpdateUserStatus(user_id, payload)
@@ -453,7 +469,7 @@ const Users = React.memo((props: any) => {
             <V8CustomButton
               className="custom-button-table"
               label={t("Reactivate")}
-              onClick={() => userStatusUpdate(rowData, true)}
+              onClick={() => openStatusUpdateModal(rowData)}
               data-testid="reactivate-user-button"
               variant="secondary"
               size="small"
@@ -462,7 +478,7 @@ const Users = React.memo((props: any) => {
             <V8CustomButton
               className="custom-button-table"
               label={t("Suspend")}
-              onClick={() => userStatusUpdate(rowData, false)}
+              onClick={() => openStatusUpdateModal(rowData)}
               data-testid="suspend-user-button"
               variant="secondary"
               size="small"
@@ -750,6 +766,38 @@ const Users = React.memo((props: any) => {
           secondaryBtnAction={confirmRoleRemove}
           primaryBtndataTestid="keep-user-role-button"
           secondoryBtndataTestid="confirm-remove-user-role-button"
+        />
+      )}
+
+      {statusUpdateConfirmation && (
+        <ConfirmModal
+          show={statusUpdateConfirmation}
+          title={
+            getStatusDisplay(updateRow?.status).label === "Suspended"
+              ? t("Activate this user?")
+              : t("Suspend this user?")
+          }
+          message={
+            getStatusDisplay(updateRow?.status).label === "Suspended"
+              ? t("Are you sure you want to activate this user?")
+              : t("Are you sure you want to suspend this user?")
+          }
+          onClose={() => setStatusUpdateConfirmation(false)}
+          primaryBtnText={
+            getStatusDisplay(updateRow?.status).label === "Suspended"
+              ? t("Activate User")
+              : t("Suspend User")
+          }
+          primaryBtnAction={() => {
+            userStatusUpdate(
+              getStatusDisplay(updateRow?.status).label === "Suspended"
+            );
+            setStatusUpdateConfirmation(false);
+          }}
+          primaryBtndataTestid="confirm-status-update-button"
+          secondaryBtnText={t("Cancel")}
+          secondaryBtnAction={() => setStatusUpdateConfirmation(false)}
+          secondoryBtndataTestid="cancel-status-update-button"
         />
       )}
     </>
