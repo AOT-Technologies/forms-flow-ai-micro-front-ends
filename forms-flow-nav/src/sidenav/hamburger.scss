@@ -1,3 +1,5 @@
+@import "../../../forms-flow-theme/scss/v8-scss/mixins";
+
 .navbar-toggler {
   margin-left: 0;
   border: 0;
@@ -28,7 +30,9 @@
   padding: 0;
 }
 
-@media (max-width: 768px) {
+// The overlay menu IS the nav below the tablet token, and only there -- above
+// it the persistent rail takes over (R3.3/R3.4).
+@include respond-below(tablet) {
   .custom-navbar {
     display: flex;
     box-shadow: 0px 2px 4px 0px rgba(48, 52, 54, 0.08);
@@ -46,7 +50,7 @@
   width: 12.1rem;
 }
 
-@media (min-width: 992px) {
+@include respond-from(tablet) {
   .navbar-collapse {
     flex-basis: auto;
   }

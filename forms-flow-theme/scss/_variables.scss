@@ -1,4 +1,4 @@
-@use "./v8-scss/breakpoints" as bp;
+@use "./v8-scss/mixins" as bp;
 
 $prefix: "ff-";
 $gray-darkest: var(--ff-gray-darkest);

@@ -1,55 +1,25 @@
 @import "../../../forms-flow-theme/scss/v8-scss/mixins";
 
 //New Colors
-$black: #000000;
 $white: #ffffff;
-$green: #57c20a;
-$green-dark: #006621;
-
-//primary shades
-$primary: #253df4;
-$primary-light: #e2e1fc;
 
 //gray shades
-// $gray-darkest: #303436;
-$gray-darkest: #7c7d7f;
-$gray-dark: #4c4c4c;
-$gray-medium-dark: #afb4b6;
 $gray-medium: #e4e6e7;
-$gray-light: #f2f2f3;
-
-// VARIABLES ADDED BY MAX
 
 //base
 $base: 1rem;
 $lineThin: 1px;
-$lineThick: $lineThin * 2;
 
 // fonts
 $fontBase: $base;
 $fontSmallest: $fontBase * 0.875;
 $fontLineHeight: 1.2;
 
-$fontModalTitle: $fontBase * 1.5;
-
-// borders
-$borderRadiusHeightESM: $base * 0.78; // 12.5px
-$borderRadiusHeightSM: $base * 1.094; // 17.5px
-$borderRadiusHeightM: $base * 1.344; // 21.5px
-$borderRadiusHeightL: $base * 1.594; // 25.5px
-$borderRadiusModal: $base * 1.5; // 24px
-
 // color globals
 $colorDivider: $gray-medium;
-$colorDividerDark: $gray-medium-dark;
-
-// modals
-$modalWidthSmall: $base * 60;
-$modalWidthLarge: $base * 75;
 
 // nav
 $navPadding: $base;
-$navSpacing: $base;
 
 // stacked on a 34px pitch. The Navbar*Icon glyphs draw their own circle, so the
 // rail scales them up rather than wrapping them in a border.
@@ -66,6 +36,13 @@ $railFlyoutRadius: $base * 0.3125; // 5px
 // rgba(48, 52, 54, 0.08) family with no equivalent, so this one is local; if a
 // second surface ever needs it, promote it to a theme token.
 $railFlyoutShadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+
+// Branded logomark (Figma "logomark branded", 107x20).
+$logoMarkGap: $base * 0.25; // ~3.5px between mark and wordmark
+$logoWordmarkSize: 0.892rem; // 14.267px
+$logoWordmarkTracking: 0.009rem; // 0.1427px
+$logoWordmarkColor: #1c1c1e;
+$logoAccentColor: #1529c4;
 
 // Count badge pill on the expanded row.
 $badgeHeight: $base * 1.1875; // 19px
@@ -147,145 +124,31 @@ $animSpeed: 300ms;
   .logo-container {
     display: flex;
     align-items: center;
+    gap: $logoMarkGap;
     min-height: 4.625rem;
-    // padding: var(--spacer-150);
     padding: 1.313rem 1rem;
+  }
+
+  // Wordmark half of the branded logomark. Brand colours, not theme colours --
+  // the palette has no token for either, and they must not follow a tenant theme.
+  .logo-wordmark {
+    @include font-style($logoWordmarkSize, 600, $logoWordmarkColor);
+    letter-spacing: $logoWordmarkTracking;
+    white-space: nowrap;
+  }
+
+  .logo-wordmark-accent {
+    color: $logoAccentColor;
   }
 
   .options-container {
     text-align: center;
-    // flex-grow: 1;
     overflow-y: auto;
     margin-bottom: auto;
   }
 
-  .accordion {
-    display: flex;
-    flex-direction: column;
-    gap: calc($navSpacing/2);
-  }
-
-  .accordion-button {
-    gap: 0.44rem;
-    // gap: $navSpacing;
-    padding: $navPadding;
-
-    color: var(--navbar-menu-font-color);
-    // color: #7C7D7F !important;
-    font-size: $fontSmallest;
-    padding-left: 0;
-    // font-weight: 700;
-
-    background-color: var(--nav-bg-color);
-    box-shadow: none;
-
-    &:focus {
-      box-shadow: none;
-    }
-
-    &::after {
-      order: -1;
-      margin-right: 0.625rem;
-      margin-left: 0;
-      display: none;
-    }
-
-    &:hover {
-      // background-color: var(--navbar-menu-hover-bg-color);
-      font-weight: 500;
-      color: var(--navbar-menu-font-color) !important;
-    }
-
-    &:not(.collapsed) {
-      // background-color: var(--navbar-main-menu-active-bg-color);
-
-      // & > svg {
-      //   transform: rotate(180deg);
-      // }
-      @include font-style(0.938rem, 500, var(--navbar-menu-font-color));
-
-      background-color: var(--nav-bg-color);
-      box-shadow: none;
-    }
-  }
-
-  .accordion-body {
-    color: var(--navbar-main-menu-active-font-color);
-    padding: 0;
-  }
-
-  .accordion-item {
-    background-color: var(--nav-bg-color);
-    border: none;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-sm);
-    line-height: var(--text-line-height);
-    border-bottom: 1px solid #e5e5e5;
-    margin: 0 1rem;
-
-    &:first-of-type > .accordion-header .accordion-button {
-      border-top-left-radius: 0 !important;
-      border-top-right-radius: 0 !important;
-    }
-    &:last-of-type > .accordion-header .accordion-button.collapsed {
-      border-bottom-left-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-    }
-    &:last-of-type {
-      border-bottom: none;
-    }
-  }
-
-  .accordion-item:last-of-type {
-    border-radius: 0;
-  }
-
-  .accordion-link {
-    display: block;
-    width: 100%;
-
-    padding: $navPadding 0;
-    // padding-left: calc($navPadding + $navSpacing + $base);
-    padding-left: 1.44rem;
-
-    // font-size: $fontSmallest;
-    // font-weight: 700;
-    line-height: $fontLineHeight;
-    // color: var(--navbar-main-menu-active-font-color);
-    text-align: left;
-    text-decoration: none;
-    cursor: pointer;
-
-    color: var(--navbar-submenu-font-color);
-    font-size: 0.875rem;
-
-    &:hover {
-      text-decoration: none;
-      // background-color: var(--navbar-hover-submenu-bg-color);
-      // color: var(--navbar-hover-submenu-font-color);
-      // font-size: var(--navbar-hover-submenu-font-size) !important;
-      // font-weight: var(--navbar-hover-submenu-font-weight) !important;
-      // color: #525254;
-      color: var(--navbar-menu-font-color);
-      font-weight: 500;
-    }
-
-    &.active {
-      // color: #525254;
-
-      @include font-style(0.875rem, 500, var(--navbar-menu-font-color));
-      line-height: 1.05rem;
-      // background-color: var(--navbar-active-submenu-bg-color);
-      // color: var(--navbar-active-submenu-font-color);
-      // font-size: var(--navbar-active-submenu-font-size) !important;
-      // font-weight: var(--navbar-active-submenu-font-weight) !important;
-    }
-  }
-
   .user-container {
     color: var(--navbar-main-menu-active-font-color);
-
-    // border-top: $lineThin solid $colorDivider;
 
     & > button {
       display: flex;
@@ -301,9 +164,6 @@ $animSpeed: 300ms;
 
       transition: all $animSpeed;
 
-      &:hover {
-        background-color: var(--navbar-hover-submenu-bg-color);
-      }
       &:first-of-type {
         border-bottom: $lineThin solid $colorDivider;
       }
@@ -336,10 +196,6 @@ $animSpeed: 300ms;
           line-height: $fontLineHeight;
           white-space: nowrap;
           text-overflow: ellipsis;
-
-          // &.user-name {
-          //   font-weight: 700;
-          // }
         }
       }
     }
@@ -349,16 +205,10 @@ $animSpeed: 300ms;
         width: 100%;
 
         color: var(--navbar-menu-font-color) !important;
-        // color: #525254;
         font-size: $fontSmallest;
         line-height: $fontLineHeight;
-        // font-weight: 700;
       }
       text-align: left;
-
-      &:hover {
-        background-color: var(--navbar-hover-submenu-bg-color);
-      }
     }
 
     // Was an initials chip; now holds the NavbarUserIcon glyph, which supplies
@@ -376,67 +226,6 @@ $animSpeed: 300ms;
         height: 100%;
       }
     }
-
-    // .user-name {
-    //   font-size: var(--font-size-sm);
-    //   font-weight: var(--font-weight-sm);
-    //   line-height: var(--text-line-height);
-    //   letter-spacing: var(--text-space-xs);
-    //   background-color: var(--nav-bg-color) !important;
-    //   text-align: left;
-    //   margin-left: var(--spacer-050) !important;
-    //   margin: 0;
-    //   cursor: pointer;
-    //   border: none;
-    //   margin-left: 0;
-    //   max-width: 9rem;
-    //   :hover{
-    //     background-color: none;
-    //   }
-    // }
-
-    // .user-email {
-    //   overflow: hidden;
-    //   white-space: nowrap;
-    //   color: var(--navbar-main-menu-active-font-color);
-    //   text-overflow: ellipsis;
-    //   font-size: var(--font-size-xs);
-    //   font-weight: var(--font-weight-xs);
-    //   line-height: normal;
-    //   text-transform: lowercase;
-    //   max-width: 7.5rem;
-    //   cursor: pointer;
-    //   margin-bottom: 0;
-    //   margin-left: var(--spacer-050);
-
-    // }
-  }
-
-  .accordion-header {
-    &.no-arrow .accordion-button::after {
-      display: none;
-    }
-
-    // &.active-header .accordion-button {
-    // background-color: var(--navbar-active-submenu-bg-color);
-    // color: var(--navbar-active-submenu-font-color);
-
-    // }
-  }
-}
-
-.collapsed {
-  .accordion-button {
-    padding: 0;
-  }
-}
-
-.custom-chevron {
-  transition: transform 0.3s ease;
-
-  .accordion-button:not(.collapsed) & {
-    // transform: rotate(180deg);
-    transform: rotate(90deg);
   }
 }
 
@@ -462,15 +251,6 @@ $animSpeed: 300ms;
   );
 }
 
-.active-header .accordion-button {
-  // background-color: var(--navbar-main-menu-active-bg-color);
-  // color: #525254;
-  color: var(--navbar-menu-font-color);
-  font-size: 0.938rem;
-  font-weight: 500;
-  @include font-style(0.938rem, 500, var(--navbar-menu-font-color));
-}
-
 // Flat menu list - Phase 3 "8.3 / Expanded". Build/Analyze render as plain
 // section labels with their children always visible, so there is no accordion
 // and no chevron; every row is a link.
@@ -485,8 +265,7 @@ $animSpeed: 300ms;
   list-style: none;
 
   // .options-container centres its text; menu rows and section labels are
-  // left-aligned, so undo it here rather than per element (the old
-  // .accordion-link carried the same reset).
+  // left-aligned, so undo it here rather than per element.
   text-align: left;
 }
 
@@ -516,21 +295,38 @@ $animSpeed: 300ms;
   align-items: center;
   gap: $menuLabelGap;
 
-  padding: 0 $menuInset;
+  // Right inset matches the header's so the task pill's right edge lines up
+  // with the collapse/expand icon above it.
+  padding: 0 $menuSectionInset 0 $menuInset;
   text-decoration: none;
-
-  &:hover {
-    background-color: var(--navbar-hover-submenu-bg-color);
-  }
 }
 
 .menu-label {
   @include font-style($fontBase, 400, var(--navbar-menu-font-color));
 }
 
+// Selected is carried by the icon plus a Medium weight label -- the label colour
+// does NOT change. ("Selected text in the Nav is 16px Medium"; the selected row
+// in the design is still gray/800, not indigo.)
 .menu-link.active .menu-label {
   font-weight: 500;
-  color: var(--navbar-menu-font-color-active);
+}
+
+// Rollover: no background fill of any kind, just a darker glyph and label
+// (ff/color/gray/700, the "Nav Rollover" swatch). The fallback keeps this
+// working if the theme bundle in use predates the token.
+// The three icon states are mutually exclusive: Selected (indigo-700), Dormant
+// (gray-500), Rollover (gray-700). :not(.active) keeps rollover off the selected
+// row -- without it, hovering the current page turned its indigo glyph grey and
+// the selection disappeared under the cursor, since selection is carried by the
+// icon alone.
+.menu-link:not(.active):hover {
+  // CSS beats the stroke presentation attribute the icon components emit, so the
+  // glyph rolls over with the label. Only stroked paths are targeted; the
+  // fill-only backdrop path must not gain an outline.
+  .menu-icon svg path[stroke] {
+    stroke: var(--navbar-menu-font-color-rollover, #636365);
+  }
 }
 
 // The glyphs already carry their own ring (NavbarHomeIcon draws a <circle>,
@@ -646,7 +442,14 @@ $animSpeed: 300ms;
     box-shadow: $railFlyoutShadow;
 
     white-space: nowrap;
-    @include font-style($fontBase, 500, var(--secondary-dark));
+    // Spec frame: "Rollover ToolTip text is 16px Regular". On the rail the
+    // tooltip IS the label, so it takes the same rollover colour as the glyph
+    // it belongs to -- label and icon always match on hover.
+    @include font-style(
+      $fontBase,
+      400,
+      var(--navbar-menu-font-color-rollover, #636365)
+    );
 
     opacity: 0;
     visibility: hidden;
@@ -680,7 +483,9 @@ $animSpeed: 300ms;
   }
 }
 
-@media (max-width: 768px) {
+// R3.4 Hidden tier: below the tablet token the persistent rail is removed and
+// the nav is reached through the hamburger overlay instead (hamburger.scss).
+@include respond-below(tablet) {
   .sidenav .logo-container {
     display: none;
   }

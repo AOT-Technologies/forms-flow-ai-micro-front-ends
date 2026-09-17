@@ -1,6 +1,6 @@
 // Import theme variables and mixins
 @use "mixins";
-@use "breakpoints" as bp;
+@use "mixins" as bp;
 
 // Switch Variables - Using consistent rem/em units for better scalability
 $switch-width: 2.75rem;              // 44px at 16px base

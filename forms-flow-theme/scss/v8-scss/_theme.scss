@@ -2,7 +2,6 @@
 
 /*|||*════════════════════════════════════ ⬥ VERSION 8 THEME ⬥ ════════════════════════════════════*||||*/
 @use "mixins";
-@use "breakpoints" as bp;
 
 
 
@@ -53,6 +52,7 @@ $scrollBarWidth: 0.5rem;
 // Navbar color changes
 $navbar-muted-color:  #979899; // ff/color/gray/500
 $navbar-accent-color: #5467FC; // ff/color/indigo/700
+$navbar-rollover-color: #636365; // ff/color/gray/700 — the "Nav Rollover" swatch
 
 // Helper: Blend with a white background [ To achieve exact variants of figma ] 
 @function blend-with-white-to-hex($color, $opacity) {
@@ -105,6 +105,7 @@ $font-tokens: (
   --navbar-menu-font-color: var(--gray-darkest); // ff/color/gray/800   #4A4A4A
   --navbar-submenu-font-color: #{$navbar-muted-color}; // ff/color/gray/500
   --navbar-menu-font-color-active: #{$navbar-accent-color}; // ff/color/indigo/700
+  --navbar-menu-font-color-rollover: #{$navbar-rollover-color}; // ff/color/gray/700
 
 /*══════════════════ ⬥ COLOUR UTILITIES | VERSION 8 ⬥ ══════════════════*/
 
@@ -236,11 +237,11 @@ $font-tokens: (
 
   // Informational for runtime consumers (JS reads via getComputedStyle).
   // CSS custom properties cannot be used inside @media conditions — SCSS authors
-  // must use bp.respond-from()/bp.respond-below() from v8-scss/_breakpoints.scss.
-  @each $name, $value in bp.$breakpoints {
+  // must use mixins.respond-from()/mixins.respond-below() from v8-scss/_mixins.scss.
+  @each $name, $value in mixins.$breakpoints {
     --breakpoint-#{$name}: #{$value};
   }
-  @each $name, $value in bp.$containers {
+  @each $name, $value in mixins.$containers {
     --container-#{$name}: #{$value};
   }
 
@@ -266,6 +267,9 @@ $font-tokens: (
       flex-direction: column;
       transition: width 0.5s ease;
       overflow: hidden;
+      // The rail is position:fixed, so this column IS the gutter that keeps it
+      // off the canvas. forms-flow-nav publishes --navbar-width on the document
+      // root as it collapses/expands, which is what keeps the two in step.
       width: var(--navbar-width);
     }
 
@@ -288,11 +292,11 @@ $font-tokens: (
            the previous container (1088/1456) so they need no rule; past 1920px
            the parent .page-container's justify-content: center centres it. */
         width: 100%;
-        @include bp.respond-from(mobile)     { max-width: bp.container(mobile); }     // 352px
-        @include bp.respond-from(tablet)     { max-width: bp.container(tablet); }     // 536px
-        @include bp.respond-from(desktop-sm) { max-width: bp.container(desktop-sm); } // 720px
-        @include bp.respond-from(desktop-md) { max-width: bp.container(desktop-md); } // 1088px
-        @include bp.respond-from(desktop-xl) { max-width: bp.container(desktop-xl); } // 1456px
+        @include mixins.respond-from(mobile)     { max-width: mixins.container(mobile); }     // 352px
+        @include mixins.respond-from(tablet)     { max-width: mixins.container(tablet); }     // 536px
+        @include mixins.respond-from(desktop-sm) { max-width: mixins.container(desktop-sm); } // 720px
+        @include mixins.respond-from(desktop-md) { max-width: mixins.container(desktop-md); } // 1088px
+        @include mixins.respond-from(desktop-xl) { max-width: mixins.container(desktop-xl); } // 1456px
         flex-shrink: 0;
         flex-grow: 0;
         display: grid;          // allows toast/header/body grid
