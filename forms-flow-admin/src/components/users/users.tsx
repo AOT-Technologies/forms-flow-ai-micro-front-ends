@@ -451,6 +451,7 @@ const Users = React.memo((props: any) => {
         return (
           isUserSuspended ? (
             <V8CustomButton
+              className="custom-button-table"
               label={t("Reactivate")}
               onClick={() => userStatusUpdate(rowData, true)}
               data-testid="reactivate-user-button"
@@ -459,6 +460,7 @@ const Users = React.memo((props: any) => {
             />
           ) : (
             <V8CustomButton
+              className="custom-button-table"
               label={t("Suspend")}
               onClick={() => userStatusUpdate(rowData, false)}
               data-testid="suspend-user-button"

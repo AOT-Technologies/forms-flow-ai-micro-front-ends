@@ -836,6 +836,7 @@ const Roles = React.memo((props: any) => {
           return (
             <div className="ms-3">
               <V8CustomButton
+                className="custom-button-table"
                 label={t("View")}
                 onClick={() => openRoleModal(roleForModal)}
                 aria-label={t("View role")}
