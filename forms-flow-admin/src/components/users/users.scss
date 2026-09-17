@@ -231,3 +231,39 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
 .manage-container .manage-tabs-wrapper .tab-content {
     max-height: calc(100vh - 225px) !important;
 }
+
+.users-role-filter-items {
+  padding-left: 0.5rem;
+  padding-right: 0rem;
+
+  .dropdown-option-content {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.users-role-filter-items:has(.users-role-filter-badge):first-child,
+.users-role-filter-items:not(:has(.users-role-filter-badge))
+  + .users-role-filter-items:has(.users-role-filter-badge) {
+  border-top: 1px solid var(--gray-x-light);
+}
+
+.users-role-filter-items:has(.users-role-filter-badge)
+  + .users-role-filter-items:not(:has(.users-role-filter-badge)) {
+  border-top: 1px solid var(--gray-x-light);
+}
+
+.users-role-filter-items:has(.users-role-filter-badge):last-child {
+  border-bottom: 1px solid var(--gray-x-light);
+}
+
+.users-role-filter-badge {
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--gray-dark);
+  background: var(--secondary);
+  border: 1px solid var(--gray-light);
+  border-radius: 1rem;
+  padding: 0.0625rem 0.5rem;
+}

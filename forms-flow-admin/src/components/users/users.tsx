@@ -1,5 +1,4 @@
 import React from "react";
-import Form from "react-bootstrap/Form";
 import { useTranslation } from "react-i18next";
 import Loading from "../loading";
 import { AddUserRole, RemoveUserRole, InviteUser, UpdateUserStatus } from "../../services/users";
@@ -26,6 +25,7 @@ import {
   CustomTextInput,
   ReusableTable,
   AddWithDropdown,
+  SelectDropdown,
 } from "@formsflow/components";
 import { useParams } from "react-router-dom";
 import { getColumnPresetSizing, getRedirectUrl, StorageService } from "@formsflow/service";
@@ -246,11 +246,11 @@ const Users = React.memo((props: any) => {
     props.setInvalidated(true);
   };
 
-  const handleSelectFilter = (e) => {
-    if (e.target.value === "ALL") {
+  const handleSelectFilter = (value: string | number) => {
+    if (value === "ALL") {
       return setSelectedFilter(null);
     }
-    setSelectedFilter(e.target.value);
+    setSelectedFilter(value);
   };
 
   const columns = [
@@ -523,6 +523,25 @@ const Users = React.memo((props: any) => {
     );
   };
 
+  // Custom roles (isDefault: false) listed first with a "Custom" badge,
+  // built-in roles at the bottom - same tiering already used for
+  // availableRoleDropdownOptions above. The first/last badged row's border
+  // (bracketing the custom-role group) is applied purely via CSS in
+  // users.scss, keyed off the presence of the badge - no index bookkeeping
+  // needed here.
+  const roleFilterOptions = [
+    { value: "ALL", label: t("All Roles") },
+    ...[...(roles ?? [])]
+      .sort((a: any, b: any) => Number(!!a?.isDefault) - Number(!!b?.isDefault))
+      .map((role: any) => ({
+        value: role.name,
+        label: formatRoleDisplayName(role.name, tenantKeyForRoleDisplay),
+        listIcon: !role.isDefault ? (
+          <span className="users-role-filter-badge">{t("Custom")}</span>
+        ) : undefined,
+      })),
+  ];
+
   return (
     <>
       <AppModal
@@ -653,7 +672,8 @@ const Users = React.memo((props: any) => {
                       size="small"
                       loading={inviteLoading}
                       loadingText={t("Inviting")}
-                      disabled={!formData.user?.trim()}
+                    disabled={!formData.user?.trim()}
+                    
                     />
                   </AppModal.Footer>
                 </AppModal>
@@ -661,30 +681,18 @@ const Users = React.memo((props: any) => {
             </>
           )}
         <div className="user-filter-container col-lg-3 col-xl-3 col-md-3 col-sm-6 col-12">
-          
-          <Form.Select
-            className="bg-light text-dark w-0"
+          <SelectDropdown
+            options={roleFilterOptions}
+            value={props.filter || "ALL"}
             onChange={handleSelectFilter}
-            title={t("Filter here")}
-            data-testid="users-roles-filter-select"
-          >
-            <option
-              value="ALL"
-              selected={!props.filter}
-              data-testid="users-roles-filter-option-all"
-            >
-              {t("All Roles")}
-            </option>
-            {roles?.map((role, i) => (
-              <option
-                key={i}
-                value={role.name}
-                data-testid={`users-roles-filter-option-${i}`}
-              >
-                {formatRoleDisplayName(role.name, tenantKeyForRoleDisplay)}
-              </option>
-            ))}
-          </Form.Select>
+            variant="secondary"
+            width="15.375rem"
+            ariaLabel={t("Filter here")}
+            id="users-roles-filter-select"
+            dataTestId="users-roles-filter-select"
+            dropdownMaxHeight="16.125rem"
+            dropdownItemClassName="users-role-filter-items"
+          />
         </div>
         <hr/>
         {!loading ? (
