@@ -1,7 +1,6 @@
 import "./Sidebar.scss";
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { navigateToBaseUrl, getRedirectUrl } from "@formsflow/service";
 import { useTranslation } from "react-i18next";
 import {
   APPLICATION_NAME,
@@ -12,8 +11,11 @@ import {
   ENABLE_APPLICATIONS_MODULE,
   ENABLE_TASKS_MODULE,
   IS_ENTERPRISE,
+  LANGUAGE,
 } from "../constants/constants";
 import {
+  navigateToBaseUrl,
+  getRedirectUrl,
   StorageService,
   StyleServices,
   storeChecklistItems,
@@ -25,7 +27,6 @@ import {
 } from "../services/tenant";
 import { setShowApplications } from "../constants/userConstants";
 import { PERMISSIONS } from "../constants/permissions";
-import { LANGUAGE } from "../constants/constants";
 import { checkIntegrationEnabled } from "../services/integration";
 import {
   fetchUserLoginDetails,
@@ -46,6 +47,13 @@ import PropTypes from "prop-types";
 // Pure constants hoisted to module scope so they are not rebuilt on every
 // Sidebar render (N.1.3). Values are byte-identical to the previous inline
 // literals — route paths are contracts.
+
+// Rail widths, published to the document root as --navbar-width so the theme's
+// .nav-space gutter tracks the rail. The collapsed value must stay in sync with
+// the theme default in forms-flow-theme `scss/v8-scss/_theme.scss`.
+const NAV_WIDTH_COLLAPSED = "3rem";
+const NAV_WIDTH_EXPANDED = "11rem";
+
 const SectionKeys = {
   HOME: {
     value: "home",
@@ -185,6 +193,14 @@ const renderLogo = (hideLogo, collapsed) => {
   return (
     <div className={`logo-container${collapsed ? " collapsed" : ""}`}>
       <ApplicationLogo data-testid="application-logo" />
+      {/* The design's "logomark branded" is the mark PLUS the wordmark;
+          ApplicationLogo only draws the mark. The rail hides the whole
+          container, so the wordmark is rendered for the expanded view only. */}
+      {!collapsed && (
+        <span className="logo-wordmark" data-testid="logo-wordmark">
+          formsflow<span className="logo-wordmark-accent">.ai</span>
+        </span>
+      )}
     </div>
   );
 };
@@ -281,21 +297,36 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
   );
 
   // Collapsible sidebar state
-  const getInitialCollapsedState = () => {
-    return window.innerWidth <= 1200;
-  };
-
-  const [persistentCollapsed, setPersistentCollapsed] = useState(
-    getInitialCollapsedState()
-  );
+  // Collapsed is the default state at every width, and the expanded state is
+  // deliberately NOT persisted: every page load starts collapsed again.
+  // Viewport size does not decide this either — below the tablet breakpoint the
+  // rail is hidden by CSS and the hamburger overlay takes over.
   // The rail expands only when the toggle is clicked. Hovering a collapsed icon
   // shows that row's tooltip instead (see .menu-flyout) and never widens the nav.
-  const collapsed = persistentCollapsed;
-  const sidebarRef = useRef(null);
+  const [collapsed, setCollapsed] = useState(true);
 
   const handleToggleClick = () => {
-    setPersistentCollapsed(!persistentCollapsed);
+    setCollapsed((prev) => !prev);
   };
+
+  // The rail is position:fixed, so the gutter that keeps it off the page content
+  // is reserved by the theme's `.base-container > .nav-space` column, which sizes
+  // itself from --navbar-width. Publishing the width on the document root (not as
+  // an inline style on .sidenav, where nothing outside this MFE could read it) is
+  // what keeps the two in step — otherwise the gutter stays at the theme's 3rem
+  // default while the expanded rail grows to 11rem and covers the canvas, which
+  // bites hardest at tablet/desktop-sm where the canvas has the least slack.
+  useEffect(() => {
+    StyleServices?.setCSSVariable(
+      "--navbar-width",
+      collapsed ? NAV_WIDTH_COLLAPSED : NAV_WIDTH_EXPANDED
+    );
+    // The rail is unmounted on preview routes; hand the gutter back to the
+    // collapsed default so the page does not keep an 11rem hole where it was.
+    return () => {
+      StyleServices?.setCSSVariable("--navbar-width", NAV_WIDTH_COLLAPSED);
+    };
+  }, [collapsed]);
 
   // checklistSkipped is hydrated into shared localStorage by forms-flow-web
   // (PrivateRoute) at login, so we read it here instead of making a duplicate
@@ -448,12 +479,6 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
         path: USER_ROUTE,
       });
     }
-    // if (isLinkManager) {
-    //     options.push({
-    //       name: "Links",
-    //       path: LINK_ROUTE,
-    //     });
-    //   }
 
     return options;
   };
@@ -529,30 +554,14 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
   // Collapsible sidebar class
   const sidebarClass = `sidenav${collapsed ? " collapsed" : ""}`;
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 1200) {
-        setPersistentCollapsed(false);
-      } else {
-        setPersistentCollapsed(true);
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   return (
     <div
       className={sidebarClass}
-      style={{
-        height: sidenavHeight,
-        "--navbar-width": collapsed ? "3rem" : "11rem",
-      }}
+      // --navbar-width is deliberately NOT set here: it lives on the document
+      // root (see the effect above) so the rail and the theme's .nav-space
+      // gutter are driven by one value. .sidenav reads it by inheritance.
+      style={{ height: sidenavHeight }}
       data-testid="sidenav"
-      ref={sidebarRef}
     >
       {/* Logo and the collapse toggle share one header row (Figma 8.3): logo
           at the left inset, toggle pinned right. */}

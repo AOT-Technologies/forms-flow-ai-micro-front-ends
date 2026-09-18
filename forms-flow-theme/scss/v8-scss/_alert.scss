@@ -1,6 +1,6 @@
 // Import theme variables and mixins
 @use "mixins";
-@use "breakpoints" as bp;
+@use "mixins" as bp;
 
 // Alert Variables - Using consistent rem/em units for better scalability
 $alert-border-radius: 0.313rem;        // 5px at 16px base
