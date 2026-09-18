@@ -891,7 +891,7 @@ const Roles = React.memo((props: any) => {
 
         {!props?.loading ? (
           <div>
-            <div data-testid="admin-roles-table">
+            <div data-testid="admin-roles-table" className="roles-table">
               <ReusableTable
                 columns={columns}
                 rows={roles}
