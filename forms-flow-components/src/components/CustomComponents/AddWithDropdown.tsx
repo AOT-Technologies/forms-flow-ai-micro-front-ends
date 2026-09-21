@@ -145,10 +145,18 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
     () => buildClassNames("add-with-dropdown", className),
     [className]
   );
+  const rootFontSize = useMemo(() => {
+    if (typeof document === "undefined") return DEFAULT_ROOT_FONT_SIZE;
+    return (
+      parseFloat(getComputedStyle(document.documentElement).fontSize) ||
+      DEFAULT_ROOT_FONT_SIZE
+    );
+  }, []);
+  const menuWidthPx = MENU_WIDTH * rootFontSize;
   const menuLeft =
     menuAlign === "end"
       ? position
-        ? position.left + position.width - MENU_WIDTH
+        ? position.left + position.width - menuWidthPx
         : 0
       : position?.left ?? 0;
 
@@ -157,13 +165,6 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
   // own height, and the menu is capped to the space that side actually offers
   // so the whole list stays on screen (it scrolls internally beyond that).
   const isFlipped = position?.placement === "top";
-  const rootFontSize = useMemo(() => {
-    if (typeof document === "undefined") return DEFAULT_ROOT_FONT_SIZE;
-    return (
-      parseFloat(getComputedStyle(document.documentElement).fontSize) ||
-      DEFAULT_ROOT_FONT_SIZE
-    );
-  }, []);
   const menuStyle = useMemo(() => {
     const availableHeightRem =
       position?.availableHeight != null
