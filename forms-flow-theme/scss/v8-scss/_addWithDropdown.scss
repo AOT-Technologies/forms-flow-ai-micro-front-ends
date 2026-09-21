@@ -112,12 +112,16 @@ $color-disabled-text: var(--gray-medium-darker);
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+    min-width: 0;
   }
 
   .add-with-dropdown-item-name {
     font-size: $add-with-dropdown-font-size;
     font-weight: $add-with-dropdown-font-weight-medium;
     color: $color-dark-gray;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .add-with-dropdown-item-badge {

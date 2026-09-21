@@ -375,8 +375,10 @@ const Users = React.memo((props: any) => {
                     )
                   }
                 >
-                  <span className="">
-                    {formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay)}
+                  <span className="d-flex align-items-center">
+                    <span className="role-name-text">
+                      {formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay)}
+                    </span>
                     {canRemoveRole(rowData, item) && (
                       <i
                         className="fa-solid fa-xmark chip-close ms-2"
