@@ -57,7 +57,7 @@ const buildClassNames = (
 ): string => classes.filter(Boolean).join(" ");
 
 const MENU_WIDTH = 25.4;
-/** Keep in sync with `.add-with-dropdown-menu` max-height in the theme (20rem). */
+/** Keep in sync with `.add-with-dropdown-menu` max-height in the theme (31.7rem). */
 const MENU_PREFERRED_HEIGHT = 31.7;
 /** Default root font size (px) assumed for the `useDropdownPosition` flip check, which works in px. */
 const DEFAULT_ROOT_FONT_SIZE = 16;
