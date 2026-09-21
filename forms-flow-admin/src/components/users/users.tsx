@@ -245,7 +245,7 @@ const Users = React.memo((props: any) => {
     ).length;
     if (visibleRoleCount <= 1) return false;
     // The admin role is protected
-    if (item?.path === "/admin") return false;
+    if (!MULTITENANCY_ENABLED && item?.path === "/admin") return false;
     // The tenant creator's OWNER role is protected
     return !isProtectedOwnerRole(rowData, item);
   };

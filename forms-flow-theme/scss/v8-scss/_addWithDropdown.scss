@@ -26,7 +26,7 @@ $color-disabled-text: var(--gray-medium-darker);
     height: 1.5rem;
     padding: 0;
     border-radius: 50%;
-    border: 1px solid $color-border;
+    border: 2px solid var(--navbar-submenu-font-color);
     background: var(--white-300);
     cursor: pointer;
     transition: background 0.15s ease-in-out;

@@ -56,12 +56,14 @@ const buildClassNames = (
   ...classes: (string | boolean | undefined)[]
 ): string => classes.filter(Boolean).join(" ");
 
-const MENU_WIDTH = 256;
+const MENU_WIDTH = 25.4;
 /** Keep in sync with `.add-with-dropdown-menu` max-height in the theme (20rem). */
-const MENU_PREFERRED_HEIGHT = 320;
+const MENU_PREFERRED_HEIGHT = 31.7;
+/** Default root font size (px) assumed for the `useDropdownPosition` flip check, which works in px. */
+const DEFAULT_ROOT_FONT_SIZE = 16;
 const MENU_POSITION_OPTIONS = {
   flip: true,
-  preferredHeight: MENU_PREFERRED_HEIGHT,
+  preferredHeight: MENU_PREFERRED_HEIGHT * DEFAULT_ROOT_FONT_SIZE,
 };
 
 /**
@@ -155,15 +157,21 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
   // own height, and the menu is capped to the space that side actually offers
   // so the whole list stays on screen (it scrolls internally beyond that).
   const isFlipped = position?.placement === "top";
-  const menuStyle = useMemo(
-    () => ({
-      maxHeight: Math.min(
-        MENU_PREFERRED_HEIGHT,
-        position?.availableHeight ?? MENU_PREFERRED_HEIGHT
-      ),
-    }),
-    [position?.availableHeight]
+  const rootFontSize = useMemo(
+    () =>
+      parseFloat(getComputedStyle(document.documentElement).fontSize) ||
+      DEFAULT_ROOT_FONT_SIZE,
+    []
   );
+  const menuStyle = useMemo(() => {
+    const availableHeightRem =
+      position?.availableHeight != null
+        ? position.availableHeight / rootFontSize
+        : MENU_PREFERRED_HEIGHT;
+    return {
+      maxHeight: `${Math.min(MENU_PREFERRED_HEIGHT, availableHeightRem)}rem`,
+    };
+  }, [position?.availableHeight, rootFontSize]);
   const portalStyle = useMemo<React.CSSProperties>(
     () => ({
       position: "absolute",
@@ -171,7 +179,7 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
       left: menuLeft,
       transform: isFlipped ? "translateY(-100%)" : undefined,
       zIndex: 2000,
-      width: `${MENU_WIDTH}px`,
+      width: `${MENU_WIDTH}rem`,
       maxWidth: "calc(100vw - 1rem)",
     }),
     [position?.top, menuLeft, isFlipped]
@@ -190,7 +198,7 @@ export const AddWithDropdown: React.FC<AddWithDropdownProps> = ({
           aria-expanded={open}
           data-testid={`${dataTestId}-trigger`}
         >
-          <AddIcon />
+          <AddIcon color="#979899"/>
         </Dropdown.Toggle>
       </Dropdown>
 
