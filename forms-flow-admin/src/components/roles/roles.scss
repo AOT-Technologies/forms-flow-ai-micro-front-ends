@@ -225,6 +225,24 @@
     .modal-header {
       justify-content: space-between;
       align-items: baseline;
+      flex-wrap: nowrap;
+      .modal-title {
+        min-width: 0;
+        flex: 1 1 auto;
+        overflow: hidden;
+        .d-flex {
+          min-width: 0;
+        }
+        .modal-title-text {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          min-width: 0;
+        }
+      }
+      .icon-close {
+        flex: 0 0 auto;
+      }
     }
     .modal-body{
       height: auto;
@@ -274,6 +292,14 @@
   padding: var(--spacer-050) var(--spacer-100);
   border-radius: var(--ff-border-radius-pill);
   margin-right: var(--spacer-050);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.role-name-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .default-badge{
   font-size: var(--font-size-s);
@@ -297,4 +323,7 @@
 }
 .text-invite-expired{
   color: #D45E5E;
+}
+.roles-table{
+  height: 60vh;
 }
