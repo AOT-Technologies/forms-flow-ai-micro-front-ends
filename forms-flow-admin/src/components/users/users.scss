@@ -227,6 +227,12 @@ $user-table-box-shadow: 0 2px 8px rgba(66, 66, 66, 0.07);
   border: 1px solid var(--gray-x-light);
   background: var(--white-300);
   margin-left: 0;
+  max-width: 100%;
+  flex-shrink: 1;
+
+  .role-name-text {
+    max-width: 12.5rem;
+  }
 }
 .manage-container .manage-tabs-wrapper .tab-content {
     max-height: calc(100vh - 225px) !important;

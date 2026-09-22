@@ -245,7 +245,7 @@ const Users = React.memo((props: any) => {
     ).length;
     if (visibleRoleCount <= 1) return false;
     // The admin role is protected
-    if (item?.path === "/admin") return false;
+    if (!MULTITENANCY_ENABLED && item?.path === "/admin") return false;
     // The tenant creator's OWNER role is protected
     return !isProtectedOwnerRole(rowData, item);
   };
@@ -375,8 +375,10 @@ const Users = React.memo((props: any) => {
                     )
                   }
                 >
-                  <span className="">
-                    {formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay)}
+                  <span className="d-flex align-items-center">
+                    <span className="role-name-text">
+                      {formatRoleDisplayName(item?.name, tenantKeyForRoleDisplay)}
+                    </span>
                     {canRemoveRole(rowData, item) && (
                       <i
                         className="fa-solid fa-xmark chip-close ms-2"
