@@ -302,7 +302,7 @@ $font-tokens: (
         flex-grow: 0;
         display: grid;          // allows toast/header/body grid
         grid-template-rows: auto auto auto auto auto 1fr; // toast + headers + body
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         padding: 0;
         box-sizing: border-box;
         height: 100%;
@@ -762,5 +762,13 @@ $font-tokens: (
     width: 100%;
     display: flex;
     justify-content: center;
+  }
+}
+@media (max-width: 1279px) {
+  .task-list-page{
+    max-height: 8rem !important;
+    .section-seperation-left{
+      flex-wrap: wrap;
+    }
   }
 }
