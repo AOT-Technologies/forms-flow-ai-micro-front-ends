@@ -165,7 +165,7 @@ const StyleEditorPanel: React.FC<EditorPanelProps> = ({
   onBack, onSave, onDelete, isDirty, isSaving, isOwner,
 }) => {
   const { t } = useTranslation();
-  const saveOrUpdateLabel = editForm.id ? t("Update") : t("Save");
+  const saveOrUpdateLabel = editForm.id ? "Update" : "Save";
 
   return (
     <div className="ff-style-editor-panel">
@@ -220,14 +220,17 @@ const StyleEditorPanel: React.FC<EditorPanelProps> = ({
           )}
         </div>
         <div className="ff-style-editor-panel__footer-actions">
-          <button
-            type="button"
-            className="ff-style-tab__btn ff-style-tab__btn--primary"
+          <V8CustomButton
+            id="save-style-template-btn"
+            variant="primary"
             onClick={onSave}
             disabled={isSaving || !isDirty}
-          >
-            {isSaving ? t("Saving...") : saveOrUpdateLabel}
-          </button>
+            loading={isSaving}
+            loadingText="Saving..."
+            label={saveOrUpdateLabel}
+            ariaLabel={t(saveOrUpdateLabel)}
+            dataTestId="save-style-template-btn"
+          />
         </div>
       </div>
     </div>

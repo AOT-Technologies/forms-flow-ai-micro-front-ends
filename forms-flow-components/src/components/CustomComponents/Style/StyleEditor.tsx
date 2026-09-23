@@ -37,7 +37,7 @@ const StyleEditor: React.FC<StyleEditorProps> = ({ styleConfig, onChange, isOwne
           label={t("Accent")}
           value={merged.accent}
           onChange={(hex) => handleChange("accent", hex)}
-          palette="neutral"
+          palette="vivid"
         />
         <ColorPicker
           label={t("Buttons")}

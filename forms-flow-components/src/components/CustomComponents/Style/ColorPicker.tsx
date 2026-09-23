@@ -1,23 +1,19 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 
-// Two distinct palettes — 21 colours each, rendered as 7 columns × 3 rows
+// Two distinct palettes — 18 colours each, sourced from the Figma theming
+// palette sheet. NEUTRAL backs the Background picker; VIVID backs both the
+// Accent and Buttons pickers, which share the identical palette in Figma.
 const NEUTRAL_PALETTE: string[] = [
-  // Row 1 – whites / pastels
-  "#FFFFFF", "#F9FAFB", "#FEE2E2", "#FCE7F3", "#F5D0FE", "#EDE9FE", "#DDD6FE",
-  // Row 2 – light blues / greens
-  "#DBEAFE", "#BFDBFE", "#BAE6FD", "#A5F3FC", "#99F6E4", "#D1FAE5", "#ECFCCB",
-  // Row 3 – darks
-  "#FEF3C7", "#FFE4E6", "#111827", "#1F2937", "#374151", "#1E3A8A", "#134E4A",
+  "#FCFCFC", "#F7F7F7", "#F4F7FA", "#E8F1F8", "#E7F2F2", "#EAF4EC",
+  "#EFEFEF", "#FBEBEC", "#F3E9EC", "#F0ECFC", "#EFECF5", "#FCEEE8",
+  "#F6F1E6", "#011B47", "#052B00", "#240001", "#392000", "#000000",
 ];
 
 const VIVID_PALETTE: string[] = [
-  // Row 1 – warm / cool spectrum
-  "#F97316", "#EF4444", "#EC4899", "#D946EF", "#A855F7", "#8B5CF6", "#3B82F6",
-  // Row 2 – blues / greens
-  "#2563EB", "#0EA5E9", "#06B6D4", "#0D9488", "#16A34A", "#65A30D", "#CA8A04",
-  // Row 3 – earthy / dark
-  "#B45309", "#C2410C", "#9F1239", "#111827", "#374151", "#1F2937", "#030712",
+  "#000000", "#4A4540", "#4A5568", "#A8750A", "#CE711C", "#E0591C",
+  "#D53441", "#B03A2E", "#8B2040", "#6C3EE5", "#5B3FA0", "#4A3080",
+  "#1E78BD", "#0060AA", "#0F7B82", "#0A6570", "#2E9446", "#1E6B3C",
 ];
 
 const HEX_REGEX = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
