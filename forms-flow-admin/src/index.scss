@@ -1,3 +1,5 @@
+@import "../../forms-flow-theme/scss/v8-scss/mixins";
+
 .loader {
   position: absolute;
   margin: auto;
@@ -21,6 +23,94 @@
 
 .manage-tabs-action {
   margin-left: auto;
+}
+
+/* ============================================================
+   Manage — responsive canvas (v8.3 tier tokens)
+   ============================================================ */
+
+@include respond-below(desktop-sm) {
+
+  .page-container .page-layout .admin-canvas {
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .page-container .page-layout .manage-container.manage-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    max-width: 100%;
+
+    .header-section-1:not(:empty),
+    .header-section-2:not(:empty),
+    .header-section-3:not(:empty),
+    .header-section-4:not(:empty) {
+      flex-wrap: wrap;
+      max-height: none;
+      overflow: visible;
+      row-gap: var(--spacer-050);
+    }
+
+    
+    .section-seperation-left,
+    .section-seperation-right {
+      flex-wrap: wrap;
+      width: auto;
+      max-width: 100%;
+      min-width: 0;
+
+      > * {
+        max-width: 100%;
+        min-width: 0;
+      }
+    }
+
+    .manage-tabs-wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      flex: 1 1 auto;
+
+      .manage-tabs-header {
+        flex-wrap: wrap;
+        row-gap: var(--spacer-050);
+
+    
+        .pill-tabs {
+          max-width: 100%;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+        }
+
+        
+        .manage-tabs-action {
+          margin-left: 0;
+        }
+      }
+
+      .tab-content {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        min-width: 0;
+        max-width: 100%;
+
+        .manage-content,
+        .container-admin,
+        .roles-table,
+        .user-table-container,
+        .custom-table-wrapper-outter {
+          min-width: 0;
+          max-width: 100%;
+        }
+      }
+    }
+  }
 }
 
 .page-link {

@@ -39,23 +39,20 @@
   }
   .offcanvas.showing,
   .offcanvas.show:not(.hiding) {
-    max-width: 12.1rem;
+    max-width: var(--navbar-width);
   }
 }
-.offcanvas-header {
-  padding: 1.75rem 1.2rem;
-  max-height: 4.625rem;
-}
+
 .offcanvas.offcanvas-start {
-  width: 12.1rem;
+  width: var(--navbar-width);
+  transition: width 300ms ease, transform 300ms ease-in-out;
 }
 
 @include respond-from(tablet) {
   .navbar-collapse {
     flex-basis: auto;
   }
-  .child-sidenav,
-  .offcanvas-header {
+  .child-sidenav {
     display: none;
   }
 }

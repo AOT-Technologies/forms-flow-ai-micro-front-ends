@@ -6,11 +6,7 @@ import Navbar from "react-bootstrap/Navbar";
 import "./hamburger.scss";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Sidebar from "./Sidebar";
-import {
-  HamburgerIcon,
-  CloseIcon,
-  ApplicationLogo,
-} from "@formsflow/components";
+import { HamburgerIcon, ApplicationLogo } from "@formsflow/components";
 import { StyleServices } from "@formsflow/service";
 function HamburgerMenu({ props }) {
   const [show, setShow] = useState(false);
@@ -53,13 +49,6 @@ function HamburgerMenu({ props }) {
         <Navbar.Collapse id="basic-navbar-nav" className="order-2">
           <Nav className="me-auto">
             <Offcanvas show={show} onHide={handleClose} data-testid="offcanvas">
-              <Offcanvas.Header className="offcanvas-header">
-                <CloseIcon
-                  onClick={handleClose}
-                  data-testid="close-button"
-                  aria-label="Close sidebar"
-                />
-              </Offcanvas.Header>
               <Offcanvas.Body>
                 <div className="child-sidenav" data-testid="child-sidenav">
                   <Sidebar props={props} />

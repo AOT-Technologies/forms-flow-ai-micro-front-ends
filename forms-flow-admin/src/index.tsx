@@ -149,7 +149,7 @@ const Admin = React.memo(({ props }: any) => {
         <div className="page-container">
           <div className="page-layout mt-3">
             {!isAccessRestricted ? (
-              <div className="min-container-height">
+              <div className="min-container-height admin-canvas">
                 <ToastContainer theme="colored" />
                 <Routes>
                   <Route path="billing/manage" element={<BillingManage />} />

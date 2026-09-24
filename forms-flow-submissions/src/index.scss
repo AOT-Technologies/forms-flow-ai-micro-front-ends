@@ -1,3 +1,5 @@
+@import "../../forms-flow-theme/scss/v8-scss/mixins";
+
 .loader-container {
   display: flex;
   height: 50vh !important;
@@ -30,4 +32,63 @@
 }
 .checkout-btn {
   padding: 8px 48px !important;
+}
+
+/* ============================================================
+   Analyze > Submissions — responsive canvas (v8.3 tier tokens)
+   ============================================================ */
+@include respond-below(desktop-sm) {
+  .page-container .page-layout
+    .analyze-submissions-page.analyze-submissions-page {
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+
+    .header-section-1:not(:empty),
+    .header-section-2:not(:empty),
+    .header-section-3:not(:empty),
+    .header-section-4:not(:empty) {
+      flex-wrap: wrap;
+      max-height: none;
+      overflow: visible;
+      row-gap: var(--spacer-050);
+    }
+
+    .section-seperation-left,
+    .section-seperation-right {
+      flex-wrap: wrap;
+      width: auto;
+      max-width: 100%;
+      min-width: 0;
+
+    
+      > * {
+        max-width: 100%;
+        min-width: 0;
+      }
+    }
+
+  
+    .medium-search-container {
+      width: auto;
+      flex: 1 1 12rem;
+      min-width: 12rem;
+    }
+
+    .body-section {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: none;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .custom-table-wrapper-outter-submissions,
+    .custom-table-wrapper-outter {
+      min-width: 0;
+      max-width: 100%;
+    }
+  }
 }

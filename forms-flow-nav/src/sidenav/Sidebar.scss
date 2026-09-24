@@ -37,12 +37,6 @@ $railFlyoutRadius: $base * 0.3125; // 5px
 // second surface ever needs it, promote it to a theme token.
 $railFlyoutShadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 
-// Branded logomark (Figma "logomark branded", 107x20).
-$logoMarkGap: $base * 0.25; // ~3.5px between mark and wordmark
-$logoWordmarkSize: 0.892rem; // 14.267px
-$logoWordmarkTracking: 0.009rem; // 0.1427px
-$logoWordmarkColor: #1c1c1e;
-$logoAccentColor: #1529c4;
 
 // Count badge pill on the expanded row.
 $badgeHeight: $base * 1.1875; // 19px
@@ -99,6 +93,8 @@ $animSpeed: 300ms;
   }
 
   .menu-toggle-icon {
+    display: flex;
+    align-items: center;
     margin-left: auto;
     padding: 0;
     transition: transform 0.3s ease;
@@ -124,21 +120,8 @@ $animSpeed: 300ms;
   .logo-container {
     display: flex;
     align-items: center;
-    gap: $logoMarkGap;
     min-height: 4.625rem;
     padding: 1.313rem 1rem;
-  }
-
-  // Wordmark half of the branded logomark. Brand colours, not theme colours --
-  // the palette has no token for either, and they must not follow a tenant theme.
-  .logo-wordmark {
-    @include font-style($logoWordmarkSize, 600, $logoWordmarkColor);
-    letter-spacing: $logoWordmarkTracking;
-    white-space: nowrap;
-  }
-
-  .logo-wordmark-accent {
-    color: $logoAccentColor;
   }
 
   .options-container {
@@ -356,6 +339,15 @@ $animSpeed: 300ms;
   height: $subIconSize;
 }
 
+
+.sidenav {
+  .menu-toggle-btn svg path[stroke],
+  .user-container .user-icon svg path[stroke],
+  .user-container .sign-out-button .menu-icon svg path[stroke] {
+    stroke: var(--navbar-submenu-font-color, #979899);
+  }
+}
+
 .menu-badge {
   display: inline-flex;
   align-items: center;
@@ -486,13 +478,11 @@ $animSpeed: 300ms;
 // R3.4 Hidden tier: below the tablet token the persistent rail is removed and
 // the nav is reached through the hamburger overlay instead (hamburger.scss).
 @include respond-below(tablet) {
-  .sidenav .logo-container {
-    display: none;
-  }
+
   .main-sidenav {
     display: none;
   }
   .sidenav {
-    height: calc(100% - var(--header-close-btn));
+    height: 100%;
   }
 }
