@@ -1,4 +1,4 @@
-export type FontKey = "figtree" | "serif" | "sans" | "heavy-sans" | "mono" | "slab";
+export type FontKey = "serif" | "sans" | "heavy-sans" | "mono" | "slab";
 export type ButtonShape = "square" | "rounded";
 export type BrandingLogo = "none" | "formsflow";
 
@@ -13,7 +13,6 @@ export interface StyleConfig {
 }
 
 export const FONT_MAP: Record<FontKey, string> = {
-  figtree: '"Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   serif: 'Georgia, "Times New Roman", Times, serif',
   sans: '"Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   "heavy-sans": '"Arial Black", "Impact", Gadget, sans-serif',
