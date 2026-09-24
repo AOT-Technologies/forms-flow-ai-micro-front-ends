@@ -34,6 +34,10 @@ interface ColorPickerProps {
   onChange: (hex: string) => void;
   palette?: "neutral" | "vivid";
   label?: string;
+  // Accent/Buttons are used as backgrounds behind white text, so an arbitrary
+  // custom colour risks a contrast failure -- restrict those to the
+  // contrast-checked preset swatches. Background has no such constraint.
+  allowCustom?: boolean;
 }
 
 interface Position {
@@ -47,6 +51,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   onChange,
   palette = "vivid",
   label,
+  allowCustom = true,
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [customInput, setCustomInput] = useState<string>(value || "");
@@ -209,38 +214,40 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             ))}
           </div>
 
-          <div className="ff-color-picker__custom-row">
-            <span className="ff-color-picker__custom-label">Custom colour</span>
-            <div
-              className={`ff-color-picker__custom-input-wrap${inputError ? " ff-color-picker__custom-input-wrap--error" : ""}`}
-            >
-              <label
-                className="ff-color-picker__custom-swatch"
-                style={{ backgroundColor: toFullHex(customInput) || "#FFFFFF" }}
-                aria-label="Open colour picker"
+          {allowCustom && (
+            <div className="ff-color-picker__custom-row">
+              <span className="ff-color-picker__custom-label">Custom colour</span>
+              <div
+                className={`ff-color-picker__custom-input-wrap${inputError ? " ff-color-picker__custom-input-wrap--error" : ""}`}
               >
+                <label
+                  className="ff-color-picker__custom-swatch"
+                  style={{ backgroundColor: toFullHex(customInput) || "#FFFFFF" }}
+                  aria-label="Open colour picker"
+                >
+                  <input
+                    type="color"
+                    className="ff-color-picker__native-input"
+                    value={toFullHex(customInput) || "#FFFFFF"}
+                    onChange={handleNativeColorChange}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  />
+                </label>
                 <input
-                  type="color"
-                  className="ff-color-picker__native-input"
-                  value={toFullHex(customInput) || "#FFFFFF"}
-                  onChange={handleNativeColorChange}
-                  tabIndex={-1}
-                  aria-hidden="true"
+                  type="text"
+                  className="ff-color-picker__custom-input"
+                  value={customInput.replace("#", "").toUpperCase()}
+                  onChange={handleCustomInputChange}
+                  onBlur={handleCustomInputBlur}
+                  maxLength={7}
+                  placeholder="FFFFFF"
+                  aria-label="Custom hex colour"
+                  aria-invalid={inputError}
                 />
-              </label>
-              <input
-                type="text"
-                className="ff-color-picker__custom-input"
-                value={customInput.replace("#", "").toUpperCase()}
-                onChange={handleCustomInputChange}
-                onBlur={handleCustomInputBlur}
-                maxLength={7}
-                placeholder="FFFFFF"
-                aria-label="Custom hex colour"
-                aria-invalid={inputError}
-              />
+              </div>
             </div>
-          </div>
+          )}
         </div>,
         document.body
       )}
