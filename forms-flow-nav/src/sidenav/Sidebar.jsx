@@ -36,7 +36,7 @@ import {
 } from "../services/user";
 import MenuComponent from "./MenuComponent";
 import {
-  ApplicationLogo,
+  ApplicationLogoFull,
   LogoutIcon,
   MenuToggleIcon,
   NavbarUserIcon,
@@ -192,15 +192,11 @@ const renderLogo = (hideLogo, collapsed) => {
 
   return (
     <div className={`logo-container${collapsed ? " collapsed" : ""}`}>
-      <ApplicationLogo data-testid="application-logo" />
-      {/* The design's "logomark branded" is the mark PLUS the wordmark;
-          ApplicationLogo only draws the mark. The rail hides the whole
-          container, so the wordmark is rendered for the expanded view only. */}
-      {!collapsed && (
-        <span className="logo-wordmark" data-testid="logo-wordmark">
-          formsflow<span className="logo-wordmark-accent">.ai</span>
-        </span>
-      )}
+      <ApplicationLogoFull
+        width={107}
+        height={20}
+        data-testid="application-logo"
+      />
     </div>
   );
 };
