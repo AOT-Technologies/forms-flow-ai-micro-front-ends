@@ -23,7 +23,7 @@ export const FONT_OPTIONS: FontOption[] = [
     key: "sans",
     label: "Sans",
     preview:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+      '"Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   },
   {
     key: "heavy-sans",
