@@ -2,6 +2,7 @@
 $primary: var(--ff-primary);
 $gray-darkest: var(--ff-gray-darkest);
 $gray-x-light: var(--gray-x-light);
+$gray-medium: var(--gray-medium);
 .bpm-container{
   height:100%;
   position: absolute;
@@ -63,4 +64,10 @@ $gray-x-light: var(--gray-x-light);
 }
 .flow-builder {
   overflow: auto;
+}
+.bio-properties-panel-input {
+  border: 1px solid $gray-medium !important;
+  &:focus {
+    border: 1px solid $gray-medium !important;
+  }
 }
