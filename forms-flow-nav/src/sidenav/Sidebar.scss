@@ -212,6 +212,13 @@ $animSpeed: 300ms;
   }
 }
 
+
+@media (max-width: breakpoint(mobile) + 0.98px) {
+  .sidenav.sidenav-overlay {
+    width: 11rem;
+  }
+}
+
 .multitenancy-header {
   height: var(--client-nav);
   box-shadow: var(--shadow-lg);
@@ -475,10 +482,9 @@ $animSpeed: 300ms;
   }
 }
 
-// R3.4 Hidden tier: below the tablet token the persistent rail is removed and
-// the nav is reached through the hamburger overlay instead (hamburger.scss).
-@include respond-below(tablet) {
-
+// Hidden tier: the persistent rail is removed and the nav is reached through
+// the hamburger overlay instead (hamburger.scss).
+@media (max-width: breakpoint(mobile) + 0.98px) {
   .main-sidenav {
     display: none;
   }
