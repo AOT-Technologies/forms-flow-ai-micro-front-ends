@@ -126,7 +126,7 @@ const TemplatesList: React.FC<TemplatesListProps> = ({
           >
             <div className="ff-style-templates__row-inner">
               <div className="ff-style-templates__row-left">
-                <span className="ff-style-templates__name">{tpl.name}</span>
+                <span className="ff-style-templates__name" title={tpl.name}>{tpl.name}</span>
               </div>
               <div className="ff-style-templates__row-actions">
                 <button

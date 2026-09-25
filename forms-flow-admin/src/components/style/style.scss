@@ -184,6 +184,12 @@ $se-selected-ring:      2px solid #111827;
     text-transform: capitalize;
     line-height: 1.2;
     flex: 1;
+    // Long names truncate with "…" instead of pushing past the Edit button;
+    // the full name is exposed via the span's title attribute.
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 
     .ff-style-templates__row--selected & {
       font-weight: 600;
