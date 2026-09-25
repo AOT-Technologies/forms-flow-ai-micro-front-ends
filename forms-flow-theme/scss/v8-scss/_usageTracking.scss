@@ -170,8 +170,9 @@ $usage-icon-size-lg: 1.25rem; // 20px
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
-    gap: 0.75rem 3.25rem; // 12px 52px
+    gap: 0.75rem 2rem; // 12px 32px
     margin: 0;
+    width: 100%;
   }
 
   .ff-usage-card__stat {

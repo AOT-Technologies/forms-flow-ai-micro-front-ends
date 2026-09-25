@@ -223,13 +223,15 @@ const withOrdinalSuffix = (day: number): string => {
   }
 };
 
-/** Formats a billing date the way the design shows it, e.g. "28th July". */
+/**
+ * Formats a billing date the way the design shows it, e.g. "28th July, 2027".
+ *
+ */
 export const formatBillingDate = (value?: string | Date | null): string => {
   const date = parseDate(value);
   if (!date) return "";
-  return `${withOrdinalSuffix(date.getDate())} ${date.toLocaleString(undefined, {
-    month: "long",
-  })}`;
+  const month = date.toLocaleString(undefined, { month: "long" });
+  return `${withOrdinalSuffix(date.getDate())} ${month}, ${date.getFullYear()}`;
 };
 
 /**
