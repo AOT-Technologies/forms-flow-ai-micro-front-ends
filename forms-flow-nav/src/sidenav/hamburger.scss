@@ -30,25 +30,58 @@
   padding: 0;
 }
 
-// The overlay menu IS the nav below the tablet token, and only there -- above
-// it the persistent rail takes over (R3.3/R3.4).
-@include respond-below(tablet) {
+// The overlay menu IS the nav on the MOBILE FRAME, and only there -- from 403px
+// up the persistent rail takes over. The bound is written from the token rather
+@media (max-width: breakpoint(mobile) + 0.98px) {
+
+  .base-container .nav-space.nav-space {
+    width: 0;
+  }
+
   .custom-navbar {
     display: flex;
-    box-shadow: 0px 2px 4px 0px rgba(48, 52, 54, 0.08);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+    min-height: 0;
+    padding: var(--spacer-075) 0;
+ 
+    pointer-events: none;
+
+ 
+    .navbar-toggler {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background-color: var(--white-100);
+
+      pointer-events: auto;
+    }
   }
+
+  .page-container.page-container .page-layout.page-layout {
+    padding-top: 3rem;
+  }
+
+  .offcanvas.offcanvas-start {
+    width: 11rem;
+    transition: transform 300ms ease-in-out;
+  }
+
   .offcanvas.showing,
   .offcanvas.show:not(.hiding) {
-    max-width: var(--navbar-width);
+    max-width: 11rem;
   }
 }
 
-.offcanvas.offcanvas-start {
-  width: var(--navbar-width);
-  transition: width 300ms ease, transform 300ms ease-in-out;
-}
-
-@include respond-from(tablet) {
+@media (min-width: breakpoint(mobile) + 1px) {
   .navbar-collapse {
     flex-basis: auto;
   }

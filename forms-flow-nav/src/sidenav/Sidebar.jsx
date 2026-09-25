@@ -201,7 +201,7 @@ const renderLogo = (hideLogo, collapsed) => {
   );
 };
 
-const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
+const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   const [tenantLogo, setTenantLogo] = React.useState("");
   const [tenantName, setTenantName] = React.useState("");
   const [applicationTitle, setApplicationTitle] = React.useState("");
@@ -293,15 +293,20 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
   );
 
   // Collapsible sidebar state
-  // Collapsed is the default state at every width, and the expanded state is
+  // Collapsed is the default for the persistent rail, and the expanded state is
   // deliberately NOT persisted: every page load starts collapsed again.
   // Viewport size does not decide this either — below the tablet breakpoint the
   // rail is hidden by CSS and the hamburger overlay takes over.
   // The rail expands only when the toggle is clicked. Hovering a collapsed icon
   // shows that row's tooltip instead (see .menu-flyout) and never widens the nav.
-  const [collapsed, setCollapsed] = useState(true);
+
+  const [collapsed, setCollapsed] = useState(!overlay);
 
   const handleToggleClick = () => {
+    if (onToggle) {
+      onToggle();
+      return;
+    }
     setCollapsed((prev) => !prev);
   };
 
@@ -313,6 +318,8 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
   // default while the expanded rail grows to 11rem and covers the canvas, which
   // bites hardest at tablet/desktop-sm where the canvas has the least slack.
   useEffect(() => {
+    if (overlay) return undefined;
+
     StyleServices?.setCSSVariable(
       "--navbar-width",
       collapsed ? NAV_WIDTH_COLLAPSED : NAV_WIDTH_EXPANDED
@@ -322,7 +329,7 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
     return () => {
       StyleServices?.setCSSVariable("--navbar-width", NAV_WIDTH_COLLAPSED);
     };
-  }, [collapsed]);
+  }, [collapsed, overlay]);
 
   // checklistSkipped is hydrated into shared localStorage by forms-flow-web
   // (PrivateRoute) at login, so we read it here instead of making a duplicate
@@ -548,7 +555,9 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
   );
 
   // Collapsible sidebar class
-  const sidebarClass = `sidenav${collapsed ? " collapsed" : ""}`;
+  const sidebarClass = `sidenav${collapsed ? " collapsed" : ""}${
+    overlay ? " sidenav-overlay" : ""
+  }`;
 
   return (
     <div
@@ -556,7 +565,7 @@ const Sidebar = React.memo(({ props, sidenavHeight = "100%" }) => {
       // --navbar-width is deliberately NOT set here: it lives on the document
       // root (see the effect above) so the rail and the theme's .nav-space
       // gutter are driven by one value. .sidenav reads it by inheritance.
-      style={{ height: sidenavHeight }}
+      style={{ height: sidenavHeight ?? "100%" }}
       data-testid="sidenav"
     >
       {/* Logo and the collapse toggle share one header row (Figma 8.3): logo
@@ -691,6 +700,10 @@ Sidebar.propTypes = {
   getKcInstance: PropTypes.func,
   publish: PropTypes.func,
   sidenavHeight: PropTypes.string,
+  // True only for the copy inside the hamburger Offcanvas.
+  overlay: PropTypes.bool,
+  // Supplied by the overlay so its header toggle closes the menu.
+  onToggle: PropTypes.func,
 };
 
 export default Sidebar;

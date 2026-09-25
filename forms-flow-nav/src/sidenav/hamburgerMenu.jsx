@@ -6,15 +6,11 @@ import Navbar from "react-bootstrap/Navbar";
 import "./hamburger.scss";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Sidebar from "./Sidebar";
-import { HamburgerIcon, ApplicationLogo } from "@formsflow/components";
-import { StyleServices } from "@formsflow/service";
+import { HamburgerIcon } from "@formsflow/components";
 function HamburgerMenu({ props }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const hideLogo = StyleServices?.getCSSVariable(
-    "--hide-formsflow-logo"
-  )?.toLowerCase();
   // Theme CSS variable is set at app bootstrap; avoid a synchronous
   // getComputedStyle() read on every render (N.1.3).
   const hamburgerIconColor = useMemo(
@@ -26,7 +22,7 @@ function HamburgerMenu({ props }) {
   );
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary custom-navbar">
+    <Navbar expand="lg" className="custom-navbar">
       <Container>
         <button
           aria-controls="basic-navbar-nav"
@@ -41,17 +37,18 @@ function HamburgerMenu({ props }) {
             color={hamburgerIconColor}
           />
         </button>
-        <Navbar.Brand href="" className="mx-auto">
-          {hideLogo !== "true" && (
-            <ApplicationLogo data-testid="application-logo" />
-          )}
-        </Navbar.Brand>
+        {/* No brand logo here: the collapsed mobile state is the hamburger
+            alone, and the logo belongs to the expanded menu the hamburger
+            opens (see renderLogo in Sidebar). */}
         <Navbar.Collapse id="basic-navbar-nav" className="order-2">
           <Nav className="me-auto">
             <Offcanvas show={show} onHide={handleClose} data-testid="offcanvas">
               <Offcanvas.Body>
                 <div className="child-sidenav" data-testid="child-sidenav">
-                  <Sidebar props={props} />
+                  {/* Opens as the full labelled menu: on mobile the nav is
+                      either shut behind this hamburger or open in full, with
+                      no collapsed rail tier in between. */}
+                  <Sidebar props={props} overlay onToggle={handleClose} />
                 </div>
               </Offcanvas.Body>
             </Offcanvas>

@@ -1,4 +1,10 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  within,
+  waitFor,
+} from "@testing-library/react";
 import { StyleServices } from "@formsflow/service";
 import Root from "./root.component";
 
@@ -54,6 +60,44 @@ describe("Root component", () => {
     setVar.mockClear();
     fireEvent.click(screen.getByTestId("sidenav-toggle-btn"));
     expect(setVar).toHaveBeenCalledWith("--navbar-width", "11rem");
+    setVar.mockRestore();
+  });
+
+  const openOverlay = () => {
+    // The testid is on both the button and the icon it wraps.
+    fireEvent.click(screen.getAllByTestId("hamburger-button")[0]);
+    return within(screen.getByTestId("child-sidenav")).getByTestId("sidenav");
+  };
+
+  it("opens the mobile overlay as the full menu, not the collapsed rail", () => {
+    // Mobile has no rail tier: the nav is either shut behind the hamburger or
+    // open as the full labelled menu, so the overlay copy starts EXPANDED.
+    render(<Root {...buildProps()} />);
+    const overlayNav = openOverlay();
+    expect(overlayNav).toHaveClass("sidenav-overlay");
+    expect(overlayNav).not.toHaveClass("collapsed");
+  });
+
+  it("dismisses the mobile overlay from its header toggle, never collapsing it", async () => {
+    render(<Root {...buildProps()} />);
+    const overlayNav = openOverlay();
+    fireEvent.click(
+      within(screen.getByTestId("child-sidenav")).getByTestId(
+        "sidenav-toggle-btn"
+      )
+    );
+    expect(overlayNav).not.toHaveClass("collapsed");
+    await waitFor(() =>
+      expect(screen.queryByTestId("child-sidenav")).not.toBeInTheDocument()
+    );
+  });
+
+  it("never lets the overlay publish the page gutter width", () => {
+    const setVar = jest.spyOn(StyleServices, "setCSSVariable");
+    render(<Root {...buildProps()} />);
+    setVar.mockClear();
+    openOverlay();
+    expect(setVar).not.toHaveBeenCalled();
     setVar.mockRestore();
   });
 
