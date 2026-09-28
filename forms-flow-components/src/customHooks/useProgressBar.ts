@@ -1,6 +1,6 @@
 // forms-flow-components/src/components/CustomComponents/ProgressBar.tsx
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from "react";
 
 export interface UseProgressBarOptions {
   /**
@@ -65,10 +65,10 @@ export interface UseProgressBarReturn {
 /**
  * Custom hook for managing progress bar state and simulation
  * Supports independent instances for multiple operations
- * 
+ *
  * @param options Configuration options for the progress bar
  * @returns Progress bar state and control functions
- * 
+ *
  * @example
  * // Upload pattern (continuous increment)
  * const { progress, start, stop, complete, reset } = useProgressBar({
@@ -76,7 +76,7 @@ export interface UseProgressBarReturn {
  *   interval: 300,
  *   useCap: false
  * });
- * 
+ *
  * @example
  * // Export pattern (cap at 90%)
  * const { progress, start, complete, reset } = useProgressBar({
@@ -86,7 +86,9 @@ export interface UseProgressBarReturn {
  *   capProgress: 90
  * });
  */
-export const useProgressBar = (options: UseProgressBarOptions = {}): UseProgressBarReturn => {
+export const useProgressBar = (
+  options: UseProgressBarOptions = {}
+): UseProgressBarReturn => {
   const {
     increment = 5,
     interval = 300,
@@ -112,7 +114,7 @@ export const useProgressBar = (options: UseProgressBarOptions = {}): UseProgress
   const start = useCallback(() => {
     clearProgressInterval();
     setIsRunning(true);
-    
+
     intervalRef.current = setInterval(() => {
       setProgressState((prevProgress) => {
         if (useCap) {
@@ -135,7 +137,14 @@ export const useProgressBar = (options: UseProgressBarOptions = {}): UseProgress
         }
       });
     }, interval);
-  }, [increment, interval, maxProgress, capProgress, useCap, clearProgressInterval]);
+  }, [
+    increment,
+    interval,
+    maxProgress,
+    capProgress,
+    useCap,
+    clearProgressInterval,
+  ]);
 
   // Stop progress simulation
   const stop = useCallback(() => {
@@ -158,9 +167,12 @@ export const useProgressBar = (options: UseProgressBarOptions = {}): UseProgress
   }, [initialProgress, clearProgressInterval]);
 
   // Set progress to specific value
-  const setProgress = useCallback((value: number) => {
-    setProgressState(Math.max(0, Math.min(maxProgress, value)));
-  }, [maxProgress]);
+  const setProgress = useCallback(
+    (value: number) => {
+      setProgressState(Math.max(0, Math.min(maxProgress, value)));
+    },
+    [maxProgress]
+  );
 
   // Cleanup on unmount
   useEffect(() => {

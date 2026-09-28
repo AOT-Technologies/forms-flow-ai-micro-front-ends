@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { CustomInfo } from "../components/CustomComponents/CustomInfo";
- 
 
 describe("CustomInfo component", () => {
   it("renders with basic props", () => {
@@ -24,7 +23,6 @@ describe("CustomInfo component", () => {
     expect(container.querySelector(".info-panel")).toHaveClass("custom-class");
   });
 
- 
   it("renders InfoIcon", () => {
     const { container } = render(
       <CustomInfo heading="Test Heading" content="Test Content" />
@@ -37,6 +35,4 @@ describe("CustomInfo component", () => {
     expect(screen.getByText("Test Heading")).toBeInTheDocument();
     expect(screen.queryByText("Test Content")).not.toBeInTheDocument();
   });
-
- 
 });

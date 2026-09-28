@@ -24,37 +24,11 @@
     }
   }
 
-  .subscription-card {
-    background-color: var(--ff-white);
-    border: 1px solid var(--ff-gray-medium);
-    border-radius: var(--spacer-050);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: var(--spacer-150);
-    margin-top: var(--spacer-100);
-
-    .subscription-status {
-      margin-bottom: var(--spacer-075);
-
-      .status-text {
-        font-size: 3rem;
-        font-weight: var(--font-weight-sm);
-        color: var(--ff-gray-darkest);
-        line-height: 1.2;
-      }
-    }
-
-    .subscription-description {
-      font-size: var(--font-size-m);
-      color: var(--ff-gray-darkest);
-      margin-bottom: var(--spacer-200);
-    }
-
-    .subscription-card-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--spacer-100);
-    }
+  // Placement only - the usage card styles itself from the shared theme
+  // (v8-scss/_usageTracking). 536px matches the designed column width.
+  .organization-usage {
+    max-width: 33.5rem; //536px
+    margin-bottom: 3.38rem;
   }
 
   .terms-actions {

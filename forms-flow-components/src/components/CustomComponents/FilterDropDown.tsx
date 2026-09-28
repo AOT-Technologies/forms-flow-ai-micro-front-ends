@@ -1,4 +1,12 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, memo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  forwardRef,
+  memo,
+} from "react";
 import { Dropdown } from "react-bootstrap";
 import { DownArrowIcon, EditIconforFilter, UpArrowIcon } from "../SvgIcons";
 import { StyleServices } from "@formsflow/service";
@@ -174,9 +182,12 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
     //   [extraActionOnClick]
     // );
 
-
-    // Single CSS variable for edit icon color across variants
-    const editIconColor = StyleServices.getCSSVariable("--gray-dark");
+    // Single CSS variable for edit icon color across variants.
+    // Memoized (getComputedStyle forces a style recalc) — same pattern as Search.tsx.
+    const editIconColor = useMemo(
+      () => StyleServices.getCSSVariable("--gray-dark"),
+      []
+    );
     // Categorize items
     const categorizedItems = useMemo(() => {
       const actionItems: FilterItemType[] = [];
@@ -210,7 +221,7 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
       const { byCategory, actionItems, noneItems } = categorizedItems;
 
       const hasContentBelow =
-        (Object.keys(byCategory || {}).length > 0) ||
+        Object.keys(byCategory || {}).length > 0 ||
         (noneItems && noneItems.length > 0);
 
       const header = (
@@ -298,11 +309,14 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             if (categoryKeys.length === 0) return null;
 
             // Determine iteration order
-            const orderedKeys = categoryOrder && categoryOrder.length
-              ? categoryOrder.filter((k) => categoryKeys.includes(k)).concat(
-                  categoryKeys.filter((k) => !categoryOrder.includes(k))
-                )
-              : categoryKeys;
+            const orderedKeys =
+              categoryOrder && categoryOrder.length
+                ? categoryOrder
+                    .filter((k) => categoryKeys.includes(k))
+                    .concat(
+                      categoryKeys.filter((k) => !categoryOrder.includes(k))
+                    )
+                : categoryKeys;
 
             return (
               <>
@@ -337,7 +351,9 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
                               <EditIconforFilter
                                 color={editIconColor}
                                 aria-label={
-                                  item.ariaLabel ? `${item.ariaLabel} - edit` : "Edit"
+                                  item.ariaLabel
+                                    ? `${item.ariaLabel} - edit`
+                                    : "Edit"
                                 }
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -373,17 +389,26 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
       return (
         <>
           {header}
-          <div className="filter-dropdown-scroll">
-            {body}
-          </div>
+          <div className="filter-dropdown-scroll">{body}</div>
         </>
       );
-    }, [categorizedItems, variant, categoryLabels, categoryOrder, searchable, searchTerm, handleSearchChange, searchPlaceholder, dataTestId, editIconColor]);
+    }, [
+      categorizedItems,
+      variant,
+      categoryLabels,
+      categoryOrder,
+      searchable,
+      searchTerm,
+      handleSearchChange,
+      searchPlaceholder,
+      dataTestId,
+      editIconColor,
+    ]);
 
     // Render uncategorized items
     const renderUncategorizedItems = useCallback(() => {
       const { uncategorized } = categorizedItems;
-      
+
       if (!uncategorized || uncategorized.length === 0) return null;
 
       return (
@@ -397,10 +422,15 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
               }}
               data-testid={item.dataTestId}
               aria-label={item.ariaLabel}
-              className={buildClassNames("filter-dropdown-item", item.className)}
+              className={buildClassNames(
+                "filter-dropdown-item",
+                item.className
+              )}
             >
               <div className="filter-dropdown-item-content">
-                <span className="filter-dropdown-item-label">{item.content}</span>
+                <span className="filter-dropdown-item-label">
+                  {item.content}
+                </span>
               </div>
             </Dropdown.Item>
           ))}
@@ -508,7 +538,9 @@ const FilterDropDownComponent = forwardRef<HTMLDivElement, FilterDropDownProps>(
             )}
           >
             <div className="filter-dropdown-items">
-              {categorize ? renderCategorizedItems() : renderUncategorizedItems()}
+              {categorize
+                ? renderCategorizedItems()
+                : renderUncategorizedItems()}
             </div>
           </Dropdown.Menu>
         </Dropdown>
@@ -523,9 +555,8 @@ FilterDropDownComponent.displayName = "FilterDropDown";
 // Export memoized component for performance optimization
 export const FilterDropDown = memo(FilterDropDownComponent);
 
-// Export types for consumers  
+// Export types for consumers
 export type {
   FilterDropDownProps as FilterDropDownPropsType,
   FilterItemType as FilterDropDownItemType,
 };
-

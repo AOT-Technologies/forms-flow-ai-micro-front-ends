@@ -1,9 +1,8 @@
 import {
   completeChecklistByRouteKey as _completeChecklistByRouteKey,
-  RequestService
+  RequestService,
 } from "@formsflow/service";
 import API from "../../api/endpoints";
-
 
 const completeChecklistItem = (trackingId: number) =>
   RequestService.httpPUTRequest(`${API.CHECKLIST}/${trackingId}`, {});

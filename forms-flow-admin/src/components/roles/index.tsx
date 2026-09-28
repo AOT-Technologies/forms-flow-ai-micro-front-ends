@@ -18,21 +18,25 @@ const RoleManagement = React.memo((props: any) => {
         setCount(data.length);
         setInvalidated(false);
         setLoading(false);
-      }, setError);
+      }, setError,true);
     }
   }, [invalidated]);
 
   React.useEffect(() => {
     setTab("Roles");
     setLoading(true);
-    fetchRoles((data) => {
-      setRoles(data);
-      setCount(data.length);
-      setLoading(false);
-    }, (err)=>{
-      setError(err);
-      setLoading(false);
-    });
+    fetchRoles(
+      (data) => {
+        setRoles(data);
+        setCount(data.length);
+        setLoading(false);
+      },
+      (err) => {
+        setError(err);
+        setLoading(false);
+      },
+      true
+    );
   }, []);
 
   return (
@@ -43,6 +47,7 @@ const RoleManagement = React.memo((props: any) => {
         setInvalidated={setInvalidated}
         loading={loading}
         error={error}
+        openCreateRoleTrigger={props.openCreateRoleTrigger}
       />
     </>
   );

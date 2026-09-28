@@ -1,16 +1,17 @@
-import NavBar from "./Navbar";
 import { BrowserRouter as Router } from "react-router-dom";
 import Sidebar from "./sidenav/Sidebar";
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import "./Navbar.scss";
 import HamburgerMenu from "./sidenav/hamburgerMenu";
-import { StyleServices ,HelperServices } from "@formsflow/service"; 
+import { StyleServices, HelperServices } from "@formsflow/service";
 import PropTypes from "prop-types";
 
 export default function Root(props) {
-  const customLogoPath =  StyleServices?.getCSSVariable("--custom-logo-path");
+  const customLogoPath = StyleServices?.getCSSVariable("--custom-logo-path");
   const customTitle = StyleServices?.getCSSVariable("--custom-title");
-  const customLogoAlignment =  StyleServices?.getCSSVariable("--custom-logo-horizontal-align")?.toLowerCase();
+  const customLogoAlignment = StyleServices?.getCSSVariable(
+    "--custom-logo-horizontal-align"
+  )?.toLowerCase();
   const [logoError, setLogoError] = useState(false);
   const logoAlignmentClass = useMemo(() => {
     switch (customLogoAlignment) {
@@ -22,19 +23,17 @@ export default function Root(props) {
         return "justify-content-center";
     }
   }, [customLogoAlignment]);
-  const headerRef = useRef(null); 
-  const sidenavRef = useRef(null); 
+  const headerRef = useRef(null);
   const [sidenavHeight, setSidenavHeight] = useState("100%");
   const hasMultitenancyHeader = customLogoPath || customTitle;
-  const [isPreviewRoute,setIsPreviewRoute] = useState(false);
-   
+  const [isPreviewRoute, setIsPreviewRoute] = useState(false);
 
   useEffect(() => {
     props.subscribe("ES_ROUTE", (msg, data) => {
       if (data) {
-      const location = data.pathname;
-      // Used to hide sidebar
-      setIsPreviewRoute(() => HelperServices.hideSideBarRoute(location));
+        const location = data.pathname;
+        // Used to hide sidebar
+        setIsPreviewRoute(() => HelperServices.hideSideBarRoute(location));
       }
     });
   }, []);
@@ -42,18 +41,20 @@ export default function Root(props) {
   useEffect(() => {
     if (hasMultitenancyHeader) {
       StyleServices?.setCSSVariable("--client-nav", "3rem");
-    } 
+    }
     const headerHeight = headerRef.current?.offsetHeight || 0;
     const totalHeight = `calc(100% - ${headerHeight}px)`;
     setSidenavHeight(totalHeight);
-  }, [ hasMultitenancyHeader ]); 
+  }, [hasMultitenancyHeader]);
 
   return (
     <Router>
-      {/* <NavBar props={props} /> */}
       <>
-      {hasMultitenancyHeader && (
-          <div ref={headerRef} className={`multitenancy-header ${logoAlignmentClass}`}>
+        {hasMultitenancyHeader && (
+          <div
+            ref={headerRef}
+            className={`multitenancy-header ${logoAlignmentClass}`}
+          >
             {customLogoPath && !logoError && (
               <img
                 className="multitenancy-logo"
@@ -68,9 +69,11 @@ export default function Root(props) {
           </div>
         )}
         <HamburgerMenu props={props} />
-        { !isPreviewRoute && <div className="main-sidenav" ref={sidenavRef} data-testid="main-sidenav">
-          <Sidebar props={props} sidenavHeight={sidenavHeight}/>
-        </div>}
+        {!isPreviewRoute && (
+          <div className="main-sidenav" data-testid="main-sidenav">
+            <Sidebar props={props} sidenavHeight={sidenavHeight} />
+          </div>
+        )}
       </>
     </Router>
   );

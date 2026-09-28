@@ -3,11 +3,11 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { SortModal } from "../components/CustomComponents/SortModal";
 
 const renderSortModal = (props) => render(<SortModal {...props} />);
- 
+
 describe("SortModal Component", () => {
   const mockOnClose = jest.fn();
   const mockPrimaryAction = jest.fn();
-  
+
   const defaultProps = {
     showSortModal: true,
     onClose: mockOnClose,
@@ -30,7 +30,7 @@ describe("SortModal Component", () => {
 
   it("renders the modal with default props", () => {
     renderSortModal(defaultProps);
-    
+
     expect(screen.getByText("Sort")).toBeInTheDocument();
     expect(screen.getByText("Sort By")).toBeInTheDocument();
     expect(screen.getByText("In a")).toBeInTheDocument();
@@ -40,32 +40,32 @@ describe("SortModal Component", () => {
 
   it("calls onClose when close button is clicked", () => {
     renderSortModal(defaultProps);
-    
+
     const closeButton = screen.getByTestId("close-sort-modal");
     fireEvent.click(closeButton);
-    
+
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it("calls onClose when cancel button is clicked", () => {
     renderSortModal(defaultProps);
-    
+
     const cancelButton = screen.getByTestId("cancel-sort-button");
     fireEvent.click(cancelButton);
-    
+
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it("disables Sort Results button when no options are selected", () => {
     renderSortModal(defaultProps);
-    
+
     const sortButton = screen.getByTestId("apply-sort-button");
     expect(sortButton).toBeDisabled();
   });
 
   it("enables Sort Results button when both options are selected", () => {
     renderSortModal(defaultProps);
-    
+
     // Select sort by option
     const sortByDropdown = screen.getByTestId("dropdown-sort-by");
     fireEvent.click(sortByDropdown);
@@ -82,7 +82,7 @@ describe("SortModal Component", () => {
 
   it("calls primaryBtnAction with selected options when Sort Results is clicked", () => {
     renderSortModal(defaultProps);
-    
+
     // Select sort by option
     const sortByDropdown = screen.getByTestId("dropdown-sort-by");
     fireEvent.click(sortByDropdown);
@@ -101,8 +101,8 @@ describe("SortModal Component", () => {
   });
 
   it("resets selected options when modal is closed and reopened", () => {
-    const { rerender } =  renderSortModal(defaultProps);
-    
+    const { rerender } = renderSortModal(defaultProps);
+
     // Select options
     const sortByDropdown = screen.getByTestId("dropdown-sort-by");
     fireEvent.click(sortByDropdown);
@@ -113,7 +113,7 @@ describe("SortModal Component", () => {
     fireEvent.click(screen.getByText("Ascending"));
 
     // Close modal
-    rerender(<SortModal {...defaultProps} showSortModal={false} />);    
+    rerender(<SortModal {...defaultProps} showSortModal={false} />);
     // Reopen modal
     rerender(<SortModal {...defaultProps} showSortModal={true} />);
 
@@ -132,12 +132,12 @@ describe("SortModal Component", () => {
       secondItemLabel: "Direction",
     };
 
-   renderSortModal(customProps);
-    
+    renderSortModal(customProps);
+
     expect(screen.getByText("Custom Sort")).toBeInTheDocument();
     expect(screen.getByText("Apply Sort")).toBeInTheDocument();
     expect(screen.getByText("Close")).toBeInTheDocument();
     expect(screen.getByText("Sort Field")).toBeInTheDocument();
     expect(screen.getByText("Direction")).toBeInTheDocument();
   });
-}); 
+});

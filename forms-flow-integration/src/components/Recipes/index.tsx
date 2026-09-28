@@ -28,7 +28,7 @@ const Recipes = React.memo((props: any) => {
   }
 
   if (error) {
-    <Alert variant="danger" message={error} />
+    <Alert variant="danger" message={error} dataTestId="integration-recipes-error-alert" />
   }
 
 
@@ -36,8 +36,9 @@ const Recipes = React.memo((props: any) => {
     <> {recipesUrl ? <iframe width="100%"
       height="700"
       src={recipesUrl}
-      title="Recipes" >
-    </iframe> : <Alert message="No urls found"/> }</>
+      title="Recipes"
+      data-testid="integration-recipes-iframe" >
+    </iframe> : <Alert message="No urls found" dataTestId="integration-recipes-no-url-alert"/> }</>
   );
 });
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs"; 
-
+import Tabs from "react-bootstrap/Tabs";
 
 interface TabItem {
   eventKey: string;
@@ -14,29 +13,29 @@ interface CustomTabsProps {
   defaultActiveKey: string;
   id?: string;
   tabs: TabItem[];
- dataTestId?: string;
+  dataTestId?: string;
   ariaLabel?: string;
   onSelect?: (eventKey: string | null) => void;
-  className? : string;
+  className?: string;
 }
 
 export const CustomTabs: React.FC<CustomTabsProps> = ({
   defaultActiveKey,
   id = "custom-tab",
   tabs,
- dataTestId = "",
+  dataTestId = "",
   ariaLabel = "",
   onSelect,
-  className ,
-}) => { 
-  const [key,setKey] = useState(defaultActiveKey)
-  const handleChange = (newKey)=>{
+  className,
+}) => {
+  const [key, setKey] = useState(defaultActiveKey);
+  const handleChange = (newKey) => {
     setKey(newKey);
     onSelect?.(newKey);
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     setKey(defaultActiveKey);
-  },[defaultActiveKey])
+  }, [defaultActiveKey]);
 
   return (
     <Tabs

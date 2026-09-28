@@ -21,7 +21,7 @@ interface SuccessState {
 /**
  * Custom hook that provides a timed success state with countdown
  * Useful for showing temporary success messages that automatically dismiss
- * 
+ *
  * @param options - Configuration options for the countdown
  * @returns Object containing success state and function to trigger the countdown
  */
@@ -32,22 +32,24 @@ const useSuccessCountdown = (options: SuccessCountdownOptions = {}) => {
     showSuccess: false,
     countdown: 0,
   });
-  
-  const [onCountdownEnd, setOnCountdownEnd] = useState<(() => void) | null>(null);
+
+  const [onCountdownEnd, setOnCountdownEnd] = useState<(() => void) | null>(
+    null
+  );
 
   /**
    * Starts the success countdown with the specified callback and duration
-   * 
+   *
    * @param callback - Function to call when countdown reaches zero
    * @param initialCount - Initial countdown value in seconds (default: 2)
    */
-  const startSuccessCountdown = useCallback((
-    callback?: () => void,
-    initialCount: number = 2
-  ) => {
-    setSuccessState({ showSuccess: true, countdown: initialCount });
-    setOnCountdownEnd(() => callback || null);
-  }, []);
+  const startSuccessCountdown = useCallback(
+    (callback?: () => void, initialCount: number = 2) => {
+      setSuccessState({ showSuccess: true, countdown: initialCount });
+      setOnCountdownEnd(() => callback || null);
+    },
+    []
+  );
 
   useEffect(() => {
     if (successState.countdown >= 0 && successState.showSuccess) {
@@ -64,7 +66,12 @@ const useSuccessCountdown = (options: SuccessCountdownOptions = {}) => {
 
       return () => clearInterval(interval);
     }
-  }, [successState.countdown, successState.showSuccess, intervalDelay, onCountdownEnd]);
+  }, [
+    successState.countdown,
+    successState.showSuccess,
+    intervalDelay,
+    onCountdownEnd,
+  ]);
 
   return {
     successState,

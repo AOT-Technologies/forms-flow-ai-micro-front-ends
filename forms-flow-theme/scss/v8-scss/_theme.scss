@@ -49,6 +49,11 @@ $opacities: (
 
 $scrollBarWidth: 0.5rem;
 
+// Navbar color changes
+$navbar-muted-color:  #979899; // ff/color/gray/500
+$navbar-accent-color: #5467FC; // ff/color/indigo/700
+$navbar-rollover-color: #636365; // ff/color/gray/700 — the "Nav Rollover" swatch
+
 // Helper: Blend with a white background [ To achieve exact variants of figma ] 
 @function blend-with-white-to-hex($color, $opacity) {
  $white: #fff;
@@ -84,7 +89,8 @@ $font-tokens: (
   font-size-l: 18px,
   font-size-m: 15px,
   font-size-s: 12px,
-  font-size-xs: 10px
+  font-size-xs: 10px,
+  font-size-table: 14px
 );
 
 
@@ -96,10 +102,11 @@ $font-tokens: (
 
   // //for navbar
   
-  --nav-bg-color: var(--white-100);
-  --navbar-menu-font-color: var(--secondary-dark);
-  --navbar-submenu-font-color: var(--gray-dark);
-  --navbar-menu-font-color-active: var(--vivid);
+  --nav-bg-color: var(--white-100); // ff/color/gray/100   #F6F6F6
+  --navbar-menu-font-color: var(--gray-darkest); // ff/color/gray/800   #4A4A4A
+  --navbar-submenu-font-color: #{$navbar-muted-color}; // ff/color/gray/500
+  --navbar-menu-font-color-active: #{$navbar-accent-color}; // ff/color/indigo/700
+  --navbar-menu-font-color-rollover: #{$navbar-rollover-color}; // ff/color/gray/700
 
 /*══════════════════ ⬥ COLOUR UTILITIES | VERSION 8 ⬥ ══════════════════*/
 
@@ -227,6 +234,17 @@ $font-tokens: (
  --body-section-height: 100vh; //update dynamically for the pages.
 
 
+/*══════════════════ ⬥ BREAKPOINT & CONTAINER TOKENS | VERSION 8.3 ⬥ ══════════════════*/
+
+  // Informational for runtime consumers (JS reads via getComputedStyle).
+  // CSS custom properties cannot be used inside @media conditions — SCSS authors
+  // must use mixins.respond-from()/mixins.respond-below() from v8-scss/_mixins.scss.
+  @each $name, $value in mixins.$breakpoints {
+    --breakpoint-#{$name}: #{$value};
+  }
+  @each $name, $value in mixins.$containers {
+    --container-#{$name}: #{$value};
+  }
 
 }
 
@@ -250,6 +268,9 @@ $font-tokens: (
       flex-direction: column;
       transition: width 0.5s ease;
       overflow: hidden;
+      // The rail is position:fixed, so this column IS the gutter that keeps it
+      // off the canvas. forms-flow-nav publishes --navbar-width on the document
+      // root as it collapses/expands, which is what keeps the two in step.
       width: var(--navbar-width);
     }
 
@@ -262,17 +283,26 @@ $font-tokens: (
       width: 100%;
       height: 100vh;
       margin: 0;
-      position: fixed;
+      // position: fixed;
       overflow: hidden;
   
       .page-layout {
-        /* Inner page layout wrapper */
-        width: 1088px;         
-        flex-shrink: 0;         
+        /* Inner page layout wrapper — tiered canvas (v8.3 R1.1):
+           full width below the smallest tier, then max-width steps to the
+           CONTAINER value of each breakpoint tier. desktop-lg/desktop-2xl repeat
+           the previous container (1088/1456) so they need no rule; past 1920px
+           the parent .page-container's justify-content: center centres it. */
+        width: 100%;
+        @include mixins.respond-from(mobile)     { max-width: mixins.container(mobile); }     // 352px
+        @include mixins.respond-from(tablet)     { max-width: mixins.container(tablet); }     // 536px
+        @include mixins.respond-from(desktop-sm) { max-width: mixins.container(desktop-sm); } // 720px
+        @include mixins.respond-from(desktop-md) { max-width: mixins.container(desktop-md); } // 1088px
+        @include mixins.respond-from(desktop-xl) { max-width: mixins.container(desktop-xl); } // 1456px
+        flex-shrink: 0;
         flex-grow: 0;
         display: grid;          // allows toast/header/body grid
         grid-template-rows: auto auto auto auto auto 1fr; // toast + headers + body
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         padding: 0;
         box-sizing: border-box;
         height: 100%;
@@ -319,7 +349,6 @@ $font-tokens: (
             max-width: 100%;
             box-sizing: border-box;
             max-height: calc(100vh - 200px);
-            width: 1088px;
             padding-bottom: 120px;
           }
 
@@ -484,7 +513,7 @@ $font-tokens: (
 }
 
 // Home page layout classes
-.home-layout {
+.page-layout {
   .ff-home-header {
     display: flex;
     align-items: center;
@@ -509,31 +538,14 @@ $font-tokens: (
   .ff-home-content-wrap {
     // margin-left: 6.75rem;
     margin: auto;
-    max-width: 58.5625rem;
+    // max-width: 58.5625rem;
   }
 
-  .ff-home-subscription-banner {
-    height: 3.5rem;
+  
+  .ff-usage-banner {
     width: 100%;
-    margin-top: 4.3125rem;
-    margin-bottom: 3.875rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 0.0625rem solid var(--gray-x-light);
-    border-radius: 0.3125rem;
-    padding: 0 var(--spacer-100);
-    background: var(--ff-white);
-  }
-
-  .ff-home-subscription-banner-content {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .ff-home-subscription-banner-message {
-    font-size: 0.9375rem;
+    margin-top: 0.8125rem;
+    margin-bottom: 3.9375rem;
   }
 
   .ff-home-quick-actions-title {
@@ -750,5 +762,13 @@ $font-tokens: (
     width: 100%;
     display: flex;
     justify-content: center;
+  }
+}
+@media (max-width: 1279px) {
+  .task-list-page:not(.body-section){
+    max-height: 8rem !important;
+    .section-seperation-left{
+      flex-wrap: wrap;
+    }
   }
 }

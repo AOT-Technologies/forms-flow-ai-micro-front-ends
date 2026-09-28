@@ -14,14 +14,11 @@ module.exports = (webpackConfigEnv, argv) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      port: 3007
+      port: 3007,
     },
-    output:{
-      filename:"forms-flow-service.js"
+    output: {
+      filename: "forms-flow-service.js",
     },
-    externals: [
-      "react",
-      "react-dom",
-    ],
+    externals: ["react", "react-dom"],
   });
 };

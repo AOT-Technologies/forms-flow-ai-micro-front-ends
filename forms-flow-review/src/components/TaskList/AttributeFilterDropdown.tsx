@@ -1,8 +1,4 @@
-import {
-  AddIcon,
-  FilterDropDown,
-  ReorderIcon,
-} from "@formsflow/components";
+import { AddIcon, FilterDropDown, ReorderIcon } from "@formsflow/components";
 import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks";
 import { RootState } from "../../reducers";
@@ -21,7 +17,6 @@ import { userRoles } from "../../helper/permissions";
 import { FilterItemType, UserDetail } from "../../types/taskFilter";
 import { buildDateRangePayload } from "../../helper/tableHelper";
 import { SelectDropdown } from "@formsflow/components"; // ✅ Use reusable dropdown
-
 
 const AttributeFilterDropdown = () => {
   const { t } = useTranslation();
@@ -46,9 +41,7 @@ const AttributeFilterDropdown = () => {
   const selectedFilter = useSelector(
     (state: RootState) => state.task.selectedFilter
   );
-  const dateRange = useSelector(
-    (state: RootState) => state.task.dateRange
-  );
+  const dateRange = useSelector((state: RootState) => state.task.dateRange);
   const handleToggleAttrFilterModal = () => {
     setShowAttributeFilter((prev) => !prev);
   };
@@ -79,34 +72,32 @@ const AttributeFilterDropdown = () => {
     )
       return;
 
-  const date = buildDateRangePayload(dateRange);
+    const date = buildDateRangePayload(dateRange);
 
-  //this is current selected filter criteria
-  const currentCriteria = cloneDeep(selectedFilter.criteria);
-  // we only need process variables from attribute filter data
-  const processVariables = attributeFilter?.criteria.processVariables?.filter(
-    (item) => item.name !== "formId"
-  );
-  // we need to patch the current criteria with process variables from attribute filter
-  if (processVariables && processVariables.length > 0) {
-    currentCriteria.processVariables = currentCriteria.processVariables || [];
-    currentCriteria.processVariables.push(...processVariables);
-  }
+    //this is current selected filter criteria
+    const currentCriteria = cloneDeep(selectedFilter.criteria);
+    // we only need process variables from attribute filter data
+    const processVariables = attributeFilter?.criteria.processVariables?.filter(
+      (item) => item.name !== "formId"
+    );
+    // we need to patch the current criteria with process variables from attribute filter
+    if (processVariables && processVariables.length > 0) {
+      currentCriteria.processVariables = currentCriteria.processVariables || [];
+      currentCriteria.processVariables.push(...processVariables);
+    }
 
-  // changing  assignee if assignee changed in attirbuite filter
-  currentCriteria.assignee = attributeFilter?.criteria.assignee;
+    // changing  assignee if assignee changed in attirbuite filter
+    currentCriteria.assignee = attributeFilter?.criteria.assignee;
 
-  // append date range to currentCriteria if date is available
-  const updatedCriteria = {
-    ...currentCriteria,
-    ...date,
+    // append date range to currentCriteria if date is available
+    const updatedCriteria = {
+      ...currentCriteria,
+      ...date,
+    };
+
+    const data = { ...selectedFilter, criteria: updatedCriteria };
+    fetchTaskList(data);
   };
-
-  const data = { ...selectedFilter, criteria: updatedCriteria };
-  fetchTaskList(data);
-};
-
-
 
   const onSearch = (searchTerm: string) => {
     setFilterSearchTerm(searchTerm);
@@ -116,7 +107,6 @@ const AttributeFilterDropdown = () => {
   //   setShowAttributeFilter(true);
   //   dispatch(setAttributeFilterToEdit(cloneDeep(selectedAttributeFilter)));
   // };
-
 
   const handleEditAttributeFromItem = (filter) => {
     if (!filter) return;
@@ -223,7 +213,10 @@ const AttributeFilterDropdown = () => {
             // );
             let category: "my" | "shared" = "my";
 
-          if ((selectedFilter?.users?.length > 0) ||(filter?.users?.length > 0))  {
+            if (
+              selectedFilter?.users?.length > 0 ||
+              filter?.users?.length > 0
+            ) {
               category = "my";
             } else {
               category = "shared";
@@ -260,7 +253,7 @@ const AttributeFilterDropdown = () => {
 
       if (filteredItems.length > 1) {
         attributeDropdownItemsArray.push(reOrderAttribute);
-      }      
+      }
     }
 
     // Only show "All Fields" when not searching
@@ -278,7 +271,7 @@ const AttributeFilterDropdown = () => {
     } else {
       // Show "No filters found" only when:
       // 1. Searching and no matches found
-      if (isSearching ) {
+      if (isSearching) {
         attributeDropdownItemsArray.push(noFilter);
       }
     }
@@ -316,7 +309,10 @@ const AttributeFilterDropdown = () => {
         className="input-filter"
         variant="field"
         categorize={true}
-        categoryLabels={{ my: t("My filters (unique to me)"), shared: t("Shared filters") }}
+        categoryLabels={{
+          my: t("My filters (unique to me)"),
+          shared: t("Shared filters"),
+        }}
         categoryOrder={["my", "shared"]}
       />
       <AttributeFilterModal
