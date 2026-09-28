@@ -2,6 +2,95 @@
 
 Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Features`, `Upcoming Features`, `Known Issues`
 
+## 8.3.0 - 27-09-2026
+
+`Added`
+
+**forms-flow-admin**
+* Added a new **Style** tab under Manage to theme the application and forms — accent/button colour selection, font selection, button shape toggle, live style preview, and branding logo upload restricted to the Owner role.
+* Added user status management to the Users tab — status column, suspend/reactivate actions with a confirmation modal, and self-suspend controls hidden for the logged-in user.
+* Added pagination, total user count, filtering and sorting to the Users tab.
+* Added group (role) listing and assignment for users.
+* Added users listing within the Roles tab.
+* Added filter and sort to the Dashboards tab.
+* Added an organization usage summary card showing submission usage against the active subscription plan.
+* Manage tabs are now URL-routed (`/admin/:tab`), so each tab is directly linkable and bookmarkable.
+
+**forms-flow-components**
+* Added style editor components — `StyleEditor`, `ColorPicker`, `FontPicker`, `ButtonShapeToggle` and `BrandingToggle`.
+* Added the `AddWithDropdown` component and the `useFormTheme` hook for applying tenant form themes.
+* Exported `DownloadPDFButton` from the component barrel.
+* Added new Storybook stories for application logo and navbar icons.
+
+**forms-flow-service**
+* Added usage metering — the `fetchFeatureUsage` service and shared usage helpers used by both the admin usage card and forms-flow-web.
+* Added the `getColumnPresetSizing` helper and table column presets for consistent table column sizing across micro-frontends.
+* Added responsive breakpoint tokens and helpers (`BREAKPOINTS`, `CONTAINERS`, `BREAKPOINT_TIERS`, `mediaFrom`, `mediaBelow`, `resolveTier`).
+
+**forms-flow-nav**
+* Added the redesigned sidebar with updated styles and an improved hamburger menu for smaller screens.
+
+**forms-flow-review**
+* Added support for `forms-flow-process-gateway`, including the socket connection.
+
+**forms-flow-submissions**
+* Added support for `forms-flow-process-gateway`.
+
+**forms-flow-theme**
+* Added a breakpoint token tier and a tiered responsive page canvas.
+* Added new styles for the usage tracking cards, the add-with-dropdown component and the redesigned sidebar.
+
+`Modified`
+
+**forms-flow-review**
+* Made the BPM API URL prefix environment configurable.
+
+**forms-flow-submissions**
+* Made the BPM API URL prefix environment configurable.
+
+**forms-flow-components**
+* Button with dropdown now opens on hover instead of click.
+
+**forms-flow-admin**
+* Hid the Camunda admin role from the filter-by dropdown.
+* Updated the permission tree.
+
+**forms-flow-theme**
+* Hid system fields in the form builder.
+
+`Generic Changes`
+* Performance and maintainability refactor across all eight packages — dead-code removal, stable render identities in shared tables and lists, lazy-loaded detail routes, memoized route/style lookups, and repaired lint, format and test tooling.
+* Added missing `data-testid` and `aria-label` attributes on interactive elements across all packages.
+* Resolved dependency security alerts across all packages.
+* Shared onboarding details across micro-frontends via local storage.
+
+`Fixed`
+
+**forms-flow-admin**
+* Fixed an invalid-token error when saving from Manage → Style in production and multitenant setups.
+* Fixed Users page flickering, user role listing, dropdown list and filter dropdown issues.
+* Excluded service-account users from the roles user list.
+* Truncated long template names in the theme list.
+* Fixed the next billing date format.
+
+**forms-flow-submissions**
+* Fixed bundle export and PDF download failures in analyze submissions.
+* Fixed bundle submissions not rendering in the analyze history modal.
+* The Flow tab is now shown only for BPMN workflows.
+
+**forms-flow-service**
+* A token with no roles is now treated as a valid session instead of failing login.
+
+**forms-flow-components**
+* Deduplicated `useFormTheme` across packages and fixed theme inheritance, a load race condition and a CSS injection issue.
+* Fixed colour picker clipping and dropdown positioning issues.
+
+**forms-flow-theme**
+* Fixed the import file UI, default hidden field styling, BPMN builder input field borders and table styling issues.
+
+`Generic Changes`
+* Fixed mobile and responsive layout issues across the nav, admin, components, review and submissions modules.
+
 ## 8.2.5 - 22-07-2026
 
 `Added`
