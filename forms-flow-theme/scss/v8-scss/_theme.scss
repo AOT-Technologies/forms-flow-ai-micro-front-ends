@@ -765,7 +765,7 @@ $font-tokens: (
   }
 }
 @media (max-width: 1279px) {
-  .task-list-page{
+  .task-list-page:not(.body-section){
     max-height: 8rem !important;
     .section-seperation-left{
       flex-wrap: wrap;
