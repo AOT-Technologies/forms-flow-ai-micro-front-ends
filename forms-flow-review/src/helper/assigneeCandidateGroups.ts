@@ -83,10 +83,12 @@ export function mapMemberOfGroupUsersToSelectOptions(
       return null;
     })
     .filter((x): x is MemberOfGroupSelectOption => x != null)
-    .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }));
+    .sort((a, b) =>
+      a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+    );
   return opts;
 }
- 
+
 export function mergeMemberOfGroupResponsesToSelectOptions(
   responses: Array<{ data?: MemberOfGroupUsersApiBody }>
 ): MemberOfGroupSelectOption[] {

@@ -1,13 +1,7 @@
-
 import TaskList from "../components/TaskList/TaskList";
 
-
 const TaskListing = () => {
- 
-
-  return (
-    <TaskList />
-  );
+  return <TaskList />;
 };
 
 export default TaskListing;

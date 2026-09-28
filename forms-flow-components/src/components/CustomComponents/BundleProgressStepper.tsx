@@ -26,7 +26,6 @@ export const BundleProgressStepper: React.FC<BundleProgressStepperProps> = ({
 
   return (
     <div className="bundle-stepper" style={cssVars}>
-
       {/* Background track */}
       <div className="bundle-stepper__track bundle-stepper__track--bg" />
 
@@ -41,7 +40,9 @@ export const BundleProgressStepper: React.FC<BundleProgressStepperProps> = ({
         return (
           <div
             key={label}
-            className={`bundle-stepper__step${done ? " bundle-stepper__step--done" : ""}`}
+            className={`bundle-stepper__step${
+              done ? " bundle-stepper__step--done" : ""
+            }`}
           >
             <div className="bundle-stepper__circle">
               <StepperCheckIcon className="bundle-stepper__check" />
@@ -50,7 +51,6 @@ export const BundleProgressStepper: React.FC<BundleProgressStepperProps> = ({
           </div>
         );
       })}
-
     </div>
   );
 };

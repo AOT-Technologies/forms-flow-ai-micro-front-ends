@@ -1,9 +1,9 @@
 import React from "react";
 
 const Alert = React.memo((props:any)=>{
-    const {variant="primary", message} = props;
+    const {variant="primary", message, dataTestId} = props;
  return (
-    <div className={`alert alert-${variant}`} role="alert">
+    <div className={`alert alert-${variant}`} role="alert" data-testid={dataTestId}>
    {message}
 </div>
  )

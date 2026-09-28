@@ -114,13 +114,13 @@ const Integration = React.memo(({ props }: any) => {
       return <PremiumSubscription />
     } 
     return <div className="d-flex align-item-center justify-content-center p-5 mt-5">
-     <Alert variant="danger" message="Unauthorized Access - You don't have the permission to access this service."/>
+     <Alert variant="danger" message="Unauthorized Access - You don't have the permission to access this service." dataTestId="integration-unauthorized-alert"/>
     </div>
   }
 
   return (
     <>
-        <div className="main-container" tabIndex={0}>
+        <div className="main-container" tabIndex={0} data-testid="integration-main-container">
           <div className="container">
             <div className="min-container-height">
                 <Head items={headerList()} page={page} />

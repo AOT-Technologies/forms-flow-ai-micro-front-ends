@@ -2,36 +2,37 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { FormSubmissionHistoryModal } from "../components/CustomComponents/FormSubmissionHistoryModal";
 
-const renderFormSubmissionHistoryModal = (props) => render(<FormSubmissionHistoryModal {...props} />);
+const renderFormSubmissionHistoryModal = (props) =>
+  render(<FormSubmissionHistoryModal {...props} />);
 
 const submissionHistory = [
   {
     created: "2025-01-13T05:56:02.549867Z",
     applicationStatus: "Submitted",
-    id: "2562"
+    id: "2562",
   },
   {
     created: "2025-01-13T05:51:24.088690Z",
     applicationStatus: "In Progress",
-    id: "2559"
-  }
+    id: "2559",
+  },
 ];
 
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({
-    t: (key: string) => key
-  })
+    t: (key: string) => key,
+  }),
 }));
 
 describe("FormSubmissionHistoryModal component", () => {
   const onClose = jest.fn();
-  
+
   const defaultProps = {
     show: true,
     onClose,
     title: "Submission History",
     allHistory: [],
-    historyCount: 0
+    historyCount: 0,
   };
 
   it("renders modal with no history", () => {
@@ -43,9 +44,9 @@ describe("FormSubmissionHistoryModal component", () => {
     renderFormSubmissionHistoryModal({
       ...defaultProps,
       allHistory: submissionHistory,
-      historyCount: submissionHistory.length
+      historyCount: submissionHistory.length,
     });
-    
+
     expect(screen.getByTestId("form-history-timeline")).toBeInTheDocument();
     expect(screen.getByTestId("form-history-content")).toBeInTheDocument();
     expect(screen.getAllByTestId(/form-history-entry-/)).toHaveLength(2);
@@ -55,7 +56,7 @@ describe("FormSubmissionHistoryModal component", () => {
     renderFormSubmissionHistoryModal({
       ...defaultProps,
       allHistory: submissionHistory,
-      historyCount: submissionHistory.length
+      historyCount: submissionHistory.length,
     });
 
     const closeButton = screen.getByTestId("close-icon");
@@ -67,7 +68,7 @@ describe("FormSubmissionHistoryModal component", () => {
     renderFormSubmissionHistoryModal({
       ...defaultProps,
       allHistory: submissionHistory,
-      historyCount: submissionHistory.length
+      historyCount: submissionHistory.length,
     });
 
     const historyFields = screen.getAllByTestId(/history-field-/);
@@ -78,14 +79,14 @@ describe("FormSubmissionHistoryModal component", () => {
   it("handles entries with missing data", () => {
     const incompleteHistory = [
       {
-        id: "1"
-      }
+        id: "1",
+      },
     ];
 
     renderFormSubmissionHistoryModal({
       ...defaultProps,
       allHistory: incompleteHistory,
-      historyCount: 1
+      historyCount: 1,
     });
 
     const historyFields = screen.getAllByTestId(/history-field-/);

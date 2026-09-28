@@ -2,8 +2,8 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { FormBuilderModal } from "../components/CustomComponents/FormBuilderModal";
 
-
-const renderFormBuilderModal = (props) => render(<FormBuilderModal {...props} />);
+const renderFormBuilderModal = (props) =>
+  render(<FormBuilderModal {...props} />);
 describe("FormBuilderModal Component", () => {
   const mockOnClose = jest.fn();
   const mockPrimaryAction = jest.fn();

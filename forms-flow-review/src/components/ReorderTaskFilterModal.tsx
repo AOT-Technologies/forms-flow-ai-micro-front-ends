@@ -7,13 +7,21 @@ import {
   V8CustomButton,
 } from "@formsflow/components";
 import { useTranslation } from "react-i18next";
-import { fetchBPMTaskCount,fetchFilterList, saveFilterPreference, updateDefaultFilter } from "../api/services/filterServices";
-import { useSelector,useDispatch } from "react-redux";
+import {
+  fetchBPMTaskCount,
+  fetchFilterList,
+  saveFilterPreference,
+  updateDefaultFilter,
+} from "../api/services/filterServices";
+import { useSelector, useDispatch } from "react-redux";
 import { useAppDispatch } from "../hooks";
 import { RootState } from "../reducers/index.js";
-import { setBPMFilterList, setDefaultFilter, setSelectedFilter } from "../actions/taskActions";
+import {
+  setBPMFilterList,
+  setDefaultFilter,
+  setSelectedFilter,
+} from "../actions/taskActions";
 import { StyleServices } from "@formsflow/service";
-
 
 interface ReorderTaskFilterModalProps {
   showModal?: boolean;
@@ -30,7 +38,9 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       );
       const { t } = useTranslation();
       const dispatch = useAppDispatch();
-      const selectedFilter = useSelector((state: any) => state.task.selectedFilter);
+      const selectedFilter = useSelector(
+        (state: any) => state.task.selectedFilter
+      );
 
       const [myFilterList, setMyFilterList] = useState<any[]>([]);
       const [sharedFilterList, setSharedFilterList] = useState<any[]>([]);
@@ -39,7 +49,8 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       //  need to  update the filterList with only key of Id,name,isChcked ,sortOrder,Icon in order to pass to drag and drop
       const updateFilterList = useMemo(() => {
         return filtersList.map((item) => {
-          const createdByMe = userDetails?.preferred_username === item?.createdBy;
+          const createdByMe =
+            userDetails?.preferred_username === item?.createdBy;
           const isSharedToPublic = !item?.roles?.length && !item?.users?.length;
           const isSharedToRoles = item?.roles?.length;
           const isSharedToMe = item?.roles?.some((role) =>
@@ -65,8 +76,10 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
 
       // set the updated filterList to  sortedfilterLis state ,to compare the updated filterList with the original filterList initially
       useEffect(() => {
-        const myFilters = updateFilterList.filter(f => f.category === "my");
-        const sharedFilters = updateFilterList.filter(f => f.category === "shared");
+        const myFilters = updateFilterList.filter((f) => f.category === "my");
+        const sharedFilters = updateFilterList.filter(
+          (f) => f.category === "shared"
+        );
         setMyFilterList(myFilters);
         setSharedFilterList(sharedFilters);
       }, [updateFilterList]);
@@ -101,15 +114,17 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
         try {
           await saveFilterPreference(updatedFiltersPreference);
 
-          const { data: { filters } } = await fetchFilterList();
-           //create an array of filters with no hidden filters
+          const {
+            data: { filters },
+          } = await fetchFilterList();
+          //create an array of filters with no hidden filters
           const updatedfilters = filters.filter((filter) => !filter.hide);
           //If the selected filter is unchecked(hide) ,then set the first sorted filter with hide false as the selected filter
-          if(selectedFilterHide){
-          dispatch(setSelectedFilter(updatedfilters[0]));
-          dispatch(setDefaultFilter(updatedfilters[0].id));
-          updateDefaultFilter(updatedfilters[0].id); 
-          }        
+          if (selectedFilterHide) {
+            dispatch(setSelectedFilter(updatedfilters[0]));
+            dispatch(setDefaultFilter(updatedfilters[0].id));
+            updateDefaultFilter(updatedfilters[0].id);
+          }
           dispatch(fetchBPMTaskCount(updatedfilters));
           dispatch(setBPMFilterList(filters));
           setShowReorderFilterModal(false);
@@ -119,20 +134,27 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
       };
 
       const isSaveBtnDisabled = useMemo(() => {
-        const myFiltersChecked = myFilterList.some(f => f.isChecked);
-        const sharedFiltersChecked = sharedFilterList.some(f => f.isChecked);
+        const myFiltersChecked = myFilterList.some((f) => f.isChecked);
+        const sharedFiltersChecked = sharedFilterList.some((f) => f.isChecked);
 
         if (!myFiltersChecked && !sharedFiltersChecked) {
           return true;
         }
 
-        const originalMy = updateFilterList.filter(f => f.category === "my");
-        const originalShared = updateFilterList.filter(f => f.category === "shared");
+        const originalMy = updateFilterList.filter((f) => f.category === "my");
+        const originalShared = updateFilterList.filter(
+          (f) => f.category === "shared"
+        );
 
-        const formatForCompare = (list) => list.map(({ id, isChecked }) => ({ id, isChecked }));
+        const formatForCompare = (list) =>
+          list.map(({ id, isChecked }) => ({ id, isChecked }));
 
-        const myChanged = JSON.stringify(formatForCompare(originalMy)) !== JSON.stringify(formatForCompare(myFilterList));
-        const sharedChanged = JSON.stringify(formatForCompare(originalShared)) !== JSON.stringify(formatForCompare(sharedFilterList));
+        const myChanged =
+          JSON.stringify(formatForCompare(originalMy)) !==
+          JSON.stringify(formatForCompare(myFilterList));
+        const sharedChanged =
+          JSON.stringify(formatForCompare(originalShared)) !==
+          JSON.stringify(formatForCompare(sharedFilterList));
 
         return !myChanged && !sharedChanged;
       }, [myFilterList, sharedFilterList, updateFilterList]);
@@ -145,17 +167,23 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
           dialogClassName="drag-drop-container"
         >
           <AppModal.Header>
-           <div className="modal-header-content">
-           <AppModal.Title> {t("Re-order And Hide Filters")}
-            <div onClick={onClose} >
-              <CloseIcon color={darkColor}/>
+            <div className="modal-header-content">
+              <AppModal.Title>
+                {" "}
+                {t("Re-order And Hide Filters")}
+                <div onClick={onClose}>
+                  <CloseIcon
+                    color={darkColor}
+                    data-testid="reorder-task-filter-close-icon"
+                    aria-label={t("Close")}
+                  />
+                </div>
+              </AppModal.Title>
+
+              <div className="modal-subtitle">
+                Toggle the visibility of filters and order them
+              </div>
             </div>
-               </AppModal.Title>
-            
-            <div className="modal-subtitle">
-            Toggle the visibility of filters and order them 
-            </div>
-           </div>
           </AppModal.Header>
           <AppModal.Body>
             <div className="filter-section mb-3">
@@ -178,27 +206,24 @@ export const ReorderTaskFilterModal: React.FC<ReorderTaskFilterModalProps> =
             </div>
           </AppModal.Body>
           <AppModal.Footer>
-              <V8CustomButton
-                label={t("Discard changes")}
-                variant="secondary"
-                  dataTestId="discard-changes"
-                  ariaLabel={t("Discard Changes")}
-                onClick={handleDiscardChanges}
-                disabled={isSaveBtnDisabled}
-              />
-              <V8CustomButton
-                label={t("Save and apply")}
-                onClick={handleSaveChanges}
-                dataTestId="save-and-apply"
-                ariaLabel={t("Save and apply")}
-                variant="primary"
-                disabled={isSaveBtnDisabled}
-              />
-
+            <V8CustomButton
+              label={t("Discard changes")}
+              variant="secondary"
+              dataTestId="discard-changes"
+              ariaLabel={t("Discard Changes")}
+              onClick={handleDiscardChanges}
+              disabled={isSaveBtnDisabled}
+            />
+            <V8CustomButton
+              label={t("Save and apply")}
+              onClick={handleSaveChanges}
+              dataTestId="save-and-apply"
+              ariaLabel={t("Save and apply")}
+              variant="primary"
+              disabled={isSaveBtnDisabled}
+            />
           </AppModal.Footer>
         </AppModal>
       );
     }
   );
-
-

@@ -2,7 +2,7 @@ import ACTION_CONSTANTS from "../actions/actionConstants";
 import cloneDeep from "lodash/cloneDeep";
 
 const initialState = {
-  submission:{}
+  submission: {},
 };
 
 const customSubmission = (state = initialState, action) => {

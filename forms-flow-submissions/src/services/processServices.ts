@@ -1,13 +1,13 @@
-
-
 import { replaceUrl } from "../helper/helper";
 import { StorageService, RequestService } from "@formsflow/service";
 import API from "../api/endpoints";
-import {setProcessActivityData, setProcessActivityLoadError} from "../actions/processActions"
-
+import {
+  setProcessActivityData,
+  setProcessActivityLoadError,
+} from "../actions/processActions";
 
 export const getProcessActivities = (process_instance_id, ...rest) => {
-  const done = rest.length ? rest[0] : () => { };
+  const done = rest.length ? rest[0] : () => {};
   const apiUrlProcessActivities = replaceUrl(
     API.PROCESS_ACTIVITIES,
     "<process_instance_id>",
@@ -38,21 +38,21 @@ export const getProcessActivities = (process_instance_id, ...rest) => {
   };
 };
 
-
-export const getProcessDetails = ({processKey, tenant_key = null, mapperId = null}) => {
+export const getProcessDetails = ({
+  processKey,
+  tenant_key = null,
+  mapperId = null,
+}) => {
   const api = API.GET_PROCESS_XML;
   let url = replaceUrl(api, "<process_key>", processKey);
-
 
   const params = [];
   if (tenant_key) params.push(`tenantId=${tenant_key}`);
   if (mapperId) params.push(`mapperId=${mapperId}`);
 
-
   if (params.length) {
     url += `?${params.join("&")}`;
   }
-
 
   return RequestService.httpGETRequest(url);
 };

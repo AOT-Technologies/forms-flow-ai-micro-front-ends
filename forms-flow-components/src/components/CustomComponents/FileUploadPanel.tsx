@@ -63,7 +63,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
 
-    const selectedLayoutVersion =       {
+    const selectedLayoutVersion = {
       value: "minor",
       label: t(
         `import as version ${fileItems?.form?.majorVersion}.${
@@ -72,7 +72,10 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
       ),
     };
 
-    const selectedFlowVersion = { value: "true", label: t("Skip, do not import") };
+    const selectedFlowVersion = {
+      value: "true",
+      label: t("Skip, do not import"),
+    };
     const resetState = () => {
       setSelectedFile(null);
       setUploadProgress(0);
@@ -112,10 +115,12 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
         const animateProgress = (timestamp: number) => {
           if (!isMounted) return;
           if (!start) start = timestamp;
-          const progress =importError ? 100 : Math.min(
-            ((timestamp - start) / duration) * maxProgress,
-            maxProgress
-          );
+          const progress = importError
+            ? 100
+            : Math.min(
+                ((timestamp - start) / duration) * maxProgress,
+                maxProgress
+              );
           setUploadProgress(progress);
           if (progress < maxProgress) {
             requestAnimationFrame(animateProgress);
@@ -131,7 +136,6 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
     }, [selectedFile, importError]);
     return (
       <div className="import-section-container p-4">
-
         <div className="import-section-body">
           <div className="d-flex justify-content-center mb-3">
             <FileUploadArea

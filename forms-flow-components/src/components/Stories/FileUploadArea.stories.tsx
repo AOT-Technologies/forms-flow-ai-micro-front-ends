@@ -1,41 +1,41 @@
-import { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
-import { FileUploadArea } from '../CustomComponents/FileUploadArea';
+import { useState } from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { action } from "@storybook/addon-actions";
+import { FileUploadArea } from "../CustomComponents/FileUploadArea";
 
 const meta: Meta<typeof FileUploadArea> = {
-  title: 'Components/FileUploadArea',
+  title: "Components/FileUploadArea",
   component: FileUploadArea,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component:
-          'A drag-and-drop file upload component with progress tracking, error handling, and multiple file type support. Features accessible design with keyboard navigation and screen reader support.',
+          "A drag-and-drop file upload component with progress tracking, error handling, and multiple file type support. Features accessible design with keyboard navigation and screen reader support.",
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     fileType: {
-      control: 'text',
+      control: "text",
       description: 'Accepted file types (e.g., ".json", ".bpmn", ".pdf")',
     },
     onFileSelect: {
-      action: 'file-selected',
-      description: 'Called when a file is selected',
+      action: "file-selected",
+      description: "Called when a file is selected",
     },
     onCancel: {
-      action: 'canceled',
-      description: 'Called when upload is canceled',
+      action: "canceled",
+      description: "Called when upload is canceled",
     },
     onRetry: {
-      action: 'retried',
-      description: 'Called when retry is clicked',
+      action: "retried",
+      description: "Called when retry is clicked",
     },
     onDone: {
-      action: 'done',
-      description: 'Called when done is clicked',
+      action: "done",
+      description: "Called when done is clicked",
     },
   },
 };
@@ -67,32 +67,32 @@ const FileUploadTemplate = (args: any) => {
     setProgress(0);
     setError(null);
     simulateProgress(10);
-    action('file-selected')(selectedFile);
+    action("file-selected")(selectedFile);
   };
 
   const handleCancel = () => {
     setFile(null);
     setProgress(0);
     setError(null);
-    action('canceled')();
+    action("canceled")();
   };
 
   const handleRetry = (retryFile: File) => {
     setError(null);
     setProgress(0);
     simulateProgress(15);
-    action('retried')(retryFile);
+    action("retried")(retryFile);
   };
 
   const handleDone = () => {
     setFile(null);
     setProgress(0);
     setError(null);
-    action('done')();
+    action("done")();
   };
 
   return (
-    <div style={{ width: '400px', height: '300px' }}>
+    <div style={{ width: "400px", height: "300px" }}>
       <FileUploadArea
         {...args}
         file={file}
@@ -110,7 +110,7 @@ const FileUploadTemplate = (args: any) => {
 // Initial state - no file selected
 export const Default: Story = {
   args: {
-    fileType: '.json, .bpmn',
+    fileType: ".json, .bpmn",
   },
   render: FileUploadTemplate,
 };
@@ -118,7 +118,7 @@ export const Default: Story = {
 // Different file types
 export const JSONFileType: Story = {
   args: {
-    fileType: '.json',
+    fileType: ".json",
   },
   render: FileUploadTemplate,
 };
@@ -126,8 +126,10 @@ export const JSONFileType: Story = {
 // Upload states
 export const Uploading: Story = {
   args: {
-    fileType: '.json, .bpmn',
-    file: new File(['{"test": "data"}'], 'test.json', { type: 'application/json' }),
+    fileType: ".json, .bpmn",
+    file: new File(['{"test": "data"}'], "test.json", {
+      type: "application/json",
+    }),
     progress: 45,
   },
   render: FileUploadTemplate,
@@ -135,8 +137,10 @@ export const Uploading: Story = {
 
 export const UploadComplete: Story = {
   args: {
-    fileType: '.json, .bpmn',
-    file: new File(['{"test": "data"}'], 'test.json', { type: 'application/json' }),
+    fileType: ".json, .bpmn",
+    file: new File(['{"test": "data"}'], "test.json", {
+      type: "application/json",
+    }),
     progress: 100,
   },
   render: FileUploadTemplate,
@@ -144,10 +148,12 @@ export const UploadComplete: Story = {
 
 export const UploadError: Story = {
   args: {
-    fileType: '.json, .bpmn',
-    file: new File(['{"test": "data"}'], 'test.json', { type: 'application/json' }),
+    fileType: ".json, .bpmn",
+    file: new File(['{"test": "data"}'], "test.json", {
+      type: "application/json",
+    }),
     progress: 30,
-    error: 'File upload failed. Please try again.',
+    error: "File upload failed. Please try again.",
   },
   render: FileUploadTemplate,
 };
@@ -155,8 +161,12 @@ export const UploadError: Story = {
 // Edge cases
 export const LargeFileName: Story = {
   args: {
-    fileType: '.json, .bpmn',
-    file: new File(['{"test": "data"}'], 'very-long-file-name-that-might-cause-layout-issues.json', { type: 'application/json' }),
+    fileType: ".json, .bpmn",
+    file: new File(
+      ['{"test": "data"}'],
+      "very-long-file-name-that-might-cause-layout-issues.json",
+      { type: "application/json" }
+    ),
     progress: 75,
   },
   render: FileUploadTemplate,
@@ -164,10 +174,13 @@ export const LargeFileName: Story = {
 
 export const NetworkError: Story = {
   args: {
-    fileType: '.json, .bpmn',
-    file: new File(['{"test": "data"}'], 'test.json', { type: 'application/json' }),
+    fileType: ".json, .bpmn",
+    file: new File(['{"test": "data"}'], "test.json", {
+      type: "application/json",
+    }),
     progress: 60,
-    error: 'Network connection lost. Please check your internet connection and try again.',
+    error:
+      "Network connection lost. Please check your internet connection and try again.",
   },
   render: FileUploadTemplate,
 };
@@ -175,13 +188,14 @@ export const NetworkError: Story = {
 // Interactive playground
 export const Playground: Story = {
   args: {
-    fileType: '.json, .bpmn',
+    fileType: ".json, .bpmn",
   },
   render: FileUploadTemplate,
   parameters: {
     docs: {
       description: {
-        story: 'Use controls to adjust props and observe behavior. Try uploading different file types and watch the progress simulation.',
+        story:
+          "Use controls to adjust props and observe behavior. Try uploading different file types and watch the progress simulation.",
       },
     },
   },

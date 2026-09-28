@@ -1,9 +1,7 @@
 /* istanbul ignore file */
 import { Client, IMessage } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
 import API from "../api/endpoints";
-import { WEBSOCKET_ENCRYPT_KEY, MULTITENANCY_ENABLED } from "../constants";
-import AES from "crypto-js/aes";
+import { MULTITENANCY_ENABLED } from "../constants";
 import { StorageService } from "@formsflow/service";
 
 interface TaskUpdate {
@@ -12,7 +10,11 @@ interface TaskUpdate {
   tenantId?: string;
 }
 
-type ReloadCallback = (taskId: string, forceReload: boolean, isUpdateEvent: boolean) => void;
+type ReloadCallback = (
+  taskId: string,
+  forceReload: boolean,
+  isUpdateEvent: boolean
+) => void;
 
 let tenantData: string | null = localStorage.getItem("tenantData");
 let tenantKey: string = "";
@@ -27,7 +29,12 @@ if (tenantData) {
 }
 
 let stompClient: Client | null = null;
-let reconnectTimeOut: NodeJS.Timeout | null = null;
+
+/**
+ * process-gateway's `/socket` route is a plain WebSocket (not SockJS), so it
+ * must be dialed as ws(s):// rather than http(s)://.
+ */
+const toWebSocketUrl = (url: string): string => url.replace(/^http/i, "ws");
 
 const connect = (reloadCallback: ReloadCallback): void => {
   const authToken = StorageService.get(StorageService.User.AUTH_TOKEN);
@@ -35,13 +42,17 @@ const connect = (reloadCallback: ReloadCallback): void => {
     console.error("Auth token not found");
     return;
   }
-  
-  const accessToken = AES.encrypt(authToken, WEBSOCKET_ENCRYPT_KEY).toString();
-  const socketUrl = `${API.BPM_BASE_URL_SOCKET_IO}?accesstoken=${accessToken}`;
+
+  const socketUrl = toWebSocketUrl(API.BPM_BASE_URL_SOCKET_IO);
 
   stompClient = new Client({
-    webSocketFactory: () => new SockJS(socketUrl),
-    reconnectDelay: window.location.pathname.includes("review") && 5000, // Auto-reconnect after 5 seconds if reconnects
+    brokerURL: socketUrl,
+    connectHeaders: {
+      Authorization: `Bearer ${authToken}`,
+    },
+    reconnectDelay: window.location.pathname.includes("review") ? 5000 : 0,
+    heartbeatIncoming: 25000,
+    heartbeatOutgoing: 0,
     debug: () => {}, // Disable debug logging
     onConnect: () => {
       console.log("Connected to WebSocket");
@@ -77,9 +88,6 @@ const isConnected = (): boolean => stompClient?.connected || false;
 const disconnect = (): void => {
   if (stompClient) {
     stompClient.deactivate();
-    if (reconnectTimeOut) {
-      clearTimeout(reconnectTimeOut);
-    }
   }
 };
 

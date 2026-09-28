@@ -1,6 +1,6 @@
 import React from "react";
 import { AppModal } from "./AppModal";
-import {CustomButton} from "./Button";
+import { CustomButton } from "./Button";
 import { CloseIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 
@@ -16,18 +16,19 @@ interface ErrorModalProps {
   primaryBtnariaLabel?: string;
 }
 
-export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
-  show,
-  onClose,
-  title,
-  message,
-  primaryBtnAction,
-  primaryBtnText,
-  primaryBtndataTestid = 'Dismiss-button',
-  primaryBtnariaLabel = 'Dismiss',
-}) => {
-  const { t } = useTranslation();
-  return (
+export const ErrorModal: React.FC<ErrorModalProps> = React.memo(
+  ({
+    show,
+    onClose,
+    title,
+    message,
+    primaryBtnAction,
+    primaryBtnText,
+    primaryBtndataTestid = "Dismiss-button",
+    primaryBtnariaLabel = "Dismiss",
+  }) => {
+    const { t } = useTranslation();
+    return (
       <AppModal
         show={show}
         onHide={onClose}
@@ -38,19 +39,14 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
       >
         <AppModal.Header>
           <AppModal.Title id="error-modal-title" className="text-danger">
-            <p>
-              {t(title)}
-            </p>
+            <p>{t(title)}</p>
           </AppModal.Title>
           <div className="icon-close" onClick={onClose}>
-              <CloseIcon />
+            <CloseIcon data-testid="error-modal-close" />
           </div>
         </AppModal.Header>
         <AppModal.Body className="build-modal-body">
-          <div
-            className="d-flex flex-column"
-            id="error-modal-message"
-          >
+          <div className="d-flex flex-column" id="error-modal-message">
             <div
               className="message-primary"
               data-testid="error-modal-primary-message"
@@ -72,5 +68,6 @@ export const ErrorModal: React.FC<ErrorModalProps> = React.memo(({
           </div>
         </AppModal.Footer>
       </AppModal>
-  );
-});
+    );
+  }
+);

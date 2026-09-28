@@ -1,7 +1,7 @@
 enum User {
   AUTH_TOKEN = "AUTH_TOKEN",
   USER_DETAILS = "USER_DETAILS",
-  USER_ROLE = "USER_ROLE"
+  USER_ROLE = "USER_ROLE",
 }
 
 class StorageService {
@@ -15,16 +15,16 @@ class StorageService {
   public static get(key: string): string | null {
     return sessionStorage.getItem(key);
   }
-   /**
+  /**
    *
    * @param key
    * @returns the current value present in the session storage for
    * the given key, null if key is not present
    */
-  
+
   public static getParsedData(key: string): Object | null {
     const data = sessionStorage.getItem(key);
-    return data ? JSON.parse(data) : null
+    return data ? JSON.parse(data) : null;
   }
   /**
    * sets a new value for the key if present in the session storage
@@ -34,7 +34,7 @@ class StorageService {
    */
   public static save(key: string, value: string): void {
     sessionStorage.setItem(key, value);
-    localStorage.setItem(key,value);
+    localStorage.setItem(key, value);
   }
   /**
    * sets a new value for the key if present in the session storage

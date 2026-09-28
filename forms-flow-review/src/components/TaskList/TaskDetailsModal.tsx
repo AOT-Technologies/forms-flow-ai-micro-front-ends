@@ -17,7 +17,10 @@ import BundleTaskForm from "../BundleTaskForm";
 import TaskForm from "../TaskForm";
 import Loading from "../Loading/Loading";
 import type { Task } from "./TasklistTable";
-import { getFormIdSubmissionIdFromURL, getFormUrlWithFormIdSubmissionId } from "../../api/services/formatterService";
+import {
+  getFormIdSubmissionIdFromURL,
+  getFormUrlWithFormIdSubmissionId,
+} from "../../api/services/formatterService";
 import { onBPMTaskFormUpdate } from "../../api/services/bpmTaskServices";
 import { setBPMTaskDetailLoader } from "../../actions/taskActions";
 
@@ -90,10 +93,13 @@ const TaskDetailsModal = ({
   const { t } = useTranslation();
   const [notesText, setNotesText] = useState("");
   const [publicNotesText, setPublicNotesText] = useState("");
-  const [currentStatusValue, setCurrentStatusValue] = useState<string>("Pending");
+  const [currentStatusValue, setCurrentStatusValue] =
+    useState<string>("Pending");
   const task = useSelector((state: any) => state.task.taskDetail);
   const submission = useSelector((state: any) => state.submission);
-  const isBPMTaskDetailLoading = useSelector((state: any) => state.task.isBPMTaskDetailLoading);
+  const isBPMTaskDetailLoading = useSelector(
+    (state: any) => state.task.isBPMTaskDetailLoading
+  );
   const dispatch = useAppDispatch();
 
   // Sync local state with prop when it changes
@@ -111,7 +117,9 @@ const TaskDetailsModal = ({
         field: "created",
         headerName: t("Created On"),
         flex: 2,
-        renderCell: (params: any) => <span>{HelperServices.getShortDateAndTime(params.value)}</span>,
+        renderCell: (params: any) => (
+          <span>{HelperServices.getShortDateAndTime(params.value)}</span>
+        ),
         sortable: false,
       },
       {
@@ -127,7 +135,11 @@ const TaskDetailsModal = ({
         sortable: false,
         renderCell: (params: any) => {
           const entry = params.row;
-          return <span className="status-text">{entry.applicationStatus || "N/A"}</span>;
+          return (
+            <span className="status-text">
+              {entry.applicationStatus || "N/A"}
+            </span>
+          );
         },
       },
     ],
@@ -162,14 +174,20 @@ const TaskDetailsModal = ({
       ["Pending", "Approve", "Decline"].map((status) => ({
         label: t(status),
         value: status,
-        icon: <FormStatusIcon color={statusColorMap[status as keyof typeof statusColorMap]} />,
+        icon: (
+          <FormStatusIcon
+            color={statusColorMap[status as keyof typeof statusColorMap]}
+          />
+        ),
       })),
     [statusColorMap, t]
   );
 
   const resolvedStatusValue = useMemo(() => {
     const validValues = statusOptions.map((option) => option.value);
-    return currentStatusValue && validValues.includes(currentStatusValue) ? currentStatusValue : "Pending";
+    return currentStatusValue && validValues.includes(currentStatusValue)
+      ? currentStatusValue
+      : "Pending";
   }, [statusOptions, currentStatusValue]);
 
   const isUpdateButtonDisabled = useMemo(() => {
@@ -195,16 +213,16 @@ const TaskDetailsModal = ({
 
     // Map SelectDropdown value to applicationStatus
     const statusMapping: Record<string, string> = {
-      "Approve": "Approved",
-      "Decline": "Rejected",
-      "Pending": "Pending",
+      Approve: "Approved",
+      Decline: "Rejected",
+      Pending: "Pending",
     };
     const selectedStatus = resolvedStatusValue || statusValue || "Pending";
     const applicationStatus = statusMapping[selectedStatus] || selectedStatus;
-    
+
     // Get submittedBy from submission owner or currentUser
     const submittedBy = submission?.owner || currentUser || "";
-    
+
     const payload = {
       bpmnData: {
         variables: {
@@ -224,18 +242,14 @@ const TaskDetailsModal = ({
       },
     };
     dispatch(
-      onBPMTaskFormUpdate(
-        selectedTask.id,
-        payload,
-        (error: any) => {
-          dispatch(setBPMTaskDetailLoader(false));
-          if (!error) {
-            // Success: Close modal and refresh task list
-            onClose();
-            onRefresh?.();
-          }
+      onBPMTaskFormUpdate(selectedTask.id, payload, (error: any) => {
+        dispatch(setBPMTaskDetailLoader(false));
+        if (!error) {
+          // Success: Close modal and refresh task list
+          onClose();
+          onRefresh?.();
         }
-      )
+      })
     );
   };
 
@@ -276,9 +290,10 @@ const TaskDetailsModal = ({
         notesField="notes"
         sx={{
           width: "100%",
-          "& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer": {
-            justifyContent: "flex-start !important",
-          },
+          "& .MuiDataGrid-columnHeader--last .MuiDataGrid-columnHeaderTitleContainer":
+            {
+              justifyContent: "flex-start !important",
+            },
           "& .MuiDataGrid-cell.action-cell-stretch": {
             alignItems: "stretch !important",
           },
@@ -304,7 +319,9 @@ const TaskDetailsModal = ({
           className="text-area-full-width"
         />
         <CustomInfo
-          content={t("Notes will be visible to all users with access to the workflow including the applicant.")}
+          content={t(
+            "Notes will be visible to all users with access to the workflow including the applicant."
+          )}
           variant="plain"
           dataTestId="public-notes-info-message"
         />
@@ -330,7 +347,10 @@ const TaskDetailsModal = ({
   );
 
   const renderSubmissionContent = () => {
-    if (isTaskDetailsLoading || (!taskDetail?.formUrl && !taskDetail?.formType)) {
+    if (
+      isTaskDetailsLoading ||
+      (!taskDetail?.formUrl && !taskDetail?.formType)
+    ) {
       return <Loading />;
     }
 
@@ -381,16 +401,24 @@ const TaskDetailsModal = ({
     <ReusableLargeModal
       show={show}
       onClose={onClose}
-      title={taskDetail?.formType === "bundle" ? bundleName : taskDetail?.applicationId}
-      headerControl={isApprovalTask && headerStatusControl}      
-      primaryBtnText={isApprovalTask && "Update"}      
+      title={
+        taskDetail?.formType === "bundle"
+          ? bundleName
+          : taskDetail?.applicationId
+      }
+      headerControl={isApprovalTask && headerStatusControl}
+      primaryBtnText={isApprovalTask && "Update"}
       primaryBtnAction={handleUpdateClick}
       primaryBtnDisable={isUpdateButtonDisabled}
+      primaryBtndataTestid="task-details-update-button"
+      primaryBtnariaLabel={t("Update")}
       buttonLoading={isBPMTaskDetailLoading}
-      secondaryBtnText={isApprovalTask && "Cancel"}      
+      secondaryBtnText={isApprovalTask && "Cancel"}
       secondaryBtnAction={handleCancel}
       secondaryBtnDisable={isCancelDisabled}
       secondaryBtnLoading={isCancelLoading}
+      secondoryBtndataTestid="task-details-cancel-button"
+      secondoryBtnariaLabel={t("Cancel")}
       subtitle={
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2">
           <div className="d-flex gap-2">
@@ -401,13 +429,15 @@ const TaskDetailsModal = ({
               dataTestId="modal-submission-button"
               selected={modalViewType === "submission"}
             />
-            {isApprovalTask && <V8CustomButton
-              label={t("Notes")}
-              onClick={onNotesClick}
-              className="mr-2"
-              dataTestId="modal-notes-button"
-              selected={modalViewType === "notes"}
-            />}
+            {isApprovalTask && (
+              <V8CustomButton
+                label={t("Notes")}
+                onClick={onNotesClick}
+                className="mr-2"
+                dataTestId="modal-notes-button"
+                selected={modalViewType === "notes"}
+              />
+            )}
             <V8CustomButton
               label={t("History")}
               onClick={onHistoryClick}
@@ -417,7 +447,10 @@ const TaskDetailsModal = ({
           </div>
           <div className="d-flex gap-2 align-items-center ms-auto">
             <div className="task-assignee-wrapper">
-              <TaskAssigneeManager task={selectedTask} isFromTaskDetails={true} />
+              <TaskAssigneeManager
+                task={selectedTask}
+                isFromTaskDetails={true}
+              />
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "dist",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "Bundler"
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test*"]

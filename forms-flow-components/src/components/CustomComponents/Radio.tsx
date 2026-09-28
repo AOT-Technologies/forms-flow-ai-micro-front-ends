@@ -76,7 +76,10 @@ let __radioGroupInstanceCounter = 0;
  *   onChange={(val) => setValue(val)}
  * />
  */
-const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioButtonProps>(
+const CustomRadioButtonComponent = forwardRef<
+  HTMLFieldSetElement,
+  CustomRadioButtonProps
+>(
   (
     {
       items,
@@ -102,7 +105,8 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
     const { t } = useTranslation();
 
     // Prefer selectedValue; support value as a legacy alias
-    const effectiveSelectedValue = selectedValue !== undefined ? selectedValue : value;
+    const effectiveSelectedValue =
+      selectedValue !== undefined ? selectedValue : value;
 
     const handleChange = useCallback(
       (optionValue: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,7 +129,9 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
     );
 
     // fieldset with legend provides native grouping and accessible name
-    const groupIdRef = useRef<string>(id || name || `radio-group-${++__radioGroupInstanceCounter}`);
+    const groupIdRef = useRef<string>(
+      id || name || `radio-group-${++__radioGroupInstanceCounter}`
+    );
     const groupIdBase = groupIdRef.current;
 
     const groupLegend = legend || label;
@@ -145,24 +151,22 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
     const itemValues = useMemo(() => items.map((opt) => opt.value), [items]);
 
     const checkedIndex = itemValues.indexOf(effectiveSelectedValue as any);
-    const firstEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes[0] : -1;
+    const firstEnabledIndex =
+      enabledIndexes.length > 0 ? enabledIndexes[0] : -1;
 
-    const focusAndSelectByIndex = useCallback(
-      (targetIndex: number) => {
-        const input = optionRefs.current[targetIndex];
-        if (!input) return;
-        input.focus();
-        // Trigger change for controlled update
-        input.click();
-      },
-      []
-    );
+    const focusAndSelectByIndex = useCallback((targetIndex: number) => {
+      const input = optionRefs.current[targetIndex];
+      if (!input) return;
+      input.focus();
+      // Trigger change for controlled update
+      input.click();
+    }, []);
 
     const findNextEnabledIndex = useCallback(
       (start: number, delta: number) => {
         if (enabledIndexes.length === 0) return -1;
         let startPos = Math.max(0, start);
-        
+
         for (const _ of items) {
           const nextPos = (startPos + delta + items.length) % items.length;
           if (items[nextPos] && !disabled && !items[nextPos].disabled) {
@@ -179,7 +183,14 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
       (event: React.KeyboardEvent<HTMLFieldSetElement>) => {
         if (disabled) return;
         const { key } = event;
-        const arrowKeys = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Home", "End"] as const;
+        const arrowKeys = [
+          "ArrowRight",
+          "ArrowLeft",
+          "ArrowUp",
+          "ArrowDown",
+          "Home",
+          "End",
+        ] as const;
         if (!arrowKeys.includes(key as any)) return;
 
         event.preventDefault();
@@ -187,7 +198,8 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
 
         const activeEl = document.activeElement as HTMLInputElement | null;
         const currentIndex = optionRefs.current.indexOf(activeEl);
-        const fallbackIndex = checkedIndex !== -1 ? checkedIndex : firstEnabledIndex;
+        const fallbackIndex =
+          checkedIndex !== -1 ? checkedIndex : firstEnabledIndex;
         const baseIndex = currentIndex === -1 ? fallbackIndex : currentIndex;
 
         if (baseIndex === -1) return;
@@ -197,7 +209,8 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
           return;
         }
         if (key === "End") {
-          const lastEnabledIndex = enabledIndexes.length > 0 ? enabledIndexes.at(-1) : -1;
+          const lastEnabledIndex =
+            enabledIndexes.length > 0 ? enabledIndexes.at(-1) : -1;
           if (lastEnabledIndex !== -1) focusAndSelectByIndex(lastEnabledIndex);
           return;
         }
@@ -206,7 +219,14 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
         const nextIndex = findNextEnabledIndex(baseIndex, delta);
         if (nextIndex !== -1) focusAndSelectByIndex(nextIndex);
       },
-      [checkedIndex, disabled, enabledIndexes, findNextEnabledIndex, firstEnabledIndex, focusAndSelectByIndex]
+      [
+        checkedIndex,
+        disabled,
+        enabledIndexes,
+        findNextEnabledIndex,
+        firstEnabledIndex,
+        focusAndSelectByIndex,
+      ]
     );
 
     return (
@@ -223,33 +243,34 @@ const CustomRadioButtonComponent = forwardRef<HTMLFieldSetElement, CustomRadioBu
         >
           {groupLegend ? <legend>{t(groupLegend)}</legend> : null}
           {items.map((option, index) => {
-          const optionId = `${groupIdBase}-${index + 1}`;
-          const isChecked = effectiveSelectedValue === option.value;
-          const isOptionDisabled = disabled || !!option.disabled;
-          const isTabbable = isChecked || (checkedIndex === -1 && index === firstEnabledIndex);
-          return (
-            <Form.Check
-              inline={inline}
-              label={t(option.label)}
-              value={String(option.value)}
-              name={name || groupIdBase}
-              type="radio"
-              id={optionId}
-              data-testid={`${dataTestId}-inline-radio-${index + 1}`}
-              key={String(option.value ?? option.label ?? index)}
-              checked={!!isChecked}
-              disabled={isOptionDisabled}
-              onChange={handleChange(option.value)}
-              onClick={option.onClick}
-              className={optionClassName}
-              required={required}
-              tabIndex={isTabbable ? 0 : -1}
-              ref={(el: HTMLInputElement | null) => {
-                optionRefs.current[index] = el;
-              }}
-            />
-          );
-        })}
+            const optionId = `${groupIdBase}-${index + 1}`;
+            const isChecked = effectiveSelectedValue === option.value;
+            const isOptionDisabled = disabled || !!option.disabled;
+            const isTabbable =
+              isChecked || (checkedIndex === -1 && index === firstEnabledIndex);
+            return (
+              <Form.Check
+                inline={inline}
+                label={t(option.label)}
+                value={String(option.value)}
+                name={name || groupIdBase}
+                type="radio"
+                id={optionId}
+                data-testid={`${dataTestId}-inline-radio-${index + 1}`}
+                key={String(option.value ?? option.label ?? index)}
+                checked={!!isChecked}
+                disabled={isOptionDisabled}
+                onChange={handleChange(option.value)}
+                onClick={option.onClick}
+                className={optionClassName}
+                required={required}
+                tabIndex={isTabbable ? 0 : -1}
+                ref={(el: HTMLInputElement | null) => {
+                  optionRefs.current[index] = el;
+                }}
+              />
+            );
+          })}
         </fieldset>
       </Form>
     );

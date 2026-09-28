@@ -1,10 +1,13 @@
-import { useEffect, useCallback, useState, useRef } from "react";
+import { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../hooks";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { textTruncate } from "../helper/helper.js";
-import {fetchTaskVariables, executeRule} from "../api/services/filterServices"
+import {
+  fetchTaskVariables,
+  executeRule,
+} from "../api/services/filterServices";
 import BundleTaskForm from "../components/BundleTaskForm";
 import {
   getBPMTaskDetail,
@@ -19,7 +22,11 @@ import {
   resetSubmission,
 } from "@aot-technologies/formio-react";
 import { Formio } from "@aot-technologies/formiojs";
-import { BackToPrevIcon, CustomButton, BreadCrumbs } from "@formsflow/components";
+import {
+  BackToPrevIcon,
+  CustomButton,
+  BreadCrumbs,
+} from "@formsflow/components";
 import {
   getFormIdSubmissionIdFromURL,
   getFormUrlWithFormIdSubmissionId,
@@ -35,8 +42,8 @@ import {
   setBundleLoading,
   setBundleErrors,
   setTaskFormSubmissionReload,
-  } from "../actions/taskActions";
-import { getFormioRoleIds } from "../api/services/userSrvices";
+} from "../actions/taskActions";
+import { getFormioRoleIds } from "../api/services/userServices";
 import {
   CUSTOM_SUBMISSION_URL,
   CUSTOM_SUBMISSION_ENABLE,
@@ -44,7 +51,10 @@ import {
 } from "../constants/index";
 import TaskForm from "../components/TaskForm";
 import { TaskHistoryModal } from "../components/TaskHistory";
-import { navigateToTaskListingFromReview, getRedirectUrl } from "@formsflow/service";
+import {
+  navigateToTaskListingFromReview,
+  getRedirectUrl,
+} from "@formsflow/service";
 import { userRoles } from "../helper/permissions";
 import TaskAssigneeManager from "../components/Assigne/Assigne";
 
@@ -53,13 +63,16 @@ const TaskDetails = () => {
   const { taskId } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const {viewTaskHistory} = userRoles();
+  const { viewTaskHistory } = userRoles();
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [bundleFormData, setBundleFormData] = useState<{ formId: string; submissionId: string }>({
+  const [bundleFormData, setBundleFormData] = useState<{
+    formId: string;
+    submissionId: string;
+  }>({
     formId: "",
     submissionId: "",
   });
-  
+
   // Redux State Selectors
   const tenantKeyFromState = useSelector(
     (state: any) => state.tenants?.tenantData?.key
@@ -71,15 +84,20 @@ const TaskDetails = () => {
   const taskFormSubmissionReload = useSelector(
     (state: any) => state.task.taskFormSubmissionReload
   );
-  const selectedForms = useSelector((state: any) => state.task.selectedForms || []);
-  const [bundleName, setBundleName] = useState('');
-
-  const currentUser = JSON.parse(
-    localStorage.getItem("UserDetails") || "{}"
-  )?.preferred_username;
-  const taskAssignee = useSelector(
-    (state: any) => state?.task?.taskAssignee
+  const selectedForms = useSelector(
+    (state: any) => state.task.selectedForms || []
   );
+  const [bundleName, setBundleName] = useState("");
+
+  // Parse once per mount instead of per render; UserDetails only changes via
+  // auth events, which remount the MFE.
+  const currentUser = useMemo(
+    () =>
+      JSON.parse(localStorage.getItem("UserDetails") || "{}")
+        ?.preferred_username,
+    []
+  );
+  const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
   const disabledMode = taskAssignee !== currentUser;
   // Redirection URL
   const redirectUrl = getRedirectUrl(tenantKey);
@@ -112,48 +130,48 @@ const TaskDetails = () => {
 
   //disable the form if task not assigned to himself
 
-    //test to see task assignee data is captured
-    useEffect(() => {
-      console.log("task test",task);
-    }, [task]);
+  //test to see task assignee data is captured
+  useEffect(() => {
+    console.log("task test", task);
+  }, [task]);
 
-    useEffect(() => {
-      if (task?.formType === "bundle") {
-        Formio.clearCache();
-        dispatch(resetFormData("form"));
-        setBundleLoading(false);
-    
-        const { formId, submissionId } = getFormIdSubmissionIdFromURL(task.formUrl);
-        setBundleFormData({ formId, submissionId });
-    
-        fetchTaskVariables(task?.formId)
-          .then((res) => {
-            setBundleName(res.data.formName);
-            executeRule(
-              {
-                submissionType: "fetch",
-                formId: formId,
-                submissionId: submissionId,
-              },
-              res.data.id
-            )
-              .then((res: { data: unknown }) => {
-                dispatch(setBundleSelectedForms(res.data));
-              })
-              .catch((err: unknown) => {
-                setBundleErrors(err);
-              })
-              .finally(() => {
-                setBundleLoading(false);
-              });
+  useEffect(() => {
+    if (task?.formType === "bundle") {
+      Formio.clearCache();
+      dispatch(resetFormData("form"));
+      setBundleLoading(false);
+
+      const { formId, submissionId } = getFormIdSubmissionIdFromURL(
+        task.formUrl
+      );
+      setBundleFormData({ formId, submissionId });
+
+      fetchTaskVariables(task?.formId).then((res) => {
+        setBundleName(res.data.formName);
+        executeRule(
+          {
+            submissionType: "fetch",
+            formId: formId,
+            submissionId: submissionId,
+          },
+          res.data.id
+        )
+          .then((res: { data: unknown }) => {
+            dispatch(setBundleSelectedForms(res.data));
+          })
+          .catch((err: unknown) => {
+            setBundleErrors(err);
+          })
+          .finally(() => {
+            setBundleLoading(false);
           });
-    
-        return () => {
-          dispatch(setBundleSelectedForms([]));
-        };
-      }
-    }, [task?.formType, task?.formId]);
-    
+      });
+
+      return () => {
+        dispatch(setBundleSelectedForms([]));
+      };
+    }
+  }, [task?.formType, task?.formId]);
 
   // Set selected task ID on mount
   useEffect(() => {
@@ -223,9 +241,13 @@ const TaskDetails = () => {
       getFormSubmissionData(task.formUrl);
     }
   }, [task?.formUrl, task?.formType, getFormSubmissionData]);
- 
+
   useEffect(() => {
-    if (task?.formUrl && taskFormSubmissionReload && task?.formType !== "bundle") {
+    if (
+      task?.formUrl &&
+      taskFormSubmissionReload &&
+      task?.formType !== "bundle"
+    ) {
       dispatch(setFormSubmissionLoading(true));
       getFormSubmissionData(task.formUrl);
     }
@@ -245,17 +267,16 @@ const TaskDetails = () => {
     const formUrl = getFormUrlWithFormIdSubmissionId(formId, submissionId);
     const webFormUrl = `${window.location.origin}/form/${formId}/submission/${submissionId}`;
     const payload = {
-      variables:{
-        formUrl:{value:formUrl},
-        applicationId:{value:task.applicationId},
-        webFormUrl:{value:webFormUrl},
-        action:{value:actionType}
-      }
-    }
+      variables: {
+        formUrl: { value: formUrl },
+        applicationId: { value: task.applicationId },
+        webFormUrl: { value: webFormUrl },
+        action: { value: actionType },
+      },
+    };
     dispatch(
-      onBPMTaskFormSubmit(
-        bpmTaskId,payload,
-        () => dispatch(setBPMTaskDetailLoader(false))
+      onBPMTaskFormSubmit(bpmTaskId, payload, () =>
+        dispatch(setBPMTaskDetailLoader(false))
       )
     );
     handleBack();
@@ -287,7 +308,7 @@ const TaskDetails = () => {
   // Breadcrumb configuration
   const breadcrumbItems = [
     { label: t("Tasks"), id: "tasks" },
-    { label: t("Submission"), id: "submission" }
+    { label: t("Submission"), id: "submission" },
   ];
 
   const handleBreadcrumbClick = (item: { label: string; id?: string }) => {
@@ -306,7 +327,7 @@ const TaskDetails = () => {
           task={task}
         />
       )}
-      
+
       <div className="nav-bar">
         <div style={{ marginBottom: "10px" }}>
           <BreadCrumbs
@@ -317,12 +338,16 @@ const TaskDetails = () => {
           />
         </div>
         <div className="icon-back" onClick={handleBack}>
-          <BackToPrevIcon data-testid="back-to-prev"/>
+          <BackToPrevIcon data-testid="back-to-prev" />
         </div>
 
         <div className="description">
           <p className="text-main">
-            {textTruncate(75, 75, task?.formType === "bundle" ? bundleName : task?.name)}
+            {textTruncate(
+              75,
+              75,
+              task?.formType === "bundle" ? bundleName : task?.name
+            )}
           </p>
         </div>
         {/* Right Section: TaskAssigneeManager + History Button */}
@@ -330,30 +355,38 @@ const TaskDetails = () => {
         <div className="buttons">
           <TaskAssigneeManager task={task} isFromTaskDetails={true} />
 
-          {viewTaskHistory && <CustomButton
-            label={t("History")}
-            onClick={handleHistory}
-            dataTestId="handle-task-details-history-testid"
-            ariaLabel={t("Submission History Button")}
-            dark
-          />
-          }
+          {viewTaskHistory && (
+            <CustomButton
+              label={t("History")}
+              onClick={handleHistory}
+              dataTestId="handle-task-details-history-testid"
+              ariaLabel={t("Submission History Button")}
+              dark
+            />
+          )}
         </div>
       </div>
 
-      {task?.formType === "bundle" && selectedForms?.length ? <BundleTaskForm
-         currentUser={currentUser}
-         onFormSubmit={onFormSubmitCallback}
-         bundleFormData={bundleFormData}
-         onCustomEvent={onCustomEventCallBack}
-       /> : 
-      <div className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${disabledMode ? "disabled-mode":"bg-white"}`}>
-       <TaskForm
-       currentUser={currentUser}
-       onFormSubmit={onFormSubmitCallback}
-       onCustomEvent={onCustomEventCallBack}
-     /> 
-      </div>}
+      {task?.formType === "bundle" && selectedForms?.length ? (
+        <BundleTaskForm
+          currentUser={currentUser}
+          onFormSubmit={onFormSubmitCallback}
+          bundleFormData={bundleFormData}
+          onCustomEvent={onCustomEventCallBack}
+        />
+      ) : (
+        <div
+          className={`scrollable-overview-with-header bg-white ps-3 pe-3 m-0 form-border ${
+            disabledMode ? "disabled-mode" : "bg-white"
+          }`}
+        >
+          <TaskForm
+            currentUser={currentUser}
+            onFormSubmit={onFormSubmitCallback}
+            onCustomEvent={onCustomEventCallBack}
+          />
+        </div>
+      )}
     </>
   );
 };

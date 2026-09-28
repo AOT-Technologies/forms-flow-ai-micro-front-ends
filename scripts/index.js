@@ -29,6 +29,21 @@ const compressFileAndUpload = (fileName, filePath) => {
     });
 };
 
+// Code-split (lazy-loaded) chunks, e.g. 508.forms-flow-submissions.js: the
+// browser requests them by their emitted name, so the S3 key must keep the
+// original file name; the body is gzipped and served with Content-Encoding.
+const chunkFilePattern = new RegExp(`^\\d+\\.${component}\\.js$`);
+
+const compressChunkAndUpload = (fileName, filePath) => {
+  createReadStream(`${filePath}/${fileName}`)
+    .pipe(createGzip())
+    .pipe(createWriteStream(`${filePath}/${fileName}.gz`))
+    .on("finish", () => {
+      console.log(`Successfully compressed the chunk ${fileName}`);
+      upload(fileName, `${filePath}/${fileName}.gz`);
+    });
+};
+
 const run = async (params) => {
   // Create an object and upload it to the Amazon S3 bucket.
   try {
@@ -96,6 +111,9 @@ function walkFunc(err, pathname, dirent) {
 
       if (fileName === `${component}.js`) {
         compressFileAndUpload(fileName, filePath);
+      }
+      if (chunkFilePattern.test(fileName)) {
+        compressChunkAndUpload(fileName, filePath);
       }
       if (fileName === `${component}.min.css`) {
         upload(fileName, `${filePath}/${fileName}`);

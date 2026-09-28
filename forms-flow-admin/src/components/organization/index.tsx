@@ -1,14 +1,25 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { V8CustomButton, UpArrowIcon, DownArrowIcon } from "@formsflow/components";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import {
+  V8CustomButton,
+  UpArrowIcon,
+  DownArrowIcon,
+} from "@formsflow/components";
 import "./organization.scss";
-import { RequestService, StorageService } from "@formsflow/service";
+import {
+  RequestService,
+  StorageService,
+  fetchFeatureUsage,
+  mapUsageResponse,
+  SUBMISSION_FEATURE_KEY,
+} from "@formsflow/service";
+import { UsageSummaryCard } from "./UsageSummaryCard";
 import API from "../../endpoints";
 import {
   MULTITENANCY_ENABLED,
-  URL_CONTACT_SALES,
   URL_TERMS_AND_CONDITIONS,
   URL_PRIVACY_POLICY,
 } from "../../constants";
@@ -18,27 +29,42 @@ interface AccordionSectionProps {
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
+  dataTestId?: string;
 }
 
-const AccordionSection: React.FC<AccordionSectionProps> = ({ title, isOpen, onToggle, children }) => {
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onToggle();
-    }
-  }, [onToggle]);
+const AccordionSection: React.FC<AccordionSectionProps> = ({
+  title,
+  isOpen,
+  onToggle,
+  children,
+  dataTestId,
+}) => {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onToggle();
+      }
+    },
+    [onToggle]
+  );
 
   return (
     <div className="organization-section">
-      <div 
+      <div
         className="organization-section-header"
         onClick={onToggle}
         role="button"
         tabIndex={0}
         onKeyDown={handleKeyDown}
+        data-testid={dataTestId}
       >
         <h3 className="organization-section-title">{title}</h3>
-        {isOpen ? <UpArrowIcon className="svgIcon-medium-dark"/> : <DownArrowIcon className="svgIcon-medium-dark"/>}
+        {isOpen ? (
+          <UpArrowIcon className="svgIcon-medium-dark" />
+        ) : (
+          <DownArrowIcon className="svgIcon-medium-dark" />
+        )}
       </div>
       <Collapse in={isOpen}>
         <div>{children}</div>
@@ -47,159 +73,74 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({ title, isOpen, onTo
   );
 };
 
-/** Parse tenant API datetimes (e.g. "2026-05-10 11:01:50.557276") with full time resolution. */
-function parseTenantDateTime(value: unknown): Date | null {
-  if (value == null || value === "") return null;
-
-  if (typeof value === "number" && Number.isFinite(value)) {
-    const d = new Date(value);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-
-  if (value instanceof Date) {
-    return Number.isNaN(value.getTime()) ? null : value;
-  }
-
-  if (typeof value === "string") {
-    const s = value.trim();
-    if (!s) return null;
-    if (s.toLowerCase() === "none") return null;
-    const withT = /\d{4}-\d{2}-\d{2}\s+\d/.test(s)
-      ? s.replace(/^(\d{4}-\d{2}-\d{2})\s+/, "$1T")
-      : s;
-    const msPrecision = withT.replace(/(\.\d{3})\d+/, "$1");
-    const d = new Date(msPrecision);
-    return Number.isNaN(d.getTime()) ? null : d;
-  }
-
-  return null;
-}
-
-function subscriptionStatusFromApi(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-type SubscriptionUiKind = "active" | "trial" | "expired" | "cancelled" | "none";
-
-function resolveSubscriptionUiKind(
-  tenant: Record<string, unknown>,
-  daysDifference: number | null
-): SubscriptionUiKind {
-  const status = subscriptionStatusFromApi(tenant?.subscription_status);
-
-  if (status === "canceled") {
-    return "cancelled";
-  }
-  if (status === "expired") {
-    return "expired";
-  }
-  if (status === "active") {
-    return "active";
-  }
-  if(!status) {
-    return "trial";
-  }
-
-  const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
-  const expiry = parseTenantDateTime(tenant?.expiry_dt);
-
-  if (expiry && trialExpiry) {
-    if (daysDifference !== null && daysDifference > 0) {
-      return "trial";
-    }
-    if (daysDifference !== null && daysDifference <= 0) {
-      return "expired";
-    }
-  }
-  if (expiry && daysDifference !== null && daysDifference > 0) {
-    return "trial";
-  }
-  if (daysDifference !== null && daysDifference > 0) {
-    return "trial";
-  }
-  return "none";
-}
-
-function getSubscriptionPresentation(
-  kind: SubscriptionUiKind,
-  daysDifference: number | null,
-  t: (key: string, opts?: Record<string, unknown>) => string
-): { title: string; description: string } {
-  switch (kind) {
-    case "active":
-      return {
-        title: t("Active"),
-        description: t("You are currently using a paid version of formsflow."),
-      };
-    case "trial":
-    case "expired":
-    case "cancelled":
-      return {
-        title: t("Go"),
-        description: "You are currently using a free version of formsflow.",
-      };
-    default:
-      return { title: "", description: "" };
-  }
-}
-
 const Organization: React.FC<any> = (props) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
-  const [subscriptionOpen, setSubscriptionOpen] = useState(true);
   const [termsOpen, setTermsOpen] = useState(true);
-  const [daysDifference, setDaysDifference] = useState<number | null>(null);
-  const [subscriptionKind, setSubscriptionKind] =
-    useState<SubscriptionUiKind>("none");
 
-  const applyTenantSubscriptionState = useCallback((tenant: Record<string, unknown>) => {
+  const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
+  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
+
+  // Every CTA the card can render - "Upgrade to Professional Plan", "Upgrade to 2500
+  // submissions" and "Discover Enterprise" - goes to the plans page, matching the home
+  // banner. Uses the admin app's own MULTITENANCY_ENABLED rather than getRoute(), so the
+  // path always matches the registered <Route path="plans"> in index.tsx.
+  const openUpgrade = useCallback(() => {
+    if (MULTITENANCY_ENABLED && !tenantKey) {
+      return;
+    }
+    navigate(`${baseUrl}admin/plans`);
+  }, [baseUrl, navigate, tenantKey]);
+
+  // Seeded from the cached record so the card paints immediately, then refreshed below.
+  const [tenantData, setTenantData] = useState<Record<string, any> | null>(() => {
     try {
-      const expiry = parseTenantDateTime(tenant?.expiry_dt);
-      const trialExpiry = parseTenantDateTime(tenant?.trial_expiry_dt);
-      const endDate = expiry ?? trialExpiry;
-
-      let days: number | null = null;
-      if (endDate) {
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-        const end = new Date(endDate);
-        end.setHours(0, 0, 0, 0);
-        days = Math.floor(
-          (end.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24)
-        );
-      }
-
-      setDaysDifference(days);
-      setSubscriptionKind(resolveSubscriptionUiKind(tenant, days));
+      const cached = StorageService.get("tenantData");
+      return cached ? JSON.parse(cached) : null;
     } catch (error) {
-      console.error("Error calculating subscription state:", error);
-      setDaysDifference(null);
-      setSubscriptionKind("none");
+      console.error("Error parsing tenantData:", error);
+      return null;
+    }
+  });
+
+  // Fetched here rather than shared from the home page: this route can be opened directly,
+  // so nothing guarantees the home page ever mounted. The request, the calculations and the
+  // response mapping all come from @formsflow/service, so this card and the home banner
+  // cannot report different numbers.
+  // tenantKey is in the key because the response is scoped to the tenant in the bearer
+  // token, which the key cannot otherwise see. Without it a tenant switch serves the
+  // previous tenant's cached usage, and with retry:false a failed refetch keeps it.
+  const { data: featureUsage } = useQuery(
+    ["usage", tenantKey, SUBMISSION_FEATURE_KEY],
+    () => fetchFeatureUsage(SUBMISSION_FEATURE_KEY)
+  );
+
+  // Null while loading, on a failed fetch, or when the plan has no metered allowance - the
+  // card is hidden in all three cases rather than showing a misleading number.
+  const usage = useMemo(
+    () => mapUsageResponse(featureUsage, tenantData),
+    [featureUsage, tenantData]
+  );
+
+  const userRoles = useMemo<string[]>(() => {
+    try {
+      const parsed = JSON.parse(
+        StorageService.get(StorageService.User.USER_ROLE) || "[]"
+      );
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.error("Error parsing user roles:", error);
+      return [];
     }
   }, []);
+  const isOrganizationManager = userRoles.includes("manage_organization");
 
+  // Refreshes the cached tenant record. The home page reads the same storage keys, so this
+  // effect is kept even though the subscription summary it used to feed has been replaced.
   useEffect(() => {
     let cancelled = false;
-
-    const readFromStorage = () => {
-      const tenantDataStr = StorageService.get("tenantData");
-      if (!tenantDataStr) {
-        setDaysDifference(null);
-        setSubscriptionKind("trial");
-        return;
-      }
-      try {
-        applyTenantSubscriptionState(JSON.parse(tenantDataStr));
-      } catch (error) {
-        console.error("Error parsing tenantData:", error);
-        setDaysDifference(null);
-        setSubscriptionKind("none");
-      }
-    };
-
-    readFromStorage();
 
     if (!MULTITENANCY_ENABLED) {
       return () => {
@@ -207,7 +148,9 @@ const Organization: React.FC<any> = (props) => {
       };
     }
 
-    const tenantUrl = `${API.GET_TENANT_DATA}${API.GET_TENANT_DATA.includes("?") ? "&" : "?"}_t=${Date.now()}`;
+    const tenantUrl = `${API.GET_TENANT_DATA}${
+      API.GET_TENANT_DATA.includes("?") ? "&" : "?"
+    }_t=${Date.now()}`;
     RequestService.httpGETRequest(tenantUrl, null, null)
       .then((res) => {
         if (cancelled || !res?.data) return;
@@ -215,7 +158,7 @@ const Organization: React.FC<any> = (props) => {
         if (res.data.key) {
           StorageService.save("tenantKey", res.data.key);
         }
-        applyTenantSubscriptionState(res.data as Record<string, unknown>);
+        setTenantData(res.data);
       })
       .catch((err) => {
         console.error("Failed to refresh tenant for Organization:", err);
@@ -224,36 +167,22 @@ const Organization: React.FC<any> = (props) => {
     return () => {
       cancelled = true;
     };
-  }, [applyTenantSubscriptionState, location.pathname]);
-  const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
-  const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
-
-  const openUpgrade = () => {
-    if (!tenantKey) {
-      return;
-    }
-    // Use admin app MULTITENANCY_ENABLED (same as index.tsx routes), not @formsflow/service getRoute(),
-    // so the path always matches the registered <Route> for plans.
-    navigate(`${baseUrl}admin/plans`);
-  };
-
-  const { title: subscriptionTitle, description: subscriptionDescription } =
-    getSubscriptionPresentation(subscriptionKind, daysDifference, t);
+  }, [location.pathname]);
 
   const renderExternalButtons = (label: string) => {
-    const key = label.toLowerCase()
-      .replace(/view our /g, '')
-      .split(' ')[0]; // Extract first word after "view our"
+    const key = label
+      .toLowerCase()
+      .replace(/view our /g, "")
+      .split(" ")[0]; // Extract first word after "view our"
     const dataTestId = `view-${key}-button`;
-  
+
     const urlMap: Record<string, string> = {
-      "Contact Sales": URL_CONTACT_SALES,
       "View our Terms and Conditions": URL_TERMS_AND_CONDITIONS,
       "View our Privacy Policy": URL_PRIVACY_POLICY,
     };
-  
+
     const url = urlMap[label];
-  
+
     return (
       <V8CustomButton
         label={t(label)}
@@ -268,39 +197,25 @@ const Organization: React.FC<any> = (props) => {
   return (
     <div className="organization-container">
       <div className="organization-content">
-        <AccordionSection
-          title={t("Subscription")}
-          isOpen={subscriptionOpen}
-          onToggle={() => setSubscriptionOpen(!subscriptionOpen)}
-        >
-          <div className="subscription-card">
-            <div className="subscription-status">
-              <span className="status-text">{subscriptionTitle}</span>
-            </div>
-            {subscriptionDescription ? (
-              <p className="subscription-description">{subscriptionDescription}</p>
-            ) : null}
-
-            <div className="subscription-card-actions">
-              <V8CustomButton
-                label={t("Upgrade")}
-                variant="secondary"
-                dataTestId="subscription-upgrade-button"
-                onClick={openUpgrade}
-              />
-              {renderExternalButtons("Contact Sales")}
-            </div>
+        {isOrganizationManager && usage && (
+          <div className="organization-usage">
+            <UsageSummaryCard
+              {...usage}
+              onUpgrade={openUpgrade}
+              dataTestId="organization-usage-summary-card"
+            />
           </div>
-        </AccordionSection>
+        )}
 
         <AccordionSection
           title={t("Terms & Conditions")}
           isOpen={termsOpen}
           onToggle={() => setTermsOpen(!termsOpen)}
+          dataTestId="organization-terms-toggle"
         >
           <div className="terms-actions">
-            {renderExternalButtons('View our Terms and Conditions')}
-            {renderExternalButtons('View our Privacy Policy')}
+            {renderExternalButtons("View our Terms and Conditions")}
+            {renderExternalButtons("View our Privacy Policy")}
           </div>
         </AccordionSection>
       </div>

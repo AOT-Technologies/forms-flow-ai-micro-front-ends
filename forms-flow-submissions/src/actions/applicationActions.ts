@@ -1,13 +1,11 @@
 import ACTION_CONSTANTS from "../actions/actionConstants";
 
-
 export const setApplicationDetail = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.APPLICATION_DETAIL,
     payload: data,
   });
 };
-
 
 export const setCustomSubmission = (data) => (dispatch) => {
   dispatch({

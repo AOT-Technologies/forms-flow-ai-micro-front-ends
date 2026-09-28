@@ -1,6 +1,6 @@
 import React from "react";
 import { AppModal } from "./AppModal";
-import {V8CustomButton} from "./CustomButton";
+import { V8CustomButton } from "./CustomButton";
 import { CloseIcon } from "../SvgIcons/index";
 import { useTranslation } from "react-i18next";
 
@@ -16,40 +16,41 @@ interface ConfirmModalProps {
   primaryBtnDisable?: boolean;
   primaryBtndataTestid?: string;
   primaryBtnariaLabel?: string;
-  buttonLoading?:boolean;
+  buttonLoading?: boolean;
   secondaryBtnText: string;
   secondaryBtnDisable?: boolean;
   secondoryBtndataTestid?: string;
   secondoryBtnariaLabel?: string;
-  secondaryBtnLoading?:boolean;
+  secondaryBtnLoading?: boolean;
   datatestId?: string;
   titleDataTestId?: string;
 }
 
-export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
-  show,
-  onClose,
-  secondaryBtnAction,
-  title,
-  message,
-  messageSecondary = '',
-  primaryBtnAction,
-  primaryBtnText,
-  primaryBtnDisable = false,
-  primaryBtndataTestid = 'confirm-button',
-  primaryBtnariaLabel = 'Confirm Button',
-  buttonLoading= false,
-  secondaryBtnText,
-  secondaryBtnDisable = false,
-  secondoryBtndataTestid = 'cancel-button',
-  secondoryBtnariaLabel = 'Cancel Button',
-  secondaryBtnLoading= false,
-  datatestId,
-  titleDataTestId,
-}) => {
-  const { t } = useTranslation();
-  return (
-    <AppModal
+export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(
+  ({
+    show,
+    onClose,
+    secondaryBtnAction,
+    title,
+    message,
+    messageSecondary = "",
+    primaryBtnAction,
+    primaryBtnText,
+    primaryBtnDisable = false,
+    primaryBtndataTestid = "confirm-button",
+    primaryBtnariaLabel = "Confirm Button",
+    buttonLoading = false,
+    secondaryBtnText,
+    secondaryBtnDisable = false,
+    secondoryBtndataTestid = "cancel-button",
+    secondoryBtnariaLabel = "Cancel Button",
+    secondaryBtnLoading = false,
+    datatestId,
+    titleDataTestId,
+  }) => {
+    const { t } = useTranslation();
+    return (
+      <AppModal
         show={show}
         onHide={onClose}
         data-testid="confirm-modal"
@@ -57,23 +58,21 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         aria-describedby="confirm-modal-message"
       >
         <AppModal.Header className="d-flex justify-content-between align-items-center">
-          <AppModal.Title id="confirm-modal-title" data-testid={titleDataTestId}>
-            <p className="m-0">
-              {t(title)}
-            </p>
+          <AppModal.Title
+            id="confirm-modal-title"
+            data-testid={titleDataTestId}
+          >
+            <p className="m-0">{t(title)}</p>
           </AppModal.Title>
           <div className="icon-close" onClick={onClose}>
-              <CloseIcon data-testid="confirm-modal-close"/>
+            <CloseIcon data-testid="confirm-modal-close" />
           </div>
         </AppModal.Header>
         <AppModal.Body className="build-modal-body">
-          <div
-            className="d-flex flex-column"
-            id="confirm-modal-message"
-          >
+          <div className="d-flex flex-column" id="confirm-modal-message">
             <div
               className="message-primary"
-              data-testid={ datatestId }
+              data-testid={datatestId}
               aria-label="Primary message"
             >
               {message}
@@ -91,28 +90,31 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = React.memo(({
         </AppModal.Body>
         <AppModal.Footer>
           <div className="buttons-row">
-          {primaryBtnText &&
-            <V8CustomButton
-              label={primaryBtnText}
-              disabled={primaryBtnDisable}
-              onClick={primaryBtnAction}
-              dataTestId={primaryBtndataTestid}
-              ariaLabel={primaryBtnariaLabel}
-              loading={buttonLoading}
-              variant="primary" 
-            />}
-          {secondaryBtnText &&
-            <V8CustomButton
-              label={secondaryBtnText}
-              onClick={secondaryBtnAction}
-              dataTestId={secondoryBtndataTestid}
-              ariaLabel={secondoryBtnariaLabel}
-              disabled={secondaryBtnDisable}
-              loading={secondaryBtnLoading}
-              variant="secondary"
-            />}
+            {primaryBtnText && (
+              <V8CustomButton
+                label={primaryBtnText}
+                disabled={primaryBtnDisable}
+                onClick={primaryBtnAction}
+                dataTestId={primaryBtndataTestid}
+                ariaLabel={primaryBtnariaLabel}
+                loading={buttonLoading}
+                variant="primary"
+              />
+            )}
+            {secondaryBtnText && (
+              <V8CustomButton
+                label={secondaryBtnText}
+                onClick={secondaryBtnAction}
+                dataTestId={secondoryBtndataTestid}
+                ariaLabel={secondoryBtnariaLabel}
+                disabled={secondaryBtnDisable}
+                loading={secondaryBtnLoading}
+                variant="secondary"
+              />
+            )}
           </div>
         </AppModal.Footer>
       </AppModal>
-  );
-});
+    );
+  }
+);

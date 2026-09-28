@@ -2,21 +2,19 @@ import API from "../endpoints";
 import { RequestService } from "@formsflow/service";
 import { replaceUrl } from "../../helper/helper";
 import axios from "axios";
-import { setBPMTaskDetail, setCustomSubmission, serviceActionError, setAppHistoryLoading, setApplicationHistoryList, setTaskAssignee, setTaskDetailsLoading } from "../../actions/taskActions";
+import {
+  setBPMTaskDetail,
+  setCustomSubmission,
+  serviceActionError,
+  setAppHistoryLoading,
+  setApplicationHistoryList,
+  setTaskAssignee,
+  setTaskDetailsLoading,
+} from "../../actions/taskActions";
 import { taskDetailVariableDataFormatter } from "./formatterService";
 
-
-export const getOnlyTaskDetails = (taskId)=>{
-    const apiUrlgetTaskDetail = replaceUrl(
-    API.GET_BPM_TASK_DETAIL,
-    "<task_id>",
-    taskId
-  );
-  return RequestService.httpGETRequest(apiUrlgetTaskDetail);
-}
-
 export const getBPMTaskDetail = (taskId, ...rest) => {
-  const done = rest.length ? rest[0] : () => { };
+  const done = rest.length ? rest[0] : () => {};
   const apiUrlgetTaskDetail = replaceUrl(
     API.GET_BPM_TASK_DETAIL,
     "<task_id>",
@@ -56,7 +54,6 @@ export const getBPMTaskDetail = (taskId, ...rest) => {
             dispatch(setTaskAssignee(taskDetails.assignee));
             dispatch(setTaskDetailsLoading(false));
             done(null, taskDetails);
-
           }
         })
       )
@@ -67,7 +64,7 @@ export const getBPMTaskDetail = (taskId, ...rest) => {
 };
 
 export const getBPMGroups = (taskId, ...rest) => {
-  const done = rest.length ? rest[0] : () => { };
+  const done = rest.length ? rest[0] : () => {};
 
   const apiUrlgetGroups = replaceUrl(API.BPM_GROUP, "<task_id>", taskId);
 
@@ -88,8 +85,8 @@ export const getBPMGroups = (taskId, ...rest) => {
   };
 };
 
-export const onBPMTaskFormSubmit = (taskId, formReq, ...rest) => { 
-  const done = rest.length ? rest[0] : () => { };
+export const onBPMTaskFormSubmit = (taskId, formReq, ...rest) => {
+  const done = rest.length ? rest[0] : () => {};
   const apiUrlOnFormSubmit = replaceUrl(
     API.BPM_FORM_SUBMIT,
     "<task_id>",
@@ -109,13 +106,13 @@ export const onBPMTaskFormSubmit = (taskId, formReq, ...rest) => {
 };
 
 export const onBPMTaskFormUpdate = (taskId, formReq, ...rest) => {
-  const done = rest.length ? rest[0] : () => { };
+  const done = rest.length ? rest[0] : () => {};
   const apiUrlOnTaskUpdate = replaceUrl(
     API.BPM_TASK_UPDATE,
     "<task_id>",
     taskId
   );
-  
+
   return (dispatch) => {
     RequestService.httpPOSTRequest(apiUrlOnTaskUpdate, formReq)
       .then((res) => {
@@ -130,7 +127,7 @@ export const onBPMTaskFormUpdate = (taskId, formReq, ...rest) => {
 };
 
 export const getCustomSubmission = (submissionId, formId, ...rest) => {
-  const done = rest.length ? rest[0] : () => { };
+  const done = rest.length ? rest[0] : () => {};
   const submissionUrl = replaceUrl(API.CUSTOM_SUBMISSION, "<form_id>", formId);
   return (dispatch) => {
     RequestService.httpGETRequest(`${submissionUrl}/${submissionId}`, {})
@@ -156,7 +153,7 @@ export const getApplicationHistory = (applicationId, ...rest) => {
       applicationId
     );
 
-    RequestService.httpGETRequest(apiUrlAppHistory, {} )
+    RequestService.httpGETRequest(apiUrlAppHistory, {})
       .then((res) => {
         if (res.data) {
           const applications = res.data.applications;

@@ -20,56 +20,56 @@ export const setAnalyzeSubmissionLimit = (data) => (dispatch) => {
   });
 };
 
-export const setAnalyzeSubmissionDateRange = (data) => (dispatch) =>{ 
+export const setAnalyzeSubmissionDateRange = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.UPDATE_SUBMISSION_DATE_RANGE,
     payload: data,
-  })
-}
+  });
+};
 
-export const setDefaultSubmissionFilter = (data) => (dispatch) =>{ 
+export const setDefaultSubmissionFilter = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.UPDATE_DEFAULT_SUBMISSION_FILTER,
     payload: data,
-  })
-}
+  });
+};
 
-export const setSelectedSubmisionFilter = (data) => (dispatch) =>{
+export const setSelectedSubmisionFilter = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.UPDATE_SELECTED_SUBMISSION_FILTER,
     payload: data,
-  })
-}
+  });
+};
 
-export const setSubmissionFilterList = (data) => (dispatch) =>{ 
+export const setSubmissionFilterList = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.SUBMISSION_FILTER_LIST,
     payload: data,
-  })
-}
+  });
+};
 
 export const setSearchFieldValues = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.UPDATE_SEARCH_FIELD_VALUES,
     payload: data,
-  })
-}
+  });
+};
 
 export const setSelectedForm = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.SELECTED_FORM,
-    payload: data
-  })
-}
+    payload: data,
+  });
+};
 export const clearSearchFieldValues = () => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.CLEAR_SEARCH_FIELD_VALUES,
-  })
-}
+  });
+};
 
 export const setColumnWidths = (data) => (dispatch) => {
   dispatch({
     type: ACTION_CONSTANTS.UPDATE_COLUMN_WIDTHS,
     payload: data,
-  })
-}
+  });
+};
