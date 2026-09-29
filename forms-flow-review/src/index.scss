@@ -1,3 +1,5 @@
+@import "../../forms-flow-theme/scss/v8-scss/mixins";
+
 .loader-container {
   display: flex;
   height: 50vh !important;
@@ -48,5 +50,47 @@
   .form-check-label {
     margin: 0;
     flex: 1;
+  }
+}
+
+/* ============================================================
+   Tasks — responsive canvas (v8.3 tier tokens)
+   ============================================================ */
+
+@include respond-below(desktop-sm) {
+  .page-container .page-layout {
+    .header-section-1.task-list-page.task-list-page:not(:empty),
+    .header-section-2.task-list-page.task-list-page:not(:empty),
+    .header-section-3.task-list-page.task-list-page:not(:empty) {
+      flex-wrap: wrap;
+      max-height: none;
+      overflow: visible;
+      row-gap: var(--spacer-050);
+
+  
+      .section-seperation-left,
+      .section-seperation-right {
+        flex-wrap: wrap;
+        width: auto;
+        max-width: 100%;
+        min-width: 0;
+
+
+        > * {
+          max-width: 100%;
+          min-width: 0;
+        }
+      }
+    }
+
+    .body-section.task-list-page.task-list-page {
+      min-width: 0;
+      max-width: 100%;
+
+      .custom-table-wrapper-outter {
+        min-width: 0;
+        max-width: 100%;
+      }
+    }
   }
 }

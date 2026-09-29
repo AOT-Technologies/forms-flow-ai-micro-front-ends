@@ -17,7 +17,7 @@ export const FONT_OPTIONS: FontOption[] = [
     key: "sans",
     label: "Sans",
     preview:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+      '"Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   },
   {
     key: "heavy-sans",
@@ -47,7 +47,10 @@ const FontPicker: React.FC<FontPickerProps> = ({ value, onChange, label }) => {
   const [open, setOpen] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const selected = FONT_OPTIONS.find((f) => f.key === value) || FONT_OPTIONS[1];
+  const selected =
+    FONT_OPTIONS.find((f) => f.key === value) ||
+    FONT_OPTIONS.find((f) => f.key === "sans") ||
+    FONT_OPTIONS[0];
 
   useEffect(() => {
     if (!open) return;

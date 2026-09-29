@@ -18,6 +18,7 @@ export const AppModal = Object.assign(makeStub("AppModal"), {
 });
 
 export const ApplicationLogo = makeStub("ApplicationLogo");
+export const ApplicationLogoFull = makeStub("ApplicationLogoFull");
 export const ChevronIcon = makeStub("ChevronIcon");
 export const CloseIcon = makeStub("CloseIcon");
 export const CustomInfo = makeStub("CustomInfo");

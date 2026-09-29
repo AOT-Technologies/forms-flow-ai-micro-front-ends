@@ -109,8 +109,11 @@ const Organization: React.FC<any> = (props) => {
   // so nothing guarantees the home page ever mounted. The request, the calculations and the
   // response mapping all come from @formsflow/service, so this card and the home banner
   // cannot report different numbers.
+  // tenantKey is in the key because the response is scoped to the tenant in the bearer
+  // token, which the key cannot otherwise see. Without it a tenant switch serves the
+  // previous tenant's cached usage, and with retry:false a failed refetch keeps it.
   const { data: featureUsage } = useQuery(
-    ["usage", SUBMISSION_FEATURE_KEY],
+    ["usage", tenantKey, SUBMISSION_FEATURE_KEY],
     () => fetchFeatureUsage(SUBMISSION_FEATURE_KEY)
   );
 

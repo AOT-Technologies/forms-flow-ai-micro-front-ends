@@ -326,7 +326,7 @@ const TaskList = () => {
     <>
       <div className="Toastify"></div>
       <div className="toast-section">{}</div>
-      <div className="header-section-1">
+      <div className="header-section-1 task-list-page">
         <div className="section-seperation-left">
           <BreadCrumbs
             items={breadcrumbItems}
@@ -360,7 +360,7 @@ const TaskList = () => {
           />
         </div>
       </div>
-      <div className="header-section-3">
+      <div className="header-section-3 task-list-page">
         <div className="section-seperation-left">
           <V8CustomButton
             variant={!isAssigned ? "primary" : "secondary"}
@@ -379,7 +379,7 @@ const TaskList = () => {
         </div>
       </div>
       {viewTasks && (
-        <div className="body-section custom-scroll">
+        <div className="body-section custom-scroll task-list-page">
           <TaskListTable />
         </div>
       )}
