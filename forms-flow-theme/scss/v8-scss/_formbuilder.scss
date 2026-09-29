@@ -255,6 +255,11 @@ $form-builder-shadow: $form-builder-shadow-color 0px 2px 8px 0px;
     span {
       font-size: 14px !important;
     }
+    // ACE computes cursor position from its own font metrics; resizing its
+    // token spans makes the cursor drift away from the typed text.
+    .ace_editor span {
+      font-size: inherit !important;
+    }
     label {
       color: var(--gray-darkest) !important;
       word-break: break-all;
