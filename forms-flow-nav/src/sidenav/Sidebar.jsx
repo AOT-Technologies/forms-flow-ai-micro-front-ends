@@ -30,7 +30,6 @@ import { PERMISSIONS } from "../constants/permissions";
 import { checkIntegrationEnabled } from "../services/integration";
 import {
   fetchUserLoginDetails,
-  getOnBoardingUserRole,
   fetchChecklist,
   getOnboardingDetails
 } from "../services/user";
@@ -405,20 +404,6 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
     if (isAuthenticated) {
       // Fetch federated login details (saves into localStorage)]
       fetchUserLoginDetails();
-      getOnBoardingUserRole().then((onboarding) => {
-        if (onboarding?.checklistSkipped) {
-          return;
-        }
-        return fetchChecklist()
-          .then((res) => {
-            const data = res.data || res;
-            const next = Array.isArray(data) ? data : [];
-            storeChecklistItems(next);
-          })
-          .catch(() => {
-            storeChecklistItems(null);
-          });
-      });
       loadChecklistFromOnboarding();
       checkIntegrationEnabled()
         .then((res) => {
