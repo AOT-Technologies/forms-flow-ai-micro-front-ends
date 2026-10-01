@@ -107,6 +107,7 @@ $font-weight-regular:var(--font-weight-regular);
   }
   
   .manage-container{
+    padding: 0;
     .manage-tabs-wrapper {
         .manage-tabs-header {
             display: flex;
@@ -114,7 +115,7 @@ $font-weight-regular:var(--font-weight-regular);
             justify-content: space-between;
             gap: 1rem;
             border-bottom: 1px solid var(--gray-x-light);
-            padding-bottom: 0.81rem;
+            // padding-bottom: 0.81rem;mo
             margin-bottom: 0;
 
             .pill-tabs{

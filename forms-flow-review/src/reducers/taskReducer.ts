@@ -1,14 +1,14 @@
- 
 import ACTION_CONSTANTS from "../actions/actionConstants";
 import { StorageService } from "@formsflow/service";
 
 const initialState = {
   isTaskListLoading: true,
-  userDetails:StorageService.getParsedData( StorageService.User.USER_DETAILS) || {},
+  userDetails:
+    StorageService.getParsedData(StorageService.User.USER_DETAILS) || {},
   isAssigned: false,
   tasksList: [],
   userList: [],
-  userGroups: [], 
+  userGroups: [],
   filterList: [],
   attributeFilterList: [],
   lastRequestedPayload: {},
@@ -18,7 +18,7 @@ const initialState = {
   selectedAttributeFilter: null,
   taskId: null,
   defaultFilter: null,
-  filtersAndCount: [], 
+  filtersAndCount: [],
   taskDetail: null,
   filterListSortParams: {
     activeKey: "created",
@@ -37,24 +37,19 @@ const initialState = {
   appHistory: [],
   isTaskDetailUpdating: false,
   isBPMTaskDetailLoading: false,
-  error : null,
+  error: null,
   isUnsavedFilter: false,
   isUnsavedAttributeFilter: false,
-  filterToEdit:null,
-  attributeFilterToEdit:null,
-  dateRange:{startDate: null, endDate: null},
-  taskAssignee:'',
+  filterToEdit: null,
+  attributeFilterToEdit: null,
+  dateRange: { startDate: null, endDate: null },
+  taskAssignee: "",
   taskDetailsLoading: false,
   selectedForms: [],
   bundleLoading: false,
-  bundleError:'',
-  bundleSubmission:{},
-  id: '',
-  isActive: false,
+  bundleError: "",
+  bundleSubmission: {},
   lastUpdated: 0,
-  form: {},
-  url: '',
-  errors: ''
 };
 
 interface TaskAction {
@@ -65,7 +60,7 @@ interface TaskAction {
 const TaskHandler = (state = initialState, action: TaskAction) => {
   switch (action.type) {
     case ACTION_CONSTANTS.BPM_LIST_TASKS:
-      return { ...state, tasksList: action.payload};
+      return { ...state, tasksList: action.payload };
     case ACTION_CONSTANTS.IS_ASSIGNED:
       return { ...state, isAssigned: action.payload };
     case ACTION_CONSTANTS.BPM_USER_LIST:
@@ -78,7 +73,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return {
         ...state,
         userDetail: action.payload,
-  };
+      };
     case ACTION_CONSTANTS.IS_PROCESS_STATUS_LOADING:
       return { ...state, isProcessLoading: action.payload };
     case ACTION_CONSTANTS.LAST_REQ_PAYLOAD:
@@ -98,7 +93,7 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       return { ...state, isUnsavedAttributeFilter: action.payload };
     case ACTION_CONSTANTS.SET_FILTER_TO_EDIT:
       return { ...state, filterToEdit: action.payload };
-          case ACTION_CONSTANTS.SET_ATTRIBUTE_FILTER_TO_EDIT:
+    case ACTION_CONSTANTS.SET_ATTRIBUTE_FILTER_TO_EDIT:
       return { ...state, attributeFilterToEdit: action.payload };
     case ACTION_CONSTANTS.SET_SELECTED_FILTER:
       // If the filter ID hasn't changed, preserve dateRange and selectedAttributeFilter
@@ -106,21 +101,25 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
       const isSameFilter = state.selectedFilter?.id === action.payload?.id;
       return {
         ...state,
-        isUnsavedFilter:false,
+        isUnsavedFilter: false,
         isUnsavedAttributeFilter: false,
         selectedFilter: action.payload,
         // Only reset dateRange and selectedAttributeFilter if switching to a different filter
-        dateRange: isSameFilter ? state.dateRange : { startDate: null, endDate: null },
-        selectedAttributeFilter: isSameFilter ? state.selectedAttributeFilter : null,
+        dateRange: isSameFilter
+          ? state.dateRange
+          : { startDate: null, endDate: null },
+        selectedAttributeFilter: isSameFilter
+          ? state.selectedAttributeFilter
+          : null,
         // Only reset activePage and isAssigned if switching to a different filter
         activePage: isSameFilter ? state.activePage : 1,
         isAssigned: isSameFilter ? state.isAssigned : false,
       };
     case ACTION_CONSTANTS.BPM_SELECTED_ATTRIBUTE_FILTER:
-        return {
-          ...state,
-          isUnsavedAttributeFilter: false,
-          selectedAttributeFilter: action.payload,
+      return {
+        ...state,
+        isUnsavedAttributeFilter: false,
+        selectedAttributeFilter: action.payload,
       };
     case ACTION_CONSTANTS.DEFAULT_FILTER:
       return { ...state, defaultFilter: action.payload };
@@ -152,40 +151,40 @@ const TaskHandler = (state = initialState, action: TaskAction) => {
     case ACTION_CONSTANTS.RELOAD_TASK_FORM_SUBMISSION:
       return { ...state, taskFormSubmissionReload: action.payload };
     case ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_UPDATING:
-        return { ...state, isTaskDetailUpdating: action.payload };
+      return { ...state, isTaskDetailUpdating: action.payload };
     case ACTION_CONSTANTS.IS_BPM_TASK_DETAIL_LOADING:
-        return { ...state, isBPMTaskDetailLoading: action.payload };
+      return { ...state, isBPMTaskDetailLoading: action.payload };
     case ACTION_CONSTANTS.ERROR:
-      return { ...state, error: action.payload };   
+      return { ...state, error: action.payload };
     case ACTION_CONSTANTS.RESET_TASK_LIST_PARAMS:
-      return {...state, ...action.payload}
-      case ACTION_CONSTANTS.IS_HISTORY_LOADING:
-        return { ...state, isHistoryListLoading: action.payload };
-      case ACTION_CONSTANTS.LIST_APPLICATION_HISTORY:
-        return { ...state, appHistory: action.payload };
-      case ACTION_CONSTANTS.SET_DATE_RANGE_FILTER:
-        return { ...state, dateRange: action.payload };
-        case ACTION_CONSTANTS.SET_TASK_ASSIGNEE:
-        return { ...state, taskAssignee: action.payload };
-         case ACTION_CONSTANTS.SET_TASK_DETAILS_LOADING:
-        return { ...state, taskDetailsLoading: action.payload };
-        case ACTION_CONSTANTS.BUNDLE_SELECTED_FORMS:
-          return { ...state, selectedForms: action.payload };
-        case ACTION_CONSTANTS.BUNDLE_LOADING:
-          return { ...state, setBundleLoading: action.payload};
-        case ACTION_CONSTANTS.BUNDLE_ERROR:
-          return { ...state, bundleError: action.payload};
-        case ACTION_CONSTANTS.FORM_CLEAR_ERROR:
-          return {...state, error: ''};
-        case ACTION_CONSTANTS.BUNDLE_FORM_SUBMISSION:
-          return {...state, bundleSubmission:action.payload};
-          case ACTION_CONSTANTS.FORM_FAILURE:
-            return {
-              ...state,
-              isActive: false,
-              isInvalid: true,
-              errors: action?.payload?.error || ''
-            };
+      return { ...state, ...action.payload };
+    case ACTION_CONSTANTS.IS_HISTORY_LOADING:
+      return { ...state, isHistoryListLoading: action.payload };
+    case ACTION_CONSTANTS.LIST_APPLICATION_HISTORY:
+      return { ...state, appHistory: action.payload };
+    case ACTION_CONSTANTS.SET_DATE_RANGE_FILTER:
+      return { ...state, dateRange: action.payload };
+    case ACTION_CONSTANTS.SET_TASK_ASSIGNEE:
+      return { ...state, taskAssignee: action.payload };
+    case ACTION_CONSTANTS.SET_TASK_DETAILS_LOADING:
+      return { ...state, taskDetailsLoading: action.payload };
+    case ACTION_CONSTANTS.BUNDLE_SELECTED_FORMS:
+      return { ...state, selectedForms: action.payload };
+    case ACTION_CONSTANTS.BUNDLE_LOADING:
+      return { ...state, setBundleLoading: action.payload };
+    case ACTION_CONSTANTS.BUNDLE_ERROR:
+      return { ...state, bundleError: action.payload };
+    case ACTION_CONSTANTS.FORM_CLEAR_ERROR:
+      return { ...state, error: "" };
+    case ACTION_CONSTANTS.BUNDLE_FORM_SUBMISSION:
+      return { ...state, bundleSubmission: action.payload };
+    case ACTION_CONSTANTS.FORM_FAILURE:
+      return {
+        ...state,
+        isActive: false,
+        isInvalid: true,
+        errors: action?.payload?.error || "",
+      };
     default:
       return state;
   }

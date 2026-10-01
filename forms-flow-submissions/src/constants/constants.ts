@@ -1,9 +1,5 @@
-export const CUSTOM_SUBMISSION_URL =
-  window._env_?.REACT_APP_CUSTOM_SUBMISSION_URL || "";
-
-export const MULTITENANCY_ENABLED =
-  String(window._env_?.REACT_APP_MULTI_TENANCY_ENABLED) === "true";
-
+// NOTE: MULTITENANCY_ENABLED comes from "@formsflow/service" and
+// CUSTOM_SUBMISSION_URL from "../api/config" — this module previously carried
+// duplicate derivations of both (drift risk).
 export const CUSTOM_SUBMISSION_ENABLE =
   String(window._env_?.REACT_APP_CUSTOM_SUBMISSION_ENABLED) === "true";
-  

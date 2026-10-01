@@ -1,5 +1,8 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { connect, ConnectedProps, useSelector } from "react-redux";
+import { useFormTheme } from "@formsflow/components";
+import { RequestService } from "@formsflow/service";
+import { WEB_BASE_URL } from "../api/config";
 import {
   selectRoot,
   selectError,
@@ -8,10 +11,10 @@ import {
 } from "@aot-technologies/formio-react";
 import Loading from "./Loading";
 import { RESOURCE_BUNDLES_DATA } from "../resourceBundles/i18n";
-import {
-  CUSTOM_SUBMISSION_ENABLE,
-  CUSTOM_SUBMISSION_URL,
-} from "../constants";
+import { CUSTOM_SUBMISSION_ENABLE, CUSTOM_SUBMISSION_URL } from "../constants";
+
+// Module-scope (not per-render) so useFormTheme's effect deps stay stable.
+const httpGetRequest = (url: string) => RequestService.httpGETRequest(url);
 
 interface TaskFormProps extends PropsFromRedux {
   currentUser: string;
@@ -30,13 +33,12 @@ const TaskForm: React.FC<TaskFormProps> = ({
   onCustomEvent = () => {},
   isApprovalTask = false,
 }) => {
-  const taskAssignee = useSelector(
-    (state: any) => state?.task?.taskAssignee
-  );
+  const taskAssignee = useSelector((state: any) => state?.task?.taskAssignee);
   const taskDetailsLoading = useSelector(
     (state: any) => state?.task?.taskDetailsLoading
   );
   const [isReadOnly, setIsReadOnly] = useState(true);
+  const { themeClass } = useFormTheme(form?._id, httpGetRequest, WEB_BASE_URL);
 
   const customSubmission = useSelector(
     (state: any) => state.customSubmission?.submission ?? {}
@@ -71,18 +73,21 @@ const TaskForm: React.FC<TaskFormProps> = ({
     return clonedForm;
   }, [form, isApprovalTask]);
 
-const isLoading =
-  isFormActive || reduxSubmission?.isActive || !form || !safeSubmission?.data || taskDetailsLoading;
+  const isLoading =
+    isFormActive ||
+    reduxSubmission?.isActive ||
+    !form ||
+    !safeSubmission?.data ||
+    taskDetailsLoading;
   // Show loading UI if loading
- useEffect(() => {
-   setIsReadOnly( taskAssignee !== currentUser);
- }, [taskAssignee, currentUser]);
+  useEffect(() => {
+    setIsReadOnly(taskAssignee !== currentUser);
+  }, [taskAssignee, currentUser]);
   if (isLoading) {
     return (
       <div className="container">
         <div className="main-header">
-          <h3 className="task-head text-truncate form-title">
-          </h3>
+          <h3 className="task-head text-truncate form-title"></h3>
         </div>
         <Loading />
       </div>
@@ -96,7 +101,7 @@ const isLoading =
       <div className="main-header">
         <h3 className="task-head text-truncate form-title">{form?.title}</h3>
       </div>
-      <div className="ms-4 mb-5 me-4 wizard-tab service-task-details">
+      <div className={`ms-4 mb-5 me-4 wizard-tab service-task-details ${themeClass}`}>
         {/* The key is added to remount the form on change */}
         <Form
           key={isReadOnly ? "readonly" : "editable"}

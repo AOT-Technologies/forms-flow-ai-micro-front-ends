@@ -30,6 +30,16 @@ $gray-darkest: var(--ff-gray-darkest);
 
   .create-from-form {
     @include mixins.create-grid(); 
+    .file-upload{
+      .upload-status-section{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .upload-progress-section{
+          max-width: 90%;
+        }
+      }
+    }
   }
 
   .create-from-form .grid-item {

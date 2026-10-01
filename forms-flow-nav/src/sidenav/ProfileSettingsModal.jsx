@@ -1,23 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types'; 
-import { Tabs, Tab } from 'react-bootstrap';
-import { AppModal, CloseIcon, V8CustomButton, CustomInfo, CustomTextInput, ApplicationLogo, GoogleIcon, MicrosoftIcon, PromptModal } from "@formsflow/components";
-import { fetchSelectLanguages } from '../services/language';
-import { updateUserProfile, requestResetPassword } from '../services/user';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { Tabs, Tab } from "react-bootstrap";
+import {
+  AppModal,
+  CloseIcon,
+  V8CustomButton,
+  CustomInfo,
+  CustomTextInput,
+  ApplicationLogo,
+  GoogleIcon,
+  MicrosoftIcon,
+  PromptModal,
+} from "@formsflow/components";
+import { updateUserProfile, requestResetPassword } from "../services/user";
 import { useTranslation } from "react-i18next";
-import i18n from '../resourceBundles/i18n';
+import i18n from "../resourceBundles/i18n";
 import { StorageService } from "@formsflow/service";
-import { LANGUAGE, MULTITENANCY_ENABLED, USER_LANGUAGE_LIST } from '../constants/constants';
-import { fetchPermissions } from '../services/permissions';
-import { getUserPermissionsByCategory } from '../helper/helper';
+import { LANGUAGE } from "../constants/constants";
+import { PERMISSIONS } from "../constants/permissions";
+import { fetchPermissions } from "../services/permissions";
+import { getUserPermissionsByCategory } from "../helper/helper";
 
 export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
-  const [selectLanguages, setSelectLanguages] = useState([]);
-  const prevSelectedLang = localStorage.getItem('i18nextLng');
-  const [selectedLang, setSelectedLang] = useState(prevSelectedLang || LANGUAGE );
+  const prevSelectedLang = localStorage.getItem("i18nextLng");
+  const [selectedLang, setSelectedLang] = useState(
+    prevSelectedLang || LANGUAGE
+  );
   const [activeTab, setActiveTab] = useState("Profile");
   const [isSSO, setIsSSO] = useState(false);
-  const [showUnsavedChangesPrompt, setShowUnsavedChangesPrompt] = useState(false);
+  const [showUnsavedChangesPrompt, setShowUnsavedChangesPrompt] =
+    useState(false);
   const [profileFields, setProfileFields] = useState({
     firstName: "",
     lastName: "",
@@ -26,7 +38,9 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   });
   const [initialProfileFields, setInitialProfileFields] = useState(null);
   const [userPermissions, setUserPermissions] = useState({});
-  const [initialSelectedLang, setInitialSelectedLang] = useState(prevSelectedLang || LANGUAGE);
+  const [initialSelectedLang, setInitialSelectedLang] = useState(
+    prevSelectedLang || LANGUAGE
+  );
   const [emailTouched, setEmailTouched] = useState(false);
   const [usernameTouched, setUsernameTouched] = useState(false);
   const [resetPasswordState, setResetPasswordState] = useState("default"); // default | success | error
@@ -36,8 +50,8 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   const [identityProvider, setIdentityProvider] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { t } = useTranslation(); 
-  
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (!show) return;
     setError(null);
@@ -47,9 +61,12 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setSelectedLang(currentLang);
       setInitialSelectedLang(currentLang);
 
-      const userDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+      const userDetail =
+        JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
       const fullName = userDetail?.name || "";
-      const [firstFromName = "", ...rest] = String(fullName).trim().split(/\s+/);
+      const [firstFromName = "", ...rest] = String(fullName)
+        .trim()
+        .split(/\s+/);
       const lastFromName = rest.join(" ");
 
       // Check if user is logged in via federated identity provider from USER_LOGIN_DETAILS
@@ -63,15 +80,25 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           const userLoginDetails = JSON.parse(userLoginDetailsStr);
           // Check loginType: "external" means SSO/external IDP, "internal" means Keycloak
           if (userLoginDetails?.loginType !== undefined) {
-            const loginType = String(userLoginDetails.loginType).trim().toLowerCase();
+            const loginType = String(userLoginDetails.loginType)
+              .trim()
+              .toLowerCase();
             federatedLogin = loginType === "external";
-          } 
-          provider = String(userLoginDetails?.identityProvider || "").trim().toLowerCase();
+          }
+          provider = String(userLoginDetails?.identityProvider || "")
+            .trim()
+            .toLowerCase();
         }
       } catch (e) {
         // Fallback to checking userDetail if USER_LOGIN_DETAILS is not available
-        federatedLogin = !!(userDetail?.identityProvider || userDetail?.identity_provider);
-        provider = String(userDetail?.identityProvider || userDetail?.identity_provider || "").trim().toLowerCase();
+        federatedLogin = !!(
+          userDetail?.identityProvider || userDetail?.identity_provider
+        );
+        provider = String(
+          userDetail?.identityProvider || userDetail?.identity_provider || ""
+        )
+          .trim()
+          .toLowerCase();
       }
       setIsSSO(federatedLogin);
       setIdentityProvider(provider);
@@ -91,8 +118,18 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setLastResetPasswordError(null);
       setUserId(userDetail?.sub || userDetail?.id || "");
     } catch (e) {
-      setProfileFields({ firstName: "", lastName: "", email: "", username: "" });
-      setInitialProfileFields({ firstName: "", lastName: "", email: "", username: "" });
+      setProfileFields({
+        firstName: "",
+        lastName: "",
+        email: "",
+        username: "",
+      });
+      setInitialProfileFields({
+        firstName: "",
+        lastName: "",
+        email: "",
+        username: "",
+      });
       setSelectedLang(prevSelectedLang || LANGUAGE);
       setInitialSelectedLang(prevSelectedLang || LANGUAGE);
       setUserId("");
@@ -100,17 +137,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       setIdentityProvider("");
     }
   }, [show]);
-
-  useEffect(() => { 
-
-    fetchSelectLanguages((languages) => {
-      const tenantData = JSON.parse(StorageService.get("tenantData"));
-      const userLanguageList = (MULTITENANCY_ENABLED && tenantData?.details?.langList) || USER_LANGUAGE_LIST;
-      const userLanguagesArray = typeof userLanguageList === 'object' ? Object.values(userLanguageList) : userLanguageList.split(',');
-      const supportedLanguages = languages.filter(item => userLanguagesArray.includes(item.name));
-      setSelectLanguages(supportedLanguages.length > 0 ? supportedLanguages : languages);
-    });
-  }, []);
 
   // Fetch user permissions when modal opens
   useEffect(() => {
@@ -126,13 +152,13 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
           // Filter out manage_bundles, manage_integrations, and manage_templates permissions
           const filteredData = data.filter(
             (permission) =>
-              permission.name !== "manage_bundles" &&
-              permission.name !== "manage_integrations" &&
-              permission.name !== "manage_templates" &&
-              permission.name !== "view_dashboards" &&
-              permission.name !== "manage_dashboard_authorizations"
+              permission.name !== PERMISSIONS.MANAGE_BUNDLES &&
+              permission.name !== PERMISSIONS.MANAGE_INTEGRATIONS &&
+              permission.name !== PERMISSIONS.MANAGE_TEMPLATES &&
+              permission.name !== PERMISSIONS.VIEW_DASHBOARDS &&
+              permission.name !== PERMISSIONS.MANAGE_DASHBOARD_AUTHORIZATIONS
           );
-          
+
           // Use helper function to group user permissions by category
           const grouped = getUserPermissionsByCategory(roles, filteredData);
           setUserPermissions(grouped);
@@ -144,10 +170,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       );
     }
   }, [show]);
-
-  const handleLanguageChange = (newLang) => {
-    setSelectedLang(newLang);
-  };
 
   const isValidEmail = (email) => {
     // Simple, practical email validation (good UX, not overly strict)
@@ -185,9 +207,11 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       const details = { status, message, data: e?.response?.data };
       setLastResetPasswordError(details);
       try {
-        StorageService.save("PROFILE_RESET_PASSWORD_LAST_ERROR", JSON.stringify(details));
-      } catch (_) {
-      }
+        StorageService.save(
+          "PROFILE_RESET_PASSWORD_LAST_ERROR",
+          JSON.stringify(details)
+        );
+      } catch (_) {}
 
       console.error("Reset password failed:", details);
     } finally {
@@ -196,7 +220,12 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   };
 
   // Helper: Build profile payload with only changed fields
-  const buildProfilePayload = (currentFields, initialFields, currentLang, prevLang) => {
+  const buildProfilePayload = (
+    currentFields,
+    initialFields,
+    currentLang,
+    prevLang
+  ) => {
     const payload = {};
     const trimmedFields = {
       firstName: (currentFields.firstName || "").trim(),
@@ -224,25 +253,45 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
   };
 
   // Helper: Build updated user detail object from API response
-  const buildUpdatedUserDetail = (userDetail, responseData, profileData, newLang, hasLangChange) => {
+  const buildUpdatedUserDetail = (
+    userDetail,
+    responseData,
+    profileData,
+    newLang,
+    hasLangChange
+  ) => {
     const updated = {
       ...userDetail,
       // Use response data if available
       ...(responseData.firstName && { given_name: responseData.firstName }),
       ...(responseData.lastName && { family_name: responseData.lastName }),
       ...(responseData.email && { email: responseData.email }),
-      ...(responseData.username && { preferred_username: responseData.username }),
+      ...(responseData.username && {
+        preferred_username: responseData.username,
+      }),
       // Fallback to profileData if response doesn't include the fields
-      ...(!responseData.firstName && profileData.firstName && { given_name: profileData.firstName }),
-      ...(!responseData.lastName && profileData.lastName && { family_name: profileData.lastName }),
-      ...(!responseData.email && profileData.email && { email: profileData.email }),
-      ...(!responseData.username && profileData.username && { preferred_username: profileData.username }),
+      ...(!responseData.firstName &&
+        profileData.firstName && { given_name: profileData.firstName }),
+      ...(!responseData.lastName &&
+        profileData.lastName && { family_name: profileData.lastName }),
+      ...(!responseData.email &&
+        profileData.email && { email: profileData.email }),
+      ...(!responseData.username &&
+        profileData.username && { preferred_username: profileData.username }),
     };
 
     // Update the name field if first or last name changed
     if (profileData.firstName || profileData.lastName) {
-      const newFirst = responseData.firstName || profileData.firstName || userDetail.given_name || "";
-      const newLast = responseData.lastName || profileData.lastName || userDetail.family_name || "";
+      const newFirst =
+        responseData.firstName ||
+        profileData.firstName ||
+        userDetail.given_name ||
+        "";
+      const newLast =
+        responseData.lastName ||
+        profileData.lastName ||
+        userDetail.family_name ||
+        "";
       updated.name = `${newFirst} ${newLast}`.trim();
     }
 
@@ -260,7 +309,7 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     localStorage.setItem("i18nextLng", newLang);
   };
 
-  const handleConfirmProfile = async () => { 
+  const handleConfirmProfile = async () => {
     // Prevent profile updates for SSO/federated users
     if (isSSO) {
       setError(t("Profile editing is disabled for federated login users."));
@@ -273,7 +322,12 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     }
 
     const hasLanguageChange = selectedLang !== prevSelectedLang;
-    const profileData = buildProfilePayload(profileFields, initialProfileFields, selectedLang, prevSelectedLang);
+    const profileData = buildProfilePayload(
+      profileFields,
+      initialProfileFields,
+      selectedLang,
+      prevSelectedLang
+    );
 
     if (Object.keys(profileData).length === 0) {
       onClose();
@@ -286,13 +340,21 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     try {
       const response = await updateUserProfile(userId, profileData);
       const responseData = response?.data || {};
-      const userDetail = JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
-      
+      const userDetail =
+        JSON.parse(StorageService.get(StorageService.User.USER_DETAILS)) || {};
+
       const updatedUserDetail = buildUpdatedUserDetail(
-        userDetail, responseData, profileData, selectedLang, hasLanguageChange
+        userDetail,
+        responseData,
+        profileData,
+        selectedLang,
+        hasLanguageChange
       );
-      
-      StorageService.save(StorageService.User.USER_DETAILS, JSON.stringify(updatedUserDetail));
+
+      StorageService.save(
+        StorageService.User.USER_DETAILS,
+        JSON.stringify(updatedUserDetail)
+      );
 
       if (hasLanguageChange) {
         applyLanguageChange(selectedLang);
@@ -305,14 +367,16 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
       onClose();
     } catch (err) {
       console.error("Error updating profile:", err);
-      const errorMessage = err?.response?.data?.message || err?.message || t("Failed to update profile. Please try again.");
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("Failed to update profile. Please try again.");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
- 
   const isSaveDisabled = selectedLang === prevSelectedLang;
   const isProfileChanged =
     !!initialProfileFields &&
@@ -347,8 +411,6 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     handleConfirmProfile();
   };
 
-  const selectedLangLabel = selectLanguages.find(lang => lang.name === selectedLang)?.value || selectedLang;
-
   const getCategoryLabel = (category) => {
     if (category === "Admin") {
       return t("Access to Manage");
@@ -359,7 +421,11 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
     if (category === "Users") {
       return t("Manage users");
     }
-    return t(`Access to ${category.charAt(0).toUpperCase()}${category.slice(1).toLowerCase()}`);
+    return t(
+      `Access to ${category.charAt(0).toUpperCase()}${category
+        .slice(1)
+        .toLowerCase()}`
+    );
   };
 
   // Check if user has admin permissions
@@ -378,278 +444,297 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
 
   return (
     <>
-    <AppModal
-      show={show}
-      onHide={handleRequestClose}
-      size="lg"
-      dialogClassName="profile-settings-modal"
-      data-testid="profile-settings-modal"
-      aria-labelledby={t("profile settings modal title")}
-      aria-describedby="profile-settings-modal"
-      backdrop="static"
-    >
-      <AppModal.Header>
-        <div className="modal-header-content">
-          <div className="modal-title pb-0">
-            <p>{t("Personal Settings")}</p>        
-          <CloseIcon color="var(--gray-darkest)" onClick={handleRequestClose}/>
-          </div>
-          <div className="modal-subtitle pb-0">
-            <div className='secondary-controls'>
-            <div className='pill-tabs-container'>
-              <Tabs
-              activeKey={activeTab}
-              onSelect={(key) => key && setActiveTab(key)}
-              id="profile-settings-tabs"
-              data-testid="profile-settings-tabs"
-              className="pill-tabs"
-              >
-                {tabs.map((tab) => (
-                  <Tab
-                    key={tab.key}
-                    eventKey={tab.key}
-                    title={
-                      <span data-testid={`profile-settings-${tab.key}-tab`}>
-                        {tab.label}
-                      </span>
-                    }
-                  >
-                    {/* Empty content; this is navigation. Body renders based on activeTab. */}
-                  </Tab>
-                ))}
-              </Tabs>
+      <AppModal
+        show={show}
+        onHide={handleRequestClose}
+        size="lg"
+        dialogClassName="profile-settings-modal"
+        data-testid="profile-settings-modal"
+        aria-labelledby={t("profile settings modal title")}
+        aria-describedby="profile-settings-modal"
+        backdrop="static"
+      >
+        <AppModal.Header>
+          <div className="modal-header-content">
+            <div className="modal-title pb-0">
+              <p>{t("Personal Settings")}</p>
+              <CloseIcon
+                color="var(--gray-darkest)"
+                onClick={handleRequestClose}
+                data-testid="profile-settings-close-btn"
+                aria-label={t("Close")}
+              />
             </div>
-            </div>
-           
-          </div>
-        </div>
-      
-      </AppModal.Header>
-
-      <AppModal.Body className="custom-scroll">
-        {activeTab === "Profile" ? (
-          <>
-            <div className="profile-settings-details-box p-3 mb-3 border rounded">
-              <div className="row g-3">
-                <div className="col-12 col-md-6">
-                  <div className="input-label-text">{t("First Name")}</div>
-                  <CustomTextInput
-                    value={profileFields.firstName}
-                    setValue={(v) => setProfileFields((p) => ({ ...p, firstName: v }))}
-                    placeholder="First Name"
-                    dataTestId="profile-first-name"
-                    ariaLabel={t("First Name")}
-                    disabled={isSSO}
-                  />
-                </div>
-                <div className="col-12 col-md-6">
-                  <div className="input-label-text">{t("Last Name")}</div>
-                  <CustomTextInput
-                    value={profileFields.lastName}
-                    setValue={(v) => setProfileFields((p) => ({ ...p, lastName: v }))}
-                    placeholder="Last Name"
-                    dataTestId="profile-last-name"
-                    ariaLabel={t("Last Name")}
-                    disabled={isSSO}
-                  />
-                </div>
-                <div className="col-12 col-md-6">
-                  <div className="input-label-text">{t("Email")}</div>
-                  <CustomTextInput
-                    value={profileFields.email}
-                    setValue={(v) => setProfileFields((p) => ({ ...p, email: v }))}
-                    placeholder="Email"
-                    dataTestId="profile-email"
-                    ariaLabel={t("Email")}
-                    disabled={isSSO}
-                    onBlur={() => setEmailTouched(true)}
-                  />
-                  <div
-                    className="profile-settings-field-error text-danger mt-1"
-                    data-testid="profile-email-error"
+            <div className="modal-subtitle pb-0">
+              <div className="secondary-controls">
+                <div className="pill-tabs-container">
+                  <Tabs
+                    activeKey={activeTab}
+                    onSelect={(key) => key && setActiveTab(key)}
+                    id="profile-settings-tabs"
+                    data-testid="profile-settings-tabs"
+                    className="pill-tabs"
                   >
-                    {emailIsInvalid ? t("Email address is invalid") : ""}
-                  </div>
-                </div>
-                <div className="col-12 col-md-6">
-                  <div className="input-label-text">{t("Username")}</div>
-                  <CustomTextInput
-                    value={profileFields.username}
-                    setValue={(v) => setProfileFields((p) => ({ ...p, username: v }))}
-                    placeholder="Username"
-                    dataTestId="profile-username"
-                    ariaLabel={t("Username")}
-                    disabled={isSSO}
-                    onBlur={() => setUsernameTouched(true)}
-                  />
-                  <div
-                    className="profile-settings-field-error text-danger mt-1"
-                    data-testid="profile-username-error"
-                  >
-                    {usernameIsInvalid ? t("Username is invalid") : ""}
-                  </div>
-                </div>
-                <div className="col-12">
-                  <V8CustomButton
-                    label={resetPasswordLoading ? "Resetting password" : "Reset Password"}
-                    variant="secondary"
-                    dataTestId="profile-reset-password"
-                    ariaLabel="Reset Password"
-                    disabled={
-                      isSSO ||
-                      resetPasswordLoading ||
-                      !profileFields.email ||
-                      emailIsInvalid
-                    }
-                    loading={resetPasswordLoading}
-                    onClick={handleResetPassword}
-                  />
-                </div>
-                <div className="col-12">
-                  <CustomInfo
-                    className={[
-                      "profile-settings-note-panel",
-                      resetPasswordState === "error"
-                        ? "profile-settings-note-panel--danger-text"
-                        : "",
-                    ].join(" ")}
-                    variant="secondary"
-                    icon={
-                      isSSO && identityProvider === "google"
-                        ? <GoogleIcon />
-                        : isSSO && identityProvider === "microsoft"
-                          ? <MicrosoftIcon />
-                          : <ApplicationLogo width="1.1875rem" height="1.4993rem" />
-                    }
-                    content={
-                      isSSO && identityProvider === "google"
-                        ? t("You are signed in using Google Workspace. To make a change to your email address or reset your password, you will need to contact your Google Workspace Administrator.")
-                        : isSSO && identityProvider === "microsoft"
-                          ? t("You are signed in using Microsoft. To make a change to your email address or reset your password, you will need to contact your Microsoft Administrator.")
-                          : resetPasswordState === "success"
-                        ? t("Success! Check your email inbox for next steps.")
-                        : resetPasswordState === "error"
-                          ? t("Uh-oh! Something went wrong. Please try again.")
-                          : t("Resetting your password sends a reset link to {{email}}.", {
-                              email: profileFields.email || "",
-                            })
-                    }
-                  />
+                    {tabs.map((tab) => (
+                      <Tab
+                        key={tab.key}
+                        eventKey={tab.key}
+                        title={
+                          <span data-testid={`profile-settings-${tab.key}-tab`}>
+                            {tab.label}
+                          </span>
+                        }
+                      >
+                        {/* Empty content; this is navigation. Body renders based on activeTab. */}
+                      </Tab>
+                    ))}
+                  </Tabs>
                 </div>
               </div>
             </div>
+          </div>
+        </AppModal.Header>
 
-            {/* TODO: Uncomment this when the language updations are implemented */}
-            {/* <SelectDropdown
-              options={selectLanguages.map((lang) => ({
-                label: lang.value,
-                value: lang.name,
-              }))}
-              width="22rem"
-              defaultValue={selectedLangLabel}
-              dataTestId="settings-language-dropdown"
-              ariaLabel={t("Language Dropdown")}
-              value={selectedLangLabel}
-              variant="primary"
-              className="mb-3"
-              onChange={handleLanguageChange}
-              disabled={isSSO}
-            /> */}
-
-          </>
-        ) : (
-            <div className='permissions-container'>
+        <AppModal.Body className="custom-scroll">
+          {activeTab === "Profile" ? (
+            <>
+              <div className="profile-settings-details-box p-3 mb-3 border rounded">
+                <div className="row g-3">
+                  <div className="col-12 col-md-6">
+                    <div className="input-label-text">{t("First Name")}</div>
+                    <CustomTextInput
+                      value={profileFields.firstName}
+                      setValue={(v) =>
+                        setProfileFields((p) => ({ ...p, firstName: v }))
+                      }
+                      placeholder="First Name"
+                      dataTestId="profile-first-name"
+                      ariaLabel={t("First Name")}
+                      disabled={isSSO}
+                    />
+                  </div>
+                  <div className="col-12 col-md-6">
+                    <div className="input-label-text">{t("Last Name")}</div>
+                    <CustomTextInput
+                      value={profileFields.lastName}
+                      setValue={(v) =>
+                        setProfileFields((p) => ({ ...p, lastName: v }))
+                      }
+                      placeholder="Last Name"
+                      dataTestId="profile-last-name"
+                      ariaLabel={t("Last Name")}
+                      disabled={isSSO}
+                    />
+                  </div>
+                  <div className="col-12 col-md-6">
+                    <div className="input-label-text">{t("Email")}</div>
+                    <CustomTextInput
+                      value={profileFields.email}
+                      setValue={(v) =>
+                        setProfileFields((p) => ({ ...p, email: v }))
+                      }
+                      placeholder="Email"
+                      dataTestId="profile-email"
+                      ariaLabel={t("Email")}
+                      disabled={isSSO}
+                      onBlur={() => setEmailTouched(true)}
+                    />
+                    <div
+                      className="profile-settings-field-error text-danger mt-1"
+                      data-testid="profile-email-error"
+                    >
+                      {emailIsInvalid ? t("Email address is invalid") : ""}
+                    </div>
+                  </div>
+                  <div className="col-12 col-md-6">
+                    <div className="input-label-text">{t("Username")}</div>
+                    <CustomTextInput
+                      value={profileFields.username}
+                      setValue={(v) =>
+                        setProfileFields((p) => ({ ...p, username: v }))
+                      }
+                      placeholder="Username"
+                      dataTestId="profile-username"
+                      ariaLabel={t("Username")}
+                      disabled={isSSO}
+                      onBlur={() => setUsernameTouched(true)}
+                    />
+                    <div
+                      className="profile-settings-field-error text-danger mt-1"
+                      data-testid="profile-username-error"
+                    >
+                      {usernameIsInvalid ? t("Username is invalid") : ""}
+                    </div>
+                  </div>
+                  <div className="col-12">
+                    <V8CustomButton
+                      label={
+                        resetPasswordLoading
+                          ? "Resetting password"
+                          : "Reset Password"
+                      }
+                      variant="secondary"
+                      dataTestId="profile-reset-password"
+                      ariaLabel="Reset Password"
+                      disabled={
+                        isSSO ||
+                        resetPasswordLoading ||
+                        !profileFields.email ||
+                        emailIsInvalid
+                      }
+                      loading={resetPasswordLoading}
+                      onClick={handleResetPassword}
+                    />
+                  </div>
+                  <div className="col-12">
+                    <CustomInfo
+                      className={[
+                        "profile-settings-note-panel",
+                        resetPasswordState === "error"
+                          ? "profile-settings-note-panel--danger-text"
+                          : "",
+                      ].join(" ")}
+                      variant="secondary"
+                      icon={
+                        isSSO && identityProvider === "google" ? (
+                          <GoogleIcon />
+                        ) : isSSO && identityProvider === "microsoft" ? (
+                          <MicrosoftIcon />
+                        ) : (
+                          <ApplicationLogo
+                            width="1.1875rem"
+                            height="1.4993rem"
+                          />
+                        )
+                      }
+                      content={
+                        isSSO && identityProvider === "google"
+                          ? t(
+                              "You are signed in using Google Workspace. To make a change to your email address or reset your password, you will need to contact your Google Workspace Administrator."
+                            )
+                          : isSSO && identityProvider === "microsoft"
+                          ? t(
+                              "You are signed in using Microsoft. To make a change to your email address or reset your password, you will need to contact your Microsoft Administrator."
+                            )
+                          : resetPasswordState === "success"
+                          ? t("Success! Check your email inbox for next steps.")
+                          : resetPasswordState === "error"
+                          ? t("Uh-oh! Something went wrong. Please try again.")
+                          : t(
+                              "Resetting your password sends a reset link to {{email}}.",
+                              {
+                                email: profileFields.email || "",
+                              }
+                            )
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="permissions-container">
               {Object.keys(userPermissions).length === 0 ? (
                 <div className="text-center p-4 border rounded">
                   <p>{t("No permissions found")}</p>
                 </div>
               ) : (
                 <div className="permissions-list p-3 border rounded">
-                  {Object.entries(userPermissions).map(([category, permissions]) => (
-                    <div key={category} className="permission-category mb-4">
-                      <div className="permission-category-title fw-bold mb-2">
-                        {getCategoryLabel(category)}
+                  {Object.entries(userPermissions).map(
+                    ([category, permissions]) => (
+                      <div key={category} className="permission-category mb-4">
+                        <div className="permission-category-title fw-bold mb-2">
+                          {getCategoryLabel(category)}
+                        </div>
+                        <div className="permission-items ps-4">
+                          {permissions.map((permission) => (
+                            <div
+                              key={permission.name}
+                              className="permission-item mb-2"
+                              data-testid={`permission-${permission.name}`}
+                            >
+                              {t(permission.description || permission.name)}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="permission-items ps-4">
-                        {permissions.map((permission) => (
-                          <div 
-                            key={permission.name} 
-                            className="permission-item mb-2"
-                            data-testid={`permission-${permission.name}`}
-                          >
-                            {t(permission.description || permission.name)}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               )}
-              
+
               {!hasAdminPermissions() && (
-                <div className='info-section'>
-                  {t("Contact an administrator to request any changes to your permissions")}
+                <div className="info-section">
+                  {t(
+                    "Contact an administrator to request any changes to your permissions"
+                  )}
                 </div>
               )}
             </div>
-        )}
-      </AppModal.Body>
+          )}
+        </AppModal.Body>
 
-      <AppModal.Footer>
-        {error && (
-          <div className="profile-error-message text-danger mb-2 w-100">
-            {error}
+        <AppModal.Footer>
+          {error && (
+            <div className="profile-error-message text-danger mb-2 w-100">
+              {error}
+            </div>
+          )}
+          <div className="buttons-row d-flex justify-content-end">
+            <V8CustomButton
+              label={isLoading ? t("Updating...") : t("Update")}
+              onClick={handleConfirmProfile}
+              dataTestId="save-profile-settings"
+              ariaLabel={t("Save Profile Settings")}
+              disabled={
+                activeTab !== "Profile" ||
+                !isAnythingChanged ||
+                emailIsInvalid ||
+                usernameIsInvalid ||
+                isLoading ||
+                isSSO
+              }
+              variant="primary"
+            />
           </div>
-        )}
-        <div className="buttons-row d-flex justify-content-end">
-          <V8CustomButton
-            label={isLoading ? t("Updating...") : t("Update")}
-            onClick={handleConfirmProfile}
-            dataTestId="save-profile-settings"
-            ariaLabel={t("Save Profile Settings")}
-            disabled={activeTab !== "Profile" || !isAnythingChanged || emailIsInvalid || usernameIsInvalid || isLoading || isSSO}
-            variant="primary"
-          />
-        </div>
-      </AppModal.Footer>
-    </AppModal>
+        </AppModal.Footer>
+      </AppModal>
 
-    <PromptModal
-      show={showUnsavedChangesPrompt}
-      size="sm"
-      onClose={() => setShowUnsavedChangesPrompt(false)}
-      type="warning"
-      title={t("You have unsaved changes")}
-      message={t("Leaving will discard any unsaved changes. Are you sure you want to continue?")}
-      primaryBtnText={t("Save")}
-      secondaryBtnText={t("Discard Changes")}
-      primaryBtnAction={handleSaveAndClose}
-      secondaryBtnAction={handleDiscardAndClose}
-      primaryBtnDisable={emailIsInvalid || usernameIsInvalid}
-      primaryBtndataTestid="profile-settings-save-before-close"
-      secondoryBtndataTestid="profile-settings-discard-before-close"
-    />
+      <PromptModal
+        show={showUnsavedChangesPrompt}
+        size="sm"
+        onClose={() => setShowUnsavedChangesPrompt(false)}
+        type="warning"
+        title={t("You have unsaved changes")}
+        message={t(
+          "Leaving will discard any unsaved changes. Are you sure you want to continue?"
+        )}
+        primaryBtnText={t("Save")}
+        secondaryBtnText={t("Discard Changes")}
+        primaryBtnAction={handleSaveAndClose}
+        secondaryBtnAction={handleDiscardAndClose}
+        primaryBtnDisable={emailIsInvalid || usernameIsInvalid}
+        primaryBtndataTestid="profile-settings-save-before-close"
+        secondoryBtndataTestid="profile-settings-discard-before-close"
+      />
     </>
   );
 };
 
 ProfileSettingsModal.propTypes = {
-  show: PropTypes.bool.isRequired,  
-  onClose: PropTypes.func.isRequired,  
-  tenant: PropTypes.shape({  
+  show: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  tenant: PropTypes.shape({
     tenantId: PropTypes.string,
     tenantData: PropTypes.shape({
       expiry_dt: PropTypes.string,
       details: PropTypes.shape({
         locale: PropTypes.string,
-        langList: PropTypes.oneOfType([
-          PropTypes.object,
-          PropTypes.string
-        ])
-      })
-    })
-  }).isRequired,  
-  publish: PropTypes.func.isRequired, 
+        langList: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+      }),
+    }),
+  }).isRequired,
+  publish: PropTypes.func.isRequired,
 };
 
 export default ProfileSettingsModal;

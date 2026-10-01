@@ -14,10 +14,10 @@ module.exports = (webpackConfigEnv, argv) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      port: 3006
+      port: 3006,
     },
-    output:{
-      filename:"forms-flow-admin.js"
+    output: {
+      filename: "forms-flow-admin.js",
     },
     module: {
       rules: [

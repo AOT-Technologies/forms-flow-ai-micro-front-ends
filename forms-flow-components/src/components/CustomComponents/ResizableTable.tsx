@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -62,16 +68,20 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
     setColumns(columns);
   }, [columns]);
 
-  const handleMouseDown = (index: number, column: Column, e: React.MouseEvent): void => {
-      if (!columns[index].resizable) return;
-      resizingRef.current = column;
-      startXRef.current = e.pageX;
-      startWidthRef.current = columns[index].width;
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-    };
+  const handleMouseDown = (
+    index: number,
+    column: Column,
+    e: React.MouseEvent
+  ): void => {
+    if (!columns[index].resizable) return;
+    resizingRef.current = column;
+    startXRef.current = e.pageX;
+    startWidthRef.current = columns[index].width;
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
 
- const handleMouseMove = useCallback((e: MouseEvent): void => {
+  const handleMouseMove = useCallback((e: MouseEvent): void => {
     if (resizingRef.current === null) return;
     const diff = e.pageX - startXRef.current;
     const currentColumn = resizingRef.current;
@@ -106,73 +116,88 @@ export const ReusableResizableTable: React.FC<ResizableTableProps> = ({
     };
   }, [handleMouseMove, handleMouseUp]);
 
-const renderSkeleton = () => (
-  <tbody>
-    {Array.from({ length: skeletonRows }).map(() => {
-      const rowKey = crypto.randomUUID();
-      return (
+  // Stable skeleton keys (precomputed once per size change) instead of
+  // crypto.randomUUID() per render, which forced a full skeleton DOM
+  // teardown/recreate on every render while loading. Same memoized pattern as
+  // TableFooter.tsx / TableSkeletonLoader.tsx.
+  const skeletonUUIDs = useMemo(
+    () => ({
+      rows: Array.from({ length: skeletonRows }, () => crypto.randomUUID()),
+      columns: Array.from({ length: columnsState.length }, () =>
+        crypto.randomUUID()
+      ),
+    }),
+    [skeletonRows, columnsState.length]
+  );
+
+  const renderSkeleton = () => (
+    <tbody>
+      {skeletonUUIDs.rows.map((rowKey) => (
         <tr key={rowKey}>
-          {columnsState.map(() => (
-            <td key={crypto.randomUUID()}>
+          {skeletonUUIDs.columns.map((cellKey) => (
+            <td key={cellKey}>
               <Skeleton height={skeletonCellHeight} />
             </td>
           ))}
         </tr>
-      );
-    })}
-  </tbody>
-);
+      ))}
+    </tbody>
+  );
 
   return (
-      <div
-        className={containerClassName}
-        data-testid={dataTestId}
-        aria-label={ariaLabel}
+    <div
+      className={containerClassName}
+      data-testid={dataTestId}
+      aria-label={ariaLabel}
+    >
+      <table
+        ref={tableRef}
+        className="table custom-tables"
+        data-testid={`${dataTestId}-table`}
       >
-        <table
-          ref={tableRef}
-          className="table custom-tables"
-          data-testid={`${dataTestId}-table`}
-        >
-          <thead className={headerClassName}>
-            <tr>
-              {loading
-                ? columnsState.map(() => (
-                    <th key={crypto.randomUUID()}>
-                      <Skeleton height={skeletonCellHeight} />
-                    </th>
-                  ))
-                : columnsState.map((column, index) =>
-                    renderHeaderCell(
-                      column,
-                      index,
-                      columnsState.length,
-                      resizingRef.current,
-                      handleMouseDown
-                    )
-                  )}
-            </tr>
-          </thead>
-          {loading ? (
-            renderSkeleton()
-          ) : (
-            <>
-              {data.length === 0 ? (
-                <tbody className="table-empty">
-                  <p className="empty-message" data-testid={`${dataTestId}-empty-message`}>
-                    {emptyMessage}
-                  </p>
-                </tbody>
-              ) : (
-                <tbody>
-                  {
-                  data.map((item, index) => renderRow(item, columnsState, index))}
-                </tbody>
-              )}
-              </>
-          )}
-        </table>
-      </div>
+        <thead className={headerClassName}>
+          <tr>
+            {loading
+              ? skeletonUUIDs.columns.map((cellKey) => (
+                  <th key={cellKey}>
+                    <Skeleton height={skeletonCellHeight} />
+                  </th>
+                ))
+              : columnsState.map((column, index) =>
+                  renderHeaderCell(
+                    column,
+                    index,
+                    columnsState.length,
+                    resizingRef.current,
+                    handleMouseDown
+                  )
+                )}
+          </tr>
+        </thead>
+        {loading ? (
+          renderSkeleton()
+        ) : (
+          <>
+            {data.length === 0 ? (
+              <tbody className="table-empty">
+                <p
+                  className="empty-message"
+                  data-testid={`${dataTestId}-empty-message`}
+                >
+                  {emptyMessage}
+                </p>
+              </tbody>
+            ) : (
+              <tbody>
+                {data.map((item, index) =>
+                  renderRow(item, columnsState, index)
+                )}
+              </tbody>
+            )}
+          </>
+        )}
+      </table>
+    </div>
   );
 };
 

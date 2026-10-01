@@ -1,4 +1,4 @@
-import { createInstance, Resource } from "i18next"; 
+import { createInstance, Resource } from "i18next";
 import { RESOURCE_BUNDLES_ZH } from "./zh/resourceBundles";
 import { RESOURCE_BUNDLES_EN } from "./en/resourceBundles";
 import { RESOURCE_BUNDLES_FR } from "./fr/resourceBundles";
@@ -36,23 +36,28 @@ class I18nManager {
         translation: RESOURCE_BUNDLES_ES,
       },
     };
-    
-    this.i18nInstance = createInstance({
-      resources,
-    }, (err: Error, t: any) => {
-      if (err) {
-        console.error(err);
-      } else {
-        this.checkCustomResourceBundleAndUpdate();
+
+    this.i18nInstance = createInstance(
+      {
+        resources,
+      },
+      (err: Error, t: any) => {
+        if (err) {
+          console.error(err);
+        } else {
+          this.checkCustomResourceBundleAndUpdate();
+        }
       }
-    });
+    );
   }
 
   private async checkCustomResourceBundleAndUpdate() {
     const envValue: any = (window as any)._env_;
     if (envValue.REACT_APP_CUSTOM_RESOURCE_BUNDLE_URL) {
       try {
-        const response = await fetch(envValue.REACT_APP_CUSTOM_RESOURCE_BUNDLE_URL);
+        const response = await fetch(
+          envValue.REACT_APP_CUSTOM_RESOURCE_BUNDLE_URL
+        );
         const data = await response.json();
 
         Object.keys(data).forEach((key) => {
@@ -81,4 +86,3 @@ class I18nManager {
 
 const i18nManager = new I18nManager();
 export default i18nManager.getInstance();
-

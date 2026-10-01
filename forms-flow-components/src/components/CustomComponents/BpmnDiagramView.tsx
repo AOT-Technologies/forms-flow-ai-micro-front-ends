@@ -1,28 +1,27 @@
-import React, {
-  useCallback,
-  useEffect, 
-  useState, 
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BpmnJS from "bpmn-js/dist/bpmn-navigated-viewer.production.min.js";
 import { useTranslation } from "react-i18next";
-
- 
 
 interface ProcessDiagramProps {
   diagramXML: string;
   activityId: string;
   isProcessDiagramLoading: boolean;
-  showDiagramTools?:boolean;
+  showDiagramTools?: boolean;
 }
 
 const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
-  ({ diagramXML, activityId, isProcessDiagramLoading, showDiagramTools=false }) => {
+  ({
+    diagramXML,
+    activityId,
+    isProcessDiagramLoading,
+    showDiagramTools = false,
+  }) => {
     const { t } = useTranslation();
     const [bpmnViewer, setBpmnViewer] = useState<any>(null);
 
     const containerRef = useCallback((node: HTMLDivElement | null) => {
       if (node) {
-        const viewerInstance = new BpmnJS({ container: node});
+        const viewerInstance = new BpmnJS({ container: node });
         setBpmnViewer(viewerInstance);
       }
     }, []);
@@ -54,9 +53,7 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
       if (diagramXML && bpmnViewer && activityId) {
         setTimeout(() => {
           if (bpmnViewer?.get("canvas")) {
-            bpmnViewer
-              .get("canvas")
-              .addMarker({ id: activityId }, "highlight");
+            bpmnViewer.get("canvas").addMarker({ id: activityId }, "highlight");
           }
         }, 0);
       }
@@ -105,19 +102,37 @@ const ProcessDiagram: React.FC<ProcessDiagramProps> = React.memo(
             ref={containerRef}
           />
         </div>
-       {showDiagramTools && <div className="d-flex justify-content-end">
-          <div className="d-flex flex-column">
-            <button className="mb-3" title="Reset Zoom" onClick={zoomReset}>
-              <i className="fa fa-retweet" aria-hidden="true" />
-            </button>
-            <button title="Zoom In" onClick={zoom}>
-              <i className="fa fa-search-plus" aria-hidden="true" />
-            </button>
-            <button title="Zoom Out" onClick={zoomOut}>
-              <i className="fa fa-search-minus" aria-hidden="true" />
-            </button>
+        {showDiagramTools && (
+          <div className="d-flex justify-content-end">
+            <div className="d-flex flex-column">
+              <button
+                className="mb-3"
+                title="Reset Zoom"
+                onClick={zoomReset}
+                aria-label={t("Reset Zoom")}
+                data-testid="diagram-zoom-reset-btn"
+              >
+                <i className="fa fa-retweet" aria-hidden="true" />
+              </button>
+              <button
+                title="Zoom In"
+                onClick={zoom}
+                aria-label={t("Zoom In")}
+                data-testid="diagram-zoom-in-btn"
+              >
+                <i className="fa fa-search-plus" aria-hidden="true" />
+              </button>
+              <button
+                title="Zoom Out"
+                onClick={zoomOut}
+                aria-label={t("Zoom Out")}
+                data-testid="diagram-zoom-out-btn"
+              >
+                <i className="fa fa-search-minus" aria-hidden="true" />
+              </button>
+            </div>
           </div>
-        </div>}
+        )}
       </>
     );
   }

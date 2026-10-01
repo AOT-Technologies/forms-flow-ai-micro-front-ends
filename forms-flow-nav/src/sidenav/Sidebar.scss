@@ -1,63 +1,68 @@
-@import '../../../forms-flow-theme/scss/v8-scss/mixins';
+@import "../../../forms-flow-theme/scss/v8-scss/mixins";
 
 //New Colors
-$black: #000000;
 $white: #ffffff;
-$green: #57C20A;
-$green-dark: #006621;
-
-//primary shades
-$primary: #253DF4;
-$primary-light: #E2E1FC;
 
 //gray shades
-// $gray-darkest: #303436;
-$gray-darkest: #7C7D7F;
-$gray-dark: #4C4C4C;
-$gray-medium-dark: #AFB4B6;
-$gray-medium: #E4E6E7;
-$gray-light: #F2F2F3;
-
-
-
-// VARIABLES ADDED BY MAX
+$gray-medium: #e4e6e7;
 
 //base
 $base: 1rem;
 $lineThin: 1px;
-$lineThick: $lineThin*2;
 
 // fonts
 $fontBase: $base;
-$fontSmallest: $fontBase*0.875;
+$fontSmallest: $fontBase * 0.875;
 $fontLineHeight: 1.2;
-
-$fontModalTitle: $fontBase*1.5;
-
-// borders
-$borderRadiusHeightESM: $base*0.78; // 12.5px
-$borderRadiusHeightSM: $base*1.094; // 17.5px
-$borderRadiusHeightM: $base*1.344;  // 21.5px
-$borderRadiusHeightL: $base*1.594; // 25.5px
-$borderRadiusModal: $base*1.5; // 24px
 
 // color globals
 $colorDivider: $gray-medium;
-$colorDividerDark: $gray-medium-dark;
-
-// modals
-$modalWidthSmall: $base*60;
-$modalWidthLarge: $base*75;
 
 // nav
 $navPadding: $base;
-$navSpacing: $base;
+
+// stacked on a 34px pitch. The Navbar*Icon glyphs draw their own circle, so the
+// rail scales them up rather than wrapping them in a border.
+$railIconSize: $base * 1.25; // 20px
+$railItemGap: $base * 0.875; // 14px -> 34px pitch with $railIconSize
+
+// Hover flyout on the collapsed rail: panel starts 40px from the row's left
+// edge, so it overlaps the 48px rail by 8px and reads as attached to it.
+$railFlyoutOffset: $base * 2.5; // 40px
+$railFlyoutPaddingY: $base * 0.625; // 10px
+$railFlyoutPaddingX: $base * 0.625; // 10px
+$railFlyoutRadius: $base * 0.3125; // 5px
+// Spec'd literally on the tooltip. The theme's shadow scale is a much subtler
+// rgba(48, 52, 54, 0.08) family with no equivalent, so this one is local; if a
+// second surface ever needs it, promote it to a theme token.
+$railFlyoutShadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+
+
+// Count badge pill on the expanded row.
+$badgeHeight: $base * 1.1875; // 19px
+$badgeMinWidth: $base * 1.6875; // 27px
+
+// Expanded list metrics, from the same design: rows are inset 13px, the label
+// sits 9px past the 20px icon slot (icon x=13, label x=42), section labels are
+// inset 14px and open a wider gap above themselves.
+$menuInset: $base * 0.8125; // 13px
+$menuLabelGap: $base * 0.5625; // 9px
+$menuSectionInset: $base * 0.875; // 14px
+// Gaps measured off the design, each stated as the EXTRA on top of the 14px
+// list gap: a section label opens 28px below the row before it, and the
+// trailing Manage/Submit pair sits 58px below the last section.
+$menuSectionGap: $base * 0.875; // 14px -> 28px total
+$menuGroupGap: $base * 2.75; // 44px -> 58px total
+$headerInset: $base * 0.75; // 12px, logo x in the design
+$headerPadding: $base * 0.875; // 14px, logo/toggle y in the design
+$badgeDotSize: $base * 0.5625; // 9px
+$badgeDotOffset: $lineThin; // dot sits 1px proud of the 20px glyph box
+$subIconSize: $base; // 16px child glyph inside the 20px slot
 
 // transitions
-$animSpeed: 300ms; 
+$animSpeed: 300ms;
 
-
-.sidenav {  
+.sidenav {
   height: 100%;
   width: var(--navbar-width);
   position: fixed;
@@ -66,23 +71,42 @@ $animSpeed: 300ms;
   background-color: var(--nav-bg-color);
   display: flex;
   flex-direction: column;
-   transition: width 0.1s ease-in;
-   cursor: default;
+  // Width follows --navbar-width, which only the toggle changes. The hover
+  // rules that used to widen the rail (and the slower collapse-on-mouse-leave
+  // transition that paired with them) are gone: hovering a collapsed icon now
+  // shows its tooltip and nothing else.
+  transition: width $animSpeed ease;
+  cursor: default;
 
-  &:not(:hover) {
-    transition: width 0.6s ease-out; // collapse takes 6s
-  }
+  // Logo + collapse toggle on a single row: logo at the 12px left inset, the
+  // toggle pinned right (margin-left:auto rather than space-between, so it
+  // stays right-aligned when hideLogo removes the logo entirely).
+  .sidenav-header {
+    display: flex;
+    align-items: center;
+    padding: $headerPadding $menuSectionInset $headerPadding $headerInset;
 
-  &:hover {
-    width: var(--navbar-width); // expanded width
+    .logo-container {
+      min-height: 0;
+      padding: 0;
+    }
   }
 
   .menu-toggle-icon {
-    padding: 0.87rem 0.75rem;
-    padding-bottom: 0;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    padding: 0;
     transition: transform 0.3s ease;
     cursor: default;
-    
+
+    .menu-toggle-btn {
+      display: inline-flex;
+      padding: 0;
+      border: none;
+      background: none;
+    }
+
     svg {
       cursor: pointer;
       transition: transform 0.3s ease;
@@ -97,145 +121,17 @@ $animSpeed: 300ms;
     display: flex;
     align-items: center;
     min-height: 4.625rem;
-    // padding: var(--spacer-150);
     padding: 1.313rem 1rem;
   }
 
   .options-container {
     text-align: center;
-    // flex-grow: 1;
     overflow-y: auto;
     margin-bottom: auto;
   }
 
-  .accordion {
-    display: flex;
-    flex-direction: column;
-    gap: calc($navSpacing/2);
-  }
-
-  .accordion-button {
-    gap: 0.44rem;
-    // gap: $navSpacing;
-    padding: $navPadding;
-
-    color: var(--navbar-menu-font-color);
-    // color: #7C7D7F !important;
-    font-size: $fontSmallest;
-    padding-left: 0;
-    // font-weight: 700;
-    
-    background-color: var(--nav-bg-color);
-    box-shadow: none;
-
-    &:focus {
-      box-shadow: none;
-    }
-
-    &::after {
-      order: -1;
-      margin-right: 0.625rem;
-      margin-left: 0;
-      display: none;
-    }
-
-    &:hover {
-      // background-color: var(--navbar-menu-hover-bg-color);
-      font-weight: 500;
-      color: var(--navbar-menu-font-color) !important;
-    }
-
-    &:not(.collapsed) {
-      // background-color: var(--navbar-main-menu-active-bg-color);
-      
-      // & > svg {
-        //   transform: rotate(180deg);
-        // }
-        @include font-style(0.938rem,500,var(--navbar-menu-font-color));
-      
-      background-color: var(--nav-bg-color);
-      box-shadow: none;
-    }
-
-  }
-
-  .accordion-body {
-    color: var(--navbar-main-menu-active-font-color);
-    padding: 0;
-  }
-
-  .accordion-item {
-    background-color: var(--nav-bg-color);
-    border: none;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-sm);
-    line-height: var(--text-line-height);
-    border-bottom: 1px solid #E5E5E5;
-    margin: 0 1rem;
-
-    &:first-of-type > .accordion-header .accordion-button {
-      border-top-left-radius: 0 !important;
-      border-top-right-radius: 0 !important;
-    }
-    &:last-of-type > .accordion-header .accordion-button.collapsed {
-      border-bottom-left-radius: 0 !important;
-      border-bottom-right-radius: 0 !important;
-    }
-    &:last-of-type{
-      border-bottom: none;
-    }
-  }
-
-  .accordion-item:last-of-type{
-    border-radius: 0;
-  }
-
-  .accordion-link {
-    display: block;
-    width: 100%;
-    
-    padding: $navPadding 0;
-    // padding-left: calc($navPadding + $navSpacing + $base);
-    padding-left: 1.44rem;
-
-    // font-size: $fontSmallest;
-    // font-weight: 700;
-    line-height: $fontLineHeight;
-    // color: var(--navbar-main-menu-active-font-color);
-    text-align: left;
-    text-decoration: none;
-    cursor: pointer;
-
-    color: var(--navbar-submenu-font-color);
-    font-size: 0.875rem;
-
-    &:hover {
-      text-decoration: none;
-      // background-color: var(--navbar-hover-submenu-bg-color);
-      // color: var(--navbar-hover-submenu-font-color);
-      // font-size: var(--navbar-hover-submenu-font-size) !important;
-      // font-weight: var(--navbar-hover-submenu-font-weight) !important;
-      // color: #525254;
-      color: var(--navbar-menu-font-color);
-      font-weight: 500;
-    }
-
-    &.active {
-      // color: #525254;
-      
-      @include font-style( 0.875rem,500,var(--navbar-menu-font-color));
-      line-height: 1.05rem;
-      // background-color: var(--navbar-active-submenu-bg-color);
-      // color: var(--navbar-active-submenu-font-color);
-      // font-size: var(--navbar-active-submenu-font-size) !important;
-      // font-weight: var(--navbar-active-submenu-font-weight) !important;
-    }
-  }
-
   .user-container {
-    color : var(--navbar-main-menu-active-font-color);
-
-    // border-top: $lineThin solid $colorDivider;
+    color: var(--navbar-main-menu-active-font-color);
 
     & > button {
       display: flex;
@@ -251,10 +147,7 @@ $animSpeed: 300ms;
 
       transition: all $animSpeed;
 
-      &:hover {
-        background-color: var(--navbar-hover-submenu-bg-color);
-      }
-      &:first-of-type{
+      &:first-of-type {
         border-bottom: $lineThin solid $colorDivider;
       }
     }
@@ -276,122 +169,54 @@ $animSpeed: 300ms;
         & > p {
           overflow: hidden;
 
-          @include font-style($fontSmallest,400,var(--navbar-menu-font-color));
+          @include font-style(
+            $fontSmallest,
+            400,
+            var(--navbar-menu-font-color)
+          );
           flex-grow: 1;
           width: 2rem;
           line-height: $fontLineHeight;
           white-space: nowrap;
           text-overflow: ellipsis;
-
-          // &.user-name {
-          //   font-weight: 700;
-          // }
         }
       }
     }
 
     .sign-out-button {
-
       p {
         width: 100%;
 
         color: var(--navbar-menu-font-color) !important;
-        // color: #525254;
         font-size: $fontSmallest;
         line-height: $fontLineHeight;
-        // font-weight: 700;
       }
       text-align: left;
-
-      &:hover {
-        background-color: var(--navbar-hover-submenu-bg-color);
-      }
     }
 
+    // Was an initials chip; now holds the NavbarUserIcon glyph, which supplies
+    // its own circle. Sized to the same 20px as the menu glyphs.
     .user-icon {
       display: flex;
       align-items: center;
       justify-content: center;
-      // width: 2rem;
-      // height: 2rem;
 
-      width: 1rem;
-      height: 1rem;
-      
-      font-weight: 400;
-      // font-size: $fontSmallest;
-      font-size: 0.5rem;
-      
-      border-radius: 50%;
-      background-color: $gray-medium;
-      // font-size: 14px;
-      // font-weight: var(--font-weight-xs);
+      width: $railIconSize;
+      height: $railIconSize;
+
+      > svg {
+        width: 100%;
+        height: 100%;
+      }
     }
-
-    // .user-name {
-    //   font-size: var(--font-size-sm);
-    //   font-weight: var(--font-weight-sm);
-    //   line-height: var(--text-line-height);
-    //   letter-spacing: var(--text-space-xs);
-    //   background-color: var(--nav-bg-color) !important;
-    //   text-align: left;
-    //   margin-left: var(--spacer-050) !important;
-    //   margin: 0;
-    //   cursor: pointer;
-    //   border: none;
-    //   margin-left: 0;
-    //   max-width: 9rem;
-    //   :hover{
-    //     background-color: none;
-    //   }
-    // }
-
-    // .user-email {
-    //   overflow: hidden;
-    //   white-space: nowrap;
-    //   color: var(--navbar-main-menu-active-font-color);
-    //   text-overflow: ellipsis;
-    //   font-size: var(--font-size-xs);
-    //   font-weight: var(--font-weight-xs);
-    //   line-height: normal;
-    //   text-transform: lowercase;
-    //   max-width: 7.5rem;
-    //   cursor: pointer;
-    //   margin-bottom: 0;
-    //   margin-left: var(--spacer-050);
-
-    // }
-  }
-
-  .accordion-header {
-    &.no-arrow .accordion-button::after {
-      display: none;
-    }
-
-
-    // &.active-header .accordion-button {
-      // background-color: var(--navbar-active-submenu-bg-color);
-      // color: var(--navbar-active-submenu-font-color);
-
-    // }
   }
 }
 
-.collapsed{
-   .accordion-button{
-    padding: 16px 0 16px 0 !important;
+
+@media (max-width: breakpoint(mobile) + 0.98px) {
+  .sidenav.sidenav-overlay {
+    width: 11rem;
   }
-}
-
-.custom-chevron {
-  transition: transform 0.3s ease;
-
-  .accordion-button:not(.collapsed) & {
-    // transform: rotate(180deg);
-    transform: rotate(90deg);
-  }
-
-
 }
 
 .multitenancy-header {
@@ -409,27 +234,261 @@ $animSpeed: 300ms;
 }
 
 .multitenancy-app-name {
-  @include font-style(var(--font-size-md),var(--font-weight-lg),var(--navbar-main-menu-active-font-color));
+  @include font-style(
+    var(--font-size-md),
+    var(--font-weight-lg),
+    var(--navbar-main-menu-active-font-color)
+  );
 }
 
-.active-header .accordion-button {
-  // background-color: var(--navbar-main-menu-active-bg-color);
-  // color: #525254;
-  color: var(--navbar-menu-font-color);
-  font-size: 0.938rem;
+// Flat menu list - Phase 3 "8.3 / Expanded". Build/Analyze render as plain
+// section labels with their children always visible, so there is no accordion
+// and no chevron; every row is a link.
+.menu-list,
+.menu-sublist {
+  display: flex;
+  flex-direction: column;
+  gap: $railItemGap;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  // .options-container centres its text; menu rows and section labels are
+  // left-aligned, so undo it here rather than per element.
+  text-align: left;
+}
+
+.menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: $railItemGap;
+
+  // Sections sit further from the row above them than rows do from each other.
+  margin-top: $menuSectionGap;
+}
+
+// Rows that trail the last section (Manage, Submit) read as their own group.
+.menu-section + .menu-row {
+  margin-top: $menuGroupGap;
+}
+
+.menu-section-title {
+  margin: 0;
+  padding: 0 $menuSectionInset;
+
+  @include font-style($fontSmallest, 400, var(--navbar-submenu-font-color));
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: $menuLabelGap;
+
+  // Right inset matches the header's so the task pill's right edge lines up
+  // with the collapse/expand icon above it.
+  padding: 0 $menuSectionInset 0 $menuInset;
+  text-decoration: none;
+}
+
+.menu-label {
+  @include font-style($fontBase, 400, var(--navbar-menu-font-color));
+}
+
+// Selected is carried by the icon plus a Medium weight label -- the label colour
+// does NOT change. ("Selected text in the Nav is 16px Medium"; the selected row
+// in the design is still gray/800, not indigo.)
+.menu-link.active .menu-label {
   font-weight: 500;
-  @include font-style(0.938rem,500,var(--navbar-main-menu-font-color));
+}
+
+// Rollover: no background fill of any kind, just a darker glyph and label
+// (ff/color/gray/700, the "Nav Rollover" swatch). The fallback keeps this
+// working if the theme bundle in use predates the token.
+// The three icon states are mutually exclusive: Selected (indigo-700), Dormant
+// (gray-500), Rollover (gray-700). :not(.active) keeps rollover off the selected
+// row -- without it, hovering the current page turned its indigo glyph grey and
+// the selection disappeared under the cursor, since selection is carried by the
+// icon alone.
+.menu-link:not(.active):hover {
+  // CSS beats the stroke presentation attribute the icon components emit, so the
+  // glyph rolls over with the label. Only stroked paths are targeted; the
+  // fill-only backdrop path must not gain an outline.
+  .menu-icon svg path[stroke] {
+    stroke: var(--navbar-menu-font-color-rollover, #636365);
+  }
+}
+
+// The glyphs already carry their own ring (NavbarHomeIcon draws a <circle>,
+// NavbarTaskIcon a ring path), so a row never adds a second one -- the box only
+// fixes the slot so labels line up. The components hard-code width/height and
+// not all of them spread props, so the size is applied here in CSS, where it
+// wins over the SVG attributes.
+.menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+
+  width: $railIconSize;
+  height: $railIconSize;
+
+  > svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Child rows use a smaller glyph but keep the same slot width, so their labels
+// stay aligned with the top-level ones.
+.menu-sublist .menu-icon > svg {
+  width: $subIconSize;
+  height: $subIconSize;
 }
 
 
-@media (max-width: 768px) {
-  .sidenav .logo-container {
-    display: none;
+.sidenav {
+  .menu-toggle-btn svg path[stroke],
+  .user-container .user-icon svg path[stroke],
+  .user-container .sign-out-button .menu-icon svg path[stroke] {
+    stroke: var(--navbar-submenu-font-color, #979899);
   }
+}
+
+.menu-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+
+  min-width: $badgeMinWidth;
+  height: $badgeHeight;
+  padding: 0 calc($base / 2);
+  border-radius: $badgeHeight;
+
+  background-color: var(--navbar-menu-font-color-active);
+  @include font-style(0.75rem, 500, $white);
+}
+
+/* ============================================================
+   Collapsed rail - FWF-6593 new navbar design
+   ============================================================ */
+
+.sidenav.collapsed {
+  // The flyout extends past the 48px rail, and `overflow-y: auto` on the scroll
+  // container would clip it (an axis set to `auto` forces the other axis out of
+  // `visible`). Only the collapsed rail opts out of scrolling.
+  .options-container {
+    overflow: visible;
+  }
+
+  // The rail keeps the same group breaks as the expanded list -- the section
+  // label simply stops occupying part of the gap, so the section itself has to
+  // supply the whole 58px.
+  .menu-section {
+    margin-top: $menuGroupGap;
+  }
+
+  // The rail shows only the toggle in its header.
+  .sidenav-header {
+    justify-content: center;
+    padding: $headerPadding 0;
+
+    .logo-container {
+      display: none;
+    }
+  }
+
+  .menu-toggle-icon {
+    margin-left: 0;
+  }
+
+  .menu-link {
+    position: relative;
+    justify-content: center;
+    padding: 0;
+  }
+
+  // The count pill has nowhere to go on a 48px rail, so it becomes a dot on
+  // the glyph's top-right corner (Figma "8.3 / Collapsed Hover").
+  .menu-icon {
+    position: relative;
+  }
+
+  .menu-badge-dot {
+    position: absolute;
+    top: -$badgeDotOffset;
+    right: -$badgeDotOffset;
+
+    width: $badgeDotSize;
+    height: $badgeDotSize;
+    border-radius: 50%;
+
+    background-color: var(--navbar-menu-font-color-active);
+  }
+
+  .menu-flyout {
+    position: absolute;
+    top: 50%;
+    left: $railFlyoutOffset;
+    z-index: 1;
+    transform: translateY(-50%);
+
+    padding: $railFlyoutPaddingY $railFlyoutPaddingX;
+    border: $lineThin solid var(--gray-x-light);
+    border-radius: $railFlyoutRadius;
+    background-color: $white;
+    box-shadow: $railFlyoutShadow;
+
+    white-space: nowrap;
+    // Spec frame: "Rollover ToolTip text is 16px Regular". On the rail the
+    // tooltip IS the label, so it takes the same rollover colour as the glyph
+    // it belongs to -- label and icon always match on hover.
+    @include font-style(
+      $fontBase,
+      400,
+      var(--navbar-menu-font-color-rollover, #636365)
+    );
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity $animSpeed;
+  }
+
+  .menu-link:hover .menu-flyout,
+  .menu-link:focus-visible .menu-flyout {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .user-container {
+    & > button {
+      justify-content: center;
+    }
+
+    // The avatar is the NavbarUserIcon glyph, which draws its own circle, so it
+    // is sized exactly like .menu-icon and gets no border of its own.
+    .user-icon {
+      width: $railIconSize;
+      height: $railIconSize;
+
+      background-color: transparent;
+
+      > svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+// Hidden tier: the persistent rail is removed and the nav is reached through
+// the hamburger overlay instead (hamburger.scss).
+@media (max-width: breakpoint(mobile) + 0.98px) {
   .main-sidenav {
     display: none;
   }
   .sidenav {
-    height: calc(100% - var(--header-close-btn));
+    height: 100%;
   }
 }

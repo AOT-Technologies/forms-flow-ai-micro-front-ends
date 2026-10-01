@@ -7,7 +7,6 @@ import {
   setBPMTaskList,
   setBPMTaskCount,
   setBPMTaskLoader,
-  setVisibleAttributes,
   setBPMTaskDetailUpdating,
   setBPMFiltersAndCount,
   setLastReqPayload,
@@ -58,7 +57,7 @@ const handleTaskError = (dispatch, error) => {
 const clearTableData = (dispatch) => {
   dispatch(setBPMTaskList([]));
   dispatch(setBPMTaskCount(0));
-}
+};
 
 /**
  * Fetches the task list from the server and updates the redux store with the task list and count.
@@ -68,7 +67,6 @@ const clearTableData = (dispatch) => {
  * @param {number} maxResults - The maximum number of results to be fetched.
  * @param {function} done - A callback function to be called after the request is completed.
  */
-
 
 let currentTaskFetchAbortController = null;
 
@@ -86,7 +84,7 @@ export const fetchServiceTaskList = (
 
   const apiUrlgetTaskList = `${
     API.GET_BPM_TASK_FILTERS
-    }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
+  }?firstResult=${firstResultIndex}&maxResults=${maxResults ?? MAX_RESULTS}`;
   return (dispatch) => {
     //  dispatch(setBPMTaskLoader(true));
     let abortFlag = 0;
@@ -105,23 +103,24 @@ export const fetchServiceTaskList = (
     const clonedReqData = cloneDeep(reqData);
     // Always embed formType so bundle detection works regardless of filter column config
     if (!clonedReqData.variables?.some((v) => v.name === "formType")) {
-      clonedReqData.variables = [...(clonedReqData.variables || []), { name: "formType" }];
+      clonedReqData.variables = [
+        ...(clonedReqData.variables || []),
+        { name: "formType" },
+      ];
     }
     let criteria = clonedReqData?.criteria ?? {};
     let taskName = null;
-    const updatedVariables = criteria.processVariables?.filter(
-      (variable) => {
-        // Only move task name (isFormVariable: false) to nameLike, keep form variables (isFormVariable: true) in processVariables
-        if( variable.name === "name" && !variable.isFormVariable) {
-          taskName = variable;
-          return false; // Remove from processVariables
-        }
-        return true; // Keep all other variables including form variables with name "name"
+    const updatedVariables = criteria.processVariables?.filter((variable) => {
+      // Only move task name (isFormVariable: false) to nameLike, keep form variables (isFormVariable: true) in processVariables
+      if (variable.name === "name" && !variable.isFormVariable) {
+        taskName = variable;
+        return false; // Remove from processVariables
       }
-    );
+      return true; // Keep all other variables including form variables with name "name"
+    });
 
     // Clean up process variables by removing the isFormVariable metadata before sending to API
-    const cleanedVariables = updatedVariables?.map(variable => {
+    const cleanedVariables = updatedVariables?.map((variable) => {
       const { isFormVariable, ...cleanVariable } = variable;
       return cleanVariable;
     });
@@ -170,10 +169,9 @@ export const fetchServiceTaskList = (
             }
             dispatch(setBPMTaskCount(taskCount.count));
             dispatch(setBPMTaskList(taskData));
-            if(taskData){
+            if (taskData) {
               abortFlag = 1;
             }
-            dispatch(setVisibleAttributes(responseData[1]));
             done(null, taskData);
           }
         } else {
@@ -189,7 +187,7 @@ export const fetchServiceTaskList = (
         if (abortFlag == 1) {
           dispatch(setBPMTaskLoader(false));
         }
-      })
+      });
   };
 };
 
@@ -280,8 +278,8 @@ export const fetchTaskVariables = (formId) => {
   return RequestService.httpGETRequest(url);
 };
 
-export const executeRule = (submissionData, mapperId) => { 
-  const url = replaceUrl(API.BUNDLE_EXECUTE_RULE,"<mapper_id>", mapperId);
+export const executeRule = (submissionData, mapperId) => {
+  const url = replaceUrl(API.BUNDLE_EXECUTE_RULE, "<mapper_id>", mapperId);
   return RequestService.httpPOSTRequest(url, submissionData);
 };
 
@@ -304,21 +302,35 @@ export const fetchFormById = (id) => {
   );
 };
 
-export const fetchBundleSubmissionData = (bundleId,submissionId,formId) => {
+export const fetchBundleSubmissionData = (bundleId, submissionId, formId) => {
   let formioToken = sessionStorage.getItem("formioToken");
   let token = formioToken ? { "x-jwt-token": formioToken } : {};
-  return RequestService.httpGETRequest(`${API.GET_FORM_BY_ID}/${bundleId}/submission/${submissionId}?formId=${formId}`, {}, "", false, {
-    ...token
-  });
-
+  return RequestService.httpGETRequest(
+    `${API.GET_FORM_BY_ID}/${bundleId}/submission/${submissionId}?formId=${formId}`,
+    {},
+    "",
+    false,
+    {
+      ...token,
+    }
+  );
 };
 
-export const getBundleCustomSubmissionData = (bundleId, submissionId, selectedFormId) =>{
-  const submissionUrl = replaceUrl(API.CUSTOM_SUBMISSION, "<form_id>", bundleId);
-  return  RequestService.
-  httpGETRequest(`${submissionUrl}/${submissionId}?formId=${selectedFormId}`, {});
+export const getBundleCustomSubmissionData = (
+  bundleId,
+  submissionId,
+  selectedFormId
+) => {
+  const submissionUrl = replaceUrl(
+    API.CUSTOM_SUBMISSION,
+    "<form_id>",
+    bundleId
+  );
+  return RequestService.httpGETRequest(
+    `${submissionUrl}/${submissionId}?formId=${selectedFormId}`,
+    {}
+  );
 };
-
 
 export const claimBPMTask = (taskId, user, ...rest) => {
   const done = rest.length ? rest[0] : () => {};
@@ -388,7 +400,11 @@ export const updateAssigneeBPMTask = (taskId, user, ...rest) => {
  * @param {string|number|null} parentFilterId - Optional parent filter ID
  * @returns {Promise} - The HTTP request promise
  */
-export const saveFilterPreference = (data, filterType = null, parentFilterId = null) => {
+export const saveFilterPreference = (
+  data,
+  filterType = null,
+  parentFilterId = null
+) => {
   let url = API.SAVE_FILTER_PREFERENCE;
   const params = [];
 
@@ -401,7 +417,7 @@ export const saveFilterPreference = (data, filterType = null, parentFilterId = n
   }
 
   if (params.length > 0) {
-    url += `?${params.join('&')}`;
+    url += `?${params.join("&")}`;
   }
 
   return RequestService.httpPOSTRequest(url, data);

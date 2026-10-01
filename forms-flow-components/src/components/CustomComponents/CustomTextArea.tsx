@@ -63,10 +63,12 @@ export const CustomTextArea: FC<CustomTextAreaProps> = ({
       />
       {icon && (
         <div
-          className={`text-area-icon ${onIconClick ? "text-area-icon-clickable" : ""}`}
+          className={`text-area-icon ${
+            onIconClick ? "text-area-icon-clickable" : ""
+          }`}
           onClick={onIconClick}
           role={onIconClick && "button"}
-          tabIndex={onIconClick && 0 }
+          tabIndex={onIconClick && 0}
           onKeyDown={
             onIconClick
               ? (e) => {
@@ -78,6 +80,7 @@ export const CustomTextArea: FC<CustomTextAreaProps> = ({
               : undefined
           }
           aria-label={onIconClick ? "Icon button" : undefined}
+          data-testid={`${dataTestId}-icon`}
         >
           {icon}
         </div>

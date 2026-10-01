@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Multiselect from "multiselect-react-dropdown";
 import { CloseIcon } from "../SvgIcons/index";
 import { StyleServices } from "@formsflow/service";
@@ -47,11 +47,24 @@ export const MultipleSelect: React.FC<MultiSelectInterface> = ({
   label,
   variant = "",
 }) => {
-  // Get color values from CSS variables for different states and variants
-  const disabledPrimaryColor = StyleServices.getCSSVariable("--primary");
-  const disabledSecondaryColor = StyleServices.getCSSVariable("--gray-x-light");
-  const primaryColor = StyleServices.getCSSVariable("--primary-dark");
-  const secondaryColor = StyleServices.getCSSVariable("--secondary-dark");
+  // Get color values from CSS variables for different states and variants.
+  // Memoized (getComputedStyle forces a style recalc) — same pattern as Search.tsx.
+  const disabledPrimaryColor = useMemo(
+    () => StyleServices.getCSSVariable("--primary"),
+    []
+  );
+  const disabledSecondaryColor = useMemo(
+    () => StyleServices.getCSSVariable("--gray-x-light"),
+    []
+  );
+  const primaryColor = useMemo(
+    () => StyleServices.getCSSVariable("--primary-dark"),
+    []
+  );
+  const secondaryColor = useMemo(
+    () => StyleServices.getCSSVariable("--secondary-dark"),
+    []
+  );
 
   // Ref to track the dropdown container for click outside detection
   const dropdownRef = useRef<HTMLDivElement | null>(null);

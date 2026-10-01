@@ -8,7 +8,11 @@ function stripTenantPrefix(value, tenantId) {
   return String(value).replace(re, "");
 }
 
-export const removingTenantId = (roles=[], tenantId, tenantIdInPath = false) => {
+export const removingTenantId = (
+  roles = [],
+  tenantId,
+  tenantIdInPath = false
+) => {
   if (MULTITENANCY_ENABLED && tenantId) {
     const escaped = String(tenantId).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const reWithSlash = new RegExp(`^/${escaped}-`, "i");
@@ -35,7 +39,6 @@ export const removingTenantId = (roles=[], tenantId, tenantIdInPath = false) => 
   return roles;
 };
 
-
 export const removeTenantKey = (value, tenantkey) => {
   const tenantKeyCheck = value.match(`${tenantkey}-`);
   if (
@@ -47,6 +50,14 @@ export const removeTenantKey = (value, tenantkey) => {
     return false;
   }
 };
+
+/**
+ * True when a role name is the internal "camunda-admin" role, which is never
+ * shown in the UI. Handles the leading-slash form roles come in as (e.g. "/camunda-admin").
+ */
+export const isInternalAdminRole = (name) =>
+  String(name ?? "")
+    .replace(/\//g, "") === "camunda-admin";
 
 /**
  * Role label for UI: last `/` segment, then strip leading `{tenantKey}-` when multitenant
@@ -69,4 +80,27 @@ export const formatRoleDisplayName = (name, tenantKey) => {
     }
   }
   return s;
+};
+const STATUS_DISPLAY = {
+  active: { label: "Active", className: "text-active" },
+  inactive: { label: "Inactive", className: "text-inactive" },
+  invite_sent: { label: "Invite Sent", className: "text-invite-sent" },
+  invite_expired: {
+    label: "Invite Expired",
+    className: "text-invite-expired",
+  },
+  suspended: { label: "Suspended", className: "text-suspended" },
+};
+
+export const getStatusDisplay = (status) => {
+  if (typeof status === "boolean") {
+    return status ? STATUS_DISPLAY.active : STATUS_DISPLAY.inactive;
+  }
+
+  const key = String(status ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_");
+
+  return STATUS_DISPLAY[key] ?? STATUS_DISPLAY.suspended;
 };

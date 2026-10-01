@@ -1,0 +1,4 @@
+# This file is one 1.27 MB line of base64 (an inlined PNG inside an SVG
+# component); ESLint hangs >5 minutes parsing it, which makes `npm run lint`
+# unusable. Excluding it does not hide real findings.
+src/components/SvgImages/index.tsx

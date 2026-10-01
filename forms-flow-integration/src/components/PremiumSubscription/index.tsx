@@ -7,7 +7,7 @@ import { IntegrationSVG } from "./integrationImage";
 
 const PremiumSubscription = () => {
   return (
-    <div className="main-container ">
+    <div className="main-container " data-testid="integration-premium-container">
       <div className="container">
         <div className="min-container-height d-flex flex-column align-items-center justify-content-center">
           <IntegrationSVG
@@ -15,7 +15,7 @@ const PremiumSubscription = () => {
           />
           <div className="d-flex justify-content-center align-items-center">
             <span>
-              <i className="fa-solid fa-crown premium"></i>
+              <i className="fa-solid fa-crown premium" aria-hidden="true"></i>
             </span>
             <h1 className="fw-bold ms-2">
               <Translation>
@@ -43,6 +43,7 @@ const PremiumSubscription = () => {
               className="btn checkout-btn btn-primary fw-bold"
               target="_blank"
               rel="noopener noreferrer"
+              data-testid="integration-premium-learn-more-link"
             >
               <Translation>
                 {(t) => t("Learn more about the feature")}
@@ -56,6 +57,7 @@ const PremiumSubscription = () => {
               href="https://formsflow.ai/about-us/#contact-us"
               target="_blank"
               rel="noopener noreferrer"
+              data-testid="integration-premium-contact-link"
             >
               <Translation>{(t) => t("Connect with formsflow.ai team.")}</Translation>
             </a>

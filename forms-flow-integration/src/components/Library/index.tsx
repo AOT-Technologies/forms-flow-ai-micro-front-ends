@@ -27,15 +27,16 @@ const Library = React.memo((props: any) => {
    }
 
    if (error) {
-      <Alert variant="danger" message={error} />
+      <Alert variant="danger" message={error} dataTestId="integration-library-error-alert" />
    }
 
    return (
       <> {libraryUrl ? <iframe width="100%"
          height="700"
          src={libraryUrl}
-         title="Library" >
-      </iframe> : <Alert message="No urls found"/> }</>
+         title="Library"
+         data-testid="integration-library-iframe" >
+      </iframe> : <Alert message="No urls found" dataTestId="integration-library-no-url-alert"/> }</>
    );
 });
 
