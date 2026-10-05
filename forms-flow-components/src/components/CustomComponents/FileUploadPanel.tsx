@@ -53,6 +53,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
   ({
     uploadActionType,
     importError,
+    importLoader,
     handleImport,
     fileItems,
     fileType,
@@ -148,6 +149,7 @@ const FileUploadPanel: React.FC<FileUploadPanelProps> = React.memo(
               onRetry={handleRetry}
               onCancel={resetState}
               onDone={onImport}
+              loading={importLoader}
             />
           </div>
         </div>
