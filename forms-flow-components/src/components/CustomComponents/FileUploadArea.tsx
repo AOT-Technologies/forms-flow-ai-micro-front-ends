@@ -39,6 +39,8 @@ interface FileUploadAreaProps
   className?: string;
   /** Maximum file size in MB */
   maxFileSizeMB?: number;
+  /** Shows a loader on the primary button while the parent processes the import */
+  loading?: boolean;
 }
 
 /**
@@ -69,6 +71,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
       className = "",
       maxFileSizeMB = 20,
       primaryButtonText = "Done",
+      loading = false,
       ...restProps
     },
     ref
@@ -346,6 +349,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
 
     const primaryButtonLabel = t(primaryButtonText);
     const isPrimaryButtonTryAgain = primaryButtonLabel === t("Try Again");
+    const isPrimaryButtonLoading = isDoneLoading || loading;
 
     return (
       <div
@@ -402,7 +406,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
                   <V8CustomButton
                     className="file-upload-action-btn"
                     label={primaryButtonLabel}
-                    loading={isDoneLoading}
+                    loading={isPrimaryButtonLoading}
                     onClick={() => {
                       if (isPrimaryButtonTryAgain) {
                         onCancel?.();
@@ -420,7 +424,7 @@ const FileUploadAreaComponent = forwardRef<HTMLDivElement, FileUploadAreaProps>(
                     variant="primary"
                   />
                 )}
-                {!isDoneLoading &&
+                {!isPrimaryButtonLoading &&
                   (uploadState.isUploading || uploadState.isCompleted) && (
                     <V8CustomButton
                       className="file-upload-action-btn"
