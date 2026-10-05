@@ -1254,4 +1254,10 @@ export const RESOURCE_BUNDLES_EN = {
     "Field selection is not available for bundles at this time.",
   "Owner and specific roles": "Owner and specific roles",
   "Only owner": "Only owner",
+  "Unable to sign in": "Unable to sign in",
+  "We couldn't reach the sign-in server.":
+    "We couldn't reach the sign-in server.",
+  "Please check your internet connection and try again.":
+    "Please check your internet connection and try again.",
+  "Try again": "Try again",
 };

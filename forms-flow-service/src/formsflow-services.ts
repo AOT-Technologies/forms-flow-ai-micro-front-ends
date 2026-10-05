@@ -1,4 +1,5 @@
 import KeycloakService from "./keycloak/KeycloakService";
+import ConnectivityService from "./connectivity/connectivityService";
 import StorageService from "./storage/storageService";
 import RequestService from "./request/requestService";
 import i18nService from "./resourceBundles/i18n";
@@ -151,6 +152,7 @@ export type {
 
 export {
   KeycloakService,
+  ConnectivityService,
   StorageService,
   RequestService,
   i18nService,
