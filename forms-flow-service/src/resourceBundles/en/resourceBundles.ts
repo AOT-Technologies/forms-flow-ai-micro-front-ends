@@ -1260,4 +1260,9 @@ export const RESOURCE_BUNDLES_EN = {
   "Please check your internet connection and try again.":
     "Please check your internet connection and try again.",
   "Try again": "Try again",
+  "You're offline. Some features need an internet connection.":
+    "You're offline. Some features need an internet connection.",
+  "Your sign-in has expired. Sign in again to continue.":
+    "Your sign-in has expired. Sign in again to continue.",
+  "Sign in": "Sign in",
 };

@@ -98,6 +98,8 @@ export {
   mediaBelow,
   resolveTier,
 } from "./constants/breakpoints";
+export type { ConnectionState } from "./keycloak/KeycloakService";
+
 export type { BreakpointTier } from "./constants/breakpoints";
 
 export {

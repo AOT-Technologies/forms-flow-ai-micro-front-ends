@@ -29,6 +29,16 @@ const decodeToken = (token: string): KeycloakTokenParsed | null => {
     return null;
   }
 };
+import ConnectivityService from "../connectivity/connectivityService";
+import {
+  isOfflineEnabled,
+  isUsableOfflineSession,
+  loadOfflineSession,
+  saveOfflineSession,
+} from "../offline/offlineSession";
+
+/** online · offline (started or kept from the saved pass) · sign-in-needed */
+export type ConnectionState = "online" | "offline" | "sign-in-needed";
 
 class KeycloakService {
   /**
@@ -41,6 +51,12 @@ class KeycloakService {
   private _tokenParsed: KeycloakTokenParsed | undefined;
   private timerId: ReturnType<typeof setTimeout> | null = null;
   private userData: any;
+  // Offline support (FFF-3). Only used when REACT_APP_OFFLINE_ENABLED is on.
+  private kcInitialized = false;
+  private reconnecting = false;
+  private connectionState: ConnectionState = "online";
+  private connectionListeners = new Set<(state: ConnectionState) => void>();
+  private stopWatchingConnectivity: (() => void) | null = null;
 
   private constructor(
     url: string,
@@ -168,6 +184,7 @@ class KeycloakService {
       if (refreshed) {
         instance.token = instance.kc.token!;
         StorageService.save(StorageService.User.AUTH_TOKEN, instance.token);
+        instance.saveOfflineSnapshot();
         return instance.token;
       } else {
         return null;
@@ -198,6 +215,13 @@ class KeycloakService {
       } catch (err) {
         console.error("Keycloak token update failed!", err);
         clearTimeout(this.timerId);
+        if (isOfflineEnabled() && !(await ConnectivityService.check())) {
+          // Lost the connection, not the login: keep the session and try
+          // again when the internet is back instead of logging out.
+          this.setConnectionState("offline");
+          this.watchForReconnect();
+          return;
+        }
         this.logout(); // ensure logout is defined on the instance
       }
     };
@@ -241,9 +265,28 @@ class KeycloakService {
       );
       return;
     }
+    if (!isOfflineEnabled()) {
+      this.initOnline(callback, onError);
+      return;
+    }
+    // Offline enabled: ask our own API first (never the sign-in server), so
+    // an offline start does not wait for Keycloak to time out.
+    ConnectivityService.check().then((online) =>
+      online
+        ? this.initOnline(callback, onError)
+        : this.startOffline(callback, onError)
+    );
+  }
+
+  /** The normal sign-in through the Keycloak server (unchanged behaviour). */
+  private initOnline(
+    callback: (authenticated) => void,
+    onError?: (error: unknown) => void
+  ): void {
     this.kc
       ?.init(this.keycloakInitConfig)
       .then((authenticated) => {
+        this.kcInitialized = true;
         if (authenticated) {
           console.log("Authenticated");
           const tokenParsed = this.kc.tokenParsed;
@@ -274,6 +317,7 @@ class KeycloakService {
                   StorageService.User.USER_DETAILS,
                   JSON.stringify(data)
                 );
+                this.saveOfflineSnapshot();
                 callback(true);
               },
               (err) => {
@@ -328,6 +372,138 @@ class KeycloakService {
     this.followParentSession();
     callback(true);
   }
+  /**
+   * Starts the app from the saved pass without contacting the sign-in server.
+   * Nothing is checked online here; the server checks everything again when
+   * the internet is back.
+   */
+  private startOffline(
+    callback: (authenticated) => void,
+    onError?: (error: unknown) => void
+  ): void {
+    const session = loadOfflineSession();
+    if (!isUsableOfflineSession(session, this._keycloakConfig.clientId)) {
+      onError?.(new Error("No usable offline session"));
+      return;
+    }
+    this.token = session.token;
+    this.userData = session.userDetails;
+    StorageService.save(
+      StorageService.User.USER_ROLE,
+      JSON.stringify(session.roles)
+    );
+    StorageService.save(StorageService.User.AUTH_TOKEN, session.token);
+    if (session.userDetails) {
+      StorageService.save(
+        StorageService.User.USER_DETAILS,
+        JSON.stringify(session.userDetails)
+      );
+    }
+    this.setConnectionState("offline");
+    this.watchForReconnect();
+    callback(true);
+  }
+
+  /** Saves the pass used for the next offline start (offline enabled only). */
+  private saveOfflineSnapshot(): void {
+    if (!isOfflineEnabled() || !this.kc?.token) return;
+    const parsed: any = this.kc.tokenParsed || {};
+    saveOfflineSession({
+      clientId: this._keycloakConfig.clientId,
+      sub: parsed.sub,
+      token: this.kc.token,
+      refreshToken: this.kc.refreshToken,
+      idToken: this.kc.idToken,
+      roles: parsed.roles || parsed.role || parsed.client_roles || [],
+      userDetails: this.userData,
+      lastOnlineAuthAt: Date.now(),
+    });
+  }
+
+  private watchForReconnect(): void {
+    if (this.stopWatchingConnectivity) return;
+    this.stopWatchingConnectivity = ConnectivityService.subscribe((online) => {
+      if (online) this.reconnect();
+    });
+  }
+
+  private stopWatchingForReconnect(): void {
+    this.stopWatchingConnectivity?.();
+    this.stopWatchingConnectivity = null;
+  }
+
+  /**
+   * Back online: renew the login with the saved refresh token. If the login
+   * has expired, the state becomes "sign-in-needed" — nothing is cleared, the
+   * caller offers signInAgain().
+   */
+  private async reconnect(): Promise<void> {
+    if (this.connectionState === "online" || this.reconnecting) return;
+    this.reconnecting = true;
+    try {
+      if (this.kcInitialized) {
+        await this.kc.updateToken(-1);
+      } else {
+        const session = loadOfflineSession();
+        await this.kc.init({
+          token: session?.token,
+          refreshToken: session?.refreshToken,
+          idToken: session?.idToken,
+          pkceMethod: "S256",
+          checkLoginIframe: false,
+        });
+        this.kcInitialized = true;
+      }
+      if (!this.kc.token) throw new Error("No token after reconnect");
+      this.token = this.kc.token;
+      this._tokenParsed = this.kc.tokenParsed;
+      StorageService.save(StorageService.User.AUTH_TOKEN, this.token);
+      this.saveOfflineSnapshot();
+      this.stopWatchingForReconnect();
+      this.setConnectionState("online");
+      this.refreshToken();
+    } catch (error) {
+      if (!(await ConnectivityService.check())) {
+        // Connection dropped again. keycloak-js allows init() only once per
+        // instance, so start from a fresh one on the next attempt.
+        if (!this.kcInitialized) this.kc = new Keycloak(this._keycloakConfig);
+        return;
+      }
+      this.stopWatchingForReconnect();
+      this.setConnectionState("sign-in-needed");
+    } finally {
+      this.reconnecting = false;
+    }
+  }
+
+  private setConnectionState(state: ConnectionState): void {
+    if (state === this.connectionState) return;
+    this.connectionState = state;
+    this.connectionListeners.forEach((listener) => listener(state));
+  }
+
+  /** online · offline · sign-in-needed (always "online" when offline is disabled). */
+  public getConnectionState(): ConnectionState {
+    return this.connectionState;
+  }
+
+  /** Calls listener when the connection state changes; returns unsubscribe. */
+  public subscribeConnectionState(
+    listener: (state: ConnectionState) => void
+  ): () => void {
+    this.connectionListeners.add(listener);
+    return () => {
+      this.connectionListeners.delete(listener);
+    };
+  }
+
+  /**
+   * Opens the sign-in page without logging out, so saved offline work stays.
+   */
+  public signInAgain(): void {
+    this.login();
+  }
+
   /**
    * logs the user out and clear all user data from session.
    */
