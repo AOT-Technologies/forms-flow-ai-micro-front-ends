@@ -12,6 +12,8 @@ type Listener = (online: boolean) => void;
 
 const PROBE_TIMEOUT_MS = 2000;
 const OFFLINE_RECHECK_MS = 15000;
+// After an API call fails with no answer, probe at most this often.
+const NETWORK_ERROR_PROBE_GAP_MS = 5000;
 
 class ConnectivityService {
   private static online =
@@ -19,17 +21,43 @@ class ConnectivityService {
   private static listeners = new Set<Listener>();
   private static started = false;
   private static recheckTimer: ReturnType<typeof setInterval> | null = null;
+  private static pendingCheck: Promise<boolean> | null = null;
+  private static lastNetworkErrorProbeAt = 0;
 
   /** Last known state (updated by `check()`). */
   public static isOnline(): boolean {
     return this.online;
   }
 
-  /** Probes the API once and returns (and broadcasts) the result. */
-  public static async check(): Promise<boolean> {
-    const online = await this.probe();
-    this.setOnline(online);
-    return online;
+  /**
+   * Probes the API once and returns (and broadcasts) the result. Checks that
+   * start while one is running share it, so a burst of calls makes one probe.
+   */
+  public static check(): Promise<boolean> {
+    if (!this.pendingCheck) {
+      this.pendingCheck = this.probe()
+        .then((online) => {
+          this.setOnline(online);
+          return online;
+        })
+        .finally(() => {
+          this.pendingCheck = null;
+        });
+    }
+    return this.pendingCheck;
+  }
+
+  /**
+   * An API call got no answer at all (network error). The browser may still
+   * say "online" — e.g. Wi-Fi without internet, or our API is down — and then
+   * no "offline" event comes. Probe now (at most every few seconds) so the app
+   * switches to offline instead of waiting for the next token refresh.
+   */
+  public static reportNetworkError(): void {
+    const now = Date.now();
+    if (now - this.lastNetworkErrorProbeAt < NETWORK_ERROR_PROBE_GAP_MS) return;
+    this.lastNetworkErrorProbeAt = now;
+    this.check();
   }
 
   /**

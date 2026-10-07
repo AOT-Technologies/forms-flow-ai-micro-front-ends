@@ -103,4 +103,35 @@ describe("ConnectivityService", () => {
     expect(listener).toHaveBeenCalledWith(false);
     expect(mockFetch).not.toHaveBeenCalled();
   });
+
+  test("checks that start together share one request", async () => {
+    mockFetch.mockResolvedValue({ ok: true });
+    const service = loadService();
+
+    const results = await Promise.all([service.check(), service.check(), service.check()]);
+
+    expect(results).toEqual([true, true, true]);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  test("a failed API call triggers a check, at most once every few seconds", async () => {
+    mockFetch.mockRejectedValue(new TypeError("Failed to fetch"));
+    const service = loadService();
+    const listener = jest.fn();
+    service.subscribe(listener);
+
+    service.reportNetworkError();
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledWith(false);
+
+    service.reportNetworkError(); // right after: skipped
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(5000);
+    service.reportNetworkError(); // later: checks again
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
 });
