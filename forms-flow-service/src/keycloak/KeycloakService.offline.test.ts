@@ -244,6 +244,32 @@ describe("KeycloakService offline start-up", () => {
     expect(connectivityListener).not.toBeNull();
   });
 
+  test("connection drops while the app is open: goes offline at once, back online after", async () => {
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.loadUserInfo.mockResolvedValue({ name: "Field User" });
+    const instance = freshInstance();
+    const states: string[] = [];
+    instance.subscribeConnectionState((state) => states.push(state));
+    instance.initKeycloak(jest.fn());
+    await flush();
+
+    // The browser reports the connection is gone — no token refresh needed.
+    connectivityListener?.(false);
+    expect(instance.getConnectionState()).toBe("offline");
+    expect(mockKc.logout).not.toHaveBeenCalled();
+
+    mockKc.updateToken.mockResolvedValue(true);
+    connectivityListener?.(true);
+    await flush();
+
+    expect(instance.getConnectionState()).toBe("online");
+    expect(states).toEqual(["offline", "online"]);
+    // Still watching: a second drop is noticed too.
+    connectivityListener?.(false);
+    expect(instance.getConnectionState()).toBe("offline");
+  });
+
   test("offline disabled: ignores the pass and signs in as before", async () => {
     (global as any).window._env_.REACT_APP_OFFLINE_ENABLED = "false";
     savePass();

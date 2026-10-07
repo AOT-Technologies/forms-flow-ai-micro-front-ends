@@ -219,7 +219,7 @@ class KeycloakService {
           // Lost the connection, not the login: keep the session and try
           // again when the internet is back instead of logging out.
           this.setConnectionState("offline");
-          this.watchForReconnect();
+          this.watchConnectivity();
           return;
         }
         this.logout(); // ensure logout is defined on the instance
@@ -326,6 +326,9 @@ class KeycloakService {
               }
             );
             this.refreshToken();
+            // Notice a lost connection at once, not only at the next token
+            // refresh (FFF-3 offline).
+            if (isOfflineEnabled()) this.watchConnectivity();
           } else {
             this.logout();
           }
@@ -400,7 +403,7 @@ class KeycloakService {
       );
     }
     this.setConnectionState("offline");
-    this.watchForReconnect();
+    this.watchConnectivity();
     callback(true);
   }
 
@@ -420,10 +423,20 @@ class KeycloakService {
     });
   }
 
-  private watchForReconnect(): void {
+  /**
+   * Watches the connection for the rest of the session (offline enabled):
+   * - lost while online -> "offline" right away, so pages use saved data
+   *   instead of waiting on calls that cannot succeed;
+   * - back while offline -> renew the login (reconnect).
+   */
+  private watchConnectivity(): void {
     if (this.stopWatchingConnectivity) return;
     this.stopWatchingConnectivity = ConnectivityService.subscribe((online) => {
-      if (online) this.reconnect();
+      if (online) {
+        this.reconnect();
+      } else if (this.connectionState === "online") {
+        this.setConnectionState("offline");
+      }
     });
   }
 
@@ -459,7 +472,6 @@ class KeycloakService {
       this._tokenParsed = this.kc.tokenParsed;
       StorageService.save(StorageService.User.AUTH_TOKEN, this.token);
       this.saveOfflineSnapshot();
-      this.stopWatchingForReconnect();
       this.setConnectionState("online");
       this.refreshToken();
     } catch (error) {
