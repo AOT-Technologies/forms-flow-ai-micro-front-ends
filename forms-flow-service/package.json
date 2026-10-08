@@ -1,6 +1,6 @@
 {
   "name": "@formsflow/services",
-  "version": "8.3.0",
+  "version": "8.3.1",
   "scripts": {
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",
@@ -48,8 +48,8 @@
     "uuid": "^11.1.1"
   },
   "dependencies": {
-    "@aot-technologies/formio-react": "^2.0.1",
-    "@aot-technologies/formiojs": "^2.0.1",
+    "@aot-technologies/formio-react": "^2.1.0",
+    "@aot-technologies/formiojs": "^2.1.0",
     "@types/jest": "^29.5.0",
     "@types/systemjs": "^6.1.1",
     "@types/webpack-env": "^1.16.2",
