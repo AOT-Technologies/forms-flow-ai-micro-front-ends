@@ -44,20 +44,6 @@ export const fetchUserLoginDetails = () => {
       console.error(error);
     });
 };
-export const getOnBoardingUserRole = () => {
-  const url = API.ONBOARDING_USER_ROLE;
-  return RequestService.httpGETRequest(url)
-    .then((res) => {
-      const data = res?.data;
-      if (data?.role) {
-        localStorage.setItem("ONBOARDINGUSERROLE", data.role);
-      }
-      return data ?? null;
-    })
-    .catch((err) => {
-      console.error(" Error in getting on boarding user role:", err);
-    });
-};
 
 export const fetchChecklist = () => {
   const url = API.CHECKLIST;
