@@ -42,6 +42,13 @@ import OfflineSettingsService from "../offline/offlineSettings";
 /** online · offline (started or kept from the saved pass) · sign-in-needed */
 export type ConnectionState = "online" | "offline" | "sign-in-needed";
 
+/**
+ * Runs before a user-started logout (FFF-3, Phase 5). Resolve false to cancel
+ * the logout (e.g. the user chose to sync waiting forms first). A guard that
+ * throws does not block the logout.
+ */
+export type LogoutGuard = () => boolean | Promise<boolean>;
+
 class KeycloakService {
   /**
    * Used to create Keycloak object
@@ -49,6 +56,7 @@ class KeycloakService {
   private _keycloakConfig: KeycloakConfig | undefined;
   private kc: Keycloak | undefined;
   private static instance: KeycloakService;
+  private static logoutGuards = new Set<LogoutGuard>();
   private token: string | undefined;
   private _tokenParsed: KeycloakTokenParsed | undefined;
   private timerId: ReturnType<typeof setTimeout> | null = null;
@@ -546,11 +554,38 @@ class KeycloakService {
   }
 
   /**
+   * Registers a check that runs before a user-started logout (FFF-3), for
+   * example the offline "forms are waiting to sync" warning. Returns a
+   * function that removes it.
+   */
+  public static registerLogoutGuard(guard: LogoutGuard): () => void {
+    this.logoutGuards.add(guard);
+    return () => {
+      this.logoutGuards.delete(guard);
+    };
+  }
+
+  private static async logoutAllowed(): Promise<boolean> {
+    for (const guard of Array.from(this.logoutGuards)) {
+      try {
+        if ((await guard()) === false) return false;
+      } catch (error) {
+        console.error("Logout check failed; logging out anyway", error);
+      }
+    }
+    return true;
+  }
+
+  /**
    * logs the user out and clear all user data from session.
+   * Registered logout guards run first and may cancel it.
    */
   public userLogout(): void {
-    StorageService.clear();
-    this.logout();
+    KeycloakService.logoutAllowed().then((allowed) => {
+      if (!allowed) return;
+      StorageService.clear();
+      this.logout();
+    });
   }
   /**
    *

@@ -99,7 +99,7 @@ export {
   mediaBelow,
   resolveTier,
 } from "./constants/breakpoints";
-export type { ConnectionState } from "./keycloak/KeycloakService";
+export type { ConnectionState, LogoutGuard } from "./keycloak/KeycloakService";
 export type { OfflineSettings } from "./offline/offlineSettings";
 
 export type { BreakpointTier } from "./constants/breakpoints";

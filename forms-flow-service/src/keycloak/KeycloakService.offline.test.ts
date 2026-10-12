@@ -351,3 +351,56 @@ describe("KeycloakService offline start-up", () => {
     expect(onError).toHaveBeenCalled();
   });
 });
+
+describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (global as any).localStorage.clear();
+    jest.spyOn(console, "error").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test("no guard: logs out and clears storage", async () => {
+    (global as any).localStorage.setItem("AUTH_TOKEN", "x");
+    freshInstance().userLogout();
+    await flush();
+
+    expect(mockKc.logout).toHaveBeenCalled();
+    expect((global as any).localStorage.getItem("AUTH_TOKEN")).toBeNull();
+  });
+
+  test("a guard that says no cancels the logout and keeps everything", async () => {
+    (global as any).localStorage.setItem("AUTH_TOKEN", "x");
+    const remove = KeycloakService.registerLogoutGuard(() => Promise.resolve(false));
+
+    freshInstance().userLogout();
+    await flush();
+
+    expect(mockKc.logout).not.toHaveBeenCalled();
+    expect((global as any).localStorage.getItem("AUTH_TOKEN")).toBe("x");
+    remove();
+  });
+
+  test("guards run before storage is cleared; a failing guard does not block", async () => {
+    const seen: (string | null)[] = [];
+    const removeA = KeycloakService.registerLogoutGuard(() => {
+      seen.push((global as any).localStorage.getItem("AUTH_TOKEN"));
+      return true;
+    });
+    const removeB = KeycloakService.registerLogoutGuard(() => {
+      throw new Error("boom");
+    });
+    (global as any).localStorage.setItem("AUTH_TOKEN", "x");
+
+    freshInstance().userLogout();
+    await flush();
+
+    expect(seen).toEqual(["x"]);
+    expect(mockKc.logout).toHaveBeenCalled();
+    removeA();
+    removeB();
+  });
+});
