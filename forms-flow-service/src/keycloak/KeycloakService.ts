@@ -31,11 +31,13 @@ const decodeToken = (token: string): KeycloakTokenParsed | null => {
 };
 import ConnectivityService from "../connectivity/connectivityService";
 import {
+  clearOfflineSession,
   isOfflineEnabled,
   isUsableOfflineSession,
   loadOfflineSession,
   saveOfflineSession,
 } from "../offline/offlineSession";
+import OfflineSettingsService from "../offline/offlineSettings";
 
 /** online · offline (started or kept from the saved pass) · sign-in-needed */
 export type ConnectionState = "online" | "offline" | "sign-in-needed";
@@ -215,7 +217,10 @@ class KeycloakService {
       } catch (err) {
         console.error("Keycloak token update failed!", err);
         clearTimeout(this.timerId);
-        if (isOfflineEnabled() && !(await ConnectivityService.check())) {
+        if (
+          OfflineSettingsService.isOfflineAllowed() &&
+          !(await ConnectivityService.check())
+        ) {
           // Lost the connection, not the login: keep the session and try
           // again when the internet is back instead of logging out.
           this.setConnectionState("offline");
@@ -319,6 +324,7 @@ class KeycloakService {
                 );
                 this.saveOfflineSnapshot();
                 callback(true);
+                this.loadOfflineSettings();
               },
               (err) => {
                 console.error("Failed to load Keycloak user info", err);
@@ -327,8 +333,9 @@ class KeycloakService {
             );
             this.refreshToken();
             // Notice a lost connection at once, not only at the next token
-            // refresh (FFF-3 offline).
-            if (isOfflineEnabled()) this.watchConnectivity();
+            // refresh (FFF-3 offline). Also started by loadOfflineSettings()
+            // when the organization turns offline forms on.
+            if (OfflineSettingsService.isOfflineAllowed()) this.watchConnectivity();
           } else {
             this.logout();
           }
@@ -385,7 +392,10 @@ class KeycloakService {
     onError?: (error: unknown) => void
   ): void {
     const session = loadOfflineSession();
-    if (!isUsableOfflineSession(session, this._keycloakConfig.clientId)) {
+    if (
+      !OfflineSettingsService.isOfflineAllowed() ||
+      !isUsableOfflineSession(session, this._keycloakConfig.clientId)
+    ) {
       onError?.(new Error("No usable offline session"));
       return;
     }
@@ -407,9 +417,27 @@ class KeycloakService {
     callback(true);
   }
 
-  /** Saves the pass used for the next offline start (offline enabled only). */
+  /**
+   * Reads the organization's offline switches after an online sign-in (FFF-3).
+   * Offline forms on: keep the pass and watch the connection. Off: remove the
+   * pass and stop watching, so the app behaves as if offline did not exist.
+   */
+  private loadOfflineSettings(): void {
+    if (!isOfflineEnabled()) return;
+    OfflineSettingsService.refresh(this.token).then(() => {
+      if (OfflineSettingsService.isOfflineAllowed()) {
+        this.saveOfflineSnapshot();
+        this.watchConnectivity();
+      } else {
+        clearOfflineSession();
+        this.stopWatchingForReconnect();
+      }
+    });
+  }
+
+  /** Saves the pass used for the next offline start (offline forms on only). */
   private saveOfflineSnapshot(): void {
-    if (!isOfflineEnabled() || !this.kc?.token) return;
+    if (!OfflineSettingsService.isOfflineAllowed() || !this.kc?.token) return;
     const parsed: any = this.kc.tokenParsed || {};
     saveOfflineSession({
       clientId: this._keycloakConfig.clientId,
@@ -474,6 +502,7 @@ class KeycloakService {
       this.saveOfflineSnapshot();
       this.setConnectionState("online");
       this.refreshToken();
+      this.loadOfflineSettings();
     } catch (error) {
       if (!(await ConnectivityService.check())) {
         // Connection dropped again. keycloak-js allows init() only once per

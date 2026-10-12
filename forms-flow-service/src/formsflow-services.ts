@@ -1,5 +1,6 @@
 import KeycloakService from "./keycloak/KeycloakService";
 import ConnectivityService from "./connectivity/connectivityService";
+import OfflineSettingsService from "./offline/offlineSettings";
 import StorageService from "./storage/storageService";
 import RequestService from "./request/requestService";
 import i18nService from "./resourceBundles/i18n";
@@ -99,6 +100,7 @@ export {
   resolveTier,
 } from "./constants/breakpoints";
 export type { ConnectionState } from "./keycloak/KeycloakService";
+export type { OfflineSettings } from "./offline/offlineSettings";
 
 export type { BreakpointTier } from "./constants/breakpoints";
 
@@ -155,6 +157,7 @@ export type {
 export {
   KeycloakService,
   ConnectivityService,
+  OfflineSettingsService,
   StorageService,
   RequestService,
   i18nService,

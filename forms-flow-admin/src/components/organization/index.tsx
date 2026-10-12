@@ -17,9 +17,11 @@ import {
   SUBMISSION_FEATURE_KEY,
 } from "@formsflow/service";
 import { UsageSummaryCard } from "./UsageSummaryCard";
+import OfflineSettingsSection from "./OfflineSettingsSection";
 import API from "../../endpoints";
 import {
   MULTITENANCY_ENABLED,
+  OFFLINE_ENABLED,
   URL_TERMS_AND_CONDITIONS,
   URL_PRIVACY_POLICY,
 } from "../../constants";
@@ -79,6 +81,7 @@ const Organization: React.FC<any> = (props) => {
   const navigate = useNavigate();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const [termsOpen, setTermsOpen] = useState(true);
+  const [offlineOpen, setOfflineOpen] = useState(true);
 
   const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -205,6 +208,17 @@ const Organization: React.FC<any> = (props) => {
               dataTestId="organization-usage-summary-card"
             />
           </div>
+        )}
+
+        {isOrganizationManager && OFFLINE_ENABLED && (
+          <AccordionSection
+            title={t("Offline forms")}
+            isOpen={offlineOpen}
+            onToggle={() => setOfflineOpen(!offlineOpen)}
+            dataTestId="organization-offline-toggle"
+          >
+            <OfflineSettingsSection />
+          </AccordionSection>
         )}
 
         <AccordionSection

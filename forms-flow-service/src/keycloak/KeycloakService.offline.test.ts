@@ -59,6 +59,21 @@ const memoryStorage = () => {
 (global as any).sessionStorage = memoryStorage();
 (global as any).localStorage = memoryStorage();
 
+// The organization's offline switches (Phase 4 part 2), as the server answers.
+let mockOrgOffline = true;
+(global as any).fetch = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () =>
+      Promise.resolve({ offline: { enabled: mockOrgOffline, autoSync: false } }),
+  })
+);
+const keepOrgSwitch = (on: boolean) =>
+  (global as any).localStorage.setItem(
+    "ff_offline_settings",
+    JSON.stringify({ offlineEnabled: on, autoSyncEnabled: false, fetchedAt: 1 })
+  );
+
 import KeycloakService from "./KeycloakService";
 import {
   loadOfflineSession,
@@ -98,6 +113,8 @@ describe("KeycloakService offline start-up", () => {
     (global as any).window._env_.REACT_APP_OFFLINE_ENABLED = "true";
     (global as any).localStorage.clear();
     (global as any).sessionStorage.clear();
+    mockOrgOffline = true;
+    keepOrgSwitch(true);
     connectivityListener = null;
     mockKc.token = "online-token";
     mockKc.updateToken.mockResolvedValue(false);
@@ -268,6 +285,52 @@ describe("KeycloakService offline start-up", () => {
     // Still watching: a second drop is noticed too.
     connectivityListener?.(false);
     expect(instance.getConnectionState()).toBe("offline");
+  });
+
+  test("first sign-in, switches not read yet: reads them, then keeps the pass", async () => {
+    (global as any).localStorage.clear();
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.loadUserInfo.mockResolvedValue({ name: "Field User" });
+
+    freshInstance().initKeycloak(jest.fn());
+    await flush();
+
+    expect((global as any).fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/organization-settings"),
+      expect.objectContaining({
+        headers: { Authorization: "Bearer online-token" },
+      })
+    );
+    expect(loadOfflineSession()?.token).toBe("online-token");
+  });
+
+  test("organization turned offline forms off: the pass is removed", async () => {
+    savePass();
+    mockOrgOffline = false;
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.loadUserInfo.mockResolvedValue({ name: "Field User" });
+
+    freshInstance().initKeycloak(jest.fn());
+    await flush();
+
+    expect(loadOfflineSession()).toBeNull();
+    expect(connectivityListener).toBeNull();
+  });
+
+  test("offline start while the organization's switch is off: reports an error", async () => {
+    keepOrgSwitch(false);
+    savePass();
+    mockConnectivity.check.mockResolvedValue(false);
+    const callback = jest.fn();
+    const onError = jest.fn();
+
+    freshInstance().initKeycloak(callback, onError);
+    await flush();
+
+    expect(callback).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalled();
   });
 
   test("offline disabled: ignores the pass and signs in as before", async () => {
