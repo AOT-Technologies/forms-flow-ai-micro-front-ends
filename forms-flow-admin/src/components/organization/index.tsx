@@ -17,6 +17,11 @@ import {
   SUBMISSION_FEATURE_KEY,
 } from "@formsflow/service";
 import { UsageSummaryCard } from "./UsageSummaryCard";
+import {
+  AiPermissionsSection,
+  AiPermissions,
+  DEFAULT_AI_PERMISSIONS,
+} from "./AiPermissionsSection";
 import API from "../../endpoints";
 import {
   MULTITENANCY_ENABLED,
@@ -79,6 +84,10 @@ const Organization: React.FC<any> = (props) => {
   const navigate = useNavigate();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const [termsOpen, setTermsOpen] = useState(true);
+  // Held locally until the organization AI settings API is available.
+  const [aiPermissions, setAiPermissions] = useState<AiPermissions>(
+    DEFAULT_AI_PERMISSIONS
+  );
 
   const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -206,6 +215,18 @@ const Organization: React.FC<any> = (props) => {
             />
           </div>
         )}
+
+        <section className="organization-section">
+          <div className="organization-section-header organization-section-header--static">
+            <h3 className="organization-section-title">
+              {t("AI Permissions")}
+            </h3>
+          </div>
+          <AiPermissionsSection
+            value={aiPermissions}
+            onChange={setAiPermissions}
+          />
+        </section>
 
         <AccordionSection
           title={t("Terms & Conditions")}

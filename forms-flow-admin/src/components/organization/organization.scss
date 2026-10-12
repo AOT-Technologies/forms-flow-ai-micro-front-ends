@@ -15,6 +15,10 @@
       cursor: pointer;
       border-bottom: 1px solid var(--ff-gray-medium);
 
+      &--static {
+        cursor: default;
+      }
+
       .organization-section-title {
         font-size: var(--font-size-xl);
         font-weight: var(--font-weight-medium);
@@ -29,6 +33,106 @@
   .organization-usage {
     max-width: 33.5rem; //536px
     margin-bottom: 3.38rem;
+  }
+
+  .ai-permissions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.12rem 2.25rem;
+    margin-top: var(--spacer-175);
+
+    .is-disabled {
+      opacity: 0.5;
+    }
+
+    // Switch centred on the left, title and description stacked beside it. The Switch
+    // wrapper uses display: contents so its own label and button join this grid,
+    // keeping the visible title as the switch's accessible name.
+    .ai-permissions-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: var(--spacer-100);
+      align-items: center;
+      padding: 1.37rem;
+      padding-top: 1.44rem;
+      border: 1px solid var(--ff-gray-medium);
+      border-radius: 0.75rem; // 12px - matches the usage card
+      background-color: var(--white-200);
+
+      // Pale tints of the switch's own "on" green; the theme has no lighter step.
+      &--on {
+        border-color: #CBEDDE;
+        background-color: #F7FCFA;
+        border-radius: 0.3125rem;
+
+        // No description when on - keep the switch and title on one centred row.
+        .ai-permissions-switch .custom-switch {
+          grid-row: 1;
+        }
+      }
+    }
+
+    .ai-permissions-switch {
+      display: contents;
+
+      .custom-switch {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+
+      .custom-switch-label {
+        grid-column: 2;
+        grid-row: 1;
+        margin: 0;
+        font-weight: var(--font-weight-medium);
+        color: var(--secondary-dark);
+      }
+    }
+
+    .ai-permissions-description {
+      grid-column: 2;
+      grid-row: 2;
+      margin: 0;
+      color: var(--gray-dark);
+    }
+
+    .ai-permissions-option,
+    .ai-permissions-privacy {
+      max-width: 27.25rem; //436px - designed column width
+
+      .form-check-label,
+      .form-label {
+        color: var(--secondary-dark);
+        margin-left: 0.44rem;
+        font-size: 1rem;
+      }
+    }
+
+    .ai-permissions-hint {
+      margin: 0;
+      width: 33.625rem;
+      font-size: 1rem;
+      line-height: 1.2rem;
+      color:#979899;
+    }
+
+    .ai-permissions-privacy-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .ai-permissions-privacy textarea {
+      resize: vertical;
+      margin-bottom: var(--spacer-050);
+    }
+
+    .form-check:not(.form-switch) .form-check-input[type=checkbox] {
+      border: 2px solid #979899 !important;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 0.125rem !important;
+    }
   }
 
   .terms-actions {

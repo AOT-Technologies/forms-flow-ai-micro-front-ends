@@ -31,5 +31,19 @@ export const DownArrowIcon = makeStub("DownArrowIcon");
 export const FormInput = makeStub("FormInput");
 export const FormTextArea = makeStub("FormTextArea");
 export const ReusableTable = makeStub("ReusableTable");
+// Functional stand-in so tests can toggle it like the real role="switch" button.
+export const Switch = ({ checked = false, onChange, label, dataTestId }) =>
+  React.createElement(
+    "button",
+    {
+      type: "button",
+      role: "switch",
+      "aria-checked": checked,
+      "aria-label": label,
+      "data-testid": dataTestId,
+      onClick: () => onChange?.(!checked),
+    },
+    label
+  );
 export const UpArrowIcon = makeStub("UpArrowIcon");
 export const V8CustomButton = makeStub("V8CustomButton");
