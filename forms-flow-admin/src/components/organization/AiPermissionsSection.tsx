@@ -120,7 +120,7 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
           </Form.Label>
           <span
             id="organization-ai-privacy-notice-count"
-            className={`ai-permissions-hint${
+            className={`textarea-count${
               privacyNoticeDisabled ? " is-disabled" : ""
             }`}
             aria-live="polite"
@@ -132,7 +132,7 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
         <Form.Control
           as="textarea"
           id="organization-ai-privacy-notice"
-          rows={3}
+          rows={4}
           maxLength={PRIVACY_NOTICE_MAX_LENGTH}
           value={privacyNotice}
           disabled={privacyNoticeDisabled}
