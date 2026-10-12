@@ -25,6 +25,13 @@ const loadService = () => {
   return service;
 };
 
+// A failed probe while online is tried once more after 3 s (Phase 6).
+const checkAndWait = async (service: any) => {
+  const result = service.check();
+  await jest.advanceTimersByTimeAsync(3000);
+  return result;
+};
+
 describe("ConnectivityService", () => {
   beforeEach(() => {
     // The offline re-check uses setInterval; keep timers fake so none leak.
@@ -54,15 +61,30 @@ describe("ConnectivityService", () => {
     mockFetch.mockRejectedValue(new TypeError("Failed to fetch"));
     const service = loadService();
 
-    await expect(service.check()).resolves.toBe(false);
+    await expect(checkAndWait(service)).resolves.toBe(false);
     expect(service.isOnline()).toBe(false);
+    expect(mockFetch).toHaveBeenCalledTimes(2); // tried twice
+  });
+
+  test("one failed check while online is not an outage: the second check decides", async () => {
+    mockFetch
+      .mockRejectedValueOnce(new TypeError("Failed to fetch"))
+      .mockResolvedValue({ ok: true });
+    const service = loadService();
+    const samples: any[] = [];
+    service.subscribeSamples((sample: any) => samples.push(sample));
+
+    await expect(checkAndWait(service)).resolves.toBe(true);
+    expect(service.isOnline()).toBe(true);
+    // The first failure still counts for the network level.
+    expect(samples.map((sample) => sample.ok)).toEqual([false, true]);
   });
 
   test("is offline when the API answers with an error status", async () => {
     mockFetch.mockResolvedValue({ ok: false, status: 503 });
     const service = loadService();
 
-    await expect(service.check()).resolves.toBe(false);
+    await expect(checkAndWait(service)).resolves.toBe(false);
   });
 
   test("does not send a request when the browser already knows it is offline", async () => {
@@ -79,8 +101,8 @@ describe("ConnectivityService", () => {
     const unsubscribe = service.subscribe(listener);
 
     mockFetch.mockRejectedValue(new TypeError("offline"));
-    await service.check(); // online -> offline
-    await service.check(); // still offline: no new call
+    await checkAndWait(service); // online -> offline
+    await service.check(); // still offline: no new call (and no second try)
     mockFetch.mockResolvedValue({ ok: true });
     await service.check(); // offline -> online
 
@@ -88,7 +110,7 @@ describe("ConnectivityService", () => {
 
     unsubscribe();
     mockFetch.mockRejectedValue(new TypeError("offline"));
-    await service.check();
+    await checkAndWait(service);
     expect(listener).toHaveBeenCalledTimes(2);
   });
 
@@ -121,17 +143,30 @@ describe("ConnectivityService", () => {
     service.subscribe(listener);
 
     service.reportNetworkError();
-    await Promise.resolve();
-    await Promise.resolve();
-    await Promise.resolve();
-    expect(mockFetch).toHaveBeenCalledTimes(1);
+    await jest.advanceTimersByTimeAsync(3000); // the second try
+    expect(mockFetch).toHaveBeenCalledTimes(2);
     expect(listener).toHaveBeenCalledWith(false);
 
     service.reportNetworkError(); // right after: skipped
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-
-    jest.advanceTimersByTime(5000);
-    service.reportNetworkError(); // later: checks again
     expect(mockFetch).toHaveBeenCalledTimes(2);
+
+    await jest.advanceTimersByTimeAsync(5000);
+    service.reportNetworkError(); // later: checks again (offline now: one try)
+    await jest.advanceTimersByTimeAsync(0);
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+  });
+
+  test("tells sample listeners each check's result and time (network level)", async () => {
+    mockFetch.mockResolvedValue({ ok: true });
+    const service = loadService();
+    const samples: any[] = [];
+    service.subscribeSamples((sample: any) => samples.push(sample));
+
+    await service.check();
+    expect(samples).toEqual([{ ok: true, ms: expect.any(Number), source: "probe" }]);
+
+    mockFetch.mockRejectedValue(new TypeError("Failed to fetch"));
+    service.reportNetworkError();
+    expect(samples[1]).toEqual({ ok: false, ms: 0, source: "api" });
   });
 });

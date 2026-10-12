@@ -10,8 +10,19 @@ import { WEB_BASE_URL } from "../constants/constants";
  */
 type Listener = (online: boolean) => void;
 
+/** One connection check: did it work, and how long did it take (ms). */
+export interface ConnectionSample {
+  ok: boolean;
+  ms: number;
+  /** "probe" = our HEAD /checkpoint; "api" = an API call got no answer. */
+  source: "probe" | "api";
+}
+type SampleListener = (sample: ConnectionSample) => void;
+
 const PROBE_TIMEOUT_MS = 2000;
 const OFFLINE_RECHECK_MS = 15000;
+// A failed probe while online is tried once more after this wait.
+const SECOND_PROBE_AFTER_MS = 3000;
 // After an API call fails with no answer, probe at most this often.
 const NETWORK_ERROR_PROBE_GAP_MS = 5000;
 
@@ -19,6 +30,7 @@ class ConnectivityService {
   private static online =
     typeof navigator === "undefined" ? true : navigator.onLine !== false;
   private static listeners = new Set<Listener>();
+  private static sampleListeners = new Set<SampleListener>();
   private static started = false;
   private static recheckTimer: ReturnType<typeof setInterval> | null = null;
   private static pendingCheck: Promise<boolean> | null = null;
@@ -35,7 +47,7 @@ class ConnectivityService {
    */
   public static check(): Promise<boolean> {
     if (!this.pendingCheck) {
-      this.pendingCheck = this.probe()
+      this.pendingCheck = this.checkTwiceIfOnline()
         .then((online) => {
           this.setOnline(online);
           return online;
@@ -48,6 +60,28 @@ class ConnectivityService {
   }
 
   /**
+   * One failed probe while online may be a bump on a shaky network, not an
+   * outage (Phase 6): probe once more after a short wait, and go offline only
+   * if that fails too. The first failure still counts for the network level
+   * ("unstable"). The browser's own "offline" never waits.
+   */
+  private static async checkTwiceIfOnline(): Promise<boolean> {
+    if (await this.timedProbe()) return true;
+    const browserOffline =
+      typeof navigator !== "undefined" && navigator.onLine === false;
+    if (!this.online || browserOffline) return false;
+    await new Promise((resolve) => setTimeout(resolve, SECOND_PROBE_AFTER_MS));
+    return this.timedProbe();
+  }
+
+  private static async timedProbe(): Promise<boolean> {
+    const startedAt = Date.now();
+    const online = await this.probe();
+    this.emitSample({ ok: online, ms: Date.now() - startedAt, source: "probe" });
+    return online;
+  }
+
+  /**
    * An API call got no answer at all (network error). The browser may still
    * say "online" — e.g. Wi-Fi without internet, or our API is down — and then
    * no "offline" event comes. Probe now (at most every few seconds) so the app
@@ -57,7 +91,24 @@ class ConnectivityService {
     const now = Date.now();
     if (now - this.lastNetworkErrorProbeAt < NETWORK_ERROR_PROBE_GAP_MS) return;
     this.lastNetworkErrorProbeAt = now;
+    // The failed call itself counts as a failed check (network level).
+    this.emitSample({ ok: false, ms: 0, source: "api" });
     this.check();
+  }
+
+  /**
+   * Calls `listener` after every check with its result and timing (used by
+   * NetworkQualityService). Returns an unsubscribe function.
+   */
+  public static subscribeSamples(listener: SampleListener): () => void {
+    this.sampleListeners.add(listener);
+    return () => {
+      this.sampleListeners.delete(listener);
+    };
+  }
+
+  private static emitSample(sample: ConnectionSample): void {
+    this.sampleListeners.forEach((listener) => listener(sample));
   }
 
   /**
