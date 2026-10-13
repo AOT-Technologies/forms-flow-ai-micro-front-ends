@@ -39,8 +39,31 @@
     margin-top: var(--spacer-175);
   }
 
+  // Figma DEV 5.1: each switch in a light card, the switch first, then its
+  // state as the title and a line of help under it.
+  .offline-settings-row {
+    padding: var(--spacer-100) var(--spacer-150);
+    border: 1px solid var(--ff-gray-medium);
+    border-radius: var(--spacer-050);
+    background-color: var(--ff-gray-light);
+
+    .custom-switch-wrapper {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      align-items: center;
+      gap: var(--spacer-075);
+    }
+
+    .custom-switch-label {
+      margin: 0;
+      color: var(--ff-gray-darkest);
+    }
+  }
+
   .offline-settings-help {
-    margin: var(--spacer-050) 0 0;
+    margin: var(--spacer-025) 0 0 3.25rem;
+    font-size: var(--font-size-sm);
     color: var(--ff-gray-dark);
   }
 

@@ -212,7 +212,7 @@ const Organization: React.FC<any> = (props) => {
 
         {isOrganizationManager && OFFLINE_ENABLED && (
           <AccordionSection
-            title={t("Offline forms")}
+            title={t("Offline Submission")}
             isOpen={offlineOpen}
             onToggle={() => setOfflineOpen(!offlineOpen)}
             dataTestId="organization-offline-toggle"

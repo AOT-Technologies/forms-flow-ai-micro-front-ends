@@ -12,12 +12,13 @@ import {
 import { OFFLINE_AUTO_SYNC_ENABLED } from "../../constants";
 
 /**
- * The organization's offline switches (FFF-3, Phase 4 part 2). Plain UI for
- * now; the final design comes in the last phase.
- *   - Offline forms: users may save forms and fill them in without internet.
- *   - Auto sync: forms filled in offline are sent by themselves when the
- *     internet is back. Only with offline forms on.
+ * The organization's offline switches (FFF-3; Figma DEV 5.1):
+ *   - Offline submission: submitters may take forms offline and fill them in
+ *     without a connection.
+ *   - Automatic sync: submissions sync on their own when the connection
+ *     returns; off = submitters are asked first. Only with offline on.
  * Each switch shows only when its env key is on (here and on the server).
+ * The title of each row tells its state ("… is on" / "… is off").
  */
 const OfflineSettingsSection: React.FC = () => {
   const { t } = useTranslation();
@@ -75,12 +76,16 @@ const OfflineSettingsSection: React.FC = () => {
           checked={offline.enabled}
           disabled={save.isLoading}
           onChange={onOfflineChange}
-          label={t("Offline forms")}
+          label={
+            offline.enabled
+              ? t("Offline submission is on")
+              : t("Offline submission is off")
+          }
           dataTestId="organization-offline-forms-switch"
         />
         <p className="offline-settings-help">
           {t(
-            "Users can save forms on their device and fill them in without internet."
+            "Submitters can take forms offline and fill them in without a connection."
           )}
         </p>
       </div>
@@ -93,15 +98,19 @@ const OfflineSettingsSection: React.FC = () => {
             checked={offline.autoSync}
             disabled={save.isLoading || !offline.enabled}
             onChange={onAutoSyncChange}
-            label={t("Auto sync offline submissions")}
+            label={
+              offline.autoSync
+                ? t("Automatic sync is on")
+                : t("Automatic sync is off")
+            }
             dataTestId="organization-offline-auto-sync-switch"
           />
           <p className="offline-settings-help">
-            {offline.enabled
-              ? t(
-                  "Forms filled in offline are sent automatically when the internet is back."
-                )
-              : t("Turn on offline forms first.")}
+            {offline.autoSync
+              ? t("Submissions sync on their own when the connection returns.")
+              : t(
+                  "Submitters are asked before anything syncs, so a backlog does not go all at once."
+                )}
           </p>
         </div>
       )}
