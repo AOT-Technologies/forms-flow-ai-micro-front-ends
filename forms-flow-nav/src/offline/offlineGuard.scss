@@ -1,0 +1,35 @@
+// "Not available offline" (FFF-3): covers the page area next to the side menu
+// (.sidenav is fixed at z-index 1050), so the menu stays usable.
+.offline-guard {
+  position: fixed;
+  // Below the tenant's logo bar when it shows (root.component.js sets it).
+  top: var(--offline-guard-top, 0px);
+  right: 0;
+  bottom: 0;
+  left: var(--navbar-width, 0px);
+  z-index: 1040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: var(--ff-white, #fff);
+}
+
+.offline-guard-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  max-width: 28rem;
+}
+
+.offline-guard-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--ff-gray-darkest, #212529);
+}
+
+.offline-guard-text {
+  margin: 0;
+  color: var(--ff-gray-dark, #495057);
+}
