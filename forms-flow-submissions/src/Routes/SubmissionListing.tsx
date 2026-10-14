@@ -336,10 +336,14 @@ const AnalyzeSubmissionList: React.FC = () => {
   }, [defaultSubmissionFilter, filterList, formData]);
 
   useEffect(() => {
-    fetchSubmissionList().then((res) => {
-      const { filters = [] } = res.data || {};
-      dispatch(setSubmissionFilterList(filters));
-    });
+    fetchSubmissionList()
+      .then((res) => {
+        const { filters = [] } = res.data || {};
+        dispatch(setSubmissionFilterList(filters));
+      })
+      .catch((error) => {
+        console.error("Error fetching submission filters:", error);
+      });
   }, [defaultSubmissionFilter]);
 
   useEffect(() => {
