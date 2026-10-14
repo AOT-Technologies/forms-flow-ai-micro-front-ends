@@ -8,14 +8,9 @@ import {
 // it covers the rest with one plain page instead of each app failing in its
 // own way (a blank page, an endless loader, a crash).
 //
-// Offline means EITHER the connection is gone, OR the user turned "Offline
-// mode" on (formsflow-web keeps it in localStorage). Only while offline
-// support is on: the env key and the organization's "Offline forms" switch.
-
-const MANUAL_KEY = "ff_offline_mode";
-// formsflow-web sends this when the Offline mode switch changes in this tab
-// (a storage event only reaches other tabs).
-export const OFFLINE_MODE_EVENT = "ff-offline-mode-change";
+// Only when the connection is really gone: the "Offline mode" switch alone
+// does not cover other pages (decided 15 Oct). Only while offline support is
+// on: the env key and the organization's "Offline forms" switch.
 
 // Same env key as formsflow-web (REACT_APP_OFFLINE_ENABLED).
 const offlineEnabled = () => {
@@ -53,23 +48,13 @@ export const isAllowedOffline = (pathname = "") => {
 const isOfflineAllowed = () =>
   offlineEnabled() && OfflineSettingsService?.isOfflineAllowed?.() === true;
 
-const isManualOffline = () => {
-  try {
-    return localStorage.getItem(MANUAL_KEY) === "on";
-  } catch (error) {
-    return false;
-  }
-};
-
 const isConnectionOffline = () =>
   typeof ConnectivityService?.isOnline === "function" &&
   !ConnectivityService.isOnline();
 
 /** Show "Not available offline" on this page now? */
 export const shouldBlockPage = (pathname = window.location.pathname) =>
-  isOfflineAllowed() &&
-  (isConnectionOffline() || isManualOffline()) &&
-  !isAllowedOffline(pathname);
+  isOfflineAllowed() && isConnectionOffline() && !isAllowedOffline(pathname);
 
 /** Calls `onChange` when anything above may have changed. Returns unsubscribe. */
 export const subscribeOfflineGuard = (onChange) => {
@@ -81,17 +66,12 @@ export const subscribeOfflineGuard = (onChange) => {
     typeof OfflineSettingsService?.subscribe === "function"
       ? OfflineSettingsService.subscribe(onChange)
       : () => {};
-  const onStorage = (event) => {
-    if (event.key === MANUAL_KEY || event.key === null) onChange();
-  };
   // single-spa sends this on every page change, in every app.
-  const events = ["single-spa:routing-event", "popstate", OFFLINE_MODE_EVENT];
+  const events = ["single-spa:routing-event", "popstate"];
   events.forEach((name) => window.addEventListener(name, onChange));
-  window.addEventListener("storage", onStorage);
   return () => {
     unsubscribeConnection();
     unsubscribeSettings();
     events.forEach((name) => window.removeEventListener(name, onChange));
-    window.removeEventListener("storage", onStorage);
   };
 };

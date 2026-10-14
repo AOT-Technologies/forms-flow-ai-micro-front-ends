@@ -24,12 +24,7 @@ jest.mock("react-i18next", () => ({
 }));
 
 window._env_ = { REACT_APP_OFFLINE_ENABLED: "true" };
-const {
-  OFFLINE_MODE_EVENT,
-  baseOf,
-  isAllowedOffline,
-  shouldBlockPage,
-} = require("./offlineGuard");
+const { baseOf, isAllowedOffline, shouldBlockPage } = require("./offlineGuard");
 const NotAvailableOffline = require("./NotAvailableOffline").default;
 
 const goOffline = (offline) =>
@@ -75,7 +70,7 @@ describe("offline guard rules", () => {
     expect(baseOf("/task")).toBe("/");
   });
 
-  it("blocks only when offline (connection or Offline mode) and offline forms are on", () => {
+  it("blocks only when the connection is gone and offline forms are on", () => {
     expect(shouldBlockPage("/task")).toBe(false); // online
     mockOnline = false;
     expect(shouldBlockPage("/task")).toBe(true);
@@ -85,8 +80,9 @@ describe("offline guard rules", () => {
 
     mockAllowed = true;
     mockOnline = true;
-    localStorage.setItem("ff_offline_mode", "on"); // Offline mode switch
-    expect(shouldBlockPage("/task")).toBe(true);
+    // The Offline mode switch alone does not cover other pages (15 Oct).
+    localStorage.setItem("ff_offline_mode", "on");
+    expect(shouldBlockPage("/task")).toBe(false);
   });
 });
 
@@ -131,11 +127,13 @@ describe("Not available offline page", () => {
     expect(screen.queryByTestId("offline-guard")).not.toBeInTheDocument();
   });
 
-  it("follows the Offline mode switch in the same tab", () => {
-    renderAt("/admin/organization");
+  it("follows page changes while the connection is gone", () => {
+    renderAt("/form");
+    goOffline(true);
+    expect(screen.queryByTestId("offline-guard")).not.toBeInTheDocument();
     act(() => {
-      localStorage.setItem("ff_offline_mode", "on");
-      window.dispatchEvent(new Event(OFFLINE_MODE_EVENT));
+      window.history.pushState({}, "", "/admin/organization");
+      window.dispatchEvent(new Event("single-spa:routing-event"));
     });
     expect(screen.getByTestId("offline-guard")).toBeInTheDocument();
   });
