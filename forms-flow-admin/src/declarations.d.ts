@@ -84,6 +84,8 @@ declare module "@formsflow/components" {
     CustomTabs,
     FormInput,
     FormTextArea,
+    CustomTextArea,
+    CustomCheckbox,
     CustomButton,
     DeleteIcon,
     CopyIcon,

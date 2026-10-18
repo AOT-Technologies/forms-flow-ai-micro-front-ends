@@ -1,11 +1,20 @@
 @import "../../variables.scss";
 
+// Design values with no exact theme token. Kept here so each lives in one place.
+$section-spacing: 3.38rem;
+$card-radius: 0.75rem; // 12px - matches the usage card
+$field-radius: 0.375rem; // 6px
+$hint-color: #979899; // Figma gray/500; nearest token is --gray-medium-darker (#9E9E9E)
+// Pale tints of the switch's own "on" green; the theme has no lighter step.
+$ai-on-border: #cbedde;
+$ai-on-background: #f7fcfa;
+
 .organization-container {
   color: var(--ff-gray-dark);
   margin-top: var(--spacer-250);
 
   .organization-section {
-    margin-bottom: 3.38rem;
+    margin-bottom: $section-spacing;
 
     &-header {
       display: flex;
@@ -31,14 +40,14 @@
   // Placement only - the usage card styles itself from the shared theme
   // (v8-scss/_usageTracking). 536px matches the designed column width.
   .organization-usage {
-    max-width: 33.5rem; //536px
-    margin-bottom: 3.38rem;
+    max-width: 33.5rem; // 536px
+    margin-bottom: $section-spacing;
   }
 
   .ai-permissions {
     display: flex;
     flex-direction: column;
-    gap: 1.12rem 2.25rem;
+    gap: 1.12rem;
     margin-top: 1.31rem;
 
     .is-disabled {
@@ -53,18 +62,12 @@
       grid-template-columns: auto 1fr;
       column-gap: var(--spacer-100);
       align-items: center;
-      padding: 1.37rem;
-      padding-top: 1.44rem;
+      padding: 1.44rem 1.37rem 1.37rem;
       border: 1px solid var(--ff-gray-medium);
-      border-radius: 0.75rem; // 12px - matches the usage card
+      border-radius: $card-radius;
       background-color: var(--white-200);
 
-      // Pale tints of the switch's own "on" green; the theme has no lighter step.
       &--on {
-        border-color: #CBEDDE;
-        background-color: #F7FCFA;
-        border-radius: 0.3125rem;
-
         // No description when on - keep the switch and title on one centred row.
         .ai-permissions-switch .custom-switch {
           grid-row: 1;
@@ -99,21 +102,29 @@
     .ai-permissions-option,
     .ai-permissions-privacy {
       max-width: 44.93rem;
+    }
 
-      .form-check-label,
-      .form-label {
-        color: var(--secondary-dark);
-        margin-left: 0.44rem;
-        font-size: 1rem;
+    // Placement only - size and colours come from CustomCheckbox's small/secondary
+    // variants. Bootstrap's negative input margin would push the box out of the row.
+    .ai-permissions-option .custom-checkbox {
+      margin: 0;
+
+      .form-check-input {
+        margin: 0;
+      }
+
+      // Overrides the small variant's 0.875rem label size for this page only.
+      .form-check-label {
+        font-size: var(--default-font-size);
       }
     }
 
     .ai-permissions-hint {
       margin: 0;
       width: 33.625rem;
-      font-size: 1rem;
+      font-size: var(--default-font-size);
       line-height: 1.2rem;
-      color:#979899;
+      color: $hint-color;
     }
 
     // Label and remaining-count share one row above a borderless-looking pale field,
@@ -121,16 +132,22 @@
     .ai-permissions-privacy {
       display: flex;
       flex-direction: column;
-      gap: var(--spacer-050);
+      gap: var(--spacer-050) 1.12rem;
 
       .form-label {
         margin: 0;
+        font-size: var(--default-font-size);
         font-weight: var(--font-weight-regular);
+        color: var(--secondary-dark);
       }
 
-      .textarea-count{
-        flex:1;
+      .textarea-count {
+        flex: 1;
         text-align: right;
+      }
+
+      .ai-permissions-privacy-input {
+        max-width: none;
       }
 
       textarea {
@@ -138,15 +155,15 @@
         padding: var(--spacer-075);
         resize: none;
         border: 1px solid var(--gray-light);
-        border-radius: 0.375rem;
+        border-radius: $field-radius;
         background-color: var(--white-200);
         box-shadow: none;
       }
 
       .ai-permissions-hint {
-        width: 35.375rem;
+        width: 40.9375rem;
         margin-top: var(--spacer-050);
-        font-size: 0.875rem;
+        font-size: var(--spacer-010);
       }
     }
 
@@ -154,17 +171,10 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-
-      .ai-permissions-hint {
-        margin-top: 0;
-      }
     }
 
-    .form-check:not(.form-switch) .form-check-input[type=checkbox] {
-      border: 2px solid #979899 !important;
-      width: 1rem;
-      height: 1rem;
-      border-radius: 0.25rem !important;
+    .ai-permissions-actions button {
+      width: fit-content;
     }
   }
 

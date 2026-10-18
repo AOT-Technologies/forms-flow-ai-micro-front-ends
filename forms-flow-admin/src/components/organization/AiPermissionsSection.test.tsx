@@ -15,14 +15,43 @@ jest.mock("react-i18next", () => ({
   }),
 }));
 
-const Harness = ({ initial = DEFAULT_AI_PERMISSIONS }) => {
+// Functional stand-in for the shared stub so the Save button can be clicked.
+jest.mock("@formsflow/components", () => {
+  const React = jest.requireActual("react");
+  return {
+    ...jest.requireActual("../../__mocks__/formsflowComponents.js"),
+    V8CustomButton: ({ label, onClick, disabled, dataTestId }: any) =>
+      React.createElement(
+        "button",
+        { type: "button", onClick, disabled, "data-testid": dataTestId },
+        label
+      ),
+  };
+});
+
+// Mirrors the organization page: Save commits the current value as the saved one.
+const Harness = ({ initial = DEFAULT_AI_PERMISSIONS, onSave = jest.fn() }) => {
   const [value, setValue] = useState<AiPermissions>(initial);
-  return <AiPermissionsSection value={value} onChange={setValue} />;
+  const [savedValue, setSavedValue] = useState<AiPermissions>(initial);
+  return (
+    <AiPermissionsSection
+      value={value}
+      savedValue={savedValue}
+      onChange={setValue}
+      onSave={() => {
+        onSave();
+        setSavedValue(value);
+      }}
+    />
+  );
 };
+
+const getSave = () =>
+  screen.getByTestId("organization-ai-permissions-save-btn");
 
 const getSwitch = () => screen.getByTestId("organization-ai-assistance-switch");
 const getCheckbox = () =>
-  screen.getByTestId("organization-ai-submitter-chat-checkbox");
+  screen.getByTestId("organization-ai-submitter-chat-inline-checkbox-1");
 const getPrivacyNotice = () =>
   screen.getByTestId("organization-ai-privacy-notice-input");
 
@@ -88,5 +117,46 @@ describe("AiPermissionsSection", () => {
     expect(
       screen.getByTestId("organization-ai-privacy-notice-count")
     ).toHaveTextContent(`${PRIVACY_NOTICE_MAX_LENGTH - 5} characters`);
+  });
+
+  it("keeps Save disabled until an AI setting changes", () => {
+    render(<Harness />);
+    expect(getSave()).toHaveTextContent("Save");
+    expect(getSave()).toBeDisabled();
+  });
+
+  it("enables Save when the switch is toggled and disables it when toggled back", () => {
+    render(<Harness />);
+    fireEvent.click(getSwitch());
+    expect(getSave()).toBeEnabled();
+    fireEvent.click(getSwitch());
+    expect(getSave()).toBeDisabled();
+  });
+
+  it("enables Save for checkbox and privacy notice changes", () => {
+    render(
+      <Harness
+        initial={{
+          aiAssistanceEnabled: true,
+          submitterChatEnabled: true,
+          privacyNotice: "",
+        }}
+      />
+    );
+    fireEvent.change(getPrivacyNotice(), { target: { value: "Notice" } });
+    expect(getSave()).toBeEnabled();
+    fireEvent.change(getPrivacyNotice(), { target: { value: "" } });
+    expect(getSave()).toBeDisabled();
+    fireEvent.click(getCheckbox());
+    expect(getSave()).toBeEnabled();
+  });
+
+  it("saves the change and disables Save again", () => {
+    const onSave = jest.fn();
+    render(<Harness onSave={onSave} />);
+    fireEvent.click(getSwitch());
+    fireEvent.click(getSave());
+    expect(onSave).toHaveBeenCalledTimes(1);
+    expect(getSave()).toBeDisabled();
   });
 });

@@ -1,9 +1,17 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Form } from "react-bootstrap";
-import { Switch } from "@formsflow/components";
+import {
+  Switch,
+  V8CustomButton,
+  CustomCheckbox,
+  CustomTextArea,
+} from "@formsflow/components";
+import { AI_ASSISTANT_PRIVACY_NOTICE_LENGTH } from "../../constants";
 
-export const PRIVACY_NOTICE_MAX_LENGTH = 300;
+
+/** Env-configured limit; falls back to the default when unset or not a positive number. */
+export const PRIVACY_NOTICE_MAX_LENGTH = AI_ASSISTANT_PRIVACY_NOTICE_LENGTH;
 
 export interface AiPermissions {
   /** Organization-wide AI form submissions assistance */
@@ -20,9 +28,32 @@ export const DEFAULT_AI_PERMISSIONS: AiPermissions = {
   privacyNotice: "",
 };
 
+/** True when any AI setting - the switch, the checkbox or the notice - differs. */
+export const hasAiPermissionsChanged = (
+  current: AiPermissions,
+  saved: AiPermissions
+): boolean =>
+  current.aiAssistanceEnabled !== saved.aiAssistanceEnabled ||
+  current.submitterChatEnabled !== saved.submitterChatEnabled ||
+  current.privacyNotice !== saved.privacyNotice;
+
+const SUBMITTER_CHAT_VALUE = "allowSubmitterChat";
+// Module scope keeps the reference stable for the memoized CustomCheckbox, which
+// translates the label itself.
+const SUBMITTER_CHAT_ITEMS = [
+  {
+    label: "Allow Submitter AI chat in your organization",
+    value: SUBMITTER_CHAT_VALUE,
+  },
+];
+
 interface AiPermissionsSectionProps {
   value: AiPermissions;
+  /** Last saved settings; Save stays disabled while `value` matches them */
+  savedValue: AiPermissions;
   onChange: (value: AiPermissions) => void;
+  onSave: () => void;
+  saving?: boolean;
 }
 
 /**
@@ -32,27 +63,39 @@ interface AiPermissionsSectionProps {
  */
 export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
   value,
+  savedValue,
   onChange,
+  onSave,
+  saving = false,
 }) => {
   const { t } = useTranslation();
   const { aiAssistanceEnabled, submitterChatEnabled, privacyNotice } = value;
   const privacyNoticeDisabled = !aiAssistanceEnabled || !submitterChatEnabled;
   const remainingCharacters = PRIVACY_NOTICE_MAX_LENGTH - privacyNotice.length;
+  const saveDisabled = !hasAiPermissionsChanged(value, savedValue);
 
   const handleAssistanceChange = useCallback(
     (checked: boolean) => onChange({ ...value, aiAssistanceEnabled: checked }),
     [onChange, value]
   );
 
+  const submitterChatSelected = useMemo(
+    () => (submitterChatEnabled ? [SUBMITTER_CHAT_VALUE] : []),
+    [submitterChatEnabled]
+  );
+
   const handleSubmitterChatChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      onChange({ ...value, submitterChatEnabled: e.target.checked }),
+    (selected: string[]) =>
+      onChange({
+        ...value,
+        submitterChatEnabled: selected.includes(SUBMITTER_CHAT_VALUE),
+      }),
     [onChange, value]
   );
 
   const handlePrivacyNoticeChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-      onChange({ ...value, privacyNotice: e.target.value }),
+    (privacyNoticeText: string) =>
+      onChange({ ...value, privacyNotice: privacyNoticeText }),
     [onChange, value]
   );
 
@@ -88,15 +131,18 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
       </div>
 
       <div className="ai-permissions-option">
-        <Form.Check
-          type="checkbox"
+        <CustomCheckbox
           id="organization-ai-submitter-chat"
-          label={t("Allow Submitter AI chat in your organization")}
-          checked={submitterChatEnabled}
-          disabled={!aiAssistanceEnabled}
+          name="organization-ai-submitter-chat"
+          items={SUBMITTER_CHAT_ITEMS}
+          selectedValues={submitterChatSelected}
           onChange={handleSubmitterChatChange}
+          disabled={!aiAssistanceEnabled}
+          size="small"
+          variant="secondary"
+          ariaLabel={t("Allow Submitter AI chat in your organization")}
           aria-describedby="organization-ai-submitter-chat-description"
-          data-testid="organization-ai-submitter-chat-checkbox"
+          dataTestId="organization-ai-submitter-chat"
         />
         <p
           id="organization-ai-submitter-chat-description"
@@ -113,7 +159,7 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
       <div className="ai-permissions-privacy">
         <div className="ai-permissions-privacy-header">
           <Form.Label
-            htmlFor="organization-ai-privacy-notice"
+            htmlFor="organization-ai-privacy-notice-input-textarea"
             className={privacyNoticeDisabled ? "is-disabled" : undefined}
           >
             {t("Privacy Notice")}
@@ -129,16 +175,17 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
             {t("{{count}} characters", { count: remainingCharacters })}
           </span>
         </div>
-        <Form.Control
-          as="textarea"
-          id="organization-ai-privacy-notice"
+        {/* CustomTextArea derives the textarea id from dataTestId
+            ("<dataTestId>-textarea"), which the label above targets. */}
+        <CustomTextArea
+          value={privacyNotice}
+          setValue={handlePrivacyNoticeChange}
           rows={4}
           maxLength={PRIVACY_NOTICE_MAX_LENGTH}
-          value={privacyNotice}
           disabled={privacyNoticeDisabled}
-          onChange={handlePrivacyNoticeChange}
-          aria-describedby="organization-ai-privacy-notice-help organization-ai-privacy-notice-count"
-          data-testid="organization-ai-privacy-notice-input"
+          ariaLabel={t("Privacy Notice")}
+          className="ai-permissions-privacy-input"
+          dataTestId="organization-ai-privacy-notice-input"
         />
         <p
           id="organization-ai-privacy-notice-help"
@@ -150,6 +197,17 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
             "Explain to the submitter how the information they provide to the AI is used and stored in your organization. This Privacy Notice appears every time AI Submitter Chat is accessed."
           )}
         </p>
+      </div>
+
+      <div className="ai-permissions-actions">
+        <V8CustomButton
+          label={t("Save")}
+          variant="primary"
+          onClick={onSave}
+          disabled={saveDisabled}
+          loading={saving}
+          dataTestId="organization-ai-permissions-save-btn"
+        />
       </div>
     </div>
   );

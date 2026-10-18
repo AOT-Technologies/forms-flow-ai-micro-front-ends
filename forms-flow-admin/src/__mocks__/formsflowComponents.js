@@ -45,5 +45,61 @@ export const Switch = ({ checked = false, onChange, label, dataTestId }) =>
     },
     label
   );
+// Functional stand-ins mirroring the real DOM contract: one checkbox per item with
+// test id "<dataTestId>-inline-checkbox-<n>", and a textarea whose id is
+// "<dataTestId>-textarea".
+export const CustomCheckbox = ({
+  items = [],
+  selectedValues = [],
+  onChange,
+  disabled = false,
+  dataTestId = "",
+  id = "",
+}) =>
+  React.createElement(
+    "fieldset",
+    { id, disabled },
+    items.map((item, index) => {
+      const checked = selectedValues.includes(item.value);
+      return React.createElement(
+        "label",
+        { key: String(item.value) },
+        React.createElement("input", {
+          type: "checkbox",
+          id: `${id}-${index + 1}`,
+          checked,
+          disabled,
+          "data-testid": `${dataTestId}-inline-checkbox-${index + 1}`,
+          onChange: (event) =>
+            onChange?.(
+              checked
+                ? selectedValues.filter((v) => v !== item.value)
+                : [...selectedValues, item.value],
+              event
+            ),
+        }),
+        item.label
+      );
+    })
+  );
+export const CustomTextArea = ({
+  value,
+  setValue,
+  disabled = false,
+  maxLength,
+  rows,
+  ariaLabel,
+  dataTestId,
+}) =>
+  React.createElement("textarea", {
+    id: `${dataTestId}-textarea`,
+    value,
+    disabled,
+    maxLength,
+    rows,
+    "aria-label": ariaLabel,
+    "data-testid": dataTestId,
+    onChange: (event) => setValue(event.target.value),
+  });
 export const UpArrowIcon = makeStub("UpArrowIcon");
 export const V8CustomButton = makeStub("V8CustomButton");

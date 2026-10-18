@@ -27,6 +27,7 @@ import {
   MULTITENANCY_ENABLED,
   URL_TERMS_AND_CONDITIONS,
   URL_PRIVACY_POLICY,
+  AI_ASSISTANT_ENABLED,
 } from "../../constants";
 
 interface AccordionSectionProps {
@@ -88,6 +89,13 @@ const Organization: React.FC<any> = (props) => {
   const [aiPermissions, setAiPermissions] = useState<AiPermissions>(
     DEFAULT_AI_PERMISSIONS
   );
+  const [savedAiPermissions, setSavedAiPermissions] = useState<AiPermissions>(
+    DEFAULT_AI_PERMISSIONS
+  );
+  // TODO: persist through the organization AI settings API once it is available.
+  const saveAiPermissions = useCallback(() => {
+    setSavedAiPermissions(aiPermissions);
+  }, [aiPermissions]);
 
   const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
@@ -145,6 +153,7 @@ const Organization: React.FC<any> = (props) => {
     }
   }, []);
   const isOrganizationManager = userRoles.includes("manage_organization");
+  const showAiSettings = AI_ASSISTANT_ENABLED && isOrganizationManager;
 
   // Refreshes the cached tenant record. The home page reads the same storage keys, so this
   // effect is kept even though the subscription summary it used to feed has been replaced.
@@ -216,17 +225,21 @@ const Organization: React.FC<any> = (props) => {
           </div>
         )}
 
-        <section className="organization-section">
-          <div className="organization-section-header organization-section-header--static">
-            <h3 className="organization-section-title">
-              {t("AI Permissions")}
-            </h3>
-          </div>
-          <AiPermissionsSection
-            value={aiPermissions}
-            onChange={setAiPermissions}
-          />
-        </section>
+        {showAiSettings && (
+          <section className="organization-section">
+            <div className="organization-section-header organization-section-header--static">
+              <h3 className="organization-section-title">
+                {t("AI Permissions")}
+              </h3>
+            </div>
+            <AiPermissionsSection
+              value={aiPermissions}
+              savedValue={savedAiPermissions}
+              onChange={setAiPermissions}
+              onSave={saveAiPermissions}
+            />
+          </section>
+        )}
 
         <AccordionSection
           title={t("Terms & Conditions")}

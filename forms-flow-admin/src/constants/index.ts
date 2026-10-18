@@ -24,3 +24,11 @@ export const URL_TERMS_AND_CONDITIONS =
   window._env_?.REACT_APP_URL_TERMS_AND_CONDITIONS || "";
 export const URL_PRIVACY_POLICY =
   window._env_?.REACT_APP_URL_PRIVACY_POLICY || "";
+
+export const AI_ASSISTANT_ENABLED = isEnabled(
+  window._env_?.REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED || false
+);
+
+export const AI_ASSISTANT_PRIVACY_NOTICE_LENGTH = parseInt(
+  window._env_?.REACT_APP_AI_PRIVACY_NOTICE_LEN || "300"
+);
