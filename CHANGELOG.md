@@ -32,6 +32,7 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
 `Fixed`
 * Fixed bundle, task assignee dropdown, shared-filter, and admin table pagination issues.
 * Fixed export PDF failure, anonymous form navbar rendering, and various UI issues (scrollbars, tab borders, variable tab).
+* Upgraded `@aot-technologies/formiojs` and `@aot-technologies/formio-react` to 2.1.0 across all micro-frontends to fix the `convertShowToBoolean is not defined` error for components with simple conditionals.
 
 ## 8.2.0 - 05-05-2026
 
