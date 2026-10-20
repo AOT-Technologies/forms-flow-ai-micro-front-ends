@@ -90,6 +90,7 @@ Mark items as `Added`, `Changed`, `Fixed`, `Modified`, `Removed`, `Untested Feat
 
 `Generic Changes`
 * Fixed mobile and responsive layout issues across the nav, admin, components, review and submissions modules.
+* Upgraded `@aot-technologies/formiojs` and `@aot-technologies/formio-react` to 2.1.0 across all micro-frontends to fix the `convertShowToBoolean is not defined` error for components with simple conditionals.
 
 ## 8.2.5 - 22-07-2026
 
