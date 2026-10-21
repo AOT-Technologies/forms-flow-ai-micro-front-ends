@@ -111,8 +111,12 @@ declare module "@formsflow/components" {
     FORMSFLOW_LOGO_ICON_SVG,
     FORMSFLOW_WEBSITE_URL,
     UsageSummaryCard,
-    mapTenantDataToUsage
+    mapTenantDataToUsage,
+    FileUploadItem,
+    SwitchCard
   }: any;
+
+  export type FileUploadStatus = "uploading" | "success" | "error";
 
   export type StyleConfig = {
     background: string;

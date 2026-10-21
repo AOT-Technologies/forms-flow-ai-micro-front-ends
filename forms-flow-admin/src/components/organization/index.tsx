@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Collapse } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
+import { toast } from "react-toastify";
 import {
   V8CustomButton,
   UpArrowIcon,
@@ -20,9 +21,12 @@ import { UsageSummaryCard } from "./UsageSummaryCard";
 import {
   AiPermissionsSection,
   AiPermissions,
+  AiPermissionsPayload,
   DEFAULT_AI_PERMISSIONS,
+  fromTenantData,
 } from "./AiPermissionsSection";
 import API from "../../endpoints";
+import { updateAiPermissions } from "../../services/organization";
 import {
   MULTITENANCY_ENABLED,
   URL_TERMS_AND_CONDITIONS,
@@ -85,19 +89,40 @@ const Organization: React.FC<any> = (props) => {
   const navigate = useNavigate();
   const { tenantId: urlTenantId } = useParams<{ tenantId?: string }>();
   const [termsOpen, setTermsOpen] = useState(true);
-  // Held locally until the organization AI settings API is available.
   const [aiPermissions, setAiPermissions] = useState<AiPermissions>(
     DEFAULT_AI_PERMISSIONS
   );
   const [savedAiPermissions, setSavedAiPermissions] = useState<AiPermissions>(
     DEFAULT_AI_PERMISSIONS
   );
-  // TODO: persist through the organization AI settings API once it is available.
-  const saveAiPermissions = useCallback(() => {
-    setSavedAiPermissions(aiPermissions);
-  }, [aiPermissions]);
+  const [savingAiPermissions, setSavingAiPermissions] = useState(false);
+  // Bumped after a successful save so the tenant-refresh effect below refetches the
+  // record and the AI settings are repopulated from what the server stored.
+  const [tenantRefreshCount, setTenantRefreshCount] = useState(0);
 
   const tenantKey = urlTenantId || StorageService.get("tenantKey") || "";
+
+  const saveAiPermissions = useCallback(
+    (payload: AiPermissionsPayload) => {
+      setSavingAiPermissions(true);
+      updateAiPermissions(
+        tenantKey,
+        payload,
+        () => {
+          setSavedAiPermissions(aiPermissions);
+          setSavingAiPermissions(false);
+          setTenantRefreshCount((count) => count + 1);
+          toast.success(t("Update success!"));
+        },
+        (error) => {
+          console.error("Failed to update AI permissions:", error);
+          setSavingAiPermissions(false);
+          toast.error(t("Update failed!"));
+        }
+      );
+    },
+    [aiPermissions, tenantKey, t]
+  );
   const baseUrl = MULTITENANCY_ENABLED ? `/tenant/${tenantKey}/` : "/";
 
   // Every CTA the card can render - "Upgrade to Professional Plan", "Upgrade to 2500
@@ -185,7 +210,16 @@ const Organization: React.FC<any> = (props) => {
     return () => {
       cancelled = true;
     };
-  }, [location.pathname]);
+  }, [location.pathname, tenantRefreshCount]);
+
+  // The tenant record is the source of truth for the saved AI settings: populate the
+  // form (and its saved baseline) from it on load and after every refetch.
+  useEffect(() => {
+    if (!tenantData) return;
+    const stored = fromTenantData(tenantData);
+    setAiPermissions(stored);
+    setSavedAiPermissions(stored);
+  }, [tenantData]);
 
   const renderExternalButtons = (label: string) => {
     const key = label
@@ -237,6 +271,7 @@ const Organization: React.FC<any> = (props) => {
               savedValue={savedAiPermissions}
               onChange={setAiPermissions}
               onSave={saveAiPermissions}
+              saving={savingAiPermissions}
             />
           </section>
         )}

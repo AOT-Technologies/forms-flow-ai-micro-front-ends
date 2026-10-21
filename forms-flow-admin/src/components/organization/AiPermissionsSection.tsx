@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Form } from "react-bootstrap";
 import {
-  Switch,
+  SwitchCard,
   V8CustomButton,
   CustomCheckbox,
   CustomTextArea,
@@ -26,6 +26,39 @@ export const DEFAULT_AI_PERMISSIONS: AiPermissions = {
   aiAssistanceEnabled: false,
   submitterChatEnabled: false,
   privacyNotice: "",
+};
+
+/** Shape of the AI settings handed to `onSave` (snake_case, as the API expects). */
+export interface AiPermissionsPayload {
+  submission_assistant: boolean;
+  submitter_chat: boolean;
+  privacy_notice: string;
+}
+
+export const toAiPermissionsPayload = ({
+  aiAssistanceEnabled,
+  submitterChatEnabled,
+  privacyNotice,
+}: AiPermissions): AiPermissionsPayload => ({
+  submission_assistant: aiAssistanceEnabled,
+  submitter_chat: submitterChatEnabled,
+  privacy_notice: privacyNotice,
+});
+
+/**
+ * Reads the saved AI settings from the tenant record. They are looked up under
+ * `details` first, then at the top level; missing fields fall back to the defaults.
+ */
+export const fromTenantData = (
+  tenantData?: Record<string, any> | null
+): AiPermissions => {
+  const source = { ...tenantData, ...tenantData?.details };
+  return {
+    aiAssistanceEnabled: Boolean(source.submission_assistant),
+    submitterChatEnabled: Boolean(source.submitter_chat),
+    privacyNotice:
+      typeof source.privacy_notice === "string" ? source.privacy_notice : "",
+  };
 };
 
 /** True when any AI setting - the switch, the checkbox or the notice - differs. */
@@ -52,7 +85,8 @@ interface AiPermissionsSectionProps {
   /** Last saved settings; Save stays disabled while `value` matches them */
   savedValue: AiPermissions;
   onChange: (value: AiPermissions) => void;
-  onSave: () => void;
+  /** Called with the current settings when Save is clicked */
+  onSave: (payload: AiPermissionsPayload) => void;
   saving?: boolean;
 }
 
@@ -79,6 +113,11 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
     [onChange, value]
   );
 
+  const handleSave = useCallback(
+    () => onSave(toAiPermissionsPayload(value)),
+    [onSave, value]
+  );
+
   const submitterChatSelected = useMemo(
     () => (submitterChatEnabled ? [SUBMITTER_CHAT_VALUE] : []),
     [submitterChatEnabled]
@@ -101,34 +140,24 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
 
   return (
     <div className="ai-permissions" data-testid="organization-ai-permissions">
-      <div
-        className={`ai-permissions-card${
-          aiAssistanceEnabled ? " ai-permissions-card--on" : ""
-        }`}
-      >
-        <Switch
-          id="organization-ai-assistance-switch"
-          className="ai-permissions-switch"
-          checked={aiAssistanceEnabled}
-          onChange={handleAssistanceChange}
-          label={
-            aiAssistanceEnabled
-              ? t("AI Form submissions assistance is ON for your organization")
-              : t("AI Form submissions assistance is OFF for your organization")
-          }
-          dataTestId="organization-ai-assistance-switch"
-        />
-        {!aiAssistanceEnabled && (
-          <p
-            className="ai-permissions-description"
-            data-testid="organization-ai-assistance-description"
-          >
-            {t(
-              "This feature allows form creators to add context to their forms. This context allows an AI assistant to help those submitting the form."
-            )}
-          </p>
-        )}
-      </div>
+      <SwitchCard
+        id="organization-ai-assistance-switch"
+        checked={aiAssistanceEnabled}
+        onChange={handleAssistanceChange}
+        label={
+          aiAssistanceEnabled
+            ? t("AI Form submissions assistance is ON for your organization")
+            : t("AI Form submissions assistance is OFF for your organization")
+        }
+        description={
+          aiAssistanceEnabled
+            ? undefined
+            : t(
+                "This feature allows form creators to add context to their forms. This context allows an AI assistant to help those submitting the form."
+              )
+        }
+        dataTestId="organization-ai-assistance"
+      />
 
       <div className="ai-permissions-option">
         <CustomCheckbox
@@ -203,7 +232,7 @@ export const AiPermissionsSection: React.FC<AiPermissionsSectionProps> = ({
         <V8CustomButton
           label={t("Save")}
           variant="primary"
-          onClick={onSave}
+          onClick={handleSave}
           disabled={saveDisabled}
           loading={saving}
           dataTestId="organization-ai-permissions-save-btn"

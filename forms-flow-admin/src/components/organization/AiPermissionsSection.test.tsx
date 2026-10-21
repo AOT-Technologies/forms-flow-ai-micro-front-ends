@@ -5,6 +5,7 @@ import {
   AiPermissions,
   DEFAULT_AI_PERMISSIONS,
   PRIVACY_NOTICE_MAX_LENGTH,
+  fromTenantData,
 } from "./AiPermissionsSection";
 
 // No i18n instance is initialised in tests, so supply a t() that interpolates.
@@ -38,8 +39,8 @@ const Harness = ({ initial = DEFAULT_AI_PERMISSIONS, onSave = jest.fn() }) => {
       value={value}
       savedValue={savedValue}
       onChange={setValue}
-      onSave={() => {
-        onSave();
+      onSave={(payload) => {
+        onSave(payload);
         setSavedValue(value);
       }}
     />
@@ -158,5 +159,55 @@ describe("AiPermissionsSection", () => {
     fireEvent.click(getSave());
     expect(onSave).toHaveBeenCalledTimes(1);
     expect(getSave()).toBeDisabled();
+  });
+
+  it("passes the settings to onSave as a snake_case object", () => {
+    const onSave = jest.fn();
+    render(<Harness onSave={onSave} />);
+    fireEvent.click(getSwitch());
+    fireEvent.click(getCheckbox());
+    fireEvent.change(getPrivacyNotice(), { target: { value: "Notice" } });
+    fireEvent.click(getSave());
+    expect(onSave).toHaveBeenCalledWith({
+      submission_assistant: true,
+      submitter_chat: true,
+      privacy_notice: "Notice",
+    });
+  });
+});
+
+describe("fromTenantData", () => {
+  it("reads the AI settings from the tenant details", () => {
+    expect(
+      fromTenantData({
+        key: "acme",
+        details: {
+          submission_assistant: true,
+          submitter_chat: true,
+          privacy_notice: "Notice",
+        },
+      })
+    ).toEqual({
+      aiAssistanceEnabled: true,
+      submitterChatEnabled: true,
+      privacyNotice: "Notice",
+    });
+  });
+
+  it("falls back to top-level fields", () => {
+    expect(
+      fromTenantData({ submission_assistant: true, submitter_chat: false })
+    ).toEqual({
+      aiAssistanceEnabled: true,
+      submitterChatEnabled: false,
+      privacyNotice: "",
+    });
+  });
+
+  it("returns the defaults when the record has no AI settings", () => {
+    expect(fromTenantData(null)).toEqual(DEFAULT_AI_PERMISSIONS);
+    expect(fromTenantData({ details: { locale: "en" } })).toEqual(
+      DEFAULT_AI_PERMISSIONS
+    );
   });
 });

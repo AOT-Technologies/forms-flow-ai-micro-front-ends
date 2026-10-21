@@ -22,6 +22,7 @@ const API = {
   CHECKLIST: `${WEB_BASE_URL}/user/checklist`,
   USER_ACTIVATION: `${WEB_BASE_URL}/user/<user_id>/status`,
   TENANT_STYLE: `${WEB_BASE_URL}/style`,
+  AI_PERMISSIONS: `${WEB_BASE_URL}/tenants/<tenant_key>/ai-permissions`,
 };
 
 export default API;
