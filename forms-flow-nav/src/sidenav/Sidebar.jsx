@@ -19,6 +19,13 @@ import {
   StorageService,
   StyleServices,
   storeChecklistItems,
+  applyBranding,
+  cacheBranding,
+  getCachedBranding,
+  truncateDisplayName,
+  BRANDING_UPDATED_EVENT,
+  isBrandingPreview,
+  startBrandingPreview,
 } from "@formsflow/service";
 import i18n from "../resourceBundles/i18n";
 import {
@@ -28,6 +35,7 @@ import {
 import { setShowApplications } from "../constants/userConstants";
 import { PERMISSIONS } from "../constants/permissions";
 import { checkIntegrationEnabled } from "../services/integration";
+import { fetchBranding } from "../services/branding";
 import {
   fetchUserLoginDetails,
   fetchChecklist,
@@ -186,15 +194,53 @@ UserProfile.propTypes = {
   collapsed: PropTypes.bool,
 };
 
-const renderLogo = (hideLogo, collapsed) => {
-  if (hideLogo === "true") return null;
+// Inside the Appearance tab's live-preview iframe: draft branding comes from the
+// parent page instead of the API, and nothing is cached.
+const IS_BRANDING_PREVIEW = isBrandingPreview?.() ?? false;
 
-  return (
-    <div className={`logo-container${collapsed ? " collapsed" : ""}`}>
+// Branding is cached per tenant; root-config reads the same key from the URL.
+const brandingTenantKey = () =>
+  MULTITENANCY_ENABLED
+    ? (window.location.pathname.match(/^\/tenant\/([^/]+)/) || [])[1] || null
+    : null;
+
+export const BrandLogo = ({ logoUrl, displayName }) => {
+  const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [logoUrl]);
+
+  if (!logoUrl || failed) {
+    return (
       <ApplicationLogoFull
         width={107}
         height={20}
         data-testid="application-logo"
+      />
+    );
+  }
+  return (
+    <img
+      className="tenant-logo"
+      src={logoUrl}
+      alt={displayName || "Logo"}
+      onError={() => setFailed(true)}
+      data-testid="tenant-logo"
+    />
+  );
+};
+
+BrandLogo.propTypes = {
+  logoUrl: PropTypes.string,
+  displayName: PropTypes.string,
+};
+
+const renderLogo = (hideLogo, collapsed, branding) => {
+  if (hideLogo === "true") return null;
+
+  return (
+    <div className={`logo-container${collapsed ? " collapsed" : ""}`}>
+      <BrandLogo
+        logoUrl={branding?.logoUrl}
+        displayName={branding?.displayName}
       />
     </div>
   );
@@ -213,6 +259,14 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   const tenantKey = tenant?.tenantId;
   const formTenant = form?.tenantKey;
   const [showProfile, setShowProfile] = useState(false);
+  const [branding, setBranding] = useState(
+    () => getCachedBranding?.(brandingTenantKey()) ?? null
+  );
+
+  useEffect(
+    () => (IS_BRANDING_PREVIEW ? startBrandingPreview(setBranding) : undefined),
+    []
+  );
   const { t } = useTranslation();
 
   const baseUrl = getRedirectUrl(tenantKey || userDetail?.tenantKey);
@@ -298,8 +352,8 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   // rail is hidden by CSS and the hamburger overlay takes over.
   // The rail expands only when the toggle is clicked. Hovering a collapsed icon
   // shows that row's tooltip instead (see .menu-flyout) and never widens the nav.
-
-  const [collapsed, setCollapsed] = useState(!overlay);
+  // The live preview opens expanded so the logo and display name are visible.
+  const [collapsed, setCollapsed] = useState(!overlay && !IS_BRANDING_PREVIEW);
 
   const handleToggleClick = () => {
     if (onToggle) {
@@ -384,6 +438,11 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
       }
     });
 
+    // Branding saved in Manage -> Appearance: update the sidebar without a reload.
+    props.subscribe(BRANDING_UPDATED_EVENT || "ES_BRANDING_UPDATED", (msg, data) => {
+      setBranding(data);
+    });
+
     // Subscribe to profile updates to refresh user details in navbar
     props.subscribe("profileUpdated", () => {
       const updatedUserDetail =
@@ -405,6 +464,17 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
       // Fetch federated login details (saves into localStorage)]
       fetchUserLoginDetails();
       loadChecklistFromOnboarding();
+      if (!IS_BRANDING_PREVIEW) {
+        fetchBranding()
+          .then((res) => {
+            setBranding(res.data);
+            applyBranding?.(res.data);
+            cacheBranding?.(res.data, brandingTenantKey());
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
       checkIntegrationEnabled()
         .then((res) => {
           setIntegrationEnabled(res.data?.enabled);
@@ -556,7 +626,7 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
       {/* Logo and the collapse toggle share one header row (Figma 8.3): logo
           at the left inset, toggle pinned right. */}
       <div className="sidenav-header">
-        {renderLogo(hideLogo, collapsed)}
+        {renderLogo(hideLogo, collapsed, branding)}
         {/* The toggle is now the only way to expand the nav, so it has to be a
             real button: the span it replaces was not focusable or key-operable. */}
         <div className={`menu-toggle-icon${collapsed ? "" : " open"}`}>
@@ -572,6 +642,15 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
           </button>
         </div>
       </div>
+      {!collapsed && branding?.displayName && (
+        <div
+          className="tenant-display-name"
+          title={branding.displayName}
+          data-testid="tenant-display-name"
+        >
+          {truncateDisplayName?.(branding.displayName) ?? branding.displayName}
+        </div>
+      )}
       <div
         className={`options-container${collapsed ? " collapsed" : ""}`}
         data-testid="options-container"

@@ -1,0 +1,264 @@
+// Manage -> Appearance (application branding). Layout follows Figma 24812:14335.
+
+// Editor and preview keep their widths; narrow windows scroll sideways instead of squashing.
+.ff-appearance {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+  overflow-x: auto;
+
+  &__editor {
+    flex: 0 0 22.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__section-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--gray-x-light);
+    color: var(--gray-darkest);
+  }
+
+  &__hint {
+    font-size: var(--font-size-s);
+    color: var(--gray-dark);
+  }
+
+  &__hint {
+    margin: 0;
+  }
+
+  &__shapes {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  &__shape {
+    flex: 1;
+    min-height: 2.5rem;
+    border: 1px solid var(--gray-medium);
+    background: var(--white-300);
+    color: var(--gray-darkest);
+
+    &--rounded {
+      border-radius: 1.5625rem;
+    }
+
+    &--square {
+      border-radius: 5px;
+    }
+
+    &--selected {
+      border-color: var(--gray-darkest);
+    }
+  }
+
+  &__logo-current {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.5rem;
+    border: 1px solid var(--gray-darkest);
+    border-radius: 0.25rem;
+
+    img {
+      max-width: 7rem;
+      max-height: 2.5rem;
+      object-fit: contain;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-x-light);
+  }
+}
+
+// Live preview panel: the iframe itself lives on <body> (previewFrameHost.ts)
+// and is positioned over this box.
+.ff-appearance-live {
+  position: relative;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--gray-x-light);
+
+  &__loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white-300);
+    color: var(--gray-dark);
+  }
+}
+
+// Logo upload: Figma 30551:2253 (empty), 30551:2557 (loading), 30551:2656 (selected).
+.ff-logo-upload {
+  &__dropzone,
+  &__card {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    height: 5rem;
+    border-radius: 0.25rem;
+  }
+
+  &__dropzone {
+    justify-content: center;
+    gap: 0.75rem;
+    border: 1px dashed var(--gray-medium);
+    background: var(--white-300);
+    color: var(--gray-darkest);
+    font-size: 1rem;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &__card {
+    gap: 1rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    border: 1px solid var(--gray-medium);
+    background: var(--white-300);
+
+    &--loading {
+      padding-left: 0.875rem;
+      border-color: var(--primary-dark);
+      background: var(--primary);
+    }
+
+    &--selected {
+      align-items: stretch;
+    }
+  }
+
+  &__file-icon {
+    display: flex;
+    align-self: flex-start;
+    margin-top: 0.625rem;
+    color: #1b34fb;
+  }
+
+  &__progress-wrap {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  &__progress {
+    width: 13.5rem;
+    max-width: 100%;
+    height: 0.5rem;
+    border-radius: 6.25rem;
+    background: #e8ebff;
+
+    span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: #1b34fb;
+      transition: width 0.15s ease-out;
+    }
+  }
+
+  &__thumb {
+    display: flex;
+    flex: 0 0 8.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+    background: var(--white-100);
+    overflow: hidden;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  // Long names (often one unbroken word) wrap inside the fixed-height card:
+  // at most two lines, breaking mid-word, then an ellipsis.
+  &__name {
+    display: -webkit-box;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--gray-darkest);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  &__card--selected &__name {
+    align-self: flex-start;
+    font-size: 1rem;
+    font-weight: var(--font-weight-regular);
+  }
+
+  &__icon-btn {
+    display: flex;
+    align-self: flex-start;
+    margin-top: 0.625rem;
+    border: 0;
+    padding: 0;
+    background: none;
+    color: var(--gray-darkest);
+
+    &--danger {
+      align-self: flex-end;
+      margin: 0 0 0.375rem;
+      color: #d53441;
+    }
+  }
+}
+
+// Figma 30551:2450 / 30551:2343. Portaled to <body> to sit above the preview iframe.
+.ff-logo-alert {
+  position: fixed;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding: 0 1rem;
+  border: 1px solid #ffe8bf;
+  border-radius: 5px;
+  background: #fffbf5;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  color: #525254;
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+
+  svg {
+    flex-shrink: 0;
+    color: #ffa100;
+  }
+
+  &__label {
+    color: #ffa100;
+  }
+}

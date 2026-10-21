@@ -4,6 +4,20 @@ import Keycloak, {
   KeycloakConfig,
 } from "keycloak-js";
 import StorageService from "../storage/storageService";
+import {
+  BRANDING_PREVIEW_AUTH,
+  BRANDING_PREVIEW_AUTH_REQUEST,
+  BRANDING_PREVIEW_UNAVAILABLE,
+  isBrandingPreview,
+} from "../helpers/brandingService";
+
+interface SessionTokens {
+  token: string;
+  refreshToken?: string;
+  idToken?: string;
+}
+
+const PREVIEW_AUTH_TIMEOUT_MS = 5000;
 
 class KeycloakService {
   /**
@@ -66,9 +80,70 @@ class KeycloakService {
     }
   }
 
+  /** Current session tokens, handed to the Appearance live-preview frame. */
+  public static getSessionTokens(): SessionTokens | null {
+    const kc = this.instance?.kc;
+    return kc?.token
+      ? { token: kc.token, refreshToken: kc.refreshToken, idToken: kc.idToken }
+      : null;
+  }
+
+  private useParentToken(token: string): void {
+    this.token = token;
+    if (this.kc) this.kc.token = token;
+  }
+
+  /**
+   * In the preview frame: the parent's refresh loop saves each new access token
+   * to the session/local storage this frame shares, so adopt it from there.
+   */
+  private followParentSession(): void {
+    window.addEventListener("storage", (event) => {
+      if (
+        event.key === StorageService.User.AUTH_TOKEN &&
+        event.newValue &&
+        event.newValue !== this.token
+      ) {
+        this.useParentToken(event.newValue);
+      }
+    });
+  }
+
+  /** In the preview frame: ask the parent page for its session tokens. */
+  private requestParentSession(): Promise<SessionTokens | null> {
+    return new Promise((resolve) => {
+      const origin = window.location.origin;
+      const timer = setTimeout(() => finish(null), PREVIEW_AUTH_TIMEOUT_MS);
+      const onMessage = (event: MessageEvent) => {
+        if (event.origin !== origin || event.source !== window.parent) return;
+        if (event.data?.type === BRANDING_PREVIEW_AUTH) {
+          finish(event.data.tokens ?? null);
+        }
+      };
+      const finish = (tokens: SessionTokens | null) => {
+        clearTimeout(timer);
+        window.removeEventListener("message", onMessage);
+        resolve(tokens);
+      };
+      window.addEventListener("message", onMessage);
+      window.parent.postMessage(
+        { type: BRANDING_PREVIEW_AUTH_REQUEST },
+        origin
+      );
+    });
+  }
+
   public static async updateToken(): Promise<string | null> {
     const instance = this.instance;
     if (!instance?.kc) return null;
+
+    // Preview frame: never spend the parent's refresh token; take its current one.
+    if (isBrandingPreview()) {
+      const tokens = await instance.requestParentSession();
+      if (!tokens) return null;
+      instance.useParentToken(tokens.token);
+      return tokens.token;
+    }
 
     try {
       const refreshed = await instance.kc.updateToken(-1);
@@ -137,9 +212,23 @@ class KeycloakService {
    * @param callback - Optional - callback function to excecute after succeessful authentication
    */
   public initKeycloak(callback: (authenticated) => void = () => {}): void {
-    this.kc
-      ?.init(this.keycloakInitConfig)
-      .then((authenticated) => {
+    // The live-preview frame reuses the parent's session: no redirect, no
+    // refresh loop (the parent owns the refresh token).
+    const preview = isBrandingPreview();
+    const init = preview
+      ? this.requestParentSession().then((tokens) =>
+          tokens
+            ? this.kc?.init({
+                pkceMethod: "S256",
+                checkLoginIframe: false,
+                ...tokens,
+              })
+            : false
+        )
+      : this.kc?.init(this.keycloakInitConfig);
+
+    init
+      ?.then((authenticated) => {
         if (authenticated) {
           console.log("Authenticated");
           const tokenParsed = this.kc.tokenParsed;
@@ -169,10 +258,16 @@ class KeycloakService {
               );
               callback(true);
             });
-            this.refreshToken();
+            if (preview) this.followParentSession();
+            else this.refreshToken();
           } else {
             this.logout();
           }
+        } else if (preview) {
+          window.parent.postMessage(
+            { type: BRANDING_PREVIEW_UNAVAILABLE },
+            window.location.origin
+          );
         } else {
           console.warn("not authenticated!");
           this.login();

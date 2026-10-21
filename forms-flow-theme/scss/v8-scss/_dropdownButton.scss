@@ -249,3 +249,16 @@ $color-secondary-active: var(--secondary);
     right: 0 !important;
   }
 }
+
+// Tenant branding: square buttons. The branding runtime sets the class on <html>.
+.ff-button-square .v8-custom-dropdown.dropdown.btn-group .v8-dropdown-toggle {
+  border-radius: 5px;
+
+  .label-div {
+    border-radius: 5px 0 0 5px;
+  }
+
+  .dropdown-icon {
+    border-radius: 0 5px 5px 0;
+  }
+}
