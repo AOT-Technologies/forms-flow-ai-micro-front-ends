@@ -107,9 +107,11 @@ const OfflineSettingsSection: React.FC = () => {
           />
           <p className="offline-settings-help">
             {offline.autoSync
-              ? t("Submissions sync on their own when the connection returns.")
+              ? t(
+                  "Submissions sync on their own when the connection returns. Each submitter can change this on their own device."
+                )
               : t(
-                  "Submitters are asked before anything syncs, so a backlog does not go all at once."
+                  "Submitters are asked before anything syncs, so a backlog does not go all at once. Each submitter can change this on their own device."
                 )}
           </p>
         </div>
