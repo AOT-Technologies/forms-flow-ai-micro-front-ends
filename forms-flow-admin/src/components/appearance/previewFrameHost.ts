@@ -93,7 +93,7 @@ const onMessage = (event: MessageEvent) => {
       frame.postMessage(
         {
           type: BRANDING_PREVIEW_AUTH,
-          tokens: KeycloakService.getSessionTokens?.() ?? null,
+          session: KeycloakService.getPreviewSession?.() ?? null,
         },
         window.location.origin
       );

@@ -44,23 +44,25 @@ Object.assign(global as any, {
   localStorage: memoryStorage(),
 });
 
-// The parent answers each auth request with these tokens.
-let parentTokens: any = {
-  token: "parent-token",
-  refreshToken: "r",
-  idToken: "i",
-};
+// A JWT-shaped access token; only the payload is read.
+const jwt = (claims: object) =>
+  `h.${Buffer.from(JSON.stringify(claims)).toString("base64url")}.s`;
+const PARENT_TOKEN = jwt({ roles: ["admin"], name: "Kåne", exp: 2, iat: 1 });
+
+// The parent answers each auth request with this session.
+let parentSession: any = null;
 parent.postMessage.mockImplementation((message: any) => {
   if (message.type !== "ff-branding-preview-auth-request") return;
   const reply = {
     origin: "https://app.example",
     source: parent,
-    data: { type: "ff-branding-preview-auth", tokens: parentTokens },
+    data: { type: "ff-branding-preview-auth", session: parentSession },
   };
   [...listeners].forEach((fn) => fn(reply));
 });
 
 import KeycloakService from "./KeycloakService";
+import StorageService from "../storage/storageService";
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -69,35 +71,30 @@ describe("KeycloakService in the preview frame", () => {
 
   beforeEach(() => {
     mockPreview = true;
-    parentTokens = { token: "parent-token", refreshToken: "r", idToken: "i" };
+    parentSession = { token: PARENT_TOKEN, userInfo: { name: "Kåne" } };
     Object.values(mockKc).forEach((fn: any) => fn.mockClear?.());
     parent.postMessage.mockClear();
   });
 
-  it("logs in with the parent's tokens instead of redirecting", async () => {
-    mockKc.init.mockImplementation(() => {
-      mockKc.token = "parent-token";
-      mockKc.tokenParsed = { roles: ["admin"], exp: 2, iat: 1 };
-      return Promise.resolve(true);
-    });
+  it("borrows the parent's access token without kc.init or a redirect", async () => {
     const callback = jest.fn();
     service.initKeycloak(callback);
     await flush();
-    await flush();
 
-    expect(mockKc.init).toHaveBeenCalledWith(
-      expect.objectContaining({ token: "parent-token", refreshToken: "r" })
-    );
+    expect(mockKc.init).not.toHaveBeenCalled();
     expect(mockKc.login).not.toHaveBeenCalled();
     expect(callback).toHaveBeenCalledWith(true);
+    expect(service.getToken()).toBe(PARENT_TOKEN);
+    expect(mockKc.tokenParsed).toMatchObject({ roles: ["admin"], name: "Kåne" });
+    expect(service.getUserData()).toEqual({ name: "Kåne" });
+    expect(StorageService.get(StorageService.User.USER_ROLE)).toBe('["admin"]');
     // No refresh loop in the frame: the parent owns the refresh token.
     expect(mockKc.updateToken).not.toHaveBeenCalled();
   });
 
   it("reports unavailable (and never redirects) when the parent has no session", async () => {
-    parentTokens = null;
+    parentSession = null;
     service.initKeycloak();
-    await flush();
     await flush();
 
     expect(mockKc.init).not.toHaveBeenCalled();
@@ -108,13 +105,25 @@ describe("KeycloakService in the preview frame", () => {
     );
   });
 
+  it("reports unavailable for a token it can't read", async () => {
+    parentSession = { token: "not-a-jwt" };
+    service.initKeycloak();
+    await flush();
+
+    expect(parent.postMessage).toHaveBeenCalledWith(
+      { type: "ff-branding-preview-unavailable" },
+      "https://app.example"
+    );
+  });
+
   it("asks the parent for a fresh token on 401 instead of refreshing", async () => {
-    parentTokens = { token: "fresh-token" };
+    const fresh = jwt({ roles: [], exp: 3, iat: 2 });
+    parentSession = { token: fresh };
     const token = await KeycloakService.updateToken();
 
-    expect(token).toBe("fresh-token");
+    expect(token).toBe(fresh);
     expect(mockKc.updateToken).not.toHaveBeenCalled();
-    expect(mockKc.token).toBe("fresh-token");
+    expect(mockKc.token).toBe(fresh);
   });
 
   it("refreshes normally outside the preview", async () => {
@@ -125,14 +134,12 @@ describe("KeycloakService in the preview frame", () => {
     expect(mockKc.updateToken).toHaveBeenCalledWith(-1);
   });
 
-  it("hands its current tokens to a preview frame", () => {
+  it("hands a preview frame only the access token and user info", () => {
     mockKc.token = "t";
     mockKc.refreshToken = "r";
     mockKc.idToken = "i";
-    expect(KeycloakService.getSessionTokens()).toEqual({
-      token: "t",
-      refreshToken: "r",
-      idToken: "i",
-    });
+    const session = KeycloakService.getPreviewSession();
+    expect(session).toEqual({ token: "t", userInfo: { name: "Kåne" } });
+    expect(JSON.stringify(session)).not.toMatch(/"r"|"i"/);
   });
 });

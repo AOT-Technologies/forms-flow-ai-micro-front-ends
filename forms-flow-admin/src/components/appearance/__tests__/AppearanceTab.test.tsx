@@ -21,7 +21,7 @@ jest.mock("react-toastify", () => ({
 
 jest.mock("@formsflow/components", () => ({
   ApplicationLogoFull: () => <span data-testid="formsflow-logo" />,
-  ConfirmModal: ({
+  PromptModal: ({
     show,
     message,
     primaryBtnText,

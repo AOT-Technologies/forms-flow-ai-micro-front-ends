@@ -110,13 +110,40 @@ describe("LogoUpload", () => {
   it("shows the loading card, then hands over the selected logo", async () => {
     const { pick, onSelect } = setup();
     pick(pngFile("brand.png"));
-    expect(screen.getByRole("progressbar")).toBeInTheDocument();
-    expect(screen.getByText("brand.png")).toBeInTheDocument();
+    const progress = screen.getByRole("progressbar", { name: "brand.png" });
+    expect(progress.tagName).toBe("PROGRESS");
+    expect(progress).toHaveAttribute("max", "100");
+    expect(progress).toHaveAttribute("value", "0");
     await waitFor(() =>
       expect(onSelect).toHaveBeenCalledWith(
         expect.objectContaining({ name: "brand.png" })
       )
     );
+  });
+
+  it("advances the progress bar as the file is read", () => {
+    let reader: FileReader | undefined;
+    const readSpy = jest
+      .spyOn(FileReader.prototype, "readAsDataURL")
+      .mockImplementation(function (this: FileReader) {
+        reader = this; // hold the read so progress can be driven by hand
+      });
+    try {
+      const { pick } = setup();
+      pick(pngFile("brand.png"));
+      act(() => {
+        reader!.onprogress!(
+          new ProgressEvent("progress", {
+            lengthComputable: true,
+            loaded: 42,
+            total: 100,
+          }) as ProgressEvent<FileReader>
+        );
+      });
+      expect(screen.getByRole("progressbar")).toHaveAttribute("value", "42");
+    } finally {
+      readSpy.mockRestore();
+    }
   });
 
   it("cancels a read in progress", async () => {

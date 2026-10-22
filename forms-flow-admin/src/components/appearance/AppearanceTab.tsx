@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import {
   ApplicationLogoFull,
-  ConfirmModal,
+  PromptModal,
   V8CustomButton,
 } from "@formsflow/components";
 import {
@@ -136,7 +136,6 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({
   };
 
   const handleRestore = () => {
-    setConfirmRestore(false);
     setBusy(true);
     resetBranding()
       .then(finish)
@@ -145,7 +144,10 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({
           message: t("Appearance could not be restored. Please try again."),
         })
       )
-      .finally(() => setBusy(false));
+      .finally(() => {
+        setBusy(false);
+        setConfirmRestore(false);
+      });
   };
 
   return (
@@ -242,20 +244,22 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({
 
       <LogoAlert error={error} onDismiss={dismissError} />
 
-      {confirmRestore && (
-        <ConfirmModal
-          show={confirmRestore}
-          title={t("Restore to Default")}
-          message={t("Are you sure you want to restore to default state?")}
-          onClose={() => setConfirmRestore(false)}
-          primaryBtnText={t("Yes, Restore to default")}
-          primaryBtnAction={handleRestore}
-          primaryBtndataTestid="appearance-restore-confirm"
-          secondaryBtnText={t("Cancel")}
-          secondaryBtnAction={() => setConfirmRestore(false)}
-          secondoryBtndataTestid="appearance-restore-cancel"
-        />
-      )}
+      <PromptModal
+        show={confirmRestore}
+        onClose={() => setConfirmRestore(false)}
+        title={t("Restore to Default")}
+        message={t("Are you sure you want to restore to default state?")}
+        type="warning"
+        dataTestId="appearance-restore-modal"
+        primaryBtnText={t("Yes, Restore to default")}
+        primaryBtnAction={handleRestore}
+        primaryBtndataTestid="appearance-restore-confirm"
+        buttonLoading={busy}
+        secondaryBtnText={t("Cancel")}
+        secondaryBtnAction={() => setConfirmRestore(false)}
+        secondoryBtndataTestid="appearance-restore-cancel"
+        secondaryBtnDisable={busy}
+      />
     </div>
   );
 };

@@ -201,7 +201,7 @@ const IS_BRANDING_PREVIEW = isBrandingPreview?.() ?? false;
 // Branding is cached per tenant; root-config reads the same key from the URL.
 const brandingTenantKey = () =>
   MULTITENANCY_ENABLED
-    ? (window.location.pathname.match(/^\/tenant\/([^/]+)/) || [])[1] || null
+    ? /^\/tenant\/([^/]+)/.exec(window.location.pathname)?.[1] || null
     : null;
 
 export const BrandLogo = ({ logoUrl, displayName }) => {

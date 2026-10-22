@@ -6,7 +6,7 @@ jest.mock("@formsflow/service", () => ({
   BRANDING_PREVIEW_READY: "ff-branding-preview-ready",
   BRANDING_PREVIEW_UNAVAILABLE: "ff-branding-preview-unavailable",
   BRANDING_PREVIEW_WHEEL: "ff-branding-preview-wheel",
-  KeycloakService: { getSessionTokens: () => ({ token: "t1" }) },
+  KeycloakService: { getPreviewSession: () => ({ token: "t1" }) },
 }));
 
 import {
@@ -62,7 +62,7 @@ describe("previewFrameHost", () => {
     const post = jest.spyOn(frame.contentWindow as Window, "postMessage");
     fromFrame("ff-branding-preview-auth-request");
     expect(post).toHaveBeenCalledWith(
-      { type: "ff-branding-preview-auth", tokens: { token: "t1" } },
+      { type: "ff-branding-preview-auth", session: { token: "t1" } },
       window.location.origin
     );
   });

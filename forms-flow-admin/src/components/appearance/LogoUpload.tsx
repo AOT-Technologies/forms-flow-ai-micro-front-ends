@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export const LOGO_TYPES = ["image/jpeg", "image/png", "image/gif"];
@@ -118,6 +118,7 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const readerRef = useRef<FileReader | null>(null);
+  const progressLabelId = useId();
   const [loading, setLoading] = useState<{
     name: string;
     progress: number;
@@ -191,18 +192,17 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
           <FileUpIcon />
         </span>
         <div className="ff-logo-upload__progress-wrap">
-          <div
+          <progress
             className="ff-logo-upload__progress"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(loading.progress * 100)}
+            max={100}
+            value={Math.round(loading.progress * 100)}
+            aria-labelledby={progressLabelId}
+          />
+          <span
+            id={progressLabelId}
+            className="ff-logo-upload__name"
+            title={loading.name}
           >
-            <span
-              style={{ width: `${Math.max(loading.progress, 0.05) * 100}%` }}
-            />
-          </div>
-          <span className="ff-logo-upload__name" title={loading.name}>
             {loading.name}
           </span>
         </div>
