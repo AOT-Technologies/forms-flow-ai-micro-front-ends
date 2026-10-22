@@ -602,8 +602,8 @@ export const ProfileSettingsModal = ({ show, onClose, tenant, publish }) => {
                           <MicrosoftIcon />
                         ) : (
                           <ApplicationLogo
-                            width="1.1875rem"
-                            height="1.4993rem"
+                            width="1.5rem"
+                            height="1.5rem"
                           />
                         )
                       }
