@@ -4,6 +4,31 @@ import Keycloak, {
   KeycloakConfig,
 } from "keycloak-js";
 import StorageService from "../storage/storageService";
+import {
+  BRANDING_PREVIEW_AUTH,
+  BRANDING_PREVIEW_AUTH_REQUEST,
+  BRANDING_PREVIEW_UNAVAILABLE,
+  isBrandingPreview,
+} from "../helpers/brandingService";
+
+// Only the access token reaches the preview frame; the refresh and ID tokens
+// stay with the parent page.
+interface PreviewSession {
+  token: string;
+  userInfo?: unknown;
+}
+
+const PREVIEW_AUTH_TIMEOUT_MS = 5000;
+
+const decodeToken = (token: string): KeycloakTokenParsed | null => {
+  try {
+    const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const bytes = Uint8Array.from(atob(payload), (c) => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    return null;
+  }
+};
 
 class KeycloakService {
   /**
@@ -66,9 +91,76 @@ class KeycloakService {
     }
   }
 
+  /** Handed to the Appearance live-preview frame. */
+  public static getPreviewSession(): PreviewSession | null {
+    const instance = this.instance;
+    return instance?.kc?.token
+      ? { token: instance.kc.token, userInfo: instance.userData }
+      : null;
+  }
+
+  private useParentToken(token: string): boolean {
+    const tokenParsed = decodeToken(token);
+    if (!tokenParsed || !this.kc) return false;
+    this.token = token;
+    this._tokenParsed = tokenParsed;
+    this.kc.token = token;
+    this.kc.tokenParsed = tokenParsed;
+    this.kc.authenticated = true;
+    return true;
+  }
+
+  /**
+   * In the preview frame: the parent's refresh loop saves each new access token
+   * to the session/local storage this frame shares, so adopt it from there.
+   */
+  private followParentSession(): void {
+    window.addEventListener("storage", (event) => {
+      if (
+        event.key === StorageService.User.AUTH_TOKEN &&
+        event.newValue &&
+        event.newValue !== this.token
+      ) {
+        this.useParentToken(event.newValue);
+      }
+    });
+  }
+
+  /** In the preview frame: ask the parent page for its session tokens. */
+  private requestParentSession(): Promise<PreviewSession | null> {
+    return new Promise((resolve) => {
+      const origin = window.location.origin;
+      const timer = setTimeout(() => finish(null), PREVIEW_AUTH_TIMEOUT_MS);
+      const onMessage = (event: MessageEvent) => {
+        if (event.origin !== origin || event.source !== window.parent) return;
+        if (event.data?.type === BRANDING_PREVIEW_AUTH) {
+          finish(event.data.session ?? null);
+        }
+      };
+      const finish = (session: PreviewSession | null) => {
+        clearTimeout(timer);
+        window.removeEventListener("message", onMessage);
+        resolve(session);
+      };
+      window.addEventListener("message", onMessage);
+      window.parent.postMessage(
+        { type: BRANDING_PREVIEW_AUTH_REQUEST },
+        origin
+      );
+    });
+  }
+
   public static async updateToken(): Promise<string | null> {
     const instance = this.instance;
     if (!instance?.kc) return null;
+
+    // Preview frame: never spend the parent's refresh token; take its current one.
+    if (isBrandingPreview()) {
+      const session = await instance.requestParentSession();
+      return session && instance.useParentToken(session.token)
+        ? session.token
+        : null;
+    }
 
     try {
       const refreshed = await instance.kc.updateToken(-1);
@@ -137,6 +229,12 @@ class KeycloakService {
    * @param callback - Optional - callback function to excecute after succeessful authentication
    */
   public initKeycloak(callback: (authenticated) => void = () => {}): void {
+    if (isBrandingPreview()) {
+      this.initPreviewSession(callback).catch((err) =>
+        console.error("Failed to initialize branding preview session", err)
+      );
+      return;
+    }
     this.kc
       ?.init(this.keycloakInitConfig)
       .then((authenticated) => {
@@ -181,6 +279,39 @@ class KeycloakService {
       .catch((err) =>
         console.error("Failed to initialize KeycloakService", err)
       );
+  }
+
+  /**
+   * The live-preview frame borrows the parent's access token: no redirect, no
+   * refresh loop. kc.init is skipped because keycloak-js only accepts a
+   * session that includes a refresh token.
+   */
+  private async initPreviewSession(
+    callback: (authenticated) => void
+  ): Promise<void> {
+    const session = await this.requestParentSession();
+    if (!session || !this.useParentToken(session.token)) {
+      window.parent.postMessage(
+        { type: BRANDING_PREVIEW_UNAVAILABLE },
+        window.location.origin
+      );
+      return;
+    }
+    const tokenParsed = this._tokenParsed!;
+    StorageService.save(
+      StorageService.User.USER_ROLE,
+      JSON.stringify(
+        tokenParsed.roles || tokenParsed.role || tokenParsed.client_roles || []
+      )
+    );
+    StorageService.save(StorageService.User.AUTH_TOKEN, session.token);
+    this.userData = session.userInfo;
+    StorageService.save(
+      StorageService.User.USER_DETAILS,
+      JSON.stringify(session.userInfo ?? {})
+    );
+    this.followParentSession();
+    callback(true);
   }
   /**
    * logs the user out and clear all user data from session.

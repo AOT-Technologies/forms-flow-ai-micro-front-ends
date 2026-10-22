@@ -7,6 +7,7 @@ import RoleManagement from "../roles";
 import UserManagement from "../users";
 import Organization from "../organization";
 import StyleTab from "../style/StyleTab";
+import AppearanceTab from "../appearance/AppearanceTab";
 import "../style/style.scss";
 import { StorageService } from "@formsflow/service";
 import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
@@ -74,7 +75,14 @@ const Manage: React.FC<ManageProps> = ({
   // Get active tab from URL or default to first accessible tab
   const activeTab = useMemo((): string => {
     if (urlTab) {
-      const validTabs = ["organization", "dashboard", "users", "roles", "style"];
+      const validTabs = [
+        "organization",
+        "dashboard",
+        "users",
+        "roles",
+        "style",
+        "appearance",
+      ];
       if (validTabs.includes(urlTab)) {
         if (urlTab === "organization" && !isOrganizationManager)
           return defaultTab();
@@ -82,6 +90,7 @@ const Manage: React.FC<ManageProps> = ({
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
         if (urlTab === "style" && !canAccessStyle) return defaultTab();
+        if (urlTab === "appearance" && !canAccessStyle) return defaultTab();
         return urlTab;
       }
     }
@@ -121,6 +130,7 @@ const Manage: React.FC<ManageProps> = ({
         users: "Users",
         roles: "Roles",
         style: "Style",
+        appearance: "Appearance",
       };
       setTab(tabNameMap[key] || "Organization");
       // Navigate to the tab route - this will update the URL and activeTab will update via useMemo
@@ -160,6 +170,10 @@ const Manage: React.FC<ManageProps> = ({
             {isRoleManager && <Tab eventKey="roles" title={t("Roles")} />}
             {canAccessStyle && (
               <Tab eventKey="style" title={t("Style")} />
+            )}
+            {/* No dedicated permission yet: shown wherever Style is. */}
+            {canAccessStyle && (
+              <Tab eventKey="appearance" title={t("Appearance")} />
             )}
           </Tabs>
 
@@ -231,6 +245,15 @@ const Manage: React.FC<ManageProps> = ({
             {activeTab === "style" && canAccessStyle && (
               <div className="manage-content">
                 <StyleTab isOwner={isOwner} />
+              </div>
+            )}
+            {activeTab === "appearance" && canAccessStyle && (
+              <div className="manage-content">
+                <AppearanceTab
+                  tenantKey={MULTITENANCY_ENABLED ? tenantId : null}
+                  publish={props?.publish}
+                  homeUrl={`${baseUrl}home`}
+                />
               </div>
             )}
           </div>
