@@ -1056,6 +1056,59 @@ export const FileUploadIcon = () => (
    </svg>
 );
 
+const outlineIconProps = {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: "16",
+  height: "16",
+  viewBox: "0 0 24 24",
+  fill: "none",
+  strokeWidth: "1.75",
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
+
+export const FileIcon = ({ color = secondaryDarkColor, ...props }) => (
+  <svg {...outlineIconProps} stroke={color} {...props}>
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+    <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+  </svg>
+);
+
+export const FileDownloadIcon = ({ color = secondaryDarkColor, ...props }) => (
+  <svg {...outlineIconProps} stroke={color} {...props}>
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+    <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+    <path d="M12 11v6" />
+    <path d="m9 14 3 3 3-3" />
+  </svg>
+);
+
+export const SearchIcon = ({ color = secondaryDarkColor, ...props }) => (
+  <svg {...outlineIconProps} stroke={color} {...props}>
+    <circle cx="11" cy="11" r="8" />
+    <path d="M21 21l-4.35-4.35" />
+  </svg>
+);
+
+export const EditOutlineIcon = ({ color = secondaryDarkColor, ...props }) => (
+  <svg {...outlineIconProps} stroke={color} {...props}>
+    <path d="M21.17 6.81a2.82 2.82 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5Z" />
+    <path d="m15 5 4 4" />
+  </svg>
+);
+
+export const TrashOutlineIcon = ({ color = dangerColor, ...props }) => (
+  <svg {...outlineIconProps}
+    width="16"
+    height="17"
+    viewBox="0 0 16 17"
+    fill="none">
+    <path d="M6.19444 7.5V12M9.30555 7.5V12M13.1944 3.75V14.25C13.1944 14.6478 13.0306 15.0294 12.7388 15.3107C12.4471 15.592 12.0514 15.75 11.6389 15.75H3.86111C3.44855 15.75 3.05289 15.592 2.76117 15.3107C2.46944 15.0294 2.30556 14.6478 2.30556 14.25V3.75M0.75 3.75H14.75M4.63889 3.75V2.25C4.63889 1.85218 4.80278 1.47064 5.0945 1.18934C5.38622 0.908035 5.78189 0.75 6.19444 0.75H9.30556C9.71811 0.75 10.1138 0.908035 10.4055 1.18934C10.6972 1.47064 10.8611 1.85218 10.8611 2.25V3.75"
+      stroke="#D45E5E"
+    />
+  </svg>
+);
+
 export const CalenderLeftIcon = ({ color = baseColor, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
