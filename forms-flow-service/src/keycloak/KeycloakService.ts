@@ -230,7 +230,9 @@ class KeycloakService {
    */
   public initKeycloak(callback: (authenticated) => void = () => {}): void {
     if (isBrandingPreview()) {
-      this.initPreviewSession(callback);
+      this.initPreviewSession(callback).catch((err) =>
+        console.error("Failed to initialize branding preview session", err)
+      );
       return;
     }
     this.kc

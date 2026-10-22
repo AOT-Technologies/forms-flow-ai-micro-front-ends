@@ -164,8 +164,10 @@ describe("AppearanceTab", () => {
     ).toHaveTextContent("Appearance settings could not be loaded");
   });
 
-  it("disables Restore when nothing is customised", async () => {
-    await renderTab();
+  it("keeps Restore disabled until a customisation is saved", async () => {
+    const { name } = await renderTab();
+    expect(screen.getByTestId("appearance-restore")).toBeDisabled();
+    fireEvent.change(name, { target: { value: "Acme" } });
     expect(screen.getByTestId("appearance-restore")).toBeDisabled();
   });
 

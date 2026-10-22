@@ -226,7 +226,7 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({
           <V8CustomButton
             label="Restore to Default"
             variant="secondary"
-            disabled={busy || (!isCustomised && !isDirty)}
+            disabled={busy || !isCustomised}
             onClick={() => setConfirmRestore(true)}
             dataTestId="appearance-restore"
           />
