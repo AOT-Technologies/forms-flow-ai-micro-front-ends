@@ -20,7 +20,8 @@ export interface ConnectionSample {
 type SampleListener = (sample: ConnectionSample) => void;
 
 const PROBE_TIMEOUT_MS = 2000;
-const OFFLINE_RECHECK_MS = 15000;
+// While offline, check again this often (FFF-3: 10 s, decided 19 Oct).
+const OFFLINE_RECHECK_MS = 10000;
 // A failed probe while online is tried once more after this wait.
 const SECOND_PROBE_AFTER_MS = 3000;
 // After an API call fails with no answer, probe at most this often.

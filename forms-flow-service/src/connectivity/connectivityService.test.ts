@@ -169,4 +169,23 @@ describe("ConnectivityService", () => {
     service.reportNetworkError();
     expect(samples[1]).toEqual({ ok: false, ms: 0, source: "api" });
   });
+
+  test("while offline, checks again every 10 seconds and comes back online", async () => {
+    mockFetch.mockRejectedValue(new Error("Network Error"));
+    const service = loadService();
+    const changes: boolean[] = [];
+    service.subscribe((online: boolean) => changes.push(online));
+    await checkAndWait(service);
+    expect(service.isOnline()).toBe(false);
+    const callsWhenOffline = mockFetch.mock.calls.length;
+
+    await jest.advanceTimersByTimeAsync(9999);
+    expect(mockFetch.mock.calls.length).toBe(callsWhenOffline); // not yet
+
+    mockFetch.mockResolvedValue({ ok: true });
+    await jest.advanceTimersByTimeAsync(1);
+    expect(mockFetch.mock.calls.length).toBe(callsWhenOffline + 1);
+    expect(service.isOnline()).toBe(true);
+    expect(changes).toEqual([false, true]);
+  });
 });
