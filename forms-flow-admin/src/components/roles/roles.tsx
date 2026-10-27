@@ -493,6 +493,7 @@ const Roles = React.memo((props: any) => {
             data-testid="role-description"
             maxRows={3}
             minRows={3}
+            maxLength={200}
             disabled={isViewOnlyRole}
           />
           {showEditRoleModal && !isViewOnlyRole && (
