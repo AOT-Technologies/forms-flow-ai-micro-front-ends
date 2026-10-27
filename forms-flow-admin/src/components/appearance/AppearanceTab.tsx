@@ -201,7 +201,7 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({
             <ApplicationLogoFull width={112} height={21} />
           </div>
           <LogoUpload
-            enabled={Boolean(saved?.logoUploadEnabled)}
+            storageConfigured={saved?.logoUploadEnabled !== false}
             selected={logoCard}
             onSelect={(logo) => {
               setSelectedLogo(logo);
@@ -214,11 +214,9 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({
             onError={(message) => setError({ message })}
           />
           <p className="ff-appearance__hint">
-            {saved && !saved.logoUploadEnabled
-              ? t("Logo upload is not configured for this installation.")
-              : t(
-                  "Images should be JPEG, PNG or GIF and should be 20 x 20 pixels in size. Max file size 3MB."
-                )}
+            {t(
+              "Images should be JPEG, PNG or GIF and should be 20 x 20 pixels in size. Max file size 3MB."
+            )}
           </p>
         </section>
 

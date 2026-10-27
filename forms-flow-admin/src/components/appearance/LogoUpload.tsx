@@ -18,7 +18,7 @@ export interface LogoCard {
 }
 
 interface LogoUploadProps {
-  enabled: boolean;
+  storageConfigured: boolean;
   selected: LogoCard | null;
   onSelect: (logo: SelectedLogo) => void;
   onClear: () => void;
@@ -109,7 +109,7 @@ const TrashIcon = () => (
 
 // Figma 30551:2253 (empty), 30551:2557 (loading), 30551:2656 (selected).
 const LogoUpload: React.FC<LogoUploadProps> = ({
-  enabled,
+  storageConfigured,
   selected,
   onSelect,
   onClear,
@@ -133,7 +133,11 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
   };
 
   const read = (file: File | undefined) => {
-    if (!file || !enabled) return;
+    if (!file) return;
+    if (!storageConfigured) {
+      onError(t("Storage is not configured"));
+      return;
+    }
     if (!LOGO_TYPES.includes(file.type)) {
       onError(t("Image file type is not supported"));
       return;
@@ -241,7 +245,6 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
       <button
         type="button"
         className="ff-logo-upload__dropzone"
-        disabled={!enabled}
         onClick={() => inputRef.current?.click()}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {

@@ -50,6 +50,7 @@ const Manage: React.FC<ManageProps> = ({
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
+  const isAppStylingManager = userRoles?.includes("manage_app_styling");
   // Style is a tenant-wide admin feature, not an Organization-only one --
   // any manage-capable admin can open it (the owner-only branding-logo
   // control inside it is gated separately, see StyleTab's isOwner prop).
@@ -69,6 +70,7 @@ const Manage: React.FC<ManageProps> = ({
     if (isUserManager) return "users";
     if (isDashboardManager) return "dashboard";
     if (isOrganizationManager) return "organization";
+    if (isAppStylingManager) return "appearance";
     return "roles";
   };
 
@@ -90,7 +92,8 @@ const Manage: React.FC<ManageProps> = ({
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
         if (urlTab === "style" && !canAccessStyle) return defaultTab();
-        if (urlTab === "appearance" && !canAccessStyle) return defaultTab();
+        if (urlTab === "appearance" && !isAppStylingManager)
+          return defaultTab();
         return urlTab;
       }
     }
@@ -110,6 +113,7 @@ const Manage: React.FC<ManageProps> = ({
     isUserManager,
     isRoleManager,
     canAccessStyle,
+    isAppStylingManager,
   ]);
 
   // Redirect to default tab if on /admin without a tab
@@ -171,8 +175,7 @@ const Manage: React.FC<ManageProps> = ({
             {canAccessStyle && (
               <Tab eventKey="style" title={t("Style")} />
             )}
-            {/* No dedicated permission yet: shown wherever Style is. */}
-            {canAccessStyle && (
+            {isAppStylingManager && (
               <Tab eventKey="appearance" title={t("Appearance")} />
             )}
           </Tabs>
@@ -247,7 +250,7 @@ const Manage: React.FC<ManageProps> = ({
                 <StyleTab isOwner={isOwner} />
               </div>
             )}
-            {activeTab === "appearance" && canAccessStyle && (
+            {activeTab === "appearance" && isAppStylingManager && (
               <div className="manage-content">
                 <AppearanceTab
                   tenantKey={MULTITENANCY_ENABLED ? tenantId : null}

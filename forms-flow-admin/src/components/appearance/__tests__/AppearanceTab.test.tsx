@@ -156,6 +156,25 @@ describe("AppearanceTab", () => {
     expect(mockService.applyBranding).not.toHaveBeenCalled();
   });
 
+  it("tells the admin storage is not configured as soon as a logo is picked", async () => {
+    await renderTab({ ...DEFAULTS, logoUploadEnabled: false });
+    expect(screen.getByTestId("appearance-logo-dropzone")).toBeEnabled();
+
+    const input = document.querySelector(
+      "input[type=file]"
+    ) as HTMLInputElement;
+    const logo = new File([new Uint8Array(64)], "acme.png", {
+      type: "image/png",
+    });
+    fireEvent.change(input, { target: { files: [logo] } });
+
+    expect(
+      await screen.findByTestId("appearance-logo-alert")
+    ).toHaveTextContent("Storage is not configured");
+    expect(screen.queryByText("acme.png")).not.toBeInTheDocument();
+    expect(screen.getByTestId("appearance-update")).toBeDisabled();
+  });
+
   it("shows the error alert when the settings can't be loaded", async () => {
     mockApi.fetchBranding.mockRejectedValue(new Error("network"));
     render(<AppearanceTab tenantKey="acme" homeUrl="/home" />);
@@ -237,15 +256,5 @@ describe("AppearanceTab", () => {
         true
       )
     );
-  });
-
-  it("explains when logo upload is not configured", async () => {
-    await renderTab({ ...DEFAULTS, logoUploadEnabled: false });
-    expect(
-      await screen.findByText(
-        "Logo upload is not configured for this installation."
-      )
-    ).toBeInTheDocument();
-    expect(screen.getByTestId("appearance-logo-dropzone")).toBeDisabled();
   });
 });

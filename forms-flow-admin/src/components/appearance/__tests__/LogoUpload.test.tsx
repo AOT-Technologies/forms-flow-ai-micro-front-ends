@@ -32,9 +32,9 @@ class FakeImage {
 const pngFile = (name = "logo.png", bytes = 64, type = "image/png") =>
   new File([new Uint8Array(bytes)], name, { type });
 
-const setup = (enabled = true) => {
+const setup = (storageConfigured = true) => {
   const props = {
-    enabled,
+    storageConfigured,
     selected: null,
     onSelect: jest.fn(),
     onClear: jest.fn(),
@@ -159,7 +159,7 @@ describe("LogoUpload", () => {
     const onClear = jest.fn();
     render(
       <LogoUpload
-        enabled
+        storageConfigured
         selected={{
           file: pngFile(),
           name: "brand.png",
@@ -175,8 +175,11 @@ describe("LogoUpload", () => {
     expect(onClear).toHaveBeenCalled();
   });
 
-  it("is disabled when upload is not configured", () => {
-    setup(false);
-    expect(screen.getByTestId("appearance-logo-dropzone")).toBeDisabled();
+  it("rejects a pick straight away when storage is not configured", () => {
+    const { pick, onError, onSelect } = setup(false);
+    pick(pngFile());
+    expect(onError).toHaveBeenCalledWith("Storage is not configured");
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(screen.getByTestId("appearance-logo-dropzone")).toBeEnabled();
   });
 });
