@@ -131,6 +131,16 @@ export type {
   UsageResponseFields,
 } from "./helpers/usageHelpers";
 
+// AI submission assistant: env- and tenant-level visibility rules shared by
+// forms-flow-admin (AI settings) and forms-flow-web (Context tab, assistant).
+export {
+  isAiAssistantFeatureEnabled,
+  isSubmissionAssistantEnabledForTenant,
+  canShowSubmissionAssistant,
+} from "./helpers/aiAssistantPermissions";
+
+export type { AiAssistantTenantData } from "./helpers/aiAssistantPermissions";
+
 export {
   KeycloakService,
   StorageService,

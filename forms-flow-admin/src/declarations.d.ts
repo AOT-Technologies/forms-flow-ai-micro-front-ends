@@ -72,6 +72,7 @@ declare module "@formsflow/service" {
     getUsageVariant,
     isOverLimit,
     getColumnPresetSizing,
+    isAiAssistantFeatureEnabled,
   }: any;
 }
 

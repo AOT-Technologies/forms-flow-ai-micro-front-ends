@@ -16,6 +16,7 @@ import {
   fetchFeatureUsage,
   mapUsageResponse,
   SUBMISSION_FEATURE_KEY,
+  isAiAssistantFeatureEnabled,
 } from "@formsflow/service";
 import { UsageSummaryCard } from "./UsageSummaryCard";
 import {
@@ -31,7 +32,6 @@ import {
   MULTITENANCY_ENABLED,
   URL_TERMS_AND_CONDITIONS,
   URL_PRIVACY_POLICY,
-  AI_ASSISTANT_ENABLED,
 } from "../../constants";
 
 interface AccordionSectionProps {
@@ -178,7 +178,7 @@ const Organization: React.FC<any> = (props) => {
     }
   }, []);
   const isOrganizationManager = userRoles.includes("manage_organization");
-  const showAiSettings = AI_ASSISTANT_ENABLED && isOrganizationManager;
+  const showAiSettings = isAiAssistantFeatureEnabled() && isOrganizationManager;
 
   // Refreshes the cached tenant record. The home page reads the same storage keys, so this
   // effect is kept even though the subscription summary it used to feed has been replaced.
