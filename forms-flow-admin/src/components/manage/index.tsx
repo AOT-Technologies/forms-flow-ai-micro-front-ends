@@ -7,6 +7,7 @@ import RoleManagement from "../roles";
 import UserManagement from "../users";
 import Organization from "../organization";
 import StyleTab from "../style/StyleTab";
+import AppearanceTab from "../appearance/AppearanceTab";
 import "../style/style.scss";
 import { StorageService } from "@formsflow/service";
 import { BreadCrumbs, V8CustomButton } from "@formsflow/components";
@@ -49,6 +50,7 @@ const Manage: React.FC<ManageProps> = ({
   const isRoleManager = userRoles?.includes("manage_roles");
   const isUserManager = userRoles?.includes("manage_users");
   const isOrganizationManager = userRoles?.includes("manage_organization");
+  const isAppStylingManager = userRoles?.includes("manage_app_styling");
   // Style is a tenant-wide admin feature, not an Organization-only one --
   // any manage-capable admin can open it (the owner-only branding-logo
   // control inside it is gated separately, see StyleTab's isOwner prop).
@@ -68,13 +70,21 @@ const Manage: React.FC<ManageProps> = ({
     if (isUserManager) return "users";
     if (isDashboardManager) return "dashboard";
     if (isOrganizationManager) return "organization";
+    if (isAppStylingManager) return "appearance";
     return "roles";
   };
 
   // Get active tab from URL or default to first accessible tab
   const activeTab = useMemo((): string => {
     if (urlTab) {
-      const validTabs = ["organization", "dashboard", "users", "roles", "style"];
+      const validTabs = [
+        "organization",
+        "dashboard",
+        "users",
+        "roles",
+        "style",
+        "appearance",
+      ];
       if (validTabs.includes(urlTab)) {
         if (urlTab === "organization" && !isOrganizationManager)
           return defaultTab();
@@ -82,6 +92,8 @@ const Manage: React.FC<ManageProps> = ({
         if (urlTab === "users" && !isUserManager) return defaultTab();
         if (urlTab === "roles" && !isRoleManager) return defaultTab();
         if (urlTab === "style" && !canAccessStyle) return defaultTab();
+        if (urlTab === "appearance" && !isAppStylingManager)
+          return defaultTab();
         return urlTab;
       }
     }
@@ -101,6 +113,7 @@ const Manage: React.FC<ManageProps> = ({
     isUserManager,
     isRoleManager,
     canAccessStyle,
+    isAppStylingManager,
   ]);
 
   // Redirect to default tab if on /admin without a tab
@@ -121,6 +134,7 @@ const Manage: React.FC<ManageProps> = ({
         users: "Users",
         roles: "Roles",
         style: "Style",
+        appearance: "Appearance",
       };
       setTab(tabNameMap[key] || "Organization");
       // Navigate to the tab route - this will update the URL and activeTab will update via useMemo
@@ -160,6 +174,9 @@ const Manage: React.FC<ManageProps> = ({
             {isRoleManager && <Tab eventKey="roles" title={t("Roles")} />}
             {canAccessStyle && (
               <Tab eventKey="style" title={t("Style")} />
+            )}
+            {isAppStylingManager && (
+              <Tab eventKey="appearance" title={t("Appearance")} />
             )}
           </Tabs>
 
@@ -231,6 +248,15 @@ const Manage: React.FC<ManageProps> = ({
             {activeTab === "style" && canAccessStyle && (
               <div className="manage-content">
                 <StyleTab isOwner={isOwner} />
+              </div>
+            )}
+            {activeTab === "appearance" && isAppStylingManager && (
+              <div className="manage-content">
+                <AppearanceTab
+                  tenantKey={MULTITENANCY_ENABLED ? tenantId : null}
+                  publish={props?.publish}
+                  homeUrl={`${baseUrl}home`}
+                />
               </div>
             )}
           </div>

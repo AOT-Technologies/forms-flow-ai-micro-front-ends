@@ -14,6 +14,7 @@ const API = {
   USER_LOGIN_DETAILS: (userId) =>
     `${WEB_BASE_URL}/user/${userId}/login-details`,
   CHECKLIST: `${WEB_BASE_URL}/user/checklist`,
+  BRANDING: `${WEB_BASE_URL}/branding`,
 };
 
 export default API;

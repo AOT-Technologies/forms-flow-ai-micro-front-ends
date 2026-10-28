@@ -73,6 +73,16 @@ declare module "@formsflow/service" {
     isOverLimit,
     getColumnPresetSizing,
     isAiAssistantFeatureEnabled,
+    cacheBranding,
+    applyBranding,
+    BRANDING_UPDATED_EVENT,
+    BRANDING_PREVIEW_ATTR,
+    BRANDING_PREVIEW_DRAFT,
+    BRANDING_PREVIEW_READY,
+    BRANDING_PREVIEW_AUTH_REQUEST,
+    BRANDING_PREVIEW_AUTH,
+    BRANDING_PREVIEW_UNAVAILABLE,
+    BRANDING_PREVIEW_WHEEL,
   }: any;
 }
 
@@ -114,7 +124,8 @@ declare module "@formsflow/components" {
     UsageSummaryCard,
     mapTenantDataToUsage,
     FileUploadItem,
-    SwitchCard
+    SwitchCard,
+    ApplicationLogoFull,
   }: any;
 
   export type FileUploadStatus = "uploading" | "success" | "error";

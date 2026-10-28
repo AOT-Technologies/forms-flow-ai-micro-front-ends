@@ -100,6 +100,24 @@ export {
 export type { BreakpointTier } from "./constants/breakpoints";
 
 export {
+  BRANDING_UPDATED_EVENT,
+  BRANDING_PREVIEW_ATTR,
+  BRANDING_PREVIEW_DRAFT,
+  BRANDING_PREVIEW_READY,
+  BRANDING_PREVIEW_AUTH_REQUEST,
+  BRANDING_PREVIEW_AUTH,
+  BRANDING_PREVIEW_UNAVAILABLE,
+  BRANDING_PREVIEW_WHEEL,
+  isBrandingPreview,
+  startBrandingPreview,
+  applyBranding,
+  truncateDisplayName,
+  cacheBranding,
+  getCachedBranding,
+} from "./helpers/brandingService";
+export type { AppBranding } from "./helpers/brandingService";
+
+export {
   getStoredChecklistItems,
   storeChecklistItems,
   completeChecklistByRouteKey,
