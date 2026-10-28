@@ -72,6 +72,16 @@ declare module "@formsflow/service" {
     getUsageVariant,
     isOverLimit,
     getColumnPresetSizing,
+    cacheBranding,
+    applyBranding,
+    BRANDING_UPDATED_EVENT,
+    BRANDING_PREVIEW_ATTR,
+    BRANDING_PREVIEW_DRAFT,
+    BRANDING_PREVIEW_READY,
+    BRANDING_PREVIEW_AUTH_REQUEST,
+    BRANDING_PREVIEW_AUTH,
+    BRANDING_PREVIEW_UNAVAILABLE,
+    BRANDING_PREVIEW_WHEEL,
   }: any;
 }
 
@@ -109,7 +119,8 @@ declare module "@formsflow/components" {
     FORMSFLOW_LOGO_ICON_SVG,
     FORMSFLOW_WEBSITE_URL,
     UsageSummaryCard,
-    mapTenantDataToUsage
+    mapTenantDataToUsage,
+    ApplicationLogoFull,
   }: any;
 
   export type StyleConfig = {

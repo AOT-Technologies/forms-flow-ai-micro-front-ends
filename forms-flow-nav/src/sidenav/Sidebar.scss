@@ -124,6 +124,27 @@ $animSpeed: 300ms;
     padding: 1.313rem 1rem;
   }
 
+  // Tenant branding: logo fits a 112 x 48 box, left-aligned; never upscaled.
+  .tenant-logo {
+    display: block;
+    max-width: 7rem;
+    max-height: 3rem;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .tenant-display-name {
+    padding: 0 1rem 1rem;
+    color: var(--navbar-menu-font-color);
+    font-size: var(--font-size-m);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .options-container {
     text-align: center;
     overflow-y: auto;
