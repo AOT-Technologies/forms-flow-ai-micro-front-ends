@@ -204,6 +204,18 @@ describe("fromTenantData", () => {
     });
   });
 
+  it('parses string-valued flags, treating "false" as disabled', () => {
+    expect(
+      fromTenantData({
+        details: { submission_assistant: "true", submitter_chat: "false" },
+      })
+    ).toEqual({
+      aiAssistanceEnabled: true,
+      submitterChatEnabled: false,
+      privacyNotice: "",
+    });
+  });
+
   it("returns the defaults when the record has no AI settings", () => {
     expect(fromTenantData(null)).toEqual(DEFAULT_AI_PERMISSIONS);
     expect(fromTenantData({ details: { locale: "en" } })).toEqual(

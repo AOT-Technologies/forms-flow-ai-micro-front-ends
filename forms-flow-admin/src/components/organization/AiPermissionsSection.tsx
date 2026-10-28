@@ -45,6 +45,10 @@ export const toAiPermissionsPayload = ({
   privacy_notice: privacyNotice,
 });
 
+/** Tenant flags may arrive as booleans or as "true"/"false" strings. */
+const isTruthyFlag = (flag: unknown): boolean =>
+  flag === true || flag === "true";
+
 /**
  * Reads the saved AI settings from the tenant record. They are looked up under
  * `details` first, then at the top level; missing fields fall back to the defaults.
@@ -54,8 +58,8 @@ export const fromTenantData = (
 ): AiPermissions => {
   const source = { ...tenantData, ...tenantData?.details };
   return {
-    aiAssistanceEnabled: Boolean(source.submission_assistant),
-    submitterChatEnabled: Boolean(source.submitter_chat),
+    aiAssistanceEnabled: isTruthyFlag(source.submission_assistant),
+    submitterChatEnabled: isTruthyFlag(source.submitter_chat),
     privacyNotice:
       typeof source.privacy_notice === "string" ? source.privacy_notice : "",
   };

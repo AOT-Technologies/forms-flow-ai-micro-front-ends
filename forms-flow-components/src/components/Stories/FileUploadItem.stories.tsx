@@ -52,7 +52,8 @@ export const Success: Story = {
   },
 };
 
-export const Error: Story = {
+export const ErrorState: Story = {
+  name: "Error",
   args: {
     status: "error",
     fileName: "Filename_123.pdf",

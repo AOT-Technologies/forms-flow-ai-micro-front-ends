@@ -29,6 +29,7 @@ export const AI_ASSISTANT_ENABLED = isEnabled(
   window._env_?.REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED || false
 );
 
-export const AI_ASSISTANT_PRIVACY_NOTICE_LENGTH = parseInt(
-  window._env_?.REACT_APP_AI_PRIVACY_NOTICE_LEN || "300"
+export const AI_ASSISTANT_PRIVACY_NOTICE_LENGTH = Number.parseInt(
+  window._env_?.REACT_APP_AI_PRIVACY_NOTICE_LEN || "300",
+  10
 );
