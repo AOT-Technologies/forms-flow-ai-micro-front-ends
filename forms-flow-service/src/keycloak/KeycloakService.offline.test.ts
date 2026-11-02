@@ -403,4 +403,56 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
     removeA();
     removeB();
   });
+
+  test("the before-logout step runs only when the logout goes ahead", async () => {
+    const beforeLogout = jest.fn();
+    const remove = KeycloakService.registerLogoutGuard(() => false);
+    freshInstance().userLogout(beforeLogout);
+    await flush();
+    expect(beforeLogout).not.toHaveBeenCalled();
+    remove();
+
+    freshInstance().userLogout(beforeLogout);
+    await flush();
+    expect(beforeLogout).toHaveBeenCalledTimes(1);
+    expect(mockKc.logout).toHaveBeenCalled();
+  });
+});
+
+describe("KeycloakService sign-in retry", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    (global as any).window._env_.REACT_APP_OFFLINE_ENABLED = "false";
+  });
+
+  afterEach(() => {
+    (global as any).window._env_.REACT_APP_OFFLINE_ENABLED = "true";
+    jest.restoreAllMocks();
+  });
+
+  test("a failed init gets a fresh Keycloak object, so 'Try again' can init again", async () => {
+    // keycloak-js allows init() once per object, even after a failure.
+    const Keycloak = require("keycloak-js");
+    mockKc.init.mockRejectedValue(new Error("Timeout when waiting for 3rd party check iframe message."));
+    const service = freshInstance();
+    const created = Keycloak.mock.calls.length;
+
+    service.initKeycloak(jest.fn(), jest.fn());
+    await flush();
+
+    expect(Keycloak.mock.calls.length).toBe(created + 1);
+  });
+
+  test("a successful init keeps its Keycloak object", async () => {
+    const Keycloak = require("keycloak-js");
+    mockKc.init.mockResolvedValue(false); // not signed in: goes to login
+    const service = freshInstance();
+    const created = Keycloak.mock.calls.length;
+
+    service.initKeycloak(jest.fn(), jest.fn());
+    await flush();
+
+    expect(Keycloak.mock.calls.length).toBe(created);
+  });
 });

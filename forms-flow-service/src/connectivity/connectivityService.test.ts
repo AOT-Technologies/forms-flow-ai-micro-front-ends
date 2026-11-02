@@ -167,7 +167,28 @@ describe("ConnectivityService", () => {
 
     mockFetch.mockRejectedValue(new TypeError("Failed to fetch"));
     service.reportNetworkError();
-    expect(samples[1]).toEqual({ ok: false, ms: 0, source: "api" });
+    await jest.advanceTimersByTimeAsync(3000); // the second try
+    // Both probes failed, so the failed call counts too.
+    expect(samples.slice(1).map((sample) => [sample.ok, sample.source])).toEqual([
+      [false, "probe"],
+      [false, "probe"],
+      [false, "api"],
+    ]);
+  });
+
+  test("a failed API call does not count when the probe works (server reason, not the network)", async () => {
+    // E.g. a missing endpoint: the browser hides the refused CORS pre-check
+    // and the call looks like "no answer", but the network is fine.
+    mockFetch.mockResolvedValue({ ok: true });
+    const service = loadService();
+    const samples: any[] = [];
+    service.subscribeSamples((sample: any) => samples.push(sample));
+
+    service.reportNetworkError();
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(samples).toEqual([{ ok: true, ms: expect.any(Number), source: "probe" }]);
+    expect(service.isOnline()).toBe(true);
   });
 
   test("while offline, checks again every 10 seconds and comes back online", async () => {

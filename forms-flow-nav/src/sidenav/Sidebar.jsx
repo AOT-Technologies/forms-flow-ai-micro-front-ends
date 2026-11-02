@@ -526,9 +526,12 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
   const handleProfileModal = () => setShowProfile(true);
   const handleProfileClose = () => setShowProfile(false);
 
+  // Moves to the home page only once the logout goes ahead: a logout
+  // cancelled in the "unsent forms" warning (FFF-3) keeps the current page.
   const logout = () => {
-    navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey);
-    instance.userLogout();
+    instance.userLogout(() =>
+      navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey)
+    );
   };
 
   const manageOptions = () => {

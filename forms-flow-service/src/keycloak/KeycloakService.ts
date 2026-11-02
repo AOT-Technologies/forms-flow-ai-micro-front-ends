@@ -354,6 +354,9 @@ class KeycloakService {
       })
       .catch((err) => {
         console.error("Failed to initialize KeycloakService", err);
+        // keycloak-js allows init() once per object, even after a failure:
+        // a fresh object lets "Try again" work (as reconnect() does).
+        if (!this.kcInitialized) this.kc = new Keycloak(this._keycloakConfig);
         onError?.(err);
       });
   }
@@ -580,9 +583,12 @@ class KeycloakService {
    * logs the user out and clear all user data from session.
    * Registered logout guards run first and may cancel it.
    */
-  public userLogout(): void {
+  public userLogout(beforeLogout?: () => void): void {
     KeycloakService.logoutAllowed().then((allowed) => {
       if (!allowed) return;
+      // Runs only when the logout goes ahead (e.g. the menu moves to the home
+      // page, so a cancelled logout leaves the user where they were).
+      beforeLogout?.();
       StorageService.clear();
       this.logout();
     });
