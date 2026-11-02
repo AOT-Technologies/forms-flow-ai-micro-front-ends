@@ -38,6 +38,19 @@ describe("isAiAssistantFeatureEnabled", () => {
     setEnv(env);
     expect(isAiAssistantFeatureEnabled()).toBe(false);
   });
+
+  // The browser has no `process`, so the flags must come from window._env_ alone.
+  it("ignores process.env", () => {
+    process.env.REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED = "true";
+    process.env.REACT_APP_MULTI_TENANCY_ENABLED = "true";
+    try {
+      setEnv(undefined);
+      expect(isAiAssistantFeatureEnabled()).toBe(false);
+    } finally {
+      delete process.env.REACT_APP_SUBMISSION_AI_ASSISTANT_ENABLED;
+      delete process.env.REACT_APP_MULTI_TENANCY_ENABLED;
+    }
+  });
 });
 
 describe("isSubmissionAssistantEnabledForTenant", () => {

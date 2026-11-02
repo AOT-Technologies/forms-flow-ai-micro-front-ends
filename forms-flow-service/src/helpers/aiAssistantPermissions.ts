@@ -15,7 +15,7 @@
 const isTruthyFlag = (value: unknown): boolean => value === true || value === "true";
 
 const readEnvFlag = (name: string): boolean =>
-  isTruthyFlag((window as any)._env_?.[name] ?? process.env[name]);
+  isTruthyFlag((window as any)._env_?.[name]);
 
 /** Shape of the tenant record, narrowed to the fields used here. */
 export interface AiAssistantTenantData {
