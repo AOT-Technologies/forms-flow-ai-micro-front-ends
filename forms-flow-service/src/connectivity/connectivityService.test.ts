@@ -168,11 +168,10 @@ describe("ConnectivityService", () => {
     mockFetch.mockRejectedValue(new TypeError("Failed to fetch"));
     service.reportNetworkError();
     await jest.advanceTimersByTimeAsync(3000); // the second try
-    // Both probes failed, so the failed call counts too.
+    // Only the probes count (the failed call itself does not).
     expect(samples.slice(1).map((sample) => [sample.ok, sample.source])).toEqual([
       [false, "probe"],
       [false, "probe"],
-      [false, "api"],
     ]);
   });
 

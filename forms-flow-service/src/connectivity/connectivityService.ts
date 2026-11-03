@@ -88,17 +88,16 @@ class ConnectivityService {
    * no "offline" event comes. Probe now (at most every few seconds) so the app
    * switches to offline instead of waiting for the next token refresh.
    *
-   * The failed call counts for the network level only if the probe fails
-   * too: when the probe works, the network is fine and the call failed for a
-   * server reason the browser hides (e.g. a refused CORS pre-check).
+   * The failed call itself is not counted for the network level: only the
+   * probe decides. When the probe works, the network is fine and the call
+   * failed for a server reason the browser hides (e.g. a refused CORS
+   * pre-check); when it fails, the probe's own sample counts.
    */
   public static reportNetworkError(): void {
     const now = Date.now();
     if (now - this.lastNetworkErrorProbeAt < NETWORK_ERROR_PROBE_GAP_MS) return;
     this.lastNetworkErrorProbeAt = now;
-    this.check().then((online) => {
-      if (!online) this.emitSample({ ok: false, ms: 0, source: "api" });
-    });
+    this.check();
   }
 
   /**
