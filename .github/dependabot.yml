@@ -46,8 +46,8 @@ updates:
 
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "05:00"
+      day: "thursday"
+      time: "09:00"
       timezone: "Asia/Kolkata"
 
     # Grouped patch PR + individual minor/major PRs can exceed the default of 5.
@@ -202,8 +202,8 @@ updates:
       - "/forms-flow-theme"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "05:30"
+      day: "thursday"
+      time: "09:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 5
     labels:
@@ -224,8 +224,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "06:00"
+      day: "thursday"
+      time: "09:00"
       timezone: "Asia/Kolkata"
     open-pull-requests-limit: 3
     labels:

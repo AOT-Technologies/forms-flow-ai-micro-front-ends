@@ -43,7 +43,7 @@ because PR-Agent rewrites it.
 
 ## Weekly cadence
 
-Monday 05:00 IST npm, 05:30 docker, 06:00 GitHub Actions. Dependabot opens the
+Thursday 09:00 IST for npm, docker and GitHub Actions. Dependabot opens the
 patch group plus up to nine individual minor/major PRs per run (limit 10 open).
 
 To refresh on demand: **Insights → Dependency graph → Dependabot → Check for
