@@ -97,6 +97,14 @@ class KeycloakService {
   }
 
   private logout(): void {
+    if (!this.kcInitialized) {
+      // Started offline (FFF-3): keycloak-js can only log out after init(),
+      // so clear the session here and restart the app (it asks for a sign-in).
+      StorageService.clear();
+      this.token = undefined;
+      window.location.assign(`${window.location.origin}/`);
+      return;
+    }
     this.kc?.logout();
     StorageService.clear();
   }

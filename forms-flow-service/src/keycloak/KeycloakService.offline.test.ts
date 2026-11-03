@@ -91,6 +91,13 @@ const freshInstance = () => {
   return KeycloakService.getInstance("http://kc", "realm", "forms-flow-web");
 };
 
+// Signed in online (keycloak-js initialised): logout goes through Keycloak.
+const onlineInstance = () => {
+  const service = freshInstance();
+  (service as any).kcInitialized = true;
+  return service;
+};
+
 const savePass = (overrides = {}) =>
   saveOfflineSession({
     clientId: "forms-flow-web",
@@ -365,7 +372,7 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
 
   test("no guard: logs out and clears storage", async () => {
     (global as any).localStorage.setItem("AUTH_TOKEN", "x");
-    freshInstance().userLogout();
+    onlineInstance().userLogout();
     await flush();
 
     expect(mockKc.logout).toHaveBeenCalled();
@@ -376,7 +383,7 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
     (global as any).localStorage.setItem("AUTH_TOKEN", "x");
     const remove = KeycloakService.registerLogoutGuard(() => Promise.resolve(false));
 
-    freshInstance().userLogout();
+    onlineInstance().userLogout();
     await flush();
 
     expect(mockKc.logout).not.toHaveBeenCalled();
@@ -395,7 +402,7 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
     });
     (global as any).localStorage.setItem("AUTH_TOKEN", "x");
 
-    freshInstance().userLogout();
+    onlineInstance().userLogout();
     await flush();
 
     expect(seen).toEqual(["x"]);
@@ -404,15 +411,32 @@ describe("KeycloakService logout guards (FFF-3, Phase 5)", () => {
     removeB();
   });
 
+  test("started offline: logout clears the session and restarts the app (keycloak-js was never initialised)", async () => {
+    keepOrgSwitch(true);
+    savePass();
+    mockConnectivity.check.mockResolvedValue(false);
+    (global as any).window.location.assign = jest.fn();
+    const service = freshInstance();
+    service.initKeycloak(jest.fn(), jest.fn());
+    await flush();
+
+    service.userLogout();
+    await flush();
+
+    expect(mockKc.logout).not.toHaveBeenCalled();
+    expect((global as any).window.location.assign).toHaveBeenCalledWith("http://localhost:3000/");
+    expect((global as any).localStorage.getItem("ff_offline_session")).toBeNull();
+  });
+
   test("the before-logout step runs only when the logout goes ahead", async () => {
     const beforeLogout = jest.fn();
     const remove = KeycloakService.registerLogoutGuard(() => false);
-    freshInstance().userLogout(beforeLogout);
+    onlineInstance().userLogout(beforeLogout);
     await flush();
     expect(beforeLogout).not.toHaveBeenCalled();
     remove();
 
-    freshInstance().userLogout(beforeLogout);
+    onlineInstance().userLogout(beforeLogout);
     await flush();
     expect(beforeLogout).toHaveBeenCalledTimes(1);
     expect(mockKc.logout).toHaveBeenCalled();
