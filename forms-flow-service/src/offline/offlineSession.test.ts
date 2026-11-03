@@ -21,6 +21,7 @@ const memoryStorage = () => {
 
 import {
   clearOfflineSession,
+  dropTokensFromSavedPass,
   getOfflineMaxHours,
   isOfflineEnabled,
   isUsableOfflineSession,
@@ -36,7 +37,6 @@ const session = (overrides: Partial<OfflineSession> = {}): OfflineSession => ({
   clientId: "forms-flow-web",
   sub: "user-1",
   token: "access-token",
-  refreshToken: "refresh-token",
   roles: ["create_submissions"],
   userDetails: { name: "Field User" },
   lastOnlineAuthAt: NOW - HOUR,
@@ -69,6 +69,20 @@ describe("offlineSession", () => {
     expect(loadOfflineSession()).toEqual(session());
     clearOfflineSession();
     expect(loadOfflineSession()).toBeNull();
+  });
+
+  test("a pass saved by an older version loses its refresh and ID token", () => {
+    (global as any).localStorage.setItem(
+      "ff_offline_session",
+      JSON.stringify({ ...session(), refreshToken: "refresh-token", idToken: "id-token" })
+    );
+    // Reading never hands them out...
+    expect(loadOfflineSession()).toEqual(session());
+    // ...and at app start they are removed from storage.
+    dropTokensFromSavedPass();
+    const stored = JSON.parse((global as any).localStorage.getItem("ff_offline_session"));
+    expect(stored).not.toHaveProperty("refreshToken");
+    expect(stored).not.toHaveProperty("idToken");
   });
 
   test("a pass younger than the limit, for the same client, can start the app", () => {

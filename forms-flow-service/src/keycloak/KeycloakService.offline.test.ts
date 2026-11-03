@@ -103,8 +103,6 @@ const savePass = (overrides = {}) =>
     clientId: "forms-flow-web",
     sub: "user-1",
     token: "saved-token",
-    refreshToken: "saved-refresh",
-    idToken: "saved-id",
     roles: ["create_submissions"],
     userDetails: { name: "Field User" },
     lastOnlineAuthAt: Date.now() - HOUR,
@@ -151,10 +149,12 @@ describe("KeycloakService offline start-up", () => {
         clientId: "forms-flow-web",
         sub: "user-1",
         token: "online-token",
-        refreshToken: "online-refresh",
         userDetails: { name: "Field User" },
       })
     );
+    // No refresh or ID token in localStorage (decided 3 Nov 2026).
+    expect(loadOfflineSession()).not.toHaveProperty("refreshToken");
+    expect(loadOfflineSession()).not.toHaveProperty("idToken");
   });
 
   test("offline with a recent pass: opens without calling Keycloak", async () => {
@@ -203,7 +203,8 @@ describe("KeycloakService offline start-up", () => {
     expect(onError).toHaveBeenCalled();
   });
 
-  test("back online: renews the login with the saved tokens and goes online", async () => {
+  test("back online after an offline start: asks to sign in again, keeps everything", async () => {
+    // The pass has no refresh token, so the login cannot be renewed silently.
     mockConnectivity.check.mockResolvedValue(false);
     savePass();
     const instance = freshInstance();
@@ -212,40 +213,43 @@ describe("KeycloakService offline start-up", () => {
     instance.initKeycloak(jest.fn());
     await flush();
 
-    mockKc.init.mockResolvedValue(true);
-    mockKc.token = "renewed-token";
     connectivityListener?.(true);
     await flush();
 
-    expect(mockKc.init).toHaveBeenCalledWith(
-      expect.objectContaining({
-        token: "saved-token",
-        refreshToken: "saved-refresh",
-        checkLoginIframe: false,
-      })
-    );
-    expect(mockKc.init.mock.calls[0][0].onLoad).toBeUndefined();
-    expect(instance.getToken()).toBe("renewed-token");
-    expect(instance.getConnectionState()).toBe("online");
-    expect(states).toEqual(["offline", "online"]);
-    expect(loadOfflineSession()?.token).toBe("renewed-token");
+    expect(mockKc.init).not.toHaveBeenCalled();
+    expect(instance.getConnectionState()).toBe("sign-in-needed");
+    expect(states).toEqual(["offline", "sign-in-needed"]);
+    expect(mockKc.logout).not.toHaveBeenCalled();
+    expect(loadOfflineSession()?.token).toBe("saved-token");
+
+    // keycloak-js was never initialised: Sign in starts the app again.
+    (global as any).window.location.reload = jest.fn();
+    instance.signInAgain();
+    expect((global as any).window.location.reload).toHaveBeenCalled();
+    expect(mockKc.login).not.toHaveBeenCalled();
   });
 
-  test("back online but the login expired: asks to sign in again, logs nobody out", async () => {
-    mockConnectivity.check.mockResolvedValue(false);
-    savePass();
+  test("started online, back online after the login expired: asks to sign in again", async () => {
+    mockConnectivity.check.mockResolvedValue(true);
+    mockKc.init.mockResolvedValue(true);
+    mockKc.loadUserInfo.mockResolvedValue({ name: "Field User" });
     const instance = freshInstance();
     instance.initKeycloak(jest.fn());
     await flush();
 
-    mockKc.init.mockRejectedValue(new Error("refresh token expired"));
+    mockKc.updateToken.mockRejectedValue(new TypeError("Failed to fetch"));
+    mockConnectivity.check.mockResolvedValue(false);
+    jest.runOnlyPendingTimers(); // the refresh fails: offline
+    await flush();
+    expect(instance.getConnectionState()).toBe("offline");
+
+    mockKc.updateToken.mockRejectedValue(new Error("refresh token expired"));
     mockConnectivity.check.mockResolvedValue(true);
     connectivityListener?.(true);
     await flush();
 
     expect(instance.getConnectionState()).toBe("sign-in-needed");
     expect(mockKc.logout).not.toHaveBeenCalled();
-
     instance.signInAgain();
     expect(mockKc.login).toHaveBeenCalled();
   });

@@ -6,6 +6,9 @@
  * switch (StorageService.clear / localStorage.clear) already wipe it.
  *
  * Holds only standard OpenID Connect data, so nothing here depends on Keycloak.
+ * No refresh token or ID token (decided 3 Nov 2026): a script that reads
+ * localStorage must not be able to get new tokens. After an offline start the
+ * user signs in again once the connection is back.
  */
 
 const OFFLINE_SESSION_KEY = "ff_offline_session";
@@ -16,8 +19,6 @@ export interface OfflineSession {
   clientId: string;
   sub?: string;
   token: string;
-  refreshToken?: string;
-  idToken?: string;
   roles: string[];
   userDetails?: unknown;
   /** When the user was last signed in online (ms since epoch). */
@@ -49,9 +50,27 @@ export const saveOfflineSession = (session: OfflineSession): void => {
 export const loadOfflineSession = (): OfflineSession | null => {
   try {
     const raw = localStorage.getItem(OFFLINE_SESSION_KEY);
-    return raw ? (JSON.parse(raw) as OfflineSession) : null;
+    if (!raw) return null;
+    // A pass saved by an older version may still hold them: never used.
+    const { refreshToken, idToken, ...session } = JSON.parse(raw);
+    return session as OfflineSession;
   } catch (error) {
     return null;
+  }
+};
+
+/**
+ * A pass saved by an older version still holds a refresh and ID token:
+ * removes them (at app start). An online sign-in also replaces the pass.
+ */
+export const dropTokensFromSavedPass = (): void => {
+  try {
+    const raw = localStorage.getItem(OFFLINE_SESSION_KEY);
+    if (!raw) return;
+    const stored = JSON.parse(raw);
+    if (stored.refreshToken || stored.idToken) saveOfflineSession(loadOfflineSession()!);
+  } catch (error) {
+    // Unreadable pass: loadOfflineSession treats it as none.
   }
 };
 

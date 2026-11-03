@@ -32,6 +32,7 @@ const decodeToken = (token: string): KeycloakTokenParsed | null => {
 import ConnectivityService from "../connectivity/connectivityService";
 import {
   clearOfflineSession,
+  dropTokensFromSavedPass,
   isOfflineEnabled,
   isUsableOfflineSession,
   loadOfflineSession,
@@ -293,6 +294,7 @@ class KeycloakService {
       this.initOnline(callback, onError);
       return;
     }
+    dropTokensFromSavedPass();
     // Offline enabled: ask our own API first (never the sign-in server), so
     // an offline start does not wait for Keycloak to time out.
     ConnectivityService.check().then((online) =>
@@ -457,7 +459,12 @@ class KeycloakService {
     });
   }
 
-  /** Saves the pass used for the next offline start (offline forms on only). */
+  /**
+   * Saves the pass used for the next offline start (offline forms on only).
+   * No refresh token or ID token (decided 3 Nov 2026): a script that reads
+   * localStorage must not be able to get new tokens; the pass only says who
+   * the user is while offline.
+   */
   private saveOfflineSnapshot(): void {
     if (!OfflineSettingsService.isOfflineAllowed() || !this.kc?.token) return;
     const parsed: any = this.kc.tokenParsed || {};
@@ -465,8 +472,6 @@ class KeycloakService {
       clientId: this._keycloakConfig.clientId,
       sub: parsed.sub,
       token: this.kc.token,
-      refreshToken: this.kc.refreshToken,
-      idToken: this.kc.idToken,
       roles: parsed.roles || parsed.role || parsed.client_roles || [],
       userDetails: this.userData,
       lastOnlineAuthAt: Date.now(),
@@ -496,27 +501,21 @@ class KeycloakService {
   }
 
   /**
-   * Back online: renew the login with the saved refresh token. If the login
-   * has expired, the state becomes "sign-in-needed" — nothing is cleared, the
-   * caller offers signInAgain().
+   * Back online: renew the login with the refresh token keycloak-js holds.
+   * Started without a connection, there is none (the pass keeps no refresh
+   * token), so the state becomes "sign-in-needed" at once. Also when the
+   * login has expired — nothing is cleared, the caller offers signInAgain().
    */
   private async reconnect(): Promise<void> {
     if (this.connectionState === "online" || this.reconnecting) return;
+    if (!this.kcInitialized) {
+      this.stopWatchingForReconnect();
+      this.setConnectionState("sign-in-needed");
+      return;
+    }
     this.reconnecting = true;
     try {
-      if (this.kcInitialized) {
-        await this.kc.updateToken(-1);
-      } else {
-        const session = loadOfflineSession();
-        await this.kc.init({
-          token: session?.token,
-          refreshToken: session?.refreshToken,
-          idToken: session?.idToken,
-          pkceMethod: "S256",
-          checkLoginIframe: false,
-        });
-        this.kcInitialized = true;
-      }
+      await this.kc.updateToken(-1);
       if (!this.kc.token) throw new Error("No token after reconnect");
       this.token = this.kc.token;
       this._tokenParsed = this.kc.tokenParsed;
@@ -526,12 +525,8 @@ class KeycloakService {
       this.refreshToken();
       this.loadOfflineSettings();
     } catch (error) {
-      if (!(await ConnectivityService.check())) {
-        // Connection dropped again. keycloak-js allows init() only once per
-        // instance, so start from a fresh one on the next attempt.
-        if (!this.kcInitialized) this.kc = new Keycloak(this._keycloakConfig);
-        return;
-      }
+      // Connection dropped again: try again when it is back.
+      if (!(await ConnectivityService.check())) return;
       this.stopWatchingForReconnect();
       this.setConnectionState("sign-in-needed");
     } finally {
@@ -564,6 +559,13 @@ class KeycloakService {
    * Opens the sign-in page without logging out, so saved offline work stays.
    */
   public signInAgain(): void {
+    if (!this.kcInitialized) {
+      // Started without a connection: keycloak-js was never initialised and
+      // can only sign in after init(). Starting the app again (now online)
+      // signs in through Keycloak; a live Keycloak session needs no password.
+      window.location.reload();
+      return;
+    }
     this.login();
   }
 
