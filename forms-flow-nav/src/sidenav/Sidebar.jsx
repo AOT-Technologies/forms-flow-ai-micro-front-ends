@@ -528,10 +528,16 @@ const Sidebar = React.memo(({ props, sidenavHeight, overlay, onToggle }) => {
 
   // Moves to the home page only once the logout goes ahead: a logout
   // cancelled in the "unsent forms" warning (FFF-3) keeps the current page.
+  // An older @formsflow/service has userLogout() without that step: move first.
   const logout = () => {
-    instance.userLogout(() =>
-      navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey)
-    );
+    const toHome = () =>
+      navigateToBaseUrl(navigate, tenantKey || userDetail?.tenantKey);
+    if (instance.userLogout.length > 0) {
+      instance.userLogout(toHome);
+      return;
+    }
+    toHome();
+    instance.userLogout();
   };
 
   const manageOptions = () => {
