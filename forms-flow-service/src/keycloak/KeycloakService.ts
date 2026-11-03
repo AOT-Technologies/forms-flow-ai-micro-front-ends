@@ -209,6 +209,9 @@ class KeycloakService {
    */
   private refreshToken(): void {
     if (!this.kc) return;
+    // One loop only: reconnect() starts it again after a connection drop,
+    // while the old loop's timer may still be waiting.
+    clearTimeout(this.timerId);
 
     const refreshLoop = async () => {
       try {
