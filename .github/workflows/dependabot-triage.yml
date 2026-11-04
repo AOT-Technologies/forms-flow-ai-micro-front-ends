@@ -1,0 +1,274 @@
+# =============================================================================
+# Dependabot Triage
+# -----------------------------------------------------------------------------
+# Runs on every Dependabot pull request and makes the review tier obvious at a
+# glance, so the grouped patch PR can be checked once and merged.
+#
+#   Tier            Title badge          Label
+#   --------------  -------------------  -----------------------------------
+#   patch group     [✅ PATCH-ONLY]      deps: patch ✅ one-pass review
+#   minor           [🟡 MINOR]           deps: minor 🟡
+#   major           [🔴 MAJOR]           deps: major 🔴 breaking-risk
+#   security group  [🔒 SECURITY]        deps: security 🔒
+#
+# What it does (idempotent, safe to re-run on every rebase/recreate):
+#   1. Reads Dependabot metadata (update type, group, directories, deps).
+#   2. Creates the tier labels if they are missing, then applies the right one.
+#   3. Prepends the tier badge to the PR title (once).
+#   4. Posts/refreshes ONE sticky comment with a badge + the review checklist
+#      for that tier (never touches the PR body, which PR-Agent rewrites).
+#   5. Optional, separate job: enables auto-merge for the patch group when
+#      the repository variable DEPENDABOT_AUTOMERGE_PATCH is "true" (off by
+#      default).
+#
+# Notes
+#   - Only GITHUB_TOKEN is used. Dependabot-triggered runs cannot read normal
+#     Actions secrets, so do not add any here.
+#   - No checkout of PR code happens in this workflow, so `pull_request` is
+#     safe. Permissions are granted per job, least-privilege: the label jobs
+#     get issues/pull-requests write only; `contents: write` exists solely in
+#     the opt-in auto-merge job and is never granted otherwise.
+#   - `workflow_dispatch` lets you bootstrap the labels before the first
+#     Dependabot run (Actions → Dependabot Triage → Run workflow).
+# =============================================================================
+name: Dependabot Triage
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: dependabot-triage-${{ github.event.pull_request.number || 'bootstrap' }}
+  cancel-in-progress: true
+
+env:
+  # Keep in sync with the group names in .github/dependabot.yml
+  PATCH_GROUP: patch-only-safe
+  SECURITY_GROUP: security-fixes
+  # Tier labels (created automatically if missing)
+  LABEL_PATCH: "deps: patch ✅ one-pass review"
+  LABEL_MINOR: "deps: minor 🟡"
+  LABEL_MAJOR: "deps: major 🔴 breaking-risk"
+  LABEL_SECURITY: "deps: security 🔒"
+  # Title badges
+  BADGE_PATCH: "[✅ PATCH-ONLY]"
+  BADGE_MINOR: "[🟡 MINOR]"
+  BADGE_MAJOR: "[🔴 MAJOR]"
+  BADGE_SECURITY: "[🔒 SECURITY]"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # One-time (or any-time) label bootstrap. Idempotent.
+  # ---------------------------------------------------------------------------
+  bootstrap-labels:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write # create/update repo labels
+    steps:
+      - name: Ensure tier labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          ensure() {
+            local name="$1" color="$2" description="$3"
+            if gh label list --limit 200 --json name --jq '.[].name' | grep -Fxq "$name"; then
+              gh label edit "$name" --color "$color" --description "$description" >/dev/null
+              echo "updated: $name"
+            else
+              gh label create "$name" --color "$color" --description "$description" >/dev/null
+              echo "created: $name"
+            fi
+          }
+          ensure "$LABEL_PATCH"    "0E8A16" "Grouped patch-only Dependabot PR. One review pass, then merge."
+          ensure "$LABEL_MINOR"    "FBCA04" "Minor version bump. Check changelog and run the touched package's tests."
+          ensure "$LABEL_MAJOR"    "B60205" "Major version bump. Breaking changes possible. Needs a deliberate review."
+          ensure "$LABEL_SECURITY" "5319E7" "Dependabot security fix. Prioritise."
+          ensure "dependencies"    "0366D6" "Pull requests that update a dependency file"
+          ensure "javascript"      "168700" "Pull requests that update javascript code"
+
+  # ---------------------------------------------------------------------------
+  # Per-PR triage
+  # ---------------------------------------------------------------------------
+  triage:
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write # create missing tier labels
+      pull-requests: write # labels, title, sticky comment on the PR
+    outputs:
+      tier: ${{ steps.tier.outputs.tier }}
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        with:
+          github-token: ${{ github.token }}
+
+      - name: Decide review tier
+        id: tier
+        env:
+          UPDATE_TYPE: ${{ steps.meta.outputs.update-type }}
+          GROUP: ${{ steps.meta.outputs.dependency-group }}
+        run: |
+          set -euo pipefail
+          echo "update-type=$UPDATE_TYPE  group=$GROUP"
+          if [[ "$GROUP" == "$SECURITY_GROUP" ]]; then
+            tier=security; label="$LABEL_SECURITY"; badge="$BADGE_SECURITY"
+          elif [[ "$GROUP" == "$PATCH_GROUP" || "$UPDATE_TYPE" == "version-update:semver-patch" ]]; then
+            tier=patch; label="$LABEL_PATCH"; badge="$BADGE_PATCH"
+          elif [[ "$UPDATE_TYPE" == "version-update:semver-minor" ]]; then
+            tier=minor; label="$LABEL_MINOR"; badge="$BADGE_MINOR"
+          elif [[ "$UPDATE_TYPE" == "version-update:semver-major" ]]; then
+            tier=major; label="$LABEL_MAJOR"; badge="$BADGE_MAJOR"
+          else
+            # Unknown bump type (e.g. git SHA pins). Treat as minor: review, don't auto-merge.
+            tier=minor; label="$LABEL_MINOR"; badge="$BADGE_MINOR"
+          fi
+          {
+            echo "tier=$tier"
+            echo "label=$label"
+            echo "badge=$badge"
+          } >> "$GITHUB_OUTPUT"
+          echo "tier=$tier"
+
+      - name: Ensure tier labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          existing=$(gh label list --limit 200 --json name --jq '.[].name')
+          ensure() {
+            local name="$1" color="$2" description="$3"
+            if ! grep -Fxq "$name" <<<"$existing"; then
+              gh label create "$name" --color "$color" --description "$description" >/dev/null && echo "created: $name"
+            fi
+          }
+          ensure "$LABEL_PATCH"    "0E8A16" "Grouped patch-only Dependabot PR. One review pass, then merge."
+          ensure "$LABEL_MINOR"    "FBCA04" "Minor version bump. Check changelog and run the touched package's tests."
+          ensure "$LABEL_MAJOR"    "B60205" "Major version bump. Breaking changes possible. Needs a deliberate review."
+          ensure "$LABEL_SECURITY" "5319E7" "Dependabot security fix. Prioritise."
+
+      - name: Apply tier label (and drop stale tier labels)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          LABEL: ${{ steps.tier.outputs.label }}
+        run: |
+          set -euo pipefail
+          args=(--add-label "$LABEL")
+          for l in "$LABEL_PATCH" "$LABEL_MINOR" "$LABEL_MAJOR" "$LABEL_SECURITY"; do
+            [[ "$l" != "$LABEL" ]] && args+=(--remove-label "$l")
+          done
+          gh pr edit "$PR" "${args[@]}"
+
+      - name: Prepend tier badge to title (once)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          TITLE: ${{ github.event.pull_request.title }}
+          BADGE: ${{ steps.tier.outputs.badge }}
+        run: |
+          set -euo pipefail
+          # Strip any previous tier badge (tier can change after a rebase), then add the current one.
+          clean="$TITLE"
+          for b in "$BADGE_PATCH" "$BADGE_MINOR" "$BADGE_MAJOR" "$BADGE_SECURITY"; do
+            clean="${clean#"$b" }"
+          done
+          new="$BADGE $clean"
+          if [[ "$new" != "$TITLE" ]]; then
+            gh pr edit "$PR" --title "$new"
+            echo "title → $new"
+          else
+            echo "title already badged"
+          fi
+
+      - name: Post or refresh sticky review comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          TIER: ${{ steps.tier.outputs.tier }}
+          UPDATE_TYPE: ${{ steps.meta.outputs.update-type }}
+          GROUP: ${{ steps.meta.outputs.dependency-group }}
+          DIRECTORY: ${{ steps.meta.outputs.directory }}
+          DEPS: ${{ steps.meta.outputs.dependency-names }}
+          ECOSYSTEM: ${{ steps.meta.outputs.package-ecosystem }}
+        run: |
+          set -euo pipefail
+          marker="<!-- dependabot-triage -->"
+          case "$TIER" in
+            patch)
+              badge="![patch-only](https://img.shields.io/badge/dependabot-patch--only%20%E2%9C%85-0E8A16)"
+              checklist=$'- [ ] All CI checks green (components / review / submissions suites)\n- [ ] Only `package.json` ranges and `package-lock.json` files changed (no source files)\n- [ ] No new peer-dependency warnings in the CI install log\n- [ ] Merge' ;;
+            minor)
+              badge="![minor](https://img.shields.io/badge/dependabot-minor%20%F0%9F%9F%A1-FBCA04)"
+              checklist=$'- [ ] Read the release notes for new behaviour / deprecations\n- [ ] CI green for every package touched\n- [ ] Local smoke-test of the affected package (`npm start`) if it is UI-facing\n- [ ] Does NOT align the intentional version drift (jest / eslint / i18next) between packages' ;;
+            major)
+              badge="![major](https://img.shields.io/badge/dependabot-major%20%F0%9F%94%B4-B60205)"
+              checklist=$'- [ ] Migration guide read; breaking changes listed in this PR\n- [ ] Cross-repo impact checked (`@formsflow/*` externals are consumed by forms-flow-web)\n- [ ] CI green + manual regression of the affected package\n- [ ] Not planned? Decline with `@dependabot ignore this major version` (policy-frozen libraries are listed in DEPENDABOT.md)' ;;
+            security)
+              badge="![security](https://img.shields.io/badge/dependabot-security%20%F0%9F%94%92-5319E7)"
+              checklist=$'- [ ] Confirm the advisory applies to our usage\n- [ ] CI green\n- [ ] Merge promptly; this takes priority over version-update PRs' ;;
+            *)
+              echo "unexpected tier: '$TIER'" >&2
+              exit 1 ;;
+          esac
+          body=$(cat <<MD
+          $marker
+          $badge
+
+          **Dependabot triage: \`$TIER\`**
+
+          | Field | Value |
+          |---|---|
+          | Highest bump | \`${UPDATE_TYPE:-n/a}\` |
+          | Group | \`${GROUP:-none (single dependency)}\` |
+          | Ecosystem | \`${ECOSYSTEM:-n/a}\` |
+          | Directories | \`${DIRECTORY:-n/a}\` |
+          | Dependencies | ${DEPS:-n/a} |
+
+          **Review checklist**
+          $checklist
+
+          <sub>Managed by \`.github/workflows/dependabot-triage.yml\`. Commands: \`@dependabot rebase\` · \`@dependabot recreate\` · \`@dependabot ignore this minor version\` · \`@dependabot ignore this major version\`.</sub>
+          MD
+          )
+          existing_id=$(gh api "repos/$GH_REPO/issues/$PR/comments" --paginate \
+            --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n1 || true)
+          if [[ -n "$existing_id" ]]; then
+            gh api -X PATCH "repos/$GH_REPO/issues/comments/$existing_id" -f body="$body" >/dev/null
+            echo "sticky comment updated ($existing_id)"
+          else
+            gh api "repos/$GH_REPO/issues/$PR/comments" -f body="$body" >/dev/null
+            echo "sticky comment created"
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Opt-in auto-merge for the patch group. Separate job so `contents: write`
+  # is only ever granted when DEPENDABOT_AUTOMERGE_PATCH is "true".
+  # ---------------------------------------------------------------------------
+  automerge-patch:
+    needs: triage
+    if: needs.triage.outputs.tier == 'patch' && vars.DEPENDABOT_AUTOMERGE_PATCH == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # required to merge
+      pull-requests: write # required to enable auto-merge
+    steps:
+      - name: Enable auto-merge for the patch group
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          # Requires: repo setting "Allow auto-merge" ON and branch protection with required checks on develop.
+          gh pr merge "$PR" --auto --merge
+          echo "auto-merge enabled; PR merges when required checks pass"
