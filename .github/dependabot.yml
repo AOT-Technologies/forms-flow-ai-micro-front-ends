@@ -14,10 +14,11 @@
 # Repo facts this file encodes:
 #   - 8 independently installed MFE packages + /scripts (CD helper). NOT a
 #     workspace monorepo: each directory has its own package-lock.json.
-#   - Version drift between packages is intentional (jest 27/29, eslint 7/8,
-#     i18next 21/23/25). React, webpack, single-spa and formio are frozen by
-#     policy (CLAUDE.md "Hard Constraints"). Those majors are ignored below so
-#     they never show up as noise; lift an ignore when an upgrade is planned.
+#   - No `ignore` list on purpose: every available update is surfaced, so
+#     nothing is missed. Majors for policy-frozen libraries (React, webpack,
+#     single-spa, formio, the intentional jest/eslint/i18next drift; see
+#     CLAUDE.md "Hard Constraints") arrive as [🔴 MAJOR] PRs and are declined
+#     per PR with `@dependabot ignore this major version` when not planned.
 #   - Default branch is `develop`; no target-branch is set on purpose, because
 #     security updates only ever target the default branch and a non-default
 #     target-branch silently detaches the groups/labels from them.
@@ -102,88 +103,6 @@ updates:
       #     applies-to: "version-updates"
       #     update-types: ["minor"]
       #     group-by: "dependency-name"
-
-    ignore:
-      # ---- Policy-frozen (CLAUDE.md Hard Constraints) -------------------------
-      # React: patch only. The whole MFE mesh + forms-flow-web share one React
-      # via the SystemJS import map; a minor/major here is a cross-repo change.
-      - dependency-name: "react"
-        update-types: ["version-update:semver-major", "version-update:semver-minor"]
-      - dependency-name: "react-dom"
-        update-types: ["version-update:semver-major", "version-update:semver-minor"]
-      - dependency-name: "@types/react"
-        update-types: ["version-update:semver-major", "version-update:semver-minor"]
-      - dependency-name: "@types/react-dom"
-        update-types: ["version-update:semver-major", "version-update:semver-minor"]
-
-      # Build system / bundler / runtime loader: majors are a planned project.
-      - dependency-name: "webpack"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "webpack-cli"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "webpack-dev-server"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "webpack-merge"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "webpack-config-single-spa*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "single-spa*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "typescript"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "sass"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "sass-loader"
-        update-types: ["version-update:semver-major"]
-
-      # Intentional version drift between packages (never "align" it):
-      - dependency-name: "jest"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "jest-environment-jsdom"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "babel-jest"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "ts-jest"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "eslint"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "eslint-config-*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "eslint-plugin-*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "i18next"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-i18next"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "prettier"
-        update-types: ["version-update:semver-major"]
-
-      # Form engine + heavy shared-bundle libraries (components ships one
-      # 4 MB bundle on every page): majors need a sized, reviewed effort.
-      - dependency-name: "@aot-technologies/formiojs"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@aot-technologies/formio-react"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@mui/*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "bpmn-js"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "bootstrap"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-bootstrap"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-router-dom"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "keycloak-js"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@reduxjs/toolkit"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@tanstack/react-query"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "storybook"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "@storybook/*"
-        update-types: ["version-update:semver-major"]
 
   # ===========================================================================
   # Docker — base images of the 8 package Dockerfiles (node / nginx).

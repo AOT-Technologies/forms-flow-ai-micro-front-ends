@@ -212,7 +212,7 @@ jobs:
               checklist=$'- [ ] Read the release notes for new behaviour / deprecations\n- [ ] CI green for every package touched\n- [ ] Local smoke-test of the affected package (`npm start`) if it is UI-facing\n- [ ] Does NOT align the intentional version drift (jest / eslint / i18next) between packages' ;;
             major)
               badge="![major](https://img.shields.io/badge/dependabot-major%20%F0%9F%94%B4-B60205)"
-              checklist=$'- [ ] Migration guide read; breaking changes listed in this PR\n- [ ] Cross-repo impact checked (`@formsflow/*` externals are consumed by forms-flow-web)\n- [ ] CI green + manual regression of the affected package\n- [ ] Consider `@dependabot ignore this major version` if it is a policy-frozen dependency' ;;
+              checklist=$'- [ ] Migration guide read; breaking changes listed in this PR\n- [ ] Cross-repo impact checked (`@formsflow/*` externals are consumed by forms-flow-web)\n- [ ] CI green + manual regression of the affected package\n- [ ] Not planned? Decline with `@dependabot ignore this major version` (policy-frozen libraries are listed in DEPENDABOT.md)' ;;
             security)
               badge="![security](https://img.shields.io/badge/dependabot-security%20%F0%9F%94%92-5319E7)"
               checklist=$'- [ ] Confirm the advisory applies to our usage\n- [ ] CI green\n- [ ] Merge promptly; this takes priority over version-update PRs' ;;

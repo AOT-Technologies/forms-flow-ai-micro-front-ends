@@ -21,7 +21,7 @@ because PR-Agent rewrites it.
 
 | File | Purpose |
 |---|---|
-| `.github/dependabot.yml` | Schedule, grouping, cooldown, policy-frozen ignores. |
+| `.github/dependabot.yml` | Schedule, grouping, cooldown. No `ignore` list: every update is surfaced. |
 | `.github/workflows/dependabot-triage.yml` | Labels, title badges, sticky comment, opt-in auto-merge. |
 | `CODEOWNERS` | Reviewer assignment. The old `reviewers:` key in `dependabot.yml` was removed by GitHub in May 2025. |
 
@@ -64,16 +64,15 @@ needed fix is being held back.
 
 ## Policy-frozen dependencies
 
-These never get a major PR (and React never gets a minor), by design. See the
-`ignore:` block in `dependabot.yml`; the reasons trace back to the Hard
-Constraints in `CLAUDE.md`.
+There is no `ignore` list: every available update is surfaced so nothing is
+missed. Some majors are still frozen by policy (see the Hard Constraints in
+`CLAUDE.md`): `react`/`react-dom` and the single-spa mesh, `webpack*`, the
+intentional `jest`/`eslint`/`i18next` drift between packages, and the heavy
+shared-bundle libraries (`@aot-technologies/formio*`, `@mui/*`, `bpmn-js`).
 
-- Runtime/mesh: `react`, `react-dom`, `single-spa*`, `webpack*`, `typescript`, `sass*`
-- Intentional drift: `jest*`, `eslint*`, `i18next`, `react-i18next`, `prettier`
-- Shared-bundle weight: `@aot-technologies/formio*`, `@mui/*`, `bpmn-js`, `bootstrap`, `react-bootstrap`, `react-router-dom`, `keycloak-js`, `@reduxjs/toolkit`, `@tanstack/react-query`, `storybook*`
-
-To plan one of these upgrades, delete its `ignore` entry in a feature branch
-and run **Check for updates**; the PR arrives as `[🔴 MAJOR]`.
+When one of those arrives as `[🔴 MAJOR]` and is not planned, decline it on the
+PR with `@dependabot ignore this major version`. Dependabot remembers that per
+dependency and stops re-opening it; `@dependabot unignore` reverses it.
 
 ## Useful PR commands
 
