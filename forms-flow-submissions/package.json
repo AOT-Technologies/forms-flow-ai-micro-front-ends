@@ -33,7 +33,7 @@
     "@types/testing-library__jest-dom": "^5.14.1",
     "babel-jest": "^29.7.0",
     "concurrently": "^6.2.1",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-ts-react-important-stuff": "^3.0.0",
