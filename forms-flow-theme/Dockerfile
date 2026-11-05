@@ -1,5 +1,5 @@
 # base image
-FROM node:16.20.1-alpine as build-stage
+FROM node:26.13.0-alpine as build-stage
 
 # set working directory
 WORKDIR /forms-flow-theme/app
