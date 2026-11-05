@@ -20,7 +20,7 @@ RUN npm ci --force
 
 # Copy only necessary files
 COPY src/ /forms-flow-submissions/app/src/
-COPY webpack.config.js tsconfig.json babel.config.json jest.config.js /forms-flow-submissions/app/
+COPY webpack.config.js webpack.formio.js tsconfig.json babel.config.json jest.config.js /forms-flow-submissions/app/
  
 RUN npm run build:webpack
 
